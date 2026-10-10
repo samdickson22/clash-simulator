@@ -1,0 +1,25 @@
+{
+  "at_utc": "2026-10-10T01:19:26Z",
+  "host": "127x01",
+  "audit_pid": 1317437,
+  "load": [
+    11.64,
+    15.82,
+    16.65
+  ],
+  "physical_unique": true,
+  "physical_cpu_count": 40,
+  "owned_python_processes": [
+    {
+      "pid": 1317437,
+      "pgid": 1317436,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        0
+      ]
+    }
+  ],
+  "cache_services": [],
+  "who": ""
+}

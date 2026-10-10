@@ -15,5 +15,5 @@ for p in Path('/proc').glob('[0-9]*'):
         if host=='127x03' and 'validation_cache_service_renewal_v4.py' in cmd and (p/'comm').read_text().strip()=='python':
             cache.append(dict(pid=pid,pgid=os.getpgid(pid),affinity=sorted(os.sched_getaffinity(pid)),alive=True))
     except (OSError,ProcessLookupError):pass
-result=dict(at_utc=subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],text=True).strip(),host=host,load=os.getloadavg(),physical_unique=True,physical_cpu_count=len(cpus),owned_python_processes=rows,cache_services=cache,who=subprocess.check_output(['who'],text=True))
+result=dict(at_utc=subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],text=True).strip(),host=host,audit_pid=os.getpid(),load=os.getloadavg(),physical_unique=True,physical_cpu_count=len(cpus),owned_python_processes=rows,cache_services=cache,who=subprocess.check_output(['who'],text=True))
 print(json.dumps(result,indent=2))

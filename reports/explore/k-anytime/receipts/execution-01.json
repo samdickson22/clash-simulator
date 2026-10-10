@@ -1,0 +1,100 @@
+{
+  "audited_at_utc": "2026-10-10T01:20:20Z",
+  "host": "127x01",
+  "reporting_games": 1000,
+  "stages": {
+    "single": {
+      "receipt": {
+        "games": 600,
+        "fresh": 600,
+        "cpu_seconds": 29363.387050399,
+        "wall_seconds": 792.2686377889477,
+        "terminal": true
+      },
+      "exit": {
+        "at_utc": "2026-10-10T00:43:19Z",
+        "returncode": 0,
+        "min_memavailable_GiB": 111.74513244628906
+      },
+      "schedule_sha256": "c04d6dd45b9bfaf02d21dbc158873fb5dcda100da8dd869499ae744efb7c537c",
+      "launch": {
+        "at_utc": "2026-10-10T00:29:48Z",
+        "supervisor_pid": 1137848,
+        "child_pid": 1137886,
+        "child_pgid": 1137886,
+        "host": "127x01",
+        "command": [
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/runtime.sh",
+          "reports/explore/k-anytime/run.py",
+          "--config",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/plan.json",
+          "--out",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/reporting/single",
+          "--workers",
+          "40",
+          "--pairs",
+          "200",
+          "--offset",
+          "400",
+          "--arms",
+          "K0",
+          "K1",
+          "KU"
+        ]
+      },
+      "census_samples": 81,
+      "paused_samples": 0
+    },
+    "threaded": {
+      "receipt": {
+        "games": 400,
+        "fresh": 400,
+        "cpu_seconds": 21989.593023498,
+        "wall_seconds": 2107.2546684080735,
+        "terminal": true
+      },
+      "exit": {
+        "at_utc": "2026-10-10T01:18:49Z",
+        "returncode": 0,
+        "min_memavailable_GiB": 103.04894256591797
+      },
+      "schedule_sha256": "3c807a197d3ef0579202d06d95d01ef2b9336afc0ee25377145fb616859954fe",
+      "launch": {
+        "at_utc": "2026-10-10T00:43:19Z",
+        "supervisor_pid": 1137848,
+        "child_pid": 1183934,
+        "child_pgid": 1183934,
+        "host": "127x01",
+        "command": [
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/runtime.sh",
+          "reports/explore/k-anytime/run.py",
+          "--config",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/plan.json",
+          "--out",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/reporting/threaded",
+          "--workers",
+          "8",
+          "--pairs",
+          "200",
+          "--offset",
+          "400",
+          "--arms",
+          "K4",
+          "K4h"
+        ]
+      },
+      "census_samples": 213,
+      "paused_samples": 0
+    }
+  },
+  "paused_samples": 0,
+  "scientific_files_unchanged": 775,
+  "native_source_files_unchanged": 77,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "plan_sha256": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695",
+  "remaining_owned_python_processes": [],
+  "all_reporting_terminal": true,
+  "reporting_done_at_utc": "2026-10-10T01:18:49Z"
+}

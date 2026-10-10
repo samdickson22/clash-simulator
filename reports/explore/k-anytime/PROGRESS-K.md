@@ -27,3 +27,5 @@ Resume: inspect owned job/progress.json and reporting/*/{launch,receipt,supervis
 2026-10-10T00:43:34Z:01 all600 single-core games terminal; stage exit0.01 K4/K4h pool PID/PGID1183934, launched2026-10-10T00:43:19Z,8 workers×5 physical cores0–39. Threaded host audit passes; still no pauses.03 single900/1200 at00:43:24Z.
 
 2026-10-10T00:48:36Z:03 all1200 single-core games terminal, stage exit0.03 K4/K4h pool PID/PGID1393695, launched2026-10-10T00:48:09Z,12workers×5physical cores0–59. All1800 single-core games now terminal;01 thread59/400 at00:48:22Z. No pauses/failures; thread01 audit verifies8 masks of5physical cores.
+
+2026-10-10T01:19:28Z:01 all1000 reporting games terminal; both stage exits0, supervisor/pool exited, no owned Python except final auditor.01 K physical cores0–39 released. Raw01 evidence copied read-only to owned03 input-01; originals retained.03 reporting1792/2000 (208remaining) at01:19:09Z. No pauses/failures.
