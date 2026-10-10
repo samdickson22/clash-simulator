@@ -1,0 +1,23 @@
+{
+  "actual_signoff_utc": "2026-10-10T05:24:52Z",
+  "arrangement": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/prepared/a19-a20-launch-readiness-r1/O9-TELEMETRY-ARRANGEMENT.md",
+    "sha256": "000513f9c28c01b6fe86d08cc242e807c060f08dc90015017f483fe97577fb31"
+  },
+  "charge_to_A19_process_cap": 16,
+  "charge_to_A19_pss_upper_bytes": 48000000000,
+  "coordinator_signoff": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a19-a20-launch-gate-watch-r1/coordinator-o9-signoff.json",
+    "sha256": "fd831cbe92e42f20e0c83e87969a56f645599225572cd8d5a736303da71ed826"
+  },
+  "cpu": 47,
+  "nice": 19,
+  "not_started": true,
+  "observer": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/prepared/a19-a20-launch-readiness-r1/observe_first_wave.py",
+    "sha256": "3f6a4e4c99d1f6b5bed9e6831d3051fa637d02a6699c1bc096a5bace6dc9b89e"
+  },
+  "signed_off_label_utc": "2026-10-10T05:27:00Z",
+  "status": "PASS",
+  "utc": "2026-10-10T11:35:50Z"
+}

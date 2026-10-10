@@ -1798,3 +1798,7 @@ Also on the hub, but with copies elsewhere:
   - R3a descriptive −28.7 pp (never adoptable; S1 is the confirmatory study).
   - Cost 68.7 CPU-h / 9.5 GPU-h (deduplicated).
   - R3 released 03 at 11:20Z; **G re-released onto 03 cores 0–59** (third one-time release).
+- **11:36 UTC: A1 r4 SEAL EXITED 0 at 11:33:50Z** (body seal f95a0df0). The serial verify auto-started as the fallback.
+  - **ISSUED** `coordinator-04-execution-allocation-20261010.json` (80f278d2; valid until 2026-10-11T12:00Z) and `coordinator-approval-parallel-body-verification-20261010.json` (5514cf28; allow_serial_verify_handoff=true, cap = allocation SHA, freezes 61940388/d77b3de5, plan 0fe6fe3a). These are byte-identical renames of the owner's offline-verified candidates.
+  - Launch receipts: O2 2ca41373, O4 10ed1fb2, R3 vacancy 29adf532, G vacancy 8642c0b3, O7 b430b728 (max 31.3 MB), O1/O3 b684771d (MemAvailable 130 GB), O9 1bbf6805.
+  - **LAUNCH AUTHORIZED** (verify-then-retire; serial continues as fallback).

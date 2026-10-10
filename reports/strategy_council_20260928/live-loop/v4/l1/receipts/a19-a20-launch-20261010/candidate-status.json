@@ -1,0 +1,27 @@
+{
+  "allocation": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/amendments/coordinator-04-execution-allocation-20261010.CANDIDATE.json",
+    "sha256": "80f278d2b2097160c72a86a2e0e4f35af7b2ab922e5b97bce2b223d51c8247ae"
+  },
+  "field_semantics": "issued_utc is requested actual candidate preparation time for coordinator issuance; final payload fields become authoritative only after coordinator issues.",
+  "issuer_action_required": "Coordinator verify, rename without .CANDIDATE byte-identically, commit and send explicit launch message.",
+  "no_launch_authorized": true,
+  "no_production_started": true,
+  "parallel_approval": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/amendments/coordinator-approval-parallel-body-verification-20261010.CANDIDATE.json",
+    "sha256": "5514cf281cd66a8ce70fc98419061a776243d9f4ffce4b620454c7fdc5f5a910"
+  },
+  "prepared_by": "perception owner at coordinator request",
+  "source_drafts": [
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/prepared/a19-a20-launch-readiness-r1/04-EXECUTION-ALLOCATION-DRAFT.json",
+      "sha256": "aa116105d1e1742e1b145a672c4758933dd1e39db56012c9b41432b7c048da89"
+    },
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/prepared/a19-a20-launch-readiness-r1/APPROVE_PARALLEL_BODY_VERIFICATION-SIGNOFF-DRAFT.json",
+      "sha256": "939449a090da75c119866bd9768358edc3c1997ca38c563bdbf06fefc3bad2c6"
+    }
+  ],
+  "status": "FINAL_CANDIDATES_NEVER_ISSUED",
+  "utc": "2026-10-10T11:35:50Z"
+}

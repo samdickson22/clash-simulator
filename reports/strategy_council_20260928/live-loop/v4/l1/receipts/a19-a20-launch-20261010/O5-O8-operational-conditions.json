@@ -1,0 +1,24 @@
+{
+  "T11_backup_pgid125221_absent": true,
+  "capacity_rechecked_by_runtime": true,
+  "estimates_only": true,
+  "first_wave_actual_throughput_and_lock_observation_required": true,
+  "first_wave_model_hours": [
+    2,
+    2.5
+  ],
+  "future_exclusivity_requires_coordinator_issued_allocation": true,
+  "helper_reserve": 5,
+  "inaccessible_process_admission_charge": 4,
+  "initial_capacity_upper": 7,
+  "io_lock_snapshot": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a19-a20-launch-20261010/O1-O3-inventory.json",
+    "sha256": "b684771dd2ec4d31449fb19cdfe25c2bc9d4079f7375a49f0c7fa4f37e79d148"
+  },
+  "observed_lock_holders": [],
+  "owned_cap": 16,
+  "owned_pss_upper_bytes": 48000000000,
+  "serial_continues_until_parallel_success": true,
+  "serial_model_hours": 13.7,
+  "utc": "2026-10-10T11:35:50Z"
+}

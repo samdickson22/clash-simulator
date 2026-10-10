@@ -1,0 +1,99 @@
+{
+  "allocation": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/coordinator-04-execution-allocation-20261010.CANDIDATE.json",
+    "sha256": "80f278d2b2097160c72a86a2e0e4f35af7b2ab922e5b97bce2b223d51c8247ae"
+  },
+  "clock": "actual UTC",
+  "combined_authority": "PASS",
+  "documentary_crossbindings": "PASS",
+  "error": null,
+  "frozen_authenticate_plan_stub_calls": 2,
+  "issued_records": {
+    "a19_freeze": {
+      "checked_keys": [
+        "a20_freeze_sha256",
+        "a20_review_sha256",
+        "amendment_sha256",
+        "decision",
+        "execution_plan_sha256",
+        "final_combined_package_manifest_sha256",
+        "incorporated_amendment_sha256",
+        "operator_supplement_manifest_sha256",
+        "r5_recheck_review_sha256",
+        "review_response_sha256",
+        "source_files_sha256"
+      ],
+      "failing_keys": [],
+      "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/19-FREEZE-RECORD-20261010.json",
+      "sha256": "6194038811a507de58a2659373af18c82165e0804bc3b82196539ac60db8e8ba",
+      "status": "PASS"
+    },
+    "a1_approval": {
+      "checked_keys": [
+        "a18_bindings",
+        "assembly_sha256",
+        "decision",
+        "evidence_recovery_approval_sha256",
+        "evidence_recovery_sha256",
+        "execution_plan_sha256",
+        "file_layer_review_sha256",
+        "freeze_sha256"
+      ],
+      "failing_keys": [],
+      "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/coordinator-approval-A1-r3.json",
+      "sha256": "ae9208deedb633c10ab092e4c4e51d4c50882efe45629a76c78f7fb2cd2c1a7d",
+      "status": "PASS"
+    },
+    "a20_approval": {
+      "checked_keys": [
+        "B_authorized",
+        "a20_freeze_sha256",
+        "adapter_sha256",
+        "amendment_sha256",
+        "authorized_stages",
+        "base_a19_plan_sha256",
+        "decision",
+        "execution_plan_sha256",
+        "heldout_opening_authorized",
+        "hosts",
+        "serial_runner_changed"
+      ],
+      "failing_keys": [],
+      "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/coordinator-approval-A20-local-io-lock-scope-20261010.json",
+      "sha256": "6bddf7706862404657d8d29019870bef4172d47b722f776e67c1a4dc5fa8ef82",
+      "status": "PASS"
+    },
+    "a20_freeze": {
+      "checked_keys": [
+        "a20_review_sha256",
+        "adapter_sha256",
+        "amendment_sha256",
+        "base_a19_plan_sha256",
+        "decision",
+        "execution_plan_sha256",
+        "r1_erratum",
+        "source_pins_sha256"
+      ],
+      "failing_keys": [],
+      "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/20-FREEZE-RECORD-20261010.json",
+      "sha256": "d77b3de5f6cba6c59d1f2c4b63b8cc9a97e89d914eadff792f28cc2010180f30",
+      "status": "PASS"
+    }
+  },
+  "launch_authorized": false,
+  "parallel_approval": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/coordinator-approval-parallel-body-verification-20261010.CANDIDATE.json",
+    "sha256": "5514cf281cd66a8ce70fc98419061a776243d9f4ffce4b620454c7fdc5f5a910"
+  },
+  "production_started": false,
+  "reviewer_harness_sha256": "068489abdacb62ab589a2a28523a56d75517162d4979ff362de91f6f7e0ecb92",
+  "scope": "Exact candidate bytes and actual four issued records; offline composed authority plus allocation/receipt/O7/O9 crossbindings. Candidate rename is byte-identical; not issuance or live admission.",
+  "status": "PASS",
+  "stubbed": [
+    "frozen authenticate_plan (not executed)",
+    "04 SSH-wrapper hash",
+    "host interpreter/cwd/PYTHONPATH",
+    "scipy availability"
+  ],
+  "utc": "2026-10-10T11:36:18.425161+00:00"
+}

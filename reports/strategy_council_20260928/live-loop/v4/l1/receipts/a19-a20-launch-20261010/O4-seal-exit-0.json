@@ -1,0 +1,99 @@
+{
+  "observation": {
+    "O2": true,
+    "O4": true,
+    "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+    "disk_free_fraction": 0.4774188992237033,
+    "mem_available_bytes": 130206310400,
+    "memory_psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=430041120\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=428783707\n",
+    "observer_only": true,
+    "seal_binding": {
+      "body_seal_sha256": "f95a0df0bd14dcaf97ad23ce7c2eea91e03ac2f47d905103503acf1080bd883d",
+      "seal_exit_sha256": "a6de61995e52d648362dd3c9b9df08aebac7946f6b125b79e4f7da6224d82ecb",
+      "seal_log_sha256": "c36bbd6f17ba8d2760e9b19f0badd47eef9a48fe757fa42e128808775c0e76e5"
+    },
+    "seal_flags": {
+      "STOP": false,
+      "complete.json": false,
+      "failure.json": false,
+      "seal-exit.json": true,
+      "seal-verification.json": false,
+      "state/body-seal.json": true,
+      "verify-exit.json": false
+    },
+    "seal_processes": [
+      {
+        "absent": false,
+        "affinity": [
+          52
+        ],
+        "command_sha256": "8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f",
+        "cpu_ticks": 218,
+        "nice": 19,
+        "observed_command_sha256": "8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f",
+        "pid": 2499718,
+        "starttime": "94874743",
+        "state": "S"
+      },
+      {
+        "absent": true,
+        "command_sha256": "87ecfb60bb85d99f6b0f6fc47c85dc2d4f9d75828ca34f5235759d02611ca57b",
+        "pid": 2499719,
+        "starttime": "94874747"
+      }
+    ],
+    "utc": "2026-10-10T11:33:50.217602+00:00",
+    "x5": [
+      {
+        "absent": true,
+        "command_sha256": "1020d0be0af7a9ee81d01819eaef041c3e28e49859a0523f6ef81bd078577743",
+        "pid": 3727388,
+        "starttime": "96071837"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3727520,
+        "starttime": "96071953"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3736754,
+        "starttime": "96080714"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3736778,
+        "starttime": "96080720"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3736797,
+        "starttime": "96080727"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3736810,
+        "starttime": "96080733"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3736811,
+        "starttime": "96080739"
+      },
+      {
+        "absent": true,
+        "command_sha256": "8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6",
+        "pid": 3736816,
+        "starttime": "96080745"
+      }
+    ]
+  },
+  "stdout": "{\"utc\": \"2026-10-10T11:33:50.217602+00:00\", \"boot_id\": \"bd010cb6-41a6-4832-af28-14e902d3cb7c\", \"O2\": true, \"O4\": true, \"x5\": [{\"command_sha256\": \"1020d0be0af7a9ee81d01819eaef041c3e28e49859a0523f6ef81bd078577743\", \"pid\": 3727388, \"starttime\": \"96071837\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3727520, \"starttime\": \"96071953\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3736754, \"starttime\": \"96080714\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3736778, \"starttime\": \"96080720\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3736797, \"starttime\": \"96080727\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3736810, \"starttime\": \"96080733\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3736811, \"starttime\": \"96080739\", \"absent\": true}, {\"command_sha256\": \"8aef5f996d4fad75c01ae4907e80725c37998ab9e423500a7912b44f67d84cc6\", \"pid\": 3736816, \"starttime\": \"96080745\", \"absent\": true}], \"seal_processes\": [{\"command_sha256\": \"8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f\", \"pid\": 2499718, \"starttime\": \"94874743\", \"absent\": false, \"state\": \"S\", \"cpu_ticks\": 218, \"affinity\": [52], \"nice\": 19, \"observed_command_sha256\": \"8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f\"}, {\"command_sha256\": \"87ecfb60bb85d99f6b0f6fc47c85dc2d4f9d75828ca34f5235759d02611ca57b\", \"pid\": 2499719, \"starttime\": \"94874747\", \"absent\": true}], \"seal_flags\": {\"STOP\": false, \"failure.json\": false, \"seal-exit.json\": true, \"verify-exit.json\": false, \"complete.json\": false, \"state/body-seal.json\": true, \"seal-verification.json\": false}, \"seal_binding\": {\"body_seal_sha256\": \"f95a0df0bd14dcaf97ad23ce7c2eea91e03ac2f47d905103503acf1080bd883d\", \"seal_exit_sha256\": \"a6de61995e52d648362dd3c9b9df08aebac7946f6b125b79e4f7da6224d82ecb\", \"seal_log_sha256\": \"c36bbd6f17ba8d2760e9b19f0badd47eef9a48fe757fa42e128808775c0e76e5\"}, \"mem_available_bytes\": 130206310400, \"disk_free_fraction\": 0.4774188992237033, \"memory_psi\": \"some avg10=0.00 avg60=0.00 avg300=0.00 total=430041120\\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=428783707\\n\", \"observer_only\": true}\n",
+  "stdout_sha256": "5e272382261b93d437919dd0abdada128488f0b88e695f397784a311ed1f7933"
+}

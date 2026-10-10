@@ -1,0 +1,18 @@
+{
+  "fresh_inventory": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a19-a20-launch-20261010/O1-O3-inventory.json",
+    "sha256": "b684771dd2ec4d31449fb19cdfe25c2bc9d4079f7375a49f0c7fa4f37e79d148"
+  },
+  "fresh_utc": "2026-10-10T11:34:55.994896+00:00",
+  "host": "127x04",
+  "no_return_without_new_coordinator_release": true,
+  "owner_exit_utc": "2026-10-10T09:57:33Z",
+  "owner_receipt": {
+    "path": "reports/strategy_council_20260928/imitation/exit-g-topup/receipts/utilization04-vacate.json",
+    "sha256": "76c8a20604ee44e5fc97e843aa3ed2686ba77fa3331aac0750b3bd32ec09e647"
+  },
+  "pgid": 1712867,
+  "remaining_processes": [],
+  "status": "PASS",
+  "utc": "2026-10-10T11:35:50Z"
+}
