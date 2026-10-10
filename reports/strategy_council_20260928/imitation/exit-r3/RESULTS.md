@@ -1,6 +1,6 @@
 # R3 results — evaluation pending
 
-Updated real UTC 2026-10-10T05:23:36Z. Exploration lane; no multiplicity adjustment and no production adoption.
+Updated real UTC 2026-10-10T05:43:49Z. Exploration lane; no multiplicity adjustment and no production adoption.
 
 R3a uses teacher roots only; R3b adds a shared-encoder advantage head with Huber regression to score−WAIT. Both initialize releasedv1 step22552 at width192 and use2500×8192 root rows, T=.003, playweight1, final EMA only. R1 has6,009,681 eligible roots; all five verifiedG shards add212,542, total6,222,223. Continuation kinds1/2, pending3, unsupervised and unscored rows are excluded.
 
@@ -8,8 +8,8 @@ Scientific plan/seed audit were pushed in bc542da8 before either fit. Evaluation
 
 | Arm | Final EMA step | Final checkpoint SHA |
 |---|---:|---|
-| R3a | pending | pending |
-| R3b | pending | pending |
+| R3a | 2500 | 37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85 |
+| R3b | 2500 | c07f8bdd04d6da153582c20c734de4cbce19321926d6a135495023d66dbc25d9 |
 
 | Input | SHA-256 |
 |---|---|
@@ -24,6 +24,7 @@ Scientific plan/seed audit were pushed in bc542da8 before either fit. Evaluation
 | G shard 3 manifest | f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d |
 | G shard 4 manifest | 8192b7e7e8e2fa4ce395349896057b4564ab16a27c5b4efa27a50e98b9bc0661 |
 | Frozen S-default native | 44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2 |
+| Human runtime manifest (zero sampled rows) | 0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68 |
 | Frozen W scorer native | 06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10 |
 
 All source/scorer file pins remain in [source manifests](receipts/source-manifests.json); adapter, runner, and evaluation pins remain in [evaluation freeze](receipts/evaluation-freeze.json).
@@ -32,25 +33,31 @@ Stage1 uses all8088 eligible roots in the64 frozen R1 heldout games. The determi
 
 | Arm | Threshold / play rate | Play recall | Play/WAIT agreement | All-WAIT agreement | Mean positive W regret | Stage1 |
 |---|---|---|---|---|---|---|
-| R3a | pending | pending | pending | pending | pending | pending |
-| R3b | pending | pending | pending | pending | pending | pending |
+| R3a | 0.5005528 / 0.3459 | 0.6297 [0.6043, 0.6543] | 0.7438 [0.7289, 0.7595] | 0.6541 [0.6403, 0.6685] | pending | KILL; regret pending |
+| R3b | 0.5006071 / 0.3459 | 0.6297 [0.6041, 0.6542] | 0.7438 [0.7293, 0.7592] | 0.6541 [0.6403, 0.6685] | pending | KILL; regret pending |
 
 Stage2 uses frozen X S-default behavior: full student inference inside200ms/8ms reserve, one physical core, paired fresh seeds4503601907370496+[0,600), releasedv1 opponent, C-v1 control and K0 descriptive anchor. Rotated complete same-seed blocks run back-to-back on one host/core at nice10/SCHED_OTHER. Smoke191+0/1 is excluded. Kill upper paired95%CI(lossR3−lossC-v1)≥0; shared5000 bootstrap resamples80991013.
 
-Stage2 is pending. No eligibility or adoption conclusion is drawn from incomplete phases.
+Both arms failed the frozen binary gates, so Stage2 will be skipped; zero smoke/reporting games. W-regret diagnostics remain pending.
 
 | Meter category | CPU hours | Charged GPU wall hours | Completed/stopped meter receipts |
 |---|---:|---:|---:|
 | CPU staging | 0.004574 | 0.000000 | 1 |
+| fits | 8.638007 | 2.959405 | 2 |
+| GPU offline | 0.009509 | 0.008973 | 2 |
 | preparation/qualification | 0.010924 | 0.000000 | 10 |
 
 | Arm | Completed effective rows | Charged fit wall seconds | Effective rows / second |
 |---|---:|---:|---:|
-| R3a | pending | pending | pending |
-| R3b | pending | pending | pending |
+| R3a | 20480000 | 5336.313 | 3837.86 |
+| R3b | 20480000 | 5317.546 | 3851.40 |
 
 Throughput divides final effective rows by the summed wall time of every retained fit attempt, including initialization, failed work, and exact-checkpoint resumes. Active fits have no final throughput estimate.
 
 Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit/GPU-offline wall charges include process initialization. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.
 
-No production adoption is authorized. Experiment remains pending; no completed adoption gate.
+R3a resource receipt: exit0, reason None; peak PSS32.869GB, max processes10, minimum GPU free45.090GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json).
+
+R3b resource receipt: exit0, reason None; peak PSS30.090GB, max processes9, minimum GPU free44.982GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json).
+
+No production adoption is authorized. Both arms failed the binary gates; final W-regret diagnostics remain pending.

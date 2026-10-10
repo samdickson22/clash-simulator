@@ -1,0 +1,12 @@
+{
+  "relative": "offline/R3b-attempt-meter-1863347.json",
+  "sha256": "acb23c1bdca641d80a546ef074df64538d06e8bcd89f878402a1dde6232761a7",
+  "value": {
+    "status": "complete",
+    "pid": 1863347,
+    "wall_seconds": 16.08780382014811,
+    "cpu_seconds": 17.058716,
+    "utc": "2026-10-10T05:36:50Z",
+    "accounting": "Whole inference process once; result CPU/wall nested and not added again."
+  }
+}

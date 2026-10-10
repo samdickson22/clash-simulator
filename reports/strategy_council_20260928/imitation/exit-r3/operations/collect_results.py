@@ -15,7 +15,7 @@ j=Path(%r)
 fixed=['R3a-launch.json','R3b-launch.json','R3a-health.json','R3b-health.json','R3a-exit.json','R3b-exit.json','stage1-results.json','stage2-results.json','wrapper-qualification.json','CPU-STAGING.json','REGRET04-STAGING.json','REGRET04-VACATED.json','REGRET04-BASE-VACATED.json','REGRET04-PGIDS.json']
 fixed += ['fits/'+a+'/'+n for a in ('R3a','R3b') for n in ('complete.json','segment.json')]
 fixed += ['offline/'+a+n for a in ('R3a','R3b') for n in ('.json','-calibration.json')]
-patterns=['offline/*-attempt-meter-*.json','regret/pool-meter-*.json','stage3-sdefault/pool-meter-*.json','stage3-sdefault-smoke/pool-meter-*.json','regret04-staging-meter-*.json','reduce-*-meter.json']
+patterns=['offline/*-attempt-meter-*.json','regret/pool-meter-*.json','regret/games/*.json','stage3-sdefault/pool-meter-*.json','stage3-sdefault-smoke/pool-meter-*.json','regret04-staging-meter-*.json','reduce-*-meter.json']
 paths=set(j/n for n in fixed)
 for pattern in patterns:paths.update(j.glob(pattern))
 files=[]

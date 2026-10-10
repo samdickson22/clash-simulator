@@ -1,0 +1,90 @@
+{
+  "relative": "offline/R3a.json",
+  "sha256": "1076285fd48382105355b055e8805c6433959e8066840261225309b9f695fec2",
+  "value": {
+    "arm": "R3a",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "metrics": {
+      "play_recall": {
+        "value": 0.629735525375268,
+        "ci95": [
+          0.6042846102495636,
+          0.6542752573685138
+        ],
+        "numerator": 1762.0,
+        "denominator": 2798.0
+      },
+      "timing_agreement": {
+        "value": 0.7438180019782393,
+        "ci95": [
+          0.7289356697697462,
+          0.7595104748769954
+        ],
+        "numerator": 6016.0,
+        "denominator": 8088.0
+      },
+      "all_WAIT_agreement": {
+        "value": 0.654055390702275,
+        "ci95": [
+          0.6403428813340647,
+          0.6684527284548015
+        ],
+        "numerator": 5290.0,
+        "denominator": 8088.0
+      },
+      "student_play_rate": {
+        "value": 0.345944609297725,
+        "ci95": [
+          0.32347081999501176,
+          0.3673701624879131
+        ],
+        "numerator": 2798.0,
+        "denominator": 8088.0
+      },
+      "uncalibrated_probability_play_recall": {
+        "value": 0.5474316986614547,
+        "ci95": [
+          0.5374511255187987,
+          0.5580603194358046
+        ],
+        "numerator": 1531.7138928547502,
+        "denominator": 2798.0
+      },
+      "top8_exact_action_recall": {
+        "value": 0.3073624017155111,
+        "ci95": [
+          0.2900917624095154,
+          0.32581773042773443
+        ],
+        "numerator": 860.0,
+        "denominator": 2798.0
+      }
+    },
+    "calibration": {
+      "arm": "R3a",
+      "threshold": 0.5005528330802917,
+      "target_play_rate": 0.346,
+      "actual_play_rate": 0.345944609297725,
+      "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "rows": 8088,
+      "teacher_play_count": 2798,
+      "labels_not_used_for_threshold": true,
+      "exploratory_calibration_reuse": true
+    },
+    "timing_pass": false,
+    "kill_reasons": [
+      "calibrated play recall <.6375",
+      "binary play/WAIT agreement <allWAIT+.10"
+    ],
+    "stage1_complete": false,
+    "regret": "pending home CPU frozen-scorer replay",
+    "survives": false,
+    "cpu_seconds": 17.123213,
+    "gpu_wall_seconds": 16.19790966110304,
+    "utc": "2026-10-10T05:37:23Z",
+    "device": "CUDAfloat32/TF32off",
+    "lane": "exploration; no multiplicity adjustment",
+    "freeze_sha256": "2802b0290e96a2249e3212bfe994639271a4cca72aa79d27759cdaf042f0f49f"
+  }
+}

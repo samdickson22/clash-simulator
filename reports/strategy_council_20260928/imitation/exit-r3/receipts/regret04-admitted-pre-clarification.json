@@ -1,0 +1,19 @@
+{
+  "host": "127x04",
+  "regret_only": true,
+  "authority_sha256": "ebd4b159bbe577554b175a84dd9cad718cb9335a97e8765a13095243a52414ce",
+  "a19_progress_sha256": {
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/RUNBOOK.md": "5f03a094310ec1c0c135a3befa38af4c0513f0f4cf95e49c0c8934030c3da82e",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/PROGRESS-T6T7.md": "bb07ba755de6d76d251bb0995949c1da4c84043da661d247c091b217b715a3f7"
+  },
+  "a19_held_snapshot_observed": true,
+  "manager_core": 19,
+  "scoring_cores": [
+    12,
+    13,
+    14
+  ],
+  "max_processes": 8,
+  "nice": 19,
+  "utc": "2026-10-10T04:40:29Z"
+}

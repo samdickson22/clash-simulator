@@ -1,0 +1,37 @@
+{
+  "relative": "fits/R3a/segment.json",
+  "sha256": "dbc73b6c0716129cb4dbef70615e913acede6f6af1d2b80888e56ac25e3dacb5",
+  "value": {
+    "host": "127x09",
+    "pid": 2651879,
+    "started_at": "2026-10-10T04:07:42.779041+00:00",
+    "numpy": "2.3.5",
+    "torch": "2.7.1+cu118",
+    "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+    "cuda_allocator_config": null,
+    "effective_human_microbatch": 3584,
+    "nice": 10,
+    "affinity": [
+      118,
+      119,
+      126
+    ],
+    "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+    "actual_loader_workers": 6,
+    "scientific_loader_workers": 1,
+    "prefetch_factor": 4,
+    "mmap_random_advice": false,
+    "operational_amendment_sha256": "d59cbb356b38dcfcf819e4faef7b51c457df5e96a1df8e6012a15bd61914b8a5",
+    "status": "returned",
+    "ended_at": "2026-10-10T05:36:11.406951+00:00",
+    "wall_seconds": 5308.627970252885,
+    "cpu_seconds": 15531.31864,
+    "parent_cpu_seconds": 9299.246589999999,
+    "loader_cpu_seconds": 6232.07205,
+    "optimizer_steps": 2500,
+    "cursor_start": 0,
+    "peak_loader_tree_pss_bytes": 35924391936,
+    "min_loader_mem_available_bytes": 114421239808,
+    "resource_stop": null
+  }
+}

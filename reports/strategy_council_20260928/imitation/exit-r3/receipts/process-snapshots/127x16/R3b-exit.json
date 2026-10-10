@@ -1,0 +1,15 @@
+{
+  "relative": "R3b-exit.json",
+  "sha256": "6613a1c4c02f9d21979e76f9547cce8ff78ff2d0a2a431457bf4b82b23bf6bfa",
+  "value": {
+    "utc": "2026-10-10T05:36:19Z",
+    "exit_code": 0,
+    "reason": null,
+    "supervisor_cpu_seconds": 531.3501229999999,
+    "trainer_tree_cpu_seconds": 14488.167613,
+    "wall_seconds": 5317.54560787091,
+    "peak_pss_bytes": 30090287104,
+    "max_processes": 9,
+    "min_gpu_free_bytes": 48299507712
+  }
+}

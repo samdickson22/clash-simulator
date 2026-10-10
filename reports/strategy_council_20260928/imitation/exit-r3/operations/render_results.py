@@ -16,6 +16,7 @@ def main():
         return load(path)['value'] if path.exists() else None
     stage1=result(a.stage1_host,'stage1-results.json') if a.stage1_host else None
     stage2=result(a.stage2_host,'stage2-results.json') if a.stage2_host else None
+    binary_killed=all((result(host,'offline--'+arm+'.json') or {}).get('timing_pass') is False for arm,host in (('R3a','127x09'),('R3b','127x16')))
     fits={arm:result(host,'fits--'+arm+'--complete.json') for arm,host in (('R3a','127x09'),('R3b','127x16'))}
     complete=bool(stage1) and all(v and v['step']==2500 and not v['stopped'] for v in fits.values()) and all(v['stage1_complete'] for v in stage1.values()) and (not any(v['survives'] for v in stage1.values()) or bool(stage2))
     now=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip()
@@ -36,6 +37,9 @@ def main():
         **{f'G shard {i} manifest':freeze['files'][f'g-corpus/{i}/manifest.json'] for i in range(5)},
         'Frozen S-default native':load(REPO/'receipts/frozen-X-sdefault.json')['native_sha256'],
     }
+    if fits['R3a']:
+        pins['Human runtime manifest (zero sampled rows)']=fits['R3a']['pins']['human_manifest']
+        if fits['R3b']:assert pins['Human runtime manifest (zero sampled rows)']==fits['R3b']['pins']['human_manifest']
     scorer_source=REPO/'operations/regret_game.py'
     assert hashlib.sha256(scorer_source.read_bytes()).hexdigest()==load(REPO/'receipts/evaluation-freeze.json')['files']['eval-ops/regret_game.py']
     for node in ast.parse(scorer_source.read_text()).body:
@@ -49,7 +53,7 @@ def main():
         off=stage1.get(arm) if stage1 else result('127x09' if arm=='R3a' else '127x16','offline--'+arm+'.json')
         if off:
             c=off['calibration'];m=off['metrics'];reg=off['regret'];regret=metric(reg['mean_positive']) if isinstance(reg,dict) else 'pending'
-            verdict=('PASS' if off['survives'] else 'KILL') if off['stage1_complete'] else 'pending regret'
+            verdict=('PASS' if off['survives'] else 'KILL') if off['stage1_complete'] else ('KILL; regret pending' if not off['timing_pass'] else 'pending regret')
             lines.append(f"| {arm} | {c['threshold']:.7g} / {c['actual_play_rate']:.4f} | {metric(m['play_recall'])} | {metric(m['timing_agreement'])} | {metric(m['all_WAIT_agreement'])} | {regret} | {verdict} |")
         else:lines.append(f'| {arm} | pending | pending | pending | pending | pending | pending |')
     if stage1:
@@ -64,6 +68,7 @@ def main():
         lines += ['', 'Per-arm deadline/default and proposal latency diagnostics:']
         for arm,r in stage2['arms'].items():lines += ['',f"{arm}: `{json.dumps(r['counts'],sort_keys=True)}`."]
     elif stage1 and not any(v['survives'] for v in stage1.values()):lines += ['', 'Both arms failed Stage1. Stage2 was skipped; zero smoke/reporting games.']
+    elif binary_killed:lines += ['', 'Both arms failed the frozen binary gates, so Stage2 will be skipped; zero smoke/reporting games. W-regret diagnostics remain pending.']
     else:lines += ['', 'Stage2 is pending. No eligibility or adoption conclusion is drawn from incomplete phases.']
     # Count each meter content once, even when copied from04 into a home job.
     meters=[];seen=set();totals={}
@@ -103,6 +108,7 @@ def main():
         passed=[arm for arm,r in stage2['arms'].items() if r.get('survives')]
         conclusion='Stage2 survivors: '+(', '.join(passed) if passed else 'none; all tested R3 arms killed')+'.'
     elif stage1 and not any(v['survives'] for v in stage1.values()):conclusion='Both arms killed at Stage1.'
+    elif binary_killed:conclusion='Both arms failed the binary gates; final W-regret diagnostics remain pending.'
     else:conclusion='Experiment remains pending; no completed adoption gate.'
     for arm,host in (('R3a','127x09'),('R3b','127x16')):
         ex=result(host,arm+'-exit.json')

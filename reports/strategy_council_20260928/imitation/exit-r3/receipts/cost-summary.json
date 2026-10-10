@@ -1,11 +1,21 @@
 {
-  "utc": "2026-10-10T05:23:36Z",
+  "utc": "2026-10-10T05:43:49Z",
   "final": false,
   "totals": {
     "CPU staging": {
       "cpu_seconds": 16.468018999999998,
       "gpu_wall_seconds": 0.0,
       "meters": 1
+    },
+    "fits": {
+      "cpu_seconds": 31096.826596,
+      "gpu_wall_seconds": 10653.858871049713,
+      "meters": 2
+    },
+    "GPU offline": {
+      "cpu_seconds": 34.2324,
+      "gpu_wall_seconds": 32.30213710619137,
+      "meters": 2
     },
     "preparation/qualification": {
       "cpu_seconds": 39.328191000000004,
@@ -21,6 +31,42 @@
       "cpu_seconds": 16.468018999999998,
       "gpu_wall_seconds": 0.0,
       "status": null,
+      "reason": null
+    },
+    {
+      "category": "fits",
+      "sha256": "cd5c23d511b65c3b2a5b651c858241397968169e46155be0b5c7a16447bc6199",
+      "path": "receipts/process-snapshots/127x09/history/R3a-exit-cd5c23d511b65c3b2a5b651c858241397968169e46155be0b5c7a16447bc6199.json",
+      "cpu_seconds": 16077.308860000001,
+      "gpu_wall_seconds": 5336.313263178803,
+      "status": null,
+      "reason": null
+    },
+    {
+      "category": "GPU offline",
+      "sha256": "987f5b0f5b330abd119be58ffd17edc8a934405c7b5ef502705fed281d7d64b8",
+      "path": "receipts/process-snapshots/127x09/history/offline--R3a-attempt-meter-2974693-987f5b0f5b330abd119be58ffd17edc8a934405c7b5ef502705fed281d7d64b8.json",
+      "cpu_seconds": 17.173684,
+      "gpu_wall_seconds": 16.214333286043257,
+      "status": "complete",
+      "reason": null
+    },
+    {
+      "category": "fits",
+      "sha256": "6613a1c4c02f9d21979e76f9547cce8ff78ff2d0a2a431457bf4b82b23bf6bfa",
+      "path": "receipts/process-snapshots/127x16/history/R3b-exit-6613a1c4c02f9d21979e76f9547cce8ff78ff2d0a2a431457bf4b82b23bf6bfa.json",
+      "cpu_seconds": 15019.517736,
+      "gpu_wall_seconds": 5317.54560787091,
+      "status": null,
+      "reason": null
+    },
+    {
+      "category": "GPU offline",
+      "sha256": "acb23c1bdca641d80a546ef074df64538d06e8bcd89f878402a1dde6232761a7",
+      "path": "receipts/process-snapshots/127x16/history/offline--R3b-attempt-meter-1863347-acb23c1bdca641d80a546ef074df64538d06e8bcd89f878402a1dde6232761a7.json",
+      "cpu_seconds": 17.058716,
+      "gpu_wall_seconds": 16.08780382014811,
+      "status": "complete",
       "reason": null
     }
   ],

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "files": {
+    "R3a.json": "1076285fd48382105355b055e8805c6433959e8066840261225309b9f695fec2",
+    "R3a-calibration.json": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "R3a-proposals.npz": "fdce6c2d74efd313dc6d14654955ff0ce04dbf546d6e1ea7a2c0c3b6deefad25",
+    "R3b.json": "eddc37c821f89d0be35c7ffae32704927edd850a83a370edeef831ddf85d2a6d",
+    "R3b-calibration.json": "11854b054c2be801c137c741c3ae1e1d74d9c59e751a57b7859512f7a42b9228",
+    "R3b-proposals.npz": "6e1bd3dbbbe1b28dec50c3433356db86fac94a77f83252be95f51d8fec727fb7"
+  },
+  "utc": "2026-10-10T05:39:19Z",
+  "note": "Exact GPU-source to04 metadata/calibration/final-proposal SHA equality before replay"
+}

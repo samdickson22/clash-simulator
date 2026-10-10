@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "hosts": [
+    {
+      "host": "127x09",
+      "vacated": true,
+      "recorded_pgids": [
+        2651869,
+        2651879,
+        2974693
+      ],
+      "all_absent": true,
+      "active_owned_runtime_pids": [],
+      "utc": "2026-10-10T05:42:38Z"
+    },
+    {
+      "host": "127x16",
+      "vacated": true,
+      "recorded_pgids": [
+        1558809,
+        1558835,
+        1863347
+      ],
+      "all_absent": true,
+      "active_owned_runtime_pids": [],
+      "utc": "2026-10-10T05:42:38Z"
+    }
+  ]
+}

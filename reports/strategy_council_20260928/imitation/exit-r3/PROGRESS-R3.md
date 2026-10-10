@@ -247,3 +247,40 @@ latest60fd2864 evaluation/04 vacancy pins unchanged.04 remains idle until
 both final proposals, then fresh grantSHA/no-launch/PSI admission. K2 owns03
 reporting;01 remains queued behind X's explicit release. RESULTS remains
 pending; no scientific outcomes evaluated. Continuation remains enabled.
+
+2026-10-10T05:43:49Z — BOTH fits complete2500/finalEMA/clean exit: R3a exit05:36:38Z,
+R3b05:36:19Z; no fit stop/failure/resume. Whole-tree CPU16077.308860s and
+15019.517736s; charged fit wall5336.313263s/5317.545608s. Max10/9 processes,
+peakPSS32.87/30.09GB, minGPUfree48.41/48.30GB. FinalEMA SHA R3a37509a4331bd
+02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85, R3bc07f8bdd04d6da
+153582c20c734de4cbce19321926d6a135495023d66dbc25d9 (full in RESULTS).
+
+GPU offline launched once: R3b PID/PGID1863347 at05:36:33Z, R3a2974693
+at05:37:05Z. BOTH binary gates FAIL: playrecall1762/2798=.6297355254<.6375;
+agreement6016/8088=.743818002<allWAIT5290/8088+.10=.754055391. Calibration
+playrate2798/8088=.3459446093; thresholds.5005528331/.5006070733. Exactplay
+top8 recall descriptiveR3a.3073624/R3b.0182273. Both ineligibleStage2: no
+smoke/reporting/control pre-run and no03/01 claim; W-regret still completes.
+All recorded fit/offline PGIDs independently absent and no own GPU runtime
+processes on09/16 at05:42:38Z; receipts/gpu-vacated.json. Inputs/canonical
+final artifacts retained in own jobs.
+
+Fresh04 admitted05:38:45Z: exact clarifiedgrant SHA, PSI0.0, no recognized
+A19 process, latest progress confirms noissuedlaunch/A1 seal active. Own
+setsid-f finalstaging PID/PGID1126275 started05:38:46Z, done05:38:55Z CPU
+2.096929s; independently absent before replay. GPU-source/offline/calibration/
+proposal SHAs exactly matched on04 before replay (final-proposals-pins.json).
+Regret pool PID/PGID1129930 launched05:39:23Z, manager19/nice19, initial
+workers1130056/1130057/1130058 cores12/13/14. Durable REGRET04-PGIDS.json
+journals every successor. Latest05:41:26Z3/64 complete, no failure/guardstop,
+next workers1137439/1138135/1138343. No automaticretry. Hard07:30vacancy
+with07:29:50 stop/reap lead remains active. No return04 until full independent
+PGIDvacancy and coordinator notification. One optional metadata census failed
+on duplicate nice-key construction; no replay/fit failure, tiny unmetered
+metadata overhead. Final census deferred until pool vacancy.
+
+Remaining: advance_regret04 until64 POOL-DONE, run guarded04 Stage1 reduction,
+collect04 metadata including64 per-game JSON seals (no rawjsonl/arrays on05),
+render_results --stage1-host127x04, all-PGIDvacancy/cost receipts, final RESULTS
+commit/push/coordinator milestone and delete continuation. Bothbinarykills
+mean Stage2 skipped; no K2/X host release is needed to finish R3 now.

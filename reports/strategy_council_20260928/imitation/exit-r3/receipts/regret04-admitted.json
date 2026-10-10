@@ -1,12 +1,13 @@
 {
   "host": "127x04",
   "regret_only": true,
-  "authority_sha256": "ebd4b159bbe577554b175a84dd9cad718cb9335a97e8765a13095243a52414ce",
+  "authority_sha256": "e40ee8ad567f79525cae2a5e67efeb9135fee6ab871c6115fa36853c9c26e442",
   "a19_progress_sha256": {
-    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/RUNBOOK.md": "5f03a094310ec1c0c135a3befa38af4c0513f0f4cf95e49c0c8934030c3da82e",
-    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/PROGRESS-T6T7.md": "bb07ba755de6d76d251bb0995949c1da4c84043da661d247c091b217b715a3f7"
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/RUNBOOK.md": "b4175c2fdaa754c329487b5aecc4029bb47c6ce32ee045f3446d8e643140c6cd",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/PROGRESS-T6T7.md": "82d7b7ee8666475e2c3cad82dca26221fc9e0364e76f075ed58280243bbb8684"
   },
-  "a19_held_snapshot_observed": true,
+  "a19_no_launch_snapshot_observed": true,
+  "coordinator_clarification": "Admit after both final proposals; A19 launch requires A1 seal exit and separate coordinator approval; hard07:30 vacancy.",
   "manager_core": 19,
   "scoring_cores": [
     12,
@@ -15,5 +16,9 @@
   ],
   "max_processes": 8,
   "nice": 19,
-  "utc": "2026-10-10T04:40:29Z"
+  "absolute_vacate_utc": "2026-10-10T07:30:00Z",
+  "stop_work_utc": "2026-10-10T07:29:50Z",
+  "utc": "2026-10-10T05:38:45Z",
+  "live_pressure_full_avg10": 0.0,
+  "live_a19_conflicting_pids": []
 }

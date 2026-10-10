@@ -1,0 +1,12 @@
+{
+  "relative": "offline/R3a-attempt-meter-2974693.json",
+  "sha256": "987f5b0f5b330abd119be58ffd17edc8a934405c7b5ef502705fed281d7d64b8",
+  "value": {
+    "status": "complete",
+    "pid": 2974693,
+    "wall_seconds": 16.214333286043257,
+    "cpu_seconds": 17.173684,
+    "utc": "2026-10-10T05:37:23Z",
+    "accounting": "Whole inference process once; result CPU/wall nested and not added again."
+  }
+}
