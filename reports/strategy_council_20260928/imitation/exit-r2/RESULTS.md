@@ -57,7 +57,9 @@ All71 corpus-file SHAs passed01:22:16Z; fit attempt1 launched01:22:43Z after
 addendum c99491bc push. Startup qualified01:25:33Z at step18, eight own
 nice10 processes,21.36GB PSS,31.79GB GPU free, no stop reason. No scientific
 X6 outcome claimed. Original controller replacement meter is
-9.379653CPU seconds (parent+children once); new controller/gate meter pending.
+9.379653CPU seconds (parent+children once); superseded six-arm controller
+1502885 adds11.933346CPU seconds (parent1.784861+metadata children10.148485),
+with no evaluation active on exit. Current G-admission controller/gate meter pending.
 Current-attempt snapshots at2026-10-10 01:37:55–01:38:06Z:4.017382650 allocated
 GPU-wall hours and12.920397222 provisional whole-tree CPU-hours across six fits.
 Original five are attempt2; X6 is attempt1. These running totals replace earlier
@@ -111,3 +113,14 @@ continuation prompt suspend all stage3 arm/control games pending explicit
 coordinator comparator revision; independent review ETA02:30Z is not a
 release. Fits and stages1/2 continue unchanged, conditional R2 still requires
 a stage2 survivor. No comparator substitution or scientific kill assigned.
+
+2026-10-10 01:47Z evaluation handoff: operational amendment989b7429 was
+secret-scanned/pushed before controller replacement. Old1502885 clean exit
+retains its11.933346CPU seconds once. New03controller_g_yield.py
+PID=PGID1596239 started01:46:38Z,nice19/SCHED_IDLE/core63, no active gate or
+failures. Before stage1/2, helper writes authorized G STOP-03 then waits for
+all G ops processes to exit, two empty scans and24GiB available memory.
+Manual01 evaluations must use STOP-01 and the same drain check. No real G
+stop requested by X admission yet because all fits still pending; qualification
+used fake files/metadata with no games. Science/frozen source bytes unchanged;
+stage3 remainsHOLD and conditional R2 depends on a stage2 survivor.

@@ -1,0 +1,37 @@
+{
+  "schema": "clasher.exit-r2.g-admission-startup.v1",
+  "utc": "2026-10-10T01:47:33Z",
+  "pid": 1596239,
+  "pgid": 1596239,
+  "nice": 19,
+  "scheduler": 5,
+  "affinity": [
+    63
+  ],
+  "status": {
+    "utc": "2026-10-10T01:47:17Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 37.569735234137625
+  },
+  "stage3_held": true,
+  "g_admission_started": false,
+  "prior_controller_exited": true,
+  "launch_utc": "2026-10-10T01:46:38Z",
+  "prelaunch_amendment_commit": "989b7429",
+  "prelaunch_push_confirmed": true,
+  "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/controller-g-yield.log",
+  "prior_meter": {
+    "pid": 1502885,
+    "parent_cpu_seconds": 1.784861,
+    "child_cpu_seconds": 10.148485,
+    "whole_cpu_seconds": 11.933346,
+    "accounting": "Closed orchestration segment once; no gate children, SSH metadata children included."
+  },
+  "fit_pids_unchanged": true,
+  "scientific_freeze_source_bytes_unchanged": true
+}

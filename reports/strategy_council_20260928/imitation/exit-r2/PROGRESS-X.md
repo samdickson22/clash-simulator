@@ -350,3 +350,19 @@ no real G STOP touched, no games. New-source SHAs sealed in own operational
 amendment. Commit/push before replacing controller; ensure old active=null/
 clean exit and retain its whole-tree CPU meter once. All6 fits and scientific
 stage1/2 recipes unchanged; stage3 stillHOLD.
+
+2026-10-10T01:47Z. Prelaunch G admission amendment989b7429 secret-scanned,
+committed/pushed. Old03controller1502885 exited cleanly via ownSTOP, no active
+child/outcome/failure; retained meter parent1.784861+children10.148485=
+11.933346CPU seconds once in controller-x6-meter.json (older1403380 meter
+9.379653s remains separately retained). After explicit no-live-controller
+deduplication, cleared only X's CONTROLLER.STOP and used own setsid-f wrapper
+to launch controller_g_yield.py01:46:38Z PID=PGID1596239. Log
+$job/controller-g-yield.log; same ownedSTOP$job/CONTROLLER.STOP. Startup
+checks PASS nice19/SCHED_IDLE/core63; offline={},stage2={},active=null,
+failures=[],X3priorityfalse. No G admission/STOP request yet; fits pending.
+All original six fit supervisor/trainer identities and scientific bytes
+unchanged. New runtime files versioned; originalcontroller_x6/addendum SHAs
+remain intact. Stage3HOLD marker stays; no stage3 seeds. Continuation prompt
+updated to CURRENTcontroller1596239 and mandatory G handoff on01/03; next
+01:51:23.475Z at10min cadence. Startup receipt g-admission-startup.json.
