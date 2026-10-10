@@ -1,13 +1,14 @@
 {
   "scheduledTaskId": "scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1",
   "enabled": true,
-  "nextRunAt": "2026-10-10T08:42:38.305Z",
+  "nextRunAt": "2026-10-10T08:52:39.973Z",
   "schedule": {
     "type": "interval",
     "everyMs": 600000
   },
   "scope": "Full R3 extension: C/D/E final fits+Stage1; r1(b) NEVER-ADOPTABLE R3a descriptive and survivor-only Stage2 on01; shared03 regret cores56-59; final combined costs/vacancy and combined final publication",
-  "utc": "2026-10-10T08:41:55Z",
+  "utc": "2026-10-10T08:51:24Z",
   "prompt_file": "round2/CONTINUATION.md",
-  "handoff": "S1 retains no timing admission until R3 explicit final01release after c/e survivor disposition and full drain"
+  "handoff": "01 EXPLICITLY RELEASED to S1 at08:45:23Z; any survivors move03 timing0\u201355 only after coordinator G stop/full-drain and separately frozen admission",
+  "advance_file": "round2/timing03/operations/advance.py"
 }

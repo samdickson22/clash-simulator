@@ -9,6 +9,13 @@ from pathlib import Path
 j=Path(JOB);paths=set(j.glob('*meter*.json'))|set(j.glob('*STAGING*.json'))|set(j.glob('*.log.identity.json'))
 for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','REGRET-SHARED-AUTHORITY.json','SHARED03-DEPLOYMENT.json','SHARED03-TESTS.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
  paths.add(j/name)
+if HOST=='127x03':
+ for pattern in ('*meter*.json','*STAGING*.json','*.log.identity.json'):
+  paths.update((j/'timing03').glob(pattern))
+ for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-stage2.json','stage2-results.json','EVAL-VACATED.json'):
+  paths.add(j/'timing03'/name)
+ for folder in ('k0-stage2-smoke','k0-stage2'):
+  paths.update((j/'timing03'/folder).glob('*.json'))
 for folder in ('offline','k0-descriptive-smoke','k0-descriptive','k0-stage2-smoke','k0-stage2','regret'):
  p=j/folder
  paths.update(p.glob('*meter*.json'));paths.update(p.glob('*.json'))
@@ -37,6 +44,6 @@ print(json.dumps(dict(host=HOST,utc=subprocess.check_output(['date','-u','+%FT%T
         if not p.exists():p.write_text(raw)
     (target/'collection.json').write_text(json.dumps(bundle,indent=2)+'\n');return dict(host=host,utc=bundle['utc'],live_processes=len(bundle['live']))
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--hosts',nargs='+',default=['127x09','127x16','127x13','127x01','127x03']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--hosts',nargs='+',default=['127x09','127x16','127x13','127x03']);a=p.parse_args()
     assert set(a.hosts)<=set(('127x09','127x16','127x13','127x01','127x03'))
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as ex:print(json.dumps(list(ex.map(collect,a.hosts)),indent=2))

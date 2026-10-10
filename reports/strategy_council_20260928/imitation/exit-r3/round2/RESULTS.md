@@ -2,13 +2,15 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T08:41:28Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T08:51:32Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
 | R3c | 127x09 | 5000 | 0.003 | 2026101013 | pending |
 | R3d | 127x16 | 2500 | 0.003 | 2026101014 | yes |
 | R3e | 127x13 | 5000 | 0.01 | 2026101013 | pending |
+
+[Host reallocation](STAGE2-HOST03-ADDENDUM.md):01 released to S1 at08:45:23Z after all611 R3 groups drained. Any complete Stage1 survivors require separately admitted03 cores0–55 after coordinator-arranged G stop/full drain. Regret-only03 cores56–59 are unchanged.
 
 Stage1 final-EMA calibration and64 common frozen-W replay gates pending. No intermediate checkpoint selection.
 

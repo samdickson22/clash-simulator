@@ -57,7 +57,7 @@ def main():
     snapshots = receipts/'evaluation-snapshots'
     stage1 = verified(snapshots/'127x03/stage1-results.json')
     descriptive = verified(snapshots/'127x01/descriptive-results.json')
-    stage2_path = snapshots/'127x01/stage2-results.json'
+    stage2_path = snapshots/'127x03/timing03--stage2-results.json'
     stage2 = verified(stage2_path) if stage2_path.exists() else None
     vacancies = [verified(snapshots/host/'EVAL-VACATED.json') for host in
                  ('127x09', '127x16', '127x13', '127x01', '127x03')]

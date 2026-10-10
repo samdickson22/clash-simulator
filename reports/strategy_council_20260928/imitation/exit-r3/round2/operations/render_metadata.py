@@ -25,16 +25,19 @@ def main():
             key=d['sha256']
             if key in meters:continue
             category=None;gpu=0
+            # Separate timing03 job meters remain whole trees; case/block
+            # diagnostics below it must never enter the cost ledger.
+            metered_name=name[len('timing03/'):] if name.startswith('timing03/') else name
             if re.fullmatch(r'R3[cde]-exit\.json',name):category='fit';gpu=v['wall_seconds']
             elif 'offline/' in name and '-attempt-meter-' in name:category='offline';gpu=v['wall_seconds']
-            elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',name):category='whole CPU pool'
-            elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',name):category='reduction'
-            elif name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json'):category='staging'
+            elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',metered_name):category='whole CPU pool'
+            elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',metered_name):category='reduction'
+            elif metered_name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json','TIMING03-STAGING.json','CODE-QUALIFICATION.json'):category='staging/qualification'
             elif name=='SHARED03-DEPLOYMENT.json':category='shared03 operational pin verification'
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
-    stage1=states.get(('127x03','stage1-results.json'));stage2=states.get(('127x01','stage2-results.json'));desc=states.get(('127x01','descriptive-results.json'))
+    stage1=states.get(('127x03','stage1-results.json'));stage2=states.get(('127x03','timing03/stage2-results.json'));desc=states.get(('127x01','descriptive-results.json'))
     fitting={a:states.get((h,f'fits/{a}/complete.json')) for a,h in [('R3c','127x09'),('R3d','127x16'),('R3e','127x13')]}
     hosts={'R3c':'127x09','R3d':'127x16','R3e':'127x13'}
     def clean(a,v):
@@ -47,6 +50,7 @@ def main():
     (receipt/'cost-summary.json').write_text(json.dumps(cost,indent=2)+'\n')
     arms=read(ROOT/'arms.json');lines=['# R3 extended results — '+('complete' if cost['final'] else 'scientific results complete; vacancy audit pending' if scientific_complete else 'pending'),'','Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.','',f"Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot {cost['utc']}.",'','| Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |','|---|---|---:|---:|---:|---|']
     for a,v in arms.items():lines.append(f"| {a} | {v['host']} | {v['steps']} | {v['temperature']} | {v['seed']} | {'yes' if fitting[a] and not fitting[a]['stopped'] else 'pending'} |")
+    lines+=['','[Host reallocation](STAGE2-HOST03-ADDENDUM.md):01 released to S1 at08:45:23Z after all611 R3 groups drained. Any complete Stage1 survivors require separately admitted03 cores0–55 after coordinator-arranged G stop/full drain. Regret-only03 cores56–59 are unchanged.']
     if closed:
         lines+=['','| Arm | Effective training rows | Rows/s, all retained fit attempts | Charged fit GPUh | Fit CPUh |','|---|---:|---:|---:|---:|']
         for a,v in arms.items():

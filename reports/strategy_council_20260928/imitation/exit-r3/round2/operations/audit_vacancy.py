@@ -50,14 +50,18 @@ for name in ('descriptive-results.json','stage2-results.json'):
  p=j/name;values[name]=json.loads(p.read_text()) if p.exists() else None
 print(json.dumps(values))
 '''.replace('JOB', repr(J))
-    values = remote('127x01', code)
-    desc = values['descriptive-results.json']
+    # 01 has been returned to S1; use its retained exact JSON/SHA decision.
+    import hashlib
+    wrapper = json.loads((ROOT/'receipts/evaluation-snapshots/127x01/descriptive-results.json').read_text())
+    assert hashlib.sha256(wrapper['raw'].encode()).hexdigest() == wrapper['sha256']
+    desc = json.loads(wrapper['raw'])
+    assert desc == wrapper['value']
     assert desc and desc['paired_seeds'] == 600 and desc['never_adoptable'] and not desc['live_adoption']
     if stage1['any_survivor']:
-        result = values['stage2-results.json']
+        result = remote('127x03', "import json\nfrom pathlib import Path\np=Path("+repr(J+'/timing03/stage2-results.json')+")\nprint(p.read_text() if p.exists() else 'null')\n")
         assert result and result['paired_seeds'] == 600 and not result['never_adoptable']
     return dict(stage1=stage1, descriptive_complete=True,
-                stage2_complete=bool(values['stage2-results.json']),
+                stage2_complete=bool(stage1['any_survivor']),
                 stage2_skipped=not stage1['any_survivor'])
 
 
@@ -70,6 +74,10 @@ for pattern in ('*STAGING*.json','VOID-ATTEMPT1-VACATED.json','EVAL-PGIDS.json')
 if HOST=='127x01':paths.add(j/'CODE-QUALIFICATION.json')
 if HOST=='127x03':paths.update((j/'SHARED03-DEPLOYMENT.json',j/'SHARED03-TESTS.json'))
 folders=('regret',) if HOST=='127x03' else ('k0-descriptive-smoke','k0-descriptive','k0-stage2-smoke','k0-stage2') if HOST=='127x01' else ('offline',)
+if HOST=='127x03':
+ for pattern in ('*.log.identity.json','*STAGING*.json','EVAL-PGIDS.json'):
+  paths.update((j/'timing03').glob(pattern))
+ folders+=('timing03/k0-stage2-smoke','timing03/k0-stage2')
 for folder in folders:
  paths.update((j/folder).glob('*meter*.json'))
 def identifiers(v):
@@ -84,7 +92,9 @@ def identifiers(v):
 for p in sorted(paths):
  if not p.is_file():continue
  raw=p.read_bytes();sources[str(p.relative_to(j))]=hashlib.sha256(raw).hexdigest();identifiers(json.loads(raw))
-for p in j.glob('*.log.pid'):
+pid_paths=list(j.glob('*.log.pid'))
+if HOST=='127x03':pid_paths+=list((j/'timing03').glob('*.log.pid'))
+for p in pid_paths:
  raw=p.read_bytes();pid=int(raw.strip());pids.add(pid)
  sources[str(p.relative_to(j))]=hashlib.sha256(raw).hexdigest()
 live=[];group_members=[];pid_members=[];self_pid=os.getpid()
@@ -124,6 +134,18 @@ print(json.dumps(result))
 
 
 def audit(host, publish=False):
+    if host == '127x01':
+        release = ROOT/'receipts/vacancy-audits/127x01/R3-CPU-RELEASE.json'
+        if release.exists():
+            result = json.loads(release.read_text())
+            assert result['released'] and result['no_further_R3_timing_on01']
+            assert result['all_recorded_groups_absent'] and result['observer_independently_absent']
+            # S1 owns01 now. Retain the final R3 release rather than auditing
+            # the successor's processes or overwriting its ownership evidence.
+            return dict(host=host, utc=result['utc'], publish=publish,
+                        retained_final_host_release=True,
+                        all_recorded_groups_absent=True,
+                        recorded_pgids=len(result['pgids']), active_owned=0)
     global_complete = decisions_complete() if publish else None
     import inspect
     result = remote(host, inspect.getsource(classify_gpu_pids)+'\n'+OBSERVE.replace('JOB', repr(J)).replace('HOST', repr(host)))
