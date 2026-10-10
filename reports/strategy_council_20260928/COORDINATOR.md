@@ -1763,3 +1763,7 @@ Also on the hub, but with copies elsewhere:
     2. The r2 students are catastrophic as defaults; their low play-recall matches.
     3. The deployment-relevant 1-core fallback harness is **K0-style** (coarse-first deadline W, with the student replacing v1 as fallback). That is where r1 S-teacher gave −7.5 pp.
   - → **Switch R3's descriptive run and round-2 stage 2 to the frozen r1 (b) K0-fallback harness** (arm = student fallback, control = v1 fallback), via an addendum before any stage-2 game.
+- **07:03 UTC: K2 COMPLETE** (`f8413b1a`; 600 paired seeds).
+  - Loss K2 / K0 / K4 = **25.0% / 45.7% / 16.5%**. K2 vs K0: −20.7 pp [−25.8, −15.8]. **Retention 71% [58, 83]**, below the 80% target. K2−K4 = +8.5 pp.
+  - **Mac deployment tiers:** 4 free cores ≈ 16–18% loss; 2 cores ≈ 25%; 1 core (K0) ≈ 43–46%; all vs v1. Strict return bound unqualified.
+  - 03 released; **G released onto 03 (cores 0–59, nice 19, PSI guard, ≤56 workers)**.
