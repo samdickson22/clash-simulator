@@ -7,12 +7,12 @@ def collect(host):
     code='''import hashlib,json,os,subprocess
 from pathlib import Path
 j=Path(JOB);paths=set(j.glob('*meter*.json'))|set(j.glob('*STAGING*.json'))|set(j.glob('*.log.identity.json'))
-for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','REGRET-SHARED-AUTHORITY.json','SHARED03-DEPLOYMENT.json','SHARED03-TESTS.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
+for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','REGRET-SHARED-AUTHORITY.json','SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-REPAIR-TESTS.json','SHARED03-TESTS.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
  paths.add(j/name)
 if HOST=='127x03':
  for pattern in ('*meter*.json','*STAGING*.json','*.log.identity.json'):
   paths.update((j/'timing03').glob(pattern))
- for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-stage2.json','stage2-results.json','EVAL-VACATED.json'):
+ for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','TIMING03-AUTHORITY.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-stage2.json','stage2-results.json','EVAL-VACATED.json'):
   paths.add(j/'timing03'/name)
  for folder in ('k0-stage2-smoke','k0-stage2'):
   paths.update((j/'timing03'/folder).glob('*.json'))

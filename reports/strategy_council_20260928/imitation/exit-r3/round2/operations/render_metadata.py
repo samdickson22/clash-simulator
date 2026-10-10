@@ -33,7 +33,7 @@ def main():
             elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',metered_name):category='whole CPU pool'
             elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',metered_name):category='reduction'
             elif metered_name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json','TIMING03-STAGING.json','CODE-QUALIFICATION.json'):category='staging/qualification'
-            elif name=='SHARED03-DEPLOYMENT.json':category='shared03 operational pin verification'
+            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json'):category='shared03 operational pin verification'
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)

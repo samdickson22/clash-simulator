@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "pins": 1445,
+  "utc": "2026-10-10T09:31:31Z",
+  "pid": 3106707,
+  "pgid": 3106707,
+  "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7",
+  "authority_sha256": "63b8a2ae1530688f7517cefbcde3bed5935d6830deed281f4d8b3cbd51410cd0",
+  "admitted_sha256": "397978f5c9c02778b90559c3463cfbfe7e01451c715b4fdcd16027f054ccd81c",
+  "cpu_seconds": 0.4574069999999999,
+  "wall_seconds": 0.4363477809820324,
+  "all_shared_G_and_R3_threads_pass": true,
+  "attempt1_pid_pgid_independently_absent": true
+}

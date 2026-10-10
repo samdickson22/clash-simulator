@@ -1,0 +1,10 @@
+{
+  "relative": "regret-proposals-staging-attempt1.log.identity.json",
+  "sha256": "533d15f87ff29d8c64a5a198ffa7195e99e698e940958c376f4ffa5433a06d90",
+  "raw": "{\"pid\":3074715,\"pgid\":3074715,\"utc\":\"2026-10-10T09:21:24Z\"}\n",
+  "value": {
+    "pid": 3074715,
+    "pgid": 3074715,
+    "utc": "2026-10-10T09:21:24Z"
+  }
+}

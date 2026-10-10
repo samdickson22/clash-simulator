@@ -1,0 +1,15 @@
+{
+  "relative": "SHARED03-REPAIR-TESTS.json",
+  "sha256": "b460c2a89da020d8dc2842a20cd2af9caf992584203e7681d8bf383267bb0b67",
+  "raw": "{\n  \"passed\": true,\n  \"checks\": 19,\n  \"scientific_data_read\": false,\n  \"pid\": 3106712,\n  \"pgid\": 3106707,\n  \"cpu_seconds\": 0.041139999999999996,\n  \"wall_seconds\": 0.021449733059853315,\n  \"utc\": \"2026-10-10T09:31:32Z\"\n}\n",
+  "value": {
+    "passed": true,
+    "checks": 19,
+    "scientific_data_read": false,
+    "pid": 3106712,
+    "pgid": 3106707,
+    "cpu_seconds": 0.041139999999999996,
+    "wall_seconds": 0.021449733059853315,
+    "utc": "2026-10-10T09:31:32Z"
+  }
+}
