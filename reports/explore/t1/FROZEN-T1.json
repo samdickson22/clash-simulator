@@ -129,8 +129,7 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "post-freeze excluded smoke health admission",
-    "explicit coordinator host set before reporting launch",
+    "post-freeze excluded smoke health admission on01/03/08 after10min foreign-SSH quiet or perception-owner confirmation",
     "explicit manifest-SHA/commit-bound reporting authorization"
   ],
   "qualification_summary": "reports/explore/t1/receipts/qualification-freeze-summary.json",
@@ -152,5 +151,11 @@
     "N8",
     "N9",
     "N10"
-  ]
+  ],
+  "reporting_hosts": [
+    "127x01",
+    "127x03",
+    "127x08"
+  ],
+  "host_set_decision": "Coordinator HOST-SET DECISION, 15:15Z: full planned set01/03/08;08 B STOP remains binding."
 }
