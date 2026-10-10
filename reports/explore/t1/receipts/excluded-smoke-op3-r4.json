@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-10T16:30:37Z",
+  "attempt": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4",
+  "excluded": true,
+  "outcomes_sealed": true,
+  "reporting_games": 0,
+  "complete_blocks": 0,
+  "failed_blocks": {
+    "127x01": 3,
+    "127x03": 3,
+    "127x08": 2
+  },
+  "reason": {
+    "127x01": "owned_STOP",
+    "127x03": "foreign_active SSH parent776414,0.11 CPU seconds/sample",
+    "127x08": "foreign_compute SSH parent1896254,child unavailable in failure receipt"
+  },
+  "evidence": {
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/diagnosis/stop-127x08.json": "c301b8a97c66d807727cfa59151f3d89c81d9a4b4a48527657a6fe085c9847b0",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/diagnosis/diagnostic-ssh-127x08.json": "c57bc88da5b764c4857193fb60722065f5cde5243e73a07cb010869ba52e76e2",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/diagnosis/diagnostic-ssh-127x03.json": "d9cbd2b94c4fbf8683bcc56269116de0976eaf6323f60af235e6a24ab509f057",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/diagnosis/stop-127x03.json": "0461c4b05db36e975cf65617db509711b43bc8af66998e8f88787257c2d44102",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/diagnosis/reproduced-ssh-127x08.json": "eb7f1b0bfbd42c9ebd7cfcb51ad27a7065795803eab2cf42fb011b30fb14aa36"
+  },
+  "own01_drained": {
+    "copier": 312275,
+    "supervisor": 312425
+  },
+  "op4_candidate_not_admitted": true
+}

@@ -18,6 +18,21 @@ def source_parent(ppid,uid):
             ppid=int(stat[1])
         except (OSError,ProcessLookupError):return None
     return None
+def ssh_family_source_parent(ppid,uid):
+    # OP-4 provenance traverses arbitrary descendants, independently of OP-2.
+    for _ in range(64):
+        d=Path('/proc')/str(ppid)
+        try:
+            stat=(d/'stat').read_text().rsplit(')',1)[1].split();owner=d.stat().st_uid
+            raw=(d/'cmdline').read_bytes();cmd=raw.replace(b'\0',b' ').decode(errors='replace').strip()
+            check=(d/'stat').read_text().rsplit(')',1)[1].split()
+            if stat[19]!=check[19] or owner!=d.stat().st_uid:return None
+            if cmd==f'sshd: {os.environ.get("USER","sdicks02")}@notty' and owner==3822945:
+                return [ppid,int(stat[19]),owner,hashlib.sha256(raw).hexdigest()]
+            ppid=int(stat[1])
+            if ppid<=1:return None
+        except OSError:return None
+    return None
 def processes():
     rows=[]
     for d in Path('/proc').iterdir():
@@ -32,8 +47,10 @@ def processes():
             try:
                 env=(d/'environ').read_bytes().split(b'\0')
                 connection=next((v[len(b'SSH_CONNECTION='):].decode() for v in env if v.startswith(b'SSH_CONNECTION=')),None)
-            except OSError:connection=None
+            except OSError:env=[];connection=None
             parent_identity=source_parent(int(stat[1]),uid) if connection and uid==3822945 else None
+            family_parent=ssh_family_source_parent(int(stat[1]),uid) if connection else None
+            copier={k:next((v[len(k)+1:].decode() for v in env if v.startswith((k+"=").encode())),None) for k in ("T1_COPIER_PID","T1_COPIER_PGID")}
             captured=time.monotonic()
             try:
                 check=(d/'stat').read_text().rsplit(')',1)[1].split()
@@ -46,7 +63,7 @@ def processes():
             exe_evidence='proc/exe' if exe else 'unavailable'
             if uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
                 exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
-            rows.append(dict(ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
+            rows.append(dict(ssh_family_parent_snapshot=family_parent,copier_identity_snapshot=copier,ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return rows
 
@@ -137,7 +154,17 @@ def census(j,before=None,block_ids=()):
   elif perception_reader(r,after):r['allowlist_kind']='perception_reader'
   elif idle_member(r,after,j):r['allowlist_kind']='idle_cache'
   elif copier_activity(r,after,j):r['allowlist_kind']='owned_copier_child'
- CONFIRMATION.apply(after,j,processes,perception_reader,block_ids=block_ids)
+ from ssh_budget import FAMILIES,record as record_ssh
+ FAMILIES.apply(after,j)
+ identity_rows=[r for r in after if not r.get('ssh_budget')]
+ def identity_collect():
+  fresh=processes();FAMILIES.apply(fresh,j)
+  return [r for r in fresh if not r.get('ssh_budget')]
+ CONFIRMATION.apply(identity_rows,j,identity_collect,perception_reader,block_ids=block_ids)
+ known={(r['pid'],r['start_ticks']) for r in after}
+ after.extend(r for r in identity_rows if (r['pid'],r['start_ticks']) not in known)
+ FAMILIES.apply(after,j)
+ record_ssh(j,after,block_ids)
  for r in after:
   if not r.get('op2_denied') and approved_parent(r,after,lambda child:child.get('allowlist_kind') in ('perception_reader','idle_cache','owned_copier_child')):
    r['allowlist_kind']='approved_sshd_transport'
@@ -164,7 +191,7 @@ def admission(j):
  from system_bus import pin as pin_system_bus
  pin_system_bus(j,before)
  time.sleep(1);after,foreign,active,load=census(j,before)
- r=dict(utc=utc(),host=host,console=c,physical_cpus=physical,foreign_compute=foreign,foreign_active=active,memavailable_GiB=memory()/2**30,processes=after,admitted=not foreign and not active and memory()>=24*2**30)
+ r=dict(utc=utc(),host=host,console=c,physical_cpus=physical,foreign_compute=foreign,foreign_active=active,memavailable_GiB=memory()/2**30,processes=after,admitted=not c['positive'] and not foreign and not active and memory()>=24*2**30)
  assert not (j/'STOP').exists() and not (j/f'STOP-{host}').exists(),'owned stop present'
  return r
 

@@ -14,7 +14,11 @@ def copier_activity(row,rows,j,env_reader=environment):
  if not target.exists():return False
  receipt=read(target);root=receipt['identity']
  if receipt.get('active') is not True or receipt['job']!=str(j):return False
- env=env_reader(row)
+ env=dict(env_reader(row))
+ # OP-4 retains copier attribution when an rsync child exits after collection.
+ if row.get('ssh_connection_snapshot') is not None:env['SSH_CONNECTION']=row['ssh_connection_snapshot']
+ for key,value in row.get('copier_identity_snapshot',{}).items():
+  if value is not None:env[key]=value
  try:argv=shlex.split(row['cmd'])
  except ValueError:return False
  if not argv:return False

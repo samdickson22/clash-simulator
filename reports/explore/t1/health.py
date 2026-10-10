@@ -9,7 +9,7 @@ def health(root,validate=False):
   r=read(p);d=r['descriptor'];pop=d['population'];counts[pop+'_local_complete']+=1
   if r['host']!='127x01' and not (p.parent/'hub-ack.json').exists():continue
   if d['id'] in seen:errors.append('duplicate block:'+d['id']);continue
-  seen.add(d['id']);counts[pop+'_hub_complete']+=1;counts['games']+=len(r['games']);counts['interfered_blocks']+=bool(r.get('interference',{}).get('interfered'))
+  seen.add(d['id']);counts[pop+'_hub_complete']+=1;counts['games']+=len(r['games']);counts['interfered_blocks']+=bool(r.get('interference',{}).get('interfered'));counts['ssh_family_interfered_blocks']+=bool(r.get('interference',{}).get('ssh_family',{}).get('interfered'))
   for kind,n in r.get('interference',{}).get('allowlist_observations',{}).items():counts['allowlist_'+kind]+=n
   if len(r['games'])!=8:errors.append('arm count:'+d['id'])
   for name,h in r['games'].items():
