@@ -1,0 +1,172 @@
+{
+  "utc": "2026-10-10T13:05:24Z",
+  "passed": true,
+  "real_games": 0,
+  "test_count": 28,
+  "groups": [
+    {
+      "name": "deadline-qualification.json",
+      "passed": true,
+      "real_games": 0,
+      "tests": [
+        "owned children only",
+        "paused owned child continued before TERM",
+        "TERM five seconds before deadline",
+        "KILL two seconds before deadline; parent headroom",
+        "exited child never signaled",
+        "memory-floor pause disabled during hard drain"
+      ]
+    },
+    {
+      "name": "pressure-qualification.json",
+      "passed": true,
+      "real_games": 0,
+      "tests": [
+        "strict >20 threshold",
+        "continuous60s reset by20-or-less",
+        "pause at60s",
+        "latched until coordinatorrelease",
+        "actualworker admission blocked",
+        "PSIreadfailure failclosed"
+      ]
+    },
+    {
+      "name": "ramp-qualification.json",
+      "passed": true,
+      "real_games": 0,
+      "tests": [
+        "four per rolling30s; boundary29.999/30",
+        "each58slot firstgame before steady; 30sfinalcooldown",
+        "eight concurrent claimers limited tofour",
+        "actualworker skipsealed2000000 and emit2000058 under58stripes",
+        "newcounter excludes sealed baseline"
+      ],
+      "ramp_seconds_minimum": 450,
+      "workers_cap": 58
+    },
+    {
+      "name": "resume01-r2-release-qualification.json",
+      "passed": true,
+      "real_games": 0,
+      "tests": [
+        "packer actual ionice assertion accepts idle/rejects best-effort; executable launch uses idle class",
+        "58 workers0-57; manager58/packer59; maximum60persistent",
+        "retained10152roots packed before first new initialization/admission",
+        "all frozen retained identities required before ramp unlock",
+        "all future R3 scripts priority; no56-59 coexistence exception",
+        "S1/K/X/future named timing studies retain priority"
+      ]
+    },
+    {
+      "name": "resume01-r2-fleet-qualification.json",
+      "passed": true,
+      "real_games": 0,
+      "tests": [
+        "unregistered01 static baseline once",
+        "registered01 replaces static10152 once",
+        "old imported01 packing fallback until full10152 pack",
+        "new01 whole corpus replaces oldpack without duplication",
+        "seed cached04 only; reload01/03/08; no04calls"
+      ],
+      "cases": [
+        {
+          "registered01": false,
+          "new01packroots": 0,
+          "total": 4314191,
+          "packed01": 10152,
+          "passed": true
+        },
+        {
+          "registered01": true,
+          "new01packroots": 0,
+          "total": 4314314,
+          "packed01": 10152,
+          "passed": true
+        },
+        {
+          "registered01": true,
+          "new01packroots": 10152,
+          "total": 4314314,
+          "packed01": 10152,
+          "passed": true
+        },
+        {
+          "registered01": true,
+          "new01packroots": 12345,
+          "total": 4314314,
+          "packed01": 12345,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "distinct_physical_cores_verified": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59
+  ],
+  "unchanged_files": [
+    "env.sh",
+    "pack_r1_frozen.py",
+    "pack_loader.py",
+    "pressure_guard.py",
+    "admission.py"
+  ]
+}

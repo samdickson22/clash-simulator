@@ -1,0 +1,65 @@
+{
+  "utc": "2026-10-10T13:05:24Z",
+  "passed": true,
+  "base": 4503601607370496,
+  "indices": [
+    2000000,
+    3000000
+  ],
+  "same_established_reservation": true,
+  "foreign_ranges_checked": 100,
+  "helper_ceiling": 271829,
+  "s1_proposed_ranges": {
+    "reporting": {
+      "base": 4503602707370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503602617370496,
+      "count": 8
+    }
+  },
+  "s1_helper_offsets": [
+    0,
+    13,
+    100000,
+    100001,
+    100002,
+    100003,
+    271828,
+    271829
+  ],
+  "overlap": [],
+  "source_receipts": [
+    {
+      "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/exit-g-topup/receipts/utilization08-seed-audit.json",
+      "sha256": "c69f62d70bd5c1950bce370db1bc7bfcf0fab6bdbf2b49f44f2ab66183268804"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher/reports/explore/s1/seed-audit.json",
+      "sha256": "50b52aee874efa7d4bc894c53373e99ebb87b46908ac37eae5635d789a9ab6e3"
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/exit-g-topup/receipts/seed-audit-01.json",
+      "sha256": "a6e60211a75285be32888e7753bd49f7bb2d4f9aaeda635462bcc61c3cfd5f6e"
+    }
+  ],
+  "other_G_ranges": [
+    [
+      64,
+      1000000
+    ],
+    [
+      4000000,
+      5000000
+    ],
+    [
+      6000000,
+      7000000
+    ]
+  ],
+  "smoke_indices_excluded": [
+    0,
+    8
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "clasher.exit-g.resume01-r2-preflight.v1",
+  "utc": "2026-10-10T13:02:35Z",
+  "passed": true,
+  "baseline": {
+    "games": 81,
+    "rows": 65337,
+    "root_decisions": 10152
+  },
+  "packed_root_decisions": 0,
+  "remaining_unpacked_roots": 10152,
+  "raw_games_sha_verified": 81,
+  "packed_shards_sha_verified": 0,
+  "source_files_verified": 1402,
+  "native_files_verified": 1,
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "old_concat_sha256": "6f909fbb38d58761c17eccab0a97e338f1463bcad4b3d61fa8ae767810f3597e",
+  "original_freeze_sha256": "37ddbe1db4abe13f08a941c2037eb037e2d9f4193808af41d612c4c8dfd2dc85",
+  "s1_release_path": "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/S1-CPU-RELEASE.json",
+  "memory_available": 130574602240,
+  "pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=20610176600\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=20554816014\n",
+  "protected_cache": [
+    {
+      "pid": 516161,
+      "pgid": 516161,
+      "start": 129232773,
+      "cmd_sha256": "9cc266c0b8289659e419afde151e1daf537048ec0671afc16b8e146f6494ffdf"
+    },
+    {
+      "pid": 516178,
+      "pgid": 516161,
+      "start": 129232776,
+      "cmd_sha256": "10541179cb4bba35f226c92efe7007558b30ecf82a8c7e9fc1f261c27933196e"
+    },
+    {
+      "pid": 516179,
+      "pgid": 516161,
+      "start": 129232776,
+      "cmd_sha256": "27c186a996c0022d7cec754dbf10e3134c94f6a21f47377aa54f80cbf272e3c8"
+    }
+  ],
+  "release": "602ad4a661b99306a76682dbc070c4954ae629405ade6b2d175c4442884a5df7",
+  "s1_vacated_pgids": [
+    1356583,
+    3330269,
+    3334066,
+    3336237,
+    3339648,
+    3344967,
+    3372782,
+    3372820,
+    3392665,
+    3392678,
+    3422967,
+    3422984,
+    4055560,
+    4058693,
+    4092215
+  ],
+  "released_markers": {
+    "STOP": {
+      "inode": 59378816,
+      "mtime_ns": 1791596275533199476,
+      "ctime_ns": 1791596275533199476,
+      "sha256": "ad640007ce9b356d0814747b2eccf7aaaeae3ec3a520d9bf54efc53cbc2bc1da"
+    },
+    "STOP-01": {
+      "inode": 59378835,
+      "mtime_ns": 1791606495256868656,
+      "ctime_ns": 1791606495256868656,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "old_generation_exit_sha256": "0f60a19de1fb3aaa84d99eaa2a3d45e5ea0451e46379f6d52818b3992c81b74b"
+}
