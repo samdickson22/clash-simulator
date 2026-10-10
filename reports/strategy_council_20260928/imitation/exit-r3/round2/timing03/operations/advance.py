@@ -62,11 +62,11 @@ def advance(descriptive=False,round2=False):
         if not stage1:
             if not read('127x03','REGRET-PROPOSALS-STAGING.json'):
                 launch(state,'127x03','regret-proposals-staging-attempt2',env('127x03',True)+J+'/eval-ops/stage_proposals.py --job '+J);return state
-            if not read('127x03','REGRET-DIAGNOSTICS-RESTART.json'):
-                state['round2_waiting']='Reviewed guard-diagnostics amendment awaits pushed freeze/qualification and fresh admission';return state
+            if not read('127x03','REGRET-METADATA-RESTART.json'):
+                state['round2_waiting']='Reviewed pinned G snapshot amendment awaits pushed freeze/qualification and fresh admission';return state
             if not read('127x03','regret/POOL-DONE.json'):
-                launch(state,'127x03','regret-pool-attempt4',env('127x03',True)+J+'/eval-ops/pool_regret.py --job '+J);return state
-            state['round2_waiting']='Shared03 replay manager must seal Stage1 in-process; closed attempts require review';state['needs_review']=phase('127x03','regret-pool-attempt4')=='closed';return state
+                launch(state,'127x03','regret-pool-attempt5',env('127x03',True)+J+'/eval-ops/pool_regret.py --job '+J);return state
+            state['round2_waiting']='Shared03 replay manager must seal Stage1 in-process; closed attempts require review';state['needs_review']=phase('127x03','regret-pool-attempt5')=='closed';return state
         if not any(v['survives'] for v in stage1.values()):state['stage2_skipped']='all round2 arms killed at complete Stage1';state['round2_complete']=True;return state
         state['round2_waiting']='Survivors require coordinator G STOP/full drain and separately frozen timing03 admission; no further01 launches'
         state['stage2_survivors']=[a for a,v in stage1.items() if v['survives']]

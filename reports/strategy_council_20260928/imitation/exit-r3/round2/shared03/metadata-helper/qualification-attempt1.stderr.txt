@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/tmp/metadata-helper-candidate-1/qualify.py", line 123, in <module>
+    try:count=run(root);passed=True
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/tmp/metadata-helper-candidate-1/qualify.py", line 86, in run
+    old_condition=original_g.body[0].test;condition=amended_g.body[0].test
+AttributeError: 'Return' object has no attribute 'test'

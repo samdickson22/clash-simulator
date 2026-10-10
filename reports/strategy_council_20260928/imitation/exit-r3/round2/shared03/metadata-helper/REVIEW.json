@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-10T10:51:58Z",
+  "previous_pool_pid": 3337091,
+  "complete_games": 46,
+  "whole_tree_cpu_seconds": 772.742551,
+  "wall_seconds": 261.14554099715315,
+  "failure_index": 48,
+  "cause": "Verified read-only G snapshot helper PGID3351735 differed from long-livedG2711936; core54/nice19/SCHED_IDLE, PSI0/MemAvailable101GB",
+  "source_sha256": "636b92df035a7d0546766d6af1df702f088a11a1dc498427f68b6769be72434d",
+  "command_sha256": "4e3c4354f159157f357c4a417ebeb7793b1eba80754b658e4780d49973ed9bcf",
+  "old_groups_independently_absent": true,
+  "recorded_pgids": 73,
+  "automatic_retry": false,
+  "scientific_changes": false,
+  "scope": "exact snapshot helper source/argv SHA only; unknown/target commands and changed source denied; all thread/core/priority/memory/PSI/scientificGgroup constraints retained"
+}

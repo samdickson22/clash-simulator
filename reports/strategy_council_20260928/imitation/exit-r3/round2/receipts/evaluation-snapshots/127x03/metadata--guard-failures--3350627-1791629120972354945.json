@@ -1,0 +1,44 @@
+{
+  "relative": "metadata/guard-failures/3350627-1791629120972354945.json",
+  "sha256": "526fe4d1285a0220ca7a935698aa955a8ae008bbe29b43e5addcb9f13b17fa46",
+  "raw": "{\n  \"schema\": \"clasher.r3.guard-denial.v1\",\n  \"utc\": \"2026-10-10T10:45:20Z\",\n  \"pid\": 3350627,\n  \"pgid\": 3350627,\n  \"context\": {\n    \"host\": \"127x03\",\n    \"affinity\": [\n      58\n    ],\n    \"nice\": 19,\n    \"scheduler\": 0\n  },\n  \"reason\": \"conflicts-or-memory-floor-or-PSI\",\n  \"exception\": null,\n  \"conflicts\": [\n    {\n      \"pid\": 3351735,\n      \"pgid\": 3351735,\n      \"command\": \"python3 /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/utilization-remote.py snapshot \",\n      \"command_sha256\": \"4e3c4354f159157f357c4a417ebeb7793b1eba80754b658e4780d49973ed9bcf\",\n      \"affinity\": [\n        54\n      ],\n      \"nice\": 19,\n      \"scheduler\": 5\n    }\n  ],\n  \"own\": [\n    3337091,\n    3345321,\n    3350292,\n    3350627\n  ],\n  \"available_bytes\": 101012242432,\n  \"PSI_full_avg10\": 0.0,\n  \"scientific_data_read\": false,\n  \"diagnostic_only\": true\n}\n",
+  "value": {
+    "schema": "clasher.r3.guard-denial.v1",
+    "utc": "2026-10-10T10:45:20Z",
+    "pid": 3350627,
+    "pgid": 3350627,
+    "context": {
+      "host": "127x03",
+      "affinity": [
+        58
+      ],
+      "nice": 19,
+      "scheduler": 0
+    },
+    "reason": "conflicts-or-memory-floor-or-PSI",
+    "exception": null,
+    "conflicts": [
+      {
+        "pid": 3351735,
+        "pgid": 3351735,
+        "command": "python3 /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/utilization-remote.py snapshot ",
+        "command_sha256": "4e3c4354f159157f357c4a417ebeb7793b1eba80754b658e4780d49973ed9bcf",
+        "affinity": [
+          54
+        ],
+        "nice": 19,
+        "scheduler": 5
+      }
+    ],
+    "own": [
+      3337091,
+      3345321,
+      3350292,
+      3350627
+    ],
+    "available_bytes": 101012242432,
+    "PSI_full_avg10": 0.0,
+    "scientific_data_read": false,
+    "diagnostic_only": true
+  }
+}

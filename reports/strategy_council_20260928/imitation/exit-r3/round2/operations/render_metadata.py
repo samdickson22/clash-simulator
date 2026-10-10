@@ -32,8 +32,8 @@ def main():
             elif 'offline/' in name and '-attempt-meter-' in name:category='offline';gpu=v['wall_seconds']
             elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',metered_name):category='whole CPU pool'
             elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',metered_name):category='reduction'
-            elif metered_name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json','TIMING03-STAGING.json','CODE-QUALIFICATION.json','REGRET-DIAGNOSTICS-RESTART.json'):category='staging/qualification'
-            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-NICE19-DEPLOYMENT.json','SHARED03-CORE58-DEPLOYMENT.json','SHARED03-GUARD-DEPLOYMENT.json'):category='shared03 operational pin verification'
+            elif metered_name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json','TIMING03-STAGING.json','CODE-QUALIFICATION.json','REGRET-DIAGNOSTICS-RESTART.json','REGRET-METADATA-RESTART.json'):category='staging/qualification'
+            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-NICE19-DEPLOYMENT.json','SHARED03-CORE58-DEPLOYMENT.json','SHARED03-GUARD-DEPLOYMENT.json','SHARED03-METADATA-DEPLOYMENT.json'):category='shared03 operational pin verification'
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
@@ -109,6 +109,8 @@ def main():
     if core58.exists():lines+=['', '[Manager core58 correction](shared03/core58/ADDENDUM.md): all four replay processes are confined to physical56–58; manager58 shares a scoring worker core, nice19/Other and PSI terms unchanged. Thirteen complete pre-stop seals/streams are SHA-pinned, unsealed games replay fully, both interrupted pool trees are charged once. No score arithmetic, gate or seed changes.',f"\nHistorical core58 regret freeze SHA: {hashlib.sha256(core58.read_bytes()).hexdigest()}."]
     diagnostics=ROOT/'shared03/diagnostics/evaluation-freeze.json'
     if diagnostics.exists():lines+=['', '[Fail-closed guard diagnostics](shared03/diagnostics/ADDENDUM.md): pool3204444 stopped after41 complete games when game42 failed its admission check. The original failed census was not recorded; the cause remains unclassified. All old groups drained and a fresh unchanged guard passed. Added predicate-equivalent denial receipts preserve the same safety conditions; all41 exact complete seals/streams are retained. Failed/unsealed work is charged once and replayed fully.',f'\nGuard-diagnostics operational freeze SHA: {hashlib.sha256(diagnostics.read_bytes()).hexdigest()}.']
+    metadata=ROOT/'shared03/metadata-helper/evaluation-freeze.json'
+    if metadata.exists():lines+=['', '[Verified producer snapshot exception](shared03/metadata-helper/ADDENDUM.md): pool3337091 stopped after46 sealed games when a read-only G snapshot had a separate process group. It stayed oncore54/Idle19 with PSI0. The exact source and snapshot command hashes are now pinned; the target mode, unknown commands, altered source and bad thread/core/priority are denied. Scientific G group rules and all R3 limits/scoring/gates/seeds stay unchanged. All46 exact complete seals are retained; failed/unsealed work is charged and replayed fully.',f'\nFinal regret-only operational freeze SHA: {hashlib.sha256(metadata.read_bytes()).hexdigest()}.']
     # The original ledger's listed preparation receipts are separate from its
     # process/tree meters. Globally deduplicate all of them by actual meter SHA.
     original=read(ROOT.parent/'receipts/cost-summary.json');combined={}

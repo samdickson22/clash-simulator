@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T10:43:24Z",
+  "utc": "2026-10-10T10:56:36Z",
   "final": false,
-  "cpu_seconds": 244597.564865,
+  "cpu_seconds": 245370.43612799997,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -565,6 +565,36 @@
       "cpu_seconds": 0.250115,
       "gpu_wall_seconds": 0,
       "status": "closed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "failed G snapshot AST qualification",
+      "sha256": "8d56b0f0bc12c40026ce185a575e1bfba1fa7d774589abb4976f9d661bbab925",
+      "path": "shared03/metadata-helper/qualification-attempt1.json",
+      "cpu_seconds": 0.06626699999999999,
+      "gpu_wall_seconds": 0,
+      "status": "failed before deployment",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "G snapshot preliminary qualification",
+      "sha256": "35096ca07e936c45db72c08a0edcdec8abb4c3bbcc82d92b4b567c4f95c0b30f",
+      "path": "shared03/metadata-helper/qualification.json",
+      "cpu_seconds": 0.062445,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "19f0ff5fd59c51aca261675efb9dd6c84e12aeed1df3849ae87d2453efba8064",
+      "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3337091-19f0ff5fd59c51aca261675efb9dd6c84e12aeed1df3849ae87d2453efba8064.json",
+      "cpu_seconds": 772.742551,
+      "gpu_wall_seconds": 0,
+      "status": "stopped_or_failed",
       "host": "127x03",
       "experiment": "round2/descriptive"
     }
