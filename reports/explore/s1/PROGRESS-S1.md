@@ -162,3 +162,14 @@ independently recomputes loss counts and paired CIs using integer bootstrap
 counts and the same frozen seed/resamples/percentiles; retains frozen results,
 flags any exact inclusive-threshold disagreement for investigation. Execute
 only after all blocks pass. No timing source/arm/seed/reducer changes.
+
+2026-10-10T12:15:39Z — R2 healthy: 2651/3,000 games and
+526/600 complete paired blocks. Fresh independent host audit
+passed: who empty, no foreign compute/active process, 15 owned Python
+processes, ~118 GiB available. No outcomes opened/reduced. Full raw census
+retained on 01; compact summary pins its SHA. Timing source, seed/arm/stats
+freeze dfefec9f unchanged. Remaining complete blocks must finish; do not use
+partial records. After clean exit, verify runtime pins and groups, run frozen
+reducer/GC supplement and independent integer bootstrap verification on 01,
+include all invalid/preparation/qualification/analysis tree costs once, then
+final vacancy and publication. Final release follows owned CPU drain.
