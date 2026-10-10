@@ -14,9 +14,9 @@ The reducer calls this barrier before loading any reporting game bytes.
 ## Common evidence on both release routes
 
 The coordinator release receipt adds `amendment_1_prerelease` with schema
-`clasher.t1.amendment1-prerelease.v1`. Its seven artifact bindings are
+`clasher.t1.amendment1-prerelease.v1`. Its eight artifact bindings are
 `amendment`, `completion`, `end_evidence`, `descriptor`, `pool_manifest`,
-`pool_check`, and `registration_manifest`. Each binding is:
+`pool_check`, `registration_manifest`, and `attempt_roots`. Each binding is:
 
 ```json
 {"path":"repository/relative/file.json","commit":"FULL_40_HEX","sha256":"FULL_64_HEX"}
@@ -32,8 +32,9 @@ Completion must retain sealed outcomes and all 2400 primary/600 guard blocks,
 with every counted reporting/replacement host and phase. The END inventory must
 bind that exact committed completion and all those phases. Only production
 `counted-reporting` evidence and the all-host/all-attempt E4 v2 descriptor qualify.
-Stopped counted phases are not rewritten or excluded here; the E4 END conflict
-in `END-CONTRACT-COMPATIBILITY-20261010.md` needs the E4 owner's reviewed fix.
+Stopped counted phases are retained verbatim, as are additional source/loss
+phases. Completion binds the committed blind ledger and counted inventory. The
+real E4 pool check validates logical coverage, source phases and raw exits.
 
 The complete FLEET-POOL seal must include all six E4 output files. The counted
 host population, descriptor, END SHA, source attempts and passing-source seals
@@ -50,7 +51,8 @@ It invokes E4's unmodified `measure_tiers.py --pool-fleet-references`, with the
 three thread environment variables pinned to1, into an exclusive temporary
 directory under `/mpac`. This is read-only reference pooling, not measurement
 or Mac access. It compares the complete output SHA inventory and every pooled
-output byte. Failure writes no successful check receipt. Stdout contains only
+output byte. Failure retains private stderr, E4 failure.json and health diagnostics, and
+writes no successful check receipt. Stdout contains only
 check health, input count and receipt SHA.
 
 The check receipt schema is `clasher.t1.pool-check.v1`. It binds the descriptor,
@@ -58,7 +60,11 @@ original pool seal, all output SHAs, checker SHA, and all original source/contex
 and measurement-file SHAs, checked again after pooling. The barrier requires
 these inputs to remain unchanged, checks that its receipt and checker are
 committed, and bounds the check time between reporting completion and the
-coordinator authorization. Actual E4 validation still checks END provenance,
+coordinator authorization. It reruns check() itself before either release
+route, comparing all fresh input/output identities with the committed receipt.
+The predeclared original attempt-root listing must match the descriptor before
+and after that rerun; failed attempts cannot be omitted. All measurement source
+files must equal an explicit committed E4 source inventory. Actual E4 validation still checks END provenance,
 exactness, warmup, CPU/clock receipts and raw state/repeat populations.
 
 ## Reviewed registration packet
@@ -82,8 +88,11 @@ contain reference/public-state evidence only, never reporting outcomes.
 
 ## Validation and remaining gates
 
-38 tests pass: the existing four barrier tests and34 receipt/check tests. They
-use explicitly synthetic Git repositories, not reporting games. Coverage includes
+The test receipt records the final passing count. The existing barrier tests
+and expanded receipt/check tests
+use explicitly synthetic Git repositories, not reporting games. Positive
+fixtures execute the unmodified committed E4 pooling CLI and check() success
+path, including in-barrier checks on both routes. Coverage includes
 both permitted routes, missing pool/check/registration, uncommitted modifications,
 host/phase/smoke mismatch, original source changes, inclusive ratios, bad ratios,
 escaping paths/symlinks, differing recheck output, counted-host exclusion, wrong
@@ -95,3 +104,7 @@ isolated branch needs review and later deliberate admission before reduction.
 Corpus approval/build, E4 END/guard fixes, A6 smoke, reporting completion, END
 reference measurements, pooling, packet review and coordinator outcome release
 remain outstanding. None is represented by a synthetic success receipt.
+
+C1–C4 response and release-envelope additions are specified in
+RELEASE-REVIEW-RESPONSE-20261010.md. The first actual production check and packet
+require independent review; synthetic tests grant no outcome release.

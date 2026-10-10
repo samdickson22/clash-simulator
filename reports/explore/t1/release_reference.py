@@ -3,6 +3,7 @@ import hashlib
 import json
 import re
 import subprocess
+import tempfile
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
@@ -110,6 +111,34 @@ def pool_inputs(descriptor_path, measurement_root):
     return files
 
 
+def attempt_roots(repo, binding, entries):
+    """A committed, pre-launch root inventory must retain every attempt directory."""
+    declared = obj(repo, binding)
+    require(declared['schema'] == 'clasher.t1.reference-attempt-roots.v1', 'Wrong attempt-root inventory')
+    roots = declared['hosts']
+    require(set(roots) == {entry['host'] for entry in entries}, 'Attempt roots omit a counted host')
+    registered_at = int(subprocess.check_output(['git', '-C', str(repo), 'show', '-s',
+                                                '--format=%ct', binding['commit']]))
+    observed = {}
+    for entry in entries:
+        root = Path(roots[entry['host']])
+        require(root.is_absolute() and root.is_dir() and not root.is_symlink(), 'Invalid attempt root')
+        children = list(root.iterdir())
+        require(all(child.is_dir() and not child.is_symlink() for child in children),
+                'Attempt root must contain only original attempt directories')
+        requested = [Path(attempt['directory']) for attempt in entry['attempts']]
+        require(all(path.is_absolute() and not path.is_symlink() and path.parent == root
+                    for path in requested), 'Attempt directory is outside its registered root')
+        require(len(requested) == len(set(requested)) and set(children) == set(requested),
+                'Descriptor omitted or added an original reference attempt')
+        for path in requested:
+            identity = json.loads((path / 'fleet-identity.json').read_text())
+            require(identity['host'] == entry['host'] and registered_at <= identity['utc'],
+                    'Attempt roots must be committed before every reference launch')
+        observed[entry['host']] = sorted(str(path) for path in children)
+    return observed
+
+
 def prerequisites(repo, release):
     """Both release routes require the same committed, checked END reference."""
     p = release['amendment_1_prerelease']
@@ -138,13 +167,35 @@ def prerequisites(repo, release):
             and end['completion']['commit'] == p['completion']['commit']
             and end['completion']['sha256'] == p['completion']['sha256'], 'Different END completion')
     wanted = {(h, n) for h, names in phases.items() for n in names}
-    require(len(end['phases']) == len(wanted) and {(x['host'], x['phase']) for x in end['phases']} == wanted,
+    supplied = {(x['host'], x['phase']) for x in end['phases']}
+    require(len(end['phases']) == len(supplied) and wanted <= supplied,
             'END omits a counted phase')
+    # The committed END interface preserves additional loss/source phases.
+    for field in ('blind_ledger', 'counted_inventory'):
+        item = end[field]
+        require(completion[field + '_sha256'] == item['sha256'],
+                'Completion differs from END ' + field)
+        value = obj(repo, dict(path=item['repository_path'], commit=item['commit'], sha256=item['sha256']))
+        if field == 'blind_ledger':
+            require(value['sealed'] is True, 'Unsealed END blind ledger')
+        else:
+            require(value['schema'] == 'clasher.t1.counted-blocks.v1' and value['outcomes_sealed'] is True,
+                    'Wrong END counted inventory')
+            require({(row['host'], row['phase']) for row in value['blocks']} == wanted,
+                    'Counted inventory differs from completion phases')
+    for phase in end['phases']:
+        require(phase['host'] in {'127x01', '127x03', '127x08'} and
+                (phase['phase'] == 'reporting' or re.fullmatch('replacement-r[1-9][0-9]*', phase['phase'])),
+                'Unknown END source phase')
+        for field in ('launch', 'supervisor_exit', 'mhz', 'census'):
+            item = phase[field]
+            committed(repo, dict(path=item['repository_path'], commit=item['commit'], sha256=item['sha256']))
     descriptor = obj(repo, p['descriptor'])
     require(descriptor['schema'] == 'clasher.e4v3.fleet-pool.v2', 'All-attempt v2 descriptor required')
     entries = descriptor['hosts']
     require(len(entries) == len(hosts) and {e['host'] for e in entries} == hosts, 'Pool omits a counted host')
     require(all(1 <= len(e['attempts']) <= 2 for e in entries), 'Invalid reference attempt inventory')
+    original_attempts = attempt_roots(repo, p['attempt_roots'], entries)
     manifest, pool = sealed(repo, p['pool_manifest'], 'FLEET-POOL')
     require(POOL_FILES <= set(manifest['files']), 'Missing pooled outputs')
     complete = json.loads((pool / 'pool-complete.json').read_text())
@@ -185,6 +236,13 @@ def prerequisites(repo, release):
     checker_name = 'reports/explore/t1/check_reference.py'
     committed(repo, dict(path=checker_name, commit=p['pool_check']['commit'], sha256=check['checker_sha256']))
     measurement_root = Path(repo) / 'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3'
+    measurement = p['measurement_source']
+    expected_measurement = {path.name for path in measurement_root.iterdir()
+                            if path.suffix in ('.py', '.sh') or path.name == 'spec-pins.json'}
+    require(set(measurement['files']) == expected_measurement, 'Incomplete committed E4 source inventory')
+    for name, digest in measurement['files'].items():
+        committed(repo, dict(path=str(measurement_root.relative_to(repo) / relative(name)),
+                             commit=measurement['commit'], sha256=digest))
     require(check['input_files'] == pool_inputs(Path(repo) / p['descriptor']['path'], measurement_root),
             'Checked reference inputs changed or incomplete')
     registration_seal, packet = sealed(repo, p['registration_manifest'], 'T1-REGISTRATION')
@@ -200,6 +258,15 @@ def prerequisites(repo, release):
     speed = registration['sets']['speed']
     require(set(speed) == TIERS and all(len(ids) == 300 and len(set(ids)) == 300 for ids in speed.values()),
             'Registration lacks fixed own-tier 300-state corpora')
+    speed_reference = json.loads((pool / 'speed-reference.json').read_text())
+    require(set(speed_reference) == TIERS | {'scope'} and speed_reference['scope'] == 'FLEET-POOL'
+            and all(set(speed[t]) == set(speed_reference[t]) for t in TIERS),
+            'Registration speed IDs differ from checked references')
+    for entry in entries:
+        identity = json.loads((Path(entry['attempts'][-1]['directory']) / 'fleet-identity.json').read_text())
+        require(identity['measurement_files'] == measurement['files'], 'Attempt used different E4 source')
+        require(identity['corpus_receipt_sha256'] == registered[registration['corpus_receipt']],
+                'Registration corpus receipt differs from measured corpus')
     for name in ('speed-reference.json', 'deadline-reference.json'):
         require(registered[name] == manifest['files'][name], 'Registration reference differs from checked pool')
     sources = registration['source_receipts']
@@ -215,4 +282,13 @@ def prerequisites(repo, release):
             require(original['scope'] == 'FLEET-REFERENCE' and bool(original['files']), 'Wrong source receipt scope')
             for filename, digest in original['files'].items():
                 require(registered.get(str(name.parent / relative(filename))) == digest, 'Unsealed original source receipt')
+    # C1: a hand-written check receipt never substitutes for executing E4 now.
+    # Keep scratch receipts/diagnostics under /mpac for independent reproduction.
+    from check_reference import check as recheck
+    scratch = Path(tempfile.mkdtemp(prefix='t1-release-recheck-', dir='/mpac/sdicks02/tmp'))
+    fresh = recheck(Path(repo) / p['descriptor']['path'], pool, measurement_root, scratch / 'check.json')
+    for field in ('pool_manifest_sha256', 'descriptor_sha256', 'checker_sha256', 'output_files', 'input_files'):
+        require(fresh[field] == check[field], 'In-barrier pool recheck differs: ' + field)
+    require(attempt_roots(repo, p['attempt_roots'], entries) == original_attempts,
+            'Reference attempt roots changed during release recheck')
     return completion

@@ -13,101 +13,8 @@ from common import sha, write
 
 @pytest.fixture
 def packet(tmp_path):
-    repo = tmp_path
-    def git(*args):
-        return subprocess.check_output(['git', '-C', str(repo), *args], stderr=subprocess.DEVNULL).decode().strip()
-    def commit():
-        names = [str(p.relative_to(repo)) for p in repo.rglob('*') if p.is_file() and '.git' not in p.parts]
-        git('add', '--', *names)
-        git('commit', '-qm', 'Synthetic health/reference evidence')
-        return git('rev-parse', 'HEAD')
-    def binding(name, revision):
-        return dict(path=name, commit=revision, sha256=sha(repo / name))
-    def seal(root, scope):
-        files = {str(p.relative_to(repo / root)): sha(p) for p in (repo / root).rglob('*') if p.is_file()}
-        write(repo / root / 'receipt-manifest.json', dict(scope=scope, status='complete', files=files))
-    git('init', '-q');git('config', 'user.name', 'Synthetic Test');git('config', 'user.email', 'test@example.invalid')
-    amendment = repo / R.AMENDMENT_PATH
-    amendment.parent.mkdir(parents=True)
-    source_root = Path(__file__).resolve().parents[3]
-    shutil.copyfile(source_root / R.AMENDMENT_PATH, amendment)
-    checker = repo / 'reports/explore/t1/check_reference.py'
-    checker.parent.mkdir(parents=True)
-    shutil.copyfile(Path(__file__).with_name('check_reference.py'), checker)
-    hosts = ['127x01', '127x03', '127x08']
-    completion = dict(reporting_complete=True, outcomes_sealed=True, counted_primary_blocks=2400,
-                      counted_guard_blocks=600, completed_at_utc='2026-10-10T12:00:00Z',
-                      counted_host_phases={h:['reporting'] for h in hosts})
-    write(repo / 'completion.json', completion)
-    first = commit()
-    end = dict(schema='clasher.e4v3.end-evidence.v1', kind='counted-reporting',
-               completion=dict(repository_path='completion.json', commit=first, sha256=sha(repo / 'completion.json')),
-               phases=[dict(host=h, phase='reporting') for h in hosts])
-    write(repo / 'end.json', end)
-    measurement = repo / 'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3'
-    measurement.mkdir(parents=True)
-    (measurement / 'measure_tiers.py').write_text('# synthetic measurement pin\n')
-    write(repo / 'bundle' / 'tiers-pins.json', dict(files={}))
-    entries = []
-    for host in hosts:
-        root = 'original/' + host
-        write(repo / root / 'fleet-identity.json', dict(host=host, measurement_files={
-            'measure_tiers.py':sha(measurement / 'measure_tiers.py')}))
-        (repo / root / 'reference-raw.jsonl').write_text('{"synthetic":true}\n')
-        seal(root, 'FLEET-REFERENCE')
-        entries.append(dict(host=host, attempts=[dict(directory=str(repo / root),
-            manifest_sha256=sha(repo / root / 'receipt-manifest.json'))]))
-    descriptor = dict(schema='clasher.e4v3.fleet-pool.v2', hosts=entries,
-                      context=dict(bundle=str(repo / 'bundle'), manifest_sha256=sha(repo / 'bundle' / 'tiers-pins.json')))
-    write(repo / 'descriptor.json', descriptor)
-    fleet = dict(scope='FLEET-POOL', amendment_1=True, hosts=hosts, excluded_hosts=[], nice=10, repeats=3,
-                 physical_cores=True, reporting_load_profile=True, pooling='raw-host-times-repeat-v1',
-                 end_evidence_sha256=sha(repo / 'end.json'), host_receipts={e['host']:dict(
-                     manifest_sha256=e['attempts'][0]['manifest_sha256'], relative_to_pooled_median=1.,
-                     reference_to_reporting_mean=1.) for e in entries})
-    pooling = dict(scope='FLEET-POOL', amendment_1=True, excluded=[], included=hosts,
-                   end_evidence_sha256=sha(repo / 'end.json'), descriptor_sha256=sha(repo / 'descriptor.json'),
-                   attempts={e['host']:[dict(**e['attempts'][0], passes=True, technical_repeat_candidate=False)] for e in entries})
-    for name, value in [('fleet_reference.json', fleet), ('pooling.json', pooling),
-                        ('pool-complete.json', dict(scope='FLEET-POOL', completed=True, outcome_access=False, live_actions=False)),
-                        ('speed-reference.json', {}), ('deadline-reference.json', {}), ('fleet-policy-agreement.json', {})]:
-        write(repo / 'pool' / name, value)
-    seal('pool', 'FLEET-POOL')
-    manifest = json.loads((repo / 'pool' / 'receipt-manifest.json').read_text())
-    check = dict(schema='clasher.t1.pool-check.v1', passes=True, checked_at_utc='2026-10-10T13:00:00Z',
-                 outcome_access=False, checker_sha256=sha(checker), output_files=manifest['files'],
-                 pool_manifest_sha256=sha(repo / 'pool' / 'receipt-manifest.json'), descriptor_sha256=sha(repo / 'descriptor.json'),
-                 input_files=R.pool_inputs(repo / 'descriptor.json', measurement))
-    write(repo / 'pool-check.json', check)
-    registration = dict(fleet_reference=fleet, pooled_reference_manifest_sha256=check['pool_manifest_sha256'],
-                        pool_check_sha256=sha(repo / 'pool-check.json'), deadline_replay_semantics='committed-copy',
-                        corpus_receipt='corpus.json', sets=dict(speed={t:[f'{t}-{i}' for i in range(300)] for t in R.TIERS}),
-                        source_receipts={})
-    for name in ('speed-reference.json', 'deadline-reference.json'):
-        (repo / 'packet').mkdir(exist_ok=True)
-        shutil.copyfile(repo / 'pool' / name, repo / 'packet' / name)
-    for name in ('golden.json', 'belief-reference.json', 'student-reference.json', 'corpus.json'):
-        write(repo / 'packet' / name, dict(synthetic=True))
-    for entry in entries:
-        host = entry['host'];shutil.copytree(repo / 'original' / host, repo / 'packet' / 'sources' / host)
-        registration['source_receipts'][host]=[dict(path=f'sources/{host}/receipt-manifest.json',
-            manifest_sha256=entry['attempts'][0]['manifest_sha256'])]
-    write(repo / 'packet' / 'registration.json', registration)
-    seal('packet', 'T1-REGISTRATION')
-    write(repo / 'summary.json', dict(synthetic=True))
-    final = commit()
-    prerelease = dict(schema='clasher.t1.amendment1-prerelease.v1', amendment=binding(R.AMENDMENT_PATH, first),
-                      completion=binding('completion.json', first), end_evidence=binding('end.json', final),
-                      descriptor=binding('descriptor.json', final), pool_manifest=binding('pool/receipt-manifest.json', final),
-                      registration_manifest=binding('packet/receipt-manifest.json', final), pool_check=binding('pool-check.json', final))
-    release = dict(coordinator_thread=COORDINATOR, authorized_at_utc='2026-10-24T12:00:00Z',
-                   authorization_message_id='synthetic-only', reason='committed_mac_summary',
-                   amendment_1_prerelease=prerelease, mac_summary_path='summary.json', commit=final,
-                   mac_summary_sha256=sha(repo / 'summary.json'), reporting_completion_path='completion.json',
-                   reporting_completion_sha256=prerelease['completion']['sha256'], completion_commit=first)
-    def recommit(name, value):
-        write(repo / name, value);return binding(name, commit())
-    return repo, release, recommit
+    from test_reference_packet import make_packet
+    return make_packet(tmp_path)
 
 
 @pytest.mark.parametrize('reason', ['committed_mac_summary', 'fourteen_day_escape'])
@@ -147,7 +54,7 @@ def test_population_and_smoke_mismatches_deny(packet, change, match):
 
 def test_changed_original_source_input_denies_even_with_intact_packet(packet):
     repo, release, _ = packet
-    (repo / 'original/127x03/reference-raw.jsonl').write_text('{"changed":true}')
+    (repo / 'attempts/127x03/r0/speed-reference-raw.jsonl').write_text('{"changed":true}')
     with pytest.raises(ValueError, match='input pin mismatch'):R.prerequisites(repo, release)
 
 
@@ -181,6 +88,7 @@ def test_recheck_output_difference_produces_no_check_receipt(tmp_path, monkeypat
     def different(command, **kwargs):
         target=Path(command[-1]);target.mkdir()
         write(target / 'receipt-manifest.json', dict(scope='FLEET-POOL', status='complete', files={'different':'b'*64}))
+    real_utc=C.utc();monkeypatch.setattr(C,'utc',lambda:real_utc)
     monkeypatch.setattr(C.subprocess, 'run', different)
     output=tmp_path / 'check.json'
     with pytest.raises(ValueError, match='differ'):C.check(descriptor, pool, tmp_path, output)
@@ -220,10 +128,94 @@ def test_committed_but_invalid_registration_cannot_open(packet, mutate, match):
 
 @pytest.mark.parametrize('mutate,match', [
     (lambda v:v.update(passes=False), 'recheck'),
-    (lambda v:v.update(checked_at_utc='2026-10-10T11:59:59Z'), 'window'),
+    (lambda v:v.update(checked_at_utc='2026-10-10T00:59:59Z'), 'window'),
     (lambda v:v['input_files'].clear(), 'incomplete')])
 def test_committed_invalid_pool_check_cannot_open(packet, mutate, match):
     repo, release, recommit=packet
     check=json.loads((repo / 'pool-check.json').read_text());mutate(check)
     release['amendment_1_prerelease']['pool_check']=recommit('pool-check.json', check)
     with pytest.raises(ValueError, match=match):R.prerequisites(repo, release)
+
+
+@pytest.mark.parametrize('reason', ['committed_mac_summary', 'fourteen_day_escape'])
+def test_committed_check_receipt_cannot_replace_barrier_reexecution(packet, monkeypatch, reason):
+    import check_reference as C
+    repo, release, _=packet;release['reason']=reason;calls=[]
+    def failed(*args):
+        calls.append(args);raise ValueError('Actual reexecution failed')
+    monkeypatch.setattr(C,'check',failed);write(repo/'release.json',release)
+    with pytest.raises(ValueError,match='Actual reexecution failed'):outcome_release(repo,repo/'release.json')
+    assert len(calls)==1 and calls[0][0]==repo/'descriptor.json'
+
+
+def test_omitted_failed_attempt_directory_denies_release(packet):
+    repo, release, _=packet
+    shutil.copytree(repo/'attempts/127x03/r0',repo/'attempts/127x03/failed-r0')
+    with pytest.raises(ValueError,match='omitted.*original reference attempt'):R.prerequisites(repo,release)
+
+
+def test_reference_attempt_root_cannot_hide_symlinked_attempt(packet):
+    repo, release, _=packet
+    (repo/'attempts/127x03/hidden').symlink_to(repo/'attempts/127x03/r0',target_is_directory=True)
+    with pytest.raises(ValueError,match='only original attempt directories'):R.prerequisites(repo,release)
+
+
+@pytest.mark.parametrize('field',['blind_ledger','counted_inventory'])
+def test_final_committed_end_must_bind_completion_inventory_shas(packet,field):
+    repo, release, recommit=packet
+    end=json.loads((repo/'end.json').read_text());end[field]['sha256']='0'*64
+    release['amendment_1_prerelease']['end_evidence']=recommit('end.json',end)
+    with pytest.raises(ValueError,match='Completion differs from END '+field):R.prerequisites(repo,release)
+
+
+def test_measurement_code_must_equal_committed_final_e4_source(packet):
+    repo, release, _=packet
+    e4=repo/'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3'
+    (e4/'fleet_end.py').write_text('# changed after commitment\n')
+    with pytest.raises(ValueError,match='committed SHA'):R.prerequisites(repo,release)
+
+
+def test_registration_ids_must_equal_checked_reference_keys(packet):
+    repo, release=replace_sealed(packet,'registration_manifest','packet','registration.json',
+                                lambda v:v['sets']['speed']['K4'].__setitem__(0,'wrong-state'))
+    with pytest.raises(ValueError,match='speed IDs differ'):R.prerequisites(repo,release)
+
+
+def test_registration_corpus_receipt_must_equal_measured_pin(packet):
+    repo, release, recommit=packet
+    write(repo/'packet/corpus.json',dict(changed=True))
+    seal=json.loads((repo/'packet/receipt-manifest.json').read_text());seal['files']['corpus.json']=sha(repo/'packet/corpus.json')
+    release['amendment_1_prerelease']['registration_manifest']=recommit('packet/receipt-manifest.json',seal)
+    with pytest.raises(ValueError,match='corpus receipt differs'):R.prerequisites(repo,release)
+
+
+def test_real_e4_recheck_success_ignores_inherited_pythonpath(packet,monkeypatch):
+    import check_reference as C
+    repo, release, _=packet;e4=repo/'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3'
+    shadow=repo/'hostile-pythonpath';shadow.mkdir();(shadow/'json.py').write_text('raise RuntimeError("shadowed")\n')
+    monkeypatch.setenv('PYTHONPATH',str(shadow));output=repo/'second-real-check.json'
+    result=C.check(repo/'descriptor.json',repo/'pool',e4,output)
+    assert result['passes'] is True and result['output_files']==json.loads((repo/'pool/receipt-manifest.json').read_text())['files']
+    assert result['input_files']==R.pool_inputs(repo/'descriptor.json',e4)
+    assert '-I' in C.pool_command(e4,repo/'descriptor.json',repo/'unused')
+    assert not (repo/'second-real-check.json.diagnostics/failure-health.json').exists()
+
+
+def test_checker_retains_failure_health_stderr_and_e4_failure(tmp_path,monkeypatch):
+    import check_reference as C
+    pool=tmp_path/'pool';pool.mkdir()
+    for name in R.POOL_FILES:write(pool/name,{})
+    write(pool/'receipt-manifest.json',dict(scope='FLEET-POOL',status='complete',files={n:sha(pool/n) for n in R.POOL_FILES}))
+    descriptor=tmp_path/'descriptor.json';write(descriptor,{})
+    monkeypatch.setattr(C,'pool_inputs',lambda *args:{'/synthetic':'a'*64})
+    def fail(command,**kwargs):
+        target=Path(command[-1]);target.mkdir();write(target/'failure.json',dict(error='synthetic reference-only failure'))
+        kwargs['stderr'].write('synthetic health diagnostic\n')
+        raise subprocess.CalledProcessError(7,command)
+    real_utc=C.utc();monkeypatch.setattr(C,'utc',lambda:real_utc)
+    monkeypatch.setattr(C.subprocess,'run',fail);output=tmp_path/'check.json'
+    with pytest.raises(subprocess.CalledProcessError):C.check(descriptor,pool,tmp_path,output)
+    assert not output.exists();diagnostics=tmp_path/'check.json.diagnostics'
+    assert json.loads((diagnostics/'failure-health.json').read_text())['returncode']==7
+    assert json.loads((diagnostics/'e4-failure.json').read_text())['error']=='synthetic reference-only failure'
+    assert (diagnostics/'stderr.txt').read_text()=='synthetic health diagnostic\n'

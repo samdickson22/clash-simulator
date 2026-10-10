@@ -11,6 +11,15 @@ from common import sha, utc
 from release_reference import POOL_FILES, beneath, pool_inputs, require
 
 
+def pool_command(measurement_root, descriptor, target):
+    # -I omits the script directory too: admit only this explicitly pinned root.
+    bootstrap = ('import runpy,sys;root=sys.argv.pop(1);script=sys.argv.pop(1);'
+                 'sys.path.insert(0,root);sys.argv[0]=script;runpy.run_path(script,run_name="__main__")')
+    return [sys.executable, '-I', '-c', bootstrap, str(measurement_root),
+            str(measurement_root / 'measure_tiers.py'), '--pool-fleet-references',
+            '--pool-input', str(descriptor), '--pool-input-sha256', sha(descriptor), '--output', str(target)]
+
+
 def check(descriptor, pool, measurement_root, output):
     descriptor, pool, measurement_root = map(lambda p: Path(p).resolve(), (descriptor, pool, measurement_root))
     output = Path(output)
@@ -27,16 +36,28 @@ def check(descriptor, pool, measurement_root, output):
                PYTHONDONTWRITEBYTECODE='1')
     # This mode performs read-only pooling, not a fleet or Mac measurement.
     # Its normal stdout is suppressed; only check health is emitted below.
+    # Preserve failure.json and stderr privately even after scratch is removed.
+    diagnostics = output.with_name(output.name + '.diagnostics')
+    diagnostics.mkdir(parents=True, mode=0o700, exist_ok=False)
     with tempfile.TemporaryDirectory(prefix='t1-pool-recheck-', dir='/mpac/sdicks02/tmp') as scratch:
         target = Path(scratch) / 'pool'
-        command = [sys.executable, str(measurement_root / 'measure_tiers.py'), '--pool-fleet-references',
-                   '--pool-input', str(descriptor), '--pool-input-sha256', sha(descriptor), '--output', str(target)]
-        subprocess.run(command, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-        repeated = json.loads((target / 'receipt-manifest.json').read_text())
-        require(repeated['scope'] == 'FLEET-POOL' and repeated['status'] == 'complete'
-                and repeated['files'] == manifest['files'], 'E4 pooled outputs differ on recheck')
-        for name, digest in manifest['files'].items():
-            require(sha(target / name) == digest, 'Rechecked pooled bytes differ')
+        try:
+            with (diagnostics / 'stderr.txt').open('x') as stderr:
+                subprocess.run(pool_command(measurement_root, descriptor, target), env=env,
+                               stdout=subprocess.DEVNULL, stderr=stderr, check=True)
+            repeated = json.loads((target / 'receipt-manifest.json').read_text())
+            require(repeated['scope'] == 'FLEET-POOL' and repeated['status'] == 'complete'
+                    and repeated['files'] == manifest['files'], 'E4 pooled outputs differ on recheck')
+            for name, digest in manifest['files'].items():
+                require(sha(target / name) == digest, 'Rechecked pooled bytes differ')
+        except Exception as error:
+            import shutil
+            if (target / 'failure.json').is_file():
+                shutil.copyfile(target / 'failure.json', diagnostics / 'e4-failure.json')
+            (diagnostics / 'failure-health.json').write_text(json.dumps(dict(
+                passes=False, outcome_access=False, error_type=type(error).__name__,
+                returncode=getattr(error, 'returncode', None), checked_at_utc=utc())) + '\n')
+            raise
     require(pool_inputs(descriptor, measurement_root) == before, 'Reference inputs changed during recheck')
     require(sha(pool / 'receipt-manifest.json') == seal_sha, 'Pool seal changed during recheck')
     for name, digest in manifest['files'].items():
