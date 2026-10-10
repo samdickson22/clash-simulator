@@ -120,7 +120,10 @@
     "reports/explore/t1/test_op5.py": "5dcd9b92f23adfc038254ebcb3338e8a993c0df943cd1e9aed5540025bae2ebf",
     "reports/explore/t1/OP5-T1.md": "6a7b4ca18fb300c40c410f3a492156e0c51fbe39f23f01432fb5fd8698c7ad0c",
     "reports/explore/t1/receipts/op5-unit-tests.json": "fb3d2c71cb1bf1321dd852a325c321b9735c3ccb72ff11d3d36660251496833c",
-    "reports/explore/t1/receipts/excluded-smoke-op4-r5.json": "e63699aba4d5db524768564daa3acf2a1448d8e57438de90a7b33a3b9ad6e263"
+    "reports/explore/t1/receipts/excluded-smoke-op4-r5.json": "e63699aba4d5db524768564daa3acf2a1448d8e57438de90a7b33a3b9ad6e263",
+    "reports/explore/t1/receipts/host-set-0108-20261010.json": "8205da9acc1fedb79688997d971484ed406203a96e24c7d8998c3715447086e3",
+    "reports/explore/t1/receipts/reporting-dispatch-0108.json": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
+    "reports/explore/t1/REVIEW-T1-OP5-CONFIRM-20261010T1713Z.md": "7509bbbb9a3c78ee68e99e015703a29f088da189bba7c4f5efb73553fbd36897"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -144,7 +147,6 @@
   "reducer_author": "T1 confirmatory fleet worker",
   "qualified_hosts": [
     "127x01",
-    "127x03",
     "127x08"
   ],
   "seed_audit_disjoint": true,
@@ -153,9 +155,8 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "OP5 fast confirmation",
-    "final-source fresh qualification",
-    "fresh all-host smoke-r6 health",
+    "final-source fresh qualification on01/08",
+    "fresh01/08 smoke-r6 health",
     "manifest-bound reporting authorization after smoke"
   ],
   "qualification_summary": "reports/explore/t1/receipts/qualification-freeze-summary.json",
@@ -180,10 +181,9 @@
   ],
   "reporting_hosts": [
     "127x01",
-    "127x03",
     "127x08"
   ],
-  "host_set_decision": "Coordinator HOST-SET DECISION, 15:15Z: full planned set01/03/08;08 B STOP remains binding.",
+  "host_set_decision": "Coordinator17:30Z:01+08 ONLY;03 parent3.6%core exceeds frozen OP4; see pinned host-set receipt",
   "operational_delta_op2": {
     "reviewed_commit": "78c9bd5bafd1d4d0b4bb8f5570a37da5e4e17c36",
     "review_commit": "00e3d6d3",
@@ -214,10 +214,10 @@
     ]
   },
   "launch_namespaces": {
-    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op4-261-r1",
-    "smoke": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5",
-    "reporting": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-op4-r1",
-    "replacement_rule": "fresh replacement-frozen-op4-rN directory for each attempt; preserve prior jobs"
+    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-0108-r1",
+    "smoke": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6",
+    "reporting": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1",
+    "replacement_rule": "fresh replacement-frozen-0108-rN directory for each attempt; preserve prior jobs; require >=2 active hosts"
   },
   "operational_delta_op4": {
     "verdict": "CONFIRM",
@@ -251,9 +251,26 @@
     }
   ],
   "operational_delta_op5": {
-    "verdict": "AWAITING_CONFIRMATION",
+    "verdict": "CONFIRM",
     "authorization": "Coordinator17:20Z OP5 exact pinned parent-generation source seed only;OP4 budgets unchanged",
     "guard_tests": 58,
-    "seed_commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623"
+    "seed_commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+    "reviewed_commit": "a697647b6c607bc46428f6e014ff5c5cdb4fae45",
+    "review_commit": "627f7842b662065af8f81387cea5727a3b9f2f8c",
+    "review_path": "reports/explore/t1/REVIEW-T1-OP5-CONFIRM-20261010T1713Z.md",
+    "coordinator_confirmation": "Coordinator OP5 CONFIRMED; admit a697647b+b2f9e25e; reporting01/08 only after fresh qualification/smoke",
+    "nonblocking_disclosures": [
+      "Integrity failure aborts admission rather than falling back; fail closed.",
+      "Seed hard-scoped to03 exact parent generation; no seed applicable on reporting01/08."
+    ]
+  },
+  "host_set_record": "reports/explore/t1/receipts/host-set-0108-20261010.json",
+  "reporting_dispatch": {
+    "path": "reports/explore/t1/receipts/reporting-dispatch-0108.json",
+    "sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
+    "hosts": [
+      "127x01",
+      "127x08"
+    ]
   }
 }
