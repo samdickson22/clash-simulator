@@ -56,3 +56,17 @@ all failed prep/qualification costs retained. Scientificsource SHA binding
 created; seed audit refreshed before freeze. Next finalfreeze/explicitpaths
 commit/secret-scan/push, deploy exact committedbytes and pin before40-game
 excluded smoke. Reporting staysclosed until smoke fullyterminal/audited.
+
+2026-10-10T09:03:58Z — Finalfreeze5ae7d16e PUSHED; committedFROZEN SHA424e3a7586970908
+cd1dfe84c6f07dc5f32787e9c3407d5ce318889f56d4f111 independently equals deployed
+bytes. Source/native/model/calibration/runtimepin allpass. Firstgit stage of
+ignored qualification.log refused beforecommit; explicit force-add only own
+receipt corrected, secret scanpassed; no games before finalfreeze publication.
+Fresh01 census09:00:24Z whoempty/noforeignwork/121.6GiB free. Excluded40game
+smoke launched09:00:51Z supervisorPID/PGID3372782, child3372820,13 three-core
+slots0–38/main39,nice10/SCHED_OTHER. Complete rotatedfive-arm blocks only.
+Resumption: inspect ownprogress.json and phase/supervisor-exit.json, then on01
+taskset-c39 bash OWN runtime.sh reports/explore/s1/advance.py --job OWNjob
+(defaultnice0 driver; childrennice10). Never retry closedclaim or reusepartial
+block. After complete smoke audit, same boundedadvance launches600reporting.
+No partial reporting outcomes; retain STOP/failedmeters.
