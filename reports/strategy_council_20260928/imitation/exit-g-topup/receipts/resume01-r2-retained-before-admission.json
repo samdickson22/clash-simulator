@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "retained_pack_utc": "2026-10-10T13:06:04Z",
+  "retained_games": 81,
+  "retained_roots": 10152,
+  "first_spawn_launch_utc_observed": "2026-10-10T13:06:05Z",
+  "first_four_workers": [
+    {
+      "pid": 4124965,
+      "start": 142747118,
+      "start_utc": "2026-10-10T13:06:05.180000+00:00"
+    },
+    {
+      "pid": 4124966,
+      "start": 142747118,
+      "start_utc": "2026-10-10T13:06:05.180000+00:00"
+    },
+    {
+      "pid": 4124969,
+      "start": 142747119,
+      "start_utc": "2026-10-10T13:06:05.190000+00:00"
+    },
+    {
+      "pid": 4124970,
+      "start": 142747121,
+      "start_utc": "2026-10-10T13:06:05.210000+00:00"
+    }
+  ],
+  "source_and_pack_shas_verified": true,
+  "first_initialization_after_retained_pack": true,
+  "ionice_idle_verified": true,
+  "pgid": 4124581
+}

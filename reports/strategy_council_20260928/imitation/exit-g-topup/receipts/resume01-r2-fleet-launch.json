@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-10T13:06:09Z",
+  "passed": true,
+  "pid": 2129051,
+  "pgid": 2129051,
+  "start": 142734130,
+  "command_sha256": "3ce1799ec81dcc602e7c80be5d99d78d7408b0baf058ddee8bb5d1adccf66c44",
+  "nice": 19,
+  "scheduler": 5,
+  "cores": [
+    0
+  ],
+  "old_controller_pid": 1942284,
+  "old_controller_group_members": [],
+  "host_expected_pgids": {
+    "01": 4124581,
+    "03": 3671794,
+    "04": 1712867,
+    "08": 16288
+  },
+  "freeze_commit": "f76d6b5451975b1d07bd80f91ceb6ff4426a7ce9",
+  "cache_seed_hosts": [
+    "04"
+  ],
+  "invalidated_hosts": [
+    "01",
+    "03",
+    "08"
+  ],
+  "no_remote_calls_to": [
+    "04"
+  ],
+  "polling_seconds": 60,
+  "old_metadata_archive": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/controller1942284-r5-20261010"
+}

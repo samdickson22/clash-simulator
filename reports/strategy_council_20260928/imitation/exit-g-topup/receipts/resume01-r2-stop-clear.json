@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-10T13:05:57Z",
+  "release_ordinal": 2,
+  "authorization": "Coordinator one-time01 release13:00Z after S1 final release; cores0-59; archive exact earlier coordinator pause STOP and X STOP-01 once; retained10152 pack first; idle I/O",
+  "one_time_consumed": true,
+  "freeze_commit": "f76d6b5451975b1d07bd80f91ceb6ff4426a7ce9",
+  "amendment_sha256": "c4044a2dd6cfc6ac2b5bd50e496d6c440d7a8ce2fa0bffa546df427904fe1b0d",
+  "archived": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/1356583-core59-r2-20261010",
+  "released_markers": {
+    "STOP": {
+      "inode": 59378816,
+      "mtime_ns": 1791596275533199476,
+      "ctime_ns": 1791596275533199476,
+      "sha256": "ad640007ce9b356d0814747b2eccf7aaaeae3ec3a520d9bf54efc53cbc2bc1da"
+    },
+    "STOP-01": {
+      "inode": 59378835,
+      "mtime_ns": 1791606495256868656,
+      "ctime_ns": 1791606495256868656,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "pressure_pause_cleared": false,
+  "other_host_stops_untouched": true,
+  "baseline": {
+    "games": 81,
+    "rows": 65337,
+    "root_decisions": 10152
+  },
+  "retained_pending_roots": 10152,
+  "retained_pack_before_admission": true
+}

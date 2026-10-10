@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-10T13:07:40Z",
+  "fleet_utc": "2026-10-10T13:07:12Z",
+  "controller_identity_verified": true,
+  "root_decisions": 5508679,
+  "packed_root_decisions": 5244701,
+  "remaining_unpacked_roots": 263978,
+  "target_complete": false,
+  "active_hosts": [
+    "01",
+    "03",
+    "08"
+  ],
+  "vacated_hosts": [
+    "04"
+  ],
+  "no_remote_calls_to": [
+    "04"
+  ],
+  "alerts": {
+    "01": {},
+    "03": {},
+    "08": {}
+  },
+  "quiet08": false
+}
