@@ -45,6 +45,15 @@ def select(paths,n=300):
  chosen.sort(key=lambda r:r['id']);assert len(chosen)==n and len({r['id'] for r in chosen})==n
  return chosen,counts,q
 
+def contract():
+ # Reuse E4's published validation contract without changing its code.
+ import sys
+ from common import ROOT
+ directory=ROOT/'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3'
+ if str(directory) not in sys.path:sys.path.insert(0,str(directory))
+ import corpus_contract
+ return corpus_contract
+
 def main():
  p=argparse.ArgumentParser();p.add_argument('--captures',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
  all_rows=[];summary={}
@@ -58,9 +67,13 @@ def main():
    assert descriptor['phase']=='corpus' and descriptor['game_class']=='qualification' and proof['capture_sha256']==sha(p)
    with gzip.open(p,'rb') as f:health.update(pickle.load(f)['health'])
   rows,counts,q=select(paths);assert all(r['tier']==tier and plan()['seed_ranges']['corpus']['base']<=r['seed']<plan()['seed_ranges']['corpus']['base']+64 for r in rows)
+  for row in rows:contract().validate_row(row,tier)
   target=a.out/f'{tier}-states.pkl';target.write_bytes(pickle.dumps(rows,protocol=5));all_rows.extend(rows)
   summary[tier]=dict(states=len(rows),state_inventory=[dict(id=r['id'],sha256=hashlib.sha256(pickle.dumps(r,protocol=5)).hexdigest()) for r in rows],capture_health=dict(health),deadline_cut_fraction=health['deadline_cut']/health['eligible_search_opportunities'],suspended_transaction_fraction=health['suspended_transaction']/health['eligible_search_opportunities'],selected_suspended_transaction_states=sum(r['belief_had_suspended_transaction'] for r in rows),sha256=sha(target),counts={str(k):v for k,v in counts.items()},selected_stratum_counts={str(k):v for k,v in q.items()},source_capture_shas={str(p):sha(p) for p in paths})
  (a.out/'states.pkl').write_bytes(pickle.dumps(all_rows,protocol=5))
  write(a.out/'corpora.json',dict(utc=utc(),selection_rule=plan()['corpus_selection'],selection_script_sha256=sha(__file__),seed_bank=plan()['seed_ranges']['corpus'],tiers=summary,combined_sha256=sha(a.out/'states.pkl'),outcomes_read=False))
+ from types import SimpleNamespace
+ receipt_name='corpora.json';manifest=dict(corpus_receipt=receipt_name,files={receipt_name:sha(a.out/receipt_name)},sets=dict(speed={tier:[r['id'] for r in all_rows if r['tier']==tier] for tier in summary}))
+ contract().validate_capture_receipt(a.out,manifest,SimpleNamespace(by_id={r['id']:r for r in all_rows}))
  print(json.dumps(dict(tiers={k:r['states'] for k,r in summary.items()},states_sha256=sha(a.out/'states.pkl'),outcomes_read=False)))
 if __name__=='__main__':main()
