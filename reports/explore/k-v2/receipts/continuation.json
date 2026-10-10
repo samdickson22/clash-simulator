@@ -1,0 +1,13 @@
+{
+  "scheduledTaskId": "scheduled-task:command:mcp:b4ac3d8c-c547-473a-99ad-da0a4a7715df:schedule-task:clasher-kv2-completion-20261010-r1",
+  "title": "K-v2 reporting completion, audits and 03 release",
+  "enabled": true,
+  "boundThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-k-v2-20261010-1",
+  "schedule": {
+    "type": "interval",
+    "everyMs": 600000
+  },
+  "nextRunAt": "2026-10-10T02:54:32.544Z",
+  "recorded_at_utc": "2026-10-10T02:46:41Z",
+  "purpose": "Temporary same-thread completion checks; disable after final reporting and release, or cancellation/pause."
+}
