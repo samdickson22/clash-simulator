@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-10T17:59:28Z",
+  "health_passed": true,
+  "counts": {
+    "smoke_local_complete": 8,
+    "smoke_hub_complete": 8,
+    "games": 64,
+    "interfered_blocks": 4,
+    "ssh_family_interfered_blocks": 1,
+    "allowlist_system_dbus": 1369,
+    "allowlist_ssh_family_budget": 2684
+  },
+  "errors": [],
+  "health_only": true,
+  "outcomes_read": false,
+  "source_smoke_admission_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/smoke-admission.json",
+  "source_smoke_admission_sha256": "91fd9149f1e96b1dc5cc9a7e98fd1bae16d00e7aaff36bea1573f358bae277e6",
+  "source_smoke_pass_sha256": "25e780a7595f678e090b43f825356ddac2ce6e05b07a369de8d8a22e204788f2",
+  "source_complete_sha256": {
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0000/complete.json": "4c1fc3c5612d9b8387ab99667c8c6ce4b9861c70f773e556b1faa61438190a80",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0001/complete.json": "99da90889b51de168f88c7e40d3587acdacc9f179d132736af70673caca1e2ee",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0002/complete.json": "a519ddb7f4c2de93653d8d5493822d64fbc9f73a7cb4365a9aac500a633acdb3",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0003/complete.json": "c91b1f5ba6e081c4489bec16634fe39598a637adfcc30c7f1ceaae8c5b1b4122",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0004/complete.json": "73bc48fe8e46882ce0ae998f5a00f2985097c862276f80ee88717264fce47acf",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0005/complete.json": "2dc72c40cda58b36b7d05e0d2f204ba4e452660569077a94bf185b27e3759fa2",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0006/complete.json": "811b042e07dd97c7ae83e6cb729af0d2993ee8a09b1a99ae42ee2537ce4dddea",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6/hub-blocks/smoke-0007/complete.json": "9015d0e2ab66270979349a63e7cedb5e4af387a45eb3a74dc701f22808d1d20a"
+  },
+  "qualification_summary": "reports/explore/t1/receipts/op5-08join-qualification-summary.json",
+  "guard_stops": 0,
+  "failed_blocks": 0,
+  "offhost_hash_acks": 4,
+  "disclosure": "4 interfered smoke blocks on08 from pinned systemdbus>1%;one alsoSSHfamily>.5%; no stop cap exceeded. Flags retained, not silently excluded.",
+  "owned_groups_drained": [
+    335935,
+    336079,
+    1649321
+  ]
+}
