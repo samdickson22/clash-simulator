@@ -683,3 +683,5 @@ admitted. No joblaunched/stopped/migrated, no scientifickill/survivor/R2.
 Latestcontinuation-check0311 liveGPU13.464315358h/CPU44.996383333h replaces
 priorlive totals; finalwholeexitmeters supersede, nestedchild/priorlive costs
 never added. Tenmincontinuation currentseven-armpromptenabled,next2026-10-10T03:21:35.683Z.
+
+2026-10-10T03:26:05Z. Coordinator02:50Z decision received03:12Z moves stage1 to sealedEMA fit-hostGPU/lightCPU, ungatedbyK; stage2 waits earliest01afterX4exit/03afterKrelease. GPUqual01PID=PGID1734168 exited03:18:41Z:128syntheticrows/zeroheldout/games,hardactions+top8exact,scoremax7.629e-6,metricmax5.588e-9;GPUwall10.278003s/CPU10.238241s,brief overlapX4GPU operationaldisclosure.03metadataqual1924274 exited03:23:38Z:12testsPASS/CPU.344673s,noinference/games. Newcodeandoperationalfreeze prepared; no stage1runbeforecommit/push. Heldoutslice73MiB staging all7 at03:24:22Z,identities in stage1-staging-launches.json,logstage1-staging-Xn.log; prep only, originalscience/source/X7family unchanged. Newcontroller requires idle1870636 cleanexit/meter before replacement.

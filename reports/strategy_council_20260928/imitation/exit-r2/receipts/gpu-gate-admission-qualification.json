@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-10T03:23:38Z",
+  "passed": true,
+  "exit_code": 0,
+  "tests": 12,
+  "files": {
+    "supplement_gpu.py": "5040a5518380364387e6079cf9984fb3701d3bd015dce74f66335b39ecde7f32",
+    "offline_gpu.py": "e7407265cabe8b6af9b20dba2239f5c01a08ec4f20432d8039edd9118f9bd6a4",
+    "stage1_gpu_guard.py": "149f90a9bfcaf31e70cf354b7a8c5f3edbc121f5654e450b439d0618d2749dbb",
+    "supervise_stage1_gpu.py": "4d6ddb29eca037a858ab9f619475eaba66b432b947c4e359f235d8744917bcab",
+    "stage1_inputs.py": "7b35d7d86a10566a1273e92b26fce2caff7543d272ea7e9073d8780fc9fbbbbb",
+    "remote_gpu_gates.py": "2d21e2a46a91560e262d1fa5c263fd80689c7ad5748efd2d5e168aa549f93dee",
+    "controller_gpu_gates.py": "fa4ea443585fa8ccbe103a92f1b1e13b6d4445ea2f3fcb1337af25081f631278",
+    "test_gpu_gate_admission.py": "a618ee715c1d2c736e9bb974fe65ba5a7f190e2cc138975ab233f3b8db3c3baf",
+    "qualify_stage1_gpu.py": "c4283957fd79c58cb2f65cb4675332e0cd1f20eecb9bc041ee78704399079835",
+    "qualify_gpu_gate_admission.py": "d3ebdb62d31c5c9bfd3bb4dc1f1cfcabf66178b59d2bd6c5914df59fc1982912"
+  },
+  "parent_cpu_seconds": 0.052203,
+  "children_cpu_seconds": 0.29247,
+  "wall_seconds": 0.27789193601347506,
+  "scope": "Metadata/fake attempts only; home03 core63 nice19/SCHED_IDLE, no model inference/games."
+}

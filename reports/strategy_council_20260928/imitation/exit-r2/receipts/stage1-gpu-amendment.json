@@ -1,0 +1,51 @@
+{
+  "schema": "clasher.exit-r2.stage1-gpu-operational.v1",
+  "utc": "2026-10-10T03:26:05Z",
+  "authority": "Coordinator decision labeled02:50Z, received03:12Z; stages1/2 timing admission split",
+  "committed_before_runs": true,
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "x6_addendum_sha256": "ce59c1f1789fd82c957261d43e88e859315d0a7e268936db426ecfc4d70b8e78",
+  "x7_addendum_sha256": "7682a6442d31df6b84f7936faf8413389e288d6ac2a2acb487a920d2c33c71d4",
+  "sdefault_addendum_sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+  "qualification_sha256": "28441a1b15e4022545281937c8a3abb19af48b9bf0ce9461fbe4531a2ac0c910",
+  "files": {
+    "ops/supplement_gpu.py": "5040a5518380364387e6079cf9984fb3701d3bd015dce74f66335b39ecde7f32",
+    "ops/offline_gpu.py": "e7407265cabe8b6af9b20dba2239f5c01a08ec4f20432d8039edd9118f9bd6a4",
+    "ops/stage1_gpu_guard.py": "149f90a9bfcaf31e70cf354b7a8c5f3edbc121f5654e450b439d0618d2749dbb",
+    "ops/supervise_stage1_gpu.py": "4d6ddb29eca037a858ab9f619475eaba66b432b947c4e359f235d8744917bcab",
+    "ops/stage1_inputs.py": "7b35d7d86a10566a1273e92b26fce2caff7543d272ea7e9073d8780fc9fbbbbb",
+    "ops/remote_gpu_gates.py": "2d21e2a46a91560e262d1fa5c263fd80689c7ad5748efd2d5e168aa549f93dee",
+    "ops/controller_gpu_gates.py": "fa4ea443585fa8ccbe103a92f1b1e13b6d4445ea2f3fcb1337af25081f631278",
+    "ops/test_gpu_gate_admission.py": "a618ee715c1d2c736e9bb974fe65ba5a7f190e2cc138975ab233f3b8db3c3baf",
+    "ops/qualify_stage1_gpu.py": "c4283957fd79c58cb2f65cb4675332e0cd1f20eecb9bc041ee78704399079835",
+    "ops/qualify_gpu_gate_admission.py": "d3ebdb62d31c5c9bfd3bb4dc1f1cfcabf66178b59d2bd6c5914df59fc1982912",
+    "ops/evaluation_k_yield.py": "f26a5b7636f3e97db0f6a082a5cd826a1973481a25dce34c1f883e48606408f7",
+    "ops/evaluation_g_yield.py": "86b4a4be30c440853b391520535017836f9e1c1336372dc327d066e49a00858e",
+    "ops/supplement.py": "9d72bd86e9d49a79f22c9cb249e5494af06d4b02dff04e661feccdfcc905349d",
+    "ops/fit_collection_ready_x7.py": "fbc68a8285e982b7fd9a6664d769e8f30b19b6f502874e05eb606c1194cb10d3"
+  },
+  "stage1": {
+    "recipe": "No training/scientific hash changes. Same sealed r1 heldout64, exact metric formulas/point kill thresholds/bootstrap5000seed80991010, final EMA only. Float32 GPU inference/no autocast/TF32 disabled,CPU reductions unchanged,batch64.",
+    "hosts": {
+      "X1": "127x09",
+      "X2": "127x16",
+      "X3": "127x08",
+      "X4": "127x01",
+      "X5": "127x04",
+      "X6": "127x13",
+      "X7": "127x14"
+    },
+    "admission": "Final4883 orX5=9766 artifacts+source/input pins/sealedEMA,supervisor exit0/no reason,all owned fit groups absent; exact heldout73MiB manifest and shardSHA, freshGPUidle/currentlease/floors. No K/G timing gate for non-timed fit-host offline scoring.",
+    "resources": "GPU scoring only,2ownprocesses<=8,nice19/SCHED_IDLE/core126,Torch1,PSSguard46GB/hard48GB,GPUfree>=8GiB. Leasedhosts no CPUheavy work/sims.04 no sims/A1 seal undisturbed.08 quiet/coordinator/FIT.STOP/Oct10 05:15guard causes immediate stop/reap, vacate by05:30.",
+    "metering": "Every scoring supervisor attempt GPUwall,parent+child CPU once including guards/data checks/bootstrap; nested child result CPU diagnostic only. No rerun of scored model without an explicit operational failure review."
+  },
+  "stage2": {
+    "design": "Unchanged256 vs releasedv1, frozenseed/deck/seat/native ABI/checkpoint; killupperlossCI>=.5.",
+    "routing": "Earliest admitted home:01cores0-23 subset0-39 AFTER X4 finalEMA+cleanexit/ownedgroupsabsent;03cores0-31 AFTER successfulKREPORTING*-DONE andzeroK timingPGIDs. Both Gfull drain/twoempty samples/home24GiB/load<=100,nice19/SCHED_IDLE/Torch1/physicalcores. Never04/08/leases.",
+    "dedupe": "Single global stage2 pool, check both home01/03 attempt identity/meter/cases before launching,adopt existingcasebank,preserve raw attempts andCPU meters. Direct sourcehost->home checkpoint rsync/SHA,never05; no model checkpoint transfer over K timing03 until that route admitted.",
+    "native_sha256": "f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8"
+  },
+  "controller": "controller_gpu_gates.py replaces idle1870636 only after this commit/push, cleanoldexit/meter; all7 offline may score independently as finals seal,stage2 serial singlepool. Sourceversions immutable.",
+  "stage3": "Unchanged frozenS-default andX1/X7familycap; replacementsmoke/reporting still requireKrelease/same-load interleaving. No reportingseed consumed by this amendment.",
+  "preparation": "Heldout copies from03 frozenr1 slice with nice19/IDL/core63 sender,73MiB each, throttled153600KiB/s,readonly/shardSHA. Preparationmeters retained,remote sender/bootstrap CPU unmetered/disclosed."
+}

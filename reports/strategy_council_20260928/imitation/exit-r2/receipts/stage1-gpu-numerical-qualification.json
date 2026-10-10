@@ -1,0 +1,46 @@
+{
+  "utc": "2026-10-10T03:18:41Z",
+  "passed": true,
+  "host": "127x01",
+  "synthetic_rows": 128,
+  "games_consumed": 0,
+  "heldout_rows_consumed": 0,
+  "log_policy_errors": [
+    {
+      "gate": 3.337860107421875e-06,
+      "card": 1.6689300537109375e-06,
+      "tile": 7.62939453125e-06
+    },
+    {
+      "gate": 2.86102294921875e-06,
+      "card": 1.430511474609375e-06,
+      "tile": 7.62939453125e-06
+    }
+  ],
+  "metrics": [
+    {
+      "root_only": true,
+      "rows": 64,
+      "maximum_metric_difference": 5.587935447692871e-09
+    },
+    {
+      "root_only": false,
+      "rows": 128,
+      "maximum_metric_difference": 3.259629011154175e-09
+    }
+  ],
+  "hard_and_top8_exact": true,
+  "precision": "float32, TF32 off, no autocast",
+  "torch": "2.7.1+cu118",
+  "numpy": "2.3.5",
+  "parent_cpu_seconds": 10.162761,
+  "children_cpu_seconds": 0.07548,
+  "gpu_wall_seconds": 10.278002813924104,
+  "files": {
+    "supplement_gpu.py": "5040a5518380364387e6079cf9984fb3701d3bd015dce74f66335b39ecde7f32",
+    "offline_gpu.py": "e7407265cabe8b6af9b20dba2239f5c01a08ec4f20432d8039edd9118f9bd6a4",
+    "stage1_gpu_guard.py": "149f90a9bfcaf31e70cf354b7a8c5f3edbc121f5654e450b439d0618d2749dbb",
+    "supervise_stage1_gpu.py": "4d6ddb29eca037a858ab9f619475eaba66b432b947c4e359f235d8744917bcab"
+  },
+  "scope": "Synthetic random valid tensors with v1 EMA; home01 core63 nice19/SCHED_IDLE/Torch1, brief concurrent GPU qualification with unchanged X4 fit; not scientific heldout inference."
+}
