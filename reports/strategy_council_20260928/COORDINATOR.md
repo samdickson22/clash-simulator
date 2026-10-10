@@ -1862,3 +1862,7 @@ Also on the hub, but with copies elsewhere:
 - **15:02 UTC: T1 freeze CONFIRMED** (9a7126f6). Host set **01/03/08**: the perception serial is CPU-bound (94–97% of a core, no lock waits) and recovered to ~24 branches/h with T1 on 03, so the half-rate interval was branch-cost variation.
   - The post-freeze smoke was stopped by a foreign ssh on 01 at 14:59:50Z (likely the perception compact mirror); the owner is told no ssh to 01/03/08 except the 04→03 readers.
   - Reporting launches sealed after a healthy smoke.
+- **15:11 UTC:**
+  - The T1 post-freeze smoke r2 was stopped on 01 at 15:08:28Z by the **hub01→04 mirror loop** (`hub_mirror_v2.sh`, fleet_run PGID 516161, 30-min rsync cycle with no stop file).
+  - **Paused it with SIGSTOP on its exact PGID** (process state T; no CPU). **Resume with `ssh 127x01 kill -CONT -516161` after T1 reporting completes.** T1 keeps its own 03→01 copier; perception mirrors to 05.
+  - Earlier stop at 14:59:50Z: the coordinator's fleetweb dashboard poller. 01/03/04/08 are in the fleet-top quiet file until 2026-10-11T12:00Z.
