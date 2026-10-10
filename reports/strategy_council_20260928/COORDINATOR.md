@@ -1619,3 +1619,8 @@ Also on the hub, but with copies elsewhere:
   - **Student screen:** all 3,232 tasks complete; final diagnostics and reduction running on 03.
   - **GPUs 01/04/08/09/16 idle:** nothing queued until the student-screen verdict, which decides DAgger round 2 vs other work. 08 is held for B, which is behind the A1 seal (64/216 branches, ETA ~05:00Z).
   - 02/06/07/11/18 are down.
+- **00:12 UTC: ExIt r1 student screen COMPLETE: ALL 3 ARMS KILLED** (frozen rules; `844c442b`, `STUDENT-SCREEN-RESULTS.md`).
+  - Play recall was 39% / 40% / 3% against the <50% kill rule; the paired-CI upper bound is ≥0 for mix and human; human also failed the WAIT rule.
+  - **Signal:** S-teacher as the deadline-W fallback gave **−7.5 pp [−12.7, −2.2]** losses, but play recall was 40%, so it's killed. Students are too passive.
+  - No adoption and no round 2 under this plan. Cost: 8.6 GPU-h / 122 CPU-h.
+  - Commissioning an Opus next-step analysis (play-recall fix vs faster search vs Mac measurement) for the idle GPUs until the lease ends.
