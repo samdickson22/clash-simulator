@@ -764,3 +764,14 @@ prompt refreshed to authoritative4closedkills/current1940296/3activefits,
 X8cancelled/15unused;enabled,next2026-10-10T04:01:40.851Z. No replacement
 fit/controller/score/pool launch. Three remaining fits/gates keep experiment
 active; no completion claimed.
+
+2026-10-10T03:53:32Z. QueuedGPUamendment continuation reconciled latest
+four closedstage1kills. Current1940296 verifiednice19/IDL/63,offline
+X1/X2/X3/X6 false,stage2{},active=null/offline_active[]/failures[].
+X4/X5/X7 originalgroups unchanged at4101/5446/1432,all8nice10processes,
+noexit/guardreason;14lease/PSS/GPU floorsPASS. No newlaunch/score/pool,
+no science/gate/recipe change; final0350meter snapshot retained without
+adding duplicate live costs. Analyst noise-ceiling draft was read only;
+it explicitly changes no frozen gate or recipe, and no newallocation is
+authorized. Its untracked file is not owned/staged by X. X8cancelled/15unused,
+remaining3fits/gates continue. Nextcontinuation04:01:40.851Z enabled.
