@@ -653,3 +653,5 @@ K/G/cleancollection admissions unchanged. X7.STOP and X3.RESUME.REQUEST on14
 veto/checkpoint; X3 has priority13/14. Staging/qualifier are preparation only.
 
 2026-10-10T03:04:27Z X7 staging completed:71/71 corpus SHAs and input/human/sidecar pins pass; staging2379849 exited,427.168715s wall,420.142932s local whole CPU. Readonly sender CPU unmetered/disclosed. Staging receipt retained; still no X7 fit before prelaunch commit/push.
+
+2026-10-10T03:07:15Z. X7 launcher2417277=PGID2417277 exited before supervisor/trainer because own venv symlink target absent. No optimizer/fit GPU cost; setup shell CPU unmetered disclosed. Existing lease-local clasher-gpu environment verified and own symlink corrected; original scientific hashes unchanged. Attempt1 log/identity retained; retry attempt2 only after correction commit/push. Old03 controller1808181 exited clean with no active task, wholeCPU8.155191s retained once.

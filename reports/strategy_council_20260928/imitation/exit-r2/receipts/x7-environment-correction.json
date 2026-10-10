@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-10T03:07:15Z",
+  "prelaunch_commit": "1d898084",
+  "failed_launcher_pid": 2417277,
+  "failed_launcher_pgid": 2417277,
+  "launched_at": "2026-10-10T03:06:16Z",
+  "failure": "env could not exec missing j/venv/bin/python; supervisor and trainer never started; no X7-launch/runtime/input/optimizer artifact",
+  "operational_correction": "Own14 j/venv points to existing /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu, as on16, rather than absent home repo .venv. Scientific source/recipe/freezes unchanged.",
+  "retry": "New fit-X7-attempt2.log only after correction commit/push and dedup/idle/lease checks. Failed attempt1 log+identity retained on14.",
+  "metering": "Zero trainer/GPU fit seconds; small failed-shell setup CPU unmetered, disclosed; no fabricated CPU charge."
+}
