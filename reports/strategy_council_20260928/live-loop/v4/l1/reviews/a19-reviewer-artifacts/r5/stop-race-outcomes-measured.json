@@ -1,0 +1,26 @@
+[
+ [
+  "SERIAL_VERIFY_SUPERSEDED",
+  "runner-stop-check"
+ ],
+ [
+  "SERIAL_VERIFY_SUPERSEDED",
+  "runner-stop-check"
+ ],
+ [
+  "SERIAL_VERIFY_SUPERSEDED",
+  "supervisor-sigterm"
+ ],
+ [
+  "SERIAL_VERIFY_SUPERSEDED",
+  "runner-stop-check"
+ ],
+ [
+  "SERIAL_VERIFY_SUPERSEDED",
+  "runner-stop-check"
+ ],
+ [
+  "SERIAL_VERIFY_SUPERSEDED",
+  "runner-stop-check"
+ ]
+]

@@ -1718,3 +1718,9 @@ Also on the hub, but with copies elsewhere:
   - **Throughput:** 04's local io.lock is held 53% of the time (decompress/parse inside the lock), so parallel verification caps at ~1.9×; A19 on A1 would likely not beat serial.
   - **Decisions:** r5, plus a separate **A20 lock-scope narrowing** amendment (operational). At seal exit: A19 on A1 only if r5 and A20 are approved; otherwise serial A1, with A19 reserved for A2. Asked the owner what the 2026-10-11T04:00Z cap is.
 - **04:24 UTC: cap clarified.** Oct 11 04:00Z is the renewed validation cache **service deadline** on 03 and 08 (plan db085fde), plus an upper bound in A19 authority. A1/A2 read pinned files, not the cache. **Authorized a seamless cache-service renewal to 2026-10-13T04:00Z** (new immutable plan, receipts and storage check; done by 20:00Z today). A19 valid_until may be up to Oct 13 04:00Z. A20 scope accepted (04-local read/hash only under the lock; the frozen serial runner stays untouched as fallback).
+- **04:51 UTC: A19 r5 re-check = APPROVE_WITH_CONDITIONS** (r5 code approved for freeze; 90762bcb). D1–D4 met; 145/145 author tests plus 20/20 reviewer tests; 18 STOP-race runs superseded correctly. Conditions:
+  - E1: raise the authority valid_until cap constant to Oct 13 (fold into A20);
+  - E2: the freeze binds the r4 draft b43a3979;
+  - E3: fix OPERATOR's deploy count (23);
+  - O1–O6 carry over.
+  - Cache services renewed to Oct 13 (04:41Z); B uses a local PixelCache, and the 08 HTTP service is to be retired before the B window.
