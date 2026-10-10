@@ -1,0 +1,35 @@
+{
+  "schema": "clasher.t1.parent-source-seed.v1",
+  "host": "127x08",
+  "source_ip": "129.65.221.14",
+  "ssh_connection": "129.65.221.14 55838 129.65.221.18 22",
+  "parent": {
+    "pid": 1896254,
+    "start_ticks": 138108616,
+    "uid": 3822945,
+    "ppid": 1896170,
+    "pgid": 1896170,
+    "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d"
+  },
+  "client_identity": {
+    "pid": 2508732,
+    "starttime": 94882802,
+    "cmdline_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+    "ppid": 1,
+    "pgid": 2508732,
+    "uid": 3822945
+  },
+  "source_join": {
+    "server": {
+      "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+      "commit": "0e137378ff251896d7a27899a9453f278945276b",
+      "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    "client": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+      "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+      "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+  },
+  "evidence_limitation": "04 mux PPID1; ControlPath/slot association rather than live serial ancestry.08 proc/fd unreadable; reversed established tuple joins authenticated server generation per coordinator18:03Z ruling."
+}
