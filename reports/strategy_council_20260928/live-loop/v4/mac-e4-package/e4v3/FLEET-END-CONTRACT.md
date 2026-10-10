@@ -84,11 +84,17 @@ repeat candidates. Classification grants no session authorization. A second
 failure makes the reference unavailable pending an outcome-blind amendment.
 
 For A6 only, use `kind: unpoolable-smoke`, a smoke-labelled pinned plan naming
-the non-reporting host, reduced slots, synthetic completion/launch/MHz/census
+the coordinator-assigned T1 host outside its reporting windows, reduced slots,
+synthetic completion/launch/MHz/census
 evidence, and the reviewed real corpus. The same runner still performs real
 backend/spawns, >=300 seconds warmup, clocks, census and sealing. It is rejected
-by the production pool regardless of timing. This worker may execute it only
-on 05 at nice19 with light load after the reviewed bundle is available.
+by the production pool regardless of timing. The coordinator assigns the host
+and window with T1, and supplies the reviewed bundle path/manifest SHA before
+this worker accesses the host. Use the assigned host's pinned plan nice level
+(current T1 nice10). Launch through T1's approved detached mechanism so the
+launching SSH closes before admission; observe only through its approved
+health-only copier. No ordinary SSH inspection during timing. The earlier
+Linux05 dry-run receipt does not satisfy this real T1-host fleet-mode smoke.
 
 T1 separately owns enforcing Amendment 1 in every outcome-release route:
 committed pool-complete and registration commit/SHA are prerequisites, including

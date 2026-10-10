@@ -12,7 +12,7 @@ compatible. No T1 files were changed. No reporting host or Mac was accessed.
 | A4 validity census | SHA-bound frozen T1 guard modules and existing admission identities; exact own PID/start descendants; reporting foreign/console/memory rules plus OP-1 meters; independent1Hz stop and final revalidation | Implemented; real guard/spawn smoke pending |
 | A5 bit-exact fleet | Native and full belief golden receipts must be EXACT/error0 before timing; pool refuses any nonzero discrepancy, including failed-attempt evidence | Implemented, tested |
 | A6 classifier | Typed crash/host-loss/MHz/census rule; exactness never repeatable; child error survives cleanup; SHA-sealed classifier CLI | Implemented, tested |
-| A6 real fleet smoke | Reviewed real300 corpus, genuine spawn/backend, >=300s warmup, telemetry, synthetic full-load reporting clocks, seal; smoke plan unpoolable | **Pending T1 bundle**, not satisfied by unit tests or prior Linux dry run |
+| A6 real fleet smoke | Coordinator-assigned T1 host/window outside reporting; reviewed real300 corpus, genuine spawn/backend, >=300s warmup, telemetry, synthetic full-load reporting clocks, seal; smoke plan unpoolable | **Pending assigned slot and T1 bundle**, not satisfied by unit tests or prior Linux dry run |
 
 57 unit/integration tests pass. The guard wiring test imports the actual frozen
 T1 OP-1 modules with synthetic process/admission fixtures; it rejects foreign
@@ -28,6 +28,10 @@ Prior Linux05 measurement receipts remain unchanged and SHA-sealed, with
 their original pipeline source pins and median ratios0.980–0.984. They do not
 satisfy A6's real fleet mode. Source/input schema changes require a freshly
 prepared reviewed bundle. The generic125 stays exclusively for exactness.
+The coordinator's latest execution ruling places A6 on a T1 host only, outside
+reporting windows. This supersedes the earlier proposed Linux05 smoke location.
+The host/window and reviewed bundle path/SHA have been requested; no T1 host
+will be accessed before that assignment.
 
 No reference-readiness confirmation is issued until the real A6 smoke and
 independent review pass. This document freezes nothing and grants no launch,
