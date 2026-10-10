@@ -1,0 +1,140 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-10T20:03:19Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r1",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "immutable_manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "counts": {
+    "127x01": {
+      "durable_blocks": 175,
+      "guard_durable_blocks": 35,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 51,
+      "primary_durable_blocks": 140
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 86,
+      "durable_blocks": 86,
+      "guard_durable_blocks": 16,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 86,
+      "ssh_flagged_blocks": 51,
+      "dbus_flagged_blocks": 86,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 53,
+      "primary_durable_blocks": 70
+    }
+  },
+  "total_durable_blocks": 261,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-10T20:03:11Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 51,
+      "failed_blocks": 0,
+      "queued": 1395,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 8.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    },
+    "127x08": {
+      "utc": "2026-10-10T20:03:08Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 53,
+      "failed_blocks": 0,
+      "queued": 1394,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 11.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-10T20:02:34Z",
+  "corpus_durability": "IN_PROGRESS",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "checkpoint_utc": "2026-10-10T20:03:50Z",
+  "identity_verification": {
+    "utc": "2026-10-10T20:02:09Z",
+    "127x01": {
+      "supervisor": {
+        "pid": 433021,
+        "start_ticks": 145043064,
+        "pgid": 433021,
+        "uid": 3822945,
+        "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+        "matches_admission": true,
+        "scheduler": 0,
+        "nice": 10,
+        "affinity": [
+          61
+        ]
+      },
+      "copier": {
+        "pid": 432837,
+        "start_ticks": 145042108,
+        "pgid": 432837,
+        "uid": 3822945,
+        "cmdline_sha256": "6ed13ec3885f058ba25509410268b4797f87051911d96229c28122d1691f725e",
+        "matches_admission": true,
+        "scheduler": 0,
+        "nice": 19,
+        "affinity": [
+          62
+        ]
+      }
+    },
+    "127x08": {
+      "supervisor": {
+        "pid": 1876811,
+        "start_ticks": 145993083,
+        "pgid": 1876811,
+        "uid": 3822945,
+        "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+        "matches_admission": true,
+        "scheduler": 0,
+        "nice": 10,
+        "affinity": [
+          61
+        ]
+      }
+    },
+    "who_empty_both": true,
+    "B_STOP_absent": true,
+    "08_STOP_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+  },
+  "corpus_copy_health": {
+    "observed_utc": "2026-10-10T20:02:26Z",
+    "state": "IN_PROGRESS",
+    "owner_pid": 39246,
+    "owner_pgid": 39246,
+    "owner_start_ticks": 144996552,
+    "nice": 19,
+    "script_sha256": "6bf453780f3ec9bd3dea4667d8deea6d39bf07d3b6de63c8dd480e4fe2bcdf44",
+    "03_final_receipt_present": false,
+    "05_final_receipt_present": false,
+    "read_only_not_yet_asserted": true
+  },
+  "copy_health_disclosure": "The retained 08 copy-health error at 19:28:47Z predates phase-directory creation; subsequent completion ACKs are verified and progress is fresh. No historical receipt was deleted.",
+  "replacements_required": false,
+  "reporting_complete": false,
+  "release_performed": false,
+  "continuation_helper_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/continuation-health.py",
+  "continuation_helper_sha256": "5f44cc87232209ad5254663b50682a0949c2e84dc703e4de51106dc0a06fad48"
+}
