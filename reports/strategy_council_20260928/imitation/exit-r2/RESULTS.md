@@ -1,16 +1,16 @@
 # ExIt r2 X screen — interim results
 
-Updated 2026-10-10T03:33:51Z. Exploration; no multiplicity adjustment. X1, X2 and X3 are killed at the frozen offline64 gate. The other four fits continue. No h2h256 or stage3 reporting game has run; R2 is not eligible. The experiment is active.
+Updated 2026-10-10T03:39:24Z. Exploration; no multiplicity adjustment. X1, X2 and X3 are killed at the frozen offline64 gate. The other four fits continue. No h2h256 or stage3 reporting game has run; R2 is not eligible. The experiment is active.
 
 | Arm | Target / teacher fraction / seed | Fit | Stage1 | Stage2 / Stage3 |
 | --- | --- | --- | --- | --- |
 | X1 | T=.003 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X2 | T=.0001 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X3 | root z-score τ=.5 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X4 | T=.003 /.75 /2026101001 | running 127x01, step3638/4883 at2026-10-10T03:30:52Z | pending | conditional |
-| X5 | X1 double steps /1 /2026101001 | running 127x04, step4736/9766 at2026-10-10T03:30:52Z | pending | conditional |
-| X6 | T=.0001 /.75 /2026101001 | running 127x13, step4286/4883 at2026-10-10T03:30:52Z | pending | conditional |
-| X7 | X1 replicate /1 /2026101007 | running 127x14, step703/4883 at2026-10-10T03:30:52Z | pending | conditional |
+| X4 | T=.003 /.75 /2026101001 | running 127x01, step3834/4883 at2026-10-10T03:39:24Z | pending | conditional |
+| X5 | X1 double steps /1 /2026101001 | running 127x04, step5001/9766 at2026-10-10T03:39:24Z | pending | conditional |
+| X6 | T=.0001 /.75 /2026101001 | running 127x13, step4567/4883 at2026-10-10T03:39:24Z | pending | conditional |
+| X7 | X1 replicate /1 /2026101007 | running 127x14, step980/4883 at2026-10-10T03:39:24Z | pending | conditional |
 
 Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher plays and5290 teacher WAITs. The all-poll supplement has37950 eligible rows. Below are point estimates and paired whole-game percentile95% bootstrap CIs (5000 resamples,PCG64 seed80991010). Display rounded; linked receipts retain full precision, denominators, all-poll metrics and pinned final EMA.
 
@@ -36,7 +36,7 @@ X3 finished fit03:30:36Z and offline03:30:50Z. All own08 fit/scoring PGIDs are a
 | X2 | 2.520438362 | 6.790320697 | 0.003094121 | 0.002869096 |
 | X3 | 2.629250317 | 7.795465627 | 0.003155318 | 0.002952663 |
 
-Current seven-fit total at03:30:36Z: 15.435942753 allocatedGPU-wall h /51.651209979 wholeCPU h. ClosedX1/X2/X3 final exit meters replace their live snapshots; remaining four are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.009344400GPU-wall h/0.008669217CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
+Current seven-fit total at03:39:24Z: 16.003758580 allocatedGPU-wall h /53.809962756 wholeCPU h ([snapshot](receipts/continuation-check-20261010T0339Z.json)). ClosedX1/X2/X3 final exit meters replace their live snapshots; remaining four are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.009344400GPU-wall h/0.008669217CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
 
 New preparation: GPU synthetic qualification10.238241CPU s/10.278003GPU-wall s;12 metadata tests.344673CPU s; all7 heldout staging6.196271CPU s. Source sender/bootstrap/native-copy CPU is unmetered and disclosed. Prior failed fits/audits/staging/controllers/smokes remain separately retained in receipts and history. Retired seven-armcontroller1870636 cleanexit11.910174CPU s charged once; currentcontroller1940296 remote jobs are separately metered, controller’s SSH/local children only counted in its own final meter.
 

@@ -689,3 +689,21 @@ never added. Tenmincontinuation currentseven-armpromptenabled,next2026-10-10T03:
 2026-10-10T03:33:51Z. Fit-hostGPU operationalfreezea7b5acd1 pushed before firstscore. Idleoldcontroller1870636 cleanexitCPU11.910174s; newcontroller_gpu_gates1940296=PGID1940296 started03:28:16Z nice19/IDL/core63, startupPASS03:29:30Z,sourcespins/oldabsent/nofailures. X1score09supervisor2521634=PGID2521634 launched03:28:19,closed03:28:30; X2score16supervisor1434632=PGID1434632 launched03:28:20,closed03:28:32; X3score08supervisor3319677=PGID3319677/worker3319713=PGID3319713 launched03:30:39,closed03:30:50. Logs stage1-Xn-attempt1.log/results+meters underownhostoffline, smallcopies03/repo. X1/X2/X3 each KILL recall/top8/hardagreement, WAITpasses; pointmetrics/CIs/sealedEMA/skipdecisions inRESULTS/receipts. No stage2/3game/R2root consumed. X3fit finalclean03:30:36; own08fit+score groupsallabsent/GPUempty48578MiBfree03:32:05,vacatedbefore05:30. No resume orpriority flags. Remaining4fitgroupshealthy03:30:36steps3638/4736/4286/703,no guards/quiet/leasefaults. Monitor0330 finalclosed3+live4total15.435942753GPUh/51.651209979CPUh REPLACESpriorlive; separate3offlinewholemeters,neverdoublechildcounts. All7heldoutcopies71SHApass,stageprepCPU6.196271s; qualifiers chargedseparately.
 
 2026-10-10T03:35:22Z. Scientific kills/result rewrite and08vacate retained; continuationcurrent1940296/moduleGPUgates/splitstage1-homeStage2 refreshed, enablednext2026-10-10T03:41:38.044Z. Pipelineactivepending4fits/gates, notcomplete.
+
+2026-10-10T03:39:24Z. Queued historical1808181 prompt reconciled to current
+seven-armGPUcontroller1940296; no superseded process restarted. Four unfinished
+fitgroups deduplicated: X4 01 1217465/1217609 step3834, X5 04
+3727388/3727520 step5001, X6 13 2251934/2252096 step4567, X7 14
+2423139/2423269 step980. PID=PGID pairs unchanged; eight nice10 ownprocesses
+each, no exit/guardreason,13/14 leases/PSS/GPU floors PASS. Controller
+1940296=PGID1940296 verified nice19/SCHED_IDLE/core63, closedofflineX1–3,
+stage2{}, active=null/offline_active[]/failures[]/priorityfalse at03:39:49.
+K1718091 timing group remains active with no REPORTING-DONE; no home03
+evaluation or replacement smoke/reporting admitted. X4 still fitting,01 game
+route closed. Base/X6/X7/S-default/stage1 amendment SHAs unchanged. No new
+fit/controller/pool/score/stop/migration launched in this continuation.
+Snapshotcontinuation-check0339 finalclosed3+live4 total16.003758580GPUh/
+53.809962756CPUh replaces prior live totals; separate scoring/closed costs
+retained, no nested child CPU counted twice. X3 remains vacated; four fits
+and exact conditional gates remain pending. Tenminschedule enabled,
+next2026-10-10T03:41:38.044Z; experiment not complete.
