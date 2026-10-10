@@ -1,5 +1,17 @@
 # X worker progress
 
+2026-10-10T05:22:08Z. Existing01reportingpool2035131 healthy/admitted,
+199/600complete/361pending/40active/no failures,mem109404102656/load47.48.
+No reporting losses/CIs/outcomes read, no launch/stop/recovery/score.
+Offline-only2071651 healthyfiveclosed/noactive/failures/stage2{}.
+X5/X7 originaleightnice10groups unchanged at8243/9766 and4269/4883,
+guards/14lease/floorsPASS. Monitor0522 closedfivefinal+livetwo fit totals
+20.454352639GPUh/69.021850976CPUh REPLACE prior live snapshots.
+ReportingCPU retains05:02sample46461.92s until finalwholepoolmeter;
+nestedchild/block/gameCPU neveradded. Original150/151unconsumed/R2ineligible.
+01notreleased; X8cancelled/15unused/08vacated. Tenminscheduleenabled,
+next2026-10-10T05:31:53.534Z; X5/X7offline and600block reduction/report pending.
+
 2026-10-10T05:12:34Z. Reportingpool2035131 alive/admitted,
 148/600complete/412pending/40active/failures[],available109352132608bytes/
 load47.23; no loss/CI/outcome read. Currentoffline-only2071651 healthy,

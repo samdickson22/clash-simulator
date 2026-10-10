@@ -1,0 +1,184 @@
+{
+  "utc": "2026-10-10T05:22:08Z",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "pool": {
+    "utc": "2026-10-10T05:22:08Z",
+    "pool_pid": 2035131,
+    "pgid": 2035131,
+    "alive": true,
+    "complete": 199,
+    "active": 40,
+    "pending": 361,
+    "admitted": true,
+    "failures": [],
+    "mem_available": 109404102656,
+    "load1": 47.48
+  },
+  "controller": {
+    "alive": true,
+    "active": null,
+    "offline_active": [],
+    "closed": [
+      "X1",
+      "X2",
+      "X3",
+      "X4",
+      "X6"
+    ],
+    "stage2": {},
+    "failures": []
+  },
+  "fits": {
+    "X5": {
+      "utc": "2026-10-10T05:22:08Z",
+      "arm": "X5",
+      "host": "127x04",
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "own_processes": [
+        {
+          "pid": 3727388,
+          "pgid": 3727388,
+          "nice": 10
+        },
+        {
+          "pid": 3727520,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736754,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736778,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736797,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736810,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736811,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736816,
+          "pgid": 3727520,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T05:22:01Z",
+        "pid": 3727520,
+        "pss": 13814895616,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 16149.67160622601
+      },
+      "step": 8243,
+      "rows": 67526656,
+      "provisional_tree_cpu_seconds": 44199.259999999995,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00008000.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X7": {
+      "utc": "2026-10-10T05:22:08Z",
+      "arm": "X7",
+      "host": "127x14",
+      "supervisor_pid": 2423139,
+      "supervisor_pgid": 2423139,
+      "trainer_pid": 2423269,
+      "trainer_pgid": 2423269,
+      "own_processes": [
+        {
+          "pid": 2423139,
+          "pgid": 2423139,
+          "nice": 10
+        },
+        {
+          "pid": 2423269,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429694,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429695,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429723,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429724,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429729,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429730,
+          "pgid": 2423269,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T05:22:01Z",
+        "pid": 2423269,
+        "pss": 19636585472,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 8058.252825540956
+      },
+      "step": 4269,
+      "rows": 34971648,
+      "provisional_tree_cpu_seconds": 22630.16,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004250.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    }
+  },
+  "schedule": {
+    "enabled": true,
+    "nextRunAt": "2026-10-10T05:31:53.534Z"
+  },
+  "note": "Metadata/count/resource checks only. No outcomes read. No launch/stop/score/recovery. Live fit CPU is nonadditive and final exit meters supersede."
+}
