@@ -485,3 +485,22 @@ Conservative cumulative pipeline cost 15.104 GPU-hours includes
 staging and all 480 segments; final actual costs await completion.
 Evidence: `monitor-20261010T0042Z.json`. Failure artifacts retained;
 continuation enabled; 16 remains released.
+
+2026-10-10 00:53Z: Width 288 reached the frozen quarter boundary.
+Own 13 log observation at 00:53:31Z: step11615 / 95,144,680 rows;
+quarter-step-00011615.pt present (76,849,050 bytes observed). Full-dev
+scoring is underway; quarter NLL, checkpoint SHA and kill decision pending.
+No survival, scientific kill or resource-censoring claim is made.
+Controller sample width 288: step 11615, 95,144,680 rows, 5768 latest loader-inclusive rows/s.
+Controller sample width 384: step 8898, 72,887,016 rows, 4413 latest loader-inclusive rows/s.
+Controller sample width 480: step 8123, 66,538,216 rows, 4366 latest loader-inclusive rows/s.
+All guards and the sole controller remain healthy;
+sampled processes per host [7, 6, 6]; peak PSS 43.34 GB;
+sampled GPU free memory ≥43.8 GiB. No new OOM, stop or restart.
+All three matched epoch-one points are retained. Quarter control remains
+0.27726436294161033 at 95,144,680 rows; gain<0.005 rule remains frozen.
+Conservative cumulative pipeline cost 15.614 GPU-hours includes
+staging and every 480 segment; actual final costs await completion.
+Evidence: `monitor-20261010T0052Z.json`. No source, config or data edits.
+480 micro1024/effective8192/cap0.78 stays fixed; failure artifacts retained.
+Continuation remains enabled; 16 remains released.
