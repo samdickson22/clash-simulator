@@ -142,3 +142,12 @@ Source inspection confirms run.py closes all player scoring pools before
 extraction/writing, as in K2; no source edits or additional tests needed.
 No outcomes opened/reduced. Resume metadata monitoring, then bounded advance
 only after clean full completion. Scientific freeze remains dfefec9f.
+
+2026-10-10T11:27:28Z — Read-only seed filename coverage review added 12
+FROZEN/frozen/PREREG/prereg JSON variants beyond original FREEZE/freeze glob.
+7367 scalar seed leaves (also low64/low32 mappings) and all base/count
+intervals are disjoint from S1 reporting/smoke/helper ranges. Original frozen
+seed audit remains immutable; additive post-launch coverage receipt records
+source hashes and zero overlaps. No outcomes opened, no source/seed/arm/stats
+changes. Earlier review printed excessive old hashed-stream seed metadata;
+compact receipt retains only counts/extrema/source SHAs, not that output.

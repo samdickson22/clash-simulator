@@ -1,0 +1,150 @@
+{
+  "utc": "2026-10-10T11:27:28Z",
+  "scope": "Additive read-only coverage of FROZEN/frozen/PREREG/prereg filename variants outside original freeze-source glob; no science, arm, seed, source, reducer or outcome changes",
+  "original_frozen_seed_audit_sha256": "50b52aee874efa7d4bc894c53373e99ebb87b46908ac37eae5635d789a9ab6e3",
+  "proposed_ranges": {
+    "reporting": {
+      "base": 4503602707370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503602617370496,
+      "count": 8
+    }
+  },
+  "sources": [
+    {
+      "path": "imitation/gates-bc/receipts/freeze-launch-v1/frozen-verification.json",
+      "sha256": "b3f9fc85500564529bdaa9f58332e09f0bc824811cdb229ceb7062e61c6d15b6",
+      "numeric_seed_leaves": 0,
+      "seed_min": null,
+      "seed_max": null,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/hog26_scalar_birthfixed_frozen_plan_20260911.json",
+      "sha256": "a23f5d3a2acfdc40a2a26cc8df6248225026228db1914ac50f373287ba127dc4",
+      "numeric_seed_leaves": 1166,
+      "seed_min": 1278601,
+      "seed_max": 115636747309928539292625345749112412690363258688021439052064609642783366751489,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/hog26_scalar_handfixed_frozen_plan_20260911.json",
+      "sha256": "99a37a78852b74f7fce65fd05950676a9fdabcb1731ce2028c39d985eb6994df",
+      "numeric_seed_leaves": 1166,
+      "seed_min": 1278601,
+      "seed_max": 115636747309928539292625345749112412690363258688021439052064609642783366751489,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/hog26_scalar_pilot_frozen_plan_20260911.json",
+      "sha256": "37f3404b5629ade08df45882bd5f20f0b89a6b6200c5fdb0ed1e7ef55f6fdfbd",
+      "numeric_seed_leaves": 1166,
+      "seed_min": 1278601,
+      "seed_max": 115671016375877001136574657464643438388761176135422475256922956439559131364087,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/hog26_scaling_frozen_plan_20260912.json",
+      "sha256": "f13e04e22b70b82a9104fdf377eeaab9d8cddf867a6acda2b244f4090c816d89",
+      "numeric_seed_leaves": 2702,
+      "seed_min": 1278601,
+      "seed_max": 115781282574748683303830238540313152929597798849590492110589204041520304371050,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/hog26_seed_transfer_frozen_plan_20260911.json",
+      "sha256": "0fddbc6e9af5a43410c20d239e6731fc8b8ab5255d1ff90293d058caeeeb617d",
+      "numeric_seed_leaves": 1166,
+      "seed_min": 1278601,
+      "seed_max": 115771777580272289451400638564374748029217188684404234297101336372507798917232,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/data/receipts/baselines-v1/prereg.json",
+      "sha256": "5f7100eb80dd042b157e9011ff4c61b391a89fbbaebad0e1bc6334ee5b63e23d",
+      "numeric_seed_leaves": 0,
+      "seed_min": null,
+      "seed_max": null,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r3/receipts/frozen-X-sdefault.json",
+      "sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+      "numeric_seed_leaves": 1,
+      "seed_min": 80991010,
+      "seed_max": 80991010,
+      "base_count_intervals": [
+        {
+          "path": ":reporting",
+          "base": 4503601517370496,
+          "count": 600
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/RUNTIME-FROZEN-INTEGRITY.json",
+      "sha256": "5974639c826eb72e8d8a86d1f91e9204e3f671150879de9687f0c45e43cf4e24",
+      "numeric_seed_leaves": 0,
+      "seed_min": null,
+      "seed_max": null,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/frozen-manifest.json",
+      "sha256": "460aabbd70b894da0750b0ef573ff06a8b7423ac77ada300254494819daab475",
+      "numeric_seed_leaves": 0,
+      "seed_min": null,
+      "seed_max": null,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/strategy_council_20260928/search-noise-s5/frozen-s4-inputs.json",
+      "sha256": "4d56bbced20f4ada8efcb26e80fdda7ea5d330339dd7bea3775dca1aa6c5b729",
+      "numeric_seed_leaves": 0,
+      "seed_min": null,
+      "seed_max": null,
+      "base_count_intervals": [],
+      "overlaps": []
+    },
+    {
+      "path": "reports/strategy_council_20260928/search-noise-s6/frozen-s4-inputs.json",
+      "sha256": "91dab61f304f5fc9e8af4a88e76499f82b64a4391073ddad1f69074d7eabbedf",
+      "numeric_seed_leaves": 0,
+      "seed_min": null,
+      "seed_max": null,
+      "base_count_intervals": [],
+      "overlaps": []
+    }
+  ],
+  "numeric_seed_leaves": 7367,
+  "scalar_mappings": [
+    "identity",
+    "modulo2**64",
+    "modulo2**32"
+  ],
+  "helper_offsets": [
+    0,
+    13,
+    100000,
+    100001,
+    100002,
+    100003,
+    271828,
+    271829
+  ],
+  "overlaps": [],
+  "post_launch_coverage_supplement": true,
+  "outcomes_opened": false
+}
