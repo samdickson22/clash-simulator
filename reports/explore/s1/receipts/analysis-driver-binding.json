@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T12:17:21Z",
+  "outcomes_opened": false,
+  "driver_sha256": "0ed0060e24a3e61d2e7c507e68904bf087416a959ca97fd5a2adf7f85541cbf0",
+  "verifier_sha256": "bb08af1172210c187b70faef2eb79944d0535c2ebd1a0495b4a5aca1707c9b43",
+  "purpose": "Meter completion analysis as one non-nested tree; advance.py requires nice0 while meter requires nice10, so invoke the identical sealed reduce.py/gc_summary.py plus read-only verifier directly at nice10/core39",
+  "barrier": "3000 terminal fresh games,600blocks, clean supervisor exit, all phase groups absent, unchanged source/model/native pins",
+  "frozen_reducer_unchanged": true
+}

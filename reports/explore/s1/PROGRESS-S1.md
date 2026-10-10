@@ -173,3 +173,14 @@ partial records. After clean exit, verify runtime pins and groups, run frozen
 reducer/GC supplement and independent integer bootstrap verification on 01,
 include all invalid/preparation/qualification/analysis tree costs once, then
 final vacancy and publication. Final release follows owned CPU drain.
+
+2026-10-10T12:17:21Z — Completion analysis driver authored before opening outcomes.
+postprocess_final.py enforces full 3,000 terminal games/600 blocks, clean exit,
+owned phase groups absent and unchanged source/model/native pins; invokes the
+identical frozen reducer and GC supplement plus precommitted integer verifier.
+This avoids advance.py nice0 vs meter.py nice10 mismatch and permits one
+non-nested analysis CPU tree meter at nice10/core39. Binding records driver/
+verifier SHAs and no outcome access. Deploy these new analysis-only files after
+reporting ends; do not overwrite any pinned timing/reducer module. Use own
+detach wrapper, distinct postprocess claim, preserve any failure; execution
+cost audit runs only after that meter group exits and then includes its cost.
