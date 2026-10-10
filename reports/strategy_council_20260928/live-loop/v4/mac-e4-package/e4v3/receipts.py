@@ -66,7 +66,7 @@ class ReceiptStore:
     def seal(self, status):
         for stream in self.streams.values():
             stream.close()
-        files = {p.name: sha(p) for p in sorted(self.directory.iterdir()) if p.is_file()}
+        files = {str(p.relative_to(self.directory)): sha(p) for p in sorted(self.directory.rglob("*")) if p.is_file()}
         self.write("receipt-manifest.json", dict(status=status, files=files))
         with (self.directory / "receipt-manifest.sha256").open("x") as stream:
             stream.write(sha(self.directory / "receipt-manifest.json") + "  receipt-manifest.json\n")

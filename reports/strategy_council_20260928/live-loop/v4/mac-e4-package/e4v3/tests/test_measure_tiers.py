@@ -66,6 +66,8 @@ class ReceiptTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run"
             store = ReceiptStore(out, "test")
+            (out/"nested").mkdir()
+            (out/"nested/settings.json").write_text('{"offline":true}')
             store.append("raw.jsonl", dict(value=2))
             store.write("failure.json", dict(error="stopped", fail_closed=True))
             with self.assertRaises(FileExistsError):
@@ -73,6 +75,7 @@ class ReceiptTests(unittest.TestCase):
             store.seal("failed")
             manifest = json.loads((out / "receipt-manifest.json").read_text())
             self.assertEqual(manifest["status"], "failed")
+            self.assertIn("nested/settings.json",manifest["files"])
             verify_files(out, manifest["files"])
             self.assertTrue((out / "receipt-manifest.sha256").read_text().startswith(sha(out / "receipt-manifest.json")))
             (out / "raw.jsonl").write_text("altered")
