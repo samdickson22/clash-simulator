@@ -1,0 +1,236 @@
+{
+  "purpose": "K anytime W exploration; frozen before games; no PREREG; heldout never read",
+  "paired_seeds": 600,
+  "arms": {
+    "K0": {
+      "own": "baseline",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 1,
+      "coarse_horizon": 160
+    },
+    "K1": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 1,
+      "coarse_horizon": 160
+    },
+    "K4": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160
+    },
+    "K4h": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 80
+    },
+    "KU": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "threads": 1,
+      "coarse_horizon": 160
+    }
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503601407370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503601417370496,
+      "count": 8
+    }
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101002,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "policy": {
+    "snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+    "checkpoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/inputs-bc-v1/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "compute": {
+    "hosts": {
+      "127x03": {
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59
+        ]
+      },
+      "127x01": {
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39
+        ]
+      }
+    },
+    "nice": 10,
+    "min_memavailable_GiB": 24,
+    "cache_root": "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/cache",
+    "threaded_game_physical_cores": 5,
+    "smt": false
+  },
+  "frozen_at_utc": "2026-10-10T00:21:20Z",
+  "spec_commit": "63b2d6d7",
+  "decision_rules": {
+    "advance_upper_loss_change_ci_pp": -10,
+    "advance_arms": [
+      "K1",
+      "K4",
+      "K4h"
+    ],
+    "kill_anytime_if_K4_ci_includes_zero": true,
+    "retention": "(K0_loss-arm_loss)/(K0_loss-KU_loss)",
+    "ci": "pointwise paired percentile 95%, 5000 shared seed resamples; no adjustment"
+  },
+  "qualification": {
+    "K1_K4_frozen_screen8_exact": 125,
+    "one_four_thread_scores_identical": true,
+    "injected_clock_tests": true,
+    "K4h_agreement": "descriptive only"
+  },
+  "ordering": {
+    "phase_order": [
+      "complete WAIT, alias WAIT10",
+      "complete WAIT20 and WAIT40",
+      "balanced coarse scan all plays",
+      "refine top8"
+    ],
+    "reduction_order": "original candidate order; improve only >1e-9",
+    "complete_score": "3 styles at horizon160; no partial or late root eligible",
+    "K4h": "h80 used only for ranking; all 3 styles recomputed at160 for refinement",
+    "deadline": "starts before observation; score cutoff wall start +192ms; returned only completed roots; 8ms reserve",
+    "threading": "four persistent GIL-release executor workers, each private root clone, bounded four in-flight tasks; drain tick-cancelled jobs before return"
+  }
+}
