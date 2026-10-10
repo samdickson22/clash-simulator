@@ -10,11 +10,11 @@ The eight-seed smoke finished at 01:19:34Z. Supervisor PID/PGID 3886095 and all 
 
 Four operational checks passed without real games: finish current game before STOP, STOP before admission, exact sealed-game resume, and STOP during low-memory admission. The B2 snapshot predates the packer, so the unchanged r1 student packer is imported from the owned ops directory. B2 scientific sources remain unchanged. Qualification and operational admission were secret-scanned, committed and pushed as `dbb45795` before production. [Operations admission](receipts/operations-admission.json).
 
-Production launched at 2026-10-10T01:21:11Z. Supervisor PID/PGID: 3908611. Packer PID: 3908895, PGID: 3908611. The 47 workers share PGID 3908611; each has one distinct physical core from 0 through 46. Supervisor and packer use core 47. [Exact worker PIDs and cores](receipts/launch-04.json).
+Production launch receipt was sealed at 2026-10-10T01:21:15Z. Supervisor PID/PGID: 3908611. Packer PID: 3908895, PGID: 3908611. The 47 workers share PGID 3908611; each has one distinct physical core from 0 through 46. Supervisor and packer use core 47. [Exact worker PIDs and cores](receipts/launch-04.json).
 
 The 01:21:24Z host audit passed all 49 owned processes and their threads: nice 19/SCHED_IDLE, affinity within physical cores 0–47, MemAvailable 96,963,969,024 bytes. G does not use SMT siblings 64–111, A1 cores 52/116 or X5 CPUs 118–126. Host 01 remains unallocated while K owns its pool; no G simulations run on 03, 08, leased hosts or 05. [Host audit](receipts/host-audit-04.json).
 
-The 01:22:15Z live snapshot had one terminal production game, 105 roots and 721 rows; all 47 workers were active, with no pause or failure. MemAvailable was 86,929,330,176 bytes. Initial loading and incomplete games are excluded from these counts; a warm rate remains pending.
+The 2026-10-10T01:23:46Z live snapshot had 59 terminal production games, 6,829 roots and 44,003 rows; all 47 workers were active, with no pause or failure. MemAvailable was 92,413,001,728 bytes. Initial loading and incomplete games are excluded from these counts; a warm rate remains pending. [Startup snapshot](receipts/startup-progress-04.json).
 
 Runtime paths, relative to the owned job prefix:
 

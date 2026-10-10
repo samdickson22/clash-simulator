@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-10T01:23:46Z",
+  "identity": {
+    "pid": 3908611,
+    "pgid": 3908611,
+    "nice": 19,
+    "scheduler": 5,
+    "cores": [
+      47
+    ]
+  },
+  "totals": {
+    "games": 59,
+    "rows": 44003,
+    "root_decisions": 6829,
+    "cpu_seconds": 2562.763317183,
+    "plays": 2223
+  },
+  "active": 47,
+  "paused": [],
+  "memory_available": 92413001728,
+  "reason": null,
+  "elapsed_seconds": 154.22844413900748,
+  "supervisor_cpu_seconds": 2.888496
+}
