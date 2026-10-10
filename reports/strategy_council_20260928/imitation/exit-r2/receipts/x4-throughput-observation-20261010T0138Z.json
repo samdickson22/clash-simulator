@@ -1,0 +1,86 @@
+{
+  "schema": "clasher.exit-r2.resource-observation.v1",
+  "utc": "2026-10-10T01:38:08Z",
+  "arm": "X4",
+  "host": "127x01",
+  "trainer_pid": 1217609,
+  "scientific_bytes_changed": false,
+  "checkpoint": {
+    "step": 750,
+    "path": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X4/step-00000750.pt"
+  },
+  "observed_optimizer_seconds": [
+    {
+      "step": 835,
+      "seconds": 2.388
+    },
+    {
+      "step": 836,
+      "seconds": 27.483
+    },
+    {
+      "step": 837,
+      "seconds": 40.112
+    },
+    {
+      "step": 838,
+      "seconds": 33.546
+    },
+    {
+      "step": 839,
+      "seconds": 39.272
+    },
+    {
+      "step": 840,
+      "seconds": 36.582
+    },
+    {
+      "step": 841,
+      "seconds": 36.076
+    },
+    {
+      "step": 842,
+      "seconds": 46.593
+    },
+    {
+      "step": 843,
+      "seconds": 43.703
+    },
+    {
+      "step": 844,
+      "seconds": 73.246
+    }
+  ],
+  "observations": {
+    "parent_cpu_affinity": "118,119,126",
+    "loader_cpu_affinities": "120-125",
+    "gpu_compute_apps": [
+      1217609
+    ],
+    "gpu_free_bytes": 29879173120,
+    "gpu_util_percent": 1,
+    "memory_available_bytes_approx": 89000000000,
+    "memory_psi_full_avg10": 80.19,
+    "cpu_psi_some_avg10": 1.29,
+    "cgroup_memory_limit_bytes": 9223372036854772000,
+    "cgroup_memory_failcnt": 0,
+    "host_system_cpu_percent_approx": 33
+  },
+  "concurrent_job": {
+    "source": "read-only G PROGRESS-G.md and ps",
+    "host": "127x01",
+    "supervisor_pid": 1356583,
+    "launch_utc": "2026-10-10T01:30:38Z",
+    "worker_cores": "0-38",
+    "supervisor_core": 39,
+    "scheduler": "SCHED_IDLE"
+  },
+  "interpretation": "Timing association suggests shared memory pressure despite disjoint affinities; causal attribution is not established. Request coordinator load reduction/pause, retain original recipe/source and no process changes.",
+  "coordinator_message_id": "message:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:thread-send:x4-throughput-20261010T0137Z",
+  "x6_checkpoint_verified": {
+    "step": 250,
+    "sha256": "dbd95e8419a95483facdc5d3bb54ba41864f0185f9e5c924f3e38c616c1b8de1",
+    "bytes": 36477394,
+    "observed_utc": "2026-10-10T01:33:38Z"
+  }
+}

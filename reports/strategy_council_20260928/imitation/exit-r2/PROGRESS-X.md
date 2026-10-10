@@ -287,3 +287,26 @@ Compact receipt monitor-20261010T0130Z.json carries all current identities,
 steps/resource floors/checkpoints and provisional non-additive meters. Current
 six-fit GPUh=3.252965018,CPUh=10.164486111 replace previous live snapshots;
 closed failure/preparation/game costs remain separate. Continuation enabled.
+
+2026-10-10T01:38:08Z. Six existing supervisor/trainer groups deduplicated;
+stepsX1–X6=1458/1415/1361/845/1357/431, all eight own processes,nice10,
+loader6, no exits/guard reasons. 09/16/13 leases pass; leased PSS16.72/18.84/
+25.13GB and GPU-free48.41/48.41/31.79GB. 08 quiet noncomment entries empty;
+X3 no priority/stop,05:15Z guard unchanged. Periodic checkpoints1250 on
+X1/X2/X3/X5,750 X4,250 X6. X6 step250 SHA verified01:33:38Z:
+dbd95e8419a95483facdc5d3bb54ba41864f0185f9e5c924f3e38c616c1b8de1,
+36,477,394bytes; optimizer/RNG checkpoint retained for exact priority yield.
+03controller1502885 alive/core63/SCHED_IDLE,offline={},stage2={},active=null,
+failures=[],priorityfalse; no reporting/R2 admission. Compact monitor receipt
+monitor-20261010T0138Z.json supersedes prior live meters: GPUh
+4.017382650,CPUh12.920397222; final exit meters replace them.
+X4 throughput slowed after835: optimizer27–73s versus prior2–3s. G01 began
+01:30:38Z on disjoint cores0–39; no other GPU app and own affinity unchanged.
+Host memory PSI full~80%,systemCPU~33%,GPUutil~1%,MemAvailable~89GB;
+cgroup limit unlimited/no fails. Coordinator milestone sent01:37Z asking a
+reversible G01 load check. No intervention or source/recipe changes made;
+resource pressure is not a scientific kill. Own receipt
+x4-throughput-observation-20261010T0138Z.json preserves observations.
+K all3000 reporting games completed and CPU pools released01:30:20Z03/
+01:18:49Z01 per read-onlyPROGRESS-K; future home evaluation still load-checks.
+Continuation remains enabled; no duplicate fit/controller/smoke launch.

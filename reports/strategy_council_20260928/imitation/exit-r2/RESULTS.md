@@ -11,12 +11,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step1202/4883 | pending | conditional | conditional | pending |
-| X2 | T=.0001 /1.0 | running16, step1167/4883 | pending | conditional | conditional | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step1126/4883 | pending | conditional | conditional | pending |
-| X4 | T=.003 /.75 | running01, step819/4883, micro3584 | pending | conditional | conditional | pending |
-| X5 | X1 double steps /1.0 | running04, step1132/9766 | pending | conditional | conditional | pending |
-| X6 | T=.0001 /.75 | running13, step180/4883, micro3584 | pending | conditional | conditional | pending |
+| X1 | T=.003 /1.0 | running09, step1458/4883 | pending | conditional | conditional | pending |
+| X2 | T=.0001 /1.0 | running16, step1415/4883 | pending | conditional | conditional | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step1361/4883 | pending | conditional | conditional | pending |
+| X4 | T=.003 /.75 | running01, step845/4883, micro3584 | pending | conditional | conditional | pending |
+| X5 | X1 double steps /1.0 | running04, step1357/9766 | pending | conditional | conditional | pending |
+| X6 | T=.0001 /.75 | running13, step431/4883, micro3584 | pending | conditional | conditional | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -57,23 +57,23 @@ addendum c99491bc push. Startup qualified01:25:33Z at step18, eight own
 nice10 processes,21.36GB PSS,31.79GB GPU free, no stop reason. No scientific
 X6 outcome claimed. Original controller replacement meter is
 9.379653CPU seconds (parent+children once); new controller/gate meter pending.
-Current-attempt snapshots at2026-10-10 01:30:15–27Z:3.252965018 allocated
-GPU-wall hours and10.164486111 provisional whole-tree CPU-hours across six fits.
+Current-attempt snapshots at2026-10-10 01:37:55–01:38:06Z:4.017382650 allocated
+GPU-wall hours and12.920397222 provisional whole-tree CPU-hours across six fits.
 Original five are attempt2; X6 is attempt1. These running totals replace earlier
 snapshots and will be replaced by final supervisor exit meters; they exclude
 failed attempts and preparation costs above.
 
 | Arm | Live fit GPU-wall h | Provisional live fit CPU h |
 | --- | --- | --- |
-| X1 | 0.623852 | 1.616317 |
-| X2 | 0.624974 | 1.671664 |
-| X3 | 0.626522 | 1.838417 |
-| X4 | 0.626221 | 2.915386 |
-| X5 | 0.626107 | 1.708925 |
-| X6 | 0.125289 | 0.413778 |
+| X1 | 0.752765 | 1.953789 |
+| X2 | 0.752052 | 2.017639 |
+| X3 | 0.754292 | 2.217167 |
+| X4 | 0.751165 | 3.727661 |
+| X5 | 0.752233 | 2.070997 |
+| X6 | 0.254877 | 0.933144 |
 
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
-added again. Receipt: `receipts/monitor-20261010T0130Z.json`. All six have eight
+added again. Receipt: `receipts/monitor-20261010T0138Z.json`. All six have eight
 owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
@@ -84,3 +84,13 @@ the audit job and PROGRESS-X.md; final totals will include every fit and game
 attempt, startup/loader CPU, and scientific postprocessing. Full per-arm metrics,
 case counts, checkpoint pins and metered totals replace this pending record as
 the staged decisions become available.
+
+2026-10-10 01:38Z resource observation: X4 optimizer latency rose from2–3s
+to27–73s after step835, around G's01 generation launch01:30:38Z. Own CPU
+affinity stays118/119/126 plus loader120–125; G uses physical0–39. Only X4
+uses the GPU; free memory29.88GB and hostMemAvailable~89GB pass guards,
+but host memory PSI full~80% and GPU utilization~1% suggest shared-memory
+pressure. Cgroup limit unlimited/no failures. Coordinator notified for a
+reversible load check; causal attribution remains unproven. No job stopped,
+recipe/source changed or scientific kill assigned. Observation receipt records
+raw timing and the verified X6 step250 checkpointSHA dbd95e8419a95483facdc5d3bb54ba41864f0185f9e5c924f3e38c616c1b8de1.
