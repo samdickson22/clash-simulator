@@ -1,0 +1,34 @@
+{
+  "schema": "clasher.t1.public-corpus-location.v1",
+  "utc": "2026-10-10T19:20:55Z",
+  "states_total": 1200,
+  "states_per_tier": 300,
+  "states_sha256": "282b08770d9a16b8e39b354551d62f934e7103dec769a00c511fb0b96260351e",
+  "public_state_locations": {
+    "127x03": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-reviewed-03-r1/built-corpora",
+    "127x05": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-publication-staging-r1"
+  },
+  "tier_files": {
+    "K0c": {
+      "file": "K0c-states.pkl",
+      "sha256": "2086682e4c08cd1aa350ac23e3cc992605df903ddf0defb726c63f9636ad7d51"
+    },
+    "S": {
+      "file": "S-states.pkl",
+      "sha256": "1527ff2dd0daa256edba7061ee19a544294e79c17ec3fd26910a0814441089d0"
+    },
+    "K2": {
+      "file": "K2-states.pkl",
+      "sha256": "0469f49c7c95a0dbf2f7f9726205a1ffff8e0f6fa2ba199a39d8b9dc4170a112"
+    },
+    "K4": {
+      "file": "K4-states.pkl",
+      "sha256": "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8"
+    }
+  },
+  "capture_commit": "a51ea64cb878ca05bf38a8145174e6d2b9f46d7a",
+  "outcomes_read": false,
+  "loader_bootstrap_sha256": "7bdc39edae5e6e4fc570fe49f816abff115c75f9f92fc9557f2b7b48e6c84a3d",
+  "initial_loader_failure_preserved": true,
+  "archive_packaging": "No corpus bytes or archives in public git, per coordinator actual19:22Z. Exact bundle stays on disk."
+}
