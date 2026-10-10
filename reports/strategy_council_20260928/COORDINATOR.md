@@ -1638,3 +1638,11 @@ Also on the hub, but with copies elsewhere:
   - X1–X5 are training: 09/16/01/04/08 at 66–74% GPU. Capacity 384/480 on 14/15. 13 is idle, waiting for X6 (queued to X). K is finishing on 03/01.
   - A1 is at 82/216; its ETA slips to ~08:30–10:00Z.
   - **Launched G** (teacher top-up, Sol worker `clasher-g-topup-20261010-1`) as preemptible filler: 04 physical cores 0–47 at nice 19 (the seal's CPU52 and X5's loader untouched), plus 01 cores 0–39 after K exits; it yields to X evaluation. Stop file; ends by 2026-10-11 03:00Z.
+- **01:33 UTC: K anytime-W result** (3,000/3,000 games, paired vs v1, 200 ms):
+  - K0 46.5% loss.
+  - **K4 (4-thread anytime) 19.33%, −27.2 pp [−31.7, −22.5] → ADVANCES.** K4h also advances. Fallback is <1%, and K4 matches unlimited W (19.33%).
+  - p99 is 193 ms, so headroom is thin.
+  - **K1 (1-core anytime) 96.5%:** cutoffs are 96.5%, so the WAIT-first default collapses on one core. The 1-core dependency does NOT go away.
+  - **Before adoption:** an independent Opus review (`clasher-k-review-20261010-1`) checks why K4, K4h and KU are exactly identical, the latency headroom on a slower Mac core, and a stage-3 redesign.
+  - X stage 3 is ON HOLD: its K1 comparator is degenerate.
+  - This strengthens the case for Sam's Mac E4 authorization: the live question is now whether 4 free cores exist next to perception.
