@@ -1817,3 +1817,7 @@ Also on the hub, but with copies elsewhere:
   - **Mac tiers (fleet-measured):** 4 cores ≈16.5–18%; 2 cores ≈25–29%; **1 core + student ≈28% (32% at 0.8×)**; 1 core without a student 44% → 79% at 0.8×.
   - R3a stays never-adoptable from the R3 frozen study. Adoption needs a confirmatory PREREG plus Mac E4.
   - 01 released at 12:55Z.
+- **12:57 UTC: A19+A20 parallel attempt RETIRED** at 12:56:10Z via its own controller STOP. The serial verify was **faster** (24.9 branches/h since 11:33Z, vs parallel 12.5/h): the parallel attempt projected ~15.9 h vs serial ~7.3 h.
+  - Clean owned exit; receipt 85c0b458.
+  - The serial verifier is untouched and running alone, now at epoch 4; ETA ~20Z at its current rate. Final seal-equality checking happens only after all 24 epochs.
+  - A21 (remote lock narrowing) is under review; a fresh A21 parallel attempt is to be decided on its verdict, and must beat the serial ETA.
