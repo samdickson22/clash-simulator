@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T08:04:46Z",
+  "authorization": "Existing07:45Z requires immediate A19 approval-request preemption; operational detector refinement detects positive requests despite unrelated no-launch clauses; negative/conditional notices remain excluded.",
+  "old_sha256": "811857e29f6bff61046dfea1e0e037906db04d299f16df22284e59a704d9c8b7",
+  "new_sha256": "040c487de19f6c1b1dec0e15591d7daf525734df9d870916cb586ffb75785d62",
+  "tests": 4,
+  "passed": true,
+  "activation": "After secret-scan/push atomically replace own05read-only helper;04reads helper fresh each15s; no pool restart/stop/science change"
+}
