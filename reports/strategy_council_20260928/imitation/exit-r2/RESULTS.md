@@ -1,7 +1,9 @@
 # ExIt r2 X screen — results pending
 
 Exploration lane; no multiplicity adjustment. Preparation at2026-10-10 00:36Z.
-No fit or reporting game has launched. This is a status record, not a verdict.
+All first fit attempts failed during input construction before any optimizer step.
+The omitted r1 assets sidecar is restored; retries pending correction commit.
+No reporting game played. This is a status record, not a verdict.
 The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
@@ -31,7 +33,9 @@ All games are home01/03 only;04 CPU seal/core52 protected;08 GPU temporarily aut
 been preempted. Leased GPU jobs require current leases and strict process,
 PSS/headroom/nice guards and return before2026-10-11 05:30Z.
 
-Metered fit GPU-hours:0; fit/evaluation CPU-hours:0 at this preparation stage.
+Metered failed-attempt fit GPU-wall hours:0.036806672;
+fit CPU-hours:0.029492098; evaluation CPU-hours:0.
+Preparation audit CPU-hours:0.844768969, including retired scan attempts.
 Preparation audit CPU costs and failed/retired scan attempts are retained under
 the audit job and PROGRESS-X.md; final totals will include every fit and game
 attempt, startup/loader CPU, and scientific postprocessing. Full per-arm metrics,

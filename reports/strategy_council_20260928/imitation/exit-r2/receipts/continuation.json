@@ -1,0 +1,11 @@
+{
+  "scheduledTaskId": "scheduled-task:command:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:schedule-task:clasher-exit-r2-x-continuation-20261010-r1",
+  "boundThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-x-exit-r2-20261010-1",
+  "enabled": true,
+  "schedule": {
+    "type": "interval",
+    "everyMs": 600000
+  },
+  "nextRunAt": "2026-10-10T01:01:15.355Z",
+  "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z"
+}

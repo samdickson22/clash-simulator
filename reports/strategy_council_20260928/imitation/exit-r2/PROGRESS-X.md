@@ -65,3 +65,15 @@ overlaps/errors, CPU915.895072s. Eight fresh inventories now pass, merged
 with14 sealed r1 inventories and explicit formula bounds. Audit receipt
 contains SHA-pinned raw inventories and charged preparation CPU. Plan and
 source freeze prepared; no fits launched before commit/push.
+
+2026-10-10T00:52:28Z. Freeze10831e2b committed/secret-scanned/pushed before launches.
+Attempt1 launched00:50:46-47Z; all failed before the first optimizer step
+because required201-byte public-assets sidecar was omitted during staging.
+SHA31c4ddbc matches original r1. Copy corrected on all fit hosts and03;
+failed attempts preserved under `$job/failed-attempt1/X*/`, logs remain
+`$job/fit-X*.log`, full launch/exit/resource identities in the sidecar receipt.
+Original freeze/source/recipe unchanged. Retry only after this correction commit.
+Controller03 PID=PGID1403380 launched00:50:57Z, nice19/SCHED_IDLE/core63;
+waits final EMA then runs offline/core60 and conditional h2h/cores60-63.
+Temporary continuation interval10min, next01:01:15.355Z; ID/disable instructions
+in receipts/continuation.json. Disable when complete or deadline cleanup done.
