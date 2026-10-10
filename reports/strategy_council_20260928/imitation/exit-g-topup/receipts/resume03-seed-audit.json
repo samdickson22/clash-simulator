@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-10T07:07:57Z",
+  "passed": true,
+  "source_receipts": [
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r3/round2/receipts/seed-audit.json",
+      "sha256": "190883b029bcf052ede9e53526b47ca6f2915477910d1f182d606d4905696c75"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/postkill-seed-audit.json",
+      "sha256": "7cd6ae2de03751e259110917f92331ec49ebb8d9ad460f855edc9cad489e0823"
+    },
+    {
+      "path": "reports/explore/k2/seed-audit.json",
+      "sha256": "22ae3813648ac6bb93509576e41f52f89b56113fbf2236f5a14d6903cc90c7a1"
+    }
+  ],
+  "published_range_declarations_checked": 100,
+  "G03_interval": [
+    4503601611370496,
+    4503601612370496
+  ],
+  "helper_ceiling": 271829,
+  "overlap": [],
+  "own_G_reservation_echoes_excluded": [
+    [
+      4503601607370496,
+      1000000
+    ],
+    [
+      4503601607370496,
+      5000000
+    ],
+    [
+      4503601609370496,
+      1000000
+    ],
+    [
+      4503601611370496,
+      1000000
+    ]
+  ],
+  "coverage": "Unchanged original G03 historical audit plus current K2, X descriptive, R3 original/round2/descriptive published audits. Both sides conservatively expanded by271829. Other G blocks are disjoint. First check refused an existing G-all-hosts-conservative echo, correctly identified and excluded as our own reservation; no foreign range excluded."
+}

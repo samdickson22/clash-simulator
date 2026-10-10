@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "baseline212542 counted once",
+    "new100roots disclosed pending",
+    "full03 corpus replaces imported baseline",
+    "combined6M boundary includes187375other roots",
+    "actualSTOP-03 prevents new game",
+    "56-stripe range unchanged"
+  ]
+}
