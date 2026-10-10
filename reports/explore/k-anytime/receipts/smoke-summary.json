@@ -1,0 +1,380 @@
+{
+  "reduced_at_utc": "2026-10-10T00:29:29Z",
+  "freeze_commit": "0f2a9ec8",
+  "plan_sha256": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695",
+  "paired_seeds": 8,
+  "terminal_games": 40,
+  "smoke": true,
+  "outcomes": {
+    "K0": {
+      "wins": 5,
+      "losses": 3,
+      "draws": 0,
+      "loss": {
+        "value": 0.375,
+        "ci95": [
+          0.125,
+          0.75
+        ],
+        "finite_resamples": 5000
+      }
+    },
+    "K1": {
+      "wins": 3,
+      "losses": 5,
+      "draws": 0,
+      "loss": {
+        "value": 0.625,
+        "ci95": [
+          0.25,
+          1.0
+        ],
+        "finite_resamples": 5000
+      }
+    },
+    "K4": {
+      "wins": 6,
+      "losses": 2,
+      "draws": 0,
+      "loss": {
+        "value": 0.25,
+        "ci95": [
+          0.0,
+          0.625
+        ],
+        "finite_resamples": 5000
+      }
+    },
+    "K4h": {
+      "wins": 8,
+      "losses": 0,
+      "draws": 0,
+      "loss": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "finite_resamples": 5000
+      }
+    },
+    "KU": {
+      "wins": 8,
+      "losses": 0,
+      "draws": 0,
+      "loss": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "finite_resamples": 5000
+      }
+    }
+  },
+  "loss_change_vs_K0": {
+    "K0": {
+      "value": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "finite_resamples": 5000
+    },
+    "K1": {
+      "value": 0.25,
+      "ci95": [
+        -0.375,
+        0.75
+      ],
+      "finite_resamples": 5000
+    },
+    "K4": {
+      "value": -0.125,
+      "ci95": [
+        -0.5,
+        0.25
+      ],
+      "finite_resamples": 5000
+    },
+    "K4h": {
+      "value": -0.375,
+      "ci95": [
+        -0.75,
+        -0.125
+      ],
+      "finite_resamples": 5000
+    },
+    "KU": {
+      "value": -0.375,
+      "ci95": [
+        -0.75,
+        -0.125
+      ],
+      "finite_resamples": 5000
+    }
+  },
+  "retention": {
+    "K0": {
+      "value": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "finite_resamples": 4877
+    },
+    "K1": {
+      "value": -0.6666666666666666,
+      "ci95": [
+        -6.0,
+        0.5
+      ],
+      "finite_resamples": 4877
+    },
+    "K4": {
+      "value": 0.3333333333333333,
+      "ci95": [
+        -2.0,
+        1.0
+      ],
+      "finite_resamples": 4877
+    },
+    "K4h": {
+      "value": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "finite_resamples": 4877
+    },
+    "KU": {
+      "value": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "finite_resamples": 4877
+    }
+  },
+  "fallback": {
+    "K0": {
+      "value": 0.002025111381125962,
+      "ci95": [
+        0.000845612461356971,
+        0.003056935422239205
+      ],
+      "finite_resamples": 5000,
+      "numerator": 5,
+      "denominator": 2469
+    },
+    "K1": {
+      "value": 0.007332722273143905,
+      "ci95": [
+        0.006552006552006552,
+        0.008324661810613945
+      ],
+      "finite_resamples": 5000,
+      "numerator": 8,
+      "denominator": 1091
+    },
+    "K4": {
+      "value": 0.007984031936127744,
+      "ci95": [
+        0.0069504778453518675,
+        0.009080590238365494
+      ],
+      "finite_resamples": 5000,
+      "numerator": 8,
+      "denominator": 1002
+    },
+    "K4h": {
+      "value": 0.007952286282306162,
+      "ci95": [
+        0.007239655355813212,
+        0.008686210640608035
+      ],
+      "finite_resamples": 5000,
+      "numerator": 8,
+      "denominator": 1006
+    },
+    "KU": {
+      "value": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "finite_resamples": 5000,
+      "numerator": 0,
+      "denominator": 944
+    }
+  },
+  "cutoff": {
+    "K0": {
+      "value": 0.2535439449169704,
+      "ci95": [
+        0.19631145398861188,
+        0.31655517699183483
+      ],
+      "finite_resamples": 5000,
+      "numerator": 626,
+      "denominator": 2469
+    },
+    "K1": {
+      "value": 0.7781851512373968,
+      "ci95": [
+        0.6994930764394232,
+        0.8361195998804636
+      ],
+      "finite_resamples": 5000,
+      "numerator": 849,
+      "denominator": 1091
+    },
+    "K4": {
+      "value": 0.03093812375249501,
+      "ci95": [
+        0.00881057268722467,
+        0.0696078431372549
+      ],
+      "finite_resamples": 5000,
+      "numerator": 31,
+      "denominator": 1002
+    },
+    "K4h": {
+      "value": 0.02982107355864811,
+      "ci95": [
+        0.0074142724745134385,
+        0.07574206755373593
+      ],
+      "finite_resamples": 5000,
+      "numerator": 30,
+      "denominator": 1006
+    },
+    "KU": {
+      "value": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "finite_resamples": 5000,
+      "numerator": 0,
+      "denominator": 944
+    }
+  },
+  "latency": {
+    "K0": {
+      "wall": {
+        "decisions": 2469,
+        "p50_ms": 13.54939816519618,
+        "p95_ms": 192.55318231880665,
+        "p99_ms": 192.68023856915534,
+        "over200_fraction": 0.002025111381125962
+      },
+      "cpu": {
+        "decisions": 2469,
+        "p50_ms": 13.529238000000277,
+        "p95_ms": 192.40924899999996,
+        "p99_ms": 192.52601724000016,
+        "over200_fraction": 0.002025111381125962
+      }
+    },
+    "K1": {
+      "wall": {
+        "decisions": 1091,
+        "p50_ms": 192.4215629696846,
+        "p95_ms": 192.5994463963434,
+        "p99_ms": 193.0698842508718,
+        "over200_fraction": 0.006416131989000917
+      },
+      "cpu": {
+        "decisions": 1091,
+        "p50_ms": 192.2493189999983,
+        "p95_ms": 192.4142169999996,
+        "p99_ms": 192.7503276999978,
+        "over200_fraction": 0.005499541704857928
+      }
+    },
+    "K4": {
+      "wall": {
+        "decisions": 1002,
+        "p50_ms": 118.02456947043538,
+        "p95_ms": 180.96167106414214,
+        "p99_ms": 193.02055747946724,
+        "over200_fraction": 0.00499001996007984
+      },
+      "cpu": {
+        "decisions": 1002,
+        "p50_ms": 248.1965994999964,
+        "p95_ms": 380.5573137500033,
+        "p99_ms": 433.58209246000666,
+        "over200_fraction": 0.7125748502994012
+      }
+    },
+    "K4h": {
+      "wall": {
+        "decisions": 1006,
+        "p50_ms": 110.24757090490311,
+        "p95_ms": 157.15717553393915,
+        "p99_ms": 193.42435540165752,
+        "over200_fraction": 0.005964214711729622
+      },
+      "cpu": {
+        "decisions": 1006,
+        "p50_ms": 233.0518235000003,
+        "p95_ms": 332.83532775000157,
+        "p99_ms": 422.0547313999895,
+        "over200_fraction": 0.709741550695825
+      }
+    },
+    "KU": {
+      "wall": {
+        "decisions": 944,
+        "p50_ms": 204.4020041357726,
+        "p95_ms": 311.8652770179324,
+        "p99_ms": 404.85668835462866,
+        "over200_fraction": 0.5317796610169492
+      },
+      "cpu": {
+        "decisions": 944,
+        "p50_ms": 204.23033400000003,
+        "p95_ms": 311.64457800000065,
+        "p99_ms": 404.4924655699981,
+        "over200_fraction": 0.5317796610169492
+      }
+    }
+  },
+  "advance_arms": [
+    "K4h"
+  ],
+  "kill_anytime_W": true,
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101002,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "game_cpu_seconds": {
+    "K0": 349.789196109,
+    "K1": 368.448665279,
+    "K4": 420.458679393,
+    "K4h": 397.555437494,
+    "KU": 358.50112891599997
+  },
+  "host_arm_counts": {
+    "127x03:K0": 8,
+    "127x03:K1": 8,
+    "127x03:KU": 8,
+    "127x03:K4": 8,
+    "127x03:K4h": 8
+  },
+  "min_memavailable_GiB": 118.75990295410156,
+  "raw_game_hash_union_sha256": "56f8eb1a25950a23e3ea5a1b40106d1ad506c6fd196e4e9da9b0c462093417ba",
+  "audits": {
+    "terminal": true,
+    "paired_decks_seats": true,
+    "policy_cadence": true,
+    "affinity": true,
+    "capacity_one": true,
+    "balanced_25matchups": false,
+    "paired_same_host": false
+  }
+}

@@ -15,3 +15,9 @@ Next: freeze commit; implementation;125-state qualification and injected clocks;
 2026-10-10T00:24:21Z smoke launched03 supervisor PID/PGID1313203; single pool PID/PGID1313223,20 physical cores0–19. Native qualification complete; no reporting games yet. Staging01 owned runtime with same source/binary; requested X4 CPUs and SMT siblings excluded.
 
 2026-10-10T00:28:09Z: thread smoke pool03 PID/PGID1319155,4 games ×5 physical cores0–19. Inherited native source exactly matches E1 source manifest; build fingerprint confirms features(extension-module,gil-release),rustflags[]; rustc1.97.1.01 staged pins exactly match03 binary/plan/sealed adapters. Reporting split:03 pair indices0–399;01 indices400–599; all five arms for each seed on same host. Both pools nice10/SCHED_IDLE.
+
+2026-10-10T00:30:16Z: all40 smoke terminal; audits pass; reporting launched after smoke with frozen configuration. Smoke excluded, no tuning.
+-127x03 reporting supervisor PID1331806,PGID1331806, launched2026-10-10T00:29:47Z.
+-127x01 reporting supervisor PID1137848,PGID1137848, launched2026-10-10T00:29:47Z.
+
+Resume: inspect owned job/progress.json and reporting/*/{launch,receipt,supervisor-exit}.json on each host; inspect exact recorded PID cmdline before assuming active/dead. Supervisor automatically skips terminal receipts and reruns only pending scheduled cases. If supervisor exited, invoke owned detach.sh with a new log/PID receipt and same supervise.py --phase reporting --pairs400 --offset0 --cpus60 on03, or --pairs200 --offset400 --cpus40 on01. Do not reuse launch.sh claim or duplicate an active supervisor. No global process kills. STOP file is owned-job-only; minimum-memory pause24GiB/resume28GiB.
