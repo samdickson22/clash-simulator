@@ -1,0 +1,58 @@
+{
+  "schema": "clasher.t1.parent-source-seed.v1",
+  "host": "127x03",
+  "parent": {
+    "pid": 776414,
+    "start_ticks": 137136686,
+    "uid": 3822945,
+    "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+    "ppid": 776335,
+    "pgid": 776335
+  },
+  "source_ip": "129.65.221.14",
+  "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+  "captured_at_utc": "2026-10-10T16:19:11Z",
+  "evidence": {
+    "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/diagnosis/diagnostic-ssh-127x03.json",
+    "source_sha256": "d9cbd2b94c4fbf8683bcc56269116de0976eaf6323f60af235e6a24ab509f057",
+    "sample_index": 0,
+    "parent_snapshot": {
+      "ssh_parent_snapshot": null,
+      "snapshot_monotonic": 1438904.773127108,
+      "ssh_connection_snapshot": null,
+      "exe": null,
+      "exe_evidence": "unavailable",
+      "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+      "pid": 776414,
+      "ppid": 776335,
+      "pgid": 776335,
+      "start_ticks": 137136686,
+      "cpu_ticks": 242323,
+      "tty": 0,
+      "uid": 3822945,
+      "cmd": "sshd: sdicks02@notty"
+    },
+    "child_snapshot": {
+      "ssh_parent_snapshot": [
+        776414,
+        137136686,
+        3822945,
+        "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d"
+      ],
+      "snapshot_monotonic": 1438904.772856314,
+      "ssh_connection_snapshot": "129.65.221.14 35798 129.65.221.13 22",
+      "exe": "/usr/bin/cat",
+      "exe_evidence": "proc/exe",
+      "cmdline_sha256": "808fe4fd859d456796a6ead25919f4d6781d1b595a977eff1c0080cbe6b0267e",
+      "pid": 16002,
+      "ppid": 776414,
+      "pgid": 16002,
+      "start_ticks": 143890459,
+      "cpu_ticks": 0,
+      "tty": 0,
+      "uid": 3822945,
+      "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/127x09/e12-v4-phase-a-1975101008/90adcf7791244c5e802cb5dbe75f57a9/body-2/v4-phase-a-1975101008-decoder.jsonl.gz"
+    }
+  },
+  "reporting_outcomes_read": false
+}
