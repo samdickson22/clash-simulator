@@ -387,3 +387,19 @@ Compactmonitor0148Z replaces live fit snapshots:GPUh
 5.046554402,whole-treeCPUh16.613594444; closed failed/preparation/
 controllers/smokes remain separate. No gate or scientifickill/R2 admission,
 no stage3 seedconsumption, no duplicate launch or migration.
+
+2026-10-10T01:50Z. Coordinator clarification labeled01:43Z: coordinator wrote
+G01 STOP01:37:55Z after X4 report; G remains off01 for rest of X4 fit and
+never returns without explicit coordinator release. PLAN and continuation
+prompt now preserve this restriction (supersedes prior01filleravailability).
+Own timing disclosure: steps836–851, elapsed2287.885436–2896.615844s,
+wall608.730407s, instrumented-step latency18.60–73.25s. ApproxUTC01:31:01–
+01:41:10 derived from runtime.started_at; monotonic boundaries authoritative.
+Normal recovery begins852 (2.059s) then853–855 (1.71–1.78s). Timing includes
+resource probes, not pure GPUcompute. Coordinator corroborates01PSIfull~80%,
+sysCPU~30%,~560kinterrupts/s,kcompactd/kswapd;04PSI0 withX5+G, so no04
+intervention. Same X4trainer1217609/attempt2 throughout; train.py/student.py/
+fit_runtime.py/loader_prefetch.py/basefreeze SHAs reverified exactly unchanged.
+Full timing and authority record x4-operational-disclosure.json; cost is
+nested within final attempt2 GPU/CPU totals, never added again. Scientific
+recipe/seed/RNG lineage/finalEMA selection unchanged, stage3HOLD unchanged.

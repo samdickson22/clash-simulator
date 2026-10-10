@@ -110,6 +110,14 @@ wrapper qualification. K's harness at `reports/explore/k-anytime/` is the primar
 if it is unready at2026-10-10 06:00Z, freeze the already-declared fallback to
 r1(b) E1 deadline W-screen8. Record that decision before affected games.
 
+Coordinator G01 restriction labeled01:43Z, received01:50Z: coordinator wrote
+G STOP on01 at01:37:55Z. G stays off01 throughout the rest of X4 fitting and
+may return only after explicit coordinator release. X never clears G stops or
+restarts G. This supersedes the prior filler availability on01;03 remains
+available to G until X gate admission requests its yield. X4's steps836–851
+slowdown is disclosed operationally; recipe/source/optimizer/RNG lineage and
+final EMA selection are unchanged.04 needs no intervention (coordinatorPSI0).
+
 Coordinator G handoff amendment2026-10-10 01:45Z: G filler may occupy03
 physical0–59 and01 physical0–39 until an X gate is ready. Before evaluation,
 create the host-specific G STOP-03/STOP-01 and wait for every G ops process

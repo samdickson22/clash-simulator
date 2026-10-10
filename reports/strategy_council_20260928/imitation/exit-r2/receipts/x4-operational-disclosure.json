@@ -1,0 +1,270 @@
+{
+  "schema": "clasher.exit-r2.x4-operational-disclosure.v1",
+  "recorded_utc": "2026-10-10T01:50Z",
+  "authority": "Coordinator message labeled01:43Z, received01:50Z",
+  "arm": "X4",
+  "fit_attempt": 2,
+  "host": "127x01",
+  "supervisor_pid": 1217465,
+  "trainer_pid": 1217609,
+  "slow_interval": {
+    "first_step": 836,
+    "last_step": 851,
+    "steps": 16,
+    "elapsed_start_seconds": 2287.88543639984,
+    "elapsed_end_seconds": 2896.6158435000107,
+    "wall_seconds": 608.7304071001709,
+    "instrumented_step_min_seconds": 18.602545280009508,
+    "instrumented_step_max_seconds": 73.24584249407053,
+    "instrumented_step_total_seconds": 601.1738076489419,
+    "approx_start_utc": "2026-10-10T01:31:00.782Z",
+    "approx_end_utc": "2026-10-10T01:41:09.512Z",
+    "clock_note": "UTC estimates add monotonic elapsed to runtime.started_at; these two clocks were not independently calibrated. Step/elapsed endpoints are authoritative.",
+    "timing_definition": "timing.jsonl optimizer_seconds covers synchronized train.step plus resource reads; this is instrumented wall latency, not isolated GPU compute."
+  },
+  "baseline_before": [
+    {
+      "step": 831,
+      "optimizer_seconds": 2.180841141846031,
+      "elapsed_seconds": 2276.7230689590797,
+      "pss_bytes": 7553161216,
+      "mem_available_bytes": 97181220864,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 832,
+      "optimizer_seconds": 2.68201161082834,
+      "elapsed_seconds": 2279.407105542952,
+      "pss_bytes": 7553259520,
+      "mem_available_bytes": 96960552960,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 833,
+      "optimizer_seconds": 2.9532039409969,
+      "elapsed_seconds": 2282.365313296905,
+      "pss_bytes": 7553261568,
+      "mem_available_bytes": 96684077056,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 834,
+      "optimizer_seconds": 3.114538243971765,
+      "elapsed_seconds": 2285.4880873160437,
+      "pss_bytes": 7553262592,
+      "mem_available_bytes": 96978825216,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 835,
+      "optimizer_seconds": 2.3876221540849656,
+      "elapsed_seconds": 2287.8798135579564,
+      "pss_bytes": 7553262592,
+      "mem_available_bytes": 96513167360,
+      "gpu_free_bytes": 29878910976
+    }
+  ],
+  "recovery": [
+    {
+      "step": 852,
+      "optimizer_seconds": 2.0586272010114044,
+      "elapsed_seconds": 2898.6779552779626,
+      "pss_bytes": 7551930368,
+      "mem_available_bytes": 104447311872,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 853,
+      "optimizer_seconds": 1.7083833799697459,
+      "elapsed_seconds": 2900.389607931953,
+      "pss_bytes": 7551930368,
+      "mem_available_bytes": 104826208256,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 854,
+      "optimizer_seconds": 1.7791057950817049,
+      "elapsed_seconds": 2902.1706073579844,
+      "pss_bytes": 7551933440,
+      "mem_available_bytes": 104743079936,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 855,
+      "optimizer_seconds": 1.778948123101145,
+      "elapsed_seconds": 2903.9515085730236,
+      "pss_bytes": 7551933440,
+      "mem_available_bytes": 104735154176,
+      "gpu_free_bytes": 29878910976
+    }
+  ],
+  "affected_records": [
+    {
+      "step": 836,
+      "optimizer_seconds": 27.4829607270658,
+      "elapsed_seconds": 2315.3683971269056,
+      "pss_bytes": 7553258496,
+      "mem_available_bytes": 91497209856,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 837,
+      "optimizer_seconds": 40.11212604888715,
+      "elapsed_seconds": 2355.501608582912,
+      "pss_bytes": 7553334272,
+      "mem_available_bytes": 91445194752,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 838,
+      "optimizer_seconds": 33.54555369191803,
+      "elapsed_seconds": 2389.177695231978,
+      "pss_bytes": 7553338368,
+      "mem_available_bytes": 90803585024,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 839,
+      "optimizer_seconds": 39.272455875063315,
+      "elapsed_seconds": 2429.2624760190956,
+      "pss_bytes": 7552130048,
+      "mem_available_bytes": 90542194688,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 840,
+      "optimizer_seconds": 36.581984479911625,
+      "elapsed_seconds": 2466.0391657329164,
+      "pss_bytes": 7552116736,
+      "mem_available_bytes": 89962967040,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 841,
+      "optimizer_seconds": 36.076218435075134,
+      "elapsed_seconds": 2502.647941532079,
+      "pss_bytes": 7552026624,
+      "mem_available_bytes": 90257956864,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 842,
+      "optimizer_seconds": 46.59339306107722,
+      "elapsed_seconds": 2549.4590137361083,
+      "pss_bytes": 7551985664,
+      "mem_available_bytes": 89135775744,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 843,
+      "optimizer_seconds": 43.702801344916224,
+      "elapsed_seconds": 2593.634969339939,
+      "pss_bytes": 7551858688,
+      "mem_available_bytes": 89209589760,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 844,
+      "optimizer_seconds": 73.24584249407053,
+      "elapsed_seconds": 2667.1940943019,
+      "pss_bytes": 7551825920,
+      "mem_available_bytes": 88694943744,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 845,
+      "optimizer_seconds": 33.31769735389389,
+      "elapsed_seconds": 2702.246676157927,
+      "pss_bytes": 7551825920,
+      "mem_available_bytes": 88971091968,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 846,
+      "optimizer_seconds": 18.602545280009508,
+      "elapsed_seconds": 2720.8923893989995,
+      "pss_bytes": 7638800384,
+      "mem_available_bytes": 89044381696,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 847,
+      "optimizer_seconds": 28.55879088304937,
+      "elapsed_seconds": 2749.4722497491166,
+      "pss_bytes": 7551837184,
+      "mem_available_bytes": 89399115776,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 848,
+      "optimizer_seconds": 46.842674060026184,
+      "elapsed_seconds": 2797.472734590061,
+      "pss_bytes": 7551898624,
+      "mem_available_bytes": 93042688000,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 849,
+      "optimizer_seconds": 31.096397378016263,
+      "elapsed_seconds": 2828.5881019399967,
+      "pss_bytes": 7551907840,
+      "mem_available_bytes": 94604554240,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 850,
+      "optimizer_seconds": 47.32330897380598,
+      "elapsed_seconds": 2876.38748014695,
+      "pss_bytes": 7551920128,
+      "mem_available_bytes": 98036576256,
+      "gpu_free_bytes": 29878910976
+    },
+    {
+      "step": 851,
+      "optimizer_seconds": 18.81905756215565,
+      "elapsed_seconds": 2896.6158435000107,
+      "pss_bytes": 7551933440,
+      "mem_available_bytes": 102617661440,
+      "gpu_free_bytes": 29878910976
+    }
+  ],
+  "g": {
+    "launch_utc": "2026-10-10T01:30:38Z",
+    "stop_written_by": "coordinator",
+    "stop_write_utc": "2026-10-10T01:37:55Z",
+    "supervisor_absent_observed_utc": "2026-10-10T01:48:47Z",
+    "policy": "G stays off01 for rest of X4 fit and cannot return without explicit coordinator release; no X code/worker clears G stop."
+  },
+  "coordinator_observations": {
+    "host01_memory_psi_full_approx_percent": 80,
+    "host01_system_cpu_approx_percent": 30,
+    "host01_interrupts_per_second_approx": 560000,
+    "host01_kcompactd_and_kswapd_active": true,
+    "host04_memory_psi_percent": 0,
+    "host04_x5_and_g_coexist_fine": true
+  },
+  "conclusion": "Shared-load interference is consistent with both worker and coordinator observations; precise kernel/GPU mechanism unproven. Operational disclosure only, no scientific kill.",
+  "recipe_unchanged": true,
+  "source_bytes_unchanged": true,
+  "no_x_process_restart_or_resume": true,
+  "sampler_optimizer_rng_lineage_unchanged": true,
+  "checkpoint_selection": "final EMA only; no intermediate selection",
+  "metering": "Slow interval is included in original attempt2 GPU-wall/whole-tree CPU meters. Do not add interval costs to full attempt totals again.",
+  "related_receipts": [
+    "x4-throughput-observation-20261010T0138Z.json",
+    "x4-throughput-recovery-20261010T0141Z.json",
+    "monitor-20261010T0148Z.json"
+  ],
+  "source_reverification": {
+    "host": "127x01",
+    "utc": "2026-10-10T01:50Z",
+    "passed": true,
+    "sha256": {
+      "train.py": "cbe3f77b969d0e5f5994b37286c62a6b580b87d86446c4deb0a184829bd45887",
+      "student.py": "923448f153c9b4128b6e3d0076ed8a50d92507ed1d36709103396c0de07d2b95",
+      "fit_runtime.py": "f097ea9f2146f01e004864504a5ee31b94509e279494f674d48b5c44abaa4002",
+      "loader_prefetch.py": "7b26fc1de339d72767b0e8c46e219b5b7d2e6eb8d9cef906caa66b33ab8d323a",
+      "freeze.json": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24"
+    }
+  }
+}

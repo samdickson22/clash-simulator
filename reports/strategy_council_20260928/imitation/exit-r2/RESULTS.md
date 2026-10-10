@@ -131,3 +131,18 @@ resource checks pass;08 quiet entries empty. X6 checkpoint750 verifiedSHA
 b3e907d7045fc0fe5368696c45223efd5b885516cc9eb26c8a571642860dccaa; only final
 EMA remains eligible for reporting. X4 steps954–958 optimizer1.92–2.35s and G01
 supervisor1356583 is now absent. Stage3 remains held; no reporting seeds.
+
+X4 operational disclosure, coordinator clarification received01:50Z: affected
+steps836–851 spanned608.730s (~01:31:01–01:41:10Z, UTC derived approximately
+from monotonic elapsed and runtime.start). Instrumented synchronized-step
+latency18.60–73.25s, versus2.18–3.11s at831–835 and1.71–2.06s at852–855.
+The timing field includes resource reads and is not isolated GPU compute.
+Coordinator wrote G01 STOP at exactly01:37:55Z, consistent with PSI~80%,
+systemCPU~30%,~560k interrupts/s and active kcompactd/kswapd observed on01.
+04PSI0 while X5+G coexist, per coordinator; no04 action. G01 stays off for
+the rest of X4 fitting and cannot return without explicit release. X4
+continued the same process/attempt2, no recipe/source/optimizer/RNG lineage
+change or intermediate selection. Five source/freeze SHAs reverified01:50Z.
+The entire slow interval remains included in attempt2 metering, never added
+again as a separate cost. Full timing rows/authority/restriction retained in
+receipts/x4-operational-disclosure.json; no scientific kill or outcome claim.
