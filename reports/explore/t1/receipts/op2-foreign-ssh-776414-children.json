@@ -1,0 +1,233 @@
+[
+  {
+    "pid": 4172130,
+    "ppid": 776414,
+    "pgid": 4172130,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100878-decoder.jsonl.gz",
+    "start_ticks": 143520457,
+    "cmdline_sha256": "3587a78bd173dd7abf6ebf73767154c3a431ce8f5276243464b3b712cf923a02",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172223,
+    "ppid": 776414,
+    "pgid": 4172223,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100898-decoder.jsonl.gz",
+    "start_ticks": 143520642,
+    "cmdline_sha256": "0ac433c51ffedd6065d212f497012b1abf856add717b220760cdb768b9ac4efa",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172224,
+    "ppid": 776414,
+    "pgid": 4172224,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100898-decoder.jsonl.gz",
+    "start_ticks": 143520743,
+    "cmdline_sha256": "0ac433c51ffedd6065d212f497012b1abf856add717b220760cdb768b9ac4efa",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172225,
+    "ppid": 776414,
+    "pgid": 4172225,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100908-decoder.jsonl.gz",
+    "start_ticks": 143520803,
+    "cmdline_sha256": "42c010d50a749bcf62cad1c5824f493232c142b8df2bba9de44e59cf73f52e9f",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172226,
+    "ppid": 776414,
+    "pgid": 4172226,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100908-decoder.jsonl.gz",
+    "start_ticks": 143520914,
+    "cmdline_sha256": "42c010d50a749bcf62cad1c5824f493232c142b8df2bba9de44e59cf73f52e9f",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172227,
+    "ppid": 776414,
+    "pgid": 4172227,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100918-decoder.jsonl.gz",
+    "start_ticks": 143520991,
+    "cmdline_sha256": "3793840e68c159144e417bcaa8d924057ddbee5ce832475e4fe9497bee136e1c",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172287,
+    "ppid": 776414,
+    "pgid": 4172287,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100918-decoder.jsonl.gz",
+    "start_ticks": 143521152,
+    "cmdline_sha256": "3793840e68c159144e417bcaa8d924057ddbee5ce832475e4fe9497bee136e1c",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172288,
+    "ppid": 776414,
+    "pgid": 4172288,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100928-decoder.jsonl.gz",
+    "start_ticks": 143521262,
+    "cmdline_sha256": "04d226909e710c67d9ed30fb15d02b421fd75a5d6df1b66583571ad779d640df",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172290,
+    "ppid": 776414,
+    "pgid": 4172290,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100928-decoder.jsonl.gz",
+    "start_ticks": 143521420,
+    "cmdline_sha256": "04d226909e710c67d9ed30fb15d02b421fd75a5d6df1b66583571ad779d640df",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172291,
+    "ppid": 776414,
+    "pgid": 4172291,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100938-decoder.jsonl.gz",
+    "start_ticks": 143521527,
+    "cmdline_sha256": "96bf866831b004707cbd8ca16cc52621583ff832c22d9132ddb1ae5b24a9fcc4",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172377,
+    "ppid": 776414,
+    "pgid": 4172377,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100938-decoder.jsonl.gz",
+    "start_ticks": 143521725,
+    "cmdline_sha256": "96bf866831b004707cbd8ca16cc52621583ff832c22d9132ddb1ae5b24a9fcc4",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172380,
+    "ppid": 776414,
+    "pgid": 4172380,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100958-decoder.jsonl.gz",
+    "start_ticks": 143521903,
+    "cmdline_sha256": "85d263aeac16cd1eba52435bf32619760464f8ae8886fda4095ee0b24f98acf6",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172382,
+    "ppid": 776414,
+    "pgid": 4172382,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100968-decoder.jsonl.gz",
+    "start_ticks": 143522004,
+    "cmdline_sha256": "bd5da50460a76f3f3fd8cb9b7d2857b05fdeef8465343c8e8f5bbcb428fe4a56",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172441,
+    "ppid": 776414,
+    "pgid": 4172441,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100968-decoder.jsonl.gz",
+    "start_ticks": 143522163,
+    "cmdline_sha256": "bd5da50460a76f3f3fd8cb9b7d2857b05fdeef8465343c8e8f5bbcb428fe4a56",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172445,
+    "ppid": 776414,
+    "pgid": 4172445,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100988-decoder.jsonl.gz",
+    "start_ticks": 143522313,
+    "cmdline_sha256": "5ded8a78e5eb2372249acfdad30e75c142e91d759595c7c59349a189ac10717f",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172446,
+    "ppid": 776414,
+    "pgid": 4172446,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100988-decoder.jsonl.gz",
+    "start_ticks": 143522500,
+    "cmdline_sha256": "5ded8a78e5eb2372249acfdad30e75c142e91d759595c7c59349a189ac10717f",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172447,
+    "ppid": 776414,
+    "pgid": 4172447,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100998-decoder.jsonl.gz",
+    "start_ticks": 143522598,
+    "cmdline_sha256": "2a5e903f6c958539a67e50ffece18c2b2037fe2ebc8f8c07b2d7d057486fb15d",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172481,
+    "ppid": 776414,
+    "pgid": 4172481,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975100998-decoder.jsonl.gz",
+    "start_ticks": 143522746,
+    "cmdline_sha256": "2a5e903f6c958539a67e50ffece18c2b2037fe2ebc8f8c07b2d7d057486fb15d",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172539,
+    "ppid": 776414,
+    "pgid": 4172539,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975101008-decoder.jsonl.gz",
+    "start_ticks": 143522819,
+    "cmdline_sha256": "1a726cf47002d3dacbbbb6dc3275bbcf4343d2c013d1f3e1c501355071e034a9",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172540,
+    "ppid": 776414,
+    "pgid": 4172540,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975101008-decoder.jsonl.gz",
+    "start_ticks": 143523023,
+    "cmdline_sha256": "1a726cf47002d3dacbbbb6dc3275bbcf4343d2c013d1f3e1c501355071e034a9",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  },
+  {
+    "pid": 4172603,
+    "ppid": 776414,
+    "pgid": 4172603,
+    "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-3/v4-phase-a-1975101038-decoder.jsonl.gz",
+    "start_ticks": 143523316,
+    "cmdline_sha256": "63e68ef61f445410f63578339d47da987af8919db7a6f6f6ccee14ccbae99a62",
+    "ssh_connection": "129.65.221.14 35798 129.65.221.13 22",
+    "perception_allowed": true,
+    "copier_allowed": false
+  }
+]

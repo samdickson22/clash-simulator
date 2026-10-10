@@ -1,0 +1,44 @@
+[
+  [
+    {
+      "pid": 4174409,
+      "ppid": 776414,
+      "pgid": 4174409,
+      "start_ticks": 143535207,
+      "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-4/v4-phase-a-1975100998-decoder.jsonl.gz",
+      "cmdline_sha256": "2726754bc9eebc921c02a70682c45c10defccef1f558c4a26b4342309ad854d7",
+      "exe": "/usr/bin/cat",
+      "allowlist_kind": null,
+      "ssh_connection": null,
+      "still_exists": false
+    }
+  ],
+  [
+    {
+      "pid": 4174466,
+      "ppid": 776414,
+      "pgid": 4174466,
+      "start_ticks": 143535281,
+      "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-4/v4-phase-a-1975101008-decoder.jsonl.gz",
+      "cmdline_sha256": "d6f1ab10df162f685fc09f624cf45a1d629a963b35042def3102193a0c63e298",
+      "exe": "/usr/bin/cat",
+      "allowlist_kind": null,
+      "ssh_connection": null,
+      "still_exists": false
+    }
+  ],
+  [
+    {
+      "pid": 4174472,
+      "ppid": 776414,
+      "pgid": 4174472,
+      "start_ticks": 143535487,
+      "cmd": "cat -- /mpac/sdicks02/v4-archive/verified-capture-20261009-r1/retained-original/127x09/d72380ad56f9f76b7d2b24338d26b1cb5986acb3617104dc492ba89ba0c5a8be/body-4/v4-phase-a-1975101008-decoder.jsonl.gz",
+      "cmdline_sha256": "d6f1ab10df162f685fc09f624cf45a1d629a963b35042def3102193a0c63e298",
+      "exe": "/usr/bin/cat",
+      "allowlist_kind": null,
+      "ssh_connection": null,
+      "still_exists": false
+    }
+  ]
+]

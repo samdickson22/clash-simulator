@@ -3,20 +3,50 @@ import argparse,json,os,socket,subprocess,time,shlex,hashlib
 from pathlib import Path
 from common import utc,write,job,plan,sha
 def memory():return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
+def source_parent(ppid,uid):
+    """Bind collected connection evidence to a still-identical SSH ancestor."""
+    for _ in range(4):
+        d=Path('/proc')/str(ppid)
+        try:
+            stat=(d/'stat').read_text().rsplit(')',1)[1].split();owner=d.stat().st_uid
+            raw=(d/'cmdline').read_bytes();cmd=raw.replace(b'\0',b' ').decode(errors='replace').strip()
+            check=(d/'stat').read_text().rsplit(')',1)[1].split()
+            if stat[19]!=check[19] or owner!=d.stat().st_uid or owner!=uid:return None
+            if cmd==f'sshd: {os.environ.get("USER","sdicks02")}@notty':
+                return [ppid,int(stat[19]),owner,hashlib.sha256(raw).hexdigest()]
+            if not cmd or Path(cmd.split()[0]).name not in ('sh','bash'):return None
+            ppid=int(stat[1])
+        except (OSError,ProcessLookupError):return None
+    return None
 def processes():
     rows=[]
     for d in Path('/proc').iterdir():
         if not d.name.isdigit():continue
         try:
+            uid=d.stat().st_uid
             stat=(d/'stat').read_text().rsplit(')',1)[1].split()
             raw_cmd=(d/'cmdline').read_bytes()
             cmd=raw_cmd.replace(b'\0',b' ').decode(errors='replace').strip()
+            # OP-2: retain connection evidence while this child still exists.
+            # Only SSH_CONNECTION is retained, never the remaining environment.
+            try:
+                env=(d/'environ').read_bytes().split(b'\0')
+                connection=next((v[len(b'SSH_CONNECTION='):].decode() for v in env if v.startswith(b'SSH_CONNECTION=')),None)
+            except OSError:connection=None
+            parent_identity=source_parent(int(stat[1]),uid) if connection and uid==3822945 else None
+            captured=time.monotonic()
+            try:
+                check=(d/'stat').read_text().rsplit(')',1)[1].split()
+                if check[19]!=stat[19] or check[1]!=stat[1] or d.stat().st_uid!=uid:continue
+            except FileNotFoundError:pass # retain the captured identity of an exited child
+            try:affinity=sorted(os.sched_getaffinity(int(d.name)))
+            except (ProcessLookupError,PermissionError):affinity=[]
             try:exe=(d/'exe').resolve(strict=True).as_posix()
             except OSError:exe=None
             exe_evidence='proc/exe' if exe else 'unavailable'
-            if d.stat().st_uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
+            if uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
                 exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
-            rows.append(dict(exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=d.stat().st_uid,cmd=cmd,affinity=sorted(os.sched_getaffinity(int(d.name)))))
+            rows.append(dict(ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return rows
 
@@ -35,6 +65,7 @@ def foreign_compute(job,rows):
             'node /opt/anaconda3/bin/configurable-http-proxy --ip  --port 8000 --api-ip 127.0.0.1 --api-port 8001 --error-target http://127.0.0.1:8081/hub/error --ssl-key /etc/ssl/private/key.key --ssl-cert /etc/ssl/private/cert.cer'):
             continue
         first=Path(r['cmd'].split()[0]).name.lower()
+        if r.get('op2_denied'):forbidden.append(r);continue
         if r.get('allowlist_kind'):continue
         if first=='dbus-daemon' and (r['uid']==103 or '--system' in r['cmd'].split()):forbidden.append(r);continue
         from ssh_transport import sshd_title,authenticated
@@ -69,18 +100,16 @@ def console():
  raw=p.stdout.strip();assert raw.isdigit(),raw
  return dict(who=who,console_count=int(raw),positive=bool(who.strip()) or int(raw)>0)
 
-def perception_reader(r,rows):
+def perception_reader(r,rows,source=None):
  exception=plan()['compute'].get('perception_io_exception',{})
- if socket.gethostname()!=exception.get('host'):return False
+ if socket.gethostname()!=exception.get('host') or r['uid']!=3822945:return False
  try:argv=shlex.split(r['cmd'])
  except ValueError:return False
  if not argv or Path(argv[0]).name not in ('cat','sha256sum'):return False
  operands=argv[1:];operands=operands[1:] if operands[:1]==['--'] else operands
  if not operands or any(not x.startswith(exception['path_prefix']) or '..' in Path(x).parts for x in operands):return False
- try:
-  env=(Path('/proc')/str(r['pid'])/'environ').read_bytes().split(b'\0')
-  conn=next(x[len(b'SSH_CONNECTION='):].decode() for x in env if x.startswith(b'SSH_CONNECTION='))
- except (OSError,StopIteration):return False
+ conn=source if source is not None else r.get('ssh_connection_snapshot')
+ if conn is None:return False
  parts=conn.split()
  if len(parts)!=4 or parts[0]!=exception['source_ip'] or parts[3]!='22':return False
  bypid={x['pid']:x for x in rows};parent=r
@@ -88,26 +117,29 @@ def perception_reader(r,rows):
   parent=bypid.get(parent['ppid'])
   if parent is None:return False
   if parent['cmd']==f'sshd: {os.environ.get("USER","sdicks02")}@notty' and parent['uid']==r['uid']:
+   if r.get('ssh_connection_snapshot') is not None and r.get('ssh_parent_snapshot')!=[parent[k] for k in ('pid','start_ticks','uid','cmdline_sha256')]:return False
    r['perception_io_allowlist']=dict(source_ip=parts[0],ssh_ancestor_pid=parent['pid'],reader_pid=r['pid'],start_ticks=r['start_ticks'],command=argv)
    return True
-  if Path(parent['cmd'].split()[0]).name not in ('bash','sh'):return False
+  if not parent['cmd'] or Path(parent['cmd'].split()[0]).name not in ('bash','sh'):return False
  return False
 
 def census(j,before=None,block_ids=()):
  from idle_services import member as idle_member
  from system_bus import member as bus_member
  from ssh_transport import approved_parent,copier_activity
+ from perception_confirmation import CONFIRMATION
  after=processes();allowed=[]
  for r in after:
   if bus_member(r,j):r['allowlist_kind']='system_dbus'
   elif perception_reader(r,after):r['allowlist_kind']='perception_reader'
   elif idle_member(r,after,j):r['allowlist_kind']='idle_cache'
   elif copier_activity(r,after,j):r['allowlist_kind']='owned_copier_child'
+ CONFIRMATION.apply(after,j,processes,perception_reader,block_ids=block_ids)
  for r in after:
-  if approved_parent(r,after,lambda child:child.get('allowlist_kind') in ('perception_reader','idle_cache','owned_copier_child')):
+  if not r.get('op2_denied') and approved_parent(r,after,lambda child:child.get('allowlist_kind') in ('perception_reader','idle_cache','owned_copier_child')):
    r['allowlist_kind']='approved_sshd_transport'
   if r.get('allowlist_kind'):
-   allowed.append(dict(kind=r['allowlist_kind'],pid=r['pid'],pgid=r['pgid'],start_ticks=r['start_ticks'],cmdline_sha256=r['cmdline_sha256'],block_ids=list(block_ids)))
+   allowed.append(dict(kind=r['allowlist_kind'],pid=r['pid'],pgid=r['pgid'],start_ticks=r['start_ticks'],cmdline_sha256=r['cmdline_sha256'],block_ids=list(block_ids),op2_confirmation=r.get('op2_confirmation')))
  if allowed:
   j.mkdir(parents=True,exist_ok=True)
   with (j/'allowlist-occurrences.jsonl').open('a') as f:f.write(json.dumps(dict(utc=utc(),scope='blocks' if block_ids else 'admission',occurrences=allowed))+'\n')
