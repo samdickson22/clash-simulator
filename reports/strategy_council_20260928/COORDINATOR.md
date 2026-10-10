@@ -1783,3 +1783,7 @@ Also on the hub, but with copies elsewhere:
     - K0 here is a v1-mirror K0 (52.8% ≈ 50%) and **not on K2/K4's scale**; lateness isn't charged;
     - the mechanism is that K0 is starved (fallback on 64% of decisions, ~98% WAIT), while the student cuts fallbacks to 23%. The gain is hardware- and budget-dependent.
   - **→ Commissioning the confirmatory study S1** in the K-v2/K2 honest-lateness harness: cached single-inference K0c vs S(R3a), at 200/160 ms, with a K2-200 anchor; 1 core; on 01.
+- **08:43 UTC heartbeat:**
+  - G on 03/04/08; R3c/R3e on 09/13. 01 is idle, so it's **reassigned to S1 now**; any R3 stage-2 survivor moves to 03 (G stopped there first).
+  - Seal ~180+/216, ETA ~11Z.
+  - Spurious STOP denial on pending_request_list ignored.
