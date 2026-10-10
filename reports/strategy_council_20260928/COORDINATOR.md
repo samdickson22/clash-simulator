@@ -1922,3 +1922,10 @@ Also on the hub, but with copies elsewhere:
   **Verification on 05** (an exact git-archive export, nice 19, CPU 63, t1-verifier Python 3.12): 213/213 pass in 7.7 s. Every manifest hash I could resolve matches (175, 0 mismatches).
 
   **GO:** C2 (FROZEN, re-hash, bind the r1–r3 reviews, this confirmation and the authority to the new manifest SHA), then C3 (a fresh two-host qualification and smoke on the exact bytes: census timing with the extra scan cost, real `_apt` methods carry all four UIDs), then the reviewed Option B coordinated 08 stop and balanced remainder. Report C3 before dispatch only if it fails.
+- **23:26 UTC: OP-7 C3 `_apt` witness, disposition.** The C2 FROZEN manifest is 04633bdb (1ea7fa18…). 08 was hard-stopped cleanly: 711 blocks durable, all 399 08 proofs verified, the copier drained. Census scans take at most 0.357 s against the 1 s budget. No live `_apt` method is running on either host, so the live all-four-UID witness is **absent, not failed**.
+
+  **Ruling:** don't start or trigger any system service. Accept a static witness instead, read-only on both hosts:
+  - the `/usr/lib/apt/methods/*` files and their ancestors are root-owned, carry no setuid or setgid bit, and are not group/other-writable;
+  - the `_apt` UID resolves from /etc/passwd.
+
+  apt drops privileges with `setuid()` as root, which sets real, effective, saved and filesystem UIDs together. A real helper with mismatched UIDs fails closed (stop), so a wrong assumption costs availability, not validity. Record the first live `_apt` observation's four UIDs in the ledger when it occurs. **Proceed** to admission and Option B dispatch once the qualification and smoke pass.
