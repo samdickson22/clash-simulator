@@ -1821,3 +1821,7 @@ Also on the hub, but with copies elsewhere:
   - Clean owned exit; receipt 85c0b458.
   - The serial verifier is untouched and running alone, now at epoch 4; ETA ~20Z at its current rate. Final seal-equality checking happens only after all 24 epochs.
   - A21 (remote lock narrowing) is under review; a fresh A21 parallel attempt is to be decided on its verdict, and must beat the serial ETA.
+- **12:59 UTC: A21 review = APPROVE_WITH_CONDITIONS** (e2e80cec). Identity is exact and fails closed on every bad stream; timeouts have 120× margin; memory ~7 GB.
+  - **Realistic speedup is only ~2.2× serial:** a fresh A1 parallel run takes ~4–7 h, because the serial's full-scope 03 holds cap it.
+  - **Decision: NO fresh A1 parallel attempt.** The serial alone (~25 branches/h, ETA ~19–20Z) is as fast or faster, and a contending attempt would slow it.
+  - **A21 is reserved for the A2 stages:** genuine serial A1 is an accepted prerequisite; no serial competitor in A2. A21 freeze/approval to be issued (C1 key sets, C2 fresh deploy, O7 03/08 sizes, O10 ControlPath exit) together with APPROVE_A2 after A1 completes.
