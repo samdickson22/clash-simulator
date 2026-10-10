@@ -2,8 +2,8 @@
 import json
 import math
 from pathlib import Path
-from receipts import TIERS, assert_exact, decision_rates, quantiles, sha, verify_files
-from tier_backend import NATIVE_SHA,V1_SHA,STUDENT_SHA,CALIBRATION_SHA
+from receipts import TIERS, assert_exact, agreement, forward_exception, canonical, decision_rates, quantiles, sha, verify_files
+from tier_backend import NATIVE_SHA,V1_SHA,STUDENT_SHA,CALIBRATION_SHA,THRESHOLD
 
 
 def geometric(values):
@@ -122,14 +122,45 @@ def run(args,store):
         identities[host]=identity;source_pins[host]=entry
     result=pool_rows(hosts)
     refs={t:{} for t in TIERS}
+    exemptions={h:{t:[] for t in TIERS} for h in hosts}
     for tier in TIERS:
         for identity,wall in result["walls"][tier].items():
             first=hosts[result["included"][0]]["results"][tier][identity]
             for host in hosts:
                 value=hosts[host]["results"][tier][identity]
-                assert_exact(value["result"],first["result"],"cross-host complete decision")
-                assert_exact(value["forward"],first["forward"],"cross-host forward")
+                old,new=first["forward"],value["forward"]
+                exempt=False
+                if tier == "S":
+                    for item in (old,new):
+                        if item is None:raise ValueError("Missing S fleet forward")
+                    left=dict(old,ranks={int(k):v for k,v in old["ranks"].items()})
+                    right=dict(new,ranks={int(k):v for k,v in new["ranks"].items()})
+                    check=agreement(left,right,THRESHOLD)
+                    if not check["equal"]:
+                        if not check["allowed"]:raise ValueError("Unexplained cross-host S gate/ordered-top8 mismatch")
+                        exempt=True
+                elif tier == "K0c":
+                    if canonical({k:new[k] for k in ("sample","top8")}) != canonical({k:old[k] for k in ("sample","top8")}):
+                        if not forward_exception(tier,old,new,THRESHOLD):
+                            raise ValueError("Unexplained cross-host K0c sample/top8 mismatch")
+                        exempt=True
+                else:
+                    assert_exact(new,old,"cross-host forward")
+                if canonical(value["result"]) != canonical(first["result"]):
+                    if not exempt:
+                        assert_exact(value["result"],first["result"],"cross-host complete decision")
+                    scores=dict(zip(first["result"]["candidates"],first["result"]["scores"]))
+                    for candidate,score in zip(value["result"]["candidates"],value["result"]["scores"]):
+                        if candidate in scores:
+                            assert_exact(score,scores[candidate],"cross-host native score; ALL tiers fail on mismatch")
+                if exempt:exemptions[host][tier].append(identity)
             refs[tier][identity]=dict(result=first["result"],forward=first["forward"],wall_seconds=wall)
+    for host,tiers in exemptions.items():
+        for tier,ids in tiers.items():
+            if len(ids)/len(refs[tier]) > .005:
+                raise ValueError("Cross-host policy agreement below99.5%; fleet reference fails closed")
+    store.write("fleet-policy-agreement.json",dict(conditional_exemptions=exemptions,threshold=THRESHOLD,
+        required_joint_fraction=.995,unexplained=0,native_common_scores_exact=True))
     store.write("speed-reference.json",refs)
     store.write("deadline-reference.json",result["deadlines"])
     store.write("pooling.json",dict(**result,source_receipts=source_pins,descriptor_sha256=sha(args.pool_input),

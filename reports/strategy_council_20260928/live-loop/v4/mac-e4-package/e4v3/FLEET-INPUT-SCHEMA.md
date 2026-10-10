@@ -161,7 +161,13 @@ are medians of all raw hosts × repeats.** Each host's geometric mean speed rati
 (pooled state wall / host state median) must lie within ±5%; hosts outside are
 explicitly excluded in one pass. Remaining raw observations are pooled again;
 a retained host outside ±5% after pooling fails for review without further
-iteration. Native/action/forward mismatches from even an excluded host fail ALL.
+iteration. Native score mismatches from even an excluded host fail ALL. Cross-host S
+joint gate/ordered-top8 and K0c sample/top8 use the registered local near-tie/gate
+exceptions, with >=99.5% joint agreement and zero unexplained differences per
+host/tier. Logits/probabilities may vary while discrete outputs agree. Conditional
+policy exemptions are recorded in `fleet-policy-agreement.json`; every common
+native candidate score remains strictly exact. All original forwards remain
+source-pinned. Non-exempt action/candidate/score differences fail ALL.
 Deadline rates pool raw counts, retaining per-state distributions and numerators.
 
 Outputs are SHA-sealed `speed-reference.json`, `deadline-reference.json`,

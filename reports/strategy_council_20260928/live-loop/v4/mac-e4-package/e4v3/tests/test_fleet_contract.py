@@ -11,7 +11,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from corpus_contract import REQUIRED_ROW,validate_row,validate_capture_receipt
 from fleet_profile import slot_layout,compare_mhz
 from fleet_pool import pool_rows
-from tier_backend import NATIVE_SHA,V1_SHA,STUDENT_SHA,CALIBRATION_SHA
+from tier_backend import NATIVE_SHA,V1_SHA,STUDENT_SHA,CALIBRATION_SHA,THRESHOLD
 from receipts import TIERS,ReceiptStore,sha,verify_files
 from measure_tiers import main
 
@@ -167,7 +167,11 @@ class FleetPoolTests(unittest.TestCase):
                 store.write("exactness-tiers.json",dict(passes=True,states=125,records=[dict(id=str(i),workers_equal=True,zero_budget_immutable=True,max_relative_difference={t:0. for t in ("K0c","K1","K2","K4")}) for i in range(125)]))
                 store.write("belief-exactness.json",dict(passes=True,histories=125,posterior_weights_cumulative_ledger_samples_rng_exact=True,records=[dict(id=str(i),deadline_on=on,exact=True) for i in range(125) for on in (False,True)]))
                 store.write("reporting-mhz-comparison.json",dict(passes=True))
-                refs={t:{i:dict(result=dict(action=1,candidates=[1],scores=[1.]),forward=None,wall_seconds=1.) for i in ids} for t,ids in sets.items()}
+                drift=1e-7 if name=="b" else 0.
+                forwards={"S":dict(gate=.6+drift,legal=[1],ranks={"1":1.+drift}),
+                    "K0c":dict(sample=1,top8=[1],probabilities=[.5+drift],log_probabilities=[-.7+drift]),"K2":None,"K4":None}
+                refs={t:{i:dict(result=dict(action=1,candidates=[1],scores=[1.]),forward=forwards[t],wall_seconds=1.) for i in ids} for t,ids in sets.items()}
+                refs["S"]["0"]["forward"]=dict(gate=THRESHOLD+(-1e-5 if name=="b" else 1e-5),legal=[1],ranks={"1":1.})
                 store.write("speed-reference.json",refs)
                 for row in data["speed"]:store.append("speed-reference-raw.jsonl",row)
                 for row in data["deadlines"]:store.append("deadline-reference-raw.jsonl",row)
@@ -180,6 +184,22 @@ class FleetPoolTests(unittest.TestCase):
             receipt=json.loads((base/"pool/receipt-manifest.json").read_text());verify_files(base/"pool",receipt["files"])
             rates=json.loads((base/"pool/deadline-reference.json").read_text())["S"]["1.0"]
             self.assertEqual(rates["n"],1800);self.assertEqual(rates["counts"]["cutoff"],600)
+            policies=json.loads((base/"pool/fleet-policy-agreement.json").read_text())
+            self.assertEqual(policies["conditional_exemptions"]["b"]["S"],["0"])
+            self.assertTrue(policies["native_common_scores_exact"])
+            # A policy near-threshold exemption cannot excuse ANY common native score drift.
+            speed_path=base/"b/speed-reference.json"
+            changed=json.loads(speed_path.read_text());changed["S"]["0"]["result"]["scores"]=[1.000001]
+            speed_path.write_text(json.dumps(changed))
+            host_seal=base/"b/receipt-manifest.json";host_receipt=json.loads(host_seal.read_text())
+            host_receipt["files"]["speed-reference.json"]=sha(speed_path)
+            host_seal.write_text(json.dumps(host_receipt))
+            entries[1]["manifest_sha256"]=sha(host_seal)
+            request.write_text(json.dumps(dict(schema="clasher.e4v3.fleet-pool.v1",hosts=entries)))
+            args[4]=sha(request);args[-1]=str(base/"native-mismatch-pool")
+            with patch.dict("os.environ",{k:"1" for k in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS")}):
+                with self.assertRaisesRegex(ValueError,"ALL tiers fail"):main(args)
+            self.assertEqual(json.loads((base/"native-mismatch-pool/receipt-manifest.json").read_text())["status"],"failed")
             (base/"a/speed-reference-raw.jsonl").write_text("tampered")
             args[-1]=str(base/"failed-pool")
             with patch.dict("os.environ",{k:"1" for k in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS")}):
