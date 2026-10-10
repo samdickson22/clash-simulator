@@ -1744,3 +1744,7 @@ Also on the hub, but with copies elsewhere:
   - revised `coordinator-approval-A1-r3.json` (ae9208de; identical to r2 except plan 0fe6fe3a);
   - `coordinator-approval-A20-local-io-lock-scope-20261010.json` (6bddf770).
   - **NOT yet issued:** APPROVE_PARALLEL_BODY_VERIFICATION and the 04 execution allocation. These are launch-time items: O2 X5 exit, O4 seal exit, O7 sizes, ≥80 GiB, allow_serial_verify_handoff=true (S1).
+- **05:46 UTC: R3 stage 1:** both arms narrowly KILLED. Recall 0.630 (gate 0.6375); agreement 0.744 (gate 0.754). This is a big improvement over r2 (0.26 / 0.61); the R3b advantage head broke top-8 (1.8%).
+  - **R3 round 2:** R3c (2× steps, 09), R3d (seed replicate, 16), R3e (2× steps, T=0.01, 13). Same gates.
+  - Plus a **descriptive never-adoptable S-default run for R3a** on 01 after X's descriptive study.
+  - Leased 14/15 remain idle.
