@@ -28,7 +28,11 @@ def main():
  from clasher.analysis.loss_review.metrics import archetype
  catalogue=read(path);assert len(catalogue['decks'])==2925
  primary=[max((d for d in catalogue['decks'] if archetype(d['cards'])==f),key=lambda d:d['frequency'])['cards'] for f in ('bridge_wincon','siege','beatdown','bait','chip')]
- from imitation.exit_r1 import emitter
+ import importlib.util
+ source=HERE/'inherited/r1/emitter.py'
+ expected=read(HERE/'provenance.json')['r1_emitter']['sha256'];assert sha(source)==expected
+ spec=importlib.util.spec_from_file_location('_t1_frozen_r1_emitter',source)
+ emitter=importlib.util.module_from_spec(spec);spec.loader.exec_module(emitter)
  emitter.PRIOR=catalogue
  assert emitter.decks()==primary+L2,'R1 emitter training-deck binding'
  support={}

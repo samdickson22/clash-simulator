@@ -88,5 +88,10 @@
       "sha256": "a3ae337abe18f96d44525b527e74ecf9c135ce8a0850f98bd1fbb96ab05d9f83",
       "target": "reports/explore/t1/detach.sh"
     }
-  ]
+  ],
+  "r1_emitter": {
+    "source": "imitation/exit_r1/emitter.py",
+    "copy": "reports/explore/t1/inherited/r1/emitter.py",
+    "sha256": "dab616517ea6b33ae1de6a34909526cf5409ec4ad71c180188d95d9716cfecc1"
+  }
 }
