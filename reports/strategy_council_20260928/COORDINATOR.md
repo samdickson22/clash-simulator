@@ -1792,3 +1792,4 @@ Also on the hub, but with copies elsewhere:
   - S1 reporting was stopped at 09:07Z by its exclusive-host guard (0 complete blocks; outcomes unread). The intruder was **T11's obsolete backup_extended60 poller** on 04, which hashed old checkpoints on 01 every 60 s.
   - **Retired via its own backup-stop-request.json** (clean exit 09:14:04Z; T11 terminal backups were already audited at 2026-10-09 19:12Z). S1 is authorized to restart on a fresh bank with an amendment. The perception owner has been told (04 inventory −3).
   - Heartbeat: G on 03/04/08; R3e on 13; 01 idle pending the S1 restart. A spurious STOP denial was ignored.
+- **09:23 UTC:** R3e KILLED (recall 0.624 / agreement 0.740). **All R3 round-2 arms are killed; no stage 2.** **13 returned to roader; the whole lease has ended early** (09/13/14/15/16 all returned and acknowledged by roader). Remaining R3 work is the common-root regret on 03 cores 56–59.
