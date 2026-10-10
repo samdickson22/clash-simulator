@@ -10,11 +10,11 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | pending09 | pending | conditional | conditional | pending |
-| X2 | T=.0001 /1.0 | pending16 | pending | conditional | conditional | pending |
-| X3 | z-score τ=.5 /1.0 | pending08; resume13/14 if needed | pending | conditional | conditional | pending |
-| X4 | T=.003 /.75 | pending01, micro3584 | pending | conditional | conditional | pending |
-| X5 | X1 double steps /1.0 | pending04 | pending | conditional | conditional | pending |
+| X1 | T=.003 /1.0 | running09 | pending | conditional | conditional | pending |
+| X2 | T=.0001 /1.0 | running16 | pending | conditional | conditional | pending |
+| X3 | z-score τ=.5 /1.0 | running08; resume13/14 if needed | pending | conditional | conditional | pending |
+| X4 | T=.003 /.75 | running01, micro3584 | pending | conditional | conditional | pending |
+| X5 | X1 double steps /1.0 | running04 | pending | conditional | conditional | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -31,7 +31,10 @@ CI≥0. Arm and empty-hook K1 control both face v1 on identical seeds/decks/seat
 K1 qualified before06Z; its primary harness is pinned, fallback unused.
 The initial own wrapper used a K1 opponent in two mechanics-only smokes.
 That design was corrected before any reporting game; v2 qualification gates
-reporting. Those two smokes cost0.047438426CPUh and are ineligible controls.
+reporting. Corrected qualification passed01:06:17Z: four terminal games,
+two exact seed/deck/seat pairs, v1 opponent/fallback, one ownK1 core,
+empty reference hooks and inference afterwall0. Those two original smokes cost0.047438426CPUh and are ineligible controls. Corrected smokeCPUh:0.069102254;
+sealCPUseconds:0.039148. No reporting outcomes consumed.
 Intervals:5000 whole-game percentile95% bootstraps, seed80991010.
 
 R2 DAgger is conditional on a stage2 survivor. No R2 generation is admitted yet.
@@ -40,7 +43,7 @@ been preempted. Leased GPU jobs require current leases and strict process,
 PSS/headroom/nice guards and return before2026-10-11 05:30Z.
 
 Metered failed-attempt fit GPU-wall hours:0.036806672;
-fit CPU-hours:0.029492098; evaluation CPU-hours:0.
+fit CPU-hours:0.029492098; heldout/reporting CPU-hours:0; mechanics costs reported above.
 Preparation audit CPU-hours:0.844768969, including retired scan attempts.
 Preparation audit CPU costs and failed/retired scan attempts are retained under
 the audit job and PROGRESS-X.md; final totals will include every fit and game

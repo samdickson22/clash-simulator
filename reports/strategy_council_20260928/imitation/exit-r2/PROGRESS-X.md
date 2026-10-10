@@ -149,3 +149,17 @@ qualify-smoke-student-3.log; expected qualification-ARM-INDEX.json and
 qualification-meter-ARM-INDEX.json. Own outputs never overlap reporting.
 Corrected reporting harness installed only home03; original worker fails
 closed. Old smoke receipt/inputs preserved. Fit-host frozen snapshots intact.
+
+2026-10-10T01:07:15Z. Corrected v2 wrapper qualification PASSED at01:06:17Z.
+Four terminal games, two exact seed/deck/seat pairs on smokeindices2/3;
+exactly one ownK1 search player, v1 opponent and v1 fallback on both actors,
+referencehooks empty, unique legal studentproposals, inference afterwall0,
+192ms cutoff. Summary SHA-pins correctedadapter a1d57b28 and harness29aa59e4;
+root03 `$job/stage3-wrapper-qualification-v2.json` now admits corrected
+reporting after stage2 survival. No reporting game or stagekill consumed yet.
+Metered corrected smokeCPU 0.06910225444444446h, sealCPU0.039148s;
+old mechanicsCPU0.04743842555555556h remains charged separately.
+Stage3 invocation after gates: game_pool_v2.py --job "$job" --stage3
+--arm Xn (and init control) --cores60 61 62 63; use literal `--stage 3`
+with a space. Reduce only600 complete genuinepairs via reduce_stage3_v2.py.
+K originals untouched, fit-host original freezes/source snapshots intact.

@@ -1,0 +1,106 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T01:06:17Z",
+  "adapter_sha256": "a1d57b2855ff34afca29116db650892b4e9546c9aa2f02ab35c9ff662a993606",
+  "harness_sha256": "29aa59e42a6ddb0feb2d3aaaa5e9fdd683ff88ac6e5c8013d489c7398bde84b3",
+  "qualifier_sha256": "9cbe6d424015cc08bb5df1bd8506d7b1d20e2beee7b7bc685c17372373dbdc41",
+  "seal_source_sha256": "6c043c4b6cdf11533a8192a4e4bb1deeb173f79daba432adc9ee7880038f891d",
+  "contrast": "student-hooked K1 versus v1 minus empty-hook K1 versus v1",
+  "opponent": "v1-policy",
+  "own_fallback": "released v1",
+  "search_players_per_game": 1,
+  "search_threads": 1,
+  "coarse_horizon": 160,
+  "inference_after_wall0": true,
+  "scoring_cutoff_seconds": 0.192,
+  "paired_seeds": [
+    4503601527370498,
+    4503601527370499
+  ],
+  "complete_terminal_games": 4,
+  "exact_seed_deck_seat_pairs": 2,
+  "results": {
+    "init": [
+      {
+        "receipt": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-init-2.json",
+        "receipt_sha256": "2aa3dfbc48e302279137fc1f6ed2b3a442558ad33cbbf2b15d2a671a607f1319",
+        "checks": {
+          "fallback_calls": 1170,
+          "proposal_calls": 0,
+          "legal_proposals": 0,
+          "min_inference_offset_seconds": 0.0014452498871833086,
+          "max_proposal_seconds": 0.0
+        }
+      },
+      {
+        "receipt": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-init-3.json",
+        "receipt_sha256": "422f14ab03dc99b80b4299b517ddc39f2d691d41f19f939a9be5b96668589ea5",
+        "checks": {
+          "fallback_calls": 1350,
+          "proposal_calls": 0,
+          "legal_proposals": 0,
+          "min_inference_offset_seconds": 0.0016054920852184296,
+          "max_proposal_seconds": 0.0
+        }
+      }
+    ],
+    "smoke-student": [
+      {
+        "receipt": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-smoke-student-2.json",
+        "receipt_sha256": "12f3392b107551dc9b259d47fa08775c364541473ab0a2cfd8297436dcd7d8a5",
+        "checks": {
+          "fallback_calls": 1142,
+          "proposal_calls": 286,
+          "legal_proposals": 345368,
+          "min_inference_offset_seconds": 0.0017236939165741205,
+          "max_proposal_seconds": 0.011006402084603906
+        }
+      },
+      {
+        "receipt": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-smoke-student-3.json",
+        "receipt_sha256": "353bdde3af4d64d1f7d77cb3c4e0debb6214b0d813422315a731aefee5a0d187",
+        "checks": {
+          "fallback_calls": 1406,
+          "proposal_calls": 352,
+          "legal_proposals": 285182,
+          "min_inference_offset_seconds": 0.002739798044785857,
+          "max_proposal_seconds": 0.11227849102579057
+        }
+      }
+    ]
+  },
+  "smoke_meters": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-meter-init-2.json",
+      "sha256": "693baa129477ef0e028a2b22abd78e6d485e33b4527edb598a0a1598d3b5b142",
+      "status": "passed",
+      "cpu_seconds": 45.214792,
+      "wall_seconds": 44.214081292040646
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-meter-init-3.json",
+      "sha256": "dee5a66de37d7ca002822e6aa9d754ab221c5c223ed9ce8476fcb6a402a29739",
+      "status": "passed",
+      "cpu_seconds": 65.012578,
+      "wall_seconds": 63.983844561968
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-meter-smoke-student-2.json",
+      "sha256": "9bba9285c286848a972a311a90e81f94fc0734d68e1ed24b0b6ba8bd271d5103",
+      "status": "passed",
+      "cpu_seconds": 62.428894,
+      "wall_seconds": 61.417231757892296
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1/qualification-meter-smoke-student-3.json",
+      "sha256": "8b0ec7543b3e8ac6b0b19ede6d9de5cd12cc88610ebc28b5199144d2f32ea3a1",
+      "status": "passed",
+      "cpu_seconds": 76.11185200000001,
+      "wall_seconds": 75.333771642996
+    }
+  ],
+  "smoke_cpu_hours": 0.06910225444444446,
+  "seal_cpu_seconds": 0.039148,
+  "reporting_games_consumed": 0,
+  "interpretation": "Mechanics qualification with v1 student stand-in; no arm survival decision."
+}
