@@ -8,7 +8,12 @@ def outcome_release(repo,receipt):
  repo=Path(repo);r=read(receipt)
  assert r['coordinator_thread']==COORDINATOR and r['authorized_at_utc']
  assert r['authorization_message_id'],'explicit coordinator evidence required'
+ assert r['reason'] in ('fourteen_day_escape','committed_mac_summary')
+ from release_reference import prerequisites
+ completion=prerequisites(repo,r)
  if r['reason']=='fourteen_day_escape':
+  bound=r['amendment_1_prerelease']['completion']
+  assert bound==dict(path=r['reporting_completion_path'],commit=r['completion_commit'],sha256=r['reporting_completion_sha256']),'escape completion differs from checked END'
   name=r['reporting_completion_path'];assert not Path(name).is_absolute() and '..' not in Path(name).parts
   raw=subprocess.check_output(['git','-C',str(repo),'show',r['completion_commit']+':'+name])
   import hashlib,json
