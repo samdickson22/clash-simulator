@@ -115,3 +115,11 @@ New own qualifier plans two terminal smoke games on disjoint seeds1527370496
 cores60/61 nice19/SCHED_IDLE. Runtime assertions bind inference to actual
 K run_game wall0 and verify both K1 cores, legal proposals and empty references.
 No scientific stage3 games/decisions are admitted by this smoke.
+
+2026-10-10T00:59:22Z. Stage3 wrapper qualification plan8f2830bb secret-scanned,
+committed/pushed before smoke. Detached home03 jobs at00:58:56/57Z:
+reference index0/core60 PID=PGID1430182; v1 student stand-in index1/core61
+PID=PGID1430280. Job `/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-20261010-r1`;
+logs qualify-0.log / qualify-1.log; expected results qualification-0.json /
+qualification-1.json. Both nice19/SCHED_IDLE, CPU only, own outputs separate
+from stage3 reporting. Do not duplicate pending smoke workers on continuation.
