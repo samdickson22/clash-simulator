@@ -620,3 +620,18 @@ final exits supersede,closedcontrollers/preparation separate,nestedchildren
 never added twice. No stageoutcome/kill/survivor/R2/reportingseed consumed.
 Continuation prompt1808181/cleancollection/S-default persisted,enabled,next
 02:51:31.806Z. Neverrestart1746462/1596239/1502885 fromolderqueuedprompts.
+
+2026-10-10T02:52:53Z. Latest queued continuation reconciled currentcontroller
+1808181 rather than superseded1746462. Fresh02:52:22Z allsixoriginalgroups
+healthy,steps3907/3865/3638/2655/3513/2975,eightnice10processeseach/noexit
+orstopreason,leasedguards/leasesPASS.08quietempty,X3checkpoint3500;
+X5checkpoint3500,X6checkpoint2750;08guard/13priority unchanged. Controller
+1808181 nice19/IDL/core63,active=null/offline={}/stage2={}/failures=[],
+priorityfalse,old1746462absent. K1718091stillactive/noDONE; no scoring/game/
+replacementwrapper smoke admitted. S-default smoke/reporting casecounts0,
+no151reportingseed consumed. No launch/stop/migration or new qualification.
+Currentclean-exit collectionguard remains qualified/frozen; training/science
+bytes unchanged. continuation-check0252 replaces live11.443398520GPUh and
+38.210255556whole-treeCPUh, not additive; finalexitmeters supersede.
+No scientificmetric/kill/survivor/R2admission. Existing10minscheduleenabled,
+currentprompt1808181 confirmed,next03:01:32.619Z. Experiment stays active.
