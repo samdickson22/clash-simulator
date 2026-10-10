@@ -1811,3 +1811,9 @@ Also on the hub, but with copies elsewhere:
   - Current A19 rate ≈1.7–1.9 epochs/h, ≈ serial speed.
   - **Commissioned A21:** narrow the remote-read lock scope (03/08) to transfer+SHA only; target review-ready ~14:30Z.
   - If approved, a possible fresh A1 parallel attempt with A21 (serial untouched); otherwise A21 serves the A2 stages.
+- **12:56 UTC: S1 COMPLETE: 1-core student tier VIABLE** (`c288e6f2`; exploration; K2-scale harness with honest lateness; 600 paired seeds × 5 arms).
+  - Losses: **S-200 (1 core + R3a proposer/fallback) 28.2%**, K0c-200 44.2%, K2-200 29.0%. S−K0c −16.0 pp [−21.0, −11.2]; **S−K2 −0.8 pp [−5.3, +3.5]**.
+  - At 160 ms (0.8× speed): S 32.2% (+4.0 pp) vs K0c **79.0%** (+34.8 pp). **The student makes 1-core search robust to slower cores.**
+  - **Mac tiers (fleet-measured):** 4 cores ≈16.5–18%; 2 cores ≈25–29%; **1 core + student ≈28% (32% at 0.8×)**; 1 core without a student 44% → 79% at 0.8×.
+  - R3a stays never-adoptable from the R3 frozen study. Adoption needs a confirmatory PREREG plus Mac E4.
+  - 01 released at 12:55Z.
