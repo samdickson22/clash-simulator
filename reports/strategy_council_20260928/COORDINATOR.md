@@ -1661,3 +1661,8 @@ Also on the hub, but with copies elsewhere:
   - X4 runs at ~70% of X1's step rate, ETA ~04:30Z. Accepted: frozen recipe, no restart.
   - G is fully off 01 (81 sealed games kept). STOP-03 is from K-v2 (timing games). 04 is briefly drained to deploy G's PSI guard.
   - A spurious STOP denial on pending_request_list was ignored per Sam's rule.
+- **02:05 UTC: G paused fleet-wide.**
+  - The 04 PSI guard tripped at steady state (85.8% full) with 40 workers next to X5's fit. Same signature as 01/X4.
+  - **Rule:** no CPU filler on a host running a GPU fit's corpus loader. G resumes only on explicit release (04 after X5 ~06–07Z; 03 after K-v2). Total so far ≈207.6 k roots.
+  - Also: K-v2 smoke found a residual pre-scan latency tail (21 overruns, early-game); K-v2 is instrumenting it before reporting.
+  - X stage-3 S-default is qualifying with default-layer equivalence; no pre-run controls (interleaving rule).
