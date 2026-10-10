@@ -171,3 +171,17 @@ Current RESULTS clearly pending; prep55.608171CPU s (including16.468019s04base),
 fit/offline/game costs pending their exitmeters. Nested diagnostic meters
 never added; copied same-SHA meters counted once acrosshosts. Finalreport
 requires both final2500 EMAs and all prescribed stage1/2 gatesresolved.
+
+2026-10-10T05:02:05Z — Continued live fits: R3a1561/R3b1531 at05:01:33/34Z; both
+step1500 checkpoints present. Health8 processes each, PSS16.62/23.65GB,
+GPUfree48.41/48.30GB, no stop reason. No2500 complete/exit/offline exists;
+bounded stage.py made no launches. Metadata process snapshots refreshed and
+RESULTS remains explicitly pending; fit costs accrue until whole-tree exit.
+
+A19 latest05:00:49Z combinedcandidate remains HELD, no production authority
+or launch; original CPU52 seal unchanged. Progress bytes changed again, so
+04 stays idle and its stale admitted snapshot cannot start final staging.
+K2 at04:58:29Z remains behind K-v2 release (2312/2400 terminal, originalPGIDs
+live); no K2 release or03 admission.01 still awaits explicit X study release.
+Temporary continuation enabled at10-minute cadence; retain until finalRESULTS
+or lease expiry/vacancy, and do not duplicate fit/offline/replay attempts.
