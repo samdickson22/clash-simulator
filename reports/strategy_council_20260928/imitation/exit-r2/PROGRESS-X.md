@@ -729,3 +729,12 @@ continuation-check0342 replaces fit totals16.210856963GPUh/54.640782201CPUh;
 finalclosed meters and separately metered score/preparation costs retained.
 Schedule enabled next2026-10-10T03:51:40.053Z. Four fits and gates pending;
 no stage2survivor or R2eligibility. Experiment remains active.
+
+2026-10-10T03:43:39Z. Queued03:08 X7 handoff is historical for controller
+and phase status. Latest1940296 remains nice19/SCHED_IDLE/core63 with no
+failures/activeeval, offlineX1–3 closedkills/stage2{}. Original four fit
+PGIDs unchanged, stepsX4=3900/X5=5137/X6=4701/X7=1116, eight nice10
+processes each, no exit/guardreason,13/14 lease/PSS/GPU floors PASS.
+No launch/stop or new scientific outcome; current metered snapshot0342
+retained without adding a second live total. X8 cancelled/15unused; X7
+continues. Tenminschedule remains enabled,next03:51:40Z.
