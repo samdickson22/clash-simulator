@@ -738,3 +738,22 @@ processes each, no exit/guardreason,13/14 lease/PSS/GPU floors PASS.
 No launch/stop or new scientific outcome; current metered snapshot0342
 retained without adding a second live total. X8 cancelled/15unused; X7
 continues. Tenminschedule remains enabled,next03:51:40Z.
+
+2026-10-10T03:50:38Z. X6 final4883 EMA sealed/cleanfitexit03:49:20,
+original supervisor2251934/trainer2252096 groups absent. GPUcontroller
+1940296 launched single offline13 attempt03:49:29 supervisor2869254=PGID/
+worker2869263=PGID,logstage1-X6-attempt1.log,closed03:49:44exit0/reasonNone.
+Heldout64 exactmetrics:recall.226257199 [CI.214442492,.237495276],
+top8.287705504 [.269442455,.306827903],hard.625247280 [.607800692,.643640799],
+WAIT.853603764 [.841989509,.865745960]/teacher.654055391=1.305094.
+Scientific KILL recall/top8/hard; WAITpasses. Stage2/3SKIP; no R2eligibility.
+Fullresults/CIs/EMA pins in stage1-X6.json; finalfit/score wholemeters and
+X6-completion retained. FitCPU34232.092604s/GPUwall8796.690268s,
+scoreCPU13.068453s/GPUwall15.246326s, never add nested child resultCPU.
+13allownfit+scoregroupsabsent/GPUcomputeempty/free48666MiB03:50:38.
+Currentcontroller1940296 healthy03:50:23,noactive/failures,4offlinekills,
+stage2{}. X4/X5/X7 unchangedfitgroups at4024/5350/1338,all8nice10
+processes/floors PASS,14leasevalid. Monitor0350 closed4+live3 totals
+16.733385911GPUh/56.693974591CPUh replace earlier snapshots.
+X8 cancelled/15unused; X7gap remains pending. No manual duplicate job,
+game/reportingseed/R2root consumed. Experiment active pending3fits/gates.

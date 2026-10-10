@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-10T03:50:38Z",
+  "arm": "X6",
+  "host": "127x13",
+  "fit_final_step": 4883,
+  "fit_final_ema_sha256": "6f8cd058db209ca4e53df42740434f9242b489c064dbae1be10970558c42cbe8",
+  "fit_exit": {
+    "utc": "2026-10-10T03:49:20Z",
+    "exit_code": 0,
+    "reason": null,
+    "supervisor_cpu_seconds": 1397.577028,
+    "trainer_tree_cpu_seconds": 32834.515576,
+    "wall_seconds": 8796.690267581027,
+    "peak_pss_bytes": 31623763968,
+    "max_processes": 10,
+    "min_gpu_free_bytes": 29974593536
+  },
+  "stage1_launch": {
+    "utc": "2026-10-10T03:49:29Z",
+    "supervisor_pid": 2869254,
+    "supervisor_pgid": 2869254,
+    "worker_pid": 2869263,
+    "worker_pgid": 2869263,
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X6/step-00004883.pt"
+  },
+  "stage1_meter": {
+    "host": "127x13",
+    "utc": "2026-10-10T03:49:44Z",
+    "arm": "X6",
+    "exit_code": 0,
+    "reason": null,
+    "parent_cpu_seconds": 0.106433,
+    "children_cpu_seconds": 12.96202,
+    "gpu_wall_seconds": 15.246326118940488,
+    "peak_pss_bytes": 3259808768,
+    "min_gpu_free_bytes": 49517953024,
+    "note": "Whole parent+child CPU once; child result CPU is nested, never add separately. Failed/reaped attempts retained."
+  },
+  "stage1_survives": false,
+  "kill_reasons": [
+    "play recall <0.60",
+    "top-8 recall <0.50",
+    "root hard agreement <0.704"
+  ],
+  "stage2": "SKIP: stage1 killed",
+  "stage3": "SKIP: stage1 killed",
+  "R2": "Not eligible from X6; no stage2survivor yet across all7",
+  "closure": {
+    "utc": "2026-10-10T03:50:38Z",
+    "own_fit_and_score_groups": [],
+    "gpu_processes": "",
+    "gpu_free_mib": "48666"
+  },
+  "original_scientific_pins_unchanged": true
+}

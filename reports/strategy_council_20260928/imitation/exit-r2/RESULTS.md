@@ -1,16 +1,16 @@
 # ExIt r2 X screen — interim results
 
-Updated 2026-10-10T03:42:28Z. Exploration; no multiplicity adjustment. X1, X2 and X3 are killed at the frozen offline64 gate. The other four fits continue. No h2h256 or stage3 reporting game has run; R2 is not eligible. The experiment is active.
+Updated 2026-10-10T03:50:37Z. Exploration; no multiplicity adjustment. X1, X2, X3 and X6 are killed at the frozen offline64 gate. X4, X5 and X7 continue fitting. No h2h256 or stage3 reporting game has run; R2 is not eligible. The experiment is active.
 
 | Arm | Target / teacher fraction / seed | Fit | Stage1 | Stage2 / Stage3 |
 | --- | --- | --- | --- | --- |
 | X1 | T=.003 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X2 | T=.0001 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X3 | root z-score τ=.5 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X4 | T=.003 /.75 /2026101001 | running 127x01, step3882/4883 at2026-10-10T03:42:28Z | pending | conditional |
-| X5 | X1 double steps /1 /2026101001 | running 127x04, step5098/9766 at2026-10-10T03:42:28Z | pending | conditional |
-| X6 | T=.0001 /.75 /2026101001 | running 127x13, step4664/4883 at2026-10-10T03:42:28Z | pending | conditional |
-| X7 | X1 replicate /1 /2026101007 | running 127x14, step1078/4883 at2026-10-10T03:42:28Z | pending | conditional |
+| X4 | T=.003 /.75 /2026101001 | running 127x01, step4024/4883 at2026-10-10T03:50:37Z | pending | conditional |
+| X5 | X1 double steps /1 /2026101001 | running 127x04, step5350/9766 at2026-10-10T03:50:37Z | pending | conditional |
+| X6 | T=.0001 /.75 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
+| X7 | X1 replicate /1 /2026101007 | running 127x14, step1338/4883 at2026-10-10T03:50:37Z | pending | conditional |
 
 Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher plays and5290 teacher WAITs. The all-poll supplement has37950 eligible rows. Below are point estimates and paired whole-game percentile95% bootstrap CIs (5000 resamples,PCG64 seed80991010). Display rounded; linked receipts retain full precision, denominators, all-poll metrics and pinned final EMA.
 
@@ -19,12 +19,13 @@ Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher
 | [X1](receipts/stage1-X1.json) | 0.259019 [0.247870,0.269634] | 0.305933 [0.288135,0.324391] | 0.612760 [0.594250,0.632325] | 0.829245 [0.816916,0.842311] | 1.267852 |
 | [X2](receipts/stage1-X2.json) | 0.235215 [0.223984,0.245770] | 0.303431 [0.285266,0.322416] | 0.629822 [0.612412,0.648093] | 0.849532 [0.838083,0.861410] | 1.298868 |
 | [X3](receipts/stage1-X3.json) | 0.252151 [0.241149,0.262688] | 0.310222 [0.292146,0.329165] | 0.624505 [0.606383,0.643139] | 0.835594 [0.823661,0.848178] | 1.277558 |
+| [X6](receipts/stage1-X6.json) | 0.226257 [0.214442,0.237495] | 0.287706 [0.269442,0.306828] | 0.625247 [0.607801,0.643641] | 0.853604 [0.841990,0.865746] | 1.305094 |
 
-All three kill on play recall<.60,top8 recall<.50 and root hard agreement<.704. Teacher WAIT is.654055391 [95% CI .641069402,.668218454]; all three student WAIT rates pass the fourth rule (kill only if>1.5×teacher). No stage2/3 CI or loss is estimated for a killed arm. Final EMA/source/corpus/seed recipe remains unchanged.
+All four kill on play recall<.60,top8 recall<.50 and root hard agreement<.704. Teacher WAIT is.654055391 [95% CI .641069402,.668218454]; all four student WAIT rates pass the fourth rule (kill only if>1.5×teacher). No stage2/3 CI or loss is estimated for a killed arm. Final EMA/source/corpus/seed recipe remains unchanged.
 
 X1/X7 gap: stage1 waits X7’s sealed result; stage2 gap is not estimable because X1 was killed before h2h; stage3 gap is not estimable under the one-member family cap. Only the better frozen-ranked X1/X7 survivor can compete equally with the other arms for3 total stage3 slots. No duplicate-family reporting game will be run.
 
-The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committed/pushed before all three offline attempts. Float32 CUDA/TF32 disabled/no autocast preserves the original batch64, metric formulas,CPU reductions,bootstrap and point gates. Synthetic128-row qualification matched hard actions/top8 exactly, score max difference7.629e-6, metric/CI differences<1e-6;12 metadata admission tests passed. These are qualification data, not heldout outcomes.
+The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committed/pushed before all four offline attempts. Float32 CUDA/TF32 disabled/no autocast preserves the original batch64, metric formulas,CPU reductions,bootstrap and point gates. Synthetic128-row qualification matched hard actions/top8 exactly, score max difference7.629e-6, metric/CI differences<1e-6;12 metadata admission tests passed. These are qualification data, not heldout outcomes.
 
 Proposed X8 (X2 replicate, trainseed2026101008,host15) was cancelled by coordinator before freeze, staging, audit, host access or fit. Zero fit/game compute; seed unused. This is a cancelled proposal, not a scientific kill. X7 continues; seven arms remain. [Cancellation receipt](receipts/x8-cancellation.json).
 
@@ -32,13 +33,16 @@ Stage1 starts on each arm’s own fit host after sealed finalEMA/clean fit exit/
 
 X3 finished fit03:30:36Z and offline03:30:50Z. All own08 fit/scoring PGIDs are absent; GPU has no compute process and48578MiB free at03:32:05Z.08 vacated well before05:30Z; no migration or X6/X7 priority yield required.
 
+X6 finished fit cleanly03:49:20Z; one heldout GPU attempt launched03:49:29Z and closed03:49:44Z. Supervisor2869254=PGID2869254/worker2869263=PGID2869263; logstage1-X6-attempt1.log. FinalEMA SHA6f8cd058db209ca4e53df42740434f9242b489c064dbae1be10970558c42cbe8. Controller collected the kill without failures. All own13 fit/scoring groups absent, GPU compute empty/free48666MiB at03:50:38Z. [Completion receipt](receipts/X6-completion.json). Fit max processes10 remains below leased16; original input/optimizer/RNG/recipe/source unchanged. No extra X2/X6 h2h games are run after their stage1 kills.
+
 | Closed arm | Fit GPU-wall h | Fit whole CPU h | Offline GPU-wall h | Offline whole CPU h |
 | --- | --- | --- | --- | --- |
 | X1 | 2.504213012 | 6.513343099 | 0.003094961 | 0.002847458 |
 | X2 | 2.520438362 | 6.790320697 | 0.003094121 | 0.002869096 |
 | X3 | 2.629250317 | 7.795465627 | 0.003155318 | 0.002952663 |
+| X6 | 2.443525074 | 9.508914612 | 0.004235091 | 0.003630126 |
 
-Current seven-fit total at03:42:28Z: 16.210856963 allocatedGPU-wall h /54.640782201 wholeCPU h ([snapshot](receipts/continuation-check-20261010T0342Z.json)). ClosedX1/X2/X3 final exit meters replace their live snapshots; remaining four are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.009344400GPU-wall h/0.008669217CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
+Current seven-fit total at03:50:37Z: 16.733385911 allocatedGPU-wall h /56.693974591 wholeCPU h ([snapshot](receipts/monitor-20261010T0350Z.json)). ClosedX1/X2/X3/X6 final exit meters replace their live snapshots; remaining three are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.013579491GPU-wall h/0.012299343CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
 
 New preparation: GPU synthetic qualification10.238241CPU s/10.278003GPU-wall s;12 metadata tests.344673CPU s; all7 heldout staging6.196271CPU s. Source sender/bootstrap/native-copy CPU is unmetered and disclosed. Prior failed fits/audits/staging/controllers/smokes remain separately retained in receipts and history. Retired seven-armcontroller1870636 cleanexit11.910174CPU s charged once; currentcontroller1940296 remote jobs are separately metered, controller’s SSH/local children only counted in its own final meter.
 
