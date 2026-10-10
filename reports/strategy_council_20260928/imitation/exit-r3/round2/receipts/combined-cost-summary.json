@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T10:39:35Z",
+  "utc": "2026-10-10T10:43:24Z",
   "final": false,
-  "cpu_seconds": 244597.31475,
+  "cpu_seconds": 244597.564865,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -553,6 +553,16 @@
       "sha256": "f2372277f93b889a0d2c858e236d24810fc84e9164a79ac0f9c75e34c82bebe2",
       "path": "receipts/evaluation-snapshots/127x03/SHARED03-GUARD-DEPLOYMENT.json",
       "cpu_seconds": 0.5821649999999999,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "staging/qualification",
+      "sha256": "c01421cbb7ee50f4b643f6a37694e3b2c01afa9f8d0e3e0ce32c7fca9ed9e00b",
+      "path": "receipts/evaluation-snapshots/127x03/REGRET-DIAGNOSTICS-RESTART.json",
+      "cpu_seconds": 0.250115,
       "gpu_wall_seconds": 0,
       "status": "closed",
       "host": "127x03",

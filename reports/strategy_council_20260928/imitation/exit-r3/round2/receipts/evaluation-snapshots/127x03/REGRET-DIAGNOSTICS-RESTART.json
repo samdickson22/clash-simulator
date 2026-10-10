@@ -1,0 +1,34 @@
+{
+  "relative": "REGRET-DIAGNOSTICS-RESTART.json",
+  "sha256": "c01421cbb7ee50f4b643f6a37694e3b2c01afa9f8d0e3e0ce32c7fca9ed9e00b",
+  "raw": "{\n  \"passed\": true,\n  \"reviewed_manual_restart\": true,\n  \"qualified_receipt_commit\": \"e6592331d49cff0069b2f63b4aa3bb94572c14ce\",\n  \"pid\": 3336132,\n  \"pgid\": 3336132,\n  \"utc\": \"2026-10-10T10:40:48Z\",\n  \"nice\": 19,\n  \"physical_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"manager_core\": 58,\n  \"worker_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"retained_sealed_games\": 41,\n  \"previous_pool_pid\": 3204444,\n  \"previous_whole_tree_CPU_seconds\": 3951.947262,\n  \"failure_cause\": \"unclassified old admission census; fresh predicate-equivalent guard passes; exact denial diagnostics now frozen\",\n  \"automatic_retry\": false,\n  \"evaluation_freeze_sha256\": \"2f69ea84029c6704bc3608cb27ac433317f421c09d208ca774f77e1b1b29dcd3\",\n  \"admitted_sha256\": \"856eb050873f85f0f1386b85534c25ed9447c88fccd5a4327d4852203b44d4f9\",\n  \"scientific_changes\": false,\n  \"cpu_seconds\": 0.250115\n}\n",
+  "value": {
+    "passed": true,
+    "reviewed_manual_restart": true,
+    "qualified_receipt_commit": "e6592331d49cff0069b2f63b4aa3bb94572c14ce",
+    "pid": 3336132,
+    "pgid": 3336132,
+    "utc": "2026-10-10T10:40:48Z",
+    "nice": 19,
+    "physical_cores": [
+      56,
+      57,
+      58
+    ],
+    "manager_core": 58,
+    "worker_cores": [
+      56,
+      57,
+      58
+    ],
+    "retained_sealed_games": 41,
+    "previous_pool_pid": 3204444,
+    "previous_whole_tree_CPU_seconds": 3951.947262,
+    "failure_cause": "unclassified old admission census; fresh predicate-equivalent guard passes; exact denial diagnostics now frozen",
+    "automatic_retry": false,
+    "evaluation_freeze_sha256": "2f69ea84029c6704bc3608cb27ac433317f421c09d208ca774f77e1b1b29dcd3",
+    "admitted_sha256": "856eb050873f85f0f1386b85534c25ed9447c88fccd5a4327d4852203b44d4f9",
+    "scientific_changes": false,
+    "cpu_seconds": 0.250115
+  }
+}
