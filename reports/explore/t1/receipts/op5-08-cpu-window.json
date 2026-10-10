@@ -1,0 +1,109 @@
+{
+  "schema": "clasher.t1.ssh-cpu-window.v1",
+  "utc": "2026-10-10T17:21:48Z",
+  "host": "127x08",
+  "parent_pid": 1896254,
+  "start_ticks": 138108616,
+  "clock_ticks_per_second": 100,
+  "source_samples": {
+    "utc": "2026-10-10T17:20:09Z",
+    "samples": [
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op3-9cd-r3/host-audit-qualification.json",
+        "sha256": "3839c5930437c3e8328dd87f74fb0666c6bb53b0f9dff04c94a086ffb44afca6",
+        "utc": "2026-10-10T16:08:51Z",
+        "parent": {
+          "pid": 1896254,
+          "start_ticks": 138108616,
+          "uid": 3822945,
+          "ppid": 1896170,
+          "pgid": 1896170,
+          "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+          "cpu_ticks": 39414,
+          "child_cpu_ticks": null
+        }
+      },
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4/host-admission-smoke.json",
+        "sha256": "949af8d6e54c7114346deb0cca1a4ab6ccac47ae4affee3dd93b78ae2c5d3622",
+        "utc": "2026-10-10T16:15:32Z",
+        "parent": {
+          "pid": 1896254,
+          "start_ticks": 138108616,
+          "uid": 3822945,
+          "ppid": 1896170,
+          "pgid": 1896170,
+          "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+          "cpu_ticks": 39939,
+          "child_cpu_ticks": null
+        }
+      },
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op4-261-r1/host-audit-qualification.json",
+        "sha256": "62a16ea8d825914f30232a3d4f34f6264be6a682885604fc9a27a736e990d7c5",
+        "utc": "2026-10-10T16:55:53Z",
+        "parent": {
+          "pid": 1896254,
+          "start_ticks": 138108616,
+          "uid": 3822945,
+          "ppid": 1896170,
+          "pgid": 1896170,
+          "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+          "cpu_ticks": 41752,
+          "child_cpu_ticks": 18111
+        }
+      },
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/host-admission-smoke.json",
+        "sha256": "294dc7c9c1ae199ce294c30a6da8c5c9243f9fdf535e5b9cfd25bbf1b7f9fff4",
+        "utc": "2026-10-10T17:02:39Z",
+        "parent": {
+          "pid": 1896254,
+          "start_ticks": 138108616,
+          "uid": 3822945,
+          "ppid": 1896170,
+          "pgid": 1896170,
+          "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+          "cpu_ticks": 41973,
+          "child_cpu_ticks": 18174
+        }
+      },
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-0108-r1/host-audit-qualification.json",
+        "sha256": "7e1bb891fa564136b54f89f910d2a57a7ce04d3b64806e3b274449546bce77a5",
+        "utc": "2026-10-10T17:16:54Z",
+        "parent": {
+          "pid": 1896254,
+          "start_ticks": 138108616,
+          "uid": 3822945,
+          "ppid": 1896170,
+          "pgid": 1896170,
+          "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+          "cpu_ticks": 42632,
+          "child_cpu_ticks": 18428
+        }
+      }
+    ]
+  },
+  "endpoint": {
+    "utc": "2026-10-10T17:18:33Z",
+    "self_ticks": 42792,
+    "reaped_ticks": 18529
+  },
+  "long_window": {
+    "first_utc": "2026-10-10T16:55:53Z",
+    "last_utc": "2026-10-10T17:18:33Z",
+    "elapsed_seconds": 1360,
+    "self_tick_delta": 1040,
+    "reaped_tick_delta": 418,
+    "combined_core_fraction": 0.010720588235294117
+  },
+  "recent_window": {
+    "elapsed_seconds": 99,
+    "self_tick_delta": 160,
+    "reaped_tick_delta": 101,
+    "combined_core_fraction": 0.026363636363636363
+  },
+  "limits": "Long window1.0721%below2%;recent99s2.6364%above2%. Live-descendant CPU and conservative double-charge not included; real blocks still must satisfy unmodified OP4.",
+  "outcomes_read": false
+}
