@@ -504,3 +504,24 @@ staging and every 480 segment; actual final costs await completion.
 Evidence: `monitor-20261010T0052Z.json`. No source, config or data edits.
 480 micro1024/effective8192/cap0.78 stays fixed; failure artifacts retained.
 Continuation remains enabled; 16 remains released.
+
+2026-10-10 01:03Z: Width 288 scientifically killed by the frozen quarter rule.
+At exact 95,144,680 rows / step11615: NLL288 0.27418144592079313,
+NLL192 0.27726436294161033, gain 0.0030829170208171996<0.005.
+Guard exit0 at 01:01:57Z, no resource stop. Independent 13 verification at
+01:03:22Z found all seven former owned PIDs gone, no GPU compute apps,
+48,666 MiB free. GPU13 is released; never relaunch the killed arm.
+Actual width288 fitting/scoring cost 4.734969255 GPU-hours; final logged
+loader-inclusive throughput 5768 rows/s. Both measured curve points, store
+receipt, source/config pins, log SHA and quarter-checkpoint SHA are archived
+in `width288-result.json`. No weights committed.
+Quarter checkpoint SHA0325bef0627e82f4bf46a5abbe2255036aaa387a7a4acedd326c564ad37632f8.
+Width 384: step 9212, 75,459,304 rows, 4405 loader-inclusive rows/s; quarter pending.
+Width 480: step 8458, 69,282,536 rows, 4370 loader-inclusive rows/s; quarter pending.
+Remaining guards and the sole controller healthy; no new OOM or restart.
+Conservative total pipeline cost 16.093 GPU-hours includes
+staging and every 480 segment; remaining actual costs pending.
+Evidence: `monitor-20261010T0102Z.json`. Frozen recipe and reporting data unchanged;
+480 micro1024/effective8192/cap0.78 stays fixed; failure artifacts retained.
+Continue 384/480 to their frozen decisions; wider use offline-only.
+Continuation remains enabled; GPUs13 and16 released.
