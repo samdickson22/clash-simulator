@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool_regret.py", line 57, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool_regret.py", line 47, in main
+    finish_stage1(j,complete,failures,stopping);reduced=True
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool_regret.py", line 10, in finish_stage1
+    assert not stopping and not failures and len(complete)==64 and set(complete)==set(range(64))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

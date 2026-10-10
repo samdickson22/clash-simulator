@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T10:29:04Z",
+  "previous_pool_pid": 3204444,
+  "status": "stopped_or_failed",
+  "complete_games": 41,
+  "whole_tree_cpu_seconds": 3951.947262,
+  "wall_seconds": 1332.3022976729553,
+  "failure_index": 42,
+  "failure_reason": "CPU admission/STOP changed during replay; original guard did not persist failed census",
+  "cause": "unclassified; current unchanged guard passes/no conflicts, PSI0/no STOP, no known authority change",
+  "manual_review": true,
+  "automatic_retry": false,
+  "old_groups_independently_absent": true,
+  "retained_seals": "all complete command-exact seals; never partials",
+  "scientific_changes": false,
+  "diagnostic_changes": "persist exact fail-closed predicate and metadata without changing predicate/constraints; scorer/reducer/pool arithmetic unchanged",
+  "guard_sha256": "cc7370c5dc9e0f6c6d7b013e2388354171e590c3abcd8ebe914f7f806e73cb4d",
+  "qualification": "27 checks including AST predicate-equivalence and denial-write failure",
+  "small_unmetered_qualification_overhead": "Two predeployment AST comparisons failed only because Python3.8 synthetic Constant lacked kind=None; semantic equality restored; no scientific launch. Initial draft missing return was caught by direct inspection and corrected before qualification/deployment."
+}

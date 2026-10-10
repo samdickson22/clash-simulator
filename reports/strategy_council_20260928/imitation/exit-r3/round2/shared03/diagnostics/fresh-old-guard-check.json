@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T10:25:53Z",
+  "passed": true,
+  "context": {
+    "host": "127x03",
+    "affinity": [
+      58
+    ],
+    "nice": 19,
+    "scheduler": 0
+  },
+  "conflicts": [],
+  "guard_sha256": "bb700b2530abd3ca3b11b52837ce9849014b2aada350ec5b0c0768177efa3073",
+  "pid": 3288323,
+  "pgid": 3288323,
+  "scientific_data_read": false,
+  "cpu_seconds": 0.07924099999999999
+}

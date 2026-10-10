@@ -1,26 +1,5 @@
 {
   "host": "127x03",
-  "utc": "2026-10-10T10:10:42Z",
-  "live": [
-    {
-      "pid": 3204444,
-      "pgid": 3204444,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool_regret.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 "
-    },
-    {
-      "pid": 3231983,
-      "pgid": 3231983,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/regret_game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --index 24 "
-    },
-    {
-      "pid": 3233127,
-      "pgid": 3233127,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/regret_game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --index 25 "
-    },
-    {
-      "pid": 3234392,
-      "pgid": 3234392,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/regret_game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --index 26 "
-    }
-  ]
+  "utc": "2026-10-10T10:24:24Z",
+  "live": []
 }

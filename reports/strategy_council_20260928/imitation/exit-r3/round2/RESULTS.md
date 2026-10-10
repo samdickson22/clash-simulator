@@ -2,7 +2,7 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T10:10:43Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T10:36:17Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
@@ -51,11 +51,11 @@ The frozen diagnostic field `completed_roots` counts fully scored candidates, no
 Round2 Stage2 survivors.
 Skipped: all round2 arms binary-killed; zero qualification/control/reporting games.
 
-Known round2/descriptive metered costs: **56.109932 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
+Known round2/descriptive metered costs: **57.207715 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
 
 [Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.
 
-Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero).
+Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero). Two predeployment Python3.8 AST comparisons had only a Constant kind=None representation mismatch; unsuccessful small metadata/test CPU unmetered, original failed candidate retained. Guard draft corrected by inspection before any deployment.
 
 Full source/input/native/checkpoint/seed SHA bindings: training and evaluation freezes, retained exact JSON process snapshots, final decisions and command/game/block proofs. Final experiment completion additionally requires independent all-owned-PGID absence, CPU/GPU vacancy, coordinator notification and continuation deletion.
 
@@ -85,6 +85,10 @@ Historical nice19 amendment freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb
 
 Current core58 regret freeze SHA: 3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207.
 
-Combined original + extension known costs: **66.845754 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
+[Fail-closed guard diagnostics](shared03/diagnostics/ADDENDUM.md): pool3204444 stopped after41 complete games when game42 failed its admission check. The original failed census was not recorded; the cause remains unclassified. All old groups drained and a fresh unchanged guard passed. Added predicate-equivalent denial receipts preserve the same safety conditions; all41 exact complete seals/streams are retained. Failed/unsealed work is charged once and replayed fully.
+
+Guard-diagnostics operational freeze SHA: 2f69ea84029c6704bc3608cb27ac433317f421c09d208ca774f77e1b1b29dcd3.
+
+Combined original + extension known costs: **67.943537 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
 
 [Combined globally deduplicated ledger](receipts/combined-cost-summary.json).

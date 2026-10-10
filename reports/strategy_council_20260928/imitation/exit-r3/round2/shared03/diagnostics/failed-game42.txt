@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/regret_game.py", line 85, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/regret_game.py", line 42, in main
+    if b.tick%20==0:assert allowed(j),'CPU admission/STOP changed during replay'
+                           ^^^^^^^^^^
+AssertionError: CPU admission/STOP changed during replay

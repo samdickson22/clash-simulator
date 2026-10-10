@@ -1,0 +1,38 @@
+{
+  "relative": "regret/progress.json",
+  "sha256": "f666af0c4cedd8c07e870e4381c60b498c007161a532b40039d493eb209e9a5c",
+  "raw": "{\n  \"pool_pid\": 3204444,\n  \"pool_pgid\": 3204444,\n  \"context\": {\n    \"host\": \"127x03\",\n    \"affinity\": [\n      58\n    ],\n    \"nice\": 19,\n    \"scheduler\": 0\n  },\n  \"completed\": 41,\n  \"pending\": 20,\n  \"active\": {\n    \"56\": {\n      \"index\": 41,\n      \"pid\": 3274943,\n      \"pgid\": 3274943\n    },\n    \"58\": {\n      \"index\": 42,\n      \"pid\": 3275126,\n      \"pgid\": 3275126\n    },\n    \"57\": {\n      \"index\": 43,\n      \"pid\": 3277892,\n      \"pgid\": 3277892\n    }\n  },\n  \"failures\": [],\n  \"stopping\": false\n}\n",
+  "value": {
+    "pool_pid": 3204444,
+    "pool_pgid": 3204444,
+    "context": {
+      "host": "127x03",
+      "affinity": [
+        58
+      ],
+      "nice": 19,
+      "scheduler": 0
+    },
+    "completed": 41,
+    "pending": 20,
+    "active": {
+      "56": {
+        "index": 41,
+        "pid": 3274943,
+        "pgid": 3274943
+      },
+      "58": {
+        "index": 42,
+        "pid": 3275126,
+        "pgid": 3275126
+      },
+      "57": {
+        "index": 43,
+        "pid": 3277892,
+        "pgid": 3277892
+      }
+    },
+    "failures": [],
+    "stopping": false
+  }
+}

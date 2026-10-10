@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T10:10:43Z",
+  "utc": "2026-10-10T10:36:17Z",
   "final": false,
-  "cpu_seconds": 240644.71402299998,
+  "cpu_seconds": 244596.732585,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -527,8 +527,28 @@
       "status": "stopped_or_failed",
       "host": "127x03",
       "experiment": "round2/descriptive"
+    },
+    {
+      "category": "guard diagnostic preliminary qualification",
+      "sha256": "90af626701874ee50934e582a0d2184fad2d3d6d3d0e559a6c57f25bcc074a7c",
+      "path": "shared03/diagnostics/qualification.json",
+      "cpu_seconds": 0.0713,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "e9a9a23d1400065f0da28077f7cb70c70727e1d2b863e6aa55c4d46e0bf7f6e9",
+      "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3204444-e9a9a23d1400065f0da28077f7cb70c70727e1d2b863e6aa55c4d46e0bf7f6e9.json",
+      "cpu_seconds": 3951.947262,
+      "gpu_wall_seconds": 0,
+      "status": "stopped_or_failed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
     }
   ],
   "accounting": "Exact original meter SHA globally once, original plus extension; no nested scientific diagnostics; open process costs pending until exits",
-  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero)."
+  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero). Two predeployment Python3.8 AST comparisons had only a Constant kind=None representation mismatch; unsuccessful small metadata/test CPU unmetered, original failed candidate retained. Guard draft corrected by inspection before any deployment."
 }

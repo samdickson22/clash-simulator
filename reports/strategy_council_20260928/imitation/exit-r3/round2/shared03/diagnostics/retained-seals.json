@@ -1,0 +1,207 @@
+{
+  "regret/games/0000.json": {
+    "seal_sha256": "4e96d5c1d463b62361ec552c51d00e6c2c79075acd7017e319ed3fe26b101b9d",
+    "jsonl_sha256": "920f072bd4ca80b4694c340f9fde96bbb3e2ce91d8ff0863371b1708117937dd",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0001.json": {
+    "seal_sha256": "e07e0a8100759a6ffd35e0e2f58b1def6cbe6d91b55c974541bb85080725b4c1",
+    "jsonl_sha256": "35afaa2471aff4d22ede8753440771397c44b90fea9085316f1b5d1963672102",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0002.json": {
+    "seal_sha256": "338eaa062f304e3548ab7c9e118829421a4ade89a8ada16ccb4040b46ac56674",
+    "jsonl_sha256": "9ad611323546a170cc65a24b97642192b4ca0b4b858951262cd52644eea61166",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0003.json": {
+    "seal_sha256": "4700ec89fd2cf716bf4acb19005872497bbf48e69e724b94b39ece90015c5dd8",
+    "jsonl_sha256": "63c9a48e7d9c4c0c868867314e8d16c4c4c718d5c6422b7c728c472891a400cb",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0004.json": {
+    "seal_sha256": "647588f264e268bb80b5fa029ff215b4f5dec799ddf80988a2f8596644eeddfe",
+    "jsonl_sha256": "e00db83c30792b874492e804241121f6e5fc57ee65c96fd38ca1377630388eb9",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0005.json": {
+    "seal_sha256": "6acf6d1b4e0e7bd4de13e243eb55d1dc14d1f1877ab4dc712a325d363eb46e9f",
+    "jsonl_sha256": "7c6892d9d28e8a749f3a20c22915826690bc42e77dce63f129b97393a669750e",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0006.json": {
+    "seal_sha256": "c93271de703f5945fd3a2f1c184d5ca0e704c712af3b5d9c92e825b2f38d20a1",
+    "jsonl_sha256": "2a12b76fc7f4e3de535d51f5c9f95a74b4c235eadeff88bef24109d2f7a98577",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0007.json": {
+    "seal_sha256": "adea64b933f5698f43092d2a94cd213720e6dca6c66a51243ce2848fc3b115c1",
+    "jsonl_sha256": "e9e47fcdba50a361cb974894f862ea07257c923ddcdb31e4b2b6a719885a8bd7",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0008.json": {
+    "seal_sha256": "d8531e525e55839e748172dfdcd0bf95979fb8b03fa6afdd70898c5b2c503429",
+    "jsonl_sha256": "15060a795ef8d0594afe0f2df3414c5db6eca1b356b883b7d448d5a242755d28",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0009.json": {
+    "seal_sha256": "37267079b7aebd5a565fd422d711cb62ea845cb89fe4b3668da4e6139a25400a",
+    "jsonl_sha256": "60d73d02a5a36e6587d0344220710f18b90663c68b6615d9eacd0085c3e6485d",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0010.json": {
+    "seal_sha256": "cfad68171a283c411c12e4e67a9b647abf04a3a0eb0f3fafd3b35100fcb7b34e",
+    "jsonl_sha256": "6295aec40b4b4c6df42cc5d3948ddec36934b29dbb252821fffac85d5a7e23f7",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0011.json": {
+    "seal_sha256": "cf56a260ffc803da90d94cb131c0a464ce21e859fd2faea6da0df2cafd58c221",
+    "jsonl_sha256": "fcfb4a08bd68d6b149c4bd532961ea8f886815b362616840ba4989fdd99fd4dc",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0012.json": {
+    "seal_sha256": "f3737ad3bf41236419a924e5a32fea470d2bc295614ab1736eaa92fcdf713966",
+    "jsonl_sha256": "5eec31fe2afb1d6fa2fbcdcfbbfc7f883a792d4fc6e258d412b67d21061522f2",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0013.json": {
+    "seal_sha256": "f1a1f58a7f23dfe891cbb7cdf125bad45d5f0fd780783d6108e07673881867a5",
+    "jsonl_sha256": "3d3926ceaa6f0e6daf5089957784d0fde62e00af2d006545e38d62b8e73c9df3",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0014.json": {
+    "seal_sha256": "3ac675a5fbbea1d1b450e4bb4a59d7dc526faa5002afdca9e8220029ae4d554c",
+    "jsonl_sha256": "3511be5deae24f6808b6b785b0753bbfc86fb0176851f77bbffdc55770f3d198",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0015.json": {
+    "seal_sha256": "408a40e4a778b2c2cd0bffdb4fca0fc43e58a111154795c20bfe53242bca6350",
+    "jsonl_sha256": "fd063a2f03115f54cceedf6d65398cfa8748ef775248100c0c8033987bfa921e",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0016.json": {
+    "seal_sha256": "de6ec9f99ebe8864e1c46e928a7a30208352d1d776647f30d1d797a3e442c46d",
+    "jsonl_sha256": "e52b08eff34be4df3bf9f7d386ac4be905b78a367f21a7c7720855c2afd6fd2c",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0017.json": {
+    "seal_sha256": "21605b740efa9452c81e2b72c8906c21c04f09be92be6a1f1993b8d6594891a1",
+    "jsonl_sha256": "1dfb9a404291a338b5648a94c7e4a57f29604a3fe955831532de8164e0a579ef",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0018.json": {
+    "seal_sha256": "e3ab24cf81b8b08eb3cdd572856bb81de366abd5eb2e447b12454932668b48d6",
+    "jsonl_sha256": "077dcd98e45179d647a10ce40ef7baa37719b2d9fb253c49a354b4fcb8b0b33a",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0019.json": {
+    "seal_sha256": "dfac3d3858c8d78f02ec6520db8aa16d712f01248c79b94f865156d64bab41a0",
+    "jsonl_sha256": "b4bfa236d9fab0fe6e02e0e76f6775d35d4aec604a676aa0807de9d1d370c2db",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0020.json": {
+    "seal_sha256": "9f2b3dd903aba842cdb4abaf20dcaf1209c8b1be08f711eeb027d2256c50987e",
+    "jsonl_sha256": "63d1bf20868df7a300ec14fab7daa9c2736f438d4291e9359008370427b89ecf",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0021.json": {
+    "seal_sha256": "75415bec1d24ffd2ae8ca7665529824cdcf9ee543edc9a884d437071d3d7f99b",
+    "jsonl_sha256": "a64d541ed522064702184dec1044e80732eb086d74bf0a312ecb185615172eb9",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0022.json": {
+    "seal_sha256": "ee0f538aae9dfce2bd0adc19be4ea6bc6601701d3184ac0860c3144eddcba12c",
+    "jsonl_sha256": "7cb5cb3015bf5f3d0759f6e677771bce180846a4039a80b49430797cd1147b2a",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0023.json": {
+    "seal_sha256": "59deba569eb99b57502e5028e87d767c4f02d4f251c40c576f9677f66e075600",
+    "jsonl_sha256": "8b8f77620476fd16db1a1be04bc0dd92269d40faa3a34a7e78c444a768cb8564",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0024.json": {
+    "seal_sha256": "8a4da0bfe388d7e8ca017ee0aa0d76b57f01ed450b0b46e2122d221ec0fd2db0",
+    "jsonl_sha256": "ee4158765b588d5a75c9cc5ca4cdf798991f17849d08ecb5dabd07f52a5de88b",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0025.json": {
+    "seal_sha256": "da0330806418d3cb63fb18d2356f84ca1e59f878c728bf53dea1ea7ba3057503",
+    "jsonl_sha256": "5a119bd92069667151c4d0b2a070640f31b41252979bc8b72c58d58863af2888",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0026.json": {
+    "seal_sha256": "ff16e23fc7ff3dfffb9d7e08434a6d10a53056d840d16b9a7f0eba8c1dda9478",
+    "jsonl_sha256": "acec7836c7209e5e832810753db7878d38d78ad06348d648c9c86af8e155dd59",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0027.json": {
+    "seal_sha256": "bf41369fdaaaae740b91cac380615e7384cc2dfd1a395a9c35b53b14040fbd29",
+    "jsonl_sha256": "a2f89e0ab91dfb86649b4f2edbd0eb6171c1e42223e2fe46b7cd6b6be70ff500",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0028.json": {
+    "seal_sha256": "6a4d05d1af21b500dcd760fb71e7f4bf45f4999abbf351332ccf75ac54d72deb",
+    "jsonl_sha256": "97692d488d12e26cb0faf3fc3d84406181b6ee7876982c175b32661afa47d41e",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0029.json": {
+    "seal_sha256": "63d6901c218bded248263d9887be7b8c87d45f8193d79a62961a1641fae903c0",
+    "jsonl_sha256": "ce114f8a8590536729ac8d9b52357fdc1f61a7efea0ec936d08575afaa610a98",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0030.json": {
+    "seal_sha256": "2fb201b6a2bc4f38f9d1d2912fd3acb896ea9d447fbafc119565d2742f51f6c6",
+    "jsonl_sha256": "66da4817abf4106745c3f16f5047ed607f42a4b73d5af741320869bf73e86a62",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0031.json": {
+    "seal_sha256": "24c30547eac74075a7f5664410336f1959b958aa8cf99b61113524b2d08ab711",
+    "jsonl_sha256": "8ae10594c760dc414040d66c26c9ec739b4ac1ca04b5a7e385deb677cdf60bf5",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0032.json": {
+    "seal_sha256": "42c5983b318cca5e9ef1aad8e0e05db918cab9d51cb45addae46c891e2a42fba",
+    "jsonl_sha256": "5b16e199165094c9623f205df69cb265e9291cddf9ca7a3df5060d3a2cb022b5",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0033.json": {
+    "seal_sha256": "c957929d236a042298e17d0821ab0dc6d69fe7bed0ca6d43f7ba803870b6947e",
+    "jsonl_sha256": "6016e329d791f745ed7ece5014b8926bb9619362f0eda4c823e1006a99a35865",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0034.json": {
+    "seal_sha256": "9173ed12ed7e520f9f11addb6e7a38b667cb23a5e74337098738c66e408b9f71",
+    "jsonl_sha256": "79468e7487b1450092c8f507c229b857a117bf1341a1d0a51cce2261b84da800",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0035.json": {
+    "seal_sha256": "47287a643092794f15f7db64c07cb98ef179a7aeeb882d366b0c133eb7ec0392",
+    "jsonl_sha256": "de52961346a61e4d5c4baef4e06a5f84056bc363a74ae0a59366fe319bcee131",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0036.json": {
+    "seal_sha256": "b91dc1657f825ba7717f67a2762d509667bc646f43ddf8cba4385151aeffa341",
+    "jsonl_sha256": "c42700fa693a4b43f7fe324ebee883d739ada3fef7a1c0310961f6153b68fc3d",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0037.json": {
+    "seal_sha256": "d33cf7bcdb0d5d6f45cdf211f50615d7899ea5841db5723515048012371f545c",
+    "jsonl_sha256": "bf1ca255c84bfe7a4fa43998e34f215853ea6ce1dc5961d215b1bcd747220d9a",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0038.json": {
+    "seal_sha256": "fe52133761bc143703d041ef5e24728e5cd1bccd1c04437dc06b0e9235ed644d",
+    "jsonl_sha256": "383b01f38056ca8eece316d6f0f19da7d510ce9d89d5369b1b5b47ed65c8e092",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0039.json": {
+    "seal_sha256": "c5a02da7ae62ee6635fd61620f515f6e2c41029b28152a53525213a8c747d462",
+    "jsonl_sha256": "acd6296169ab8c35eefafb467b9c88b9c4dca6757e50c430670eefa329be768e",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  },
+  "regret/games/0040.json": {
+    "seal_sha256": "43e66957431c707e8496566f99ccb8fb843bd6804b55617c46c35780b72a0b81",
+    "jsonl_sha256": "d0500761c278eb6380e9fdb32a0ee3c216a49b9afe8514aef07f9938eea63827",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207"
+  }
+}
