@@ -655,3 +655,23 @@ and every 480 segment; remaining actual final costs await completion.
 Evidence: `monitor-20261010T0222Z.json`. Scientific recipe, source and data remain unchanged;
 480 uses authorized micro1024/effective8192/cap0.78. All failed artifacts retained.
 Continuation remains enabled pending outcomes and survivor curves.
+
+2026-10-10 02:35Z: Width 384 scientifically killed at exact quarter step11615 /
+95,144,680 rows. Full 11,776,480-row dev NLL 0.27280791354526357 versus
+192 NLL 0.27726436294161033; gain 0.004456449396346762 < 0.005.
+Frozen kill rule fired; guard exited0 with no resource stop at 02:33:59Z.
+Full measured two-point curve archived in `width384-result.json`; final
+loader-inclusive rate 4347 rows/s, actual fitting/scoring cost 6.271614029 GPU-hours.
+Quarter checkpoint SHA fbee86499c59656d42300c1aaded11ed0dc6f3cc8c3c6bf59f23dc156c4f0061 remains on14; no weights committed.
+Independent release check 2026-10-10T02:34:40.379602+00:00: all seven owned PIDs gone, no GPU compute apps,
+48666 MiB free. GPU14 released; never relaunch the killed arm.
+Width 288 remains killed, gain 0.0030829170208171996; GPUs13 and16 remain released.
+Width 480 alone continues: step 11606, 95,070,952 rows,
+4460 loader-inclusive rows/s; quarter NLL/decision pending.
+The sole controller and remaining guard are healthy; PSS peak 43.80 GB,
+6 processes, sampled GPU free 39.1 GiB; nice19 independently verified.
+No new error, OOM or restart. Conservative cumulative pipeline cost
+19.116 GPU-hours includes staging and all 480 segments; actual final 480 cost pending.
+Evidence: `monitor-20261010T0232Z.json`, `width384-result.json`, `width384-release.json`.
+No source, recipe or data changes. Authorized 480 micro1024 amendment disclosed;
+all failed artifacts retained. Continuation stays enabled pending 480 outcome and any survivor curve.
