@@ -10,6 +10,7 @@ def health(root,validate=False):
   if r['host']!='127x01' and not (p.parent/'hub-ack.json').exists():continue
   if d['id'] in seen:errors.append('duplicate block:'+d['id']);continue
   seen.add(d['id']);counts[pop+'_hub_complete']+=1;counts['games']+=len(r['games']);counts['interfered_blocks']+=bool(r.get('interference',{}).get('interfered'))
+  for kind,n in r.get('interference',{}).get('allowlist_observations',{}).items():counts['allowlist_'+kind]+=n
   if len(r['games'])!=8:errors.append('arm count:'+d['id'])
   for name,h in r['games'].items():
    f=p.parent/'games'/name

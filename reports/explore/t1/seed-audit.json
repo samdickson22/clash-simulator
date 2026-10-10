@@ -1,6 +1,6 @@
 {
-  "utc": "2026-10-10T14:15:02Z",
-  "status": "DRAFT-PASS",
+  "utc": "2026-10-10T14:47:30Z",
+  "status": "FROZEN-PASS",
   "proposed_ranges": {
     "primary": {
       "base": 4503603107370496,
@@ -16102,5 +16102,6 @@
       "stop_exclusive": 4503603507642397
     }
   ],
-  "intersections": []
+  "intersections": [],
+  "frozen_at_utc": "2026-10-10T14:47:30Z"
 }

@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-10T14:54:58Z",
+  "status": "EXCLUDED-PRESERVED",
+  "game_class": "smoke",
+  "attempt_started_at_utc": "2026-10-10T14:24:49Z",
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1",
+  "hosts": {
+    "127x01": {
+      "supervisor_pid": 172887,
+      "reason": "admission system dbus foreign",
+      "blocks_started": 0
+    },
+    "127x03": {
+      "supervisor_pid": 4049936,
+      "reason": "unattributed SSH transport foreign",
+      "blocks_started": 3
+    },
+    "127x08": {
+      "supervisor_pid": 1408057,
+      "reason": "system dbus foreign activity",
+      "blocks_started": 2
+    }
+  },
+  "complete_blocks": 0,
+  "reporting_games": 0,
+  "outcomes_read": false,
+  "exclude_entire_attempt": true,
+  "retain": [
+    "smoke-supervisor.log",
+    "smoke-supervisor-pid.json",
+    "smoke/launch.json",
+    "smoke/*/launch-intent.json",
+    "smoke/*/pid.json",
+    "smoke/*/exit.json",
+    "smoke/*/games/"
+  ],
+  "rerun": "only after freeze; fresh owned attempt directory; original excluded smoke seeds permitted; no reporting-seed reuse"
+}

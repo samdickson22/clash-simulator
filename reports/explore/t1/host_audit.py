@@ -11,7 +11,12 @@ def processes():
             stat=(d/'stat').read_text().rsplit(')',1)[1].split()
             raw_cmd=(d/'cmdline').read_bytes()
             cmd=raw_cmd.replace(b'\0',b' ').decode(errors='replace').strip()
-            rows.append(dict(cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=d.stat().st_uid,cmd=cmd,affinity=sorted(os.sched_getaffinity(int(d.name)))))
+            try:exe=(d/'exe').resolve(strict=True).as_posix()
+            except OSError:exe=None
+            exe_evidence='proc/exe' if exe else 'unavailable'
+            if d.stat().st_uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
+                exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
+            rows.append(dict(exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=d.stat().st_uid,cmd=cmd,affinity=sorted(os.sched_getaffinity(int(d.name)))))
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return rows
 
@@ -30,6 +35,10 @@ def foreign_compute(job,rows):
             'node /opt/anaconda3/bin/configurable-http-proxy --ip  --port 8000 --api-ip 127.0.0.1 --api-port 8001 --error-target http://127.0.0.1:8081/hub/error --ssl-key /etc/ssl/private/key.key --ssl-cert /etc/ssl/private/cert.cer'):
             continue
         first=Path(r['cmd'].split()[0]).name.lower()
+        if r.get('allowlist_kind'):continue
+        if first=='dbus-daemon' and (r['uid']==103 or '--system' in r['cmd'].split()):forbidden.append(r);continue
+        from ssh_transport import sshd_title,authenticated
+        if sshd_title(r) and '@' in r['cmd'] and any(c['ppid']==r['pid'] for c in rows):forbidden.append(r);continue
         if own_process(job,r) or perception_reader(r,rows) or member(r,rows,job):continue
         if first.startswith('python') or first in ('raylet','cargo','rustc','gcc','clang','node','java','ffmpeg'):
             forbidden.append(r)
@@ -84,20 +93,31 @@ def perception_reader(r,rows):
   if Path(parent['cmd'].split()[0]).name not in ('bash','sh'):return False
  return False
 
-def census(j,before=None):
+def census(j,before=None,block_ids=()):
+ from idle_services import member as idle_member
+ from system_bus import member as bus_member
+ from ssh_transport import approved_parent,copier_activity
  after=processes();allowed=[]
  for r in after:
-  if perception_reader(r,after):allowed.append(r['perception_io_allowlist'])
+  if bus_member(r,j):r['allowlist_kind']='system_dbus'
+  elif perception_reader(r,after):r['allowlist_kind']='perception_reader'
+  elif idle_member(r,after,j):r['allowlist_kind']='idle_cache'
+  elif copier_activity(r,after,j):r['allowlist_kind']='owned_copier_child'
+ for r in after:
+  if approved_parent(r,after,lambda child:child.get('allowlist_kind') in ('perception_reader','idle_cache','owned_copier_child')):
+   r['allowlist_kind']='approved_sshd_transport'
+  if r.get('allowlist_kind'):
+   allowed.append(dict(kind=r['allowlist_kind'],pid=r['pid'],pgid=r['pgid'],start_ticks=r['start_ticks'],cmdline_sha256=r['cmdline_sha256'],block_ids=list(block_ids)))
  if allowed:
   j.mkdir(parents=True,exist_ok=True)
-  with (j/'perception-io-occurrences.jsonl').open('a') as f:f.write(json.dumps(dict(utc=utc(),occurrences=allowed))+'\n')
+  with (j/'allowlist-occurrences.jsonl').open('a') as f:f.write(json.dumps(dict(utc=utc(),scope='blocks' if block_ids else 'admission',occurrences=allowed))+'\n')
  forbidden=foreign_compute(j,after);active=[];console_cpu=0.
  if before is not None:
   old={r['pid']:r for r in before};hz=os.sysconf('SC_CLK_TCK')
   for r in after:
    if not r['cmd'] or r['pid'] not in old or old[r['pid']]['start_ticks']!=r['start_ticks']:continue
    used=(r['cpu_ticks']-old[r['pid']]['cpu_ticks'])/hz
-   if r['uid']!=0 and not own_process(j,r) and not r.get('perception_io_allowlist') and not __import__('idle_services').member(r,after,j) and used>.1 and Path(r['cmd'].split()[0]).name not in ('sshd','tailscaled'):
+   if r['uid']!=0 and not own_process(j,r) and not r.get('allowlist_kind') and used>.1 and Path(r['cmd'].split()[0]).name!='tailscaled':
     active.append(dict(r,cpu_seconds=used));console_cpu+=used
  return after,forbidden,active,console_cpu
 
@@ -105,7 +125,10 @@ def admission(j):
  host=socket.gethostname();cfg=plan();assert host in cfg['compute']['hosts'],host
  expected=cfg['compute']['hosts'][host]
  physical=physical_cpus();assert set(expected['physical_cpus'])|{expected['supervisor_cpu'],expected['copy_cpu'],expected['census_cpu']}<=set(physical)
- c=console();before=processes();time.sleep(1);after,foreign,active,load=census(j,before)
+ c=console();before=processes()
+ from system_bus import pin as pin_system_bus
+ pin_system_bus(j,before)
+ time.sleep(1);after,foreign,active,load=census(j,before)
  r=dict(utc=utc(),host=host,console=c,physical_cpus=physical,foreign_compute=foreign,foreign_active=active,memavailable_GiB=memory()/2**30,processes=after,admitted=not foreign and not active and memory()>=24*2**30)
  assert not (j/'STOP').exists() and not (j/f'STOP-{host}').exists(),'owned stop present'
  return r

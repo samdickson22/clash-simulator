@@ -1,6 +1,8 @@
 """One exclusive host, five-core slots, one-second stop census, sealed logs."""
 import argparse,json,os,resource,signal,socket,subprocess,time
 from pathlib import Path
+from collections import Counter
+import system_bus
 from common import utc,read,write,sha,plan
 from host_audit import admission,processes,census,console,memory
 from pin import verify
@@ -40,8 +42,10 @@ def main():
  launch=dict(utc=utc(),host=host,phase=a.phase,slots=slots,who=r['console']['who'],runtime_pin_sha256=sha(j/'runtime-pin.json'),dispatch_sha256=sha(a.dispatch),supervisor_pid=os.getpid(),supervisor_pgid=os.getpgrp())
  write(out/'launch.json',launch)
  while idx<len(rows) or active:
-  now=time.monotonic();after,foreign,foreign_active,foreign_cpu=census(j,before);dt=max(now-last,.001);last=now;before=after
-  for live in active.values():idle_update(live['idle_meter'],after)
+  now=time.monotonic();after,foreign,foreign_active,foreign_cpu=census(j,before,block_ids=[r['descriptor']['id'] for r in active.values()]);dt=max(now-last,.001);last=now;before=after
+  for live in active.values():
+   idle_update(live['idle_meter'],after);system_bus.update(live['system_bus_meter'],after)
+   live['allowlist_counts'].update(r['allowlist_kind'] for r in after if r.get('allowlist_kind'))
   c=console();overload=overload+dt if c['positive'] and foreign_cpu/dt>1 else 0.
   # Console activity below the registered one-core threshold is recorded. Other jobs are disallowed immediately.
   foreign_jobs=[x for x in foreign if not (c['positive'] and x.get('tty',0))]
@@ -54,7 +58,10 @@ def main():
    child=row['process'];rc=child.poll()
    if rc is None:continue
    row['log'].close();folder=out/row['descriptor']['id'];good=rc==0 and (folder/'local-complete.json').exists()
-   interference=idle_finish(row['idle_meter'],time.monotonic()-row['started'])
+   elapsed=time.monotonic()-row['started'];interference=idle_finish(row['idle_meter'],elapsed)
+   interference['system_dbus']=system_bus.finish(row['system_bus_meter'],elapsed)
+   interference['interfered']|=interference['system_dbus']['interfered']
+   interference['allowlist_observations']=dict(row['allowlist_counts'])
    write(folder/'interference.json',dict(utc=utc(),descriptor=row['descriptor'],**interference))
    if good:
     proof=read(folder/'local-complete.json');proof['interference']=interference;proof['interference_sha256']=sha(folder/'interference.json');write(folder/'complete.json',proof)
@@ -73,7 +80,7 @@ def main():
     cores=hc['physical_cpus'][5*slot:5*slot+5];cmd=['taskset','-c',','.join(map(str,cores)),'bash',str(j/'repo/reports/explore/t1/runtime.sh'),'reports/explore/t1/corpus_game.py' if a.phase=='corpus' else 'reports/explore/t1/run.py','--block',str(descfile),'--out',str(folder),'--cores',','.join(map(str,cores))]
     if a.phase=='smoke':cmd.append('--smoke')
     log=(out/f"{desc['id']}.log").open('x');child=subprocess.Popen(cmd,stdout=log,stderr=log,start_new_session=True)
-    active[slot]=dict(process=child,descriptor=desc,log=log,idle_meter=idle_begin(j,processes()),started=time.monotonic())
+    active[slot]=dict(process=child,descriptor=desc,log=log,idle_meter=idle_begin(j,processes()),system_bus_meter=system_bus.begin(j,processes()),allowlist_counts=Counter(),started=time.monotonic())
     write(out/'pids'/f"{desc['id']}.json",dict(utc=utc(),pid=child.pid,pgid=child.pid,command=cmd,cores=cores,descriptor=desc))
   progress=dict(utc=utc(),host=host,phase=a.phase,complete_local_blocks=len(done),complete_local_games=(1 if a.phase=='corpus' else 8)*len(done),failed_blocks=len(failures),queued=len(rows)-idx,inflight=len(active),console=c,console_over_one_core_seconds=overload,memavailable_GiB=memory()/2**30,reason=reason,sealed=True)
   write(j/'progress.json',progress)

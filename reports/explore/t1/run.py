@@ -301,8 +301,7 @@ def run_game(case):
     result['wall_seconds']=time.perf_counter()-start
     result['cpu_seconds']=time.process_time()-cpu
     write(Path(OPTIONS['out'])/'games'/f'{ident}.json', result)
-    print(json.dumps(dict(game=ident, terminal=terminal,
-                          cpu=result['cpu_seconds'], wall=result['wall_seconds'])), flush=True)
+    print(json.dumps(dict(game=ident, terminal=terminal)), flush=True)
     return dict(game=ident, terminal=terminal, cpu=result['cpu_seconds'])
 
 

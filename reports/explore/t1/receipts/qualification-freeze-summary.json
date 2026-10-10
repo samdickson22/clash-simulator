@@ -1,0 +1,86 @@
+{
+  "utc": "2026-10-10T14:54:58Z",
+  "outcomes_sealed": true,
+  "reporting_games_started": 0,
+  "source_stable": true,
+  "hosts": {
+    "127x01": {
+      "binding_path": "reports/explore/t1/receipts/qualification-source-binding-127x01.json",
+      "completed_at_utc": "2026-10-10T14:46:53Z",
+      "tests_passed": 60,
+      "golden_states_passed": 125,
+      "belief_histories_passed": 125,
+      "guard_decks_supported": 3,
+      "guard_cards_supported": 17,
+      "guard_skipped": 0,
+      "log_path": "127x01:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualification-freeze-op1.log",
+      "raw_receipt_sha256": {
+        "qualification.json": "5395be24cf84e6c17b551f064c511737fc90487b1a4b0ee15de71cfed86347ff",
+        "belief-qualification.json": "d537d879f34dd3ec9d374f26a3e80ae73a7c911bcaa14bd7abf635170a4cfe13",
+        "guard-support-qualification.json": "5b7115ab8309e9df16c44d5d84913f650710b3ac8e018badb3dd8d9e1611d506"
+      },
+      "source_stable": true,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "physical_cpu_mask": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "127x03": {
+      "binding_path": "reports/explore/t1/receipts/qualification-source-binding-127x03.json",
+      "completed_at_utc": "2026-10-10T14:46:48Z",
+      "tests_passed": 60,
+      "golden_states_passed": 125,
+      "belief_histories_passed": 125,
+      "guard_decks_supported": 3,
+      "guard_cards_supported": 17,
+      "guard_skipped": 0,
+      "log_path": "127x03:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualification-freeze-op1.log",
+      "raw_receipt_sha256": {
+        "qualification.json": "7675b59e7d319ab4bb0ec36b7b847abb2a7d66f33aab46dd34eacefaede54a34",
+        "belief-qualification.json": "f507d8f36cd0c955da2c1d192419fde4955c8a1aa095b9abe1cb66ab97903ab2",
+        "guard-support-qualification.json": "695db3590492fb3facb853a94d474d8966cc3246253d8629aa78a02614f5d2ba"
+      },
+      "source_stable": true,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "physical_cpu_mask": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "127x08": {
+      "binding_path": "reports/explore/t1/receipts/qualification-source-binding-127x08.json",
+      "completed_at_utc": "2026-10-10T14:46:49Z",
+      "tests_passed": 60,
+      "golden_states_passed": 125,
+      "belief_histories_passed": 125,
+      "guard_decks_supported": 3,
+      "guard_cards_supported": 17,
+      "guard_skipped": 0,
+      "log_path": "127x08:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualification-freeze-op1.log",
+      "raw_receipt_sha256": {
+        "qualification.json": "d900063f1c5115fb3aec3d9f935a1fe1af392255422416051d4e096492a612e5",
+        "belief-qualification.json": "f507d8f36cd0c955da2c1d192419fde4955c8a1aa095b9abe1cb66ab97903ab2",
+        "guard-support-qualification.json": "695db3590492fb3facb853a94d474d8966cc3246253d8629aa78a02614f5d2ba"
+      },
+      "source_stable": true,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "physical_cpu_mask": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-10T14:38:17Z",
+  "host": "127x01",
+  "identity": {
+    "pid": 2047,
+    "start_ticks": 1178,
+    "exe": "/usr/bin/dbus-daemon",
+    "cmdline_sha256": "f481db6887b1454cde723322eee10a57f08a0789ab8db6f16d41ac2ad3329749",
+    "uid": 103
+  },
+  "exe_evidence": "argv0 (proc/exe unreadable, unprivileged)",
+  "coordinator_ruling": "OP-1 14:45Z; exact PID/start/exe/cmd SHA; >1% core flags only"
+}

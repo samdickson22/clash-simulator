@@ -1,0 +1,56 @@
+{
+  "utc": "2026-10-10T14:01:13Z",
+  "host": "127x08",
+  "coordinator_ruling": "2026-10-10 14:35Z user instruction",
+  "services": [
+    {
+      "name": "v4-validation-cache-renewed-20261010-08r1",
+      "service": {
+        "pid": 3550685,
+        "ppid": 3550684,
+        "pgid": 3550672,
+        "start_ticks": 140655829,
+        "cmdline_sha256": "eb8586651db403e9bdf35f3e52a359b3504faf89d9eb987baad3347e1fff1e4a",
+        "uid": 3822945
+      },
+      "wrapper_trio": [
+        {
+          "pid": 3550685,
+          "ppid": 3550684,
+          "pgid": 3550672,
+          "start_ticks": 140655829,
+          "cmdline_sha256": "eb8586651db403e9bdf35f3e52a359b3504faf89d9eb987baad3347e1fff1e4a",
+          "uid": 3822945
+        },
+        {
+          "pid": 3550684,
+          "ppid": 3550672,
+          "pgid": 3550672,
+          "start_ticks": 140655829,
+          "cmdline_sha256": "9d97843d7222655326b417af251567ef2144fa3237b5d2ffccf7ad4ea36001ee",
+          "uid": 3822945
+        },
+        {
+          "pid": 3550672,
+          "ppid": 1,
+          "pgid": 3550672,
+          "start_ticks": 140655826,
+          "cmdline_sha256": "855c8118682292c86a2f56cc863ebaef84af665a42fd74336bfe4fffa90b31ff",
+          "uid": 3822945
+        }
+      ],
+      "wrapper_artifacts": {
+        "/mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.pid": "c31f815fea4772e18a86c609ff2f921958f2d94d8fd0b4f49167e2c8c26f97e1",
+        "/mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.ready.json": "88cab4089e644e5a532a06611dfed6e19e37ca214bc39274155b3b06a5f574c2",
+        "/mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.token": "c7a623053e4f4e5a6525974385abe3bd270891eef4efc42a7f291d21fc3da609"
+      },
+      "commands": [
+        "/mpac/sdicks02/envs/clasher-gpu/bin/python -B /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/validation_cache_service_renewal_v4.py --plan /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/plan.json --plan-sha256 9277fb80434842825c0de18b67b819817315ff51eaf906dcf79c0ec2d8c09c2e --token /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.token --ready /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.ready.json --stop /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.stop",
+        "/usr/bin/time -v nice -n 19 ionice -c 3 taskset -c 126-127 /mpac/sdicks02/envs/clasher-gpu/bin/python -B /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/validation_cache_service_renewal_v4.py --plan /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/plan.json --plan-sha256 9277fb80434842825c0de18b67b819817315ff51eaf906dcf79c0ec2d8c09c2e --token /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.token --ready /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.ready.json --stop /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.stop",
+        "bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh --worker v4-validation-cache-renewed-20261010-08r1 nice -n 19 ionice -c 3 taskset -c 126-127 /mpac/sdicks02/envs/clasher-gpu/bin/python -B /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/validation_cache_service_renewal_v4.py --plan /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/plan.json --plan-sha256 9277fb80434842825c0de18b67b819817315ff51eaf906dcf79c0ec2d8c09c2e --token /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.token --ready /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.ready.json --stop /mpac/sdicks02/jobs/clasher/v4-validation-cache-renewed-20261010-08r1.stop"
+      ],
+      "idle_cpu_threshold": 0.01,
+      "new_children_always_flag": true
+    }
+  ]
+}
