@@ -1666,3 +1666,7 @@ Also on the hub, but with copies elsewhere:
   - **Rule:** no CPU filler on a host running a GPU fit's corpus loader. G resumes only on explicit release (04 after X5 ~06–07Z; 03 after K-v2). Total so far ≈207.6 k roots.
   - Also: K-v2 smoke found a residual pre-scan latency tail (21 overruns, early-game); K-v2 is instrumenting it before reporting.
   - X stage-3 S-default is qualifying with default-layer equivalence; no pre-run controls (interleaving rule).
+- **02:35 UTC:**
+  - **Capacity width 384 KILLED** (gain 0.00446 < 0.005 at 95.1 M; `ffad9503`). 480's quarter decision is imminent.
+  - 14 freed → **X7** = X1 seed replicate (seed-noise estimate for the 2×2 arms).
+  - Perception: verify_body recomputes all 216 branches serially after the seal (+~12 h). Asked the owner to draft a parallel fresh-process verify amendment for review.
