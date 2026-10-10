@@ -1,0 +1,883 @@
+{
+  "utc": "2026-10-10T01:46:32Z",
+  "host": "127x01",
+  "passed": true,
+  "pgid": 1356583,
+  "generation_group_members": [],
+  "fully_vacated": true,
+  "stop_owner": "Coordinator01:43Z confirms STOP01:37:55Z; no resume without explicitrelease",
+  "generation_exit": {
+    "utc": "2026-10-10T01:42:43Z",
+    "identity": {
+      "pid": 1356583,
+      "pgid": 1356583,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        39
+      ]
+    },
+    "reason": "external_stop",
+    "totals": {
+      "games": 81,
+      "rows": 65337,
+      "root_decisions": 10152,
+      "cpu_seconds": 4567.886367624001,
+      "plays": 3478
+    },
+    "fully_vacated": true,
+    "children": [
+      {
+        "pid": 1356886,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356889,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356892,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356893,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356894,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356899,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356900,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356901,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356902,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356903,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356904,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356905,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356906,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356907,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356908,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356909,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356910,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356911,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356933,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356940,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356945,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356946,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356947,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356950,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356951,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1356972,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357007,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357039,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357044,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357045,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357046,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357047,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357048,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357078,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357083,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357085,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357086,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357087,
+        "pgid": 1356583,
+        "returncode": 0
+      },
+      {
+        "pid": 1357116,
+        "pgid": 1356583,
+        "returncode": 0
+      }
+    ],
+    "child_cpu_seconds": 23565.127566,
+    "elapsed_seconds": 727.6660556560382
+  },
+  "raw_games": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000000",
+      "manifest_sha256": "faf747a25edb9a3a5969563534c391b4554591bda3dab95ce1e55921891bc931",
+      "index": 2000000,
+      "seed": 4503601609370496,
+      "rows": 721,
+      "root_decisions": 108
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000001",
+      "manifest_sha256": "8effc051354103a1293e2a1e825b77a10b5a165a330683c6e3ed3a549592093d",
+      "index": 2000001,
+      "seed": 4503601609370497,
+      "rows": 721,
+      "root_decisions": 106
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000002",
+      "manifest_sha256": "dc8e3d8bc3bfaa5fb2f99598e1ba46e9a4bb19c62d1267ffd0fa318cb7659531",
+      "index": 2000002,
+      "seed": 4503601609370498,
+      "rows": 721,
+      "root_decisions": 107
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000003",
+      "manifest_sha256": "a1525edbef2157d61e653ead3d100a4ce308595463a27bb4ce381f633103771d",
+      "index": 2000003,
+      "seed": 4503601609370499,
+      "rows": 721,
+      "root_decisions": 110
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000004",
+      "manifest_sha256": "01a99819ded4c019fa79480527175fffc0d6a29abfec2c76a85781fd97ede88e",
+      "index": 2000004,
+      "seed": 4503601609370500,
+      "rows": 739,
+      "root_decisions": 105
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000005",
+      "manifest_sha256": "c1c0d52041e8ed2db45965243319604db56305cff2d07b29c1824d48768d5ff1",
+      "index": 2000005,
+      "seed": 4503601609370501,
+      "rows": 721,
+      "root_decisions": 119
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000006",
+      "manifest_sha256": "3fb6c165c5e0c0dfa0e3e09a9b523e7d6df6a4b6cd852a118d89a98d37e7a3b6",
+      "index": 2000006,
+      "seed": 4503601609370502,
+      "rows": 721,
+      "root_decisions": 111
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000007",
+      "manifest_sha256": "d4c91130ebf981cdaa716993d82e8d8f5bbcde7c81b00f24c1af3fc16668298d",
+      "index": 2000007,
+      "seed": 4503601609370503,
+      "rows": 721,
+      "root_decisions": 110
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000008",
+      "manifest_sha256": "6d91b3ab916bfac0e3801ad71fc3cf9a4f7f632b35673ec1f39d319ab5922abc",
+      "index": 2000008,
+      "seed": 4503601609370504,
+      "rows": 1201,
+      "root_decisions": 191
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000009",
+      "manifest_sha256": "4b5bc5c51ebbac76867d12db1c2e466dd7effd23cec0bd14d8a84c341edd762e",
+      "index": 2000009,
+      "seed": 4503601609370505,
+      "rows": 721,
+      "root_decisions": 112
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000010",
+      "manifest_sha256": "37e84157779111d2f95676266f8d565fabb91bfac28a8f67ebd71144d4dee2da",
+      "index": 2000010,
+      "seed": 4503601609370506,
+      "rows": 721,
+      "root_decisions": 118
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000011",
+      "manifest_sha256": "aeda0d4bc223c7c2fdca3ff019d6e4628d05632e8f881e4690a8e0b2c6bc2c0c",
+      "index": 2000011,
+      "seed": 4503601609370507,
+      "rows": 721,
+      "root_decisions": 122
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000012",
+      "manifest_sha256": "d7cc53b6dd381563b749a2a9dc68c468be31e2c241ec3a2311845f673894b265",
+      "index": 2000012,
+      "seed": 4503601609370508,
+      "rows": 721,
+      "root_decisions": 105
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000013",
+      "manifest_sha256": "7aefb71d45e280411e50698329f9bdd8c4a28d3afec54373581e914f472cdefc",
+      "index": 2000013,
+      "seed": 4503601609370509,
+      "rows": 721,
+      "root_decisions": 119
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000014",
+      "manifest_sha256": "e9139dbb1e20ff182dfb5dba538f42d3a3267c5a483140358c00993901917724",
+      "index": 2000014,
+      "seed": 4503601609370510,
+      "rows": 1201,
+      "root_decisions": 196
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000015",
+      "manifest_sha256": "148866dbac25aa6be08e8296124f2f7c698cab144969c805452cd4e145a0235b",
+      "index": 2000015,
+      "seed": 4503601609370511,
+      "rows": 721,
+      "root_decisions": 112
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000016",
+      "manifest_sha256": "f28e6007a7848d0fb0d80ed055541dd0ae97081b7c2d44d6da45f2700cdd4df6",
+      "index": 2000016,
+      "seed": 4503601609370512,
+      "rows": 884,
+      "root_decisions": 141
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000017",
+      "manifest_sha256": "b97d1968bdfabef1a4698075c5ed33a50ddf1630345e2172f50863a308d46f96",
+      "index": 2000017,
+      "seed": 4503601609370513,
+      "rows": 721,
+      "root_decisions": 108
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000018",
+      "manifest_sha256": "17c28d8f879741e1536039f58ff6bb6456e1e19b71c267553569a0a21f354ede",
+      "index": 2000018,
+      "seed": 4503601609370514,
+      "rows": 721,
+      "root_decisions": 114
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000019",
+      "manifest_sha256": "21e100fa25b6b2f443b779095a6132ddb3856a41e6a921fbb842ec98bb205df4",
+      "index": 2000019,
+      "seed": 4503601609370515,
+      "rows": 721,
+      "root_decisions": 110
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000020",
+      "manifest_sha256": "198bdba085e43253e42ce7034209d1d343d8a7a65a0f0f7946e176b618b132e4",
+      "index": 2000020,
+      "seed": 4503601609370516,
+      "rows": 721,
+      "root_decisions": 118
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000021",
+      "manifest_sha256": "b822975299995bdd1973ed414e198cee8b66355d0595bc9e3ac0a47156c81128",
+      "index": 2000021,
+      "seed": 4503601609370517,
+      "rows": 989,
+      "root_decisions": 154
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000022",
+      "manifest_sha256": "954979a5c54bd2a1f1209bf9f4bf81325ff388353437ad02d15a14fe278bdf68",
+      "index": 2000022,
+      "seed": 4503601609370518,
+      "rows": 1201,
+      "root_decisions": 191
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000023",
+      "manifest_sha256": "19342901a38d9aeb635b104024d2fb85396ba56054afd80eee3da773e2fc6f61",
+      "index": 2000023,
+      "seed": 4503601609370519,
+      "rows": 721,
+      "root_decisions": 112
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000024",
+      "manifest_sha256": "0d791231c36b4b4abd1b6bde3632b88871d110f7cdbe6d311c08d2364a13de3d",
+      "index": 2000024,
+      "seed": 4503601609370520,
+      "rows": 1201,
+      "root_decisions": 190
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000025",
+      "manifest_sha256": "6fa93a7032943577b146e8626e2d6fae8391ac307447b8a5464b02ceb9e8007f",
+      "index": 2000025,
+      "seed": 4503601609370521,
+      "rows": 1027,
+      "root_decisions": 150
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000026",
+      "manifest_sha256": "218a5fd8278f16bbf2f2230008ff174a37c3f5054fe158f8e1cc6ec8c5e6d8df",
+      "index": 2000026,
+      "seed": 4503601609370522,
+      "rows": 981,
+      "root_decisions": 155
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000027",
+      "manifest_sha256": "ddecd8bc56ed3a7be91e49464c8bf96bb7edc3f98084097f1d73460a165e75f9",
+      "index": 2000027,
+      "seed": 4503601609370523,
+      "rows": 704,
+      "root_decisions": 105
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000028",
+      "manifest_sha256": "c601636db605a59bc9b4cdbd0916e10e144dada82f1a57a003555c195d278e3c",
+      "index": 2000028,
+      "seed": 4503601609370524,
+      "rows": 1201,
+      "root_decisions": 189
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000029",
+      "manifest_sha256": "aa8ec95f4d42cf38caea30b438b24469610b15d1f1a8acdb0136984b70294ed7",
+      "index": 2000029,
+      "seed": 4503601609370525,
+      "rows": 721,
+      "root_decisions": 109
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000030",
+      "manifest_sha256": "695a9b6a94469565b7d092e5128239f5d4bcff4dff3fd8b9ef78f9add85851d1",
+      "index": 2000030,
+      "seed": 4503601609370526,
+      "rows": 1060,
+      "root_decisions": 159
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000031",
+      "manifest_sha256": "8b8c38f304ed25d023547e1db930932e4ea37a32bb0d5dc5d1f09e449937f5d2",
+      "index": 2000031,
+      "seed": 4503601609370527,
+      "rows": 566,
+      "root_decisions": 88
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000032",
+      "manifest_sha256": "d5a5c1148b6fed495d3b41ba3f164241b61027da994fbdd381736e1a47679b35",
+      "index": 2000032,
+      "seed": 4503601609370528,
+      "rows": 888,
+      "root_decisions": 140
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000033",
+      "manifest_sha256": "4f2010f4877b56e75b8689dd69dc722b00499331316e02a7300cad2904590051",
+      "index": 2000033,
+      "seed": 4503601609370529,
+      "rows": 721,
+      "root_decisions": 107
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000034",
+      "manifest_sha256": "652cca8ced253c8c7ade51400e1d2919c478a0695a227255a76f69e5a1a452af",
+      "index": 2000034,
+      "seed": 4503601609370530,
+      "rows": 721,
+      "root_decisions": 116
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000035",
+      "manifest_sha256": "d8fecf31363226f9ca5cff401fc3e9a9d19962a39f264f15e3bb941050281b2d",
+      "index": 2000035,
+      "seed": 4503601609370531,
+      "rows": 721,
+      "root_decisions": 111
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000036",
+      "manifest_sha256": "c1ef39c0cc81a81c6105b32a757aab4d8409c5acb2c75112668d98c942c6c03e",
+      "index": 2000036,
+      "seed": 4503601609370532,
+      "rows": 1133,
+      "root_decisions": 163
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000037",
+      "manifest_sha256": "dff1b2265315597859a17b77be772eae030d5764fba94872444242e37614f739",
+      "index": 2000037,
+      "seed": 4503601609370533,
+      "rows": 721,
+      "root_decisions": 114
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000038",
+      "manifest_sha256": "43636c7752fcd3b16d5460e503b6fc0fd58db4691138cc24475b140d4132f9b8",
+      "index": 2000038,
+      "seed": 4503601609370534,
+      "rows": 721,
+      "root_decisions": 108
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000039",
+      "manifest_sha256": "c4144f3119069f3a33d9e9419a8e5ac46f6584c4a3dd16a0e1ad3e3a8adf80c8",
+      "index": 2000039,
+      "seed": 4503601609370535,
+      "rows": 629,
+      "root_decisions": 92
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000040",
+      "manifest_sha256": "ab499b9872a69e6ee2c2e3307f5424f8f5002b30b988ac647282c6c331170a4f",
+      "index": 2000040,
+      "seed": 4503601609370536,
+      "rows": 921,
+      "root_decisions": 151
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000041",
+      "manifest_sha256": "43a78454437163a05d45d71f152afea29c5fa2a43d63e4bcd8ca3436d4b485d7",
+      "index": 2000041,
+      "seed": 4503601609370537,
+      "rows": 822,
+      "root_decisions": 126
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000042",
+      "manifest_sha256": "b23e9a8735967ec453110ddb4252f7e71a334b198fc2cfe9b60653b599c9376a",
+      "index": 2000042,
+      "seed": 4503601609370538,
+      "rows": 721,
+      "root_decisions": 110
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000043",
+      "manifest_sha256": "cdf38a68a4d2278ff7d1e74c1e16385de346f147923b2d16277c50e087549224",
+      "index": 2000043,
+      "seed": 4503601609370539,
+      "rows": 721,
+      "root_decisions": 108
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000044",
+      "manifest_sha256": "993242e7e9958ba42bb712d0bd080423fb38f8541f3fe3fb4a4e145c1a18248a",
+      "index": 2000044,
+      "seed": 4503601609370540,
+      "rows": 721,
+      "root_decisions": 112
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000045",
+      "manifest_sha256": "dbbc8f6dba7b3f23532da406b9f8b4e8c42544d76c1dfebb5d3aee97a1317cc9",
+      "index": 2000045,
+      "seed": 4503601609370541,
+      "rows": 721,
+      "root_decisions": 120
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000046",
+      "manifest_sha256": "a84923dcac0723973da54dd4854abacd74a0a0f8a8024f052c55f467f930fa7c",
+      "index": 2000046,
+      "seed": 4503601609370542,
+      "rows": 1201,
+      "root_decisions": 186
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000047",
+      "manifest_sha256": "12a10f1eb656496ff371b49246aa8fc72926124dc889532bbcacf8b768d02a14",
+      "index": 2000047,
+      "seed": 4503601609370543,
+      "rows": 560,
+      "root_decisions": 82
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000048",
+      "manifest_sha256": "6f9d560511bfa08fec2796a20b76820e29b1a4fac81d0b54e296f2b17645f230",
+      "index": 2000048,
+      "seed": 4503601609370544,
+      "rows": 721,
+      "root_decisions": 106
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000050",
+      "manifest_sha256": "2cfb12e685b0d086bd39c99085aababd8259ee1bedd691926f75ddfe02b373be",
+      "index": 2000050,
+      "seed": 4503601609370546,
+      "rows": 721,
+      "root_decisions": 112
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000051",
+      "manifest_sha256": "0f68fb84d824aca2381f636b1d17e370aa1549284a417c549ef4bfbcbfbd9ff4",
+      "index": 2000051,
+      "seed": 4503601609370547,
+      "rows": 706,
+      "root_decisions": 99
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000052",
+      "manifest_sha256": "f46612e6c1a363d3623f858ad8272e16aaaf318280d92de571cde3668f64c864",
+      "index": 2000052,
+      "seed": 4503601609370548,
+      "rows": 877,
+      "root_decisions": 132
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000053",
+      "manifest_sha256": "78077844e1b3f163d99d6bf4b4798039f6d3fcffac69e62d3ea76772f91956c0",
+      "index": 2000053,
+      "seed": 4503601609370549,
+      "rows": 721,
+      "root_decisions": 117
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000054",
+      "manifest_sha256": "c71ab7abb518841a4840101dd1883b342fbfde6facebacfb445f819a079fad44",
+      "index": 2000054,
+      "seed": 4503601609370550,
+      "rows": 721,
+      "root_decisions": 108
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000055",
+      "manifest_sha256": "8ca2b19497821392acfdbea2124b18e27d26ee2c9cf433a699c457388c2af60f",
+      "index": 2000055,
+      "seed": 4503601609370551,
+      "rows": 721,
+      "root_decisions": 111
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000056",
+      "manifest_sha256": "d07ab61e3c077a874eb5024417ef744303d2b6b360622ec0124c04ad75625550",
+      "index": 2000056,
+      "seed": 4503601609370552,
+      "rows": 721,
+      "root_decisions": 117
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000057",
+      "manifest_sha256": "cc185ed85bef358a5d4434d781f8aa93ff0563b2d23fc124fd3fafcc723da7d5",
+      "index": 2000057,
+      "seed": 4503601609370553,
+      "rows": 673,
+      "root_decisions": 96
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000058",
+      "manifest_sha256": "3cb4487f62266a6df31bcb6b827c4aff933f4a995a394c64728bdc7cdd8960c7",
+      "index": 2000058,
+      "seed": 4503601609370554,
+      "rows": 852,
+      "root_decisions": 136
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000059",
+      "manifest_sha256": "f49604579c7dedc061c4c086b9aa6495671208880fa07020a7abf20940c9fbe7",
+      "index": 2000059,
+      "seed": 4503601609370555,
+      "rows": 646,
+      "root_decisions": 106
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000060",
+      "manifest_sha256": "7bb4c63806a03403c26abfdc298c7d6e5fc89b652acdfe8f1356a03dd3fa1d68",
+      "index": 2000060,
+      "seed": 4503601609370556,
+      "rows": 755,
+      "root_decisions": 117
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000061",
+      "manifest_sha256": "ff2b3ed635745a021cd9543ece9563fef5dda56cce9ffd1d1a46cf2adb505e19",
+      "index": 2000061,
+      "seed": 4503601609370557,
+      "rows": 816,
+      "root_decisions": 131
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000062",
+      "manifest_sha256": "4f6cd124af4e9ce3b75c3f4a3b8d072a1366f11f59b3f798e06c949790323bfc",
+      "index": 2000062,
+      "seed": 4503601609370558,
+      "rows": 895,
+      "root_decisions": 143
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000064",
+      "manifest_sha256": "bf627e7eeb83d0ae488bef6fc06847798b9044340533d5d2b305f699d7a68113",
+      "index": 2000064,
+      "seed": 4503601609370560,
+      "rows": 795,
+      "root_decisions": 124
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000065",
+      "manifest_sha256": "5166f77ecb7484d9e51f291e708c304770855c2c049a4177992aa0bf1895d865",
+      "index": 2000065,
+      "seed": 4503601609370561,
+      "rows": 721,
+      "root_decisions": 113
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000066",
+      "manifest_sha256": "e9c687b3e4a8a6de60e3be1b7f9e816574e2e4f95fb148e355f92ae0676ca5ea",
+      "index": 2000066,
+      "seed": 4503601609370562,
+      "rows": 721,
+      "root_decisions": 109
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000068",
+      "manifest_sha256": "d1f381af1485453dd77d1f6ade43ac677cb95d89d60eceb72c5e77ae91cdbf36",
+      "index": 2000068,
+      "seed": 4503601609370564,
+      "rows": 721,
+      "root_decisions": 111
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000069",
+      "manifest_sha256": "a3be3353bf219a4cf8d8fbb9fc4a032a0596c9e072d221272ddefc10f46829de",
+      "index": 2000069,
+      "seed": 4503601609370565,
+      "rows": 721,
+      "root_decisions": 113
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000070",
+      "manifest_sha256": "68c74d76be18b496d7a4e55c19c9e56582486d2566d9e2c5c56383a6218f27e0",
+      "index": 2000070,
+      "seed": 4503601609370566,
+      "rows": 1201,
+      "root_decisions": 190
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000072",
+      "manifest_sha256": "c72cecffeaf3b830aa3680370c87ca7f87956dadb2e49eda16bec16a32745d72",
+      "index": 2000072,
+      "seed": 4503601609370568,
+      "rows": 1201,
+      "root_decisions": 190
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000073",
+      "manifest_sha256": "a4862e49f7e37670f551eba56c9b07838fe190da5f59824440241973d0fe56f2",
+      "index": 2000073,
+      "seed": 4503601609370569,
+      "rows": 947,
+      "root_decisions": 147
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000074",
+      "manifest_sha256": "8e13f3953e0e67b1857faa0513ef52f8ea1875f35c4e1e657a89d10cba9f2c0c",
+      "index": 2000074,
+      "seed": 4503601609370570,
+      "rows": 721,
+      "root_decisions": 115
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000076",
+      "manifest_sha256": "c6e799bc029f77c9259847f152ec75698487d30017631b809dde781539025128",
+      "index": 2000076,
+      "seed": 4503601609370572,
+      "rows": 877,
+      "root_decisions": 135
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000080",
+      "manifest_sha256": "c715b15bd1398d829ef835251b189b3fda2ec8d04318cf88c7c681625373b3ce",
+      "index": 2000080,
+      "seed": 4503601609370576,
+      "rows": 721,
+      "root_decisions": 118
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000082",
+      "manifest_sha256": "eebca0c396b90809573eec823f3339a2884f43cc4fdfc18b7dde83c16b67b17c",
+      "index": 2000082,
+      "seed": 4503601609370578,
+      "rows": 728,
+      "root_decisions": 113
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000085",
+      "manifest_sha256": "2b985a25cfe8b836cb67322b2b29911546eeeec5397542045a69948b9aa2b93e",
+      "index": 2000085,
+      "seed": 4503601609370581,
+      "rows": 613,
+      "root_decisions": 94
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000086",
+      "manifest_sha256": "03ea06359345271725bc64bb44a512b10b5e92c28f38624ba39f2bfca5a3b19d",
+      "index": 2000086,
+      "seed": 4503601609370582,
+      "rows": 721,
+      "root_decisions": 116
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000094",
+      "manifest_sha256": "9627a9d441bf3814f25c77a11eccf92ed4aae8a322cf24da0ae98c1c46fb3f0b",
+      "index": 2000094,
+      "seed": 4503601609370590,
+      "rows": 1201,
+      "root_decisions": 200
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000098",
+      "manifest_sha256": "dbd713f766df4f39ae99200945d18b8ba5ea41b8ea6966ca946d132e71c8a623",
+      "index": 2000098,
+      "seed": 4503601609370594,
+      "rows": 721,
+      "root_decisions": 113
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000100",
+      "manifest_sha256": "aa0b32208b91613030c510c4faae0e575ae22055c9bd8aa31d07f87d8658afc3",
+      "index": 2000100,
+      "seed": 4503601609370596,
+      "rows": 721,
+      "root_decisions": 106
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000105",
+      "manifest_sha256": "80ee78396e6f661c8294ecd04e9cf089ddf3a6fdfb5bcf431fd6fcbb3f8a851b",
+      "index": 2000105,
+      "seed": 4503601609370601,
+      "rows": 721,
+      "root_decisions": 116
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-002000111",
+      "manifest_sha256": "c269fe684478bb8257154d33532012de23ba561730afaef466561aab657ec15b",
+      "index": 2000111,
+      "seed": 4503601609370607,
+      "rows": 721,
+      "root_decisions": 108
+    }
+  ],
+  "packed_shards": [],
+  "pending_unpacked_roots": 10152,
+  "pending_unpacked_rows": 65337,
+  "handling": "Raw SHA-sealed games retained read-only. Later portable packing on allowed04 prefix, preserving source01 identities; no generation/packing on01 without release."
+}

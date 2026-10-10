@@ -1,0 +1,471 @@
+{
+  "utc": "2026-10-10T01:44:45Z",
+  "reason": "pressure_guard_upgrade",
+  "fleet_status": {
+    "utc": "2026-10-10T01:44:41Z",
+    "pid": 4044807,
+    "pgid": 4044807,
+    "reason": null,
+    "totals": {
+      "root_decisions": 179480,
+      "games": 1454,
+      "rows": 1155906
+    },
+    "hosts": {
+      "127x04": {
+        "generation": {
+          "utc": "2026-10-10T01:44:35Z",
+          "identity": {
+            "pid": 3908611,
+            "pgid": 3908611,
+            "nice": 19,
+            "scheduler": 5,
+            "cores": [
+              47
+            ]
+          },
+          "totals": {
+            "games": 1204,
+            "rows": 960880,
+            "root_decisions": 149145,
+            "cpu_seconds": 60618.86524635799,
+            "plays": 51170
+          },
+          "active": 47,
+          "paused": [],
+          "memory_available": 90726793216,
+          "reason": null,
+          "elapsed_seconds": 1403.4331477710512,
+          "supervisor_cpu_seconds": 6.8534120000000005
+        },
+        "stop": false,
+        "internal_stop": false,
+        "packing": {
+          "utc": "2026-10-10T01:44:23Z",
+          "pid": 3908895,
+          "pgid": 3908611,
+          "complete": false,
+          "games": 0,
+          "rows": 0,
+          "root_decisions": 0,
+          "shards": 0
+        },
+        "concat": {
+          "schema": "clasher.exit-g.concat-manifest.v1",
+          "utc": "2026-10-10T01:44:23Z",
+          "complete": false,
+          "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+          "freeze_sha256": "37ddbe1db4abe13f08a941c2037eb037e2d9f4193808af41d612c4c8dfd2dc85",
+          "shards": [],
+          "games": 0,
+          "rows": 0,
+          "root_decisions": 0,
+          "candidate_scores": 0,
+          "smoke_excluded": true,
+          "loader": "Instantiate one TeacherStore(path, assets) for r1 and each G packed shard; use the existing teacher_batch.combined_batch over cumulative row ends. Packed roots retain root_scores/root_valid; offsets stay local to each shard.",
+          "generation_exit_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/exit.json"
+        },
+        "concat_sha256": "0fca0648919e5ed992884574f32bc47a2b31a1f1ce65c3a6922521328f43d1b1",
+        "generation_group_members": [
+          3908611,
+          3908895,
+          3908896,
+          3908901,
+          3908906,
+          3908911,
+          3908918,
+          3908921,
+          3908922,
+          3908927,
+          3908928,
+          3908930,
+          3908931,
+          3908932,
+          3908933,
+          3908934,
+          3908935,
+          3908936,
+          3908942,
+          3908986,
+          3909006,
+          3909039,
+          3909047,
+          3909048,
+          3909049,
+          3909050,
+          3909052,
+          3909053,
+          3909081,
+          3909108,
+          3909115,
+          3909116,
+          3909117,
+          3909118,
+          3909132,
+          3909165,
+          3909181,
+          3909182,
+          3909183,
+          3909184,
+          3909216,
+          3909241,
+          3909246,
+          3909248,
+          3909249,
+          3909287,
+          3909310,
+          3909311,
+          3909312
+        ]
+      },
+      "127x01": {
+        "generation": {
+          "utc": "2026-10-10T01:42:43Z",
+          "identity": {
+            "pid": 1356583,
+            "pgid": 1356583,
+            "nice": 19,
+            "scheduler": 5,
+            "cores": [
+              39
+            ]
+          },
+          "reason": "external_stop",
+          "totals": {
+            "games": 81,
+            "rows": 65337,
+            "root_decisions": 10152,
+            "cpu_seconds": 4567.886367624001,
+            "plays": 3478
+          },
+          "fully_vacated": true,
+          "children": [
+            {
+              "pid": 1356886,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356889,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356892,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356893,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356894,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356899,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356900,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356901,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356902,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356903,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356904,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356905,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356906,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356907,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356908,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356909,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356910,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356911,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356933,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356940,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356945,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356946,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356947,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356950,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356951,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1356972,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357007,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357039,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357044,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357045,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357046,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357047,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357048,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357078,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357083,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357085,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357086,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357087,
+              "pgid": 1356583,
+              "returncode": 0
+            },
+            {
+              "pid": 1357116,
+              "pgid": 1356583,
+              "returncode": 0
+            }
+          ],
+          "child_cpu_seconds": 23565.127566,
+          "elapsed_seconds": 727.6660556560382
+        },
+        "stop": true,
+        "internal_stop": false,
+        "packing": {
+          "utc": "2026-10-10T01:38:14Z",
+          "pid": 1356885,
+          "pgid": 1356583,
+          "complete": false,
+          "games": 0,
+          "rows": 0,
+          "root_decisions": 0,
+          "shards": 0
+        },
+        "concat": {
+          "schema": "clasher.exit-g.concat-manifest.v1",
+          "utc": "2026-10-10T01:38:14Z",
+          "complete": false,
+          "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+          "freeze_sha256": "37ddbe1db4abe13f08a941c2037eb037e2d9f4193808af41d612c4c8dfd2dc85",
+          "shards": [],
+          "games": 0,
+          "rows": 0,
+          "root_decisions": 0,
+          "candidate_scores": 0,
+          "smoke_excluded": true,
+          "loader": "Instantiate one TeacherStore(path, assets) for r1 and each G packed shard; use the existing teacher_batch.combined_batch over cumulative row ends. Packed roots retain root_scores/root_valid; offsets stay local to each shard.",
+          "generation_exit_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/exit.json"
+        },
+        "concat_sha256": "6f909fbb38d58761c17eccab0a97e338f1463bcad4b3d61fa8ae767810f3597e",
+        "generation_group_members": []
+      },
+      "127x03": {
+        "generation": {
+          "utc": "2026-10-10T01:44:40Z",
+          "identity": {
+            "pid": 1575208,
+            "pgid": 1575208,
+            "nice": 19,
+            "scheduler": 5,
+            "cores": [
+              59
+            ]
+          },
+          "totals": {
+            "games": 169,
+            "rows": 129689,
+            "root_decisions": 20183,
+            "cpu_seconds": 7924.681058475003,
+            "plays": 6755
+          },
+          "active": 36,
+          "paused": [],
+          "memory_available": 112766816256,
+          "reason": "external_stop",
+          "elapsed_seconds": 191.59470715606585,
+          "supervisor_cpu_seconds": 7.966837999999999
+        },
+        "stop": true,
+        "internal_stop": false,
+        "packing": {
+          "utc": "2026-10-10T01:44:11Z",
+          "pid": 1575392,
+          "pgid": 1575208,
+          "complete": false,
+          "games": 0,
+          "rows": 0,
+          "root_decisions": 0,
+          "shards": 0
+        },
+        "concat": {
+          "schema": "clasher.exit-g.concat-manifest.v1",
+          "utc": "2026-10-10T01:44:11Z",
+          "complete": false,
+          "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+          "freeze_sha256": "78770f0755f83ce55b3ae91f4e441fbc06cda5c35a8a3295dae023cd7718b081",
+          "shards": [],
+          "games": 0,
+          "rows": 0,
+          "root_decisions": 0,
+          "candidate_scores": 0,
+          "smoke_excluded": true,
+          "loader": "Instantiate one TeacherStore(path, assets) for r1 and each G packed shard; use the existing teacher_batch.combined_batch over cumulative row ends. Packed roots retain root_scores/root_valid; offsets stay local to each shard.",
+          "generation_exit_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/exit.json"
+        },
+        "concat_sha256": "e00b264ab6c2077e6f0e5b93ebedbafd036f4ad446fe99a94d7f5fdf53979f1c",
+        "generation_group_members": [
+          1575208,
+          1575392,
+          1575393,
+          1575395,
+          1575397,
+          1575398,
+          1575407,
+          1575426,
+          1575429,
+          1575434,
+          1575435,
+          1575436,
+          1575437,
+          1575439,
+          1575440,
+          1575442,
+          1575467,
+          1575500,
+          1575503,
+          1575504,
+          1575506,
+          1575534,
+          1575538,
+          1575540,
+          1575541,
+          1575570,
+          1575576,
+          1575609,
+          1575612,
+          1575640,
+          1575644,
+          1575650,
+          1575735,
+          1575766,
+          1575777,
+          1575778,
+          1575780,
+          1575850
+        ]
+      }
+    },
+    "errors": []
+  },
+  "coordinator_authorization": "01:43Z guard on every running G host;04/03continue;01staysstopped"
+}

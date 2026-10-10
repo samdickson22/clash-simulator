@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-10T01:46:32Z",
+  "schema": "clasher.exit-g.pressure-guard-amendment.v1",
+  "authorization": "Coordinator01:43Z:01staysstopped;03proceed/04continue;memory PSI full avg10>20percent continuous60s pausesadmission andreports.",
+  "scientific_change": "None; frozenB2emitter/decks/opponents/native/checkpoint/seeds unchanged.",
+  "guard": "Supervisor reads /proc/pressure/memory eachsecond. Strictfullavg10>20percent,continuous60s;20-or-less resets timer. Latches PRESSURE.ADMISSION.PAUSE and pressure-alert.json; newgames/newpacks pause, currentgames finish. Await coordinatorrelease before clearing. PSIreadfailure also failclosed. Existinghostmemoryfloors anddeadline unchanged.",
+  "operations": {
+    "127x04": {
+      "driver.py": "352450ac261b046e72358b35904e24b16c6358afd43cc218bdd78d21879a8da6",
+      "finalize.py": "c3370d8de73958c787281286ced41b4db24fac8b2181d112e9c05b83f87d15e6",
+      "pressure_guard.py": "123956f58408a2ed31f41e9a3fbc648e9f15005ec299cbdd6189ebf93efb039f",
+      "qualify_pressure.py": "9871a88f26bf4f78016699240ae2ad9fe62fc4a250aac7fe185e82f011738011"
+    },
+    "127x03": {
+      "driver.py": "210fb76f973061eb09b2296fb0764dda72e6f9e5df81bff89aa3bc5702615e5f",
+      "finalize.py": "06062e93cc6acd287638cbb138ee9d40714bedcb4d7ae4661e48a38e92b60014",
+      "pressure_guard.py": "123956f58408a2ed31f41e9a3fbc648e9f15005ec299cbdd6189ebf93efb039f",
+      "qualify_pressure.py": "9871a88f26bf4f78016699240ae2ad9fe62fc4a250aac7fe185e82f011738011"
+    }
+  },
+  "qualification04": {
+    "passed": true,
+    "real_games": 0,
+    "tests": [
+      "strict >20 threshold",
+      "continuous60s reset by20-or-less",
+      "pause at60s",
+      "latched until coordinatorrelease",
+      "actualworker admission blocked",
+      "PSIreadfailure failclosed"
+    ]
+  },
+  "qualification03": {
+    "passed": true,
+    "real_games": 0,
+    "tests": [
+      "strict >20 threshold",
+      "continuous60s reset by20-or-less",
+      "pause at60s",
+      "latched until coordinatorrelease",
+      "actualworker admission blocked",
+      "PSIreadfailure failclosed"
+    ]
+  },
+  "deployment": "Originalactiveprocesses loadopsatstart. Solefleet-r3 retired afteridentitycheck.04 INTERNAL.STOP explicitlycreatedforpressure_guard_upgrade, recordedpretargettotals/deadline/provenance;afterentiregenerationPGIDexit andguardreceiptpush, clear ONLYthat operationalinternalstop and resumesealedstripes. Nevercleartarget/deadline/externalstop.03externalSTOP-03appeared01:44:22Z duringdeployment;honoranddonotclearwithoutcoordinatorrelease.",
+  "reporting": "Existingcontinuationchangedfrom30mto5m,reportpressure-alert.json onnextpollandmarkreportack;healthychecksquiet. Noextratimer.",
+  "deadline_utc": "2026-10-11T03:00:00Z"
+}

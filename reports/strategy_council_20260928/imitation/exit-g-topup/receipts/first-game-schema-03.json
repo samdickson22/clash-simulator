@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-10T01:42:30Z",
+  "passed": true,
+  "seed": 4503601611370515,
+  "index": 4000019,
+  "rows": 637,
+  "root_decisions": 99,
+  "columns": 68,
+  "game_manifest_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/game-004000019/manifest.json",
+  "game_manifest_sha256": "6706fcf752550bd5e603c04f6056764067157e970cd5d3a30742ee408c0eb758",
+  "reference_schema_sha256": "e0acd0fdc49f4dc5c1e9d87878a31731c1dfa574d374db7d2a0e23ba2785e431",
+  "numpy_version": "2.3.5",
+  "all_game_file_shas_verified": true,
+  "schema_matches_04_smoke": true
+}
