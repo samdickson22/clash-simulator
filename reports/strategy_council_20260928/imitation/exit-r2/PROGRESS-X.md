@@ -310,3 +310,15 @@ x4-throughput-observation-20261010T0138Z.json preserves observations.
 K all3000 reporting games completed and CPU pools released01:30:20Z03/
 01:18:49Z01 per read-onlyPROGRESS-K; future home evaluation still load-checks.
 Continuation remains enabled; no duplicate fit/controller/smoke launch.
+
+2026-10-10T01:41:32Z. X4 recovered under original PID1217609 without any
+X process/source/recipe changes. Steps855–861 optimizer1.71–2.78s, compared
+27–73s during pressure; MemAvailable106.04GB and memoryPSIfullavg10=11.76%
+falling. G reported honoringSTOP01:38Z/current-game drain; own read-onlyps
+shows supervisor1356583 still present, so full vacate is not assumed. Shared
+load effect supported, exact mechanism unproven. Coordinator recovery message
+sent01:41Z. Receipt x4-throughput-recovery-20261010T0141Z.json; slowdown
+interval remains part of original fit attempt2 final meter. Scientific gate
+outcomes still pending, no R2 admission or reporting games. Continuation
+enabled/10min, last returned next2026-10-10T01:41:21.869Z; no new timer or
+duplicate fit/controller launched.

@@ -1,0 +1,27 @@
+{
+  "schema": "clasher.exit-r2.resource-recovery.v1",
+  "utc": "2026-10-10T01:41:32Z",
+  "arm": "X4",
+  "trainer_pid": 1217609,
+  "original_fit_attempt": 2,
+  "scientific_bytes_changed": false,
+  "x_process_changes": false,
+  "g_stop_reported_utc": "2026-10-10T01:38Z",
+  "source": "Read-only coordinator timeline G message plus home01 own timing/pressure/ps.",
+  "g_supervisor_pid": 1356583,
+  "g_vacated": false,
+  "optimizer_seconds": {
+    "855": 1.778948123101145,
+    "856": 1.7094137878157198,
+    "857": 1.763993037166074,
+    "858": 2.0408574889879674,
+    "859": 1.9532498358748853,
+    "860": 1.858784378040582,
+    "861": 2.7772042430005968
+  },
+  "mem_available_bytes": 106037702656,
+  "memory_psi_full_avg10": 11.76,
+  "interpretation": "Throughput recovery during G drain supports a shared-load effect; exact root cause unproven. No intervention on X fit, no recipe/source change, no scientific kill. Original fit accounting includes the slow interval.",
+  "prior_observation": "x4-throughput-observation-20261010T0138Z.json",
+  "coordinator_message_id": "message:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:thread-send:x4-recovered-20261010T0141Z"
+}

@@ -94,3 +94,11 @@ pressure. Cgroup limit unlimited/no failures. Coordinator notified for a
 reversible load check; causal attribution remains unproven. No job stopped,
 recipe/source changed or scientific kill assigned. Observation receipt records
 raw timing and the verified X6 step250 checkpointSHA dbd95e8419a95483facdc5d3bb54ba41864f0185f9e5c924f3e38c616c1b8de1.
+
+2026-10-10 01:41:32Z follow-up: X4 steps855–861 recovered to1.71–2.78s
+optimizer latency as G honored STOP01:38Z and drained games. Host available
+memory106.04GB, memory PSI full avg10=11.76% (falling). G supervisor remained
+present; full vacate was not claimed. X trainerPID1217609, source, recipe and
+checkpoint lineage unchanged; slow interval remains charged within attempt2.
+Recovery supports shared-load interference but does not establish its precise
+cause. Coordinator informed; receipt x4-throughput-recovery-20261010T0141Z.json.
