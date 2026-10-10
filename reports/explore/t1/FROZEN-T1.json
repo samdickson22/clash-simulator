@@ -138,7 +138,7 @@
     "reports/explore/t1/receipts/op5-08join-qualification-summary.json": "28ba59cac2523a2c367007df3fdbccde9e36414bdaf21470af757a1d3fa7d7db",
     "reports/explore/t1/receipts/op5-08join-smoke-r6-launch.json": "7ea6f5a556b15c0acfa67918f4fd835c03fb6ba9876534259fbb7f826ba82cfe",
     "reports/explore/t1/receipts/smoke-r6-health-admission.json": "d2a519b64860e2a914d54b70deef1cde26014f2cc865ea3c1d7aaea958596285",
-    "reports/explore/t1/PROGRESS-T1.md": "7edddd23ee034a50d8541c8efdfe0635f48ae4b6bad016ed4df685e04baf0d36",
+    "reports/explore/t1/PROGRESS-T1.md": "d40d78c5e513f72805f5d8fa312adb25f7b2d0e070125282bd3aa11ab730413d",
     "reports/explore/t1/receipts/reporting-launch-receipt-0108.json": "100584090ea8fac3950a2bcd762bfb3c6b8f1c37c0ee02ed23aa33602f065f6a",
     "reports/explore/t1/receipts/reporting-authorization-0108.json": "3eb770c9b900a13beac8ef85453856296e2bb3c47f1b60310f4ab3c15556771a",
     "reports/explore/t1/receipts/reporting-launch-127x01.json": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
@@ -151,7 +151,9 @@
     "reports/explore/t1/receipts/corpus-03-validator-staging.json": "59627962264fb4ddb383170b6a937e21d0da259cf6118d44794a51016923c53c",
     "reports/explore/t1/receipts/corpus-03-operational-worker.py": "5797c240ce484860e04827f1c310b7d0a437e4775083a266ff622c954794e108",
     "reports/explore/t1/receipts/corpus-03-operational-supervisor.py": "00d19c01a313042b054cbd5357dcaf49afb69b0298a0ffb42f59d73d1752eb15",
-    "reports/explore/t1/receipts/amendment1-release-c14-candidate.json": "b0145ef16fe3e98a30a86ef2b7cf26b1934ac97377e74efa8c2bcb32a44b9150"
+    "reports/explore/t1/receipts/amendment1-release-c14-candidate.json": "b0145ef16fe3e98a30a86ef2b7cf26b1934ac97377e74efa8c2bcb32a44b9150",
+    "reports/explore/t1/receipts/corpus-03-publisher-launch.json": "e7775af1f498ef2f4baa63a6e8df727d78751d407e245d647b89ed8d0ee31f0e",
+    "reports/explore/t1/receipts/corpus-03-operational-publisher.py": "2ea22c48558f1ca21474f661320a31503324fd865bd1d819a0a151ee3ae091f4"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -396,5 +398,11 @@
     "status": "AWAITING_INDEPENDENT_RE_REVIEW",
     "unadmitted": true,
     "reporting_runtime_unchanged": true
+  },
+  "corpus_publication_job": {
+    "launch_receipt": "reports/explore/t1/receipts/corpus-03-publisher-launch.json",
+    "destination": "reports/explore/t1/corpora/corpus-03-a51ea64c",
+    "status": "RUNNING_WAIT_FOR_BUILD",
+    "outcomes_read": false
   }
 }

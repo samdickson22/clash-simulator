@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-10T18:29:21Z",
+  "host": "127x05",
+  "scope": "metadata/public-state archive publishing only; no timing or games",
+  "nice": 19,
+  "core": 63,
+  "pid_receipt": {
+    "launched_at_utc": "2026-10-10T18:28:08Z",
+    "pid": 2136422,
+    "pgid": 2136422
+  },
+  "script_path": "reports/explore/t1/receipts/corpus-03-operational-publisher.py",
+  "script_sha256": "2ea22c48558f1ca21474f661320a31503324fd865bd1d819a0a151ee3ae091f4",
+  "corpus_source_job": "127x03:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-reviewed-03-r1",
+  "publication_path": "reports/explore/t1/corpora/corpus-03-a51ea64c",
+  "status_directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-03-operations",
+  "stops_after_publication_or_error": true,
+  "outcomes_read": false
+}
