@@ -1,5 +1,16 @@
 # X worker progress
 
+2026-10-10T06:22:16Z. Existing01 reporting pool2035131 alive/admitted,
+528/600 complete/40active/32pending/no failures, mem110070210560/load48.95.
+No reporting outcomes read; no launch/block/bank/recovery/01release.
+ALL7 original fits/offline records and controller2071651 remain CLOSED,
+neverrepeat/restart. Final fit/offline costs9f13eaa9 unchanged; no newfit
+snapshot added. Existing06:02 wholepoolCPU sample remains provisional until
+finalexit; neveraddnestedchildren. Frozenselectedreducer reviewed for final
+600-block provenance/terminal/context/paireddeck checks; not executed.
+Tenminenabled,next2026-10-10T06:32:07.577Z, prompt refreshed with528/600.
+Pending600/cleanpoolclosure/selectedreduction/report/explicit01release.
+
 2026-10-10T06:13:33Z. ALL7 original fits/frozenoffline64 CLOSED, neverrepeat.
 X5 final9766/EMA fitexit0 06:11:37; singleGPUscore04 1291224/1291233
 closed06:12:05 exit0/no reason. Originalfit3727388/3727520+scoregroups

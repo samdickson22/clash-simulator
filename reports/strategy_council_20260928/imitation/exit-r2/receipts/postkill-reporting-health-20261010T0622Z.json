@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-10T06:22:16Z",
+  "pool_pid": 2035131,
+  "pgid": 2035131,
+  "alive": true,
+  "complete": 528,
+  "active": 40,
+  "pending": 32,
+  "admitted": true,
+  "failures": [],
+  "mem_available": 110070210560,
+  "load1": 48.95,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "selected": [
+    "X1",
+    "X2",
+    "X4"
+  ],
+  "original_records_closed": true,
+  "original_controller_closed": true,
+  "reporting_outcomes_inspected": false,
+  "launch_or_recovery": false,
+  "host01_released": false,
+  "pool_live_cpu_sample": {
+    "utc": "2026-10-10T06:02:52Z",
+    "whole_tree_seconds": 190834.24000000005,
+    "provisional_nonadditive": true,
+    "final_exit_meter_supersedes": true
+  },
+  "final_fit_gpu_hours": 21.609775054376094,
+  "final_fit_whole_cpu_hours": 72.09740290444445,
+  "final_offline_gpu_hours": 0.02461393756083756,
+  "final_offline_whole_cpu_hours": 0.022129878888888888,
+  "original_150_151_unconsumed": true,
+  "R2_eligible": false
+}
