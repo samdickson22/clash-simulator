@@ -148,3 +148,18 @@
   - K4Sl-160 − K4S-160: +1.8 [−1.2, 4.8].
 
   K4 holds to 0.9× and breaks between 0.9× and 0.8×. The S-default sign flips between 1.0× and 0.9×.
+- 12:00:00Z: rep08EF exited cleanly: 840/840 blocks (E-odd 300, F-odd 540), rc 0, empty group. **127x08 had zero
+  X4S2 processes at 12:00:53Z**; chain08 is done. The 05 backstop still touches STOP on 08 at 12:15Z and records the
+  vacancy census. rep03EF at 451 blocks: E-even done, F-even 151/540, ETA ~13:10Z (stop-at 13:30Z).
+- 12:15:16Z: 05 backstop touched STOP on 127x08. The census at 12:15:16Z found **0 X4S2 processes: VACANT**
+  ([receipts/vacate08.jsonl](receipts/vacate08.jsonl)). The remaining sdicks02 processes on 08 belong to other
+  threads (tailscaled, v4 validation-cache service) and were not touched.
+- 12:16:12Z: sync did its final pull of 08 and retired it. 05 makes no further contact with 127x08.
+- 12:41Z: rep03EF at 709/840 blocks (F-even 409/540); ETA ~13:05Z, before the 13:30Z stop. Healthy.
+- 13:01:01Z: rep03EF exited cleanly: 840/840 blocks (E-even 300, F-even 540), rc 0, empty group. 127x03 had 0 X4S2
+  processes at 13:01:23Z. STOP placed on 03 at 13:01Z; sync retired 03 at 13:01:41Z and exited (both hosts retired).
+  The 05 backstop and sync have exited.
+- 13:02Z: **final reduction**: 16,980 new games (3,948 blocks, 12 retired) plus 5,400 paired X4S games.
+  - **F** (guard decks, 120 ms), loss %: K4 92.1, K4S 22.8 (−69.4 [−72.2, −66.3]), K4Sh 21.0.
+  - **Pooled X + G:** K4S − K4 at 200 ms = +0.6 [−0.8, 2.2] over 1,668 seeds.
+  - RESULTS.md written. **X4S2 complete.** No X4S2 processes remain on 03, 08 or 05.

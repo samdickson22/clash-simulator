@@ -181,6 +181,23 @@ def main():
             rng = random.Random(cfg['bootstrap']['seed'])
             boot = [100*sum(diff[rng.randrange(len(idx))] for _ in idx)/len(idx) for _ in range(cfg['bootstrap']['reps'])]
             out['contrasts'][f'{pop}: {l} minus {r}'] = dict(seeds=len(idx), loss_change_pp=100*sum(diff)/len(idx), ci95_pp=ci(boot))
+    # Pooled across populations (bootstrap stratified by population; seeds weighted equally).
+    out['pooled'] = {}
+    if set(table) == {'X', 'G'}:
+        pooled = {'K4S minus K4 at 200 ms': (('x4s:K4S-200', 'x4s:K4-200'), ('K4S-200', 'K4-200')),
+                  'K4S minus K4 at 140 ms': (('x4s:K4S-140', 'x4s:K4-140'), ('K4S-140', 'K4-140')),
+                  'K4Sh-140 minus K4-140': (('K4Sh-140', 'x4s:K4-140'), ('K4Sh-140', 'K4-140')),
+                  'K4S-120 (X4S / G) minus K4-120': (('x4s:K4S-120', 'x4s:K4-120'), ('K4S-120', 'K4-120')),
+                  'K4Sh-120 minus K4-120': (('K4Sh-120', 'x4s:K4-120'), ('K4Sh-120', 'K4-120'))}
+        for name, ((xl, xr), (gl, gr)) in pooled.items():
+            dx = [table['X'][i][xl]['loss']-table['X'][i][xr]['loss'] for i in table['X'] if xl in table['X'][i] and xr in table['X'][i]]
+            dg = [table['G'][i][gl]['loss']-table['G'][i][gr]['loss'] for i in table['G'] if gl in table['G'][i] and gr in table['G'][i]]
+            if not dx or not dg: continue
+            rng = random.Random(cfg['bootstrap']['seed'])
+            n = len(dx)+len(dg)
+            boot = [100*(sum(dx[rng.randrange(len(dx))] for _ in dx)+sum(dg[rng.randrange(len(dg))] for _ in dg))/n
+                    for _ in range(cfg['bootstrap']['reps'])]
+            out['pooled'][name] = dict(seeds_X=len(dx), seeds_G=len(dg), loss_change_pp=100*(sum(dx)+sum(dg))/n, ci95_pp=ci(boot))
     a.out.write_text(json.dumps(out, indent=2)+'\n')
     print(json.dumps(dict(utc=out['utc'], hosts=hosts, blocks=nblocks, excluded=len(excluded))))
 

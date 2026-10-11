@@ -33,6 +33,13 @@ def main():
     for k, v in C.items():
         L.append(f"| {k} | {v['seeds']} | {v['loss_change_pp']:+.1f} | {c(v['ci95_pp'])} |")
     L.append('')
+    if d.get('pooled'):
+        L.append('## Pooled X + G (bootstrap stratified by population)\n')
+        L.append('| Contrast | Seeds X / G | pp | 95% CI |')
+        L.append('|---|---:|---:|---|')
+        for k, v in d['pooled'].items():
+            L.append(f"| {k} | {v['seeds_X']} / {v['seeds_G']} | {v['loss_change_pp']:+.1f} | {c(v['ci95_pp'])} |")
+        L.append('')
     L.append(f"Blocks per phase: {d['blocks_per_phase']}; blocks per host: {d['hosts_games']}; "
              f"excluded interrupted blocks: {len(d['excluded_interrupted'])}.")
     dst.write_text('\n'.join(L)+'\n')
