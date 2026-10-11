@@ -1,0 +1,82 @@
+{
+  "utc": "2026-10-11T20:08:19Z",
+  "host": "127x03",
+  "job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1",
+  "phase": "reporting",
+  "supervisor": {
+    "pid": 776314,
+    "pgid": 776314,
+    "start_ticks": 153906032,
+    "uid": 3822945,
+    "cmdline_sha256": "21ab4097787b955a3f407629d0443a885b62a1ad3ce0919cd134c9c06e333075",
+    "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+  },
+  "worker_groups": [
+    {
+      "pid": 776559,
+      "pgid": 776559,
+      "start_ticks": 153906559,
+      "uid": 3822945
+    },
+    {
+      "pid": 776708,
+      "pgid": 776708,
+      "start_ticks": 153906641,
+      "uid": 3822945
+    },
+    {
+      "pid": 776915,
+      "pgid": 776915,
+      "start_ticks": 153906724,
+      "uid": 3822945
+    },
+    {
+      "pid": 777076,
+      "pgid": 777076,
+      "start_ticks": 153906808,
+      "uid": 3822945
+    },
+    {
+      "pid": 777255,
+      "pgid": 777255,
+      "start_ticks": 153906892,
+      "uid": 3822945
+    },
+    {
+      "pid": 777483,
+      "pgid": 777483,
+      "start_ticks": 153906976,
+      "uid": 3822945
+    },
+    {
+      "pid": 777682,
+      "pgid": 777682,
+      "start_ticks": 153907062,
+      "uid": 3822945
+    },
+    {
+      "pid": 777852,
+      "pgid": 777852,
+      "start_ticks": 153907147,
+      "uid": 3822945
+    },
+    {
+      "pid": 778027,
+      "pgid": 778027,
+      "start_ticks": 153907232,
+      "uid": 3822945
+    },
+    {
+      "pid": 778202,
+      "pgid": 778202,
+      "start_ticks": 153907317,
+      "uid": 3822945
+    },
+    {
+      "pid": 778459,
+      "pgid": 778459,
+      "start_ticks": 153907404,
+      "uid": 3822945
+    }
+  ]
+}

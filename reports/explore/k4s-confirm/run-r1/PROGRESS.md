@@ -101,7 +101,24 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   interfered 03=0, 04=3 (dbus), charge max dev ≤0.008). smoke-admission 03 e338db63…, 04 9c4d636f….
   Next: B3 request to coordinator (manifest 416f6e51 + smoke receipts) → REPORTING-AUTHORIZATION.json → reporting launch.
 
+- 20:04:59Z: coordinator REPORTING AUTHORIZATION (msg …9bac571d…, COORDINATOR fa34fcb0). 20:05:50Z/55Z first launch in
+  k4s-confirm-r1 REFUSED by frozen owned_supervisor.pin (one supervisor phase per job; smoke used it) before admission; no
+  game; copiers revoked. 20:07:31Z coordinator ack (…12fbbb0f…): distinct reporting namespace per T1 precedent.
+  Staged k4s-confirm-reporting-r1 on 03/04 from the qualified runtime (overlay 175/175, pin OK, SMOKE-PASS/manifest/dispatch
+  byte-identical; 03 idle pin re-verified = T1 identity). REPORTING-AUTHORIZATION-v2 (reporting_jobs updated). Barrier PASS.
+- **20:08:22Z / 20:08:27Z: SEALED REPORTING LAUNCHED** 03 sup 776314 / 04 sup 4015460 (nice 10, core 61, 11 slots, 11 inflight,
+  1939 queued); copiers on 05: 03 1322045 (core 62), 04 1331157 (core 63). Receipt receipts/reporting-launch-receipt.json.
+
 ## Running (owned PGIDs only)
+- 03: reporting supervisor PGID 776314 (+ its block groups) in /mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1
+- 04: reporting supervisor PGID 4015460 (+ block groups) in /mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1
+- 05: OA-1 copiers PGID 1322045 (03) / 1331157 (04); logs run-r1/copier/127x0{3,4}-reporting.log
+- Health: tools/k4s_health.py every 20 min → health/*.json + PROGRESS line + coordinator note.
+- Resume after a session restart: check these PGIDs with ps; if a copier died, restart it with the same
+  `K4S_JOBNAME=k4s-confirm-reporting-r1` copier command (normal start = recovery; never --revoke); supervisors are never relaunched
+  in the same job (frozen launch-claim) — any supervisor loss goes to the coordinator (replacement rules).
+
+## Running (stale header kept for history)
 - none (drill qualification drivers exited 0).
 
 ## Next

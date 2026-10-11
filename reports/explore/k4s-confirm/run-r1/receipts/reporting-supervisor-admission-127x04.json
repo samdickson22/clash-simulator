@@ -1,0 +1,82 @@
+{
+  "utc": "2026-10-11T20:08:24Z",
+  "host": "127x04",
+  "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1",
+  "phase": "reporting",
+  "supervisor": {
+    "pid": 4015460,
+    "pgid": 4015460,
+    "start_ticks": 111645108,
+    "uid": 3822945,
+    "cmdline_sha256": "cc1ae7a4353f39758aee878f4ed863e6896efc52750dee39559692df9d154130",
+    "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+  },
+  "worker_groups": [
+    {
+      "pid": 4015702,
+      "pgid": 4015702,
+      "start_ticks": 111645619,
+      "uid": 3822945
+    },
+    {
+      "pid": 4015880,
+      "pgid": 4015880,
+      "start_ticks": 111645706,
+      "uid": 3822945
+    },
+    {
+      "pid": 4016058,
+      "pgid": 4016058,
+      "start_ticks": 111645795,
+      "uid": 3822945
+    },
+    {
+      "pid": 4016236,
+      "pgid": 4016236,
+      "start_ticks": 111645884,
+      "uid": 3822945
+    },
+    {
+      "pid": 4016416,
+      "pgid": 4016416,
+      "start_ticks": 111645974,
+      "uid": 3822945
+    },
+    {
+      "pid": 4016718,
+      "pgid": 4016718,
+      "start_ticks": 111646065,
+      "uid": 3822945
+    },
+    {
+      "pid": 4016896,
+      "pgid": 4016896,
+      "start_ticks": 111646156,
+      "uid": 3822945
+    },
+    {
+      "pid": 4017074,
+      "pgid": 4017074,
+      "start_ticks": 111646246,
+      "uid": 3822945
+    },
+    {
+      "pid": 4017252,
+      "pgid": 4017252,
+      "start_ticks": 111646336,
+      "uid": 3822945
+    },
+    {
+      "pid": 4017430,
+      "pgid": 4017430,
+      "start_ticks": 111646428,
+      "uid": 3822945
+    },
+    {
+      "pid": 4017627,
+      "pgid": 4017627,
+      "start_ticks": 111646519,
+      "uid": 3822945
+    }
+  ]
+}

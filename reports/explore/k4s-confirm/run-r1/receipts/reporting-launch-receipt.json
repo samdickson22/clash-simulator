@@ -1,0 +1,107 @@
+{
+ "schema": "clasher.k4s.reporting-launch.v1",
+ "study": "PREREG-K4S",
+ "outcomes_sealed": true,
+ "outcomes_read": false,
+ "health_only": true,
+ "reporting_launched": true,
+ "authorization": {
+  "path": "reports/explore/k4s-confirm/run-r1/receipts/REPORTING-AUTHORIZATION-v2.json",
+  "sha256": "852c01e6b32e8a93132b4f6c6711c3c5af4d70b4150bc51a7ee0ef5f51491791",
+  "message_id": "message:provider:claudeAgent:native-item:9bac571d-dd91-4067-9be7-ce9f8f658b89",
+  "authorized_at_utc": "2026-10-11T20:04:59Z",
+  "namespace_ack": "message:provider:claudeAgent:native-item:12fbbb0f-696d-48f1-83ed-9edddd47ad38"
+ },
+ "freeze_commit": "391d2006acc5c70f42679d7f014b84bc9fe0c2f9",
+ "manifest_sha256": "416f6e51e32e1900faaf8ceaf329287475a6a621fb1dc2d1b6def50ebb528ed1",
+ "dispatch": {
+  "path": "reports/explore/k4s-confirm/run-r1/dispatch/reporting-dispatch.json",
+  "sha256": "78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2",
+  "blocks": 3900,
+  "games": 33000,
+  "per_host_blocks": 1950
+ },
+ "launch_addendum_commit": "5d6ac662",
+ "smoke_pass_commit": "5f4f1cd8",
+ "first_attempt": {
+  "utc": [
+   "2026-10-11T20:05:50Z",
+   "2026-10-11T20:05:55Z"
+  ],
+  "job": "k4s-confirm-r1",
+  "outcome": "refused by frozen owned_supervisor.pin before admission (one supervisor phase per job); no game ran; copiers revoked"
+ },
+ "hosts": {
+  "127x03": {
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1",
+   "launch": {
+    "utc": "2026-10-11T20:08:22Z",
+    "host": "127x03",
+    "phase": "reporting",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "65e5beaeafe847890b74cddaf9bbef86555caf9032e98bf933c2d656eaed533b",
+    "dispatch_sha256": "78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2",
+    "supervisor_pid": 776314,
+    "supervisor_pgid": 776314
+   },
+   "launch_sha256": "116f1ed5f998649ba950fbde08846b47b052294acbbb6432b4a04b2a324e0159",
+   "admission": {
+    "utc": "2026-10-11T20:08:21Z",
+    "admitted": true,
+    "who": "",
+    "console_count": 0,
+    "foreign_compute": 0,
+    "foreign_active": 0,
+    "memavailable_GiB": 121.9
+   },
+   "supervisor_admission_sha256": "18a31279b746709a0a1fe9601cb789da62eb03bdd032211137dfb362db6c7029",
+   "copier": {
+    "pid": 1322045,
+    "pgid": 1322045,
+    "core": 62,
+    "nice": 19,
+    "hub": "127x05",
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "initial_inflight": 11,
+   "initial_queued": 1939
+  },
+  "127x04": {
+   "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1",
+   "launch": {
+    "utc": "2026-10-11T20:08:27Z",
+    "host": "127x04",
+    "phase": "reporting",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "a99ca55bf3251d51e80d34f521a866673e3ac9fd7d5de7ab68df06e07123d1d9",
+    "dispatch_sha256": "78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2",
+    "supervisor_pid": 4015460,
+    "supervisor_pgid": 4015460
+   },
+   "launch_sha256": "7cd6b140551d8f1d66858d98b3cf2d74b14339e7d334e6b4fc3650a3fa383c48",
+   "admission": {
+    "utc": "2026-10-11T20:08:26Z",
+    "admitted": true,
+    "who": "",
+    "console_count": 0,
+    "foreign_compute": 0,
+    "foreign_active": 0,
+    "memavailable_GiB": 121.7
+   },
+   "supervisor_admission_sha256": "7f8ab0540fea6d61989156bfa0398c5b363ad25a60d47b7afae738ba40e95143",
+   "copier": {
+    "pid": 1331157,
+    "pgid": 1331157,
+    "core": 63,
+    "nice": 19,
+    "hub": "127x05",
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "initial_inflight": 11,
+   "initial_queued": 1939
+  }
+ },
+ "estimate": "~16 h per host at ~92 games/slot-hour (11 slots); replacements and END not included"
+}

@@ -1,0 +1,30 @@
+{
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "r3_explicitly_frozen": true,
+  "authorization_message_id": "message:provider:claudeAgent:native-item:9bac571d-dd91-4067-9be7-ce9f8f658b89",
+  "authorized_at_utc": "2026-10-11T20:04:59Z",
+  "coordinator_record_commit": "fa34fcb0",
+  "study": "PREREG-K4S",
+  "freeze_commit": "391d2006acc5c70f42679d7f014b84bc9fe0c2f9",
+  "manifest_sha256": "416f6e51e32e1900faaf8ceaf329287475a6a621fb1dc2d1b6def50ebb528ed1",
+  "hosts": [
+    "127x03",
+    "127x04"
+  ],
+  "reporting_jobs": {
+    "127x03": "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1",
+    "127x04": "/mpac/sdicks02/jobs-k4s/k4s-confirm-r1"
+  },
+  "dispatch_path": "reports/explore/k4s-confirm/run-r1/dispatch/reporting-dispatch.json",
+  "dispatch_sha256": "78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2",
+  "launch_addendum_commit": "5d6ac662",
+  "oa1_script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd",
+  "smoke_pass_commit": "5f4f1cd8",
+  "smoke_admission_sha256": {
+    "127x03": "e338db63456772b930334dfb898839380b8c9180da35252c04c4c9f0d71eb24f",
+    "127x04": "9c4d636f13a141b3399eb0307f4edfc7af2407af37fc27dbe24d154929af9c1c"
+  },
+  "slots": 11,
+  "nice": 10,
+  "outcomes_sealed": true
+}
