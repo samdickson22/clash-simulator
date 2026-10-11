@@ -1,8 +1,8 @@
 # PREREG-K4S FREEZE RECORD (2026-10-11)
 
 - **Status: FROZEN.** Issuer: coordinator 0523ae6f (Claude Opus 5.5) under owner delegation.
-- Freeze UTC: **2026-10-11T17:43:02Z** (`date -u`). Executor: freeze executor r2 (clasher-prereg-k4s-freeze-exec-20261011-r2), Claude Opus 5.5, 127x05.
-- Freeze commit: this record is committed in the freeze commit; its SHA is filled by the following commit. Parent: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`. Audit-fix commit: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`.
+- Freeze commit: **`391d2006acc5c70f42679d7f014b84bc9fe0c2f9`**, committed **2026-10-11T17:45:00Z** (freeze UTC). This record and the SD1 supersession were composed at 2026-10-11T17:43:02Z (`date -u`); both take effect at the freeze commit.
+- Executor: freeze executor r2 (clasher-prereg-k4s-freeze-exec-20261011-r2), Claude Opus 5.5, 127x05. Parent: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`. Audit-fix commit: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`.
 - Machine-readable twin: `PREREG-K4S-FREEZE-20261011.json` (same directory).
 
 ## Frozen documents
@@ -17,15 +17,15 @@
 
 ## Decisions (coordinator 0523ae6f)
 
-1. **c\* = 0.9.** Record `6ef5e2ff`. Phase E receipt `results-phaseACE.json` sha256 `d2b32b9a…` at `b577a255`; d180 = −2.2 pp [−5.2, +0.8]; the lower bound is not > 0, so c\* = 0.9 (sequence H1–H7 with H4). The rule was locked at `daba6859`, before phase E was reduced.
-2. **Host set {127x03, 127x04}.**
-   - 127x03: A2 transport retired (receipt c2cef696); X4S-2 vacated 13:01Z; K4S prep vacated 17:18Z. T1 read-only K4 corpus durability copy on 03 must never be modified.
+1. **(F-1) c\* = 0.9.** Record `6ef5e2ff`. Phase E receipt `results-phaseACE.json` sha256 `d2b32b9a…` at `b577a255`; d180 = −2.2 pp [−5.2, +0.8]; the lower bound is not > 0, so c\* = 0.9 (sequence H1–H7 with H4). The rule was locked at `daba6859`, before phase E was reduced.
+2. **(F-7) Host set {127x03, 127x04}.**
+   - 127x03: A2 transport retired (receipt c2cef696); X4S-2 vacated 13:01Z (COORDINATOR.md 13:06 entry); K4S prep vacated 17:18Z (k4s-confirm/PROGRESS.md 17:18:21Z). T1 read-only K4 corpus durability copy on 03 must never be modified.
    - 127x04: perception allocation released (receipt 5f59f7f8); r3 Q7 "04 not before 2026-10-12T12Z" was that allocation, released early; perception storage on 04 is off-limits.
    - T1 END pooled reference needs neither 03 nor 04 (T1 reporting hosts are 01/08; skeleton section E).
-3. **Q1–Q13: r3 §8 defaults.** Q13 order: H1 B(0.8), H2 B(0.7), H3 B(0.6), H4 A(0.9), H5 A(0.8), H6 A(0.7), H7 A(0.6): B(0.6) at H3 (default), fixed sequence, stop at first failure. Q12: **TIERS stands**.
+3. **(F-9) Q1–Q13: r3 §8 defaults.** Q13 order: H1 B(0.8), H2 B(0.7), H3 B(0.6), H4 A(0.9), H5 A(0.8), H6 A(0.7), H7 A(0.6): B(0.6) at H3 (default), fixed sequence, stop at first failure. Q12: **TIERS stands**.
 4. **K4S-SPEC I-1..I-5: accepted.**
 5. **Errata** (recorded here, not edited into r3): R2 — section 1.3 "This rule text is final as of r2" reads "This rule text is final as of r2 (r3's N1 edit excepted)". R5 — Q13 r1-order (B(0.6) at H5) pessimistic values: A(0.9) .69 reads .705; A(0.8) approx .35 reads .366.
-6. **Attestation.** T1/TIERS outcomes: SEALED at freeze (no T1 or TIERS outcome has been released or read by K4S). r3 text: unchanged since RECHECK-r3 (bytes 9650972d) except the recorded errata and the F-1..F-10 fills in this record.
+6. **(F-10) Attestation.** T1/TIERS outcomes: SEALED at freeze (no T1 or TIERS outcome has been released or read by K4S). r3 text: unchanged since RECHECK-r3 (bytes 9650972d, unchanged since daba6859); the only additions are the recorded errata and the F-1..F-9 fills in this record.
 7. **SD1 supersession issued** as `reports/explore/k4s-confirm/SD1-SUPERSESSION-ISSUED.md` (verbatim r3 §2.1 / draft). **SD1 hash `b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76`** (sha256 of `SD1-MANIFEST.json` at the freeze commit). Additive pointer: new file `reports/strategy_council_20260928/imitation/exit-r3/POINTER-SD1-K4S.md`; no existing exit-r3 file is edited.
 8. **T1 K4 speed corpus** (`a97b1fbf…`, inventory `81f2483e`): a read-only, SHA-verified copy into the K4S job dirs on 03/04 is authorized, for END only. Source: the 05 durability bundle or the 03 read-only copy; never write to the source.
 9. **TIERS blocker noted:** TIERS measure_tiers.py (5d7de8e3) lacks import math (math.isfinite at l.70): known TIERS-side Mac blocker, handled separately by T1; not a K4S change.
@@ -112,9 +112,26 @@
 
 - GPT-6.1-Sol, seed-audit fix + DELTA-MANIFEST transition r1: **APPROVE**, round 1 of max 3 (`reports/explore/k4s-confirm/reviews/SOL-REVIEW-AUDIT-MANIFEST-r1.md`, sha256 `844f40f509899e01a3872bcc1939e2e00cea95bc3fed1c3b7ca96ba30a60f91e`).
 - Prep reviews carried, final rounds binding: Sol core r6 APPROVE; independent verifier r3 APPROVE; Mac/END r6 APPROVE.
-- Mac tests on the frozen tree: 94/95 pass. The one failure, `test_manifest_loader_rejects_draft_for_mac_and_tamper`, asserts that the in-repo manifest is still a draft (l.609 `frozen is False`), which is false by construction after the freeze. The loader behaviour it covers is unchanged and was re-checked: the frozen manifest loads with `require_frozen=True`, and the pre-freeze draft bytes are refused. No reviewed test was edited.
-- Independent Claude Opus 5.5 (high effort) diff check of this record against the coordinator's decisions: recorded in the fill commit.
+- Mac tests on the frozen tree: 94/95 pass. The one failure, `test_manifest_loader_rejects_draft_for_mac_and_tamper`, asserts that the in-repo manifest is still a draft (l.609 `frozen is False`), which is false by construction after the freeze. Because it aborts at l.609, its later SHA-mismatch and forged-pin checks (l.612–619) no longer run. All of that behaviour was re-checked against the frozen manifest:
+  - it loads with `require_frozen=True`;
+  - the pre-freeze draft bytes are refused;
+  - a wrong SHA is refused ("K4S manifest SHA mismatch");
+  - a forged `measure_tiers.py` pin is refused ("Pin mismatch"), as confirmed by the independent check.
+  No reviewed test was edited.
+- Independent Claude Opus 5.5 (high effort) diff check of this record against the coordinator's decisions: **APPROVE** (`reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-FREEZE-20261011-CHECK-OPUS-r1.md`). Its non-blocking wording notes N1–N5 are applied in the fill commit.
+
+## Fill (commit after the freeze)
+
+- Freeze commit `391d2006acc5c70f42679d7f014b84bc9fe0c2f9` (2026-10-11T17:45:00Z, parent `fbcd677d`).
+- The record as committed in the freeze commit had sha256 `7b1b57f5983d27ed2137bc81fa5be4944a40f27609d6e97eb742a4a22787771b` (.json) and `c05fd0e1ca99bfd7e270d717255a9405470e99b20b80dfb73699ce473ca43d63` (.md). The fill commit adds:
+  - the freeze-commit SHA and commit UTC;
+  - the Opus check verdict;
+  - the Opus wording notes: N1 freeze vs composition time, N2 Mac test note, N3 SHA fill, N4 F-labels and attestation wording, N5 vacancy sources.
+  No decision, pin or fill value changed.
+- `SD1-SUPERSESSION-ISSUED.md` and `exit-r3/POINTER-SD1-K4S.md` are left byte-identical; their freeze-commit SHA is the one above.
+- Confirmation seed audit at the freeze commit `391d2006` (2026-10-11T17:45:14Z): **PASS, exit 0**. 205 declaration files walked; the freeze JSON adds no intervals. 54 in-window literals, 0 FAIL. Its outputs were not committed: the committed F-4 receipt is the run at `fbcd677d`.
+- `rebind.py verify` at the freeze tree: exactly one failure, the cyclic skeleton row (see DELTA-MANIFEST history).
 
 ## Signature
 
-Issued by coordinator 0523ae6f (Claude Opus 5.5) under the owner's delegation; executed by freeze executor r2 at 2026-10-11T17:43:02Z.
+Issued by coordinator 0523ae6f (Claude Opus 5.5) under the owner's delegation; executed by freeze executor r2; freeze commit `391d2006acc5c70f42679d7f014b84bc9fe0c2f9` at 2026-10-11T17:45:00Z.
