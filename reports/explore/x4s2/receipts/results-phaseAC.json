@@ -1,0 +1,774 @@
+{
+  "utc": "2026-10-11T09:41:28Z",
+  "label": "X4S2 exploration, NEVER ADOPTABLE",
+  "hosts_games": {
+    "127x03": 900,
+    "127x08": 300
+  },
+  "blocks_per_phase": {
+    "rep03": 300,
+    "rep08": 300,
+    "rep03C": 600
+  },
+  "excluded_interrupted": [],
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101105,
+    "unit": "paired seed (per population)",
+    "confidence": 0.95
+  },
+  "arms": {
+    "X:K4-100": {
+      "games": 600,
+      "losses": 600,
+      "loss_pct": 100.0,
+      "decisions": 103841,
+      "cutoff_pct": 98.24635741181228,
+      "fallback_pct": 2.1176606542695082,
+      "student_default_pct": 0.0,
+      "overrun_pct": 0.1983802159070117,
+      "coarse_complete_at_cutoff_pct": 4.822583807096648,
+      "play_rate_pct": 2.365154418774858,
+      "poll_ms": 11.006579681608484,
+      "scale_sleep_ms": 0.0,
+      "prep_ms": 47.725196366721896,
+      "wall_ms": {
+        "p50": 92.31894696131349,
+        "p95": 92.56267198361456,
+        "p99": 92.79379043728113,
+        "max": 118.23736596852541
+      },
+      "game_cpu_hours": 6.415493019924436,
+      "loss_ci_pct": [
+        100.0,
+        100.0
+      ],
+      "seeds": 600
+    },
+    "X:K4S-140r": {
+      "games": 600,
+      "losses": 129,
+      "loss_pct": 21.5,
+      "decisions": 71154,
+      "cutoff_pct": 27.36318407960199,
+      "fallback_pct": 1.1130786744244878,
+      "student_default_pct": 7.950361188408241,
+      "overrun_pct": 0.05481069230120583,
+      "coarse_complete_at_cutoff_pct": 71.99794555726758,
+      "play_rate_pct": 32.842847907355875,
+      "poll_ms": 10.056355542118853,
+      "scale_sleep_ms": 0.0,
+      "prep_ms": 39.827854989162645,
+      "wall_ms": {
+        "p50": 114.56653801724315,
+        "p95": 132.96305688563734,
+        "p99": 133.0453761923127,
+        "max": 150.22009587846696
+      },
+      "game_cpu_hours": 7.919448346019986,
+      "loss_ci_pct": [
+        18.333333333333332,
+        24.833333333333332
+      ],
+      "seeds": 600
+    },
+    "X:K4Sf-120": {
+      "games": 600,
+      "losses": 143,
+      "loss_pct": 23.833333333333332,
+      "decisions": 104598,
+      "cutoff_pct": 86.02936958641656,
+      "fallback_pct": 18.4066616952523,
+      "student_default_pct": 20.943039063844434,
+      "overrun_pct": 0.7246792481691811,
+      "coarse_complete_at_cutoff_pct": 6.89003722842696,
+      "play_rate_pct": 21.374213656092852,
+      "poll_ms": 10.454782002972282,
+      "scale_sleep_ms": 33.32335420215078,
+      "prep_ms": 82.95269851455166,
+      "wall_ms": {
+        "p50": 112.72391607053578,
+        "p95": 113.01838009385392,
+        "p99": 116.20407820446417,
+        "max": 156.4729600213468
+      },
+      "game_cpu_hours": 6.427076953353605,
+      "loss_ci_pct": [
+        20.666666666666668,
+        27.166666666666668
+      ],
+      "seeds": 600
+    },
+    "X:K4Sf-140": {
+      "games": 600,
+      "losses": 133,
+      "loss_pct": 22.166666666666668,
+      "decisions": 75698,
+      "cutoff_pct": 69.02295965547306,
+      "fallback_pct": 2.5839520198684247,
+      "student_default_pct": 24.408835107928876,
+      "overrun_pct": 0.2760971227773521,
+      "coarse_complete_at_cutoff_pct": 33.227430190051486,
+      "play_rate_pct": 30.817194641866365,
+      "poll_ms": 10.281649617713585,
+      "scale_sleep_ms": 21.583275222916008,
+      "prep_ms": 71.40270066755565,
+      "wall_ms": {
+        "p50": 132.65136850532144,
+        "p95": 133.01299999002367,
+        "p99": 133.10377151938155,
+        "max": 167.1786808874458
+      },
+      "game_cpu_hours": 7.296281919353328,
+      "loss_ci_pct": [
+        18.833333333333332,
+        25.5
+      ],
+      "seeds": 600
+    },
+    "X:K4Sh-100": {
+      "games": 600,
+      "losses": 153,
+      "loss_pct": 25.5,
+      "decisions": 91489,
+      "cutoff_pct": 83.81226158335974,
+      "fallback_pct": 6.804096667358918,
+      "student_default_pct": 23.641093464788117,
+      "overrun_pct": 0.2109543223775536,
+      "coarse_complete_at_cutoff_pct": 8.264322695914135,
+      "play_rate_pct": 24.304561204079178,
+      "poll_ms": 10.444469005332124,
+      "scale_sleep_ms": 10.510878354813924,
+      "prep_ms": 56.73198447176326,
+      "wall_ms": {
+        "p50": 92.56331203505397,
+        "p95": 92.99493846483529,
+        "p99": 93.10345756821334,
+        "max": 121.10033305361867
+      },
+      "game_cpu_hours": 6.5375824101202795,
+      "loss_ci_pct": [
+        22.0,
+        29.166666666666668
+      ],
+      "seeds": 600
+    },
+    "X:K4Sh-120": {
+      "games": 600,
+      "losses": 144,
+      "loss_pct": 24.0,
+      "decisions": 76116,
+      "cutoff_pct": 70.94172053181985,
+      "fallback_pct": 1.940459298964738,
+      "student_default_pct": 25.31268064533081,
+      "overrun_pct": 0.16290924378580063,
+      "coarse_complete_at_cutoff_pct": 35.35501314863514,
+      "play_rate_pct": 31.26412318040885,
+      "poll_ms": 10.283817944677377,
+      "scale_sleep_ms": 6.919039262541786,
+      "prep_ms": 52.620022413577544,
+      "wall_ms": {
+        "p50": 112.67253407277167,
+        "p95": 113.01206081407145,
+        "p99": 113.08303799014539,
+        "max": 139.4320479594171
+      },
+      "game_cpu_hours": 7.534630336316958,
+      "loss_ci_pct": [
+        20.666666666666668,
+        27.504166666666606
+      ],
+      "seeds": 600
+    },
+    "X:K4Sh-140": {
+      "games": 600,
+      "losses": 139,
+      "loss_pct": 23.166666666666668,
+      "decisions": 71931,
+      "cutoff_pct": 39.84512936008119,
+      "fallback_pct": 1.3123687978757421,
+      "student_default_pct": 12.516161321266214,
+      "overrun_pct": 0.04726752026247376,
+      "coarse_complete_at_cutoff_pct": 67.038833257737,
+      "play_rate_pct": 32.75083065715755,
+      "poll_ms": 10.09002215115374,
+      "scale_sleep_ms": 4.382743511385578,
+      "prep_ms": 49.272898367126054,
+      "wall_ms": {
+        "p50": 124.9027899466455,
+        "p95": 132.98624951858073,
+        "p99": 133.05765707045794,
+        "max": 153.34173990413547
+      },
+      "game_cpu_hours": 8.06998126611833,
+      "loss_ci_pct": [
+        20.0,
+        26.5
+      ],
+      "seeds": 600
+    },
+    "X:K4Sh-160": {
+      "games": 600,
+      "losses": 130,
+      "loss_pct": 21.666666666666668,
+      "decisions": 70490,
+      "cutoff_pct": 16.107249255213507,
+      "fallback_pct": 1.0001418640941977,
+      "student_default_pct": 4.4786494538232375,
+      "overrun_pct": 0.06809476521492411,
+      "coarse_complete_at_cutoff_pct": 74.2821912982209,
+      "play_rate_pct": 33.10824230387289,
+      "poll_ms": 10.046818111657199,
+      "scale_sleep_ms": 2.5694416900841706,
+      "prep_ms": 46.551933315776,
+      "wall_ms": {
+        "p50": 120.99786847829819,
+        "p95": 152.91231005685404,
+        "p99": 153.0255335313268,
+        "max": 178.16774896346033
+      },
+      "game_cpu_hours": 8.286305703148608,
+      "loss_ci_pct": [
+        18.5,
+        25.0
+      ],
+      "seeds": 600
+    },
+    "X:K4Sl-140": {
+      "games": 600,
+      "losses": 131,
+      "loss_pct": 21.833333333333332,
+      "decisions": 72414,
+      "cutoff_pct": 34.42152070041705,
+      "fallback_pct": 1.1489490982406716,
+      "student_default_pct": 6.3716960808683405,
+      "overrun_pct": 0.05661888585080233,
+      "coarse_complete_at_cutoff_pct": 71.94495707293589,
+      "play_rate_pct": 31.34614853481371,
+      "poll_ms": 10.664302079695432,
+      "scale_sleep_ms": 0.0,
+      "prep_ms": 41.70655250373261,
+      "wall_ms": {
+        "p50": 119.80820959433913,
+        "p95": 132.95539509272203,
+        "p99": 133.0419038562104,
+        "max": 152.96811400912702
+      },
+      "game_cpu_hours": 8.223094263218616,
+      "loss_ci_pct": [
+        18.5,
+        25.166666666666668
+      ],
+      "seeds": 600
+    },
+    "X:K4Sl-200": {
+      "games": 600,
+      "losses": 125,
+      "loss_pct": 20.833333333333332,
+      "decisions": 69520,
+      "cutoff_pct": 3.6277330264672036,
+      "fallback_pct": 0.7407940161104718,
+      "student_default_pct": 0.5063291139240507,
+      "overrun_pct": 0.1395281933256617,
+      "coarse_complete_at_cutoff_pct": 68.51704996034893,
+      "play_rate_pct": 32.85817031070196,
+      "poll_ms": 10.42506832163111,
+      "scale_sleep_ms": 0.0,
+      "prep_ms": 40.61055196304746,
+      "wall_ms": {
+        "p50": 115.48149446025491,
+        "p95": 180.99626302719116,
+        "p99": 192.9122334322892,
+        "max": 213.42737902887166
+      },
+      "game_cpu_hours": 8.314728082765566,
+      "loss_ci_pct": [
+        17.666666666666668,
+        24.166666666666668
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4-120": {
+      "games": 600,
+      "losses": 534,
+      "loss_pct": 89.0,
+      "decisions": 95698,
+      "cutoff_pct": 88.5932830362181,
+      "fallback_pct": 1.3573951388743757,
+      "student_default_pct": 0.0,
+      "overrun_pct": 0.14315868670191645,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 10.50596668686911,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 112.58714355062693,
+        "p95": 112.89650733815506,
+        "p99": 113.00204212544486,
+        "max": 141.4675679989159
+      },
+      "game_cpu_hours": 8.447733484688623,
+      "loss_ci_pct": [
+        86.5,
+        91.5
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4-140": {
+      "games": 600,
+      "losses": 284,
+      "loss_pct": 47.333333333333336,
+      "decisions": 79631,
+      "cutoff_pct": 45.524983988647634,
+      "fallback_pct": 1.0661676985093744,
+      "student_default_pct": 0.0,
+      "overrun_pct": 0.06153382476673657,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 24.722783840464142,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 128.34902480244637,
+        "p95": 132.91056349407881,
+        "p99": 133.01020150538534,
+        "max": 152.31390297412872
+      },
+      "game_cpu_hours": 8.695098677488323,
+      "loss_ci_pct": [
+        43.333333333333336,
+        51.333333333333336
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4-160": {
+      "games": 600,
+      "losses": 167,
+      "loss_pct": 27.833333333333332,
+      "decisions": 72824,
+      "cutoff_pct": 18.611996045259804,
+      "fallback_pct": 0.9433703174777546,
+      "student_default_pct": 0.0,
+      "overrun_pct": 0.11671976271558827,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 30.514665494891794,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 118.5467115137726,
+        "p95": 152.84651279216632,
+        "p99": 152.98961862223223,
+        "max": 179.2679901700467
+      },
+      "game_cpu_hours": 8.419883471035547,
+      "loss_ci_pct": [
+        24.333333333333332,
+        31.5
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4-200": {
+      "games": 600,
+      "losses": 111,
+      "loss_pct": 18.5,
+      "decisions": 70180,
+      "cutoff_pct": 4.02251353662012,
+      "fallback_pct": 0.743801652892562,
+      "student_default_pct": 0.0,
+      "overrun_pct": 0.1353662011969222,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 32.53776004559704,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 114.68190199229866,
+        "p95": 184.10008515929803,
+        "p99": 192.8766232309863,
+        "max": 214.0858550556004
+      },
+      "game_cpu_hours": 8.257017012418894,
+      "loss_ci_pct": [
+        15.333333333333334,
+        21.666666666666668
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4S-120": {
+      "games": 600,
+      "losses": 156,
+      "loss_pct": 26.0,
+      "decisions": 74221,
+      "cutoff_pct": 57.398849382250305,
+      "fallback_pct": 1.5534686948437775,
+      "student_default_pct": 19.51065062448633,
+      "overrun_pct": 0.11587017151480039,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 32.564907505961926,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 112.52137902192771,
+        "p95": 113.01876395009458,
+        "p99": 113.0885370541364,
+        "max": 131.69664819724858
+      },
+      "game_cpu_hours": 7.711013222713609,
+      "loss_ci_pct": [
+        22.5,
+        29.666666666666668
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4S-140": {
+      "games": 600,
+      "losses": 133,
+      "loss_pct": 22.166666666666668,
+      "decisions": 71266,
+      "cutoff_pct": 28.299609912160076,
+      "fallback_pct": 1.1562315830830971,
+      "student_default_pct": 8.135716891645385,
+      "overrun_pct": 0.060337327757977156,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 32.673364577779026,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 115.39090145379305,
+        "p95": 132.9720444045961,
+        "p99": 133.0547605175525,
+        "max": 156.88952896744013
+      },
+      "game_cpu_hours": 7.976428772841395,
+      "loss_ci_pct": [
+        19.0,
+        25.666666666666668
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4S-160": {
+      "games": 600,
+      "losses": 109,
+      "loss_pct": 18.166666666666668,
+      "decisions": 70357,
+      "cutoff_pct": 12.409568344301206,
+      "fallback_pct": 0.95939281094987,
+      "student_default_pct": 3.402646502835539,
+      "overrun_pct": 0.13644697755731483,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 33.143823642281504,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 114.77494682185352,
+        "p95": 152.8800436295569,
+        "p99": 153.02477699704468,
+        "max": 185.70734490640461
+      },
+      "game_cpu_hours": 8.115219693219178,
+      "loss_ci_pct": [
+        15.166666666666666,
+        21.333333333333332
+      ],
+      "seeds": 600
+    },
+    "X:x4s:K4S-200": {
+      "games": 600,
+      "losses": 124,
+      "loss_pct": 20.666666666666668,
+      "decisions": 69545,
+      "cutoff_pct": 3.1792364655978145,
+      "fallback_pct": 0.7448414695520886,
+      "student_default_pct": 0.762096484290747,
+      "overrun_pct": 0.1466676252785966,
+      "coarse_complete_at_cutoff_pct": null,
+      "play_rate_pct": 32.94557480767848,
+      "poll_ms": null,
+      "scale_sleep_ms": null,
+      "prep_ms": null,
+      "wall_ms": {
+        "p50": 113.96224610507488,
+        "p95": 177.30754083022478,
+        "p99": 192.90821230970323,
+        "max": 220.3011862002313
+      },
+      "game_cpu_hours": 8.11949718222084,
+      "loss_ci_pct": [
+        17.5,
+        24.0
+      ],
+      "seeds": 600
+    }
+  },
+  "contrasts": {
+    "X: K4Sh-160 minus x4s:K4-160": {
+      "seeds": 600,
+      "loss_change_pp": -6.166666666666667,
+      "ci95_pp": [
+        -10.333333333333334,
+        -2.1666666666666665
+      ]
+    },
+    "X: K4Sh-160 minus x4s:K4S-160": {
+      "seeds": 600,
+      "loss_change_pp": 3.5,
+      "ci95_pp": [
+        0.0,
+        6.833333333333333
+      ]
+    },
+    "X: K4Sh-160 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 3.1666666666666665,
+      "ci95_pp": [
+        -0.6666666666666666,
+        7.0
+      ]
+    },
+    "X: K4Sh-160 minus x4s:K4S-200": {
+      "seeds": 600,
+      "loss_change_pp": 1.0,
+      "ci95_pp": [
+        -3.0,
+        4.833333333333333
+      ]
+    },
+    "X: K4Sh-140 minus x4s:K4-140": {
+      "seeds": 600,
+      "loss_change_pp": -24.166666666666668,
+      "ci95_pp": [
+        -28.833333333333332,
+        -19.333333333333332
+      ]
+    },
+    "X: K4Sh-140 minus x4s:K4S-140": {
+      "seeds": 600,
+      "loss_change_pp": 1.0,
+      "ci95_pp": [
+        -3.0,
+        5.166666666666667
+      ]
+    },
+    "X: K4Sh-140 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 4.666666666666667,
+      "ci95_pp": [
+        0.5,
+        8.833333333333334
+      ]
+    },
+    "X: K4Sh-140 minus x4s:K4S-200": {
+      "seeds": 600,
+      "loss_change_pp": 2.5,
+      "ci95_pp": [
+        -1.8333333333333333,
+        6.666666666666667
+      ]
+    },
+    "X: K4Sh-120 minus x4s:K4-120": {
+      "seeds": 600,
+      "loss_change_pp": -65.0,
+      "ci95_pp": [
+        -69.0,
+        -60.833333333333336
+      ]
+    },
+    "X: K4Sh-120 minus x4s:K4S-120": {
+      "seeds": 600,
+      "loss_change_pp": -2.0,
+      "ci95_pp": [
+        -6.004166666666667,
+        2.3333333333333335
+      ]
+    },
+    "X: K4Sh-120 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 5.5,
+      "ci95_pp": [
+        1.5,
+        9.666666666666666
+      ]
+    },
+    "X: K4Sh-120 minus x4s:K4S-200": {
+      "seeds": 600,
+      "loss_change_pp": 3.3333333333333335,
+      "ci95_pp": [
+        -1.0,
+        7.666666666666667
+      ]
+    },
+    "X: K4Sh-100 minus K4-100": {
+      "seeds": 600,
+      "loss_change_pp": -74.5,
+      "ci95_pp": [
+        -78.0,
+        -70.83333333333333
+      ]
+    },
+    "X: K4Sh-100 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 7.0,
+      "ci95_pp": [
+        2.8333333333333335,
+        11.166666666666666
+      ]
+    },
+    "X: K4Sh-100 minus x4s:K4S-200": {
+      "seeds": 600,
+      "loss_change_pp": 4.833333333333333,
+      "ci95_pp": [
+        0.6666666666666666,
+        9.0
+      ]
+    },
+    "X: K4Sh-100 minus K4Sh-120": {
+      "seeds": 600,
+      "loss_change_pp": 1.5,
+      "ci95_pp": [
+        -2.3333333333333335,
+        5.5
+      ]
+    },
+    "X: K4-100 minus x4s:K4-120": {
+      "seeds": 600,
+      "loss_change_pp": 11.0,
+      "ci95_pp": [
+        8.5,
+        13.5
+      ]
+    },
+    "X: K4Sf-140 minus x4s:K4-140": {
+      "seeds": 600,
+      "loss_change_pp": -25.166666666666668,
+      "ci95_pp": [
+        -29.666666666666668,
+        -20.5
+      ]
+    },
+    "X: K4Sf-140 minus x4s:K4S-140": {
+      "seeds": 600,
+      "loss_change_pp": 0.0,
+      "ci95_pp": [
+        -4.333333333333333,
+        4.166666666666667
+      ]
+    },
+    "X: K4Sf-140 minus K4Sh-140": {
+      "seeds": 600,
+      "loss_change_pp": -1.0,
+      "ci95_pp": [
+        -5.333333333333333,
+        3.1666666666666665
+      ]
+    },
+    "X: K4Sf-140 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 3.6666666666666665,
+      "ci95_pp": [
+        -0.3333333333333333,
+        7.666666666666667
+      ]
+    },
+    "X: K4Sf-120 minus x4s:K4-120": {
+      "seeds": 600,
+      "loss_change_pp": -65.16666666666667,
+      "ci95_pp": [
+        -69.0,
+        -61.32916666666673
+      ]
+    },
+    "X: K4Sf-120 minus x4s:K4S-120": {
+      "seeds": 600,
+      "loss_change_pp": -2.1666666666666665,
+      "ci95_pp": [
+        -6.166666666666667,
+        1.8333333333333333
+      ]
+    },
+    "X: K4Sf-120 minus K4Sh-120": {
+      "seeds": 600,
+      "loss_change_pp": -0.16666666666666666,
+      "ci95_pp": [
+        -4.166666666666667,
+        4.0
+      ]
+    },
+    "X: K4Sf-120 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 5.333333333333333,
+      "ci95_pp": [
+        1.3333333333333333,
+        9.333333333333334
+      ]
+    },
+    "X: K4S-140r minus x4s:K4S-140": {
+      "seeds": 600,
+      "loss_change_pp": -0.6666666666666666,
+      "ci95_pp": [
+        -4.5,
+        3.1666666666666665
+      ]
+    },
+    "X: K4Sh-140 minus K4S-140r": {
+      "seeds": 600,
+      "loss_change_pp": 1.6666666666666667,
+      "ci95_pp": [
+        -2.3333333333333335,
+        5.833333333333333
+      ]
+    },
+    "X: K4Sf-140 minus K4S-140r": {
+      "seeds": 600,
+      "loss_change_pp": 0.6666666666666666,
+      "ci95_pp": [
+        -3.5,
+        5.004166666666606
+      ]
+    },
+    "X: K4Sl-200 minus x4s:K4-200": {
+      "seeds": 600,
+      "loss_change_pp": 2.3333333333333335,
+      "ci95_pp": [
+        -0.3333333333333333,
+        5.0
+      ]
+    },
+    "X: K4Sl-200 minus x4s:K4S-200": {
+      "seeds": 600,
+      "loss_change_pp": 0.16666666666666666,
+      "ci95_pp": [
+        -1.8333333333333333,
+        2.1666666666666665
+      ]
+    },
+    "X: K4Sl-140 minus x4s:K4S-140": {
+      "seeds": 600,
+      "loss_change_pp": -0.3333333333333333,
+      "ci95_pp": [
+        -4.333333333333333,
+        3.6666666666666665
+      ]
+    },
+    "X: K4Sl-140 minus x4s:K4-140": {
+      "seeds": 600,
+      "loss_change_pp": -25.5,
+      "ci95_pp": [
+        -30.0,
+        -21.0
+      ]
+    },
+    "X: K4Sl-140 minus K4S-140r": {
+      "seeds": 600,
+      "loss_change_pp": 0.3333333333333333,
+      "ci95_pp": [
+        -3.8333333333333335,
+        4.504166666666606
+      ]
+    }
+  }
+}

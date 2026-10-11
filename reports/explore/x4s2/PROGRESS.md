@@ -99,3 +99,20 @@
   - K4S − K4: 200 ms +0.4 [−2.4, 3.1]; 140 ms −31.5 [−36.7, −26.3];
   - K4Sh-140 − K4-140: −34.4;
   - K4S-140 − K4-200: +3.5 [−1.3, 8.1].
+- 08:52Z: rep03C at 328/870 blocks (C has 600 two-game blocks, then D-even); rep08 at 684/840 (in D-odd). Healthy.
+  At 09:15Z rep08 stops; chain08 then runs rep08L (never-started D-odd), then rep08EF.
+- 09:15:08Z: rep08 hit its planned stop-at. Supervisor exit at 09:15:09Z with an empty group. 772 blocks complete; the
+  12 interrupted D-odd blocks (marker, no proof) are retired. leftover.py found 56 never-started D-odd blocks, and
+  **rep08L** started on them at ~09:15:50Z. rep08EF (E-odd then F-odd) follows, to 12:15Z.
+- 09:31:49Z: rep08L exited cleanly: 56/56 blocks, rc 0, empty group. D-odd is complete except the 12 retired blocks.
+  **rep08EF** (E-odd, then F-odd; plan-ext.json) started 09:31:59Z, stop-at 12:15Z.
+- 09:41Z: **Phase C complete**: 600/600 X blocks in rep03C, 0 interrupted. Reduced X only (A + C); E stays sealed
+  ([receipts/results-phaseAC.md](receipts/results-phaseAC.md)). Loss %: K4Sl-200 20.8, K4Sl-140 21.8.
+  - K4Sl-200 − K4-200: +2.3 [−0.3, 5.0].
+  - K4Sl-200 − K4S-200: +0.2 [−1.8, 2.2].
+  - K4Sl-140 − K4-140: −25.5.
+  - K4Sl-140 − K4S-140: −0.3.
+
+  So the lite rule does not remove the ~+2 pp at 200 ms. At 200 ms, student defaults are 0.5% (lite) vs 0.8% (full)
+  of decisions, so the default rule is unlikely to be the source. rep03C is in D-even (72/270, ETA ~10:35Z), then
+  rep03EF. rep08EF started E-odd.
