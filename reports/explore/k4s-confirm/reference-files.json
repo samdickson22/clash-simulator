@@ -1,0 +1,25 @@
+{
+  "purpose": "Committed files read by reference by unchanged T1 OP-5 guard tests; exported with git show into the staged repo (never copied from a live T1 or l1 tree).",
+  "files": [
+    {
+      "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+      "commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+      "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+      "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+      "commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+      "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+    },
+    {
+      "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+      "commit": "0e137378ff251896d7a27899a9453f278945276b",
+      "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+      "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+      "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+  ]
+}

@@ -1,0 +1,734 @@
+"""Offline tests for the K4S Mac measurement logic (no torch, no native, no Mac, no network)."""
+import json
+import subprocess
+import sys
+import time
+from fractions import Fraction
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build_manifest as B  # noqa: E402
+import classify_k4s_failure as C  # noqa: E402
+import k4s_logic as L  # noqa: E402
+import measure_k4s as M  # noqa: E402
+
+GOLDEN = 125
+
+
+# ---------------------------------------------------------------- fixtures
+
+def rates(n, cutoff, ncp, fallback=0):
+    return dict(n=n, cutoff_count=cutoff, cutoff=cutoff / n, no_complete_play_count=ncp,
+                no_complete_play=ncp / n, fallback_count=fallback, fallback=fallback / n)
+
+
+FLEET = {"1.0": rates(900, 9, 9), "0.9": rates(900, 18, 18), "0.8": rates(900, 45, 45),
+         "0.7": rates(900, 90, 90), "0.6": rates(900, 180, 180)}
+
+
+def inputs(**over):
+    base = dict(gate0=dict(passes=True, parts=dict(tiers_exactness_and_worker_equality=True)),
+                r_k4s=1.0, p10_k4s=.95, r_inf=1.0, poll_p99_seconds=.010,
+                perception=dict(fps=20., processed_fraction=1.), gc=dict(passes=True),
+                mac_deadline=rates(300, 3, 3), fleet_deadline=FLEET)
+    base.update(over)
+    return base
+
+
+def tiers(k4_full=False, kind=None, gate0=True):
+    return dict(gate0=dict(passes=gate0, parts=dict(tiers_exactness_and_worker_equality=gate0)),
+                exactness_failure_kind=kind, k4_cell_1_0=k4_full, sessions=[])
+
+
+def tree_state(root):
+    root = Path(root)
+    return {str(p.relative_to(root)): (L.sha(p), p.stat().st_mtime_ns) for p in sorted(root.rglob("*")) if p.is_file()}
+
+
+def make_tiers_session(directory, *, state="complete", scope="LINUX-DRY-RUN:PROVISIONAL-LOAD", r=1.05, p10=.9,
+                       cell=1.0, feasible=True, measured_cut=.01, lock_path=None, utc=None, error=None,
+                       manifest_sha="b" * 64, native_sha=L.NATIVE_PROVENANCE_SHA):
+    store = L.K4SStore(directory, scope)
+    store.write("tiers-identity.json", dict(manifest_sha256=manifest_sha, load_label="PROVISIONAL-LOAD", host="mac",
+                                            machine="arm64", platform="Darwin"))
+    if lock_path is not None:
+        store.write("coordinator-lock.json", dict(path=str(lock_path), held_exclusively=True, receipt=""))
+    store.write("build-tiers.json", dict(native_sha256=native_sha, source_manifest_sha256=manifest_sha,
+                                         target="aarch64-apple-darwin", locked=True, rustflags=""))
+    if state == "complete":
+        store.write("exactness-tiers.json", dict(passes=True, states=GOLDEN, records=[
+            dict(id=str(i), workers_equal=True, zero_budget_immutable=True) for i in range(GOLDEN)]))
+        store.write("belief-exactness.json", dict(passes=True, histories=GOLDEN,
+                                                  posterior_weights_cumulative_ledger_samples_rng_exact=True))
+        store.write("student-agreement.json", dict(backends=dict(cpu=dict(passes=True, fraction=1., n=2000))))
+        store.write("tiers-summary.json", dict(
+            exactness_class="EXACT", speed=dict(K4=dict(r=r, p10=p10)),
+            feasibility=dict(K4=dict(feasible=feasible, cell=cell, gates={"3_exactness": True})),
+            deadline_equivalence=dict(K4=dict(cell=cell, checks=[dict(cell=1.0, passes=True,
+                reference=dict(cutoff=.02, no_complete_play=.02), measured=dict(cutoff=measured_cut, no_complete_play=.01))]))))
+        store.write("tiers-complete.json", dict(completed=True, utc=time.time() if utc is None else utc, final=False))
+        store.seal("complete")
+    elif state == "exactness":
+        store.write("failure.json", dict(error=error or "Traceback (most recent call last):\nValueError: Exactness mismatch: g7/1=4\n"))
+        store.seal("failed")
+    else:
+        store.write("failure.json", dict(error="Traceback (most recent call last):\nRuntimeError: Replay worker failed\n"))
+        store.seal("failed")
+    return Path(directory), L.sha(Path(directory) / "receipt-manifest.json")
+
+
+def no_classify(directory):
+    return dict(technical_repeat_candidate=False, reasons=[])
+
+
+# ---------------------------------------------------------------- cell mapping
+
+def test_all_gates_pass_maps_to_0_9():
+    mapping = L.map_cell(inputs())
+    assert mapping["c_M_k4s"] == "0.9" and mapping["provisional_cell"] == "0.9"
+    assert mapping["gate6_trail"] == [dict(cell="0.9", passes=True, gate6=True)]
+
+
+@pytest.mark.parametrize("r,p10,expected", [(.95, .9, "0.9"), (.85, .8, "0.8"), (.75, .65, "0.7"),
+                                            (.65, .55, "0.6"), (.59, .55, None), (1.0, .69, "0.7")])
+def test_speed_gate_selects_cell(r, p10, expected):
+    assert L.map_cell(inputs(r_k4s=r, p10_k4s=p10))["c_M_k4s"] == expected
+
+
+def test_p10_and_r_edges_are_inclusive_as_written():
+    assert L.map_cell(inputs(r_k4s=.8, p10_k4s=.7))["c_M_k4s"] == "0.8"
+    assert L.map_cell(inputs(r_k4s=.8, p10_k4s=.6999999))["c_M_k4s"] == "0.7"
+    assert L.map_cell(inputs(r_k4s=.9, p10_k4s=.8))["c_M_k4s"] == "0.9"
+
+
+def test_inference_coverage_gate_is_c_squared():
+    assert L.map_cell(inputs(r_inf=.81))["c_M_k4s"] == "0.9"
+    assert L.map_cell(inputs(r_inf=.8))["c_M_k4s"] == "0.8"
+    assert L.map_cell(inputs(r_inf=.49))["c_M_k4s"] == "0.7"
+    assert L.map_cell(inputs(r_inf=.35))["c_M_k4s"] is None
+
+
+def test_gate6_failure_moves_down_one_cell_and_rechecks():
+    # 0.9 limit = 18/900 + 2/100 = 0.04; 0.8 limit = 0.05 + 0.02 = 0.07.
+    mapping = L.map_cell(inputs(mac_deadline=rates(300, 18, 3)))   # 0.06
+    assert mapping["provisional_cell"] == "0.9" and mapping["c_M_k4s"] == "0.8"
+    assert [t["cell"] for t in mapping["gate6_trail"]] == ["0.9", "0.8"]
+    assert mapping["gate6_trail"][0]["gate6"] is False
+
+
+def test_gate6_exact_margin_edge_passes_and_multiple_steps():
+    assert L.map_cell(inputs(mac_deadline=rates(300, 12, 3)))["c_M_k4s"] == "0.9"   # 0.04 == 0.02 + 0.02
+    assert L.map_cell(inputs(mac_deadline=rates(300, 13, 3)))["c_M_k4s"] == "0.8"
+    deep = L.map_cell(inputs(mac_deadline=rates(300, 3, 66)))                       # 0.22: only 0.6 (0.22)
+    assert deep["c_M_k4s"] == "0.6" and [t["cell"] for t in deep["gate6_trail"]] == ["0.9", "0.8", "0.7", "0.6"]
+    none = L.map_cell(inputs(mac_deadline=rates(300, 67, 3)))
+    assert none["c_M_k4s"] is None and none["mac_infeasible"] and len(none["gate6_trail"]) == 4
+
+
+def test_gate6_does_not_rescue_a_speed_failure():
+    mapping = L.map_cell(inputs(r_k4s=.85, p10_k4s=.8, mac_deadline=rates(300, 3, 60)))   # 0.2 > 0.07
+    assert mapping["provisional_cell"] == "0.8" and mapping["c_M_k4s"] == "0.6"
+
+
+def test_gate0_failure_kills_even_with_perfect_speed():
+    i = inputs(gate0=dict(passes=False, parts=dict(sd1_agreement_k4s=False)))
+    mapping = L.map_cell(i)
+    assert mapping["c_M_k4s"] is None and mapping["provisional_cell"] is None
+    kill = L.kill_flags(i, tiers())
+    assert kill["k4s_killed_on_mac"] and "gate 0 part failed: sd1_agreement_k4s" in kill["reasons"]
+
+
+@pytest.mark.parametrize("p99,expected", [(.020, "0.9"), (.0201, None)])
+def test_poll_p99_limit_is_inclusive_and_kills(p99, expected):
+    i = inputs(poll_p99_seconds=p99)
+    assert L.map_cell(i)["c_M_k4s"] == expected
+    assert L.kill_flags(i, tiers())["k4s_killed_on_mac"] is (expected is None)
+
+
+@pytest.mark.parametrize("over", [dict(perception=dict(fps=17.99, processed_fraction=1.)),
+                                  dict(perception=dict(fps=20., processed_fraction=.949)),
+                                  dict(gc=dict(passes=False))])
+def test_cell_independent_gates_make_tier_infeasible(over):
+    assert L.map_cell(inputs(**over))["c_M_k4s"] is None
+
+
+def test_nonfinite_gate_input_fails_closed():
+    with pytest.raises(L.GateInputError):
+        L.map_cell(inputs(r_k4s=float("nan")))
+    with pytest.raises(L.GateInputError):
+        L.map_cell(inputs(r_inf=True))
+
+
+def test_final_cell_uses_tiers_for_1_0_and_c_star_eligibility():
+    mapping = L.map_cell(inputs())
+    assert L.final_cell(tiers(k4_full=True), mapping, "0.9")["c_M"] == "1.0"
+    assert L.final_cell(tiers(k4_full=True), mapping, "0.9")["k4s_eligible_c_M_le_c_star"] is False
+    assert L.final_cell(tiers(), mapping, "0.9")["k4s_eligible_c_M_le_c_star"] is True
+    assert L.final_cell(tiers(), mapping, "0.8")["k4s_eligible_c_M_le_c_star"] is False
+    low = L.map_cell(inputs(r_k4s=.85, p10_k4s=.8))
+    assert L.final_cell(tiers(), low, "0.8")["k4s_eligible_c_M_le_c_star"] is True
+    assert L.final_cell(tiers(k4_full=True, kind="all-tiers"), mapping, "0.9")["c_M"] is None
+    assert L.final_cell(tiers(), None, "0.9")["c_M"] is None
+    with pytest.raises(L.GateInputError):
+        L.final_cell(tiers(), mapping, "0.7")
+
+
+def test_kill_flags_for_tiers_exactness_kinds():
+    assert L.kill_flags(None, tiers(kind="all-tiers", gate0=False))["all_tiers_infeasible"]
+    workers = L.kill_flags(None, tiers(kind="workers-only", gate0=False))
+    assert workers["k4s_killed_on_mac"] and not workers["all_tiers_infeasible"]
+
+
+# ---------------------------------------------------------------- statistics
+
+def test_speed_summary_is_tiers_statistic_with_repeat_medians():
+    rows = []
+    for i in range(10):
+        fleet = .1 + .01 * i
+        for wall in (fleet / .9, fleet / 1.1, fleet / 1.0):     # median ratio 1.0 per state
+            rows.append(dict(id=str(i), fleet_wall_seconds=fleet, wall_seconds=wall))
+    s = L.k4s_speed_summary(rows, [str(i) for i in range(10)])
+    assert s["states"] == 10 and s["p50"] == pytest.approx(1.0) and s["p10"] == pytest.approx(1.0)
+    assert s["r"] == min(s["p50"], s["sum_ratio"], s["p90_wall_ratio"])
+    slow_tail = rows + [dict(id="9", fleet_wall_seconds=.19, wall_seconds=.5)] * 4
+    assert L.k4s_speed_summary(slow_tail)["r"] < 1.0
+    with pytest.raises(L.GateInputError):
+        L.k4s_speed_summary(rows, [str(i) for i in range(11)])
+
+
+def test_speed_summary_min_of_three_components():
+    rows = [dict(id=str(i), fleet_wall_seconds=.1, wall_seconds=.1) for i in range(9)]
+    rows.append(dict(id="9", fleet_wall_seconds=1.0, wall_seconds=2.0))      # heavy slow state
+    s = L.k4s_speed_summary(rows)
+    assert s["p50"] == 1.0 and s["sum_ratio"] == pytest.approx(1.9 / 2.9)
+    assert s["r"] == pytest.approx(min(s["sum_ratio"], s["p90_wall_ratio"]))
+
+
+def test_poll_summary_r_inf_p99_and_cold_exclusion():
+    fleet = {str(i): dict(sd1_poll_seconds=.004) for i in range(5)}
+    rows = [dict(id="0", poll_seconds=.5, cold=True)]
+    rows += [dict(id=str(i), poll_seconds=.005, cold=False) for i in range(5) for _ in range(3)]
+    p = L.poll_summary(rows, fleet, [str(i) for i in range(5)])
+    assert p["r_inf"] == pytest.approx(.8) and p["p99_seconds"] == pytest.approx(.005) and p["observations"] == 15
+    with pytest.raises(L.GateInputError):
+        L.poll_summary(rows, {"0": dict(sd1_poll_seconds=.004)})
+
+
+def test_perception_aggregate_and_agreement_gate():
+    agg = L.perception_aggregate([dict(processed=360, expected=400), dict(processed=380, expected=400)], 40.)
+    assert agg["fps"] == 18.5 and agg["processed_fraction"] == .925 and agg["passes"] is False
+    ok = [dict(equal=True, allowed=True)] * 995 + [dict(equal=False, allowed=True)] * 5
+    assert L.sd1_agreement_gate(ok)["passes"] is True
+    low = [dict(equal=True, allowed=True)] * 994 + [dict(equal=False, allowed=True)] * 6
+    assert L.sd1_agreement_gate(low)["passes"] is False
+    bad = [dict(equal=True, allowed=True)] * 999 + [dict(equal=False, allowed=False)]
+    assert L.sd1_agreement_gate(bad)["passes"] is False
+    assert L.sd1_agreement_gate([])["passes"] is False
+
+
+def test_deadline_rates_counts():
+    rows = [dict(cutoff=i < 3, no_complete_play=i < 2, fallback=False, wall_seconds=.1, over_200_ms=False,
+                 cut_return_over_208_ms=False) for i in range(10)]
+    r = L.k4s_deadline_rates(rows)
+    assert (r["n"], r["cutoff_count"], r["no_complete_play_count"]) == (10, 3, 2)
+
+
+def test_combine_sessions_takes_minimum_r_and_worst_inputs():
+    a = inputs(r_k4s=.95, poll_p99_seconds=.01, mac_deadline=rates(300, 3, 15))
+    b = inputs(r_k4s=.86, p10_k4s=.9, poll_p99_seconds=.015, mac_deadline=rates(200, 10, 2))
+    worst = L.combine_k4s_sessions([a, b])
+    assert worst["r_k4s"] == .86 and worst["poll_p99_seconds"] == .015
+    assert (worst["mac_deadline"]["cutoff_count"], worst["mac_deadline"]["cutoff_n"]) == (10, 200)
+    assert (worst["mac_deadline"]["no_complete_play_count"], worst["mac_deadline"]["no_complete_play_n"]) == (15, 300)
+    assert L.map_cell(worst)["c_M_k4s"] == "0.8"
+    with pytest.raises(L.GateInputError):
+        L.combine_k4s_sessions([a, inputs(fleet_deadline=dict(FLEET, **{"0.9": rates(900, 1, 1)}))])
+    assert L.combine_k4s_sessions([a, inputs(gate0=dict(passes=False, parts={}))])["gate0"]["passes"] is False
+
+
+# ---------------------------------------------------------------- TIERS receipts (read only)
+
+@pytest.mark.parametrize("error,kind", [
+    ("ValueError: Exactness mismatch: g1/1=4", "workers-only"),
+    ("ValueError: Exactness mismatch: g1/1=2", "workers-only"),
+    ("ValueError: Exactness mismatch: g1/K4/scores", "all-tiers"),
+    ("ValueError: Exactness mismatch: belief/posterior/ledger/sampling/RNG/g1/posterior", "all-tiers"),
+    ("ValueError: Zero-budget root mutated", "all-tiers"),
+    ("RuntimeError: Replay worker failed", None), ("", None)])
+def test_tiers_exactness_failure_kind(error, kind):
+    assert L.exactness_failure_kind(error) == kind
+
+
+def test_read_complete_tiers_session_and_reuse_inputs(tmp_path):
+    d, digest = make_tiers_session(tmp_path / "tiers")
+    s = L.read_tiers_session(d, digest, require_mac=False, classify=no_classify)
+    assert s["state"] == "complete"
+    t = L.tiers_inputs([s], GOLDEN)
+    assert t["gate0"]["passes"] is True and t["k4_cell_1_0"] is True and t["exactness_failure_kind"] is None
+    d2, digest2 = make_tiers_session(tmp_path / "tiers08", cell=.8)
+    assert L.tiers_inputs([L.read_tiers_session(d2, digest2, require_mac=False)], GOLDEN)["k4_cell_1_0"] is False
+
+
+def test_tiers_session_refusals(tmp_path):
+    d, digest = make_tiers_session(tmp_path / "tiers")
+    with pytest.raises(L.PreconditionRefusal, match="SHA mismatch"):
+        L.read_tiers_session(d, "0" * 64, require_mac=False)
+    with pytest.raises(L.PreconditionRefusal, match="not an authorized Mac session"):
+        L.read_tiers_session(d, digest, require_mac=True)
+    with pytest.raises(L.PreconditionRefusal, match="technically invalid"):
+        L.read_tiers_session(d, digest, require_mac=False, classify=lambda _: dict(technical_repeat_candidate=True))
+    h, hd = make_tiers_session(tmp_path / "harness", state="harness")
+    with pytest.raises(L.PreconditionRefusal, match="not complete"):
+        L.read_tiers_session(h, hd, require_mac=False)
+    (d / "tiers-summary.json").write_text("{}\n")
+    with pytest.raises(L.PreconditionRefusal, match="Pin mismatch"):
+        L.read_tiers_session(d, digest, require_mac=False)
+
+
+def test_tiers_exactness_termination_is_gate0_failure(tmp_path):
+    d, digest = make_tiers_session(tmp_path / "t", state="exactness")
+    t = L.tiers_inputs([L.read_tiers_session(d, digest, require_mac=False)], GOLDEN)
+    assert t["gate0"]["passes"] is False and t["exactness_failure_kind"] == "workers-only" and not t["k4_cell_1_0"]
+
+
+def test_tiers_multi_session_uses_worst_inputs(tmp_path):
+    a = L.read_tiers_session(*make_tiers_session(tmp_path / "a", measured_cut=.03), require_mac=False)
+    b = L.read_tiers_session(*make_tiers_session(tmp_path / "b", measured_cut=.041, r=1.2), require_mac=False)
+    assert L.tiers_inputs([a], GOLDEN)["k4_cell_1_0"] is True
+    assert L.tiers_inputs([a, b], GOLDEN)["k4_cell_1_0"] is False      # worst cutoff .041 > .02 + .02
+    c = L.read_tiers_session(*make_tiers_session(tmp_path / "c", r=.99, cell=.8), require_mac=False)
+    assert L.tiers_inputs([a, c], GOLDEN)["k4_cell_1_0"] is False
+
+
+def test_in_session_ordering_lock_and_gap(tmp_path):
+    lock = tmp_path / "lock"
+    s = L.read_tiers_session(*make_tiers_session(tmp_path / "t", lock_path=lock, utc=1000.), require_mac=False)
+    assert L.check_in_session(s, lock, 1000. + 600)["passes"]
+    with pytest.raises(L.PreconditionRefusal, match="2 h"):
+        L.check_in_session(s, lock, 1000. + 3 * 3600)
+    with pytest.raises(L.PreconditionRefusal, match="not before"):
+        L.check_in_session(s, lock, 999.)
+    with pytest.raises(L.PreconditionRefusal, match="same coordinator lock"):
+        L.check_in_session(s, tmp_path / "other", 1000. + 600)
+
+
+def test_same_mac_identity():
+    ident = dict(host="m", machine="arm64", platform="Darwin", sysctl=dict(stdout="\n".join(
+        "%s: %s" % (k, v) for k, v in (("hw.model", "Mac14,3"), ("machdep.cpu.brand_string", "Apple M2"),
+                                       ("hw.memsize", "17179869184"), ("hw.perflevel0.physicalcpu", "4"),
+                                       ("hw.perflevel1.physicalcpu", "4"), ("hw.perflevel0.logicalcpu", "4"),
+                                       ("hw.perflevel1.logicalcpu", "4")))))
+    assert L.same_mac(ident, ident)["passes"]
+    other = dict(ident, sysctl=dict(stdout=ident["sysctl"]["stdout"].replace("Mac14,3", "Mac15,1")))
+    assert L.same_mac(ident, other)["mismatches"] == ["hw.model"]
+
+
+# ---------------------------------------------------------------- binding, pins, load
+
+def test_scorer_binding_accepts_declared_anchor_x_derivative_only(tmp_path):
+    root = L.REPO_ROOT
+    pins = {L.TIERS_SCORER_REL: L.sha(root / L.TIERS_SCORER_REL),
+            L.TIERS_SCORER_BASE_REL: L.sha(root / L.TIERS_SCORER_BASE_REL)}
+    build = dict(native_sha256="n" * 64, source_manifest_sha256="m" * 64, target="aarch64-apple-darwin", locked=True)
+    common = dict(tiers_runtime_files=pins, runtime_root=root, native_sha256="n" * 64, tiers_build=build,
+                  tiers_pins_sha256="m" * 64, dry_run=False)
+    assert L.bind_scorer_and_native(k4s_scorer_rel="reports/explore/k4s-confirm/anchor_x.py", **common)["passes"]
+    assert L.bind_scorer_and_native(k4s_scorer_rel=L.TIERS_SCORER_REL, **common)["passes"]
+    assert not L.bind_scorer_and_native(k4s_scorer_rel="reports/explore/k4s-confirm/anchor_x.py",
+                                        **dict(common, native_sha256="x" * 64))["passes"]
+    assert not L.bind_scorer_and_native(k4s_scorer_rel="reports/explore/k4s-confirm/anchor_x.py",
+                                        **dict(common, tiers_pins_sha256="z" * 64))["passes"]
+    tampered = (root / "reports/explore/k4s-confirm/anchor_x.py").read_bytes().replace(b"score += value", b"score -= value")
+    assert L.sha_bytes(L.scorer_normal_form(tampered)) != pins[L.TIERS_SCORER_REL]
+    nested = L.bind_scorer_and_native(k4s_scorer_rel="reports/explore/k4s-confirm/mac/k4s_logic.py", **common)
+    assert not nested["passes"] and "reports/explore/<dir>/" in nested["reasons"][0]
+
+
+def test_select_load_is_tiers_bundle_profile():
+    bundle = dict(load=dict(kind="v3-body-hud-only", label="PROVISIONAL-LOAD", target_fps=20,
+                            config=dict(device="mps"), matches=["m"], split="s"))
+    load = L.select_load(bundle, dict(load_label="PROVISIONAL-LOAD"), dry_run=False)
+    assert load["nice"] == 10 and load["qos"] == "inherited" and "PROVISIONAL-LOAD" in load["labels"]
+    with pytest.raises(L.PreconditionRefusal):
+        L.select_load(bundle, dict(load_label="OTHER"), dry_run=False)
+    cpu = dict(load=dict(bundle["load"], config=dict(device="cpu")))
+    with pytest.raises(L.PreconditionRefusal, match="MPS"):
+        L.select_load(cpu, dict(load_label="PROVISIONAL-LOAD"), dry_run=False)
+    assert L.select_load(cpu, dict(load_label="PROVISIONAL-LOAD"), dry_run=True)["nice"] == 19
+    with pytest.raises(L.PreconditionRefusal):
+        L.check_priority_and_threads(0, dict(OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1"),
+                                     dry_run=False)
+
+
+def test_corpus_and_fleet_reference_checks():
+    root = L.REPO_ROOT / "reports/explore/t1/corpora/corpus-03-a51ea64c"
+    inventory = json.loads((root / "corpora.json").read_text())
+    publication = json.loads((root / "publication.json").read_text())
+    ids = L.check_corpus(L.T1_K4_CORPUS_SHA, L.T1_K4_CORPUS_SHA, inventory, publication, None)
+    assert len(ids) == 300 and ids[0].startswith("K4-200/")
+    with pytest.raises(L.PreconditionRefusal):
+        L.check_corpus("0" * 64, L.T1_K4_CORPUS_SHA, inventory, publication, None)
+    with pytest.raises(L.PreconditionRefusal):
+        L.check_corpus("0" * 64, "0" * 64, inventory, publication, None)
+    with pytest.raises(L.PreconditionRefusal):
+        L.check_corpus(L.T1_K4_CORPUS_SHA, L.T1_K4_CORPUS_SHA, inventory, publication, ids[:-1] + ["x"])
+    states = {i: dict(k4s_wall_seconds=.1, sd1_poll_seconds=.004, result=dict(action=1, candidates=[1], scores=[0.]))
+              for i in ids}
+    deadline = {c: dict(FLEET[c], budget_ms=L.BUDGET_MS[c], charge_scale=str(Fraction(1) / Fraction(c))) for c in FLEET}
+    ref = dict(schema="clasher.k4s.mac-fleet-reference.v1", corpus_sha256=L.T1_K4_CORPUS_SHA, repeats=3,
+               reporting_load_profile=True, hosts=["127x01", "127x03"], end_recheck_sha256="e" * 64,
+               pool_conforms=True, states=states, deadline=deadline)
+    assert L.check_fleet_reference(ref, L.T1_K4_CORPUS_SHA, ids, dry_run=False)["states"] == 300
+    assert deadline["0.9"]["charge_scale"] == "10/9"
+    bad = json.loads(json.dumps(ref))
+    bad["deadline"]["0.8"]["cutoff"] = .5
+    with pytest.raises(L.PreconditionRefusal, match="disagrees"):
+        L.check_fleet_reference(bad, L.T1_K4_CORPUS_SHA, ids, dry_run=False)
+    with pytest.raises(L.PreconditionRefusal, match="re-check"):
+        L.check_fleet_reference(dict(ref, end_recheck_sha256=None), L.T1_K4_CORPUS_SHA, ids, dry_run=False)
+
+
+def test_output_isolation_from_tiers_paths(tmp_path):
+    tiers_dir = tmp_path / "tiers"
+    tiers_dir.mkdir()
+    forbidden = L.forbidden_roots(L.REPO_ROOT, [tiers_dir], None)
+    for bad in (L.REPO_ROOT / L.E4V3_REL / "k4s-out", tiers_dir, tiers_dir / "k4s", tmp_path,
+                L.REPO_ROOT / "reports/explore/t1/k4s"):
+        with pytest.raises(L.PreconditionRefusal):
+            L.check_output_isolated(bad, forbidden)
+    assert L.check_output_isolated(tmp_path / "k4s-out", forbidden)
+
+
+def test_repeat_admission_rules():
+    tech = dict(technical_repeat_candidate=True, counts_toward_repeat_allowance=True, receipt_sha256="a" * 64)
+    tiers_invalid = dict(technical_repeat_candidate=True, counts_toward_repeat_allowance=False, receipt_sha256="b" * 64)
+    assert L.check_repeat_admission([], released=False, review=None)["attempt"] == 1
+    assert L.check_repeat_admission([tech, tiers_invalid], released=False, review=None)["counted_repeats"] == 1
+    with pytest.raises(L.PreconditionRefusal, match="exhausted"):
+        L.check_repeat_admission([tech, dict(tech, receipt_sha256="c" * 64)], released=False, review=None)
+    with pytest.raises(L.PreconditionRefusal, match="not a pre-listed"):
+        L.check_repeat_admission([dict(technical_repeat_candidate=False, receipt_sha256="d" * 64)], released=False, review=None)
+    with pytest.raises(L.PreconditionRefusal, match="independent"):
+        L.check_repeat_admission([tech], released=True, review=None)
+    review = dict(schema="clasher.k4s.mac-classification-review.v1", independent_of_author=True,
+                  confirmed_classification_sha256=["a" * 64], confirms_session_validity_rule=True)
+    assert L.check_repeat_admission([tech], released=True, review=review)["released"]
+    with pytest.raises(L.PreconditionRefusal, match="every prior"):
+        L.check_repeat_admission([tech], released=True, review=dict(review, confirmed_classification_sha256=[]))
+
+
+def test_standalone_authorization(tmp_path):
+    with pytest.raises(L.PreconditionRefusal):
+        L.check_standalone_authorization(None, None, [])
+    auth = tmp_path / "auth.json"
+    auth.write_text(json.dumps(dict(schema="clasher.k4s.mac-standalone-authorization.v1", coordinator="0523ae6f",
+                                    sam_authorized_session=True, utc="2026-10-12T00:00Z",
+                                    tiers_receipt_manifest_sha256=["a" * 64])))
+    assert L.check_standalone_authorization(auth, L.sha(auth), ["a" * 64])["descriptive_only"] is False
+    with pytest.raises(L.PreconditionRefusal, match="different TIERS"):
+        L.check_standalone_authorization(auth, L.sha(auth), ["b" * 64])
+    with pytest.raises(L.PreconditionRefusal):
+        L.check_standalone_authorization(auth, "0" * 64, ["a" * 64])
+
+
+def test_provisional_labels():
+    assert L.provisional_status(False, False, False) == dict(provisional=True, label="PROVISIONAL (emulator-off)")
+    assert L.provisional_status(True, True, False)["provisional"] is True
+    assert L.provisional_status(True, True, True)["provisional"] is False
+    assert L.emulator_present("  1 /sbin/launchd\n 99 /opt/sdk/qemu-system-aarch64\n")
+    assert not L.emulator_present("  1 /sbin/launchd\n")
+
+
+# ---------------------------------------------------------------- manifest
+
+def test_manifest_is_current_and_measure_tiers_unmodified():
+    on_disk = json.loads((L.MAC_DIR / L.MANIFEST_NAME).read_text())
+    assert on_disk == B.build(L.REPO_ROOT, list(on_disk["k4s_kernel"]["files"]), on_disk["frozen"])
+    path = on_disk["measure_tiers_unmodified"]["path"]
+    committed = subprocess.run(["git", "-C", str(L.REPO_ROOT), "show", "HEAD:" + path], capture_output=True, check=True).stdout
+    assert L.sha_bytes(committed) == on_disk["measure_tiers_unmodified"]["sha256"] == L.sha(L.REPO_ROOT / path)
+    for rel, digest in on_disk["reused_readonly"].items():
+        blob = subprocess.run(["git", "-C", str(L.REPO_ROOT), "show", "HEAD:" + rel], capture_output=True, check=True).stdout
+        assert L.sha_bytes(blob) == digest, rel
+    assert on_disk["native"]["provenance_linux_sha256"] == L.NATIVE_PROVENANCE_SHA
+    assert all(p.startswith(L.MAC_REL + "/") for p in on_disk["k4s_files"])
+
+
+def test_manifest_loader_rejects_draft_for_mac_and_tamper(tmp_path):
+    path = L.MAC_DIR / L.MANIFEST_NAME
+    manifest = L.load_k4s_manifest(path, L.sha(path), L.REPO_ROOT, require_frozen=False)
+    assert manifest["frozen"] is False
+    with pytest.raises(L.PreconditionRefusal, match="frozen"):
+        L.load_k4s_manifest(path, L.sha(path), L.REPO_ROOT, require_frozen=True)
+    with pytest.raises(L.PreconditionRefusal, match="SHA mismatch"):
+        L.load_k4s_manifest(path, "0" * 64, L.REPO_ROOT, require_frozen=False)
+    forged = json.loads(path.read_text())
+    forged["reused_readonly"][L.E4V3_REL + "/measure_tiers.py"] = "0" * 64
+    other = tmp_path / "m.json"
+    other.write_text(json.dumps(forged))
+    with pytest.raises(L.PreconditionRefusal, match="Pin mismatch"):
+        L.load_k4s_manifest(other, L.sha(other), L.REPO_ROOT, require_frozen=False)
+
+
+# ---------------------------------------------------------------- CLI preconditions (no Mac, no TIERS writes)
+
+def dry_argv(out, *extra):
+    path = L.MAC_DIR / L.MANIFEST_NAME
+    return ["--output", str(out), "--linux-dry-run", "--k4s-manifest", str(path),
+            "--k4s-manifest-sha256", L.sha(path), *extra]
+
+
+ENV = dict(OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1")
+
+
+@pytest.fixture
+def offline(monkeypatch):
+    monkeypatch.setattr(M, "admit_platform", lambda args: None)
+    return dict(environ=ENV, nice=19, classify=no_classify)
+
+
+def sealed(out):
+    manifest = json.loads((out / "receipt-manifest.json").read_text())
+    return manifest["status"], manifest["files"]
+
+
+def test_cli_refuses_without_tiers_completion_receipt(tmp_path, offline):
+    before = tree_state(L.REPO_ROOT / L.TIERS_PACKAGE_REL)
+    out = tmp_path / "k4s"
+    assert M.main(dry_argv(out), **offline) == 3
+    status, files = sealed(out)
+    refusal = json.loads((out / "refusal.json").read_text())
+    assert status == "refused" and "refusal.json" in files and "TIERS session-completion receipt" in refusal["error"]
+    assert refusal["repeat_consumed"] is False and "k4s-mac-summary.json" not in files
+    assert tree_state(L.REPO_ROOT / L.TIERS_PACKAGE_REL) == before
+
+
+def test_cli_refuses_output_inside_tiers_paths(tmp_path, offline):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
+    before = tree_state(tiers_dir)
+    for out in (tiers_dir / "k4s", L.REPO_ROOT / L.E4V3_REL / "receipts" / "k4s-test-never"):
+        assert M.main(dry_argv(out, "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest), **offline) == 3
+        assert not out.exists()
+    assert tree_state(tiers_dir) == before
+
+
+def test_cli_refuses_bad_tiers_sha_and_standalone_without_authorization(tmp_path, offline):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
+    assert M.main(dry_argv(tmp_path / "a", "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", "0" * 64),
+                  **offline) == 3
+    assert "SHA mismatch" in json.loads((tmp_path / "a" / "refusal.json").read_text())["error"]
+    assert M.main(dry_argv(tmp_path / "b", "--standalone"), **offline) == 3
+    assert "authorization" in json.loads((tmp_path / "b" / "refusal.json").read_text())["error"]
+    assert M.main(dry_argv(tmp_path / "c", "--tiers-receipts", str(tiers_dir)), **offline) == 3
+
+
+def test_cli_refuses_incomplete_tiers_session(tmp_path, offline):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers", state="harness")
+    assert M.main(dry_argv(tmp_path / "k", "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest),
+                  **offline) == 3
+    assert "not complete" in json.loads((tmp_path / "k" / "refusal.json").read_text())["error"]
+
+
+def test_cli_refuses_technically_invalid_tiers_session(tmp_path, offline):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
+    hooks = dict(offline, classify=lambda _: dict(technical_repeat_candidate=True, reasons=["x"]))
+    assert M.main(dry_argv(tmp_path / "k", "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest),
+                  **hooks) == 3
+
+
+def test_cli_tiers_exactness_failure_writes_no_measurement_summary(tmp_path, offline):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers", state="exactness")
+    before = tree_state(tiers_dir)
+    out = tmp_path / "k4s"
+    assert M.main(dry_argv(out, "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest), **offline) == 0
+    status, files = sealed(out)
+    summary = json.loads((out / "k4s-mac-summary.json").read_text())
+    assert status == "complete" and summary["c_M"] is None and summary["measurements"] == dict(measured=False)
+    assert summary["kill"]["k4s_killed_on_mac"] and summary["tiers_inputs"]["exactness_failure_kind"] == "workers-only"
+    assert summary["dry_run"] is True and summary["provisional"] is True
+    assert tree_state(tiers_dir) == before
+    classification = C.classify(out, tiers_dir, digest, tiers_classify=no_classify)
+    assert classification["category"] == "valid" and classification["tiers_classification_untouched"]
+
+
+def test_cli_rejects_mac_authorization_with_dry_run(tmp_path, offline):
+    assert M.main(dry_argv(tmp_path / "k", "--sam-authorized-replay"), **offline) == 3
+
+
+def test_admit_platform_restrictions():
+    mac = SimpleNamespace(linux_dry_run=False, sam_authorized_replay=True)
+    M.admit_platform(mac, system="Darwin", machine="arm64", host="mini")
+    with pytest.raises(L.PreconditionRefusal):
+        M.admit_platform(SimpleNamespace(linux_dry_run=False, sam_authorized_replay=False),
+                         system="Darwin", machine="arm64", host="mini")
+    with pytest.raises(L.PreconditionRefusal):
+        M.admit_platform(mac, system="Linux", machine="x86_64", host="127x03")
+    with pytest.raises(L.PreconditionRefusal):
+        M.admit_platform(SimpleNamespace(linux_dry_run=True, sam_authorized_replay=False),
+                         system="Linux", machine="x86_64", host="127x09")
+
+
+def test_measure_module_imports_without_torch():
+    code = ("import sys; sys.path.insert(0, %r); import measure_k4s, classify_k4s_failure; "
+            "assert 'torch' not in sys.modules and 'tier_backend' not in sys.modules") % str(L.MAC_DIR)
+    subprocess.run([sys.executable, "-c", code], check=True)
+
+
+# ---------------------------------------------------------------- measurement loops with a fake backend
+
+class FakeBackend:
+    def __init__(self, ids, wall=.1, poll=.005, mismatch=None):
+        self.k4s_rows = {i: dict(id=i) for i in ids}
+        self.wall, self.poll, self.mismatch, self.calls = wall, poll, mismatch, 0
+        self.prepared = []
+
+    def k4s_work(self, row, deadline=None, packet_entry=None):
+        self.calls += 1
+        action = 9 if row["id"] == self.mismatch else 1
+        timing = dict(wall_seconds=self.wall, poll_seconds=self.poll, cold_poll=self.calls == 1,
+                      cutoff=deadline is not None and row["id"] < "2", fallback=False,
+                      no_complete_play=deadline is not None and row["id"] < "1", over_200_ms=False,
+                      cut_return_over_208_ms=False, coarse_order=[1])
+        return dict(action=action, candidates=[1], scores=[0.]), timing
+
+    def prepare_work(self, row):
+        self.prepared.append(row["id"])
+
+    def infer(self, identity, device):
+        return dict(gate=.9, legal=[1], ranks={1: 1.}), .001
+
+
+class ListStore:
+    def __init__(self):
+        self.rows = {}
+
+    def append(self, name, value):
+        self.rows.setdefault(name, []).append(value)
+
+    def write(self, name, value):
+        self.rows[name] = value
+
+
+def exact(actual, expected, label):
+    if actual != expected:
+        raise ValueError("Exactness mismatch: " + label)
+    return 0.
+
+
+def test_measurement_loops_with_fake_backend():
+    ids = [str(i) for i in range(5)]
+    fleet = {i: dict(k4s_wall_seconds=.09, sd1_poll_seconds=.004, result=dict(action=1, candidates=[1], scores=[0.]))
+             for i in ids}
+    limits = dict(L.DRY_LIMITS, speed=5, speed_seconds=0, agreement=3)
+    store = ListStore()
+    m = M.Measurements(FakeBackend(ids), store, limits, ids, fleet, window=lambda a, b: dict(processed=20, expected=20))
+    assert m.corpus_exactness(exact) == dict(passes=True, states=5, exactness_class="EXACT")
+    m.loaded_speed()
+    speed = L.k4s_speed_summary(m.speed_rows, ids)
+    assert speed["r"] == pytest.approx(.9) and len(m.spans) == 1
+    poll = L.poll_summary(m.poll_rows, fleet, ids)
+    assert poll["r_inf"] == pytest.approx(.8)
+    r = m.deadline_corpus()
+    assert (r["n"], r["cutoff_count"], r["no_complete_play_count"]) == (5, 2, 1)
+    refs = {i: dict(gate=.9, legal=[1], ranks={"1": 1.}) for i in ids}
+    agree = m.sd1_agreement(ids, refs, L.SD1_THRESHOLD,
+                            lambda ref, act, thr: dict(equal=ref["ranks"] == act["ranks"], allowed=True))
+    assert agree["passes"] and agree["n"] == 3
+    bad = M.Measurements(FakeBackend(ids, mismatch="3"), ListStore(), limits, ids, fleet)
+    result = bad.corpus_exactness(exact)
+    assert result["passes"] is False and result["failed_state"] == "3"
+
+    class RootMismatch(FakeBackend):
+        def k4s_work(self, row, deadline=None, packet_entry=None):
+            if row["id"] == "2":
+                raise ValueError("Exactness mismatch: complete decision public root")
+            return super().k4s_work(row, deadline, packet_entry)
+    assert M.Measurements(RootMismatch(ids), ListStore(), limits, ids, fleet).corpus_exactness(exact)["failed_state"] == "2"
+
+    class Crash(FakeBackend):
+        def k4s_work(self, row, deadline=None, packet_entry=None):
+            raise ValueError("Native module crashed")
+    with pytest.raises(ValueError, match="crashed"):
+        M.Measurements(Crash(ids), ListStore(), limits, ids, fleet).corpus_exactness(exact)
+
+
+def test_summarize_records_every_gate_input():
+    ctx = dict(tiers=tiers(), c_star="0.9", dry_run=True, mode="in-session", k4s_manifest_sha256="a" * 64)
+    i = inputs()
+    body = M.summarize(ctx, inputs=i, mapping=L.map_cell(i), extra={}, provisional=L.provisional_status(False, False, False))
+    for key in ("gate0", "r_k4s", "p10_k4s", "r_inf", "poll_p99_seconds", "perception", "gc", "mac_deadline", "fleet_deadline"):
+        assert key in body["gate_inputs"]
+    assert body["c_M"] == "0.9" and body["dry_run"] is True and body["provisional_label"] == "PROVISIONAL (emulator-off)"
+    assert body["mac_qualified"] is False and body["live_actions"] is False
+
+
+# ---------------------------------------------------------------- classifier
+
+@pytest.mark.parametrize("kwargs,category", [
+    (dict(refusal=dict(error="no receipt")), "precondition-refusal"),
+    (dict(failure_error="Traceback (most recent call last):\nValueError: Exactness mismatch: x"), "gate-failure"),
+    (dict(failure_error="Traceback (most recent call last):\nRuntimeError: Replay worker failed"), "technical-failure"),
+    (dict(failure_error="ValueError: Pin mismatch (x): y"), "technical-failure"),
+    (dict(complete=dict(completed=True), capacity_rows=[dict(phase="K3", processes=[dict(foreign_over_one_core_seconds=61)])]),
+     "technical-failure"),
+    (dict(complete=dict(completed=True), capacity_rows=[dict(phase="K1", processes=[],
+                                                              thermal=dict(stdout="CPU_Speed_Limit = 80"))]), "technical-failure"),
+    (dict(complete=dict(completed=True), capacity_rows=[dict(phase="K3", processes=[],
+                                                              thermal=dict(stdout="CPU_Speed_Limit = 80"))]), "valid"),
+    (dict(complete=dict(completed=True), capacity_rows=[dict(phase="K3", processes=[], boottime=dict(stdout="a")),
+                                                        dict(phase="K3", processes=[], boottime=dict(stdout="b"))]),
+     "technical-failure"),
+    (dict(complete=dict(completed=True)), "valid"),
+    (dict(), "technical-failure"),
+    (dict(complete=dict(completed=True), tiers_classification=dict(technical_repeat_candidate=True, reasons=["r"])),
+     "invalid-tiers-session"),
+])
+def test_classifier_categories(kwargs, category):
+    result = C.classify_records(**kwargs)
+    assert result["category"] == category
+    assert result["technical_repeat_candidate"] is (category in ("technical-failure", "invalid-tiers-session"))
+    assert result["counts_toward_repeat_allowance"] is (category == "technical-failure")
+
+
+def test_classifier_cli_reads_only_and_writes_fresh_dir(tmp_path):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
+    session = L.K4SStore(tmp_path / "k4s", "K4S-LINUX-DRY-RUN")
+    session.write("k4s-preconditions.json", dict(tiers=dict(sessions=[dict(receipt_manifest_sha256=digest)])))
+    session.write("k4s-complete.json", dict(completed=True))
+    session.seal("complete")
+    before = tree_state(tiers_dir), tree_state(tmp_path / "k4s")
+    assert C.classify(tmp_path / "k4s")["category"] == "valid"
+    invalid = C.classify(tmp_path / "k4s", tiers_dir, digest,
+                         tiers_classify=lambda _: dict(technical_repeat_candidate=True, reasons=["foreign"]))
+    assert invalid["category"] == "invalid-tiers-session" and invalid["valid"] is False
+    with pytest.raises(L.PreconditionRefusal):
+        C.classify(tmp_path / "k4s", tiers_dir, "0" * 64, tiers_classify=no_classify)
+    with pytest.raises(L.PreconditionRefusal):
+        C.main(["classify", "--receipts", str(tmp_path / "k4s"), "--output", str(tmp_path / "k4s" / "c")])
+    with pytest.raises(L.PreconditionRefusal):
+        C.main(["classify", "--receipts", str(tmp_path / "k4s"), "--output", str(tiers_dir / "c"),
+                "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest])
+    assert C.main(["classify", "--receipts", str(tmp_path / "k4s"), "--output", str(tmp_path / "cls")]) == 0
+    assert (tree_state(tiers_dir), tree_state(tmp_path / "k4s")) == before
+
+
+def test_reduce_sessions_minimum_across_valid_sessions_only():
+    t = tiers()
+    valid = dict(category="valid", valid=True)
+    s1 = dict(tiers_inputs=t, gate_inputs=inputs(r_k4s=.95), provisional=True)
+    s2 = dict(tiers_inputs=t, gate_inputs=inputs(r_k4s=.84, p10_k4s=.8), provisional=True)
+    s3 = dict(tiers_inputs=t, gate_inputs=inputs(r_k4s=.5), provisional=True)
+    final = C.reduce_sessions([(s1, valid), (s2, valid), (s3, dict(category="technical-failure", valid=False))], "0.9")
+    assert final["valid_sessions"] == 2 and final["gate_inputs"]["r_k4s"] == .84 and final["c_M"] == "0.8"
+    gate_fail = dict(tiers_inputs=t, gate_inputs=dict(gate0=dict(passes=False, parts=dict(k4s_corpus_exactness=False)),
+                                                      r_k4s=None), provisional=True)
+    assert C.reduce_sessions([(s1, valid), (gate_fail, dict(category="gate-failure", valid=True))], "0.9")["c_M"] is None
+    stopped = C.gate_failure_summary(t)
+    assert C.reduce_sessions([(s1, valid), (stopped, dict(category="gate-failure", valid=True))], "0.9")["c_M"] is None
+    with pytest.raises(L.GateInputError):
+        C.reduce_sessions([(s3, dict(valid=False))], "0.9")
+    with pytest.raises(L.GateInputError):
+        C.reduce_sessions([(s1, valid), (dict(s2, tiers_inputs=tiers(k4_full=True)), valid)], "0.9")

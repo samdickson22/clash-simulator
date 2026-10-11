@@ -1,0 +1,104 @@
+{
+  "schema": "clasher.k4s.sd1-manifest.v1",
+  "artifact": "SD1",
+  "artifact_id": "clasher-sd1-k4s-default-20261011",
+  "prereg": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md",
+    "sha256": "9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a",
+    "section": "2.1"
+  },
+  "sd1_hash": "sha256 of this file, computed and recorded at the freeze (FROZEN-K4S.json sd1_manifest_sha256)",
+  "role": {
+    "scope": "K4S S-default role defined by PREREG-K4S r3 \u00a72.3 only; search seat only; opponent untouched",
+    "uses": [
+      "1 seat poll: SD1 replaces v1 as the search seat poll, one cached forward per poll; deterministic default = WAIT if P(play) < threshold or no legal play, else highest-ranked legal play",
+      "2 coarse order: SD1 top-8 ranked legal plays are coarse-scanned first; scheduling only, candidate set unchanged (no augmentation, no refinement proposals)",
+      "3 cutoff default: preparation cutoff returns the SD1 default; scoring deadline with no complete legal-play score and an SD1 play returns that play with selected_wait_ticks=0; SD1 WAIT keeps the frozen choice; any complete play score keeps the frozen best-complete-score rule"
+    ],
+    "no_deadline_equivalence": "With no deadline K4S == K4 (qualified)"
+  },
+  "status": {
+    "r3a": "R3a REMAINS KILLED under R3 Stage 1; R3 files are not edited",
+    "never_adoptable_clause": "reports/strategy_council_20260928/imitation/exit-r3/RESULTS.md l.85, 97, 125 (sha256 646db0a6b77ce89d42dda26fbb77d2349bf185e8c065d90557c8a9ce3576b146)",
+    "supersession": "role-scoped, issued by coordinator 0523ae6f at the freeze only; draft: reports/explore/k4s-confirm/SD1-SUPERSESSION-DRAFT.md",
+    "claims_attach_to": "SD1 in this role only; never to the R3 recipe or to tier S; TIERS \u00a72.1 tier-S supersession unaffected"
+  },
+  "training_recipe": {
+    "source": "reports/strategy_council_20260928/imitation/exit-r3/PLAN.md",
+    "source_sha256": "6e9e98bc161b0a8461b3a8d6f1be7f8719f25748a897a0b2ef9cb40c2e8b67f4",
+    "freeze_commit": "bc542da8",
+    "initialisation": "released v1 main-2026100802 step 22552 EMA, width 192, sha256 d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "steps": 2500,
+    "rows_per_step": 8192,
+    "sampling": "uniform with replacement over concatenated eligible root indices",
+    "train_seed": 2026101013,
+    "data": {
+      "r1_corpus_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+      "r1_eligible_roots": 6009681,
+      "g_pause_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
+      "g_extra_roots": 212542,
+      "total_roots": 6222223,
+      "filter": "teacher_root true and wait_kind 0; exclude continuation wait kinds 1/2, pending 3, unsupervised rows and rows without candidate scores"
+    },
+    "loss": "listwise softmax over valid completed candidates T=0.003, play weight 1, value weight 0, plus existing R2 gate/card/tile loss with conditional full-8192 denominators",
+    "optimiser": {
+      "name": "AdamW",
+      "lr": 0.0003,
+      "weight_decay": 0.05,
+      "warmup": 2000,
+      "schedule": "cosine total 2500",
+      "grad_clip": 1,
+      "ema": 0.999,
+      "autocast": "bf16 CUDA",
+      "final": "final EMA only, no intermediate checkpoint selection"
+    },
+    "ranking": "conditional card+tile log-probability; top-8 legal plays",
+    "gate_calibration": {
+      "slice": "frozen r1 held-out64 slice sha256 0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "rule": "scalar P(gate=play) threshold requiring a legal play, nearest 34.6% deterministic root play prevalence; midpoint between sorted adjacent probabilities; smaller threshold on exact distance ties; no action labels/outcomes",
+      "reopened": false
+    },
+    "recipe_variance": "R3d (new-seed refit, seed 2026101014) differed by -0.036 pp play recall (exit-r3 RESULTS.md)"
+  },
+  "disclosures": [
+    "full R3 chain per TIERS \u00a72.2",
+    "R3a trained on all eight R1 deck slots incl. L2 Hog 2.6 and X-Bow vs an opponent mix incl. v1: primary population is in distribution for SD1 (favours K4S); guard removes only opponent-deck overlap",
+    "threshold calibrated on the held-out64 slice; slice not reopened; only the frozen value is used",
+    "supersession is outcome-informed (follows X4S, X4S-2, and for tier S r1(b) and S1)"
+  ],
+  "runtime_file_names": "SD1 bytes are staged under the T1 input names inputs/R3a.pt and inputs/R3a-calibration.json (same bytes; pin.py unchanged)",
+  "same_bytes_as": "R3a (exit-r3 Stage 1 arm R3a; final EMA)",
+  "checkpoint": {
+    "job_path": "inputs/R3a.pt",
+    "sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85"
+  },
+  "calibration": {
+    "job_path": "inputs/R3a-calibration.json",
+    "sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414"
+  },
+  "threshold": 0.5005528330802917,
+  "inference_sources": {
+    "reports/explore/k4s-confirm/cached_policy.py": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe",
+    "reports/explore/k4s-confirm/sd1_policy.py": "53d0d9ccd09b6ee9c346f5f9e58ac192214fc71b78c33b721a9dcc30d6d6af24",
+    "reports/explore/k4s-confirm/proposals.py": "be0c23188251f7ac2181dafd6bd01b2f90f47699f70c3671b91815e7fe990190",
+    "reports/explore/e1/policy.py": "1a16390ccc8ef093e6de5a98a0d730de5b643d67b06c37056eea382a3a0211d7",
+    "imitation/evaluation/d1.py": "e864b226baa819cf4fe5045119624c2ea04a2c8844f9c0a627ad430e16fe8076",
+    "imitation/evaluation/standalone.py": "238fad80f1ba0cac8c76ed76c13c62eacc61fd5da01c84ce6759cf2d900b21e0",
+    "imitation/model/inference.py": "d5d05d7c6aa91276d5f31db6e5a7e1c91b4ffca1e263f7e13496a3fd2a11cf52",
+    "student-source/exit_r3/network.py": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b"
+  },
+  "torch_version": "2.10.0+cu128",
+  "inference_mode": {
+    "device": "cpu",
+    "dtype": "float32",
+    "torch_threads": 1,
+    "cuda_visible_devices": "",
+    "grad": "torch.inference_mode",
+    "temperatures": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "forwards_per_poll": 1
+  }
+}

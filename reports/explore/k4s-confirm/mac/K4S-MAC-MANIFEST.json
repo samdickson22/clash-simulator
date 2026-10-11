@@ -1,0 +1,112 @@
+{
+  "checklist_item": "CONFORMANCE-r2 F-8 / N2; RECHECK-r3 R3, R5",
+  "corpus": {
+    "inventory": "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+    "inventory_commit": "81f2483e",
+    "k4_states_sha256": "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8",
+    "publication": "reports/explore/t1/corpora/corpus-03-a51ea64c/publication.json",
+    "states": 300
+  },
+  "fleet_reference_schema": "clasher.k4s.mac-fleet-reference.v1 (K4S-MAC-PROCEDURE.md \u00a73)",
+  "frozen": false,
+  "k4s_files": {
+    "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "71cd257063814c3cc6b0761b68a79bf09ac0fbd6cff790fb51b4d2cbf7b1408b",
+    "reports/explore/k4s-confirm/mac/build_manifest.py": "7277c66e34c54588112a0e34ccbdc8aa3d9f001f46dc150319ca17de4ceb84c9",
+    "reports/explore/k4s-confirm/mac/classify_k4s_failure.py": "26db8776cb58fa16cb5513c339d0637f2a9c2728c720cb7a8d7b9a040d9b2aff",
+    "reports/explore/k4s-confirm/mac/k4s_backend.py": "8c8da476109e0b8390a9db8f91a8711644619172e7dbf78ca20d444c13f35954",
+    "reports/explore/k4s-confirm/mac/k4s_logic.py": "0e034caa66978afa7f2abcf22dca5980c334ad4fe6a48a3b8f2b767e361db503",
+    "reports/explore/k4s-confirm/mac/measure_k4s.py": "d0ad109de21b97e27962bbd377ed63550b51108858fdf7733eaea54f043941eb",
+    "reports/explore/k4s-confirm/mac/test_measure_k4s.py": "841a3f0fddad39002c60187205b84c10c80125a37454702b032f8dbd8ed9b2e6"
+  },
+  "k4s_kernel": {
+    "candidates": {
+      "reports/explore/k4s-confirm/anchor_x.py": "cf528473278d4fbf9ffd8aecfd4a3350fe1dbb6bbeb0d441870c9f88bad3ec98",
+      "reports/explore/x4s2/sdefault.py": "6da69e5de05b4df564b9c7772466f97af300cf44538a05e1e5c902347759e066"
+    },
+    "files": {
+      "reports/explore/k4s-confirm/anchor_x.py": "cf528473278d4fbf9ffd8aecfd4a3350fe1dbb6bbeb0d441870c9f88bad3ec98",
+      "reports/explore/k4s-confirm/sdefault.py": "0448db50afffb583c69d69a84218aed6f4413e514188ac086b7cd1631a67fa8e"
+    },
+    "interface": "planner_class(base) with the full S-default rule (apply_default), K4S-SPEC \u00a74(e)-(f)"
+  },
+  "measure_tiers_unmodified": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "sha256": "5d7de8e36890f0f8d086e77be5ec4e20de1b3cc1f48943bd06e8bbd103046124",
+    "statement": "measure_tiers.py, the TIERS manifest/spec-pins and every e4v3 file are reused read-only and unmodified; K4S never edits them, never re-hashes the TIERS manifest and never writes under any TIERS path."
+  },
+  "native": {
+    "mac_binding": "Mac native = the binary the TIERS session built and qualified (TIERS build-tiers.json native_sha256, source_manifest_sha256 = TIERS tiers-pins.json SHA); K4S never rebuilds it",
+    "provenance_linux_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"
+  },
+  "prereg": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md",
+    "sha256": "9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a"
+  },
+  "references": {
+    "conformance_r2": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-CONFORMANCE-r2.md",
+      "sha256": "ad681329c3c072e68e5486fff47db9812a1f35fd375eddb1ec0c815a1fd092b4"
+    },
+    "k4s_spec": {
+      "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+      "sha256": "6034373b0edde34cead0319de749d765e1beb01222e311f6857ecb394a0ce1bb"
+    },
+    "prereg": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md",
+      "sha256": "9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a"
+    },
+    "recheck_r3": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-RECHECK-r3.md",
+      "sha256": "eca937da3d0db042eb2fc3c7c3ef83b280a4bbab0148cc73e795e16fa0aa8fc9"
+    },
+    "t1_corpus_inventory": {
+      "path": "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+      "sha256": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"
+    },
+    "t1_corpus_publication": {
+      "path": "reports/explore/t1/corpora/corpus-03-a51ea64c/publication.json",
+      "sha256": "71f5b4ac15db8c954387ea21286b271501f2b5c14e1dd381948c6d53cb2f565c"
+    },
+    "tiers_addendum_r3": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/E4-V3-ADDENDUM-r3-DRAFT.md",
+      "sha256": "fc54507d5f742f4ef6ecd0b656ee47fdb61d1468a14ff4cb4dd14a94a6311a9b"
+    },
+    "tiers_prereg_r3": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
+      "sha256": "ef0db97ad509753ccf63c7376f800d6db7f0b82ee07f102476eafb939e2a4c77"
+    }
+  },
+  "reused_readonly": {
+    "reports/explore/e1/planner.py": "4f608829289acfb4130f8f2022fd1f0d61755209e20230d1432595eec4c08bd6",
+    "reports/explore/s1/anchor.py": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
+    "reports/explore/s1/cached_policy.py": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe",
+    "reports/explore/s1/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py": "5d7de8e36890f0f8d086e77be5ec4e20de1b3cc1f48943bd06e8bbd103046124",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py": "b04d201de7a95a36669e5c11898a297ba8f324d1a658f2987ec5ba244671add7"
+  },
+  "schema": "clasher.k4s.mac-manifest.v1",
+  "scorer_binding": {
+    "rule": "K4S scorer == TIERS-pinned scorer bytes, or the declared stats-only anchor_x derivative whose two hunks revert to them exactly",
+    "tiers_scorer": "reports/explore/s1/anchor.py",
+    "tiers_scorer_base": "reports/explore/e1/planner.py"
+  },
+  "sd1_manifest": {
+    "exists": true,
+    "note": "filled at the K4S freeze (CONFORMANCE-r2 F-2)",
+    "path": "reports/explore/k4s-confirm/SD1-MANIFEST.json",
+    "sha256": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76"
+  },
+  "status": "DRAFT: independent review pending; not frozen",
+  "study": "PREREG-K4S",
+  "tiers_freeze": {
+    "addendum_r3_sha256": "fc54507d5f742f4ef6ecd0b656ee47fdb61d1468a14ff4cb4dd14a94a6311a9b",
+    "freeze_commit": "cc6410b2",
+    "prereg_r3_sha256": "ef0db97ad509753ccf63c7376f800d6db7f0b82ee07f102476eafb939e2a4c77"
+  }
+}
