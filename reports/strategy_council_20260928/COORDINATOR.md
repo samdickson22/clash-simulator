@@ -2091,3 +2091,9 @@ Also on the hub, but with copies elsewhere:
   - **First attempt refused (safe):** it was refused by the frozen one-supervisor-per-job pin, so I approved distinct reporting namespaces (k4s-confirm-reporting-r1), following T1's precedent. Authorization v2 is 852c01e6.
   - **Run:** 11 slots per host; 0 foreign/active; OA-1 copiers on 05.
   - **Timing:** ~16 h, so it ends ~12Z Oct 12. Outcomes sealed.
+- **20:13 UTC: SAM AUTHORIZED the replay-only Mac E4 measurement session** (~20:11Z: "you got it"). ssh to macmini-fleet is now allowed for the frozen TIERS/K4S Mac procedures. Replay only: no live games, no detection evasion.
+  - **Operator launched** (Opus, clasher-mac-e4-session-20261011-r1).
+  - **Phase A, now:** Mac inventory, separate post-merge bundle, arm64 build, offline preflight.
+  - **Phase B:** the TIERS session, only after T1's END pooled fleet reference is committed, using `measure_tiers.py` 6066228b.
+  - **Phase C:** the K4S Mac measurement (manifest 8bb20a75), after the K4S END reference (~Oct 12 afternoon), as a standalone session if needed.
+  - **GUI-only steps** get routed to a Codex/Sol computer-use task.
