@@ -1,6 +1,6 @@
 # Mac registration inputs: agreement2000 + packets1000 (design proposal)
 
-Prepared 2026-10-11 ~22:20–23:00Z on 127x05 by the design sub-agent for coordinator thread 0523ae6f. This is
+Assigned 2026-10-11 ~22:11Z and prepared ~22:11–22:23Z on 127x05 by the design sub-agent for coordinator thread 0523ae6f. This is
 read-only research plus a proposal. I made no ssh to any 127x host and no Mac contact. I read no T1 or K4S game
 results, no `games/` file and no heldout data. Sources are origin/main at `76887b33`, extracted read-only, plus
 metadata (`ls`/`find`) and a byte-compressibility probe of public state files on 05.
