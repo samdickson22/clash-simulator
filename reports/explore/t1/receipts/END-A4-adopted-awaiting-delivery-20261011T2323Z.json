@@ -1,0 +1,24 @@
+{
+  "END_source_unchanged": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "T1_no_03_access": true,
+  "adopted_at_utc": "2026-10-11T23:16Z",
+  "builder_task": "clasher-mac-registration-builder-20261011-r1",
+  "coordinator_commit": "16d431b4329f46757af92f47bcf2c044f04fc3bd",
+  "observed_at_utc": "2026-10-11T23:23:51Z",
+  "outcomes_sealed": true,
+  "records": {
+    "json": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.json",
+      "sha256": "c9da4db0b34fbdc9f2e3aca43a7b34458c6ca5c9c897873537c58d4ae6f87ae8"
+    },
+    "md": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.md",
+      "sha256": "2a36f62073e39ed61148b3554007282ab2e81c75b36931f1db974eda22499e7f"
+    }
+  },
+  "registration_sealing_permitted": false,
+  "required_before_seal": "Builder delivers validatedinputs; T1 merges after END pool",
+  "source_commit": "94df513d7d29956a77404ecbf27ca6f288e0353a",
+  "status": "ADOPTED_AWAITING_BUILDER_INPUT_DELIVERY",
+  "window_owner": "coordinator; expected03 apt gapOct12 08:47Z, requires explicitdeclaration"
+}
