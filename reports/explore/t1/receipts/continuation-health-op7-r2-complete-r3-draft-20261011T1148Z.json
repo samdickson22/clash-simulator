@@ -1,0 +1,197 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-11T11:44:17Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r2",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+  "immutable_manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "prior_preserved_blocks": 711,
+  "prior_r1_failed_blocks": 22,
+  "prior_all_ledger_losses": 54,
+  "counts": {
+    "127x01": {
+      "durable_blocks": 1460,
+      "descriptive_durable_blocks": 36,
+      "new_phase_durable_blocks": 1181,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "apt_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "guard_durable_blocks": 286,
+      "original_preserved_blocks": 124,
+      "prior_r1_preserved_blocks": 155,
+      "primary_durable_blocks": 1138
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 592,
+      "durable_blocks": 592,
+      "guard_durable_blocks": 116,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 592,
+      "ssh_flagged_blocks": 477,
+      "apt_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 477,
+      "dbus_flagged_blocks": 592,
+      "idle_flagged_blocks": 0,
+      "prior_r1_preserved_blocks": 399,
+      "new_phase_durable_blocks": 160,
+      "primary_durable_blocks": 476
+    }
+  },
+  "total_durable_blocks": 2052,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-11T11:36:53Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 1181,
+      "failed_blocks": 0,
+      "queued": 0,
+      "inflight": 0,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 444.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": true
+    },
+    "127x08": {
+      "utc": "2026-10-11T01:17:46Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 160,
+      "failed_blocks": 0,
+      "queued": 1010,
+      "inflight": 10,
+      "reason": "foreign_active",
+      "sealed": true,
+      "age_seconds": 37591.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": true,
+      "supervisor-exit_receipt_present": true
+    }
+  },
+  "phase_exits": {
+    "127x01": {
+      "utc": "2026-10-11T11:36:54Z",
+      "host": "127x01",
+      "reason": null,
+      "completed_blocks": 1181,
+      "failed_blocks": 0,
+      "unstarted_blocks": 0,
+      "receipt_sha256": "1449fdb4020b494b80e4f12f4a5c848135a7000f40c22881c4a12154ddc6d5ff"
+    },
+    "127x08": {
+      "utc": "2026-10-11T01:17:48Z",
+      "host": "127x08",
+      "reason": "foreign_active",
+      "completed_blocks": 160,
+      "failed_blocks": 10,
+      "unstarted_blocks": 1010,
+      "receipt_sha256": "0e5b3b8844705b67ee742a1e1687fdd33f03eea9e122a83f71be780af3e0ccf8"
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-11T01:17:56Z",
+  "corpus_durability": "VERIFIED_READ_ONLY_20261010T202144Z",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "process_audits": [],
+  "apt_helper_probes": [
+    {
+      "utc": "2026-10-11T11:27:19Z",
+      "host": "127x01",
+      "occurrence_file_present": false,
+      "census_occurrence_records": 0,
+      "helper_occurrences": 0,
+      "first_helper": null
+    }
+  ],
+  "coordinator_read_through_position": 7522,
+  "live_health_hosts": [
+    "127x01"
+  ],
+  "held_host": "127x08",
+  "held_host_final_evidence_receipt": "reports/explore/t1/receipts/continuation-health-op7-r2-08-stop-20261011T0124Z.json",
+  "hold_ruling": "9090b365",
+  "readmission_policy": "7479 permits pre-restart r2-only inventory/balanced draft and01 qualification after01 supervisor/copier exit and finalcopies; no08SSH. Dispatch/admission still waits explicit coordinator A2 transport retirement, zero X4S-2 processes, fresh08 vacancy census and reviewed two-host qualification/smoke. No guard/seed changes or one-host dispatch.",
+  "checkpoint_utc": "2026-10-11T11:48:31Z",
+  "reporting_complete": false,
+  "replacements_required": true,
+  "replacement_dispatch_generated": true,
+  "live_runtime_changed": false,
+  "root_foreign_edits_preserved": true,
+  "schedule_policy": "Existing 20-minute bound continuation; no new watcher or schedule",
+  "prior_inventory_policy": "Original/r1 inventoried once; r2 inventoried once by reviewed replace.py after01 finaldurability and owned exits. Full original/r1/r2 history each supplied once.",
+  "prior_preserved_breakdown": {
+    "original": 157,
+    "replacement_r1": 554
+  },
+  "apt_first_helper_policy": "Notify coordinator immediately upon first real helper with four UID fields",
+  "repair_status": "R3_DRAFT_COMMITTED_PENDING_EXPLICIT_TRANSPORT_RETIREMENT_AND_08_VACANCY",
+  "stopped_progress_policy": "Both host progress snapshots are terminal/historical; verbatim exit hashes and fresh finaldurability/deadgroup audits govern.",
+  "held_stop_receipt_sha256": "4b93dbb56281bc01e4fcbacfb57c8b5f39eb27b3d9eba2f6ca4ab819229a65ec",
+  "no_new_08_connection": true,
+  "copy_deadline_status": "All2052 complete raw-hash sets verified on01 with592 remoteACKs; no backlog; owned copier exited via reviewedSTOP-COPY",
+  "coordinator_transport_plan": "7521/7522: A2 independent bounds reached epoch15, transports03/08 retained. Explicit retirement/vacancy still required. X4S-2 08 hardstop12:30Z, earlier coordinatorSTOP wins; T1 never invokes exploration STOP. Fleetweb quiet until2026-10-12T06:00Z.",
+  "planning_correction": "Previous checkpoints recording09:12STOP/09:25vacancy backstop are superseded by7363/12:30Z extension; T1 does not invoke exploration STOP.",
+  "post_01_preparation_authority": {
+    "coordinator_position": 7479,
+    "message_id": "message:provider:claudeAgent:native-item:996bfa1b-7390-4d40-9942-96899688e567",
+    "actual_utc": "2026-10-11T10:04:53.828Z",
+    "prerequisites": "01 r2 completes; supervisor and owned copier exit; final durable copies and generation/group checks first",
+    "authorized": "Blind r2-only inventory once, commit balanced two-host remainder draft without dispatch, then reviewed01 qualification if procedure allows",
+    "prohibited": "No08SSH, no dispatch/launch before explicit08 vacancy and A2 transport retirement; no running runtime changes",
+    "status": "R2_INVENTORY_ONCE_AND_REVIEWED_REMAINDER_DRAFT_PREPARED",
+    "draft_dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+    "draft_host_counts": {
+      "127x01": 512,
+      "127x08": 508
+    },
+    "qualification_status": "NOT_STARTED"
+  },
+  "final_durability": {
+    "schema": "clasher.t1.final-phase-health.v1",
+    "utc": "2026-10-11T11:45:30Z",
+    "outcomes_sealed": true,
+    "outcomes_read": false,
+    "host": "127x01",
+    "phase": "replacement-r2",
+    "source_exit_sha256": "1449fdb4020b494b80e4f12f4a5c848135a7000f40c22881c4a12154ddc6d5ff",
+    "completed": 1181,
+    "failed": 0,
+    "unstarted": 0,
+    "supervisor_dead": true,
+    "owned_block_groups_dead": true,
+    "block_groups_checked": 1181,
+    "durable_by_host": {
+      "127x01": 1460,
+      "127x08": 592
+    },
+    "verified_game_hashes": 16416,
+    "remote_ACKs": 592,
+    "copy_backlog": 0,
+    "copier_identity": {
+      "pid": 590814,
+      "pgid": 590814,
+      "start_ticks": 146558310,
+      "cmdline_sha256": "315f78f8294df792802247ecb10542f1d12ed5d4bbb977a3d8b3b6a5f5a0fe75",
+      "uid": 3822945,
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+    },
+    "stop_mechanism": "Reviewed STOP-COPY after all completed hashes and ACKs verified"
+  },
+  "owned_exit_audit": {
+    "utc": "2026-10-11T11:45:49Z",
+    "copier_generation_absent": true,
+    "copier_group_members": [],
+    "supervisor_generation_absent": true
+  },
+  "replacement_dispatch_draft_only": true,
+  "dispatch_launched": false,
+  "stopped_08_evidence_policy": "Retained01:23:49Z deadgroups/partials/160ACK audit and exitSHA bind08; failed started descriptors projected from authenticated exit for reviewed inventory, no fresh08 connection.",
+  "allocation_correction": "Reviewed assign_hosts with full original/r1/r2 history once yielded512/508; initial bespoke510/510 expectation rejected, draft preserved unchanged"
+}
