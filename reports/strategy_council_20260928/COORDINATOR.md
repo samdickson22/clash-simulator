@@ -1990,3 +1990,10 @@ Also on the hub, but with copies elsewhere:
   - **d180** = L(K4S-180) − L(K4-180), X population, 600 paired seeds: **−2.2 pp [−5.2, +0.8]**. The lower bound is not > 0, so **c\* = 0.9**, and the hypothesis sequence stays as r3 §1.4 with H4 retained.
   - **Ordering:** the rule text was locked at daba6859 (09:30:42Z, editor and re-checker phase-E-blind) before phase E was reduced, so the locking clause does not apply. No rule text has changed since.
   - **For the freeze record.**
+- **13:06 UTC: X4S-2 COMPLETE** (d7e00ac4; exploration, never adoptable; 16,980 games; 0 X4S-2 processes on 03/08/05). The X4S conclusion holds.
+  - **Overcharged inference:** K4Sh loses 21.7/23.2/24.0/25.5% at 160/140/120/100 ms vs K4 at 27.8/47.3/89.0/100%. The worker notes that X4S's budget cut was already honest for uniformly slow cores, so K4Sh deliberately overcharges.
+  - **Held-out decks:** K4S − K4 is −31.4 pp at 140 ms and −69.4 pp at 120 ms.
+  - **Full-speed cost:** +0.6 pp [−0.8, 2.2] pooled over 1,668 seeds; S-lite doesn't help.
+  - **Threshold:** the worker suggests S-default on below ~0.95×, consistent with the c\* = 0.9 record.
+  - **Vacancy:** 08 vacant since 12:00Z (STOP and census at 12:15:16Z); 03 vacant since 13:01Z.
+  - **Next:** **K4S freeze-fill preparation** launched on 03 (Opus worker, clasher-prereg-k4s-freeze-prep-20261011-r1): SD1 manifest and supersession draft, seed audit, harness plus delta manifest with independent reducer/verifier and Sol review, 03 qualification, separate Mac script, freeze-record skeleton. No freeze and no reporting.
