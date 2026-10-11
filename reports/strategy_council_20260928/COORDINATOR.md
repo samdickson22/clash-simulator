@@ -2129,3 +2129,8 @@ Also on the hub, but with copies elsewhere:
     5. **Authorization:** the same bindings as 20:04:59Z, with reporting_jobs plus this ruling cited.
   - **03:** its current open-ended phase keeps running. Accept the ~11-block motd loss at ~00:58Z and the stop at the 08:47Z apt timer, then continue in windowed rounds. No pre-emptive STOP, since no drain mode exists.
   - **Escalation threshold:** now 50% of either replacement cap (150 primary / 45 guard), or any stop that isn't apt/motd.
+- **22:11 UTC: K4S ruling revised to Option A** (supersedes the windowed-dispatch part of 76887b33). The frozen `replace.py` inventories only stopped phases, needs ≥2 hosts, and re-dispatches the full rebalanced remainder; windowed dispatch would be new code, so it is withdrawn.
+  - **Now:** owned STOP on 03, then one blind inventory of both reporting phases, the ledger, a fresh namespace k4s-confirm-replacement-r1 on 03 and 04, a full rebalanced dispatch, fresh launch-time qualification, and smoke carry-over only with byte-identical bindings.
+  - **Each future apt/motd stop** repeats this frozen round cycle.
+  - **Still apply before every launch:** the motd-stamp pre-trigger and the timer readings.
+  - **Escalate** at 50% of either cap, if any cell's replacement index nears its k limit (11 / 9), or on any non-apt/motd stop.
