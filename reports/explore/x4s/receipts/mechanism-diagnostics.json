@@ -1,0 +1,56 @@
+{
+ "K0c-200": {
+  "decisions": 118043,
+  "median_candidates": 12,
+  "median_candidates_cut": 12,
+  "play_rate_pct": 18.739781266148775
+ },
+ "K4-120": {
+  "decisions": 95698,
+  "median_candidates": 24.0,
+  "median_candidates_cut": 24.0,
+  "play_rate_pct": 10.50596668686911
+ },
+ "K4-140": {
+  "decisions": 79631,
+  "median_candidates": 12,
+  "median_candidates_cut": 12.0,
+  "play_rate_pct": 24.722783840464142
+ },
+ "K4-160": {
+  "decisions": 72824,
+  "median_candidates": 12.0,
+  "median_candidates_cut": 12.0,
+  "play_rate_pct": 30.514665494891794
+ },
+ "K4-200": {
+  "decisions": 70180,
+  "median_candidates": 12.0,
+  "median_candidates_cut": 12,
+  "play_rate_pct": 32.53776004559704
+ },
+ "K4S-120": {
+  "decisions": 74221,
+  "median_candidates": 12,
+  "median_candidates_cut": 12.0,
+  "play_rate_pct": 32.564907505961926
+ },
+ "K4S-140": {
+  "decisions": 71266,
+  "median_candidates": 12.0,
+  "median_candidates_cut": 12.0,
+  "play_rate_pct": 32.673364577779026
+ },
+ "K4S-160": {
+  "decisions": 70357,
+  "median_candidates": 12,
+  "median_candidates_cut": 12,
+  "play_rate_pct": 33.143823642281504
+ },
+ "K4S-200": {
+  "decisions": 69545,
+  "median_candidates": 12,
+  "median_candidates_cut": 12,
+  "play_rate_pct": 32.94557480767848
+ }
+}

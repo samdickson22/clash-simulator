@@ -20,3 +20,11 @@ STOP file: <job>/STOP on each host. Hard stop 2026-10-11T14:00:00Z.
 - 01:45Z: unit tests r2 31 passed; corpus qualification r2 PASS (same counts). Completed-play-kept/student-WAIT paths covered by unit tests only.
 - 01:44Z: smoke complete: 72 games, 8 blocks, 425 s wall on 8 slots (~7 min per 9-game block); excluded, outcomes not inspected.
 - 01:50Z: STOP test r2 PASS on 08 (new supervisor): STOP 01:50:15Z → exit 01:50:17Z, durable block written, 0 X4S processes left; STOP removed.
+- 01:50Z: freeze commit 63538665 pushed (plan, harness, seed audit, qualification receipts); deployed bytes on 03/08 verified equal.
+- 01:50:49Z / 01:50:50Z: REPORTING launched: reporting-03 (300 indices, (i//50) even) and reporting-08 (300, odd), 12 slots each, 5-core masks verified; sync puller on 05 (logs/sync-pid.json). Expected ~7 min per block per slot → ~3 h.
+- 02:17Z: progress 03 50/300 blocks, 08 49/300; 98 blocks mirrored to 05; MemAvailable 118 GiB, owned PSS ≤3.8 GiB; no console users. ETA ~04:30Z.
+- 02:45Z: progress 03 103/300, 08 104/300 blocks; 206 mirrored; healthy (MemAvailable 118 GiB, PSS ≤3.9 GiB, no console users). ETA ~04:35Z.
+- 03:13Z: progress 03 164/300, 08 164/300 blocks; 328 mirrored; healthy. ETA ~04:25Z.
+- 03:42Z: progress 03 225/300, 08 224/300; 449 mirrored; healthy. ETA ~04:20Z.
+- 04:18:12Z (03) / 04:18:32Z (08): REPORTING COMPLETE, 300/300 blocks per host, rc 0, empty groups. 04:19Z STOP files placed on both hosts to retire sync; 04:20:39Z sync retired both hosts, 5,400 games mirrored. 127x08 holds zero X4S processes.
+- 04:21Z: reduced (results.json); independent raw recount matches. RESULTS.md written.
