@@ -1,0 +1,95 @@
+{
+  "branch": "worker/t1-tiers-amendment2-20261011",
+  "candidate_commit": "e521800b40d8fddb694b40801b994a0e6affd256",
+  "conditions": {
+    "python_scope": {
+      "import_math_same_behavior": true,
+      "mac_interpreter_exercised": false,
+      "mac_requires": ">=3.12",
+      "mac_session_exercised": false,
+      "pool_PC3_python": "3.12",
+      "validation_python": "3.8.10"
+    },
+    "same_bytes_everywhere": {
+      "bind_new_inventories_to_integration_commit": true,
+      "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+      "mixed_population_unpoolable": true,
+      "old_bytes_reference_or_smoke_void": true,
+      "old_bytes_require_reprepare_and_rerun": true,
+      "prepare_bundles_only_after_integration": true,
+      "routes": [
+        "END reference",
+        "A6 smoke",
+        "pooling",
+        "every Mac session"
+      ]
+    }
+  },
+  "coordinator_authorization_position": 7746,
+  "coordinator_disposition_commit": "6a2669ae9cab4a737697480f4c7208751d4d2841",
+  "coordinator_merge_authorization_position": 7785,
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "deployment": "approved for integration by coordinator; prospective END/A6 inventories/bundles prepared only afterward with identical amended bytes; separate END/Mac/outcome authorization still required",
+  "independent_review": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/TIERS-AMENDMENT-2-REVIEW-r1.md",
+    "sha256": "021c8f4477a2eebd04614672f6a66e52f0513e813efc7eb66501c48dc70031af",
+    "verdict": "APPROVE_WITH_CONDITIONS"
+  },
+  "integration_recorded_utc": "2026-10-11T18:06:55Z",
+  "k4s_companion": {
+    "entries": [
+      "reused_readonly",
+      "measure_tiers_unmodified"
+    ],
+    "k4s_files_modified_here": false,
+    "manifest_path": "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json",
+    "new_measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+    "owner": "coordinator",
+    "required_before": "any K4S Mac session",
+    "requires_independent_Sol_review": true,
+    "requires_manifest_hash_regeneration": true
+  },
+  "mac_access": false,
+  "note": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-2-20261011.md",
+    "sha256": "1636c6df1f34069b790d3afeaea915b8b0c2804c047567e3fb757d6e9e26f05a"
+  },
+  "original_freeze": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-FREEZE-20261010.json",
+    "sha256": "47aba25e306d787518ec41bac6ecbca88e3372c03f5b118aacda2c5b86ae217c",
+    "unchanged": true
+  },
+  "outcome_blind": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "parent_commit": "66acf60c4b593a3841a0aac78d81892197aabecc",
+  "production_delta": "import math only",
+  "running_jobs_modified": false,
+  "schema": "clasher.tiers.amendment2-candidate.v1",
+  "source_changes": {
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py": {
+      "before_sha256": "5d7de8e36890f0f8d086e77be5ec4e20de1b3cc1f48943bd06e8bbd103046124",
+      "candidate_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+    },
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_measure_tiers.py": {
+      "before_sha256": "f3198e6bf320c98b28e1a27446dceaccd1071f1dfee51bceb539ccc869546586",
+      "candidate_sha256": "84b02676be66a08addb24935dc14251ef32f952e264f597c5ac8c8cd3514843b"
+    }
+  },
+  "status": "APPROVED_WITH_CONDITIONS",
+  "utc": "2026-10-11T17:48:31Z",
+  "validation": {
+    "affinity": [
+      63
+    ],
+    "command": "python3 -B reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_measure_tiers.py",
+    "host": "127x05",
+    "mac_interpreter_exercised": false,
+    "mac_session_exercised": false,
+    "nice": 19,
+    "post_fix_nonfinite_and_outside_gate_rejected": true,
+    "pre_fix_regression": "NameError: name math is not defined in Amendment 1 non-dry admission path",
+    "python": "3.8.10",
+    "tests_passed": 33
+  }
+}
