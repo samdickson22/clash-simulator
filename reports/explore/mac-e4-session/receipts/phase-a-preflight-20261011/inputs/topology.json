@@ -1,0 +1,29 @@
+{
+ "E": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "P": [
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "mapping_evidence": {
+  "captured_utc": "2026-10-11T20:20:27Z",
+  "evidence_sha256": {
+   "ioreg-cpus.txt": "ef3cf702d3c7318296cdb2ff39315ac6d8ecec03b8b0a6a5ede59b9febcf6016",
+   "qos-probe.json": "169f4f1bfea61510e06d0e7e83536ab4311bf7dfe0c97f536d225f899da6c75c",
+   "sysctl-perflevel.txt": "ae79322e495158d47544c770b868f413ecf9ec79c5d3a3bc56fb8e6ac626089a"
+  },
+  "host": "Mac16,11 Apple M4 Pro macOS 27.0 (26A428)",
+  "method": "IODeviceTree /cpus: each cpuN logical-cpu-id with cluster-type E (ids 0-3, logical-cluster-id 0) or P (ids 4-7 cluster 1, 8-11 cluster 2); corroborated by host_processor_info per-index busy deltas: QOS_CLASS_BACKGROUND spin loads only indices 0-3, QOS_CLASS_USER_INTERACTIVE spin loads indices 4-7; counts equal hw.perflevel0.logicalcpu=8 (Performance) and hw.perflevel1.logicalcpu=4 (Efficiency)",
+  "review": "pending independent review"
+ }
+}

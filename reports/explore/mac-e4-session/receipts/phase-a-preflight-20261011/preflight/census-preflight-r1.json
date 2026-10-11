@@ -1,0 +1,68 @@
+{
+ "scope": "NON-COUNTED Phase A census preflight (frozen telemetry.Census + receipts.census_average, 180 s)",
+ "samples": 164,
+ "over_0_2": [
+  [
+   "31230",
+   "/Users/sam/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService",
+   0.22202433680775457
+  ],
+  [
+   "93121",
+   "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+   0.5054140563600225
+  ]
+ ],
+ "top": [
+  [
+   "93121",
+   "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+   0.505
+  ],
+  [
+   "31230",
+   "/Users/sam/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService",
+   0.222
+  ],
+  [
+   "596",
+   "/usr/libexec/opendirectoryd",
+   0.076
+  ],
+  [
+   "32408",
+   "/usr/libexec/replayd",
+   0.036
+  ],
+  [
+   "34720",
+   "/usr/libexec/sysmond",
+   0.027
+  ],
+  [
+   "821",
+   "/opt/homebrew/opt/tailscale/bin/tailscaled",
+   0.019
+  ],
+  [
+   "43541",
+   "/Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper (Renderer).app/Contents/MacOS/T3 Code (Nightly) Helper (Renderer)",
+   0.018
+  ],
+  [
+   "43819",
+   "/Applications/T3 Code (Nightly).app/Contents/Resources/resource-monitor/t3-resource-monitor",
+   0.016
+  ],
+  [
+   "60300",
+   "/System/Applications/Utilities/Activity Monitor.app/Contents/MacOS/Activity Monitor",
+   0.015
+  ],
+  [
+   "43269",
+   "/Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper.app/Contents/MacOS/T3 Code (Nightly) Helper",
+   0.012
+  ]
+ ]
+}

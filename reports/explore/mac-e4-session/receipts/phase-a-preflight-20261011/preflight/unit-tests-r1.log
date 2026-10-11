@@ -1,0 +1,396 @@
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+======================================================================
+ERROR: test_background_worker_runs_every_tier_and_full_corpus_on_its_pinned_mask (test_fleet_contract.FleetProfileTests.test_background_worker_runs_every_tier_and_full_corpus_on_its_pinned_mask)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_fleet_contract.py", line 181, in test_background_worker_runs_every_tier_and_full_corpus_on_its_pinned_mask
+    with patch("replay_load.validate_bundle",return_value=manifest),patch("fleet_profile.pinned_profile",return_value=(None,None,([], [mask],63))),patch("tier_backend.TierBackend",return_value=backend),patch("os.sched_setaffinity") as affinity:
+                                                                                                                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <module 'os' (frozen)> does not have the attribute 'sched_setaffinity'
+
+======================================================================
+ERROR: test_guard_loads_frozen_final_t1_code_and_enforces_op6_strictness_and_foreign_stops (test_fleet_end.FleetValidityTests.test_guard_loads_frozen_final_t1_code_and_enforces_op6_strictness_and_foreign_stops)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_fleet_end.py", line 150, in test_guard_loads_frozen_final_t1_code_and_enforces_op6_strictness_and_foreign_stops
+    base=Path(tmp);manifest,bus,job,_=stage_guard(base);root=base/"t1-guard"
+                                      ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_pinned_freeze_and_seed_join_inputs_cannot_change (test_guard_seeds.GuardSeedTests.test_pinned_freeze_and_seed_join_inputs_cannot_change) (case='freeze')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 104, in test_pinned_freeze_and_seed_join_inputs_cannot_change
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_pinned_freeze_and_seed_join_inputs_cannot_change (test_guard_seeds.GuardSeedTests.test_pinned_freeze_and_seed_join_inputs_cannot_change) (case='bundle-seed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 104, in test_pinned_freeze_and_seed_join_inputs_cannot_change
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_pinned_freeze_and_seed_join_inputs_cannot_change (test_guard_seeds.GuardSeedTests.test_pinned_freeze_and_seed_join_inputs_cannot_change) (case='live-join')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 104, in test_pinned_freeze_and_seed_join_inputs_cannot_change
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_pinned_freeze_and_seed_join_inputs_cannot_change (test_guard_seeds.GuardSeedTests.test_pinned_freeze_and_seed_join_inputs_cannot_change) (case='missing-join')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 104, in test_pinned_freeze_and_seed_join_inputs_cannot_change
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_pinned_freeze_and_seed_join_inputs_cannot_change (test_guard_seeds.GuardSeedTests.test_pinned_freeze_and_seed_join_inputs_cannot_change) (case='unreviewed-op6')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 104, in test_pinned_freeze_and_seed_join_inputs_cannot_change
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='pid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='start_ticks')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='uid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='cmdline_sha256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='ppid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='pgid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict (test_guard_seeds.GuardSeedTests.test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict) (field='conflict')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 91, in test_seed_does_not_refresh_changed_parent_generation_or_overwrite_conflict
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seeded_childless_parent_is_admitted_before_census_once_on_03_and_08 (test_guard_seeds.GuardSeedTests.test_seeded_childless_parent_is_admitted_before_census_once_on_03_and_08) (host='127x03')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 71, in test_seeded_childless_parent_is_admitted_before_census_once_on_03_and_08
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_seeded_childless_parent_is_admitted_before_census_once_on_03_and_08 (test_guard_seeds.GuardSeedTests.test_seeded_childless_parent_is_admitted_before_census_once_on_03_and_08) (host='127x08')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 71, in test_seeded_childless_parent_is_admitted_before_census_once_on_03_and_08
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_self_repinned_08_join_still_requires_committed_t1_bytes (test_guard_seeds.GuardSeedTests.test_self_repinned_08_join_still_requires_committed_t1_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 118, in test_self_repinned_08_join_still_requires_committed_t1_bytes
+    base=Path(tmp);manifest,bus,job,receipts=stage_guard(base)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 25, in stage_guard
+    freeze_raw=raw(REVIEWED_FREEZE,"reports/explore/t1/FROZEN-T1.json")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_guard_seeds.py", line 24, in raw
+    return subprocess.check_output(["git","-C",str(repository),"show",commit+":"+name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime', 'show', 'aeeb3003d2a877bd7ff538a1977cbbc37adb404f:reports/explore/t1/FROZEN-T1.json']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_failed_admission_is_recorded_and_classified_without_starting_block (test_reference_guard_control.ReferenceGuardControlTests.test_failed_admission_is_recorded_and_classified_without_starting_block)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_reference_guard_control.py", line 57, in test_failed_admission_is_recorded_and_classified_without_starting_block
+    with patch("fleet_reference.os.sched_setaffinity"),patch("fleet_validity.ReportingGuard",return_value=guard),patch("fleet_reference.monitor_worker",side_effect=lambda *args:args[-1]()):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <module 'os' (frozen)> does not have the attribute 'sched_setaffinity'
+
+======================================================================
+ERROR: test_monitor_records_serial_begin_end_and_failure_before_ack (test_reference_guard_control.ReferenceGuardControlTests.test_monitor_records_serial_begin_end_and_failure_before_ack) (fail=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_reference_guard_control.py", line 39, in test_monitor_records_serial_begin_end_and_failure_before_ack
+    with patch("fleet_reference.os.sched_setaffinity"),patch("fleet_validity.ReportingGuard",return_value=guard),patch("fleet_reference.monitor_worker",side_effect=monitor):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <module 'os' (frozen)> does not have the attribute 'sched_setaffinity'
+
+======================================================================
+ERROR: test_monitor_records_serial_begin_end_and_failure_before_ack (test_reference_guard_control.ReferenceGuardControlTests.test_monitor_records_serial_begin_end_and_failure_before_ack) (fail=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_reference_guard_control.py", line 39, in test_monitor_records_serial_begin_end_and_failure_before_ack
+    with patch("fleet_reference.os.sched_setaffinity"),patch("fleet_validity.ReportingGuard",return_value=guard),patch("fleet_reference.monitor_worker",side_effect=monitor):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <module 'os' (frozen)> does not have the attribute 'sched_setaffinity'
+
+----------------------------------------------------------------------
+Ran 70 tests in 8.627s
+
+FAILED (errors=20)

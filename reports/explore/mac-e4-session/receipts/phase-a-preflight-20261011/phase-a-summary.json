@@ -1,0 +1,123 @@
+{
+ "blockers": [
+  "G1 T1 END pooled reference + reviewed T1-REGISTRATION packet not yet committed (expected)",
+  "Census: Codex Computer Use (and the WindowServer load it drives) must be idle/quit, and Activity Monitor closed, during the session; needs GUI/owner action",
+  "Mac states.pkl / registration packet transfer waits for T1 END bundle identity (files[states.pkl] SHA)",
+  "Topology mapping_evidence and runtime staging need independent review"
+ ],
+ "completed_utc": "2026-10-11T20:35:18Z",
+ "counted": false,
+ "live_client": false,
+ "mac_inventory": {
+  "chip": "Apple M4 Pro",
+  "console_users": [
+   "sam (console since Oct 2)",
+   "simonfarshid (console since Oct 7 and Sep 18; ttys000 ssh from 100.64.176.68)"
+  ],
+  "cores": {
+   "E": 4,
+   "P": 8,
+   "logical": 12
+  },
+  "disk_free_gib": 63,
+  "emulator": {
+   "adb_server_processes": 3,
+   "evidence": "ps only",
+   "qemu_or_emulator_process": false,
+   "touched": false
+  },
+  "existing_checkouts": [
+   "~/Desktop/code/clasher @ b082ddb97 (Sam's; untouched)",
+   "~/Desktop/code/clasher-runtime-v4 (live runtime; read-only source of TRAIN match 1975100700)",
+   "clasher-cleanup"
+  ],
+  "kernel": "Darwin 27.0.0 RELEASE_ARM64_T6041",
+  "macos": "27.0 (26A428)",
+  "model": "Mac16,11",
+  "other_load": "WindowServer ~0.37-0.51 core, Codex Computer Use SkyComputerUseService ~0.22 core, opendirectoryd ~0.08, replayd, T3 Code app, Activity Monitor (simonfarshid), canvasdoc node servers, /private/tmp/watch-t3-sk worker.sh x3 (1 Hz sleep loops), load average ~2.8-3.2",
+  "packages": {
+   "cv2": "5.0.0",
+   "dill": "0.4.1",
+   "gymnasium": "1.2.3",
+   "msgspec": "0.20.0",
+   "numpy": "2.3.5",
+   "psutil": "7.2.2",
+   "pydantic": "2.13.4",
+   "pygame": "2.6.1",
+   "scipy": "1.18.0",
+   "torch": "2.10.0 (MPS available)",
+   "ultralytics": "8.1.24"
+  },
+  "pmset_therm": "no thermal/performance/CPU-power warnings recorded",
+  "python": "/Users/sam/Desktop/code/clasher/.venv/bin/python 3.12.13 arm64 (existing env, used read-only)",
+  "ram_bytes": 25769803776,
+  "rust": "rustc/cargo 1.97.1, aarch64-apple-darwin, Xcode CLT, offline crates cache present",
+  "uptime_days": 26
+ },
+ "network_to_client": false,
+ "operator": "claude-opus-5-5 subagent clasher-mac-e4-session-20261011-r1 on 127x05",
+ "outcomes_read": false,
+ "preflight": {
+  "arm64_build": {
+   "command": "cargo build --offline --locked --release --features extension-module,gil-release --target aarch64-apple-darwin -j 2, RUSTFLAGS empty, nice 10",
+   "imports": true,
+   "methods": [
+    "rollout",
+    "rollout_e1",
+    "score_wait_screen8",
+    "select_action"
+   ],
+   "note": "scratch only; the counted build is rebuilt by build_tiers.sh into a fresh dir in-session",
+   "result": "PASS",
+   "scratch": true,
+   "scratch_native_sha256": "0e7213abb0fdae2fa58ccc43f15da0b4d26c2e646ff8de1ef9cc33402acd4e72",
+   "seconds": 31
+  },
+  "perception": {
+   "device": "mps",
+   "note": "unloaded (no search); non-counted",
+   "result": "PASS",
+   "seconds": 90,
+   "service_ms_p50": 21.2,
+   "service_ms_p95": 30.7,
+   "service_ms_p99": 38.7,
+   "warm_fps": 20.01
+  },
+  "quiescence_census": {
+   "method": "frozen telemetry.Census + receipts.census_average, 180 s",
+   "monitor_sample_cost_s": 0.045,
+   "over_0_2_core": {
+    "Codex Computer Use SkyComputerUseService": 0.222,
+    "WindowServer": 0.505
+   },
+   "result": "FAIL (would block)"
+  },
+  "runtime_pins": "PASS (names complete after overlay; 11 qualified S1 sources match)",
+  "stage_load_and_admit_replay": "PASS both TRAIN matches (split + media SHA admission)",
+  "unit_tests": {
+   "full_suite": "70 run, 50 OK, 20 errors all fleet-only: 16 need git history (archive runtime has no .git), 4 need Linux sched_setaffinity",
+   "test_measure_tiers": "33/33 OK on Mac Python 3.12.13",
+   "test_prepare_fleet_smoke": "2/2 OK"
+  }
+ },
+ "schema": "clasher.mac-e4-session.phase-a.v1",
+ "staging": {
+  "artifacts": {
+   "R3a-calibration.json": "e3003533",
+   "R3a.pt": "37509a43",
+   "load/body.pt": "8b6fde6f",
+   "load/geometry.json": "8104006c",
+   "load/hud.npz": "d09682eb",
+   "load/split.json": "3edbd25b",
+   "match-0 (1975101190 train) video": "3223f562",
+   "match-1 (1975100700 train) video": "2ec86df8",
+   "v1.pt": "d77005d5"
+  },
+  "lock": "session.lock (operator-created lease file)",
+  "measure_tiers_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "root": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011",
+  "runtime": "runtime-staging.json",
+  "runtime_commit": "d651b52c (post-6afcbbab; T1 END source commit)",
+  "topology": "inputs/topology.json E=[0-3] P=[4-11]; evidence ioreg + QoS probe; NEEDS independent review"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "config": {
+  "body": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/inputs/artifacts/load/body.pt",
+  "device": "mps",
+  "geometry": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/inputs/artifacts/load/geometry.json",
+  "hud": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/inputs/artifacts/load/hud.npz"
+ },
+ "kind": "v3-body-hud-only",
+ "matches": [
+  "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/inputs/artifacts/load/match-0",
+  "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/inputs/artifacts/load/match-1"
+ ],
+ "split": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/inputs/artifacts/load/split.json",
+ "target_fps": 20
+}

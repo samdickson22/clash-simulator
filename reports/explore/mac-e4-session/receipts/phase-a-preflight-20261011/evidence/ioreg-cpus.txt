@@ -1,0 +1,435 @@
++-o cpus  <class IOPlatformDevice, id 0x1000002d1, registered, matched, active, busy 0 (1 ms), retain 18>
+  | {
+  |   "max_cpus" = <10000000>
+  |   "cpu-cluster-count" = <03000000>
+  |   "p-core-count" = <08000000>
+  |   "e-core-count" = <04000000>
+  |   "#address-cells" = <01000000>
+  |   "#size-cells" = <00000000>
+  |   "name" = <"cpus">
+  |   "AAPL,phandle" = <15000000>
+  | }
+  | 
+  +-o cpu0@0  <class IOPlatformDevice, id 0x1000002c4, registered, matched, active, busy 0 (0 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <00000000>
+  |     "cluster-type" = <"E">
+  |     "cluster-core-id" = <00000000>
+  |     "IOInterruptSpecifiers" = (<33000000>)
+  |     "AAPL,phandle" = <16000000>
+  |     "cpu-id" = <00000000>
+  |     "acc-impl-reg" = <0000f010020000008800040000000000>
+  |     "logical-cluster-id" = 0
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "l2-cache-size" = <00004000>
+  |     "function-error_handler" = <2d0000004872724500000000>
+  |     "cpu-uttdbg-reg" = <0000041002000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,sawtooth","ARM,v8">
+  |     "interrupts" = <33000000>
+  |     "name" = <"cpu0">
+  |     "reg-private" = <0000011002000000>
+  |     "function-enable_core" = <e000000065726f4301000000>
+  |     "cluster-id" = <00000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00000510020000001090000000000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000011002000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 0
+  |     "reg" = <00000000>
+  |     "cpm-impl-reg" = <0000e4100200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu1@1  <class IOPlatformDevice, id 0x1000002c5, registered, matched, active, busy 0 (2 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <00000000>
+  |     "cluster-type" = <"E">
+  |     "cluster-core-id" = <01000000>
+  |     "IOInterruptSpecifiers" = (<36000000>)
+  |     "AAPL,phandle" = <17000000>
+  |     "cpu-id" = <01000000>
+  |     "acc-impl-reg" = <0000f010020000008800040000000000>
+  |     "logical-cluster-id" = 0
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "l2-cache-size" = <00004000>
+  |     "function-error_handler" = <2d0000004872724501000000>
+  |     "cpu-uttdbg-reg" = <0000141002000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,sawtooth","ARM,v8">
+  |     "interrupts" = <36000000>
+  |     "name" = <"cpu1">
+  |     "reg-private" = <0000111002000000>
+  |     "function-enable_core" = <e000000065726f4302000000>
+  |     "cluster-id" = <00000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00001510020000001090000000000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000111002000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 1
+  |     "reg" = <01000000>
+  |     "cpm-impl-reg" = <0000e4100200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu2@2  <class IOPlatformDevice, id 0x1000002c7, registered, matched, active, busy 0 (61 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <00000000>
+  |     "cluster-type" = <"E">
+  |     "cluster-core-id" = <02000000>
+  |     "IOInterruptSpecifiers" = (<39000000>)
+  |     "AAPL,phandle" = <18000000>
+  |     "cpu-id" = <02000000>
+  |     "acc-impl-reg" = <0000f010020000008800040000000000>
+  |     "logical-cluster-id" = 0
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "l2-cache-size" = <00004000>
+  |     "function-error_handler" = <2d0000004872724502000000>
+  |     "cpu-uttdbg-reg" = <0000241002000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,sawtooth","ARM,v8">
+  |     "interrupts" = <39000000>
+  |     "name" = <"cpu2">
+  |     "reg-private" = <0000211002000000>
+  |     "function-enable_core" = <e000000065726f4304000000>
+  |     "cluster-id" = <00000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00002510020000001090000000000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000211002000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 2
+  |     "reg" = <02000000>
+  |     "cpm-impl-reg" = <0000e4100200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu3@3  <class IOPlatformDevice, id 0x1000002c8, registered, matched, active, busy 0 (1 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <00000000>
+  |     "cluster-type" = <"E">
+  |     "cluster-core-id" = <03000000>
+  |     "IOInterruptSpecifiers" = (<3c000000>)
+  |     "AAPL,phandle" = <19000000>
+  |     "cpu-id" = <03000000>
+  |     "acc-impl-reg" = <0000f010020000008800040000000000>
+  |     "logical-cluster-id" = 0
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "l2-cache-size" = <00004000>
+  |     "function-error_handler" = <2d0000004872724503000000>
+  |     "cpu-uttdbg-reg" = <0000341002000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,sawtooth","ARM,v8">
+  |     "interrupts" = <3c000000>
+  |     "name" = <"cpu3">
+  |     "reg-private" = <0000311002000000>
+  |     "function-enable_core" = <e000000065726f4308000000>
+  |     "cluster-id" = <00000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00003510020000001090000000000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000311002000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 3
+  |     "reg" = <03000000>
+  |     "cpm-impl-reg" = <0000e4100200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu4@100  <class IOPlatformDevice, id 0x1000002c9, registered, matched, active, busy 0 (1 ms), retain 8>
+  |   {
+  |     "fixed-frequency" = <00366e0100000000>
+  |     "logical-cluster-id" = 1
+  |     "coresight-reg" = <0000011102000000c800030000000000>
+  |     "cluster-core-id" = <00000000>
+  |     "die-id" = <00000000>
+  |     "state" = <"running">
+  |     "clock-frequency" = <00366e0100000000>
+  |     "l2-cache-size" = <00000001>
+  |     "interrupt-parent" = <cb000000>
+  |     "function-error_handler" = <2d0000004872724504000000>
+  |     "interrupts" = <57000000>
+  |     "timebase-frequency" = <00366e0100000000>
+  |     "logical-cpu-id" = 4
+  |     "cpu-impl-reg" = <00000511020000001090000000000000>
+  |     "function-enable_core" = <e000000065726f4310000000>
+  |     "cluster-id" = <01000000>
+  |     "l2-cache-id" = <00000000>
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "memory-frequency" = <00366e0100000000>
+  |     "cpm-impl-reg" = <0000e4110200000010c0000000000000>
+  |     "cpu-uttdbg-reg" = <0000041102000000c800000000000000>
+  |     "peripheral-frequency" = <00366e0100000000>
+  |     "AAPL,phandle" = <1a000000>
+  |     "cpu-id" = <04000000>
+  |     "name" = <"cpu4">
+  |     "cluster-power-down" = <01000000>
+  |     "cluster-type" = <"P">
+  |     "no-aic-ipi-required" = <>
+  |     "device_type" = <"cpu">
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "die-cluster-id" = <01000000>
+  |     "reg-private" = <0000011102000000>
+  |     "reg" = <00010000>
+  |     "acc-impl-reg" = <0000f011020000008800040000000000>
+  |     "bus-frequency" = <00366e0100000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "IOInterruptSpecifiers" = (<57000000>)
+  |   }
+  |   
+  +-o cpu5@101  <class IOPlatformDevice, id 0x1000002ca, registered, matched, active, busy 0 (55 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <01000000>
+  |     "cluster-type" = <"P">
+  |     "cluster-core-id" = <01000000>
+  |     "IOInterruptSpecifiers" = (<5a000000>)
+  |     "AAPL,phandle" = <1b000000>
+  |     "cpu-id" = <05000000>
+  |     "acc-impl-reg" = <0000f011020000008800040000000000>
+  |     "logical-cluster-id" = 1
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "function-error_handler" = <2d0000004872724505000000>
+  |     "l2-cache-size" = <00000001>
+  |     "cpu-uttdbg-reg" = <0000141102000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "interrupts" = <5a000000>
+  |     "name" = <"cpu5">
+  |     "reg-private" = <0000111102000000>
+  |     "function-enable_core" = <e000000065726f4320000000>
+  |     "cluster-id" = <01000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00001511020000001090000000000000>
+  |     "cluster-power-down" = <01000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000111102000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 5
+  |     "reg" = <01010000>
+  |     "cpm-impl-reg" = <0000e4110200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu6@102  <class IOPlatformDevice, id 0x1000002cb, registered, matched, active, busy 0 (54 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <01000000>
+  |     "cluster-type" = <"P">
+  |     "cluster-core-id" = <02000000>
+  |     "IOInterruptSpecifiers" = (<5d000000>)
+  |     "AAPL,phandle" = <1c000000>
+  |     "cpu-id" = <06000000>
+  |     "acc-impl-reg" = <0000f011020000008800040000000000>
+  |     "logical-cluster-id" = 1
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "function-error_handler" = <2d0000004872724506000000>
+  |     "l2-cache-size" = <00000001>
+  |     "cpu-uttdbg-reg" = <0000241102000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "interrupts" = <5d000000>
+  |     "name" = <"cpu6">
+  |     "reg-private" = <0000211102000000>
+  |     "function-enable_core" = <e000000065726f4340000000>
+  |     "cluster-id" = <01000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00002511020000001090000000000000>
+  |     "cluster-power-down" = <01000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000211102000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 6
+  |     "reg" = <02010000>
+  |     "cpm-impl-reg" = <0000e4110200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu7@103  <class IOPlatformDevice, id 0x1000002cc, registered, matched, active, busy 0 (61 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <01000000>
+  |     "cluster-type" = <"P">
+  |     "cluster-core-id" = <03000000>
+  |     "IOInterruptSpecifiers" = (<60000000>)
+  |     "AAPL,phandle" = <1d000000>
+  |     "cpu-id" = <07000000>
+  |     "acc-impl-reg" = <0000f011020000008800040000000000>
+  |     "logical-cluster-id" = 1
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "function-error_handler" = <2d0000004872724507000000>
+  |     "l2-cache-size" = <00000001>
+  |     "cpu-uttdbg-reg" = <0000341102000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "interrupts" = <60000000>
+  |     "name" = <"cpu7">
+  |     "reg-private" = <0000311102000000>
+  |     "function-enable_core" = <e000000065726f4380000000>
+  |     "cluster-id" = <01000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00003511020000001090000000000000>
+  |     "cluster-power-down" = <01000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000311102000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 7
+  |     "reg" = <03010000>
+  |     "cpm-impl-reg" = <0000e4110200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu10@200  <class IOPlatformDevice, id 0x1000002cd, registered, matched, active, busy 0 (42 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <02000000>
+  |     "cluster-type" = <"P">
+  |     "cluster-core-id" = <00000000>
+  |     "IOInterruptSpecifiers" = (<82000000>)
+  |     "AAPL,phandle" = <20000000>
+  |     "cpu-id" = <0a000000>
+  |     "acc-impl-reg" = <0000f012020000008800040000000000>
+  |     "logical-cluster-id" = 2
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "function-error_handler" = <2d000000487272450a000000>
+  |     "l2-cache-size" = <00000001>
+  |     "cpu-uttdbg-reg" = <0000041202000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "interrupts" = <82000000>
+  |     "name" = <"cpu10">
+  |     "reg-private" = <0000011202000000>
+  |     "function-enable_core" = <e000000065726f4300040000>
+  |     "cluster-id" = <02000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00000512020000001090000000000000>
+  |     "cluster-power-down" = <01000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000011202000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 8
+  |     "reg" = <00020000>
+  |     "cpm-impl-reg" = <0000e4120200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu11@201  <class IOPlatformDevice, id 0x1000002ce, registered, matched, active, busy 0 (1 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <02000000>
+  |     "cluster-type" = <"P">
+  |     "cluster-core-id" = <01000000>
+  |     "IOInterruptSpecifiers" = (<85000000>)
+  |     "AAPL,phandle" = <21000000>
+  |     "cpu-id" = <0b000000>
+  |     "acc-impl-reg" = <0000f012020000008800040000000000>
+  |     "logical-cluster-id" = 2
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "function-error_handler" = <2d000000487272450b000000>
+  |     "l2-cache-size" = <00000001>
+  |     "cpu-uttdbg-reg" = <0000141202000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "interrupts" = <85000000>
+  |     "name" = <"cpu11">
+  |     "reg-private" = <0000111202000000>
+  |     "function-enable_core" = <e000000065726f4300080000>
+  |     "cluster-id" = <02000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00001512020000001090000000000000>
+  |     "cluster-power-down" = <01000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000111202000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 9
+  |     "reg" = <01020000>
+  |     "cpm-impl-reg" = <0000e4120200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu12@202  <class IOPlatformDevice, id 0x1000002cf, registered, matched, active, busy 0 (1 ms), retain 8>
+  |   {
+  |     "die-cluster-id" = <02000000>
+  |     "cluster-type" = <"P">
+  |     "cluster-core-id" = <02000000>
+  |     "IOInterruptSpecifiers" = (<88000000>)
+  |     "AAPL,phandle" = <22000000>
+  |     "cpu-id" = <0c000000>
+  |     "acc-impl-reg" = <0000f012020000008800040000000000>
+  |     "logical-cluster-id" = 2
+  |     "IOInterruptControllers" = ("IOInterruptController000000CB")
+  |     "no-aic-ipi-required" = <>
+  |     "function-error_handler" = <2d000000487272450c000000>
+  |     "l2-cache-size" = <00000001>
+  |     "cpu-uttdbg-reg" = <0000241202000000c800000000000000>
+  |     "interrupt-parent" = <cb000000>
+  |     "die-id" = <00000000>
+  |     "l2-cache-id" = <00000000>
+  |     "compatible" = <"apple,everest","ARM,v8">
+  |     "interrupts" = <88000000>
+  |     "name" = <"cpu12">
+  |     "reg-private" = <0000211202000000>
+  |     "function-enable_core" = <e000000065726f4300100000>
+  |     "cluster-id" = <02000000>
+  |     "state" = <"waiting">
+  |     "cpu-impl-reg" = <00002512020000001090000000000000>
+  |     "cluster-power-down" = <01000000>
+  |     "function-cpu_idle" = <e000000049757063>
+  |     "coresight-reg" = <0000211202000000c800030000000000>
+  |     "device_type" = <"cpu">
+  |     "logical-cpu-id" = 10
+  |     "reg" = <02020000>
+  |     "cpm-impl-reg" = <0000e4120200000010c0000000000000>
+  |   }
+  |   
+  +-o cpu13@203  <class IOPlatformDevice, id 0x1000002d0, registered, matched, active, busy 0 (54 ms), retain 8>
+      {
+        "die-cluster-id" = <02000000>
+        "cluster-type" = <"P">
+        "cluster-core-id" = <03000000>
+        "IOInterruptSpecifiers" = (<8b000000>)
+        "AAPL,phandle" = <23000000>
+        "cpu-id" = <0d000000>
+        "acc-impl-reg" = <0000f012020000008800040000000000>
+        "logical-cluster-id" = 2
+        "IOInterruptControllers" = ("IOInterruptController000000CB")
+        "no-aic-ipi-required" = <>
+        "function-error_handler" = <2d000000487272450d000000>
+        "l2-cache-size" = <00000001>
+        "cpu-uttdbg-reg" = <0000341202000000c800000000000000>
+        "interrupt-parent" = <cb000000>
+        "die-id" = <00000000>
+        "l2-cache-id" = <00000000>
+        "compatible" = <"apple,everest","ARM,v8">
+        "interrupts" = <8b000000>
+        "name" = <"cpu13">
+        "reg-private" = <0000311202000000>
+        "function-enable_core" = <e000000065726f4300200000>
+        "cluster-id" = <02000000>
+        "state" = <"waiting">
+        "cpu-impl-reg" = <00003512020000001090000000000000>
+        "cluster-power-down" = <01000000>
+        "function-cpu_idle" = <e000000049757063>
+        "coresight-reg" = <0000311202000000c800030000000000>
+        "device_type" = <"cpu">
+        "logical-cpu-id" = 11
+        "reg" = <03020000>
+        "cpm-impl-reg" = <0000e4120200000010c0000000000000>
+      }
+      
+

@@ -1,0 +1,11 @@
+   Compiling unindent v0.2.4
+   Compiling indoc v2.0.7
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+    Finished `release` profile [optimized] target(s) in 30.98s
+/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/preflight/build-r1/clasher_core.cpython-312-darwin.so: Mach-O 64-bit dynamically linked shared library arm64
+/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/preflight/build-r1/clasher_core.cpython-312-darwin.so:
+	/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/preflight/build-r1/target/aarch64-apple-darwin/release/deps/libclasher_core.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+0e7213abb0fdae2fa58ccc43f15da0b4d26c2e646ff8de1ef9cc33402acd4e72  /Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/preflight/build-r1/clasher_core.cpython-312-darwin.so
