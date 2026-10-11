@@ -1,0 +1,57 @@
+{
+  "schema": "clasher.t1.end.memory-hold.health.v1",
+  "observed_at_utc": "2026-10-11T20:42:05Z",
+  "coordinator_ruling": "8f61824e",
+  "coordinator_message_position": 8024,
+  "explicit_adoption_received": false,
+  "decision": "HOLD_NO_REGISTRATION_A6_TIMING_OR_REFERENCE",
+  "hosts": [
+    {
+      "utc": "2026-10-11T20:42:05Z",
+      "host": "127x01",
+      "manifest_sha256": "ac1da9c6455e0bebe4f71eac3a74e1342cc245ceb3e9130b9b39f92076c16ae2",
+      "manifest_unchanged": true,
+      "states_size_unchanged": true,
+      "states_full_sha_verified_at": "2026-10-11T20:32:35Z",
+      "attempt_root_exists": false,
+      "attempt_children": [],
+      "C3_original_utc": "2026-10-11T20:32:35Z",
+      "C3_original_status": "PASS",
+      "outcomes_sealed": true,
+      "timing_started": false
+    },
+    {
+      "utc": "2026-10-11T20:42:05Z",
+      "host": "127x08",
+      "manifest_sha256": "afd62c6f2f1df48a3d988c0a16804dbb22fa769be8945bcc3a877c571d4bb3f2",
+      "manifest_unchanged": true,
+      "states_size_unchanged": true,
+      "states_full_sha_verified_at": "2026-10-11T20:40:02Z",
+      "attempt_root_exists": false,
+      "attempt_children": [],
+      "C3_original_utc": "2026-10-11T20:40:02Z",
+      "C3_original_status": "PASS",
+      "outcomes_sealed": true,
+      "timing_started": false
+    }
+  ],
+  "prior_08_C3_receipt_commit": "3cd0e58bd7ed1416e393f3d85ccfc4c653f86bad",
+  "reporting_completion_commit": "bc3730c4dcfa844df906fb4d888a4735b53ad1b1",
+  "reporting_counts": {
+    "primary": 2400,
+    "guard": 600,
+    "descriptive": 72,
+    "total": 3072,
+    "historical_losses": 54
+  },
+  "outcomes_sealed": true,
+  "bundles_modified": false,
+  "slot_floor_budgets_backend_semantics_relaxed": false,
+  "hub_mirror": "coordinator-paused",
+  "same_end_timer": {
+    "enabled": true,
+    "every_ms": 1200000,
+    "next_run_at": "2026-10-11T21:01:31.182Z"
+  },
+  "required_next_action": "Wait for explicit coordinator Amendment 3 adoption; regenerate distinct repaired END bundles and repeat C3 on both hosts before A6."
+}
