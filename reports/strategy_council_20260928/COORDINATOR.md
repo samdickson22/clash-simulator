@@ -2006,3 +2006,6 @@ Also on the hub, but with copies elsewhere:
     3. admission and dispatch of draft d066dc37 (1,020 rows, 512/508).
   - **Not authorized:** B, heldout. The END clean window comes after T1 reporting finishes.
   - **Perception next:** the 08 HTTP cache must be retired before END.
+- **13:57 UTC: 04 released by perception** at 13:57Z (receipt 5f59f7f8). This releases compute only; all 04 evidence and cache storage is preserved and off-limits. **The planned K4S execution host set is {03, 04}**, neither a T1 reporting host, so K4S could run in parallel with T1 once frozen (pending the END-reference host check). The prep worker now qualifies 04 too.
+  - **T1 status:** 08 fresh qualification PASS (f2a2444e, binding b3099194); two-host smoke r9 launched at 13:54Z.
+  - **The 08 HTTP cache** retires in the END window, per perception's requirements (b58b4bc5).
