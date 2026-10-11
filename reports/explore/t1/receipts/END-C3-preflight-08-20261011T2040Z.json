@@ -1,0 +1,43 @@
+{
+  "C3_offline_preflight": "PASS",
+  "attempts_registered": false,
+  "bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-bundle-preparation-r1/bundle",
+  "cpus": [
+    61
+  ],
+  "environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "full_occupancy_observations": 14646,
+  "golden_states": 125,
+  "guard_admission_names": [
+    "idle-services.json",
+    "owned-copier-admission.json",
+    "owned-supervisor-admission.json",
+    "system-bus-admission.json"
+  ],
+  "guard_freeze_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "host": "127x08",
+  "manifest_sha256": "afd62c6f2f1df48a3d988c0a16804dbb22fa769be8945bcc3a877c571d4bb3f2",
+  "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "memory_timing_gate": "STOP awaiting reviewedTIERSAmendment3 and explicit adoption; regenerate and repeat bothC3 beforeA6",
+  "nice": 19,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "outside_attempt_roots": true,
+  "own_tier_states": 1200,
+  "python": "3.12.13",
+  "python_optimized": false,
+  "qualified_runtime": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-bundle-preparation-r1/runtime",
+  "reporting_blocks": 3072,
+  "reporting_losses": 54,
+  "runtime_files": 3775,
+  "source_commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+  "states_bytes": 11649583550,
+  "states_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+  "timing": false,
+  "total_states": 1325,
+  "utc": "2026-10-11T20:40:02Z"
+}
