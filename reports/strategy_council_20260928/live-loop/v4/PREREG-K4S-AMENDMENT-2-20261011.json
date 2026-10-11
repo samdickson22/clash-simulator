@@ -1,0 +1,261 @@
+{
+  "amendment": 2,
+  "authorized_by": {
+    "coordinator_thread": "0523ae6f",
+    "disposition_commit": "4ccbdd4f",
+    "entry": "COORDINATOR.md 22:07 UTC TIERS AMENDMENT 3 ADOPTED, execution item 2"
+  },
+  "base_tree": "4ccbdd4f",
+  "blinding_disclosure": {
+    "author": "opened no K4S confirmatory receipt/outcome; COORDINATOR.md reading showed operational K4S fleet status lines (block counts, apt/motd guard stops, replacement rulings; no game results); rebind.py verify printed run-r1/health receipt file names (not opened); the A1 template quotes the frozen design input c*=0.9",
+    "impact": "none: the re-pin is mechanically determined by the A3 byte change, the TierBackend import graph and the builder",
+    "reviewer": "every Sol round under an explicit outcome-blind read boundary excluding run-r1/, end/, all receipt directories and any game outcome"
+  },
+  "builder": {
+    "change": "append \"state_rows.py\" (with a comment line) to E4V3_REUSED; no logic change",
+    "new_sha256": "2e255fb939c2b1720749a8a38e99a4a66e397f1149f4d63f7a24d62cb82343f7",
+    "old_sha256": "26932fa87d9638c080c0d1611b2c2f73c5401ae8ac424b863474a42c7d75f449",
+    "path": "reports/explore/k4s-confirm/mac/build_manifest.py"
+  },
+  "cause": {
+    "adopted": "COORDINATOR.md 22:07 UTC (4ccbdd4f)",
+    "amendment": "TIERS Amendment 3",
+    "failure": "k4s_logic.load_k4s_manifest -> verify_pinned: Pin mismatch (reused read-only TIERS files): tier_backend.py",
+    "file": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py",
+    "merged_commit": "f6cebbaa",
+    "new_import": {
+      "file": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/state_rows.py",
+      "sha256": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755"
+    },
+    "new_sha256": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d",
+    "old_sha256": "b04d201de7a95a36669e5c11898a297ba8f324d1a658f2987ec5ba244671add7",
+    "record": {
+      "json_sha256": "3e5627cb1861dc05fab60af7059d471db80888e66fcf84d59ab341568b0ffabe",
+      "md_sha256": "761ebc0d8a921ca495513f5b96e416a1f88967f602c6ebd7522fad851293eef2"
+    },
+    "review": {
+      "condition": 5,
+      "path": "reports/strategy_council_20260928/live-loop/v4/TIERS-AMENDMENT-3-REVIEW-SOL.md",
+      "sha256": "18baa4eae024d0cd148d788b9f843c2630a008433e452fbbd163beda71252d7a"
+    }
+  },
+  "compatibility": {
+    "files_read": [
+      "mac/k4s_backend.py",
+      "mac/k4s_logic.py",
+      "mac/measure_k4s.py",
+      "end_reference.py",
+      "end_background.py",
+      "end_pool.py"
+    ],
+    "mac_memory": {
+      "amended_tier_backend": "A3 measured 0.37-0.41 GiB RssAnon, <=0.87 GiB peak on the 1,325-row END fixture (not measured on the Mac fixture)",
+      "estimate_source": "TIERS A3 condition 5",
+      "k4s_corpus_bytes": 2829766847,
+      "k4s_corpus_peak_gib_estimate": 6,
+      "k4s_corpus_resident_gib_estimate": 3,
+      "k4s_corpus_sha256": "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8",
+      "mac": "24 GiB unified, ~1 GiB free at idle (coordinator figure)",
+      "status": "recorded as K4S's own Mac footprint and a Phase C risk; not measured (no Mac contact), not changed"
+    },
+    "residuals": [
+      "K5/K6 pre-arrival load time can make entered later than scheduled (05 lookup p99 0.22 s, max 0.31 s); K4S gate 5 (frozen receipts.gc_summary) counts a late poll only when GC spans the scheduled instant; A3-P is TIERS-only and no K4S analogue is added (would be a gate change); open item for the coordinator",
+      "K4S main process still holds its own K4S corpus objects, so A3's GC-traversal reduction applies only to the TIERS fixture part; no pre-A3 K4S Mac receipt exists (Phase C not run)",
+      "if K4SBackend.__init__ fails after super().__init__, the read-only state-rows descriptor stays open until process exit (fail-closed refusal path; no measurement effect)",
+      "K6 GC labels (A3 residual 1, D8 analogue): PacketDecisions.run looks up a variant's first row (measure_k4s.py:144) before setting that variant's trace context (measure_k4s.py:147), so GC during that first load is labelled with the previous trace context",
+      "END background duty cycle and I/O (A3 residuals 3-4): end_background.py:101 loads each state (pread, SHA-256, unpickle) before search on the slot's pinned cores; slots stay CPU-busy and the frozen MHz comparison still applies; bundles carry states-rows.bin, hashed by validate_bundle at start and end (storage and I/O)"
+    ],
+    "uses": {
+      "close": "inherited; also releases the state-rows descriptor; Session.close and end_reference cleanup_steps call it",
+      "end_background": "backend.work(backend.by_id[identity], tier): single lookup as work() argument (A3-audited FleetBackground pattern)",
+      "end_reference": "only be.k4s_rows; prepare_work before entered",
+      "k4s_backend": "super().__init__ then own corpus in self.k4s_rows; never reads self.rows/self.inputs/self.openings; decision methods (prepare_work, configure, policy_input, check_d1, work/_work, core, activate, infer) byte-unchanged by A3",
+      "packet_decisions": "by_id[packet id] single lookup before prepare_work and wait_until (outside timer); row held in a local",
+      "sd1_agreement": "backend.infer only for bundle sets.agreement[:limit] = the retained set (all retained in dry run)"
+    },
+    "verdict": "COMPATIBLE; no K4S code change"
+  },
+  "effect": {
+    "end": "END-JOB k4s_manifest_sha256, END pool descriptor k4s_manifest.sha256 and every end_reference --k4s-manifest-sha256 must name c1fb1e9a from an amended runtime; K4S END fleet-reference bundles must pin states-rows.json/.bin (A3 prepare_bundle --state-rows, never patched; byte-identical container copies across hosts sharing a fixture, A3 condition 2)",
+    "end_status": "no END-JOB.json on 4ccbdd4f; no K4S END window declared per COORDINATOR.md; external job state not inspected (no ssh)",
+    "fleet": "FROZEN-K4S 416f6e51 pins no e4v3 file; it lists mac/K4S-MAC-MANIFEST.json d89cab16 and mac/build_manifest.py 26932fa8 (391d2006 bytes); fleet reporting stays on d89cab16/391d2006 bytes and its job runtime trees keep those bytes; deploying main's mac/ into a fleet runtime blocks admission (barrier.py:51); do not list mac/test_k4s_amendment1.py or mac/test_k4s_amendment2.py",
+    "mac_sessions": "--k4s-manifest-sha256 c1fb1e9a...; runtime holds tier_backend.py 02e2139f and state_rows.py 3899276b; reused TIERS Mac bundle pins states-rows.json/.bin (validate_bundle requires them), staged with prepare_bundle.py --state-rows, Mac never converts",
+    "no_effect_on": [
+      "K4S fleet game run on 127x03/127x04 (provided its runtime keeps the frozen 391d2006 bytes)",
+      "arms",
+      "cells",
+      "seeds",
+      "N",
+      "hypotheses",
+      "gates",
+      "margins",
+      "alpha",
+      "SD1",
+      "c_star",
+      "kernel",
+      "scorer",
+      "corpus",
+      "native"
+    ],
+    "old_references": {
+      "scope": "no END-JOB on the checked tree 4ccbdd4f; external job state not inspected; a reference under 8bb20a75 or on b04d201d bytes cannot serve an amended Mac session; A1 section 5 cases apply with c1fb1e9a in place of 8bb20a75",
+      "with_committed_old_end_job": "(ii) any externally discovered committed END-JOB naming d89cab16 or 8bb20a75: end_evidence.immutable makes it append-only and end_evidence.end_job refuses a different k4s_manifest_sha256; coordinator disposition and an explicitly authorized END-authority migration required before any amended re-run; not implemented here; the immutable declaration must not be edited, replaced or patched",
+      "without_end_job": "(i) dev/dry, outside valid END authority: not valid for authorized END/Mac use; exclude from the reporting reference and produce fresh under an END-JOB naming c1fb1e9a from the amended tree"
+    },
+    "rebind_verify_on_main": "additionally reports mac/build_manifest.py (sha changed) and mac/test_k4s_amendment2.py (present but not in manifest); prep-time classifier, not a runtime gate",
+    "scope": "K4S Mac sessions and K4S END steps that load the K4S manifest",
+    "unedited_records": [
+      "reports/explore/k4s-confirm/DELTA-MANIFEST.json",
+      "reports/explore/k4s-confirm/FREEZE-RECORD-SKELETON.md",
+      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-FREEZE-20261011.json",
+      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-FREEZE-20261011.md",
+      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-AMENDMENT-1-20261011.md",
+      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-AMENDMENT-1-20261011.json",
+      "reports/explore/k4s-confirm/run-r1/addendum/K4S-LAUNCH-ADDENDUM.md",
+      "reports/explore/k4s-confirm/run-r1/addendum/K4S-LAUNCH-ADDENDUM.json"
+    ]
+  },
+  "frozen_study": {
+    "fill_commit": "fab6e03f",
+    "freeze_commit": "391d2006",
+    "freeze_record_json_sha256": "478068b6e58480426294ed328f8e7bc5f992d0b047c7987f452a940ecb82969a",
+    "freeze_record_md_sha256": "24623ff8fb29ed0210c3d12f00f74e4372cf9f05f81bc4515dbd65624267e6d0"
+  },
+  "manifest": {
+    "behaviour": "load_k4s_manifest(new, c1fb1e9a, tree, require_frozen=True) succeeds; 8bb20a75 refuses (Pin mismatch (K4S Mac files): build_manifest.py; tier_backend.py next)",
+    "changed_pins": [
+      {
+        "key": "reused_readonly.reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py",
+        "new": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d",
+        "old": "b04d201de7a95a36669e5c11898a297ba8f324d1a658f2987ec5ba244671add7"
+      },
+      {
+        "key": "reused_readonly.reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/state_rows.py",
+        "new": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+        "old": null
+      },
+      {
+        "key": "k4s_files.reports/explore/k4s-confirm/mac/build_manifest.py",
+        "new": "2e255fb939c2b1720749a8a38e99a4a66e397f1149f4d63f7a24d62cb82343f7",
+        "old": "26932fa87d9638c080c0d1611b2c2f73c5401ae8ac424b863474a42c7d75f449",
+        "reason": "builder must list state_rows.py in E4V3_REUSED so the manifest is builder-regenerated (test_manifest_is_current asserts on_disk == build()); data-only diff"
+      }
+    ],
+    "end_frozen_pins_change": "only k4s_manifest_sha256 (build_manifest.py is not in END_MEASUREMENT_FILES)",
+    "frozen": true,
+    "frozen_f8_sha256": "d89cab16afdffa88d30e61eb1f4daea74e046703994f6aee7e74bfedc8d08f40",
+    "import_closure_from_tier_backend": [
+      "tier_backend.py",
+      "receipts.py",
+      "corpus_contract.py",
+      "state_rows.py"
+    ],
+    "leaf_keys": {
+      "new": 78,
+      "old": 77
+    },
+    "new_sha256": "c1fb1e9acb71a69d406c04d5a040dae734aa8fda57cae58f4f56363b591815de",
+    "not_pinned": {
+      "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267: Linux one-time converter, not imported by K4S/TierBackend/state_rows; Mac never converts (A3 condition 4)",
+      "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb: staging tool, not imported by any K4S runtime path; never pinned by K4S; bound for staging by A3 condition 1"
+    },
+    "old_sha256": "8bb20a753bdb8f5f606ea2288336b1350f96a5199d158b2b8750317c26493009",
+    "other_changes": [],
+    "path": "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json",
+    "pins_checked": "all 40 distinct file pins of 8bb20a75 hashed against 4ccbdd4f: only tier_backend.py mismatched",
+    "regenerated_by": "mac/build_manifest.py --root <4ccbdd4f tree + builder edit> --kernel reports/explore/k4s-confirm/anchor_x.py --kernel reports/explore/k4s-confirm/sdefault.py --freeze",
+    "status": "FROZEN"
+  },
+  "note": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-AMENDMENT-2-20261011.md",
+    "sha256": "b28b636e016b2336c6c839585f16428757ce5cb13a5eeef765a0f0b6a0951590"
+  },
+  "outcome_access": false,
+  "outcome_access_scope": "false = no K4S confirmatory outcome/reporting receipt and no TIERS/T1 game outcome was read",
+  "outcome_blind": true,
+  "prior_amendment": {
+    "amendment": 1,
+    "commit": "45f32c0f",
+    "json_sha256": "79b9268621d84f005b4929a4f9c07337dec60b0d614f9b8a98aeb3b792cbdf74",
+    "md_sha256": "e01f11b6f69d4c57d8cbb0d50a4cedaa4cdd89c87f3c020b7fbe386253aab1d0"
+  },
+  "recorded_on": "127x05",
+  "recorded_utc": "2026-10-11T22:15:42Z",
+  "review": {
+    "files": "reports/explore/k4s-confirm/reviews/SOL-REVIEW-K4S-AMENDMENT-2-r*.md",
+    "final_verdict": "APPROVE (r2; r1 APPROVE with 2 minors)",
+    "reviewer": "GPT-6.1-Sol (codex, reasoningEffort high), T3 delegate_task",
+    "rounds": [
+      {
+        "findings": 2,
+        "path": "reports/explore/k4s-confirm/reviews/SOL-REVIEW-K4S-AMENDMENT-2-r1.md",
+        "resolution": "documentation only, applied after approval: residuals 4 (K6 GC labels) and 5 (END background duty cycle and I/O) added; old-reference text scoped to the checked tree with A1 cases (i)/(ii) restored",
+        "round": 1,
+        "severity": "2 minor, no blocker/major",
+        "verdict": "APPROVE"
+      },
+      {
+        "findings": 0,
+        "path": "reports/explore/k4s-confirm/reviews/SOL-REVIEW-K4S-AMENDMENT-2-r2.md",
+        "resolution": "confirmation: both r1 minors resolved accurately and consistently; manifest/builder/test bytes unchanged since r1; no new finding",
+        "round": 2,
+        "verdict": "APPROVE"
+      }
+    ]
+  },
+  "schema": "clasher.k4s.prereg-amendment.v1",
+  "study": "PREREG-K4S",
+  "tests": {
+    "after_amendment_1_recorded": {
+      "failed": 1,
+      "passed": 95,
+      "total": 96
+    },
+    "after_existing_suite": {
+      "failed": 1,
+      "passed": 95,
+      "total": 96
+    },
+    "after_with_regression": {
+      "failed": 1,
+      "passed": 98,
+      "total": 99
+    },
+    "before_4ccbdd4f": {
+      "failed": 7,
+      "failures": [
+        "test_manifest_is_current_and_measure_tiers_unmodified",
+        "test_cli_refuses_uncommitted_tiers_receipts",
+        "test_manifest_loader_rejects_draft_for_mac_and_tamper",
+        "test_cli_refuses_without_tiers_completion_receipt",
+        "test_cli_refuses_bad_tiers_sha_and_standalone_without_authorization",
+        "test_cli_refuses_incomplete_tiers_session",
+        "test_cli_tiers_exactness_failure_writes_no_measurement_summary"
+      ],
+      "passed": 89,
+      "total": 96
+    },
+    "command": "nice -n 19 taskset -c 63 /mpac/sdicks02/venvs/t1-verifier/bin/python -B -m pytest -q -p no:cacheprovider reports/explore/k4s-confirm/mac (Python 3.12.12)",
+    "end_tests": {
+      "after_passed": 103,
+      "before_passed": 103,
+      "files": [
+        "test_end_reference.py",
+        "test_end_background.py"
+      ]
+    },
+    "known_by_construction_failure": "test_manifest_loader_rejects_draft_for_mac_and_tamper (asserts draft status)",
+    "regression_test": {
+      "note": "new unpinned file; test_measure_k4s.py is pinned in k4s_files and is not edited",
+      "on_old_manifest": "first two fail, third passes",
+      "path": "reports/explore/k4s-confirm/mac/test_k4s_amendment2.py",
+      "sha256": "16fcb2bbc15c80cea8f69cb377f0a52bb622f9aed7a66a43f45b2ca4247d36d1",
+      "tests": [
+        "test_verify_pinned_accepts_amended_tier_backend_and_state_rows_and_rejects_old",
+        "test_every_e4v3_module_reachable_from_tier_backend_is_pinned",
+        "test_backend_consumers_use_only_single_id_lookups"
+      ]
+    }
+  },
+  "title": "Re-pin tier_backend.py and add state_rows.py after TIERS Amendment 3"
+}

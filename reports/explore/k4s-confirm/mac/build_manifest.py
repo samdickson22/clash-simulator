@@ -21,7 +21,9 @@ K4S_FILES = ("measure_k4s.py", "k4s_logic.py", "k4s_backend.py", "classify_k4s_f
 E4V3_REUSED = ("measure_tiers.py", "receipts.py", "tier_backend.py", "replay_load.py", "telemetry.py",
                "classify_failure.py", "corpus_contract.py", "spec-pins.json",
                # frozen fleet helpers reused read-only by the K4S END producer/pooler
-               "fleet_end.py", "fleet_profile.py", "fleet_validity.py", "fleet_pool.py", "fleet_reference.py")
+               "fleet_end.py", "fleet_profile.py", "fleet_validity.py", "fleet_pool.py", "fleet_reference.py",
+               # TIERS Amendment 3: TierBackend.__init__ imports state_rows (K4S Amendment 2)
+               "state_rows.py")
 END_FILES = ("reports/explore/k4s-confirm/end_reference.py", "reports/explore/k4s-confirm/end_pool.py",
              "reports/explore/k4s-confirm/end_background.py", "reports/explore/k4s-confirm/end_evidence.py")
 RUNTIME_REUSED = (L.TIERS_SCORER_REL, L.TIERS_SCORER_BASE_REL, "reports/explore/s1/cached_policy.py",

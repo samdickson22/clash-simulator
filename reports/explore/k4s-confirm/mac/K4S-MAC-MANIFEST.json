@@ -17,7 +17,7 @@
   "frozen": true,
   "k4s_files": {
     "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "1b747d945c7a34bd91dc8b246a45b503f0547c6186db104984903ca5640bb9b0",
-    "reports/explore/k4s-confirm/mac/build_manifest.py": "26932fa87d9638c080c0d1611b2c2f73c5401ae8ac424b863474a42c7d75f449",
+    "reports/explore/k4s-confirm/mac/build_manifest.py": "2e255fb939c2b1720749a8a38e99a4a66e397f1149f4d63f7a24d62cb82343f7",
     "reports/explore/k4s-confirm/mac/classify_k4s_failure.py": "ac8aca3e9ee426561b3869d366751b662e91a7136c71a0fb279decc33f6f1600",
     "reports/explore/k4s-confirm/mac/k4s_backend.py": "8c8da476109e0b8390a9db8f91a8711644619172e7dbf78ca20d444c13f35954",
     "reports/explore/k4s-confirm/mac/k4s_logic.py": "2e4d7a5ce5363a9778eb088be7487d5f1ef7291706f743e9dd4c7c65ee5d4864",
@@ -98,8 +98,9 @@
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
-    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py": "b04d201de7a95a36669e5c11898a297ba8f324d1a658f2987ec5ba244671add7"
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
   },
   "schema": "clasher.k4s.mac-manifest.v1",
   "scorer_binding": {
