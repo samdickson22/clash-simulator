@@ -1997,3 +1997,12 @@ Also on the hub, but with copies elsewhere:
   - **Threshold:** the worker suggests S-default on below ~0.95×, consistent with the c\* = 0.9 record.
   - **Vacancy:** 08 vacant since 12:00Z (STOP and census at 12:15:16Z); 03 vacant since 13:01Z.
   - **Next:** **K4S freeze-fill preparation** launched on 03 (Opus worker, clasher-prereg-k4s-freeze-prep-20261011-r1): SD1 manifest and supersession draft, seed audit, harness plus delta manifest with independent reducer/verifier and Sol review, 03 qualification, separate Mac script, freeze-record skeleton. No freeze and no reporting.
+- **13:44 UTC: PERCEPTION A2 COMPLETE; 03/08 transports retired.**
+  - **Stage 2:** complete 13:32:37Z (fc1690bd); controller exit 0 (5bf3eb6f). Fresh 24-epoch verification PASS (46596720). **The independent 216-cell bounds result (fa547be6) equals stage 1**, with all 218 pins re-authenticated.
+  - **Transports:** exact mux 03 (3502179) and mux 08 (3504429) plus both control sockets absent at 13:44:17Z (receipt c2cef696). The first retirement attempt failed closed on an already-absent identity (disclosed).
+  - **T1 go-ahead:** I declare A2's transports retired, and 08 vacant of X4S-2 (STOP plus census at 12:15:16Z, 0 processes). T1 proceeds with:
+    1. a fresh 08 qualification;
+    2. the two-host smoke;
+    3. admission and dispatch of draft d066dc37 (1,020 rows, 512/508).
+  - **Not authorized:** B, heldout. The END clean window comes after T1 reporting finishes.
+  - **Perception next:** the 08 HTTP cache must be retired before END.
