@@ -13,7 +13,7 @@ from fractions import Fraction
 from pathlib import Path
 import numpy as np
 from common import plan, read, write, sha, utc, ROOT
-from schedule import CORE, SUBSAMPLE, ARMS, COUNTS, CELLS, SUB_LIMIT, expected_order
+from schedule import CORE, SUBSAMPLE, ARMS, COUNTS, CELLS, SUB_LIMIT, REPLACEMENT, expected_order, canonical
 
 CELL_ARM = {1.0: 200, 0.9: 180, 0.8: 160, 0.7: 140, 0.6: 120}
 Q_LO, Q_HI = Fraction(1, 40), Fraction(39, 40)
@@ -92,7 +92,7 @@ def decide(stats, c_star, margins):
     steps = []; stopped = False
     for k, (level, c) in enumerate(sequence, 1):
         if stopped:
-            steps.append(dict(step=f'H{k}', hypothesis=f'{level}({c})', tested=False, passed=False)); continue
+            steps.append(dict(step=f'H{k}', hypothesis=f'{level}({c})', tested=False, passed=None)); continue
         p = parts(level, c); ok = all(p.values())
         steps.append(dict(step=f'H{k}', hypothesis=f'{level}({c})', tested=True, passed=ok, parts=p))
         stopped = not ok
@@ -105,34 +105,56 @@ def decide(stats, c_star, margins):
     return dict(c_star=c_star, sequence=steps, admitted=admitted, veto_0_9_pass=veto, usable_cells=usable)
 
 
+def validate_ledger(events):
+    """Replay the blind replacement ledger: each lost block is canonical and lost once; its replacement is the
+    canonical k-th bank seed of the lost block's cell (k derived here), names the logical original, and caps hold."""
+    seen = collections.Counter(); per_pop = collections.Counter(); lost_ids = set()
+    for e in events:
+        lost = e['lost']; canonical(lost); pop, c = lost['population'], lost['cell']
+        assert lost['id'] not in lost_ids, 'block lost twice'; lost_ids.add(lost['id'])
+        r = e['replacement']; assert r is not None, 'primary/guard losses are always replaced'
+        k = seen[(pop, c)]; seen[(pop, c)] += 1; per_pop[pop] += 1
+        assert per_pop[pop] <= REPLACEMENT[pop]['cap'] and k <= REPLACEMENT[pop]['max_k'], 'replacement cap; stop and amend'
+        exp = canonical(r)
+        assert r['replaces'] == (lost.get('replaces') or lost['id']) and r['replacement_k'] == k and r['cell'] == c, 'ledger replacement'
+    return {e['replacement']['id']: canonical(e['replacement']) for e in events}
+
+
 def load_blocks(root, ledger):
     lost = {e['lost']['id'] for e in ledger}
-    replacements = {e['replacement']['id']: e['replacement'] for e in ledger if e['replacement'] is not None}
-    pops = {'primary': {}, 'guard': {}}; files = {}
+    replacements = validate_ledger(ledger)
+    decks_file = read(Path(__file__).parent/'guard-decks.json')
+    pops = {'primary': {}, 'guard': {}}; files = {}; seeds = collections.Counter()
     for f in sorted(Path(root).glob('*/complete.json')):
         proof = read(f); d = proof['descriptor']; pop = d['population']; ident = d['id']
         if pop not in pops or ident in lost: continue
         if proof['host'] != '127x01': assert (f.parent/'hub-ack.json').exists(), 'completed block not durable on hub'
+        exp = canonical(d)
         if d.get('replaces'):
-            r = replacements[ident]
-            assert d['cell'] == r['cell'] and d['replaces'] == r['replaces'] and d['order'] == r['order']
+            assert ident in replacements and replacements[ident] == exp, 'replacement not in the blind ledger'
         logical = d.get('replaces') or ident
         L = int(logical.rsplit('-', 1)[1])
         assert 0 <= L < COUNTS[pop] and d['cell'] == L % CELLS[pop] and logical not in pops[pop], 'logical block'
         assert d['order'] == expected_order(d) and set(d['order']) == (set(ARMS) if L < SUB_LIMIT[pop] else set(CORE))
-        assert d['seed'] == plan()['seed_ranges'][pop]['base']+d['index']
+        seeds[d['seed']] += 1; assert seeds[d['seed']] == 1, 'duplicate reporting seed'
         assert len(proof['games']) == len(d['order'])
+        if pop == 'primary':
+            want = (sorted(decks_file['primary'][d['own_index']]), sorted(decks_file['primary'][d['opponent_index']]))
+        else:
+            want = (sorted(decks_file['l2'][d['own_index']]), sorted(decks_file['guard'][d['opponent_index']]['cards']))
         row = dict(id=logical, index=L, seed=d['seed'], cell=d['cell'], seat=d['seat'], host=proof['host'],
-                   subsample=L < SUB_LIMIT[pop], interference=proof.get('interference', {}),
-                   loss={}, draw={}, win={}, timing={}, matchup=None)
+                   subsample=L < SUB_LIMIT[pop], interference=proof.get('interference', {}), complete_sha256=sha(f),
+                   loss={}, draw={}, win={}, timing={}, gc={}, matchup=None)
         for name, h in proof['games'].items():
             p = f.parent/'games'/name; assert sha(p) == h; files[str(p)] = h
             g = read(p); m = g['metadata']; a = g['cohort']
-            assert m['terminal'] and m['seed'] == d['seed'] and m['cell'] == d['cell'] and m['seat'] == d['seat'] and a in d['order']
+            assert name == f"{ident}-d27-{a}.json" and a in d['order'] and a not in row['loss'], 'game file identity'
+            assert m['terminal'] and m['seed'] == d['seed'] and m['cell'] == d['cell'] and m['seat'] == d['seat']
+            assert (sorted(m['own_deck']), sorted(m['opponent_deck'])) == want, 'paired arms must use the frozen decks'
             lossv = int(m['winner'] is not None and m['winner'] != m['seat']); assert int(g['loss']) == lossv
             row['loss'][a] = lossv; row['draw'][a] = m['winner'] is None; row['win'][a] = m['winner'] == m['seat']
-            row['timing'][a] = g['search_ab']['deadline_stats']
-            row['matchup'] = (tuple(sorted(m['own_deck'])), tuple(sorted(m['opponent_deck'])))
+            row['timing'][a] = g['search_ab']['deadline_stats']; row['gc'][a] = g['search_ab'].get('gc_maintenance', [])
+            row['matchup'] = (tuple(want[0]), tuple(want[1]))
         assert set(row['loss']) == set(d['order'])
         pops[pop][logical] = row
     assert len(pops['primary']) == COUNTS['primary'] and len(pops['guard']) == COUNTS['guard'], {k: len(v) for k, v in pops.items()}
@@ -148,26 +170,65 @@ def all_analyses(rows, reps, rng):
             'guard_subsample': analysis([r for r in rows['guard'] if r['subsample']], ARMS, reps, rng)}
 
 
-def secondary(rows, stats, cfg):
+RATES = ('cutoff', 'student_default', 'fallback', 'overrun', 'play')
+
+
+def rate_counts(ds):
+    return [sum(bool(d['hit']) for d in ds), sum(bool(d.get('student_default')) for d in ds), sum(bool(d['fallback']) for d in ds),
+            sum(bool(d['wall_overrun']) for d in ds), sum(d['action'] < 2304 for d in ds), len(ds)]
+
+
+def rate_bootstrap(rows, arms, reps, rng):
+    """r3 §5.1: per-game numerators and denominators resampled together (paired, stratified by cell)."""
+    m = np.array([[rate_counts(r['timing'][a]) for a in arms] for r in rows], dtype=np.int64)  # rows x arms x 6
+    cells = np.asarray([r['cell'] for r in rows]); tot = np.zeros((reps,)+m.shape[1:], np.int64)
+    for c in sorted(set(cells.tolist())):
+        idx = np.flatnonzero(cells == c); draw = rng.integers(0, len(idx), size=(reps, len(idx)))
+        tot += m[idx[draw]].sum(axis=1)
+    point = m.sum(0); out = {}
+    for j, a in enumerate(arms):
+        den = point[j, -1]; out[a] = dict(decisions=int(den))
+        for k, name in enumerate(RATES):
+            v = 100*tot[:, j, k]/np.maximum(tot[:, j, -1], 1)
+            out[a][name] = dict(pct=float(100*point[j, k]/max(den, 1)), ci95=[float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))])
+    return out
+
+
+def wait_spiral(ds):
+    run = best = 0
+    for d in ds:
+        run = run+1 if d['action'] >= 2304 else 0; best = max(best, run)
+    waits = [d for d in ds if d['action'] >= 2304]
+    return dict(wait_share=len(waits)/max(len(ds), 1), longest_wait_run=best, cut_wait_share=sum(bool(d['hit']) for d in waits)/max(len(waits), 1))
+
+
+def secondary(rows, stats, cfg, root=None, events=(), ledger_sha=None):
     reps = cfg['bootstrap']['reps']; out = {}
     out['F1'] = {p: contrast(stats, p, 'K4S-200', 'K4-200') for p in ('primary', 'guard')}
     out['F1_always_on_note'] = all(upper(out['F1'][p]) <= Fraction(5, 2) for p in out['F1'])
     out['monotonicity'] = {k: contrast(stats, 'primary', x, y) for k, x, y in
                            (('K4S-180 minus K4S-160', 'K4S-180', 'K4S-160'), ('K4S-200 minus K4S-180', 'K4S-200', 'K4S-180'))}
-    # Flagged-block sensitivity (separate stream); never changes admission.
-    rng = np.random.default_rng(cfg['bootstrap']['sensitivity_seed'])
-    clean = {p: [r for r in v if not r['interference'].get('interfered')] for p, v in rows.items()}
-    out['interference_excluded'] = {p: len(rows[p])-len(clean[p]) for p in rows}
-    if all(clean.values()):
-        out['interference_sensitivity'] = {p: analysis(clean[p], CORE, reps, rng)['contrasts'] for p in ('primary', 'guard')}
+    # Prespecified interference sensitivity (r3 §5.3 item 2): the inherited OP-6/OP-7 sidecar ledger over the final
+    # counted inventory; exclude source-proven SSH-or-apt flagged blocks; separate RNG stream; never changes admission.
+    if root is not None:
+        from ssh_sensitivity import health_ledger, analyze_union
+        ledger = health_ledger(Path(root), list(events), ledger_sha)
+        union = analyze_union(rows, ledger, reps, cfg['bootstrap']['sensitivity_seed'], population_stats, np.random.default_rng)
+        keep = {b['id'] for b in ledger['blocks'] if not b['ssh_or_apt_flagged']}
+        rng = np.random.default_rng(cfg['bootstrap']['sensitivity_seed']+100)
+        sub = {p: [r for r in rows[p] if r['subsample'] and r['id'] in keep] for p in rows}
+        out['interference_sensitivity'] = dict(rule='exclude source-proven SSH-or-apt flagged blocks (OP-6/OP-7 sidecar)',
+                                               ledger_flag_counts=ledger['flag_counts'], core=union,
+                                               subsample={p: analysis(v, ARMS, reps, rng)['contrasts'] if v else None for p, v in sub.items()})
+        out['interference_any_flag_excluded'] = {p: sum(bool(r['interference'].get('interfered')) for r in v) for p, v in rows.items()}
     # Matchup-cluster bootstrap over the 25 primary matchups and the 9 guard pairs (separate stream).
     rng = np.random.default_rng(cfg['bootstrap']['cluster_seed']); out['cluster'] = {}
     for p in ('primary', 'guard'):
         keys = sorted({r['matchup'] for r in rows[p]}); by = {k: [r for r in rows[p] if r['matchup'] == k] for k in keys}
-        mats = {k: np.array([[r['loss'][a] for a in CORE] for r in by[k]], np.int64) for k in keys}
+        sums = np.array([np.array([[r['loss'][a] for a in CORE] for r in by[k]], np.int64).sum(0) for k in keys])
+        sizes = np.array([len(by[k]) for k in keys])
         draw = rng.integers(0, len(keys), size=(reps, len(keys)))
-        tot = np.array([[mats[keys[i]].sum(0) for i in row] for row in draw]).sum(1)
-        cnt = np.array([[len(by[keys[i]]) for i in row] for row in draw]).sum(1)
+        tot = sums[draw].sum(1); cnt = sizes[draw].sum(1)
         res = {}
         for x in CORE[1:]:
             j, k = CORE.index(x), CORE.index('K4-200'); v = 100*(tot[:, j]-tot[:, k])/cnt
@@ -178,19 +239,28 @@ def secondary(rows, stats, cfg):
                                 for h in sorted({r['host'] for r in rows[p]}) for s in (0, 1)
                                 if any(r['host'] == h and r['seat'] == s for r in rows[p])} for p in rows}
     out['draws_half_loss_pct'] = {p: {a: 100*sum(r['loss'][a]+0.5*r['draw'][a] for r in rows[p])/len(rows[p]) for a in CORE} for p in rows}
+    rng = np.random.default_rng(cfg['bootstrap']['rates_seed'])
+    out['rates'] = {p: rate_bootstrap(rows[p], CORE, reps, rng) for p in ('primary', 'guard')}
+    out['rates_subsample'] = {p: rate_bootstrap([r for r in rows[p] if r['subsample']], ARMS, reps, rng) for p in ('primary', 'guard')}
     mech = {}
     for p in rows:
         mech[p] = {}
         for a in CORE:
-            ds = [d for r in rows[p] for d in r['timing'][a]]
-            mech[p][a] = dict(decisions=len(ds), cutoff_pct=100*np.mean([d['hit'] for d in ds]), student_default_pct=100*np.mean([bool(d.get('student_default')) for d in ds]),
+            ds = [d for r in rows[p] for d in r['timing'][a]]; gc = [g for r in rows[p] for g in r['gc'][a]]
+            spirals = [wait_spiral(r['timing'][a]) for r in rows[p]]
+            mech[p][a] = dict(decisions=len(ds),
                               coarse_complete_at_cutoff_pct=100*np.mean([bool(d.get('coarse_complete')) for d in ds if d['hit']] or [0]),
-                              fallback_pct=100*np.mean([d['fallback'] for d in ds]), overrun_pct=100*np.mean([d['wall_overrun'] for d in ds]),
-                              play_pct=100*np.mean([d['action'] < 2304 for d in ds]),
                               median_candidates=float(np.median([d['unpruned_candidate_count'] for d in ds if d['unpruned_candidate_count'] is not None] or [0])),
                               wall_ms=dict(zip(('p50', 'p95', 'p99', 'max'), map(float, np.percentile([1000*d['wall_seconds'] for d in ds], [50, 95, 99, 100])))),
+                              positive_overrun_ms=dict(zip(('p50', 'p99', 'max'), map(float, np.percentile([d['positive_overrun_ms'] for d in ds if d['wall_overrun']] or [0], [50, 99, 100])))),
                               late_returns=sum(d['wall_seconds'] > CELL_ARM_BUDGET(a)/1000+0.008 for d in ds),
-                              sd1_p_play_quartiles=None if a.startswith('K4-') else list(map(float, np.percentile([d['sd1_p_play'] for d in ds], [25, 50, 75]))))
+                              charged_extra_ticks=dict(collections.Counter(str(d['delayed_ticks']) for d in ds)),
+                              wait_spiral=dict(median_wait_share=float(np.median([x['wait_share'] for x in spirals])),
+                                               median_longest_wait_run=float(np.median([x['longest_wait_run'] for x in spirals])),
+                                               median_cut_wait_share=float(np.median([x['cut_wait_share'] for x in spirals]))),
+                              gc=dict(count=len(gc), seconds=float(sum(g['seconds'] for g in gc)), during_decision=sum(bool(g['during_decision']) for g in gc),
+                                      p99_pause_ms=float(np.percentile([1000*g['seconds'] for g in gc], 99)) if gc else None),
+                              sd1_p_play_quartiles=None if a.startswith('K4-') else list(map(float, np.percentile([d['sd1_p_play'] for d in ds if d['sd1_p_play'] is not None] or [0], [25, 50, 75]))))
     out['mechanism'] = mech
     return out
 
@@ -241,7 +311,7 @@ def main():
     decision['status'] = 'ADMISSION' if decision['validity']['inside'] else 'SUSPENDED (validity window; independent receipts-only code review required)'
     result = dict(utc=utc(), study='PREREG-K4S', sealed=False, release=release, bootstrap=cfg['bootstrap'], populations=stats,
                   verifier_view=verifier_view(stats, decision),
-                  decision=decision, secondary=secondary(rows, stats, cfg), replacements=ledger, file_shas=files,
+                  decision=decision, secondary=secondary(rows, stats, cfg, a.root, ledger, sha(a.ledger) if a.ledger else None), replacements=ledger, file_shas=files,
                   plan_sha256=sha(Path(__file__).parent/'plan.json'), reducer_sha256=sha(__file__))
     write(a.out, result)
     print(json.dumps(dict(utc=result['utc'], completed=True, status=decision['status'])))

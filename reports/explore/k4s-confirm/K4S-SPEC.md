@@ -295,11 +295,11 @@ The reducer output has a top-level `verifier_view`, and the verifier's `--compar
 |---|---|
 | `schema` | `clasher.k4s.verifier-view.v1` |
 | `counts` | `counts[A][arm] = {losses, draws, n}` for A ∈ {`P_full`, `G_full`, `P_sub`, `G_sub`}: the 8 core arms in full analyses, all 10 in subsamples |
-| `contrasts` | `contrasts[key] = {lower: [num, den], upper: [num, den]}`, the exact rational 2.5th/97.5th percentile bounds in pp |
-| `sequence` | `[{step, hypothesis, tested, passed}]` in test order |
+| `contrasts` | `contrasts[key] = {lower: [num, den], upper: [num, den]}`, the exact rational 2.5th/97.5th percentile bounds in pp, in lowest terms with a positive denominator |
+| `sequence` | `[{step, hypothesis, tested, passed}]` in test order; every step of the sequence appears; a step after the first failure has `tested: false, passed: null` |
 | `admitted` | `{"0.9", "0.8", "0.7", "0.6"} → "A" \| "B" \| null` |
 | `veto_pass` | bool |
-| `usable_cells` | list of strings, e.g. `["0.9", "0.8"]` |
+| `usable_cells` | list of strings in the order 0.9, 0.8, 0.7, 0.6, e.g. `["0.9", "0.8"]` (compared as a set) |
 | `validity_inside` | bool |
 
 The `contrasts` keys are:
@@ -316,7 +316,8 @@ The `contrasts` keys are:
 
 The receipt shape is `{coordinator_thread, authorized_at_utc, authorization_message_id, study: "PREREG-K4S", commit,
 items: {name: {path, sha256}}}`, with repo-relative paths. At that commit, `git show commit:path` must hash to the
-declared sha256 for each of the six items, and the working-tree bytes must equal it:
+declared sha256 for each of the six r3 §4.5 items (item 2 is either the END reference and its re-check, two files, or the
+ratio-unavailable declaration, one file), and the working-tree bytes must equal it:
 1. `completion`: the completion receipt, a JSON object with `reporting_complete: true`, `outcomes_sealed: true`,
    `counted_primary_blocks: 3000` and `counted_guard_blocks: 900`.
 2. `end_reference` plus `end_recheck`, or `ratio_unavailable_declaration`.

@@ -1,13 +1,17 @@
 """Health-only projection; never compute or emit wins/losses/winner identities.
 
-K4S delta vs T1: a block has len(descriptor order) games (8 or 10).
+K4S delta vs T1: a block has len(descriptor order) games (8 or 10); with --validate (smoke admission) every
+decision must carry the r3 §3.6 fields and the r3 §4.1 charge test must hold on every exit path.
 """
 import argparse,collections,json,math
 from pathlib import Path
 from common import read,write,sha,utc,plan
 
+K4S_FIELDS=('cpu_seconds','coarse_complete','coarse_scored','plays','frozen_action','student_default','sd1_default_action','sd1_p_play','coarse_order_sha256','chosen_action','fallback_used','selected_wait_ticks','poll_seconds','scale_sleep_seconds','prep_seconds','scored','positive_overrun_ms','charged_extra_ticks')
+CHARGE_TOLERANCE=0.02
+
 def health(root,validate=False):
- counts=collections.Counter();errors=[];timing=collections.Counter();seen=set()
+ counts=collections.Counter();errors=[];timing=collections.Counter();seen=set();charge=collections.defaultdict(list)
  for p in sorted(Path(root).glob('*/complete.json')):
   r=read(p);d=r['descriptor'];pop=d['population'];counts[pop+'_local_complete']+=1
   if r['host']!='127x01' and not (p.parent/'hub-ack.json').exists():continue
@@ -31,8 +35,16 @@ def health(root,validate=False):
     expected=max(0.,wall-spec['deadline_seconds'])
     if v['overrun_seconds']!=expected or v['delayed_ticks']!=math.ceil(expected*20):errors.append('honest lateness:'+d['id'])
     if any(k not in v for k in ('unpruned_candidate_count','own_elixir','fallback_action','threads','coarse_horizon','default_source')):errors.append('C17 fields:'+d['id'])
+    if any(k not in v for k in K4S_FIELDS):errors.append('K4S fields:'+d['id'])
+    elif spec['speed_cell']==1.:
+     if v['scale_sleep_seconds']!=0.:errors.append('charge at c=1:'+d['id'])
+    else:charge[arm,'prep' if v.get('preparation_cutoff') else 'scored' if v['scored'] else 'unscored'].append(v['scale_sleep_seconds']/(v['poll_seconds']+v['scale_sleep_seconds'])-(1-spec['speed_cell']))
     timing['decisions']+=1;timing['cutoffs']+=bool(v['hit']);timing['fallbacks']+=bool(v['fallback']);timing['overruns']+=expected>0
- return dict(utc=utc(),sealed=True,counts=dict(counts),health_counts=dict(timing),errors=errors,passed=not errors)
+ # r3 §4.1 charge test: on every exit path, sleep share = (1/c-1)/(1/c) +- 0.02 (mean and every decision).
+ charge_summary={f'{k[0]}|{k[1]}':dict(n=len(v),mean_dev=sum(v)/len(v),max_abs_dev=max(map(abs,v))) for k,v in sorted(charge.items())}
+ for k,r in charge_summary.items():
+  if abs(r['mean_dev'])>CHARGE_TOLERANCE or r['max_abs_dev']>CHARGE_TOLERANCE:errors.append('charge share:'+k)
+ return dict(utc=utc(),sealed=True,counts=dict(counts),health_counts=dict(timing),charge=charge_summary,errors=errors,passed=not errors)
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--validate',action='store_true');a=p.parse_args();r=health(a.root,a.validate);write(a.out,r);print(json.dumps(r));assert r['passed']

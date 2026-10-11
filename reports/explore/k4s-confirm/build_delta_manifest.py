@@ -23,6 +23,14 @@ SUPPORT = {
     'qualify.sh': 'qualification sequence (T1 batteries + K4S)',
     'rebind.py': 'mechanical T1 -> K4S path rebinding and its proof',
     'build_delta_manifest.py': 'this manifest builder',
+    'qualify_games.sh': 'qualification: 11-slot game-level launcher (no-deadline, injected virtual clock, charged, zero) + check',
+    'run_qualification.sh': 'qualification: per-host driver (pin, batteries, games, STOP test, receipt)',
+    'stop_test.py': 'qualification: owned-STOP drain test (<= 5 min, 0 owned processes)',
+    'make_qualification_receipt.py': 'qualification: per-host receipt assembler (outcome-blind)',
+    'export_staging_extras.sh': 'qualification: T1 reference runtime + committed reference receipts, from git',
+    'test_op7_boottime.py': 'qualification: host-independent run of a host-uptime-dependent T1 OP-7 test (T1 bytes unchanged)',
+    'make_freeze_skeleton.py': 'freeze-record skeleton generator (draft only)',
+    'stage_k4s.py': 'staging from the inherited S1 runtime pin f81f3655',
 }
 DOCS = ('.md',)
 

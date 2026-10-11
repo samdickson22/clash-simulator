@@ -1,0 +1,168 @@
+{
+  "schema": "clasher.k4s.reducer-verifier-crosscheck.v1",
+  "utc": "2026-10-11T13:47:17Z",
+  "host": "127x03",
+  "synthetic": true,
+  "scenarios": {
+    "admit-all": {
+      "verifier_status": "OK",
+      "compare": {
+        "items": 169,
+        "matched": 169,
+        "mismatched": 0
+      },
+      "reducer_status": "ADMISSION",
+      "admitted": {
+        "0.9": "A",
+        "0.8": "A",
+        "0.7": "A",
+        "0.6": "A"
+      },
+      "sequence": [
+        [
+          "B(0.8)",
+          true
+        ],
+        [
+          "B(0.7)",
+          true
+        ],
+        [
+          "B(0.6)",
+          true
+        ],
+        [
+          "A(0.9)",
+          true
+        ],
+        [
+          "A(0.8)",
+          true
+        ],
+        [
+          "A(0.7)",
+          true
+        ],
+        [
+          "A(0.6)",
+          true
+        ]
+      ],
+      "usable": [
+        0.9,
+        0.8,
+        0.7,
+        0.6
+      ],
+      "ledger_events": 4,
+      "reduce_sha256": "a11c06ccbd8d4cc239f4e1abf8eff8ccfbd0dc8d277b7b8a407f549c6180aa22",
+      "verify_sha256": "5c8256cdf9a876e5ffd387a5dc2378a2d6c0ea7bf59ee0b75a0805ce692220d4",
+      "reducer_sha256": "79985929946c980256ec2c1ab4ea50ed33af55feb1a7a4c23899e81f498ffc11",
+      "verifier_sha256": "62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf"
+    },
+    "stop-at-H2": {
+      "verifier_status": "OK",
+      "compare": {
+        "items": 169,
+        "matched": 169,
+        "mismatched": 0
+      },
+      "reducer_status": "ADMISSION",
+      "admitted": {
+        "0.9": null,
+        "0.8": "B",
+        "0.7": null,
+        "0.6": null
+      },
+      "sequence": [
+        [
+          "B(0.8)",
+          true
+        ],
+        [
+          "B(0.7)",
+          false
+        ],
+        [
+          "B(0.6)",
+          null
+        ],
+        [
+          "A(0.9)",
+          null
+        ],
+        [
+          "A(0.8)",
+          null
+        ],
+        [
+          "A(0.7)",
+          null
+        ],
+        [
+          "A(0.6)",
+          null
+        ]
+      ],
+      "usable": [
+        0.8
+      ],
+      "ledger_events": 2,
+      "reduce_sha256": "2ea5e017ecfb3052cb1a70878f5afea20909416964b0166e79634533025b2f01",
+      "verify_sha256": "f86fbb3613634957538962a682d49d4aec670bc5e787290acb1fef4177da8fbb",
+      "reducer_sha256": "79985929946c980256ec2c1ab4ea50ed33af55feb1a7a4c23899e81f498ffc11",
+      "verifier_sha256": "62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf"
+    },
+    "suspended": {
+      "verifier_status": "SUSPENDED",
+      "compare": {
+        "items": 169,
+        "matched": 169,
+        "mismatched": 0
+      },
+      "reducer_status": "SUSPENDED (validity window; independent receipts-only code review required)",
+      "admitted": {
+        "0.9": null,
+        "0.8": null,
+        "0.7": null,
+        "0.6": null
+      },
+      "sequence": [
+        [
+          "B(0.8)",
+          false
+        ],
+        [
+          "B(0.7)",
+          null
+        ],
+        [
+          "B(0.6)",
+          null
+        ],
+        [
+          "A(0.9)",
+          null
+        ],
+        [
+          "A(0.8)",
+          null
+        ],
+        [
+          "A(0.7)",
+          null
+        ],
+        [
+          "A(0.6)",
+          null
+        ]
+      ],
+      "usable": [],
+      "ledger_events": 2,
+      "reduce_sha256": "8f340944b978687f88ec99db79bc1ca0fd3058aeb4958b6a8405ca07bc14f9ae",
+      "verify_sha256": "ab610bad065d4b2986a90bafa1b3edc0e720dba43e948fc38423aedb7a7e5c21",
+      "reducer_sha256": "79985929946c980256ec2c1ab4ea50ed33af55feb1a7a4c23899e81f498ffc11",
+      "verifier_sha256": "62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf"
+    }
+  }
+}

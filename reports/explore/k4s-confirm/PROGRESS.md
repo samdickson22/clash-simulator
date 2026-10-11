@@ -42,6 +42,42 @@ Scope: prepare every freeze fill. **No freeze and no reporting game.**
 - 13:40Z: Sol review r1 of the core harness launched. Delta 8 (end_reference.py, end_pool.py) written and
   logic-tested. It cannot execute: the T1 K4 corpus is stored only under T1 job dirs.
 
+- 13:44Z: Sol core review r1: APPROVE_WITH_FIXES (4 MAJOR, 3 MINOR). Sol Mac+END review r1: REJECT (2 BLOCKER,
+  7 MAJOR); an Opus fix agent was launched (task k4s-mac-end-fix-r1). Verifier r2: exact `verifier_view` compare,
+  169/169 items match the reducer in 3 synthetic scenarios (receipts/reducer-verifier-crosscheck.json).
+- 13:50–13:57Z: core fixes:
+  - canonical descriptor validation, in the runner and in the reducer with a blind-ledger replay;
+  - strict `check_games` with a nonzero exit, plus smoke charge and field checks in `health.py`;
+  - guard-receipt projection compare;
+  - `frozen_action` and slot/attempt/tick/crowns/draw fields;
+  - the inherited OP-6/OP-7 sidecar sensitivity, and rate CIs with per-game numerator/denominator, GC and WAIT-spiral
+    tables.
+  New: a full-runner virtual-clock T1 vs K4S comparison. Native budgets are enforced in virtual time and the poll-cost
+  cycle is coprime with the poll cadence. Trial on qual seed 5: identical command hash, 0/241 decision mismatches;
+  coverage 22 belief cutoffs, 128 scored cutoffs, 5 overruns.
+- 13:58Z (coordinator update): perception released 127x04 early (receipt `04-allocation-release-20261011-r1.json`,
+  SHA 5f59f7f8; A2 complete; 03/08 transports retired, c2cef696).
+  - **Planned K4S host set {127x03, 127x04}.** The host set is left blank for the coordinator.
+  - 04 is available on the same terms as 03 (nice 19, STOP, ≤96 threads, ≤60 GB). No ssh to 01/08.
+  - **04 storage rule:** never modify or delete anything under `/mpac/sdicks02/jobs/clasher/` or
+    `/mpac/sdicks02/repos/clasher-v4-cache/` on 04. My 04 job dir is therefore `/mpac/sdicks02/jobs-k4s/k4s-prep-20261011/`,
+    with STOP `/mpac/sdicks02/jobs-k4s/k4s-prep-20261011/STOP`. `who` at 13:58Z: 0 users, load 0.0.
+- 2026-10-11T13:59:10Z: copied the pinned S1 base from 03 to `04:…/jobs-k4s/k4s-prep-20261011/base-s1` over the LAN (pin
+  sha f81f3655… verified). Staging re-verifies every file.
+
+- 2026-10-11T14:08:24Z: dev pipeline on 03 (qual-03-dev2) and 04 (qual-04-dev).
+  - The game stage passes on both hosts with identical hashes: no-deadline K4 = T1 = K4S; virtual-clock full runner
+    T1 vs K4S has 0 mismatches over 452 decisions (51 belief cutoffs, 229 scored cutoffs, 17 overruns); charge share
+    max deviation 0.0072.
+  - Test stage found two host-environment issues:
+    - The verifier tests need a git checkout. They run on the 05 checkout instead (95 passed).
+    - T1 `test_op7::test_fresh_reaps_cannot_renew_stale_orphan_debt` needs host uptime above about 16.85 days (its
+      fixture start_ticks is 145613425), so it fails on 04 at 12.7 days. It now runs via `test_op7_boottime.py` with
+      a pinned CLOCK_BOOTTIME; T1 bytes are unchanged and the deviation is disclosed.
+  - T1 END host check (Haiku research, spot-checked): T1 END needs neither 03 nor 04 for compute (Amendment 1 pool =
+    counted hosts 01+08). 03 holds T1's corpus durability copy (storage only). Recorded in FREEZE-RECORD-SKELETON §E.
+  - Sol core r2 and the Mac/END fix agent are running.
+
 ## Status
 | Item | Status |
 |---|---|

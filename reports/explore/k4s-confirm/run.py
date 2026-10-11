@@ -269,9 +269,15 @@ def run_game(case):
                         if not scored:
                             prep_seconds = elapsed  # no scoring call: the whole decision was preparation
                         if 'student_default' not in stats:
-                            # Preparation cutoffs return the seat poll, which is the SD1 default in K4S.
-                            stats['student_default'] = bool(sdefault_arm and stats['fallback'] and action < 2304)
-                            stats['frozen_action'] = None
+                            if scored:
+                                # Plain K4 scored decision: the frozen collector's own action.
+                                stats['student_default'] = False
+                                stats['frozen_action'] = int(action)
+                            else:
+                                # No scoring call (preparation cutoff or single candidate): no frozen scoring decision.
+                                # Preparation cutoffs return the seat poll, which is the SD1 default in K4S.
+                                stats['student_default'] = bool(sdefault_arm and stats['fallback'] and action < 2304)
+                                stats['frozen_action'] = None
                         overrun, delayed_ticks = apply_lateness(ch, waits, available_at, actor, b.tick, elapsed, deadline_seconds)
                         stats.update(unpruned_candidate_count=unpruned_count,own_elixir=float(info.own['elixir']) if 'elixir' in info.own else float(info.packet.observation.global_features[5])*10,fallback_action=int(fallback),threads=spec['threads'],coarse_horizon=spec['coarse_horizon'],default_source=spec['default_source'],wall_overrun=overrun > 0, overrun_seconds=overrun, delayed_ticks=delayed_ticks, decision_tick=b.tick, action=int(action), wall_seconds=elapsed,
                                      cpu_seconds=cpu_elapsed, chosen_action=int(action), fallback_used=bool(stats['fallback']), selected_wait_ticks=p.core.selected_wait_ticks,
@@ -302,6 +308,8 @@ def run_game(case):
              sd1_manifest_sha256=SD1_MANIFEST_SHA256, sd1_checkpoint_sha256=cfg['student']['checkpoint_sha256'], sd1_calibration_sha256=cfg['student']['calibration_sha256'], sd1_threshold=cfg['student']['threshold'],
              opponent_checkpoint_sha256=cfg['policy']['checkpoint_sha256'], native_sha256=cfg['source_reference']['native_sha256'],
              rotation=placement['rotation'], block_id=placement['block_id'], replacement_k=placement['replacement_k'],
+             slot=SLOT_CORES[0]//5, slot_cores=list(SLOT_CORES), attempt_dir=str(OPTIONS['out']),
+             final_tick=b.tick, crowns=[b.players[seat].get_crown_count(), b.players[1-seat].get_crown_count()], draw=terminal and b.winner is None,
              scale_sleep_seconds=sleep_total[0], scale_sleeps=sleep_total[1],
              checkpoint_sha256=cfg['student']['checkpoint_sha256'] if sdefault_arm else cfg['policy']['checkpoint_sha256'], ticks_per_second=20, honest_lateness=True, belief_preparation='exact resumable4096-row cancellation', cyclic_gc='automatic collection deferred during decisions; maintenance metered',
              arm=arm, abilities='disabled both sides', opponent=spec['opponent'], deadline_seconds=deadline_seconds, reserve_floor=spec.get('reserve_floor',False),
@@ -345,6 +353,9 @@ def main():
     # Reporting and smoke run at T1's nice 10; qualification may run at nice 19 (shared-host courtesy).
     prio=os.getpriority(os.PRIO_PROCESS,0)
     assert os.sched_getscheduler(0)==os.SCHED_OTHER and (prio==10 or (a.qualification and prio==19))
+    if desc['population']!='qualification':
+        from schedule import canonical
+        canonical(desc)  # every field equals the frozen schedule (rotation, seed, cell, decks, order, replacement bank)
     assert desc['order']==expected_order(desc),'block order must be the frozen rotation/subsample order'
     assert not a.out.exists(),'never reuse an interrupted block directory'
     a.out.mkdir(parents=True);os.chmod(a.out,0o700)

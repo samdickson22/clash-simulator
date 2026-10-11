@@ -49,6 +49,24 @@ def block(pop,index,*,cell=None,replaces=None,logical=None,replacement_k=None):
  rho=rotation(pop,logical);sub=pop=='smoke' or logical<SUB_LIMIT[pop]
  return dict(id=f'{pop}-{index:04d}',population=pop,index=index,seed=cfg['seed_ranges'][pop]['base']+index,cell=cell,seat=cell%2,own_index=cell%5 if pop in ('primary','smoke') else (cell//2)%3,opponent_index=(cell//5)%5 if pop in ('primary','smoke') else cell//6,rotation=rho,subsample=sub,order=order_for(rho,sub),replaces=replaces,replacement_k=replacement_k)
 
+def canonical(d):
+ """Recompute the frozen descriptor from (population, index) or (replaces, replacement_k); every field must match.
+ Rejects wrong rotations, seeds, cells, decks, arm orders and replacement banks before any game runs."""
+ pop=d['population'];assert pop in ('primary','guard','smoke'),'population'
+ if d.get('replaces') is None:
+  assert d.get('replacement_k') is None,'original block with a replacement k'
+  i=d['index'];assert isinstance(i,int) and 0<=i<COUNTS[pop],'index range'
+  exp=block(pop,i)
+ else:
+  assert pop in REPLACEMENT,'only primary/guard are replaced'
+  opop,oi=d['replaces'].rsplit('-',1);L=int(oi)
+  assert opop==pop and d['replaces']==f'{pop}-{L:04d}' and 0<=L<COUNTS[pop],'replaces must name the logical original'
+  rule=REPLACEMENT[pop];k=d['replacement_k'];assert isinstance(k,int) and 0<=k<=rule['max_k'],'replacement k'
+  c=L%CELLS[pop];exp=block(pop,rule['first']+rule['stride']*k+c,cell=c,replaces=d['replaces'],logical=L,replacement_k=k)
+ assert set(d)-set(exp)<={'host','dispatch'},'unexpected descriptor fields'
+ bad=sorted(k for k in exp if d.get(k)!=exp[k]);assert not bad,'descriptor differs from the frozen schedule: '+','.join(bad)
+ return exp
+
 def blocks(smoke=False):
  if smoke:return [block('smoke',i) for i in range(8)]
  rows=[]

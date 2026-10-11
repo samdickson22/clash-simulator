@@ -43,6 +43,7 @@ def test_stops_at_first_failure_and_levels():
     # B(0.6) fails on the guard part (> 15): A(0.9) onward is not reached.
     d = R.decide(fake({('gref', 120): 15.5}), 0.9, MARGINS)
     assert passed(d) == ['B(0.8)', 'B(0.7)'] and [x['tested'] for x in d['sequence']] == [True]*3+[False]*4
+    assert [x['passed'] for x in d['sequence']] == [True, True, False]+[None]*4
     assert d['admitted'] == {'0.9': None, '0.8': 'B', '0.7': 'B', '0.6': None}
 
 
@@ -79,3 +80,29 @@ def test_seal_refuses_without_release(tree, tmp_path):
     (tmp_path/'t2').mkdir()
     r = subprocess.run([sys.executable, str(HERE/'reduce.py'), '--root', str(tmp_path/'t2'), '--synthetic', '--out', str(tmp_path/'x.json')])
     assert r.returncode != 0
+
+
+def test_ledger_replay_rejects_wrong_k_and_non_logical_replaces():
+    from schedule import block, replacement
+    lost = block('primary', 5); r = replacement(lost, [])
+    ok = [dict(lost=lost, replacement=r)]
+    assert R.validate_ledger(ok)[r['id']] == r
+    with pytest.raises(AssertionError): R.validate_ledger([dict(lost=lost, replacement=dict(r, replacement_k=1, index=3055, id='primary-3055', seed=r['seed']+50))])
+    r2 = replacement(r, ok)
+    assert r2['replaces'] == 'primary-0005'
+    with pytest.raises(AssertionError): R.validate_ledger(ok+[dict(lost=r, replacement=dict(r2, replaces='primary-3005'))])
+    with pytest.raises(AssertionError): R.validate_ledger(ok+[dict(lost=lost, replacement=r2)])  # same block lost twice
+
+
+def test_tampered_descriptors_are_rejected(tmp_path):
+    import shutil
+    t = build(tmp_path/'t', seed=5)
+    def tamper(ident, **kw):
+        p = t/ident/'complete.json'; proof = json.loads(p.read_text()); orig = json.loads(p.read_text())
+        proof['descriptor'].update(kw); p.write_text(json.dumps(proof)); return p, orig
+    from schedule import order_for
+    for ident, kw in (('primary-0050', dict(rotation=0, order=order_for(0, True))), ('primary-0000', dict(index=1, seed=4503605807370497))):
+        p, orig = tamper(ident, **kw)
+        r = subprocess.run([sys.executable, str(HERE/'reduce.py'), '--root', str(t), '--synthetic', '--out', str(tmp_path/'x.json')], capture_output=True)
+        assert r.returncode != 0 and b'descriptor differs' in r.stderr
+        p.write_text(json.dumps(orig))

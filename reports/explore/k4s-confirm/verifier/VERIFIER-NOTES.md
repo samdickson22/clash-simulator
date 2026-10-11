@@ -4,18 +4,44 @@
 
 - **Author:** Claude Haiku 5.5 (`claude-haiku-5-5`), working as the independent verifier author for the
   PREREG-K4S confirmatory study. The reducer is written by a different author.
-- **Did not read** `reports/explore/k4s-confirm/reduce.py` or any `reduce*.py` in k4s-confirm. Nothing under
-  `reports/explore/x4s2/receipts` and no game outcome data was opened. No ssh, no git commit or push, no network.
-- **Sources read:** `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` (governs) and
-  `reports/explore/k4s-confirm/K4S-SPEC.md`. The T1 verifier header (`git show ef4c073a:reports/explore/t1/verifier/verify_t1.py`)
-  was read for layout and style only. Nothing is imported from it.
+- **Did not read** `reports/explore/k4s-confirm/reduce.py` or any `reduce*.py` in k4s-confirm, in round 1 or round 2.
+  Nothing under `reports/explore/x4s2/receipts` and no game outcome data was opened. No ssh, no git commit or push,
+  no network.
+- **Sources read (round 2):** `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` (governs),
+  `reports/explore/k4s-confirm/K4S-SPEC.md` (the updated spec, §3, §6.7, §7), and this verifier's round-1 files.
 - **Imports:** standard library and numpy only.
 
-## Environment note
+## Round 2 changes
 
-The brief's interpreter `/mpac/sdicks02/repos/clasher/.venv/bin/python` does not exist (there is no `.venv` in
-that checkout). Tests were run with `/mpac/sdicks02/venvs/t1-verifier/bin/python` (Python 3.12.12, numpy 2.5.3,
-pytest 9.1.1), under `nice -n 19`.
+Round 1 matched the reducer's decisions exactly on the full 3000/900 synthetic tree, but `--compare` matched by
+meaning and left many items unmatched or ambiguous. Round 2 removes that matching.
+
+1. **`--compare` is exact and key by key (spec §6.7).** The verifier emits a top-level `verifier_view` with the spec's
+   keys: `schema`, `counts`, `contrasts`, `sequence`, `admitted`, `veto_pass`, `usable_cells`, `validity_inside`.
+   `compare_verifier_view` walks the verifier's block and the reducer's `verifier_view` together:
+   - The key sets of every dict must be equal. Each missing or extra key is one mismatch.
+   - Integers must be `int`. A bool is not an int, a float is not an int, and `None` matches only `None`.
+   - Bounds are `[num, den]` pairs. They match when the two are equal as Fractions, with integer parts and a nonzero
+     denominator. So `[14, 2]` matches `[7, 1]`.
+   - `sequence` is compared in order, element by element, with its length.
+   - `usable_cells` is compared as a multiset (see objection O6).
+   - A missing `verifier_view` in the reducer output, or a missing one from the verifier, is one mismatch.
+   The result reports `items`, `matched`, `mismatched` and each mismatch's path with both values. Any mismatch is exit 2.
+   The old `unmatched` and `ambiguous` lists are gone.
+2. **Release barrier (§7).** The receipt must have `study` = `PREREG-K4S`. Each item must be exactly
+   `{path, sha256}`, the path must be repo-relative (no absolute path, no `..`), and the sha256 must be 64 lowercase
+   hex digits. `git show commit:path` must hash to the declared value, and the working-tree bytes must equal the
+   committed bytes. The completion receipt uses the §7 field names: `reporting_complete`, `outcomes_sealed`,
+   `counted_primary_blocks` (3000) and `counted_guard_blocks` (900). These are integers, not bools.
+   Exactly one of `end_reference` + `end_recheck` or `ratio_unavailable_declaration`, and exactly one of
+   `tiers_summary` or `tiers_release`. Any other item name is refused.
+3. **`replaces` (§3).** `replaces` must be the logical original id, `{pop}-{logical:04d}`. The immediately lost
+   replacement is refused. Round 1 accepted both forms.
+4. **Tests.** 95 tests, up from 41. They cover the release shape and every refusal, the replacement rule (chain
+   accepted with the original id, immediate-lost id refused, single-level original required), a hand-built
+   `verifier_view` that matches itself and an equal-rational variant, 33 single-item perturbations that must each fail,
+   the verifier's own view against its own output, a tampered count that exits 2, and a reducer with no
+   `verifier_view` that exits 2.
 
 ## Files
 
@@ -26,13 +52,14 @@ pytest 9.1.1), under `nice -n 19`.
 | `VERIFIER-NOTES.md` | This file. |
 
 Exit codes: 0 clean, 1 flags only (including `SUSPENDED` validity and `c_star` mismatch), 2 refusal, errors, or
-comparison mismatches, unmatched items, or ambiguous matches.
+comparison mismatch.
 
 ## Transcription (constant → source)
 
 | Constant | Value | Source |
 |---|---|---|
 | `COORDINATOR` | `0523ae6f-baa3-4d4e-b233-b392671670db` | Spec §7; r3 §4.5 |
+| `SEAL_STUDY` | `PREREG-K4S` | Spec §7 |
 | Primary seed base | `4503605807370496` | r3 §3.4; spec §2 |
 | Guard seed base | `4503605817370496` | r3 §3.4; spec §2 |
 | Primary n / subsample | 3000 / 600 (`i < 600`) | r3 §3.1, §3.3; spec §3 |
@@ -52,99 +79,79 @@ comparison mismatches, unmatched items, or ambiguous matches.
 
 ## Interpretations (K4S-SPEC §9 and my own choices)
 
-These are the choices the verifier makes where the text is open. Each one is also a place where the reducer might
-read it differently, so the coordinator should check them against the reducer.
+These are the choices the verifier makes where the text is open. The reducer may read them differently, so the
+coordinator should check them against the reducer.
 
 1. **Replacement `k` is 0-based.** Only a 0-based `k` fills the banks exactly: 12 × 50 = 600 primary, 10 × 18 = 180 guard.
+   `k` counts every lost block in the (population, cell), replacement losses included, in ledger order.
 2. **Game file location.** `<root>/<id>/games/<id>-d27-<arm>.json`, where `<id>` is the block's own id (for a
    replacement, its replacement index). The `games` map key in `complete.json` must equal that file name.
-3. **`replaces` may be the immediate lost id or the logical original id.** Both are accepted. The logical index is
-   resolved through the chain.
+3. **`replaces` is the logical original id (§3).** It is refused if it names the immediately lost replacement.
 4. **Replacements inherit** the lost block's logical index, rotation, arm set and cell ([I-1]). The verifier checks
-   the replacement's own descriptor against its logical index, so a wrong rotation or cell is an error.
+   the replacement's own descriptor against its logical index.
 5. **Subsample membership uses the logical index.** `L < 600` (primary) and `L < 300` (guard).
 6. **Cell-level bootstrap draws happen only for non-empty cells.** No cell is empty in the configured sizes.
 7. **Δ_same(0.8) is on primary full.** K4-160 is on every block. Δ_same(0.7) and (0.6) are on primary subsample,
    where K4-140 and K4-120 exist.
-8. **Losses come from `metadata.winner` and the descriptor's `seat`.** Any stored `loss` or `draw` field is ignored
-   (§6.2).
+8. **Losses come from `metadata.winner` and the descriptor's `seat`.** Any stored `loss` or `draw` field is ignored (§6.2).
 9. **`freeze_manifest_sha256` must be non-null in every counted game** (§5: null only in qualification and smoke).
 10. **`c_star` is an input.** The verifier does not derive it from X4S-2 phase E. A games-versus-`--c-star`
     mismatch is a flag.
 11. **Under c* = 0.8**, the veto is reported as descriptive (r3 §1.3). Usable 0.9 is False, because A(0.9) is not tested.
+12. **`verifier_view.sequence` lists every step of the c\* sequence, in test order.** A step after a failure has
+    `tested: false` and `passed: null`. (O5.)
+13. **Full analyses carry the 8 core arms. Subsamples carry all 10.** Each `counts` entry has `n` equal to its analysis's n.
 
-## Ambiguities found in the spec and r3 (r3 governs)
+## Spec objections (r3 governs)
 
-- **A1 (release item shape).** §7 says each item's `git show commit:path` hashes to a declared sha256. It does not
-  say how the receipt declares path and sha256. I used `items[name] = {"path": ..., "sha256": ...}`.
-- **A2 (completion receipt fields).** §7 item 1 requires `reporting_complete`, `outcomes_sealed`, and "3000 / 900
-  counted", without field names. I read `counted.primary == 3000` and `counted.guard == 900`. Confirm the names.
-- **A3 (commit ancestry).** §7 says the commit must be an ancestor of HEAD. It does not say whose HEAD. I use the
-  repository at `--repo` (default: the verifier's own repository).
-- **A4 (replacement caps).** r3 §3.4 gives both "300 primary / 90 guard in total" and "k ≤ 11 / k ≤ 9" per cell.
-  With 0-based `k` the per-cell bank alone allows 600 primary, so the total cap binds first. Both are enforced.
-- **A5 (`replaces` field).** Spec §3 says `replaces` is "the logical original id", while §3's logical-index rule
-  says to follow the chain. These agree only for a single-level replacement. See interpretation 3.
-- **A6 (game file location and key).** Spec §6.1 says "`<id>/complete.json` + `games/`". §5 says
-  `games/{pop}-{index:04d}-d27-{arm}.json`. The directory is ambiguous. See interpretation 2.
-- **A7 (guard subsample is unequal).** L < 300 spread over 18 cells gives 16 or 17 rows per cell. r3 does not say
-  so. The stratified bootstrap handles it, because `n_c` is per cell.
-- **A8 (subsample bootstrap stream).** r3 §5.1 says "shared across all contrasts within a population". The
-  subsample analyses resample different row sets, so they are separate draws. The spec's RNG order is what
-  makes the subsample draws reproducible, and that order is an implementation choice.
-- **A9 (veto under c* = 0.8).** r3 §1.3 says K4@0.9 and K4S@0.9 "become descriptive". Spec §6.5 still calls the
-  veto a gate. I report it as descriptive at c* = 0.8. It cannot admit anything either way, because A(0.9) is
-  not tested.
-- **A10 (c* provenance).** r3 §1.3 says the coordinator applies the phase E rule before freeze and records it.
-  The verifier takes `--c-star` as input and flags a mismatch with the games' `c_star`. The phase E rule itself
-  is outside this tool.
-- **A11 (hub acknowledgement).** §4.4 says blocks are "hub-acknowledged when the host is not 127x01". The format
-  is not given. I flag an unacknowledged non-01 block (key `hub_ack`), but I do not gate on it, because §6.2 does
-  not list it among the counting rules.
-- **A12 (`study` string).** §5 gives `study` = `PREREG-K4S` "(with SEALED)". I check the `PREREG-K4S` prefix.
-- **A13 (block that fails counting).** §6.2 says "a block counts if ...". A failing block is not counted, which
-  makes the logical count short, which is an error. I report the failure directly. Both paths fail closed.
-- **A14 (unreplaced loss).** §6.2 does not say what to do with a ledger loss whose replacement is null. I treat it
-  as an error, since the logical count would fall short anyway.
+These are my own objections, written from the spec as it stands. Each one is a place where I had to pick a reading.
+
+- **O1. §7 item count.** §7 says "six items", but the list gives seven when the end pair is used
+  (completion, end_reference, end_recheck, production_checks, verifier_receipt, mac, tiers). The verifier accepts
+  either form, and the coordinator should fix the count.
+- **O2. Authorization is not verifiable from the repository.** `coordinator_thread` and `authorization_message_id`
+  are strings the receipt declares. The seal proves the bytes, not that the authorization happened. Something outside
+  the verifier has to tie the message id to a real authorization.
+- **O3. Whose HEAD (A3, still open).** "Commit is an ancestor of HEAD" does not say which repository's HEAD. The
+  verifier uses `--repo`, which defaults to its own checkout. The spec should name the branch (e.g. `origin/main`).
+- **O4. Rational form.** §6.7 says `[num, den]` but does not require lowest terms or a positive denominator. The
+  verifier accepts any nonzero denominator that is equal as a Fraction. The spec should require lowest terms with a
+  positive denominator, so that the two sides can be compared as written.
+- **O5. Sequence contents.** §6.7 does not say whether untested steps appear, or what `passed` is for them. I include
+  every step with `tested: false` and `passed: null`. The spec should say so.
+- **O6. `usable_cells` order.** §6.7 gives `["0.9", "0.8"]` as an example and does not fix the order. The verifier
+  emits descending order and compares as a multiset. Fixing the order in the spec would let it compare as a list.
+- **O7. Validity and usable cells.** §6.5 says a SUSPENDED result reports admissions "marked suspended", but §1.5 does
+  not say whether usable cells are then forced to empty. The verifier computes usable cells as before and reports
+  `validity_inside` separately. The spec must say which is meant.
+- **O8. Percentile convention.** §6.3 cites "the T1 convention" but gives the formula in full. The verifier implements
+  linear interpolation at position `(R−1)·q`, which matches numpy's default `linear` method. The coordinator should
+  confirm this against T1's bounds, which I did not read in round 2.
+- **O9. Replacement ledger.** §3 does not say whether a lost replacement's `k` counts in its cell's bank. The verifier
+  counts it, which is what the 600 / 180 bank arithmetic requires, and the spec should say so.
+- **O10. Release timing.** `authorized_at_utc` is not checked against any commit time, so it is informational only.
+  The spec should either bind it or say that it is not checked.
+
+## Ambiguities resolved since round 1
+
+- **A1 (item shape).** Resolved by §7: `items[name] = {path, sha256}`.
+- **A2 (completion field names).** Resolved by §7: `counted_primary_blocks`, `counted_guard_blocks`.
+- **A5 (`replaces`).** Resolved by §3: always the logical original.
+- A3 (whose HEAD) is still open (O3). A4, A6–A14 are unchanged from round 1 (see the spec; they are reflected in the code).
 
 ## Not implemented (out of scope for this task)
 
 - §6.6 secondary outputs: F1, the flagged-block sensitivity on `default_rng(2026101171)`, the matchup-cluster
-  bootstrap on `2026101172`, per-host and per-seat tables, mechanism rates, latency, draws-as-half, and
-  monotonicity. None of them can change admission.
+  bootstrap on `2026101172`, per-host and per-seat tables, mechanism rates, latency, draws-as-half, and monotonicity.
+  None of them can change admission.
 - Derivation of c* from X4S-2 phase E, and the c_e mapping from c_M (the Mac measurement).
-- Verification of the TIERS release barrier contents. The seal checks only its declared sha256.
+- Verification of the TIERS release barrier contents. The seal checks only its declared sha256 and its working-tree bytes.
 - Interference flags (OP-6/OP-7), and matchup or per-host analyses.
-
-## Comparison (`--compare`)
-
-- Matching is by meaning, not by path. A reducer leaf matches when each alias group occurs in its normalised
-  path (lowercase, `Δ` spelled out, only `a-z0-9`). Groups cover the analysis (`primary`/`pfull`, `full`/`sub`),
-  the arm (`K4S-180` → `k4s180`, `k4s09`), the quantity (`loss`, `draw`), the contrast (`dref09`, `deltaref09`,
-  `dsame08`), the bound (`lower`, `upper`), the hypothesis (`h1`, `passed`), admission (`admission`, `08`), and
-  usable (`usable`, `08`).
-- Missing, ambiguous and conflicting matches are reported and make the exit 2. Nothing is guessed. A `frac` item
-  that matches both an exact and a float twin takes the exact one. A float match is accepted within 1e-9.
-- The reducer's leaf names are not known to me. A reducer that names things very differently will show up as
-  `unmatched`, which is the intended failure mode. The coordinator should read the unmatched list.
 
 ## Test results
 
 Command: `nice -n 19 /mpac/sdicks02/venvs/t1-verifier/bin/python -m pytest -q reports/explore/k4s-confirm/verifier`
-Result: **41 passed in 2.78s.**
+Result: **95 passed in 3.87s.**
 
-Coverage: seal refusal (no release and no SYNTHETIC, wrong coordinator, hash mismatch, missing item, non-ancestor
-commit, wrong completion counts, and a bad release refusing before any game bytes); SYNTHETIC marker and flag
-gating; loss and draw rule on integer tables; replacement chain (two levels), wrong index, cell mismatch, per-cell
-bank cap, population 10% cap, unreplaced loss, missing logical block, arm set against descriptor, SHA-256 of a
-tampered game, non-terminal game, and qualification records in counted blocks; exact percentile by hand and at an
-integer position; bootstrap RNG consumption; strict SUP and inclusive margins; within-one-step flag; sequence stops
-at the first failure; H4 dropped at c* = 0.8; level A falling back to B; veto inclusive at 5; usable cells; validity
-window inclusive at 10% and 30%; end-to-end CLI; `--compare` on its own output (all matched), and a tampered count
-caught (exit 2).
-
-**Full-size check (outside the repo, not committed):** a 3000/900 synthetic tree with 33,000 games and 3 replacements
-loads and counts correctly (3000 and 900 logical blocks, 600 and 300 in the subsample). The verifier ran in
-about 4 seconds wall, and two runs gave identical JSON. Exit 1 there is expected: the synthetic K4-200 loss rate
-(33.3%) is outside the validity window, so the run reports SUSPENDED. Primary K4-200, K4S-180 and K4S-160 losses (1000 each) match an independent recount from the
-game files.
+The brief's interpreter `/mpac/sdicks02/repos/clasher/.venv/bin/python` does not exist. The test venv is Python 3.12 with
+numpy and pytest.

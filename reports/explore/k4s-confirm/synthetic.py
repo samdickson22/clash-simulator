@@ -21,7 +21,8 @@ def game(desc, arm, rng, p, decks):
     winner = None if u < DRAW else (1-seat if u < DRAW+p[arm] else seat)
     loss = int(winner is not None and winner != seat)
     stat = dict(hit=rng.random() < .3, fallback=False, student_default=arm.startswith('K4S') and rng.random() < .1, coarse_complete=True,
-                wall_overrun=False, action=2304, unpruned_candidate_count=10, wall_seconds=.1, sd1_p_play=.4 if arm.startswith('K4S') else None)
+                wall_overrun=False, action=2304 if rng.random() < .7 else 5, unpruned_candidate_count=10, wall_seconds=.1, positive_overrun_ms=0., delayed_ticks=0,
+                sd1_p_play=.4 if arm.startswith('K4S') else None)
     own, opp = decks
     spec = PLAN['arms'][arm]
     meta = dict(terminal=True, winner=winner, seat=seat, seed=desc['seed'], cell=desc['cell'], own_deck=own, opponent_deck=opp,
@@ -34,7 +35,7 @@ def game(desc, arm, rng, p, decks):
                 sd1_manifest_sha256='2'*64, sd1_checkpoint_sha256=PLAN['student']['checkpoint_sha256'],
                 sd1_calibration_sha256=PLAN['student']['calibration_sha256'], sd1_threshold=PLAN['student']['threshold'],
                 opponent_checkpoint_sha256=PLAN['policy']['checkpoint_sha256'], native_sha256=PLAN['source_reference']['native_sha256'])
-    return dict(cohort=arm, loss=float(loss), metadata=meta, search_ab=dict(deadline_stats=[stat]))
+    return dict(cohort=arm, loss=float(loss), metadata=meta, search_ab=dict(deadline_stats=[stat, dict(stat, hit=False)], gc_maintenance=[dict(seconds=.001, generation=0, during_decision=False)]))
 
 
 def write_block(root, desc, rng, p, host='127x01'):

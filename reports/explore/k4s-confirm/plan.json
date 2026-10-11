@@ -222,7 +222,8 @@
       "guard_subsample"
     ],
     "confidence": "19/20 two-sided; upper = 39/40 percentile",
-    "threshold_arithmetic": "Integer resample loss counts; rational linear percentile interpolation; rational bounds govern. Margins inclusive; SUP strict <0."
+    "threshold_arithmetic": "Integer resample loss counts; rational linear percentile interpolation; rational bounds govern. Margins inclusive; SUP strict <0.",
+    "rates_seed": 2026101173
   },
   "policy": {
     "snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",

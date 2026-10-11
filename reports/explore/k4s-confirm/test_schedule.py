@@ -74,3 +74,17 @@ def test_each_cell_visits_every_host_balanced():
             for c in range(cells):
                 counts = Counter(r['host'] for r in rows if r['population'] == pop and r['cell'] == c)
                 assert set(counts) == set(hosts) and max(counts.values())-min(counts.values()) <= 1
+
+
+def test_canonical_descriptor_rejects_tampering():
+    from schedule import canonical
+    for d in blocks()[:40]+blocks(smoke=True):
+        assert canonical(dict(d, host='127x03', dispatch=1)) == {k: v for k, v in d.items()}
+    d = block('primary', 50)
+    for bad in (dict(d, rotation=0, order=order_for(0, True)), dict(d, index=51), dict(d, seed=d['seed']+1), dict(d, cell=1),
+                dict(d, subsample=False, order=order_for(1, False)), dict(d, replacement_k=0), dict(d, extra=1)):
+        with pytest.raises(AssertionError): canonical(bad)
+    r = replacement(block('guard', 20), [])
+    assert canonical(r) == r
+    for bad in (dict(r, replacement_k=1), dict(r, replaces='guard-0021'), dict(r, index=903), dict(r, rotation=0, order=order_for(0, True))):
+        with pytest.raises(AssertionError): canonical(bad)
