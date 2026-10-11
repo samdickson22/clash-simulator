@@ -2052,3 +2052,7 @@ Also on the hub, but with copies elsewhere:
     - **END and Mac sessions:** they name 8bb20a75 and run from the amended tree, in a separate staged END tree. No END declaration may ever name d89cab16.
     - **Disclosure:** the r1 Sol reviewer saw X4S-2 numbers already used for c\* (mechanical re-pin, no effect); disclosed in the record.
   - Relayed to the K4S runner.
+- **18:48 UTC: K4S runner dispositions** (outcome-blind):
+  - **Sol MINOR 5, ACCEPTED as frozen behaviour.** Excluded smoke games carry freeze_manifest_sha256 = sha(FROZEN-K4S.json), whereas K4S-SPEC §5 says null. No frozen bytes change; the discrepancy goes in the freeze addendum.
+  - **STOP drill, APPROVED:** a separate excluded drill job per host (k4s-confirm-r1-stopdrill) with its own staging and qualification, run before the counted smoke. The counted smoke stays 8/8.
+  - **Status:** OA-1/B2 Sol r2 REJECT (2 new MAJORs: transport descendant teardown, and restart ACK without hub re-verification); fixing for r3. B2 manifest 454b5f54 is compatible. END corpus copied read-only and SHA-verified. Dispatches: smoke 5ff0b681; reporting 3,900 blocks / 33,000 games (78335dc4).
