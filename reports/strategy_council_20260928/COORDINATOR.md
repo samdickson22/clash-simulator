@@ -1942,3 +1942,16 @@ Also on the hub, but with copies elsewhere:
 
   T1 results are sealed until the Mac measurements anyway, and END needs the post-A2 clean window, so this costs no critical-path time.
 - **01:27 UTC: X4S exploration launched** on the idle 08 (CPUs + A6000) and 03 (CPUs) during A2. It's an Opus-high worker (task clasher-x4s-k4-sdefault-slowcore-20261011-r1; NEVER ADOPTABLE). The question: does the R3a student as the cutoff default rescue K4 at 200/160/140/120 ms (≈1.0/0.8/0.7/0.6× Mac speed)? This decides whether a Mac slower than 0.8× can still run 4-core search. Limits: nice 19, ≤96 threads and ≤60 GB per host (headroom for A2's 03/08 remote hashing); STOP file `/mpac/sdicks02/jobs/clasher/x4s-20261011/STOP` drains within 5 min to zero processes; hard end 14:00Z. **08 must be STOPped and verified empty before T1's Option B restart.** No ssh to 01/04; no T1 or perception paths.
+- **04:24 UTC: X4S COMPLETE: a student default rescues K4 on slow cores** (4bc4acb1; exploration, NEVER ADOPTABLE; 600 paired seeds × 9 arms, 0 exclusions; recount reproduces). Loss vs v1, K4 → K4+S-default:
+
+  | Budget | K4 | K4+S-default |
+  |---|---|---|
+  | 200 ms | 18.5% | 20.7% (+2.2 pp, ns) |
+  | 160 ms (0.8×) | 27.8% | 18.2% (−9.7 pp) |
+  | 140 ms (0.7×) | 47.3% | 22.2% (−25.2 pp) |
+  | 120 ms (0.6×) | 89.0% | 26.0% (−63 pp) |
+
+  K0c at 200 ms is 43.2%. Plain K4's cutoff rate is 18.6% at 160 ms and 88.6% at 120 ms, where the WAIT spiral sets in; the student default prevents it.
+  - **Implication:** plain K4 needs about ≥0.9× fleet core speed. With the student default, a 0.8× Mac matches fleet-speed K4, and 0.6× stays ~17 pp better than 1-core.
+  - **Caveats:** this is a deadline cut, not real slow hardware; student inference is unscaled; there was one opponent and five decks.
+  - **Next:** **X4S-2** (Opus worker, task clasher-x4s2-robustness-20261011-r1): honest inference scaling, wider decks, and the full-speed cost variant, on 03 (until 13:30Z) and 08 (hard stop 09:30Z or STOP, 08 verified empty before the T1 restart). If it holds, I'll draft a confirmatory PREREG for a speed-gated K4+S-default Mac tier; the R3a student would be re-frozen as a new artifact. Mac speed is still unmeasured, pending Sam's Mac E4 authorization.
