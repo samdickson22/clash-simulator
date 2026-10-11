@@ -2010,3 +2010,15 @@ Also on the hub, but with copies elsewhere:
   - **T1 status:** 08 fresh qualification PASS (f2a2444e, binding b3099194); two-host smoke r9 launched at 13:54Z.
   - **The 08 HTTP cache** retires in the END window, per perception's requirements (b58b4bc5).
 - **14:06 UTC: T1 replacement-r3 LAUNCHED** at 14:03:49Z on 01/08 (receipt f8a54939). Draft d066dc37: 1,020 rows, 512/508; smoke r9 PASS (93c22a09/0b7ae802); freeze ef4c073a, manifest 488f6c8d unchanged. 2,052 preserved. At ~200/h across both hosts, it should finish ~19–20Z, then the END clean window: 08 HTTP cache retirement, E4 A6 smoke, E4 review, pooled reference, T1 release (PC1–PC4), and B on 08.
+- **17:21 UTC: K4S freeze-fill prep COMPLETE** (247ef6d4). Sol approved all three streams: core r6, independent verifier r3, Mac/END r6 (15 reviews). Qualification r3 PASS on 03 and 04, 28/28 each. Reducer/verifier cross-check 169/169. Seed audit PASS.
+  - **Freeze decisions (mine):**
+    - c\* = 0.9.
+    - Host set {03, 04}, with transport declarations c2cef696 and 5f59f7f8. T1's 03 corpus copy and 04 perception storage stay untouched.
+    - Q1–Q13 defaults.
+    - K4S-SPEC I-1..I-5 accepted.
+    - Errata R2/R5 recorded.
+    - Attestation: T1/TIERS outcomes sealed.
+    - SD1 supersession issued, with an additive exit-r3 pointer.
+    - Read-only SHA-verified copy of T1's K4 speed corpus (a97b1fbf) into the K4S job dirs authorized, for END only.
+  - **Freeze executor launched** (Opus, clasher-prereg-k4s-freeze-exec-20261011-r1): SHA re-verification, seed-audit re-run, Mac manifest freeze, freeze record and commit, independent check. Then the K4S run on {03, 04} (excluded smoke, then reporting), in parallel with T1 reporting on 01/08.
+  - **TIERS blocker found by prep:** the frozen `measure_tiers.py` (5d7de8e3) uses `math.isfinite` without `import math` (l.70), so every Mac session with amendment_1 would hit NameError. A reviewed TIERS erratum is needed before any Mac session; it is outcome-blind and doesn't affect fleet reporting. Assigned to T1.
