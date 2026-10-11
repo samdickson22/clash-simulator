@@ -1,0 +1,24 @@
+{
+ "samples": 82,
+ "copier_related": {
+  "sshd: sdicks02@notty": [
+   "None",
+   "ssh_family_budget"
+  ],
+  "rsync --server --sender -logDtpre.iLsfxC . /mpac/sdicks02/jobs-k4s/k4s-confirm-oa1test2/smoke/smoke-0001/": [
+   "ssh_family_budget"
+  ],
+  "rsync --server --sender -logDtpre.iLsfxC . /mpac/sdicks02/jobs-k4s/k4s-confirm-oa1test2/smoke/smoke-0002/": [
+   "ssh_family_budget"
+  ],
+  "rsync --server --sender -logDtpre.iLsfxC . /mpac/sdicks02/jobs-k4s/k4s-confirm-oa1test2/smoke/smoke-0003/": [
+   "ssh_family_budget"
+  ]
+ },
+ "foreign": [
+  "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+ ],
+ "active": [
+  "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+ ]
+}

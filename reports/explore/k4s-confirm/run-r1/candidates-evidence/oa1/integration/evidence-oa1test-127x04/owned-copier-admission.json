@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-11T18:21:12Z",
+  "host": "127x05",
+  "source_ip": "129.65.221.15",
+  "identity": {
+    "pid": 1736330,
+    "pgid": 1736330,
+    "start_ticks": 153264410,
+    "cmdline_sha256": "82c821fe146ded89272c4cfb76c96c001db55734a1d8d8f372629dfcefb03d75",
+    "uid": 3822945,
+    "exe": "/usr/bin/python3.8"
+  },
+  "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-oa1test",
+  "phase": "smoke",
+  "source_host": "127x04",
+  "active": false,
+  "amendment": "K4S OA-1",
+  "finished_utc": "2026-10-11T18:21:18Z"
+}

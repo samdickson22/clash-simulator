@@ -1,0 +1,115 @@
+{
+ "schema": "clasher.k4s.stop-drill.v1",
+ "study": "PREREG-K4S",
+ "excluded": true,
+ "outcomes_read": false,
+ "sealed": true,
+ "purpose": "Exercise the frozen supervisor owned-STOP path (QUALIFICATION.md step 6 note; coordinator 2026-10-11T18:48Z f442b968) in a separate excluded job per host so the counted smoke can reach 8/8",
+ "method": "frozen launch.sh smoke on k4s-confirm-r1-stopdrill (own staging + qualification PASS); owned STOP target touched ~2 min after launch with 8 blocks in flight; supervisor exit and absence of owned process groups checked; the 8 interrupted drill blocks are excluded and never inspected",
+ "hosts": {
+  "127x03": {
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1-stopdrill",
+   "drill_qualification": {
+    "verdict": "PASS",
+    "utc": "2026-10-11T18:46:46Z",
+    "tests": "299 passed, 2 deselected in 35.47s",
+    "checks": "28/28"
+   },
+   "admission": {
+    "utc": "2026-10-11T18:58:16Z",
+    "admitted": true,
+    "foreign": 0,
+    "foreign_active": 0,
+    "console": false
+   },
+   "launch": {
+    "utc": "2026-10-11T18:58:16Z",
+    "host": "127x03",
+    "phase": "smoke",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "6d92efbfdd8f5475e715bad67af8526714e4aa8f4443b9d3b30e478e4f625c9a",
+    "dispatch_sha256": "5ff0b681c5011457342f20234e658c63eb8a335ca8ed69a62d8f2bbd60039b9e",
+    "supervisor_pid": 741615,
+    "supervisor_pgid": 741615
+   },
+   "stop_touched_utc": "2026-10-11T19:00:30.347Z",
+   "supervisor_process_gone_utc": "2026-10-11T19:00:32.062Z",
+   "stop_reason": {
+    "utc": "2026-10-11T19:00:31Z",
+    "reason": "owned_STOP",
+    "foreign": 0,
+    "foreign_active": 0,
+    "console": false
+   },
+   "supervisor_exit": {
+    "utc": "2026-10-11T19:00:31Z",
+    "reason": "owned_STOP",
+    "completed": 0,
+    "failed": 8,
+    "unstarted": 0
+   },
+   "owned_process_groups_after": 0,
+   "stop_target_removed": true,
+   "sha256": {
+    "host-admission-smoke.json": "97bd4a1d687aaf6e81b9705b15a5b0b6512f2877629ff02296849b4b5c4a7057",
+    "launch.json": "df977bb4cc64ad331f4d96bf30c060fcd205438f308d9786e90c495e1c9d282d",
+    "qualification-127x03.json": "e64590ed817064cf2868e26770bdd0172f73b88fca44253796fc1626729850aa",
+    "stop-reason.json": "9606f97d1456f4f1c81e98571d155518797dd9ab5e63f91c38b6ded900924b4e",
+    "supervisor-exit.json": "447d927afa58303317ad12c132ea4bda899f12cb657222763d065fdd54679db0"
+   }
+  },
+  "127x04": {
+   "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-r1-stopdrill",
+   "drill_qualification": {
+    "verdict": "PASS",
+    "utc": "2026-10-11T18:47:09Z",
+    "tests": "299 passed, 2 deselected in 35.54s",
+    "checks": "28/28"
+   },
+   "admission": {
+    "utc": "2026-10-11T18:58:16Z",
+    "admitted": true,
+    "foreign": 0,
+    "foreign_active": 0,
+    "console": false
+   },
+   "launch": {
+    "utc": "2026-10-11T18:58:17Z",
+    "host": "127x04",
+    "phase": "smoke",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "0d5b3142bab2ef62efc240729b7ccd88757ad6c4e470eb1145cd73cf55ecc7a2",
+    "dispatch_sha256": "5ff0b681c5011457342f20234e658c63eb8a335ca8ed69a62d8f2bbd60039b9e",
+    "supervisor_pid": 3981732,
+    "supervisor_pgid": 3981732
+   },
+   "stop_touched_utc": "2026-10-11T19:00:30.718Z",
+   "supervisor_process_gone_utc": "2026-10-11T19:00:33.462Z",
+   "stop_reason": {
+    "utc": "2026-10-11T19:00:32Z",
+    "reason": "owned_STOP",
+    "foreign": 0,
+    "foreign_active": 0,
+    "console": false
+   },
+   "supervisor_exit": {
+    "utc": "2026-10-11T19:00:32Z",
+    "reason": "owned_STOP",
+    "completed": 0,
+    "failed": 8,
+    "unstarted": 0
+   },
+   "owned_process_groups_after": 0,
+   "stop_target_removed": true,
+   "sha256": {
+    "host-admission-smoke.json": "063966b59c8c275826dfb90df53a55b2af0fe47fcf09a9f8c285beafd434483a",
+    "launch.json": "a401fb132ac5538f22157741e890e2fa84f42ac4800daed760a5cfae04eb655f",
+    "qualification-127x04.json": "7bfa573c0164ac050355da4dcd7d91072152941db61958d987980939f41d043d",
+    "stop-reason.json": "fdf56e83b5a57aa558eba559832856da3560bfe4e8d97a4a4761644118b411b0",
+    "supervisor-exit.json": "25c92f9409a0f3ee493e51dd16a761bbe8882622badbe61c3903d186ee5f6df0"
+   }
+  }
+ }
+}

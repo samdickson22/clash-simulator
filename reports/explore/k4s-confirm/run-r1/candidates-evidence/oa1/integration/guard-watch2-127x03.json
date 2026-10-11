@@ -1,0 +1,22 @@
+{
+ "samples": 89,
+ "copier_related": {
+  "sshd: sdicks02@notty": [
+   "ssh_family_budget"
+  ],
+  "rsync --server --sender -logDtpre.iLsfxC . /mpac/sdicks02/jobs/clasher/k4s-confirm-oa1test2/smoke/smoke-0003/": [
+   "ssh_family_budget"
+  ],
+  "rsync --server --sender -logDtpre.iLsfxC . /mpac/sdicks02/jobs/clasher/k4s-confirm-oa1test2/smoke/smoke-0001/": [
+   "ssh_family_budget"
+  ],
+  "rsync --server --sender -logDtpre.iLsfxC . /mpac/sdicks02/jobs/clasher/k4s-confirm-oa1test2/smoke/smoke-0002/": [
+   "ssh_family_budget"
+  ]
+ },
+ "foreign": [
+  "/mpac/sdicks02/repos/clasher-v4-cpu/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/validation_cache_service_renewal_v4.py --plan /mpac/sdic",
+  "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+ ],
+ "active": []
+}

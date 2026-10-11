@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-11T18:21:14Z",
+  "hub": "127x05",
+  "hub_ip": "129.65.221.15",
+  "amendment": "K4S OA-1",
+  "source_host": "127x04",
+  "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-oa1test",
+  "phase": "smoke",
+  "block": "smoke-0001",
+  "complete_sha256": "9dd0283a1c2039abbf41a78537f20991db1583276fd8eb8fc7b9bc0dd1205c3f",
+  "games": 10,
+  "sealed": true
+}

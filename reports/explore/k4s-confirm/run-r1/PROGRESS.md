@@ -37,18 +37,58 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   approved audit_seeds.py fix + its test (not runtime).
 - 18:19Z: B4 done: 391d2006 objects fetched by SHA into /mpac/sdicks02/repos/clasher on 03/04 (FETCH_HEAD only; HEAD db1d17a0
   unchanged); PREREG r3 (9650972d) copied byte-verified into both staged repos.
-- 18:21–18:25Z: OA-1 live integration (synthetic random-byte fixtures, test job dirs removed afterwards): 8- and 10-game blocks
+- 18:21–18:24Z: OA-1 live integration (synthetic random-byte fixtures, test job dirs removed afterwards): 8- and 10-game blocks
   acked on 05 and written back on 03 and 04; corrupt block refused; frozen census classified copier children
   `ssh_family_budget` (never foreign/active). First run exposed a stall (one bad block aborted the pass) -> fixed (per-block isolation).
-- 18:24Z: **03 admission ruling requested**: perception v4 validation cache service PID 2180947 (frozen SERVICE_PIDS['127x03'])
+- 18:22Z: **03 admission ruling requested**: perception v4 validation cache service PID 2180947 (frozen SERVICE_PIDS['127x03'])
   is foreign unless pinned via frozen idle_services.py. Recommended (a) pin it. Waiting.
 - 18:26Z: final B2 manifest FROZEN-K4S.json sha cecb2f59… (176 files, binds both launch receipts). Sol review r1 of OA-1 + B2
   delegated (task k4s-run-r1-sol-oa1-b2-review-r1; review file reviews/SOL-REVIEW-OA1-B2-r1.md).
 - 18:27Z: dispatches generated with frozen schedule.py (canonical() on every row): smoke 16 blocks (8/host, 10 arms, 80 games/host)
   sha 5ff0b681…; reporting 3900 blocks / 33000 games, 16500 per host, cell imbalance 0, sha 78335dc4….
 
+- 18:22Z: coordinator ruling (a) (d999d016): admit 03 with the frozen idle-service pin. 18:27:34Z pinned via frozen
+  `idle_services.py --job $J` on 03: PID 2180947, start_ticks 139691386, cmdline 16152ceb… = T1's committed pin exactly.
+- 18:28Z: END prep (authorized read-only copy): `K4-states.pkl` a97b1fbf… + `corpora.json` 3501e2ac… (= git 81f2483e) copied
+  from the 05 bundle `t1-20261010-r1/corpus-publication-staging-r1` to `$J/end-corpus/` on 03/04, chmod 444, SHA-verified;
+  source unchanged (read only). No END measurement until the coordinator declares the K4S END window.
+- 18:30Z: STOP-path decision (operational): the frozen supervisor allows one smoke per job (launch-claim) and smoke_pass needs
+  8/8 complete, so a supervisor STOP inside the counted smoke would void it. As T1 did (per-attempt job dirs), the supervisor
+  STOP path is exercised in a separate excluded drill job per host `k4s-confirm-r1-stopdrill` (own staging + qualification,
+  smoke-phase supervisor, STOP after ~2 min, verify drain < 5 min and 0 owned processes; outcomes never read).
+- 18:31Z: drill jobs staged (overlay 175/175 OK) and qualifying: 03 PGID 724883, 04 PGID 3964459.
+
+- 18:33Z: **Sol r1 OA-1/B2: REJECT** (3 MAJOR: ACK-return permanence, registration race/successor revocation, stale receipt
+  on failed revocation; 2 MINOR: manifest wording, smoke freeze-sha spec note). B2 inventory/barrier compatibility passed.
+- 18:36Z: fixes (lock, verified ACK return + retry, ownership-checked verified revocation, --revoke recovery, path/symlink/arm
+  hardening); 21 tests pass; live re-run on 03/04 OK (oa1test3, removed). mirror_k4s.py 4a5d9e9f…, manifest 454b5f54….
+  Response `reviews/RESPONSE-OA1-B2-r1.md`. **Sol r2 delegated** (k4s-run-r1-sol-oa1-b2-review-r2).
+
+- 18:47Z: drill qualification PASS on 03 and 04 (k4s-confirm-r1-stopdrill). Coordinator note (~18:30Z): **K4S Amendment 1**
+  committed 45f32c0f (Sol APPROVE r3), amended Mac manifest 8bb20a75… (was d89cab16). Binding: fleet reporting keeps
+  391d2006 bytes (FROZEN-K4S.json pins mac/K4S-MAC-MANIFEST.json at d89cab16; amended manifest never deployed to the
+  reporting runtime); END only from a SEPARATE staged amended tree (post-6afcbbab measure_tiers.py + 45f32c0f) and every END
+  declaration/run names 8bb20a75, never d89cab16; freeze addendum cites Amendment 1 with OA-1 and the B2 manifest SHA.
+
+- 18:48Z: coordinator (f442b968): MINOR 5 disposition accepted (record in addendum, no frozen change); STOP drill approved;
+  if Sol r3 does not approve, STOP and report before another round. (My status message was labelled 18:53Z but sent 18:48:23Z.)
+- 18:5xZ: Sol r2 REJECT (new MAJOR 6 transport descendants, 7 unverified ACK on restart) -> fixed: process-group
+  transports drained, signals as stop requests, remote pgrep quiescence before register/revoke with double confirm,
+  full hub-block verification before any return + at copier start, quarantine + re-copy; 35 tests; live 03/04 OK.
+  Test-harness slip: a bare `setsid … &` forked; two test copiers ran ~40 s on deleted test jobs; stopped by exact PID.
+  18:57Z: response r2 written; **Sol r3 (final) delegated**. Manifest now 416f6e51….
+- 18:58–19:00Z: **STOP drill PASS** (excluded, k4s-confirm-r1-stopdrill, drill qualification 28/28 both): admitted 0 foreign;
+  8 blocks in flight; STOP touched 19:00:30.347Z (03) / 19:00:30.718Z (04); supervisors gone 19:00:32.062Z / 19:00:33.462Z
+  (≈1.7 s / 2.7 s); reason owned_STOP; 8 failed / 0 completed (excluded, never inspected); 0 owned groups; STOP targets
+  removed. Receipt `receipts/stop-drill.json`.
+
+- 19:05Z: **Sol r3 (final) OA-1/B2: REJECT.** Resolved: 1, 2, 4, 5 (coordinator), 7. Still PARTIAL: 3/6 (root SIGKILL leaves a
+  separately-sessioned local transport alive after the job lock is released; registration/--revoke don't drain it;
+  drain failure reduced to a block error). New MINOR 8 (re-copy needs --ignore-times). B2 manifest 416f6e51 compatible.
+  Per coordinator rule (18:48Z): STOPPED; findings sent to coordinator; no further round without a ruling. No launch.
+
 ## Running (owned PGIDs only)
-- none on 03/04 (qualification drivers exited 0).
+- none (drill qualification drivers exited 0).
 
 ## Next
 1. Qualification receipts (03/04) -> commit under run-r1/receipts/.

@@ -1,0 +1,12 @@
+{
+ "samples": 72,
+ "copier_related": {
+  "sshd: sdicks02@notty": [
+   "None"
+  ]
+ },
+ "foreign": [
+  "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+ ],
+ "active": []
+}

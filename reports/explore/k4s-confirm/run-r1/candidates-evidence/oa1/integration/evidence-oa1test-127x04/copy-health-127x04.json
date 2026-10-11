@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-11T18:21:18Z",
+  "host": "127x04",
+  "phase": "smoke",
+  "error": "AssertionError: smoke-0003-d27-K4-200.json",
+  "sealed": true
+}

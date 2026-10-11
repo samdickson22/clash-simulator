@@ -1,0 +1,13 @@
+{
+ "samples": 78,
+ "copier_related": {
+  "sshd: sdicks02@notty": [
+   "None"
+  ]
+ },
+ "foreign": [
+  "/mpac/sdicks02/repos/clasher-v4-cpu/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/v4-cache-renewal-r2/validation_cache_service_renewal_v4.py --plan /mpac/sdic",
+  "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+ ],
+ "active": []
+}

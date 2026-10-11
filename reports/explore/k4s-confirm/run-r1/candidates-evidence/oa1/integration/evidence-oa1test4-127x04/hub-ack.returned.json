@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-11T18:54:02Z",
+  "source_host": "127x04",
+  "hub_ack_sha256": "e6e14136a993c71ad2c0f03bd9b07841af549f671f8fd3be9d39531abb6f2611",
+  "complete_sha256": "9988798f4b2c9b1031574617ccd84f7fb574104edb2c552b5ff8cbb3f60d0921",
+  "verified_by": "full hub verification + pull-back byte compare"
+}
