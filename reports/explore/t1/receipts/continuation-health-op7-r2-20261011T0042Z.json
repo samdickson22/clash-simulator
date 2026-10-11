@@ -1,0 +1,211 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-11T00:42:30Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r2",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+  "immutable_manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "prior_preserved_blocks": 711,
+  "prior_r1_failed_blocks": 22,
+  "prior_all_ledger_losses": 44,
+  "counts": {
+    "127x01": {
+      "durable_blocks": 376,
+      "guard_durable_blocks": 77,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "apt_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "prior_r1_preserved_blocks": 155,
+      "new_phase_durable_blocks": 97,
+      "primary_durable_blocks": 299
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 530,
+      "durable_blocks": 530,
+      "guard_durable_blocks": 104,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 530,
+      "ssh_flagged_blocks": 450,
+      "apt_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 450,
+      "dbus_flagged_blocks": 530,
+      "idle_flagged_blocks": 0,
+      "prior_r1_preserved_blocks": 399,
+      "new_phase_durable_blocks": 98,
+      "primary_durable_blocks": 426
+    }
+  },
+  "total_durable_blocks": 906,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-11T00:42:23Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 97,
+      "failed_blocks": 0,
+      "queued": 1073,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 7.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    },
+    "127x08": {
+      "utc": "2026-10-11T00:42:22Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 98,
+      "failed_blocks": 0,
+      "queued": 1071,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 8.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    }
+  },
+  "phase_exits": {},
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-11T00:42:23Z",
+  "corpus_durability": "VERIFIED_READ_ONLY_20261010T202144Z",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "process_audits": [
+    {
+      "utc": "2026-10-11T00:42:21Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 590908,
+            "start_ticks": 146558724,
+            "pgid": 590908,
+            "uid": 3822945,
+            "cmdline_sha256": "d9885fbd564fb6ef5ffeb6cee13b1c10472d0d767b06e7e2559737381dc6142d",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 590814,
+            "start_ticks": 146558310,
+            "pgid": 590814,
+            "uid": 3822945,
+            "cmdline_sha256": "315f78f8294df792802247ecb10542f1d12ed5d4bbb977a3d8b3b6a5f5a0fe75",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    },
+    {
+      "utc": "2026-10-11T00:42:21Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 2676200,
+            "start_ticks": 147508701,
+            "pgid": 2676200,
+            "uid": 3822945,
+            "cmdline_sha256": "d9885fbd564fb6ef5ffeb6cee13b1c10472d0d767b06e7e2559737381dc6142d",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "apt_helper_probes": [
+    {
+      "utc": "2026-10-11T00:42:21Z",
+      "host": "127x01",
+      "occurrence_file_present": false,
+      "census_occurrence_records": 0,
+      "helper_occurrences": 0,
+      "first_helper": null
+    },
+    {
+      "utc": "2026-10-11T00:42:21Z",
+      "host": "127x08",
+      "occurrence_file_present": false,
+      "census_occurrence_records": 0,
+      "helper_occurrences": 0,
+      "first_helper": null
+    }
+  ],
+  "copy_deadline_audit": {
+    "utc": "2026-10-11T00:42:21Z",
+    "host": "127x08",
+    "complete_local_blocks": 98,
+    "acked_local_blocks": 96,
+    "pending": [
+      {
+        "block": "primary-1382",
+        "proof_age_seconds": 0.385
+      },
+      {
+        "block": "primary-1376",
+        "proof_age_seconds": 9.325
+      }
+    ],
+    "copy_deadline_seconds": 1800,
+    "overdue": 0
+  },
+  "coordinator_read_through_position": 7054,
+  "checkpoint_utc": "2026-10-11T00:42:52Z",
+  "reporting_complete": false,
+  "replacements_required": false,
+  "replacement_dispatch_generated": false,
+  "live_runtime_changed": false,
+  "root_foreign_edits_preserved": true,
+  "schedule_policy": "Existing 20-minute bound continuation; no new watcher or schedule",
+  "prior_inventory_policy": "Original and replacement-r1 phases inventoried once; never reclassified",
+  "prior_preserved_breakdown": {
+    "original": 157,
+    "replacement_r1": 554
+  },
+  "apt_first_helper_policy": "Notify coordinator immediately upon first real helper with four UID fields",
+  "copy_audit_reconciliation": "At00:42:21Z two fresh proofs pending0.385s/9.325s; by00:42:30Z all98 new08 proofs ACK-verified, matching latest local progress"
+}
