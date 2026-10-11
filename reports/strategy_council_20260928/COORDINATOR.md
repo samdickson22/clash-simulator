@@ -2078,3 +2078,12 @@ Also on the hub, but with copies elsewhere:
   - **Hub mirror (PGID 516161 on 01):** stays SIGSTOP-paused through END, because resuming it would be foreign activity on 01. After END, retarget it away from 04 (K4S host) before resuming.
 - **19:42 UTC: END step 1 DONE: 08 HTTP cache retired** (4292e520; receipt 46ceee24). The r1 attempt stopped safely when the wrapper command SHA didn't match. I authorized one reconciliation connection, which matched the exact reconstructed argv (855c8118) and all pins. Owned STOP at 19:41:55Z; server, timer and wrapper exited 0; port 39503 absent; all 172 payload/token/lock stat tuples unchanged; no signals or deletions. 03 cache untouched. **T1 may now proceed with END on 08 as well** (C1–C4; 08 reference first).
 - **K4S:** OA-1 Sol r6 REJECT (MAJOR 12, confined to the separate `--revoke` mode). **Approved simplification S1:** delete the revocation mode; recovery is a normal copier restart through the single verified main() path. r7 reviews the deletion plus a real SIGKILL-restart test. If another new MAJOR comes up, I'll consider dropping OA-1 entirely.
+- **20:05:03 UTC: K4S REPORTING AUTHORIZED (B3).**
+  - **Smoke:** excluded smoke PASS on 03 and 04 (5f4f1cd8): 8/8 blocks each, 0 failures, OA-1 hub-ACK 8/8. Charge-share deviation ≤0.008. 04 had 3 dbus-interfered blocks (disclosed).
+  - **Authorized:** PREREG-K4S reporting on hosts [127x03, 127x04] under:
+    - freeze 391d2006;
+    - FROZEN-K4S.json 416f6e51;
+    - reporting dispatch 78335dc4 (3,900 blocks / 33,000 games);
+    - launch addendum 5d6ac662 (OA-1 47eb96d6 / Sol r7; Amendment 1 45f32c0f);
+    - r3_explicitly_frozen = true.
+  - **Rules:** outcomes SEALED; health checkpoints every 20 min; stop and report on any guard stop. ~16 h, so it ends ~12Z on Oct 12.
