@@ -1,0 +1,66 @@
+{
+  "amendment_json_sha256": "3e5627cb1861dc05fab60af7059d471db80888e66fcf84d59ab341568b0ffabe",
+  "amendment_md_sha256": "761ebc0d8a921ca495513f5b96e416a1f88967f602c6ebd7522fad851293eef2",
+  "attempts_registered": false,
+  "conversion_host": "127x01 only",
+  "conversion_in_progress": true,
+  "coordinator_message_label_approximately": "22:12Z",
+  "direct_adoption_received_actual_utc": "2026-10-11T22:07:48Z",
+  "hosts": [
+    {
+      "attempts_registered": false,
+      "fixture_link": "immutable states.pkl hardlink; never opened for writing",
+      "host": "127x01",
+      "old_bundle_preserved": true,
+      "outcomes_sealed": true,
+      "qualified_non_E4_bytes_unchanged": true,
+      "runtime": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+      "runtime_files": 3785,
+      "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/source",
+      "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+      "source_pins": {
+        "FLEET-INPUT-SCHEMA.md": "e5b51de9b9ebd1f00f1936963b1116bec586999b7e93e8379e8de4a085c9fb96",
+        "README.md": "c9d20e21db673669ca044edfa5b56421a908a2e1d1ef19a566778a3529c521b3",
+        "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+        "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+        "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+        "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+        "tests/test_state_rows.py": "5888b1fb820c85327a0b68a945b00ea8f592536b9b4cd4f6175ad4ef8bf04477",
+        "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+      },
+      "status": "PASS",
+      "timing": false,
+      "utc": "2026-10-11T22:09:40Z"
+    },
+    {
+      "attempts_registered": false,
+      "fixture_link": "immutable states.pkl hardlink; never opened for writing",
+      "host": "127x08",
+      "old_bundle_preserved": true,
+      "outcomes_sealed": true,
+      "qualified_non_E4_bytes_unchanged": true,
+      "runtime": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+      "runtime_files": 3785,
+      "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/source",
+      "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+      "source_pins": {
+        "FLEET-INPUT-SCHEMA.md": "e5b51de9b9ebd1f00f1936963b1116bec586999b7e93e8379e8de4a085c9fb96",
+        "README.md": "c9d20e21db673669ca044edfa5b56421a908a2e1d1ef19a566778a3529c521b3",
+        "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+        "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+        "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+        "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+        "tests/test_state_rows.py": "5888b1fb820c85327a0b68a945b00ea8f592536b9b4cd4f6175ad4ef8bf04477",
+        "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+      },
+      "status": "PASS",
+      "timing": false,
+      "utc": "2026-10-11T22:09:39Z"
+    }
+  ],
+  "outcomes_sealed": true,
+  "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "step": "A3-adopted-runtime-source-preparation",
+  "timing": false,
+  "utc": "2026-10-11T22:10:58Z"
+}
