@@ -2154,3 +2154,9 @@ Also on the hub, but with copies elsewhere:
 
   K4SBackend is compatible, with no K4S code change. Mac suite 98/99 (the known by-construction failure); END 103/103. Fleet runtimes keep the d89cab16 manifest and the 26932fa8 builder bytes. K4S END and Mac declarations must name c1fb1e9a. If TIERS A4 touches any pinned e4v3 file, another re-pin follows.
   - **Ruling:** K4S Mac all-cause poll lateness (the A3-P metric) is reported **descriptively only**, with no gate change, disclosed in the K4S Mac summary.
+- **22:31 UTC: Mac session prep rulings.**
+  - **Disk:** no external volume, ~65.7 GiB reachable vs a ~72 GiB staging peak. **No-copy staging** (hard link or APFS clone, SHA-verified, keeping END↔Mac pin equality) is added to the A4 builder's scope. Only three regenerable caches may be freed; other threads' worktrees are off-limits.
+  - **Memory precondition** (operator, not a gate): available ≥6 GiB, free swap ≥1 GiB, 0 swapouts in census, disk ≥10 GiB after staging. Measured on 05: main 0.93 GiB, D6 child 0.78, concurrent 1.33.
+  - **A3-P** applies to the frozen gate-4 variant v\* (stricter).
+  - **Session runs under its own `caffeinate -i`.**
+  - **macOS 27.0.1** is staged with AutomaticallyInstallMacOSUpdates=1. Disabling it needs admin, so a short Sol computer-use step at session time turns auto-download/install off for the window, then restores it.
