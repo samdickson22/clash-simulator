@@ -1,0 +1,114 @@
+{
+  "utc": "2026-10-11T20:04:14Z",
+  "sealed": true,
+  "counts": {
+    "smoke_local_complete": 8,
+    "smoke_hub_complete": 8,
+    "games": 80,
+    "interfered_blocks": 0,
+    "ssh_family_interfered_blocks": 0,
+    "allowlist_system_dbus": 1246,
+    "allowlist_ssh_family_budget": 3738
+  },
+  "health_counts": {
+    "decisions": 10226,
+    "cutoffs": 3396,
+    "fallbacks": 126,
+    "overruns": 7
+  },
+  "charge": {
+    "K4-120|prep": {
+      "n": 16,
+      "mean_dev": 0.0021174361781767133,
+      "max_abs_dev": 0.0025216486145948624
+    },
+    "K4-120|scored": {
+      "n": 1341,
+      "mean_dev": 0.002038933689759281,
+      "max_abs_dev": 0.0031335359508192773
+    },
+    "K4-140|prep": {
+      "n": 11,
+      "mean_dev": 0.0034550533839523253,
+      "max_abs_dev": 0.0038664135809836075
+    },
+    "K4-140|scored": {
+      "n": 1112,
+      "mean_dev": 0.0027949594025563195,
+      "max_abs_dev": 0.00434098241040809
+    },
+    "K4-160|prep": {
+      "n": 9,
+      "mean_dev": 0.004277503669237527,
+      "max_abs_dev": 0.005196217946981663
+    },
+    "K4-160|scored": {
+      "n": 911,
+      "mean_dev": 0.0039001478097268234,
+      "max_abs_dev": 0.005638894166079961
+    },
+    "K4-180|prep": {
+      "n": 8,
+      "mean_dev": 0.005386174325304081,
+      "max_abs_dev": 0.006596026654757503
+    },
+    "K4-180|scored": {
+      "n": 1019,
+      "mean_dev": 0.0049087607864303166,
+      "max_abs_dev": 0.007994272145035425
+    },
+    "K4S-120|prep": {
+      "n": 14,
+      "mean_dev": 0.0025691097435941368,
+      "max_abs_dev": 0.0029884726938956274
+    },
+    "K4S-120|scored": {
+      "n": 925,
+      "mean_dev": 0.0022447148190911682,
+      "max_abs_dev": 0.0032139272352166848
+    },
+    "K4S-140|prep": {
+      "n": 11,
+      "mean_dev": 0.0032444312610543018,
+      "max_abs_dev": 0.003941350854638148
+    },
+    "K4S-140|scored": {
+      "n": 911,
+      "mean_dev": 0.0030223772130231743,
+      "max_abs_dev": 0.00441496310190248
+    },
+    "K4S-160|prep": {
+      "n": 9,
+      "mean_dev": 0.004221798806698592,
+      "max_abs_dev": 0.005195246440027862
+    },
+    "K4S-160|scored": {
+      "n": 945,
+      "mean_dev": 0.0038864373174590052,
+      "max_abs_dev": 0.0057958148571097545
+    },
+    "K4S-180|prep": {
+      "n": 8,
+      "mean_dev": 0.005344568132945348,
+      "max_abs_dev": 0.006575122000340397
+    },
+    "K4S-180|scored": {
+      "n": 911,
+      "mean_dev": 0.00492811323638039,
+      "max_abs_dev": 0.007035017597761803
+    }
+  },
+  "errors": [],
+  "passed": true,
+  "source_hashes": {
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0000/complete.json": "3fa193946fa7cd58391ded218003a4beb558cc4bd5e89d7626df79f55e9e989e",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0001/complete.json": "7900f8dde0cbf70e0ce4df62b2930be26b2d7785f86ca28cb41217b9de72338c",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0002/complete.json": "4577d542910eadfccfffa3e6cf2d4f0afbe625e12e9c69e8c5eb2a4871354f38",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0003/complete.json": "7b241115480e669d2423581f7fb13dd8036fd54f59221325869f1cfcd96e1845",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0004/complete.json": "39c441af10106ea8cd27dca67c3248309360a98ab78a456cb3b653da00b9973d",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0005/complete.json": "d475d2017ab92291937a24f34dcebc4b592cdd5a45e2f48272b2025acedd92c0",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0006/complete.json": "62a73eaac5bbeb7a79190eacd97b46d04eeb833dca738dcade41e218fe35cdf3",
+    "/mpac/sdicks02/jobs/clasher/k4s-confirm-r1/smoke/smoke-0007/complete.json": "b48a1a208b62d981f3b1624caf8bf252f9f88913d41db03dad3a3980163ea3e4"
+  },
+  "outcomes_read": false
+}

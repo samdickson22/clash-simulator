@@ -1,0 +1,13 @@
+{
+ "utc": "2026-10-11T19:55:55Z",
+ "host": "127x04",
+ "console": {
+  "who": "",
+  "console_count": 0,
+  "positive": false
+ },
+ "foreign_compute": [],
+ "foreign_active": [],
+ "memavailable_GiB": 121.69245147705078,
+ "admitted": true
+}

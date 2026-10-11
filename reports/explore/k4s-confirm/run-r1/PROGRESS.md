@@ -95,6 +95,12 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 19:55Z: B2 + OA-1 final bytes + review trail committed 6ac7b641 (mirror_k4s.py 47eb96d6…, FROZEN-K4S.json 416f6e51…).
   Freeze addendum `addendum/K4S-LAUNCH-ADDENDUM.{md,json}` composed 19:55:15Z.
 
+- 19:55:47Z / 19:55:52Z: **counted smoke launched** (03 sup 761064, 04 sup 4001173; copiers on 05 4095807/4105420); both
+  admitted 0 foreign/active, no console. 20:03Z: 8/8 complete, 0 failed, 8/8 hub-ACK durable+returned per host, no stop
+  reason; copiers STOP-COPY → exited, revoked (verified both sides). **20:04:14Z SMOKE-PASS both** (80 games/host, 0 errors;
+  interfered 03=0, 04=3 (dbus), charge max dev ≤0.008). smoke-admission 03 e338db63…, 04 9c4d636f….
+  Next: B3 request to coordinator (manifest 416f6e51 + smoke receipts) → REPORTING-AUTHORIZATION.json → reporting launch.
+
 ## Running (owned PGIDs only)
 - none (drill qualification drivers exited 0).
 
