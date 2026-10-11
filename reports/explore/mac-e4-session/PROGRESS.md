@@ -194,7 +194,7 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   census); awaiting coordinator numbers.
 - **HOLD:** no timing and no bundle staging.
 
-### 2026-10-11T22:31:25Z: coordinator 22:33Z rulings recorded; software-update read
+### 2026-10-11T22:31:25Z: coordinator rulings (sent 22:30:53Z, labelled 22:33Z) recorded; software-update read
 
 - **Disk:** option (b), no-copy hard-link or APFS-clone staging, goes to the Amendment 4 builder with Sol review.
   At staging time only npm `_cacache`, npm `_npx` and the Homebrew download cache may be freed. Never touch other
