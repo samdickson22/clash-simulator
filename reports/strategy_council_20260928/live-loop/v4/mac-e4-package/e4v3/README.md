@@ -54,6 +54,11 @@ stager and [A6-END-RUNBOOK.md](A6-END-RUNBOOK.md) are prepared. END references
 remain unconfirmed until independent code/result review. Fleet mode never uses
 the nice19 Linux dry-run load path.
 
+TIERS Amendment 3 (memory): backends read the pinned fixture one state at a time
+from `states-rows.{bin,json}`, produced once by `convert_states.py` on Linux (the
+Mac never unpickles the whole corpus, including during staging). See
+`../../PREREG-SEARCH-TIERS-AMENDMENT-3-20261011.md`.
+
 `prepare_bundle.py` copies only explicit approved artifacts, verifies policy/source
 pins, checks TRAIN membership before media access and generates `tiers-pins.json`
 plus its SHA. Mac staging requires a reviewed `registration.json` packet containing
@@ -101,6 +106,7 @@ export E4_RUNTIME=/absolute/fresh-frozen-runtime
 export E4_BUNDLE=/absolute/new-tiers-bundle
 export E4_REFERENCE_PACKET=/absolute/reviewed-pooled-reference-packet
 export E4_STATES=/absolute/reviewed-public-states.pkl
+export E4_STATE_ROWS=/absolute/convert_states-output-for-E4_STATES  # Amendment 3, made on Linux
 export E4_R3A=/absolute/R3a.pt
 export E4_CALIBRATION=/absolute/R3a-calibration.json
 export E4_V1=/absolute/v1.pt
@@ -124,7 +130,8 @@ fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # held BEFORE staging
 native = pathlib.Path(e['E4_BUILD']) / ('clasher_core' + sysconfig.get_config_var('EXT_SUFFIX'))
 subprocess.run([sys.executable, '-B', str(script/'prepare_bundle.py'),
     '--runtime-root', e['E4_RUNTIME'], '--native', str(native),
-    '--states', e['E4_STATES'], '--reference-packet', e['E4_REFERENCE_PACKET'],
+    '--states', e['E4_STATES'], '--state-rows', e['E4_STATE_ROWS'],
+    '--reference-packet', e['E4_REFERENCE_PACKET'],
     '--student', e['E4_R3A'], '--calibration', e['E4_CALIBRATION'], '--v1', e['E4_V1'],
     '--load-config', e['E4_LOAD_CONFIG'], '--topology', e['E4_TOPOLOGY'],
     '--output', e['E4_BUNDLE']], check=True)

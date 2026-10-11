@@ -22,12 +22,15 @@ THRESHOLD = .5005528330802917
 
 
 def dry_opening_orders(rows):
-    orders = {}
+    # One traversal: rows may be a stream (Amendment 3 state_rows.Rows).
+    orders, legacy = {}, []
     for row in rows:
         cards = list(row["info"].own["hand"]) + list(row["info"].own["cycle"])
         if len(cards) == 8 and len(set(cards)) == 8 and all(cards):
             orders.setdefault(row["seed"], cards)
-    if any("d1" not in row and row["seed"] not in orders for row in rows):
+        if "d1" not in row:
+            legacy.append(row["seed"])
+    if any(seed not in orders for seed in legacy):
         raise ValueError("Legacy dry corpus has no complete eight-card public own order")
     return orders
 
@@ -121,23 +124,50 @@ class TierBackend:
         if torch.backends.mps.is_available():
             self.students["mps"] = DeviceStudent(self.student, "mps")
         # Pickles are executed ONLY after the entire input manifest is verified.
-        self.rows = pickle.loads((self.bundle / "states.pkl").read_bytes())
-        self.by_id = {str(r["id"]): r for r in self.rows}
-        if len(self.by_id) != len(self.rows):
-            raise ValueError("Duplicate fixed-state IDs")
-        self.openings = dry_opening_orders(self.rows)
+        # Amendment 3: the pinned states.pkl rows are read one state at a time
+        # from their SHA-indexed canonical bytes; no process holds the corpus.
+        from state_rows import ById, Rows, StateRows
+        self.state_rows = StateRows(self.bundle, self.manifest["files"])
+        try:
+            self._load_inputs(Rows(self.state_rows), ById(self.state_rows))
+        except BaseException:
+            self.state_rows.close()
+            raise
+
+    def _load_inputs(self, rows, by_id):
+        self.rows = rows
+        self.by_id = by_id
+        dry = self.manifest["profile"] == "linux-dry-run"
+        # Dry-run legacy inputs need every seed's opening first; production
+        # inputs never read openings, so their check shares the single pass.
+        self.openings = dry_opening_orders(self.rows) if dry else {}
         self.cores = {}
         self.inputs = {}
         from corpus_contract import validate_row
-        golden_only = set() if self.manifest["profile"] == "linux-dry-run" else set(self.manifest["sets"]["golden"]) - set().union(
+        golden_only = set() if dry else set(self.manifest["sets"]["golden"]) - set().union(
             *[set(v) for v in self.manifest["sets"]["speed"].values()],
             set(self.manifest["sets"].get("agreement",())),set(self.manifest["sets"].get("packets",())))
+        # Every row is still validated and its policy input rebuilt (D1 exactness),
+        # but only rows that infer() can be asked for keep their input resident.
+        retained = None if dry else set(self.manifest["sets"].get("agreement",()))
+        openings, legacy = {}, []
         for row in self.rows:
-            if self.manifest["profile"] != "linux-dry-run":
+            if not dry:
+                cards = list(row["info"].own["hand"]) + list(row["info"].own["cycle"])
+                if len(cards) == 8 and len(set(cards)) == 8 and all(cards):
+                    openings.setdefault(row["seed"], cards)
+                if "d1" not in row:
+                    legacy.append(row["seed"])
                 if str(row["id"]) in golden_only:
                     continue  # Native/belief golden fixtures need no policy input.
                 validate_row(row)
-            self.inputs[str(row["id"])] = self.policy_input(row)
+            value = self.policy_input(row)
+            if retained is None or str(row["id"]) in retained:
+                self.inputs[str(row["id"])] = value
+        if not dry:
+            if any(seed not in openings for seed in legacy):
+                raise ValueError("Legacy dry corpus has no complete eight-card public own order")
+            self.openings = openings
 
     def policy_input(self, row, *, verify=True, tracker_state=None):
         from imitation.evaluation.standalone import StandalonePlayer
@@ -410,8 +440,11 @@ class TierBackend:
         return result, elapsed
 
     def close(self):
-        for c in self.cores.values():
-            c.close()
+        try:
+            for c in self.cores.values():
+                c.close()
+        finally:
+            self.state_rows.close()
 
 
 def validate_bundle(bundle, root, *, dry_run, require_references=True):
@@ -430,7 +463,7 @@ def validate_bundle(bundle, root, *, dry_run, require_references=True):
         raise ValueError("Threshold changed")
     if not dry_run and manifest["profile"] != "mac-preregistered":
         raise ValueError("Dry-run inputs cannot qualify a Mac")
-    for name in (("golden.json", "belief-reference.json", "student-reference.json", "speed-reference.json", "deadline-reference.json", "states.pkl") if require_references else ("states.pkl",)):
+    for name in (("golden.json", "belief-reference.json", "student-reference.json", "speed-reference.json", "deadline-reference.json", "states.pkl", "states-rows.json", "states-rows.bin") if require_references else ("states.pkl", "states-rows.json", "states-rows.bin")):
         if name not in manifest["files"]:
             raise ValueError("Required input is not pinned: " + name)
     return manifest

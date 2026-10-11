@@ -1,0 +1,77 @@
+{
+  "assembled": {
+    "byte_identity": "states.pkl SHA verified before unpickling",
+    "redump_bytes": 11649583514,
+    "redump_sha256": "777bfb06c58378895364a30b287137c60607fd635957fc558b0d5447ec63a689",
+    "sha256": "a7c5cc24e9031823c1aa922004a4be940fe43a0f81b1c8af4831940e101342cf"
+  },
+  "converter_sha256": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+  "corpus_inventory": null,
+  "cpus": [
+    63
+  ],
+  "fixture_canonical_fingerprint": "c09142b97ecc147efa635036a69508e16fe647347749e052d321048910040901",
+  "host": "127x05",
+  "inputs": [
+    {
+      "bytes": 11649583644,
+      "path": "/mpac/sdicks02/jobs/clasher/e4-amendment3-loader-20261011/rss-bundle/states.pkl",
+      "role": "assembled",
+      "rows": 1325,
+      "sha256": "a7c5cc24e9031823c1aa922004a4be940fe43a0f81b1c8af4831940e101342cf",
+      "sha256_after": "a7c5cc24e9031823c1aa922004a4be940fe43a0f81b1c8af4831940e101342cf"
+    }
+  ],
+  "inputs_modified": false,
+  "load_seconds": {
+    "max": 0.2658204750623554,
+    "median": 0.0017925831489264965,
+    "p99": 0.21467204298824072,
+    "total": 14.883462936850265
+  },
+  "maxrss_bytes": 12505022464,
+  "nice": 19,
+  "numpy": "2.2.6",
+  "outcomes_read": false,
+  "output": {
+    "container": {
+      "bytes": 11651404052,
+      "file": "states-rows.bin",
+      "sha256": "3b50b318a54c826781bda68c20d7973faa7c4941f0906bf20675bfdb7bd414e6"
+    },
+    "directory": "/mpac/sdicks02/jobs/clasher/e4-amendment3-loader-20261011/end-states-rows-r4s",
+    "index": {
+      "file": "states-rows.json",
+      "sha256": "d303634f89eee7c76ec25824583499eb06f47f74e19104ac8c362fb5671bc132"
+    }
+  },
+  "python": "CPython3.12.12",
+  "row_bytes": {
+    "max": 139715225,
+    "median": 2051588,
+    "min": 1927775
+  },
+  "rows": 1325,
+  "schema": "clasher.e4v3.state-rows-conversion.v1",
+  "seconds": 189.58882354502566,
+  "state_rows_sha256": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+  "status": "PASS",
+  "timing": false,
+  "torch": "2.10.0+cpu",
+  "utc": "2026-10-11T21:49:11Z",
+  "verification": {
+    "arrays_and_tensors": 63450,
+    "canonical_digest_equal": 1325,
+    "cross_row_shared_mutable_objects": {
+      "builtins.dict": 75,
+      "derived_public_state.PublicEvent": 75,
+      "numpy.bool": 1199
+    },
+    "deep_structural_equal": 1325,
+    "order_and_identity_equal": true,
+    "per_row_sha256": 1325,
+    "rows": 1325,
+    "sharing_a_backing_buffer": 0,
+    "source_verified": true
+  }
+}

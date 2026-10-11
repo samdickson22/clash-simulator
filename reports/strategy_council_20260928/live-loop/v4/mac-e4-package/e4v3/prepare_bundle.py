@@ -104,6 +104,13 @@ def prepare(args):
         copy_file(source, out / name)
     load = stage_load(args.load_config, out)
     copy_file(args.states, out / "states.pkl")
+    # Amendment 3: per-state canonical bytes made by convert_states.py on Linux.
+    # Only SHAs are checked here; no corpus pickle executes during staging.
+    from state_rows import CONTAINER, INDEX, StateRows
+    for name in (INDEX, CONTAINER):
+        copy_file(args.state_rows / name, out / name)
+    StateRows(out, {"states.pkl": sha(out / "states.pkl"), INDEX: sha(out / INDEX),
+                    CONTAINER: sha(out / CONTAINER)}).close()
     manifest = dict(schema="clasher.e4v3.inputs.v1", final=False, threshold=THRESHOLD,
         profile="linux-dry-run" if args.linux_dry_run else "mac-preregistered", load=load,
         runtime_files=runtime_pins(root),
@@ -223,6 +230,8 @@ def main():
     parser.add_argument("--runtime-root", type=Path, required=True)
     parser.add_argument("--native", type=Path, required=True)
     parser.add_argument("--states", type=Path, required=True)
+    parser.add_argument("--state-rows", type=Path, required=True,
+        help="convert_states.py output directory for exactly --states")
     parser.add_argument("--golden", type=Path)
     parser.add_argument("--student", type=Path, required=True)
     parser.add_argument("--v1", type=Path, required=True)

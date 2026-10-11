@@ -61,6 +61,7 @@ transports are gone and08's HTTP cache is retired; no reference runs meanwhile.
 - `specification`: exact `spec-pins.json` contents.
 - `files`: relative input path -> SHA256, including `states.pkl`, frozen
   v1/R3a/calibration, exactness references and all profile/corpus source receipts.
+  Amendment 3 adds `states-rows.json` and `states-rows.bin` (see below).
 - `runtime_files`: qualified frozen runtime relative path -> SHA256; generated
   with `prepare_bundle.runtime_pins(root)` and its qualified source binding.
 - `measurement_files`: this package's `.py`, `.sh`, `spec-pins.json` -> SHA256.
@@ -108,6 +109,16 @@ slot width/count, console count, SMT policy and forbidden hosts. Reporting MHz
 uses T1's existing rows `{utc, slots, physical_core_mhz:[{cpu,mhz},...]}` and joins
 each phase's census on UTC; `inflight == slots` is required. A three-Boolean END
 marker is rejected: the completion and phase files must match committed Git bytes.
+
+**Amendment 3 state storage.** No backend unpickles `states.pkl` any more; it stays
+pinned and byte-identical as the fixture's identity. `convert_states.py` writes each
+of its rows, in order, as `pickle.dumps(row, protocol=5)` into `states-rows.bin`,
+with offsets, raw SHA-256 and an address-independent canonical digest per row in
+`states-rows.json` (whose `source.sha256` must equal the pinned `states.pkl`). A
+backend unpickles one state per `by_id` miss, after checking that state's SHA, and
+keeps only the last state; every caller looks a state up before its timer starts.
+Policy inputs are rebuilt and checked for every row at construction but retained
+only for `sets.agreement` (all rows in a Linux dry run).
 
 `states.pkl` executes only after all pins pass. Each production speed, agreement
 or scheduled decision row has **exactly these 20 top-level fields**:

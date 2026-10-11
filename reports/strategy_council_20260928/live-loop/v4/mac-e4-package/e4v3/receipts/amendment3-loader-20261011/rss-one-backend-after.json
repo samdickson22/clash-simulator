@@ -1,0 +1,52 @@
+{
+  "after_construction": {
+    "RssAnon": 400142336,
+    "RssFile": 88739840,
+    "RssShmem": 0,
+    "VmHWM": 802594816,
+    "VmRSS": 488882176
+  },
+  "after_probe": {
+    "RssAnon": 442142720,
+    "RssFile": 88739840,
+    "RssShmem": 0,
+    "VmHWM": 932093952,
+    "VmRSS": 530882560
+  },
+  "construct_seconds": 33.62970812502317,
+  "cpus": [
+    63
+  ],
+  "host": "127x05",
+  "inputs_retained": 0,
+  "maxrss_bytes": 932093952,
+  "mode": "after-r4",
+  "nice": 19,
+  "outcomes_read": false,
+  "probe": {
+    "admission_seconds": {
+      "max": 0.08034636708907783,
+      "median": 0.0007471591234207153,
+      "p90": 0.0020668660290539265,
+      "p99": 0.04064581380225718
+    },
+    "lookup_plus_admission_seconds": {
+      "max": 0.35470025916583836,
+      "median": 0.0025894520804286003,
+      "p90": 0.018112655030563474,
+      "p99": 0.2639173560310155
+    },
+    "lookup_seconds": {
+      "max": 0.31301245209760964,
+      "median": 0.0018149728421121836,
+      "p90": 0.01627932209521532,
+      "p99": 0.21577789913862944
+    },
+    "lookups": 1325,
+    "retained_input_bytes_each": 56709.12,
+    "seconds": 20.754109221044928
+  },
+  "rows": 1325,
+  "tier_backend_sha256": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d",
+  "timing": false
+}

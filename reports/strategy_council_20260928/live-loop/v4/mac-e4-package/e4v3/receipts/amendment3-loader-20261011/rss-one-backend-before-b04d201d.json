@@ -1,0 +1,51 @@
+{
+  "after_construction": {
+    "RssAnon": 12132700160,
+    "RssFile": 89595904,
+    "RssShmem": 0,
+    "VmHWM": 23878504448,
+    "VmRSS": 12222296064
+  },
+  "after_probe": {
+    "RssAnon": 12155744256,
+    "RssFile": 89595904,
+    "RssShmem": 0,
+    "VmHWM": 23878504448,
+    "VmRSS": 12245340160
+  },
+  "construct_seconds": 30.188093298813328,
+  "cpus": [
+    63
+  ],
+  "host": "127x05",
+  "inputs_retained": 1200,
+  "maxrss_bytes": 23878504448,
+  "mode": "before",
+  "nice": 19,
+  "outcomes_read": false,
+  "probe": {
+    "admission_seconds": {
+      "max": 0.04036633996292949,
+      "median": 0.000717788003385067,
+      "p90": 0.0023192379157990217,
+      "p99": 0.03951865993440151
+    },
+    "lookup_plus_admission_seconds": {
+      "max": 0.04036664986051619,
+      "median": 0.0007183779962360859,
+      "p90": 0.002320077968761325,
+      "p99": 0.03951914981007576
+    },
+    "lookup_seconds": {
+      "max": 2.600019797682762e-06,
+      "median": 4.498288035392761e-07,
+      "p90": 1.0600779205560684e-06,
+      "p99": 1.8200371414422989e-06
+    },
+    "lookups": 1325,
+    "seconds": 3.5537301609292626
+  },
+  "rows": 1325,
+  "tier_backend_sha256": "b04d201de7a95a36669e5c11898a297ba8f324d1a658f2987ec5ba244671add7",
+  "timing": false
+}
