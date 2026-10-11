@@ -116,3 +116,20 @@
   So the lite rule does not remove the ~+2 pp at 200 ms. At 200 ms, student defaults are 0.5% (lite) vs 0.8% (full)
   of decisions, so the default rule is unlikely to be the source. rep03C is in D-even (72/270, ETA ~10:35Z), then
   rep03EF. rep08EF started E-odd.
+- 10:12Z: rep03C at 787/870 blocks (D-even ETA ~10:35Z); rep08EF at 187 blocks / 766 games (E-odd ETA ~10:35Z, then
+  F-odd to ~12:05Z). 03 projection: E-even ~10:35–11:40Z, F-even ~11:40–13:10Z. Healthy, with no console users.
+- 10:34:00Z: rep03C exited cleanly: 870/870 blocks, rc 0, empty group. rep03EF (E-even, then F-even; plan-ext)
+  started 10:34:25Z, stop-at 13:30Z.
+- 10:35Z: **Phase D complete**. G population (B + D) has 1,068 seeds; 12 D blocks were interrupted and retired. F
+  stays sealed ([receipts/results-phaseBD.md](receipts/results-phaseBD.md)). Loss %:
+
+  | Arm | 200 ms | 140 ms |
+  |---|---:|---:|
+  | K4 | 26.7 | 58.6 |
+  | K4S | 26.4 | 27.2 |
+  | K4Sh | – | 23.5 |
+
+  Contrasts:
+  - K4S − K4: 200 ms −0.3 [−2.2, 1.7]; 140 ms −31.4 [−34.9, −27.6];
+  - K4S-140 − K4-200: +0.6 [−2.8, 3.9];
+  - K4Sh-140 − K4S-140: −3.7 [−6.9, −0.6] (unadjusted).
