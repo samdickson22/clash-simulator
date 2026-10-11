@@ -1,0 +1,14 @@
+[
+ {
+  "after_sha256": "b540df8273398be034bea7b254f34c2e5cb60fb932f977284e8f434f9cc069e9",
+  "before_sha256": "f75cd3a3189e050d65bb52ae4dffb748d4b160d9ccffa79b74a031735e74202b",
+  "file": "reports/explore/mac-registration/tests/test_stage_nocopy.py",
+  "helper_unchanged_sha256": "96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7",
+  "id": "E1",
+  "kind": "test-only",
+  "reason": "inode/method assertions assumed the Linux hard-link path; on Darwin the helper correctly uses clonefile (own inode); test now asserts the receipt method: apfs-clone on Darwin, hardlink with equal inode on Linux",
+  "reported_by": "Mac operator commits 27faac2c, 44040cd3 (receipts reports/explore/mac-e4-session/receipts/phase-b-prep-20261011/a4-nocopy-darwin/)",
+  "rules_or_frozen_files_changed": false,
+  "sol_check": "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-E1.md"
+ }
+]

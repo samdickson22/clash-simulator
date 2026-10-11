@@ -44,6 +44,20 @@
   "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
   "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
  },
+ "errata": [
+  {
+   "after_sha256": "b540df8273398be034bea7b254f34c2e5cb60fb932f977284e8f434f9cc069e9",
+   "before_sha256": "f75cd3a3189e050d65bb52ae4dffb748d4b160d9ccffa79b74a031735e74202b",
+   "file": "reports/explore/mac-registration/tests/test_stage_nocopy.py",
+   "helper_unchanged_sha256": "96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7",
+   "id": "E1",
+   "kind": "test-only",
+   "reason": "inode/method assertions assumed the Linux hard-link path; on Darwin the helper correctly uses clonefile (own inode); test now asserts the receipt method: apfs-clone on Darwin, hardlink with equal inode on Linux",
+   "reported_by": "Mac operator commits 27faac2c, 44040cd3 (receipts reports/explore/mac-e4-session/receipts/phase-b-prep-20261011/a4-nocopy-darwin/)",
+   "rules_or_frozen_files_changed": false,
+   "sol_check": "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-E1.md"
+  }
+ ],
  "games_read": false,
  "independent_review": {
   "coordinator_ruling_finding_8": "23:04Z COORDINATOR 684195b3",
@@ -92,7 +106,7 @@
  },
  "note": {
   "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.md",
-  "sha256": "2a36f62073e39ed61148b3554007282ab2e81c75b36931f1db974eda22499e7f"
+  "sha256": "16d59da18d2d348b54cdbda5dc68eaed0958f8b3643500156df431936bf2d2c0"
  },
  "original_freeze": {
   "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-FREEZE-20261010.json",
@@ -198,7 +212,7 @@
   "build_sets.py": "376f0e74164675b9714368273cb3a3caa5affdb5be24c98e39e2411fe798aba6",
   "fetch_captures.sh": "f61a729ce79de8d7140c8108bd88a0b23e3eba53dfaf6443ab9aad1b1d2f4efb",
   "macreg_io.py": "0f6042b4a96171b8c43dc3a3ad7d1396e96cefcada582f069facb8fb1fbe0bb9",
-  "make_amendment_record.py": "f310742002e979fe601d9cad44b3e4293a06e0d95fdb575908d8114882a126b7",
+  "make_amendment_record.py": "489ab33db5d64275e75fc9151b1fc4232a4f258029ef4b9b28c01777a3986788",
   "memory_check.py": "9bbca2f102c2ee78f5f0d52496a3b05aa14d426533786fc816f61de753c07194",
   "run_phase3.sh": "87b54c059e20b0e6aa7ddb0b7254a26d237fa73953961770ca82182d374d3ccb",
   "run_tests.sh": "ad56318f2646fda9741a0c9b5f8ea79e9c9a682f0102cb6ac2adc4261c6031eb",
@@ -209,17 +223,17 @@
   "tests/smoke_real_runtime.py": "6854ec6a97f094fad16ac851dd65d6bf69d635c291bfa95bcf4712009502b796",
   "tests/test_pipeline.py": "85825db4c37b5dd18ad9020bf6c2800e9e2f0fb0c22d2f3985b76fcaf8bff1a6",
   "tests/test_selection.py": "4f0297e14dfe44d75cd7ace69c46e8415aeb2bcad9c36cee39892e6f595f2954",
-  "tests/test_stage_nocopy.py": "f75cd3a3189e050d65bb52ae4dffb748d4b160d9ccffa79b74a031735e74202b",
+  "tests/test_stage_nocopy.py": "b540df8273398be034bea7b254f34c2e5cb60fb932f977284e8f434f9cc069e9",
   "tests/test_verify_captures.py": "25ff111fdc51fc86f448617ee397d0d337bb7e4aed1cd5c9841e53a250332bc2",
   "verify_captures.py": "7f3a21f6bf17620dc08da02ab2271d99fd5b1fa9126f90499452ad55972353cf"
  },
  "ssh_to_01_03_04_08": false,
- "status": "CANDIDATE_PENDING_ADOPTION",
+ "status": "ADOPTED (COORDINATOR 16d431b4; commit 94df513d)",
  "study": "PREREG-SEARCH-TIERS",
  "tests": {
   "py312": {
    "log": "reports/explore/mac-registration/receipts/unit-tests-py312.log",
-   "log_sha256": "cccb78db1707257069c8bea7222bd4b34ad73fe5b5b17445325e58ce50a4786c",
+   "log_sha256": "1dd07c52e893723d1549ac77a976cd79eb92c37e9c1cc6262891f13b2e251ef4",
    "passed": true,
    "python": "3.12.12",
    "ran": 38,
@@ -227,7 +241,7 @@
   },
   "py38": {
    "log": "reports/explore/mac-registration/receipts/unit-tests-py38.log",
-   "log_sha256": "04e097622ddd459dffaaf94b57d61ffbd73523ca1fe4cdf65a558b0c1f73f72d",
+   "log_sha256": "9c62698507e52efbb2eec72e2105dcbef2520df42e5280685ea425b28156e491",
    "passed": true,
    "python": "3.8.10",
    "ran": 38,

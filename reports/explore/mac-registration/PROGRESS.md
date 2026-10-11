@@ -54,6 +54,23 @@ Work directory on 05: `/mpac/sdicks02/jobs/clasher/mac-registration-20261011/`. 
   - 38/38 tests pass on both Pythons.
 - **About 23:07Z** Sol round 3 requested on the whole amendment (`macreg-a4-sol-review-r3`). One round is held in reserve.
 
+- **23:15Z** Committed and pushed `94df513d` (32 files, temp index on origin/main, secret scan clean).
+- **Coordinator: A4 ADOPTED** (COORDINATOR `16d431b4`).
+
+- **23:19–23:24Z Erratum E1 (test only).** The Mac operator (`27faac2c`, `44040cd3`) found that `test_stage_nocopy.py` assumed a hard-link inode, while on Darwin the helper correctly clones.
+  - The test now asserts the placement method recorded in the receipt.
+  - Test SHA `f75cd3a3` → `b540df82`. The helper `96abd847` is unchanged.
+  - Recorded in the A4 md and json. Sol diff check: APPROVE (`reviews/SOL-REVIEW-A4-E1.md`).
+
 ## Phase 2 / Phase 3
 
-Not started. They wait for coordinator adoption of A4 and for a declared 03 read window, expected at about 08:47Z Oct 12.
+Waiting for an explicit 03 read-window declaration from the coordinator (expected at about 08:47Z Oct 12, when K4S 03's apt-daily timer stops its phase). The coordinator will wake this thread with `t3_thread_send`.
+- No host contact and no Phase 3 before then.
+- **On wake:**
+  1. Check `date -u`.
+  2. Run `fetch_captures.sh` (one session).
+  3. Run `verify_captures.py`.
+  4. Post "released" to the coordinator immediately.
+  5. Run `run_phase3.sh build`, then `reference`, then `memory`, detached with setsid nohup.
+  6. Start the independent Haiku 5.5 reproduction (max effort, without the selection code).
+  7. Run the cross-check and the seal once T1's pooled END S forwards exist.

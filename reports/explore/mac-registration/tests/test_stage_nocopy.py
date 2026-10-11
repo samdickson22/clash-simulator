@@ -170,16 +170,21 @@ class FrozenPrepareBundle(unittest.TestCase):
         self.assertEqual((plain / "tiers-pins.json").read_bytes(), (nocopy / "tiers-pins.json").read_bytes())
         self.assertEqual((plain / "tiers-pins.sha256").read_bytes(), (nocopy / "tiers-pins.sha256").read_bytes())
         self.assertEqual(sorted(p.relative_to(plain) for p in plain.rglob("*")), sorted(p.relative_to(nocopy) for p in nocopy.rglob("*")))
-        for name, source in (("states.pkl", "states.pkl"), ("states-rows.json", "rows/states-rows.json"), ("states-rows.bin", "rows/states-rows.bin")):
-            self.assertEqual(os.stat(nocopy / name).st_ino, os.stat(self.r / "src" / source).st_ino)
-            self.assertNotEqual(os.stat(plain / name).st_ino, os.stat(self.r / "src" / source).st_ino)
         receipt = json.loads((self.r / "nocopy.nocopy-receipt.json").read_text())
+        # Placement method comes from the receipt: clonefile first on macOS (own inode), hard link on Linux (same inode).
+        expected = "apfs-clone" if sys.platform == "darwin" else "hardlink"
+        methods = {p["file"]: p["method"] for p in receipt["placed"]}
+        self.assertEqual(methods, dict.fromkeys(stage_nocopy.FIXTURE, expected))
+        for name, source in (("states.pkl", "states.pkl"), ("states-rows.json", "rows/states-rows.json"), ("states-rows.bin", "rows/states-rows.bin")):
+            same_inode = os.stat(nocopy / name).st_ino == os.stat(self.r / "src" / source).st_ino
+            self.assertEqual(same_inode, expected == "hardlink")
+            self.assertNotEqual(os.stat(plain / name).st_ino, os.stat(self.r / "src" / source).st_ino)
         self.assertEqual(receipt["tiers_pins_sha256"], hashlib.sha256((nocopy / "tiers-pins.json").read_bytes()).hexdigest())
         self.assertFalse((nocopy / "nocopy.nocopy-receipt.json").exists())
         # Condition 5: session-time re-verification passes, then fails closed on change or on write access.
         verified = stage_nocopy.verify_bundle(nocopy)
         self.assertTrue(verified["passes"] and verified["helper_used"])
-        self.assertEqual({f["file"]: f["method"] for f in verified["files"]}, dict.fromkeys(stage_nocopy.FIXTURE, "hardlink"))
+        self.assertEqual({f["file"]: f["method"] for f in verified["files"]}, dict.fromkeys(stage_nocopy.FIXTURE, expected))
         self.assertEqual(len(list(self.r.glob("nocopy.nocopy-verify-*.json"))), 1)
         os.chmod(nocopy / "states-rows.json", 0o644)
         with self.assertRaisesRegex(PermissionError, "writable again"):

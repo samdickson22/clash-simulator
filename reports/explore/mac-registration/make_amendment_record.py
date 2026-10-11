@@ -26,12 +26,15 @@ def committed_sha(path, ref="origin/main"):
 
 
 def main():
-    review = json.loads(sys.argv[1]) if len(sys.argv) > 1 else dict(final_verdict="PENDING", rounds=[])
+    target = ROOT / V4 / "PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.json"
+    previous = json.loads(target.read_text()) if target.exists() else {}
+    review = json.loads(sys.argv[1]) if len(sys.argv) > 1 else previous.get("independent_review", dict(final_verdict="PENDING", rounds=[]))
+    errata = json.loads((HERE / "errata.json").read_text()) if (HERE / "errata.json").exists() else []
     tests = json.loads((HERE / "receipts/unit-tests.json").read_text())
     record = dict(
         schema="clasher.tiers.amendment4-candidate.v1", study="PREREG-SEARCH-TIERS",
         title="Outcome-blind Mac registration inputs: agreement2000 + packets1000 selection, cadence and fixture",
-        status="CANDIDATE_PENDING_ADOPTION", coordinator_thread="0523ae6f-baa3-4d4e-b233-b392671670db",
+        status="ADOPTED (COORDINATOR 16d431b4; commit 94df513d)", coordinator_thread="0523ae6f-baa3-4d4e-b233-b392671670db",
         role="Mac registration inputs builder; T1 corpus-owner delegate; T1 keeps merge and seal authority",
         prepared_host="127x05",
         note=dict(path=V4 + "/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.md", sha256=sha(V4 + "/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.md")),
@@ -86,13 +89,12 @@ def main():
                          "FROZEN-K4S 416f6e51": "unchanged (no fleet file changes)"},
         memory_check=dict(cap_bytes=6 * 2**30, rule="main VmHWM + two sequential D6 child VmHWM, each 2,000 retained inputs, Mac profile on 05"),
         source_files={p: sha("reports/explore/mac-registration/" + p) for p in SOURCES},
-        tests=tests, independent_review=review,
+        tests=tests, independent_review=review, errata=errata,
         runtime_binding=json.loads((HERE / "receipts/runtime-a3-binding.json").read_text()),
         real_runtime_smoke={k: v for k, v in json.loads((HERE / "receipts/real-runtime-smoke.json").read_text()).items()
                             if k in ("passes", "main_infer", "torch_threads", "child_exitcode", "versions", "utc")},
         outcome_blind=True, outcomes_read=False, games_read=False, timing_runs=False, mac_access=False,
         ssh_to_01_03_04_08=False)
-    target = ROOT / V4 / "PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.json"
     target.write_text(json.dumps(record, sort_keys=True, indent=1) + "\n")
     print(sha(V4 + "/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.json"))
 

@@ -39,6 +39,6 @@ test_extra_file_or_mismatch_fails (test_verify_captures.Copy) ... ok
 test_passes (test_verify_captures.Copy) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 3.468s
+Ran 38 tests in 3.423s
 
 OK
