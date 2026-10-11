@@ -48,3 +48,19 @@
 - 04:56Z: freeze commit **de48533f** pushed. Before any reporting game, I added a spare-capacity **Phase D** (G indices
   540–1079, B's arms, dispatched last, stopped by time only). G reporting count is now 1080, re-audited clean.
   Worklists updated: 08 has 840 blocks, 03 has 570 (A+B) plus 870 (C+D). Deployed bytes verified equal on 03 and 08.
+- 04:56:58Z: amendment **c1ddfacf** pushed, then **REPORTING launched**:
+  - **rep08** on 127x08: 840 blocks, stop-at 09:15Z, child pgid 3513853;
+  - **rep03** on 127x03: 570 blocks, stop-at 13:30Z, child pgid 294835. It chains to **rep03C** (C + D, 870 blocks)
+    unless STOP is present.
+
+  Both hosts run 12 disjoint 5-core masks (0–59) with no console users. The 05 sync pulls every 90 s.
+- 04:58Z: 05 backstop `tools/vacate08.sh` (pgid 2451588) set up. At 09:12Z it touches STOP on 08, then polls until zero
+  X4S2 processes and writes `logs/vacate08.jsonl`. It stops contacting 08 by 09:25Z.
+- 05:23Z: rep03 at 53 blocks / 483 games; rep08 at 55 / 477. That is about 1,100 games/h per host. 108 blocks
+  mirrored to 05. MemAvailable 118 GiB, owned PSS ≤3.5 GiB, no console users, no worker errors.
+  ETA: 08 finishes A ~07:10Z and B-odd ~08:25Z, then D-odd until the 09:15Z stop. 03 finishes A+B ~08:20Z and C+D
+  ~10:40Z.
+- 05:51Z: rep03 at 124 blocks / 1,023 games; rep08 at 123 / 1,013. 236 blocks mirrored. MemAvailable 118 GiB, PSS
+  ≤3.6 GiB, no errors, no console users. On schedule.
+- 06:21Z: rep03 at 191 blocks / 1,580 games; rep08 at 189 / 1,558. 380 blocks mirrored. Healthy, with no errors and
+  no console users. Phase A (300 blocks per host) ETA ~07:10Z.
