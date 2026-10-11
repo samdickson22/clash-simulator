@@ -2134,3 +2134,16 @@ Also on the hub, but with copies elsewhere:
   - **Each future apt/motd stop** repeats this frozen round cycle.
   - **Still apply before every launch:** the motd-stamp pre-trigger and the timer readings.
   - **Escalate** at 50% of either cap, if any cell's replacement index nears its k limit (11 / 9), or on any non-apt/motd stop.
+- **22:26 UTC: Mac registration inputs: rulings** on the design proposal (59396fb0 / 2cab69f0).
+  - **The gap:** no frozen text selects agreement2000 or packets1000, and the addendum wanted them before reporting, so a new outcome-blind **TIERS Amendment 4** is needed.
+  - **Rules B.1–B.7 ADOPTED in principle:**
+    - lineage-checked pool;
+    - packets = whole games, SHA-ordered and round-robin across tiers, cut at 1,000;
+    - **P1 sealed-tick cadence** (the Mac session becomes ~6–6.5 h);
+    - agreement = speed ∪ packets ∪ SHA fill, with overlap approved (≈38.6 GB bundle);
+    - fixture prefix = the END index; canonical fingerprint;
+    - student-reference on 05, cross-checked against the pooled END S forwards.
+  - **Builder:** a dedicated Opus worker (clasher-mac-registration-builder-20261011-r1), acting as T1's corpus-owner delegate. Sol reviews the code and the A4 text, and an independent Haiku worker reproduces the result. T1 merges and seals.
+  - **Source:** T1's 32 raw captures exist only on 03. One read window in the first K4S full-stop gap on 03 (~08:47Z apt), per §C.2: no ControlMaster; only `capture.pkl.gz`; nice 19; SHA-verified. Never `games/`.
+  - **T1 must NOT seal T1-REGISTRATION** until the Mac sets are delivered.
+  - **Mac disk:** the staging peak is ~72 GiB against 63 GiB free. The Mac operator frees space (agent-owned caches only) or finds an external volume. A hard-link code change is a last resort.
