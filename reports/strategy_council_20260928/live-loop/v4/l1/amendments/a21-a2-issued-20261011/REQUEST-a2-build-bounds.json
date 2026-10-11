@@ -1,0 +1,59 @@
+{
+  "a19_freeze": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/19-FREEZE-A21-A2.json",
+    "sha256": "0ad43d5b334437a0b02affd507bd39448b9f80ff951010db60cd38693ef845c5"
+  },
+  "a1_approval": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/REVISED-A1-A21-A2.json",
+    "sha256": "64fb85d6217e77ad253e23847c80d379989da6b55491052d4905ea9860a9242e"
+  },
+  "a20_amendment": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/A20-r1-DRAFT.md",
+    "sha256": "6b027d792f5a3baa2524725db34a05f3a23798c88fef363e39737064da36fc15"
+  },
+  "a20_approval": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/APPROVE-A20-A21-A2.json",
+    "sha256": "3dd7f2d289942483fc87e2ce192b8130a9fa4aff8fe5ca6a42fe03e5a1b5d5b0"
+  },
+  "a20_freeze": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/20-FREEZE-A21-A2.json",
+    "sha256": "af3f4be413a56e19b1767e944136ed485278295a8ef833ae46a6fe3b62765353"
+  },
+  "a21_amendment": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/A21-r1-DRAFT.md",
+    "sha256": "26b56a676c38194a94ea871dacb5a5f8a54d11ff30c554a188ab409138594517"
+  },
+  "a21_approval": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/APPROVE-A21-A2.json",
+    "sha256": "85669caa5177fedf5005f6ae27232945441920c68b66987324caf2b74148a2f5"
+  },
+  "a21_freeze": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/21-FREEZE-A2.json",
+    "sha256": "bd345c60d0a9795ded4bd5f1db7cdde8ae45bc9e7511b495afb4bbcf92df2c7e"
+  },
+  "amendment": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/A19-r5-DRAFT.md",
+    "sha256": "2b09f87a742a072bcb411708a332331c9463669efb2465903c54b6a0efea3839"
+  },
+  "operational_approval": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/OPERATIONAL-A21-A2.json",
+    "sha256": "91c612b7f4c6489f5da7351f60a5d5331d03c31a611dcbbb9bfe8f4a244aea15"
+  },
+  "original_approval": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5/coordinator-approval-A1-r2.json",
+    "sha256": "19401ce4ccb70fced9d530234015861693328e4e0cebfa650dd78e9344374b88"
+  },
+  "original_plan": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5/execution-plan-a1-deployment-r2.json",
+    "sha256": "68e2472255ba5d1b79ec9f45217aa14208a31b6c44ccec890af332909efe8bc8"
+  },
+  "stage": "a2-build-bounds",
+  "stage_approval": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/APPROVE-a2-build-bounds.json",
+    "sha256": "d152ba7edbb039b8f212e5ab7598632a52ad96fcf89edf0a6adb6abdad95f74e"
+  },
+  "verification_plan": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/execution-plan.json",
+    "sha256": "327c958dda9fa9a2dd6778e128590f91c3c35ed744d332ac2bedf8e3313aacaf"
+  }
+}

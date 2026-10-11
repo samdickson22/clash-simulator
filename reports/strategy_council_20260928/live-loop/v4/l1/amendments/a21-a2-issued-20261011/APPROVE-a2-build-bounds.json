@@ -1,0 +1,36 @@
+{
+  "B_authorized": false,
+  "a1_verification_receipt": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/seal-verification.json",
+    "sha256": "a685925fa1e013c73e72046912f1939265e3d55bb98f7e03c09b0f1332f9d432"
+  },
+  "a21_approval_sha256": "85669caa5177fedf5005f6ae27232945441920c68b66987324caf2b74148a2f5",
+  "a21_freeze_sha256": "bd345c60d0a9795ded4bd5f1db7cdde8ae45bc9e7511b495afb4bbcf92df2c7e",
+  "a21_review_sha256": "e2e80cec389fa771d3755b88dd53db253b1033d2edd77131b4aa2c6e446cc4c3",
+  "authorized_stages": [
+    "a2-build-bounds"
+  ],
+  "body_seal_sha256": "f95a0df0bd14dcaf97ad23ce7c2eea91e03ac2f47d905103503acf1080bd883d",
+  "bounds_absent_required": true,
+  "decision": "APPROVE_A2",
+  "execution_cap_authority_sha256": "32eedc431fad676f3866b935a8bdc95c0b0aefc64146df4f13cfe8b508e81b0c",
+  "execution_order": "After genuine serial A1 complete/exit0 and supervisor absent; reauthenticate completed validation64 event copy; fresh admission; fresh 24-epoch verification; serial 216-cell build.",
+  "fresh_24_epoch_verification_required": true,
+  "fresh_admission_required": true,
+  "heldout_opening_authorized": false,
+  "issued_utc": "2026-10-11T01:01:32Z",
+  "issuer": "coordinator",
+  "no_fresh_a1_parallel_attempt": true,
+  "operational_approval_sha256": "91c612b7f4c6489f5da7351f60a5d5331d03c31a611dcbbb9bfe8f4a244aea15",
+  "original_execution_plan_sha256": "68e2472255ba5d1b79ec9f45217aa14208a31b6c44ccec890af332909efe8bc8",
+  "partial_results_reuse_authorized": false,
+  "previous_parallel_owned_exit_receipt_sha256": "85f9cefffd0b77831bedae59ea7ea5d2d42f0628f85913cbd8fdacf3ee67a890",
+  "serial_complete_receipt_sha256": "f43dacea9d41368ece3d691f9c9c2285519f4ac7983cfe241cd86eb51fa56dd4",
+  "serial_exit_receipt_sha256": "fa609391af07c6df547dcf3b5a5bcbe7997e6ab0ad53c540149bb0a48b76af6e",
+  "serial_supervisor_absent_required": true,
+  "source_deployment_receipt_sha256": "7d0024a7248d55c265a1a233408e6aa5ea1009dbe1261c89213a79ed56773875",
+  "stage_overlap_authorized": false,
+  "valid_until_utc": "2026-10-12T12:00:00Z",
+  "validation_event_truth_preflight_sha256": "a92e73e06c35a440c0812e95b8356d8ecf4f95a0880f9524dc5b3ebb962b521b",
+  "verification_execution_plan_sha256": "327c958dda9fa9a2dd6778e128590f91c3c35ed744d332ac2bedf8e3313aacaf"
+}

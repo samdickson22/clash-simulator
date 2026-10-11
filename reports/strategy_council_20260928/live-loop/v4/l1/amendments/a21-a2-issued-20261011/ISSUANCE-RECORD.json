@@ -1,0 +1,51 @@
+{
+  "O9_observer_signoff": {
+    "arrangement_sha256_unchanged": "000513f9c28c01b6fe86d08cc242e807c060f08dc90015017f483fe97577fb31",
+    "coordinator_diff_check": "exactly two lines differ from signed 3f6a4e4c: output_parent v4-a19-parallel-verification-r5-a20-r1 -> v4-a19-a20-a21-verification-r1; code v4-a19-a20-combined-r2/code -> v4-a19-a20-a21-combined-r1/code",
+    "path": "l1/receipts/a21-a2-admission-20261011-r1/observe_first_wave_a21_a2_r2.py",
+    "sha256": "a08ef764da4a10b8839a2aef66f357795f0114cdcbc68378812c87b5b81d47db",
+    "supersedes": "3f6a4e4c (not runnable for A2)"
+  },
+  "bound_evidence": {
+    "G_R3_vacancy": "bffe0c5fb784a2b2ac45adb91fd3621fffe4371f52f11e12f687a9c9e61831b4",
+    "O1_O4_O6_O8_O10_04": "63e0b8668a16e69ced6bf560abeb1b9fad679cb3489c6e89e73173a16cbdb2df",
+    "O7_summary": "84262c44817d3d2972c12204eba31b94ffc4b781650e7975cff18c63dcf08dc5",
+    "admission_summary": "9241a588b72b2d5fdb9b0b9aceb9d77b2c2f9604047b8cde6fae9aa59ed90a20",
+    "serial_authenticated_completion_receipt": "91066f3bf681093c3bb9b2002d212f8f5b390028185eb8f45cff09ea911adde8",
+    "serial_complete": "f43dacea9d41368ece3d691f9c9c2285519f4ac7983cfe241cd86eb51fa56dd4",
+    "serial_seal_verification": "a685925fa1e013c73e72046912f1939265e3d55bb98f7e03c09b0f1332f9d432",
+    "serial_verify_exit": "fa609391af07c6df547dcf3b5a5bcbe7997e6ab0ad53c540149bb0a48b76af6e"
+  },
+  "install_paths": "Install byte-exact at /mpac/sdicks02/jobs/clasher/v4-a19-a20-a21-combined-r1/authority/<name>.json on 127x04 and verify every SHA before use.",
+  "issued_files_sha256": {
+    "04-ALLOCATION-A21-A2": "32eedc431fad676f3866b935a8bdc95c0b0aefc64146df4f13cfe8b508e81b0c",
+    "19-FREEZE-A21-A2": "0ad43d5b334437a0b02affd507bd39448b9f80ff951010db60cd38693ef845c5",
+    "20-FREEZE-A21-A2": "af3f4be413a56e19b1767e944136ed485278295a8ef833ae46a6fe3b62765353",
+    "21-FREEZE-A2": "bd345c60d0a9795ded4bd5f1db7cdde8ae45bc9e7511b495afb4bbcf92df2c7e",
+    "APPROVE-A20-A21-A2": "3dd7f2d289942483fc87e2ce192b8130a9fa4aff8fe5ca6a42fe03e5a1b5d5b0",
+    "APPROVE-A21-A2": "85669caa5177fedf5005f6ae27232945441920c68b66987324caf2b74148a2f5",
+    "APPROVE-a2-build-bounds": "d152ba7edbb039b8f212e5ab7598632a52ad96fcf89edf0a6adb6abdad95f74e",
+    "APPROVE-a2-verified-bounds": "49ccc8af501e8925f77720e4a86b4fa5a326dc33e31d920fd018c6419f08c3d1",
+    "OPERATIONAL-A21-A2": "91c612b7f4c6489f5da7351f60a5d5331d03c31a611dcbbb9bfe8f4a244aea15",
+    "REQUEST-a2-build-bounds": "ea3449e8fa42f17d3c899d89302c92d3daa8a23a43512ec22882279420b9440d",
+    "REQUEST-a2-verified-bounds": "8751a79e42801e3e0cec4432f5f247b4404c0919588f82de96eeaf371f319d34",
+    "REVISED-A1-A21-A2": "64fb85d6217e77ad253e23847c80d379989da6b55491052d4905ea9860a9242e"
+  },
+  "issued_utc": "2026-10-11T01:01:32Z",
+  "issuer": "coordinator (thread 0523ae6f, Claude Opus 5.5)",
+  "offline_check": "check_authority_drafts.py against issued bytes on 05 (t1-verifier Python 3.12, nice19/CPU63): PASS a2-build-bounds, a2-verified-bounds, extra_A21_key_rejected; exact key counts 6/11/8.",
+  "schema": "clasher.v4.coordinator-issuance-record.v1",
+  "scope": {
+    "B_authorized": false,
+    "fresh_A1_parallel": false,
+    "heldout_opening_authorized": false,
+    "sequential_no_overlap": true,
+    "stages": [
+      "a2-build-bounds",
+      "a2-verified-bounds"
+    ],
+    "valid_until_utc": "2026-10-12T12:00:00Z"
+  },
+  "source_readiness_manifest_sha256": "c5bf927a02a0525dce10d6fa9318efd6b6d030f3962d7de53f06a0c2167563b5",
+  "stage2_dynamic_bindings": "APPROVE-a2-verified-bounds keeps build_attempt_complete_receipt_sha256/build_bounds_complete_sha256 as REQUIRED_AFTER_*; bind the actual values in the authenticated stage-2 own-launch receipt (coordinator-authorized), never edit issued bytes."
+}

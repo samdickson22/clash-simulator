@@ -1,0 +1,19 @@
+{
+  "B_authorized": false,
+  "a20_freeze_sha256": "af3f4be413a56e19b1767e944136ed485278295a8ef833ae46a6fe3b62765353",
+  "adapter_sha256": "da583414af5554417cd58b2f199f6466fa54cd731163ec62540afc1ec12bc7f0",
+  "amendment_sha256": "6b027d792f5a3baa2524725db34a05f3a23798c88fef363e39737064da36fc15",
+  "authorized_stages": [
+    "a1-verify",
+    "a2-build-bounds",
+    "a2-verified-bounds"
+  ],
+  "base_a19_plan_sha256": "7d2a92bc06315c7a1fcabc2636c9818cec1784446ee35fd6b9b5399c28f4fc12",
+  "decision": "APPROVE_LOCAL_IO_LOCK_SCOPE",
+  "execution_plan_sha256": "327c958dda9fa9a2dd6778e128590f91c3c35ed744d332ac2bedf8e3313aacaf",
+  "heldout_opening_authorized": false,
+  "hosts": [
+    "127x04"
+  ],
+  "serial_runner_changed": false
+}

@@ -1,0 +1,38 @@
+{
+  "B_authorized": false,
+  "a21_freeze_sha256": "bd345c60d0a9795ded4bd5f1db7cdde8ae45bc9e7511b495afb4bbcf92df2c7e",
+  "adapter_sha256": "a1637caf0636d1e6462a08c0679f5a9806e5827db982ec98d0d60d24531e4b22",
+  "amendment_sha256": "26b56a676c38194a94ea871dacb5a5f8a54d11ff30c554a188ab409138594517",
+  "authorized_stages": [
+    "a1-verify",
+    "a2-build-bounds",
+    "a2-verified-bounds"
+  ],
+  "base_combined_plan_sha256": "0fe6fe3a1a864811e33e4b8358feea9157b4578771f2ff92237700b366ccfe72",
+  "decision": "APPROVE_REMOTE_IO_LOCK_SCOPE",
+  "execution_plan_sha256": "327c958dda9fa9a2dd6778e128590f91c3c35ed744d332ac2bedf8e3313aacaf",
+  "heldout_opening_authorized": false,
+  "remote_io_lock_scope": {
+    "adapter_sha256": "a1637caf0636d1e6462a08c0679f5a9806e5827db982ec98d0d60d24531e4b22",
+    "base_combined_plan_sha256": "0fe6fe3a1a864811e33e4b8358feea9157b4578771f2ff92237700b366ccfe72",
+    "chunk_bytes": 65536,
+    "execution_host": "127x04",
+    "hash_reply_bytes": 65536,
+    "hash_script_bytes": 4194304,
+    "hash_timeout_seconds": 60,
+    "hosts": [
+      "127x03",
+      "127x08"
+    ],
+    "lock_scope": "remote-transfer-exit-and-sha-only",
+    "max_snapshot_bytes": 536870912,
+    "pre_staging": false,
+    "revision": "A21-r1",
+    "route_change": false,
+    "routing_source_sha256": "a172fdc26eff537bcc25de59938a24202d621acc4d845f15b3e4b8beda2d8dd2",
+    "serial_runner_changed": false,
+    "stderr_bytes": 4096,
+    "transfer_timeout_seconds": 30
+  },
+  "serial_runner_changed": false
+}
