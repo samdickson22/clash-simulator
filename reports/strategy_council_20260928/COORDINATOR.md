@@ -1977,3 +1977,10 @@ Also on the hub, but with copies elsewhere:
     - K4S never overrides a 1-core/2-thread pick;
     - N stays 3,000/900.
   - **Next:** an independent conformance review of r2 (Opus high, launched). The freeze waits for that, the seed audit, SD1 hashes, and applying the gate rule to X4S-2 phase E.
+- **09:20 UTC: PREREG-K4S r2 conformance = CONFORMS_WITH_FIXES** (cfbcd183; review ad681329). 13 of 14 r1 findings resolved; no game/arm/N/margin/alpha changes. **Text fixes required before freeze:**
+  - N1: K4S deploys only if c_M ≤ c*.
+  - N2: own Mac measurement script, never editing TIERS-frozen `measure_tiers.py`; it runs after TIERS §7, and its failures never affect TIERS.
+  - N3: K4S fills F0 only if K4 is Mac-infeasible; add the gate-3 arm64/1-2-4-worker exactness check and SD1 ≥ 99.5% agreement; extend the kill rule.
+  - M1–M6 as listed.
+
+  **r3 editor launched, phase-E-blind** (clasher-prereg-k4s-r3-edit-20261011): it must not read X4S-2 phase E (unreduced on main at 09:20Z), and gets an independent diff-only re-check. The freeze then needs: c* record, SD1 manifest and supersession, seed audit, runtime pins, per-host qualification, host set with transport retirement, the K4S Mac procedure, the Q1–Q13 record and attestation.
