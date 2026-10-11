@@ -2147,3 +2147,10 @@ Also on the hub, but with copies elsewhere:
   - **Source:** T1's 32 raw captures exist only on 03. One read window in the first K4S full-stop gap on 03 (~08:47Z apt), per §C.2: no ControlMaster; only `capture.pkl.gz`; nice 19; SHA-verified. Never `games/`.
   - **T1 must NOT seal T1-REGISTRATION** until the Mac sets are delivered.
   - **Mac disk:** the staging peak is ~72 GiB against 63 GiB free. The Mac operator frees space (agent-owned caches only) or finds an external volume. A hard-link code change is a last resort.
+- **22:28 UTC: K4S Amendment 2 COMMITTED** (f231fbcb; Sol APPROVE r1+r2; record md b28b636e / json e0adbeae). K4S Mac manifest 8bb20a75 → **c1fb1e9a**:
+  - `tier_backend.py` re-pinned to 02e2139f;
+  - `state_rows.py` added;
+  - `build_manifest.py` → 2e255fb9 (its file list only).
+
+  K4SBackend is compatible, with no K4S code change. Mac suite 98/99 (the known by-construction failure); END 103/103. Fleet runtimes keep the d89cab16 manifest and the 26932fa8 builder bytes. K4S END and Mac declarations must name c1fb1e9a. If TIERS A4 touches any pinned e4v3 file, another re-pin follows.
+  - **Ruling:** K4S Mac all-cause poll lateness (the A3-P metric) is reported **descriptively only**, with no gate change, disclosed in the K4S Mac summary.
