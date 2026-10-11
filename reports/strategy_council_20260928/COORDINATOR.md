@@ -2097,3 +2097,8 @@ Also on the hub, but with copies elsewhere:
   - **Phase B:** the TIERS session, only after T1's END pooled fleet reference is committed, using `measure_tiers.py` 6066228b.
   - **Phase C:** the K4S Mac measurement (manifest 8bb20a75), after the K4S END reference (~Oct 12 afternoon), as a standalone session if needed.
   - **GUI-only steps** get routed to a Codex/Sol computer-use task.
+- **20:35 UTC: T1 END stopped safely before A6** (no attempt registered).
+  - **Done so far:** the 01 bundle and C3 preflight PASS (68a65b6e). The drift was confined to six E4 files, and the separate post-merge snapshot was approved.
+  - **Blocker, measured:** one TierBackend uses 11.46 GiB anonymous RSS on the 11.65 GB public corpus. With 11 frozen slots that is ≥126 GiB, more than the host's 125.6 GiB, before the frozen 24 GiB floor.
+  - **Decision:** no slot, floor or budget change. An **outcome-blind E4 input-loading repair** is assigned (Opus implementer plus Sol review; TIERS Amendment 3). It must keep fixture bytes and order identical, never touch the timed region, and avoid K4S-pinned files or stop and report.
+  - **Delay:** the Mac TIERS session is pushed back until the END pooled reference exists.
