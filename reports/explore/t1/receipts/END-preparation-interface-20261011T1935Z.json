@@ -1,0 +1,69 @@
+{
+  "A6_output_must_be_outside_attempt_roots": true,
+  "apt_timer_clearance_required_hours": 2,
+  "attempt_roots_registered": false,
+  "completion": {
+    "path": "reports/explore/t1/receipts/reporting-completion-END-op7-r3-20261011.json",
+    "sha256": "4dd191b644ceb45f2530d5d9d15aea15dc052b8cfac8b22c796308dbf3f172eb"
+  },
+  "coordinator_declaration_commit": "09d81393",
+  "coordinator_message_position": 7881,
+  "counted_inventory": {
+    "path": "reports/explore/t1/receipts/counted-inventory-END-op7-r3.json",
+    "sha256": "6f6f000781d5d345846a33331d8fbc864fc679971001e23b4c7355505165386f"
+  },
+  "derived_plan": {
+    "equality_proof": true,
+    "only_semantic_addition": {
+      "reporting_hosts": [
+        "127x01",
+        "127x08"
+      ]
+    },
+    "parent_path": "reports/explore/t1/plan.json",
+    "parent_sha256": "af6aeade7de1a9c5e22fbf17a3cf1d6606652500ec9c35983d21a1cdb3767498",
+    "path": "reports/explore/t1/receipts/END-plan-0108-derived-20261011.json",
+    "sha256": "389f31d51c5285221b834287e1775612538d00ad78c74cefb13721194ad091a1"
+  },
+  "fleet_end_counting_check": "PASS: all3072 raw completed memberships/full54loss bindings/exact original logical population across8retained phases",
+  "guard_freeze": {
+    "commit": "aeeb3003",
+    "manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+    "status": "OP6 exact source only; reportingOP7 tree untouched"
+  },
+  "health_only": true,
+  "host01_preflight": "NOT_RUN: complete approved END input bundle is not yet staged",
+  "host08_gate": "WAIT_PERCEPTION_COMMITTED_HTTP_RETIREMENT",
+  "hub_mirror": "COORDINATOR_PAUSED",
+  "measurement_source": {
+    "commit": "4b645921ea87d4bf48a816745b18834486e837aa",
+    "descendant_of_6afcbbab": true,
+    "files": {
+      "build_tiers.sh": "3656f88ecf80cd9aec83c94607dad44088e0b7fbb2d244d06d47c74561e45372",
+      "classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
+      "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+      "fleet_end.py": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+      "fleet_pool.py": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+      "fleet_profile.py": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+      "fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+      "fleet_validity.py": "94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae",
+      "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+      "prepare_bundle.py": "ad36c2020ab59ccafd91b3dbb03329a3fe1c2bb3b79d8b3d94b557d3daa6138e",
+      "prepare_fleet_smoke.py": "69190b46ff379b6f75cf38b47d10b5fcd551583e2255301f8a0466a282a0ab1f",
+      "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+      "replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
+      "spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+      "telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
+      "tier_backend.py": "b04d201de7a95a36669e5c11898a297ba8f324d1a658f2987ec5ba244671add7"
+    },
+    "measure_tiers_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+    "path": "/mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3"
+  },
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "production08_reference_first": true,
+  "schema": "clasher.t1.END-preparation-health.v1",
+  "timer_enabled": false,
+  "timing_or_reference_work_started": false,
+  "utc": "2026-10-11T19:36:11Z"
+}

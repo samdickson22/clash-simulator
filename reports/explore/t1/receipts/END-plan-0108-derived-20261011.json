@@ -1,0 +1,450 @@
+{
+  "arms": {
+    "K0c-160": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.16,
+      "kernel": "coarse-first",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "v1-cached",
+      "threads": 1
+    },
+    "K0c-200": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.2,
+      "kernel": "coarse-first",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "v1-cached",
+      "threads": 1
+    },
+    "K2-160": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.16,
+      "kernel": "K2-anytime",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "v1-unmodified",
+      "threads": 2
+    },
+    "K2-200": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.2,
+      "kernel": "K2-anytime",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "v1-unmodified",
+      "threads": 2
+    },
+    "K4-160": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.16,
+      "kernel": "K2-anytime",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "v1-unmodified",
+      "threads": 4
+    },
+    "K4-200": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.2,
+      "kernel": "K2-anytime",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "v1-unmodified",
+      "threads": 4
+    },
+    "S-160": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.16,
+      "kernel": "coarse-first",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "R3a-cached",
+      "threads": 1
+    },
+    "S-200": {
+      "coarse_horizon": 160,
+      "deadline_seconds": 0.2,
+      "kernel": "coarse-first",
+      "opponent": "v1-policy",
+      "own": "W-screen8",
+      "policy": "R3a-cached",
+      "threads": 1
+    }
+  },
+  "bootstrap": {
+    "confidences": [
+      0.9833333333333333,
+      0.975,
+      0.95
+    ],
+    "exact_confidences": [
+      "59/60",
+      "39/40",
+      "19/20"
+    ],
+    "reps": 10000,
+    "seed": 2026101040,
+    "threshold_arithmetic": "Integer resample loss counts; rational linear percentile interpolation. Exact rational pp bounds and integer validity comparisons govern all threshold decisions, including float/exact disagreement. G1 strictly <0; other limits inclusive.",
+    "unit": "paired seed stratified by fixed population cell"
+  },
+  "catalogue_sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+  "command_capacity_both_sides": 1,
+  "compute": {
+    "allowed_optional_host": "127x08",
+    "cache_root": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/cache",
+    "console_slots": 8,
+    "forbidden_hosts": [
+      "127x04",
+      "127x05"
+    ],
+    "hosts": {
+      "127x01": {
+        "census_cpu": 63,
+        "copy_cpu": 62,
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "supervisor_cpu": 61
+      },
+      "127x03": {
+        "census_cpu": 63,
+        "copy_cpu": 62,
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "supervisor_cpu": 61
+      },
+      "127x08": {
+        "census_cpu": 63,
+        "copy_cpu": 62,
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "supervisor_cpu": 61
+      }
+    },
+    "idle_service_exception": {
+      "activity": ">1% core averaged over block or any new descendant flags block; does not stop or silently exclude it",
+      "coordinator_ruling": "2026-10-10 14:35Z user instruction",
+      "hosts": [
+        "127x03",
+        "127x08"
+      ],
+      "identity": "PID/start_ticks/raw cmdline SHA256/PGID/three wrapper process identities; pinned at admission"
+    },
+    "min_memavailable_GiB": 24,
+    "nice": 10,
+    "perception_io_exception": {
+      "commands": [
+        "cat",
+        "sha256sum"
+      ],
+      "coordinator_ruling": "2026-10-10 14:00Z instruction; I/O paired within blocks; every occurrence recorded",
+      "host": "127x03",
+      "path_prefix": "/mpac/sdicks02/v4-archive/verified-capture-20261009-r1/",
+      "source_host": "127x04",
+      "source_ip": "129.65.221.14"
+    },
+    "scheduler": "SCHED_OTHER",
+    "slot_width": 5,
+    "slots": 11,
+    "smt": false
+  },
+  "corpus_selection": {
+    "belief_snapshot": "Committed public pre-update posterior; discard private suspended transaction, as complete no-deadline update does. Presence recorded per state; identical work on fleet and Mac.",
+    "eligible": "Own-tier excluded qualification-class corpus-bank200ms games; all public search opportunities with >1 candidate, regardless of live cutoff/root construction. Reconstruct eligibility/posterior/sample/root after timer on independent copies.",
+    "elixir_bins": [
+      3,
+      6
+    ],
+    "excluded_indices": [
+      0,
+      1,
+      2
+    ],
+    "initial_games_per_tier": 8,
+    "legal_play_count_bins": [
+      1,
+      128
+    ],
+    "max_games_per_tier": 64,
+    "reservoir_per_stratum": 300,
+    "sampling": "proportional occupied-stratum allocation, >=1 each; largest remainders; SHA256 priority of tier/seed/tick; ties by ID",
+    "states_per_tier": 300
+  },
+  "fleet_reference_schedule": "END of reporting window, after reviewed E4 fixes and corpus approval, same pinned reporting load; all qualified remaining named hosts, with08 only if B window not declared. Losing named reference host requires explicit reviewed reference amendment; never extend08 past B.",
+  "horizon": 160,
+  "lateness": {
+    "all_overruns_recorded": true,
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking",
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "rounding": "ceil positive overrun / 50ms",
+    "ticks_per_second": 20,
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then"
+  },
+  "max_ticks": 6001,
+  "opponent_delay": 27,
+  "ordering": {
+    "anchor": "byte-exact K2 anytime score collection",
+    "blocks": "All eight arm-cells consecutively in rotated order on the same five-core slot; one-core arms use its first core; no partial reuse.",
+    "host_allocation": "For each population/cell choose least-used host; population/seat and total load break ties. Never-started blocks retain original seed and are re-dispatched; only started in-flight or complete off-hub blocks require fresh cell-preserving replacement seeds.",
+    "one_core": "balanced coarse scan all original candidates, refine score-ranked top8; proposer top8 enter frozen candidate generator; complete roots only; fallback when none completes"
+  },
+  "outcome_barrier": "SHA-bound committed Mac tiers-summary.json, or explicitly authorized fourteen_day_escape backed by committed reporting-completion receipt and authorization >= completion+14days. No other release reason.",
+  "own_delay": 27,
+  "paired_seeds": 3072,
+  "policy": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/inputs/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "seed_offset": 271828,
+    "snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+    "temperature": 1
+  },
+  "policy_decision_interval": 5,
+  "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
+  "purpose": "T1 r3 confirmatory tiers; SEALED; draft preparation only",
+  "qualification": {
+    "belief_and_gc": "inherited qualification unchanged",
+    "cache": "125-state single-vs-double v1 sample/propose equality including RNG",
+    "injected_clock": true,
+    "no_deadline": "125 exact actions/candidates/scores and root immutability for coarse-first and K2 anchor; proposal-augmented frozen scorer equality",
+    "student_inference_inside_timer": true
+  },
+  "reporting_gate": "Coordinator r3 freeze, committed T1 plan/seed audit/runtime freeze, runner/reducer round3 APPROVE. Corpus/fleet review does not gate reporting.",
+  "reporting_hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "return_reserve_seconds": 0.008,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "screen_plays": 8,
+  "script_top": 4,
+  "search_decision_interval": 10,
+  "seed_ranges": {
+    "corpus": {
+      "base": 4503603407370496,
+      "count": 64
+    },
+    "descriptive": {
+      "base": 4503603507370496,
+      "count": 72
+    },
+    "guard": {
+      "base": 4503603207370496,
+      "count": 600
+    },
+    "guard_replacements": {
+      "base": 4503603207371096,
+      "count": 120
+    },
+    "primary": {
+      "base": 4503603107370496,
+      "count": 2400
+    },
+    "primary_replacements": {
+      "base": 4503603107372896,
+      "count": 480
+    },
+    "smoke": {
+      "base": 4503603307370496,
+      "count": 8
+    }
+  },
+  "source_reference": {
+    "K2_anchor_sha256": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
+    "K_freeze": "0f2a9ec8",
+    "K_implementation": "8237f993",
+    "K_review": "c296d98f",
+    "K_v2_final": "dd692ef9",
+    "K_v2_plan": "e546e181",
+    "K_v2_preparation": "75e2513d",
+    "S1_manifest": "reports/explore/s1/FROZEN-R2.json",
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"
+  },
+  "start_tick": 90,
+  "status": "UNFROZEN",
+  "student": {
+    "calibration": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/inputs/R3a-calibration.json",
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "original_stage1": "killed; never relabel as R3 survivor; S1 compute-tier study only",
+    "threshold": 0.5005528330802917
+  },
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01
+}

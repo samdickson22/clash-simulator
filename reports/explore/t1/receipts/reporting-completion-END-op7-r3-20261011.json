@@ -1,0 +1,465 @@
+{
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "END_conditions_732ea9bd": {
+    "C1": "Prospective END plan reporting_hosts01/08 only; otherwise identical af6aeade; no running-job changes.",
+    "C2": "END reference uses strict OP6; per-host apt timers must offer2h clearance.",
+    "C3": "Preflight and A6 outside registered attempt roots.",
+    "C4": "Every END builder/launcher asserts measure_tiers6066228b.",
+    "additional": "No python-O;08 reference before B. Coordinator declaration still required."
+  },
+  "END_interface_projection": {
+    "changes": [
+      "Add completed_at_utc equal to already retained completion_utc",
+      "Project inventory to exactly schema/outcomes_sealed/blocks and host/phase/descriptor rows",
+      "Bind projected inventory SHA; retain full health inventory hash proof separately"
+    ],
+    "logical_ids_descriptors_counts_sources_unchanged": true,
+    "previous_completion_commit": "bc3730c4dcfa844df906fb4d888a4735b53ad1b1",
+    "previous_completion_path": "reports/explore/t1/receipts/reporting-completion-op7-r3-20261011.json",
+    "previous_completion_sha256": "9e788d2053c10da19e339e201d4a3b4cb7d387e96bc837778b1fee2fa10e2dca",
+    "utc": "2026-10-11T19:36:11Z"
+  },
+  "artifacts": {
+    "blind-ledger-final.json": {
+      "durable_host": "127x01",
+      "durable_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/blind-ledger-final.json",
+      "repository_path": "reports/explore/t1/receipts/blind-ledger-final-op7-r3.json",
+      "sha256": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa"
+    },
+    "counted-inventory-final.json": {
+      "derived_from_health_inventory_sha256": "50f24dd6c93daad65ce8df3558978d669486efdf00da5e33c2d0f852b6effc72",
+      "repository_path": "reports/explore/t1/receipts/counted-inventory-END-op7-r3.json",
+      "sha256": "6f6f000781d5d345846a33331d8fbc864fc679971001e23b4c7355505165386f"
+    },
+    "counted-inventory-health-proof.json": {
+      "durable_host": "127x01",
+      "durable_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/counted-inventory-final.json",
+      "repository_path": "reports/explore/t1/receipts/counted-inventory-final-op7-r3.json",
+      "sha256": "50f24dd6c93daad65ce8df3558978d669486efdf00da5e33c2d0f852b6effc72"
+    },
+    "retained-phase-bindings.json": {
+      "durable_host": "127x01",
+      "durable_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/retained-phase-bindings.json",
+      "repository_path": "reports/explore/t1/receipts/phase-source-bindings-final-op7-r3.json",
+      "sha256": "08cad0ffbf693115ad133cd9e53d552302f8f4737e5fb48650186fefca815fdb"
+    },
+    "ssh-sensitivity-final.json": {
+      "durable_host": "127x01",
+      "durable_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/ssh-sensitivity-final.json",
+      "repository_path": "reports/explore/t1/receipts/ssh-sensitivity-final-op7-r3.json",
+      "sha256": "48730da553491f998f16e389d65d94c0d586ed5a0964d64fa58c01f294962b62"
+    }
+  },
+  "blind_ledger_events": 54,
+  "blind_ledger_path": "reports/explore/t1/receipts/blind-ledger-final-op7-r3.json",
+  "blind_ledger_sha256": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa",
+  "completed_at_utc": "2026-10-11T19:31:38Z",
+  "completion_utc": "2026-10-11T19:31:38Z",
+  "coordinator_readthrough": 7871,
+  "copier_exit": {
+    "STOP_COPY_present": true,
+    "copier_pgid": 1410572,
+    "copier_pid": 1410572,
+    "copier_start_ticks": 151731791,
+    "health_only": true,
+    "host": "127x01",
+    "outcomes_read": false,
+    "owned_copier_group_alive": 0,
+    "utc": "2026-10-11T19:28:00Z"
+  },
+  "corpus_durability_sha256": "72ac548b1c79ee58958aed1350cdf07b8364ec199fd4fb864b455bb011d2f19f",
+  "corpus_status": "DISK_ONLY_READ_ONLY_COMPLETE",
+  "counted_descriptive_blocks": 72,
+  "counted_guard_blocks": 600,
+  "counted_host_phases": {
+    "127x01": [
+      "replacement-r1",
+      "replacement-r2",
+      "replacement-r3",
+      "reporting"
+    ],
+    "127x08": [
+      "replacement-r1",
+      "replacement-r2",
+      "replacement-r3",
+      "reporting"
+    ]
+  },
+  "counted_hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "counted_inventory_path": "reports/explore/t1/receipts/counted-inventory-END-op7-r3.json",
+  "counted_inventory_sha256": "6f6f000781d5d345846a33331d8fbc864fc679971001e23b4c7355505165386f",
+  "counted_phase_counts": [
+    {
+      "complete": 155,
+      "host": "127x01",
+      "phase": "replacement-r1"
+    },
+    {
+      "complete": 1181,
+      "host": "127x01",
+      "phase": "replacement-r2"
+    },
+    {
+      "complete": 512,
+      "host": "127x01",
+      "phase": "replacement-r3"
+    },
+    {
+      "complete": 124,
+      "host": "127x01",
+      "phase": "reporting"
+    },
+    {
+      "complete": 399,
+      "host": "127x08",
+      "phase": "replacement-r1"
+    },
+    {
+      "complete": 160,
+      "host": "127x08",
+      "phase": "replacement-r2"
+    },
+    {
+      "complete": 508,
+      "host": "127x08",
+      "phase": "replacement-r3"
+    },
+    {
+      "complete": 33,
+      "host": "127x08",
+      "phase": "reporting"
+    }
+  ],
+  "counted_primary_blocks": 2400,
+  "counted_total_blocks": 3072,
+  "counts": {
+    "127x01": {
+      "apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "descriptive_durable_blocks": 54,
+      "durable_blocks": 1972,
+      "guard_durable_blocks": 386,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 512,
+      "original_preserved_blocks": 124,
+      "primary_durable_blocks": 1532,
+      "prior_r1_preserved_blocks": 155,
+      "prior_r2_preserved_blocks": 1181,
+      "ssh_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 0,
+      "total_flagged_blocks": 0
+    },
+    "127x08": {
+      "apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 1100,
+      "descriptive_durable_blocks": 18,
+      "durable_blocks": 1100,
+      "guard_durable_blocks": 214,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 508,
+      "original_preserved_blocks": 33,
+      "primary_durable_blocks": 868,
+      "prior_r1_preserved_blocks": 399,
+      "prior_r2_preserved_blocks": 160,
+      "ssh_flagged_blocks": 477,
+      "ssh_or_apt_flagged_blocks": 477,
+      "total_flagged_blocks": 1100,
+      "verified_offhost_ACKs": 1100
+    }
+  },
+  "final_progress": {
+    "127x01": {
+      "age_seconds": 506.0,
+      "complete_local_blocks": 512,
+      "console_count": 0,
+      "failed_blocks": 0,
+      "host": "127x01",
+      "inflight": 0,
+      "phase": "replacement",
+      "queued": 0,
+      "reason": null,
+      "sealed": true,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": true,
+      "utc": "2026-10-11T19:17:12Z"
+    },
+    "127x08": {
+      "age_seconds": 1532.0,
+      "complete_local_blocks": 508,
+      "console_count": 0,
+      "failed_blocks": 0,
+      "host": "127x08",
+      "inflight": 0,
+      "phase": "replacement",
+      "queued": 0,
+      "reason": null,
+      "sealed": true,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": true,
+      "utc": "2026-10-11T19:00:06Z"
+    }
+  },
+  "health_only": true,
+  "hub_mirror": "COORDINATOR_PAUSED; worker does not resume",
+  "inventory_invocations_each": {
+    "original": 1,
+    "replacement-r1": 1,
+    "replacement-r2": 1
+  },
+  "k4s_companion_binding": {
+    "END_Mac_manifest": "8bb20a75",
+    "END_requires_separate_staged_tree": true,
+    "amendment_commit": "45f32c0f",
+    "coordinator_position": 7824,
+    "disposition_commit": "22d2e4d3",
+    "fleet_reporting_manifest": "d89cab16",
+    "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+  },
+  "logical_coverage": {
+    "counted_inventory_sha256": "50f24dd6c93daad65ce8df3558978d669486efdf00da5e33c2d0f852b6effc72",
+    "health_only": true,
+    "logical_blocks": 3072,
+    "original_dispatch_sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
+    "original_logical_ids_exact": true,
+    "outcomes_read": false,
+    "utc": "2026-10-11T19:30:33Z"
+  },
+  "mac_tiers_erratum": {
+    "amendment_record_sha256": "46d8c4be2ba1863f97c2da1ab9d37afb840c9e7b106b7fe42319970ab9269be4",
+    "integration_commit": "6afcbbaba0a6748baafe3aca408b781f84989b7f",
+    "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+    "status": "approved integration; END/A6/pool/Mac same-byte and fresh post-merge bundle conditions unchanged; running reporting copies unchanged"
+  },
+  "no_terminal_reinventory": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "phase_source_bindings": {
+    "durable_host": "127x01",
+    "durable_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/retained-phase-bindings.json",
+    "repository_path": "reports/explore/t1/receipts/phase-source-bindings-final-op7-r3.json",
+    "sha256": "08cad0ffbf693115ad133cd9e53d552302f8f4737e5fb48650186fefca815fdb"
+  },
+  "r3_dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+  "r3_exits": {
+    "127x01": {
+      "completed_blocks": 512,
+      "failed_blocks": 0,
+      "host": "127x01",
+      "reason": null,
+      "receipt_sha256": "2f66d73399fce5c3b7dd2a2f1d5a296553cc7cc22b19591d64c305df18dcb8e5",
+      "unstarted_blocks": 0,
+      "utc": "2026-10-11T19:17:13Z"
+    },
+    "127x08": {
+      "completed_blocks": 508,
+      "failed_blocks": 0,
+      "host": "127x08",
+      "reason": null,
+      "receipt_sha256": "4da6bc447024cc512a6e996f579ea3515d05c9b0e666f2f8196cd9e932fa5c00",
+      "unstarted_blocks": 0,
+      "utc": "2026-10-11T19:00:07Z"
+    }
+  },
+  "r3_frozen_source_commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+  "r3_manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "raw_durability": {
+    "artifacts": {
+      "blind-ledger-final.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/blind-ledger-final.json",
+        "sha256": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa"
+      },
+      "counted-inventory-final.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/counted-inventory-final.json",
+        "sha256": "50f24dd6c93daad65ce8df3558978d669486efdf00da5e33c2d0f852b6effc72"
+      },
+      "ssh-sensitivity-final.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/ssh-sensitivity-final.json",
+        "sha256": "48730da553491f998f16e389d65d94c0d586ed5a0964d64fa58c01f294962b62"
+      }
+    },
+    "by_host": {
+      "127x01": 1972,
+      "127x08": 1100
+    },
+    "copier_identity": {
+      "cmdline_sha256": "ede5882ed65253e899e4b03abd6fe7bcd039866f6d752e3e7350cd4894949977",
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "pgid": 1410572,
+      "pid": 1410572,
+      "start_ticks": 151731791,
+      "uid": 3822945
+    },
+    "copy_backlog": 0,
+    "counted_host_phases": {
+      "127x01": [
+        "replacement-r1",
+        "replacement-r2",
+        "replacement-r3",
+        "reporting"
+      ],
+      "127x08": [
+        "replacement-r1",
+        "replacement-r2",
+        "replacement-r3",
+        "reporting"
+      ]
+    },
+    "counted_phase_counts": [
+      {
+        "complete": 155,
+        "host": "127x01",
+        "phase": "replacement-r1"
+      },
+      {
+        "complete": 1181,
+        "host": "127x01",
+        "phase": "replacement-r2"
+      },
+      {
+        "complete": 512,
+        "host": "127x01",
+        "phase": "replacement-r3"
+      },
+      {
+        "complete": 124,
+        "host": "127x01",
+        "phase": "reporting"
+      },
+      {
+        "complete": 399,
+        "host": "127x08",
+        "phase": "replacement-r1"
+      },
+      {
+        "complete": 160,
+        "host": "127x08",
+        "phase": "replacement-r2"
+      },
+      {
+        "complete": 508,
+        "host": "127x08",
+        "phase": "replacement-r3"
+      },
+      {
+        "complete": 33,
+        "host": "127x08",
+        "phase": "reporting"
+      }
+    ],
+    "frozen_source_hashes_verified": 196,
+    "health_only": true,
+    "outcomes_read": false,
+    "outcomes_sealed": true,
+    "populations": {
+      "descriptive": 72,
+      "guard": 600,
+      "primary": 2400
+    },
+    "schema": "clasher.t1.final-durability.health.v1",
+    "total_durable_blocks": 3072,
+    "utc": "2026-10-11T19:27:23Z",
+    "verified_game_hashes": 24576,
+    "verified_offhost_ACKs": 1100
+  },
+  "release_status": "SEALED; PC1-PC4 mandatory before both routes including14-day escape",
+  "remote_owned_process_absence": {
+    "health_only": true,
+    "host": "127x08",
+    "outcomes_read": false,
+    "owned_r3_job_or_copier_processes_remaining": 0,
+    "utc": "2026-10-11T19:28:44Z"
+  },
+  "reporting_complete": true,
+  "retained_verbatim_exits": "All8 original/r1/r2/r3 source exits and launches retained byte-identically on01 and metadata05; health-only path/SHA bindings committed. Raw fragments remain in source job roots unchanged.",
+  "schedule_disable": "AFTER_COMMITTED_COMPLETION_AND_COORDINATOR_NOTIFICATION",
+  "schema": "clasher.t1.reporting-completion.v1",
+  "scientific_last_supervisor_exit_utc": "2026-10-11T19:17:13Z",
+  "sensitivity_health_check": {
+    "APT_flags": 0,
+    "APT_meter_stops": 0,
+    "SSH_flags": 477,
+    "SSH_meter_stops": 0,
+    "blocks": 3072,
+    "flag_counts": {
+      "descriptive": {
+        "apt": 0,
+        "apt_meter_stop": 0,
+        "both": 0,
+        "either": 0,
+        "ssh": 0,
+        "ssh_meter_stop": 0,
+        "total": 72
+      },
+      "guard": {
+        "apt": 0,
+        "apt_meter_stop": 0,
+        "both": 0,
+        "either": 98,
+        "ssh": 98,
+        "ssh_meter_stop": 0,
+        "total": 600
+      },
+      "primary": {
+        "apt": 0,
+        "apt_meter_stop": 0,
+        "both": 0,
+        "either": 379,
+        "ssh": 379,
+        "ssh_meter_stop": 0,
+        "total": 2400
+      }
+    },
+    "outcomes_read": false,
+    "standalone": true,
+    "status": "PASS"
+  },
+  "ssh_sensitivity_path": "reports/explore/t1/receipts/ssh-sensitivity-final-op7-r3.json",
+  "ssh_sensitivity_sha256": "48730da553491f998f16e389d65d94c0d586ed5a0964d64fa58c01f294962b62",
+  "supervisor_terminal_audits": {
+    "127x01": {
+      "B_STOP_link_target": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08",
+      "base_B_STOP_present": false,
+      "completed_blocks": 512,
+      "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+      "exit_sha256": "2f66d73399fce5c3b7dd2a2f1d5a296553cc7cc22b19591d64c305df18dcb8e5",
+      "exit_utc": "2026-10-11T19:17:13Z",
+      "failed_blocks": 0,
+      "health_only": true,
+      "host": "127x01",
+      "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "outcomes_read": false,
+      "owned_groups_alive": 0,
+      "owned_groups_checked": 513,
+      "reason": null,
+      "supervisor_absent": true,
+      "supervisor_pid": 1410693,
+      "unstarted_blocks": 0,
+      "utc": "2026-10-11T19:26:00Z"
+    },
+    "127x08": {
+      "B_STOP_link_target": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08",
+      "base_B_STOP_present": false,
+      "completed_blocks": 508,
+      "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+      "exit_sha256": "4da6bc447024cc512a6e996f579ea3515d05c9b0e666f2f8196cd9e932fa5c00",
+      "exit_utc": "2026-10-11T19:00:07Z",
+      "failed_blocks": 0,
+      "health_only": true,
+      "host": "127x08",
+      "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "outcomes_read": false,
+      "owned_groups_alive": 0,
+      "owned_groups_checked": 509,
+      "reason": null,
+      "supervisor_absent": true,
+      "supervisor_pid": 287703,
+      "unstarted_blocks": 0,
+      "utc": "2026-10-11T19:26:00Z"
+    }
+  },
+  "terminal_progress_handling": "Both final exits supersede stale last progress; fresh owned-group and copier absence proofs govern.",
+  "utc": "2026-10-11T19:31:38Z"
+}
