@@ -1961,3 +1961,19 @@ Also on the hub, but with copies elsewhere:
   - **Phase B, guard decks:** K4S − K4 is +0.4 pp at 200 ms and −31.5 pp at 140 ms.
   - **Next:** I launched an Opus-high design worker (clasher-prereg-k4s-draft-20261011-r1) to draft **PREREG-K4S**, a confirmatory study for a speed-gated K4+S-default Mac tier (R3a re-frozen as a new artifact; fresh seeds; T1 machinery). It goes through an independent Opus review to r2; I do the freeze. This is design only; no compute.
   - A2 stage 2 is at 13/24 verification epochs at 08:35Z. T1 has 1,764 durable.
+- **09:13 UTC: PREREG-K4S r2 drafted** (a44bd628, b159d116). Independent Opus review r1 said REVISE: 14 findings, all in deployment/release logic, all accepted, with no change to games, arms, N or margins.
+  - **Design:**
+    - K4 and K4S at 1.0/0.9/0.8×, plus K4S at 0.7/0.6×; every network poll charged 1/s inside the timer.
+    - 3,000 primary + 900 guard seeds vs v1; fresh bank 2^52+6.18e9.
+    - Seven fixed-order hypotheses (level B within 10 pp, then level A within 5 pp), FWER 2.5%.
+    - ~33k games, ~460 CPU-h, ~11–16 h wall plus END. Start realistically Oct 12, after T1 END and A2 transport retirement.
+    - R3a re-frozen as SD1 (same bytes) with a role-scoped override.
+  - **Decisions:** accept all Q1–Q13 defaults as written. In particular:
+    - the 1/s charge on all arms;
+    - the gate is default-on below full speed, with the phase-E rule;
+    - release is gated on the tiers Mac summary;
+    - no second opponent;
+    - the Mac measurement goes into the tiers Mac session addendum;
+    - K4S never overrides a 1-core/2-thread pick;
+    - N stays 3,000/900.
+  - **Next:** an independent conformance review of r2 (Opus high, launched). The freeze waits for that, the seed audit, SD1 hashes, and applying the gate rule to X4S-2 phase E.
