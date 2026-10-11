@@ -1,0 +1,19 @@
+{
+  "END": "WAIT_EXPLICIT_COORDINATOR_CLEAN_WINDOW_AND_REQUIRED_PRERELEASE_CHECKS",
+  "completion_commit": "bc3730c4dcfa844df906fb4d888a4735b53ad1b1",
+  "completion_receipt": "reports/explore/t1/receipts/reporting-completion-op7-r3-20261011.json",
+  "completion_sha256": "9e788d2053c10da19e339e201d4a3b4cb7d387e96bc837778b1fee2fa10e2dca",
+  "coordinator_notification_message": "message:mcp:1d318750-510c-4298-9fd7-13c1eae507ce:thread-send:t1-reporting-complete-20261011T193212Z",
+  "coordinator_notification_utc": "2026-10-11T19:32:12Z",
+  "disable_confirmation_utc": "2026-10-11T19:32:39Z",
+  "enabled": false,
+  "health_only": true,
+  "hub_mirror": "COORDINATOR_PAUSED",
+  "nextRunAt": null,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "reporting_complete": true,
+  "scheduledTaskId": "scheduled-task:command:mcp:1d318750-510c-4298-9fd7-13c1eae507ce:schedule-task:clasher-t1-sealed-reporting-continuation-20261010-r1",
+  "schema": "clasher.t1.continuation-schedule-retired.v1",
+  "utc": "2026-10-11T19:33:14Z"
+}
