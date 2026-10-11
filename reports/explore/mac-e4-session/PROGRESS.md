@@ -193,3 +193,21 @@ See `receipts/reviews-20261011/REVIEWS.md`.
 - **Memory pre-start check:** proposed (free+inactive+purgeable ≥4 GiB, free swap ≥0.5 GiB, no swapouts during the
   census); awaiting coordinator numbers.
 - **HOLD:** no timing and no bundle staging.
+
+### 2026-10-11T22:31:25Z: coordinator 22:33Z rulings recorded; software-update read
+
+- **Disk:** option (b), no-copy hard-link or APFS-clone staging, goes to the Amendment 4 builder with Sol review.
+  At staging time only npm `_cacache`, npm `_npx` and the Homebrew download cache may be freed. Never touch other
+  threads' or projects' worktrees.
+- **Memory precondition (operator, not a gate):** don't start unless free+inactive+purgeable ≥ 6 GiB, free swap
+  ≥ 1 GiB, 0 swapouts during the 5-minute census, and free disk ≥ 10 GiB after staging. Record all readings in
+  the session receipt.
+- **macOS update** (read at 22:30:58Z):
+  - AutomaticallyInstallMacOSUpdates=1, AutomaticDownload=1, Critical/ConfigData=1, App Store AutoUpdate=0.
+  - macOS 27.0.1 is staged.
+  - There is no passwordless sudo, so a Sol computer-use step will turn auto-install off for the window and
+    restore it afterwards. Record both changes.
+- **Sleep:** pmset sleep=1, prevented by Sam's `caffeinate -is` (PID 98902). Plan: run the session under its
+  own `caffeinate -i`, pending coordinator objection.
+- **Open rulings:** the A3-P v* combination rule, and the caffeinate wrapper.
+- **HOLD:** no timing and no staging.
