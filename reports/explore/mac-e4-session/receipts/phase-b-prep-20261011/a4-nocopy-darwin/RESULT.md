@@ -1,6 +1,6 @@
 # Amendment 4 no-copy staging helper on the Mac (non-counted, synthetic data only)
 
-- **Run** on 2026-10-11 at about 23:20Z, on the Mac mini with Python 3.12.13 (existing venv, read-only), at nice 10.
+- **Run** on 2026-10-11 between 23:17:13Z and 23:18:52Z, on the Mac mini with Python 3.12.13 (existing venv, read-only), at nice 10.
 - **Helper:** `reports/explore/mac-registration/stage_nocopy.py` 96abd847, copied to
   `$S/helpers/mac-registration/`, outside e4v3 and the runtime root. Its test is `tests/test_stage_nocopy.py`
   f75cd3a3. `CLASHER_E4V3` pointed at `$S/runtime-a3/.../e4v3`, i.e. runtime 76887b33.
