@@ -1,0 +1,63 @@
+{
+  "B_authorized": false,
+  "action_source_sha256": "efa2f39783d0980872c2497f425a7d814b2fa9b9f62d1ec5fb3fc9966ca6e9e4",
+  "all_exact_transports_absent": true,
+  "cell_equality": 216,
+  "connection_exit_code": 0,
+  "connection_start_utc": "2026-10-11T13:44:17.420801+00:00",
+  "control_identities_absent": [
+    {
+      "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+      "live": false,
+      "pid": 3690456,
+      "starttime": "107062038"
+    },
+    {
+      "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+      "live": false,
+      "pid": 3690481,
+      "starttime": "107062300"
+    },
+    {
+      "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+      "live": false,
+      "pid": 3690482,
+      "starttime": "107062301"
+    }
+  ],
+  "end_utc": "2026-10-11T13:44:17.842789+00:00",
+  "heldout_opening_authorized": false,
+  "method": "Exact owned OpenSSH control sockets, check master PID then -O exit; no signals, no payload/cache/service changes",
+  "pins_checked": 218,
+  "prior_attempt_error": "transport-retirement-r1-attempt-error.json",
+  "retirements": [
+    {
+      "action": "Already absent; no command sent",
+      "control_socket": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x03-22-a19-r5",
+      "identity": {
+        "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+        "pid": 3502179,
+        "starttime": "104848753"
+      },
+      "identity_absent": true,
+      "master_exit_code": "Not available; exit observed by absence only",
+      "observed_utc": "2026-10-11T13:44:17.842738+00:00",
+      "socket_absent": true
+    },
+    {
+      "action": "Already absent; no command sent",
+      "control_socket": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a19-r5",
+      "identity": {
+        "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+        "pid": 3504429,
+        "starttime": "104860895"
+      },
+      "identity_absent": true,
+      "master_exit_code": "Not available; exit observed by absence only",
+      "observed_utc": "2026-10-11T13:44:17.842767+00:00",
+      "socket_absent": true
+    }
+  ],
+  "stage2_integrity": "PASS",
+  "utc": "2026-10-11T13:44:17.842684+00:00"
+}

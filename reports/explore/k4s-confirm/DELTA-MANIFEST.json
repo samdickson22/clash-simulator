@@ -96,7 +96,7 @@
     },
     "FREEZE-RECORD-SKELETON.md": {
       "class": "new",
-      "k4s_sha256": "2294a7a9aed58e8e9fd0dac3d8869fa77073b795d585da04097fb5134c7cb4df",
+      "k4s_sha256": "e9299e6a6a51db2f4bf365ee751c57c3ee819d7e85cc8ad46a4dc60121e97d21",
       "role": "document (not executed)"
     },
     "K4S-SPEC.md": {
@@ -126,9 +126,14 @@
       "k4s_sha256": "494622cdc5cfdeff7aed31c9a8ee03cff8c700253c5f3642ef8e9f53395a3f04",
       "role": "document (not executed)"
     },
+    "SD1-SUPERSESSION-ISSUED.md": {
+      "class": "new",
+      "k4s_sha256": "7a7446b62e3c3d1319bae3ee8a4384ec6a3e3327418bf4a52570cc70d3998b90",
+      "role": "document (not executed)"
+    },
     "SEED-AUDIT-RECEIPT.md": {
       "class": "new",
-      "k4s_sha256": "0ea9d233f10d0cf10371d1e567af23412c6aecb64451af85817b9358617d9221",
+      "k4s_sha256": "42c6fd3211b230aa3bf6bf325d3ea279edcb7e24b0990720404fbefaf5621e1f",
       "role": "document (not executed)"
     },
     "anchor.py": {
@@ -440,7 +445,7 @@
     },
     "mac/K4S-MAC-MANIFEST.json": {
       "class": "new",
-      "k4s_sha256": "781d25bafac6057253939b8f4f8c99480e2a226c938253f2ab9f8efdd0f775f6",
+      "k4s_sha256": "d89cab16afdffa88d30e61eb1f4daea74e046703994f6aee7e74bfedc8d08f40",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "mac/K4S-MAC-PROCEDURE.md": {
@@ -807,7 +812,7 @@
     },
     "seed-audit.json": {
       "class": "delta",
-      "k4s_sha256": "38e254b582d8377a9e9e7aa88488f572c841cec1571654e66aa30e8d9c5a0326",
+      "k4s_sha256": "e7037f40c716bd4e8ef5f292b5e51d9aba3fde9b603f7dc68b5741213e18f4c2",
       "t1_sha256": "7fc89dde6cd0d4305afdcc81f365dbb7553872067f8f78373f47caeb326ba291",
       "deltas": [
         5
@@ -1195,7 +1200,7 @@
     "identical": 61,
     "rebound": 14,
     "delta": 15,
-    "new": 83
+    "new": 84
   },
   "guard_code_note": "OP-1..OP-7 guard modules (host_audit, ssh_budget, ssh_transport, apt_budget, cpu_accounting, system_bus, idle_services, owned_supervisor, perception_confirmation, parent_source_seed, pin, mirror, supervise, ssh_sensitivity) are identical or rebound-only; see their class rows."
 }

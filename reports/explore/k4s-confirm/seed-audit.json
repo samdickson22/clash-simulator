@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-11T17:41:56Z",
+  "utc": "2026-10-11T17:42:50Z",
   "status": "PASS",
-  "worktree_head": "c18249aa2b07206c742e74ef27caf2272c67676e",
+  "worktree_head": "fbcd677d3c51d9baf922243a3ad5ef5b460e4449",
   "tool": {
     "path": "reports/explore/k4s-confirm/audit_seeds.py",
     "sha256": "93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd"
@@ -17845,8 +17845,8 @@
       "reports/explore/k4s-confirm/seed-audit.json",
       "reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md"
     ],
-    "tracked_files": 10465,
-    "text_files_with_content": 10405,
+    "tracked_files": 10467,
+    "text_files_with_content": 10407,
     "windows": {
       "task_inclusive": [
         4503605500000000,
@@ -17938,7 +17938,7 @@
       {
         "literal": 4503605500000000,
         "path": "reports/explore/k4s-confirm/audit_seeds.py",
-        "line": 17,
+        "line": 21,
         "in_task_window": true,
         "in_f4_window": true,
         "classification": "WINDOW_BOUND_TEXT"
@@ -17946,7 +17946,7 @@
       {
         "literal": 4503606999999999,
         "path": "reports/explore/k4s-confirm/audit_seeds.py",
-        "line": 17,
+        "line": 21,
         "in_task_window": true,
         "in_f4_window": false,
         "classification": "WINDOW_BOUND_TEXT"
@@ -17954,7 +17954,7 @@
       {
         "literal": 4503605500000000,
         "path": "reports/explore/k4s-confirm/audit_seeds.py",
-        "line": 238,
+        "line": 253,
         "in_task_window": true,
         "in_f4_window": true,
         "classification": "WINDOW_BOUND_TEXT"
@@ -17962,7 +17962,7 @@
       {
         "literal": 4503606999999999,
         "path": "reports/explore/k4s-confirm/audit_seeds.py",
-        "line": 238,
+        "line": 253,
         "in_task_window": true,
         "in_f4_window": false,
         "classification": "WINDOW_BOUND_TEXT"
@@ -19394,6 +19394,6 @@
   "notes": [
     "8 declaration-pattern files skipped by the outcome-name filter (results/outcome/game/summary/report).",
     "2 K4S own-declaration files under reports/explore/k4s-confirm/ skipped as prior declarations: ['reports/explore/k4s-confirm/plan.json', 'reports/explore/k4s-confirm/seed-audit.json']",
-    "637 literal occurrences in the tool's own outputs ['reports/explore/k4s-confirm/seed-audit.json', 'reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md'] excluded from the literal scan."
+    "691 literal occurrences in the tool's own outputs ['reports/explore/k4s-confirm/seed-audit.json', 'reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md'] excluded from the literal scan."
   ]
 }

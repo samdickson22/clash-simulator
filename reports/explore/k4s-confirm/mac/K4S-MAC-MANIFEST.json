@@ -14,7 +14,7 @@
     "reports/explore/k4s-confirm/end_reference.py": "5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9"
   },
   "fleet_reference_schema": "clasher.k4s.mac-fleet-reference.v1 (K4S-MAC-PROCEDURE.md \u00a73)",
-  "frozen": false,
+  "frozen": true,
   "k4s_files": {
     "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "1b747d945c7a34bd91dc8b246a45b503f0547c6186db104984903ca5640bb9b0",
     "reports/explore/k4s-confirm/mac/build_manifest.py": "26932fa87d9638c080c0d1611b2c2f73c5401ae8ac424b863474a42c7d75f449",
@@ -113,7 +113,7 @@
     "path": "reports/explore/k4s-confirm/SD1-MANIFEST.json",
     "sha256": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76"
   },
-  "status": "DRAFT: independent review pending; not frozen",
+  "status": "FROZEN",
   "study": "PREREG-K4S",
   "tiers_freeze": {
     "addendum_r3_sha256": "fc54507d5f742f4ef6ecd0b656ee47fdb61d1468a14ff4cb4dd14a94a6311a9b",

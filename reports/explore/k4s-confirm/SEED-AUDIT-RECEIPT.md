@@ -1,7 +1,7 @@
 # K4S seed audit receipt (PREREG-K4S-DRAFT-r3 §3.4; CONFORMANCE-r2 F-4)
 
-- UTC: 2026-10-11T17:41:56Z
-- Worktree HEAD: `c18249aa2b07206c742e74ef27caf2272c67676e`
+- UTC: 2026-10-11T17:42:50Z
+- Worktree HEAD: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`
 - Result: **PASS**
 - Tool: `reports/explore/k4s-confirm/audit_seeds.py` sha256 `93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd`
 - Seed-audit JSON: `reports/explore/k4s-confirm/seed-audit.json`
@@ -76,7 +76,7 @@
 
 ## Literal scan summary
 
-- Pattern `45036[0-9]{11}`, scope git grep -I at HEAD (tracked text files, all paths except the tool's own two outputs); tracked files 10465, text files with content 10405.
+- Pattern `45036[0-9]{11}`, scope git grep -I at HEAD (tracked text files, all paths except the tool's own two outputs); tracked files 10467, text files with content 10407.
 - Windows: task `[4503605500000000, 4503606999999999]` inclusive; F-4 `2^52+[5.87e9, 7.37e9)` = `[4503605497370496, 4503606997370496)`.
 - Nearest out-of-window literal below: `4503605207370496`; above: `4503609917370496`.
 - In-window hits (file:line, class):
@@ -89,10 +89,10 @@
   - `4503605837370496` `reports/explore/k4s-confirm/K4S-SPEC.md:61` — EXCLUDED_K4S_DECLARATION
   - `4503605847370496` `reports/explore/k4s-confirm/K4S-SPEC.md:62` — EXCLUDED_K4S_DECLARATION
   - `4503605837370496` `reports/explore/k4s-confirm/QUALIFICATION.md:63` — EXCLUDED_K4S_DECLARATION
-  - `4503605500000000` `reports/explore/k4s-confirm/audit_seeds.py:17` — WINDOW_BOUND_TEXT
-  - `4503606999999999` `reports/explore/k4s-confirm/audit_seeds.py:17` — WINDOW_BOUND_TEXT
-  - `4503605500000000` `reports/explore/k4s-confirm/audit_seeds.py:238` — WINDOW_BOUND_TEXT
-  - `4503606999999999` `reports/explore/k4s-confirm/audit_seeds.py:238` — WINDOW_BOUND_TEXT
+  - `4503605500000000` `reports/explore/k4s-confirm/audit_seeds.py:21` — WINDOW_BOUND_TEXT
+  - `4503606999999999` `reports/explore/k4s-confirm/audit_seeds.py:21` — WINDOW_BOUND_TEXT
+  - `4503605500000000` `reports/explore/k4s-confirm/audit_seeds.py:253` — WINDOW_BOUND_TEXT
+  - `4503606999999999` `reports/explore/k4s-confirm/audit_seeds.py:253` — WINDOW_BOUND_TEXT
   - `4503605837370496` `reports/explore/k4s-confirm/check_games.py:46` — EXCLUDED_K4S_DECLARATION
   - `4503605807370496` `reports/explore/k4s-confirm/plan.json:184` — EXCLUDED_K4S_DECLARATION
   - `4503605807373496` `reports/explore/k4s-confirm/plan.json:188` — EXCLUDED_K4S_DECLARATION

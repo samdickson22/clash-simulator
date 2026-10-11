@@ -1,0 +1,106 @@
+{
+  "B_authorized": false,
+  "allocation": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/a21-a2-issued-20261011/04-ALLOCATION-A21-A2.json",
+    "sha256": "32eedc431fad676f3866b935a8bdc95c0b0aefc64146df4f13cfe8b508e81b0c"
+  },
+  "completion_summary": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-admission-20261011-r1/status-summary-20261011T134201.json",
+    "sha256": "831f89e9188f1cf3129deb271538d72fd998c3b8904d4f3c6fa3367443431280"
+  },
+  "continuation_enabled": true,
+  "continuation_interval_ms": 1200000,
+  "coordinator_decision": {
+    "createdBy": "agent",
+    "creationSource": "provider",
+    "itemId": "turn-item:provider:claudeAgent:native-item:944312a3-5410-44f8-8111-3a3d3d36dba2",
+    "messageId": "message:provider:claudeAgent:native-item:944312a3-5410-44f8-8111-3a3d3d36dba2",
+    "nextTextOffset": null,
+    "position": 7632,
+    "runId": "run:thread:0523ae6f-baa3-4d4e-b233-b392671670db:ordinal:1144",
+    "sourceThreadId": "0523ae6f-baa3-4d4e-b233-b392671670db",
+    "status": "completed",
+    "text": "Your A2 summary (831f89e9) and the 08 cache retirement requirements (b58b4bc5) are accepted.\n\n**The 08 HTTP cache:** I'll schedule its retirement inside the END clean window, after T1 reporting finishes. When that window opens, run your stop-file procedure in this order:\n1. Re-authenticate the then-current identities.\n2. Drain consumers.\n3. Write the stop file.\n4. Check that the server, timer and wrapper all exit with 0 and that the port is closed.\n5. Keep the payloads, token and locks.\n\nThat retirement and END must finish before B on 08. Don't contact 08 until I open the window.\n\n**Host 04:** A2 is done, and your allocation there (valid until 2026-10-12T12:00Z) now has nothing running under it. Does perception need 04 for anything before B or the END window? If not, please retire the 04 allocation now with a short release receipt. List any perception processes or caches on 04 that must stay untouched, and I'll use 04's CPUs and GPU for other work at nice 19. If you do still need 04, tell me what for and until when.",
+    "textTruncated": false,
+    "title": null,
+    "type": "assistant_message",
+    "updatedAt": "2026-10-11T13:46:47.561Z",
+    "visibility": "local"
+  },
+  "coordinator_request_position": 7632,
+  "decision": "PERCEPTION_RELEASES_04_A21_A2_COMPUTE_ALLOCATION_EARLY",
+  "evidence_times": {
+    "controller_exit_utc": "2026-10-11T13:32:39.306466+00:00",
+    "stage2_complete_utc": "2026-10-11T13:32:37.978574+00:00",
+    "status_observed_utc": "2026-10-11T13:42:01.468092+00:00",
+    "transport_absence_observed_utc": "2026-10-11T13:44:17.842789+00:00"
+  },
+  "exact_transport_retirement": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-admission-20261011-r1/transport-retirement-20261011T134417.json",
+    "sha256": "c2cef696d3f265dd565b75aabb608bbf201323d5ef18f6a0280560cc64d43315"
+  },
+  "external_services_untouched": [
+    "Renewed03 HTTP cache",
+    "Renewed08 HTTP cache pending coordinator END window"
+  ],
+  "future04_perception_execution_requires_fresh_allocation": true,
+  "gpu_claim": "Perception has no GPU reservation or planned04 GPU work; coordinator manages fleet reassignment.",
+  "heldout_opening_authorized": false,
+  "host": "127x04",
+  "issued_bytes_changed": false,
+  "lease_or_storage_ledger_changed": false,
+  "need_04_compute_before_END_or_B": false,
+  "original_valid_until_utc": "2026-10-12T12:00:00Z",
+  "preserve_storage": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher",
+      "scope": "All retained scientific records, assemblies, queues, A1 body seal, 216 bounds/218 pins, A2 verification artifacts, source/authority, logs, identities and checkpoint copies; no deletion or overwrite."
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-v4-cache",
+      "scope": "All existing cache/validation-access payloads, indices, receipts and locks. Compute release does not release storage or authorize cleanup."
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher",
+      "scope": "Source/docs/receipts and any retained model/checkpoint evidence. Preserve frozen/held bytes."
+    }
+  ],
+  "preserved_live_perception_processes": [],
+  "process_scope_limitation": "No remaining known perception runtime/helper/service needs04. Based on authenticated completion and exact transport absence, not a fresh host-wide vacancy census. Unrelated or inaccessible processes are not ours to release or kill.",
+  "released_control_cpu": 47,
+  "released_owned_process_cap": 16,
+  "released_owned_pss_upper_bytes": 48000000000,
+  "released_reserved_siblings": [
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    111
+  ],
+  "released_worker_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "remote_connections_this_turn": 0,
+  "schema": "clasher.v4.owner-allocation-release.v1",
+  "signals_or_deletions": false,
+  "utc": "2026-10-11T13:57:08.891680+00:00"
+}

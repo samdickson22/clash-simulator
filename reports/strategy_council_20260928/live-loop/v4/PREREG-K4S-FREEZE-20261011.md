@@ -1,0 +1,120 @@
+# PREREG-K4S FREEZE RECORD (2026-10-11)
+
+- **Status: FROZEN.** Issuer: coordinator 0523ae6f (Claude Opus 5.5) under owner delegation.
+- Freeze UTC: **2026-10-11T17:43:02Z** (`date -u`). Executor: freeze executor r2 (clasher-prereg-k4s-freeze-exec-20261011-r2), Claude Opus 5.5, 127x05.
+- Freeze commit: this record is committed in the freeze commit; its SHA is filled by the following commit. Parent: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`. Audit-fix commit: `fbcd677d3c51d9baf922243a3ad5ef5b460e4449`.
+- Machine-readable twin: `PREREG-K4S-FREEZE-20261011.json` (same directory).
+
+## Frozen documents
+
+| Item | Path | sha256 |
+|---|---|---|
+| prereg_r3 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` | `9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a` |
+| conformance_r2 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-CONFORMANCE-r2.md` | `ad681329c3c072e68e5486fff47db9812a1f35fd375eddb1ec0c815a1fd092b4` |
+| recheck_r3 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-RECHECK-r3.md` | `eca937da3d0db042eb2fc3c7c3ef83b280a4bbab0148cc73e795e16fa0aa8fc9` |
+| diff_r2_r3 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DIFF-r2-r3.diff` | `0ee3925399141662ba79d322bdd9bc920dc3a4817d43b5bf1e458990a362ce10` |
+| k4s_spec | `reports/explore/k4s-confirm/K4S-SPEC.md` | `e80652d4859504eaf6a9256a3b3672a247a3f1993160ab17378587e7cdd93e53` |
+
+## Decisions (coordinator 0523ae6f)
+
+1. **c\* = 0.9.** Record `6ef5e2ff`. Phase E receipt `results-phaseACE.json` sha256 `d2b32b9a…` at `b577a255`; d180 = −2.2 pp [−5.2, +0.8]; the lower bound is not > 0, so c\* = 0.9 (sequence H1–H7 with H4). The rule was locked at `daba6859`, before phase E was reduced.
+2. **Host set {127x03, 127x04}.**
+   - 127x03: A2 transport retired (receipt c2cef696); X4S-2 vacated 13:01Z; K4S prep vacated 17:18Z. T1 read-only K4 corpus durability copy on 03 must never be modified.
+   - 127x04: perception allocation released (receipt 5f59f7f8); r3 Q7 "04 not before 2026-10-12T12Z" was that allocation, released early; perception storage on 04 is off-limits.
+   - T1 END pooled reference needs neither 03 nor 04 (T1 reporting hosts are 01/08; skeleton section E).
+3. **Q1–Q13: r3 §8 defaults.** Q13 order: H1 B(0.8), H2 B(0.7), H3 B(0.6), H4 A(0.9), H5 A(0.8), H6 A(0.7), H7 A(0.6): B(0.6) at H3 (default), fixed sequence, stop at first failure. Q12: **TIERS stands**.
+4. **K4S-SPEC I-1..I-5: accepted.**
+5. **Errata** (recorded here, not edited into r3): R2 — section 1.3 "This rule text is final as of r2" reads "This rule text is final as of r2 (r3's N1 edit excepted)". R5 — Q13 r1-order (B(0.6) at H5) pessimistic values: A(0.9) .69 reads .705; A(0.8) approx .35 reads .366.
+6. **Attestation.** T1/TIERS outcomes: SEALED at freeze (no T1 or TIERS outcome has been released or read by K4S). r3 text: unchanged since RECHECK-r3 (bytes 9650972d) except the recorded errata and the F-1..F-10 fills in this record.
+7. **SD1 supersession issued** as `reports/explore/k4s-confirm/SD1-SUPERSESSION-ISSUED.md` (verbatim r3 §2.1 / draft). **SD1 hash `b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76`** (sha256 of `SD1-MANIFEST.json` at the freeze commit). Additive pointer: new file `reports/strategy_council_20260928/imitation/exit-r3/POINTER-SD1-K4S.md`; no existing exit-r3 file is edited.
+8. **T1 K4 speed corpus** (`a97b1fbf…`, inventory `81f2483e`): a read-only, SHA-verified copy into the K4S job dirs on 03/04 is authorized, for END only. Source: the 05 durability bundle or the 03 read-only copy; never write to the source.
+9. **TIERS blocker noted:** TIERS measure_tiers.py (5d7de8e3) lacks import math (math.isfinite at l.70): known TIERS-side Mac blocker, handled separately by T1; not a K4S change.
+
+## Fills at the freeze commit
+
+| Fill | Path | sha256 |
+|---|---|---|
+| F-2 SD1 manifest (SD1 hash) | `reports/explore/k4s-confirm/SD1-MANIFEST.json` | `b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76` |
+| F-3 SD1 supersession (issued) | `reports/explore/k4s-confirm/SD1-SUPERSESSION-ISSUED.md` | `7a7446b62e3c3d1319bae3ee8a4384ec6a3e3327418bf4a52570cc70d3998b90` |
+| F-3 SD1 supersession draft (source text) | `reports/explore/k4s-confirm/SD1-SUPERSESSION-DRAFT.md` | `494622cdc5cfdeff7aed31c9a8ee03cff8c700253c5f3642ef8e9f53395a3f04` |
+| F-3 exit-r3 additive pointer (new file) | `reports/strategy_council_20260928/imitation/exit-r3/POINTER-SD1-K4S.md` | `6ee65f7ea158960bdefabec4be4b54eb92d4cca9cfdcaa3e610c832e577c70dd` |
+| F-4 seed audit JSON (PASS, run at the audit-fix commit) | `reports/explore/k4s-confirm/seed-audit.json` | `e7037f40c716bd4e8ef5f292b5e51d9aba3fde9b603f7dc68b5741213e18f4c2` |
+| F-4 seed audit receipt (PASS) | `reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md` | `42c6fd3211b230aa3bf6bf325d3ea279edcb7e24b0990720404fbefaf5621e1f` |
+| F-4 seed audit tool (fixed) | `reports/explore/k4s-confirm/audit_seeds.py` | `93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd` |
+| F-4 seed audit tests | `reports/explore/k4s-confirm/test_audit_seeds.py` | `dadfd3f71969ad1c51ee60ae84698dd7391ae40e4b3af711242456e3c8f46ac3` |
+| F-5 delta manifest | `reports/explore/k4s-confirm/DELTA-MANIFEST.json` | `34eca2b74c0345649d350c9cc33bf5b557a4ed3cf533a72fbaf85a2f0a690056` |
+| F-5 plan | `reports/explore/k4s-confirm/plan.json` | `38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf` |
+| F-5 runner | `reports/explore/k4s-confirm/run.py` | `78d88a572a8637956492d0f8447569c2307454818bb03356007b9ff9938a5f13` |
+| F-5 reducer | `reports/explore/k4s-confirm/reduce.py` | `9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8` |
+| F-5 independent verifier | `reports/explore/k4s-confirm/verifier/verify_k4s.py` | `43c4a574a48a245fa844a4b0fa69ec1be1d482bd1b1be56b9acf242a3a1b4947` |
+| F-5 release barrier | `reports/explore/k4s-confirm/barrier.py` | `01a58c66573ad6f7bf116fdf03bd075f4f81991f67a8aa5d8ddf47343ad0b063` |
+| F-5 END reference driver | `reports/explore/k4s-confirm/end_reference.py` | `5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9` |
+| F-5 END pooling | `reports/explore/k4s-confirm/end_pool.py` | `069c22e7d68e1488291873c6c2d9e87cb1daf328fbe8bf254415d1fc2af06da2` |
+| F-5 END test (now pinned) | `reports/explore/k4s-confirm/test_end_reference.py` | `1d9d111a2360b159d16673a1e8049552db2ff84314ee78d70f0450432c22c7d1` |
+| F-6 qualification 127x03 | `reports/explore/k4s-confirm/receipts/qualification-127x03.json` | `94b7a6a1f4622955855dfdd5e1c1bed6904049c2efcb79405f1760f155e24276` |
+| F-6 qualification 127x04 | `reports/explore/k4s-confirm/receipts/qualification-127x04.json` | `a9921a6da649ad31a6b222496dacbf00cad88953c8f0d97545d7708ced1fb7c9` |
+| F-8 K4S Mac manifest (FROZEN) | `reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json` | `d89cab16afdffa88d30e61eb1f4daea74e046703994f6aee7e74bfedc8d08f40` |
+| F-8 K4S Mac procedure | `reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md` | `1b747d945c7a34bd91dc8b246a45b503f0547c6186db104984903ca5640bb9b0` |
+| F-8 K4S Mac script | `reports/explore/k4s-confirm/mac/measure_k4s.py` | `c9d874b0362fff099dbe97d50605e693e9b0476ef54032b9d6744fa382a9a4c8` |
+| Freeze-record skeleton (draft, superseded by this record) | `reports/explore/k4s-confirm/FREEZE-RECORD-SKELETON.md` | `2011b8c570f36fb2cd83ca712c9251fd74e35196d9f2eb9f489fd7c459804b0b` |
+
+## K4S Mac manifest (F-8)
+
+- Frozen offline: `/bin/python3 reports/explore/k4s-confirm/mac/build_manifest.py --kernel reports/explore/k4s-confirm/anchor_x.py --kernel reports/explore/k4s-confirm/sdefault.py --freeze`.
+- sha256 `d89cab16afdffa88d30e61eb1f4daea74e046703994f6aee7e74bfedc8d08f40` (pre-freeze `781d25bafac6057253939b8f4f8c99480e2a226c938253f2ab9f8efdd0f775f6`); only `frozen`, `status` changed.
+
+## Seed audit (F-4)
+
+- **PASS, exit 0**, run at the audit-fix commit `fbcd677d` (clean tree), 2026-10-11T17:42:50Z: `nice -n 19 /bin/python3 reports/explore/k4s-confirm/audit_seeds.py`.
+- Receipt `SEED-AUDIT-RECEIPT.md` sha256 `42c6fd3211b230aa3bf6bf325d3ea279edcb7e24b0990720404fbefaf5621e1f`; `seed-audit.json` sha256 `e7037f40c716bd4e8ef5f292b5e51d9aba3fde9b603f7dc68b5741213e18f4c2`. Both are committed byte-identical in the freeze commit.
+- Tool `audit_seeds.py` sha256 `93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd`.
+- Counts: 0 violations; named banks 13/13; 204 declaration files walked; 279 unique prior intervals; 56 helper checks; 640 mutual comparisons.
+- In-window literals: 54 (44 K4S declarations, 10 window-bound text, 0 FAIL). 691 literals in the tool's own outputs were excluded. 2 K4S self-declaration files were skipped: `plan.json` and `seed-audit.json`.
+
+## Audit-fix history
+
+- Freeze r1 re-ran the audit at `490a8084`: **FAIL, 182 violations, exit 0**. Every violation was a self-read of K4S's own outputs after `38c195b8`: `plan.json` and `seed-audit.json` were walked as priors; `seed-audit.json` and `SEED-AUDIT-RECEIPT.md` were literal-scanned; and `test_reduce.py:105` holds the primary base + 1. There was no foreign collision.
+- Coordinator approved exactly five parts (COORDINATOR.md 17:31Z):
+  1. skip `reports/explore/k4s-confirm/` files as prior declarations, listing them in the notes;
+  2. exclude the tool's own two outputs from the literal scan;
+  3. in K4S docs, base..last seed + max helper offset (inclusive) is a K4S declaration, and both F-4 bounds are window bounds;
+  4. exit 1 on FAIL;
+  5. tests, including a synthetic foreign collision.
+- Implemented by freeze executor r2 (Claude Opus 5.5). `test_audit_seeds.py` (sha256 `dadfd3f7…`) has 7 tests: all pass with the fix, all fail against the pre-fix tool.
+- GPT-6.1-Sol review r1: **APPROVE** (`reviews/SOL-REVIEW-AUDIT-MANIFEST-r1.md`, sha256 `844f40f5…`).
+- Committed at `fbcd677d` via a temp index on origin/main `c18249aa`, then re-run at `fbcd677d`: PASS, exit 0.
+
+## DELTA-MANIFEST history
+
+- `d15715ba` (962ecce2): reviewed by Sol core r6 (`SOL-REVIEW-CORE-r6.md` l.91). Counts identical 61, rebound 14, delta 15, new 65.
+- `19586d20`: committed at `247ef6d4` (prep FINAL), new 81. The prep skeleton pinned a stale intermediate (`d771e459`, "new 73"); this is corrected. Transition `d15715ba` → `19586d20`:
+  - +16 new-class receipt/review rows;
+  - 15 new-class rows with SHA-only changes;
+  - no class changes and no undeclared delta;
+  - Sol r1 confirmed all of this and explicitly approved the previously unpinned `test_end_reference.py`, sha256 `1d9d111a2360b159d16673a1e8049552db2ff84314ee78d70f0450432c22c7d1` (91 END tests pass).
+- `bc1a4947`: regenerated draft with the audit fix and tests (new 82). Reviewed by Sol r1: **APPROVE**.
+- `32240719`: committed at `fbcd677d` (new 83: + `test_audit_seeds.py` + `reviews/SOL-REVIEW-AUDIT-MANIFEST-r1.md`; SHA rows refreshed for `audit_seeds.py`, `seed-audit.json`, `SEED-AUDIT-RECEIPT.md` and the skeleton).
+- **`34eca2b7`: at the freeze commit (authoritative).** Mechanical regeneration on the freeze tree: identical 61, rebound 14, delta 15, new 84, inventory 174. Versus `32240719`:
+  - + `SD1-SUPERSESSION-ISSUED.md`;
+  - SHA-only rows: `seed-audit.json` and `SEED-AUDIT-RECEIPT.md` (the F-4 run at fbcd677d), `mac/K4S-MAC-MANIFEST.json` (frozen) and `FREEZE-RECORD-SKELETON.md`;
+  - no class changes.
+- Skeleton/manifest cycle: the skeleton embeds the manifest SHA, and the manifest inventories the skeleton. The skeleton is therefore generated last and pins `34eca2b7`. `rebind.py verify` at the freeze tree reports exactly one failure, the skeleton row, by construction. The skeleton's "`rebind.py verify` 0 failures" text is true only as of its generation (verify was 0 immediately after the manifest build); it is not the current verify result. The skeleton is a non-executed draft, and this record is the authoritative pin.
+- The skeleton generator drops sections G/H, which the prep worker had appended by hand. They are re-appended verbatim, with the new review row added.
+
+## Transport receipts (perception; committed in the freeze commit, byte-identical)
+
+| Receipt | Path | sha256 | Declares |
+|---|---|---|---|
+| perception (A2) | `reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-admission-20261011-r1/transport-retirement-20261011T134417.json` | `c2cef696d3f265dd565b75aabb608bbf201323d5ef18f6a0280560cc64d43315` | 127x03 (and 127x08) A2 transports retired: exact mux + control sockets absent at 13:44:17Z |
+| perception | `reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-admission-20261011-r1/04-allocation-release-20261011-r1.json` | `5f59f7f85220cca3437c61fe128f4fbb84ab19f32a1d56fab295eb33a4965f52` | 127x04 A21-A2 compute allocation released early at 13:57Z; 04 perception storage preserved and off-limits |
+
+## Reviews
+
+- GPT-6.1-Sol, seed-audit fix + DELTA-MANIFEST transition r1: **APPROVE**, round 1 of max 3 (`reports/explore/k4s-confirm/reviews/SOL-REVIEW-AUDIT-MANIFEST-r1.md`, sha256 `844f40f509899e01a3872bcc1939e2e00cea95bc3fed1c3b7ca96ba30a60f91e`).
+- Prep reviews carried, final rounds binding: Sol core r6 APPROVE; independent verifier r3 APPROVE; Mac/END r6 APPROVE.
+- Mac tests on the frozen tree: 94/95 pass. The one failure, `test_manifest_loader_rejects_draft_for_mac_and_tamper`, asserts that the in-repo manifest is still a draft (l.609 `frozen is False`), which is false by construction after the freeze. The loader behaviour it covers is unchanged and was re-checked: the frozen manifest loads with `require_frozen=True`, and the pre-freeze draft bytes are refused. No reviewed test was edited.
+- Independent Claude Opus 5.5 (high effort) diff check of this record against the coordinator's decisions: recorded in the fill commit.
+
+## Signature
+
+Issued by coordinator 0523ae6f (Claude Opus 5.5) under the owner's delegation; executed by freeze executor r2 at 2026-10-11T17:43:02Z.
