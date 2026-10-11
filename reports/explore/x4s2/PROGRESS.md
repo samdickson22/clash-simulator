@@ -83,3 +83,19 @@
   - supervisor ceiling for 08 set to 12:25Z;
   - PLAN Amendment 1 added: phases E (threshold: K4/K4S/K4Sl-180, K4Sl-160) and F (guard decks at 120 ms) under
     plan-ext.json. A–D are unchanged, and rep08 still stops at 09:15Z, with its never-started blocks re-run in rep08L.
+- 07:50Z: rep03 at 468 blocks / 3,263 games; rep08 at 459 / 3,212. 924 blocks mirrored. Healthy. Phase B ends
+  ~08:20Z: 03 finishes rep03 and chains to rep03C.
+- 08:17:25Z: rep03 exited cleanly: 570/570 blocks, rc 0, empty group. rep03C (C + D) started 08:17:5xZ.
+- 08:20:40Z: **Phase B complete**: 540/540 G blocks (270 per host), 2,700 games, 0 interrupted. Reduced with
+  `--g-max 540`, so D stays sealed ([receipts/results-phaseB.md](receipts/results-phaseB.md)). Loss %:
+
+  | Arm | 200 ms | 140 ms |
+  |---|---:|---:|
+  | K4 | 23.7 | 58.7 |
+  | K4S | 24.1 | 27.2 |
+  | K4Sh | – | 24.3 |
+
+  Contrasts:
+  - K4S − K4: 200 ms +0.4 [−2.4, 3.1]; 140 ms −31.5 [−36.7, −26.3];
+  - K4Sh-140 − K4-140: −34.4;
+  - K4S-140 − K4-200: +3.5 [−1.3, 8.1].

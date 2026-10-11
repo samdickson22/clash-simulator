@@ -58,7 +58,7 @@ def load_x4s():
     return rows
 
 
-def load_x4s2(phases, cfg, rng_name='reporting', pops=('X', 'G')):
+def load_x4s2(phases, cfg, rng_name='reporting', pops=('X', 'G'), g_max=None):
     rows = defaultdict(dict); excluded = []; hosts = Counter(); nblocks = Counter()
     for phase in phases:
         sched = json.loads((phase/'schedule.json').read_text())
@@ -67,7 +67,7 @@ def load_x4s2(phases, cfg, rng_name='reporting', pops=('X', 'G')):
         blocks = defaultdict(list)
         for c in sched['cases']: blocks[(c[0], c[1])].append(c)
         for (pop, i), cases in blocks.items():
-            if pop not in pops: continue
+            if pop not in pops or (pop == 'G' and g_max is not None and i >= g_max): continue
             proof_path = phase/'blocks'/f'{pop}{i:04d}.json'
             if not proof_path.exists():
                 started = sorted(p.name for p in (phase/'games').glob(f'sim-{pop}{i:04d}-d27-*.json'))
@@ -121,7 +121,8 @@ def main():
     ap.add_argument('--phases', type=Path, nargs='+', required=True)
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--range', default='reporting')
-    ap.add_argument('--pops', nargs='+', default=['X', 'G'])  # keep in-progress populations sealed  # 'smoke' only for reducer dry-runs
+    ap.add_argument('--pops', nargs='+', default=['X', 'G'])  # keep in-progress populations sealed
+    ap.add_argument('--g-max', type=int, default=None)  # only G indices < this (e.g. 540 = phase B while D runs)  # 'smoke' only for reducer dry-runs
     a = ap.parse_args()
     # plan-ext.json (phases E/F, added after the 07:28Z 08 extension) is a strict superset of plan.json.
     base_cfg = json.loads((HERE/'plan.json').read_text())
@@ -129,7 +130,7 @@ def main():
     assert all(cfg['arms'][k] == v for k, v in base_cfg['arms'].items()) and cfg['seed_ranges'] == base_cfg['seed_ranges']
     CONFIG_SHAS.update({sha(HERE/'plan.json'), sha(HERE/'plan-ext.json')})
     old = load_x4s()
-    new, excluded, hosts, nblocks = load_x4s2(a.phases, cfg, a.range, set(a.pops))
+    new, excluded, hosts, nblocks = load_x4s2(a.phases, cfg, a.range, set(a.pops), a.g_max)
     # Unified per-population tables: X arms from both studies (X4S arms prefixed 'x4s:').
     table = {pop: defaultdict(dict) for pop in ('X', 'G') if pop in a.pops}
     if 'X' in table:
