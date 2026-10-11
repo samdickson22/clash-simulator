@@ -198,3 +198,32 @@ R3a 37509a43), copied locally on each host, with git `reports/explore/x4s2` over
     rescue survives.
 - **Sealing:** reporting games are not opened for outcomes until their phase ends or stops. Only progress counts are
   read during the run.
+
+## Amendment 1 (2026-10-11T07:30Z): 127x08 window extended to 12:30Z by the coordinator (07:28Z)
+Committed reporting phases A–D are unchanged, and the running rep08 supervisor keeps its 09:15Z stop. Its
+interrupted blocks are retired as planned.
+
+**127x08 from 09:15Z** ([chain08.sh](chain08.sh)):
+1. **rep08L** re-dispatches rep08's never-started blocks (no `.started` marker; [leftover.py](leftover.py)). These
+   are committed B/D blocks.
+2. Then **rep08EF**.
+
+Both stop at 12:15Z. The supervisor ceiling for 08 is now 12:25Z in code. The 05 backstop touches STOP at 12:15Z and
+censuses until zero processes. Sync stops contacting 08 at 12:27Z. A coordinator STOP on 08 still overrides
+everything.
+
+**127x03:** after rep03C (C + D), **rep03EF** ([chain03.sh](chain03.sh)) runs until 13:30Z.
+
+**New phases** use [plan-ext.json](plan-ext.json), a strict superset of plan.json: existing arms and seed ranges are
+identical, which the reducer asserts.
+
+| Phase | Population | Arms | Why |
+|---|---|---|---|
+| **E** (priority 3, threshold) | X, indices 0–599 (X4S seeds) | K4-180, K4S-180, K4Sl-180, K4Sl-160 | Locate the speed threshold for switching S on: S-default and S-lite cost or benefit at 0.9×, and S-lite at 0.8×. Pairs with X4S K4/K4S-200/160 and C's K4Sl-200. |
+| **F** (priority 2, generalization) | G, indices 0–1079 | K4-120, K4S-120, K4Sh-120 | Does the rescue hold at 0.6× on the held-out guard decks? |
+
+Dispatch is E then F, with E split (i//50) odd on 08 and even on 03, and F split (i//18) odd on 08 and even on 03.
+Both run in increasing index order and are stopped by time only.
+
+E comes first because the final question asks for a speed threshold. Priority 2's requested scope (200 and 140 ms on
+the wider decks) is already fully covered by B + D.

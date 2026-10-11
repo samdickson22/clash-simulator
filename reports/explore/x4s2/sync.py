@@ -12,11 +12,11 @@ JOB = '/mpac/sdicks02/jobs/clasher/x4s2-20261011'
 MIRROR = Path(JOB)/'mirror'
 HOSTS = ['127x03', '127x08']
 END = datetime.datetime(2026, 10, 11, 13, 50, tzinfo=datetime.timezone.utc)
-# Treated as stopped from the supervisor stop time (08's supervisor stops at 09:15Z, drain <=2 min);
-# never contacted after NO_CONTACT (08 must be left alone from 09:30Z).
-HARD_STOP = {'127x08': datetime.datetime(2026, 10, 11, 9, 15, tzinfo=datetime.timezone.utc),
+# Treated as stopped from the supervisor stop time (08's last supervisor stops at 12:15Z, drain <=2 min);
+# never contacted after NO_CONTACT (08 must be left alone from 12:30Z; coordinator update 07:28Z, was 09:30Z).
+HARD_STOP = {'127x08': datetime.datetime(2026, 10, 11, 12, 15, tzinfo=datetime.timezone.utc),
              '127x03': datetime.datetime(2026, 10, 11, 13, 30, tzinfo=datetime.timezone.utc)}
-NO_CONTACT = {'127x08': datetime.datetime(2026, 10, 11, 9, 27, tzinfo=datetime.timezone.utc),
+NO_CONTACT = {'127x08': datetime.datetime(2026, 10, 11, 12, 27, tzinfo=datetime.timezone.utc),
               '127x03': datetime.datetime(2026, 10, 11, 13, 45, tzinfo=datetime.timezone.utc)}
 def now(): return datetime.datetime.now(datetime.timezone.utc)
 EXCLUDE = ['repo/', 'native/', 'native-source/', 'inputs/', 'corpus/', 'cache/', '*.tmp', 'mirror/']

@@ -13,6 +13,7 @@ HERE = Path(__file__).resolve().parent
 X4S = Path('/mpac/sdicks02/jobs/clasher/x4s-20261011/mirror')
 X4S_PHASES = [X4S/'127x03/reporting-03', X4S/'127x08/reporting-08']
 X4S_PLAN = HERE.parent/'x4s/plan.json'
+CONFIG_SHAS = set()
 
 
 def utc(): return subprocess.check_output(['date', '-u', '+%FT%TZ'], text=True).strip()
@@ -62,7 +63,7 @@ def load_x4s2(phases, cfg, rng_name='reporting', pops=('X', 'G')):
     for phase in phases:
         sched = json.loads((phase/'schedule.json').read_text())
         assert sched['range'] == rng_name, phase
-        if rng_name == 'reporting': assert sched['config_sha256'] == sha(HERE/'plan.json'), phase
+        if rng_name == 'reporting': assert sched['config_sha256'] in CONFIG_SHAS, phase
         blocks = defaultdict(list)
         for c in sched['cases']: blocks[(c[0], c[1])].append(c)
         for (pop, i), cases in blocks.items():
@@ -122,7 +123,11 @@ def main():
     ap.add_argument('--range', default='reporting')
     ap.add_argument('--pops', nargs='+', default=['X', 'G'])  # keep in-progress populations sealed  # 'smoke' only for reducer dry-runs
     a = ap.parse_args()
-    cfg = json.loads((HERE/'plan.json').read_text())
+    # plan-ext.json (phases E/F, added after the 07:28Z 08 extension) is a strict superset of plan.json.
+    base_cfg = json.loads((HERE/'plan.json').read_text())
+    cfg = json.loads((HERE/'plan-ext.json').read_text())
+    assert all(cfg['arms'][k] == v for k, v in base_cfg['arms'].items()) and cfg['seed_ranges'] == base_cfg['seed_ranges']
+    CONFIG_SHAS.update({sha(HERE/'plan.json'), sha(HERE/'plan-ext.json')})
     old = load_x4s()
     new, excluded, hosts, nblocks = load_x4s2(a.phases, cfg, a.range, set(a.pops))
     # Unified per-population tables: X arms from both studies (X4S arms prefixed 'x4s:').
@@ -158,8 +163,13 @@ def main():
     pairs['X'] += [('K4S-140r', 'x4s:K4S-140'), ('K4Sh-140', 'K4S-140r'), ('K4Sf-140', 'K4S-140r'),
                    ('K4Sl-200', 'x4s:K4-200'), ('K4Sl-200', 'x4s:K4S-200'), ('K4Sl-140', 'x4s:K4S-140'),
                    ('K4Sl-140', 'x4s:K4-140'), ('K4Sl-140', 'K4S-140r')]
+    pairs['X'] += [('K4S-180', 'K4-180'), ('K4Sl-180', 'K4-180'), ('K4Sl-180', 'K4S-180'), ('K4-180', 'x4s:K4-200'),
+                   ('K4S-180', 'x4s:K4-200'), ('K4Sl-180', 'x4s:K4-200'), ('K4-180', 'x4s:K4-160'), ('K4Sl-160', 'x4s:K4-160'),
+                   ('K4Sl-160', 'x4s:K4S-160'), ('K4Sl-160', 'x4s:K4-200')]
     pairs['G'] = [('K4S-200', 'K4-200'), ('K4S-140', 'K4-140'), ('K4Sh-140', 'K4-140'), ('K4Sh-140', 'K4S-140'),
-                  ('K4-140', 'K4-200'), ('K4S-140', 'K4-200'), ('K4Sh-140', 'K4-200'), ('K4S-140', 'K4S-200')]
+                  ('K4-140', 'K4-200'), ('K4S-140', 'K4-200'), ('K4Sh-140', 'K4-200'), ('K4S-140', 'K4S-200'),
+                  ('K4S-120', 'K4-120'), ('K4Sh-120', 'K4-120'), ('K4Sh-120', 'K4S-120'), ('K4S-120', 'K4-200'), ('K4Sh-120', 'K4-200'),
+                  ('K4-120', 'K4-200')]
     for pop, ps in pairs.items():
         if pop not in table: continue
         t = table[pop]

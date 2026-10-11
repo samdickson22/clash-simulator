@@ -62,8 +62,8 @@ def main():
     out = job/a.phase
     assert not out.exists(), 'fresh output directory per phase'
     out.mkdir()
-    # Per-host ceilings from the assignment: 08 must be empty by 09:30Z, 03 by 13:30Z.
-    ceiling = {'127x08': '2026-10-11T09:25:00Z', '127x03': '2026-10-11T13:30:00Z'}[host]
+    # Per-host ceilings: 08 must be empty by 12:30Z (coordinator update 07:28Z; was 09:30Z), 03 by 13:30Z.
+    ceiling = {'127x08': '2026-10-11T12:25:00Z', '127x03': '2026-10-11T13:30:00Z'}[host]
     assert a.stop_at <= ceiling, (a.stop_at, ceiling)
     config = a.config or job/'repo/reports/explore/x4s2/plan.json'
     cmd = ['taskset', '-c', f'0-{workers*5-1}', 'bash', str(job/'repo/reports/explore/x4s2/runtime.sh'),

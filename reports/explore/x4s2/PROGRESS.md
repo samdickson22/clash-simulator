@@ -74,3 +74,12 @@
   - **Drift:** K4S-140r − X4S K4S-140 = −0.7 [−4.5, 3.2].
   - **K4-100:** 100.0%.
 - 07:19Z: rep03 at 354 blocks and rep08 at 344, now in B. Healthy.
+- 07:28Z: **coordinator update** received (logged at 07:30Z): perception A2 stage 2 started, so the 127x08 hard stop
+  moves from 09:30Z to **12:30Z**; 03 stays at 13:30Z. A coordinator STOP on 08 still overrides everything.
+  Actions:
+  - the 05 backstop was replaced at 07:28:32Z (pgid 2781061): it touches STOP on 08 at 12:15Z, censuses to zero and
+    makes no contact after 12:27Z;
+  - sync restarted at 07:28:44Z (pgid 2803592) with 08 stopped-at 12:15Z and no contact after 12:27Z;
+  - supervisor ceiling for 08 set to 12:25Z;
+  - PLAN Amendment 1 added: phases E (threshold: K4/K4S/K4Sl-180, K4Sl-160) and F (guard decks at 120 ms) under
+    plan-ext.json. A–D are unchanged, and rep08 still stops at 09:15Z, with its never-started blocks re-run in rep08L.
