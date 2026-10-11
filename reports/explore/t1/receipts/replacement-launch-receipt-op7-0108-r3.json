@@ -1,0 +1,199 @@
+{
+  "schema": "clasher.t1.reporting-launch.health.v1",
+  "utc": "2026-10-11T14:05:45Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "reporting_complete": false,
+  "phase": "replacement-r3",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "continuation_authorization_positions": [
+    7621,
+    7635,
+    7643
+  ],
+  "continuation_authorization_commit": "71481d5e",
+  "freeze_commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+  "manifest_path": "reports/explore/t1/receipts/replacement-manifest-op7-0108-r2.json",
+  "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "frozen_hashes": 196,
+  "dispatch_path": "reports/explore/t1/receipts/dispatch-option-b-op7-r3-DRAFT.json",
+  "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+  "dispatch_rows": 1020,
+  "dispatch_host_counts": {
+    "127x01": 512,
+    "127x08": 508
+  },
+  "ledger_path": "reports/explore/t1/receipts/blind-ledger-option-b-op7-r3-draft.json",
+  "ledger_sha256": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa",
+  "ledger_events": 54,
+  "ledger_preserved_prefix": 44,
+  "inventory_invocations_each": {
+    "original": 1,
+    "replacement-r1": 1,
+    "replacement-r2": 1
+  },
+  "preserved_logical_complete_blocks": 2052,
+  "preserved_primary": 1614,
+  "preserved_guard": 402,
+  "preserved_descriptive": 36,
+  "smoke_receipt": "reports/explore/t1/receipts/smoke-op7-r9-health-admission.json",
+  "smoke_commit": "93c22a09",
+  "smoke_integrated_push_commit": "0b7ae802",
+  "qualification_receipts": {
+    "127x01": "reports/explore/t1/receipts/qualification-op7-r3-01-complete-20261011T1156Z.json",
+    "127x08": "reports/explore/t1/receipts/qualification-op7-r3-08-complete-20261011T1353Z.json"
+  },
+  "host_health": {
+    "127x01": {
+      "utc": "2026-10-11T14:04:51Z",
+      "host": "127x01",
+      "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+      "health_only": true,
+      "outcomes_read": false,
+      "supervisor_identity": {
+        "pid": 1410693,
+        "pgid": 1410693,
+        "start_ticks": 151732746,
+        "uid": 3822945,
+        "cmdline_sha256": "637fa2252d56700ad88d50fca340fb933198234d1195715b48356cf6cb4bc730",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+      },
+      "nice": 10,
+      "scheduler": 0,
+      "affinity": [
+        61
+      ],
+      "scientific_launch": {
+        "utc": "2026-10-11T14:03:49Z",
+        "host": "127x01",
+        "phase": "replacement",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "eabc7ee6e3325710cdf9fb0253c0a31472310f912e735910ff7bbd96a1d074cd",
+        "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+        "supervisor_pid": 1410693,
+        "supervisor_pgid": 1410693
+      },
+      "copier_admission": {
+        "utc": "2026-10-11T14:03:32Z",
+        "host": "127x01",
+        "source_ip": "127.0.1.1",
+        "identity": {
+          "pid": 1410572,
+          "pgid": 1410572,
+          "start_ticks": 151731791,
+          "cmdline_sha256": "ede5882ed65253e899e4b03abd6fe7bcd039866f6d752e3e7350cd4894949977",
+          "uid": 3822945,
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        },
+        "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+        "phase": "replacement-r3",
+        "active": true
+      },
+      "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+      "B_STOP_present": false,
+      "admission_utc": "2026-10-11T14:03:47Z",
+      "admitted": true,
+      "foreign_compute_count": 0,
+      "foreign_active_count": 0,
+      "console_count": 0,
+      "progress": {
+        "utc": "2026-10-11T14:04:50Z",
+        "complete_local_blocks": 0,
+        "failed_blocks": 0,
+        "queued": 501,
+        "inflight": 11,
+        "reason": null,
+        "sealed": true
+      }
+    },
+    "127x08": {
+      "utc": "2026-10-11T14:04:51Z",
+      "host": "127x08",
+      "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+      "health_only": true,
+      "outcomes_read": false,
+      "supervisor_identity": {
+        "pid": 287703,
+        "pgid": 287703,
+        "start_ticks": 152682770,
+        "uid": 3822945,
+        "cmdline_sha256": "637fa2252d56700ad88d50fca340fb933198234d1195715b48356cf6cb4bc730",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+      },
+      "nice": 10,
+      "scheduler": 0,
+      "affinity": [
+        61
+      ],
+      "scientific_launch": {
+        "utc": "2026-10-11T14:03:49Z",
+        "host": "127x08",
+        "phase": "replacement",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "8c9c79a4a6e33078d73475d97d619d56e62cdf3063eb24951042fff52b67b7e6",
+        "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+        "supervisor_pid": 287703,
+        "supervisor_pgid": 287703
+      },
+      "copier_admission": {
+        "utc": "2026-10-11T14:03:32Z",
+        "host": "127x01",
+        "source_ip": "127.0.1.1",
+        "identity": {
+          "pid": 1410572,
+          "pgid": 1410572,
+          "start_ticks": 151731791,
+          "cmdline_sha256": "ede5882ed65253e899e4b03abd6fe7bcd039866f6d752e3e7350cd4894949977",
+          "uid": 3822945,
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        },
+        "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+        "phase": "replacement-r3",
+        "active": true
+      },
+      "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+      "B_STOP_present": false,
+      "admission_utc": "2026-10-11T14:03:48Z",
+      "admitted": true,
+      "foreign_compute_count": 0,
+      "foreign_active_count": 0,
+      "console_count": 0,
+      "progress": {
+        "utc": "2026-10-11T14:04:49Z",
+        "complete_local_blocks": 0,
+        "failed_blocks": 0,
+        "queued": 497,
+        "inflight": 11,
+        "reason": null,
+        "sealed": true
+      }
+    }
+  },
+  "owned_copier": {
+    "utc": "2026-10-11T14:03:32Z",
+    "host": "127x01",
+    "source_ip": "127.0.1.1",
+    "identity": {
+      "pid": 1410572,
+      "pgid": 1410572,
+      "start_ticks": 151731791,
+      "cmdline_sha256": "ede5882ed65253e899e4b03abd6fe7bcd039866f6d752e3e7350cd4894949977",
+      "uid": 3822945,
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+    },
+    "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+    "phase": "replacement-r3",
+    "active": true
+  },
+  "raw_prior_hash_verification_utc": "2026-10-11T11:45:30Z",
+  "initial_projection_correction": "First read-only postlaunch health projection failed before producing a result; scientific supervisors were not relaunched. Corrected bounded projection verified both exact identities and fresh progress14:04:51Z.",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "mirror": "COORDINATOR_PAUSED",
+  "corpus": "DISK_ONLY_READ_ONLY_DURABLE"
+}
