@@ -1,0 +1,130 @@
+{
+ "schema": "clasher.k4s.run-health.v2",
+ "study": "PREREG-K4S",
+ "sealed": true,
+ "outcomes_read": false,
+ "utc": "2026-10-11T22:08:53Z",
+ "phase": "reporting",
+ "tag": "watch",
+ "hosts": {
+  "127x03": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-11T22:08:52Z\",  \"host\": \"127x03\",  \"phase\": \"reporting\",  \"complete_local_blocks\": 199,  \"complete_local_games\": 1592,  \"failed_blocks\": 0,  \"queued\": 1740,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.91709899902344,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "199",
+    "HUBACK": "199",
+    "EXITS": "199 0",
+    "LOSTPOP": "0 0",
+    "SRCRECEIPT": "\"pid\": 1322045 \"active\": true",
+    "SUPPROC": "776314 SNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-11T22:08:52Z",
+    "phase": "reporting",
+    "complete_local_blocks": 199,
+    "failed_blocks": 0,
+    "queued": 1740,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.91709899902344
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 199,
+    "returned": 199,
+    "flags": {
+     "interfered": 0,
+     "dbus": 0,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 1322045,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-11T22:08:43Z",
+     "listed": 199,
+     "durable_on_hub": 199,
+     "ack_returned": 199,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  },
+  "127x04": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-11T22:06:13Z\",  \"host\": \"127x04\",  \"phase\": \"reporting\",  \"complete_local_blocks\": 186,  \"complete_local_games\": 1488,  \"failed_blocks\": 11,  \"queued\": 1742,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.49969100952148,  \"reason\": \"ubuntu_apt_average_budget\",  \"sealed\": true}",
+    "COMPLETE": "186",
+    "HUBACK": "186",
+    "EXITS": "208 22",
+    "LOSTPOP": "16 6",
+    "STOPREASON": "\"utc\": \"2026-10-11T22:06:15Z\" \"reason\": \"ubuntu_apt_average_budget\"",
+    "SUPEXIT": "\"reason\": \"ubuntu_apt_average_budget\"",
+    "SRCRECEIPT": "\"pid\": 1331157 \"active\": true",
+    "SUPPROC": "4015460"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-11T22:06:13Z",
+    "phase": "reporting",
+    "complete_local_blocks": 186,
+    "failed_blocks": 11,
+    "queued": 1742,
+    "inflight": 11,
+    "reason": "ubuntu_apt_average_budget",
+    "memavailable_GiB": 116.49969100952148
+   },
+   "lost": {
+    "primary": 16,
+    "guard": 6
+   },
+   "hub": {
+    "durable": 186,
+    "returned": 186,
+    "flags": {
+     "interfered": 175,
+     "dbus": 175,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 1331157,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-11T22:08:50Z",
+     "listed": 186,
+     "durable_on_hub": 186,
+     "ack_returned": 186,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  }
+ },
+ "lost_total": {
+  "primary": 16,
+  "guard": 6
+ },
+ "anomalies": [
+  "127x04: failed blocks 22 (acknowledged 11)",
+  "127x04: STOP \"utc\": \"2026-10-11T22:06:15Z\" \"reason\": \"ubuntu_apt_average_budget\"",
+  "127x04: progress reason ubuntu_apt_average_budget",
+  "127x04: supervisor exited (\"reason\": \"ubuntu_apt_average_budget\", complete 186/1950)"
+ ],
+ "summary": "127x03 complete 199 acked 199 hub 199/199 failed 0 stopevent - inflight 11 queued 1740 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 186 acked 186 hub 186/186 failed 22 stopevent \"utc\": \"2026-10-11T22:06:15Z\" \"reason\": \"ubuntu_apt_average_budget\" inflight 11 queued 1742 reason ubuntu_apt_average_budget who 0 flags[dbus 175 ssh 0 apt 0 idle 0]; lost primary 16 guard 6"
+}
