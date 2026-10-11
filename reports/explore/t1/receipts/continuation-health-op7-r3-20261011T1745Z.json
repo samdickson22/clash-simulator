@@ -1,0 +1,167 @@
+{
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "checkpoint_utc": "2026-10-11T17:46:14Z",
+  "coordinator_readthrough": 7755,
+  "copy_deadline_check": {
+    "counted_missing_ACKs": 0,
+    "deadline_violations": 0,
+    "new_complete_blocks_by_host": {
+      "127x01": 360,
+      "127x08": 378
+    },
+    "new_durable_blocks_by_host": {
+      "127x01": 360,
+      "127x08": 378
+    }
+  },
+  "corpus_durability": "COPY_COMPLETE_SHA_RECEIPT_PRESENT",
+  "corpus_durability_sha256": "72ac548b1c79ee58958aed1350cdf07b8364ec199fd4fb864b455bb011d2f19f",
+  "counts": {
+    "127x01": {
+      "apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "descriptive_durable_blocks": 49,
+      "durable_blocks": 1820,
+      "guard_durable_blocks": 356,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 360,
+      "original_preserved_blocks": 124,
+      "primary_durable_blocks": 1415,
+      "prior_r1_preserved_blocks": 155,
+      "prior_r2_preserved_blocks": 1181,
+      "ssh_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 0,
+      "total_flagged_blocks": 0
+    },
+    "127x08": {
+      "apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 970,
+      "descriptive_durable_blocks": 13,
+      "durable_blocks": 970,
+      "guard_durable_blocks": 188,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 378,
+      "original_preserved_blocks": 33,
+      "primary_durable_blocks": 769,
+      "prior_r1_preserved_blocks": 399,
+      "prior_r2_preserved_blocks": 160,
+      "ssh_flagged_blocks": 477,
+      "ssh_or_apt_flagged_blocks": 477,
+      "total_flagged_blocks": 970,
+      "verified_offhost_ACKs": 970
+    }
+  },
+  "health_only": true,
+  "identity_audit": {
+    "127x01": {
+      "B_STOP_link_target": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08",
+      "B_STOP_present": false,
+      "affinity": [
+        61
+      ],
+      "base_B_STOP_present": false,
+      "copier_affinity": [
+        62
+      ],
+      "copier_identity": {
+        "cmdline_sha256": "ede5882ed65253e899e4b03abd6fe7bcd039866f6d752e3e7350cd4894949977",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "pgid": 1410572,
+        "pid": 1410572,
+        "start_ticks": 151731791,
+        "uid": 3822945
+      },
+      "copier_identity_verified_utc": "2026-10-11T17:45:33Z",
+      "copier_nice": 19,
+      "copier_scheduler": 0,
+      "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+      "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "nice": 10,
+      "scheduler": 0,
+      "supervisor_identity": {
+        "cmdline_sha256": "637fa2252d56700ad88d50fca340fb933198234d1195715b48356cf6cb4bc730",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "pgid": 1410693,
+        "pid": 1410693,
+        "start_ticks": 151732746,
+        "uid": 3822945
+      },
+      "utc": "2026-10-11T17:45:33Z"
+    },
+    "127x08": {
+      "B_STOP_link_target": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08",
+      "B_STOP_present": false,
+      "affinity": [
+        61
+      ],
+      "base_B_STOP_present": false,
+      "dispatch_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+      "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "nice": 10,
+      "scheduler": 0,
+      "supervisor_identity": {
+        "cmdline_sha256": "637fa2252d56700ad88d50fca340fb933198234d1195715b48356cf6cb4bc730",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "pgid": 287703,
+        "pid": 287703,
+        "start_ticks": 152682770,
+        "uid": 3822945
+      },
+      "utc": "2026-10-11T17:45:32Z"
+    }
+  },
+  "immutable_manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "inventory_invocations_each": 1,
+  "latest_08_durable_ack_utc": "2026-10-11T17:43:36Z",
+  "launch_receipt": "reports/explore/t1/receipts/replacement-launch-receipt-op7-0108-r3.json",
+  "mac_tiers_erratum": {
+    "coordinator_position": 7746,
+    "status": "prepare reviewed import math candidate on 05 worker branch; no frozen job changes; no Mac access"
+  },
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "phase": "replacement-r3",
+  "phase_exits": {},
+  "prior_all_ledger_losses": 54,
+  "prior_preserved_blocks": 2052,
+  "prior_r1_failed_blocks": 22,
+  "progress": {
+    "127x01": {
+      "age_seconds": 8,
+      "complete_local_blocks": 360,
+      "console_count": 0,
+      "failed_blocks": 0,
+      "host": "127x01",
+      "inflight": 11,
+      "phase": "replacement",
+      "queued": 141,
+      "reason": null,
+      "sealed": true,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false,
+      "utc": "2026-10-11T17:45:25Z"
+    },
+    "127x08": {
+      "age_seconds": 10,
+      "complete_local_blocks": 378,
+      "console_count": 0,
+      "failed_blocks": 0,
+      "host": "127x08",
+      "inflight": 11,
+      "phase": "replacement",
+      "queued": 119,
+      "reason": null,
+      "sealed": true,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false,
+      "utc": "2026-10-11T17:45:23Z"
+    }
+  },
+  "proof_errors": [],
+  "raw_prior_hash_verification_utc": "2026-10-11T11:45:30Z",
+  "reporting_complete": false,
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+  "schema": "clasher.t1.continuation-health.v1",
+  "total_durable_blocks": 2790,
+  "utc": "2026-10-11T17:45:33Z"
+}
