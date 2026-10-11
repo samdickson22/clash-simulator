@@ -2102,3 +2102,10 @@ Also on the hub, but with copies elsewhere:
   - **Blocker, measured:** one TierBackend uses 11.46 GiB anonymous RSS on the 11.65 GB public corpus. With 11 frozen slots that is ≥126 GiB, more than the host's 125.6 GiB, before the frozen 24 GiB floor.
   - **Decision:** no slot, floor or budget change. An **outcome-blind E4 input-loading repair** is assigned (Opus implementer plus Sol review; TIERS Amendment 3). It must keep fixture bytes and order identical, never touch the timed region, and avoid K4S-pinned files or stop and report.
   - **Delay:** the Mac TIERS session is pushed back until the END pooled reference exists.
+- **20:38 UTC: Mac E4 Phase A COMPLETE** (b8792a6c). M4 Pro (8P + 4E), 24 GiB, Python 3.12.13, torch with MPS.
+  - **Staged:** runtime under ~/Desktop/code/clasher-mac-e4-tiers-20261011, built from d651b52c plus 33 runtime-pin files plus regenerated E1 native source (76/77 pins; non-compiled manifest disclosed). Runtime pins PASS. `test_measure_tiers` 33/33 on Python 3.12. arm64 scratch build OK. MPS replay at 20 FPS.
+  - **Blockers:**
+    - (1) **The Mac would also run out of memory:** main ~11.5 GiB steady / ~22 GiB peak, and the D6 forward children each load a full backend (~34 GiB peak on a 24 GiB machine). Amendment 3's scope now includes the Mac path, with a streaming per-id load capped at ~6 GiB total.
+    - (2) **Quiescence census fails:** WindowServer at 0.5 core and Codex Computer Use at 0.22. A quiet Mac window is needed at Phase B, with no computer-use tasks running; coordinate with roader if it uses the Mac.
+    - (3) **Bundle identity** waits on Amendment 3 plus the regenerated END bundle.
+  - Independent reviews of staging and topology are approved (Sol for code, Opus for topology and provenance).
