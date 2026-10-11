@@ -1,0 +1,47 @@
+{
+  "branch": "worker/t1-tiers-amendment2-20261011",
+  "coordinator_authorization_position": 7746,
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "deployment": "requires independent review and coordinator disposition; regenerate prospective source inventory/bundle pins only after approval",
+  "mac_access": false,
+  "note": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-2-20261011.md",
+    "sha256": "fc53c1ef8a13e64448d19482ffc9caf5a3d86c988484bce8ab5812e754a04dbf"
+  },
+  "original_freeze": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-FREEZE-20261010.json",
+    "sha256": "47aba25e306d787518ec41bac6ecbca88e3372c03f5b118aacda2c5b86ae217c",
+    "unchanged": true
+  },
+  "outcome_blind": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "parent_commit": "66acf60c4b593a3841a0aac78d81892197aabecc",
+  "production_delta": "import math only",
+  "running_jobs_modified": false,
+  "schema": "clasher.tiers.amendment2-candidate.v1",
+  "source_changes": {
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py": {
+      "before_sha256": "5d7de8e36890f0f8d086e77be5ec4e20de1b3cc1f48943bd06e8bbd103046124",
+      "candidate_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+    },
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_measure_tiers.py": {
+      "before_sha256": "f3198e6bf320c98b28e1a27446dceaccd1071f1dfee51bceb539ccc869546586",
+      "candidate_sha256": "84b02676be66a08addb24935dc14251ef32f952e264f597c5ac8c8cd3514843b"
+    }
+  },
+  "status": "CANDIDATE_PENDING_INDEPENDENT_OPUS_REVIEW",
+  "utc": "2026-10-11T17:48:31Z",
+  "validation": {
+    "affinity": [
+      63
+    ],
+    "command": "python3 -B reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_measure_tiers.py",
+    "host": "127x05",
+    "nice": 19,
+    "post_fix_nonfinite_and_outside_gate_rejected": true,
+    "pre_fix_regression": "NameError: name math is not defined in Amendment 1 non-dry admission path",
+    "python": "3.8.10",
+    "tests_passed": 33
+  }
+}

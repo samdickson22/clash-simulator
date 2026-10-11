@@ -301,6 +301,30 @@ class AdmissionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 admit_platform(*params)
 
+    def test_mac_amendment_1_reference_ratios_validate_without_a_session(self):
+        # Synthetic admission metadata only: no backend, corpus, or Mac access.
+        limits = dict(golden=1, agreement=1, decisions=1, speed=1)
+        manifest = dict(
+            sets=dict(golden=["g"], agreement=["a"], packets=["p"],
+                      speed={tier: ["s"] for tier in TIERS}),
+            packet_schedule=[dict(id="p", offset_seconds=0.)],
+            fleet_reference=dict(
+                nice=10, repeats=3, pooling="raw-host-times-repeat-v1",
+                reporting_load_profile=True, hosts=["127x01", "127x08"],
+                host_receipts={host: dict(relative_to_pooled_median=1.,
+                                         reference_to_reporting_mean=1.)
+                               for host in ("127x01", "127x08")},
+                amendment_1=True, excluded_hosts=[], physical_cores=True),
+            load=dict(config=dict(device="mps")))
+        validate_counts(manifest, limits, False)
+        for ratio in (float("nan"), float("inf"), -float("inf"), .94, 1.06):
+            with self.subTest(reference_to_reporting_mean=ratio):
+                changed = copy.deepcopy(manifest)
+                changed["fleet_reference"]["host_receipts"]["127x08"][
+                    "reference_to_reporting_mean"] = ratio
+                with self.assertRaisesRegex(ValueError, "signed full-occupancy MHz ratios"):
+                    validate_counts(changed, limits, False)
+
     def test_counts_reject_repeated_state_padding(self):
         manifest=dict(sets={"golden":[str(i) for i in range(125)], "agreement":[str(i) for i in range(32)],
             "packets":[str(i) for i in range(32)],"speed":{t:[str(i) for i in range(32)] for t in TIERS}},
