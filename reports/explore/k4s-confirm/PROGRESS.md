@@ -94,15 +94,46 @@ Scope: prepare every freeze fill. **No freeze and no reporting game.**
   on 03 and 04. Sol verifier r2 REJECT (c\* must bind to plan.json): Haiku round 4 running. Mac/END fix round 3 done (175
   tests): Sol Mac/END r3 review running. Sol core r5 review running.
 
+- 2026-10-11T15:26:31Z: **Sol core r6: APPROVE** (finding 21: complete runtime-pin revalidation; 30/30 mutation controls rejected).
+  **Sol verifier r3: APPROVE** (c\* bound to plan.json; 149 tests). Reducer/verifier cross-check (current bytes):
+  169/169 in 3 scenarios. Sol Mac/END r3: REJECT on 2 MAJOR (18: recorded gate-0 failure lost after cleanup failure;
+  19: END attempt-registry authority); everything else is resolved. Opus fix round 4 is running. The final 03/04
+  qualification waits for Mac/END convergence, because qualification binds the whole k4s-confirm byte tree.
+
+- 15:49–16:06Z: qualification **r1 PASS on 127x03 and 127x04**: full driver on the post-core-approval bytes, overlay
+  digest d61427d9… (`qual-03-r1`, `jobs-k4s/…/qual-04-r1`). Mac/END fix round 4 landed (186 tests). **Sol Mac/END r4:
+  REJECT**: finding 18 resolved; 19 partial (authority path aliasable via a copied completion); new MAJOR 20 (stray-claim
+  whole-repo content scan) and 21 (indented claims skipped).
+- 2026-10-11T16:06:54Z: round-5 design directive to the Opus fix agent: fixed, code-frozen authority path
+  `reports/explore/k4s-confirm/end/END-JOB.json` with one job per study; path-name-only enumeration inside the END
+  namespace; full-JSON parsing. Mac/END bytes will change, so r1 receipts become a validation pass and the binding run
+  will be **r2** after Sol approves Mac/END.
+
+- 16:23–16:40Z: Mac/END fix round 5 (fixed-path authority, 194 tests). Qualification **r2 PASS on 03 and 04** (overlay
+  digest 10ec1232…). **Sol Mac/END r5: REJECT** on a single new MAJOR 22 (an earlier END round's nonconforming
+  pool is accepted on assertion; prior attempts are not re-validated); 19, 20 and 21 resolved.
+- 2026-10-11T16:40:21Z: Opus fix round 6 for 22 running: re-validate and recompute every earlier round by the same code path; require
+  ratio-only nonconformity; fail closed on any earlier unrepeatable failure.
+
+- 2026-10-11T17:17:31Z (coordinator request): **All Sol review streams APPROVE:** core r6, verifier r3, Mac/END r6 (finding 22
+  fixed: earlier END rounds are re-validated and recomputed). **No open Sol findings.**
+  - **Qualification r3 PASS on 127x03 and 127x04** (17:01–17:17Z, overlay digest 34ef9a42…), on exactly the
+    Sol-approved bytes. Earlier r1/r2 passes are superseded validation runs.
+  - **ETA to final commit:** about 20 min. Receipts, refreshed freeze-record skeleton, delta manifest and a
+    qualified-vs-committed diff receipt showing that only non-executed docs/receipts differ.
+  - Nothing blocks a freeze tonight on {03, 04} from the prep side. Open coordinator items: c\* confirmation, host
+    set, transport declarations, Q1–Q13, attestation, SD1 supersession issue. Open for TIERS: the
+    `measure_tiers.py` missing `import math` blocks the Mac session, not the freeze.
+
 ## Status
 | Item | Status |
 |---|---|
-| 1 SD1 manifest + supersession draft + exit-r3 pointer draft | drafted (SD1-MANIFEST.json, SD1-SUPERSESSION-DRAFT.md) |
-| 2 Seed audit | PASS (seed-audit.json, SEED-AUDIT-RECEIPT.md); re-run at the freeze commit |
-| 3 Harness + delta manifest + reducer + verifier + Sol review | built; Sol r1 and verifier r2 running |
-| 4 Qualification on 03 | dev PASS; final run after review |
-| 5 K4S Mac script + procedure (N2) | drafted (mac/); needs Sol review |
-| 6 Freeze-record skeleton | pending |
+| 1 SD1 manifest + supersession draft + exit-r3 pointer draft | DONE (manifest built and checked on 03/04; drafts ready for the coordinator) |
+| 2 Seed audit | DONE: PASS; re-run at the freeze commit |
+| 3 Harness + delta manifest + reducer + verifier + Sol review | DONE: core APPROVE r6, verifier APPROVE r3, Mac/END APPROVE r6 |
+| 4 Qualification on 03 (+04 per coordinator) | DONE: r3 PASS on both (approved bytes); receipts being committed |
+| 5 K4S Mac script + procedure (N2) | DONE: Sol APPROVE r6 (TIERS `math` import blocker is TIERS-side) |
+| 6 Freeze-record skeleton | drafted; final regeneration in the final commit |
 
 ## Running processes (127x03)
 None (dev qualification finished at 13:33Z).
