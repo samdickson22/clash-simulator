@@ -87,6 +87,14 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   drain failure reduced to a block error). New MINOR 8 (re-copy needs --ignore-times). B2 manifest 416f6e51 compatible.
   Per coordinator rule (18:48Z): STOPPED; findings sent to coordinator; no further round without a ruling. No launch.
 
+- 19:07Z r4 authorized → 19:18Z Sol r4 REJECT (new MAJOR 9 recovery kills unverified procs, 10 ledger failure) → stopped.
+  19:19Z r5 (no-signal design) authorized → 19:31Z Sol r5 REJECT (new MAJOR 11 drain syscall errors) → stopped.
+  19:32Z r6 (narrow) authorized → 19:39Z Sol r6 REJECT (new MAJOR 12 --revoke outside lifecycle boundary) → stopped.
+  19:40Z S1 (delete recovery mode) authorized → 19:54Z **Sol r7 APPROVE_WITH_FIXES** (12/11/6/10 RESOLVED; MINOR 13 fixed
+  as prescribed, 48 tests). Live regressions on 03/04 after every round (synthetic fixtures, removed).
+- 19:55Z: B2 + OA-1 final bytes + review trail committed 6ac7b641 (mirror_k4s.py 47eb96d6…, FROZEN-K4S.json 416f6e51…).
+  Freeze addendum `addendum/K4S-LAUNCH-ADDENDUM.{md,json}` composed 19:55:15Z.
+
 ## Running (owned PGIDs only)
 - none (drill qualification drivers exited 0).
 
