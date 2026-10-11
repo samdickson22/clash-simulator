@@ -1,0 +1,77 @@
+{
+  "schema": "clasher.t1.smoke-launch.health.v1",
+  "utc": "2026-10-11T13:57:29Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "reporting_complete": false,
+  "reporting_dispatch_launched": false,
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op7-0108-r9-20261011",
+  "coordinator_authorization_position": 7621,
+  "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "frozen_hashes": 196,
+  "hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "smoke_rows": 8,
+  "smoke_host_counts": {
+    "127x01": 4,
+    "127x08": 4
+  },
+  "supervisor_launch_utc": {
+    "127x01": "2026-10-11T13:54:36Z",
+    "127x08": "2026-10-11T13:54:37Z"
+  },
+  "copier_launch_utc": "2026-10-11T13:54:21Z",
+  "qualification01_receipt": "reports/explore/t1/receipts/qualification-op7-r3-01-complete-20261011T1156Z.json",
+  "qualification08_receipt": "reports/explore/t1/receipts/qualification-op7-r3-08-complete-20261011T1353Z.json",
+  "observer_setup_correction": "05parent directory omitted before launch; sameownedcopier retries succeeded after metadata-only parent creation13:56:15Z; no copierrestart/newwatcher",
+  "final_smoke_validation_pending": true,
+  "exact01_identites": {
+    "1403596": {
+      "state": "S",
+      "pgid": 1403596,
+      "start_ticks": 151676708,
+      "cmdline_sha256": "6e281763f97f1222f081adac021a2d028c5c0ceeabcf921f25212879f5c7bf16",
+      "nice": 19,
+      "affinity": [
+        62
+      ]
+    },
+    "1403750": {
+      "state": "S",
+      "pgid": 1403750,
+      "start_ticks": 151678255,
+      "cmdline_sha256": "06a59cbd704df1a7a05e6d41a2c226de3bf792aa51c50eb5de8502c3ec0164be",
+      "nice": 10,
+      "affinity": [
+        61
+      ]
+    }
+  },
+  "exact08_supervisor_identity": {
+    "pid": 267614,
+    "pgid": 267614,
+    "start_ticks": 152628273,
+    "uid": 3822945,
+    "cmdline_sha256": "06a59cbd704df1a7a05e6d41a2c226de3bf792aa51c50eb5de8502c3ec0164be",
+    "nice": 10,
+    "scheduler": 0,
+    "affinity": [
+      61
+    ]
+  },
+  "owned_copier_admission": {
+    "utc": "2026-10-11T13:54:21Z",
+    "identity": {
+      "pid": 1403596,
+      "pgid": 1403596,
+      "start_ticks": 151676708,
+      "cmdline_sha256": "6e281763f97f1222f081adac021a2d028c5c0ceeabcf921f25212879f5c7bf16",
+      "uid": 3822945,
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+    },
+    "phase": "smoke"
+  }
+}
