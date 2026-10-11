@@ -6,7 +6,7 @@
   "tar_sha256": "6a48ec92c2d5af114edac663abc2d3e4c79eb4516b1ceb918ad5dbaf20af07d5"
  },
  "mac_runtime": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime",
- "note": "runtime_pins() enforces only names plus the 11 qualified S1 sources; 17 tracked files differ from runtime-pin-r2 file SHAs exactly as in the 05 Linux smoke runtime. Versus 05 smoke bundle r6 runtime_files: 22 differ (post-merge e4v3 measurement files, exit-r3 ops, engine-rs/src/scripts.rs=E1 frozen source), 275 newer-only (k4s-confirm etc.), 0 missing.",
+ "note": "runtime_pins() enforces only names plus the 11 qualified S1 sources; 17 tracked files differ from runtime-pin-r2 file SHAs; 16 of them equal the 05 Linux smoke runtime bytes, while engine-rs/src/scripts.rs intentionally differs (E1 frozen native source overlay, 127c6980, versus smoke/git df849040). Versus 05 smoke bundle r6 runtime_files: 22 differ (post-merge e4v3 measurement files, exit-r3 ops, engine-rs/src/scripts.rs=E1 frozen source), 275 newer-only (k4s-confirm etc.), 0 missing.",
  "overlay_e1_native_source": {
   "files": {
    "src/e1_commands.rs": "fd7574328a87e8192b048dec69a8b585b95cad57a7061d32878912ff91b1e26b",

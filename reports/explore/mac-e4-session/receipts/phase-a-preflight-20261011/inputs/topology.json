@@ -24,6 +24,7 @@
   },
   "host": "Mac16,11 Apple M4 Pro macOS 27.0 (26A428)",
   "method": "IODeviceTree /cpus: each cpuN logical-cpu-id with cluster-type E (ids 0-3, logical-cluster-id 0) or P (ids 4-7 cluster 1, 8-11 cluster 2); corroborated by host_processor_info per-index busy deltas: QOS_CLASS_BACKGROUND spin loads only indices 0-3, QOS_CLASS_USER_INTERACTIVE spin loads indices 4-7; counts equal hw.perflevel0.logicalcpu=8 (Performance) and hw.perflevel1.logicalcpu=4 (Efficiency)",
-  "review": "pending independent review"
+  "node_name_note": "Map by logical-cpu-id, never by ioreg node name: the second P cluster nodes are named cpu10-cpu13 (cpu-id 0x0a-0x0d) but have logical-cpu-id 8-11",
+  "review": "APPROVE_WITH_CONDITIONS: independent Claude Opus 5.5 (high) review task mac-e4-r1-opus-topology-review-r1, completed 2026-10-11T20:50:00Z; condition = mark reviewed before bundle preparation and do not edit afterwards"
  }
 }

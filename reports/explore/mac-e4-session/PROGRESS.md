@@ -77,3 +77,54 @@ Mac analysis:
 
 **Hold:** no Mac timing until the coordinator confirms the repaired loader (Amendment 3) and the pooled reference
 are committed.
+
+### 2026-10-11T20:41:58Z: coordinator rulings (sent ~20:37Z, labelled 20:42Z; correction record COORDINATOR 3c747c38); reviews launched
+
+The coordinator accepted Phase A (b8792a6c). Rulings:
+- Amendment 3 covers the Mac path: a streaming per-id load, capped at about 6 GiB total.
+- Review split: Sol for code, Opus for the topology and overlay provenance.
+- The coordinator arranges a quiet Mac window. Do not quit apps, and leave simonfarshid alone. Re-run the census at
+  Phase B; if it fails, report the top consumers and do not start.
+- Copy no bundle inputs until the END bundle identity and the registration packet are named.
+- A K4S fresh clone is OK, and so is staging K4-states.pkl later with a SHA check.
+
+New work:
+- `verify_runtime_staging.py`: Mac runtime == expected (10,611 files, 0 missing/extra/differ, expected manifest
+  cbe89896); receipt `runtime-verify-r1.json`.
+- Reviews: Sol task `mac-e4-r1-sol-staging-review-r1`; Opus task `mac-e4-r1-opus-topology-review-r1`.
+
+### 2026-10-11T20:49:39Z: Sol staging review APPROVE_WITH_CONDITIONS; all findings addressed
+
+Sol reproduced `runtime-verify` PASS (10,611 files). No compiled-source defect; compiled sources and Cargo.lock match
+the 44874fd6 provenance. Dispositions:
+1. MAJOR, symlinks unverified: fixed. The verifier now requires `--mac-symlinks` and checks link paths and targets.
+   Only `visualize_battle.py -> examples/visualize_battle.py` exists. A negative test with an injected link gives
+   passes=false.
+2. MINOR, duplicate or invalid listing paths: fixed. They are refused; a negative test raises "Duplicate listing path".
+3. MINOR, native subtree was updated rather than replaced: fixed. engine-rs is now replaced by the stager output.
+4. and 5. MINOR, perception preflight fidelity: fixed in r2 of the script (`set_num_interop_threads(1)`, per-frame
+   flush, fixed post-warmup window). It was not re-run because of the Mac timing hold. Sol's recomputation of the
+   r1 rows over the full window gives 20.0002 FPS.
+6. MINOR, wording: `runtime-staging.json` corrected; 16 of the 17 pin deviations equal smoke, and scripts.rs differs
+   intentionally.
+7. NOTE: no action; a counted build and the gates are still required.
+
+Re-verified with `runtime-verify-r2.json`: PASS, expected manifest cbe89896, symlinks equal.
+
+### 2026-10-11T20:50:47Z: Opus topology/provenance review APPROVE_WITH_CONDITIONS; reviews complete, HOLD
+
+See `receipts/reviews-20261011/REVIEWS.md`.
+- **Topology:** marked reviewed and frozen at 20:50:00Z (Mac `inputs/topology.json` 2b2ec325, read-only).
+- **Phase B checklist additions:**
+  1. Apply END's PYTHONPATH additions (`runtime/imitation/evaluation/runtime_dependencies`,
+     `runtime/reports/strategy_council_20260928/imitation`) unless Amendment 3 removes the need; confirm with the
+     coordinator.
+  2. Run the END-runtime content diff once the bundle is named. Allowed differences are scripts.rs plus the 12
+     exit-r3 scripts.
+  3. The libm ULP exactness risk is disclosed; D1 decides it.
+  4. Census re-run in the coordinator's quiet window.
+  5. Fresh counted build via build_tiers.sh.
+- **K4S:** fresh partial clone `$S/k4s-commit-repo` (3cd0e58b, 465 MB, user Sam Dickson) for the procedure's local
+  commits. K4-states.pkl will be staged later with a SHA check.
+- **HOLD:** no Mac timing until the coordinator confirms Amendment 3 plus the pooled reference, and names the END
+  bundle and registration packet.

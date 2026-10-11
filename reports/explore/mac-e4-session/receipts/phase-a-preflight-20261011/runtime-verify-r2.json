@@ -1,0 +1,58 @@
+{
+ "commit": "d651b52c1a442072055ae482267531af8018ef25",
+ "differ": [],
+ "e1_native_overlay": {
+  "engine-rs/e1-source-manifest.json": "9fac959eae331a950def52a1209b84892d432afff6947c6faa8a96c79d0ad3fa",
+  "engine-rs/src/e1_commands.rs": "fd7574328a87e8192b048dec69a8b585b95cad57a7061d32878912ff91b1e26b",
+  "engine-rs/src/scripts.rs": "127c6980d748d272b028e8df92462e5883f133acd717b0e2741ca2b4f00efba2"
+ },
+ "e1_noncompiled_mismatch": [
+  "e1-source-manifest.json"
+ ],
+ "expected_files": 10611,
+ "expected_manifest_sha256": "cbe898966750355fdb4e9aa6e9a9d0349851ae4c901815211fbfe94685f4568b",
+ "extra": [],
+ "mac_files": 10611,
+ "missing": [],
+ "overlay_uncommitted": {
+  "imitation/__init__.py": "ef1ed5d91a51cd08740cc7a1222712647ae2ba477caa38de9e36f6301832e722",
+  "imitation/evaluation/legacy_audit.py": "b4af3e9bddb3cd2536d715a301b35dbd401cf61bcd6ec411e9aa88f4a7ee8f5f",
+  "imitation/evaluation/runtime_dependencies/derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+  "imitation/evaluation/runtime_dependencies/own_cycle.py": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+  "imitation/evaluation/runtime_dependencies/sidecar_observer.py": "cdb2d830042189b6d9b3e03aede152d2bb441e6f47c3ce113e3dce96f79c22e5",
+  "imitation/evaluation/seed_compat.py": "d5897eefeb722eb7bf01bc39e7ac69fb03543ae95f5eed2bfdfdf334774f4673",
+  "reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+  "reports/strategy_council_20260928/m0/data/roles_v2/training.json": "44a69f6dfa5d04e874310bb4673212281f10f1cf66ac3d14b52fd16f42497c4f",
+  "reports/strategy_council_20260928/search-noise-s6/runtime/support/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+  "reports/strategy_council_20260928/search-noise-s6/runtime/support/selection.json": "de2eda3e0200d5a257f9f3d9d5efd0ba699b34e6ed797dbf7481e2896cb200b4",
+  "src/clasher/analysis/loss_review/delay_fixes.py": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+  "src/clasher/analysis/loss_review/delay_runtime.py": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+  "src/clasher/analysis/loss_review/delay_simulate.py": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+  "src/clasher/analysis/loss_review/scheduling.py": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+  "src/clasher/analysis/loss_review/search_ab.py": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+  "src/clasher/analysis/loss_review/tempo.py": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+  "src/clasher/analysis/loss_review/throughput_guard.py": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+  "student-source/exit_r3/__init__.py": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087",
+  "student-source/exit_r3/network.py": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b",
+  "student-source/exit_r3/rows.py": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+  "student-source/exit_r3/student.py": "dd59fa136230eaf46bee31c53555c6843376032f093d1d633e801f21cf520d67",
+  "student-source/exit_r3/teacher_batch.py": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+  "student-source/exit_r3/test_r3.py": "58641244e3c9e53d98809e5a5fd0de3a29e503325b9c89c1a12ada10ae84c96e",
+  "student-source/exit_r3/test_round2.py": "fc7c5785e643da9718a7e7cfdbda5db12e146c04e214141924cb5a63ca93b106",
+  "student-source/exit_r3/train.py": "947f8147e44c4c4a3d039cd054a22932b163486fcbcbeb3ec9d03b7ad54a6ee8",
+  "tests/analysis/test_delay_fixes.py": "745968094c1767079882e55bc0fb803c2b977ce1eee13cec49be4cd02d4c78be",
+  "tests/analysis/test_delay_fixes_summary.py": "60dd12e17c89413b825add79eff73209d9a88d44448c2bcb845ab9d3382824d1",
+  "tests/analysis/test_search_ab.py": "86b356164c3b2c97854c6acdd7730411144a28c2fbb2fde573478ce1044dee2a",
+  "tests/analysis/test_search_ab_guard.py": "9d8ee3988edd574642a937f284d2830dae44e1d06bd37254e8d2e6847a33ee41",
+  "tests/analysis/test_tempo.py": "010e462fa8c3aefab8937e5665fdd5a32d350b597d11239f3b87a9ec4b46041a",
+  "tests/analysis/test_tempo_launch.py": "2cd18eda00b76d62243f6f0116e85cfa543b54d5b316ec6888033c445b12b0bb",
+  "tests/analysis/test_throughput_guard.py": "79a4c564b128d17c82e3ab3bf8e933ffd9b5c056084b33bdec127d6c8405c486",
+  "tests/test_l1_v4.py": "26e6e487f65180ea91f4426ec0946a1e8974e74f7d98f551cb2aaecbb12cdd6b"
+ },
+ "passes": true,
+ "schema": "clasher.mac-e4-session.runtime-verify.v1",
+ "symlink_mismatch": [],
+ "symlinks": {
+  "visualize_battle.py": "examples/visualize_battle.py"
+ }
+}

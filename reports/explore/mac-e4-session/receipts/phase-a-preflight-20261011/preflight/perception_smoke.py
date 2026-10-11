@@ -1,4 +1,4 @@
-"""NON-COUNTED Phase A preflight: v3-body-hud-only TRAIN replay perception on MPS, mirroring
+"""NON-COUNTED Phase A preflight (r2 after Sol review: interop threads, per-frame flush, fixed window): v3-body-hud-only TRAIN replay perception on MPS, mirroring
 e4v3 replay_load.load_worker's loop (offline socket guard, 1-thread cv2/torch, paced replay).
 Measures processed FPS only; no search, no bundle, no counted receipt."""
 import json, os, socket, sys, threading, time
@@ -14,7 +14,7 @@ def offline(sock, addr):
     return orig(sock, addr)
 socket.socket.connect = offline
 import torch, cv2
-torch.set_num_threads(1); cv2.setNumThreads(1)
+torch.set_num_threads(1); torch.set_num_interop_threads(1); cv2.setNumThreads(1)
 from clasher.live.capture import admit_replay, replay_frames
 from clasher.live.perception import V3Fallback
 cfg = json.loads((stage / "load-config.staged.json").read_text())
@@ -32,12 +32,13 @@ with (out / "perception.jsonl").open("x") as f:
                 fr = replace(fr, episode=fr.episode + "-load-" + str(lap))
                 torch.mps.synchronize(); a = time.monotonic(); sensor.step(fr); torch.mps.synchronize(); b = time.monotonic()
                 r = dict(seq=fr.sequence, produced=fr.produced_at, start=a, finished=b, service_ms=(b-a)*1000, age_ms=(b-fr.produced_at)*1000)
-                f.write(json.dumps(r) + "\n"); rows.append(r)
+                f.write(json.dumps(r) + "\n"); f.flush(); rows.append(r)
             if stop.is_set(): break
         lap += 1
 elapsed = time.monotonic() - t0
+# Full fixed post-warmup window [t0+10 s, end of run], so boundary stalls cannot be excluded.
 warm = [r for r in rows if r["start"] - t0 > 10]
-span = (warm[-1]["finished"] - warm[0]["start"]) if len(warm) > 1 else 0
+span = elapsed - 10
 svc = sorted(r["service_ms"] for r in warm)
 q = lambda p: svc[min(len(svc)-1, int(p*len(svc)))] if svc else None
 summary = dict(scope="NON-COUNTED Phase A preflight", device="mps", frames=len(rows), elapsed_s=elapsed,
