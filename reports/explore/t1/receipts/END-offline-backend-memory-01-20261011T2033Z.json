@@ -1,0 +1,39 @@
+{
+  "anonymous_memory_alone_fits_total_with_floor": false,
+  "assembled_states_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+  "attempts_registered": false,
+  "backend_closed_normally": true,
+  "backend_count_required": 11,
+  "backend_rows": 1325,
+  "conservative_11_rss_bytes": 139148787712,
+  "coordinator_memory_authority_position": 7984,
+  "corpus_original_sha256": "282b08770d9a16b8e39b354551d62f934e7103dec769a00c511fb0b96260351e",
+  "cpus": [
+    61
+  ],
+  "decision": "BLOCK_A6_AND_PRODUCTION_REFERENCE_NO_ATTEMPT_REGISTERED",
+  "estimated_11_anon_bytes": 135364579328,
+  "host": "127x01",
+  "host_memory": {
+    "MemAvailable": 118564425728,
+    "MemTotal": 134897418240
+  },
+  "manifest_sha256": "ac1da9c6455e0bebe4f71eac3a74e1342cc245ceb3e9130b9b39f92076c16ae2",
+  "maxrss_bytes": 24305397760,
+  "memory": {
+    "RssAnon": 12305870848,
+    "VmHWM": 24305397760,
+    "VmRSS": 12649889792
+  },
+  "memory_floor_bytes": 25769803776,
+  "minimum_headroom_shortfall_bytes": 26236964864,
+  "nice": 19,
+  "outcomes_read": false,
+  "phase": "offline-one-backend-capacity",
+  "required_action": "E4 owner reviewed input storage/loading repair; maintain fixtures,all11slots,24GiBfloor,OP6budgets,exact qualification",
+  "required_minimum_total_bytes_including_floor": 161134383104,
+  "source_changed": false,
+  "states_changed": false,
+  "timing": false,
+  "utc": "2026-10-11T20:33:42Z"
+}
