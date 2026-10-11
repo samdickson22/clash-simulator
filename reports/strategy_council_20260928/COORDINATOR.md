@@ -2032,3 +2032,10 @@ Also on the hub, but with copies elsewhere:
     1. **Same bytes everywhere:** END reference, A6 smoke, pooling and every Mac session use the post-merge `measure_tiers.py` 6066228b only. END/A6 bundles are prepared only after the merge, and any reference or smoke prepared on 5d7de8e3 is void and re-run.
     2. **Python note:** validated on Python 3.8, while the Mac requires ≥3.12; `import math` doesn't depend on the version.
   - **Companion K4S rebind required:** the K4S Mac manifest (d89cab16) pins `measure_tiers.py` 5d7de8e3, and `verify_pinned` would refuse every K4S Mac session after the merge. An outcome-blind **K4S Amendment 1** re-pins it to 6066228b and changes nothing else; it gets Sol review. Worker launched. K4S fleet execution doesn't depend on this pin.
+- **17:55 UTC: PREREG-K4S FROZEN** at 17:45:00Z (391d2006; fill fab6e03f; record json 478068b6 / md 24623ff8).
+  - **Pins:** seed audit PASS with exit 0 at fbcd677d (Sol APPROVE on the audit fix and manifest delta); SD1 hash b8ce7b4c; supersession issued with a new exit-r3 pointer; Mac manifest d89cab16.
+  - **Independent Opus check:** APPROVE, all 32 SHAs recomputed.
+  - **Known and accepted:**
+    - one Mac test asserts the manifest is still a draft, so it fails by construction (94/95; coverage re-checked);
+    - one rebind-verify row lags because of the skeleton↔manifest self-reference.
+  - **K4S confirmatory RUN launched** (Opus runner, clasher-k4s-confirm-run-20261011-r1) on {03, 04}: fresh qualification, excluded smoke, then sealed reporting with 20-min health checks. END prep only, until I declare the K4S END window.
