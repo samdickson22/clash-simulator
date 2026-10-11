@@ -2120,3 +2120,12 @@ Also on the hub, but with copies elsewhere:
     1. **T1:** convert once on 01 against states.pkl 0addf7c0 (expect fingerprint c09142b9). Copy the container set byte-identically to 08. Regenerate the manifests, then repeat C3 and the memory check on both hosts. Then A6 → reference (08 first; extended C2) → pool → PC1–PC4.
     2. **Coordinator:** K4S Amendment 2 re-pins `tier_backend.py` and adds `state_rows.py` in the K4S Mac manifest, with Sol review.
     3. **Mac:** its own fixture is converted on Linux under its own fingerprint; the Mac stages it only and never converts.
+- **22:10 UTC: K4S 04 apt stop** at 22:06:15Z. The frozen OP-7 `ubuntu_apt_average_budget` guard fired on root apt-daily, and the supervisor exited. 04 has 186 complete; 22 lost (21:32 motd + 22:06 apt); 1,742 never started. 03 is healthy. Daily apt/motd timers will hit every remaining window.
+  - **Ruling: windowed replacement rounds** under the frozen T1 §3.2 mechanics:
+    1. **Per round:** a fresh job namespace; blind inventory; ledger replacements with cell-preserving seeds; never-started blocks unchanged.
+    2. **Dispatch size:** each round dispatches only as many blocks as finish, at the measured rate, **≥30 min before that host's next apt-daily / apt-daily-upgrade timer** (read via systemctl list-timers), so a round ends cleanly with no in-flight losses.
+    3. **Before each launch:** read both motd stamps. Launch only if neither can fire inside the window; if a stamp is stale, pre-trigger it with one login and wait for the check to exit.
+    4. **Qualification:** fresh launch-time qualification per new namespace is required. Smoke-pass carry-over is allowed only with byte-identical runtime and FROZEN-K4S (416f6e51) bindings.
+    5. **Authorization:** the same bindings as 20:04:59Z, with reporting_jobs plus this ruling cited.
+  - **03:** its current open-ended phase keeps running. Accept the ~11-block motd loss at ~00:58Z and the stop at the 08:47Z apt timer, then continue in windowed rounds. No pre-emptive STOP, since no drain mode exists.
+  - **Escalation threshold:** now 50% of either replacement cap (150 primary / 45 guard), or any stop that isn't apt/motd.
