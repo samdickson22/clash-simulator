@@ -1,0 +1,390 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-11T01:24:24Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r2",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+  "immutable_manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "prior_preserved_blocks": 711,
+  "prior_r1_failed_blocks": 22,
+  "prior_all_ledger_losses": 44,
+  "counts": {
+    "127x01": {
+      "durable_blocks": 444,
+      "guard_durable_blocks": 89,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "apt_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "prior_r1_preserved_blocks": 155,
+      "new_phase_durable_blocks": 165,
+      "primary_durable_blocks": 355
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 592,
+      "durable_blocks": 592,
+      "guard_durable_blocks": 116,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 592,
+      "ssh_flagged_blocks": 477,
+      "apt_flagged_blocks": 0,
+      "ssh_or_apt_flagged_blocks": 477,
+      "dbus_flagged_blocks": 592,
+      "idle_flagged_blocks": 0,
+      "prior_r1_preserved_blocks": 399,
+      "new_phase_durable_blocks": 160,
+      "primary_durable_blocks": 476
+    }
+  },
+  "total_durable_blocks": 1036,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-11T01:24:13Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 165,
+      "failed_blocks": 0,
+      "queued": 1005,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 11.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    },
+    "127x08": {
+      "utc": "2026-10-11T01:17:46Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 160,
+      "failed_blocks": 0,
+      "queued": 1010,
+      "inflight": 10,
+      "reason": "foreign_active",
+      "sealed": true,
+      "age_seconds": 398.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": true,
+      "supervisor-exit_receipt_present": true
+    }
+  },
+  "phase_exits": {
+    "127x08": {
+      "utc": "2026-10-11T01:17:48Z",
+      "host": "127x08",
+      "reason": "foreign_active",
+      "completed_blocks": 160,
+      "failed_blocks": 10,
+      "unstarted_blocks": 1010,
+      "receipt_sha256": "0e5b3b8844705b67ee742a1e1687fdd33f03eea9e122a83f71be780af3e0ccf8"
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-11T01:17:56Z",
+  "corpus_durability": "VERIFIED_READ_ONLY_20261010T202144Z",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "process_audits": [
+    {
+      "utc": "2026-10-11T01:22:29Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 590908,
+            "start_ticks": 146558724,
+            "pgid": 590908,
+            "uid": 3822945,
+            "cmdline_sha256": "d9885fbd564fb6ef5ffeb6cee13b1c10472d0d767b06e7e2559737381dc6142d",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 590814,
+            "start_ticks": 146558310,
+            "pgid": 590814,
+            "uid": 3822945,
+            "cmdline_sha256": "315f78f8294df792802247ecb10542f1d12ed5d4bbb977a3d8b3b6a5f5a0fe75",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    },
+    {
+      "utc": "2026-10-11T01:22:29Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": false,
+          "pid": 2676200
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "apt_helper_probe_01": {
+    "utc": "2026-10-11T01:23:48Z",
+    "host": "127x01",
+    "occurrence_file_present": false,
+    "census_occurrence_records": 0,
+    "helper_occurrences": 0,
+    "first_helper": null
+  },
+  "stopped_08_final_audit": {
+    "utc": "2026-10-11T01:23:49Z",
+    "host": "127x08",
+    "failed_workers": [
+      {
+        "pid": 2973898,
+        "pgid": 2973898,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1771",
+        "exit_sha256": "ca67b7a1c9196bae248744149bea8ce3588b6392309eaf7cd5680ce812c6b5c8",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2977933,
+        "pgid": 2977933,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "guard-0447",
+        "exit_sha256": "736142d8ba46a6ccaf4631d8df35b2abf888ff9801be7ba0ce833cfc205e0f60",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2978939,
+        "pgid": 2978939,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1793",
+        "exit_sha256": "30b41efd771d86c875e814050ccd6882407be2681c76831d370ea929fb179748",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2982838,
+        "pgid": 2982838,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1800",
+        "exit_sha256": "806a7b34151c19beee94f39e5c02da6c5a886fb8d927dafa23cf057f98a25b59",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2984063,
+        "pgid": 2984063,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1808",
+        "exit_sha256": "26663cf1beefe40980d3cff91844ad2e58eb42476add718bd023c45c6a9e5ae6",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2988154,
+        "pgid": 2988154,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1813",
+        "exit_sha256": "7c7c9e9665d2e8e0010a15984cf8b2c3435b5f717411f87ccaf891577084fd8d",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2989559,
+        "pgid": 2989559,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1816",
+        "exit_sha256": "3a2ab26452ae42485de4f25dfb3918cd2dd5c6faa05635292cfb4cc5783aaacb",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2991943,
+        "pgid": 2991943,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1835",
+        "exit_sha256": "39b5210685db81ca8a8695b3992f6cde334cbb41b18e1753314775d38768f6a5",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2992886,
+        "pgid": 2992886,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "guard-0459",
+        "exit_sha256": "09ab67c379052917a5cabac6183daa531202aa6c93fec32b95ebd7ad3db20a37",
+        "fragment_directory_retained": true
+      },
+      {
+        "pid": 2993343,
+        "pgid": 2993343,
+        "returncode": -15,
+        "complete": false,
+        "reason": "foreign_active",
+        "block": "primary-1840",
+        "exit_sha256": "bbe0faa2b72d3d91dfe3e15e6772da8fd5496bc5860eeb5dd29e5d7fd0b8b412",
+        "fragment_directory_retained": true
+      }
+    ],
+    "remaining_failed_group_members": [],
+    "final_exit_sha256": "0e5b3b8844705b67ee742a1e1687fdd33f03eea9e122a83f71be780af3e0ccf8",
+    "completed_blocks": 160,
+    "failed_blocks": 10,
+    "unstarted_blocks": 1010,
+    "acked_completed_blocks": 160,
+    "pending_complete_proofs": [],
+    "copy_proof_errors": [],
+    "apt_occurrence_records": 0,
+    "apt_helper_occurrences": 0,
+    "first_apt_helper": null
+  },
+  "socket_audit": {
+    "utc": "2026-10-11T01:24:09Z",
+    "host": "127x08",
+    "pid": 2995332,
+    "expected_start_ticks": 148086709,
+    "same_generation": true,
+    "exe_unreadable_errno": 13,
+    "fd_unreadable_errno": 13,
+    "established_inbound_ssh": [
+      {
+        "local": {
+          "ip": "129.65.221.18",
+          "port": 22
+        },
+        "peer": {
+          "ip": "129.65.221.15",
+          "port": 46160
+        },
+        "uid": 0,
+        "inode": 96057980
+      },
+      {
+        "local": {
+          "ip": "129.65.221.18",
+          "port": 22
+        },
+        "peer": {
+          "ip": "129.65.221.14",
+          "port": 41072
+        },
+        "uid": 0,
+        "inode": 95902009
+      }
+    ],
+    "parent_socket_join": "UNPROVEN: proc/fd unreadable; TCP rows alone do not bind exact parent"
+  },
+  "stop_receipt_sha256": "2df9a9a44bce40428f526cab266db77d77c9ebf6bb8bdc81056119c6f4ea4a62",
+  "stop_projection": {
+    "utc": "2026-10-11T01:17:48Z",
+    "reason": "foreign_active",
+    "foreign_active": [
+      {
+        "pid": 2995332,
+        "start_ticks": 148086709,
+        "uid": 3822945,
+        "cmd": "sshd: sdicks02@notty",
+        "cmdline_sha256": "4c329d019d1cfb5d89873f3250cffd8bb4f35800d95118f6a40e583450ae203d",
+        "ppid": 2995276,
+        "pgid": 2995276,
+        "exe": null,
+        "exe_evidence": "unavailable",
+        "ssh_connection_snapshot": null,
+        "ssh_parent_snapshot": null,
+        "ssh_family_parent_snapshot": null,
+        "copier_identity_snapshot": {
+          "T1_COPIER_PID": null,
+          "T1_COPIER_PGID": null
+        },
+        "cpu_ticks": 60,
+        "child_cpu_ticks": 41,
+        "cpu_seconds": 0.31
+      }
+    ],
+    "ssh_family_sample": {
+      "cpu_ticks": 0,
+      "seconds": 2.6378572769463062,
+      "core_fraction": 0,
+      "source_proven_cpu_ticks": 0,
+      "idle_cpu_ticks": 0,
+      "stop": false
+    },
+    "ubuntu_apt_sample": {
+      "cpu_ticks": 0,
+      "seconds": 2.6378572769463062,
+      "core_fraction": 0,
+      "stop": false
+    }
+  },
+  "coordinator_read_through_position": 7130,
+  "checkpoint_utc": "2026-10-11T01:24:52Z",
+  "reporting_complete": false,
+  "replacements_required": true,
+  "replacement_dispatch_generated": false,
+  "live_runtime_changed": false,
+  "root_foreign_edits_preserved": true,
+  "schedule_policy": "Existing 20-minute bound continuation; no new watcher or schedule",
+  "prior_inventory_policy": "Original and replacement-r1 phases inventoried once; newly stopped r2 not yet inventoried",
+  "prior_preserved_breakdown": {
+    "original": 157,
+    "replacement_r1": 554
+  },
+  "apt_first_helper_policy": "Notify coordinator immediately upon first real helper with four UID fields",
+  "repair_status": "WAIT_COORDINATOR_A2_TRANSPORT_RETIREMENT_THEN_BALANCED_OPTION_B",
+  "stopped_progress_policy": "08 final exit governs:160complete/10failed/1010unstarted; stale progress failed0/inflight10 superseded",
+  "foreign_source_status": "UNKNOWN: TCP04:41072 candidate is not an exact parent/socket proof",
+  "one_host_dispatch_forbidden": true,
+  "coordinator_recovery_ruling": {
+    "commit": "9090b365",
+    "message_position": 7139,
+    "message_updated_at": "2026-10-11T01:24:51.956Z",
+    "recorded_utc": "2026-10-11T01:25:31Z",
+    "01": "Continue unchanged r2 remainder",
+    "08": "Remain stopped until coordinator declares A2 transports retired",
+    "guard": "No guard change or seed",
+    "health": "01-only bounded live checks;08 final durable exits/proofs retained",
+    "recovery": "Coordinated01stop if still running,deadgroups/finalcopies,blind inventory only newly stopped r2 phases,committed balanced01/08 remainder;no one-host dispatch"
+  },
+  "future_stop_progress_policy": "08 final exit retained; do not demand fresh08progress or open new08health sessions before coordinator retirement declaration"
+}
