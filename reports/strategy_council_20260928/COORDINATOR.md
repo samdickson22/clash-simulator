@@ -2046,3 +2046,9 @@ Also on the hub, but with copies elsewhere:
   - OA-1 and the B2 manifest are recorded as a K4S freeze addendum before any reporting game.
 - **18:22 UTC: K4S 03 admission ruling: (a) frozen idle-service pin.** Perception's v4 validation cache service on 03 (PID 2180947, idle at 0.0% CPU since 2026-10-09 21:39Z) is admitted using the frozen `idle_services.py` pin (SERVICE_PIDS 127x03 = 2180947, per the T1 ruling of 2026-10-10 14:35Z, which plan.json's idle_service_exception covers). Any block where it exceeds 1% of a core or spawns a child is flagged and disclosed, not stopped. Don't touch the service. If its identity (PID/start/cmd) differs from the pin at admission, 03 is not admitted; report it.
   - **Status:** K4S launch-time qualification PASS on 03 (f985a32c) and 04 (a11c978c), 28/28 each. B2 manifest dry run 426fe4c5. OA-1 live copier test passed; a robustness fix is pending, then Sol review.
+- **18:41 UTC: K4S Amendment 1 COMMITTED** (45f32c0f; Sol APPROVE r3; record md e01f11b6 / json 79b92686). The K4S Mac manifest re-pins `measure_tiers.py` to 6066228b: d89cab16 → **8bb20a75**. Only that pin and its required copy differ. Mac suite 95/96, with the single known by-construction failure; END tests 103/103.
+  - **Binding:**
+    - **Fleet reporting:** FROZEN-K4S.json and the 03/04 runtime keep the 391d2006 bytes (manifest d89cab16).
+    - **END and Mac sessions:** they name 8bb20a75 and run from the amended tree, in a separate staged END tree. No END declaration may ever name d89cab16.
+    - **Disclosure:** the r1 Sol reviewer saw X4S-2 numbers already used for c\* (mechanical re-pin, no effect); disclosed in the record.
+  - Relayed to the K4S runner.
