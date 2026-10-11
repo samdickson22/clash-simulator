@@ -1,0 +1,8 @@
+{
+ "127x04": {
+  "failed": 11,
+  "stopreason": "\"utc\": \"2026-10-11T21:32:49Z\" \"reason\": \"foreign_compute\"",
+  "reported": "2026-10-11T21:39Z coordinator msg k4s-run-r1-guardstop-04-20261011T2132Z",
+  "ruling": "2026-10-11T21:39Z accept+disclose (11105b3f)"
+ }
+}

@@ -11,6 +11,8 @@ JOBS={'127x03':'/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1','127x04':'
 EXPECTED={'reporting':1950}
 SSH=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10']
 L=Path('/mpac/sdicks02/k4s-runner/run-r1')
+KF=L/'health'/'acknowledged-events.json'
+KNOWN=json.loads(KF.read_text()) if KF.exists() else {}   # events already reported to the coordinator
 phase=sys.argv[1] if len(sys.argv)>1 else 'reporting';tag=sys.argv[2] if len(sys.argv)>2 else 'checkpoint'
 assert re.fullmatch(r'(smoke|reporting|replacement-r[0-9]+)',phase),'phase'
 assert re.fullmatch(r'[A-Za-z0-9_.-]{1,40}',tag),'tag'
@@ -22,7 +24,8 @@ echo "PROGRESS $(tr -d '\\n' < "$J/progress.json" 2>/dev/null)"
 echo "COMPLETE $(find "$J/$P" -mindepth 2 -maxdepth 2 -name complete.json 2>/dev/null | wc -l)"
 echo "HUBACK $(find "$J/$P" -mindepth 2 -maxdepth 2 -name hub-ack.json 2>/dev/null | wc -l)"
 echo "EXITS $(ls "$J/$P/exits" 2>/dev/null | wc -l) $(grep -l '"complete": false' "$J/$P"/exits/*.json 2>/dev/null | wc -l)"
-test -e "$J/$P/stop-reason.json" && echo "STOPREASON $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"reason": *"[^"]*"' | head -1)"
+echo "LOSTPOP $(grep -l '"complete": false' "$J/$P"/exits/primary-*.json 2>/dev/null | wc -l) $(grep -l '"complete": false' "$J/$P"/exits/guard-*.json 2>/dev/null | wc -l)"
+test -e "$J/$P/stop-reason.json" && echo "STOPREASON $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"utc": *"[^"]*"' | head -1) $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"reason": *"[^"]*"' | head -1)"
 test -e "$J/$P/supervisor-exit.json" && echo "SUPEXIT $(tr -d '\\n' < "$J/$P/supervisor-exit.json" | grep -o '"reason": *[^,]*' | head -1)"
 echo "SRCRECEIPT $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"pid": *[0-9]*' | head -1) $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"active": *[a-z]*')"
 S=$(grep -o '"supervisor_pid": *[0-9]*' "$J/$P/launch.json" 2>/dev/null | grep -o '[0-9]*$')
@@ -46,6 +49,7 @@ def local_identity(pid):
 
 utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip();now=datetime.datetime.strptime(utc,'%Y-%m-%dT%H:%M:%SZ')
 def age(s):return (now-datetime.datetime.strptime(s,'%Y-%m-%dT%H:%M:%SZ')).total_seconds()
+LOST=[0,0]
 r=dict(schema='clasher.k4s.run-health.v2',study='PREREG-K4S',sealed=True,outcomes_read=False,utc=utc,phase=phase,tag=tag,hosts={});anom=[];parts=[]
 for h,J in JOBS.items():
  x={};r['hosts'][h]=x
@@ -57,8 +61,10 @@ for h,J in JOBS.items():
   prog=json.loads(y['PROGRESS']);x['progress']={k:prog.get(k) for k in ('utc','phase','complete_local_blocks','failed_blocks','queued','inflight','reason','memavailable_GiB')}
   if who:anom.append(f'{h}: console users {who}')
   if any(stopf):anom.append(f'{h}: STOP file present {stopf}')
-  if failed:anom.append(f'{h}: failed blocks {failed}')
-  if y.get('STOPREASON'):anom.append(f'{h}: STOP {y["STOPREASON"]}')
+  lp,lg=ints(y['LOSTPOP'],2);x['lost']=dict(primary=lp,guard=lg);LOST[0]+=lp;LOST[1]+=lg
+  known=KNOWN.get(h,{})
+  if failed>known.get('failed',0):anom.append(f'{h}: failed blocks {failed} (acknowledged {known.get("failed",0)})')
+  if y.get('STOPREASON') and y['STOPREASON']!=known.get('stopreason'):anom.append(f'{h}: STOP {y["STOPREASON"]}')
   if prog.get('reason'):anom.append(f'{h}: progress reason {prog["reason"]}')
   if (prog.get('console') or {}).get('positive'):anom.append(f'{h}: console positive')
   exp=EXPECTED.get(phase)
@@ -94,9 +100,13 @@ for h,J in JOBS.items():
   if ch.get('error'):anom.append(f'{h}: copier error {str(ch["error"])[:120]}')
   if ch.get('block_errors'):anom.append(f'{h}: copier block errors {list(ch["block_errors"])[:5]}')
   if comp-ack>15:anom.append(f'{h}: ACK lag {comp-ack}')
-  parts.append(f"{h} complete {comp} acked {ack} hub {durable}/{returned} failed {failed} inflight {prog.get('inflight')} queued {prog.get('queued')} reason {prog.get('reason')} who {who} flags[dbus {flags['dbus']} ssh {flags['ssh']} apt {flags['apt']} idle {flags['idle']}]")
+  parts.append(f"{h} complete {comp} acked {ack} hub {durable}/{returned} failed {failed} stopevent {y.get('STOPREASON') or '-'} inflight {prog.get('inflight')} queued {prog.get('queued')} reason {prog.get('reason')} who {who} flags[dbus {flags['dbus']} ssh {flags['ssh']} apt {flags['apt']} idle {flags['idle']}]")
  except Exception as e:   # unknown data is never treated as healthy
   anom.append(f'{h}: health check failed {type(e).__name__}: {e}');parts.append(f'{h} UNKNOWN')
+# coordinator 21:39Z (11105b3f): escalate as cumulative lost blocks approach 10% of a replacement cap (30 primary / 9 guard)
+if LOST[0]>=24 or LOST[1]>=7:anom.append(f'lost blocks approaching 10% of a replacement cap: primary {LOST[0]}/30, guard {LOST[1]}/9')
+parts.append(f'lost primary {LOST[0]} guard {LOST[1]}')
+r['lost_total']=dict(primary=LOST[0],guard=LOST[1])
 r['anomalies']=anom;r['summary']='; '.join(parts)
 out=L/'health'/f'{phase}-{utc.replace(":","").replace("-","")}.json';out.parent.mkdir(exist_ok=True);out.write_text(json.dumps(r,indent=1)+'\n')
 print(json.dumps(dict(utc=utc,out=str(out),summary=r['summary'],anomalies=anom)))
