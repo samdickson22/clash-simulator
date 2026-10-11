@@ -1,0 +1,35 @@
+{
+  "schema": "clasher.t1.end.pre-authorized-continuation.v1",
+  "received_at_actual_utc": "2026-10-11T22:24:25Z",
+  "coordinator_instruction_label": "22:24Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "coordinator_read_through": 8188,
+  "accepted_preparation_commit": "07ed3f6d4352f9dd241ff2d2e61e54f1772bd861",
+  "additional_coordinator_confirmation_required": false,
+  "activation_requires": [
+    "Both actual apt-daily runs on01 and08 have occurred, and every apt or maintenance process on both hosts has exited.",
+    "Fresh systemctl list-timers shows at least7200seconds clearance on each host for the entire attempt window.",
+    "Both motd stamp paths are fresh and cannot trigger during the window; if stale, one ordinary login before launch, exact exit and refreshed-stamp proof."
+  ],
+  "sequence": [
+    "A6 smoke outside attempt roots",
+    "08 reference",
+    "01 reference",
+    "pool",
+    "commit",
+    "PC1-PC4"
+  ],
+  "required_independent_A6_result_review_retained": true,
+  "launch_receipts_require_all_readings": true,
+  "on_guard_stop_or_refusal": "Stop and report immediately; do not retry without coordinator ruling.",
+  "budgets_source_identities_unchanged": true,
+  "timing_started": false,
+  "attempts_registered": false,
+  "outcomes_sealed": true,
+  "hub_mirror": "coordinator-paused",
+  "same_timer": {
+    "enabled": true,
+    "every_ms": 1200000,
+    "next_run_at": "2026-10-11T22:41:51.786Z"
+  }
+}
