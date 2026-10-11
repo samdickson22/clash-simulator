@@ -1,0 +1,70 @@
+{
+  "all32_verbatim_files": true,
+  "host_checks": [
+    {
+      "full_occupancy_observations": 29170,
+      "host": "127x01",
+      "status": "PASS"
+    },
+    {
+      "full_occupancy_observations": 14646,
+      "host": "127x08",
+      "status": "PASS"
+    }
+  ],
+  "numeric_clock_values_disclosed": false,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "phase_row_counts": [
+    {
+      "census_rows": 2601,
+      "host": "127x01",
+      "mhz_rows": 2601,
+      "phase": "replacement-r1"
+    },
+    {
+      "census_rows": 17146,
+      "host": "127x01",
+      "mhz_rows": 17146,
+      "phase": "replacement-r2"
+    },
+    {
+      "census_rows": 7653,
+      "host": "127x01",
+      "mhz_rows": 7653,
+      "phase": "replacement-r3"
+    },
+    {
+      "census_rows": 2123,
+      "host": "127x01",
+      "mhz_rows": 2123,
+      "phase": "reporting"
+    },
+    {
+      "census_rows": 5640,
+      "host": "127x08",
+      "mhz_rows": 5640,
+      "phase": "replacement-r1"
+    },
+    {
+      "census_rows": 2105,
+      "host": "127x08",
+      "mhz_rows": 2105,
+      "phase": "replacement-r2"
+    },
+    {
+      "census_rows": 6500,
+      "host": "127x08",
+      "mhz_rows": 6500,
+      "phase": "replacement-r3"
+    },
+    {
+      "census_rows": 549,
+      "host": "127x08",
+      "mhz_rows": 549,
+      "phase": "reporting"
+    }
+  ],
+  "schema": "clasher.t1.END-phase-clock-join.health.v1",
+  "utc": "2026-10-11T20:23:09Z"
+}

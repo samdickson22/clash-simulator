@@ -1,0 +1,74 @@
+{
+  "all32_phase_files_present": true,
+  "files": [
+    {
+      "bytes": 890888,
+      "host": "127x08",
+      "name": "mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/reporting/mhz.jsonl",
+      "phase": "reporting",
+      "sha256": "e7865989a97abc466df1264ce62ced39953c0c288aedfa41e090ff3b09f13338",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting/mhz.jsonl",
+      "verbatim": true
+    },
+    {
+      "bytes": 194191,
+      "host": "127x08",
+      "name": "census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/reporting/census.jsonl",
+      "phase": "reporting",
+      "sha256": "9915db03b54117546ea03e3f92c461e8b8652be4768b501f86c4f4616b8543a5",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting/census.jsonl",
+      "verbatim": true
+    },
+    {
+      "bytes": 3415930,
+      "host": "127x08",
+      "name": "mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r2/mhz.jsonl",
+      "phase": "replacement-r2",
+      "sha256": "96fa2ad41f5db304b9fc90093da640a54ca9046a8a735e708312d57facf88680",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2/mhz.jsonl",
+      "verbatim": true
+    },
+    {
+      "bytes": 751679,
+      "host": "127x08",
+      "name": "census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r2/census.jsonl",
+      "phase": "replacement-r2",
+      "sha256": "d98b99aa93e446feeae18db2372601cbd74f0845aa3e963655542736eff47d5b",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2/census.jsonl",
+      "verbatim": true
+    },
+    {
+      "bytes": 10545601,
+      "host": "127x08",
+      "name": "mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r3/mhz.jsonl",
+      "phase": "replacement-r3",
+      "sha256": "16938741b2580e18e5aa214c17d3e7bcf4d016c8f02c19088bc3a9e73f544f9d",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3/mhz.jsonl",
+      "verbatim": true
+    },
+    {
+      "bytes": 2320502,
+      "host": "127x08",
+      "name": "census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r3/census.jsonl",
+      "phase": "replacement-r3",
+      "sha256": "107c9e67750a2a7fa57e580d0c2ff1b569d07aa6b521cbc0a4e62c28dd658f82",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3/census.jsonl",
+      "verbatim": true
+    }
+  ],
+  "gate_commit": "56a5fd9b",
+  "originals_unchanged": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "reference_attempts_started": false,
+  "retirement_commit": "4292e520550b4c19feaf305856508fd0a9588d9f",
+  "retirement_receipt_sha256": "46ceee2466de551f9f338956c5fed9e5d218e483c9a811b251ab8874afccdeff",
+  "schema": "clasher.t1.END08-phase-retrieval.health.v1",
+  "utc": "2026-10-11T20:21:52Z"
+}
