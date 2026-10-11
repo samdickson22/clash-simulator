@@ -1,0 +1,184 @@
+{
+  "utc": "2026-10-11T01:43:58Z",
+  "note": "EXCLUDED smoke, partial (6 of 8 blocks at reduction time); outcomes deliberately omitted",
+  "paired_seeds": 6,
+  "checks": {
+    "decisions": 6918,
+    "games": 54
+  },
+  "arms": {
+    "K0c-200": {
+      "cutoff_pct": 69.41056910569105,
+      "student_default_pct": 0.0,
+      "fallback_pct": 32.6219512195122,
+      "overrun_pct": 0.1016260162601626,
+      "wall_ms": {
+        "p50": 192.49624002259225,
+        "p95": 192.7066447562538,
+        "p99": 193.05148012936115,
+        "max": 208.21072184480727
+      },
+      "decisions": 984,
+      "cut_returns_past_deadline_plus_reserve": 1,
+      "preparation_cutoffs": {
+        "scoring_or_none": 984
+      },
+      "game_cpu_hours": 0.07632371613388889
+    },
+    "K4-200": {
+      "cutoff_pct": 1.7241379310344827,
+      "student_default_pct": 0.0,
+      "fallback_pct": 0.7957559681697612,
+      "overrun_pct": 0.3978779840848806,
+      "wall_ms": {
+        "p50": 113.41117799747735,
+        "p95": 166.3037808961235,
+        "p99": 192.66303193289787,
+        "max": 214.038894046098
+      },
+      "decisions": 754,
+      "cut_returns_past_deadline_plus_reserve": 1,
+      "preparation_cutoffs": {
+        "scoring_or_none": 753,
+        "sample": 1
+      },
+      "game_cpu_hours": 0.085900006695
+    },
+    "K4S-200": {
+      "cutoff_pct": 1.8867924528301887,
+      "student_default_pct": 0.12578616352201258,
+      "fallback_pct": 0.6289308176100629,
+      "overrun_pct": 0.25157232704402516,
+      "wall_ms": {
+        "p50": 116.15504208020866,
+        "p95": 168.4802967356518,
+        "p99": 192.7695141127333,
+        "max": 206.5275488421321
+      },
+      "decisions": 795,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 793,
+        "sample": 1,
+        "belief": 1
+      },
+      "game_cpu_hours": 0.09363325124694445
+    },
+    "K4-160": {
+      "cutoff_pct": 5.317577548005908,
+      "student_default_pct": 0.0,
+      "fallback_pct": 0.8862629246676514,
+      "overrun_pct": 0.0,
+      "wall_ms": {
+        "p50": 109.51034096069634,
+        "p95": 152.06695036031306,
+        "p99": 152.81279224902391,
+        "max": 154.52417195774615
+      },
+      "decisions": 677,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 672,
+        "belief": 5
+      },
+      "game_cpu_hours": 0.07381840190583336
+    },
+    "K4S-160": {
+      "cutoff_pct": 8.192457737321197,
+      "student_default_pct": 0.7802340702210663,
+      "fallback_pct": 0.7802340702210663,
+      "overrun_pct": 0.0,
+      "wall_ms": {
+        "p50": 116.24715500511229,
+        "p95": 152.77179339900613,
+        "p99": 152.9617554973811,
+        "max": 153.81662384606898
+      },
+      "decisions": 769,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 764,
+        "belief": 5
+      },
+      "game_cpu_hours": 0.0877942314697222
+    },
+    "K4-140": {
+      "cutoff_pct": 27.058823529411764,
+      "student_default_pct": 0.0,
+      "fallback_pct": 1.1764705882352942,
+      "overrun_pct": 0.0,
+      "wall_ms": {
+        "p50": 116.59776244778186,
+        "p95": 132.80221946770325,
+        "p99": 132.9598498926498,
+        "max": 133.0400330480188
+      },
+      "decisions": 680,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 674,
+        "belief": 6
+      },
+      "game_cpu_hours": 0.07264383773833334
+    },
+    "K4S-140": {
+      "cutoff_pct": 21.515151515151516,
+      "student_default_pct": 4.393939393939394,
+      "fallback_pct": 1.0606060606060606,
+      "overrun_pct": 0.0,
+      "wall_ms": {
+        "p50": 109.55366934649646,
+        "p95": 132.88751848740503,
+        "p99": 132.97897898126394,
+        "max": 133.0411529634148
+      },
+      "decisions": 660,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 654,
+        "belief": 6
+      },
+      "game_cpu_hours": 0.07057718338305558
+    },
+    "K4-120": {
+      "cutoff_pct": 82.90094339622641,
+      "student_default_pct": 0.0,
+      "fallback_pct": 1.4150943396226414,
+      "overrun_pct": 0.1179245283018868,
+      "wall_ms": {
+        "p50": 112.6291846157983,
+        "p95": 112.87106787785888,
+        "p99": 113.00133653217927,
+        "max": 121.45868106745183
+      },
+      "decisions": 848,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 840,
+        "belief": 6,
+        "sample": 2
+      },
+      "game_cpu_hours": 0.07422907832333335
+    },
+    "K4S-120": {
+      "cutoff_pct": 54.86018641810919,
+      "student_default_pct": 18.37549933422104,
+      "fallback_pct": 1.5978695073235685,
+      "overrun_pct": 0.2663115845539281,
+      "wall_ms": {
+        "p50": 112.48986702412367,
+        "p95": 112.99668403808028,
+        "p99": 113.10258752200752,
+        "max": 126.49846612475812
+      },
+      "decisions": 751,
+      "cut_returns_past_deadline_plus_reserve": 0,
+      "preparation_cutoffs": {
+        "scoring_or_none": 742,
+        "belief": 6,
+        "sample": 3
+      },
+      "game_cpu_hours": 0.07702865968638889
+    }
+  }
+}

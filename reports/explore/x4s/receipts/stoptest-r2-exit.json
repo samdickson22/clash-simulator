@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-11T01:50:17Z",
+  "host": "127x08",
+  "returncode": -15,
+  "reason": "owned_STOP",
+  "remaining_group_pids": [],
+  "min_memavailable_GiB": 119.02280807495117,
+  "max_owned_pss_GiB": 2.7940025329589844,
+  "wall_seconds": 277.7276394779328,
+  "children_cpu_seconds": 16.890878,
+  "parent_cpu_seconds": 3.813983,
+  "complete_blocks": 1
+}

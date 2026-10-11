@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-11T01:48:27Z",
+  "host": "127x08",
+  "purpose": "no-deadline K4 vs K4S in-game equality (qualification seeds 4503604827370496+[0,2))",
+  "pairs": [
+    {
+      "index": 0,
+      "seed": 4503604827370496,
+      "K4_command_sha256": "af630cf0d2a2931068358283a78f75ebbf4987eec51e05a5d407246fe4b3de29",
+      "K4S_command_sha256": "af630cf0d2a2931068358283a78f75ebbf4987eec51e05a5d407246fe4b3de29",
+      "equal": true,
+      "K4S_student_forwards": 703,
+      "K4S_polls": {
+        "0": 703,
+        "1": 703
+      }
+    },
+    {
+      "index": 1,
+      "seed": 4503604827370497,
+      "K4_command_sha256": "d530982b908af7b340969fb784807a06085f0c13b253988c18594ffe10b3f30f",
+      "K4S_command_sha256": "d530982b908af7b340969fb784807a06085f0c13b253988c18594ffe10b3f30f",
+      "equal": true,
+      "K4S_student_forwards": 703,
+      "K4S_polls": {
+        "0": 703,
+        "1": 703
+      }
+    }
+  ],
+  "all_equal": true,
+  "supervisor_exit": {
+    "utc": "2026-10-11T01:36:52Z",
+    "host": "127x08",
+    "returncode": 0,
+    "reason": null,
+    "remaining_group_pids": [],
+    "min_memavailable_GiB": 120.66930770874023,
+    "max_owned_pss_GiB": 1.1733207702636719,
+    "wall_seconds": 82.63807336310856,
+    "children_cpu_seconds": 195.388185,
+    "parent_cpu_seconds": 0.763028,
+    "complete_blocks": 2
+  }
+}

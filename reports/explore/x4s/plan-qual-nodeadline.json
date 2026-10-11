@@ -1,0 +1,162 @@
+{
+  "purpose": "X4S qualification only: no-deadline K4 vs K4S command-hash equality",
+  "status": "exploration only; NEVER ADOPTABLE; R3a remains killed under its original Stage 1 gates",
+  "paired_seeds": 600,
+  "arms": {
+    "K4-none": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete"
+    },
+    "K4S-none": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete"
+    }
+  },
+  "budgets_ms": {
+    "200": "~1.0x fleet",
+    "160": "~0.8x",
+    "140": "~0.7x",
+    "120": "~0.6x"
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503604807370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503604817370496,
+      "count": 8
+    },
+    "qualification": {
+      "base": 4503604827370496,
+      "count": 8
+    }
+  },
+  "seed_reservation": {
+    "block_start": 4503604807370496,
+    "block_stop_exclusive": 4503604907370496,
+    "note": "2^52+[5.18e9,5.28e9); repo-wide scan found no bank in 2^52+[3.89e9,1.029e10)"
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101104,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "policy": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s-20261011/inputs/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "student": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s-20261011/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "threshold": 0.5005528330802917,
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "status": "killed in R3 Stage 1; NEVER ADOPTABLE; used only as an exploration cutoff default"
+  },
+  "compute": {
+    "hosts": {
+      "127x03": {
+        "physical_cpus": "0-59",
+        "supervisor_cpu": 62
+      },
+      "127x08": {
+        "physical_cpus": "0-59",
+        "supervisor_cpu": 62
+      }
+    },
+    "slots": "12 disjoint 5-physical-core slots per host (cores 0-59); SMT siblings 64-127 not assigned; 10 slots if a console user is present",
+    "game_physical_cores": {
+      "K0c-200": 1,
+      "K4-200": 5,
+      "K4S-200": 5,
+      "K4-160": 5,
+      "K4S-160": 5,
+      "K4-140": 5,
+      "K4S-140": 5,
+      "K4-120": 5,
+      "K4S-120": 5
+    },
+    "nice": 19,
+    "scheduler": "SCHED_OTHER",
+    "max_threads_per_host": 96,
+    "max_memory_GiB_per_host": 60,
+    "cuda": "disabled (CPU inference, as S1)",
+    "cache_root": "/mpac/sdicks02/jobs/clasher/x4s-20261011/cache"
+  },
+  "ordering": {
+    "blocks": "all nine arms of a seed consecutively on one 5-core slot, rotated by index; K0c uses the slot first core",
+    "host_split": "indices with (i//50)%2==0 -> 127x03, else 127x08; each host runs its indices in increasing order; unstarted indices of a stopped host may be reassigned to the other host in a new output directory",
+    "interrupted": "games of an incomplete block are excluded; that seed is retired, never re-run"
+  },
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  },
+  "decision_rules": {
+    "primary": "descriptive with paired 95% CIs; no adoption decision is possible",
+    "contrasts": [
+      "K4S-b minus K4-b for b in 200/160/140/120",
+      "K4-b minus K4-200",
+      "K4S-b minus K4-200",
+      "K4-b minus K0c-200",
+      "K4S-b minus K0c-200"
+    ],
+    "rescue_reading": "K4S-b rescues K4 at budget b if upper95CI(K4S-b minus K4-b)<0; holds-up if upper95CI(K4S-b minus K4-200)<=+5pp (S1 margin)"
+  },
+  "qualification": {
+    "unit": "injected-clock tests of the S-default rule (test_sdefault.py) plus inherited S1 anchor/belief/lateness tests",
+    "corpus": "125 frozen states: K4 and K4S with no deadline reproduce the frozen screen8 action/candidates/scores; K4S with zero budget and an injected cutoff after WAIT return the R3a action",
+    "games": "no-deadline K4 vs K4S games on qualification seeds have identical command hashes",
+    "stop": "STOP file on each host stops the supervisor and its process group; tested on smoke"
+  },
+  "source_reference": {
+    "S1_freeze": "dfefec9f74b8e9af6709051c218680a527f573bb",
+    "S1_plan_sha256": "057a30800fb50a2ebe22fe43e690c0a8a3f1b74cb195fbaf0c2cf52a3ae8bd6e",
+    "K_freeze": "0f2a9ec8",
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "runtime_base": "127x03:/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/{repo,native,native-source} + git reports/explore/{s1,x4s} overlay + exit-r3-20261010-r2/student-source"
+  }
+}

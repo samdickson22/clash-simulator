@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-11T01:46:50Z",
+  "host": "127x03",
+  "states": 125,
+  "counts": {
+    "K4_frozen": 125,
+    "K4S_frozen": 125,
+    "K4S_equals_K4": 125,
+    "zero_budget_student": 125,
+    "zero_budget_student_play": 31,
+    "injected_cutoffs": 342,
+    "injected_student_default": 124,
+    "injected_after_complete_wait": 124,
+    "injected_completed_play_kept": 0,
+    "root_immutable": 125
+  },
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "student_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+  "corpus_sha256": {
+    "states-ready.pkl": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "symmetric-screen-samples.json": "86ecbb600b712d0fab05c2022e8d95d1dfb47a9be531ed4b8722a1acdcfd2b7d"
+  },
+  "label": "X4S exploration, NEVER ADOPTABLE",
+  "injected_by_clock_read_budget": {
+    "8": {
+      "hit": 125,
+      "student_default": 31
+    },
+    "16": {
+      "hit": 125,
+      "student_default": 31
+    },
+    "40": {
+      "hit": 46,
+      "student_default": 31
+    },
+    "80": {
+      "hit": 46,
+      "student_default": 31
+    },
+    "160": {
+      "hit": 0,
+      "student_default": 0
+    },
+    "400": {
+      "hit": 0,
+      "student_default": 0
+    },
+    "800": {
+      "hit": 0,
+      "student_default": 0
+    }
+  },
+  "coverage_note": "completed-play-kept and student-WAIT-keeps-frozen paths are covered by test_sdefault.py; corpus clock budgets 8..800 reads either cut before any play completed or completed the full search"
+}
