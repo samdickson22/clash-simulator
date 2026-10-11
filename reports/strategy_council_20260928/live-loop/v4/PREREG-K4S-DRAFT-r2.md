@@ -1,6 +1,6 @@
 # PREREG-K4S (DRAFT r2, not frozen): speed-gated K4 + student-default Mac tier
 
-- **What this is.** Draft r2, 2026-10-11T09:20Z, by the design worker (Opus, 127x05) for coordinator `0523ae6f`.
+- **What this is.** Draft r2, 2026-10-11T09:11Z, by the design worker (Opus, 127x05) for coordinator `0523ae6f`.
   It revises r1 (`68a15c6a`, sha256 `caa52ad0…`) after the independent review `PREREG-K4S-REVIEW-r1.md` (verdict
   REVISE: 5 MAJOR, 8 MINOR, 1 NIT). Each finding's disposition is in `PREREG-K4S-RESPONSE-r1.md`.
 - **What changed.** The games, arms, seeds and n are unchanged. The decision layer (§1.3–1.5), the release rule

@@ -1,6 +1,6 @@
 # PREREG-K4S: response to REVIEW-r1
 
-- **Author:** design worker (Opus, 127x05), 2026-10-11T09:25Z.
+- **Author:** design worker (Opus, 127x05), 2026-10-11T09:11Z.
 - **Review:** `PREREG-K4S-REVIEW-r1.md`, an independent Claude Opus 5.5 reviewer at high effort. Verdict
   **REVISE**: 5 MAJOR, 8 MINOR, 1 NIT. The reviewer judged the games and statistics sound and the decision layer
   defective.
