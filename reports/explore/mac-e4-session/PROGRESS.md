@@ -128,3 +128,25 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   commits. K4-states.pkl will be staged later with a SHA check.
 - **HOLD:** no Mac timing until the coordinator confirms Amendment 3 plus the pooled reference, and names the END
   bundle and registration packet.
+
+### 2026-10-11T20:51:21Z: coordinator ~20:53Z rulings; HOLD until go
+
+- **(a)** The Mac may use T1's import-path-only addition
+  `PYTHONPATH += runtime/imitation/evaluation/runtime_dependencies:runtime/reports/strategy_council_20260928/imitation`.
+  It must resolve only within the qualified bytes, with no other paths, and the exact environment goes in the
+  session receipt. Drop it, and say so, if Amendment 3 removes the need.
+- **(b)** The libm ULP risk is accepted as disclosed. If D1, D1b or D5 exactness fails, stop and report; there is no
+  workaround.
+- **(c)** When the END bundle is named: diff runtime content and measurement files, and verify the 05 copy against 01
+  before staging.
+- **Coming with Amendment 3:**
+  - new `tier_backend.py` and `prepare_bundle.py`, plus `state_rows.py` and `convert_states.py`;
+  - `states.pkl` unchanged at 0addf7c0, plus new `states-rows.json` and `.bin`;
+  - K4S Amendment 2 re-pins `tier_backend.py` in the K4S Mac manifest.
+- **When Amendment 3 lands, the Mac runtime must be re-staged:**
+  1. a new runtime from the Amendment 3 commit, with the same 33 + E1 overlays, then `verify_runtime_staging.py`;
+  2. re-run `test_measure_tiers` and the new tests on Mac Python 3.12;
+  3. a fresh scratch build only if the Rust changes (the counted build is redone by build_tiers.sh anyway, bound to
+     the new tiers-pins SHA).
+
+  The current scratch native 0e7213ab is not reused for counting.
