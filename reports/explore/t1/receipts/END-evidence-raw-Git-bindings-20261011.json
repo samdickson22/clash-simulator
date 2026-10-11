@@ -1,0 +1,249 @@
+{
+  "blind_ledger": {
+    "commit": "bc3730c4dcfa844df906fb4d888a4735b53ad1b1",
+    "path": "end-sources/blind-ledger-final-op7-r3.json",
+    "repository_path": "reports/explore/t1/receipts/blind-ledger-final-op7-r3.json",
+    "sha256": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa"
+  },
+  "completion": {
+    "commit": "d651b52c1a442072055ae482267531af8018ef25",
+    "path": "end-sources/reporting-completion-END-op7-r3-20261011.json",
+    "repository_path": "reports/explore/t1/receipts/reporting-completion-END-op7-r3-20261011.json",
+    "sha256": "4dd191b644ceb45f2530d5d9d15aea15dc052b8cfac8b22c796308dbf3f172eb"
+  },
+  "counted_inventory": {
+    "commit": "d651b52c1a442072055ae482267531af8018ef25",
+    "path": "end-sources/counted-inventory-END-op7-r3.json",
+    "repository_path": "reports/explore/t1/receipts/counted-inventory-END-op7-r3.json",
+    "sha256": "6f6f000781d5d345846a33331d8fbc864fc679971001e23b4c7355505165386f"
+  },
+  "kind": "counted-reporting",
+  "phases": [
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/reporting/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/reporting/census.jsonl",
+        "sha256": "b6541233f47292b3dcbf550e2b0208042cfc6c731fa806904bdbf98a8b8e8e8d"
+      },
+      "host": "127x01",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/reporting/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/reporting/launch.json",
+        "sha256": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/reporting/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/reporting/mhz.jsonl",
+        "sha256": "3f0b87a7ab2529dce123d8e49ba06d05b9e682a46a8a97351ecabfdd72c0cf77"
+      },
+      "phase": "reporting",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/reporting/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/reporting/supervisor-exit.json",
+        "sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r1/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r1/census.jsonl",
+        "sha256": "f0fdfb7ac2648a00562ae94b15fa29ab9025003cfdd9a41178c3c6f2164888e4"
+      },
+      "host": "127x01",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r1/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r1/launch.json",
+        "sha256": "70c75c7293afdfbf1ce8ce7e31424bf06d386350281bfb963786d55cebe3a704"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r1/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r1/mhz.jsonl",
+        "sha256": "a35f327e8406c9659a369066afaa555e0c265a3d3d392ebd61790630f05048d1"
+      },
+      "phase": "replacement-r1",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r1/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r1/supervisor-exit.json",
+        "sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r2/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r2/census.jsonl",
+        "sha256": "91283eef11a5e0d59d99db0c7de06afb043357b198599fcbd0c603283960ed9a"
+      },
+      "host": "127x01",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r2/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r2/launch.json",
+        "sha256": "4c663dc703be792e63414fd9e6334cd6766c6da356ee7b866f4bbd5b45d9993a"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r2/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r2/mhz.jsonl",
+        "sha256": "2aa10764a9d416fdac2c3d53e0dd9a2a5d3d784d23a5c7b9046891fd8dadd541"
+      },
+      "phase": "replacement-r2",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r2/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r2/supervisor-exit.json",
+        "sha256": "1449fdb4020b494b80e4f12f4a5c848135a7000f40c22881c4a12154ddc6d5ff"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r3/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r3/census.jsonl",
+        "sha256": "d8f559ec1c573bd5c80ae978ba44f408d7ea5e8ce8ccceb7b01ce82327d593bb"
+      },
+      "host": "127x01",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r3/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r3/launch.json",
+        "sha256": "add1d8a01d7b34bd56df9f8535f2612311fcdc69c7a1689367307cf909ba3103"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r3/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r3/mhz.jsonl",
+        "sha256": "3120fa38fc2b0ef36b876f88037245c0a92eed15b6725379d473e69965d4db72"
+      },
+      "phase": "replacement-r3",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x01/replacement-r3/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x01/replacement-r3/supervisor-exit.json",
+        "sha256": "2f66d73399fce5c3b7dd2a2f1d5a296553cc7cc22b19591d64c305df18dcb8e5"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/reporting/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/reporting/census.jsonl",
+        "sha256": "9915db03b54117546ea03e3f92c461e8b8652be4768b501f86c4f4616b8543a5"
+      },
+      "host": "127x08",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/reporting/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/reporting/launch.json",
+        "sha256": "847f07fb631df0928df3d7548d7ce280e9636face7316f355d1c35901f4f57c6"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/reporting/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/reporting/mhz.jsonl",
+        "sha256": "e7865989a97abc466df1264ce62ced39953c0c288aedfa41e090ff3b09f13338"
+      },
+      "phase": "reporting",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/reporting/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/reporting/supervisor-exit.json",
+        "sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r1/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r1/census.jsonl",
+        "sha256": "55cec63f60f783c11b269ffad99c752dd758e49e12500d9193c25d500cc626f3"
+      },
+      "host": "127x08",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r1/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r1/launch.json",
+        "sha256": "de9df2997f1ad79aaebd7617335ec5d5b16ccdd808a34ab73d48a3060513e458"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r1/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r1/mhz.jsonl",
+        "sha256": "5ecb25c39e6f55a8dc18a1501d390ff4815081db2d0e9413ca2c18c517b69c5d"
+      },
+      "phase": "replacement-r1",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r1/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r1/supervisor-exit.json",
+        "sha256": "2f7239d07f572095d444f9d34978284abb65062b20d232b6e2d2977a80f6726e"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r2/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r2/census.jsonl",
+        "sha256": "d98b99aa93e446feeae18db2372601cbd74f0845aa3e963655542736eff47d5b"
+      },
+      "host": "127x08",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r2/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r2/launch.json",
+        "sha256": "1dc0f2eff38cffd822a5d6c685de65f1086bac4e506facd05c0509e9e7bc123f"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r2/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r2/mhz.jsonl",
+        "sha256": "96fa2ad41f5db304b9fc90093da640a54ca9046a8a735e708312d57facf88680"
+      },
+      "phase": "replacement-r2",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r2/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r2/supervisor-exit.json",
+        "sha256": "0e5b3b8844705b67ee742a1e1687fdd33f03eea9e122a83f71be780af3e0ccf8"
+      }
+    },
+    {
+      "census": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r3/census.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r3/census.jsonl",
+        "sha256": "107c9e67750a2a7fa57e580d0c2ff1b569d07aa6b521cbc0a4e62c28dd658f82"
+      },
+      "host": "127x08",
+      "launch": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r3/launch.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r3/launch.json",
+        "sha256": "862b865e24ee57d20b6d9d7dcea115dfb735eea6f1549805fe825e15537006d5"
+      },
+      "mhz": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r3/mhz.jsonl",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r3/mhz.jsonl",
+        "sha256": "16938741b2580e18e5aa214c17d3e7bcf4d016c8f02c19088bc3a9e73f544f9d"
+      },
+      "phase": "replacement-r3",
+      "supervisor_exit": {
+        "commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+        "path": "end-sources/127x08/replacement-r3/supervisor-exit.json",
+        "repository_path": "reports/explore/t1/receipts/END-raw-phases-20261011/127x08/replacement-r3/supervisor-exit.json",
+        "sha256": "4da6bc447024cc512a6e996f579ea3515d05c9b0e666f2f8196cd9e932fa5c00"
+      }
+    }
+  ],
+  "repository": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-postmerge-01-preflight-r1-20261011",
+  "schema": "clasher.e4v3.end-evidence.v1"
+}

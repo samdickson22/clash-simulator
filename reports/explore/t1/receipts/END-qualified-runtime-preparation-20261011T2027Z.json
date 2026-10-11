@@ -1,0 +1,24 @@
+{
+  "coordinator_disposition_position": 7976,
+  "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "missing_official_manifest_metadata_copied_from_committed_repo": true,
+  "old_bundle_unchanged": true,
+  "old_runtime_drift_confined_to_E4": true,
+  "old_runtime_drift_files": [
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_reference.py",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests/test_measure_tiers.py",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py"
+  ],
+  "outcomes_read": false,
+  "qualified_kernel_bytes_unchanged": true,
+  "reviewed_measurement_source_commit": "bc87454f20cf13e2965a23be2668b0036f817f51",
+  "runtime_pinned_files": 3775,
+  "runtime_pins_sha256": "5f9816965aee15a911309f0125fda51c5cb52bcc572f9db41bdcf94ea62cff64",
+  "source_bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-bundle-preparation-r1/bundle",
+  "source_runtime": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-bundle-preparation-r1/runtime",
+  "standalone_golden_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-bundle-preparation-r1/golden-states.pkl",
+  "utc": "2026-10-11T20:27:07Z"
+}
