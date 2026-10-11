@@ -64,3 +64,13 @@
   ≤3.6 GiB, no errors, no console users. On schedule.
 - 06:21Z: rep03 at 191 blocks / 1,580 games; rep08 at 189 / 1,558. 380 blocks mirrored. Healthy, with no errors and
   no console users. Phase A (300 blocks per host) ETA ~07:10Z.
+- 06:50Z: rep03 at 263 blocks / 2,135 games; rep08 at 259 / 2,105. 521 blocks mirrored. Healthy. Phase A completes
+  ~07:10Z.
+- 07:19Z: **Phase A complete**: 600/600 X blocks (300 per host), 4,800 games, 0 interrupted. Reduced with `--pops X`,
+  so G stays sealed until B/D end ([receipts/results-phaseA.md](receipts/results-phaseA.md)).
+  - **K4Sh** (inference stressed 1/s), loss %: 21.7 / 23.2 / 24.0 / 25.5 at 160 / 140 / 120 / 100 ms. vs X4S K4:
+    −6.2 [−10.3, −2.2], −24.2, −65.0, and at 100 ms vs K4-100 −74.5 pp. vs X4S K4S: +3.5 [0.0, 6.8], +1.0, −2.0 pp.
+  - **K4Sf** (all prep stressed): 22.2 at 140 and 23.8 at 120. vs K4S: +0.0 and −2.2.
+  - **Drift:** K4S-140r − X4S K4S-140 = −0.7 [−4.5, 3.2].
+  - **K4-100:** 100.0%.
+- 07:19Z: rep03 at 354 blocks and rep08 at 344, now in B. Healthy.

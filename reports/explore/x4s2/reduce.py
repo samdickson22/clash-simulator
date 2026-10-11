@@ -57,14 +57,16 @@ def load_x4s():
     return rows
 
 
-def load_x4s2(phases, cfg):
+def load_x4s2(phases, cfg, rng_name='reporting', pops=('X', 'G')):
     rows = defaultdict(dict); excluded = []; hosts = Counter(); nblocks = Counter()
     for phase in phases:
         sched = json.loads((phase/'schedule.json').read_text())
-        assert sched['range'] == 'reporting' and sched['config_sha256'] == sha(HERE/'plan.json'), phase
+        assert sched['range'] == rng_name, phase
+        if rng_name == 'reporting': assert sched['config_sha256'] == sha(HERE/'plan.json'), phase
         blocks = defaultdict(list)
         for c in sched['cases']: blocks[(c[0], c[1])].append(c)
         for (pop, i), cases in blocks.items():
+            if pop not in pops: continue
             proof_path = phase/'blocks'/f'{pop}{i:04d}.json'
             if not proof_path.exists():
                 started = sorted(p.name for p in (phase/'games').glob(f'sim-{pop}{i:04d}-d27-*.json'))
@@ -73,7 +75,7 @@ def load_x4s2(phases, cfg):
                 continue
             proof = json.loads(proof_path.read_text())
             assert proof['pop'] == pop and proof['index'] == i and proof['order'] == [c[3] for c in cases]
-            seed = cfg['seed_ranges'][f'{pop}-reporting']['base']+i
+            seed = cfg['seed_ranges'][f'{pop}-reporting' if rng_name == 'reporting' else rng_name]['base']+i
             assert proof['seed'] == seed
             for c in cases:
                 arm = c[3]; sp = cfg['arms'][arm]
@@ -117,14 +119,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--phases', type=Path, nargs='+', required=True)
     ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--range', default='reporting')
+    ap.add_argument('--pops', nargs='+', default=['X', 'G'])  # keep in-progress populations sealed  # 'smoke' only for reducer dry-runs
     a = ap.parse_args()
     cfg = json.loads((HERE/'plan.json').read_text())
     old = load_x4s()
-    new, excluded, hosts, nblocks = load_x4s2(a.phases, cfg)
+    new, excluded, hosts, nblocks = load_x4s2(a.phases, cfg, a.range, set(a.pops))
     # Unified per-population tables: X arms from both studies (X4S arms prefixed 'x4s:').
-    table = {'X': defaultdict(dict), 'G': defaultdict(dict)}
-    for i, games in old.items():
-        for arm, r in games.items(): table['X'][i]['x4s:'+arm] = r
+    table = {pop: defaultdict(dict) for pop in ('X', 'G') if pop in a.pops}
+    if 'X' in table:
+        for i, games in old.items():
+            for arm, r in games.items(): table['X'][i]['x4s:'+arm] = r
     for (pop, i), games in new.items():
         for arm, r in games.items(): table[pop][i][arm] = r
     out = dict(utc=utc(), label='X4S2 exploration, NEVER ADOPTABLE', hosts_games=hosts, blocks_per_phase=nblocks,
@@ -156,6 +161,7 @@ def main():
     pairs['G'] = [('K4S-200', 'K4-200'), ('K4S-140', 'K4-140'), ('K4Sh-140', 'K4-140'), ('K4Sh-140', 'K4S-140'),
                   ('K4-140', 'K4-200'), ('K4S-140', 'K4-200'), ('K4Sh-140', 'K4-200'), ('K4S-140', 'K4S-200')]
     for pop, ps in pairs.items():
+        if pop not in table: continue
         t = table[pop]
         for l, r in ps:
             idx = sorted(i for i in t if l in t[i] and r in t[i])
