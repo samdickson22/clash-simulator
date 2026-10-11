@@ -1,0 +1,14 @@
+{
+  "authoritative_containers": {
+    "states-rows.bin": "8cc2f611e867dc3891cdab643365193be685057b802cf73847c7fd6c91d6a1cb",
+    "states-rows.json": "bcd307770b70394878f7da17a97e4a1baa10f6efd7ea06d6b4240901dc0336e5"
+  },
+  "conversion_run_on05": false,
+  "disk_only": true,
+  "host": "127x05",
+  "outcomes_sealed": true,
+  "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "source_host": "127x01",
+  "status": "PASS",
+  "utc": "2026-10-11T22:20:07Z"
+}

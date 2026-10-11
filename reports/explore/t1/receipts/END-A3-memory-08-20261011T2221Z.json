@@ -1,0 +1,14 @@
+{
+  "available_margin_bytes": 91524182016,
+  "basis": "01 identical runtime/container backend measured peak RSS1225879552B x11 plus24GiB floor",
+  "eleven_01_backend_peak_plus_floor_bytes": 39254478848,
+  "host": "127x08",
+  "host_memory_bytes": {
+    "MemAvailable": 130778660864,
+    "MemTotal": 134897418240
+  },
+  "outcomes_sealed": true,
+  "status": "PASS",
+  "timing": false,
+  "utc": "2026-10-11T22:21:11Z"
+}

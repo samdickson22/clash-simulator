@@ -1,0 +1,38 @@
+{
+  "C3_offline_preflight": "PASS",
+  "attempts_registered": false,
+  "authoritative_container_sha256": "8cc2f611e867dc3891cdab643365193be685057b802cf73847c7fd6c91d6a1cb",
+  "authoritative_index_sha256": "bcd307770b70394878f7da17a97e4a1baa10f6efd7ea06d6b4240901dc0336e5",
+  "bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/bundle",
+  "cpus": [
+    61
+  ],
+  "environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "fixture_fingerprint": "c09142b97ecc147efa635036a69508e16fe647347749e052d321048910040901",
+  "full_occupancy_observations": 14646,
+  "guard_freeze_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "historical_losses": 54,
+  "host": "127x08",
+  "manifest_sha256": "1bd8a4c734e79a615f2f86f9354ff7724ae12b23cebf152c79404a84e918ff88",
+  "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "nice": 19,
+  "old_bundle_preserved": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "python": "3.12.13",
+  "python_optimized": false,
+  "reporting_blocks": 3072,
+  "runtime": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+  "runtime_files": 3785,
+  "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "state_rows_sha256": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+  "states_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+  "tier_backend_sha256": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d",
+  "timing": false,
+  "utc": "2026-10-11T22:20:43Z"
+}

@@ -1,0 +1,75 @@
+{
+  "apt_changed": false,
+  "attempts_registered": false,
+  "coordinator_instruction_position": 8164,
+  "hosts": [
+    {
+      "apt_lists_newest_mtime_epoch": 1791686970.0,
+      "apt_properties": {
+        "apt-daily-upgrade.timer": "NextElapseUSecRealtime=Mon 2026-10-12 06:36:48 PDT\nLastTriggerUSec=Sun 2026-10-11 06:22:56 PDT\nActiveState=active\n",
+        "apt-daily.timer": "NextElapseUSecRealtime=Sun 2026-10-11 17:12:59 PDT\nLastTriggerUSec=Sun 2026-10-11 05:30:19 PDT\nActiveState=active\n"
+      },
+      "apt_timers": "Sun 2026-10-11 17:12:59 PDT 2h 0min left Sun 2026-10-11 05:30:19 PDT 9h ago apt-daily.timer         apt-daily.service        \nMon 2026-10-12 06:36:48 PDT 15h left     Sun 2026-10-11 06:22:56 PDT 8h ago apt-daily-upgrade.timer apt-daily-upgrade.service\n",
+      "host": "127x01",
+      "outcomes_sealed": true,
+      "read_only": true,
+      "stamps": [
+        {
+          "age_seconds": 158.38514828681946,
+          "exists": true,
+          "mtime_epoch": 1791756563.8138218,
+          "mtime_utc": "2026-10-11T22:09:23Z",
+          "path": "/var/lib/ubuntu-release-upgrader/release-upgrade-available"
+        },
+        {
+          "age_seconds": 34889.305371046066,
+          "exists": true,
+          "mtime_epoch": 1791721832.893599,
+          "mtime_utc": "2026-10-11T12:30:32Z",
+          "path": "/var/lib/update-notifier/updates-available"
+        }
+      ],
+      "utc": "2026-10-11T22:12:02Z"
+    },
+    {
+      "apt_lists_newest_mtime_epoch": 1791592619.0,
+      "apt_properties": {
+        "apt-daily-upgrade.timer": "NextElapseUSecRealtime=Mon 2026-10-12 06:32:43 PDT\nLastTriggerUSec=Sun 2026-10-11 06:38:16 PDT\nActiveState=active\n",
+        "apt-daily.timer": "NextElapseUSecRealtime=Sun 2026-10-11 16:59:05 PDT\nLastTriggerUSec=Sat 2026-10-10 19:07:51 PDT\nActiveState=active\n"
+      },
+      "apt_timers": "Sun 2026-10-11 16:59:05 PDT 1h 47min left Sat 2026-10-10 19:07:51 PDT 20h ago apt-daily.timer         apt-daily.service        \nMon 2026-10-12 06:32:43 PDT 15h left      Sun 2026-10-11 06:38:16 PDT 8h ago  apt-daily-upgrade.timer apt-daily-upgrade.service\n",
+      "host": "127x08",
+      "outcomes_sealed": true,
+      "read_only": true,
+      "stamps": [
+        {
+          "age_seconds": 158.12283325195312,
+          "exists": true,
+          "mtime_epoch": 1791756564.0743973,
+          "mtime_utc": "2026-10-11T22:09:24Z",
+          "path": "/var/lib/ubuntu-release-upgrader/release-upgrade-available"
+        },
+        {
+          "age_seconds": 133232.84423017502,
+          "exists": true,
+          "mtime_epoch": 1791623489.3530004,
+          "mtime_utc": "2026-10-10T09:11:29Z",
+          "path": "/var/lib/update-notifier/updates-available"
+        }
+      ],
+      "utc": "2026-10-11T22:12:02Z"
+    }
+  ],
+  "minimum_launch_clearance_seconds": 7200,
+  "next_apt_daily_utc": {
+    "127x01": "2026-10-12T00:12:59Z",
+    "127x08": "2026-10-11T23:59:05Z"
+  },
+  "outcomes_sealed": true,
+  "readings_are_preparation_only": true,
+  "require_fresh_timer_stamp_process_exit_proof_before_each_launch": true,
+  "stamps_manually_changed": false,
+  "status": "WAIT_FOR_BOTH_ACTUAL_APT_RUNS_AND_ALL_MAINTENANCE_EXIT",
+  "timing_started": false,
+  "utc": "2026-10-11T22:21:11Z"
+}
