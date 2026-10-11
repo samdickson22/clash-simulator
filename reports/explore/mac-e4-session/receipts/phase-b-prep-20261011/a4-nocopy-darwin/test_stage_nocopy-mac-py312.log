@@ -1,0 +1,22 @@
+test_manifest_byte_identical_and_fixture_not_copied (tests.test_stage_nocopy.FrozenPrepareBundle.test_manifest_byte_identical_and_fixture_not_copied) ... FAIL
+test_refuses_helper_inside_runtime_root (tests.test_stage_nocopy.FrozenPrepareBundle.test_refuses_helper_inside_runtime_root) ... ok
+test_clone_failure_falls_back_to_hard_link (tests.test_stage_nocopy.Placement.test_clone_failure_falls_back_to_hard_link) ... ok
+test_clone_first_on_darwin (tests.test_stage_nocopy.Placement.test_clone_first_on_darwin) ... ok
+test_clonefile_real_call_fails_cleanly_off_macos (tests.test_stage_nocopy.Placement.test_clonefile_real_call_fails_cleanly_off_macos) ... skipped 'Linux-only check'
+test_data_copy_only_with_headroom (tests.test_stage_nocopy.Placement.test_data_copy_only_with_headroom) ... ok
+test_fixture_files_hard_linked_on_linux (tests.test_stage_nocopy.Placement.test_fixture_files_hard_linked_on_linux) ... ok
+test_never_overwrites_and_only_bundle_root (tests.test_stage_nocopy.Placement.test_never_overwrites_and_only_bundle_root) ... ok
+test_sha_mismatch_fails_closed (tests.test_stage_nocopy.Placement.test_sha_mismatch_fails_closed) ... ok
+
+======================================================================
+FAIL: test_manifest_byte_identical_and_fixture_not_copied (tests.test_stage_nocopy.FrozenPrepareBundle.test_manifest_byte_identical_and_fixture_not_copied)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/helpers/mac-registration/tests/test_stage_nocopy.py", line 174, in test_manifest_byte_identical_and_fixture_not_copied
+    self.assertEqual(os.stat(nocopy / name).st_ino, os.stat(self.r / "src" / source).st_ino)
+AssertionError: 224736130 != 224736080
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.038s
+
+FAILED (failures=1, skipped=1)

@@ -235,3 +235,19 @@ See `receipts/reviews-20261011/REVIEWS.md`.
 - **Run** the README locked heredoc (prepare_bundle --state-rows, build_tiers.sh, measure_tiers.py).
 - **Afterwards:** A3-P, classify_failure if needed, commit the Mac summary receipt, restore update prefs (via
   Sol) and record them.
+
+### 2026-10-11T23:18:43Z: TIERS Amendment 4 adopted (94df513d / COORDINATOR 16d431b4); no-copy helper preflight on the Mac
+
+- **Staging procedure:**
+  - stage with `stage_nocopy.py --e4v3 <e4v3> -- <unchanged prepare_bundle args>`;
+  - immediately before the session, run `stage_nocopy.py --verify-bundle <bundle>`;
+  - peak staging disk is about 36 GiB.
+- **Helper placement:** 96abd847 is at `$S/helpers/mac-registration/`, outside e4v3 and the runtime.
+- **Guard:** runtime-a3 e4v3 `measurement_files` equal END-A3's 18 entries.
+- **Darwin test result:**
+  - `test_stage_nocopy` is 7 ok, 1 skip, and 1 Linux-specific inode assertion that fails on APFS. The helper
+    clones there, giving its own inode; the byte-identity asserts pass.
+  - The ad-hoc check passes: apfs-clone, 0o444, verify passes, and it fails closed when writable.
+  - Receipts are in `receipts/phase-b-prep-20261011/a4-nocopy-darwin/`.
+- **Timeline:** the Mac fixture is built about 08:47–12Z on Oct 12, then T1 merges and seals the registration.
+- **HOLD:** no staging and no timing until the coordinator's go.
