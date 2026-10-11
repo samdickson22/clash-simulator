@@ -1,0 +1,81 @@
+{
+  "utc": "2026-10-11T11:50:53Z",
+  "host": "127x01",
+  "qualification_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op7-01-r3-prep-20261011",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "launch": {
+    "launched_at_utc": "2026-10-11T11:50:23Z",
+    "pid": 1380824,
+    "pgid": 1380824
+  },
+  "owned_processes": [
+    {
+      "identity": {
+        "pid": 1380824,
+        "pgid": 1380824,
+        "start_ticks": 150932866,
+        "uid": 3822945,
+        "cmdline_sha256": "ee55a412bd91d1e31c256ef037b4090b70c56bf9dfd8184ecf5338b3c1f0dd34",
+        "exe": "/usr/bin/bash"
+      },
+      "nice": 10,
+      "scheduler": 0,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "identity": {
+        "pid": 1381555,
+        "pgid": 1380824,
+        "start_ticks": 150934316,
+        "uid": 3822945,
+        "cmdline_sha256": "12f26e9e2ede5c0039114c1e7bd5bb7ad8a2e48c890795220e5eb4310f179f99",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+      },
+      "nice": 10,
+      "scheduler": 0,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "markers": {
+    "TESTS-PASS": true,
+    "QUALIFIED": false,
+    "BELIEF-QUALIFIED": false,
+    "qualification-source-binding.json": false
+  },
+  "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "frozen_hashes": 196,
+  "source_stable": true,
+  "dispatch_launched": false,
+  "tests_summary": [
+    "265 passed"
+  ],
+  "tests_pass_utc": "2026-10-11T11:50:37Z",
+  "coordinator_positions": [
+    7479,
+    7519,
+    7535,
+    7539
+  ],
+  "draft_host_counts": {
+    "127x01": 512,
+    "127x08": 508
+  },
+  "draft_authority": "7539: exact510/510 was forecast only; reviewed512/508 with full history is authoritative. Keep d066dc37 unchanged; no inventoryrerun/allocatorchange.",
+  "timestamp_correction": "Draft notification labeled11:50:00Z in error; actualdate-u11:49:31Z; correction sent11:49:51Z and acknowledged7542.",
+  "setup_correction": "Prelaunch wrapper incorrectly required optional08 idle/SSH seed metadata on01; no process launched. Resumed same freshqualification directory using reviewed optional-source behavior; source unchanged.",
+  "checkpoint_utc": "2026-10-11T11:51:29Z"
+}
