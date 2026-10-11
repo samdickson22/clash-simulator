@@ -1,0 +1,32 @@
+{
+  "schema": "clasher.t1.registration.amendment4-hold.v1",
+  "received_at_actual_utc": "2026-10-11T22:28:13Z",
+  "coordinator_instruction_label": "22:27Z",
+  "coordinator_commit": "89b28b6d950d29dd7d1f1d35ec06e93c4cc7ad9b",
+  "builder_task": "clasher-mac-registration-builder-20261011-r1",
+  "builder_role": "T1 corpus-owner delegate",
+  "builder_inputs": [
+    "Mac agreement2000",
+    "Mac packets1000",
+    "packet_schedule",
+    "student-reference.json"
+  ],
+  "merge_and_seal_owner": "T1 confirmatory runner",
+  "registration_seal_requires": [
+    "Builder inputs delivered",
+    "Explicit coordinator TIERS Amendment4 adoption"
+  ],
+  "seal_registration_now": false,
+  "release_reference_now": false,
+  "reason": "release_reference binds one manifest; premature sealing would force second registration",
+  "END_steps_unchanged": true,
+  "automatic_END_pre_authorization_commit": "5c613c9fb50dd1b097495efa7384b55587d11ce3",
+  "prepared_END_commit": "07ed3f6d4352f9dd241ff2d2e61e54f1772bd861",
+  "END_maintenance_conditions_unchanged": true,
+  "PC1_PC4_prerequisites_continue": true,
+  "outcomes_sealed": true,
+  "hub_mirror": "coordinator-paused",
+  "no_host_access": true,
+  "no_duplicate_builder": true,
+  "same_timer_enabled": true
+}
