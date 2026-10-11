@@ -1,0 +1,107 @@
+{
+ "schema": "clasher.k4s.run-health.v1",
+ "study": "PREREG-K4S",
+ "sealed": true,
+ "outcomes_read": false,
+ "utc": "2026-10-11T20:15:30Z",
+ "phase": "reporting",
+ "tag": "watch",
+ "hosts": {
+  "127x03": {
+   "host": {
+    "UTC": "2026-10-11T20:15:30Z",
+    "WHO": "0",
+    "LOAD": "13.52 11.44 6.94",
+    "MEMAVAIL_KB": "122666448",
+    "STOPFILES": "0 0",
+    "PROGRESS": {
+     "utc": "2026-10-11T20:15:28Z",
+     "phase": "reporting",
+     "complete_local_blocks": 8,
+     "complete_local_games": 64,
+     "failed_blocks": 0,
+     "queued": 1931,
+     "inflight": 11,
+     "reason": null,
+     "memavailable_GiB": 117.15337753295898,
+     "console_positive": false
+    },
+    "COMPLETE": "8",
+    "HUBACK": "7",
+    "EXITS": "8 FAILED 0",
+    "INTERFERED": "0 SSHFLAG 0 APTFLAG 0",
+    "LAUNCH": "{  \"utc\": \"2026-10-11T20:08:22Z\",  \"host\": \"127x03\",  \"phase\": \"reporting\",  \"slots\": 11,  \"who\": \"\",  \"runtime_pin_sha256\": \"65e5beaeafe847890b74cddaf9bbef86555caf9032e98bf933c2d656eaed533b\",  \"dispatch_sha256\": \"78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2\",  \"supervisor_pid\": 776314,  \"supervisor_pgid\": 776314}",
+    "COPIERRECEIPT": "\"active\": true",
+    "SUPPROC": "776314 776314 10 61 432 RNs",
+    "OWNEDGROUPS": "12",
+    "ssh_rc": 0,
+    "check_seconds": 0.44
+   },
+   "hub": {
+    "hub_durable": 7,
+    "hub_returned": 6,
+    "copy_health": {
+     "utc": "2026-10-11T20:15:18Z",
+     "listed": 6,
+     "durable_on_hub": 6,
+     "ack_returned": 6,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null
+    },
+    "copier_receipt_active": true
+   },
+   "copier_alive_on_05": true
+  },
+  "127x04": {
+   "host": {
+    "UTC": "2026-10-11T20:15:31Z",
+    "WHO": "0",
+    "LOAD": "14.22 11.84 7.07",
+    "MEMAVAIL_KB": "122279704",
+    "STOPFILES": "0 0",
+    "PROGRESS": {
+     "utc": "2026-10-11T20:15:29Z",
+     "phase": "reporting",
+     "complete_local_blocks": 7,
+     "complete_local_games": 56,
+     "failed_blocks": 0,
+     "queued": 1932,
+     "inflight": 11,
+     "reason": null,
+     "memavailable_GiB": 116.67607498168945,
+     "console_positive": false
+    },
+    "COMPLETE": "7",
+    "HUBACK": "7",
+    "EXITS": "7 FAILED 0",
+    "INTERFERED": "2 SSHFLAG 0 APTFLAG 0",
+    "LAUNCH": "{  \"utc\": \"2026-10-11T20:08:27Z\",  \"host\": \"127x04\",  \"phase\": \"reporting\",  \"slots\": 11,  \"who\": \"\",  \"runtime_pin_sha256\": \"a99ca55bf3251d51e80d34f521a866673e3ac9fd7d5de7ab68df06e07123d1d9\",  \"dispatch_sha256\": \"78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2\",  \"supervisor_pid\": 4015460,  \"supervisor_pgid\": 4015460}",
+    "COPIERRECEIPT": "\"active\": true",
+    "SUPPROC": "4015460 4015460 10 61 427 RNs",
+    "OWNEDGROUPS": "12",
+    "ssh_rc": 0,
+    "check_seconds": 0.51
+   },
+   "hub": {
+    "hub_durable": 7,
+    "hub_returned": 7,
+    "copy_health": {
+     "utc": "2026-10-11T20:15:24Z",
+     "listed": 7,
+     "durable_on_hub": 7,
+     "ack_returned": 7,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null
+    },
+    "copier_receipt_active": true
+   },
+   "copier_alive_on_05": true
+  }
+ },
+ "anomalies": [],
+ "summary": "127x03 complete 8 acked 7 hub 7/6 failed 0 inflight 11 queued 1931 reason None who 0 flags[0 SSHFLAG 0 APTFLAG 0]; 127x04 complete 7 acked 7 hub 7/7 failed 0 inflight 11 queued 1932 reason None who 0 flags[2 SSHFLAG 0 APTFLAG 0]"
+}

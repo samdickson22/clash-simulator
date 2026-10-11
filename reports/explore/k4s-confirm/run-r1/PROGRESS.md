@@ -125,3 +125,6 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 1. Qualification receipts (03/04) -> commit under run-r1/receipts/.
 2. Coordinator ruling on B1/B2/B3; author + Sol-review `mirror_k4s.py` and the manifest builder.
 3. Excluded smoke (8 blocks/host, all 10 arms) -> SMOKE-PASS -> coordinator go -> reporting dispatch.
+
+## Health checkpoints (SEALED, health only)
+- 2026-10-11T20:15:30Z SEALED health: 127x03 complete 8 acked 7 hub 7/6 failed 0 inflight 11 queued 1931 reason None who 0 flags[0 SSHFLAG 0 APTFLAG 0]; 127x04 complete 7 acked 7 hub 7/7 failed 0 inflight 11 queued 1932 reason None who 0 flags[2 SSHFLAG 0 APTFLAG 0]; no anomalies
