@@ -45,3 +45,6 @@
   exit paths. No-deadline r3: K4, K4S, K4Sl, K4Sh and K4Sf give identical hashes on X0 and G1.
 - 04:56Z: Sol r3: **no blockers**. Its should-fix (production-path timeout coverage) is answered by the smoke r3
   per-decision check; the nit is fixed.
+- 04:56Z: freeze commit **de48533f** pushed. Before any reporting game, I added a spare-capacity **Phase D** (G indices
+  540–1079, B's arms, dispatched last, stopped by time only). G reporting count is now 1080, re-audited clean.
+  Worklists updated: 08 has 840 blocks, 03 has 570 (A+B) plus 870 (C+D). Deployed bytes verified equal on 03 and 08.

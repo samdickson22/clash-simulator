@@ -209,7 +209,7 @@
     },
     "G-reporting": {
       "base": 4503605107370496,
-      "count": 540
+      "count": 1080
     },
     "smoke": {
       "base": 4503605117370496,
@@ -329,6 +329,17 @@
         "K4Sl-140"
       ],
       "indices": "0..599 (X4S reporting seeds)"
+    },
+    "D": {
+      "population": "G",
+      "arms": [
+        "K4-200",
+        "K4S-200",
+        "K4-140",
+        "K4S-140",
+        "K4Sh-140"
+      ],
+      "indices": "540..1079, dispatched after B (08) / after C (03) in increasing index order; spare-capacity extension declared before any reporting game; stopped by time only; pooled with B as the G population"
     }
   },
   "populations": {

@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-11T04:31:36Z",
+  "utc": "2026-10-11T04:56:32Z",
   "sources": [
     {
       "path": "imitation/gate-a-v2/denominator-diagnostics-freeze.json",
@@ -16055,7 +16055,7 @@
   "proposed_ranges": {
     "G-reporting": {
       "base": 4503605107370496,
-      "count": 540
+      "count": 1080
     },
     "smoke": {
       "base": 4503605117370496,
@@ -16086,49 +16086,49 @@
       "range": "G-reporting",
       "offset": 0,
       "start": 4503605107370496,
-      "stop_exclusive": 4503605107371036
+      "stop_exclusive": 4503605107371576
     },
     {
       "range": "G-reporting",
       "offset": 13,
       "start": 4503605107370509,
-      "stop_exclusive": 4503605107371049
+      "stop_exclusive": 4503605107371589
     },
     {
       "range": "G-reporting",
       "offset": 100000,
       "start": 4503605107470496,
-      "stop_exclusive": 4503605107471036
+      "stop_exclusive": 4503605107471576
     },
     {
       "range": "G-reporting",
       "offset": 100001,
       "start": 4503605107470497,
-      "stop_exclusive": 4503605107471037
+      "stop_exclusive": 4503605107471577
     },
     {
       "range": "G-reporting",
       "offset": 100002,
       "start": 4503605107470498,
-      "stop_exclusive": 4503605107471038
+      "stop_exclusive": 4503605107471578
     },
     {
       "range": "G-reporting",
       "offset": 100003,
       "start": 4503605107470499,
-      "stop_exclusive": 4503605107471039
+      "stop_exclusive": 4503605107471579
     },
     {
       "range": "G-reporting",
       "offset": 271828,
       "start": 4503605107642324,
-      "stop_exclusive": 4503605107642864
+      "stop_exclusive": 4503605107643404
     },
     {
       "range": "G-reporting",
       "offset": 271829,
       "start": 4503605107642325,
-      "stop_exclusive": 4503605107642865
+      "stop_exclusive": 4503605107643405
     },
     {
       "range": "smoke",

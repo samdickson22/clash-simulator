@@ -36,6 +36,7 @@ scores are identical to S1's. Here s = budget/200 and `inference_scale` = 1/s.
 | A | X | K4S-140r | S-default | none: replicates X4S K4S-140 to measure run-to-run drift |
 | A | X | K4-100 | frozen K4 (WAIT default) | none |
 | **B** (priority 2) | G: own deck ∈ the three L2-v4 decks (Hog 2.6, X-Bow cycle, Royal Hogs spawners); opponent ∈ the three held-out TIERS guard decks (Hog EQ, Goblinstein Royal Hogs, ArcherQueen Royal Delivery); 18 cells (seat i%2, own (i//2)%3, opponent (i//6)%3); **fresh seeds** | K4-200, K4S-200, K4-140, K4S-140, K4Sh-140 | as named | K4Sh: inference |
+| **D** (spare capacity, declared at 04:57Z before any reporting game) | G, indices 540–1079 (fresh) | same five arms as B | as B | as B; dispatched last, stopped by time only, pooled with B as the G population |
 | **C** (priority 3) | X, same 600 seeds | K4Sl-200, K4Sl-140 | **S-lite**: the student play is used only if the deadline hit, no refined play completed, **and the coarse scan was incomplete**; otherwise the frozen choice stands | none |
 
 ### What the scaling arms measure (finding during qualification, 04:38Z)
@@ -112,7 +113,7 @@ R3a 37509a43), copied locally on each host, with git `reports/explore/x4s2` over
 ## Seeds ([seed-audit.json](seed-audit.json))
 - **X population:** a declared paired reuse of X4S reporting 4503604807370496 + [0, 600).
 - **Fresh bank 2^52 + [5.48e9, 5.58e9):**
-  - G reporting 4503605107370496 + [0, 540);
+  - G reporting 4503605107370496 + [0, 1080) (B: 0–539, D: 540–1079; re-audited at 04:56Z);
   - smoke 4503605117370496 + [0, 8);
   - qualification 4503605127370496 + [0, 8).
 - The audit found no overlap with 119 declared prior ranges at helper offsets {0, 13, 100000–100003, 271828–271829}.
@@ -131,14 +132,16 @@ R3a 37509a43), copied locally on each host, with git `reports/explore/x4s2` over
   `/mpac/sdicks02/jobs/clasher/x4s2-20261011/mirror/`.
 - **127x08**, supervisor stop-at 09:15Z (drain ≤2 min; sync stops contacting 08 at 09:27Z):
   1. A indices with (i//50) odd: 300 blocks × 8 games;
-  2. then B indices with (i//18) odd, in increasing order.
+  2. then B indices with (i//18) odd, in increasing order;
+  3. then D indices with (i//18) odd.
 
   At about 92 games per slot-hour, 08 should finish A by about 08:30Z and part of B by 09:15Z. Unfinished blocks are
   excluded, and 08 is verified **empty** by 09:30Z.
 - **127x03**, stop-at 13:30Z:
   1. A with (i//50) even;
   2. B with (i//18) even;
-  3. C, all 600.
+  3. C, all 600;
+  4. then D indices with (i//18) even.
 
   Then, in a new output directory, any B blocks that 08 never started.
 - **Interrupted blocks:** a durable `.started` marker is written before a block's first game. A block with a marker
