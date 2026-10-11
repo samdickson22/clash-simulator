@@ -1,0 +1,281 @@
+{
+  "utc": "2026-10-11T19:29:25Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "phases": [
+    {
+      "host": "127x01",
+      "phase": "reporting",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/reporting/supervisor-exit.json",
+        "sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-10T19:20:29Z",
+      "stop_reason": "owned_STOP",
+      "completed": 124,
+      "failed": 11,
+      "unstarted": 1400,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/reporting/launch.json",
+        "sha256": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/FROZEN-T1.json",
+        "sha256": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/runtime-pin.json",
+        "sha256": "706e03a0cc6ccc103904976e3d0a8f565aa0653264a83bc1eb0b6ca7e75f28a4"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/dispatch.json",
+        "sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f"
+      }
+    },
+    {
+      "host": "127x08",
+      "phase": "reporting",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/source-phases/127x08-reporting",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/reporting/supervisor-exit.json",
+        "sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-10T18:25:33Z",
+      "stop_reason": "ssh_family_average_budget",
+      "completed": 33,
+      "failed": 11,
+      "unstarted": 1493,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/reporting/launch.json",
+        "sha256": "847f07fb631df0928df3d7548d7ce280e9636face7316f355d1c35901f4f57c6",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/FROZEN-T1.json",
+        "sha256": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/runtime-pin.json",
+        "sha256": "caaf6ca4609855b6934d09dc9eaded75f189ca0f82e5e664fea24324c329ac8b"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/dispatch.json",
+        "sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f"
+      },
+      "source_binding_host": "127x08",
+      "source_binding_verified_utc": "2026-10-11T19:29:24Z"
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r1",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/replacement-r1",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r1/supervisor-exit.json",
+        "sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-10T21:03:53Z",
+      "stop_reason": "foreign_compute",
+      "completed": 155,
+      "failed": 11,
+      "unstarted": 1291,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r1/launch.json",
+        "sha256": "70c75c7293afdfbf1ce8ce7e31424bf06d386350281bfb963786d55cebe3a704",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/FROZEN-T1.json",
+        "sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/runtime-pin.json",
+        "sha256": "2a48b10bf3dc026a21d9cb58575983bf4a8a07b934107589e11900793ef2324c"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/dispatch.json",
+        "sha256": "edd51b5c900a095e962467e8312fcb516e3bae7011534b7728b2fb59673e9ba0"
+      }
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r1",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/recovery-op7-r2/phase-127x08-replacement-r1",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r1/supervisor-exit.json",
+        "sha256": "2f7239d07f572095d444f9d34978284abb65062b20d232b6e2d2977a80f6726e",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-10T23:22:21Z",
+      "stop_reason": "owned_STOP",
+      "completed": 399,
+      "failed": 11,
+      "unstarted": 1048,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r1/launch.json",
+        "sha256": "de9df2997f1ad79aaebd7617335ec5d5b16ccdd808a34ab73d48a3060513e458",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/FROZEN-T1.json",
+        "sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/runtime-pin.json",
+        "sha256": "c7937c554d69a482b8fda79f2fc78a0ce40b01cf09f282854019c622f9324e18"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/dispatch.json",
+        "sha256": "edd51b5c900a095e962467e8312fcb516e3bae7011534b7728b2fb59673e9ba0"
+      },
+      "source_binding_host": "127x08",
+      "source_binding_verified_utc": "2026-10-11T19:29:24Z"
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r2",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r2/supervisor-exit.json",
+        "sha256": "1449fdb4020b494b80e4f12f4a5c848135a7000f40c22881c4a12154ddc6d5ff",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-11T11:36:54Z",
+      "stop_reason": null,
+      "completed": 1181,
+      "failed": 0,
+      "unstarted": 0,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r2/launch.json",
+        "sha256": "4c663dc703be792e63414fd9e6334cd6766c6da356ee7b866f4bbd5b45d9993a",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/FROZEN-T1.json",
+        "sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/runtime-pin.json",
+        "sha256": "847d54bee0a842493e24a44195820c53523808708a243b9435c56ce7a9f528f1"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/dispatch.json",
+        "sha256": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39"
+      }
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r2",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/recovery-op7-r3-draft-20261011/phase-127x08-replacement-r2",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r2/supervisor-exit.json",
+        "sha256": "0e5b3b8844705b67ee742a1e1687fdd33f03eea9e122a83f71be780af3e0ccf8",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-11T01:17:48Z",
+      "stop_reason": "foreign_active",
+      "completed": 160,
+      "failed": 10,
+      "unstarted": 1010,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r2/launch.json",
+        "sha256": "1dc0f2eff38cffd822a5d6c685de65f1086bac4e506facd05c0509e9e7bc123f",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/FROZEN-T1.json",
+        "sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/runtime-pin.json",
+        "sha256": "8993b60935309457532c3c8df1a7dea7b58bc87f6725601ee9b675e06608e92c"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/dispatch.json",
+        "sha256": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39"
+      },
+      "source_binding_host": "127x08",
+      "source_binding_verified_utc": "2026-10-11T19:29:24Z"
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r3",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r3/supervisor-exit.json",
+        "sha256": "2f66d73399fce5c3b7dd2a2f1d5a296553cc7cc22b19591d64c305df18dcb8e5",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-11T19:17:13Z",
+      "stop_reason": null,
+      "completed": 512,
+      "failed": 0,
+      "unstarted": 0,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r3/launch.json",
+        "sha256": "add1d8a01d7b34bd56df9f8535f2612311fcdc69c7a1689367307cf909ba3103",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/FROZEN-T1.json",
+        "sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/runtime-pin.json",
+        "sha256": "eabc7ee6e3325710cdf9fb0253c0a31472310f912e735910ff7bbd96a1d074cd"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/dispatch.json",
+        "sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017"
+      }
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r3",
+      "source_phase": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/observer-remote",
+      "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3",
+      "supervisor_exit": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r3/supervisor-exit.json",
+        "sha256": "4da6bc447024cc512a6e996f579ea3515d05c9b0e666f2f8196cd9e932fa5c00",
+        "verbatim": true
+      },
+      "exit_utc": "2026-10-11T19:00:07Z",
+      "stop_reason": null,
+      "completed": 508,
+      "failed": 0,
+      "unstarted": 0,
+      "launch": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r3/launch.json",
+        "sha256": "862b865e24ee57d20b6d9d7dcea115dfb735eea6f1549805fe825e15537006d5",
+        "verbatim": true
+      },
+      "FROZEN-T1.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/FROZEN-T1.json",
+        "sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e"
+      },
+      "runtime-pin.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/runtime-pin.json",
+        "sha256": "8c9c79a4a6e33078d73475d97d619d56e62cdf3063eb24951042fff52b67b7e6"
+      },
+      "dispatch.json": {
+        "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/dispatch.json",
+        "sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017"
+      },
+      "source_binding_host": "127x08",
+      "source_binding_verified_utc": "2026-10-11T19:29:24Z"
+    }
+  ],
+  "runtime_pin_correction": "Each08 binding uses actual08 runtime-pin bytes, verified against its verbatim launch;01 runtime pins never substituted."
+}
