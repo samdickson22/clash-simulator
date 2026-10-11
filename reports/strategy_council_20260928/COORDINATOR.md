@@ -2109,3 +2109,6 @@ Also on the hub, but with copies elsewhere:
     - (2) **Quiescence census fails:** WindowServer at 0.5 core and Codex Computer Use at 0.22. A quiet Mac window is needed at Phase B, with no computer-use tasks running; coordinate with roader if it uses the Mac.
     - (3) **Bundle identity** waits on Amendment 3 plus the regenerated END bundle.
   - Independent reviews of staging and topology are approved (Sol for code, Opus for topology and provenance).
+- **21:38 UTC: K4S 04 guard stop** at 21:32:49Z (foreign_compute: root `check-new-release`). It was triggered by pam_motd's release-upgrade check on one of our copier's ssh logins, once the stamp was more than a day old. 11 in-flight blocks were lost; the frozen supervisor continued automatically. 03 is forecast to do the same at ~00:58Z Oct 12.
+  - **Ruling (a):** accept and disclose. Lost blocks are replaced after reporting by the frozen blind ledger (caps 300/90). No mid-run copier change.
+  - **Carry-over to T1 END (extends C2):** before each reference launch on 01/08, besides the apt timers, read (read-only) the ages of `/var/lib/ubuntu-release-upgrader/release-upgrade-available` and `/var/lib/update-notifier/updates-available`. Launch only if neither motd check can fire during the attempt. If a stamp is stale, let one ordinary login trigger the check *before* the launch and wait for it to exit.
