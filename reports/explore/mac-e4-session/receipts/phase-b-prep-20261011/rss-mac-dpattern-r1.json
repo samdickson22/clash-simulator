@@ -1,0 +1,59 @@
+{
+ "after_construction": {
+  "RssAnon": 465600512,
+  "RssFile": 89112576,
+  "VmHWM": 797409280,
+  "VmRSS": 554713088
+ },
+ "after_full_lookup": {
+  "RssAnon": 440782848,
+  "RssFile": 89112576,
+  "VmHWM": 819306496,
+  "VmRSS": 529895424
+ },
+ "after_retaining": {
+  "RssAnon": 440672256,
+  "RssFile": 89112576,
+  "VmHWM": 818110464,
+  "VmRSS": 529784832
+ },
+ "construct_seconds": 33.149648630060256,
+ "cpus": [
+  58
+ ],
+ "d6_child": {
+  "after_construction": {
+   "RssAnon": 464306176,
+   "RssFile": 88797184,
+   "VmHWM": 803000320,
+   "VmRSS": 553103360
+  },
+  "final": {
+   "RssAnon": 464306176,
+   "RssFile": 88797184,
+   "VmHWM": 803000320,
+   "VmRSS": 553103360
+  }
+ },
+ "host": "127x05",
+ "mac_estimate_bytes": {
+  "concurrent_main_plus_d6_child_peak": 1185617237.3333333,
+  "d6_child_peak_with_agreement2000": 761453226.6666666,
+  "main_peak_vmhwm_plus_extra_retention": 802687658.6666666,
+  "main_resident_with_agreement2000": 424164010.6666667,
+  "note": "Linux RSS on 05 as a proxy for macOS; excludes the perception worker (torch/ultralytics v3 on MPS) and the monitor"
+ },
+ "main_during_child": {
+  "RssAnon": 440782848,
+  "RssFile": 89112576,
+  "VmHWM": 819306496,
+  "VmRSS": 529895424
+ },
+ "maxrss_bytes": 819306496,
+ "nice": 19,
+ "outcomes_read": false,
+ "retained_bytes_each": -20773.546666666665,
+ "retained_inputs": 1200,
+ "tier_backend_sha256": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d",
+ "timing": false
+}

@@ -1,0 +1,31 @@
+{
+ "caveats": [
+  "Linux RSS is a proxy for macOS footprint",
+  "excludes the perception worker (torch + ultralytics v3 on MPS) and monitor, and MPS forward allocations",
+  "main peak 0.93 GiB is within ~7% of the 1 GiB per-process target; a Mac agreement set longer than 2,000 scales at ~27 KB per state",
+  "decision allocations sampled on 20 states; heavy-tail rows (max 139.7 MB) are covered by the full lookup/admission pass"
+ ],
+ "mac_estimate_gib": {
+  "agreement_length": 2000,
+  "concurrent_main_rssanon_plus_child_peak_r2b_as_emitted": 1.2277056376139324,
+  "concurrent_main_vmrss_plus_child_peak": 1.3247629801432292,
+  "d6_child_peak": 0.778753916422526,
+  "excludes": "perception worker (torch+ultralytics v3 on MPS), monitor; MPS forward allocations",
+  "main_peak": 0.9304351806640625
+ },
+ "measured_gib": {
+  "child_vmhwm": 0.7582359313964844,
+  "main_rssanon_during_child": 0.42816925048828125,
+  "main_vmhwm": 0.9096527099609375
+ },
+ "method": "r2b: mac_dpattern_rss_r2.py on 05 (nice 19, core 58), Amendment 3 tier_backend 02e2139f, verified END-like rss-bundle-r4 (1,325 rows). Main: retain 1,200 policy inputs, lookup+prepare_work every golden/speed row, 20 real no-deadline CPU decisions (5/tier). Concurrent spawned D6 child: own backend, retain 1,200 inputs, 1,200 CPU forwards. malloc_trim baseline; non-positive deltas refused.",
+ "outcomes_read": false,
+ "retained_bytes_each": {
+  "child": 27538.773333333334,
+  "main": 27893.76
+ },
+ "schema": "clasher.mac-e4-session.dpattern-rss.v2",
+ "sol_review": "r1 REJECT (findings fixed); r2 APPROVE_WITH_CONDITIONS: MINOR concurrent metric mixed main RssAnon with child VmHWM; fixed to main VmRSS (script line updated after the r2b run; r2b raw JSON keeps the as-emitted name)",
+ "superseded": "r1 (mac_dpattern_rss.py / rss-mac-dpattern-r1.json): lookups only, child construction only, negative retention delta; Sol review r1 REJECT findings 2-3. Retained only as history.",
+ "timing": false
+}

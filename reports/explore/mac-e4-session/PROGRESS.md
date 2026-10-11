@@ -150,3 +150,46 @@ See `receipts/reviews-20261011/REVIEWS.md`.
      the new tiers-pins SHA).
 
   The current scratch native 0e7213ab is not reused for counting.
+
+### 2026-10-11T22:15:31Z: Amendment 3 adopted (coordinator 22:09Z, 4ccbdd4f); Phase B prep, no timing
+
+- Item 2, the Mac fixture (agreement2000/packets1000), is a **BLOCKER, HELD.** The coordinator's hold was sent at
+  about 22:11Z (labelled ~22:16Z).
+  - No frozen builder exists, and there are only 1,325 contract rows.
+  - The raw captures are only on 03. No reads from 03 by anyone; copies only in an authorized gap between K4S
+    rounds.
+  - A design worker (clasher-mac-registration-inputs-design-20261011) will propose rules and an owner.
+- Item 1: runtime re-staged at 76887b33 (post-f6cebbaa) in `$S/runtime-a3`.
+  - Verified: tier_backend 02e2139f, state_rows 3899276b, prepare_bundle a1c59fa3, measure_tiers 6066228b,
+    convert_states 7ce30683.
+  - `runtime-verify-a3-r1` PASS: 10,764 files, expected manifest a4ae1b8e, same 33 + E1 overlays.
+  - Mac Python 3.12: test_measure_tiers 33/33, test_state_rows 21/21, test_prepare_fleet_smoke 2/2. The full suite
+    is 91 with the same 20 fleet-only errors.
+- Item 3: `a3p_poll_check.py`, a reducer from sealed receipts only.
+  - A3-P is applied to the frozen gate-4 variant v* (freeze if freeze_gc passes, else default). Both variants are
+    reported.
+  - Synthetic tests: correct verdicts; a tampered seal fails.
+- Item 4: engine-rs is identical in runtime-a3. The counted build in-session (build_tiers.sh) binds to the new
+  tiers-pins SHA automatically; no scratch rebuild is needed.
+- Item 5: offline D-pattern RSS measurement running on 05 (core 58, nice 19).
+  - The frozen Mac procedure specifies no free-memory or swap threshold; the 24 GiB MemAvailable rule is fleet-only.
+    I'm proposing an operator pre-start check to the coordinator.
+
+### 2026-10-11T22:30:46Z: Phase B prep items 1/3/4/5 done; item 2 is the builder's (Amendment 4); disk blocker
+
+- Coordinator 22:27Z (89b28b6d):
+  - The Mac fixture is built by `clasher-mac-registration-builder-20261011-r1` under TIERS Amendment 4, not by me.
+  - The session will run about 6–6.5 h, so it needs an overnight quiet window.
+  - The bundle is about 38.6 GB, with a staging peak of about 72 GiB.
+  - Transfer later with `pigz -c | ssh | gunzip`, then SHA-verify on the Mac.
+- **Disk:** no external volume; 62.75 GiB free after deleting my superseded scratch (old d651 runtime and build
+  target). Regenerable caches (npm cacache and _npx, Homebrew) would bring it to at most about 65.7 GiB, below
+  the 72 GiB peak. Sam's T3/canvasdoc worktrees (36 GiB) and the reference emulator SDK/AVD (13 GiB) are not
+  touched. A macOS update is staged (MSUPrepareUpdate). Options were reported to the coordinator at 22:31Z.
+- **A3-P reducer:** now refuses non-complete seals. Sol r1 REJECT, fixed; Sol r2 APPROVE_WITH_CONDITIONS (the v*
+  rule needs a coordinator ruling).
+- **D-pattern RSS r2b:** main 0.93 GiB, D6 child 0.78 GiB, concurrent 1.33 GiB (main VmRSS + child peak; Sol r2
+  MINOR fixed). Each process is under 1 GiB; perception and MPS are excluded.
+- **Memory pre-start check:** proposed (free+inactive+purgeable ≥4 GiB, free swap ≥0.5 GiB, no swapouts during the
+  census); awaiting coordinator numbers.
+- **HOLD:** no timing and no bundle staging.

@@ -1,0 +1,73 @@
+{
+ "after_construction": {
+  "RssAnon": 400621568,
+  "RssFile": 90157056,
+  "VmHWM": 804503552,
+  "VmRSS": 490778624
+ },
+ "after_decisions": {
+  "RssAnon": 459743232,
+  "RssFile": 104214528,
+  "VmHWM": 976732160,
+  "VmRSS": 563957760
+ },
+ "after_lookup_admission": {
+  "RssAnon": 457150464,
+  "RssFile": 90157056,
+  "VmHWM": 960049152,
+  "VmRSS": 547307520
+ },
+ "after_retaining": {
+  "RssAnon": 390008832,
+  "RssFile": 90157056,
+  "VmHWM": 821604352,
+  "VmRSS": 480165888
+ },
+ "construct_seconds": 32.815006743883714,
+ "cpus": [
+  58
+ ],
+ "d6_child": {
+  "after_construction": {
+   "RssAnon": 462934016,
+   "RssFile": 88739840,
+   "VmHWM": 802668544,
+   "VmRSS": 551673856
+  },
+  "after_forwards": {
+   "RssAnon": 406429696,
+   "RssFile": 97419264,
+   "VmHWM": 814149632,
+   "VmRSS": 503848960
+  },
+  "after_retaining": {
+   "RssAnon": 389455872,
+   "RssFile": 88739840,
+   "VmHWM": 814149632,
+   "VmRSS": 478195712
+  },
+  "each": 27538.773333333334,
+  "forwards": 1200
+ },
+ "decisions": 20,
+ "host": "127x05",
+ "mac_estimate_gib": {
+  "agreement_length": 2000,
+  "concurrent_main_resident_plus_child_peak": 1.2277056376139324,
+  "d6_child_peak": 0.778753916422526,
+  "excludes": "perception worker (torch+ultralytics v3 on MPS), monitor; MPS forward allocations",
+  "main_peak": 0.9304351806640625
+ },
+ "main_during_child": {
+  "RssAnon": 459743232,
+  "RssFile": 104214528,
+  "VmHWM": 976732160,
+  "VmRSS": 563957760
+ },
+ "main_retained_bytes_each": 27893.76,
+ "maxrss_bytes": 976732160,
+ "nice": 19,
+ "outcomes_read": false,
+ "tier_backend_sha256": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d",
+ "timing": false
+}
