@@ -1,0 +1,12 @@
+{
+  "adoption_message_sent_utc": "2026-10-11T22:07Z",
+  "authorization_conditions_unchanged": true,
+  "content_unchanged": true,
+  "coordinator_commit": "4ccbdd4f04db66e2cadad08eb5be971d1b3402ee",
+  "kind": "adoption-timestamp-correction",
+  "original_message_label_approximately": "2026-10-11T22:12Z",
+  "outcomes_sealed": true,
+  "prior_raw_messages_and_receipts_preserved": true,
+  "utc": "2026-10-11T22:26:27Z",
+  "worker_received_actual_utc": "2026-10-11T22:07:48Z"
+}
