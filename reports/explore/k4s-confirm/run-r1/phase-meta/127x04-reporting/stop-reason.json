@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-11T22:06:15Z",
+  "reason": "ubuntu_apt_average_budget",
+  "foreign": [],
+  "foreign_active": [],
+  "console": {
+    "who": "",
+    "console_count": 0,
+    "positive": false
+  },
+  "ssh_family_sample": {
+    "cpu_ticks": 0,
+    "seconds": 2.410816120915115,
+    "core_fraction": 0.0,
+    "source_proven_cpu_ticks": 0,
+    "idle_cpu_ticks": 0,
+    "stop": false
+  },
+  "ubuntu_apt_sample": {
+    "cpu_ticks": 249,
+    "seconds": 2.410816120915115,
+    "core_fraction": 1.0328452586648658,
+    "stop": false
+  }
+}

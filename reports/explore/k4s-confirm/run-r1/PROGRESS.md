@@ -109,6 +109,19 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - **20:08:22Z / 20:08:27Z: SEALED REPORTING LAUNCHED** 03 sup 776314 / 04 sup 4015460 (nice 10, core 61, 11 slots, 11 inflight,
   1939 queued); copiers on 05: 03 1322045 (core 62), 04 1331157 (core 63). Receipt receipts/reporting-launch-receipt.json.
 
+- 21:32:49Z 04 foreign_compute stop (motd release-check; supervisor continued); ruling (a) 21:39Z (11105b3f), disclosure committed.
+- 22:06:15Z 04 ubuntu_apt_average_budget stop (apt-daily 22:05:58Z + motd updates-available apt-check); supervisor EXITED
+  (186 completed / 22 failed / 1742 unstarted). Escalated. Ruling ~22:12Z: OPTION A (stop 03, one blind inventory of both
+  phases, fresh namespace replacement-r1 on both, fresh qualification, motd stamp/timer checks, authorization cites ruling).
+- 22:12:08.897Z 03 owned STOP → supervisor gone 22:12:12Z (206 completed / 11 failed / 1733 unstarted); 0 owned groups.
+  Both reporting copiers exited+revoked after 186/206 ACKs returned. (A 04-only replace.py draft was run first under the
+  superseded windowed ruling; never used; kept in superseded-draft-r1/.)
+- 22:12Z frozen replace.py over both phases (04 first) with a 05 symlink hub view: ledger 33 events (primary 25, guard 8),
+  max k primary 1 / guard 0; dispatch replacement-r1.json 3508 rows (3475 never-started + 33 replacements), 1754/host,
+  29080 games; coverage 392 counted + 3508 = all 3000/900 logical blocks once.
+- 22:13Z fresh namespaces k4s-confirm-replacement-r1 staged (overlay OK, PREREG 9650972d); fresh qualification running
+  (03 PGID 990201, 04 PGID 26640).
+
 ## Running (owned PGIDs only)
 - 03: reporting supervisor PGID 776314 (+ its block groups) in /mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1
 - 04: reporting supervisor PGID 4015460 (+ block groups) in /mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1
