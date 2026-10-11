@@ -7,8 +7,10 @@ Sol ops review r1 fixes: phase allowlist + quoting (1); STOP files, required fie
 copier checked by current receipt identity, non-zombie, source receipt, health freshness (3)."""
 import datetime,hashlib,json,re,shlex,subprocess,sys
 from pathlib import Path
-JOBS={'127x03':'/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1','127x04':'/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1'}
-EXPECTED={'reporting':1950}
+import os
+NS=os.environ.get('K4S_NS','k4s-confirm-replacement-r1')
+JOBS={'127x03':f'/mpac/sdicks02/jobs/clasher/{NS}','127x04':f'/mpac/sdicks02/jobs-k4s/{NS}'}
+EXPECTED={'reporting':1950,'replacement-r1':1754}
 SSH=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10']
 L=Path('/mpac/sdicks02/k4s-runner/run-r1')
 KF=L/'health'/'acknowledged-events.json'

@@ -122,7 +122,14 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 22:13Z fresh namespaces k4s-confirm-replacement-r1 staged (overlay OK, PREREG 9650972d); fresh qualification running
   (03 PGID 990201, 04 PGID 26640).
 
+- 22:29Z fresh qualification PASS 28/28 both (03 b912da99, 04 08d4651d); runtime byte-identical to smoke job (pin maps, inputs,
+  plan); SMOKE-PASS/smoke-admission/FROZEN-K4S 416f6e51 carried over byte-identical; 03 idle pin re-verified; auth v3 (cites
+  afe83faa); barrier PASS. **22:30:38Z / 22:30:42Z replacement-r1 LAUNCHED** 03 sup 1002822 / 04 sup 37363 (11 inflight,
+  1743 queued each); copiers 03 702958 / 04 711250. K4S Amendment 2 (19ed3815): fleet unaffected; END/Mac must name c1fb1e9a.
+
 ## Running (owned PGIDs only)
+- CURRENT: replacement-r1 in k4s-confirm-replacement-r1: 03 sup PGID 1002822, 04 sup PGID 37363; copiers on 05 702958 / 711250.
+  (Reporting-phase PGIDs below are dead/superseded.)
 - 03: reporting supervisor PGID 776314 (+ its block groups) in /mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1
 - 04: reporting supervisor PGID 4015460 (+ block groups) in /mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1
 - 05: OA-1 copiers PGID 1322045 (03) / 1331157 (04); logs run-r1/copier/127x0{3,4}-reporting.log

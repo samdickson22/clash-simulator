@@ -1,0 +1,138 @@
+{
+ "schema": "clasher.k4s.replacement-launch.v1",
+ "study": "PREREG-K4S",
+ "phase": "replacement-r1",
+ "outcomes_sealed": true,
+ "outcomes_read": false,
+ "ruling": "Option A ~22:12Z, COORDINATOR.md afe83faa",
+ "authorization": {
+  "path": "reports/explore/k4s-confirm/run-r1/receipts/REPORTING-AUTHORIZATION-v3-replacement-r1.json",
+  "sha256": "a39d232d3962b978249c969ecedb8f2cdf7cc706468c51817607dc77c97772f5"
+ },
+ "dispatch": {
+  "path": "reports/explore/k4s-confirm/run-r1/dispatch/replacement-r1.json",
+  "sha256": "46eba59b8a282ea50eac34f873100771fa09738a30370e75abb5e28d89bcd220",
+  "rows": 3508,
+  "never_started": 3475,
+  "replacements": 33,
+  "per_host": 1754,
+  "games": 29080
+ },
+ "ledger": {
+  "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r1.json",
+  "sha256": "19580caaf6ece2648952ce1e7e2f8c1979248aacfef7e9766a596e2efc03c60f",
+  "events": 33,
+  "lost_primary": 25,
+  "lost_guard": 8,
+  "max_k": {
+   "primary": 1,
+   "guard": 0
+  }
+ },
+ "counted_so_far": 392,
+ "hosts": {
+  "127x03": {
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1",
+   "launch": {
+    "utc": "2026-10-11T22:30:38Z",
+    "host": "127x03",
+    "phase": "replacement",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "2252214e051a3a920c92f6bcc125e8c7e4ffeaf8632f113f33170fe42530ad3d",
+    "dispatch_sha256": "46eba59b8a282ea50eac34f873100771fa09738a30370e75abb5e28d89bcd220",
+    "supervisor_pid": 1002822,
+    "supervisor_pgid": 1002822
+   },
+   "admission": {
+    "utc": "2026-10-11T22:30:37Z",
+    "admitted": true,
+    "who": "",
+    "foreign": 0,
+    "active": 0
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r1-qualification-127x03.json",
+    "sha256": "b912da99e680122a293ccd559da40627a1d1f97a9b2482122f314cce0b32427f",
+    "verdict": "PASS 28/28"
+   },
+   "runtime_identical_to_smoke_job": {
+    "files": true,
+    "native_source": true,
+    "inputs": true,
+    "inherited_runtime_pin_sha256": true,
+    "plan_sha256": true,
+    "files_count": 1724
+   },
+   "smoke_carry_over": {
+    "SMOKE_PASS": "d3ed1c61",
+    "smoke_admission": "e338db63",
+    "frozen_manifest": "416f6e51"
+   },
+   "timers_and_stamps_read_2026_10_11T22_13Z": {
+    "apt_daily": "2026-10-12T08:47:09Z",
+    "apt_daily_upgrade": "2026-10-12T13:46:58Z",
+    "release_upgrade_stamp": "2026-10-11T00:57:43Z (expires ~2026-10-12T00:58Z: accepted motd loss)",
+    "updates_available_stamp": "2026-10-11T07:53:13Z (newer than apt lists 07:53:02Z: not stale)"
+   },
+   "copier": {
+    "pgid": 702958,
+    "core": 62,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "idle_pin_03": "PID 2180947 start_ticks 139691386 cmdline 16152ceb"
+  },
+  "127x04": {
+   "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1",
+   "launch": {
+    "utc": "2026-10-11T22:30:42Z",
+    "host": "127x04",
+    "phase": "replacement",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "1f561807f4afb25a2452254c1a4eb3843c7a13342bd49f20bf9548f5ae735e71",
+    "dispatch_sha256": "46eba59b8a282ea50eac34f873100771fa09738a30370e75abb5e28d89bcd220",
+    "supervisor_pid": 37363,
+    "supervisor_pgid": 37363
+   },
+   "admission": {
+    "utc": "2026-10-11T22:30:41Z",
+    "admitted": true,
+    "who": "",
+    "foreign": 0,
+    "active": 0
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r1-qualification-127x04.json",
+    "sha256": "08d4651d4bb8357c1db98ee28331d55821b0fb02cead68627aea38ac91e696a2",
+    "verdict": "PASS 28/28"
+   },
+   "runtime_identical_to_smoke_job": {
+    "files": true,
+    "native_source": true,
+    "inputs": true,
+    "inherited_runtime_pin_sha256": true,
+    "plan_sha256": true,
+    "files_count": 1724
+   },
+   "smoke_carry_over": {
+    "SMOKE_PASS": "5c4b7606",
+    "smoke_admission": "9c4d636f",
+    "frozen_manifest": "416f6e51"
+   },
+   "timers_and_stamps_read_2026_10_11T22_13Z": {
+    "apt_daily": "2026-10-12T11:20:02Z",
+    "apt_daily_upgrade": "2026-10-12T13:27:55Z",
+    "release_upgrade_stamp": "2026-10-11T21:32:48Z (fresh)",
+    "updates_available_stamp": "2026-10-11T22:06:15Z (fresh; apt lists 22:06:04Z)"
+   },
+   "copier": {
+    "pgid": 711250,
+    "core": 63,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "idle_pin_03": null
+  }
+ },
+ "amendment_2_note": "K4S Amendment 2 (19ed3815/f231fbcb): fleet keeps d89cab16; END/Mac declarations must name c1fb1e9a"
+}

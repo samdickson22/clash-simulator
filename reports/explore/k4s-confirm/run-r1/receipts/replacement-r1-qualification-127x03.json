@@ -1,0 +1,464 @@
+{
+  "schema": "clasher.k4s.host-qualification.v1",
+  "consumed_artifact_sha256": {
+    "tests.log": "391fecd5b14983d3a3523f819ec936a4d60a84415b872a7a59de38e5df9d92dd",
+    "k4s-qualification.json": "b500c651fe255e4a81e1bc988badfa1afc91ca90ea0a0748352a235c0eb0ed6b",
+    "qualification.json": "be55436d44ce4c9fa4189d55a26a731c9620d1c219c85571b2e2c0c37ddb5826",
+    "belief-qualification.json": "ea1cae7000ff2fc5c79b0595365fb589e65b45b4494504c754e6b85c20b379d8",
+    "guard-support-qualification.json": "e54bbafc96cc7e15cb020dc8754dcb963ff2d71ba86bda99c349e66633cb3f54",
+    "sd1-manifest-check.txt": "109eecc71eb0236d5bb06c49e7b8e186121e4e69c210b0e8eea6c606b9a7f749",
+    "qualification-source-binding.json": "44a7033167312deb6d30d8ac31e030a9acddbc489be1153481f420c75f375af8",
+    "source-binding-start.json": "bb2997044d1689fcc8a4a1269fe9d153901950da523370a86c9e87c514436912",
+    "source-binding-end.json": "c1a14ba92fedbd09baa8ab5801abe834021a4fa4875115b1054faadc432df91e",
+    "out/check-games.json": "d87bb84849d797122fd923ff0292f5c2c4bd00cba6c9ce82ad2b1a9adafd690e",
+    "out/stoptest.json": "5aa52aeda51365f559640f4505f11e8c4081294936713e84976ad8be8cb65ab0",
+    "runtime-pin.json": "2252214e051a3a920c92f6bcc125e8c7e4ffeaf8632f113f33170fe42530ad3d",
+    "staging.json": "2bf97cd9935a10604670fbae867ed849a0c05bb911351a3dcd64b6e89d7c33cc"
+  },
+  "utc": "2026-10-11T22:29:10Z",
+  "host": "127x03",
+  "job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1",
+  "verdict": "PASS",
+  "checks": {
+    "tests_passed": true,
+    "t1_battery_125": true,
+    "belief_125_250": true,
+    "k4_equals_t1_fixed_states": true,
+    "k4_equals_k4s_no_deadline": true,
+    "sd1_policy_equals_cached": true,
+    "s_default_cases": true,
+    "nodeadline_command_hashes": true,
+    "charge_share": true,
+    "zero_budget_sd1_default": true,
+    "game_checks_passed": true,
+    "sd1_manifest": true,
+    "guard_decks_sha": true,
+    "guard_card_support": true,
+    "injected_full_runner_equal": true,
+    "stop_test": true,
+    "source_stable": true,
+    "source_binding_through_games": true,
+    "source_now_equals_start": true,
+    "source_now_equals_end": true,
+    "source_end_links_start": true,
+    "t1_reference_matches_ef4c073a_now": true,
+    "driver_receipts_now": true,
+    "bound_games_unchanged": true,
+    "qualification_inventory_unchanged": true,
+    "battery_receipt_links": true,
+    "artifacts_unchanged_since_verify": true,
+    "game_runtime_pins": true
+  },
+  "tests_summary": "299 passed, 2 deselected in 36.12s",
+  "k4s_counts": {
+    "K4_frozen": 125,
+    "T1_anchor_four_frozen": 125,
+    "K4S_frozen": 125,
+    "K4S_equals_K4": 125,
+    "anchor_x_equals_anchor_injected": 125,
+    "sd1_policy_equals_cached": 125,
+    "sd1_p_play_exact": 125,
+    "zero_budget_sd1_default": 125,
+    "zero_budget_sd1_play": 31,
+    "injected_cutoffs": 884,
+    "injected_sd1_play_default": 179,
+    "injected_after_complete_wait": 179,
+    "injected_sd1_wait_kept": 557,
+    "injected_completed_play_kept": 148,
+    "root_immutable": 125
+  },
+  "t1_counts": {
+    "coarse_frozen": 125,
+    "anchor_frozen": 125,
+    "anchor_one_frozen": 125,
+    "anchor_four_frozen": 125,
+    "v1_cache_action_rng": 125,
+    "v1_cache_proposals": 125,
+    "student_cache_equal": 125,
+    "proposal_augmented_frozen": 125,
+    "root_immutable": 125,
+    "student_charged_inside_timer": 125
+  },
+  "nodeadline": {
+    "k4s-nd-p0": {
+      "t1_K4_200": "d37286a2c422c1417ef634f4037b5727d131719305541983ec4cf1caa2acea10",
+      "k4s_K4_200": "d37286a2c422c1417ef634f4037b5727d131719305541983ec4cf1caa2acea10",
+      "k4s_K4S_200": "d37286a2c422c1417ef634f4037b5727d131719305541983ec4cf1caa2acea10",
+      "k4_equals_t1": true,
+      "k4s_equals_k4": true
+    },
+    "k4s-nd-g1": {
+      "t1_K4_200": "84d52406e8d7fd38e4a40ac4cac474db36c9bce03698297e255598c29223828c",
+      "k4s_K4_200": "84d52406e8d7fd38e4a40ac4cac474db36c9bce03698297e255598c29223828c",
+      "k4s_K4S_200": "84d52406e8d7fd38e4a40ac4cac474db36c9bce03698297e255598c29223828c",
+      "k4_equals_t1": true,
+      "k4s_equals_k4": true
+    }
+  },
+  "injected": {
+    "qualification-0005-d27-K4-200.json": {
+      "command_equal": true,
+      "decisions": 241,
+      "field_mismatches": 0
+    },
+    "qualification-0007-d27-K4-200.json": {
+      "command_equal": true,
+      "decisions": 211,
+      "field_mismatches": 0
+    }
+  },
+  "injected_coverage": {
+    "decisions": 452,
+    "hit": 280,
+    "overrun": 17,
+    "scored": 401,
+    "scored_hit": 229,
+    "belief": 51
+  },
+  "guard_support_receipt_sha256": "e54bbafc96cc7e15cb020dc8754dcb963ff2d71ba86bda99c349e66633cb3f54",
+  "charge": {
+    "K4-120|belief": {
+      "cell": 0.6,
+      "n": 3,
+      "mean_dev": 0.002162484407497408,
+      "max_abs_dev": 0.0022238245413648827,
+      "outside_tolerance": 0
+    },
+    "K4-120|scored": {
+      "cell": 0.6,
+      "n": 259,
+      "mean_dev": 0.0022052229563613275,
+      "max_abs_dev": 0.0035860367728245968,
+      "outside_tolerance": 0
+    },
+    "K4-140|belief": {
+      "cell": 0.7,
+      "n": 2,
+      "mean_dev": 0.003024547122867788,
+      "max_abs_dev": 0.0034059926307748456,
+      "outside_tolerance": 0
+    },
+    "K4-140|prescan": {
+      "cell": 0.7,
+      "n": 1,
+      "mean_dev": 0.0034152931448556134,
+      "max_abs_dev": 0.0034152931448556134,
+      "outside_tolerance": 0
+    },
+    "K4-140|scored": {
+      "cell": 0.7,
+      "n": 334,
+      "mean_dev": 0.0029434651474354273,
+      "max_abs_dev": 0.004171808225913454,
+      "outside_tolerance": 0
+    },
+    "K4-160|belief": {
+      "cell": 0.8,
+      "n": 1,
+      "mean_dev": 0.004402872085524007,
+      "max_abs_dev": 0.004402872085524007,
+      "outside_tolerance": 0
+    },
+    "K4-160|scored": {
+      "cell": 0.8,
+      "n": 216,
+      "mean_dev": 0.0040962407201582335,
+      "max_abs_dev": 0.005695946510768574,
+      "outside_tolerance": 0
+    },
+    "K4-180|belief": {
+      "cell": 0.9,
+      "n": 1,
+      "mean_dev": 0.005513441161589444,
+      "max_abs_dev": 0.005513441161589444,
+      "outside_tolerance": 0
+    },
+    "K4-180|scored": {
+      "cell": 0.9,
+      "n": 280,
+      "mean_dev": 0.0052142309802134,
+      "max_abs_dev": 0.007054306375373201,
+      "outside_tolerance": 0
+    },
+    "K4S-120|belief": {
+      "cell": 0.6,
+      "n": 2,
+      "mean_dev": 0.0028467688693201154,
+      "max_abs_dev": 0.002967606065634898,
+      "outside_tolerance": 0
+    },
+    "K4S-120|scored": {
+      "cell": 0.6,
+      "n": 295,
+      "mean_dev": 0.0022024214011872457,
+      "max_abs_dev": 0.003227335910728324,
+      "outside_tolerance": 0
+    },
+    "K4S-140|belief": {
+      "cell": 0.7,
+      "n": 2,
+      "mean_dev": 0.0033483111395845033,
+      "max_abs_dev": 0.003354921542038425,
+      "outside_tolerance": 0
+    },
+    "K4S-140|prescan": {
+      "cell": 0.7,
+      "n": 1,
+      "mean_dev": 0.0038642997883381325,
+      "max_abs_dev": 0.0038642997883381325,
+      "outside_tolerance": 0
+    },
+    "K4S-140|scored": {
+      "cell": 0.7,
+      "n": 317,
+      "mean_dev": 0.003127592168537261,
+      "max_abs_dev": 0.004327884254589021,
+      "outside_tolerance": 0
+    },
+    "K4S-160|belief": {
+      "cell": 0.8,
+      "n": 1,
+      "mean_dev": 0.0042790449325743884,
+      "max_abs_dev": 0.0042790449325743884,
+      "outside_tolerance": 0
+    },
+    "K4S-160|scored": {
+      "cell": 0.8,
+      "n": 216,
+      "mean_dev": 0.004123635568484115,
+      "max_abs_dev": 0.005744552767643046,
+      "outside_tolerance": 0
+    },
+    "K4S-180|belief": {
+      "cell": 0.9,
+      "n": 1,
+      "mean_dev": 0.0054139995748035685,
+      "max_abs_dev": 0.0054139995748035685,
+      "outside_tolerance": 0
+    },
+    "K4S-180|scored": {
+      "cell": 0.9,
+      "n": 217,
+      "mean_dev": 0.005342945116687327,
+      "max_abs_dev": 0.007063124552903338,
+      "outside_tolerance": 0
+    }
+  },
+  "charge_paths_seen": {
+    "K4-120": [
+      "belief",
+      "scored"
+    ],
+    "K4-140": [
+      "belief",
+      "prescan",
+      "scored"
+    ],
+    "K4-160": [
+      "belief",
+      "scored"
+    ],
+    "K4-180": [
+      "belief",
+      "scored"
+    ],
+    "K4-200": [
+      "belief",
+      "scored"
+    ],
+    "K4S-120": [
+      "belief",
+      "scored"
+    ],
+    "K4S-140": [
+      "belief",
+      "prescan",
+      "scored"
+    ],
+    "K4S-160": [
+      "belief",
+      "scored"
+    ],
+    "K4S-180": [
+      "belief",
+      "scored"
+    ],
+    "K4S-200": [
+      "belief",
+      "scored"
+    ]
+  },
+  "zero_budget": {
+    "qualification-0004-d27-K4S-200.json": {
+      "decisions": 280,
+      "sd1_default_returned": 280,
+      "sd1_plays": 36,
+      "paths": {
+        "belief": 280
+      }
+    },
+    "qualification-0004-d27-K4S-120.json": {
+      "decisions": 280,
+      "sd1_default_returned": 280,
+      "sd1_plays": 36,
+      "paths": {
+        "belief": 280
+      }
+    }
+  },
+  "stop_test": {
+    "utc": "2026-10-11T22:29:09Z",
+    "stop_touched_utc": "2026-10-11T22:29:08Z",
+    "game_running_at_touch": true,
+    "drained": true,
+    "drain_seconds": 0.6013812620658427,
+    "returncode": 1,
+    "owned_processes_after": 0,
+    "interrupted_by_owned_stop": true,
+    "log_tail": [
+      "InterruptedError: owned K4S stop"
+    ],
+    "stop_removed_by_test": true,
+    "external_stop_preserved": false
+  },
+  "host_audit": {
+    "admitted": null,
+    "note": "not run before the freeze: host_audit.admission reads FROZEN-K4S.json (OP-5 parent-source seeds); the supervisor runs it at launch"
+  },
+  "staging": {
+    "utc": "2026-10-11T22:13:01Z",
+    "host": "127x03",
+    "base": "/mpac/sdicks02/jobs/clasher/x4s2-20261011",
+    "inherited_runtime_pin": "/mpac/sdicks02/jobs/clasher/x4s-20261011/s1-runtime-pin-r2.json",
+    "inherited_runtime_pin_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
+    "inherited_files_verified": 1557,
+    "native_source_verified": 77,
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "corpus_sha256": {
+      "states-ready.pkl": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+      "symmetric-screen-samples.json": "86ecbb600b712d0fab05c2022e8d95d1dfb47a9be531ed4b8722a1acdcfd2b7d"
+    }
+  },
+  "runtime_pin_sha256": "2252214e051a3a920c92f6bcc125e8c7e4ffeaf8632f113f33170fe42530ad3d",
+  "source_binding": {
+    "utc": "2026-10-11T22:21:48Z",
+    "files": {
+      "reports/explore/k4s-confirm/anchor.py": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
+      "reports/explore/k4s-confirm/anchor_x.py": "cf528473278d4fbf9ffd8aecfd4a3350fe1dbb6bbeb0d441870c9f88bad3ec98",
+      "reports/explore/k4s-confirm/apt_budget.py": "c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618",
+      "reports/explore/k4s-confirm/audit_seeds.py": "93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd",
+      "reports/explore/k4s-confirm/barrier.py": "01a58c66573ad6f7bf116fdf03bd075f4f81991f67a8aa5d8ddf47343ad0b063",
+      "reports/explore/k4s-confirm/belief.py": "5e6f07fc3d7f71cf380d8f68a9c47021355a48b85026df2b1878c236556a0f56",
+      "reports/explore/k4s-confirm/build_delta_manifest.py": "36ef7d350005358e9c2c11d37c340ac5134fd808db5507556f0e209eb0c0b406",
+      "reports/explore/k4s-confirm/cached_policy.py": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe",
+      "reports/explore/k4s-confirm/charge.py": "a1fa23ab9461d00c0508d727026c50291fcda6ca75e61893ad30784ca62d8476",
+      "reports/explore/k4s-confirm/check_games.py": "83a92547c9f335daaceab56d872cf60700423e294346978cd1c013b484eefd9b",
+      "reports/explore/k4s-confirm/clone_stage.py": "d99554260c1cae3e00360bd7a05e3e798945bac833537a409a1ac3a5e7d2ec77",
+      "reports/explore/k4s-confirm/common.py": "c1d8d304ed23858e53ea58b57f25d5f11abea4e144169f004e967d45c929694b",
+      "reports/explore/k4s-confirm/corpus.py": "913fc163ac5c3edafe09e16dc788087e2b837a84271c8b7e08dd581675c477d0",
+      "reports/explore/k4s-confirm/corpus_game.py": "bea12e077190379f175828771deeacec16e5c8e6e7943087fb399849a5197df6",
+      "reports/explore/k4s-confirm/cpu_accounting.py": "5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f",
+      "reports/explore/k4s-confirm/detach.sh": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+      "reports/explore/k4s-confirm/end_background.py": "a872bd2d810161d82467075567439d8000817eaa1c1082d00a73d4a5b008e839",
+      "reports/explore/k4s-confirm/end_evidence.py": "6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e",
+      "reports/explore/k4s-confirm/end_pool.py": "069c22e7d68e1488291873c6c2d9e87cb1daf328fbe8bf254415d1fc2af06da2",
+      "reports/explore/k4s-confirm/end_reference.py": "5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9",
+      "reports/explore/k4s-confirm/export_staging_extras.sh": "d8a61f9c957f935f96a96110e3feec7692270528ee7ea9c84b11b07dc0327a65",
+      "reports/explore/k4s-confirm/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
+      "reports/explore/k4s-confirm/health.py": "5bbe9beb4db6f40e9aab64fd2cf07aa57419e04ddfcbb2dccf4bb6351b51b697",
+      "reports/explore/k4s-confirm/host_audit.py": "c2ac7bf4dc42077f01373aa4c5a080b7d97dffc700358e4b28d65dbeabef65db",
+      "reports/explore/k4s-confirm/idle_services.py": "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
+      "reports/explore/k4s-confirm/latency.py": "70b733cb9f16d329f310cfb23dc0dedec961cdd97ee73d598b5b6e779e9f09b2",
+      "reports/explore/k4s-confirm/launch.sh": "733414fbcfaf51f3e4f0881ab380a2de4e6dbc32a40701b42d17e66ffa59317a",
+      "reports/explore/k4s-confirm/make_freeze_skeleton.py": "9406499c7cd17eef3613c2a2e1740fca168db68f833cd017ee930ecaa73f9219",
+      "reports/explore/k4s-confirm/make_qualification_receipt.py": "fcdf768c4e2c7ee8c41bdd22dbcf8cc445c99286c33fae05657b0a364d43d790",
+      "reports/explore/k4s-confirm/mirror.py": "c9defb332d3dc5f83c4aed630bff8368b6d4201bb9511844aa515d0f3e22289e",
+      "reports/explore/k4s-confirm/owned_supervisor.py": "28b73adfa3e5b2bf3e932c5b3cd35a55b66bde30723b0ed9baedd3b6a5b0dca2",
+      "reports/explore/k4s-confirm/parent_source_seed.py": "070ddc7d722053569413d90ca80110c1098d2fd56ec4b9467fd091b464723a56",
+      "reports/explore/k4s-confirm/perception_confirmation.py": "6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680",
+      "reports/explore/k4s-confirm/pin.py": "440e59236f2dcf5fbf7e47fd69859fe0a72c91d8ecd15f93009307b37e13ce07",
+      "reports/explore/k4s-confirm/planner.py": "20893b4f8f3364e5f735ad14b7d38f9fd30a31d1d8301a593ece631f295a7784",
+      "reports/explore/k4s-confirm/proposals.py": "be0c23188251f7ac2181dafd6bd01b2f90f47699f70c3671b91815e7fe990190",
+      "reports/explore/k4s-confirm/qual_tasks.py": "cc81b3172fc41f0fe1835e0cb9038ee96720998bde65a2836b4caba15657133e",
+      "reports/explore/k4s-confirm/qualification_binding.py": "48644ca369eb246c4c43aaf64254a27e86a941eb9fc3fd69385113a2387701c0",
+      "reports/explore/k4s-confirm/qualify.py": "99b6782b577a83dccd9eaea7764ffdb6945796a00a51328fba47b3cc80fe14a3",
+      "reports/explore/k4s-confirm/qualify.sh": "9e9b979d517c9cb0eac3a324b57e977a6457b4fd6189b5bf850a32690872605d",
+      "reports/explore/k4s-confirm/qualify_belief.py": "b6d86ed9fa3cd20ed83a86d75314295f055e92110212b904986b193a43451213",
+      "reports/explore/k4s-confirm/qualify_games.py": "13b18a7bde9917dbb1300f6041cbb02542cb9c4543f6d11db837d9be971ece2b",
+      "reports/explore/k4s-confirm/qualify_games.sh": "3fa3961677db602be35588b161dbd7572ef674d369f48c0f1203503af956d7c2",
+      "reports/explore/k4s-confirm/qualify_k4s.py": "12bb640f5cf7343e6e98e750517c4428f47588f5f6442068280f4b9242518de4",
+      "reports/explore/k4s-confirm/rebind.py": "4857b6db0851ce1c04574181a967e1a0732d9a43a8fc76fc759a76ddf0df17f5",
+      "reports/explore/k4s-confirm/reduce.py": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
+      "reports/explore/k4s-confirm/reference_timed_policy.py": "1e5ba412228cbd3bc51f40528163e8d0e72bd2291e76ba19cc84087c813418ab",
+      "reports/explore/k4s-confirm/replace.py": "4df2e55ec28bee969981efbb3acdcd5a5219e6a3070e550c202f8ca089db214f",
+      "reports/explore/k4s-confirm/run.py": "78d88a572a8637956492d0f8447569c2307454818bb03356007b9ff9938a5f13",
+      "reports/explore/k4s-confirm/run_qualification.sh": "1d788704af244574ac0acd15f1492baaa9a2e1f3edda05c83b5e3f898df1ea65",
+      "reports/explore/k4s-confirm/runtime.sh": "67249aac5f7ff0027bb7bf5fb19c4275f1fe7d9b56a9ab4977a731169b8570f3",
+      "reports/explore/k4s-confirm/schedule.py": "b95ad6757baa1623f8af3cd6d65ac47c0a85460fd1ea231122313abf4728d131",
+      "reports/explore/k4s-confirm/sd1_manifest.py": "f3fd75178a9d5ca17684f24672ed20dcc00efa8529752c1ecd50ab77c4fe1ba9",
+      "reports/explore/k4s-confirm/sd1_policy.py": "53d0d9ccd09b6ee9c346f5f9e58ac192214fc71b78c33b721a9dcc30d6d6af24",
+      "reports/explore/k4s-confirm/sdefault.py": "0448db50afffb583c69d69a84218aed6f4413e514188ac086b7cd1631a67fa8e",
+      "reports/explore/k4s-confirm/select_guard_decks.py": "21125180d53c6d654c8889c4cedb1a5148c3a695c20aa5467fce5165f11f479e",
+      "reports/explore/k4s-confirm/smoke_pass.py": "e23d661ae2f2fd6abb26d42041cc9ca4f913215d8d483283101855cd16698502",
+      "reports/explore/k4s-confirm/source_binding.py": "568e016377fe63b84c266958d2982f704bda56ed4a12d6259dd7ce089f6116e5",
+      "reports/explore/k4s-confirm/ssh_budget.py": "0ef24fac5ff6c47fb93e0e8b189402c4144d1a202b8cd2c123847188f8b34100",
+      "reports/explore/k4s-confirm/ssh_sensitivity.py": "bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5",
+      "reports/explore/k4s-confirm/ssh_transport.py": "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f",
+      "reports/explore/k4s-confirm/stage.py": "0fdf3374b43277d2d3190eceebdbe80faa1c792f6c91b28a30b58b0f7ae1b288",
+      "reports/explore/k4s-confirm/stage_k4s.py": "568642727a1a5f4f5ef135358931079d4fbaff474a3f69ec4bb104a5a4fed5c2",
+      "reports/explore/k4s-confirm/stop_test.py": "ef0ab1a18918592372f4160d1bc10ae717004fdc8b9f8170e3f79243f3ce0f23",
+      "reports/explore/k4s-confirm/supervise.py": "a25c9076978a540472241bee3866224ac980596cf4585da8609c0aa8ae190778",
+      "reports/explore/k4s-confirm/synthetic.py": "64b2d080865e9df8c27d81d1e4104162d30a58f56cd68844de1c4d2b3baea847",
+      "reports/explore/k4s-confirm/system_bus.py": "785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11",
+      "reports/explore/k4s-confirm/test_anchor.py": "2d15209c739ae6cf2a092aca8bb5cee0be8f7bf8dfb4a295a9fcd9adde4f6553",
+      "reports/explore/k4s-confirm/test_audit_seeds.py": "dadfd3f71969ad1c51ee60ae84698dd7391ae40e4b3af711242456e3c8f46ac3",
+      "reports/explore/k4s-confirm/test_barrier.py": "cf7fad46730be421fd551696ffbe643c986e1dcbc005eafd470c3452ae28cabd",
+      "reports/explore/k4s-confirm/test_belief.py": "c0bfdb09be4cbc9e44999317e19d37b37a9332c09644b5c91bb68f94a0e39c6e",
+      "reports/explore/k4s-confirm/test_charge.py": "b8e68aa15bbde6bcb54e012bcd406e07eb3bda044a74735febca98298a177cd1",
+      "reports/explore/k4s-confirm/test_coarse.py": "ab159d4d1e3ea9ef4d378b84ca8f11022b5ad6920920e0dea76c1976ec29bd23",
+      "reports/explore/k4s-confirm/test_corpus.py": "d82619642de2c5ace234914dcda96e99601579d304bc7a88703a4a6ad2b84ddf",
+      "reports/explore/k4s-confirm/test_end_background.py": "cd979b746d7f55d892355a52680426719d13828ed31fa5e101ef6400f63972b6",
+      "reports/explore/k4s-confirm/test_end_reference.py": "1d9d111a2360b159d16673a1e8049552db2ff84314ee78d70f0450432c22c7d1",
+      "reports/explore/k4s-confirm/test_gc_window.py": "6a00843c96a02a8dd18c636994ecbf8474ef5e7bbcce9c11201344609b3eac3d",
+      "reports/explore/k4s-confirm/test_health.py": "ff4f2e9b53106eaa25a783442c81390bfeae23debc00340ae132b5872e218913",
+      "reports/explore/k4s-confirm/test_idle_services.py": "d0f282c655cdd4105b9940ce59654bb4c09cbc8e1ea0b85240c9d5e0c85aac91",
+      "reports/explore/k4s-confirm/test_latency.py": "8fb2c1324fa3b2dbfa52d3cc446878925f11962ebedc5fccad09cd06064d4e62",
+      "reports/explore/k4s-confirm/test_op1.py": "cedd1da28579eb8ff4905fb9f36dd02c226a3c88496b8fe6e319eeb5a42a03e7",
+      "reports/explore/k4s-confirm/test_op2.py": "b996bb45d4559785e99979452e64d8543d6f979914dd89f6db1644e5bbbc154a",
+      "reports/explore/k4s-confirm/test_op3.py": "ebffb7cf6201f912b60803226787a37aaedf16234303be0af2440ade9b5ba72b",
+      "reports/explore/k4s-confirm/test_op4.py": "43d5a163af77175386d7a4710705b2e2043aaf50c6b5fe9672c64cd710c4d4b2",
+      "reports/explore/k4s-confirm/test_op5.py": "5d640c3cc30a1457bd32164a46896667ba34f9d18d5e5c81f0f0f3c0e08ea240",
+      "reports/explore/k4s-confirm/test_op5_08.py": "68d039ec6671ec5cf04ee11e5e427e956150449630b5be96459a90b3af3a320e",
+      "reports/explore/k4s-confirm/test_op6.py": "b87ab5e09c445f3b8a3c0c9260fe24f1ec507ef753e0529d5f27484a677b2f03",
+      "reports/explore/k4s-confirm/test_op7.py": "b1f24517ad58a94bf5b97b48d274970eca0aad455daee3ccfdf491e04e5fa68a",
+      "reports/explore/k4s-confirm/test_op7_boottime.py": "b0a790aa9f886bc4e025cbb46265f51ccf6eca1e04681a672b6e697bc83e909c",
+      "reports/explore/k4s-confirm/test_qual_tasks.py": "6ee1a0b2e911ec1a8f5a31870a4e39c6dfa8fd391dc5adcc69fc0a36ff7cbc16",
+      "reports/explore/k4s-confirm/test_reduce.py": "70bd6257ab09c54ef58c4a1a2cd9cebdb383ee4699d0be836cc4aa721d9d6775",
+      "reports/explore/k4s-confirm/test_replace.py": "9dbae6efa12af393dc9809131abe9ec5def41af2b1810bff7648904f05fcd0fa",
+      "reports/explore/k4s-confirm/test_schedule.py": "b1989c36d8fcb9b755dd4bee6af8700d01ae7ba07ab0c1127235cc7785d0b1dd",
+      "reports/explore/k4s-confirm/test_sdefault.py": "e211a81d1403c270e01e9bcd98bad69dc5437a15b8d3b0099b91c04a6b728eaa",
+      "reports/explore/k4s-confirm/plan.json": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf"
+    },
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "student_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "receipts": {
+      "qualification.json": "be55436d44ce4c9fa4189d55a26a731c9620d1c219c85571b2e2c0c37ddb5826",
+      "belief-qualification.json": "ea1cae7000ff2fc5c79b0595365fb589e65b45b4494504c754e6b85c20b379d8",
+      "guard-support-qualification.json": "e54bbafc96cc7e15cb020dc8754dcb963ff2d71ba86bda99c349e66633cb3f54"
+    },
+    "source_stable": true
+  },
+  "source_binding_start_sha256": "bb2997044d1689fcc8a4a1269fe9d153901950da523370a86c9e87c514436912",
+  "source_binding_end_sha256": "c1a14ba92fedbd09baa8ab5801abe834021a4fa4875115b1054faadc432df91e",
+  "t1_reference_matches_ef4c073a": true,
+  "sd1_manifest_sha256": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "plan_sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+  "corpus_sha256": {
+    "states-ready.pkl": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "symmetric-screen-samples.json": "86ecbb600b712d0fab05c2022e8d95d1dfb47a9be531ed4b8722a1acdcfd2b7d"
+  },
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "outcomes_read": false
+}
