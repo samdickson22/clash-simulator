@@ -1,0 +1,59 @@
+{
+  "schema": "clasher.t1.end.memory-hold.health.v1",
+  "observed_at_utc": "2026-10-11T21:02:03Z",
+  "coordinator_ruling": "8f61824e",
+  "coordinator_read_through": 8059,
+  "own_messages_read_through": 3693,
+  "explicit_adoption_received": false,
+  "decision": "HOLD_NO_REGISTRATION_A6_TIMING_OR_REFERENCE",
+  "hosts": [
+    {
+      "utc": "2026-10-11T21:02:02Z",
+      "host": "127x01",
+      "manifest_sha256": "ac1da9c6455e0bebe4f71eac3a74e1342cc245ceb3e9130b9b39f92076c16ae2",
+      "manifest_unchanged": true,
+      "states_size_unchanged": true,
+      "states_full_sha_verified_at": "2026-10-11T20:32:35Z",
+      "attempt_root_exists": false,
+      "attempt_children": [],
+      "C3_original_utc": "2026-10-11T20:32:35Z",
+      "C3_original_status": "PASS",
+      "outcomes_sealed": true
+    },
+    {
+      "utc": "2026-10-11T21:02:03Z",
+      "host": "127x08",
+      "manifest_sha256": "afd62c6f2f1df48a3d988c0a16804dbb22fa769be8945bcc3a877c571d4bb3f2",
+      "manifest_unchanged": true,
+      "states_size_unchanged": true,
+      "states_full_sha_verified_at": "2026-10-11T20:40:02Z",
+      "attempt_root_exists": false,
+      "attempt_children": [],
+      "C3_original_utc": "2026-10-11T20:40:02Z",
+      "C3_original_status": "PASS",
+      "outcomes_sealed": true
+    }
+  ],
+  "source_fixture_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+  "new_coordinator_rule": {
+    "position": 8059,
+    "status": "future_binding_only_not_adoption",
+    "actual_01_file_conversion_after_adoption": true,
+    "canonical_ordered_fingerprint_must_equal_reviewed_05": true,
+    "authoritative_containers": "01 states-rows.json and states-rows.bin; copy byte-identically everywhere",
+    "independent_host_conversion_for_use": false
+  },
+  "serialization_correction": {
+    "source": "implementer position8057, coordinator8059",
+    "finding": "torch legacy pickle storage keys depend on process memory addresses; captured per-row raw SHAs are not reproducible by re-pickling loaded objects",
+    "actual_states_pickle_bytes_preserved": true
+  },
+  "outcomes_sealed": true,
+  "bundles_modified": false,
+  "same_end_timer": {
+    "enabled": true,
+    "every_ms": 1200000,
+    "next_run_at": "2026-10-11T21:21:35.050Z"
+  },
+  "hub_mirror": "coordinator-paused"
+}
