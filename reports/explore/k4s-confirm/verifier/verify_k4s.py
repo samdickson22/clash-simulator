@@ -9,10 +9,13 @@ What it does, in order:
   1. Seal (spec §7): verifies the release receipt against the repository at the receipt's commit, with
      sha256 of each item, before any game file is opened. Otherwise it refuses, unless the tree is marked
      SYNTHETIC and --synthetic is given.
-  2. Counting (spec §6.2): block completeness, game SHA-256, arm set == descriptor order, the replacement
-     ledger (index, cell, bank and cap rules), and exactly 3000 primary / 900 guard logical blocks, with 600 /
-     300 in the subsample.
-  3. Integer outcomes: loss = winner is not None and winner != seat; draw = winner is None.
+  2. Counting (spec §6.1, §6.2, §3): hub acknowledgement file for every non-127x01 block, block completeness, game
+     SHA-256, arm set == descriptor order, the replacement ledger replayed in event order (index, cell, bank and
+     cap rules, allocation before loss, final survivor), exactly 3000 primary / 900 guard logical blocks with 600 /
+     300 in the subsample, and the §2 deck mapping (guard-decks.json, pinned by sha256) for every game.
+  3. Integer outcomes: the winner key must exist; loss = winner is not None and winner != seat; draw = winner is
+     explicitly null. c* is read from the frozen plan.json (spec §6.2) as data, and its path and sha256 are recorded.
+     Each game's metadata.c_star must equal that value. --c-star, if given, must equal it or the run is refused.
   4. Stratified paired bootstrap (spec §6.3): R = 10,000, default_rng(2026101170); analyses drawn in the order
      primary full, guard full, primary subsample, guard subsample; cells ascending; one index draw per cell,
      shared by all arms.
@@ -29,6 +32,7 @@ Exit code: 0 clean, 1 flags only, 2 refusal, errors, or comparison mismatches.
 import argparse
 import hashlib
 import json
+import math
 import re
 import subprocess
 import sys
@@ -73,6 +77,13 @@ RESERVE_MS = 8
 PIN_KEYS = ("freeze_manifest_sha256", "runtime_pin_sha256", "opponent_checkpoint_sha256", "native_sha256")
 SD1_KEYS = ("sd1_manifest_sha256", "sd1_checkpoint_sha256", "sd1_calibration_sha256", "sd1_threshold")
 HUB_HOST = "127x01"
+# §2: T1's guard-decks file, pinned by sha256 and read as data.
+GUARD_DECKS_PATH = Path(__file__).resolve().parent.parent / "guard-decks.json"
+GUARD_DECKS_SHA256 = "6d51628bb1262f53258e88ef6247cfb41f2762f9f13323387fcd36ad126c48ef"
+# §6.2: the frozen c*, read from the study's plan.json as data. A different plan is a test fixture (see load_plan).
+PLAN_PATH = Path(__file__).resolve().parent.parent / "plan.json"
+PLAN_MARKER = "SYNTHETIC"
+C_STAR_VALUES = ("0.9", "0.8")
 
 # §5.1, §6.3 bootstrap.
 REPS = 10_000
@@ -234,29 +245,88 @@ def expected_layout(pop, logical, pops):
     return rotated, rho, False
 
 
-def resolve_logical(did, descs, errors, seen=()):
-    """§3.1 [I-1]: a replacement's logical index is that of the block it ultimately replaces."""
-    if did in seen:
-        errors.append(f"replacement cycle through {did}")
-        return None
-    desc = descs.get(did)
-    if desc is None:
-        errors.append(f"replacement target {did} is in neither the ledger nor the tree")
-        return None
-    if desc.get("replaces") is None:
-        return desc.get("index")
-    return resolve_logical(desc["replaces"], descs, errors, seen + (did,))
+def original_id(pop, logical):
+    return f"{pop}-{logical:04d}"
 
 
-def check_descriptor(did, desc, logical, errors, pops):
-    """Layout, seed, cell and seat for one descriptor, given its logical index."""
+def logical_of_original(replaces, pop, spec):
+    """§3: `replaces` names a logical original, {pop}-{index:04d} with index < n. Returns the index, or None."""
+    if not isinstance(replaces, str) or not re.fullmatch(rf"{pop}-[0-9]{{4}}", replaces):
+        return None
+    index = int(replaces[len(pop) + 1:])
+    if index >= spec["n"] or replaces != original_id(pop, index):
+        return None
+    return index
+
+
+def load_decks(path=GUARD_DECKS_PATH):
+    """§2: the frozen deck lists. Refused unless the file hashes to the pinned sha256."""
+    raw = path.read_bytes()
+    if sha256_bytes(raw) != GUARD_DECKS_SHA256:
+        raise Refusal("guard-decks.json does not match its pinned sha256")
+    doc = json.loads(raw)
+    decks = dict(primary=doc["primary"], l2=doc["l2"], guard=[entry["cards"] for entry in doc["guard"]])
+    if (len(decks["primary"]), len(decks["l2"]), len(decks["guard"])) != (5, 3, 3):
+        raise Refusal("guard-decks.json does not have 5 primary, 3 l2 and 3 guard decks")
+    return decks
+
+
+def load_plan(path, synthetic):
+    """§6.2: the frozen c* is the plan's c_star field, read as data. Returns the path, sha256 and c* label.
+
+    The frozen plan.json is the only plan a counted run accepts. Any other plan is a test fixture: it runs only with
+    --synthetic, and it must carry the SYNTHETIC marker. The frozen plan must not carry the marker.
+    """
+    path = Path(path)
+    try:
+        raw = path.read_bytes()
+    except OSError as exc:
+        raise Refusal(f"cannot read plan {path}: {exc}")
+    try:
+        doc = json.loads(raw)
+    except ValueError:
+        raise Refusal(f"plan {path} is not JSON")
+    if not isinstance(doc, dict):
+        raise Refusal(f"plan {path} is not a JSON object")
+    frozen = path.resolve() == PLAN_PATH
+    marked = doc.get("synthetic_marker") == PLAN_MARKER
+    if frozen and marked:
+        raise Refusal("the frozen plan.json carries a SYNTHETIC marker")
+    if not frozen:
+        if not synthetic:
+            raise Refusal("--plan other than the frozen plan.json needs --synthetic")
+        if not marked:
+            raise Refusal(f"test plan {path} needs the SYNTHETIC marker")
+    value = doc.get("c_star")
+    label = next((c for c in C_STAR_VALUES if isinstance(value, float) and approx(value, float(c))), None)
+    if label is None:
+        raise Refusal(f"plan {path}: c_star {value!r} is not one of {list(C_STAR_VALUES)}")
+    return dict(path=str(path.resolve()), sha256=sha256_bytes(raw), c_star=label)
+
+
+def scheduled_decks(pop, cell, decks):
+    """§2: the own and opponent deck indices, and card lists, that a population cell is scheduled to play."""
+    if pop == "primary":
+        own, opp = cell % 5, (cell // 5) % 5
+        return dict(own_index=own, opponent_index=opp, own=decks["primary"][own], opponent=decks["primary"][opp])
+    own, opp = (cell // 2) % 3, cell // 6
+    return dict(own_index=own, opponent_index=opp, own=decks["l2"][own], opponent=decks["guard"][opp])
+
+
+def same_deck(got, want):
+    """§6.2: decks compare as sorted lists, because the runner shuffles deck order per game."""
+    return isinstance(got, list) and all(isinstance(card, str) for card in got) and sorted(got) == sorted(want)
+
+
+def check_descriptor(did, desc, logical, errors, pops, decks):
+    """Layout, seed, cell, seat and deck indices for one descriptor, given its logical index."""
     pop = desc.get("population")
     if pop not in pops:
         errors.append(f"{did}: unknown population {pop!r}")
         return
     spec = pops[pop]
     index = desc.get("index")
-    if not is_int(index) or desc.get("id") != f"{pop}-{index:04d}":
+    if not is_int(index) or desc.get("id") != original_id(pop, index):
         errors.append(f"{did}: id/index mismatch")
         return
     if desc.get("seed") != spec["base"] + index:
@@ -265,6 +335,12 @@ def check_descriptor(did, desc, logical, errors, pops):
         errors.append(f"{did}: cell {desc.get('cell')} != logical index mod cells")
     if desc.get("seat") != desc.get("cell", -1) % 2:
         errors.append(f"{did}: seat is not cell mod 2")
+    cell = desc.get("cell")
+    if is_int(cell) and 0 <= cell < spec["cells"]:
+        want = scheduled_decks(pop, cell, decks)
+        for key in ("own_index", "opponent_index"):
+            if not is_int(desc.get(key)) or desc[key] != want[key]:
+                errors.append(f"{did}: {key} {desc.get(key)!r} != {want[key]} (§2 deck mapping)")
     order, rho, is_sub = expected_layout(pop, logical, pops)
     if desc.get("order") != order:
         errors.append(f"{did}: order {desc.get('order')} != expected layout {order}")
@@ -285,62 +361,82 @@ def load_ledger(path):
 
 
 def check_ledger(events, pops, errors):
-    """§3.4: replacement index, cell, bank and cap rules.
+    """§3 and §3.4: the replacement ledger, replayed in event order.
 
-    The k of a loss is its 0-based position among the ledger's losses in the same (population, cell), taken in
-    blind loss order (the ledger's event order). Returns the lost ids, the replacement ids, the descriptors
-    known from the ledger, and the replacement count per population.
+    Originals start active. A lost block must be the active block of its logical original. A replacement can be
+    lost only after an earlier event allocated it. Each allocation makes the replacement the active block of its
+    original, so the counted block for a replaced original is the final survivor. The k of a loss is its 0-based
+    position among the ledger's losses in the same (population, cell). Bank and population caps apply.
+
+    Returns (lost ids, replacement ids, descriptors the ledger names, replacements per population, logical index of
+    each ledger block, active block of each replaced logical original).
     """
-    descs = {}
-    lost_ids, rep_ids = set(), set()
+    descs, logical_of, active = {}, {}, {}
+    lost_ids, rep_ids, allocated = set(), set(), set()
+    per_cell, per_pop = defaultdict(int), defaultdict(int)
     for event in events:
         lost = event.get("lost")
         if not isinstance(lost, dict) or "id" not in lost:
             errors.append("ledger event without a lost descriptor")
             continue
-        if lost["id"] in lost_ids:
-            errors.append(f"ledger lists {lost['id']} as lost twice")
-        lost_ids.add(lost["id"])
-        descs.setdefault(lost["id"], lost)
-
-    per_cell = defaultdict(int)
-    per_pop = defaultdict(int)
-    for event in events:
-        lost = event["lost"]
-        pop, cell = lost.get("population"), lost.get("cell")
+        lid, pop, cell = lost["id"], lost.get("population"), lost.get("cell")
         if pop not in pops:
-            errors.append(f"ledger lost {lost['id']}: unknown population {pop!r}")
+            errors.append(f"ledger lost {lid}: unknown population {pop!r}")
             continue
         spec = pops[pop]
+        if lost.get("replaces") is None:
+            logical = lost.get("index")
+            if not is_int(logical) or not 0 <= logical < spec["n"] or lid != original_id(pop, logical):
+                errors.append(f"ledger lost {lid}: not a reporting block of {pop} (index 0..{spec['n'] - 1})")
+                continue
+        else:
+            logical = logical_of_original(lost["replaces"], pop, spec)
+            if logical is None:
+                errors.append(f"ledger lost {lid}: replaces {lost['replaces']!r} is not a logical original of {pop}")
+                continue
+            if lid not in allocated:
+                errors.append(f"ledger lost {lid} before an earlier event allocated it")
+                continue
+            if descs[lid] != lost:
+                errors.append(f"ledger lost {lid} differs from its allocated descriptor")
+                continue
+        current = active.get((pop, logical), original_id(pop, logical))
+        if lid != current:
+            errors.append(f"ledger lost {lid} is not the active block of {pop} logical {logical} (active: {current})")
+            continue
+        lost_ids.add(lid)
+        descs.setdefault(lid, lost)
+        logical_of[lid] = logical
+
         k = per_cell[(pop, cell)]
         per_cell[(pop, cell)] += 1
         rep = event.get("replacement")
         if rep is None:
-            errors.append(f"lost block {lost['id']} has no replacement (unreplaced loss)")
+            errors.append(f"lost block {lid} has no replacement (unreplaced loss)")
             continue
-        if rep.get("id") in rep_ids:
-            errors.append(f"replacement {rep.get('id')} listed twice")
-        rep_ids.add(rep.get("id"))
-        if rep.get("id") in descs and descs[rep["id"]] != rep:
-            errors.append(f"conflicting descriptors for {rep['id']}")
-        descs.setdefault(rep.get("id"), rep)
+        rid = rep.get("id")
+        if rid in rep_ids:
+            errors.append(f"replacement {rid} listed twice")
+        if rid in descs and descs[rid] != rep:
+            errors.append(f"conflicting descriptors for {rid}")
+        rep_ids.add(rid)
+        descs.setdefault(rid, rep)
         if k > spec["max_k"]:
             errors.append(f"replacement k={k} for {pop} cell {cell} exceeds the bank cap {spec['max_k']}")
         if rep.get("index") != spec["n"] + spec["cells"] * k + cell:
-            errors.append(f"replacement {rep.get('id')}: index {rep.get('index')} != n + cells*k + cell (k={k})")
+            errors.append(f"replacement {rid}: index {rep.get('index')} != n + cells*k + cell (k={k})")
         if rep.get("population") != pop or rep.get("cell") != cell:
-            errors.append(f"replacement {rep.get('id')}: population or cell differs from the lost block")
-        # §3: replaces is always the logical original, never the immediately lost replacement.
-        lost_logical = resolve_logical(lost["id"], descs, errors)
-        if lost_logical is not None:
-            original = f"{pop}-{lost_logical:04d}"
-            if rep.get("replaces") != original:
-                errors.append(f"replacement {rep.get('id')}: replaces {rep.get('replaces')} "
-                              f"is not the logical original {original}")
+            errors.append(f"replacement {rid}: population or cell differs from the lost block")
+        original = original_id(pop, logical)
+        if rep.get("replaces") != original:
+            errors.append(f"replacement {rid}: replaces {rep.get('replaces')} is not the logical original {original}")
         per_pop[pop] += 1
         if per_pop[pop] > spec["n"] // REPLACEMENT_CAP_DIVISOR:
             errors.append(f"{pop} replacements exceed the 10% cap")
-    return lost_ids, rep_ids, descs, dict(per_pop)
+        allocated.add(rid)
+        active[(pop, logical)] = rid
+        logical_of[rid] = logical
+    return lost_ids, rep_ids, descs, dict(per_pop), logical_of, active
 
 
 def judge(label, contract, op, threshold, n, flags):
@@ -426,9 +522,9 @@ def build_pops(test_counts):
     return pops
 
 
-def check_game(rec, did, pop, desc, arm, errors):
-    """§5: per-game fields that must agree with the descriptor and the arm's frozen settings.
-    Returns (metadata, winner), or None if the record has no metadata."""
+def check_game(rec, did, pop, desc, arm, errors, c_star, decks):
+    """§5 and §6.2: per-game fields that must agree with the descriptor, the arm's frozen settings, the frozen c*
+    and the scheduled decks. Returns (metadata, winner), or None if the record has no metadata or no winner key."""
     spec = ARM_SPEC[arm]
     meta = rec.get("metadata")
     tag = f"{did} {arm}"
@@ -443,6 +539,8 @@ def check_game(rec, did, pop, desc, arm, errors):
     need(rec.get("cohort") == arm, "cohort != arm")
     need(meta.get("arm") == arm, "metadata.arm != arm")
     need(meta.get("terminal") is True, "non-terminal game")
+    has_winner = "winner" in meta
+    need(has_winner, "winner key missing (a missing outcome is an error, not a draw)")
     winner = meta.get("winner")
     need(winner is None or (is_int(winner) and winner in (0, 1)), f"bad winner {winner!r}")
     need(is_int(meta.get("seat")) and meta.get("seat") == desc["seat"], "seat != descriptor")
@@ -451,6 +549,7 @@ def check_game(rec, did, pop, desc, arm, errors):
     need(meta.get("cell") == desc["cell"], "cell != descriptor cell")
     need(meta.get("population") == pop, "population != descriptor population")
     need(meta.get("block_id") == did, "block_id != descriptor id")
+    need(approx(meta.get("c_star"), float(c_star)), f"c_star {meta.get('c_star')!r} != frozen plan c_star {c_star} (§6.2)")
     need(approx(meta.get("speed_cell"), float(spec["c"])), "speed_cell != arm cell")
     need(meta.get("budget_ms") == spec["budget"], "budget_ms != arm budget")
     need(approx(meta.get("deadline_seconds"), spec["budget"] / 1000), "deadline_seconds != budget")
@@ -465,15 +564,22 @@ def check_game(rec, did, pop, desc, arm, errors):
     need(str(meta.get("study", "")).startswith("PREREG-K4S"), "study is not PREREG-K4S")
     need(isinstance(meta.get("freeze_manifest_sha256"), str) and meta["freeze_manifest_sha256"],
          "freeze_manifest_sha256 missing (a qualification or smoke record in a counted block)")
+    if is_int(desc.get("cell")) and 0 <= desc["cell"] < POPS[pop]["cells"]:
+        want = scheduled_decks(pop, desc["cell"], decks)
+        need(same_deck(meta.get("own_deck"), want["own"]), "own_deck != the scheduled own deck (§2)")
+        need(same_deck(meta.get("opponent_deck"), want["opponent"]),
+             "opponent_deck != the scheduled opponent deck (§2)")
+    else:
+        need(False, "descriptor cell is out of range, so no deck can be scheduled")
     if spec["default"] == "SD1":
         for key in SD1_KEYS:
             need(meta.get(key) is not None, f"{key} missing on an SD1 arm")
-    return meta, winner
+    return (meta, winner) if has_winner else None
 
 
-def reduce_tree(root, pops, events, c_star, errors, flags):
+def reduce_tree(root, pops, events, c_star, decks, errors, flags):
     """Counting, per-game checks and integer outcomes."""
-    lost_ids, rep_ids, descs, rep_counts = check_ledger(events, pops, errors)
+    lost_ids, rep_ids, descs, rep_counts, logical_of, active = check_ledger(events, pops, errors)
 
     blocks = {}
     for entry in sorted(root.iterdir()):
@@ -487,11 +593,17 @@ def reduce_tree(root, pops, events, c_star, errors, flags):
                     errors.append(f"{entry.name}: tree descriptor conflicts with the ledger")
                 descs.setdefault(entry.name, desc)
 
+    # Logical index of each block the ledger or the tree names. An unlisted replacement has none.
+    logical = dict(logical_of)
+    for did, desc in descs.items():
+        spec = pops.get(desc.get("population"))
+        if did not in logical and spec is not None and desc.get("replaces") is None \
+                and is_int(desc.get("index")) and 0 <= desc["index"] < spec["n"]:
+            logical[did] = desc["index"]
     # Every ledger descriptor must also be layout-valid at its logical index.
     for did, desc in sorted(descs.items()):
-        logical = resolve_logical(did, descs, errors)
-        if logical is not None:
-            check_descriptor(did, desc, logical, errors, pops)
+        if did in logical:
+            check_descriptor(did, desc, logical[did], errors, pops, decks)
 
     counted = {name: {} for name in pops}
     for did, doc in sorted(blocks.items()):
@@ -504,16 +616,23 @@ def reduce_tree(root, pops, events, c_star, errors, flags):
             continue
         if desc.get("replaces") is not None and did not in rep_ids:
             errors.append(f"{did}: replacement block not in the ledger")
-        if desc.get("replaces") is None and not (isinstance(desc.get("index"), int)
-                                                 and desc["index"] < pops[pop]["n"]):
+            continue
+        if did not in logical:
             errors.append(f"{did}: outside the reporting range with no replacement link")
-        logical = resolve_logical(did, descs, errors)
-        if logical is None:
             continue
-        if logical in counted[pop]:
-            errors.append(f"{pop} logical index {logical} counted twice ({counted[pop][logical]} and {did})")
+        index = logical[did]
+        final = active.get((pop, index), original_id(pop, index))
+        if did != final:
+            errors.append(f"{did}: not the final survivor of {pop} logical block {index} (final: {final})")
             continue
-        counted[pop][logical] = did
+        if doc.get("host") != HUB_HOST and not (root / did / "hub-ack.json").is_file():
+            errors.append(f"{did}: host {doc.get('host')!r} needs the durable hub acknowledgement "
+                          f"{did}/hub-ack.json (§6.1)")
+            continue
+        if index in counted[pop]:
+            errors.append(f"{pop} logical index {index} counted twice ({counted[pop][index]} and {did})")
+            continue
+        counted[pop][index] = did
 
     for pop, spec in pops.items():
         missing = [i for i in range(spec["n"]) if i not in counted[pop]]
@@ -529,7 +648,6 @@ def reduce_tree(root, pops, events, c_star, errors, flags):
     tables = {}
     pins = defaultdict(set)
     sd1_pins = defaultdict(set)
-    c_values = set()
     games_total = 0
     for pop, spec in pops.items():
         n = spec["n"]
@@ -537,8 +655,8 @@ def reduce_tree(root, pops, events, c_star, errors, flags):
         draw = np.zeros((n, len(ALL_ARMS)), dtype=np.int64)
         present = np.zeros((n, len(ALL_ARMS)), dtype=bool)
         tables[pop] = dict(loss=loss, draw=draw, present=present)
-        for logical in sorted(counted[pop]):
-            did = counted[pop][logical]
+        for logical_index in sorted(counted[pop]):
+            did = counted[pop][logical_index]
             doc = blocks[did]
             desc = doc["descriptor"]
             order = desc["order"]
@@ -547,9 +665,6 @@ def reduce_tree(root, pops, events, c_star, errors, flags):
             if set(games) != expect_names or len(games) != len(order):
                 errors.append(f"{did}: games {sorted(games)} do not match descriptor order {order}")
                 continue
-            if doc.get("host") not in (None, HUB_HOST) and "hub_ack" not in doc:
-                flags.append(dict(code="hub_ack_unverified", where=did,
-                                  detail="non-01 host block with no hub_ack key (not gated; §4.4)"))
             for arm in order:
                 fname = f"{did}-d27-{arm}.json"
                 path = root / did / "games" / fname
@@ -565,31 +680,26 @@ def reduce_tree(root, pops, events, c_star, errors, flags):
                 except ValueError:
                     errors.append(f"{did}: game {fname} is not JSON")
                     continue
-                checked = check_game(rec, did, pop, desc, arm, errors)
+                checked = check_game(rec, did, pop, desc, arm, errors, c_star, decks)
                 if checked is None:
                     continue
                 meta, winner = checked
                 for key in PIN_KEYS:
                     pins[key].add(json.dumps(meta.get(key)))
-                c_values.add(json.dumps(meta.get("c_star")))
                 if ARM_SPEC[arm]["default"] == "SD1":
                     for key in SD1_KEYS:
                         sd1_pins[key].add(json.dumps(meta.get(key)))
                 col = ALL_ARMS.index(arm)
-                present[logical, col] = True
+                present[logical_index, col] = True
                 if winner is None:
-                    draw[logical, col] = 1
+                    draw[logical_index, col] = 1
                 else:
-                    loss[logical, col] = int(winner != desc["seat"])
+                    loss[logical_index, col] = int(winner != desc["seat"])
                 games_total += 1
 
     for key, values in {**pins, **sd1_pins}.items():
         if len(values) > 1:
             errors.append(f"games disagree on {key}: {sorted(values)}")
-    c_seen = {json.loads(v) for v in c_values}
-    if c_seen and c_seen != {float(c_star)}:
-        flags.append(dict(code="c_star_mismatch", where="games",
-                          detail=f"games record c_star {sorted(c_seen, key=str)}; verifier run with {c_star}"))
     return dict(tables=tables, counted=counted, games=games_total, replacements=rep_counts,
                 lost=len(lost_ids), blocks=len(blocks))
 
@@ -715,10 +825,15 @@ def same_scalar(expected, got):
 
 
 def same_rational(expected, got):
-    """A [num, den] pair from the reducer: integers with a nonzero denominator, equal as Fractions."""
-    if not (isinstance(got, list) and len(got) == 2 and all(type(x) is int for x in got) and got[1] != 0):
+    """§6.7: a [num, den] pair from the reducer in lowest terms with a positive denominator, and equal to the
+    verifier's pair. The expected pair is canonical (it is a Fraction's numerator and denominator), so an equal
+    list is an equal value. Noncanonical forms such as [14, 2], [-7, -1] and [0, 5] are mismatches."""
+    if not (isinstance(got, list) and len(got) == 2 and all(type(x) is int for x in got)):
         return False
-    return Fraction(*got) == Fraction(*expected)
+    num, den = got
+    if den <= 0 or math.gcd(num, den) != 1:
+        return False
+    return [num, den] == list(expected)
 
 
 def _check(t, path, ok, expected, got):
@@ -759,7 +874,7 @@ def _sequence(t, path, expected, got):
 def compare_verifier_view(mine, reducer):
     """§6.7: the verifier's verifier_view against the reducer's, key by key and exactly. Returns the counts of
     compared items, matched and mismatched, with each mismatch's path and both values. usable_cells is compared as
-    a multiset, since §6.7 does not fix its order."""
+    a set of valid cell strings, as §6.7 specifies."""
     t = dict(items=0, matched=0, mismatches=[])
     if not isinstance(mine, dict):
         _check(t, "verifier_view", False, "produced by the verifier", "not produced")
@@ -785,8 +900,8 @@ def compare_verifier_view(mine, reducer):
                 elif key == "admitted":
                     _scalars(t, path, exp_val, got_val)
                 elif key == "usable_cells":
-                    ok = isinstance(got_val, list) and all(type(x) is str for x in got_val) \
-                        and sorted(got_val) == sorted(exp_val)
+                    ok = isinstance(got_val, list) and all(type(x) is str and x in VIEW_CELLS for x in got_val) \
+                        and set(got_val) == set(exp_val)
                     _check(t, path, ok, exp_val, got_val)
                 else:
                     _check(t, path, same_scalar(exp_val, got_val), exp_val, got_val)
@@ -819,17 +934,23 @@ def run(args):
         release_info["receipt_sha256"] = sha256_file(args.release)
     if args.test_counts and not args.synthetic:
         raise Refusal("--test-counts needs --synthetic")
+    plan = load_plan(args.plan, args.synthetic)
+    c_star = plan["c_star"]
+    if args.c_star is not None and args.c_star != c_star:
+        raise Refusal(f"--c-star {args.c_star} != frozen plan c_star {c_star} ({plan['path']})")
 
     pops = build_pops(parse_test_counts(args.test_counts) if args.test_counts else None)
     events = load_ledger(args.ledger)
+    decks = load_decks()
     errors, flags = [], []
-    counting = reduce_tree(root, pops, events, args.c_star, errors, flags)
+    counting = reduce_tree(root, pops, events, c_star, decks, errors, flags)
     out = dict(
         study="PREREG-K4S", synthetic=bool(args.synthetic), release=release_info,
         verifier_sha256=sha256_file(Path(__file__)),
         ledger_sha256=sha256_file(args.ledger) if args.ledger else None,
+        plan=plan,
         bootstrap=dict(reps=REPS, seed=BOOT_SEED, q_lo="1/40", q_hi="39/40"),
-        c_star=args.c_star,
+        c_star=c_star,
         counts=dict(games=counting["games"], blocks_in_tree=counting["blocks"], lost=counting["lost"],
                     replacements=counting["replacements"],
                     logical={pop: dict(counted=len(counting["counted"][pop]), required=spec["n"],
@@ -856,13 +977,13 @@ def run(args):
     out["contrasts"] = {f"{analysis}:{kind}@{cell}": public(contracts[(kind, cell)])
                         for (kind, cell), (analysis, _, _) in CONTRASTS.items()}
 
-    out["hypotheses"] = run_sequence(args.c_star, contracts, n_of, flags)
+    out["hypotheses"] = run_sequence(c_star, contracts, n_of, flags)
     out["sequence"] = list(out["hypotheses"])
     out["admission"] = {cell: admission(out["hypotheses"], cell) for cell in ("0.8", "0.7", "0.6", "0.9")}
 
     veto = judge("veto(0.9)", contracts[("veto", "0.9")], "<=", VETO_MAX, n_of["P_full"], flags)
     out["veto"] = dict(part=veto, holds=veto["holds"],
-                       role="gate" if args.c_star == "0.9" else "descriptive (c*=0.8 drops H4)")
+                       role="gate" if c_star == "0.9" else "descriptive (c*=0.8 drops H4)")
     out["usable_cells"] = usable_cells(out["admission"], veto["holds"])
 
     out["validity"] = validity(losses["P_full"]["K4-200"], n_of["P_full"], flags)
@@ -882,7 +1003,10 @@ def build_parser():
     ap.add_argument("--ledger", type=Path, help="replacement ledger (optional)")
     ap.add_argument("--release", type=Path, help="release receipt (required unless --synthetic)")
     ap.add_argument("--synthetic", action="store_true", help="only with a SYNTHETIC marker at the root")
-    ap.add_argument("--c-star", default="0.9", choices=["0.9", "0.8"], help="0.8 drops H4")
+    ap.add_argument("--plan", type=Path, default=PLAN_PATH,
+                    help="frozen plan.json (default; c* is its c_star). Other plans: --synthetic test fixtures only")
+    ap.add_argument("--c-star", choices=list(C_STAR_VALUES),
+                    help="optional; must equal the plan's c_star or the run is refused")
     ap.add_argument("--repo", type=Path, help="repository holding the release commit (default: this repo)")
     ap.add_argument("--compare", type=Path, help="reducer output JSON to compare by meaning")
     ap.add_argument("--out", type=Path, help="write the result JSON here (default: stdout)")
@@ -890,12 +1014,22 @@ def build_parser():
     return ap
 
 
+def write_result(out, args):
+    text = json.dumps(out, indent=2, default=str)
+    if args.out:
+        args.out.write_text(text + "\n")
+    else:
+        sys.stdout.write(text + "\n")
+
+
 def main(argv=None):
     args = build_parser().parse_args(argv)
     try:
         out, code = run(args)
     except Refusal as exc:
-        out, code = dict(status="REFUSED", reason=str(exc)), 2
+        # §7: a refusal ends the run. Nothing else is read, the --compare input included.
+        write_result(dict(status="REFUSED", reason=str(exc)), args)
+        return 2
     if args.compare is not None:
         try:
             reducer = json.loads(args.compare.read_bytes())
@@ -906,11 +1040,7 @@ def main(argv=None):
             out["compare"] = compare_verifier_view(out.get("verifier_view"), reducer)
             if out["compare"]["mismatched"]:
                 code = 2
-    text = json.dumps(out, indent=2, default=str)
-    if args.out:
-        args.out.write_text(text + "\n")
-    else:
-        sys.stdout.write(text + "\n")
+    write_result(out, args)
     return code
 
 

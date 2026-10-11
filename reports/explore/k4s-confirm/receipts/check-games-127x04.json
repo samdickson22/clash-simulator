@@ -1,0 +1,278 @@
+{
+  "nodeadline": {
+    "k4s-nd-p0": {
+      "t1_K4_200": "d37286a2c422c1417ef634f4037b5727d131719305541983ec4cf1caa2acea10",
+      "k4s_K4_200": "d37286a2c422c1417ef634f4037b5727d131719305541983ec4cf1caa2acea10",
+      "k4s_K4S_200": "d37286a2c422c1417ef634f4037b5727d131719305541983ec4cf1caa2acea10",
+      "k4_equals_t1": true,
+      "k4s_equals_k4": true
+    },
+    "k4s-nd-g1": {
+      "t1_K4_200": "84d52406e8d7fd38e4a40ac4cac474db36c9bce03698297e255598c29223828c",
+      "k4s_K4_200": "84d52406e8d7fd38e4a40ac4cac474db36c9bce03698297e255598c29223828c",
+      "k4s_K4S_200": "84d52406e8d7fd38e4a40ac4cac474db36c9bce03698297e255598c29223828c",
+      "k4_equals_t1": true,
+      "k4s_equals_k4": true
+    }
+  },
+  "injected": {
+    "qualification-0005-d27-K4-200.json": {
+      "command_equal": true,
+      "decisions": 241,
+      "field_mismatches": 0
+    },
+    "qualification-0007-d27-K4-200.json": {
+      "command_equal": true,
+      "decisions": 211,
+      "field_mismatches": 0
+    }
+  },
+  "charged": {
+    "K4-120|belief": {
+      "cell": 0.6,
+      "n": 3,
+      "mean_dev": 0.0020482097444697125,
+      "max_abs_dev": 0.002210369413965685,
+      "outside_tolerance": 0
+    },
+    "K4-120|scored": {
+      "cell": 0.6,
+      "n": 271,
+      "mean_dev": 0.0021464680774070785,
+      "max_abs_dev": 0.0030461830705848514,
+      "outside_tolerance": 0
+    },
+    "K4-140|belief": {
+      "cell": 0.7,
+      "n": 2,
+      "mean_dev": 0.002990689402689789,
+      "max_abs_dev": 0.0033437659516908913,
+      "outside_tolerance": 0
+    },
+    "K4-140|prescan": {
+      "cell": 0.7,
+      "n": 1,
+      "mean_dev": 0.0034917732089753684,
+      "max_abs_dev": 0.0034917732089753684,
+      "outside_tolerance": 0
+    },
+    "K4-140|scored": {
+      "cell": 0.7,
+      "n": 287,
+      "mean_dev": 0.0030743080999778467,
+      "max_abs_dev": 0.004127308823565046,
+      "outside_tolerance": 0
+    },
+    "K4-160|belief": {
+      "cell": 0.8,
+      "n": 1,
+      "mean_dev": 0.004459755991127412,
+      "max_abs_dev": 0.004459755991127412,
+      "outside_tolerance": 0
+    },
+    "K4-160|sample": {
+      "cell": 0.8,
+      "n": 1,
+      "mean_dev": 0.005208711616627559,
+      "max_abs_dev": 0.005208711616627559,
+      "outside_tolerance": 0
+    },
+    "K4-160|scored": {
+      "cell": 0.8,
+      "n": 219,
+      "mean_dev": 0.003989679729359906,
+      "max_abs_dev": 0.005568702330795705,
+      "outside_tolerance": 0
+    },
+    "K4-180|belief": {
+      "cell": 0.9,
+      "n": 1,
+      "mean_dev": 0.005281160651122052,
+      "max_abs_dev": 0.005281160651122052,
+      "outside_tolerance": 0
+    },
+    "K4-180|scored": {
+      "cell": 0.9,
+      "n": 301,
+      "mean_dev": 0.005166613146157996,
+      "max_abs_dev": 0.007416389881162985,
+      "outside_tolerance": 0
+    },
+    "K4S-120|belief": {
+      "cell": 0.6,
+      "n": 2,
+      "mean_dev": 0.002713163177936767,
+      "max_abs_dev": 0.0029625097624904617,
+      "outside_tolerance": 0
+    },
+    "K4S-120|scored": {
+      "cell": 0.6,
+      "n": 231,
+      "mean_dev": 0.0023229499067168526,
+      "max_abs_dev": 0.0032028228826521676,
+      "outside_tolerance": 0
+    },
+    "K4S-140|belief": {
+      "cell": 0.7,
+      "n": 2,
+      "mean_dev": 0.0032675697512098145,
+      "max_abs_dev": 0.0032737763789044694,
+      "outside_tolerance": 0
+    },
+    "K4S-140|sample": {
+      "cell": 0.7,
+      "n": 1,
+      "mean_dev": 0.00402924600718374,
+      "max_abs_dev": 0.00402924600718374,
+      "outside_tolerance": 0
+    },
+    "K4S-140|scored": {
+      "cell": 0.7,
+      "n": 321,
+      "mean_dev": 0.0031144751369522826,
+      "max_abs_dev": 0.004171515065442999,
+      "outside_tolerance": 0
+    },
+    "K4S-160|belief": {
+      "cell": 0.8,
+      "n": 1,
+      "mean_dev": 0.004252798288150977,
+      "max_abs_dev": 0.004252798288150977,
+      "outside_tolerance": 0
+    },
+    "K4S-160|scored": {
+      "cell": 0.8,
+      "n": 217,
+      "mean_dev": 0.004093057763720679,
+      "max_abs_dev": 0.005548028554743928,
+      "outside_tolerance": 0
+    },
+    "K4S-180|belief": {
+      "cell": 0.9,
+      "n": 1,
+      "mean_dev": 0.005414518578435959,
+      "max_abs_dev": 0.005414518578435959,
+      "outside_tolerance": 0
+    },
+    "K4S-180|scored": {
+      "cell": 0.9,
+      "n": 217,
+      "mean_dev": 0.005294967181549922,
+      "max_abs_dev": 0.006811467984850578,
+      "outside_tolerance": 0
+    }
+  },
+  "zero": {
+    "qualification-0004-d27-K4S-200.json": {
+      "decisions": 280,
+      "sd1_default_returned": 280,
+      "sd1_plays": 36,
+      "paths": {
+        "belief": 280
+      }
+    },
+    "qualification-0004-d27-K4S-120.json": {
+      "decisions": 280,
+      "sd1_default_returned": 280,
+      "sd1_plays": 36,
+      "paths": {
+        "belief": 280
+      }
+    }
+  },
+  "inventory_errors": {},
+  "errors": [],
+  "injected_coverage": {
+    "decisions": 452,
+    "hit": 280,
+    "overrun": 17,
+    "scored": 401,
+    "scored_hit": 229,
+    "belief": 51
+  },
+  "charged_all_within_tolerance": true,
+  "charged_paths_seen": {
+    "K4-120": [
+      "belief",
+      "scored"
+    ],
+    "K4-140": [
+      "belief",
+      "prescan",
+      "scored"
+    ],
+    "K4-160": [
+      "belief",
+      "sample",
+      "scored"
+    ],
+    "K4-180": [
+      "belief",
+      "scored"
+    ],
+    "K4-200": [
+      "belief",
+      "scored"
+    ],
+    "K4S-120": [
+      "belief",
+      "scored"
+    ],
+    "K4S-140": [
+      "belief",
+      "sample",
+      "scored"
+    ],
+    "K4S-160": [
+      "belief",
+      "scored"
+    ],
+    "K4S-180": [
+      "belief",
+      "scored"
+    ],
+    "K4S-200": [
+      "belief",
+      "scored"
+    ]
+  },
+  "receipt_errors": [],
+  "unbound_games": [],
+  "bound_game_sha256": {
+    "k4s-ch-g3/qualification-0003-d27-K4-120.json": "3383196a29a8d82784855b2501dd7a96480e904af33756c049b95d18a99d5d53",
+    "k4s-ch-g3/qualification-0003-d27-K4-140.json": "355e02c1b6ad156c166cb6902286a7be01b9bb46d5055099eef5d78e537e8e6d",
+    "k4s-ch-g3/qualification-0003-d27-K4-160.json": "543b8d3b3a0e2abb3f0e365f47745de4db58c32a01aa5f173a3d338705a4f0ff",
+    "k4s-ch-g3/qualification-0003-d27-K4-180.json": "1987ff554f6fc7b132867768df39bbc938a1f81b8367cd52e7118466a9ed97eb",
+    "k4s-ch-g3/qualification-0003-d27-K4-200.json": "1c5e4ebfddd64c4ec39a43ced3c357518dccb54e6f386955902eb7ec07752728",
+    "k4s-ch-g3/qualification-0003-d27-K4S-120.json": "c5d66858994768dcacdc4a916aaa8aa532542356d3edb8025b73da7aa71f328a",
+    "k4s-ch-g3/qualification-0003-d27-K4S-140.json": "65854e23a727b579c05388f3962f9267ea54f70c0c3a9a02b8b1f3c6c8339c67",
+    "k4s-ch-g3/qualification-0003-d27-K4S-160.json": "7ac5e8ffcfce46779733007ac5d31aed320b8a47347cbfcff4a8a0dbd778857d",
+    "k4s-ch-g3/qualification-0003-d27-K4S-180.json": "8290793b12097d44f37b55139e1d73c62620ffae9390b49c4afffb4b2bdd4a36",
+    "k4s-ch-g3/qualification-0003-d27-K4S-200.json": "b818a7b3ca933650e239b6485c246fa3e8f57c0d5db2b07f91bcb707f1e112c5",
+    "k4s-ch-p2/qualification-0002-d27-K4-120.json": "a134e6da7342ec20fba69bffb676781ce6d0b4354fc5b7b218880c99e3866947",
+    "k4s-ch-p2/qualification-0002-d27-K4-140.json": "a3d7fa9802200dc979fa9dce59d0e90af3df87c8e80d3002c581c02a8efeec55",
+    "k4s-ch-p2/qualification-0002-d27-K4-160.json": "e9adbcbebb32e4128ac47dee9a25f74efeb7523aa576c1c127c314cbd6f79bd6",
+    "k4s-ch-p2/qualification-0002-d27-K4-180.json": "44a62bff1982880a401518573abbdc4f75091137f017625e80723781407a03ca",
+    "k4s-ch-p2/qualification-0002-d27-K4-200.json": "34a0532257fde366ae8ce4bb4f60e3cdb9c8b13ca3fdc4528c745545e6827e71",
+    "k4s-ch-p2/qualification-0002-d27-K4S-120.json": "e621cec345c7af441496851aa02c0d052228e81f5ce1b7f0b825ff6b84ab82b8",
+    "k4s-ch-p2/qualification-0002-d27-K4S-140.json": "6a9063de2abf5aede74639b9532b983c40766a93c9d7568ad8d89bea76076412",
+    "k4s-ch-p2/qualification-0002-d27-K4S-160.json": "17e8de6730644afb734320b07fadd53c281942fb5ab2e4bc025fb6088bac61b1",
+    "k4s-ch-p2/qualification-0002-d27-K4S-180.json": "834301c4fa875d7bf363dde15c99f0a8b3943f6645c6b21025725ef043b6de58",
+    "k4s-ch-p2/qualification-0002-d27-K4S-200.json": "3ee1a1a2e0e1e45806a2de02067b76e81416f6688c944ca1681831f829e0767a",
+    "k4s-inj/qualification-0005-d27-K4-200.json": "4898240efcfd158d0e6289d0484532861d6b3be088d9af96d28807eb8fcfa7c2",
+    "k4s-inj/qualification-0007-d27-K4-200.json": "0698febd5b216fa44449e95a3f924344ed6c2d0696e28be960039cff31d331aa",
+    "k4s-nd-g1/qualification-0001-d27-K4-200.json": "d24e423167177ac68c622242dd2295095e1af4f490893a9856a14893d6085ffe",
+    "k4s-nd-g1/qualification-0001-d27-K4S-200.json": "b4cc2b126ff5215109d5877b42140c9c4fcc4197d918ffc0de04e3133b2b53ea",
+    "k4s-nd-p0/qualification-0000-d27-K4-200.json": "f9ab48b1735ef035612a95ab968b9be315adac78fe774344db3339517144a25a",
+    "k4s-nd-p0/qualification-0000-d27-K4S-200.json": "2500003b6b7190b83bdf58881a94fd3e95bd76eb81610282860fb7e1d8f0bcaa",
+    "k4s-zero/qualification-0004-d27-K4S-120.json": "9918d20a9e18920e590f103e9d894f14ed408627a02f06a4004e5dcebacf76b7",
+    "k4s-zero/qualification-0004-d27-K4S-200.json": "dd9a6a89bc02dec52bfbf619d7d80a7e2b5d89be56f0f1d341a5597544f46075",
+    "t1-inj/qualification-0005-d27-K4-200.json": "18d80d342a6cd5f0810f2f3f0c5bae7dc67de03cfc9fe7425d5cb4cc0035ed23",
+    "t1-inj/qualification-0007-d27-K4-200.json": "da945925f38477d0ebf9e3dff96e397831df8cb43a39dc64d9937686de6449ab",
+    "t1-nd/qualification-0000-d27-K4-200.json": "54e9a6b771ee2fb09fd93ac6ef43db9c2b490c5d6ba1d50a490a6be0bfcaf8b3",
+    "t1-nd/qualification-0001-d27-K4-200.json": "16f629139ab187141913924d06eac5ce5c0dc2c0111342f1df1cbbd559348605"
+  },
+  "runtime_pin_sha256_ok": true,
+  "identity_errors": [],
+  "passed": true
+}

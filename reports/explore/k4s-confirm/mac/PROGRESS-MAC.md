@@ -100,3 +100,100 @@ Still open / not fixable here:
   (e.g. `K4S-SPEC.md`) make `test_manifest_is_current…` fail until `build_manifest.py` is re-run.
 - The committed counted-inventory format is inherited (`clasher.t1.counted-blocks.v1`, exactly `{host, phase,
   descriptor}` rows); its K4S producer is outside these files and must emit that shape.
+
+## Round 4 (fixes for Sol r3)
+
+Worker: Opus 5.5 (1M), implementation sub-agent, 2026-10-11. Review: `reviews/SOL-REVIEW-MAC-END-r3.md` (REJECT on
+18, 19; 4, 9, 14 PARTIAL through them; everything else resolved). Offline only: no ssh, no Mac/fleet contact, no
+network, no git commit/push, no outcome data. Frozen TIERS package, `reports/explore/t1/` and the PREREG untouched
+(`git diff --exit-code HEAD` on them is clean). Written: `mac/classify_k4s_failure.py`, `mac/k4s_logic.py`,
+`mac/test_measure_k4s.py`, `mac/K4S-MAC-PROCEDURE.md`, `mac/K4S-MAC-MANIFEST.json` (regenerated last, draft),
+this file, `end_evidence.py`, `end_pool.py`, `end_reference.py`, `test_end_reference.py`, `END-RUNBOOK.md`.
+
+| # | Finding | Fix |
+|---|---|---|
+| 18 | Recorded gate-0 failure discarded after a cleanup failure | `classify_k4s_failure.gate0_evidence` derives gate-0 failures from the verified sealed verdicts, independent of exceptions: a caught K1 mismatch row in `k4s-corpus-exactness.jsonl`, an unexplained SD1 disagreement in `k4s-sd1-agreement.jsonl`, every failing gate-0 part of `k4s-mac-summary.json`, and the committed TIERS gate 0 in `k4s-preconditions.json` (descriptive-only `tiers_inputs_unavailable` excluded). The summary must agree with the traces it summarises (K1 verdict, recomputed `sd1_agreement_gate`, sealed TIERS parts and inputs, passes = all parts) or classification is refused. `classify_records(recorded_gate0=...)`: thrown OR recorded → `gate-failure` (valid, no repeat, `gate0_thrown`, `gate0_evidence`), surviving any later cleanup/harness failure, whose reasons are kept in `technical_diagnostics`. The TIERS-invalid-session rule and precondition refusal still come first. `read_entry` re-derives the evidence from the session's own seal for **every** classification: `valid`/`technical-failure` that would discard it is refused; a gate-failure must match the re-derived evidence; gate 0 is forced false with each recorded failing part false. Tests: main → classify → reduce for a caught corpus mismatch and an ordinary SD1 agreement failure, each followed by a cleanup failure, alone and with a good session (c_M null, killed, 2 valid / 0 excluded), P7 refuses a repeat; the same without cleanup failure; forged technical/valid/mismatched classifications refused; partial traces (crash mid-agreement, caught K1 then crash) establish failures; a tolerated disagreement does not; three summary contradictions refused; TIERS-invalid rule still precedes. The no-measurement TIERS-exactness session now classifies `gate-failure` (was `valid`; same reduction). |
+| 19 | Attempt registry replaceable / older snapshot selectable | `end_evidence` part 3. **END-JOB** (`clasher.k4s.end-job.v1`, exact health-only fields) at the one canonical path next to the committed completion receipt, binding completion, evidence, plan, counted hosts and frozen K4S manifest, naming the single `registry_root`; must have exactly one (adding) commit. **Producer** (`end_reference.py --end-job-sha256 S [--round R]`, `--attempt-registry` removed): verifies the END-JOB at its HEAD and that the host is counted, then `producer_claim` claims `<root>/round-RR/<host>/attempt-NN.json` (`claim.v2`, bound to job/evidence/round) only while the round is open (no committed finalization for it or a later round; round R>0 needs round R−1 finalized); committed claims must be a prefix of the local ones; `end-identity.json` binds `end_job_sha256`/`round`. **Finalization** `END-FINAL-round-RR.json` (`clasher.k4s.end-finalization.v1`): every claim of rounds 0..RR plus `prior_rounds`. **Pool** (descriptor v3: `end_job`, `round`, `finalization` SHAs only; `job_registry`): registry read at HEAD only; finalizations at HEAD exactly 0..RR; registry append-only (no D/M/T in history); HEAD claims = finalization = registry at the finalization's own commit; every round claims every counted host; claims added after the END-JOB and launched before `finalized_utc`; each earlier round reconciled with its committed finalization and committed **nonconforming** pool (seal SHA, scope, status, reference bound to job/round/finalization/claims); no committed claim or receipt copy of a claim for this job outside the root. Provenance: `end_job`, `round`, `finalization`, `claims`, `prior_rounds`; recheck and the Mac (`check_fleet_provenance`) bind `end_job_sha256`, `finalization_sha256`, `round`. Negative tests: switching roots after an exactness failure (rewritten END-JOB — producer and pool refuse; a second END-JOB elsewhere — SHA mismatch; failed claim + finalization deleted and redone — not append-only); excess attempts hidden in a second committed registry, and a committed receipt copy of a hidden claim; an older finalization after an additional (forced) claim; a finalization committed before its claims; producer without END-JOB / uncounted host / closed or skipped round. Rounds: round 0 nonconforming pool committed → round 1 claimed, finalized with `prior_rounds` → conforming pool; omitted prior round and wrong prior seal refused; re-pooling round 0 after round 1 refused. |
+| 4/9/14 | PARTIAL through 18/19 | Closed by 18 (cleanup/status vs recorded gate 0) and 19 (`all_original_attempts_classified` now rests on the job-wide finalized inventory). |
+
+Tests: `cd reports/explore/k4s-confirm && nice -n 19 /mpac/sdicks02/venvs/t1-verifier/bin/python -B -m pytest -q
+-p no:cacheprovider mac test_end_reference.py test_end_*.py` (result in the final report). `K4S-MAC-MANIFEST.json`
+regenerated as a draft (`--kernel sdefault.py --kernel anchor_x.py`, not `--freeze`) as the last step.
+
+Still open / not fixable here:
+- TIERS `measure_tiers.py` missing `import math` remains a TIERS-side decision.
+- The real END run is untested; the authority is tested on synthetic git repositories. Uncommitted claims on a fleet
+  host cannot be seen by the pool: the operator must collect every host's registry directory before finalizing
+  (runbook step 3); the producer refuses further claims once a finalization is committed at the host's HEAD.
+- `DELTA-MANIFEST.json` (prep-owned) has stale SHAs for the changed END files; its owner must rebuild it. Other
+  workers are concurrently editing k4s-confirm files (`PROGRESS.md`, `source_binding.py`, `verifier/`, `receipts/`);
+  if a manifest-pinned reference changes after this round, `test_manifest_is_current…` fails until
+  `build_manifest.py` is re-run.
+
+## Round 5 (fixes for Sol r4)
+
+Worker: Opus 5.5 (1M), implementation sub-agent, 2026-10-11. Review: `reviews/SOL-REVIEW-MAC-END-r4.md` (REJECT: 19
+partial; new MAJOR 20, 21; 4 and 14 partial; 9 and 18 resolved). Design: the simpler fixed-location authority decided by
+the prep worker/orchestrator; the r4 alias surface (END-JOB next to the completion, whole-repository claim search) is
+removed rather than patched. Offline only: no ssh, no Mac/fleet contact, no network, no git commit/push, no outcome
+data. Frozen TIERS package, `reports/explore/t1/` and the PREREG files untouched (`git diff --exit-code HEAD` clean).
+Written: `end_evidence.py`, `end_pool.py`, `end_reference.py` (docstring/help only), `test_end_reference.py`,
+`END-RUNBOOK.md`, `mac/K4S-MAC-PROCEDURE.md` (one provenance sentence), this file, `mac/K4S-MAC-MANIFEST.json`
+(regenerated last, draft). `end_background.py` and `test_end_background.py` needed no change.
+
+| # | Finding | Fix |
+|---|---|---|
+| 19 | Authority duplicable through a copied completion location | Fixed paths, module constants in `end_evidence.py`: `END_DIR = reports/explore/k4s-confirm/end`, `END_JOB_PATH = END_DIR/END-JOB.json`, `REGISTRY_ROOT = END_DIR/registry`, finalizations `END_DIR/END-FINAL-round-RR.json`, earlier pools `POOLS_ROOT = END_DIR/pools/round-RR` (`prior_rounds.pool_repository_path` must equal it). `job_path()` takes no argument; nothing derives from `completion.repository_path` or the descriptor. `registry_root` is no longer a job field (the root is fixed). `end_job`: the END-JOB at the fixed path, added in exactly one commit and never modified/deleted/re-added, binds completion, END evidence, plan, counted hosts and the frozen K4S manifest. `declarations()` refuses any other `END-JOB*.json` (any case) or misplaced `END-FINAL*.json` name anywhere under `reports/explore/k4s-confirm/`, checked by name only. Producer (`end_job` then `producer_claim`) and pool (`job_registry`) consume the same fixed binding. Regression `test_copied_completion_and_repackaged_evidence_cannot_open_a_second_authority` runs the reviewer's sequence. It retains an exactness failure, commits a byte-identical completion copy and repackages the evidence (which `end_evidence` accepts: same completion/plan/membership, new SHA). The producer's `end_job` under the repackaged evidence is refused as not bound. A second END-JOB plus registry B beside the copy: the producer and pool hit an END-JOB SHA mismatch (the fixed job), and the original job with evidence B is not bound. The original pool still ends Unrepeatable. A second END-JOB-like declaration in the study tree (`copied-reporting/END-JOB.json`, `end/END-JOB-b.json`) is refused, for the original authority too. `test_switching_roots…` was rewritten: a re-declared END-JOB is not append-only (producer and pool); a second root `end/registry-b` is refused by name (pool and producer); a deleted and redone claim is not append-only. |
+| 20 | Stray-claim check searched every committed blob | `git grep` is removed. `tree_names` = `git ls-tree -r -z --name-only HEAD -- <dir>/` (tree metadata only). `namespace_blob` is the authority's only blob reader and refuses any path outside `END_DIR`. `namespace()` enforces a strict layout under `END_DIR`, by name only. Allowed: the END-JOB, finalizations, claims under `REGISTRY_ROOT` (strict `registry_at` layout), pool files under `pools/round-RR/`, receipt files under `receipts/round-RR/<host>/<dir>/`. Any `attempt-*.json` outside `REGISTRY_ROOT`, other than a receipt directory's `attempt-claim.json`, is refused, and so is any other path. The producer runs the same namespace check before claiming. Tests: `test_namespace_and_declarations_are_checked_by_path_name_only` uses a mocked git transport that answers only `ls-tree --name-only`, so any blob read fails the test. It covers the accepted layout, 6 refused namespace paths and 3 refused declaration names, and `namespace_blob` refusing an outside path. `test_pool_authority_never_reads_outside_the_end_namespace` commits synthetic markers: an indented claim-shaped `games/outcome-marker.json`, `k4s-confirm/outcomes/attempt-00.json`, and a schema-string text file. It records every git call of the authority during a conforming pool. Only `show`/`ls-tree`/`log`/`merge-base` run; every `show` is inside `END_DIR`; every `ls-tree`/`log` is names- or commit-only and scoped to the study tree; no marker path is ever named. |
+| 21 | Indented claims outside the registry skipped (first-line parse) | `document(data, label)` parses the COMPLETE bytes (`json.loads` on all of them), and a non-JSON or non-object document is refused. It is used for the END-JOB, every registry claim, every receipt copy, finalizations, earlier pool seals/references, and in `SealedReceipt` (seal and `json()`). `end_pool.load_json` uses it as well. No first-line parsing remains in `end_evidence.py`/`end_pool.py`. Receipt copies (`receipt_copies`): exact fields `{scope = K4S-END-REFERENCE, claim, claim_sha256}`, and the SHA, claim object, round, host and receipt directory must equal the registry's. Tests (each × compact/indented/malformed): `test_registry_claims_are_parsed_from_their_complete_bytes`: compact and indented registry claims pool identically; malformed is refused. `test_receipt_copies_and_stray_claims_in_any_serialization`: a receipt copy of a registry claim is accepted compact/indented and refused when malformed. A receipt copy of a hidden claim is refused in every form (the r4 indented bypass). The hidden claim committed in a second root is refused by path name whatever its bytes. |
+| 4/14 | PARTIAL through 19/21 | "All original attempts" = every claim under the fixed `REGISTRY_ROOT` at HEAD. It must equal the latest committed finalization and the registry at the finalization's own commit; the registry is append-only. There is one END-JOB (fixed path, unique name), so no second authority exists, and no attempt-claim-named file can sit elsewhere in the END namespace. Each host's descriptor attempts must equal those claims in order (unchanged `classify_attempts`), so `all_original_attempts_classified` now rests on a unique authority. |
+
+Tests: `cd reports/explore/k4s-confirm && nice -n 19 /mpac/sdicks02/venvs/t1-verifier/bin/python -B -m pytest -q
+-p no:cacheprovider mac test_end_reference.py test_end_background.py` → **194 passed** (r4: 186; +10 new/rewritten
+authority tests, the old hidden-registry test folded into the receipt-copy/stray test). `K4S-MAC-MANIFEST.json`
+regenerated as a draft (`--kernel sdefault.py --kernel anchor_x.py`, not `--freeze`) as the last step.
+
+Still open / not fixable here:
+- Scope of the boundary, by design: claim-named files are checked only inside `END_DIR`, and END-JOB-like names
+  across `reports/explore/k4s-confirm/`. A copy outside those trees is never consulted, so it cannot become
+  authority, and it is not read. Hosts' uncommitted claims remain invisible offline: collecting every host's
+  `end/registry/round-RR/<host>/` before finalizing stays an END-time operator duty (runbook step 3).
+- The TIERS `measure_tiers.py` missing `import math` remains a TIERS-side decision.
+- `DELTA-MANIFEST.json` (prep-owned) has stale SHAs for the changed END files; its owner must rebuild it.
+
+## Round 6 (fix for Sol r5)
+
+Worker: Opus 5.5 (1M), implementation sub-agent, 2026-10-11. Review: `reviews/SOL-REVIEW-MAC-END-r5.md` (REJECT on new
+MAJOR 22; 19/20/21 resolved; 4 and 14 partial through 22). Offline only: no ssh, no Mac/fleet contact, no network, no
+git commit/push, no outcome data. Frozen TIERS package, `reports/explore/t1/` and PREREG files untouched. Written:
+`end_evidence.py`, `end_pool.py`, `end_reference.py`, `test_end_reference.py`, `END-RUNBOOK.md`, this file,
+`mac/K4S-MAC-MANIFEST.json` (regenerated last, draft).
+
+| # | Finding | Fix |
+|---|---|---|
+| 22 | A later round trusted an earlier pool's `nonconforming` seal status; its attempts were never validated | An earlier round is now re-validated by the **same code path** as the current round, never trusted from its seal. `end_pool.run_pool` was split into `pool_context` (frozen shared inputs), `pool_round` (all hosts: claims, seals, reconciliation, frozen `classify_attempt` incl. exactness, pins, slots, guard, warm-up, MHz, timing, pool, provenance) and `write_pool` (sealed bytes; the pool now also seals the descriptor's exact bytes as `pool-input.json`). Before pooling round RR, `validated_priors` → `validate_prior_round` runs for every round < RR. `end_evidence.committed_round` copies that round's committed pool and **every original attempt receipt** from HEAD (`end/pools/round-RR/`, `end/receipts/round-RR/<host>/<receipt dir>/`). It reads blobs only inside `END_DIR`, and every file must be append-only. Per host, the receipt directories must be exactly the round's claimed directories. Every pool file must be committed before any later round's claim. The sealed descriptor must be bound to the job, round, round finalization, frozen inputs and exactly those receipts. `pool_round` then recomputes the round. Any unrepeatable failure (exactness, excess repeat, no passing attempt, any other refusal) raises, so the whole END job fails closed. The result must be `pool_conforms = false`, which after every other check can only mean a host ratio outside [0.95, 1.05]. It must also equal the committed pool byte-for-byte: reference, descriptor, ratio record, seal status and inventory, with `pool-inputs.json` compared by digest because its paths are local. Every round's finalization goes through one shared `finalization()`: claims of rounds 00..r at HEAD and at its own commit, launches before it, `prior_rounds` at fixed paths with committed seal SHAs. `job_registry` now only authenticates; `rounds_authority` and `round_finals` are shared. Producer: `producer_registry(…, context)` requires committed finalizations of exactly rounds 00..RR−1 and, for RR > 0, a pool context. It runs `end_pool.predecessors`, the same `validate_prior_round`, before any claim. `end_reference.reference` passes `P.pool_context(P.shared_request(...))` for `--round > 0`. Recheck re-executes `pool` in a fresh interpreter, which re-runs the multi-round validation from HEAD. |
+| 4/14 | PARTIAL through 22 | `all_original_attempts_classified` now holds job-wide. Every round's every claimed attempt is reclassified from its committed sealed receipt whenever any later round is claimed or pooled. |
+
+Regressions (`test_end_reference.py`):
+- `test_forged_predecessor_certificate_is_refused_by_producer_pool_and_recheck` covers the reviewer's probe: round 00 retains an exactness failure, the reference holds only provenance, and the seal lists only `end-reference.json`. The producer and the pool both refuse it. A pooler monkeypatched to trust the certificate (r5 behaviour) produces a "conforming" round-01 pool, and the fresh-interpreter recheck refuses it with the same message.
+- `test_an_unrepeatable_earlier_round_fails_the_whole_end_job[exactness|excess-repeats]` uses a complete, hash-consistent nonconforming pool shell bound to the committed receipts. Round 00 has an exactness failure, or two crashes before a pass. The producer and the pool of a good round 01 refuse it with `Unrepeatable END failure` / `at most one repeat`.
+- `test_producer_refuses_a_new_round_without_a_validated_nonconforming_predecessor` covers these cases:
+  - no context;
+  - a finalized round with no pool;
+  - a genuine conforming pool (status complete);
+  - the same pool relabeled nonconforming, refused with "conforms on recomputation";
+  - a genuine nonconforming pool with one host's receipts missing.
+  It is accepted once those receipts are committed.
+- `test_rerun_rounds_record_and_reconcile_the_earlier_nonconforming_pool` was rewritten. A genuine ratio-only nonconforming round 00 with receipts committed is accepted by the producer for round 01 and by the round-01 pool, whose `prior_rounds` carries the finalization SHA. The independent recheck passes through the multi-round path. Also covered: a pool committed only after a round-01 claim is refused, the producer without context is refused, and the omitted and wrong-seal finalizations and re-pooling an older round are still refused.
+
+Tests: `cd reports/explore/k4s-confirm && nice -n 19 /mpac/sdicks02/venvs/t1-verifier/bin/python -B -m pytest -q
+-p no:cacheprovider mac test_end_reference.py test_end_background.py` → **198 passed** (r5: 194; +4 new test functions,
+1 rewritten). `K4S-MAC-MANIFEST.json` regenerated as a draft (not `--freeze`) as the last step.
+
+Still open / not fixable here:
+- Collecting every host's uncommitted claims, and committing every original receipt directory of a round before
+  re-running, stay END-time operator duties (runbook steps 3–4). An uncollected receipt now refuses the re-run
+  instead of being silently skipped.
+- `DELTA-MANIFEST.json` (prep-owned, not writable here) pins the r5 SHAs of `end_evidence.py`, `end_pool.py` and
+  `end_reference.py`; its owner must rebuild it (`end_background.py` unchanged).
+- The TIERS `measure_tiers.py` missing `import math` remains a TIERS-side decision.

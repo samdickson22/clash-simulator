@@ -16,14 +16,21 @@ its own SHA and every END measurement source; END_SHARED_PIN_KEYS = bundle runti
 equal on every host and the frozen ones equal to the descriptor's frozen K4S manifest. Each host's own bundle
 manifest (it names that host) is a per-host receipt (END_HOST_PIN_KEYS), validated per host and retained.
 Provenance (r3 §4.5, A1.1-A1.3): committed reporting completion, counted-host set and the ported frozen
-membership/loss/replacement reconciliation (end_evidence.py); the committed END attempt registry defines every
-original attempt per host (exact membership and order); every attempt is read only through its verified seal and
-classified by the frozen fleet_validity.classify_attempt after its failure/completion receipts are reconciled;
+membership/loss/replacement reconciliation (end_evidence.py); the END job authority (end_evidence.job_registry: the
+single END-JOB at the fixed END_JOB_PATH and its fixed REGISTRY_ROOT, the registry at HEAD only, append-only, equal to
+the round's committed finalization record, every earlier nonconforming pool round reconciled at its fixed path, the
+END namespace checked by path name only with blobs opened only inside it) defines every original attempt per host (exact
+membership and order); every attempt is read only through its verified seal and classified by the frozen fleet_validity.classify_attempt after its failure/completion receipts are reconciled;
 slot 0 / every background slot / priority from the pinned plan (frozen fleet_profile.slot_layout), the frozen
 reporting guard validators, and the 1 Hz reference MHz against full-occupancy reporting rows (frozen
 fleet_end.host_reporting + fleet_profile.compare_mhz) with the signed ratio retained. reporting_load_profile is true
 only when every one of these checks passed. Every consumed file is recorded (pool-inputs.json); the re-check
 requires them all to be in its before/after input inventory.
+Earlier rounds (r3 §4.5 re-run; Sol r5 finding 22): before pooling round RR, every round < RR is re-validated by the SAME
+code path (validate_prior_round -> pool_round): its committed original attempt receipts and sealed pool descriptor are
+read from HEAD, every attempt reclassified (an exactness/unrepeatable failure in any round refuses the whole END job),
+the round re-pooled, and the result must be nonconforming (a host ratio outside the window, nothing else) and equal
+to the committed pool byte-for-byte. The producer of round RR runs the same check (predecessors) before claiming.
 
   end_pool.py pool --pool-input D.json --pool-input-sha256 S --output NEW_POOL_DIR
   end_pool.py recheck --pool-input D.json --pool-input-sha256 S --pool NEW_POOL_DIR --checked-by WHO \
@@ -38,6 +45,7 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -47,9 +55,9 @@ import end_evidence as E  # noqa: E402
 
 RAW_SCHEMA = "clasher.k4s.end-reference-raw.v3"
 EVIDENCE_SCHEMA = E.EVIDENCE_SCHEMA
-POOL_INPUT_SCHEMA = "clasher.k4s.end-pool-input.v2"
+POOL_INPUT_SCHEMA = "clasher.k4s.end-pool-input.v3"
 POOL_SCOPE = "K4S-END-POOL"
-REFERENCE_SCOPE = "K4S-END-REFERENCE"
+REFERENCE_SCOPE = E.REFERENCE_SCOPE
 TIMING_KEYS = ("k4_wall", "k4s_wall", "sd1_poll", "v1_poll")
 REPEATS = (0, 1, 2)
 BLOCK = 50
@@ -210,8 +218,7 @@ def frozen_helpers(k4s_manifest, root=ROOT):
 
 
 def load_json(path):
-    text = Path(path).read_text()
-    return json.loads(text.splitlines()[0]) if text.count("\n") <= 1 else json.loads(text)
+    return E.document(Path(path).read_bytes(), "JSON input " + str(path))
 
 
 def read_lines(path):
@@ -257,10 +264,11 @@ def reconcile(sealed, label):
         require(sealed.has(name), label + " seal lacks " + name)
 
 
-def classify_attempts(host, attempts, registry, evidence, fleet_validity, consumed):
-    """Every original attempt in the committed registry order (exact membership; the descriptor cannot omit or
-    add one); at most one repeat; only the last may pass; earlier ones must be mechanically classified technical
-    repeat candidates (frozen classify_attempt on a verified, reconciled seal; exactness never earns a repeat)."""
+def classify_attempts(host, attempts, registry, evidence, fleet_validity, consumed, job_sha256=None, round_=0):
+    """Every original attempt of this round in the finalized registry order (exact membership; the descriptor cannot
+    omit or add one); at most one repeat; only the last may pass; earlier ones must be mechanically classified
+    technical repeat candidates (frozen classify_attempt on a verified, reconciled seal; exactness never earns a
+    repeat). Each receipt binds the END job and round."""
     claims = registry.get(host, [])
     require(isinstance(attempts, list) and len(attempts) == len(claims) and claims,
             "Pool descriptor attempts differ from the committed END attempt registry: " + host)
@@ -279,6 +287,9 @@ def classify_attempts(host, attempts, registry, evidence, fleet_validity, consum
         require(identity.get("host") == host and identity.get("end_kind") == "counted-reporting"
                 and identity.get("end_evidence_sha256") == evidence["sha256"]
                 and identity.get("attempt_claim_sha256") == claim_sha, "Attempt host/committed END binding differs")
+        require(identity.get("end_job_sha256") == job_sha256 and identity.get("round") == round_
+                and claim.get("job_sha256") == job_sha256 and claim.get("round") == round_,
+                "Attempt is not bound to the END job/round: " + label)
         stamp = identity.get("utc")
         require(positive(stamp) and (last is None or stamp > last), "Attempts must be strictly chronological")
         last = stamp
@@ -293,11 +304,12 @@ def classify_attempts(host, attempts, registry, evidence, fleet_validity, consum
     return passing, classified
 
 
-def validate_host(host, entry, evidence, ids, expected_frozen, helpers, registry, consumed):
+def validate_host(host, entry, evidence, ids, expected_frozen, helpers, registry, consumed, job_sha256=None, round_=0):
     """One counted host's passing receipt, read only through its verified seal: pins, slots, priority, guard,
     warm-up and MHz."""
     fleet_end, fleet_profile, fleet_validity = helpers
-    sealed, attempts = classify_attempts(host, entry["attempts"], registry, evidence, fleet_validity, consumed)
+    sealed, attempts = classify_attempts(host, entry["attempts"], registry, evidence, fleet_validity, consumed,
+                                         job_sha256, round_)
     identity = sealed.json("end-identity.json")
     complete = sealed.json("end-complete.json")
     require(complete.get("completed") is True and complete.get("repeats") == 3 and complete.get("poolable") is True
@@ -363,15 +375,25 @@ def expected_pins_from(k4s_manifest, k4s_manifest_sha256, kernel_rel, scorer_rel
         raise PoolError(str(error)) from None
 
 
-def run_pool(descriptor_path, descriptor_sha256, output, repository=ROOT, root=ROOT):
-    """Validate every input, pool, and write a sealed K4S-END-POOL directory (deterministic bytes)."""
+COMMON_INPUTS = ("k4s_manifest", "corpus_inventory", "end_evidence")
+POOL_FILES = ("end-reference.json", "pool-input.json", "pool-inputs.json")
+NONCONFORMING_FILE = "pool-nonconforming.json"
+
+
+def shared_request(k4s_manifest, k4s_manifest_sha256, corpus_inventory, end_evidence, end_evidence_sha256, kernel_rel,
+                   scorer_rel):
+    """The descriptor fields every END round shares (the producer's pool_context input for a later round)."""
+    return dict(k4s_manifest=dict(path=str(k4s_manifest), sha256=k4s_manifest_sha256),
+                corpus_inventory=dict(path=str(corpus_inventory), sha256=L.sha(corpus_inventory)),
+                end_evidence=dict(path=str(end_evidence), sha256=end_evidence_sha256), kernel_rel=kernel_rel,
+                scorer_rel=scorer_rel)
+
+
+def pool_context(request, repository=ROOT, root=ROOT):
+    """The frozen inputs every END round shares, from descriptor-shaped fields (the producer passes the same fields):
+    the frozen K4S manifest and e4v3 helpers, the corpus state inventory, the committed END evidence and the expected
+    common pins. ``inputs`` records every local file read (path -> SHA-256)."""
     consumed = Consumed()
-    descriptor_path = Path(descriptor_path)
-    raw_descriptor = consumed.read(descriptor_path)
-    require(L.sha_bytes(raw_descriptor) == descriptor_sha256, "Pool descriptor SHA mismatch")
-    request = json.loads(raw_descriptor)
-    require(request.get("schema") == POOL_INPUT_SCHEMA and request.get("hosts") and request.get("pooled_by"),
-            "Unsupported pool descriptor")
     manifest_sha = request["k4s_manifest"]["sha256"]
     require(L.sha_bytes(consumed.read(request["k4s_manifest"]["path"])) == manifest_sha, "K4S manifest SHA mismatch")
     k4s_manifest = L.load_k4s_manifest(request["k4s_manifest"]["path"], manifest_sha, root, require_frozen=True)
@@ -382,42 +404,165 @@ def run_pool(descriptor_path, descriptor_sha256, output, repository=ROOT, root=R
     evidence = E.end_evidence(request["end_evidence"]["path"], request["end_evidence"]["sha256"], repository, helpers[0])
     consumed[str(Path(request["end_evidence"]["path"]).resolve())] = request["end_evidence"]["sha256"]
     consumed.update({str(Path(p).resolve()): d for p, d in evidence["files"].items()})
+    expected = expected_pins_from(k4s_manifest, manifest_sha, request["kernel_rel"], request["scorer_rel"])
+    common = dict({k: request[k]["sha256"] for k in COMMON_INPUTS}, kernel_rel=request["kernel_rel"],
+                  scorer_rel=request["scorer_rel"])
+    return SimpleNamespace(manifest_sha=manifest_sha, k4s_manifest=k4s_manifest, helpers=helpers, ids=ids,
+                           evidence=evidence, expected=expected, common=common, inputs=dict(consumed))
+
+
+def pool_round(request, descriptor_sha256, ctx, authority, round_, prior, consumed):
+    """One round's reference document from its descriptor and the authority: every counted host validated (claims,
+    seals, classification, pins, slots, guard, warm-up, MHz, timing), pooled, with provenance. Identical for the
+    latest round and for the re-validation of every earlier round (validate_prior_round)."""
+    require(request.get("schema") == POOL_INPUT_SCHEMA and request.get("hosts") and request.get("pooled_by"),
+            "Unsupported pool descriptor")
+    evidence = ctx.evidence
     hosts = [entry["host"] for entry in request["hosts"]]
     require(sorted(hosts) == evidence["counted_hosts"] and len(set(hosts)) == len(hosts),
             "Pool host list must equal ALL committed counted hosts (no exclusion after counting)")
-    registry_ref = request.get("attempt_registry") or {}
-    registry = E.committed_registry(repository, registry_ref.get("commit"), registry_ref.get("repository_path"))
+    rnd = authority["rounds"][round_]
+    registry = rnd["claims"]
+    job_sha = authority["job"]["sha256"]
     require(set(registry) == set(hosts), "Committed END attempt registry hosts differ from the counted hosts")
-    expected = expected_pins_from(k4s_manifest, manifest_sha, request["kernel_rel"], request["scorer_rel"])
     raws, receipts = [], {}
     for entry in sorted(request["hosts"], key=lambda e: e["host"]):
-        raw, record = validate_host(entry["host"], entry, evidence, ids, expected, helpers, registry, consumed)
+        raw, record = validate_host(entry["host"], entry, evidence, ctx.ids, ctx.expected, ctx.helpers, registry,
+                                    consumed, job_sha, round_)
         raws.append(raw)
         receipts[entry["host"]] = record
-    timing = pool(raws, ids)
+    timing = pool(raws, ctx.ids)
     for host in timing["hosts"]:
         receipts[host]["ratio_to_pool"] = timing["host_ratio_to_pool"][host]
+    final = rnd["final"]
     provenance = dict(
         pool_input_sha256=descriptor_sha256, end_evidence_sha256=evidence["sha256"],
         completion_sha256=evidence["completion_sha256"], plan_sha256=evidence["plan_sha256"],
         counted_hosts=evidence["counted_hosts"], membership=evidence["membership"], host_receipts=receipts,
-        attempt_registry=dict(commit=registry_ref["commit"], repository_path=registry_ref["repository_path"],
-                              claims={h: [sha for _, sha in v] for h, v in sorted(registry.items())}),
-        k4s_manifest_sha256=manifest_sha, pooled_by=request["pooled_by"], pooler_sha256=L.sha(Path(__file__).resolve()),
+        end_job=dict(sha256=job_sha, repository_path=authority["job"]["repository_path"],
+                     registry_root=authority["job"]["registry_root"], commit=authority["job"]["commit"]),
+        round=round_, finalization=dict(sha256=final["sha256"], repository_path=final["repository_path"],
+                                        commit=final["commit"]),
+        claims=rnd["digests"], prior_rounds=prior,
+        k4s_manifest_sha256=ctx.manifest_sha, pooled_by=request["pooled_by"], pooler_sha256=L.sha(Path(__file__).resolve()),
         population="frozen T1 K4 speed corpus, 300 states (inventory 81f2483e); K4S no-deadline work unit",
         reporting_load_profile_evidence={k: True for k in L.REPORTING_EVIDENCE_KEYS})
-    document = reference_document(timing, provenance)
+    return reference_document(timing, provenance)
+
+
+def write_pool(output, document, descriptor, consumed):
+    """The sealed K4S-END-POOL directory (deterministic bytes): the reference, the pool descriptor's exact bytes
+    (so a later round can recompute this pool), the consumed-input inventory and, if nonconforming, the ratios."""
     store = L.K4SStore(output, POOL_SCOPE)
     try:
         store.write("end-reference.json", document)
+        store.write("pool-input.json", dict(sha256=L.sha_bytes(descriptor), text=descriptor.decode("utf-8")))
         store.write("pool-inputs.json", dict(consumed=dict(sorted(consumed.items()))))
         if not document["pool_conforms"]:
-            store.write("pool-nonconforming.json", dict(host_ratio_to_pool=timing["host_ratio_to_pool"],
+            store.write(NONCONFORMING_FILE, dict(host_ratio_to_pool=document["host_ratio_to_pool"],
                         rule="r3 §4.5: re-run or coordinator ratio-unavailable declaration; no host exclusion"))
         store.seal("complete" if document["pool_conforms"] else "nonconforming")
     except BaseException:
         store.seal("failed")
         raise
+    return Path(output)
+
+
+def validate_prior_round(repository, ctx, authority, r, prior):
+    """Earlier round ``r`` re-validated by the SAME code path as the current round (r3 §4.5 re-run; Sol r5 finding
+    22). Its committed pool and every original attempt receipt are read from HEAD (end_evidence.committed_round), its
+    sealed pool descriptor is bound to this job/round/finalization/frozen inputs and to exactly the committed
+    receipts, and ``pool_round`` recomputes the round: membership, claims, seals, attempt classification (an
+    exactness or other unrepeatable failure refuses the whole END job), pins, slots, guard, warm-up, MHz and timing.
+    The recomputed pool must NOT conform (it fails solely on a host ratio outside [0.95, 1.05]; every other defect
+    already raised) and must equal the committed pool byte-for-byte (reference, descriptor, ratio record, seal status
+    and inventory; the consumed-input record by digest, its paths being local). Returns the prior-round entry."""
+    label = f"Earlier END pool round {r:02d}"
+    rnd = authority["rounds"][r]
+    with tempfile.TemporaryDirectory(prefix="k4s-end-round-") as scratch:
+        committed = E.committed_round(repository, authority, r, Path(scratch) / "committed")
+        sealed = E.SealedReceipt(committed["pool"], committed["pool_manifest_sha256"], scope=POOL_SCOPE, label=label)
+        require(sealed.status == "nonconforming" and set(sealed.files) == set(POOL_FILES) | {NONCONFORMING_FILE},
+                label + " is not a complete sealed nonconforming pool (only a ratio failure permits a re-run)")
+        stored = sealed.json("pool-input.json")
+        text = stored.get("text")
+        require(set(stored) == {"scope", "sha256", "text"} and isinstance(text, str)
+                and stored["sha256"] == L.sha_bytes(text.encode("utf-8")), label + " lacks its sealed pool descriptor")
+        descriptor = text.encode("utf-8")
+        request = E.document(descriptor, label + " descriptor")
+        bound = isinstance(request.get("hosts"), list) and all(isinstance(e, dict) for e in request["hosts"]) \
+            and all(isinstance(request.get(k), dict) for k in COMMON_INPUTS + ("end_job", "finalization"))
+        require(bound and request.get("round") == r and request["end_job"].get("sha256") == authority["job"]["sha256"]
+                and request["finalization"].get("sha256") == rnd["final"]["sha256"]
+                and all(request[k].get("sha256") == ctx.common[k] for k in COMMON_INPUTS)
+                and request.get("kernel_rel") == ctx.common["kernel_rel"]
+                and request.get("scorer_rel") == ctx.common["scorer_rel"],
+                label + " descriptor is not bound to this END job/round/finalization and frozen inputs")
+        local = []
+        for entry in request["hosts"]:
+            receipts = committed["receipts"].get(entry.get("host"), [])
+            attempts = entry.get("attempts")
+            require(isinstance(attempts, list) and all(isinstance(a, dict) for a in attempts)
+                    and [(Path(str(a.get("directory"))).name, a.get("manifest_sha256")) for a in attempts]
+                    == [(d.name, digest) for d, digest in receipts],
+                    label + " descriptor attempts differ from the committed original attempt receipts: "
+                    + str(entry.get("host")))
+            local.append(dict(entry, attempts=[dict(directory=str(d), manifest_sha256=digest) for d, digest in receipts]))
+        consumed = Consumed(ctx.inputs)
+        consumed[label + " descriptor"] = L.sha_bytes(descriptor)
+        document = pool_round(dict(request, hosts=local), L.sha_bytes(descriptor), ctx, authority, r, prior, consumed)
+        require(document["pool_conforms"] is False,
+                label + " conforms on recomputation: a conforming pool ends the END job; no later round may exist")
+        again = write_pool(Path(scratch) / "recomputed", document, descriptor, consumed)
+        recomputed = E.SealedReceipt(again, L.sha(again / "receipt-manifest.json"), scope=POOL_SCOPE,
+                                     label=label + " (recomputed)")
+        require(recomputed.status == sealed.status and set(recomputed.files) == set(sealed.files),
+                label + " does not recompute (status/inventory)")
+        for name in sorted(set(sealed.files) - {"pool-inputs.json"}):
+            require(recomputed.files[name] == sealed.files[name], label + " does not recompute byte-for-byte: " + name)
+        inputs = sealed.json("pool-inputs.json")
+        require(set(inputs) == {"scope", "consumed"} and isinstance(inputs["consumed"], dict)
+                and sorted(inputs["consumed"].values()) == sorted(consumed.values()),
+                label + " consumed-input record does not recompute")
+    return dict(round=r, pool_repository_path=E.pool_path(r), pool_manifest_sha256=committed["pool_manifest_sha256"],
+                finalization_sha256=rnd["final"]["sha256"], status="nonconforming")
+
+
+def validated_priors(repository, ctx, authority, through):
+    """Every round 0..``through`` re-validated in order as a ratio-only nonconforming pool."""
+    prior = []
+    for r in range(through + 1):
+        prior.append(validate_prior_round(repository, ctx, authority, r, list(prior)))
+    return prior
+
+
+def predecessors(repository, job, round_, ctx):
+    """Producer admission of round ``round_`` > 0 (end_evidence.producer_registry): every earlier round finalized
+    and re-validated by the pool's code path as a ratio-only nonconforming pool, under this job's frozen inputs."""
+    require(type(round_) is int and round_ > 0, "Only a later END round has predecessors")
+    require(job["end_evidence_sha256"] == ctx.evidence["sha256"] and job["k4s_manifest_sha256"] == ctx.manifest_sha,
+            "Pool context is not this END job's frozen inputs")
+    authority = E.round_finals(repository, E.rounds_authority(repository, job, round_ - 1))
+    return validated_priors(repository, ctx, authority, round_ - 1)
+
+
+def run_pool(descriptor_path, descriptor_sha256, output, repository=ROOT, root=ROOT):
+    """Validate every input (every earlier round re-validated and recomputed first), pool, and write a sealed
+    K4S-END-POOL directory (deterministic bytes)."""
+    consumed = Consumed()
+    raw_descriptor = consumed.read(Path(descriptor_path))
+    require(L.sha_bytes(raw_descriptor) == descriptor_sha256, "Pool descriptor SHA mismatch")
+    request = E.document(raw_descriptor, "Pool descriptor")
+    require(request.get("schema") == POOL_INPUT_SCHEMA and request.get("hosts") and request.get("pooled_by"),
+            "Unsupported pool descriptor")
+    ctx = pool_context(request, repository, root)
+    consumed.update(ctx.inputs)
+    round_ = request.get("round")
+    authority = E.job_registry(repository, ctx.evidence, (request.get("end_job") or {}).get("sha256"), ctx.manifest_sha,
+                               round_, (request.get("finalization") or {}).get("sha256"))
+    prior = validated_priors(repository, ctx, authority, round_ - 1)
+    document = pool_round(request, descriptor_sha256, ctx, authority, round_, prior, consumed)
+    write_pool(output, document, raw_descriptor, consumed)
     return document
 
 
@@ -476,7 +621,8 @@ def recheck(descriptor_path, descriptor_sha256, pool_dir, checked_by, output, re
                   pool_manifest_sha256=seal_sha, pool_input_sha256=descriptor_sha256,
                   end_evidence_sha256=prov["end_evidence_sha256"],
                   host_receipts={h: r["manifest_sha256"] for h, r in prov["host_receipts"].items()},
-                  attempt_registry_commit=prov["attempt_registry"]["commit"],
+                  end_job_sha256=prov["end_job"]["sha256"], finalization_sha256=prov["finalization"]["sha256"],
+                  round=prov["round"],
                   checker_sha256=L.sha(Path(__file__).resolve()), input_files=before)
     with output.open("x") as stream:
         stream.write(json.dumps(result, indent=2, sort_keys=True) + "\n")

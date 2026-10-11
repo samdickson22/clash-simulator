@@ -88,7 +88,7 @@
   "files": {
     "END-RUNBOOK.md": {
       "class": "new",
-      "k4s_sha256": "7fe0f7c20e7346f995c598064c7feba6391d1862e0ce3f7445d925772974cb5d",
+      "k4s_sha256": "1641a74fa6dfa84173377c3b18fe5540055c1ac9b147e1d61428febdd17f52ca",
       "deltas": [
         8
       ],
@@ -96,7 +96,7 @@
     },
     "FREEZE-RECORD-SKELETON.md": {
       "class": "new",
-      "k4s_sha256": "f1f2296c08d57840f7eadf9c095e745a953c8c363edb7ba4c2a38b733319b39e",
+      "k4s_sha256": "f2906fef476b6cea223a6d5bc237d51c83b14e4f4312564db4f3de2c1d3f2d42",
       "role": "document (not executed)"
     },
     "K4S-SPEC.md": {
@@ -106,7 +106,7 @@
     },
     "PROGRESS.md": {
       "class": "new",
-      "k4s_sha256": "4b134dac616b3fafd61416c3aff61b37a11bec3d3fa47decf38532ecd1eb6bc4",
+      "k4s_sha256": "9c29960fe50caab1b72332548b0c649a66ff4e47f4c06f550233cb28e70b6bd9",
       "role": "document (not executed)"
     },
     "QUALIFICATION.md": {
@@ -232,21 +232,21 @@
     },
     "end_evidence.py": {
       "class": "new",
-      "k4s_sha256": "9dc9cca2fa82b90027c84b3fc20b061c996b0f7bdcf213b33ec6d5801105a158",
+      "k4s_sha256": "6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e",
       "deltas": [
         8
       ]
     },
     "end_pool.py": {
       "class": "new",
-      "k4s_sha256": "6eac4a5ba0625f884d62f138f7830e3842cec3a7329829ea212f820cbcc7e491",
+      "k4s_sha256": "069c22e7d68e1488291873c6c2d9e87cb1daf328fbe8bf254415d1fc2af06da2",
       "deltas": [
         8
       ]
     },
     "end_reference.py": {
       "class": "new",
-      "k4s_sha256": "671e193e36f1b046b8f3d09c359e5ab5a9845315aae8b8d24164f0094c152850",
+      "k4s_sha256": "5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9",
       "deltas": [
         8
       ]
@@ -440,17 +440,17 @@
     },
     "mac/K4S-MAC-MANIFEST.json": {
       "class": "new",
-      "k4s_sha256": "4c25d4543ff07b285662dbbc6c056ed144ca501c948aebc9ab6b990ae075309c",
+      "k4s_sha256": "781d25bafac6057253939b8f4f8c99480e2a226c938253f2ab9f8efdd0f775f6",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "mac/K4S-MAC-PROCEDURE.md": {
       "class": "new",
-      "k4s_sha256": "a97d030e43ca02ac91babd23c4cdeb0f8df3514148a5ae0c6181a8c9a885d333",
+      "k4s_sha256": "1b747d945c7a34bd91dc8b246a45b503f0547c6186db104984903ca5640bb9b0",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "mac/PROGRESS-MAC.md": {
       "class": "new",
-      "k4s_sha256": "b6793a3251cefa182f30a92016f5741c5e16dbb0b0e827858f87c3f7aa201f05",
+      "k4s_sha256": "c5378f7796f43cee92f13c85e269efae788266a1a39bdc17071ad6f48fb9ace2",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "mac/build_manifest.py": {
@@ -460,7 +460,7 @@
     },
     "mac/classify_k4s_failure.py": {
       "class": "new",
-      "k4s_sha256": "e2d39115590cded6a490e6fda217e4c330d45cbe28653c7df366b65e8067135c",
+      "k4s_sha256": "ac8aca3e9ee426561b3869d366751b662e91a7136c71a0fb279decc33f6f1600",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "mac/k4s_backend.py": {
@@ -470,7 +470,7 @@
     },
     "mac/k4s_logic.py": {
       "class": "new",
-      "k4s_sha256": "85740e1a1cfad386ba14c899da60f9375801e256e4ff14680a87fa9fedbca4ae",
+      "k4s_sha256": "2e4d7a5ce5363a9778eb088be7487d5f1ef7291706f743e9dd4c7c65ee5d4864",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "mac/measure_k4s.py": {
@@ -480,7 +480,7 @@
     },
     "mac/test_measure_k4s.py": {
       "class": "new",
-      "k4s_sha256": "1715a9e951a537ec4d7e1938ee1c1b0dfe9b57a0c1b786cb368668a43f95f881",
+      "k4s_sha256": "edd6956bd96f0ab2dcffef874ddcedd41d4a0a926a10a6851c82c14beeda5da8",
       "role": "K4S Mac measurement (N2; separate from TIERS measure_tiers.py)"
     },
     "make_freeze_skeleton.py": {
@@ -591,9 +591,37 @@
       "k4s_sha256": "4857b6db0851ce1c04574181a967e1a0732d9a43a8fc76fc759a76ddf0df17f5",
       "support": "mechanical T1 -> K4S path rebinding and its proof"
     },
+    "receipts/check-games-127x03.json": {
+      "class": "new",
+      "k4s_sha256": "25a25d9cd7ee244b63aae2713825adf89413f9142be85fa306a516ef6bf3d75c"
+    },
+    "receipts/check-games-127x04.json": {
+      "class": "new",
+      "k4s_sha256": "fe2fbb0dfcf069135793f17a961bf66177c3285ed4c6a82e2407a344b8efefd9"
+    },
+    "receipts/qualification-127x03.json": {
+      "class": "new",
+      "k4s_sha256": "94b7a6a1f4622955855dfdd5e1c1bed6904049c2efcb79405f1760f155e24276"
+    },
+    "receipts/qualification-127x04.json": {
+      "class": "new",
+      "k4s_sha256": "a9921a6da649ad31a6b222496dacbf00cad88953c8f0d97545d7708ced1fb7c9"
+    },
+    "receipts/qualified-vs-committed.json": {
+      "class": "new",
+      "k4s_sha256": "4b13cb7c7c19de0686d3f6a7092d40edceed2d1db60593731d587c1e1d995607"
+    },
     "receipts/reducer-verifier-crosscheck.json": {
       "class": "new",
-      "k4s_sha256": "a4e8981b3f3adb13bf2cc8c40212c3063df60e411baab1a4b60cd31e258c77ee"
+      "k4s_sha256": "c61ff98940d7934f505532c1802fb505f5982dfda56e7495f51281f47205bd1e"
+    },
+    "receipts/stoptest-127x03.json": {
+      "class": "new",
+      "k4s_sha256": "bd93485baf041e6e978439f7a47d0540a72cdc68ce3ef9e09264f7b16df06433"
+    },
+    "receipts/stoptest-127x04.json": {
+      "class": "new",
+      "k4s_sha256": "354efb79ccc0eadf3b6a178dab6f7e4f6be1817bef705d0b7f4c3d7c1aaa355b"
     },
     "reduce.py": {
       "class": "delta",
@@ -643,6 +671,11 @@
       "k4s_sha256": "38811696c58fe690c94e4fbbe4c8bf2d4b6d9ed9be166428bd3ab6602edf1753",
       "role": "document (not executed)"
     },
+    "reviews/RESPONSE-CORE-r5.md": {
+      "class": "new",
+      "k4s_sha256": "ee7c7a236371350530acfc377ee73e53a37c998ab1035d856010e72372d694b0",
+      "role": "document (not executed)"
+    },
     "reviews/SOL-REVIEW-CORE-r1.md": {
       "class": "new",
       "k4s_sha256": "0bfac35d8c29470bc3d78f0af81507e2f71f326309a502288c8e9ee5c0141913",
@@ -663,6 +696,16 @@
       "k4s_sha256": "426d1c004c7ac026c11b1c43ccef5d427c32207f029204280cb0b6a297cf5d8e",
       "role": "document (not executed)"
     },
+    "reviews/SOL-REVIEW-CORE-r5.md": {
+      "class": "new",
+      "k4s_sha256": "f46aed32c8ad77f1c35b859b9862db3ef4c22ffc677a243b062ca31b25d9ff33",
+      "role": "document (not executed)"
+    },
+    "reviews/SOL-REVIEW-CORE-r6.md": {
+      "class": "new",
+      "k4s_sha256": "6293dc5715c31af83c0d59690226514117b428c1f898b648e55c16a427a759ce",
+      "role": "document (not executed)"
+    },
     "reviews/SOL-REVIEW-MAC-END-r1.md": {
       "class": "new",
       "k4s_sha256": "d32c95d05edcddc3ecdd3ec4792d0150e9fd029fb7f6a164edca2a21f9277384",
@@ -673,9 +716,39 @@
       "k4s_sha256": "3fe5b0393a9909a731d2383588c42b08a0830328789a760e12f9883e66bb0b81",
       "role": "document (not executed)"
     },
+    "reviews/SOL-REVIEW-MAC-END-r3.md": {
+      "class": "new",
+      "k4s_sha256": "c09e8cf5f5add21eb2a89d38fb0671c295816a772306f862748f38dff91ad625",
+      "role": "document (not executed)"
+    },
+    "reviews/SOL-REVIEW-MAC-END-r4.md": {
+      "class": "new",
+      "k4s_sha256": "4747ad5d900d46df057893c62779e8f522d7581e1f95be4408aa472b2d978fec",
+      "role": "document (not executed)"
+    },
+    "reviews/SOL-REVIEW-MAC-END-r5.md": {
+      "class": "new",
+      "k4s_sha256": "8ebc4a47d6bcc5c5fc4586849f13866aff9d20f6362279f08adfa830d4db44e0",
+      "role": "document (not executed)"
+    },
+    "reviews/SOL-REVIEW-MAC-END-r6.md": {
+      "class": "new",
+      "k4s_sha256": "ec9ce8be811d459f1eddfdaffba44e069ac00c6cc1b5d46182ff4a794664a7f6",
+      "role": "document (not executed)"
+    },
     "reviews/SOL-REVIEW-VERIFIER-r1.md": {
       "class": "new",
       "k4s_sha256": "70862322d89430fa63ff2dfedcf11c22936d1b0f37a691207a75e87fd3121fe0",
+      "role": "document (not executed)"
+    },
+    "reviews/SOL-REVIEW-VERIFIER-r2.md": {
+      "class": "new",
+      "k4s_sha256": "91f4bc73157cec0b590149bf8b60d9eef756ea02e923100b6e421dccccaee4d5",
+      "role": "document (not executed)"
+    },
+    "reviews/SOL-REVIEW-VERIFIER-r3.md": {
+      "class": "new",
+      "k4s_sha256": "d1452cb4c8cb3674c3fb219075bf2cb68f09a1ec9a643933522e4aa7fd3e13e2",
       "role": "document (not executed)"
     },
     "run.py": {
@@ -750,7 +823,7 @@
     },
     "source_binding.py": {
       "class": "new",
-      "k4s_sha256": "8e2863e08f2746c4a1234b5d0821a8acf0757cd51e4e202bdb56e0bc5faab0a2",
+      "k4s_sha256": "568e016377fe63b84c266958d2982f704bda56ed4a12d6259dd7ce089f6116e5",
       "support": "qualification: K4S overlay + T1 reference (== ef4c073a) source binding through games/STOP"
     },
     "ssh_budget.py": {
@@ -852,7 +925,7 @@
     },
     "test_end_reference.py": {
       "class": "new",
-      "k4s_sha256": "ae543721fe9ebd78b2d32eb9204ec4a7dcf3040d84239515f734809f76c9d613",
+      "k4s_sha256": "1d9d111a2360b159d16673a1e8049552db2ff84314ee78d70f0450432c22c7d1",
       "deltas": [
         8
       ]
@@ -1113,7 +1186,7 @@
     "identical": 61,
     "rebound": 14,
     "delta": 15,
-    "new": 65
+    "new": 81
   },
   "guard_code_note": "OP-1..OP-7 guard modules (host_audit, ssh_budget, ssh_transport, apt_budget, cpu_accounting, system_bus, idle_services, owned_supervisor, perception_confirmation, parent_source_seed, pin, mirror, supervise, ssh_sensitivity) are identical or rebound-only; see their class rows."
 }

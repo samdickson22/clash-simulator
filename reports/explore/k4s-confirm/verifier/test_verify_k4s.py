@@ -1,9 +1,11 @@
 """Tests for verify_k4s.py. Synthetic trees only: games are tiny JSON files, and the sizes are the test-only
 --test-counts hook (primary 100 / 50 subsample, guard 36 / 18), which runs only with a SYNTHETIC marker.
+Decks are the real §2 mapping from guard-decks.json (pinned by sha256), so fixtures carry real deck identities.
 
 Author: Claude Haiku 5.5 (independent verifier author). Run from the worktree root with:
     nice -n 19 <python> -m pytest -q reports/explore/k4s-confirm/verifier
 """
+import builtins
 import copy
 import json
 import subprocess
@@ -18,6 +20,7 @@ import verify_k4s as V
 COUNTS = (100, 50, 36, 18)  # primary n, primary sub, guard n, guard sub (test-only)
 POPS_T = V.build_pops(COUNTS)
 COUNTS_ARG = ",".join(str(x) for x in COUNTS)
+DECKS = V.load_decks()
 
 
 def outcome_mixed(pop, logical, arm, seat):
@@ -31,19 +34,23 @@ def make_desc(pop, index, logical, cell=None, replaces=None):
     spec = POPS_T[pop]
     cell = logical % spec["cells"] if cell is None else cell
     order, rho, sub = V.expected_layout(pop, logical, POPS_T)
+    want = V.scheduled_decks(pop, cell, DECKS)
     return dict(id=f"{pop}-{index:04d}", population=pop, index=index, seed=spec["base"] + index, cell=cell,
-                seat=cell % 2, order=order, replaces=replaces, rotation=rho, subsample=sub)
+                seat=cell % 2, own_index=want["own_index"], opponent_index=want["opponent_index"],
+                order=order, replaces=replaces, rotation=rho, subsample=sub)
 
 
-def game_record(pop, did, desc, arm, winner):
+def game_record(pop, did, desc, arm, winner, c_star=0.9):
     spec = V.ARM_SPEC[arm]
     c = float(spec["c"])
     sd1 = spec["default"] == "SD1"
+    want = V.scheduled_decks(pop, desc["cell"], DECKS)
     meta = dict(study="PREREG-K4S SEALED", arm=arm, terminal=True, winner=winner, seat=desc["seat"],
                 seed=desc["seed"], seed_index=desc["index"], cell=desc["cell"], population=pop,
                 block_id=did, speed_cell=c, budget_ms=spec["budget"], deadline_seconds=spec["budget"] / 1000,
                 reserve_ms=8, inference_scale=1 / c, scale_mode="poll", default_source=spec["default"],
-                s_default_rule=spec["rule"], kernel=spec["kernel"], threads=4, coarse_horizon=160, c_star=0.9,
+                s_default_rule=spec["rule"], kernel=spec["kernel"], threads=4, coarse_horizon=160, c_star=c_star,
+                own_deck=list(want["own"]), opponent_deck=list(want["opponent"]),
                 freeze_manifest_sha256="a" * 64, runtime_pin_sha256="b" * 64,
                 opponent_checkpoint_sha256="c" * 64, native_sha256="d" * 64,
                 sd1_manifest_sha256="e" * 64 if sd1 else None, sd1_checkpoint_sha256="f" * 64 if sd1 else None,
@@ -52,13 +59,14 @@ def game_record(pop, did, desc, arm, winner):
     return {"cohort": arm, "metadata": meta}
 
 
-def write_block(root, desc, logical, outcome=outcome_mixed, edit=None):
+def write_block(root, desc, logical, outcome=outcome_mixed, edit=None, c_star=0.9, host="127x01"):
     """Writes complete.json and games/ for one block. edit(arm, record) may alter a game before it is hashed."""
     did = desc["id"]
     games = {}
     for arm in desc["order"]:
         fname = f"{did}-d27-{arm}.json"
-        rec = game_record(desc["population"], did, desc, arm, outcome(desc["population"], logical, arm, desc["seat"]))
+        rec = game_record(desc["population"], did, desc, arm, outcome(desc["population"], logical, arm, desc["seat"]),
+                          c_star=c_star)
         if edit is not None:
             edit(arm, rec)
         raw = json.dumps(rec, sort_keys=True).encode()
@@ -66,25 +74,29 @@ def write_block(root, desc, logical, outcome=outcome_mixed, edit=None):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(raw)
         games[fname] = V.sha256_bytes(raw)
-    complete = dict(descriptor=desc, host="127x01", slot_cores=[0, 1, 2, 3, 4], games=games, interference={})
+    complete = dict(descriptor=desc, host=host, slot_cores=[0, 1, 2, 3, 4], games=games, interference={})
     (root / did / "complete.json").write_text(json.dumps(complete))
 
 
-def write_originals(root, skip=()):
+def write_hub_ack(root, did):
+    (root / did / "hub-ack.json").write_text(json.dumps(dict(block=did, verified_sha256="ok")))
+
+
+def write_originals(root, skip=(), c_star=0.9):
     for pop, spec in POPS_T.items():
         for logical in range(spec["n"]):
             if (pop, logical) in skip:
                 continue
-            write_block(root, make_desc(pop, logical, logical), logical)
+            write_block(root, make_desc(pop, logical, logical), logical, c_star=c_star)
 
 
-def replacement(root, lost, k, logical, outcome=outcome_mixed, replaces=None):
+def replacement(root, lost, k, logical, outcome=outcome_mixed, replaces=None, c_star=0.9):
     """Replacement for a lost descriptor, the k-th loss in its (population, cell), per §3.4. replaces defaults to
     the lost id; a chain's later replacement passes the logical original's id instead (§3)."""
     spec = POPS_T[lost["population"]]
     index = spec["n"] + spec["cells"] * k + lost["cell"]
     desc = make_desc(lost["population"], index, logical, cell=lost["cell"], replaces=replaces or lost["id"])
-    write_block(root, desc, logical, outcome)
+    write_block(root, desc, logical, outcome, c_star=c_star)
     return desc
 
 
@@ -459,7 +471,7 @@ def test_non_terminal_game_is_an_error():
     desc = make_desc("guard", 0, 0)
     rec = game_record("guard", desc["id"], desc, "K4-200", None)
     rec["metadata"]["terminal"] = False
-    V.check_game(rec, desc["id"], "guard", desc, "K4-200", errors)
+    V.check_game(rec, desc["id"], "guard", desc, "K4-200", errors, "0.9", DECKS)
     assert any("non-terminal" in e for e in errors)
 
 
@@ -468,7 +480,7 @@ def test_a_qualification_record_in_a_counted_block_is_an_error(tmp_path):
     desc = make_desc("primary", 0, 0)
     rec = game_record("primary", desc["id"], desc, "K4-200", None)
     rec["metadata"]["freeze_manifest_sha256"] = None
-    V.check_game(rec, desc["id"], "primary", desc, "K4-200", errors)
+    V.check_game(rec, desc["id"], "primary", desc, "K4-200", errors, "0.9", DECKS)
     assert any("freeze_manifest_sha256" in e for e in errors)
 
 
@@ -478,7 +490,7 @@ def test_loss_and_draw_rule_on_integer_tables(tmp_path):
     root = synthetic_root(tmp_path)
     write_originals(root)
     errors, flags = [], []
-    counting = V.reduce_tree(root, POPS_T, [], "0.9", errors, flags)
+    counting = V.reduce_tree(root, POPS_T, [], "0.9", DECKS, errors, flags)
     assert errors == []
     col = V.ALL_ARMS.index("K4-200")
     table = counting["tables"]["primary"]
@@ -702,11 +714,31 @@ def test_hand_built_view_matches_itself_item_for_item():
     assert result["matched"] == result["items"] > 100
 
 
-def test_equal_rationals_match_whatever_their_written_form():
+@pytest.mark.parametrize("pair", [[14, 2], [-14, -2], [7, -1], [-7, -1], [0, 5], [7, 0], [1, 1.0]])
+def test_noncanonical_rational_forms_are_mismatches(pair):
+    # §6.7: lowest terms with a positive denominator. The value is 7, but these forms are not the canonical pair.
     reducer = hand_view()
-    reducer["contrasts"]["P_full:dref@0.8"]["upper"] = [14, 2]  # 7, the same Fraction
-    reducer["usable_cells"] = ["0.7", "0.8"]  # §6.7 does not fix the order
+    reducer["contrasts"]["P_full:dref@0.8"]["upper"] = pair
+    result = compare_with(reducer)
+    assert result["mismatched"] == 1
+    assert result["mismatches"][0]["path"] == "verifier_view.contrasts.P_full:dref@0.8.upper"
+
+
+def test_canonical_rational_forms_match():
+    assert compare_with(hand_view())["mismatched"] == 0
+
+
+def test_usable_cells_are_compared_as_a_set_in_any_order():
+    reducer = hand_view()
+    reducer["usable_cells"] = ["0.7", "0.8"]  # §6.7 compares usable_cells as a set
     assert compare_with(reducer)["mismatched"] == 0
+
+
+@pytest.mark.parametrize("cells", [["0.8", "0.5"], ["0.8", 0.7], ["0.8", None], "0.8,0.7"])
+def test_usable_cells_must_be_valid_cell_strings(cells):
+    reducer = hand_view()
+    reducer["usable_cells"] = cells
+    assert compare_with(reducer)["mismatched"] == 1
 
 
 def _set(*path, value):
@@ -769,7 +801,7 @@ PERTURBATIONS = [
     ("admitted key missing", _drop("admitted", "0.6")),
     ("veto flipped", _set("veto_pass", value=False)),
     ("usable cell dropped", _set("usable_cells", value=["0.8"])),
-    ("usable cell duplicated", _set("usable_cells", value=["0.8", "0.8", "0.7"])),
+    ("usable cell not a cell string", _set("usable_cells", value=["0.8", "0.5"])),
     ("validity flipped", _set("validity_inside", value=False)),
     ("bool as int", _set("validity_inside", value=1)),
     ("schema changed", _set("schema", value="clasher.k4s.verifier-view.v0")),
@@ -799,13 +831,13 @@ def test_a_view_the_verifier_did_not_produce_is_a_mismatch():
 
 # ---------- end to end and compare ----------
 
-def build_scenario(tmp_path):
+def build_scenario(tmp_path, c_star=0.9):
     root = synthetic_root(tmp_path)
     lost = make_desc("primary", 3, 3)
-    write_originals(root, skip={("primary", 3), ("guard", 2)})
-    rep1 = replacement(root, lost, k=0, logical=3)
+    write_originals(root, skip={("primary", 3), ("guard", 2)}, c_star=c_star)
+    rep1 = replacement(root, lost, k=0, logical=3, c_star=c_star)
     g_lost = make_desc("guard", 2, 2)
-    g_rep = replacement(root, g_lost, k=0, logical=2)
+    g_rep = replacement(root, g_lost, k=0, logical=2, c_star=c_star)
     ledger = tmp_path / "ledger.json"
     write_ledger(ledger, [dict(lost=lost, replacement=rep1), dict(lost=g_lost, replacement=g_rep)])
     return root, ledger
@@ -877,10 +909,453 @@ def test_compare_against_a_reducer_without_verifier_view_exits_2(tmp_path):
     assert json.loads(out.read_text())["compare"]["mismatched"] == 1
 
 
-def test_c_star_0_8_run_drops_h4(tmp_path):
+def write_plan(tmp_path, c_star, marked=True, name="plan.json"):
+    """A test-only plan fixture. The SYNTHETIC marker is what lets --synthetic read it."""
+    path = tmp_path / name
+    doc = dict(study="PREREG-K4S", c_star=c_star)
+    if marked:
+        doc["synthetic_marker"] = "SYNTHETIC"
+    path.write_text(json.dumps(doc))
+    return path
+
+
+def test_default_plan_is_the_frozen_plan_json_and_binds_c_star_0_9(tmp_path):
+    # (c) The default --plan is the frozen plan.json beside the verifier. Its c_star is 0.9, and the output records
+    # the path and sha256 of the bytes that were read.
+    assert V.PLAN_PATH == Path(V.__file__).resolve().parent.parent / "plan.json"
     root, ledger = build_scenario(tmp_path)
-    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger), "--c-star", "0.8"))
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger)))
     assert code in (0, 1), result.get("errors")
+    assert result["c_star"] == "0.9"
+    assert result["plan"]["path"] == str(V.PLAN_PATH)
+    assert result["plan"]["sha256"] == V.sha256_file(V.PLAN_PATH)
+    assert result["plan"]["c_star"] == "0.9"
+    assert list(result["hypotheses"]) == ["H1", "H2", "H3", "H4", "H5", "H6", "H7"]
+
+
+def test_frozen_plan_is_0_9_and_is_read_as_data():
+    doc = json.loads(V.PLAN_PATH.read_text())
+    assert doc["c_star"] == 0.9 and "synthetic_marker" not in doc
+
+
+def test_frozen_0_8_plan_refuses_a_mutually_consistent_0_9_cli_and_games(tmp_path):
+    # (a) The plan says 0.8. The games record 0.9 and the CLI says 0.9, so the two agree with each other but not with
+    # the frozen value. Refused before any decision or view.
+    root, ledger = build_scenario(tmp_path, c_star=0.9)
+    plan = write_plan(tmp_path, 0.8)
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger), "--plan", str(plan),
+                                 "--c-star", "0.9"))
+    assert code == 2 and result["status"] == "REFUSED"
+    assert "--c-star 0.9 != frozen plan c_star 0.8" in result["reason"]
+    assert "verifier_view" not in result and "admission" not in result and "hypotheses" not in result
+
+
+def test_frozen_0_8_plan_with_games_recording_0_9_is_an_input_error(tmp_path):
+    # (a) without --c-star: the games' recorded 0.9 disagrees with the frozen 0.8, so no decision and no view.
+    root, ledger = build_scenario(tmp_path, c_star=0.9)
+    plan = write_plan(tmp_path, 0.8)
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger), "--plan", str(plan)))
+    assert code == 2 and result["status"] == "ERRORS"
+    assert any("c_star 0.9 != frozen plan c_star 0.8" in e for e in result["errors"])
+    assert "verifier_view" not in result and "admission" not in result and "hypotheses" not in result
+
+
+def test_frozen_0_8_plan_with_games_recording_0_8_runs_the_normal_invocation(tmp_path):
+    # (b) The normal invocation, with no --c-star. The plan is 0.8, the games record 0.8, and H4 is dropped.
+    root, ledger = build_scenario(tmp_path, c_star=0.8)
+    plan = write_plan(tmp_path, 0.8)
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger), "--plan", str(plan)))
+    assert code in (0, 1), result.get("errors")
+    assert result["c_star"] == "0.8" and result["plan"]["c_star"] == "0.8"
+    assert result["plan"]["sha256"] == V.sha256_file(plan)
     assert list(result["hypotheses"]) == ["H1", "H2", "H3", "H5", "H6", "H7"]
     assert result["usable_cells"]["0.9"] is False
     assert [s["step"] for s in result["verifier_view"]["sequence"]] == ["H1", "H2", "H3", "H5", "H6", "H7"]
+    assert result["verifier_view"]["admitted"]["0.9"] is None
+
+
+def test_c_star_on_the_cli_that_equals_the_frozen_0_8_plan_runs(tmp_path):
+    root, ledger = build_scenario(tmp_path, c_star=0.8)
+    plan = write_plan(tmp_path, 0.8)
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger), "--plan", str(plan),
+                                 "--c-star", "0.8"))
+    assert code in (0, 1), result.get("errors")
+    assert list(result["hypotheses"]) == ["H1", "H2", "H3", "H5", "H6", "H7"]
+
+
+def test_c_star_on_the_cli_that_disagrees_with_the_frozen_plan_is_refused(tmp_path):
+    # The plan says 0.9 and the CLI says 0.8, and the games record 0.8. The refusal is at the plan, not in the games.
+    root, ledger = build_scenario(tmp_path, c_star=0.8)
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger), "--c-star", "0.8"))
+    assert code == 2 and result["status"] == "REFUSED"
+    assert "--c-star 0.8 != frozen plan c_star 0.9" in result["reason"]
+    assert "verifier_view" not in result and "hypotheses" not in result
+
+
+def test_one_game_recording_another_c_star_is_an_input_error(tmp_path):
+    root = synthetic_root(tmp_path)
+    write_originals(root)
+    write_block(root, make_desc("guard", 0, 0), 0, c_star=0.8)  # one block, recorded at 0.8, in a 0.9 study
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code == 2 and any("c_star 0.8 != frozen plan c_star 0.9" in e for e in result["errors"])
+    assert "verifier_view" not in result
+
+
+def test_plan_other_than_the_frozen_one_needs_synthetic(tmp_path):
+    # A production tree with a valid seal, so the refusal comes from the plan rule and not from the release.
+    repo, receipt = make_repo(tmp_path)
+    receipt_path = tmp_path / "receipt.json"
+    receipt_path.write_text(json.dumps(receipt))
+    root, ledger = production_tree(tmp_path)
+    plan = write_plan(tmp_path, 0.8)
+    out = tmp_path / "out.json"
+    code = V.main(["--root", str(root), "--ledger", str(ledger), "--plan", str(plan), "--out", str(out),
+                   "--release", str(receipt_path), "--repo", str(repo)])
+    reason = json.loads(out.read_text())["reason"]
+    assert code == 2 and "--plan other than the frozen plan.json needs --synthetic" in reason
+
+
+def test_test_plan_needs_the_synthetic_marker(tmp_path):
+    root, ledger = build_scenario(tmp_path)
+    plan = write_plan(tmp_path, 0.8, marked=False)
+    out = tmp_path / "out.json"
+    code = V.main(base_argv(root, out, "--ledger", str(ledger), "--plan", str(plan)))
+    assert code == 2 and "needs the SYNTHETIC marker" in json.loads(out.read_text())["reason"]
+
+
+@pytest.mark.parametrize("value", [0.7, "0.9", 1, None, True])
+def test_plan_c_star_must_be_0_9_or_0_8(tmp_path, value):
+    root, ledger = build_scenario(tmp_path)
+    plan = tmp_path / "plan.json"
+    plan.write_text(json.dumps(dict(c_star=value, synthetic_marker="SYNTHETIC")))
+    out = tmp_path / "out.json"
+    code = V.main(base_argv(root, out, "--ledger", str(ledger), "--plan", str(plan)))
+    assert code == 2 and "c_star" in json.loads(out.read_text())["reason"]
+
+
+def test_plan_that_is_not_json_is_refused(tmp_path):
+    root, ledger = build_scenario(tmp_path)
+    plan = tmp_path / "plan.json"
+    plan.write_text("{")
+    out = tmp_path / "out.json"
+    code = V.main(base_argv(root, out, "--ledger", str(ledger), "--plan", str(plan)))
+    assert code == 2 and "not JSON" in json.loads(out.read_text())["reason"]
+
+
+# ---------- evidence refusals: no outcome or comparison file is read after a seal refusal (§7) ----------
+
+@pytest.fixture
+def read_spy(monkeypatch):
+    """Records every path read through Path.open, Path.read_bytes or Path.read_text."""
+    opened = []
+    real_open, real_bytes, real_text = Path.open, Path.read_bytes, Path.read_text
+
+    def spy_open(self, mode="r", *args, **kwargs):
+        if not any(flag in mode for flag in "wax+"):  # reads only; the test's own writes are not recorded
+            opened.append(str(self))
+        return real_open(self, mode, *args, **kwargs)
+
+    def spy_bytes(self):
+        opened.append(str(self))
+        return real_bytes(self)
+
+    def spy_text(self, *args, **kwargs):
+        opened.append(str(self))
+        return real_text(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", spy_open)
+    monkeypatch.setattr(Path, "read_bytes", spy_bytes)
+    monkeypatch.setattr(Path, "read_text", spy_text)
+    return opened
+
+
+def production_tree(tmp_path):
+    """A production-shaped tree: no SYNTHETIC marker, so every refusal below is a production refusal."""
+    root, ledger = build_scenario(tmp_path)
+    (root / "SYNTHETIC").unlink()
+    return root, ledger
+
+
+def refusal_cases(tmp_path):
+    """Every refusal path that --compare could follow, each with the reason it must give."""
+    bad_receipt = tmp_path / "bad-receipt.json"
+    bad_receipt.write_text(json.dumps(dict(coordinator_thread="wrong", study="PREREG-K4S", authorization_message_id="x",
+                                           authorized_at_utc="x", commit="0", items={})))
+    not_json = tmp_path / "not-json.json"
+    not_json.write_text("{")
+    return {"no release": ([], "no release receipt"),
+            "bad coordinator": (["--release", str(bad_receipt)], "coordinator"),
+            "unreadable receipt": (["--release", str(not_json)], "cannot read release receipt")}
+
+
+@pytest.mark.parametrize("case", ["no release", "bad coordinator", "unreadable receipt"])
+def test_no_game_or_comparison_file_is_read_after_a_seal_refusal(tmp_path, read_spy, case):
+    root, ledger = production_tree(tmp_path)
+    compare = tmp_path / "reducer.json"
+    compare.write_text(json.dumps({"verifier_view": {}}))
+    out = tmp_path / "out.json"
+    extra, reason = refusal_cases(tmp_path)[case]
+    argv = ["--root", str(root), "--ledger", str(ledger), "--out", str(out), "--compare", str(compare), *extra]
+    code = V.main(argv)
+    result = json.loads(out.read_text())
+    assert code == 2 and result["status"] == "REFUSED"
+    assert reason in result["reason"]
+    assert "compare" not in result
+    opened = set(read_spy)
+    assert str(compare) not in opened
+    assert str(V.PLAN_PATH) not in opened
+    assert not any(p.startswith(str(root)) for p in opened)  # no block, complete.json or game file is read
+
+
+def seal_failure_cases(repo, receipt):
+    """Post-parse seal failures (§7): each mutates the receipt or the repository after the receipt parsed."""
+    def absent_path(r):
+        r["items"]["production_checks"]["path"] = "seal/absent.bin"
+
+    def bad_sha(r):
+        r["items"]["production_checks"]["sha256"] = "0" * 64
+
+    def tree_differs(r):  # the receipt stays as committed; only the working-tree bytes change
+        (repo / "seal" / "production_checks.bin").write_bytes(b"edited after the release commit\n")
+
+    return {"missing committed item": (absent_path, "git show"),
+            "bad sha": (bad_sha, "sha256"),
+            "working-tree bytes differ": (tree_differs, "working-tree bytes differ")}
+
+
+@pytest.mark.parametrize("case", ["missing committed item", "bad sha", "working-tree bytes differ"])
+def test_post_parse_seal_failures_read_no_game_or_comparison(tmp_path, read_spy, case):
+    repo, receipt = make_repo(tmp_path)
+    mutate, reason = seal_failure_cases(repo, receipt)[case]
+    mutate(receipt)
+    receipt_path = tmp_path / "receipt.json"
+    receipt_path.write_text(json.dumps(receipt))
+    root, ledger = production_tree(tmp_path)
+    compare = tmp_path / "reducer.json"
+    compare.write_text(json.dumps({"verifier_view": {}}))
+    out = tmp_path / "out.json"
+    code = V.main(["--root", str(root), "--ledger", str(ledger), "--out", str(out), "--compare", str(compare),
+                   "--release", str(receipt_path), "--repo", str(repo)])
+    result = json.loads(out.read_text())
+    assert code == 2 and result["status"] == "REFUSED"
+    assert reason in result["reason"]
+    assert "compare" not in result
+    opened = set(read_spy)
+    assert str(compare) not in opened
+    assert str(V.PLAN_PATH) not in opened
+    assert not any(p.startswith(str(root)) for p in opened)
+
+
+def test_synthetic_marker_refusal_reads_no_game_or_comparison(tmp_path, read_spy):
+    root, ledger = build_scenario(tmp_path)
+    (root / "SYNTHETIC").unlink()
+    compare = tmp_path / "reducer.json"
+    compare.write_text("{}")
+    out = tmp_path / "out.json"
+    code = V.main(["--root", str(root), "--ledger", str(ledger), "--synthetic", "--out", str(out),
+                   "--test-counts", COUNTS_ARG, "--compare", str(compare)])
+    assert code == 2 and "needs a SYNTHETIC file" in json.loads(out.read_text())["reason"]
+    assert str(compare) not in read_spy
+    assert not any(p.startswith(str(root)) for p in read_spy)
+
+
+@pytest.mark.parametrize("extra, marked, reason", [
+    (["--synthetic"], False, "needs a SYNTHETIC file"),
+    (["--test-counts", COUNTS_ARG], True, "tree is marked SYNTHETIC"),
+    (["--test-counts", COUNTS_ARG], False, "--test-counts is for SYNTHETIC trees only"),
+])
+def test_other_refusals_read_no_game_or_comparison(tmp_path, read_spy, extra, marked, reason):
+    # --synthetic on a tree without the marker, a marked tree run without --synthetic, or --test-counts on a
+    # production tree: all refused, each for its own reason.
+    root, ledger = build_scenario(tmp_path)
+    if not marked:
+        (root / "SYNTHETIC").unlink()
+    compare = tmp_path / "reducer.json"
+    compare.write_text("{}")
+    out = tmp_path / "out.json"
+    code = V.main(["--root", str(root), "--ledger", str(ledger), "--out", str(out), "--compare", str(compare),
+                   *extra])
+    result = json.loads(out.read_text())
+    assert code == 2 and result["status"] == "REFUSED" and reason in result["reason"]
+    assert str(compare) not in read_spy
+    assert not any(p.startswith(str(root)) for p in read_spy)
+
+
+# ---------- hub acknowledgement (spec §6.1, r3 §4.4) ----------
+
+def test_remote_host_block_without_hub_ack_file_is_not_counted(tmp_path):
+    root = synthetic_root(tmp_path)
+    write_originals(root, skip={("primary", 10)})
+    write_block(root, make_desc("primary", 10, 10), 10, host="127x03")
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code == 2
+    assert any("primary-0010" in e and "hub-ack.json" in e for e in result["errors"])
+    assert any("primary: 1 logical blocks missing" in e for e in result["errors"])
+
+
+def test_complete_json_hub_ack_key_is_not_proof(tmp_path):
+    root = synthetic_root(tmp_path)
+    write_originals(root, skip={("primary", 10)})
+    write_block(root, make_desc("primary", 10, 10), 10, host="127x03")
+    doc = json.loads((root / "primary-0010" / "complete.json").read_text())
+    doc["hub_ack"] = True
+    (root / "primary-0010" / "complete.json").write_text(json.dumps(doc))
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code == 2 and any("hub-ack.json" in e for e in result["errors"])
+
+
+def test_remote_host_block_with_hub_ack_file_counts(tmp_path):
+    root = synthetic_root(tmp_path)
+    write_originals(root, skip={("primary", 10)})
+    write_block(root, make_desc("primary", 10, 10), 10, host="127x03")
+    write_hub_ack(root, "primary-0010")
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code in (0, 1), result.get("errors")
+    assert result["counts"]["logical"]["primary"]["counted"] == 100
+
+
+# ---------- winner key and deck identities (spec §6.2, §2) ----------
+
+def test_missing_winner_key_is_an_error_not_a_draw():
+    errors = []
+    desc = make_desc("primary", 0, 0)
+    rec = game_record("primary", desc["id"], desc, "K4-200", None)
+    del rec["metadata"]["winner"]
+    assert V.check_game(rec, desc["id"], "primary", desc, "K4-200", errors, "0.9", DECKS) is None
+    assert any("winner key missing" in e for e in errors)
+
+
+def test_explicit_null_winner_is_a_draw():
+    errors = []
+    desc = make_desc("primary", 0, 0)
+    rec = game_record("primary", desc["id"], desc, "K4-200", None)
+    meta, winner = V.check_game(rec, desc["id"], "primary", desc, "K4-200", errors, "0.9", DECKS)
+    assert errors == [] and winner is None and "winner" in meta
+
+
+def test_missing_winner_in_an_end_to_end_tree_is_an_error(tmp_path):
+    root = synthetic_root(tmp_path)
+
+    def drop_winner(arm, rec):
+        if arm == "K4-200":
+            del rec["metadata"]["winner"]
+
+    write_originals(root)
+    write_block(root, make_desc("primary", 4, 4), 4, edit=drop_winner)
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code == 2 and any("winner key missing" in e for e in result["errors"])
+
+
+def test_wrong_deck_index_in_a_descriptor_is_an_error():
+    errors = []
+    desc = make_desc("primary", 3, 3)
+    desc["own_index"] = 999
+    V.check_descriptor("primary-0003", desc, 3, errors, POPS_T, DECKS)
+    assert any("own_index" in e and "§2" in e for e in errors)
+
+
+def test_guard_opponent_index_must_follow_cell_div_6():
+    errors = []
+    desc = make_desc("guard", 7, 7)  # cell 7: opponent index 7 // 6 = 1
+    desc["opponent_index"] = 0
+    V.check_descriptor("guard-0007", desc, 7, errors, POPS_T, DECKS)
+    assert any("opponent_index" in e for e in errors)
+
+
+def test_game_with_another_cells_own_deck_is_an_error():
+    errors = []
+    desc = make_desc("primary", 3, 3)
+    rec = game_record("primary", desc["id"], desc, "K4-200", None)
+    rec["metadata"]["own_deck"] = V.scheduled_decks("primary", 4, DECKS)["own"]
+    V.check_game(rec, desc["id"], "primary", desc, "K4-200", errors, "0.9", DECKS)
+    assert any("own_deck != the scheduled own deck" in e for e in errors)
+
+
+def test_one_arm_with_a_different_opponent_deck_is_an_error(tmp_path):
+    root = synthetic_root(tmp_path)
+
+    def swap_opponent(arm, rec):
+        if arm == "K4S-200":
+            rec["metadata"]["opponent_deck"] = V.scheduled_decks("primary", 5, DECKS)["opponent"]  # cell 5 -> primary[1]
+
+    write_originals(root)
+    write_block(root, make_desc("primary", 3, 3), 3, edit=swap_opponent)
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code == 2 and any("opponent_deck != the scheduled opponent deck" in e for e in result["errors"])
+
+
+def test_shuffled_deck_order_is_accepted(tmp_path):
+    root = synthetic_root(tmp_path)
+
+    def shuffle(arm, rec):
+        rec["metadata"]["own_deck"] = list(reversed(rec["metadata"]["own_deck"]))
+
+    write_originals(root)
+    write_block(root, make_desc("primary", 3, 3), 3, edit=shuffle)
+    code, result = cli(base_argv(root, tmp_path / "out.json"))
+    assert code in (0, 1), result.get("errors")
+
+
+def test_guard_decks_must_match_the_pinned_sha256(tmp_path):
+    bad = tmp_path / "guard-decks.json"
+    bad.write_bytes(b'{"primary": []}')
+    with pytest.raises(V.Refusal, match="pinned sha256"):
+        V.load_decks(bad)
+
+
+# ---------- replacement ledger replay (spec §3) ----------
+
+def test_a_replacement_lost_before_its_allocation_is_an_error():
+    # Event 1 loses the k=1 replacement of primary-0003 before any event allocated it.
+    lost_original = make_desc("primary", 3, 3)
+    first = make_desc("primary", 103, 3, replaces="primary-0003")
+    second = make_desc("primary", 153, 3, replaces="primary-0003")
+    errors = []
+    V.check_ledger([dict(lost=second, replacement=first), dict(lost=lost_original, replacement=second)],
+                   POPS_T, errors)
+    assert any("primary-0153 before an earlier event allocated it" in e for e in errors)
+
+
+def test_a_disconnected_chain_is_an_error():
+    # Event 2 loses primary-0103, which is the active block of logical 3, but names logical 5 as its original.
+    lost_original = make_desc("primary", 3, 3)
+    first = make_desc("primary", 103, 3, replaces="primary-0003")
+    other = make_desc("primary", 105, 5, replaces="primary-0005")
+    bad = dict(first, replaces="primary-0005")
+    errors = []
+    V.check_ledger([dict(lost=lost_original, replacement=first), dict(lost=bad, replacement=other)], POPS_T, errors)
+    assert any("primary-0103 differs from its allocated descriptor" in e or
+               "primary-0103 is not the active block" in e for e in errors)
+
+
+def test_losing_an_original_twice_is_an_error():
+    lost_original = make_desc("primary", 3, 3)
+    first = make_desc("primary", 103, 3, replaces="primary-0003")
+    second = make_desc("primary", 153, 3, replaces="primary-0003")
+    errors = []
+    V.check_ledger([dict(lost=lost_original, replacement=first), dict(lost=lost_original, replacement=second)],
+                   POPS_T, errors)
+    assert any("primary-0003 is not the active block" in e for e in errors)
+
+
+def test_chain_replay_accepts_a_valid_two_step_chain():
+    lost_original = make_desc("primary", 3, 3)
+    first = make_desc("primary", 103, 3, replaces="primary-0003")
+    second = make_desc("primary", 153, 3, replaces="primary-0003")
+    errors = []
+    lost_ids, rep_ids, descs, per_pop, logical_of, active = V.check_ledger(
+        [dict(lost=lost_original, replacement=first), dict(lost=first, replacement=second)], POPS_T, errors)
+    assert errors == []
+    assert active[("primary", 3)] == "primary-0153"
+    assert lost_ids == {"primary-0003", "primary-0103"}
+
+
+def test_an_unlisted_replacement_for_a_replaced_original_is_not_counted(tmp_path):
+    # The tree has a stale replacement for logical 3 that the ledger does not name: it is refused, not counted.
+    root, ledger = build_scenario(tmp_path)
+    stale = make_desc("primary", 203, 3, replaces="primary-0003")
+    write_block(root, stale, 3)
+    code, result = cli(base_argv(root, tmp_path / "out.json", "--ledger", str(ledger)))
+    assert code == 2 and any("primary-0203: replacement block not in the ledger" in e for e in result["errors"])
+
+

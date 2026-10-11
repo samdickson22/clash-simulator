@@ -72,8 +72,14 @@ def snapshot(job):
     errors += [f'input pin: {n}' for n, h in pinned.items() if inputs[n] != h]
     pin = json.loads((Path(job)/'runtime-pin.json').read_text())
     errors += [f'runtime-pin input: {n}' for n, h in pin['inputs'].items() if inputs.get(n) != h]
+    # Sol core r5 finding 21: every source file and native-source file the runtime pin declares must still match
+    # (the same rule as the inherited pin.verify), not merely the pin file's own hash.
+    errors += [f'runtime-pin file: {n}' for n, h in pin['files'].items() if not (repo/n).is_file() or sha((repo/n).read_bytes()) != h]
+    errors += [f'runtime-pin native source: {n}' for n, h in pin['native_source'].items()
+               if not (Path(job)/'native-source'/n).is_file() or sha((Path(job)/'native-source'/n).read_bytes()) != h]
     return dict(k4s=tree(repo/'reports/explore/k4s-confirm'), t1=t1, t1_expected_sha256=sha(json.dumps(expected, sort_keys=True).encode()),
-                inputs=inputs, t1_matches_ef4c073a=not errors, t1_errors=errors)
+                inputs=inputs, runtime_pin_files=len(pin['files']), runtime_pin_native_source=len(pin['native_source']),
+                t1_matches_ef4c073a=not errors, t1_errors=errors)
 
 
 def verify_receipts(job, snap):

@@ -3,7 +3,7 @@
 - **What this is.** The operator procedure for the separate K4S Mac script `measure_k4s.py`, its manifest
   `K4S-MAC-MANIFEST.json`, the load-selection rule and the failure classifier `classify_k4s_failure.py`. Together
   they make up release item 5 of r3 §4.5 (CONFORMANCE-r2 N2/F-8, RECHECK-r3 R3/R5).
-- **Status.** Draft r2 (fixes for the SOL review r1 findings 1–9), not frozen; integration re-review pending. No Mac has been contacted. Nothing here authorises
+- **Status.** Draft r4 (fixes for the SOL re-review r3 findings 18–19), not frozen; re-review pending. No Mac has been contacted. Nothing here authorises
   live play: the script is replay only and has no actuator, client, emulator, network or live-input option.
 - **Governing text.** `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` (sha256 `9650972d…`).
   Where this file and r3 differ, r3 governs. TIERS's own Mac rules come from `PREREG-SEARCH-TIERS-r3-DRAFT.md` §6–§7
@@ -112,13 +112,18 @@ by `end_pool.py recheck`. Fields:
   `reporting_priority`, `reporting_guard`, `full_occupancy_reporting_mhz`;
 - `provenance`: `pool_input_sha256`, `end_evidence_sha256`, `completion_sha256`, `plan_sha256`, `counted_hosts`,
   `pooled_by`, `pooler_sha256`, and `host_receipts[host]` = {`manifest_sha256`, `attempts` (frozen
-  `classify_attempt` verdicts, in the committed END attempt-registry order), `host_pins`, `search_cpus`,
+  `classify_attempt` verdicts, in the finalized END attempt-registry order), `host_pins`, `search_cpus`,
   `background_masks`, `nice`, `reference_to_reporting_mean` (the signed MHz ratio), `mhz_comparison_passes`,
-  `ratio_to_pool`}; `attempt_registry {commit, repository_path, claims}` and `k4s_manifest_sha256`.
+  `ratio_to_pool`}; the END job authority: `end_job {sha256, repository_path, registry_root, commit}` (the one committed,
+  append-only END job at the fixed `reports/explore/k4s-confirm/end/END-JOB.json`), `round`, `finalization {sha256, repository_path,
+  commit}` (the round's committed `END-FINAL-round-RR.json`), `claims {round: {host: [claim SHA…]}}` (every original
+  attempt of every round) and `prior_rounds` (one reconciled nonconforming pool per earlier round; length = `round`);
+  and `k4s_manifest_sha256`. `END-RUNBOOK.md` defines these documents.
 
 The re-check receipt (`clasher.k4s.end-recheck.v1`) must have `passes = true`, `outcome_access = false`,
 `reference_sha256` = the SHA of the reference file passed to the script, and the same `pool_input_sha256`,
-`end_evidence_sha256` and per-host receipt seals as the reference's provenance; `checker_sha256` = the SHA of the
+`end_evidence_sha256`, per-host receipt seals, `end_job_sha256`, `finalization_sha256` and `round` as the
+reference's provenance; `checker_sha256` = the SHA of the
 manifest-pinned `end_pool.py`; `checked_by` non-empty and different from `pooled_by`. An arbitrary SHA string is
 not accepted.
 
@@ -268,14 +273,16 @@ python3 MAC/classify_k4s_failure.py reduce --session S1 --session-sha256 H1 --cl
 
   | Category | Meaning | Valid | Repeat |
   |---|---|---|---|
-  | `valid` | Complete; no technical evidence | yes | no |
-  | `gate-failure` | Exactness mismatch, zero-budget or agreement gate failure, **including one raised after a summary was written** (e.g. the post-run bundle re-validation); a cleanup exception or a disagreeing seal status is recorded in its reasons but never turns it into a pass or a repeat | yes | **no** |
-  | `technical-failure` | Harness/load exception, including a sealed `cleanup-failure.json` (load, telemetry or backend cleanup failed, even after `k4s-complete.json`); a sealed status that disagrees with the receipts (e.g. `failed`/`refused` with a completion receipt); host sleep/reboot (boot time change or > 3 s wall/monotonic jump); `pmset` CPU speed limit < 100% before the K4S load starts (K0/K0-census/K1); a foreign process > 1 core for > 60 s; a staging pin mismatch; an incomplete session without a gate failure | no | one |
+  | `valid` | Complete; no technical evidence; no recorded gate-0 failure | yes | no |
+  | `gate-failure` | An established gate-0 (exactness/agreement) failure, **thrown or recorded**: an exactness mismatch / zero-budget exception (including one raised after a summary was written, e.g. the post-run bundle re-validation), **or** a gate-0 failure recorded in the sealed verdicts (`gate0_evidence`): a caught K1 corpus mismatch in `k4s-corpus-exactness.jsonl`, an unexplained SD1 disagreement in `k4s-sd1-agreement.jsonl`, a failing gate 0 part in `k4s-mac-summary.json`, or the committed TIERS gate 0 in `k4s-preconditions.json`. It stays a gate failure through any later cleanup/harness failure; those are kept in `technical_diagnostics`/`reasons` but never turn it into a pass or a repeat | yes | **no** |
+  | `technical-failure` | Harness/load exception without an established gate-0 failure, including a sealed `cleanup-failure.json` (load, telemetry or backend cleanup failed, even after `k4s-complete.json`); a sealed status that disagrees with the receipts (e.g. `failed`/`refused` with a completion receipt); host sleep/reboot (boot time change or > 3 s wall/monotonic jump); `pmset` CPU speed limit < 100% before the K4S load starts (K0/K0-census/K1); a foreign process > 1 core for > 60 s; a staging pin mismatch; an incomplete session without a gate failure | no | one |
   | `invalid-tiers-session` | The K4S block ran inside a TIERS session that TIERS's own classifier marks technically invalid (R3) | no | yes, without using the K4S allowance |
   | `precondition-refusal` | Nothing measured | not a session | not needed |
 
 - **What never counts as technical.** Low speed, failed gates and noisy values. A human cannot declare a technical
-  failure.
+  failure. A summary that contradicts the traces it summarises (K1 verdict, recomputed SD1 gate, the sealed TIERS
+  gate 0 parts, `passes` ≠ all parts) is refused by the classifier, never resolved as a pass. The
+  `invalid-tiers-session` rule (R3) still takes precedence over a recorded gate failure.
 - **Repeat allowance.** At most one counted technical repeat. Beyond that, a coordinator amendment is needed. Every
   repeat uses a fresh output directory and passes its prior classification receipts (P7).
 - **After K4S release.** If K4S outcomes are released, an independent reviewer confirms the mechanical
@@ -286,10 +293,14 @@ python3 MAC/classify_k4s_failure.py reduce --session S1 --session-sha256 H1 --cl
   preconditions are read only if listed in the session's own verified inventory.
 - **Admission reconciles classification and receipts.** A `valid` classification is admitted only if the session's
   own seal is `complete` with `k4s-complete.json` and holds no `failure.json`, `cleanup-failure.json` or
-  `refusal.json`. A `gate-failure` is admitted only with a sealed exactness failure trace, and its gate 0 is
-  **forced false**: any summary written before the failure is superseded (its measurements are not reduced; only
-  its TIERS inputs and gate 0 parts are kept, plus `k4s_exactness_gate_failure = false`). `reduce` also refuses a
-  gate-failure classification paired with a passing gate 0.
+  `refusal.json`. For **every** classification, `reduce` re-derives the gate-0 evidence (thrown trace and
+  `gate0_evidence`) from the session's own verified seal: a classification that would discard an established gate-0
+  failure (`valid` or `technical-failure`) is refused; only `invalid-tiers-session` and a sealed
+  `precondition-refusal` take precedence. A `gate-failure` is admitted only when that re-derived evidence exists and
+  equals the classification's, and its gate 0 is **forced false**: any summary is superseded (its measurements are
+  not reduced; only its TIERS inputs and gate 0 parts are kept, with each recorded failing part false, plus
+  `k4s_exactness_gate_failure = false` for a thrown failure). `reduce` also refuses a gate-failure classification
+  paired with a passing gate 0. A gate-failure classification is never a repeat candidate (P7 refuses a repeat).
 - **Across valid sessions** (`reduce`): minimum r_K4S, p10 and r_inf; maximum poll p99 and deadline rates; minimum
   FPS and processed fraction; gate 0 and GC must pass in every valid session. Then apply the §7 mapping. A gate 0
   failure in any valid session makes K4S Mac-infeasible. Sessions must read the same TIERS inputs.

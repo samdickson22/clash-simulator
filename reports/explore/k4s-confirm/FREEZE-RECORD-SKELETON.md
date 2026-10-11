@@ -1,6 +1,6 @@
 # PREREG-K4S freeze record: SKELETON (draft for coordinator 0523ae6f; NOT a freeze)
 
-- Generated 2026-10-11T14:02:11Z by `make_freeze_skeleton.py` at worktree HEAD `38c195b8` (SHAs are of the working tree when generated).
+- Generated 2026-10-11T17:18:36Z by `make_freeze_skeleton.py` at worktree HEAD `962ecce2` (SHAs are of the working tree when generated).
 - The coordinator re-verifies every SHA at the freeze commit, fills the blanks, signs, secret-scans, commits and pushes.
 - Items marked **COORDINATOR** are decisions the prep worker must not make.
 
@@ -11,7 +11,7 @@
 | PREREG r3 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` | `9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a` | must equal 9650972d… plus any coordinator errata (R2/R5); record errata separately |
 | Conformance r2 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-CONFORMANCE-r2.md` | `ad681329c3c072e68e5486fff47db9812a1f35fd375eddb1ec0c815a1fd092b4` |  |
 | Re-check r3 | `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-RECHECK-r3.md` | `eca937da3d0db042eb2fc3c7c3ef83b280a4bbab0148cc73e795e16fa0aa8fc9` |  |
-| K4S spec (implementation contract) | `reports/explore/k4s-confirm/K4S-SPEC.md` | `d1bfb11c73f744ace219008632db54d38e0a5ddb4a80a3257af51c3e91f3e2ec` | interpretation choices I-1..I-5 in §9 need coordinator acceptance |
+| K4S spec (implementation contract) | `reports/explore/k4s-confirm/K4S-SPEC.md` | `e80652d4859504eaf6a9256a3b3672a247a3f1993160ab17378587e7cdd93e53` | interpretation choices I-1..I-5 in §9 need coordinator acceptance |
 
 ## B. Fills prepared by the prep worker (checklist F-2..F-8)
 
@@ -22,19 +22,19 @@
 | F-4 seed audit | `reports/explore/k4s-confirm/seed-audit.json` | `6a11556f94b34cecc43e5f7ae0b3760c2af88285e30186094f08f2c7ab835c67` | PASS; **re-run at the freeze commit** (SEED-AUDIT-RECEIPT.md has the command) |
 | F-4 seed audit receipt | `reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md` | `e39ea169f9a0b2a2acac7074bb7e259ff7aa3824114033ce3f7b56cb52308a6e` |  |
 | F-4 seed audit tool | `reports/explore/k4s-confirm/audit_seeds.py` | `70cfc4e6cd25717356998891a6ea31bc58b6a09970e503ff1ae79c14f394b871` |  |
-| F-5 delta manifest (eight deltas vs T1 ef4c073a) | `reports/explore/k4s-confirm/DELTA-MANIFEST.json` | `7165b33cd3a50763072038700023a2e34db5af40b96ef6045bc8283819b66c7b` | identical 61, rebound 14, delta 15, new 36; `rebind.py verify` 0 failures |
+| F-5 delta manifest (eight deltas vs T1 ef4c073a) | `reports/explore/k4s-confirm/DELTA-MANIFEST.json` | `d771e4593494803552dfe131be4a9c8eb132d34e7f93c349d1ccdfc3d384fc20` | identical 61, rebound 14, delta 15, new 73; `rebind.py verify` 0 failures |
 | F-5 plan | `reports/explore/k4s-confirm/plan.json` | `38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf` |  |
-| F-5 runner | `reports/explore/k4s-confirm/run.py` | `eb7a323f1d8fadaeccf5c0870187ee0333426dffff4eaaca0518ed364e8d7684` |  |
-| F-5 reducer (author: K4S prep worker, Opus) | `reports/explore/k4s-confirm/reduce.py` | `a0ac06b98ba37533d23983207a5125e30c1025e71867a5f60bf21ec4bf92a686` |  |
-| F-5 independent verifier (author: Claude Haiku 5.5, did not read reduce.py) | `reports/explore/k4s-confirm/verifier/verify_k4s.py` | `62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf` |  |
+| F-5 runner | `reports/explore/k4s-confirm/run.py` | `78d88a572a8637956492d0f8447569c2307454818bb03356007b9ff9938a5f13` |  |
+| F-5 reducer (author: K4S prep worker, Opus) | `reports/explore/k4s-confirm/reduce.py` | `9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8` |  |
+| F-5 independent verifier (author: Claude Haiku 5.5, did not read reduce.py) | `reports/explore/k4s-confirm/verifier/verify_k4s.py` | `43c4a574a48a245fa844a4b0fa69ec1be1d482bd1b1be56b9acf242a3a1b4947` |  |
 | F-5 release barrier | `reports/explore/k4s-confirm/barrier.py` | `01a58c66573ad6f7bf116fdf03bd075f4f81991f67a8aa5d8ddf47343ad0b063` |  |
-| F-5 END reference driver (delta 8) | `reports/explore/k4s-confirm/end_reference.py` | `b6731acc5fa210bd669423cbcf01adfd13099b90b8795ef0420d138e385e8b6c` | logic-tested only; T1 K4 corpus copy needs coordinator authorisation |
-| F-5 END pooling (delta 8) | `reports/explore/k4s-confirm/end_pool.py` | `c103022f3ca9a7fc8033aa688e0eda2de6f67fde6db819d1a42eac647afd33c1` |  |
-| F-6 qualification receipt, 127x03 | `reports/explore/k4s-confirm/receipts/qualification-127x03.json` | `MISSING` | pending |
-| F-6 qualification receipt, 127x04 | `reports/explore/k4s-confirm/receipts/qualification-127x04.json` | `MISSING` | pending |
-| F-8 K4S Mac manifest (N2) | `reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json` | `215dfbf577209e11df2a5637e6419039ce7ec4299191134612a75d179a901152` | freeze with `mac/build_manifest.py --kernel … --freeze` |
-| F-8 K4S Mac procedure | `reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md` | `71cd257063814c3cc6b0761b68a79bf09ac0fbd6cff790fb51b4d2cbf7b1408b` |  |
-| F-8 K4S Mac script | `reports/explore/k4s-confirm/mac/measure_k4s.py` | `58e16dea8947cd35ec83f4ac0a1b50fe28fac4d22320ecef8c1eeda2f3859ad3` |  |
+| F-5 END reference driver (delta 8) | `reports/explore/k4s-confirm/end_reference.py` | `5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9` | logic-tested only; T1 K4 corpus copy needs coordinator authorisation |
+| F-5 END pooling (delta 8) | `reports/explore/k4s-confirm/end_pool.py` | `069c22e7d68e1488291873c6c2d9e87cb1daf328fbe8bf254415d1fc2af06da2` |  |
+| F-6 qualification receipt, 127x03 | `reports/explore/k4s-confirm/receipts/qualification-127x03.json` | `94b7a6a1f4622955855dfdd5e1c1bed6904049c2efcb79405f1760f155e24276` | PASS |
+| F-6 qualification receipt, 127x04 | `reports/explore/k4s-confirm/receipts/qualification-127x04.json` | `a9921a6da649ad31a6b222496dacbf00cad88953c8f0d97545d7708ced1fb7c9` | PASS |
+| F-8 K4S Mac manifest (N2) | `reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json` | `781d25bafac6057253939b8f4f8c99480e2a226c938253f2ab9f8efdd0f775f6` | freeze with `mac/build_manifest.py --kernel … --freeze` |
+| F-8 K4S Mac procedure | `reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md` | `1b747d945c7a34bd91dc8b246a45b503f0547c6186db104984903ca5640bb9b0` |  |
+| F-8 K4S Mac script | `reports/explore/k4s-confirm/mac/measure_k4s.py` | `c9d874b0362fff099dbe97d50605e693e9b0476ef54032b9d6744fa382a9a4c8` |  |
 
 Pins carried from T1 / r3 (verify at the freeze):
 - T1 runtime `ef4c073a4c69e85aea0b6f9af9c1118ca8888a59` (branch `origin/worker/t1-op7-apt-20261010`); inherited S1 runtime pin `f81f3655…`.
@@ -47,8 +47,25 @@ Pins carried from T1 / r3 (verify at the freeze):
 | Review | File | Verdict |
 |---|---|---|
 | RESPONSE-CORE-r1.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r1.md` | see file |
+| RESPONSE-CORE-r2.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r2.md` | see file |
+| RESPONSE-CORE-r3.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r3.md` | see file |
+| RESPONSE-CORE-r4.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r4.md` | see file |
+| RESPONSE-CORE-r5.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r5.md` | see file |
 | SOL-REVIEW-CORE-r1.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r1.md` | see file |
+| SOL-REVIEW-CORE-r2.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r2.md` | see file |
+| SOL-REVIEW-CORE-r3.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r3.md` | see file |
+| SOL-REVIEW-CORE-r4.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r4.md` | see file |
+| SOL-REVIEW-CORE-r5.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r5.md` | see file |
+| SOL-REVIEW-CORE-r6.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r6.md` | see file |
 | SOL-REVIEW-MAC-END-r1.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-MAC-END-r1.md` | see file |
+| SOL-REVIEW-MAC-END-r2.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-MAC-END-r2.md` | see file |
+| SOL-REVIEW-MAC-END-r3.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-MAC-END-r3.md` | see file |
+| SOL-REVIEW-MAC-END-r4.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-MAC-END-r4.md` | see file |
+| SOL-REVIEW-MAC-END-r5.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-MAC-END-r5.md` | see file |
+| SOL-REVIEW-MAC-END-r6.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-MAC-END-r6.md` | see file |
+| SOL-REVIEW-VERIFIER-r1.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-VERIFIER-r1.md` | see file |
+| SOL-REVIEW-VERIFIER-r2.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-VERIFIER-r2.md` | see file |
+| SOL-REVIEW-VERIFIER-r3.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-VERIFIER-r3.md` | see file |
 
 ## D. Coordinator-only items (blank until the freeze)
 
@@ -85,3 +102,49 @@ Pins carried from T1 / r3 (verify at the freeze):
 - Qualification receipts exist for 127x03 and 127x04 (see B). Any other host needs its own qualification (`QUALIFICATION.md`).
 - Re-run qualification on both hosts if any runtime byte changes after the receipts (source binding).
 - Excluded smoke (r3 §4.1) after the freeze on all named hosts at nice 10 under the T1 supervisor; it also exercises the supervisor STOP path.
+
+## G. Review verdicts (independent GPT-6.1-Sol; final rounds are binding)
+
+**Final verdicts:**
+- core r6: **APPROVE**;
+- independent verifier r3: **APPROVE**;
+- Mac/END r6: **APPROVE**.
+
+Earlier rounds are retained as the review trail.
+
+| Review file | Verdict |
+|---|---|
+| `RESPONSE-CORE-r1.md` | author response |
+| `RESPONSE-CORE-r2.md` | author response |
+| `RESPONSE-CORE-r3.md` | author response |
+| `RESPONSE-CORE-r4.md` | author response |
+| `RESPONSE-CORE-r5.md` | author response |
+| `SOL-REVIEW-CORE-r1.md` | APPROVE_WITH_FIXES |
+| `SOL-REVIEW-CORE-r2.md` | APPROVE_WITH_FIXES |
+| `SOL-REVIEW-CORE-r3.md` | APPROVE_WITH_FIXES |
+| `SOL-REVIEW-CORE-r4.md` | APPROVE_WITH_FIXES |
+| `SOL-REVIEW-CORE-r5.md` | APPROVE_WITH_FIXES |
+| `SOL-REVIEW-CORE-r6.md` | APPROVE |
+| `SOL-REVIEW-MAC-END-r1.md` | REJECT |
+| `SOL-REVIEW-MAC-END-r2.md` | REJECT |
+| `SOL-REVIEW-MAC-END-r3.md` | REJECT |
+| `SOL-REVIEW-MAC-END-r4.md` | REJECT |
+| `SOL-REVIEW-MAC-END-r5.md` | REJECT |
+| `SOL-REVIEW-MAC-END-r6.md` | APPROVE |
+| `SOL-REVIEW-VERIFIER-r1.md` | REJECT |
+| `SOL-REVIEW-VERIFIER-r2.md` | REJECT |
+| `SOL-REVIEW-VERIFIER-r3.md` | APPROVE |
+
+## H. Qualification evidence (127x03 and 127x04, run r3, 2026-10-11 17:01–17:17Z)
+
+| Item | Path |
+|---|---|
+| Qualification receipts | `reports/explore/k4s-confirm/receipts/qualification-127x03.json`, `qualification-127x04.json` |
+| Game checks | `receipts/check-games-127x0{3,4}.json` |
+| STOP tests | `receipts/stoptest-127x0{3,4}.json` |
+| Qualified vs committed bytes (executed files identical) | `receipts/qualified-vs-committed.json` |
+| Reducer/verifier cross-check | `receipts/reducer-verifier-crosscheck.json` |
+
+- Both receipts are PASS, with 28/28 checks each.
+- 299 tests passed (2 host-uptime-dependent T1 cases run via `test_op7_boottime.py`).
+- The staged overlay is identical on both hosts (164 files).

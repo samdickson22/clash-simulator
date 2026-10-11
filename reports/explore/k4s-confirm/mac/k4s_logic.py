@@ -942,6 +942,11 @@ def check_fleet_provenance(ref, reference_sha256, recheck, expected_pins, end_po
     for key in ("pool_input_sha256", "end_evidence_sha256", "completion_sha256", "plan_sha256", "pooler_sha256"):
         if not is_sha256(prov.get(key)):
             raise PreconditionRefusal("Fleet reference provenance lacks " + key)
+    # The END job authority (canonical END-JOB + the round's finalized claim inventory, end_evidence.job_registry).
+    if not is_sha256((prov.get("end_job") or {}).get("sha256")) or not is_sha256((prov.get("finalization") or {}).get("sha256")) \
+            or type(prov.get("round")) is not int or not isinstance(prov.get("claims"), dict) \
+            or not isinstance(prov.get("prior_rounds"), list) or len(prov["prior_rounds"]) != prov["round"]:
+        raise PreconditionRefusal("Fleet reference provenance lacks its END job / finalized attempt inventory")
     receipts = prov.get("host_receipts")
     if prov.get("counted_hosts") != hosts or not isinstance(receipts, dict) or sorted(receipts) != hosts:
         raise PreconditionRefusal("Fleet reference host set differs from the committed counted-host set")
@@ -969,7 +974,9 @@ def check_fleet_provenance(ref, reference_sha256, recheck, expected_pins, end_po
         raise PreconditionRefusal("Fleet reference needs its independent re-check receipt")
     bound = dict(schema=END_RECHECK_SCHEMA, passes=True, outcome_access=False, reference_sha256=reference_sha256,
                  pool_input_sha256=prov["pool_input_sha256"], end_evidence_sha256=prov["end_evidence_sha256"],
-                 host_receipts={h: receipts[h]["manifest_sha256"] for h in hosts}, checker_sha256=end_pool_sha256)
+                 host_receipts={h: receipts[h]["manifest_sha256"] for h in hosts}, checker_sha256=end_pool_sha256,
+                 end_job_sha256=prov["end_job"]["sha256"], finalization_sha256=prov["finalization"]["sha256"],
+                 round=prov["round"])
     for key, value in bound.items():
         if recheck.get(key) != value:
             raise PreconditionRefusal("Independent END re-check does not bind " + key)

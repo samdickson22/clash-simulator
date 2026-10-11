@@ -697,7 +697,12 @@ def test_cli_tiers_exactness_failure_writes_no_measurement_summary(tmp_path, off
     assert summary["dry_run"] is True and summary["provisional"] is True
     assert tree_state(tiers_dir) == before
     classification = C.classify(out, tiers_dir, digest, tiers_classify=no_classify)
-    assert classification["category"] == "valid" and classification["tiers_classification_untouched"]
+    # The committed TIERS §7.2 failure is a recorded gate-0 failure: a valid, no-repeat gate-failure session.
+    assert classification["category"] == "gate-failure" and classification["valid"] is True
+    assert classification["technical_repeat_candidate"] is False and classification["tiers_classification_untouched"]
+    assert classification["gate0_evidence"] == [
+        "k4s-mac-summary.json gate 0: tiers_exactness_and_worker_equality",
+        "k4s-preconditions.json committed TIERS gate 0: tiers_exactness_and_worker_equality"]
 
 
 def test_cli_rejects_mac_authorization_with_dry_run(tmp_path, offline):
@@ -1100,3 +1105,172 @@ def test_end_frozen_pins_cover_every_end_measurement_source():
     with pytest.raises(L.PreconditionRefusal, match="END-source pin"):
         L.end_frozen_pins(dict(manifest, end_files={}), "a" * 64, "reports/explore/k4s-confirm/sdefault.py",
                           "reports/explore/k4s-confirm/anchor_x.py")
+
+
+# ---------------------------------------------------------------- recorded gate-0 failure + cleanup (r3 finding 18)
+
+def recorded_gate_failure(tmp_path, monkeypatch, offline, *, kind, close_error="Telemetry did not stop cleanly",
+                          name="k4s"):
+    """Through the real measure_k4s.main: the real K1/SD1 loops (fake backend) record a gate-0 failure normally,
+    the session writes its failing summary and completion receipt, then close() fails (if ``close_error``)."""
+    ids = [str(i) for i in range(5)]
+    fleet = {i: dict(k4s_wall_seconds=.09, sd1_poll_seconds=.004, result=dict(action=1, candidates=[1], scores=[0.]))
+             for i in ids}
+    limits = dict(L.DRY_LIMITS, speed=5, speed_seconds=0, agreement=3)
+
+    class RecordedGateFailure:
+        def __init__(self, args, store, ctx):
+            self.store, self.ctx = store, ctx
+
+        def run(self):
+            m = M.Measurements(FakeBackend(ids, mismatch="3" if kind == "corpus" else None), self.store, limits,
+                               ids, fleet)
+            corpus = m.corpus_exactness(exact)                           # a caught K1 mismatch, not an exception
+            refs = {i: dict(gate=.9, legal=[1], ranks={"1": 1.}) for i in ids}
+            agree = m.sd1_agreement(ids, refs, L.SD1_THRESHOLD, lambda ref, act, thr: dict(
+                equal=kind != "agreement", allowed=kind != "agreement"))
+            gate0 = dict(self.ctx["tiers"]["gate0"])
+            gate0["parts"] = dict(gate0["parts"], k4s_corpus_exactness=corpus["passes"], sd1_agreement_k4s=agree["passes"],
+                                  sd1_agreement_tiers_cpu=True, r5_binding=True)
+            gate0["passes"] = all(v is True for v in gate0["parts"].values())
+            assert gate0["passes"] is False
+            inputs_ = dict(gate0=gate0, r_k4s=None, p10_k4s=None, r_inf=None, poll_p99_seconds=None, perception=None,
+                           gc=None, mac_deadline=None, fleet_deadline=FLEET)
+            mapping = dict(cells=None, provisional_cell=None, gate6_trail=[], c_M_k4s=None, mac_infeasible=True,
+                           reason="gate 0 failed; no K4S cell can pass")
+            self.store.write("k4s-mac-summary.json", M.summarize(self.ctx, inputs=inputs_, mapping=mapping,
+                             extra=dict(corpus_exactness=corpus, sd1_agreement=agree),
+                             provisional=L.provisional_status(False, False, False)))
+            self.store.write("k4s-complete.json", dict(completed=True, utc=time.time()))
+
+        def close(self):
+            if close_error:
+                raise RuntimeError(close_error)
+    ctx = dict(measure=True, dry_run=True, tiers=tiers(), sessions=[], c_star="0.9", mode="in-session",
+               k4s_manifest_sha256="a" * 64)
+
+    def preconditions(args, store, **hooks):
+        store.write("k4s-preconditions.json", dict(mode="in-session", tiers=ctx["tiers"], measure=True))
+        return ctx
+    monkeypatch.setattr(M, "preconditions", preconditions)
+    monkeypatch.setattr(M, "stage_inputs", lambda args, ctx, store: ctx)
+    monkeypatch.setattr(M, "Session", RecordedGateFailure)
+    out = tmp_path / name
+    if close_error:
+        with pytest.raises(RuntimeError, match=close_error):
+            M.main(dry_argv(out), **offline)
+    else:
+        assert M.main(dry_argv(out), **offline) == 0
+    return out, L.sha(out / "receipt-manifest.json")
+
+
+EVIDENCE = {"corpus": ["k4s-corpus-exactness.jsonl: recorded exactness mismatch on state 3",
+                       "k4s-mac-summary.json gate 0: k4s_corpus_exactness"],
+            "agreement": ["k4s-mac-summary.json gate 0: sd1_agreement_k4s",
+                          "k4s-sd1-agreement.jsonl: unexplained SD1 disagreement (TIERS §7.3)"]}
+
+
+@pytest.mark.parametrize("kind", ["corpus", "agreement"])
+def test_recorded_gate0_failure_survives_a_later_cleanup_failure(tmp_path, offline, monkeypatch, kind):
+    """The reviewer's r3 scenario: main -> classify -> reduce, alone and alongside a good session."""
+    session = recorded_gate_failure(tmp_path, monkeypatch, offline, kind=kind)
+    status, files = sealed(session[0])
+    summary = json.loads((session[0] / "k4s-mac-summary.json").read_text())
+    assert status == "failed" and {"cleanup-failure.json", "k4s-complete.json", "k4s-mac-summary.json"} <= set(files)
+    assert "failure.json" not in files and summary["gate_inputs"]["gate0"]["passes"] is False
+    result = C.classify(session[0])
+    assert result["category"] == "gate-failure" and result["valid"] is True and result["gate0_failed"] is True
+    assert result["technical_repeat_candidate"] is False and result["counts_toward_repeat_allowance"] is False
+    assert result["gate0_thrown"] is False and result["gate0_evidence"] == EVIDENCE[kind]
+    assert any("cleanup" in r for r in result["technical_diagnostics"])                  # diagnostics kept
+    assert any("survives the later failure" in r for r in result["reasons"])
+    with pytest.raises(L.PreconditionRefusal, match="not a pre-listed technical failure"):
+        L.check_repeat_admission([dict(result, receipt_sha256="0" * 64)], released=False, review=None)
+    c = classified(session[0], tmp_path / "c")
+    entry, _ = C.read_entry(*session, *c)
+    part = "k4s_corpus_exactness" if kind == "corpus" else "sd1_agreement_k4s"
+    assert entry["gate_inputs"]["gate0"]["passes"] is False and entry["gate_inputs"]["gate0"]["parts"][part] is False
+    assert "k4s_exactness_gate_failure" not in entry["gate_inputs"]["gate0"]["parts"]
+    assert C.main(reduce_argv([(session, c)], tmp_path / "final")) == 0
+    final = json.loads((tmp_path / "final" / "k4s-mac-final.json").read_text())
+    assert final["valid_sessions"] == 1 and final["c_M"] is None and final["kill"]["k4s_killed_on_mac"] is True
+    good = sealed_session(tmp_path / "good", dict(tiers_inputs=tiers(), gate_inputs=inputs(r_k4s=.95), provisional=True))
+    assert C.main(reduce_argv([(session, c), (good, classified(good[0], tmp_path / "cg"))], tmp_path / "final2")) == 0
+    final = json.loads((tmp_path / "final2" / "k4s-mac-final.json").read_text())
+    assert final["valid_sessions"] == 2 and final["excluded_sessions"] == 0
+    assert final["c_M"] is None and final["gate_inputs"]["gate0"]["passes"] is False
+    assert final["kill"]["k4s_killed_on_mac"] is True and final["gate_inputs"]["gate0"]["parts"][part] is False
+
+
+def test_recorded_gate0_failure_without_cleanup_failure_is_the_same_gate_failure(tmp_path, offline, monkeypatch):
+    session = recorded_gate_failure(tmp_path, monkeypatch, offline, kind="corpus", close_error=None)
+    assert sealed(session[0])[0] == "complete"
+    result = C.classify(session[0])
+    assert result["category"] == "gate-failure" and result["gate0_evidence"] == EVIDENCE["corpus"]
+    assert result["technical_diagnostics"] == []
+    c = classified(session[0], tmp_path / "c")
+    assert C.main(reduce_argv([(session, c)], tmp_path / "final")) == 0
+    assert json.loads((tmp_path / "final" / "k4s-mac-final.json").read_text())["c_M"] is None
+
+
+def test_admission_refuses_a_classification_that_discards_a_recorded_gate0_failure(tmp_path, offline, monkeypatch):
+    session = recorded_gate_failure(tmp_path, monkeypatch, offline, kind="agreement")
+    for forged in (dict(category="technical-failure", valid=False, technical_repeat_candidate=True),
+                   dict(category="valid", valid=True, technical_repeat_candidate=False),
+                   dict(category="gate-failure", valid=True, gate0_failed=True, gate0_evidence=EVIDENCE["corpus"])):
+        name = "c-" + forged["category"] + str(len(forged))
+        store = L.K4SStore(tmp_path / name, C.CLASSIFICATION_SCOPE)
+        store.write("classification.json", dict(forged, source_manifest_sha256=session[1], status="failed"))
+        store.seal("complete")
+        with pytest.raises(L.PreconditionRefusal, match="discards the session|differs from the session"):
+            C.read_entry(*session, tmp_path / name, L.sha(tmp_path / name / "receipt-manifest.json"))
+
+
+def test_recorded_gate0_contradictions_are_refused_and_partial_traces_establish_failures(tmp_path):
+    def session(name, *, summary=None, agreement=(), corpus=(), failure=None, status="failed"):
+        store = L.K4SStore(tmp_path / name, "K4S-LINUX-DRY-RUN")
+        store.write("k4s-preconditions.json", dict(tiers=tiers()))
+        for row in corpus:
+            store.append("k4s-corpus-exactness.jsonl", row)
+        for row in agreement:
+            store.append("k4s-sd1-agreement.jsonl", row)
+        if summary is not None:
+            store.write("k4s-mac-summary.json", summary)
+        if failure:
+            store.write("failure.json", dict(error=failure))
+        store.seal(status)
+        return tmp_path / name
+    # Crash mid-agreement after an unexplained disagreement: the recorded verdict already fails TIERS §7.3.
+    crash = "Traceback (most recent call last):\nRuntimeError: Replay worker failed"
+    out = session("partial", agreement=[dict(id="0", equal=False, allowed=False)], failure=crash)
+    result = C.classify(out)
+    assert result["category"] == "gate-failure" and result["gate0_evidence"] == EVIDENCE["agreement"][1:]
+    assert "harness/load exception" in result["technical_diagnostics"]
+    # A caught K1 mismatch before a crash (no summary yet).
+    out = session("k1", corpus=[dict(id="0", exact=False, error="Exactness mismatch: k4s-corpus/0")], failure=crash)
+    assert C.classify(out)["gate0_evidence"] == ["k4s-corpus-exactness.jsonl: recorded exactness mismatch on state 0"]
+    # An allowed (tolerated) disagreement alone is not a recorded failure: technical.
+    out = session("allowed", agreement=[dict(id="0", equal=False, allowed=True)], failure=crash)
+    assert C.classify(out)["category"] == "technical-failure"
+    # A summary that contradicts the traces it summarises is refused, never resolved as a pass.
+    passing = dict(tiers_inputs=tiers(), gate_inputs=inputs(gate0=dict(passes=True, parts=dict(
+        tiers_exactness_and_worker_equality=True, k4s_corpus_exactness=True))), provisional=True)
+    out = session("contra", summary=passing, corpus=[dict(id="0", exact=False, error="Exactness mismatch: x")],
+                  status="complete")
+    with pytest.raises(L.PreconditionRefusal, match="K1 corpus-exactness trace"):
+        C.classify(out)
+    lying = dict(passing, gate_inputs=inputs(gate0=dict(passes=True, parts=dict(tiers_exactness_and_worker_equality=False))))
+    with pytest.raises(L.PreconditionRefusal, match="passes differs"):
+        C.classify(session("lying", summary=lying, status="complete"))
+    other = dict(passing, tiers_inputs=tiers(gate0=False))
+    with pytest.raises(L.PreconditionRefusal, match="committed TIERS inputs"):
+        C.classify(session("tiers", summary=other, status="complete"))
+
+
+def test_tiers_invalid_session_rule_still_precedes_a_recorded_gate0_failure(tmp_path, offline, monkeypatch):
+    session = recorded_gate_failure(tmp_path, monkeypatch, offline, kind="corpus")
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
+    result = C.classify(session[0], tiers_dir, digest,
+                        tiers_classify=lambda _: dict(technical_repeat_candidate=True, reasons=["foreign"]))
+    assert result["category"] == "invalid-tiers-session" and result["valid"] is False
+    assert result["counts_toward_repeat_allowance"] is False

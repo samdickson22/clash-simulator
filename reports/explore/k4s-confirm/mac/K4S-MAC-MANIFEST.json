@@ -9,20 +9,20 @@
   },
   "end_files": {
     "reports/explore/k4s-confirm/end_background.py": "a872bd2d810161d82467075567439d8000817eaa1c1082d00a73d4a5b008e839",
-    "reports/explore/k4s-confirm/end_evidence.py": "9dc9cca2fa82b90027c84b3fc20b061c996b0f7bdcf213b33ec6d5801105a158",
-    "reports/explore/k4s-confirm/end_pool.py": "6eac4a5ba0625f884d62f138f7830e3842cec3a7329829ea212f820cbcc7e491",
-    "reports/explore/k4s-confirm/end_reference.py": "671e193e36f1b046b8f3d09c359e5ab5a9845315aae8b8d24164f0094c152850"
+    "reports/explore/k4s-confirm/end_evidence.py": "6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e",
+    "reports/explore/k4s-confirm/end_pool.py": "069c22e7d68e1488291873c6c2d9e87cb1daf328fbe8bf254415d1fc2af06da2",
+    "reports/explore/k4s-confirm/end_reference.py": "5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9"
   },
   "fleet_reference_schema": "clasher.k4s.mac-fleet-reference.v1 (K4S-MAC-PROCEDURE.md \u00a73)",
   "frozen": false,
   "k4s_files": {
-    "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "a97d030e43ca02ac91babd23c4cdeb0f8df3514148a5ae0c6181a8c9a885d333",
+    "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "1b747d945c7a34bd91dc8b246a45b503f0547c6186db104984903ca5640bb9b0",
     "reports/explore/k4s-confirm/mac/build_manifest.py": "26932fa87d9638c080c0d1611b2c2f73c5401ae8ac424b863474a42c7d75f449",
-    "reports/explore/k4s-confirm/mac/classify_k4s_failure.py": "e2d39115590cded6a490e6fda217e4c330d45cbe28653c7df366b65e8067135c",
+    "reports/explore/k4s-confirm/mac/classify_k4s_failure.py": "ac8aca3e9ee426561b3869d366751b662e91a7136c71a0fb279decc33f6f1600",
     "reports/explore/k4s-confirm/mac/k4s_backend.py": "8c8da476109e0b8390a9db8f91a8711644619172e7dbf78ca20d444c13f35954",
-    "reports/explore/k4s-confirm/mac/k4s_logic.py": "85740e1a1cfad386ba14c899da60f9375801e256e4ff14680a87fa9fedbca4ae",
+    "reports/explore/k4s-confirm/mac/k4s_logic.py": "2e4d7a5ce5363a9778eb088be7487d5f1ef7291706f743e9dd4c7c65ee5d4864",
     "reports/explore/k4s-confirm/mac/measure_k4s.py": "c9d874b0362fff099dbe97d50605e693e9b0476ef54032b9d6744fa382a9a4c8",
-    "reports/explore/k4s-confirm/mac/test_measure_k4s.py": "1715a9e951a537ec4d7e1938ee1c1b0dfe9b57a0c1b786cb368668a43f95f881"
+    "reports/explore/k4s-confirm/mac/test_measure_k4s.py": "edd6956bd96f0ab2dcffef874ddcedd41d4a0a926a10a6851c82c14beeda5da8"
   },
   "k4s_kernel": {
     "candidates": {

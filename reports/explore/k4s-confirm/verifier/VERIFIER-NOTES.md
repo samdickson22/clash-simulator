@@ -7,9 +7,75 @@
 - **Did not read** `reports/explore/k4s-confirm/reduce.py` or any `reduce*.py` in k4s-confirm, in round 1 or round 2.
   Nothing under `reports/explore/x4s2/receipts` and no game outcome data was opened. No ssh, no git commit or push,
   no network.
-- **Sources read (round 2):** `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` (governs),
-  `reports/explore/k4s-confirm/K4S-SPEC.md` (the updated spec, §3, §6.7, §7), and this verifier's round-1 files.
+- **Sources read (round 3):** `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` (governs,
+  sha256 `9650972d…`), `reports/explore/k4s-confirm/K4S-SPEC.md` at sha256 `e80652d4…` (§2, §3, §5, §6.1–6.2, §6.7,
+  §7; the spec changed during round 3, and this is the text the round-3 verifier implements),
+  `reports/explore/k4s-confirm/guard-decks.json` read as data only, pinned by sha256 `6d51628b…`, and the round-2
+  files. The Sol review `reviews/SOL-REVIEW-VERIFIER-r1.md` is the source of the round-3 findings.
+- **Still not read:** `reduce.py` and any `reduce*.py`, all game outcome data, `x4s2` receipts. No ssh, no network,
+  no git commit or push.
 - **Imports:** standard library and numpy only.
+
+## Round 4 changes (Sol review r2, finding 6 and minor findings 9 and 10)
+
+Findings 1–5, 7 and 8 were resolved in review r2 and are unchanged.
+
+1. **MAJOR 6: c\* is bound to the frozen plan.** `load_plan` reads `reports/explore/k4s-confirm/plan.json` as data
+   (default `--plan` = `../plan.json` relative to the verifier). Its `c_star` must be the number 0.9 or 0.8. The
+   output records `plan.path`, `plan.sha256` and `plan.c_star`, and `c_star` comes from the plan. Every game's
+   `metadata.c_star` must equal it. `--c-star`, if given, must equal the plan's value, or the run is refused with exit 2
+   before any game is read. Refusals produce no decisions and no view.
+   - A `--plan` other than the frozen file is a test fixture. It runs only with `--synthetic`, and it must carry
+     `"synthetic_marker": "SYNTHETIC"`. The frozen plan must not carry the marker. A production run with another plan
+     is refused.
+   - Regressions: (a) a frozen 0.8 plan against consistent 0.9 CLI and games is refused, both with `--c-star 0.9`
+     (REFUSED) and without it (games disagree, ERRORS, no view). (b) A frozen 0.8 plan with games recording 0.8, under
+     the normal invocation with no `--c-star`, runs and gives labels H1, H2, H3, H5, H6, H7. (c) The default plan is
+     the real `plan.json` (0.9), and the output's `plan.sha256` equals the file's hash.
+   - Other tests: the CLI disagreeing with the plan is refused, a plan with a `c_star` other than 0.9 or 0.8 is refused,
+     and a non-JSON plan is refused.
+2. **MINOR 9: release-refusal tests.** The three production-refusal read-spy cases now run on a tree without the
+   SYNTHETIC marker. Each asserts its own reason: "no release receipt", "coordinator", "cannot read release receipt".
+   The tests also assert that neither the plan nor the comparison file is read. The `--synthetic` and `--test-counts`
+   refusals also assert their own reasons. New post-parse seal cases (a real repository with a valid receipt, then a
+   mutation) are "git show" for a missing committed item, "sha256" for a bad digest, and "working-tree bytes differ".
+   Each asserts that no block, game or comparison file is read.
+3. **MINOR 10: notes.** The exit-code line no longer lists c\* mismatch as flags-only. A c\* mismatch is now a refusal
+   (exit 2). O5 is resolved. O11 is resolved, and the plan binding is documented above.
+
+## Round 3 changes (Sol review r1, all eight findings)
+
+1. **BLOCKER: no read after a seal refusal.** `main()` returns at once on a `Refusal`, and `--compare` is read only
+   on the path that reaches the reduction. `test_no_game_or_comparison_file_is_read_after_a_seal_refusal` and
+   `test_other_refusals_read_no_game_or_comparison` install a read spy (reads only, through `Path.open`,
+   `read_bytes` and `read_text`) and assert that no game file, no block file and no comparison file is opened.
+2. **MAJOR: hub acknowledgement is a separate durable file.** A block whose `complete.json` host is not `127x01`
+   counts only if `<root>/<id>/hub-ack.json` exists (spec §6.1). A `hub_ack` key in `complete.json` is not proof, and
+   the old flag is gone. Missing means a counting error and the block is not counted. The file's content is not
+   specified, so only its existence is checked. Tests: remote host with no file, a `complete.json` key with no file,
+   and a remote host with the file.
+3. **MAJOR: ledger replayed in event order** (`check_ledger`, spec §3 "Ledger replay"). Originals start active. A lost
+   block must be the active block of its logical original. A replacement can be lost only after an earlier event
+   allocated it, and its descriptor must match that allocation. Each allocation makes the replacement active. The
+   counted block for a logical original must be its final survivor (`reduce_tree`). Bank and population caps are
+   unchanged. Tests: future loss before allocation, a disconnected chain, losing an original twice, a valid two-step
+   chain, and an unlisted replacement.
+4. **MAJOR: the `winner` key must exist.** A missing key is an error, not a draw. Only an explicit JSON `null` is a
+   draw. Tests: missing key (error), explicit null (draw), and a missing key end to end.
+5. **MAJOR: the §2 deck mapping is verified independently.** `guard-decks.json` is loaded only after its sha256 matches
+   `6d51628b…`, and otherwise the run is refused. `scheduled_decks` implements §2: primary own = `primary[cell mod 5]`,
+   opponent = `primary[(cell div 5) mod 5]`; guard own = `l2[(cell div 2) mod 3]`, opponent = `guard[cell div 6].cards`.
+   Each descriptor's `own_index` and `opponent_index` must match, and each game's `own_deck` and `opponent_deck` must
+   equal the scheduled deck as a sorted list. Fixtures carry the real decks. Tests: wrong descriptor index, guard
+   `opponent_index`, a wrong game deck, one arm with another opponent deck, shuffled order (accepted), and the pinned hash.
+6. **MAJOR: c\* is an input check.** A game whose `metadata.c_star` is missing, or differs from `--c-star`, is an
+   error, so no decision or view is produced. The old `c_star_mismatch` flag is gone. The c\*=0.8 positive test now
+   generates games recording 0.8, and the sequence labels stay H1, H2, H3, H5, H6, H7. Mismatch refusal tests added.
+7. **MINOR: rationals in lowest terms, positive denominator** (spec §6.7). `same_rational` requires `den > 0` and
+   `gcd(|num|, den) = 1`, and compares exactly with the verifier's canonical pair. `[14,2]`, `[-7,-1]`, `[0,5]`,
+   `[7,0]` and `[1,1.0]` are mismatches. The old acceptance test is reversed.
+8. **MINOR: `usable_cells` is compared as a set** (spec §6.7), after checking that each entry is a valid cell string.
+   Duplicates in the reducer's list therefore match, as the set rule says. A `0.5` or a non-string is a mismatch.
 
 ## Round 2 changes
 
@@ -47,12 +113,12 @@ meaning and left many items unmatched or ambiguous. Round 2 removes that matchin
 
 | File | Role |
 |---|---|
-| `verify_k4s.py` | The verifier. CLI: `--root`, `--ledger`, `--release`, `--synthetic`, `--c-star {0.9,0.8}`, `--compare`, `--out`, `--repo`. |
+| `verify_k4s.py` | The verifier. CLI: `--root`, `--ledger`, `--release`, `--synthetic`, `--plan` (default `../plan.json`), `--c-star {0.9,0.8}` (optional; must equal the plan), `--compare`, `--out`, `--repo`. |
 | `test_verify_k4s.py` | Pytest suite. Synthetic trees only. Test-only sizes come from the `--test-counts` hook, which is accepted only with `--synthetic` and a `SYNTHETIC` marker. |
 | `VERIFIER-NOTES.md` | This file. |
 
-Exit codes: 0 clean, 1 flags only (including `SUSPENDED` validity and `c_star` mismatch), 2 refusal, errors, or
-comparison mismatch.
+Exit codes: 0 clean, 1 flags only (including `SUSPENDED` validity), 2 refusal (seal, flags, a `--c-star` that differs
+from the plan), errors (including a game `c_star` that differs from the plan), or comparison mismatch.
 
 ## Transcription (constant → source)
 
@@ -95,8 +161,11 @@ coordinator should check them against the reducer.
    where K4-140 and K4-120 exist.
 8. **Losses come from `metadata.winner` and the descriptor's `seat`.** Any stored `loss` or `draw` field is ignored (§6.2).
 9. **`freeze_manifest_sha256` must be non-null in every counted game** (§5: null only in qualification and smoke).
-10. **`c_star` is an input.** The verifier does not derive it from X4S-2 phase E. A games-versus-`--c-star`
-    mismatch is a flag.
+10. **`c_star` is the frozen plan's value.** The verifier reads `plan.json` `c_star` as data (round 4, §6.2) and does not
+    derive it from X4S-2 phase E. A game whose `metadata.c_star` is missing or differs from the plan is an input error,
+    and no decision or view is produced. A `--c-star` that differs from the plan is a refusal.
+14. **Hub acknowledgement content** is not specified. The verifier requires `<id>/hub-ack.json` to exist, and does not
+    check its content.
 11. **Under c* = 0.8**, the veto is reported as descriptive (r3 §1.3). Usable 0.9 is False, because A(0.9) is not tested.
 12. **`verifier_view.sequence` lists every step of the c\* sequence, in test order.** A step after a failure has
     `tested: false` and `passed: null`. (O5.)
@@ -114,13 +183,14 @@ These are my own objections, written from the spec as it stands. Each one is a p
   the verifier has to tie the message id to a real authorization.
 - **O3. Whose HEAD (A3, still open).** "Commit is an ancestor of HEAD" does not say which repository's HEAD. The
   verifier uses `--repo`, which defaults to its own checkout. The spec should name the branch (e.g. `origin/main`).
-- **O4. Rational form.** §6.7 says `[num, den]` but does not require lowest terms or a positive denominator. The
-  verifier accepts any nonzero denominator that is equal as a Fraction. The spec should require lowest terms with a
-  positive denominator, so that the two sides can be compared as written.
-- **O5. Sequence contents.** §6.7 does not say whether untested steps appear, or what `passed` is for them. I include
-  every step with `tested: false` and `passed: null`. The spec should say so.
-- **O6. `usable_cells` order.** §6.7 gives `["0.9", "0.8"]` as an example and does not fix the order. The verifier
-  emits descending order and compares as a multiset. Fixing the order in the spec would let it compare as a list.
+- **O4. Rational form (resolved in round 3).** Spec §6.7 does require `[num, den]` in lowest terms with a positive
+  denominator. Round 2 misread it. The verifier now refuses noncanonical forms.
+- **O5. Sequence contents (resolved in round 4).** Spec §6.7 says every step appears, and a step after the first failure
+  has `tested: false, passed: null`. The verifier does this.
+- **O6. `usable_cells` (resolved in round 3).** Spec §6.7 says the list is compared as a set. The verifier emits the
+  spec's order (0.9, 0.8, 0.7, 0.6) and compares sets of valid cell strings. Round 2 misread the spec.
+- **O11. Frozen c\* binding (resolved in round 4).** The verifier reads `plan.json` `c_star` as data, records its path and
+  sha256, and uses it for every metadata check and for the sequence. `--c-star` must agree with it, or the run is refused.
 - **O7. Validity and usable cells.** §6.5 says a SUSPENDED result reports admissions "marked suspended", but §1.5 does
   not say whether usable cells are then forced to empty. The verifier computes usable cells as before and reports
   `validity_inside` separately. The spec must say which is meant.
@@ -150,8 +220,8 @@ These are my own objections, written from the spec as it stands. Each one is a p
 
 ## Test results
 
-Command: `nice -n 19 /mpac/sdicks02/venvs/t1-verifier/bin/python -m pytest -q reports/explore/k4s-confirm/verifier`
-Result: **95 passed in 3.87s.**
+Round 4 command: `cd /mpac/sdicks02/repos/clasher-k4s-prep && nice -n 19 /mpac/sdicks02/venvs/t1-verifier/bin/python -B -m pytest -q -p no:cacheprovider reports/explore/k4s-confirm/verifier`
+Result: **149 passed in about 9s.** (Round 3 had 132; round 2 had 95.)
 
 The brief's interpreter `/mpac/sdicks02/repos/clasher/.venv/bin/python` does not exist. The test venv is Python 3.12 with
 numpy and pytest.

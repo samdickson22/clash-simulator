@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-11T17:16:55Z",
+  "stop_touched_utc": "2026-10-11T17:16:54Z",
+  "game_running_at_touch": true,
+  "drained": true,
+  "drain_seconds": 0.6013557689730078,
+  "returncode": 1,
+  "owned_processes_after": 0,
+  "interrupted_by_owned_stop": true,
+  "log_tail": [
+    "InterruptedError: owned K4S stop"
+  ],
+  "stop_removed_by_test": true,
+  "external_stop_preserved": false
+}

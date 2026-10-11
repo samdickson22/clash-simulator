@@ -4,8 +4,13 @@ Runs after the committed reporting-completion receipt, on every host with counte
 slot 0 while every other reporting slot runs the frozen TIERS corpus loop (reporting load profile) through the
 K4S-owned background adapter (end_background.K4SFleetBackground: the frozen FleetBackground lifecycle and work loop,
 with K4S evidence instead of the frozen 2400/600 TIERS END reader). One run claims the next entry of the END attempt
-registry (end_evidence.claim_attempt) and writes one sealed per-host receipt directory (scope K4S-END-REFERENCE)
-that end_pool.py pools.
+registry (end_evidence.producer_claim) and writes one sealed per-host receipt directory (scope K4S-END-REFERENCE)
+that end_pool.py pools. The registry is not a caller choice: the single committed, append-only END-JOB at the fixed
+end_evidence.END_JOB_PATH (end_evidence.end_job) binds the completion, END evidence, plan, counted hosts and frozen
+K4S manifest, and claims go only under the fixed end_evidence.REGISTRY_ROOT; the END-JOB must exist before the first
+claim, and a round can be claimed only while no finalization record for it (or a later round) is committed. A
+later round (r3 §4.5 re-run) can be claimed only after every earlier round's committed pool and original attempt
+receipts re-validate and recompute, by end_pool's own code path, as a ratio-only nonconforming pool.
 
 Before the backend is constructed or any pickle is executed (frozen_identity):
   - the TIERS fleet-reference bundle, runtime and measurement pins via the frozen
@@ -35,7 +40,7 @@ end-complete.json (cleanup_succeeded = true) is written only after cleanup succe
 
   nice -n 10 end_reference.py --bundle B --runtime-root R --native N --corpus K4-states.pkl \
       --k4s-manifest-sha256 S --sd1-manifest-sha256 S --end-evidence E.json --end-evidence-sha256 S \
-      --attempt-registry REG --out NEW_DIR
+      --end-job-sha256 S [--round R] --out NEW_DIR
 """
 import argparse
 import json
@@ -297,7 +302,12 @@ def reference(a):
     validate_physical_cpus(search + sum(background_masks, []) + [census_cpu])
     os.sched_setaffinity(0, set(search))
     a.cores = search
-    claim, claim_sha = E.claim_attempt(a.attempt_registry, host, a.out)       # before the receipt directory exists
+    job = E.end_job(a.repository, evidence, a.end_job_sha256, a.k4s_manifest_sha256)    # before the first claim
+    # A later round: every earlier round re-validated by the pool's code path as a ratio-only nonconforming pool.
+    context = P.pool_context(P.shared_request(a.k4s_manifest, a.k4s_manifest_sha256, a.corpus_inventory, a.end_evidence,
+                                              a.end_evidence_sha256, a.kernel, a.scorer), a.repository) if a.round else None
+    claim, claim_sha = E.producer_claim(a.repository, job, a.round, host, a.out,      # before the receipt directory
+                                        context=context)
     store = L.K4SStore(a.out, P.REFERENCE_SCOPE)
     state = SimpleNamespace(stop=None, monitor=None, channel=None, monitor_channel=None, backend=None)
 
@@ -307,6 +317,7 @@ def reference(a):
             host=host, utc=time.time(), nice=nice, scheduler="SCHED_OTHER", end_kind=evidence["kind"],
             end_evidence_sha256=evidence["sha256"], counted_hosts=evidence["counted_hosts"],
             plan_sha256=evidence["plan_sha256"], attempt=claim["attempt"], attempt_claim_sha256=claim_sha,
+            end_job_sha256=job["sha256"], round=a.round,
             load_profile={k: profile[k] for k in (
                 "host", "reference_slot", "slot_count", "console_rule", "warmup_seconds", "perception")},
             search_cpus=search, background_masks=background_masks, census_cpu=census_cpu, pins=pins,
@@ -417,8 +428,11 @@ def main(argv=None):
     ap.add_argument('--end-evidence', type=Path, required=True, help='clasher.k4s.end-evidence.v1 (committed inputs)')
     ap.add_argument('--end-evidence-sha256', required=True)
     ap.add_argument('--repository', type=Path, default=ROOT, help='git checkout holding the evidence commits')
-    ap.add_argument('--attempt-registry', type=Path, required=True,
-                    help='END attempt registry directory (<registry>/<host>/attempt-NN.json, committed before pooling)')
+    ap.add_argument('--end-job-sha256', required=True,
+                    help='SHA-256 of the committed END-JOB at the fixed end_evidence.END_JOB_PATH')
+    ap.add_argument('--round', type=int, default=0, help='END round (0; a re-run under r3 §4.5 needs every earlier '
+                                                         'round finalized, its pool and receipts committed, and each '
+                                                         're-validated as a ratio-only nonconforming pool)')
     ap.add_argument('--out', type=Path, required=True, help='fresh per-host receipt directory')
     a = ap.parse_args(argv)
     if a.corpus_sha256 != K4_CORPUS_SHA256:

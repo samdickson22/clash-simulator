@@ -1,0 +1,68 @@
+{
+  "schema": "clasher.k4s.qualified-vs-committed.v1",
+  "utc": "2026-10-11T17:18:48Z",
+  "qualified_overlay": {
+    "hosts": [
+      "127x03",
+      "127x04"
+    ],
+    "runs": [
+      "qual-03-r3",
+      "qual-04-r3"
+    ],
+    "files": 164,
+    "identical_on_both_hosts": true
+  },
+  "executed_or_data_files_identical": 133,
+  "executed_identical_digest": "30c32c6aa3d160080b526f38d52a9ff0d37162e5cfc1c2b56d59e3cc784d3ff3",
+  "differing_files": {
+    "FREEZE-RECORD-SKELETON.md": {
+      "category": "document (not executed)",
+      "in_qualified": true,
+      "in_committed": true
+    },
+    "PROGRESS.md": {
+      "category": "document (not executed)",
+      "in_qualified": true,
+      "in_committed": true
+    },
+    "receipts/check-games-127x03.json": {
+      "category": "receipt (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    },
+    "receipts/check-games-127x04.json": {
+      "category": "receipt (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    },
+    "receipts/qualification-127x03.json": {
+      "category": "receipt (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    },
+    "receipts/qualification-127x04.json": {
+      "category": "receipt (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    },
+    "receipts/stoptest-127x03.json": {
+      "category": "receipt (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    },
+    "receipts/stoptest-127x04.json": {
+      "category": "receipt (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    },
+    "reviews/SOL-REVIEW-MAC-END-r6.md": {
+      "category": "document (not executed)",
+      "in_qualified": false,
+      "in_committed": true
+    }
+  },
+  "executed_or_data_differences": [],
+  "verdict": "PASS",
+  "note": "Qualification snapshots the whole k4s-confirm tree. After qualification r3 only non-executed documents, receipts and the generated manifest changed; every executed or data file is byte-identical to the qualified overlay (digest over the identical set)."
+}

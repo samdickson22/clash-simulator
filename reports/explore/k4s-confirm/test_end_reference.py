@@ -2,12 +2,14 @@
 
 The fleet fixture is producer-shaped: common/host pins come from the real ``end_reference.frozen_identity`` for two
 hosts with different (host-naming) bundles, every receipt is written through ``end_reference.run_attempt`` after a
-real ``end_evidence.claim_attempt`` registry claim, the registry is committed, and the committed supervisor exits
+real ``end_evidence.producer_claim`` under a committed END-JOB (each scenario in its own clone of the evidence
+repository), the registry and the round's finalization record are committed, and the committed supervisor exits
 carry the counted descriptors verbatim. Only the native/corpus binaries and the TIERS bundle validation are stand-ins.
 """
 import copy
 import json
 import math
+import shutil
 import subprocess
 import sys
 from argparse import Namespace
@@ -626,12 +628,14 @@ def test_unregistered_phase_name_is_refused(tmp_path):
 
 # ---------------------------------------------------------------- producer-shaped host receipts
 
-def produce(fleet, registry, name, host, kind='good', *, utc=1000., factor=1.0, mhz=2000., mutate=lambda n, v: v,
-            common=None, host_pins=None):
-    """One END attempt: a real registry claim, then the producer's run_attempt lifecycle with fake work."""
+def produce(fleet, ref, name, host, kind='good', *, utc=1000., factor=1.0, mhz=2000., mutate=lambda n, v: v,
+            common=None, host_pins=None, claim=None):
+    """One END attempt: a real producer claim under the committed END-JOB, then the producer's run_attempt lifecycle
+    with fake work. ``claim(directory)`` overrides the claim (tests of claims outside the canonical registry)."""
     _, fleet_validity, fleet_profile, fleet_end = frozen_e4v3()
     directory = fleet.tmp / name
-    claim, claim_sha = E.claim_attempt(registry, host, directory, now=utc)
+    claim, claim_sha = (claim or (lambda d: E.producer_claim(ref.repo, ref.job, ref.round, host, d, now=utc,
+                                                             context=pool_context(fleet, ref) if ref.round else None)))(directory)
     store = L.K4SStore(directory, P.REFERENCE_SCOPE)
     profile = dict(PROFILE, host=host)
     search, background, census_cpu = fleet_profile.slot_layout(profile, PLAN, host, 10)
@@ -646,7 +650,8 @@ def produce(fleet, registry, name, host, kind='good', *, utc=1000., factor=1.0, 
         write('end-identity.json', dict(host=host, utc=utc, nice=10, scheduler='SCHED_OTHER', end_kind='counted-reporting',
                                         end_evidence_sha256=fleet.evidence['sha256'], counted_hosts=fleet.evidence['counted_hosts'],
                                         plan_sha256=fleet.evidence['plan_sha256'], attempt=claim['attempt'],
-                                        attempt_claim_sha256=claim_sha, load_profile=profile, search_cpus=search,
+                                        attempt_claim_sha256=claim_sha, end_job_sha256=ref.job['sha256'], round=ref.round,
+                                        load_profile=profile, search_cpus=search,
                                         background_masks=background, census_cpu=census_cpu, pins=common, host_pins=host_pins))
         reporting = fleet_end.host_reporting(fleet.evidence, profile, PLAN)
         write('reporting-full-occupancy-mhz.json', dict(rows=reporting))
@@ -696,25 +701,70 @@ def guard(**over):
 GOOD = {'a': [('good', {})], 'b': [('good', dict(factor=1.02))]}
 
 
-def scenario(fleet, name, plan=GOOD, commit=True):
-    """plan: {host: [(kind, kwargs), ...]} in launch order -> descriptor host entries + committed registry ref."""
-    registry = fleet.repo / 'registries' / name
+ROOT = E.REGISTRY_ROOT
+
+
+def job_dict(fleet, evidence=None, **over):
+    evidence = fleet.evidence if evidence is None else evidence
+    job = dict(schema=E.JOB_SCHEMA, study='PREREG-K4S', end_evidence_sha256=evidence['sha256'],
+               completion_sha256=evidence['completion_sha256'], plan_sha256=evidence['plan_sha256'],
+               k4s_manifest_sha256=fleet.manifest_sha, counted_hosts=evidence['counted_hosts'],
+               declared_utc='2026-10-14T02:00:00Z', declared_by='coordinator')
+    job.update(over)
+    return job
+
+
+def job_repo(fleet, name):
+    """A clone of the committed evidence repository with the committed END-JOB at its fixed path (before any claim)."""
+    repo = fleet.tmp / f'repo-{name}'
+    git(fleet.tmp, 'clone', '-q', str(fleet.repo), str(repo))
+    (repo / 'end-evidence.json').write_bytes(fleet.evidence_path.read_bytes())
+    (repo / E.END_DIR).mkdir(parents=True)
+    (repo / E.END_JOB_PATH).write_text(L.canonical(job_dict(fleet)) + '\n')
+    commit_all(repo, [E.END_JOB_PATH], 'END job')
+    sha = L.sha(repo / E.END_JOB_PATH)
+    return Namespace(repo=repo, evidence_path=repo / 'end-evidence.json', round=0,
+                     job=E.end_job(repo, fleet.evidence, sha, fleet.manifest_sha))
+
+
+def finalize(ref, round_, prior=(), utc=10. ** 6, commit=True):
+    """Commit END-FINAL-round-RR.json: every claim of rounds 0..RR at HEAD and every earlier pool round."""
+    layout = E.registry_at(ref.repo, 'HEAD')
+    claims = E._digests(E._claims(ref.repo, ref.job, 'HEAD', layout))
+    final = dict(schema=E.FINAL_SCHEMA, job_sha256=ref.job['sha256'], round=round_, claims=claims,
+                 prior_rounds=list(prior), finalized_utc=utc, finalized_by='coordinator')
+    name = E.final_path(round_)
+    (ref.repo / name).write_text(L.canonical(final) + '\n')
+    if commit:
+        commit_all(ref.repo, [name], f'END finalization round {round_}')
+    ref.final_sha, ref.round = L.sha(ref.repo / name), round_
+    return ref
+
+
+def scenario(fleet, name, plan=GOOD, commit=True, ref=None, round_=0, final=True, prior=()):
+    """plan: {host: [(kind, kwargs), ...]} in launch order -> descriptor host entries + END job/finalization ref."""
+    ref = job_repo(fleet, name) if ref is None else ref
+    ref.round = round_
+    fleet.repos[name] = ref.repo
     hosts = []
     for host, attempts in plan.items():
-        made = [produce(fleet, registry, f'{name}-{host}-{i}', host, kind, utc=1000. + i, **kw)
+        made = [produce(fleet, ref, f'{name}-r{round_}-{host}-{i}', host, kind, utc=1000. + 100 * round_ + i, **kw)
                 for i, (kind, kw) in enumerate(attempts)]
         hosts.append((host, made))
-    ref = dict(commit=commit_all(fleet.repo, [f'registries/{name}'], name) if commit else git(fleet.repo, 'rev-parse', 'HEAD'),
-               repository_path=f'registries/{name}')
+    if commit:
+        commit_all(ref.repo, [ROOT], f'{name} claims round {round_}')
+        if final:
+            finalize(ref, round_, prior)
     return hosts, ref
 
 
-def descriptor(fleet, hosts, registry_ref, name='pool-input.json', **over):
+def descriptor(fleet, hosts, ref, name='pool-input.json', **over):
     d = dict(schema=P.POOL_INPUT_SCHEMA, pooled_by='pooler-agent',
              k4s_manifest=dict(path=str(fleet.manifest_path), sha256=fleet.manifest_sha),
              corpus_inventory=dict(path=str(INVENTORY), sha256=L.sha(INVENTORY)),
-             end_evidence=dict(path=str(fleet.evidence_path), sha256=L.sha(fleet.evidence_path)), kernel_rel=KERNEL,
-             scorer_rel=SCORER, attempt_registry=registry_ref,
+             end_evidence=dict(path=str(ref.evidence_path), sha256=L.sha(ref.evidence_path)), kernel_rel=KERNEL,
+             scorer_rel=SCORER, end_job=dict(sha256=ref.job['sha256']),
+             finalization=dict(sha256=getattr(ref, 'final_sha', '0' * 64)), round=ref.round,
              hosts=[dict(host=h, attempts=[dict(directory=str(d), manifest_sha256=s) for d, s in attempts]) for h, attempts in hosts])
     d.update(over)
     path = fleet.tmp / name
@@ -735,14 +785,21 @@ def fleet(tmp_path):
         identity[host] = (common, host_pins)
     sha = L.sha(manifest_path)
     return Namespace(tmp=tmp_path, repo=repo, evidence_path=evidence_path, evidence=evidence, manifest_path=manifest_path,
-                     manifest_sha=sha, frozen=L.end_frozen_pins(manifest, sha, KERNEL, SCORER), identity=identity)
+                     manifest_sha=sha, frozen=L.end_frozen_pins(manifest, sha, KERNEL, SCORER), identity=identity,
+                     repos={})
 
 
-def pool_dir(fleet, name='pool', plan=GOOD, hosts=None, ref=None):
+def pool_context(fleet, ref):
+    """The producer's shared-input pool context for a later round (end_reference.reference)."""
+    return P.pool_context(P.shared_request(fleet.manifest_path, fleet.manifest_sha, INVENTORY, ref.evidence_path,
+                                           L.sha(ref.evidence_path), KERNEL, SCORER), ref.repo)
+
+
+def pool_dir(fleet, name='pool', plan=GOOD, hosts=None, ref=None, output=None):
     if hosts is None:
         hosts, ref = scenario(fleet, name, plan)
     path, digest = descriptor(fleet, hosts, ref, name + '-input.json')
-    return path, digest, P.run_pool(path, digest, fleet.tmp / name, repository=fleet.repo)
+    return path, digest, P.run_pool(path, digest, output or fleet.tmp / name, repository=ref.repo)
 
 
 def test_pool_recheck_mac_and_gate_inputs_end_to_end(fleet):
@@ -755,13 +812,16 @@ def test_pool_recheck_mac_and_gate_inputs_end_to_end(fleet):
     assert prov['counted_hosts'] == ['a', 'b'] and prov['host_receipts']['a']['reference_to_reporting_mean'] == 1.0
     assert prov['completion_sha256'] == fleet.evidence['completion_sha256'] and prov['k4s_manifest_sha256'] == fleet.manifest_sha
     assert prov['host_receipts']['b']['host_pins'] == fleet.identity['b'][1] and document['pins'] == fleet.identity['a'][0]
-    receipt = P.recheck(path, digest, fleet.tmp / 'pool', 'checker-agent', fleet.tmp / 'end-recheck.json', repository=fleet.repo)
+    receipt = P.recheck(path, digest, fleet.tmp / 'pool', 'checker-agent', fleet.tmp / 'end-recheck.json',
+                        repository=fleet.repos['pool'])
     assert receipt['reference_sha256'] == L.sha(reference_file)
     consumed = json.loads((fleet.tmp / 'pool' / 'pool-inputs.json').read_text())['consumed']
     assert set(consumed) <= set(receipt['input_files']) and all(receipt['input_files'][p] == d for p, d in consumed.items())
     for host in ('a', 'b'):
-        assert str((fleet.tmp / f'pool-{host}-0' / 'end-raw.json').resolve()) in consumed
-    assert str((fleet.repo / 'a-reporting-census.jsonl').resolve()) in consumed
+        assert str((fleet.tmp / f'pool-r0-{host}-0' / 'end-raw.json').resolve()) in consumed
+    assert str((fleet.repos['pool'] / 'a-reporting-census.jsonl').resolve()) in consumed
+    assert prov['end_job']['sha256'] == L.sha(fleet.repos['pool'] / E.END_JOB_PATH) and prov['round'] == 0
+    assert receipt['end_job_sha256'] == prov['end_job']['sha256'] and receipt['finalization_sha256'] == prov['finalization']['sha256']
     ref = json.loads(reference_file.read_text())
     recheck = json.loads((fleet.tmp / 'end-recheck.json').read_text())
     kwargs = dict(dry_run=False, reference_sha256=L.sha(reference_file), recheck=recheck, expected_pins=fleet.frozen,
@@ -784,6 +844,8 @@ def test_pool_recheck_mac_and_gate_inputs_end_to_end(fleet):
                               (dict(pool_input_sha256='0' * 64), 'pool_input_sha256'),
                               (dict(checker_sha256='0' * 64), 'checker_sha256'),
                               (dict(checked_by='pooler-agent'), 'someone other'),
+                              (dict(finalization_sha256='0' * 64), 'finalization_sha256'),
+                              (dict(end_job_sha256='0' * 64), 'end_job_sha256'),
                               (dict(passes=False), 'passes')):
         with pytest.raises(L.PreconditionRefusal, match=message):
             L.check_fleet_reference(ref, L.T1_K4_CORPUS_SHA, IDS, **dict(kwargs, recheck=dict(recheck, **mutation)))
@@ -801,6 +863,8 @@ def test_pool_recheck_mac_and_gate_inputs_end_to_end(fleet):
         L.check_fleet_reference(ref, L.T1_K4_CORPUS_SHA, IDS, **dict(kwargs, expected_pins={
             k: v for k, v in fleet.frozen.items() if k != 'measurement_files'}))
     for mutation, message in ((lambda r: r['provenance']['reporting_load_profile_evidence'].update(reporting_guard=False), 'reporting-load evidence'),
+                              (lambda r: r['provenance'].pop('end_job'), 'END job'),
+                              (lambda r: r['provenance'].update(round=1), 'END job'),
                               (lambda r: r.update(hosts=['a']), 'host'),
                               (lambda r: r['host_ratio_to_pool'].update(b=.94), 'outside'),
                               (lambda r: r['pins'].pop('bundle_model_files'), 'key set'),
@@ -868,7 +932,7 @@ def test_pool_refuses_omitted_host_bad_mhz_slots_and_unrepeatable_attempts(fleet
     _, _, document = pool_dir(fleet, 'repeat', {'a': [('good', {})], 'b': [('crash', {}), ('good', {})]})
     attempts = document['provenance']['host_receipts']['b']['attempts']
     assert [x['passes'] for x in attempts] == [False, True] and attempts[0]['technical_repeat_candidate'] is True
-    assert document['provenance']['attempt_registry']['claims']['b'] == [x['claim_sha256'] for x in attempts]
+    assert document['provenance']['claims']['0']['b'] == [x['claim_sha256'] for x in attempts]
     # ... but an exactness failure never earns a repeat.
     with pytest.raises(P.PoolError, match='Unrepeatable'):
         pool_dir(fleet, 'exact', {'a': [('good', {})], 'b': [('exact', {}), ('good', {})]})
@@ -896,20 +960,26 @@ def test_registry_refuses_excess_technical_attempts(fleet):
         pool_dir(fleet, 'excess', hosts=[('a', dict(hosts)['a']), ('b', b[1:])], ref=ref)   # hides one crash
 
 
-def test_registry_must_be_committed_contiguous_and_cover_exactly_the_counted_hosts(fleet, tmp_path):
+def test_registry_must_be_committed_finalized_and_contiguous(fleet, tmp_path):
     hosts, ref = scenario(fleet, 'late', commit=False)                     # claims never committed
-    with pytest.raises(P.PoolError, match='Attempt registry is not in the commit'):
+    with pytest.raises(P.PoolError, match='END finalization record is not committed'):
         pool_dir(fleet, 'late', hosts=hosts, ref=ref)
-    with pytest.raises(P.PoolError, match='full commit'):
-        E.committed_registry(fleet.repo, ref['commit'][:12], ref['repository_path'])
-    registry = tmp_path / 'reg'
-    E.claim_attempt(registry, 'a', tmp_path / 'x')
-    (registry / 'a' / 'attempt-00.json').rename(registry / 'a' / 'attempt-01.json')
+    commit_all(ref.repo, [ROOT], 'late claims')
+    with pytest.raises(P.PoolError, match='END finalization record is not committed'):   # committed, not finalized
+        pool_dir(fleet, 'late', hosts=hosts, ref=ref)
+    finalize(ref, 0)
+    pool_dir(fleet, 'late', hosts=hosts, ref=ref)                          # finalized: poolable
+    directory = tmp_path / 'reg'
+    E.claim_attempt(directory, tmp_path / 'x', job=ref.job, round_=0, host='a')
+    (directory / 'attempt-00.json').rename(directory / 'attempt-01.json')
     with pytest.raises(P.PoolError, match='contiguous'):
-        E.claim_attempt(registry, 'a', tmp_path / 'y')
-    claim, digest = E.claim_attempt(tmp_path / 'reg2', 'b', tmp_path / 'z', now=5.)
+        E.claim_attempt(directory, tmp_path / 'y', job=ref.job, round_=0, host='a')
+    claim, _ = E.claim_attempt(tmp_path / 'reg2', tmp_path / 'z', job=ref.job, round_=0, host='b', now=5.)
     assert claim['attempt'] == 0 and claim['receipt_directory'] == 'z' and claim['launched_utc'] == 5.
-    assert E.claim_attempt(tmp_path / 'reg2', 'b', tmp_path / 'w')[0]['attempt'] == 1
+    assert claim['job_sha256'] == ref.job['sha256'] and claim['end_evidence_sha256'] == fleet.evidence['sha256']
+    assert set(claim) == E.CLAIM_FIELDS
+    with pytest.raises(P.PoolError, match='lost a committed claim'):
+        E.claim_attempt(tmp_path / 'reg2', tmp_path / 'w', job=ref.job, round_=0, host='b', committed=['attempt-07.json'])
 
 
 # ---------------------------------------------------------------- seals (finding 13)
@@ -1090,3 +1160,500 @@ def test_reporting_load_profile_is_set_only_when_evidenced():
     assert P.reference_document(timing, dict(reporting_load_profile_evidence=full))['reporting_load_profile'] is True
     assert P.reference_document(timing, dict(reporting_load_profile_evidence=dict(full, reporting_guard=False)))[
         'reporting_load_profile'] is False
+
+
+# ---------------------------------------------------------------- END job authority (r3 finding 19)
+
+EXACT_B = {'a': [('good', {})], 'b': [('exact', {})]}
+
+
+def test_producer_requires_the_committed_end_job_and_an_open_round(fleet, tmp_path):
+    ref = job_repo(fleet, 'producer')
+    bare = fleet.tmp / 'repo-bare'
+    git(fleet.tmp, 'clone', '-q', str(fleet.repo), str(bare))
+    with pytest.raises(P.PoolError, match='END-JOB declaration is not committed'):
+        E.end_job(bare, fleet.evidence, ref.job['sha256'], fleet.manifest_sha)
+    with pytest.raises(P.PoolError, match='END-JOB SHA mismatch'):
+        E.end_job(ref.repo, fleet.evidence, '0' * 64, fleet.manifest_sha)
+    with pytest.raises(P.PoolError, match='different frozen K4S manifest'):
+        E.end_job(ref.repo, fleet.evidence, ref.job['sha256'], '0' * 64)
+    with pytest.raises(P.PoolError, match='no counted blocks'):
+        E.producer_claim(ref.repo, ref.job, 0, 'c', tmp_path / 'c0')
+    with pytest.raises(P.PoolError, match='requires the committed finalization of round 00'):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1')
+    hosts, ref = scenario(fleet, 'producer', ref=ref)                      # round 0 claimed, committed, finalized
+    with pytest.raises(P.PoolError, match='already finalized'):
+        E.producer_claim(ref.repo, ref.job, 0, 'b', tmp_path / 'b-late')
+    assert sorted(E.registry_at(ref.repo, 'HEAD')[0]) == ['a', 'b']
+    pool_dir(fleet, 'producer', hosts=hosts, ref=ref)
+    # The producer CLI no longer accepts a caller-chosen registry; it requires the END-JOB SHA.
+    with pytest.raises(SystemExit):
+        R.main(['--bundle', 'B', '--runtime-root', 'R', '--native', 'N', '--corpus', 'K', '--corpus-inventory', 'I',
+                '--k4s-manifest-sha256', 'S', '--sd1-manifest-sha256', 'S', '--end-evidence', 'E',
+                '--end-evidence-sha256', 'S', '--attempt-registry', 'REG', '--out', 'O'])
+
+
+def clone_at(fleet, source, name, rev):
+    """A fresh clone of scenario ``source`` reset to ``rev`` (each tampering case gets its own repository)."""
+    repo = fleet.tmp / f'repo-{name}'
+    git(fleet.tmp, 'clone', '-q', str(fleet.repos[source]), str(repo))
+    git(repo, 'reset', '-q', '--hard', rev)
+    return repo
+
+
+def test_switching_roots_after_an_exactness_failure_is_refused(fleet, tmp_path):
+    hosts, ref = scenario(fleet, 'switch', EXACT_B)
+    with pytest.raises(P.PoolError, match='Unrepeatable'):
+        pool_dir(fleet, 'switch', hosts=hosts, ref=ref)
+    base = git(ref.repo, 'rev-parse', 'HEAD')
+    # (1) Re-declare the fixed END-JOB after the failure: the producer and the pool both refuse it.
+    other = clone_at(fleet, 'switch', 'switch1', base)
+    (other / E.END_JOB_PATH).write_text(L.canonical(job_dict(fleet, declared_utc='2026-10-15T00:00:00Z')) + '\n')
+    commit_all(other, [E.END_JOB_PATH], 're-declare after exactness failure')
+    new_sha = L.sha(other / E.END_JOB_PATH)
+    with pytest.raises(P.PoolError, match='END-JOB declaration is not append-only'):
+        E.end_job(other, fleet.evidence, new_sha, fleet.manifest_sha)
+    forged = Namespace(**dict(vars(ref), repo=other, job=dict(ref.job, sha256=new_sha)))
+    with pytest.raises(P.PoolError, match='END-JOB declaration is not append-only'):
+        pool_dir(fleet, 'switch1', hosts=hosts, ref=forged)
+    # (2) A second registry root inside the END namespace: refused by path name (producer and pool).
+    other = clone_at(fleet, 'switch', 'switch2', base)
+    E.claim_attempt(other / E.END_DIR / 'registry-b' / 'round-00' / 'b', tmp_path / 'b-rerun', job=ref.job, round_=0,
+                    host='b', now=2000.)
+    commit_all(other, [E.END_DIR], 'b re-run in a second root')
+    with pytest.raises(P.PoolError, match='claim outside the registry root'):
+        pool_dir(fleet, 'switch2', hosts=hosts, ref=Namespace(**dict(vars(ref), repo=other)))
+    with pytest.raises(P.PoolError, match='claim outside the registry root'):
+        E.producer_claim(other, ref.job, 1, 'b', tmp_path / 'b-next')
+    # (3) Same root, but the failed claim and the finalization deleted and redone: not append-only.
+    third = clone_at(fleet, 'switch', 'switch4', base)
+    final_rel = E.final_path(0)
+    git(third, 'rm', '-q', f'{ROOT}/round-00/b/attempt-00.json', final_rel)
+    commit_all(third, [ROOT], 'drop the exactness failure')
+    redo = Namespace(repo=third, evidence_path=ref.evidence_path, round=0, job=E.end_job(
+        third, fleet.evidence, ref.job['sha256'], fleet.manifest_sha))
+    b = produce(fleet, redo, 'switch4-b', 'b', utc=3000.)
+    commit_all(third, [ROOT], 'b again')
+    finalize(redo, 0)
+    with pytest.raises(P.PoolError, match='END finalization record is not append-only'):
+        pool_dir(fleet, 'switch4', hosts=[('a', dict(hosts)['a']), ('b', [b])], ref=redo)
+    # Even with a fresh (never deleted) finalization path the deleted claim is caught by the registry history.
+    with pytest.raises(P.PoolError, match=r'registry is not append-only \(claim deleted/modified\)'):
+        E.registry_append_only(third)
+
+
+def test_copied_completion_and_repackaged_evidence_cannot_open_a_second_authority(fleet, tmp_path):
+    """Sol r4 finding 19: retain an exactness failure, copy the completion to another committed directory, repackage
+    the END evidence and try a second job/registry. The END-JOB location is fixed and unique, so every route fails."""
+    hosts, ref = scenario(fleet, 'copy', EXACT_B)
+    with pytest.raises(P.PoolError, match='Unrepeatable'):
+        pool_dir(fleet, 'copy', hosts=hosts, ref=ref)
+    base = git(ref.repo, 'rev-parse', 'HEAD')
+    repo = clone_at(fleet, 'copy', 'copy-b', base)
+    (repo / 'copied-reporting').mkdir()
+    (repo / 'copied-reporting' / 'completion.json').write_bytes((repo / 'completion.json').read_bytes())
+    copied = commit_all(repo, ['copied-reporting'], 'byte-identical copy of the completion')
+    packaged = json.loads(ref.evidence_path.read_text())
+    packaged['completion'].update(repository_path='copied-reporting/completion.json', commit=copied)
+    path_b = repo / 'end-evidence-b.json'
+    path_b.write_text(json.dumps(packaged))
+    evidence_b = E.end_evidence(path_b, L.sha(path_b), repo, frozen_e4v3()[3])    # the repackaging itself validates
+    assert evidence_b['sha256'] != fleet.evidence['sha256']
+    assert (evidence_b['completion_sha256'], evidence_b['plan_sha256'], evidence_b['membership']) == \
+        (fleet.evidence['completion_sha256'], fleet.evidence['plan_sha256'], fleet.evidence['membership'])
+    assert E.job_path() == E.END_JOB_PATH                         # never derived from the completion location
+    # The one END-JOB is bound to the original evidence: the producer under the repackaged evidence is refused.
+    with pytest.raises(P.PoolError, match='not bound to this committed completion/END evidence'):
+        E.end_job(repo, evidence_b, ref.job['sha256'], fleet.manifest_sha)
+    # A second END-JOB beside the copy (the reviewer's layout, outside the study tree) with its own registry B:
+    # never consulted; the producer/pool read only the fixed END_JOB_PATH, whose SHA differs.
+    job_b = job_dict(fleet, evidence_b)
+    (repo / 'copied-reporting' / 'END-JOB.json').write_text(L.canonical(job_b) + '\n')
+    sha_b = L.sha(repo / 'copied-reporting' / 'END-JOB.json')
+    E.claim_attempt(repo / 'copied-reporting' / 'registry' / 'round-00' / 'b', tmp_path / 'b-again',
+                    job=dict(job_b, sha256=sha_b), round_=0, host='b', now=2000.)
+    commit_all(repo, ['copied-reporting'], 'second job + registry B for the copied completion')
+    with pytest.raises(P.PoolError, match='END-JOB SHA mismatch'):
+        E.end_job(repo, evidence_b, sha_b, fleet.manifest_sha)
+    second = Namespace(**dict(vars(ref), repo=repo, evidence_path=path_b, job=dict(ref.job, sha256=sha_b)))
+    with pytest.raises(P.PoolError, match='END-JOB SHA mismatch'):
+        pool_dir(fleet, 'copy-b', hosts=hosts, ref=second)
+    with pytest.raises(P.PoolError, match='not bound to this committed completion/END evidence'):
+        pool_dir(fleet, 'copy-b2', hosts=hosts, ref=Namespace(**dict(vars(second), job=ref.job)))
+    with pytest.raises(P.PoolError, match='Unrepeatable'):           # the original failure is still the outcome
+        pool_dir(fleet, 'copy-a', hosts=hosts, ref=Namespace(**dict(vars(ref), repo=repo)))
+    # A second END-JOB-like declaration inside the study tree (any directory, any END-JOB*.json name) is refused
+    # outright, for the original authority too.
+    for name, rel in (('copy-c', f'{E.STUDY_DIR}/copied-reporting/END-JOB.json'), ('copy-d', f'{E.END_DIR}/END-JOB-b.json')):
+        clone = clone_at(fleet, 'copy', name, base)
+        (clone / rel).parent.mkdir(parents=True, exist_ok=True)
+        (clone / rel).write_text(L.canonical(job_b) + '\n')
+        commit_all(clone, [rel], 'second END-JOB-like declaration')
+        with pytest.raises(P.PoolError, match='END-JOB-like declaration outside the fixed END-JOB location'):
+            E.end_job(clone, fleet.evidence, ref.job['sha256'], fleet.manifest_sha)
+        with pytest.raises(P.PoolError, match='END-JOB-like declaration outside the fixed END-JOB location'):
+            pool_dir(fleet, name, hosts=hosts, ref=Namespace(**dict(vars(ref), repo=clone)))
+
+
+# ---------------------------------------------------------------- health-only read boundary (Sol r4 finding 20)
+
+def fake_git(listing, calls):
+    """A mocked git transport: only name listings are answered; any blob read fails the test."""
+    def run(args, **kw):
+        calls.append(list(args))
+        assert args[3] == 'ls-tree' and '--name-only' in args, args
+        prefix = args[args.index('--') + 1]
+        return SimpleNamespace(returncode=0, stdout='\0'.join(n for n in listing if n.startswith(prefix)).encode(),
+                               stderr=b'')
+    return SimpleNamespace(run=run)
+
+
+def test_namespace_and_declarations_are_checked_by_path_name_only(monkeypatch):
+    good = [E.END_JOB_PATH, E.final_path(0), E.claim_path(0, 'a', 'attempt-00.json'),
+            f'{E.POOLS_ROOT}/round-00/end-reference.json', f'{E.RECEIPTS_ROOT}/round-00/b/raw-b-0/attempt-claim.json',
+            f'{E.RECEIPTS_ROOT}/round-00/b/raw-b-0/end-raw.json',
+            f'{E.STUDY_DIR}/outcomes/attempt-00.json', f'{E.STUDY_DIR}/outcomes/marker.json', 'games/outcome-marker.json']
+    calls = []
+    monkeypatch.setattr(E, 'subprocess', fake_git(good, calls))
+    assert E.namespace('R') == [(f'{E.RECEIPTS_ROOT}/round-00/b/raw-b-0/attempt-claim.json', 0, 'b', 'raw-b-0')]
+    E.declarations('R')
+    assert E.finals_at_head('R') == [0]
+    assert all(c[3] == 'ls-tree' for c in calls)                   # names only; no blob was opened
+    for bad, message in ((f'{E.END_DIR}/registry-b/round-00/b/attempt-00.json', 'claim outside the registry root'),
+                         (f'{E.END_DIR}/attempt-00.json', 'claim outside the registry root'),
+                         (f'{E.POOLS_ROOT}/round-00/attempt-claim.json', 'claim outside the registry root'),
+                         (f'{E.RECEIPTS_ROOT}/round-00/b/raw-b-0/attempt-01.json', 'claim outside the registry root'),
+                         (f'{E.RECEIPTS_ROOT}/round-00/b/attempt-claim.json', 'claim outside the registry root'),
+                         (f'{E.END_DIR}/notes/claims.json', 'Unregistered path in the END namespace')):
+        monkeypatch.setattr(E, 'subprocess', fake_git(good + [bad], []))
+        with pytest.raises(P.PoolError, match=message):
+            E.namespace('R')
+    for bad, message in ((f'{E.STUDY_DIR}/other/END-JOB.json', 'END-JOB-like declaration'),
+                         (f'{E.END_DIR}/end-job-copy.json', 'END-JOB-like declaration'),
+                         (f'{E.END_DIR}/sub/END-FINAL-round-00.json', 'finalization-like record')):
+        monkeypatch.setattr(E, 'subprocess', fake_git(good + [bad], []))
+        with pytest.raises(P.PoolError, match=message):
+            E.declarations('R')
+    with pytest.raises(P.PoolError, match='outside the health-only END namespace'):
+        E.namespace_blob('R', 'games/outcome-marker.json', 'probe')
+
+
+def test_pool_authority_never_reads_outside_the_end_namespace(fleet, monkeypatch):
+    """Synthetic marker files (claim-shaped, claim-named, outcome-named) outside the END namespace are never opened,
+    searched or named in any git command of the authority; the pool still conforms."""
+    hosts, ref = scenario(fleet, 'boundary')
+    claim = json.loads((ref.repo / E.claim_path(0, 'a', 'attempt-00.json')).read_text())
+    markers = {'games/outcome-marker.json': json.dumps(dict(claim=claim, claim_sha256='0' * 64), indent=2),
+               f'{E.STUDY_DIR}/outcomes/attempt-00.json': json.dumps(claim, indent=2),
+               f'{E.STUDY_DIR}/outcomes/marker.txt': E.REGISTRY_SCHEMA + ' marker\n'}
+    for rel, text in markers.items():
+        (ref.repo / rel).parent.mkdir(parents=True, exist_ok=True)
+        (ref.repo / rel).write_text(text)
+    commit_all(ref.repo, list(markers), 'synthetic markers outside the END namespace')
+    calls, real = [], subprocess.run
+
+    def recording(args, **kw):
+        calls.append(list(args))
+        return real(args, **kw)
+    monkeypatch.setattr(E, 'subprocess', SimpleNamespace(run=recording))
+    _, _, document = pool_dir(fleet, 'boundary', hosts=hosts, ref=ref)
+    assert document['pool_conforms'] and calls
+    assert {c[3] for c in calls} <= {'show', 'ls-tree', 'log', 'merge-base'}
+    for c in calls:
+        assert c[:3] == ['git', '-C', str(ref.repo)]
+        if c[3] == 'show':
+            assert c[4].split(':', 1)[1].startswith(E.END_DIR + '/'), c
+        if c[3] in ('ls-tree', 'log'):
+            assert '--name-only' in c or '--format=%H' in c, c
+            assert all(p.startswith(E.STUDY_DIR + '/') for p in c[c.index('--') + 1:]), c
+    named = ' '.join(' '.join(c) for c in calls)
+    assert not any(rel in named for rel in markers) and 'outcome' not in named
+
+
+# ---------------------------------------------------------------- complete-bytes parsing (Sol r4 finding 21)
+
+FORMS = ('compact', 'indented', 'malformed')
+
+
+def reformat(data, form):
+    value = json.loads(data)
+    return {'compact': json.dumps(value, separators=(',', ':')), 'indented': json.dumps(value, indent=2),
+            'malformed': json.dumps(value, indent=2)[:-1]}[form] + '\n'
+
+
+def final_manual(ref, utc=10. ** 6):
+    """A finalization written from the committed claim file SHAs (does not parse the claims)."""
+    root = ref.repo / E.REGISTRY_ROOT / 'round-00'
+    claims = {'0': {h: [L.sha(p) for p in sorted((root / h).iterdir())] for h in sorted(p.name for p in root.iterdir())}}
+    final = dict(schema=E.FINAL_SCHEMA, job_sha256=ref.job['sha256'], round=0, claims=claims, prior_rounds=[],
+                 finalized_utc=utc, finalized_by='coordinator')
+    (ref.repo / E.final_path(0)).write_text(L.canonical(final) + '\n')
+    commit_all(ref.repo, [E.final_path(0)], 'END finalization round 0')
+    ref.final_sha, ref.round = L.sha(ref.repo / E.final_path(0)), 0
+    return ref
+
+
+@pytest.mark.parametrize('form', FORMS)
+def test_registry_claims_are_parsed_from_their_complete_bytes(fleet, form):
+    ref = job_repo(fleet, f'claim-{form}')
+
+    def formatted(directory):
+        claim, _ = E.producer_claim(ref.repo, ref.job, 0, 'a', directory, now=1000.)
+        path = ref.repo / E.claim_path(0, 'a', 'attempt-00.json')
+        path.write_text(reformat(path.read_bytes(), form))
+        return claim, L.sha(path)
+    plan = {'a': [('good', dict(claim=formatted))], 'b': [('good', dict(factor=1.02))]}
+    hosts, ref = scenario(fleet, f'claim-{form}', plan, ref=ref, final=False)
+    final_manual(ref)
+    if form == 'malformed':
+        with pytest.raises(P.PoolError, match='not one well-formed JSON document'):
+            pool_dir(fleet, f'claim-{form}', hosts=hosts, ref=ref)
+    else:                                                          # compact and indented claims are equivalent
+        assert pool_dir(fleet, f'claim-{form}', hosts=hosts, ref=ref)[2]['pool_conforms']
+
+
+@pytest.mark.parametrize('form', FORMS)
+def test_receipt_copies_and_stray_claims_in_any_serialization(fleet, form):
+    ref = job_repo(fleet, f'copies-{form}')
+
+    def hidden(directory):                                         # a claim outside the fixed registry root
+        return E.claim_attempt(fleet.tmp / f'uncommitted-{form}', directory, job=ref.job, round_=0, host='b', now=900.)
+    plan = {'a': [('good', {})], 'b': [('crash', dict(claim=hidden)), ('good', {})]}
+    hosts, ref = scenario(fleet, f'copies-{form}', plan, ref=ref)
+    base = git(ref.repo, 'rev-parse', 'HEAD')
+    listed = [('a', dict(hosts)['a']), ('b', dict(hosts)['b'][1:])]
+    crash_dir, good_dir = (Path(d) for d, _ in dict(hosts)['b'])
+
+    def case(suffix, rel, data):
+        clone = clone_at(fleet, f'copies-{form}', f'copies-{form}-{suffix}', base)
+        (clone / rel).parent.mkdir(parents=True, exist_ok=True)
+        (clone / rel).write_text(data)
+        commit_all(clone, [rel], 'committed ' + suffix)
+        return lambda: pool_dir(fleet, f'copies-{form}-{suffix}', hosts=listed, ref=Namespace(**dict(vars(ref), repo=clone)))
+    malformed = 'not one well-formed JSON document'
+    # A receipt copy of a registry claim: compact/indented are equivalent and accepted; malformed is refused.
+    run = case('registered', f'{E.RECEIPTS_ROOT}/round-00/b/{good_dir.name}/attempt-claim.json',
+               reformat((good_dir / 'attempt-claim.json').read_bytes(), form))
+    if form == 'malformed':
+        with pytest.raises(P.PoolError, match=malformed):
+            run()
+    else:
+        assert run()[2]['pool_conforms']
+    # A receipt copy of the hidden claim: refused in every serialization (the r4 indented bypass is closed).
+    run = case('hidden', f'{E.RECEIPTS_ROOT}/round-00/b/{crash_dir.name}/attempt-claim.json',
+               reformat((crash_dir / 'attempt-claim.json').read_bytes(), form))
+    with pytest.raises(P.PoolError, match=malformed if form == 'malformed' else 'claim is not in the registry'):
+        run()
+    # The hidden claim itself committed in a second root: refused by its path name, whatever its bytes.
+    run = case('stray', f'{E.END_DIR}/hidden/round-00/b/attempt-00.json',
+               reformat((fleet.tmp / f'uncommitted-{form}' / 'attempt-00.json').read_bytes(), form))
+    with pytest.raises(P.PoolError, match='claim outside the registry root'):
+        run()
+
+
+def test_an_older_finalization_snapshot_after_additional_claims_is_refused(fleet, tmp_path):
+    hosts, ref = scenario(fleet, 'snapshot')
+    pool_dir(fleet, 'snapshot', hosts=hosts, ref=ref)
+    with pytest.raises(P.PoolError, match='already finalized'):           # the producer refuses a late claim ...
+        E.producer_claim(ref.repo, ref.job, 0, 'b', tmp_path / 'extra')
+    E.claim_attempt(ref.repo / ROOT / 'round-00' / 'b', tmp_path / 'extra', job=ref.job, round_=0, host='b', now=5000.)
+    commit_all(ref.repo, [ROOT], 'additional claim after finalization')    # ... and one forced in anyway is seen
+    with pytest.raises(P.PoolError, match='not the complete claim inventory at HEAD'):
+        pool_dir(fleet, 'snapshot2', hosts=hosts, ref=ref)
+    # A finalization committed before the claims it lists is refused even if HEAD matches it.
+    hosts, ref = scenario(fleet, 'early')
+    final_rel = E.final_path(0)
+    data = (ref.repo / final_rel).read_bytes()
+    git(ref.repo, 'reset', '-q', 'HEAD~2')                                 # un-commit claims and finalization
+    commit_all(ref.repo, [final_rel], 'finalization first')
+    commit_all(ref.repo, [ROOT], 'claims afterwards')
+    assert (ref.repo / final_rel).read_bytes() == data
+    with pytest.raises(P.PoolError, match='committed before every claim'):
+        pool_dir(fleet, 'early', hosts=hosts, ref=ref)
+
+
+# ---------------------------------------------------------------- earlier rounds re-validated (Sol r5 finding 22)
+
+def commit_round(ref, round_, hosts, pool=None, only=None):
+    """Commit round RR's original attempt receipt directories (all hosts, or ``only``) under RECEIPTS_ROOT and, if
+    given, its pool directory already written at the fixed POOLS_ROOT/round-RR."""
+    for host, attempts in hosts:
+        if only is None or host in only:
+            for directory, _ in attempts:
+                shutil.copytree(directory, ref.repo / E.RECEIPTS_ROOT / f'round-{round_:02d}' / host / Path(directory).name)
+    commit_all(ref.repo, [E.END_DIR], f'round {round_} receipts' + (' and pool' if pool else ''))
+    return L.sha(ref.repo / E.pool_path(round_) / 'receipt-manifest.json') if pool else None
+
+
+def forge_pool(ref, round_, files, status='nonconforming'):
+    """Commit a hand-made pool at the fixed location: the given files plus a self-consistent seal and sidecar."""
+    directory = ref.repo / E.pool_path(round_)
+    directory.mkdir(parents=True)
+    for name, value in files.items():
+        data = value if isinstance(value, bytes) else (L.canonical(dict(scope=P.POOL_SCOPE, **value)) + '\n').encode()
+        (directory / name).write_bytes(data)
+    seal = dict(scope=P.POOL_SCOPE, status=status, files={n: L.sha(directory / n) for n in sorted(files)})
+    (directory / 'receipt-manifest.json').write_text(L.canonical(seal) + '\n')
+    (directory / 'receipt-manifest.sha256').write_text(L.sha(directory / 'receipt-manifest.json') + '  receipt-manifest.json\n')
+    commit_all(ref.repo, [E.pool_path(round_)], f'hand-made round {round_} pool')
+    return L.sha(directory / 'receipt-manifest.json')
+
+
+def forced(ref, round_, host, utc):
+    """A claim written directly into the registry, bypassing the producer's predecessor check."""
+    return lambda d: E.claim_attempt(ref.repo / ROOT / f'round-{round_:02d}' / host, d, job=ref.job, round_=round_,
+                                     host=host, now=utc)
+
+
+def forced_round(fleet, ref, name, prior):
+    """Round 01 claimed and measured (good on both hosts) despite the producer, then finalized naming ``prior``."""
+    plan = {'a': [('good', dict(claim=forced(ref, 1, 'a', 1100.)))],
+            'b': [('good', dict(factor=1.02, claim=forced(ref, 1, 'b', 1101.)))]}
+    hosts1, ref = scenario(fleet, name, plan, ref=ref, round_=1, final=False)
+    finalize(ref, 1, prior)
+    return hosts1, ref
+
+
+def test_rerun_rounds_record_and_reconcile_the_earlier_nonconforming_pool(fleet, tmp_path):
+    """A genuine ratio-only nonconforming round 00 permits round 01; both the producer and the pool re-validate round 00
+    by the pool's own code path, and the fresh-interpreter re-check repeats it."""
+    hosts0, ref = scenario(fleet, 'rounds', {'a': [('good', {})], 'b': [('good', dict(factor=1.2))]})
+    _, _, doc0 = pool_dir(fleet, 'rounds0', hosts=hosts0, ref=ref, output=ref.repo / E.pool_path(0))
+    assert doc0['pool_conforms'] is False and doc0['provenance']['round'] == 0
+    with pytest.raises(P.PoolError, match='Earlier END pool round 00 is not committed'):     # pool not yet committed
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a-early', context=pool_context(fleet, ref))
+    final0_head = git(ref.repo, 'rev-parse', 'HEAD')
+    seal = commit_round(ref, 0, hosts0, pool=True)
+    prior = [dict(round=0, pool_repository_path=E.pool_path(0), pool_manifest_sha256=seal)]
+    # The same pool committed only after a round-01 claim: the re-run needs the validated pool first.
+    late = clone_at(fleet, 'rounds', 'rounds-late', final0_head)
+    late_ref = Namespace(**dict(vars(ref), repo=late))
+    E.claim_attempt(late / ROOT / 'round-01' / 'b', tmp_path / 'b-late', job=ref.job, round_=1, host='b', now=1200.)
+    commit_all(late, [ROOT], 'round 01 claim before the round 00 pool')
+    shutil.copytree(ref.repo / E.pool_path(0), late / E.pool_path(0))
+    commit_round(late_ref, 0, hosts0, pool=True)
+    with pytest.raises(P.PoolError, match="committed after a later round's claim"):
+        E.producer_claim(late, ref.job, 1, 'a', tmp_path / 'a-late', context=pool_context(fleet, late_ref))
+    with pytest.raises(P.PoolError, match='no pool context given'):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a-blind')
+    assert P.predecessors(ref.repo, ref.job, 1, pool_context(fleet, ref))[0]['status'] == 'nonconforming'
+    hosts1, ref = scenario(fleet, 'rounds', GOOD, ref=ref, round_=1, final=False)        # the producer accepts round 01
+    before_final = git(ref.repo, 'rev-parse', 'HEAD')
+    for name, bad, message in (('rounds-omit', [], 'record every earlier pool round'),
+                               ('rounds-seal', [dict(prior[0], pool_manifest_sha256='0' * 64)], 'seal mismatch')):
+        clone = fleet.tmp / f'repo-{name}'
+        git(fleet.tmp, 'clone', '-q', str(ref.repo), str(clone))
+        git(clone, 'reset', '-q', '--hard', before_final)
+        variant = finalize(Namespace(repo=clone, evidence_path=ref.evidence_path, job=ref.job, round=1), 1, bad)
+        with pytest.raises(P.PoolError, match=message):
+            pool_dir(fleet, name, hosts=hosts1, ref=variant)
+    finalize(ref, 1, prior)
+    path, digest, doc1 = pool_dir(fleet, 'rounds1', hosts=hosts1, ref=ref)
+    prov = doc1['provenance']
+    assert doc1['pool_conforms'] is True and prov['round'] == 1 and sorted(prov['claims']) == ['0', '1']
+    assert prov['prior_rounds'] == [dict(prior[0], status='nonconforming',
+                                         finalization_sha256=L.sha(ref.repo / E.final_path(0)))]
+    receipt = P.recheck(path, digest, fleet.tmp / 'rounds1', 'checker-agent', fleet.tmp / 'rounds1-recheck.json',
+                        repository=ref.repo)
+    assert receipt['passes'] and receipt['round'] == 1
+    # Pooling the older round again after round 1 exists is refused (latest finalized round only).
+    with pytest.raises(P.PoolError, match='exactly rounds 00..00'):
+        pool_dir(fleet, 'rounds0-again', hosts=hosts0, ref=Namespace(**dict(vars(ref), round=0, final_sha=L.sha(
+            ref.repo / E.final_path(0)))))
+
+
+def test_forged_predecessor_certificate_is_refused_by_producer_pool_and_recheck(fleet, tmp_path, monkeypatch, capfd):
+    """Sol r5 finding 22, the reviewer's probe: round 00 retains an exactness failure; a provenance-only reference under
+    a seal listing only end-reference.json is offered as the nonconforming round-00 pool."""
+    hosts0, ref = scenario(fleet, 'forged', EXACT_B)
+    with pytest.raises(P.PoolError, match='Unrepeatable'):
+        pool_dir(fleet, 'forged0', hosts=hosts0, ref=ref)
+    commit_round(ref, 0, hosts0)
+    final0 = json.loads((ref.repo / E.final_path(0)).read_text())
+    certificate = dict(provenance=dict(end_job=dict(sha256=ref.job['sha256']), round=0, claims=final0['claims'],
+                                       finalization=dict(sha256=L.sha(ref.repo / E.final_path(0)))))
+    seal = forge_pool(ref, 0, {'end-reference.json': certificate})
+    refused = 'Earlier END pool round 00 is not a complete sealed nonconforming pool'
+    with pytest.raises(P.PoolError, match=refused):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1', context=pool_context(fleet, ref))
+    prior = [dict(round=0, pool_repository_path=E.pool_path(0), pool_manifest_sha256=seal)]
+    hosts1, ref = forced_round(fleet, ref, 'forged', prior)
+    with pytest.raises(P.PoolError, match=refused):
+        pool_dir(fleet, 'forged1', hosts=hosts1, ref=ref)
+    # A pooler that trusted the certificate (the r5 behaviour) is caught by the independent fresh-interpreter re-check.
+    trusted = [dict(prior[0], finalization_sha256=L.sha(ref.repo / E.final_path(0)), status='nonconforming')]
+    monkeypatch.setattr(P, 'validated_priors', lambda *a: trusted)
+    path, digest, doc = pool_dir(fleet, 'forged1-trusting', hosts=hosts1, ref=ref)
+    assert doc['pool_conforms'] is True
+    monkeypatch.undo()
+    capfd.readouterr()
+    with pytest.raises(subprocess.CalledProcessError):
+        P.recheck(path, digest, fleet.tmp / 'forged1-trusting', 'checker-agent', fleet.tmp / 'forged-recheck.json',
+                  repository=ref.repo)
+    assert refused in capfd.readouterr().err and not (fleet.tmp / 'forged-recheck.json').exists()
+
+
+def full_shaped_pool(fleet, ref, hosts0, r=0):
+    """A complete, self-consistent nonconforming pool inventory (reference, descriptor bound to the round's
+    finalization and to exactly the committed receipts, inputs, ratio record) that the pooler never produced."""
+    path, _ = descriptor(fleet, hosts0, ref, f'hand-{r}-input.json')
+    document = dict(pool_conforms=False, host_ratio_to_pool={'a': 1.1, 'b': 0.9}, provenance=dict(round=r))
+    raw_descriptor = path.read_bytes()
+    return forge_pool(ref, r, {'end-reference.json': document,
+                               'pool-input.json': dict(sha256=L.sha_bytes(raw_descriptor), text=raw_descriptor.decode()),
+                               'pool-inputs.json': dict(consumed={}),
+                               'pool-nonconforming.json': dict(host_ratio_to_pool=document['host_ratio_to_pool'])})
+
+
+@pytest.mark.parametrize('case', ('exactness', 'excess-repeats'))
+def test_an_unrepeatable_earlier_round_fails_the_whole_end_job(fleet, tmp_path, case):
+    """A retained round-00 exactness failure (or an invalid excess repeat) under a complete, hash-consistent
+    nonconforming pool shell: the re-validation reclassifies round 00 and refuses round 01 (producer and pool)."""
+    plan = EXACT_B if case == 'exactness' else {'a': [('good', {})], 'b': [('crash', {}), ('crash', {}), ('good', {})]}
+    message = 'Unrepeatable END failure' if case == 'exactness' else 'at most one repeat'
+    hosts0, ref = scenario(fleet, f'unrep-{case}', plan)
+    with pytest.raises(P.PoolError, match=message):
+        pool_dir(fleet, f'unrep-{case}0', hosts=hosts0, ref=ref)
+    commit_round(ref, 0, hosts0)
+    seal = full_shaped_pool(fleet, ref, hosts0)
+    with pytest.raises(P.PoolError, match=message):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1', context=pool_context(fleet, ref))
+    prior = [dict(round=0, pool_repository_path=E.pool_path(0), pool_manifest_sha256=seal)]
+    hosts1, ref = forced_round(fleet, ref, f'unrep-{case}', prior)
+    with pytest.raises(P.PoolError, match=message):                  # round 01 is good, yet never conforms
+        pool_dir(fleet, f'unrep-{case}1', hosts=hosts1, ref=ref)
+
+
+def test_producer_refuses_a_new_round_without_a_validated_nonconforming_predecessor(fleet, tmp_path):
+    hosts0, ref = scenario(fleet, 'pred', GOOD)
+    context = pool_context(fleet, ref)
+    with pytest.raises(P.PoolError, match='no pool context given'):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1')
+    with pytest.raises(P.PoolError, match='Earlier END pool round 00 is not committed'):        # finalized, no pool
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1', context=context)
+    base = git(ref.repo, 'rev-parse', 'HEAD')
+    # (1) The genuine CONFORMING round-00 pool (status complete): that is the END reference; no re-run.
+    pool_dir(fleet, 'pred0', hosts=hosts0, ref=ref, output=ref.repo / E.pool_path(0))
+    commit_round(ref, 0, hosts0, pool=True)
+    with pytest.raises(P.PoolError, match='is not a complete sealed nonconforming pool'):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1', context=context)
+    # (2) The same conforming pool relabeled nonconforming (complete inventory, self-consistent seal): recomputed.
+    clone = clone_at(fleet, 'pred', 'pred-relabel', base)
+    relabel = Namespace(**dict(vars(ref), repo=clone))
+    genuine = ref.repo / E.pool_path(0)
+    files = {n: (genuine / n).read_bytes() for n in P.POOL_FILES}
+    files['pool-nonconforming.json'] = dict(host_ratio_to_pool=json.loads(files['end-reference.json'])['host_ratio_to_pool'])
+    forge_pool(relabel, 0, files)
+    commit_round(relabel, 0, hosts0)
+    with pytest.raises(P.PoolError, match='conforms on recomputation'):
+        E.producer_claim(clone, ref.job, 1, 'a', tmp_path / 'a1', context=pool_context(fleet, relabel))
+    # (3) A genuine nonconforming round-00 pool whose original attempt receipts are not all committed.
+    hosts0, ref = scenario(fleet, 'pred-missing', {'a': [('good', {})], 'b': [('good', dict(factor=1.2))]})
+    pool_dir(fleet, 'pred-missing0', hosts=hosts0, ref=ref, output=ref.repo / E.pool_path(0))
+    commit_round(ref, 0, hosts0, pool=True, only=('a',))
+    with pytest.raises(P.PoolError, match='original attempt receipts are not committed exactly'):
+        E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1m', context=pool_context(fleet, ref))
+    # (4) ... and once they are committed the same pool re-validates: the producer opens round 01.
+    commit_round(ref, 0, hosts0, only=('b',))
+    claim, _ = E.producer_claim(ref.repo, ref.job, 1, 'a', tmp_path / 'a1ok', context=pool_context(fleet, ref))
+    assert claim['round'] == 1 and claim['attempt'] == 0

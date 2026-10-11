@@ -1,6 +1,6 @@
 {
   "schema": "clasher.k4s.reducer-verifier-crosscheck.v1",
-  "utc": "2026-10-11T14:42:23Z",
+  "utc": "2026-10-11T15:19:39Z",
   "host": "127x03",
   "synthetic": true,
   "scenarios": {
@@ -10,6 +10,11 @@
         "items": 169,
         "matched": 169,
         "mismatched": 0
+      },
+      "verifier_plan": {
+        "path": "/mpac/sdicks02/jobs/clasher/k4s-prep-20261011/qual-03-dev3/repo/reports/explore/k4s-confirm/plan.json",
+        "sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+        "c_star": "0.9"
       },
       "reducer_status": "ADMISSION",
       "admitted": {
@@ -62,10 +67,10 @@
         0.6
       ],
       "ledger_events": 4,
-      "reduce_sha256": "d22716dfd4f1e70bb04c1af8640c852628ebdf9aca3afdb5e45530faa296fd1f",
-      "verify_sha256": "de177038fa7b227760e63343346a76b0cff843377912c68851ea660578eea287",
+      "reduce_sha256": "d9b24b94ec6f3beaa25f07de176cdd8773540b053406b1fa601e79d1e04e75b9",
+      "verify_sha256": "e56660aa7892c4149670da479d9db556e2f90112bcb835032cc2a38cf6e87daa",
       "reducer_sha256": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
-      "verifier_sha256": "47e59142fcafb6fdae68943402ceb3129e31d317cabc42c8d07e0e766412738e"
+      "verifier_sha256": "43c4a574a48a245fa844a4b0fa69ec1be1d482bd1b1be56b9acf242a3a1b4947"
     },
     "stop-at-H2": {
       "verifier_status": "OK",
@@ -73,6 +78,11 @@
         "items": 169,
         "matched": 169,
         "mismatched": 0
+      },
+      "verifier_plan": {
+        "path": "/mpac/sdicks02/jobs/clasher/k4s-prep-20261011/qual-03-dev3/repo/reports/explore/k4s-confirm/plan.json",
+        "sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+        "c_star": "0.9"
       },
       "reducer_status": "ADMISSION",
       "admitted": {
@@ -122,10 +132,10 @@
         0.8
       ],
       "ledger_events": 4,
-      "reduce_sha256": "3523013eddb8abaf3c3f952577fbf316424fec694b18c437acaec52909ec29c0",
-      "verify_sha256": "c20ecc3683dacc0162332388017ff781ac65bcb47c43b666a6a75b5b6d3580d7",
+      "reduce_sha256": "3f0253f1b66601aff4d06a36f96dc2247a8f2d17b4cd59f2c2578b04a96cc778",
+      "verify_sha256": "acb1b66342e92f33b170ff047a3608725f37904d7675f5b67ede0d17fdfd4b2e",
       "reducer_sha256": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
-      "verifier_sha256": "47e59142fcafb6fdae68943402ceb3129e31d317cabc42c8d07e0e766412738e"
+      "verifier_sha256": "43c4a574a48a245fa844a4b0fa69ec1be1d482bd1b1be56b9acf242a3a1b4947"
     },
     "suspended": {
       "verifier_status": "SUSPENDED",
@@ -133,6 +143,11 @@
         "items": 169,
         "matched": 169,
         "mismatched": 0
+      },
+      "verifier_plan": {
+        "path": "/mpac/sdicks02/jobs/clasher/k4s-prep-20261011/qual-03-dev3/repo/reports/explore/k4s-confirm/plan.json",
+        "sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+        "c_star": "0.9"
       },
       "reducer_status": "SUSPENDED (validity window; independent receipts-only code review required)",
       "admitted": {
@@ -180,10 +195,10 @@
       ],
       "usable": [],
       "ledger_events": 4,
-      "reduce_sha256": "eb37c8490ee11895a4b9b96c84c0ad58decb91aa7f45e62adf491e78aba188fb",
-      "verify_sha256": "c9a3e1779aea2187a34768a6848acb6d7ed14b20dad8e44c4367347b09ae3d03",
+      "reduce_sha256": "4c90e46c8df16b640e69b0b1acc8f7a7de8a5ae709e52368aa838283f2bafe46",
+      "verify_sha256": "ccffabcdaec683ce629aa1f05a920022b48849908745c377f0e3b4de1f8f3304",
       "reducer_sha256": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
-      "verifier_sha256": "47e59142fcafb6fdae68943402ceb3129e31d317cabc42c8d07e0e766412738e"
+      "verifier_sha256": "43c4a574a48a245fa844a4b0fa69ec1be1d482bd1b1be56b9acf242a3a1b4947"
     }
   }
 }
