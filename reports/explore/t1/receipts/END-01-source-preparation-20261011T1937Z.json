@@ -1,0 +1,28 @@
+{
+  "C3_offline_preflight": "PENDING complete END bundle",
+  "END_plan_sha256": "389f31d51c5285221b834287e1775612538d00ad78c74cefb13721194ad091a1",
+  "actual_preparation_affinity": [
+    61
+  ],
+  "actual_preparation_nice": 19,
+  "attempts_registered": false,
+  "complete_END_bundle_staged": false,
+  "health_only": true,
+  "host": "127x01",
+  "measurement_sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "post_6afcbbab": true,
+  "preflight_namespace_outside_attempt_roots": true,
+  "python_optimization_forbidden": true,
+  "required_launcher_environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "schema": "clasher.t1.END-source-preparation.health.v1",
+  "source_commit": "d651b52c1a442072055ae482267531af8018ef25",
+  "source_tree": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-postmerge-01-preflight-r1-20261011",
+  "timing_work_started": false,
+  "utc": "2026-10-11T19:37:54Z"
+}
