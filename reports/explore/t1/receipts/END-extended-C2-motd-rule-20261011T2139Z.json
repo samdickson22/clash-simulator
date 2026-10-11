@@ -1,0 +1,42 @@
+{
+  "schema": "clasher.t1.end.extended-c2-motd-rule.v1",
+  "received_at_actual_utc": "2026-10-11T21:38:57Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "rule_status": "RECORDED_NO_HOST_ACTION_UNTIL_EXPLICIT_ADOPTION",
+  "explicit_amendment3_adoption_received": false,
+  "source": "Direct coordinator instruction labelled approximately21:40Z; K4S incident evidence coordinator8084",
+  "applies_before_each_reference_launch": [
+    "127x01",
+    "127x08"
+  ],
+  "stamps": [
+    "/var/lib/ubuntu-release-upgrader/release-upgrade-available",
+    "/var/lib/update-notifier/updates-available"
+  ],
+  "requirements": [
+    "Read both stamp times and ages read-only, with relevant apt-list freshness and trigger conditions.",
+    "Require neither motd maintenance check can fire during the entire attempt window.",
+    "If stale, use one ordinary login before launch; wait for maintenance to exit and confirm refreshed stamp.",
+    "Record stamp times, clearance and any pre-launch refresh/exit evidence in every launch receipt.",
+    "Retain existing OP6 identities/budgets and at least2h apt-timer clearance."
+  ],
+  "no_host_access_performed": true,
+  "no_stamp_changes_performed": true,
+  "bundles_preserved": true,
+  "attempts_registered": false,
+  "A6_started": false,
+  "timing_started": false,
+  "outcomes_sealed": true,
+  "fixture_fingerprint_correction": {
+    "coordinator_position": 8082,
+    "expected_after_adoption": "c09142b97ecc147efa635036a69508e16fe647347749e052d321048910040901",
+    "superseded": "e841ea51",
+    "not_adoption": true
+  },
+  "timer": {
+    "same_timer": true,
+    "enabled": true,
+    "next_run_at": "2026-10-11T21:41:38.904Z"
+  },
+  "hub_mirror": "coordinator-paused"
+}
