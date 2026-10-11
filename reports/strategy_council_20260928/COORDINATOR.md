@@ -2112,3 +2112,11 @@ Also on the hub, but with copies elsewhere:
 - **21:38 UTC: K4S 04 guard stop** at 21:32:49Z (foreign_compute: root `check-new-release`). It was triggered by pam_motd's release-upgrade check on one of our copier's ssh logins, once the stamp was more than a day old. 11 in-flight blocks were lost; the frozen supervisor continued automatically. 03 is forecast to do the same at ~00:58Z Oct 12.
   - **Ruling (a):** accept and disclose. Lost blocks are replaced after reporting by the frozen blind ledger (caps 300/90). No mid-run copier change.
   - **Carry-over to T1 END (extends C2):** before each reference launch on 01/08, besides the apt timers, read (read-only) the ages of `/var/lib/ubuntu-release-upgrader/release-upgrade-available` and `/var/lib/update-notifier/updates-available`. Launch only if neither motd check can fire during the attempt. If a stamp is stale, let one ordinary login trigger the check *before* the launch and wait for it to exit.
+- **22:07 UTC: TIERS AMENDMENT 3 ADOPTED** (f6cebbaa; record md 761ebc0d / json 3e5627cb; Sol APPROVE r4, review 18baa4ea). An outcome-blind loader repair:
+  - `tier_backend.py` b04d201d → 02e2139f; `prepare_bundle.py` → a1c59fa3; new `state_rows.py` 3899276b and `convert_states.py` 7ce30683. `measure_tiers.py` and `fleet_reference.py` are byte-identical.
+  - One backend's RSS went from 11.3 to 0.4 GiB. Equivalence PASS: 1,325 states, 1,200 inputs, 15 bit-exact checks. Tests 91/91 on Python 3.8 and 3.12.
+  - **A3-P accepted:** an all-cause Mac poll-lateness check (≤1%, max ≤50 ms, same thresholds as the frozen GC gate). It can only make a tier infeasible, guarding against out-of-timer load tails (p99 0.22 s).
+  - **Execution:**
+    1. **T1:** convert once on 01 against states.pkl 0addf7c0 (expect fingerprint c09142b9). Copy the container set byte-identically to 08. Regenerate the manifests, then repeat C3 and the memory check on both hosts. Then A6 → reference (08 first; extended C2) → pool → PC1–PC4.
+    2. **Coordinator:** K4S Amendment 2 re-pins `tier_backend.py` and adds `state_rows.py` in the K4S Mac manifest, with Sol review.
+    3. **Mac:** its own fixture is converted on Linux under its own fingerprint; the Mac stages it only and never converts.
