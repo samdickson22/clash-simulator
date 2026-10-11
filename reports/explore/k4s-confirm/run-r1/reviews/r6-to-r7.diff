@@ -1,0 +1,55 @@
+25c25
+<   or published and is held for the copier's whole life (including --revoke), so at most one copier root per job;
+---
+>   or published and is held for the copier's whole life, so at most one copier root per job;
+37c37,39
+<   with a lifecycle error. After SIGKILL/power loss run `--revoke` (refuses while the receipt's copier lives).
+---
+>   with a lifecycle error. There is no separate recovery mode: after SIGKILL/power loss a normal start recovers (it
+>   waits <=10 min on the job lock, which orphaned transports hold until they exit by themselves; timeout = stop for
+>   manual handling).
+125c127
+<  SIGKILLed: a successor (or --revoke) can only take the lock after every orphan has exited by itself."""
+---
+>  SIGKILLed: a successor can only take the lock after every orphan has exited by itself."""
+219,224c221,226
+< def revoke(j,host,me=None):
+<  """Deactivate the admission receipt on the hub and the source. With `me`, only this process's own receipt.
+<  Without `me` (recovery after SIGKILL/power loss), only a receipt whose copier is no longer alive.
+<  Never signals anything. Local transports are proven gone (own groups: read-only check; a dead copier's orphans:
+<  the caller holds the job lock they would hold); the source must be quiescent; the inactive receipt is confirmed
+<  twice, 5 s apart."""
+---
+> def revoke(j,host,me):
+>  """Deactivate this process's own admission receipt on the hub and the source (never a successor's). Never signals
+>  anything. Every transport this root started is proven gone (read-only check), the source must be quiescent, and
+>  the inactive receipt is confirmed twice, 5 s apart. There is no separate recovery mode: after a crash, SIGKILL or
+>  power loss a normal copier start is the recovery (it waits on the inherited job lock until every orphan has exited
+>  by itself, accepts the dead prior receipt, re-verifies every hub block and re-registers)."""
+226,231c228,229
+<  if me is not None:
+<   assert receipt['identity']==me,'receipt belongs to another copier; not revoking a successor'
+<   own_transports_gone()   # read-only proof that every transport this root started is gone
+<  else:
+<   assert not alive(receipt['identity']),'receipt copier is alive; stop it instead'
+<   # The caller holds the job lock, which orphans of the dead copier would still hold: they are gone.
+---
+>  assert receipt['identity']==me,'receipt belongs to another copier; not revoking a successor'
+>  own_transports_gone()   # read-only proof that every transport this root started is gone
+363c361
+<  p.add_argument('--phase');p.add_argument('--once',action='store_true');p.add_argument('--revoke',action='store_true',help='recovery after SIGKILL/power loss')
+---
+>  p.add_argument('--phase',required=True);p.add_argument('--once',action='store_true')
+369,371c367
+<  if a.revoke:
+<   target=j/'owned-copier-admission.json'
+<   assert not (target.exists() and alive(read(target)['identity'])),'receipt copier is alive; stop it instead'
+---
+>  assert PHASE.fullmatch(a.phase)
+374,376d369
+<   if a.revoke:
+<    print(json.dumps(revoke(j,a.host)));return 0
+<   assert a.phase and PHASE.fullmatch(a.phase)
+390a384,385
+>   except Exception as e:   # any other fatal error (e.g. registration push, startup verification I/O): honest exit 2
+>    status=2;last=dict(last or dict(utc=utc(),host=a.host,phase=a.phase,sealed=True),fatal_error=f'{type(e).__name__}: {e}');write(health,last)

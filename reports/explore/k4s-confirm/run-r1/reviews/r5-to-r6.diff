@@ -1,0 +1,22 @@
+109,113c109,118
+<  here (run() waits with WNOWAIT), so its PID/PGID cannot have been recycled: the signal can only reach our group."""
+<  try:drain(p.pid)
+<  finally:
+<   try:p.wait(timeout=5)
+<   except subprocess.TimeoutExpired:pass
+---
+>  here (run() waits with WNOWAIT), so its PID/PGID cannot have been recycled: the signal can only reach our group.
+>  Any failure to drain or reap (deadline, killpg/proc errors, reap timeout) is a LifecycleError: the copier stops
+>  (exit 3) and the group stays in PENDING, so revocation is refused while it lives. Only a completed drain AND reap
+>  retire the PENDING entry."""
+>  try:
+>   drain(p.pid)
+>   p.wait(timeout=5)
+>  except LifecycleError:raise
+>  except BaseException as e:
+>   raise LifecycleError(f'transport group {p.pid} cleanup failed: {type(e).__name__}: {e}') from e
+393c398,399
+<      state=dict(last or dict(utc=utc(),host=a.host,phase=a.phase,sealed=True));state.update(utc=utc(),lifecycle_error=f'{type(e).__name__}: {e}')
+---
+>      state=dict(last or dict(utc=utc(),host=a.host,phase=a.phase,sealed=True));prev=state.get('lifecycle_error')
+>      state.update(utc=utc(),lifecycle_error=(prev+'; then revocation: ' if prev else '')+f'{type(e).__name__}: {e}',revoked=False)
