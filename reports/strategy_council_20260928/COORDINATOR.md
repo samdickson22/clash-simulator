@@ -2087,3 +2087,7 @@ Also on the hub, but with copies elsewhere:
     - launch addendum 5d6ac662 (OA-1 47eb96d6 / Sol r7; Amendment 1 45f32c0f);
     - r3_explicitly_frozen = true.
   - **Rules:** outcomes SEALED; health checkpoints every 20 min; stop and report on any guard stop. ~16 h, so it ends ~12Z on Oct 12.
+- **20:09 UTC: K4S SEALED REPORTING LAUNCHED** at 20:08:22Z / 20:08:27Z on 03/04 (receipt 9a63dd3f, commit 93d1565d).
+  - **First attempt refused (safe):** it was refused by the frozen one-supervisor-per-job pin, so I approved distinct reporting namespaces (k4s-confirm-reporting-r1), following T1's precedent. Authorization v2 is 852c01e6.
+  - **Run:** 11 slots per host; 0 foreign/active; OA-1 copiers on 05.
+  - **Timing:** ~16 h, so it ends ~12Z Oct 12. Outcomes sealed.
