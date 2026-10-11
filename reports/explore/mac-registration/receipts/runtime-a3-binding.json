@@ -1,0 +1,10 @@
+{
+ "e4v3_source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+ "end_manifest_sha256": "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7",
+ "measurement_files_equal": true,
+ "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+ "runtime_files": 3785,
+ "runtime_files_equal": true,
+ "source": "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/runtime-a3",
+ "utc": "2026-10-11T22:53:11Z"
+}

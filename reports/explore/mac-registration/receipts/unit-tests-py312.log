@@ -1,0 +1,44 @@
+test_cross_check (test_pipeline.CrossCheck.test_cross_check) ... ok
+test_committed_corpora_maps_32_captures (test_pipeline.Inventory.test_committed_corpora_maps_32_captures) ... ok
+test_assembly_and_converter_fingerprint (test_pipeline.Pipeline.test_assembly_and_converter_fingerprint) ... ok
+test_capture_sha_mismatch_fails_closed (test_pipeline.Pipeline.test_capture_sha_mismatch_fails_closed) ... ok
+test_end_prefix_mismatch_fails_closed (test_pipeline.Pipeline.test_end_prefix_mismatch_fails_closed) ... ok
+test_health_mismatch_fails_closed (test_pipeline.Pipeline.test_health_mismatch_fails_closed) ... ok
+test_lineage_mismatch_fails_closed (test_pipeline.Pipeline.test_lineage_mismatch_fails_closed) ... ok
+test_sets_and_schedule (test_pipeline.Pipeline.test_sets_and_schedule) ... ok
+test_stage_receipt (test_pipeline.Pipeline.test_stage_receipt) ... ok
+test_z_handoff_glue (test_pipeline.Pipeline.test_z_handoff_glue)
+compute (one setup_imports, inside the backend), cross-check, seal; then tampering fails closed. ... ok
+test_fill_smaller_than_tiers_stops (test_selection.Agreement.test_fill_smaller_than_tiers_stops) ... ok
+test_invalid_core_rejected (test_selection.Agreement.test_invalid_core_rejected) ... ok
+test_no_fill_when_core_reaches_2000 (test_selection.Agreement.test_no_fill_when_core_reaches_2000) ... ok
+test_salt_is_domain_separated (test_selection.Agreement.test_salt_is_domain_separated) ... ok
+test_union_plus_fill (test_selection.Agreement.test_union_plus_fill) ... ok
+test_check_pool (test_selection.FixtureAndValidity.test_check_pool) ... ok
+test_fixture_order (test_selection.FixtureAndValidity.test_fixture_order) ... ok
+test_invalid_stop_rule (test_selection.FixtureAndValidity.test_invalid_stop_rule) ... ok
+test_empty_game_keeps_its_slot (test_selection.Packets.test_empty_game_keeps_its_slot) ... ok
+test_input_order_independent (test_selection.Packets.test_input_order_independent) ... ok
+test_insufficient_pool (test_selection.Packets.test_insufficient_pool) ... ok
+test_round_robin_sha_game_order (test_selection.Packets.test_round_robin_sha_game_order) ... ok
+test_whole_games_truncated_at_exactly_1000 (test_selection.Packets.test_whole_games_truncated_at_exactly_1000) ... ok
+test_matches_t1_corpus_quotas (test_selection.Quotas.test_matches_t1_corpus_quotas) ... ok
+test_check_schedule_rejects_tampering (test_selection.Schedule.test_check_schedule_rejects_tampering) ... ok
+test_noncontiguous_game_rejected (test_selection.Schedule.test_noncontiguous_game_rejected) ... ok
+test_sealed_tick_cadence (test_selection.Schedule.test_sealed_tick_cadence) ... ok
+test_manifest_byte_identical_and_fixture_not_copied (test_stage_nocopy.FrozenPrepareBundle.test_manifest_byte_identical_and_fixture_not_copied) ... ok
+test_refuses_helper_inside_runtime_root (test_stage_nocopy.FrozenPrepareBundle.test_refuses_helper_inside_runtime_root) ... ok
+test_clone_failure_falls_back_to_hard_link (test_stage_nocopy.Placement.test_clone_failure_falls_back_to_hard_link) ... ok
+test_clone_first_on_darwin (test_stage_nocopy.Placement.test_clone_first_on_darwin) ... ok
+test_clonefile_real_call_fails_cleanly_off_macos (test_stage_nocopy.Placement.test_clonefile_real_call_fails_cleanly_off_macos) ... ok
+test_data_copy_only_with_headroom (test_stage_nocopy.Placement.test_data_copy_only_with_headroom) ... ok
+test_fixture_files_hard_linked_on_linux (test_stage_nocopy.Placement.test_fixture_files_hard_linked_on_linux) ... ok
+test_never_overwrites_and_only_bundle_root (test_stage_nocopy.Placement.test_never_overwrites_and_only_bundle_root) ... ok
+test_sha_mismatch_fails_closed (test_stage_nocopy.Placement.test_sha_mismatch_fails_closed) ... ok
+test_extra_file_or_mismatch_fails (test_verify_captures.Copy.test_extra_file_or_mismatch_fails) ... ok
+test_passes (test_verify_captures.Copy.test_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 11.146s
+
+OK

@@ -1,0 +1,239 @@
+{
+ "amendments_unchanged": {
+  "PREREG-SEARCH-TIERS-AMENDMENT-1-20261010.md": "b35bd4e5d8beaf8e89ade092bdf4fc607e067e562f7d9f378fb9c06367df2775",
+  "PREREG-SEARCH-TIERS-AMENDMENT-2-20261011.json": "46d8c4be2ba1863f97c2da1ab9d37afb840c9e7b106b7fe42319970ab9269be4",
+  "PREREG-SEARCH-TIERS-AMENDMENT-3-20261011.json": "3e5627cb1861dc05fab60af7059d471db80888e66fcf84d59ab341568b0ffabe"
+ },
+ "changes_none_of": [
+  "hypothesis",
+  "arm",
+  "seed",
+  "tier",
+  "gate",
+  "threshold",
+  "reducer",
+  "slots",
+  "budgets",
+  "warmup",
+  "op6_guard",
+  "memory_floor",
+  "a3p_check",
+  "outcome_handling"
+ ],
+ "coordinator_rulings": [
+  "22:26Z rules B.1-B.7 adopted as written; overlapping minimal fixture approved; P1 cadence",
+  "22:31Z no-copy Mac staging added to the A4 builder's scope; scope message with constraints sent 22:30:53Z",
+  "23:04Z (COORDINATOR 684195b3, recorded 23:04:25Z) stage_nocopy.py APPROVED as an external operational staging helper inside A4 under six conditions"
+ ],
+ "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+ "design_proposal": {
+  "commits": [
+   "59396fb0",
+   "2cab69f0"
+  ],
+  "path": "reports/strategy_council_20260928/live-loop/v4/MAC-REGISTRATION-INPUTS-PROPOSAL-20261011.md",
+  "sha256": "10cc8f6802d513f2840645ed3c6e6c14e2c0c22de1ca63f9ff16eb900e5fccee"
+ },
+ "e4v3_files_changed": false,
+ "e4v3_pins": {
+  "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+  "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+  "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+  "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+  "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+  "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+ },
+ "games_read": false,
+ "independent_review": {
+  "coordinator_ruling_finding_8": "23:04Z COORDINATOR 684195b3",
+  "final_verdict": "APPROVE",
+  "records": [
+   "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-r1.md",
+   "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-r2.md",
+   "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-r3.md",
+   "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-r4.md"
+  ],
+  "reviewer": "gpt-6.1-sol (high), T3 delegate_task",
+  "rounds": [
+   "REJECT",
+   "REJECT",
+   "APPROVE_WITH_CONDITIONS",
+   "APPROVE"
+  ]
+ },
+ "mac_access": false,
+ "mac_staging": {
+  "design": "import the unmodified frozen prepare_bundle; substitute module copy_file for states.pkl/states-rows.json/states-rows.bin only",
+  "evidence": "synthetic 05: frozen prepare_bundle Mac mode, tiers-pins.json byte-identical plain vs helper",
+  "helper": "reports/explore/mac-registration/stage_nocopy.py",
+  "peak_disk": "about one fixture copy (~36 GiB) instead of ~72 GiB",
+  "placement": [
+   "apfs clonefile (macOS)",
+   "hard link",
+   "data copy only if >= 10 GiB free after"
+  ],
+  "reason": "prepare_bundle.py a1c59fa3 is in measurement_files (END-A3 01/08, fleet_pool binding) and refuses pre-placed files",
+  "ruling_conditions": [
+   "outside e4v3 and runtime root; SHA-pinned in A4; verify e4v3 measurement_files == END-A3 18 entries; import frozen prepare_bundle unchanged; override copy_file only for states.pkl/states-rows.json/states-rows.bin",
+   "placement: clonefile -> hard link -> data copy only if >= 10 GiB free after; SHA-verify each, fail closed",
+   "after placement chmod a-w on source and bundle copies of the three files; record in receipt",
+   "keep the byte-identical tiers-pins.json test (real frozen prepare_bundle, with vs without helper) in A4 evidence",
+   "immediately before the Mac session re-verify the three SHAs in the staged bundle (stage_nocopy.py --verify-bundle); session receipt records helper use, method per file and SHAs",
+   "no re-pins only while nothing frozen changes; if anything does, stop"
+  ],
+  "session_verify": "stage_nocopy.py --verify-bundle <bundle>",
+  "status": "APPROVED by coordinator ruling issued 23:04Z 2026-10-11, recorded in COORDINATOR 684195b3 at 23:04:25Z (entry '23:04 UTC'; git commit time 23:04:29Z), answering Sol r2 finding 8",
+  "verification": "SHA-256 of each placed file equals its source; fail closed"
+ },
+ "memory_check": {
+  "cap_bytes": 6442450944,
+  "rule": "main VmHWM + two sequential D6 child VmHWM, each 2,000 retained inputs, Mac profile on 05"
+ },
+ "note": {
+  "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.md",
+  "sha256": "2a36f62073e39ed61148b3554007282ab2e81c75b36931f1db974eda22499e7f"
+ },
+ "original_freeze": {
+  "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-FREEZE-20261010.json",
+  "sha256": "47aba25e306d787518ec41bac6ecbca88e3372c03f5b118aacda2c5b86ae217c",
+  "unchanged": true
+ },
+ "outcome_blind": true,
+ "outcomes_read": false,
+ "prepared_host": "127x05",
+ "re_pin_analysis": {
+  "FROZEN-K4S 416f6e51": "unchanged (no fleet file changes)",
+  "K4S Mac manifest c1fb1e9a": "unchanged (prepare_bundle never K4S-pinned)",
+  "TIERS freeze 47aba25e and A1-A3": "unchanged (A3 records prepare_bundle after-SHA a1c59fa3; bytes unchanged)",
+  "e4v3 / measurement_files / END-A3 manifests": "unchanged",
+  "runtime_files": "unchanged (helper outside runtime root, enforced)"
+ },
+ "re_pins_required": [],
+ "real_runtime_smoke": {
+  "child_exitcode": 0,
+  "main_infer": 6,
+  "passes": true,
+  "torch_threads": [
+   1,
+   1
+  ],
+  "utc": "2026-10-11T22:58:14Z",
+  "versions": {
+   "numpy": "2.2.6",
+   "python": "3.12.12",
+   "torch": "2.10.0+cpu"
+  }
+ },
+ "role": "Mac registration inputs builder; T1 corpus-owner delegate; T1 keeps merge and seal authority",
+ "rules": {
+  "b1": {
+   "corpora_sha256": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+   "invalid_stop_fraction": 0.01,
+   "lineage": "1,200 speed canonical digests equal committed END digests (c09142b9); per-tier counts/health equal corpora.json",
+   "pool": "32 SHA-verified T1 captures, seeds 4503603407370496+[3,11), a51ea64c",
+   "speed_rows_from": "published 282b0877",
+   "validity": "corpus_contract.validate_row(row, tier)"
+  },
+  "b2": {
+   "game_key": "(tier, seed)",
+   "game_priority": "sha256('tiers-packets/{tier}/{seed}') ascending",
+   "interleave": "round-robin by rank in TIERS order",
+   "packets": 1000,
+   "rows": "valid rows ascending info.tick",
+   "truncation": "last game at exactly 1000"
+  },
+  "b3": {
+   "cadence": "P1",
+   "disclosed_session_hours": [
+    6,
+    6.5
+   ],
+   "join_ticks": 10,
+   "offset": "timestamp - schedule[0].timestamp",
+   "opportunity": true,
+   "tick_seconds": 0.05,
+   "timestamp": "(tick + O_k) * 0.05; O_0=-f_0; O_{k+1}=O_k+l_k+10-f_{k+1}"
+  },
+  "b4": {
+   "agreement": "speed1200 | packets | F; |F| = max(0, 2000 - |speed | packets|)",
+   "fill_allocation": "corpus.quotas over fill-pool tier counts",
+   "fill_priority": "sha256('tiers-agreement/{tier}/{seed}/{tick}') ascending, ties by id",
+   "order": "(TIERS index, seed, tick)",
+   "uncovered_case": "0 < |F| < occupied tiers: stop and escalate (no new rule)"
+  },
+  "b5": {
+   "conversion": "convert_states.py --states --expect-fingerprint on 05",
+   "end_prefix_fingerprint": "c09142b97ecc147efa635036a69508e16fe647347749e052d321048910040901",
+   "identity": "ordered canonical fingerprint",
+   "order": "public 1200 (END) + golden125 (END) + extra by (TIERS index, seed, tick)"
+  },
+  "b6": {
+   "fallback": "recompute on 01 after its END pool",
+   "gate": "300 S speed ids: legal equal, receipts.agreement equal, |gate|,|logit| deltas <= 1e-4 vs pooled END S forwards",
+   "host": "127x05",
+   "profile": "mac-preregistered offline bundle",
+   "torch_threads": 1
+  },
+  "b7": {
+   "merger": "T1",
+   "receipt": "mac-sets-selection.json",
+   "seal": "T1-REGISTRATION"
+  }
+ },
+ "runtime_binding": {
+  "e4v3_source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "end_manifest_sha256": "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7",
+  "measurement_files_equal": true,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "runtime_files": 3785,
+  "runtime_files_equal": true,
+  "source": "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/runtime-a3",
+  "utc": "2026-10-11T22:53:11Z"
+ },
+ "schema": "clasher.tiers.amendment4-candidate.v1",
+ "source_files": {
+  "assemble_states.py": "016d9707ca16d8a29eb7a6c0a2bf5eca46c69a0c2fb7a1e46c14afe8f4999e3c",
+  "build_runtime.sh": "114d1b5d2ff42d23871ad7af392242e604368bdc37fee9fc06c6733669c371ff",
+  "build_sets.py": "376f0e74164675b9714368273cb3a3caa5affdb5be24c98e39e2411fe798aba6",
+  "fetch_captures.sh": "f61a729ce79de8d7140c8108bd88a0b23e3eba53dfaf6443ab9aad1b1d2f4efb",
+  "macreg_io.py": "0f6042b4a96171b8c43dc3a3ad7d1396e96cefcada582f069facb8fb1fbe0bb9",
+  "make_amendment_record.py": "f310742002e979fe601d9cad44b3e4293a06e0d95fdb575908d8114882a126b7",
+  "memory_check.py": "9bbca2f102c2ee78f5f0d52496a3b05aa14d426533786fc816f61de753c07194",
+  "run_phase3.sh": "87b54c059e20b0e6aa7ddb0b7254a26d237fa73953961770ca82182d374d3ccb",
+  "run_tests.sh": "ad56318f2646fda9741a0c9b5f8ea79e9c9a682f0102cb6ac2adc4261c6031eb",
+  "seal_receipt.py": "5742892b623051644c3c7d9f9f95d4403aec14e28b8d9d88e60915b68983a696",
+  "selection.py": "ad8b348a192feb394964108ba291358ed530a2b8a82afd71c95f7accfbecc3a1",
+  "stage_nocopy.py": "96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7",
+  "student_reference.py": "98c4e154fb83e40841964f4c16f1f0baf74a7ac89914fcf48920cafc03d1f8cf",
+  "tests/smoke_real_runtime.py": "6854ec6a97f094fad16ac851dd65d6bf69d635c291bfa95bcf4712009502b796",
+  "tests/test_pipeline.py": "85825db4c37b5dd18ad9020bf6c2800e9e2f0fb0c22d2f3985b76fcaf8bff1a6",
+  "tests/test_selection.py": "4f0297e14dfe44d75cd7ace69c46e8415aeb2bcad9c36cee39892e6f595f2954",
+  "tests/test_stage_nocopy.py": "f75cd3a3189e050d65bb52ae4dffb748d4b160d9ccffa79b74a031735e74202b",
+  "tests/test_verify_captures.py": "25ff111fdc51fc86f448617ee397d0d337bb7e4aed1cd5c9841e53a250332bc2",
+  "verify_captures.py": "7f3a21f6bf17620dc08da02ab2271d99fd5b1fa9126f90499452ad55972353cf"
+ },
+ "ssh_to_01_03_04_08": false,
+ "status": "CANDIDATE_PENDING_ADOPTION",
+ "study": "PREREG-SEARCH-TIERS",
+ "tests": {
+  "py312": {
+   "log": "reports/explore/mac-registration/receipts/unit-tests-py312.log",
+   "log_sha256": "cccb78db1707257069c8bea7222bd4b34ad73fe5b5b17445325e58ce50a4786c",
+   "passed": true,
+   "python": "3.12.12",
+   "ran": 38,
+   "skipped": 0
+  },
+  "py38": {
+   "log": "reports/explore/mac-registration/receipts/unit-tests-py38.log",
+   "log_sha256": "04e097622ddd459dffaaf94b57d61ffbd73523ca1fe4cdf65a558b0c1f73f72d",
+   "passed": true,
+   "python": "3.8.10",
+   "ran": 38,
+   "skipped": 0
+  }
+ },
+ "timing_runs": false,
+ "title": "Outcome-blind Mac registration inputs: agreement2000 + packets1000 selection, cadence and fixture"
+}
