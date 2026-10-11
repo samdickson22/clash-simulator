@@ -1,0 +1,51 @@
+{
+  "04_client": {
+    "affinity": [
+      3
+    ],
+    "command_sha256": "c4df6d5c4e99264d365747ae3f9acc1e4d9681fbab66340438dfc08fc5204588",
+    "fd_errors": [],
+    "identity": {
+      "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+      "pid": 3504429,
+      "starttime": "104860895"
+    },
+    "identity_still_live": true,
+    "sockets": [
+      {
+        "fd": "4",
+        "inode": "94810152",
+        "local": {
+          "address": "129.65.221.14",
+          "port": 41072
+        },
+        "remote": {
+          "address": "129.65.221.18",
+          "port": 22
+        }
+      }
+    ],
+    "title": "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a19-r5 [mux]"
+  },
+  "08_reported_generation": {
+    "candidate_client_local_port": 41072,
+    "parent_pid": 2995276,
+    "parent_starttime": "148086679",
+    "pid": 2995332,
+    "server_pid_to_socket_join": "NOT_PROVEN_EACCES",
+    "source": "coordinator7139/T1 receipts; no08 inspection by this probe",
+    "starttime": "148086709"
+  },
+  "conclusion": "04 client3504429/start104860895 directly owns socket04:41072->08:22; exact ControlPath identifies current A2 transport. Matches the endpoint reported by T1. Server PID2995332-to-socket join remains unproven due reported08 EACCES; no claim of direct server attribution.",
+  "control_path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a19-r5",
+  "coordinator_request_position": 7139,
+  "no_process_or_runtime_change": true,
+  "no_remote08_connection": true,
+  "observed_utc": "2026-10-11T01:34:34.759745+00:00",
+  "retirement": "Still live and needed for A2; notify coordinator only after both stages finish and exact03/08 transports are retired.",
+  "schema": "clasher-a21-a2-04-to08-attribution-v1",
+  "source_receipt": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-admission-20261011-r1/continuation-20261011T013433.json",
+    "sha256": "214a65a0219d148a190d7212a6d7f9b051ea322c3cb6faab07ab98917be5875b"
+  }
+}
