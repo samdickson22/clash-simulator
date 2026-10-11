@@ -1,0 +1,80 @@
+{
+  "utc": "2026-10-11T13:46:34Z",
+  "host": "127x08",
+  "qualification_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op7-08-r3-20261011",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "launch": {
+    "launched_at_utc": "2026-10-11T13:46:12Z",
+    "pid": 263546,
+    "pgid": 263546
+  },
+  "owned_processes": [
+    {
+      "identity": {
+        "pid": 263546,
+        "pgid": 263546,
+        "start_ticks": 152577797,
+        "uid": 3822945,
+        "cmdline_sha256": "1a6cb8236d4bf33ec05f8803ec88ddfe9469bd339b23eebbee2f1a281cdb0bdc",
+        "exe": "/usr/bin/bash"
+      },
+      "nice": 10,
+      "scheduler": 0,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "identity": {
+        "pid": 264279,
+        "pgid": 263546,
+        "start_ticks": 152579243,
+        "uid": 3822945,
+        "cmdline_sha256": "8775487520a2b5147b12acab898f83c2ab094af4fc02d83dc2cfc8414d39996e",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+      },
+      "nice": 10,
+      "scheduler": 0,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "markers": {
+    "TESTS-PASS": true,
+    "QUALIFIED": false,
+    "BELIEF-QUALIFIED": false,
+    "qualification-source-binding.json": false
+  },
+  "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "frozen_hashes": 196,
+  "source_stable": true,
+  "dispatch_launched": false,
+  "tests_summary": [
+    "265 passed"
+  ],
+  "tests_pass_utc": "2026-10-11T13:46:27Z",
+  "latest_belief_progress": null,
+  "schema": "clasher.t1.qualification-launch.health.v1",
+  "coordinator_authorization_position": 7621,
+  "coordinator_authorization_commit": "71481d5e",
+  "transport_retirement_receipt_sha256": "c2cef696d3f265dd565b75aabb608bbf201323d5ef18f6a0280560cc64d43315",
+  "prequalification_admitted_utc": "2026-10-11T13:46:12Z",
+  "prequalification_console_count": 0,
+  "prequalification_foreign_compute_count": 0,
+  "prequalification_foreign_active_count": 0,
+  "original_r1_r2_inventory_invocations_each": 1,
+  "reporting_draft_sha256": "d066dc3700edcbc340afb48965585b8a2018cd5188083d42b4eb0f13746ec017",
+  "reporting_complete": false,
+  "checkpoint_utc": "2026-10-11T13:47:06Z"
+}
