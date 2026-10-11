@@ -211,3 +211,27 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   own `caffeinate -i`, pending coordinator objection.
 - **Open rulings:** the A3-P v* combination rule, and the caffeinate wrapper.
 - **HOLD:** no timing and no staging.
+
+### 2026-10-11T22:32:19Z: coordinator rulings on the 22:35Z report
+
+1. **A3-P v\* confirmed:** A3-P is applied to the frozen gate-4 variant (freeze if freeze_gc passes, else
+   default). The existential reading is rejected. `a3p_poll_check.py` already implements this; no change.
+2. **Session `caffeinate -i` approved:** operational only; record it in the session receipt.
+3. **Software update:** the coordinator routes a Sol computer-use step at session time (turn off "Install macOS
+   updates" and "Download new updates" for the window, then restore). The operator re-reads the
+   `com.apple.SoftwareUpdate` prefs before and after and records them; the operator changes nothing itself.
+
+**Phase B start checklist:**
+- **Coordinator go:** pooled END reference, END bundle and registration packet named, Amendment 4 fixture with
+  no-copy staging, quiet window and update step.
+- **Re-verify the runtime** against the named END bundle: content diff (allowed: scripts.rs plus the 12 exit-r3
+  scripts) and measurement-file equality.
+- **Free the three caches** only if needed, then stage via the builder's reviewed no-copy step with SHA
+  verification.
+- **Memory precondition:** free+inactive+purgeable ≥ 6 GiB, free swap ≥ 1 GiB, 0 swapouts during the census,
+  disk ≥ 10 GiB after staging.
+- **Census:** must pass under the frozen census, otherwise report the top consumers and don't start.
+- **Environment:** PYTHONPATH import-path addition; nice 10; OMP/OPENBLAS/MKL=1; run under `caffeinate -i`.
+- **Run** the README locked heredoc (prepare_bundle --state-rows, build_tiers.sh, measure_tiers.py).
+- **Afterwards:** A3-P, classify_failure if needed, commit the Mac summary receipt, restore update prefs (via
+  Sol) and record them.
