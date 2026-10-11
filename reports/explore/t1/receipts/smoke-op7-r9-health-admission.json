@@ -1,0 +1,89 @@
+{
+  "utc": "2026-10-11T14:02:06Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op7-0108-r9-20261011",
+  "passed": true,
+  "smoke_admission_sha256": "847ffa5857ab5c74dc2e375f75eedf23deb446f82f4befca7d9c30498d7f0bdb",
+  "smoke_pass_sha256": "32ed10617d8d4a25cb176e80fbe8cad9934fa2f2a4abcda5b9e55fddbda02d86",
+  "complete_proofs": 8,
+  "raw_hashes_verified": 64,
+  "counts": {
+    "127x01": {
+      "complete": 4,
+      "ssh_flags": 0,
+      "apt_flags": 0,
+      "dbus_flags": 0,
+      "idle_flags": 0,
+      "total_flags": 0
+    },
+    "127x08": {
+      "complete": 4,
+      "ssh_flags": 0,
+      "apt_flags": 0,
+      "dbus_flags": 4,
+      "idle_flags": 0,
+      "total_flags": 4,
+      "ACKs": 4
+    }
+  },
+  "exact_copier_identity_before_stop": {
+    "pid": 1403596,
+    "pgid": 1403596,
+    "start_ticks": 151676708,
+    "cmdline_sha256": "6e281763f97f1222f081adac021a2d028c5c0ceeabcf921f25212879f5c7bf16",
+    "uid": 3822945,
+    "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+  },
+  "supervisor_exits": {
+    "127x01": {
+      "utc": "2026-10-11T14:01:53Z",
+      "reason": null,
+      "completed": 4,
+      "failed": 0,
+      "unstarted": 0,
+      "sha256": "98e7f98d9def3f11fbe27d64010d2d75e9894ca9f85d66babf9c32d705a8e2d1"
+    },
+    "127x08": {
+      "utc": "2026-10-11T14:01:43Z",
+      "reason": null,
+      "completed": 4,
+      "failed": 0,
+      "unstarted": 0,
+      "sha256": "396406cff25066adcfb29e7ae4f75ce561bf246f095547fae0854146519f9b0e"
+    }
+  },
+  "owned_group_exit_audits": {
+    "127x01": {
+      "utc": "2026-10-11T14:02:30Z",
+      "host": "127x01",
+      "checked_groups": [
+        1403596,
+        1403750,
+        1403841,
+        1403843,
+        1403845,
+        1403847
+      ],
+      "active_owned": [],
+      "all_owned_groups_absent": true
+    },
+    "127x08": {
+      "utc": "2026-10-11T14:02:31Z",
+      "host": "127x08",
+      "checked_groups": [
+        267614,
+        267809,
+        267811,
+        267813,
+        267815
+      ],
+      "active_owned": [],
+      "all_owned_groups_absent": true
+    }
+  },
+  "coordinator_authorization_position": 7621,
+  "reporting_dispatch_launched": false,
+  "checkpoint_utc": "2026-10-11T14:02:59Z"
+}
