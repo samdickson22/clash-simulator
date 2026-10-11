@@ -309,7 +309,8 @@ def run_game(case):
              opponent_checkpoint_sha256=cfg['policy']['checkpoint_sha256'], native_sha256=cfg['source_reference']['native_sha256'],
              rotation=placement['rotation'], block_id=placement['block_id'], replacement_k=placement['replacement_k'],
              slot=SLOT_CORES[0]//5, slot_cores=list(SLOT_CORES), attempt_dir=str(OPTIONS['out']),
-             final_tick=b.tick, crowns=[b.players[seat].get_crown_count(), b.players[1-seat].get_crown_count()], draw=terminal and b.winner is None,
+             final_tick=b.tick, crowns=[b.get_crown_count(seat), b.get_crown_count(1-seat)],  # earned crowns, seat first (BattleState API)
+             draw=terminal and b.winner is None,
              scale_sleep_seconds=sleep_total[0], scale_sleeps=sleep_total[1],
              checkpoint_sha256=cfg['student']['checkpoint_sha256'] if sdefault_arm else cfg['policy']['checkpoint_sha256'], ticks_per_second=20, honest_lateness=True, belief_preparation='exact resumable4096-row cancellation', cyclic_gc='automatic collection deferred during decisions; maintenance metered',
              arm=arm, abilities='disabled both sides', opponent=spec['opponent'], deadline_seconds=deadline_seconds, reserve_floor=spec.get('reserve_floor',False),

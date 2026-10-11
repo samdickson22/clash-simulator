@@ -12,6 +12,7 @@ import json
 import math
 import os
 import re
+import subprocess
 import sys
 import time
 from fractions import Fraction
@@ -29,6 +30,23 @@ NATIVE_PROVENANCE_SHA = "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90e
 SD1_CHECKPOINT_SHA = "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85"
 SD1_CALIBRATION_SHA = "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414"
 SD1_THRESHOLD = 0.5005528330802917
+SD1_SCHEMA = "clasher.k4s.sd1-manifest.v1"
+SD1_ARTIFACT_ID = "clasher-sd1-k4s-default-20261011"
+SD1_CHECKPOINT_JOB_PATH = "inputs/R3a.pt"
+SD1_CALIBRATION_JOB_PATH = "inputs/R3a-calibration.json"
+# Repo-relative SD1 inference path (k4s-confirm/sd1_manifest.py SOURCES; cross-checked by a test).
+SD1_SOURCES = (
+    "reports/explore/k4s-confirm/cached_policy.py",
+    "reports/explore/k4s-confirm/sd1_policy.py",
+    "reports/explore/k4s-confirm/proposals.py",
+    "reports/explore/e1/policy.py",
+    "imitation/evaluation/d1.py",
+    "imitation/evaluation/standalone.py",
+    "imitation/model/inference.py",
+    "student-source/exit_r3/network.py",
+)
+SD1_INFERENCE_MODE = dict(device="cpu", dtype="float32", torch_threads=1, cuda_visible_devices="",
+                          grad="torch.inference_mode", temperatures=[1.0, 1.0, 1.0], forwards_per_poll=1)
 TIERS_SCORER_REL = "reports/explore/s1/anchor.py"
 TIERS_SCORER_BASE_REL = "reports/explore/e1/planner.py"
 T1_INVENTORY_COMMIT = "81f2483e"
@@ -38,6 +56,12 @@ T1_K4_CORPUS_SHA = "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaad
 FULL_CELL = "1.0"
 K4S_CELLS = ("0.9", "0.8", "0.7", "0.6")
 BUDGET_MS = {"1.0": 200, "0.9": 180, "0.8": 160, "0.7": 140, "0.6": 120}
+# Canonical deadline-cell naming, shared by the END producer (end_pool.py), the procedure (§3)
+# and the Mac reader/gate inputs: rates are the bare key, integer counts are key + "_count".
+DEADLINE_RATE_KEYS = ("cutoff", "no_complete_play", "fallback")
+FLEET_REFERENCE_SCHEMA = "clasher.k4s.mac-fleet-reference.v1"
+END_RECHECK_SCHEMA = "clasher.k4s.end-recheck.v1"
+END_POOL_REL = "reports/explore/k4s-confirm/end_pool.py"
 POLL_P99_LIMIT = Fraction(20, 1000)          # gate 3, seconds, inclusive
 DEADLINE_MARGIN = Fraction(2, 100)           # gate 6, absolute, inclusive
 FPS_MIN, PROCESSED_MIN = Fraction(18), Fraction(95, 100)   # gate 4
@@ -113,6 +137,7 @@ def load_k4s_manifest(path, expected_sha256, runtime_root, *, require_frozen):
     if manifest.get("schema") != "clasher.k4s.mac-manifest.v1":
         raise PreconditionRefusal("Unsupported K4S manifest schema")
     verify_pinned(runtime_root, manifest["k4s_files"], "K4S Mac files")
+    verify_pinned(runtime_root, manifest["end_files"], "K4S END producer/pooler files")
     verify_pinned(runtime_root, manifest["reused_readonly"], "reused read-only TIERS files")
     tiers_script = manifest["measure_tiers_unmodified"]
     if manifest["reused_readonly"].get(tiers_script["path"]) != tiers_script["sha256"]:
@@ -171,6 +196,31 @@ def cell_fraction(cell):
     if cell not in BUDGET_MS:
         raise GateInputError("Unknown cell: " + repr(cell))
     return Fraction(cell)
+
+
+def charge_scale_text(cell):
+    """Exact 1/c as a rational string: "1", "10/9", "5/4", "10/7", "5/3"."""
+    return str(Fraction(1) / cell_fraction(cell))
+
+
+def deadline_cell_record(cell, n, counts):
+    """One fleet END deadline cell in the canonical naming (producer side).
+
+    ``counts`` maps each DEADLINE_RATE_KEYS name to an integer count over ``n`` rows. The
+    rate is count / n (correctly rounded, equal to float(Fraction(count, n))).
+    """
+    if type(n) is not int or n <= 0:
+        raise GateInputError("Deadline cell needs a positive integer n")
+    if set(counts) != set(DEADLINE_RATE_KEYS):
+        raise GateInputError("Deadline cell counts must be exactly " + ",".join(DEADLINE_RATE_KEYS))
+    record = dict(budget_ms=BUDGET_MS[cell], charge_scale=charge_scale_text(cell), n=n)
+    for key in DEADLINE_RATE_KEYS:
+        count = counts[key]
+        if type(count) is not int or not 0 <= count <= n:
+            raise GateInputError("Deadline count must be an integer in [0, n]: " + key)
+        record[key + "_count"] = count
+        record[key] = float(Fraction(count, n))
+    return record
 
 
 # ---------------------------------------------------------------- statistics (r3 §1.4)
@@ -457,12 +507,50 @@ def _read_json(path):
     return json.loads(text.splitlines()[0]) if text.count("\n") <= 1 else json.loads(text)
 
 
-def read_tiers_session(directory, manifest_sha256, *, require_mac, classify=None):
+def git_bytes(repository, commit, name):
+    result = subprocess.run(["git", "-C", str(repository), "show", commit + ":" + name], capture_output=True)
+    if result.returncode != 0:
+        raise PreconditionRefusal("Not in the committed tree: " + name)
+    return result.stdout
+
+
+def verify_committed_receipts(directory, files, *, repository, commit, repository_path):
+    """r3 §1.4 / CONFORMANCE-r2 N2: reused TIERS receipts are read from a commit.
+
+    ``commit`` must be a full SHA that is an ancestor of the repository's HEAD; the committed
+    tree at ``repository_path`` must hold exactly the sealed inventory (every manifest file
+    plus receipt-manifest.json and its sidecar), and every committed blob must equal the
+    bytes being read.
+    """
+    if not isinstance(commit, str) or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise PreconditionRefusal("Committed TIERS receipts need a full 40-hex commit")
+    rel = Path(repository_path or "")
+    if rel.is_absolute() or ".." in rel.parts or not rel.parts:
+        raise PreconditionRefusal("TIERS receipt repository path must be repo-relative without traversal")
+    repository = Path(repository)
+    ancestry = subprocess.run(["git", "-C", str(repository), "merge-base", "--is-ancestor", commit, "HEAD"],
+                              capture_output=True)
+    if ancestry.returncode != 0:
+        raise PreconditionRefusal("TIERS receipt commit is not an ancestor of HEAD")
+    listing = subprocess.run(["git", "-C", str(repository), "ls-tree", "-r", "--name-only", commit, "--",
+                              rel.as_posix() + "/"], capture_output=True, text=True)
+    names = sorted(set(files) | {"receipt-manifest.json", "receipt-manifest.sha256"})
+    committed = sorted(line[len(rel.as_posix()) + 1:] for line in listing.stdout.splitlines())
+    if listing.returncode != 0 or committed != names:
+        raise PreconditionRefusal("Committed TIERS receipt inventory differs from the sealed inventory")
+    for name in names:
+        if git_bytes(repository, commit, rel.as_posix() + "/" + name) != (Path(directory) / name).read_bytes():
+            raise PreconditionRefusal("TIERS receipt differs from its committed blob: " + name)
+    return dict(commit=commit, repository_path=rel.as_posix(), files=len(names))
+
+
+def read_tiers_session(directory, manifest_sha256, *, require_mac, classify=None, committed=None):
     """Admit one TIERS session receipt directory, read only, by path + receipt-manifest SHA.
 
     Admissible: a sealed complete session (TIERS §7 D0-D9 done), or a sealed session that
     TIERS terminated on a §7.2 exactness gate failure (a valid gate outcome). Anything
-    else, or any TIERS technical-repeat candidate, is refused.
+    else, or any TIERS technical-repeat candidate, is refused. ``committed`` =
+    dict(repository, commit, repository_path) proves the receipts are committed bytes.
     """
     directory = Path(directory)
     manifest_path = directory / "receipt-manifest.json"
@@ -473,6 +561,9 @@ def read_tiers_session(directory, manifest_sha256, *, require_mac, classify=None
         raise PreconditionRefusal("TIERS receipt-manifest.sha256 sidecar mismatch")
     manifest = _read_json(manifest_path)
     verify_pinned(directory, manifest["files"], "TIERS session receipts")
+    if committed is None:
+        raise PreconditionRefusal("TIERS receipts must be read from a commit (commit + repo-relative path)")
+    commitment = verify_committed_receipts(directory, manifest["files"], **committed)
     scope = manifest.get("scope", "")
     if require_mac and not scope.startswith("MAC-REPLAY"):
         raise PreconditionRefusal("TIERS receipt is not an authorized Mac session: " + scope)
@@ -505,7 +596,41 @@ def read_tiers_session(directory, manifest_sha256, *, require_mac, classify=None
                 complete=complete, identity=load("tiers-identity.json"), summary=load("tiers-summary.json"),
                 exactness=load("exactness-tiers.json"), belief=load("belief-exactness.json"),
                 student_agreement=load("student-agreement.json"), build=load("build-tiers.json"),
-                coordinator_lock=load("coordinator-lock.json"), classification=classification)
+                coordinator_lock=load("coordinator-lock.json"), classification=classification,
+                committed=commitment)
+
+
+def read_sealed(directory, manifest_sha256, *, scopes, label, required=(), statuses=None):
+    """A sealed K4S receipt directory by path + receipt-manifest SHA: seal, sidecar, scope,
+    status and every listed file re-hashed. Returns the manifest; read files only through
+    ``read_sealed_json`` so unlisted bytes are never consumed."""
+    directory = Path(directory)
+    manifest_path = directory / "receipt-manifest.json"
+    if not is_sha256(manifest_sha256) or not manifest_path.is_file() or sha(manifest_path) != manifest_sha256:
+        raise PreconditionRefusal(label + " receipt-manifest SHA mismatch")
+    sidecar = directory / "receipt-manifest.sha256"
+    if not sidecar.is_file() or sidecar.read_text() != manifest_sha256 + "  receipt-manifest.json\n":
+        raise PreconditionRefusal(label + " receipt-manifest.sha256 sidecar mismatch")
+    manifest = _read_json(manifest_path)
+    if manifest.get("scope") not in scopes:
+        raise PreconditionRefusal(label + " has an unexpected scope: " + str(manifest.get("scope")))
+    if statuses is not None and manifest.get("status") not in statuses:
+        raise PreconditionRefusal(label + " seal status is " + str(manifest.get("status")))
+    missing = [name for name in required if name not in manifest.get("files", {})]
+    if missing:
+        raise PreconditionRefusal(label + " seal does not include: " + ",".join(missing))
+    verify_pinned(directory, manifest["files"], label)
+    return manifest
+
+
+def read_sealed_json(directory, manifest, name):
+    """One sealed JSON receipt, only if listed in the (already verified) manifest."""
+    if name not in manifest["files"]:
+        return None
+    path = Path(directory) / name
+    if sha(path) != manifest["files"][name]:
+        raise PreconditionRefusal("Sealed receipt changed after verification: " + name)
+    return _read_json(path)
 
 
 def tiers_gate0(session, golden):
@@ -565,7 +690,9 @@ def tiers_inputs(sessions, golden):
     return dict(gate0=dict(passes=all(g["passes"] for g in gates), parts=parts),
                 exactness_failure_kind=kind, k4_cell_1_0=full,
                 sessions=[dict(directory=s["directory"], receipt_manifest_sha256=s["receipt_manifest_sha256"],
-                               state=s["state"], scope=s["scope"]) for s in sessions])
+                               state=s["state"], scope=s["scope"],
+                               committed_path=(s.get("committed") or {}).get("repository_path"))
+                          for s in sessions])
 
 
 # ---------------------------------------------------------------- binding (RECHECK-r3 R5)
@@ -631,19 +758,33 @@ def bind_scorer_and_native(*, tiers_runtime_files, runtime_root, k4s_scorer_rel,
 # ---------------------------------------------------------------- other pins
 
 def check_sd1_manifest(path, expected_sha256, runtime_root, bundle_student_sha256, bundle_calibration_sha256):
+    """SD1 identity from the real clasher.k4s.sd1-manifest.v1 schema (k4s-confirm/sd1_manifest.py).
+
+    Binds the nested checkpoint/calibration job paths and SHA-256s, the threshold, the
+    inference mode and the complete inference_sources map (every listed source re-hashed
+    under runtime_root; the key set must be exactly the frozen SD1 inference path).
+    """
     path = Path(path)
     if not is_sha256(expected_sha256) or not path.is_file() or sha(path) != expected_sha256:
         raise PreconditionRefusal("SD1 manifest SHA mismatch")
     sd1 = json.loads(path.read_text())
-    if sd1.get("checkpoint_sha256") != SD1_CHECKPOINT_SHA or sd1.get("calibration_sha256") != SD1_CALIBRATION_SHA:
+    if not isinstance(sd1, dict) or sd1.get("schema") != SD1_SCHEMA or sd1.get("artifact_id") != SD1_ARTIFACT_ID:
+        raise PreconditionRefusal("SD1 manifest schema or artifact identity differs")
+    if sd1.get("checkpoint") != dict(job_path=SD1_CHECKPOINT_JOB_PATH, sha256=SD1_CHECKPOINT_SHA) \
+            or sd1.get("calibration") != dict(job_path=SD1_CALIBRATION_JOB_PATH, sha256=SD1_CALIBRATION_SHA):
         raise PreconditionRefusal("SD1 manifest does not bind the R3a bytes")
-    if sd1.get("threshold") != SD1_THRESHOLD:
+    if type(sd1.get("threshold")) is not float or sd1["threshold"] != SD1_THRESHOLD:
         raise PreconditionRefusal("SD1 threshold differs")
+    if sd1.get("inference_mode") != SD1_INFERENCE_MODE:
+        raise PreconditionRefusal("SD1 inference mode differs")
+    if not isinstance(sd1.get("torch_version"), str) or not sd1["torch_version"]:
+        raise PreconditionRefusal("SD1 manifest lacks its recorded Torch version")
+    sources = sd1.get("inference_sources")
+    if not isinstance(sources, dict) or set(sources) != set(SD1_SOURCES):
+        raise PreconditionRefusal("SD1 inference_sources is not exactly the frozen SD1 inference path")
     if bundle_student_sha256 != SD1_CHECKPOINT_SHA or bundle_calibration_sha256 != SD1_CALIBRATION_SHA:
         raise PreconditionRefusal("TIERS bundle student bytes are not SD1's bytes")
-    sources = sd1.get("source_files") or sd1.get("inference_source_sha256") or {}
-    if sources:
-        verify_pinned(runtime_root, sources, "SD1 inference sources")
+    verify_pinned(runtime_root, sources, "SD1 inference sources")
     return sd1
 
 
@@ -664,43 +805,177 @@ def check_corpus(corpus_sha256_actual, corpus_sha256_arg, inventory, publication
     return pinned
 
 
-def check_fleet_reference(ref, corpus_sha256, corpus_ids, *, dry_run):
-    """Fleet END reference cells (a)-(c) for the T1 K4 corpus (K4S-SPEC §8)."""
-    if ref.get("schema") != "clasher.k4s.mac-fleet-reference.v1":
+HOST_RATIO_STATISTIC = ("geometric mean over the 300 corpus states of (pooled per-state median no-deadline K4S "
+                        "work-unit wall over every host x repeat) / (host per-state median over its 3 repeats); "
+                        "frozen TIERS fleet_pool direction")
+HOST_RATIO_WINDOW = (Fraction(95, 100), Fraction(105, 100))
+REPORTING_EVIDENCE_KEYS = ("committed_completion", "all_counted_hosts", "all_original_attempts_classified",
+                           "slot0_and_every_background_slot", "reporting_priority", "reporting_guard",
+                           "full_occupancy_reporting_mhz")
+
+
+def in_host_ratio_window(value):
+    """Inclusive [0.95, 1.05] as written (r3 §4.5), against the nearest doubles.
+
+    Deliberately NOT TIERS's frozen ``abs(r - 1) <= .05`` (fleet_pool.py), which rejects the
+    exact doubles 0.95 and 1.05 because both differences round above .05. K4S r3 §4.5 says
+    "inclusive", so both endpoint doubles pass here (tests pin both forms at both endpoints).
+    """
+    _finite(value, "host ratio")
+    return float(HOST_RATIO_WINDOW[0]) <= float(value) <= float(HOST_RATIO_WINDOW[1])
+
+
+# END common identity pins (equal on every counted host; the frozen ones equal the frozen K4S
+# manifest's values). Host-specific bundle receipts (each host's own tiers-pins.json) are kept
+# separately as ``host_pins`` and never compared across hosts.
+END_MEASUREMENT_FILES = ("reports/explore/k4s-confirm/end_reference.py", "reports/explore/k4s-confirm/end_pool.py",
+                         "reports/explore/k4s-confirm/end_background.py", "reports/explore/k4s-confirm/end_evidence.py",
+                         MAC_REL + "/k4s_backend.py", MAC_REL + "/k4s_logic.py")
+END_FROZEN_PIN_KEYS = ("kernel_sha256", "scorer_sha256", "sd1_manifest_sha256", "corpus_sha256", "native_sha256",
+                       "k4s_manifest_sha256", "measurement_files")
+END_SHARED_PIN_KEYS = ("bundle_runtime_files_sha256", "bundle_measurement_files_sha256", "bundle_model_files")
+END_HOST_PIN_KEYS = ("bundle_manifest_sha256", "bundle_profile_host")
+
+
+def end_frozen_pins(k4s_manifest, k4s_manifest_sha256, kernel_rel, scorer_rel):
+    """The frozen common END pins implied by one frozen K4S manifest (producer, pooler and Mac)."""
+    kernel = (k4s_manifest.get("k4s_kernel") or {}).get("files") or {}
+    sd1 = (k4s_manifest.get("sd1_manifest") or {}).get("sha256")
+    sources = {}
+    for rel in END_MEASUREMENT_FILES:
+        sources[rel] = (k4s_manifest.get("end_files") or {}).get(rel) or (k4s_manifest.get("k4s_files") or {}).get(rel)
+    pins = dict(kernel_sha256=kernel.get(kernel_rel), scorer_sha256=kernel.get(scorer_rel), sd1_manifest_sha256=sd1,
+                corpus_sha256=T1_K4_CORPUS_SHA, native_sha256=NATIVE_PROVENANCE_SHA,
+                k4s_manifest_sha256=k4s_manifest_sha256, measurement_files=sources)
+    if not all(is_sha256(v) for k, v in pins.items() if k != "measurement_files") \
+            or not all(is_sha256(v) for v in sources.values()):
+        raise PreconditionRefusal("Frozen K4S manifest lacks a kernel/scorer/SD1/END-source pin")
+    return pins
+
+
+def check_end_pins(pins, expected_frozen, label):
+    """Exactly the common key set; every frozen pin equal to its frozen value; shared pins well-formed."""
+    if not isinstance(pins, dict) or set(pins) != set(END_FROZEN_PIN_KEYS) | set(END_SHARED_PIN_KEYS):
+        raise PreconditionRefusal(label + " common pins have an unexpected key set")
+    if not isinstance(expected_frozen, dict) or set(expected_frozen) != set(END_FROZEN_PIN_KEYS):
+        raise PreconditionRefusal(label + " pins cannot be compared with the complete frozen identity")
+    for key in END_FROZEN_PIN_KEYS:
+        if canonical(pins[key]) != canonical(expected_frozen[key]):
+            raise PreconditionRefusal(label + " was measured on a different " + key)
+    models = pins["bundle_model_files"]
+    if not (is_sha256(pins["bundle_runtime_files_sha256"]) and is_sha256(pins["bundle_measurement_files_sha256"])
+            and isinstance(models, dict) and set(models) == {"v1.pt", "R3a.pt", "R3a-calibration.json", "states.pkl"}
+            and all(is_sha256(v) for v in models.values())):
+        raise PreconditionRefusal(label + " shared bundle pins are malformed")
+    if models["R3a.pt"] != SD1_CHECKPOINT_SHA or models["R3a-calibration.json"] != SD1_CALIBRATION_SHA:
+        raise PreconditionRefusal(label + " bundle R3a bytes are not SD1's")
+    return pins
+
+
+def _positive(value):
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value) and value > 0
+
+
+def check_fleet_reference(ref, corpus_sha256, corpus_ids, *, dry_run, reference_sha256=None, recheck=None,
+                          expected_pins=None, end_pool_sha256=None):
+    """Fleet END reference cells (a)-(c) for the T1 K4 corpus (K4S-SPEC §8; r3 §4.5).
+
+    Mac mode requires the pooled provenance written by end_pool.py (committed completion,
+    every counted host, classified attempts, slot/priority/guard evidence, full-occupancy
+    MHz with signed ratios) and validates the independent re-check receipt by its bound
+    inputs: the reference SHA, pool descriptor, END evidence and every host receipt seal,
+    and the checker bytes. ``expected_pins`` is the complete frozen common END identity the Mac uses
+    (``end_frozen_pins``: kernel/scorer/SD1/corpus/native, the frozen K4S manifest SHA and every END
+    measurement source); the fleet reference must have been measured and pooled on exactly those.
+    """
+    if ref.get("schema") != FLEET_REFERENCE_SCHEMA:
         raise PreconditionRefusal("Unsupported K4S fleet reference schema")
     if ref.get("corpus_sha256") != corpus_sha256:
         raise PreconditionRefusal("Fleet reference was built on a different corpus")
     if not dry_run:
-        if ref.get("repeats") != 3 or ref.get("reporting_load_profile") is not True or not ref.get("hosts"):
-            raise PreconditionRefusal("Fleet reference must be 3-repeat, reporting-load, named hosts")
-        if not is_sha256(ref.get("end_recheck_sha256")) or ref.get("pool_conforms") is not True:
-            raise PreconditionRefusal("Fleet reference needs a conforming pool and its independent re-check")
+        check_fleet_provenance(ref, reference_sha256, recheck, expected_pins, end_pool_sha256)
     states = ref.get("states", {})
     if set(states) != set(corpus_ids):
         raise PreconditionRefusal("Fleet reference states differ from the corpus")
     for identity, row in states.items():
         for key in ("k4s_wall_seconds", "sd1_poll_seconds"):
-            value = row.get(key)
-            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            if not _positive(row.get(key)):
                 raise PreconditionRefusal("Fleet reference " + key + " invalid: " + identity)
         result = row.get("result")
         if not isinstance(result, dict) or set(result) != {"action", "candidates", "scores"}:
             raise PreconditionRefusal("Fleet reference lacks the no-deadline K4S result: " + identity)
     deadline = ref.get("deadline", {})
+    if not isinstance(deadline, dict) or set(deadline) != set(BUDGET_MS):
+        raise PreconditionRefusal("Fleet deadline reference must have exactly the five registered cells")
     for cell in BUDGET_MS:
-        rates = deadline.get(cell)
+        rates = deadline[cell]
         if not isinstance(rates, dict):
             raise PreconditionRefusal("Fleet deadline reference lacks cell " + cell)
-        if rates.get("budget_ms") != BUDGET_MS[cell] or rates.get("charge_scale") != str(Fraction(1) / Fraction(cell)):
+        if rates.get("budget_ms") != BUDGET_MS[cell] or rates.get("charge_scale") != charge_scale_text(cell):
             raise PreconditionRefusal("Fleet deadline cell " + cell + " lacks its budget or 1/c charge")
-        for key in ("cutoff", "no_complete_play", "fallback"):
+        if not dry_run and rates.get("n") != 3 * len(corpus_ids) * len(ref["hosts"]):
+            raise PreconditionRefusal("Fleet deadline cell " + cell + " is not every host x state x repeat")
+        for key in DEADLINE_RATE_KEYS:
             try:
                 exact = rate_fraction(rates, key)
             except (GateInputError, KeyError):
                 raise PreconditionRefusal("Fleet deadline counts invalid: " + cell + "/" + key) from None
             if rates.get(key) != float(exact):
                 raise PreconditionRefusal("Fleet deadline rate disagrees with its counts: " + cell + "/" + key)
-    return dict(cells={c: deadline[c] for c in BUDGET_MS}, states=len(states))
+    return dict(cells={c: deadline[c] for c in BUDGET_MS}, states=len(states),
+                hosts=ref.get("hosts"), pins=ref.get("pins"))
+
+
+def check_fleet_provenance(ref, reference_sha256, recheck, expected_pins, end_pool_sha256):
+    """Mac-mode provenance of the pooled END reference and its independent re-check."""
+    hosts = ref.get("hosts")
+    if ref.get("repeats") != 3 or not isinstance(hosts, list) or not hosts or hosts != sorted(set(hosts)):
+        raise PreconditionRefusal("Fleet reference must be 3-repeat with named, sorted, unique hosts")
+    prov = ref.get("provenance")
+    if not isinstance(prov, dict):
+        raise PreconditionRefusal("Fleet reference lacks its pooled END provenance")
+    evidence = prov.get("reporting_load_profile_evidence")
+    if not isinstance(evidence, dict) or any(evidence.get(k) is not True for k in REPORTING_EVIDENCE_KEYS):
+        raise PreconditionRefusal("Fleet reference lacks machine-checked reporting-load evidence")
+    if ref.get("reporting_load_profile") is not True:
+        raise PreconditionRefusal("Fleet reference is not a reporting-load profile")
+    for key in ("pool_input_sha256", "end_evidence_sha256", "completion_sha256", "plan_sha256", "pooler_sha256"):
+        if not is_sha256(prov.get(key)):
+            raise PreconditionRefusal("Fleet reference provenance lacks " + key)
+    receipts = prov.get("host_receipts")
+    if prov.get("counted_hosts") != hosts or not isinstance(receipts, dict) or sorted(receipts) != hosts:
+        raise PreconditionRefusal("Fleet reference host set differs from the committed counted-host set")
+    ratios = ref.get("host_ratio_to_pool")
+    if not isinstance(ratios, dict) or sorted(ratios) != hosts or ref.get("ratio_statistic") != HOST_RATIO_STATISTIC:
+        raise PreconditionRefusal("Fleet reference lacks the frozen per-host ratio statistic")
+    for host in hosts:
+        entry = receipts[host]
+        if not is_sha256(entry.get("manifest_sha256")) or entry.get("mhz_comparison_passes") is not True:
+            raise PreconditionRefusal("Fleet host receipt lacks its seal or a passing MHz comparison: " + host)
+        host_pins = entry.get("host_pins")
+        if not isinstance(host_pins, dict) or set(host_pins) != set(END_HOST_PIN_KEYS) \
+                or not is_sha256(host_pins["bundle_manifest_sha256"]) or host_pins["bundle_profile_host"] != host:
+            raise PreconditionRefusal("Fleet host receipt lacks its own bundle/profile receipt: " + host)
+        if not _positive(entry.get("reference_to_reporting_mean")):
+            raise PreconditionRefusal("Fleet host lacks its signed reference/reporting MHz ratio: " + host)
+        if not in_host_ratio_window(ratios[host]) or entry.get("ratio_to_pool") != ratios[host]:
+            raise PreconditionRefusal("Fleet host ratio outside [0.95, 1.05] or unbound: " + host)
+    if ref.get("pool_conforms") is not True:
+        raise PreconditionRefusal("Fleet reference pool does not conform")
+    # Common identity pins incl. the frozen K4S manifest SHA and every END measurement source
+    # (r2 finding 15): the reference must have been produced and pooled by the frozen code.
+    check_end_pins(ref.get("pins"), expected_pins, "Fleet reference")
+    if not is_sha256(reference_sha256) or not isinstance(recheck, dict):
+        raise PreconditionRefusal("Fleet reference needs its independent re-check receipt")
+    bound = dict(schema=END_RECHECK_SCHEMA, passes=True, outcome_access=False, reference_sha256=reference_sha256,
+                 pool_input_sha256=prov["pool_input_sha256"], end_evidence_sha256=prov["end_evidence_sha256"],
+                 host_receipts={h: receipts[h]["manifest_sha256"] for h in hosts}, checker_sha256=end_pool_sha256)
+    for key, value in bound.items():
+        if recheck.get(key) != value:
+            raise PreconditionRefusal("Independent END re-check does not bind " + key)
+    if not is_sha256(end_pool_sha256) or not recheck.get("checked_by") or recheck.get("checked_by") == prov.get("pooled_by"):
+        raise PreconditionRefusal("END re-check must be run by someone other than the pooler, with pinned checker bytes")
+    return dict(passes=True)
 
 
 def check_output_isolated(output, forbidden):

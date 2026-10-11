@@ -36,10 +36,15 @@ AUTHORITY = "classification only; a repeat still needs separate session authoriz
 
 
 def classify_records(*, failure_error=None, refusal=None, capacity_rows=(), complete=None,
-                     tiers_classification=None):
+                     tiers_classification=None, cleanup_error=None, status="complete"):
+    """``status`` is the sealed receipt-manifest status; it must agree with the receipts."""
     reasons = []
     base = dict(final=False, authority=AUTHORITY, tiers_classification_untouched=True)
     if refusal is not None:
+        if status != "refused" or failure_error:
+            return dict(base, category="technical-failure", session=True, valid=False, technical_repeat_candidate=True,
+                        counts_toward_repeat_allowance=True,
+                        reasons=["sealed status disagrees with the refusal receipt (" + str(status) + ")"])
         return dict(base, category="precondition-refusal", session=False, valid=False,
                     technical_repeat_candidate=False, counts_toward_repeat_allowance=False,
                     reasons=[refusal.get("error", "refused")])
@@ -55,6 +60,8 @@ def classify_records(*, failure_error=None, refusal=None, capacity_rows=(), comp
             reasons.append("staging pin mismatch")
         elif "Traceback (most recent call last)" in error:
             reasons.append("harness/load exception")
+    if cleanup_error:
+        reasons.append("harness/load cleanup exception (cleanup-failure.json)")
     if any(p.get("foreign_over_one_core_seconds", 0) > 60 for r in capacity_rows for p in r.get("processes", ())):
         reasons.append("foreign process above one core for over 60 seconds")
     boot = {r["boottime"]["stdout"] for r in capacity_rows if "boottime" in r}
@@ -65,15 +72,27 @@ def classify_records(*, failure_error=None, refusal=None, capacity_rows=(), comp
                                                   (r.get("thermal") or {}).get("stdout", ""))) for r in pre):
         reasons.append("pre-load CPU speed limit below 100 percent")
     if gate_failure:
+        # Exactness evidence governs and never earns a repeat. The sealed status and any cleanup
+        # exception are reconciled explicitly (recorded), never allowed to turn it into a pass or
+        # a technical repeat. Admission forces gate 0 false for every such session (read_entry).
+        notes = ["exactness gate failure (gate 0)"]
+        if status != "failed":
+            notes.append("sealed status " + str(status) + " disagrees with the failure receipt; exactness governs")
+        if complete and complete.get("completed") is True:
+            notes.append("failure after the summary/completion receipt; any written summary is superseded (gate 0 false)")
+        notes += [r for r in reasons if "cleanup" in r]
         return dict(base, category="gate-failure", session=True, valid=True, technical_repeat_candidate=False,
-                    counts_toward_repeat_allowance=False, reasons=["exactness gate failure (gate 0)"],
-                    gate0_failed=True)
+                    counts_toward_repeat_allowance=False, reasons=notes, gate0_failed=True)
     if reasons:
         return dict(base, category="technical-failure", session=True, valid=False, technical_repeat_candidate=True,
                     counts_toward_repeat_allowance=True, reasons=reasons)
     if error or not (complete and complete.get("completed") is True):
         return dict(base, category="technical-failure", session=True, valid=False, technical_repeat_candidate=True,
                     counts_toward_repeat_allowance=True, reasons=["incomplete session without a gate failure"])
+    if status != "complete":
+        return dict(base, category="technical-failure", session=True, valid=False, technical_repeat_candidate=True,
+                    counts_toward_repeat_allowance=True,
+                    reasons=["sealed status " + str(status) + " disagrees with the completion receipt"])
     return dict(base, category="valid", session=True, valid=True, technical_repeat_candidate=False,
                 counts_toward_repeat_allowance=False, reasons=[])
 
@@ -92,6 +111,7 @@ def classify(directory, tiers_dir=None, tiers_sha256=None, tiers_classify=None):
     L.verify_pinned(directory, manifest["files"], "K4S receipts")
     files = manifest["files"]
     failure = _load(directory, "failure.json", files)
+    cleanup = _load(directory, "cleanup-failure.json", files)
     refusal = _load(directory, "refusal.json", files)
     complete = _load(directory, "k4s-complete.json", files)
     capacity = _load(directory, "capacity.jsonl", files)
@@ -110,15 +130,21 @@ def classify(directory, tiers_dir=None, tiers_sha256=None, tiers_classify=None):
             from classify_failure import classify as tiers_classify
         tiers_classification = tiers_classify(tiers_dir)
     result = classify_records(failure_error=(failure or {}).get("error"), refusal=refusal, capacity_rows=rows,
-                              complete=complete, tiers_classification=tiers_classification)
+                              complete=complete, tiers_classification=tiers_classification,
+                              cleanup_error=(cleanup or {}).get("error", "cleanup failure") if cleanup is not None else None,
+                              status=manifest["status"])
     return dict(result, source_manifest_sha256=L.sha(manifest_path), status=manifest["status"],
                 tiers_receipt_manifest_sha256=tiers_sha256)
 
 
-def gate_failure_summary(tiers_inputs):
-    """A valid session that stopped on an exactness gate failure: gate 0 failed, nothing else."""
+def gate_failure_summary(tiers_inputs, parts=None):
+    """A valid session that stopped on an exactness gate failure: gate 0 failed, nothing else.
+
+    Any summary the session wrote before the failure is superseded: its measurements are not
+    reduced, and only its gate 0 parts are carried (all forced together with the failure part)."""
+    parts = dict(parts or {}, k4s_exactness_gate_failure=False)
     return dict(tiers_inputs=tiers_inputs, provisional=True,
-                gate_inputs=dict(gate0=dict(passes=False, parts=dict(k4s_exactness_gate_failure=False)), r_k4s=None))
+                gate_inputs=dict(gate0=dict(passes=False, parts=parts), r_k4s=None))
 
 
 def reduce_sessions(entries, c_star):
@@ -126,11 +152,16 @@ def reduce_sessions(entries, c_star):
     valid = [(s, c) for s, c in entries if c["valid"] is True]
     if not valid:
         raise L.GateInputError("No valid K4S session to reduce")
+    for s, c in valid:
+        if (c.get("category") == "gate-failure" or c.get("gate0_failed") is True) \
+                and s["gate_inputs"]["gate0"]["passes"] is not False:
+            raise L.GateInputError("A gate-failure classification contradicts a passing gate 0 summary")
     tiers = valid[0][0]["tiers_inputs"]
     if any(L.canonical(s["tiers_inputs"]) != L.canonical(tiers) for s, _ in valid):
         raise L.GateInputError("Valid sessions read different TIERS inputs; reduce per TIERS final verdict first")
-    measured = [s["gate_inputs"] for s, _ in valid if s["gate_inputs"].get("r_k4s") is not None]
-    gate0_failed = any(s["gate_inputs"]["gate0"]["passes"] is not True for s, _ in valid)
+    measured = [s["gate_inputs"] for s, c in valid if s["gate_inputs"].get("r_k4s") is not None]
+    gate0_failed = any(s["gate_inputs"]["gate0"]["passes"] is not True or c.get("gate0_failed") is True
+                       for s, c in valid)
     if gate0_failed or not measured:
         parts = {}
         for s, _ in valid:
@@ -147,6 +178,61 @@ def reduce_sessions(entries, c_star):
                 cell_mapping=mapping, tiers_inputs=tiers, kill=L.kill_flags(inputs, tiers), **final,
                 provisional=any(s.get("provisional", True) for s, _ in valid), final=False,
                 rule="minimum r and worst value of every gate input across valid K4S sessions (r3 §1.4)")
+
+
+SESSION_SCOPES = ("K4S-MAC-REPLAY", "K4S-LINUX-DRY-RUN")
+CLASSIFICATION_SCOPE = "K4S-MECHANICAL-FAILURE-CLASSIFICATION"
+
+
+def read_entry(session, digest, cdir, cdigest):
+    """One (summary, classification) pair, each read only from its own verified seal.
+
+    The classification seal must be complete and must include classification.json, whose
+    bytes are re-hashed against that seal before they are read; it must name this session's
+    seal. The session's summary/preconditions are consumed only if listed in the session's
+    own verified inventory (an unlisted file on disk is refused, never read).
+    """
+    session, cdir = Path(session), Path(cdir)
+    cmanifest = L.read_sealed(cdir, cdigest, scopes=(CLASSIFICATION_SCOPE,), statuses=("complete",),
+                              required=("classification.json",), label="classification")
+    classification = L.read_sealed_json(cdir, cmanifest, "classification.json")
+    if classification.get("source_manifest_sha256") != digest:
+        raise L.PreconditionRefusal("Classification belongs to a different session")
+    smanifest = L.read_sealed(session, digest, scopes=SESSION_SCOPES, label="K4S session")
+    if classification.get("status") != smanifest["status"]:
+        raise L.PreconditionRefusal("Classification status disagrees with the session seal")
+    for name in ("k4s-mac-summary.json", "k4s-preconditions.json"):
+        if (session / name).exists() and name not in smanifest["files"]:
+            raise L.PreconditionRefusal("Session file is not in its own sealed inventory: " + name)
+    summary = L.read_sealed_json(session, smanifest, "k4s-mac-summary.json")
+    files = smanifest["files"]
+    if classification["valid"] is not True:
+        return summary, classification
+    if classification.get("category") == "valid":
+        # Re-derived from the session's own seal: complete status, a completion receipt, and no
+        # failure, cleanup-failure or refusal evidence.
+        complete = L.read_sealed_json(session, smanifest, "k4s-complete.json")
+        if smanifest["status"] != "complete" or not (complete and complete.get("completed") is True) \
+                or any(name in files for name in ("failure.json", "cleanup-failure.json", "refusal.json")):
+            raise L.PreconditionRefusal("A 'valid' classification contradicts the session's sealed status/receipts")
+        if summary is None:
+            raise L.GateInputError("Valid session without a summary")
+        return summary, classification
+    if classification.get("category") != "gate-failure" or classification.get("gate0_failed") is not True:
+        raise L.PreconditionRefusal("Unknown valid classification category")
+    # A gate failure (incl. one raised AFTER a passing summary was written, e.g. the post-run bundle
+    # re-validation): re-read the sealed failure trace, then force gate 0 false. Any earlier summary is
+    # superseded; only its TIERS inputs and gate 0 parts are kept.
+    failure = L.read_sealed_json(session, smanifest, "failure.json")
+    if not failure or not any(w in failure.get("error", "") for w in L.TIERS_GATE_FAILURE_WORDS):
+        raise L.PreconditionRefusal("Gate-failure classification without a sealed exactness failure trace")
+    if summary is not None:
+        parts = (summary.get("gate_inputs") or {}).get("gate0", {}).get("parts", {})
+        return gate_failure_summary(summary["tiers_inputs"], parts), classification
+    pre = L.read_sealed_json(session, smanifest, "k4s-preconditions.json")
+    if pre is None:
+        raise L.PreconditionRefusal("Gate-failure session lacks its sealed preconditions")
+    return gate_failure_summary(pre["tiers"]), classification
 
 
 def main(argv=None):
@@ -167,7 +253,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "classify":
         forbidden = L.forbidden_roots(L.REPO_ROOT, [p for p in (args.tiers_receipts,) if p], None, [args.receipts])
-        store = L.K4SStore(args.output, "K4S-MECHANICAL-FAILURE-CLASSIFICATION", forbidden)
+        store = L.K4SStore(args.output, CLASSIFICATION_SCOPE, forbidden)
         try:
             store.write("classification.json", classify(args.receipts, args.tiers_receipts, args.tiers_receipt_sha256))
             store.seal("complete")
@@ -183,22 +269,7 @@ def main(argv=None):
     store = L.K4SStore(args.output, "K4S-SESSION-REDUCTION",
                        L.forbidden_roots(L.REPO_ROOT, (), None, [p for p, _ in pairs] + [p for p, _ in cpairs]))
     try:
-        entries = []
-        for (session, digest), (cdir, cdigest) in zip(pairs, cpairs):
-            if L.sha(session / "receipt-manifest.json") != digest or L.sha(cdir / "receipt-manifest.json") != cdigest:
-                raise L.PreconditionRefusal("Session or classification receipt SHA mismatch")
-            classification = json.loads((cdir / "classification.json").read_text().splitlines()[0])
-            if classification["source_manifest_sha256"] != digest:
-                raise L.PreconditionRefusal("Classification belongs to a different session")
-            L.verify_pinned(session, json.loads((session / "receipt-manifest.json").read_text().splitlines()[0])["files"], "K4S receipts")
-            summary_path = session / "k4s-mac-summary.json"
-            summary = json.loads(summary_path.read_text().splitlines()[0]) if summary_path.exists() else None
-            if classification["valid"] and summary is None:
-                if classification["category"] != "gate-failure":
-                    raise L.GateInputError("Valid session without a summary")
-                pre = json.loads((session / "k4s-preconditions.json").read_text().splitlines()[0])
-                summary = gate_failure_summary(pre["tiers"])
-            entries.append((summary, classification))
+        entries = [read_entry(session, digest, cdir, cdigest) for (session, digest), (cdir, cdigest) in zip(pairs, cpairs)]
         store.write("k4s-mac-final.json", reduce_sessions(entries, args.c_star))
         store.seal("complete")
     except BaseException:

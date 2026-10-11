@@ -86,11 +86,12 @@ def decide(stats, c_star, margins):
             pop = 'primary' if c == 0.8 else 'primary_subsample'
             p['same'] = upper(contrast(stats, pop, arm('K4S', c), arm('K4', c))) < 0
         return p
-    sequence = [('B', 0.8), ('B', 0.7), ('B', 0.6), ('A', 0.9), ('A', 0.8), ('A', 0.7), ('A', 0.6)]
+    # Fixed labels H1..H7; with c* = 0.8 H4 is dropped and the order is H1, H2, H3, H5, H6, H7 (r3 §1.3).
+    sequence = [(1, 'B', 0.8), (2, 'B', 0.7), (3, 'B', 0.6), (4, 'A', 0.9), (5, 'A', 0.8), (6, 'A', 0.7), (7, 'A', 0.6)]
     assert c_star in (0.9, 0.8)
-    if c_star == 0.8: sequence.remove(('A', 0.9))
+    if c_star == 0.8: sequence = [s for s in sequence if s[0] != 4]
     steps = []; stopped = False
-    for k, (level, c) in enumerate(sequence, 1):
+    for k, level, c in sequence:
         if stopped:
             steps.append(dict(step=f'H{k}', hypothesis=f'{level}({c})', tested=False, passed=None)); continue
         p = parts(level, c); ok = all(p.values())
@@ -106,23 +107,28 @@ def decide(stats, c_star, margins):
 
 
 def validate_ledger(events):
-    """Replay the blind replacement ledger: each lost block is canonical and lost once; its replacement is the
-    canonical k-th bank seed of the lost block's cell (k derived here), names the logical original, and caps hold."""
-    seen = collections.Counter(); per_pop = collections.Counter(); lost_ids = set()
+    """Replay the blind replacement ledger in event order: originals start active; a lost block must be the active
+    block of its logical original (a replacement only after an earlier event allocated it); its replacement is the
+    canonical k-th bank seed of the lost block's cell (k derived here), names the logical original, and caps hold.
+    Returns ({replacement id: canonical descriptor}, {logical original: final surviving block id})."""
+    seen = collections.Counter(); per_pop = collections.Counter(); lost_ids = set(); active = {}
     for e in events:
         lost = e['lost']; canonical(lost); pop, c = lost['population'], lost['cell']
         assert lost['id'] not in lost_ids, 'block lost twice'; lost_ids.add(lost['id'])
+        logical = lost.get('replaces') or lost['id']
+        assert active.get(logical, logical) == lost['id'], 'lost block is not the active block of its logical original'
+        active[logical] = e['replacement']['id'] if e['replacement'] is not None else None
         r = e['replacement']; assert r is not None, 'primary/guard losses are always replaced'
         k = seen[(pop, c)]; seen[(pop, c)] += 1; per_pop[pop] += 1
         assert per_pop[pop] <= REPLACEMENT[pop]['cap'] and k <= REPLACEMENT[pop]['max_k'], 'replacement cap; stop and amend'
         exp = canonical(r)
         assert r['replaces'] == (lost.get('replaces') or lost['id']) and r['replacement_k'] == k and r['cell'] == c, 'ledger replacement'
-    return {e['replacement']['id']: canonical(e['replacement']) for e in events}
+    return {e['replacement']['id']: canonical(e['replacement']) for e in events}, active
 
 
 def load_blocks(root, ledger):
     lost = {e['lost']['id'] for e in ledger}
-    replacements = validate_ledger(ledger)
+    replacements, survivors = validate_ledger(ledger)
     decks_file = read(Path(__file__).parent/'guard-decks.json')
     pops = {'primary': {}, 'guard': {}}; files = {}; seeds = collections.Counter()
     for f in sorted(Path(root).glob('*/complete.json')):
@@ -133,6 +139,7 @@ def load_blocks(root, ledger):
         if d.get('replaces'):
             assert ident in replacements and replacements[ident] == exp, 'replacement not in the blind ledger'
         logical = d.get('replaces') or ident
+        assert survivors.get(logical, logical) == ident, 'counted block is not the final survivor of its logical original'
         L = int(logical.rsplit('-', 1)[1])
         assert 0 <= L < COUNTS[pop] and d['cell'] == L % CELLS[pop] and logical not in pops[pop], 'logical block'
         assert d['order'] == expected_order(d) and set(d['order']) == (set(ARMS) if L < SUB_LIMIT[pop] else set(CORE))
@@ -151,6 +158,7 @@ def load_blocks(root, ledger):
             assert name == f"{ident}-d27-{a}.json" and a in d['order'] and a not in row['loss'], 'game file identity'
             assert m['terminal'] and m['seed'] == d['seed'] and m['cell'] == d['cell'] and m['seat'] == d['seat']
             assert (sorted(m['own_deck']), sorted(m['opponent_deck'])) == want, 'paired arms must use the frozen decks'
+            assert 'winner' in m and m.get('c_star') == plan()['c_star'], 'winner key required (explicit null = draw); c* must be the frozen value'
             lossv = int(m['winner'] is not None and m['winner'] != m['seat']); assert int(g['loss']) == lossv
             row['loss'][a] = lossv; row['draw'][a] = m['winner'] is None; row['win'][a] = m['winner'] == m['seat']
             row['timing'][a] = g['search_ab']['deadline_stats']; row['gc'][a] = g['search_ab'].get('gc_maintenance', [])

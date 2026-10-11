@@ -78,6 +78,22 @@ Scope: prepare every freeze fill. **No freeze and no reporting game.**
     counted hosts 01+08). 03 holds T1's corpus durability copy (storage only). Recorded in FREEZE-RECORD-SKELETON §E.
   - Sol core r2 and the Mac/END fix agent are running.
 
+- 14:13–14:29Z: dev3 full qualification (new driver) **PASS on both 03 and 04**: tests; three 125-state batteries;
+  11-slot games with identity checks; STOP drained in about 0.6 s with the owned-stop interruption; source binding
+  unchanged through games; receipt PASS.
+- 14:30–14:44Z: Sol core r3 APPROVE_WITH_FIXES (evidence validation, findings 14–18): fixed with the canonical
+  `qual_tasks.py`, strict receipt binding, assembly re-verification, smoke-health value checks, and the
+  freeze-before-qualification wording. Sol verifier r1 REJECT (1 blocker, 5 major): Haiku round 3 launched. Sol
+  Mac/END r2 REJECT (2 blockers, 6 major): Opus fix round 3 launched.
+- 2026-10-11T14:33:52Z: reducer aligned with the verifier findings that apply to it: fixed H-labels (c\*=0.8 gives H1–H3, H5–H7),
+  chronological ledger replay with active-chain/final-survivor check, required `winner` key, games' c\* = frozen c\*.
+  Spec updated (hub-ack file, winner, c\*, ledger replay, labels). test_reduce + test_schedule 18/18 on 03.
+
+- 2026-10-11T15:11:11Z: verifier r3 done (132 tests); cross-check with current reducer + verifier: 169/169 in 3 scenarios. Sol core r4
+  APPROVE_WITH_FIXES (19: input/artifact re-binding; 20: shared decision validator), both fixed. Dev4 full qualification PASS
+  on 03 and 04. Sol verifier r2 REJECT (c\* must bind to plan.json): Haiku round 4 running. Mac/END fix round 3 done (175
+  tests): Sol Mac/END r3 review running. Sol core r5 review running.
+
 ## Status
 | Item | Status |
 |---|---|

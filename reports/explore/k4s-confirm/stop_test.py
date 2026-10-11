@@ -27,7 +27,7 @@ def main():
     child = subprocess.Popen(cmd, stdout=log.open('w'), stderr=subprocess.STDOUT, start_new_session=True, cwd=a.job/'repo', env=dict(os.environ, K4S_JOB=str(a.job)))
     time.sleep(a.warmup)
     assert child.poll() is None, 'game ended before STOP; extend warm-up'
-    touched_utc = utc(); t0 = time.monotonic(); a.stop.write_text(touched_utc+' stop test\n')
+    touched_utc = utc(); t0 = time.monotonic(); token = touched_utc+' stop test pid %d\n' % os.getpid(); a.stop.write_text(token)
     while child.poll() is None and time.monotonic()-t0 < 300:
         time.sleep(.05)
     drain = time.monotonic()-t0; drained = child.poll() is not None
@@ -35,12 +35,17 @@ def main():
         time.sleep(.05)
     left = alive(child.pid)
     if left: os.killpg(child.pid, signal.SIGKILL)
-    a.stop.unlink()
+    # Remove only the STOP this test wrote; an externally replaced STOP is preserved.
+    ours = a.stop.exists() and a.stop.read_text() == token
+    if ours: a.stop.unlink()
     tail = log.read_text().strip().splitlines()[-1:] if log.exists() else []
-    r = dict(utc=utc(), stop_touched_utc=touched_utc, drained=drained, drain_seconds=drain, returncode=child.returncode,
-             owned_processes_after=int(left), interrupted_by_owned_stop=any('owned K4S stop' in x for x in tail), log_tail=tail, stop_removed=not a.stop.exists())
+    text = log.read_text() if log.exists() else ''
+    interrupted = 'InterruptedError: owned K4S stop' in text and child.returncode not in (0, None)
+    r = dict(utc=utc(), stop_touched_utc=touched_utc, game_running_at_touch=True, drained=drained, drain_seconds=drain, returncode=child.returncode,
+             owned_processes_after=int(left), interrupted_by_owned_stop=interrupted, log_tail=tail, stop_removed_by_test=ours,
+             external_stop_preserved=a.stop.exists() and not ours)
     (a.job/'out'/'stoptest.json').write_text(json.dumps(r, indent=2)+'\n')
-    print(json.dumps(r)); sys.exit(0 if drained and not left and drain <= 300 else 1)
+    print(json.dumps(r)); sys.exit(0 if drained and not left and drain <= 300 and interrupted else 1)
 
 
 if __name__ == '__main__':

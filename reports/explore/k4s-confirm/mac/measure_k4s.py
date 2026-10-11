@@ -180,7 +180,8 @@ def gate_inputs(*, gate0, speed, poll, perception, gc_result, mac_deadline, flee
                 fleet_deadline={c: {k: v[k] for k in GATE6_KEYS} for c, v in fleet_deadline.items()})
 
 
-GATE6_KEYS = ("n", "cutoff", "cutoff_count", "no_complete_play", "no_complete_play_count")
+# Gate 6 reads the canonical deadline naming (k4s_logic.DEADLINE_RATE_KEYS): rate = key, count = key_count.
+GATE6_KEYS = ("n",) + tuple(x for key in L.DEADLINE_RATE_KEYS[:2] for x in (key, key + "_count"))
 
 
 def summarize(ctx, *, inputs, mapping, extra, provisional):
@@ -258,7 +259,14 @@ def preconditions(args, store, *, environ=None, nice=None, now=None, classify=No
     if classify is None:
         sys.path.insert(0, str(runtime / L.E4V3_REL))
         from classify_failure import classify as classify  # noqa: PLW0127 (TIERS classifier, read only)
-    sessions = [L.read_tiers_session(p, s, require_mac=not dry, classify=classify) for p, s in pairs]
+    commits = parse_pairs(args.tiers_receipt_commit, args.tiers_receipt_repo_path, "TIERS receipt commit")
+    if len(commits) != len(pairs):
+        raise L.PreconditionRefusal("Every TIERS receipt needs --tiers-receipt-commit and --tiers-receipt-repo-path "
+                                    "(r3 §1.4: reused TIERS inputs are read from committed receipts)")
+    repository = Path(args.repository) if args.repository else runtime
+    sessions = [L.read_tiers_session(p, s, require_mac=not dry, classify=classify,
+                                     committed=dict(repository=repository, commit=c, repository_path=r))
+                for (p, s), (c, r) in zip(pairs, commits)]
     ctx = dict(dry_run=dry, limits=limits, manifest=manifest, k4s_manifest_sha256=args.k4s_manifest_sha256,
                c_star=args.c_star, repeat=repeat, released=released, authorization=authorization,
                mode="standalone" if args.standalone else "in-session", sessions=sessions,
@@ -280,7 +288,8 @@ def preconditions(args, store, *, environ=None, nice=None, now=None, classify=No
     ctx["measure"] = not any(s["state"] == "exactness-terminated" for s in sessions)
     store.write("k4s-preconditions.json", dict(mode=ctx["mode"], repeat=repeat, released=released,
                 tiers=ctx["tiers"], authorization=authorization, k4s_manifest_sha256=args.k4s_manifest_sha256,
-                c_star=args.c_star, measure=ctx["measure"]))
+                c_star=args.c_star, measure=ctx["measure"],
+                tiers_commitments=[s["committed"] for s in sessions]))
     return ctx
 
 
@@ -290,7 +299,8 @@ def stage_inputs(args, ctx, store):
     runtime = Path(args.runtime_root)
     if not args.k4s_kernel_rel or not args.k4s_scorer:
         raise L.PreconditionRefusal("--k4s-kernel-rel and --k4s-scorer are required")
-    for name in ("tiers_bundle", "native", "corpus", "corpus_inventory", "fleet_reference"):
+    for name in ("tiers_bundle", "native", "corpus", "corpus_inventory", "fleet_reference") + \
+            (() if dry else ("fleet_recheck",)):
         if getattr(args, name) is None:
             raise L.PreconditionRefusal("--" + name.replace("_", "-") + " is required")
     sys.path.insert(0, str(runtime / L.E4V3_REL))
@@ -348,16 +358,38 @@ def stage_inputs(args, ctx, store):
     if not dry and args.corpus_sha256 != L.T1_K4_CORPUS_SHA:
         raise L.PreconditionRefusal("Mac session requires the frozen T1 K4 speed corpus")
     ids = L.check_corpus(sha(args.corpus), args.corpus_sha256, inventory, publication, None)
-    reference = json.loads(Path(args.fleet_reference).read_text())
     if sha(args.fleet_reference) != args.fleet_reference_sha256:
         raise L.PreconditionRefusal("Fleet END reference SHA mismatch")
-    ctx["fleet"] = L.check_fleet_reference(reference, args.corpus_sha256, ids, dry_run=dry)
+    reference = json.loads(Path(args.fleet_reference).read_text())
+    recheck = None
+    if args.fleet_recheck is not None:
+        if sha(args.fleet_recheck) != args.fleet_recheck_sha256:
+            raise L.PreconditionRefusal("Fleet END re-check receipt SHA mismatch")
+        recheck = json.loads(Path(args.fleet_recheck).read_text())
+    end_pool = runtime / L.END_POOL_REL
+    end_pins = ctx["manifest"].get("end_files", {})
+    if not dry and (end_pins.get(L.END_POOL_REL) is None or not end_pool.is_file() or sha(end_pool) != end_pins[L.END_POOL_REL]):
+        raise L.PreconditionRefusal("END pooling/re-check script is not the K4S-manifest-pinned one")
+    # The complete frozen common END identity (kernel/scorer/SD1/corpus/native + the frozen K4S manifest SHA and
+    # every END measurement source): the reference must come from the same frozen manifest as this session.
+    expected_pins = None
+    if not dry:
+        expected_pins = L.end_frozen_pins(ctx["manifest"], args.k4s_manifest_sha256, args.k4s_kernel_rel, args.k4s_scorer)
+        if expected_pins["sd1_manifest_sha256"] != args.sd1_manifest_sha256 or expected_pins["corpus_sha256"] != args.corpus_sha256:
+            raise L.PreconditionRefusal("SD1/corpus arguments differ from the frozen END identity")
+    ctx["fleet"] = L.check_fleet_reference(reference, args.corpus_sha256, ids, dry_run=dry,
+                                           reference_sha256=args.fleet_reference_sha256, recheck=recheck,
+                                           expected_pins=expected_pins,
+                                           end_pool_sha256=sha(end_pool) if end_pool.is_file() else None)
     ctx["fleet_states"] = reference["states"]
     ctx["corpus_ids"] = ids
     ctx["bundle"] = bundle
     store.write("k4s-staging.json", dict(load=ctx["load"], binding=ctx["binding"], tiers_manifest_sha256=bundle_sha,
                 corpus_sha256=args.corpus_sha256, fleet_reference_sha256=args.fleet_reference_sha256,
-                sd1_manifest_sha256=args.sd1_manifest_sha256, fleet_deadline=ctx["fleet"]["cells"]))
+                sd1_manifest_sha256=args.sd1_manifest_sha256, fleet_deadline=ctx["fleet"]["cells"],
+                fleet_recheck_sha256=args.fleet_recheck_sha256, fleet_hosts=ctx["fleet"]["hosts"],
+                kernel_sha256=sha(runtime / args.k4s_kernel_rel), scorer_sha256=sha(runtime / args.k4s_scorer),
+                fleet_pins=ctx["fleet"]["pins"]))
     return ctx
 
 
@@ -605,6 +637,9 @@ def build_parser():
     p.add_argument("--linux-dry-run", action="store_true")
     p.add_argument("--tiers-receipts", type=Path, action="append", help="TIERS session receipt dir (repeatable)")
     p.add_argument("--tiers-receipt-sha256", action="append", help="its receipt-manifest.json SHA-256")
+    p.add_argument("--tiers-receipt-commit", action="append", help="full commit holding those receipts (repeatable)")
+    p.add_argument("--tiers-receipt-repo-path", action="append", help="their repo-relative directory in that commit")
+    p.add_argument("--repository", type=Path, help="git checkout holding the commits (default --runtime-root)")
     p.add_argument("--standalone", action="store_true")
     p.add_argument("--coordinator-authorization", type=Path)
     p.add_argument("--coordinator-authorization-sha256")
@@ -631,6 +666,8 @@ def build_parser():
     p.add_argument("--corpus-publication-sha256")
     p.add_argument("--fleet-reference", type=Path, help="pooled fleet END K4S reference (a)-(c)")
     p.add_argument("--fleet-reference-sha256")
+    p.add_argument("--fleet-recheck", type=Path, help="independent END re-check receipt (end_pool.py recheck)")
+    p.add_argument("--fleet-recheck-sha256")
     p.add_argument("--search-cpus", type=lambda v: [int(i) for i in v.split(",")], help="Linux dry run only")
     p.add_argument("--load-cpu", type=int, help="Linux dry run only")
     p.add_argument("--background-cpus", type=lambda v: [int(i) for i in v.split(",")], help="Linux dry run only")
@@ -691,9 +728,11 @@ def main(argv=None, **hooks):
             if session is not None:
                 session.close()
         except BaseException:
+            # Always sealed as evidence; classify_k4s_failure reads it (harness/load exception).
+            store.write("cleanup-failure.json", dict(error=traceback.format_exc(), fail_closed=True,
+                                                     status_before_cleanup=status, utc=time.time()))
             if status == "complete":
                 status = "failed"
-                store.write("cleanup-failure.json", dict(error=traceback.format_exc(), fail_closed=True))
                 raise
         finally:
             store.seal(status)

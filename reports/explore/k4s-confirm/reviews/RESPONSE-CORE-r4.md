@@ -1,0 +1,8 @@
+# Response to SOL-REVIEW-CORE-r4 (APPROVE_WITH_FIXES)
+
+Author: K4S prep worker (Opus), 2026-10-11.
+
+| # | Fix |
+|---|---|
+| 19 (and the rest of 16, plus 4/8/9) | `source_binding.snapshot` covers the immutable qualified inputs: the native `.so`, SD1 checkpoint, calibration, v1 checkpoint, the 125-state corpus files, `runtime-pin.json`, `inherited-runtime-pin.json` and `staging.json`. Each native/model input must equal its plan.json pin and its runtime-pin entry; any mismatch makes `t1_matches_ef4c073a` false, which fails record/verify/assembly. The start/end/assembly equality therefore extends to these inputs. `verify` also binds `artifact_sha256` for every battery/check/STOP artifact (tests log, K4S, T1 and belief 125-state receipts, guard receipt, SD1 check, both qualification-binding files, check-games, STOP). The assembler re-checks: the current `qualification_binding.inventory()` equals both the before and binding records (top-level sources plus native/SD1/calibration/v1 SHAs); the binding's battery-receipt links (`receipts`) equal the current files; the current artifact hashes equal `artifact_sha256`; and `check_games` confirmed every K4S game's `runtime_pin_sha256` equals the job's `runtime-pin.json`. Each is a separate check; any failure gives FAIL and exit 1. |
+| 20 | `check_games` charged decisions run `health.sd1_errors`, the same outcome-blind validator smoke uses: SD1 default/P(play), coarse-order nullability by path, scan-field nullability (scored vs unscored), and the action/fallback/extra-tick/overrun aliases. Valid unscored and preparation-cutoff paths keep null scan and frozen fields. |

@@ -11,7 +11,8 @@ verify reads T1 bytes with `git show ef4c073a:reports/explore/t1/<name>` and che
   identical -> K4S bytes == T1 bytes;
   rebound   -> K4S bytes == rebind(T1 bytes) and != T1 bytes;
   delta     -> recorded T1 base SHA matches git (the diff itself is reviewed separately);
-  new       -> no T1 counterpart.
+  new       -> no T1 counterpart;
+and that the manifest inventory equals the directory's files exactly.
 """
 import hashlib, json, subprocess, sys
 from pathlib import Path
@@ -72,7 +73,11 @@ def verify():
             if cls == 'delta' and (mine == base or mine == rebind(base)):
                 bad.append((name, 'declared delta but unchanged'))
         counts[cls] += 1
-    print(json.dumps(dict(t1_commit=T1_COMMIT, counts=counts, failures=bad)))
+    # Inventory completeness: every file in this directory is classified (the manifest itself excepted).
+    present = {str(p.relative_to(HERE)) for p in HERE.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != 'DELTA-MANIFEST.json'}
+    bad += [(n, 'present but not in manifest') for n in sorted(present - set(m['files']))]
+    bad += [(n, 'in manifest but missing') for n in sorted(set(m['files']) - present)]
+    print(json.dumps(dict(t1_commit=T1_COMMIT, counts=counts, inventory=len(present), failures=bad)))
     return not bad
 
 

@@ -75,8 +75,11 @@ def main():
     import run
     from common import plan, read, sha, utc
     cfg = plan()
-    cores = list(map(int, a.cores.split(','))); assert len(cores) == 5
+    cores = list(map(int, a.cores.split(',')))
+    # Planned work cores are physical CPUs 0-54 on every fleet host (K4S plan.json compute.hosts; T1's plan has no 04 row).
+    assert len(cores) == 5 and cores == list(range(cores[0], cores[0]+5)) and cores[0] % 5 == 0 and set(cores) <= set(range(55)), 'planned five-core slot'
     os.sched_setaffinity(0, set(cores)); run.SLOT_CORES = cores
+    assert os.sched_getaffinity(0) == set(cores) and os.sched_getscheduler(0) == os.SCHED_OTHER
     assert os.getpriority(os.PRIO_PROCESS, 0) in (10, 19) and socket.gethostname() in ('127x01', '127x03', '127x04', '127x08')
     base = 4503605837370496
     seed = base + a.index

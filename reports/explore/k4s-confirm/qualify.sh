@@ -15,7 +15,7 @@ bash "$runtime" $K/sd1_manifest.py check > "$job/sd1-manifest-check.txt"
 bash "$runtime" -m pytest -q -p no:cacheprovider $K/test_anchor.py $K/test_coarse.py $K/test_belief.py $K/test_latency.py $K/test_gc_window.py \
   $K/test_schedule.py $K/test_replace.py $K/test_barrier.py $K/test_reduce.py $K/test_idle_services.py \
   $K/test_op1.py $K/test_op2.py $K/test_op3.py $K/test_op4.py $K/test_op5.py $K/test_op5_08.py $K/test_op6.py $K/test_op7.py \
-  $K/test_sdefault.py $K/test_charge.py $K/test_op7_boottime.py \
+  $K/test_sdefault.py $K/test_charge.py $K/test_op7_boottime.py $K/test_health.py $K/test_qual_tasks.py \
   --deselect "$K/test_op7.py::test_fresh_reaps_cannot_renew_stale_orphan_debt[apt_budget-apt_budget]" \
   --deselect "$K/test_op7.py::test_fresh_reaps_cannot_renew_stale_orphan_debt[ssh_budget-ssh_budget]" | tee "$job/tests.log"
 date -u +%FT%TZ > "$job/TESTS-PASS"

@@ -3,7 +3,7 @@
 - **What this is.** The operator procedure for the separate K4S Mac script `measure_k4s.py`, its manifest
   `K4S-MAC-MANIFEST.json`, the load-selection rule and the failure classifier `classify_k4s_failure.py`. Together
   they make up release item 5 of r3 §4.5 (CONFORMANCE-r2 N2/F-8, RECHECK-r3 R3/R5).
-- **Status.** Draft, not frozen; independent review pending. No Mac has been contacted. Nothing here authorises
+- **Status.** Draft r2 (fixes for the SOL review r1 findings 1–9), not frozen; integration re-review pending. No Mac has been contacted. Nothing here authorises
   live play: the script is replay only and has no actuator, client, emulator, network or live-input option.
 - **Governing text.** `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md` (sha256 `9650972d…`).
   Where this file and r3 differ, r3 governs. TIERS's own Mac rules come from `PREREG-SEARCH-TIERS-r3-DRAFT.md` §6–§7
@@ -24,8 +24,11 @@
 4. A K4S-only failure **never** writes into, triggers, invalidates or reclassifies a TIERS session or receipt, and
    never adds a session to TIERS's minimum across sessions. The K4S classifier calls only the pure `classify()`
    function of TIERS's `classify_failure.py`, read-only, and never its CLI.
-5. Reused TIERS inputs are **read from TIERS's sealed receipts (path + receipt-manifest SHA-256), never
-   re-measured**:
+5. Reused TIERS inputs are **read from TIERS's committed, sealed receipts, never re-measured** (r3 §1.4, N2).
+   The script verifies the receipt-manifest SHA-256 and sidecar, every sealed file, and then the commit: a full
+   40-hex commit that is an ancestor of the repository's `HEAD`, whose tree at the given repo-relative directory
+   holds exactly the sealed inventory (every manifest file plus `receipt-manifest.json` and its sidecar), with every
+   committed blob byte-equal to what is read. Uncommitted, locally revised or re-sealed receipts are refused:
    - `c_M = 1.0` iff TIERS's `tiers-summary.json` has `feasibility.K4.feasible = true` with `cell = 1.0` (TIERS's
      r_5, p10 ≥ 0.70 and gates 2–6);
    - gate 0's TIERS part is the §7.2 verdict: `exactness-tiers.json` (125 states, `workers_equal` and
@@ -52,16 +55,16 @@
 |---|---|---|
 | P1 | Sam has authorised this Mac replay session | `--sam-authorized-replay`, Darwin/arm64, nice 10, OMP/OPENBLAS/MKL = 1 |
 | P2 | The K4S manifest is frozen and matches | `--k4s-manifest-sha256` (the frozen manifest SHA); every K4S and reused file re-hashed |
-| P3 | TIERS's complete §7 list (or a §7.2 exactness termination) in a sealed TIERS session that TIERS's classifier does not mark technically invalid | `--tiers-receipts DIR --tiers-receipt-sha256 SHA` (receipt-manifest.json SHA; repeat the pair for every valid TIERS session) |
+| P3 | TIERS's complete §7 list (or a §7.2 exactness termination) in a sealed, **committed** TIERS session that TIERS's classifier does not mark technically invalid | `--tiers-receipts DIR --tiers-receipt-sha256 SHA --tiers-receipt-commit C --tiers-receipt-repo-path REL` (repeat the group for every valid TIERS session) and `--repository GIT_CHECKOUT` |
 | P4 | Same session: K4S starts within 2 h of `tiers-complete.json`, under the same coordinator lock file | `--coordinator-lock` (+ the inherited `--coordinator-lock-fd`) |
 | P5 | Or standalone: explicit flag plus coordinator authorization file | `--standalone --coordinator-authorization F --coordinator-authorization-sha256 S` |
 | P6 | Release state declared; if K4S outcomes are released, an independent reviewer has confirmed the mechanical session-validity classification (r3 §1.4, TIERS §6.6(b)) | `--k4s-release-state sealed\|released`, `--independent-review F --independent-review-sha256 S` |
 | P7 | Repeat admission: every prior attempt was a pre-listed technical failure, at most one counted repeat | `--prior-classification F --prior-classification-sha256 S` per prior attempt |
 | P8 | TIERS bundle is the one the TIERS session measured | `--tiers-bundle`, `--tiers-manifest-sha256` (= TIERS `tiers-identity.json` `manifest_sha256`) |
 | P9 | R5 binding (§1 item 6) | `--native`, `--k4s-scorer`, `--k4s-kernel-rel` (both pinned in the manifest's `k4s_kernel.files`) |
-| P10 | SD1 manifest frozen, binding R3a bytes `37509a43…`, calibration `e3003533…`, threshold 0.5005528330802917 | `--sd1-manifest`, `--sd1-manifest-sha256` (equal to the manifest's `sd1_manifest.sha256`) |
+| P10 | SD1 manifest frozen (`clasher.k4s.sd1-manifest.v1`): nested `checkpoint {job_path inputs/R3a.pt, sha256 37509a43…}`, `calibration {job_path inputs/R3a-calibration.json, sha256 e3003533…}`, threshold 0.5005528330802917, the inference mode, and the complete `inference_sources` map (exactly the 8 SD1 source files, each re-hashed under the runtime root); the TIERS bundle's R3a bytes are SD1's | `--sd1-manifest`, `--sd1-manifest-sha256` (equal to the manifest's `sd1_manifest.sha256`) |
 | P11 | Frozen T1 K4 speed corpus (inventory `81f2483e`, `K4-states.pkl` `a97b1fbf…`, 300 states) | `--corpus/-sha256`, `--corpus-inventory/-sha256`, `--corpus-publication/-sha256` |
-| P12 | Pooled fleet END reference (a)–(c), conforming, independently re-checked (r3 §4.5) | `--fleet-reference`, `--fleet-reference-sha256` |
+| P12 | Pooled fleet END reference (a)–(c), conforming, with machine-checked reporting-load provenance, measured and pooled on this session's complete frozen END identity (kernel/scorer/SD1/corpus/native, the frozen K4S manifest SHA and every END measurement source), and independently re-checked (r3 §4.5; §3 below) | `--fleet-reference`, `--fleet-reference-sha256`, `--fleet-recheck`, `--fleet-recheck-sha256` |
 | P13 | The recorded c\* | `--c-star 0.9` (c\* record, COORDINATOR 11:46Z / `6ef5e2ff`) |
 | P14 | 5-minute quiescence census: no foreign process above 0.2 core | measured at K0. A failure delays the session; it is not a technical failure |
 
@@ -74,20 +77,50 @@ receipts; the result is then descriptive and has no cell. The independent review
 
 ## 3. Fleet END reference contract (`clasher.k4s.mac-fleet-reference.v1`)
 
-The K4S END reference (K4S-SPEC §8, r3 §4.5) is pooled by its own reviewed script and supplies one JSON file with
-these fields:
-- `corpus_sha256` = the T1 K4 corpus SHA;
-- `repeats = 3`, `reporting_load_profile = true`, `hosts`, `pool_conforms = true`, `end_recheck_sha256` (the
-  independent re-check receipt);
+The K4S END reference (K4S-SPEC §8, r3 §4.5) is pooled by `reports/explore/k4s-confirm/end_pool.py pool` (pinned in
+`K4S-MAC-MANIFEST.json` `end_files`) as `end-reference.json` in a sealed `K4S-END-POOL` directory, and re-checked
+by `end_pool.py recheck`. Fields:
+- `corpus_sha256` = the T1 K4 corpus SHA; `repeats = 3`; `hosts` (sorted) = every committed counted host;
+- `host_ratio_to_pool[host]`, `ratio_statistic` (the frozen TIERS `fleet_pool.py` statistic: geometric mean over
+  the 300 corpus states of pooled per-state median / host per-state median of the no-deadline K4S work unit),
+  `ratio_window = [0.95, 1.05]` (inclusive), `pool_conforms = true`;
+- **Ratio window semantics.** K4S follows r3 §4.5's "inclusive" literally: `0.95 <= r <= 1.05` on the nearest
+  doubles (`k4s_logic.in_host_ratio_window`). This deliberately differs from the frozen TIERS check
+  `abs(r-1) <= .05` (`e4v3/fleet_pool.py`), which rejects the exact doubles 0.95 and 1.05 because both
+  differences round above .05. The two rules disagree only at those two endpoint doubles (tests pin both forms at
+  both endpoints and one ulp outside); K4S never edits the TIERS rule;
+- `pins` (common identity, equal on every counted host): the frozen keys `kernel_sha256`, `scorer_sha256`,
+  `sd1_manifest_sha256`, `corpus_sha256`, `native_sha256`, `k4s_manifest_sha256` and `measurement_files` (every
+  `k4s_logic.END_MEASUREMENT_FILES` source → its K4S-manifest pin), plus the shared bundle keys
+  `bundle_runtime_files_sha256`, `bundle_measurement_files_sha256`, `bundle_model_files`. The Mac requires exactly
+  this key set and every frozen key equal to `k4s_logic.end_frozen_pins` of **its own** frozen K4S manifest (same
+  manifest SHA, same END source pins); the pooler requires the same against the pool descriptor's frozen manifest.
+  Each host's own bundle manifest (which names that host) is a per-host receipt, never compared across hosts:
+  `provenance.host_receipts[host].host_pins = {bundle_manifest_sha256, bundle_profile_host = host}`;
 - `states[id]` for every corpus state:
   - `k4s_wall_seconds`: the pooled per-state median no-deadline K4S work unit, item (a);
   - `sd1_poll_seconds`: the pooled per-state median SD1 poll span, item (c);
   - `result {action, candidates, scores}`: the no-deadline K4S result, which equals K4's;
-  - optionally `k4_wall_seconds` and `v1_poll_seconds`, which are descriptive;
-- `deadline[cell]` for cells 1.0/0.9/0.8/0.7/0.6, item (b), K4S at b(c) with the 1/c charge:
-  - `budget_ms`;
-  - `charge_scale` as the exact rational string ("1", "10/9", "5/4", "10/7", "5/3");
-  - the integer counts `n`, `cutoff_count`, `no_complete_play_count` and `fallback_count`, plus the matching rates.
+  - `k4_wall_seconds` and `v1_poll_seconds`, which are descriptive;
+- `deadline[cell]` for exactly the cells "1.0"/"0.9"/"0.8"/"0.7"/"0.6", item (b), K4S at b(c) with the 1/c charge,
+  in the **canonical naming shared by the producer (`k4s_logic.deadline_cell_record`), this contract and the
+  gate-6 reader**: `budget_ms` (200/180/160/140/120), `charge_scale` ("1", "10/9", "5/4", "10/7", "5/3"), integer
+  `n` (= 3 × 300 × hosts), and for each of `cutoff`, `no_complete_play`, `fallback`: the integer `<key>_count` and
+  the rate `<key>` = count / n. No `_rate` suffix exists;
+- `reporting_load_profile = true` **only** when `provenance.reporting_load_profile_evidence` has every check true:
+  `committed_completion`, `all_counted_hosts`, `all_original_attempts_classified`, `slot0_and_every_background_slot`,
+  `reporting_priority`, `reporting_guard`, `full_occupancy_reporting_mhz`;
+- `provenance`: `pool_input_sha256`, `end_evidence_sha256`, `completion_sha256`, `plan_sha256`, `counted_hosts`,
+  `pooled_by`, `pooler_sha256`, and `host_receipts[host]` = {`manifest_sha256`, `attempts` (frozen
+  `classify_attempt` verdicts, in the committed END attempt-registry order), `host_pins`, `search_cpus`,
+  `background_masks`, `nice`, `reference_to_reporting_mean` (the signed MHz ratio), `mhz_comparison_passes`,
+  `ratio_to_pool`}; `attempt_registry {commit, repository_path, claims}` and `k4s_manifest_sha256`.
+
+The re-check receipt (`clasher.k4s.end-recheck.v1`) must have `passes = true`, `outcome_access = false`,
+`reference_sha256` = the SHA of the reference file passed to the script, and the same `pool_input_sha256`,
+`end_evidence_sha256` and per-host receipt seals as the reference's provenance; `checker_sha256` = the SHA of the
+manifest-pinned `end_pool.py`; `checked_by` non-empty and different from `pooled_by`. An arbitrary SHA string is
+not accepted.
 
 ## 4. Load-selection rule (frozen)
 
@@ -116,7 +149,11 @@ export K4S_SD1=/absolute/SD1-MANIFEST.json K4S_SD1_SHA=FROZEN_SD1_HASH
 export K4S_CORPUS=/absolute/K4-states.pkl
 export K4S_INVENTORY=$E4_RUNTIME/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json
 export K4S_PUBLICATION=$E4_RUNTIME/reports/explore/t1/corpora/corpus-03-a51ea64c/publication.json
-export K4S_FLEET=/absolute/k4s-fleet-reference.json K4S_FLEET_SHA=COMMITTED_SHA256
+export K4S_FLEET=/absolute/k4s-end-pool/end-reference.json K4S_FLEET_SHA=COMMITTED_SHA256
+export K4S_RECHECK=/absolute/end-recheck.json K4S_RECHECK_SHA=COMMITTED_SHA256
+export E4_REPO=/absolute/clasher-git-checkout              # operator's checkout (not the frozen runtime)
+export TIERS_RECEIPT_REL=COORDINATOR_ASSIGNED/repo-relative/tiers-session-dir
+export CLASHER_SECRET_SCAN=/absolute/clasher-secret-scan          # the repo's staged-diff secret scanner
 export K4S_KERNEL=reports/explore/k4s-confirm/FROZEN_KERNEL.py K4S_SCORER=reports/explore/k4s-confirm/anchor_x.py
 export K4S_RELEASE_STATE=sealed                           # or released (then add --independent-review ...)
 ```
@@ -124,16 +161,28 @@ export K4S_RELEASE_STATE=sealed                           # or released (then ad
 ### 5.1 Default: inside the TIERS session, after TIERS's complete §7 list
 
 Append this to the TIERS heredoc **after** the `measure_tiers.py` call has returned 0. It inherits the same locked
-descriptor, so the coordinator lock is held from TIERS staging through K4S cleanup. TIERS's receipt directory is
-already sealed at that point, and K4S only reads it.
+descriptor, so the coordinator lock is held from TIERS staging through the commit and K4S cleanup. TIERS's receipt
+directory is already sealed at that point. **First the sealed TIERS receipts are committed** (secret scan, then a
+local commit in `E4_REPO`, still under the lock; pushing may happen later). K4S then reads the committed copy and
+proves it against that commit. If the commit step fails, K4S does not start and TIERS is unaffected.
 
 ```python
+import shutil
 tiers_sha = open(e['E4_OUTPUT'] + '/receipt-manifest.sha256').read().split()[0]
+committed_dir = pathlib.Path(e['E4_REPO']) / e['TIERS_RECEIPT_REL']
+shutil.copytree(e['E4_OUTPUT'], committed_dir)            # exact sealed bytes; the directory must be new
+git = ['git', '-C', e['E4_REPO']]
+subprocess.run(git + ['add', '--', e['TIERS_RECEIPT_REL']], check=True)
+subprocess.run([e['CLASHER_SECRET_SCAN']], cwd=e['E4_REPO'], check=True)   # staged-diff scan; exit 1 stops
+subprocess.run(git + ['commit', '-m', 'TIERS Mac session receipts (sealed ' + tiers_sha[:12] + ')'], check=True)
+tiers_commit = subprocess.run(git + ['rev-parse', 'HEAD'], check=True, capture_output=True, text=True).stdout.strip()
 k4s = pathlib.Path(e['E4_RUNTIME']) / 'reports/explore/k4s-confirm/mac'
 subprocess.run([sys.executable, '-B', str(k4s/'measure_k4s.py'), '--sam-authorized-replay',
     '--output', e['K4S_OUTPUT'], '--runtime-root', e['E4_RUNTIME'],
     '--k4s-manifest-sha256', e['K4S_MANIFEST_SHA'], '--c-star', '0.9',
-    '--tiers-receipts', e['E4_OUTPUT'], '--tiers-receipt-sha256', tiers_sha,
+    '--tiers-receipts', str(committed_dir), '--tiers-receipt-sha256', tiers_sha,
+    '--tiers-receipt-commit', tiers_commit, '--tiers-receipt-repo-path', e['TIERS_RECEIPT_REL'],
+    '--repository', e['E4_REPO'],
     '--tiers-bundle', e['E4_BUNDLE'], '--tiers-manifest-sha256', e['E4_MANIFEST_SHA'], '--native', str(native),
     '--k4s-kernel-rel', e['K4S_KERNEL'], '--k4s-scorer', e['K4S_SCORER'],
     '--sd1-manifest', e['K4S_SD1'], '--sd1-manifest-sha256', e['K4S_SD1_SHA'],
@@ -141,6 +190,7 @@ subprocess.run([sys.executable, '-B', str(k4s/'measure_k4s.py'), '--sam-authoriz
     '--corpus-inventory', e['K4S_INVENTORY'], '--corpus-inventory-sha256', SHA_OF_CORPORA_JSON,
     '--corpus-publication', e['K4S_PUBLICATION'], '--corpus-publication-sha256', SHA_OF_PUBLICATION_JSON,
     '--fleet-reference', e['K4S_FLEET'], '--fleet-reference-sha256', e['K4S_FLEET_SHA'],
+    '--fleet-recheck', e['K4S_RECHECK'], '--fleet-recheck-sha256', e['K4S_RECHECK_SHA'],
     '--k4s-release-state', e['K4S_RELEASE_STATE'],
     '--coordinator-lock', e['E4_LOCK'], '--coordinator-lock-fd', str(lock.fileno())],
     pass_fds=(lock.fileno(),), check=False)   # a K4S exit never changes the TIERS session
@@ -153,7 +203,8 @@ receipts are already sealed before K4S starts.
 
 Use this when the TIERS session has already ended, more than 2 h have passed, or TIERS ran in an earlier session on
 the same Mac. Use the same command with `--standalone --coordinator-authorization F
---coordinator-authorization-sha256 S`, and pass every valid TIERS session receipt. Sam's authorisation and the
+--coordinator-authorization-sha256 S`, and pass every valid TIERS session receipt with its commit and repo-relative
+path (the receipts must already be committed). Sam's authorisation and the
 coordinator lock are still required. The same-Mac identity and native checks still bind K4S to the Mac TIERS
 qualified.
 
@@ -161,7 +212,7 @@ qualified.
 
 ```bash
 python3 MAC/classify_k4s_failure.py classify --receipts $K4S_OUTPUT --output NEW_CLASSIFICATION_DIR \
-    --tiers-receipts $E4_OUTPUT --tiers-receipt-sha256 $TIERS_SHA
+    --tiers-receipts $E4_REPO/$TIERS_RECEIPT_REL --tiers-receipt-sha256 $TIERS_SHA
 python3 MAC/classify_k4s_failure.py reduce --session S1 --session-sha256 H1 --classification C1 \
     --classification-sha256 G1 [--session S2 ...] --c-star 0.9 --output NEW_FINAL_DIR
 ```
@@ -218,8 +269,8 @@ python3 MAC/classify_k4s_failure.py reduce --session S1 --session-sha256 H1 --cl
   | Category | Meaning | Valid | Repeat |
   |---|---|---|---|
   | `valid` | Complete; no technical evidence | yes | no |
-  | `gate-failure` | Exactness mismatch, zero-budget or agreement gate failure | yes | **no** |
-  | `technical-failure` | Harness/load exception; host sleep/reboot (boot time change or > 3 s wall/monotonic jump); `pmset` CPU speed limit < 100% before the K4S load starts (K0/K0-census/K1); a foreign process > 1 core for > 60 s; a staging pin mismatch; an incomplete session without a gate failure | no | one |
+  | `gate-failure` | Exactness mismatch, zero-budget or agreement gate failure, **including one raised after a summary was written** (e.g. the post-run bundle re-validation); a cleanup exception or a disagreeing seal status is recorded in its reasons but never turns it into a pass or a repeat | yes | **no** |
+  | `technical-failure` | Harness/load exception, including a sealed `cleanup-failure.json` (load, telemetry or backend cleanup failed, even after `k4s-complete.json`); a sealed status that disagrees with the receipts (e.g. `failed`/`refused` with a completion receipt); host sleep/reboot (boot time change or > 3 s wall/monotonic jump); `pmset` CPU speed limit < 100% before the K4S load starts (K0/K0-census/K1); a foreign process > 1 core for > 60 s; a staging pin mismatch; an incomplete session without a gate failure | no | one |
   | `invalid-tiers-session` | The K4S block ran inside a TIERS session that TIERS's own classifier marks technically invalid (R3) | no | yes, without using the K4S allowance |
   | `precondition-refusal` | Nothing measured | not a session | not needed |
 
@@ -229,6 +280,16 @@ python3 MAC/classify_k4s_failure.py reduce --session S1 --session-sha256 H1 --cl
   repeat uses a fresh output directory and passes its prior classification receipts (P7).
 - **After K4S release.** If K4S outcomes are released, an independent reviewer confirms the mechanical
   classification before any K4S Mac session runs (P6). This applies to the first session as well as repeats.
+- **Sealed inputs to `reduce`.** Each classification directory is read by path + seal SHA: its seal must be
+  `complete`, its scope the classifier's, and it must list `classification.json`, whose bytes are re-hashed against
+  the seal before reading; the classification must name the session's seal SHA and status. Session summaries and
+  preconditions are read only if listed in the session's own verified inventory.
+- **Admission reconciles classification and receipts.** A `valid` classification is admitted only if the session's
+  own seal is `complete` with `k4s-complete.json` and holds no `failure.json`, `cleanup-failure.json` or
+  `refusal.json`. A `gate-failure` is admitted only with a sealed exactness failure trace, and its gate 0 is
+  **forced false**: any summary written before the failure is superseded (its measurements are not reduced; only
+  its TIERS inputs and gate 0 parts are kept, plus `k4s_exactness_gate_failure = false`). `reduce` also refuses a
+  gate-failure classification paired with a passing gate 0.
 - **Across valid sessions** (`reduce`): minimum r_K4S, p10 and r_inf; maximum poll p99 and deadline rates; minimum
   FPS and processed fraction; gate 0 and GC must pass in every valid session. Then apply the §7 mapping. A gate 0
   failure in any valid session makes K4S Mac-infeasible. Sessions must read the same TIERS inputs.
@@ -249,7 +310,7 @@ python3 MAC/classify_k4s_failure.py reduce --session S1 --session-sha256 H1 --cl
 | `k4s-decisions.jsonl`, `k4s-gc-freeze.jsonl`, `k4s-gc-freeze-rss.json`, `k4s-gc-trace.jsonl` | K5–K6 |
 | `k4s-mac-summary.json` | Every gate input, per-cell gate table, gate 6 trail, c_M, c\*, eligibility, kill flags, TIERS inputs, binding, `status`, `provisional`, `provisional_label`, `dry_run`; `final`, `mac_qualified`, `formal_E4_qualified` and `live_actions` are all false |
 | `k4s-complete.json` | Completion (exit 0 means completed, not passed) |
-| `refusal.json` / `failure.json` | A refusal (no session) or a failure trace |
+| `refusal.json` / `failure.json` / `cleanup-failure.json` | A refusal (no session), a failure trace, or a cleanup exception (always sealed; a cleanup failure after completion seals `failed`) |
 | `receipt-manifest.json` + `.sha256` | The seal |
 
 Commit the sealed directory, its classification and the reduction (after `clasher-secret-scan`). The coordinator

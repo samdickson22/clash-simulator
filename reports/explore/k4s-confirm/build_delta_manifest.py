@@ -15,7 +15,7 @@ DELTAS = {
     5: ('new populations and seeds: K4S bank 2^52+[6.18e9,6.28e9), SD1 inputs, staging from the inherited S1 runtime', ['plan.json', 'audit_seeds.py', 'seed-audit.json', 'stage_k4s.py', 'reference-files.json', 'qualify.py']),
     6: ('reducer: fixed sequence H1-H7, veto, usable cells, validity; release barrier with r3 §4.5 items; verifier by another author', ['reduce.py', 'test_reduce.py', 'synthetic.py', 'barrier.py', 'test_barrier.py', 'verifier/verify_k4s.py', 'verifier/test_verify_k4s.py']),
     7: ('per-decision and per-game fields (r3 §3.6)', ['run.py', 'check_games.py']),
-    8: ('END reference cells (a)-(c) incl. SD1/v1 poll-span timing, pooling to the Mac contract', ['end_reference.py', 'end_pool.py', 'test_end_reference.py', 'END-RUNBOOK.md']),
+    8: ('END reference cells (a)-(c) incl. SD1/v1 poll-span timing, pooling to the Mac contract', ['end_reference.py', 'end_pool.py', 'end_background.py', 'end_evidence.py', 'test_end_reference.py', 'test_end_background.py', 'END-RUNBOOK.md']),
 }
 SUPPORT = {
     'qualify_k4s.py': 'qualification: 125 fixed states (K4 == T1 anchor, K4 == K4S no deadline, SD1Policy == CachedPolicy, S-default cases)',
@@ -31,6 +31,11 @@ SUPPORT = {
     'test_op7_boottime.py': 'qualification: host-independent run of a host-uptime-dependent T1 OP-7 test (T1 bytes unchanged)',
     'make_freeze_skeleton.py': 'freeze-record skeleton generator (draft only)',
     'stage_k4s.py': 'staging from the inherited S1 runtime pin f81f3655',
+    'qual_tasks.py': 'qualification: canonical 11-task game inventory shared by launcher, checker, binder and receipt',
+    'test_qual_tasks.py': 'qualification: launcher == canonical task inventory',
+    'source_binding.py': 'qualification: K4S overlay + T1 reference (== ef4c073a) source binding through games/STOP',
+    't1-reference-expected.json': 'qualification: expected staged T1 reference bytes, from git ef4c073a',
+    'test_health.py': 'smoke-health value/nullability tests',
 }
 DOCS = ('.md',)
 

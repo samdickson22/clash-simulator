@@ -48,6 +48,40 @@ def tree_state(root):
     return {str(p.relative_to(root)): (L.sha(p), p.stat().st_mtime_ns) for p in sorted(root.rglob("*")) if p.is_file()}
 
 
+COMMITS = {}
+
+
+def git(repo, *args):
+    return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True).stdout.strip()
+
+
+def commit_receipts(directory):
+    """Commit a TIERS receipt directory in its parent git repository (r3 N2: committed receipts)."""
+    directory = Path(directory)
+    repo = directory.parent
+    if not (repo / ".git").exists():
+        git(repo, "init", "-q")
+    git(repo, "add", "--", directory.name)
+    git(repo, "-c", "user.name=K4S fixture", "-c", "user.email=k4s-fixture@example.invalid", "commit", "-q", "-m", "fixture")
+    COMMITS[str(directory)] = git(repo, "rev-parse", "HEAD")
+    return COMMITS[str(directory)]
+
+
+def committed(directory):
+    directory = Path(directory)
+    return dict(repository=directory.parent, commit=COMMITS[str(directory)], repository_path=directory.name)
+
+
+def read_session(directory, digest, **kwargs):
+    return L.read_tiers_session(directory, digest, committed=committed(directory), **kwargs)
+
+
+def tiers_args(directory, digest):
+    directory = Path(directory)
+    return ["--tiers-receipts", str(directory), "--tiers-receipt-sha256", digest, "--tiers-receipt-commit",
+            COMMITS[str(directory)], "--tiers-receipt-repo-path", directory.name, "--repository", str(directory.parent)]
+
+
 def make_tiers_session(directory, *, state="complete", scope="LINUX-DRY-RUN:PROVISIONAL-LOAD", r=1.05, p10=.9,
                        cell=1.0, feasible=True, measured_cut=.01, lock_path=None, utc=None, error=None,
                        manifest_sha="b" * 64, native_sha=L.NATIVE_PROVENANCE_SHA):
@@ -77,6 +111,7 @@ def make_tiers_session(directory, *, state="complete", scope="LINUX-DRY-RUN:PROV
     else:
         store.write("failure.json", dict(error="Traceback (most recent call last):\nRuntimeError: Replay worker failed\n"))
         store.seal("failed")
+    commit_receipts(directory)
     return Path(directory), L.sha(Path(directory) / "receipt-manifest.json")
 
 
@@ -264,48 +299,48 @@ def test_tiers_exactness_failure_kind(error, kind):
 
 def test_read_complete_tiers_session_and_reuse_inputs(tmp_path):
     d, digest = make_tiers_session(tmp_path / "tiers")
-    s = L.read_tiers_session(d, digest, require_mac=False, classify=no_classify)
+    s = read_session(d, digest, require_mac=False, classify=no_classify)
     assert s["state"] == "complete"
     t = L.tiers_inputs([s], GOLDEN)
     assert t["gate0"]["passes"] is True and t["k4_cell_1_0"] is True and t["exactness_failure_kind"] is None
     d2, digest2 = make_tiers_session(tmp_path / "tiers08", cell=.8)
-    assert L.tiers_inputs([L.read_tiers_session(d2, digest2, require_mac=False)], GOLDEN)["k4_cell_1_0"] is False
+    assert L.tiers_inputs([read_session(d2, digest2, require_mac=False)], GOLDEN)["k4_cell_1_0"] is False
 
 
 def test_tiers_session_refusals(tmp_path):
     d, digest = make_tiers_session(tmp_path / "tiers")
     with pytest.raises(L.PreconditionRefusal, match="SHA mismatch"):
-        L.read_tiers_session(d, "0" * 64, require_mac=False)
+        read_session(d, "0" * 64, require_mac=False)
     with pytest.raises(L.PreconditionRefusal, match="not an authorized Mac session"):
-        L.read_tiers_session(d, digest, require_mac=True)
+        read_session(d, digest, require_mac=True)
     with pytest.raises(L.PreconditionRefusal, match="technically invalid"):
-        L.read_tiers_session(d, digest, require_mac=False, classify=lambda _: dict(technical_repeat_candidate=True))
+        read_session(d, digest, require_mac=False, classify=lambda _: dict(technical_repeat_candidate=True))
     h, hd = make_tiers_session(tmp_path / "harness", state="harness")
     with pytest.raises(L.PreconditionRefusal, match="not complete"):
-        L.read_tiers_session(h, hd, require_mac=False)
+        read_session(h, hd, require_mac=False)
     (d / "tiers-summary.json").write_text("{}\n")
     with pytest.raises(L.PreconditionRefusal, match="Pin mismatch"):
-        L.read_tiers_session(d, digest, require_mac=False)
+        read_session(d, digest, require_mac=False)
 
 
 def test_tiers_exactness_termination_is_gate0_failure(tmp_path):
     d, digest = make_tiers_session(tmp_path / "t", state="exactness")
-    t = L.tiers_inputs([L.read_tiers_session(d, digest, require_mac=False)], GOLDEN)
+    t = L.tiers_inputs([read_session(d, digest, require_mac=False)], GOLDEN)
     assert t["gate0"]["passes"] is False and t["exactness_failure_kind"] == "workers-only" and not t["k4_cell_1_0"]
 
 
 def test_tiers_multi_session_uses_worst_inputs(tmp_path):
-    a = L.read_tiers_session(*make_tiers_session(tmp_path / "a", measured_cut=.03), require_mac=False)
-    b = L.read_tiers_session(*make_tiers_session(tmp_path / "b", measured_cut=.041, r=1.2), require_mac=False)
+    a = read_session(*make_tiers_session(tmp_path / "a", measured_cut=.03), require_mac=False)
+    b = read_session(*make_tiers_session(tmp_path / "b", measured_cut=.041, r=1.2), require_mac=False)
     assert L.tiers_inputs([a], GOLDEN)["k4_cell_1_0"] is True
     assert L.tiers_inputs([a, b], GOLDEN)["k4_cell_1_0"] is False      # worst cutoff .041 > .02 + .02
-    c = L.read_tiers_session(*make_tiers_session(tmp_path / "c", r=.99, cell=.8), require_mac=False)
+    c = read_session(*make_tiers_session(tmp_path / "c", r=.99, cell=.8), require_mac=False)
     assert L.tiers_inputs([a, c], GOLDEN)["k4_cell_1_0"] is False
 
 
 def test_in_session_ordering_lock_and_gap(tmp_path):
     lock = tmp_path / "lock"
-    s = L.read_tiers_session(*make_tiers_session(tmp_path / "t", lock_path=lock, utc=1000.), require_mac=False)
+    s = read_session(*make_tiers_session(tmp_path / "t", lock_path=lock, utc=1000.), require_mac=False)
     assert L.check_in_session(s, lock, 1000. + 600)["passes"]
     with pytest.raises(L.PreconditionRefusal, match="2 h"):
         L.check_in_session(s, lock, 1000. + 3 * 3600)
@@ -377,18 +412,129 @@ def test_corpus_and_fleet_reference_checks():
         L.check_corpus(L.T1_K4_CORPUS_SHA, L.T1_K4_CORPUS_SHA, inventory, publication, ids[:-1] + ["x"])
     states = {i: dict(k4s_wall_seconds=.1, sd1_poll_seconds=.004, result=dict(action=1, candidates=[1], scores=[0.]))
               for i in ids}
-    deadline = {c: dict(FLEET[c], budget_ms=L.BUDGET_MS[c], charge_scale=str(Fraction(1) / Fraction(c))) for c in FLEET}
-    ref = dict(schema="clasher.k4s.mac-fleet-reference.v1", corpus_sha256=L.T1_K4_CORPUS_SHA, repeats=3,
-               reporting_load_profile=True, hosts=["127x01", "127x03"], end_recheck_sha256="e" * 64,
-               pool_conforms=True, states=states, deadline=deadline)
-    assert L.check_fleet_reference(ref, L.T1_K4_CORPUS_SHA, ids, dry_run=False)["states"] == 300
-    assert deadline["0.9"]["charge_scale"] == "10/9"
+    deadline = {c: dict(FLEET[c], budget_ms=L.BUDGET_MS[c], charge_scale=L.charge_scale_text(c)) for c in FLEET}
+    ref = dict(schema=L.FLEET_REFERENCE_SCHEMA, corpus_sha256=L.T1_K4_CORPUS_SHA, repeats=3, hosts=["127x01"],
+               reporting_load_profile=True, pool_conforms=True, states=states, deadline=deadline)
+    assert L.check_fleet_reference(ref, L.T1_K4_CORPUS_SHA, ids, dry_run=True)["states"] == 300
+    # Mac mode never accepts a reference without pooled provenance and its re-check (full chain: test_end_reference).
+    with pytest.raises(L.PreconditionRefusal, match="provenance"):
+        L.check_fleet_reference(ref, L.T1_K4_CORPUS_SHA, ids, dry_run=False, reference_sha256="e" * 64,
+                                recheck=dict(passes=True), expected_pins={}, end_pool_sha256="f" * 64)
     bad = json.loads(json.dumps(ref))
     bad["deadline"]["0.8"]["cutoff"] = .5
     with pytest.raises(L.PreconditionRefusal, match="disagrees"):
-        L.check_fleet_reference(bad, L.T1_K4_CORPUS_SHA, ids, dry_run=False)
-    with pytest.raises(L.PreconditionRefusal, match="re-check"):
-        L.check_fleet_reference(dict(ref, end_recheck_sha256=None), L.T1_K4_CORPUS_SHA, ids, dry_run=False)
+        L.check_fleet_reference(bad, L.T1_K4_CORPUS_SHA, ids, dry_run=True)
+    old_names = json.loads(json.dumps(ref))
+    for cell in old_names["deadline"].values():
+        cell["cutoff_rate"] = cell.pop("cutoff")
+    with pytest.raises(L.PreconditionRefusal, match="disagrees"):
+        L.check_fleet_reference(old_names, L.T1_K4_CORPUS_SHA, ids, dry_run=True)
+
+
+# ---------------------------------------------------------------- SD1 manifest (finding 1)
+
+SD1_PATH = L.REPO_ROOT / "reports/explore/k4s-confirm/SD1-MANIFEST.json"
+
+
+def sd1_runtime(tmp_path, network=b"synthetic network bytes\n"):
+    """A runtime root holding the shipped SD1 inference sources (network.py is not in this worktree)."""
+    root = tmp_path / "runtime"
+    for rel in L.SD1_SOURCES:
+        target = root / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        source = L.REPO_ROOT / rel
+        target.write_bytes(source.read_bytes() if source.is_file() else network)
+    return root
+
+
+def test_sd1_validator_reads_the_shipped_manifest_schema(tmp_path):
+    shipped = json.loads(SD1_PATH.read_text())
+    assert shipped["schema"] == L.SD1_SCHEMA and set(shipped["inference_sources"]) == set(L.SD1_SOURCES)
+    root = sd1_runtime(tmp_path)
+    # Every shipped source but network.py verifies; the complete map is checked, so the fake network fails.
+    with pytest.raises(L.PreconditionRefusal, match="student-source/exit_r3/network.py"):
+        L.check_sd1_manifest(SD1_PATH, L.sha(SD1_PATH), root, L.SD1_CHECKPOINT_SHA, L.SD1_CALIBRATION_SHA)
+    # The same shipped manifest with only network.py's hash matching this runtime passes every other field.
+    copy = dict(shipped, inference_sources=dict(shipped["inference_sources"], **{
+        "student-source/exit_r3/network.py": L.sha(root / "student-source/exit_r3/network.py")}))
+    path = tmp_path / "SD1.json"
+    path.write_text(json.dumps(copy, indent=2) + "\n")
+    assert L.check_sd1_manifest(path, L.sha(path), root, L.SD1_CHECKPOINT_SHA, L.SD1_CALIBRATION_SHA)["threshold"] == L.SD1_THRESHOLD
+    for mutate, message in (
+            (lambda m: m["checkpoint"].update(sha256="0" * 64), "R3a bytes"),
+            (lambda m: m["calibration"].update(job_path="inputs/other.json"), "R3a bytes"),
+            (lambda m: m.update(threshold=0.5), "threshold"),
+            (lambda m: m["inference_sources"].pop("imitation/model/inference.py"), "inference_sources"),
+            (lambda m: m["inference_sources"].update({"reports/explore/e1/policy.py": "0" * 64}), "Pin mismatch"),
+            (lambda m: m["inference_mode"].update(torch_threads=2), "inference mode"),
+            (lambda m: m.update(schema="other"), "schema")):
+        forged = json.loads(json.dumps(copy))
+        mutate(forged)
+        other = tmp_path / "forged.json"
+        other.write_text(json.dumps(forged))
+        with pytest.raises(L.PreconditionRefusal, match=message):
+            L.check_sd1_manifest(other, L.sha(other), root, L.SD1_CHECKPOINT_SHA, L.SD1_CALIBRATION_SHA)
+    with pytest.raises(L.PreconditionRefusal, match="SD1's bytes"):
+        L.check_sd1_manifest(path, L.sha(path), root, "0" * 64, L.SD1_CALIBRATION_SHA)
+    with pytest.raises(L.PreconditionRefusal, match="SHA mismatch"):
+        L.check_sd1_manifest(path, L.sha(SD1_PATH), root, L.SD1_CHECKPOINT_SHA, L.SD1_CALIBRATION_SHA)
+
+
+def test_sd1_frozen_identity_matches_sd1_manifest_module():
+    sys.path.insert(0, str(L.REPO_ROOT / "reports/explore/k4s-confirm"))
+    import sd1_manifest
+    assert tuple(sd1_manifest.SOURCES) == L.SD1_SOURCES and sd1_manifest.MODE == L.SD1_INFERENCE_MODE
+    shipped = json.loads(SD1_PATH.read_text())
+    assert shipped["checkpoint"]["sha256"] == L.SD1_CHECKPOINT_SHA and shipped["threshold"] == L.SD1_THRESHOLD
+
+
+# ---------------------------------------------------------------- committed TIERS receipts (finding 7)
+
+def test_tiers_receipts_must_be_committed_ancestors_with_equal_blobs(tmp_path):
+    d, digest = make_tiers_session(tmp_path / "tiers")
+    assert read_session(d, digest, require_mac=False)["committed"]["files"] == len(json.loads(
+        (d / "receipt-manifest.json").read_text())["files"]) + 2
+    with pytest.raises(L.PreconditionRefusal, match="from a commit"):
+        L.read_tiers_session(d, digest, require_mac=False)
+    with pytest.raises(L.PreconditionRefusal, match="full 40-hex"):
+        L.read_tiers_session(d, digest, require_mac=False, committed=dict(committed(d), commit="abc"))
+    # A commit on a side branch is not admissible.
+    git(tmp_path, "checkout", "-q", "-b", "side")
+    (tmp_path / "note").write_text("x")
+    git(tmp_path, "add", "note")
+    git(tmp_path, "-c", "user.name=f", "-c", "user.email=f@example.invalid", "commit", "-q", "-m", "side")
+    side = git(tmp_path, "rev-parse", "HEAD")
+    git(tmp_path, "checkout", "-q", "-")
+    with pytest.raises(L.PreconditionRefusal, match="ancestor"):
+        L.read_tiers_session(d, digest, require_mac=False, committed=dict(committed(d), commit=side))
+    # A locally revised, re-sealed verdict does not match the committed blobs.
+    revised = tmp_path / "revised"
+    store = L.K4SStore(revised / "tiers", "LINUX-DRY-RUN:PROVISIONAL-LOAD")
+    for name in json.loads((d / "receipt-manifest.json").read_text())["files"]:
+        value = json.loads((d / name).read_text())
+        value.pop("scope")
+        if name == "tiers-summary.json":
+            value["feasibility"]["K4"]["cell"] = 1.0
+            value["exactness_class"] = "ARM64-NEAR-EXACT"
+        store.write(name, value)
+    store.seal("complete")
+    resealed = L.sha(revised / "tiers" / "receipt-manifest.json")
+    with pytest.raises(L.PreconditionRefusal, match="committed blob|inventory"):
+        L.read_tiers_session(revised / "tiers", resealed, require_mac=False,
+                             committed=dict(committed(d)))
+    # An extra committed file means the committed inventory is not the sealed one.
+    (d / "extra.json").write_text("{}\n")
+    git(tmp_path, "add", "--", "tiers/extra.json")
+    git(tmp_path, "-c", "user.name=f", "-c", "user.email=f@example.invalid", "commit", "-q", "-m", "extra")
+    with pytest.raises(L.PreconditionRefusal, match="inventory"):
+        L.read_tiers_session(d, digest, require_mac=False, committed=dict(committed(d), commit=git(tmp_path, "rev-parse", "HEAD")))
+
+
+def test_cli_refuses_uncommitted_tiers_receipts(tmp_path, offline):
+    tiers_dir, digest = make_tiers_session(tmp_path / "tiers", state="exactness")
+    out = tmp_path / "k"
+    assert M.main(dry_argv(out, "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest), **offline) == 3
+    assert "commit" in json.loads((out / "refusal.json").read_text())["error"]
 
 
 def test_output_isolation_from_tiers_paths(tmp_path):
@@ -510,14 +656,14 @@ def test_cli_refuses_output_inside_tiers_paths(tmp_path, offline):
     tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
     before = tree_state(tiers_dir)
     for out in (tiers_dir / "k4s", L.REPO_ROOT / L.E4V3_REL / "receipts" / "k4s-test-never"):
-        assert M.main(dry_argv(out, "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest), **offline) == 3
+        assert M.main(dry_argv(out, *tiers_args(tiers_dir, digest)), **offline) == 3
         assert not out.exists()
     assert tree_state(tiers_dir) == before
 
 
 def test_cli_refuses_bad_tiers_sha_and_standalone_without_authorization(tmp_path, offline):
     tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
-    assert M.main(dry_argv(tmp_path / "a", "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", "0" * 64),
+    assert M.main(dry_argv(tmp_path / "a", *tiers_args(tiers_dir, "0" * 64)),
                   **offline) == 3
     assert "SHA mismatch" in json.loads((tmp_path / "a" / "refusal.json").read_text())["error"]
     assert M.main(dry_argv(tmp_path / "b", "--standalone"), **offline) == 3
@@ -527,7 +673,7 @@ def test_cli_refuses_bad_tiers_sha_and_standalone_without_authorization(tmp_path
 
 def test_cli_refuses_incomplete_tiers_session(tmp_path, offline):
     tiers_dir, digest = make_tiers_session(tmp_path / "tiers", state="harness")
-    assert M.main(dry_argv(tmp_path / "k", "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest),
+    assert M.main(dry_argv(tmp_path / "k", *tiers_args(tiers_dir, digest)),
                   **offline) == 3
     assert "not complete" in json.loads((tmp_path / "k" / "refusal.json").read_text())["error"]
 
@@ -535,7 +681,7 @@ def test_cli_refuses_incomplete_tiers_session(tmp_path, offline):
 def test_cli_refuses_technically_invalid_tiers_session(tmp_path, offline):
     tiers_dir, digest = make_tiers_session(tmp_path / "tiers")
     hooks = dict(offline, classify=lambda _: dict(technical_repeat_candidate=True, reasons=["x"]))
-    assert M.main(dry_argv(tmp_path / "k", "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest),
+    assert M.main(dry_argv(tmp_path / "k", *tiers_args(tiers_dir, digest)),
                   **hooks) == 3
 
 
@@ -543,7 +689,7 @@ def test_cli_tiers_exactness_failure_writes_no_measurement_summary(tmp_path, off
     tiers_dir, digest = make_tiers_session(tmp_path / "tiers", state="exactness")
     before = tree_state(tiers_dir)
     out = tmp_path / "k4s"
-    assert M.main(dry_argv(out, "--tiers-receipts", str(tiers_dir), "--tiers-receipt-sha256", digest), **offline) == 0
+    assert M.main(dry_argv(out, *tiers_args(tiers_dir, digest)), **offline) == 0
     status, files = sealed(out)
     summary = json.loads((out / "k4s-mac-summary.json").read_text())
     assert status == "complete" and summary["c_M"] is None and summary["measurements"] == dict(measured=False)
@@ -574,7 +720,7 @@ def test_admit_platform_restrictions():
 def test_measure_module_imports_without_torch():
     code = ("import sys; sys.path.insert(0, %r); import measure_k4s, classify_k4s_failure; "
             "assert 'torch' not in sys.modules and 'tier_backend' not in sys.modules") % str(L.MAC_DIR)
-    subprocess.run([sys.executable, "-c", code], check=True)
+    subprocess.run([sys.executable, "-B", "-c", code], check=True)
 
 
 # ---------------------------------------------------------------- measurement loops with a fake backend
@@ -668,7 +814,11 @@ def test_summarize_records_every_gate_input():
 # ---------------------------------------------------------------- classifier
 
 @pytest.mark.parametrize("kwargs,category", [
-    (dict(refusal=dict(error="no receipt")), "precondition-refusal"),
+    (dict(refusal=dict(error="no receipt"), status="refused"), "precondition-refusal"),
+    (dict(refusal=dict(error="no receipt"), status="complete"), "technical-failure"),
+    (dict(complete=dict(completed=True), status="failed"), "technical-failure"),
+    (dict(complete=dict(completed=True), cleanup_error="Traceback (most recent call last):\nRuntimeError: x"),
+     "technical-failure"),
     (dict(failure_error="Traceback (most recent call last):\nValueError: Exactness mismatch: x"), "gate-failure"),
     (dict(failure_error="Traceback (most recent call last):\nRuntimeError: Replay worker failed"), "technical-failure"),
     (dict(failure_error="ValueError: Pin mismatch (x): y"), "technical-failure"),
@@ -732,3 +882,221 @@ def test_reduce_sessions_minimum_across_valid_sessions_only():
         C.reduce_sessions([(s3, dict(valid=False))], "0.9")
     with pytest.raises(L.GateInputError):
         C.reduce_sessions([(s1, valid), (dict(s2, tiers_inputs=tiers(k4_full=True)), valid)], "0.9")
+
+
+# ---------------------------------------------------------------- sealed reduction inputs (finding 8)
+
+def sealed_session(directory, summary=None, *, complete=True, status="complete", scope="K4S-LINUX-DRY-RUN"):
+    store = L.K4SStore(directory, scope)
+    store.write("k4s-preconditions.json", dict(tiers=tiers()))
+    if summary is not None:
+        store.write("k4s-mac-summary.json", summary)
+    if complete:
+        store.write("k4s-complete.json", dict(completed=True))
+    store.seal(status)
+    return Path(directory), L.sha(Path(directory) / "receipt-manifest.json")
+
+
+def classified(session, output):
+    assert C.main(["classify", "--receipts", str(session), "--output", str(output)]) == 0
+    return Path(output), L.sha(Path(output) / "receipt-manifest.json")
+
+
+def reduce_argv(pairs, output):
+    argv = ["reduce", "--output", str(output)]
+    for (s, sd), (c, cd) in pairs:
+        argv += ["--session", str(s), "--session-sha256", sd, "--classification", str(c), "--classification-sha256", cd]
+    return argv
+
+
+def test_reduce_verifies_classification_bytes_against_their_seal(tmp_path):
+    good = dict(tiers_inputs=tiers(), gate_inputs=inputs(r_k4s=.84, p10_k4s=.8), provisional=True)
+    s1 = sealed_session(tmp_path / "s1", good)
+    c1 = classified(s1[0], tmp_path / "c1")
+    assert C.main(reduce_argv([(s1, c1)], tmp_path / "final")) == 0
+    final = json.loads((tmp_path / "final" / "k4s-mac-final.json").read_text())
+    assert final["c_M"] == "0.8" and final["valid_sessions"] == 1
+    # A technically invalid session: mutate classification.json to "valid", keep the original seal.
+    s2 = sealed_session(tmp_path / "s2", dict(good, gate_inputs=inputs(r_k4s=.5)), complete=False, status="failed")
+    c2 = classified(s2[0], tmp_path / "c2")
+    assert json.loads((c2[0] / "classification.json").read_text())["valid"] is False
+    forged = json.loads((c2[0] / "classification.json").read_text())
+    forged.update(valid=True, category="valid", technical_repeat_candidate=False)
+    (c2[0] / "classification.json").write_text(L.canonical(forged) + "\n")
+    with pytest.raises(L.PreconditionRefusal, match="Pin mismatch"):
+        C.main(reduce_argv([(s1, c1), (s2, c2)], tmp_path / "final2"))
+    # A seal that omits classification.json is refused (no unsealed classification is ever read).
+    c3 = tmp_path / "c3"
+    store = L.K4SStore(c3, C.CLASSIFICATION_SCOPE)
+    store.seal("complete")
+    (c3 / "classification.json").write_text(L.canonical(dict(valid=True, category="valid",
+                                                              source_manifest_sha256=s1[1], status="complete")) + "\n")
+    with pytest.raises(L.PreconditionRefusal, match="does not include"):
+        C.main(reduce_argv([(s1, (c3, L.sha(c3 / "receipt-manifest.json")))], tmp_path / "final3"))
+    # A failed classification seal is not admissible.
+    with pytest.raises(L.PreconditionRefusal):
+        C.read_entry(s1[0], s1[1], s2[0], "0" * 64)
+
+
+def test_reduce_reads_session_summary_only_from_its_own_inventory(tmp_path):
+    s, sd = sealed_session(tmp_path / "s", None)
+    c = classified(s, tmp_path / "c")
+    (s / "k4s-mac-summary.json").write_text(L.canonical(dict(tiers_inputs=tiers(), gate_inputs=inputs(),
+                                                             provisional=True)) + "\n")
+    with pytest.raises(L.PreconditionRefusal, match="not in its own sealed inventory"):
+        C.main(reduce_argv([((s, sd), c)], tmp_path / "final"))
+    with pytest.raises(L.PreconditionRefusal, match="different session"):
+        other = sealed_session(tmp_path / "o", dict(tiers_inputs=tiers(), gate_inputs=inputs(), provisional=True))
+        C.read_entry(other[0], other[1], *c)
+
+
+# ---------------------------------------------------------------- cleanup failures (finding 9)
+
+def test_cleanup_failure_after_completion_is_classified_technical_and_excluded(tmp_path, offline, monkeypatch):
+    class CompletedThenCleanupFails:
+        def __init__(self, args, store, ctx):
+            self.store = store
+
+        def run(self):
+            self.store.write("k4s-mac-summary.json", dict(tiers_inputs=tiers(), gate_inputs=inputs(), provisional=True))
+            self.store.write("k4s-complete.json", dict(completed=True, utc=time.time()))
+
+        def close(self):
+            raise RuntimeError("Telemetry did not stop cleanly")
+    ctx = dict(measure=True, dry_run=True, tiers=tiers(), sessions=[])
+    monkeypatch.setattr(M, "preconditions", lambda args, store, **hooks: ctx)
+    monkeypatch.setattr(M, "stage_inputs", lambda args, ctx, store: ctx)
+    monkeypatch.setattr(M, "Session", CompletedThenCleanupFails)
+    out = tmp_path / "k4s"
+    with pytest.raises(RuntimeError, match="did not stop cleanly"):
+        M.main(dry_argv(out), **offline)
+    status, files = sealed(out)
+    assert status == "failed" and {"cleanup-failure.json", "k4s-complete.json", "k4s-mac-summary.json"} <= set(files)
+    result = C.classify(out)
+    assert result["category"] == "technical-failure" and result["valid"] is False
+    assert any("cleanup" in r for r in result["reasons"]) and result["counts_toward_repeat_allowance"] is True
+    c = classified(out, tmp_path / "c")
+    with pytest.raises(L.GateInputError, match="No valid"):
+        C.main(reduce_argv([((out, L.sha(out / "receipt-manifest.json")), c)], tmp_path / "final"))
+    good = sealed_session(tmp_path / "good", dict(tiers_inputs=tiers(), gate_inputs=inputs(r_k4s=.95), provisional=True))
+    assert C.main(reduce_argv([((out, L.sha(out / "receipt-manifest.json")), c),
+                               (good, classified(good[0], tmp_path / "cg"))], tmp_path / "final2")) == 0
+    final = json.loads((tmp_path / "final2" / "k4s-mac-final.json").read_text())
+    assert final["valid_sessions"] == 1 and final["excluded_sessions"] == 1
+
+
+def test_complete_seal_without_completion_or_with_failure_is_not_valid(tmp_path):
+    s, _ = sealed_session(tmp_path / "s", None, complete=False)
+    assert C.classify(s)["category"] == "technical-failure"
+    store = L.K4SStore(tmp_path / "t", "K4S-LINUX-DRY-RUN")
+    store.write("k4s-complete.json", dict(completed=True))
+    store.write("failure.json", dict(error="Traceback (most recent call last):\nRuntimeError: Replay worker failed"))
+    store.seal("complete")
+    assert C.classify(tmp_path / "t")["category"] == "technical-failure"
+
+
+# ---------------------------------------------------------------- post-summary gate failure (r2 finding 17)
+
+def summary_then(tmp_path, monkeypatch, offline, *, error, close_error=None, name="k4s"):
+    """Session.run writes a PASSING summary, then the post-run bundle re-validation fails (as validate_bundle /
+    assert_exact would on a changed specification); close() may fail too."""
+    class SummaryThenFailure:
+        def __init__(self, args, store, ctx):
+            self.store = store
+
+        def run(self):
+            self.store.write("k4s-mac-summary.json", dict(tiers_inputs=tiers(), gate_inputs=inputs(), provisional=True))
+            raise ValueError(error)
+
+        def close(self):
+            if close_error:
+                raise RuntimeError(close_error)
+    ctx = dict(measure=True, dry_run=True, tiers=tiers(), sessions=[])
+    monkeypatch.setattr(M, "preconditions", lambda args, store, **hooks: ctx)
+    monkeypatch.setattr(M, "stage_inputs", lambda args, ctx, store: ctx)
+    monkeypatch.setattr(M, "Session", SummaryThenFailure)
+    out = tmp_path / name
+    with pytest.raises(ValueError, match="Exactness mismatch"):
+        M.main(dry_argv(out), **offline)
+    return out
+
+
+def test_post_summary_exactness_failure_classifies_and_reduces_to_gate0_false(tmp_path, offline, monkeypatch):
+    out = summary_then(tmp_path, monkeypatch, offline, error="Exactness mismatch: frozen r3 specification")
+    status, files = sealed(out)
+    summary = json.loads((out / "k4s-mac-summary.json").read_text())
+    assert status == "failed" and "failure.json" in files and summary["gate_inputs"]["gate0"]["passes"] is True
+    result = C.classify(out)
+    assert result["category"] == "gate-failure" and result["valid"] is True and result["gate0_failed"] is True
+    assert result["technical_repeat_candidate"] is False and result["counts_toward_repeat_allowance"] is False
+    c = classified(out, tmp_path / "c")
+    session = (out, L.sha(out / "receipt-manifest.json"))
+    entry, _ = C.read_entry(*session, *c)
+    assert entry["gate_inputs"]["gate0"]["passes"] is False and entry["gate_inputs"]["r_k4s"] is None
+    assert entry["gate_inputs"]["gate0"]["parts"]["k4s_exactness_gate_failure"] is False
+    assert C.main(reduce_argv([(session, c)], tmp_path / "final")) == 0
+    final = json.loads((tmp_path / "final" / "k4s-mac-final.json").read_text())
+    assert final["c_M"] is None and final["gate_inputs"]["gate0"]["passes"] is False and final["valid_sessions"] == 1
+    good = sealed_session(tmp_path / "good", dict(tiers_inputs=tiers(), gate_inputs=inputs(r_k4s=.95), provisional=True))
+    assert C.main(reduce_argv([(session, c), (good, classified(good[0], tmp_path / "cg"))], tmp_path / "final2")) == 0
+    final = json.loads((tmp_path / "final2" / "k4s-mac-final.json").read_text())
+    assert final["valid_sessions"] == 2 and final["c_M"] is None and final["kill"]["k4s_killed_on_mac"] is True
+
+
+def test_exactness_failure_with_cleanup_failure_stays_a_no_repeat_gate_failure(tmp_path, offline, monkeypatch):
+    out = summary_then(tmp_path, monkeypatch, offline, error="Exactness mismatch: frozen r3 specification",
+                       close_error="Telemetry did not stop cleanly")
+    status, files = sealed(out)
+    assert status == "failed" and {"failure.json", "cleanup-failure.json"} <= set(files)
+    result = C.classify(out)
+    assert result["category"] == "gate-failure" and result["technical_repeat_candidate"] is False
+    assert any("cleanup" in r for r in result["reasons"])
+    c = classified(out, tmp_path / "c")
+    assert C.main(reduce_argv([((out, L.sha(out / "receipt-manifest.json")), c)], tmp_path / "final")) == 0
+    assert json.loads((tmp_path / "final" / "k4s-mac-final.json").read_text())["gate_inputs"]["gate0"]["passes"] is False
+
+
+def test_gate_failure_classification_status_mismatch_is_recorded_and_still_fails_gate0():
+    result = C.classify_records(failure_error="Exactness mismatch: x", complete=dict(completed=True), status="complete")
+    assert result["category"] == "gate-failure" and result["gate0_failed"] is True
+    assert any("disagrees" in r for r in result["reasons"]) and any("superseded" in r for r in result["reasons"])
+
+
+def test_reducer_rejects_a_contradictory_valid_or_gate_failure_entry(tmp_path):
+    passing = dict(tiers_inputs=tiers(), gate_inputs=inputs(), provisional=True)
+    with pytest.raises(L.GateInputError, match="contradicts a passing gate 0"):
+        C.reduce_sessions([(passing, dict(category="gate-failure", valid=True, gate0_failed=True))], "0.9")
+    # A sealed "valid" classification for a session whose own seal holds failure evidence is refused.
+    store = L.K4SStore(tmp_path / "s", "K4S-LINUX-DRY-RUN")
+    store.write("k4s-mac-summary.json", passing)
+    store.write("k4s-complete.json", dict(completed=True))
+    store.write("cleanup-failure.json", dict(error="close failed"))
+    store.seal("complete")
+    digest = L.sha(tmp_path / "s" / "receipt-manifest.json")
+    cstore = L.K4SStore(tmp_path / "c", C.CLASSIFICATION_SCOPE)
+    cstore.write("classification.json", dict(category="valid", valid=True, source_manifest_sha256=digest, status="complete"))
+    cstore.seal("complete")
+    with pytest.raises(L.PreconditionRefusal, match="contradicts the session"):
+        C.read_entry(tmp_path / "s", digest, tmp_path / "c", L.sha(tmp_path / "c" / "receipt-manifest.json"))
+    # A gate-failure classification without a sealed exactness trace is refused.
+    store = L.K4SStore(tmp_path / "s2", "K4S-LINUX-DRY-RUN")
+    store.write("k4s-mac-summary.json", passing)
+    store.seal("failed")
+    digest = L.sha(tmp_path / "s2" / "receipt-manifest.json")
+    cstore = L.K4SStore(tmp_path / "c2", C.CLASSIFICATION_SCOPE)
+    cstore.write("classification.json", dict(category="gate-failure", valid=True, gate0_failed=True,
+                                              source_manifest_sha256=digest, status="failed"))
+    cstore.seal("complete")
+    with pytest.raises(L.PreconditionRefusal, match="without a sealed exactness failure trace"):
+        C.read_entry(tmp_path / "s2", digest, tmp_path / "c2", L.sha(tmp_path / "c2" / "receipt-manifest.json"))
+
+
+def test_end_frozen_pins_cover_every_end_measurement_source():
+    manifest = B.build(L.REPO_ROOT, ["reports/explore/k4s-confirm/sdefault.py", "reports/explore/k4s-confirm/anchor_x.py"], True)
+    assert set(L.END_MEASUREMENT_FILES) <= set(manifest["end_files"]) | set(manifest["k4s_files"])
+    pins = L.end_frozen_pins(manifest, "a" * 64, "reports/explore/k4s-confirm/sdefault.py",
+                             "reports/explore/k4s-confirm/anchor_x.py")
+    assert set(pins) == set(L.END_FROZEN_PIN_KEYS) and pins["k4s_manifest_sha256"] == "a" * 64
+    with pytest.raises(L.PreconditionRefusal, match="END-source pin"):
+        L.end_frozen_pins(dict(manifest, end_files={}), "a" * 64, "reports/explore/k4s-confirm/sdefault.py",
+                          "reports/explore/k4s-confirm/anchor_x.py")

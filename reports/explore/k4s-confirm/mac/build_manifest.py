@@ -19,7 +19,11 @@ import k4s_logic as L  # noqa: E402
 K4S_FILES = ("measure_k4s.py", "k4s_logic.py", "k4s_backend.py", "classify_k4s_failure.py",
              "build_manifest.py", "K4S-MAC-PROCEDURE.md", "test_measure_k4s.py")
 E4V3_REUSED = ("measure_tiers.py", "receipts.py", "tier_backend.py", "replay_load.py", "telemetry.py",
-               "classify_failure.py", "corpus_contract.py", "spec-pins.json")
+               "classify_failure.py", "corpus_contract.py", "spec-pins.json",
+               # frozen fleet helpers reused read-only by the K4S END producer/pooler
+               "fleet_end.py", "fleet_profile.py", "fleet_validity.py", "fleet_pool.py", "fleet_reference.py")
+END_FILES = ("reports/explore/k4s-confirm/end_reference.py", "reports/explore/k4s-confirm/end_pool.py",
+             "reports/explore/k4s-confirm/end_background.py", "reports/explore/k4s-confirm/end_evidence.py")
 RUNTIME_REUSED = (L.TIERS_SCORER_REL, L.TIERS_SCORER_BASE_REL, "reports/explore/s1/cached_policy.py",
                   "reports/explore/s1/gc_window.py")
 REFERENCES = {
@@ -58,6 +62,7 @@ def build(root, kernel=(), freeze=False):
         prereg=dict(path=REFERENCES["prereg"], sha256=pin(REFERENCES["prereg"])),
         references={k: dict(path=v, sha256=pin(v)) for k, v in REFERENCES.items()},
         k4s_files={L.MAC_REL + "/" + n: pin(L.MAC_REL + "/" + n) for n in K4S_FILES},
+        end_files={rel: pin(rel) for rel in END_FILES},
         reused_readonly=reused,
         measure_tiers_unmodified=dict(
             path=tiers_script, sha256=reused[tiers_script],

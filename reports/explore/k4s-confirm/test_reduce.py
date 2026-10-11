@@ -57,6 +57,7 @@ def test_margins_inclusive_sup_strict():
 def test_c_star_08_drops_h4_and_veto():
     d = R.decide(fake({}), 0.8, MARGINS)
     assert [x['hypothesis'] for x in d['sequence']] == ['B(0.8)', 'B(0.7)', 'B(0.6)', 'A(0.8)', 'A(0.7)', 'A(0.6)']
+    assert [x['step'] for x in d['sequence']] == ['H1', 'H2', 'H3', 'H5', 'H6', 'H7']
     assert d['admitted']['0.9'] is None and 0.9 not in d['usable_cells']
     d = R.decide(fake({('veto',): 5.01}), 0.9, MARGINS)
     assert d['admitted']['0.9'] == 'A' and not d['veto_0_9_pass'] and 0.9 not in d['usable_cells']
@@ -86,7 +87,7 @@ def test_ledger_replay_rejects_wrong_k_and_non_logical_replaces():
     from schedule import block, replacement
     lost = block('primary', 5); r = replacement(lost, [])
     ok = [dict(lost=lost, replacement=r)]
-    assert R.validate_ledger(ok)[r['id']] == r
+    assert R.validate_ledger(ok)[0][r['id']] == r and R.validate_ledger(ok)[1] == {'primary-0005': r['id']}
     with pytest.raises(AssertionError): R.validate_ledger([dict(lost=lost, replacement=dict(r, replacement_k=1, index=3055, id='primary-3055', seed=r['seed']+50))])
     r2 = replacement(r, ok)
     assert r2['replaces'] == 'primary-0005'
@@ -106,3 +107,11 @@ def test_tampered_descriptors_are_rejected(tmp_path):
         r = subprocess.run([sys.executable, str(HERE/'reduce.py'), '--root', str(t), '--synthetic', '--out', str(tmp_path/'x.json')], capture_output=True)
         assert r.returncode != 0 and b'descriptor differs' in r.stderr
         p.write_text(json.dumps(orig))
+
+
+def test_ledger_rejects_loss_before_allocation():
+    from schedule import block, replacement
+    lost = block('primary', 3); r0 = replacement(lost, []); r1 = replacement(r0, [dict(lost=lost, replacement=r0)])
+    # Event 1 loses the k=1 replacement before event 2 allocates it (Sol verifier r1 finding 3 shape).
+    bad = [dict(lost=r1, replacement=dict(r0)), dict(lost=lost, replacement=r1)]
+    with pytest.raises(AssertionError): R.validate_ledger(bad)

@@ -1,6 +1,6 @@
 {
   "schema": "clasher.k4s.reducer-verifier-crosscheck.v1",
-  "utc": "2026-10-11T13:47:17Z",
+  "utc": "2026-10-11T14:42:23Z",
   "host": "127x03",
   "synthetic": true,
   "scenarios": {
@@ -20,30 +20,37 @@
       },
       "sequence": [
         [
+          "H1",
           "B(0.8)",
           true
         ],
         [
+          "H2",
           "B(0.7)",
           true
         ],
         [
+          "H3",
           "B(0.6)",
           true
         ],
         [
+          "H4",
           "A(0.9)",
           true
         ],
         [
+          "H5",
           "A(0.8)",
           true
         ],
         [
+          "H6",
           "A(0.7)",
           true
         ],
         [
+          "H7",
           "A(0.6)",
           true
         ]
@@ -55,10 +62,10 @@
         0.6
       ],
       "ledger_events": 4,
-      "reduce_sha256": "a11c06ccbd8d4cc239f4e1abf8eff8ccfbd0dc8d277b7b8a407f549c6180aa22",
-      "verify_sha256": "5c8256cdf9a876e5ffd387a5dc2378a2d6c0ea7bf59ee0b75a0805ce692220d4",
-      "reducer_sha256": "79985929946c980256ec2c1ab4ea50ed33af55feb1a7a4c23899e81f498ffc11",
-      "verifier_sha256": "62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf"
+      "reduce_sha256": "d22716dfd4f1e70bb04c1af8640c852628ebdf9aca3afdb5e45530faa296fd1f",
+      "verify_sha256": "de177038fa7b227760e63343346a76b0cff843377912c68851ea660578eea287",
+      "reducer_sha256": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
+      "verifier_sha256": "47e59142fcafb6fdae68943402ceb3129e31d317cabc42c8d07e0e766412738e"
     },
     "stop-at-H2": {
       "verifier_status": "OK",
@@ -76,30 +83,37 @@
       },
       "sequence": [
         [
+          "H1",
           "B(0.8)",
           true
         ],
         [
+          "H2",
           "B(0.7)",
           false
         ],
         [
+          "H3",
           "B(0.6)",
           null
         ],
         [
+          "H4",
           "A(0.9)",
           null
         ],
         [
+          "H5",
           "A(0.8)",
           null
         ],
         [
+          "H6",
           "A(0.7)",
           null
         ],
         [
+          "H7",
           "A(0.6)",
           null
         ]
@@ -107,11 +121,11 @@
       "usable": [
         0.8
       ],
-      "ledger_events": 2,
-      "reduce_sha256": "2ea5e017ecfb3052cb1a70878f5afea20909416964b0166e79634533025b2f01",
-      "verify_sha256": "f86fbb3613634957538962a682d49d4aec670bc5e787290acb1fef4177da8fbb",
-      "reducer_sha256": "79985929946c980256ec2c1ab4ea50ed33af55feb1a7a4c23899e81f498ffc11",
-      "verifier_sha256": "62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf"
+      "ledger_events": 4,
+      "reduce_sha256": "3523013eddb8abaf3c3f952577fbf316424fec694b18c437acaec52909ec29c0",
+      "verify_sha256": "c20ecc3683dacc0162332388017ff781ac65bcb47c43b666a6a75b5b6d3580d7",
+      "reducer_sha256": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
+      "verifier_sha256": "47e59142fcafb6fdae68943402ceb3129e31d317cabc42c8d07e0e766412738e"
     },
     "suspended": {
       "verifier_status": "SUSPENDED",
@@ -129,40 +143,47 @@
       },
       "sequence": [
         [
+          "H1",
           "B(0.8)",
           false
         ],
         [
+          "H2",
           "B(0.7)",
           null
         ],
         [
+          "H3",
           "B(0.6)",
           null
         ],
         [
+          "H4",
           "A(0.9)",
           null
         ],
         [
+          "H5",
           "A(0.8)",
           null
         ],
         [
+          "H6",
           "A(0.7)",
           null
         ],
         [
+          "H7",
           "A(0.6)",
           null
         ]
       ],
       "usable": [],
-      "ledger_events": 2,
-      "reduce_sha256": "8f340944b978687f88ec99db79bc1ca0fd3058aeb4958b6a8405ca07bc14f9ae",
-      "verify_sha256": "ab610bad065d4b2986a90bafa1b3edc0e720dba43e948fc38423aedb7a7e5c21",
-      "reducer_sha256": "79985929946c980256ec2c1ab4ea50ed33af55feb1a7a4c23899e81f498ffc11",
-      "verifier_sha256": "62d292423df5fedf3976f8de017c0ba9aab6dfbd4bfe70d43180ca52af70ffaf"
+      "ledger_events": 4,
+      "reduce_sha256": "eb37c8490ee11895a4b9b96c84c0ad58decb91aa7f45e62adf491e78aba188fb",
+      "verify_sha256": "c9a3e1779aea2187a34768a6848acb6d7ed14b20dad8e44c4367347b09ae3d03",
+      "reducer_sha256": "9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8",
+      "verifier_sha256": "47e59142fcafb6fdae68943402ceb3129e31d317cabc42c8d07e0e766412738e"
     }
   }
 }

@@ -97,6 +97,10 @@ original's rotation, arm set and cell.
 - Bank caps: k ≤ 11 primary and k ≤ 9 guard.
 - Population caps: at most 300 primary and 90 guard replacements in total. Beyond any cap: stop and amend.
 - Never-started blocks are re-dispatched unchanged.
+- **Ledger replay.** The ledger is replayed in event order. Originals start active. A lost block must be the active
+  block of its logical original; a replacement can be lost only after an earlier event allocated it. Each
+  allocation makes the replacement the active block. A counted block for a replaced logical original must be its
+  final survivor.
 
 ## 4. Decision timing, charge and the S-default (r3 §2.3, §2.4, §4.3)
 
@@ -183,7 +187,8 @@ It adds these fields:
 ### 6.1 Inputs and seal
 
 The inputs are:
-- the counted block tree (a directory of `<id>/complete.json`, hub-acknowledged when the host is not 127x01);
+- the counted block tree (a directory of `<id>/complete.json`). A block whose `complete.json` host is not 127x01
+  counts only if the durable hub acknowledgement file `<id>/hub-ack.json` exists (r3 §4.4);
 - the replacement ledger (`{"events":[{"lost":desc,"replacement":desc|null,...}]}`);
 - the coordinator's release receipt.
 
@@ -198,8 +203,12 @@ The reducer verifies the release (§7) **before** opening any game file, or else
 - The expected totals are exactly 3000 primary and 900 guard logical blocks, and exactly 600 / 300 of them in the
   subsample. Anything else is an error.
 - Per game:
+  - the `winner` key must be present; a missing key is an error, not a draw;
   - loss = 1 iff `winner` is not null and `winner != seat`;
-  - draw iff `winner` is null;
+  - draw iff `winner` is explicitly null;
+  - `metadata.c_star` must equal the frozen c\* (plan.json `c_star`); any mismatch is an error;
+  - the decks of every arm (compared as sorted lists, because the runner shuffles them) must equal the frozen §2
+    mapping;
   - a non-terminal game is an error;
   - `metadata.seed`, `cell` and `seat` must match the descriptor.
 
@@ -252,7 +261,7 @@ All bounds are upper 97.5th-percentile bounds. Margins are inclusive (≤), and 
 
 **Sequence.**
 - With c\* = 0.9: H1 B(0.8), H2 B(0.7), H3 B(0.6), H4 A(0.9), H5 A(0.8), H6 A(0.7), H7 A(0.6).
-- With c\* = 0.8: H4 is removed.
+- With c\* = 0.8: H4 is removed and the remaining steps keep their labels: H1, H2, H3, H5, H6, H7 (r3 §1.3).
 - Test in order and stop at the first failure. Everything after it is "not reached" and is not admitted.
 
 **Admitted level.**

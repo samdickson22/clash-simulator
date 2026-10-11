@@ -7,16 +7,22 @@
     "publication": "reports/explore/t1/corpora/corpus-03-a51ea64c/publication.json",
     "states": 300
   },
+  "end_files": {
+    "reports/explore/k4s-confirm/end_background.py": "a872bd2d810161d82467075567439d8000817eaa1c1082d00a73d4a5b008e839",
+    "reports/explore/k4s-confirm/end_evidence.py": "9dc9cca2fa82b90027c84b3fc20b061c996b0f7bdcf213b33ec6d5801105a158",
+    "reports/explore/k4s-confirm/end_pool.py": "6eac4a5ba0625f884d62f138f7830e3842cec3a7329829ea212f820cbcc7e491",
+    "reports/explore/k4s-confirm/end_reference.py": "671e193e36f1b046b8f3d09c359e5ab5a9845315aae8b8d24164f0094c152850"
+  },
   "fleet_reference_schema": "clasher.k4s.mac-fleet-reference.v1 (K4S-MAC-PROCEDURE.md \u00a73)",
   "frozen": false,
   "k4s_files": {
-    "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "71cd257063814c3cc6b0761b68a79bf09ac0fbd6cff790fb51b4d2cbf7b1408b",
-    "reports/explore/k4s-confirm/mac/build_manifest.py": "7277c66e34c54588112a0e34ccbdc8aa3d9f001f46dc150319ca17de4ceb84c9",
-    "reports/explore/k4s-confirm/mac/classify_k4s_failure.py": "26db8776cb58fa16cb5513c339d0637f2a9c2728c720cb7a8d7b9a040d9b2aff",
+    "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md": "a97d030e43ca02ac91babd23c4cdeb0f8df3514148a5ae0c6181a8c9a885d333",
+    "reports/explore/k4s-confirm/mac/build_manifest.py": "26932fa87d9638c080c0d1611b2c2f73c5401ae8ac424b863474a42c7d75f449",
+    "reports/explore/k4s-confirm/mac/classify_k4s_failure.py": "e2d39115590cded6a490e6fda217e4c330d45cbe28653c7df366b65e8067135c",
     "reports/explore/k4s-confirm/mac/k4s_backend.py": "8c8da476109e0b8390a9db8f91a8711644619172e7dbf78ca20d444c13f35954",
-    "reports/explore/k4s-confirm/mac/k4s_logic.py": "0e034caa66978afa7f2abcf22dca5980c334ad4fe6a48a3b8f2b767e361db503",
-    "reports/explore/k4s-confirm/mac/measure_k4s.py": "d0ad109de21b97e27962bbd377ed63550b51108858fdf7733eaea54f043941eb",
-    "reports/explore/k4s-confirm/mac/test_measure_k4s.py": "841a3f0fddad39002c60187205b84c10c80125a37454702b032f8dbd8ed9b2e6"
+    "reports/explore/k4s-confirm/mac/k4s_logic.py": "85740e1a1cfad386ba14c899da60f9375801e256e4ff14680a87fa9fedbca4ae",
+    "reports/explore/k4s-confirm/mac/measure_k4s.py": "c9d874b0362fff099dbe97d50605e693e9b0476ef54032b9d6744fa382a9a4c8",
+    "reports/explore/k4s-confirm/mac/test_measure_k4s.py": "1715a9e951a537ec4d7e1938ee1c1b0dfe9b57a0c1b786cb368668a43f95f881"
   },
   "k4s_kernel": {
     "candidates": {
@@ -49,7 +55,7 @@
     },
     "k4s_spec": {
       "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
-      "sha256": "6034373b0edde34cead0319de749d765e1beb01222e311f6857ecb394a0ce1bb"
+      "sha256": "e80652d4859504eaf6a9256a3b3672a247a3f1993160ab17378587e7cdd93e53"
     },
     "prereg": {
       "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md",
@@ -83,6 +89,11 @@
     "reports/explore/s1/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_end.py": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_pool.py": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_profile.py": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+    "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_validity.py": "94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py": "5d7de8e36890f0f8d086e77be5ec4e20de1b3cc1f48943bd06e8bbd103046124",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",

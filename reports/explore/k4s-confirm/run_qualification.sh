@@ -8,8 +8,10 @@ cd "$job/repo"
 test -L "$job/STOP" && test "$(readlink -f "$job/STOP")" = "$(readlink -f "$stop")"
 date -u +%FT%TZ > "$job/QUALIFICATION-STARTED"
 nice -n "$nice" bash $K/runtime.sh $K/pin.py --job "$job"
+nice -n "$nice" bash $K/runtime.sh $K/source_binding.py record --job "$job"   # K4S overlay + T1 reference == ef4c073a
 nice -n "$nice" taskset -c 0-4 bash $K/qualify.sh
 nice -n "$nice" bash $K/qualify_games.sh
 nice -n "$nice" bash $K/runtime.sh $K/stop_test.py --job "$job" --stop "$stop" --cores 5,6,7,8,9
+nice -n "$nice" bash $K/runtime.sh $K/source_binding.py verify --job "$job"   # unchanged through games/STOP; driver receipts bound
 nice -n "$nice" bash $K/runtime.sh $K/make_qualification_receipt.py --job "$job" --out "$job/qualification-$(hostname).json"
 date -u +%FT%TZ > "$job/QUALIFICATION-FINISHED"
