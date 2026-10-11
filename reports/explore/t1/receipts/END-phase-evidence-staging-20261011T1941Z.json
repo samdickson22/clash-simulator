@@ -1,0 +1,319 @@
+{
+  "schema": "clasher.t1.END-phase-evidence-staging.health.v1",
+  "utc": "2026-10-11T19:41:27Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "source_files": [
+    {
+      "host": "127x01",
+      "phase": "reporting",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/reporting/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/reporting/launch.json",
+      "sha256": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
+      "bytes": 346,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "reporting",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/reporting/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/reporting/supervisor-exit.json",
+      "sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee",
+      "bytes": 686567,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "reporting",
+      "name": "mhz.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting/mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/reporting/mhz.jsonl",
+      "sha256": "3f0b87a7ab2529dce123d8e49ba06d05b9e682a46a8a97351ecabfdd72c0cf77",
+      "bytes": 3444424,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "reporting",
+      "name": "census.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting/census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/reporting/census.jsonl",
+      "sha256": "b6541233f47292b3dcbf550e2b0208042cfc6c731fa806904bdbf98a8b8e8e8d",
+      "bytes": 753012,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "reporting",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/reporting/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/reporting/launch.json",
+      "sha256": "847f07fb631df0928df3d7548d7ce280e9636face7316f355d1c35901f4f57c6",
+      "bytes": 348,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "reporting",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/reporting/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/reporting/supervisor-exit.json",
+      "sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c",
+      "bytes": 687467,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r1",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r1/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r1/launch.json",
+      "sha256": "70c75c7293afdfbf1ce8ce7e31424bf06d386350281bfb963786d55cebe3a704",
+      "bytes": 348,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r1",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r1/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r1/supervisor-exit.json",
+      "sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26",
+      "bytes": 651864,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r1",
+      "name": "mhz.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/replacement-r1/mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r1/mhz.jsonl",
+      "sha256": "a35f327e8406c9659a369066afaa555e0c265a3d3d392ebd61790630f05048d1",
+      "bytes": 4219883,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r1",
+      "name": "census.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1/replacement-r1/census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r1/census.jsonl",
+      "sha256": "f0fdfb7ac2648a00562ae94b15fa29ab9025003cfdd9a41178c3c6f2164888e4",
+      "bytes": 928714,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r1",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r1/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r1/launch.json",
+      "sha256": "de9df2997f1ad79aaebd7617335ec5d5b16ccdd808a34ab73d48a3060513e458",
+      "bytes": 350,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r1",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r1/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r1/supervisor-exit.json",
+      "sha256": "2f7239d07f572095d444f9d34978284abb65062b20d232b6e2d2977a80f6726e",
+      "bytes": 652355,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r1",
+      "name": "mhz.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/recovery-op7-r2/phase-127x08-replacement-r1/mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r1/mhz.jsonl",
+      "sha256": "5ecb25c39e6f55a8dc18a1501d390ff4815081db2d0e9413ca2c18c517b69c5d",
+      "bytes": 9151501,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r1",
+      "name": "census.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/recovery-op7-r2/phase-127x08-replacement-r1/census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r1/census.jsonl",
+      "sha256": "55cec63f60f783c11b269ffad99c752dd758e49e12500d9193c25d500cc626f3",
+      "bytes": 2019762,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r2",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r2/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r2/launch.json",
+      "sha256": "4c663dc703be792e63414fd9e6334cd6766c6da356ee7b866f4bbd5b45d9993a",
+      "bytes": 348,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r2",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r2/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r2/supervisor-exit.json",
+      "sha256": "1449fdb4020b494b80e4f12f4a5c848135a7000f40c22881c4a12154ddc6d5ff",
+      "bytes": 528586,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r2",
+      "name": "mhz.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2/mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r2/mhz.jsonl",
+      "sha256": "2aa10764a9d416fdac2c3d53e0dd9a2a5d3d784d23a5c7b9046891fd8dadd541",
+      "bytes": 27814818,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r2",
+      "name": "census.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2/census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r2/census.jsonl",
+      "sha256": "91283eef11a5e0d59d99db0c7de06afb043357b198599fcbd0c603283960ed9a",
+      "bytes": 6134236,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r2",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r2/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r2/launch.json",
+      "sha256": "1dc0f2eff38cffd822a5d6c685de65f1086bac4e506facd05c0509e9e7bc123f",
+      "bytes": 350,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r2",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r2/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r2/supervisor-exit.json",
+      "sha256": "0e5b3b8844705b67ee742a1e1687fdd33f03eea9e122a83f71be780af3e0ccf8",
+      "bytes": 528137,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r3",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r3/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r3/launch.json",
+      "sha256": "add1d8a01d7b34bd56df9f8535f2612311fcdc69c7a1689367307cf909ba3103",
+      "bytes": 350,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r3",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x01/replacement-r3/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r3/supervisor-exit.json",
+      "sha256": "2f66d73399fce5c3b7dd2a2f1d5a296553cc7cc22b19591d64c305df18dcb8e5",
+      "bytes": 229023,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r3",
+      "name": "mhz.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3/mhz.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r3/mhz.jsonl",
+      "sha256": "3120fa38fc2b0ef36b876f88037245c0a92eed15b6725379d473e69965d4db72",
+      "bytes": 12413546,
+      "verbatim": true
+    },
+    {
+      "host": "127x01",
+      "phase": "replacement-r3",
+      "name": "census.jsonl",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3/census.jsonl",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x01/replacement-r3/census.jsonl",
+      "sha256": "d8f559ec1c573bd5c80ae978ba44f408d7ea5e8ce8ccceb7b01ce82327d593bb",
+      "bytes": 2732228,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r3",
+      "name": "launch.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r3/launch.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r3/launch.json",
+      "sha256": "862b865e24ee57d20b6d9d7dcea115dfb735eea6f1549805fe825e15537006d5",
+      "bytes": 348,
+      "verbatim": true
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r3",
+      "name": "supervisor-exit.json",
+      "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-completion-sealed-r1/verbatim-retained-phases/127x08/replacement-r3/supervisor-exit.json",
+      "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-phase-evidence-staging-r1/127x08/replacement-r3/supervisor-exit.json",
+      "sha256": "4da6bc447024cc512a6e996f579ea3515d05c9b0e666f2f8196cd9e932fa5c00",
+      "bytes": 227246,
+      "verbatim": true
+    }
+  ],
+  "pending_original08_files": [
+    {
+      "host": "127x08",
+      "phase": "reporting",
+      "name": "mhz.jsonl",
+      "authoritative_host": "127x08",
+      "authoritative_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting/mhz.jsonl"
+    },
+    {
+      "host": "127x08",
+      "phase": "reporting",
+      "name": "census.jsonl",
+      "authoritative_host": "127x08",
+      "authoritative_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/reporting/census.jsonl"
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r2",
+      "name": "mhz.jsonl",
+      "authoritative_host": "127x08",
+      "authoritative_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2/mhz.jsonl"
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r2",
+      "name": "census.jsonl",
+      "authoritative_host": "127x08",
+      "authoritative_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2/replacement-r2/census.jsonl"
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r3",
+      "name": "mhz.jsonl",
+      "authoritative_host": "127x08",
+      "authoritative_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3/mhz.jsonl"
+    },
+    {
+      "host": "127x08",
+      "phase": "replacement-r3",
+      "name": "census.jsonl",
+      "authoritative_host": "127x08",
+      "authoritative_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/replacement-r3/census.jsonl"
+    }
+  ],
+  "files_staged": 26,
+  "outside_attempt_roots": true,
+  "original_bytes_unchanged": true,
+  "Git_source_commit_binding": "PENDING: raw phase artifacts not yet committed/staged into END evidence manifest",
+  "host08_retrieval_gate": "WAIT_PERCEPTION_COMMITTED_HTTP_RETIREMENT",
+  "timing_work_started": false
+}
