@@ -133,3 +133,18 @@
   - K4S − K4: 200 ms −0.3 [−2.2, 1.7]; 140 ms −31.4 [−34.9, −27.6];
   - K4S-140 − K4-200: +0.6 [−2.8, 3.9];
   - K4Sh-140 − K4S-140: −3.7 [−6.9, −0.6] (unadjusted).
+- 10:41Z: rep08EF finished E-odd (300/300 X blocks) and is now in F-odd (342 blocks total). rep03EF at 28 blocks
+  (E-even; ETA ~11:40Z). Healthy.
+- 11:04Z: rep03EF at 140/300 E-even blocks. rep08EF at 189 F-odd blocks (~330 blocks/h, so it should cover most of
+  F-odd's 540 by 12:15Z). Healthy.
+- 11:33Z: rep03EF at 279 blocks (E-even 280/300; E completes ~11:40Z). rep08EF F-odd at 369/540. Healthy.
+- 11:36:50Z: **Phase E complete**: 600/600 X blocks (300 per host), 0 interrupted. Reduced X (A + C + E); F stays
+  sealed ([receipts/results-phaseACE.md](receipts/results-phaseACE.md)). Loss % at 180 ms: K4 19.3, K4S 17.2,
+  K4Sl 18.8; K4Sl-160 20.0.
+  - K4S-180 − K4-180: −2.2 [−5.2, 0.8].
+  - K4-180 − K4-200: +0.8 [−2.5, 4.2].
+  - K4-180 − K4-160: −8.5 [−12.5, −4.3].
+  - K4Sl-160 − K4-160: −7.8 [−11.5, −4.2].
+  - K4Sl-160 − K4S-160: +1.8 [−1.2, 4.8].
+
+  K4 holds to 0.9× and breaks between 0.9× and 0.8×. The S-default sign flips between 1.0× and 0.9×.
