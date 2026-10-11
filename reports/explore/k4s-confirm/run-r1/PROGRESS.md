@@ -128,3 +128,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 
 ## Health checkpoints (SEALED, health only)
 - 2026-10-11T20:15:30Z SEALED health: 127x03 complete 8 acked 7 hub 7/6 failed 0 inflight 11 queued 1931 reason None who 0 flags[0 SSHFLAG 0 APTFLAG 0]; 127x04 complete 7 acked 7 hub 7/7 failed 0 inflight 11 queued 1932 reason None who 0 flags[2 SSHFLAG 0 APTFLAG 0]; no anomalies
+- 2026-10-11T20:25:48Z SEALED health: 127x03 complete 24 acked 24 hub 24/24 failed 0 inflight 11 queued 1915 reason None who 0 flags[0 SSHFLAG 0 APTFLAG 0]; 127x04 complete 22 acked 22 hub 22/22 failed 0 inflight 11 queued 1917 reason None who 0 flags[17 SSHFLAG 0 APTFLAG 0]; no anomalies
