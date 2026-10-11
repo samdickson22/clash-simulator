@@ -2063,3 +2063,16 @@ Also on the hub, but with copies elsewhere:
   - **C4 (F4):** builders and launchers assert `measure_tiers.py` == 6066228b, with the measurement-source commit after 6afcbbab. Checkouts on 01/08 must contain the completion and inventory commits.
   - **F8:** never run the reducer or barrier with `python -O`.
   - **F9:** 08's reference finishes before B takes 08.
+- **19:32 UTC: T1 REPORTING COMPLETE (SEALED)** at 19:31:38Z (bc3730c4; receipt 9e788d20): 2,400 primary + 600 guard + 72 descriptive; 01 = 1,972, 08 = 1,100; all 3,072 logical IDs once; 24,576 raw hashes and 1,100 ACKs PASS; 0 failures; all owned processes gone at 19:28:44Z.
+  - **END CLEAN WINDOW DECLARED on 01/08.** Steps, in order:
+    1. **Perception retires the 08 HTTP cache** per b58b4bc5: re-authenticate the current identity, drain, owned STOP, server/timer/wrapper exit 0 plus port absence; preserve payloads/token/locks; commit a receipt.
+    2. **T1 runs END under rulings C1–C4:**
+       - (C3) offline preflights on 01 and 08 outside the attempt roots;
+       - (C1) the END-bundle plan copy with reporting_hosts [127x01, 127x08];
+       - (C4) assert `measure_tiers.py` == 6066228b;
+       - (C2) OP-6 guard freeze, with an apt-timer clearance of ≥2 h per launch;
+       - E4 A6 smoke, output outside the attempt roots;
+       - then the pooled fleet reference on 01/08, with 08's reference first (F9).
+    3. **Release barrier PC1–PC4**, never with `python -O`. Outcomes stay sealed until the barrier and the TIERS Mac summary allow release; the Mac session still needs Sam.
+    4. Then B on 08 (perception; needs my authorization).
+  - **Hub mirror (PGID 516161 on 01):** stays SIGSTOP-paused through END, because resuming it would be foreign activity on 01. After END, retarget it away from 04 (K4S host) before resuming.
