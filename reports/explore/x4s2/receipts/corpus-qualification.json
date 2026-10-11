@@ -1,0 +1,7784 @@
+{
+  "utc": "2026-10-11T04:44:51Z",
+  "host": "127x03",
+  "states": 125,
+  "counts": {
+    "K4_frozen": 125,
+    "K4S_frozen": 125,
+    "K4Sl_frozen": 125,
+    "K4S_equals_K4": 125,
+    "anchor_x_equals_anchor_injected": 125,
+    "lite_cutoffs": 388,
+    "lite_student_default": 93,
+    "lite_kept_after_complete_coarse": 31,
+    "lite4_cutoffs": 217,
+    "lite4_student_default": 93,
+    "lite4_kept_after_complete_coarse": 0,
+    "zero_budget_student": 125,
+    "zero_budget_student_play": 31,
+    "injected_cutoffs": 342,
+    "injected_student_default": 124,
+    "injected_after_complete_wait": 124,
+    "injected_completed_play_kept": 0,
+    "root_immutable": 125
+  },
+  "records": [
+    {
+      "id": "0:90:0",
+      "student_action": 120,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 261,
+          "frozen": 261,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 261,
+          "frozen": 261,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 261,
+          "frozen": 261,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "0:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "0:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "0:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "0:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "1:90:1",
+      "student_action": 831,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 831,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 831,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 831,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 831,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 831,
+          "frozen": 831,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 831,
+          "frozen": 831,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 831,
+          "frozen": 831,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "1:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "1:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "1:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "1:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 104,
+          "frozen": 104,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 104,
+          "frozen": 104,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 104,
+          "frozen": 104,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "2:90:0",
+      "student_action": 109,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 109,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 109,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 109,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 109,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1923,
+          "frozen": 1923,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1923,
+          "frozen": 1923,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1923,
+          "frozen": 1923,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "2:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "2:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "2:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "2:2400:0",
+      "student_action": 113,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 113,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 113,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 113,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 113,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "3:90:1",
+      "student_action": 993,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 993,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 993,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 993,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 993,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 993,
+          "frozen": 993,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 993,
+          "frozen": 993,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 993,
+          "frozen": 993,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "3:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "3:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "3:1200:1",
+      "student_action": 120,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 120,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 120,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 136,
+          "frozen": 136,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 136,
+          "frozen": 136,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 136,
+          "frozen": 136,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "3:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "4:90:0",
+      "student_action": 1065,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1065,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1065,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1065,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1065,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "4:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "4:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "4:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "4:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "5:90:1",
+      "student_action": 236,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 236,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 236,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 236,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 236,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1174,
+          "frozen": 1174,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1174,
+          "frozen": 1174,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1174,
+          "frozen": 1174,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "5:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "5:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "5:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "5:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "6:90:0",
+      "student_action": 689,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 689,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 689,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 689,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 689,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "6:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 181,
+          "frozen": 181,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 181,
+          "frozen": 181,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 181,
+          "frozen": 181,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "6:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "6:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "6:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "7:90:1",
+      "student_action": 1965,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1965,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1965,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1965,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1965,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1965,
+          "frozen": 1965,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1965,
+          "frozen": 1965,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1965,
+          "frozen": 1965,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "7:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "7:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "7:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "7:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "8:90:0",
+      "student_action": 1390,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1390,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1390,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1390,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1390,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 263,
+          "frozen": 263,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 263,
+          "frozen": 263,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 263,
+          "frozen": 263,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "8:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "8:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "8:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "8:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "9:90:1",
+      "student_action": 1641,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1641,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1641,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1641,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1641,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 795,
+          "frozen": 795,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 795,
+          "frozen": 795,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 795,
+          "frozen": 795,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "9:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "9:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "9:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "9:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "10:90:0",
+      "student_action": 824,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 824,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 824,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 824,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 824,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 244,
+          "frozen": 244,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 244,
+          "frozen": 244,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 244,
+          "frozen": 244,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "10:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "10:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "10:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "10:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "11:90:1",
+      "student_action": 1848,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1848,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1848,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1848,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1848,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "11:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1346,
+          "frozen": 1346,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1346,
+          "frozen": 1346,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1346,
+          "frozen": 1346,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "11:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "11:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "11:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "12:90:0",
+      "student_action": 1400,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1400,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1400,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1400,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1400,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 654,
+          "frozen": 654,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 654,
+          "frozen": 654,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 654,
+          "frozen": 654,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "12:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "12:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "12:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "12:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "13:90:1",
+      "student_action": 1966,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1966,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1966,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1966,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1966,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 701,
+          "frozen": 701,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 701,
+          "frozen": 701,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 701,
+          "frozen": 701,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "13:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "13:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "13:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "13:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "14:90:0",
+      "student_action": 1346,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1346,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1346,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1346,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1346,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1366,
+          "frozen": 1366,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1366,
+          "frozen": 1366,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1366,
+          "frozen": 1366,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "14:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "14:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "14:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "14:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "15:90:1",
+      "student_action": 248,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 248,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 248,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 248,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 248,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "15:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "15:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "15:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "15:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1889,
+          "frozen": 1889,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1889,
+          "frozen": 1889,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1889,
+          "frozen": 1889,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "16:90:0",
+      "student_action": 1407,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1407,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1407,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1407,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1407,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1405,
+          "frozen": 1405,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1405,
+          "frozen": 1405,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1405,
+          "frozen": 1405,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "16:300:0",
+      "student_action": 1848,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1848,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1848,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1848,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1848,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "16:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "16:1200:0",
+      "student_action": 689,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 689,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 689,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 689,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 689,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "16:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "17:90:1",
+      "student_action": 1272,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1272,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1272,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1272,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1272,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1254,
+          "frozen": 1254,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1254,
+          "frozen": 1254,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1254,
+          "frozen": 1254,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "17:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "17:600:1",
+      "student_action": 685,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 685,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 685,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 685,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 685,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "17:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "17:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "18:90:0",
+      "student_action": 120,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 120,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 120,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 120,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 116,
+          "frozen": 116,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 116,
+          "frozen": 116,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 116,
+          "frozen": 116,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "18:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "18:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "18:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "18:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "19:90:1",
+      "student_action": 1346,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1346,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1346,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1346,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1346,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 214,
+          "frozen": 214,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 214,
+          "frozen": 214,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 214,
+          "frozen": 214,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "19:300:1",
+      "student_action": 689,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 689,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 689,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 689,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 689,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 211,
+          "frozen": 211,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 211,
+          "frozen": 211,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 211,
+          "frozen": 211,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "19:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "19:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "19:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "20:90:0",
+      "student_action": 812,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 812,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 812,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 812,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 812,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 824,
+          "frozen": 824,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 824,
+          "frozen": 824,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 824,
+          "frozen": 824,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "20:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "20:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "20:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "20:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "21:90:1",
+      "student_action": 696,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 696,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 696,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 696,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 696,
+          "frozen": 2401,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 1847,
+          "frozen": 1847,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 1847,
+          "frozen": 1847,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 1847,
+          "frozen": 1847,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "21:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "21:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "21:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "21:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "22:90:0",
+      "student_action": 1400,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 1400,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 1400,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 1400,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 1400,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 783,
+          "frozen": 783,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 783,
+          "frozen": 783,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 783,
+          "frozen": 783,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "22:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "22:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "22:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "22:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2401,
+          "frozen": 2401,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "23:90:1",
+      "student_action": 194,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 194,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 194,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 194,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 194,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 700,
+          "frozen": 700,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 700,
+          "frozen": 700,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 700,
+          "frozen": 700,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "23:300:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "23:600:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "23:1200:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "23:2400:1",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "24:90:0",
+      "student_action": 2217,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2217,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2217,
+          "frozen": 2304,
+          "student_default": true
+        },
+        {
+          "budget": 40,
+          "hit": true,
+          "completed": 4,
+          "action": 2217,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 80,
+          "hit": true,
+          "completed": 4,
+          "action": 2217,
+          "frozen": 2402,
+          "student_default": true
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 12,
+          "action": 707,
+          "frozen": 707,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 12,
+          "action": 707,
+          "frozen": 707,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 12,
+          "action": 707,
+          "frozen": 707,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "24:300:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "24:600:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "24:1200:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    },
+    {
+      "id": "24:2400:0",
+      "student_action": 2304,
+      "injected": [
+        {
+          "budget": 8,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 16,
+          "hit": true,
+          "completed": 2,
+          "action": 2304,
+          "frozen": 2304,
+          "student_default": false
+        },
+        {
+          "budget": 40,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 80,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 160,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 400,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        },
+        {
+          "budget": 800,
+          "hit": false,
+          "completed": 4,
+          "action": 2402,
+          "frozen": 2402,
+          "student_default": false
+        }
+      ]
+    }
+  ],
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "student_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+  "corpus_sha256": {
+    "states-ready.pkl": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "symmetric-screen-samples.json": "86ecbb600b712d0fab05c2022e8d95d1dfb47a9be531ed4b8722a1acdcfd2b7d"
+  },
+  "label": "X4S2 exploration, NEVER ADOPTABLE"
+}

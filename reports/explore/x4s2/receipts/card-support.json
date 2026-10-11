@@ -1,0 +1,169 @@
+{
+  "utc": "2026-10-11T04:35:53Z",
+  "cards": [
+    {
+      "card": "ArcherQueen",
+      "token": 6,
+      "roundtrip": "ArcherQueen",
+      "defined": true
+    },
+    {
+      "card": "Archers",
+      "token": 9,
+      "roundtrip": "Archers",
+      "defined": true
+    },
+    {
+      "card": "BarbLog",
+      "token": 20,
+      "roundtrip": "BarbLog",
+      "defined": true
+    },
+    {
+      "card": "Berserker",
+      "token": 37,
+      "roundtrip": "Berserker",
+      "defined": true
+    },
+    {
+      "card": "BombTower",
+      "token": 42,
+      "roundtrip": "BombTower",
+      "defined": true
+    },
+    {
+      "card": "Cannon",
+      "token": 62,
+      "roundtrip": "Cannon",
+      "defined": true
+    },
+    {
+      "card": "Earthquake",
+      "token": 81,
+      "roundtrip": "Earthquake",
+      "defined": true
+    },
+    {
+      "card": "ElectroSpirit",
+      "token": 85,
+      "roundtrip": "ElectroSpirit",
+      "defined": true
+    },
+    {
+      "card": "Fireball",
+      "token": 100,
+      "roundtrip": "Fireball",
+      "defined": true
+    },
+    {
+      "card": "Firecracker",
+      "token": 102,
+      "roundtrip": "Firecracker",
+      "defined": true
+    },
+    {
+      "card": "FirespiritHut",
+      "token": 105,
+      "roundtrip": "FirespiritHut",
+      "defined": true
+    },
+    {
+      "card": "Ghost",
+      "token": 114,
+      "roundtrip": "Ghost",
+      "defined": true
+    },
+    {
+      "card": "GoblinHut",
+      "token": 151,
+      "roundtrip": "GoblinHut",
+      "defined": true
+    },
+    {
+      "card": "Goblinstein",
+      "token": 164,
+      "roundtrip": "Goblinstein",
+      "defined": true
+    },
+    {
+      "card": "HogRider",
+      "token": 191,
+      "roundtrip": "HogRider",
+      "defined": true
+    },
+    {
+      "card": "IceGolem",
+      "token": 194,
+      "roundtrip": "IceGolem",
+      "defined": true
+    },
+    {
+      "card": "IceSpirit",
+      "token": 196,
+      "roundtrip": "IceSpirit",
+      "defined": true
+    },
+    {
+      "card": "Knight",
+      "token": 208,
+      "roundtrip": "Knight",
+      "defined": true
+    },
+    {
+      "card": "Lightning",
+      "token": 214,
+      "roundtrip": "Lightning",
+      "defined": true
+    },
+    {
+      "card": "Log",
+      "token": 218,
+      "roundtrip": "Log",
+      "defined": true
+    },
+    {
+      "card": "MightyMiner",
+      "token": 228,
+      "roundtrip": "MightyMiner",
+      "defined": true
+    },
+    {
+      "card": "Musketeer",
+      "token": 250,
+      "roundtrip": "Musketeer",
+      "defined": true
+    },
+    {
+      "card": "RoyalDelivery",
+      "token": 286,
+      "roundtrip": "RoyalDelivery",
+      "defined": true
+    },
+    {
+      "card": "RoyalHogs",
+      "token": 293,
+      "roundtrip": "RoyalHogs",
+      "defined": true
+    },
+    {
+      "card": "Skeletons",
+      "token": 310,
+      "roundtrip": "Skeletons",
+      "defined": true
+    },
+    {
+      "card": "Tesla",
+      "token": 325,
+      "roundtrip": "Tesla",
+      "defined": true
+    },
+    {
+      "card": "Xbow",
+      "token": 354,
+      "roundtrip": "Xbow",
+      "defined": true
+    }
+  ],
+  "unknown_token": 1,
+  "label": "X4S2 exploration, NEVER ADOPTABLE"
+}

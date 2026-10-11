@@ -1,0 +1,4 @@
+# X4S2 production-path prep charge check on smoke-r3 (127x08), 2026-10-11T04:55:40Z
+# per K4Sf decision: scale_sleep_seconds/prep_seconds vs (scale-1)/scale, |diff|<0.02; key=(exit path, ok)
+K4Sf-140 {('scored', True): 1623, ('belief', True): 24, ('sample', True): 3, ('precut', True): 3} []
+K4Sf-120 {('scored', True): 1388, ('belief', True): 28, ('sample', True): 5, ('precut', True): 2} []
