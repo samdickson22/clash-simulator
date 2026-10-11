@@ -96,7 +96,7 @@
     },
     "FREEZE-RECORD-SKELETON.md": {
       "class": "new",
-      "k4s_sha256": "f2906fef476b6cea223a6d5bc237d51c83b14e4f4312564db4f3de2c1d3f2d42",
+      "k4s_sha256": "2294a7a9aed58e8e9fd0dac3d8869fa77073b795d585da04097fb5134c7cb4df",
       "role": "document (not executed)"
     },
     "K4S-SPEC.md": {
@@ -128,7 +128,7 @@
     },
     "SEED-AUDIT-RECEIPT.md": {
       "class": "new",
-      "k4s_sha256": "e39ea169f9a0b2a2acac7074bb7e259ff7aa3824114033ce3f7b56cb52308a6e",
+      "k4s_sha256": "0ea9d233f10d0cf10371d1e567af23412c6aecb64451af85817b9358617d9221",
       "role": "document (not executed)"
     },
     "anchor.py": {
@@ -150,7 +150,7 @@
     },
     "audit_seeds.py": {
       "class": "delta",
-      "k4s_sha256": "70cfc4e6cd25717356998891a6ea31bc58b6a09970e503ff1ae79c14f394b871",
+      "k4s_sha256": "93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd",
       "t1_sha256": "495787892cdf4c00dc01ac2a6042baf14b5b3db2998a7f4cdfae9d2538128dce",
       "deltas": [
         5
@@ -676,6 +676,11 @@
       "k4s_sha256": "ee7c7a236371350530acfc377ee73e53a37c998ab1035d856010e72372d694b0",
       "role": "document (not executed)"
     },
+    "reviews/SOL-REVIEW-AUDIT-MANIFEST-r1.md": {
+      "class": "new",
+      "k4s_sha256": "844f40f509899e01a3872bcc1939e2e00cea95bc3fed1c3b7ca96ba30a60f91e",
+      "role": "document (not executed)"
+    },
     "reviews/SOL-REVIEW-CORE-r1.md": {
       "class": "new",
       "k4s_sha256": "0bfac35d8c29470bc3d78f0af81507e2f71f326309a502288c8e9ee5c0141913",
@@ -802,7 +807,7 @@
     },
     "seed-audit.json": {
       "class": "delta",
-      "k4s_sha256": "6a11556f94b34cecc43e5f7ae0b3760c2af88285e30186094f08f2c7ab835c67",
+      "k4s_sha256": "38e254b582d8377a9e9e7aa88488f572c841cec1571654e66aa30e8d9c5a0326",
       "t1_sha256": "7fc89dde6cd0d4305afdcc81f365dbb7553872067f8f78373f47caeb326ba291",
       "deltas": [
         5
@@ -885,6 +890,10 @@
       "class": "identical",
       "k4s_sha256": "2d15209c739ae6cf2a092aca8bb5cee0be8f7bf8dfb4a295a9fcd9adde4f6553",
       "t1_sha256": "2d15209c739ae6cf2a092aca8bb5cee0be8f7bf8dfb4a295a9fcd9adde4f6553"
+    },
+    "test_audit_seeds.py": {
+      "class": "new",
+      "k4s_sha256": "dadfd3f71969ad1c51ee60ae84698dd7391ae40e4b3af711242456e3c8f46ac3"
     },
     "test_barrier.py": {
       "class": "delta",
@@ -1186,7 +1195,7 @@
     "identical": 61,
     "rebound": 14,
     "delta": 15,
-    "new": 81
+    "new": 83
   },
   "guard_code_note": "OP-1..OP-7 guard modules (host_audit, ssh_budget, ssh_transport, apt_budget, cpu_accounting, system_bus, idle_services, owned_supervisor, perception_confirmation, parent_source_seed, pin, mirror, supervise, ssh_sensitivity) are identical or rebound-only; see their class rows."
 }

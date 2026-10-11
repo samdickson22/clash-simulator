@@ -1,10 +1,10 @@
 {
-  "utc": "2026-10-11T13:22:37Z",
+  "utc": "2026-10-11T17:41:56Z",
   "status": "PASS",
-  "worktree_head": "756a6559e8bacebc1ff2ce0d2a387f9a83fffd6a",
+  "worktree_head": "c18249aa2b07206c742e74ef27caf2272c67676e",
   "tool": {
     "path": "reports/explore/k4s-confirm/audit_seeds.py",
-    "sha256": "70cfc4e6cd25717356998891a6ea31bc58b6a09970e503ff1ae79c14f394b871"
+    "sha256": "93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd"
   },
   "windows": {
     "task_inclusive": [
@@ -17840,9 +17840,13 @@
   },
   "literal_scan": {
     "pattern": "45036[0-9]{11}",
-    "scope": "git grep -I at HEAD (tracked text files, all paths)",
-    "tracked_files": 10276,
-    "text_files_with_content": 10216,
+    "scope": "git grep -I at HEAD (tracked text files, all paths except the tool's own two outputs)",
+    "excluded_own_outputs": [
+      "reports/explore/k4s-confirm/seed-audit.json",
+      "reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md"
+    ],
+    "tracked_files": 10465,
+    "text_files_with_content": 10405,
     "windows": {
       "task_inclusive": [
         4503605500000000,
@@ -17857,16 +17861,232 @@
         4503606999999999
       ]
     },
-    "occurrences": 20283,
-    "distinct_literals": 6560,
-    "files_with_literals": 479,
-    "in_window_occurrences": 27,
+    "occurrences": 20348,
+    "distinct_literals": 6563,
+    "files_with_literals": 489,
+    "in_window_occurrences": 54,
     "counts_by_class": {
-      "EXCLUDED_K4S_DECLARATION": 21,
-      "WINDOW_BOUND_TEXT": 6,
+      "EXCLUDED_K4S_DECLARATION": 44,
+      "WINDOW_BOUND_TEXT": 10,
       "FAIL": 0
     },
     "in_window_hits": [
+      {
+        "literal": 4503605807370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 56,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605807370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 57,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605817370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 58,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605817370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 59,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605827370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 60,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605837370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 61,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605847370496,
+        "path": "reports/explore/k4s-confirm/K4S-SPEC.md",
+        "line": 62,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605837370496,
+        "path": "reports/explore/k4s-confirm/QUALIFICATION.md",
+        "line": 63,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605500000000,
+        "path": "reports/explore/k4s-confirm/audit_seeds.py",
+        "line": 17,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "WINDOW_BOUND_TEXT"
+      },
+      {
+        "literal": 4503606999999999,
+        "path": "reports/explore/k4s-confirm/audit_seeds.py",
+        "line": 17,
+        "in_task_window": true,
+        "in_f4_window": false,
+        "classification": "WINDOW_BOUND_TEXT"
+      },
+      {
+        "literal": 4503605500000000,
+        "path": "reports/explore/k4s-confirm/audit_seeds.py",
+        "line": 238,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "WINDOW_BOUND_TEXT"
+      },
+      {
+        "literal": 4503606999999999,
+        "path": "reports/explore/k4s-confirm/audit_seeds.py",
+        "line": 238,
+        "in_task_window": true,
+        "in_f4_window": false,
+        "classification": "WINDOW_BOUND_TEXT"
+      },
+      {
+        "literal": 4503605837370496,
+        "path": "reports/explore/k4s-confirm/check_games.py",
+        "line": 46,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605807370496,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 184,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605807373496,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 188,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605817370496,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 192,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605817371396,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 196,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605827370496,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 200,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605837370496,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 204,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605847370496,
+        "path": "reports/explore/k4s-confirm/plan.json",
+        "line": 208,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605837370496,
+        "path": "reports/explore/k4s-confirm/qual_tasks.py",
+        "line": 8,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605837370496,
+        "path": "reports/explore/k4s-confirm/qualify_games.py",
+        "line": 84,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605807370497,
+        "path": "reports/explore/k4s-confirm/test_reduce.py",
+        "line": 105,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605807370496,
+        "path": "reports/explore/k4s-confirm/verifier/VERIFIER-NOTES.md",
+        "line": 129,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605817370496,
+        "path": "reports/explore/k4s-confirm/verifier/VERIFIER-NOTES.md",
+        "line": 130,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605807370496,
+        "path": "reports/explore/k4s-confirm/verifier/verify_k4s.py",
+        "line": 55,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
+      {
+        "literal": 4503605817370496,
+        "path": "reports/explore/k4s-confirm/verifier/verify_k4s.py",
+        "line": 56,
+        "in_task_window": true,
+        "in_f4_window": true,
+        "classification": "EXCLUDED_K4S_DECLARATION"
+      },
       {
         "literal": 4503605500000000,
         "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r1.md",
@@ -18086,7 +18306,7 @@
     ],
     "nearest_below_union": 4503605207370496,
     "nearest_above_union": 4503609917370496,
-    "note": "Window-bound text is the inclusive bound pair written in PREREG-K4S-DRAFT r1/r2/r3 \u00a73.4 prose; it is not a seed and is disclosed, not counted as FAIL."
+    "note": "In K4S docs, a literal from a K4S range base through its last seed plus the largest helper offset (inclusive) is a K4S declaration; window-bound text is the inclusive task bound pair (PREREG-K4S-DRAFT r1/r2/r3 \u00a73.4 prose) or either F-4 bound. Neither is a foreign seed; both are disclosed, not counted as FAIL."
   },
   "sources": [
     {
@@ -19146,7 +19366,7 @@
     },
     {
       "ref": "reports/explore/k4s-confirm/plan.json (worktree, untracked)",
-      "sha256": "141d897d070a0bfdfda480d675f2d7f3946182cca84349196b8a31e3aace4841"
+      "sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf"
     },
     {
       "ref": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-CONFORMANCE-r2.md",
@@ -19167,11 +19387,13 @@
     "parse_errors": [],
     "helper_checks": 56,
     "mutual_group_pairs_checked": 640,
-    "in_window_occurrences": 27,
+    "in_window_occurrences": 54,
     "violations": 0
   },
   "violations": [],
   "notes": [
-    "8 declaration-pattern files skipped by the outcome-name filter (results/outcome/game/summary/report)."
+    "8 declaration-pattern files skipped by the outcome-name filter (results/outcome/game/summary/report).",
+    "2 K4S own-declaration files under reports/explore/k4s-confirm/ skipped as prior declarations: ['reports/explore/k4s-confirm/plan.json', 'reports/explore/k4s-confirm/seed-audit.json']",
+    "637 literal occurrences in the tool's own outputs ['reports/explore/k4s-confirm/seed-audit.json', 'reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md'] excluded from the literal scan."
   ]
 }

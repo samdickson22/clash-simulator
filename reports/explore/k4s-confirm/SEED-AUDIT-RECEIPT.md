@@ -1,17 +1,17 @@
 # K4S seed audit receipt (PREREG-K4S-DRAFT-r3 §3.4; CONFORMANCE-r2 F-4)
 
-- UTC: 2026-10-11T13:22:37Z
-- Worktree HEAD: `756a6559e8bacebc1ff2ce0d2a387f9a83fffd6a`
+- UTC: 2026-10-11T17:41:56Z
+- Worktree HEAD: `c18249aa2b07206c742e74ef27caf2272c67676e`
 - Result: **PASS**
-- Tool: `reports/explore/k4s-confirm/audit_seeds.py` sha256 `70cfc4e6cd25717356998891a6ea31bc58b6a09970e503ff1ae79c14f394b871`
+- Tool: `reports/explore/k4s-confirm/audit_seeds.py` sha256 `93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd`
 - Seed-audit JSON: `reports/explore/k4s-confirm/seed-audit.json`
 
 ## Result counts
 
 - Seven K4S ranges checked at 8 helper offsets against 279 unique prior intervals (204 declaration files walked at HEAD + named banks).
 - Named banks found: 13/13 (named ranges 43).
-- Literal scan: 20283 occurrences, 6560 distinct literals in 479 files.
-- In-window occurrences: 27 — classes {'EXCLUDED_K4S_DECLARATION': 21, 'WINDOW_BOUND_TEXT': 6, 'FAIL': 0}.
+- Literal scan: 20348 occurrences, 6563 distinct literals in 489 files.
+- In-window occurrences: 54 — classes {'EXCLUDED_K4S_DECLARATION': 44, 'WINDOW_BOUND_TEXT': 10, 'FAIL': 0}.
 - Violations: 0
 
 ## Named-bank table
@@ -76,11 +76,38 @@
 
 ## Literal scan summary
 
-- Pattern `45036[0-9]{11}`, scope git grep -I at HEAD (tracked text files, all paths); tracked files 10276, text files with content 10216.
+- Pattern `45036[0-9]{11}`, scope git grep -I at HEAD (tracked text files, all paths except the tool's own two outputs); tracked files 10465, text files with content 10405.
 - Windows: task `[4503605500000000, 4503606999999999]` inclusive; F-4 `2^52+[5.87e9, 7.37e9)` = `[4503605497370496, 4503606997370496)`.
 - Nearest out-of-window literal below: `4503605207370496`; above: `4503609917370496`.
 - In-window hits (file:line, class):
 
+  - `4503605807370496` `reports/explore/k4s-confirm/K4S-SPEC.md:56` — EXCLUDED_K4S_DECLARATION
+  - `4503605807370496` `reports/explore/k4s-confirm/K4S-SPEC.md:57` — EXCLUDED_K4S_DECLARATION
+  - `4503605817370496` `reports/explore/k4s-confirm/K4S-SPEC.md:58` — EXCLUDED_K4S_DECLARATION
+  - `4503605817370496` `reports/explore/k4s-confirm/K4S-SPEC.md:59` — EXCLUDED_K4S_DECLARATION
+  - `4503605827370496` `reports/explore/k4s-confirm/K4S-SPEC.md:60` — EXCLUDED_K4S_DECLARATION
+  - `4503605837370496` `reports/explore/k4s-confirm/K4S-SPEC.md:61` — EXCLUDED_K4S_DECLARATION
+  - `4503605847370496` `reports/explore/k4s-confirm/K4S-SPEC.md:62` — EXCLUDED_K4S_DECLARATION
+  - `4503605837370496` `reports/explore/k4s-confirm/QUALIFICATION.md:63` — EXCLUDED_K4S_DECLARATION
+  - `4503605500000000` `reports/explore/k4s-confirm/audit_seeds.py:17` — WINDOW_BOUND_TEXT
+  - `4503606999999999` `reports/explore/k4s-confirm/audit_seeds.py:17` — WINDOW_BOUND_TEXT
+  - `4503605500000000` `reports/explore/k4s-confirm/audit_seeds.py:238` — WINDOW_BOUND_TEXT
+  - `4503606999999999` `reports/explore/k4s-confirm/audit_seeds.py:238` — WINDOW_BOUND_TEXT
+  - `4503605837370496` `reports/explore/k4s-confirm/check_games.py:46` — EXCLUDED_K4S_DECLARATION
+  - `4503605807370496` `reports/explore/k4s-confirm/plan.json:184` — EXCLUDED_K4S_DECLARATION
+  - `4503605807373496` `reports/explore/k4s-confirm/plan.json:188` — EXCLUDED_K4S_DECLARATION
+  - `4503605817370496` `reports/explore/k4s-confirm/plan.json:192` — EXCLUDED_K4S_DECLARATION
+  - `4503605817371396` `reports/explore/k4s-confirm/plan.json:196` — EXCLUDED_K4S_DECLARATION
+  - `4503605827370496` `reports/explore/k4s-confirm/plan.json:200` — EXCLUDED_K4S_DECLARATION
+  - `4503605837370496` `reports/explore/k4s-confirm/plan.json:204` — EXCLUDED_K4S_DECLARATION
+  - `4503605847370496` `reports/explore/k4s-confirm/plan.json:208` — EXCLUDED_K4S_DECLARATION
+  - `4503605837370496` `reports/explore/k4s-confirm/qual_tasks.py:8` — EXCLUDED_K4S_DECLARATION
+  - `4503605837370496` `reports/explore/k4s-confirm/qualify_games.py:84` — EXCLUDED_K4S_DECLARATION
+  - `4503605807370497` `reports/explore/k4s-confirm/test_reduce.py:105` — EXCLUDED_K4S_DECLARATION
+  - `4503605807370496` `reports/explore/k4s-confirm/verifier/VERIFIER-NOTES.md:129` — EXCLUDED_K4S_DECLARATION
+  - `4503605817370496` `reports/explore/k4s-confirm/verifier/VERIFIER-NOTES.md:130` — EXCLUDED_K4S_DECLARATION
+  - `4503605807370496` `reports/explore/k4s-confirm/verifier/verify_k4s.py:55` — EXCLUDED_K4S_DECLARATION
+  - `4503605817370496` `reports/explore/k4s-confirm/verifier/verify_k4s.py:56` — EXCLUDED_K4S_DECLARATION
   - `4503605500000000` `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r1.md:327` — WINDOW_BOUND_TEXT
   - `4503606999999999` `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r1.md:327` — WINDOW_BOUND_TEXT
   - `4503605807370496` `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r1.md:331` — EXCLUDED_K4S_DECLARATION
@@ -109,7 +136,7 @@
   - `4503605837370496` `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md:453` — EXCLUDED_K4S_DECLARATION
   - `4503605847370496` `reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r3.md:454` — EXCLUDED_K4S_DECLARATION
 
-Window-bound text is the inclusive bound pair written in PREREG-K4S-DRAFT r1/r2/r3 §3.4 prose; it is not a seed and is disclosed, not counted as FAIL.
+In K4S docs, a literal from a K4S range base through its last seed plus the largest helper offset (inclusive) is a K4S declaration; window-bound text is the inclusive task bound pair (PREREG-K4S-DRAFT r1/r2/r3 §3.4 prose) or either F-4 bound. Neither is a foreign seed; both are disclosed, not counted as FAIL.
 
 ## Re-run
 

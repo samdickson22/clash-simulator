@@ -3,10 +3,12 @@
 Adapted from T1 audit_seeds.py (commit ef4c073a) and the X4S-2 literal scan. Reads seed declarations only:
 *seed*audit*.json, *freeze*.json, *FREEZE*.json and plan*.json at HEAD under reports/ and imitation/, plus explicitly
 named banks. Game outcome/results files are never opened. Writes seed-audit.json and SEED-AUDIT-RECEIPT.md here.
+Files under reports/explore/k4s-confirm/ are K4S's own declarations and are not walked as priors (listed in notes); the
+tool's two outputs are excluded from the literal scan. Exits 1 on FAIL.
 Re-run at the freeze commit from the worktree root:
   nice -n 19 /bin/python3 reports/explore/k4s-confirm/audit_seeds.py
 """
-import fnmatch,hashlib,json,re,subprocess
+import fnmatch,hashlib,json,re,subprocess,sys
 from pathlib import Path
 
 HERE=Path(__file__).resolve().parent
@@ -14,9 +16,12 @@ ROOT=HERE.parents[2]
 OFFSETS=(0,13,100000,100001,100002,100003,271828,271829)
 LIVE_V4='reports/strategy_council_20260928/live-loop/v4/'
 K4S_DOC_PREFIXES=(LIVE_V4+'PREREG-K4S','reports/explore/k4s-confirm/')
+SELF_DECL_PREFIX='reports/explore/k4s-confirm/'  # K4S's own declarations: never walked as prior declarations
+OWN_OUTPUTS=('reports/explore/k4s-confirm/seed-audit.json','reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md')  # never literal-scanned
 SCAN_TASK=(4503605500000000,4503606999999999)  # inclusive, from the task spec
 SCAN_F4=(2**52+5870000000,2**52+7370000000)   # half-open, CONFORMANCE-r2 F-4 = 2^52+[5.87e9,7.37e9)
 SCAN_LO=min(SCAN_TASK[0],SCAN_F4[0]);SCAN_HI=max(SCAN_TASK[1],SCAN_F4[1]-1)
+WINDOW_BOUNDS=frozenset(SCAN_TASK)|frozenset(SCAN_F4)  # the two task bounds and the two F-4 bounds
 LITERAL=re.compile(r'45036[0-9]{11}')
 JSON_PATTERNS=('*seed*audit*.json','*freeze*.json','*FREEZE*.json','plan*.json','*AMENDMENT*.json','*seed*.json','FROZEN*.json')
 OUTCOME_WORDS=('result','outcome','game','summary','report')  # never opened: game outcome/results files
@@ -98,6 +103,14 @@ def walk(x,label,out):
  elif isinstance(x,list):
   for i,v in enumerate(x):walk(v,label+':'+str(i),out)
 def overlaps(a,ca,b,cb):return a<b+cb and b<a+ca
+def k4s_declared(v,K):
+ # A K4S range covers base through its last seed plus the largest helper offset, inclusive.
+ return any(r['base']<=v<=r['stop']-1+max(OFFSETS) for r in K.values())
+def classify(path,v,K):
+ in_doc=path.startswith(K4S_DOC_PREFIXES)
+ if in_doc and k4s_declared(v,K):return 'EXCLUDED_K4S_DECLARATION'
+ if in_doc and v in WINDOW_BOUNDS:return 'WINDOW_BOUND_TEXT'
+ return 'FAIL'
 def utc():return subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],text=True).strip()
 def sha_file(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 
@@ -128,6 +141,9 @@ def main():
              if f.endswith('.json') and any(fnmatch.fnmatchcase(Path(f).name,p) for p in JSON_PATTERNS)]
  files=[f for f in candidates if not any(w in Path(f).name.lower() for w in OUTCOME_WORDS)]
  notes.append(f'{len(candidates)-len(files)} declaration-pattern files skipped by the outcome-name filter (results/outcome/game/summary/report).')
+ self_skipped=sorted(f for f in files if f.startswith(SELF_DECL_PREFIX))
+ files=[f for f in files if not f.startswith(SELF_DECL_PREFIX)]
+ notes.append(f'{len(self_skipped)} K4S own-declaration files under {SELF_DECL_PREFIX} skipped as prior declarations: {self_skipped}')
  walked=[];parse_errors=[]
  for f in sorted(set(files)):
   raw=blob('HEAD:'+f)
@@ -170,27 +186,25 @@ def main():
  occ=[]
  for line in scan.splitlines():
   _,rest=line.split(':',1);path,ln,val=rest.rsplit(':',2);occ.append((path,int(ln),int(val)))
+ own=[o for o in occ if o[0] in OWN_OUTPUTS];occ=[o for o in occ if o[0] not in OWN_OUTPUTS]
+ notes.append(f'{len(own)} literal occurrences in the tool\'s own outputs {list(OWN_OUTPUTS)} excluded from the literal scan.')
  distinct=sorted({v for _,_,v in occ})
- K4S_BASES={v['base'] for v in K.values()}|{K['primary_replacements']['base'],K['guard_replacements']['base']}
  hits=[];counts={'EXCLUDED_K4S_DECLARATION':0,'WINDOW_BOUND_TEXT':0,'FAIL':0}
  for path,ln,v in occ:
   if not(SCAN_LO<=v<=SCAN_HI):continue
-  in_doc=path.startswith(K4S_DOC_PREFIXES)
-  if in_doc and v in K4S_BASES:cls='EXCLUDED_K4S_DECLARATION'
-  elif in_doc and v in SCAN_TASK:cls='WINDOW_BOUND_TEXT'
-  else:cls='FAIL'
+  cls=classify(path,v,K)
   counts[cls]+=1
   if cls=='FAIL':violations.append(f'in-window literal {v} at {path}:{ln}')
   hits.append(dict(literal=v,path=path,line=ln,in_task_window=SCAN_TASK[0]<=v<=SCAN_TASK[1],in_f4_window=SCAN_F4[0]<=v<SCAN_F4[1],classification=cls))
  below=[x for x in distinct if x<SCAN_LO];above=[x for x in distinct if x>SCAN_HI]
  text_files=len(git('grep','-I','-l','-e','','HEAD','--','.').splitlines())
  tracked=len(git('ls-tree','-r','--name-only','HEAD').splitlines())
- scan_out=dict(pattern=LITERAL.pattern,scope='git grep -I at HEAD (tracked text files, all paths)',tracked_files=tracked,text_files_with_content=text_files,
+ scan_out=dict(pattern=LITERAL.pattern,scope='git grep -I at HEAD (tracked text files, all paths except the tool\'s own two outputs)',excluded_own_outputs=list(OWN_OUTPUTS),tracked_files=tracked,text_files_with_content=text_files,
    windows=dict(task_inclusive=list(SCAN_TASK),f4_half_open=list(SCAN_F4),union_inclusive=[SCAN_LO,SCAN_HI]),
    occurrences=len(occ),distinct_literals=len(distinct),files_with_literals=len({p for p,_,_ in occ}),
    in_window_occurrences=len(hits),counts_by_class=counts,in_window_hits=hits,
    nearest_below_union=max(below) if below else None,nearest_above_union=min(above) if above else None,
-   note='Window-bound text is the inclusive bound pair written in PREREG-K4S-DRAFT r1/r2/r3 §3.4 prose; it is not a seed and is disclosed, not counted as FAIL.')
+   note='In K4S docs, a literal from a K4S range base through its last seed plus the largest helper offset (inclusive) is a K4S declaration; window-bound text is the inclusive task bound pair (PREREG-K4S-DRAFT r1/r2/r3 §3.4 prose) or either F-4 bound. Neither is a foreign seed; both are disclosed, not counted as FAIL.')
  status='PASS' if not violations else 'FAIL'
  proposed={k:dict(base=v['base'],count=v['count'],stop_exclusive=v['stop'],group=next((g for g,(b,c) in groups.items() if b<=v['base']<b+c),None)) for k,v in K.items()}
  for p in (ROOT/PREREG_R3,ROOT/CONFORMANCE):SOURCES[str(p.relative_to(ROOT))+' (worktree)']=dict(ref=str(p.relative_to(ROOT)),sha256=sha_file(p))
@@ -210,6 +224,7 @@ def main():
  (HERE/'seed-audit.json').write_text(json.dumps(out,indent=2)+'\n')
  write_receipt(out)
  print(json.dumps(dict(status=status,**counts_out,literal_occurrences=len(occ),distinct_literals=len(distinct),in_window_counts=counts,nearest_below=scan_out['nearest_below_union'],nearest_above=scan_out['nearest_above_union'])))
+ return 0 if status=='PASS' else 1
 
 def write_receipt(out):
  L=[]
@@ -245,4 +260,4 @@ def write_receipt(out):
  L.append('```\nnice -n 19 /bin/python3 reports/explore/k4s-confirm/audit_seeds.py\nsha256sum reports/explore/k4s-confirm/seed-audit.json reports/explore/k4s-confirm/audit_seeds.py\n```\n')
  (HERE/'SEED-AUDIT-RECEIPT.md').write_text('\n'.join(L)+'\n')
 
-if __name__=='__main__':main()
+if __name__=='__main__':sys.exit(main())

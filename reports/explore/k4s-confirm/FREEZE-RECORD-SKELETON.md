@@ -1,6 +1,6 @@
 # PREREG-K4S freeze record: SKELETON (draft for coordinator 0523ae6f; NOT a freeze)
 
-- Generated 2026-10-11T17:18:36Z by `make_freeze_skeleton.py` at worktree HEAD `962ecce2` (SHAs are of the working tree when generated).
+- Generated 2026-10-11T17:41:59Z by `make_freeze_skeleton.py` at worktree HEAD `c18249aa` (SHAs are of the working tree when generated).
 - The coordinator re-verifies every SHA at the freeze commit, fills the blanks, signs, secret-scans, commits and pushes.
 - Items marked **COORDINATOR** are decisions the prep worker must not make.
 
@@ -19,10 +19,10 @@
 |---|---|---|---|
 | F-2 SD1 manifest (the SD1 hash is this sha at the freeze commit) | `reports/explore/k4s-confirm/SD1-MANIFEST.json` | `b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76` | built on 03; `sd1_manifest.py check` passes |
 | F-3 SD1 supersession text + exit-r3 pointer (DRAFT) | `reports/explore/k4s-confirm/SD1-SUPERSESSION-DRAFT.md` | `494622cdc5cfdeff7aed31c9a8ee03cff8c700253c5f3642ef8e9f53395a3f04` | coordinator issues; pointer added only by coordinator |
-| F-4 seed audit | `reports/explore/k4s-confirm/seed-audit.json` | `6a11556f94b34cecc43e5f7ae0b3760c2af88285e30186094f08f2c7ab835c67` | PASS; **re-run at the freeze commit** (SEED-AUDIT-RECEIPT.md has the command) |
-| F-4 seed audit receipt | `reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md` | `e39ea169f9a0b2a2acac7074bb7e259ff7aa3824114033ce3f7b56cb52308a6e` |  |
-| F-4 seed audit tool | `reports/explore/k4s-confirm/audit_seeds.py` | `70cfc4e6cd25717356998891a6ea31bc58b6a09970e503ff1ae79c14f394b871` |  |
-| F-5 delta manifest (eight deltas vs T1 ef4c073a) | `reports/explore/k4s-confirm/DELTA-MANIFEST.json` | `d771e4593494803552dfe131be4a9c8eb132d34e7f93c349d1ccdfc3d384fc20` | identical 61, rebound 14, delta 15, new 73; `rebind.py verify` 0 failures |
+| F-4 seed audit | `reports/explore/k4s-confirm/seed-audit.json` | `38e254b582d8377a9e9e7aa88488f572c841cec1571654e66aa30e8d9c5a0326` | PASS; **re-run at the freeze commit** (SEED-AUDIT-RECEIPT.md has the command) |
+| F-4 seed audit receipt | `reports/explore/k4s-confirm/SEED-AUDIT-RECEIPT.md` | `0ea9d233f10d0cf10371d1e567af23412c6aecb64451af85817b9358617d9221` |  |
+| F-4 seed audit tool | `reports/explore/k4s-confirm/audit_seeds.py` | `93646e2f0241c797cf8f7d8520a53b7c356d154035471ed009c036e7cd1afffd` |  |
+| F-5 delta manifest (eight deltas vs T1 ef4c073a) | `reports/explore/k4s-confirm/DELTA-MANIFEST.json` | `322407190a382e72752738faa57978022d7dd06d6304a5f02fd74b1e4ec132df` | identical 61, rebound 14, delta 15, new 83; `rebind.py verify` 0 failures |
 | F-5 plan | `reports/explore/k4s-confirm/plan.json` | `38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf` |  |
 | F-5 runner | `reports/explore/k4s-confirm/run.py` | `78d88a572a8637956492d0f8447569c2307454818bb03356007b9ff9938a5f13` |  |
 | F-5 reducer (author: K4S prep worker, Opus) | `reports/explore/k4s-confirm/reduce.py` | `9c2e5ac00aac65827daa7596c93b5f7993d748976e405202d09e1e1bc24706c8` |  |
@@ -51,6 +51,7 @@ Pins carried from T1 / r3 (verify at the freeze):
 | RESPONSE-CORE-r3.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r3.md` | see file |
 | RESPONSE-CORE-r4.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r4.md` | see file |
 | RESPONSE-CORE-r5.md | `reports/explore/k4s-confirm/reviews/RESPONSE-CORE-r5.md` | see file |
+| SOL-REVIEW-AUDIT-MANIFEST-r1.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-AUDIT-MANIFEST-r1.md` | see file |
 | SOL-REVIEW-CORE-r1.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r1.md` | see file |
 | SOL-REVIEW-CORE-r2.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r2.md` | see file |
 | SOL-REVIEW-CORE-r3.md | `reports/explore/k4s-confirm/reviews/SOL-REVIEW-CORE-r3.md` | see file |
@@ -102,49 +103,3 @@ Pins carried from T1 / r3 (verify at the freeze):
 - Qualification receipts exist for 127x03 and 127x04 (see B). Any other host needs its own qualification (`QUALIFICATION.md`).
 - Re-run qualification on both hosts if any runtime byte changes after the receipts (source binding).
 - Excluded smoke (r3 §4.1) after the freeze on all named hosts at nice 10 under the T1 supervisor; it also exercises the supervisor STOP path.
-
-## G. Review verdicts (independent GPT-6.1-Sol; final rounds are binding)
-
-**Final verdicts:**
-- core r6: **APPROVE**;
-- independent verifier r3: **APPROVE**;
-- Mac/END r6: **APPROVE**.
-
-Earlier rounds are retained as the review trail.
-
-| Review file | Verdict |
-|---|---|
-| `RESPONSE-CORE-r1.md` | author response |
-| `RESPONSE-CORE-r2.md` | author response |
-| `RESPONSE-CORE-r3.md` | author response |
-| `RESPONSE-CORE-r4.md` | author response |
-| `RESPONSE-CORE-r5.md` | author response |
-| `SOL-REVIEW-CORE-r1.md` | APPROVE_WITH_FIXES |
-| `SOL-REVIEW-CORE-r2.md` | APPROVE_WITH_FIXES |
-| `SOL-REVIEW-CORE-r3.md` | APPROVE_WITH_FIXES |
-| `SOL-REVIEW-CORE-r4.md` | APPROVE_WITH_FIXES |
-| `SOL-REVIEW-CORE-r5.md` | APPROVE_WITH_FIXES |
-| `SOL-REVIEW-CORE-r6.md` | APPROVE |
-| `SOL-REVIEW-MAC-END-r1.md` | REJECT |
-| `SOL-REVIEW-MAC-END-r2.md` | REJECT |
-| `SOL-REVIEW-MAC-END-r3.md` | REJECT |
-| `SOL-REVIEW-MAC-END-r4.md` | REJECT |
-| `SOL-REVIEW-MAC-END-r5.md` | REJECT |
-| `SOL-REVIEW-MAC-END-r6.md` | APPROVE |
-| `SOL-REVIEW-VERIFIER-r1.md` | REJECT |
-| `SOL-REVIEW-VERIFIER-r2.md` | REJECT |
-| `SOL-REVIEW-VERIFIER-r3.md` | APPROVE |
-
-## H. Qualification evidence (127x03 and 127x04, run r3, 2026-10-11 17:01–17:17Z)
-
-| Item | Path |
-|---|---|
-| Qualification receipts | `reports/explore/k4s-confirm/receipts/qualification-127x03.json`, `qualification-127x04.json` |
-| Game checks | `receipts/check-games-127x0{3,4}.json` |
-| STOP tests | `receipts/stoptest-127x0{3,4}.json` |
-| Qualified vs committed bytes (executed files identical) | `receipts/qualified-vs-committed.json` |
-| Reducer/verifier cross-check | `receipts/reducer-verifier-crosscheck.json` |
-
-- Both receipts are PASS, with 28/28 checks each.
-- 299 tests passed (2 host-uptime-dependent T1 cases run via `test_op7_boottime.py`).
-- The staged overlay is identical on both hosts (164 files).
