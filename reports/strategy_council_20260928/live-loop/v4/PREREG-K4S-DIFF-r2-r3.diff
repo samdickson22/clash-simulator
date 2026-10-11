@@ -1,0 +1,227 @@
+--- PREREG-K4S-DRAFT-r2.md	2026-10-11 09:12:06.058092786 +0000
++++ PREREG-K4S-DRAFT-r3.md	2026-10-11 09:24:40.720828377 +0000
+@@ -1,9 +1,22 @@
+-# PREREG-K4S (DRAFT r2, not frozen): speed-gated K4 + student-default Mac tier
++# PREREG-K4S (DRAFT r3, not frozen): speed-gated K4 + student-default Mac tier
+ 
+-- **What this is.** Draft r2, 2026-10-11T09:11Z, by the design worker (Opus, 127x05) for coordinator `0523ae6f`.
+-  It revises r1 (`68a15c6a`, sha256 `caa52ad0…`) after the independent review `PREREG-K4S-REVIEW-r1.md` (verdict
+-  REVISE: 5 MAJOR, 8 MINOR, 1 NIT). Each finding's disposition is in `PREREG-K4S-RESPONSE-r1.md`.
+-- **What changed.** The games, arms, seeds and n are unchanged. The decision layer (§1.3–1.5), the release rule
++- **What this is.** Draft r3, 2026-10-11T09:24:22Z, by the design worker (Opus, 127x05) for coordinator
++  `0523ae6f`. It revises r2 (`a44bd628`, sha256 `b159d116…`) after the independent conformance review
++  `PREREG-K4S-CONFORMANCE-r2.md` (verdict CONFORMS_WITH_FIXES: N1–N3 required, M1–M6 minor). Each item's
++  disposition is in `PREREG-K4S-RESPONSE-r2.md`; the full change is `PREREG-K4S-DIFF-r2-r3.diff`.
++- **r3 changelog** (text only; no game, arm, cell, n, seed, margin, α, bootstrap or compute figure changes):
++  - **N1** (c_M ≤ c\* eligibility): §1.5 eligibility clause; §1.3 c\* = 0.8 branch; §0 Tier and Decision; Q6.
++  - **N2** (separate K4S Mac script, after TIERS §7, failure isolation): §1.4 Implementation; §4.5 item 5; §4.6
++    Mac; §7 step 4; Q5.
++  - **N3** (F0 fill only if TIERS found K4 Mac-infeasible; gate 0 = TIERS gate 3 with 1/2/4-worker equality plus
++    SD1 agreement ≥ 99.5%): §1.5 F0 row; §1.4 cell mapping gate 0; §5.4 Mac side; §0 Decision; Q10.
++  - **M1** Q13 r1-order B(0.6) pessimistic .24 → ≈.27. **M2** §3.5 Choice and Q9 power under the r2 order.
++    **M3** §1.3 locking cites `806f92ab` (09:11:59Z). **M4** §1.5 +5 pp allowance vs K4@0.9 stated.
++    **M5** §2.1 SD1 role = all three §2.3 uses, full repo paths. **M6** §0 "≤ c\*" (with N1).
++  - The editor of r3 had not seen any X4S-2 phase E output when making these edits (§1.3).
++- **History.** r2 revised r1 (`68a15c6a`, sha256 `caa52ad0…`) after the independent review
++  `PREREG-K4S-REVIEW-r1.md` (verdict REVISE: 5 MAJOR, 8 MINOR, 1 NIT); dispositions in `PREREG-K4S-RESPONSE-r1.md`.
++- **What changed in r2.** The games, arms, seeds and n are unchanged. The decision layer (§1.3–1.5), the release rule
+   (§4.5) and several specifications were rewritten.
+ - **What has not happened.** This is design only: no game, compute job or Mac access, and nothing is frozen.
+   Freezing is the coordinator's decision.
+@@ -23,7 +36,8 @@
+ own 1-core and 3-core ratios.
+ 
+ **Tier.** The tier is **speed-gated**. The student default is ON only when the Mac's evidence cell c_e (§1.5) is
+-below the full-speed cell 1.0. At full speed the tier is plain K4, which TIERS governs.
++≤ the threshold cell c\* (§1.3; default 0.9), and K4S is deployed only if the Mac's cell c_M ≤ c\*. At full speed
++the tier is plain K4, which TIERS governs.
+ 
+ **Design.**
+ 
+@@ -41,8 +55,8 @@
+   levels:
+   - **A:** within 5 pp of fleet-speed K4;
+   - **B:** within 10 pp of fleet-speed K4, *and* superior to plain K4 at the same speed.
+-- Deployment (§1.5) is keyed on the TIERS selection. K4S replaces a TIERS K4 pick on a 0.8–0.9× Mac, and fills in
+-  only where TIERS selects F0.
++- Deployment (§1.5) is keyed on the TIERS selection. K4S replaces a TIERS K4 pick on a 0.8–0.9× Mac with
++  c_M ≤ c\*, and fills in only where TIERS selects F0 because it found K4 Mac-infeasible.
+ 
+ **Expected outcome (planning, not a claim).** Cumulative probability of passing, at central planning values
+ (pessimistic in parentheses; see §3.5 for the central/pessimistic basis):
+@@ -141,12 +155,17 @@
+   - **If the lower bound of d180 > 0** (S significantly hurts at 0.9×), set **c\* = 0.8**:
+     - H4 is dropped from the sequence (the order becomes H1, H2, H3, H5, H6, H7);
+     - K4@0.9 and K4S@0.9 become descriptive;
+-    - a 0.9× Mac follows TIERS (plain K4).
++    - a 0.9× Mac (c_M = 0.9 > c\*) receives the TIERS selection, F0 included; K4S is not eligible (§1.5
++      eligibility).
+   - **Otherwise c\* = 0.9.** This includes the case where phase E is not complete at the freeze.
+   - No other exploration outcome may move c\*.
+-  - **Locking.** This rule text is final as of r2. At r2's writing (09:07Z), phase E had not been reduced
+-    (X4S-2 PROGRESS ends at phase B). Any later change to it would be outcome-informed and would void the rule; c\*
+-    would then default to 0.9.
++  - **Locking.** This rule text is final as of r2. As of `806f92ab` (09:11:59Z), the last x4s2 commit on origin/main
++    was `00328d1b` (Phase B, 08:23Z), so phase E had not been reduced. Any later change to it would be
++    outcome-informed and would void the rule; c\* would then default to 0.9.
++  - **r3's N1 edit** (the §1.5 eligibility clause) implements r2's stated c\* = 0.8 consequence above; it is not a
++    new rule. It was made at 2026-10-11T09:24:22Z by an editor who had not seen any X4S-2 phase E output. The
++    coordinator's c\* record states whether it precedes phase E's reduction. If it does not, the locking clause applies and
++    c\* = 0.9, under which the clause is a no-op.
+ - **No S-lite.** The X4S-2 "S-lite" rule (phase C) is not adopted. Under the gate, S is never on at full speed, which
+   is the only place S-lite was meant to help.
+ 
+@@ -177,6 +196,9 @@
+ - **Deadline mode:** the K4S corpus at **200 ms** on the Mac (cutoff rate and no-complete-play rate).
+ 
+ *Cell mapping.* For c ≤ 0.9, c_M is the largest c that passes all of:
++0. **Exactness (TIERS gate 3).** TIERS §6.3 gate 3 / §7.2 passes on this Mac, including belief/RNG exactness and
++   **1/2/4-worker equality** (taken from TIERS's committed receipt), and SD1 cross-platform agreement is
++   **≥ 99.5%** (TIERS §7.3 procedure and tolerances).
+ 1. r_K4S ≥ c and p10_K4S ≥ c − 0.10. This deliberately generalises TIERS's p10 ≥ 0.70 at 0.8 to every cell.
+ 2. **Inference coverage: r_inf ≥ c²** (§2.4).
+ 3. Poll-span p99 ≤ 20 ms.
+@@ -192,8 +214,14 @@
+   classified mechanically; the minimum r and worst gate inputs across valid sessions are used.
+ - A replay-only (emulator-off) result is **PROVISIONAL** until formal E4/T9 re-measures every input (TIERS §6.5
+   item 5).
+-- **Implementation:** a reviewed addendum adds a K4S configuration to E4's `measure_tiers.py`. Using the same session
+-  as TIERS is the default (Q5).
++- **Implementation:** the K4S measurement uses its **own** reviewed script and manifest (for example
++  `measure_k4s.py`). It never edits TIERS's frozen `measure_tiers.py`, the TIERS manifest or its hash (TIERS
++  §6.6(a)).
++  - Running inside the TIERS Mac session is the default (Q5). There it runs only **after TIERS's complete §7 list**.
++  - A K4S-only failure never triggers, invalidates or reclassifies a TIERS session, and never adds a session to
++    TIERS's minimum across sessions.
++  - The TIERS inputs K4S reuses (K4's 1.0-cell feasibility for c_M = 1.0, and the §7.2 exactness verdict for gate 0)
++    are read from TIERS's committed receipts, never re-measured.
+ - If the session runs **after** K4S outcomes are released, an independent reviewer confirms the mechanical
+   session-validity classification before it runs (TIERS §6.6(b)).
+ 
+@@ -204,17 +232,22 @@
+   - c = 0.8 and it is admitted at A or B; or
+   - c = 0.9, admitted at A, **and** the §1.2 gate-check veto passes; or
+   - c ∈ {0.7, 0.6} and it is admitted at A or B.
++- **Allowance at 0.9 (disclosed).** Deployment at c_e = 0.9 permits K4S to be up to +5 pp (upper 95% bound) worse
++  than plain K4@0.9 on the Mac's own cell; this is disclosed.
+ - **Evidence cell.** c_e = max{usable c ≤ c_M}. If there is none, c_e is *undefined*.
+ - **Convention.** Using a slower cell's evidence for a faster Mac is the TIERS convention, and assumes loss is
+   non-increasing in speed. That assumption is untested. X4S's point estimates violate it within noise (K4S-160
+   18.2% < K4S-200 20.7%), and §5.3 item 9 checks it descriptively.
++- **Eligibility.** K4S is deployed (in any row below) only if c_M ≤ c\*. Under c\* = 0.8, a Mac with c_M = 0.9
++  receives the TIERS selection, F0 included. Under the default c\* = 0.9 this clause is a no-op, because every K4S
++  cell is ≤ 0.9.
+ 
+ | TIERS selection | Rule |
+ |---|---|
+ | not yet available | K4S is held; it never pre-empts TIERS. |
+ | **K4** | If c_M = 1.0: plain K4 (S off). If c_M ≤ 0.9 and c_e ∈ {0.9, 0.8} with c_e ≤ c\*: **K4S (S-default on)**. Otherwise: plain K4 as TIERS selected. |
+ | **K2 or S** | **TIERS stands** (Q12). There is no paired evidence for K4S against K2 or S. |
+-| **F0** | If c_e is defined and ≤ c\*: K4S at c_e, labelled by its level ("full" for A, "degraded" for B). Otherwise F0. |
++| **F0** | Only if TIERS found **K4 Mac-infeasible** (TIERS §6.3–6.4): if c_e is defined and ≤ c\*, K4S at c_e, labelled by its level ("full" for A, "degraded" for B); otherwise F0. If K4 was Mac-feasible and TIERS still selected F0 (a strength failure, TIERS §8), **F0 stands**. |
+ 
+ General rules:
+ - **The live deadline stays 200 ms** (TIERS D3). The cell only says which evidence applies.
+@@ -243,7 +276,8 @@
+   Torch version and the inference mode (CPU float32, one Torch thread).
+ - Its own SHA-256 is **the SD1 hash**, computed at the freeze. The runner refuses to start on any mismatch.
+ 
+-**Training recipe.** Fixed for disclosure and for any future refit, from `imitation/exit-r3/PLAN.md`:
++**Training recipe.** Fixed for disclosure and for any future refit, from
++`reports/strategy_council_20260928/imitation/exit-r3/PLAN.md`:
+ - **Initialisation:** released v1 step 22552 EMA, width 192 (`d77005d5…`).
+ - **Steps and sampling:** 2,500 AdamW steps × 8,192 root rows, sampled uniformly with replacement; train seed
+   2026101013.
+@@ -270,13 +304,15 @@
+ **Status and supersession** (text proposed for the coordinator to issue at the freeze):
+ - R3a **remains KILLED** under R3 Stage 1. R3's files are not edited.
+ - "This PREREG, issued by coordinator `0523ae6f` under the owner's delegation, supersedes R3's 'ALWAYS
+-  NEVER-ADOPTABLE … regardless of its paired benefit' clause (`exit-r3/RESULTS.md` l.85, 97, 125) **for these exact
+-  bytes in the K4S cutoff-default role only**."
++  NEVER-ADOPTABLE … regardless of its paired benefit' clause
++  (`reports/strategy_council_20260928/imitation/exit-r3/RESULTS.md` l.85, 97, 125) **for these exact bytes in the
++  K4S S-default role defined by §2.3 only (all three uses: the seat poll, the coarse ordering and the cutoff
++  default)**."
+ - The supersession is **outcome-informed**: it follows X4S and X4S-2 (and, for tier S, r1(b) and S1), and the report
+   says so.
+ - Claims attach only to SD1 in this role. They never attach to the R3 recipe or to tier S. TIERS §2.1's separate
+   supersession for tier S is unaffected.
+-- An additive pointer is placed in `exit-r3/`.
++- An additive pointer is placed in `reports/strategy_council_20260928/imitation/exit-r3/`.
+ 
+ **Disclosures** (repeated in the final report):
+ - the full R3 chain from TIERS §2.2;
+@@ -495,8 +531,9 @@
+ | H7 A(0.6) | .00 | .00 |
+ 
+ **Choice: n = 3,000 primary, 900 guard.**
+-- At 2,400 / 600, A(0.8) falls to 0.71 central.
+-- 3,600 adds ≈ 0.04 for about 20% more cost.
++- At 2,400 / 600, A(0.8) falls to ≈ 0.65 central under this order (cumulative .91 × .90 × .80, because B(0.6) now
++  precedes it).
++- 3,600 / 1,080 adds ≈ 0.08 for about 20% more cost (≈ 0.06 if the guard stays at 900).
+ 
+ **Error control.** The FWER for any falsely admitted cell-level is ≤ 0.025. For example, a K4S that is truly +10 pp
+ worse at 0.8 is admitted at B with probability ≤ 0.025.
+@@ -636,7 +673,8 @@
+ 3. **PC1–PC4** adapted from T1: all original attempt roots; the reviewed E4 source inventory; one pinned
+    interpreter; and the interference-sensitivity sidecar over the final counted inventory and blind ledger;
+ 4. the **independent integer-count verifier**, whose author is not the reducer's author;
+-5. the frozen K4S Mac measurement procedure: the §1.4 scripts, the load-selection rule and the failure classifier;
++5. the frozen K4S Mac measurement procedure: the §1.4 K4S script and manifest (separate from `measure_tiers.py`),
++   the load-selection rule and the failure classifier;
+ 6. **TIERS `tiers-summary.json`, or a released TIERS outcome barrier** (including via its 14-day escape). K4S plays
+    TIERS's K4@200/160 cells on TIERS's populations, so opening earlier would give a confirmatory-grade steering
+    input to the TIERS Mac session.
+@@ -663,7 +701,7 @@
+   - Plan for 12–17 h including overhead.
+ - **Preparation and qualification:** about half a day of agent time and about 2 h of host time.
+ - **END:** about 2–3 h.
+-- **Mac:** about +30–45 min inside the TIERS E4-v3 session, or about 1.5 h standalone.
++- **Mac:** about +30–45 min inside the TIERS E4-v3 session, after TIERS's §7 list, or about 1.5 h standalone.
+ 
+ ## 5. Analysis
+ 
+@@ -716,6 +754,8 @@
+   - SD1 cross-platform agreement below 99.5%, or poll-span p99 above 20 ms, kills the tier on that Mac.
+   - r_inf < c², or a deadline-equivalence failure, lowers the cell or makes the tier infeasible.
+   - An arm64 single-thread exactness failure (TIERS §7.2) kills every tier.
++  - A 2/4-worker-only equality failure (TIERS §7.2), or any other §1.4 gate 0 failure, kills K4S on that Mac: K4S
++    is a 4-worker search.
+ - **Validity suspension:** if L(K4@1.0, primary) falls outside **[10%, 30%]** (prior studies: 16–24%), selection is
+   suspended pending an independent receipts-only code review (as in TIERS §8). A harness defect voids the study:
+   a new PREREG with new seeds is required.
+@@ -743,7 +783,7 @@
+ 2. Coordinator decisions on Q1–Q13.
+ 3. The coordinator applies the c\* rule to the phase E receipt.
+ 4. Author and review the runner deltas, reducer, verifier (a different author), SD1 manifest, END scripts and the
+-   `measure_tiers.py` K4S addendum.
++   separate K4S Mac script and manifest (§1.4; `measure_tiers.py` is not edited).
+ 5. Seed audit and qualification on the named hosts.
+ 6. **Freeze:** PREREG, plan, SD1 manifest with the supersession text, source manifest, seed audit and c\* record.
+    Secret-scan, commit, push.
+@@ -763,12 +803,12 @@
+ | Q2 | Gate threshold c\*; S-lite? | **c\* = 0.9,** unless phase E's d180 has a lower CI bound > 0, then c\* = 0.8. **No S-lite.** |
+ | Q3 | Release gated on the K4S Mac summary? | **No.** It is gated on the TIERS summary or TIERS release (§4.5 item 6). A post-release K4S Mac session needs an independent classification review. |
+ | Q4 | A second opponent? | **None.** The guard decks cover transfer; disclosed. |
+-| Q5 | K4S Mac cell inside the TIERS E4-v3 session, or a separate session? | **The same session,** via a reviewed addendum, if it has not yet run. |
+-| Q6 | Replace a TIERS K4 pick at 0.8–0.9×? | **Yes,** when c_e ∈ {0.9 (A with veto passing), 0.8 (A or B)}. |
++| Q5 | K4S Mac cell inside the TIERS E4-v3 session, or a separate session? | **The same session,** if it has not yet run, using K4S's own reviewed script and manifest (`measure_tiers.py` is not edited) and only after TIERS's complete §7 list. A K4S-only failure never triggers, invalidates or reclassifies a TIERS session. |
++| Q6 | Replace a TIERS K4 pick at 0.8–0.9×? | **Yes,** when c_e ∈ {0.9 (A with veto passing), 0.8 (A or B)} and c_M ≤ c\* (§1.5 eligibility). |
+ | Q7 | Hosts and timing | Any ≥ 2 of {01, 03, 04, 08} that are clear of T1 (including END) and of perception transports, with written retirement declarations. 04 not before 2026-10-12T12Z. |
+ | Q8 | SD1: same bytes or a refit? | **Same bytes,** with an explicit role-scoped supersession (§2.1). |
+-| Q9 | Size | **3,000 / 900** (A(0.8) power 0.86 vs 0.71 at 2,400 / 600). |
+-| Q10 | Level B deployable? | **Yes:** to replace TIERS K4 at c_e = 0.8, or where TIERS selects F0; always labelled. |
++| Q9 | Size | **3,000 / 900** (A(0.8) power 0.86 vs ≈ 0.65 at 2,400 / 600 with B(0.6) at H3; 3,600 / 1,080 adds ≈ 0.08). |
++| Q10 | Level B deployable? | **Yes:** to replace TIERS K4 at c_e = 0.8, or where TIERS selects F0 because it found K4 Mac-infeasible; always labelled. |
+ | Q11 | One root (TIERS D2)? | **Yes.** Activation needs the same L2-v4 one-root amendment. |
+ | Q12 | May K4S replace a TIERS **S or K2** selection? | **No (TIERS stands).** Alternative: level-A K4S may replace S/K2, on the untested argument that A means within 5 pp of K4@1.0. |
+ | Q13 | Position of B(0.6) in the sequence | **H3** (before the A-levels). Moving it to H5 (r1's order) changes cumulative power as shown below. |
+@@ -777,6 +817,6 @@
+ 
+ | Claim | B(0.6) at H3 (default) | B(0.6) at H5 (r1 order) |
+ |---|---|---|
+-| B(0.6) | .96 (.67) | .86 (.24) |
++| B(0.6) | .96 (.67) | .86 (≈.27) |
+ | A(0.9) | .94 (.52) | .97 (.69) |
+ | A(0.8) | .86 (.27) | .89 (≈.35; r1 printed .33 with SUP(0.8) double-counted) |
