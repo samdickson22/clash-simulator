@@ -2160,3 +2160,12 @@ Also on the hub, but with copies elsewhere:
   - **A3-P** applies to the frozen gate-4 variant v\* (stricter).
   - **Session runs under its own `caffeinate -i`.**
   - **macOS 27.0.1** is staged with AutomaticallyInstallMacOSUpdates=1. Disabling it needs admin, so a short Sol computer-use step at session time turns auto-download/install off for the window, then restores it.
+- **23:04 UTC: A4 no-copy staging: APPROVED `stage_nocopy.py`.**
+  - **Why a helper:** editing `prepare_bundle.py` would break END↔Mac pin equality, and frozen `prepare_bundle` refuses pre-placed files.
+  - **The helper:** an external, SHA-pinned helper that imports the frozen `prepare_bundle` unchanged and overrides `copy_file` only for `states.pkl` and `states-rows.{json,bin}`. Placement is clonefile, then a hard link, then a copy only if ≥10 GiB stays free.
+  - **Conditions:**
+    - SHA verification after placement;
+    - source and bundle files made read-only;
+    - a byte-identical `tiers-pins.json` test with and without the helper;
+    - SHAs re-verified right before the Mac session.
+  - **Effects:** peak staging disk drops ~72 → ~36 GiB, with no re-pins (Sol agrees). Sol r2 found everything else in A4 resolved; r3 runs on the whole amendment.
