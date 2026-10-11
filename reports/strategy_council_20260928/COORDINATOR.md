@@ -2022,3 +2022,8 @@ Also on the hub, but with copies elsewhere:
     - Read-only SHA-verified copy of T1's K4 speed corpus (a97b1fbf) into the K4S job dirs authorized, for END only.
   - **Freeze executor launched** (Opus, clasher-prereg-k4s-freeze-exec-20261011-r1): SHA re-verification, seed-audit re-run, Mac manifest freeze, freeze record and commit, independent check. Then the K4S run on {03, 04} (excluded smoke, then reporting), in parallel with T1 reporting on 01/08.
   - **TIERS blocker found by prep:** the frozen `measure_tiers.py` (5d7de8e3) uses `math.isfinite` without `import math` (l.70), so every Mac session with amendment_1 would hit NameError. A reviewed TIERS erratum is needed before any Mac session; it is outcome-blind and doesn't affect fleet reporting. Assigned to T1.
+- **17:31 UTC: K4S freeze r1 STOPPED correctly.**
+  - **Seed audit:** the re-run at 490a8084 FAILED on self-reads only. Since 38c195b8, the tool reads K4S's own committed outputs as prior declarations; there is no real foreign collision. It also exits 0 on FAIL.
+  - **DELTA-MANIFEST:** reviewed d15715ba, committed 19586d20, skeleton d771e459 (mechanical; new class 65 → 81).
+  - **Approved:** a five-part audit_seeds.py fix (skip K4S self-docs, exclude own outputs, helper-offset window bounds, exit 1 on FAIL, tests including a synthetic foreign collision), plus Sol review of the fix and the DELTA-MANIFEST delta, including the unpinned test_end_reference.py.
+  - **Freeze r2 executor launched** (clasher-prereg-k4s-freeze-exec-20261011-r2) with the same decisions 1–9. It also commits perception's two transport receipts.
