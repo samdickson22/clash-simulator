@@ -2331,3 +2331,15 @@ Each round commits a receipt with every hash. **`round.py` is shelved**: no furt
 
    r2 is 08's first counted attempt; one technical repeat remains under the existing rule.
 5. **Review.** A quick independent Opus review of RF1 runs in parallel. If it rejects the exemption, I re-rule before pooling. That only affects release-side assembly, never launches.
+
+## 2026-10-12 02:53Z: RF1 erratum: how 08 r1 is verified
+
+RF1 item 1 was wrong to expect a non-zero verifier exit for 08 r1. The approved verifier 753722c9 ACKs **sealed failed** data: it exits 0 and writes DURABLE-ACK.json with status failed.
+
+**Corrected:**
+- After r1's C-d, run 753722c9 exactly as approved: C-a pins (r1's launch receipt and its committed prepare proof), C-c check, `python3 -I`.
+- Its ACK with `status=failed` is the proof that the data arrived intact, matches its hashes and is bound to its launch. It does **not** mean the run succeeded, and it changes nothing in RF1: r1 stays unassembled and uncounted, and it is disclosed.
+- Bind the DURABLE-ACK into the refusal-disclosure receipt.
+- If the verifier exits non-zero, apply C-b: record the output and escalate.
+
+No code changes.
