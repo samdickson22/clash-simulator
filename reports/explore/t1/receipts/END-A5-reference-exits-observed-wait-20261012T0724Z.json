@@ -1,0 +1,51 @@
+{
+  "coordinator_position_read": 9188,
+  "host_probed": false,
+  "hosts": {
+    "127x01": {
+      "C_d_not_before_utc": "2026-10-12T07:42:00Z",
+      "exit": {
+        "attempt": "end-reference-127x01-0a87166f-a5-r1",
+        "command_exited": true,
+        "exit_code": 0,
+        "host": "127x01",
+        "measurement_exists": true,
+        "utc": "2026-10-12T07:20:20Z"
+      },
+      "files": [
+        "PREPARED.json",
+        "TRANSFER-COMPLETE.json",
+        "argv.nul",
+        "detach.json",
+        "detach.log",
+        "durable-measurement",
+        "exit.json"
+      ],
+      "received_data": "UNVERIFIED"
+    },
+    "127x08": {
+      "C_d_not_before_utc": "2026-10-12T07:32:49Z",
+      "exit": {
+        "attempt": "end-reference-127x08-0a87166f-a5-r1",
+        "command_exited": true,
+        "exit_code": 0,
+        "host": "127x08",
+        "measurement_exists": true,
+        "utc": "2026-10-12T07:11:09Z"
+      },
+      "files": [
+        "PREPARED.json",
+        "TRANSFER-COMPLETE.json",
+        "argv.nul",
+        "detach.json",
+        "detach.log",
+        "durable-measurement",
+        "exit.json"
+      ],
+      "received_data": "UNVERIFIED"
+    }
+  },
+  "outcomes_sealed": true,
+  "utc": "2026-10-12T07:25:06Z",
+  "verification_invoked": false
+}
