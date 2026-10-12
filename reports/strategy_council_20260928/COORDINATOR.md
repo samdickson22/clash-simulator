@@ -2774,3 +2774,12 @@ The audit (`/mpac/sdicks02/jobs/clasher/k4s-audits/ROUND-r2-AUDIT.md`, independe
 **k.** PREREG-K4S §3.4 caps k ≤ 11/9, and k is 0-based. Escalation uses the stricter count reading, **k ≥ 8/6**, applied by hand. The tool's own 9/7 alert stays until review. Current max k is 2/1.
 
 **`checkpoint.py` diff** 52cd4583 has gone to Sol for narrow review (`k4s-audits/SOL-REVIEW-CHECKPOINT-r1.md`).
+
+## 2026-10-12 09:17Z: 08 released to perception B (GO); 01 stays T1-reserved
+
+T1 END timing is complete: the pool was committed at 95774e86 and only release paperwork remains. **127x08 is released to the perception owner for B.**
+- **Frozen on 08:** all T1 paths (`t1-*`, `fleet-end-attempts-0108*`, `end-*`) stay untouched until release, because R7 re-lists the host roots.
+- **How B runs:** under nice, with headroom, after checking `who`.
+- **Plan first:** the B plan gets posted before it runs. Anything beyond these limits needs my approval.
+
+**127x01 stays T1-reserved.** Its four job directories are frozen, the hub mirror stays paused, and 01 holds the only copy of the counted blocks. A durability copy and the mirror retarget come after the release review.
