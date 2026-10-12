@@ -96,6 +96,10 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
   are inactive. Then post "03 quiet" and hold the 03 launch until the builder posts "released". P2 timeout: 30 minutes after the coordinator's GO
   to the builder. On timeout, proceed with rN and tell the coordinator. The window is DECLARED for the ~08:40Z cut (P2).
   The "quiet" post states whether any K4S qualification or other owned process is running (audit F5 disclosure).
+- Cut 2 (~11:10Z) read window for the perception owner on BOTH 03 and 04 (coordinator, same handshake): after the joint
+  STOP and 04's apt-daily, quiet-read v2 on each host; when both have two consecutive quiet reads, post "03/04 quiet"
+  (with the qualification/owned-process statement). Hold the r3 launch on EACH host until the coordinator forwards that
+  host's "released"; per-host 30-min timeout from the coordinator's GO, after which that host proceeds.
   Only then do the motd/timer reads above. If no window is declared, there is no hold.
 - Escalation gates clear.
 
