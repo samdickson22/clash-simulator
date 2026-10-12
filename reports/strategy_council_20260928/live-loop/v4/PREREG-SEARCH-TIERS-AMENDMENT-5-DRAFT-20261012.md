@@ -14,7 +14,7 @@ Impact inventory: [`E4-GUARD-RACE-FIX-IMPACT-20261012.md`](E4-GUARD-RACE-FIX-IMP
 ## 1. What this amendment changes, and what it does not
 
 **Changes:**
-1. **One E4 file.** `e4v3/fleet_validity.py` goes from 94d0e7f2 to `<R1-APPROVED SHA>`, the SHA recorded in the adoption ruling. It is the only change to any `measurement_files` / `runtime_files` / `measurement_source` entry. The r2 candidate under review is `016ae7d0ba8238b5af55356a9b33b3e467c02ef21087599535dbb16a2ef26cf3`.
+1. **One E4 file.** `e4v3/fleet_validity.py` goes from 94d0e7f2 to `<R1-APPROVED SHA>`, the SHA recorded in the adoption ruling. It is the only change to any `measurement_files` / `runtime_files` / `measurement_source` entry. The r3 candidate under review is `0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f` (r2 016ae7d0 and r1 eae5db3f: Sol REQUEST_CHANGES).
 2. **Every old-code END reference attempt is disclosed and excluded from pooling**, whatever it shows.
 3. **A fresh END reference series runs on both counted hosts, 127x01 and 127x08,** under the fixed code, with new attempt names and a new release-side root declaration. It is preceded by a required fixed-code smoke (§7 R4).
 4. **The R-ord post-exit code check** becomes a full comparison of the 18-entry `measurement_files` (§5.1).
@@ -53,7 +53,7 @@ Source: `reports/explore/t1/receipts/END-08r2-DIAGNOSIS-r1.md`, ec6eb568.
 
 **What it is not.** The failure isn't host interference, and the launch environment isn't implicated. 08 r3 (RG2) reproduced the signature, which confirms the diagnosis's prediction.
 
-## 3. The fix (fleet_validity.py 94d0e7f2 → `<R1-APPROVED SHA>`; r2 candidate 016ae7d0, +16/−5)
+## 3. The fix (fleet_validity.py 94d0e7f2 → `<R1-APPROVED SHA>`; r3 candidate 0775b704, +16/−5)
 
 1. **Identity-valid ancestry.** `owned_tree(rows, roots, known, pinned=None, keys=())` takes the pinned identities. A row whose pid already has a pinned six-KEY identity (`supervisor.KEYS`) that differs from the row is never owned, neither as a seed nor as a child. It therefore grants nothing to descendants. This applies at `:144` (snapshot 1) and in the census pass.
    - PID-reuse protection through `known` start_ticks is unchanged.
@@ -62,7 +62,8 @@ Source: `reports/explore/t1/receipts/END-08r2-DIAGNOSIS-r1.md`, ec6eb568.
 2. **Census pass, new.** After `self.audit.census(...)`:
    - E4 descendants **newly** reached on the census rows (`owned_tree(after, …) − current_owned`) are pinned with the unchanged `setdefault` of the six KEYS, provided the row's start_ticks equals `known`;
    - they are added to `current_owned` only if that pinned identity matches;
-   - `foreign_compute` and `foreign_active` then drop the rows that `own_process` now owns.
+   - `foreign_compute` is then **recomputed by the frozen `host_audit.foreign_compute` on the same census rows** (`after`, with their allowlist and OP-2 annotations) under the updated ownership. That keeps the frozen classifier's precedence: `op2_denied`, unallowlisted system-dbus and unapproved SSH-title trees are flagged before ownership is consulted. No third snapshot is taken (Sol r2 F4).
+   - `foreign_active` drops the rows that `own_process` now owns. The frozen active rule is itself conditioned on `not own_process`.
 
    The pass never removes ownership and never replaces a pinned identity.
 3. **Unchanged:** the `:147-151` six-KEY `known_identity.setdefault` loop and the `own_process` override are byte-for-byte as on 94d0e7f2. **No exec, pre-exec or identity-replacement exception exists.**
@@ -78,13 +79,15 @@ Source: `reports/explore/t1/receipts/END-08r2-DIAGNOSIS-r1.md`, ec6eb568.
 - A process outside the E4 ppid tree is never owned, even with E4's cmdline.
 - A reused pid with new start_ticks is never owned, whatever its ppid.
 - A pinned identity is never replaced, under any condition.
-- Every T1 rule and reason is untouched.
+- Every T1 rule and reason is untouched, and every frozen `foreign_compute` denial that precedes ownership still wins over E4 ownership.
 
 **Tests** (impact §5):
-- the e4v3 suite is 101/101 OK with 2 torch skips, against a 91/91 baseline;
-- the 10 new tests give 5 failures on 94d0e7f2: the three race positives, plus the denied-parent case with the child already in the ownership snapshot;
+- the e4v3 suite is 104 tests OK with 2 torch skips, against a 91 baseline;
+- the 13 new tests on 94d0e7f2 still flag every classifier denial. They fail only where they test the race fix: the three race positives, the denied-parent case with the child already in the ownership snapshot, and the census-only OP-2 case's assertion that 101 is owned;
+- on r2 (016ae7d0), the six classifier subtests fail, which reproduces F4;
 - Sol's exec and rearm negatives are rejected on both versions;
-- the live check on 05 shows 10/10 owned on r2 and 0/10 on 94d0e7f2, with the 6 real foreign processes flagged on both versions.
+- Sol's r2 `classifier_probes.py` gives r3 the same reason and foreign list as 94d0e7f2 in all six case/snapshot arrangements;
+- the live check on 05 shows 10/10 owned on r3 and 0/10 on 94d0e7f2, with the other real foreign processes flagged on both versions.
 
 ### 3.1 Sol r1 response (REQUEST_CHANGES → r2)
 
@@ -95,7 +98,17 @@ Source: `reports/explore/t1/receipts/END-08r2-DIAGNOSIS-r1.md`, ec6eb568.
 | **F3 (MED):** census reconciliation admits descendants through an identity-rejected parent | `owned_tree` checks the pinned six-KEY identity of every seed and every newly admitted child, in both snapshots. A rejected parent grants nothing | `test_denied_parent_new_child` (child first seen in the census, and child present in both snapshots), `test_rejected_intermediate_late_grandchild` |
 | Positive coverage | (unchanged race fix) | `test_spawn_children_seen_only_by_census_are_owned`, `test_late_grandchild_listed_before_its_parent_is_owned` (reverse row order) |
 
-Sol's `probes.py`, run against r2, gives results identical to 94d0e7f2 for `arbitrary_exec`, `arbitrary_exec_active`, `repeated_exec`, `late_rearm` and `denied_parent_new_child`, and owns `[100, 102, 103]` for `grandchildren`.
+Sol's `probes.py`, run against r2 and again against r3, gives results identical to 94d0e7f2 for `arbitrary_exec`, `arbitrary_exec_active`, `repeated_exec`, `late_rearm` and `denied_parent_new_child`, and owns `[100, 102, 103]` for `grandchildren`.
+
+### 3.2 Sol r2 response (REQUEST_CHANGES → r3)
+
+Sol r2 resolved F1–F3 and accepted the tightening. It raised one blocker, F4.
+
+| Sol r2 finding | r3 change | Regression tests |
+| --- | --- | --- |
+| **F4 (HIGH):** the unconditional `foreign = [r for r in foreign if not own_process]` filter overrode frozen classifier denials that precede ownership (`op2_denied`, unallowlisted system-dbus, unapproved SSH-title trees), for rows owned in snapshot 1 as well as late rows | That line is replaced by Sol's exact correction, `foreign = self.audit.foreign_compute(self.job, after)`, after the census ancestry and pinning pass. Nothing else changes: the `active` filter, six-KEY pins, PID-reuse handling and identity-valid ancestry are as in r2 | `test_unallowlisted_system_dbus_stays_foreign`, `test_sshd_unapproved_tree_stays_foreign`, `test_real_op2_denial_stays_foreign` (denial produced by the frozen OP-2 confirmation). Each runs with the process owned in snapshot 1 and first seen in the census, and each keeps pid 101 in `foreign_compute` and fails the guard |
+
+T5 (i)/(ii) are unchanged in substance. r3 restores the frozen classifier precedence; it adds no relaxation or tightening.
 
 ## 4. Disclosure: every END-campaign execution of the 94d0e7f2 guard
 
@@ -192,7 +205,7 @@ A5 sets no absolute deadline. If the series slips past the TIERS schedule, that 
 
 | Step | Reviewer | Scope | Pass condition |
 | --- | --- | --- | --- |
-| R1 | **Sol** (GPT-6.1-Sol; Claude-written code) | `fleet_validity.py` diff 94d0e7f2 → `<R1-APPROVED SHA>` (r1 eae5db3f: REQUEST_CHANGES; r2 candidate 016ae7d0), `tests/test_guard_census_race.py` and the live-check script. Specifically: the union-not-subtract census pass; identity-valid ancestry in both snapshots; no replacement of any pinned identity; pid-reuse protection; no masking of real foreign processes; no change to T1 semantics | APPROVE. Each round goes back with the full brief, prior findings and responses (§3.1). If the approved diff changes behaviour beyond T5 (i) and (ii), or violates either, R3 re-checks before adoption. |
+| R1 | **Sol** (GPT-6.1-Sol; Claude-written code) | `fleet_validity.py` diff 94d0e7f2 → `<R1-APPROVED SHA>` (r1 eae5db3f and r2 016ae7d0: REQUEST_CHANGES; r3 candidate 0775b704), `tests/test_guard_census_race.py` and the live-check script. Specifically: the union-not-subtract census pass; identity-valid ancestry in both snapshots; no replacement of any pinned identity; pid-reuse protection; no masking of real foreign processes; no change to T1 semantics | APPROVE. Each round goes back with the full brief, prior findings and responses (§3.1, §3.2). If the approved diff changes behaviour beyond T5 (i) and (ii), or violates either, R3 re-checks before adoption. |
 | R2 | **PC2** production packet reviewer | The "final independently reviewed E4 commit" is recorded as A3-reviewed E4 (E4-END-INDEPENDENT-REVIEW, 732ea9bd) plus the R1-approved one-file diff, with the inventory-diff receipt. Check that the A5 attempts' `measurement_files` equal that commit's inventory (17 unchanged entries plus `<R1-APPROVED SHA>`), including END and pooling code | Recorded at the production packet, as PC2 already requires. A5 asks the coordinator to tell the PC2 reviewer **now** that the reviewed commit moves |
 | R3 | **Independent Opus science review** (high effort; not the drafter) | Outcome-blindness of A5; completeness of the D1–D5 disclosure; the "never pool old code" rule fixed in advance; the §5.2 PC1 interpretation; deferral and no-relaxation; whether the fix could bias timing (it changes only guard ownership, in the monitor process, at 1 Hz on the census core) | r1: ADOPT_WITH_CHANGES (`OPUS-SCIENCE-REVIEW-A5-r1.md`), T1–T13 applied. r2 narrow re-check: ADOPT_WITH_CHANGES (`OPUS-SCIENCE-RECHECK-A5-R3.md`); T5 replaced as specified there. |
 | R4 | R3 reviewer and coordinator | **R4 (resolved): fixed-code smoke required** (A1 precondition; A2/A3 condition 1 precedent). Before the first A5 reference launch, one `e4v3-unpoolable-smoke` run on the A5 bytes passes on 08 (preferred: D ≥ 1 s exercises the race path) or on 01. It uses job parent `$base`, is outside all roots, and goes through the full C5/C6, C-a to C-d and verifier flow, with A6's pass criteria. It is disclosed, never pooled, and needs its own clean window (§6). A smoke failure means STOP and escalate; it uses no reference attempt. | Resolved (R3 r1 T7) |

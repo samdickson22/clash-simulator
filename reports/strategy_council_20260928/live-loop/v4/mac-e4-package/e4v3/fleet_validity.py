@@ -162,7 +162,7 @@ class ReportingGuard:
             if r["pid"] in late and r["start_ticks"] == self.known[r["pid"]]:
                 identity = tuple(r[k] for k in self.supervisor.KEYS)
                 if self.known_identity.setdefault(r["pid"], identity) == identity:self.current_owned.add(r["pid"])
-        foreign = [r for r in foreign if not self.audit.own_process(self.job, r)]
+        foreign = self.audit.foreign_compute(self.job, after)
         active = [r for r in active if not self.audit.own_process(self.job, r)]
         # Confirmation can take two seconds; T1 measures the interval AFTER it.
         now = time.monotonic(); dt = max(now-self.last, .001)

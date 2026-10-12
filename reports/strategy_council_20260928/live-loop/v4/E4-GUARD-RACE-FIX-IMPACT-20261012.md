@@ -13,7 +13,7 @@ All SHA-256 values are of the file bytes at origin/main 5cc4c5bc, except the 08 
 
 | File | Before | After (this branch) |
 | --- | --- | --- |
-| `…/mac-e4-package/e4v3/fleet_validity.py` | `94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae` | **adopted:** `<R1-APPROVED SHA>`, recorded in the adoption ruling. **r2 candidate:** `016ae7d0ba8238b5af55356a9b33b3e467c02ef21087599535dbb16a2ef26cf3` (+16/−5 against 94d0e7f2). **r1 (rejected by Sol):** `eae5db3f…` |
+| `…/mac-e4-package/e4v3/fleet_validity.py` | `94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae` | **adopted:** `<R1-APPROVED SHA>`, recorded in the adoption ruling. **r3 candidate:** `0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f` (+16/−5 against 94d0e7f2). **Rejected by Sol:** r2 `016ae7d0…` (F4) and r1 `eae5db3f…` (F1–F3) |
 | `…/mac-e4-package/e4v3/tests/test_guard_census_race.py` | (new) | test only; not in any `measurement_files` inventory |
 | `…/live-loop/v4/e4-guard-race-fix-20261012/{live_race.py,results.json}` | (new) | test receipt, kept outside `e4v3/` so the e4v3 runtime file list changes only by the test |
 
@@ -21,9 +21,9 @@ All SHA-256 values are of the file bytes at origin/main 5cc4c5bc, except the 08 
 - `release_reference.py:240-241` builds the E4 measurement inventory from the `.py`/`.sh` files plus `spec-pins.json` directly under `e4v3/`. `tests/` is not included.
 - So in every `measurement_files` / `runtime_files` / `measurement_source` inventory, **exactly one entry changes: `fleet_validity.py`.** The other 17 entries stay byte-identical, including the five A3 code SHAs, native 44874fd6, the guard freeze `FROZEN-T1.json` 24817e16 and the nine T1 guard modules.
 
-**What the change does (r2).**
+**What the change does (r3).**
 - `owned_tree` gains optional `pinned`/`keys` arguments. A row whose pid has a pinned six-KEY identity that differs from the row is neither owned nor a parent through which descendants are admitted. This applies at `:144` and in the census pass.
-- After the census, E4 descendants that are **newly** reached on the census rows are pinned with the unchanged six-KEY `setdefault` (start_ticks must equal `known`). They are added only if they match, never removed. `foreign_compute` / `foreign_active` then drop rows that `own_process` now owns.
+- After the census, E4 descendants that are **newly** reached on the census rows are pinned with the unchanged six-KEY `setdefault` (start_ticks must equal `known`). They are added only if they match, never removed. `foreign_compute` is then recomputed by the frozen `host_audit.foreign_compute(job, after)` on the same census rows under the updated ownership, so frozen denials that precede ownership (`op2_denied`, unallowlisted system-dbus, unapproved SSH-title trees) still win. `foreign_active` drops rows that `own_process` now owns.
 - **No exec, pre-exec or identity-replacement exception.** The `:147-151` loop and the `own_process` override are as on 94d0e7f2.
 - No rule, threshold or reason code changes.
 
@@ -41,9 +41,15 @@ All SHA-256 values are of the file bytes at origin/main 5cc4c5bc, except the 08 
 | F3 MED: identity-rejected parent admits new descendants | `owned_tree` requires a valid pinned identity for every seed and admitted child, in both snapshots | `test_denied_parent_new_child` (census-only and both-snapshot), `test_rejected_intermediate_late_grandchild` |
 | positives | race fix kept | `test_spawn_children_seen_only_by_census_are_owned`, `test_late_grandchild_listed_before_its_parent_is_owned` |
 
-Sol's `probes.py` on r2 gives results identical to 94d0e7f2 for all five negative sequences and owns `[100, 102, 103]` in `grandchildren`.
+Sol's `probes.py` on r2, and again on r3, gives results identical to 94d0e7f2 for all five negative sequences and owns `[100, 102, 103]` in `grandchildren`.
 
-**Behaviour delta that R3 must re-check (A5 §7 R1 clause).** The F3 rule is a tightening at `:144` too. On 94d0e7f2, a child that first appears under an identity-changed parent in the ownership snapshot was admitted. Under r2 it is flagged.
+**Sol r2 response (REQUEST_CHANGES → r3).** F1–F3 resolved; tightening accepted.
+
+| Finding | r3 change | Regression |
+| --- | --- | --- |
+| F4 HIGH: unconditional ownership filter of `foreign` overrides frozen classifier denials that precede ownership | `foreign = self.audit.foreign_compute(self.job, after)` after the ancestry and pinning pass (Sol's exact correction); nothing else changed | `test_unallowlisted_system_dbus_stays_foreign`, `test_sshd_unapproved_tree_stays_foreign`, `test_real_op2_denial_stays_foreign` (frozen OP-2 confirmation produces `wrong child UID/source`), each in snapshot-1 and census-only arrangements |
+
+**Behaviour delta (re-checked).** The F3 rule is a tightening at `:144` too. On 94d0e7f2, a child that first appears under an identity-changed parent in the ownership snapshot was admitted; now it is flagged. The R3 narrow re-check returned ADOPT_WITH_CHANGES (`OPUS-SCIENCE-RECHECK-A5-R3.md`), and A5 T5 declares it as (ii). r3's F4 correction restores frozen precedence and doesn't alter (i) or (ii).
 
 ## 1. Who executes `fleet_validity.py`, and who only pins its bytes
 
@@ -113,7 +119,7 @@ The searches were `git grep 94d0e7f2` and `git grep fleet_validity` over origin/
 
 | Item | Source | Needed |
 | --- | --- | --- |
-| **PC2** (reviewed E4 source) | `reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md` ff0b7afe (24105954): "measurement source inventory must equal the final independently reviewed E4 commit, including END and pooling code" | The "final independently reviewed E4 commit" becomes the **fix commit after Sol APPROVE**. The PC2 reviewer must check the A5 attempts' `measurement_files` against that commit: 17 entries unchanged plus fleet_validity `<R1-APPROVED SHA>` (r2 candidate 016ae7d0) |
+| **PC2** (reviewed E4 source) | `reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md` ff0b7afe (24105954): "measurement source inventory must equal the final independently reviewed E4 commit, including END and pooling code" | The "final independently reviewed E4 commit" becomes the **fix commit after Sol APPROVE**. The PC2 reviewer must check the A5 attempts' `measurement_files` against that commit: 17 entries unchanged plus fleet_validity `<R1-APPROVED SHA>` (r3 candidate 0775b704) |
 | **PC1** (every original attempt) | same file; declaration `reference-attempt-roots-0108.json` | The reading becomes: host-root listing = A5 descriptor ⊎ old-code disclosure (D2/D4/D5) ⊎ committed RF1-exempt disclosures (D3, plus at most one A5-series exempt refusal on 01). PC1 also needs the **push-time receipt** for the A5 roots file (T10), because `registered_at` is committer time. Both are declared interpretations for the PC1 reviewer (§3) |
 | **PC2** recording (T6/F9) | — | The reviewed commit is recorded as A3-reviewed E4 (E4-END-INDEPENDENT-REVIEW 732ea9bd) plus the R1-approved one-file diff, with the inventory-diff receipt |
 | `release_reference.prerequisites` | `:194-198, 242-247, 265-267` | **The descriptor may hold only fixed-code attempts:** `fleet_pool.py:107` runs `verify_files` on every attempt, including failed ones, against the pool's own e4v3 directory, and `:169-176` makes runtime and measurement files equal across hosts. So the old-code attempts (01 r1, 08 r2, 08 r3) **cannot** appear in an A5 descriptor |
@@ -178,9 +184,12 @@ These ran on 127x05 under `nice -n 19 taskset -c 120-123`, with Python 3.12.12 (
 | Run | Result |
 | --- | --- |
 | Baseline, origin/main (94d0e7f2) | 91 tests, OK (skipped=2: torch unavailable) |
-| r2's 10 new tests in `test_guard_census_race.py` against **94d0e7f2** | **FAILED (failures=5)**: the census-only spawn children, the reverse-order grandchild and the foreign test (worker 102 flagged next to the real foreign 300); plus `test_denied_parent_new_child` with the child already in the ownership snapshot, the inherited `:144` weakness that r2 closes. Sol's exec negatives (`arbitrary_exec`, `arbitrary_exec_active`, `repeated_exec`, `late_rearm`), the rejected-intermediate grandchild and pid reuse **pass on both**, as intended: frozen behaviour is preserved |
-| Full suite with r2 (016ae7d0) | **101 tests, OK (skipped=2, same torch skips)** |
-| Sol `probes.py` on r2 | identical to 94d0e7f2 for all five negatives; `grandchildren` owns `[100, 102, 103]` |
+| r3's 13 new tests in `test_guard_census_race.py` against **94d0e7f2** | **FAILED (failures=6)**. All three classifier negatives keep 101 in `foreign_compute` on 94d0e7f2; the one extra failure is the census-only OP-2 subtest's "101 is owned" assertion, which the old race prevents. The others: the census-only spawn children, the reverse-order grandchild and the foreign test (worker 102 flagged next to the real foreign 300); plus `test_denied_parent_new_child` with the child already in the ownership snapshot, the inherited `:144` weakness that r2 closes. Sol's exec negatives (`arbitrary_exec`, `arbitrary_exec_active`, `repeated_exec`, `late_rearm`), the rejected-intermediate grandchild and pid reuse **pass on both**, as intended: frozen behaviour is preserved |
+| Full suite with r3 (0775b704) | **104 tests, OK (skipped=2, same torch skips)** |
+| r3's 13 new tests against r2 (016ae7d0) | **FAILED (failures=6)**: exactly the six classifier subtests (F4 reproduced) |
+| Sol r1 `probes.py` on r3 | identical to 94d0e7f2 for all five negatives; `grandchildren` owns `[100, 102, 103]` |
+| Sol r2 `classifier_probes.py`, old vs r3 | same `reason` (`foreign_compute`) and `foreign` (`[101]`) in all 6 case/snapshot arrangements; `real_op2_denial` carries `op2_denied = 'wrong child UID/source'` from the frozen confirmation |
+| r2 (016ae7d0, superseded) | 101 OK; Sol r2 REQUEST_CHANGES (F4) |
 | r1 (eae5db3f, superseded) | 96 OK; Sol r1 REQUEST_CHANGES (F1–F3) |
 
 The new tests:
@@ -188,11 +197,12 @@ The new tests:
 2. **foreign:** real foreign pythons are still flagged, including one with E4's cmdline outside the tree;
 3. **pid reuse:** a reused pid with different start_ticks is not owned, whether its ppid is 1 or E4;
 4. **Sol F1/F2 negatives:** `arbitrary_exec`, `arbitrary_exec_active` (both foreign lists), `repeated_exec` (exe-only, three steps, with the pinned identity never replaced) and `late_rearm` (the PID-1 reparenting sequence);
-5. **Sol F3 negatives:** `denied_parent_new_child` (the child first seen in the census, and the child in both snapshots) and the rejected-intermediate late grandchild.
+5. **Sol F3 negatives:** `denied_parent_new_child` (the child first seen in the census, and the child in both snapshots) and the rejected-intermediate late grandchild;
+6. **Sol r2 F4 negatives:** unallowlisted system-dbus, unapproved SSH-title tree, and a real OP-2 denial. Each runs owned in snapshot 1 and first seen in the census, and each must keep 101 in `foreign_compute` and fail the guard.
 
-**Live `/proc` check on 127x05.** The receipt is `e4-guard-race-fix-20261012/results.json` (v2), produced by `live_race.py`. The check starts 10 real spawn workers between the ownership snapshot and the census, against the real host scan plus the synthetic pinned dbus row.
-- On 94d0e7f2, 0/10 workers were owned, and **all 10 were flagged `foreign_compute`** in each of 3 runs, re-run at about 04:18Z.
-- On r2 (016ae7d0), 10/10 were owned and none flagged, in each of 3 runs.
-- On both versions, the 6 genuinely foreign python processes on 05 were still flagged.
+**Live `/proc` check on 127x05.** The receipt is `e4-guard-race-fix-20261012/results.json` (v3), produced by `live_race.py`. The check starts 10 real spawn workers between the ownership snapshot and the census, against the real host scan plus the synthetic pinned dbus row.
+- On 94d0e7f2, 0/10 workers were owned, and **all 10 were flagged `foreign_compute`** in every run: 3 runs plus 1 confirmation.
+- On r3 (0775b704), 10/10 were owned and none flagged, in each of 3 runs. r2 gave the same result earlier.
+- On both versions, the genuinely foreign python processes on 05 were still flagged: 6 in each run, and 7 in the old-code confirmation run, because the host's process set changed.
 
-That is the full extent of live exercise; nothing was run on a fleet host. The required A5 smoke (T7) is the first fleet exercise. Sol r2 is pending.
+That is the full extent of live exercise; nothing was run on a fleet host. The required A5 smoke (T7) is the first fleet exercise. Sol r3 is pending.

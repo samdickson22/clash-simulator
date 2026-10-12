@@ -1,10 +1,12 @@
 """E4 spawn children born between the ownership and census snapshots stay E4's;
 identity-changed processes neither stay owned nor vouch for new descendants."""
 import copy
+import os
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from fleet_validity import ReportingGuard
 from test_guard_seeds import stage_guard,fresh_modules
@@ -150,6 +152,43 @@ class GuardCensusRaceTests(unittest.TestCase):
         reason,g=self.call(base,[self.bus,self.own,grandchild,self.shell(self.worker(101)),child])
         self.assertEqual(reason,"foreign_compute");self.assertEqual(self.pids(g["foreign_compute"]),[102,103])
         self.assertTrue({102,103}.isdisjoint(self.owned(g)));self.assertTrue({102,103}.isdisjoint(self.guard.known_identity))
+
+    # Negatives (Sol r2 F4): frozen classifier denials that precede ownership
+    # in host_audit.foreign_compute still win over E4 ownership.
+    def classifier_case(self,case):
+        for census_only in (False,True):
+            with self.subTest(case=case,census_only=census_only):
+                self.tearDown();self.setUp()
+                if case=="system_dbus":
+                    late=[self.bus,self.own,self.worker(101,cmd="/usr/bin/dbus-daemon --system --nofork",
+                                                         cmdline_sha256="f"*64,exe="/usr/bin/dbus-daemon")]
+                else:
+                    parent=self.worker(101,cmd="sshd: "+os.environ.get("USER","sdicks02")+"@notty",cmdline_sha256="f"*64,
+                                       exe="/usr/sbin/sshd",uid=os.getuid())
+                    child=self.worker(102,ppid=101,uid=os.getuid(),cmd="/bin/sleep 30",cmdline_sha256="b"*64,exe="/usr/bin/sleep")
+                    if case=="real_op2_denial":
+                        parent["ssh_connection_snapshot"]="129.65.221.14 1234 127.0.0.1 22"
+                        child["ssh_connection_snapshot"]="192.0.2.5 1234 127.0.0.1 22"
+                        child["ssh_family_parent_snapshot"]=[parent[k] for k in ("pid","start_ticks","uid","cmdline_sha256")]
+                    late=[self.bus,self.own,parent,child]
+                first=[self.bus,self.own] if census_only else late
+                with patch("socket.gethostname",return_value="127x03"):reason,g=self.call(first,late)
+                self.assertEqual(reason,"foreign_compute");self.assertIn(101,self.pids(g["foreign_compute"]))
+                denial=next(r for r in self.guard.previous if r["pid"]==101).get("op2_denied")
+                if case=="real_op2_denial":
+                    # Produced by the frozen OP-2 confirmation, not injected.
+                    self.assertEqual(denial,"wrong child UID/source")
+                    self.assertIn(101,self.owned(g))
+
+    def test_unallowlisted_system_dbus_stays_foreign(self):
+        self.classifier_case("system_dbus")
+
+    def test_sshd_unapproved_tree_stays_foreign(self):
+        self.classifier_case("sshd_unapproved_tree")
+
+    @unittest.skipUnless(os.getuid()==3822945,"frozen OP-2 source binding is for the sdicks02 uid")
+    def test_real_op2_denial_stays_foreign(self):
+        self.classifier_case("real_op2_denial")
 
 
 if __name__=="__main__":unittest.main()
