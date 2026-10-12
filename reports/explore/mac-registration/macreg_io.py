@@ -27,6 +27,11 @@ E4V3_REL = "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3"
 # T1's committed END-A3 manifest for 01 (reports/explore/t1/receipts/END-A3-manifest-01-f6cebbaa.json).
 END_MANIFEST_SHA256 = "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7"
 NATIVE_SHA256 = "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"  # tier_backend.NATIVE_SHA
+# TIERS Amendment 5 (COORDINATOR 46ab6923, main 8799a0d6): T1's committed END-A5 inventory diff
+# (reports/explore/t1/receipts/END-A5-runtime-manifest-inventory-diff.json): END-A5 = END-A3 with only
+# e4v3/fleet_validity.py changed, in both runtime_files and measurement_files.
+END_A5_DIFF_SHA256 = "900bae16afeafeccd990109d23057a6f263f43a999b18e1a0e9b687b38afd69f"
+FLEET_VALIDITY_REL = E4V3_REL + "/fleet_validity.py"
 CORPORA_SHA256 = "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"  # T1 corpora.json
 PUBLIC_SHA256 = "282b08770d9a16b8e39b354551d62f934e7103dec769a00c511fb0b96260351e"  # T1 public 1,200
 GOLDEN_SHA256 = "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce"  # golden125
@@ -118,24 +123,45 @@ def bootstrap(runtime_root, native, extra_paths=()):
     check_e4v3_modules()
 
 
-def verify_runtime(runtime_root, native, end_manifest):
-    """END-A3 binding (fail closed): the frozen runtime_pins of ``runtime_root`` and the
-    e4v3 measurement_files equal T1's committed END-A3 manifest, e4v3 is the runtime's own
-    package, and the native module is the frozen provenance build."""
+def a5_expected(manifest, diff):
+    """END-A5 pins: the END-A3 manifest with exactly the fleet_validity entry replaced, as T1's
+    committed inventory diff certifies (fail closed on any other difference)."""
+    if diff.get("status") != "ADOPTED" or diff.get("A5_adopted") is not True or diff.get("adopted_commit") != "8799a0d6" \
+            or diff["A3_runtime_3785_diff_entries"] != [FLEET_VALIDITY_REL] \
+            or diff["measurement_files18_diff_entries"] != ["fleet_validity.py"] or diff["native_unchanged"] != NATIVE_SHA256[:8]:
+        raise ValueError("END-A5 inventory diff is not the adopted single-file fleet_validity change")
+    fleet_validity = diff["fleet_validity_sha256"]
+    runtime = dict(manifest["runtime_files"])
+    if FLEET_VALIDITY_REL not in runtime or len(runtime) != 3785:
+        raise ValueError("END-A3 runtime_files lack the fleet_validity entry")
+    runtime[FLEET_VALIDITY_REL] = fleet_validity
+    measurement = dict(manifest["measurement_files"], **{"fleet_validity.py": fleet_validity})
+    if measurement != diff["full_18_inventory"]:
+        raise ValueError("END-A5 measurement inventory differs from END-A3 + fleet_validity")
+    return runtime, measurement
+
+
+def verify_runtime(runtime_root, native, end_manifest, end_a5_diff):
+    """END-A5 binding (fail closed; TIERS A5, A4 erratum E3): the frozen runtime_pins of
+    ``runtime_root`` and the e4v3 measurement_files equal T1's committed END-A3 manifest with
+    only fleet_validity.py replaced per T1's committed END-A5 inventory diff; e4v3 is the
+    runtime's own package; the native module is the frozen provenance build."""
     root = Path(runtime_root).resolve()
     if E4V3_DIR != root / E4V3_REL:
-        raise ValueError("e4v3 must be the END-A3 runtime's own package")
-    manifest = read_pinned_json(end_manifest, END_MANIFEST_SHA256)
+        raise ValueError("e4v3 must be the END-A5 runtime's own package")
+    runtime_expected, measurement_expected = a5_expected(read_pinned_json(end_manifest, END_MANIFEST_SHA256),
+                                                         read_pinned_json(end_a5_diff, END_A5_DIFF_SHA256))
     from prepare_bundle import runtime_pins
-    if runtime_pins(root) != manifest["runtime_files"]:
-        raise ValueError("Runtime differs from the END-A3 runtime_files")
+    if runtime_pins(root) != runtime_expected:
+        raise ValueError("Runtime differs from the END-A5 runtime_files")
     measurement = {p.name: file_sha(p) for p in sorted(E4V3_DIR.iterdir())
                    if p.suffix in (".py", ".sh") or p.name == "spec-pins.json"}
-    if measurement != manifest["measurement_files"]:
-        raise ValueError("e4v3 measurement_files differ from END-A3")
+    if measurement != measurement_expected:
+        raise ValueError("e4v3 measurement_files differ from END-A5")
     if file_sha(native) != NATIVE_SHA256:
         raise ValueError("Native module is not the frozen provenance build")
-    return dict(end_manifest_sha256=END_MANIFEST_SHA256, runtime_files=len(manifest["runtime_files"]),
+    return dict(end_manifest_sha256=END_MANIFEST_SHA256, end_a5_diff_sha256=END_A5_DIFF_SHA256,
+                fleet_validity_sha256=measurement_expected["fleet_validity.py"], runtime_files=len(runtime_expected),
                 runtime_files_equal=True, measurement_files_equal=True, native_sha256=NATIVE_SHA256)
 
 
@@ -145,6 +171,7 @@ def runtime_arguments(parser):
     parser.add_argument("--native", type=Path, required=True)
     parser.add_argument("--extra-path", type=Path, action="append", default=[])
     parser.add_argument("--end-manifest", type=Path, required=True, help="T1 END-A3-manifest-01-f6cebbaa.json (bd9804c3)")
+    parser.add_argument("--end-a5-diff", type=Path, required=True, help="T1 END-A5-runtime-manifest-inventory-diff.json (900bae16)")
     parser.add_argument("--e4v3", type=Path, help="defaults to <runtime-root>/" + E4V3_REL)
 
 
@@ -152,7 +179,7 @@ def setup_runtime(args, bootstrap_runtime=True):
     """Pins, END-A3 runtime binding, then imports. A process that will construct a
     TierBackend passes bootstrap_runtime=False: the backend runs setup_imports once."""
     pins = add_e4v3(args.e4v3 or Path(args.runtime_root) / E4V3_REL)
-    binding = verify_runtime(args.runtime_root, args.native, args.end_manifest)
+    binding = verify_runtime(args.runtime_root, args.native, args.end_manifest, args.end_a5_diff)
     if bootstrap_runtime:
         bootstrap(args.runtime_root, args.native, args.extra_path)
     else:

@@ -147,6 +147,7 @@ class World:
 
     def common(self):
         return ["--e4v3", str(E4V3), "--runtime-root", "/nonexistent", "--native", "/nonexistent", "--end-manifest", "/nonexistent",
+                "--end-a5-diff", "/nonexistent",
                 "--corpora", str(self.corpora), "--end-digests", str(self.end),
                 "--end-digests-sha256", io.file_sha(self.end), "--captures", str(self.captures)]
 
@@ -296,7 +297,7 @@ class Pipeline(unittest.TestCase):
             raise AssertionError("a TierBackend process must not bootstrap the runtime itself")
 
         args = SimpleNamespace(e4v3=E4V3, runtime_root=Path("/nonexistent"), native=Path("/nonexistent"), extra_path=[],
-                               end_manifest=Path("/nonexistent"), selection=self.selection, assembly=self.assembly,
+                               end_manifest=Path("/nonexistent"), end_a5_diff=Path("/nonexistent"), selection=self.selection, assembly=self.assembly,
                                state_rows=rows_dir, v1=root / "v1.pt", student=root / "R3a.pt", output=root / "reference")
         seal = ["--runtime-root", "/nonexistent", "--e4v3", str(E4V3), "--selection", str(self.selection), "--state-rows", str(rows_dir),
                 "--reference", str(root / "reference")]

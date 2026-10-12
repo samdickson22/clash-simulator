@@ -1,6 +1,6 @@
 #!/bin/bash
 # Phase 3 on 127x05 (nice 19, core 63, one thread, no timing). Usage: run_phase3.sh build|reference|memory|crosscheck|seal
-#   (once)      build_runtime.sh creates and verifies $W/runtime-a3
+#   (once)      build_runtime.sh creates and verifies $W/runtime-a5 (END-A5; A4 erratum E3)
 #   build:      build_sets -> assemble_states -> convert_states --states --expect-fingerprint
 #   reference:  student_reference compute (B.6)
 #   memory:     memory_check (blocking)
@@ -10,7 +10,7 @@
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 W=${MACREG_WORK:-/mpac/sdicks02/jobs/clasher/mac-registration-20261011}
-RT=$W/runtime-a3  # build_runtime.sh: END-A3-equal runtime (bd9804c3), full check in build/assemble/reference/memory stages
+RT=$W/runtime-a5  # build_runtime.sh: END-A5 runtime (bd9804c3 + 900bae16), full check in build/assemble/reference/memory stages
 E4V3=$RT/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3
 NATIVE=/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/native/clasher_core.abi3.so
 T1JOB=/mpac/sdicks02/jobs/clasher/t1-20261010-r1
@@ -20,6 +20,7 @@ CORPORA=$HERE/../t1/corpora/corpus-03-a51ea64c/corpora.json
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 PY="nice -n 19 taskset -c 63 /mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python -B"
 RUNTIME=(--runtime-root "$RT" --native "$NATIVE" --end-manifest "$W/END-A3-manifest-01-f6cebbaa.json"
+         --end-a5-diff "$W/END-A5-runtime-manifest-inventory-diff.json"
          --extra-path "$RT/imitation/evaluation/runtime_dependencies" --extra-path "$RT/reports/strategy_council_20260928/imitation")
 CONVERT_RUNTIME=(--runtime-root "$RT" --native "$NATIVE" --extra-path "$RT/imitation/evaluation/runtime_dependencies"
          --extra-path "$RT/reports/strategy_council_20260928/imitation")

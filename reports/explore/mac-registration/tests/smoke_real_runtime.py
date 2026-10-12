@@ -41,9 +41,10 @@ def main():
     work, out = Path(sys.argv[1]), Path(sys.argv[2])
     io.require_low_priority()
     out.mkdir(parents=True)
-    rt = work / "runtime-a3"
+    rt = work / "runtime-a5"
     args = SimpleNamespace(runtime_root=rt, native=Path("/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/native/clasher_core.abi3.so"),
-                           end_manifest=work / "END-A3-manifest-01-f6cebbaa.json", e4v3=None,
+                           end_manifest=work / "END-A3-manifest-01-f6cebbaa.json",
+                           end_a5_diff=work / "END-A5-runtime-manifest-inventory-diff.json", e4v3=None,
                            extra_path=[rt / "imitation/evaluation/runtime_dependencies", rt / "reports/strategy_council_20260928/imitation"])
     builder = mp.get_context("spawn").Process(target=build_fixture, args=(args, out))  # unpickling needs a bootstrap
     builder.start()

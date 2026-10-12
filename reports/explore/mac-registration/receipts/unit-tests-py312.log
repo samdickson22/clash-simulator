@@ -9,6 +9,8 @@ test_sets_and_schedule (test_pipeline.Pipeline.test_sets_and_schedule) ... ok
 test_stage_receipt (test_pipeline.Pipeline.test_stage_receipt) ... ok
 test_z_handoff_glue (test_pipeline.Pipeline.test_z_handoff_glue)
 compute (one setup_imports, inside the backend), cross-check, seal; then tampering fails closed. ... ok
+test_fails_closed (test_runtime_binding.A5Binding.test_fails_closed) ... ok
+test_single_entry_replaced (test_runtime_binding.A5Binding.test_single_entry_replaced) ... ok
 test_fill_smaller_than_tiers_stops (test_selection.Agreement.test_fill_smaller_than_tiers_stops) ... ok
 test_invalid_core_rejected (test_selection.Agreement.test_invalid_core_rejected) ... ok
 test_no_fill_when_core_reaches_2000 (test_selection.Agreement.test_no_fill_when_core_reaches_2000) ... ok
@@ -39,6 +41,6 @@ test_extra_file_or_mismatch_fails (test_verify_captures.Copy.test_extra_file_or_
 test_passes (test_verify_captures.Copy.test_passes) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 10.919s
+Ran 40 tests in 11.392s
 
 OK

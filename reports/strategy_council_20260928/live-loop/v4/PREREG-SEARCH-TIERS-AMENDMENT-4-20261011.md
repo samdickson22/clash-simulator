@@ -190,3 +190,32 @@ Source SHAs and test results are in the [amendment record](PREREG-SEARCH-TIERS-A
 - **Tests:** 38/38 pass on Python 3.8.10 and on 3.12.12 against the A5 e4v3. The no-copy integration test runs the real frozen `prepare_bundle` through the helper on those bytes.
 - **Re-stage before staging:** the Mac runtime must be re-staged from main `8799a0d6` or later, or overlaid and re-verified, before any Mac staging. Under A2's "same amended bytes everywhere", no TIERS Mac session runs on a runtime that holds `fleet_validity.py` `94d0e7f2`.
 - **B.6:** the pooled-S-forward gate binds the A5 END pool.
+- **Status:** accepted by the coordinator (COORDINATOR `8bbb0908`). The coordinator checked all 18 pins against the A5 e4v3 inventory at `8799a0d6` personally, and the Sol diff check was waived.
+
+**E3. The builder's runtime binding follows TIERS Amendment 5, so Phase 3 builds on A5 bytes. Builder code only; no rule or frozen-file change by A4.**
+- **Problem:** the builder's provenance check (`macreg_io.verify_runtime`) and its runtime (`build_runtime.sh` → `runtime-a3`) were bound to T1's END-A3 manifest `bd9804c3`. That manifest holds `fleet_validity.py` `94d0e7f2`. Under A2's "same amended bytes everywhere", Phase 3 must run on A5 bytes. T1 has committed SHAs for its END-A5 bundle manifests (01 `5df0fa00…`, 08 `93daf063…`) but not the manifest files. It has committed the inventory diff `reports/explore/t1/receipts/END-A5-runtime-manifest-inventory-diff.json` (`900bae16afeafeccd990109d23057a6f263f43a999b18e1a0e9b687b38afd69f`, commit `ffb138ab`). That diff certifies that END-A5 equals END-A3 with only `e4v3/fleet_validity.py` changed to `0775b704…`, in both `runtime_files` and `measurement_files`, with the native module unchanged.
+- **Change:**
+  - **`macreg_io.py`:**
+    - A new function `a5_expected()` takes the committed END-A3 manifest and replaces exactly the `fleet_validity` entry, following the SHA-pinned diff.
+    - It fails closed unless the diff is ADOPTED at `8799a0d6`, names exactly that one entry in `runtime_files` and in `measurement_files`, and reports the native module unchanged. The result must also equal the diff's 18-entry inventory.
+    - `verify_runtime` and `runtime_arguments` take the new `--end-a5-diff` argument.
+  - **`build_runtime.sh`:** builds `runtime-a5`, which is T1's END-preparation runtime plus the e4v3 package at `f6cebbaa` plus `fleet_validity.py` from `8799a0d6`, and verifies it.
+  - **`run_phase3.sh`, `tests/smoke_real_runtime.py` and `tests/test_pipeline.py`:** use `runtime-a5` and pass `--end-a5-diff`.
+  - **New test:** `tests/test_runtime_binding.py` checks that exactly one entry is replaced and covers six fail-closed cases.
+  - **Unchanged:** selection, assembly, conversion, the student reference, the memory check, the seal and `stage_nocopy.py` (E2 bytes, `166a1636…`).
+- **SHAs (before → after):**
+
+  | File | Before | After |
+  | --- | --- | --- |
+  | `macreg_io.py` | `0f6042b4…` | `2d6181fd…` |
+  | `build_runtime.sh` | `114d1b5d…` | `eeec07c6…` |
+  | `run_phase3.sh` | `87b54c05…` | `8a60925a…` |
+  | `tests/smoke_real_runtime.py` | `6854ec6a…` | `d2ec4b28…` |
+  | `tests/test_pipeline.py` | `85825db4…` | `a7fca998…` |
+  | `tests/test_runtime_binding.py` | none | `bad7ad1b…` |
+
+- **Evidence:**
+  - **`receipts/runtime-a5-binding.json`:** `runtime-a5` holds 3,785 `runtime_files` and 18 `measurement_files`, equal to END-A3 + `fleet_validity` `0775b704`, with native `44874fd6`.
+  - **`receipts/real-runtime-smoke-a5.json`:** a real Mac-profile `TierBackend` on `runtime-a5` passes, with a single bootstrap and a spawned D6-style child.
+  - **Tests:** 40/40 pass on Python 3.8.10 and 3.12.12 against the A5 e4v3.
+  - **Kept as evidence:** `runtime-a3` and its receipts.

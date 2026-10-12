@@ -13,7 +13,7 @@ SOURCES = ("selection.py", "macreg_io.py", "build_sets.py", "assemble_states.py"
            "memory_check.py", "seal_receipt.py", "stage_nocopy.py", "fetch_captures.sh", "verify_captures.py",
            "make_amendment_record.py", "run_tests.sh", "run_phase3.sh", "build_runtime.sh",
            "tests/smoke_real_runtime.py", "tests/test_selection.py", "tests/test_pipeline.py",
-           "tests/test_stage_nocopy.py", "tests/test_verify_captures.py")
+           "tests/test_stage_nocopy.py", "tests/test_verify_captures.py", "tests/test_runtime_binding.py")
 
 
 def sha(path):
@@ -91,6 +91,7 @@ def main():
         source_files={p: sha("reports/explore/mac-registration/" + p) for p in SOURCES},
         tests=tests, independent_review=review, errata=errata,
         runtime_binding=json.loads((HERE / "receipts/runtime-a3-binding.json").read_text()),
+        runtime_binding_a5=json.loads((HERE / "receipts/runtime-a5-binding.json").read_text()),
         real_runtime_smoke={k: v for k, v in json.loads((HERE / "receipts/real-runtime-smoke.json").read_text()).items()
                             if k in ("passes", "main_infer", "torch_threads", "child_exitcode", "versions", "utc")},
         outcome_blind=True, outcomes_read=False, games_read=False, timing_runs=False, mac_access=False,

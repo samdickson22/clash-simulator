@@ -21,6 +21,41 @@
   "mac_runtime": "must be re-staged from main 8799a0d6 or later (or overlaid and re-verified) before any Mac staging",
   "reason": "TIERS Amendment 5 (COORDINATOR 46ab6923, main 8799a0d6) changes e4v3/fleet_validity.py; A5 ruling R5(b)",
   "rules_or_frozen_files_changed": false,
-  "sol_check": "pending (coordinator-routed narrow diff check)"
+  "sol_check": "waived; accepted by the coordinator after verifying all 18 pins against the A5 e4v3 at 8799a0d6 (COORDINATOR 8bbb0908)"
+ },
+ {
+  "binding": "END-A3 manifest bd9804c3 + T1 END-A5 inventory diff 900bae16 (only e4v3/fleet_validity.py -> 0775b704)",
+  "files": {
+   "build_runtime.sh": [
+    "114d1b5d2ff42d23871ad7af392242e604368bdc37fee9fc06c6733669c371ff",
+    "eeec07c6b3e774d37ea14e469e114ecdef6c743a9ad68888762b96b0354937ad"
+   ],
+   "macreg_io.py": [
+    "0f6042b4a96171b8c43dc3a3ad7d1396e96cefcada582f069facb8fb1fbe0bb9",
+    "2d6181fd5db10abb31f2d98cfe34ce826a088f23f327ec8c86254ca1dbdc21e1"
+   ],
+   "run_phase3.sh": [
+    "87b54c059e20b0e6aa7ddb0b7254a26d237fa73953961770ca82182d374d3ccb",
+    "8a60925a36b35cfeceb296dd815dd3dd2aac68ccff42f6e4b24a7c27063316da"
+   ],
+   "tests/smoke_real_runtime.py": [
+    "6854ec6a97f094fad16ac851dd65d6bf69d635c291bfa95bcf4712009502b796",
+    "d2ec4b28ebedb15c94ace924da559b7862ece4704a8f518564e37ea3e12ab47f"
+   ],
+   "tests/test_pipeline.py": [
+    "85825db4c37b5dd18ad9020bf6c2800e9e2f0fb0c22d2f3985b76fcaf8bff1a6",
+    "a7fca9983084e243109f09f23e0ddc9e7aefb5974ee9e45c909652fb4d96a8bb"
+   ],
+   "tests/test_runtime_binding.py": [
+    null,
+    "bad7ad1bd786760b70b24c8b803fbf337ac0f7b00f11ba980f48ce1e1b6640d1"
+   ]
+  },
+  "id": "E3",
+  "kind": "builder-runtime-binding-follows-adopted-amendment",
+  "reason": "TIERS A5 adopted (COORDINATOR 46ab6923, main 8799a0d6); Phase 3 must run on A5 bytes (A2 same amended bytes everywhere)",
+  "rules_or_frozen_files_changed": false,
+  "runtime": "runtime-a5 = T1 END-preparation runtime + e4v3@f6cebbaa + fleet_validity.py@8799a0d6; 3785 runtime_files + 18 measurement_files equal; native 44874fd6",
+  "sol_check": "pending (coordinator to route or waive)"
  }
 ]

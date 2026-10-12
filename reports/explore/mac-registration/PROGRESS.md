@@ -58,6 +58,12 @@ Work directory on 05: `/mpac/sdicks02/jobs/clasher/mac-registration-20261011/`. 
   - 38/38 tests pass against the A5 e4v3 extraction `e4v3-a5-8799a0d6`.
   - Removed a duplicated PROGRESS block, caused by a repeated edit on 10-11.
   - **Open for Phase 3:** the builder runtime `runtime-a3` and `verify_runtime` bind END-A3 (`bd9804c3`, holding `fleet_validity` `94d0e7f2`). To build on A5 bytes, the binding must move to the END-A5 manifest once T1 commits it. That needs a separate narrow change, raised with the coordinator.
+- **E2 accepted** by the coordinator (COORDINATOR `8bbb0908`); the Sol check was waived.
+- **06:18–06:21Z Erratum E3: the builder's runtime binding moves to A5.**
+  - `verify_runtime` binds END-A3 `bd9804c3` plus T1's committed END-A5 inventory diff `900bae16`, in which only `fleet_validity` changes, to `0775b704`.
+  - `runtime-a5` was built and verified (3,785 + 18 files equal; native `44874fd6`).
+  - The real smoke on `runtime-a5` passes. 40/40 tests pass on both Pythons.
+  - Phase 3 now runs on `runtime-a5`.
 
 ## Phase 2 / Phase 3
 
