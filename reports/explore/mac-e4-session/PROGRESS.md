@@ -414,3 +414,12 @@ with rc 0 and the lock fd inherited; the exception path writes the post receipt 
 - **Resume:** if this operator restarts, the session continues on the Mac (it is daemonized). Run
   `run_session.sh status` and do NOT relaunch. After the post receipt appears: A3-P, the D/ public 15 paths, the
   private commit plus bundle, relaunch Chrome with `open -a`, re-read the prefs.
+
+### 2026-10-12T13:38:25Z: post-session tool approved (Sol pre-run r4 APPROVE)
+
+- `collect_session.py` steps: check, fetch, public, private, bundle, binding, apps.
+- r1 (bash) REJECT; r2 REJECT; r3 REJECT; r4 APPROVE. Every finding is fixed.
+- **Order after the post receipt appears:** `check fetch public private bundle binding apps`, then the public
+  temp-index commit of D (15 paths + private-commit-binding.json).
+- The full sealed dir stays private: `/mpac/sdicks02/jobs/clasher/mac-e4-private/` (05) plus the Mac
+  k4s-commit-repo private branch.
