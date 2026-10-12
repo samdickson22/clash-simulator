@@ -2,7 +2,7 @@
   "A3_runtime_3785_diff_entries": [
     "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_validity.py"
   ],
-  "A5_adopted": false,
+  "A5_adopted": true,
   "adopted_commit": "8799a0d6",
   "adoption": "46ab6923",
   "candidate_source_commit": "23a39863",
