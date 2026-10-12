@@ -4291,3 +4291,31 @@ The fix is a pure rename, recorded in this commit:
 - The placement GO and draft SHAs are unchanged.
 
 **Placement r3 must use COORDINATOR_COMMIT = this commit.** No placement attempt was consumed.
+
+## 2026-10-12 23:48Z: K4S END full package Sol r1: REQUEST_CHANGES (6 findings); D1 clarification ratified
+
+**Review.** `/mpac/sdicks02/k4s-runner/run-r1/reviews/SOL-REVIEW-END-FULL-r1.md` (6918d77a).
+
+| Component | Verdict |
+|---|---|
+| safe_input r3 | APPROVE_WITH_CONDITIONS |
+| S1 | APPROVE (unchanged) |
+| S2, S4 | REQUEST_CHANGES |
+| S1b, S3, S9, S10 | REQUEST_CHANGES |
+| S5, S6, S7 | REQUEST_CHANGES |
+
+Tests: 1,766 pass normally and 1,744 under -O, after fixing the test shim modes.
+
+**Findings:**
+- **F1 (BLOCKING).** The stdlib bootstraps in S2, S4 and common, and the host-tool wrappers, read `safe_input.py` and the host tool through an un-gated ancestor path before any confinement check.
+- **F2 (HIGH).** The shallow guard repo that S3 builds is refused by the S5 and S7 host helpers. The guard-repo contract must be consistent across all three.
+- **F3 (BLOCKING).** A relative `XDG_CONFIG_HOME` is checked in a different location from where frozen git reads it.
+- **F4 (HIGH).** Full-clone verification is optional. It must be a precondition for S9's build, verify and equivalence steps.
+- **F5 (HIGH).** RC-9 does not bind the preflight to native/corpus inputs or to the attempt bundle. It accepts an ACK from a different round, and it does not check bus-band consistency.
+- **F6 (MEDIUM).** The committed test shims are mode 644, so the suite can't be reproduced as committed.
+
+**Disclosures.** Sol accepted all nine.
+- **D1 clarification ratified by the coordinator.** S9 may read, SHA-pinned, exactly the six frozen-verifier support files: the runtime-pin list, the qualified binding, the K4S manifest, `K4S-MAC-PROCEDURE.md`, `spec-pins.json` and `build_tiers.sh`. None of them ever enters `runtime_files`.
+- Disclosures 2–9 are accepted as Sol states them: the S9 clone exception, the S3 `FETCH_HEAD` removal, the S10 receive receipt, the TRANSFER-DONE rename and names-only exceptions, the S2 commit-bound diagnostic, the S4 partials, the erratum, and the residuals.
+
+**Next.** The runner fixes F1–F6 and resubmits for Sol r2. No host step until then.
