@@ -4208,3 +4208,32 @@ The runbook is `reports/explore/x4s4/QUALIFY-RUNBOOK.md`, commit 433c36e7. These
   - If r5 approves, use option (b): run `qualify4 trainer` on the first real O batch after the O gate and before the R5 fit is admitted. This is a recorded change to the §6 ordering, and a trainer failure blocks every fit.
 - **Q-D3. Smoke parity at 8 games per arm: designed pause accepted.** If it fails, the coordinator decides whether to grant an exact-receipt exception.
 - **Q-D4. Q0 seed audit: included.** It runs once on 05 at nice 19 on a few cores, reading pinned blobs only (7,705 sources plus the 29 approved declarations). It does not touch the shared checkout's worktree.
+
+## 2026-10-12 23:18Z: Perception B generic phase transport: APPROVE_WITH_CONDITIONS
+
+**Review.** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-GENERIC-TRANSPORT-REVIEW-r1.md` (62cf641a).
+
+**Approved, unchanged.** These four files are the single path for the environment phase, the 24 epoch units and the reducer:
+- transport 8d348859
+- launcher 2679fc3e
+- guard cd35c65f
+- retrieval 8ac48b0b
+
+They come from bundle manifest 32a4a36f.
+
+**What the review found:**
+- The run command is derived only from the CPU GO and the frozen package.
+- The C-5 checks cover the recursive authority closure, including placement.
+- Each phase makes five exclusive claims per CPU GO.
+- All C-6 items are closed.
+- The 64 MiB environment cap is adequate: it fails closed and needs no pre-measurement.
+
+**Adopted conditions:**
+- **Worker memory limit (RLIMIT_AS).** 16 GiB for the environment phase. 32 GiB for serial epochs and the reducer. At most 20 GiB per member in a two-member group.
+- **Full SHAs on the ledger.** A full B authority SHA may appear only on its own column-0 ISSUED line.
+- **Run windows** must end at least 1 h before the CPU GO deadline.
+- **Repo hygiene.** Large local artifacts never go into the public repo.
+- **Concurrency.** Off for the environment phase and epoch 1. After that, optional two-member groups, each needing its own group authority.
+- **Retrieval.** Defect U1 (one bad file aborts the whole read) is deferred to r2.
+
+**Next.** Fresh drafts for the environment phase: a CPU GO, placement r3 and a run GO using this transport. These replace the unissued 05ff759e, edea9611 and 401ac9f9.
