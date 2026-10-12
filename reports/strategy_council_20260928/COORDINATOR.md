@@ -3063,3 +3063,25 @@ The independent review is `END-C1-RELEASE-DRIVER-REVIEW-r2.md` (T1 job dir).
 The driver r3 allowlist is exactly the public paths in R-M1, plus `D/private-commit-binding.json`.
 
 **Mac staging is done:** tiers-pins 273ef196, `validate_bundle` PASS, fixture clones 0444, 22.4 GB free. Chrome and Claude were quit gracefully. ChatGPT was left running because it hosts Codex agents.
+
+## 2026-10-12 11:51Z: X4S-3 G-08 pull: scope ruling after Sol r2
+
+Sol's r2 review returned REQUEST_CHANGES:
+- P2, P4 and P6 are resolved.
+- P1, P3 and P5 are only partly resolved.
+- New findings R2-1 through R2-6.
+
+**Accepted residual risks.** This is an exploration-lane, read-only copy of our own data between our own hosts, with one operator and no other writer to these paths. Two classes of finding are accepted as residual:
+- **R2-1:** concurrent replacement of a path or its ancestors.
+- **R2-2 and R2-3:** process-handoff and preflight lifecycle races.
+
+**Condition on that acceptance.** The pull runs **attended, in the foreground**, never unattended. The operator verifies cleanup with `ps` if it aborts.
+
+**Required r3 fixes:**
+- The `data` directory must already exist; outputs are written with noclobber.
+- Wrap the preflight in `timeout 120` and rsync in `timeout 5400`, with `LC_ALL=C`.
+- **R2-4:** receipts must be regular files with a single link; special entries are rejected.
+- **R2-5:** the end stamp is published by temp file then rename, after the final STOP check.
+- **R2-6:** files are opened non-blocking, then checked with `fstat`.
+
+A narrow Sol delta check covers only these items.
