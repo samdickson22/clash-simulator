@@ -3131,3 +3131,16 @@ The Sol review is at `x4s3-student-scale-review/SOL-REVIEW-PULL-G08-r3-and-MIRRO
 - **Approved for one attended, foreground run.** Retries need a new ruling. Outputs and the PGID `ps` are recorded in PROGRESS.
 
 **`mirror.sh` is withdrawn.** It had four failures, M1–M4: writes outside its prefix, filters that only excluded, following the source-root symlink, and no STOP or cleanup. It is replaced by manual, explicit-file, SHA-verified copies of each fitted student and its receipts to the 05 mirror after each fit.
+
+## 2026-10-12 12:13Z: K4S checkpoint.py r6 APPROVED (closes round-r3 audit F1)
+
+Sol reviewed the change in rounds r4–r6 (`k4s-audits/SOL-REVIEW-CHECKPOINT-r{4,5,6}.md`) and r6 is **APPROVE**. The approved candidate is 05d0908f with tests 536a5b2d (125/125, also under `-O`).
+
+**What changed:**
+- Expected counts now come from the phase dispatch, bound by history SHA.
+- Strict JSON readers parse `LAUNCHDISPATCH` and `SUPEXITN`.
+- Status-safe capture: a reader that prints valid output and then fails is treated as INVALID.
+- A strict 14-key parser.
+- Everything fails closed with exit 2 and a receipt.
+
+**Deployment:** one commit, with a byte-equality check. The hand check is retired after the first clean live run, and a manual cross-check stays at each inventory.
