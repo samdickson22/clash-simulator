@@ -4155,3 +4155,27 @@ Issued copies:
 - `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-stage-transport-run-go-r1.json`
 
 ISSUED AUTHORIZE_B_STAGE_TRANSPORT_RUN a679b0520fef294979a5c7ab5b666660b8a1a345c07dcc2103332b062b421dc6
+
+## 2026-10-12 22:32Z: Perception B CPU stage COMPLETE on 08; C-4 audit clean (accepted)
+
+**Run.** The stage ran once through guard cffa7f27 at 2026-10-12T22:30:37Z, under run GO a679b052, using one SSH session and no retry. The launcher and sender exit codes were both 0, the remote stage exit was 0, and stderr was empty.
+
+**Completion record.** The local `complete.json` (da9df44b6759a0e569438ace345f1d4ea52a0b7b8a9f92ce10e2ff0533e00f7d) is identical to the envelope `complete_sha256`. Its contents:
+- schema: b08-stage-complete.v1
+- CPU GO: ca6b5ac8; package: 374325696dc9
+- 1,238 files, 2,136,818,985 bytes
+- `runtime_admitted`, `gpu_work` and `heldout_opened` all false
+
+**C-4 audit (coordinator, read-only): CLEAN.**
+- File count is 1,238, matching the plan.
+- All paths are under `preflight-ca6b5ac8…/`, with no protected or outcome names.
+- Revocation tip 15048bd4 is an ancestor of origin/main.
+- None of the 4 guarded SHAs appears on any ledger line after the tip, and there are 0 REVOKED lines.
+
+**Stage ACCEPTED.**
+
+**Next.** The `environment` phase. It needs:
+1. a CPU-preflight GO for `environment` only;
+2. its placement;
+3. a reviewed run through the same guarded transport pattern;
+4. a G6 comparison against the 2026-10-08 environment record before the epoch units.
