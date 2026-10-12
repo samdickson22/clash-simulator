@@ -2755,3 +2755,22 @@ The audit (`/mpac/sdicks02/jobs/clasher/k4s-audits/ROUND-r2-AUDIT.md`, independe
 - **F3/F4:** the r3 receipt must carry hashes for all step evidence, with exact times.
 - **F5:** the runner must cite the PREREG-K4S definition of k; if the 0-based and count readings differ, the stricter one applies.
 - **Disclosure:** K4S qualification was running on 03 during the builder read.
+
+## 2026-10-12 09:10Z: K4S cut-2 step-6 command amended; k escalation at 8/6; checkpoint Sol review routed
+
+**Step 6.** The previous coordinator command (38ed75a2) counted the idle boot-time `unattended-upgrade-shutdown --wait-for-signal` helper, so it would always read `maint=1`. The runner found this in a read-only test and did not edit the command.
+
+**The amended command**, sent to the runner, does the following:
+- excludes exactly that helper's command line and records it (pinned 03 PID 2368, 04 PID 2296);
+- lists every remaining maintenance match.
+
+**Quiet** means all of:
+- rc 0;
+- both units not active;
+- `maint=0`;
+- `who=0`;
+- **two consecutive quiet reads 30 s apart**, with up to 3 retries, otherwise FAIL.
+
+**k.** PREREG-K4S §3.4 caps k ≤ 11/9, and k is 0-based. Escalation uses the stricter count reading, **k ≥ 8/6**, applied by hand. The tool's own 9/7 alert stays until review. Current max k is 2/1.
+
+**`checkpoint.py` diff** 52cd4583 has gone to Sol for narrow review (`k4s-audits/SOL-REVIEW-CHECKPOINT-r1.md`).
