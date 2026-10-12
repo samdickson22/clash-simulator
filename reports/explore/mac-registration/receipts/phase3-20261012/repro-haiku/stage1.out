@@ -1,0 +1,42 @@
+[     1.1s] bootstrap ok; native sha 44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2 pin 44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2
+[     1.1s] END index ok: fingerprint c09142b97ecc147efa635036a69508e16fe647347749e052d321048910040901
+[     7.2s] K0c-0003: retained 258 invalid 0 counted 258
+[    10.5s] K0c-0004: retained 183 invalid 0 counted 183
+[    13.4s] K0c-0005: retained 155 invalid 0 counted 155
+[    15.7s] K0c-0006: retained 153 invalid 0 counted 153
+[    17.9s] K0c-0007: retained 121 invalid 0 counted 121
+[    23.3s] K0c-0008: retained 147 invalid 0 counted 147
+[    26.0s] K0c-0009: retained 165 invalid 0 counted 165
+[    29.3s] K0c-0010: retained 93 invalid 0 counted 93
+[    32.9s] S-0003: retained 123 invalid 0 counted 123
+[    35.3s] S-0004: retained 121 invalid 0 counted 121
+[    38.5s] S-0005: retained 153 invalid 0 counted 153
+[    40.9s] S-0006: retained 139 invalid 0 counted 139
+[    44.3s] S-0007: retained 118 invalid 0 counted 118
+[    47.1s] S-0008: retained 121 invalid 0 counted 121
+[    52.0s] S-0009: retained 244 invalid 0 counted 244
+[    54.7s] S-0010: retained 137 invalid 0 counted 137
+[    58.6s] K2-0003: retained 103 invalid 0 counted 103
+[    61.1s] K2-0004: retained 104 invalid 0 counted 104
+[    63.8s] K2-0005: retained 116 invalid 0 counted 116
+[    66.3s] K2-0006: retained 114 invalid 0 counted 114
+[    69.2s] K2-0007: retained 109 invalid 0 counted 109
+[    72.3s] K2-0008: retained 111 invalid 0 counted 111
+[    74.9s] K2-0009: retained 114 invalid 0 counted 114
+[    79.4s] K2-0010: retained 112 invalid 0 counted 112
+[    83.1s] K4-0003: retained 114 invalid 0 counted 114
+[    85.4s] K4-0004: retained 104 invalid 0 counted 104
+[    87.9s] K4-0005: retained 116 invalid 0 counted 116
+[    90.1s] K4-0006: retained 111 invalid 0 counted 111
+[    92.6s] K4-0007: retained 113 invalid 0 counted 113
+[    96.1s] K4-0008: retained 153 invalid 0 counted 153
+[    98.9s] K4-0009: retained 106 invalid 0 counted 106
+[   103.6s] K4-0010: retained 111 invalid 0 counted 111
+[   103.7s] pool retained 4242 valid 4242 invalid 0
+[   103.7s] lineage checks passed: 1200 speed digests equal END; counts/health equal corpora
+[   103.7s] packets: 1000 from 9 games; truncation {'tier': 'K0c', 'idx': 6, 'seed': 4503603407370502, 'game_available': 153, 'game_taken': 43, 'last_tick': 1140}
+[   103.7s] schedule: 1000 entries, last offset 1459.500s, mean gap 1.461s
+[   103.7s] agreement 2000 (S=1931, F=69, quotas={'K0c': 22, 'S': 20, 'K2': 13, 'K4': 14}, fill_counts={'K0c': 735, 'S': 668, 'K2': 440, 'K4': 468})
+[   103.7s] extra rows (agreement minus speed): 800
+[   103.7s] wrote selection.json
+[   103.7s] peak RSS 2.37 GiB

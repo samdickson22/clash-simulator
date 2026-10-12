@@ -1,0 +1,48 @@
+{
+ "all_equal": true,
+ "canonical_json_sha256": {
+  "agreement": {
+   "builder": "5da2279c7b480cc88942e7a98509dc4d6884e70759dfbff4527c15d4b64d5244",
+   "equal": true,
+   "reproduction": "5da2279c7b480cc88942e7a98509dc4d6884e70759dfbff4527c15d4b64d5244"
+  },
+  "fixture_ids": {
+   "builder": "88d6eb28f3ab269026bc6b9b82a33979f5d19f7c9255c8e23f3d46d8c557fadb",
+   "equal": true,
+   "reproduction": "88d6eb28f3ab269026bc6b9b82a33979f5d19f7c9255c8e23f3d46d8c557fadb"
+  },
+  "packet_schedule": {
+   "builder": "bb88acfa8810d25cf9af4d39cb9e4ef147e3f39a571d517a2ace05408a500475",
+   "equal": true,
+   "reproduction": "bb88acfa8810d25cf9af4d39cb9e4ef147e3f39a571d517a2ace05408a500475"
+  },
+  "packets": {
+   "builder": "f118cdd98bd57836edbdeaa459672cff49189a6c086f55bb5ca3afc1d356a279",
+   "equal": true,
+   "reproduction": "f118cdd98bd57836edbdeaa459672cff49189a6c086f55bb5ca3afc1d356a279"
+  }
+ },
+ "extra_digests_equal": true,
+ "fill_quotas": {
+  "builder": {
+   "K0c": 22,
+   "K2": 13,
+   "K4": 14,
+   "S": 20
+  },
+  "reproduction": {
+   "K0c": 22,
+   "K2": 13,
+   "K4": 14,
+   "S": 20
+  }
+ },
+ "fixture_canonical_fingerprint": {
+  "builder": "0de6995803380052a0d1618107e6c6566f9afbd9e35901808e5b59f3f3e05e05",
+  "reproduction": "0de6995803380052a0d1618107e6c6566f9afbd9e35901808e5b59f3f3e05e05"
+ },
+ "repro_json_sha256": "d47fd1cc14bd6bac92c6f3edfdb2f7ab21b031b24fa1f7927a3be83263d6ab98",
+ "reproducer": "claude-haiku-5-5 (effort max), T3 delegate_task macreg-phase3-repro-haiku-r1; own code (repro.py), no access to builder code or outputs",
+ "schema": "clasher.tiers-a4.independent-reproduction-comparison.v1",
+ "utc": "2026-10-12T10:28:22Z"
+}

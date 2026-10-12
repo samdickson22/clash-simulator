@@ -67,13 +67,25 @@ Work directory on 05: `/mpac/sdicks02/jobs/clasher/mac-registration-20261011/`. 
 
 ## Phase 2 / Phase 3
 
-Waiting for an explicit 03 read-window declaration from the coordinator (expected at about 08:47Z Oct 12, when K4S 03's apt-daily timer stops its phase). The coordinator will wake this thread with `t3_thread_send`.
-- No host contact and no Phase 3 before then.
-- **On wake:**
-  1. Check `date -u`.
-  2. Run `fetch_captures.sh` (one session).
-  3. Run `verify_captures.py`.
-  4. Post "released" to the coordinator immediately.
-  5. Run `run_phase3.sh build`, then `reference`, then `memory`, detached with setsid nohup.
-  6. Start the independent Haiku 5.5 reproduction (max effort, without the selection code).
-  7. Run the cross-check and the seal once T1's pooled END S forwards exist.
+- **08:48Z Oct 12: coordinator Phase 2 GO** (03 quiet).
+  - One read-only ssh session 05 → 03 (no ControlMaster), 08:49:03–08:51:29Z.
+  - Ran a remote sha256sum (the "before" check), then a tar stream of exactly the 32 pinned captures. Remote side ran at nice 19 on core 63, with a 32 MiB/s local cap; 4,891,842,873 bytes.
+  - All 32 SHAs equal `corpora.json`, both before (on 03) and after (on 05). Nothing was written on 03, and `games/` was never touched.
+  - Receipt commit `fa8e700a`. "released" posted at 08:51:50Z.
+- **Coordinator note:** `fetch_captures_stream.sh` was new and unreviewed; it was accepted after the fact. Rule from now on: any new script that touches a host is reviewed before it runs.
+- **Phase 3 GO** (05 only, `runtime-a5`, nice 19, `PYTHONDONTWRITEBYTECODE=1`).
+  - 08:52Z: `run_phase3.sh build` launched detached (setsid).
+  - 08:53Z: independent Haiku 5.5 (max effort) reproduction delegated (`macreg-phase3-repro-haiku-r1`, core 62, own code, no access to the builder's code or outputs).
+- **Selection (08:52–08:57Z):**
+  - 4,242 pool rows, 0 invalid, lineage 1,200/1,200, counts and health equal.
+  - 9 packet games; the last (K0c-6) is truncated at 43 rows.
+  - Agreement: 1,931 + fill 69. Schedule last offset 1,459.5 s.
+- **Assembly:** 2,125 rows; the END prefix equals `c09142b9`. Fingerprint **`0de69958…`**.
+- **Conversion:** PASS at 09:03:35Z, `--expect-fingerprint`, `source_verified`; maxrss 20.2 GiB.
+- **Haiku reproduction:** identical on every output (packets, schedule, agreement, fixture ids, 800 extra digests, quotas, fingerprint).
+- **Student reference:** 2,000 states (`7a90fa7a`), finished about 09:25Z.
+  - My wait loop's `pgrep -f` matched itself and hung, costing about 1 h. Waits now go on the PID.
+- **B.6 cross-check vs T1's pooled A5 END S forwards** (`fe534ec0`): PASS, 300/300 bit-exact.
+- **Memory check:** PASS. Conservative 2.88 GiB vs the 6 GiB cap; concurrent 1.60 GiB.
+- **Seal:** `mac-sets-selection.json` `f3b87ce5`, all checks true.
+- **Hand-off package:** `receipts/phase3-20261012/` (`HANDOFF.md`).

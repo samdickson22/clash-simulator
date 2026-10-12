@@ -1,0 +1,121 @@
+{
+ "agreement": 2000,
+ "bundle_manifest_sha256": "3e7d87d82d59a8878ac4244749dc56d5ee13af6f94a603d19c55e335cc976aaf",
+ "cap_bytes": 6442450944,
+ "caveat": "Linux CPU RSS on 05 is a proxy for macOS CPU/MPS footprint, not an upper bound; no Mac contact",
+ "children": [
+  {
+   "after_construction": {
+    "RssAnon": 528302080,
+    "RssFile": 89636864,
+    "RssShmem": 0,
+    "VmHWM": 993148928,
+    "VmRSS": 617938944
+   },
+   "after_forwards": {
+    "RssAnon": 528556032,
+    "RssFile": 99901440,
+    "RssShmem": 0,
+    "VmHWM": 993148928,
+    "VmRSS": 628457472
+   },
+   "forwards": 2001,
+   "inputs_retained": 2000,
+   "inputs_retained_sha256": "b57239402892a4eeee090816489f668fbb479bc02942b81a285e83efcacc9655"
+  },
+  {
+   "after_construction": {
+    "RssAnon": 511987712,
+    "RssFile": 87904256,
+    "RssShmem": 0,
+    "VmHWM": 996040704,
+    "VmRSS": 599891968
+   },
+   "after_forwards": {
+    "RssAnon": 512237568,
+    "RssFile": 98340864,
+    "RssShmem": 0,
+    "VmHWM": 996040704,
+    "VmRSS": 610578432
+   },
+   "forwards": 2001,
+   "inputs_retained": 2000,
+   "inputs_retained_sha256": "b57239402892a4eeee090816489f668fbb479bc02942b81a285e83efcacc9655"
+  }
+ ],
+ "conservative_sum_vmhwm_bytes": 3088703488,
+ "cpus": [
+  63
+ ],
+ "d2_forwards_main": 2000,
+ "e4v3_pins": {
+  "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+  "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+  "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+  "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+  "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+  "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+ },
+ "forwards_per_child": 2001,
+ "host": "127x05",
+ "inputs_retained_main": 2000,
+ "inputs_retained_sha256": "b57239402892a4eeee090816489f668fbb479bc02942b81a285e83efcacc9655",
+ "main": {
+  "after_construction": {
+   "RssAnon": 636059648,
+   "RssFile": 88514560,
+   "RssShmem": 0,
+   "VmHWM": 1099513856,
+   "VmRSS": 724574208
+  },
+  "after_d2": {
+   "RssAnon": 636309504,
+   "RssFile": 98820096,
+   "RssShmem": 0,
+   "VmHWM": 1099513856,
+   "VmRSS": 735129600
+  },
+  "final": {
+   "RssAnon": 636309504,
+   "RssFile": 98820096,
+   "RssShmem": 0,
+   "VmHWM": 1099513856,
+   "VmRSS": 735129600
+  }
+ },
+ "nice": 19,
+ "outcomes_read": false,
+ "passes": true,
+ "python": "3.12.12",
+ "runtime": {
+  "end_a5_diff_sha256": "900bae16afeafeccd990109d23057a6f263f43a999b18e1a0e9b687b38afd69f",
+  "end_manifest_sha256": "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7",
+  "fleet_validity_sha256": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+  "measurement_files_equal": true,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "runtime_files": 3785,
+  "runtime_files_equal": true
+ },
+ "sampled_concurrent_vmrss_peak_bytes": 1721511936,
+ "schema": "clasher.tiers-a4.mac-profile-memory.v1",
+ "script_sha256": {
+  "macreg_io.py": "2d6181fd5db10abb31f2d98cfe34ce826a088f23f327ec8c86254ca1dbdc21e1",
+  "memory_check.py": "9bbca2f102c2ee78f5f0d52496a3b05aa14d426533786fc816f61de753c07194"
+ },
+ "seconds": 196.7433218860533,
+ "selection_stage_sha256": "111c456d32906d35335a01937f7235d70cc1efaa3a1fe2b31c259bd8d4c4a825",
+ "sets_sha256": "b8f21e84c72a28bbe5bd0d586a00ae8b100488a863281522dd5856b5eaf957fe",
+ "state_rows_container_sha256": "dc92bf459a337410b53cc5b2313286121542d7137b190493789126af6739b353",
+ "state_rows_index_sha256": "49cbe56ce9c3df18ae85616d09a481f5113cf7aa29bbed2c8aaca4fcb329f63d",
+ "states_sha256": "afdbd237d65897816b2683335c823fdf2557fa1640256acc892ee967368684a7",
+ "student_reference_receipt_sha256": "975534b2ce4e0f4ecfa90f7f6a18a7f06b06737c2e78a6c0707d76d96910d613",
+ "timing": false,
+ "utc_end": "2026-10-12T10:27:25Z",
+ "utc_start": "2026-10-12T10:24:08Z",
+ "versions": {
+  "numpy": "2.2.6",
+  "python": "3.12.12",
+  "torch": "2.10.0+cpu"
+ }
+}

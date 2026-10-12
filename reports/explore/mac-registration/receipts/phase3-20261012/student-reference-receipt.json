@@ -1,0 +1,67 @@
+{
+ "assembly_sha256": "4768b13342e827f50ce987a1a3bd85009214970d43983373a204bc8f833a918d",
+ "bundle_files": {
+  "R3a.pt": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+  "states-rows.bin": "dc92bf459a337410b53cc5b2313286121542d7137b190493789126af6739b353",
+  "states-rows.json": "49cbe56ce9c3df18ae85616d09a481f5113cf7aa29bbed2c8aaca4fcb329f63d",
+  "states.pkl": "afdbd237d65897816b2683335c823fdf2557fa1640256acc892ee967368684a7",
+  "v1.pt": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+ },
+ "bundle_manifest_sha256": "3e7d87d82d59a8878ac4244749dc56d5ee13af6f94a603d19c55e335cc976aaf",
+ "conversion_receipt_sha256": "94f265d9a9b4810450342aad19ac6e2c7b30631cf9163d2ed7133924c230566a",
+ "cpus": [
+  63
+ ],
+ "e4v3_pins": {
+  "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+  "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+  "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+  "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+  "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+  "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+  "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+ },
+ "fixture_canonical_fingerprint": "0de6995803380052a0d1618107e6c6566f9afbd9e35901808e5b59f3f3e05e05",
+ "host": "127x05",
+ "nice": 19,
+ "outcomes_read": false,
+ "profile": "mac-preregistered",
+ "python": "3.12.12",
+ "runtime": {
+  "end_a5_diff_sha256": "900bae16afeafeccd990109d23057a6f263f43a999b18e1a0e9b687b38afd69f",
+  "end_manifest_sha256": "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7",
+  "fleet_validity_sha256": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+  "measurement_files_equal": true,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "runtime_files": 3785,
+  "runtime_files_equal": true
+ },
+ "schema": "clasher.tiers-a4.student-reference.v1",
+ "script_sha256": {
+  "macreg_io.py": "2d6181fd5db10abb31f2d98cfe34ce826a088f23f327ec8c86254ca1dbdc21e1",
+  "student_reference.py": "98c4e154fb83e40841964f4c16f1f0baf74a7ac89914fcf48920cafc03d1f8cf"
+ },
+ "seconds": 64.47697252593935,
+ "selection_stage_sha256": "111c456d32906d35335a01937f7235d70cc1efaa3a1fe2b31c259bd8d4c4a825",
+ "sets_sha256": "b8f21e84c72a28bbe5bd0d586a00ae8b100488a863281522dd5856b5eaf957fe",
+ "state_rows_container_sha256": "dc92bf459a337410b53cc5b2313286121542d7137b190493789126af6739b353",
+ "state_rows_index_sha256": "49cbe56ce9c3df18ae85616d09a481f5113cf7aa29bbed2c8aaca4fcb329f63d",
+ "states": 2000,
+ "states_sha256": "afdbd237d65897816b2683335c823fdf2557fa1640256acc892ee967368684a7",
+ "student_reference": {
+  "file": "student-reference.json",
+  "sha256": "7a90fa7a16d38a568ed4b08a0ca971afde7ec9830a920f4e755e8901402fd165"
+ },
+ "timing": false,
+ "torch_threads": {
+  "interop": 1,
+  "torch": 1
+ },
+ "utc_end": "2026-10-12T09:25:20Z",
+ "utc_start": "2026-10-12T09:24:16Z",
+ "versions": {
+  "numpy": "2.2.6",
+  "python": "3.12.12",
+  "torch": "2.10.0+cpu"
+ }
+}
