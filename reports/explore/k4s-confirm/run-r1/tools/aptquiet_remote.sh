@@ -1,5 +1,6 @@
-# read-only: apt unit states, apt-daily timer line, and count of apt/maintenance processes excluding this shell's tree
-s=$(systemctl is-active apt-daily.service apt-daily-upgrade.service | tr "\n" " ")
-t=$(systemctl list-timers --all 2>/dev/null | grep "apt-daily.timer" | cut -c1-110)
-n=$(ps -eo pid=,ppid=,args= | awk -v me=$$ '$1!=me && $2!=me' | grep -E "(^| |/)(apt|apt-get|apt-check|apt.systemd.daily|unattended-upgrade|unattended-upgrades|dpkg|check-new-release|update-notifier)( |$)|/usr/lib/update-notifier/|/usr/lib/ubuntu-release-upgrader/" | grep -v -E "awk|grep" | wc -l)
-echo "$s|$t|procs=$n"
+#!/usr/bin/env bash
+# SHELVED (round r2 audit F1; coordinator ruling for cut 2): new, unreviewed, fails open and aborts under strict mode.
+# Never run. The original bytes are kept at tools/shelved/aptquiet_remote.sh. Step-6 reads use the coordinator's inline
+# command recorded in CYCLE-CHECKLIST.md.
+echo "aptquiet_remote.sh is shelved; use the CYCLE-CHECKLIST step-6 inline command" >&2
+exit 2

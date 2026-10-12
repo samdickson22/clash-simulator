@@ -47,7 +47,9 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
   - new ledger events == the failed blocks of the stopped phases;
   - every new replacement is in the dispatch;
   - exact 3000/900 logical coverage, each logical block exactly once.
-- Gates: cumulative lost ≥150 primary or ≥45 guard, or ledger max k ≥9 primary or ≥7 guard = escalate (no launch).
+- Gates: cumulative lost ≥150 primary or ≥45 guard, or ledger max `replacement_k` ≥8 primary or ≥6 guard = escalate (no
+  launch). k is the frozen 0-based index (count = k + 1). Since the r2 audit (F5), the stricter count reading of Option A's
+  "within 2 of the k limit 11/9" applies (count 9/7 = index 8/6); see `rounds/r2/RECEIPT-ERRATUM.md`.
 - Publish: save `blind-ledger-before-rN.json`, promote the working ledger, and write `dispatch/replacement-rN.json`.
 
 ## 4. Stage (both hosts, fresh namespace)
@@ -77,8 +79,12 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
   (see `receipts/AUTHORIZATION-CITATION-ERRATUM-20261012.md`). Frozen barrier PASS (176 files) on both hosts.
 
 ## 6. Prelaunch (both hosts)
-- The cut's timer has fired (`systemctl list-timers` LAST time after the cut), and no apt / apt-check /
-  check-new-release / unattended-upgrade process is running (ps checked).
+- The cut's timer has fired (`systemctl list-timers` LAST time after the cut).
+- Quiet read (coordinator ruling on audit F1; replaces the shelved `aptquiet_remote.sh`). Run exactly this, one ssh per
+  host, and record the full stdout and the exit code:
+  `bash -c 'set -euo pipefail; for u in apt-daily.service apt-daily-upgrade.service; do printf "%s=%s\n" "$u" "$(systemctl is-active "$u" || true)"; done; P=$(ps -eo comm=); test -n "$P"; printf "maint=%s\n" "$(printf "%s\n" "$P" | grep -cE "^(apt|apt-get|apt-check|dpkg|unattended-upgr|update-notifier|check-new-rele)" || true)"; who | wc -l'`
+  A non-zero exit, or empty `ps`, is a FAIL. Quiet means both units are not `active`, `maint=0` and the `who` count
+  is 0.
 - Stamps: `release-upgrade-available` younger than 24 h minus the round window; `updates-available` newer than
   `/var/lib/apt/lists`. If either is stale: one ordinary login, wait for the checks to exit, re-read.
 - Record the next timers.
@@ -86,6 +92,7 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
   that the 03 phase has exited (supervisor-exit, no owned groups) and that `apt-daily.service` / `apt-daily-upgrade.service`
   are inactive. Then post "03 quiet" and hold the 03 launch until the builder posts "released". P2 timeout: 30 minutes after the coordinator's GO
   to the builder. On timeout, proceed with rN and tell the coordinator. The window is DECLARED for the ~08:40Z cut (P2).
+  The "quiet" post states whether any K4S qualification or other owned process is running (audit F5 disclosure).
   Only then do the motd/timer reads above. If no window is declared, there is no hold.
 - Escalation gates clear.
 
@@ -99,3 +106,13 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
 - On any failure: owned STOP on every launched host, prove shutdown, keep evidence, escalate.
 - Append the phase to `rounds/history.json`.
 - Commit `rounds/rN/RECEIPT.json` with every hash, then post "round rN receipt committed <sha>" to the coordinator.
+  From r3 on (audit F3/F4), persist under `rounds/rN/evidence/` and hash in the receipt:
+  - step 1: the final `owned-supervisor-admission.json`, `stop-reason.json`, `supervisor-exit.json`, and the `ps -eo
+    pgid,pid,stat` census output with its exit code;
+  - step 2: the completed-ID set, the ACK/returned binding listing, the final `copy-health-*.json`, the hub and source
+    `owned-copier-admission.json` records, and the hub-view listing;
+  - step 4: extras-tar sha, overlay check output (175/175), PREREG copy sha, stage output;
+  - step 5: qualification receipts, the `pin.verify` output, the idle-pin read, the authorization, the barrier output;
+  - step 6: the quiet-read stdout and exit code, the stamp and timer reads;
+  - step 7: the `launch_phase.sh` output, the copier pid files and both copier registrations, `launch.json`, the host admission.
+  Every time is an exact `date -u` value (no `~`, no rounding).

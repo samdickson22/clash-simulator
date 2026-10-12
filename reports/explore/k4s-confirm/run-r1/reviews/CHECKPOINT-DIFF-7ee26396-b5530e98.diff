@@ -1,0 +1,46 @@
+diff --git a/reports/explore/k4s-confirm/run-r1/tools/checkpoint.py b/reports/explore/k4s-confirm/run-r1/tools/checkpoint.py
+index da2d5bd1..54f25dca 100644
+--- a/reports/explore/k4s-confirm/run-r1/tools/checkpoint.py
++++ b/reports/explore/k4s-confirm/run-r1/tools/checkpoint.py
+@@ -8,9 +8,9 @@ copier checked by current receipt identity, non-zombie, source receipt, health f
+ import datetime,hashlib,json,re,shlex,subprocess,sys
+ from pathlib import Path
+ import os
+-NS=os.environ.get('K4S_NS','k4s-confirm-replacement-r1')
++NS=os.environ.get('K4S_NS','k4s-confirm-replacement-r2')
+ JOBS={'127x03':f'/mpac/sdicks02/jobs/clasher/{NS}','127x04':f'/mpac/sdicks02/jobs-k4s/{NS}'}
+-EXPECTED={'reporting':1950,'replacement-r1':1754}
++EXPECTED={'reporting':1950,'replacement-r1':1754,'replacement-r2':{'127x03':555,'127x04':554}}
+ SSH=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10']
+ L=Path('/mpac/sdicks02/k4s-runner/run-r1')
+ KF=L/'health'/'acknowledged-events.json'
+@@ -69,7 +69,7 @@ for h,J in JOBS.items():
+   if y.get('STOPREASON') and y['STOPREASON']!=known.get('stopreason'):anom.append(f'{h}: STOP {y["STOPREASON"]}')
+   if prog.get('reason'):anom.append(f'{h}: progress reason {prog["reason"]}')
+   if (prog.get('console') or {}).get('positive'):anom.append(f'{h}: console positive')
+-  exp=EXPECTED.get(phase)
++  exp=EXPECTED.get(phase);exp=exp[h] if isinstance(exp,dict) else exp
+   done=y.get('SUPEXIT') is not None
+   if done:
+    if y['SUPEXIT'].split(':',1)[-1].strip()!='null' or (exp and comp<exp):anom.append(f'{h}: supervisor exited ({y["SUPEXIT"]}, complete {comp}/{exp})')
+@@ -105,9 +105,17 @@ for h,J in JOBS.items():
+   parts.append(f"{h} complete {comp} acked {ack} hub {durable}/{returned} failed {failed} stopevent {y.get('STOPREASON') or '-'} inflight {prog.get('inflight')} queued {prog.get('queued')} reason {prog.get('reason')} who {who} flags[dbus {flags['dbus']} ssh {flags['ssh']} apt {flags['apt']} idle {flags['idle']}]")
+  except Exception as e:   # unknown data is never treated as healthy
+   anom.append(f'{h}: health check failed {type(e).__name__}: {e}');parts.append(f'{h} UNKNOWN')
+-# coordinator 21:39Z (11105b3f): escalate as cumulative lost blocks approach 10% of a replacement cap (30 primary / 9 guard)
+-if LOST[0]>=24 or LOST[1]>=7:anom.append(f'lost blocks approaching 10% of a replacement cap: primary {LOST[0]}/30, guard {LOST[1]}/9')
+-parts.append(f'lost primary {LOST[0]} guard {LOST[1]}')
++# coordinator Option A (afe83faa): escalate at 50% of a replacement cap (150 primary / 45 guard) or a cell at k-2 (9 / 7).
++LED=L/'ledger'/'blind-ledger.json';ev=json.loads(LED.read_text())['events'] if LED.exists() else []
++lp0=sum(e['lost']['population']=='primary' for e in ev);lg0=sum(e['lost']['population']=='guard' for e in ev)
++kmax={'primary':0,'guard':0}
++for e in ev:
++ rr=e.get('replacement') or {};kmax[rr.get('population','primary')]=max(kmax.get(rr.get('population','primary'),0),rr.get('replacement_k') or 0)
++cp,cg=lp0+LOST[0],lg0+LOST[1]
++if cp>=150 or cg>=45:anom.append(f'cumulative lost at 50% of a replacement cap: primary {cp}/300, guard {cg}/90')
++if kmax['primary']>=9 or kmax['guard']>=7:anom.append(f'replacement k at limit-2: {kmax}')
++parts.append(f'lost this phase primary {LOST[0]} guard {LOST[1]}; cumulative primary {cp}/300 guard {cg}/90; ledger max k {kmax}')
++r['cumulative_lost']=dict(primary=cp,guard=cg,ledger_events=len(ev),ledger_max_k=kmax)
+ r['lost_total']=dict(primary=LOST[0],guard=LOST[1])
+ r['anomalies']=anom;r['summary']='; '.join(parts)
+ out=L/'health'/f'{phase}-{utc.replace(":","").replace("-","")}.json';out.parent.mkdir(exist_ok=True);out.write_text(json.dumps(r,indent=1)+'\n')

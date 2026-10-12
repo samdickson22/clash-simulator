@@ -1,0 +1,1 @@
+bash -c 'set -euo pipefail; for u in apt-daily.service apt-daily-upgrade.service; do printf "%s=%s\n" "$u" "$(systemctl is-active "$u" || true)"; done; P=$(ps -eo comm=); test -n "$P"; printf "maint=%s\n" "$(printf "%s\n" "$P" | grep -cE "^(apt|apt-get|apt-check|dpkg|unattended-upgr|update-notifier|check-new-rele)" || true)"; who | wc -l'

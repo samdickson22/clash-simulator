@@ -237,3 +237,16 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   Copiers on 05: 03 485959 (core 62), 04 494063 (core 63). Receipt rounds/r2/RECEIPT.json. Next cut ~11:10Z (04 apt 11:20:02Z).
 ## Running (owned PGIDs only) -- CURRENT
 - replacement-r2 in k4s-confirm-replacement-r2: 03 sup PGID 2116555, 04 sup PGID 1140717; copiers on 05 485959 / 494063.
+- 2026-10-12T09:09:08Z Round r2 audit PASS_WITH_NOTES (audits/ROUND-r2-AUDIT.md 4b89ddc2, retained verbatim); the r2 launch stands.
+  Cut-2 rulings applied (see rounds/r2/RECEIPT-ERRATUM.md):
+  - F1: aptquiet_remote.sh shelved (stub refuses); step-6 uses the coordinator's inline strict-mode command.
+  - F2: checkpoint.py diff 7ee26396..b5530e98 sha 52cd4583 (gate rewrite; ran uncommitted 2026-10-11T22:37:02Z to
+    2026-10-12T08:58:42Z) disclosed; Sol review requested via the coordinator; tool still in use (health only).
+  - F3/F4: r3 receipt persists and hashes step evidence, with exact times (checklist step 7).
+  - F5: k is the frozen 0-based index (count = k + 1); the stricter count reading applies: escalate at max k ≥8/6.
+  - DISCLOSURE: K4S's own r2 qualification on 03 (PGID 2102837, 08:39:43Z to 08:54:59Z) was running during apt-daily,
+    the "03 quiet" post (08:47:47Z) and the builder's read (08:49:03Z to 08:51:29Z). "03 quiet" certified only that the
+    reporting phase had exited, the apt units were inactive, there were no apt processes and no console user.
+  - Quiet-read test 09:08Z (read-only): both hosts maint=1 at baseline (boot-time unattended-upgrade-shutdown
+    --wait-for-signal: 03 PID 2368, 04 PID 2296). One 04 read at 09:08:15Z showed maint=2 (transient, unidentified).
+    Coordinator ruling requested before the cut-2 prelaunch.
