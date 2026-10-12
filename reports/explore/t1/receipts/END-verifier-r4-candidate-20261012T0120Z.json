@@ -1,0 +1,86 @@
+{
+  "R3_1": "All asserts replaced explicit ValueError checks; not __debug__ fails at import",
+  "R3_2": "Prepared nonce/proof required and pinned; PUSH-FAILED rejected; exact marker exit_utc equality; pinned launch receipt and byte argv comparison",
+  "R3_3": "Future post-exit wrapper records rsync_exit_code; exact exit_utc in marker",
+  "all_tests_synthetic_no_network_or_backend": true,
+  "diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-verifier-r4-narrow.diff",
+  "diff_sha256": "09908df2974dd26965c13cf44e4afaecd2c65f1f70ecf191c382b52cf0c72b70",
+  "future_wrapper_sha256": "2928eb15cfbe9ae4e838d3a6b3cafe6beaa9e7c3bf17fa0fdb087a30c11d65c6",
+  "initial_test_probe": "Synthetic fixture argv lacked NUL terminator; correctly rejected. Fixture corrected; no production change.",
+  "legacy_A6_detail": "Approved active0a wrapper marker lacks exit_utc; new strict verifier refuses it until explicit legacy binding disposition",
+  "legacy_A6_requires_coordinator_disposition": true,
+  "no_actual_ACK_written": true,
+  "no_timing_host_probe": true,
+  "outcomes_sealed": true,
+  "running_A6_wrapper_sha256": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1",
+  "running_A6_wrapper_unchanged": true,
+  "status": "UNAPPROVED; quick coordinator-routed diff check required; NO ACK",
+  "test_script_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-exit-push-r4-offline-tests.py",
+  "test_script_sha256": "ea6785948ba1d8ce1b40b5a20be1993249cee19ec37eee8dc98319a0b8a22a87",
+  "tests": {
+    "early_no_output": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 0
+    },
+    "exit_status_mismatch_rejected": true,
+    "extra_file_rejected": true,
+    "failure": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "missing_manifest_unsealed_no_ack": true,
+    "missing_transfer_marker_rejected": true,
+    "nonempty_receive_rejected": true,
+    "optimized_bytecode_refused": true,
+    "permanent": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "persistent": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 3
+    },
+    "push_failed_rejected": true,
+    "sealed_failure_ack_health_only": true,
+    "stale_marker_exit_rejected": true,
+    "success": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "transient": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 2
+    },
+    "unprepared_receive_rejected": true,
+    "valid_seal": true,
+    "wrong_argv_rejected": true,
+    "wrong_file_sha_rejected": true
+  },
+  "utc": "2026-10-12T01:20:47Z",
+  "verification_command": "nice -n19 taskset -c63 python3 -I [ABS verifier] --receive [ROOT] --launch-receipt [PINNED] --launch-receipt-sha256 [SHA] --prepare-proof [PINNED] --prepare-proof-sha256 [SHA]",
+  "verifier_sha256": "da22a9facd8bde4a04558340f2a0b8138a2f1939b050e0cfc58d18e6cf27b834"
+}
