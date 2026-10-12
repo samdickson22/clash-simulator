@@ -3245,3 +3245,24 @@ The supplement ran once per host under package b38a9bff, with GO at 8be7ca00. Bo
 Everything landed only under `08:v4-b-20261012-r1/inputs-supplement-r1/<host>/`, and the cut-2 data was left untouched. Receipts are in `l1/receipts/b08-supplemental-proof-export-20261012-r1/`, which perception commits.
 
 Both hosts are released to K4S for r4, the final round of 139 rows. B on 08 now has every input it needs. It remains development-only until the B1–B11 package review passes and a dry run is admitted.
+
+## 2026-10-12 14:25Z: K4S DBus-flag ruling (R1–R5 adopted)
+
+The investigation is in `k4s-audits/K4S-DBUS-FLAG-INVESTIGATION-r1.md`. The flag is OP-1: the system dbus-daemon running above 1% of one core over a block. Under the frozen prereg it is **descriptive only**.
+- It is not a stop rule, not an exclusion, and not part of the §5.3(2) sensitivity, which covers SSH and apt only.
+- 98.7% of counted 04 blocks carry it, against 0% on 03. The cause is a constant 04 baseline of about 1.47% vs about 0.40% on 03, most likely from the GDM login session that only 04 runs.
+- Reporting validity is not threatened. Blocks are split 50/50 by host within every cell and seat, every arm runs on the same host, and the per-host and host×arm table (§5.3 item 4) already shows any host effect.
+
+**Ruling:**
+- **R1.** DBus flags are descriptive, as frozen. The DBus hold on the reducer/verifier lifts once R2 is committed.
+- **R2.** Before any reduction, the K4S runner commits an outcome-blind disclosure covering:
+  - counts per host and phase, and the cause;
+  - that the flag is effectively the same as "host 04";
+  - that `interference_any_flag_excluded` is a count only;
+  - that §5.3(2) drops nothing.
+- **R3.** No post-hoc DBus-exclusion analysis.
+- **R4 (gates K4S END).** After reporting completes and the copier is off, take a read-only baseline of 04's bus over a single long-lived connection. If it stays clearly under 1%, END proceeds as frozen. If not, choose in this order:
+  - (a) Sam or a lab admin stops GDM on 04 for the END window;
+  - (b) a reviewed amendment sets a 04-relative threshold;
+  - (c) the ratio-unavailable path is declared in advance.
+- **R5.** Audits treat 04's DBus level as known and constant, and alert only if it changes or the daemon disappears.
