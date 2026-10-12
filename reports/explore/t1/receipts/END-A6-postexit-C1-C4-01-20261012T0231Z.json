@@ -1,0 +1,54 @@
+{
+  "C4_received_bytes_match_source": {
+    "argv.nul": true,
+    "detach.json": true,
+    "detach.log": true,
+    "exit.json": true
+  },
+  "C_d_deadline_utc": "2026-10-12T02:30:27Z",
+  "all_mirror_members_stopped": true,
+  "earlier_wrappers": [],
+  "exact_wrapper_gone": true,
+  "expected_wrapper": {
+    "cmdline_sha256": "9964f7b66735fa13592d60efe9423cc5d459a14aea3171ba304d8e51053c6c5f",
+    "pgid": 1821023,
+    "pid": 1821023,
+    "start_ticks": 155752250
+  },
+  "host": "127x01",
+  "mirror_group_members": 4,
+  "mirror_identity": {
+    "cmdline_sha256": "9cc266c0b8289659e419afde151e1daf537048ec0671afc16b8e146f6494ffdf",
+    "exe": "/usr/bin/bash",
+    "pgid": 516161,
+    "pid": 516161,
+    "start_ticks": 129232773
+  },
+  "mirror_state": "T",
+  "mirror_untouched": true,
+  "outcomes_sealed": true,
+  "pid_current": null,
+  "source_metadata_sha256": {
+    "argv.nul": "d3a6e81e560bbf10b3217c90117fc4f34d4e9f877bbb4c90d4703ef09df9845a",
+    "detach.json": "d334df2f04df86039ed11abf54c547d90884a56beb2a8e7797e976bd4bce7a1a",
+    "detach.log": "e7286fe162facae6a9914bf9c17e985ebb676c3b06a345a20454dd6fd5e69f34",
+    "exit.json": "13b95ffd8f93b554d29764bc54c7e3e3c3c089173e68ec8b416b6cd50abad7c3"
+  },
+  "source_observation_argv": [
+    "ssh",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ControlPath=none",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=10",
+    "127x01",
+    "nice -n 19 taskset -c 61 python3 -B -"
+  ],
+  "source_observation_exit_code": 0,
+  "source_observation_stderr": "",
+  "utc": "2026-10-12T02:31:47Z",
+  "wrapper_group_members": []
+}

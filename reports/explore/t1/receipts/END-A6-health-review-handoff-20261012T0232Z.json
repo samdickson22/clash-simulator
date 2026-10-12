@@ -1,0 +1,31 @@
+{
+  "C1_C4_proof": "END-A6-postexit-C1-C4-01-20261012T0231Z.json",
+  "durable_ack": "END-A6-approved-verification-r5-20261012T0230Z.json",
+  "health": {
+    "fleet-complete.json": {
+      "completed": true,
+      "exactness_class": "EXACT",
+      "host": "127x01",
+      "live_actions": false,
+      "outcome_access": false,
+      "poolable": false,
+      "repeats": 3,
+      "reporting_load_profile": true
+    },
+    "reference-block-validity.json": {
+      "passes": true
+    },
+    "reference-validity.json": {
+      "passes": true
+    },
+    "reporting-mhz-comparison.json": {
+      "passes": true
+    }
+  },
+  "independent_A6_review_pending": true,
+  "mirror_paused": true,
+  "no_production_attempt_registered": true,
+  "outcomes_sealed": true,
+  "registration_unsealed": true,
+  "utc": "2026-10-12T02:32:48Z"
+}
