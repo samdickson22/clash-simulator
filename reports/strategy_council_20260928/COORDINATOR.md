@@ -2239,7 +2239,7 @@ Wall time for A6 hasn't been committed; T1 is to record it with its basis.
 - **Pooling** happens once both references exist.
 - **If A6 refuses or fails,** STOP and report, with no retry without a new ruling.
 
-## 2026-10-12 02:20Z: K4S cycle method: Proposal M adopted (manual checklist, automation shelved)
+## 2026-10-12 02:17Z: K4S cycle method: Proposal M adopted (manual checklist, automation shelved)
 
 Sol has rejected the cycle automation twice (`round.sh` r1, `round.py` r2: seven MAJOR findings, all about unattended-automation guarantees). Sol re-verified the manual r1 cycle as correct. **Adopted: Proposal M.** Every P2 cycle runs by hand from a written checklist that incorporates Sol's substantive checks:
 
