@@ -2229,3 +2229,12 @@ The independent Opus diff review (`END-verifier-REVIEW-r5.md`, T1 job directory)
 - **C-c:** keep the code as is. In the verification receipt, record `test ! -e PUSH-FAILED.json && test ! -L PUSH-FAILED.json`.
 - **C-d:** verify no earlier than `exit_utc` + 1300 s (the wrapper's maximum lifetime). C5 holds until then; after that, C1 proof that the wrapper is gone comes before the 08 reference launch.
 - **Order after an ACK is unchanged:** 08 reference first, then 01 reference (cutoff 04:17:43Z), then pool, then PC1–PC4. Outcomes stay sealed.
+
+## 2026-10-12 02:05Z: T1 END schedule pre-ruling (if A6 overruns)
+
+Wall time for A6 hasn't been committed; T1 is to record it with its basis.
+
+- **08 reference:** launches after the A6 ACK, provided C1 holds and C2 is fresh (≥2 h clearance before 08's next apt-daily).
+- **01 reference:** if it can't start by the 01 cutoff after its own C-d and C1, it is deferred, not relaxed. It moves to the first clean window after 01's next apt-daily, with a fresh C2 (both actual runs exited, ≥2 h clearance, both motd stamps fresh). The same applies to 08 if its window is missed.
+- **Pooling** happens once both references exist.
+- **If A6 refuses or fails,** STOP and report, with no retry without a new ruling.
