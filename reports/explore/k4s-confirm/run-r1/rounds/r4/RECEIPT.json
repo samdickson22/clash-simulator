@@ -1,0 +1,275 @@
+{
+ "schema": "clasher.k4s.round-receipt.v2",
+ "study": "PREREG-K4S",
+ "round": "r4",
+ "cut": "P2 cut 3 (apt-daily-upgrade fired 04 13:27:59Z, 03 13:47:03Z)",
+ "outcomes_sealed": true,
+ "outcomes_read": false,
+ "authority": {
+  "option_a": "afe83faa (22:11 UTC)",
+  "windowed_rounds": "76887b33 (22:10:17Z)",
+  "p2": "adc12f36",
+  "proposal_m": "2c847954",
+  "quiet_read": "rounds/r4/quiet-read-v3.cmd sha256 a293207e601498d8e7b374a610eddba6f7223e64af34dae00ce52defa30f7c9c",
+  "k_gate": "8/6 (zero-based replacement_k)",
+  "read_window": "perception supplement on 03 and 04: declared COORDINATOR 328fb83e, GO 8be7ca00",
+  "checklist_sha256": "99fa0b052dd99948f782e26df6d540cda52ef75f3c61d677426a0b143b333670",
+  "health_tool_sha256": "05d0908f67b30a4e84983b80b1d46ccf526b3cfec99dffc634e0fb36f94c9368"
+ },
+ "times": {
+  "stop_touch_03": "2026-10-12T13:16:55.777Z",
+  "stop_touch_04": "2026-10-12T13:16:55.781Z",
+  "exit_03": "2026-10-12T13:17:00Z",
+  "exit_04": "2026-10-12T13:16:59Z",
+  "copier_finished_03": "2026-10-12T13:17:25Z",
+  "copier_finished_04": "2026-10-12T13:17:25Z",
+  "copier_ps_gone_03": "2026-10-12T13:17:34.263Z",
+  "copier_ps_gone_04": "2026-10-12T13:17:33.226Z",
+  "inventory_start": "2026-10-12T13:17:49.778Z",
+  "published": "2026-10-12T13:18:16.616Z",
+  "staged_03": "2026-10-12T13:18:19Z",
+  "staged_04": "2026-10-12T13:18:22Z",
+  "apt_daily_upgrade_04_fired": "2026-10-12T13:27:59Z",
+  "apt_daily_upgrade_03_fired": "2026-10-12T13:47:03Z",
+  "qualification_pass_04": "2026-10-12T13:33:46Z",
+  "qualification_pass_03": "2026-10-12T13:34:51Z",
+  "quiet_reads": [
+   "2026-10-12T13:47:38Z",
+   "2026-10-12T13:48:09Z"
+  ],
+  "quiet_posted": "2026-10-12T13:48:10Z",
+  "coordinator_go": "2026-10-12T14:01:29Z (commit time of 8be7ca00; no go_utc field published; received 14:01:48Z)",
+  "timeout": "2026-10-12T14:31:29Z",
+  "released_03_and_04_received": "2026-10-12T14:03:15Z",
+  "barrier_03": "2026-10-12T14:03:34Z",
+  "barrier_04": "2026-10-12T14:03:35Z",
+  "prelaunch_quiet_reads": [
+   "2026-10-12T14:03:50Z",
+   "2026-10-12T14:03:51Z",
+   "2026-10-12T14:04:21Z",
+   "2026-10-12T14:04:22Z"
+  ],
+  "stamps_read_03": "2026-10-12T14:04:22.811Z",
+  "stamps_read_04": "2026-10-12T14:04:23.193Z",
+  "copier_03": "2026-10-12T14:04:33Z",
+  "launch_03": "2026-10-12T14:04:39Z",
+  "copier_04": "2026-10-12T14:04:37Z",
+  "launch_04": "2026-10-12T14:04:44Z"
+ },
+ "inventory": {
+  "tool": "frozen replace.py @391d2006",
+  "new_events": 22,
+  "new_primary": 16,
+  "new_guard": 6,
+  "reasons": {
+   "owned_STOP": 22
+  },
+  "cumulative_lost": {
+   "primary": 73,
+   "guard": 26
+  },
+  "max_k": {
+   "primary": 3,
+   "guard": 3
+  },
+  "gates": {
+   "primary": "73/150",
+   "guard": "26/45",
+   "k_primary": "3/8",
+   "k_guard": "3/6",
+   "clear": true
+  },
+  "ledger_before": {
+   "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r3.json",
+   "sha256": "153eb421f75815b5c77e375ef264c18fe994d10f2f47748c70094db97ad22942"
+  },
+  "ledger_after": {
+   "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r4.json",
+   "sha256": "649272bdae066e49a524bd46e0155cdaf99f6d1b543e78014d357e1eb18a4f08"
+  },
+  "coverage": {
+   "counted": 3761,
+   "new_rows": 139,
+   "logical": 3900,
+   "exact": true
+  }
+ },
+ "dispatch": {
+  "path": "reports/explore/k4s-confirm/run-r1/dispatch/replacement-r4.json",
+  "sha256": "3aa43065a15934f48ed54948d77f72165228b6150bf948c379229958efc61347",
+  "rows": 139,
+  "never_started": 117,
+  "replacements": 22,
+  "per_host": {
+   "127x03": 71,
+   "127x04": 68
+  },
+  "games": 1140
+ },
+ "authorization": {
+  "path": "reports/explore/k4s-confirm/run-r1/receipts/REPORTING-AUTHORIZATION-v6-replacement-r4.json",
+  "sha256": "33e4526a83ed35d3c61bddb156539ff8bc095178974a14d8c11474c9ac81a78b"
+ },
+ "history_sha256": "94ee52e0755e56dd103989cef00fcd4d130768cc3c266415b71b68e7d3451487",
+ "hosts": {
+  "127x03": {
+   "stopped_phase": {
+    "supervisor_pid": 2373197,
+    "stop_touch": "2026-10-12T13:16:55.777Z",
+    "exit_utc": "2026-10-12T13:17:00Z",
+    "reason": "owned_STOP",
+    "completed": 219,
+    "failed": 11,
+    "unstarted": 56,
+    "copier_pid": 876522,
+    "copier_finished_utc": "2026-10-12T13:17:25Z"
+   },
+   "new_launch": {
+    "utc": "2026-10-12T14:04:39Z",
+    "supervisor_pid": 2589813,
+    "dispatch_sha256": "3aa43065a15934f48ed54948d77f72165228b6150bf948c379229958efc61347",
+    "runtime_pin_sha256": "4212ffd703b0e7447a8fd4adb5096d4e2453e6e811b97ff8abc78a95cf024c6a"
+   },
+   "admission": {
+    "utc": "2026-10-12T14:04:38Z",
+    "admitted": true,
+    "foreign": 0,
+    "active": 0,
+    "who": ""
+   },
+   "copier": {
+    "pid": 2182223,
+    "core": 62,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r4-qualification-127x03.json",
+    "sha256": "bf6ec3b0abdb80b7ed1877f0f0ca551feb1bc0b1e5ca1a0404482d05ce1952d0",
+    "verdict": "PASS 28/28"
+   }
+  },
+  "127x04": {
+   "stopped_phase": {
+    "supervisor_pid": 1396984,
+    "stop_touch": "2026-10-12T13:16:55.781Z",
+    "exit_utc": "2026-10-12T13:16:59Z",
+    "reason": "owned_STOP",
+    "completed": 217,
+    "failed": 11,
+    "unstarted": 61,
+    "copier_pid": 884802,
+    "copier_finished_utc": "2026-10-12T13:17:25Z"
+   },
+   "new_launch": {
+    "utc": "2026-10-12T14:04:44Z",
+    "supervisor_pid": 1612061,
+    "dispatch_sha256": "3aa43065a15934f48ed54948d77f72165228b6150bf948c379229958efc61347",
+    "runtime_pin_sha256": "711af336136f714113dd5df0de3cfffe5bf2b9fae9252b95abf3fb5de6306911"
+   },
+   "admission": {
+    "utc": "2026-10-12T14:04:43Z",
+    "admitted": true,
+    "foreign": 0,
+    "active": 0,
+    "who": ""
+   },
+   "copier": {
+    "pid": 2190563,
+    "core": 63,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r4-qualification-127x04.json",
+    "sha256": "94cd15cf92d89d0a463e360291a45e19a800a3bcc3ca0f5974a2e4b4a1eed0d4",
+    "verdict": "PASS 28/28"
+   }
+  }
+ },
+ "evidence_sha256": {
+  "rounds/r4/evidence/step7/127x03-copier-pid.json": "5908363878572b3df3fb9c56e909dbd39eb27a42ac2b4a28194e9a8092202064",
+  "rounds/r4/evidence/step7/127x03-host-admission.json": "e3acfa1b9af5fb0bff66cb5b53270cb26e19ac9dd118bc796bff57102f7a9900",
+  "rounds/r4/evidence/step7/127x03-hub-copier-registration.json": "c311a49525f46c27b9137e87e2f860fcbdddb3ad085231ffb270424398fc2f4b",
+  "rounds/r4/evidence/step7/127x03-launch.json": "e8f72fb483e73b5bcbb78b4aa129e5b31c61b4e2f0c45fec67d6b9637f65f2e6",
+  "rounds/r4/evidence/step7/127x03-launch_phase.txt": "92dc19832653028e3e2eee26d9e7923a1f506921850bdb163f3438a6eff9cd09",
+  "rounds/r4/evidence/step7/127x03-post-launch-check.txt": "d476f807e1a84380e449f7f49cdaf60cb7aa2e66f988abec8c5ce59096ba2b69",
+  "rounds/r4/evidence/step7/127x03-source-copier-registration.json": "c311a49525f46c27b9137e87e2f860fcbdddb3ad085231ffb270424398fc2f4b",
+  "rounds/r4/evidence/step7/127x04-copier-pid.json": "653572238423f20f9a2b6a38cf138c164ddac4a65c739b8eaf43d14af1a689a8",
+  "rounds/r4/evidence/step7/127x04-host-admission.json": "a0eec9d3869391d1b6becddbb5a46124c1f4f78b9236778084f30341963572ad",
+  "rounds/r4/evidence/step7/127x04-hub-copier-registration.json": "34b54b2172e028acf3580f32433d298f0d5fd4f2c4c5331c627e6cad74bac76a",
+  "rounds/r4/evidence/step7/127x04-launch.json": "38730d445b2a8095cbad8b393f709fbf5e0a79eb0267d6eb69c9875c2ee6c69a",
+  "rounds/r4/evidence/step7/127x04-launch_phase.txt": "f831b4d5c4c2f520dc5642ecb6a3bfe53fbe916f81d13df0298dc3a009192ee2",
+  "rounds/r4/evidence/step7/127x04-post-launch-check.txt": "20373cecdf4d75ab94a16dedc1dfaf18eb4c29c9aa88c9163319bed1f22465b4",
+  "rounds/r4/evidence/step7/127x04-source-copier-registration.json": "34b54b2172e028acf3580f32433d298f0d5fd4f2c4c5331c627e6cad74bac76a",
+  "rounds/r4/evidence/step5/127x03-barrier.txt": "ed618afb5589a8ce5284edf28b1b594e33c54c5fafb5868e16f10d3bdb45a9c5",
+  "rounds/r4/evidence/step5/127x03-finalize.txt": "0bd9f878a4f6e3f16608206bf649a1cb75f85eea54dc4347aa7d1351a84452a4",
+  "rounds/r4/evidence/step5/127x04-barrier.txt": "39bc7f71d4394273391b1a4207ae48cf1a8b4f1ff87a663725cb6b26d93a78f1",
+  "rounds/r4/evidence/step5/127x04-finalize.txt": "a546233beb84a1cb8428134859b3053607ec637070a900454b93ee5e2244f6e6",
+  "rounds/r4/evidence/step5/REPORTING-AUTHORIZATION-v6-replacement-r4.json": "33e4526a83ed35d3c61bddb156539ff8bc095178974a14d8c11474c9ac81a78b",
+  "rounds/r4/evidence/step5/replacement-r4-qualification-127x03.json": "bf6ec3b0abdb80b7ed1877f0f0ca551feb1bc0b1e5ca1a0404482d05ce1952d0",
+  "rounds/r4/evidence/step5/replacement-r4-qualification-127x04.json": "94cd15cf92d89d0a463e360291a45e19a800a3bcc3ca0f5974a2e4b4a1eed0d4",
+  "rounds/r4/evidence/step1/127x03-exit-wait.txt": "97e774fae28fe8c3e01f35b067c86cb89a7865d7288da1611bf8288ef3b62203",
+  "rounds/r4/evidence/step1/127x03-launch-r3.json": "6c49a6679c1c654879a071c44a86cda952fb40bc1722af43e3b2c22914b13efb",
+  "rounds/r4/evidence/step1/127x03-owned-supervisor-admission.json": "e811860914f2338145c834226bcb66427c3f556b20079c396e3b921503acfda3",
+  "rounds/r4/evidence/step1/127x03-ps-census.meta": "12123926235be221ead397a02fe7534e9e4b887f1e86f2033554a0a4e846e749",
+  "rounds/r4/evidence/step1/127x03-ps-census.txt": "d7813127b134c3af1579082a71e61dd6b616a43db8add5b35fb4fd5f4c898c78",
+  "rounds/r4/evidence/step1/127x03-stop-reason.json": "a0d84c3ddc43763182f26bb3aa303e3e26c33d3f0ddfba4375d1e5a1b02b2dec",
+  "rounds/r4/evidence/step1/127x03-stop-touch.txt": "85918acff3b6e44d013ec74b246a1afd5941cfcbc5694551ff0429f767fb6eda",
+  "rounds/r4/evidence/step1/127x03-supervisor-exit.json": "cccb86839ef970ae6e9bda6a8bb3b10451aa73baad8ac0978750f7c654688616",
+  "rounds/r4/evidence/step1/127x04-exit-wait.txt": "b80d3485f5a4ffefb0d2029ad83cf98e2698a61b4c8a1a88347d7a77e7b95d93",
+  "rounds/r4/evidence/step1/127x04-launch-r3.json": "9cd6bc37da5638dbc95a065cfd47ad467980d9b348bef2d7a711f8f9a7b4264e",
+  "rounds/r4/evidence/step1/127x04-owned-supervisor-admission.json": "f19fd0d490d6b04b6ced8ce8c8addb701e7124a7c0cdc76cab64bad8814a3b2f",
+  "rounds/r4/evidence/step1/127x04-ps-census.meta": "ec5242a5cbfe5ab01faeb985ddf259a23d7d24a4c528fa0c49c2e7c50c389de9",
+  "rounds/r4/evidence/step1/127x04-ps-census.txt": "2b517339fccba32d3a6c0e2d56d8deee1a1aa1b44d75edcbe814380803c0d201",
+  "rounds/r4/evidence/step1/127x04-stop-reason.json": "02fc62f0a5308afa7a44793f1fe1a78b99a59a0b5754eefb4af6ab738afa3fe4",
+  "rounds/r4/evidence/step1/127x04-stop-touch.txt": "d36f832ad8f9ec192dc44c0642206d36eb4c7ebeb5d9816adf7e96ca9866e8fc",
+  "rounds/r4/evidence/step1/127x04-supervisor-exit.json": "91475244cc702e33dbf0a4fd20635dcb5b2fa435b21361094263723fc4cd414c",
+  "rounds/r4/evidence/quiet-test/127x03-2026-10-12T11:39:36Z.txt": "dc67a9656e01b9b5f9b7e1993c1fa894cc44a524de5e6dd834c8a10b6db85273",
+  "rounds/r4/evidence/quiet-test/127x03-2026-10-12T11:40:07Z.txt": "7c342ce5c6bc08e35e2b415680962b5a74fe974bcac9b49eb5b7dbab2b72fd33",
+  "rounds/r4/evidence/quiet-test/127x04-2026-10-12T11:39:36Z.txt": "00a647b1cab0fc538daf2083f736fadb470606d10db5bd87de96f16b196266ec",
+  "rounds/r4/evidence/quiet-test/127x04-2026-10-12T11:40:07Z.txt": "318592a3d57a331fcdc3d37626d2d25110f7ccf57b5e5078f2dc6f99344dc2d8",
+  "rounds/r4/evidence/quiet-test/pattern-check.txt": "51abcc6839c9fb52dff256d142135d58504465a442eea264e671ea7debe11985",
+  "rounds/r4/evidence/step2/127x03-ack-bindings.txt": "efe973457a13ea99a4e43f6544e2e6a02faa9e3d7f53911b40675dfa8139d2b5",
+  "rounds/r4/evidence/step2/127x03-complete-ids.txt": "ac9a2409e550c73b73ee6a502521ccc9df18b6804a57b142fb9a379a8eb03eb8",
+  "rounds/r4/evidence/step2/127x03-copier-exit-wait.txt": "f227d04a23cd09465fb26f96aee1d1d55a6832b092a7d50b4161c71361650488",
+  "rounds/r4/evidence/step2/127x03-copy-health-final.json": "9739ef4d30d1add84f2289e5f45e82a27c56acee8b073684bd566a000bd1dd3e",
+  "rounds/r4/evidence/step2/127x03-hub-copier-admission.json": "1422c6bbda2cf168f9f2b20ab582fcac89de0c31d61dfeeb71a36c84c3252376",
+  "rounds/r4/evidence/step2/127x03-source-copier-admission.json": "1422c6bbda2cf168f9f2b20ab582fcac89de0c31d61dfeeb71a36c84c3252376",
+  "rounds/r4/evidence/step2/127x04-ack-bindings.txt": "d0adceb6357a76c7f72b21e8df637e81d95e6fdf68e12f46f337317ca93a4d95",
+  "rounds/r4/evidence/step2/127x04-complete-ids.txt": "aa4204991b73d8931674a49d4903c8ff2ba1a9f084ee129e53d5cd074cf17a34",
+  "rounds/r4/evidence/step2/127x04-copier-exit-wait.txt": "940c1629c20a0ad24a7e3bd0092b18b28502e4949d6fc4a29060eddbb9ea7bc9",
+  "rounds/r4/evidence/step2/127x04-copy-health-final.json": "8c245cdc0fdf60a5bd7efad513af069eb990ec91b455490cf71f22f363148f11",
+  "rounds/r4/evidence/step2/127x04-hub-copier-admission.json": "d78b1a524e4fbe5046789e3f185797da97406dfeaa2bdf9de294fa4671bf48ca",
+  "rounds/r4/evidence/step2/127x04-source-copier-admission.json": "d78b1a524e4fbe5046789e3f185797da97406dfeaa2bdf9de294fa4671bf48ca",
+  "rounds/r4/evidence/step2/hub-view-replacement-r3.txt": "76d432557f80c21337c8ad753f2f7450002ec96daaeb9b7d9abea2a3e24dc836",
+  "rounds/r4/evidence/step2/stop-copy-removed.txt": "1d53c1413f1a1d08d63e1b96d4c24c239ebd70826c1f694c247a37f32f8a89c7",
+  "rounds/r4/evidence/step3/published.txt": "664b1237edd6a85c1cee0c247df73c8f6ab379b0b209c53dd4691cab7460b1b7",
+  "rounds/r4/evidence/step3/replace-stdout.txt": "0a211d8666ec2d5fe51f063cd67b14c1ce86423adf1b8b8672a0ecd1a11cf13a",
+  "rounds/r4/evidence/step3/validation.txt": "e5ad145c55b7cf933be591007628246134bc3769945c9ed2f8d02e5c2dee331b",
+  "rounds/r4/evidence/step4/127x03-overlay-check.txt": "a9cc690a414d0c7fd4ef2a51a6d13a2fb49b9ebb0edae99817d6fe2e1b07de15",
+  "rounds/r4/evidence/step4/127x03-stage.txt": "5a8b60130c98af03777dbfe10e89bb91ce9f003efb1522220af902d19d49cc7b",
+  "rounds/r4/evidence/step4/127x04-overlay-check.txt": "a9cc690a414d0c7fd4ef2a51a6d13a2fb49b9ebb0edae99817d6fe2e1b07de15",
+  "rounds/r4/evidence/step4/127x04-stage.txt": "b87929502df8f19a4633086ca642d147e709d93a958a127ac6d3441698a1091c",
+  "rounds/r4/evidence/step6/127x03-prelaunch-quiet-2026-10-12T14:03:50Z.txt": "6673fb68851a1972a3c3bd7b54b82705328dc88cf6bee8b4d2d105bef22793ae",
+  "rounds/r4/evidence/step6/127x03-prelaunch-quiet-2026-10-12T14:04:21Z.txt": "8028cc5322442ba644f7ffc0ba3c702007f19d7493e65eadb368b30585da31c6",
+  "rounds/r4/evidence/step6/127x03-quiet-2026-10-12T13:47:38Z.txt": "c059750d3c744f907b88deb3bb47aabda2ac10f7c097ad6dd6b7f772aa7eaef1",
+  "rounds/r4/evidence/step6/127x03-quiet-2026-10-12T13:48:09Z.txt": "0a0b4c0ddd462935c4fc7ef5838bae8f890510e1362e8a405ef2bd8d79dcbf1f",
+  "rounds/r4/evidence/step6/127x03-stamps-timers.txt": "22dff03c4bfa0610f8c28a269358b347e35e816f1909929eb4be974244ec8bc9",
+  "rounds/r4/evidence/step6/127x03-upgrade-wait.txt": "b7448a32c85fa21309f7316bca2143bf22c9087e96235bc5ef9af337c83c050c",
+  "rounds/r4/evidence/step6/127x04-prelaunch-quiet-2026-10-12T14:03:51Z.txt": "7fd013aea7f605924e492192f224e622a22fdc86d4d99688f531a1174f994418",
+  "rounds/r4/evidence/step6/127x04-prelaunch-quiet-2026-10-12T14:04:22Z.txt": "e9de3c4fd225e7a6dd3416a02a79df78144a74440f92ebbf2d5a677f241ca212",
+  "rounds/r4/evidence/step6/127x04-quiet-2026-10-12T13:47:38Z.txt": "16ec1f1e8b86e0c1fd063e90f22344ea941046f65af7ea1b7b529a5619317c23",
+  "rounds/r4/evidence/step6/127x04-quiet-2026-10-12T13:48:09Z.txt": "8f84c6ce627d19728a05a68e4c8b6ba30497f694496ec4a221a0c937ad890fcf",
+  "rounds/r4/evidence/step6/127x04-stamps-timers.txt": "061ed2d366ba2054f682f72a9e7b4d4b8fd174988c0ad60edad8a137611fdd34",
+  "rounds/r4/evidence/step6/127x04-upgrade-wait.txt": "20bf77aa0ccbe06efb164255dd6c35cf401dfdf2704a76eb98405c27e10aa2ea",
+  "rounds/r4/evidence/step6/read-window.txt": "2e4e2976d8439a0da7700aec68ec2b029b33439f21d67e8d7666b439368f93c5"
+ },
+ "window_limits": {
+  "release_upgrade_04_expires": "2026-10-12T21:32:48Z",
+  "apt_daily_03": "2026-10-12T20:36:30Z",
+  "apt_daily_04": "2026-10-13T00:25:02Z"
+ },
+ "disclosures": [
+  "K4S r4 qualification finished (03 13:34:51Z, 04 13:33:46Z) before \"03/04 quiet\"; drivers verified dead (0 live members) at 13:48:2xZ; hosts idle during the perception window.",
+  "r4 is the last round: its end is a natural null-reason supervisor exit, checked automatically by checkpoint.py 05d0908f against dispatch-derived expected counts (71/68)."
+ ]
+}

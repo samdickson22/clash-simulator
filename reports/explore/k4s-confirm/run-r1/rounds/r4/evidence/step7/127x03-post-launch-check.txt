@@ -1,0 +1,6 @@
+read_utc=2026-10-12T14:05:04Z
+127x03 launch 2026-10-12T14:04:39Z 127x03 3aa43065a15934f4 sup 2589813
+127x03 admission 2026-10-12T14:04:38Z admitted True foreign 0 active 0 who ''
+127x03 supervisor alive
+127x03 stop file present False
+127x03 copier pid 2182223 hub-reg 2182223 True replacement-r4 src-reg 2182223 True match True

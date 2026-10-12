@@ -1,0 +1,6 @@
+read_utc=2026-10-12T14:03:33Z
+127x03 BARRIER PASS 176
+barrier-rc=0
+127x03 fresh-slot
+127x03 who=0
+end_utc=2026-10-12T14:03:34Z

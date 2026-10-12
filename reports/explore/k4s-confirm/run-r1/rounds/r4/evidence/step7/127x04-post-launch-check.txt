@@ -1,0 +1,6 @@
+read_utc=2026-10-12T14:05:05Z
+127x04 launch 2026-10-12T14:04:44Z 127x04 3aa43065a15934f4 sup 1612061
+127x04 admission 2026-10-12T14:04:43Z admitted True foreign 0 active 0 who ''
+127x04 supervisor alive
+127x04 stop file present False
+127x04 copier pid 2190563 hub-reg 2190563 True replacement-r4 src-reg 2190563 True match True

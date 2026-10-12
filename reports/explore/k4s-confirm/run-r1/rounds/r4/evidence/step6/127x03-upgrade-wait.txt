@@ -1,0 +1,2 @@
+read_utc=2026-10-12T13:47:23Z Tue 2026-10-13 06:33:52 PDT 23h left      Mon 2026-10-12 06:47:03 PDT 20s ago      apt-daily-upgrade.timer      apt-daily-upgrade.service     
+inactive

@@ -312,3 +312,14 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   03 71 / 04 68; 1140 games); exact coverage 3761 + 139. Ledger 153eb421 -> 649272bd.
 - 13:18:19Z / 13:18:22Z k4s-confirm-replacement-r4 staged (extras sha OK, overlay 175/175, PREREG 9650972d); qualification
   running (03 PGID 2573704, 04 PGID 1596026). Read window declared (328fb83e).
+- 2026-10-12T14:01:48Z GO to perception supplement (COORDINATOR 8be7ca00); r4 held per host until "released" or 30 min from go_utc.
+- 2026-10-12T14:03:15Z coordinator relayed "released 127x03" and "released 127x04" (perception supplement sessions closed, exit 0).
+- 13:27:59Z / 13:47:03Z apt-daily-upgrade fired on 04 / 03; quiet-read v3 x2 per host (13:47:38Z, 13:48:09Z); "03/04 quiet" 13:48:10Z
+  (r4 qualification already finished: 04 13:33:46Z, 03 13:34:51Z PASS 28/28). GO 8be7ca00 (14:01:29Z); both released 14:03:15Z.
+- 14:03Z finalize both (runtime == smoke, pin.verify OK, carry-over, 03 idle pin), auth v6 33e4526a, barrier PASS 176; prelaunch
+  quiet-read v3 x2 (14:03:50Z, 14:04:21Z); stamps fresh (04 release stamp valid to 21:32:48Z).
+- **14:04:39Z / 14:04:44Z replacement-r4 LAUNCHED** (final round): 03 sup 2589813, 04 sup 1612061; copiers 2182223 / 2190563.
+  Receipt rounds/r4/RECEIPT.json. Expected end: null exit with 71 / 68 completed.
+## Running (owned PGIDs only) -- CURRENT
+- replacement-r4 in k4s-confirm-replacement-r4: 03 sup PGID 2589813, 04 sup PGID 1612061; copiers on 05 2182223 / 2190563.
+  Health: K4S_NS=k4s-confirm-replacement-r4 K4S_PHASE=replacement-r4 tools/watch.sh

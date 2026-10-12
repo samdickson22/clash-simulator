@@ -1,0 +1,6 @@
+start_utc=2026-10-12T14:04:31.615Z
+host-ok
+{"launched_at_utc":"2026-10-12T14:04:33Z","pid":2182223,"pgid":2182223}
+copier-registered
+{"launched_at_utc":"2026-10-12T14:04:35Z","pid":2589813,"pgid":2589813}
+rc=0 end_utc=2026-10-12T14:04:36.000Z

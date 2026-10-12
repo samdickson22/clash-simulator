@@ -1,0 +1,8 @@
+read_utc=2026-10-12T13:47:38Z
+apt-daily.service=inactive
+apt-daily-upgrade.service=inactive
+helper=   2368 Wed Sep 23 17:37:32 2026 unattended-upgr /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+maint_lines=<<>>
+maint=0
+who=0
+rc=0
