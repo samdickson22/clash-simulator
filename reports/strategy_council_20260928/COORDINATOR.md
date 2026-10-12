@@ -3774,3 +3774,32 @@ PLAN r3 is 87809ae0 (`reports/explore/x4s4/PLAN.md`). The coordinator verified i
 The outcome-name gate becomes a reviewed, case-insensitive family/pattern denylist shared by all components. S2 and S4 move to safe_input in r4, together with package 2 r2.
 
 **Reviewer disclosure, accepted.** While exporting the frozen code, the Sol reviewer copied 92 committed `e4v3/receipts/` files: the linux05 TIERS dry-run timing receipts, including `tiers-complete.json`. It did not display, parse or use their contents. These are public committed health/timing receipts, not K4S or T1 game outcomes, so there is no impact on blinding. It is recorded.
+
+## 2026-10-12 18:14Z: X4S-4 scripts, Sol r1: REQUEST_CHANGES (18 findings)
+
+**Review.** `/mpac/sdicks02/jobs/clasher/x4s4-review/SOL-REVIEW-SCRIPTS-r1.md` (ea6760f8), of script commit 13fb31d0.
+- **Verified:** all 20 hashes, the six-line capture delta, and evaluation `run.py` byte identity. 40/40 tests pass in every mode.
+- **Not enough on their own:** targeted fixtures exposed real defects that the passing tests miss.
+
+**Blocking findings:**
+- **F1:** wrapping `run_game` breaks its inherited inference-frame guard.
+- **F2:** the post-submit empty-`pending` filter drops play decisions.
+
+**High findings:**
+- **F3:** the fair-information permutation leaves one hidden-state path unperturbed.
+- **F4:** a receipt merely existing is accepted as the C5 SHA freeze.
+- **F5:** nonzero statuses are masked.
+- **F6:** the O_W prefix/resume identity is not checked.
+- **F7:** the foreign-CPU census undercounts.
+- **F8:** reporting launches the unchanged X4S-3 supervisor.
+- **F9:** study-wide guards are incomplete.
+- **F10:** writers accept paths outside the job prefix.
+- **F11:** the seed audit fails open under -O.
+- **F13:** the O gate is not bound to the capture identities.
+- **F16:** the repo-wide seed audit (inherited from X4S-3) can read any file under the repo root.
+
+**Medium and low findings:** F12, F14, F15, F17, F18.
+
+**Note on F16.** Sealed K4S and T1 outcomes are not committed to the repo. They live in host job directories. So the X4S-3 audit very likely read no outcome bytes. The fix is still required: a pre-read allowlist of seed-declaration sources.
+
+**Next.** The owner fixes all 18 findings in a new script commit, adding regression fixtures for each Sol probe, and the scripts go back for a Sol r2 review. No host contact until GO.
