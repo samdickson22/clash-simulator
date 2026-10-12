@@ -301,3 +301,117 @@ def test_main_nonnull_exit_still_flagged(tmp_path,capsys):
  run=fake_run(supexit='"owned_STOP"',supexitn={'127x03':'3 0 0','127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
  rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
  ok(rc==2 and has(line['anomalies'],'127x03: supervisor exited ("reason": "owned_STOP"'),line['anomalies'])
+
+# ---- Sol checkpoint review r4: the remote readers themselves (extraction -> main) --------------------------------
+import shlex
+
+def real_meta(tmp,host,phase,launch,exit_doc):
+ """Run the REAL remote template with bash against synthetic local metadata and return its LAUNCHDISPATCH / SUPEXIT /
+ SUPEXITN lines (the rest of the template's output is discarded). launch/exit_doc: bytes, or None for an absent file."""
+ J=tmp/'meta'/host;(J/phase).mkdir(parents=True,exist_ok=True)
+ for name,data in (('launch.json',launch),('supervisor-exit.json',exit_doc)):
+  f=J/phase/name
+  if data is None:
+   if f.exists():f.unlink()
+  else:f.write_bytes(data)
+ out=subprocess.run(['bash','-c',C.REMOTE.format(J=shlex.quote(str(J)),P=shlex.quote(phase))],capture_output=True,text=True,timeout=60).stdout
+ return [l for l in out.splitlines() if l.split(' ',1)[0] in ('LAUNCHDISPATCH','SUPEXIT','SUPEXITN')]
+
+def launch_bytes(sha):return json.dumps(dict(host='x',dispatch_sha256=sha,supervisor_pid=None)).encode()
+
+def exit_bytes(**kw):
+ d=dict(utc=UTC,host='x',reason=None,completed=[],failed=[],unstarted=[]);d.update(kw);return json.dumps(d).encode()
+
+def meta_run(tmp,phase,per_host,complete):
+ """per_host: {host: (launch_bytes_or_None, exit_bytes_or_None)}; other lines are canned and healthy."""
+ lines={h:real_meta(tmp,h,phase,*per_host[h]) for h in per_host}
+ def run(cmd,**kw):
+  host=cmd[len(C.SSH)]
+  running=not any(l.startswith('SUPEXIT ') for l in lines[host])
+  out='\n'.join(lines[host]+['WHO 0','STOPFILES 0 0',
+   'PROGRESS '+json.dumps(dict(utc=UTC,phase=phase,complete_local_blocks=0,failed_blocks=0,queued=1,inflight=11,reason=None)),
+   f'COMPLETE {complete[host]}',f'HUBACK {complete[host]}','EXITS 0 0','LOSTPOP 0 0','FAILEDIDS ',
+   'SRCRECEIPT "pid": 4242 "active": true']+(['SUPPROC 99 SNs'] if running else []))+'\n'
+  return subprocess.CompletedProcess(cmd,0,out,'')
+ return run
+
+ROWS=lambda n:[dict(id=f'primary-{i:04d}') for i in range(n)]
+GOOD04=lambda: (launch_bytes(DSHA),None)
+
+@pytest.mark.parametrize('case,value,alert',[
+ ('exact',DSHA,None),
+ ('h_plus_hex',DSHA+'a','launch dispatch_sha256 invalid'),
+ ('h_plus_h',DSHA+DSHA,'launch dispatch_sha256 invalid'),
+ ('short',DSHA[:63],'launch dispatch_sha256 invalid'),
+ ('different','e'*64,'launch dispatch_sha256 eeeeeeeeeeeeeeee != history'),
+ ('uppercase',DSHA.upper(),'launch dispatch_sha256 invalid'),
+ ('number',12345,'launch dispatch_sha256 invalid'),
+ ('null',None,'launch dispatch_sha256 invalid'),
+])
+def test_launch_reader_to_main(tmp_path,capsys,case,value,alert):
+ lines=real_meta(tmp_path,'probe','replacement-r2',launch_bytes(value),None)
+ ok(lines==([f'LAUNCHDISPATCH {DSHA}'] if alert is None or 'history' in alert else ['LAUNCHDISPATCH INVALID']) or (case=='different' and lines==['LAUNCHDISPATCH '+'e'*64]),(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(value),None),'127x04':GOOD04()},{'127x03':0,'127x04':0}),capsys)
+ if alert is None:ok(rc==0 and line['anomalies']==[],(case,line))
+ else:ok(rc==2 and has(line['anomalies'],'127x03: '+alert) and not has(line['anomalies'],'127x04: launch'),(case,line['anomalies']))
+
+@pytest.mark.parametrize('case,raw',[('malformed_json',b'{"dispatch_sha256": "'+DSHA.encode()+b'"'),('not_object',json.dumps([DSHA]).encode()),
+ ('missing_key',json.dumps(dict(host='x')).encode()),('absent_file',None),('empty_file',b''),('trailing_garbage',launch_bytes(DSHA)+b'x')])
+def test_launch_reader_malformed_to_main(tmp_path,capsys,case,raw):
+ lines=real_meta(tmp_path,'probe','replacement-r2',raw,None)
+ ok(lines==['LAUNCHDISPATCH INVALID'],(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(raw,None),'127x04':GOOD04()},{'127x03':0,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: launch dispatch_sha256 invalid'),(case,line['anomalies']))
+ ok(rec['anomalies']==line['anomalies'])
+
+@pytest.mark.parametrize('case,doc',[
+ ('completed_string',dict(completed='abc',failed='',unstarted='')),
+ ('completed_object',dict(completed={'a':1,'b':2,'c':3},failed={},unstarted={})),
+ ('string_with_lists',dict(completed='abc',failed=[],unstarted=[])),
+ ('missing_failed',dict(completed=ROWS(3),unstarted=[],failed=None,_drop='failed')),
+ ('null_unstarted',dict(completed=ROWS(3),failed=[],unstarted=None)),
+ ('scalar_completed',dict(completed=3,failed=[],unstarted=[])),
+ ('bool_failed',dict(completed=ROWS(3),failed=False,unstarted=[])),
+])
+def test_exit_reader_invalid_to_main(tmp_path,capsys,case,doc):
+ d=dict(utc=UTC,host='x',reason=None);d.update({k:v for k,v in doc.items() if k!='_drop'})
+ if doc.get('_drop'):d.pop(doc['_drop'])
+ raw=json.dumps(d).encode()
+ lines=real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw)
+ ok('SUPEXITN INVALID' in lines,(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':3,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],"127x03: supervisor-exit counts unreadable ('INVALID')"),(case,line['anomalies']))
+ ok(rec['anomalies']==line['anomalies'])
+
+@pytest.mark.parametrize('case,raw',[('malformed_json',b'{"reason": null, "completed": ['),('not_object',b'[]'),('empty_file',b'')])
+def test_exit_reader_malformed_to_main(tmp_path,capsys,case,raw):
+ lines=real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw)
+ ok('SUPEXITN INVALID' in lines,(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':3,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: supervisor-exit counts unreadable'),(case,line['anomalies']))
+
+def test_exit_reader_valid_full_lists_pass(tmp_path,capsys):
+ raw03=exit_bytes(completed=ROWS(3));raw04=exit_bytes(completed=ROWS(2))
+ ok('SUPEXITN 3 0 0' in real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw03))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw03),'127x04':(launch_bytes(DSHA),raw04)},{'127x03':3,'127x04':2}),capsys)
+ ok(rc==0 and line['anomalies']==[],line);ok(rec['hosts']['127x03']['exit_counts']==dict(completed=3,failed=0,unstarted=0))
+
+def test_exit_reader_valid_empty_lists_flag_shortfall(tmp_path,capsys):
+ """Valid (empty) lists are read as 0 0 0: accepted by the reader, then flagged as unaccounted blocks."""
+ raw=exit_bytes()
+ ok('SUPEXITN 0 0 0' in real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':0,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: supervisor-exit counts 0+0+0 != dispatched 3') and has(line['anomalies'],'complete 0 < expected 3'),line['anomalies'])
+
+def test_exit_reader_valid_with_failures_and_unstarted(tmp_path,capsys):
+ raw=exit_bytes(completed=ROWS(1),failed=ROWS(1),unstarted=ROWS(1))
+ ok('SUPEXITN 1 1 1' in real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':1,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: null-reason exit left 1 unstarted'),line['anomalies'])
+
+@pytest.mark.parametrize('v',['-1 0 0','3 0','3 0 0 0','3 x 0','+3 0 0','3.0 0 0','',None,'INVALID'])
+def test_exit_counts_strict(v):
+ with pytest.raises(ValueError):C.exit_counts(v)
+
+def test_exit_counts_valid():
+ ok(C.exit_counts('3 0 0')==(3,0,0) and C.exit_counts('0 0 0')==(0,0,0))

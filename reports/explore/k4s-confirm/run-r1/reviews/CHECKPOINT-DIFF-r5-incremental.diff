@@ -1,0 +1,73 @@
+--- a/candidate-r4/checkpoint.py@cae34ed5
++++ b/candidate-r4/checkpoint.py
+@@ -11,7 +11,9 @@
+ Sol checkpoint review r2 fix: the k alert is evaluated as soon as the ledger validates, so it survives unknown host data.
+ Round r3 audit F1 fix: the per-host expected completions come from the phase's own dispatch, resolved through
+ rounds/history.json and bound by sha256 to both the history entry and the host's launch.json; on a supervisor exit the
+-exit receipt's completed/failed/unstarted counts must account for every dispatched block. Any missing, unreadable or
++exit receipt's completed/failed/unstarted counts must account for every dispatched block. Sol checkpoint review r4:
++both remote readers parse JSON strictly (launch dispatch_sha256 must be a full 64-hex string, compared whole; the three
++exit collections must be lists) and print INVALID otherwise, which main() treats as an anomaly. Any missing, unreadable or
+ mismatched input is an anomaly (exit 2), never a silent pass.
+ Every check is explicit (no assert), so it also holds under python -O."""
+ import datetime,hashlib,json,re,shlex,subprocess,sys
+@@ -41,8 +43,22 @@
+ echo "FAILEDIDS $(grep -l '"complete": false' "$J/$P"/exits/*.json 2>/dev/null | sed 's#.*/##; s#[.]json$##' | tr '\\n' ' ')"
+ test -e "$J/$P/stop-reason.json" && echo "STOPREASON $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"utc": *"[^"]*"' | head -1) $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"reason": *"[^"]*"' | head -1)"
+ test -e "$J/$P/supervisor-exit.json" && echo "SUPEXIT $(tr -d '\\n' < "$J/$P/supervisor-exit.json" | grep -o '"reason": *[^,]*' | head -1)"
+-test -e "$J/$P/supervisor-exit.json" && echo "SUPEXITN $(python3 -c 'import json,sys;e=json.load(open(sys.argv[1]));print(len(e["completed"]),len(e["failed"]),len(e["unstarted"]))' "$J/$P/supervisor-exit.json" 2>/dev/null)"
+-echo "LAUNCHDISPATCH $(grep -o '"dispatch_sha256": *"[0-9a-f]*"' "$J/$P/launch.json" 2>/dev/null | grep -o '[0-9a-f]\\{{64\\}}' | head -1)"
++test -e "$J/$P/supervisor-exit.json" && echo "SUPEXITN $(python3 -c '
++import json,sys
++try:
++ e=json.load(open(sys.argv[1]))
++ k=("completed","failed","unstarted")
++ print(" ".join(str(len(e[x])) for x in k) if isinstance(e,dict) and all(isinstance(e.get(x),list) for x in k) else "INVALID")
++except Exception:
++ print("INVALID")' "$J/$P/supervisor-exit.json" 2>/dev/null || echo INVALID)"
++echo "LAUNCHDISPATCH $(python3 -c '
++import json,re,sys
++try:
++ d=json.load(open(sys.argv[1]))
++ v=d.get("dispatch_sha256") if isinstance(d,dict) else None
++ print(v if isinstance(v,str) and re.fullmatch("[0-9a-f]{{64}}",v) else "INVALID")
++except Exception:
++ print("INVALID")' "$J/$P/launch.json" 2>/dev/null || echo INVALID)"
+ echo "SRCRECEIPT $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"pid": *[0-9]*' | head -1) $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"active": *[a-z]*')"
+ S=$(grep -o '"supervisor_pid": *[0-9]*' "$J/$P/launch.json" 2>/dev/null | grep -o '[0-9]*$')
+ test -n "$S" && echo "SUPPROC $S $(ps -o stat= -p $S 2>/dev/null | tr -d ' ')"
+@@ -63,6 +79,15 @@
+ def ints(s,n):
+  v=[int(x) for x in s.split()];need(len(v)==n,f'expected {n} integers, got {s!r}');return v
+ 
++SHA64=re.compile(r'[0-9a-f]{64}')
++
++def exit_counts(v):
++ """SUPEXITN payload -> (completed, failed, unstarted). The remote reader prints three list lengths or INVALID;
++ anything other than exactly three nonnegative decimal integers is rejected."""
++ parts=(v or '').split()
++ need(len(parts)==3 and all(re.fullmatch(r'[0-9]+',x) for x in parts),f'supervisor-exit counts invalid ({v!r})')
++ return tuple(int(x) for x in parts)
++
+ def strict_int(v):
+  return isinstance(v,int) and not isinstance(v,bool)
+ 
+@@ -196,7 +221,8 @@
+     if EXP.get(h,0)<=0:anom.append(f'{h}: expected count UNKNOWN (no {phase} dispatch rows for this host)')
+     else:exp=EXP[h]
+     ld=y.get('LAUNCHDISPATCH','')
+-    if ld!=EXP_SHA:anom.append(f'{h}: launch dispatch_sha256 {ld[:16] or "missing"} != history {EXP_SHA[:16]}')
++    if SHA64.fullmatch(ld) is None:anom.append(f'{h}: launch dispatch_sha256 invalid ({ld[:20]!r})')
++    elif ld!=EXP_SHA:anom.append(f'{h}: launch dispatch_sha256 {ld[:16]} != history {EXP_SHA[:16]}')
+    x['expected']=exp
+    done=y.get('SUPEXIT') is not None
+    if done:
+@@ -206,7 +232,7 @@
+     else:
+      if comp<exp:anom.append(f'{h}: supervisor exited ({y["SUPEXIT"]}) with complete {comp} < expected {exp}')
+      try:
+-      nc,nf,nu=ints(y.get('SUPEXITN',''),3)
++      nc,nf,nu=exit_counts(y.get('SUPEXITN'))
+      except ValueError:
+       anom.append(f'{h}: supervisor-exit counts unreadable ({y.get("SUPEXITN")!r})')
+      else:

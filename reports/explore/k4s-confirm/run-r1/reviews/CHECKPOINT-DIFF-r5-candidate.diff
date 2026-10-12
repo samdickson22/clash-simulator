@@ -1,0 +1,136 @@
+--- a/tools/checkpoint.py@aa898ab2
++++ b/tools/candidate-r4/checkpoint.py
+@@ -9,13 +9,18 @@
+ unconditionally, validated and aggregated inside the anomaly boundary, failing closed to an UNKNOWN anomaly + receipt +
+ exit 2 (R2); cumulative losses count the per-population union of ledger lost IDs and current-phase failed IDs (R3).
+ Sol checkpoint review r2 fix: the k alert is evaluated as soon as the ledger validates, so it survives unknown host data.
++Round r3 audit F1 fix: the per-host expected completions come from the phase's own dispatch, resolved through
++rounds/history.json and bound by sha256 to both the history entry and the host's launch.json; on a supervisor exit the
++exit receipt's completed/failed/unstarted counts must account for every dispatched block. Sol checkpoint review r4:
++both remote readers parse JSON strictly (launch dispatch_sha256 must be a full 64-hex string, compared whole; the three
++exit collections must be lists) and print INVALID otherwise, which main() treats as an anomaly. Any missing, unreadable or
++mismatched input is an anomaly (exit 2), never a silent pass.
+ Every check is explicit (no assert), so it also holds under python -O."""
+ import datetime,hashlib,json,re,shlex,subprocess,sys
+ from pathlib import Path
+ import os
+ NS=os.environ.get('K4S_NS','k4s-confirm-replacement-r2')
+ JOBS={'127x03':f'/mpac/sdicks02/jobs/clasher/{NS}','127x04':f'/mpac/sdicks02/jobs-k4s/{NS}'}
+-EXPECTED={'reporting':1950,'replacement-r1':1754,'replacement-r2':{'127x03':555,'127x04':554}}
+ SSH=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10']
+ L=Path('/mpac/sdicks02/k4s-runner/run-r1')
+ # Frozen bank geometry (plan.json replacement / schedule.CELLS): cells per population and the bank's max zero-based k.
+@@ -38,6 +43,22 @@
+ echo "FAILEDIDS $(grep -l '"complete": false' "$J/$P"/exits/*.json 2>/dev/null | sed 's#.*/##; s#[.]json$##' | tr '\\n' ' ')"
+ test -e "$J/$P/stop-reason.json" && echo "STOPREASON $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"utc": *"[^"]*"' | head -1) $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"reason": *"[^"]*"' | head -1)"
+ test -e "$J/$P/supervisor-exit.json" && echo "SUPEXIT $(tr -d '\\n' < "$J/$P/supervisor-exit.json" | grep -o '"reason": *[^,]*' | head -1)"
++test -e "$J/$P/supervisor-exit.json" && echo "SUPEXITN $(python3 -c '
++import json,sys
++try:
++ e=json.load(open(sys.argv[1]))
++ k=("completed","failed","unstarted")
++ print(" ".join(str(len(e[x])) for x in k) if isinstance(e,dict) and all(isinstance(e.get(x),list) for x in k) else "INVALID")
++except Exception:
++ print("INVALID")' "$J/$P/supervisor-exit.json" 2>/dev/null || echo INVALID)"
++echo "LAUNCHDISPATCH $(python3 -c '
++import json,re,sys
++try:
++ d=json.load(open(sys.argv[1]))
++ v=d.get("dispatch_sha256") if isinstance(d,dict) else None
++ print(v if isinstance(v,str) and re.fullmatch("[0-9a-f]{{64}}",v) else "INVALID")
++except Exception:
++ print("INVALID")' "$J/$P/launch.json" 2>/dev/null || echo INVALID)"
+ echo "SRCRECEIPT $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"pid": *[0-9]*' | head -1) $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"active": *[a-z]*')"
+ S=$(grep -o '"supervisor_pid": *[0-9]*' "$J/$P/launch.json" 2>/dev/null | grep -o '[0-9]*$')
+ test -n "$S" && echo "SUPPROC $S $(ps -o stat= -p $S 2>/dev/null | tr -d ' ')"
+@@ -58,6 +79,15 @@
+ def ints(s,n):
+  v=[int(x) for x in s.split()];need(len(v)==n,f'expected {n} integers, got {s!r}');return v
+ 
++SHA64=re.compile(r'[0-9a-f]{64}')
++
++def exit_counts(v):
++ """SUPEXITN payload -> (completed, failed, unstarted). The remote reader prints three list lengths or INVALID;
++ anything other than exactly three nonnegative decimal integers is rejected."""
++ parts=(v or '').split()
++ need(len(parts)==3 and all(re.fullmatch(r'[0-9]+',x) for x in parts),f'supervisor-exit counts invalid ({v!r})')
++ return tuple(int(x) for x in parts)
++
+ def strict_int(v):
+  return isinstance(v,int) and not isinstance(v,bool)
+ 
+@@ -126,6 +156,27 @@
+  part=f'cumulative primary {cp}/300 guard {cg}/90 (union; already in ledger {len(overlap["primary"])}/{len(overlap["guard"])}); ledger max k {kmax}'
+  return rec,anom,part
+ 
++def expected_counts(root,phase):
++ """Per-host dispatched block counts for PHASE from its own dispatch file. Returns (counts, dispatch_sha256).
++ Raises HealthDataError unless rounds/history.json names exactly one entry for the phase and the dispatch file's
++ sha256 equals that entry."""
++ hist=json.loads((Path(root)/'rounds'/'history.json').read_text())
++ need(isinstance(hist,list),'history is not a list')
++ entries=[e for e in hist if isinstance(e,dict) and e.get('phase')==phase]
++ need(len(entries)==1,f'history has {len(entries)} entries for phase {phase}')
++ e=entries[0];name=e.get('dispatch_file');want=e.get('dispatch_sha256')
++ need(isinstance(name,str) and re.fullmatch(r'[A-Za-z0-9_.-]+[.]json',name) is not None,f'history dispatch_file {name!r}')
++ need(isinstance(want,str) and re.fullmatch(r'[0-9a-f]{64}',want) is not None,f'history dispatch_sha256 {want!r}')
++ raw=(Path(root)/'dispatch'/name).read_bytes()
++ need(hashlib.sha256(raw).hexdigest()==want,f'dispatch {name} sha256 != history')
++ doc=json.loads(raw)
++ need(isinstance(doc,dict) and isinstance(doc.get('blocks'),list),'dispatch blocks is not a list')
++ counts={}
++ for b in doc['blocks']:
++  need(isinstance(b,dict) and isinstance(b.get('host'),str),'dispatch row without host')
++  counts[b['host']]=counts.get(b['host'],0)+1
++ return counts,want
++
+ def local_identity(pid):
+  try:
+   d=Path(f'/proc/{pid}');stat=(d/'stat').read_text().rsplit(')',1)[1].split()
+@@ -141,8 +192,12 @@
+  known_all=json.loads(kf.read_text()) if kf.exists() else {}   # events already reported to the coordinator
+  utc=utc or subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip();now=datetime.datetime.strptime(utc,'%Y-%m-%dT%H:%M:%SZ')
+  def age(s):return (now-datetime.datetime.strptime(s,'%Y-%m-%dT%H:%M:%SZ')).total_seconds()
+- LOST=[0,0];FAILED={'primary':set(),'guard':set()};failed_known=True
+  r=dict(schema='clasher.k4s.run-health.v2',study='PREREG-K4S',sealed=True,outcomes_read=False,utc=utc,phase=phase,tag=tag,hosts={});anom=[];parts=[]
++ LOST=[0,0];FAILED={'primary':set(),'guard':set()};failed_known=True
++ try:
++  EXP,EXP_SHA=expected_counts(root,phase)
++ except Exception as e:   # no dispatch, no expected count: fail closed
++  EXP,EXP_SHA=None,None;anom.append(f'expected counts UNKNOWN for {phase}: {type(e).__name__}: {e}')
+  for h,J in jobs.items():
+   x={};r['hosts'][h]=x
+   try:
+@@ -161,10 +216,30 @@
+    if y.get('STOPREASON') and y['STOPREASON']!=known.get('stopreason'):anom.append(f'{h}: STOP {y["STOPREASON"]}')
+    if prog.get('reason'):anom.append(f'{h}: progress reason {prog["reason"]}')
+    if (prog.get('console') or {}).get('positive'):anom.append(f'{h}: console positive')
+-   exp=EXPECTED.get(phase);exp=exp[h] if isinstance(exp,dict) else exp
++   exp=None
++   if EXP is not None:
++    if EXP.get(h,0)<=0:anom.append(f'{h}: expected count UNKNOWN (no {phase} dispatch rows for this host)')
++    else:exp=EXP[h]
++    ld=y.get('LAUNCHDISPATCH','')
++    if SHA64.fullmatch(ld) is None:anom.append(f'{h}: launch dispatch_sha256 invalid ({ld[:20]!r})')
++    elif ld!=EXP_SHA:anom.append(f'{h}: launch dispatch_sha256 {ld[:16]} != history {EXP_SHA[:16]}')
++   x['expected']=exp
+    done=y.get('SUPEXIT') is not None
+    if done:
+-    if y['SUPEXIT'].split(':',1)[-1].strip()!='null' or (exp and comp<exp):anom.append(f'{h}: supervisor exited ({y["SUPEXIT"]}, complete {comp}/{exp})')
++    reason=y['SUPEXIT'].split(':',1)[-1].strip()
++    if reason!='null':anom.append(f'{h}: supervisor exited ({y["SUPEXIT"]}, complete {comp}/{exp})')
++    if exp is None:anom.append(f'{h}: supervisor exited with no expected count (complete {comp})')
++    else:
++     if comp<exp:anom.append(f'{h}: supervisor exited ({y["SUPEXIT"]}) with complete {comp} < expected {exp}')
++     try:
++      nc,nf,nu=exit_counts(y.get('SUPEXITN'))
++     except ValueError:
++      anom.append(f'{h}: supervisor-exit counts unreadable ({y.get("SUPEXITN")!r})')
++     else:
++      x['exit_counts']=dict(completed=nc,failed=nf,unstarted=nu)
++      if nc+nf+nu!=exp:anom.append(f'{h}: supervisor-exit counts {nc}+{nf}+{nu} != dispatched {exp}')
++      if nc!=comp:anom.append(f'{h}: supervisor-exit completed {nc} != complete.json count {comp}')
++      if reason=='null' and nu:anom.append(f'{h}: null-reason exit left {nu} unstarted')
+    else:
+     sp=y.get('SUPPROC','').split()
+     if len(sp)!=2 or sp[1].startswith('Z') or sp[1].startswith('T'):anom.append(f'{h}: supervisor process not running ({y.get("SUPPROC")})')
