@@ -2411,3 +2411,20 @@ T1 records this gap and the downstream enforcement in the 01 launch receipt. The
    - an outcome-blind amendment text: disclose all old-code attempts, run a fresh reference series on both hosts under the fixed code, with deferral windows per c6387611.
 
    Sol reviews the Claude-written code. Nothing is adopted or staged on any host unless r3 fails.
+
+## 2026-10-12 03:55Z: E4 guard-race fix drafted (branch, NOT adopted); Sol review routed; K4S END reference held
+
+The RG1 step 3 draft is on branch `e4-guard-race-fix-20261012` (head ad8aba8d; code f23be563):
+- `fleet_validity.py` 94d0e7f2 → eae5db3f. Ownership is re-derived on the census snapshot, with start_ticks pid-reuse protection and a one-time exec identity update.
+- Tests: 96 OK, and the new tests fail on the old code. A live `/proc` check on 05 reproduces the 10/10 false-foreign result on the old code and 0 on the new; real foreign processes are still flagged.
+- Also on the branch: `E4-GUARD-RACE-FIX-IMPACT-20261012.md` and `PREREG-SEARCH-TIERS-AMENDMENT-5-DRAFT-20261012.md`, marked DRAFT.
+
+**Sol code review r1 is routed** (`e4-guard-race-fix-20261012/SOL-REVIEW-r1.md`).
+
+**Impact:**
+- **K4S reporting on 03/04 is unaffected:** `fleet_validity` isn't imported there.
+- **The K4S END reference has the same race.** It is **held** until a ruling, and adoption would mean re-pinning c1fb1e9a.
+- **Mac/A4:** `stage_nocopy.py` 96abd847 hard-codes the old SHA, and so does the staged Mac runtime. Any adoption needs an A4 erratum, a narrow Sol review and re-staging. The Mac is on HOLD in any case.
+- **The R-ord SHA check** grows from five code SHAs to six if the fix is adopted.
+
+Nothing is adopted or staged on any host. 08 r3 proceeds as-is under RG1.
