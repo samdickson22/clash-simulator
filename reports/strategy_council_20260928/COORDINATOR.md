@@ -3928,3 +3928,30 @@ The output is `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-qu
 | allowed CPUs | 0–127 on both 05 and 08 | — | — |
 
 **Coordinator-approved cpus for the deployment GO: [0, 1].** This observation is the provenance for the deployment GO's who, free-space and cpus fields. The observation commit is the one containing this entry.
+
+## 2026-10-12 20:31Z: Perception B deployment GO ISSUED (copy to 08, once)
+
+**What this authorizes.** The GO is byte-identical to the draft at `l1/prepared/b08-deployment-go-final-r1/`, SHA 06f8d1b0. It authorizes:
+- the reviewed sender `deploy_b08.py` (2f1d0e79), run through the r2 detached launcher (79cc2a5a) and operator wrapper (b8a4e3f8);
+- a deployment of package 374325696dc9 to 127x08, writing only its versioned prefixes;
+- cpus [0, 1], with gpu and heldout false;
+- a window of 2026-10-12 21:00Z–22:30Z;
+- no retry.
+
+**Failure handling.** If the exit code is nonzero or the run times out, exactly one read-only inspection (`operator_inspect_once.py` 5921618b, helper fab8ba7d) is allowed, until 23:00Z.
+
+**Provenance.**
+- Quiet-read observation 54858b0e at 1fd18160 (who 0, 1.22 TB available).
+- Review receipt 59ffe41a.
+- Coordinator verified all pins against r2 REVIEW-MANIFEST 6b43a70d.
+
+**Issued copies.**
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-deployment-go-receipt-r2.json` (0444)
+- `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-deployment-go-receipt-r2.json`
+
+ISSUED AUTHORIZE_B_DEPLOYMENT 06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9be5d1396e79b1a
+
+**Not authorized.** This GO does not authorize authority placement, the CPU preflight, GPU or heldout work. Those wait for:
+- the F1 r3 revocation fix;
+- the review of `complete.json`;
+- separate GOs.
