@@ -4042,3 +4042,23 @@ The family pattern is **not** narrowed. Any other member that matches is refused
 **Ruling: full clone.** S9 builds only from a dedicated runner-owned full clone at `/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full`. It is cloned from origin with no filter. safe_input checks that it has no promisor, alternates, grafts, hooks or driver config. It is checked out at evidence commit P. The shared checkout at `/mpac/sdicks02/repos/clasher` is never used as a build source, because it is a partial clone.
 
 **Ruling: frozen-reader interim.** Frozen code (`k4s_logic.git_bytes()` and the frozen END `git show`) runs only under a wrapper that scrubs `GIT_*` and sets the P2-4 environment. It runs only on clones that safe_input has pre-verified (no replace refs, alternates, grafts, hooks or driver config). S5 and S7 perform that check on the host clone before running.
+
+## 2026-10-12 21:31Z: Perception B first authority placement COMPLETE; C-6 audit clean
+
+**Placement GO 4433d54c: done.** It ran exactly once at 2026-10-12T21:30:44Z using the pinned fetch-then-send operator d6cb3690, with one SSH session and no retry.
+
+**Exit status.** Both the launch and the F1 journal returned exit code 0.
+
+**What landed on 08.** The remote completion record (`complete` echo, SHA 12ce1ed2) shows exactly one receipt placed: the combined-review approval 59ffe41a, at `/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/59ffe41a….json`. `runtime_admitted` is false.
+
+**C-6 audit (coordinator, read-only): clean.**
+- The `revocation_tip_commit` and `fetched_tip` are both bb1d4472. That commit is an ancestor of origin/main, and origin/main had no later commits when audited.
+- The ledger contains no `REVOKED` lines.
+- For each of the two placed or relied-on SHAs, the only ledger line is its single issuance line.
+
+**Next steps** (each a separate coordinator GO):
+1. A CPU-preflight `stage` GO, `AUTHORIZE_B_CPU_PREFLIGHT`, scoped to `stage` only.
+2. Its own placement on 08 via F1.
+3. Running the stage.
+
+No CPU, GPU or heldout action has been authorized yet.
