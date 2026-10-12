@@ -264,3 +264,43 @@ See `receipts/reviews-20261011/REVIEWS.md`.
     measurement_files guard;
   - re-run the Mac Python 3.12 tests.
 - Mac untouched now, by coordinator order.
+
+### 2026-10-12T11:13:59Z: Phase B PREPARE ordered (COORDINATOR 2e275312); staging scripts in review
+
+- **Prerequisites met:**
+  - T1 A5 pooled END reference 95774e86;
+  - A4 Mac inputs 73d9ac68 (B.7 f3b87ce5), sealed into T1's private registration bbff541c;
+  - packet at 05 `t1-20261010-r1/end-a5-release-r1/source/reports/explore/t1/private-registration-a5-20261012-r1/packet`
+    (127 files pinned by `END-A5-private-registration-durability-r1.json`).
+- **Plan:**
+  - runtime from 2e275312 (descends 8799a0d6; its e4v3 equals stage_nocopy E2 166a1636's frozen 18
+    measurement_files, including fleet_validity 0775b704) into `$S/runtime-a5`;
+  - fixture from HANDOFF: states.pkl 20.7 GB afdbd237, states-rows.json 49cbe56c, states-rows.bin 20.7 GB
+    dc92bf45; fingerprint 0de69958;
+  - stage under the lock to `$S/bundle-a5` with stage_nocopy (APFS clone);
+  - the session later re-takes the lock, re-runs --verify-bundle and builds fresh.
+- **Scripts:**
+  - `stage_phase_b.sh` and `mac_preconditions.py`: Sol pre-run r1 REJECT (confinement, ssh-error-as-absent,
+    idempotency), all fixed; r2 review pending. Not run yet.
+  - `SOFTWARE-UPDATE-STEP.md`: the Sol computer-use step plus caffeinate, for the coordinator to route.
+- **Mac memory read (read-only):** free+inactive+purgeable about 5.86 GiB, below the 6 GiB precondition; swap free
+  1.33 GiB, total 6 GiB.
+
+### 2026-10-12T11:20:39Z: coordinator memory ruling
+
+- For the quiet window, the operator may gracefully quit only **Google Chrome, ChatGPT and the Claude desktop app**,
+  via osascript `quit app` with no force-kill. **Never quit** T3 Code, Codex, or anything hosting agent threads.
+- Record the apps running before, and the memory before and after quitting. Relaunch the same apps after the
+  session, together with the software-update restore step.
+- If memory is still below 6 GiB after quitting, don't start; report the top memory holders.
+- The formal 5-minute `mac_preconditions.py` check gets its own receipt. Readiness = staging receipt + that check;
+  then the coordinator's start GO.
+- **Operator caution:** `ChatGPT.app` bundles "Codex (Service)" and "Codex (Renderer)"
+  (`Contents/Frameworks/Codex Framework`). Before quitting ChatGPT, check whether that service hosts Codex agent
+  threads; if it does, don't quit it and ask the coordinator.
+
+### 2026-10-12T11:25:11Z: staging scripts approved (Sol pre-run r4 APPROVE)
+
+- `stage_phase_b.sh` r4 plus `macfs.py` plus `mac_preconditions.py`. r1–r3 were REJECTs; every finding is fixed.
+- r4 is APPROVE under the exclusive single-operator assumption, with no concurrent Mac writer in our tree.
+- Running now: runtime, helper, packet, then fixture (long, detached), then stage.
