@@ -2191,3 +2191,21 @@ Also on the hub, but with copies elsewhere:
     4. K4S relaunches r2.
 
     If the builder hasn't released 03 within 30 min, r2 proceeds and the builder waits for the next gap.
+
+## 2026-10-12 01:21Z: T1 END verifier R3 fix: disposition (wrapper frozen, legacy-format verifier)
+
+The R3-1/2/3 candidate splits into two parts. Future wrapper 2928eb15 adds `exit_utc` to TRANSFER and the rsync exit code to PUSH-FAILED. Verifier da22a9fa is strict and would refuse the marker from the running A6 (0a87166f).
+
+**Ruling:**
+- **No wrapper change this END campaign.** The approved wrapper 0a87166f stays for A6, the 08 reference and the 01 reference: one set of reviewed bytes, and no re-review on the critical path. Wrapper 2928eb15 is shelved.
+- **The verifier is fixed to accept exactly the 0a87166f marker format.** Binding comes from existing controls, not `exit_utc`:
+  - **R3-1:** explicit raises, and refusal under `not __debug__`.
+  - **R3-2:**
+    - the pinned `--prepare` proof (empty receiver plus nonce, created before the launch time in the launch receipt) plus a nonce match;
+    - reject if PUSH-FAILED.json is present;
+    - the TRANSFER-COMPLETE marker's mtime must be at or after `exit.json`'s exit time;
+    - refuse unprepared directories.
+  - **R3-3:** a legacy PUSH-FAILED without an rsync code counts as a failure (no ACK), recorded in the receipt.
+  - **V3:** byte-compare `argv.nul` with the pinned argv (`argv_nul_sha256` d3a6e81e, receipt END-A6-launch-preparation-01-r1).
+- **Next:** T1 sends the verifier SHA and diff, and the coordinator routes a narrow Opus diff check.
+- **Until approval:** no ACK; C5 holds (no SSH to 01 from any thread while A6 is in its timing window); received data waits.
