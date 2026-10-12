@@ -1,0 +1,27 @@
+{
+  "schema": "clasher.t1.release-hold-checkpoint.v1",
+  "utc": "2026-10-12T11:45:36Z",
+  "coordinator_readthrough": 9686,
+  "driver_candidate_commit": "c5a99fd59800da09971688377c144f759e55b307",
+  "driver_delta_sha256": "92bd6333afdcb6c8033447f56e4c59a7157068a8422101ddb1805ea5e500694f",
+  "direct_C1_r2_verdict_received": false,
+  "Mac_summary_route_received": false,
+  "direct_release_authorization_received": false,
+  "action": "HOLD",
+  "reads_this_checkpoint": [
+    "latest own PROGRESS",
+    "coordinator messages"
+  ],
+  "host_contact": false,
+  "source_changes": false,
+  "repeated_checks": false,
+  "repeated_copy_or_hash": false,
+  "outcome_access": false,
+  "mirror_paused": true,
+  "outcomes_sealed": true,
+  "same_END_timer_active": true,
+  "canonical_R_last_recorded_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "canonical_R_not_probed_this_checkpoint": true,
+  "host_paths_frozen": true,
+  "host01_CPUs_available": true
+}
