@@ -3664,3 +3664,41 @@ This is a deliberate, recorded idle, not an oversight. It will be revisited when
 - **The `--repository` clone** keeps `end/` by design, for claims. It is not part of the hashed runtime.
 
 **R7. Plain copies only (binding).** Every staged input must be an independent regular file with link count 1. **Never use `cp -l`, `ln`, reflink-to-shared, or hard-link dedup.** S10's bytewise copy already complies, and the S4/S10 `st_nlink` gates enforce it.
+
+## 2026-10-12 17:30Z: K4S END package 2, Sol r1: all 7 components REQUEST_CHANGES; Q5 deviation ruled
+
+**Review.** `/mpac/sdicks02/k4s-runner/run-r1/reviews/SOL-REVIEW-END-PKG2-r1.md` (fdefbd8f). Tests: Part A 91 pass (28 real-data tests excluded); Part B 155 pass normally, 145 pass + 11 skipped under -O.
+
+| Component | Verdict | Main findings |
+|---|---|---|
+| S1b (copy admissions) | REQUEST_CHANGES | BLOCKING: the remote reader reads hard-linked admissions (no `st_nlink`). |
+| S3 (guard job) | REQUEST_CHANGES | BLOCKING: an unrestricted `--admissions-dir` and S1b manifest; the shared reader is leaf-only, with no nlink check. HIGH: no `-pfNN` form. |
+| S9 (runtime export) | REQUEST_CHANGES | BLOCKING: git export reads every blob with no pre-read E1/E4/outcome gate; `--source`/verify roots are unconfined. |
+| S10 (stage host) | REQUEST_CHANGES | BLOCKING: the recursive walk hashes any leaf, with no outcome/nlink gate. HIGH: base mismatch (`k4s-confirm-end-r1` vs `k4s-end-r1`), masked P-status, no refusal of S4 test-only bundles. |
+| S5 (preflight) | REQUEST_CHANGES | BLOCKING: bootstrap trusts the caller's manifest SHA, not a fixed 74314eda, before import. BLOCKING: aliased reads and roots. HIGH: 04 can pass with no reference load and no bus-threshold decision. |
+| S6 (exit push + verifier) | REQUEST_CHANGES | BLOCKING: registry hard-link aliases. BLOCKING: shell redirections can truncate a pre-existing or foreign-inode `argv.nul` (reproduced; inherited from T1's pattern). HIGH: C-d exit+1300 s not enforced. |
+| S7 (launch gate) | REQUEST_CHANGES | BLOCKING: unrestricted local reads; a host base symlink lets a launch land in a foreign directory (reproduced). HIGH: failed `ps` treated as a valid census; RC-9 checks only Booleans. |
+
+**Common root cause.** Every component hand-rolls input reads. **Ruling P2-1:** the runner builds ONE shared, reviewed `safe_input` layer and routes every local and remote read and write through it. The layer provides:
+- a declared-root/role allowlist;
+- component-wise `O_NOFOLLOW` walks;
+- `st_nlink == 1`;
+- E1/E2/E4 exact entries;
+- outcome-name refusal before any byte is read;
+- exclusive no-clobber creation;
+- rc-checked subprocess helpers.
+
+S2 r3 and S4 r3b should adopt the same layer where practical.
+
+**Ruling P2-2 (Q5 deviation, decision 1): ADOPTED with Sol's conditions.**
+- Build and stage at evidence commit P. The END-JOB commit X must be a descendant of P whose diff is exactly `reports/explore/k4s-confirm/end/END-JOB.json`.
+- `s9 equivalence` is a hard gate; evidence, admissions and roots are already in P.
+- External and staged inventories are fixed, the S9 verify and S10 receipts are consistent with the bundles, and there are no intervening runtime or bundle changes.
+- Repository clones are fast-forwarded to X.
+- This replaces "build at the END-JOB commit" for this run only.
+
+**Ruling P2-3 (04 preflight).** The binding 04 preflight must run the agreed reference load and duration. A background-only run is a non-qualifying diagnostic. Proceed only if the loaded cumulative bus is at most about 0.3% (the adopted threshold). The intermediate band needs a coordinator decision. At ≥0.7%, stop before any claim.
+
+**Bases.** Use `k4s-end-r1` everywhere (S10-F2). The RC-6 declaration lists runtime, bundles, repository, attempts and preflight, plus the separate Q4 guard-job parent.
+
+No host step is authorized. Package 2 r2 goes to Sol again.
