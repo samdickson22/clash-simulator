@@ -1,0 +1,112 @@
+{
+  "A5_context_counts": {
+    "golden": 125,
+    "speed_each_tier": 300
+  },
+  "A5_context_golden_order": "lexicographic ID order",
+  "all_registration_Mac_END_pool_golden_consumer_joins_by_state_ID": true,
+  "authority": "direct conditional coordinator ruling: delivered golden order permitted if consumers key by ID",
+  "delivered_counts": {
+    "golden": 125,
+    "speed_each_tier": 300
+  },
+  "delivered_golden_order": "END canonical index rows1200:1325; verified metadata equality",
+  "evidence": [
+    {
+      "finding": "Exactness loops identity; row=backend.by_id[identity_] and reference=refs[identity_]; emitted records contain id.",
+      "first_line": 179,
+      "last_line": 203,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+      "sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+    },
+    {
+      "finding": "Belief exactness uses backend.by_id[identity_] and refs[identity_], emitting id/deadline_on.",
+      "first_line": 204,
+      "last_line": 219,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+      "sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+    },
+    {
+      "finding": "Counts and uniqueness only; no golden position equality.",
+      "first_line": 45,
+      "last_line": 55,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+      "sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+    },
+    {
+      "finding": "Mac speed comparison to END uses refs[tier][identity_] (not golden positions).",
+      "first_line": 257,
+      "last_line": 275,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+      "sha256": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e"
+    },
+    {
+      "finding": "by_id mapping and golden_only ID set membership.",
+      "first_line": 137,
+      "last_line": 161,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py",
+      "sha256": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+    },
+    {
+      "finding": "Golden count125 then same Session.exactness ID-based implementation.",
+      "first_line": 118,
+      "last_line": 120,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_reference.py",
+      "sha256": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764"
+    },
+    {
+      "finding": "Native records unique IDs; belief tuples ID/deadline_on and native/belief ID-set equality; no positional comparison.",
+      "first_line": 140,
+      "last_line": 145,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_pool.py",
+      "sha256": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252"
+    },
+    {
+      "finding": "Copies delivered registration sets unchanged into Mac manifest and copies reference files byte-exact.",
+      "first_line": 208,
+      "last_line": 216,
+      "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py",
+      "sha256": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb"
+    },
+    {
+      "finding": "Registration seal verifies a path-to-file-SHA inventory, not golden list positions.",
+      "first_line": 64,
+      "last_line": 72,
+      "path": "reports/explore/t1/release_reference.py",
+      "sha256": "f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555"
+    },
+    {
+      "finding": "Registration lineage checks bind files; only speed IDs are compared as sets. No golden-position constraint.",
+      "first_line": 250,
+      "last_line": 267,
+      "path": "reports/explore/t1/release_reference.py",
+      "sha256": "f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555"
+    }
+  ],
+  "fixture_order_clause": "B.5 golden125 (END order) applies to fixture rows, not equality with A5 sets.golden order",
+  "golden_A5_context_first_id": "0:1200:0",
+  "golden_delivered_first_id": "0:90:0",
+  "golden_first_differing_index": 0,
+  "multisets_equal": true,
+  "no_artifact_reordering": true,
+  "outcome_access": false,
+  "pinned_A4_JSON_sha256": "c9da4db0b34fbdc9f2e3aca43a7b34458c6ca5c9c897873537c58d4ae6f87ae8",
+  "pinned_A4_MD_sha256": "2a36f62073e39ed61148b3554007282ab2e81c75b36931f1db974eda22499e7f",
+  "preparation_failure_preserved": {
+    "before_any_registration_tree_change": true,
+    "error": "ValueError: Original speed/golden order",
+    "exit": 1,
+    "helper": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-A5-registration-private-prepare-r1.py",
+    "helper_sha256": "8a3c08b14dc5e6d35538663b34c5116da473b5d6c7d79028df63683fd7253d0b",
+    "line": 65
+  },
+  "qualification_only_note": {
+    "detail": "Historical loader qualification selects first3 golden IDs, then uses by_id for both backends; not a consumer of this registration or Mac/END comparison and not rerun.",
+    "line": 42,
+    "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts/amendment3-loader-20261011/scripts/equivalence.py"
+  },
+  "schema": "clasher.t1.A4.golden-order-consumer-evidence.v1",
+  "speed_exact_order_equal": true,
+  "symmetric_difference_ids": [],
+  "utc": "2026-10-12T10:39:59Z"
+}

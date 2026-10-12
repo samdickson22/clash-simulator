@@ -1,0 +1,28 @@
+{
+  "no_conversion": true,
+  "pins": {
+    "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/assembly/states.pkl": {
+      "bytes": 20710108933,
+      "sha256": "afdbd237d65897816b2683335c823fdf2557fa1640256acc892ee967368684a7"
+    },
+    "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/reference/student-reference.json": {
+      "bytes": 27314150,
+      "sha256": "7a90fa7a16d38a568ed4b08a0ca971afde7ec9830a920f4e755e8901402fd165"
+    },
+    "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/selection/mac-sets.json": {
+      "bytes": 298150,
+      "sha256": "72d83033051b2fae1bf53e1dca13e4570700374c1e66c161a948be6969e8ce50"
+    },
+    "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/state-rows/states-rows.bin": {
+      "bytes": 20712961718,
+      "sha256": "dc92bf459a337410b53cc5b2313286121542d7137b190493789126af6739b353"
+    },
+    "/mpac/sdicks02/jobs/clasher/mac-registration-20261011/state-rows/states-rows.json": {
+      "bytes": 568325,
+      "sha256": "49cbe56ce9c3df18ae85616d09a481f5113cf7aa29bbed2c8aaca4fcb329f63d"
+    }
+  },
+  "read_only": true,
+  "utc_end": "2026-10-12T10:33:58Z",
+  "utc_start": "2026-10-12T10:33:32Z"
+}

@@ -1,0 +1,43 @@
+{
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "R7_pending": true,
+  "argv": [
+    "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-A5-R6-prerequisites-once-r1.py"
+  ],
+  "canonical_release_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "canonical_release_checkout": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source",
+  "dont_write_bytecode": true,
+  "exit": 0,
+  "finish_utc": "2026-10-12T10:44:39Z",
+  "full_stderr": "",
+  "in_barrier_check_sha256": "79ccbc21e63ccbbaff3e69366896f515edc5e856cf8925b482e499f6b726530d",
+  "in_barrier_check_verbatim_public_path": "reports/explore/t1/receipts/END-A5-R6-in-barrier-pool-check-r1.json",
+  "in_barrier_checked_inputs": 204,
+  "in_barrier_diagnostics_paths": [
+    "/mpac/sdicks02/tmp/t1-release-recheck-umm5u555/check.json",
+    "/mpac/sdicks02/tmp/t1-release-recheck-umm5u555/check.json.diagnostics/stderr.txt"
+  ],
+  "in_barrier_fields_equal_final_R3": true,
+  "outcome_access": false,
+  "outcome_read_attempts": [],
+  "passes": true,
+  "publication_bookkeeping_note": {
+    "cause": "existing PROGRESS-T1.md 207723 bytes exceeded my arbitrary 200000-byte all-path guard",
+    "exception": "AssertionError before git add/commit",
+    "initial_preflight_exit": 1,
+    "registration_R5_R6_not_repeated": true,
+    "resolution": "guard applies to new small receipt files; existing progress log exempt"
+  },
+  "reducer_check": "deferred to authorized release per coordinator 2969615c; never invoked here",
+  "release_authorized": false,
+  "release_reference_sha256": "f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555",
+  "reporting_complete": true,
+  "schema": "clasher.t1.A5.R6-prerequisites.v1",
+  "scope": "release_reference.prerequisites and its in-barrier recheck only",
+  "source_host_contact": false,
+  "start_utc": "2026-10-12T10:41:28Z",
+  "sys_executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "version": "3.12.12 (main, Dec 17 2025, 21:10:06) [Clang 21.1.4 ]"
+}

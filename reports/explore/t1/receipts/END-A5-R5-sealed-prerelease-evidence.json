@@ -1,0 +1,91 @@
+{
+  "R5_sealed": true,
+  "R6_scope": "prerequisites plus in-barrier recheck only",
+  "R7": "coordinator commissions after public receipts; release not authorized",
+  "amendment_1_prerelease": {
+    "amendment": {
+      "commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+      "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-1-20261010.md",
+      "sha256": "b35bd4e5d8beaf8e89ade092bdf4fc607e067e562f7d9f378fb9c06367df2775"
+    },
+    "attempt_roots": {
+      "commit": "4ff93a1004606e3562e5be26874c584d2be7a51d",
+      "path": "reports/explore/t1/receipts/reference-attempt-roots-0108-a5.json",
+      "sha256": "bc90c1bd757cf1a1029d655329e1507d2c202417eb93451759208253e3db3cf2"
+    },
+    "completion": {
+      "commit": "d651b52c1a442072055ae482267531af8018ef25",
+      "path": "reports/explore/t1/receipts/reporting-completion-END-op7-r3-20261011.json",
+      "sha256": "4dd191b644ceb45f2530d5d9d15aea15dc052b8cfac8b22c796308dbf3f172eb"
+    },
+    "descriptor": {
+      "commit": "95774e86b1679cdf5aaebde1391450715e156b63",
+      "path": "reports/explore/t1/receipts/END-A5-pool-descriptor.json",
+      "sha256": "f4319e5f0ff8cd6cf88b61332768643d9b4d00d0a3a60bfb9c36bbfd45f8d2e1"
+    },
+    "end_evidence": {
+      "commit": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+      "path": "reports/explore/t1/private-registration-a5-20261012-r1/end-evidence.json",
+      "sha256": "dc4b1986ebe12085048b5002e0a92ab598e653ac7260813418b29b7da151f037"
+    },
+    "measurement_source": {
+      "commit": "8799a0d6c2ac6bd7291dc85d7bef7d64bd4b4be5",
+      "files": {
+        "build_tiers.sh": "3656f88ecf80cd9aec83c94607dad44088e0b7fbb2d244d06d47c74561e45372",
+        "classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
+        "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+        "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+        "fleet_end.py": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+        "fleet_pool.py": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+        "fleet_profile.py": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+        "fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+        "fleet_validity.py": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+        "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+        "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+        "prepare_fleet_smoke.py": "69190b46ff379b6f75cf38b47d10b5fcd551583e2255301f8a0466a282a0ab1f",
+        "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+        "replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
+        "spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+        "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+        "telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
+        "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+      }
+    },
+    "pool_check": {
+      "commit": "041de8101f44f416d8b895a78d8ba5582e11135f",
+      "path": "reports/explore/t1/receipts/END-A5-pool-check-r3.json",
+      "sha256": "cf3be4dd9e3815f2e02c32a064fa9b5385150e38371c2d0e97ce362f4427c7c2"
+    },
+    "pool_manifest": {
+      "commit": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+      "path": "reports/explore/t1/private-registration-a5-20261012-r1/pool/receipt-manifest.json",
+      "sha256": "0e517b96f6c0eda31a8c75398023f46b559fc38c5c4e31a55e9a006974d0afea"
+    },
+    "registration_manifest": {
+      "commit": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+      "path": "reports/explore/t1/private-registration-a5-20261012-r1/packet/receipt-manifest.json",
+      "sha256": "e4618cc3df92dba8bc20b5fc46f581dbd957ea75d93265ee82b6ea8338b9aebd"
+    },
+    "schema": "clasher.t1.amendment1-prerelease.v1"
+  },
+  "authority": "COORDINATOR fae252e1 and direct private-commit/durability ruling; no outcome authority",
+  "canonical_release_checkout": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source",
+  "canonical_release_checkout_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "golden_order": "A4-delivered END fixture order, unchanged; membership-equal125",
+  "golden_order_consumer_evidence": {
+    "path": "reports/explore/t1/receipts/END-A4-golden-order-consumer-evidence-r1.json",
+    "sha256": "50cd117b287e8a62e09009e265321e49aa6364d89e45f2adf3eb6874cc3b5de1"
+  },
+  "landing_commit": "1cb46a138788a4dde81bc74f7313f07804e15bfc",
+  "outcomes_sealed": true,
+  "private_commit": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "private_ref": "refs/private/t1-registration-20261012",
+  "private_tree": "31c4b4c8a365bd9f49f1c80b912215f7672171aa",
+  "public_base_commit": "537ae0593b37255854573da355f8c71bff0060ba",
+  "reducer_ledger_equality": "deferred to release per2969615c, outcome read forbidden now",
+  "registration_sealed": true,
+  "release_authorized": false,
+  "schema": "clasher.t1.A5.R5-sealed-prerelease.v1",
+  "sealed_utc": "2026-10-12T10:43:26Z",
+  "speed_order": "exact A5 order, unchanged"
+}
