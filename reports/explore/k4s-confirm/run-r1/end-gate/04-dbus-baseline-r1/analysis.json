@@ -1,0 +1,62 @@
+{
+ "samples": 1800,
+ "begin": [
+  "BEGIN 2026-10-12T14:45:20.208Z host=127x04 clk_tck=100 nproc=128 who=0 uid125=45 exe="
+ ],
+ "end": [
+  "END 2026-10-12T15:15:32.988Z who=0 uid125=45"
+ ],
+ "gone": [],
+ "clk_tck": 100,
+ "start_ticks": [
+  1032
+ ],
+ "wall_seconds": 1811.7,
+ "whole_window_core_pct": 0.0359,
+ "samples_sha256": "b80bf1cd327e0ca9acc465c4f174a65d74c57fb77e5fd53fc98d3b0b66d5fa52",
+ "window_30s": {
+  "n": 1770,
+  "min": 0.0,
+  "p50": 0.0331,
+  "p95": 0.0662,
+  "max": 0.0993,
+  "over_1pct": 0,
+  "over_0_7pct": 0
+ },
+ "window_60s": {
+  "n": 1740,
+  "min": 0.0165,
+  "p50": 0.0331,
+  "p95": 0.0497,
+  "max": 0.0662,
+  "over_1pct": 0,
+  "over_0_7pct": 0
+ },
+ "window_120s": {
+  "n": 1680,
+  "min": 0.0248,
+  "p50": 0.0331,
+  "p95": 0.0414,
+  "max": 0.0497,
+  "over_1pct": 0,
+  "over_0_7pct": 0
+ },
+ "window_300s": {
+  "n": 1502,
+  "min": 0.03,
+  "p50": 0.0367,
+  "p95": 0.04,
+  "max": 0.0433,
+  "over_1pct": 0,
+  "over_0_7pct": 0
+ },
+ "window_600s": {
+  "n": 1204,
+  "min": 0.0317,
+  "p50": 0.0367,
+  "p95": 0.0383,
+  "max": 0.04,
+  "over_1pct": 0,
+  "over_0_7pct": 0
+ }
+}
