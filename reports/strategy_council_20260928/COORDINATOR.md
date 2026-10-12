@@ -2591,3 +2591,18 @@ The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8
 - T4 allows its one descriptive old-vs-fixed comparison.
 
 **Hosts:** 01 and 08 stay reserved to T1 until the pool is committed (in case it needs a source re-read). After that, 08 is released for perception B (needs my GO), and the hub mirror is retargeted away from 04 and resumed.
+
+## 2026-10-12 08:01Z: T1 END A5 POOL COMMITTED (95774e86); PC1–PC4 production review commissioned
+
+**Pool.** Both A5 hosts are included, with no exclusion. END ratios are within ±5%: 01 = 0.9789, 08 = 1.0175.
+- Run with unchanged `fleet_pool` 572ad682 under e4v3-venv Python 3.12.12. The reviewed checker was rerun under the same interpreter and PASSED (204 inputs).
+- Pool check 43a6f0f2. Manifest 0e517b96. Descriptor f4319e5f, A5 roots only.
+- **Pool context on 05:** a byte-exact 0addf7c0 copy from 08 (SHA verified), plus a faithful detached worktree reconstruction of `end-a3-f6cebbaa-0108-r1/source` at f6cebbaa. No alias, symlink or substitution was used.
+
+**PC1–PC4 production-packet review** is commissioned to Opus (`END-PRODUCTION-PACKET-REVIEW-r1.md`). For PC1 only, it may take read-only listings of the 01/08 host roots.
+
+**T4.** The single pre-declared descriptive old-vs-fixed comparison on 01 is now allowed.
+
+**Not yet:**
+- 01/08 stay reserved to T1 until the PC verdict.
+- No release.
