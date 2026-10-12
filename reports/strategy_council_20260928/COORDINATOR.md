@@ -3819,3 +3819,36 @@ The outcome-name gate becomes a reviewed, case-insensitive family/pattern denyli
 - **D4. S10 drops on-host `tar -x`.** It is replaced by a shipped receiver: the layer's remote program gains a `receive` mode with exclusive creation, the denylist, nlink and no-follow checks, and hash verification.
 
 **Residual accepted.** A same-size, in-place rewrite by another local actor during a read goes undetected unless an expected SHA is supplied. All production reads must pass expected SHAs.
+
+## 2026-10-12 18:20Z: Perception B combined package r1 review: REQUEST_CHANGES (narrow); scientific core sound
+
+**Review.** Opus independent review of package 22c60918: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-COMBINED-REVIEW-r1.md` (e2ae46ea).
+
+**What passes:**
+- **Integrity:** all 392 files match, and the A1 diff reproduces byte-exactly.
+- **Recovered sources:** the four recovered files match the A1 pins.
+- **Data boundaries:** nothing reads heldout, T1 or K4S data.
+- **C1 in code:** all 8,721 digests are mapped, the 1,536 selected decoders equal composition r6, and the 49 C1 digests are qualification references only.
+- **R16:** it reproduces the frozen receipt exactly.
+- **Torch check:** CPU-only torch is rejected.
+- **Tests:** 335/335 pass.
+
+**Blocking findings:**
+- **F1:** the full-216 `current-graph` recomputation cannot realistically finish inside the hard 2 h one-shot window.
+- **F2:** the code root and claim names are unversioned, so the code cannot be fixed after deployment.
+
+**Ruling.** r2 must be a narrow delta patch against r1:
+- **R1 (b):** per-epoch, fresh-process units, each with its own exclusive receipt, plus a final reducer that requires all 24 receipts and a full re-hash.
+- **R2:** version deployment by package SHA and attempts by GO SHA. The rule becomes one attempt per GO, and environment pre-checks run before the claim.
+- **R3:** kill the 5 surviving mutants, including the GO's GPU/heldout refusal and the 2 h cap. Type-check `phases`. Assert `CUDA_VISIBLE_DEVICES=''`, the thread variables and nice ≥ 19 in every phase.
+- **Everything else stays unchanged.**
+
+The delta review follows.
+
+**Conditions G1–G8 are adopted now for the later CPU GO:**
+- separate coordinator-committed receipts (`APPROVE_B_COMBINED_REVIEW`, then `AUTHORIZE_B_CPU_PREFLIGHT` with gpu and heldout set to false);
+- a reviewed 05→08 deployment script;
+- the clasher-gpu interpreter with `-B -s`, no CUDA, one thread, nice 19, and no environment repair;
+- strict stage → environment → current-graph order with no automatic retry;
+- a coordinator comparison of the environment against the 2026-10-08 record;
+- before the deciding stage: measured cost, an allowlist with no SSH session, and a reviewed notification transfer.
