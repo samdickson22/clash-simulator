@@ -18,19 +18,21 @@ class FleetTechnicalError(RuntimeError):
         super().__init__(detail)
 
 
-def owned_tree(rows, roots, known):
-    """PID reuse never earns ownership; descendants include spawn helpers."""
+def owned_tree(rows, roots, known, pinned=None, keys=()):
+    """PID reuse never earns ownership; descendants include spawn helpers.
+    A row whose pinned identity changed neither is owned nor grants children."""
     live = {r["pid"]: r for r in rows}
+    valid = lambda r: pinned is None or pinned.get(r["pid"], tuple(r[k] for k in keys)) == tuple(r[k] for k in keys)
     for pid in roots:
         if pid in live:
             known.setdefault(pid, live[pid]["start_ticks"])
-    owned = {pid for pid, start in known.items() if pid in live and live[pid]["start_ticks"] == start}
+    owned = {pid for pid, start in known.items() if pid in live and live[pid]["start_ticks"] == start and valid(live[pid])}
     changed = True
     while changed:
         changed = False
         for row in rows:
             if row["ppid"] in owned and row["pid"] not in owned:
-                if row["pid"] in known and known[row["pid"]] != row["start_ticks"]:
+                if row["pid"] in known and known[row["pid"]] != row["start_ticks"] or not valid(row):
                     continue
                 known[row["pid"]] = row["start_ticks"]
                 owned.add(row["pid"]); changed = True
@@ -141,7 +143,7 @@ class ReportingGuard:
         if self.sample_previous is None:
             self.sample_previous = current; self.sample_last = time.monotonic()
         roots = {p for p in self.owned if p > 0} | {os.getpid()}
-        self.current_owned = owned_tree(current, roots, self.known)
+        self.current_owned = owned_tree(current, roots, self.known, self.known_identity, self.supervisor.KEYS)
         # Use the frozen OP-3 identity fields for the explicitly supplied E4
         # tree. A stale T1 job/argv predicate never grants unrelated ownership.
         for r in current:
@@ -153,6 +155,15 @@ class ReportingGuard:
             self.bus_meter = self.bus.begin(self.job, current)
             self.idle_meters = self.idle.begin(self.job, current)
         after, foreign, active, cpu = self.audit.census(self.job, self.previous, block_ids=list(self.blocks))
+        # The census rescans /proc: own E4 descendants that first appear there,
+        # under the same start_ticks and identity-valid ancestry rules.
+        late = owned_tree(after, roots, self.known, self.known_identity, self.supervisor.KEYS) - self.current_owned
+        for r in after:
+            if r["pid"] in late and r["start_ticks"] == self.known[r["pid"]]:
+                identity = tuple(r[k] for k in self.supervisor.KEYS)
+                if self.known_identity.setdefault(r["pid"], identity) == identity:self.current_owned.add(r["pid"])
+        foreign = self.audit.foreign_compute(self.job, after)
+        active = [r for r in active if not self.audit.own_process(self.job, r)]
         # Confirmation can take two seconds; T1 measures the interval AFTER it.
         now = time.monotonic(); dt = max(now-self.last, .001)
         # Extra block checkpoints must not turn T1's one-second burst budget
