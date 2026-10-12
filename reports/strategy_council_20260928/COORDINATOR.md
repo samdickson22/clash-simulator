@@ -3000,3 +3000,19 @@ The Mac operator found that `ssh macmini-fleet 'exit 3'` and `ssh macmini-fleet 
 - `runtime-a5` is verified (11,144 files, manifest 91c938ac, A5 pins, no 94d0e7f2).
 - The packet promotion fix (r5) is in Sol review.
 - ChatGPT.app bundles a "Codex (Service)". If that service hosts agent threads, the operator skips quitting the app and asks the coordinator first.
+
+## 2026-10-12 11:39Z: K4S round r3 audit PASS_WITH_NOTES; rulings for cut 3 and r4
+
+The audit is in `k4s-audits/ROUND-r3-AUDIT.md`. Results:
+- All 69 evidence hashes match.
+- All arithmetic was recomputed independently.
+- The handshake order is correct on both hosts.
+- R2-audit findings F1–F5 are resolved.
+- No outcome is exposed.
+
+**Rulings:**
+- **F1 (MEDIUM): fix `checkpoint.py`.** Expected per-host completions are derived from the phase's dispatch file, and a missing dispatch is an anomaly with exit 2. The fix needs a narrow Sol review. If the review isn't approved before r4 launches, a recorded hand check at every health read (completed vs dispatch per host, plus the exit reason) is required instead.
+- **F3: quiet-read v3 from cut 3.** It is v2 with `apt-config` and `apt.systemd.dai` added to the pattern. It must be tested read-only before cut 3.
+- **F2:** an r3 receipt erratum corrects the time labels.
+
+**Cut 3** must STOP before 04's apt-daily-upgrade at 13:27:55Z. The r4 duration is capped by 04's release-upgrade stamp, which runs out at 21:32:48Z.
