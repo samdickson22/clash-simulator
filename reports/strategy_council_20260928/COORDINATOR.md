@@ -2343,3 +2343,30 @@ RF1 item 1 was wrong to expect a non-zero verifier exit for 08 r1. The approved 
 - If the verifier exits non-zero, apply C-b: record the output and escalate.
 
 No code changes.
+
+## 2026-10-12 02:56Z: RF1 independent review: APPROVE_WITH_CONDITIONS; C1–C8 adopted
+
+The review (`END-RF1-REVIEW-r1.md`, T1 job dir) found:
+- the exemption preserves the purpose of the all-attempts rule;
+- r1 is inside the class;
+- counting r1 isn't viable (F3);
+- erratum c42b32fe is correct.
+
+All conditions are **adopted**:
+- **C1, mechanical predicate.** All must hold:
+  - the DURABLE-ACK shows SEALED, status=failed, files=1, and the attempt's exit≠0;
+  - the manifest's keys are exactly {`failure.json`};
+  - `fleet_technical_cause` is null;
+  - the innermost `fleet_reference.py` frame is `run` at a line ≤96, or there is no such frame;
+  - `detach.log` holds only the traceback.
+
+  Otherwise L1 applies.
+- **C2:** at most one exempt refusal per host per END campaign. A second one means STOP and a new ruling.
+- **C3:** the refusal disclosure is committed before r2 launches. PC1 becomes: host-root listing == descriptor ∪ committed exempt disclosures (disjoint), and the PC1 reviewer re-evaluates C1.
+- **C4:** a byte copy of r1 goes on 05 at `BASE/fleet-end-refusals-0108/127x08/<r1>/`, outside the registered root.
+- **C5, pre-exec gate.** In the exec shell: parent nice is 0, the scheduler is SCHED_OTHER, and the argv is byte-identical with no outer prefix (the frozen inner `nice -n 10 taskset` is unchanged). Afterwards, record wrapper and E4 nice = 10.
+- **C6:** no signal on a wrong nice. E4 is left to self-refuse and seal, then STOP and escalate. This replaces RF1's "owned STOP before admission".
+- **C7:** a read-only 08 host listing of r1's measurement directory is part of r2's C1 proof.
+- **C8:** post-ACK routing branches on the DURABLE-ACK status, never on the exit code.
+
+The preservation text in the roots file now reads as "every E4 invocation that sealed `fleet-identity.json`". That is a declared interpretation, flagged to PC1.
