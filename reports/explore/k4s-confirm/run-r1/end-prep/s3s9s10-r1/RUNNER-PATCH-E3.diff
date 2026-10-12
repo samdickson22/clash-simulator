@@ -1,0 +1,29 @@
+--- /tmp/s3_guard_job.py.orig	2026-10-12 10:08:06.286705647 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r1/s3_guard_job.py	2026-10-12 10:08:06.302706095 -0700
+@@ -71,7 +71,7 @@
+ Q3_COMMITS = ("b2f9e25e1002d43cc910a4bb476716cc4cd32623", "ce042b9775f80cb495c327b14a4712730ae95c85")
+ GUARD_PARENTS = {"127x03": "/mpac/sdicks02/jobs/clasher", "127x04": "/mpac/sdicks02/jobs-k4s"}
+ JOB_NAME = re.compile(r"k4s-end-guard-r1-rd([0-9]{2})-a([0-9]{2})")
+-DEFAULT_ADMISSIONS_DIR = "reports/explore/k4s-confirm/end-admissions"
++DEFAULT_ADMISSIONS_DIR = "reports/explore/k4s-confirm/end-guard-admissions"   # coordinator E3 (ab171591)
+ DEFAULT_PYTHON = "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python"
+ COMMIT = re.compile(r"[0-9a-f]{40}")
+ 
+@@ -156,7 +156,7 @@
+         s1b = json.loads(C.read_bounded(s1b_manifest, 16 << 20))
+         require(s1b.get("schema") == S1B.SCHEMA and s1b.get("status") == "copied", "not an S1b manifest")
+     for name in S1B.NAMES[host]:
+-        rel = f"{admissions_dir}/{host}/{name}"
++        rel = f"{admissions_dir}/{host}-{name}"   # E3 layout <host>-<name>.json
+         raw = show(repository, commit, rel)
+         identity = S1B.check_admission(host, name, raw)
+         entry = dict(repository_path=rel, sha256=sha_bytes(raw), size=len(raw), identity=identity)
+@@ -370,7 +370,7 @@
+     bp.add_argument("--attempt", required=True)
+     bp.add_argument("--repository", default="/mpac/sdicks02/repos/clasher")
+     bp.add_argument("--commit", required=True, help="commit holding FROZEN-T1 and the committed admissions (Q2)")
+-    bp.add_argument("--admissions-dir", default=DEFAULT_ADMISSIONS_DIR, help="repo dir holding <host>/<name>")
++    bp.add_argument("--admissions-dir", default=DEFAULT_ADMISSIONS_DIR, help="repo dir holding <host>-<name> (E3)")
+     bp.add_argument("--s1b-manifest", help="S1b s1b-admissions-manifest.json (cross-check; recommended)")
+     bp.add_argument("--out", required=True)
+     bp.add_argument("--python", default=DEFAULT_PYTHON if os.path.exists(DEFAULT_PYTHON) else sys.executable)

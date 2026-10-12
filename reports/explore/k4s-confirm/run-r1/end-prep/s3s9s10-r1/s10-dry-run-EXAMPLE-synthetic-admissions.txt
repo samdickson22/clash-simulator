@@ -1,0 +1,202 @@
+# S10 --dry-run example (2026-10-12T16:52:06Z); NO ssh made. Runtime = real S9 build of caeeecdc in /tmp scratch;
+# Q6 inputs = real T1 bytes on 05 (hashed read-only); guard job = S3 build on a scratch commit with SYNTHETIC admissions
+# (the real admissions do not exist yet: S1b has not run). For review of the remote scripts only.
+S9 VERIFY OK: manifest ef231b34a94d9b54c29311f06af7a14f0e6f98ec56cb9d459604709d5e272e45; runtime_files a2ad99a10e413151878a5681bab79853629ba6f29fcd52f71ffd980b277ee639; inventory 9b6a88833b8a17501316c03c1550f56a6cb5bda89ca8ab4907d97fa49c9ee119
+S3 VERIFY OK: /tmp/k4s-s3s9s10-scratch/g-127x03/k4s-end-guard-r1-rd00-a00 manifest 944c23a913a718c864cec7c55bd8f68f942bf9513e7889632d8868301dfd0038
+hashing /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/states-rows.bin ...
+hashing /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/states-rows.json ...
+hashing /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/states.pkl ...
+{
+ "mode": "dry-run",
+ "host": "127x03",
+ "logins": 3,
+ "bytes": 23777097599,
+ "components": [
+  {
+   "kind": "runtime",
+   "local": "/tmp/k4s-s3s9s10-scratch/runtime-caeeecdc/runtime",
+   "remote": "/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79",
+   "files": 11554,
+   "dirs": 1022,
+   "bytes": 409700188,
+   "inventory_sha256": "6b13106a315350ce1667f14e952b3391c1d569b301e4c34cdd7b1a2781df75a0",
+   "commit": "caeeecdccb795b0aa049776d5377ff00190f4b10",
+   "runtime_files_sha256": "a2ad99a10e413151878a5681bab79853629ba6f29fcd52f71ffd980b277ee639",
+   "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+   "runtime_manifest_sha256": "ef231b34a94d9b54c29311f06af7a14f0e6f98ec56cb9d459604709d5e272e45"
+  },
+  {
+   "kind": "inputs",
+   "local": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle",
+   "remote": "/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs",
+   "files": 3,
+   "dirs": 0,
+   "bytes": 23301341213,
+   "inventory_sha256": "0005d2ea884a0c2b3b777b94cdd744082120ac11e17e197550b7e0512509f88f",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle"
+  },
+  {
+   "kind": "guard-job",
+   "local": "/tmp/k4s-s3s9s10-scratch/g-127x03/k4s-end-guard-r1-rd00-a00",
+   "remote": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+   "files": 17,
+   "dirs": 19,
+   "bytes": 66056198,
+   "inventory_sha256": "1173160c5b77d880c69c3922714381acc63122f70689d52d36957219830aea8d",
+   "read_only": [
+    "FROZEN-T1.json",
+    "idle-services.json",
+    "system-bus-admission.json",
+    "repo/reports/explore/t1/receipts/op5-parent-source-127x03.json",
+    "repo/reports/explore/t1/receipts/op5-parent-source-127x08.json",
+    "repo/reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+    "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json"
+   ],
+   "bindings": [
+    {
+     "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "label": "seed-03",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+     "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+     "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+     "label": "seed-08",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+     "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+    },
+    {
+     "commit": "0e137378ff251896d7a27899a9453f278945276b",
+     "label": "join-08-server",
+     "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+     "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    {
+     "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "label": "join-08-client",
+     "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+     "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+   ],
+   "guard_manifest_sha256": "944c23a913a718c864cec7c55bd8f68f942bf9513e7889632d8868301dfd0038"
+  }
+ ]
+}
+# login P 127x03
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o ClearAllForwardings=yes -o RequestTTY=no -o Compression=no -- 127x03 'bash -c '"'"'set -eu
+export LC_ALL=C
+hostname
+if test -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79 || test -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79; then echo '"'"'"'"'"'"'"'"'EXISTS|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'ABSENT|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79'"'"'"'"'"'"'"'"'; fi
+if test -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial || test -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial; then echo '"'"'"'"'"'"'"'"'EXISTS|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'ABSENT|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial'"'"'"'"'"'"'"'"'; fi
+if test -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs || test -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs; then echo '"'"'"'"'"'"'"'"'EXISTS|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'ABSENT|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs'"'"'"'"'"'"'"'"'; fi
+if test -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial || test -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial; then echo '"'"'"'"'"'"'"'"'EXISTS|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'ABSENT|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial'"'"'"'"'"'"'"'"'; fi
+if test -e /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00 || test -L /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00; then echo '"'"'"'"'"'"'"'"'EXISTS|/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'ABSENT|/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00'"'"'"'"'"'"'"'"'; fi
+if test -e /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial || test -L /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial; then echo '"'"'"'"'"'"'"'"'EXISTS|/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'ABSENT|/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial'"'"'"'"'"'"'"'"'; fi
+stat -c '"'"'"'"'"'"'"'"'PARENT|%F|%U|%n'"'"'"'"'"'"'"'"' -- /mpac/sdicks02/jobs/clasher
+if test -L /mpac; then echo '"'"'"'"'"'"'"'"'LINK|/mpac'"'"'"'"'"'"'"'"'; fi
+if test -L /mpac/sdicks02; then echo '"'"'"'"'"'"'"'"'LINK|/mpac/sdicks02'"'"'"'"'"'"'"'"'; fi
+if test -L /mpac/sdicks02/jobs; then echo '"'"'"'"'"'"'"'"'LINK|/mpac/sdicks02/jobs'"'"'"'"'"'"'"'"'; fi
+if test -L /mpac/sdicks02/jobs/clasher; then echo '"'"'"'"'"'"'"'"'LINK|/mpac/sdicks02/jobs/clasher'"'"'"'"'"'"'"'"'; fi
+if test -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1; then echo '"'"'"'"'"'"'"'"'LINK|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1'"'"'"'"'"'"'"'"'; fi
+if test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1; then echo '"'"'"'"'"'"'"'"'DIR|present|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'DIR|absent|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1'"'"'"'"'"'"'"'"'; fi
+if test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/bundles; then echo '"'"'"'"'"'"'"'"'DIR|present|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/bundles'"'"'"'"'"'"'"'"'; else echo '"'"'"'"'"'"'"'"'DIR|absent|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/bundles'"'"'"'"'"'"'"'"'; fi
+df -P -B1 /mpac/sdicks02 | tail -n 1 | awk '"'"'"'"'"'"'"'"'{print "DF|" $4}'"'"'"'"'"'"'"'"'
+echo "GIT|$(git --version)"
+if command -v tar sha256sum find xargs sort >/dev/null; then echo '"'"'"'"'"'"'"'"'TOOLS|ok'"'"'"'"'"'"'"'"'; fi
+echo "WHO|$(who | wc -l)"'"'"''
+# login TV 127x03 (stdin: tar stream)
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o ClearAllForwardings=yes -o RequestTTY=no -o Compression=no -- 127x03 'bash -c '"'"'set -euo pipefail
+export LC_ALL=C
+umask 022
+test "$(hostname)" = 127x03
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial
+test -d /mpac
+test ! -L /mpac
+test -d /mpac/sdicks02
+test ! -L /mpac/sdicks02
+test -d /mpac/sdicks02/jobs
+test ! -L /mpac/sdicks02/jobs
+test -d /mpac/sdicks02/jobs/clasher
+test ! -L /mpac/sdicks02/jobs/clasher
+test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1 || mkdir -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1
+test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1
+nice -n 19 tar -x -f - -C /mpac/sdicks02 --no-same-owner --keep-old-files
+echo '"'"'"'"'"'"'"'"'@@LIST|0'"'"'"'"'"'"'"'"'
+( cd -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial && find . -mindepth 1 -printf '"'"'"'"'"'"'"'"'%y|%m|%s|%P\n'"'"'"'"'"'"'"'"' | sort )
+echo '"'"'"'"'"'"'"'"'@@SHA|0'"'"'"'"'"'"'"'"'
+( cd -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial && find . -type f -print0 | sort -z | xargs -0 -r nice -n 19 sha256sum -- )
+echo '"'"'"'"'"'"'"'"'@@LIST|1'"'"'"'"'"'"'"'"'
+( cd -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial && find . -mindepth 1 -printf '"'"'"'"'"'"'"'"'%y|%m|%s|%P\n'"'"'"'"'"'"'"'"' | sort )
+echo '"'"'"'"'"'"'"'"'@@SHA|1'"'"'"'"'"'"'"'"'
+( cd -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial && find . -type f -print0 | sort -z | xargs -0 -r nice -n 19 sha256sum -- )
+echo '"'"'"'"'"'"'"'"'@@LIST|2'"'"'"'"'"'"'"'"'
+( cd -- /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial && find . -mindepth 1 -printf '"'"'"'"'"'"'"'"'%y|%m|%s|%P\n'"'"'"'"'"'"'"'"' | sort )
+echo '"'"'"'"'"'"'"'"'@@SHA|2'"'"'"'"'"'"'"'"'
+( cd -- /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial && find . -type f -print0 | sort -z | xargs -0 -r nice -n 19 sha256sum -- )
+echo '"'"'"'"'"'"'"'"'@@GIT|2'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo cat-file -e b2f9e25e1002d43cc910a4bb476716cc4cd32623^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|b2f9e25e1002d43cc910a4bb476716cc4cd32623|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo cat-file -e ce042b9775f80cb495c327b14a4712730ae95c85^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|ce042b9775f80cb495c327b14a4712730ae95c85|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo cat-file -e 0e137378ff251896d7a27899a9453f278945276b^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|0e137378ff251896d7a27899a9453f278945276b|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo cat-file -e 274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a|0'"'"'"'"'"'"'"'"'
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/explore/t1/receipts/op5-parent-source-127x03.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo show b2f9e25e1002d43cc910a4bb476716cc4cd32623:reports/explore/t1/receipts/op5-parent-source-127x03.json | sha256sum
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/explore/t1/receipts/op5-parent-source-127x08.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo show ce042b9775f80cb495c327b14a4712730ae95c85:reports/explore/t1/receipts/op5-parent-source-127x08.json | sha256sum
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/explore/t1/receipts/op5-parent-generation-127x08.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo show 0e137378ff251896d7a27899a9453f278945276b:reports/explore/t1/receipts/op5-parent-generation-127x08.json | sha256sum
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo show 274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a:reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json | sha256sum
+echo '"'"'"'"'"'"'"'"'@@END'"'"'"'"'"'"'"'"''"'"''
+# login F 127x03
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o ClearAllForwardings=yes -o RequestTTY=no -o Compression=no -- 127x03 'bash -c '"'"'set -euo pipefail
+export LC_ALL=C
+test "$(hostname)" = 127x03
+test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79
+test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs
+test -d /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial
+test ! -L /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+chmod -R a-w -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial
+mv -T -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79
+test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79.partial
+stat -c '"'"'"'"'"'"'"'"'FINAL|%F|%a|%n'"'"'"'"'"'"'"'"' -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79
+n=$(find /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79 -perm /222 | wc -l)
+echo "WRITABLE|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/runtime-caeeecdccb79|$n"
+chmod -R a-w -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial
+mv -T -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs
+test -d /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs.partial
+stat -c '"'"'"'"'"'"'"'"'FINAL|%F|%a|%n'"'"'"'"'"'"'"'"' -- /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs
+n=$(find /mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs -perm /222 | wc -l)
+echo "WRITABLE|/mpac/sdicks02/jobs/clasher/k4s-confirm-end-r1/t1-background-inputs|$n"
+chmod 0444 -- /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/FROZEN-T1.json /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/idle-services.json /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/system-bus-admission.json /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo/reports/explore/t1/receipts/op5-parent-source-127x03.json /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo/reports/explore/t1/receipts/op5-parent-source-127x08.json /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo/reports/explore/t1/receipts/op5-parent-generation-127x08.json /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json
+mv -T -- /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+test -d /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+test ! -e /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial
+stat -c '"'"'"'"'"'"'"'"'FINAL|%F|%a|%n'"'"'"'"'"'"'"'"' -- /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+n=$(find /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00 -maxdepth 1 -type f -perm /222 | wc -l)
+echo "WRITABLE|/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00|$n"
+echo '"'"'"'"'"'"'"'"'@@FGIT|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo cat-file -e b2f9e25e1002d43cc910a4bb476716cc4cd32623^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|b2f9e25e1002d43cc910a4bb476716cc4cd32623|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo cat-file -e ce042b9775f80cb495c327b14a4712730ae95c85^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|ce042b9775f80cb495c327b14a4712730ae95c85|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo cat-file -e 0e137378ff251896d7a27899a9453f278945276b^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|0e137378ff251896d7a27899a9453f278945276b|0'"'"'"'"'"'"'"'"'
+git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo cat-file -e 274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a^{commit} && echo '"'"'"'"'"'"'"'"'CATFILE|274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a|0'"'"'"'"'"'"'"'"'
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/explore/t1/receipts/op5-parent-source-127x03.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo show b2f9e25e1002d43cc910a4bb476716cc4cd32623:reports/explore/t1/receipts/op5-parent-source-127x03.json | sha256sum
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/explore/t1/receipts/op5-parent-source-127x08.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo show ce042b9775f80cb495c327b14a4712730ae95c85:reports/explore/t1/receipts/op5-parent-source-127x08.json | sha256sum
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/explore/t1/receipts/op5-parent-generation-127x08.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo show 0e137378ff251896d7a27899a9453f278945276b:reports/explore/t1/receipts/op5-parent-generation-127x08.json | sha256sum
+printf '"'"'"'"'"'"'"'"'SHOW|%s|'"'"'"'"'"'"'"'"' reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json; git -C /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo show 274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a:reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json | sha256sum
+test "$(hostname)" = 127x03 && echo DONE'"'"''
+# exit=0
