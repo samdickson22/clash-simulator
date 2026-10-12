@@ -86,3 +86,18 @@ Hard stop is 2026-10-12T23:30:00Z.
   files read-only ([receipts/g08-verify.json](receipts/g08-verify.json)).
 - **12:22:50Z:** union gate written ([receipts/G-UNION-VERIFIED.json](receipts/G-UNION-VERIFIED.json)): r1 + G-01
   + G-08 = 8,804,755 roots. The R4-D fit starts when R3a-rep frees the GPU (about 13:00Z).
+- **12:58:55Z:** R3a-rep fit returned: 2,500/2,500 steps, 5,136 s wall, final loss about 5.49, GPU memory about
+  2.6 GB.
+  - **Driver bug (harmless):** at 12:59:02Z the driver's wall-time guard SIGTERM'd the already-finished trainer
+    during teardown. complete.json (step 2500, stopped=false) and segment.json (`returned`) had already been
+    written at 12:58:55Z.
+  - Cause: the guard took "prior progress" from the current complete.json, so the limit collapsed to 600 s.
+  - Fixed: the guard now skips a finished fit and uses the plain 2× budget. Anomaly acknowledged; the driver was
+    restarted at 12:59:36Z.
+- **12:59:12Z:** R3a-rep calibrated: threshold 0.49952925741672516. The play rate is 0.345944609297725, the same
+  count of plays as R3a, as the target fixes it. Checkpoint 8d537a78; runtime `rt-R3a-rep` ready.
+  - Hand-mirrored to 05 (explicit files, SHA-verified): `.pt`, calibration, fit receipts, READY.
+  - Receipts are in [receipts/fits/R3a-rep/](receipts/fits/R3a-rep/).
+- **12:59:22Z:** R4-D fit launched on the 14-shard union (seed 2026101201, 2,500 steps); expected done about
+  14:30Z.
+- **13:00Z:** R3a K4S-120 at 1,013/1,167, then R3a S-200 (one-core lanes), then R3a-rep.

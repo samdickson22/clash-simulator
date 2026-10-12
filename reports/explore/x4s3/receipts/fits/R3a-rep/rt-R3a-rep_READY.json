@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-12T12:59:12Z",
+  "id": "R3a-rep",
+  "plan_sha256": "8bf019b94957419d5c565601287b785afb90ca5af832a9dff249ebdddbb25e38",
+  "student": {
+    "id": "R3a-rep",
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/R3a-rep.pt",
+    "checkpoint_sha256": "8d537a782df775617487d2996b7153ded16cee9782797ba688a132380ddc5b8f",
+    "threshold": 0.49952925741672516,
+    "calibration_sha256": "bc98ac2835b33c8c49f7231be27d59850d9af7c86ade06f84db25406deab022a",
+    "status": "X4S-3 R3a-rep student; exploration only; NEVER ADOPTABLE"
+  }
+}

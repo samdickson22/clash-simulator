@@ -115,9 +115,12 @@ class Fits:
         elif now() >= STOP_AT: why = 'hard_stop'
         else:
             start = datetime.datetime.strptime(rec['launched_at_utc'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc)
+            done = jload(J/'fits'/fid/'complete.json')
+            if done and not done['stopped'] and done['step'] == FITS[fid]['steps']:
+                return  # finished; the trainer is only tearing down
+            # 2x expected wall time for this segment (resumed segments get the full budget; conservative).
             limit = 2*(FITS[fid]['steps']*STEP_SECONDS+LOAD_SECONDS)
-            done = jload(J/'fits'/fid/'complete.json'); prior = done['step'] if done else 0
-            if (now()-start).total_seconds() > limit*(1-prior/FITS[fid]['steps'])+LOAD_SECONDS: why = 'wall_over_2x'
+            if (now()-start).total_seconds() > limit: why = 'wall_over_2x'
             losses = []
             try:
                 for line in (J/'fits'/fid/'train.jsonl').read_text().splitlines()[-200:]:

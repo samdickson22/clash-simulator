@@ -1,0 +1,17 @@
+{"utc": "2026-10-12T11:52:39Z", "kind": "driver_start", "pid": 2099466}
+{"utc": "2026-10-12T11:52:39Z", "kind": "phase_launch", "student": "R3a", "arm": "K4S-120", "attempt": 1, "todo": 1200}
+{"utc": "2026-10-12T11:53:09Z", "kind": "retire", "indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "why": "interrupted games/R3a/K4S-120/a1: memory_guard rc=-15"}
+{"utc": "2026-10-12T11:53:09Z", "kind": "phase_launch", "student": "R3a", "arm": "K4S-120", "attempt": 2, "todo": 1189}
+{"utc": "2026-10-12T11:53:40Z", "kind": "retire", "indices": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "why": "interrupted games/R3a/K4S-120/a2: memory_guard rc=-15"}
+{"utc": "2026-10-12T11:53:40Z", "kind": "phase_launch", "student": "R3a", "arm": "K4S-120", "attempt": 3, "todo": 1178}
+{"utc": "2026-10-12T11:54:06Z", "kind": "driver_exit", "reason": "SIGTERM"}
+{"utc": "2026-10-12T11:55:37Z", "kind": "driver_start", "pid": 2100919}
+{"utc": "2026-10-12T11:55:37Z", "kind": "retire", "indices": [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], "why": "interrupted games/R3a/K4S-120/a3: supervisor_SIGTERM rc=-15"}
+{"utc": "2026-10-12T11:55:37Z", "kind": "anomaly", "name": "exit-games_R3a_K4S-120_a3", "reason": "supervisor_SIGTERM", "rc": -15}
+{"utc": "2026-10-12T11:56:37Z", "kind": "phase_launch", "student": "R3a", "arm": "K4S-120", "attempt": 4, "todo": 1167}
+{"utc": "2026-10-12T12:59:02Z", "kind": "fit_stop", "fit": "R3a-rep", "reason": "wall_over_2x"}
+{"utc": "2026-10-12T12:59:02Z", "kind": "anomaly", "name": "fit-R3a-rep", "reason": "wall_over_2x"}
+{"utc": "2026-10-12T12:59:12Z", "kind": "student_ready", "id": "R3a-rep", "threshold": 0.49952925741672516, "play_rate": 0.345944609297725, "checkpoint_sha256": "8d537a782df775617487d2996b7153ded16cee9782797ba688a132380ddc5b8f"}
+{"utc": "2026-10-12T12:59:22Z", "kind": "fit_launch", "fit": "R4-D", "resume": []}
+{"utc": "2026-10-12T12:59:36Z", "kind": "driver_exit", "reason": "SIGTERM"}
+{"utc": "2026-10-12T12:59:36Z", "kind": "driver_start", "pid": 2137533}
