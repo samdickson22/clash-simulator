@@ -136,3 +136,13 @@ Hard stop is 2026-10-12T23:30:00Z.
 - **15:04:05Z:** R3a-rep K4S-120 complete (1,167/1,167, rc 0, beside the R4-D fit at PSI 0.00). R3a-rep S-200
   launched with the GPU idle, under the union-fit/S-200 rule. Next: R4-D S-200, then the R4-DC fit beside R4-D
   K4S-120.
+- **15:28Z:** R3a-rep S-200 complete (1,167/1,167, rc 0, PSI max 0.0). **All of R3a-rep's games are complete.**
+- **15:28–15:32Z (ops bug, fixed):** the driver didn't reap the supervisors it spawned, so a zombie kept the exited
+  phase's group "alive". Dispatch waited for the 5-min heartbeat's incidental reap, costing 3.8 min idle. Driver r6
+  (15:32:21Z) reaps children every tick. Scheduling only.
+- **15:31:46–15:56:00Z:** R4-D S-200 complete (1,167/1,167, rc 0), with no fit alongside.
+- **15:56:00Z:** R4-DC fit (union, 5,000 steps, seed 2026101203) and R4-D K4S-120 launched together. PSI was 0.00
+  through the fit's load and training (20 s samples in [receipts/psi-r4dc-load.log](receipts/psi-r4dc-load.log)),
+  fit at 1.84 s/step.
+  - Projections: R4-D K4S-120 about 17:10Z; R4-DC fit about 18:31Z; R4-DC games (if the gate passes) about
+    18:33–20:10Z.

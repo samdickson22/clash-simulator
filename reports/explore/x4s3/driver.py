@@ -371,6 +371,13 @@ def main():
     signal.signal(signal.SIGTERM, lambda *a: stop.append('SIGTERM'))
     beat = 0
     while not stop:
+        # Reap exited children (supervisors, fits) so a zombie never keeps its process group "alive".
+        while True:
+            try:
+                pid, _ = os.waitpid(-1, os.WNOHANG)
+            except ChildProcessError:
+                break
+            if pid == 0: break
         try:
             fits.tick(True); prepare_students(); games_tick()
         except Exception as e:
