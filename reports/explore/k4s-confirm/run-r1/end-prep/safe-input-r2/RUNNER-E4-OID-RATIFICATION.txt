@@ -1,0 +1,6 @@
+read_utc=2026-10-12T21:27:18Z runner-independent check of the four E4 blob OIDs (origin/main 457eed181):
+for each exact E4 path: oid from 'git ls-tree origin/main -- <path>', then 'git cat-file blob <oid> | sha256sum' (hash only; never displayed or parsed)
+7c9502037a75263dcfaaf5ab33666d2b8382a201 -> sha256 d1492d0f49d4f9c7... (= ruled E2)  imitation/model/receipts/throughput-0935/complete.json
+a2f94dd0ce1ab1f4b233d63201a454318dc0ecff -> sha256 0a4906396b270206... (= ruled E4)  reports/strategy_council_20260928/live-loop/v4/emulator-host/complete.json
+9e15e1f73e4f3dd05fa635da0f621851a52c873a -> sha256 9c84b7a8b8c82192... (= ruled E4)  .../l1/receipts/b08-gap-export-20261012-r1/complete.json
+1a73d2e1c54ab69fac9433047a8c957c3693d055 -> sha256 724ee1d7032442e1... (= ruled E4)  .../l1/receipts/b08-supplemental-proof-export-20261012-r1/complete.json
