@@ -3640,3 +3640,16 @@ This is a deliberate, recorded idle, not an oversight. It will be revisited when
 - **Exempt list.** These three, plus E2, are exempt at their **exact path and SHA**. They may be hashed as part of the runtime export and must **never be parsed**.
 - **Fail-closed.** S9 and S4 must refuse **any** tracked `complete.json` at the build commit that is not on this list of four (exact path and SHA). Later additions need a new ruling.
 - **Not a reading grant.** This permits the runtime to carry the files. It does not permit any tool to read them.
+
+## 2026-10-12 17:13Z: Exploration X4S-3 complete: more off-policy search data does NOT help the student (exploration, never adoptable)
+
+**Readout.** RESULTS is at c86d928d (`reports/explore/x4s3/RESULTS.md`), with a time fix at 52d4d9df. It covers 1,167 paired seeds and 7,002 games, and all reducer checks pass.
+- **Primary:** R4-D (more W-root data) − R3a = **+0.69 pp [−1.54, +2.78]** in losses. The noise reference (R3a-rep − R3a) is +1.41 [−0.69, +3.51]. Fit-seed noise is under 4 pp in every view.
+- **Pre-declared conclusion: "data helps" = NO.** Off-policy W roots look saturated for this student, so **G-style generation stops.**
+- R4-DC was skipped by the pre-declared stop rule: the point estimate was ≥ 0, and the independent gate gave +0.6855 pp.
+- The S-200 thrash-window sensitivity (374 seeds) agrees.
+- All deviations are disclosed in RESULTS: the guard deviation and 33 retired seeds, data that isn't a strict superset, calibration-slice reuse, and operational events.
+
+**Hosts.** 01 is idle; 08 was never used. Mirror: 14,140 files, SHA-verified, at `05:<job>/mirror/final/`.
+
+**Direction.** The next student lever is **on-policy cutoff-state labels** (states the student actually reaches, labelled by the search teacher), or student capacity. An Opus design brief for the next exploration on 01 and 08 follows. Its scripts need Sol review before any host run.
