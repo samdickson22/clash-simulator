@@ -1,22 +1,28 @@
 {
-  "schema": "clasher.e4v3.a5-guard-race-tests.v1",
+  "schema": "clasher.e4v3.a5-guard-race-tests.v2",
   "host": "127x05",
-  "utc": "2026-10-12T03:52:04Z",
+  "utc": "2026-10-12T04:20:00Z",
   "interpreter": "CPython 3.12.12 (uv, private job-dir install)",
   "priority": "nice -n 19 taskset -c 120-123",
   "fleet_validity_before": "94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae",
-  "fleet_validity_after": "eae5db3f6feb76a1ad506738c88cc08686757a87891dffb47e0c5bd57d11ddb6",
+  "fleet_validity_after": "016ae7d0ba8238b5af55356a9b33b3e467c02ef21087599535dbb16a2ef26cf3",
   "unit": {
     "command": "python -B -m unittest discover -s reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests",
     "baseline_before": "Ran 91 tests, OK (skipped=2, torch unavailable)",
-    "new_tests_against_before": "test_guard_census_race.py: FAILED (failures=7); reuse test passes on both (preserved behaviour)",
-    "after": "Ran 96 tests, OK (skipped=2, torch unavailable)"
+    "new_tests_against_before": "test_guard_census_race.py (10 tests): FAILED (failures=5): the three race positives (census-only children, reverse-order grandchild, foreign row also listing E4 worker 102) and denied_parent_new_child with the child in the ownership snapshot (inherited :144 weakness now closed); arbitrary_exec, arbitrary_exec_active, repeated_exec, late_rearm, rejected-intermediate grandchild and pid-reuse pass on both (frozen behaviour preserved)",
+    "after": "Ran 101 tests, OK (skipped=2, torch unavailable)"
   },
   "live_proc": {
     "script": "e4-guard-race-fix-20261012/live_race.py, run as: python -B live_race.py <e4v3> (real /proc on 127x05; 10 spawn workers started between the ownership snapshot and the census; synthetic pinned dbus row appended)",
-    "before_3_runs": "workers_owned 0/10, all 10 E4 workers flagged foreign_compute, other_foreign 6 (each run)",
-    "after_3_runs": "workers_owned 10/10, own_tree_flagged [], other_foreign 6 (each run)"
+    "before_3_runs": "94d0e7f2: workers_owned 0/10, all 10 E4 workers flagged foreign_compute, other_foreign 6 (each run; re-run 2026-10-12 ~04:18Z)",
+    "after_3_runs": "016ae7d0: workers_owned 10/10, own_tree_flagged [], other_foreign 6 (each run)"
   },
   "outcomes_read": false,
-  "ssh": false
+  "ssh": false,
+  "revision": "r2 (Sol r1 response: exec exception deleted; identity-valid ancestry in both snapshots)",
+  "superseded_r1": {
+    "fleet_validity": "eae5db3f6feb76a1ad506738c88cc08686757a87891dffb47e0c5bd57d11ddb6",
+    "sol_r1": "REQUEST_CHANGES"
+  },
+  "sol_probes_r2": "Sol .sol-review/probes.py on 016ae7d0: arbitrary_exec, arbitrary_exec_active, repeated_exec, late_rearm, denied_parent_new_child all identical to 94d0e7f2 (rejected); grandchildren owned [100,102,103]"
 }
