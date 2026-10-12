@@ -1,0 +1,5 @@
+read_utc=2026-10-12T15:06:16Z
+Frozen end_evidence.counting (end_evidence.py sha 6337e4bc…, identical at 391d2006 and origin/main), called read-only on
+ledger/blind-ledger.json (649272bd), the 10 committed phase-meta supervisor-exit.json files, and each inventory/completion pair:
+  completion/    (v1, inventory f10ab943, completion ed7d11b7): REFUSES - EvidenceError "END requires the sealed blind ledger and counted inventory"
+  completion-v2/ (v2, inventory 22c41cb7, completion 3794d953): ACCEPTS - blocks 3900, losses 99, host_phases = all 10 (03/04 x reporting, r1..r4)

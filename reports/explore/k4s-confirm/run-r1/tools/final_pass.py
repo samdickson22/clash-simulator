@@ -67,7 +67,7 @@ def main(argv):
     rows.append(dict(host=h,phase=ph,descriptor=d))
    per[f'{h}/{ph}']=dict(counted=n,games_hashed=games)
  for pop,c in COUNTS.items():need(logical[pop]=={f'{pop}-{i:04d}' for i in range(c)},f'{pop} logical coverage {len(logical[pop])}/{c}')
- inv=dict(schema='clasher.k4s.counted-inventory.v1',study='PREREG-K4S',sealed=True,outcomes_read=False,blocks=rows)
+ inv=dict(schema='clasher.t1.counted-blocks.v1',outcomes_sealed=True,blocks=rows)   # frozen end_evidence INVENTORY_FIELDS
  inv_raw=(json.dumps(inv,indent=1)+'\n').encode();(out/'counted-inventory.json').write_bytes(inv_raw)
  hosts_phases={h:[ph for ph in phases if per[f'{h}/{ph}']['counted']>0] for h in ('127x03','127x04')}
  last_exit=max(v['utc'] for v in exits.values())

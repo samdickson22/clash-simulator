@@ -349,3 +349,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   SSH/apt/idle 0; interference_any_flag count 1459/447 (nothing excluded); §5.3(2) drops 0.
 - 14:45:20Z R4 04 bus baseline running (30 min, one ssh, nice 19) -> end-gate/04-dbus-baseline-r1/.
 - 2026-10-12T14:48:09Z Sealed reducer/verifier runs (rounds/final/sealed/SEALED-RUNS.md): no --release; reduce.py fails closed in barrier.outcome_release before load_blocks (rc 1, no output); verify_k4s.py REFUSED 'no release receipt' (rc 2). Audit-hook guard: 0 accesses to final-view/hub-blocks/games. strace unusable (openat2 unknown; ptrace denied) - attempts recorded.
+- 2026-10-12T15:06:16Z ERRATUM: v1 counted-inventory envelope not the frozen end_evidence format (END would refuse). completion-v2/ candidate (inventory 22c41cb7, completion 3794d953; rows identical) validated by frozen counting(); final_pass.py envelope fixed. Coordinator to rule which receipt is of record.
