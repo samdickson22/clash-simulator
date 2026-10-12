@@ -1,0 +1,22 @@
+{
+  "A4_completed_delivery_received": false,
+  "R5_sealed": false,
+  "R6_R7_invoked": false,
+  "coordinator_read_through": 9388,
+  "direct_R5_registration_go_received": false,
+  "handoff_ruling_commit": "0c71f359faf1360925ecffbdaab3e3025b9f0959",
+  "handoff_ruling_verbatim_path": "reports/explore/t1/receipts/END-host08-handoff-ruling-0c71f359.md",
+  "handoff_ruling_verbatim_sha256": "2e1f023b24a061e6e2169e11fcbef5ca4ae3fdacf1d4afbff2d6d98ed2d9f1bd",
+  "host01_reservation": "T1 reserved; four job directories frozen",
+  "host08_T1_paths": "frozen until release, including for R7 host-root listing",
+  "host08_compute_reservation": "released to perception by coordinator",
+  "local_only_checkpoint": true,
+  "mirror_remains_paused_no_action": true,
+  "no_host_contact_or_writes": true,
+  "no_repeated_checks_or_analysis": true,
+  "outcomes_sealed": true,
+  "registration_sealed": false,
+  "same_END_timer_remains_active": true,
+  "schema": "clasher.t1.A5.A4-input-hold-health.v1",
+  "utc": "2026-10-12T09:26:21Z"
+}
