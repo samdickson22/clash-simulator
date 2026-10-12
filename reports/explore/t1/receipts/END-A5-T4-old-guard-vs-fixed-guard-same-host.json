@@ -1,0 +1,61 @@
+{
+  "all_other_D_content_stays_sealed": true,
+  "comparison": "D2 (01 r1) / 01 A5 passing attempt",
+  "comparison_started": {
+    "one_predeclared_comparison": true,
+    "pool_check_commit": "95774e86b1679cdf5aaebde1391450715e156b63",
+    "start_utc": "2026-10-12T08:02:42Z"
+  },
+  "descriptive_only": true,
+  "host": "127x01",
+  "hosts_not_contacted": true,
+  "label": "old-guard vs fixed-guard, same host",
+  "metadata_correction": {
+    "completed_comparison_count": 1,
+    "corrected_from_pinned_receipts_TIERS": [
+      "K0c",
+      "S",
+      "K2",
+      "K4"
+    ],
+    "initial_error": "AssertionError before any ratio was produced: hand-written tier list used K1 instead of K4",
+    "receipts_sha256": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6"
+  },
+  "method": "For each matched own-tier state, median of three D2 wall repeats divided by median of three 01 A5 wall repeats; report the per-tier median of those 300 state ratios. Repeats are reduced per state before the corpus, following the established speed-summary convention.",
+  "no_gate_effect": true,
+  "no_pool_effect": true,
+  "no_registration_effect": true,
+  "no_release_effect": true,
+  "old_code_never_pooled": true,
+  "one_predeclared_comparison": true,
+  "only_D_derived_statistics": "the four predeclared per-tier median wall ratios",
+  "outcomes_sealed": true,
+  "per_tier_median_wall_ratio_D2_over_01_A5": {
+    "K0c": 0.9862563400847204,
+    "K2": 0.9828748714209707,
+    "K4": 0.9855854687728673,
+    "S": 0.9860989764557191
+  },
+  "pool_check_commit_precedes_D_timing_access": "95774e86b1679cdf5aaebde1391450715e156b63",
+  "pool_check_sha256": "43a6f0f2b6f9d1d8afc3f086be02778ea7aa2b6ea5ec3cb0820e68269e03b72c",
+  "python_executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "python_version": "3.12.12",
+  "schema": "clasher.t1.a5.T4-descriptive-comparison.v1",
+  "sources": [
+    {
+      "complete_fixed_state_repeat_inventory": true,
+      "directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x01/end-reference-127x01-0a87166f-r1",
+      "receipt_manifest_sha256": "95f01164d69231a84b277b36b32ff3e6f75a9ae50096ee773ae1120221b165e4",
+      "speed_wall_source": "speed-reference-raw.jsonl",
+      "speed_wall_source_sha256": "db5deb4b980aeba8151b82fe801874209d73c750ef1889a8a0f1c5f32aa86223"
+    },
+    {
+      "complete_fixed_state_repeat_inventory": true,
+      "directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x01/end-reference-127x01-0a87166f-a5-r1",
+      "receipt_manifest_sha256": "d6bc1d4c9f9205d43d5ae2aeadcb45cd252011d45bbbb3dd90bb0b2fc65b9f29",
+      "speed_wall_source": "speed-reference-raw.jsonl",
+      "speed_wall_source_sha256": "1c17eb668b5230a4c1d461a935db679ad42158569294b48d84e9f7c6d4cf767e"
+    }
+  ],
+  "utc": "2026-10-12T08:03:56Z"
+}
