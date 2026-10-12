@@ -1,0 +1,4 @@
+start_utc=2026-10-12T14:47:16.441Z cmd: verify_k4s.py --root final-view --ledger blind-ledger.json --out sealed/verifier-out.json (NO --release)
+strace: test_ptrace_get_syscall_info: PTRACE_TRACEME: Operation not permitted
+strace: ptrace(PTRACE_TRACEME, ...): Operation not permitted
+rc=1 end_utc=2026-10-12T14:47:16.449Z

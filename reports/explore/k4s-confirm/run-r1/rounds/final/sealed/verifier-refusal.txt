@@ -1,0 +1,2 @@
+start_utc=2026-10-12T14:47:44.131Z cmd: sealed_guard.py verify_k4s.py --root final-view --ledger ledger/blind-ledger.json --out sealed/verifier-out.json (NO --release)
+rc=2 end_utc=2026-10-12T14:47:44.309Z

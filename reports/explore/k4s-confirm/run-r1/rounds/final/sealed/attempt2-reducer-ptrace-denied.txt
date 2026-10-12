@@ -1,0 +1,4 @@
+start_utc=2026-10-12T14:47:16.427Z cmd: reduce.py --root final-view --ledger blind-ledger.json --out sealed/reducer-out.json (NO --release)
+strace: test_ptrace_get_syscall_info: PTRACE_TRACEME: Operation not permitted
+strace: ptrace(PTRACE_TRACEME, ...): Operation not permitted
+rc=1 end_utc=2026-10-12T14:47:16.439Z

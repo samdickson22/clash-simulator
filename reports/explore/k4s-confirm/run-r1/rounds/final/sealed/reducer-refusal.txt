@@ -1,0 +1,5 @@
+start_utc=2026-10-12T14:47:43.577Z cmd: sealed_guard.py reduce.py --root final-view --ledger ledger/blind-ledger.json --out sealed/reducer-out.json (NO --release)
+  File "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 373, in __init__
+    raise TypeError(
+TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'NoneType'
+rc=1 end_utc=2026-10-12T14:47:44.129Z

@@ -1,0 +1,6 @@
+  File "reduce.py", line 329, in <module>
+  File "reduce.py", line 310, in main
+  File "/mpac/sdicks02/repos/clasher-k4s-run/reports/explore/k4s-confirm/barrier.py", line 23, in outcome_release
+  File "/mpac/sdicks02/repos/clasher-k4s-run/reports/explore/k4s-confirm/common.py", line 8, in read
+    raise TypeError(
+TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'NoneType'
