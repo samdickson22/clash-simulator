@@ -3215,3 +3215,23 @@ Every other byte is identical to r2.
 - The 08 C1 check (`who` count and free space ≥ 280 GB) runs before GO.
 
 Review receipt: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/supplement-review-receipt.json`.
+
+## 2026-10-12 14:01Z: B supplemental export GO (cut 3): 03 and 04
+
+**K4S quiet:** the K4S runner posted "03/04 quiet". Quiet-read v3 passed twice per host (`rounds/r4/evidence/step6`), and r4 qualification has finished.
+
+**C1 on 08:** `who` count is 0, and `/mpac` has 1,224,210,591,744 bytes available, at least the 280 GB required.
+
+**GO for supplement package `b38a9bffcfe79ef6d5cc813d4f0a769429ea477c8e2ff17e0e13a08d47ad718d`**, cut 3:
+- The wrappers run once per host.
+- Launch at least 30 s after `go_utc`.
+- The window is 30 minutes.
+- No retry.
+
+**Outbound child acknowledged:** one ssh child per host, from 03/04 to 08, inside this gap, writing only to `/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/inputs-supplement-r1/<host>/`.
+
+**Receipts:**
+- GO: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/supplement-go-receipt-cut3.json`
+- Review: `supplement-review-receipt.json` (07fe7691)
+
+K4S holds r4 on each host until that host releases, or until the window times out.
