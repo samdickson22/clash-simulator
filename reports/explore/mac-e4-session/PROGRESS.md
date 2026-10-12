@@ -251,3 +251,16 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   - Receipts are in `receipts/phase-b-prep-20261011/a4-nocopy-darwin/`.
 - **Timeline:** the Mac fixture is built about 08:47–12Z on Oct 12, then T1 merges and seals the registration.
 - **HOLD:** no staging and no timing until the coordinator's go.
+
+### 2026-10-12T04:45:56Z: TIERS Amendment 5 adopted (COORDINATOR 46ab6923, main 8799a0d6). HOLD, no Mac action
+
+- E4 `fleet_validity.py` changed from 94d0e7f2 to 0775b704.
+- **Rule:** no TIERS Mac session may run on a runtime holding 94d0e7f2. The staged Mac `runtime-a3` (76887b33) holds
+  94d0e7f2, so it is **NOT admissible** for Phase B.
+- **Before Phase B:**
+  - re-stage the Mac runtime from main 8799a0d6 or later, with the same 33 + E1 overlays, then run
+    `verify_runtime_staging.py`;
+  - use the builder's A4 erratum to `stage_nocopy.py`, re-checking its pinned SHA and the END-A3/A5
+    measurement_files guard;
+  - re-run the Mac Python 3.12 tests.
+- Mac untouched now, by coordinator order.
