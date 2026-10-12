@@ -4179,3 +4179,18 @@ ISSUED AUTHORIZE_B_STAGE_TRANSPORT_RUN a679b0520fef294979a5c7ab5b666660b8a1a345c
 2. its placement;
 3. a reviewed run through the same guarded transport pattern;
 4. a G6 comparison against the 2026-10-08 environment record before the epoch units.
+
+## 2026-10-12 22:37Z: Perception B: environment phase needs new transport; ruling PT-1, one phase-generic transport
+
+The owner's offline environment drafts (`l1/prepared/b08-environment-and-placement-go-r1/`) show that the reviewed stage transport, launcher and guard can't run any other phase unchanged. The stage GO, phase, claims and completion schema are all hard-coded.
+
+**Ruling PT-1.** Do not build and review a separate transport for each remaining phase: environment, 24 epoch units, reducer. The owner writes **one phase-generic transport set** instead, with these parts:
+- **Sender and launcher.** One reviewed sender and launcher, parameterized only by the issued CPU GO. Phase, claims and the completion schema are derived and validated from the GO and the frozen package.
+- **Guard.** One reviewed guard, parameterized by the run-GO SHA. It applies the C-5 rule to every authority the run relies on.
+- **Retrieval.** One generic read-only UNKNOWN retrieval.
+- **Carry-over fixes.** It includes all C-6 items from the stage transport review (S4 `env -i`, S5 hash-before-exec, S2 tokenized revocation plus placement checks, S3 claim after publication, S8 integration tests) and a reviewed output cap for each phase.
+- **Concurrency.** Bounded concurrency for epoch units (G5: at most 8 units, on disjoint cores) is supported but not used until it is separately authorized.
+
+**Review and issuance.** It gets one independent review. After approval, each phase still gets its own CPU GO, placement and run GO.
+
+**Drafts not issued.** The environment drafts 05ff759e and edea9611, and the template 401ac9f9, are not issued. They will be re-drafted with fresh windows after the transport review.
