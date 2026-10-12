@@ -3998,3 +3998,23 @@ ISSUED AUTHORIZE_B_DEPLOYMENT 06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9
 - `runtime_admitted` = false.
 
 **Next.** The first authority-placement GO, under C-1 to C-6 (7ecf4787). The CPU preflight still needs its own GO after placement.
+
+## 2026-10-12 21:04Z: Perception B first authority-placement GO issued
+
+**The GO.** It is byte-identical to the draft at `l1/prepared/b08-authority-placement-go-r1/` (SHA 4433d54c).
+- **What it places:** exactly one receipt, the combined-review approval (59ffe41a), at `B_ROOT/authority/<sha>.json` on 127x08.
+- **Pins:** procedure 20e58965 and operator command d6cb3690.
+- **Execution limits:** cpus [0, 1]; no GPU; no heldout; no retry. It attests `between_phases`.
+- **Window:** 2026-10-12 21:30Z–23:00Z.
+- **Observation:** quiet-read 54858b0e at commit 1fd18160.
+- **Prerequisite:** the deployment record (`complete.json`, 46fad651) was accepted at 4d685b55.
+
+**C-5 pre-issue check passed.** A read-only grep of origin/main shows exactly one issuance line for 59ffe41a and none for this GO.
+
+**Issued copies:**
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r1.json` (0444)
+- `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r1.json`
+
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 4433d54c18e3228971ae3f03fda6b40af8e0fba9d8d3b7387416daff0a70b706
+
+**Not authorized by this GO:** the CPU preflight, GPU or heldout work, or any other placement. After placement, the coordinator runs the C-6 audit.

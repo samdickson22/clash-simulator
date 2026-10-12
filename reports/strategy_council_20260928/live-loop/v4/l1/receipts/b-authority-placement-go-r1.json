@@ -1,0 +1,70 @@
+{
+  "available_bytes": 1223077609472,
+  "between_phases": true,
+  "conditions": {
+    "C1": "Accepted deployment; committed quiet-read; between phases; no runtime admission",
+    "C2": "Keep r2/r3 byte-identical; no git clean; pin reviewed procedure and operator",
+    "C3": "Canonical full lowercase SHA revocation line at column zero and coordinator STOP",
+    "C4": "One invocation of pinned detached fetch-then-send operator; five exported variables; no retry",
+    "C5": "Coordinator performs pre-issue ledger check",
+    "C6": "Coordinator audits revocation_tip_commit..origin/main after placement"
+  },
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_AUTHORITY_PLACEMENT",
+  "deployment_prerequisite": {
+    "complete_sha256": "46fad651c776ec847660f03c003727826b1488065ec19dd7060ae0f944cac9e9",
+    "coordinator_acceptance_ledger_commit": "4d685b554abac07329f60b22b376102a9c065fa5",
+    "go_sha256": "06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9be5d1396e79b1a",
+    "status": "ACCEPTED"
+  },
+  "expires_epoch": 1791846000,
+  "git_sources": {
+    "59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-combined-review-receipt-r2.json"
+  },
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "no_active_cpu_or_gpu_phase": true,
+  "no_retry": true,
+  "not_before_epoch": 1791840600,
+  "observation_provenance": {
+    "commit": "1fd18160ea57b85c91a5daa6305840abc9270a9a",
+    "sha256": "54858b0e9a86ea02879f5cfad7843530367f8cc4ffbb8f0a5cc5e76c3a3d817d",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r1/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-12T20:27:25.676929+00:00"
+  },
+  "operator_command": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/evidence/B-AUTHORITY-PLACEMENT-REVIEW-r3-placement-operator-command.sh",
+    "sha256": "d6cb3690d176c0a70d78f292e57aae23517740853829063d81bdbab9c8ca0ea9"
+  },
+  "operator_exports": {
+    "APPROVED_CPUS": {
+      "value": "0,1"
+    },
+    "COORDINATOR_COMMIT": {
+      "source": "full 40-hex coordinator issuance commit containing this GO and its anchored ISSUED line"
+    },
+    "PLACEMENT_GO_GIT_PATH": {
+      "value": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r1.json"
+    },
+    "PLACEMENT_GO_SHA": {
+      "source": "SHA256 of the byte-identical issued GO file"
+    },
+    "PROCEDURE_SHA": {
+      "value": "20e58965221ce8cb2c3f46cbf55c931fd2e95292302cee547fe43e480d81e351"
+    }
+  },
+  "package_sha256": "374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "procedure_sha256": "20e58965221ce8cb2c3f46cbf55c931fd2e95292302cee547fe43e480d81e351",
+  "receipts": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282.json",
+      "sha256": "59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282"
+    }
+  ],
+  "who_count": 0
+}
