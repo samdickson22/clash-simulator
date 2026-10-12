@@ -3292,3 +3292,19 @@ The investigation is in `k4s-audits/K4S-DBUS-FLAG-INVESTIGATION-r1.md`. The flag
 4. K4S release, which needs an explicit coordinator GO.
 
 **03 and 04** are no longer running K4S reporting. They stay reserved for K4S END until it is planned. 03's T1 corpus copy and 04's perception storage remain off-limits.
+
+## 2026-10-12 15:16Z: K4S R4 passed: 04 bus baseline 0.036%, so END proceeds with the frozen DBus threshold
+
+**The measurement (fbcf1a67):** a read-only 30-minute baseline on 04 after reporting had drained, with the copier off and nothing else logged in. One long-lived SSH session sampled the pinned dbus-daemon at 1 Hz.
+- **Whole window:** 0.0359% of a core.
+- **Worst rolling windows:** 0.099% over 30 s and 0.043% over 300 s.
+- No window went above 1%, which is the R4 bar. The GDM greeter was resident throughout.
+
+**What it means.** The roughly 1.47% we saw during reporting was session churn, mostly copier SSH logins amplified by the greeter. GDM itself adds about 0.04%.
+
+**Ruling.** The K4S END runs with the frozen bus threshold. For every attempt on 04 (and 03):
+- one launch SSH, closed before admission;
+- no copier running during timing;
+- the C5 rule: no SSH to the timed host from any thread.
+
+**Process note.** `probe.sh` was a new script that touched a host and ran without a pre-run review. It was read-only and limited to `/proc` sampling under the R4 authorization, so I'm accepting it after the fact. From now on, any new host script needs review first. That covers the B2 copier and the B3 assembler.
