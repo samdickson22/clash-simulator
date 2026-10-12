@@ -1,0 +1,22 @@
+{
+  "schema": "clasher.e4v3.a5-guard-race-tests.v1",
+  "host": "127x05",
+  "utc": "2026-10-12T03:52:04Z",
+  "interpreter": "CPython 3.12.12 (uv, private job-dir install)",
+  "priority": "nice -n 19 taskset -c 120-123",
+  "fleet_validity_before": "94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae",
+  "fleet_validity_after": "eae5db3f6feb76a1ad506738c88cc08686757a87891dffb47e0c5bd57d11ddb6",
+  "unit": {
+    "command": "python -B -m unittest discover -s reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests",
+    "baseline_before": "Ran 91 tests, OK (skipped=2, torch unavailable)",
+    "new_tests_against_before": "test_guard_census_race.py: FAILED (failures=7); reuse test passes on both (preserved behaviour)",
+    "after": "Ran 96 tests, OK (skipped=2, torch unavailable)"
+  },
+  "live_proc": {
+    "script": "e4-guard-race-fix-20261012/live_race.py, run as: python -B live_race.py <e4v3> (real /proc on 127x05; 10 spawn workers started between the ownership snapshot and the census; synthetic pinned dbus row appended)",
+    "before_3_runs": "workers_owned 0/10, all 10 E4 workers flagged foreign_compute, other_foreign 6 (each run)",
+    "after_3_runs": "workers_owned 10/10, own_tree_flagged [], other_foreign 6 (each run)"
+  },
+  "outcomes_read": false,
+  "ssh": false
+}

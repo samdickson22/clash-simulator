@@ -111,7 +111,7 @@ class ReportingGuard:
             if (self.job/name).exists() and name not in self.admissions:
                 raise ValueError("Every existing guard admission must be pinned")
         self.owned = owned; self.known = {}; self.current_owned = set()
-        self.known_identity = {}
+        self.known_identity = {}; self.pre_exec = set()
         self.audit.own_process = lambda job, row: (row["pid"] in self.current_owned and
             tuple(row[k] for k in self.supervisor.KEYS) == self.known_identity.get(row["pid"]))
         self.previous = None; self.last = time.monotonic(); self.origin = self.last
@@ -141,18 +141,16 @@ class ReportingGuard:
         if self.sample_previous is None:
             self.sample_previous = current; self.sample_last = time.monotonic()
         roots = {p for p in self.owned if p > 0} | {os.getpid()}
-        self.current_owned = owned_tree(current, roots, self.known)
-        # Use the frozen OP-3 identity fields for the explicitly supplied E4
-        # tree. A stale T1 job/argv predicate never grants unrelated ownership.
-        for r in current:
-            if r["pid"] in self.current_owned:
-                identity = tuple(r[k] for k in self.supervisor.KEYS)
-                old = self.known_identity.setdefault(r["pid"], identity)
-                if old != identity:self.current_owned.remove(r["pid"])
+        self.current_owned = self.pin_identity(current, owned_tree(current, roots, self.known))
         if self.bus_meter is None:
             self.bus_meter = self.bus.begin(self.job, current)
             self.idle_meters = self.idle.begin(self.job, current)
         after, foreign, active, cpu = self.audit.census(self.job, self.previous, block_ids=list(self.blocks))
+        # The census takes its own later snapshot: E4 descendants spawned (or
+        # exec'd) after `current` are still E4's. Re-derive on the census rows.
+        self.current_owned |= self.pin_identity(after, owned_tree(after, roots, self.known))
+        foreign = [r for r in foreign if not self.audit.own_process(self.job, r)]
+        active = [r for r in active if not self.audit.own_process(self.job, r)]
         # Confirmation can take two seconds; T1 measures the interval AFTER it.
         now = time.monotonic(); dt = max(now-self.last, .001)
         # Extra block checkpoints must not turn T1's one-second burst budget
@@ -190,6 +188,25 @@ class ReportingGuard:
             owned_pid_start_ticks={str(pid): self.known[pid] for pid in sorted(self.current_owned)})
         self.latest = row["reporting_guard"]
         return reason
+
+    def pin_identity(self, rows, tree):
+        """Use the frozen OP-3 identity fields for the explicitly supplied E4
+        tree. A stale T1 job/argv predicate never grants unrelated ownership.
+        A pid first seen pre-exec (vfork: still its parent's cmdline) may
+        re-pin once at exec, with pid/pgid/start_ticks/uid unchanged."""
+        parents = {r["pid"]: r for r in rows}; owned = set()
+        for r in rows:
+            if r["pid"] not in tree:continue
+            identity = tuple(r[k] for k in self.supervisor.KEYS)
+            old = self.known_identity.setdefault(r["pid"], identity)
+            if old != identity and r["pid"] in self.pre_exec and old[:4] == identity[:4]:
+                self.known_identity[r["pid"]] = old = identity
+            parent = parents.get(r["ppid"])
+            if old == identity and parent is not None and parent["cmdline_sha256"] == r["cmdline_sha256"]:
+                self.pre_exec.add(r["pid"])
+            else:self.pre_exec.discard(r["pid"])
+            if old == identity:owned.add(r["pid"])
+        return owned
 
     def begin_block(self, identity):
         if self.blocks:raise ValueError("Reference guard blocks must be serial and disjoint")
