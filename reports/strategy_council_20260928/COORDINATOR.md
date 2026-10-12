@@ -2796,3 +2796,28 @@ Sol reviewed the candidate in three rounds (`k4s-audits/SOL-REVIEW-CHECKPOINT-r{
 **Safety:** no host mutation, no outcome exposure.
 
 **Deploy:** promote the candidate as `tools/checkpoint.py` in one commit. Running bytes must equal committed bytes, with the SHA recorded. Automatic alerts replace the manual ones; a manual cross-check stays at each inventory.
+
+## 2026-10-12 10:02Z: Perception B prerequisites: 03/04 read window at K4S cut 2; B code review gate
+
+(The previous commit adceb889 is empty, caused by a push-retry script error. This entry is the intended content.)
+
+**Blockers in perception's B plan on 08:**
+- 08 lacks all 192 validation truth files (19.2 MB, pinned on 04).
+- 08 lacks 1,376 of the 1,536 D4 decoder files: 1,052 are pinned on 03 and 324 on 04.
+- The old B worker uses v1 plan auth, but the issued A1 is `assembly-a18-v1`. The A12 B1–B11 integration and review are still required.
+
+**Ruling:**
+1. **Read window on 03 and 04: one read-only session per host, only inside the K4S cut-2 gap,** with the same handshake the builder used:
+   - K4S posts "03/04 quiet" (quiet-read v2), and the coordinator gives GO;
+   - perception posts "released" per host within 30 minutes, or stops;
+   - K4S holds r3 on each host until that host is released or the 30 minutes run out.
+
+   **Scope:**
+   - stat and SHA-check only the exact pinned files and their auth proofs (manifests 1c40c032 and 45a00712);
+   - copy to `08:v4-b-20261012-r1/inputs/<host>/` at nice 19, with a bandwidth cap, SHA-verified at both ends;
+   - copy nothing if a host's total exceeds 60 GB, or if fewer than 100 GB would remain free on 08;
+   - no `games/`, K4S or T1 paths.
+
+   **Pre-review:** the per-host command gets a narrow review before the gap. No unreviewed script touches a host.
+2. **B code:** the B4 telemetry candidate and the A12 B1–B11 integration are reviewed as one package. No GPU work on 08 until that review passes and a dry run is admitted.
+3. **Allowed now:** read-only payload hashing on 08. T1 paths stay frozen.
