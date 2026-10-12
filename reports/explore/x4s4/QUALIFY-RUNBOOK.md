@@ -1,37 +1,30 @@
 # X4S-4 PLAN §6 qualification-stage launch runbook (exploration, NEVER ADOPTABLE)
 
-This was prepared offline on 127x05 on 2026-10-12, while Sol r5 reviews scripts ffde20ac. It authorizes nothing: every
-step on 127x01 waits for an explicit coordinator GO, and runs only if Sol approves the script set. If r5 asks for
-changes, the commit and SHAs below are updated before use. Production (collection, labeling, fits, reporting) is
+This was prepared offline on 127x05 on 2026-10-12 and updated for scripts r6 (commit `C` below) after Sol r5 returned
+REQUEST_CHANGES on ffde20ac. It authorizes nothing: every step on 127x01 waits for an explicit coordinator GO, and runs
+only if Sol approves the script set (now r6). If a later round asks for changes, the commit and SHAs below are updated
+before use. Production (collection, labeling, fits, reporting) is
 **not** part of this runbook; it needs its own GO after the qualification evidence is reviewed.
 
-**Decision points for the coordinator (read first).**
-1. **The T clock.** PLAN §7 defines T as the first launch after GO, and the hard stop as T+24 h, never reset. The
-   qualification stage is the first launch, so `HARD-STOP-UTC.txt` is written at Q1 and the review gap between
-   qualification and the production GO consumes the 24 h. Options:
-   - (a) Accept this as frozen.
-   - (b) Issue the production GO conditionally, at the same time as the qualification GO, effective automatically if
-     every gate in §E below passes. A failure pauses the study for your decision.
+**Coordinator decisions Q-D1 to Q-D4** (COORDINATOR 2026-10-12 22:50Z; effective once Sol approves the script set):
+- **Q-D1. One combined GO:** §6 qualification plus **conditional** production (section G). Production continues
+  automatically only if every gate passes with its exact receipts. Any failure, anomaly or STOP pauses for the
+  coordinator. T starts at the first qualification launch (Q1).
+- **Q-D2. §6.5 trainer compatibility:**
+  - If r5 requests changes: (a), a narrow `qualify4 smoke-pack`, reviewed in the next round.
+  - If r5 approves: (b), `qualify4 trainer` on the first real O batch after the O gate and before R5 fit admission
+    (section G, P8). A trainer failure blocks all fits.
+  - **Applicable variant: (a).** Sol r5 requested changes, so r6 adds `qualify4 smoke-pack` and Q6 runs inside the
+    qualification stage (section D). Production step P8 is not used.
+- **Q-D3. Smoke parity at 8 games per arm:** the designed pause applies. The coordinator decides on any exact-receipt
+  exception.
+- **Q-D4. Q0 seed audit:** included. It runs once on 05 at nice 19 on a few cores, over pinned blobs only. It does
+  not touch the shared checkout's worktree: the reviewed code runs from a /dev/shm export, and its output is written
+  there (see Q0).
 
-   I recommend (b), because the study's own budget is about 19 h after qualification.
-2. **§6.5 trainer compatibility has no reviewed producer.** It needs "a packed smoke batch". The reviewed `label.py
-   plan` admits only bank-C collection phases with a bank-C parity receipt, so smoke captures cannot be labeled or
-   packed by any reviewed path. Options:
-   - (a) A narrow r6 addition, `qualify4.py smoke-pack`, which labels the smoke captures with `label.label_game` and
-     packs them under `<job>/qual/` for `qualify4 trainer`. It needs Sol review.
-   - (b) Defer §6.5 to the first real O batch: run `qualify4 trainer` on `data/onpolicy/batch-0000` after the O gate
-     and before the R5 fit is admitted. That is a recorded amendment to §6 ordering.
-
-   I recommend (a) if r5 returns changes anyway, and otherwise (b).
-3. **Smoke C7b parity on 8 games/arm is noisy.** PLAN §6.2 asks for it on the collection smoke. With 8 games per arm
-   the ±2 pp band can fail by chance. A failure writes PARITY-PAUSE and creates STOP, as designed. The coordinator
-   then decides, through an exact-receipt PARITY-EXCEPTION, whether to continue to production. That decision counts
-   against T.
-4. **The seed audit (Q0) runs on 127x05**, with no host contact. It reads only git blobs of pinned commit 7f82af0d:
-   - 7,705 sources;
-   - the 29 sealed declarations Sol approved (r4, `seed-sources.json` v2).
-
-   Please include Q0 in the GO. It can run before the 01 steps.
+**Budget disclosure.** PLAN §7 allots 0.8 h to staging plus qualification. This runbook expects about 2.0–3.6 h,
+including the 10–20 min smoke-pack labelling of variant (a). With PLAN's 18 h for production, the margin to T+24 h is
+about 2.5–4 h. E8 truncation rules apply if it runs out.
 
 ## A. Fixed identities
 
@@ -40,7 +33,7 @@ changes, the commit and SHAs below are updated before use. Production (collectio
 | Host | 127x01 only. No other host; 03/04/Mac never. |
 | Job root `J` | `/mpac/sdicks02/jobs/clasher/x4s4-onpolicy`. It must not exist before staging. |
 | X4S-3 job `J3` (read-only source) | `/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012` |
-| Script commit `C` | `ffde20acd24ec77012a1d17a366702159c77ef03` (pending Sol r5) |
+| Script commit `C` | `0fc0f243843f44dba30e0ceb3c7e12f8ac0a438f` (scripts r6, pending Sol r6) |
 | Runtime python | `/mpac/sdicks02/repos/clasher/.venv/bin/python`, via `x4s3/runtime.sh` |
 | GPU python | `/mpac/sdicks02/envs/clasher-gpu/bin/python` |
 | Pins | native `44874fd6…`; v1 `d77005d5…`; R3a `37509a43…` (threshold 0.5005528330802917); R3a-rep `8d537a78…` (threshold 0.49952925741672516); emitter `dab61651…`; `x4s3/run.py` `e7f90d76…` |
@@ -109,7 +102,7 @@ cp -a $J3/fit/source $J3/fit/ops $J3/fit/loader6.json $J/fit/
 From 127x05, stream exactly the reviewed X4S-4 files from git (no worktree file):
 
 ```bash
-git -C /mpac/sdicks02/repos/clasher archive ffde20ac reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
+git -C /mpac/sdicks02/repos/clasher archive 0fc0f243 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
 ```
 
 **S2: verify, then overlay.**
@@ -161,11 +154,18 @@ SUP="nice -n 10 taskset -c 0-49 env X4S3_RT=$RT bash $R/reports/explore/x4s3/run
 **Q0, on 127x05 (no host contact): seed audit at the pinned inventory.**
 
 ```bash
-cd /mpac/sdicks02/repos/clasher && git -C . cat-file -e 7f82af0d4b3b6a465cba9a1b6dd26c708bcf25d1 && \
-nice -n 19 /dev/shm/x4s4-venv/bin/python -B reports/explore/x4s4/audit_seeds.py audit
+Q=/dev/shm/x4s4-q0; rm -rf $Q; mkdir -p $Q
+git -C /mpac/sdicks02/repos/clasher archive 0fc0f243 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
+git -C /mpac/sdicks02/repos/clasher cat-file -e 7f82af0d4b3b6a465cba9a1b6dd26c708bcf25d1
+nice -n 19 taskset -c 0-3 /dev/shm/x4s4-venv/bin/python -B -c "import sys; sys.path.insert(0, '$Q/reports/explore/x4s4')
+import x4s4io as io; io.REPORT_ROOT = '$Q/reports/explore/x4s4'
+import audit_seeds as A; A.main(['audit'])"
 ```
 
-It writes `reports/explore/x4s4/seed-audit.json` and must exit 0, with `intersections=[]`. It takes about 1–3 min.
+This reads git objects of the repository by object id only, plus `seed-sources.json` and `plan.json` from the export.
+It writes `$Q/reports/explore/x4s4/seed-audit.json`, never the shared worktree. It must exit 0, with
+`intersections=[]`. The receipt is committed through a temp index from the /dev/shm file. About 1–3 min on 4 cores at
+nice 19.
 
 **Q1: start T, and run the unit tests.**
 
@@ -240,14 +240,27 @@ cd $J && $DET logs/q-ow-acc.log receipts/q-ow-acc-launch.json nice -n 10 taskset
 Pass: `data/raw-OW-acceptance-smoke.json` `passed=true` (2 games, replay_exact, sealed). The gate re-verifies it
 later. About 3–5 min.
 
-**Q6: trainer compatibility (§6.5).** Blocked on decision point 2. With option (a), after an r6 review:
+**Q6: trainer compatibility (§6.5), variant (a) per Q-D2.** It runs after Q4 and needs Q4's two smoke collection
+phases. First, `smoke-pack` labels every authenticated smoke capture with the unchanged `label.label_game` (frozen
+teacher, 1 thread), seals each game under `$J/qual/smoke-raw`, and packs them once with the frozen `pack()` into the
+fresh `$J/qual/smoke-pack/batch-0000` (plan `$J/qual/smoke-plan.json`). It writes nothing under `$J/data`. Then the
+trainer check re-verifies that batch's complete seal and opens it with the frozen RootTeacherStore and targets:
 
 ```bash
-cd $J && $RUN $X/qualify4.py smoke-pack ...            # r6 only
+cd $J && $RUN $X/qualify4.py smoke-pack --phases $J/smoke/collect-K4S-120 $J/smoke/collect-S-200 --threads 1 \
+   --out $J/qual/smoke-pack.json
 cd $J/fit/source && PYTHONPATH=$J/fit/source:$J/fit/source/src:$J/fit/ops nice -n 10 taskset -c 56-61 \
    /mpac/sdicks02/envs/clasher-gpu/bin/python -B $X/qualify4.py trainer --packed $J/qual/smoke-pack/batch-0000 \
    --assets $J/inputs/assets.npz --out $J/qual/trainer.json
 ```
+
+**Pass:**
+- `smoke-pack.json` `passed=true`: all 16 smoke games labelled (`sealed`, or `no_rows` for a game without a scored
+  root), with the packed manifest SHA. STOP or the hard stop during labelling fails it, and nothing is packed;
+- `trainer.json` `passed=true`: rows = roots > 0, and the targets are finite and normalized.
+
+A failure blocks all fits. smoke-pack takes about 10–20 min on one core (about 1,900 captures × 1 label); the trainer
+check takes about 1 min and about 1 GB of GPU memory.
 
 **Q7: evaluation smoke, 8 + 8 R3a games (§6.7).** The runtime plan is the x4s4 plan, so these games are on the
 smoke bank:
@@ -282,9 +295,42 @@ cat $J/smoke/stoptest/supervisor-exit.json; rm $J/STOP
 
 About 4 min.
 
-**Expected total wall time** is about 1.5–3 h, plus 10–20 min of staging. It is CPU-bound on cores 0–49, and the GPU
-is idle except Q6. The order is Q0 (05) → S0–S3 → Q1 → Q2 → Q3 → Q4 → Q5 → Q7 → Q8 → Q6 (if available).
+**Expected total wall time** is about 1.7–3.3 h, plus 10–20 min of staging. It is CPU-bound on cores 0–49, and the GPU
+is idle except Q6. The order is Q0 (05) → S0–S3 → Q1 → Q2 → Q3 → Q4 → Q6 → Q5 → Q7 → Q8.
 Independent CPU steps never overlap phases: one supervisor phase at a time.
+
+## G. Conditional production (Q-D1): runs only after every §6 gate passes
+
+These commands run in this order with no further GO. Any failed gate, ANOMALY, PARITY-PAUSE, STOP or guard stop
+pauses the study for the coordinator. The common variables are as in D. The study's own guards (supervisor,
+studytree, driver) enforce every resource cap; I do not hand-edit any receipt.
+
+| Step | Command (on 01, detached as in D) | Gate to continue |
+|---|---|---|
+| P1 | `printf` the K4S-120 indices `[0,2000) ∪ [3500,3750)` into `$J/collect/idx-K4S-120.json`; `$SUP --phase collect/K4S-120/a1 --range reporting --indices $J/collect/idx-K4S-120.json --config $X/plan-collect.json --arms K4S-120 --script reports/explore/x4s4/collect.py --stop-at …` (≈2.3 h) | clean or interrupted exit; no PARITY-PAUSE (the in-supervisor C7b watch) |
+| P2 | Same for S-200: `[2000,3500) ∪ [3750,4000)`, `collect/S-200/a1` (≈0.6 h) | as P1 |
+| P3 | `qualify4.py parity --phases $J/collect/K4S-120/a1 $J/collect/S-200/a1 --bank collection --min-games 100 --out $J/receipts/parity-collection.json` | passed and final; otherwise the Q-D3 pause |
+| P4 | `label.py plan --phases <P1,P2 phases> --parity $J/receipts/parity-collection.json --out $J/data/label-plan.json` | plan written |
+| P5 | `label.py run --plan $J/data/label-plan.json --set O --workers 48`, then `--set holdout` (≈0.8 h) | both run receipts passed; process exit 0 |
+| P6 | `python -m imitation.exit_r1.pack --roots $J/data/raw-O/K4S-120 $J/data/raw-O/S-200 --output $J/data/onpolicy/batch-0000`; then the same for raw-holdout into `onpolicy-holdout/batch-0000` | exit 0 |
+| P7 | `verify_onpolicy.py --mode O --plan $X/plan.json --label-receipts <O receipts>`, then `--mode holdout …` | `O-VERIFIED.json` and `HOLDOUT-VERIFIED.json` written; rc 0 (0.30–0.45 M rows) |
+| P8 | Not used: Q-D2 resolved to variant (a), and §6.5 trainer compatibility is Q6 in the qualification stage. | — |
+| P9 | `collect_w.py --checkpoint $J/inputs/main02.pt --count 6000 --workers 48` (≈1.2 h, beside the R5 fit); pack `raw-OW` into `onpolicy-w/batch-0000`; `verify_onpolicy.py --mode OW --plan $X/plan.json --selection $J/data/raw-OW-selection.json` | selection reached; `OW-VERIFIED.json` |
+| P10 | Driver (after P7; in parallel with P9): `$DET logs/driver.log receipts/driver-launch.json nice -n 10 taskset -c 56-61 python3 -u $R/reports/explore/x4s4/driver.py`. It runs the R5 and R5-rep fits after the O gate and R5W after the O_W gate, then calibrations and runtimes. | all three fits done and calibrated; no ANOMALY |
+| P11 | Diagnostic, once no fit is live and before reporting: `diagnose.py` with the GPU python on 56–61 | descriptive only. A failure is disclosed as "unavailable" and does not block. |
+| P12 | `touch $J/REPORTING.GO`; the driver runs the ABBA block (≈8.5 h) | every phase settled; no ANOMALY |
+| P13 | `contention.py --job $J`; commit the receipt bytes to `reports/explore/x4s4/receipts/contention-exclusion.json` via temp index and push | the receipt SHA committed on origin/main **before** any reduction |
+| P14 | `reduce.py --job $J --students R3a R5 R5-rep R3a-rep R5W --out $J/analysis/results.json --contention-sha <S> --freeze-commit <C>`. Add `--allow-prefix` only for an E8 hard-stop cut, which is disclosed. | rc 0 |
+| P15 | `write_report.py --contention-sha <S> --freeze-commit <C>`; commit RESULTS.md and the small receipts | the report is rendered |
+
+Production evidence returned:
+- the parity, label, verify, gate, trainer, selection and acceptance receipts;
+- the driver's events, anomalies and retired list;
+- the phase exits and census summaries;
+- the contention receipt and its commit;
+- results.json, RESULTS.md and the diagnostic.
+
+All of it is small JSON/Markdown, posted with SHAs at each milestone.
 
 ## E. Pass/fail and stopping rules
 
@@ -295,7 +341,7 @@ Independent CPU steps never overlap phases: one supervisor phase at a time.
 - A guard stop (memory, PSI, console user) is retried only after the condition clears, and is disclosed.
 - **The qualification passes** when every one of these holds:
   - Q0, Q1, Q2, Q3, Q4, Q5, Q7 and Q8 pass;
-  - Q6 passes, or decision 2(b) is ruled;
+  - Q6 passes (`smoke-pack.json` and `trainer.json`);
   - the smoke parity passes, or there is an exact-receipt PARITY-EXCEPTION.
 
 ## F. Evidence returned (small JSON/text receipts only; no game bytes, captures, checkpoints or corpora)
@@ -312,6 +358,7 @@ and posted with their SHAs:
 | `frozen.json` (Q3) | 125/125 |
 | `roundtrip.json`, `parity-smoke.json` (Q4) | 100% round trip; parity with its pinned phase evidence |
 | `raw-OW-acceptance-smoke.json` (Q5) | 2 games, seals, replay_exact |
+| `smoke-pack.json`, `smoke-plan.json` (Q6) | Games labelled, statuses, rows, drops, plan SHA, packed manifest SHA |
 | `trainer.json` (Q6) | Store/targets, packed manifest SHA |
 | Each phase's `launch.json`, `supervisor-exit.json` and `census.jsonl` summary (Q2/Q4/Q7/Q8) | Execution identity, exits, resource census |
 | `stop-test.json` (Q8) | STOP time, exit time, remaining PIDs |
