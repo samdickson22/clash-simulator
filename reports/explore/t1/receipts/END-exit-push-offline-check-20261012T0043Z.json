@@ -1,0 +1,32 @@
+{
+  "no_network": true,
+  "no_scientific_backend": true,
+  "no_timing": true,
+  "not_actual_host_qualification": true,
+  "synthetic": true,
+  "tests": {
+    "failed_measurement": {
+      "all_mock_transport_after_exit": true,
+      "command_invocations": 1,
+      "exit_code_preserved": true,
+      "fragments_preserved": true,
+      "transfer_marker_after_copy": true
+    },
+    "success": {
+      "all_mock_transport_after_exit": true,
+      "command_invocations": 1,
+      "exit_code_preserved": true,
+      "fragments_preserved": true,
+      "transfer_marker_after_copy": true
+    },
+    "transport_retry_only": {
+      "all_mock_transport_after_exit": true,
+      "command_invocations": 1,
+      "exit_code_preserved": true,
+      "fragments_preserved": true,
+      "transfer_marker_after_copy": true
+    }
+  },
+  "utc": "2026-10-12T00:43:06Z",
+  "wrapper_sha256": "8886028110814eaa1fe9b7662b4a1fbb4d88184198212c19859f7014f3db3b4f"
+}
