@@ -1,0 +1,49 @@
+{
+  "basis": "Retained committed A3 code and existing staging/launch receipts only; no host probe or received scientific-result access.",
+  "coordinator_schedule_ruling": "c6387611",
+  "expected_a6_wall_time": {
+    "ack_not_before": "Recorded exit_utc +1300s, independently of expected duration.",
+    "additional_work": "3600 full decisions plus exactness, backend setup, per-state preparation, guard handshakes, cleanup, sealing and post-exit transport.",
+    "deadline_decision_calls": 7200,
+    "deadline_seconds": [
+      0.2,
+      0.16
+    ],
+    "full_decision_calls": 3600,
+    "nominal_component_minutes_seconds": "26m36s",
+    "nominal_deadline_budget_sum_seconds": 1296,
+    "precise_total_seconds": null,
+    "qualification": "1296s is the sum of nominal deadline budgets, not observed runtime, an enforced total bound, or a guaranteed minimum. This A6 executes the complete three-repeat fleet-reference path; it is not limited to its 300s warmup.",
+    "reason": "No retained mean duration for the unbudgeted full-decision work or preprocessing; a fixed total/finish ETA would be unsupported.",
+    "repeats": 3,
+    "states_per_tier": 300,
+    "thermal_warmup_seconds": 300,
+    "tiers": 4,
+    "warmup_plus_nominal_deadline_budget_seconds": 1596
+  },
+  "host_probed": false,
+  "mirror_paused": true,
+  "outcomes_sealed": true,
+  "registration_unsealed": true,
+  "scheduling": {
+    "apt_clearance_seconds": 7200,
+    "defer_missed_window": "First clean window after that host next actual apt-daily run, with both actual runs exited and fresh full-window apt/motd clearance. No margin relaxation.",
+    "fresh_C1_C2_required": true,
+    "host01_existing_launch_cutoff_utc": "2026-10-12T04:17:43Z",
+    "pool_after_both_references": true,
+    "reference_order": [
+      "127x08",
+      "127x01"
+    ],
+    "refusal_or_failure": "STOP/report; no retry without new coordinator ruling."
+  },
+  "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "source_sha256": {
+    "fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+    "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+    "prepare_fleet_smoke.py": "69190b46ff379b6f75cf38b47d10b5fcd551583e2255301f8a0466a282a0ab1f"
+  },
+  "unchanged_ack_ruling": "0b45a3dc",
+  "utc": "2026-10-12T02:06:01Z",
+  "verification_invoked": false
+}
