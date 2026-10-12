@@ -3576,3 +3576,28 @@ The failure is uniform, with a maximum of about 150 ms in every tier and variant
    - The T1 originals on 01/08 stay preserved, read-only and never deleted.
 4. **Hosts 01/08:** the release-sequence compute freeze lifts. The hosts may take other approved work, provided T1 original paths stay untouched. The hub mirror stays paused until the coordinator retargets it.
 5. **Engineering follow-up (outcome-blind, not a TIERS repeat).** Diagnose the about-150 ms all-cause poll lateness from the sealed Mac timing receipts. This blocks any Mac live play at any tier, and the fix belongs to a future, separately pre-registered Mac study.
+
+## 2026-10-12 16:44Z: Mac poll-lateness diagnosis r1 (outcome-blind; follow-up to A3P-1)
+
+The report is `/mpac/sdicks02/jobs/clasher/mac-a3p-diagnosis/REPORT-r1.md` (dfd9de7d), written by a Haiku worker from timing fields only. It reproduces the A3-P table exactly.
+
+**Cause.** The poll loop's last `time.sleep` wakes 0–150 ms late (median about 30 ms). The loop is in `measure_tiers.py` (`decisions()` 382–397, `wait_until()` 159–163), and the host was running the replay load plus 1 Hz telemetry, with the E-cluster at times fully busy.
+
+**Ruled out:**
+- the schedule: the P1 cadence was used, and no decision overran its next poll (0/999);
+- GC: 0 of 4,572 late polls overlap a GC event;
+- search cost: lateness is uncorrelated (|r| ≤ 0.05) with decision time, and K0c fails the same way as K4.
+
+The 150 ms ceiling is unexplained. It may be macOS timer coalescing.
+
+**Consequence.** A3P-1 stands: the rule was applied as adopted. This is also a **live-loop engineering defect**: any Mac bot that sleeps to a poll deadline under load inherits the same lateness.
+
+**Requirements for any future, separately pre-registered Mac measurement (and for the live loop):**
+- a null no-op decision arm under the same load, as a harness floor;
+- per-poll logging of the requested sleep versus the actual wake;
+- a hybrid final wait (sleep to deadline − 5 ms, then spin);
+- user-interactive QoS for the poll thread, kept off the load-worker cores;
+- telemetry subprocesses de-phased from the polls;
+- P1 spacing kept.
+
+There is no Mac work now. This is queued behind K4S END and the K4S Mac phase.
