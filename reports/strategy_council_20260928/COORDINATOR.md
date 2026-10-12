@@ -2255,7 +2255,7 @@ Each round commits a receipt with every hash. **`round.py` is shelved**: no furt
 
 **Post-round audit:** a read-only evidence and receipt audit by an Opus-high delegate, routed by the coordinator. Sol is reserved for reviewing Claude-written code, and no new code is involved. Findings go to the coordinator. A blocking finding stops the next cycle until it is ruled on.
 
-## 2026-10-12 02:47Z: T1 END reference layout ruling (wrapper `$job/measurement` vs PC1 attempt roots)
+## 2026-10-12 02:37Z: T1 END reference layout ruling (wrapper `$job/measurement` vs PC1 attempt roots)
 
 **The conflict:** the frozen wrapper 0a87166f forces E4 `--output=$job/measurement`, with the job's parent being either BASE or the host root. `release_reference.attempt_roots` (`:114-138`) wants each attempt directory to be an immediate child of the declared root, with `fleet-identity.json` directly inside. There is no code change; the wrapper, E4, the checker and `reference-attempt-roots-0108.json` all stay unchanged.
 
