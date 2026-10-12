@@ -4121,3 +4121,37 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT eb334bb229081bcb49757762d76e45b3d18037c81
 - **C-4, success and audit.** Success means both exit codes are 0 and `complete.json` is verified. Then the coordinator audits the ledger from `revocation_tip_commit` onward.
 - **C-5, UNKNOWN result.** An UNKNOWN result needs a separately reviewed read-only retrieval under its own GO.
 - **C-6, next revision.** S4/S5/S2/S3/S8 go into the next revision; they don't block this run.
+
+## 2026-10-12 22:12Z: Perception B second placement complete, C-6 clean; UNKNOWN-retrieval review; stage run GO issued
+
+**Second placement (GO eb334bb2).** It ran exactly once, 2026-10-12T22:10:41Z to 22:10:46Z, using the pinned operator.
+- Launch and journal exit codes were both 0. One SSH session, no retry.
+- The remote completion record shows exactly one receipt placed on 08: the CPU stage GO (ca6b5ac8). `runtime_admitted` is false.
+
+**C-6 audit (coordinator, read-only): CLEAN.**
+- The revocation tip and fetched tip are both 0f9b0092, an ancestor of origin/main, with no later commits.
+- The ledger has zero REVOKED lines.
+- Each relied-on authority has only its single issuance line.
+
+**UNKNOWN-retrieval review.** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-STAGE-UNKNOWN-RETRIEVAL-REVIEW-r1.md` (73fe4ff2) gives **APPROVE_WITH_CONDITIONS** for reader 41a08106 and sender 2cd58b5a.
+- The procedure is read-only and covers exactly 4 paths.
+- It is usable only after a coordinator-accepted real UNKNOWN, under its own GO:
+  - a window of at most 300 s, opening no earlier than 2026-10-13 00:32Z;
+  - the review's R-1 to R-6 conditions;
+  - one run, no retry.
+
+**Stage run GO.** The run GO is byte-identical to draft a679b052. It binds:
+- transport 29d90793, launcher c99a8b33, manifest 256badc1;
+- guard cffa7f27, transport review ba630631;
+- the CPU stage GO and the second placement GO.
+
+Constraints:
+- Launch exactly once, through the guard only, from 127x05, in the slot 2026-10-12 22:30Z to 23:30Z.
+- Stage hard deadline: 00:30Z.
+- cpus [0,1]. No GPU, no heldout data, no retry.
+
+Issued copies:
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-stage-transport-run-go-r1.json` (0444)
+- `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-stage-transport-run-go-r1.json`
+
+ISSUED AUTHORIZE_B_STAGE_TRANSPORT_RUN a679b0520fef294979a5c7ab5b666660b8a1a345c07dcc2103332b062b421dc6

@@ -1,0 +1,63 @@
+{
+  "combined_review_receipt_sha256": "59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282",
+  "completion_requirements": [
+    "Local launcher exit-code=0.",
+    "Local sender exit-code=0.",
+    "Local complete.json SHA matches returned envelope; schema, CPU GO, package and runtime/GPU/heldout false flags match.",
+    "Coordinator audits claim.revocation_tip_commit..origin/main ledger for CPU GO, combined review, second placement GO and this run GO before any later phase."
+  ],
+  "cpu_go_sha256": "ca6b5ac89accaa513cb81ea21c1f2c3c40338ef724b6703c0d8fde032d7ca891",
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_STAGE_TRANSPORT_RUN",
+  "expires_epoch": 1791847800,
+  "gpu_authorized": false,
+  "guard": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/evidence/B-STAGE-TRANSPORT-REVIEW-r1-operator-command.sh",
+    "sha256": "cffa7f279b61fa7b781157b8aa61da64ff2637d4bee5896ce600c3a98d07400f"
+  },
+  "heldout_authorized": false,
+  "host": "127x08",
+  "issuance_preconditions": [
+    "Second placement eb334bb2 has completed successfully.",
+    "Coordinator C-6 audit of second placement is CLEAN and accepted.",
+    "Publish this exact receipt with exactly one anchored ISSUED AUTHORIZE_B_STAGE_TRANSPORT_RUN line."
+  ],
+  "launch_preconditions": [
+    "Separate explicit coordinator run GO received.",
+    "Invoke only the pinned guard with the review section7 sha256sum check, once, foreground, within22:30-23:30Z.",
+    "Any prior claim, nonzero or UNKNOWN means no relaunch; preserve all partials.",
+    "Keep bundle and guard byte-identical; no git clean, no changes to ~/.bashrc or ~/.ssh/environment or ~/.ssh/rc."
+  ],
+  "launcher": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-stage-transport-review-r1/operator_stage_once.sh",
+    "sha256": "c99a8b339e05d8ba068eeecf152e00aa90cfba3b5b1fa578ef2fafe394645c6e"
+  },
+  "manifest": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-stage-transport-review-r1/REVIEW-MANIFEST.json",
+    "sha256": "256badc178f75b1f5ba09deea693ac2fa245b333c1b062ba591c5c250ad8b515"
+  },
+  "max_launches": 1,
+  "no_retry": true,
+  "not_before_epoch": 1791844200,
+  "operator_command": "printf '%s  %s\\n' cffa7f279b61fa7b781157b8aa61da64ff2637d4bee5896ce600c3a98d07400f /mpac/sdicks02/jobs/clasher/v4-b-gap-review/evidence/B-STAGE-TRANSPORT-REVIEW-r1-operator-command.sh | /usr/bin/sha256sum -c - &&\nRUN_GO_SHA=${RUN_GO_SHA:?Set full issued run GO SHA} /usr/bin/env -u BASH_ENV -u ENV PATH=/usr/bin:/bin /bin/bash --noprofile --norc /mpac/sdicks02/jobs/clasher/v4-b-gap-review/evidence/B-STAGE-TRANSPORT-REVIEW-r1-operator-command.sh",
+  "operator_host": "127x05",
+  "package_sha256": "374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "phases": [
+    "stage"
+  ],
+  "placement_go_sha256": "eb334bb229081bcb49757762d76e45b3d18037c815c23b9ec60063ac3e6c1f68",
+  "review": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-STAGE-TRANSPORT-REVIEW-r1.md",
+    "sha256": "ba630631a5d6d82ee78d9b6c178fac596376165f35a827354ff86cf14969aea6"
+  },
+  "run_go_sha_binding": "RUN_GO_SHA is the full SHA256 of this byte-identical coordinator-issued receipt; resolve after publication.",
+  "stage_deadline_epoch": 1791851400,
+  "transport": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-stage-transport-review-r1/stage_transport.py",
+    "sha256": "29d9079304500a7b9dc075285afc03c45f8d8c55aa74503ff10d6e23e81d97e5"
+  },
+  "unknown_policy": "No automatic inspection, reconnect, retry or repair. Read-only retrieval requires separate reviewed code and its own issued GO plus explicit authorization."
+}
