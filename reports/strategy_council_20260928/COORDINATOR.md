@@ -2238,3 +2238,19 @@ Wall time for A6 hasn't been committed; T1 is to record it with its basis.
 - **01 reference:** if it can't start by the 01 cutoff after its own C-d and C1, it is deferred, not relaxed. It moves to the first clean window after 01's next apt-daily, with a fresh C2 (both actual runs exited, ≥2 h clearance, both motd stamps fresh). The same applies to 08 if its window is missed.
 - **Pooling** happens once both references exist.
 - **If A6 refuses or fails,** STOP and report, with no retry without a new ruling.
+
+## 2026-10-12 02:20Z: K4S cycle method: Proposal M adopted (manual checklist, automation shelved)
+
+Sol has rejected the cycle automation twice (`round.sh` r1, `round.py` r2: seven MAJOR findings, all about unattended-automation guarantees). Sol re-verified the manual r1 cycle as correct. **Adopted: Proposal M.** Every P2 cycle runs by hand from a written checklist that incorporates Sol's substantive checks:
+
+1. Owned STOP, with proof that the supervisor and every recorded worker group are empty.
+2. Drain: completed-ID set = supervisor-exit list; hub-ack bindings and returned marker checked; copier revoked on both sides.
+3. Inventory: frozen `replace.py` runs once on a working ledger copy with a hub view limited to this run. Validate canonical rows, events = failed blocks, exact 3000/900 coverage. Only then publish, keeping the previous ledger. Escalation gates: 150/45 and k 9/7.
+4. Fresh namespace and fresh qualification.
+5. Finalize: hashes, runtime byte-equality, 03 idle pin, dispatch, barrier.
+6. Prelaunch: timer fired, maintenance exited, both motd stamps fresh, and the builder handshake.
+7. Launch, then confirm launch.json, admission and dispatch SHA on both hosts. On any failure: owned STOP and escalate.
+
+Each round commits a receipt with every hash. **`round.py` is shelved**: no further hardening rounds and no execution.
+
+**Post-round audit:** a read-only evidence and receipt audit by an Opus-high delegate, routed by the coordinator. Sol is reserved for reviewing Claude-written code, and no new code is involved. Findings go to the coordinator. A blocking finding stops the next cycle until it is ruled on.
