@@ -1,0 +1,161 @@
+{
+ "base_commit": "3cd0e58bd7ed1416e393f3d85ccfc4c653f86bad",
+ "bundle": {
+  "bytes": 195431758,
+  "path_05": "/mpac/sdicks02/jobs/clasher/mac-e4-private/bundles/session-a5-r1-private.bundle",
+  "path_mac": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session-a5-r1-private.bundle",
+  "range": "3cd0e58bd7ed1416e393f3d85ccfc4c653f86bad..refs/private/mac-e4-tiers-session-r1",
+  "sha256": "ab0eb38451b7e5cf05751828fb06696b84a83dc6bc3b60c7590c3232cd827ab8"
+ },
+ "content": "sealed TIERS Mac session receipts (timing/capacity/health; no game outcomes)",
+ "files": {
+  "belief-exactness.json": {
+   "bytes": 25058,
+   "sha256": "4949be22319aef5e11888c51eca6377ad7d23a306adcc775065e3a4119beb639"
+  },
+  "build-tiers.json": {
+   "bytes": 1633,
+   "sha256": "eec5c7f5df2b089ad3b426885aef6e78fd0511a3b363d5cc0b6be7136325cac1"
+  },
+  "capacity.jsonl": {
+   "bytes": 1661380660,
+   "sha256": "fb5029d3570f99f54b144bfbaaddc7f2eeb7f2f014e455a4e963943d88682315"
+  },
+  "coordinator-lock.json": {
+   "bytes": 148,
+   "sha256": "f27d8c9cc6e55597fbb1d2181f4ee8bf25bf658eae50b5e85960a5873e8e5a2c"
+  },
+  "corpus-capture.json": {
+   "bytes": 150016,
+   "sha256": "c30d6c1e7129c7c321160b80f1713c7a2a0cbc9f260df89ffb473c4cd91b9f13"
+  },
+  "deadline-corpus.jsonl": {
+   "bytes": 3965339,
+   "sha256": "144f5104712760a75606f921a25ca8918cf8fd037325899f8fdb4499663dfd69"
+  },
+  "deadline-equivalence.json": {
+   "bytes": 391132,
+   "sha256": "4cbeb71a00fbb5c8ff1acb421bf0f877dca6a0c8346f23c9f6c7407387f9ff84"
+  },
+  "decisions-tiers.jsonl": {
+   "bytes": 15751765,
+   "sha256": "3dad2b19d7fc02956beb0a252988620f3dbe3747bc979b8597f8bc906adf4ca6"
+  },
+  "exactness-tiers.json": {
+   "bytes": 26929,
+   "sha256": "9d1503d899db4ef549f7e2e97df7d938585502ad6abf9f400cd8e38591244be8"
+  },
+  "forward-cpu.jsonl": {
+   "bytes": 327920,
+   "sha256": "ae2aac41edac8e934fe3d670dd29be1e750aa135cb35a1dcfb0d7786c61a0f8d"
+  },
+  "forward-mps.jsonl": {
+   "bytes": 326616,
+   "sha256": "4e35d630c78d4af5b172b940ec8fd38491fdbad2af8921d0754b82f897545399"
+  },
+  "forward-window-cpu.json": {
+   "bytes": 690,
+   "sha256": "9cfa04f7ae9416952cc0ba61256bfcab37cfb33bb3fc89b15ab23c9f3f956c9a"
+  },
+  "forward-window-mps.json": {
+   "bytes": 704,
+   "sha256": "656debf61427a15c31c72052d1afeed2f31d3ff2f98d9f3711e73cc621f77009"
+  },
+  "gc-freeze-rss-K0c.json": {
+   "bytes": 293,
+   "sha256": "b949ac070ca9830ec573a3240bf11e1faace727a22ecab1ed494e451357bc73e"
+  },
+  "gc-freeze-rss-K2.json": {
+   "bytes": 292,
+   "sha256": "9bb23ffeffba64cc030a2855fe8f7936f6e37879fe94c39fb3b52ed29bf3220d"
+  },
+  "gc-freeze-rss-K4.json": {
+   "bytes": 291,
+   "sha256": "588f24389dd37ea6d241215bdb654551393783dccf17443726d55544f892aed8"
+  },
+  "gc-freeze-rss-S.json": {
+   "bytes": 290,
+   "sha256": "592928efdf3ccfbdffcf30866f7e72086e3a44966c97c9933b4a444cc83b9eba"
+  },
+  "gc-freeze.jsonl": {
+   "bytes": 15743458,
+   "sha256": "c2942d21d805d1882c45c7331979219464b6624d5b9da3a783f67387828e5408"
+  },
+  "gc-trace.jsonl": {
+   "bytes": 4327078,
+   "sha256": "81bb9d6ccd29851a990139d53482587c74d61ed3798322bc1cb7b3c89276b3a9"
+  },
+  "loaded-windows.json": {
+   "bytes": 132990,
+   "sha256": "e8f216635f44bb3bc017490ea6c25eb1a7d95cab7a6d0dbdb52799c98368b18d"
+  },
+  "offline-yolo/settings.yaml": {
+   "bytes": 401,
+   "sha256": "adaefd34ea4594608007b0dbfc03c452e0eb9d1062e3be2a7b2898aefa577e5d"
+  },
+  "perception-replay.jsonl": {
+   "bytes": 62162812,
+   "sha256": "0aceaaac44c669648c9410a46e347887f1ffd5f68f7f11dec11a70969a6ee4ea"
+  },
+  "pre-session-census.json": {
+   "bytes": 151,
+   "sha256": "bb62a82e8785bc75409392daae4ffd1e0322dd06ebb3f713812f1f460ea64d68"
+  },
+  "presession-census.jsonl": {
+   "bytes": 39728371,
+   "sha256": "e14d70f151c231fc23f657b87813d13e8b4ce2c6129ea1a8c27b66c95bddeb23"
+  },
+  "receipt-manifest.json": {
+   "bytes": 3044,
+   "sha256": "f411b9b4c7790564c6407983d162e6a5feff378239304e73dbea9a0f45bc2ed6"
+  },
+  "receipt-manifest.sha256": {
+   "bytes": 88,
+   "sha256": "78e11c5560d445d60fa36a8982f6ab4f0f7298374f51c271bf44f240209efd39"
+  },
+  "runtime-versions.json": {
+   "bytes": 204,
+   "sha256": "91b69fd05edbaad287d11cb89485a77dce1fcb13a9a03da527923b00b85059fe"
+  },
+  "speed-loaded.jsonl": {
+   "bytes": 4762665,
+   "sha256": "60e83704ffc099cdc55ed8f09064de338bb2bb17367be60a6e45d5ef21a5fef5"
+  },
+  "speed-unloaded.jsonl": {
+   "bytes": 104125,
+   "sha256": "e925b11e23d2cdffeccc0d31e13e82de16e738ef1766a0cd45706ddbaf62f823"
+  },
+  "student-agreement.json": {
+   "bytes": 946440,
+   "sha256": "33a1c1491db576276b39b80183c70185111b59fcb8bd236bac9411eca793fe52"
+  },
+  "student-forward.jsonl": {
+   "bytes": 754586,
+   "sha256": "018944453f2e3955de4f86b849b8342146c0129e859d91755c659bb3c5fc6bd0"
+  },
+  "tiers-complete.json": {
+   "bytes": 191,
+   "sha256": "799017e3986d9379987acdf8e62d2092ac0df7a7d9d9b88d227d4986b0cc98a1"
+  },
+  "tiers-identity.json": {
+   "bytes": 67695,
+   "sha256": "1a57194c690daa62749c7d011526f719b00c34146118dd1b11317bb87fca3933"
+  },
+  "tiers-summary.json": {
+   "bytes": 464701,
+   "sha256": "6b0324e0a0f731583a4d66f9836cd4254c8d1ea54bec863c4ed309222fc7e488"
+  },
+  "unloaded-windows.json": {
+   "bytes": 284,
+   "sha256": "d01e67a08565d56ad7ac7b61639157d0d1fea2ec0bd34717deba6fa1c19edc83"
+  }
+ },
+ "never_push": true,
+ "private_branch": "private-mac-e4-session-r1",
+ "private_commit": "174c4a0aa0aff96379cfc593d08a1e6ba8136379",
+ "private_ref": "refs/private/mac-e4-tiers-session-r1",
+ "private_tree": "a24483820f5bab10c1a43c8058ceac3732a0099c",
+ "repo_path": "reports/explore/mac-e4-session/tiers-session-r1/sealed",
+ "repository": "Mac:/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/k4s-commit-repo (single remote; pushurl invalid; pre-push hook refuses)",
+ "schema": "clasher.mac-e4-session.private-commit-binding.v1"
+}

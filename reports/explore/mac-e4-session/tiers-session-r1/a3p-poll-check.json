@@ -1,0 +1,115 @@
+{
+ "amendment": "TIERS Amendment 3 A3-P",
+ "combination": "A3-P on the frozen gate-4 variant v*; can only remove feasibility; failure is not a technical failure and grants no repeat",
+ "outcomes_read": false,
+ "receipt_manifest_sha256": "f411b9b4c7790564c6407983d162e6a5feff378239304e73dbea9a0f45bc2ed6",
+ "receipts": "/mpac/sdicks02/jobs/clasher/mac-e4-private/session-a5-r1",
+ "schema": "clasher.mac-e4-session.a3p.v1",
+ "thresholds": {
+  "late_seconds": 0.025,
+  "max_ms": 50.0,
+  "max_rate": 0.01
+ },
+ "tiers": {
+  "K0c": {
+   "a3p_passes": false,
+   "feasible_after_a3p": false,
+   "frozen_feasible": true,
+   "frozen_gate4_variant": "freeze",
+   "reasons": [
+    "A3-P all-cause poll lateness"
+   ],
+   "variants": {
+    "default": {
+     "late_polls": 588,
+     "late_rate": 0.588,
+     "max_lateness_ms": 150.04575019702315,
+     "opportunities": 1000,
+     "passes": false
+    },
+    "freeze": {
+     "late_polls": 560,
+     "late_rate": 0.56,
+     "max_lateness_ms": 150.0826245173812,
+     "opportunities": 1000,
+     "passes": false
+    }
+   }
+  },
+  "K2": {
+   "a3p_passes": false,
+   "feasible_after_a3p": false,
+   "frozen_feasible": true,
+   "frozen_gate4_variant": "freeze",
+   "reasons": [
+    "A3-P all-cause poll lateness"
+   ],
+   "variants": {
+    "default": {
+     "late_polls": 600,
+     "late_rate": 0.6,
+     "max_lateness_ms": 150.07566660642624,
+     "opportunities": 1000,
+     "passes": false
+    },
+    "freeze": {
+     "late_polls": 529,
+     "late_rate": 0.529,
+     "max_lateness_ms": 150.07237484678626,
+     "opportunities": 1000,
+     "passes": false
+    }
+   }
+  },
+  "K4": {
+   "a3p_passes": false,
+   "feasible_after_a3p": false,
+   "frozen_feasible": true,
+   "frozen_gate4_variant": "freeze",
+   "reasons": [
+    "A3-P all-cause poll lateness"
+   ],
+   "variants": {
+    "default": {
+     "late_polls": 553,
+     "late_rate": 0.553,
+     "max_lateness_ms": 150.07879212498665,
+     "opportunities": 1000,
+     "passes": false
+    },
+    "freeze": {
+     "late_polls": 606,
+     "late_rate": 0.606,
+     "max_lateness_ms": 150.24416614323854,
+     "opportunities": 1000,
+     "passes": false
+    }
+   }
+  },
+  "S": {
+   "a3p_passes": false,
+   "feasible_after_a3p": false,
+   "frozen_feasible": true,
+   "frozen_gate4_variant": "freeze",
+   "reasons": [
+    "A3-P all-cause poll lateness"
+   ],
+   "variants": {
+    "default": {
+     "late_polls": 574,
+     "late_rate": 0.574,
+     "max_lateness_ms": 150.06879204884171,
+     "opportunities": 1000,
+     "passes": false
+    },
+    "freeze": {
+     "late_polls": 562,
+     "late_rate": 0.562,
+     "max_lateness_ms": 150.06879204884171,
+     "opportunities": 1000,
+     "passes": false
+    }
+   }
+  }
+ }
+}

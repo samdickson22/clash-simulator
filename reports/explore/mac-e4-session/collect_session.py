@@ -178,7 +178,9 @@ def step_fetch():
     PRIVROOT.mkdir(mode=0o700, exist_ok=True)
     os.chmod(PRIVROOT, 0o700)
     archive = PRIVROOT / "session-a5-r1.fetch.tar"
-    mac_stream("tar -C '%s' -cf - session-a5-r1" % S, archive)
+    # macOS bsdtar would otherwise add AppleDouble "._*" members for extended attributes (com.apple.provenance);
+    # those are not sealed files and the strict member check refuses them.
+    mac_stream("COPYFILE_DISABLE=1 tar --no-mac-metadata --no-xattrs -C '%s' -cf - session-a5-r1" % S, archive)
     PRIV.mkdir()
     with tarfile.open(archive, "r:") as tar:
         for member in tar:

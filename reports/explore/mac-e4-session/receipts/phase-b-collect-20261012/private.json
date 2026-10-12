@@ -1,0 +1,9 @@
+{
+ "base": "3cd0e58bd7ed1416e393f3d85ccfc4c653f86bad",
+ "branch": "private-mac-e4-session-r1",
+ "commit": "174c4a0aa0aff96379cfc593d08a1e6ba8136379",
+ "files": 35,
+ "ref": "refs/private/mac-e4-tiers-session-r1",
+ "repo_path": "reports/explore/mac-e4-session/tiers-session-r1/sealed",
+ "tree": "a24483820f5bab10c1a43c8058ceac3732a0099c"
+}

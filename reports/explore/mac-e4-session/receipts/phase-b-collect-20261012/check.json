@@ -1,0 +1,19 @@
+{
+ "final_returncode": 0,
+ "mode": "complete",
+ "seal_sha256": "f411b9b4c7790564c6407983d162e6a5feff378239304e73dbea9a0f45bc2ed6",
+ "steps": [
+  [
+   "verify-bundle",
+   0
+  ],
+  [
+   "build",
+   0
+  ],
+  [
+   "measure",
+   0
+  ]
+ ]
+}

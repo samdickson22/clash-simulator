@@ -1,0 +1,9 @@
+{
+ "bytes": 195431758,
+ "path_05": "/mpac/sdicks02/jobs/clasher/mac-e4-private/bundles/session-a5-r1-private.bundle",
+ "path_mac": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session-a5-r1-private.bundle",
+ "range": "3cd0e58bd7ed1416e393f3d85ccfc4c653f86bad..refs/private/mac-e4-tiers-session-r1",
+ "restore_repo": "/mpac/sdicks02/jobs/clasher/mac-e4-private/bundles/restore-0baf23b46c489319",
+ "restored_commit": "174c4a0aa0aff96379cfc593d08a1e6ba8136379",
+ "sha256": "ab0eb38451b7e5cf05751828fb06696b84a83dc6bc3b60c7590c3232cd827ab8"
+}

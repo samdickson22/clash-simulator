@@ -1,0 +1,238 @@
+{
+ "apps_quit_for_window": {
+  "chatgpt": "left running (hosts Codex agents)",
+  "claude": "not quit (PID 63277 belongs to the other console user simonfarshid)",
+  "google_chrome": "SIGTERM to main PID 56345 at 2026-10-12T11:56:42Z (exited ~1 s)"
+ },
+ "caffeinate": {
+  "argv": [
+   "/usr/bin/caffeinate",
+   "-i",
+   "-w",
+   "8573"
+  ],
+  "pid": 8574
+ },
+ "files": {
+  "a3p-poll-check.json": {
+   "bytes": 2697,
+   "sha256": "29f86b817076e84835aa19df2b6f5c2a412a86ad19122c01477fc7d4b635805d"
+  },
+  "preconditions.json": {
+   "bytes": 3942,
+   "sha256": "2c1c0890f0b613f4115254fd2a62991109a436b9b631941af2190b21a9d4d82c"
+  },
+  "sealed/belief-exactness.json": {
+   "bytes": 25058,
+   "sha256": "4949be22319aef5e11888c51eca6377ad7d23a306adcc775065e3a4119beb639"
+  },
+  "sealed/build-tiers.json": {
+   "bytes": 1633,
+   "sha256": "eec5c7f5df2b089ad3b426885aef6e78fd0511a3b363d5cc0b6be7136325cac1"
+  },
+  "sealed/exactness-tiers.json": {
+   "bytes": 26929,
+   "sha256": "9d1503d899db4ef549f7e2e97df7d938585502ad6abf9f400cd8e38591244be8"
+  },
+  "sealed/pre-session-census.json": {
+   "bytes": 151,
+   "sha256": "bb62a82e8785bc75409392daae4ffd1e0322dd06ebb3f713812f1f460ea64d68"
+  },
+  "sealed/receipt-manifest.json": {
+   "bytes": 3044,
+   "sha256": "f411b9b4c7790564c6407983d162e6a5feff378239304e73dbea9a0f45bc2ed6"
+  },
+  "sealed/receipt-manifest.sha256": {
+   "bytes": 88,
+   "sha256": "78e11c5560d445d60fa36a8982f6ab4f0f7298374f51c271bf44f240209efd39"
+  },
+  "sealed/runtime-versions.json": {
+   "bytes": 204,
+   "sha256": "91b69fd05edbaad287d11cb89485a77dce1fcb13a9a03da527923b00b85059fe"
+  },
+  "sealed/student-agreement.json": {
+   "bytes": 946440,
+   "sha256": "33a1c1491db576276b39b80183c70185111b59fcb8bd236bac9411eca793fe52"
+  },
+  "sealed/tiers-complete.json": {
+   "bytes": 191,
+   "sha256": "799017e3986d9379987acdf8e62d2092ac0df7a7d9d9b88d227d4986b0cc98a1"
+  },
+  "sealed/tiers-identity.json": {
+   "bytes": 67695,
+   "sha256": "1a57194c690daa62749c7d011526f719b00c34146118dd1b11317bb87fca3933"
+  },
+  "sealed/tiers-summary.json": {
+   "bytes": 464701,
+   "sha256": "6b0324e0a0f731583a4d66f9836cd4254c8d1ea54bec863c4ed309222fc7e488"
+  },
+  "stage-nocopy-session-verify.json": {
+   "bytes": 945,
+   "sha256": "edbd543af68e2d3e9f667a33f65c55fb9d0f647cf1aad6f7a266e9a7ef21c2c2"
+  }
+ },
+ "go_reference": "coordinator CONDITIONAL GO (msg after 503ed848 readiness) + Sol mac-e4-r1-sol-session-launch-review-r1 APPROVE_WITH_CONDITIONS, conditions met in 0e0662fb; preconditions-r3 PASS 12:09:50-12:14:51Z",
+ "manifest_sha256": "273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d",
+ "mode": "complete",
+ "outcomes_read": false,
+ "runtime_commit": "2e2753120a768ec03d0354e47650c61c8fd34820",
+ "schema": "clasher.mac-e4-session.session-receipt.v1",
+ "session_post": {
+  "caffeinate_returncode": null,
+  "final_returncode": 0,
+  "nocopy_session_verification": {
+   "files": [
+    {
+     "file": "states.pkl",
+     "method": "apfs-clone",
+     "mode": "0o444",
+     "sha256": "afdbd237d65897816b2683335c823fdf2557fa1640256acc892ee967368684a7"
+    },
+    {
+     "file": "states-rows.json",
+     "method": "apfs-clone",
+     "mode": "0o444",
+     "sha256": "49cbe56ce9c3df18ae85616d09a481f5113cf7aa29bbed2c8aaca4fcb329f63d"
+    },
+    {
+     "file": "states-rows.bin",
+     "method": "apfs-clone",
+     "mode": "0o444",
+     "sha256": "dc92bf459a337410b53cc5b2313286121542d7137b190493789126af6739b353"
+    }
+   ],
+   "helper_sha256": "166a163620f7a1924ff50e120a2e9dff3e449329a02f5b5b52b13398536bc67d",
+   "helper_used": true,
+   "path": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/staged-a5/bundle-a5.nocopy-verify-2026-10-12T121518Z.json",
+   "sha256": "edbd543af68e2d3e9f667a33f65c55fb9d0f647cf1aad6f7a266e9a7ef21c2c2",
+   "tiers_pins_sha256": "273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d",
+   "utc": "2026-10-12T12:15:18Z"
+  },
+  "schema": "clasher.mac-e4-session.session-post.v1",
+  "software_update_prefs_after": {
+   "AutomaticDownload": "1",
+   "AutomaticallyInstallMacOSUpdates": "1",
+   "ConfigDataInstall": "1",
+   "CriticalUpdateInstall": "1"
+  },
+  "steps": [
+   {
+    "argv": [
+     "/Users/sam/Desktop/code/clasher/.venv/bin/python",
+     "-B",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/helpers/mac-registration-e2/stage_nocopy.py",
+     "--verify-bundle",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/staged-a5/bundle-a5"
+    ],
+    "ended": "2026-10-12T12:15:18Z",
+    "returncode": 0,
+    "started": "2026-10-12T12:15:00Z",
+    "step": "verify-bundle"
+   },
+   {
+    "argv": [
+     "bash",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/build_tiers.sh",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/staged-a5/bundle-a5",
+     "273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/build-a5"
+    ],
+    "ended": "2026-10-12T12:16:07Z",
+    "returncode": 0,
+    "started": "2026-10-12T12:15:18Z",
+    "step": "build"
+   },
+   {
+    "argv": [
+     "/Users/sam/Desktop/code/clasher/.venv/bin/python",
+     "-B",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+     "--sam-authorized-replay",
+     "--bundle",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/staged-a5/bundle-a5",
+     "--runtime-root",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5",
+     "--native",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/build-a5/clasher_core.cpython-312-darwin.so",
+     "--manifest-sha256",
+     "273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d",
+     "--coordinator-lock",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session.lock",
+     "--coordinator-lock-fd",
+     "3",
+     "--output",
+     "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session-a5-r1"
+    ],
+    "ended": "2026-10-12T16:12:28Z",
+    "returncode": 0,
+    "started": "2026-10-12T12:16:07Z",
+    "step": "measure"
+   }
+  ],
+  "utc": "2026-10-12T16:12:28Z",
+  "wrapper_failure": null
+ },
+ "session_pre": {
+  "build": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/build-a5",
+  "bundle": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/staged-a5/bundle-a5",
+  "caffeinate_argv": [
+   "/usr/bin/caffeinate",
+   "-i",
+   "-w",
+   "8573"
+  ],
+  "caffeinate_pid": 8574,
+  "environment": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYO3_PYTHON": "/Users/sam/Desktop/code/clasher/.venv/bin/python",
+   "PYTHONDONTWRITEBYTECODE": "1",
+   "PYTHONPATH": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5/imitation/evaluation/runtime_dependencies:/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5/reports/strategy_council_20260928/imitation",
+   "SAM_AUTHORIZED_REPLAY": "yes"
+  },
+  "lock": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session.lock",
+  "lock_fd": 3,
+  "manifest_sha256": "273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d",
+  "nice": 10,
+  "output": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session-a5-r1",
+  "pid": 8573,
+  "python": "/Users/sam/Desktop/code/clasher/.venv/bin/python",
+  "python_version": "3.12.13",
+  "runtime": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5",
+  "schema": "clasher.mac-e4-session.session-pre.v1",
+  "software_update_change": "none (no sudo/GUI route; coordinator dbe683e0)",
+  "software_update_prefs_before": {
+   "AutomaticDownload": "1",
+   "AutomaticallyInstallMacOSUpdates": "1",
+   "ConfigDataInstall": "1",
+   "CriticalUpdateInstall": "1"
+  },
+  "uname": [
+   "Darwin",
+   "Mac.attlocal.net",
+   "27.0.0",
+   "Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:48 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T6041",
+   "arm64",
+   "arm"
+  ],
+  "utc": "2026-10-12T12:15:00Z"
+ },
+ "software_update": {
+  "change": "none (no sudo/GUI route; coordinator dbe683e0)",
+  "prefs_after": {
+   "AutomaticDownload": "1",
+   "AutomaticallyInstallMacOSUpdates": "1",
+   "ConfigDataInstall": "1",
+   "CriticalUpdateInstall": "1"
+  },
+  "prefs_before": {
+   "AutomaticDownload": "1",
+   "AutomaticallyInstallMacOSUpdates": "1",
+   "ConfigDataInstall": "1",
+   "CriticalUpdateInstall": "1"
+  }
+ },
+ "stage_nocopy_helper_used": true
+}

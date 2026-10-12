@@ -1,0 +1,21 @@
+{
+ "directory": "reports/explore/mac-e4-session/tiers-session-r1",
+ "files": [
+  "a3p-poll-check.json",
+  "preconditions.json",
+  "sealed/belief-exactness.json",
+  "sealed/build-tiers.json",
+  "sealed/exactness-tiers.json",
+  "sealed/pre-session-census.json",
+  "sealed/receipt-manifest.json",
+  "sealed/receipt-manifest.sha256",
+  "sealed/runtime-versions.json",
+  "sealed/student-agreement.json",
+  "sealed/tiers-complete.json",
+  "sealed/tiers-identity.json",
+  "sealed/tiers-summary.json",
+  "session-receipt.json",
+  "stage-nocopy-session-verify.json"
+ ],
+ "mode": "complete"
+}

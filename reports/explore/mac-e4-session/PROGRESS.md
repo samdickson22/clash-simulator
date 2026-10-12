@@ -423,3 +423,16 @@ with rc 0 and the lock fd inherited; the exception path writes the post receipt 
   temp-index commit of D (15 paths + private-commit-binding.json).
 - The full sealed dir stays private: `/mpac/sdicks02/jobs/clasher/mac-e4-private/` (05) plus the Mac
   k4s-commit-repo private branch.
+
+### 2026-10-12T16:20:49Z: TIERS MAC SESSION COMPLETE; collected; public commit of D
+
+- **Session:** launched 12:15:00Z and finished before 16:15Z. Wrapper post receipt: mode complete, verify-bundle,
+  build and measure all rc 0; the seal is present.
+- **Collection** (`collect_session.py`; Sol r5 APPROVE for the tar-flag fix after an AppleDouble fail-closed):
+  - fetch: 33 sealed files verified;
+  - public: exactly 15 files in D (A3-P included);
+  - private: commit 174c4a0a in the Mac k4s-commit-repo, branch private-mac-e4-session-r1, ref
+    refs/private/mac-e4-tiers-session-r1, never pushed;
+  - bundle: on 05 at `/mpac/sdicks02/jobs/clasher/mac-e4-private/bundles/`, restored and inventory-verified;
+  - binding: `D/private-commit-binding.json`;
+  - Chrome relaunched (open_rc 0, running).

@@ -1,0 +1,23 @@
+2026-10-12T16:15:15Z step check begin
+2026-10-12T16:15:16Z check OK mode=complete
+2026-10-12T16:15:16Z step check end
+2026-10-12T16:15:16Z step fetch begin
+2026-10-12T16:16:05Z FAIL bad archive member ._session-a5-r1
+2026-10-12T16:17:59Z step fetch begin
+2026-10-12T16:18:51Z fetch OK 33 sealed files
+2026-10-12T16:18:51Z step fetch end
+2026-10-12T16:18:51Z step public begin
+2026-10-12T16:18:53Z public OK 15 files in reports/explore/mac-e4-session/tiers-session-r1 (not yet committed)
+2026-10-12T16:18:53Z step public end
+2026-10-12T16:18:57Z step private begin
+2026-10-12T16:19:46Z private OK commit 174c4a0aa0aff96379cfc593d08a1e6ba8136379 (never pushed)
+2026-10-12T16:19:46Z step private end
+2026-10-12T16:19:46Z step bundle begin
+2026-10-12T16:20:28Z bundle OK (restored and inventory-verified)
+2026-10-12T16:20:28Z step bundle end
+2026-10-12T16:20:28Z step binding begin
+2026-10-12T16:20:29Z binding OK
+2026-10-12T16:20:29Z step binding end
+2026-10-12T16:20:29Z step apps begin
+2026-10-12T16:20:37Z apps recorded: open_rc=0 | CHROME_RUNNING
+2026-10-12T16:20:37Z step apps end
