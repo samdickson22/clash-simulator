@@ -4254,3 +4254,15 @@ They come from bundle manifest 32a4a36f.
 | CPUs | 128 on both hosts |
 
 All gates pass. **The environment CPU GO, placement r3 GO and run GO must cite this observation.**
+
+## 2026-10-12 23:24Z: Perception B CPU-preflight GO issued (phase `environment` only)
+
+- **Source:** byte-identical to the draft `l1/prepared/b08-environment-and-placement-go-r2/DRAFT-AUTHORIZE_B_CPU_PREFLIGHT-environment.json` (0925060b).
+- **Scope:** phase `environment` only, on 127x08. Code root `code-374325696dc9`, clasher-gpu `-B -s`, CUDA hidden, threads 1, nice 19, cpus [0,1], worker limit 16 GiB, concurrency off. No GPU, no heldout, no retry.
+- **Window:** 2026-10-13 00:20Z to 02:20Z.
+- **Cites:** the accepted stage completion da9df44b and the fresh quiet-read d5086e1e.
+- **Issued copies:**
+  - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-environment-go-r1.json` (0444)
+  - `l1/receipts/b-cpu-preflight-environment-go-r1.json`
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 0925060b75dc26220bdd802a0ce25c647bf44f7e611d652211bd204988a40fc5
