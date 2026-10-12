@@ -2560,3 +2560,11 @@ The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8
 - Per-cell lateness is reported against each cell's own budget.
 
 **Hygiene:** fix the stale `A5_adopted:false` in `END-A5-runtime-manifest-inventory-diff.json`.
+
+## 2026-10-12 06:17Z: A4 erratum E2 (86fda5a1) accepted, coordinator-verified
+
+`stage_nocopy.py` moves from 96abd847 to 166a1636. The only code change is one constant: the `fleet_validity.py` pin, 94d0e7f2 → 0775b704.
+
+**Coordinator check, by mechanical equality:** the helper's 18 `FROZEN_MEASUREMENT_FILES` pins are dict-equal to the e4v3 inventory at 8799a0d6, which the A5 smoke review already independently checked. No logic changed, so Sol review is waived for a constant that equals an approved inventory.
+
+**Mac re-staging must use main ≥ 8799a0d6.** The Mac stays on HOLD.
