@@ -4105,3 +4105,19 @@ The GO is byte-identical to the draft `l1/prepared/b08-stage-and-placement-go-r1
 - `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r2.json`
 
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT eb334bb229081bcb49757762d76e45b3d18037c815c23b9ec60063ac3e6c1f68
+
+## 2026-10-12 21:55Z: Perception B stage transport review: APPROVE_WITH_CONDITIONS
+
+**Review:** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-STAGE-TRANSPORT-REVIEW-r1.md` (ba630631).
+
+**Verdict.** The transport `stage_transport.py` (29d90793) and launcher `operator_stage_once.sh` (c99a8b33) are approved unchanged, with bundle manifest 256badc1. They may be launched **only** through the reviewer's guard command `evidence/B-STAGE-TRANSPORT-REVIEW-r1-operator-command.sh`, SHA cffa7f279b61fa7b781157b8aa61da64ff2637d4bee5896ce600c3a98d07400f.
+- The guard checks the run-GO binding, the one-line C-5 rule for 4 SHAs, the launch slot and any existing claims.
+- It passed all 16 dry-run cases.
+
+**Adopted conditions:**
+- **C-1, run GO.** A run GO `AUTHORIZE_B_STAGE_TRANSPORT_RUN` is committed at `l1/receipts/b-stage-transport-run-go-r1.json`. It must contain the full SHAs of the transport, launcher, CPU GO, manifest, guard and this review. It is issued only after placement eb334bb2 succeeds and its C-6 audit is accepted.
+- **C-2, freeze.** Keep everything frozen: no `git clean` of `prepared/`, and no changes to `~/.bashrc` or `~/.ssh/{environment,rc}`.
+- **C-3, single launch.** Launch once, within 22:30Z–23:30Z, with no retry.
+- **C-4, success and audit.** Success means both exit codes are 0 and `complete.json` is verified. Then the coordinator audits the ledger from `revocation_tip_commit` onward.
+- **C-5, UNKNOWN result.** An UNKNOWN result needs a separately reviewed read-only retrieval under its own GO.
+- **C-6, next revision.** S4/S5/S2/S3/S8 go into the next revision; they don't block this run.
