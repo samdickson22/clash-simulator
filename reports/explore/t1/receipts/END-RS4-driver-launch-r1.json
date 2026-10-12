@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-12T16:38:19.847097+00:00",
+  "pid": 2977266,
+  "argv": [
+    "env",
+    "-i",
+    "HOME=//home/sdicks02",
+    "PATH=/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "setsid",
+    "nice",
+    "-n",
+    "19",
+    "taskset",
+    "-c",
+    "63",
+    "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/explore/t1/release_run.py",
+    "--release",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/coordinator-release-r1/release-mac-summary-r1.json",
+    "--release-sha256",
+    "6a767ffb26c50a629049dc6b2b708a7d23395f74e60f7401a6ccf31c25bc8eaa",
+    "--r5",
+    "/mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/explore/t1/receipts/END-A5-R5-sealed-prerelease-evidence.json",
+    "--copy-receipt",
+    "/mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/explore/t1/receipts/END-C2-counted-block-copy-r1.json",
+    "--private-name",
+    "mac-summary-20261012-r2"
+  ],
+  "output_directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/release-private/mac-summary-20261012-r2",
+  "detached_setsId": true
+}

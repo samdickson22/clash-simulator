@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-12T16:39:06Z",
+  "authorization_commit": "e11ad6f0bdba352f74de3c69ed3184ab63ae1764",
+  "driver_final_health": {
+    "passes": false,
+    "stage": "preflight_or_record",
+    "exception_type": "A3PRequiresRuling",
+    "no_result_reported": true,
+    "driver_sha256": "9ffbd2e197e58b5c56b3d58cefe4008d47cb4fdf50764808e841218294408bca",
+    "outputs_locked": false
+  },
+  "retry": false
+}
