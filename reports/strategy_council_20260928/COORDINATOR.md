@@ -3914,3 +3914,17 @@ This approves the B1–B11/B4 package review only. It is **not** a deployment, C
 - It reads only: UTC, the `who` count, the `/mpac` available and total size, loadavg, and the allowed CPUs.
 - There is no retry. A nonzero exit means no deployment until a new decision.
 - The output goes to `l1/receipts/b08-quiet-read-r1/` and is committed through a temp index after a secret scan.
+
+## 2026-10-12 20:27Z: 08 quiet-read complete (exit 0, one SSH session)
+
+The output is `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r1/`. **observation.json SHA 54858b0e9a86ea02879f5cfad7843530367f8cc4ffbb8f0a5cc5e76c3a3d817d**, remote UTC 2026-10-12T20:27:25.676929+00:00.
+
+| Check | 127x08 value | Gate | Result |
+|---|---|---|---|
+| `who_count` | 0 | must be 0 | pass |
+| `/mpac` available | 1,223,077,609,472 B | ≥ 280e9 B | pass |
+| `/mpac` size | 2,015,104,376,832 B (available is 60.7%) | available ≥ 40% of size | pass |
+| loadavg | 0.0 / 0.0 / 0.0 | — | — |
+| allowed CPUs | 0–127 on both 05 and 08 | — | — |
+
+**Coordinator-approved cpus for the deployment GO: [0, 1].** This observation is the provenance for the deployment GO's who, free-space and cpus fields. The observation commit is the one containing this entry.
