@@ -2173,3 +2173,9 @@ Also on the hub, but with copies elsewhere:
   - **What it covers:** the Mac registration inputs per rules B.1–B.7, P1 cadence, overlap, and the no-copy staging helper `stage_nocopy.py` with conditions 1–6.
   - **Uncovered B.4 case** (0 < |F| < #tiers): stop and escalate, no new rule.
   - **Next:** Phase 2, a read of 03 only in a window I declare explicitly, expected at K4S 03's ~08:47Z apt stop. Then Phase 3 builds on 05 and hands off to T1 for the merge and seal, after its END pool.
+- **00:49 UTC: T1 END copier design.**
+  - **Round 1:** an in-run polling copier, REQUEST_CHANGES (SSH-flag risk, source attribution). Withdrawn, never launched.
+  - **Round 2:** an exit-push wrapper (8886028), APPROVE_WITH_CONDITIONS (`END-exit-push-REVIEW-r2.md`). There is zero activity during timing, and the idle parent is invisible to the guard.
+  - **Ruling:** fix H1–H5 in code with a narrow re-review: bounded transport-only retries, an always-pushed `exit.json`, per-host/per-attempt destinations, a 05-side verifier, log push, an output-path assert, `timeout -k`.
+  - **Conditions C1–C6** also apply. In particular, **no SSH into a timed host from any thread during its window**, including T1's own probes. Launch only from the staged A3 package (the shared 05 checkout still has 5d7de8e3).
+  - **Deadline:** 01's cutoff is 04:17:43Z; otherwise run 08 first and defer 01.
