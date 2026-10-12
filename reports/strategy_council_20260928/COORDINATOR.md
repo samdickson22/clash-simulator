@@ -3445,3 +3445,50 @@ Together that is 116 files, 1.13 GB, written to `08:inputs-final-dependencies-r1
 **C1 (qualification-reference only)** is now binding on B code. B is still development-only until the B1–B11 review passes and a dry run is admitted.
 
 **03 and 04 are now reserved for K4S END.** No host step may run there until Sol has reviewed it and the coordinator has authorized it.
+
+## 2026-10-12 16:21Z: TIERS Mac session COMPLETE; T1 RELEASE-SEQUENCE GO (Mac-summary route)
+
+**Mac session.** Launched 12:15:00Z and finished cleanly:
+- the post receipt is complete;
+- verify-bundle, build and measure all exited 0;
+- there was no OS update or restart.
+
+**D is committed at 67b05a50**, as exactly the 15 R-M1 paths plus `private-commit-binding.json`. The coordinator verified the SHAs from git:
+- `sealed/tiers-summary.json` 6b0324e0, which is `release.mac_summary_path`;
+- `a3p-poll-check.json` 29f86b81;
+- `sealed/receipt-manifest.json` f411b9b4, the seal that A3-P binds.
+
+**R-M2 private inventory:**
+- local commit 174c4a0a on the Mac, never pushed;
+- bundle verified on 05 at `mac-e4-private/bundles/`.
+
+**RELEASE-SEQUENCE GO for T1 / PREREG-SEARCH-TIERS, Mac-summary route.** Sam was told in advance and did not object. All preconditions are met:
+- R7 cleared (2e275312);
+- driver r3 9ffbd2e1 approved, with C1–C6 met (eddba5f7, 8c8cfbd7);
+- builder dd644cdc approved, under BC1/BC2 (ee0aa034);
+- Mac D and A3-P committed;
+- registration sealed (bbff541c).
+
+**Order, exactly once each:**
+1. **Builder `prepare_release_descendant.py` dd644cdc**, once, using `env -i` and `-B`, pinned SHAs, and a fresh ref name.
+   - Inputs: base `<R>` 9bb349b1 plus the allowlisted Mac D blobs at 67b05a50.
+   - BC1 checks before and after.
+   - The protection ref `refs/private/t1-registration-20261012` must stay at 9bb349b1.
+2. **BC2 switch:** `env -i … git -c core.hooksPath=/dev/null -C <R> switch --detach <descendant>`, followed by every post-check under the same environment:
+   - HEAD is the descendant, with both parents;
+   - the tree is clean;
+   - the protection ref is unchanged;
+   - e4v3 is mode 555.
+3. **Driver `release_run.py` 9ffbd2e1**, under its launch conditions: `env -i`, mode 555 and a clean tree, the driver SHA plus its committed directory, and e4v3-venv 3.12.12 with `-B`. In order, it performs:
+   - the R-M3 A3-P gate;
+   - the pre-outcome health guard, which must equal the PC4 sidecar;
+   - the barrier;
+   - the reducer, with output kept private;
+   - the post-check;
+   - the release receipt.
+
+**On any refusal,** including `A3PRequiresRuling`: STOP, report the stage and failure type only, and make no retry without a ruling.
+
+**On success:** commit the release receipt and the public outputs exactly as the reviewed runbook defines them. Report the headline primary result to the coordinator in plain language.
+
+**The 14-day route is not used** (42219e57 stays reserved).
