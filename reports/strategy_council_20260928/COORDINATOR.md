@@ -3723,3 +3723,22 @@ No host step is authorized. Package 2 r2 goes to Sol again.
 - **C7–C9:** go to the Sol script review: deep-copied belief plus deadline-mode parity, capture fields (`opponent_elixir`, `reserved_packet`, empty `pending`), and the fair-information invariance test with a no-Battle-reference assertion.
 
 **Process.** PLAN r2 gets a diff-only re-check, then scripts go to Sol, then the coordinator GO. Estimated compute is about 17 h within the 24 h hard stop. A capacity arm is separate future work (X4S-5).
+
+## 2026-10-12 17:43Z: X4S-4 PLAN r2 re-check: APPROVE_WITH_CONDITIONS; PLAN r3 edits ruled
+
+**Review.** Opus re-check of PLAN r2 a72b3213: `/mpac/sdicks02/jobs/clasher/x4s4-review/OPUS-DESIGN-RECHECK-r2.md` (665c73d2). C1–C6 are implemented as ruled: the MDE is 2.12 pp, R5W is matched, bank C′ is disjoint, and the reporting block is fit-free.
+
+**Ruling: PLAN r3 must make all 11 consolidated edits.** The recommended ones are adopted too.
+1. Delete the R5-rep futility stop: all five students' games always run, and nothing is reduced before the C5 freeze (R2-1, HIGH).
+2. Disclose the fit-seed error rates (about 6.5–10%) and the 2.1–2.8 pp MDE; write the single-fit clause as pooled.
+3. Add a fit-inflated descriptive interval with σ_fit fixed at 0.65.
+4. Replace the R5 − R5W sign split with a CI-based attribution sub-label that defaults to "unresolved" and has a declared next step.
+5. Correct the O_W "only behavior policy" wording; the matching unit is `teacher_root` rows.
+6. ABBA reporting order.
+7. Flag yield windows in C5.
+8. Truncation: R5W never cuts the primary N; cuts are index-prefix; pauses count against T+24 h.
+9. Add a "harmful" sub-label.
+10. Clarify the parity flag.
+11. State the O_W gate thresholds.
+
+R2-9 and R2-11 go to the Sol script review. The coordinator will verify r3 textually; no further Opus round is needed.
