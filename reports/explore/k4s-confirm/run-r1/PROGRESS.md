@@ -323,3 +323,16 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 ## Running (owned PGIDs only) -- CURRENT
 - replacement-r4 in k4s-confirm-replacement-r4: 03 sup PGID 2589813, 04 sup PGID 1612061; copiers on 05 2182223 / 2190563.
   Health: K4S_NS=k4s-confirm-replacement-r4 K4S_PHASE=replacement-r4 tools/watch.sh
+- 2026-10-12T14:08:03Z Completion plan (coordinator: sealed only; release, END and Mac each need explicit GO):
+  1. After the r4 null exits (71/68): final durability/ACK pass over every counted block of all 5 phases. Per block:
+     hub-ack bound (hub 127x05, host, job, phase, block, complete sha), returned marker bound, and game-file SHA-256 ==
+     complete.json games map. Hash only; no game content parsed.
+  2. counted-inventory.json in the frozen end_evidence format ({host, phase, descriptor} rows = the raw exit
+     descriptors; 3000/900 logical blocks exactly once; no lost id counted). Completion receipt with the §7/END fields:
+     reporting_complete, outcomes_sealed, counted_primary_blocks 3000, counted_guard_blocks 900, counted_host_phases,
+     completed_at_utc, blind_ledger_sha256, counted_inventory_sha256.
+  3. Sealed reducer/verifier = PREREG §4.5 "fails closed before it opens any game bytes": run each with NO release
+     receipt and record the refusal. reduce.py calls barrier.outcome_release before load_blocks; verify_k4s.py raises
+     Refusal("no release receipt") before any game file. Nothing outcome-bearing is computed, printed or committed. If
+     either tool would get past its barrier, STOP and report.
+- 2026-10-12T14:16:12Z SEALED health: 127x03 complete 19 acked 19 hub 19/19 failed 0 stopevent - inflight 11 queued 41 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 16 acked 16 hub 16/16 failed 0 stopevent - inflight 11 queued 41 reason None who 0 flags[dbus 13 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 73/300 guard 26/90 (union; already in ledger 0/0); ledger max k {'primary': 3, 'guard': 3}; no anomalies
