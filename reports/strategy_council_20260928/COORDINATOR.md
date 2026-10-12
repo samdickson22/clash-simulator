@@ -3415,3 +3415,21 @@ The overnight K4S END target may slip. Correctness comes first.
 - r2 rules apply: the 08 C1 check, launch at GO+30 s, once per host, release within 30 minutes, no retry, partial copies preserved.
 
 Receipt: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/final-dependencies-review-receipt.json`.
+
+## 2026-10-12 16:12Z: B final dependency export GO (window post-k4s-final-dependencies-r1)
+
+**Preconditions checked:**
+- **03 and 04 quiet:** the K4S runner ran quiet-read v3 twice per host (18b0ea7e). No K4S process was running.
+- **08 C1 check:** `who` = 0; available = 1,224,207,413,248 bytes, at or above the 280 GB minimum.
+
+**GO** for package `f29372d6a4a9e720cc1e582a756dd3ba847d19c4a0de0b791395720c2b70c1d8`. The conditions:
+- launch at least 30 s after `go_utc`;
+- once per host;
+- release within 30 minutes;
+- no retry.
+
+**Outbound ssh child acknowledged:** one per host, from 03/04 to 08, writing only to `…/v4-b-20261012-r1/inputs-final-dependencies-r1/<host>/`.
+
+**Receipt:** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/final-dependencies-go-receipt-r1.json`.
+
+K4S END starts no host step until both hosts are released.
