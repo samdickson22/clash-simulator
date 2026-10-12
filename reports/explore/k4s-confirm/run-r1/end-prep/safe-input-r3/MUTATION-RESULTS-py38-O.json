@@ -1,0 +1,2032 @@
+{
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "python": "3.8.10",
+ "optimize": 1,
+ "jobs": 12,
+ "baseline": "SURVIVED",
+ "mutants": 273,
+ "killed": 270,
+ "not_killed": [
+  "Q11",
+  "SD01",
+  "SD08"
+ ],
+ "recheck_without": "test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+ "killed_only_by_recheck_test": [],
+ "null_controls": [
+  {
+   "id": "NULL-00",
+   "gate": "control: unmodified source (must SURVIVE)",
+   "verdict": "SURVIVED",
+   "seconds": 25.5,
+   "detail": "548 passed in 25.01s"
+  },
+  {
+   "id": "NULL-01",
+   "gate": "control: unmodified source (must SURVIVE)",
+   "verdict": "SURVIVED",
+   "seconds": 25.6,
+   "detail": "548 passed in 25.07s"
+  },
+  {
+   "id": "NULL-02",
+   "gate": "control: unmodified source (must SURVIVE)",
+   "verdict": "SURVIVED",
+   "seconds": 25.5,
+   "detail": "548 passed in 25.00s"
+  },
+  {
+   "id": "NULL-03",
+   "gate": "control: unmodified source (must SURVIVE)",
+   "verdict": "SURVIVED",
+   "seconds": 25.9,
+   "detail": "548 passed in 25.31s"
+  },
+  {
+   "id": "NULL-04",
+   "gate": "control: unmodified source (must SURVIVE)",
+   "verdict": "SURVIVED",
+   "seconds": 25.8,
+   "detail": "548 passed in 25.27s"
+  },
+  {
+   "id": "NULL-05",
+   "gate": "control: unmodified source (must SURVIVE)",
+   "verdict": "SURVIVED",
+   "seconds": 25.5,
+   "detail": "548 passed in 24.98s"
+  }
+ ],
+ "null_controls_all_survived": true,
+ "equivalent_excluded": {
+  "P03": "rel.startswith('/') redundant with the empty-component check",
+  "growth-probe-alone": "redundant with the final fstat size check (R02 joint, R03 fstat alone)",
+  "O_NOFOLLOW-on-O_EXCL": "O_CREAT|O_EXCL already fails on any existing name incl. symlinks (X01)",
+  "O_NOCTTY": "not testable without a tty; devices are refused before open",
+  "--no-replace-objects alone / GIT_NO_REPLACE_OBJECTS alone": "two layers; each alone is masked by the other (GH02 removes both)",
+  "core.fsmonitor=false alone": "masked by the repo-config refusal of core.fsmonitor and the scrubbed HOME/GIT_CONFIG_* (GH04 joint)",
+  "commondir 'declared' check alone": "masked by the target-equality check (GH12 joint, GH13 alone)",
+  "objects/ real-directory check": "masked: the alternates probe opens objects/ component-wise with O_NOFOLLOW and refuses a symlink",
+  "receive post-create nlink/regular check": "a file just created with O_CREAT|O_EXCL|O_NOFOLLOW is a single-link regular file",
+  "E1 materialised-copy SHA re-check": "create_excl hashes exactly the bytes it was given (the target blob)",
+  "D3 'rel in role.exact' inside _gate": "masked by the role allowlist, which a D3 role declares with exact names only",
+  "E5 exact-path clause inside _gate alone": "masked by name_gate's own e5_rel exactness check (E5-06J joint, E5-03 alone)",
+  "receive: E5 'not e4' clause": "masked by the E4 pin rule: no E5 path is an E4 path, so e4+e5 refuses there first",
+  "receive: E5 exact-path clause alone": "masked by the receiver's name_gate e5_rel exactness check before anything is created (E5-18J joint)",
+  "name_gate: E5 leaf-only (i == last)": "not mutated: every E5 path matches a family in its final component only (test_constant_is_exactly_the_ruling)"
+ },
+ "results": [
+  {
+   "id": "N04",
+   "gate": "casefold",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_forbidden_names_refuse_with_zero_syscalls[x/K4S-END-GUARD-r1-rd01-a01/a]"
+  },
+  {
+   "id": "N10",
+   "gate": "reporting job grant",
+   "verdict": "KILLED",
+   "seconds": 5.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_forbidden_tracked_paths_refuse[k4s-confirm-reporting-r1/launch.json]"
+  },
+  {
+   "id": "N11",
+   "gate": "guard job grant",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_forbidden_names_refuse_with_zero_syscalls[k4s-end-guard-r1-pf01/a.py]"
+  },
+  {
+   "id": "N12",
+   "gate": "strict END pair",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_forbidden_names_refuse_with_zero_syscalls[k4s-confirm/end/receipts/x.json]"
+  },
+  {
+   "id": "N13",
+   "gate": "END: named .json only",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_hard_linked_outcome_canary_never_opened_under_every_role[5]"
+  },
+  {
+   "id": "N14",
+   "gate": "T1 namespaces",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_t1_and_cache_namespaces_refuse_on_every_host[/mpac/sdicks02/jobs/clasher/t1-20261010-r1/quali"
+  },
+  {
+   "id": "N15",
+   "gate": "04 perception root",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_perception_root_on_04_only"
+  },
+  {
+   "id": "N16",
+   "gate": "v4 cache repo",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_t1_and_cache_namespaces_refuse_on_every_host[/mpac/sdicks02/repos/clasher-v4-cache]"
+  },
+  {
+   "id": "N17",
+   "gate": "known host",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_unknown_host_refuses_in_name_gate"
+  },
+  {
+   "id": "P01",
+   "gate": "rel '..'",
+   "verdict": "KILLED",
+   "seconds": 10.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_bad_roles_refuse[kwargs12]"
+  },
+  {
+   "id": "P02",
+   "gate": "control/backslash chars",
+   "verdict": "KILLED",
+   "seconds": 10.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_bad_role_roots_refuse[/a/\\x00b]"
+  },
+  {
+   "id": "W01",
+   "gate": "root ancestor lstat layer",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_symlink_ancestor_of_root_refuses"
+  },
+  {
+   "id": "W02",
+   "gate": "root realpath layer",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_realpath_is_checked_even_without_symlinks"
+  },
+  {
+   "id": "W03",
+   "gate": "root: all three layers",
+   "verdict": "KILLED",
+   "seconds": 1.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_cli_refusals"
+  },
+  {
+   "id": "W04",
+   "gate": "component fstatat symlink layer",
+   "verdict": "KILLED",
+   "seconds": 7.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_gitfile_and_symlinked_git_dir_refuse"
+  },
+  {
+   "id": "W05",
+   "gate": "component O_NOFOLLOW",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_directory_swapped_to_symlink_at_open_refuses_by_o_nofollow"
+  },
+  {
+   "id": "W06",
+   "gate": "component dev/ino after open",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_directory_replaced_between_check_and_open_refuses"
+  },
+  {
+   "id": "W07",
+   "gate": "leaf O_NOFOLLOW",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_leaf_swapped_to_symlink_at_open_refuses_by_o_nofollow"
+  },
+  {
+   "id": "W08",
+   "gate": "leaf O_NONBLOCK",
+   "verdict": "KILLED",
+   "seconds": 21.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_leaf_swapped_to_fifo_at_open_never_blocks"
+  },
+  {
+   "id": "D01",
+   "gate": "pre-open symlink",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_exact_alias"
+  },
+  {
+   "id": "D02",
+   "gate": "pre-open regular",
+   "verdict": "KILLED",
+   "seconds": 4.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_on_disk_normal_gates_apply[directory]"
+  },
+  {
+   "id": "D03",
+   "gate": "pre-open nlink",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_hard_linked_outcome_canary_never_opened_under_every_role[0]"
+  },
+  {
+   "id": "D04",
+   "gate": "pre-open size",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_size_cap_refuses_before_open"
+  },
+  {
+   "id": "D05",
+   "gate": "post-open regular",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_leaf_swapped_to_fifo_at_open_never_blocks"
+  },
+  {
+   "id": "D06",
+   "gate": "post-open dev/ino",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_leaf_replaced_between_check_and_open_refuses"
+  },
+  {
+   "id": "D07",
+   "gate": "post-open nlink",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_hard_link_appearing_at_open_refuses"
+  },
+  {
+   "id": "D08",
+   "gate": "post-open size",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_growth_before_open_refuses"
+  },
+  {
+   "id": "R01",
+   "gate": "shrink",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_shrink_during_read_refuses"
+  },
+  {
+   "id": "R02",
+   "gate": "growth probe + fstat (joint)",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_growth_during_read_refuses"
+  },
+  {
+   "id": "R03",
+   "gate": "growth fstat after read",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_growth_after_last_byte_detected_by_fstat"
+  },
+  {
+   "id": "R04",
+   "gate": "expected sha",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_sha_mismatch_refuses"
+  },
+  {
+   "id": "R05",
+   "gate": "json duplicate keys",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_strict_json_refuses[{\"a\": 1, \"a\": 2}]"
+  },
+  {
+   "id": "R06",
+   "gate": "json NaN/Infinity",
+   "verdict": "KILLED",
+   "seconds": 11.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_strict_json_refuses[{\"a\": NaN}]"
+  },
+  {
+   "id": "R07",
+   "gate": "json max_size",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_size_cap_refuses_before_open"
+  },
+  {
+   "id": "G01",
+   "gate": "allowlist",
+   "verdict": "KILLED",
+   "seconds": 5.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_claim_grant_is_exact_names_only"
+  },
+  {
+   "id": "G03",
+   "gate": "role access",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_access_kinds_enforced"
+  },
+  {
+   "id": "G04",
+   "gate": "local nodename",
+   "verdict": "KILLED",
+   "seconds": 1.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_cli_refusals"
+  },
+  {
+   "id": "G06",
+   "gate": "role root name gate",
+   "verdict": "KILLED",
+   "seconds": 5.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_family_inside_role_roots_and_writes"
+  },
+  {
+   "id": "G07",
+   "gate": "unknown role",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_never_through_ordinary_reads"
+  },
+  {
+   "id": "G08",
+   "gate": "role declares names",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_bad_roles_refuse[kwargs0]"
+  },
+  {
+   "id": "G09",
+   "gate": "'*' never crosses '/'",
+   "verdict": "KILLED",
+   "seconds": 6.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_git_show_file"
+  },
+  {
+   "id": "E01",
+   "gate": "E1 link text",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_refusals"
+  },
+  {
+   "id": "E02",
+   "gate": "E1 alias must be a symlink",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_refusals"
+  },
+  {
+   "id": "E03",
+   "gate": "E1 role exemption",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_refusals"
+  },
+  {
+   "id": "E04",
+   "gate": "walk: E1 only at root",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_refusals"
+  },
+  {
+   "id": "E05",
+   "gate": "walk: E1 target present",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_refusals"
+  },
+  {
+   "id": "E06",
+   "gate": "walk: E1 link text",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_refusals"
+  },
+  {
+   "id": "E07",
+   "gate": "E4 pin in hash_e4",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_refusals"
+  },
+  {
+   "id": "E08",
+   "gate": "E4 exact path",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_refusals"
+  },
+  {
+   "id": "E09",
+   "gate": "E4 copy: hash pass first",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_copy_refuses_when_pin_differs"
+  },
+  {
+   "id": "E10",
+   "gate": "E4 copy: pin on copy pass",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_copy_rechecks_the_pin_on_the_copy_pass"
+  },
+  {
+   "id": "E11",
+   "gate": "walk: E4 bucket",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_hash_only_with_exact_path_and_sha"
+  },
+  {
+   "id": "E12",
+   "gate": "walk: E4 needs role exemption",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_refusals"
+  },
+  {
+   "id": "T01",
+   "gate": "walk: names before lstat",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_hard_linked_outcome_canary_never_opened_under_every_role[5]"
+  },
+  {
+   "id": "T02",
+   "gate": "walk: nlink",
+   "verdict": "KILLED",
+   "seconds": 0.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_hard_linked_outcome_canary_never_opened_under_every_role[0]"
+  },
+  {
+   "id": "T03",
+   "gate": "walk: allowlist",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_walk_tree"
+  },
+  {
+   "id": "T04",
+   "gate": "walk: specials",
+   "verdict": "KILLED",
+   "seconds": 4.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_on_disk_normal_gates_apply[fifo]"
+  },
+  {
+   "id": "X03",
+   "gate": "writer parent walk",
+   "verdict": "KILLED",
+   "seconds": 25.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_writes.py::test_base_symlink_foreign_launch_dir_probe"
+  },
+  {
+   "id": "X04",
+   "gate": "writer cap",
+   "verdict": "KILLED",
+   "seconds": 1.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_cli_refusals"
+  },
+  {
+   "id": "X05",
+   "gate": "writer canonical root",
+   "verdict": "KILLED",
+   "seconds": 1.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_cli_refusals"
+  },
+  {
+   "id": "X06",
+   "gate": "writer file name gate",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_publish_refuses_aliased_tmp"
+  },
+  {
+   "id": "X07",
+   "gate": "writer dir name gate",
+   "verdict": "KILLED",
+   "seconds": 5.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_family_inside_role_roots_and_writes"
+  },
+  {
+   "id": "X08",
+   "gate": "writer access",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_access_kinds_enforced"
+  },
+  {
+   "id": "X09",
+   "gate": "E1 symlink exemption",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e1_symlink_creation_is_exact"
+  },
+  {
+   "id": "X10",
+   "gate": "publish never replaces",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_publish_never_replaces"
+  },
+  {
+   "id": "X11",
+   "gate": "publish: tmp nlink",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_publish_refuses_aliased_tmp"
+  },
+  {
+   "id": "X12",
+   "gate": "publish: tmp regular",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_publish_refuses_aliased_tmp"
+  },
+  {
+   "id": "C01",
+   "gate": "CLI mode syntax",
+   "verdict": "KILLED",
+   "seconds": 1.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_cli_refusals"
+  },
+  {
+   "id": "C02",
+   "gate": "CLI refusal exit status",
+   "verdict": "KILLED",
+   "seconds": 1.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_cli_refusals"
+  },
+  {
+   "id": "S01",
+   "gate": "rc check",
+   "verdict": "KILLED",
+   "seconds": 5.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_ls_tree_status_and_format"
+  },
+  {
+   "id": "S02",
+   "gate": "stdout/stderr bound",
+   "verdict": "KILLED",
+   "seconds": 6.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_blob_bytes_must_hash_to_the_object_id"
+  },
+  {
+   "id": "S03",
+   "gate": "timeout watchdog",
+   "verdict": "KILLED",
+   "seconds": 44.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_bounds_and_timeout"
+  },
+  {
+   "id": "S04",
+   "gate": "lingering descendants",
+   "verdict": "KILLED",
+   "seconds": 25.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_bounds_and_timeout"
+  },
+  {
+   "id": "S05",
+   "gate": "explicit env",
+   "verdict": "KILLED",
+   "seconds": 6.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_inherited_object_directory_redirect"
+  },
+  {
+   "id": "S06",
+   "gate": "absolute argv[0]",
+   "verdict": "KILLED",
+   "seconds": 25.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_argv_and_env_rules"
+  },
+  {
+   "id": "S07",
+   "gate": "ps own row",
+   "verdict": "KILLED",
+   "seconds": 25.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_ps_checked"
+  },
+  {
+   "id": "S08",
+   "gate": "hostname format",
+   "verdict": "KILLED",
+   "seconds": 25.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_hostname_checked"
+  },
+  {
+   "id": "S09",
+   "gate": "hostname expected",
+   "verdict": "KILLED",
+   "seconds": 25.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_hostname_checked"
+  },
+  {
+   "id": "S12",
+   "gate": "ps field values",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_ps_fields"
+  },
+  {
+   "id": "S13",
+   "gate": "ps field names",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_ps_fields"
+  },
+  {
+   "id": "Q01",
+   "gate": "tree: names",
+   "verdict": "KILLED",
+   "seconds": 3.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_moved_path_refused[scripts/old/compare_native_public_games.py]"
+  },
+  {
+   "id": "Q02",
+   "gate": "tree: only E1 symlink",
+   "verdict": "KILLED",
+   "seconds": 5.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_symlinks_only_exact_e1"
+  },
+  {
+   "id": "Q03",
+   "gate": "tree: entry type",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_non_100644_mode_refused[gitlink]"
+  },
+  {
+   "id": "Q04",
+   "gate": "tree: modes",
+   "verdict": "KILLED",
+   "seconds": 5.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_pure_tree_gate[bad0-not-regular]"
+  },
+  {
+   "id": "Q05",
+   "gate": "tree: blob size",
+   "verdict": "KILLED",
+   "seconds": 5.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_pure_tree_gate[bad3-size]"
+  },
+  {
+   "id": "Q06",
+   "gate": "tree: duplicates",
+   "verdict": "KILLED",
+   "seconds": 6.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_pure_tree_gate[bad0-not-regular]"
+  },
+  {
+   "id": "Q11",
+   "gate": "E1 tracked text",
+   "verdict": "SURVIVED",
+   "seconds": 25.5,
+   "detail": "548 passed in 25.01s"
+  },
+  {
+   "id": "Q12",
+   "gate": "git E4 pin",
+   "verdict": "KILLED",
+   "seconds": 5.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_e4_through_git"
+  },
+  {
+   "id": "Q13",
+   "gate": "ls-tree record format",
+   "verdict": "KILLED",
+   "seconds": 5.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_ls_tree_status_and_format"
+  },
+  {
+   "id": "Q15",
+   "gate": "show: names first",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_git_plan_accepts_each_member_opaquely[reports/explore/k4s-confirm/check_games.py]"
+  },
+  {
+   "id": "Q16",
+   "gate": "show: exactly one entry",
+   "verdict": "KILLED",
+   "seconds": 6.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_git_show_file"
+  },
+  {
+   "id": "Q17",
+   "gate": "show: blob, not symlink",
+   "verdict": "KILLED",
+   "seconds": 6.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_git_show_file"
+  },
+  {
+   "id": "Q18",
+   "gate": "show: size cap",
+   "verdict": "KILLED",
+   "seconds": 6.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_git_show_file"
+  },
+  {
+   "id": "M01",
+   "gate": "remote: name gates first",
+   "verdict": "KILLED",
+   "seconds": 12.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_name_gates_apply_even_to_a_hand_built_request[/x-games/a.json-None]"
+  },
+  {
+   "id": "M03",
+   "gate": "remote: E4 hash-only/exact",
+   "verdict": "KILLED",
+   "seconds": 13.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_rejects_malformed_requests[<lambda>7]"
+  },
+  {
+   "id": "M04",
+   "gate": "remote: E4 pin",
+   "verdict": "KILLED",
+   "seconds": 14.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_e4_pin"
+  },
+  {
+   "id": "M05",
+   "gate": "remote: request keys",
+   "verdict": "KILLED",
+   "seconds": 13.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_rejects_malformed_requests[<lambda>8]"
+  },
+  {
+   "id": "M06",
+   "gate": "remote: grants subset",
+   "verdict": "KILLED",
+   "seconds": 13.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_rejects_malformed_requests[<lambda>5]"
+  },
+  {
+   "id": "M07",
+   "gate": "remote: two-pass (read during gate pass)",
+   "verdict": "KILLED",
+   "seconds": 12.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_two_pass_gates_before_any_read"
+  },
+  {
+   "id": "M09",
+   "gate": "remote: absent check",
+   "verdict": "KILLED",
+   "seconds": 12.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_root_and_ancestor_symlink"
+  },
+  {
+   "id": "L01",
+   "gate": "parser rc",
+   "verdict": "KILLED",
+   "seconds": 13.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[37-None-remote]"
+  },
+  {
+   "id": "L02",
+   "gate": "parser nlink",
+   "verdict": "KILLED",
+   "seconds": 14.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-nlink]"
+  },
+  {
+   "id": "L03",
+   "gate": "parser request sha",
+   "verdict": "KILLED",
+   "seconds": 14.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-remote2]"
+  },
+  {
+   "id": "L04",
+   "gate": "parser content sha",
+   "verdict": "KILLED",
+   "seconds": 14.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-remote8]"
+  },
+  {
+   "id": "L05",
+   "gate": "parser key sets",
+   "verdict": "KILLED",
+   "seconds": 13.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-remote1]"
+  },
+  {
+   "id": "L06",
+   "gate": "parser rc 3 must be refusal",
+   "verdict": "KILLED",
+   "seconds": 13.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[3-None-remote]"
+  },
+  {
+   "id": "L07",
+   "gate": "parser host",
+   "verdict": "KILLED",
+   "seconds": 14.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-remote3]"
+  },
+  {
+   "id": "L08",
+   "gate": "parser regular",
+   "verdict": "KILLED",
+   "seconds": 14.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-not-regular]"
+  },
+  {
+   "id": "L09",
+   "gate": "parser size cap",
+   "verdict": "KILLED",
+   "seconds": 14.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_refusals[0-<lambda>-size]"
+  },
+  {
+   "id": "L10",
+   "gate": "parser E4 pin",
+   "verdict": "KILLED",
+   "seconds": 14.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_e4_pin"
+  },
+  {
+   "id": "L11",
+   "gate": "parser unrequested content",
+   "verdict": "KILLED",
+   "seconds": 14.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_unrequested_content"
+  },
+  {
+   "id": "L13",
+   "gate": "builder local gate",
+   "verdict": "KILLED",
+   "seconds": 5.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_family_names_refuse_before_any_syscall_in_every_api[games]"
+  },
+  {
+   "id": "L15",
+   "gate": "builder E4 hash-only",
+   "verdict": "KILLED",
+   "seconds": 13.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_local_request_builder_refuses_first"
+  },
+  {
+   "id": "N01",
+   "gate": "family: games",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_direct_outcome_name_never_touched"
+  },
+  {
+   "id": "N02",
+   "gate": "family: hub-blocks",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N03",
+   "gate": "family token start (prefix variants)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N03b",
+   "gate": "family token end (suffix variants)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N05",
+   "gate": "family: *complete*.json*",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_e4_hash_only_with_exact_path_and_sha"
+  },
+  {
+   "id": "N05b",
+   "gate": "complete family breadth",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N06",
+   "gate": "family: hub-ack*.json",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N07",
+   "gate": "family: end-raw*.json",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N08",
+   "gate": "family: interference*.json",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "N09",
+   "gate": "E4 leaf exemption: exactly complete.json",
+   "verdict": "KILLED",
+   "seconds": 5.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_e4_and_d3_leaf_flags_are_exact_and_final_only"
+  },
+  {
+   "id": "R08",
+   "gate": "Input single use",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_reads.py::test_happy_reads"
+  },
+  {
+   "id": "G02",
+   "gate": "name gate in _gate",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_direct_outcome_name_never_touched"
+  },
+  {
+   "id": "G05",
+   "gate": "grants need exact names",
+   "verdict": "KILLED",
+   "seconds": 5.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_claim_grant_is_exact_names_only"
+  },
+  {
+   "id": "X01",
+   "gate": "O_EXCL",
+   "verdict": "KILLED",
+   "seconds": 0.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_canaries_exemptions.py::test_canary_never_reaches_a_writer"
+  },
+  {
+   "id": "X02",
+   "gate": "mkdir exists",
+   "verdict": "KILLED",
+   "seconds": 11.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_existing_destination_is_never_touched"
+  },
+  {
+   "id": "S10",
+   "gate": "git: work tree canonical",
+   "verdict": "KILLED",
+   "seconds": 10.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_more_preflight_controls"
+  },
+  {
+   "id": "S11",
+   "gate": "stdin feed failure",
+   "verdict": "KILLED",
+   "seconds": 14.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_unread_stdin_refuses"
+  },
+  {
+   "id": "Q07",
+   "gate": "tree: E1 target present",
+   "verdict": "KILLED",
+   "seconds": 9.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_d2_e1_link_blob_is_verified"
+  },
+  {
+   "id": "Q08",
+   "gate": "object id recomputed",
+   "verdict": "KILLED",
+   "seconds": 6.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_blob_bytes_must_hash_to_the_object_id"
+  },
+  {
+   "id": "Q09",
+   "gate": "object body size",
+   "verdict": "KILLED",
+   "seconds": 6.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_blob_bytes_must_hash_to_the_object_id"
+  },
+  {
+   "id": "Q10",
+   "gate": "planned entries only",
+   "verdict": "KILLED",
+   "seconds": 1.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_git_plan_accepts_each_member_opaquely[reports/explore/k4s-confirm/check_games.py]"
+  },
+  {
+   "id": "Q14",
+   "gate": "show: role rooted at repo",
+   "verdict": "KILLED",
+   "seconds": 6.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_git_show_file"
+  },
+  {
+   "id": "Q19",
+   "gate": "show: expected sha",
+   "verdict": "KILLED",
+   "seconds": 6.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_git_show_file"
+  },
+  {
+   "id": "Q20",
+   "gate": "export: E1 copy is the verified target",
+   "verdict": "KILLED",
+   "seconds": 5.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_e4_through_git"
+  },
+  {
+   "id": "M02",
+   "gate": "remote: host check",
+   "verdict": "KILLED",
+   "seconds": 13.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_host_mismatch"
+  },
+  {
+   "id": "M08",
+   "gate": "remote: duplicate keys",
+   "verdict": "KILLED",
+   "seconds": 13.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_remote_refuses_duplicate_keys_in_an_otherwise_valid_request"
+  },
+  {
+   "id": "L12",
+   "gate": "parser one line",
+   "verdict": "KILLED",
+   "seconds": 14.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_parser_output_shape"
+  },
+  {
+   "id": "L14",
+   "gate": "builder remote policy",
+   "verdict": "KILLED",
+   "seconds": 13.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_remote.py::test_local_request_builder_refuses_first"
+  },
+  {
+   "id": "F01",
+   "gate": "family: END-JOB*",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "F02",
+   "gate": "family: END-FINAL*",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "F03",
+   "gate": "family: attempt-*.json",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "F04",
+   "gate": "END-claim grant",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_name_gate_still_applies_to_other_components"
+  },
+  {
+   "id": "F05",
+   "gate": "outcome casefold",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_name_gate_still_applies_to_other_components"
+  },
+  {
+   "id": "F06",
+   "gate": "END-claim casefold",
+   "verdict": "KILLED",
+   "seconds": 5.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_end_claim_family_variants[end-job-END-JOB.json]"
+  },
+  {
+   "id": "F07",
+   "gate": "D3 leaf exemption: exactly the two names",
+   "verdict": "KILLED",
+   "seconds": 5.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_e4_and_d3_leaf_flags_are_exact_and_final_only"
+  },
+  {
+   "id": "F08",
+   "gate": "E/D exemptions only on the final component",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_name_gate_e5_argument_is_exact"
+  },
+  {
+   "id": "F09",
+   "gate": "claim grant requires exact names",
+   "verdict": "KILLED",
+   "seconds": 5.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_families.py::test_claim_grant_is_exact_names_only"
+  },
+  {
+   "id": "D3-01",
+   "gate": "D3: S6-only role name",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_role_construction[kwargs0-policy]"
+  },
+  {
+   "id": "D3-02",
+   "gate": "D3: read, exact, no grant, only D3",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_role_construction[kwargs1-policy]"
+  },
+  {
+   "id": "D3-03",
+   "gate": "D3: root is the declared receive parent",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_role_construction[kwargs5-policy]"
+  },
+  {
+   "id": "D3-04",
+   "gate": "D3: exact name shape",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_role_construction[kwargs7-policy]"
+  },
+  {
+   "id": "D3-05",
+   "gate": "D3: inside durable-measurement",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_role_construction[kwargs11-policy]"
+  },
+  {
+   "id": "D3-06",
+   "gate": "D3: role must carry D3",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_never_through_ordinary_reads"
+  },
+  {
+   "id": "D3-07",
+   "gate": "D3: non-D3 refuses as exemption",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_never_through_ordinary_reads"
+  },
+  {
+   "id": "D3-08",
+   "gate": "D3: seal sha format",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_seal_sha_mismatch_and_missing_seal"
+  },
+  {
+   "id": "D3-09",
+   "gate": "D3: sealed (both seal files)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_seal_sha_mismatch_and_missing_seal"
+  },
+  {
+   "id": "D3-10",
+   "gate": "D3: seal sha compared",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_d3.py::test_d3_seal_sha_mismatch_and_missing_seal"
+  },
+  {
+   "id": "GH01",
+   "gate": "git: no inherited environment",
+   "verdict": "KILLED",
+   "seconds": 6.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_inherited_object_directory_redirect"
+  },
+  {
+   "id": "GH02",
+   "gate": "git: replace objects off (flag + env, joint)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "GH03",
+   "gate": "git: core.hooksPath=/dev/null",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "GH04",
+   "gate": "git: fsmonitor (override + config refusal, joint)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "GH05",
+   "gate": "git: protocol.allow=never",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "GH06",
+   "gate": "git: explicit --git-dir",
+   "verdict": "KILLED",
+   "seconds": 7.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_helper_argv_flags"
+  },
+  {
+   "id": "GH07",
+   "gate": "git: fresh empty HOME",
+   "verdict": "KILLED",
+   "seconds": 7.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_inherited_replace_ref_base_and_home_config"
+  },
+  {
+   "id": "GH07b",
+   "gate": "git: XDG_CONFIG_HOME inside the fresh HOME",
+   "verdict": "KILLED",
+   "seconds": 7.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_inherited_replace_ref_base_and_home_config"
+  },
+  {
+   "id": "GH08",
+   "gate": "git: subcommand allowlist",
+   "verdict": "KILLED",
+   "seconds": 8.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_protocols_subcommands_env_and_init"
+  },
+  {
+   "id": "GH09",
+   "gate": "git: extra env allowlist",
+   "verdict": "KILLED",
+   "seconds": 8.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_protocols_subcommands_env_and_init"
+  },
+  {
+   "id": "GH10",
+   "gate": "git: preflight before every call",
+   "verdict": "KILLED",
+   "seconds": 7.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_static_indirection_files_refuse_before_git_runs[alternates-objects/info/alternates]"
+  },
+  {
+   "id": "GH11",
+   "gate": "git: alternates/grafts/shallow refused",
+   "verdict": "KILLED",
+   "seconds": 7.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_static_indirection_files_refuse_before_git_runs[alternates-objects/info/alternates]"
+  },
+  {
+   "id": "GH11b",
+   "gate": "git: declared allowance honoured",
+   "verdict": "KILLED",
+   "seconds": 7.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_static_indirection_files_refuse_before_git_runs[alternates-objects/info/alternates]"
+  },
+  {
+   "id": "GH12",
+   "gate": "git: commondir declared + target (joint)",
+   "verdict": "KILLED",
+   "seconds": 8.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_linked_worktree_must_be_declared"
+  },
+  {
+   "id": "GH13",
+   "gate": "git: commondir target equals declaration",
+   "verdict": "KILLED",
+   "seconds": 8.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_linked_worktree_must_be_declared"
+  },
+  {
+   "id": "GH14",
+   "gate": "git: declared common_dir needs commondir",
+   "verdict": "KILLED",
+   "seconds": 8.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_linked_worktree_must_be_declared"
+  },
+  {
+   "id": "GH16",
+   "gate": "git config: driver/include sections",
+   "verdict": "KILLED",
+   "seconds": 10.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_repository_config_indirection_refuses_before_git_runs[[filter \"x\"]\\n\\tsmudge = %s\\n]"
+  },
+  {
+   "id": "GH17",
+   "gate": "git config: core keys",
+   "verdict": "KILLED",
+   "seconds": 8.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_repo_hooks_and_fsmonitor_never_run"
+  },
+  {
+   "id": "GH18",
+   "gate": "git config: config file checked",
+   "verdict": "KILLED",
+   "seconds": 8.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_repo_hooks_and_fsmonitor_never_run"
+  },
+  {
+   "id": "GH18b",
+   "gate": "git config: config.worktree checked",
+   "verdict": "KILLED",
+   "seconds": 10.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_more_preflight_controls"
+  },
+  {
+   "id": "GH19",
+   "gate": "git config: section names casefolded",
+   "verdict": "KILLED",
+   "seconds": 10.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_repository_config_indirection_refuses_before_git_runs[[includeIf \"gitdir:/\"]\\n\\tpath = %s\\n]"
+  },
+  {
+   "id": "GH20",
+   "gate": "git: init only where no git dir exists",
+   "verdict": "KILLED",
+   "seconds": 8.2,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_protocols_subcommands_env_and_init"
+  },
+  {
+   "id": "GH21",
+   "gate": "git: nothing left in HOME",
+   "verdict": "KILLED",
+   "seconds": 10.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_more_preflight_controls"
+  },
+  {
+   "id": "GH22",
+   "gate": "git: run counter",
+   "verdict": "KILLED",
+   "seconds": 7.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_helper_argv_flags"
+  },
+  {
+   "id": "GO01",
+   "gate": "object: header oid/type/size",
+   "verdict": "KILLED",
+   "seconds": 6.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_blob_identity_checked"
+  },
+  {
+   "id": "GO02",
+   "gate": "object: bounded output",
+   "verdict": "KILLED",
+   "seconds": 6.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_blob_bytes_must_hash_to_the_object_id"
+  },
+  {
+   "id": "GO03",
+   "gate": "object: read counter",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_object_read_counter_counts_reads"
+  },
+  {
+   "id": "GC01",
+   "gate": "commit id must be a commit",
+   "verdict": "KILLED",
+   "seconds": 5.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_ls_tree_status_and_format"
+  },
+  {
+   "id": "ST01",
+   "gate": "E4 fail-closed for every tracked complete.json",
+   "verdict": "KILLED",
+   "seconds": 5.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_reviewer_probe_s9_f1"
+  },
+  {
+   "id": "ST02",
+   "gate": "E4 pinned blob identity",
+   "verdict": "KILLED",
+   "seconds": 5.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_e4_through_git"
+  },
+  {
+   "id": "ST02b",
+   "gate": "E4 mode",
+   "verdict": "KILLED",
+   "seconds": 9.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_e4_identity_refused_in_phase_one[wrong-mode]"
+  },
+  {
+   "id": "ST03",
+   "gate": "D1: non-members skipped",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_git_plan_accepts_each_member_opaquely[reports/explore/k4s-confirm/check_games.py]"
+  },
+  {
+   "id": "ST04",
+   "gate": "D1: declared members present",
+   "verdict": "KILLED",
+   "seconds": 9.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_d1_members_never_read_non_members"
+  },
+  {
+   "id": "ST05",
+   "gate": "E1 entry: exact link oid",
+   "verdict": "KILLED",
+   "seconds": 5.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_symlinks_only_exact_e1"
+  },
+  {
+   "id": "ST06",
+   "gate": "E1 target gated when not a member",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_e1_target_is_screened_even_as_non_member"
+  },
+  {
+   "id": "ST07",
+   "gate": "E1 target regular blob",
+   "verdict": "KILLED",
+   "seconds": 11.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_e1_target_is_screened_even_as_non_member"
+  },
+  {
+   "id": "ST08",
+   "gate": "D1 predicate: exactly True",
+   "verdict": "KILLED",
+   "seconds": 9.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_d1_members_never_read_non_members"
+  },
+  {
+   "id": "ST09",
+   "gate": "plan: role rooted at repo",
+   "verdict": "KILLED",
+   "seconds": 9.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_plan_role_must_be_the_repository"
+  },
+  {
+   "id": "E1-01",
+   "gate": "D2: plan has an E1 entry",
+   "verdict": "KILLED",
+   "seconds": 9.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_d1_members_never_read_non_members"
+  },
+  {
+   "id": "E1-02",
+   "gate": "D2: shipped bytes equal the target blob",
+   "verdict": "KILLED",
+   "seconds": 9.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_d2_e1_materialised"
+  },
+  {
+   "id": "E1-03",
+   "gate": "D2: export copy only",
+   "verdict": "KILLED",
+   "seconds": 5.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_e4_through_git"
+  },
+  {
+   "id": "E4-01",
+   "gate": "export: E4 pin",
+   "verdict": "KILLED",
+   "seconds": 11.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git_r2.py::test_e4_sha_pin_checked_even_when_oid_matches"
+  },
+  {
+   "id": "RV01",
+   "gate": "receive: request keys",
+   "verdict": "KILLED",
+   "seconds": 11.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[extra-request-key]"
+  },
+  {
+   "id": "RV02",
+   "gate": "receive: duplicate names",
+   "verdict": "KILLED",
+   "seconds": 11.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[duplicate]"
+  },
+  {
+   "id": "RV03",
+   "gate": "receive: casefold duplicates",
+   "verdict": "KILLED",
+   "seconds": 11.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[casefold-duplicate]"
+  },
+  {
+   "id": "RV04",
+   "gate": "receive: dir after its parent",
+   "verdict": "KILLED",
+   "seconds": 11.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[dir-before-parent]"
+  },
+  {
+   "id": "RV05",
+   "gate": "receive: file inside declared dirs",
+   "verdict": "KILLED",
+   "seconds": 11.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[outside-dirs]"
+  },
+  {
+   "id": "RV06",
+   "gate": "receive: file keys",
+   "verdict": "KILLED",
+   "seconds": 11.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[extra-key]"
+  },
+  {
+   "id": "RV07",
+   "gate": "receive: modes",
+   "verdict": "KILLED",
+   "seconds": 11.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[bad-mode]"
+  },
+  {
+   "id": "RV08",
+   "gate": "receive: E4 pin",
+   "verdict": "KILLED",
+   "seconds": 11.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_receive_e4_carried_with_pin"
+  },
+  {
+   "id": "RV09",
+   "gate": "receive: max_total",
+   "verdict": "KILLED",
+   "seconds": 11.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[over-total]"
+  },
+  {
+   "id": "RV10",
+   "gate": "receive: name gates (all)",
+   "verdict": "KILLED",
+   "seconds": 5.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receiver_manifest_refusals_create_nothing[flag-false]"
+  },
+  {
+   "id": "RV10b",
+   "gate": "receive: file name gates",
+   "verdict": "KILLED",
+   "seconds": 5.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receiver_manifest_refusals_create_nothing[flag-false]"
+  },
+  {
+   "id": "RV11",
+   "gate": "receive: host",
+   "verdict": "KILLED",
+   "seconds": 11.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[wrong-host]"
+  },
+  {
+   "id": "RV12",
+   "gate": "receive: manifest sha vs argv",
+   "verdict": "KILLED",
+   "seconds": 12.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_stream_refusals"
+  },
+  {
+   "id": "RV13",
+   "gate": "receive: root created exclusively",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_existing_destination_is_never_touched"
+  },
+  {
+   "id": "RV14",
+   "gate": "receive: short stream",
+   "verdict": "KILLED",
+   "seconds": 12.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_stream_refusals"
+  },
+  {
+   "id": "RV15",
+   "gate": "receive: sha",
+   "verdict": "KILLED",
+   "seconds": 12.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_stream_refusals"
+  },
+  {
+   "id": "RV16",
+   "gate": "receive: extra bytes",
+   "verdict": "KILLED",
+   "seconds": 12.0,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_stream_refusals"
+  },
+  {
+   "id": "RV17",
+   "gate": "receive: manifest length bound",
+   "verdict": "KILLED",
+   "seconds": 12.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_stream_refusals"
+  },
+  {
+   "id": "RV19",
+   "gate": "receive: bootstrap program sha",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned",
+   "verdict_without": "KILLED",
+   "detail_without": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_cli_publish_ps.py::test_constants_fingerprint_is_pinned"
+  },
+  {
+   "id": "RV20",
+   "gate": "receive: argv shape",
+   "verdict": "KILLED",
+   "seconds": 12.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_stream_refusals"
+  },
+  {
+   "id": "RV21",
+   "gate": "receive: dir name gates",
+   "verdict": "KILLED",
+   "seconds": 11.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_manifest_refusals_create_nothing[forbidden-dir-only]"
+  },
+  {
+   "id": "RP01",
+   "gate": "receipt: rc",
+   "verdict": "KILLED",
+   "seconds": 11.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP02",
+   "gate": "receipt: one line",
+   "verdict": "KILLED",
+   "seconds": 11.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP03",
+   "gate": "receipt: manifest sha",
+   "verdict": "KILLED",
+   "seconds": 11.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP04",
+   "gate": "receipt: rc 3 refusal shape",
+   "verdict": "KILLED",
+   "seconds": 11.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP05",
+   "gate": "receipt: ok key set",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP06",
+   "gate": "receipt: host/root/dirs",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP07",
+   "gate": "receipt: file count",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP08",
+   "gate": "receipt: rel/size/sha",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP09",
+   "gate": "receipt: nlink",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "RP10",
+   "gate": "receipt: mode",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_direct_happy_path_and_parser"
+  },
+  {
+   "id": "SD01",
+   "gate": "sender: local source names before ssh",
+   "verdict": "SURVIVED",
+   "seconds": 25.3,
+   "detail": "548 passed in 24.83s"
+  },
+  {
+   "id": "SD02",
+   "gate": "sender: size and sha required",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_local_source_gates"
+  },
+  {
+   "id": "SD03",
+   "gate": "sender: streamed sha",
+   "verdict": "KILLED",
+   "seconds": 11.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_sha_and_size_mismatch_keep_partials"
+  },
+  {
+   "id": "SD04",
+   "gate": "sender: destination file gates",
+   "verdict": "KILLED",
+   "seconds": 4.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "SD05",
+   "gate": "sender: destination dir gates",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_local_source_gates"
+  },
+  {
+   "id": "SD06",
+   "gate": "sender: local manifest validation",
+   "verdict": "KILLED",
+   "seconds": 4.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "SD07",
+   "gate": "sender: descriptor gate before ssh",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_local_source_gates"
+  },
+  {
+   "id": "SD08",
+   "gate": "sender: builder write role",
+   "verdict": "SURVIVED",
+   "seconds": 25.3,
+   "detail": "548 passed in 24.80s"
+  },
+  {
+   "id": "S14",
+   "gate": "stdin break tolerated only on nonzero rc",
+   "verdict": "KILLED",
+   "seconds": 25.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_subprocess.py::test_broken_stdin_tolerated_only_on_nonzero_rc"
+  },
+  {
+   "id": "S15",
+   "gate": "feeder Refusal surfaces as itself",
+   "verdict": "KILLED",
+   "seconds": 11.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_sha_and_size_mismatch_keep_partials"
+  },
+  {
+   "id": "R09",
+   "gate": "Input.chunks single use",
+   "verdict": "KILLED",
+   "seconds": 12.1,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_input_chunks_single_use"
+  },
+  {
+   "id": "E5-01",
+   "gate": "E5: constant guard (test mode may change OIDs only)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_test_mode_may_change_oids_only[tenth]"
+  },
+  {
+   "id": "E5-02",
+   "gate": "E5: exact, case-sensitive path lookup",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_constant_is_exactly_the_ruling"
+  },
+  {
+   "id": "E5-03",
+   "gate": "name_gate: e5_rel exactness (E5 path and suffix)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_name_gate_e5_argument_is_exact"
+  },
+  {
+   "id": "E5-03b",
+   "gate": "name_gate: e5_rel must be the suffix",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_name_gate_e5_argument_is_exact"
+  },
+  {
+   "id": "E5-05",
+   "gate": "_gate: E5 needs the role exemption",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_git_plan_accepts_each_member_opaquely[reports/explore/k4s-confirm/check_games.py]"
+  },
+  {
+   "id": "E5-06J",
+   "gate": "_gate exact path + name_gate exactness (joint; the _gate clause alone is masked)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_name_gate_e5_argument_is_exact"
+  },
+  {
+   "id": "E5-07",
+   "gate": "_gate: e5 request refuses unless granted",
+   "verdict": "KILLED",
+   "seconds": 1.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_git_plan_accepts_each_member_opaquely[reports/explore/k4s-confirm/check_games.py]"
+  },
+  {
+   "id": "E5-08",
+   "gate": "tree: E5 mode 100644",
+   "verdict": "KILLED",
+   "seconds": 4.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_non_100644_mode_refused[100755]"
+  },
+  {
+   "id": "E5-09",
+   "gate": "tree: E5 pinned blob OID (phase 1)",
+   "verdict": "KILLED",
+   "seconds": 2.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_real_oids_refuse_synthetic_stand_ins_before_any_read"
+  },
+  {
+   "id": "E5-10",
+   "gate": "tree: E5 cap",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_e5_needs_the_role_exemption_and_the_cap"
+  },
+  {
+   "id": "E5-11",
+   "gate": "tree: E5 needs the role exemption",
+   "verdict": "KILLED",
+   "seconds": 4.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_e5_needs_the_role_exemption_and_the_cap"
+  },
+  {
+   "id": "E5-12",
+   "gate": "hash_e5: pinned blob OID",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_on_disk_changed_bytes_and_unpinned_refuse"
+  },
+  {
+   "id": "E5-13",
+   "gate": "copy_e5: copy pass re-checked",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_on_disk_copy_rechecks_the_pin_on_the_copy_pass"
+  },
+  {
+   "id": "E5-14",
+   "gate": "copy_e5: hash pass before any write",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_on_disk_copy_of_unpinned_bytes_creates_nothing"
+  },
+  {
+   "id": "E5-15",
+   "gate": "git_hash_e5: planned E5 entry only",
+   "verdict": "KILLED",
+   "seconds": 1.5,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_git_plan_accepts_each_member_opaquely[reports/explore/k4s-confirm/check_games.py]"
+  },
+  {
+   "id": "E5-16",
+   "gate": "walk: E5 path must not be a directory",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_on_disk_normal_gates_apply[directory]"
+  },
+  {
+   "id": "E5-17",
+   "gate": "walk: E5 needs the role exemption",
+   "verdict": "KILLED",
+   "seconds": 4.6,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_walk_tree_lists_e5_separately"
+  },
+  {
+   "id": "E5-18",
+   "gate": "receive: E5 exact path / mode 0444 / not E4",
+   "verdict": "KILLED",
+   "seconds": 4.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "E5-18a",
+   "gate": "receive: E5 mode 0444",
+   "verdict": "KILLED",
+   "seconds": 4.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "E5-18J",
+   "gate": "receive: E5 exact path + name_gate exactness (joint; the path clause alone is masked)",
+   "verdict": "KILLED",
+   "seconds": 1.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_name_gate_e5_argument_is_exact"
+  },
+  {
+   "id": "E5-19",
+   "gate": "receive: e5 flag is a strict bool",
+   "verdict": "KILLED",
+   "seconds": 4.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receiver_manifest_refusals_create_nothing[flag-type]"
+  },
+  {
+   "id": "E5-20",
+   "gate": "receive: E5 name exemption only when flagged",
+   "verdict": "KILLED",
+   "seconds": 4.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receiver_manifest_refusals_create_nothing[flag-false]"
+  },
+  {
+   "id": "E5-21",
+   "gate": "receive: blob OID re-hash on the host",
+   "verdict": "KILLED",
+   "seconds": 4.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receiver_checks_the_blob_oid_itself"
+  },
+  {
+   "id": "E5-22",
+   "gate": "sender: hash_e5 of every E5 source before ssh",
+   "verdict": "KILLED",
+   "seconds": 4.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "E5-22b",
+   "gate": "sender: E5 source SHA/size equal the declared ones",
+   "verdict": "KILLED",
+   "seconds": 4.7,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "E5-23",
+   "gate": "sender: E5 keeps its exact path",
+   "verdict": "KILLED",
+   "seconds": 4.8,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_e5.py::test_receive_local_refusals_before_ssh"
+  },
+  {
+   "id": "Q11J",
+   "gate": "E1 link text + link OID pin (joint; Q11 alone is masked by the OID pin and recompute)",
+   "verdict": "KILLED",
+   "seconds": 5.4,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_git.py::test_symlinks_only_exact_e1"
+  },
+  {
+   "id": "SD01J",
+   "gate": "sender pre-ssh names + descriptor gate (joint; SD01 alone is masked by SD07)",
+   "verdict": "KILLED",
+   "seconds": 11.3,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_receive.py::test_local_source_gates"
+  },
+  {
+   "id": "SD08J",
+   "gate": "builder write role + _gate access (joint; SD08 alone is masked by G03)",
+   "verdict": "KILLED",
+   "seconds": 10.9,
+   "detail": "FAILED ../../../../mpac/sdicks02/k4s-runner/run-r1/end-prep/safe-input-r3/tests/test_names_policy.py::test_access_kinds_enforced"
+  }
+ ],
+ "equivalent_survivors": {
+  "note": "Post-run annotation (not produced by mutate.py, whose exit status is 1 because not_killed is non-empty): the three not_killed ids are the documented r2 equivalent mutants; each joint mutant is in this same run.",
+  "Q11": "E1 link-text check alone; masked by the phase-1 E1_LINK_OID pin + _git_object OID recompute; joint Q11J verdict=KILLED",
+  "SD01": "sender pre-ssh name gate alone; masked by SD07 (the pre-ssh descriptor gate also name-gates); joint SD01J verdict=KILLED",
+  "SD08": "builder write-role check alone; masked by _gate's access check (G03); joint SD08J verdict=KILLED"
+ },
+ "e5_mutants": {
+  "count": 26,
+  "all_killed": true,
+  "note": "post-run annotation from this run's results"
+ }
+}
