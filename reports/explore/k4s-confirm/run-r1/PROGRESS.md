@@ -127,6 +127,12 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   afe83faa); barrier PASS. **22:30:38Z / 22:30:42Z replacement-r1 LAUNCHED** 03 sup 1002822 / 04 sup 37363 (11 inflight,
   1743 queued each); copiers 03 702958 / 04 711250. K4S Amendment 2 (19ed3815): fleet unaffected; END/Mac must name c1fb1e9a.
 
+- 00:57:44Z 03 motd release stamp refreshed with NO stop (check exited between census samples).
+- 01:07Z **standing policy P2 approved (adc12f36)**: stop BOTH hosts (owned STOP) before each known apt timer (~08:40Z, ~11:10Z,
+  ~13:20Z), one blind inventory (frozen replace.py), fresh replacement-rN round after the update has run (pre-trigger stale
+  motd stamps with one login, record timers/stamps). At 08:40Z only: after 03's apt finishes post "03 quiet" to the coordinator,
+  wait for the builder's "released" (max 30 min), then relaunch. Cycle automation: tools/round.sh (Sol review requested).
+
 ## Running (owned PGIDs only)
 - CURRENT: replacement-r1 in k4s-confirm-replacement-r1: 03 sup PGID 1002822, 04 sup PGID 37363; copiers on 05 702958 / 711250.
   (Reporting-phase PGIDs below are dead/superseded.)
