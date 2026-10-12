@@ -1,0 +1,11 @@
+{
+  "hosts": {
+    "127x01": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x01",
+    "127x08": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x08"
+  },
+  "outcomes_sealed": true,
+  "phase": "A5 END fixed-code reference series; adopted46ab6923/source8799a0d6; smoke required before references",
+  "preservation": "A5 ACKed durable measurement copied byte-identically as plain files under these release roots; same basename as host attempt in original host root. Original host roots equal A5 descriptor disjoint union old-code disclosure disjoint union RF1 exempt disclosures. Old-code data never pooled. Smoke outside all roots.",
+  "schema": "clasher.t1.reference-attempt-roots.v1",
+  "utc": "2026-10-12T04:53:23Z"
+}
