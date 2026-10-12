@@ -1,0 +1,59 @@
+{
+  "durable_ack_sha256": "ae161bd4ed88a5ff412687818db7488dc6b738d8ea33fb546c1eda7c4e70bf19",
+  "durable_ack_status": "complete",
+  "exactness_pass": true,
+  "full_18_matches_adopted_inventory": true,
+  "full_18_measurement_files": {
+    "build_tiers.sh": "3656f88ecf80cd9aec83c94607dad44088e0b7fbb2d244d06d47c74561e45372",
+    "classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
+    "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+    "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+    "fleet_end.py": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+    "fleet_pool.py": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+    "fleet_profile.py": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+    "fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+    "fleet_validity.py": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+    "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+    "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+    "prepare_fleet_smoke.py": "69190b46ff379b6f75cf38b47d10b5fcd551583e2255301f8a0466a282a0ab1f",
+    "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+    "replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
+    "spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+    "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+    "telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
+    "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+  },
+  "guard_validations": {
+    "admission": {
+      "passes": true,
+      "rules": "frozen-t1-op1-op2-op3-op4-op5-op6-v1"
+    },
+    "blocks": {
+      "blocks": 238,
+      "passes": true,
+      "rules": "frozen-t1-op1-op2-op3-op4-op5-op6-v1"
+    },
+    "census": {
+      "final": false,
+      "observations": 2124,
+      "passes": true,
+      "rules": "frozen-t1-op1-op2-op3-op4-op5-op6-v1"
+    }
+  },
+  "health_checks": "PASS",
+  "host": "127x08",
+  "independent_review_is_coordinator_owned": true,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "old_timing_not_opened": true,
+  "outcomes_sealed": true,
+  "poolable": false,
+  "reference_launch_still_requires_relayed_PASS": true,
+  "reporting_mhz_gate_pass": true,
+  "schema": "clasher.t1.a5-smoke-health.v1",
+  "slot_count": 11,
+  "smoke_outside_all_roots": true,
+  "step": "A5-unpoolable-smoke",
+  "unpoolable": true,
+  "utc": "2026-10-12T06:14:12Z",
+  "warmup_seconds": 300
+}
