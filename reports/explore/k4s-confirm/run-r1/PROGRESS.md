@@ -216,3 +216,16 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-12T07:30:59Z SEALED health: 127x03 complete 1068 acked 1068 hub 1068/1068 failed 0 stopevent - inflight 11 queued 675 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 1057 acked 1056 hub 1056/1056 failed 0 stopevent - inflight 11 queued 686 reason None who 0 flags[dbus 1051 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
 - 2026-10-12T07:50:17Z SEALED health: 127x03 complete 1106 acked 1106 hub 1106/1106 failed 0 stopevent - inflight 11 queued 637 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 1096 acked 1096 hub 1096/1096 failed 0 stopevent - inflight 11 queued 647 reason None who 0 flags[dbus 1091 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
 - 2026-10-12T08:09:29Z SEALED health: 127x03 complete 1147 acked 1147 hub 1147/1147 failed 0 stopevent - inflight 11 queued 596 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 1135 acked 1135 hub 1135/1135 failed 0 stopevent - inflight 11 queued 608 reason None who 0 flags[dbus 1130 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
+
+## P2 cut 1 (r1 -> r2), 2026-10-12
+- 08:37:46.543Z / 08:37:46.567Z joint owned STOP of replacement-r1 (03 sup 1002822, 04 sup 37363). Supervisors exited
+  08:37:48Z / 08:37:51Z (owned_STOP): 03 1205 completed / 11 failed / 538 unstarted; 04 1194 / 11 / 549. Recorded PGIDs
+  (03 1217, 04 1206) have 0 live members. complete.json sets == exit lists.
+- Drain: hub ACK + returned marker bound for all 1205 + 1194 blocks; copiers 702958 / 711250 exited, revoked, final, no
+  errors; hub and source admissions inactive; STOP-COPY removed.
+- Inventory (frozen replace.py @391d2006, working ledger): 22 new events (all owned_STOP; primary 16, guard 6) == failed
+  blocks; cumulative lost primary 41/150, guard 14/45; max k primary 2/9, guard 1/7. dispatch replacement-r2.json
+  1df20188 (1109 rows = 1087 never-started + 22 replacements; 555 / 554; 8938 games); exact coverage 2791 counted + 1109.
+  Ledger before-r2 19580caa -> 4a56abf3.
+- 08:39:43Z / 08:39:46Z k4s-confirm-replacement-r2 staged (extras sha OK, overlay 175/175, PREREG 9650972d); qualification
+  running (03 PGID 2102837, 04 PGID 1128505).

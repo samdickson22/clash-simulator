@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-12T08:37:48Z",
+  "reason": "owned_STOP",
+  "foreign": [],
+  "foreign_active": [],
+  "console": {
+    "who": "",
+    "console_count": 0,
+    "positive": false
+  },
+  "ssh_family_sample": {
+    "cpu_ticks": 0,
+    "seconds": 2.52266930998303,
+    "core_fraction": 0.0,
+    "source_proven_cpu_ticks": 0,
+    "idle_cpu_ticks": 0,
+    "stop": false
+  },
+  "ubuntu_apt_sample": {
+    "cpu_ticks": 0,
+    "seconds": 2.52266930998303,
+    "core_fraction": 0.0,
+    "stop": false
+  }
+}
