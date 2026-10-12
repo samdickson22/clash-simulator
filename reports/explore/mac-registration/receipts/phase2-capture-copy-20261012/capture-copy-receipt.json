@@ -1,0 +1,219 @@
+{
+ "corpora_sha256": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+ "cpus": [
+  63
+ ],
+ "extra_files": [],
+ "files": [
+  {
+   "actual": "d8506004b472e206a3012abd7c3ee094e6a5740e209d4adc638f1eed21663c89",
+   "bytes": 218535501,
+   "expected": "d8506004b472e206a3012abd7c3ee094e6a5740e209d4adc638f1eed21663c89",
+   "relative": "corpus-K0c-0003/capture.pkl.gz"
+  },
+  {
+   "actual": "7ddce48bb8fc71f6705ea1d03354ffd3b0d2277faa48f0b8d69f350a05c4d037",
+   "bytes": 121326120,
+   "expected": "7ddce48bb8fc71f6705ea1d03354ffd3b0d2277faa48f0b8d69f350a05c4d037",
+   "relative": "corpus-K0c-0004/capture.pkl.gz"
+  },
+  {
+   "actual": "4faea7895ec9746bc6792e703015f59c4e5039b54953813eaeb28858afa77966",
+   "bytes": 130357564,
+   "expected": "4faea7895ec9746bc6792e703015f59c4e5039b54953813eaeb28858afa77966",
+   "relative": "corpus-K0c-0005/capture.pkl.gz"
+  },
+  {
+   "actual": "767c5b755a1f8a4baef6969d7f07f24f1c03b4290fd41fcff3ffe9c1fe3e06f7",
+   "bytes": 118981882,
+   "expected": "767c5b755a1f8a4baef6969d7f07f24f1c03b4290fd41fcff3ffe9c1fe3e06f7",
+   "relative": "corpus-K0c-0006/capture.pkl.gz"
+  },
+  {
+   "actual": "a51788981bcd3ee26d754ceb3733f1ad245d2e77fec62e8b3a568abf4526995b",
+   "bytes": 117867624,
+   "expected": "a51788981bcd3ee26d754ceb3733f1ad245d2e77fec62e8b3a568abf4526995b",
+   "relative": "corpus-K0c-0007/capture.pkl.gz"
+  },
+  {
+   "actual": "fb1bf0a6707731349c2e922afabe994e1361b0d4567c19040d5702bca289d86a",
+   "bytes": 264102977,
+   "expected": "fb1bf0a6707731349c2e922afabe994e1361b0d4567c19040d5702bca289d86a",
+   "relative": "corpus-K0c-0008/capture.pkl.gz"
+  },
+  {
+   "actual": "dc137878b561bb1a963be06994956514bddf7784eafad1877d2438982d61a402",
+   "bytes": 141876772,
+   "expected": "dc137878b561bb1a963be06994956514bddf7784eafad1877d2438982d61a402",
+   "relative": "corpus-K0c-0009/capture.pkl.gz"
+  },
+  {
+   "actual": "8a2ed68b317a140068c10747c83042452cfb4360800341246b4b58214c06accd",
+   "bytes": 154599155,
+   "expected": "8a2ed68b317a140068c10747c83042452cfb4360800341246b4b58214c06accd",
+   "relative": "corpus-K0c-0010/capture.pkl.gz"
+  },
+  {
+   "actual": "ba77916b5f16d52c0c4d45dfda219cc054e11e8377a34caedf408de3e3cd889e",
+   "bytes": 179206017,
+   "expected": "ba77916b5f16d52c0c4d45dfda219cc054e11e8377a34caedf408de3e3cd889e",
+   "relative": "corpus-S-0003/capture.pkl.gz"
+  },
+  {
+   "actual": "d296b1613245e67c6a082efe3211bf0317cbee29ff97ef818a259ef4058864ee",
+   "bytes": 115118471,
+   "expected": "d296b1613245e67c6a082efe3211bf0317cbee29ff97ef818a259ef4058864ee",
+   "relative": "corpus-S-0004/capture.pkl.gz"
+  },
+  {
+   "actual": "a0047ac71f3a5009d48d7f5d94c9d2aac70eb4e834e8025c2ac0a73124b0eff0",
+   "bytes": 148948396,
+   "expected": "a0047ac71f3a5009d48d7f5d94c9d2aac70eb4e834e8025c2ac0a73124b0eff0",
+   "relative": "corpus-S-0005/capture.pkl.gz"
+  },
+  {
+   "actual": "f50b40215a6376531117fb5f2d90edeb819a6cf74f4a2eb1abe33ce56fea4c58",
+   "bytes": 115575727,
+   "expected": "f50b40215a6376531117fb5f2d90edeb819a6cf74f4a2eb1abe33ce56fea4c58",
+   "relative": "corpus-S-0006/capture.pkl.gz"
+  },
+  {
+   "actual": "b05bb3d762ce3f7121928331546ece42691605842ddbe85454b186a8f29e8afb",
+   "bytes": 164691077,
+   "expected": "b05bb3d762ce3f7121928331546ece42691605842ddbe85454b186a8f29e8afb",
+   "relative": "corpus-S-0007/capture.pkl.gz"
+  },
+  {
+   "actual": "bff245f050637fbcef66efc2dce40d1d9fb220c4ff27d0fb7df85db53f34acba",
+   "bytes": 142305831,
+   "expected": "bff245f050637fbcef66efc2dce40d1d9fb220c4ff27d0fb7df85db53f34acba",
+   "relative": "corpus-S-0008/capture.pkl.gz"
+  },
+  {
+   "actual": "5bc3141bf5a8a9688f57ddf25628ef4c1f5b923be7ae82388547df07fcfaaca9",
+   "bytes": 207000530,
+   "expected": "5bc3141bf5a8a9688f57ddf25628ef4c1f5b923be7ae82388547df07fcfaaca9",
+   "relative": "corpus-S-0009/capture.pkl.gz"
+  },
+  {
+   "actual": "1298c7a7de3e919ad4bfcd08185c13291cbc6ef23b41d02ed4cdd774720c7bb0",
+   "bytes": 135414600,
+   "expected": "1298c7a7de3e919ad4bfcd08185c13291cbc6ef23b41d02ed4cdd774720c7bb0",
+   "relative": "corpus-S-0010/capture.pkl.gz"
+  },
+  {
+   "actual": "bcf3a59fe4d787add54a8d38555532d9620932d52f180f2564657c4b02b00537",
+   "bytes": 206073412,
+   "expected": "bcf3a59fe4d787add54a8d38555532d9620932d52f180f2564657c4b02b00537",
+   "relative": "corpus-K2-0003/capture.pkl.gz"
+  },
+  {
+   "actual": "22fa5d124653774f269265a9b25accf5c4de3664683c4720815110e33bcb89a4",
+   "bytes": 112278983,
+   "expected": "22fa5d124653774f269265a9b25accf5c4de3664683c4720815110e33bcb89a4",
+   "relative": "corpus-K2-0004/capture.pkl.gz"
+  },
+  {
+   "actual": "ba0f452764b12b5feaf6037db651359c80d247c92b0fc6ca0819567ac0516c64",
+   "bytes": 122010120,
+   "expected": "ba0f452764b12b5feaf6037db651359c80d247c92b0fc6ca0819567ac0516c64",
+   "relative": "corpus-K2-0005/capture.pkl.gz"
+  },
+  {
+   "actual": "72caa378e150bcd8865b52ad2d385746f645714306549f9e53fe68dc6786e6ec",
+   "bytes": 114392176,
+   "expected": "72caa378e150bcd8865b52ad2d385746f645714306549f9e53fe68dc6786e6ec",
+   "relative": "corpus-K2-0006/capture.pkl.gz"
+  },
+  {
+   "actual": "bad2026fe4a536e819b4574de836968ad795b00b4c342bda14dbcf2ff8dc0684",
+   "bytes": 125385800,
+   "expected": "bad2026fe4a536e819b4574de836968ad795b00b4c342bda14dbcf2ff8dc0684",
+   "relative": "corpus-K2-0007/capture.pkl.gz"
+  },
+  {
+   "actual": "919cbb43076e8bec797ec5c05cf165aebfa158c8355163900d4cab6b258452d0",
+   "bytes": 184236567,
+   "expected": "919cbb43076e8bec797ec5c05cf165aebfa158c8355163900d4cab6b258452d0",
+   "relative": "corpus-K2-0008/capture.pkl.gz"
+  },
+  {
+   "actual": "c2bc3941c360fcff480557c366875d1fe50fcdcc6dd43c655716ece88fed4c81",
+   "bytes": 137047860,
+   "expected": "c2bc3941c360fcff480557c366875d1fe50fcdcc6dd43c655716ece88fed4c81",
+   "relative": "corpus-K2-0009/capture.pkl.gz"
+  },
+  {
+   "actual": "986b7ab8b80ba9b8c228ade1d991c775fe3b61e831230d8058f7eafe6e3bb229",
+   "bytes": 218085015,
+   "expected": "986b7ab8b80ba9b8c228ade1d991c775fe3b61e831230d8058f7eafe6e3bb229",
+   "relative": "corpus-K2-0010/capture.pkl.gz"
+  },
+  {
+   "actual": "0ce9a6b7f4a9ead76a032b6cdabe10f9a372590671e97cfb1c82f1099d16e178",
+   "bytes": 184541548,
+   "expected": "0ce9a6b7f4a9ead76a032b6cdabe10f9a372590671e97cfb1c82f1099d16e178",
+   "relative": "corpus-K4-0003/capture.pkl.gz"
+  },
+  {
+   "actual": "d14655e95c0e18c698b7d8101ee6df49ab62556679ba4d9d550c1fb5ba605458",
+   "bytes": 112274987,
+   "expected": "d14655e95c0e18c698b7d8101ee6df49ab62556679ba4d9d550c1fb5ba605458",
+   "relative": "corpus-K4-0004/capture.pkl.gz"
+  },
+  {
+   "actual": "8c677cf783f9f2edef53c98824c6bbac8ada9e0eea477ccd58cca9b613f4e1a3",
+   "bytes": 122019105,
+   "expected": "8c677cf783f9f2edef53c98824c6bbac8ada9e0eea477ccd58cca9b613f4e1a3",
+   "relative": "corpus-K4-0005/capture.pkl.gz"
+  },
+  {
+   "actual": "ab5c143f4de7b3c5ca25562441d9227eb258f09ff327611ba6d292ac409bce0d",
+   "bytes": 114234828,
+   "expected": "ab5c143f4de7b3c5ca25562441d9227eb258f09ff327611ba6d292ac409bce0d",
+   "relative": "corpus-K4-0006/capture.pkl.gz"
+  },
+  {
+   "actual": "056010f8751d9473e6a128032b496393993b7f6f109a6e504cdbdfaf6af4dfa4",
+   "bytes": 124372604,
+   "expected": "056010f8751d9473e6a128032b496393993b7f6f109a6e504cdbdfaf6af4dfa4",
+   "relative": "corpus-K4-0007/capture.pkl.gz"
+  },
+  {
+   "actual": "13248e69349413b978114e2f67385cca8df67289e51942af9dcd6f545aaabc2e",
+   "bytes": 183185606,
+   "expected": "13248e69349413b978114e2f67385cca8df67289e51942af9dcd6f545aaabc2e",
+   "relative": "corpus-K4-0008/capture.pkl.gz"
+  },
+  {
+   "actual": "22cc0970fd14c0e1435b61d92f413fa05829e60fafc123b418b8f67e9701cefd",
+   "bytes": 137778522,
+   "expected": "22cc0970fd14c0e1435b61d92f413fa05829e60fafc123b418b8f67e9701cefd",
+   "relative": "corpus-K4-0009/capture.pkl.gz"
+  },
+  {
+   "actual": "fe7aa6b18ae10c95014079702837fe886fa4232094e26145546375b1ef72041d",
+   "bytes": 218017496,
+   "expected": "fe7aa6b18ae10c95014079702837fe886fa4232094e26145546375b1ef72041d",
+   "relative": "corpus-K4-0010/capture.pkl.gz"
+  }
+ ],
+ "games_copied": false,
+ "host": "127x05",
+ "mismatched": [],
+ "nice": 19,
+ "only_pinned_files": true,
+ "outcomes_read": false,
+ "passes": true,
+ "python": "3.8.10",
+ "remote_before": {
+  "all_equal_corpora": true,
+  "file_sha256": "5729149b6c1bc45652e5735b571c1ab3cdb5e3daf10f2a38de2ae8b74f22397b",
+  "files": 32,
+  "mismatched": []
+ },
+ "schema": "clasher.tiers-a4.capture-copy.v1",
+ "source_host": "127x03",
+ "total_bytes": 4891842873,
+ "utc": "2026-10-12T08:51:32Z"
+}
