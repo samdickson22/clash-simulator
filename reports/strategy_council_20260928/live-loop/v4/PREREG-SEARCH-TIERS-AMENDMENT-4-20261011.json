@@ -56,6 +56,18 @@
    "reported_by": "Mac operator commits 27faac2c, 44040cd3 (receipts reports/explore/mac-e4-session/receipts/phase-b-prep-20261011/a4-nocopy-darwin/)",
    "rules_or_frozen_files_changed": false,
    "sol_check": "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-E1.md"
+  },
+  {
+   "after_sha256": "166a163620f7a1924ff50e120a2e9dff3e449329a02f5b5b52b13398536bc67d",
+   "before_sha256": "96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7",
+   "change": "FROZEN_MEASUREMENT_FILES[\"fleet_validity.py\"] 94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae -> 0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+   "file": "reports/explore/mac-registration/stage_nocopy.py",
+   "id": "E2",
+   "kind": "pin-follows-adopted-amendment",
+   "mac_runtime": "must be re-staged from main 8799a0d6 or later (or overlaid and re-verified) before any Mac staging",
+   "reason": "TIERS Amendment 5 (COORDINATOR 46ab6923, main 8799a0d6) changes e4v3/fleet_validity.py; A5 ruling R5(b)",
+   "rules_or_frozen_files_changed": false,
+   "sol_check": "pending (coordinator-routed narrow diff check)"
   }
  ],
  "games_read": false,
@@ -106,7 +118,7 @@
  },
  "note": {
   "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-4-20261011.md",
-  "sha256": "16d59da18d2d348b54cdbda5dc68eaed0958f8b3643500156df431936bf2d2c0"
+  "sha256": "2f8d2f2e4a82d1fcac526ed4e48a2b57f37b662df4b444d605604e8eff8acc77"
  },
  "original_freeze": {
   "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-FREEZE-20261010.json",
@@ -218,7 +230,7 @@
   "run_tests.sh": "ad56318f2646fda9741a0c9b5f8ea79e9c9a682f0102cb6ac2adc4261c6031eb",
   "seal_receipt.py": "5742892b623051644c3c7d9f9f95d4403aec14e28b8d9d88e60915b68983a696",
   "selection.py": "ad8b348a192feb394964108ba291358ed530a2b8a82afd71c95f7accfbecc3a1",
-  "stage_nocopy.py": "96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7",
+  "stage_nocopy.py": "166a163620f7a1924ff50e120a2e9dff3e449329a02f5b5b52b13398536bc67d",
   "student_reference.py": "98c4e154fb83e40841964f4c16f1f0baf74a7ac89914fcf48920cafc03d1f8cf",
   "tests/smoke_real_runtime.py": "6854ec6a97f094fad16ac851dd65d6bf69d635c291bfa95bcf4712009502b796",
   "tests/test_pipeline.py": "85825db4c37b5dd18ad9020bf6c2800e9e2f0fb0c22d2f3985b76fcaf8bff1a6",
@@ -233,7 +245,7 @@
  "tests": {
   "py312": {
    "log": "reports/explore/mac-registration/receipts/unit-tests-py312.log",
-   "log_sha256": "1dd07c52e893723d1549ac77a976cd79eb92c37e9c1cc6262891f13b2e251ef4",
+   "log_sha256": "3f02f596e9f1c1b373ef9e1a0fc6ff63ed0b481bf85bfb78f899d6e3ddb6f372",
    "passed": true,
    "python": "3.12.12",
    "ran": 38,
@@ -241,7 +253,7 @@
   },
   "py38": {
    "log": "reports/explore/mac-registration/receipts/unit-tests-py38.log",
-   "log_sha256": "9c62698507e52efbb2eec72e2105dcbef2520df42e5280685ea425b28156e491",
+   "log_sha256": "5910ef58bebfb72c9c97dfa9e5e07c2a3d682c83fdfe8a73d8a26762006fac7a",
    "passed": true,
    "python": "3.8.10",
    "ran": 38,

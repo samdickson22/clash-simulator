@@ -44,15 +44,6 @@ Work directory on 05: `/mpac/sdicks02/jobs/clasher/mac-registration-20261011/`. 
 - **About 23:06Z** Sol round 3 requested on the whole amendment (`macreg-a4-sol-review-r3`). One round is held in reserve.
 - **23:10Z Sol round 3: APPROVE_WITH_CONDITIONS.** The single condition was finding 10 (minor): the "every stage" runtime-check wording. Fixed at 23:11Z.
 - **23:14Z Sol round 4 (confirmation): APPROVE.** Committing A4 and the builder through a temp index.
-- **23:03Z Sol round 2: REJECT.**
-  - All 7 round-1 findings are resolved.
-  - Finding 8 (blocking): the runtime `copy_file` substitution needs an explicit coordinator ruling. I reported the stop at 23:03Z.
-  - Finding 9 (minor): text fix, done.
-- **23:04Z coordinator ruling** (COORDINATOR `684195b3`, recorded 23:04:25Z; first labelled 23:07Z, corrected by the coordinator): `stage_nocopy.py` APPROVED under 6 conditions.
-  - Implemented the read-only protection (condition 3) and `--verify-bundle` (condition 5).
-  - The ruling is recorded in the A4 md and json.
-  - 38/38 tests pass on both Pythons.
-- **About 23:07Z** Sol round 3 requested on the whole amendment (`macreg-a4-sol-review-r3`). One round is held in reserve.
 
 - **23:15Z** Committed and pushed `94df513d` (32 files, temp index on origin/main, secret scan clean).
 - **Coordinator: A4 ADOPTED** (COORDINATOR `16d431b4`).
@@ -61,6 +52,12 @@ Work directory on 05: `/mpac/sdicks02/jobs/clasher/mac-registration-20261011/`. 
   - The test now asserts the placement method recorded in the receipt.
   - Test SHA `f75cd3a3` → `b540df82`. The helper `96abd847` is unchanged.
   - Recorded in the A4 md and json. Sol diff check: APPROVE (`reviews/SOL-REVIEW-A4-E1.md`).
+
+- **04:45Z Oct 12: Erratum E2.** TIERS A5 was adopted (COORDINATOR `46ab6923`, main `8799a0d6`), changing `fleet_validity.py` `94d0e7f2` → `0775b704`.
+  - The `stage_nocopy.py` pin was updated (one line). Helper `96abd847` → `166a1636`.
+  - 38/38 tests pass against the A5 e4v3 extraction `e4v3-a5-8799a0d6`.
+  - Removed a duplicated PROGRESS block, caused by a repeated edit on 10-11.
+  - **Open for Phase 3:** the builder runtime `runtime-a3` and `verify_runtime` bind END-A3 (`bd9804c3`, holding `fleet_validity` `94d0e7f2`). To build on A5 bytes, the binding must move to the END-A5 manifest once T1 commits it. That needs a separate narrow change, raised with the coordinator.
 
 ## Phase 2 / Phase 3
 

@@ -1,7 +1,7 @@
 {
  "py312": {
   "log": "reports/explore/mac-registration/receipts/unit-tests-py312.log",
-  "log_sha256": "1dd07c52e893723d1549ac77a976cd79eb92c37e9c1cc6262891f13b2e251ef4",
+  "log_sha256": "3f02f596e9f1c1b373ef9e1a0fc6ff63ed0b481bf85bfb78f899d6e3ddb6f372",
   "passed": true,
   "python": "3.12.12",
   "ran": 38,
@@ -9,7 +9,7 @@
  },
  "py38": {
   "log": "reports/explore/mac-registration/receipts/unit-tests-py38.log",
-  "log_sha256": "9c62698507e52efbb2eec72e2105dcbef2520df42e5280685ea425b28156e491",
+  "log_sha256": "5910ef58bebfb72c9c97dfa9e5e07c2a3d682c83fdfe8a73d8a26762006fac7a",
   "passed": true,
   "python": "3.8.10",
   "ran": 38,

@@ -10,5 +10,17 @@
   "reported_by": "Mac operator commits 27faac2c, 44040cd3 (receipts reports/explore/mac-e4-session/receipts/phase-b-prep-20261011/a4-nocopy-darwin/)",
   "rules_or_frozen_files_changed": false,
   "sol_check": "reports/explore/mac-registration/reviews/SOL-REVIEW-A4-E1.md"
+ },
+ {
+  "after_sha256": "166a163620f7a1924ff50e120a2e9dff3e449329a02f5b5b52b13398536bc67d",
+  "before_sha256": "96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7",
+  "change": "FROZEN_MEASUREMENT_FILES[\"fleet_validity.py\"] 94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae -> 0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+  "file": "reports/explore/mac-registration/stage_nocopy.py",
+  "id": "E2",
+  "kind": "pin-follows-adopted-amendment",
+  "mac_runtime": "must be re-staged from main 8799a0d6 or later (or overlaid and re-verified) before any Mac staging",
+  "reason": "TIERS Amendment 5 (COORDINATOR 46ab6923, main 8799a0d6) changes e4v3/fleet_validity.py; A5 ruling R5(b)",
+  "rules_or_frozen_files_changed": false,
+  "sol_check": "pending (coordinator-routed narrow diff check)"
  }
 ]

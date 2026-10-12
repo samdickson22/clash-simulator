@@ -181,3 +181,12 @@ Source SHAs and test results are in the [amendment record](PREREG-SEARCH-TIERS-A
 - **Unchanged:** `stage_nocopy.py` stays at `96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7`.
 - **Tests:** 38/38 pass on Python 3.8.10 and on 3.12.12 on 05.
 - **Review:** a diff-only Sol check is recorded in `reports/explore/mac-registration/reviews/SOL-REVIEW-A4-E1.md`.
+
+**E2. Staging-helper pin follows TIERS Amendment 5. One line; no rule, logic or frozen-file change by A4.**
+- **Source:** TIERS Amendment 5 (adopted, COORDINATOR `46ab6923`; main `8799a0d6`) changes `e4v3/fleet_validity.py` from `94d0e7f2…` to `0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f`. A5 ruling R5(b) requires this erratum.
+- **Change:** in `stage_nocopy.py`, the `FROZEN_MEASUREMENT_FILES["fleet_validity.py"]` entry goes from `94d0e7f2…` to `0775b704…`. Nothing else in the helper changed.
+- **Helper SHA:** `96abd8474d6410d6ba4342889e18d5caed5b455417535d44440d676041f653c7` before, `166a163620f7a1924ff50e120a2e9dff3e449329a02f5b5b52b13398536bc67d` after.
+- **Pin check:** the 18 pins now equal the `measurement_files` of the e4v3 package at `8799a0d6`. An e4v3 holding the superseded `fleet_validity` bytes is refused before `prepare_bundle` is imported.
+- **Tests:** 38/38 pass on Python 3.8.10 and on 3.12.12 against the A5 e4v3. The no-copy integration test runs the real frozen `prepare_bundle` through the helper on those bytes.
+- **Re-stage before staging:** the Mac runtime must be re-staged from main `8799a0d6` or later, or overlaid and re-verified, before any Mac staging. Under A2's "same amended bytes everywhere", no TIERS Mac session runs on a runtime that holds `fleet_validity.py` `94d0e7f2`.
+- **B.6:** the pooled-S-forward gate binds the A5 END pool.
