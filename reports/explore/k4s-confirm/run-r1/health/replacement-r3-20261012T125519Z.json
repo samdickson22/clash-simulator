@@ -1,0 +1,147 @@
+{
+ "schema": "clasher.k4s.run-health.v2",
+ "study": "PREREG-K4S",
+ "sealed": true,
+ "outcomes_read": false,
+ "utc": "2026-10-12T12:55:19Z",
+ "phase": "replacement-r3",
+ "tag": "watch",
+ "hosts": {
+  "127x03": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T12:55:18Z\",  \"host\": \"127x03\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 172,  \"complete_local_games\": 1376,  \"failed_blocks\": 0,  \"queued\": 103,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.96731567382812,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "172",
+    "HUBACK": "172",
+    "EXITS": "172 0",
+    "LOSTPOP": "0 0",
+    "FAILEDIDS": "",
+    "LAUNCHDISPATCH": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+    "SRCRECEIPT": "\"pid\": 876522 \"active\": true",
+    "SUPPROC": "2373197 RNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T12:55:18Z",
+    "phase": "replacement",
+    "complete_local_blocks": 172,
+    "failed_blocks": 0,
+    "queued": 103,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.96731567382812
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "expected": 286,
+   "hub": {
+    "durable": 172,
+    "returned": 172,
+    "flags": {
+     "interfered": 0,
+     "dbus": 0,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 876522,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T12:55:09Z",
+     "listed": 172,
+     "durable_on_hub": 172,
+     "ack_returned": 172,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  },
+  "127x04": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T12:55:18Z\",  \"host\": \"127x04\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 171,  \"complete_local_games\": 1368,  \"failed_blocks\": 0,  \"queued\": 107,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.55928039550781,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "171",
+    "HUBACK": "171",
+    "EXITS": "171 0",
+    "LOSTPOP": "0 0",
+    "FAILEDIDS": "",
+    "LAUNCHDISPATCH": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+    "SRCRECEIPT": "\"pid\": 884802 \"active\": true",
+    "SUPPROC": "1396984 RNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T12:55:18Z",
+    "phase": "replacement",
+    "complete_local_blocks": 171,
+    "failed_blocks": 0,
+    "queued": 107,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.55928039550781
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "expected": 289,
+   "hub": {
+    "durable": 171,
+    "returned": 171,
+    "flags": {
+     "interfered": 168,
+     "dbus": 168,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 884802,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T12:55:13Z",
+     "listed": 171,
+     "durable_on_hub": 171,
+     "ack_returned": 171,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  }
+ },
+ "cumulative_lost": {
+  "status": "OK",
+  "primary": 57,
+  "guard": 20,
+  "ledger_events": 77,
+  "ledger_max_k": {
+   "primary": 3,
+   "guard": 2
+  },
+  "overlap": {
+   "primary": 0,
+   "guard": 0
+  },
+  "overlap_ids": {
+   "primary": [],
+   "guard": []
+  }
+ },
+ "lost_total": {
+  "primary": 0,
+  "guard": 0
+ },
+ "anomalies": [],
+ "summary": "127x03 complete 172 acked 172 hub 172/172 failed 0 stopevent - inflight 11 queued 103 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 171 acked 171 hub 171/171 failed 0 stopevent - inflight 11 queued 107 reason None who 0 flags[dbus 168 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 57/300 guard 20/90 (union; already in ledger 0/0); ledger max k {'primary': 3, 'guard': 2}"
+}
