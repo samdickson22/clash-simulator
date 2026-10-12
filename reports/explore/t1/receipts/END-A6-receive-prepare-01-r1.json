@@ -1,0 +1,24 @@
+{
+  "attempt": "end-a6-127x01-0a87166f-r1",
+  "created_empty": true,
+  "host": "127x01",
+  "nonce": "fcd3174f62674ab2ad71326add7c3391",
+  "prepare_argv": [
+    "nice",
+    "-n",
+    "19",
+    "taskset",
+    "-c",
+    "63",
+    "python3",
+    "-I",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-prepare-only-325a00a6.py",
+    "--receive",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x01/end-a6-127x01-0a87166f-r1",
+    "--prepare"
+  ],
+  "prepare_source_sha256": "325a00a6be155f21b2a745b783290d015b92edd7e25ba551d0765fab3a8d117c",
+  "receive": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x01/end-a6-127x01-0a87166f-r1",
+  "utc": "2026-10-12T01:08:13Z",
+  "verification_or_ACK": false
+}

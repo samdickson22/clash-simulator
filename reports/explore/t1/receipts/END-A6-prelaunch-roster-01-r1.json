@@ -1,0 +1,26 @@
+{
+  "all_mirror_members_stopped": true,
+  "console": {
+    "console_count": 0,
+    "positive": false,
+    "who": ""
+  },
+  "earlier_wrappers": [],
+  "earlier_wrappers_gone": true,
+  "host": "127x01",
+  "mirror_group_members": 4,
+  "mirror_identity": {
+    "cmd": "bash reports/strategy_council_20260928/fleet/fleet_run.sh --worker hub-mirror-127x04-v2-20261008 bash /mpac/sdicks02/jobs/clasher/hub_mirror_v2.sh",
+    "cmdline_sha256": "9cc266c0b8289659e419afde151e1daf537048ec0671afc16b8e146f6494ffdf",
+    "exe": "/usr/bin/bash",
+    "pgid": 516161,
+    "pid": 516161,
+    "start_ticks": 129232773,
+    "uid": 3822945
+  },
+  "mirror_state": "T",
+  "mirror_untouched": true,
+  "outcomes_sealed": true,
+  "timing_started": false,
+  "utc": "2026-10-12T01:10:49Z"
+}

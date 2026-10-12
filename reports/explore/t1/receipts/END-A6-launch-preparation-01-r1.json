@@ -1,0 +1,130 @@
+{
+  "C3_binding_preflight": "PASS",
+  "admissions": [
+    "owned-supervisor-admission.json",
+    "system-bus-admission.json"
+  ],
+  "argv": [
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a6-127x01-0a87166f-r1/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a6-127x01-0a87166f-r1/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "ede18ecc04d9387ed8e49387c80449d6a822a9434e7bb470b86358a9fbf9d164"
+  ],
+  "argv_nul_sha256": "d3a6e81e560bbf10b3217c90117fc4f34d4e9f877bbb4c90d4703ef09df9845a",
+  "binding_changes": [
+    "guard.job",
+    "remove owned-copier admission"
+  ],
+  "bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a6-127x01-0a87166f-r1/bundle",
+  "detach_sha256": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+  "host": "127x01",
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a6-127x01-0a87166f-r1",
+  "layout": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    [
+      [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      [
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      [
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      [
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      [
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      [
+        50,
+        51,
+        52,
+        53,
+        54
+      ]
+    ],
+    63
+  ],
+  "manifest_sha256": "ede18ecc04d9387ed8e49387c80449d6a822a9434e7bb470b86358a9fbf9d164",
+  "outcomes_sealed": true,
+  "python": "3.12.13",
+  "slot_count": 11,
+  "source_inputs_unchanged": true,
+  "source_manifest_sha256": "1da56dc747fdcec7867c3bf375f5f191dcc610f7cfe60e3a207696e300bd8474",
+  "timing_started": false,
+  "unpoolable": true,
+  "utc": "2026-10-12T01:08:28Z",
+  "warmup_seconds": 300,
+  "wrapper_sha256": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1"
+}
