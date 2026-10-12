@@ -1,0 +1,17 @@
+{
+  "a6_staging_manifest_sha256": "1da56dc747fdcec7867c3bf375f5f191dcc610f7cfe60e3a207696e300bd8474",
+  "a6_staging_receipt_seal_sha256": "a7abd755441e9b7ea6fb4ab45b0d2cef1502bcbbae266a14f14276889842c0d3",
+  "attempt_registered": false,
+  "both_actual_apt_runs_and_exits": true,
+  "candidate_review_status": "PENDING; MUST NOT LAUNCH",
+  "candidate_sha256": "ecf4ad62236418255109d400aa7b8d6ca515eada730fbd3982927bf1aa82f5b3",
+  "coordinator_ruling_position": 8456,
+  "fresh_launch_recheck_required": true,
+  "maintenance_observation_utc": "2026-10-12T00:23:34Z",
+  "mirror_paused": true,
+  "outcomes_sealed": true,
+  "registration_unsealed": true,
+  "review_task": "t1-end-owned-copier-review-r1-20261012",
+  "timing_started": false,
+  "utc": "2026-10-12T00:33:34Z"
+}

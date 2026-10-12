@@ -1,0 +1,1 @@
+{"frozen_source": "aeeb3003", "initial_probe": "Synthetic dead root rejected on origin05; corrected test to intended timinghost view", "remote_host_view_mock": "127x01", "synthetic": true, "tests": {"approved_rsync": true, "arbitrary_program_rejected": true, "outside_job_rejected": true, "wrong_root_rejected": true, "wrong_source_rejected": true}, "timing": false}
