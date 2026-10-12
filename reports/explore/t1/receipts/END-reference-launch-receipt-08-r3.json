@@ -1,0 +1,251 @@
+{
+  "C5_no_further_SSH": true,
+  "C5_preexec_gate": {
+    "SCHED_OTHER": true,
+    "command_byte_equal": true,
+    "exact_exec_shell_pid": 1323439,
+    "frozen_launch_argv_nul_sha256": "ee062475a48a524ebca09e965b931c731ad51e14169faba5d6386a1ead6c559e",
+    "outside_priority_prefix": false,
+    "preexec_gate_pass": true,
+    "ps_nice": 0,
+    "scheduler": 0,
+    "start_ticks": 157682071,
+    "utc": "2026-10-12T03:56:55Z"
+  },
+  "C6_no_signals_on_wrong_nice": true,
+  "E4_python_identities": [
+    {
+      "nice": 10,
+      "pid": 1323459,
+      "scheduler": 0,
+      "start_ticks": 157682087
+    }
+  ],
+  "E4_python_visible": true,
+  "RG1": "92acdf02",
+  "first_counted_attempt_for_host": false,
+  "host": "127x08",
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3",
+  "launch_SSH_argv": [
+    "ssh",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ControlPath=none",
+    "-o",
+    "BatchMode=yes",
+    "127x08",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -"
+  ],
+  "launch_SSH_exit_code": 0,
+  "launch_SSH_finished_local_utc": "2026-10-12T03:56:55Z",
+  "launch_SSH_stderr": "",
+  "launch_command": [
+    "nice",
+    "-n",
+    "10",
+    "taskset",
+    "-c",
+    "61",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-frozen-detach-aeeb3003.sh",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/detach.log",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/detach.json",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-approved-exit-push-0a87166f.sh",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3",
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "ffd2d96ea0c23a46d8843bfb79f24b29481b76e3f617d24b072253c3e222e975"
+  ],
+  "local05_abort_disposition": "Coordinator direct ruling: droplocal05prioritycheck/no05prioritychange;08sshdspawnsremote independently;localabort bookkeeping/noattempt.",
+  "local05_preflight_correction": {
+    "RF1_gate_applies_exact_remote_exec_shell": true,
+    "extra05_nice0_gate_aborted_beforeSSH": true,
+    "no_E4_retry_or_guard_stop": true,
+    "observed05_local_nice": 5
+  },
+  "manifest_sha256": "ffd2d96ea0c23a46d8843bfb79f24b29481b76e3f617d24b072253c3e222e975",
+  "measurement_argv": [
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "ffd2d96ea0c23a46d8843bfb79f24b29481b76e3f617d24b072253c3e222e975"
+  ],
+  "no_ControlMaster_used": true,
+  "no_signals_sent": true,
+  "outcomes_sealed": true,
+  "postexec_priority_pass": true,
+  "prelaunch_checks": {
+    "C1_earlier_wrappers": [],
+    "C1_plan_sha256": "389f31d51c5285221b834287e1775612538d00ad78c74cefb13721194ad091a1",
+    "actual_apt_daily_exit_verified": true,
+    "actual_apt_daily_run_verified": true,
+    "additional_motd_trigger_mtimes": {
+      "/etc/apt/sources.list": 1625602167.257667,
+      "/var/lib/dpkg/status": 1790343216.8256514
+    },
+    "apt_lists_directory": {
+      "age_seconds": 14135.81634759903,
+      "exists": true,
+      "mtime_epoch": 1791763152.4418821,
+      "mtime_utc": "2026-10-11T23:59:12Z",
+      "path": "/var/lib/apt/lists"
+    },
+    "apt_lists_newest_file_mtime_epoch": 1791686970.0,
+    "attempt_window_seconds_checked": 7200,
+    "clearance_seconds_required": 7200,
+    "console": {
+      "console_count": 0,
+      "positive": false,
+      "who": ""
+    },
+    "detach_sha_checked": true,
+    "end_kind": "counted-reporting",
+    "exact_refused_r1_wrapper_gone": true,
+    "expected_apt_daily_due_epoch": 1791763145,
+    "host": "127x08",
+    "list_timers_raw": "Mon 2026-10-12 08:49:07 UTC 4h 54min left Sun 2026-10-11 23:59:09 UTC 3h 55min ago apt-daily.timer         apt-daily.service        \nMon 2026-10-12 13:32:43 UTC 9h left       Sun 2026-10-11 13:38:16 UTC 14h ago      apt-daily-upgrade.timer apt-daily-upgrade.service\n",
+    "maintenance_processes": [],
+    "motd_scripts": {
+      "/etc/update-motd.d/90-updates-available": "#!/bin/sh\n\nstamp=\"/var/lib/update-notifier/updates-available\"\n\n[ ! -r \"$stamp\" ] || cat \"$stamp\"\n\nfind $stamp -newermt 'now-7 days' 2> /dev/null | grep -q -m 1 '.' || /usr/share/update-notifier/notify-updates-outdated\n",
+      "/etc/update-motd.d/91-release-upgrade": "#!/bin/sh\n\n# if the current release is under development there won't be a new one\nif [ \"$(lsb_release -sd | cut -d' ' -f4)\" = \"(development\" ]; then\n    exit 0\nfi\n\n# if it is non-root user, skip\nif [ $(id -u) -ne 0 ]; then\n    exit 0\nfi\n\nif [ -x /usr/lib/ubuntu-release-upgrader/release-upgrade-motd ]; then\n    exec /usr/lib/ubuntu-release-upgrader/release-upgrade-motd\nfi\n",
+      "/usr/lib/ubuntu-release-upgrader/release-upgrade-motd": "#!/bin/sh -e\n#\n#    91-release-upgrade - display upgrade message or update the cache\n#                         in the background\n#\n#    Copyright (C) 2010 Canonical Ltd.\n#\n#    Authors: Dustin Kirkland <kirkland@canonical.com>\n#\n#    This program is free software: you can redistribute it and/or modify\n#    it under the terms of the GNU General Public License as published by\n#    the Free Software Foundation, version 3 of the License.\n#\n#    This program is distributed in the hope that it will be useful,\n#    but WITHOUT ANY WARRANTY; without even the implied warranty of\n#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n#    GNU General Public License for more details.\n#\n#    You should have received a copy of the GNU General Public License\n#    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n\nstamp=/var/lib/ubuntu-release-upgrader/release-upgrade-available\nif [ -f \"$stamp\" ]; then\n\t# Stamp exists, see if it's expired\n\tnow=$(date +%s)\n        lastrun=$(stat -c %Y \"$stamp\") 2>/dev/null || lastrun=0\n        expiration=$(expr $lastrun + 86400)\n        if [ $now -ge $expiration ]; then\n\t\t# Older than 1 day old, so update in the background\n\t\t/usr/lib/ubuntu-release-upgrader/check-new-release -q > \"$stamp\" &\n\telif [ -s \"$stamp\" ]; then\n\t\t# Less than 1 day old, and non-empty, so display now\n\t\tcat \"$stamp\"\n\t\techo\n\tfi\nelif [ \"$(id -u)\" = 0 ]; then\n\t# No cache at all, so update in the background\n\t/usr/lib/ubuntu-release-upgrader/check-new-release -q > \"$stamp\" &\nfi\n",
+      "/usr/lib/update-notifier/update-motd-updates-available": "#!/bin/sh -e\n#\n# helper for update-motd\n\n\n# poor mans force\nif [ \"$1\" = \"--force\" ]; then\n    NEED_UPDATE_CHECK=yes\nelse\n    NEED_UPDATE_CHECK=no\nfi\n\n# check time when we did the last update check\nstamp=\"/var/lib/update-notifier/updates-available\"\n\n# get list dir\nStateDir=\"/var/lib/apt/\"\nListDir=\"lists/\"\neval \"$(apt-config shell StateDir Dir::State)\"\neval \"$(apt-config shell ListDir Dir::State::Lists)\"\n\n# get dpkg status file\nDpkgStatus=\"/var/lib/dpkg/status\"\neval \"$(apt-config shell DpkgStatus Dir::State::status)\"\n\n# get sources.list file\nEtcDir=\"etc/apt/\"\nSourceList=\"sources.list\"\neval \"$(apt-config shell EtcDir Dir::Etc)\"\neval \"$(apt-config shell SourceList Dir::Etc::sourcelist)\"\n\n# let the actual update be asynchronous to avoid stalling apt-get\ncleanup() { rm -f \"$tmpfile\"; }\n\n# check if we have a list file or sources.list that needs checking\nif [ -e \"$stamp\" ]; then\n    if [ \"$(find \"/$StateDir/$ListDir\" \"/$EtcDir/$SourceList\" \"/$DpkgStatus\" -type f -newer \"$stamp\" -print -quit)\" ]; then\n        NEED_UPDATE_CHECK=yes\n    fi\nelse\n    if [ \"$(find \"/$StateDir/$ListDir\" \"/$EtcDir/$SourceList\" -type f -print -quit)\" ]; then\n        NEED_UPDATE_CHECK=yes\n    fi\nfi\n\ntmpfile=\"\"\ntrap cleanup EXIT\ntmpfile=$(mktemp -p $(dirname \"$stamp\"))\n\n# output something for update-motd\nif [ \"$NEED_UPDATE_CHECK\" = \"yes\" ]; then\n    {\n\n        echo \"\"\n        /usr/lib/update-notifier/apt-check --human-readable\n        echo \"\"\n    } > \"$tmpfile\"\n    mv \"$tmpfile\" \"$stamp\"\n    chmod +r \"$stamp\"\nfi\n"
+    },
+    "outcomes_sealed": true,
+    "prelaunch_assertions_pass": true,
+    "prelaunch_utc": "2026-10-12T03:54:52Z",
+    "preliminary_gate_passes": true,
+    "read_only": true,
+    "release_stamp_full_window_fresh": true,
+    "reporting_hosts": [
+      "127x01",
+      "127x08"
+    ],
+    "services": {
+      "apt-daily-upgrade.service": {
+        "ActiveState": "inactive",
+        "ExecMainExitTimestamp": "Sun 2026-10-11 13:38:22 UTC",
+        "ExecMainExitTimestamp_epoch": 1791725902,
+        "ExecMainStartTimestamp": "Sun 2026-10-11 13:38:16 UTC",
+        "ExecMainStartTimestamp_epoch": 1791725896,
+        "ExecMainStatus": "0",
+        "InactiveEnterTimestamp": "Sun 2026-10-11 13:38:22 UTC",
+        "InactiveEnterTimestamp_epoch": 1791725902,
+        "Result": "success",
+        "SubState": "dead"
+      },
+      "apt-daily.service": {
+        "ActiveState": "inactive",
+        "ExecMainExitTimestamp": "Sun 2026-10-11 23:59:28 UTC",
+        "ExecMainExitTimestamp_epoch": 1791763168,
+        "ExecMainStartTimestamp": "Sun 2026-10-11 23:59:09 UTC",
+        "ExecMainStartTimestamp_epoch": 1791763149,
+        "ExecMainStatus": "0",
+        "InactiveEnterTimestamp": "Sun 2026-10-11 23:59:28 UTC",
+        "InactiveEnterTimestamp_epoch": 1791763168,
+        "Result": "success",
+        "SubState": "dead"
+      }
+    },
+    "stamps": [
+      {
+        "age_seconds": 20724.183832406998,
+        "exists": true,
+        "mtime_epoch": 1791756564.0743973,
+        "mtime_utc": "2026-10-11T22:09:24Z",
+        "path": "/var/lib/ubuntu-release-upgrader/release-upgrade-available"
+      },
+      {
+        "age_seconds": 14125.176045179367,
+        "exists": true,
+        "mtime_epoch": 1791763163.0821846,
+        "mtime_utc": "2026-10-11T23:59:23Z",
+        "path": "/var/lib/update-notifier/updates-available"
+      }
+    ],
+    "synthetic_sources": false,
+    "timers": {
+      "apt-daily-upgrade.timer": {
+        "ActiveState": "active",
+        "InactiveEnterTimestamp": "",
+        "LastTriggerUSec": "Sun 2026-10-11 13:38:16 UTC",
+        "NextElapseUSecRealtime": "Mon 2026-10-12 13:32:43 UTC",
+        "Result": "success",
+        "SubState": "waiting",
+        "clearance_seconds": 34674.74177026749,
+        "last_trigger_epoch": 1791725896,
+        "next_epoch": 1791811963
+      },
+      "apt-daily.timer": {
+        "ActiveState": "active",
+        "InactiveEnterTimestamp": "",
+        "LastTriggerUSec": "Sun 2026-10-11 23:59:09 UTC",
+        "NextElapseUSecRealtime": "Mon 2026-10-12 08:49:07 UTC",
+        "Result": "success",
+        "SubState": "waiting",
+        "clearance_seconds": 17658.741770267487,
+        "last_trigger_epoch": 1791763149,
+        "next_epoch": 1791794947
+      }
+    },
+    "timing_started": false,
+    "updates_stamp_fresh": true,
+    "utc": "2026-10-12T03:54:48Z",
+    "wrapper_sha_checked": true
+  },
+  "prelaunch_checks_sha256": "5359d68c2240064b6e455eb13c00ca495ae1647cd0cadc41e0a1a7cd31ab20a5",
+  "prepare_proof_commit": "096ae12a",
+  "prepare_proof_sha256": "4cc61a1f8d7d00537f604065b232ef4b83e8542d55110cca20f5789a7bfe7176",
+  "prior_counted_failed_attempt": "end-reference-127x08-0a87166f-r2",
+  "r2_ACK_sha256": "f1762225661db08543d706e1d040b9e6cabf92206f20e328551672fe661809a9",
+  "r2_L1_assembly_receipt": "END-reference-L1-assembly-08-r2.json",
+  "reporting_guard_freeze": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "scientific_games": false,
+  "source_commit": "f6cebbaacfeb67337311c4f929b54285de3679ce",
+  "step": "reference",
+  "technical_repeat_index": 1,
+  "utc": "2026-10-12T03:56:55Z",
+  "wrapper_identity": {
+    "cmdline_sha256": "a997b26b1ef491cf4ce54a050321d5503e7c7bf0c0703363da9fbef857d9205b",
+    "exe": "/usr/bin/bash",
+    "nice": 10,
+    "pgid": 1323452,
+    "pid": 1323452,
+    "scheduler": 0,
+    "start_ticks": 157682083
+  },
+  "wrapper_sha256": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1"
+}

@@ -2411,3 +2411,74 @@ T1 records this gap and the downstream enforcement in the 01 launch receipt. The
    - an outcome-blind amendment text: disclose all old-code attempts, run a fresh reference series on both hosts under the fixed code, with deferral windows per c6387611.
 
    Sol reviews the Claude-written code. Nothing is adopted or staged on any host unless r3 fails.
+
+## 2026-10-12 03:55Z: E4 guard-race fix drafted (branch, NOT adopted); Sol review routed; K4S END reference held
+
+The RG1 step 3 draft is on branch `e4-guard-race-fix-20261012` (head ad8aba8d; code f23be563):
+- `fleet_validity.py` 94d0e7f2 → eae5db3f. Ownership is re-derived on the census snapshot, with start_ticks pid-reuse protection and a one-time exec identity update.
+- Tests: 96 OK, and the new tests fail on the old code. A live `/proc` check on 05 reproduces the 10/10 false-foreign result on the old code and 0 on the new; real foreign processes are still flagged.
+- Also on the branch: `E4-GUARD-RACE-FIX-IMPACT-20261012.md` and `PREREG-SEARCH-TIERS-AMENDMENT-5-DRAFT-20261012.md`, marked DRAFT.
+
+**Sol code review r1 is routed** (`e4-guard-race-fix-20261012/SOL-REVIEW-r1.md`).
+
+**Impact:**
+- **K4S reporting on 03/04 is unaffected:** `fleet_validity` isn't imported there.
+- **The K4S END reference has the same race.** It is **held** until a ruling, and adoption would mean re-pinning c1fb1e9a.
+- **Mac/A4:** `stage_nocopy.py` 96abd847 hard-codes the old SHA, and so does the staged Mac runtime. Any adoption needs an A4 erratum, a narrow Sol review and re-staging. The Mac is on HOLD in any case.
+- **The R-ord SHA check** grows from five code SHAs to six if the fix is adopted.
+
+Nothing is adopted or staged on any host. 08 r3 proceeds as-is under RG1.
+
+## 2026-10-12 04:03Z: 08 r3 failed with the same race signature; ruling RG2: go to the Amendment 5 path
+
+**What happened.** 08 r3 launched at 03:56:55Z and exited at 04:02:43Z with code 1. The failure is `FleetTechnicalError validity_census` at the first sample after admission, with `foreign_compute` = 1 E4 spawn worker (ppid = the E4 python 1323459, pgid = the wrapper 1323452). That is the same signature as r2. My check was read-only, on the 05 receiver.
+
+**Consequence.** 08 has used both counted attempts (r2, r3). `fleet_pool` therefore blocks the END pool until an outcome-blind amendment is in place.
+
+**Separately, 01 r1** exited 0 at 03:52:14Z. It is still unverified, and its C-d is at 04:13:54Z.
+
+**RG2 ruling:**
+1. **T1:** STOP launches.
+   - After each C-d, run the approved 753 verifier and apply C8.
+   - Assemble 08 r3 under L1 as a counted failed attempt.
+   - Verify 01 r1 as planned and keep it as received. Under Amendment 5 it becomes an old-code attempt that is disclosed and never pooled. Don't pool anything.
+2. **Amendment 5 path (RG1 step 3) is now active:**
+   - Sol code review r1 of `fleet_validity` eae5db3f is running.
+   - An independent Opus science/procedure review of `PREREG-SEARCH-TIERS-AMENDMENT-5-DRAFT` and the impact inventory is routed now.
+   - Adoption needs both approvals. After that:
+     - merge to main;
+     - re-pin the END-A3 bundles and runtime with six code SHAs;
+     - commit a new release-side roots declaration before the first fixed-code launch;
+     - fresh C3 preflights;
+     - a fresh reference series on both hosts in the next clean windows (c6387611): 01 after its 06:17:43Z apt-daily, and 08 by its 08:49:07Z apt-daily window or after it.
+3. **Every old-code END attempt is disclosed and never pooled:** A6, 01 r1, 08 r1 (exempt under RF1), 08 r2 and 08 r3. This was decided before anyone has seen any reference timing.
+4. **K4S END and the Mac/A4 re-staging** wait on the same adoption.
+
+## 2026-10-12 04:09Z: A5 reviews: Sol code r1 REQUEST_CHANGES, Opus science r1 ADOPT_WITH_CHANGES; r2 in progress
+
+**Sol code review r1** (`e4-guard-race-fix-20261012/SOL-REVIEW-r1.md`): REQUEST_CHANGES.
+- The race fix itself is correct.
+- **F1 and F2 (HIGH):** the exec identity-replacement exception authenticates the process generation, not the executable, and its one-use limit isn't enforced.
+- **F3 (MED):** a parent that fails the identity check can still grant new descendants.
+
+**Coordinator direction for r2:**
+- Delete the exec exception entirely. The microsecond vfork window becomes an accepted, documented residual.
+- Ancestry may pass only through parents that pass the full six-KEY identity check on the same snapshot.
+- Add Sol's sequences as negative regressions.
+
+**Opus science review r1** (`OPUS-SCIENCE-REVIEW-A5-r1.md`): ADOPT_WITH_CHANGES. The full re-run of both hosts is the minimal correct option, and it is outcome-blind. T1–T13 are being applied verbatim to the draft, with T5 clause (ii) dropped. The key additions:
+- **T4:** a binding seal on old-code timing, which may only be cited for existence, status, exit and SHAs until the A5 pool check is committed. After that there is one pre-declared descriptive comparison: 01 old guard vs fixed guard.
+- **T7:** a **required fixed-code smoke**, `e4v3-unpoolable-smoke` with job parent `$base`. Run it on 08 (preferred), with A6's pass criteria, before any A5 reference.
+- **T8:** sequential `-a5-r<n>` ordinals, at most 2 counted attempts per host, with RF1 exemption bookkeeping.
+- **T9:** the post-exit check compares all 18 `measurement_files` with the A5 inventory.
+- **T10:** a push-time receipt for the A5 roots file before the first launch, plus L1 item 2 amended (flagged to PC1).
+- **T11:** prerequisites, which are D2/D5 C-d, ACK, L1 and the disclosure receipt.
+- **T12:** no TIERS Mac session on superseded bytes.
+
+**Expected order once adopted:**
+1. Merge, re-pin and stage.
+2. 08 smoke, which must launch before 08's C2 limit relative to its 08:49:07Z apt-daily.
+3. 01 reference after its 06:17:43Z apt-daily, with fresh C2.
+4. 08 reference after its 08:49Z apt-daily, with fresh C2.
+
+**Planning advisory (no ruling yet):** K4S END should adopt the fix through K4S Amendment 3 rather than run on the old guard.

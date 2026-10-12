@@ -1,0 +1,32 @@
+{
+  "ACK_written": false,
+  "C_d_not_before_utc": "2026-10-12T04:13:54Z",
+  "SSH": false,
+  "TRANSFER-COMPLETE.json_sha256": "1dffffc11bf4d6594ea4923a053760c9a8e4a6239daa5c64801f6958b41572d7",
+  "attempt": "end-reference-127x01-0a87166f-r1",
+  "detach.json_sha256": "b24766fe06e43d2cd291dfd3cd7cd6a1b01c48d01c7b89d1d9be81ae5420464e",
+  "exit": {
+    "attempt": "end-reference-127x01-0a87166f-r1",
+    "command_exited": true,
+    "exit_code": 0,
+    "host": "127x01",
+    "measurement_exists": true,
+    "utc": "2026-10-12T03:52:14Z"
+  },
+  "exit.json_sha256": "1f1a25746d786ad4dc5f014094408cd59f917b15726de02dee78d33de42a5111",
+  "files": [
+    "PREPARED.json",
+    "TRANSFER-COMPLETE.json",
+    "argv.nul",
+    "detach.json",
+    "detach.log",
+    "durable-measurement",
+    "exit.json"
+  ],
+  "host": "127x01",
+  "metadata_unverified": true,
+  "observed_wall_seconds": 3299.0,
+  "outcomes_sealed": true,
+  "utc": "2026-10-12T03:58:43Z",
+  "verification_invoked": false
+}
