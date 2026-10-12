@@ -1,0 +1,22 @@
+{
+  "OP7_confirmation_commit_meaning": "coordinator confirmation commit, not the commit containing the receipt path",
+  "R5_sealed": false,
+  "R6_R7_invoked": false,
+  "addendum_sha256": "725c4e8e6916850b60da217704e6ff0917bed2d887be277b46d03d0efca82d11",
+  "confirmation_receipt_absent_at_coordinator_confirmation_commit": true,
+  "confirmation_receipt_added_at_commit": "04633bdb4f59d93e5ff1fd81c4026fcba42dad13",
+  "confirmation_receipt_path": "reports/explore/t1/receipts/op7-confirmation-1947830b-20261010.json",
+  "confirmation_receipt_sha256": "0c99826bd992f687566a6a465556918eb9c9280516269cbdf125fe07c9200fc3",
+  "confirmation_receipt_verified_at_frozen_commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+  "coordinator_confirmation_commit": "1947830b0e5deaabbf0e3816d42107c3ae699c1b",
+  "landing_review_sha256": "38d63bbd490afd282511edda7d6b1dced943b931e4d2c79302af8009ee29d759",
+  "landing_review_verdict": "APPROVE",
+  "nonblocking": true,
+  "original_lineage_receipt": "reports/explore/t1/receipts/release-lineage-op7-20261012.json",
+  "original_lineage_receipt_sha256": "93ded9a24e2a413c9d0909d866a5ef998ba0d4f648922d60497a68b9218adb9b",
+  "original_receipt_unchanged": true,
+  "outcomes_sealed": true,
+  "registration_sealed": false,
+  "schema": "clasher.t1.OP7-confirmation-field-clarification.v1",
+  "utc": "2026-10-12T08:52:57Z"
+}

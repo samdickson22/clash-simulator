@@ -1,0 +1,525 @@
+{
+  "verdict": "PASS",
+  "r2": {
+    "run": "PC4 r2 (landed bytes)",
+    "reviewer": "Claude Opus 5.5 (1M context), independent PC4 reviewer",
+    "source": {
+      "commit": "1cb46a138788a4dde81bc74f7313f07804e15bfc",
+      "on_origin_main": true,
+      "archive": "git archive 1cb46a13 reports/explore/t1",
+      "archive_sha256": "f796174364647f1e998d0104d82894f800847e2da8ad7b2bc8813f5eed029db3",
+      "archive_files": 512,
+      "extraction_on_01_equals_archive": true
+    },
+    "modules_loaded": {
+      "apt_budget": "c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618",
+      "common": "36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0",
+      "cpu_accounting": "5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f",
+      "idle_services": "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
+      "ssh_budget": "0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d",
+      "ssh_sensitivity": "bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5",
+      "ssh_transport": "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f"
+    },
+    "host_audit_loaded": false,
+    "module_expectations": {
+      "ssh_sensitivity": "bb124cc4",
+      "apt_budget": "c1578535",
+      "cpu_accounting": "5ecae99d",
+      "common": "36e5eec3 (= 488f6c8d)",
+      "idle_services": "911c18ae (= 488f6c8d)",
+      "ssh_transport": "16a211a5 (= 488f6c8d)",
+      "ssh_budget": "0c2759f5 on main vs 0ef24fac in 488f6c8d: DIFFERS"
+    },
+    "ssh_budget_difference": {
+      "main": "0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d",
+      "manifest_488f6c8d": "0ef24fac5ff6c47fb93e0e8b189402c4144d1a202b8cd2c123847188f8b34100",
+      "summary": "OP-6 main version: no cpu_accounting import; sample/begin/update use increment()/partition_ticks() instead of Accounting; finish() omits cpu_accounting_rule. Names used on the PC4 path (lan_connection via ssh_sensitivity; generation, total_ticks via apt_budget) are byte-identical in both versions, as are UID/LAN/AVERAGE_STOP_MIN_SECONDS.",
+      "effect_on_output": "none: output equals ea3d44d3 and 48730da5 except utc"
+    },
+    "invocation": {
+      "host": "127x01",
+      "cwd": "/mpac/sdicks02/tmp/pc4b-20261012T084334Z/reports/explore/t1",
+      "argv": [
+        "nice",
+        "-n",
+        "19",
+        "taskset",
+        "-c",
+        "62",
+        "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "-E",
+        "-s",
+        "-B",
+        "ssh_sensitivity.py",
+        "--root",
+        "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r3/hub-blocks",
+        "--ledger",
+        "/mpac/sdicks02/tmp/pc4b-20261012T084334Z/blind-ledger.json",
+        "--out",
+        "/mpac/sdicks02/tmp/pc4b-20261012T084334Z/ssh-sensitivity-pc4-landed.json"
+      ],
+      "sys_executable": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "version": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+      "flags": {
+        "ignore_environment": 1,
+        "no_user_site": 1,
+        "dont_write_bytecode": 1,
+        "isolated": 0
+      },
+      "interpreter_sha256": "021044895e95be79dc2f110367607e684119afbc8ce75f6f0eec94844e0acec7",
+      "start": "2026-10-12T08:43:58Z",
+      "end": "2026-10-12T08:43:58Z",
+      "exit_code": 0,
+      "stdout": "SSH sensitivity health ledger written; outcomes SEALED",
+      "stderr_bytes": 0,
+      "pycache_written": false,
+      "files_newer_than_run_under_interpreter_or_jobs_tree": 0
+    },
+    "ledger": {
+      "path": "/mpac/sdicks02/tmp/pc4b-20261012T084334Z/blind-ledger.json",
+      "sha256": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa",
+      "source": "1cb46a13:reports/explore/t1/receipts/blind-ledger-final-op7-r3.json"
+    },
+    "output": {
+      "file": "PC4/ssh-sensitivity-pc4-landed.json",
+      "sha256": "16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e",
+      "utc": "2026-10-12T08:43:58Z",
+      "utc_masked_bytes_sha256": "33a272e0a40142fddea050961ed1e7a347a5c1a4d46d5a22e9f75e4969dea018"
+    },
+    "comparisons": {
+      "first_run_ea3d44d3": {
+        "sha256": "ea3d44d337fd3b581f11ba70633744e84ccde84dd230ce9c0e6e8ecea3ae7ea4",
+        "utc": "2026-10-12T08:32:20Z",
+        "equal_except_top_level_utc": true,
+        "differing_keys": [],
+        "utc_masked_bytes_sha256": "33a272e0a40142fddea050961ed1e7a347a5c1a4d46d5a22e9f75e4969dea018"
+      },
+      "committed_48730da5": {
+        "sha256": "48730da553491f998f16e389d65d94c0d586ed5a0964d64fa58c01f294962b62",
+        "utc": "2026-10-11T19:27:23Z",
+        "equal_except_top_level_utc": true,
+        "differing_keys": [],
+        "utc_masked_bytes_sha256": "33a272e0a40142fddea050961ed1e7a347a5c1a4d46d5a22e9f75e4969dea018"
+      }
+    },
+    "checker": {
+      "script": "PC4/pc4_reviewer_check.py",
+      "sha256": "5c4cdada6d962ebf4bbb7e61a09547ca4f467a6078069ac90a6a4a824d393ed8",
+      "invocation": "python3 -I pc4_reviewer_check.py <review-dir> <out>; input from01/ssh-sensitivity-pc4.json is a copy of the landed output (same bytes 16e1b34f)",
+      "inputs_from": "1cb46a13 receipts/ + ef4c073a FROZEN-T1.json"
+    },
+    "scratch_01": {
+      "path": "/mpac/sdicks02/tmp/pc4b-20261012T084334Z",
+      "removed": "2026-10-12T08:44:23Z"
+    },
+    "reviewer_inputs_on_05": "/mpac/sdicks02/tmp/pc4b-review-20261012T084326Z"
+  },
+  "checks": {
+    "inputs_committed_sha": {
+      "ok": true
+    },
+    "equal_except_top_level_utc": {
+      "ok": true,
+      "detail": {
+        "pc4_utc": "2026-10-12T08:43:58Z",
+        "committed_utc": "2026-10-11T19:27:23Z",
+        "keys": [
+          "blind_ledger_sha256",
+          "blocks",
+          "flag_counts",
+          "schema",
+          "sealed",
+          "utc"
+        ]
+      }
+    },
+    "no_nested_utc_in_blocks": {
+      "ok": true
+    },
+    "schema_sealed_ledger": {
+      "ok": true
+    },
+    "entries_3072_2400_600_72": {
+      "ok": true,
+      "detail": {
+        "descriptive": 72,
+        "guard": 600,
+        "primary": 2400
+      }
+    },
+    "logical_ids_unique_sorted": {
+      "ok": true
+    },
+    "logical_ids_eq_inventory_50f24dd6": {
+      "ok": true
+    },
+    "source_ids_eq_inventory_50f24dd6": {
+      "ok": true
+    },
+    "source_ids_eq_END_6f6f0007": {
+      "ok": true
+    },
+    "logical_ids_eq_END_6f6f0007_projection": {
+      "ok": true
+    },
+    "row_fields_match_inventory": {
+      "ok": true
+    },
+    "row_fields_match_END": {
+      "ok": true
+    },
+    "complete_sha256_eq_inventory_all": {
+      "ok": true
+    },
+    "interference_sha256_eq_inventory_all": {
+      "ok": true,
+      "detail": {
+        "non_null": 3072
+      }
+    },
+    "complete_sha256_unique": {
+      "ok": true
+    },
+    "v2_2361_legacy_711": {
+      "ok": true,
+      "detail": {
+        "OP-7-observed-child-credit-v2": 2361,
+        "legacy-self-plus-reaped": 711
+      }
+    },
+    "v2_iff_OP7_phase": {
+      "ok": true
+    },
+    "flags_eq_completion_9e788d20": {
+      "ok": true,
+      "detail": {
+        "ssh": 477,
+        "apt": 0,
+        "either": 477,
+        "both": 0,
+        "ssh_meter_stop": 0,
+        "apt_meter_stop": 0
+      }
+    },
+    "union_flag_derived": {
+      "ok": true
+    },
+    "flag_counts_recomputed_eq_sidecar": {
+      "ok": true
+    },
+    "flag_counts_population_totals_eq_completion": {
+      "ok": true
+    },
+    "per_host_flags_eq_completion": {
+      "ok": true
+    },
+    "hosts_1972_1100": {
+      "ok": true,
+      "detail": {
+        "127x08": 1100,
+        "127x01": 1972
+      }
+    },
+    "offhost_blocks_have_inventory_ACK": {
+      "ok": true
+    },
+    "ledger_54_events": {
+      "ok": true
+    },
+    "no_lost_source_in_ledger": {
+      "ok": true
+    },
+    "replacements_bound_to_ledger": {
+      "ok": true,
+      "detail": {
+        "replacement_entries": 54
+      }
+    },
+    "identity_entries_have_no_replaces": {
+      "ok": true
+    }
+  },
+  "info": {
+    "input_sha256": {
+      "ssh-sensitivity-final-op7-r3.json": "48730da553491f998f16e389d65d94c0d586ed5a0964d64fa58c01f294962b62",
+      "counted-inventory-final-op7-r3.json": "50f24dd6c93daad65ce8df3558978d669486efdf00da5e33c2d0f852b6effc72",
+      "counted-inventory-END-op7-r3.json": "6f6f000781d5d345846a33331d8fbc864fc679971001e23b4c7355505165386f",
+      "reporting-completion-op7-r3-20261011.json": "9e788d2053c10da19e339e201d4a3b4cb7d387e96bc837778b1fee2fa10e2dca",
+      "blind-ledger.json": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa",
+      "phase-source-bindings-final-op7-r3.json": "08cad0ffbf693115ad133cd9e53d552302f8f4737e5fb48650186fefca815fdb",
+      "FROZEN-T1-ef4c073a.json": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+      "from01/blind-ledger.json": "866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa"
+    },
+    "meter_regimes_by_host_phase": {
+      "127x01/replacement-r1": {
+        "regime": "OP-6 (24817e16)",
+        "rules": {
+          "legacy-self-plus-reaped": 155
+        },
+        "total": 155
+      },
+      "127x01/replacement-r2": {
+        "regime": "OP-7 (488f6c8d)",
+        "rules": {
+          "OP-7-observed-child-credit-v2": 1181
+        },
+        "total": 1181
+      },
+      "127x01/replacement-r3": {
+        "regime": "OP-7 (488f6c8d)",
+        "rules": {
+          "OP-7-observed-child-credit-v2": 512
+        },
+        "total": 512
+      },
+      "127x01/reporting": {
+        "regime": "OP-5 (a7ebba64)",
+        "rules": {
+          "legacy-self-plus-reaped": 124
+        },
+        "total": 124
+      },
+      "127x08/replacement-r1": {
+        "regime": "OP-6 (24817e16)",
+        "rules": {
+          "legacy-self-plus-reaped": 399
+        },
+        "total": 399
+      },
+      "127x08/replacement-r2": {
+        "regime": "OP-7 (488f6c8d)",
+        "rules": {
+          "OP-7-observed-child-credit-v2": 160
+        },
+        "total": 160
+      },
+      "127x08/replacement-r3": {
+        "regime": "OP-7 (488f6c8d)",
+        "rules": {
+          "OP-7-observed-child-credit-v2": 508
+        },
+        "total": 508
+      },
+      "127x08/reporting": {
+        "regime": "OP-5 (a7ebba64)",
+        "rules": {
+          "legacy-self-plus-reaped": 33
+        },
+        "total": 33
+      }
+    },
+    "meter_rules_by_host": {
+      "127x01": {
+        "OP-7-observed-child-credit-v2": 1693,
+        "legacy-self-plus-reaped": 279
+      },
+      "127x08": {
+        "OP-7-observed-child-credit-v2": 668,
+        "legacy-self-plus-reaped": 432
+      }
+    },
+    "ssh_flagged_by_population": {
+      "descriptive": {
+        "total": 72,
+        "ssh": 0
+      },
+      "guard": {
+        "total": 600,
+        "ssh": 98
+      },
+      "primary": {
+        "total": 2400,
+        "ssh": 379
+      }
+    },
+    "ssh_flagged_by_host": {
+      "127x01": {
+        "total": 1972,
+        "ssh": 0
+      },
+      "127x08": {
+        "total": 1100,
+        "ssh": 477
+      }
+    },
+    "ssh_flagged_by_host_population": {
+      "127x01/descriptive": {
+        "total": 54,
+        "ssh": 0
+      },
+      "127x01/guard": {
+        "total": 386,
+        "ssh": 0
+      },
+      "127x01/primary": {
+        "total": 1532,
+        "ssh": 0
+      },
+      "127x08/descriptive": {
+        "total": 18,
+        "ssh": 0
+      },
+      "127x08/guard": {
+        "total": 214,
+        "ssh": 98
+      },
+      "127x08/primary": {
+        "total": 868,
+        "ssh": 379
+      }
+    },
+    "ssh_flagged_by_host_phase": {
+      "127x01/replacement-r1": {
+        "total": 155,
+        "ssh": 0
+      },
+      "127x01/replacement-r2": {
+        "total": 1181,
+        "ssh": 0
+      },
+      "127x01/replacement-r3": {
+        "total": 512,
+        "ssh": 0
+      },
+      "127x01/reporting": {
+        "total": 124,
+        "ssh": 0
+      },
+      "127x08/replacement-r1": {
+        "total": 399,
+        "ssh": 352
+      },
+      "127x08/replacement-r2": {
+        "total": 160,
+        "ssh": 125
+      },
+      "127x08/replacement-r3": {
+        "total": 508,
+        "ssh": 0
+      },
+      "127x08/reporting": {
+        "total": 33,
+        "ssh": 0
+      }
+    },
+    "ssh_flagged_by_rule": {
+      "OP-7-observed-child-credit-v2": {
+        "total": 2361,
+        "ssh": 125
+      },
+      "legacy-self-plus-reaped": {
+        "total": 711,
+        "ssh": 352
+      }
+    },
+    "ssh_flagged_by_population_cell": {
+      "descriptive": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0
+      },
+      "guard": {
+        "0": 6,
+        "1": 6,
+        "2": 6,
+        "3": 6,
+        "4": 6,
+        "5": 6,
+        "6": 4,
+        "7": 6,
+        "8": 6,
+        "9": 4,
+        "10": 5,
+        "11": 7,
+        "12": 5,
+        "13": 4,
+        "14": 5,
+        "15": 6,
+        "16": 5,
+        "17": 5
+      },
+      "primary": {
+        "0": 6,
+        "1": 8,
+        "2": 8,
+        "3": 7,
+        "4": 8,
+        "5": 8,
+        "6": 8,
+        "7": 8,
+        "8": 5,
+        "9": 6,
+        "10": 7,
+        "11": 8,
+        "12": 8,
+        "13": 8,
+        "14": 8,
+        "15": 8,
+        "16": 7,
+        "17": 6,
+        "18": 9,
+        "19": 7,
+        "20": 7,
+        "21": 8,
+        "22": 8,
+        "23": 8,
+        "24": 6,
+        "25": 8,
+        "26": 8,
+        "27": 7,
+        "28": 8,
+        "29": 8,
+        "30": 9,
+        "31": 9,
+        "32": 7,
+        "33": 8,
+        "34": 7,
+        "35": 9,
+        "36": 8,
+        "37": 6,
+        "38": 8,
+        "39": 6,
+        "40": 6,
+        "41": 10,
+        "42": 8,
+        "43": 6,
+        "44": 9,
+        "45": 9,
+        "46": 8,
+        "47": 7,
+        "48": 7,
+        "49": 8
+      }
+    },
+    "flag_totals": {
+      "ssh": 477,
+      "apt": 0,
+      "either": 477,
+      "both": 0,
+      "ssh_meter_stop": 0,
+      "apt_meter_stop": 0
+    },
+    "complete_proof_digest": {
+      "rule": "sha256 of UTF-8 lines \"<logical_id> <source_id> <complete_sha256>\\n\" over the 3072 entries sorted by logical_id",
+      "sha256": "ef621e517f6616e323e7028cf8952487821e9f582c476a3e3358594a5107f243",
+      "set_rule": "sha256 of sorted complete_sha256 hex values each followed by \"\\n\"",
+      "set_sha256": "d0f010695064c0b5d397ce8f24afede30a679a571a989daa4e058c1571c23fe0"
+    },
+    "pc4_sidecar_sha256": "16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e"
+  }
+}

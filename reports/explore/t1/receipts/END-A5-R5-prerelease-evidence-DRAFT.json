@@ -1,16 +1,36 @@
 {
   "PC4_run": false,
-  "R3_R4_evidence": "reports/explore/t1/receipts/END-A5-R3-R4-checker-interpreter-r2.json",
-  "R3_R4_evidence_commit": "8fc25b2d21630bf17389272e795cb88374ad76df",
+  "PC4_run_field_scope": "T1 worker has not run PC4; both runs were independent reviewer-owned",
+  "R3_R4_evidence": "reports/explore/t1/receipts/END-A5-R3-final-landing-checker-r3.json",
+  "R3_R4_evidence_commit": "041de8101f44f416d8b895a78d8ba5582e11135f",
   "R5_sealed": false,
   "canonical_release_checkout": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source",
-  "canonical_release_checkout_HEAD": "8fc25b2d21630bf17389272e795cb88374ad76df",
+  "canonical_release_checkout_HEAD": "1cb46a138788a4dde81bc74f7313f07804e15bfc",
   "holds": [
-    "PC4 F2 counted-root logistics and F3 CLI/reducer lineage await direct coordinator ruling",
-    "R5 sealing prohibited pending ruling",
-    "registration remains unsealed",
-    "R6/R7 and all later steps prohibited pending ruling"
+    "R5 sealing prohibited pending A4 builder delivery and direct coordinator go",
+    "registration unsealed pending A4 Mac inputs and direct coordinator go",
+    "R6/R7 and all later steps prohibited pending direct coordinator go"
   ],
+  "independent_PC4_landed": {
+    "equality_scope": "every field except top-level utc, per independent review",
+    "files": {
+      "reports/explore/t1/receipts/PC4/PC4-REVIEW-r2-landed.md": "71e491c1000e29ba03dbce04b85dc629a29cf78d7ceb5d81e34b6eb262dcebfe",
+      "reports/explore/t1/receipts/PC4/PC4-REVIEWER-CHECK-RECEIPT-r2-landed.json": "98e980ff8f214bd4c01f0087f8e59c32a7344cd72c33d7e754b31e9ea1f025ff",
+      "reports/explore/t1/receipts/PC4/ssh-sensitivity-pc4-landed.json": "16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e"
+    },
+    "source_commit": "1cb46a138788a4dde81bc74f7313f07804e15bfc",
+    "verbatim_retained": true,
+    "verdict": "PASS"
+  },
+  "landing_review": {
+    "addendum_path": "reports/explore/t1/receipts/RELEASE-INTEGRATION-977c4dfb-ADDENDUM-r1.md",
+    "addendum_sha256": "725c4e8e6916850b60da217704e6ff0917bed2d887be277b46d03d0efca82d11",
+    "direct_relay_received": true,
+    "landing_commit": "1cb46a138788a4dde81bc74f7313f07804e15bfc",
+    "review_path": "reports/explore/t1/receipts/LANDING-OP7-REVIEW-r1.md",
+    "review_sha256": "38d63bbd490afd282511edda7d6b1dced943b931e4d2c79302af8009ee29d759",
+    "verdict": "APPROVE"
+  },
   "measurement_source_keys": "18 basenames exactly equal fleet-identity.measurement_files",
   "nothing_removed": true,
   "other_source_trees_unchanged": true,
@@ -50,9 +70,9 @@
       }
     },
     "pool_check": {
-      "commit": "8fc25b2d21630bf17389272e795cb88374ad76df",
-      "path": "reports/explore/t1/receipts/END-A5-pool-check-r2.json",
-      "sha256": "4516763beb71fd0c6ba0ebdd0c81d8c864194af163f1f797519531c85cbc962d"
+      "commit": "041de8101f44f416d8b895a78d8ba5582e11135f",
+      "path": "reports/explore/t1/receipts/END-A5-pool-check-r3.json",
+      "sha256": "cf3be4dd9e3815f2e02c32a064fa9b5385150e38371c2d0e97ce362f4427c7c2"
     },
     "pool_manifest": {
       "commit": "95774e86b1679cdf5aaebde1391450715e156b63",
@@ -66,5 +86,6 @@
   "release_barrier_invoked": false,
   "release_checkout_clean": true,
   "schema": "clasher.t1.A5.R5-pre-release-binding-draft.v1",
-  "status": "UNSEALED_DRAFT"
+  "status": "UNSEALED_DRAFT",
+  "updated_utc": "2026-10-12T08:52:57Z"
 }
