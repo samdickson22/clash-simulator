@@ -2986,3 +2986,17 @@ The perception read ran once per host under package r2 (40655641), with GO at c0
 Both landed only under `08:v4-b-20261012-r1/inputs/<host>/`. Receipts are in `l1/receipts/b08-gap-export-20261012-r1/`.
 
 Hosts 03 and 04 have been released to K4S for r3. B stays development-only until the B1–B11 integration review passes and a dry run is admitted.
+
+## 2026-10-12 11:29Z: FLEET-WIDE: `ssh macmini-fleet` does not propagate remote exit status
+
+The Mac operator found that `ssh macmini-fleet 'exit 3'` and `ssh macmini-fleet false` both return **0**. The connection goes through Tailscale SSH, then `login -f`, then zsh. Any script that relies on that exit code fails open. In the staging run it logged OK after a failed rename, though nothing was damaged.
+
+**Rule for every Mac-touching script:**
+- Emit an explicit status token, for example `setopt pipefail; { CMD; }; printf '\n__RC=%s\n' $?`, and parse it.
+- A missing or non-zero token means FAIL.
+- Pre-run reviews must check for this.
+
+**Mac staging:**
+- `runtime-a5` is verified (11,144 files, manifest 91c938ac, A5 pins, no 94d0e7f2).
+- The packet promotion fix (r5) is in Sol review.
+- ChatGPT.app bundles a "Codex (Service)". If that service hosts agent threads, the operator skips quitting the app and asks the coordinator first.
