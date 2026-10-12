@@ -2891,3 +2891,27 @@ The stop came from T1's own extra ordered-equality check, not from any handed-of
 - Condition: T1 first proves with file:line evidence that every consumer of `sets.golden` keys by state ID, not by position. The consumers are the exactness checks, the Mac-vs-END comparison, the registration seal and `fleet_pool`.
 - Any dependence on position means STOP, with no reordering.
 - The builder's independent answer has to agree.
+
+## 2026-10-12 11:03Z: R7 production-packet review r2: CLEARED_WITH_CONDITIONS; pre-release work ordered
+
+The review is `END-PRODUCTION-PACKET-REVIEW-r2.md` (T1 job dir).
+- **F1–F4 are closed.** The reviewer recomputed `pool_inputs` and independently re-ran R6 from `<R>`, logging every file the run opened; none was outcome-bearing.
+- **R5 and registration: PASS.** The golden ID-keyed evidence is verified: seeds are per state and results don't depend on order.
+- **Private commit 9bb349b1: PASS.** It is absent from all 40 origin refs, contains health and metadata only, and its bundle verifies.
+- **PC1 host roots are unchanged.** No outcome exposure was found.
+
+**Correction to 2969615c.** The sidecar-equality check **can** run before any game byte is read. `health_ledger` reads only proofs, interference data and `hub-ack.json`. Nothing currently enforces the check: `reduce.py`, `barrier.py` and `release_reference.py` have no sidecar comparison.
+
+**Conditions before any reducer run, adopted:**
+- **C1. Release driver.** T1 writes it, an Opus review covers it, and it is committed. It leaves aebb2017 unchanged.
+  - **Pre-outcome guard:** compute `health_ledger` on the exact release root and ledger. It must equal PC4 sidecar 16e1b34f (ignoring `utc`), and the blind ledger must be 866e6f7f. Otherwise ABORT before any game read.
+  - Run the reducer with all outputs and stdout in a private directory.
+  - **Post-check:** the emitted ledger must equal the sidecar (ignoring `utc`). Otherwise LOCK the output and report only the failure.
+- **C2. Durability and release source.** Make a byte-identical copy of the counted blocks from 01's r3 `hub-blocks` chain, dereferenced, into a new dedicated prefix on 05, `t1-20261010-r1/release-blocks-0108-r3/`.
+  - Read-only on 01, nice 19, with a bandwidth cap.
+  - Verify: 3,072 complete proofs (set digest d0f01069); 24,576 game files by hash against the completion receipt; 1,100 `hub-ack` files.
+  - Game bytes are copied but **never opened or parsed**: sha256 streaming only. This also closes the single-copy risk on 01.
+- **C3.** `<R>` HEAD stays at 9bb349b1, or a local-only descendant. It stays clean, keeps its private ref, and is never pushed.
+- **C4.** Use the e4v3-venv 3.12.12 interpreter with `-B`, run from `<R>/reports/explore/t1`.
+
+**Release timing:** release still waits for the TIERS Mac-summary route, and the 14-day escape is not before 2026-10-25T19:31:38Z. So the next step is the **Mac Phase B session**, whose prerequisites are now met (A4 sealed, A5 pooled reference).
