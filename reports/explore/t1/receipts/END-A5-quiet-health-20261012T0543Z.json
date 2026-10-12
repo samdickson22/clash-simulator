@@ -1,0 +1,17 @@
+{
+  "adoption": "46ab6923/8799a0d6",
+  "coordinator_read_through": 9080,
+  "files": [
+    "PREPARED.json"
+  ],
+  "host_liveness_claim": false,
+  "host_probed": false,
+  "old_timing_sealed": true,
+  "one_END_timer": true,
+  "outcomes_sealed": true,
+  "receive": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x08/end-a5-smoke-127x08-0a87166f-r1",
+  "references_held": true,
+  "schema": "clasher.t1.a5-quiet-health.v1",
+  "utc": "2026-10-12T05:43:49Z",
+  "verification_invoked": false
+}
