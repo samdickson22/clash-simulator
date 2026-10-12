@@ -3880,3 +3880,23 @@ The delta review follows.
 - the F1 authority-placement procedure, which goes to Opus review.
 
 The coordinator verifies and commits the receipts. Deployment needs its own GO. No host action yet.
+
+## 2026-10-12 20:03Z: Perception B: combined-review approval receipt ISSUED; authority-placement review
+
+Authority-placement review: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-AUTHORITY-PLACEMENT-REVIEW-r1.md` (7a042d90).
+
+**Verdicts:**
+- **F1 transport `authority_placement.py`: REQUEST_CHANGES (narrow).**
+  - It placed a forged GO from a dangling commit (P1).
+  - It counted a "REJECTED" ledger mention as issuance (P2).
+  - **Fixes required:** an origin/main ancestry check, a sanitized git environment, and anchored ledger lines in exactly the format below. Write the revision to a new r2 directory.
+- **APPROVE draft:** correct; commit byte-identical.
+- **Deployment GO draft:** the schema passes. It still needs cited, already-authorized who/free-space/cpus provenance, a refreshed window and issuance.
+
+**Issued** (byte-identical copy of the draft 59ffe41a; binds package 374325696dc9, CPU plan 8d5d338e, deploy script 2f1d0e79 and review 35b7cf4f):
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-combined-review-receipt-r2.json` (0444)
+- `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-combined-review-receipt-r2.json`
+
+ISSUED APPROVE_B_COMBINED_REVIEW 59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282
+
+This approves the B1–B11/B4 package review only. It is **not** a deployment, CPU, GPU or heldout authorization.
