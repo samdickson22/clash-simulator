@@ -1,0 +1,23 @@
+{
+  "apt_next_01_utc": "2026-10-12T06:17:43Z",
+  "attempt_registered": false,
+  "candidate_commit": "c9baa07776b75a4b7c3f6969686e0768940d58dd",
+  "coordinator_ack_position": 8463,
+  "diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-owned-copier-candidate-c9baa077.diff",
+  "diff_sha256": "9929900eb579fcbf68aad82e421c400920c812b8e2147e2d73bb3ac507188da8",
+  "fresh_clearance_before_each_launch_required": true,
+  "kind": "END-COPIER-REVIEW-HANDOFF",
+  "latest_01_launch_cutoff_utc": "2026-10-12T04:17:43Z",
+  "mirror_paused": true,
+  "no_frozen_source_or_budget_changes": true,
+  "outcomes_sealed": true,
+  "registration_unsealed": true,
+  "review_model": "claude-opus-5-5",
+  "review_provider": "claudeAgent",
+  "review_status": "RUNNING; timing held",
+  "review_task": "node:delegated-task:command%3Amcp%3A1d318750-510c-4298-9fd7-13c1eae507ce%3Adelegate-task%3At1-end-owned-copier-review-r1-20261012",
+  "source_path": "reports/explore/t1/end_owned_copier.py",
+  "source_sha256": "ecf4ad62236418255109d400aa7b8d6ca515eada730fbd3982927bf1aa82f5b3",
+  "timing_started": false,
+  "utc": "2026-10-12T00:35:50Z"
+}
