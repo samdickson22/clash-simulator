@@ -1,0 +1,111 @@
+{
+  "01": "AfterCd04:13:54 approved753blindhashverify/C8, keep exactlyreceived; never open or summarize reference timing values",
+  "08": "AfterCd04:24:23 approved753/C8failed/L1countedplaincopy/fullSHA",
+  "A4_registration_unsealed": true,
+  "ACK_NOT_written": true,
+  "Amendment5": "Standby; no codefix/re-pin/staging/newroots/launch beforeexplicitadoptionandinstructions",
+  "C_d_not_before_utc": "2026-10-12T04:24:23Z",
+  "NO_more_launches": true,
+  "RG1": "92acdf02",
+  "RG2": "d7d5245a",
+  "SSH": false,
+  "STOP": true,
+  "all_originals_retained": true,
+  "attempt": "end-reference-127x08-0a87166f-r3",
+  "capacity_error": {
+    "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/telemetry.py\", line 207, in monitor_worker\n    raise RuntimeError(\"Reference reporting validity census: \"+reason)\nRuntimeError: Reference reporting validity census: foreign_compute\n"
+  },
+  "capacity_error_sha256": "de0ba0d7d5a3f6934d97ade777966dcba09a77eb46832aa91b075768d1daab89",
+  "exit": {
+    "attempt": "end-reference-127x08-0a87166f-r3",
+    "command_exited": true,
+    "exit_code": 1,
+    "host": "127x08",
+    "measurement_exists": true,
+    "utc": "2026-10-12T04:02:43Z"
+  },
+  "exit_sha256": "dc495da568d02752a9aa1b45b4ed8e8c4e00d4428c502027cf723875c0b271b0",
+  "failure": {
+    "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py\", line 688, in main\n    run(args, store)\n  File \"/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_reference.py\", line 129, in run\n    with background_load as background:\n         ^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py\", line 137, in __enter__\n    self.check()\n  File \"/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py\", line 228, in check\n    self.check_external()\n  File \"/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_reference.py\", line 59, in check_monitor\n    raise FleetTechnicalError(\"validity_census\",\"Reference reporting guard failed\")\nfleet_validity.FleetTechnicalError: Reference reporting guard failed\n",
+    "fail_closed": true,
+    "final": false,
+    "fleet_technical_cause": "validity_census",
+    "live_actions": false,
+    "scope": "FLEET-REFERENCE",
+    "utc": 1791777762.5019505
+  },
+  "failure_sha256": "95cbf387041d71e5f5b9ad8f21bec806e54e8ba5107a70991c45bec472d2edc0",
+  "first_sample_signature": {
+    "foreign_compute": [
+      {
+        "affinity": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "child_cpu_ticks": 0,
+        "cmd": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=6, pipe_handle=34) --multiprocessing-fork",
+        "cmdline_sha256": "a537ec33b2b2bb27c90338f2bdeb4a07cff45e05417c14e72d05cfe2a443d664",
+        "copier_identity_snapshot": {
+          "T1_COPIER_PGID": null,
+          "T1_COPIER_PID": null
+        },
+        "cpu_ticks": 13,
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+        "exe_evidence": "proc/exe",
+        "pgid": 1323452,
+        "pid": 1325017,
+        "ppid": 1323459,
+        "snapshot_monotonic": 1577105.763895238,
+        "ssh_connection_snapshot": "129.65.221.15 48800 129.65.221.18 22",
+        "ssh_family_parent_snapshot": null,
+        "ssh_parent_snapshot": null,
+        "start_ticks": 157710547,
+        "tty": 0,
+        "uid": 3822945
+      }
+    ],
+    "owned_pid_start_ticks": {
+      "1323459": 157682087,
+      "1323755": 157687320,
+      "1324987": 157710420,
+      "1325008": 157710540,
+      "1325009": 157710540,
+      "1325010": 157710540,
+      "1325011": 157710541,
+      "1325012": 157710541,
+      "1325013": 157710542,
+      "1325014": 157710542,
+      "1325015": 157710543,
+      "1325016": 157710544
+    },
+    "passes": false,
+    "phase": "reference-warmup",
+    "reason": "foreign_compute",
+    "row_count": 1
+  },
+  "host": "127x08",
+  "launch_receipt_sha256": "edc181409771f350edf50e12287672ec6d0fec893bdbf935de277e7f0a65dafe",
+  "manifest_sha256": "f32a4a70c0535afed711af425103b891300369552cd2fe625b79f0336315f174",
+  "manifest_status": "failed",
+  "metadata_unverified": true,
+  "mirror_paused": true,
+  "observed_utc": "2026-10-12T04:03:26Z",
+  "old_code_attempts_never_pooled": [
+    "A6",
+    "01 r1",
+    "08 r1 (RF1 exempt)",
+    "08 r2",
+    "08 r3"
+  ],
+  "outcomes_sealed": true,
+  "pool_blocked": true,
+  "prepare_proof_sha256": "4cc61a1f8d7d00537f604065b232ef4b83e8542d55110cca20f5789a7bfe7176",
+  "same_signature": true,
+  "signals_sent": false,
+  "technical_repeat_exhausted": true,
+  "utc": "2026-10-12T04:05:27Z",
+  "verifier_NOT_invoked": true
+}
