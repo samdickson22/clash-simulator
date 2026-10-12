@@ -1,0 +1,12 @@
+# s5s6s7-r2 final test matrix (safe_input r3 806e5ebb pin), 127x05, 2026-10-12T22:44:40Z
+# command: nice -n 19 <python> [-O] -B -m pytest -q -p no:cacheprovider tests   (PYTHONDONTWRITEBYTECODE=1; pytest 8.3.5 for 3.8 from /dev/shm)
+--- py312 (Python 3.12.12)
+276 passed in 179.95s (0:02:59)
+--- py312_-O (Python 3.12.12)
+254 passed, 22 skipped, 1 warning in 155.45s (0:02:35)
+      1 PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are n
+--- py38 (Python 3.8.10)
+276 passed in 200.76s (0:03:20)
+--- py38_-O (Python 3.8.10)
+254 passed, 22 skipped, 1 warning in 185.86s (0:03:05)
+      1 PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are n

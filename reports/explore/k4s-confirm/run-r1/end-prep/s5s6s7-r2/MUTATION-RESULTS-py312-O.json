@@ -1,0 +1,1070 @@
+{
+ "created_utc": "2026-10-12T22:39:16Z",
+ "equivalent_survivors": [
+  "P14",
+  "P22"
+ ],
+ "killed": 72,
+ "mutants": 74,
+ "nulls": 6,
+ "nulls_survived": 6,
+ "package_sha256": {
+  "k4s_end_exit_push.sh": "48d02ae266ab19a358b1feee1fd6423587613a3440b32ce8877f755cf76c86ef",
+  "k4s_end_host_tool.py": "cf19269071d57f0d1fe9b7ce5f865b4641ecda62c88e418cd73b711a57a5d6f3",
+  "k4s_end_launch_gate.py": "c378644f47ed65933166060b818ff99b8bb7735ff173393a379faaaeaa5b5603",
+  "k4s_end_launch_remote.py": "7abe5fc1a764c9a74eb97ef6b898814cc280cb65799a5e61d936d4b1fe529dd0",
+  "k4s_end_preflight.py": "43ca0057fa921fd89c858797d7d8604e92b52320549b74f9f40c36753b152dba",
+  "k4s_end_verify_push.py": "a2c8d7c9d05dd36ef6f83e0c39773bd4a0379eca3be944bed1bcb5dec8db40b6",
+  "k4s_preflight_push.sh": "0204fd2bd74f89573dbd851661c0e8710ecde1e6c96e150c7c3c940488f4eaea",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "results": [
+  {
+   "description": "registry: claim-name regex off",
+   "file": "k4s_end_host_tool.py",
+   "id": "H01",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 8.0,
+   "tail": "ng: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_registry_unexpected_names_refuse_before_stat[round-00/127x03/notes.txt]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 1 warning in 7.63s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "registry: claim nlink/regular check off",
+   "file": "k4s_end_host_tool.py",
+   "id": "H02",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.9,
+   "tail": "ytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_registry_hard_linked_claim_refuses_and_canary_untouched\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 passed, 1 warning in 6.57s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "verify_clone: replace refs ignored",
+   "file": "k4s_end_host_tool.py",
+   "id": "H03",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.0,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_verify_clone_replace_ref_refuses - Attri...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 12 passed, 1 warning in 2.72s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "verify_clone: any hook allowed",
+   "file": "k4s_end_host_tool.py",
+   "id": "H04",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.5,
+   "tail": "nit__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_verify_clone_indirections_refuse[hook]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 17 passed, 1 warning in 3.17s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "frozen env: inherited GIT_* kept",
+   "file": "k4s_end_host_tool.py",
+   "id": "H05",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.1,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_frozen_git_env_scrubs_and_sets - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 19 passed, 1 warning in 3.82s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "frozen env: no GIT_CONFIG_PARAMETERS",
+   "file": "k4s_end_host_tool.py",
+   "id": "H06",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.7,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_frozen_git_env_scrubs_and_sets - KeyErro...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 19 passed, 1 warning in 3.43s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "global git config not checked",
+   "file": "k4s_end_host_tool.py",
+   "id": "H07",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.1,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_global_git_config_checked - AssertionErr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 21 passed, 1 warning in 3.82s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "read_pinned: nlink not checked",
+   "file": "k4s_end_host_tool.py",
+   "id": "H08",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.0,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_read_pinned_refuses_aliases_and_drift - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 passed, 1 warning in 3.71s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "read_pinned: SHA not checked",
+   "file": "k4s_end_host_tool.py",
+   "id": "H09",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.1,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_read_pinned_refuses_aliases_and_drift - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 passed, 1 warning in 3.82s\n",
+   "tests": [
+    "tests/test_host_tool.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "snapshot copies no claim",
+   "file": "k4s_end_host_tool.py",
+   "id": "H10",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.9,
+   "tail": "_.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_registry_snapshot_copies_through_safe_input\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 9 passed, 1 warning in 6.57s\n",
+   "tests": [
+    "tests/test_host_tool.py",
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "Q3 seed commits not checked",
+   "file": "k4s_end_host_tool.py",
+   "id": "H11",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 2.7,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_host_tool.py::test_seed_commits - AssertionError: expected ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 18 passed, 1 warning in 2.35s\n",
+   "tests": [
+    "tests/test_host_tool.py",
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "frozen-exec: clone not verified",
+   "file": "k4s_end_host_tool.py",
+   "id": "H12",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 12.6,
+   "tail": "__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_unverified_clone_never_runs_the_command\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 39 passed, 1 warning in 12.30s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "caller manifest SHA accepted",
+   "file": "k4s_end_preflight.py",
+   "id": "P01",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 0.4,
+   "tail": "gins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_refusals[info8-120-60-30-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-manifest of record]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 8 passed, 1 warning in 0.13s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "manifest read without the anchor",
+   "file": "k4s_end_preflight.py",
+   "id": "P02",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.9,
+   "tail": "PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_manifest_with_same_closure_but_other_bytes_refused\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 13 passed, 1 warning in 3.57s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "closure table not compared",
+   "file": "k4s_end_preflight.py",
+   "id": "P03",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.8,
+   "tail": "y:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_code_closure_table_must_equal_the_manifest\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 14 passed, 1 warning in 3.48s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "closure files not hashed against pins",
+   "file": "k4s_end_preflight.py",
+   "id": "P04",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.8,
+   "tail": ":1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_tampered_closure_file_refused_before_import\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 12 passed, 1 warning in 3.45s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "pre-import pins skipped",
+   "file": "k4s_end_preflight.py",
+   "id": "P05",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 1.6,
+   "tail": ": PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_unanchored_manifest_refused_and_nothing_executed\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 passed, 1 warning in 1.30s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "S4 synthetic stamp accepted",
+   "file": "k4s_end_preflight.py",
+   "id": "P06",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 5.2,
+   "tail": "estConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_s4_test_only_or_unbound_bundle_refused[synthetic-key]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 18 passed, 1 warning in 4.86s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "non-production assembly receipt accepted",
+   "file": "k4s_end_preflight.py",
+   "id": "P07",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.3,
+   "tail": "Warning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_s4_test_only_or_unbound_bundle_refused[receipt-not-production]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 19 passed, 1 warning in 3.95s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "bundle manifest read without its SHA",
+   "file": "k4s_end_preflight.py",
+   "id": "P08",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.7,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_bundle_manifest_bytes_must_match_the_pin\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 23 passed, 1 warning in 3.45s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "runtime-<commit12> layout not enforced",
+   "file": "k4s_end_preflight.py",
+   "id": "P09",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 1.0,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_layout_refusals - AssertionError: exp...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 10 passed, 1 warning in 0.75s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "pf/rd guard-job form not enforced",
+   "file": "k4s_end_preflight.py",
+   "id": "P10",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.2,
+   "tail": "__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_guard_job_forms_enforced[preflight-rd]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 24 passed, 1 warning in 2.87s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "guard repo clone not verified",
+   "file": "k4s_end_preflight.py",
+   "id": "P11",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.0,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_guard_repo_replace_ref_refused - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 31 passed, 1 warning in 5.72s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "repository clone not verified",
+   "file": "k4s_end_preflight.py",
+   "id": "P12",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.4,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_repository_alternates_refused - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 33 passed, 1 warning in 6.09s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "frozen git env not applied",
+   "file": "k4s_end_preflight.py",
+   "id": "P13",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.7,
+   "tail": "it__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_frozen_git_env_applied_before_import\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 34 passed, 1 warning in 6.41s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "binding without reference work",
+   "equivalent": "load['reference_slot_work'] and mode_requested == 'binding' both derive from the same --no-reference-work argument (result['load'] is set from a.reference_work); the states-worked > 0 condition remains",
+   "file": "k4s_end_preflight.py",
+   "id": "P14",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 39.6,
+   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n64 passed, 1 warning in 39.31s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "binding without measured duration",
+   "file": "k4s_end_preflight.py",
+   "id": "P15",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 13.9,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_short_measured_hold_is_not_binding - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 41 passed, 1 warning in 13.63s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "bus stop band never reached",
+   "file": "k4s_end_preflight.py",
+   "id": "P16",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 13.0,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_04_bus_bands[0.8-stop] - AssertionErr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 39 passed, 1 warning in 12.74s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "attempt parent / guard-source copy not required",
+   "file": "k4s_end_preflight.py",
+   "id": "P17",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 21.4,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_non_empty_attempt_parent_fails - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 48 passed, 1 warning in 21.08s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "guard job freshness not checked",
+   "file": "k4s_end_preflight.py",
+   "id": "P18",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 22.4,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_guard_job_not_fresh_fails - Assertion...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 49 passed, 1 warning in 22.10s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "sample minimum not enforced",
+   "file": "k4s_end_preflight.py",
+   "id": "P19",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.6,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_sample_minimum_enforced - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 27 passed, 1 warning in 4.26s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "loaded non-closure runtime module accepted",
+   "file": "k4s_end_preflight.py",
+   "id": "P20",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 24.6,
+   "tail": " PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_loaded_runtime_modules_must_be_closure_or_pinned\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 51 passed, 1 warning in 24.34s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "closure_only off",
+   "file": "k4s_end_preflight.py",
+   "id": "P21",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 27.5,
+   "tail": " PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_loaded_runtime_modules_must_be_closure_or_pinned\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 51 passed, 1 warning in 27.17s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "verify-received: extra files accepted",
+   "equivalent": "the walk role allows exactly the sealed names (an extra file refuses as allowlist) and every listed file is hashed (a missing one refuses as missing), so the set equality cannot fail on its own",
+   "file": "k4s_end_preflight.py",
+   "id": "P22",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 39.3,
+   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n64 passed, 1 warning in 38.96s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "verify-received: file SHAs not compared",
+   "file": "k4s_end_preflight.py",
+   "id": "P23",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 36.2,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_verify_received_refusals[member-content]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 60 passed, 1 warning in 35.83s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "verify-received: PUSH-FAILED ignored",
+   "file": "k4s_end_preflight.py",
+   "id": "P24",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 32.6,
+   "tail": "__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_verify_received_refusals[push-failed]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 57 passed, 1 warning in 32.27s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "frozen manifest not bound to the pinned bundle",
+   "file": "k4s_end_preflight.py",
+   "id": "P25",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 3.2,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s5_preflight.py::test_frozen_manifest_must_be_the_pinned_bundle\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 26 passed, 1 warning in 2.91s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END wrapper: argv.nul by truncating redirection (r1 bug)",
+   "file": "k4s_end_exit_push.sh",
+   "id": "W01",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 2.3,
+   "tail": "testConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_hard_linked_metadata_canary_is_never_written[argv.nul]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 21 passed, 1 warning in 2.07s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END wrapper: metadata pre-checks off",
+   "file": "k4s_end_exit_push.sh",
+   "id": "W02",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 2.4,
+   "tail": "testConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_hard_linked_metadata_canary_is_never_written[argv.nul]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 21 passed, 1 warning in 2.13s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END wrapper: command not through frozen-exec",
+   "file": "k4s_end_exit_push.sh",
+   "id": "W03",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 5.8,
+   "tail": ":1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_complete_pushes_everything_through_safe_input\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 32 passed, 1 warning in 5.52s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END wrapper: refused registry snapshot ignored",
+   "file": "k4s_end_exit_push.sh",
+   "id": "W04",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 14.6,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_hard_linked_registry_claim_is_never_pushed\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 38 passed, 1 warning in 14.29s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END wrapper: host tool SHA not checked",
+   "file": "k4s_end_exit_push.sh",
+   "id": "W05",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 7.6,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_symlinked_job_or_tools_refuse - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 31 passed, 1 warning in 7.35s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END wrapper: PUSH-FAILED by redirection",
+   "file": "k4s_end_exit_push.sh",
+   "id": "W06",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.2,
+   "tail": ": assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_alias_planted_during_the_run_is_never_written_through[PUSH-FAILED.json]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 30 passed, 1 warning in 5.96s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "preflight wrapper: argv.nul by truncating redirection",
+   "file": "k4s_preflight_push.sh",
+   "id": "W07",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 16.8,
+   "tail": "t__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s6_wrapper.py::test_preflight_wrapper_hard_linked_argv_nul\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 48 passed, 1 warning in 16.49s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "C-d not enforced",
+   "file": "k4s_end_verify_push.py",
+   "id": "V01",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 4.6,
+   "tail": ", **k)\n        except exc as error:\n            ok(match is None or match in str(error), \"expected %r in %r\" % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\nE       AssertionError: expected ValueError; call succeeded\n\ntests/helpers.py:33: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_c_d_enforced - AssertionError: expecte...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed in 4.26s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "D3 members not hashed",
+   "file": "k4s_end_verify_push.py",
+   "id": "V02",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 11.6,
+   "tail": " % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[d3-sha] - AttributeError: 'tu...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 10 passed in 11.35s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "sealed listing not compared",
+   "file": "k4s_end_verify_push.py",
+   "id": "V03",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 10.0,
+   "tail": "r\" % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[extra-file] - AttributeError:...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 8 passed in 9.71s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "received registry not bound to the listing",
+   "file": "k4s_end_verify_push.py",
+   "id": "V04",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 19.5,
+   "tail": " % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[registry-extra] - AttributeEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 18 passed in 19.24s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "registry claims read without listing SHA",
+   "file": "k4s_end_verify_push.py",
+   "id": "V05",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 17.8,
+   "tail": " % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[listing-sha] - AttributeError...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 17 passed in 17.48s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "ordinary member SHA not compared",
+   "file": "k4s_end_verify_push.py",
+   "id": "V06",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 11.8,
+   "tail": " % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[member-sha] - AttributeError:...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 passed in 11.51s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PUSH-FAILED ignored",
+   "file": "k4s_end_verify_push.py",
+   "id": "V07",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 16.1,
+   "tail": " % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[push-failed] - AttributeError...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 16 passed in 15.84s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "wrapper SHA not checked",
+   "file": "k4s_end_verify_push.py",
+   "id": "V08",
+   "optimized": false,
+   "rc": 1,
+   "seconds": 14.2,
+   "tail": " % (match, str(error)))\n            return error\n>       raise AssertionError(\"expected %s; call succeeded\" % exc.__name__)\n                                                             ^^^^^^^^^^^^\nE       AttributeError: 'tuple' object has no attribute '__name__'. Did you mean: '__ne__'?\n\ntests/helpers.py:33: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_s6_verifier.py::test_refusals[wrapper-sha] - AttributeError...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 14 passed in 13.88s\n",
+   "tests": [
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "RC-6 roots not bound to k4s-end-r1/Q4",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G01",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 93.0,
+   "tail": "ytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc6_declaration_validation[base] - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 65 passed, 1 warning in 92.67s (0:01:32)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "undeclared bundle accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G02",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 121.8,
+   "tail": "testConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_end_argv_refusals[bundle-undeclared] - Att...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 94 passed, 1 warning in 121.44s (0:02:01)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "preflight receipt schema not checked",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G03",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 50.7,
+   "tail": "_.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[no-schema]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 35 passed, 1 warning in 50.36s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "diagnostic preflight accepted for RC-9",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G04",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 59.0,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[diagnostic]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 39 passed, 1 warning in 58.69s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "reference load not required",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G05",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 62.6,
+   "tail": "onfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[no-reference-work]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 40 passed, 1 warning in 62.31s (0:01:02)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "loaded duration not required",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G06",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 62.3,
+   "tail": ": PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[duration]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 42 passed, 1 warning in 62.03s (0:01:02)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "04 bus STOP band accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G07",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 71.0,
+   "tail": ": PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[bus-stop]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 44 passed, 1 warning in 70.68s (0:01:10)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "preflight provenance not re-hashed",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G08",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 77.0,
+   "tail": "PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[provenance]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 48 passed, 1 warning in 76.66s (0:01:16)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "preflight input binding not checked",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G09",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 77.9,
+   "tail": "ytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_preflight_receipt_validation[layer] - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 47 passed, 1 warning in 77.59s (0:01:17)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "03 ACK verified before C-d accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G10",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 94.8,
+   "tail": ": PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_04_needs_03_complete_cd_and_rc7[early]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 54 passed, 1 warning in 94.45s (0:01:34)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "RC-7 admission not required",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G11",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 99.7,
+   "tail": "46: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_04_needs_03_complete_cd_and_rc7[rc7]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 57 passed, 1 warning in 99.39s (0:01:39)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "03 failed seal accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G12",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 93.8,
+   "tail": " PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_rc9_04_needs_03_complete_cd_and_rc7[failed]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 52 passed, 1 warning in 93.42s (0:01:33)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "open ControlMaster accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G13",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 76.7,
+   "tail": "testConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_local_controlmaster_refused_before_any_session\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 34 passed, 1 warning in 76.42s (0:01:16)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "diagnostic preflight launch without the flag",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G14",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 148.0,
+   "tail": "estConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_preflight_argv - AssertionError: expected ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 101 passed, 1 warning in 147.75s (0:02:27)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "preflight receive dir not empty accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G15",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 150.6,
+   "tail": "estConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_preflight_receive_dir_must_be_empty - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 102 passed, 1 warning in 150.34s (0:02:30)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "END bundle of another round accepted",
+   "file": "k4s_end_launch_gate.py",
+   "id": "G16",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 134.8,
+   "tail": "testConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_end_argv_refusals[bundle-preflight] - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 95 passed, 1 warning in 134.43s (0:02:14)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "failed ps not reported",
+   "file": "k4s_end_launch_remote.py",
+   "id": "R01",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 12.5,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_failed_ps_with_valid_table_is_refused - As...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 1 warning in 12.24s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "hostname not bound to the host",
+   "file": "k4s_end_launch_remote.py",
+   "id": "R02",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 56.4,
+   "tail": "t__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_wrong_host - AssertionError: check failed\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 28 passed, 1 warning in 55.74s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "frozen-reader checks skipped",
+   "file": "k4s_end_launch_remote.py",
+   "id": "R03",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 5.1,
+   "tail": "ig/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_launch_happy_path - KeyError: 'frozen_reader'\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 4.73s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "staged pins not compared",
+   "file": "k4s_end_launch_remote.py",
+   "id": "R04",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 45.1,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_host_refusals[wrapper-pin] - AssertionErro...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 passed, 1 warning in 44.82s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "C5 nice not checked",
+   "file": "k4s_end_launch_remote.py",
+   "id": "R05",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 45.1,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_host_refusals[own-nice] - AssertionError: ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 20 passed, 1 warning in 44.81s\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "two claims accepted",
+   "file": "k4s_end_launch_remote.py",
+   "id": "R06",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 67.6,
+   "tail": "ytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_s7_gate.py::test_registry_attempt_limits - AssertionError: ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 32 passed, 1 warning in 67.32s (0:01:07)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N01",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 58.3,
+   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n90 passed, 1 warning in 57.92s\n",
+   "tests": [
+    "tests/test_host_tool.py",
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N02",
+   "optimized": false,
+   "rc": 0,
+   "seconds": 52.9,
+   "tail": "........................................................................ [ 98%]\n.                                                                        [100%]\n73 passed in 52.56s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py",
+    "tests/test_s6_verifier.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N03",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 133.8,
+   "tail": " warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n109 passed, 1 warning in 133.51s (0:02:13)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N04",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 48.7,
+   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n64 passed, 1 warning in 48.34s\n",
+   "tests": [
+    "tests/test_s5_preflight.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N05",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 130.8,
+   "tail": " warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n109 passed, 1 warning in 130.52s (0:02:10)\n",
+   "tests": [
+    "tests/test_s7_gate.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N06",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 23.5,
+   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n50 passed, 1 warning in 23.21s\n",
+   "tests": [
+    "tests/test_s6_wrapper.py"
+   ],
+   "verdict": "SURVIVED"
+  }
+ ]
+}
