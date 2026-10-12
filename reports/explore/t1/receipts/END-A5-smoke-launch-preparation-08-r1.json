@@ -1,0 +1,179 @@
+{
+  "C3_offline_preflight": "PASS",
+  "adoption": "46ab6923",
+  "argv": [
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "c84d65ed8fb91dca82ed78152bcaae9111db02a6be58f5031f9cf4f18de1cb99"
+  ],
+  "argv_nul_sha256": "7e4acfa5773f0f25b896cc8bae92e96f401902227bd1347db20015376922fdd6",
+  "bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/bundle",
+  "frozen_launch_argv_nul_sha256": "58501e2911980246beea5f392e28fc491c5e8dfab5b20aeaa503960ea56152da",
+  "frozen_launch_command": [
+    "nice",
+    "-n",
+    "10",
+    "taskset",
+    "-c",
+    "61",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-frozen-detach-aeeb3003.sh",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/detach.log",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/detach.json",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-approved-exit-push-0a87166f.sh",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1",
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "c84d65ed8fb91dca82ed78152bcaae9111db02a6be58f5031f9cf4f18de1cb99"
+  ],
+  "host": "127x08",
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-smoke-127x08-0a87166f-r1",
+  "layout": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    [
+      [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      [
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      [
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      [
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      [
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      [
+        50,
+        51,
+        52,
+        53,
+        54
+      ]
+    ],
+    63
+  ],
+  "manifest_sha256": "c84d65ed8fb91dca82ed78152bcaae9111db02a6be58f5031f9cf4f18de1cb99",
+  "measurement_files": {
+    "build_tiers.sh": "3656f88ecf80cd9aec83c94607dad44088e0b7fbb2d244d06d47c74561e45372",
+    "classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
+    "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+    "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+    "fleet_end.py": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+    "fleet_pool.py": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+    "fleet_profile.py": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+    "fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+    "fleet_validity.py": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+    "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+    "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+    "prepare_fleet_smoke.py": "69190b46ff379b6f75cf38b47d10b5fcd551583e2255301f8a0466a282a0ab1f",
+    "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+    "replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
+    "spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+    "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+    "telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
+    "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+  },
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "old_code_disclosure_commit": "13c3dbe4",
+  "outcomes_sealed": true,
+  "python": "3.12.13",
+  "runtime": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-0775b704-0108-r1/runtime",
+  "slot_count": 11,
+  "smoke_uses_reference_attempt": false,
+  "source_commit": "8799a0d6",
+  "timing_started": false,
+  "unpoolable": true,
+  "utc": "2026-10-12T04:53:59Z",
+  "warmup_seconds": 300
+}

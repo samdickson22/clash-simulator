@@ -1,0 +1,11 @@
+{
+  "adoption": "46ab6923",
+  "commit": "4ff93a1004606e3562e5be26874c584d2be7a51d",
+  "origin_ref": "refs/heads/main",
+  "outcomes_sealed": true,
+  "push_exit_code": 0,
+  "pushed_before_any_A5_reference_launch": true,
+  "roots_path": "reports/explore/t1/receipts/reference-attempt-roots-0108-a5.json",
+  "roots_sha256": "bc90c1bd757cf1a1029d655329e1507d2c202417eb93451759208253e3db3cf2",
+  "utc": "2026-10-12T04:54:12Z"
+}
