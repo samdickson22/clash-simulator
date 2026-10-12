@@ -1,0 +1,46 @@
+{
+ "build": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/build-a5",
+ "bundle": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/staged-a5/bundle-a5",
+ "caffeinate_argv": [
+  "/usr/bin/caffeinate",
+  "-i",
+  "-w",
+  "8573"
+ ],
+ "caffeinate_pid": 8574,
+ "environment": {
+  "MKL_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "PYO3_PYTHON": "/Users/sam/Desktop/code/clasher/.venv/bin/python",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "PYTHONPATH": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5/imitation/evaluation/runtime_dependencies:/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5/reports/strategy_council_20260928/imitation",
+  "SAM_AUTHORIZED_REPLAY": "yes"
+ },
+ "lock": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session.lock",
+ "lock_fd": 3,
+ "manifest_sha256": "273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d",
+ "nice": 10,
+ "output": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/session-a5-r1",
+ "pid": 8573,
+ "python": "/Users/sam/Desktop/code/clasher/.venv/bin/python",
+ "python_version": "3.12.13",
+ "runtime": "/Users/sam/Desktop/code/clasher-mac-e4-tiers-20261011/runtime-a5",
+ "schema": "clasher.mac-e4-session.session-pre.v1",
+ "software_update_change": "none (no sudo/GUI route; coordinator dbe683e0)",
+ "software_update_prefs_before": {
+  "AutomaticDownload": "1",
+  "AutomaticallyInstallMacOSUpdates": "1",
+  "ConfigDataInstall": "1",
+  "CriticalUpdateInstall": "1"
+ },
+ "uname": [
+  "Darwin",
+  "Mac.attlocal.net",
+  "27.0.0",
+  "Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:48 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T6041",
+  "arm64",
+  "arm"
+ ],
+ "utc": "2026-10-12T12:15:00Z"
+}

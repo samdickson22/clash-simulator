@@ -400,3 +400,17 @@ See `receipts/reviews-20261011/REVIEWS.md`.
 
 Local mocks (Python 3.12.12, platform and caffeinate patched): the success path runs verify, build and measure
 with rc 0 and the lock fd inherited; the exception path writes the post receipt with the failure.
+
+### 2026-10-12T12:15:28Z: TIERS MAC SESSION LAUNCHED 12:15:00Z (wrapper PID 8573, caffeinate 8574)
+
+- **GO_REF:** coordinator conditional GO + Sol session-launch r1 APPROVE_WITH_CONDITIONS (conditions met in
+  0e0662fb) + preconditions-r3 PASS 12:09:50–12:14:51Z.
+- **Mac paths:** pre receipt `$S/session-a5-r1.pre.json` (copied to
+  `receipts/phase-b-session-20261012/`); output `$S/session-a5-r1`; build `$S/build-a5`; console
+  `$S/session-a5-r1.console.log`; post receipt `$S/session-a5-r1.post.json` when done.
+- **Expected end:** about 18:15–18:45Z.
+- **Health:** every ~30 min, the first at ~12:45Z (after the frozen pre-session census). Liveness, file names and
+  sizes, and phase label only. No outcome or summary values.
+- **Resume:** if this operator restarts, the session continues on the Mac (it is daemonized). Run
+  `run_session.sh status` and do NOT relaunch. After the post receipt appears: A3-P, the D/ public 15 paths, the
+  private commit plus bundle, relaunch Chrome with `open -a`, re-read the prefs.
