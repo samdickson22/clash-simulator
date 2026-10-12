@@ -3955,3 +3955,30 @@ ISSUED AUTHORIZE_B_DEPLOYMENT 06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9
 - the F1 r3 revocation fix;
 - the review of `complete.json`;
 - separate GOs.
+
+## 2026-10-12 20:44Z: Perception B F1 r3 review APPROVE_WITH_CONDITIONS; canonical revocation protocol adopted
+
+**Review:** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-AUTHORITY-PLACEMENT-REVIEW-r3.md` (3c4961d3).
+- F1 transport r3 (procedure 20e58965, manifest 4631d05d) gets **APPROVE_WITH_CONDITIONS**.
+- R1, R2 and G5 are fixed and verified on real git. 54/54 tests pass.
+- r2 is unchanged (6b43a70d), so deployment GO 06f8d1b0 stays valid.
+
+**Adopted now (C-3): canonical revocation protocol**, binding on all coordinator authority from here on.
+- **Form.** A revocation is ONE line, starting at column 0: `REVOKED <DECISION> <full lowercase 64-hex SHA> <reason>`.
+- **Forbidden ways to revoke:**
+  - an abbreviated SHA;
+  - prose or a heading;
+  - deleting or striking an issuance line;
+  - any other verb.
+- **Order.** The revocation line is written and pushed from 05 before any other action. A STOP is then sent to the operator thread with `t3_thread_send`.
+- **Never** put a live authority's full SHA on a line containing revoked, withdrawn or rescinded (any case) unless the line is meant to revoke.
+- A column-0 full-SHA issuance line is written only when issuing.
+
+**First placement GO: conditions C-1 to C-6** (reviewed in §5 of the review).
+- **C-1.** The deployment `complete.json` has been reviewed first.
+- **C-2.** Pin `procedure_sha256` 20e58965. Freeze r3 and r2 byte-identical, and never `git clean` the prepared directories.
+- **C-4.** The operator runs the dry-run-verified fetch-then-send command `evidence/…-r3-placement-operator-command.sh` (d6cb3690) exactly once. It writes an exit-code file.
+- **C-5.** The coordinator runs a read-only pre-issue grep. Each SHA must show exactly its one issuance line.
+- **C-6.** After placement, audit `revocation_tip_commit..origin/main` for placed SHAs. There is no retry.
+
+**Optional.** Hardening F-8 is not required, and is deferred.
