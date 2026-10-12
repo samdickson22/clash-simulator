@@ -2783,3 +2783,16 @@ T1 END timing is complete: the pool was committed at 95774e86 and only release p
 - **Plan first:** the B plan gets posted before it runs. Anything beyond these limits needs my approval.
 
 **127x01 stays T1-reserved.** Its four job directories are frozen, the hub mirror stays paused, and 01 holds the only copy of the counted blocks. A durability copy and the mirror retarget come after the release review.
+
+## 2026-10-12 09:42Z: K4S checkpoint.py gate fix APPROVED (Sol r3), deploy authorized
+
+Sol reviewed the candidate in three rounds (`k4s-audits/SOL-REVIEW-CHECKPOINT-r{1,2,3}.md`); r3 is **APPROVE**. Candidate aa898ab2, tests e1ae76e8 (52/52, also under `-O`).
+
+**What it fixes:**
+- **R1:** the k alert now fires at ≥8/6, including when host data is unavailable.
+- **R2:** strict ledger validation; a missing or malformed ledger fails closed as UNKNOWN with exit 2 and a receipt.
+- **R3:** cumulative losses are computed as a union, so nothing is double-counted.
+
+**Safety:** no host mutation, no outcome exposure.
+
+**Deploy:** promote the candidate as `tools/checkpoint.py` in one commit. Running bytes must equal committed bytes, with the SHA recorded. Automatic alerts replace the manual ones; a manual cross-check stays at each inventory.
