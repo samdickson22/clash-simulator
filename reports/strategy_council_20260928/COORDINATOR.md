@@ -3742,3 +3742,16 @@ No host step is authorized. Package 2 r2 goes to Sol again.
 11. State the O_W gate thresholds.
 
 R2-9 and R2-11 go to the Sol script review. The coordinator will verify r3 textually; no further Opus round is needed.
+
+## 2026-10-12 17:45Z: X4S-4 PLAN r3 accepted (design frozen)
+
+PLAN r3 is 87809ae0 (`reports/explore/x4s4/PLAN.md`). The coordinator verified it textually: all 11 edits from 7b989359 are present and tagged [E1]–[E11].
+- The futility stop is deleted, and nothing is reduced before the C5 freeze.
+- The fit-inflated interval is added.
+- The attribution sub-label is CI-based and defaults to "unresolved".
+- A "harmful" sub-label is added.
+- ABBA order.
+- Truncation never cuts the primary N.
+- O_W gate thresholds are stated.
+
+**The design is frozen at 87809ae0.** Next comes one Sol review of the full script set; it includes R2-9 and R2-11 and C7–C9. A coordinator GO follows only after Sol approves. Hosts: 01 only.
