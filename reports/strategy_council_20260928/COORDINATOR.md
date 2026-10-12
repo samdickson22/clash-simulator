@@ -2482,3 +2482,40 @@ Nothing is adopted or staged on any host. 08 r3 proceeds as-is under RG1.
 4. 08 reference after its 08:49Z apt-daily, with fresh C2.
 
 **Planning advisory (no ruling yet):** K4S END should adopt the fix through K4S Amendment 3 rather than run on the old guard.
+
+## 2026-10-12 04:45Z: TIERS AMENDMENT 5 ADOPTED (merge 8799a0d6)
+
+**Review chain complete:**
+- **Sol code review:** r1 and r2 REQUEST_CHANGES, then **r3 APPROVE** (`e4-guard-race-fix-20261012/SOL-REVIEW-r3.md`).
+- **Opus science review:** r1 ADOPT_WITH_CHANGES (T1–T13 applied), then the R3 re-check ADOPT_WITH_CHANGES (T5 (i)/(ii) and texts applied).
+
+The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8799a0d6**.
+
+**Adopted:**
+- `PREREG-SEARCH-TIERS-AMENDMENT-5-DRAFT-20261012.md` at 8799a0d6 (sha256 ac73e8e4…). The DRAFT label is superseded by this ruling.
+- The impact doc (f72e3a5c…).
+- **`<R1-APPROVED SHA>` = `fleet_validity.py` 0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f.**
+
+**Binding A5 rules:**
+- **T4:** old-code timing stays sealed, with one pre-declared descriptive comparison allowed after the A5 pool check is committed.
+- **Old-code attempts are disclosed and never pooled:** A6, 01 r1, 08 r2 and 08 r3. 08 r1 stays the RF1 exemption.
+- **T7: the required fixed-code smoke runs first.** On 08, `e4v3-unpoolable-smoke`, job parent `$base`, outside all roots, A6 pass criteria. It must launch inside 08's C2 window before its 08:49:07Z apt-daily.
+- **The A5 reference series:**
+  - attempts are named `end-reference-<host>-0a87166f-a5-r<n>`, sequential;
+  - each host gets at most 2 counted attempts, and 01 keeps one RF1 exemption;
+  - host jobs live under the existing host roots, as the wrapper requires;
+  - the release-side root is `BASE/fleet-end-attempts-0108-a5/<host>`.
+- **T10:** `reference-attempt-roots-0108-a5.json` must be committed **and pushed**, with a push-time receipt, before the first A5 reference launch. It is the only `attempt_roots` binding for release; record its path, commit and SHA in the receipt.
+- **T9:** the post-exit check compares all 18 `measurement_files` with the A5 inventory.
+- **T11:** prerequisites, plus `END-A5-old-code-attempt-disclosure.json` committed before the smoke.
+- **C1–C8, C-a to C-d, C5/C6 pre-exec gate, R-ord and c6387611 all carry over.**
+- **Expected order:**
+  1. 08 smoke, then its C-d and ACK;
+  2. 01 A5 reference after its 06:17:43Z apt-daily (fresh C2), once the smoke has passed;
+  3. 08 A5 reference after its 08:49Z apt-daily (fresh C2);
+  4. pool;
+  5. PC1–PC4.
+
+**Companions, separate rulings to come:**
+- (a) K4S END adopts the fix through K4S Amendment 3 / a c1fb1e9a re-pin. K4S END stays held until then.
+- (b) The Mac/A4 erratum: `stage_nocopy.py`, the staged Mac runtime, and no TIERS Mac session on 94d0e7f2 bytes.
