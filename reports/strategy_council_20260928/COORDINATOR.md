@@ -3755,3 +3755,22 @@ PLAN r3 is 87809ae0 (`reports/explore/x4s4/PLAN.md`). The coordinator verified i
 - O_W gate thresholds are stated.
 
 **The design is frozen at 87809ae0.** Next comes one Sol review of the full script set; it includes R2-9 and R2-11 and C7–C9. A coordinator GO follows only after Sol approves. Hosts: 01 only.
+
+## 2026-10-12 18:03Z: K4S END S2 r3 / S4 r3b Sol review: R2 fixes verified; new git-indirection findings
+
+**Review.** `/mpac/sdicks02/k4s-runner/run-r1/reviews/SOL-REVIEW-END-S2S4-r3.md` (9b24219c). 547 tests pass in both modes. The round-2 findings are all **FIXED**: S2-F1/F2 and S4-F1/F2/F3.
+
+**New findings (both components REQUEST_CHANGES):**
+- **S2-R3-F1 and S4-R3-F1, BLOCKING.** Git calls inherit the environment and honour replacement refs. A replace ref or `GIT_*` override can substitute outcome bytes underneath a correctly named path or OID.
+- **S4-R3-F2, BLOCKING.** The outcome-name gate is a six-name exact, case-sensitive list, so variants and standalone END receipt names pass.
+- **S4-R3-F3, HIGH.** E4 metadata screening is interleaved with blob reads. It should be a complete metadata pass first, and only then any blob access.
+
+**Ruling P2-4: the shared safe_input layer's git helper is the fix for all of these.** Every git call must:
+- run with a scrubbed environment (no inherited `GIT_*`; explicit `GIT_DIR`/work-tree only if declared);
+- set `GIT_NO_REPLACE_OBJECTS=1` and use `--no-replace-objects`, `-c core.hooksPath=/dev/null` and `GIT_OPTIONAL_LOCKS=0`;
+- verify the object type and OID against the expected tree entry before consuming any content;
+- run all tree-metadata screening (E1/E4, modes, names) to completion before any blob is read.
+
+The outcome-name gate becomes a reviewed, case-insensitive family/pattern denylist shared by all components. S2 and S4 move to safe_input in r4, together with package 2 r2.
+
+**Reviewer disclosure, accepted.** While exporting the frozen code, the Sol reviewer copied 92 committed `e4v3/receipts/` files: the linux05 TIERS dry-run timing receipts, including `tiers-complete.json`. It did not display, parse or use their contents. These are public committed health/timing receipts, not K4S or T1 game outcomes, so there is no impact on blinding. It is recorded.
