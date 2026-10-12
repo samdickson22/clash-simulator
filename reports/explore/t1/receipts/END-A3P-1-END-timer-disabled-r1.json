@@ -1,0 +1,10 @@
+{
+  "scheduledTaskId": "scheduled-task:command:mcp:1d318750-510c-4298-9fd7-13c1eae507ce:schedule-task:clasher-t1-sealed-reporting-continuation-20261010-r1",
+  "enabled": false,
+  "nextRunAt": null,
+  "ruling_commit": "32f5e2e46ae99da86ffe20712760870e1ff24c5e",
+  "ruling_record_commit": "9308f1b171370a7ddd75ac118268cee415c73607",
+  "outcomes_sealed": true,
+  "coordinator_will_wake_for_future_separate_ruling": true,
+  "no_private_state_or_originals_touched": true
+}
