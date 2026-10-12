@@ -4194,3 +4194,17 @@ The owner's offline environment drafts (`l1/prepared/b08-environment-and-placeme
 **Review and issuance.** It gets one independent review. After approval, each phase still gets its own CPU GO, placement and run GO.
 
 **Drafts not issued.** The environment drafts 05ff759e and edea9611, and the template 401ac9f9, are not issued. They will be re-drafted with fresh windows after the transport review.
+
+## 2026-10-12 22:50Z: X4S-4 qualification runbook received; decisions Q-D1 to Q-D4 (pending Sol r5)
+
+The runbook is `reports/explore/x4s4/QUALIFY-RUNBOOK.md`, commit 433c36e7. These decisions take effect only once Sol r5 approves; a qualification GO is issued after that.
+
+- **Q-D1. GO structure: adopted.** One combined GO covers PLAN §6 qualification plus a **conditional** production run.
+  - Production proceeds automatically only if every §6 gate passes with its exact receipts.
+  - Any failure, anomaly or STOP pauses the run for a coordinator decision.
+  - The T+24 h clock starts at the first qualification launch.
+- **Q-D2. §6.5 trainer compatibility: decided by the r5 verdict.**
+  - If r5 requests changes anyway, use option (a): a narrow `qualify4 smoke-pack`, Sol-reviewed with the next round.
+  - If r5 approves, use option (b): run `qualify4 trainer` on the first real O batch after the O gate and before the R5 fit is admitted. This is a recorded change to the §6 ordering, and a trainer failure blocks every fit.
+- **Q-D3. Smoke parity at 8 games per arm: designed pause accepted.** If it fails, the coordinator decides whether to grant an exact-receipt exception.
+- **Q-D4. Q0 seed audit: included.** It runs once on 05 at nice 19 on a few cores, reading pinned blobs only (7,705 sources plus the 29 approved declarations). It does not touch the shared checkout's worktree.
