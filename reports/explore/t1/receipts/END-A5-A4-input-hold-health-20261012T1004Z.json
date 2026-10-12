@@ -1,0 +1,21 @@
+{
+  "R5_draft_unchanged_binding_commit": "fc0d74a60227953f9dd14e22077972176f1dd96e",
+  "R5_sealed": false,
+  "R6_R7_invoked": false,
+  "checkpoint_scope": "local progress and coordinator messages only",
+  "completed_A4_delivery_received": false,
+  "coordinator_read_through": 9451,
+  "direct_T1_go_received": false,
+  "host01": "T1 reserved; four jobs frozen",
+  "host08_compute": "released to perception under 0c71f359; T1 paths frozen",
+  "last_builder_status_relayed": "independent rebuild matched; final conversion running; no actual input delivery or direct T1 go",
+  "mirror_remains_paused_no_action": true,
+  "outcomes_sealed": true,
+  "registration_sealed": false,
+  "repeated_verification_analysis_or_copy": false,
+  "same_END_timer_active": true,
+  "schema": "clasher.t1.A5.A4-input-hold-health.v1",
+  "source_host_contact": false,
+  "source_host_writes": false,
+  "utc": "2026-10-12T10:04:59Z"
+}
