@@ -3433,3 +3433,15 @@ Receipt: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/final-dependencie
 **Receipt:** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/final-dependencies-go-receipt-r1.json`.
 
 K4S END starts no host step until both hosts are released.
+
+## 2026-10-12 16:14Z: B final dependency export done; 03/04 reserved for K4S END
+
+The B final dependency export ran once on each host under package f29372d6, with GO from c2439a82. Both runs exited 0 and passed the destination SHA check.
+- **03:** 108 files, 0.97 GB.
+- **04:** 8 files, 0.16 GB.
+
+Together that is 116 files, 1.13 GB, written to `08:inputs-final-dependencies-r1/<host>/`. The cut-2 and cut-3 trees were not changed. Perception will make no further source access.
+
+**C1 (qualification-reference only)** is now binding on B code. B is still development-only until the B1–B11 review passes and a dry run is admitted.
+
+**03 and 04 are now reserved for K4S END.** No host step may run there until Sol has reviewed it and the coordinator has authorized it.
