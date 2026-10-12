@@ -3016,3 +3016,25 @@ The audit is in `k4s-audits/ROUND-r3-AUDIT.md`. Results:
 - **F2:** an r3 receipt erratum corrects the time labels.
 
 **Cut 3** must STOP before 04's apt-daily-upgrade at 13:27:55Z. The r4 duration is capped by 04's release-upgrade stamp, which runs out at 21:32:48Z.
+
+## 2026-10-12 11:46Z: C1 release driver r2 (42219e57) APPROVED WITH CONDITIONS
+
+The independent review is `END-C1-RELEASE-DRIVER-REVIEW-r2.md` (T1 job dir).
+
+**What it found:**
+- RC1–RC4 and S1–S5 are implemented correctly.
+- All 18 pins match `<R>` 9bb349b1, and the import closure equals the pinned set.
+- No game byte can be read before the guard passes.
+- 32/32 tests pass. Of 47 mutants, all 26 from r1 and 14 new ones are killed.
+- The signal demo locks the outputs.
+- Seven hardening mutants survive. They are untested, but the code itself is correct.
+
+**Launch conditions** (operator and runbook, no code change):
+1. Run the parent under `env -i`.
+2. Before launch, verify `<R>`'s e4v3 is mode 555 and `git status` is empty.
+3. Verify the driver's sha256 is 42219e57 before launch, and that its directory contains only the committed tree.
+4. **The Mac-summary route is NOT available at this driver SHA**, because the allowlist is empty. Using it needs a new driver revision with a reviewed allowlist of the Mac-summary paths, built with `--no-renames` from the allowed paths only. That revision also takes the non-blocking hardening: tests for the surviving mutants, blocking signals inside the failure handler, and killing the reducer's whole session.
+
+**Release routes:**
+- **Mac-summary route:** after Mac Phase B, a driver revision (r3) with the Mac allowlist plus review, then coordinator authorization.
+- **14-day escape route:** not before 2026-10-25T19:31:38Z, and it would run on 42219e57 under conditions 1–3.
