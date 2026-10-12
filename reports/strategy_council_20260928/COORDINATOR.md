@@ -3393,3 +3393,25 @@ Sol's review (`k4s-audits/SOL-REVIEW-END-PKG1-r1.md`) returned REQUEST_CHANGES o
 - **Diagnostics:** an outcome-blind census/MHz mismatch diagnosis, while keeping the frozen refusal.
 
 The overnight K4S END target may slip. Correctness comes first.
+
+## 2026-10-12 16:11Z: B final dependency export APPROVED (package f29372d6) with disclosure; window scheduled before K4S END
+
+**Review result.** The independent review (`B-FINAL-DEPENDENCY-EXPORT-REVIEW-r1.md`) returned APPROVE_WITH_CONDITIONS. It covered:
+- all 116 allowlist entries, each found in authenticated A1 session records, which match the pinned manifest;
+- no overlap with the cut-2 or cut-3 copies, and no forbidden paths;
+- `transfer.py`, which changes only `BASE` from r2;
+- the launcher, which fails closed on every bad input;
+- 29/29 tests.
+
+**Disclosure (C1).** 26 of the 116 files, plus 23 of the items being staged on 08, are byte-identical to **unselected** A1 body branches: epochs e09, e17 and e20. This is the first time unselected-branch bytes reach B. They are not heldout data.
+- B may use them **only as qualification reference**.
+- Decoder inputs are taken by the selected SHAs only, and references are looked up by SHA, never by path.
+- B never compares branches.
+
+**Approval.** APPROVE_EXACT for package `f29372d6a4a9e720cc1e582a756dd3ba847d19c4a0de0b791395720c2b70c1d8` only. The package is frozen.
+
+**Window `post-k4s-final-dependencies-r1`.** It runs now, before K4S END staging.
+- 03 and 04 are idle now that K4S reporting has finished. No K4S END host step has been authorized yet.
+- r2 rules apply: the 08 C1 check, launch at GO+30 s, once per host, release within 30 minutes, no retry, partial copies preserved.
+
+Receipt: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/final-dependencies-review-receipt.json`.
