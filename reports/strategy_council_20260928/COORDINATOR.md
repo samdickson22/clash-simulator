@@ -3235,3 +3235,13 @@ Review receipt: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/supplement
 - Review: `supplement-review-receipt.json` (07fe7691)
 
 K4S holds r4 on each host until that host releases, or until the window times out.
+
+## 2026-10-12 14:03Z: B supplemental export done; 03/04 released to K4S for r4
+
+The supplement ran once per host under package b38a9bff, with GO at 8be7ca00. Both runs exited 0 and were destination-SHA verified:
+- **03:** 127 proof JSONs (2.04 MB);
+- **04:** 33 proof JSONs (0.51 MB).
+
+Everything landed only under `08:v4-b-20261012-r1/inputs-supplement-r1/<host>/`, and the cut-2 data was left untouched. Receipts are in `l1/receipts/b08-supplemental-proof-export-20261012-r1/`, which perception commits.
+
+Both hosts are released to K4S for r4, the final round of 139 rows. B on 08 now has every input it needs. It remains development-only until the B1–B11 package review passes and a dry run is admitted.
