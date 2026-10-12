@@ -2738,3 +2738,20 @@ That closes F1 and F4 of review r1, and F2 and F3 are closed by R1 and PC4.
 - 03 has been released to K4S for its r2 launch.
 - The builder's Phase 3 builds on 05 against `runtime-a5` (A5 bytes).
 - After that comes the handoff to T1 for registration.
+
+## 2026-10-12 09:06Z: K4S round r2 audit PASS_WITH_NOTES; cut-2 rulings
+
+The audit (`/mpac/sdicks02/jobs/clasher/k4s-audits/ROUND-r2-AUDIT.md`, independent Opus) confirms every Proposal M step and all the arithmetic:
+- 22 events equal the failed blocks;
+- coverage is exact;
+- gates 41/150, 14/45, k 2/9 and 1/7;
+- dispatch 1df20188, 555/554;
+- handshake order is correct;
+- no outcome exposure.
+
+**Rulings:**
+- **F1:** the unreviewed `aptquiet_remote.sh` touched hosts and is retired. Cut 2 uses a coordinator-specified inline strict-mode command; non-zero exit or empty `ps` counts as FAIL.
+- **F2:** `checkpoint.py` also changed the alert gate (to ledger-cumulative), and the running copy diverged from the committed one for about 10 h. A receipt erratum is required, and a narrow Sol review will be routed.
+- **F3/F4:** the r3 receipt must carry hashes for all step evidence, with exact times.
+- **F5:** the runner must cite the PREREG-K4S definition of k; if the 0-based and count readings differ, the stricter one applies.
+- **Disclosure:** K4S qualification was running on 03 during the builder read.
