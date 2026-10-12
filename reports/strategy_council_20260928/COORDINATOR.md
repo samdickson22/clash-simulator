@@ -3702,3 +3702,24 @@ S2 r3 and S4 r3b should adopt the same layer where practical.
 **Bases.** Use `k4s-end-r1` everywhere (S10-F2). The RC-6 declaration lists runtime, bundles, repository, attempts and preflight, plus the separate Q4 guard-job parent.
 
 No host step is authorized. Package 2 r2 goes to Sol again.
+
+## 2026-10-12 17:30Z: X4S-4 plan design review: APPROVE_WITH_CONDITIONS; coordinator adopts C1–C9
+
+**Review.** Opus design review r1 of PLAN f9f528b9: `/mpac/sdicks02/jobs/clasher/x4s4-review/OPUS-DESIGN-REVIEW-r1.md` (969e47ec).
+
+**Key points:**
+- As written, a single-fit contrast at N = 1,200 has an MDE of about 3 pp, against a plausible one-round effect of 0.5–2 pp.
+- Fit-seed noise raises the rule's true false-positive rate to about 7–12%, and R5-rep cannot change the verdict.
+- "On-policy" is confounded with v1-opponent / X-deck matched data.
+- Controls would be evaluated beside fits while treatments run alone.
+
+**Rulings (all review conditions adopted):**
+- **C1:** R5-rep is mandatory. Primary = mean(R5, R5-rep) − mean(R3a, R3a-rep), paired by seed. "Helps" = upper 95% CI < 0 AND both single-fit points < 0.
+- **C2:** declare the MDE (about 2.1 pp). Outcomes are three-way: helps / no material effect (lower CI > −2.0 pp) / inconclusive. **N stays at 1,200**, with no optional extension, to avoid forking paths.
+- **C3:** **include the R5W matched off-policy control** (W-vs-v1 roots on the X decks ×4, fresh bank C′, existing reviewed emitter path). R5 − R5W is a declared secondary.
+- **C4:** no reporting game of any student runs beside a fit. **01 only**; 08 is not used, so no transfer amendment is needed. Pre-declare the timing-parity check.
+- **C5:** pre-declare the contention sensitivity (PSI avg10 > 10% or a foreign process holding > 2 cores) from timing fields, SHA-frozen before reduction.
+- **C6:** O-gate thresholds, per-arm caps, labeler/interruption handling, the readout template, and a descriptive-only O-holdout diagnostic (bank-C 3500–3999). Only the primary drives the decision table.
+- **C7–C9:** go to the Sol script review: deep-copied belief plus deadline-mode parity, capture fields (`opponent_elixir`, `reserved_packet`, empty `pending`), and the fair-information invariance test with a no-Battle-reference assertion.
+
+**Process.** PLAN r2 gets a diff-only re-check, then scripts go to Sol, then the coordinator GO. Estimated compute is about 17 h within the 24 h hard stop. A capacity arm is separate future work (X4S-5).
