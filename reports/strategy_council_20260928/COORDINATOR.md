@@ -3191,3 +3191,27 @@ The 21 alias probes all failed safely. The mutants were 108 killed and 7 survivi
 5. Driver 9ffbd2e1 runs under its launch conditions.
 
 The 14-day route stays on 42219e57.
+
+## 2026-10-12 12:47Z: B supplemental proof export APPROVED (package b38a9bff); cut-3 read window declared
+
+**Review.** The narrow delta review is `B-SUPPLEMENT-EXPORT-REVIEW-r1.md`, verdict APPROVE_WITH_CONDITIONS. It confirmed that only these change from the approved r2 package:
+- the single BASE literal, now `inputs-supplement-r1`;
+- the new 127/33 allowlists of proof JSONs, which don't overlap cut 2;
+- one test fixture line.
+
+Every other byte is identical to r2.
+
+**Decision.** `APPROVE_EXACT_GAP_COMMANDS` covers package `b38a9bffcfe79ef6d5cc813d4f0a769429ea477c8e2ff17e0e13a08d47ad718d` only.
+
+**Conditions:**
+- **C1, C2:** new review and GO receipts, with cut 3.
+- **C3:** the package is frozen.
+- **C4:** the r2 rules apply: GO+30 s, once per host, release per host, a 30-min window, no retry, and partial copies are preserved.
+- **C5:** exact failure reporting.
+
+**The K4S cut-3 read window is declared.**
+- After the quiet-read v3 handshake, perception runs the supplement, once per host.
+- K4S holds r4 on each host until that host is released, or until the timeout expires.
+- The 08 C1 check (`who` count and free space ≥ 280 GB) runs before GO.
+
+Review receipt: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/supplement-review-receipt.json`.
