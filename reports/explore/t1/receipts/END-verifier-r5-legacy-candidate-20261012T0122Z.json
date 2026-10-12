@@ -1,0 +1,87 @@
+{
+  "ACK_written": false,
+  "all_tests_synthetic_no_network_backend": true,
+  "approved_running_wrapper_unchanged": true,
+  "controls": [
+    "explicit raises/__debug__refusal",
+    "pinned empty-receive preparation proof/nonce before pinned launch UTC",
+    "root PREPARED nonce/proof equality",
+    "PUSHFAILED including legacy missing code is failure/noACK",
+    "TRANSFER marker filesystemmtime >= recorded exit UTC",
+    "pinned argv byte equality",
+    "neverPython-O; verification Python-I only"
+  ],
+  "coordinator_disposition": "81b7c01e",
+  "diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-verifier-r5-legacy-only.diff",
+  "diff_sha256": "6422005c90b79b028c10652732c35054761d8a106d0094e7b88e447fea952896",
+  "future_wrapper_2928eb15_shelved": true,
+  "no_SSH01_since_A6launch": true,
+  "outcomes_sealed": true,
+  "status": "UNAPPROVED; NO ACK until quick verifier-only review",
+  "tests": {
+    "early_no_output": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 0
+    },
+    "exit_status_mismatch_rejected": true,
+    "extra_file_rejected": true,
+    "failure": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "missing_manifest_unsealed_no_ack": true,
+    "missing_transfer_marker_rejected": true,
+    "nonempty_receive_rejected": true,
+    "optimized_bytecode_refused": true,
+    "permanent": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "persistent": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 3
+    },
+    "push_failed_rejected": true,
+    "sealed_failure_ack_health_only": true,
+    "stale_marker_mtime_rejected": true,
+    "success": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "transient": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 2
+    },
+    "unprepared_receive_rejected": true,
+    "valid_seal": true,
+    "wrong_argv_rejected": true,
+    "wrong_file_sha_rejected": true
+  },
+  "utc": "2026-10-12T01:22:42Z",
+  "verifier_sha256": "753722c922a1f6adae09de42044202a9c57b877af91cc11fcb9d238c879f60d1",
+  "wrapper_sha256": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1"
+}

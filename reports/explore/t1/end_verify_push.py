@@ -51,7 +51,10 @@ def verify(root, launch, prepared):
     """Return a health receipt; emit no ACK for missing or inconsistent seals."""
     namespace(root)
     require(root.is_dir(), 'Verification check failed')
-    require(not (root / 'PUSH-FAILED.json').exists(), 'PUSH-FAILED prohibits ACK')
+    if (root / 'PUSH-FAILED.json').exists():
+        failure = json.loads((root / 'PUSH-FAILED.json').read_text())
+        code = failure.get('rsync_exit_code', 'legacy-unspecified')
+        raise ValueError('PUSH-FAILED prohibits ACK; rsync_exit_code=' + str(code))
     require((root / 'PREPARED.json').is_file() and not (root / 'PREPARED.json').is_symlink(), 'Receive was not prepared')
     proof = json.loads((root / 'PREPARED.json').read_text())
     require(proof == prepared, 'Receive preparation proof changed')
@@ -68,8 +71,10 @@ def verify(root, launch, prepared):
     code = exit_['exit_code']
     require(type(code) is int and 0 <= code <= 255, 'Verification check failed')
     require(marker['measurement_exit_code'] == code, 'Verification check failed')
-    require(marker.get('exit_utc') == exit_['utc'], 'Transfer marker does not bind exact exit UTC')
-    require(proof['utc'] <= launch['utc'] <= exit_['utc'] <= marker['utc'], 'Stale or inconsistent transfer UTC')
+    exit_epoch = datetime.datetime.strptime(exit_['utc'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).timestamp()
+    require((root / 'TRANSFER-COMPLETE.json').stat().st_mtime >= exit_epoch, 'Transfer marker predates recorded exit')
+    require(proof['utc'] < launch['utc'] <= exit_['utc'] <= marker['utc'], 'Preparation must precede launch; transfer must follow exit')
+    require(launch['wrapper_sha256'] == '0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1', 'Unapproved END campaign wrapper')
     expected_argv = b''.join(value.encode() + b'\0' for value in launch['measurement_argv'])
     require((root / 'argv.nul').read_bytes() == expected_argv, 'Recorded argv differs from approved launch')
     require(type(exit_['measurement_exists']) is bool, 'Verification check failed')
@@ -106,7 +111,9 @@ def verify(root, launch, prepared):
     return dict(utc=time.time(), host=root.parent.name, attempt=root.name,
                 classification='SEALED', status=manifest['status'], exit_code=code,
                 ack_allowed=True, files=len(files), all_hashes_verified=True,
-                receipt_manifest_sha256=sha(seal), outcomes_sealed=True)
+                receipt_manifest_sha256=sha(seal), outcomes_sealed=True,
+                legacy_PUSH_FAILED_without_exit_code_is_failure=True,
+                prepared_nonce=proof['nonce'], approved_legacy_wrapper=True)
 
 
 def main():

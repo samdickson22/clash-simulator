@@ -66,24 +66,23 @@ push_file() {
   return "$rc"
 }
 failed=0
-last_rsync_exit=0
 # Metadata is attempted independently and before any measurement directory.
 for name in exit.json detach.log detach.json argv.nul; do
-  push_file "$job/$name" "$receive/" 30 || { last_rsync_exit=$?; failed=1; }
+  push_file "$job/$name" "$receive/" 30 || failed=1
 done
 if "$measurement_exists"; then
-  push_file "$job/measurement/" "$receive/durable-measurement/" 900 || { last_rsync_exit=$?; failed=1; }
+  push_file "$job/measurement/" "$receive/durable-measurement/" 900 || failed=1
 fi
 if test "$failed" = 0; then
   copied_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
-  printf '{"utc":"%s","host":"%s","attempt":"%s","transfer_complete":true,"exit_utc":"%s","measurement_exit_code":%s,"measurement_exists":%s,"hash_verification_pending":true}\n' \
-    "$copied_utc" "$host" "$attempt" "$exit_utc" "$measurement_exit" "$measurement_exists" > "$job/TRANSFER-COMPLETE.json.tmp"
+  printf '{"utc":"%s","host":"%s","attempt":"%s","transfer_complete":true,"measurement_exit_code":%s,"measurement_exists":%s,"hash_verification_pending":true}\n' \
+    "$copied_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" > "$job/TRANSFER-COMPLETE.json.tmp"
   mv "$job/TRANSFER-COMPLETE.json.tmp" "$job/TRANSFER-COMPLETE.json"
-  push_file "$job/TRANSFER-COMPLETE.json" "$receive/" 30 || { last_rsync_exit=$?; failed=1; }
+  push_file "$job/TRANSFER-COMPLETE.json" "$receive/" 30 || failed=1
 fi
 if test "$failed" != 0; then
-  printf '{"transfer_complete":false,"measurement_exit_code":%s,"transport_failed":true,"rsync_exit_code":%s}\n' \
-    "$measurement_exit" "$last_rsync_exit" > "$job/PUSH-FAILED.json"
+  printf '{"transfer_complete":false,"measurement_exit_code":%s,"transport_failed":true}\n' \
+    "$measurement_exit" > "$job/PUSH-FAILED.json"
   # One final bounded metadata attempt; original evidence remains on the host.
   timeout -k 30 30 nice -n 9 taskset -c 62 rsync -a --checksum \
     "$job/PUSH-FAILED.json" "127x05:$receive/" || true
