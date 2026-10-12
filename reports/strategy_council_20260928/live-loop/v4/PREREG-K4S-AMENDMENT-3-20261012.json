@@ -1,0 +1,225 @@
+{
+  "amendment": 3,
+  "base_tree": "13c3dbe4",
+  "binding_artifacts": {
+    "direct": [
+      {
+        "commit": "f231fbcb",
+        "disposition": "re-pinned by this amendment",
+        "path": "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json",
+        "sha256": "c1fb1e9a"
+      },
+      {
+        "disposition": "historical, not edited; d89cab16 stays the fleet reporting manifest",
+        "path": "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json (earlier versions)",
+        "sha256": [
+          "d89cab16 (391d2006)",
+          "8bb20a75 (45f32c0f)",
+          "781d25ba (247ef6d4)",
+          "4c25d454 (962ecce2)"
+        ]
+      }
+    ],
+    "external": "none: no END-JOB.json on 13c3dbe4, no END pool descriptor or reference bundle; K4S END never declared or run (held 92acdf02)",
+    "indirect": [
+      {
+        "binds": "d89cab16, builder 26932fa8; no e4v3 file",
+        "disposition": "no change (running reporting)",
+        "path": "reports/explore/k4s-confirm/run-r1/oa1/FROZEN-K4S.json",
+        "sha256": "416f6e51"
+      },
+      {
+        "binds": "d89cab16",
+        "disposition": "no change",
+        "path": "reports/explore/k4s-confirm/run-r1/candidates/oa1/FROZEN-K4S.json"
+      },
+      {
+        "binds": "FROZEN-K4S 416f6e51 / 391d2006; r1 launch receipt cites c1fb1e9a as A2 Mac/END manifest",
+        "disposition": "no change",
+        "path": "reports/explore/k4s-confirm/run-r1/receipts/{REPORTING-AUTHORIZATION,REPORTING-AUTHORIZATION-v2,REPORTING-AUTHORIZATION-v3-replacement-r1,reporting-launch-receipt,replacement-r1-launch-receipt}.json"
+      },
+      {
+        "binds": "d89cab16, 8bb20a75",
+        "disposition": "historical",
+        "path": "reports/explore/k4s-confirm/run-r1/addendum/K4S-LAUNCH-ADDENDUM.{md,json}, make_addendum.py"
+      },
+      {
+        "binds": "d89cab16",
+        "disposition": "historical",
+        "path": "reports/explore/k4s-confirm/DELTA-MANIFEST.json, FREEZE-RECORD-SKELETON.md, PREREG-K4S-FREEZE-20261011.{md,json}, PREREG-K4S-FREEZE-20261011-CHECK-OPUS-r1.md"
+      },
+      {
+        "binds": "8bb20a75 / c1fb1e9a",
+        "disposition": "superseded for Mac/END use only; tests still pass",
+        "path": "PREREG-K4S-AMENDMENT-{1,2}*.{md,json}, mac/test_k4s_amendment{1,2}.py, reviews/SOL-REVIEW-K4S-AMENDMENT-{1,2}-r*.md"
+      },
+      {
+        "binds": "text mention of 94d0e7f2",
+        "disposition": "not a pin",
+        "path": "reports/explore/k4s-confirm/run-r1/PROGRESS.md"
+      },
+      {
+        "binds": "FROZEN_HELPERS verified against the manifest by module (no SHA)",
+        "disposition": "no code change",
+        "path": "reports/explore/k4s-confirm/{end_reference,end_pool,end_background,end_evidence}.py"
+      },
+      {
+        "binds": "E4V3_REUSED lists fleet_validity.py (no SHA)",
+        "disposition": "no change",
+        "path": "reports/explore/k4s-confirm/mac/build_manifest.py"
+      }
+    ]
+  },
+  "blinding_disclosure": {
+    "author": "the author is the K4S run-r1 runner and sees sealed operational counts only (blocks completed/acked/failed, ledger event counts, stop causes); no game outcome or contrast opened; E4-GUARD-RACE-FIX-IMPACT-20261012.md read for its binding inventory (guard failure signatures and timings, no game outcomes)",
+    "reviewer": "review should run under the A2 read boundary (exclude run-r1 receipts/health, end/, every receipt directory, any game outcome)"
+  },
+  "builder": {
+    "changed": false,
+    "path": "reports/explore/k4s-confirm/mac/build_manifest.py",
+    "reason": "fleet_validity.py already in E4V3_REUSED",
+    "sha256": "2e255fb939c2b1720749a8a38e99a4a66e397f1149f4d63f7a24d62cb82343f7"
+  },
+  "cause": {
+    "adopted": "COORDINATOR 46ab6923",
+    "amendment": "TIERS Amendment 5",
+    "failure_without_amendment": "on the A5 tree, load_k4s_manifest -> verify_pinned: Pin mismatch (reused read-only TIERS files): fleet_validity.py; every K4S Mac session and END step fails closed",
+    "file": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_validity.py",
+    "hold": "K4S END held by coordinator (92acdf02)",
+    "k4s_exposure": "end_reference.py:295,334 starts frozen fleet_reference.reference_monitor -> fleet_validity.ReportingGuard(bundle, manifest, owned) (fleet_reference.py:237-239), then 10 K4SFleetBackground spawn workers after checkpoint('admit'): same pattern as E4",
+    "merge_commit": "8799a0d6",
+    "new_sha256": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+    "old_sha256": "94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae",
+    "race": "ReportingGuard owned set came from one /proc snapshot while host_audit.census rescans /proc; own spawn descendants first seen in the rescan counted as foreign_compute on hosts with a slow admit census (08: 1.24 s; T1 E4 08 r2/r3)",
+    "review": "Sol r3 APPROVE"
+  },
+  "compatibility": {
+    "uses": [
+      {
+        "under_a5": "fixed code; constructor signature unchanged",
+        "use": "ReportingGuard via frozen fleet_reference.reference_monitor",
+        "where": "end_reference.py:295,334"
+      },
+      {
+        "under_a5": "unchanged",
+        "use": "FleetTechnicalError",
+        "where": "end_reference.py:293"
+      },
+      {
+        "under_a5": "byte-unchanged",
+        "use": "validate_census/validate_admission/validate_blocks",
+        "where": "end_reference.py:396-399, end_pool.py:343-347"
+      },
+      {
+        "under_a5": "byte-unchanged",
+        "use": "classify_attempt",
+        "where": "end_pool.py:296"
+      },
+      {
+        "under_a5": "verifies the new pin via the amended manifest",
+        "use": "FROZEN_HELPERS pin check",
+        "where": "end_pool.py:65,214; end_background.frozen_helpers"
+      },
+      {
+        "under_a5": "owned_tree(rows, roots, known, pinned=None, keys=()): optional params, backward-compatible defaults",
+        "use": "owned_tree",
+        "where": "not called by K4S"
+      }
+    ],
+    "verdict": "COMPATIBLE; no K4S code change"
+  },
+  "effect": {
+    "end": "END-JOB k4s_manifest_sha256, END pool descriptor and every end_reference --k4s-manifest-sha256 must name 74314eda from an amended runtime; A2 case (ii) does not arise (no END-JOB exists); K4S END stays held pending a separate window ruling",
+    "frozen_unchanged": "arms, cells, seeds, N, H1-H4, gates, margins, alpha, SD1, c*=0.9, kernel, scorer, corpus, native, DELTA-MANIFEST deltas",
+    "mac": "--k4s-manifest-sha256 74314eda from a runtime holding fleet_validity 0775b704; no Mac session on 94d0e7f2 (A5 T12)",
+    "reporting": "UNAFFECTED: launch.sh/runtime.sh/supervise.py/run.py/host_audit.py never name fleet_validity or e4v3 (git grep at 391d2006); FROZEN-K4S 416f6e51 lists no e4v3 file and keeps d89cab16; P2 replacement cycles unaffected; no host action"
+  },
+  "frozen_study": {
+    "fill_commit": "fab6e03f",
+    "freeze_commit": "391d2006",
+    "freeze_record_json_sha256": "478068b6e58480426294ed328f8e7bc5f992d0b047c7987f452a940ecb82969a",
+    "freeze_record_md_sha256": "24623ff8fb29ed0210c3d12f00f74e4372cf9f05f81bc4515dbd65624267e6d0"
+  },
+  "manifest": {
+    "changed_pins": [
+      {
+        "key": "reused_readonly[reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/fleet_validity.py]",
+        "new": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+        "old": "94d0e7f2c20bfc139f5d95ccefb375f52293a06c2c78bee84e9442fc62bcb0ae"
+      }
+    ],
+    "command": "python -B reports/explore/k4s-confirm/mac/build_manifest.py --kernel reports/explore/k4s-confirm/anchor_x.py --kernel reports/explore/k4s-confirm/sdefault.py --freeze",
+    "end_frozen_pins_change": "k4s_manifest_sha256 only (fleet_validity.py is not in END_MEASUREMENT_FILES)",
+    "frozen": true,
+    "hand_edited": false,
+    "history": {
+      "391d2006": "d89cab16afdffa88d30e61eb1f4daea74e046703994f6aee7e74bfedc8d08f40",
+      "45f32c0f": "8bb20a753bdb8f5f606ea2288336b1350f96a5199d158b2b8750317c26493009",
+      "f231fbcb": "c1fb1e9acb71a69d406c04d5a040dae734aa8fda57cae58f4f56363b591815de"
+    },
+    "leaf_keys": {
+      "after": 78,
+      "before": 78
+    },
+    "new_sha256": "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+    "old_sha256": "c1fb1e9acb71a69d406c04d5a040dae734aa8fda57cae58f4f56363b591815de",
+    "path": "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json"
+  },
+  "note": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-AMENDMENT-3-20261012.md",
+    "sha256": "6f89f80304430c83a3812d2ab27cbc125f53316e385f01430655d6e327e956b4"
+  },
+  "outcome_access": false,
+  "outcome_access_scope": "false = no K4S confirmatory outcome/reporting result and no TIERS/T1 game outcome was read",
+  "outcome_blind": true,
+  "prior_amendment": {
+    "amendment": 2,
+    "commit": "f231fbcb",
+    "json_sha256": "e0adbeae63f50b6b1f543f0e67528df0903d042dc0f7228817fdc6d61f6a3e35",
+    "md_sha256": "b28b636e016b2336c6c839585f16428757ce5cb13a5eeef765a0f0b6a0951590"
+  },
+  "recorded_on": "127x05",
+  "recorded_utc": "2026-10-12T04:56Z",
+  "requested_by": {
+    "coordinator_thread": "0523ae6f",
+    "entry": "TIERS Amendment 5 adopted (COORDINATOR 46ab6923, main 8799a0d6); draft K4S Amendment 3 as a draft only, no host actions"
+  },
+  "review": {
+    "status": "pending (posted to coordinator)"
+  },
+  "schema": "clasher.k4s.prereg-amendment.v1",
+  "status": "DRAFT (not adopted; for coordinator review)",
+  "study": "PREREG-K4S",
+  "tests": {
+    "end_suites_with_a3_manifest": {
+      "failed": 0,
+      "passed": 103,
+      "total": 103
+    },
+    "host": "127x05",
+    "mac_suite_with_a2_manifest": {
+      "failed": 8,
+      "passed": 94,
+      "total": 102
+    },
+    "mac_suite_with_a3_manifest": {
+      "failed": 1,
+      "passed": 101,
+      "total": 102
+    },
+    "python": "3.12.12",
+    "regression_file": {
+      "path": "reports/explore/k4s-confirm/mac/test_k4s_amendment3.py",
+      "pinned": false,
+      "sha256": "5f41d93ddb2c7e1db38502735af0973c6519cf5f70ba51ed616a6e9054d5c1c7",
+      "tests": [
+        "test_verify_pinned_accepts_amended_fleet_validity_and_rejects_old",
+        "test_every_other_reused_pin_unchanged_from_amendment_2",
+        "test_fleet_reporting_runtime_never_imports_fleet_validity"
+      ]
+    },
+    "remaining_failure": "test_manifest_loader_rejects_draft_for_mac_and_tamper (known, by construction)",
+    "tree": "13c3dbe4"
+  },
+  "title": "Re-pin fleet_validity.py after TIERS Amendment 5 (E4 guard census-ownership race fix)"
+}
