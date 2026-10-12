@@ -3144,3 +3144,24 @@ Sol reviewed the change in rounds r4–r6 (`k4s-audits/SOL-REVIEW-CHECKPOINT-r{4
 - Everything fails closed with exit 2 and a receipt.
 
 **Deployment:** one commit, with a byte-equality check. The hand check is retired after the first clean live run, and a manual cross-check stays at each inventory.
+
+## 2026-10-12 12:15Z: TIERS Mac session LAUNCHED (12:15:00Z)
+
+**Launch:** the Mac E4 session started at 12:15:00Z.
+- Wrapper PID 8573 runs at nice 10, under `caffeinate -i -w`.
+- The GO conditions all held:
+  - the Sol launcher review returned APPROVE_WITH_CONDITIONS, with its conditions met at 0e0662fb;
+  - preconditions-r3 passed immediately before launch;
+  - pins: manifest 273ef196, runtime-a5, no 94d0e7f2;
+  - every step returned nonce `__RC` statuses.
+- GO_REF is recorded.
+
+**Expected:** the session should end at about 18:15–18:45Z.
+
+**Health checks:** roughly every 30 min starting about 12:45Z, so the pre-session census window isn't disturbed. They cover liveness, file names and sizes, the phase label, and the failure and post receipts. **No summary values** are reported.
+
+**After the session:**
+1. Publish D's 15 paths.
+2. Make the private commit and bundle.
+3. Run A3-P.
+4. Then comes release driver r3 (in review), followed by the release route.
