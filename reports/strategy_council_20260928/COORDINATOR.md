@@ -3601,3 +3601,20 @@ The 150 ms ceiling is unexplained. It may be macOS timer coalescing.
 - P1 spacing kept.
 
 There is no Mac work now. This is queued behind K4S END and the K4S Mac phase.
+
+## 2026-10-12 16:55Z: K4S END package 1 r2 Sol review; exception rulings E1–E3
+
+**Review.** Sol r2 (`/mpac/sdicks02/k4s-runner/run-r1/reviews/SOL-REVIEW-END-PKG1-r2.md`, e347219d). Tests are 248/248, normally and under -O.
+
+| Component | Commit | Verdict | Open findings |
+|---|---|---|---|
+| S1 (copy END sources) | 293b2fe7 | **APPROVE** | All r1 findings fixed. |
+| S2 (END evidence) | 293b2fe7 | **REQUEST_CHANGES** | **S2-R2-F1:** auxiliary inputs (S1 manifests, profiles) bypass the outcome/strict-END location gate. **S2-R2-F2** (MEDIUM): a malformed profile silently falls back to the defaults and is mislabelled `s4-bundles`. |
+| S4 (fleet reference assembler) | 12928087 | **REQUEST_CHANGES** | **S4-R2-F1** (BLOCKING): no `st_nlink == 1` gate, so a hard-link alias can read outcome bytes. **S4-R2-F2:** auxiliary END-location confinement gaps. **S4-R2-F3** (MEDIUM): the synthetic-pins input bypasses the confinement helpers. |
+
+**Rulings (coordinator, with Sol's support):**
+- **E1. Tracked symlink `visualize_battle.py`: exempted.** It is exempt only as the exact committed 120000 entry with link text `examples/visualize_battle.py`. The target must pass the confined walk and the new hard-link gate. No other symlink is exempt.
+- **E2. Training receipt `imitation/model/receipts/throughput-0935/complete.json`: exempted.** It is exempt from the blanket `complete.json` prohibition at this exact path and SHA only (`d1492d0f49d4f9c7836ca0c1fc48240e8749545e2855c6fa61c70e2b192eb5fc`, bound by both committed T1 A3 runtime inventories). It may be hashed and must **never be parsed**. Its provenance is a model-training throughput receipt under `imitation/model/receipts/`, not a game, T1 or K4S outcome. Every other `complete.json` stays forbidden.
+- **E3. Admission identities.** They are pinned from r4, and stale identities are refused. A reboot, bus replacement or 03 cache-service restart stops the workflow until the coordinator rules a re-pin from fresh outcome-blind admission copies. Committed admissions go under `reports/explore/k4s-confirm/end-guard-admissions/<host>-<name>.json` (Sol R1).
+
+**Next.** The K4S runner fixes S2 and S4 (r3) and sends them for a Sol r3 review as soon as they are ready, without waiting for package 2. S1 is approved but stays offline: no host step until S2, S4 and the host plan are approved and authorized one step at a time.
