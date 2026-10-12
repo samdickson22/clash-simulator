@@ -1,0 +1,27 @@
+{
+  "context": {
+    "bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle",
+    "manifest_sha256": "f81c928808c704cf1ee05a8ee00f6cc2c0f031fd679a3bddfe3fcfb9ee57368b"
+  },
+  "hosts": [
+    {
+      "attempts": [
+        {
+          "directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x01/end-reference-127x01-0a87166f-a5-r1",
+          "manifest_sha256": "d6bc1d4c9f9205d43d5ae2aeadcb45cd252011d45bbbb3dd90bb0b2fc65b9f29"
+        }
+      ],
+      "host": "127x01"
+    },
+    {
+      "attempts": [
+        {
+          "directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x08/end-reference-127x08-0a87166f-a5-r1",
+          "manifest_sha256": "1ee1aaa9fc6ca5f1ed4ccaaf2ad21ffc59b1d269a56a8b13ca71137524379311"
+        }
+      ],
+      "host": "127x08"
+    }
+  ],
+  "schema": "clasher.e4v3.fleet-pool.v2"
+}

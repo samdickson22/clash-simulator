@@ -1,0 +1,46 @@
+{
+  "PC3_same_interpreter": true,
+  "argv": [
+    "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+    "-I",
+    "-c",
+    "import runpy,sys;root=sys.argv.pop(1);script=sys.argv.pop(1);sys.path.insert(0,root);sys.argv[0]=script;runpy.run_path(script,run_name=\"__main__\")",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--pool-fleet-references",
+    "--pool-input",
+    "/mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/explore/t1/receipts/END-A5-pool-descriptor.json",
+    "--pool-input-sha256",
+    "f4319e5f0ff8cd6cf88b61332768643d9b4d00d0a3a60bfb9c36bbfd45f8d2e1",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pooled-reference-r1"
+  ],
+  "attempt_roots_binding": {
+    "commit": "4ff93a1004606e3562e5be26874c584d2be7a51d",
+    "path": "reports/explore/t1/receipts/reference-attempt-roots-0108-a5.json",
+    "sha256": "bc90c1bd757cf1a1029d655329e1507d2c202417eb93451759208253e3db3cf2"
+  },
+  "attempt_roots_checked": {
+    "127x01": [
+      "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x01/end-reference-127x01-0a87166f-a5-r1"
+    ],
+    "127x08": [
+      "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108-a5/127x08/end-reference-127x08-0a87166f-a5-r1"
+    ]
+  },
+  "descriptor_sha256": "f4319e5f0ff8cd6cf88b61332768643d9b4d00d0a3a60bfb9c36bbfd45f8d2e1",
+  "exit": 0,
+  "fleet_pool_sha256": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+  "full_stderr": "",
+  "full_stdout": "",
+  "measurement_root": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3",
+  "old_D_timing_not_opened": true,
+  "old_code_excluded": true,
+  "outcomes_sealed": true,
+  "pool_manifest_sha256": "0e517b96f6c0eda31a8c75398023f46b559fc38c5c4e31a55e9a006974d0afea",
+  "pool_status": "complete",
+  "python_executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "python_version": "3.12.12 (main, Dec 17 2025, 21:10:06) [Clang 21.1.4 ]",
+  "start_utc": "2026-10-12T07:55:24Z",
+  "utc": "2026-10-12T07:56:10Z"
+}
