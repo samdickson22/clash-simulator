@@ -9,30 +9,54 @@ reducer or outcome read has been performed by this change.
    supplies the release JSON and its SHA. Its prerequisite envelope must equal
    sealed R5 3b7d2295 exactly. The Mac-summary commit must be an ancestor of the
    eventual canonical private HEAD. The driver currently has an **empty explicit
-   descendant allowlist**: any tracked difference from 9bb349b1 fails closed.
-   A later coordinator ruling and reviewed allowlist update must permit the exact
-   summary/driver/receipt paths before a local descendant is prepared.
+   descendant allowlist in approved r2**: any tracked difference from 9bb349b1
+   fails closed. Candidate r3 adopts only the 18 exact metadata paths assigned
+   in COORDINATOR 4eb6c3e5. Unknown classification names are denied.
    The fourteen-day route is not available
    before 2026-10-25T19:31:38Z.
-2. Only under the later state-change ruling, incorporate the public driver and
-   Mac summary into a local-only descendant of private 9bb349b1. Never push that
+2. Only under the later state-change ruling, incorporate the Mac metadata into a
+   local-only descendant of private 9bb349b1. Never push that
    checkout or its private ref. At present canonical R stays clean at 9bb349b1;
    the driver is committed in the worker's public checkout, not installed in R.
+   Use `prepare_release_descendant.py` only after that ruling: it builds a tree
+   from 9bb349b1 with a temporary index, copies regular blobs at exact allowed
+   paths, checks `git diff --no-renames --name-only`, and protects the result with
+   a local private ref. It preserves the public Mac source as a second parent
+   for barrier ancestry, without merging its unrelated public changes into the
+   tree. It does not update the working-tree HEAD or its index. Unknown paths
+   under the Mac session prefix abort. Do not run this helper on real R now.
 3. Run the approved committed driver by absolute path, from canonical
    `R/reports/explore/t1`, using `e4v3-venv/bin/python -B` (3.12.12), environment
-   `PYTHONDONTWRITEBYTECODE=1`, nice 19/core 63. Launch **detached under setsid**,
+   `PYTHONDONTWRITEBYTECODE=1`, nice 19/core 63. Launch the parent with **env -i**:
+   preserve only the operator's HOME, PATH=/usr/bin:/bin and
+   PYTHONDONTWRITEBYTECODE=1. Launch **detached under setsid**,
    with stdin `/dev/null` and stdout/stderr redirected to an exclusive private log,
    never in a bare SSH foreground. Provide required `--release`,
    `--release-sha256`, `--r5`, `--copy-receipt` and unique `--private-name`.
    The private parent `t1-20261010-r1/release-private/` must be a new/plain 0700
    directory established under that authorization. Never invoke the reducer bare.
-4. The driver checks canonical ancestry/ref/cleanliness, empty descendant allowlist,
+   Immediately before launch, confirm the reviewed driver SHA and that its
+   directory contains only the committed tree (no extra Python files). Approved
+   r2 is 42219e57c052ada73a3ca691839fa47166f1d554fa5600dd85553bb68a916a5e;
+   this r3 candidate requires its own review and recorded SHA. Confirm canonical
+   e4v3 directory mode is exactly 555 and git status --porcelain --ignored is empty.
+4. The driver checks canonical ancestry/ref/cleanliness, exact descendant allowlist,
    remote-ref ancestry exclusion and all 17 executed local modules plus plan.json.
    It requires the actual -B flag, interpreter 3.12.12 and numpy 2.2.6; the reducer
    receives no PYTHON* environment variables and runs in a new process session.
    It imports canonical health code, compares the exact copied-root health ledger
    against PC4 16e1b34f, ignoring only top-level UTC. A mismatch or exception
    prevents both barrier and reducer. The parent also denies game-path opens.
+   For `committed_mac_summary`, the release envelope must additionally supply
+   `a3p_poll_check` and `mac_receipt_manifest`, each a full `{path,commit,sha256}`
+   binding at `D/a3p-poll-check.json` and `D/sealed/receipt-manifest.json`.
+   `release.mac_summary_path` must be `D/sealed/tiers-summary.json`.
+   Before the health guard, r3 verifies all three committed artifacts, the A3-P
+   manifest SHA and summary seal, exact tier coverage and Boolean consistency.
+   If any frozen-feasible tier is disqualified by A3-P, it returns failure type
+   `A3PRequiresRuling`, creates no output directory and invokes no reducer.
+   Return this health-only failure to the coordinator for a selection ruling.
+   If every frozen-feasible tier passes A3-P, the frozen reducer stays unchanged.
 5. It captures the explicit barrier's stdout/stderr privately, then invokes the
    unchanged aebb2017 reducer with the same root/ledger/receipt, capturing all
    stdout/stderr privately. The reducer runs its own barrier before games.
@@ -44,7 +68,10 @@ reducer or outcome read has been performed by this change.
    The visible failure record contains stage/type only, never exception text,
    stdout, selection or result values. SIGTERM, SIGHUP and SIGINT raise into the
    BaseException quarantine path. The reducer's new session keeps terminal
-   hangups isolated; subprocess.run kills/waits for the direct child on exception.
+   hangups isolated; on termination the driver SIGKILLs and reaps the owned
+   reducer session, including its E4 grandchildren. Failure handlers block
+   TERM/HUP/INT until quarantine; output ownership is registered at mkdir under
+   a signal mask, before the guarded call can return.
    SIGKILL cannot be handled. Any exit without a completed health record means:
    treat the output as locked, chmod 000 the owned private directory, and report
    failure only. Preserve quarantine and stop; no retry.

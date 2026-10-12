@@ -221,6 +221,35 @@ class StrongGuardTests(GuardTests):
         with self.assertRaises(driver.ReleaseFailure):self.run_guard()
         self.assertEqual(self.calls,[]);self.assertFalse(self.directory.exists())
 
+    def test_interference_symlink_refuses_before_health_callback(self):
+        block=self.base/'s0';block.mkdir();(block/'complete.json').write_text('{}')
+        target=self.base/'target';target.write_text('{}');(block/'interference.json').symlink_to(target)
+        with self.assertRaises(driver.ReleaseFailure):self.run_guard()
+        self.assertEqual(self.calls,[]);self.assertFalse(self.directory.exists())
+
+    def test_signal_handlers_restored(self):
+        import signal
+        previous={s:signal.getsignal(s) for s in (signal.SIGTERM,signal.SIGHUP,signal.SIGINT)}
+        def sentinel(*a):pass
+        try:
+            for s in previous:signal.signal(s,sentinel)
+            with driver.terminating_signals():
+                self.assertIs(signal.getsignal(signal.SIGTERM),driver.raise_on_signal)
+            for s in previous:self.assertIs(signal.getsignal(s),sentinel)
+        finally:
+            for s,h in previous.items():signal.signal(s,h)
+
+    def test_failure_handler_blocks_signals_before_lock(self):
+        import signal
+        original=os.chmod
+        def checked_chmod(path,mode):
+            if mode==0:
+                mask=signal.pthread_sigmask(signal.SIG_BLOCK,set())
+                self.assertTrue({signal.SIGTERM,signal.SIGHUP,signal.SIGINT} <= mask)
+            return original(path,mode)
+        with patch.object(os,'chmod',checked_chmod):
+            self.assert_locked_failure(reducer=lambda *a:23,stage='reducer')
+
 
 def synthetic_main_worker(base_string, scenario, reason, pipe):
     """Fork-isolated main tests: all git state, receipts, modules and data synthetic."""
@@ -239,12 +268,22 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
     release=base/'release.json';release.write_text(json.dumps({'reason':reason,'mac_summary_path':'summary.json','amendment_1_prerelease':{'synthetic':True}}))
     r5=base/'r5.json';r5.write_text(json.dumps({'amendment_1_prerelease':{'synthetic':True}}))
     cp=base/'copy.json';cp.write_text(json.dumps(dict(destination=str(root),exit_code=0,complete_proofs=3072,verified_game_files=24576,verified_hub_ack=1100,game_parse_or_summary=False,complete_proof_set_sha256='d0f010695064c0b5d397ce8f24afede30a679a571a989daa4e058c1571c23fe0')))
+    macsummary=repo/driver.MAC_SUMMARY_PATH;macsummary.parent.mkdir(parents=True)
+    macsummary.write_text(json.dumps({'dry_run':False,'feasibility':{t:{'feasible':True} for t in ('K0c','S','K2','K4')}}))
+    macseal=repo/driver.MAC_MANIFEST_PATH;macseal.write_text(json.dumps({'status':'complete','files':{'tiers-summary.json':driver.sha(macsummary)}}))
+    a3p=repo/driver.MAC_A3P_PATH;a3p.write_text(json.dumps({'outcomes_read':False,'receipt_manifest_sha256':driver.sha(macseal),'tiers':{t:dict(frozen_feasible=True,feasible_after_a3p=True,a3p_passes=True) for t in ('K0c','S','K2','K4')}}))
+    if scenario=='a3p_reject':
+        value=json.loads(a3p.read_text());value['tiers']['S'].update(feasible_after_a3p=False,a3p_passes=False);a3p.write_text(json.dumps(value))
+    if scenario=='a3p_seal_mismatch':
+        value=json.loads(a3p.read_text());value['receipt_manifest_sha256']='0'*64;a3p.write_text(json.dumps(value))
     subprocess.run(['git','init','-q',str(repo)],check=True)
     subprocess.run(['git','-C',str(repo),'add','.'],check=True)
     subprocess.run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','synthetic fixture'],check=True)
     commit=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()
     subprocess.run(['git','-C',str(repo),'update-ref',driver.PRIVATE_REF,commit],check=True)
-    original_run=subprocess.run;original_git=driver.git
+    release.write_text(json.dumps(dict(reason=reason,mac_summary_path=driver.MAC_SUMMARY_PATH,commit=commit,mac_summary_sha256=driver.sha(macsummary),a3p_poll_check=dict(path=driver.MAC_A3P_PATH,commit=commit,sha256=driver.sha(a3p)),mac_receipt_manifest=dict(path=driver.MAC_MANIFEST_PATH,commit=commit,sha256=driver.sha(macseal)),amendment_1_prerelease={'synthetic':True})))
+    release_sha=driver.sha(release)
+    original_run=subprocess.run;original_git=driver.git;original_popen=subprocess.Popen;original_write=driver.write;original_chmod=os.chmod
     cwd=here
     opts=dict(CANONICAL=repo,BLOCK_ROOT=root,PRIVATE=private,PYTHON=sys.executable,PRIVATE_COMMIT=commit,PINS=pins,BLIND_SHA=driver.sha(ledger),SIDECAR_SHA=driver.sha(sidepath),R5_SHA=driver.sha(r5),COPY_SHA=driver.sha(cp),SCRATCH=scratch)
     checks=[];calls=[]
@@ -253,6 +292,8 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
     def health(*args):
         calls.append('health')
         if scenario=='audit':(root/'games/x').read_bytes()
+        if scenario=='audit_other':(root/'other.bin').read_bytes()
+        if scenario=='audit_alias':(base/'alias').read_bytes()
         return {**side,'utc':'new'}
     def barrier(*args):calls.append('barrier');makecheck('parent')
     def mocked_run(argv,**kw):
@@ -262,7 +303,7 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
             calls.append('reducer')
             output=private/'once/reduce.json'
             expected=[sys.executable,'-B',str(here/'reduce.py'),'--root',str(root),'--release',str(release),'--ledger',str(ledger),'--out',str(output)]
-            if reason=='committed_mac_summary':expected+=['--mac-summary',str(repo/'summary.json')]
+            if reason=='committed_mac_summary':expected+=['--mac-summary',str(macsummary)]
             if argv!=expected:raise AssertionError('literal reducer argv differs')
             if kw.get('start_new_session') is not True:raise AssertionError('missing child session')
             if any(k.startswith('PYTHON') for k in kw['env']):raise AssertionError('Python environment leaked')
@@ -272,10 +313,33 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
             if scenario!='fresh':makecheck('child')
             return types.SimpleNamespace(returncode=0)
         return original_run(argv,**kw)
+    def mocked_popen(argv,**kw):
+        if len(argv)>2 and str(argv[2]).endswith('/reduce.py'):
+            result=mocked_run(argv,**kw)
+            class Fake:
+                pid=987654
+                def wait(self):return result.returncode
+                def __enter__(self):return self
+                def __exit__(self,*a):return False
+            return Fake()
+        return original_popen(argv,**kw)
+    def signal_write(path,value):
+        import signal
+        if str(scenario).startswith('record_signal_') and Path(path).name=='release-health-receipt.json':
+            os.kill(os.getpid(),getattr(signal,scenario.removeprefix('record_signal_')))
+        return original_write(path,value)
+    def checked_chmod(path,mode):
+        import signal
+        if mode==0:
+            mask=signal.pthread_sigmask(signal.SIG_BLOCK,set())
+            if not {signal.SIGTERM,signal.SIGHUP,signal.SIGINT} <= mask:
+                raise AssertionError('failure handler did not mask signals')
+        return original_chmod(path,mode)
     def special_git(*args):
         if scenario=='code_pin' and args[0] in ('status','diff'):return ''
         if scenario=='private_ref' and args==('rev-parse',driver.PRIVATE_REF):return 'wrong'
         if scenario=='remote' and args[0]=='for-each-ref':return 'refs/remotes/synthetic'
+        if scenario=='remote_HEAD' and args[0]=='for-each-ref' and args[2]!=commit:return 'refs/remotes/synthetic'
         if scenario=='record_dirty' and args[0]=='status' and 'reducer' in calls:return 'dirty'
         return original_git(*args)
     if scenario=='dirty':(repo/'dirty').write_text('synthetic')
@@ -284,6 +348,10 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
     if scenario=='descendant':
         (repo/'new-unapproved').write_text('x');original_run(['git','-C',str(repo),'add','.'],check=True)
         original_run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','forbidden descendant'],check=True)
+    if scenario=='remote_HEAD':
+        path=repo/driver.MAC_DIRECTORY/'preconditions.json';path.write_text('{}')
+        original_run(['git','-C',str(repo),'add','.'],check=True)
+        original_run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','allowed descendant'],check=True)
     if scenario=='code_pin':(here/'barrier.py').write_text('changed synthetic barrier')
     if scenario=='release_pin':release.write_text('{"bad":true}')
     if scenario=='r5_pin':r5.write_text('{"bad":true}')
@@ -304,9 +372,14 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
     else:version=sys.version_info
     options=[sys.executable,'-B',str(here/'driver.py')]
     if scenario=='no_B':options=[sys.executable,str(here/'driver.py')]
-    argv=[str(here/'driver.py'),'--release',str(release),'--release-sha256',hashlib.sha256(json.dumps({'reason':reason,'mac_summary_path':'summary.json','amendment_1_prerelease':{'synthetic':True}}).encode()).hexdigest(),'--r5',str(r5),'--copy-receipt',str(cp),'--private-name','once']
+    argv=[str(here/'driver.py'),'--release',str(release),'--release-sha256',release_sha,'--r5',str(r5),'--copy-receipt',str(cp),'--private-name','once']
     if scenario=='private_name':argv[-1]='../unsafe'
-    if scenario=='early_audit':argv[argv.index('--release')+1]=str(root/'games/x')
+    if scenario=='early_audit':
+        (root/'games/x').write_bytes(release.read_bytes())
+        argv[argv.index('--release')+1]=str(root/'games/x')
+        argv[argv.index('--release-sha256')+1]=driver.sha(root/'games/x')
+    if scenario=='audit_other':(root/'other.bin').write_text('synthetic')
+    if scenario=='audit_alias':(base/'alias').symlink_to(root/'games/x')
     modules={n:types.ModuleType(n) for n in ('common','ssh_sensitivity','barrier')}
     modules['common'].ROOT=modules_root;modules['ssh_sensitivity'].health_ledger=health;modules['barrier'].outcome_release=barrier
     stdout=io.StringIO();os.chdir(cwd)
@@ -315,7 +388,7 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
         def __getattr__(self,name):
             if name=='dont_write_bytecode' and scenario=='no_flags':return 0
             return getattr(original_flags,name)
-    with patch.multiple(driver,**opts),patch.dict(sys.modules,modules),patch.object(driver,'git',special_git),patch.object(sys,'argv',argv),patch.object(sys,'orig_argv',options),patch.object(sys,'flags',FlagsProxy()),patch.object(sys,'version_info',version),patch.object(driver.importlib.metadata,'version',return_value='wrong' if scenario=='numpy' else '2.2.6'),patch.object(subprocess,'run',mocked_run),patch.dict(os.environ,{'PYTHONDONTWRITEBYTECODE':'1','PYTHONPATH':'synthetic-shadow','PYTHONWARNINGS':'error'}),contextlib.redirect_stdout(stdout):
+    with patch.multiple(driver,**opts),patch.dict(sys.modules,modules),patch.object(os,'chmod',checked_chmod),patch.object(driver,'write',signal_write),patch.object(driver,'git',special_git),patch.object(sys,'argv',argv),patch.object(sys,'orig_argv',options),patch.object(sys,'flags',FlagsProxy()),patch.object(sys,'version_info',version),patch.object(driver.importlib.metadata,'version',return_value='wrong' if scenario=='numpy' else '2.2.6'),patch.object(subprocess,'run',mocked_run),patch.object(subprocess,'Popen',mocked_popen),patch.dict(os.environ,{'PYTHONDONTWRITEBYTECODE':'1','PYTHONPATH':'synthetic-shadow','PYTHONWARNINGS':'error'}),contextlib.redirect_stdout(stdout):
         rc=driver.main()
     mode=(private/'once').stat().st_mode&0o777 if (private/'once').exists() else None
     pipe.send(dict(rc=rc,stdout=stdout.getvalue(),mode=mode,calls=calls,checks=checks))
@@ -345,7 +418,7 @@ class MainTests(unittest.TestCase):
                 self.assertEqual(result['mode'],0o700)
 
     def test_main_preflight_failures_have_no_output_directory(self):
-        for scenario in ('version','no_B','no_flags','executable','numpy','cwd','dirty','ignored','private_ref','ancestry','remote','descendant','code_pin','release_pin','r5_pin','r5_envelope','blind_pin','sidecar_pin','copy_pin','c2_destination','c2_root','root_import','private_mode','private_name','early_audit'):
+        for scenario in ('version','no_B','no_flags','executable','numpy','cwd','dirty','ignored','private_ref','ancestry','remote','remote_HEAD','descendant','code_pin','release_pin','r5_pin','r5_envelope','blind_pin','sidecar_pin','copy_pin','c2_destination','c2_root','root_import','private_mode','private_name','early_audit'):
             with self.subTest(scenario=scenario):
                 result,health=self.case(scenario)
                 self.assertEqual(result['rc'],1);self.assertFalse(health['passes'])
@@ -353,9 +426,24 @@ class MainTests(unittest.TestCase):
                 self.assertEqual(set(health),{'passes','stage','exception_type','no_result_reported','driver_sha256','outputs_locked'})
 
     def test_main_audit_rejects_synthetic_game_read_before_barrier(self):
-        result,health=self.case('audit')
-        self.assertEqual(result['rc'],1);self.assertEqual(result['calls'],['health']);self.assertIsNone(result['mode'])
-        self.assertEqual(health['stage'],'pre_guard')
+        for scenario in ('audit','audit_other','audit_alias'):
+            with self.subTest(scenario=scenario):
+                result,health=self.case(scenario)
+                self.assertEqual(result['rc'],1);self.assertEqual(result['calls'],['health']);self.assertIsNone(result['mode'])
+                self.assertEqual(health['stage'],'pre_guard')
+
+    def test_main_record_signals_lock_and_report_health_only(self):
+        for sig in ('SIGTERM','SIGHUP','SIGINT'):
+            with self.subTest(signal=sig):
+                result,health=self.case('record_signal_'+sig)
+                self.assertEqual(result['rc'],1);self.assertEqual(result['mode'],0)
+                self.assertTrue(health['outputs_locked']);self.assertEqual(health['exception_type'],'TerminationSignal')
+
+    def test_mac_a3p_failure_or_seal_mismatch_stops_before_health_and_reducer(self):
+        for scenario in ('a3p_reject','a3p_seal_mismatch'):
+            result,health=self.case(scenario)
+            self.assertEqual(result['rc'],1);self.assertIsNone(result['mode']);self.assertEqual(result['calls'],[])
+            if scenario=='a3p_reject':self.assertEqual(health['exception_type'],'A3PRequiresRuling')
 
     def test_main_record_failures_lock_owned_outputs(self):
         for scenario in ('fresh','record_dirty'):
@@ -368,7 +456,70 @@ class MainTests(unittest.TestCase):
         names='apt_budget barrier check_reference common cpu_accounting host_audit idle_services owned_supervisor parent_source_seed perception_confirmation reduce release_reference schedule ssh_budget ssh_sensitivity ssh_transport system_bus'.split()
         self.assertEqual(set(driver.PINS),{n+'.py' for n in names}|{'plan.json'})
         self.assertTrue(all(len(value)==64 for value in driver.PINS.values()))
-        self.assertEqual(driver.DESCENDANT_ALLOWLIST,frozenset())
+        self.assertEqual(len(driver.DESCENDANT_ALLOWLIST),18)
+        self.assertIn(driver.MAC_SUMMARY_PATH,driver.DESCENDANT_ALLOWLIST)
+        self.assertTrue(all(p.startswith(driver.MAC_DIRECTORY+'/') and '*' not in p for p in driver.DESCENDANT_ALLOWLIST))
+
+
+class ReducerSessionTests(unittest.TestCase):
+    def test_termination_kills_entire_owned_process_group_and_reaps(self):
+        import signal,types
+        calls=[]
+        class Child:
+            pid=123456
+            count=0
+            def __enter__(self):return self
+            def __exit__(self,*a):return False
+            def wait(self):
+                self.count+=1
+                if self.count==1:raise driver.TerminationSignal(signal.SIGTERM)
+                calls.append('reaped');return -9
+        with driver.terminating_signals(),patch.object(driver.subprocess,'Popen',return_value=Child()) as spawn,patch.object(driver.os,'killpg',side_effect=lambda p,s:calls.append((p,s))):
+            with self.assertRaises(driver.TerminationSignal):driver.run_reducer(['synthetic'],Path('/tmp'),io.StringIO(),io.StringIO())
+        self.assertEqual(calls,[(123456,signal.SIGKILL),'reaped'])
+        self.assertTrue(spawn.call_args.kwargs['start_new_session'])
+
+    def test_real_synthetic_child_and_grandchild_are_killed_together(self):
+        import signal,sys,time
+        with tempfile.TemporaryDirectory(prefix='t1-child-session-synthetic-') as tmp:
+            pidfile=Path(tmp)/'pid'
+            code="import subprocess,sys,os,signal,time; p=subprocess.Popen([sys.executable,'-B','-c','import time; time.sleep(20)']); open(sys.argv[1],'w').write(str(p.pid)); os.kill(os.getppid(),signal.SIGTERM); time.sleep(20)"
+            with driver.terminating_signals(),(Path(tmp)/'stdout').open('w') as out,(Path(tmp)/'stderr').open('w') as err:
+                with self.assertRaises(driver.TerminationSignal):
+                    driver.run_reducer([sys.executable,'-B','-c',code,str(pidfile)],Path(tmp),out,err)
+            pid=int(pidfile.read_text());statpath=Path('/proc')/str(pid)/'stat'
+            end=time.monotonic()+2
+            while statpath.exists() and statpath.read_text().split()[2]!='Z' and time.monotonic()<end:time.sleep(.01)
+            dead=not statpath.exists() or statpath.read_text().split()[2]=='Z'
+            if not dead:os.kill(pid,signal.SIGKILL) # Clean up even deliberately broken mutants.
+            self.assertTrue(dead)
+
+
+class DescendantTests(unittest.TestCase):
+    def test_narrow_tree_preserves_both_ancestries_and_rejects_rename_source_escape(self):
+        import subprocess
+        import prepare_release_descendant as builder
+        with tempfile.TemporaryDirectory(prefix='t1-descendant-synthetic-') as tmp:
+            repo=Path(tmp)/'repo';repo.mkdir()
+            def git(*args):return subprocess.check_output(['git','-C',str(repo),*args],text=True).strip()
+            git('init','-q');git('config','user.name','Synthetic');git('config','user.email','synthetic@example.invalid')
+            (repo/'protected').write_text('unchanged');git('add','.');git('commit','-qm','base');base=git('rev-parse','HEAD')
+            (repo/'protected').rename(repo/'renamed-public')
+            mac=repo/driver.MAC_SUMMARY_PATH;mac.parent.mkdir(parents=True);mac.write_text('{"synthetic":true}')
+            (repo/'unrelated').write_text('public unrelated');git('add','-A');git('commit','-qm','source');source=git('rev-parse','HEAD')
+            original_index=(repo/'.git/index').read_bytes()
+            with patch.object(builder,'PRIVATE_COMMIT',base):
+                result=builder.build_descendant(repo,source,'refs/private/synthetic-release')
+            self.assertEqual(result['changed_paths'],[driver.MAC_SUMMARY_PATH])
+            self.assertEqual(git('show',result['commit']+':protected'),'unchanged')
+            for ancestor in (base,source):git('merge-base','--is-ancestor',ancestor,result['commit'])
+            self.assertEqual(git('rev-parse','HEAD'),source)
+            self.assertEqual((repo/'.git/index').read_bytes(),original_index)
+            self.assertEqual(git('status','--porcelain'),'')
+            extra=repo/driver.MAC_DIRECTORY/'classification/unknown.json';extra.parent.mkdir();extra.write_text('{}')
+            git('add','.');git('commit','-qm','unlisted classification');bad=git('rev-parse','HEAD')
+            with patch.object(builder,'PRIVATE_COMMIT',base),self.assertRaises(ValueError):
+                builder.build_descendant(repo,bad,'refs/private/refused')
 
 
 if __name__ == '__main__':

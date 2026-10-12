@@ -1,0 +1,47 @@
+KILLED    G1 drop pre-guard compare
+KILLED    G2 mask schema too
+KILLED    G3 mask blind sha too
+KILLED    G4 mask sealed+flag_counts
+KILLED    G5 compare only blocks
+KILLED    G6 mkdir before guard
+KILLED    P1 drop post emitted compare
+KILLED    P2 post compare emitted only blocks
+KILLED    P3 binding check only ssh
+KILLED    P4 binding .get tolerant
+KILLED    F1 no lock
+KILLED    F2 lock 0500
+KILLED    F3 leak msg
+KILLED    F4 ignore exit code
+KILLED    F5 except Exception only
+KILLED    O1 reducer before barrier
+KILLED    O2 no barrier
+KILLED    O3 no stdout capture
+KILLED    M1 drop code pins
+KILLED    M2 drop ledger arg
+KILLED    M3 drop audit hook
+KILLED    M4 drop owns_output lock
+KILLED    M5 drop dirty check
+KILLED    M6 drop fresh==2
+KILLED    M7 drop C2 binding
+KILLED    M8 print record on failure
+KILLED    A1 drop descendant allowlist
+KILLED    A2 drop remote-ref exclusion
+KILLED    A3 remote check PRIVATE only
+KILLED    A4 driver sha omitted on failure
+KILLED    S1 no handlers in execute_guarded
+KILLED    S2 no handlers in main
+KILLED    S3 SIGHUP not handled
+KILLED    S4 SIGTERM not handled
+KILLED    S5 reducer same session
+KILLED    S6 handlers not restored
+KILLED    E1 -B option not required
+KILLED    E2 numpy pin dropped
+KILLED    E3 child env inherits PYTHON*
+KILLED    E4 child env scrubs only PYTHONPATH
+KILLED    E5 flags via env only (r1)
+KILLED    C1 dict compare (r1 semantics)
+KILLED    H1 audit hook after preflight (r1 position)
+KILLED    H2 audit: no BLOCK_ROOT restriction
+KILLED    H3 audit: no resolve
+KILLED    L1 no interference symlink check
+KILLED    L2 no complete symlink check

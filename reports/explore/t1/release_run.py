@@ -25,7 +25,23 @@ SIDECAR_SHA = '16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e'
 R5_SHA = '3b7d2295657be87c76a07dfc9d278e2f96b262d436b04504e4556352d23ba5f9'
 COPY_SHA = 'd433dd54556a6040428e0a6791df67db441eb7637c03cae59db8ca8e5b25d3ef'
 PINS = {'apt_budget.py': 'c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618', 'barrier.py': '346d3c053157ef2fea2f8aa5b629dbeb53a5c365036033cd37aea4af85a9b00b', 'check_reference.py': 'c848baa2f674801776543bbd9e0cd9c312c1de66fe017a5c8a583f79d5e64d43', 'common.py': '36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0', 'cpu_accounting.py': '5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f', 'host_audit.py': '5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7', 'idle_services.py': '911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2', 'owned_supervisor.py': 'fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249', 'parent_source_seed.py': '3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e', 'perception_confirmation.py': '6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680', 'reduce.py': 'aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79', 'release_reference.py': 'f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555', 'schedule.py': '8478935e2649b2d4b3cf70dc699d9a38a538644fa7196270bdb72943356264be', 'ssh_budget.py': '0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d', 'ssh_sensitivity.py': 'bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5', 'ssh_transport.py': '16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f', 'system_bus.py': '785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11', 'plan.json': 'af6aeade7de1a9c5e22fbf17a3cf1d6606652500ec9c35983d21a1cdb3767498'}
-DESCENDANT_ALLOWLIST = frozenset()
+MAC_DIRECTORY = 'reports/explore/mac-e4-session/tiers-session-r1'
+MAC_SUMMARY_PATH = MAC_DIRECTORY + '/sealed/tiers-summary.json'
+MAC_A3P_PATH = MAC_DIRECTORY + '/a3p-poll-check.json'
+MAC_MANIFEST_PATH = MAC_DIRECTORY + '/sealed/receipt-manifest.json'
+DESCENDANT_ALLOWLIST = frozenset(
+    MAC_DIRECTORY + '/' + name for name in (
+        'sealed/tiers-summary.json', 'sealed/tiers-complete.json',
+        'sealed/receipt-manifest.json', 'sealed/receipt-manifest.sha256',
+        'sealed/tiers-identity.json', 'sealed/build-tiers.json',
+        'sealed/pre-session-census.json', 'sealed/runtime-versions.json',
+        'sealed/exactness-tiers.json', 'sealed/belief-exactness.json',
+        'sealed/student-agreement.json', 'a3p-poll-check.json',
+        'stage-nocopy-session-verify.json', 'preconditions.json',
+        'session-receipt.json', 'private-commit-binding.json',
+        'sealed/failure.json', 'sealed/cleanup-failure.json'))
+FAILURE_PATHS = frozenset(MAC_DIRECTORY + '/sealed/' + name
+                          for name in ('failure.json', 'cleanup-failure.json'))
 SCRATCH = Path("/mpac/sdicks02/tmp")
 
 
@@ -67,6 +83,7 @@ def raise_on_signal(signum, frame):
 
 @contextlib.contextmanager
 def terminating_signals():
+    previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, set())
     previous = {s: signal.signal(s, raise_on_signal) for s in
                 (signal.SIGTERM, signal.SIGHUP, signal.SIGINT)}
     try:
@@ -74,6 +91,20 @@ def terminating_signals():
     finally:
         for s, handler in previous.items():
             signal.signal(s, handler)
+        signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask)
+
+
+def block_failure_signals():
+    signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGHUP, signal.SIGINT})
+
+
+@contextlib.contextmanager
+def ownership_signals_blocked():
+    old = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGHUP, signal.SIGINT})
+    try:
+        yield
+    finally:
+        signal.pthread_sigmask(signal.SIG_SETMASK, old)
 
 
 def parent_audit(event, values):
@@ -97,12 +128,12 @@ def postcheck(output, sidecar):
     return digest
 
 
-def execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
+def execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn, on_created=None):
     with terminating_signals():
-        return _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn)
+        return _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn, on_created)
 
 
-def _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
+def _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn, on_created=None):
     """Callbacks permit offline synthetic tests; production supplies pinned R code."""
     stage = 'pre_guard'
     created = False
@@ -113,8 +144,11 @@ def _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, re
             require(not interference.is_symlink(), 'symlink interference proof')
         computed = health_fn(root, read(ledger)['events'], sha(ledger))
         require(without_utc(computed) == without_utc(sidecar), 'pre-outcome health differs')
-        directory.mkdir(mode=0o700, exist_ok=False)
-        created = True
+        with ownership_signals_blocked():
+            directory.mkdir(mode=0o700, exist_ok=False)
+            created = True
+            if on_created is not None:
+                on_created()
         write(directory / 'pre-guard-ledger.json', computed)
         output = directory / 'reduce.json'
         stage = 'barrier'
@@ -135,6 +169,7 @@ def _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, re
         return record
     except BaseException as exc:
         # Exception messages or repr may contain result bytes. Publish type/stage only.
+        block_failure_signals()
         if created:
             os.chmod(directory, 0o000)
         raise ReleaseFailure(stage, type(exc).__name__, created) from None
@@ -147,8 +182,63 @@ class ReleaseFailure(Exception):
         super().__init__('Release failed; health record only')
 
 
+def run_reducer(argv, here, out, err):
+    with subprocess.Popen(argv, cwd=here, stdout=out, stderr=err, start_new_session=True,
+                          env={k: v for k, v in os.environ.items() if not k.startswith('PYTHON')}) as child:
+        try:
+            return child.wait()
+        except BaseException:
+            block_failure_signals()
+            try:
+                os.killpg(child.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            child.wait()
+            raise
+
+
 def git(*args):
     return subprocess.check_output(['git', '--no-optional-locks', '-C', str(CANONICAL), *args], text=True).strip()
+
+
+def bound_mac_json(binding, expected_path):
+    require(binding['path'] == expected_path, 'Mac binding path differs')
+    import re
+    require(re.fullmatch('[0-9a-f]{40}', binding['commit']) is not None and
+            re.fullmatch('[0-9a-f]{64}', binding['sha256']) is not None, 'Mac full binding required')
+    subprocess.run(['git', '--no-optional-locks', '-C', str(CANONICAL),
+                    'merge-base', '--is-ancestor', binding['commit'], 'HEAD'], check=True)
+    raw = subprocess.check_output(['git', '--no-optional-locks', '-C', str(CANONICAL),
+                                   'show', binding['commit'] + ':' + expected_path])
+    path = CANONICAL / expected_path
+    require(path.resolve() == path and hashlib.sha256(raw).hexdigest() == binding['sha256'] and
+            path.read_bytes() == raw, 'Mac binding changed')
+    return json.loads(raw)
+
+
+class A3PRequiresRuling(ValueError):
+    pass
+
+
+def check_mac_a3p(release):
+    summary = bound_mac_json(dict(path=release['mac_summary_path'], commit=release['commit'],
+                                  sha256=release['mac_summary_sha256']), MAC_SUMMARY_PATH)
+    a3p = bound_mac_json(release['a3p_poll_check'], MAC_A3P_PATH)
+    seal = bound_mac_json(release['mac_receipt_manifest'], MAC_MANIFEST_PATH)
+    require(a3p['receipt_manifest_sha256'] == release['mac_receipt_manifest']['sha256'], 'A3-P seal binding differs')
+    require(seal['status'] == 'complete' and seal['files']['tiers-summary.json'] == release['mac_summary_sha256'], 'Mac summary seal differs')
+    require(summary['dry_run'] is False and a3p['outcomes_read'] is False, 'Mac route scope')
+    tiers = {'K0c', 'S', 'K2', 'K4'}
+    require(set(summary['feasibility']) == set(a3p['tiers']) == tiers, 'A3-P tier coverage')
+    for tier in sorted(tiers):
+        frozen = summary['feasibility'][tier]['feasible']
+        row = a3p['tiers'][tier]
+        require(type(frozen) is bool and type(row['frozen_feasible']) is bool and
+                type(row['feasible_after_a3p']) is bool and type(row['a3p_passes']) is bool, 'A3-P Boolean contract')
+        require(row['frozen_feasible'] == frozen and
+                row['feasible_after_a3p'] == (frozen and row['a3p_passes']), 'A3-P feasibility binding differs')
+        if frozen and not row['feasible_after_a3p']:
+            raise A3PRequiresRuling('A3-P requires coordinator ruling before outcome access')
 
 
 def main():
@@ -179,7 +269,7 @@ def _main():
         require(git('status', '--porcelain', '--ignored') == '', 'canonical checkout dirty')
         head = git('rev-parse', 'HEAD')
         require(git('rev-parse', PRIVATE_REF) == PRIVATE_COMMIT, 'private ref changed')
-        require(set(git('diff', '--name-only', PRIVATE_COMMIT, 'HEAD').splitlines()) <= DESCENDANT_ALLOWLIST,
+        require(set(git('diff', '--no-renames', '--name-only', PRIVATE_COMMIT, 'HEAD').splitlines()) <= DESCENDANT_ALLOWLIST,
                 'unapproved descendant diff')
         for commit in (PRIVATE_COMMIT, head):
             require(git('for-each-ref', '--contains', commit, 'refs/remotes') == '', 'private ancestry on remote ref')
@@ -188,6 +278,9 @@ def _main():
         require(sha(args.r5) == R5_SHA, 'sealed R5 pin')
         release = read(args.release)
         require(release['amendment_1_prerelease'] == read(args.r5)['amendment_1_prerelease'], 'R5 envelope')
+        if release['reason'] == 'committed_mac_summary':
+            require(not (set(git('diff', '--no-renames', '--name-only', PRIVATE_COMMIT, 'HEAD').splitlines()) & FAILURE_PATHS), 'Mac failure path requires ruling')
+            check_mac_a3p(release)
         here = CANONICAL / 'reports/explore/t1'
         for name, digest in PINS.items():
             require(sha(here / name) == digest, 'reviewed code pin')
@@ -217,10 +310,11 @@ def _main():
         def barrier():
             outcome_release(CANONICAL, args.release)
         def reducer(output, out, err):
-            return subprocess.run(argv, cwd=here, stdout=out, stderr=err, start_new_session=True,
-                                  env={k: v for k, v in os.environ.items() if not k.startswith('PYTHON')}).returncode
-        record = execute_guarded(BLOCK_ROOT, ledger, read(sidecar_path), directory, health_ledger, barrier, reducer)
-        owns_output = True
+            return run_reducer(argv, here, out, err)
+        def on_created():
+            nonlocal owns_output
+            owns_output = True
+        record = execute_guarded(BLOCK_ROOT, ledger, read(sidecar_path), directory, health_ledger, barrier, reducer, on_created)
         fresh = set(SCRATCH.glob('t1-release-recheck-*/check.json')) - before
         require(len(fresh) == 2, 'parent/reducer barrier checks not both retained')
         record.update(driver_sha256=driver_sha, canonical_HEAD=head, sys_executable=sys.executable, version=sys.version,
@@ -233,6 +327,7 @@ def _main():
         print(json.dumps(record))
         return 0
     except BaseException as exc:
+        block_failure_signals()
         if owns_output:
             os.chmod(directory, 0o000)
         health = exc.health if isinstance(exc, ReleaseFailure) else dict(passes=False, stage='preflight_or_record', exception_type=type(exc).__name__, no_result_reported=True)

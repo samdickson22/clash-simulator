@@ -1,0 +1,104 @@
+{
+  "schema": "clasher.t1.release-driver-candidate.v3",
+  "utc": "2026-10-12T12:02:56Z",
+  "review": "PENDING_COORDINATOR_R3",
+  "previous_driver_sha256": "42219e57c052ada73a3ca691839fa47166f1d554fa5600dd85553bb68a916a5e",
+  "driver_sha256": "9ffbd2e197e58b5c56b3d58cefe4008d47cb4fdf50764808e841218294408bca",
+  "tests_sha256": "056c9aa50dead89cfaf74ac1f34fc1a252942c7d74356e9a752fa08c009a524f",
+  "descendant_builder_sha256": "86ae8202aa93dc2ddb719325f8a923d8163d1f8810dfe86e978dafda2b2a87b1",
+  "diff_sha256": "72cca2afe6d5b749c9fb55261907c85f75f57444c98cff9bbfdd832289893f01",
+  "diff_private_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-release-driver-r3.diff",
+  "review_r2_verbatim_sha256": "e5414e3a5ee0cd47059f159ce1ffc30d61d2a14dba2999e495e026a61767c3d7",
+  "layout_ruling_commit": "4eb6c3e58318d9a599cf80e98eb79826f28bb8a9",
+  "layout_ruling_verbatim_sha256": "e2cf6a5cffbbf4e9406affbbf495c33e3be66fd68ec41f55f7f51c78b402c925",
+  "descendant_allowlist": [
+    "reports/explore/mac-e4-session/tiers-session-r1/a3p-poll-check.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/preconditions.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/private-commit-binding.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/belief-exactness.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/build-tiers.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/cleanup-failure.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/exactness-tiers.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/failure.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/pre-session-census.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/receipt-manifest.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/receipt-manifest.sha256",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/runtime-versions.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/student-agreement.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/tiers-complete.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/tiers-identity.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/sealed/tiers-summary.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/session-receipt.json",
+    "reports/explore/mac-e4-session/tiers-session-r1/stage-nocopy-session-verify.json"
+  ],
+  "unknown_classifier_paths": "DENIED",
+  "R_M3_release_fields": [
+    "a3p_poll_check={path,commit,sha256}",
+    "mac_receipt_manifest={path,commit,sha256}"
+  ],
+  "R_M3": "Committed summary/A3P/seal verified before guard; any frozen feasible tier disqualified raises A3PRequiresRuling; no output directory or reducer",
+  "tests": {
+    "passes": true,
+    "count": 40,
+    "argv": [
+      "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "test_release_run"
+    ],
+    "sys_executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+    "version": "3.12.12 (main, Dec 17 2025, 21:10:06) [Clang 21.1.4 ]",
+    "synthetic_only": true,
+    "real_synthetic_child_session_kill_test": true
+  },
+  "mutants": {
+    "reviewer_r2": 47,
+    "killed": 47,
+    "previous_survivors_killed": 7,
+    "extra": 5,
+    "extra_killed": 5,
+    "runner_adaptations": "Paths, --no-renames anchor, 2 worker threads; original reviewer runner unchanged",
+    "export_test_sha256": "fb7ccb73d11082f20bbbe362f79422d658a772d795015df11b4129bb7f668a12",
+    "extra_export_test_sha256": "bf0e1f28746afb165aa1748bc37a2acefaf9a128be8876e1946d1226d9020da3"
+  },
+  "evidence": {
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r3-final-tests-v3.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r3-final-tests-v3.stderr": {
+      "sha256": "1a320075df00c56ca8401d90a162226ff53dc35cd20bc46894079e147c8c33df",
+      "bytes": 5831
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r3-mutants.stdout": {
+      "sha256": "cb45444d2f3056931f44ec99b7b2f5555778cd5d74595024da67e5f67f266a42",
+      "bytes": 1636
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r3-mutants.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-mutant-runner-r3.py": {
+      "sha256": "a670c429a5d9cca189d27a8d880ace4eba2cf465e617d4d600349c00b27bdab9",
+      "bytes": 7384
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r3-extra-mutants.json": {
+      "sha256": "e467df228f8b50fccb1cc390b8fbbd0d132ef9a7bccb19d64bc15f125906d97f",
+      "bytes": 409
+    },
+    "/tmp/sdicks02/c1rev2/tools/mut_r2.py": {
+      "sha256": "e4e4ac703b432cc0e050916136534422102acd3ff23bcf94501ed089c6fc65a8",
+      "bytes": 7317
+    }
+  },
+  "real_descendant_built": false,
+  "production_driver_run": false,
+  "real_barrier_or_reducer_run": false,
+  "host_contact": false,
+  "outcome_access": false,
+  "canonical_R_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "canonical_R_clean": true,
+  "private_ref_never_pushed": true
+}

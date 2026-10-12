@@ -1,0 +1,27 @@
+[
+  {
+    "mutant": "R-M3 no gate",
+    "killed": true,
+    "exit": 1
+  },
+  {
+    "mutant": "R-M3 no seal compare",
+    "killed": true,
+    "exit": 1
+  },
+  {
+    "mutant": "No core failure signal mask",
+    "killed": true,
+    "exit": 1
+  },
+  {
+    "mutant": "No main failure signal mask",
+    "killed": true,
+    "exit": 1
+  },
+  {
+    "mutant": "Kill child only",
+    "killed": true,
+    "exit": 1
+  }
+]
