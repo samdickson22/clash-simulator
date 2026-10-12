@@ -1,0 +1,61 @@
+{
+ "hosts": {
+  "127x03": {
+   "attempts": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts",
+   "base": "/mpac/sdicks02/jobs/clasher/k4s-end-r1",
+   "bundle_layout": "bundles/<S4 bundle basename>/ (a-w)",
+   "bundles": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles",
+   "created_by_s10": [
+    "base",
+    "base/attempts",
+    "base/preflight",
+    "base/runtime",
+    "base/bundles"
+   ],
+   "guard_job_layout": "<guard_job_parent>/k4s-end-guard-r1-rdRR-aNN | -pfNN (dirs writable)",
+   "guard_job_names": "k4s-end-guard-r1-(?:rd([0-9]{2})-a([0-9]{2})|pf([0-9]{2}))",
+   "guard_job_parent": "/mpac/sdicks02/jobs/clasher",
+   "preflight": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/preflight",
+   "provisioned_separately": [
+    "repository (the --repository clone; S6/S7)"
+   ],
+   "repository": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository",
+   "runtime": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime",
+   "runtime_layout": "runtime/runtime-<P commit 12>/ (S9 tree, a-w)",
+   "written_by_s7": [
+    "attempts/<attempt>",
+    "preflight/<preflight>"
+   ]
+  },
+  "127x04": {
+   "attempts": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/attempts",
+   "base": "/mpac/sdicks02/jobs-k4s/k4s-end-r1",
+   "bundle_layout": "bundles/<S4 bundle basename>/ (a-w)",
+   "bundles": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles",
+   "created_by_s10": [
+    "base",
+    "base/attempts",
+    "base/preflight",
+    "base/runtime",
+    "base/bundles"
+   ],
+   "guard_job_layout": "<guard_job_parent>/k4s-end-guard-r1-rdRR-aNN | -pfNN (dirs writable)",
+   "guard_job_names": "k4s-end-guard-r1-(?:rd([0-9]{2})-a([0-9]{2})|pf([0-9]{2}))",
+   "guard_job_parent": "/mpac/sdicks02/jobs-k4s",
+   "preflight": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight",
+   "provisioned_separately": [
+    "repository (the --repository clone; S6/S7)"
+   ],
+   "repository": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository",
+   "runtime": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime",
+   "runtime_layout": "runtime/runtime-<P commit 12>/ (S9 tree, a-w)",
+   "written_by_s7": [
+    "attempts/<attempt>",
+    "preflight/<preflight>"
+   ]
+  }
+ },
+ "rulings": "P2 decision 3 (k4s-end-r1 bases), Q4 (guard parents), P2-3/RC-2 (preflight), D4 (receive)",
+ "schema": "clasher.k4s.end-rc6-roots.DRAFT.v1",
+ "status": "DRAFT (RC-6; needs coordinator adoption)"
+}
