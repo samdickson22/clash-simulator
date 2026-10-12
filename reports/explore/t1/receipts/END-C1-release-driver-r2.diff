@@ -1,0 +1,472 @@
+diff --git a/reports/explore/t1/RELEASE-RUNBOOK-r1.md b/reports/explore/t1/RELEASE-RUNBOOK-r1.md
+index 214fdaa6..e9287a68 100644
+--- a/reports/explore/t1/RELEASE-RUNBOOK-r1.md
++++ b/reports/explore/t1/RELEASE-RUNBOOK-r1.md
+@@ -8,7 +8,11 @@ reducer or outcome read has been performed by this change.
+    release authorization after the TIERS Mac-summary route. The coordinator
+    supplies the release JSON and its SHA. Its prerequisite envelope must equal
+    sealed R5 3b7d2295 exactly. The Mac-summary commit must be an ancestor of the
+-   eventual canonical private HEAD. The fourteen-day route is not available
++   eventual canonical private HEAD. The driver currently has an **empty explicit
++   descendant allowlist**: any tracked difference from 9bb349b1 fails closed.
++   A later coordinator ruling and reviewed allowlist update must permit the exact
++   summary/driver/receipt paths before a local descendant is prepared.
++   The fourteen-day route is not available
+    before 2026-10-25T19:31:38Z.
+ 2. Only under the later state-change ruling, incorporate the public driver and
+    Mac summary into a local-only descendant of private 9bb349b1. Never push that
+@@ -16,11 +20,16 @@ reducer or outcome read has been performed by this change.
+    the driver is committed in the worker's public checkout, not installed in R.
+ 3. Run the approved committed driver by absolute path, from canonical
+    `R/reports/explore/t1`, using `e4v3-venv/bin/python -B` (3.12.12), environment
+-   `PYTHONDONTWRITEBYTECODE=1`, nice 19/core 63. Provide required `--release`,
++   `PYTHONDONTWRITEBYTECODE=1`, nice 19/core 63. Launch **detached under setsid**,
++   with stdin `/dev/null` and stdout/stderr redirected to an exclusive private log,
++   never in a bare SSH foreground. Provide required `--release`,
+    `--release-sha256`, `--r5`, `--copy-receipt` and unique `--private-name`.
+    The private parent `t1-20261010-r1/release-private/` must be a new/plain 0700
+    directory established under that authorization. Never invoke the reducer bare.
+-4. The driver checks canonical ancestry/ref/cleanliness and receipt/module pins.
++4. The driver checks canonical ancestry/ref/cleanliness, empty descendant allowlist,
++   remote-ref ancestry exclusion and all 17 executed local modules plus plan.json.
++   It requires the actual -B flag, interpreter 3.12.12 and numpy 2.2.6; the reducer
++   receives no PYTHON* environment variables and runs in a new process session.
+    It imports canonical health code, compares the exact copied-root health ledger
+    against PC4 16e1b34f, ignoring only top-level UTC. A mismatch or exception
+    prevents both barrier and reducer. The parent also denies game-path opens.
+@@ -29,15 +38,28 @@ reducer or outcome read has been performed by this change.
+    stdout/stderr privately. The reducer runs its own barrier before games.
+    Both fresh in-barrier check paths and SHAs are retained in the health receipt;
+    scratch diagnostics remain in their original paths.
+-6. It checks the emitted ledger against PC4 except UTC, and checks all three
++6. It compares canonical JSON, masking only top-level UTC, and checks all three
+    sensitivity sections' ledger SHA bindings. Any barrier/reducer/post-check or
+    final-record failure quarantines the owned output directory with mode 000.
+    The visible failure record contains stage/type only, never exception text,
+-   stdout, selection or result values. Preserve quarantine and stop; no retry.
++   stdout, selection or result values. SIGTERM, SIGHUP and SIGINT raise into the
++   BaseException quarantine path. The reducer's new session keeps terminal
++   hangups isolated; subprocess.run kills/waits for the direct child on exception.
++   SIGKILL cannot be handled. Any exit without a completed health record means:
++   treat the output as locked, chmod 000 the owned private directory, and report
++   failure only. Preserve quarantine and stop; no retry.
+ 7. Only after the health receipt completes may the coordinator read the private
+    output. Descriptive sensitivity never chooses a tier. No output handoff is
+    permitted while review, the Mac route or explicit release authorization waits.
+ 
++Do not run another barrier concurrently. The driver requires exactly its parent
++and reducer's two new recheck receipts; a third concurrent run fails closed and
++quarantines outputs. Keep their original health scratch and diagnostics intact.
++Parent reads under the block root are limited to complete/interference health
++proofs, neither symlinked. The early audit hook rejects operator game paths before
++even hashing them. C2's ACK hashes remain the binding; the frozen health function
++checks ACK existence only. This informational S6 behaviour is unchanged.
++
+ C2 copied the dereferenced 01 r3 hub chain into `release-blocks-0108-r3` on 05.
+ The receipt pins 3,072 proofs (set d0f01069), 24,576 streaming game hashes and
+ 1,100 ACK hashes. The file inventory is private. No game data was parsed.
+diff --git a/reports/explore/t1/release_run.py b/reports/explore/t1/release_run.py
+index 02391ad7..39a71fd2 100644
+--- a/reports/explore/t1/release_run.py
++++ b/reports/explore/t1/release_run.py
+@@ -6,10 +6,12 @@ The reducer and its imports always come from R, never the driver's checkout.
+ import argparse
+ import contextlib
+ import hashlib
++import importlib.metadata
+ import json
+ import os
+ from pathlib import Path
+ import subprocess
++import signal
+ import sys
+ 
+ CANONICAL = Path('/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source')
+@@ -22,8 +24,9 @@ BLIND_SHA = '866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa'
+ SIDECAR_SHA = '16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e'
+ R5_SHA = '3b7d2295657be87c76a07dfc9d278e2f96b262d436b04504e4556352d23ba5f9'
+ COPY_SHA = 'd433dd54556a6040428e0a6791df67db441eb7637c03cae59db8ca8e5b25d3ef'
+-PINS = {'reduce.py': 'aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79',
+-        'ssh_sensitivity.py': 'bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5'}
++PINS = {'apt_budget.py': 'c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618', 'barrier.py': '346d3c053157ef2fea2f8aa5b629dbeb53a5c365036033cd37aea4af85a9b00b', 'check_reference.py': 'c848baa2f674801776543bbd9e0cd9c312c1de66fe017a5c8a583f79d5e64d43', 'common.py': '36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0', 'cpu_accounting.py': '5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f', 'host_audit.py': '5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7', 'idle_services.py': '911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2', 'owned_supervisor.py': 'fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249', 'parent_source_seed.py': '3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e', 'perception_confirmation.py': '6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680', 'reduce.py': 'aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79', 'release_reference.py': 'f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555', 'schedule.py': '8478935e2649b2d4b3cf70dc699d9a38a538644fa7196270bdb72943356264be', 'ssh_budget.py': '0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d', 'ssh_sensitivity.py': 'bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5', 'ssh_transport.py': '16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f', 'system_bus.py': '785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11', 'plan.json': 'af6aeade7de1a9c5e22fbf17a3cf1d6606652500ec9c35983d21a1cdb3767498'}
++DESCENDANT_ALLOWLIST = frozenset()
++SCRATCH = Path("/mpac/sdicks02/tmp")
+ 
+ 
+ def require(condition, label):
+@@ -50,7 +53,38 @@ def write(path, value):
+ 
+ 
+ def without_utc(value):
+-    return {k: v for k, v in value.items() if k != 'utc'}
++    masked = {k: v for k, v in value.items() if k != 'utc'}
++    return json.dumps(masked, sort_keys=True, separators=(',', ':'), allow_nan=False)
++
++
++class TerminationSignal(BaseException):
++    pass
++
++
++def raise_on_signal(signum, frame):
++    raise TerminationSignal(signum)
++
++
++@contextlib.contextmanager
++def terminating_signals():
++    previous = {s: signal.signal(s, raise_on_signal) for s in
++                (signal.SIGTERM, signal.SIGHUP, signal.SIGINT)}
++    try:
++        yield
++    finally:
++        for s, handler in previous.items():
++            signal.signal(s, handler)
++
++
++def parent_audit(event, values):
++    if event != 'open' or not isinstance(values[0], (str, bytes, os.PathLike)):
++        return
++    path = Path(os.fsdecode(values[0])).resolve()
++    require('games' not in path.parts, 'parent game access refused')
++    if path.is_relative_to(BLOCK_ROOT):
++        rel = path.relative_to(BLOCK_ROOT)
++        require(len(rel.parts) == 2 and rel.name in ('complete.json', 'interference.json'),
++                'parent non-health access refused')
+ 
+ 
+ def postcheck(output, sidecar):
+@@ -64,10 +98,19 @@ def postcheck(output, sidecar):
+ 
+ 
+ def execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
++    with terminating_signals():
++        return _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn)
++
++
++def _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
+     """Callbacks permit offline synthetic tests; production supplies pinned R code."""
+     stage = 'pre_guard'
+     created = False
+     try:
++        for proof in root.glob('*/complete.json'):
++            require(not proof.is_symlink(), 'symlink complete proof')
++            interference = proof.parent / 'interference.json'
++            require(not interference.is_symlink(), 'symlink interference proof')
+         computed = health_fn(root, read(ledger)['events'], sha(ledger))
+         require(without_utc(computed) == without_utc(sidecar), 'pre-outcome health differs')
+         directory.mkdir(mode=0o700, exist_ok=False)
+@@ -105,10 +148,17 @@ class ReleaseFailure(Exception):
+ 
+ 
+ def git(*args):
+-    return subprocess.check_output(['git', '-C', str(CANONICAL), *args], text=True).strip()
++    return subprocess.check_output(['git', '--no-optional-locks', '-C', str(CANONICAL), *args], text=True).strip()
+ 
+ 
+ def main():
++    with terminating_signals():
++        return _main()
++
++
++def _main():
++    audit = parent_audit
++    sys.addaudithook(audit)
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--release', type=Path, required=True)
+     parser.add_argument('--release-sha256', required=True)
+@@ -118,14 +168,21 @@ def main():
+     args = parser.parse_args()
+     os.umask(0o077)
+     owns_output = False
++    driver_sha = sha(Path(__file__))
+     try:
+         require(__debug__ and sys.version_info[:3] == (3, 12, 12), 'interpreter version')
+-        require(sys.executable == PYTHON and sys.dont_write_bytecode and
++        options = sys.orig_argv[1:sys.orig_argv.index(sys.argv[0])]
++        require(sys.executable == PYTHON and sys.flags.dont_write_bytecode and '-B' in options and
+                 os.environ.get('PYTHONDONTWRITEBYTECODE') == '1', 'interpreter flags')
++        require(importlib.metadata.version('numpy') == '2.2.6', 'numpy version')
+         require(Path.cwd() == CANONICAL / 'reports/explore/t1', 'canonical cwd')
+         require(git('status', '--porcelain', '--ignored') == '', 'canonical checkout dirty')
+         head = git('rev-parse', 'HEAD')
+         require(git('rev-parse', PRIVATE_REF) == PRIVATE_COMMIT, 'private ref changed')
++        require(set(git('diff', '--name-only', PRIVATE_COMMIT, 'HEAD').splitlines()) <= DESCENDANT_ALLOWLIST,
++                'unapproved descendant diff')
++        for commit in (PRIVATE_COMMIT, head):
++            require(git('for-each-ref', '--contains', commit, 'refs/remotes') == '', 'private ancestry on remote ref')
+         subprocess.run(['git', '-C', str(CANONICAL), 'merge-base', '--is-ancestor', PRIVATE_COMMIT, head], check=True)
+         require(sha(args.release) == args.release_sha256, 'release receipt pin')
+         require(sha(args.r5) == R5_SHA, 'sealed R5 pin')
+@@ -147,11 +204,6 @@ def main():
+         require(Path(args.private_name).name == args.private_name and args.private_name not in ('.', '..'), 'private name')
+         require(PRIVATE.is_dir() and not PRIVATE.is_symlink() and PRIVATE.stat().st_mode & 0o777 == 0o700, 'private parent')
+         directory = PRIVATE / args.private_name
+-        # Health-only parent is forbidden from opening any game path throughout.
+-        def audit(event, values):
+-            if event == 'open' and isinstance(values[0], (str, bytes, os.PathLike)):
+-                require('games' not in Path(os.fsdecode(values[0])).parts, 'parent game access refused')
+-        sys.addaudithook(audit)
+         sys.path.insert(0, str(here))
+         from ssh_sensitivity import health_ledger
+         from barrier import outcome_release
+@@ -161,17 +213,17 @@ def main():
+                 '--release', str(args.release), '--ledger', str(ledger), '--out', str(directory / 'reduce.json')]
+         if release['reason'] == 'committed_mac_summary':
+             argv += ['--mac-summary', str(CANONICAL / release['mac_summary_path'])]
+-        before = set(Path('/mpac/sdicks02/tmp').glob('t1-release-recheck-*/check.json'))
++        before = set(SCRATCH.glob('t1-release-recheck-*/check.json'))
+         def barrier():
+             outcome_release(CANONICAL, args.release)
+         def reducer(output, out, err):
+-            return subprocess.run(argv, cwd=here, stdout=out, stderr=err,
+-                                  env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'}).returncode
++            return subprocess.run(argv, cwd=here, stdout=out, stderr=err, start_new_session=True,
++                                  env={k: v for k, v in os.environ.items() if not k.startswith('PYTHON')}).returncode
+         record = execute_guarded(BLOCK_ROOT, ledger, read(sidecar_path), directory, health_ledger, barrier, reducer)
+         owns_output = True
+-        fresh = set(Path('/mpac/sdicks02/tmp').glob('t1-release-recheck-*/check.json')) - before
++        fresh = set(SCRATCH.glob('t1-release-recheck-*/check.json')) - before
+         require(len(fresh) == 2, 'parent/reducer barrier checks not both retained')
+-        record.update(canonical_HEAD=head, sys_executable=sys.executable, version=sys.version,
++        record.update(driver_sha256=driver_sha, canonical_HEAD=head, sys_executable=sys.executable, version=sys.version,
+                       driver_argv=sys.orig_argv, reducer_argv=argv, release_receipt_sha256=args.release_sha256,
+                       barrier_exit_code=0, fresh_checks={str(p): sha(p) for p in sorted(fresh)},
+                       root=str(BLOCK_ROOT), blind_ledger_sha256=BLIND_SHA, output_path=str(directory / 'reduce.json'))
+@@ -184,6 +236,7 @@ def main():
+         if owns_output:
+             os.chmod(directory, 0o000)
+         health = exc.health if isinstance(exc, ReleaseFailure) else dict(passes=False, stage='preflight_or_record', exception_type=type(exc).__name__, no_result_reported=True)
++        health.update(driver_sha256=driver_sha, outputs_locked=owns_output or health.get('outputs_locked', False))
+         print(json.dumps(health))
+         return 1
+ 
+diff --git a/reports/explore/t1/test_release_run.py b/reports/explore/t1/test_release_run.py
+index 7dd24846..473ca178 100644
+--- a/reports/explore/t1/test_release_run.py
++++ b/reports/explore/t1/test_release_run.py
+@@ -150,9 +150,11 @@ class GuardTests(unittest.TestCase):
+         block = self.base / 'synthetic-0'
+         (block / 'games').mkdir(parents=True)
+         (block / 'games/not-json').write_bytes(b'synthetic opaque bytes')
++        (block / 'interference.json').write_text('{}')
++        (block / 'hub-ack.json').write_text('{}')
+         (block / 'complete.json').write_text(json.dumps(dict(
+-            host='127x01', descriptor=dict(id='synthetic-0', population='primary', cell=0),
+-            interference={})))
++            host='127x08', descriptor=dict(id='synthetic-0', population='primary', cell=0),
++            interference={}, interference_sha256=driver.sha(block / 'interference.json'))))
+         opened = []
+         original = Path.open
+         def guarded_open(path, *args, **kwargs):
+@@ -162,7 +164,211 @@ class GuardTests(unittest.TestCase):
+         with patch.object(Path, 'open', guarded_open):
+             health = health_ledger(self.base, [], driver.sha(self.ledger))
+         self.assertEqual(health['blocks'][0]['id'], 'synthetic-0')
+-        self.assertTrue(opened)
++        self.assertIn(block / 'interference.json', opened)
++        self.assertIn(block / 'complete.json', opened)
++
++
++class StrongGuardTests(GuardTests):
++    def setUp(self):
++        super().setUp()
++        self.sidecar.update(sealed=True, blind_ledger_sha256='synthetic-blind', flag_counts={'ssh': 0})
++        self.sidecar['blocks'][0]['utc'] = 'nested-fixed'
++
++    def test_all_top_level_keys_and_nested_utc_are_compared_pre_and_post(self):
++        for key in ('schema', 'sealed', 'blind_ledger_sha256', 'flag_counts', 'blocks', 'nested_utc'):
++            for phase in ('pre', 'post'):
++                with self.subTest(key=key, phase=phase):
++                    changed=json.loads(json.dumps(self.sidecar))
++                    if key=='nested_utc':changed['blocks'][0]['utc']='changed'
++                    else:changed[key]='different'
++                    if phase=='pre':
++                        with self.assertRaises(driver.ReleaseFailure):
++                            self.run_guard(health=lambda *a:changed)
++                        self.assertFalse(self.directory.exists())
++                    else:
++                        def bad(output,*rest):
++                            self.reducer(output,*rest)
++                            emitted=output.with_name(output.name+'.ssh-sensitivity-ledger.json')
++                            emitted.write_text(json.dumps(changed))
++                            result=json.loads(output.read_text())
++                            for k in ('ssh_sensitivity','apt_sensitivity','ssh_or_apt_sensitivity'):
++                                result[k]['ledger_sha256']=driver.sha(emitted)
++                            output.write_text(json.dumps(result));return 0
++                        self.assert_locked_failure(reducer=bad)
++                        os.chmod(self.directory,0o700)
++                        self.directory=self.base/(key+'-'+phase)
++
++    def test_json_types_are_exact(self):
++        with self.assertRaises(driver.ReleaseFailure):
++            self.run_guard(health=lambda *a:{**self.sidecar,'sealed':1})
++
++    def test_keyboard_interrupt_locks(self):
++        def bad(*args):raise KeyboardInterrupt('SECRET')
++        self.assert_locked_failure(reducer=bad,stage='reducer')
++
++    def test_termination_signals_lock(self):
++        import signal
++        for signum in (signal.SIGTERM,signal.SIGHUP,signal.SIGINT):
++            with self.subTest(signum=signum):
++                def bad(*args):os.kill(os.getpid(),signum)
++                self.assert_locked_failure(reducer=bad,stage='reducer')
++                os.chmod(self.directory,0o700)
++                self.directory=self.base/('signal-'+str(signum))
++
++    def test_symlink_health_proof_refuses_before_health_callback(self):
++        block=self.base/'s0';block.mkdir();target=self.base/'target';target.write_text('{}')
++        (block/'complete.json').symlink_to(target)
++        with self.assertRaises(driver.ReleaseFailure):self.run_guard()
++        self.assertEqual(self.calls,[]);self.assertFalse(self.directory.exists())
++
++
++def synthetic_main_worker(base_string, scenario, reason, pipe):
++    """Fork-isolated main tests: all git state, receipts, modules and data synthetic."""
++    import subprocess,sys,types,hashlib
++    from unittest.mock import patch
++    base=Path(base_string);repo=base/'repo';here=repo/'reports/explore/t1'
++    here.mkdir(parents=True);(here/'receipts/PC4').mkdir(parents=True)
++    root=base/'blocks';root.mkdir();private=base/'outputs';private.mkdir(mode=0o700)
++    scratch=base/'scratch';scratch.mkdir()
++    (root/'games').mkdir();(root/'games/x').write_text('opaque synthetic sentinel')
++    for name in driver.PINS:(here/name).write_text('synthetic '+name)
++    pins={name:driver.sha(here/name) for name in driver.PINS}
++    ledger=here/'receipts/blind-ledger-final-op7-r3.json';ledger.write_text('{"events":[]}')
++    side={'utc':'old','schema':'synthetic','sealed':True,'blocks':[{'id':'s0'}]}
++    sidepath=here/'receipts/PC4/ssh-sensitivity-pc4-landed.json';sidepath.write_text(json.dumps(side))
++    release=base/'release.json';release.write_text(json.dumps({'reason':reason,'mac_summary_path':'summary.json','amendment_1_prerelease':{'synthetic':True}}))
++    r5=base/'r5.json';r5.write_text(json.dumps({'amendment_1_prerelease':{'synthetic':True}}))
++    cp=base/'copy.json';cp.write_text(json.dumps(dict(destination=str(root),exit_code=0,complete_proofs=3072,verified_game_files=24576,verified_hub_ack=1100,game_parse_or_summary=False,complete_proof_set_sha256='d0f010695064c0b5d397ce8f24afede30a679a571a989daa4e058c1571c23fe0')))
++    subprocess.run(['git','init','-q',str(repo)],check=True)
++    subprocess.run(['git','-C',str(repo),'add','.'],check=True)
++    subprocess.run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','synthetic fixture'],check=True)
++    commit=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()
++    subprocess.run(['git','-C',str(repo),'update-ref',driver.PRIVATE_REF,commit],check=True)
++    original_run=subprocess.run;original_git=driver.git
++    cwd=here
++    opts=dict(CANONICAL=repo,BLOCK_ROOT=root,PRIVATE=private,PYTHON=sys.executable,PRIVATE_COMMIT=commit,PINS=pins,BLIND_SHA=driver.sha(ledger),SIDECAR_SHA=driver.sha(sidepath),R5_SHA=driver.sha(r5),COPY_SHA=driver.sha(cp),SCRATCH=scratch)
++    checks=[];calls=[]
++    def makecheck(tag):
++        d=scratch/('t1-release-recheck-'+tag);d.mkdir();(d/'check.json').write_text('{}');checks.append(str(d))
++    def health(*args):
++        calls.append('health')
++        if scenario=='audit':(root/'games/x').read_bytes()
++        return {**side,'utc':'new'}
++    def barrier(*args):calls.append('barrier');makecheck('parent')
++    def mocked_run(argv,**kw):
++        if scenario=='ancestry' and argv[0]=='git' and '--is-ancestor' in argv:
++            raise subprocess.CalledProcessError(1,argv)
++        if len(argv)>2 and str(argv[2]).endswith('/reduce.py'):
++            calls.append('reducer')
++            output=private/'once/reduce.json'
++            expected=[sys.executable,'-B',str(here/'reduce.py'),'--root',str(root),'--release',str(release),'--ledger',str(ledger),'--out',str(output)]
++            if reason=='committed_mac_summary':expected+=['--mac-summary',str(repo/'summary.json')]
++            if argv!=expected:raise AssertionError('literal reducer argv differs')
++            if kw.get('start_new_session') is not True:raise AssertionError('missing child session')
++            if any(k.startswith('PYTHON') for k in kw['env']):raise AssertionError('Python environment leaked')
++            emitted=output.with_name(output.name+'.ssh-sensitivity-ledger.json');emitted.write_text(json.dumps(side))
++            value={k:{'ledger_sha256':driver.sha(emitted)} for k in ('ssh_sensitivity','apt_sensitivity','ssh_or_apt_sensitivity')}
++            output.write_text(json.dumps(value));kw['stdout'].write('SYNTHETIC SECRET')
++            if scenario!='fresh':makecheck('child')
++            return types.SimpleNamespace(returncode=0)
++        return original_run(argv,**kw)
++    def special_git(*args):
++        if scenario=='code_pin' and args[0] in ('status','diff'):return ''
++        if scenario=='private_ref' and args==('rev-parse',driver.PRIVATE_REF):return 'wrong'
++        if scenario=='remote' and args[0]=='for-each-ref':return 'refs/remotes/synthetic'
++        if scenario=='record_dirty' and args[0]=='status' and 'reducer' in calls:return 'dirty'
++        return original_git(*args)
++    if scenario=='dirty':(repo/'dirty').write_text('synthetic')
++    if scenario=='ignored':
++        (repo/'.git/info/exclude').write_text('ignored\n');(repo/'ignored').write_text('synthetic')
++    if scenario=='descendant':
++        (repo/'new-unapproved').write_text('x');original_run(['git','-C',str(repo),'add','.'],check=True)
++        original_run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','forbidden descendant'],check=True)
++    if scenario=='code_pin':(here/'barrier.py').write_text('changed synthetic barrier')
++    if scenario=='release_pin':release.write_text('{"bad":true}')
++    if scenario=='r5_pin':r5.write_text('{"bad":true}')
++    if scenario=='blind_pin':ledger.write_text('{"events":[{}]}')
++    if scenario=='sidecar_pin':sidepath.write_text('{}')
++    if scenario=='copy_pin':cp.write_text('{}')
++    if scenario=='c2_destination':
++        value=json.loads(cp.read_text());value['destination']='wrong';cp.write_text(json.dumps(value));opts['COPY_SHA']=driver.sha(cp)
++    if scenario=='c2_root':root.rmdir() if not list(root.iterdir()) else None;opts['BLOCK_ROOT']=base/'absent'
++    if scenario=='private_mode':os.chmod(private,0o755)
++    if scenario=='executable':opts['PYTHON']='not-the-interpreter'
++    if scenario=='root_import':modules_root=base
++    else:modules_root=repo
++    if scenario=='r5_envelope':
++        r5.write_text('{"amendment_1_prerelease":{}}');opts['R5_SHA']=driver.sha(r5)
++    if scenario=='cwd':cwd=base
++    if scenario=='version':version=(3,12,11)
++    else:version=sys.version_info
++    options=[sys.executable,'-B',str(here/'driver.py')]
++    if scenario=='no_B':options=[sys.executable,str(here/'driver.py')]
++    argv=[str(here/'driver.py'),'--release',str(release),'--release-sha256',hashlib.sha256(json.dumps({'reason':reason,'mac_summary_path':'summary.json','amendment_1_prerelease':{'synthetic':True}}).encode()).hexdigest(),'--r5',str(r5),'--copy-receipt',str(cp),'--private-name','once']
++    if scenario=='private_name':argv[-1]='../unsafe'
++    if scenario=='early_audit':argv[argv.index('--release')+1]=str(root/'games/x')
++    modules={n:types.ModuleType(n) for n in ('common','ssh_sensitivity','barrier')}
++    modules['common'].ROOT=modules_root;modules['ssh_sensitivity'].health_ledger=health;modules['barrier'].outcome_release=barrier
++    stdout=io.StringIO();os.chdir(cwd)
++    original_flags=sys.flags
++    class FlagsProxy:
++        def __getattr__(self,name):
++            if name=='dont_write_bytecode' and scenario=='no_flags':return 0
++            return getattr(original_flags,name)
++    with patch.multiple(driver,**opts),patch.dict(sys.modules,modules),patch.object(driver,'git',special_git),patch.object(sys,'argv',argv),patch.object(sys,'orig_argv',options),patch.object(sys,'flags',FlagsProxy()),patch.object(sys,'version_info',version),patch.object(driver.importlib.metadata,'version',return_value='wrong' if scenario=='numpy' else '2.2.6'),patch.object(subprocess,'run',mocked_run),patch.dict(os.environ,{'PYTHONDONTWRITEBYTECODE':'1','PYTHONPATH':'synthetic-shadow','PYTHONWARNINGS':'error'}),contextlib.redirect_stdout(stdout):
++        rc=driver.main()
++    mode=(private/'once').stat().st_mode&0o777 if (private/'once').exists() else None
++    pipe.send(dict(rc=rc,stdout=stdout.getvalue(),mode=mode,calls=calls,checks=checks))
++    if mode==0:os.chmod(private/'once',0o700)
++    pipe.close()
++
++
++class MainTests(unittest.TestCase):
++    def case(self,scenario='success',reason='committed_mac_summary'):
++        import multiprocessing
++        with tempfile.TemporaryDirectory(prefix='t1-c1-main-synthetic-') as tmp:
++            context=multiprocessing.get_context('fork');parent,child=context.Pipe(False)
++            process=context.Process(target=synthetic_main_worker,args=(tmp,scenario,reason,child));process.start();child.close()
++            self.assertTrue(parent.poll(15),'synthetic main process did not finish')
++            result=parent.recv();process.join(2);self.assertEqual(process.exitcode,0)
++            health=json.loads(result['stdout']) # rejects extra repr/secret output
++            self.assertIn('driver_sha256',health)
++            self.assertNotIn('SECRET',result['stdout'])
++            return result,health
++
++    def test_main_success_both_routes_literal_argv_scrubbed_environment_detached_child(self):
++        for reason in ('committed_mac_summary','fourteen_day_escape'):
++            with self.subTest(reason=reason):
++                result,health=self.case(reason=reason)
++                self.assertEqual(result['rc'],0);self.assertTrue(health['passes'])
++                self.assertEqual(result['calls'],['health','barrier','reducer'])
++                self.assertEqual(result['mode'],0o700)
++
++    def test_main_preflight_failures_have_no_output_directory(self):
++        for scenario in ('version','no_B','no_flags','executable','numpy','cwd','dirty','ignored','private_ref','ancestry','remote','descendant','code_pin','release_pin','r5_pin','r5_envelope','blind_pin','sidecar_pin','copy_pin','c2_destination','c2_root','root_import','private_mode','private_name','early_audit'):
++            with self.subTest(scenario=scenario):
++                result,health=self.case(scenario)
++                self.assertEqual(result['rc'],1);self.assertFalse(health['passes'])
++                self.assertIsNone(result['mode']);self.assertNotIn('reducer',result['calls'])
++                self.assertEqual(set(health),{'passes','stage','exception_type','no_result_reported','driver_sha256','outputs_locked'})
++
++    def test_main_audit_rejects_synthetic_game_read_before_barrier(self):
++        result,health=self.case('audit')
++        self.assertEqual(result['rc'],1);self.assertEqual(result['calls'],['health']);self.assertIsNone(result['mode'])
++        self.assertEqual(health['stage'],'pre_guard')
++
++    def test_main_record_failures_lock_owned_outputs(self):
++        for scenario in ('fresh','record_dirty'):
++            with self.subTest(scenario=scenario):
++                result,health=self.case(scenario)
++                self.assertEqual(result['rc'],1);self.assertEqual(result['mode'],0)
++                self.assertTrue(health['outputs_locked']);self.assertEqual(health['stage'],'preflight_or_record')
++
++    def test_exact_execution_pin_names_and_empty_allowlist(self):
++        names='apt_budget barrier check_reference common cpu_accounting host_audit idle_services owned_supervisor parent_source_seed perception_confirmation reduce release_reference schedule ssh_budget ssh_sensitivity ssh_transport system_bus'.split()
++        self.assertEqual(set(driver.PINS),{n+'.py' for n in names}|{'plan.json'})
++        self.assertTrue(all(len(value)==64 for value in driver.PINS.values()))
++        self.assertEqual(driver.DESCENDANT_ALLOWLIST,frozenset())
+ 
+ 
+ if __name__ == '__main__':

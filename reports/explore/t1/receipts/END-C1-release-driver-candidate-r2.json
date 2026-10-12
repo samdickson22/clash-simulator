@@ -1,0 +1,129 @@
+{
+  "schema": "clasher.t1.release-driver-candidate.v2",
+  "utc": "2026-10-12T11:34:03Z",
+  "independent_review": "PENDING_R2",
+  "previous_commit": "494fd4fb4ab61480e5aa407af4c882c3b8852886",
+  "previous_driver_sha256": "51520e9b8f04e86ff1db4d607305c6b80c5ede84398f1767391999a8f1b97a44",
+  "review_r1_verbatim_sha256": "884ed9f7176661e642c47924e59f78bee244c6f7fecf22f34b28208997c9c04b",
+  "driver_sha256": "42219e57c052ada73a3ca691839fa47166f1d554fa5600dd85553bb68a916a5e",
+  "test_sha256": "683ce23c0f7f2765be439f65927edd2117fb4594f662fe10ed071318b43b7569",
+  "delta_diff_path": "reports/explore/t1/receipts/END-C1-release-driver-r2.diff",
+  "delta_diff_private_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-release-driver-r2.diff",
+  "delta_diff_sha256": "92bd6333afdcb6c8033447f56e4c59a7157068a8422101ddb1805ea5e500694f",
+  "execution_pins": {
+    "apt_budget.py": "c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618",
+    "barrier.py": "346d3c053157ef2fea2f8aa5b629dbeb53a5c365036033cd37aea4af85a9b00b",
+    "check_reference.py": "c848baa2f674801776543bbd9e0cd9c312c1de66fe017a5c8a583f79d5e64d43",
+    "common.py": "36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0",
+    "cpu_accounting.py": "5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f",
+    "host_audit.py": "5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7",
+    "idle_services.py": "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
+    "owned_supervisor.py": "fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249",
+    "parent_source_seed.py": "3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e",
+    "perception_confirmation.py": "6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680",
+    "reduce.py": "aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79",
+    "release_reference.py": "f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555",
+    "schedule.py": "8478935e2649b2d4b3cf70dc699d9a38a538644fa7196270bdb72943356264be",
+    "ssh_budget.py": "0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d",
+    "ssh_sensitivity.py": "bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5",
+    "ssh_transport.py": "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f",
+    "system_bus.py": "785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11",
+    "plan.json": "af6aeade7de1a9c5e22fbf17a3cf1d6606652500ec9c35983d21a1cdb3767498"
+  },
+  "descendant_allowlist": [],
+  "tests": {
+    "passes": true,
+    "tests": 32,
+    "synthetic_only": true,
+    "argv": [
+      "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "test_release_run"
+    ],
+    "version": "3.12.12 (main, Dec 17 2025, 21:10:06) [Clang 21.1.4 ]",
+    "sys_executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+    "dont_write_bytecode_flag": 1,
+    "exit": 0
+  },
+  "mutants": {
+    "reviewer_original": 26,
+    "extra": 6,
+    "killed": 32,
+    "survived": 0,
+    "adapter_changes": "Export/mutant paths; audit-line indentation; six extra RC2/RC4 mutants. Original tools unchanged."
+  },
+  "signal_demo": [
+    {
+      "signal": "SIGTERM",
+      "exit": 1,
+      "directory_mode": "0o0",
+      "locked": true
+    },
+    {
+      "signal": "SIGHUP",
+      "exit": 1,
+      "directory_mode": "0o0",
+      "locked": true
+    },
+    {
+      "signal": "SIGINT",
+      "exit": 1,
+      "directory_mode": "0o0",
+      "locked": true
+    }
+  ],
+  "evidence": {
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r2-final-tests-v2.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-r2-final-tests-v2.stderr": {
+      "sha256": "c09bc7b92fb2da60705d2dde38291cf8f7171cec6969e1320ef62d4164fdad0c",
+      "bytes": 4586
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-mutants-final-r2.stdout": {
+      "sha256": "6d14880614a0ae7e46c5d66b394b71391200e7e505055765584d8d6101985ab4",
+      "bytes": 994
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-mutants-final-r2.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-mutant-runner-final-r2.py": {
+      "sha256": "ea123f4bdc21556691a71c5153a02ffaf305d9432071186170b26b1537b2109a",
+      "bytes": 4316
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-signal-demo-r2.py": {
+      "sha256": "82a64f59b409d5e322570c47ed18a8beeaef19638b0b83cd9f61245ec8c472bb",
+      "bytes": 507
+    },
+    "/tmp/sdicks02/c1rev/tools/mut.py": {
+      "sha256": "02eae083c21db69ca2ada69cc66af0d1b9c02e8cb42ff4d8f11cb7f568eb9d74",
+      "bytes": 3767
+    },
+    "/tmp/sdicks02/c1rev/tools/sigdemo.py": {
+      "sha256": "2c23c1f137cf934f56b2ffdca730d40e662ef624b7d3c7e9f614adbd87b4da88",
+      "bytes": 464
+    }
+  },
+  "suggestions": {
+    "S1": "canonical JSON exact types/topUTC only",
+    "S2": "early audit, health-only root opens, nonsymlink proofs",
+    "S3": "runbook forbids concurrent barrier runs",
+    "S4": "offline remote-ref ancestry exclusion",
+    "S5": "git --no-optional-locks",
+    "S6": "informational ACK existence behaviour retained; C2 hash verification unchanged"
+  },
+  "production_driver_run": false,
+  "real_barrier_run": false,
+  "real_reducer_run": false,
+  "real_data_used": false,
+  "canonical_R_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "canonical_R_clean": true,
+  "host_contact": false,
+  "outcomes_sealed": true,
+  "publication_check_note": "Initial git diff --cached --check exited2 before commit: blank context lines in the verbatim .diff artifact were treated as whitespace. Source-only whitespace check and git apply --check against synthetic 494fd4fb export passed; exact diff unchanged."
+}

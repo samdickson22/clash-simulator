@@ -1,0 +1,20 @@
+[
+  {
+    "signal": "SIGTERM",
+    "exit": 1,
+    "directory_mode": "0o0",
+    "locked": true
+  },
+  {
+    "signal": "SIGHUP",
+    "exit": 1,
+    "directory_mode": "0o0",
+    "locked": true
+  },
+  {
+    "signal": "SIGINT",
+    "exit": 1,
+    "directory_mode": "0o0",
+    "locked": true
+  }
+]

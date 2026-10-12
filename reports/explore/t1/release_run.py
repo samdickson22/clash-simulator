@@ -6,10 +6,12 @@ The reducer and its imports always come from R, never the driver's checkout.
 import argparse
 import contextlib
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
 import subprocess
+import signal
 import sys
 
 CANONICAL = Path('/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source')
@@ -22,8 +24,9 @@ BLIND_SHA = '866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa'
 SIDECAR_SHA = '16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e'
 R5_SHA = '3b7d2295657be87c76a07dfc9d278e2f96b262d436b04504e4556352d23ba5f9'
 COPY_SHA = 'd433dd54556a6040428e0a6791df67db441eb7637c03cae59db8ca8e5b25d3ef'
-PINS = {'reduce.py': 'aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79',
-        'ssh_sensitivity.py': 'bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5'}
+PINS = {'apt_budget.py': 'c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618', 'barrier.py': '346d3c053157ef2fea2f8aa5b629dbeb53a5c365036033cd37aea4af85a9b00b', 'check_reference.py': 'c848baa2f674801776543bbd9e0cd9c312c1de66fe017a5c8a583f79d5e64d43', 'common.py': '36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0', 'cpu_accounting.py': '5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f', 'host_audit.py': '5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7', 'idle_services.py': '911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2', 'owned_supervisor.py': 'fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249', 'parent_source_seed.py': '3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e', 'perception_confirmation.py': '6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680', 'reduce.py': 'aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79', 'release_reference.py': 'f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555', 'schedule.py': '8478935e2649b2d4b3cf70dc699d9a38a538644fa7196270bdb72943356264be', 'ssh_budget.py': '0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d', 'ssh_sensitivity.py': 'bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5', 'ssh_transport.py': '16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f', 'system_bus.py': '785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11', 'plan.json': 'af6aeade7de1a9c5e22fbf17a3cf1d6606652500ec9c35983d21a1cdb3767498'}
+DESCENDANT_ALLOWLIST = frozenset()
+SCRATCH = Path("/mpac/sdicks02/tmp")
 
 
 def require(condition, label):
@@ -50,7 +53,38 @@ def write(path, value):
 
 
 def without_utc(value):
-    return {k: v for k, v in value.items() if k != 'utc'}
+    masked = {k: v for k, v in value.items() if k != 'utc'}
+    return json.dumps(masked, sort_keys=True, separators=(',', ':'), allow_nan=False)
+
+
+class TerminationSignal(BaseException):
+    pass
+
+
+def raise_on_signal(signum, frame):
+    raise TerminationSignal(signum)
+
+
+@contextlib.contextmanager
+def terminating_signals():
+    previous = {s: signal.signal(s, raise_on_signal) for s in
+                (signal.SIGTERM, signal.SIGHUP, signal.SIGINT)}
+    try:
+        yield
+    finally:
+        for s, handler in previous.items():
+            signal.signal(s, handler)
+
+
+def parent_audit(event, values):
+    if event != 'open' or not isinstance(values[0], (str, bytes, os.PathLike)):
+        return
+    path = Path(os.fsdecode(values[0])).resolve()
+    require('games' not in path.parts, 'parent game access refused')
+    if path.is_relative_to(BLOCK_ROOT):
+        rel = path.relative_to(BLOCK_ROOT)
+        require(len(rel.parts) == 2 and rel.name in ('complete.json', 'interference.json'),
+                'parent non-health access refused')
 
 
 def postcheck(output, sidecar):
@@ -64,10 +98,19 @@ def postcheck(output, sidecar):
 
 
 def execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
+    with terminating_signals():
+        return _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn)
+
+
+def _execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
     """Callbacks permit offline synthetic tests; production supplies pinned R code."""
     stage = 'pre_guard'
     created = False
     try:
+        for proof in root.glob('*/complete.json'):
+            require(not proof.is_symlink(), 'symlink complete proof')
+            interference = proof.parent / 'interference.json'
+            require(not interference.is_symlink(), 'symlink interference proof')
         computed = health_fn(root, read(ledger)['events'], sha(ledger))
         require(without_utc(computed) == without_utc(sidecar), 'pre-outcome health differs')
         directory.mkdir(mode=0o700, exist_ok=False)
@@ -105,10 +148,17 @@ class ReleaseFailure(Exception):
 
 
 def git(*args):
-    return subprocess.check_output(['git', '-C', str(CANONICAL), *args], text=True).strip()
+    return subprocess.check_output(['git', '--no-optional-locks', '-C', str(CANONICAL), *args], text=True).strip()
 
 
 def main():
+    with terminating_signals():
+        return _main()
+
+
+def _main():
+    audit = parent_audit
+    sys.addaudithook(audit)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--release', type=Path, required=True)
     parser.add_argument('--release-sha256', required=True)
@@ -118,14 +168,21 @@ def main():
     args = parser.parse_args()
     os.umask(0o077)
     owns_output = False
+    driver_sha = sha(Path(__file__))
     try:
         require(__debug__ and sys.version_info[:3] == (3, 12, 12), 'interpreter version')
-        require(sys.executable == PYTHON and sys.dont_write_bytecode and
+        options = sys.orig_argv[1:sys.orig_argv.index(sys.argv[0])]
+        require(sys.executable == PYTHON and sys.flags.dont_write_bytecode and '-B' in options and
                 os.environ.get('PYTHONDONTWRITEBYTECODE') == '1', 'interpreter flags')
+        require(importlib.metadata.version('numpy') == '2.2.6', 'numpy version')
         require(Path.cwd() == CANONICAL / 'reports/explore/t1', 'canonical cwd')
         require(git('status', '--porcelain', '--ignored') == '', 'canonical checkout dirty')
         head = git('rev-parse', 'HEAD')
         require(git('rev-parse', PRIVATE_REF) == PRIVATE_COMMIT, 'private ref changed')
+        require(set(git('diff', '--name-only', PRIVATE_COMMIT, 'HEAD').splitlines()) <= DESCENDANT_ALLOWLIST,
+                'unapproved descendant diff')
+        for commit in (PRIVATE_COMMIT, head):
+            require(git('for-each-ref', '--contains', commit, 'refs/remotes') == '', 'private ancestry on remote ref')
         subprocess.run(['git', '-C', str(CANONICAL), 'merge-base', '--is-ancestor', PRIVATE_COMMIT, head], check=True)
         require(sha(args.release) == args.release_sha256, 'release receipt pin')
         require(sha(args.r5) == R5_SHA, 'sealed R5 pin')
@@ -147,11 +204,6 @@ def main():
         require(Path(args.private_name).name == args.private_name and args.private_name not in ('.', '..'), 'private name')
         require(PRIVATE.is_dir() and not PRIVATE.is_symlink() and PRIVATE.stat().st_mode & 0o777 == 0o700, 'private parent')
         directory = PRIVATE / args.private_name
-        # Health-only parent is forbidden from opening any game path throughout.
-        def audit(event, values):
-            if event == 'open' and isinstance(values[0], (str, bytes, os.PathLike)):
-                require('games' not in Path(os.fsdecode(values[0])).parts, 'parent game access refused')
-        sys.addaudithook(audit)
         sys.path.insert(0, str(here))
         from ssh_sensitivity import health_ledger
         from barrier import outcome_release
@@ -161,17 +213,17 @@ def main():
                 '--release', str(args.release), '--ledger', str(ledger), '--out', str(directory / 'reduce.json')]
         if release['reason'] == 'committed_mac_summary':
             argv += ['--mac-summary', str(CANONICAL / release['mac_summary_path'])]
-        before = set(Path('/mpac/sdicks02/tmp').glob('t1-release-recheck-*/check.json'))
+        before = set(SCRATCH.glob('t1-release-recheck-*/check.json'))
         def barrier():
             outcome_release(CANONICAL, args.release)
         def reducer(output, out, err):
-            return subprocess.run(argv, cwd=here, stdout=out, stderr=err,
-                                  env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'}).returncode
+            return subprocess.run(argv, cwd=here, stdout=out, stderr=err, start_new_session=True,
+                                  env={k: v for k, v in os.environ.items() if not k.startswith('PYTHON')}).returncode
         record = execute_guarded(BLOCK_ROOT, ledger, read(sidecar_path), directory, health_ledger, barrier, reducer)
         owns_output = True
-        fresh = set(Path('/mpac/sdicks02/tmp').glob('t1-release-recheck-*/check.json')) - before
+        fresh = set(SCRATCH.glob('t1-release-recheck-*/check.json')) - before
         require(len(fresh) == 2, 'parent/reducer barrier checks not both retained')
-        record.update(canonical_HEAD=head, sys_executable=sys.executable, version=sys.version,
+        record.update(driver_sha256=driver_sha, canonical_HEAD=head, sys_executable=sys.executable, version=sys.version,
                       driver_argv=sys.orig_argv, reducer_argv=argv, release_receipt_sha256=args.release_sha256,
                       barrier_exit_code=0, fresh_checks={str(p): sha(p) for p in sorted(fresh)},
                       root=str(BLOCK_ROOT), blind_ledger_sha256=BLIND_SHA, output_path=str(directory / 'reduce.json'))
@@ -184,6 +236,7 @@ def main():
         if owns_output:
             os.chmod(directory, 0o000)
         health = exc.health if isinstance(exc, ReleaseFailure) else dict(passes=False, stage='preflight_or_record', exception_type=type(exc).__name__, no_result_reported=True)
+        health.update(driver_sha256=driver_sha, outputs_locked=owns_output or health.get('outputs_locked', False))
         print(json.dumps(health))
         return 1
 
