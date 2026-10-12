@@ -1,0 +1,96 @@
+{
+  "attempt_registered": false,
+  "conditions": {
+    "F1": "exit/detach metadata independent before optional measurement; 3 transport attempts; deadline1200s",
+    "F3": "05 prepare refuses existing receive; end-received/HOST/ATTEMPT",
+    "F4": "05 marker/seal/allSHA/exactfile-set/exitstatus equivalence; missingmanifestUNSEALEDnoACK",
+    "F5": "detach.log/detach.json/argv.nul always attempted before measurement",
+    "F6": "canonical one-component job under BASE or approved host attempt root; one exact --output",
+    "F7": "exit code and measurement directory existence observed; no hardcoded seal claim",
+    "F8": "timeout -k 30 on every transfer"
+  },
+  "diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-exit-push-r3-narrow.diff",
+  "diff_sha256": "d6d89197af5d2699935512f8408246e7c839e8a3fe87e7a1b92c5b50ebcb7a8b",
+  "host_qualification": false,
+  "mirror_paused": true,
+  "no_network_backend_or_timing": true,
+  "operational_conditions_pending": [
+    "prove all earlier host wrappers exited",
+    "distinct A6/08ref/01ref jobs and empty05receivers",
+    "exact launch argv and detached PID/PGID receipt",
+    "no SSH into timing host from any thread or ENDtimer",
+    "record exact stopped mirror PGID516161 on01",
+    "check wrapper SHA on each host",
+    "staged A3 package only; C4measure6066228b",
+    "freshC2everylaunch;01cutoff04:17:43Z"
+  ],
+  "outcomes_sealed": true,
+  "r2_verdict": "APPROVE_WITH_CONDITIONS",
+  "r3_status": "UNAPPROVED; coordinator narrow Opus re-review required",
+  "registration_unsealed": true,
+  "synthetic_only": true,
+  "test_script_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-exit-push-r3-offline-tests.py",
+  "test_script_sha256": "7dfe61669965c819137fd8227b372cda5b4f776ddf92ccd5d852fc704fdfc98b",
+  "tests": {
+    "early_no_output": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 0
+    },
+    "exit_status_mismatch_rejected": true,
+    "extra_file_rejected": true,
+    "failure": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "missing_manifest_unsealed_no_ack": true,
+    "missing_transfer_marker_rejected": true,
+    "nonempty_receive_rejected": true,
+    "permanent": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "persistent": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 3
+    },
+    "sealed_failure_ack_health_only": true,
+    "success": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 1
+    },
+    "transient": {
+      "bounded": true,
+      "command_once": true,
+      "detach_evidence_delivered": true,
+      "exit_always_delivered": true,
+      "no_network": true,
+      "transport_attempts": 2
+    },
+    "valid_seal": true,
+    "wrong_file_sha_rejected": true
+  },
+  "timing_started": false,
+  "utc": "2026-10-12T00:54:48Z",
+  "verifier_sha256": "325a00a6be155f21b2a745b783290d015b92edd7e25ba551d0765fab3a8d117c",
+  "wrapper_sha256": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1"
+}
