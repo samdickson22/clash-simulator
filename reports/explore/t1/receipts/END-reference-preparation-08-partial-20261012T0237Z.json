@@ -1,0 +1,40 @@
+{
+  "final_job_binding_held_for_PC1_layout_ruling": true,
+  "fresh_C2_not_run": "Deferred to just before launch as instructed",
+  "host": "127x08",
+  "independent_A6_review_pending": true,
+  "mirror_paused": true,
+  "outcomes_sealed": true,
+  "prepare_argv": [
+    "nice",
+    "-n",
+    "19",
+    "taskset",
+    "-c",
+    "63",
+    "python3",
+    "-I",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-verification-pins-r5-20261012/END-approved-verifier-753722c9.py",
+    "--receive",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x08/end-reference-127x08-0a87166f-r1",
+    "--prepare"
+  ],
+  "prepare_exit_code": 0,
+  "prepare_stderr": "",
+  "prepared_with_verifier_sha256": "753722c922a1f6adae09de42044202a9c57b877af91cc11fcb9d238c879f60d1",
+  "receive_prepare_proof": "reports/explore/t1/receipts/END-reference-receive-prepare-08-r1.json",
+  "receive_prepare_proof_sha256": "f67b6870957e9a5da7479e926ca1abde5bbbe035e145d07a546199f3d4a54c9f",
+  "registration_unsealed": true,
+  "timing_started": false,
+  "utc": "2026-10-12T02:37:27Z",
+  "wrapper_staging": {
+    "host": "127x08",
+    "outcomes_sealed": true,
+    "staged_sha256": {
+      "END-approved-exit-push-0a87166f.sh": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1",
+      "END-frozen-detach-aeeb3003.sh": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb"
+    },
+    "timing_started": false,
+    "utc": "2026-10-12T02:36:51Z"
+  }
+}
