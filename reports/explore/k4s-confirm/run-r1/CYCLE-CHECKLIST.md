@@ -72,7 +72,9 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
 - Dispatch copied and its sha checked. No `owned-supervisor-admission.json` present.
 - 03: frozen `idle_services.py` pin = PID 2180947, start_ticks 139691386, cmdline 16152ceb….
 - Authorization = the 20:04:59Z bindings, with `reporting_jobs`, phase, dispatch path/sha and policy citations
-  updated. Frozen barrier PASS (176 files) on both hosts.
+  updated. `reporting_jobs_note.ruling` cites: windowed-rounds ruling COORDINATOR 76887b33 at 22:10:17Z (windowed
+  dispatch superseded), Option A afe83faa at 22:11 UTC (commit 22:11:53Z), P2 adc12f36 and Proposal M 2c847954
+  (see `receipts/AUTHORIZATION-CITATION-ERRATUM-20261012.md`). Frozen barrier PASS (176 files) on both hosts.
 
 ## 6. Prelaunch (both hosts)
 - The cut's timer has fired (`systemctl list-timers` LAST time after the cut), and no apt / apt-check /
