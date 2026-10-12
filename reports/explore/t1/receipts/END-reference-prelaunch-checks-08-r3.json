@@ -1,0 +1,119 @@
+{
+  "C1_earlier_wrappers": [],
+  "C1_plan_sha256": "389f31d51c5285221b834287e1775612538d00ad78c74cefb13721194ad091a1",
+  "actual_apt_daily_exit_verified": true,
+  "actual_apt_daily_run_verified": true,
+  "additional_motd_trigger_mtimes": {
+    "/etc/apt/sources.list": 1625602167.257667,
+    "/var/lib/dpkg/status": 1790343216.8256514
+  },
+  "apt_lists_directory": {
+    "age_seconds": 14135.81634759903,
+    "exists": true,
+    "mtime_epoch": 1791763152.4418821,
+    "mtime_utc": "2026-10-11T23:59:12Z",
+    "path": "/var/lib/apt/lists"
+  },
+  "apt_lists_newest_file_mtime_epoch": 1791686970.0,
+  "attempt_window_seconds_checked": 7200,
+  "clearance_seconds_required": 7200,
+  "console": {
+    "console_count": 0,
+    "positive": false,
+    "who": ""
+  },
+  "detach_sha_checked": true,
+  "end_kind": "counted-reporting",
+  "exact_refused_r1_wrapper_gone": true,
+  "expected_apt_daily_due_epoch": 1791763145,
+  "host": "127x08",
+  "list_timers_raw": "Mon 2026-10-12 08:49:07 UTC 4h 54min left Sun 2026-10-11 23:59:09 UTC 3h 55min ago apt-daily.timer         apt-daily.service        \nMon 2026-10-12 13:32:43 UTC 9h left       Sun 2026-10-11 13:38:16 UTC 14h ago      apt-daily-upgrade.timer apt-daily-upgrade.service\n",
+  "maintenance_processes": [],
+  "motd_scripts": {
+    "/etc/update-motd.d/90-updates-available": "#!/bin/sh\n\nstamp=\"/var/lib/update-notifier/updates-available\"\n\n[ ! -r \"$stamp\" ] || cat \"$stamp\"\n\nfind $stamp -newermt 'now-7 days' 2> /dev/null | grep -q -m 1 '.' || /usr/share/update-notifier/notify-updates-outdated\n",
+    "/etc/update-motd.d/91-release-upgrade": "#!/bin/sh\n\n# if the current release is under development there won't be a new one\nif [ \"$(lsb_release -sd | cut -d' ' -f4)\" = \"(development\" ]; then\n    exit 0\nfi\n\n# if it is non-root user, skip\nif [ $(id -u) -ne 0 ]; then\n    exit 0\nfi\n\nif [ -x /usr/lib/ubuntu-release-upgrader/release-upgrade-motd ]; then\n    exec /usr/lib/ubuntu-release-upgrader/release-upgrade-motd\nfi\n",
+    "/usr/lib/ubuntu-release-upgrader/release-upgrade-motd": "#!/bin/sh -e\n#\n#    91-release-upgrade - display upgrade message or update the cache\n#                         in the background\n#\n#    Copyright (C) 2010 Canonical Ltd.\n#\n#    Authors: Dustin Kirkland <kirkland@canonical.com>\n#\n#    This program is free software: you can redistribute it and/or modify\n#    it under the terms of the GNU General Public License as published by\n#    the Free Software Foundation, version 3 of the License.\n#\n#    This program is distributed in the hope that it will be useful,\n#    but WITHOUT ANY WARRANTY; without even the implied warranty of\n#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n#    GNU General Public License for more details.\n#\n#    You should have received a copy of the GNU General Public License\n#    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n\nstamp=/var/lib/ubuntu-release-upgrader/release-upgrade-available\nif [ -f \"$stamp\" ]; then\n\t# Stamp exists, see if it's expired\n\tnow=$(date +%s)\n        lastrun=$(stat -c %Y \"$stamp\") 2>/dev/null || lastrun=0\n        expiration=$(expr $lastrun + 86400)\n        if [ $now -ge $expiration ]; then\n\t\t# Older than 1 day old, so update in the background\n\t\t/usr/lib/ubuntu-release-upgrader/check-new-release -q > \"$stamp\" &\n\telif [ -s \"$stamp\" ]; then\n\t\t# Less than 1 day old, and non-empty, so display now\n\t\tcat \"$stamp\"\n\t\techo\n\tfi\nelif [ \"$(id -u)\" = 0 ]; then\n\t# No cache at all, so update in the background\n\t/usr/lib/ubuntu-release-upgrader/check-new-release -q > \"$stamp\" &\nfi\n",
+    "/usr/lib/update-notifier/update-motd-updates-available": "#!/bin/sh -e\n#\n# helper for update-motd\n\n\n# poor mans force\nif [ \"$1\" = \"--force\" ]; then\n    NEED_UPDATE_CHECK=yes\nelse\n    NEED_UPDATE_CHECK=no\nfi\n\n# check time when we did the last update check\nstamp=\"/var/lib/update-notifier/updates-available\"\n\n# get list dir\nStateDir=\"/var/lib/apt/\"\nListDir=\"lists/\"\neval \"$(apt-config shell StateDir Dir::State)\"\neval \"$(apt-config shell ListDir Dir::State::Lists)\"\n\n# get dpkg status file\nDpkgStatus=\"/var/lib/dpkg/status\"\neval \"$(apt-config shell DpkgStatus Dir::State::status)\"\n\n# get sources.list file\nEtcDir=\"etc/apt/\"\nSourceList=\"sources.list\"\neval \"$(apt-config shell EtcDir Dir::Etc)\"\neval \"$(apt-config shell SourceList Dir::Etc::sourcelist)\"\n\n# let the actual update be asynchronous to avoid stalling apt-get\ncleanup() { rm -f \"$tmpfile\"; }\n\n# check if we have a list file or sources.list that needs checking\nif [ -e \"$stamp\" ]; then\n    if [ \"$(find \"/$StateDir/$ListDir\" \"/$EtcDir/$SourceList\" \"/$DpkgStatus\" -type f -newer \"$stamp\" -print -quit)\" ]; then\n        NEED_UPDATE_CHECK=yes\n    fi\nelse\n    if [ \"$(find \"/$StateDir/$ListDir\" \"/$EtcDir/$SourceList\" -type f -print -quit)\" ]; then\n        NEED_UPDATE_CHECK=yes\n    fi\nfi\n\ntmpfile=\"\"\ntrap cleanup EXIT\ntmpfile=$(mktemp -p $(dirname \"$stamp\"))\n\n# output something for update-motd\nif [ \"$NEED_UPDATE_CHECK\" = \"yes\" ]; then\n    {\n\n        echo \"\"\n        /usr/lib/update-notifier/apt-check --human-readable\n        echo \"\"\n    } > \"$tmpfile\"\n    mv \"$tmpfile\" \"$stamp\"\n    chmod +r \"$stamp\"\nfi\n"
+  },
+  "outcomes_sealed": true,
+  "prelaunch_assertions_pass": true,
+  "prelaunch_utc": "2026-10-12T03:54:52Z",
+  "preliminary_gate_passes": true,
+  "read_only": true,
+  "release_stamp_full_window_fresh": true,
+  "reporting_hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "services": {
+    "apt-daily-upgrade.service": {
+      "ActiveState": "inactive",
+      "ExecMainExitTimestamp": "Sun 2026-10-11 13:38:22 UTC",
+      "ExecMainExitTimestamp_epoch": 1791725902,
+      "ExecMainStartTimestamp": "Sun 2026-10-11 13:38:16 UTC",
+      "ExecMainStartTimestamp_epoch": 1791725896,
+      "ExecMainStatus": "0",
+      "InactiveEnterTimestamp": "Sun 2026-10-11 13:38:22 UTC",
+      "InactiveEnterTimestamp_epoch": 1791725902,
+      "Result": "success",
+      "SubState": "dead"
+    },
+    "apt-daily.service": {
+      "ActiveState": "inactive",
+      "ExecMainExitTimestamp": "Sun 2026-10-11 23:59:28 UTC",
+      "ExecMainExitTimestamp_epoch": 1791763168,
+      "ExecMainStartTimestamp": "Sun 2026-10-11 23:59:09 UTC",
+      "ExecMainStartTimestamp_epoch": 1791763149,
+      "ExecMainStatus": "0",
+      "InactiveEnterTimestamp": "Sun 2026-10-11 23:59:28 UTC",
+      "InactiveEnterTimestamp_epoch": 1791763168,
+      "Result": "success",
+      "SubState": "dead"
+    }
+  },
+  "stamps": [
+    {
+      "age_seconds": 20724.183832406998,
+      "exists": true,
+      "mtime_epoch": 1791756564.0743973,
+      "mtime_utc": "2026-10-11T22:09:24Z",
+      "path": "/var/lib/ubuntu-release-upgrader/release-upgrade-available"
+    },
+    {
+      "age_seconds": 14125.176045179367,
+      "exists": true,
+      "mtime_epoch": 1791763163.0821846,
+      "mtime_utc": "2026-10-11T23:59:23Z",
+      "path": "/var/lib/update-notifier/updates-available"
+    }
+  ],
+  "synthetic_sources": false,
+  "timers": {
+    "apt-daily-upgrade.timer": {
+      "ActiveState": "active",
+      "InactiveEnterTimestamp": "",
+      "LastTriggerUSec": "Sun 2026-10-11 13:38:16 UTC",
+      "NextElapseUSecRealtime": "Mon 2026-10-12 13:32:43 UTC",
+      "Result": "success",
+      "SubState": "waiting",
+      "clearance_seconds": 34674.74177026749,
+      "last_trigger_epoch": 1791725896,
+      "next_epoch": 1791811963
+    },
+    "apt-daily.timer": {
+      "ActiveState": "active",
+      "InactiveEnterTimestamp": "",
+      "LastTriggerUSec": "Sun 2026-10-11 23:59:09 UTC",
+      "NextElapseUSecRealtime": "Mon 2026-10-12 08:49:07 UTC",
+      "Result": "success",
+      "SubState": "waiting",
+      "clearance_seconds": 17658.741770267487,
+      "last_trigger_epoch": 1791763149,
+      "next_epoch": 1791794947
+    }
+  },
+  "timing_started": false,
+  "updates_stamp_fresh": true,
+  "utc": "2026-10-12T03:54:48Z",
+  "wrapper_sha_checked": true
+}
