@@ -2719,3 +2719,22 @@ That closes F1 and F4 of review r1, and F2 and F3 are closed by R1 and PC4.
 1. R5 sealing and registration, once the builder's A4 inputs are delivered (Phase 2 read from 03 is in progress; Phase 3 build on 05 follows).
 2. R6 barrier; the reducer aebb2017 ledger must equal the PC4 sidecar except `utc`.
 3. R7 production-packet review r2.
+
+## 2026-10-12 08:52Z: Builder Phase 2 done (03 read released, fa8e700a); 03 handed back to K4S
+
+**The read:** one read-only session from 05 to 03, 08:49:03Z–08:51:29Z, no ControlMaster.
+- It copied only the 32 pinned `capture.pkl.gz` files: 4.89 GB, at nice 19 with a 32 MiB/s cap.
+- SHAs matched `corpora.json` 3501e2ac before (on 03) and after (on 05).
+- It did not touch `games/` and wrote nothing on 03.
+
+**Procedure deviation, accepted after the fact:** the builder used a new, unreviewed `fetch_captures_stream.sh` (in fa8e700a) instead of the reviewed rsync script, so the "before" SHA check could run inside the same single session. It's accepted because:
+- the effect was read-only;
+- it is fully bounded by the SHA checks at both ends;
+- no other files were touched.
+
+**Future rule:** any new script that touches a host needs a review first.
+
+**Next:**
+- 03 has been released to K4S for its r2 launch.
+- The builder's Phase 3 builds on 05 against `runtime-a5` (A5 bytes).
+- After that comes the handoff to T1 for registration.
