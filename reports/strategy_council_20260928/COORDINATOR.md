@@ -2209,3 +2209,23 @@ The R3-1/2/3 candidate splits into two parts. Future wrapper 2928eb15 adds `exit
   - **V3:** byte-compare `argv.nul` with the pinned argv (`argv_nul_sha256` d3a6e81e, receipt END-A6-launch-preparation-01-r1).
 - **Next:** T1 sends the verifier SHA and diff, and the coordinator routes a narrow Opus diff check.
 - **Until approval:** no ACK; C5 holds (no SSH to 01 from any thread while A6 is in its timing window); received data waits.
+
+## 2026-10-12 01:29Z: T1 END verifier r5 (legacy-only 753722c9) is APPROVED for ACK with conditions
+
+The independent Opus diff review (`END-verifier-REVIEW-r5.md`, T1 job directory) returned APPROVE_WITH_CONDITIONS:
+- the verifier is 753722c9 and the diff 6422005c;
+- the wrapper is still 0a87166f;
+- every control in 81b7c01e fails closed;
+- there is no ACK path for a stale, foreign, partial or unprepared directory;
+- the marker-mtime rule is sound, because rsync -a keeps 01's mtime, so cross-host clock skew doesn't matter.
+
+**Adopted, with no further code change.** The verifier bytes stay 753722c9 for the whole END campaign. Conditions:
+- **C-a: pin these files.**
+  - Launch receipt `END-A6-launch-receipt-01-20261012T011336Z.json` (sha 45bd9dc3…41b8, holds `measurement_argv`). Not the launch-preparation receipt, which lacks that key.
+  - Prepare proof: the copy committed in e6c73498 (`END-A6-receive-prepare-01-r1.json`, sha b6597ae1…d520), never the receive directory's own PREPARED.json.
+  - Run it as `python3 -I` under nice 19, and check the verifier SHA first.
+  - The 08 and 01 references pin their own launch receipts, plus prepare proofs committed before launch with at least a 1 s gap.
+- **C-b:** any non-zero exit or traceback is a REFUSE. Record argv, exit code and full stderr in a T1 receipt.
+- **C-c:** keep the code as is. In the verification receipt, record `test ! -e PUSH-FAILED.json && test ! -L PUSH-FAILED.json`.
+- **C-d:** verify no earlier than `exit_utc` + 1300 s (the wrapper's maximum lifetime). C5 holds until then; after that, C1 proof that the wrapper is gone comes before the 08 reference launch.
+- **Order after an ACK is unchanged:** 08 reference first, then 01 reference (cutoff 04:17:43Z), then pool, then PC1–PC4. Outcomes stay sealed.
