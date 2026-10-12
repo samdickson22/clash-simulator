@@ -20,6 +20,9 @@ if [[ $id == R4-* ]]; then
   done
 fi
 if [[ -n ${2:-} ]]; then extra+=(--resume "$2"); fi
+# Operational only: the 14-shard union keeps ~1,000 mmapped arrays open (R3's 6 shards stayed under the
+# default soft limit of 1024). Raise the soft nofile limit within the hard limit.
+ulimit -Sn 65536
 export PYTHONPATH=$J/fit/source:$J/fit/source/src PYTHONDONTWRITEBYTECODE=1
 export XDG_CACHE_HOME=$J/cache/fit CUDA_CACHE_PATH=$J/cache/fit/cuda TORCH_HOME=$J/cache/fit/torch
 export TRITON_CACHE_DIR=$J/cache/fit/triton TMPDIR=$J/cache/fit/tmp

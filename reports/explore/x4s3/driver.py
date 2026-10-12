@@ -130,7 +130,9 @@ class Fits:
             g = gpu_used_mib()
             if g > GPU_LIMIT_MIB: why = 'gpu_over_40GB'
         if why:
-            try: os.killpg(rec['pgid'], signal.SIGTERM)
+            # SIGTERM the trainer itself (run_fit.sh execs python, so pid == trainer): it finishes the step,
+            # checkpoints and shuts its loaders down. A group signal would kill the loaders first.
+            try: os.kill(rec['pid'], signal.SIGTERM)
             except ProcessLookupError: pass
             event(kind='fit_stop', fit=fid, reason=why)
             if why not in ('STOP', 'hard_stop'): anomaly(f'fit-{fid}', reason=why)

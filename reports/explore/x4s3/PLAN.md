@@ -156,3 +156,24 @@ R3a 37509a43.
 - **Seed retirement.** Under the declared rule, seeds 0–32 (33 indices that may have started in the interrupted
   attempts; none finished) are retired for every student and never re-run. The paired reporting set is therefore
   at most **1,167 seeds**. Cells (index mod 50) 0–32 have 23 seeds; the others have 24.
+
+## Pre-declared S-200 sensitivity analysis (written 2026-10-12 ~13:52Z, before any reduction or outcome look)
+During R3a's S-200 phase (13:09:39–13:41:58Z), the R4-D fit's loaders thrashed the page cache: memory PSI avg10
+reached 91.6%. The fit was paused at 13:34Z.
+
+- **Thrash window:** the first and last supervisor census sample of `games/R3a/S-200/a1` with memory PSI avg10
+  > 10%, which is **[2026-10-12T13:10:02Z, 13:33:05Z]**. The census logs "some" avg10; "some" and "full" agreed
+  within 0.1 when both were read during the episode.
+- **Game in the window:** an R3a S-200 game counts as in the window if
+  [mtime(game JSON) − wall_seconds, mtime(game JSON)] intersects the window.
+- **Frozen exclusion:** [receipts/s200-thrash-exclusion.json](receipts/s200-thrash-exclusion.json), SHA-256
+  5782b6c1…. It was built from timing fields only, with no outcome field read. 793 seed indices are excluded and
+  374 kept, out of 1,167.
+- **Reporting:** RESULTS reports R3a S-200, and every S-200 contrast between students, twice:
+  - on all paired seeds;
+  - on the kept seeds only.
+
+  The same seed exclusion applies to every student's S-200 arm, so the comparison stays paired.
+- **Primary readout:** unchanged (all paired seeds, pooled over both arms).
+- **Overlap rule from here on:** a fit and a game phase may overlap only while memory PSI stays ≤ 10%. Otherwise
+  they are serialized.

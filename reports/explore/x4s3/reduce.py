@@ -118,6 +118,25 @@ def main():
         pooled = [sum(per_seed(l, arm)[k]-per_seed(r, arm)[k] for arm in ARMS)/len(ARMS) for k in range(n)]
         out['contrasts'][f'{l} minus {r} [pooled]'] = dict(loss_change_pp=100*sum(pooled)/n,
             ci95_pp=ci([100*sum(pooled[j] for j in smp)/n for smp in samples]))
+    # Pre-declared S-200 thrash-window sensitivity (PLAN): same kept-seed set for every student.
+    excl_path = a.job/'receipts'/'s200-thrash-exclusion.json'
+    if not excl_path.exists(): excl_path = Path(__file__).parent/'receipts'/'s200-thrash-exclusion.json'
+    if excl_path.exists():
+        ex = json.loads(excl_path.read_text()); kept = set(ex['kept_indices'])
+        pos = [k for k, i in enumerate(idx) if i in kept]; m = len(pos)
+        rng2 = random.Random(plan['bootstrap']['seed'])
+        samp2 = [[pos[rng2.randrange(m)] for _ in range(m)] for _ in range(plan['bootstrap']['reps'])]
+        sens = dict(exclusion_sha256=sha(excl_path), window_utc=ex['window_utc'], kept_paired_seeds=m, arms={}, contrasts={})
+        for s in data:
+            L = loss[(s, 'S-200')]
+            sens['arms'][f'{s} S-200'] = dict(loss_pct=100*sum(L[k] for k in pos)/m,
+                                             loss_ci_pct=ci([100*sum(L[k] for k in smp)/m for smp in samp2]))
+        for l, r in PAIRS:
+            if l in data and r in data:
+                dl, dr = loss[(l, 'S-200')], loss[(r, 'S-200')]
+                sens['contrasts'][f'{l} minus {r} [S-200, kept seeds]'] = dict(
+                    loss_change_pp=100*sum(dl[k]-dr[k] for k in pos)/m, ci95_pp=ci([100*sum(dl[k]-dr[k] for k in smp)/m for smp in samp2]))
+        out['s200_thrash_sensitivity'] = sens
     c = out['contrasts']
     if 'R4-D minus R3a [pooled]' in c and 'R4-D minus R3a-rep [pooled]' in c:
         out['readout'] = dict(data_helps=c['R4-D minus R3a [pooled]']['ci95_pp'][1] < 0 and c['R4-D minus R3a-rep [pooled]']['loss_change_pp'] < 0,
