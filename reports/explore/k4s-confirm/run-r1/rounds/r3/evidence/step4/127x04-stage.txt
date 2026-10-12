@@ -1,0 +1,7 @@
+127x04 extras 48156e5a6812d5246e82fc084cc5980b3d4379a497461a110078ff2d624ea1b4
+127x04 extras-sha-ok
+STAGED /mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3 2026-10-12T11:10:57Z
+127x04 OVERLAY-OK 175/175 overlay-list-sha d0c39b928db42330
+PREREG 9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a
+/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/STOP -> /mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3.STOP
+{"launched_at_utc":"2026-10-12T11:10:57Z","pid":1383353,"pgid":1383353}

@@ -262,3 +262,14 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-12T10:05:43Z SEALED health: 127x03 complete 138 acked 138 hub 138/138 failed 0 stopevent - inflight 11 queued 406 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 135 acked 135 hub 135/135 failed 0 stopevent - inflight 11 queued 408 reason None who 0 flags[dbus 132 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 41/300 guard 14/90 (union; already in ledger 0/0); ledger max k {'primary': 2, 'guard': 1}; no anomalies
 - 2026-10-12T10:24:48Z SEALED health: 127x03 complete 179 acked 179 hub 179/179 failed 0 stopevent - inflight 11 queued 365 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 171 acked 171 hub 171/171 failed 0 stopevent - inflight 11 queued 372 reason None who 0 flags[dbus 168 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 41/300 guard 14/90 (union; already in ledger 0/0); ledger max k {'primary': 2, 'guard': 1}; no anomalies
 - 2026-10-12T10:43:56Z SEALED health: 127x03 complete 218 acked 218 hub 218/218 failed 0 stopevent - inflight 11 queued 326 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 213 acked 213 hub 213/213 failed 0 stopevent - inflight 11 queued 330 reason None who 0 flags[dbus 210 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 41/300 guard 14/90 (union; already in ledger 0/0); ledger max k {'primary': 2, 'guard': 1}; no anomalies
+
+## P2 cut 2 (r2 -> r3), 2026-10-12
+- 11:09:30.516Z / 11:09:30.532Z joint owned STOP of replacement-r2 (03 sup 2116555, 04 sup 1140717); exits 11:09:31Z /
+  11:09:33Z owned_STOP: 03 268/11/276, 04 266/11/277. Recorded PGIDs (03 280, 04 278) 0 live (ps rc 0). complete sets ==
+  exit lists. Drain: 268 + 266 ACK bindings OK; copiers 485959 / 494063 exited 11:10:10Z / 11:10:08Z, revoked/final, no
+  errors, admissions inactive, same identity.
+- Inventory 11:10:25Z (frozen replace.py @391d2006): +22 events (owned_STOP; primary 16, guard 6); cumulative 57/150,
+  20/45; max k 3/8, 2/6 (manual cross-check, gates CLEAR). Dispatch replacement-r3.json ab8b6238 (575 rows = 553 + 22;
+  03 286 / 04 289; 4644 games); exact coverage 3325 + 575. Ledger 4a56abf3 -> 153eb421.
+- 11:10:54Z / 11:10:57Z k4s-confirm-replacement-r3 staged (extras sha OK, overlay 175/175, PREREG 9650972d); qualification
+  running (03 PGID 2360714, 04 PGID 1383353).

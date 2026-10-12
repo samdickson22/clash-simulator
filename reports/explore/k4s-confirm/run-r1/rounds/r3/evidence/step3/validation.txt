@@ -1,0 +1,6 @@
+old events prefix unchanged True 55
+new events 22 == failed blocks True {'primary': 16, 'guard': 6} {'owned_STOP': 22}
+cumulative lost {'guard': 20, 'primary': 57} max k {'primary': 3, 'guard': 2} GATES {'primary': '57/150', 'guard': '20/45', 'k': '3/8 2/6'} CLEAR True
+canonical OK; unique True
+rows 575 never-started 553 replacement rows 22 new replacements in dispatch True hosts {'127x04': 289, '127x03': 286} games 4644
+logical coverage exact True dups [] counted 3325 + rows 575 = 3900

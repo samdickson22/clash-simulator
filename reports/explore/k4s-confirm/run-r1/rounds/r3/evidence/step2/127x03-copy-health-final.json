@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-12T11:10:10Z",
+  "host": "127x03",
+  "phase": "replacement-r2",
+  "listed": 268,
+  "durable_on_hub": 268,
+  "ack_returned": 268,
+  "pending_return": [],
+  "error": null,
+  "block_errors": {},
+  "lifecycle_error": null,
+  "stop_request": [],
+  "sealed": true,
+  "revoked": true,
+  "final": true
+}

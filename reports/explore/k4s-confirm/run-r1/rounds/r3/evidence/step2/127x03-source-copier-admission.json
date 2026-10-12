@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-12T08:57:07Z",
+  "host": "127x05",
+  "source_ip": "129.65.221.15",
+  "identity": {
+    "pid": 485959,
+    "pgid": 485959,
+    "start_ticks": 158519881,
+    "cmdline_sha256": "c236474e033ce427e7e9f3a9b89731dc1142a81e8226a6ea99ebf6fdfa819bec",
+    "uid": 3822945,
+    "exe": "/usr/bin/python3.8"
+  },
+  "job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2",
+  "phase": "replacement-r2",
+  "source_host": "127x03",
+  "active": false,
+  "amendment": "K4S OA-1",
+  "finished_utc": "2026-10-12T11:10:02Z"
+}

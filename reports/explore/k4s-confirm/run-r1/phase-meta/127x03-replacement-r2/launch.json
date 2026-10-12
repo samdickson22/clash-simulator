@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-12T08:57:13Z",
+  "host": "127x03",
+  "phase": "replacement",
+  "slots": 11,
+  "who": "",
+  "runtime_pin_sha256": "5ce48005dbea8dd0ee80c26c7785636c95bdcddded0bc2c90f6740b610ed176b",
+  "dispatch_sha256": "1df20188998b9bfe659446fa3463bb2d8b369eba547e0a3331f8b1f2e84bfcd3",
+  "supervisor_pid": 2116555,
+  "supervisor_pgid": 2116555
+}

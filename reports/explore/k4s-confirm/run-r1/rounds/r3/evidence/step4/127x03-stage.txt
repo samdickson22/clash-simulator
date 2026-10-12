@@ -1,0 +1,7 @@
+127x03 extras e709d7c791fb502d6dc4d954fff0bc5fe032cac3e0fe83955c7c5561b85c8663
+127x03 extras-sha-ok
+STAGED /mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3 2026-10-12T11:10:54Z
+127x03 OVERLAY-OK 175/175 overlay-list-sha d0c39b928db42330
+PREREG 9650972d362299d87f8b1084d450f9a2dbbad516a494e97da6ba33d60fb68b3a
+/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/STOP -> /mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3.STOP
+{"launched_at_utc":"2026-10-12T11:10:54Z","pid":2360714,"pgid":2360714}
