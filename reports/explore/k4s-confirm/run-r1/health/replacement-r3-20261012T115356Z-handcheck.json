@@ -1,10 +1,9 @@
 {
- "schema": "clasher.k4s.health-handcheck.v1",
- "health_receipt": "replacement-r3-20261012T115356Z.json",
- "health_sha256": "6a4bb27099c9307ccbc46d3249b0cfda851f0b3883c9e872b17977609aa2ceb0",
- "health_utc": "2026-10-12T11:53:56Z",
+ "schema": "clasher.k4s.health-handcheck.v2",
+ "script": "handcheck.py",
+ "script_sha256": "e2027200b1cc4255cbf8846111865025062652ed60e0701cb8062916297e96d8",
  "phase": "replacement-r3",
- "dispatch_sha256": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+ "status": "OK",
  "hosts": {
   "127x03": {
    "expected": 286,
@@ -23,6 +22,10 @@
    "ok": true
   }
  },
+ "flags": [],
  "note": "recorded hand check (coordinator ruling on round r3 audit F1): completed vs dispatch per host + supervisor exit reason",
- "flags": []
+ "health_receipt": "replacement-r3-20261012T115356Z.json",
+ "health_sha256": "6a4bb27099c9307ccbc46d3249b0cfda851f0b3883c9e872b17977609aa2ceb0",
+ "health_utc": "2026-10-12T11:53:56Z",
+ "dispatch_sha256": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48"
 }
