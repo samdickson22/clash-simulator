@@ -1,0 +1,136 @@
+{
+ "census_samples": 300,
+ "checks": {
+  "available_ge_6GiB": false,
+  "census_no_foreign_over_0_2_core": true,
+  "census_samples_ge_298": true,
+  "disk_free_ge_10GiB": true,
+  "swap_free_ge_1GiB": true,
+  "zero_swapouts": true
+ },
+ "disk_free_bytes": 22389616640,
+ "foreign_over_0_2_core": {},
+ "passes": false,
+ "schema": "clasher.mac-e4-session.preconditions.v1",
+ "scope": "operator preconditions, not gates; non-counted",
+ "swapouts_delta": 0,
+ "top_consumers": [
+  {
+   "cores": 0.14908109620873566,
+   "name": "/Users/sam/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService",
+   "pid": "31230"
+  },
+  {
+   "cores": 0.11033833152039794,
+   "name": "/Applications/UTM.app/Contents/XPCServices/QEMUHelper.xpc/Contents/MacOS/QEMULauncher.app/Contents/MacOS/QEMULauncher",
+   "pid": "97342"
+  },
+  {
+   "cores": 0.07935603921337368,
+   "name": "/usr/libexec/opendirectoryd",
+   "pid": "596"
+  },
+  {
+   "cores": 0.056534757833823016,
+   "name": "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+   "pid": "93121"
+  },
+  {
+   "cores": 0.03444886152028699,
+   "name": "/Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper (Renderer).app/Contents/MacOS/T3 Code (Nightly) Helper (Renderer)",
+   "pid": "43541"
+  },
+  {
+   "cores": 0.022821246348756992,
+   "name": "/usr/libexec/sysmond",
+   "pid": "34720"
+  },
+  {
+   "cores": 0.019155618377393626,
+   "name": "/opt/homebrew/opt/tailscale/bin/tailscaled",
+   "pid": "821"
+  },
+  {
+   "cores": 0.01589134996056411,
+   "name": "/System/Applications/Utilities/Activity Monitor.app/Contents/MacOS/Activity Monitor",
+   "pid": "60300"
+  },
+  {
+   "cores": 0.012659614949259716,
+   "name": "/Applications/T3 Code (Nightly).app/Contents/Resources/resource-monitor/t3-resource-monitor",
+   "pid": "43819"
+  },
+  {
+   "cores": 0.011893330380723044,
+   "name": "/Applications/T3 Code (Nightly).app/Contents/MacOS/T3 Code (Nightly)",
+   "pid": "43542"
+  }
+ ],
+ "vm_after": {
+  "available_bytes": 6651641856,
+  "page_size": 16384,
+  "pages": {
+   "\"Translation faults\"": 130284746121,
+   "Anonymous pages": 500062,
+   "Compressions": 19728606639,
+   "Decompressions": 16513313109,
+   "File-backed pages": 275652,
+   "Pageins": 891809167,
+   "Pageouts": 1313686,
+   "Pages active": 388333,
+   "Pages copy-on-write": 4834542232,
+   "Pages free": 16995,
+   "Pages inactive": 386908,
+   "Pages occupied by compressor": 504132,
+   "Pages purgeable": 2081,
+   "Pages purged": 399800107,
+   "Pages reactivated": 13894394920,
+   "Pages speculative": 473,
+   "Pages stored in compressor": 825761,
+   "Pages throttled": 0,
+   "Pages wired down": 242224,
+   "Pages zero filled": 119583456998,
+   "Swapins": 232990530,
+   "Swapouts": 262708804
+  },
+  "swap_free_bytes": 1385168896.0,
+  "swap_total_bytes": 6442450944.0,
+  "swap_used_bytes": 5057282048.0,
+  "swapouts": 262708804,
+  "utc": 1791806078.694713
+ },
+ "vm_before": {
+  "available_bytes": 6385909760,
+  "page_size": 16384,
+  "pages": {
+   "\"Translation faults\"": 130276799772,
+   "Anonymous pages": 419739,
+   "Compressions": 19728606639,
+   "Decompressions": 16513237965,
+   "File-backed pages": 323612,
+   "Pageins": 891699785,
+   "Pageouts": 1313681,
+   "Pages active": 372043,
+   "Pages copy-on-write": 4833318646,
+   "Pages free": 18884,
+   "Pages inactive": 370879,
+   "Pages occupied by compressor": 535884,
+   "Pages purgeable": 2,
+   "Pages purged": 399797060,
+   "Pages reactivated": 13894392560,
+   "Pages speculative": 429,
+   "Pages stored in compressor": 891684,
+   "Pages throttled": 0,
+   "Pages wired down": 240946,
+   "Pages zero filled": 119580866996,
+   "Swapins": 232990506,
+   "Swapouts": 262708804
+  },
+  "swap_free_bytes": 1385168896.0,
+  "swap_total_bytes": 6442450944.0,
+  "swap_used_bytes": 5057282048.0,
+  "swapouts": 262708804,
+  "utc": 1791805778.492914
+ },
+ "window_seconds": 300
+}

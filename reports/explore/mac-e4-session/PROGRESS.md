@@ -323,3 +323,36 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   readiness.
 - **ChatGPT.app:** if its Codex service hosts agent threads, or that can't be ruled out, leave it running. If
   Chrome + Claude alone don't reach 6 GiB, ask the coordinator before going further.
+
+### 2026-10-12T11:37:56Z: staging run 20261012T113505Z; fixture+stage running detached; ChatGPT.app check
+
+- run 20261012T113505Z: verifyfinal OK (runtime-a5 11,144 files and symlinks, helper 166a1636, commit file),
+  cleanup OK, packet OK (127/127 promoted).
+- run 20261012T113704Z: fixture then stage, running detached (setsid; PID 1856828; log
+  `/mpac/sdicks02/jobs/clasher/mac-e4-session-staging/fixture-stage-20261012T113704Z.log`).
+- **ChatGPT.app hosts Codex agents:**
+  - child `codex app-server` (PID 31193), with `codex exec-server --remote … --environment-id …` (31420);
+  - Codex Computer Use (31230) is also its child.
+  - Per the coordinator ruling, **ChatGPT stays running**. Only Chrome and the Claude desktop app may be quit.
+
+### 2026-10-12T11:55:09Z: STAGED (tiers-pins 273ef196); baseline preconditions FAIL on memory only
+
+- **Staging:**
+  - run 20261012T113704Z: fixture 3/3 SHA-verified; stage via stage_nocopy E2 (apfs-clone ×3, mode 0444);
+  - `validate_bundle` PASS (mac-preregistered);
+  - bundle `$S/staged-a5/bundle-a5`, tiers-pins **273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d**;
+  - staging verify receipt at 11:46:39Z; free after staging 22.4 GB.
+- **Apps:**
+  - `osascript quit app` for Google Chrome and Claude was sent at 11:47:39Z over ssh. Both are **still running**: Apple
+    Events from the Tailscale-SSH session don't reach the GUI session (or a confirm dialog may be up).
+  - No force-kill. ChatGPT is kept running (it hosts Codex agents).
+- **Baseline preconditions** (`receipts/.../preconditions-baseline-r1.json`, 11:49:38–11:54:38Z, 300 samples):
+  - census PASS (top: Codex Computer Use 0.149, UTM QEMULauncher 0.11, opendirectoryd 0.079, WindowServer 0.057);
+  - swap free 1.29 GiB PASS; 0 swapouts PASS; disk 20.9 GiB PASS;
+  - **available 5.95→6.19 GiB, FAIL** (minimum below 6).
+- **Top memory (RSS):** UTM QEMU VM 2.9 GB, T3 1.6 GB, Chrome 1.4 GB, ChatGPT/Codex 0.9 GB, Claude 0.4 GB.
+- **Coordinator rulings (COORDINATOR 4eb6c3e5):**
+  - R-M1: `D = reports/explore/mac-e4-session/tiers-session-r1`, with the 15 public paths;
+  - R-M2: the full sealed inventory goes in a private, never-pushed commit in `$S/k4s-commit-repo`, with a bundle
+    backup on 05 at `/mpac/sdicks02/jobs/clasher/mac-e4-private/` and `D/private-commit-binding.json`;
+  - R-M3: driver r3 enforces A3-P.

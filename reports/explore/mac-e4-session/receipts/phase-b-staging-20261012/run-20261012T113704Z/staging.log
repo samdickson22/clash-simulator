@@ -1,0 +1,12 @@
+2026-10-12T11:37:04Z run 20261012T113704Z commit 2e2753120a768ec03d0354e47650c61c8fd34820 macfs e63834a742db9878ef4505e500637a7a5ba26217279612b38b4fd0d6dc62976a
+2026-10-12T11:37:04Z step fixture begin
+2026-10-12T11:37:07Z fixture states-rows.json transfer start (568325 B)
+2026-10-12T11:37:08Z fixture states-rows.json OK
+2026-10-12T11:38:18Z fixture states.pkl transfer start (20710108933 B)
+2026-10-12T11:41:06Z fixture states.pkl OK
+2026-10-12T11:42:18Z fixture states-rows.bin transfer start (20712961718 B)
+2026-10-12T11:45:06Z fixture states-rows.bin OK
+2026-10-12T11:45:06Z step fixture end
+2026-10-12T11:45:06Z step stage begin
+2026-10-12T11:46:59Z stage OK tiers-pins 273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d
+2026-10-12T11:46:59Z step stage end

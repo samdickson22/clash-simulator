@@ -1,0 +1,10 @@
+2026-10-12T11:35:05Z run 20261012T113505Z commit 2e2753120a768ec03d0354e47650c61c8fd34820 macfs e63834a742db9878ef4505e500637a7a5ba26217279612b38b4fd0d6dc62976a
+2026-10-12T11:35:05Z step verifyfinal begin
+2026-10-12T11:36:38Z verifyfinal OK runtime/helper/commit
+2026-10-12T11:36:38Z step verifyfinal end
+2026-10-12T11:36:38Z step cleanup begin
+2026-10-12T11:36:39Z cleanup OK .staging-tmp-packet-20261012T112521Z
+2026-10-12T11:36:39Z step cleanup end
+2026-10-12T11:36:39Z step packet begin
+2026-10-12T11:36:56Z packet OK 127 files
+2026-10-12T11:36:56Z step packet end
