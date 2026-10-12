@@ -1,0 +1,28 @@
+{
+  "ack_present": false,
+  "exit_health": {
+    "command_exited": true,
+    "exit_code": 0,
+    "measurement_exists": true,
+    "utc": "2026-10-12T02:08:47Z"
+  },
+  "exit_received": true,
+  "files": [
+    "PREPARED.json",
+    "TRANSFER-COMPLETE.json",
+    "argv.nul",
+    "detach.json",
+    "detach.log",
+    "durable-measurement",
+    "exit.json"
+  ],
+  "host_probed": false,
+  "metadata_reader_correction": "Legacy wrapper exit.json uses utc, not exit_utc; marker name TRANSFER-COMPLETE.json. Initial health read KeyError corrected; approved verifier was never invoked.",
+  "not_before_utc": "2026-10-12T02:30:27Z",
+  "outcomes_sealed": true,
+  "push_failed": false,
+  "receiver": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x01/end-a6-127x01-0a87166f-r1",
+  "transfer_complete": true,
+  "utc": "2026-10-12T02:23:55Z",
+  "verification_invoked": false
+}
