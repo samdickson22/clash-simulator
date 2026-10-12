@@ -2606,3 +2606,28 @@ The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8
 **Not yet:**
 - 01/08 stay reserved to T1 until the PC verdict.
 - No release.
+
+## 2026-10-12 08:18Z: Production-packet review r1: NOT CLEARED (fail-closed blockers); next steps
+
+`END-PRODUCTION-PACKET-REVIEW-r1.md`, T1 job dir.
+
+**Results:**
+
+| Check | Result |
+|---|---|
+| PC1: all attempts accounted for (independent 01/08 host listings) | PASS |
+| PC2: 18/18 reviewed inventory | PASS |
+| Pool: both hosts, ±5%, first-passing classification, no old code in `pool_inputs` | PASS |
+| T4 seal | INTACT |
+| Outcome exposure | none found |
+
+**Blockers. Each fails closed; none involves outcomes.**
+- **F1:** the pool-check receipt mixes two path roots, so `release_reference.prerequisites` would refuse it. Remedy R3: regenerate the receipt in one clean release checkout.
+- **F2:** PC4 hasn't been run against the durable counted-block root. The complete proofs exist only on hub 01.
+- **F3:** it is ambiguous which CLI and reducer lineage applies: OP-6 e643a342 on main, or OP-7 bb124cc4, which produced the committed sidecar and is on a worker branch.
+- **F4:** the checker's interpreter wasn't recorded. My independent rerun under e4v3-venv 3.12.12 passes and is byte-identical.
+
+**Actions:**
+- **T1:** R3/R4 (regenerate the pool check in clean `<R>`, recording the interpreter) and prepare R5. No sealing.
+- **Coordinator:** an independent Opus lineage investigation is routed (`END-PC4-LINEAGE-INVESTIGATION-r1.md`). The F3 ruling and the PC4 root/authority (F2) follow from it.
+- **Hosts:** 01 and 08 stay reserved, with the host roots and release roots untouched until release.
