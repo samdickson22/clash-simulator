@@ -2668,3 +2668,30 @@ The basis is the independent investigation `END-PC4-LINEAGE-INVESTIGATION-r1.md`
    - R5 seal and registration (registration still waits on the A4 Mac inputs: the builder's 03 read happens at the current K4S gap).
    - R6 barrier under e4v3-venv 3.12.12.
    - R7 production-packet review r2.
+
+## 2026-10-12 08:35Z: PC4 PASS (independent reviewer run on 01, OP-7 CLI bb124cc4)
+
+Reviewer files are in the T1 job dir: `PC4/PC4-REVIEW-r1.md` (11bbfc9a), `PC4/PC4-REVIEWER-CHECK-RECEIPT.json` (48fe1011) and `PC4/ssh-sensitivity-pc4.json` (ea3d44d3).
+
+**The run:**
+- One read-only run on hub 01, from the ef4c073a archive. All 193 manifest entries were verified.
+- cpython 3.12.13, exit 0, empty stderr.
+- Root: r3 `hub-blocks`. Ledger: 866e6f7f.
+
+**Checks (28/28 pass):**
+- The output equals the committed 48730da5 in every field except `utc`.
+- 3,072 entries: 2400 primary / 600 guard / 72 descriptive.
+- IDs equal 50f24dd6 and 6f6f0007, and every complete/interference SHA matches.
+- 2,361 v2 / 711 legacy.
+- Flags: apt 0, apt stops 0, SSH stops 0, SSH-flagged 477 (all on 08: 352 in r1 under OP-6, 125 in r2 under OP-7; primary 379 / guard 98).
+- Durability 1,972 (01) + 1,100 (08, all ACKed). Dedup holds, and 54 replacements are bound to the ledger.
+
+**T1 commits the PC4 files verbatim.**
+
+**Remaining before release:**
+- The landing commit plus an Opus diff review and the 977c4dfb addendum.
+- A second PC4 run from the landed bytes, which must give the identical sidecar (add `-B`).
+- R3 in the final `<R>`.
+- R5 seal plus registration, after the A4 inputs.
+- R6 barrier. Reducer aebb2017's emitted ledger must equal the PC4 sidecar except `utc`.
+- R7 review r2.
