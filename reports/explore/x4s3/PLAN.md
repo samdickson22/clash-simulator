@@ -144,3 +144,15 @@ R3a 37509a43.
 - Budget equivalence, not a real slow Mac.
 - The calibration slice is reused.
 - Students differ in data and seed only through the declared arms.
+
+## Pre-outcome deviation (2026-10-12, accepted by the coordinator before any reporting outcome was seen)
+- **Memory guard semantics.** The first three R3a K4S-120 attempts (11:52:50–11:54:06Z) were stopped by the
+  supervisor's memory-PSI kill guard (some avg10 > 10%). The trigger was a page-cache burst when 10 game workers
+  started while the fit streamed its corpus; MemAvailable stayed at about 105 GiB.
+  - From 11:55Z the supervisor kills only on MemAvailable < 24 GiB or owned PSS > 50 GiB.
+  - Memory PSI is still logged, and the driver withholds new dispatch while some avg10 > 10%. This is the plan's
+    "stop dispatching".
+  - This is a guard-only change: no game, student or scoring code changed.
+- **Seed retirement.** Under the declared rule, seeds 0–32 (33 indices that may have started in the interrupted
+  attempts; none finished) are retired for every student and never re-run. The paired reporting set is therefore
+  at most **1,167 seeds**. Cells (index mod 50) 0–32 have 23 seeds; the others have 24.
