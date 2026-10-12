@@ -1,0 +1,109 @@
+{
+  "01_ACK_sha256": "9614ab9252e2f1e271a4cfc8f914ca9f067405db0a9cb10866ea5ac49d55e57a",
+  "01_timing_values_NEVER_opened": true,
+  "08r3_ACK_sha256": "096eabdbb3da6227acffe471243824f4c079bd938f2e77ce831939d691a0f16b",
+  "A4_unsealed": true,
+  "L1_copies": {
+    "01_r1": 59,
+    "08_r3": 52,
+    "all_SHA_match": true,
+    "original_received_data_unchanged": true
+  },
+  "RG2_finished_first": true,
+  "backend_or_tests": false,
+  "baseline_runtime": {
+    "18_measurement_files_checked": true,
+    "all_A3_pins_checked": true,
+    "extra_measurement_only_nonPython_files_restored_fromA3archive": true,
+    "files": 3785
+  },
+  "candidate_root": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-base-20261012-r1",
+  "host_copies": false,
+  "host_writes": false,
+  "inputs": {
+    "016_void_NOTstaged": true,
+    "A5_adopted": false,
+    "host_copies": false,
+    "host_writes": false,
+    "hosts": {
+      "01": {
+        "candidate_not_C3_PASS": true,
+        "external_byte_dependencies": [
+          {
+            "expected_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+            "path": "states.pkl",
+            "reason": "authoritative0addbytesonlyonhost;postadoptionhardlinkunchangedA3file;05reserializeda7NOTsubstitute"
+          }
+        ],
+        "manifest_SHA": "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7",
+        "pinned_inputs": 68,
+        "present_inputs": 67
+      },
+      "08": {
+        "candidate_not_C3_PASS": true,
+        "external_byte_dependencies": [
+          {
+            "expected_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+            "path": "states.pkl",
+            "reason": "authoritative0addbytesonlyonhost;postadoptionhardlinkunchangedA3file;05reserializeda7NOTsubstitute"
+          }
+        ],
+        "manifest_SHA": "1bd8a4c734e79a615f2f86f9354ff7724ae12b23cebf152c79404a84e918ff88",
+        "pinned_inputs": 69,
+        "present_inputs": 68
+      }
+    },
+    "launches": false,
+    "newconversion": false,
+    "row_containers": "sameimmutableauthoritativeA3bytes/hardlinks",
+    "status": "CANDIDATE-A3-INPUTS-WITH-DECLARED-EXTERNAL-FIXTURE",
+    "utc": "2026-10-12T04:32:25Z"
+  },
+  "launches": false,
+  "mirror_paused": true,
+  "next": "replacementSHA\u2192rebuildfreshCANDIDATEnamespace; explicitadoption+instructionsbeforehostwrites; fullhostC3 required/picklehardlink; metadatahost08smokederivationdiffreviewable",
+  "no_C3_PASS_claim": true,
+  "no_main_adoption_claim": true,
+  "old_attempts_NEVER_pooled": true,
+  "outcomes_sealed": true,
+  "reconversion": false,
+  "replacement_SHA_pending": true,
+  "smoke_blueprint": {
+    "016_NOTstaged": true,
+    "A5_adopted": false,
+    "backend": false,
+    "external_states_pkl_sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+    "helper_SHA": "071a43282cd42950396539081e2f6f2f6696a3c421ca5ec64ced91183504b815",
+    "helper_outside_frozen_runtime": true,
+    "host": "127x08",
+    "host_writes": false,
+    "launch": false,
+    "manifest_sha256": "88b14f2b1d0f2ec6f8ae350964178101bdc2ad4541e22f27518ca2c05c3777dc",
+    "measurement_code": "A3baselineONLY/awaitreplacementSHA",
+    "new_conversion": false,
+    "offline_derivation_failures_preserved": "r1wronghelpercheckdirectory/r2threeA3measurement-onlyextrasmissing; correctedwithoutbackend/hostwrites",
+    "profile": "e4v3-unpoolable-smoke",
+    "rebuild_after_replacement_SHA": true,
+    "slots": 11,
+    "status": "CANDIDATE-METADATA-BLUEPRINT-ONLY-NOT-C3-PASS",
+    "timing": false,
+    "utc": "2026-10-12T04:38:57Z",
+    "warmup": 300
+  },
+  "source_documents_commit": "fd3f1a03",
+  "status": "CANDIDATE / NOT ADOPTED / OFFLINE 05 ONLY",
+  "templates": {
+    "A5-manifest-01.CANDIDATE.template.json": "c65cd6d1f3a67f898f9e42c29d0aced180c4bf30c7babd1b9f2ed2f262cf1bd5",
+    "A5-manifest-08.CANDIDATE.template.json": "1bcc32d41e1315e77fe011ec4ad7dbcd110858230a60f3ed592aa06fcd7e4b0a",
+    "argv-and-C3-input-templates.CANDIDATE.json": "dad8ae12c564646ad5119df223e0258ad1d08cb09a7fe18fc4ef6cc41eab181a",
+    "derive-smoke-08-CANDIDATE-metadata-only.py": "071a43282cd42950396539081e2f6f2f6696a3c421ca5ec64ced91183504b815",
+    "derive-smoke-08-CANDIDATE.diff": "47e03f46dd3871a2d6b67d0f5a67c7735529a4a64d005866e7c229b0aa3a11dc",
+    "measurement-files-18-CANDIDATE.json": "e7768a6af019e740e74b161fc7c8c96c3137977a1179f866757b54edd5472446",
+    "parameterized-build-recipe.CANDIDATE.json": "1a691fbaca1b09dc6aab5ade072b902a01399025d270621ba7e4b551c7e8ebc8",
+    "reference-attempt-roots-0108-a5.CANDIDATE.json": "0d20fca82eb547c8cad4c081812efd00c1d7a6ea15872533fb24f4bd902129bd",
+    "smoke-blueprint-plan.CANDIDATE.json": "251d7931b33fab14275d10937d88e03d1ff26fabac4701a855830ad9fd199746"
+  },
+  "utc": "2026-10-12T04:39:50Z",
+  "void_bytes_NOT_staged": true,
+  "void_candidate_sha256": "016ae7d0ba8238b5af55356a9b33b3e467c02ef21087599535dbb16a2ef26cf3"
+}
