@@ -1,0 +1,4 @@
+pattern: (apt|apt-get|apt-check|dpkg|unattended-upgr|update-notifier|check-new-rele)
+pattern: (apt|apt-get|apt-check|apt-config|apt.systemd.dai|dpkg|unattended-upgr|update-notifier|check-new-rele)
+  match: apt.systemd.dai
+  match: apt-config
