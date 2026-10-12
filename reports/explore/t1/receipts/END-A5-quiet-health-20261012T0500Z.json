@@ -1,0 +1,23 @@
+{
+  "authoritative_adoption": "46ab6923/8799a0d6",
+  "current_preparation_commit": "d7c4c9a9",
+  "files": [
+    "PREPARED.json"
+  ],
+  "host_probed": false,
+  "old_code_never_pooled": true,
+  "old_timing_sealed": true,
+  "outcomes_sealed": true,
+  "pins_match": true,
+  "pins_sha256": {
+    "END-A5-smoke-launch-receipt-08-r1.json": "615c7f4e53d8a32109c275af07ff7a66b7ad228d4233b298e948ca48ba5f6b85",
+    "END-A5-smoke-receive-prepare-08-r1.json": "be30258efa2a82425267a765a00fbaa9a6b6ee0605b70aa1e206481125bce15b",
+    "END-approved-verifier-753722c9.py": "753722c922a1f6adae09de42044202a9c57b877af91cc11fcb9d238c879f60d1"
+  },
+  "queued_checkpoint": "04:39:50 before A5 adoption; historical",
+  "receive": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x08/end-a5-smoke-127x08-0a87166f-r1",
+  "reference_launches_held": true,
+  "schema": "clasher.t1.a5-quiet-health.v1",
+  "utc": "2026-10-12T05:00:55Z",
+  "verification_invoked": false
+}
