@@ -1,0 +1,136 @@
+{
+ "census_samples": 300,
+ "checks": {
+  "available_ge_6GiB": true,
+  "census_no_foreign_over_0_2_core": true,
+  "census_samples_ge_298": true,
+  "disk_free_ge_10GiB": true,
+  "swap_free_ge_1GiB": true,
+  "zero_swapouts": true
+ },
+ "disk_free_bytes": 22414405632,
+ "foreign_over_0_2_core": {},
+ "passes": true,
+ "schema": "clasher.mac-e4-session.preconditions.v1",
+ "scope": "operator preconditions, not gates; non-counted",
+ "swapouts_delta": 0,
+ "top_consumers": [
+  {
+   "cores": 0.14621627356399505,
+   "name": "/Users/sam/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService",
+   "pid": "31230"
+  },
+  {
+   "cores": 0.11570291504859591,
+   "name": "/Applications/UTM.app/Contents/XPCServices/QEMUHelper.xpc/Contents/MacOS/QEMULauncher.app/Contents/MacOS/QEMULauncher",
+   "pid": "97342"
+  },
+  {
+   "cores": 0.08688585502612846,
+   "name": "/usr/libexec/opendirectoryd",
+   "pid": "596"
+  },
+  {
+   "cores": 0.05683456325919689,
+   "name": "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+   "pid": "93121"
+  },
+  {
+   "cores": 0.030518373499958895,
+   "name": "/Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper (Renderer).app/Contents/MacOS/T3 Code (Nightly) Helper (Renderer)",
+   "pid": "43541"
+  },
+  {
+   "cores": 0.024987882250190635,
+   "name": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/corespotlightd",
+   "pid": "98056"
+  },
+  {
+   "cores": 0.023453742016303444,
+   "name": "/usr/libexec/sysmond",
+   "pid": "34720"
+  },
+  {
+   "cores": 0.021522089329592414,
+   "name": "/opt/homebrew/opt/tailscale/bin/tailscaled",
+   "pid": "821"
+  },
+  {
+   "cores": 0.0159914646064854,
+   "name": "/System/Applications/Utilities/Activity Monitor.app/Contents/MacOS/Activity Monitor",
+   "pid": "60300"
+  },
+  {
+   "cores": 0.012693077608915871,
+   "name": "/Applications/T3 Code (Nightly).app/Contents/Resources/resource-monitor/t3-resource-monitor",
+   "pid": "43819"
+  }
+ ],
+ "vm_after": {
+  "available_bytes": 8602681344,
+  "page_size": 16384,
+  "pages": {
+   "\"Translation faults\"": 130297786576,
+   "Anonymous pages": 734522,
+   "Compressions": 19728606639,
+   "Decompressions": 16513569284,
+   "File-backed pages": 271208,
+   "Pageins": 892016554,
+   "Pageouts": 1313686,
+   "Pages active": 499930,
+   "Pages copy-on-write": 4836544651,
+   "Pages free": 18029,
+   "Pages inactive": 502485,
+   "Pages occupied by compressor": 288103,
+   "Pages purgeable": 4552,
+   "Pages purged": 399803259,
+   "Pages reactivated": 13894397199,
+   "Pages speculative": 3315,
+   "Pages stored in compressor": 534739,
+   "Pages throttled": 0,
+   "Pages wired down": 227199,
+   "Pages zero filled": 119587385296,
+   "Swapins": 232993242,
+   "Swapouts": 262708804
+  },
+  "swap_free_bytes": 1435500544.0,
+  "swap_total_bytes": 6442450944.0,
+  "swap_used_bytes": 5006950400.0,
+  "swapouts": 262708804,
+  "utc": 1791806530.664889
+ },
+ "vm_before": {
+  "available_bytes": 7061405696,
+  "page_size": 16384,
+  "pages": {
+   "\"Translation faults\"": 130288997035,
+   "Anonymous pages": 542606,
+   "Compressions": 19728606639,
+   "Decompressions": 16513363476,
+   "File-backed pages": 302119,
+   "Pageins": 891897917,
+   "Pageouts": 1313686,
+   "Pages active": 421950,
+   "Pages copy-on-write": 4835179338,
+   "Pages free": 15546,
+   "Pages inactive": 411439,
+   "Pages occupied by compressor": 450922,
+   "Pages purgeable": 4009,
+   "Pages purged": 399801322,
+   "Pages reactivated": 13894396111,
+   "Pages speculative": 11336,
+   "Pages stored in compressor": 727278,
+   "Pages throttled": 0,
+   "Pages wired down": 227871,
+   "Pages zero filled": 119584783440,
+   "Swapins": 232992905,
+   "Swapouts": 262708804
+  },
+  "swap_free_bytes": 1427111936.0,
+  "swap_total_bytes": 6442450944.0,
+  "swap_used_bytes": 5015339008.0,
+  "swapouts": 262708804,
+  "utc": 1791806230.4633632
+ },
+ "window_seconds": 300
+}

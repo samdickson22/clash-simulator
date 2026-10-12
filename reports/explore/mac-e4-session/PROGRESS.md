@@ -356,3 +356,22 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   - R-M2: the full sealed inventory goes in a private, never-pushed commit in `$S/k4s-commit-repo`, with a bundle
     backup on 05 at `/mpac/sdicks02/jobs/clasher/mac-e4-private/` and `D/private-commit-binding.json`;
   - R-M3: driver r3 enforces A3-P.
+
+### 2026-10-12T12:04:10Z: coordinator rulings dbe683e0 applied; preconditions-r2 PASS; session launcher in Sol review
+
+- **Manifest approved:** `E4_MANIFEST_SHA` = 273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d.
+- **There is no Sol computer-use route.** App quits are done by SIGTERM of the main app process only; the update
+  toggles stay unchanged and are disclosed.
+- **Chrome:** PID 56345 (user sam, `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`, parent launchd)
+  was sent SIGTERM at 11:56:42Z. It exited in about 1 s, with 0 sam Chrome processes left.
+- **Claude:** PID 63277 belongs to user **simonfarshid** (the other console user's session). Not touched, per "leave
+  simonfarshid alone".
+- **Update state, read-only at 11:56:53–11:57:04Z:**
+  - AutomaticDownload=1, AutomaticallyInstallMacOSUpdates=1, ConfigDataInstall=1, CriticalUpdateInstall=1;
+    automatic checking ON;
+  - `softwareupdate --list`: macOS 27.0.1-26A434, Recommended YES, **Action: restart**;
+  - the MSUPrepareUpdate snapshot is present; softwareupdated is idle.
+- **preconditions-r2** (11:57:10–12:02:10Z): **PASS**. Census top: Codex Computer Use 0.146; available 6.58 →
+  8.01 GiB; swap free 1.33 GiB; 0 swapouts; disk 20.9 GiB. Receipt `receipts/phase-b-staging-20261012/preconditions-r2.json`.
+- **Session launcher:** `run_session.sh` plus `session_wrapper.py` (daemonized, caffeinate -i -w, lock held
+  through verify/build/measure, pre and post receipts), in Sol pre-run review.
