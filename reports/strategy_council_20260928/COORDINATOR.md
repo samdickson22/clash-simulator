@@ -3167,3 +3167,27 @@ The review is `END-C1-RELEASE-DRIVER-REVIEW-r3.md`.
 - **C6:** tests only. Add tests that kill the surviving R-M3, AL1/AL2/AL5 and T2c mutants, then rerun the mutant suite and keep the receipt.
 
 **Residual, accepted:** a second signal during the main failure handler exits 143 without a health line. The directory is already at mode 000, and the runbook treats "no health record" as locked.
+
+## 2026-10-12 12:44Z: Release descendant builder dd644cdc APPROVED WITH CONDITIONS
+
+The review is `END-C1-BUILDER-REVIEW-r1.md`.
+
+**The protection-ref fix is correct.** It does three things:
+- refuses the ref by exact name, whether loose or packed;
+- creates refs with CAS, only if the name is absent;
+- checks 9bb349b1 before and after the write.
+
+The 21 alias probes all failed safely. The mutants were 108 killed and 7 surviving, with every required one killed. The runbook post-checks catch every injected HEAD, tree, ref and mode fault.
+
+**Conditions (runbook only):**
+- **BC1:** the target ref name must be fully unused beforehand; check that no symref, ref, child ref or loose file exists there. Afterwards the ref must equal the receipt commit, and that commit must not be reachable from heads, tags or remotes.
+- **BC2:** the HEAD switch runs under `env -i` with `core.hooksPath=/dev/null`, and the post-checks run in the same environment.
+
+**Release sequence once the Mac session ends:**
+1. Mac D outputs, the private bundle and A3-P are committed.
+2. The coordinator gives GO.
+3. The builder runs once.
+4. The BC2 switch and its post-checks.
+5. Driver 9ffbd2e1 runs under its launch conditions.
+
+The 14-day route stays on 42219e57.
