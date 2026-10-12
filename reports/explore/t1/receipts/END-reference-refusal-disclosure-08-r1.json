@@ -1,0 +1,113 @@
+{
+  "ACK": {
+    "ack_allowed": true,
+    "all_hashes_verified": true,
+    "approved_legacy_wrapper": true,
+    "attempt": "end-reference-127x08-0a87166f-r1",
+    "classification": "SEALED",
+    "exit_code": 1,
+    "files": 1,
+    "host": "127x08",
+    "legacy_PUSH_FAILED_without_exit_code_is_failure": true,
+    "outcomes_sealed": true,
+    "prepared_nonce": "13ca818fd2a94a37be73db86adf1ff05",
+    "receipt_manifest_sha256": "d1fba388751730b3ca0f91b52c1e8a8216dd98237e186d14663713fe169235fb",
+    "status": "failed",
+    "utc": 1791774631.9767814
+  },
+  "ACK_sha256": "48e11022d34657011b11bb9c59192342d906f146fee576ae0999633a29c88406",
+  "PC1_rule": "host-root listing == descriptor UNION committed exemptdisclosures; disjoint",
+  "RF1": "536bf5bd/c42b32fe/15b10ef2",
+  "STOP_receipt": "reports/explore/t1/receipts/END-reference-invalid-nice-08-STOP-20261012T0249Z.json",
+  "STOP_receipt_sha256": "cb8605cb42652c22ce6dc930fd066deae9aa7e5c7a6f57d8e31466657f26d9c5",
+  "ack_status_branch": "failed durabilityonly, NEVERpassing",
+  "argv_nul_sha256": "cb771b50a086cbd9726a6b2c8c7ada6a027c76cfce1bafbcb6f3beb515ed9c83",
+  "attempt": "end-reference-127x08-0a87166f-r1",
+  "cause": "Launcher inheritednice19; requirednice10; slot_layout refusal beforeidentity/timing",
+  "descriptor_included": false,
+  "detach_log_sha256": "8dc04fa3fb2143544391d865b9fae54adddd3f7b0001e28f9e227d776ee4ff7f",
+  "exempt_refusals_this_host_campaign": 1,
+  "exit": {
+    "attempt": "end-reference-127x08-0a87166f-r1",
+    "command_exited": true,
+    "exit_code": 1,
+    "host": "127x08",
+    "measurement_exists": true,
+    "utc": "2026-10-12T02:48:18Z"
+  },
+  "exit_sha256": "594856c2562e2c4c8915945ede7848e2ff1707e4cefa54e97f851af3b54b4085",
+  "failure_sha256": "8aa5acbf5f30d1121c5da6a6353281c3037cf12bae975e60d2fa38f5fb7903e3",
+  "full_SHA_equality": true,
+  "host": "127x08",
+  "launch_receipt_path": "reports/explore/t1/receipts/END-reference-launch-receipt-08-r1.json",
+  "launch_receipt_sha256": "b2c9969d1b048dbf5c6829bb35afd636073302b8e00c31253da3fda906380788",
+  "manifest_sha256": "d1fba388751730b3ca0f91b52c1e8a8216dd98237e186d14663713fe169235fb",
+  "mechanical_predicate": {
+    "ACK_SEALED_failed_one_file_nonzero_attempt_exit": true,
+    "detach_log_only_traceback": true,
+    "innermost_reference_frame_pre_identity": true,
+    "manifest_files_exact_failure": true,
+    "technical_cause_explicit_null": true
+  },
+  "metadata_receipt_assembly_correction": "Initial05assembler missinghashlib import; fixed before disclosurewrite. No verifier or E4 retry.",
+  "must_commit_before_r2_launch": true,
+  "outcomes_sealed": true,
+  "reference_frames": [
+    {
+      "function": "run",
+      "line": 34
+    }
+  ],
+  "refusal_copy_directory": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-refusals-0108/127x08/end-reference-127x08-0a87166f-r1",
+  "refusal_copy_file_count": 3,
+  "refusal_copy_sha256": {
+    "failure.json": "8aa5acbf5f30d1121c5da6a6353281c3037cf12bae975e60d2fa38f5fb7903e3",
+    "receipt-manifest.json": "d1fba388751730b3ca0f91b52c1e8a8216dd98237e186d14663713fe169235fb",
+    "receipt-manifest.sha256": "a2976f9a8a87c92f0a2db48e2d77999b2ebd48025c6a5dfdfcaa15711819839a"
+  },
+  "registered_release_root_included": false,
+  "repeat_rule_counted": false,
+  "seal_stamp_sha256": "a2976f9a8a87c92f0a2db48e2d77999b2ebd48025c6a5dfdfcaa15711819839a",
+  "source_C1_C7": {
+    "console": {
+      "console_count": 0,
+      "positive": false,
+      "who": ""
+    },
+    "earlier_wrappers": [],
+    "exact_wrapper_gone": true,
+    "group_empty": true,
+    "host": "127x08",
+    "host_root_listing": [
+      "end-reference-127x08-0a87166f-r1"
+    ],
+    "no_signals_or_mutations": true,
+    "outcomes_sealed": true,
+    "source_measurement": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r1/measurement",
+    "source_measurement_listing": [
+      "failure.json",
+      "receipt-manifest.json",
+      "receipt-manifest.sha256"
+    ],
+    "source_measurement_sha256": {
+      "failure.json": "8aa5acbf5f30d1121c5da6a6353281c3037cf12bae975e60d2fa38f5fb7903e3",
+      "receipt-manifest.json": "d1fba388751730b3ca0f91b52c1e8a8216dd98237e186d14663713fe169235fb",
+      "receipt-manifest.sha256": "a2976f9a8a87c92f0a2db48e2d77999b2ebd48025c6a5dfdfcaa15711819839a"
+    },
+    "source_wrapper_metadata_sha256": {
+      "argv.nul": "cb771b50a086cbd9726a6b2c8c7ada6a027c76cfce1bafbcb6f3beb515ed9c83",
+      "detach.json": "a99b80f8862454cc9a69712378c9a8c927828f6221a4cbf6eb261a807fe988a3",
+      "detach.log": "8dc04fa3fb2143544391d865b9fae54adddd3f7b0001e28f9e227d776ee4ff7f",
+      "exit.json": "594856c2562e2c4c8915945ede7848e2ff1707e4cefa54e97f851af3b54b4085"
+    },
+    "utc": "2026-10-12T03:14:32Z",
+    "wrapper_pid": 1310023,
+    "wrapper_start_ticks": 157268945
+  },
+  "source_C1_C7_pending": false,
+  "source_measurement_matches_received_and_refusal_copy": true,
+  "technical_cause": null,
+  "utc": "2026-10-12T03:13:05Z",
+  "verification_receipt": "reports/explore/t1/receipts/END-reference-approved-verification-08-r1-20261012T0310Z.json",
+  "verification_receipt_sha256": "dcf565ee40626e352e59aa599b66829c726d4192b99c1de4a80e98b69879a786"
+}
