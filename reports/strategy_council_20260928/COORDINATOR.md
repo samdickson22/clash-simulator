@@ -4237,3 +4237,20 @@ They come from bundle manifest 32a4a36f.
 - **Retrieval.** Defect U1 (one bad file aborts the whole read) is deferred to r2.
 
 **Next.** Fresh drafts for the environment phase: a CPU GO, placement r3 and a run GO using this transport. These replace the unissued 05ff759e, edea9611 and 401ac9f9.
+
+## 2026-10-12 23:22Z: Fresh 08 quiet-read r2 for the environment GO (E-1 of the generic-transport review)
+
+**Script.** The coordinator ran the reviewed quiet-read once with exactly one change: the output directory is `b08-quiet-read-r2` instead of `-r1`, since the r1 directory is exclusive and already exists.
+- The diff is that single `Q=` line. The new script is `evidence/coordinator-quiet-read-r2.sh`, sha 91f4ea6e.
+- The reviewed original is e36f8538 and is unchanged.
+
+**Run.** Exit 0, one SSH session, empty stderr. Output is in `l1/receipts/b08-quiet-read-r2/`: **observation.json, sha d5086e1e773b656b771f01ca66654dc4af3168b0c3bd840ac7fd15bc98d29ccf**. Remote UTC was 2026-10-12T23:21:49.439240Z.
+
+| Check on 08 | Value |
+|---|---|
+| who | 0 |
+| `/mpac` available | 1,220,889,788,416 B of 2,015,104,376,832 B (60.6%) |
+| loadavg | 0/0/0 |
+| CPUs | 128 on both hosts |
+
+All gates pass. **The environment CPU GO, placement r3 GO and run GO must cite this observation.**
