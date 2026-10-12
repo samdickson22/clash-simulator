@@ -2695,3 +2695,27 @@ Reviewer files are in the T1 job dir: `PC4/PC4-REVIEW-r1.md` (11bbfc9a), `PC4/PC
 - R5 seal plus registration, after the A4 inputs.
 - R6 barrier. Reducer aebb2017's emitted ledger must equal the PC4 sidecar except `utc`.
 - R7 review r2.
+
+## 2026-10-12 08:50Z: OP-7 landing APPROVED; second PC4 (landed bytes) PASS; final R3 pool check
+
+**Landing 1cb46a13 is APPROVED.** The review is `LANDING-OP7-REVIEW-r1.md`; the addendum is `RELEASE-INTEGRATION-977c4dfb-ADDENDUM-r1.md`.
+- **Exact copies.** The five files are byte-exact with tag ef4c073a and with 488f6c8d.
+- **Protected files unchanged:** 132 in total, including `FROZEN-T1` 24817e16, `host_audit`, `ssh_budget`, `supervise`, `barrier`, `release_reference`, `check_reference`, `common` and all 125 e4v3 files.
+- **Reducer.** The only delta is the OP-7 apt/union analyses. The primary analysis and its RNG are unchanged.
+- **Tests:** 174/174 on the landing tree; full `test_op7` 99/99 on the frozen export.
+
+**Second PC4 run from the landed bytes: PASS** (`PC4/PC4-REVIEW-r2-landed.md`).
+- The sidecar 16e1b34f equals ea3d44d3 and 48730da5 except for `utc`, and all three are byte-identical once `utc` is masked.
+- Main's `ssh_budget` 0c2759f5 is immaterial here: the functions it uses are identical.
+
+**Final R3 pool check** (041de810, check cf3be4dd):
+- run in canonical `<R>` at landing 1cb46a13;
+- its 204 inputs equal `pool_inputs`;
+- interpreter recorded as e4v3-venv 3.12.12.
+
+That closes F1 and F4 of review r1, and F2 and F3 are closed by R1 and PC4.
+
+**Remaining:**
+1. R5 sealing and registration, once the builder's A4 inputs are delivered (Phase 2 read from 03 is in progress; Phase 3 build on 05 follows).
+2. R6 barrier; the reducer aebb2017 ledger must equal the PC4 sidecar except `utc`.
+3. R7 production-packet review r2.
