@@ -1,0 +1,42 @@
+{
+  "all_source_sessions_closed_before_go_plus_30_minutes": true,
+  "b_runtime_admitted": false,
+  "both_released": true,
+  "bytes": 13427790169,
+  "coordinator_commit": "c00317cf504b23bbf2759986a49f472b420b1f99",
+  "cut": 2,
+  "destination_prefix": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/inputs/",
+  "files": 7649,
+  "go_receipt": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/go-receipt-cut2.json",
+  "go_sha256": "1d383dece35b9e16069c6920841c03c5a90f3ce369d4564b103aded22dcb9e04",
+  "gpu_started": false,
+  "heldout_opened": false,
+  "package_sha256": "4065564142c9ebad3b38f465591faeb8d5203913989931059e7057dcdbb6e9b1",
+  "payloads_on_05": false,
+  "results": {
+    "127x03": {
+      "bytes": 10302441712,
+      "exit_code": 0,
+      "files": 5387,
+      "released_message_id": "message:mcp:5eaa8034-8c9f-4cbb-a098-e5ccf5d5f81f:thread-send:perception-b-gap-cut2-released-127x03-r1",
+      "result_receipt": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-gap-export-20261012-r1/127x03-cut2-claim-result.json",
+      "sha256": "15bddeaa31cfda947a22c9302d8b56c4c9e9e8e6d275c6c8b27437a228f81800",
+      "source_session_closed_utc": "2026-10-12T11:26:18.580660+00:00",
+      "status": "DESTINATION_SHA_VERIFIED"
+    },
+    "127x04": {
+      "bytes": 3125348457,
+      "exit_code": 0,
+      "files": 2262,
+      "released_message_id": "message:mcp:5eaa8034-8c9f-4cbb-a098-e5ccf5d5f81f:thread-send:perception-b-gap-cut2-released-127x04-r1",
+      "result_receipt": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-gap-export-20261012-r1/127x04-cut2-claim-result.json",
+      "sha256": "ab1667772563c24f31949d05aba5f41c8c3209e170d3dcfa1c9399588f817e0c",
+      "source_session_closed_utc": "2026-10-12T11:24:24.955538+00:00",
+      "status": "DESTINATION_SHA_VERIFIED"
+    }
+  },
+  "retries": 0,
+  "schema": "clasher.v4.b08-gap-export-completion.v1",
+  "source_sessions_per_host": 1,
+  "utc": "2026-10-12T11:27:08.075093+00:00"
+}
