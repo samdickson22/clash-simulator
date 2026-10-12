@@ -2254,3 +2254,25 @@ Sol has rejected the cycle automation twice (`round.sh` r1, `round.py` r2: seven
 Each round commits a receipt with every hash. **`round.py` is shelved**: no further hardening rounds and no execution.
 
 **Post-round audit:** a read-only evidence and receipt audit by an Opus-high delegate, routed by the coordinator. Sol is reserved for reviewing Claude-written code, and no new code is involved. Findings go to the coordinator. A blocking finding stops the next cycle until it is ruled on.
+
+## 2026-10-12 02:47Z: T1 END reference layout ruling (wrapper `$job/measurement` vs PC1 attempt roots)
+
+**The conflict:** the frozen wrapper 0a87166f forces E4 `--output=$job/measurement`, with the job's parent being either BASE or the host root. `release_reference.attempt_roots` (`:114-138`) wants each attempt directory to be an immediate child of the declared root, with `fleet-identity.json` directly inside. There is no code change; the wrapper, E4, the checker and `reference-attempt-roots-0108.json` all stay unchanged.
+
+**Ruling (L1):**
+
+1. **On each measuring host,** the reference job is `BASE/fleet-end-attempts-0108/<host>/<attempt>`, the original attempt as an immediate child of the original host root, which the wrapper allows. E4 output goes to `<attempt>/measurement`. Every passing or failed attempt gets its own directory there. Nothing is deleted, moved or archived on the host.
+2. **On 05,** which runs the pool and release, `BASE/fleet-end-attempts-0108/<host>/<attempt>/` is assembled as a **byte-identical plain copy** of that attempt's ACKed received `durable-measurement` (the E4 output directory). Rules:
+   - no symlinks and no archives;
+   - the same `<attempt>` basename as on the host;
+   - assembled only after the verifier ACK, then checked against `receipt-manifest.json` with full hashes;
+   - a failed or REFUSED attempt is assembled the same way from whatever was received; if nothing arrived, STOP and escalate (F3);
+   - wrapper metadata (`exit.json`, `argv.nul`, `detach.*`, TRANSFER-COMPLETE) stays in `end-received/` and is bound in the assembly receipt.
+3. **Assembly receipt:** for each attempt, record:
+   - host path `<root>/<attempt>/measurement` mapped to release path `<root>/<attempt>`;
+   - file count and full SHA equality;
+   - the verifier ACK receipt;
+   - the release-side root listing, which must equal the set of launched attempts.
+
+   The PC1 packet reviewer cross-checks this receipt against the original host root listings (the children's basenames must equal the descriptor's attempts) and the launch receipts. This ruling is flagged to the PC1 reviewer as a declared interpretation of "preserve full roots at release-side paths".
+4. **Unchanged:** A6 stays outside the roots, since it isn't a reference attempt. The order stays 08 then 01, and C1–C6, C-a to C-d and c6387611 all still apply.
