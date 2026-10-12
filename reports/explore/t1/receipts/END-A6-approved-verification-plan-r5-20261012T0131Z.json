@@ -1,0 +1,42 @@
+{
+  "ACK_NOT_written": true,
+  "conditions": {
+    "C_a": "Exact staged verifier SHA; committed launch receipt with measurement_argv; committed prepare proof never receive PREPARED.json; nice19/core63/python3-I",
+    "C_b": "Every nonzero/traceback REFUSE; record exact argv/exit/fullstderr; noACK/retry without ruling",
+    "C_c": "Before invocation record test ! -e PUSH-FAILED.json && test ! -L PUSH-FAILED.json",
+    "C_d": "NOverify/NO01SSH before actual exit_utc+1300s; afterward exactC1wrappergone proof before08ref"
+  },
+  "coordinator_approval": "0b45a3dc",
+  "disposition": "81b7c01e",
+  "launch_receipt_commit": "733a27d8",
+  "launch_receipt_sha256": "45bd9dc30ec6de5c2c7f67929209c33144162191f93211f23bc7ef79a2a741b8",
+  "no_exception_to_1300s_wait": true,
+  "outcomes_sealed": true,
+  "prepare_proof_commit": "e6c73498",
+  "prepare_proof_sha256": "b6597ae13f1740ba5d8eb14de1b8a182a557340e3770ae498e94de310c4cd520",
+  "review_path": "reports/explore/t1/receipts/END-verifier-REVIEW-r5.md",
+  "utc": "2026-10-12T01:31:04Z",
+  "verification_NOT_run": true,
+  "verification_argv": [
+    "nice",
+    "-n",
+    "19",
+    "taskset",
+    "-c",
+    "63",
+    "python3",
+    "-I",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-verification-pins-r5-20261012/END-approved-verifier-753722c9.py",
+    "--receive",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x01/end-a6-127x01-0a87166f-r1",
+    "--launch-receipt",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-verification-pins-r5-20261012/END-A6-launch-receipt-01-20261012T011336Z.json",
+    "--launch-receipt-sha256",
+    "45bd9dc30ec6de5c2c7f67929209c33144162191f93211f23bc7ef79a2a741b8",
+    "--prepare-proof",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-verification-pins-r5-20261012/END-A6-receive-prepare-01-r1.json",
+    "--prepare-proof-sha256",
+    "b6597ae13f1740ba5d8eb14de1b8a182a557340e3770ae498e94de310c4cd520"
+  ],
+  "verifier_sha256": "753722c922a1f6adae09de42044202a9c57b877af91cc11fcb9d238c879f60d1"
+}
