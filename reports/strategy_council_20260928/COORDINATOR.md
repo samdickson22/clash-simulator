@@ -2858,3 +2858,21 @@ The coordinator then commissions R7, production-packet review r2. Release happen
   - the bundle SHAs;
   - `<R>`'s final HEAD (an ancestor check is required by `release_reference.committed`).
 - **Verification:** R7 checks all of this.
+
+## 2026-10-12 10:37Z: B gap export package r2 APPROVED (exact package 40655641)
+
+The independent Opus delta review is `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-GAP-EXPORT-REVIEW-r2.md`, verdict APPROVE_WITH_CONDITIONS.
+- The R1 tar-padding blocker is fixed: 0 of 118 harness cases fail, and the mutant is killed.
+- R2 tests are in place: 20 of 20 pass.
+- Hardening H1–H5 is in. In particular, nothing is written on 03 or 04 (atime included), and no `who` identities are logged.
+- The allowlists are byte-identical to r1.
+
+**APPROVE_EXACT_GAP_COMMANDS** applies to package `4065564142c9ebad3b38f465591faeb8d5203913989931059e7057dcdbb6e9b1` only, run through its r2 `read-127x03.sh` and `read-127x04.sh`.
+
+**Conditions:**
+- **C1:** shortly before GO, perception confirms on 08 that `who` is empty and that free space is at least the 03 total plus the 04 total plus 160 GB. Both values are recorded in the GO receipt.
+- **C2:** the GO receipt acknowledges the outbound ssh child from 03/04 to 08 (one per host, inside the gap, writing only to 08's new prefix). It carries the true `go_utc` and the package SHA. Launch happens at least 30 s after GO.
+- **C3:** run the r2 scripts only.
+- **C4:** no retry within a cut. Any partial copy is kept, and the next attempt waits for cut 3.
+
+The review receipt is written to `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/review-receipt.json`.
