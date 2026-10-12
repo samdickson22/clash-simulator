@@ -2179,3 +2179,6 @@ Also on the hub, but with copies elsewhere:
   - **Ruling:** fix H1–H5 in code with a narrow re-review: bounded transport-only retries, an always-pushed `exit.json`, per-host/per-attempt destinations, a 05-side verifier, log push, an output-path assert, `timeout -k`.
   - **Conditions C1–C6** also apply. In particular, **no SSH into a timed host from any thread during its window**, including T1's own probes. Launch only from the staged A3 package (the shared 05 checkout still has 5d7de8e3).
   - **Deadline:** 01's cutoff is 04:17:43Z; otherwise run 08 first and defer 01.
+- **01:04 UTC: T1 END exit-push r3 = APPROVE_WITH_CONDITIONS** (`END-exit-push-REVIEW-r3.md`). **Timing GO.**
+  - **Wrapper 0a87166f approved.** Timing may run under C1/C4/C5/C6, V2 `--prepare`, staged A3, fresh C2 and the 01 cutoff.
+  - **Verifier 325a00a6 NOT approved for ACK** until code fixes land: explicit raises not asserts (R3-1); a marker↔`exit.json` binding plus `PUSH-FAILED` rejection (R3-2); the rsync code recorded (R3-3). Then a quick diff check. Only after that, plus V1/V3, is anything ACKed.
