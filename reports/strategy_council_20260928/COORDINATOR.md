@@ -3982,3 +3982,19 @@ ISSUED AUTHORIZE_B_DEPLOYMENT 06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9
 - **C-6.** After placement, audit `revocation_tip_commit..origin/main` for placed SHAs. There is no retry.
 
 **Optional.** Hardening F-8 is not required, and is deferred.
+
+## 2026-10-12 21:02Z: Perception B deployment to 08 COMPLETE; complete.json reviewed (accepted)
+
+**Run.** The deployment GO 06f8d1b0 ran exactly once at 2026-10-12T21:00:48Z, through the reviewed r2 detached launcher, with one SSH session. There was no retry and no inspection. The operator exit code is **0**, and stderr is empty.
+
+**`complete.json` on 08.** It is at `/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-06f8d1b0…/complete.json`, SHA **46fad651c776ec847660f03c003727826b1488065ec19dd7060ae0f944cac9e9**.
+- The local replica (`l1/receipts/b08-deployment-operator/06f8d1b0…/complete-reconstructed.json`) has the same SHA. It is reconstructed from the retained receiver stdout (f382ea6b) with the pinned serializer, so no second SSH session was needed.
+
+**Coordinator review: ACCEPTED.**
+- The schema is v1.
+- It binds package 374325696dc9, GO 06f8d1b0 and review 59ffe41a.
+- `files` = 334, which matches the 333 members `deploy_b08.destinations()` selects from the r2 manifest (code/, upload/metadata/ and the 4 META files), plus the deployment record. The coordinator recomputed this offline.
+- `bytes` = 46,413,097.
+- `runtime_admitted` = false.
+
+**Next.** The first authority-placement GO, under C-1 to C-6 (7ecf4787). The CPU preflight still needs its own GO after placement.
