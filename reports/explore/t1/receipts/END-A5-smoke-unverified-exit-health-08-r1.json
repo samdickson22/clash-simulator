@@ -1,0 +1,32 @@
+{
+  "C_d_not_before_utc": "2026-10-12T06:13:24Z",
+  "exit": {
+    "attempt": "end-a5-smoke-127x08-0a87166f-r1",
+    "command_exited": true,
+    "exit_code": 0,
+    "host": "127x08",
+    "measurement_exists": true,
+    "utc": "2026-10-12T05:51:44Z"
+  },
+  "files": [
+    "PREPARED.json",
+    "TRANSFER-COMPLETE.json",
+    "argv.nul",
+    "detach.json",
+    "detach.log",
+    "durable-measurement",
+    "exit.json"
+  ],
+  "host_probed": false,
+  "no_duplicate_review": true,
+  "outcomes_sealed": true,
+  "receive": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x08/end-a5-smoke-127x08-0a87166f-r1",
+  "received_data_unverified": true,
+  "review_coordinator_routed": true,
+  "review_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-A5-SMOKE-INDEPENDENT-REVIEW-r1.md",
+  "schema": "clasher.t1.a5-unverified-exit-health.v1",
+  "seconds_until_C_d": 1015.168915,
+  "source_SSH_held": true,
+  "utc": "2026-10-12T05:56:28Z",
+  "verification_invoked": false
+}

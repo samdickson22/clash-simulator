@@ -1,0 +1,22 @@
+{
+  "adoption": "46ab6923",
+  "frozen_launch_argv_byte_sha256": "5f7bb8ec3c8f8e9e094824e80809f5cb591cdedd700b98bd6fcaff6d2f269b52",
+  "helper_sha256": {
+    "END-A5-reference-launch-01-r1-C5-metadata.py": "df0335bcd4db5ec7ef0b919c471866bf1f10d461d0746975eaeaa56393fe5b8d",
+    "END-A5-reference-prelaunch-checks-01-r1.py": "960b27dc166c630e2805884f0d97ba026a5cd48bdcdbe87e53f9bb9f3f55f2d4",
+    "END-A5-smoke-C1-C4-08-readonly.py": "a110b67507f33675e74045cc13d678211ba887c1cd6493c20b99576ff3ebf81e",
+    "END-A5-smoke-verify-once-05.py": "d66eb515b40aa064ac991ac8f12a208524711ac9ebf4576fe47277aebffe709e"
+  },
+  "host_calls": false,
+  "launch_preparation_commit": "d7c4c9a9",
+  "offline05_only": true,
+  "outcomes_sealed": true,
+  "remaining_launch_gates": [
+    "smoke C-d and complete ACK",
+    "coordinator relayed PASS/PASS_WITH_NOTES",
+    "01 actual post06:17apt exit andfreshC2/motd/C1/mirror4T",
+    "fullremote C5/C6 no signals"
+  ],
+  "smoke_gate_pending": true,
+  "utc": "2026-10-12T06:00:05Z"
+}
