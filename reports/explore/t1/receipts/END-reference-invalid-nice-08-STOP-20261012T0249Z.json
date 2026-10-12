@@ -1,0 +1,34 @@
+{
+  "cause": "Metadata launch helper ran under nice19; nested nice -n10 cannot lower inherited priority. Frozen wrapper/E4 unchanged.",
+  "exit_received": true,
+  "expected_nice": 10,
+  "launch_utc": "2026-10-12T02:48:04Z",
+  "mirror_paused": true,
+  "no01_launch_or_preparation": true,
+  "noSSH08_after_launch": true,
+  "no_live_priority_repair": true,
+  "no_retry_without_coordinator_ruling": true,
+  "observed_wrapper_nice": 19,
+  "outcomes_sealed": true,
+  "receiver_files": [
+    "PREPARED.json",
+    "TRANSFER-COMPLETE.json",
+    "argv.nul",
+    "detach.json",
+    "detach.log",
+    "durable-measurement",
+    "exit.json"
+  ],
+  "registration_unsealed": true,
+  "status": "STOP: INVALID ACTUAL LAUNCH PRIORITY; coordinator ruling required",
+  "utc": "2026-10-12T02:49:10Z",
+  "verification_invoked": false,
+  "wrapper_identity": {
+    "cmdline_sha256": "82ac2f63aafa7933564491baf4d9d93e5688ded7e9922756f48e00077d9b8197",
+    "exe": "/usr/bin/bash",
+    "nice": 19,
+    "pgid": 1310023,
+    "pid": 1310023,
+    "start_ticks": 157268945
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "C_d_not_before_utc": "2026-10-12T03:09:58Z",
+  "PUSH_FAILED_present": false,
+  "TRANSFER_COMPLETE_received": true,
+  "exit_health": {
+    "command_exited": true,
+    "exit_code": 1,
+    "measurement_exists": true,
+    "utc": "2026-10-12T02:48:18Z"
+  },
+  "failed_attempt_preservation_required": true,
+  "host": "127x08",
+  "noSSH08": true,
+  "no_ACK": true,
+  "outcomes_sealed": true,
+  "utc": "2026-10-12T02:49:47Z",
+  "verification_not_run": true
+}
