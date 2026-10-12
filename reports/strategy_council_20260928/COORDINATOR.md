@@ -2568,3 +2568,26 @@ The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8
 **Coordinator check, by mechanical equality:** the helper's 18 `FROZEN_MEASUREMENT_FILES` pins are dict-equal to the e4v3 inventory at 8799a0d6, which the A5 smoke review already independently checked. No logic changed, so Sol review is waived for a constant that equals an approved inventory.
 
 **Mac re-staging must use main ≥ 8799a0d6.** The Mac stays on HOLD.
+
+## 2026-10-12 07:44Z: Both A5 END references PASS; pool authorized
+
+**The A5 references are verified and assembled under L1:**
+- **08** `end-reference-127x08-0a87166f-a5-r1`: launched 06:16:32Z, exit 0 at 07:11:09Z. ACK 86eb8c11, complete (8d662ad0).
+- **01** `end-reference-127x01-0a87166f-a5-r1`: launched 06:26:27Z, exit 0 at 07:20:20Z. ACK 7ea9ae1d, complete (4c34d762).
+
+**Checks on both:**
+- 18/18 A5 files, native 44874fd6, 11 slots, warmup 300;
+- `poolable` true;
+- all guard, exactness and MHz gates pass;
+- C1 wrapper gone;
+- L1 plain copies into the A5 release root.
+
+**Pool authorized:**
+- one byte-exact, SHA-verified copy of the 0addf7c0 bundle context from a now-untimed host to 05, done at nice 19 with a bandwidth cap;
+- the pool runs under e4v3-venv Python 3.12 with `fleet_pool` 572ad682, on A5 attempts only.
+
+**After the pool check is committed:**
+- the coordinator commissions the PC1–PC4 production-packet review;
+- T4 allows its one descriptive old-vs-fixed comparison.
+
+**Hosts:** 01 and 08 stay reserved to T1 until the pool is committed (in case it needs a source re-read). After that, 08 is released for perception B (needs my GO), and the hub mirror is retargeted away from 04 and resumed.
