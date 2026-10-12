@@ -1,0 +1,27 @@
+{
+  "A4_registration": "unsealed",
+  "coordinator_position_read": 9169,
+  "hosts": {
+    "127x01": {
+      "files": [
+        "PREPARED.json"
+      ],
+      "host_probed": false,
+      "receiver": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x01/end-reference-127x01-0a87166f-a5-r1",
+      "verification_invoked": false
+    },
+    "127x08": {
+      "files": [
+        "PREPARED.json"
+      ],
+      "host_probed": false,
+      "receiver": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-received/127x08/end-reference-127x08-0a87166f-a5-r1",
+      "verification_invoked": false
+    }
+  },
+  "mirror": "paused",
+  "observed_utc": "2026-10-12T07:04:18Z",
+  "outcomes": "SEALED",
+  "same_END_timer_active": true,
+  "scope": "05 receiver metadata only"
+}
