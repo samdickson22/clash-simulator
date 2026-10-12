@@ -3308,3 +3308,42 @@ The investigation is in `k4s-audits/K4S-DBUS-FLAG-INVESTIGATION-r1.md`. The flag
 - the C5 rule: no SSH to the timed host from any thread.
 
 **Process note.** `probe.sh` was a new script that touched a host and ran without a pre-run review. It was read-only and limited to `/proc` sampling under the R4 authorization, so I'm accepting it after the fact. From now on, any new host script needs review first. That covers the B2 copier and the B3 assembler.
+
+## 2026-10-12 15:23Z: K4S END plan ADOPTED WITH CHANGES; completion-v2 of record
+
+The review (`k4s-audits/K4S-END-PLAN-REVIEW-r1.md`) returned ADOPT_WITH_CHANGES.
+
+**Completion of record: v2** (23604d1c).
+- Contents: inventory 22c41cb7 and `REPORTING-COMPLETION` 3794d953.
+- It is a pure envelope fix:
+  - its rows are byte-identical to v1's (canonical rows 2e18ce34);
+  - the frozen `counting()` accepts v2 and refuses v1;
+  - no selection risk and no outcome exposure;
+  - no amendment needed.
+- **v1 (bb7c7f88) is superseded** and stays committed.
+- Three notes from the review:
+  - v2 was re-wrapped from v1's rows; its `script_sha256` is v1's script;
+  - `VALIDATION.txt`'s ledger path corresponds to the committed `blind-ledger-final.json`;
+  - the DBus disclosure still stands.
+- v2 is the record for the END-JOB, PC4, the verifier and release item 1.
+
+**Changes the plan must adopt:**
+- **On-host preflight per host.** Following the T1 C3/A5-smoke precedent: no claim and no timing. It covers the git requirement of `parent_source_seed.admit` (a git `repo/` in the guard job or on the host), the guard admission pins, topology, native and model loading, background spawn and the MHz gate.
+- **The 04 preflight runs at least 15 min under full 11-slot load with no logins,** to measure the bus under load.
+- A fresh guard job per attempt.
+- A committed attempt-roots declaration.
+- Unfiltered `systemctl list-timers --all`.
+- The exit-push wrapper also pushes the host registry claim directory.
+- **The B2 copier** binds each phase directory to its committed launch and exit hashes, and refuses any file over 95 MB.
+- **03 seals `complete` and is verified before 04 runs.**
+- **04 DBus:** the second quiet read, the gates and the detach all go in one SSH session. A bus-interference failure means STOP and a new ruling before the last attempt is spent.
+- **Disclose** the inherent short-block meter risk.
+- **T1 state files** may be read only from T1's copies on **05**, never from 03's T1 corpus copy.
+
+**Process:**
+- Sol reviews every new script before it runs: the copier, the evidence builder and validator, the guard-job builder, the assembler, the preflight, the wrapper and verifier changes, and the launch gate.
+- The coordinator authorizes each host step separately: the copier, staging, venv, preflights, stale-stamp logins, the END-JOB and each launch.
+
+**Mac phase C** is covered by Sam's 2026-10-11 authorization (TIERS + K4S replay-only); a standalone authorization file will cite it. It runs after the TIERS Mac session.
+
+**Target:** launch 03 overnight, around 02:00–04:00Z on 10-13, with a pooled END by mid-morning on 10-13.
