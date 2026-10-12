@@ -4266,3 +4266,17 @@ All gates pass. **The environment CPU GO, placement r3 GO and run GO must cite t
   - `l1/receipts/b-cpu-preflight-environment-go-r1.json`
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 0925060b75dc26220bdd802a0ce25c647bf44f7e611d652211bd204988a40fc5
+
+## 2026-10-12 23:24Z: Perception B third authority-placement GO issued
+
+- **Source:** byte-identical to the draft `…/b08-environment-and-placement-go-r2/DRAFT-AUTHORIZE_B_AUTHORITY_PLACEMENT-r3.json` (d2824e27).
+- **What it places:** exactly one receipt, the environment CPU GO (0925060b), on 127x08.
+- **Settings:** procedure 20e58965, operator d6cb3690, cpus [0,1], between phases. No GPU, no heldout, no retry.
+- **Window:** 2026-10-13 00:00Z to 01:30Z.
+- **Cites:** quiet-read d5086e1e.
+- **Pre-issue check (C-5):** the CPU GO SHA appears on exactly one ISSUED line.
+- **Issued copies:**
+  - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r3.json` (0444)
+  - `l1/receipts/b-authority-placement-go-r3.json`
+
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT d2824e27091dbb3790be1c460522d899445b91cc28a28c05a2f778848548ea23
