@@ -2370,3 +2370,21 @@ All conditions are **adopted**:
 - **C8:** post-ACK routing branches on the DURABLE-ACK status, never on the exit code.
 
 The preservation text in the roots file now reads as "every E4 invocation that sealed `fleet-identity.json`". That is a declared interpretation, flagged to PC1.
+
+## 2026-10-12 02:58Z: 01 reference launched before the C5 pre-exec gate reached T1: accepted, no action
+
+01 `end-reference` launched at 02:57:15Z under RF1, before 15b10ef2 arrived.
+- **Recorded in the launch session:**
+  - parent bash nice 0;
+  - wrapper nice 10, PGID 1893019;
+  - frozen prefix and argv unchanged;
+  - no signal sent.
+- **Not recorded before exec:**
+  - SCHED_OTHER;
+  - the exact-shell byte comparison.
+
+**Disposition: accepted, and 01 keeps running untouched (C5).** Both missing items are enforced fail-closed downstream:
+- E4 `pinned_profile` refuses unless the process is SCHED_OTHER and nice equals the plan value. A violation would show up as a pre-identity refusal, handled under C1/C2.
+- Verifier V3 byte-compares `argv.nul` against the pinned argv before any ACK.
+
+T1 records this gap and the downstream enforcement in the 01 launch receipt. The full C5 gate applies to 08 r2 and every later launch.
