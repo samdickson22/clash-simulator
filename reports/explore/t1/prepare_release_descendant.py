@@ -9,14 +9,16 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
-from release_run import CANONICAL, PRIVATE_COMMIT, DESCENDANT_ALLOWLIST, MAC_DIRECTORY, require
+from release_run import CANONICAL, PRIVATE_COMMIT, PRIVATE_REF, DESCENDANT_ALLOWLIST, MAC_DIRECTORY, require
 
 
 def build_descendant(repo, source_commit, private_ref):
     require(private_ref.startswith('refs/private/'), 'local private ref required')
+    require(private_ref != PRIVATE_REF, 'registration protection ref cannot be a target')
     def git(*args, env=None, data=None):
         return subprocess.check_output(['git', '--no-optional-locks', '-C', str(repo), *args],
                                        env=env, input=data, text=True).strip()
+    require(git('rev-parse', PRIVATE_REF) == PRIVATE_COMMIT, 'registration protection ref changed before build')
     source_commit = git('rev-parse', source_commit + '^{commit}')
     require(git('status', '--porcelain', '--ignored') == '', 'checkout must be clean')
     source_mac_paths = set(git('ls-tree', '-r', '--name-only', source_commit, '--', MAC_DIRECTORY).splitlines())
@@ -40,7 +42,8 @@ def build_descendant(repo, source_commit, private_ref):
                      data='PRIVATE: narrow TIERS Mac route descendant; never push\n')
         changed = set(git('diff', '--no-renames', '--name-only', PRIVATE_COMMIT, commit).splitlines())
         require(changed <= DESCENDANT_ALLOWLIST, 'descendant escaped exact allowlist')
-        git('update-ref', private_ref, commit)
+        git('update-ref', private_ref, commit, '0' * 40)
+        require(git('rev-parse', PRIVATE_REF) == PRIVATE_COMMIT, 'registration protection ref changed after build')
         return dict(commit=commit, tree=tree, private_ref=private_ref, source_commit=source_commit,
                     base_commit=PRIVATE_COMMIT, changed_paths=sorted(changed), copied_paths=copied,
                     checked_out=False, never_push=True)

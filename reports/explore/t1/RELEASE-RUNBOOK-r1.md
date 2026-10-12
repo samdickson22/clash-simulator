@@ -10,10 +10,15 @@ reducer or outcome read has been performed by this change.
    sealed R5 3b7d2295 exactly. The Mac-summary commit must be an ancestor of the
    eventual canonical private HEAD. The driver currently has an **empty explicit
    descendant allowlist in approved r2**: any tracked difference from 9bb349b1
-   fails closed. Candidate r3 adopts only the 18 exact metadata paths assigned
+   fails closed. Approved Mac-route r3 adopts only the 18 exact metadata paths assigned
    in COORDINATOR 4eb6c3e5. Unknown classification names are denied.
    The fourteen-day route is not available
    before 2026-10-25T19:31:38Z.
+   **Route separation:** the fourteen-day route must use approved r2 SHA
+   `42219e57c052ada73a3ca691839fa47166f1d554fa5600dd85553bb68a916a5e`
+   with canonical HEAD at 9bb349b1 and an empty descendant diff. Never use r3
+   for the fourteen-day route. The Mac-summary route uses reviewed r3 SHA
+   `9ffbd2e197e58b5c56b3d58cefe4008d47cb4fdf50764808e841218294408bca`.
 2. Only under the later state-change ruling, incorporate the Mac metadata into a
    local-only descendant of private 9bb349b1. Never push that
    checkout or its private ref. At present canonical R stays clean at 9bb349b1;
@@ -38,7 +43,7 @@ reducer or outcome read has been performed by this change.
    Immediately before launch, confirm the reviewed driver SHA and that its
    directory contains only the committed tree (no extra Python files). Approved
    r2 is 42219e57c052ada73a3ca691839fa47166f1d554fa5600dd85553bb68a916a5e;
-   this r3 candidate requires its own review and recorded SHA. Confirm canonical
+   reviewed Mac-route r3 is 9ffbd2e197e58b5c56b3d58cefe4008d47cb4fdf50764808e841218294408bca. Confirm canonical
    e4v3 directory mode is exactly 555 and git status --porcelain --ignored is empty.
 4. The driver checks canonical ancestry/ref/cleanliness, exact descendant allowlist,
    remote-ref ancestry exclusion and all 17 executed local modules plus plan.json.
@@ -94,3 +99,62 @@ The receipt pins 3,072 proofs (set d0f01069), 24,576 streaming game hashes and
 The later CPU ruling releases 01 CPUs only. Its four job directories, all A5
 host/release roots on 01/08, end-received, private R and bundles remain frozen.
 The hub mirror remains paused. C2 does not authorize deletion or relocation.
+
+## Exact builder and HEAD activation steps — documentation only, not authorized now
+
+The builder is awaiting its narrow independent review. Neither this section nor
+driver approval authorizes running the builder or moving canonical R. Execute
+only after builder approval, Mac outputs/A3-P and explicit coordinator state-change
+and release GO. Any failed check stops; preserve evidence and request a ruling.
+
+Use the coordinator's full public Mac metadata source SHA and a fresh unused ref.
+The target must start with `refs/private/` and must never be
+`refs/private/t1-registration-20261012`. Candidate builder SHA (pending review):
+`dd644cdcde6c9a6d6994aac891ecd4cf20d8b810873b8cef3fab56ef21647259`.
+The builder directory's `release_run.py` must be the reviewed Mac-route r3 SHA
+above, and the directory must contain only its committed tree. Before and after
+building, the protection ref must still resolve to
+`9bb349b1d4f467866f802a859c142c4adc7c0402`.
+
+Launch the builder with a clean environment, no GIT_* variables, and -B. Here
+`release_source_sha` is the full coordinator-bound source SHA, and
+`release_fresh_ref` is the new ref name. Preserve the builder's JSON receipt:
+
+```bash
+env -i HOME="$HOME" PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
+  nice -n 19 taskset -c 63 \
+  /mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python -B \
+  /mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/explore/t1/prepare_release_descendant.py \
+  --source-commit "$release_source_sha" --private-ref "$release_fresh_ref"
+```
+
+The builder creates the target only with a zero old-value compare-and-swap; an
+existing ref is never overwritten. It checks the protection ref on both sides.
+Set `release_descendant_sha` from that preserved receipt. The exact HEAD move is:
+
+```bash
+git -C /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source \
+  switch --detach "$release_descendant_sha"
+cd /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source
+```
+
+Immediately afterwards, under the same clean environment and -B interpreter,
+verify **all** of the following using the preserved builder receipt:
+All Git queries below run from that canonical directory; they must never query
+the public worker checkout by accident.
+
+- `git rev-parse HEAD` equals its `commit`, and `git rev-list --parents -n 1 HEAD`
+  has exactly three SHA tokens: descendant, private base9bb349b1, and the receipt's
+  full `source_commit`, in that order. Both parent commits must be ancestors.
+- `git --no-optional-locks status --porcelain --ignored` is empty.
+- `git rev-parse refs/private/t1-registration-20261012` is still exactly9bb349b1.
+- `git diff --no-renames --name-only 9bb349b1 HEAD` is a subset of the reviewed
+  driver's exact 18-path allowlist, with neither failure path present.
+- `stat -c %a <R>/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3`
+  is exactly `555`. All 18 execution pins still equal the reviewed values.
+- Neither the private base nor descendant occurs in remote-tracking ancestry.
+  Never push canonical R, either private ref or any commit descending from them.
+
+Record the observed HEAD, both parents, empty status, protection SHA and directory
+mode before launching the route-specific driver. This turn executes none of these
+activation commands; canonical R remains frozen at9bb349b1.

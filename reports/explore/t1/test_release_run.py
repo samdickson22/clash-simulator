@@ -261,6 +261,7 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
     scratch=base/'scratch';scratch.mkdir()
     (root/'games').mkdir();(root/'games/x').write_text('opaque synthetic sentinel')
     for name in driver.PINS:(here/name).write_text('synthetic '+name)
+    (repo/'rename-source').write_text('{"synthetic":"rename"}')
     pins={name:driver.sha(here/name) for name in driver.PINS}
     ledger=here/'receipts/blind-ledger-final-op7-r3.json';ledger.write_text('{"events":[]}')
     side={'utc':'old','schema':'synthetic','sealed':True,'blocks':[{'id':'s0'}]}
@@ -276,12 +277,23 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
         value=json.loads(a3p.read_text());value['tiers']['S'].update(feasible_after_a3p=False,a3p_passes=False);a3p.write_text(json.dumps(value))
     if scenario=='a3p_seal_mismatch':
         value=json.loads(a3p.read_text());value['receipt_manifest_sha256']='0'*64;a3p.write_text(json.dumps(value))
+    if scenario=='manifest_binding_sha':
+        value=json.loads(a3p.read_text());value['receipt_manifest_sha256']='0'*64;a3p.write_text(json.dumps(value))
+    if scenario=='summary_other_path':(repo/'alternate-summary.json').write_bytes(macsummary.read_bytes())
     subprocess.run(['git','init','-q',str(repo)],check=True)
     subprocess.run(['git','-C',str(repo),'add','.'],check=True)
     subprocess.run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','synthetic fixture'],check=True)
     commit=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()
     subprocess.run(['git','-C',str(repo),'update-ref',driver.PRIVATE_REF,commit],check=True)
     release.write_text(json.dumps(dict(reason=reason,mac_summary_path=driver.MAC_SUMMARY_PATH,commit=commit,mac_summary_sha256=driver.sha(macsummary),a3p_poll_check=dict(path=driver.MAC_A3P_PATH,commit=commit,sha256=driver.sha(a3p)),mac_receipt_manifest=dict(path=driver.MAC_MANIFEST_PATH,commit=commit,sha256=driver.sha(macseal)),amendment_1_prerelease={'synthetic':True})))
+    if scenario in ('a3p_binding_sha','a3p_binding_commit','a3p_binding_path','manifest_binding_sha','summary_other_path'):
+        value=json.loads(release.read_text())
+        if scenario=='a3p_binding_sha':value['a3p_poll_check']['sha256']='0'*64
+        if scenario=='a3p_binding_commit':value['a3p_poll_check']['commit']='0'*40
+        if scenario=='a3p_binding_path':value['a3p_poll_check']['path']='other.json'
+        if scenario=='manifest_binding_sha':value['mac_receipt_manifest']['sha256']='0'*64
+        if scenario=='summary_other_path':value['mac_summary_path']='alternate-summary.json'
+        release.write_text(json.dumps(value))
     release_sha=driver.sha(release)
     original_run=subprocess.run;original_git=driver.git;original_popen=subprocess.Popen;original_write=driver.write;original_chmod=os.chmod
     cwd=here
@@ -352,6 +364,15 @@ def synthetic_main_worker(base_string, scenario, reason, pipe):
         path=repo/driver.MAC_DIRECTORY/'preconditions.json';path.write_text('{}')
         original_run(['git','-C',str(repo),'add','.'],check=True)
         original_run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','allowed descendant'],check=True)
+    if scenario in ('rename_descendant','unlisted_mac_descendant','failure_mac_descendant'):
+        if scenario=='rename_descendant':
+            (repo/'rename-source').rename(repo/driver.MAC_DIRECTORY/'preconditions.json')
+            original_run(['git','-C',str(repo),'config','diff.renames','true'],check=True)
+        else:
+            name='classification/unknown.json' if scenario=='unlisted_mac_descendant' else 'sealed/failure.json'
+            p=repo/driver.MAC_DIRECTORY/name;p.parent.mkdir(exist_ok=True);p.write_text('{}')
+        original_run(['git','-C',str(repo),'add','.'],check=True)
+        original_run(['git','-C',str(repo),'-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','synthetic route check'],check=True)
     if scenario=='code_pin':(here/'barrier.py').write_text('changed synthetic barrier')
     if scenario=='release_pin':release.write_text('{"bad":true}')
     if scenario=='r5_pin':r5.write_text('{"bad":true}')
@@ -445,12 +466,24 @@ class MainTests(unittest.TestCase):
             self.assertEqual(result['rc'],1);self.assertIsNone(result['mode']);self.assertEqual(result['calls'],[])
             if scenario=='a3p_reject':self.assertEqual(health['exception_type'],'A3PRequiresRuling')
 
+    def test_real_binding_paths_in_main_cannot_be_ignored(self):
+        for scenario in ('a3p_binding_sha','a3p_binding_commit','a3p_binding_path','manifest_binding_sha','summary_other_path'):
+            with self.subTest(scenario=scenario):
+                result,health=self.case(scenario)
+                self.assertEqual(result['rc'],1);self.assertEqual(result['calls'],[]);self.assertIsNone(result['mode'])
+
     def test_main_record_failures_lock_owned_outputs(self):
         for scenario in ('fresh','record_dirty'):
             with self.subTest(scenario=scenario):
                 result,health=self.case(scenario)
                 self.assertEqual(result['rc'],1);self.assertEqual(result['mode'],0)
                 self.assertTrue(health['outputs_locked']);self.assertEqual(health['stage'],'preflight_or_record')
+
+    def test_mac_descendants_cannot_hide_rename_unlisted_path_or_failure(self):
+        for scenario in ('rename_descendant','unlisted_mac_descendant','failure_mac_descendant'):
+            with self.subTest(scenario=scenario):
+                result,health=self.case(scenario)
+                self.assertEqual(result['rc'],1);self.assertIsNone(result['mode']);self.assertEqual(result['calls'],[])
 
     def test_exact_execution_pin_names_and_empty_allowlist(self):
         names='apt_budget barrier check_reference common cpu_accounting host_audit idle_services owned_supervisor parent_source_seed perception_confirmation reduce release_reference schedule ssh_budget ssh_sensitivity ssh_transport system_bus'.split()
@@ -479,6 +512,27 @@ class ReducerSessionTests(unittest.TestCase):
         self.assertEqual(calls,[(123456,signal.SIGKILL),'reaped'])
         self.assertTrue(spawn.call_args.kwargs['start_new_session'])
 
+    def test_second_signal_during_group_kill_does_not_skip_kill_and_reap(self):
+        import signal
+        calls=[];old=signal.getsignal(signal.SIGTERM)
+        class Child:
+            pid=123456;count=0
+            def __enter__(self):return self
+            def __exit__(self,*a):return False
+            def wait(self):
+                self.count+=1
+                if self.count==1:raise driver.TerminationSignal(signal.SIGTERM)
+                calls.append('reaped');return -9
+        def killpg(pid,sig):
+            os.kill(os.getpid(),signal.SIGTERM)
+            calls.append((pid,sig))
+        try:
+            signal.signal(signal.SIGTERM,lambda *a:None)
+            with driver.terminating_signals(),patch.object(driver.subprocess,'Popen',return_value=Child()),patch.object(driver.os,'killpg',side_effect=killpg):
+                with self.assertRaises(driver.TerminationSignal):driver.run_reducer(['synthetic'],Path('/tmp'),io.StringIO(),io.StringIO())
+            self.assertEqual(calls,[(123456,signal.SIGKILL),'reaped'])
+        finally:signal.signal(signal.SIGTERM,old)
+
     def test_real_synthetic_child_and_grandchild_are_killed_together(self):
         import signal,sys,time
         with tempfile.TemporaryDirectory(prefix='t1-child-session-synthetic-') as tmp:
@@ -504,6 +558,7 @@ class DescendantTests(unittest.TestCase):
             def git(*args):return subprocess.check_output(['git','-C',str(repo),*args],text=True).strip()
             git('init','-q');git('config','user.name','Synthetic');git('config','user.email','synthetic@example.invalid')
             (repo/'protected').write_text('unchanged');git('add','.');git('commit','-qm','base');base=git('rev-parse','HEAD')
+            git('update-ref',builder.PRIVATE_REF,base)
             (repo/'protected').rename(repo/'renamed-public')
             mac=repo/driver.MAC_SUMMARY_PATH;mac.parent.mkdir(parents=True);mac.write_text('{"synthetic":true}')
             (repo/'unrelated').write_text('public unrelated');git('add','-A');git('commit','-qm','source');source=git('rev-parse','HEAD')
@@ -524,3 +579,136 @@ class DescendantTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class MacGateContractTests(unittest.TestCase):
+    def invoke(self, change=None):
+        import hashlib,copy
+        with tempfile.TemporaryDirectory(prefix='t1-mac-gate-synthetic-') as tmp:
+            repo=Path(tmp)
+            summary={'dry_run':False,'feasibility':{t:{'feasible':True} for t in ('K0c','S','K2','K4')}}
+            a3p={'outcomes_read':False,'tiers':{t:dict(frozen_feasible=True,feasible_after_a3p=True,a3p_passes=True) for t in ('K0c','S','K2','K4')}}
+            seal={'status':'complete','files':{}}
+            if change:change(summary,a3p,seal)
+            rawsummary=json.dumps(summary).encode();summary_sha=hashlib.sha256(rawsummary).hexdigest()
+            seal['files'].setdefault('tiers-summary.json',summary_sha)
+            rawseal=json.dumps(seal).encode();seal_sha=hashlib.sha256(rawseal).hexdigest()
+            a3p['receipt_manifest_sha256']=seal_sha
+            data={driver.MAC_SUMMARY_PATH:summary,driver.MAC_A3P_PATH:a3p,driver.MAC_MANIFEST_PATH:seal}
+            commits={driver.MAC_SUMMARY_PATH:'1'*40,driver.MAC_A3P_PATH:'2'*40,driver.MAC_MANIFEST_PATH:'3'*40}
+            bindings={}
+            for name,value in data.items():
+                p=repo/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(value))
+                bindings[name]=dict(path=name,commit=commits[name],sha256=driver.sha(p))
+            release=dict(mac_summary_path=driver.MAC_SUMMARY_PATH,commit='1'*40,mac_summary_sha256=summary_sha,a3p_poll_check=bindings[driver.MAC_A3P_PATH],mac_receipt_manifest=bindings[driver.MAC_MANIFEST_PATH])
+            calls=[]
+            def bound(binding,expected):
+                self.assertEqual(binding,bindings[expected]);calls.append(expected)
+                return data[expected]
+            with patch.object(driver,'CANONICAL',repo),patch.object(driver,'bound_mac_json',side_effect=bound):
+                driver.check_mac_a3p(release)
+            self.assertEqual(calls,[driver.MAC_SUMMARY_PATH,driver.MAC_A3P_PATH,driver.MAC_MANIFEST_PATH])
+
+    def test_every_mac_artifact_is_commit_and_sha_bound_including_later_a3p_commit(self):
+        self.invoke()
+
+    def test_seal_scope_coverage_types_and_consistency_fail_independently(self):
+        mutations={
+            'manifest_status':lambda s,a,m:m.update(status='failed'),
+            'summary_seal_entry':lambda s,a,m:m['files'].update({'tiers-summary.json':'0'*64}),
+            'dry_run':lambda s,a,m:s.update(dry_run=True),
+            'outcomes_read':lambda s,a,m:a.update(outcomes_read=True),
+            'extra_tier':lambda s,a,m:a['tiers'].update(EXTRA=dict(frozen_feasible=True,feasible_after_a3p=True,a3p_passes=True)),
+            'summary_extra_tier':lambda s,a,m:s['feasibility'].update(EXTRA={'feasible':True}),
+            'frozen_not_bound':lambda s,a,m:a['tiers']['S'].update(frozen_feasible=False),
+            'after_not_bound':lambda s,a,m:(s['feasibility']['S'].update(feasible=False),a['tiers']['S'].update(frozen_feasible=False,feasible_after_a3p=True)),
+            'frozen_integer':lambda s,a,m:s['feasibility']['S'].update(feasible=1),
+            'row_frozen_integer':lambda s,a,m:a['tiers']['S'].update(frozen_feasible=1),
+            'row_after_integer':lambda s,a,m:a['tiers']['S'].update(feasible_after_a3p=1),
+            'row_passes_integer':lambda s,a,m:a['tiers']['S'].update(a3p_passes=1),
+        }
+        for name,change in mutations.items():
+            with self.subTest(name=name),self.assertRaises(ValueError):self.invoke(change)
+
+
+class MacBindingTests(unittest.TestCase):
+    def invoke(self, scenario):
+        import hashlib,types,subprocess
+        with tempfile.TemporaryDirectory(prefix='t1-mac-binding-synthetic-') as tmp:
+            root=Path(tmp);expected=driver.MAC_A3P_PATH;p=root/expected;p.parent.mkdir(parents=True)
+            raw=b'{"synthetic":true}';p.write_bytes(raw)
+            binding=dict(path=expected,commit='2'*40,sha256=hashlib.sha256(raw).hexdigest())
+            if scenario=='path':binding['path']='other.json'
+            if scenario=='commit_format':binding['commit']='synthetic-ref'
+            if scenario=='sha':binding['sha256']='0'*64
+            if scenario=='worktree':p.write_bytes(b'{"synthetic":false}')
+            if scenario=='symlink':
+                target=root/'target';target.write_bytes(raw);p.unlink();p.symlink_to(target)
+            def run(argv,**kwargs):
+                if scenario=='ancestry':raise subprocess.CalledProcessError(1,argv)
+                self.assertTrue(kwargs['check']);return types.SimpleNamespace(returncode=0)
+            with patch.object(driver,'CANONICAL',root),patch.object(driver.subprocess,'run',side_effect=run),patch.object(driver.subprocess,'check_output',return_value=raw):
+                return driver.bound_mac_json(binding,expected)
+
+    def test_bound_mac_json_positive(self):self.assertEqual(self.invoke('success'),{'synthetic':True})
+    def test_binding_rejects_every_independent_boundary(self):
+        import subprocess
+        for scenario in ('path','commit_format','sha','worktree','symlink','ancestry'):
+            with self.subTest(scenario=scenario),self.assertRaises((ValueError,subprocess.CalledProcessError)):
+                self.invoke(scenario)
+
+
+class BuilderRefTests(unittest.TestCase):
+    def setUp(self):
+        import subprocess
+        import prepare_release_descendant as builder
+        self.builder=builder;self.temp=tempfile.TemporaryDirectory(prefix='t1-builder-ref-synthetic-');self.repo=Path(self.temp.name)/'repo';self.repo.mkdir()
+        self.git=lambda *a:subprocess.check_output(['git','-C',str(self.repo),*a],text=True).strip()
+        self.git('init','-q');self.git('config','user.name','Synthetic');self.git('config','user.email','synthetic@example.invalid')
+        (self.repo/'protected').write_text('common');self.git('add','.');self.git('commit','-qm','common');common=self.git('rev-parse','HEAD')
+        self.git('checkout','-qb','private-case');(self.repo/'private-only').write_text('keep-private');self.git('add','.');self.git('commit','-qm','private base');self.base=self.git('rev-parse','HEAD')
+        self.git('update-ref',builder.PRIVATE_REF,self.base)
+        self.git('checkout','-qb','public-case',common);mac=self.repo/driver.MAC_SUMMARY_PATH;mac.parent.mkdir(parents=True);mac.write_text('{}')
+        (self.repo/'unrelated').write_text('public only');self.git('add','.');self.git('commit','-qm','public source');self.source=self.git('rev-parse','HEAD')
+        self.pin=patch.object(builder,'PRIVATE_COMMIT',self.base);self.pin.start()
+    def tearDown(self):self.pin.stop();self.temp.cleanup()
+    def build(self,name='refs/private/fresh'):
+        return self.builder.build_descendant(self.repo,self.source,name)
+    def test_divergent_source_preserves_both_exact_parents_and_private_tree(self):
+        import subprocess
+        self.assertEqual(subprocess.run(['git','-C',str(self.repo),'merge-base','--is-ancestor',self.base,self.source]).returncode,1)
+        index=(self.repo/'.git/index').read_bytes();r=self.build()
+        self.assertEqual(self.git('rev-list','--parents','-n','1',r['commit']).split()[1:],[self.base,self.source])
+        self.assertEqual(self.git('show',r['commit']+':private-only'),'keep-private')
+        self.assertEqual(self.git('rev-parse',self.builder.PRIVATE_REF),self.base)
+        self.assertEqual((self.repo/'.git/index').read_bytes(),index);self.assertEqual(self.git('rev-parse','HEAD'),self.source)
+    def test_nonprivate_and_protection_ref_targets_are_rejected(self):
+        for name in ('refs/heads/unsafe',self.builder.PRIVATE_REF):
+            with self.subTest(name=name),self.assertRaises(ValueError):self.build(name)
+        self.assertEqual(self.git('rev-parse',self.builder.PRIVATE_REF),self.base)
+    def test_existing_ref_is_never_overwritten(self):
+        import subprocess
+        self.git('update-ref','refs/private/existing',self.base)
+        with self.assertRaises(subprocess.CalledProcessError):self.build('refs/private/existing')
+        self.assertEqual(self.git('rev-parse','refs/private/existing'),self.base)
+        self.assertEqual(self.git('rev-parse',self.builder.PRIVATE_REF),self.base)
+    def test_changed_protection_ref_before_build_is_rejected(self):
+        self.git('update-ref',self.builder.PRIVATE_REF,self.source)
+        with self.assertRaises(ValueError):self.build()
+    def test_changed_protection_ref_after_build_is_detected(self):
+        original=self.builder.subprocess.check_output
+        def fault(argv,**kwargs):
+            out=original(argv,**kwargs)
+            if 'update-ref' in argv and 'refs/private/fresh' in argv:
+                original(['git','-C',str(self.repo),'update-ref',self.builder.PRIVATE_REF,self.source],text=True)
+            return out
+        with patch.object(self.builder.subprocess,'check_output',side_effect=fault),self.assertRaises(ValueError):self.build()
+    def test_symlink_blob_at_allowed_path_is_refused(self):
+        p=self.repo/driver.MAC_SUMMARY_PATH;p.unlink();p.symlink_to('synthetic-target')
+        self.git('add','.');self.git('commit','-qm','symlink metadata');self.source=self.git('rev-parse','HEAD')
+        with self.assertRaises(ValueError):self.build()
+    def test_dirty_checkout_refused(self):
+        (self.repo/'dirty').write_text('x')
+        with self.assertRaises(ValueError):self.build()
+    def test_source_without_allowed_metadata_refused(self):
+        self.source=self.git('rev-parse',self.source+'^')
+        with self.assertRaises(ValueError):self.build()

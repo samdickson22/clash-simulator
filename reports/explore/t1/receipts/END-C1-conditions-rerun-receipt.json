@@ -1,0 +1,539 @@
+{
+  "schema": "clasher.t1.release-conditions-rerun.v1",
+  "utc": "2026-10-12T12:32:46Z",
+  "review_r3_verbatim_sha256": "e3427a92075d612ff99cd533459b4427ab4093077b8b4b02a0ff25d56af7c45d",
+  "driver_sha256": "9ffbd2e197e58b5c56b3d58cefe4008d47cb4fdf50764808e841218294408bca",
+  "driver_bytes_unchanged": true,
+  "builder_sha256": "dd644cdcde6c9a6d6994aac891ecd4cf20d8b810873b8cef3fab56ef21647259",
+  "builder_diff_sha256": "815710b2bdbad59930f0a3ee9db87c9d9a9e83d8a5d756063201aaa14b826aa6",
+  "builder_diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-builder-protection-r1.diff",
+  "builder_review": "PENDING_NARROW_REVIEW",
+  "builder_protection": {
+    "ref_target_refused": true,
+    "absent_only_CAS": true,
+    "zero_old_SHA": "0000000000000000000000000000000000000000",
+    "checks_before_and_after": true
+  },
+  "tests": {
+    "passes": true,
+    "count": 55,
+    "argv": [
+      "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "test_release_run"
+    ],
+    "version": "3.12.12 (main, Dec 17 2025, 21:10:06) [Clang 21.1.4 ]",
+    "synthetic_only": true
+  },
+  "mutants": {
+    "total": 104,
+    "killed": 100,
+    "survived": 4,
+    "required_all_killed": true,
+    "required_ids": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R7",
+      "R8",
+      "R9",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "AL1",
+      "AL2",
+      "AL5",
+      "T2c",
+      "D1",
+      "D3",
+      "D5"
+    ],
+    "survivors": [
+      "T2g",
+      "T2h",
+      "D7",
+      "D8"
+    ],
+    "survivor_limitations": {
+      "T2g": "bytecode return/owner window, inspected in review",
+      "T2h": "bytecode mkdir-mask window, inspected in review",
+      "D7": "equivalent by exact allowed-blob construction",
+      "D8": "redundant by exact allowed-blob construction"
+    },
+    "results": {
+      "G1": {
+        "status": "KILLED",
+        "description": "drop pre-guard compare"
+      },
+      "G2": {
+        "status": "KILLED",
+        "description": "mask schema too"
+      },
+      "G3": {
+        "status": "KILLED",
+        "description": "mask blind sha too"
+      },
+      "G4": {
+        "status": "KILLED",
+        "description": "mask sealed+flag_counts"
+      },
+      "G5": {
+        "status": "KILLED",
+        "description": "compare only blocks"
+      },
+      "G6": {
+        "status": "KILLED",
+        "description": "mkdir before guard"
+      },
+      "P1": {
+        "status": "KILLED",
+        "description": "drop post emitted compare"
+      },
+      "P2": {
+        "status": "KILLED",
+        "description": "post compare emitted only blocks"
+      },
+      "P3": {
+        "status": "KILLED",
+        "description": "binding check only ssh"
+      },
+      "P4": {
+        "status": "KILLED",
+        "description": "binding .get tolerant"
+      },
+      "F1": {
+        "status": "KILLED",
+        "description": "no lock"
+      },
+      "F2": {
+        "status": "KILLED",
+        "description": "lock 0500"
+      },
+      "F3": {
+        "status": "KILLED",
+        "description": "leak msg"
+      },
+      "F4": {
+        "status": "KILLED",
+        "description": "ignore exit code"
+      },
+      "F5": {
+        "status": "KILLED",
+        "description": "except Exception only"
+      },
+      "O1": {
+        "status": "KILLED",
+        "description": "reducer before barrier"
+      },
+      "O2": {
+        "status": "KILLED",
+        "description": "no barrier"
+      },
+      "O3": {
+        "status": "KILLED",
+        "description": "no stdout capture"
+      },
+      "M1": {
+        "status": "KILLED",
+        "description": "drop code pins"
+      },
+      "M2": {
+        "status": "KILLED",
+        "description": "drop ledger arg"
+      },
+      "M3": {
+        "status": "KILLED",
+        "description": "drop audit hook"
+      },
+      "M4": {
+        "status": "KILLED",
+        "description": "drop owns_output lock"
+      },
+      "M5": {
+        "status": "KILLED",
+        "description": "drop dirty check"
+      },
+      "M6": {
+        "status": "KILLED",
+        "description": "drop fresh==2"
+      },
+      "M7": {
+        "status": "KILLED",
+        "description": "drop C2 binding"
+      },
+      "M8": {
+        "status": "KILLED",
+        "description": "print record on failure"
+      },
+      "A1": {
+        "status": "KILLED",
+        "description": "drop descendant allowlist"
+      },
+      "A2": {
+        "status": "KILLED",
+        "description": "drop remote-ref exclusion"
+      },
+      "A3": {
+        "status": "KILLED",
+        "description": "remote check PRIVATE only"
+      },
+      "A4": {
+        "status": "KILLED",
+        "description": "driver sha omitted on failure"
+      },
+      "S1": {
+        "status": "KILLED",
+        "description": "no handlers in execute_guarded"
+      },
+      "S2": {
+        "status": "KILLED",
+        "description": "no handlers in main"
+      },
+      "S3": {
+        "status": "KILLED",
+        "description": "SIGHUP not handled"
+      },
+      "S4": {
+        "status": "KILLED",
+        "description": "SIGTERM not handled"
+      },
+      "S5": {
+        "status": "KILLED",
+        "description": "reducer same session"
+      },
+      "S6": {
+        "status": "KILLED",
+        "description": "handlers not restored"
+      },
+      "E1": {
+        "status": "KILLED",
+        "description": "-B option not required"
+      },
+      "E2": {
+        "status": "KILLED",
+        "description": "numpy pin dropped"
+      },
+      "E3": {
+        "status": "KILLED",
+        "description": "child env inherits PYTHON*"
+      },
+      "E4": {
+        "status": "KILLED",
+        "description": "child env scrubs only PYTHONPATH"
+      },
+      "E5": {
+        "status": "KILLED",
+        "description": "flags via env only (r1)"
+      },
+      "C1": {
+        "status": "KILLED",
+        "description": "dict compare (r1 semantics)"
+      },
+      "H1": {
+        "status": "KILLED",
+        "description": "audit hook after preflight (r1 position)"
+      },
+      "H2": {
+        "status": "KILLED",
+        "description": "audit: no BLOCK_ROOT restriction"
+      },
+      "H3": {
+        "status": "KILLED",
+        "description": "audit: no resolve"
+      },
+      "L1": {
+        "status": "KILLED",
+        "description": "no interference symlink check"
+      },
+      "L2": {
+        "status": "KILLED",
+        "description": "no complete symlink check"
+      },
+      "T2a": {
+        "status": "KILLED",
+        "description": "no mask in execute_guarded except"
+      },
+      "T2b": {
+        "status": "KILLED",
+        "description": "no mask in main except"
+      },
+      "T2c": {
+        "status": "KILLED",
+        "description": "no mask in run_reducer except"
+      },
+      "T2d": {
+        "status": "KILLED",
+        "description": "block_failure_signals is a no-op"
+      },
+      "T2e": {
+        "status": "KILLED",
+        "description": "mask omits SIGHUP"
+      },
+      "T2f": {
+        "status": "KILLED",
+        "description": "owner not registered at mkdir (r2)"
+      },
+      "T2g": {
+        "status": "SURVIVED",
+        "description": "owner registered after return (r2)"
+      },
+      "T2h": {
+        "status": "SURVIVED",
+        "description": "mkdir outside ownership mask"
+      },
+      "T2i": {
+        "status": "KILLED",
+        "description": "terminating_signals leaves mask"
+      },
+      "T3a": {
+        "status": "KILLED",
+        "description": "kill child only"
+      },
+      "T3b": {
+        "status": "KILLED",
+        "description": "no kill at all"
+      },
+      "T3c": {
+        "status": "KILLED",
+        "description": "SIGTERM group"
+      },
+      "T3d": {
+        "status": "KILLED",
+        "description": "no reap"
+      },
+      "T3e": {
+        "status": "KILLED",
+        "description": "swallow termination"
+      },
+      "T3f": {
+        "status": "KILLED",
+        "description": "run_reducer except Exception"
+      },
+      "AL1": {
+        "status": "KILLED",
+        "description": "rename detection in driver diff"
+      },
+      "AL2": {
+        "status": "KILLED",
+        "description": "prefix allowlist (wildcard)"
+      },
+      "AL3": {
+        "status": "KILLED",
+        "description": "extra classification path"
+      },
+      "AL4": {
+        "status": "KILLED",
+        "description": "drop one allowlisted path"
+      },
+      "AL5": {
+        "status": "KILLED",
+        "description": "failure paths not refused"
+      },
+      "R1": {
+        "status": "KILLED",
+        "description": "no A3-P gate"
+      },
+      "R2": {
+        "status": "KILLED",
+        "description": "A3-P disqualification not raised"
+      },
+      "R3": {
+        "status": "KILLED",
+        "description": "A3-P gate after health guard (in barrier)"
+      },
+      "R4": {
+        "status": "KILLED",
+        "description": "no A3-P seal sha compare"
+      },
+      "R5": {
+        "status": "KILLED",
+        "description": "no manifest status/summary seal"
+      },
+      "R6": {
+        "status": "KILLED",
+        "description": "manifest summary entry unchecked"
+      },
+      "R7": {
+        "status": "KILLED",
+        "description": "dry_run unchecked"
+      },
+      "R8": {
+        "status": "KILLED",
+        "description": "outcomes_read unchecked"
+      },
+      "R9": {
+        "status": "KILLED",
+        "description": "tier coverage unchecked"
+      },
+      "R10": {
+        "status": "KILLED",
+        "description": "Boolean type unchecked"
+      },
+      "R11": {
+        "status": "KILLED",
+        "description": "frozen_feasible not bound to summary"
+      },
+      "R12": {
+        "status": "KILLED",
+        "description": "after_a3p not bound to passes"
+      },
+      "R13": {
+        "status": "KILLED",
+        "description": "gate on a3p row frozen flag"
+      },
+      "R14": {
+        "status": "KILLED",
+        "description": "binding path unchecked"
+      },
+      "R15": {
+        "status": "KILLED",
+        "description": "binding regex unchecked"
+      },
+      "R16": {
+        "status": "KILLED",
+        "description": "binding ancestry unchecked"
+      },
+      "R17": {
+        "status": "KILLED",
+        "description": "binding sha unchecked"
+      },
+      "R18": {
+        "status": "KILLED",
+        "description": "worktree bytes unchecked"
+      },
+      "R19": {
+        "status": "KILLED",
+        "description": "symlink resolve unchecked"
+      },
+      "R20": {
+        "status": "KILLED",
+        "description": "a3p commit ignored (uses summary commit)"
+      },
+      "R21": {
+        "status": "KILLED",
+        "description": "a3p sha ignored"
+      },
+      "R22": {
+        "status": "KILLED",
+        "description": "manifest sha ignored"
+      },
+      "R23": {
+        "status": "KILLED",
+        "description": "summary path not forced"
+      },
+      "R24": {
+        "status": "KILLED",
+        "description": "A3P exception is plain ValueError"
+      },
+      "D1": {
+        "status": "KILLED",
+        "description": "any private ref name"
+      },
+      "D2": {
+        "status": "KILLED",
+        "description": "unlisted Mac paths allowed"
+      },
+      "D3": {
+        "status": "KILLED",
+        "description": "symlink/exec blobs allowed"
+      },
+      "D4": {
+        "status": "KILLED",
+        "description": "single parent (no source ancestry)"
+      },
+      "D5": {
+        "status": "KILLED",
+        "description": "source-only parent"
+      },
+      "D6": {
+        "status": "KILLED",
+        "description": "whole-tree from source"
+      },
+      "D7": {
+        "status": "SURVIVED",
+        "description": "rename detection in builder diff"
+      },
+      "D8": {
+        "status": "SURVIVED",
+        "description": "no post-build allowlist check"
+      },
+      "D9": {
+        "status": "KILLED",
+        "description": "real index (no temp index)"
+      },
+      "D10": {
+        "status": "KILLED",
+        "description": "no clean check"
+      },
+      "D11": {
+        "status": "KILLED",
+        "description": "empty descendant allowed"
+      },
+      "D12": {
+        "status": "KILLED",
+        "description": "checkout result"
+      },
+      "D13": {
+        "status": "KILLED",
+        "description": "whole Mac dir copied from source"
+      }
+    },
+    "adapter_changes": "Synthetic export/result paths and zero-old-value update-ref anchor (D12); original reviewer tool unchanged"
+  },
+  "evidence": {
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-conditions-final-tests.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-conditions-final-tests.stderr": {
+      "sha256": "ede9d71af0548689baac09004688bab3866fac28d40f81b4935b084685b68f59",
+      "bytes": 8228
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-conditions-mutants.stdout": {
+      "sha256": "587dfd10192d66f5ef6db4d68f9baee702e9e6559690473d71ca6af89fc2270f",
+      "bytes": 3901
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-conditions-mutants.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-conditions-mutant-runner.py": {
+      "sha256": "2a4677d59a58d51cf0af741be88a983e7aa4894b35ec17c4a27f7e60ffbc56f3",
+      "bytes": 17205
+    },
+    "/tmp/sdicks02/c1rev/r3/tools/mut_r3.py": {
+      "sha256": "2e6781bcb3cf137fecadd6c8db1d8e7013011393e6dd3a5d4a4be7ecae151667",
+      "bytes": 17119
+    }
+  },
+  "runbook_conditions": [
+    "C2 exact detached HEAD activation plus HEAD/two-parent/clean/protection/555 checks",
+    "C3 builder env -i/-B/pinned driver+builder/fresh ref",
+    "C4 fourteen-day route only42219e57, neverr3",
+    "C5 Mac route reviewed9ffbd2e1"
+  ],
+  "canonical_R_changes": false,
+  "canonical_R_not_probed": true,
+  "real_builder_run": false,
+  "real_driver_or_reducer_run": false,
+  "host_contact": false,
+  "outcome_access": false
+}
