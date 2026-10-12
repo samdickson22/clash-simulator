@@ -3085,3 +3085,18 @@ Sol's r2 review returned REQUEST_CHANGES:
 - **R2-6:** files are opened non-blocking, then checked with `fstat`.
 
 A narrow Sol delta check covers only these items.
+
+## 2026-10-12 11:56Z: Mac Phase B: manifest approved; memory and update-step rulings
+
+**Approved:** `E4_MANIFEST_SHA` = 273ef19647c6fa2ee869793541b2000fc5a6947183b0d26977224c781ceb599d. The bundle is staged and pinned on A5 bytes. `validate_bundle` passed and the fixture clones are 0444.
+
+**Preconditions-r1 failed:** available memory dipped to 5.95 GiB at the start of the window. The graceful osascript quit of Chrome and Claude did not take effect, because Apple Events from the Tailscale-SSH session don't reach the GUI session.
+
+**Sol computer use is not available.** The coordinator's T3 is 127x05 Linux, and no T3 on the Mac side can be reached. The computer-use step in SOFTWARE-UPDATE-STEP is therefore replaced:
+- **Quitting apps:** send SIGTERM (never SIGKILL) to the verified top-level app PIDs of Chrome and Claude only, then confirm both have exited. If either survives, STOP and report.
+- **Update toggles:** left unchanged, because there is no sudo and no GUI. The session receipt discloses this, recording the preferences before and after, plus `softwareupdate --list` and any pending restart state.
+  - An install or restart mid-session would fail the session closed, and it would be rescheduled.
+  - The session runs during Mac-local morning, outside the usual overnight install window.
+- **After the session:** relaunch the apps with `open -a` if possible; otherwise record that it wasn't done.
+
+**Next:** preconditions-r2, then the readiness report, then GO.
