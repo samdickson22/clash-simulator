@@ -2276,3 +2276,26 @@ Each round commits a receipt with every hash. **`round.py` is shelved**: no furt
 
    The PC1 packet reviewer cross-checks this receipt against the original host root listings (the children's basenames must equal the descriptor's attempts) and the launch receipts. This ruling is flagged to the PC1 reviewer as a declared interpretation of "preserve full roots at release-side paths".
 4. **Unchanged:** A6 stays outside the roots, since it isn't a reference attempt. The order stays 08 then 01, and C1–C6, C-a to C-d and c6387611 all still apply.
+
+## 2026-10-12 02:40Z: A6 independent review PASS_WITH_NOTES; reference order ruling R-ord (both hosts independent)
+
+**Review** (`END-A6-INDEPENDENT-REVIEW-r1.md`, T1 job directory): PASS_WITH_NOTES.
+- Approved argv and bytes; exit 0; 29/29 outputs match da9230ad.
+- Every gate was recomputed from raw: EXACT 125/125 and 250/250; zero SSH, dbus or apt interference; MHz ratio 0.99923; memory well inside the A3 budget.
+- No outcome exposure.
+- Observed A6 wall time: **55 m 11 s**. This is the duration basis for the references.
+
+**R-ord: the 08→01 serial dependency is withdrawn.** Under strict serial order, 01's window would be lost. "08 first" existed to satisfy F9 (08's reference finishes before B takes 08), not to make 01 wait.
+- The two references are independent: neither launch waits on the other's exit or ACK.
+- **Launch 01 first.** Its window closes first, and it is already C1-clean. Launch 08 when it is ready.
+- Each host keeps its own conditions:
+  - 01: cutoff 04:17:43Z;
+  - 08: fresh C2 against its 08:49:07Z apt-daily;
+  - per host: fresh C2 and motd stamps, roster, V2 prepare proof committed ≥1 s before launch, C-a pins.
+- **C5 applies per timed host.** No SSH into a host while its reference is timing. Finish all of a host's prep SSH before that host launches. SSH to the other, untimed host is allowed.
+- If 01 misses its cutoff, c6387611 deferral applies; there is no relaxation.
+
+**Review conditions adopted for each reference:**
+- **Before launch:** assert `end-evidence` kind = `counted-reporting`, with no `synthetic` sources. Assert that the plan is the C1 frozen copy with `reporting_hosts` [127x01, 127x08].
+- **After exit:** require `fleet-complete.poolable == true`, the five A3 code SHAs, native 44874fd6, 11 slots and warmup 300. Otherwise the attempt is a failed attempt: preserved per L1, then STOP and escalate.
+- Pool and PC reporting state deadline overruns per cell against each cell's own budget, not the absolute 208 ms counter.
