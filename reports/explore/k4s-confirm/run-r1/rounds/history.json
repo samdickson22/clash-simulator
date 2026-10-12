@@ -19,5 +19,12 @@
   "dispatch_file": "replacement-r2.json",
   "dispatch_sha256": "1df20188998b9bfe659446fa3463bb2d8b369eba547e0a3331f8b1f2e84bfcd3",
   "launched_utc": "2026-10-12T08:57:13Z"
+ },
+ {
+  "namespace": "k4s-confirm-replacement-r3",
+  "phase": "replacement-r3",
+  "dispatch_file": "replacement-r3.json",
+  "dispatch_sha256": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+  "launched_utc": "2026-10-12T11:28:44Z"
  }
 ]

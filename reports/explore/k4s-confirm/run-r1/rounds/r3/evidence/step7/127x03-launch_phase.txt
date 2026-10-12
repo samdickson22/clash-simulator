@@ -1,0 +1,5 @@
+host-ok
+{"launched_at_utc":"2026-10-12T11:28:37Z","pid":876522,"pgid":876522}
+copier-registered
+{"launched_at_utc":"2026-10-12T11:28:40Z","pid":2373197,"pgid":2373197}
+rc=0 2026-10-12T11:28:40Z

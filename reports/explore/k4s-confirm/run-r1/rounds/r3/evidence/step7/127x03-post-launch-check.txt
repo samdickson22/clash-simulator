@@ -1,0 +1,5 @@
+127x03 launch 2026-10-12T11:28:44Z 127x03 ab8b62388c16a282 sup 2373197
+127x03 admission 2026-10-12T11:28:43Z admitted True foreign 0 active 0 who ''
+127x03 supervisor alive
+127x03 stop file present False
+127x03 copier pid 876522 hub-reg 876522 True replacement-r3 src-reg 876522 True match True

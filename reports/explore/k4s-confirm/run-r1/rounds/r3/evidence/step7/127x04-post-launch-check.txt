@@ -1,0 +1,5 @@
+127x04 launch 2026-10-12T11:28:49Z 127x04 ab8b62388c16a282 sup 1396984
+127x04 admission 2026-10-12T11:28:47Z admitted True foreign 0 active 0 who ''
+127x04 supervisor alive
+127x04 stop file present False
+127x04 copier pid 884802 hub-reg 884802 True replacement-r3 src-reg 884802 True match True

@@ -273,3 +273,15 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   03 286 / 04 289; 4644 games); exact coverage 3325 + 575. Ledger 4a56abf3 -> 153eb421.
 - 11:10:54Z / 11:10:57Z k4s-confirm-replacement-r3 staged (extras sha OK, overlay 175/175, PREREG 9650972d); qualification
   running (03 PGID 2360714, 04 PGID 1383353).
+- 2026-10-12T11:21:22Z 04 apt-daily fired 11:20:06Z; quiet-read v2 x2 per host (11:20:32Z/33Z, 11:21:04Z) all quiet; posted "03/04 quiet" at 11:21:05Z (disclosed: K4S r3 qualification running on both). Holding r3 launches for per-host "released" / 30 min from GO.
+- 2026-10-12T11:22:52Z coordinator GO to perception (COORDINATOR c00317cf); r3 launch held per host until "released" or 2026-10-12T11:52:52Z.
+- 2026-10-12T11:24:49Z coordinator relayed "released 127x04" (perception session closed, exit 0); 03 still held.
+- 2026-10-12T11:26:38Z coordinator relayed "released 127x03" (perception session closed, exit 0); both hosts released.
+- 11:26:04Z / 11:27:12Z qualification PASS 28/28 (04 / 03); runtime == smoke; pin.verify OK; carry-over byte-identical; 03 idle
+  pin OK; auth v5 7f3f7b5e; barrier PASS 176 (11:27:45Z / 11:27:47Z); prelaunch quiet-read v2 x2 per host OK; stamps fresh.
+- **11:28:44Z / 11:28:49Z replacement-r3 LAUNCHED**: 03 sup 2373197, 04 sup 1396984 (admitted, 0 foreign/active, no console);
+  copiers 03 876522 (core 62), 04 884802 (core 63), registrations match. Receipt rounds/r3/RECEIPT.json (evidence hashed).
+  Next cut ~13:20Z (04 apt-daily-upgrade 13:27:55Z; 03 13:46:58Z).
+## Running (owned PGIDs only) -- CURRENT
+- replacement-r3 in k4s-confirm-replacement-r3: 03 sup PGID 2373197, 04 sup PGID 1396984; copiers on 05 876522 / 884802.
+  Health: K4S_NS=k4s-confirm-replacement-r3 K4S_PHASE=replacement-r3 tools/watch.sh

@@ -1,0 +1,255 @@
+{
+ "schema": "clasher.k4s.round-receipt.v2",
+ "study": "PREREG-K4S",
+ "round": "r3",
+ "cut": "P2 cut 2 (04 apt-daily 11:20:02Z)",
+ "outcomes_sealed": true,
+ "outcomes_read": false,
+ "authority": {
+  "option_a": "afe83faa (22:11 UTC)",
+  "windowed_rounds": "76887b33 (22:10:17Z)",
+  "p2": "adc12f36",
+  "proposal_m": "2c847954",
+  "quiet_read": "coordinator ruling, cmd rounds/r3/quiet-read-v2.cmd sha256 08aabe920d145abb45f063fa32350defd0af64bdf190fb82d7583c62bcf34678",
+  "k_gate": "8/6 (zero-based replacement_k; RECEIPT-ERRATUM r2 F5)",
+  "read_window": "perception owner on 03 and 04, GO COORDINATOR c00317cf",
+  "checklist_sha256": "fed131943df3975327010c76782c92a565469a0b78c3077a77917ce4a9c62146",
+  "health_tool_sha256": "aa898ab2db74e519a3682a14791a6bbc99a5d3abcdd15928c7722f0cde80441a"
+ },
+ "times": {
+  "stop_touch_03": "2026-10-12T11:09:30.516Z",
+  "stop_touch_04": "2026-10-12T11:09:30.532Z",
+  "exit_03": "2026-10-12T11:09:31Z",
+  "exit_04": "2026-10-12T11:09:33Z",
+  "copier_exit_04": "2026-10-12T11:10:08Z",
+  "copier_exit_03": "2026-10-12T11:10:10Z",
+  "inventory": "2026-10-12T11:10:25Z",
+  "staged_03": "2026-10-12T11:10:54Z",
+  "staged_04": "2026-10-12T11:10:57Z",
+  "apt_daily_04_fired": "2026-10-12T11:20:06Z",
+  "quiet_reads": [
+   "2026-10-12T11:20:32Z",
+   "2026-10-12T11:20:33Z",
+   "2026-10-12T11:21:04Z"
+  ],
+  "quiet_posted": "2026-10-12T11:21:05Z",
+  "coordinator_go": "2026-10-12T11:22:52Z (receipt time of the GO message; COORDINATOR c00317cf)",
+  "timeout": "2026-10-12T11:52:52Z",
+  "released_04_relayed": "2026-10-12T11:24:49Z",
+  "released_03_relayed": "2026-10-12T11:26:38Z",
+  "qualification_pass_04": "2026-10-12T11:26:04Z",
+  "qualification_pass_03": "2026-10-12T11:27:12Z",
+  "barrier_03": "2026-10-12T11:27:45Z",
+  "barrier_04": "2026-10-12T11:27:47Z",
+  "prelaunch_quiet_reads": [
+   "2026-10-12T11:27:55Z",
+   "2026-10-12T11:27:56Z",
+   "2026-10-12T11:28:26Z",
+   "2026-10-12T11:28:27Z"
+  ],
+  "copier_03": "2026-10-12T11:28:37Z",
+  "launch_03": "2026-10-12T11:28:44Z",
+  "copier_04": "2026-10-12T11:28:42Z",
+  "launch_04": "2026-10-12T11:28:49Z"
+ },
+ "inventory": {
+  "tool": "frozen replace.py @391d2006",
+  "new_events": 22,
+  "new_primary": 16,
+  "new_guard": 6,
+  "reasons": {
+   "owned_STOP": 22
+  },
+  "cumulative_lost": {
+   "primary": 57,
+   "guard": 20
+  },
+  "max_k": {
+   "primary": 3,
+   "guard": 2
+  },
+  "gates": {
+   "primary": "57/150",
+   "guard": "20/45",
+   "k_primary": "3/8",
+   "k_guard": "2/6",
+   "clear": true
+  },
+  "ledger_before": {
+   "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r2.json",
+   "sha256": "4a56abf356446c3cae6935674ffe4c92273ff8a91f689a097eaec76c935d5510"
+  },
+  "ledger_after": {
+   "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r3.json",
+   "sha256": "153eb421f75815b5c77e375ef264c18fe994d10f2f47748c70094db97ad22942"
+  },
+  "coverage": {
+   "counted": 3325,
+   "new_rows": 575,
+   "logical": 3900,
+   "exact": true
+  }
+ },
+ "dispatch": {
+  "path": "reports/explore/k4s-confirm/run-r1/dispatch/replacement-r3.json",
+  "sha256": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+  "rows": 575,
+  "never_started": 553,
+  "replacements": 22,
+  "per_host": {
+   "127x03": 286,
+   "127x04": 289
+  },
+  "games": 4644
+ },
+ "authorization": {
+  "path": "reports/explore/k4s-confirm/run-r1/receipts/REPORTING-AUTHORIZATION-v5-replacement-r3.json",
+  "sha256": "7f3f7b5e2d32c1bee21122e546096d7cd1896dc62de6648caba9e491bf9868be"
+ },
+ "history_sha256": "8aeee040fff2232372efe0afc5fa4703fa137b84fbf91deb3c013e985a290774",
+ "hosts": {
+  "127x03": {
+   "stopped_phase": {
+    "supervisor_pid": 2116555,
+    "stop_touch": "2026-10-12T11:09:30.516Z",
+    "exit_utc": "2026-10-12T11:09:31Z",
+    "reason": "owned_STOP",
+    "completed": 268,
+    "failed": 11,
+    "unstarted": 276
+   },
+   "new_launch": {
+    "utc": "2026-10-12T11:28:44Z",
+    "supervisor_pid": 2373197,
+    "dispatch_sha256": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+    "runtime_pin_sha256": "b93816cc581e1132e85ddba0e4470ecf0bc5e56ae32f39ec336b239c99d6c4dd"
+   },
+   "admission": {
+    "utc": "2026-10-12T11:28:43Z",
+    "admitted": true,
+    "foreign": 0,
+    "active": 0,
+    "who": ""
+   },
+   "copier": {
+    "pid": 876522,
+    "core": 62,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r3-qualification-127x03.json",
+    "sha256": "8b012e5bf87a6455fe32d7e87e187fb09755dbb4470ffb1f0bae3217a4a990b3",
+    "verdict": "PASS 28/28"
+   }
+  },
+  "127x04": {
+   "stopped_phase": {
+    "supervisor_pid": 1140717,
+    "stop_touch": "2026-10-12T11:09:30.532Z",
+    "exit_utc": "2026-10-12T11:09:33Z",
+    "reason": "owned_STOP",
+    "completed": 266,
+    "failed": 11,
+    "unstarted": 277
+   },
+   "new_launch": {
+    "utc": "2026-10-12T11:28:49Z",
+    "supervisor_pid": 1396984,
+    "dispatch_sha256": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+    "runtime_pin_sha256": "7a3d52ea01c2de6887ef6083690dd09c8f87b80464785a66806d43962d0b9e6c"
+   },
+   "admission": {
+    "utc": "2026-10-12T11:28:47Z",
+    "admitted": true,
+    "foreign": 0,
+    "active": 0,
+    "who": ""
+   },
+   "copier": {
+    "pid": 884802,
+    "core": 63,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r3-qualification-127x04.json",
+    "sha256": "fecf9a8acd4107464f13bd0edbb1853d0bd27156f7e18ac9c278e6c260cab0d8",
+    "verdict": "PASS 28/28"
+   }
+  }
+ },
+ "evidence_sha256": {
+  "rounds/r3/evidence/step7/127x03-copier-pid.json": "a6ae361e9f3c191a92d379c42b21d6865c554e6ceff7fd8728773ef6439fadc1",
+  "rounds/r3/evidence/step7/127x03-host-admission.json": "797873c80ad462b5411a2de32cbe220efb98b7345b0786676826a74994a34eff",
+  "rounds/r3/evidence/step7/127x03-hub-copier-registration.json": "281f22193bb7c84c652a3165d83459d62e31a4b894cac06fdf3164dcd1376c1d",
+  "rounds/r3/evidence/step7/127x03-launch.json": "6c49a6679c1c654879a071c44a86cda952fb40bc1722af43e3b2c22914b13efb",
+  "rounds/r3/evidence/step7/127x03-launch_phase.txt": "48e473a95f6e5158122d976e4f9224eeb4c8a23da9f9464ec10ebc1e46ae1f75",
+  "rounds/r3/evidence/step7/127x03-post-launch-check.txt": "0f3442fe312034886716ecaaf7cc33e619c06423d553f08d9dad67522780da4e",
+  "rounds/r3/evidence/step7/127x03-source-copier-registration.json": "281f22193bb7c84c652a3165d83459d62e31a4b894cac06fdf3164dcd1376c1d",
+  "rounds/r3/evidence/step7/127x04-copier-pid.json": "5228051b098fd748b1bcb4d348e929428dff438e5ae07d62d65bde0b6b6deacc",
+  "rounds/r3/evidence/step7/127x04-host-admission.json": "8345021d3ea5623a2b5f827ac6a5c2bde503cf185a368d9d3d1b6361aeb9df73",
+  "rounds/r3/evidence/step7/127x04-hub-copier-registration.json": "9e7af87f0266e832e830dbaab41717991e0e6067ba8d85b94f799e6479fe12d4",
+  "rounds/r3/evidence/step7/127x04-launch.json": "9cd6bc37da5638dbc95a065cfd47ad467980d9b348bef2d7a711f8f9a7b4264e",
+  "rounds/r3/evidence/step7/127x04-launch_phase.txt": "663249fd056fe1571b4cea6c6bd1ae7e42e64430a66c27748d505b6412df0785",
+  "rounds/r3/evidence/step7/127x04-post-launch-check.txt": "fe35807f19866ce56f8d3dbfc328bee9389ce1866991df4abcafcae365e5a048",
+  "rounds/r3/evidence/step7/127x04-source-copier-registration.json": "9e7af87f0266e832e830dbaab41717991e0e6067ba8d85b94f799e6479fe12d4",
+  "rounds/r3/evidence/step5/127x03-barrier.txt": "8eaa30695a6e911e3f17e0e5f6235553663739954dbf55ad2dabf4e0280d78aa",
+  "rounds/r3/evidence/step5/127x03-finalize.txt": "67068365e30daee7b3f2642e25135812c8ce288e0b4bed7dfc6e124333091109",
+  "rounds/r3/evidence/step5/127x04-barrier.txt": "894f77201baa708d6e8b21cb25121ef0e755cacbbe72aa5d7d02408e92f63264",
+  "rounds/r3/evidence/step5/127x04-finalize.txt": "098f52c0e89c4ebff2ffa4a0823f17888586eb1761b98523cdb9d63f1eef3872",
+  "rounds/r3/evidence/step5/REPORTING-AUTHORIZATION-v5-replacement-r3.json": "7f3f7b5e2d32c1bee21122e546096d7cd1896dc62de6648caba9e491bf9868be",
+  "rounds/r3/evidence/step5/replacement-r3-qualification-127x03.json": "8b012e5bf87a6455fe32d7e87e187fb09755dbb4470ffb1f0bae3217a4a990b3",
+  "rounds/r3/evidence/step5/replacement-r3-qualification-127x04.json": "fecf9a8acd4107464f13bd0edbb1853d0bd27156f7e18ac9c278e6c260cab0d8",
+  "rounds/r3/evidence/step1/127x03-exit-wait.txt": "4ef8ef8b2511e4c1a81f3bd75e2f4846769a87c872135021c4326a54bd606f04",
+  "rounds/r3/evidence/step1/127x03-launch-r2.json": "1d917968d9875f89c2024ba173fb1a16fcdaf8b7a5f6a5504fe3bc7b6b9df299",
+  "rounds/r3/evidence/step1/127x03-owned-supervisor-admission.json": "42efc4fe83c8e452be8103df5e8e617171d305e293a5a3dbcda5fbe3884fe0dc",
+  "rounds/r3/evidence/step1/127x03-ps-census.meta": "014a1c176fc0df28bf6eaca072189c7b0ae3f01a29c964d708de97c840e0cfca",
+  "rounds/r3/evidence/step1/127x03-ps-census.txt": "447ead03619cee416879fe239e15605454a5110d4a0bf04e12bcdae832817d0d",
+  "rounds/r3/evidence/step1/127x03-stop-reason.json": "a7f7574a72f4313bcc8b29440546d2e0955d12131ad7ab4e53e35eb53bc5d403",
+  "rounds/r3/evidence/step1/127x03-stop-touch.txt": "48f3cfcd0757a16b4403f6a5bd00dfea97de6019805b3f0af883dc38b129dc46",
+  "rounds/r3/evidence/step1/127x03-supervisor-exit.json": "834fc2475b5a071d1564076b77403d83b983dbdf2026f4ccccf7df84012c3e3f",
+  "rounds/r3/evidence/step1/127x04-exit-wait.txt": "17fea730f8052e5465f9a2864ac1644caa3db428bfa5b718b7d31c4aa686d529",
+  "rounds/r3/evidence/step1/127x04-launch-r2.json": "ea88e4d5c11590390875bfc8c044f5027950349e70bdd3f5b3eef82f3683cf32",
+  "rounds/r3/evidence/step1/127x04-owned-supervisor-admission.json": "5e023edf85608bedb28f022fdc9245490292af7d0ee9f1d4c75ad00352970f3f",
+  "rounds/r3/evidence/step1/127x04-ps-census.meta": "08a1b047d82254644276ddb2637c9ecfd7f20e4de0fd09584ae243c1375cba4b",
+  "rounds/r3/evidence/step1/127x04-ps-census.txt": "92701f4e5cf3c1bee62696111d90402f5fab9640200143b36e39f5a8caad86fe",
+  "rounds/r3/evidence/step1/127x04-stop-reason.json": "3dbbd3f209a341b8638745916bb8ae9eab2ca5574d3bb1e7a40b04a06bfc5ddd",
+  "rounds/r3/evidence/step1/127x04-stop-touch.txt": "aaf095e46cfa163dc9f7b558ffe9e585dd5e511aba055433a8d807c71dad4443",
+  "rounds/r3/evidence/step1/127x04-supervisor-exit.json": "37aafa6a128757e80082d0fbad6a1e518de88a277e342538cb2f33dbbdfc8e8b",
+  "rounds/r3/evidence/quiet-test/127x03-2026-10-12T09:09:53Z.txt": "658d104381abc954cd8256f20c6a74aeb634b7bf0715bef5af0554320505942f",
+  "rounds/r3/evidence/quiet-test/127x03-2026-10-12T09:10:24Z.txt": "658d104381abc954cd8256f20c6a74aeb634b7bf0715bef5af0554320505942f",
+  "rounds/r3/evidence/quiet-test/127x04-2026-10-12T09:09:53Z.txt": "3ed6ac58fd37a3c66829e1d48b5e0fbbfbdee0f09729670237ea883fe09a84c8",
+  "rounds/r3/evidence/quiet-test/127x04-2026-10-12T09:10:24Z.txt": "3ed6ac58fd37a3c66829e1d48b5e0fbbfbdee0f09729670237ea883fe09a84c8",
+  "rounds/r3/evidence/step2/127x03-ack-bindings.txt": "4697ac4ddd5769554b21ddfdb3010e25742dd5249cd37eabbac1bf519c3b392a",
+  "rounds/r3/evidence/step2/127x03-complete-ids.txt": "48778639ed9c6675f141cb1433ae90d272d290ca95bf7d376da0802bcb4cab1f",
+  "rounds/r3/evidence/step2/127x03-copy-health-final.json": "feb90f3cb51ee9be2c963970a10bc302cf41569165b8e7c8255d3a81d3a132ed",
+  "rounds/r3/evidence/step2/127x03-hub-copier-admission.json": "6734db482a91e37cd99eedcdfedcf85dab848b1e6ff4faf335ff7351f92f3e57",
+  "rounds/r3/evidence/step2/127x03-source-copier-admission.json": "6734db482a91e37cd99eedcdfedcf85dab848b1e6ff4faf335ff7351f92f3e57",
+  "rounds/r3/evidence/step2/127x04-ack-bindings.txt": "f32f30579e6f530a60144c4580ccf6c15aac5563373275b0eb1c04ced8b7d454",
+  "rounds/r3/evidence/step2/127x04-complete-ids.txt": "7fec48fccd1bd070b2e3766df6dcbfe15cf9abdd613b83eafc01be791e112f31",
+  "rounds/r3/evidence/step2/127x04-copy-health-final.json": "75b2dddb01e6a225a0c30adb2832701dd2df67c9195ce4393a2dfa31d744c9ad",
+  "rounds/r3/evidence/step2/127x04-hub-copier-admission.json": "7819b3a0a352cb077e4dc636ef21fe9c60cd2c2ed2178a546524da392dde7e6d",
+  "rounds/r3/evidence/step2/127x04-source-copier-admission.json": "7819b3a0a352cb077e4dc636ef21fe9c60cd2c2ed2178a546524da392dde7e6d",
+  "rounds/r3/evidence/step2/hub-view-replacement-r2.txt": "1464e1e28708601c9fcba7232b2920c8019411c517fe685fde2a17aa9c14a23e",
+  "rounds/r3/evidence/step3/published.sha256": "404fe3c378d0e778c88da46180e8bbcec022f21f3f9f633323ccedce0ac77136",
+  "rounds/r3/evidence/step3/replace-stdout.txt": "43de3c185576fddbf615023384fbd2c70dd6d3fc0b65987475f26df1ee3dc4b0",
+  "rounds/r3/evidence/step3/validation.txt": "329c6b647c927eca9daadc66efda8333a33dd814870df379f136770eb94b5ac5",
+  "rounds/r3/evidence/step4/127x03-stage.txt": "304549fed38771917df8f03408b9053d656db48cc580ab3b5ededfc914882c55",
+  "rounds/r3/evidence/step4/127x04-stage.txt": "50c5308b7aee3c6d83667d2f1f925f3c3de4bbef90938c6d4bbd867a98f89f3b",
+  "rounds/r3/evidence/step6/127x03-prelaunch-quiet-2026-10-12T11:27:55Z.txt": "658d104381abc954cd8256f20c6a74aeb634b7bf0715bef5af0554320505942f",
+  "rounds/r3/evidence/step6/127x03-prelaunch-quiet-2026-10-12T11:28:26Z.txt": "658d104381abc954cd8256f20c6a74aeb634b7bf0715bef5af0554320505942f",
+  "rounds/r3/evidence/step6/127x03-quiet-2026-10-12T11:20:32Z.txt": "658d104381abc954cd8256f20c6a74aeb634b7bf0715bef5af0554320505942f",
+  "rounds/r3/evidence/step6/127x03-quiet-2026-10-12T11:21:04Z.txt": "658d104381abc954cd8256f20c6a74aeb634b7bf0715bef5af0554320505942f",
+  "rounds/r3/evidence/step6/127x03-stamps-timers.txt": "469f164ff34129447bd3f52036cc85ee5e2c11e777dd9ff29eaa22640aadea87",
+  "rounds/r3/evidence/step6/127x04-prelaunch-quiet-2026-10-12T11:27:56Z.txt": "3ed6ac58fd37a3c66829e1d48b5e0fbbfbdee0f09729670237ea883fe09a84c8",
+  "rounds/r3/evidence/step6/127x04-prelaunch-quiet-2026-10-12T11:28:27Z.txt": "3ed6ac58fd37a3c66829e1d48b5e0fbbfbdee0f09729670237ea883fe09a84c8",
+  "rounds/r3/evidence/step6/127x04-quiet-2026-10-12T11:20:33Z.txt": "3ed6ac58fd37a3c66829e1d48b5e0fbbfbdee0f09729670237ea883fe09a84c8",
+  "rounds/r3/evidence/step6/127x04-quiet-2026-10-12T11:21:04Z.txt": "3ed6ac58fd37a3c66829e1d48b5e0fbbfbdee0f09729670237ea883fe09a84c8",
+  "rounds/r3/evidence/step6/127x04-stamps-timers.txt": "0708fc5d327d4a889dbc55513315dc86a99e9ebc7806f126e1c2a056174c6173",
+  "rounds/r3/evidence/step6/127x04-timer-wait.txt": "4b5e14f1088ed0a71398b7812b6e6e2c9b831fc7d423606a33aced2bd36d218d",
+  "rounds/r3/evidence/step6/read-window.txt": "11499e5cd5ab0eddac01e7bd578687569ca8068daf99cf4cf4fb91d6ec3896c0"
+ },
+ "disclosures": [
+  "K4S r3 qualification (nice 10) ran on both hosts during the perception read window (03 PGID 2360714 11:10:54Z-11:27:12Z, 04 PGID 1383353 11:10:57Z-11:26:04Z); stated in the \"03/04 quiet\" post.",
+  "Health tool unchanged for r3: run with K4S_NS=k4s-confirm-replacement-r3 K4S_PHASE=replacement-r3 (existing env inputs); EXPECTED has no replacement-r3 entry, so a supervisor exit with a null reason and fewer completions than dispatched is not auto-flagged; checked by hand at each read (03 286, 04 289)."
+ ]
+}

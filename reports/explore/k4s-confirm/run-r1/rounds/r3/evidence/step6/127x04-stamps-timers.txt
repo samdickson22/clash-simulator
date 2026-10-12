@@ -1,0 +1,6 @@
+2026-10-11T21:32:48Z /var/lib/ubuntu-release-upgrader/release-upgrade-available
+2026-10-12T11:20:18Z /var/lib/update-notifier/updates-available
+2026-10-12T11:20:08Z /var/lib/apt/lists
+Mon 2026-10-12 06:27:55 PDT 1h 59min left Sun 2026-10-11 06:32:53 PDT 21h ago      apt-daily-upgrade.timer      apt-daily-upgrade.service     
+Mon 2026-10-12 17:25:02 PDT 12h left      Mon 2026-10-12 04:20:06 PDT 8min ago     apt-daily.timer              apt-daily.service             
+Mon 2026-10-12 19:15:31 PDT 14h left      Mon 2026-10-12 03:52:05 PDT 36min ago    motd-news.timer              motd-news.service             

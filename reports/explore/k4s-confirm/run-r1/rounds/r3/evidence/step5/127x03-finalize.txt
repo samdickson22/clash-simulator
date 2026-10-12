@@ -1,0 +1,10 @@
+BELIEF-QUALIFIED QUALIFICATION-FINISHED QUALIFICATION-STARTED QUALIFIED TESTS-PASS 
+127x03 runtime identical to smoke job: {'files': True, 'native_source': True, 'inputs': True, 'inherited_runtime_pin_sha256': True, 'plan_sha256': True} 1724 runtime-pin sha b93816cc581e1132e85ddba0e4470ecf0bc5e56ae32f39ec336b239c99d6c4dd
+127x03 qual PASS 2026-10-12T11:27:12Z 299 passed, 2 deselected in 36.18s 28 / 28 host 127x03 job ok True pin sha ok True
+127x03 pin.verify OK
+416f6e51e32e1900faaf8ceaf329287475a6a621fb1dc2d1b6def50ebb528ed1  /mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/FROZEN-K4S.json
+d3ed1c61092633bc57c8b7814f8f76829fd013720f1536e0cd926322fc8fc722  /mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/SMOKE-PASS
+e338db63456772b930334dfb898839380b8c9180da35252c04c4c9f0d71eb24f  /mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/smoke-admission.json
+127x03 no-supervisor-admission
+03 idle pin 2180947 139691386 16152ceb7942621141a2d8d91189affdeacde28ad1a9059ffbadde5e9bde799a
+ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48  /mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3.json
