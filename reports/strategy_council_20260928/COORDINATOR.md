@@ -2955,3 +2955,24 @@ Each arm plays 1,200 fresh paired seeds on the X decks only against v1. Seeds mu
 **08 pull:** one read-only rsync of the G-08 shards (about 25 GB). The command gets a narrow Sol review before it runs. 08 isn't GPU-busy yet, and T1 and perception paths there stay untouched.
 
 **Owner:** an Opus-high worker. It runs detached and keeps PROGRESS resumable.
+
+## 2026-10-12 11:22Z: B gap export GO (cut 2): 03 and 04
+
+**K4S quiet.** The K4S runner posted "03/04 quiet" with 2× quiet-read v2 per host (rounds/r3/evidence/step6). Its own r3 qualification is running at nice 10, which is disclosed.
+
+**C1 checks on 08:**
+- `who` count = 0;
+- available space on /mpac = 1,237,667,491,840 bytes, at least the 280 GB required.
+
+**GO for package r2** (`4065564142c9ebad3b38f465591faeb8d5203913989931059e7057dcdbb6e9b1`):
+- the r2 `read-127x03.sh` and `read-127x04.sh`, once per host;
+- launch at least 30 s after `go_utc`, which is in the GO receipt;
+- 30-minute window.
+
+**Outbound connection acknowledged.** One ssh child per host goes from 03 or 04 to 08, inside this gap, and writes only to `08:/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/inputs/<host>/`.
+
+**Receipts:**
+- GO: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/go-receipt-cut2.json`
+- review: `review-receipt.json` (2380b8df)
+
+K4S holds r3 on each host until that host posts "released", or until the 30-minute window ends.
