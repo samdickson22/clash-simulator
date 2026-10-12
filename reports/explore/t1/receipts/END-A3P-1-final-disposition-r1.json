@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-12T16:41:23Z",
+  "ruling_commit": "32f5e2e46ae99da86ffe20712760870e1ff24c5e",
+  "ruling": "A3P-1",
+  "mac_route_final": "NO_MAC_FEASIBLE_TIER",
+  "selected_tier": null,
+  "all_four_frozen_feasible_tiers_removed_by_a3p": true,
+  "repeat_authorized": false,
+  "reducer_amendment": false,
+  "outcomes_sealed": true,
+  "future_route": "fourteen_day_escape",
+  "not_before_utc": "2026-10-25T19:31:38Z",
+  "separate_future_ruling_required": true,
+  "future_driver_sha256": "42219e57c052ada73a3ca691839fa47166f1d554fa5600dd85553bb68a916a5e",
+  "future_canonical_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "retained_private_descendant": "2473c0a9ab4e6d481ac19c584c001f0b62fd77b2",
+  "no_private_state_or_originals_touched_this_turn": true,
+  "mirror_stays_paused": true,
+  "receipt_commit": "f405567b95ab60457265658f6517974d7e784cee",
+  "receipt_paths": [
+    "reports/explore/t1/receipts/END-RS4-private-mode-r1.json",
+    "reports/explore/t1/receipts/END-RS4-driver-launch-r1.json",
+    "reports/explore/t1/receipts/END-release-driver-STOP-A3P-RS4.json"
+  ],
+  "timer_action": "disable_after_this_record_is_committed_and_pushed"
+}
