@@ -22,7 +22,10 @@ Impact inventory: [`E4-GUARD-RACE-FIX-IMPACT-20261012.md`](E4-GUARD-RACE-FIX-IMP
 **Does not change:**
 - any hypothesis, arm, seed, tier, gate, threshold or reducer;
 - the slot count (11), warmup (300 s), budgets, nice 10 and SCHED_OTHER, and the 24 GiB floor;
-- the T1 guard modules, the rule set `frozen-t1-op1-op2-op3-op4-op5-op6-v1` and every stop reason. The E4 adapter's application of OP-3 identity pinning changes in one way only: (i) ownership is also derived on the census snapshot (union, start_ticks-protected, never outside the E4 ppid tree). This is a declared adapter-level relaxation, not a T1 rule change;
+- the T1 guard modules, the rule set `frozen-t1-op1-op2-op3-op4-op5-op6-v1` and every stop reason. The E4 adapter's application of OP-3 identity pinning changes in two declared ways only, neither of them a T1 rule change:
+  - (i) **Relaxation (false-positive repair):** ownership is also derived on the census snapshot. It is unioned with the ownership snapshot, never subtracted. It is start_ticks-protected, never extends outside the E4 ppid/start_ticks tree, and never replaces a pinned six-KEY identity.
+  - (ii) **Tightening:** in both snapshots, ancestry passes only through identity-valid processes. A process whose pinned six-KEY identity (`supervisor.KEYS`) has changed is not owned and grants ownership to no newly reached descendant. On 94d0e7f2, such a parent's new children were admitted from the ownership snapshot. Descendants already admitted keep their ownership.
+  - No exec, pre-exec or identity-replacement exception exists.
 - the guard freeze `FROZEN-T1.json` 24817e16 and its nine modules;
 - the END evidence and counted population;
 - the corpus, states, native 44874fd6, policy and calibration;
@@ -31,8 +34,6 @@ Impact inventory: [`E4-GUARD-RACE-FIX-IMPACT-20261012.md`](E4-GUARD-RACE-FIX-IMP
 - the wrapper `end_exit_push.sh` 0a87166f, `detach.sh` and the verifier 753722c9;
 - the release checker `release_reference.py` f8b61c60 / `check_reference.py` c848baa2;
 - any outcome-handling rule.
-
-> *Drafter note (r2, not review text).* The r2 code also makes the adapter **stricter**, in the snapshot-1 derivation (`:144`) and in the census pass alike: a process whose pinned six-KEY identity has changed neither stays owned nor makes its new descendants owned (Sol r1 F3). On 94d0e7f2, such a parent's new children were admitted from the ownership snapshot on. This tightening isn't covered by T5 (i), so it is flagged to R3 under the R1 re-check clause (§7).
 
 ## 2. Cause
 
@@ -71,6 +72,7 @@ Source: `reports/explore/t1/receipts/END-08r2-DIAGNOSIS-r1.md`, ec6eb568.
 - After exec the six-KEY identity differs, the child is permanently de-owned, and it is flagged `foreign_compute`. The attempt fails as `validity_census`, which is a technical-repeat candidate, before timing.
 - The window is microseconds per spawn and has never been observed: A6 recorded 2449 capacity rows and 476 block rows, and the 08 r2/r3 flagged rows were all post-exec workers.
 - Fixing it would need an identity-replacement rule, which Sol r1 F1/F2 showed weakens OP-3.
+- E4 creates processes only at start (monitor before admit; the 10 workers immediately after it, `fleet_reference.py:125-128`), so this residual can fire only before warmup.
 
 **Still true after the fix:**
 - A process outside the E4 ppid tree is never owned, even with E4's cmdline.
@@ -173,7 +175,7 @@ Each host is scheduled on its own (R-ord). A host's A5 launch, whether the smoke
 
 **Conditions for a clean window:**
 - **Prerequisites done:** A5 adopted; the host staged; C3 repeated; prepare proof committed; the A5 roots file pushed, with the push receipt; and, before any A5 reference launch, the passed A5 smoke (§7 R4).
-- **Per host:** 01: D2's C-d (04:13:54Z), its verifier ACK and its L1 assembly. 08: D5's C-d (04:24:23Z), its verifier ACK and its L1 assembly. For both hosts, the committed `END-A5-old-code-attempt-disclosure.json` and the passed smoke (T7).
+- **Per host:** 01: D2's C-d (04:13:54Z), its verifier ACK and its L1 assembly. 08: D5's C-d (04:24:23Z), its verifier ACK and its L1 assembly. For both hosts, the committed `END-A5-old-code-attempt-disclosure.json` and the passed smoke (§7 R4).
 - **Fresh C2:** both actual apt runs (apt-daily and apt-daily-upgrade) have exited, motd stamps are fresh, and there are **≥2 h** of clearance to the host's next apt timer.
 - **C1 proof** that no earlier wrapper of ours is alive on that host.
 - **Duration basis:** 55 m 11 s (A6 observed) of run time, plus the C-d 1300 s before verification. This applies to the smoke as well as to a reference.
@@ -190,10 +192,10 @@ A5 sets no absolute deadline. If the series slips past the TIERS schedule, that 
 
 | Step | Reviewer | Scope | Pass condition |
 | --- | --- | --- | --- |
-| R1 | **Sol** (GPT-6.1-Sol; Claude-written code) | `fleet_validity.py` diff 94d0e7f2 → `<R1-APPROVED SHA>` (r1 eae5db3f: REQUEST_CHANGES; r2 candidate 016ae7d0), `tests/test_guard_census_race.py` and the live-check script. Specifically: the union-not-subtract census pass; identity-valid ancestry in both snapshots; no replacement of any pinned identity; pid-reuse protection; no masking of real foreign processes; no change to T1 semantics | APPROVE. Each round goes back with the full brief, prior findings and responses (§3.1). If the approved diff changes behaviour beyond census-snapshot ownership derivation, or violates T5 (i), R3 re-checks before adoption. *(Drafter note: r2's identity-valid ancestry tightening, from Sol F3, is such a change, so a narrow R3 re-check is required.)* |
+| R1 | **Sol** (GPT-6.1-Sol; Claude-written code) | `fleet_validity.py` diff 94d0e7f2 → `<R1-APPROVED SHA>` (r1 eae5db3f: REQUEST_CHANGES; r2 candidate 016ae7d0), `tests/test_guard_census_race.py` and the live-check script. Specifically: the union-not-subtract census pass; identity-valid ancestry in both snapshots; no replacement of any pinned identity; pid-reuse protection; no masking of real foreign processes; no change to T1 semantics | APPROVE. Each round goes back with the full brief, prior findings and responses (§3.1). If the approved diff changes behaviour beyond T5 (i) and (ii), or violates either, R3 re-checks before adoption. |
 | R2 | **PC2** production packet reviewer | The "final independently reviewed E4 commit" is recorded as A3-reviewed E4 (E4-END-INDEPENDENT-REVIEW, 732ea9bd) plus the R1-approved one-file diff, with the inventory-diff receipt. Check that the A5 attempts' `measurement_files` equal that commit's inventory (17 unchanged entries plus `<R1-APPROVED SHA>`), including END and pooling code | Recorded at the production packet, as PC2 already requires. A5 asks the coordinator to tell the PC2 reviewer **now** that the reviewed commit moves |
-| R3 | **Independent Opus science review** (high effort; not the drafter) | Outcome-blindness of A5; completeness of the D1–D5 disclosure; the "never pool old code" rule fixed in advance; the §5.2 PC1 interpretation; deferral and no-relaxation; whether the fix could bias timing (it changes only guard ownership, in the monitor process, at 1 Hz on the census core) | r1: ADOPT_WITH_CHANGES (`OPUS-SCIENCE-REVIEW-A5-r1.md`), T1–T13 applied. A narrow re-check of the r2 code delta per R1 |
-| R4 | R3 reviewer and coordinator | **R4 (resolved): fixed-code smoke required** (A1 precondition; A2/A3 condition 1 precedent). Before the first A5 reference launch, one `e4v3-unpoolable-smoke` run on the A5 bytes passes on 08 (preferred: D ≥ 1 s exercises the race path) or on 01. It uses job parent `$base`, is outside all roots, and goes through the full C5/C6, C-a to C-d and verifier flow, with A6's pass criteria. It is disclosed, never pooled, and needs its own clean window (§6). A smoke failure means STOP and escalate; it uses no reference attempt. | Resolved (T7) |
+| R3 | **Independent Opus science review** (high effort; not the drafter) | Outcome-blindness of A5; completeness of the D1–D5 disclosure; the "never pool old code" rule fixed in advance; the §5.2 PC1 interpretation; deferral and no-relaxation; whether the fix could bias timing (it changes only guard ownership, in the monitor process, at 1 Hz on the census core) | r1: ADOPT_WITH_CHANGES (`OPUS-SCIENCE-REVIEW-A5-r1.md`), T1–T13 applied. r2 narrow re-check: ADOPT_WITH_CHANGES (`OPUS-SCIENCE-RECHECK-A5-R3.md`); T5 replaced as specified there. |
+| R4 | R3 reviewer and coordinator | **R4 (resolved): fixed-code smoke required** (A1 precondition; A2/A3 condition 1 precedent). Before the first A5 reference launch, one `e4v3-unpoolable-smoke` run on the A5 bytes passes on 08 (preferred: D ≥ 1 s exercises the race path) or on 01. It uses job parent `$base`, is outside all roots, and goes through the full C5/C6, C-a to C-d and verifier flow, with A6's pass criteria. It is disclosed, never pooled, and needs its own clean window (§6). A smoke failure means STOP and escalate; it uses no reference attempt. | Resolved (R3 r1 T7) |
 | R5 | Coordinator | Adoption ruling. Companion actions are sequenced but are not prerequisites for the TIERS A5 series. (a) **K4S re-pin**, a K4S Amendment 3 changing `K4S-MAC-MANIFEST` c1fb1e9a by one leaf, with Sol review, before any K4S END reference or Mac K4S session. The **fleet d89cab16 and FROZEN-K4S 416f6e51 are not re-pinned**, and the running K4S reporting is not touched. Advisory (K4S is not governed by A5): running the K4S END on the old guard on a slow host uses up attempts on a known, near-deterministic false failure. (b) **A4 erratum** for `stage_nocopy.py` 96abd847 (`FROZEN_MEASUREMENT_FILES["fleet_validity.py"]`), with a narrow Sol diff review, then Mac runtime re-stage or overlay and re-verify before any Mac staging. Mac is on HOLD, so nothing in progress is affected. Under A2's "same amended bytes everywhere", no TIERS Mac session runs on a runtime that holds the superseded `fleet_validity` bytes once A5 is adopted. A4 B.6's pooled-S-forward gate binds the A5 pool. | Committed ruling |
 
 ## 8. Residual race outside this series
