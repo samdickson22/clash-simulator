@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-12T17:10:44Z",
+  "seeds": 1167,
+  "pooled_R4D_minus_R3a_pp": 0.6855184233076264,
+  "run_r4dc": false,
+  "rule": "skip R4-DC if point >= 0"
+}

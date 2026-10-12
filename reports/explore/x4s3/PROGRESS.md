@@ -146,3 +146,18 @@ Hard stop is 2026-10-12T23:30:00Z.
   fit at 1.84 s/step.
   - Projections: R4-D K4S-120 about 17:10Z; R4-DC fit about 18:31Z; R4-DC games (if the gate passes) about
     18:33–20:10Z.
+- **17:09:14Z:** R4-D K4S-120 complete (1,167/1,167, rc 0). **All of R4-D's games are complete.** R3a, R3a-rep and
+  R4-D are terminal at fixed N.
+- **17:09:41Z:** reduction, with the pre-declared reducer reduce.py (SHA 9ede397b), over 1,167 paired seeds, 7,002
+  games and 1,058,974 decisions, all checks passing:
+  - primary R4-D − R3a, pooled: **+0.69 pp [−1.54, +2.78]**;
+  - noise R3a-rep − R3a: +1.41 pp;
+  - **"data helps": NO.**
+- **17:10:14Z:** the pre-declared stop rule applies (R4-D − R3a point ≥ 0), so **R4-DC is skipped.** The fit was
+  stopped cleanly by trainer-PID SIGTERM at step 2,385 (stopped=true, segment `returned`, group empty). The driver's
+  independent gate agrees: +0.6855 pp, `run_r4dc` false. The gate event log raised a cosmetic TypeError after the
+  gate file was written.
+- **17:11:44Z:** driver stopped. No X4S-3 process remains on 01; GPU idle; job prefix 27 GB.
+- **17:12Z:** final attended copy of games, driver, receipts, analysis and calibration to
+  `05:<job>/mirror/final/`: 14,140 files, all SHAs match.
+- **17:2xZ:** RESULTS.md committed (pre-declared readout only). X4S-3 is complete; 08 was not used.

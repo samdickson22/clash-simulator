@@ -31,3 +31,6 @@
 {"utc": "2026-10-12T15:32:21Z", "kind": "driver_start", "pid": 2224304}
 {"utc": "2026-10-12T15:56:00Z", "kind": "fit_launch", "fit": "R4-DC", "resume": []}
 {"utc": "2026-10-12T15:56:00Z", "kind": "phase_launch", "student": "R4-D", "arm": "K4S-120", "attempt": 1, "todo": 1167}
+{"utc":"2026-10-12T17:10:14Z","kind":"owner_fit_stop","fit":"R4-DC","reason":"pre-declared stop rule: pooled R4-D minus R3a point +0.69 pp >= 0 (analysis/results-3students.json)"}
+{"utc": "2026-10-12T17:10:44Z", "kind": "anomaly", "name": "driver-exception", "error": "TypeError(\"type object got multiple values for keyword argument 'utc'\")"}
+{"utc": "2026-10-12T17:11:44Z", "kind": "driver_exit", "reason": "SIGTERM"}
