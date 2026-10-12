@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Phase B staging for the TIERS Mac session (no timing, no measurement). r4 after Sol pre-run reviews r1-r3.
+# Phase B staging for the TIERS Mac session (no timing, no measurement). r6: nonce-anchored final status line; no remote values inside log.
 # Runs on 127x05 and drives the Mac over `ssh macmini-fleet`. All Mac filesystem mutations go through macfs.py
 # (confined to $S, symlink-free path walk, exclusive mkdir, O_EXCL|O_NOFOLLOW writes, atomic renamex_np RENAME_EXCL).
 # Each step builds in a fresh $S/.staging-tmp-* directory, verifies there, then promotes atomically; a final path is
@@ -52,7 +52,22 @@ mkdir "$OUT"
 log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" | tee -a "$OUT/staging.log" >&2; }
 die() { log "FAIL $*"; exit 1; }
 sha() { sha256sum "$1" | cut -d' ' -f1; }
-mac() { "${MAC[@]}" "$@"; }
+# `ssh macmini-fleet` (Tailscale SSH -> login -f -> zsh) does NOT propagate the remote exit status (verified:
+# `exit 3` returns 0). So every remote command runs as `setopt pipefail; { CMD; }; printf '\n__RC=%s\n' $?` and
+# the token is parsed here; a missing token (transport failure) or a non-zero rc aborts. stdout is passed through.
+mac() {
+  local out rc nonce tail
+  nonce=$(od -An -tx8 -N8 /dev/urandom | tr -d ' \n'); [[ $nonce =~ ^[0-9a-f]{16}$ ]] || die "nonce"
+  out=$("${MAC[@]}" "setopt pipefail; { $1 ; }; printf '\n__RC_${nonce}=%s\n' \$?") || die "ssh transport failed: ${1:0:100}"
+  # The status must be the exact final line, carrying this call's nonce; anything else (including a token
+  # embedded earlier in the command's own output) is a failure.
+  tail=${out##*$'\n'}; [[ $out == *$'\n'* ]] || tail=$out
+  [[ $tail =~ ^__RC_${nonce}=([0-9]+)$ ]] || die "no/invalid final status line: ${1:0:100}"
+  rc=${BASH_REMATCH[1]}
+  out=${out%$'\n'"$tail"}; [[ $out == "$tail" ]] && out=""
+  [[ $rc == 0 ]] || die "remote rc=$rc: ${1:0:100}"
+  printf '%s' "$out"
+}
 MACFS_B64=$(base64 -w0 "$HERE/macfs.py")
 MACFS_SHA=$(sha "$HERE/macfs.py")
 MACFS="/usr/bin/python3 -I -c \"import base64;exec(base64.b64decode('$MACFS_B64'))\" '$S'"
@@ -88,7 +103,8 @@ step_runtime() {
   done
   macfs rename "$t" runtime-a5
   printf '%s\n' "$COMMIT" | macfs write runtime-a5-commit.txt
-  log "runtime OK $(python3 -c "import json;print(json.load(open('$OUT/runtime-verify.json'))['expected_manifest_sha256'])")"
+  local manifest; manifest=$(python3 -c "import json;print(json.load(open('$OUT/runtime-verify.json'))['expected_manifest_sha256'])")
+  log "runtime OK $manifest"
 }
 
 step_helper() {
@@ -114,7 +130,8 @@ step_fixture() {
     [[ $st == absent ]] || die "$dst is '$st'"
     [[ $(sha "$src") == "${FIXTURE_SHA[$name]}" ]] || die "05 source SHA $name"
     t=$(mktmp "fixture-${name%%.*}")
-    log "fixture $name transfer start ($(stat -c %s "$src") B)"
+    local size; size=$(stat -c %s "$src")
+    log "fixture $name transfer start ($size B)"
     nice -n 19 pigz -p 4 -c "$src" | mac "gunzip -c | $MACFS write $t/$name"
     got=$(remote_sha "$t/$name"); [[ $got == "${FIXTURE_SHA[$name]}" ]] || die "Mac SHA $name: $got (temp $t kept)"
     mac "chmod a-w '$S/$t/$name'"
@@ -149,9 +166,11 @@ sys.exit(1 if bad or not want else 0)
 EOF
   links=$(mac "find '$S/$t' -type l -print")
   [[ -z $links ]] || die "symlink inside packet copy: $links"
-  mac "chmod -R a-w '$S/$t'"
+  mac "find '$S/$t' -type f -exec chmod a-w {} +"        # files read-only now; a read-only dir cannot be renamed
   macfs rename "$t" inputs/reference-packet-a5
-  log "packet OK $(grep -c . "$OUT/mac-packet-listing.txt") files"
+  mac "find '$S/inputs/reference-packet-a5' -type d -exec chmod a-w {} +"
+  local count; count=$(grep -c . "$OUT/mac-packet-listing.txt")
+  log "packet OK $count files"
 }
 
 step_stage() {
@@ -184,7 +203,34 @@ EOF
   macfs rename "$t" staged-a5
   receipts=$(mac "cd '$S/staged-a5' && cat bundle-a5.nocopy-receipt.json && cat bundle-a5/tiers-pins.sha256 && cat bundle-a5.nocopy-verify-*.json")
   printf '%s\n' "$receipts" > "$OUT/staging-receipts.txt"
-  log "stage OK tiers-pins $(mac "cut -d' ' -f1 '$S/staged-a5/bundle-a5/tiers-pins.sha256'")"
+  local pins; pins=$(mac "cut -d' ' -f1 '$S/staged-a5/bundle-a5/tiers-pins.sha256'")
+  [[ $pins =~ ^[0-9a-f]{64}$ ]] || die "tiers-pins sha"
+  log "stage OK tiers-pins $pins"
+}
+
+# Read-only re-verification of finals promoted by the r4 run 20261012T112521Z (Sol r6 approval condition 3):
+# runtime-a5 content + symlinks against the commit (verify_runtime_staging), full helper SHA, exact commit file.
+step_verifyfinal() {
+  local listing links got commit
+  need runtime-a5 dir; need helpers/mac-registration-e2/stage_nocopy.py file; need runtime-a5-commit.txt file
+  listing=$(mac "cd '$S/runtime-a5' && find . -type f ! -name '._*' -print0 | xargs -0 shasum -a 256"); printf '%s\n' "$listing" > "$OUT/final-runtime-listing.txt"
+  links=$(mac "cd '$S/runtime-a5' && find . -type l | while read l; do printf '%s\t%s\n' \"\$l\" \"\$(readlink \"\$l\")\"; done"); printf '%s\n' "$links" | sed '/^$/d' > "$OUT/final-runtime-symlinks.txt"
+  python3 -I "$REPO/reports/explore/mac-e4-session/verify_runtime_staging.py" --repo "$REPO" --commit "$COMMIT" \
+    --smoke-runtime "$SMOKE_RT" --mac-listing "$OUT/final-runtime-listing.txt" --mac-symlinks "$OUT/final-runtime-symlinks.txt" \
+    --output "$OUT/final-runtime-verify.json" || die "final runtime verify"
+  if grep -q '^94d0e7f2' "$OUT/final-runtime-listing.txt"; then die "runtime contains 94d0e7f2"; fi
+  got=$(remote_sha helpers/mac-registration-e2/stage_nocopy.py); [[ $got == "$HELPER_SHA" ]] || die "helper SHA $got"
+  commit=$(mac "cat '$S/runtime-a5-commit.txt'"); [[ $commit == "$COMMIT" ]] || die "commit file '$commit'"
+  log "verifyfinal OK runtime/helper/commit"
+}
+
+# One-off removal of the failed r4 packet temp dir (operator-owned; Sol r5/r6 accepted).
+step_cleanup() {
+  local t=.staging-tmp-packet-20261012T112521Z st
+  st=$(state "$t"); [[ $st == absent ]] && { log "cleanup: $t already absent"; return; }
+  [[ $st == dir ]] || die "$t is '$st'"
+  mac "chmod -R u+w '$S/$t' && rm -rf '$S/$t'"
+  need_absent "$t"; log "cleanup OK $t"
 }
 
 for step in "$@"; do log "step $step begin"; "step_$step"; log "step $step end"; done

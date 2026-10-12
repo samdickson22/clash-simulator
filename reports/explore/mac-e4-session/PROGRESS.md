@@ -304,3 +304,22 @@ See `receipts/reviews-20261011/REVIEWS.md`.
 - `stage_phase_b.sh` r4 plus `macfs.py` plus `mac_preconditions.py`. r1–r3 were REJECTs; every finding is fixed.
 - r4 is APPROVE under the exclusive single-operator assumption, with no concurrent Mac writer in our tree.
 - Running now: runtime, helper, packet, then fixture (long, detached), then stage.
+
+### 2026-10-12T11:28:55Z: staging run 20261012T112521Z — runtime/helper OK; packet promotion failed (no damage); ssh exit-status finding
+
+- runtime-a5: content-verified PASS (11,144 files, expected manifest 91c938ac); helper 166a1636 placed.
+- packet: copy verified (127/127 pinned files), but the final renamex_np failed (Permission denied on the
+  read-only temp dir). The final `inputs/reference-packet-a5` is absent; the temp
+  `.staging-tmp-packet-20261012T112521Z` remains.
+- **Finding:** `ssh macmini-fleet` (Tailscale SSH -> login -f -> zsh) does NOT propagate remote exit status
+  (`exit 3` and `false` return 0). Remote exit-code checks were fail-open; content checks held.
+- **Fix r5:** a remote `__RC` status token with pipefail; files made read-only before promotion and dirs after.
+  In Sol r5 review; no further Mac action until it approves.
+
+### 2026-10-12T11:29:43Z: coordinator ack (COORDINATOR cfab55af)
+
+- **Fleet-wide rule:** every Mac command emits a status token, and a missing token counts as FAIL.
+- **Plan confirmed:** r5 review; then packet, fixture, stage; then quit apps; then the preconditions receipt; then
+  readiness.
+- **ChatGPT.app:** if its Codex service hosts agent threads, or that can't be ruled out, leave it running. If
+  Chrome + Claude alone don't reach 6 GiB, ask the coordinator before going further.
