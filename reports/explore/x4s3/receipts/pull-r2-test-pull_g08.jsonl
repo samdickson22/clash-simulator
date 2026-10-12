@@ -1,0 +1,10 @@
+{"case":"success","ok":true,"rc":0}
+{"case":"stop_during_transfer_2s","ok":true,"rc":3}
+{"case":"dangling_stop_symlink","ok":true,"rc":3}
+{"case":"sigterm","ok":true,"rc":4}
+{"case":"symlink_ancestor","ok":true,"rc":1}
+{"case":"symlink_g08","ok":true,"rc":1}
+{"case":"g08_preexists","ok":true,"rc":1}
+{"case":"source_shard_symlink","ok":true,"rc":1}
+{"case":"source_root_symlink","ok":true,"rc":1}
+{"all_ok":true}

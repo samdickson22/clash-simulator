@@ -1,0 +1,37 @@
+{"case": "valid", "ok": true, "rc": 0, "passed": true, "error": null, "outside_still_writable": true, "optimize": 0}
+{"case": "wrong_concat_pin", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('concat manifest SHA')", "outside_still_writable": true, "optimize": 0}
+{"case": "concat_incomplete", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('concat manifest not complete / wrong parent')", "outside_still_writable": true, "optimize": 0}
+{"case": "empty_selection", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('empty selection')", "outside_still_writable": true, "optimize": 0}
+{"case": "extra_root_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError(\"unexpected root entries: ['stray.txt']\")", "outside_still_writable": true, "optimize": 0}
+{"case": "unlisted_train_manifest", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000 file inventory differs from seal')", "outside_still_writable": true, "optimize": 0}
+{"case": "dangling_symlink", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('symlink: /tmp/x4s3-vg-ti_06bh1/job/data/g08/batch-00001/dangling')", "outside_still_writable": true, "optimize": 0}
+{"case": "extra_empty_dir", "ok": true, "rc": 1, "passed": false, "error": "ValidationError(\"batch-00001 unexpected directories ['empty']\")", "outside_still_writable": true, "optimize": 0}
+{"case": "extra_root_dir", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('root directories != expected shards')", "outside_still_writable": true, "optimize": 0}
+{"case": "symlinked_listed_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('symlink: /tmp/x4s3-vg-ekaoe9w6/job/data/g08/batch-00000/mask_table.npy')", "outside_still_writable": true, "optimize": 0}
+{"case": "hardlinked_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('multiply-linked file: /tmp/x4s3-vg-glabh79v/job/data/g08/batch-00000/sources.json')", "outside_still_writable": true, "optimize": 0}
+{"case": "symlink_ancestor", "ok": true, "rc": "raised", "passed": false, "error": "ValidationError('not a real directory: /tmp/x4s3-vg-jf0qspcl/job/data')", "outside_still_writable": true, "optimize": 0}
+{"case": "missing_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000 file inventory differs from seal')", "outside_still_writable": true, "optimize": 0}
+{"case": "data_sha_mismatch", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000/sources.json SHA')", "outside_still_writable": true, "optimize": 0}
+{"case": "fifo", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('special file: /tmp/x4s3-vg-ggd7j9mo/job/data/g08/batch-00000/fifo')", "outside_still_writable": true, "optimize": 0}
+{"case": "invalid_wait", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000 root without valid WAIT')", "outside_still_writable": true, "optimize": 0}
+{"case": "receipt_preexists", "ok": true, "rc": "raised", "passed": false, "error": "FileExistsError(17, 'File exists')", "outside_still_writable": true, "optimize": 0}
+{"all_ok": true, "cases": 17, "optimize": 0}
+{"case": "valid", "ok": true, "rc": 0, "passed": true, "error": null, "outside_still_writable": true, "optimize": 1}
+{"case": "wrong_concat_pin", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('concat manifest SHA')", "outside_still_writable": true, "optimize": 1}
+{"case": "concat_incomplete", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('concat manifest not complete / wrong parent')", "outside_still_writable": true, "optimize": 1}
+{"case": "empty_selection", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('empty selection')", "outside_still_writable": true, "optimize": 1}
+{"case": "extra_root_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError(\"unexpected root entries: ['stray.txt']\")", "outside_still_writable": true, "optimize": 1}
+{"case": "unlisted_train_manifest", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000 file inventory differs from seal')", "outside_still_writable": true, "optimize": 1}
+{"case": "dangling_symlink", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('symlink: /tmp/x4s3-vg-id7qtxd6/job/data/g08/batch-00001/dangling')", "outside_still_writable": true, "optimize": 1}
+{"case": "extra_empty_dir", "ok": true, "rc": 1, "passed": false, "error": "ValidationError(\"batch-00001 unexpected directories ['empty']\")", "outside_still_writable": true, "optimize": 1}
+{"case": "extra_root_dir", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('root directories != expected shards')", "outside_still_writable": true, "optimize": 1}
+{"case": "symlinked_listed_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('symlink: /tmp/x4s3-vg-c1het_i4/job/data/g08/batch-00000/mask_table.npy')", "outside_still_writable": true, "optimize": 1}
+{"case": "hardlinked_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('multiply-linked file: /tmp/x4s3-vg-x7km8xhl/job/data/g08/batch-00000/sources.json')", "outside_still_writable": true, "optimize": 1}
+{"case": "symlink_ancestor", "ok": true, "rc": "raised", "passed": false, "error": "ValidationError('not a real directory: /tmp/x4s3-vg-kqgdto9t/job/data')", "outside_still_writable": true, "optimize": 1}
+{"case": "missing_file", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000 file inventory differs from seal')", "outside_still_writable": true, "optimize": 1}
+{"case": "data_sha_mismatch", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000/sources.json SHA')", "outside_still_writable": true, "optimize": 1}
+{"case": "fifo", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('special file: /tmp/x4s3-vg-k5ew3w2k/job/data/g08/batch-00000/fifo')", "outside_still_writable": true, "optimize": 1}
+{"case": "invalid_wait", "ok": true, "rc": 1, "passed": false, "error": "ValidationError('batch-00000 root without valid WAIT')", "outside_still_writable": true, "optimize": 1}
+{"case": "receipt_preexists", "ok": true, "rc": "raised", "passed": false, "error": "FileExistsError(17, 'File exists')", "outside_still_writable": true, "optimize": 1}
+{"all_ok": true, "cases": 17, "optimize": 1}
+{"all_ok": true, "cases": 17, "optimize": 2}

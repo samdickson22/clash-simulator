@@ -1,0 +1,163 @@
+{
+  "purpose": "X4S-3 qualification only: no-deadline command-hash identity (excluded from results)",
+  "status": "exploration only; NEVER ADOPTABLE; no student here enters any frozen manifest (SD1 stays R3a)",
+  "planning_doc": "/mpac/sdicks02/jobs/clasher/planning/01-idle-compute-plan-20261012.md",
+  "paired_seeds": 1200,
+  "arms": {
+    "K4-none": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete"
+    },
+    "K4S-none": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "student-cached",
+      "default_source": "student-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; student-if-nothing-complete"
+    },
+    "S-none": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "threads": 1,
+      "coarse_horizon": 160,
+      "kernel": "coarse-first",
+      "policy": "student-cached",
+      "default_source": "student-cached-sample-if-no-complete-score; student top-8 proposals enter the frozen candidate generator (S1 S-200)"
+    }
+  },
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503606107370496,
+      "count": 1200
+    },
+    "smoke": {
+      "base": 4503606117370496,
+      "count": 8
+    },
+    "qualification": {
+      "base": 4503606127370496,
+      "count": 8
+    }
+  },
+  "seed_reservation": {
+    "block_start": 4503606107370496,
+    "block_stop_exclusive": 4503606207370496,
+    "note": "2^52+[6.48e9,6.58e9); fresh bank, audited repo-wide"
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101201,
+    "unit": "paired seed, stratified by arm (each resampled seed carries both arms)",
+    "confidence": 0.95
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  },
+  "policy": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "student": {
+    "id": "R3a",
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "threshold": 0.5005528330802917,
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "status": "R3a control (existing checkpoint, no fit); killed in R3 Stage 1; NEVER ADOPTABLE"
+  },
+  "students": {
+    "R3a": {
+      "data": "existing checkpoint 37509a43 (r1 6,009,681 + G-04 212,542 roots)",
+      "steps": 2500,
+      "train_seed": 2026101013,
+      "role": "control (no fit)"
+    },
+    "R4-D": {
+      "data": "r1 6,009,681 + G-01 149,385 + G-08 2,645,689 = 8,804,755 roots",
+      "steps": 2500,
+      "train_seed": 2026101201,
+      "role": "primary: data effect"
+    },
+    "R3a-rep": {
+      "data": "r1 only, 6,009,681 roots",
+      "steps": 2500,
+      "train_seed": 2026101202,
+      "role": "fit-seed noise floor (R3a G-04 rows not on 01; disclosed)"
+    },
+    "R4-DC": {
+      "data": "same union as R4-D",
+      "steps": 5000,
+      "train_seed": 2026101203,
+      "role": "data + compute (optional, last; skipped if R4-D minus R3a point estimate >= 0)"
+    }
+  },
+  "recipe": "R3a: init v1 d77005d5, width 192, root-only (teacher ratio 1), listwise T=0.003, play weight 1, value weight 0, advantage 0, AdamW 3e-4 wd .05, warmup 2000 + cosine, batch 8192, microbatch 3584, EMA 0.999, final EMA only; trainer exit-r3/source (freeze bc542da8), loader6/prefetch4, eager, bf16 autocast",
+  "calibration": "R3 rule: threshold on P(gate=play) with a legal play nearest 34.6% deterministic root play on the 8,088 eligible roots of ExIt R1 held-out64 slice 0ecce0f0; midpoints between sorted distinct probabilities; smaller threshold on ties; label-free; GPU float32 TF32 off",
+  "compute": {
+    "host": "127x01",
+    "game_physical_cores": "0-49 (10 five-core K4S-120 slots, or 50 one-core S-200 lanes); SMT siblings unassigned",
+    "fit_cores": "56-61 parent, loaders on siblings 120-125",
+    "free_cores": "50-55, 62-63",
+    "nice": 10,
+    "scheduler": "SCHED_OTHER",
+    "max_processes": 70,
+    "gpu_GiB_max": 40,
+    "disk_GB_max": 100,
+    "min_memavailable_GiB": 24,
+    "max_memory_psi_some_avg10": 10,
+    "console_user": "yield (stop) then <=16 game processes",
+    "cuda_games": "disabled (CPU inference, as S1/X4S)"
+  },
+  "ordering": {
+    "blocks": "one game per block: each phase runs one arm for one student over all 1,200 indices in increasing order; K4S-120 phases use 5-core slots, S-200 phases 1-core lanes",
+    "interrupted": "a game of an interrupted block is excluded; its seed is retired for every later phase and never re-run; reduction uses only seeds terminal in every reduced (student, arm)"
+  },
+  "readout": {
+    "primary": "loss(R4-D) minus loss(R3a), paired by seed, pooled over K4S-120 and S-200 with equal arm weight; each arm also separately",
+    "noise": "R3a-rep minus R3a",
+    "data_helps": "upper95CI(R4-D minus R3a, pooled) < 0 AND point(R4-D minus R3a-rep, pooled) < 0",
+    "also": "cutoff %, student-default %, play %, wall p50/p99, overrun % per student and arm; R4-DC minus R4-D if run",
+    "stop_rule": "fixed N; a student contrast is reduced only after all 2x1,200 of its games are terminal"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "utc": "2026-10-12T11:48:10Z",
+  "label": "X4S-3 exploration, NEVER ADOPTABLE",
+  "host": "127x01",
+  "unit_tests": "31 passed in 0.26s",
+  "corpus_125": {
+    "counts": {
+      "K4_frozen": 125,
+      "K4S_frozen": 125,
+      "K4S_equals_K4": 125,
+      "zero_budget_student": 125,
+      "zero_budget_student_play": 31,
+      "injected_cutoffs": 342,
+      "injected_student_default": 124,
+      "injected_after_complete_wait": 124,
+      "injected_completed_play_kept": 0,
+      "root_immutable": 125
+    },
+    "equals_x4s_receipt": true,
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "student_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "corpus_sha256": {
+      "states-ready.pkl": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+      "symmetric-screen-samples.json": "86ecbb600b712d0fab05c2022e8d95d1dfb47a9be531ed4b8722a1acdcfd2b7d"
+    }
+  },
+  "k4s_none_vs_x4s_receipt": {
+    "seeds": [
+      4503604827370496,
+      4503604827370497
+    ],
+    "hashes": [
+      "af630cf0d2a2931068358283a78f75ebbf4987eec51e05a5d407246fe4b3de29",
+      "d530982b908af7b340969fb784807a06085f0c13b253988c18594ffe10b3f30f"
+    ],
+    "x4s_receipt": [
+      "af630cf0d2a2931068358283a78f75ebbf4987eec51e05a5d407246fe4b3de29",
+      "d530982b908af7b340969fb784807a06085f0c13b253988c18594ffe10b3f30f"
+    ],
+    "equal": true
+  },
+  "k4_none_equals_k4s_none": {
+    "seeds": "4503606127370496+[0,8)",
+    "equal": 8,
+    "of": 8,
+    "hashes": [
+      "0c50932569ddfdc3788a4111148d5d2c2cd3db025854784ed248f2160cd60464",
+      "2bc20338e188fcd9b68d88531c602e01c15296c7a0711e89f8aac06fe51d756d",
+      "54be47673bd847fd4c3d66c77d9ac1a349a36263847e6aecde7a1266616894d9",
+      "f4b687ada52b145d615d5d0b1591b1c4092b2ad203df57bc73e801c3c7c8f43a",
+      "0f771a142372c038b2a3f4f669b72cf87a18e330012830257949395a8fe011c1",
+      "c7015689e201794698087c7d3962e73c74a27b01f6dc7708d16978d3278aa909",
+      "1829aa3160c0f8516195358555a41534c6fb0b45b7c3c6bc20bfc3897edb7a34",
+      "cb326bf98f1e1cf0576b3429baae50d4497aadb346a14e6f4f68bb1c95ba4e13"
+    ]
+  },
+  "s_none_x4s3_equals_s1_runpy": {
+    "seeds": "4503606127370496+[0,8)",
+    "equal": 8,
+    "of": 8,
+    "hashes": [
+      "9419bf4717ef5d3b0084fbe0de4cd1dd562beb69b1ca032638d5d8d856c9ca4d",
+      "c8bd094d95bed38aef465358b439f596b049e15e188bb42eba3c17bf22d069c0",
+      "4e28f5d39e103869249e1c6f0303c56aa8bcdfc339f4a8ae212feac0b94c6663",
+      "b38531a0e463a7b1fcbb6c61125f83b7cc7576bfa8095fa47b79f4519de1c96d",
+      "dd8d2787ed65f718bd375c95db8afbc12a924e2e9c8835c32fe4a985ebc6bb58",
+      "87137fb69bb1cdfa24c9b228646a2c76c2c84d8649e47d4175375db191c04a84",
+      "63c97aea308781d090cb13504cb2abe34dc3b5aff7130ce57f133eb264401cf4",
+      "3dfdaeb12512e912c098a44f3ea917afeb9ffacf93ce8c980575d512d8c50f18"
+    ],
+    "s1_runpy_sha256": "bdc226c6bfae7b9dd90fbbb060587b3930be8ba636e053d896884825abb3c68a"
+  },
+  "calibration_recheck_R3a": {
+    "id": "R3a",
+    "threshold": 0.5005528628826141,
+    "target_play_rate": 0.346,
+    "actual_play_rate": 0.345944609297725,
+    "rows": 8088,
+    "legal_rows": 6167,
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+    "checkpoint_meta": {
+      "step": 2500,
+      "width": 192,
+      "seed": 2026101013,
+      "steps": 2500,
+      "advantage_weight": 0.0,
+      "teacher_manifests": [
+        "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+        "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+        "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+        "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+        "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+        "8192b7e7e8e2fa4ce395349896057b4564ab16a27c5b4efa27a50e98b9bc0661"
+      ],
+      "init_checkpoint": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737"
+    },
+    "labels_not_used_for_threshold": true,
+    "exploratory_calibration_reuse": true,
+    "device": "CUDA float32, TF32 off",
+    "torch": "2.7.1+cu118",
+    "gpu_wall_seconds": 4.682803725125268,
+    "label": "X4S-3 exploration, NEVER ADOPTABLE",
+    "utc": "2026-10-12T11:35:14Z",
+    "expected_threshold": 0.5005528330802917,
+    "threshold_reproduced": false
+  },
+  "runtime_pins": {
+    "s1_runtime_pin_r2_files_matched": 1557,
+    "native": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "v1": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "R3a": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "x4s3_run_py": "e7f90d76f7603973b72c2e4a9ee0fc733727fddcb97b795b887f63a7b7c7a543",
+    "x4s3_plan_json": "3525254e6bb374b02e74c2edd8c2b97d9d3520a471e3d4a6dd8e6b2be7013ac4"
+  },
+  "trainer_source_pins": "24/24 R3a checkpoint source_files match fit/source",
+  "passed": true
+}

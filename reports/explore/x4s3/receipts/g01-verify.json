@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "sealed": true,
+  "mode": "g01",
+  "host": "127x01",
+  "root": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/data/g01",
+  "shards": [
+    {
+      "name": "batch-00000",
+      "manifest_sha256": "84594fa228cda55d31deb5dfa682cf5488439ab9c5108c1e0caf2f485beafba4",
+      "files": 71,
+      "eligible_roots": 10152
+    },
+    {
+      "name": "batch-00001",
+      "manifest_sha256": "091dc210fb1179c839f3c8d3faf09ffb0d957bbd2df29061691e75bcea0c3cd3",
+      "files": 71,
+      "eligible_roots": 139233
+    }
+  ],
+  "concat_manifest_sha256": "7e21f90a14f96fbd462dc29f0e109e80775eded5cf27bdc91417714a4e8268d2",
+  "label": "X4S-3 exploration, NEVER ADOPTABLE",
+  "python_optimize": 0,
+  "eligible_roots": 149385,
+  "sealed_files": 144,
+  "utc": "2026-10-12T11:46:12Z",
+  "wall_seconds": 3.5426817648112774
+}
