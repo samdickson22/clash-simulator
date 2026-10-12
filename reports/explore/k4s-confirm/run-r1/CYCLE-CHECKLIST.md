@@ -100,6 +100,10 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
   STOP and 04's apt-daily, quiet-read v2 on each host; when both have two consecutive quiet reads, post "03/04 quiet"
   (with the qualification/owned-process statement). Hold the r3 launch on EACH host until the coordinator forwards that
   host's "released"; per-host 30-min timeout from the coordinator's GO, after which that host proceeds.
+- Cut 3 (~13:18Z): a perception read window MAY be declared (supplemental export of ~160 proof files from 03 and 04, same
+  reviewed transfer code and handshake). After quiet-read v3 (2 consecutive per host) post "03/04 quiet" and WAIT for the
+  coordinator's reply: GO (window declared) -> hold r4 per host until that host's "released" or 30 min from go_utc;
+  "no window" -> launch r4 immediately.
   Only then do the motd/timer reads above. If no window is declared, there is no hold.
 - Escalation gates clear.
 
