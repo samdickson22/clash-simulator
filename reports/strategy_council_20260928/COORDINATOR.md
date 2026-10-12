@@ -3100,3 +3100,24 @@ A narrow Sol delta check covers only these items.
 - **After the session:** relaunch the apps with `open -a` if possible; otherwise record that it wasn't done.
 
 **Next:** preconditions-r2, then the readiness report, then GO.
+
+## 2026-10-12 12:05Z: TIERS Mac session: conditional GO; release driver r3 in review
+
+**Mac preconditions r2 PASS:**
+- Available memory went from 6.58 to 8.01 GiB after Chrome was stopped with SIGTERM. It exited cleanly, with no SIGKILL.
+- Claude belongs to the other console user (`simonfarshid`), so it was left untouched.
+- Update preferences are unchanged. macOS 27.0.1 is pending and needs a restart; this is disclosed as a residual risk.
+
+**Conditional GO.** The operator launches without asking again once all of these hold:
+1. The Sol pre-run review of the session launcher (`run_session.sh` / `session_wrapper.py`) is APPROVE or APPROVE_WITH_CONDITIONS, with every condition met.
+2. Preconditions r3 pass in the 5 minutes right before launch.
+3. Pins are confirmed: manifest 273ef196, runtime-a5, no 94d0e7f2.
+4. Every remote step uses the nonce/`__RC` status.
+
+During the session the operator posts health only, with no summary values. Any failure, including an OS update or restart, fails closed and the session is rescheduled. Expected duration is about 6–6.5 h.
+
+**Release driver r3** (f45a3ad8, driver 9ffbd2e1) has gone to an independent Opus review. It contains:
+- the exact 18-path Mac allowlist;
+- the descendant builder;
+- the R-M3 A3-P pre-game gate;
+- the r2 hardening.
