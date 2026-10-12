@@ -84,7 +84,8 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
 - Record the next timers.
 - 03 read window (COORDINATOR 89b28b6d, sequencing in P2 adc12f36), only if the coordinator has DECLARED it: confirm
   that the 03 phase has exited (supervisor-exit, no owned groups) and that `apt-daily.service` / `apt-daily-upgrade.service`
-  are inactive. Then post "03 quiet" and hold the 03 launch until the builder posts "released" (P2: or 30 minutes).
+  are inactive. Then post "03 quiet" and hold the 03 launch until the builder posts "released". P2 timeout: 30 minutes after the coordinator's GO
+  to the builder. On timeout, proceed with rN and tell the coordinator. The window is DECLARED for the ~08:40Z cut (P2).
   Only then do the motd/timer reads above. If no window is declared, there is no hold.
 - Escalation gates clear.
 
