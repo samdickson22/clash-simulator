@@ -3144,3 +3144,26 @@ Sol reviewed the change in rounds r4–r6 (`k4s-audits/SOL-REVIEW-CHECKPOINT-r{4
 - Everything fails closed with exit 2 and a receipt.
 
 **Deployment:** one commit, with a byte-equality check. The hand check is retired after the first clean live run, and a manual cross-check stays at each inventory.
+
+## 2026-10-12 12:17Z: C1 release driver r3 (9ffbd2e1) APPROVED WITH CONDITIONS (Mac route); builder not yet approved
+
+The review is `END-C1-RELEASE-DRIVER-REVIEW-r3.md`.
+
+**Approved:**
+- The 18-path allowlist is exact.
+- The R-M3 A3-P gate is correct. It fires before the health guard and before any game read, and the field names match the real Mac producers.
+- The two-parent descendant satisfies both barrier ancestry checks.
+- All 47 r2 mutants are killed.
+- The signal demos pass.
+
+**Not yet approved: the descendant builder.** It can overwrite the protection ref `refs/private/t1-registration-20261012`.
+
+**Conditions:**
+- **C1:** the builder refuses the protection ref, creates refs only if they don't already exist, and checks the protection ref before and after. It then gets a narrow builder-only review.
+- **C2:** the runbook gives the exact step that moves `<R>`'s HEAD, plus the post-checks.
+- **C3:** the builder runs under `env -i` and `-B`, with pinned SHAs and a fresh ref.
+- **C4:** the **14-day route stays on 42219e57**, because r3 accepts Mac descendants, including failure ones.
+- **C5:** the runbook records 9ffbd2e1 as the reviewed Mac-route driver.
+- **C6:** tests only. Add tests that kill the surviving R-M3, AL1/AL2/AL5 and T2c mutants, then rerun the mutant suite and keep the receipt.
+
+**Residual, accepted:** a second signal during the main failure handler exits 143 without a health line. The directory is already at mode 000, and the runbook treats "no health record" as locked.
