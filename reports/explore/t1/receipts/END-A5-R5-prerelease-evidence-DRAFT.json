@@ -1,0 +1,70 @@
+{
+  "PC4_run": false,
+  "R3_R4_evidence": "reports/explore/t1/receipts/END-A5-R3-R4-checker-interpreter-r2.json",
+  "R3_R4_evidence_commit": "8fc25b2d21630bf17389272e795cb88374ad76df",
+  "R5_sealed": false,
+  "canonical_release_checkout": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source",
+  "canonical_release_checkout_HEAD": "8fc25b2d21630bf17389272e795cb88374ad76df",
+  "holds": [
+    "PC4 F2 counted-root logistics and F3 CLI/reducer lineage await direct coordinator ruling",
+    "R5 sealing prohibited pending ruling",
+    "registration remains unsealed",
+    "R6/R7 and all later steps prohibited pending ruling"
+  ],
+  "measurement_source_keys": "18 basenames exactly equal fleet-identity.measurement_files",
+  "nothing_removed": true,
+  "other_source_trees_unchanged": true,
+  "outcomes_sealed": true,
+  "prepared_prerelease_fields": {
+    "attempt_roots": {
+      "commit": "4ff93a1004606e3562e5be26874c584d2be7a51d",
+      "path": "reports/explore/t1/receipts/reference-attempt-roots-0108-a5.json",
+      "sha256": "bc90c1bd757cf1a1029d655329e1507d2c202417eb93451759208253e3db3cf2"
+    },
+    "descriptor": {
+      "commit": "95774e86b1679cdf5aaebde1391450715e156b63",
+      "path": "reports/explore/t1/receipts/END-A5-pool-descriptor.json",
+      "sha256": "f4319e5f0ff8cd6cf88b61332768643d9b4d00d0a3a60bfb9c36bbfd45f8d2e1"
+    },
+    "measurement_source": {
+      "commit": "8799a0d6c2ac6bd7291dc85d7bef7d64bd4b4be5",
+      "files": {
+        "build_tiers.sh": "3656f88ecf80cd9aec83c94607dad44088e0b7fbb2d244d06d47c74561e45372",
+        "classify_failure.py": "9ab2f0383c0eec1a4998a0f48406f43b681109a176cef339a3d80f5d1663cc47",
+        "convert_states.py": "7ce306835410792534d9290e91001312d96babc8853925cd20b3ea7037520267",
+        "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+        "fleet_end.py": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+        "fleet_pool.py": "572ad68272694d4974bef474fb27f2efa5ba809abe92730326f4ef5e7032a252",
+        "fleet_profile.py": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+        "fleet_reference.py": "c767a6e063a3c50a171b370cb10868ed5e125b56b6289594cb4734363bcfa764",
+        "fleet_validity.py": "0775b704905324d70f9a43bc580bcbba1548cb2d2a4835c84ff61a0d8b64ae0f",
+        "measure_tiers.py": "6066228b89601d6cf29ff456e9dee4848fa59886f319ff38ebabd49e3c101f2e",
+        "prepare_bundle.py": "a1c59fa3f9d546eaf212ef63fa3b3126bc039f4a86de384761832009e3cbe1bb",
+        "prepare_fleet_smoke.py": "69190b46ff379b6f75cf38b47d10b5fcd551583e2255301f8a0466a282a0ab1f",
+        "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6",
+        "replay_load.py": "1d0e12cca4191c5f451619b667fe7c744de301f462ddf92ccad322304a019624",
+        "spec-pins.json": "823d2e1de642e2c2621960f5aad85fc935b7f10947da3ed1b7acf6e5adb46c6f",
+        "state_rows.py": "3899276bb99a8b29c6777cf8b476440bee1c1c493612a97539550d2e35bbf755",
+        "telemetry.py": "808d6fab49304c12b98581e67a5150e87274db5eef137f6ce351346c31c7fd24",
+        "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
+      }
+    },
+    "pool_check": {
+      "commit": "8fc25b2d21630bf17389272e795cb88374ad76df",
+      "path": "reports/explore/t1/receipts/END-A5-pool-check-r2.json",
+      "sha256": "4516763beb71fd0c6ba0ebdd0c81d8c864194af163f1f797519531c85cbc962d"
+    },
+    "pool_manifest": {
+      "commit": "95774e86b1679cdf5aaebde1391450715e156b63",
+      "path": "reports/explore/t1/receipts/END-A5-pool-manifest.json",
+      "sha256": "0e517b96f6c0eda31a8c75398023f46b559fc38c5c4e31a55e9a006974d0afea"
+    }
+  },
+  "prepared_utc": "2026-10-12T08:25:22Z",
+  "registration_sealed": false,
+  "release_authorized": false,
+  "release_barrier_invoked": false,
+  "release_checkout_clean": true,
+  "schema": "clasher.t1.A5.R5-pre-release-binding-draft.v1",
+  "status": "UNSEALED_DRAFT"
+}
