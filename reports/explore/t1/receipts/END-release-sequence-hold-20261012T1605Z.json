@@ -1,0 +1,36 @@
+{
+  "schema": "t1-release-sequence-hold-checkpoint-r1",
+  "utc": "2026-10-12T16:06:20Z",
+  "coordinator_timeline_read_through": 10154,
+  "completed_public_conditions_commit": "8c8cfbd7c4aa3888b66d3bfc21c52d9ba216ee98",
+  "builder_reviewed_sha_prefix": "dd644cdc",
+  "driver_mac_reviewed_sha_prefix": "9ffbd2e1",
+  "driver_fourteen_day_reviewed_sha_prefix": "42219e57",
+  "coordinator_release_sequence_GO_received": false,
+  "mac_session_status": "last operator relay D8 continuing/no failure/post receipt; coordinator explicitly continues T1 hold; no worker host probe",
+  "pending": [
+    "Mac D outputs",
+    "A3-P check",
+    "explicit coordinator release-sequence GO"
+  ],
+  "authorized_later_order": [
+    "builder once",
+    "HEAD switch with BC2",
+    "driver"
+  ],
+  "activities": [
+    "read own progress",
+    "read coordinator messages",
+    "record local health checkpoint"
+  ],
+  "host_contact": false,
+  "canonical_R_probe_or_change": false,
+  "production_run": false,
+  "outcomes_read": false,
+  "repeated_verification_or_copy": false,
+  "original_paths_frozen": true,
+  "mirror_paused": true,
+  "same_END_timer_active": true,
+  "prior_hold_commit": "54f4cf906e938c5d065510a0312c208aac3f4c58",
+  "K4S_notice": "fa89baa9: K4S reads byte-exact T1 copies on05 only, no T1 writes or01/08 contact; acknowledged, no action required"
+}
