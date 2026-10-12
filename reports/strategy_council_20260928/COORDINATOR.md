@@ -2453,3 +2453,32 @@ Nothing is adopted or staged on any host. 08 r3 proceeds as-is under RG1.
      - a fresh reference series on both hosts in the next clean windows (c6387611): 01 after its 06:17:43Z apt-daily, and 08 by its 08:49:07Z apt-daily window or after it.
 3. **Every old-code END attempt is disclosed and never pooled:** A6, 01 r1, 08 r1 (exempt under RF1), 08 r2 and 08 r3. This was decided before anyone has seen any reference timing.
 4. **K4S END and the Mac/A4 re-staging** wait on the same adoption.
+
+## 2026-10-12 04:09Z: A5 reviews: Sol code r1 REQUEST_CHANGES, Opus science r1 ADOPT_WITH_CHANGES; r2 in progress
+
+**Sol code review r1** (`e4-guard-race-fix-20261012/SOL-REVIEW-r1.md`): REQUEST_CHANGES.
+- The race fix itself is correct.
+- **F1 and F2 (HIGH):** the exec identity-replacement exception authenticates the process generation, not the executable, and its one-use limit isn't enforced.
+- **F3 (MED):** a parent that fails the identity check can still grant new descendants.
+
+**Coordinator direction for r2:**
+- Delete the exec exception entirely. The microsecond vfork window becomes an accepted, documented residual.
+- Ancestry may pass only through parents that pass the full six-KEY identity check on the same snapshot.
+- Add Sol's sequences as negative regressions.
+
+**Opus science review r1** (`OPUS-SCIENCE-REVIEW-A5-r1.md`): ADOPT_WITH_CHANGES. The full re-run of both hosts is the minimal correct option, and it is outcome-blind. T1–T13 are being applied verbatim to the draft, with T5 clause (ii) dropped. The key additions:
+- **T4:** a binding seal on old-code timing, which may only be cited for existence, status, exit and SHAs until the A5 pool check is committed. After that there is one pre-declared descriptive comparison: 01 old guard vs fixed guard.
+- **T7:** a **required fixed-code smoke**, `e4v3-unpoolable-smoke` with job parent `$base`. Run it on 08 (preferred), with A6's pass criteria, before any A5 reference.
+- **T8:** sequential `-a5-r<n>` ordinals, at most 2 counted attempts per host, with RF1 exemption bookkeeping.
+- **T9:** the post-exit check compares all 18 `measurement_files` with the A5 inventory.
+- **T10:** a push-time receipt for the A5 roots file before the first launch, plus L1 item 2 amended (flagged to PC1).
+- **T11:** prerequisites, which are D2/D5 C-d, ACK, L1 and the disclosure receipt.
+- **T12:** no TIERS Mac session on superseded bytes.
+
+**Expected order once adopted:**
+1. Merge, re-pin and stage.
+2. 08 smoke, which must launch before 08's C2 limit relative to its 08:49:07Z apt-daily.
+3. 01 reference after its 06:17:43Z apt-daily, with fresh C2.
+4. 08 reference after its 08:49Z apt-daily, with fresh C2.
+
+**Planning advisory (no ruling yet):** K4S END should adopt the fix through K4S Amendment 3 rather than run on the old guard.
