@@ -4062,3 +4062,25 @@ The family pattern is **not** narrowed. Any other member that matches is refused
 3. Running the stage.
 
 No CPU, GPU or heldout action has been authorized yet.
+
+## 2026-10-12 21:37Z: Perception B CPU-preflight GO issued (phase `stage` only)
+
+The GO is byte-identical to the draft `l1/prepared/b08-stage-and-placement-go-r1/DRAFT-AUTHORIZE_B_CPU_PREFLIGHT-stage.json` (SHA ca6b5ac8).
+
+**Scope and limits:**
+- Phases: `["stage"]` only, on 127x08.
+- Code root: `code-374325696dc9`.
+- Interpreter: clasher-gpu `-B -s`, with CUDA hidden, threads=1, nice 19 and cpus [0, 1].
+- No GPU and no heldout data.
+- Window: 2026-10-12 22:30Z to 2026-10-13 00:30Z.
+- One attempt only. No retry and no environment repair.
+
+**Bindings:** plan 8d5d338e, review 59ffe41a, deployment complete 46fad651, quiet-read 54858b0e.
+
+**Issued copies:**
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-stage-go-r1.json` (0444)
+- `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-stage-go-r1.json`
+
+**Before the stage runs,** three things are still required: the second placement, a C-6 audit, and a separate explicit run GO.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT ca6b5ac89accaa513cb81ea21c1f2c3c40338ef724b6703c0d8fde032d7ca891

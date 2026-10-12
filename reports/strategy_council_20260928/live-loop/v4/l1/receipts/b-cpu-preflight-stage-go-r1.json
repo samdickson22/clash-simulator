@@ -1,0 +1,66 @@
+{
+  "available_bytes": 1223077609472,
+  "code_root": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9",
+  "cpu_preflight_plan_sha256": "8d5d338e269ef4c3e56dbf3f90b3017c5a8e628e46baef5388322ae8eb319ea6",
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_CPU_PREFLIGHT",
+  "deployment_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9be5d1396e79b1a/complete.json",
+    "sha256": "46fad651c776ec847660f03c003727826b1488065ec19dd7060ae0f944cac9e9"
+  },
+  "deployment_prerequisite": {
+    "complete_sha256": "46fad651c776ec847660f03c003727826b1488065ec19dd7060ae0f944cac9e9",
+    "coordinator_acceptance_ledger_commit": "4d685b554abac07329f60b22b376102a9c065fa5",
+    "go_sha256": "06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9be5d1396e79b1a",
+    "status": "ACCEPTED"
+  },
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONPATH": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9/src"
+  },
+  "execution_preconditions": [
+    "Coordinator commits this CPU GO with its anchored ISSUED line before issuing the separate placement GO.",
+    "Second placement completes and coordinator C-6 audit accepts it.",
+    "Coordinator gives a separate explicit run GO for stage inside this CPU GO window.",
+    "Stop on any coordinator STOP or canonical revocation. No retry, environment repair or window extension. Preserve partials."
+  ],
+  "expires_epoch": 1791851400,
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "interpreter": "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+  "interpreter_flags": [
+    "-B",
+    "-s"
+  ],
+  "nice": 19,
+  "no_retry": true,
+  "not_before_epoch": 1791844200,
+  "observation_provenance": {
+    "commit": "1fd18160ea57b85c91a5daa6305840abc9270a9a",
+    "sha256": "54858b0e9a86ea02879f5cfad7843530367f8cc4ffbb8f0a5cc5e76c3a3d817d",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r1/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-12T20:27:25.676929+00:00"
+  },
+  "one_attempt_per_go": true,
+  "operator_command": "env -u BASH_ENV -u ENV PATH=/usr/bin:/bin PYTHONPATH=/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9/src CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 0,1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -s /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9/b08_cpu_preflight.py --phase stage --plan /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/review-package-374325696dc9/cpu-preflight-plan.json --plan-sha256 8d5d338e269ef4c3e56dbf3f90b3017c5a8e628e46baef5388322ae8eb319ea6 --review /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282.json --review-sha256 59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282 --go /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/${CPU_STAGE_GO_SHA}.json --go-sha256 ${CPU_STAGE_GO_SHA} --package-sha256 374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "operator_variable": {
+    "CPU_STAGE_GO_SHA": "Full SHA256 of this byte-identical coordinator-issued CPU GO; resolve after issuance"
+  },
+  "package_sha256": "374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "phase_scope": "Stage exact CPU-plan inputs only, including reviewed cheap interpreter/CUDA-build metadata precheck before claim. No environment inventory, epoch units, reducer, GPU dry run, deciding or heldout.",
+  "phases": [
+    "stage"
+  ],
+  "review_receipt_sha256": "59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282",
+  "scientific_constraints": "C1 qualification references are SHA-only; selected decoder input SHAs, mapping, R16, verified_bounds, A1 bytes and recovered sources remain unchanged. T6 verification is not repeated; Tier2 and heldout remain disabled.",
+  "who_count": 0
+}
