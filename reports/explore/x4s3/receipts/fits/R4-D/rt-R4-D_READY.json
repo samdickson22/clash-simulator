@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-12T14:54:01Z",
+  "id": "R4-D",
+  "plan_sha256": "4dad843afdb7218ae380dbceadae63502f256ee156fa44cc333dd12aff103039",
+  "student": {
+    "id": "R4-D",
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/R4-D.pt",
+    "checkpoint_sha256": "99813802ff4e52371289194235c596c09eef0556d9af0d106b4ee2b267c130ba",
+    "threshold": 0.5002268850803375,
+    "calibration_sha256": "ccd645e99f95b4e112ceb4db94b17c9a7f58cdb6f42c5f7a8e027a1dc5288934",
+    "status": "X4S-3 R4-D student; exploration only; NEVER ADOPTABLE"
+  }
+}

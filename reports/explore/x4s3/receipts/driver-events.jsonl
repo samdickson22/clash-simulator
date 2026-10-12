@@ -15,3 +15,14 @@
 {"utc": "2026-10-12T12:59:22Z", "kind": "fit_launch", "fit": "R4-D", "resume": []}
 {"utc": "2026-10-12T12:59:36Z", "kind": "driver_exit", "reason": "SIGTERM"}
 {"utc": "2026-10-12T12:59:36Z", "kind": "driver_start", "pid": 2137533}
+{"utc": "2026-10-12T13:01:07Z", "kind": "anomaly", "name": "fit-R4-D", "reason": "fit process gone without complete.json"}
+{"utc": "2026-10-12T13:09:39Z", "kind": "phase_launch", "student": "R3a", "arm": "S-200", "attempt": 1, "todo": 1167}
+{"utc": "2026-10-12T13:10:19Z", "kind": "fit_launch", "fit": "R4-D", "resume": []}
+{"utc": "2026-10-12T13:35:24Z", "kind": "driver_exit", "reason": "SIGTERM"}
+{"utc": "2026-10-12T13:35:25Z", "kind": "driver_start", "pid": 2157655}
+{"utc":"2026-10-12T13:42:31Z","kind":"owner_fit_resume","fit":"R4-D","from":"step-00000250.pt"}
+{"utc": "2026-10-12T13:51:10Z", "kind": "phase_launch", "student": "R3a-rep", "arm": "K4S-120", "attempt": 1, "todo": 1167}
+{"utc": "2026-10-12T14:00:53Z", "kind": "driver_exit", "reason": "SIGTERM"}
+{"utc": "2026-10-12T14:00:54Z", "kind": "driver_start", "pid": 2170819}
+{"utc": "2026-10-12T14:54:01Z", "kind": "student_ready", "id": "R4-D", "threshold": 0.5002268850803375, "play_rate": 0.345944609297725, "checkpoint_sha256": "99813802ff4e52371289194235c596c09eef0556d9af0d106b4ee2b267c130ba"}
+{"utc": "2026-10-12T15:04:05Z", "kind": "phase_launch", "student": "R3a-rep", "arm": "S-200", "attempt": 1, "todo": 1167}

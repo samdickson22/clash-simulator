@@ -129,3 +129,10 @@ Hard stop is 2026-10-12T23:30:00Z.
     - then the R4-DC fit, alongside R4-D K4S-120;
     - R4-DC games (if gated in) about 19:00–21:00Z;
     - R4-DC is dropped first if time runs short.
+- **14:53:34Z:** R4-D fit returned: steps 250→2500 resumed (2,250 optimizer steps in this segment), 14 teacher
+  manifests, seed 2026101201. **14:54:01Z:** calibrated, threshold 0.5002268850803375 (same play count), checkpoint
+  99813802; `rt-R4-D` ready. Hand-mirrored to 05 with SHAs verified. Receipts are in
+  [receipts/fits/R4-D/](receipts/fits/R4-D/).
+- **15:04:05Z:** R3a-rep K4S-120 complete (1,167/1,167, rc 0, beside the R4-D fit at PSI 0.00). R3a-rep S-200
+  launched with the GPU idle, under the union-fit/S-200 rule. Next: R4-D S-200, then the R4-DC fit beside R4-D
+  K4S-120.

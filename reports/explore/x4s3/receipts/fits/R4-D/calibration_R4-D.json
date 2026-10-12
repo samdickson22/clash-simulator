@@ -1,0 +1,43 @@
+{
+  "id": "R4-D",
+  "threshold": 0.5002268850803375,
+  "target_play_rate": 0.346,
+  "actual_play_rate": 0.345944609297725,
+  "rows": 8088,
+  "legal_rows": 6167,
+  "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/R4-D.pt",
+  "checkpoint_sha256": "99813802ff4e52371289194235c596c09eef0556d9af0d106b4ee2b267c130ba",
+  "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+  "checkpoint_meta": {
+    "step": 2500,
+    "width": 192,
+    "seed": 2026101201,
+    "steps": 2500,
+    "advantage_weight": 0.0,
+    "teacher_manifests": [
+      "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+      "84594fa228cda55d31deb5dfa682cf5488439ab9c5108c1e0caf2f485beafba4",
+      "091dc210fb1179c839f3c8d3faf09ffb0d957bbd2df29061691e75bcea0c3cd3",
+      "bde4d9df909df845c88ff1a428fbc424e8ad9ad9af88e194e47624734438a60a",
+      "7d751a602adb3622fb12a4837ededdef155531e811087bb8a265be4fbf660d10",
+      "871413a6f44c917516493226690343ed0a55b1f28a65b0bb5a61452fe9d9ce20",
+      "2cbc63e490307c81e9c5ddbf31b808649fb00616394a6a679a22e5ca058fe29a",
+      "a5b95fbd5ff557915b0ccb063d02d8e49c9466b7766d50a63ad777b7b3b90784",
+      "54a6b08dac189610f0d7a6fb0f4b9f07bc973b147446d49cc3b3ee2091c3262b",
+      "2e1b2fefaef6e96d1b3ef408b3a3b3e5b89593d612c00d8080fbda0022194b00",
+      "cb6f28110fb5e62ba1620359f1d8bc0e83031414386f4f76d5c9e6614283c1bc",
+      "41eab91e5410334943f86116366da0becadac2b1a452fce8b2f7f728eecb2d96",
+      "8755467cee78ad96750f2ab2ba459e70d80d99193433c854cdd3a6779b61cc66",
+      "dd72db163d8bc59c7975c5cff87a26e116012818412dba0e83dd39b688c53ee9"
+    ],
+    "init_checkpoint": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737"
+  },
+  "labels_not_used_for_threshold": true,
+  "exploratory_calibration_reuse": true,
+  "device": "CUDA float32, TF32 off",
+  "torch": "2.7.1+cu118",
+  "gpu_wall_seconds": 4.003757928963751,
+  "label": "X4S-3 exploration, NEVER ADOPTABLE",
+  "utc": "2026-10-12T14:54:00Z"
+}
