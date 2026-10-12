@@ -1,0 +1,12 @@
+# r4b S2/S4 PROGRESS (safe_input r2 -> r3, E5) — resumable log
+- 2026-10-12T22:56:07Z start on 127x05. Copied s1s2-r4 -> s1s2-r4b, b3-r4 -> b3-r4b (cp -a). r4 SHA256SUMS verified OK before copy.
+- 2026-10-12T22:57:41Z S2: safe_input r3 vendored both dirs (806e5ebb, nlink1); s2_end_evidence.py pins/messages/docstring updated; tests/test_s2_r4_git.py loader pin + message updated.
+- 2026-10-12T22:59:35Z S4 assembler edited (loader r3 pins; hook removed; runtime+repo roles E5; si.hash_e5; Committed.check_e5). Next: tests.
+- 2026-10-12T23:01:13Z frozen export: 43 paths (si.name_gate: 0 refused) git archive origin/main 6313e14b -> /dev/shm/k4s-r4b-frozen-C06ZOX
+- 2026-10-12T23:02:34Z S4 k4s-freeze normal: 463 passed
+- 2026-10-12T23:04:28Z S2 k4s-freeze normal: 270 passed
+- 2026-10-12T23:06:45Z matrix (pre-mutation bytes): S4 463 x4 (k4s N/O, e4v3 N/O), S2 270 x4; only -O warning = pytest assertion-rewrite notice
+- 2026-10-12T23:07:28Z mutation drivers launched: S4 mutate_s4_r4.py (41 mutants: r4 E5-hook mutants replaced by 11 r4b E5 mutants) jobs 12; S2 tests/mutate_s2_r4.py jobs 16 scratch /dev/shm/k4s-r4b-mut-s2
+- 2026-10-12T23:08:02Z DESIGN.md/OPEN-QUESTIONS.md r4b notes added (b3-r4b). Waiting on mutation.
+- 2026-10-12T23:12:03Z mutation done: S4 37/41 killed (4 declared equivalents, JOINTs killed; 3 NULL survived; 0 invalid); S2 60/63 (3 equivalents as r4; NULL x3 survived; 0 invalid). JSONs copied as MUTATION-RESULTS-r4b.json
+- 2026-10-12T23:13:59Z DONE: RESPONSE-r4b.md + README r4b headers both dirs; SHA256SUMS regenerated (s1s2-r4b f655acc3, b3-r4b d66d274a), sha256sum -c OK; r4 dirs still intact; /dev/shm + /tmp scratch removed.
