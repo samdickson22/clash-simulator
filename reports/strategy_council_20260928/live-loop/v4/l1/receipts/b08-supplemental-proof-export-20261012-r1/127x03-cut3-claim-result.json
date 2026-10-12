@@ -1,0 +1,11 @@
+{
+  "deadline": 1791815430.0,
+  "host": "127x03",
+  "manifest_sha256": "7d775d96c7536b0fdd12953d961f13f748f769464fa04810dc26f02c4b7245e3",
+  "package_sha256": "b38a9bffcfe79ef6d5cc813d4f0a769429ea477c8e2ff17e0e13a08d47ad718d",
+  "release_message_required_now": true,
+  "returncode": 0,
+  "source_session_closed_utc": "2026-10-12T14:02:21.669427+00:00",
+  "stderr": "{\"source_host\": \"127x03\", \"file_count\": 127, \"total_bytes\": 2038698, \"size_limit_bytes\": 60000000000}\n{\"host\": \"127x08\", \"who_line_count\": 0}\n",
+  "stdout": "{\"host\": \"127x03\", \"manifest_sha256\": \"7d775d96c7536b0fdd12953d961f13f748f769464fa04810dc26f02c4b7245e3\", \"files\": 127, \"bytes\": 2038698, \"status\": \"DESTINATION_SHA_VERIFIED\", \"deadline\": 1791815430.0}\n"
+}

@@ -1,0 +1,44 @@
+{
+  "b_runtime_authorized": false,
+  "c1_receipt_sha256": "d56648d894a16907f7ce3aa40db446df959d0675d60898b8e00d0d2af1afdec8",
+  "cut": 3,
+  "cut2_data_untouched": true,
+  "destination_prefix": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/inputs-supplement-r1",
+  "go_receipt_sha256": "b08b77a46d01e5db6c59b19368ad91a469f10e93c25cf084c81e5c24decc59bf",
+  "go_utc": "2026-10-12T14:01:30Z",
+  "heldout_opened": false,
+  "hosts": [
+    {
+      "bytes": 2038698,
+      "claim_sha256": "b7787864553137a7e39f29abfea3a6b4082c8d3b09e9a168c63c13ff5c6494d0",
+      "files": 127,
+      "host": "127x03",
+      "release_notification_id": "message:mcp:5eaa8034-8c9f-4cbb-a098-e5ccf5d5f81f:thread-send:perception-supplement-cut3-released-127x03",
+      "result_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-supplemental-proof-export-20261012-r1/127x03-cut3-claim-result.json",
+      "result_sha256": "10f94d448059db43c0efbb4caab120fedfa221428d3a4507187787912828a339",
+      "returncode": 0,
+      "source_session_closed_utc": "2026-10-12T14:02:21.669427+00:00"
+    },
+    {
+      "bytes": 510380,
+      "claim_sha256": "208d71964c2f491c882e3a7807f11b867e8d2b0fb58b476d53b168d89fd12bca",
+      "files": 33,
+      "host": "127x04",
+      "release_notification_id": "message:mcp:5eaa8034-8c9f-4cbb-a098-e5ccf5d5f81f:thread-send:perception-supplement-cut3-released-127x04",
+      "result_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-supplemental-proof-export-20261012-r1/127x04-cut3-claim-result.json",
+      "result_sha256": "a3778ab2f48af207c5b56e9104cd2a09b96a96ae7285661f09eb2690f9140d18",
+      "returncode": 0,
+      "source_session_closed_utc": "2026-10-12T14:02:22.001711+00:00"
+    }
+  ],
+  "no_retries": true,
+  "package_sha256": "b38a9bffcfe79ef6d5cc813d4f0a769429ea477c8e2ff17e0e13a08d47ad718d",
+  "payloads_on05": false,
+  "prelaunch_verified_utc": "2026-10-12T14:02:08.327780+00:00",
+  "review_receipt_sha256": "07fe7691d26156bc1312878a12a1efffc0e699a48960fa2df7fc6af0f7a1c00e",
+  "schema": "clasher.v4.b-gap-export-completion.v1",
+  "status": "ALL_DESTINATION_SHA_VERIFIED_BOTH_HOSTS_RELEASED",
+  "total_bytes": 2549078,
+  "total_files": 160,
+  "utc": "2026-10-12T14:03:17.835321+00:00"
+}
