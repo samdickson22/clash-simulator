@@ -1,0 +1,26 @@
+{
+  "coordinator_read_through": 9153,
+  "health": {
+    "127x01": {
+      "files": [
+        "PREPARED.json"
+      ],
+      "host_probed": false,
+      "verification_invoked": false
+    },
+    "127x08": {
+      "files": [
+        "PREPARED.json"
+      ],
+      "host_probed": false,
+      "verification_invoked": false
+    }
+  },
+  "host_liveness_claim": false,
+  "old_timing_sealed": true,
+  "one_END_timer": true,
+  "outcomes_sealed": true,
+  "pool_not_run": true,
+  "schema": "clasher.t1.a5-reference-quiet-health.v1",
+  "utc": "2026-10-12T06:44:04Z"
+}

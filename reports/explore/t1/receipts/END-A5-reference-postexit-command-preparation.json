@@ -1,0 +1,19 @@
+{
+  "C8": "failed ACK remains failed; complete gates still required",
+  "health_failure": "Write FAIL/STOP receipt, preserve complete-status durable data under L1 without taking passing path",
+  "helper_sha256": {
+    "END-A5-reference-C1-C4-source-readonly.py": "edeff071092d5af22b0ea3c945f607e11b8e54dd67eafbb66a3affc2fc7749ef",
+    "END-A5-reference-L1-assemble-05.py": "4bf66cafecd0c1e316fa47b8f6eb18c2a00e2f60debbfb10a6454553da1d29e8",
+    "END-A5-reference-post-ACK-health-05.py": "0b15db8f6844f7a4aae9a456329522a32f02c09ba772e663e10c00dc7176e06f",
+    "END-A5-reference-verify-once-05.py": "3b2b82cc6de7f807a3254a95c941ca8f75d5b4f6da5a9d662be320f932433a08"
+  },
+  "host_calls": false,
+  "offline05_only": true,
+  "outcomes_sealed": true,
+  "preservation": "L1 plainfullhashcopy into only A5roots; no symlinks/extras; per-host listing equals launched A5attempts; keep everyoriginal",
+  "source_proof_before_L1": true,
+  "strict_C_d": "each actual exit.utc+1300s; no early exception",
+  "utc": "2026-10-12T06:46:04Z",
+  "verification_invoked": false,
+  "verifier": "immutable753, exact nice19/taskset63/python3-I pinned args"
+}
