@@ -3121,3 +3121,13 @@ During the session the operator posts health only, with no summary values. Any f
 - the descendant builder;
 - the R-M3 A3-P pre-game gate;
 - the r2 hardening.
+
+## 2026-10-12 12:09Z: X4S-3: G-08 pull r3 approved by ruling; mirror script withdrawn
+
+The Sol review is at `x4s3-student-scale-review/SOL-REVIEW-PULL-G08-r3-and-MIRROR-r1.md`.
+
+**Pull r3 (`pull_g08.sh` 834d1598, `verify_g.py` eef8cdfd).** The five required items are present.
+- The remaining finding, R3A-1, is accepted as a residual. A command error during publication leaves at most a temp stamp and a nonzero exit, and `verify_g` then rejects the stray root entry, so it fails closed.
+- **Approved for one attended, foreground run.** Retries need a new ruling. Outputs and the PGID `ps` are recorded in PROGRESS.
+
+**`mirror.sh` is withdrawn.** It had four failures, M1–M4: writes outside its prefix, filters that only excluded, following the source-root symlink, and no STOP or cleanup. It is replaced by manual, explicit-file, SHA-verified copies of each fitted student and its receipts to the 05 mirror after each fit.
