@@ -1,0 +1,265 @@
+{
+ "schema": "clasher.k4s.round-receipt.v1",
+ "study": "PREREG-K4S",
+ "round": "r2",
+ "cut": "P2 cut 1 (~08:40Z, 03 apt-daily)",
+ "outcomes_sealed": true,
+ "outcomes_read": false,
+ "authority": {
+  "option_a": "afe83faa (22:11 UTC)",
+  "windowed_rounds": "76887b33 (22:10:17Z)",
+  "p2": "adc12f36",
+  "proposal_m": "2c847954",
+  "read_window": "89b28b6d",
+  "procedure": "reports/explore/k4s-confirm/run-r1/CYCLE-CHECKLIST.md",
+  "checklist_sha256": "12865ae64dba4bd194cb6cf553c3bde0183100098190322974bf4bbdfb60fb72"
+ },
+ "inventory": {
+  "tool": "frozen replace.py @391d2006",
+  "source_phases": [
+   "127x03 replacement-r1",
+   "127x04 replacement-r1"
+  ],
+  "dispatches": [
+   "reporting-dispatch.json 78335dc4",
+   "replacement-r1.json 46eba59b"
+  ],
+  "new_events": 22,
+  "new_primary": 16,
+  "new_guard": 6,
+  "reasons": {
+   "owned_STOP": 22
+  },
+  "cumulative_lost": {
+   "primary": 41,
+   "guard": 14
+  },
+  "max_k": {
+   "primary": 2,
+   "guard": 1
+  },
+  "gates": {
+   "primary": "41/150",
+   "guard": "14/45",
+   "k_primary": "2/9",
+   "k_guard": "1/7",
+   "clear": true
+  },
+  "ledger_before": {
+   "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r1.json",
+   "sha256": "19580caaf6ece2648952ce1e7e2f8c1979248aacfef7e9766a596e2efc03c60f"
+  },
+  "ledger_after": {
+   "path": "reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-r2.json",
+   "sha256": "4a56abf356446c3cae6935674ffe4c92273ff8a91f689a097eaec76c935d5510"
+  },
+  "coverage": {
+   "counted": 2791,
+   "new_rows": 1109,
+   "logical": 3900,
+   "exact": true
+  }
+ },
+ "dispatch": {
+  "path": "reports/explore/k4s-confirm/run-r1/dispatch/replacement-r2.json",
+  "sha256": "1df20188998b9bfe659446fa3463bb2d8b369eba547e0a3331f8b1f2e84bfcd3",
+  "rows": 1109,
+  "never_started": 1087,
+  "replacements": 22,
+  "per_host": {
+   "127x03": 555,
+   "127x04": 554
+  },
+  "games": 8938
+ },
+ "authorization": {
+  "path": "reports/explore/k4s-confirm/run-r1/receipts/REPORTING-AUTHORIZATION-v4-replacement-r2.json",
+  "sha256": "af5b96d79a93daabb3d93ee3c73f95487780b78bfb059c9cafca28fa2fbb27d8"
+ },
+ "history_sha256": "b462ac84cba1486629940263f48298b454b53752b137d41120c27f9e700d0ee1",
+ "hosts": {
+  "127x03": {
+   "stopped_phase": {
+    "stop_utc": "2026-10-12T08:37:46.543Z",
+    "exit_utc": "2026-10-12T08:37:48Z",
+    "supervisor_pid": 1002822,
+    "completed": 1205,
+    "failed": 11,
+    "unstarted": 538,
+    "recorded_pgids": 1217,
+    "live_members": 0,
+    "acks_bound": 1205,
+    "copier_pid": 702958,
+    "reason": "owned_STOP",
+    "supervisor_exit_sha256": "bffde5d4008b2a47fc867e690f18d6ae087fd09e58464816f9a2fa60dddb5efa",
+    "launch_sha256": "b864703e102d9dea314e1b332ee1415518f90153a0a633a9c2b1b0ac0ca1a70b",
+    "copier_final": {
+     "revoked": true,
+     "final": true,
+     "lifecycle_error": null,
+     "fatal_error": null,
+     "hub_admission_active": false,
+     "source_admission_active": false
+    }
+   },
+   "new_job": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2",
+   "launch": {
+    "utc": "2026-10-12T08:57:13Z",
+    "host": "127x03",
+    "phase": "replacement",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "5ce48005dbea8dd0ee80c26c7785636c95bdcddded0bc2c90f6740b610ed176b",
+    "dispatch_sha256": "1df20188998b9bfe659446fa3463bb2d8b369eba547e0a3331f8b1f2e84bfcd3",
+    "supervisor_pid": 2116555,
+    "supervisor_pgid": 2116555
+   },
+   "launch_sha256": "1d917968d9875f89c2024ba173fb1a16fcdaf8b7a5f6a5504fe3bc7b6b9df299",
+   "admission": {
+    "utc": "2026-10-12T08:57:12Z",
+    "admitted": true,
+    "who": "",
+    "foreign": 0,
+    "active": 0
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r2-qualification-127x03.json",
+    "sha256": "201b8fc520602ce35fc5e6d45c5286c97e0613b98c1a01cd9e1c215be2969057",
+    "verdict": "PASS 28/28",
+    "tests": "299 passed, 2 deselected"
+   },
+   "runtime_identical_to_smoke_job": {
+    "files": true,
+    "native_source": true,
+    "inputs": true,
+    "inherited_runtime_pin_sha256": true,
+    "plan_sha256": true,
+    "files_count": 1724,
+    "pin_verify_rehash": "OK"
+   },
+   "smoke_carry_over": {
+    "SMOKE_PASS": "d3ed1c61",
+    "smoke_admission": "e338db63",
+    "frozen_manifest": "416f6e51"
+   },
+   "barrier": "PASS 176 files",
+   "copier": {
+    "pid": 485959,
+    "core": 62,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "supervisor_pid": 2116555,
+   "idle_pin_03": "PID 2180947 start_ticks 139691386 cmdline 16152ceb",
+   "prelaunch": {
+    "apt_daily_fired": "2026-10-12T08:47:17Z",
+    "apt_units": "inactive",
+    "apt_processes": 0,
+    "stamps": {
+     "release_upgrade_available": "2026-10-12T00:57:44Z",
+     "updates_available": "2026-10-12T08:47:30Z",
+     "apt_lists": "2026-10-12T08:47:20Z"
+    },
+    "next_timers": {
+     "motd_news": "2026-10-12T09:31:08Z",
+     "apt_daily_upgrade": "2026-10-12T13:46:58Z",
+     "apt_daily": "2026-10-12T20:36:30Z"
+    },
+    "read_window": {
+     "quiet_posted": "2026-10-12T08:47:47Z",
+     "coordinator_go": "~2026-10-12T08:48Z",
+     "released_forwarded": "2026-10-12T08:52Z",
+     "builder_receipt": "fa8e700a"
+    }
+   }
+  },
+  "127x04": {
+   "stopped_phase": {
+    "stop_utc": "2026-10-12T08:37:46.567Z",
+    "exit_utc": "2026-10-12T08:37:51Z",
+    "supervisor_pid": 37363,
+    "completed": 1194,
+    "failed": 11,
+    "unstarted": 549,
+    "recorded_pgids": 1206,
+    "live_members": 0,
+    "acks_bound": 1194,
+    "copier_pid": 711250,
+    "reason": "owned_STOP",
+    "supervisor_exit_sha256": "c11ae500e34504872095ba1d2b50d836546923c14641684d6ab97f635e4114b2",
+    "launch_sha256": "420f7ec1076885ddb0c0211a39bcfa0d0ced72b9c9c3856c382eef1f4f727f0e",
+    "copier_final": {
+     "revoked": true,
+     "final": true,
+     "lifecycle_error": null,
+     "fatal_error": null,
+     "hub_admission_active": false,
+     "source_admission_active": false
+    }
+   },
+   "new_job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2",
+   "launch": {
+    "utc": "2026-10-12T08:57:17Z",
+    "host": "127x04",
+    "phase": "replacement",
+    "slots": 11,
+    "who": "",
+    "runtime_pin_sha256": "7419760c17a2c07f62c54a7913ae702bdc7e12feb28d7854b6bc27453998bb64",
+    "dispatch_sha256": "1df20188998b9bfe659446fa3463bb2d8b369eba547e0a3331f8b1f2e84bfcd3",
+    "supervisor_pid": 1140717,
+    "supervisor_pgid": 1140717
+   },
+   "launch_sha256": "ea88e4d5c11590390875bfc8c044f5027950349e70bdd3f5b3eef82f3683cf32",
+   "admission": {
+    "utc": "2026-10-12T08:57:16Z",
+    "admitted": true,
+    "who": "",
+    "foreign": 0,
+    "active": 0
+   },
+   "qualification": {
+    "path": "reports/explore/k4s-confirm/run-r1/receipts/replacement-r2-qualification-127x04.json",
+    "sha256": "3e6d4058009d4c4cd1618489564a4c12ef42118b2177c13582374e8467ff90eb",
+    "verdict": "PASS 28/28",
+    "tests": "299 passed, 2 deselected"
+   },
+   "runtime_identical_to_smoke_job": {
+    "files": true,
+    "native_source": true,
+    "inputs": true,
+    "inherited_runtime_pin_sha256": true,
+    "plan_sha256": true,
+    "files_count": 1724,
+    "pin_verify_rehash": "OK"
+   },
+   "smoke_carry_over": {
+    "SMOKE_PASS": "5c4b7606",
+    "smoke_admission": "9c4d636f",
+    "frozen_manifest": "416f6e51"
+   },
+   "barrier": "PASS 176 files",
+   "copier": {
+    "pid": 494063,
+    "core": 63,
+    "script_sha256": "47eb96d61bd094ffea300f6892844e63ede1c6127795e93a72781e9c1d7da5cd"
+   },
+   "supervisor_pid": 1140717,
+   "idle_pin_03": null,
+   "prelaunch": {
+    "timer_at_this_cut": null,
+    "apt_units": "inactive",
+    "apt_processes": 0,
+    "stamps": {
+     "release_upgrade_available": "2026-10-11T21:32:48Z",
+     "updates_available": "2026-10-11T22:06:15Z",
+     "apt_lists": "2026-10-11T22:06:04Z"
+    },
+    "next_timers": {
+     "motd_news": "2026-10-12T10:52:04Z",
+     "apt_daily": "2026-10-12T11:20:02Z",
+     "apt_daily_upgrade": "2026-10-12T13:27:55Z"
+    }
+   }
+  }
+ },
+ "health_tool_change": "checkpoint.py: default namespace replacement-r2, per-host EXPECTED for replacement-r2 (555/554); watch.sh default phase replacement-r2"
+}

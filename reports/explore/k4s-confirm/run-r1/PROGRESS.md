@@ -229,3 +229,11 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   Ledger before-r2 19580caa -> 4a56abf3.
 - 08:39:43Z / 08:39:46Z k4s-confirm-replacement-r2 staged (extras sha OK, overlay 175/175, PREREG 9650972d); qualification
   running (03 PGID 2102837, 04 PGID 1128505).
+- 2026-10-12T08:48:14Z coordinator GO to builder (03 read window); 03 r2 launch held until "released" or 30 min (2026-10-12T09:18:14Z); 04 may proceed.
+- 2026-10-12T08:52:17Z coordinator forwarded "released" (builder receipt fa8e700a); 03 r2 launch released from hold.
+- 08:55Z qualification PASS 28/28 both (03 08:54:59Z, 04 08:55:51Z); runtime == smoke job; pin.verify re-hash OK; carry-over
+  416f6e51 / SMOKE-PASS / smoke-admission byte-identical; 03 idle pin OK; auth v4 (corrected citations); barrier PASS 176 both.
+- **08:57:13Z / 08:57:17Z replacement-r2 LAUNCHED**: 03 sup 2116555, 04 sup 1140717 (admitted, 0 foreign/active, no console).
+  Copiers on 05: 03 485959 (core 62), 04 494063 (core 63). Receipt rounds/r2/RECEIPT.json. Next cut ~11:10Z (04 apt 11:20:02Z).
+## Running (owned PGIDs only) -- CURRENT
+- replacement-r2 in k4s-confirm-replacement-r2: 03 sup PGID 2116555, 04 sup PGID 1140717; copiers on 05 485959 / 494063.
