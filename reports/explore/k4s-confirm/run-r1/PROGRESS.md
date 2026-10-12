@@ -285,3 +285,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 ## Running (owned PGIDs only) -- CURRENT
 - replacement-r3 in k4s-confirm-replacement-r3: 03 sup PGID 2373197, 04 sup PGID 1396984; copiers on 05 876522 / 884802.
   Health: K4S_NS=k4s-confirm-replacement-r3 K4S_PHASE=replacement-r3 tools/watch.sh
+- 2026-10-12T11:38:55Z SEALED health: 127x03 complete 13 acked 13 hub 13/13 failed 0 stopevent - inflight 11 queued 262 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 14 acked 14 hub 14/14 failed 0 stopevent - inflight 11 queued 264 reason None who 0 flags[dbus 11 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 57/300 guard 20/90 (union; already in ledger 0/0); ledger max k {'primary': 3, 'guard': 2}; no anomalies
