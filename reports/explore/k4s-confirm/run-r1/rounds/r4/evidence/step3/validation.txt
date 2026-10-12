@@ -1,0 +1,7 @@
+validation read_utc=2026-10-12T13:18:01.884Z
+old events prefix unchanged True 77
+new events 22 == failed blocks True {'guard': 6, 'primary': 16} {'owned_STOP': 22}
+cumulative lost {'guard': 26, 'primary': 73} max k {'primary': 3, 'guard': 3} GATES {'primary': '73/150', 'guard': '26/45', 'k': '3/8 3/6'} CLEAR True
+canonical OK; unique True
+rows 139 never-started 117 replacement rows 22 new replacements in dispatch True hosts {'127x03': 71, '127x04': 68} games 1140
+logical coverage exact True dups [] counted 3761 + rows 139 = 3900

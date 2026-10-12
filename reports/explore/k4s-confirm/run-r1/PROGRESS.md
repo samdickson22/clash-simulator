@@ -301,3 +301,14 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-12T12:40:46Z Coordinator: cut 3 may carry a perception read window (~160 proof files from 03/04, pending package review). After quiet-read v3 x2: post "03/04 quiet"; then GO -> per-host hold until "released" / 30 min from go_utc, or "no window" -> launch r4.
 - 2026-10-12T12:47:45Z Cut-3 read window DECLARED (COORDINATOR 328fb83e): perception supplemental export on 03 and 04. After quiet-read v3 x2 post "03/04 quiet"; hold r4 per host until "released" or 30 min from GO go_utc.
 - 2026-10-12T12:55:19Z SEALED health: 127x03 complete 172 acked 172 hub 172/172 failed 0 stopevent - inflight 11 queued 103 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 171 acked 171 hub 171/171 failed 0 stopevent - inflight 11 queued 107 reason None who 0 flags[dbus 168 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 57/300 guard 20/90 (union; already in ledger 0/0); ledger max k {'primary': 3, 'guard': 2}; no anomalies
+
+## P2 cut 3 (r3 -> r4), 2026-10-12
+- 13:16:55.777Z / 13:16:55.781Z joint owned STOP of replacement-r3 (03 sup 2373197, 04 sup 1396984); exits 13:17:00Z /
+  13:16:59Z owned_STOP: 03 219/11/56, 04 217/11/61. Recorded PGIDs (03 231, 04 229) 0 live (ps rc 0). complete sets ==
+  exit lists. Drain: 219 + 217 ACK bindings OK; copiers 876522 / 884802 finished_utc 13:17:25Z, ps -p rc 1 at 13:17:34Z /
+  13:17:33Z, revoked/final, no errors, admissions inactive.
+- Inventory 13:17:49.778Z (frozen replace.py @391d2006, rc 0): +22 events (owned_STOP; primary 16, guard 6); cumulative
+  73/150, 26/45; max k 3/8, 3/6 (manual cross-check, CLEAR). Dispatch replacement-r4.json 3aa43065 (139 rows = 117 + 22;
+  03 71 / 04 68; 1140 games); exact coverage 3761 + 139. Ledger 153eb421 -> 649272bd.
+- 13:18:19Z / 13:18:22Z k4s-confirm-replacement-r4 staged (extras sha OK, overlay 175/175, PREREG 9650972d); qualification
+  running (03 PGID 2573704, 04 PGID 1596026). Read window declared (328fb83e).
