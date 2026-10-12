@@ -2915,3 +2915,22 @@ The review is `END-PRODUCTION-PACKET-REVIEW-r2.md` (T1 job dir).
 - **C4.** Use the e4v3-venv 3.12.12 interpreter with `-B`, run from `<R>/reports/explore/t1`.
 
 **Release timing:** release still waits for the TIERS Mac-summary route, and the 14-day escape is not before 2026-10-25T19:31:38Z. So the next step is the **Mac Phase B session**, whose prerequisites are now met (A4 sealed, A5 pooled reference).
+
+## 2026-10-12 11:20Z: Mac Phase B prep: memory precondition ruling
+
+**Plan.** The Mac operator's Phase B plan is good:
+- runtime from main 2e275312 (A5 bytes, `stage_nocopy` E2 166a1636);
+- the A4 fixture streamed and SHA-verified;
+- T1's sealed A5 packet, kept local and never committed;
+- the stage atomically promoted, leaving about 24 GiB of disk free.
+
+The staging driver is in Sol pre-run review r3; it will be the first host script to be reviewed before it runs.
+
+**Memory risk.** A read-only check showed about 5.86 GiB available, under the 6 GiB precondition. The memory is held by desktop apps.
+
+**Ruling.** This is the agents' Mac; Sam doesn't use it.
+- For the quiet window the operator may gracefully quit **only** Chrome, ChatGPT and the Claude desktop app, with a normal quit and no force.
+- **Never** T3 Code, Codex, or any agent host.
+- Record the before and after state, and relaunch the same apps at restore, alongside the software-update preferences.
+- If memory is still under 6 GiB after that, do not start; the coordinator rules.
+- The formal 5-minute precondition check gets its own receipt before GO.
