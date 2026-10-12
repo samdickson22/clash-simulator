@@ -3618,3 +3618,12 @@ There is no Mac work now. This is queued behind K4S END and the K4S Mac phase.
 - **E3. Admission identities.** They are pinned from r4, and stale identities are refused. A reboot, bus replacement or 03 cache-service restart stops the workflow until the coordinator rules a re-pin from fresh outcome-blind admission copies. Committed admissions go under `reports/explore/k4s-confirm/end-guard-admissions/<host>-<name>.json` (Sol R1).
 
 **Next.** The K4S runner fixes S2 and S4 (r3) and sends them for a Sol r3 review as soon as they are ready, without waiting for package 2. S1 is approved but stays offline: no host step until S2, S4 and the host plan are approved and authorized one step at a time.
+
+## 2026-10-12 16:58Z: 08 idle by decision until perception B is admitted
+
+The exploration owner declined 08: its students all ran on 01, and moving would add a host-timing confound and need modified scripts. A read-only lane survey (`/mpac/sdicks02/jobs/clasher/coordinator-notes/08-lane-survey-r1.md`) found no reviewed lane that can run on 08 unchanged.
+- 08 stays **reserved for perception B** under the earlier GO. B's first 08 use is its dry run, after the B1–B11 review.
+- The T5 GRU stays parked: it is descriptive-only, roughly 120–200 GPU-h, and its r2 change is unreviewed.
+- Mask v2 has no owner since Astra retired. It is not scheduled.
+
+This is a deliberate, recorded idle, not an oversight. It will be revisited when the B review lands or a reviewed lane appears.
