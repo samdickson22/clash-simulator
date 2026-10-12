@@ -160,4 +160,4 @@ Hard stop is 2026-10-12T23:30:00Z.
 - **17:11:44Z:** driver stopped. No X4S-3 process remains on 01; GPU idle; job prefix 27 GB.
 - **17:12Z:** final attended copy of games, driver, receipts, analysis and calibration to
   `05:<job>/mirror/final/`: 14,140 files, all SHAs match.
-- **17:2xZ:** RESULTS.md committed (pre-declared readout only). X4S-3 is complete; 08 was not used.
+- **17:12Z:** RESULTS.md committed (c86d928d) (pre-declared readout only). X4S-3 is complete; 08 was not used.
