@@ -1,10 +1,10 @@
 # X4S-4 PLAN §6 qualification-stage launch runbook (exploration, NEVER ADOPTABLE)
 
-This was prepared offline on 127x05 on 2026-10-12 and updated for scripts r6 (commit `C` below) after Sol r5 returned
-REQUEST_CHANGES on ffde20ac. It authorizes nothing: every step on 127x01 waits for an explicit coordinator GO, and runs
-only if Sol approves the script set (now r6). If a later round asks for changes, the commit and SHAs below are updated
-before use. Production (collection, labeling, fits, reporting) is
-**not** part of this runbook; it needs its own GO after the qualification evidence is reviewed.
+This was prepared offline on 127x05 on 2026-10-12 and updated for scripts r7 (commit `C` below) after Sol r6 returned
+REQUEST_CHANGES on 0fc0f243 (r6 itself followed Sol r5's REQUEST_CHANGES on ffde20ac). It authorizes nothing: every
+step on 127x01 waits for an explicit coordinator GO, and runs only if Sol approves the script set (now r7). If a later
+round asks for changes, the commit and SHAs below are updated before use. Production (collection, labeling, fits,
+reporting) is **not** part of this runbook; it needs its own GO after the qualification evidence is reviewed.
 
 **Coordinator decisions Q-D1 to Q-D4** (COORDINATOR 2026-10-12 22:50Z; effective once Sol approves the script set):
 - **Q-D1. One combined GO:** §6 qualification plus **conditional** production (section G). Production continues
@@ -14,7 +14,7 @@ before use. Production (collection, labeling, fits, reporting) is
   - If r5 requests changes: (a), a narrow `qualify4 smoke-pack`, reviewed in the next round.
   - If r5 approves: (b), `qualify4 trainer` on the first real O batch after the O gate and before R5 fit admission
     (section G, P8). A trainer failure blocks all fits.
-  - **Applicable variant: (a).** Sol r5 requested changes, so r6 adds `qualify4 smoke-pack` and Q6 runs inside the
+  - **Applicable variant: (a).** Sol r5 requested changes, so r6 added `qualify4 smoke-pack` (guarded and strict since r7) and Q6 runs inside the
     qualification stage (section D). Production step P8 is not used.
 - **Q-D3. Smoke parity at 8 games per arm:** the designed pause applies. The coordinator decides on any exact-receipt
   exception.
@@ -33,7 +33,7 @@ about 2.5–4 h. E8 truncation rules apply if it runs out.
 | Host | 127x01 only. No other host; 03/04/Mac never. |
 | Job root `J` | `/mpac/sdicks02/jobs/clasher/x4s4-onpolicy`. It must not exist before staging. |
 | X4S-3 job `J3` (read-only source) | `/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012` |
-| Script commit `C` | `0fc0f243843f44dba30e0ceb3c7e12f8ac0a438f` (scripts r6, pending Sol r6) |
+| Script commit `C` | `81d78349980367e5a64b72ef0faf3fa6a9231abd` (scripts r7, pending Sol r7) |
 | Runtime python | `/mpac/sdicks02/repos/clasher/.venv/bin/python`, via `x4s3/runtime.sh` |
 | GPU python | `/mpac/sdicks02/envs/clasher-gpu/bin/python` |
 | Pins | native `44874fd6…`; v1 `d77005d5…`; R3a `37509a43…` (threshold 0.5005528330802917); R3a-rep `8d537a78…` (threshold 0.49952925741672516); emitter `dab61651…`; `x4s3/run.py` `e7f90d76…` |
@@ -61,6 +61,16 @@ No `pkill`, no pattern kills: every stop is the reviewed PID-only path or `J/STO
 - **GPU ≤ 40 GB.** The only GPU step is the trainer check (Q6, about 1 GB).
 - **Console user:** yield, then ≤ 16 game processes (supervisor).
 - **STOP:** `J/STOP`, which may be a dangling symlink, stops everything within about 2 min.
+- **Direct qualification commands (Q3, Q4 round trip and parity, Q6):** every `qualify4.py` subcommand runs under
+  its built-in guard (r7, R6-F2). It applies the same admission as a phase, registers its process group, and runs a
+  watcher that applies the running-work rules every 5 s. Work halts at the next state, capture or game; if the
+  watcher's breach is not acknowledged within 60 s, it writes the failed receipt and ends the process. The receipt is
+  rechecked for STOP, the deadline and any breach immediately before it is written, so a qualification receipt never
+  passes after any of them. The trainer step also gets the fit GPU rules: ≤ 8 GiB used at admission, ≤ 40 GB live,
+  and an unreadable GPU stops it.
+  - Admission: no STOP; before the hard stop; MemAvailable ≥ 24 GiB; PSI readable and ≤ 10; ≤ 70 processes; ≤ 100 GB.
+  - Running-work rules: STOP; the hard stop; MemAvailable < 24 GiB or unreadable; PSI unreadable; PSS > 50 GiB or
+    unreadable; the process and disk caps. High PSI alone is not a stop rule.
 - **Hard stop:** `J/HARD-STOP-UTC.txt` = T+24 h, written once at Q1.
 
 ## C. Staging (S0–S3)
@@ -102,7 +112,7 @@ cp -a $J3/fit/source $J3/fit/ops $J3/fit/loader6.json $J/fit/
 From 127x05, stream exactly the reviewed X4S-4 files from git (no worktree file):
 
 ```bash
-git -C /mpac/sdicks02/repos/clasher archive 0fc0f243 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
+git -C /mpac/sdicks02/repos/clasher archive 81d78349 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
 ```
 
 **S2: verify, then overlay.**
@@ -155,7 +165,7 @@ SUP="nice -n 10 taskset -c 0-49 env X4S3_RT=$RT bash $R/reports/explore/x4s3/run
 
 ```bash
 Q=/dev/shm/x4s4-q0; rm -rf $Q; mkdir -p $Q
-git -C /mpac/sdicks02/repos/clasher archive 0fc0f243 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
+git -C /mpac/sdicks02/repos/clasher archive 81d78349 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
 git -C /mpac/sdicks02/repos/clasher cat-file -e 7f82af0d4b3b6a465cba9a1b6dd26c708bcf25d1
 nice -n 19 taskset -c 0-3 /dev/shm/x4s4-venv/bin/python -B -c "import sys; sys.path.insert(0, '$Q/reports/explore/x4s4')
 import x4s4io as io; io.REPORT_ROOT = '$Q/reports/explore/x4s4'
@@ -171,10 +181,12 @@ nice 19.
 
 ```bash
 date -u -d '+24 hours' +%Y-%m-%dT%H:%M:%SZ > $J/HARD-STOP-UTC.txt     # ONCE; T recorded in receipts/T.json
-cd $R && $RUN -m pytest -q reports/explore/x4s/test_sdefault.py reports/explore/s1/test_anchor.py reports/explore/s1/test_latency.py > $J/qual/unit-tests.log 2>&1
+test ! -e $J/STOP && test ! -L $J/STOP && cd $R && timeout 300 $RUN -m pytest -q reports/explore/x4s/test_sdefault.py \
+   reports/explore/s1/test_anchor.py reports/explore/s1/test_latency.py > $J/qual/unit-tests.log 2>&1
 ```
 
-The tests must pass as in X4S-3 (31 tests). This takes about 1 min.
+The tests must pass as in X4S-3 (31 tests). This takes about 1 min. Q1 is the only step without the live guard: it
+uses no study inputs, is checked for STOP before it starts, and is bounded at 5 min by `timeout`.
 
 **Q2: capture non-perturbation (§6.2). Two detached phases, run sequentially.**
 
@@ -255,8 +267,10 @@ cd $J/fit/source && PYTHONPATH=$J/fit/source:$J/fit/source/src:$J/fit/ops nice -
 ```
 
 **Pass:**
-- `smoke-pack.json` `passed=true`: all 16 smoke games labelled (`sealed`, or `no_rows` for a game without a scored
-  root), with the packed manifest SHA. STOP or the hard stop during labelling fails it, and nothing is packed;
+- `smoke-pack.json` `passed=true`: all 16 smoke games labelled, as `sealed` or as `no_rows` for a game whose captures
+  all lack a scored root. Every capture is attempted, and rows + drops = attempted for each game. Any digest mismatch
+  fails (r7, R6-F3). STOP, the hard stop or a guard breach during labelling or packing fails it, and no packed batch
+  is accepted;
 - `trainer.json` `passed=true`: rows = roots > 0, and the targets are finite and normalized.
 
 A failure blocks all fits. smoke-pack takes about 10–20 min on one core (about 1,900 captures × 1 label); the trainer
