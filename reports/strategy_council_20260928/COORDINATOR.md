@@ -3852,3 +3852,31 @@ The delta review follows.
 - strict stage → environment → current-graph order with no automatic retry;
 - a coordinator comparison of the environment against the 2026-10-08 record;
 - before the deciding stage: measured cost, an allowlist with no SSH session, and a reviewed notification transfer.
+
+## 2026-10-12 19:36Z: Perception B combined r2 delta review: package and deploy script APPROVE_WITH_CONDITIONS
+
+**Review.** Opus delta review of package 37432569 and `deploy_b08.py` 2f1d0e79, at `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-COMBINED-REVIEW-r2.md` (**35b7cf4f**).
+- **Integrity.** All 414 files match; the delta reproduces all 19 changed files; only 4 runtime modules changed. C1, R16, `verified_bounds`, A1 and the digests are unchanged.
+- **Fixes.** R1(b), R2 and R3 are correct: one-shot fail-closed epoch units, and the reducer needs exactly 24 valid receipts plus a full re-hash.
+- **Tests.** 373/373 pass.
+- **Deploy script.** It writes only to versioned prefixes, creates files exclusively, checks SHA after copying, opens one SSH session with no ControlMaster, and keeps partial copies without retrying.
+
+**Coordinator decision: review approved under the amended G1–G8.**
+- **G1.** Separate receipts:
+  - `APPROVE_B_COMBINED_REVIEW`: binds the package, CPU plan 8d5d338e, deploy 2f1d0e79 and review 35b7cf4f.
+  - Then `AUTHORIZE_B_DEPLOYMENT`.
+  - Then `AUTHORIZE_B_CPU_PREFLIGHT` (per phase).
+- **G2.** Every receipt and GO is coordinator-committed, with its SHA recorded here before use. Each GO reference is exactly `{path, sha256}`.
+- **G3.** One deploy run, with no rerun. One pre-authorized read-only inspection if it fails. The coordinator reviews `complete.json`.
+  - **New (F1):** placing authority receipts on 08 under `B_ROOT` needs its own reviewed procedure before the stage GO.
+- **G4.** Invoke exactly `code-374325696dc9`, using the clasher-gpu interpreter with `-B -s`, no CUDA, one thread and nice 19.
+- **G5.** Strict order: deployment → stage → environment → 24 epoch units (bounded concurrency, at most 8) → reducer.
+  - **Cost gate:** the reducer GO is issued only if the longest epoch unit took ≤ 3,600 s.
+- **G6–G8.** As the review states.
+
+**Next.** The perception owner drafts, to the code's exact schemas:
+- the `APPROVE_B_COMBINED_REVIEW` receipt;
+- the `AUTHORIZE_B_DEPLOYMENT` GO;
+- the F1 authority-placement procedure, which goes to Opus review.
+
+The coordinator verifies and commits the receipts. Deployment needs its own GO. No host action yet.
