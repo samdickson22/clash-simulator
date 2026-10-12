@@ -37,6 +37,7 @@ monitored, exclusive GPU work (run_calibration: DISPATCH-flock admission with no
 PID-only stop on breach, nonzero or post-deadline results rejected). R4-F3 - a stopped (partial) completion is
 reconciled exactly like a final one: segment 'returned' and a known zero exit of this launch (or an exact-attempt
 ACK), else 'failed' (blocking anomaly, never resumed).
+r7 (Sol r6): R6-F1 - final_gate() runs its exclusion/status scans first and the cheap STOP/hard-stop checks last.
 r6 (Sol r5): R5-F1 - final_gate() (STOP, hard stop, unresolved anomaly, live diagnostic/calibration/phase/fit) runs
 inside launch() immediately before every spawn, after all lock waits and slow preparation; a refused fit resume rolls
 its renames back, a refused phase sets its indices file aside; STOP after a calibrator's last poll rejects its result,
@@ -188,16 +189,18 @@ def live_calibration():
 
 
 def final_gate():
-    """R5-F1: the LAST check before any child is created, evaluated inside launch() after every lock wait and every slow
-    preparation/admission step: STOP (lexists), the immutable hard stop, unresolved anomalies, and exclusion of every
-    other GPU/reporting activity (a live diagnostic, calibration, reporting phase or fit). Returns None or the reason."""
-    if stop_present(): return 'STOP'
-    if now() >= STOP_AT: return 'hard_stop'
+    """R5-F1/R6-F1: the LAST check before any child is created, evaluated inside launch() after every lock wait and
+    every slow preparation/admission step. The exclusion and status reconciliation run first (unresolved anomalies, a
+    live diagnostic, calibration, reporting phase or fit - fit_state may read the whole events log); only then the
+    cheap STOP (lexists) and immutable hard-stop checks, so nothing slow lies between them and io.spawn. Returns None
+    or the reason."""
     if unresolved_anomalies(): return 'unresolved anomaly'
     if diagnostic_live(): return 'diagnostic live'
     if live_calibration(): return 'calibration live'
     if live_supervisor(): return 'reporting phase live'
     if any(fit_state(f)[0] == 'running' for f in FIT_ORDER): return 'fit live'
+    if stop_present(): return 'STOP'                                # R6-F1: cheap checks last, after every scan
+    if now() >= STOP_AT: return 'hard_stop'
     return None
 
 

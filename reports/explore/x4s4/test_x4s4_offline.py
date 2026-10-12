@@ -1289,6 +1289,20 @@ def qual_phase(root, name, arms, rng, base, cmd='h', capture=True, fair_moved=Tr
     return ph
 
 
+def healthy_host(fn):
+    """r7: qualify4 subcommands now run study admission (QualGuard); offline the host measurements are stubbed healthy
+    (MemAvailable 100 GiB, PSI 1.0) and restored afterwards."""
+    def wrapped(tmp):
+        import studytree as ST
+        saved = (ST.mem_available, ST.psi_some_avg10)
+        ST.mem_available, ST.psi_some_avg10 = (lambda: 100*2**30), (lambda: 1.0)
+        try: return fn(tmp)
+        finally: ST.mem_available, ST.psi_some_avg10 = saved
+    wrapped.__name__ = fn.__name__
+    return wrapped
+
+
+@healthy_host
 def test_qualify(tmp):
     stub_torch_imports()
     import qualify4 as Q, label
@@ -1882,6 +1896,197 @@ def test_r6(tmp):
          body={k: body.get(k) for k in ('games', 'statuses', 'rows', 'captures', 'passed')}, stop=stopped.get('statuses'))
 
 
+# ================================================================ r7: Sol r6 findings R6-F1..F3
+@healthy_host
+def test_r7(tmp):
+    import studytree as ST, qualify4 as Q, label
+    stub_torch_imports()
+    from imitation.exit_r1 import pack as packmod
+    past = datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc)
+    def stop_link(job):
+        if not os.path.lexists(Path(job)/'STOP'): os.symlink(Path(job)/'nowhere', Path(job)/'STOP')
+
+    # ---- R6-F1: STOP / deadline crossing during the final gate's own events-log scan never reaches io.spawn
+    def gate_case(sub, kind):
+        drv, job = driver_module(tmp/sub)
+        out = job/'fits'/'R5'; out.mkdir(parents=True, exist_ok=True)
+        wjson(out/'complete.json', dict(stopped=False, step=2500)); wjson(out/'segment.json', dict(status='returned'))
+        rec = dict(launch_id='DONE', pid=2**22+77, pgid=2**22+77, starttime=5, launched_at_utc='2026-10-13T00:00:00Z')
+        wjson(job/'receipts'/'fit-R5-launch.json', rec)
+        with (job/'driver'/'events.jsonl').open('a') as f: f.write(json.dumps(dict(utc='x', kind='child_exit', pid=rec['pid'], launch_id='DONE', exit_code=0))+'\n')
+        spawned = []
+        ns = types.SimpleNamespace(**{k: getattr(io, k) for k in dir(io) if not k.startswith('__')})
+        def spy(argv, *a, **k): spawned.append(argv); raise RuntimeError('spawn reached')
+        def slow_read(path, *a, **k):
+            text = io.read_text(path, *a, **k)
+            if str(path).endswith('/events.jsonl'):                     # the gate's own exit-log scan
+                if kind == 'STOP': stop_link(job)
+                else: drv.STOP_AT = past
+            return text
+        ns.spawn, ns.read_text = spy, slow_read; drv.io = ns
+        drv.live_supervisor = lambda: None
+        try: r = drv.launch('fit-R5-rep', ['/bin/true'], f'{job}/logs/x.log', f'{job}/receipts/x.json', {})
+        except RuntimeError as e: r = 'SPAWNED' if 'spawn reached' in str(e) else repr(e)
+        return r is None and not spawned and drv.fit_state('R5')[0] == 'done'
+    g = {k: gate_case(f'g-{k}', k) for k in ('STOP', 'deadline')}
+    src = (HERE/'driver.py').read_text(); fg = src[src.index('def final_gate():'):src.index('def launch(')]
+    order = fg.index("fit_state(f)[0] == 'running'") < fg.index('if stop_present()') < fg.index('if now() >= STOP_AT')
+    case("R6-F1 (Sol): STOP or the hard stop crossing during the final gate's own events-log/fit-status scan is caught: launch() "
+         "returns None and io.spawn is never reached; the cheap checks are statically last", all(g.values()) and order, gate=g, order=order)
+
+    # ---- R6-F2: qualification work is admitted, owned and live-guarded; it never passes after STOP/deadline/breach
+    def guard_for(job, name, out='g.json'):
+        gd = Q.QualGuard(str(job), name, str(Path(job)/'qual'/out)); return gd
+    def smoke_job(sub):
+        j = new_job(tmp/sub); phases = []
+        for arm in Q.COLLECT_ARMS:
+            p = j/'collect'/'smoke'/arm; phases.append(p)
+            for i in range(8): write_collect_game(p, arm, i, (100, 110, 120), base=SMOKE)
+            wjson(p/'schedule.json', dict(range='smoke', indices=list(range(8)), cases=[[i, SMOKE+i, arm] for i in range(8)]))
+        return j, [str(p) for p in phases]
+    saved = (label.score_state, label.THREADS, label.RAW, label.PLAN_SHA, label.DATA_ROLE, label.halt_reason)
+    def restore(): label.score_state, label.THREADS, label.RAW, label.PLAN_SHA, label.DATA_ROLE, label.halt_reason = saved
+    def score_n(n_fire, fire):
+        calls = []
+        def score(*a, **k):
+            calls.append(1)
+            if len(calls) == n_fire: fire()
+            return 5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None]
+        return score, calls
+    batch = lambda j: Path(j)/'qual'/'smoke-pack'/'batch-0000'
+    res = {}
+    for kind in ('STOP', 'deadline'):
+        holder = {}
+        def fire(kind=kind, holder=holder):
+            if kind == 'STOP': stop_link(holder['j'])
+            else: (Path(holder['j'])/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+        j, phases = smoke_job(f'r7-late-{kind}'); holder['j'] = j
+        gd = guard_for(j, 'smoke-pack'); gd.admit(); Q.GUARD = gd
+        sc, calls = score_n(48, fire); label.score_state, label.THREADS = sc, 1
+        try:
+            try: out = Q.smoke_pack_into(phases, label, packmod.pack)
+            except Q.QualHalt as e: out = 'halt: '+str(e)
+        finally: Q.GUARD = None; gd.done.set(); restore()
+        res[f'late_score_{kind}'] = isinstance(out, str) and out.startswith('halt') and len(calls) == 48 and not batch(j).exists()
+    # STOP during the frozen packer (its per-source guard callback) and STOP right after the pack returns
+    for when in ('in_pack', 'after_pack'):
+        j, phases = smoke_job(f'r7-{when}')
+        def pk(roots, output, memory_guard=None, j=j, when=when):
+            n = []
+            def mg():
+                n.append(1)
+                if when == 'in_pack' and len(n) == 3: stop_link(j)
+                memory_guard()
+            r = packmod.pack(roots, output, memory_guard=mg)
+            if when == 'after_pack': stop_link(j)
+            return r
+        gd = guard_for(j, 'smoke-pack'); gd.admit(); Q.GUARD = gd
+        label.score_state, label.THREADS = (lambda *a, **k: (5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None])), 1
+        try:
+            try: out = Q.smoke_pack_into(phases, label, pk)
+            except Q.QualHalt as e: out = 'halt: '+str(e)
+        finally: Q.GUARD = None; gd.done.set(); restore()
+        sealed = False
+        if batch(j).exists():
+            try: io.verify_sealed_dir(str(batch(j))); sealed = True
+            except io.Refusal: sealed = False
+        res[when] = isinstance(out, str) and out.startswith('halt') and (when == 'after_pack' or not sealed)
+    # admission: PSI 11 or unreadable refuses before any work (PSI is measured); a STOP link refuses
+    psi_calls = []
+    j, _ = smoke_job('r7-psi')
+    for val, key in ((11.0, 'psi_11'), (None, 'psi_unreadable')):
+        ST.psi_some_avg10 = lambda v=val: (psi_calls.append(v), v)[1]
+        res[key] = raises(lambda: guard_for(j, 'smoke-pack').admit(), Q.QualHalt, 'PSI')
+    ST.psi_some_avg10 = lambda: 1.0
+    res['psi_measured'] = len(psi_calls) >= 2
+    stop_link(j); res['admission_STOP'] = raises(lambda: guard_for(j, 'parity').admit(), Q.QualHalt, 'STOP'); (j/'STOP').unlink()
+    # live breach: MemAvailable 0 is latched by the watcher and halts the work; PSI unreadable while running is a breach;
+    # high PSI while running is not (dispatch inhibition only)
+    gd = guard_for(j, 'roundtrip'); gd.admit()
+    ST.psi_some_avg10 = lambda: 50.0; res['high_psi_not_kill'] = gd.poll() is None
+    ST.psi_some_avg10 = lambda: None; res['psi_unreadable_live'] = gd.poll() == 'psi_unreadable'
+    ST.psi_some_avg10 = lambda: 1.0; gd.done.set()
+    gd2 = guard_for(j, 'roundtrip', 'g2.json'); gd2.admit()
+    ST.mem_available = lambda: 0
+    res['memory_breach'] = gd2.poll() == 'memory_guard' and raises(gd2.check, Q.QualHalt, 'memory_guard')
+    ST.mem_available = lambda: 100*2**30; gd2.done.set()
+    # the watcher thread itself: an unacknowledged breach is failed by the watcher (receipt + exit 3) within the grace
+    saved_t = (Q.GUARD_PERIOD, Q.GUARD_GRACE); Q.GUARD_PERIOD, Q.GUARD_GRACE = 0.05, 0.3
+    gd3 = guard_for(j, 'frozen', 'g3.json'); exits = []; gd3.exit = exits.append; gd3.admit()
+    ST.mem_available = lambda: 0
+    t0 = time.monotonic()
+    while not exits and time.monotonic()-t0 < 10: time.sleep(0.05)
+    ST.mem_available = lambda: 100*2**30; gd3.done.set(); Q.GUARD_PERIOD, Q.GUARD_GRACE = saved_t
+    g3 = json.loads((j/'qual'/'g3.json').read_text()) if (j/'qual'/'g3.json').exists() else {}
+    res['watcher_expires'] = exits == [3] and g3.get('passed') is False and 'memory_guard' in g3.get('error', '') and gd3.finalize(dict(passed=True)) is None
+    # roundtrip loop: STOP on the first scoring call halts before the next capture (Sol: 96 calls, passed, exit 0)
+    gd4 = guard_for(j, 'roundtrip', 'g4.json'); gd4.admit(); Q.GUARD = gd4
+    calls = []
+    def rscore(*a):
+        calls.append(1); stop_link(j); return (5, [5], [0.1])
+    caps = [dict(info=None, opponent=None, root_rng_state=None, candidate_rng_state=None, seed=0, root_digest=None) for _ in range(48)]
+    try: rt_halt = raises(lambda: Q.roundtrip_check(caps, rscore), Q.QualHalt, 'owned_STOP')
+    finally: Q.GUARD = None
+    res['roundtrip_halts'] = rt_halt and len(calls) == 2
+    # finalize: a result computed as passed is written passed=false when STOP/deadline is present at the receipt
+    fin = gd4.finalize(dict(passed=True, check='roundtrip'))
+    res['finalize_STOP'] = fin['passed'] is False and json.loads((j/'qual'/'g4.json').read_text())['passed'] is False
+    (j/'STOP').unlink()
+    (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+    gd5 = guard_for(j, 'hashes', 'g5.json'); gd5.halt = None; gd5.own = None
+    res['finalize_deadline'] = gd5.finalize(dict(passed=True))['passed'] is False
+    (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
+    # CLI: the real main() refuses at admission with STOP present and writes a failed receipt (exit 1)
+    stop_link(j)
+    try: Q.main(['parity', '--phases', str(j/'collect'/'smoke'/'K4S-120'), '--min-games', '1', '--bank', 'smoke', '--out', str(j/'qual'/'cli.json')]); rc = 0
+    except SystemExit as e: rc = e.code
+    cli = json.loads((j/'qual'/'cli.json').read_text())
+    res['cli_admission_STOP'] = rc == 1 and cli['passed'] is False and 'admission' in cli['error']
+    (j/'STOP').unlink()
+    # GPU step: admitted only with the GPU readable and <= 8 GiB used; live > 40 GB or unreadable is a breach
+    saved_gpu = Q.gpu_used_mib
+    gg = Q.QualGuard(str(j), 'trainer', str(j/'qual'/'gt.json'), gpu=True)
+    Q.gpu_used_mib = lambda: None; gpu_unread = raises(gg.admit, Q.QualHalt, 'GPU')
+    Q.gpu_used_mib = lambda: 50000; gpu_busy = raises(gg.admit, Q.QualHalt, 'GPU')
+    Q.gpu_used_mib = lambda: 1000; gg.admit(); Q.gpu_used_mib = lambda: 45*1024; gpu_live = gg.poll() == 'gpu_unreadable_or_over_40GB'
+    gg.done.set(); Q.gpu_used_mib = saved_gpu
+    res['gpu_rules'] = gpu_unread and gpu_busy and gpu_live
+    res['registered'] = bool(list((j/'receipts').glob('cpujob-qual-*.json')))
+    case("R6-F2 (Sol): a STOP or the deadline at the last (48th) score, a STOP inside the frozen packer and a STOP right after it "
+         "all halt smoke-pack with no accepted batch; admission refuses PSI 11, unreadable PSI and STOP (PSI is measured); a "
+         "live MemAvailable 0 or unreadable PSI is a breach while high PSI is not; an unacknowledged breach is failed by the "
+         "watcher (receipt + exit 3); the round-trip loop halts at the next capture; finalize writes passed=false under STOP or "
+         "the deadline; the real CLI refuses at admission; the trainer gets the GPU fit rules; jobs are registered",
+         all(res.values()), res=res)
+
+    # ---- R6-F3: digest failures fail smoke-pack; legitimate no-scored-root games are allowed
+    def drops_case(sub, score):
+        j, phases = smoke_job(sub); label.score_state, label.THREADS = score, 1
+        try: return Q.smoke_pack_into(phases, label, packmod.pack), j
+        finally: restore()
+    ok_score = (5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None])
+    def by_seed(bad_seed, kind, only_tick=None):
+        def score(info, opponent, rrs, crs, seed, digest=None):
+            tick = int(str(digest).rsplit('-', 1)[1]) if digest else None
+            if seed == bad_seed and (only_tick is None or tick == only_tick):
+                if kind == 'digest': raise label.DigestMismatch('root digest mismatch')
+                return 5, [5], [0.3]                                        # one candidate: no scored root
+            return ok_score
+        return score
+    d1, j1 = drops_case('r7-digest-only', by_seed(SMOKE+7, 'digest'))       # all roots of one game (both arms' index 7)
+    d2, j2 = drops_case('r7-digest-mixed', by_seed(SMOKE+3, 'digest', only_tick=110))
+    h1, j3 = drops_case('r7-noroot-game', by_seed(SMOKE+5, 'noroot'))
+    h2, j4 = drops_case('r7-noroot-mixed', by_seed(SMOKE+2, 'noroot', only_tick=120))
+    f3 = dict(digest_only=d1['passed'] is False and 'digest' in d1.get('error', '') and not batch(j1).exists(),
+              digest_mixed=d2['passed'] is False and 'digest' in d2.get('error', '') and not batch(j2).exists(),
+              noroot_game=h1['passed'] is True and h1['statuses'].get('no_rows') == 2 and h1['drops'] == {'no_scored_root': 6}
+                          and h1['attempted'] == 48 and h1['rows'] == 42,
+              noroot_mixed=h2['passed'] is True and h2['drops'] == {'no_scored_root': 2} and h2['rows'] == 46 and h2['attempted'] == 48)
+    case("R6-F3 (Sol): smoke-pack fails on digest mismatches - a game whose roots all fail (no_rows) and a single failed root in a "
+         "sealed game - with no packed batch; legitimate no-scored-root games and roots pass with complete attempted/row/drop accounting",
+         all(f3.values()), f3=f3, d1=d1.get('error'), h1={k: h1.get(k) for k in ('statuses', 'drops', 'rows', 'attempted', 'error')})
+
+
 # ================================================================ static (F11, F17, R2-F10), run_fit.sh (F5)
 def test_static(tmp):
     owned = [p for p in sorted(HERE.glob('*.py')) if p.name not in ('run_collect.py', 'test_x4s4_offline.py')]
@@ -1947,7 +2152,7 @@ def main():
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
         for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
-                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_static):
+                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
             except Exception as e:
