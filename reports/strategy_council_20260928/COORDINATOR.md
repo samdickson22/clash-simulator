@@ -4280,3 +4280,14 @@ ISSUED AUTHORIZE_B_CPU_PREFLIGHT 0925060b75dc26220bdd802a0ce25c647bf44f7e611d652
   - `l1/receipts/b-authority-placement-go-r3.json`
 
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT d2824e27091dbb3790be1c460522d899445b91cc28a28c05a2f778848548ea23
+
+## 2026-10-12 23:25Z: Coordinator correction: environment CPU GO publication path moved r1→r2
+
+The coordinator published the environment CPU GO (0925060b) at `l1/receipts/b-cpu-preflight-environment-go-r1.json`. The issued placement GO (d2824e27) signs its source path as `…-r2.json`. This was a coordinator error, and it would make the pinned sender fail before claiming.
+
+The fix is a pure rename, recorded in this commit:
+- The blob is unchanged (git object 0a5262702121), so the GO bytes, its SHA and both ISSUED lines are unchanged.
+- No duplicate copy is kept.
+- The placement GO and draft SHAs are unchanged.
+
+**Placement r3 must use COORDINATOR_COMMIT = this commit.** No placement attempt was consumed.
