@@ -1,0 +1,172 @@
+{
+ "schema": "clasher.k4s.reporting-completion.v1",
+ "study": "PREREG-K4S",
+ "reporting_complete": true,
+ "outcomes_sealed": true,
+ "counted_primary_blocks": 3000,
+ "counted_guard_blocks": 900,
+ "counted_host_phases": {
+  "127x03": [
+   "reporting",
+   "replacement-r1",
+   "replacement-r2",
+   "replacement-r3",
+   "replacement-r4"
+  ],
+  "127x04": [
+   "reporting",
+   "replacement-r1",
+   "replacement-r2",
+   "replacement-r3",
+   "replacement-r4"
+  ]
+ },
+ "completed_at_utc": "2026-10-12T14:45:34Z",
+ "last_supervisor_exit_utc": "2026-10-12T14:43:51Z",
+ "blind_ledger_sha256": "649272bdae066e49a524bd46e0155cdaf99f6d1b543e78014d357e1eb18a4f08",
+ "blind_ledger_events": 99,
+ "counted_inventory_sha256": "f10ab9433b6582299caeeb3055c4c7db494e3e99019e1cf8c8e0abc2fccbe38d",
+ "counted_blocks": 3900,
+ "dispatches": {
+  "reporting": "78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2",
+  "replacement-r1": "46eba59b8a282ea50eac34f873100771fa09738a30370e75abb5e28d89bcd220",
+  "replacement-r2": "1df20188998b9bfe659446fa3463bb2d8b369eba547e0a3331f8b1f2e84bfcd3",
+  "replacement-r3": "ab8b62388c16a2827d36269308c4ca82d7ac55b185d893735f80a88a6f258b48",
+  "replacement-r4": "3aa43065a15934f48ed54948d77f72165228b6150bf948c379229958efc61347"
+ },
+ "supervisor_exits": {
+  "127x03/reporting": {
+   "sha256": "88debddf7bf33c1b0bc2f14002339c87072be956398d90bfb727c2d0c36a1033",
+   "utc": "2026-10-11T22:12:11Z",
+   "reason": "owned_STOP",
+   "completed": 206,
+   "failed": 11,
+   "unstarted": 1733
+  },
+  "127x04/reporting": {
+   "sha256": "c0a935f6cd1ecf022bf197dc3e88604769491bb461973bcd3c106e393aa71084",
+   "utc": "2026-10-11T22:06:15Z",
+   "reason": "ubuntu_apt_average_budget",
+   "completed": 186,
+   "failed": 22,
+   "unstarted": 1742
+  },
+  "127x03/replacement-r1": {
+   "sha256": "bffde5d4008b2a47fc867e690f18d6ae087fd09e58464816f9a2fa60dddb5efa",
+   "utc": "2026-10-12T08:37:48Z",
+   "reason": "owned_STOP",
+   "completed": 1205,
+   "failed": 11,
+   "unstarted": 538
+  },
+  "127x04/replacement-r1": {
+   "sha256": "c11ae500e34504872095ba1d2b50d836546923c14641684d6ab97f635e4114b2",
+   "utc": "2026-10-12T08:37:51Z",
+   "reason": "owned_STOP",
+   "completed": 1194,
+   "failed": 11,
+   "unstarted": 549
+  },
+  "127x03/replacement-r2": {
+   "sha256": "834fc2475b5a071d1564076b77403d83b983dbdf2026f4ccccf7df84012c3e3f",
+   "utc": "2026-10-12T11:09:31Z",
+   "reason": "owned_STOP",
+   "completed": 268,
+   "failed": 11,
+   "unstarted": 276
+  },
+  "127x04/replacement-r2": {
+   "sha256": "37aafa6a128757e80082d0fbad6a1e518de88a277e342538cb2f33dbbdfc8e8b",
+   "utc": "2026-10-12T11:09:33Z",
+   "reason": "owned_STOP",
+   "completed": 266,
+   "failed": 11,
+   "unstarted": 277
+  },
+  "127x03/replacement-r3": {
+   "sha256": "cccb86839ef970ae6e9bda6a8bb3b10451aa73baad8ac0978750f7c654688616",
+   "utc": "2026-10-12T13:17:00Z",
+   "reason": "owned_STOP",
+   "completed": 219,
+   "failed": 11,
+   "unstarted": 56
+  },
+  "127x04/replacement-r3": {
+   "sha256": "91475244cc702e33dbf0a4fd20635dcb5b2fa435b21361094263723fc4cd414c",
+   "utc": "2026-10-12T13:16:59Z",
+   "reason": "owned_STOP",
+   "completed": 217,
+   "failed": 11,
+   "unstarted": 61
+  },
+  "127x03/replacement-r4": {
+   "sha256": "c9066d63cd1aa73de74d2214498dc7543d2d863282d3593887aec2f65642027c",
+   "utc": "2026-10-12T14:43:51Z",
+   "reason": null,
+   "completed": 71,
+   "failed": 0,
+   "unstarted": 0
+  },
+  "127x04/replacement-r4": {
+   "sha256": "21269aa00b3340f8b75a02de5526c5f20d525d3af27a2b1c0ac6d56f8fc47cb9",
+   "utc": "2026-10-12T14:40:39Z",
+   "reason": null,
+   "completed": 68,
+   "failed": 0,
+   "unstarted": 0
+  }
+ },
+ "per_host_phase": {
+  "127x03/reporting": {
+   "counted": 206,
+   "games_hashed": 2060
+  },
+  "127x04/reporting": {
+   "counted": 186,
+   "games_hashed": 1860
+  },
+  "127x03/replacement-r1": {
+   "counted": 1205,
+   "games_hashed": 10114
+  },
+  "127x04/replacement-r1": {
+   "counted": 1194,
+   "games_hashed": 10028
+  },
+  "127x03/replacement-r2": {
+   "counted": 268,
+   "games_hashed": 2152
+  },
+  "127x04/replacement-r2": {
+   "counted": 266,
+   "games_hashed": 2142
+  },
+  "127x03/replacement-r3": {
+   "counted": 219,
+   "games_hashed": 1762
+  },
+  "127x04/replacement-r3": {
+   "counted": 217,
+   "games_hashed": 1742
+  },
+  "127x03/replacement-r4": {
+   "counted": 71,
+   "games_hashed": 582
+  },
+  "127x04/replacement-r4": {
+   "counted": 68,
+   "games_hashed": 558
+  }
+ },
+ "durability": {
+  "checked_from": "2026-10-12T14:45:30Z",
+  "checked_to": "2026-10-12T14:45:34Z",
+  "hub": "127x05",
+  "checks": "hub-ack + returned bindings, descriptor == exit, games/ == listed, every game sha256"
+ },
+ "frozen_freeze_commit": "391d2006",
+ "frozen_manifest_sha256": "416f6e51e32e1900faaf8ceaf329287475a6a621fb1dc2d1b6def50ebb528ed1",
+ "script": "final_pass.py",
+ "script_sha256": "94f3e405098d573139a0847faedf32d4101a4cc9e9a68947ae845bbc15644385",
+ "outcomes_read": false
+}

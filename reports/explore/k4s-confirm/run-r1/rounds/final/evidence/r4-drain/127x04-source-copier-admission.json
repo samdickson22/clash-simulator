@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-12T14:04:37Z",
+  "host": "127x05",
+  "source_ip": "129.65.221.15",
+  "identity": {
+    "pid": 2190563,
+    "pgid": 2190563,
+    "start_ticks": 160364949,
+    "cmdline_sha256": "6284368bc8a6749b8dcaa25ef4da291605ca9ad673999a9a05dbb4857204b816",
+    "uid": 3822945,
+    "exe": "/usr/bin/python3.8"
+  },
+  "job": "/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4",
+  "phase": "replacement-r4",
+  "source_host": "127x04",
+  "active": false,
+  "amendment": "K4S OA-1",
+  "finished_utc": "2026-10-12T14:44:54Z"
+}

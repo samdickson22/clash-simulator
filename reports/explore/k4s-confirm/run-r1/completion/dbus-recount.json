@@ -1,0 +1,266 @@
+{
+ "schema": "clasher.k4s.dbus-recount.v1",
+ "outcomes_read": false,
+ "counted_inventory_sha256": "f10ab9433b6582299caeeb3055c4c7db494e3e99019e1cf8c8e0abc2fccbe38d",
+ "script_sha256": "6fbfeb25ac4ba89c417f686264caa417eb4598c09885c69c08f6f030d9c83c8f",
+ "per_host_phase": {
+  "127x03/replacement-r1": {
+   "blocks": 1205,
+   "dbus_flagged": 0,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 0,
+   "pct_flagged": 0.0,
+   "core_pct_p10_p50_p90_max": [
+    0.376,
+    0.399,
+    0.419,
+    0.465
+   ],
+   "dbus_identity": [
+    [
+     2049,
+     1273
+    ]
+   ]
+  },
+  "127x03/replacement-r2": {
+   "blocks": 268,
+   "dbus_flagged": 0,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 0,
+   "pct_flagged": 0.0,
+   "core_pct_p10_p50_p90_max": [
+    0.379,
+    0.402,
+    0.421,
+    0.456
+   ],
+   "dbus_identity": [
+    [
+     2049,
+     1273
+    ]
+   ]
+  },
+  "127x03/replacement-r3": {
+   "blocks": 219,
+   "dbus_flagged": 0,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 0,
+   "pct_flagged": 0.0,
+   "core_pct_p10_p50_p90_max": [
+    0.38,
+    0.402,
+    0.423,
+    0.438
+   ],
+   "dbus_identity": [
+    [
+     2049,
+     1273
+    ]
+   ]
+  },
+  "127x03/replacement-r4": {
+   "blocks": 71,
+   "dbus_flagged": 0,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 0,
+   "pct_flagged": 0.0,
+   "core_pct_p10_p50_p90_max": [
+    0.356,
+    0.403,
+    0.423,
+    0.442
+   ],
+   "dbus_identity": [
+    [
+     2049,
+     1273
+    ]
+   ]
+  },
+  "127x03/reporting": {
+   "blocks": 206,
+   "dbus_flagged": 0,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 0,
+   "pct_flagged": 0.0,
+   "core_pct_p10_p50_p90_max": [
+    0.371,
+    0.385,
+    0.4,
+    0.437
+   ],
+   "dbus_identity": [
+    [
+     2049,
+     1273
+    ]
+   ]
+  },
+  "127x04/replacement-r1": {
+   "blocks": 1194,
+   "dbus_flagged": 1189,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 1189,
+   "pct_flagged": 99.6,
+   "core_pct_p10_p50_p90_max": [
+    1.349,
+    1.478,
+    1.594,
+    1.772
+   ],
+   "dbus_identity": [
+    [
+     2005,
+     1032
+    ]
+   ]
+  },
+  "127x04/replacement-r2": {
+   "blocks": 266,
+   "dbus_flagged": 263,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 263,
+   "pct_flagged": 98.9,
+   "core_pct_p10_p50_p90_max": [
+    1.33,
+    1.491,
+    1.617,
+    1.824
+   ],
+   "dbus_identity": [
+    [
+     2005,
+     1032
+    ]
+   ]
+  },
+  "127x04/replacement-r3": {
+   "blocks": 217,
+   "dbus_flagged": 214,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 214,
+   "pct_flagged": 98.6,
+   "core_pct_p10_p50_p90_max": [
+    1.353,
+    1.489,
+    1.621,
+    1.763
+   ],
+   "dbus_identity": [
+    [
+     2005,
+     1032
+    ]
+   ]
+  },
+  "127x04/replacement-r4": {
+   "blocks": 68,
+   "dbus_flagged": 65,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 65,
+   "pct_flagged": 95.6,
+   "core_pct_p10_p50_p90_max": [
+    1.143,
+    1.5,
+    1.639,
+    1.676
+   ],
+   "dbus_identity": [
+    [
+     2005,
+     1032
+    ]
+   ]
+  },
+  "127x04/reporting": {
+   "blocks": 186,
+   "dbus_flagged": 175,
+   "retired": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "any_interfered": 175,
+   "pct_flagged": 94.1,
+   "core_pct_p10_p50_p90_max": [
+    1.214,
+    1.373,
+    1.468,
+    1.584
+   ],
+   "dbus_identity": [
+    [
+     2005,
+     1032
+    ]
+   ]
+  }
+ },
+ "per_host": {
+  "127x03": {
+   "blocks": 1969,
+   "dbus_flagged": 0,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "retired": 0,
+   "any_interfered": 0,
+   "pct_flagged": 0.0,
+   "core_pct_median": 0.398
+  },
+  "127x04": {
+   "blocks": 1931,
+   "dbus_flagged": 1906,
+   "ssh_flagged": 0,
+   "apt_flagged": 0,
+   "idle_flagged": 0,
+   "retired": 0,
+   "any_interfered": 1906,
+   "pct_flagged": 98.7,
+   "core_pct_median": 1.472
+  }
+ },
+ "per_population": {
+  "primary": {
+   "blocks": 3000,
+   "any_interfered": 1459,
+   "ssh_or_apt_flagged": 0,
+   "dbus_flagged": 1459
+  },
+  "guard": {
+   "blocks": 900,
+   "any_interfered": 447,
+   "ssh_or_apt_flagged": 0,
+   "dbus_flagged": 447
+  }
+ }
+}
