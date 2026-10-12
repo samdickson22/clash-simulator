@@ -1,73 +1,115 @@
-# X4S-4 scripts, r2 for Sol re-review (exploration, NEVER ADOPTABLE)
+# X4S-4 scripts, r3 for Sol re-review (exploration, NEVER ADOPTABLE)
 
-The design is frozen at PLAN r3 87809ae0. The r1 script set was 13fb31d0, reviewed by Sol r1 (REQUEST_CHANGES, 18 findings). r2 fixes all 18 findings. Nothing has been run on any host. Everything below was done offline on 127x05, using synthetic fixtures under /dev/shm.
+The design is frozen at PLAN r3 87809ae0. The history of the script set:
+
+| Round | Script set | Sol verdict |
+|---|---|---|
+| r1 | 13fb31d0 | REQUEST_CHANGES, 18 findings |
+| r2 | f15691b5 | REQUEST_CHANGES (a556419e): F1, F2, F3, F8, F11 fixed; R2-F1–R2-F10 open |
+| r3 | this commit | — |
+
+r3 fixes R2-F1 to R2-F10. Nothing has been run on any host. Everything below was done offline on 127x05, using synthetic fixtures and disposable git repositories under /dev/shm.
 
 ## Index
 
 | File | Kind | SHA-256 |
 |---|---|---|
-| `run_collect.py` | new | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
-| `collect.py` | new | `3ed143df1ec7aaddf9b86ccdd30f27e0e88f5f83db576f715afa508974374658` |
-| `label.py` | new | `a0703970802dc14f6bcd54884da9f9fc3a62401351d01d6e862b31796cd2856d` |
-| `collect_w.py` | new | `62764d7baeac45f167aa32a290118e408270ed10fe7db8f19a612e62f2d69773` |
-| `verify_onpolicy.py` | new | `5cdf8673c49abae28052df6398a816b151855faa1759a188658eb89a5be32f6a` |
-| `diagnose.py` | new | `e0d3977cec756f501938d694ac623e9447d0ddfa05364006f40d5a49478c4759` |
-| `contention.py` | new | `c7c90c18dd384227f47b2932569f109c3d01f2f22e6b513072b2e12489053780` |
-| `qualify4.py` | new | `2798f6b8df8fe97280f1a67548054b2816ceb4543a91a622c415fe05aea40d0c` |
-| `confine.py` | **new in r2** (F10) | `6a1316623b9826dff3242465e09dfcc77ad7de57b6c441cf679ab19af8089674` |
-| `studytree.py` | **new in r2** (F9) | `76f7da1b6764d382edaa2146199f3cf65a698810ec969775a4c3425cfcb0d171` |
-| `supervise.py` | modified (from x4s3) | `54626791f990c12e14e8c144387ac46352625a5c8a12a827246f8696e3b39be2` |
-| `run_fit.sh` | modified (from x4s3) | `0dda76798d83b508274a42c771105a64842b7d7f2efd23091dd8e38cfeb35fa0` |
-| `driver.py` | modified (from x4s3) | `8d6fe0c483df207ada3e168a429a06d6e18fd5555a1e599da4ce048e09feaf23` |
-| `reduce.py` | modified (from x4s3) | `0e0e817b4d13136ece8ac1e97191746f2839fb76ae7509220cea98857a13d8ac` |
-| `write_report.py` | modified (from x4s3) | `30a2e7dee5cc49195b04c0790193e935cc8164e29587252a2229a856122a66a3` |
-| `audit_seeds.py` | modified (from x4s3) | `bda09cf62c48261f672ce6a9ebeecd53bdcdac38b2b8d8c1a2eb5629ced40b2a` |
-| `plan.json` | config | `0d72c67a2f9b2d7f79cf1dfd453c70c90ce4564ac2d65f8ff2b6995befbf963c` |
-| `plan-collect.json` | config | `57f6a1427a584a607fe1e8da79e14340736f90bbf909795a8f125ffd1b9fedea` |
-| `plan-qual-capture.json` | config | `450522158dccbe73216c3cc2b86054cdde4fbe62f4d55dafd0e75c87470461d4` |
-| `idx-qual.json` | config | `4587c7edd4a17da602e224777e96b98af33e570cea9fcbf3e5ed9543b82d606b` |
-| `idx-smoke.json` | config | `4587c7edd4a17da602e224777e96b98af33e570cea9fcbf3e5ed9543b82d606b` |
-| `test_x4s4_offline.py` | test | `0e48a0940d61420fdcd1d9a498bd51c79813fd5fcc0116340f90373d2f9f9193` |
+| `x4s4io.py` | **new in r3**: the one I/O, subprocess and signal gate | `5b5080324db052584f54303f8267cd440905727deeec9f5647eb7dc0683419f6` |
+| `studytree.py` | r3: shared live guards | `94ad2e752ccfc49d2e364f89959b10944613dbfea8e1545f62a709d9c5bc930f` |
+| `run_collect.py` | unchanged since r2 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
+| `collect.py` | new | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
+| `label.py` | new | `d5782818e42d013f1a45b6af2917827a9afe851f367c47ab4b60328fe2dc1532` |
+| `collect_w.py` | new | `a0c9d322996b2396bcbb9e600970d91f5ff08ab31c9a27d4c8567a5ef958bc03` |
+| `verify_onpolicy.py` | new | `767259e6f54b10b99ff7517a0a8c339b0593bfefab47bb987f7421d2c63acc1f` |
+| `diagnose.py` | new | `3a4e6c1c7b12d8c0987a01747c3075622b3df063188b82f815aef6921e066dbc` |
+| `contention.py` | new | `0139abc5590fdb1bd5698bde97b9d63362ebc929c2eb85b14f27cb5d0ae53be3` |
+| `qualify4.py` | new | `8dcd13056b2d18bfd02434e4090cc02ba069b465673cb0c7abee7b7b8b34af08` |
+| `supervise.py` | modified (from x4s3) | `b333b12f1f41d471bbcb3a06d7f96b7e1f7672e6e79e5e1e64e28d4d3fc9e987` |
+| `run_fit.sh` | unchanged since r2 | `0dda76798d83b508274a42c771105a64842b7d7f2efd23091dd8e38cfeb35fa0` |
+| `driver.py` | modified (from x4s3) | `fe70dbb71487b7be6e5789defe51bd5104e072306469d18375f670a3bba445ff` |
+| `reduce.py` | modified (from x4s3) | `8757c77fc9ae8bb260397eb716956a3e79c33db61013f91d836791a3c8a74911` |
+| `write_report.py` | modified (from x4s3) | `db3df449df258cbf339af9acda86324490097869be50aa6caac26a079617bc7b` |
+| `audit_seeds.py` | modified (from x4s3) | `36b4d037386514b1bc840e8e20690af9cadf1902d6b9f165462b4c802facd022` |
+| `seed-sources.json` | **new in r3**: the reviewed seed-source inventory | `b221a75e27f97f9aa2ef6602e3142c1c4ec013fe9ae7545253c50c3213fb90d1` |
+| `plan.json` | config | `13840cc60834dd6c46ff1aa9bc4b75ca752a6df9bc9e95939bab544b2d04c4e1` |
+| `plan-collect.json` | config, unchanged | `57f6a1427a584a607fe1e8da79e14340736f90bbf909795a8f125ffd1b9fedea` |
+| `plan-qual-capture.json` | config, unchanged | `450522158dccbe73216c3cc2b86054cdde4fbe62f4d55dafd0e75c87470461d4` |
+| `idx-qual.json`, `idx-smoke.json` | config | `4587c7edd4a17da602e224777e96b98af33e570cea9fcbf3e5ed9543b82d606b` |
+| `test_x4s4_offline.py` | test | `9b838960afb50ab49111aeb996ff1dbacbbe575f1a33461d380194864593c97d` |
 
-Byte-identical reuse is unchanged from r1: `x4s3/run.py` (SHA e7f90d76…, asserted by the suite), `runtime.sh`, `detach.sh`, `calibrate.py`, the frozen R3 trainer, and `imitation/exit_r1/{rows,pack,emitter}.py`.
+`confine.py` is removed; `x4s4io.py` replaces it. Byte-identical reuse is unchanged: `x4s3/run.py` (e7f90d76…), `runtime.sh`, `detach.sh`, `calibrate.py`, the frozen trainer, and `imitation/exit_r1/{rows,pack,emitter}.py`. Every owned file compiles under both `/usr/bin/python3` 3.8.10 (the fleet's system python, which runs the driver) and 3.12.
 
-**Correction to r1 (F11).** r1 claimed that no `assert` remained outside `run_collect.py`. That was wrong: five inherited asserts remained in `audit_seeds.py` and `reduce.py`. In r2, an AST scan in the suite enforces **zero** `assert` statements in every X4S-4-owned script. `run_collect.py` keeps the asserts of the byte-copied `x4s3/run.py`.
+**Staging consequence.** The runtime inventory checked before every reporting launch now lists:
+- `x4s4/supervise.py`, `x4s4io.py`, `studytree.py`, `qualify4.py`;
+- `x4s3/run.py`, `runtime.sh`;
+- `fit/run_fit.sh`, checked before every fit;
+- `inputs/assets.npz`, checked by the diagnostic.
 
-## Findings → fixes → fixtures
+## Shared I/O layer (the coordinator's advice)
 
-Each Sol probe has a fixture named "F<n> probe" in `test_x4s4_offline.py`. Each negative is paired with a positive control.
+`x4s4io.py` vendors the tested primitives of the K4S shared layer safe_input r1 (blob c7e3fce7…, commit 4c9439de):
+- the component-wise `O_DIRECTORY|O_NOFOLLOW` walk with a dev/ino re-check;
+- the descriptor gate (regular, `st_nlink == 1`, cap, same inode after open);
+- exact-size reads;
+- strict JSON (no duplicate keys, no NaN or Infinity);
+- exclusive creation;
+- `run_checked` (absolute argv, exact environment, bounded output, group watchdog, rc checked before stdout is used).
 
-| # | Fix | Fixture(s) |
+It does not vendor the K4S name policy, which forbids a `games` path component and so cannot serve X4S-4. X4S-4 declares its own roots instead: job roles plus three exact report-root names.
+
+It adds:
+- atomic replacement over single-link files only;
+- `O_APPEND|O_NOFOLLOW` appends;
+- fd-based removal that never follows a link;
+- fresh-tree copy (links copied as links);
+- `(pgid, leader starttime)` process ownership with PID-only signalling;
+- complete sealed-directory re-verification;
+- a self-verifying git object walker: `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS`, a null graft file, no hooks, a scrubbed environment, and every commit, tree and blob hashed against its id.
+
+An AST test checks that no owned script reads, writes, renames, removes, spawns or group-signals outside it. Only `/proc` pseudo-files are read directly.
+
+## Sol r2 findings → fixes → fixtures
+
+Each Sol r2 probe has a named fixture (`R2-F<n> probe`). Write-safety negatives assert that the outside sentinel is unchanged.
+
+| # | Fix | Fixtures |
 |---|---|---|
-| F1 | `run_game` is never replaced. `run_collect.py` adds two explicit hooks: `CAPTURE` (after `apply_lateness`) and `CAPTURE_END` (after the game JSON is durable, before the block proof). `install()` only sets the two hooks. | The exact `inference_check` AST from `run_collect.py`, with its asserts made explicit, passes after `collect.install()`; the r1 wrapper fails it. A diff test shows `run_collect.py` = `x4s3/run.py` + 9 hook lines, none removed. |
-| F2 | Eligibility uses the decision's **input** transaction `p.core.pending`, which run.py sets before candidates, not the post-submit `ch.pending`. | A play whose own command sits in `ch.pending` is eligible, as is WAIT; a non-empty input transaction is rejected. The per-game capture file contains a hit play and a hit WAIT. |
-| F3 | The fair check rebuilds the payload with `kw['b']` **replaced**; the battle is read only via `kw['b']`. Coverage counters cover perturbed decisions overall and early in the game (tick < 600). Qualification requires ≥ 1 perturbed decision per game and ≥ 50% perturbed early checks. | The **real** `collect.payload` (with stubbed engine resources) is byte-identical under the permutation, with cards actually moved. Negative controls that read the hidden hand, hidden cycle or future battle RNG through `kw['b']` are each detected. Qualification fails when a permutation moves no card. |
-| F4 | `reduce.py verify_freeze()` runs before any game is opened. The receipt must be regular, single-link and non-writable. Its SHA must equal `--contention-sha`, and the same bytes must sit at `--freeze-commit` on origin/main. Schema must be `x4s4.contention.v2`. The phase set and per-phase inventory (census, launch, exit, SETTLED, block and game listings) must re-verify. | These are all refused with zero games read: Sol's writable minimal receipt, no receipt, wrong SHA, uncommitted bytes, a commit off origin/main, a writable receipt, a hard-linked receipt, a changed census and an extra phase. Real git fixtures are used. |
-| F5 | Driver: an exit is retired or resumed only for a permitted guard reason or an owner ACK; anything else is an anomaly that stops dispatch. Exit codes are durable `child_exit` events. A fit is done only after a clean return **and** a known zero exit. `run_fit.sh` uses checked command substitution. `label.finish()` and `collect_w` exit 1 on failure. Labeling tolerates only the declared drops. | An rc-17, reason-less exit retires nothing and launches nothing (memory_guard and ACK controls). Fit states are tested for unknown, nonzero, zero (from events) and masked exits. A producer that prints a batch and then exits 17 aborts `run_fit.sh`. A memory_guard label result fails and exits 1. An undeclared scorer exception propagates. |
-| F6 | The O_W gate requires selection == `range(n)`, per-game roots derived from the packed rows, a strict minimal prefix, seeds `C′+g`, a passing acceptance smoke and an exact last-game root count. On resume, `collect_w` re-verifies the seal and the realized identity. | Rejected: Sol's 45-of-60 case, a short prefix, sources `[0,1,2,4]`, a non-range selection, a wrong seed, a failed acceptance and a wrong last-game claim. Resume: a wrong seed, wrong opponent, broken seal or unsealed directory is refused. |
-| F7 | Census = host busy ticks minus X4S-4 tree ticks, with own processes keyed by `(pid, starttime)`. The baseline is taken before the child starts, and a final row is written. None, gaps (15/30/15 s), an empty census and a missing exit or SETTLED all count as bad or refused. | Scripted `/proc`: a new foreign process with 1,000 ticks is counted. PSI, unreadable PSI, foreign load, unreadable foreign load, yield and a gap **each** flag exactly their own game. Capped, empty-census and tail-gap cases are covered, as is refusal of unsettled phases. |
-| F8 | Reporting launches `reports/explore/x4s4/supervise.py`. `supervise.py`, `confine.py`, `x4s3/run.py` and `runtime.sh` in the runtime copy must match `RUNTIME-INVENTORY.json`. | The command names the X4S-4 supervisor; a tampered runtime file is refused with an anomaly. |
-| F9 | Admission fails closed on unreadable PSI, memory, disk or GPU, PSI > 10, > 70 tree processes (`studytree.py`) and > 100 GB. Fit admission uses the same gate, and the fit PSS cap is 60 GiB. The labeler and O_W register their process groups and stop at the tree cap or hard stop. A diagnostic lock excludes fits and reporting. STOP uses lexists everywhere. Only a `wall_over_2x` fit auto-resumes, and only after the O_W gate. | Every admission probe is covered, plus the lock, a dangling STOP symlink, the resume rule (divergence never resumes), the studytree caps, the labeler's tree_cap and diagnose's refusal while a group is live. |
-| F10 | `confine.writable()`/`mkdirs()` guard every writer: absolute canonical path, under the job root (or the report directory for RESULTS.md and seed-audit.json), allowed role, no symlink ancestor or target. Labeling `rmtree` touches only its own confined temp directory. | Confine negatives, plus outside-root refusals for capture, label plan, supervisor `--job`/`--phase`, reducer `--out`, `write_report --out` and qualification `--out`. |
-| F11 | Explicit raises everywhere (`AuditError`, `SystemExit`). | Identical bank bases, an intersecting prior range and a policy-cache mismatch all fail **in each optimization mode**; the AST no-assert scan passes. |
-| F12 | `qualify4 hashes` requires 16/16 cases with terminal SHA-matched proofs and the 1,000 s capture-all config. `roundtrip` checks **every** smoke capture across 0–7 × both arms. `parity` requires both arms; `--watch` writes PARITY-PAUSE and creates STOP. `label.py plan` requires a passing parity receipt or an explicit `PARITY-EXCEPTION` bound to its SHA. Collection configs are full staged runtime configs (student R3a, policy v1). | Failures on 15/16 cases, an unmoved permutation and a hash difference. 32/32 captures pass; a missing arm, digest error or bad C8 hash fails. One arm fails while both pass; the watcher pauses. A failed parity is refused, and the exception is accepted. |
-| F13 | The plan authenticates block proofs (game SHA), binds the filename, summary and capture identity, and enforces the bank-C allocation (also at launch, in `collect.check_allocation`) and public/pending parity. A run requires the capture SHA to equal the plan entry. Resume checks the plan SHA, keep SHA, teacher and threads. Verify binds every packed source to its plan entry and receipt. | Refusals: stale block, seed mismatch, parity false, pending, out-of-allocation, launch allocation, stale capture, a resume with a different plan, a receipt/packed game-set mismatch, source identity drift and a stale plan. |
-| F14 | Per-arm averaged primary; explicit no-estimate contention view; R5W prefix counts; composition, dedup and 600-tick tables; O_W single-candidate share; fixed control-data disclosures; decision-table row with its harmful/attribution follow-up. The report is confined. | A by-hand check of −37.5 / 0 / −18.75 pp; the per-arm mean equals the pooled value; render tests check every required section and the empty view. |
-| F15 | `diagnose.CEAccumulator` keeps global numerators and denominators of the frozen objective and a per-root listwise CE. Each batch is cross-checked against the frozen `teacher_loss`. | Batch-size/order invariance over 1, 7, 64 and all; equality with the frozen formula; Sol's counterexample gives C (row-mean gives C/2). |
-| F16 | A pre-read admissibility filter. Inside the sealed trees (T1, K4S-confirm, the Mac E4 session, the live loop, `*tiers*`), only seed declarations are opened; outcome-named files and symlinks are never opened. | Spy on `read_bytes`: sealed outcome files and a symlink alias are never opened. Controls: the same literal is found in an ordinary file and in a sealed PREREG declaration. |
-| F17 | `plan.json` now describes r3: the ABBA order, no futility stop, host-wide contention, the new sub-labels and input pending. The driver docstring's inherited X4S-3 text is replaced. | A test checks plan.json against the driver constants and checks both collection configs. |
-| F18 | The suite was rewritten as above: 76 cases. | The r2 suite run against the 13fb31d0 scripts fails 21 of the 31 cases that execute there, including the F1/F2/F3/F5/F11/F17 probes. ([receipts/r2-suite-vs-13fb31d0.json](receipts/r2-suite-vs-13fb31d0.json)) |
+| R2-F1 | Every writer goes through x4s4io before its first mutation: the driver (events, state, logs, receipts, checkpoint copies, runtime overlay and its `plan.json`, calibration output, fit and cache directories), collection, labeling, O_W, supervisor, qualification, reducer, report, contention, diagnostic and audit. The collection entry validates `--out` before the inherited runner runs. | Sol's three probes, all rejected with the sentinel unchanged: the hard-linked `receipt.json.tmp` with `label.write_json`, a symlinked `driver/events.jsonl`, and a collection entry pointed outside (directory not created). Also replace/create/append through hard links and symlinks, read gates (symlink, hard link, ancestor, FIFO not opened), fd removal and the overlay copy. |
+| R2-F2 | A reporting attempt settles only if the reaped child status (a durable `child_exit` event carrying the launch's `launch_id`) agrees with the supervisor receipt. Otherwise, including after a restart with unknown status, it needs an ACK bound to that exact attempt (`launch_id`, pid, starttime, receipt SHA, disposition, owner). The ACK is consumed and its anomaly archived, and the evidence is kept in `SETTLED.json`. Fits use the same mechanism. | Sol's probe (child 17 with a clean receipt) gives an anomaly, no SETTLED and no dispatch. An unknown status gives an anomaly; a wrong-attempt ACK gives a stale-ACK anomaly; the exact ACK settles and is consumed. Guard-stop and clean controls pass. Fit states: unknown, another launch's event, ACK-resolved once, known nonzero. |
+| R2-F3 | Running fits are stopped when memory is below 24 GiB or unreadable, the GPU is unreadable or over 40 GB, or PSS exceeds **50 GiB (the frozen rule, restored)** or is unreadable. Fit admission requires the GPU to be readable with ≤ 8 GiB already used. Admission reserves the new workers (fit 10, phase 53, label/O_W workers+1). Label, O_W, acceptance and diagnostic run `studytree.monitor` live: STOP, hard stop, memory, PSI, own PSS, tree size and disk. On a breach the parent stops its own verified worker PIDs, so in-flight O_W work has a real hard-stop path, and a game finishing after the deadline is not counted. The supervisor applies the tree and disk caps itself. The diagnostic takes its lock inside the driver's exclusive `DISPATCH.lock` flock. All signals are PID-only on verified `(pgid, starttime)` members; the one exception is `run_checked`'s kill of the short helper session it created itself. | Sol's probes all stop: MemAvailable 0, GPU unreadable, 50,000 MiB admission. Also PSS over 50 GiB or unreadable, the reservation over 70, the diagnostic lock, the O_W game straddling the deadline, and the studytree monitor cases (dangling STOP, unreadable deadline). |
+| R2-F4 | Contention schema v3 freezes every counted game's SHA, size and exact `st_mtime_ns`, the census/launch/exit/SETTLED SHAs and the `retired.json` SHA. The reducer re-derives all of it. Committed bytes come from the verified commit → tree → blob walk, and ancestry from the replace-free graph. The wording now says "before any outcome field is used". | Sol's mtime probe is refused, and the rebuild would change the exclusion from [0,1] to []. Sol's git-replace probe is refused even though plain git returns the substituted bytes. Also retired, census and phase-set changes, wrong SHA, uncommitted bytes, a commit off main, and writable or hard-linked receipts. |
+| R2-F5 | Every packed source is re-verified completely (exact inventory and every file re-hashed). Packed bytes must equal the source arrays under pack.py's exact transforms. O sources must match plan, teacher and threads. O_W sources must match the selection identity rows. The acceptance smoke is exactly 2 games on the **qualification bank** (excluded from C′), with seals, replay identity and producer SHAs verified. | Sol's teacher-edit probe and Sol's Boolean-only acceptance receipt are both rejected. Also forged packed bytes (with the batch's own seal forged to match), a one-game or C′ acceptance, and a selection without identity rows. |
+| R2-F6 | The seed audit reads only hash-verified git blobs of a pinned commit, selected from tree metadata by a reviewed rule. Outcome tokens anywhere in the path exclude a file, as does any content alias of an excluded file. Sealed trees contribute only listed declarations. `seed-sources.json` pins the commit (7f82af0d), the rule and the derived-list SHA: 7,711 sources and 35 sealed declarations, each listed by path and blob id. Omissions are counted per reason (`sealed` 2,681, `outcome_path` 812, `alias_of_excluded` 55, …). | Sol's hard-link alias and `t1/outcomes/plan.json` probes: never read (blob-request spy). A list differing from the reviewed one is refused. Literal-scan and range controls. |
+| R2-F7 | Census values must be finite and admissible (PSI in [0,100], foreign CPU in [0,1024], reduced-concurrency flag exactly false) and in chronological order. Non-JSON rows, including NaN or Infinity, are bad. Readers return None for non-finite values. | Sol's all-NaN phase and Infinity, negative, overflowing, chronology and non-boolean flag cases are each bad in an uncapped phase. |
+| R2-F8 | Games are projected (outcome fields dropped) to require a terminal flag, seed, arm, budget and student checkpoint. Smoke games are proof-authenticated. Parity receipts carry the exact game inventory and a `final` flag, and label admission re-derives the inventory. The C7b watch runs inside the collection supervisor. A collection runner without a live supervisor refuses to start, and exits 70 with a receipt if the supervisor dies. A failed parity needs an exception bound to a coordinator commit on origin/main whose COORDINATOR.md names the receipt SHA. | Sol's 16 non-terminal games fail. Sol's stale-parity probe (games added after the receipt) is refused. Also a non-final receipt, a forged smoke game, the watch pause and watch failure, monitor death, and a bare exception string refused while a commit-bound one is accepted. |
+| R2-F9 | Gates carry the plan, receipt, selection, acceptance, O-gate and source SHAs. The report reads fixed job inputs and refuses unchained ones. The diagnostic takes inputs only from the verified holdout gate and the five staged students, records the holdout gate SHA, and reports a missing diagnostic explicitly as unavailable. | Rejected: an O_W gate not built on this O gate, a stale label plan, a diagnostic not run on the verified holdout. Also tested: the unavailable rendering, the diagnostic input refusals, and an out-of-root output. |
+| R2-F10 | `plan.json` `ordering.interrupted` now states the fixed-N / largest-prefix / R5W-separation rule; the supervisor docstring says T+24 h. | Static checks. The suite asserts "not writable", never an exact mode, and runs under umask 022 and 077. |
+
+**Owner decisions after Sol's opinion.**
+1. The exception must now be bound to a coordinator commit on origin/main whose COORDINATOR.md names the receipt SHA; a bare ruling string is refused, per Sol's condition.
+2. ACKs are attempt-bound and consumed (adopted).
+3. The 15/30/15 tolerances are kept, now only after the validity and chronology checks.
+4. Coverage is unchanged.
+5. Replaced by the inventory-based audit (R2-F6).
+
+The rest is a mapping and adds no new judgement.
 
 ## Offline test results (127x05, /dev/shm, nice 19, cores 0–3, no host contact)
 
-`test_x4s4_offline.py` passed **76/76 under -O0, -O and -OO** (exit 0 in each mode). Receipts:
+`test_x4s4_offline.py` passes **81/81 under -O0, -O and -OO with umask 077**, and also under umask 022. Receipts (umask 077 runs):
 
 | Mode | Receipt | SHA-256 |
 |---|---|---|
-| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `a7ba94a5425c99648e3fa94958a0c73fe0fb8be6989abba6ea7732890b2c10da` |
-| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `ab9e6c51114920481630e0e172679d7746e9e5733005c6b8a7e0c158e52ccf81` |
-| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `1c22f827589e459680c60e7b5cac5efb15b9aac813bdecfc1d12e57417d6bcb6` |
+| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `0e4b8110b2139d04a01633f730f01eb3e464c4c88913f990e17f54e384aa7af6` |
+| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `c80c6b493ef6ce75065f9d309949423abcd554c7389f88b06677e7a793687222` |
+| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `6f5e1dd432b50f943168d7a0c21bf5b9adff9c26318f7d0f1bceb4ed54dc4811` |
 
-**Environment.** Python 3.12.12 venv (`/dev/shm/x4s4-venv`), numpy 2.5.3, no torch. The real `BattleState`, `PlayerState`, `DiscreteTileActionSpace`, `seal`, `pack` and git are used; engine resources are stubbed for the real capture payload.
+The r3 suite was also run against the r2 scripts of f15691b5, with r3's `x4s4io.py` added so imports resolve. It recorded 30 cases, of which 14 failed ([receipts/r3-suite-vs-f15691b5.json](receipts/r3-suite-vs-f15691b5.json)). 11 of those are test-group exceptions on r2 interfaces, so this is weak evidence. The discriminating evidence is the named per-probe fixtures above.
 
-**Not covered offline** (qualification §6 on 01, after a GO): real W scoring and the 125 frozen references, real command-hash non-perturbation, real C8/root round trips, the emitter acceptance replay, RootTeacherStore compatibility, GPU diagnostic execution and the real repo-wide seed audit.
+**Not covered offline** (qualification §6 on 01, after a GO):
+- real W scoring and the 125 native references;
+- real command hashes and C8/root round trips;
+- the emitter acceptance replay;
+- RootTeacherStore compatibility;
+- the GPU diagnostic;
+- the real seed audit run against `seed-sources.json`.

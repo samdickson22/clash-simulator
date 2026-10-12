@@ -1,77 +1,82 @@
-{"case": "F10 probe: confine rejects relative, .., outside-root, wrong role, symlink ancestor/target, existing; accepts a fresh path", "ok": true, "rejected": {"relative path": true, "parent traversal": true, "outside the job": true, "role not allowed": true, "symlinked ancestor": true, "symlink target": true, "must_not_exist": true}}
+{"case": "R2-F1/F10 probes: the gate refuses relative/traversing/outside/wrong-role/symlinked-ancestor targets and never writes through a hard link or symlink (outside sentinel unchanged)", "ok": true, "refused": {"relative path": true, "parent traversal": true, "outside the job": true, "role not allowed": true, "symlinked ancestor": true, "replace over hard link": true, "replace over symlink": true, "create over hard link": true, "append to hard link": true, "append to symlink": true}}
+{"case": "R2-F1 probe (Sol): label.write_json beside a hard-linked receipt.json.tmp leaves the outside sentinel unchanged", "ok": true}
+{"case": "fd-based removal never follows a link; exclusive creation makes read-only files; replace is atomic", "ok": true}
+{"case": "runtime overlay: fresh copy with links copied as links; an existing destination refuses", "ok": true}
+{"case": "reads: symlink/hard-link/ancestor/FIFO refuse before reading; strict JSON; projections drop outcome keys", "ok": true, "reads": {"symlink_leaf": true, "hard_link_leaf": true, "symlink_ancestor": true, "fifo_not_opened": true, "nan_json": true, "dup_key": true}}
+{"case": "run_checked: nonzero rc (with valid stdout), relative argv and timeout all refuse", "ok": true, "sub": {"rc_nonzero": true, "relative_argv": true, "timeout": true}}
+{"case": "owned processes: (pgid, starttime) identity; a wrong starttime owns nothing; PID-only stop", "ok": true}
 {"case": "reused evaluation runner x4s3/run.py is byte-identical to c86d928d", "ok": true}
-{"case": "run_collect.py = x4s3/run.py + only the two explicit hooks (no removed line, no run_game change)", "ok": true, "added": 9}
-{"case": "F1 probe: inference_check passes through the collection install (run_game identity kept); the r1 wrapper fails it", "ok": true}
+{"case": "run_collect.py = x4s3/run.py + only the two explicit hooks (9 added lines, none removed)", "ok": true}
+{"case": "F1 probe: inference_check passes through the collection install; the r1 wrapper fails it", "ok": true}
 {"case": "capture_rng deterministic and domain-separated", "ok": true}
-{"case": "persistent_id guard rejects a nested PlayerState and a BattleState; passes plain data", "ok": true}
-{"case": "F2 probe: a play whose own command is in ch.pending is eligible; WAIT eligible; a non-empty INPUT transaction is rejected", "ok": true}
-{"case": "eligible(): preparation, suspended belief and single-candidate exclusions", "ok": true}
-{"case": "permutation moves only unrevealed cards, keeps the multiset and leaves the original intact", "ok": true, "moved": 7}
-{"case": "F3 probe: the real payload is byte-identical under the permutation, with cards actually moved (early-game coverage)", "ok": true, "checks": {"belief_unchanged": 2, "belief_checked": 2, "fair_identical": 2, "fair_checked": 2, "fair_perturbed_decisions": 2, "fair_moved_cards": 14, "fair_checked_early": 2, "fair_perturbed_early": 2}}
-{"case": "F3 probe: hidden hand, hidden cycle and future-RNG reads through kw[b] are each DETECTED", "ok": true}
-{"case": "C7a/C9: live-belief mutation detected; a Battle reference raises the graph guard", "ok": true}
-{"case": "real payload stores the C8 triple with its SHA, empty input pending and an explicit play (F2 play retained)", "ok": true}
-{"case": "per-game capture file: SHA, identity, counts (hit play and hit WAIT captured, non-hit unsampled, single-candidate excluded)", "ok": true, "counts": {"captured": 2, "not_sampled": 1, "not_search": 1}}
-{"case": "F10 probe: capture output outside the job is refused", "ok": true}
-{"case": "F13 probe: collection allocation: K4S-120 index 2500, S-200 index 100, two arms and K4S-120 holdout 3750 are refused", "ok": true}
-{"case": "label plan: holdout split, interruption drop, dedup, per-arm cap, 600-tick feature duplicates", "ok": true}
-{"case": "F13/F12 probes: plan refuses stale block proof, seed mismatch, public-parity false, non-empty pending, out-of-allocation, failed or mismatched parity", "ok": true, "probes": {"stale_block": true, "seed_mismatch": true, "public_parity_false": true, "pending": true, "allocation": true, "failed_parity": true, "parity_other_phases": true}}
-{"case": "F12: an explicit coordinator PARITY-EXCEPTION bound to the failed receipt is accepted and recorded", "ok": true}
-{"case": "F10 probe: label plan output outside <job>/data is refused", "ok": true}
-{"case": "labeling seals every planned game; resume re-verifies seal + identity and skips", "ok": true}
-{"case": "F13/F5 probes: resume with a different plan SHA, a stale capture SHA and an undeclared scorer exception all fail (no silent drop)", "ok": true}
-{"case": "F5 probe: label run receipt: memory_guard -> complete False, passed False and exit 1; 1 mismatch in 46 fails the 0.1% limit", "ok": true}
-{"case": "verify O: passes and writes the O gate from real label receipts bound to the plan", "ok": true, "error": ""}
-{"case": "F13 probes: verify O rejects a failed receipt, stale plan, receipt/packed game-set mismatch, source identity drift, small O, symlink", "ok": true, "errors": {"mismatch receipt": "ValidationError('label receipts not passed for this set and plan')", "stale plan SHA": "ValidationError('label receipts not passed for this set and plan')", "receipt game set != packed": "ValidationError('packed games != label receipt games (9 vs 8)')", "source receipt identity": "ValidationError('source game K4S-120/1 receipt seed 4503606317370498 != 45036063", "below the O minimum": "ValidationError('O rows 46 outside [1000, 100]')", "symlink in batch": "ValidationError('symlink: /dev/shm/x4s4-test-_9xao000/test_pipeline/v-sl/data/on"}}
-{"case": "verify OW: minimal prefix (45 < 46 <= 60), roots by the RootTeacherStore rule, single-candidate share reported", "ok": true, "error": null}
-{"case": "F6 probes: O_W gate rejects a non-minimal prefix (Sol 45-of-60), a short prefix, sources [0,1,2,4], a non-range selection, a wrong seed, a failed acceptance smoke and a wrong last-game root claim", "ok": true, "errors": {"non_minimal": "ValidationError('O_W prefix not minimal or short: 45 < 45 <= 60')", "short": "ValidationError('O_W prefix not minimal or short: 45 < 61 <= 60')", "gap_0124": "ValidationError('O_W sources != the selected prefix range(n)')", "selection_not_range": "ValidationError('selection is not exactly range(n)')", "seed_not_cprime_g": "ValidationError(\"source game 2 seed != C'+2\")", "acceptance_failed": "ValidationError('emitter acceptance smoke not passed')", "last_game_roots_claim": "ValidationError('selection root counts differ from the packed rows')"}}
-{"case": "F6/F9 probes: collect_w resume re-verifies seal and realized identity (seed, opponent); unsealed dir refused; dangling STOP symlink stops", "ok": true}
-{"case": "driver: no reporting phase while any fit is not done; ABBA order, all ten phases, no futility skip", "ok": true, "order": ["R3a/K4S-120", "R3a/S-200", "R5/K4S-120", "R5/S-200", "R5-rep/K4S-120", "R5-rep/S-200", "R3a-rep/K4S-120", "R3a-rep/S-200", "R5W/K4S-120", "R5W/S-200"]}
-{"case": "driver never reads a game outcome (only the fit training loss)", "ok": true, "subs": ["r['loss']"]}
-{"case": "F5 probe: a reporting exit with rc 17 and no reason is an anomaly: nothing retired, no SETTLED, no further dispatch", "ok": true}
-{"case": "F5 control: a permitted guard stop (memory_guard) or an owner ACK retires the started seeds and settles", "ok": true}
-{"case": "F5 probe: fit done only with a clean return + zero exit; unknown or nonzero exit (incl. from durable events) is failed", "ok": true, "states": ["failed", "failed", "done", "failed"]}
-{"case": "F9 probes: admission blocks on unreadable PSI/memory/disk/GPU, PSI > 10, disk > 100 GB, > 70 processes, a live diagnostic; STOP via lexists", "ok": true, "probes": {"psi unreadable": true, "psi > 10": true, "mem unreadable": true, "disk unreadable": true, "disk > 100 GB": true, "> 70 processes": true, "GPU unreadable (fit)": true, "live diagnostic lock": true, "dangling STOP symlink": true}}
-{"case": "F9/R2-11: a wall_over_2x fit resumes only after the O_W gate; divergence never auto-resumes", "ok": true}
-{"case": "F8 probe: reporting runs reports/explore/x4s4/supervise.py; a runtime file differing from RUNTIME-INVENTORY is refused", "ok": true}
-{"case": "supervisor: X4S-4 tree groups include driver, child and own group", "ok": true}
-{"case": "F7 probe: baseline before the child; a NEW foreign process's first-interval CPU is counted; own births/exits handled; unreadable -> None", "ok": true, "values": [9.5, 0.0, 5.0, null]}
-{"case": "F9: the supervisor tests STOP with lexists only", "ok": true}
-{"case": "F10 probes: supervisor refuses a non-canonical --job and absolute/traversing/wrong-role --phase before any write", "ok": true, "probes": {"job_not_canonical": true, "phase_traversal": true, "phase_absolute": true, "phase_role": true}}
-{"case": "F18/F7 probe: PSI, unreadable PSI, foreign, unreadable foreign, yield and a census gap each flag exactly their own games", "ok": true, "got": {"clean": [], "psi": [1], "psi_unreadable": [2], "foreign": [3], "foreign_unreadable": [4], "yield_window": [5], "mid_gap": [6, 7]}}
-{"case": "F7 probes: a capped phase flags all its games; an EMPTY census flags the whole phase; an uncovered tail is bad", "ok": true, "got": [[0, 1, 2, 3, 4, 5, 6, 7], [0, 1, 2, 3, 4, 5, 6, 7], [3, 4, 5, 6]]}
-{"case": "F7 probe: contention refuses unsettled or exit-less phases", "ok": true}
-{"case": "contention parses only wall_seconds from a game JSON", "ok": true}
-{"case": "contention receipt: schema v2 with per-phase inventory, written once (O_EXCL), mode 0444", "ok": true}
-{"case": "F4 probes: no receipt, Sol's writable minimal receipt, wrong SHA, uncommitted bytes, commit off origin/main, writable, hard-linked, changed inventory and an extra phase are all refused BEFORE any game read", "ok": true, "refusals": {"no_receipt": "C5 contention receipt must be frozen before any reduction (E", "sol_probe_writable_minimal": "C5 receipt must be a regular, single-link, non-writable file", "wrong_sha": "C5 receipt SHA differs from --contention-sha", "not_committed_bytes": "C5 receipt is not committed with this SHA at 40ac34e55533c00", "not_on_origin_main": "the C5 freeze commit is not on origin/main", "writable": "C5 receipt must be a regular, single-link, non-writable file", "hard_linked": "C5 receipt must be a regular, single-link, non-writable file", "inventory_changed": "C5 source inventory of games/R5/S-200/a1 changed since the f", "extra_phase": "reporting phases on disk differ from the frozen C5 receipt"}}
-{"case": "F10 probe: reducer --out outside <job>/analysis is refused", "ok": true}
-{"case": "reducer refuses an incomplete student without --allow-prefix (fixed N), after the freeze gate", "ok": true, "msg": "R5W: not every non-retired index is terminal in both arms (fixed N)"}
-{"case": "reducer: primary on the full primary prefix (R5W never cuts it); fit-inflated interval wider than the CI", "ok": true}
-{"case": "F14: per-arm averaged primary present and averages to the pooled point (equal arm weight)", "ok": true}
-{"case": "reducer: contention view excludes exactly the frozen indices [0, 1] and records the freeze SHA + commit", "ok": true, "excluded": [0, 1]}
-{"case": "F11 probe: a policy-cache mismatch (forward=99) is refused in this optimization mode too", "ok": true, "optimize": 0}
-{"case": "classification boundaries: upper CI strictly < 0 and both pooled single-fit points < 0 for helps; lower CI strictly > -2.0", "ok": true, "got": ["helps", "inconclusive", "inconclusive", "no material effect", "inconclusive"]}
-{"case": "exact formulas: per-arm and pooled primary by hand (-37.5, 0, -18.75 pp); fit-inflated half-width 1.96*sqrt(se^2+0.65^2)", "ok": true, "got": [-37.5, 0.0, -18.75]}
-{"case": "F14: report renders per-arm primary, R5W prefix disclosure, composition/dedup/600-tick tables, O_W single-candidate share, fixed disclosures, decision row", "ok": true, "missing": []}
-{"case": "F14: decision-table follow-ups: helps -> unresolved default (matched W generation first); no effect + harmful -> label audit", "ok": true}
-{"case": "F10 probe: write_report --out outside reports/explore/x4s4 is refused", "ok": true}
-{"case": "qualify hashes: 16/16 cases with terminal proofs, equal command hashes, capture checks and fair coverage pass", "ok": true, "error": null}
-{"case": "F12/F3 probes: qualification fails on 15/16 cases, a permutation that moved no card, or a command-hash difference", "ok": true, "errors": {"missing_case": "/dev/shm/x4s4-test-_9xao000/test_qualify/job/qual/col-15: sim-0007-d27-S-long.json missing or differs from its block proof", "unmoved_permutation": "", "command_hash_differs": ""}}
-{"case": "F12 probes: round trip covers ALL 32 smoke captures (no sampling); a missing arm, a digest mismatch or a bad C8 hash fails", "ok": true}
-{"case": "F12 probes: parity with one arm does not pass; both arms in band pass; out of band the watcher writes PARITY-PAUSE, creates STOP and exits 1", "ok": true}
-{"case": "F10 probe: qualification receipts outside <job>/qual|receipts are refused", "ok": true}
-{"case": "F15 probe: global CE is batch-size/order invariant, equals the frozen objective on all rows, and gives C (not C/2) on Sol's counterexample", "ok": true}
-{"case": "F9 probe: the diagnostic takes the driver lock, refuses (and releases) while a reporting/fit group lives", "ok": true}
-{"case": "F16 probe: sealed T1/K4S/TIERS outcome files and symlink aliases are never opened (skipped and counted)", "ok": true, "opened_sealed": []}
-{"case": "F16 control: the same literal in an ordinary file is found (the scan is live)", "ok": true}
-{"case": "F16: a seed DECLARATION inside a sealed tree is still audited", "ok": true}
-{"case": "F11 probe: identical bank bases fail the audit in this optimization mode too", "ok": true, "optimize": 0}
-{"case": "F11: a prior declared range intersecting bank E fails the audit", "ok": true}
-{"case": "F9 probes: CPU jobs register their group; admission blocks on > 70 tree processes, unreadable or > 100 GB disk; the labeler halts on the tree cap; the driver counts registered CPU jobs and collection supervisors", "ok": true}
-{"case": "F11: no assert statement in any X4S-4-owned script (run_collect.py keeps x4s3/run.py's bytes)", "ok": true, "asserts": {"audit_seeds.py": 0, "collect.py": 0, "collect_w.py": 0, "confine.py": 0, "contention.py": 0, "diagnose.py": 0, "driver.py": 0, "label.py": 0, "qualify4.py": 0, "reduce.py": 0, "studytree.py": 0, "supervise.py": 0, "verify_onpolicy.py": 0, "write_report.py": 0}}
-{"case": "F17: plan.json describes r3 (87809ae0), the ABBA order used by the driver, no futility stop, host-wide contention", "ok": true}
-{"case": "F17/F12: plan-collect.json is a full staged runtime config (student R3a, policy v1, capture block)", "ok": true}
-{"case": "F17/F12: plan-qual-capture.json is a full staged runtime config (student R3a, policy v1, capture block)", "ok": true}
-{"case": "F5 probe: run_fit.sh lists each O batch x4 (seed 2026101301); R5W refuses without its gate; a failing producer aborts it", "ok": true, "producer_rc": 3}
-{"case": "collect_w: emitter-derived (own, opponent, seat) equals the X4S mapping for g in 0..199; 50 cells", "ok": true}
-{"all_ok": true, "cases": 76, "failed": [], "python_optimize": 0}
+{"case": "persistent_id guard rejects PlayerState/BattleState; passes plain data", "ok": true}
+{"case": "F2 probe: a play with its own command in ch.pending is eligible; WAIT eligible; a non-empty INPUT transaction rejected", "ok": true}
+{"case": "F3 probe: the real payload is byte-identical under the permutation with cards moved; hand/cycle/RNG reads via kw[b] are detected", "ok": true}
+{"case": "C7a/C9: belief mutation detected; a Battle reference raises the graph guard", "ok": true}
+{"case": "real payload stores the C8 triple with its SHA, empty input pending and the submitted play", "ok": true}
+{"case": "per-game capture file through the gate: SHA, identity, counts; exclusive and read-only", "ok": true}
+{"case": "R2-F1 probe (Sol): collection entry refuses an outside --out WITHOUT creating it, a used phase dir, and a symlinked ancestor", "ok": true}
+{"case": "F13 probe: collection allocation refuses out-of-allocation indices and two arms", "ok": true}
+{"case": "R2-F8 probe: monitor death - the runner refuses to start without its supervisor and exits 70 with a receipt when it dies", "ok": true, "rc": 70}
+{"case": "label plan: holdout split, interruption drop, dedup, per-arm cap, 600-tick duplicates; bound to the parity inventory", "ok": true}
+{"case": "R2-F8/F13 probes: the plan refuses a stale block proof, a NON-TERMINAL game, a STALE parity receipt (games added after it), a non-final receipt, public-parity false and a failed parity without an authentic exception", "ok": true, "probes": {"stale_block": "parity inventory cannot be re-derived: /dev/shm/x4s4-test-qv4h6upe/tes", "nonterminal": "parity inventory cannot be re-derived: /dev/shm/x4s4-test-qv4h6upe/tes", "seed_mismatch": "capture identity mismatch in /dev/shm/x4s4-test-qv4h6upe/test_pipeline", "public_parity_false": "capture parity/pending failure in /dev/shm/x4s4-test-qv4h6upe/test_pip", "failed_parity_no_exception": "C7b parity failed and there is no authentic coordinator PARITY-EXCEPTI", "not_final": "the parity receipt is not final (a phase had not exited)", "stale_parity": "stale parity receipt: its game inventory differs from the current phas"}}
+{"case": "R2-F8: a bare exception string is refused; an exception bound to a coordinator commit on origin/main naming the receipt SHA is accepted", "ok": true}
+{"case": "labeling seals every planned game; resume re-verifies the complete seal + identity and skips", "ok": true}
+{"case": "F13/F5 probes: resume with another plan SHA or an extra file in the seal, a stale capture and an undeclared scorer exception all fail", "ok": true}
+{"case": "F5 probe: memory_guard -> incomplete + exit 1; 1 mismatch in 46 fails the 0.1% limit", "ok": true}
+{"case": "verify O: passes with complete source re-verification and packed-byte binding", "ok": true, "error": ""}
+{"case": "R2-F5/F13 probes: verify O rejects a broken raw seal (teacher edit), forged packed bytes, a failed receipt, a stale plan, small O, a symlink", "ok": true, "errors": {"mismatch receipt": "ValidationError('label receipts not passed for this set and plan')", "R2-F5 Sol probe: unreviewed teacher in a raw receipt": "Refusal('seal: /dev/shm/x4s4-test-qv4h6upe/test_pipeline/v-teacher/data/raw-O/K4", "packed bytes forged (own seal resealed)": "ValidationError('packed hand_ids of episode 0 differs from its source /dev/shm/x", "stale plan SHA": "ValidationError('label receipts not passed for this set and plan')", "below the O minimum": "ValidationError('O rows 46 outside [1000, 100]')", "symlink in batch": "Refusal('symlink: /dev/shm/x4s4-test-qv4h6upe/test_pipeline/v-sl/data/onpolicy/b"}}
+{"case": "verify OW: minimal prefix (45 < 46 <= 60), selection identity rows, authenticated acceptance, single-candidate share", "ok": true, "error": null}
+{"case": "F6/R2-F5 probes: O_W gate rejects a non-minimal prefix, a short prefix, sources [0,1,2,4], a wrong seed, a wrong last-game claim, Sol's Boolean-only acceptance receipt, a one-game or C'-bank acceptance, and a selection without identity rows", "ok": true, "errors": {"non_minimal": "ValidationError('O_W prefix not minimal or short: 45 < 45 <= 60')", "short": "ValidationError('O_W prefix not minimal or short: 45 < 61 <= 60')", "gap_0124": "ValidationError('selection identity rows != range(n)')", "seed_not_cprime_g": "ValidationError(\"source game 2 seed != C'+2\")", "last_game_roots_claim": "ValidationError('selection root counts differ from the packed rows')", "acceptance_boolean_only": "ValidationError('acceptance receipt schema/bank')", "acceptance_one_game": "ValidationError('acceptance must hold exactly games 0 and 1')", "acceptance_on_cprime": "ValidationError('acceptance receipt schema/bank')", "selection_row_manifest": "ValidationError('selection identity rows != range(n)')"}}
+{"case": "R2-F3/F6 probes: collect_w resume re-verifies the complete seal and realized identity; a game straddling the hard stop is NOT counted; a dangling STOP stops dispatch and the parent monitor (which stops in-flight workers) sees it", "ok": true}
+{"case": "driver: no reporting phase while any fit is not done; ABBA order, all ten phases, no futility skip", "ok": true}
+{"case": "driver never reads a game outcome (only the fit training loss)", "ok": true, "subs": ["json.loads(line)['loss']"]}
+{"case": "R2-F1 probe (Sol): driver event() refuses a symlinked events.jsonl; the outside sentinel is unchanged", "ok": true}
+{"case": "R2-F2 probes: Sol's child-17 + clean receipt is an anomaly with no SETTLED and no dispatch; an unknown child status needs an ACK bound to the exact attempt (a wrong launch_id is a stale-ACK anomaly); the right ACK settles, keeps the evidence and is consumed", "ok": true}
+{"case": "R2-F2 controls: a permitted guard stop with child status 1 retires started seeds; a clean receipt with child 0 settles clean", "ok": true}
+{"case": "R2-F2/decision-2: fit done only with a clean return and a zero exit of THIS launch; an exit event of another launch does not count; an exact-attempt ACK resolves an unknown exit once (consumed, durable resolution); a known nonzero exit stays failed", "ok": true, "states": ["failed", "failed", "done", "done", "failed"]}
+{"case": "R2-F3 probes (Sol): a running fit is stopped (signal sent + blocking ANOMALY-fit) on MemAvailable 0 or unreadable, GPU unreadable or > 40 GB, and PSS > 50 GiB (frozen rule restored) or unreadable; a healthy fit is left alone", "ok": true, "guards": {"clean": null, "memory_zero": "memory_floor", "memory_unreadable": "memory_floor", "gpu_unreadable": "gpu_unreadable", "gpu_over": "gpu_over_40GB", "pss_over_50": "fit_pss_over_50GiB_or_unreadable", "pss_unreadable": "fit_pss_over_50GiB_or_unreadable"}}
+{"case": "R2-F3 probes: admission fails closed on unreadable PSI/memory/GPU, PSI > 10, GPU already 50,000 MiB, a reservation that would exceed 70 processes, and a live diagnostic lock", "ok": true, "adm": {"psi unreadable": true, "psi > 10": true, "mem unreadable": true, "Sol's 50,000 MiB GPU": true, "GPU unreadable": true, "reporting reservation (20 live + 53 new > 70)": true, "live diagnostic lock": true}}
+{"case": "R2-11: a wall_over_2x fit resumes only after the O_W gate; divergence never auto-resumes", "ok": true}
+{"case": "F8: reporting runs the X4S-4 supervisor with an absolute argv and a read-only launch receipt; a runtime file (here x4s4io.py) differing from RUNTIME-INVENTORY is refused", "ok": true}
+{"case": "F7 probe: a NEW foreign process's first-interval CPU is counted; own births/exits handled; unreadable -> None", "ok": true, "values": [9.5, 0.0, 5.0, null]}
+{"case": "supervisor: STOP via lexists; no bare group signal (verified-PID stop only); hard stop bound to HARD-STOP-UTC.txt; 24 h", "ok": true}
+{"case": "R2-F1: the supervisor refuses a non-canonical --job and absolute/traversing/wrong-role --phase before any write", "ok": true}
+{"case": "R2-F8 probes: the in-supervisor C7b watch pauses (PARITY-PAUSE + STOP) out of band, and a failing watch is a stop reason", "ok": true, "why": "parity_pause"}
+{"case": "F7 probes: PSI, unreadable PSI, foreign, unreadable foreign, yield and a census gap each flag exactly their own games", "ok": true, "got": {"clean": [], "psi": [1], "psi_unreadable": [2], "foreign": [3], "foreign_unreadable": [4], "yield_window": [5], "mid_gap": [6, 7]}}
+{"case": "R2-F7 probes (Sol): NaN, Infinity, negative and overflowing readings, out-of-chronology times and a non-boolean yield flag are BAD (each isolated in an uncapped phase) - never clean", "ok": true, "got": {"nan": [1, 2, 3], "infinity": [2, 3, 4], "negative": [3], "foreign_nan_value": [4, 5, 6], "chronology": [0, 1, 2, 3, 4], "reduced_not_bool": [6]}}
+{"case": "F7: a capped phase flags all its games; an EMPTY census flags the whole phase; an uncovered tail is bad", "ok": true}
+{"case": "contention refuses unsettled or exit-less phases", "ok": true}
+{"case": "contention: wall_seconds projection only; schema v3 with per-game SHA/size/st_mtime_ns and the retired SHA; written once, read-only", "ok": true}
+{"case": "R2-F4/F4 probes: refused before any game load - no receipt, Sol's r1 writable receipt, wrong SHA, uncommitted bytes, a commit off origin/main, a GIT-REPLACE substitution (which fools plain git), writable/hard-linked receipts, changed game mtimes (whose rebuild changes the exclusion), a changed retired.json, census or phase set", "ok": true, "refusals": {"no_receipt": "C5 contention receipt must be frozen before any reduction (E", "sol_r1_writable_minimal": "C5 receipt must be a regular, single-link, non-writable file", "wrong_sha": "C5 receipt SHA differs from --contention-sha", "not_committed_bytes": "C5 receipt is not committed with this SHA at 924d0f57b69ce5f", "not_on_origin_main": "the C5 freeze commit is not on origin/main", "git_replace_substitution": "C5 receipt is not committed with this SHA at 924d0f57b69ce5f", "writable": "C5 receipt must be a regular, single-link, non-writable file", "hard_linked": "C5 receipt must be a regular, single-link, non-writable file", "R2-F4 Sol probe: game mtimes changed, bytes unchanged": "C5 source inventory of games/R3a-rep/K4S-120/a1 (content or ", "retired.json changed": "driver/retired.json changed since the C5 freeze", "census changed": "C5 source inventory of games/R5/S-200/a1 (content or mtime) ", "extra phase": "reporting phases on disk differ from the frozen C5 receipt"}, "rebuilt": []}
+{"case": "F10: reducer --out outside <job>/analysis is refused", "ok": true}
+{"case": "reducer refuses an incomplete student without --allow-prefix (fixed N), after the freeze gate", "ok": true}
+{"case": "reducer: primary on the full primary prefix (R5W never cuts it); per-arm mean equals pooled; contention view [0,1] with SHA + commit", "ok": true}
+{"case": "F11 probe: a policy-cache mismatch is refused in this optimization mode too", "ok": true, "optimize": 0}
+{"case": "classification boundaries are strict", "ok": true, "got": ["helps", "inconclusive", "inconclusive", "no material effect", "inconclusive"]}
+{"case": "exact formulas by hand (-37.5, 0, -18.75 pp) and fit-inflated half-width", "ok": true}
+{"case": "R2-F9/F14: the report renders every required section and an explicit unavailable diagnostic; stale or unchained inputs and an out-of-root --out are refused", "ok": true, "missing": [], "bind": {"O_W gate not built on this O gate": true, "stale label plan": true, "diagnostic not on the verified holdout": true}}
+{"case": "qualify hashes: 16/16 proved, projected-terminal cases with equal command hashes, capture checks and fair coverage pass", "ok": true, "error": null}
+{"case": "R2-F8 probes (Sol): qualification FAILS on 16 non-terminal games with valid proofs, and on 15/16 cases, an unmoved permutation, a command-hash difference or another student checkpoint", "ok": true, "errors": {"nonterminal_16": "/dev/shm/x4s4-test-qv4h6upe/test_qualify/job/qual/col-nt: 0 ", "missing_case": "/dev/shm/x4s4-test-qv4h6upe/test_qualify/job/qual/col-15: 7 ", "unmoved_permutation": "", "command_hash_differs": "", "wrong_student": "/dev/shm/x4s4-test-qv4h6upe/test_qualify/job/qual/col-ck: 0 "}}
+{"case": "F12/R2-F8: round trip covers ALL 32 smoke captures, each smoke game proof-authenticated; a missing arm, a digest error or a forged smoke game fails", "ok": true}
+{"case": "parity: one arm does not pass; both arms in band pass with an inventory", "ok": true}
+{"case": "C7b: out of band the parity command writes PARITY-PAUSE, creates STOP and exits 1", "ok": true}
+{"case": "R2-F8: a parity receipt over a phase without supervisor-exit is not final and does not pass", "ok": true}
+{"case": "F15: global CE is batch-size/order invariant and gives C (not C/2) on Sol's counterexample (formula algebra; GPU path is qualification)", "ok": true}
+{"case": "R2-F3/F9 probes: the diagnostic lock (pid + starttime) is taken under the DISPATCH flock and refused while reporting/fit work lives; live guards abort on STOP and the hard stop; inputs come only from the verified holdout gate and the staged students", "ok": true}
+{"case": "R2-F6 probes (Sol): an outcome file, its content alias elsewhere (hard-link twin) and a declaration name under an outcome-bearing ancestor (t1/outcomes/plan.json) are never read; the sealed seed declaration is; omissions are counted per reason", "ok": true, "omitted": {"outcome_path": 3, "own": 1, "alias_of_excluded": 1}, "err": true}
+{"case": "R2-F6: the audit refuses a source list that differs from the reviewed inventory", "ok": true}
+{"case": "R2-F6 control: the same literal in an ordinary scan source fails the audit (the scan is live)", "ok": true}
+{"case": "F11 probe: identical bank bases fail in this optimization mode too", "ok": true, "optimize": 0}
+{"case": "F11: a declared prior range intersecting bank E fails the audit", "ok": true}
+{"case": "the committed seed-sources.json pins a commit, the rule version, the derived list SHA and the explicit sealed declarations", "ok": true}
+{"case": "CPU jobs register (pgid, starttime); phase supervisors and children are tree groups", "ok": true}
+{"case": "R2-F3 probes: admission RESERVES new workers (20 live + 51 > 70); disk unreadable/over; monitor stops on unreadable memory, unreadable or > 50 GiB PSS, a dangling STOP and an unreadable deadline", "ok": true, "res": {"add_50": true, "add_50_ok": true, "disk_unreadable": true, "disk_over": true, "mem_unreadable": true, "pss_unreadable": true, "pss_over_50": true, "dangling_STOP": true, "deadline_unreadable": true}}
+{"case": "F11: no assert statement in any X4S-4-owned script", "ok": true, "asserts": {"audit_seeds.py": 0, "collect.py": 0, "collect_w.py": 0, "contention.py": 0, "diagnose.py": 0, "driver.py": 0, "label.py": 0, "qualify4.py": 0, "reduce.py": 0, "studytree.py": 0, "supervise.py": 0, "verify_onpolicy.py": 0, "write_report.py": 0, "x4s4io.py": 0}}
+{"case": "R2-F1: no owned script reads, writes, renames, removes, spawns or group-signals outside x4s4io (only /proc is read directly)", "ok": true, "bypass": {}}
+{"case": "F17/R2-F10: plan.json describes r3: ABBA order, no futility, host-wide contention, the prefix rule for interruptions", "ok": true}
+{"case": "plan-collect.json is a full staged runtime config (student R3a, policy v1, capture block)", "ok": true}
+{"case": "plan-qual-capture.json is a full staged runtime config (student R3a, policy v1, capture block)", "ok": true}
+{"case": "F5: run_fit.sh lists each O batch x4 (seed 2026101301); R5W refuses without its gate; a failing producer aborts it", "ok": true}
+{"case": "collect_w: emitter-derived (own, opponent, seat) equals the X4S mapping for g in 0..199; acceptance on the qualification bank", "ok": true}
+{"all_ok": true, "cases": 81, "failed": [], "python_optimize": 0, "umask": "0o77"}

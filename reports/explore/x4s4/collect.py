@@ -1,4 +1,9 @@
-"""X4S-4 on-policy state collection (exploration, NEVER ADOPTABLE). r2 after Sol script review r1.
+"""X4S-4 on-policy state collection (exploration, NEVER ADOPTABLE). r3 after Sol script review r2.
+
+r3 (R2-F1, R2-F8): every read and write goes through x4s4io; the entry validates --out (a confined collect/qual/smoke
+path of real directories, fresh or holding only the supervisor's files) BEFORE the inherited runner touches the
+filesystem; the runner only runs under its supervisor (X4S4_SUPERVISOR=pid:starttime) and, if that process disappears,
+records supervisor-lost.json, TERMs its own group's verified PIDs and exits 70.
 
 Plays deployment games with run_collect.py, a byte copy of the reviewed x4s3/run.py plus two explicit hooks:
 CAPTURE(...) right after apply_lateness (the decision timer has closed) and CAPTURE_END(pair, seed, arm) right
@@ -23,12 +28,12 @@ must match) and fair_check (Sol F3: the payload is rebuilt from kw with kw['b'] 
 opponent never-revealed hand/cycle cards are permuted and whose battle RNG is reseeded; the payload must be
 byte-identical; the number of decisions with an actual card permutation is counted for coverage).
 """
-import copy, hashlib, io, json, pickle, random, sys, time
+import copy, hashlib, io as _stdio, json, os, pickle, random, sys, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-import confine                                   # noqa: E402
+import x4s4io as io                              # noqa: E402  (every read/write goes through the gate)
 
 CAPTURE_SCHEMA = 'x4s4.capture.v3'
 CAPTURE_ROLES = ('collect', 'qual', 'smoke')
@@ -54,7 +59,7 @@ class GuardedPickler(pickle.Pickler):
 
 
 def guarded_dumps(obj):
-    buf = io.BytesIO(); GuardedPickler(buf, protocol=pickle.HIGHEST_PROTOCOL).dump(obj); return buf.getvalue()
+    buf = _stdio.BytesIO(); GuardedPickler(buf, protocol=pickle.HIGHEST_PROTOCOL).dump(obj); return buf.getvalue()
 
 
 def capture_rng(label, seed, tick):
@@ -66,7 +71,7 @@ def capture_rng(label, seed, tick):
 def config():
     global _cfg
     if _cfg is None:
-        cfg = json.loads(Path(sys.argv[sys.argv.index('--config')+1]).read_text())
+        cfg = io.read_json(sys.argv[sys.argv.index('--config')+1], 4 << 20)
         c = cfg['capture']
         rate = float(c['nonhit_rate'])
         if not 0 <= rate <= 1:
@@ -195,12 +200,11 @@ def capture(**kw):
 def capture_end(pair, seed, arm):
     """Write this game's captures durably (before run.py writes the block proof); reset per-game state."""
     caps_blobs = list(_captures)
-    out = confine.writable(str(Path(run.OPTIONS['out'])/'captures'), roles=CAPTURE_ROLES)
-    if not out.exists(): confine.mkdirs(str(out), roles=CAPTURE_ROLES)
-    target = confine.writable(str(out/f'sim-{pair:04d}-d27-{arm}.pkl'), roles=CAPTURE_ROLES, must_not_exist=True)
+    out = str(run.OPTIONS['out'])+'/captures'
+    io.mkdirs(out, roles=CAPTURE_ROLES)
+    target = f'{out}/sim-{pair:04d}-d27-{arm}.pkl'
     body = pickle.dumps(caps_blobs, protocol=pickle.HIGHEST_PROTOCOL)
-    tmp = confine.writable(str(target)+'.tmp', roles=CAPTURE_ROLES)
-    tmp.write_bytes(body); run.durable(tmp); tmp.replace(target); run.durable(target)
+    io.create_excl(target, body, roles=CAPTURE_ROLES, mode=0o444)           # exclusive, fsynced, no-follow
     caps = [pickle.loads(x) for x in caps_blobs]
     summary = dict(schema=CAPTURE_SCHEMA, index=int(pair), seed=int(seed), arm=arm, captures=len(caps), counts=dict(_counts),
                    checks=dict(_checks), sha256=hashlib.sha256(body).hexdigest(),
@@ -212,9 +216,7 @@ def capture_end(pair, seed, arm):
                    student_default=sum(bool(c['stats'].get('student_default')) for c in caps),
                    fallback=sum(bool(c['stats'].get('fallback')) for c in caps),
                    plays_captured=sum(c['agent_action'] < 2304 for c in caps))
-    sj = confine.writable(str(target.with_suffix('.json')), roles=CAPTURE_ROLES, must_not_exist=True)
-    tj = confine.writable(str(sj)+'.tmp', roles=CAPTURE_ROLES)
-    tj.write_text(json.dumps(summary)+'\n'); run.durable(tj); tj.replace(sj); run.durable(sj)
+    io.write_json_once(target[:-4]+'.json', summary, roles=CAPTURE_ROLES, mode=0o444)
     _captures.clear(); _counts.clear(); _checks.clear()
 
 
@@ -242,7 +244,7 @@ def check_allocation(argv):
         i = argv.index(k); return argv[i+1:i+1+n]
     rng = arg('--range')[0]
     if rng != 'reporting': return
-    cfg = json.loads(Path(arg('--config')[0]).read_text())
+    cfg = io.read_json(arg('--config')[0], 4 << 20)
     if cfg['seed_ranges']['reporting'] != dict(base=C_BASE, count=4000): raise SystemExit('collection must use bank C')
     arms = []
     for x in (argv[argv.index('--arms')+1:] if '--arms' in argv else []):
@@ -250,14 +252,58 @@ def check_allocation(argv):
         arms.append(x)
     if len(arms) != 1 or arms[0] not in ALLOC:
         raise SystemExit('a bank-C collection phase runs exactly one arm (--arms K4S-120 or S-200)')
-    idx = json.loads(Path(arg('--indices')[0]).read_text())
+    idx = io.read_json(arg('--indices')[0], 1 << 20)
     bad = [i for i in idx if not any(lo <= i < hi for lo, hi in ALLOC[arms[0]])]
     if bad: raise SystemExit(f'indices outside the {arms[0]} bank-C allocation: {bad[:5]}')
+
+
+SUPERVISOR_FILES = {'launch.json', 'worker.log', 'census.jsonl', 'progress.json', 'stop-reason.json'}
+
+
+def check_out(argv):
+    """Sol r2 R2-F1: the inherited runner creates and writes --out with ordinary path calls, so the entry validates it
+    FIRST: a confined collect/qual/smoke path whose every component is a real directory, either created here or the
+    supervisor's fresh phase directory (only supervisor files present)."""
+    out = argv[argv.index('--out')+1]
+    if not out.startswith('/'): raise SystemExit('--out must be absolute')
+    io.check_writable(out, roles=CAPTURE_ROLES)
+    if io.lexists(out):
+        if not io.is_real_dir(out): raise SystemExit(f'--out is not a real directory: {out}')
+        extra = set(io.listdir(out))-SUPERVISOR_FILES
+        if extra: raise SystemExit(f'--out already holds {sorted(extra)[:5]} (one schedule per directory)')
+    else:
+        io.mkdirs(out, roles=CAPTURE_ROLES)
+    return out
+
+
+def supervisor_watchdog(out, period=5.0):
+    """R2-F8 monitor death: the collection runner is only allowed to run under its live supervisor (pid:starttime in
+    X4S4_SUPERVISOR). If that process is gone or replaced, the runner records it and stops its own group's PIDs."""
+    import threading, signal
+    spec = os.environ.get('X4S4_SUPERVISOR', '')
+    try: spid, sstart = (int(x) for x in spec.split(':'))
+    except ValueError: raise SystemExit('collection runs only under the X4S-4 supervisor (X4S4_SUPERVISOR=pid:starttime)')
+    me = io.own_identity()
+    def alive():
+        st = io.proc_stat(spid); return st is not None and st['starttime'] == sstart and st['state'] != 'Z'
+    if not alive(): raise SystemExit('supervisor not alive at start')
+    def loop():
+        while alive(): time.sleep(period)
+        try: io.write_json_once(out+'/supervisor-lost.json', dict(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                                                                  supervisor=spec), roles=CAPTURE_ROLES)
+        except io.Refusal: pass
+        lead = io.proc_stat(me['pgid'])
+        io.signal_owned(me['pgid'], lead['starttime'] if lead else me['starttime'], signal.SIGTERM, exclude=(me['pid'],))
+        os._exit(70)
+    t = threading.Thread(target=loop, daemon=True); t.start()
+    return t
 
 
 def main():
     import run_collect                       # byte copy of x4s3/run.py + the two explicit hooks
     check_allocation(sys.argv)
+    out = check_out(sys.argv)                # before the inherited runner touches the filesystem
+    supervisor_watchdog(out)
     config()
     install(run_collect)
     run_collect.main()

@@ -13,28 +13,30 @@ and the R1 held-out64 slice 0ecce0f0), over every scored root (RootTeacherStore)
                    sum((card_ce+tile_ce)*w)/sum(w*play_mass), accumulated as global numerators/denominators, so
                    it is invariant to batch size and order. Each batch's per-row terms are cross-checked against the
                    frozen teacher_loss on that batch (relative 1e-4).
-GPU float32, TF32 off, inference only. Exclusion (Sol F9): it first creates <job>/driver/DIAGNOSTIC.lock (O_EXCL,
-with its pid; the driver dispatches no fit or reporting phase while the lock's pid lives), then refuses to run if any
-reporting supervisor or fit process group from <job>/receipts is alive; the lock is removed at exit. Output is
-confined below <job>/analysis/ or <job>/receipts/ and written once (O_EXCL, 0444).
+GPU float32, TF32 off, inference only. r3 (Sol r2 R2-F3, R2-F9): every read and write goes through x4s4io; inputs
+are not caller choices - the verified O-holdout batches listed in <job>/data/HOLDOUT-VERIFIED.json (bank C
+3500-3999; its SHA is recorded), exactly the five students R3a (staged plan), R3a-rep, R5, R5-rep, R5W (runtime
+READY receipts) with checkpoint SHAs re-verified, and assets pinned by RUNTIME-INVENTORY. The diagnostic registers
+its process group, takes driver/DIAGNOSTIC.lock (pid + starttime) inside the driver's exclusive DISPATCH flock after
+checking that no reporting/fit group lives, and runs the live guards (STOP, hard stop, MemAvailable, PSS <= 50 GiB,
+tree, disk) before each student and every 100 batches; a breach aborts without output. The lock is removed at exit.
+Output: <job>/analysis/diagnostic.json, written once (0444).
 """
-import argparse, hashlib, json, os, sys, time
+import argparse, fcntl, hashlib, json, os, sys, time
 from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-import confine                                   # noqa: E402
+import x4s4io as io, studytree                   # noqa: E402
+
+STUDENTS = ('R3a', 'R3a-rep', 'R5', 'R5-rep', 'R5W')
 
 HELDOUT = Path('/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/heldout-corpus')
 HELDOUT_SHA = '0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f'
 
 
-def sha(p):
-    h = hashlib.sha256()
-    with open(p, 'rb') as f:
-        for b in iter(lambda: f.read(1 << 20), b''): h.update(b)
-    return h.hexdigest()
+def sha(p): return io.sha256_file(str(p))
 
 
 class CEAccumulator:
@@ -71,14 +73,15 @@ def row_terms(raw, yy, temperature=.003):
     return (-(q*gp[rows, gate]).sum(-1), -(q*play*cp[rows, slot]).sum(-1), -(q*play*tp[rows, slot, tile]).sum(-1), w, (q*play).sum(-1))
 
 
-def evaluate(policy, threshold, stores, batch=64):
+def evaluate(policy, threshold, stores, batch=64, guard=None):
     import torch
     from proposals import outputs, rank_actions
     from exit_r3.student import teacher_loss
     acc = CEAccumulator(); agree = gate_ok = n = 0; worst = 0.0
     with torch.inference_mode():
         for store in stores:
-            for start in range(0, len(store), batch):
+            for k, start in enumerate(range(0, len(store), batch)):
+                if guard and k % 100 == 0: guard()                     # STOP / hard stop / memory / PSS / tree (R2-F3)
                 b, y = store.batch(np.arange(start, min(start+batch, len(store))))
                 bb = {k: v.cuda() for k, v in b.items()}
                 pplay, ranks = outputs(policy.model, bb)
@@ -99,62 +102,105 @@ def evaluate(policy, threshold, stores, batch=64):
     return dict(roots=n, top1_agreement=agree/max(1, n), gate_accuracy=gate_ok/max(1, n), frozen_crosscheck_max_rel=worst, **acc.result())
 
 
-def group_alive(pgid):
-    try: os.killpg(int(pgid), 0); return True
-    except ProcessLookupError: return False
-    except PermissionError: return True
+class Abort(Exception):
+    pass
 
 
 def live_study_work(job):
-    """Reporting supervisors and fits launched by the driver (receipts) that are still alive."""
+    """Reporting supervisors and fits launched by the driver (receipts) that are still alive (verified owned PIDs)."""
     live = []
-    for rec in [*sorted((job/'receipts').glob('phase-*-launch.json')), *sorted((job/'receipts').glob('fit-*-launch*.json'))]:
-        try: r = json.loads(rec.read_text())
-        except (OSError, ValueError): live.append(f'{rec.name} unreadable'); continue
-        if group_alive(r['pgid']): live.append(rec.name)
+    for n in io.listdir(job+'/receipts'):
+        if (n.startswith('phase-') and n.endswith('-launch.json')) or n.startswith('fit-') and '-launch' in n:
+            try: r = io.read_json(f'{job}/receipts/{n}', 1 << 20)
+            except io.Refusal: live.append(f'{n} unreadable'); continue
+            if io.group_alive(r.get('pgid'), r.get('starttime')): live.append(n)
     return live
 
 
 def acquire_lock(job):
-    lock = confine.writable(str(job/'driver'/'DIAGNOSTIC.lock'), roles=('driver',), must_not_exist=True)
-    fd = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
-    with os.fdopen(fd, 'w') as f: f.write(json.dumps(dict(pid=os.getpid(), utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())))+'\n')
-    live = live_study_work(job)          # checked AFTER the lock exists: the driver cannot dispatch in between
-    if live:
-        os.unlink(lock); raise SystemExit(f'diagnostic refused: live reporting/fit work {live}')
+    """Under the driver's exclusive DISPATCH flock: refuse while reporting/fit work lives, else create the
+    diagnostic lock (pid + starttime). The driver checks that lock inside the same flock before every launch."""
+    lock = job+'/driver/DIAGNOSTIC.lock'
+    fd = io.open_append(job+'/driver/DISPATCH.lock', roles=('driver',))
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        live = live_study_work(job)
+        if live: raise SystemExit(f'diagnostic refused: live reporting/fit work {live}')
+        me = io.own_identity()
+        io.write_json_once(lock, dict(pid=me['pid'], starttime=me['starttime'], utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())),
+                           roles=('driver',), mode=0o644)
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN); os.close(fd)
     return lock
+
+
+def students_of(job):
+    """Exactly the five declared students, from the staged plan (R3a) and the runtime READY receipts (R2-F9)."""
+    plan = io.read_json(job+'/base/repo/reports/explore/x4s3/plan.json', 16 << 20)
+    out = {'R3a': dict(checkpoint=plan['student']['checkpoint'], checkpoint_sha256=plan['student']['checkpoint_sha256'],
+                       threshold=plan['student']['threshold'])}
+    for sid in STUDENTS[1:]:
+        st = io.read_json(f'{job}/rt-{sid}/READY.json', 4 << 20)['student']
+        out[sid] = dict(checkpoint=st['checkpoint'], checkpoint_sha256=st['checkpoint_sha256'], threshold=st['threshold'])
+    return out
+
+
+def holdout_of(job):
+    """The verified O-holdout batches (HOLDOUT-VERIFIED.json, C 3500-3999) and the gate's SHA."""
+    gate = job+'/data/HOLDOUT-VERIFIED.json'
+    g = io.read_json(gate, 64 << 20)
+    if g.get('mode') != 'holdout' or not g.get('batches'): raise SystemExit('HOLDOUT-VERIFIED.json is not a holdout gate')
+    return [f"{job}/data/onpolicy-holdout/{b['name']}" for b in g['batches']], io.sha256_file(gate)
+
+
+def guard_factory(job):
+    me = io.own_identity(); lead = io.proc_stat(me['pgid'])
+    own = (me['pgid'], lead['starttime'] if lead else me['starttime'])
+    def guard():
+        why = studytree.monitor(job, own=own, check_psi=False)
+        if why: raise Abort(why)
+    return guard
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--students', type=Path, required=True, help='JSON {id: {checkpoint, checkpoint_sha256, threshold}}')
-    ap.add_argument('--holdout', type=Path, nargs='+', required=True, help='verified O-holdout packed batch directories')
-    ap.add_argument('--assets', type=Path, required=True); ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--out', default=io.JOB+'/analysis/diagnostic.json')
     a = ap.parse_args()
-    out = confine.writable(str(a.out), roles=('analysis', 'receipts'), must_not_exist=True)
-    lock = acquire_lock(confine.JOB)
+    job = io.JOB
+    io.check_writable(a.out, roles=('analysis',), must_not_exist=True)
+    guard = guard_factory(job)
+    guard()                                                         # STOP / hard stop / memory / tree before anything
+    holdout, holdout_sha = holdout_of(job)
+    students = students_of(job)
+    inv = io.read_json(job+'/RUNTIME-INVENTORY.json', 4 << 20)
+    assets = job+'/inputs/assets.npz'
+    if io.sha256_file(assets) != inv.get('inputs/assets.npz'): raise SystemExit('assets differ from RUNTIME-INVENTORY')
+    if io.sha256_file(str(HELDOUT/'manifest.json')) != HELDOUT_SHA: raise SystemExit('held-out64 manifest SHA')
+    studytree.register(job, 'diagnose')
+    lock = acquire_lock(job)
     try:
         import torch
         from proposals import load_student
         from exit_r3.student import RootTeacherStore
         torch.set_num_threads(1); torch.backends.cuda.matmul.allow_tf32 = False; torch.backends.cudnn.allow_tf32 = False
-        if sha(HELDOUT/'manifest.json') != HELDOUT_SHA: raise SystemExit('held-out64 manifest SHA')
-        slices = {'O-holdout': [RootTeacherStore(d, a.assets) for d in a.holdout], 'R1-heldout64': [RootTeacherStore(HELDOUT, a.assets)]}
-        students = json.loads(a.students.read_text()); res = {}
+        slices = {'O-holdout': [RootTeacherStore(d, assets) for d in holdout], 'R1-heldout64': [RootTeacherStore(str(HELDOUT), assets)]}
+        res = {}
         for sid, s in students.items():
-            if sha(s['checkpoint']) != s['checkpoint_sha256']: raise SystemExit(f'{sid} checkpoint SHA')
+            guard()
+            if io.sha256_file(s['checkpoint']) != s['checkpoint_sha256']: raise SystemExit(f'{sid} checkpoint SHA')
             policy = load_student(s['checkpoint']); policy.model.cuda().eval()
-            res[sid] = {name: evaluate(policy, float(s['threshold']), st) for name, st in slices.items()}
+            res[sid] = {name: evaluate(policy, float(s['threshold']), st, guard=guard) for name, st in slices.items()}
             del policy; torch.cuda.empty_cache()
-        body = dict(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), students=res,
-                    holdout=[str(d) for d in a.holdout], heldout64_sha256=HELDOUT_SHA, device='CUDA float32, TF32 off',
+        body = dict(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), students=res, student_checkpoints=students,
+                    holdout=holdout, holdout_gate_sha256=holdout_sha, heldout64_sha256=HELDOUT_SHA, device='CUDA float32, TF32 off',
                     ce_definition='listwise_ce: per-root gate+card+tile CE vs W T=0.003 targets; frozen_objective: global frozen teacher_loss',
                     label='X4S-4 O-holdout diagnostic; descriptive only; never a gate; exploration, NEVER ADOPTABLE')
-        fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o444)
-        with os.fdopen(fd, 'w') as f: f.write(json.dumps(body, indent=2)+'\n')
+        io.write_json_once(a.out, body, roles=('analysis',), mode=0o444)
         print(json.dumps(res))
+    except Abort as e:
+        raise SystemExit(f'diagnostic stopped by a live guard: {e}')
     finally:
-        os.unlink(lock)
+        io.remove_tree(lock, roles=('driver',))
 
 
 if __name__ == '__main__':

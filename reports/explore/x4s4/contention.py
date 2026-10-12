@@ -1,36 +1,36 @@
 """X4S-4 pre-declared contention exclusion (PLAN r3 C5 + E7 + R2-9; exploration, NEVER ADOPTABLE). Stdlib only.
-r2 after Sol script review r1 (F4, F7, F10).
+r3 after Sol script review r2 (R2-F1, R2-F4, R2-F7). Every read and write goes through x4s4io.
 
-Reads ONLY timing fields: supervisor census samples (utc, psi_some_avg10, foreign_cores_host,
-reduced_concurrency), launch.json (utc, workers, lane_width), supervisor-exit.json (utc) of every reporting phase,
-and for each reporting game its file mtime and `wall_seconds`. Game JSONs are parsed with an object_pairs_hook that
-keeps only the key `wall_seconds` at every level, so no outcome field is ever materialized. The unchanged
-x4s3/run.py writes no end timestamp, so the game interval ends at the game file's mtime (written once and fsynced).
+Reads ONLY timing fields: supervisor census samples (utc, psi_some_avg10, foreign_cores_host, reduced_concurrency),
+launch.json (utc, workers, lane_width), supervisor-exit.json (utc) of every reporting phase, and for each counted game
+its exact st_mtime_ns and top-level `wall_seconds` (parsed with a projection that keeps only that key, so no outcome
+field is materialized). The game interval ends at the game file's mtime.
 
-Coverage (Sol F7): every phase must be finished (supervisor-exit.json and the driver's SETTLED.json present) and have
-a census. A census sample covers the period since the previous sample of its phase (the first sample: since the
-phase launch). It is BAD if memory PSI avg10 > 10 or unreadable (None), foreign_cores_host > 2 or unreadable (None;
-R2-9: host-wide, outside the X4S-4 tree), or reduced_concurrency is true (E7 yield window). Uncovered time is BAD:
-launch -> first sample > 15 s, consecutive samples > 30 s apart, last sample -> supervisor exit > 15 s, or a phase
-with no samples at all (launch -> exit). A phase launched with fewer than its full workers flags all of its games
-(E7). A game is flagged if [mtime - wall_seconds, mtime] intersects any bad period of ANY phase (contention is
-host-wide). The union of flagged seed indices (over all students and arms) is excluded for every student.
+Coverage and validity (Sol F7, R2-F7): every phase must be finished (supervisor-exit.json and SETTLED.json) and have
+a census. A sample covers the period since the previous sample (the first: since launch). It is BAD if its memory PSI
+avg10 is > 10, missing, non-numeric, non-finite or outside [0, 100]; foreign_cores_host is > 2, missing, non-numeric,
+non-finite or outside [0, 1024]; reduced_concurrency is not exactly false; or its time is outside [launch - 1 s,
+exit + 1 s] or earlier than the previous sample (chronology). Uncovered time is BAD: launch -> first > 15 s, gaps
+> 30 s, last -> exit > 15 s, no census. Census lines that are not strict JSON (NaN/Infinity included) are BAD rows.
+A phase launched below its full workers flags all its games (E7). A game is flagged if [mtime - wall_seconds, mtime]
+meets any bad period of ANY phase; the union of flagged indices is excluded for every student.
 
-Freeze (Sol F4): the receipt carries schema x4s4.contention.v2 and a per-phase source inventory (SHA-256 of census,
-launch, exit, SETTLED and of the sorted block-proof and game listings). It is written once to
-<job>/receipts/contention-exclusion.json (confined, O_EXCL, mode 0444). Its SHA must be committed before any
-reduction; reduce.py re-authenticates the receipt, the commit and the inventory before reading any game.
+Freeze (Sol F4, R2-F4): schema x4s4.contention.v3. The receipt carries, per phase, the SHA-256 of census, launch,
+exit and SETTLED, the block listing, and for every counted game its name, SHA-256, size and exact st_mtime_ns - the
+inputs that select the excluded view - plus the SHA-256 of driver/retired.json (which selects the reduced population).
+reduce.py re-derives all of it and refuses on any change. The receipt is written once to
+<job>/receipts/contention-exclusion.json (exclusive, read-only); its SHA must then be committed before any reduction.
 """
-import argparse, datetime, hashlib, json, os, sys
+import argparse, datetime, hashlib, json, math, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import confine                                   # noqa: E402
+import x4s4io as io                                  # noqa: E402
 
-SCHEMA = 'x4s4.contention.v2'
-PSI_LIMIT, FOREIGN_LIMIT = 10.0, 2.0
-HEAD_GAP, MID_GAP, TAIL_GAP = 15.0, 30.0, 15.0
-RECEIPT = Path('receipts')/'contention-exclusion.json'
+SCHEMA = 'x4s4.contention.v3'
+PSI_LIMIT, FOREIGN_LIMIT, FOREIGN_MAX = 10.0, 2.0, 1024.0
+HEAD_GAP, MID_GAP, TAIL_GAP, SLACK = 15.0, 30.0, 15.0, 1.0
+RECEIPT = 'receipts/contention-exclusion.json'
 
 
 class ContentionError(Exception):
@@ -39,119 +39,138 @@ class ContentionError(Exception):
 
 def ts(s): return datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).timestamp()
 def sha_bytes(b): return hashlib.sha256(b).hexdigest()
-def sha_file(p): return sha_bytes(Path(p).read_bytes())
-
-
-def _keep_wall(pairs):
-    return {k: v for k, v in pairs if k == 'wall_seconds'}
 
 
 def wall_only(path):
     """Top-level wall_seconds; every other key is dropped during parsing (outcomes are never materialized)."""
-    return float(json.loads(Path(path).read_text(), object_pairs_hook=_keep_wall)['wall_seconds'])
+    v = io.project_json(str(path), ('wall_seconds',)).get('wall_seconds')
+    if not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) or v < 0: raise ContentionError(f'{path}: invalid wall_seconds')
+    return float(v)
 
 
-def listing_sha(paths):
-    """SHA of the sorted 'name sha256' listing of files (block proofs or game files)."""
-    return sha_bytes(''.join(f'{p.name} {sha_file(p)}\n' for p in sorted(paths)).encode())
+def valid_number(v, lo, hi):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and lo <= v <= hi
 
 
 def phase_dirs(job):
-    return sorted(d for d in (Path(job)/'games').glob('*/*/a*') if d.is_dir() and not d.is_symlink())
+    base = f'{job}/games'
+    out = []
+    if not io.lexists(base): return out
+    for sid in io.listdir(base):
+        for arm in (io.listdir(f'{base}/{sid}') if io.is_real_dir(f'{base}/{sid}') else []):
+            p = f'{base}/{sid}/{arm}'
+            if not io.is_real_dir(p): continue
+            out += [f'{p}/{a}' for a in io.listdir(p) if a.startswith('a') and io.is_real_dir(f'{p}/{a}')]
+    return sorted(out)
 
 
 def counted_games(d):
     """(index, game path) for every block proof of a phase; the game file named by the reporting runner."""
-    arm = d.parent.name
-    return [(int(p.stem), d/'games'/f'sim-{int(p.stem):04d}-d27-{arm}.json') for p in sorted((d/'blocks').glob('*.json'))]
+    arm = d.split('/')[-2]
+    b = d+'/blocks'
+    names = sorted(n for n in io.listdir(b) if n.endswith('.json')) if io.lexists(b) else []
+    return [(int(n[:-5]), f'{d}/games/sim-{int(n[:-5]):04d}-d27-{arm}.json') for n in names]
 
 
 def inventory(job, d):
-    """Source identity of one phase (re-verified by reduce.py before reduction)."""
-    games = counted_games(d)
-    return dict(census_sha256=sha_file(d/'census.jsonl'), launch_sha256=sha_file(d/'launch.json'),
-                exit_sha256=sha_file(d/'supervisor-exit.json'), settled_sha256=sha_file(d/'SETTLED.json'),
-                blocks=len(games), blocks_sha256=listing_sha(list((d/'blocks').glob('*.json'))),
-                games_sha256=listing_sha([g for _, g in games]))
+    """Selection-relevant identity of one phase (re-derived by reduce.py before reduction)."""
+    games = []
+    for i, g in counted_games(d):
+        st = io.stat_leaf(g)
+        games.append([i, g.split('/')[-1], io.sha256_file(g), st.st_size, st.st_mtime_ns])
+    blocks = sorted(n for n in io.listdir(d+'/blocks') if n.endswith('.json')) if io.lexists(d+'/blocks') else []
+    return dict(census_sha256=io.sha256_file(d+'/census.jsonl'), launch_sha256=io.sha256_file(d+'/launch.json'),
+                exit_sha256=io.sha256_file(d+'/supervisor-exit.json'), settled_sha256=io.sha256_file(d+'/SETTLED.json'),
+                blocks_sha256=sha_bytes(''.join(f'{n} {io.sha256_file(d+"/blocks/"+n)}\n' for n in blocks).encode()),
+                games=games)
 
 
 def bad_periods(job, d):
-    """Bad census periods of one phase, including uncovered time (Sol F7)."""
-    rel = str(d.relative_to(job))
-    launch = json.loads((d/'launch.json').read_text()); ex = json.loads((d/'supervisor-exit.json').read_text())
+    rel = d[len(job)+1:]
+    launch = io.read_json(d+'/launch.json', 1 << 20); ex = io.read_json(d+'/supervisor-exit.json', 1 << 20)
     t_launch, t_exit = ts(launch['utc']), ts(ex['utc'])
-    rows = [json.loads(line) for line in (d/'census.jsonl').read_text().splitlines() if line.strip()]
     out = []
     def add(start, end, why, **kw): out.append(dict(phase=rel, start=start, end=end, why=why, **kw))
-    if not rows:
+    lines = [l for l in io.read_text(d+'/census.jsonl', 256 << 20).splitlines() if l.strip()]
+    if not lines:
         add(t_launch, t_exit, 'no_census'); return out, 0
     prev = t_launch
-    for k, r in enumerate(rows):
-        t = ts(r['utc'])
-        if t < prev - 1.0: raise ContentionError(f'{rel}: census not in time order at row {k}')
+    for k, line in enumerate(lines):
+        try:
+            r = io.loads_strict(line.encode(), 'census')
+            t = ts(r['utc'])
+        except (io.Refusal, KeyError, ValueError, TypeError):
+            add(prev, prev+MID_GAP, 'invalid_census_row', row=k); continue      # unparseable row: the next gap check covers it
         gap = HEAD_GAP if k == 0 else MID_GAP
+        why = []
+        if t < prev - SLACK or t < t_launch - SLACK or t > t_exit + SLACK: why.append('chronology')
         if t - prev > gap: add(prev, t, 'census_gap', gap_seconds=t-prev)
-        psi, foreign = r.get('psi_some_avg10'), r.get('foreign_cores_host')
-        why = [w for w, bad in (('psi_unreadable', psi is None), ('psi', psi is not None and psi > PSI_LIMIT),
-                                ('foreign_unreadable', foreign is None), ('foreign', foreign is not None and foreign > FOREIGN_LIMIT),
-                                ('reduced_concurrency', r.get('reduced_concurrency') is not False)) if bad]
-        if why: add(prev, t, '+'.join(why), psi=psi, foreign_cores=foreign, reduced_concurrency=r.get('reduced_concurrency'))
+        psi, foreign, red = r.get('psi_some_avg10'), r.get('foreign_cores_host'), r.get('reduced_concurrency')
+        if not valid_number(psi, 0.0, 100.0): why.append('psi_invalid')
+        elif psi > PSI_LIMIT: why.append('psi')
+        if not valid_number(foreign, 0.0, FOREIGN_MAX): why.append('foreign_invalid')
+        elif foreign > FOREIGN_LIMIT: why.append('foreign')
+        if red is not False: why.append('reduced_concurrency')
+        if why: add(min(prev, t), max(prev, t), '+'.join(why), psi=psi if valid_number(psi, -1e18, 1e18) else repr(psi),
+                    foreign_cores=foreign if valid_number(foreign, -1e18, 1e18) else repr(foreign), reduced_concurrency=red)
         prev = max(prev, t)
     if t_exit - prev > TAIL_GAP: add(prev, t_exit, 'census_tail_gap', gap_seconds=t_exit-prev)
-    return out, len(rows)
+    return out, len(lines)
+
+
+def retired_sha(job):
+    p = f'{job}/driver/retired.json'
+    return io.sha256_file(p) if io.lexists(p) else None
 
 
 def build(job):
-    job = Path(job)
+    job = str(job)
     phases = phase_dirs(job)
     if not phases: raise ContentionError('no reporting phases')
     for d in phases:
         for n in ('launch.json', 'supervisor-exit.json', 'SETTLED.json', 'census.jsonl'):
-            if not (d/n).is_file() or (d/n).is_symlink(): raise ContentionError(f'{d.relative_to(job)}: {n} missing (phase unfinished or uncovered)')
+            if not io.lexists(f'{d}/{n}'): raise ContentionError(f'{d[len(job)+1:]}: {n} missing (phase unfinished or uncovered)')
     bad, samples, coverage = [], 0, {}
     for d in phases:
         b, n = bad_periods(job, d); bad += b; samples += n
-        coverage[str(d.relative_to(job))] = dict(census_samples=n, **inventory(job, d))
+        coverage[d[len(job)+1:]] = dict(census_samples=n, **inventory(job, d))
     flagged, games, capped = {}, 0, []
     for d in phases:
-        sid, arm = d.parent.parent.name, d.parent.name
-        launch = json.loads((d/'launch.json').read_text())
+        sid, arm = d.split('/')[-3], d.split('/')[-2]
+        launch = io.read_json(d+'/launch.json', 1 << 20)
         phase_capped = launch['workers'] < 50//launch['lane_width']
-        if phase_capped: capped.append(str(d.relative_to(job)))
+        if phase_capped: capped.append(d[len(job)+1:])
         for i, g in counted_games(d):
-            end = os.stat(g).st_mtime; start = end-wall_only(g); games += 1
+            end = io.stat_leaf(g).st_mtime_ns/1e9; start = end-wall_only(g); games += 1
             if phase_capped or any(start <= p['end'] and p['start'] <= end for p in bad):
                 flagged.setdefault(i, []).append(f'{sid}/{arm}')
     return dict(schema=SCHEMA, label='X4S-4 contention exclusion (pre-declared C5), exploration, NEVER ADOPTABLE',
-                rule=(f'census sample bad if psi_some_avg10 > {PSI_LIMIT} or unreadable, foreign_cores_host > {FOREIGN_LIMIT} or '
-                      f'unreadable, or reduced_concurrency; uncovered time bad (launch->first > {HEAD_GAP}s, gap > {MID_GAP}s, '
-                      f'last->exit > {TAIL_GAP}s, no census); game flagged if its phase launched below full workers or '
+                rule=(f'census sample bad if psi_some_avg10 > {PSI_LIMIT} or invalid, foreign_cores_host > {FOREIGN_LIMIT} or invalid, '
+                      f'reduced_concurrency not false, or out of chronology; uncovered time bad (launch->first > {HEAD_GAP}s, gap > '
+                      f'{MID_GAP}s, last->exit > {TAIL_GAP}s, no census); game flagged if its phase launched below full workers or '
                       '[mtime - wall_seconds, mtime] meets any bad period; union of flagged indices excluded for all students'),
                 capped_phases=capped, phases=sorted(coverage), coverage=coverage, census_samples=samples, bad_periods=bad,
-                games_checked=games, excluded_indices=sorted(flagged),
+                games_checked=games, excluded_indices=sorted(flagged), retired_sha256=retired_sha(job),
                 flagged_by=dict(sorted((str(k), v) for k, v in flagged.items())),
                 fields_read='census utc/psi_some_avg10/foreign_cores_host/reduced_concurrency; launch.json utc/workers/lane_width; '
-                            'supervisor-exit.json utc; game file mtime and top-level wall_seconds only; file SHAs')
+                            'supervisor-exit.json utc; game file st_mtime_ns and top-level wall_seconds only; file SHAs')
 
 
 def write_once(job, body):
-    out = confine.writable(str(Path(job)/RECEIPT), roles=('receipts',), must_not_exist=True)
-    data = (json.dumps(body, indent=2)+'\n').encode()
-    fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o444)
-    with os.fdopen(fd, 'wb') as f:
-        f.write(data); f.flush(); os.fsync(f.fileno())
-    return out, sha_bytes(data)
+    path = f'{job}/{RECEIPT}'
+    digest = io.write_json_once(path, body, roles=('receipts',), mode=0o444)
+    return path, digest
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--job', type=Path, required=True); a = ap.parse_args()
-    if a.job != confine.JOB: raise SystemExit(f'--job must be {confine.JOB}')
+    ap = argparse.ArgumentParser(); ap.add_argument('--job', required=True); a = ap.parse_args()
+    if a.job != io.JOB: raise SystemExit(f'--job must be {io.JOB}')
     try:
         body = build(a.job)
-    except ContentionError as e:
+    except (ContentionError, io.Refusal) as e:
         raise SystemExit(f'contention.py: {e}')
     out, digest = write_once(a.job, body)
-    print(json.dumps(dict(receipt=str(out), excluded=len(body['excluded_indices']), bad_periods=len(body['bad_periods']),
+    print(json.dumps(dict(receipt=out, excluded=len(body['excluded_indices']), bad_periods=len(body['bad_periods']),
                           games=body['games_checked'], phases=len(body['phases']), sha256=digest,
                           next='copy to reports/explore/x4s4/receipts/, commit, then pass --contention-sha and --freeze-commit to reduce.py')))
 

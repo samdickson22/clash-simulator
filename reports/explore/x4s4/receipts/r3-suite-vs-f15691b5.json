@@ -1,0 +1,22 @@
+{
+  "what": "r3 offline suite run against the r2 scripts of f15691b5 (plus r3 x4s4io.py so imports resolve); /dev/shm export, 127x05, no host contact",
+  "cases_recorded": 30,
+  "failed": 14,
+  "failed_cases": [
+    "test_io raised",
+    "test_collect raised",
+    "test_pipeline raised",
+    "test_driver raised",
+    "test_supervise raised",
+    "test_contention raised",
+    "test_reduce raised",
+    "test_qualify raised",
+    "test_diagnose raised",
+    "test_audit raised",
+    "test_studytree raised",
+    "R2-F1: no owned script reads, writes, renames, removes, spawns or group-signals outside x4s4io (only /proc is read directly)",
+    "F17/R2-F10: plan.json describes r3: ABBA order, no futility, host-wide contention, the prefix rule for interruptions",
+    "test_static raised"
+  ],
+  "note": "11 failures are test-group exceptions on incompatible r2 interfaces (each group stops at its first one), so this is weak regression evidence; every Sol r2 probe has its own named fixture in the r3 suite, which passes 81/81"
+}

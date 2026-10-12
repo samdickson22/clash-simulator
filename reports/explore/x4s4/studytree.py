@@ -1,75 +1,162 @@
-"""X4S-4 study-wide process tree and aggregate admission (Sol r1 F9; exploration, NEVER ADOPTABLE). Stdlib only.
+"""X4S-4 study-wide process tree, admission and live guards (Sol r1 F9, r2 R2-F3; exploration, NEVER ADOPTABLE).
+Stdlib only, Python 3.8+. All I/O goes through x4s4io.
 
-The X4S-4 tree is every process group recorded under the job: the driver (driver/driver.pid), fits
-(receipts/fit-*-launch*.json), reporting supervisors (receipts/phase-*-launch.json), every supervisor/child group
-of a games/collect/qual/smoke phase (<phase>/launch.json) and every registered CPU job (receipts/cpujob-*.json,
-written by label.py and collect_w.py at start). Admission for a new unit of work requires <= 70 live processes in
-that tree and <= 100 GB under the job (du, cached 300 s); an unreadable measurement blocks (fail closed).
+The X4S-4 tree is every owned process group recorded under the job as (pgid, leader starttime): the driver
+(driver/driver.pid), fits (receipts/fit-*-launch*.json), reporting supervisors (receipts/phase-*-launch.json), every
+supervisor/child group of a games/collect/qual/smoke phase (<phase>/launch.json) and every registered CPU job
+(receipts/cpujob-*.json: labeler, O_W generator, acceptance smoke, diagnostic). A group number whose leader
+starttime differs is a reused number and owns nothing.
+
+admission(job, add): the tree after adding `add` new processes must hold <= 70, the job <= 100 GB (du, cached
+300 s; unreadable blocks) - the RESERVATION covers the workers a new pool/fit/phase will create.
+monitor(job, own=None, pss_limit): the frozen live stop rules for a running owned task - STOP (lexists), the study
+hard stop, MemAvailable < 24 GiB (unreadable = breach), memory PSI unreadable/non-finite, the owned task's PSS
+> 50 GiB (any unreadable process = breach), tree > 70 processes, disk > 100 GB or unreadable. Returns a reason or None.
 """
-import json, os, subprocess, time
-from pathlib import Path
+import datetime, math, os, time
 
-import confine
+import x4s4io as io
 
 MAX_PROCESSES, MAX_DISK_BYTES, DISK_CACHE_SECONDS = 70, 100*10**9, 300
+MEM_FLOOR, PSS_LIMIT = 24*2**30, 50*2**30
 _disk = dict(t=0.0, bytes=None)
 
 
-def _pgid(path, key):
-    try: return int(json.loads(Path(path).read_text())[key])
-    except (OSError, ValueError, KeyError, TypeError): return None
+def _rec(path, pid_key='pgid', start_key='starttime'):
+    try: r = io.read_json(path, 1 << 20)
+    except io.Refusal: return None
+    g, s = r.get(pid_key), r.get(start_key)
+    return (g, s) if isinstance(g, int) and isinstance(s, int) else None
 
 
-def groups(job):
-    job = Path(job); out = {os.getpgrp()}
-    recs = [(job/'driver'/'driver.pid', 'pgid'), *[(p, 'pgid') for p in sorted((job/'receipts').glob('fit-*-launch*.json'))],
-            *[(p, 'pgid') for p in sorted((job/'receipts').glob('phase-*-launch.json'))],
-            *[(p, 'pgid') for p in sorted((job/'receipts').glob('cpujob-*.json'))]]
+def _glob(directory, prefix, suffix='.json'):
+    try: names = io.listdir(directory)
+    except io.Refusal: return []
+    return [directory+'/'+n for n in names if n.startswith(prefix) and n.endswith(suffix)]
+
+
+def _phase_launches(job):
+    out = []
     for role in ('games', 'collect', 'qual', 'smoke'):
-        for p in sorted((job/role).glob('**/launch.json')):
-            recs += [(p, 'child_pgid'), (p, 'supervisor_pgid')]
-    for p, key in recs:
-        g = _pgid(p, key)
-        if g is not None: out.add(g)
+        base = job+'/'+role
+        if not io.is_real_dir(base): continue
+        for dirpath, dirnames, filenames in os.walk(base, followlinks=False):
+            dirnames[:] = [d for d in dirnames if not os.path.islink(os.path.join(dirpath, d))]
+            if 'launch.json' in filenames: out.append(os.path.join(dirpath, 'launch.json'))
+    return sorted(out)
+
+
+def groups(job=None):
+    """{(pgid, leader starttime)} of every recorded owned group (own group included)."""
+    job = job or io.JOB
+    me = io.own_identity(); lead = io.proc_stat(me['pgid'])
+    out = {(me['pgid'], lead['starttime'] if lead else me['starttime'])}
+    recs = [job+'/driver/driver.pid'] + _glob(job+'/receipts', 'fit-') + _glob(job+'/receipts', 'phase-') \
+        + _glob(job+'/receipts', 'cpujob-')
+    for p in recs:
+        g = _rec(p)
+        if g: out.add(g)
+    for p in _phase_launches(job):
+        for k in ('child', 'supervisor'):
+            g = _rec(p, k+'_pgid', k+'_starttime')
+            if g: out.add(g)
     return out
 
 
-def processes(pgids):
-    pids = []
-    for d in Path('/proc').iterdir():
-        if not d.name.isdigit(): continue
+def processes(grps):
+    pids = set()
+    for pgid, start in grps: pids.update(io.owned_pids(pgid, start))
+    return sorted(pids)
+
+
+def pss_bytes(pids):
+    """Total PSS, or None if any process's smaps_rollup is unreadable for a reason other than its exit."""
+    total = 0
+    for pid in pids:
         try:
-            if int((d/'stat').read_text().rsplit(')', 1)[1].split()[2]) in pgids: pids.append(int(d.name))
-        except (FileNotFoundError, ProcessLookupError, IndexError, ValueError): pass
-    return pids
+            with open('/proc/%d/smaps_rollup' % pid) as f:
+                total += sum(int(l.split()[1])*1024 for l in f if l.startswith('Pss:'))
+        except (FileNotFoundError, ProcessLookupError):
+            continue                                          # exited between enumeration and read
+        except (PermissionError, OSError, ValueError, IndexError):
+            return None
+    return total
 
 
-def disk_bytes(job):
+def mem_available():
+    try:
+        with open('/proc/meminfo') as f:
+            v = next(int(x.split()[1])*1024 for x in f if x.startswith('MemAvailable:'))
+        return v if v >= 0 else None
+    except Exception:
+        return None
+
+
+def psi_some_avg10():
+    """Memory PSI some avg10, or None if unreadable or not a finite number in [0, 100]."""
+    try:
+        with open('/proc/pressure/memory') as f: v = float(f.read().split()[1].split('=')[1])
+    except Exception:
+        return None
+    return v if math.isfinite(v) and 0.0 <= v <= 100.0 else None
+
+
+def disk_bytes(job=None):
+    job = job or io.JOB
     if _disk['bytes'] is None or time.time()-_disk['t'] > DISK_CACHE_SECONDS:
         try:
-            r = subprocess.run(['du', '-sb', str(job)], capture_output=True, text=True, timeout=600)
-            _disk['bytes'] = int(r.stdout.split()[0]) if r.returncode == 0 else None
-        except Exception: _disk['bytes'] = None
+            r = io.run_checked(['/usr/bin/du', '-sb', '--', job], 900, 4096, env={'LC_ALL': 'C'})
+            v = int(r.stdout.split()[0]); _disk['bytes'] = v if v >= 0 else None
+        except (io.Refusal, ValueError, IndexError):
+            _disk['bytes'] = None
         _disk['t'] = time.time()
     return _disk['bytes']
 
 
-def admission(job, disk=True):
-    """(ok, reason): <= 70 processes in the X4S-4 tree and (if disk) <= 100 GB under the job; unreadable blocks."""
+def hard_stop_at(job=None):
+    job = job or io.JOB
+    text = io.read_text(job+'/HARD-STOP-UTC.txt', 64).strip()
+    return datetime.datetime.strptime(text, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc)
+
+
+def hard_stop_passed(job=None):
+    try: return datetime.datetime.now(datetime.timezone.utc) >= hard_stop_at(job)
+    except (io.Refusal, ValueError): return True              # unreadable deadline = stopped (fail closed)
+
+
+def admission(job=None, add=0, disk=True):
+    """(ok, reason): tree + add <= 70 processes and (if disk) <= 100 GB under the job; unreadable blocks."""
+    job = job or io.JOB
     try: n = len(processes(groups(job)))
     except OSError: return False, 'process scan failed'
-    if n > MAX_PROCESSES: return False, f'{n} X4S-4 processes > {MAX_PROCESSES}'
+    if n+add > MAX_PROCESSES: return False, '%d X4S-4 processes + %d new > %d' % (n, add, MAX_PROCESSES)
     if disk:
         b = disk_bytes(job)
         if b is None: return False, 'disk usage unreadable'
-        if b > MAX_DISK_BYTES: return False, f'{b} bytes under the job > {MAX_DISK_BYTES}'
+        if b > MAX_DISK_BYTES: return False, '%d bytes under the job > %d' % (b, MAX_DISK_BYTES)
     return True, None
 
 
+def monitor(job=None, own=None, pss_limit=PSS_LIMIT, disk=True, check_psi=True):
+    """The frozen live stop rules for a running owned task (own = (pgid, starttime) of that task's group)."""
+    job = job or io.JOB
+    if io.lexists(job+'/STOP'): return 'owned_STOP'
+    if hard_stop_passed(job): return 'hard_stop_time'
+    mem = mem_available()
+    if mem is None or mem < MEM_FLOOR: return 'memory_guard'
+    if check_psi and psi_some_avg10() is None: return 'psi_unreadable'
+    if own is not None:
+        p = pss_bytes(io.owned_pids(*own))
+        if p is None or p > pss_limit: return 'pss_guard'
+    ok, why = admission(job, 0, disk)
+    if not ok: return 'study_tree_cap: '+why
+    return None
+
+
 def register(job, name):
-    """Record this CPU job's process group so the driver, supervisors and admission count it."""
-    p = confine.writable(str(Path(job)/'receipts'/f'cpujob-{name}-{os.getpid()}.json'), roles=('receipts',), must_not_exist=True)
-    fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
-    with os.fdopen(fd, 'w') as f:
-        f.write(json.dumps(dict(name=name, pid=os.getpid(), pgid=os.getpgrp(), utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())))+'\n')
-    return p
+    """Record this CPU job's process group (with leader starttime) so the driver, supervisors and admission count it."""
+    me = io.own_identity(); lead = io.proc_stat(me['pgid'])
+    path = '%s/receipts/cpujob-%s-%d.json' % (job, name, me['pid'])
+    io.write_json_once(path, dict(name=name, pid=me['pid'], pgid=me['pgid'], starttime=lead['starttime'] if lead else me['starttime'],
+                                  utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())), roles=('receipts',), mode=0o644)
+    return path

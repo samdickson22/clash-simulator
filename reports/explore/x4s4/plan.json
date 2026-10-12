@@ -151,7 +151,7 @@
   },
   "ordering": {
     "blocks": "one game per block: each phase runs one arm for one student over all 1,200 indices in increasing order; K4S-120 phases use 5-core slots, S-200 phases 1-core lanes",
-    "interrupted": "a game of an interrupted block is excluded; its seed is retired for every later phase and never re-run; reduction uses only seeds terminal in every reduced (student, arm)"
+    "interrupted": "a game of an interrupted block is excluded; its seed is retired for every later phase and never re-run. Fixed N = every non-retired index terminal in both arms for every reduced student; at a hard-stop cut (E8) the primary uses the largest seed-index prefix complete in both arms for the four primary students, and R5W secondaries use R5W's own prefix, which never cuts the primary"
   },
   "readout": {
     "primary": "Delta = mean(R5, R5-rep) minus mean(R3a, R3a-rep), paired by seed, pooled over K4S-120 and S-200 with equal arm weight; each arm also separately",

@@ -1,12 +1,14 @@
 """X4S-4 reducer (exploration, NEVER ADOPTABLE; PLAN r3, frozen at 87809ae0), derived from the X4S-3 reducer; stdlib only.
-r2 after Sol script review r1 (F4, F10, F11, F14): every check is an explicit raise (no assert; identical under -O/-OO).
+r3 after Sol script review r2 (R2-F1, R2-F4): every read and write goes through x4s4io; every check is an explicit raise.
 
-C5 freeze gate (Sol F4), BEFORE any game is opened: <job>/receipts/contention-exclusion.json must be a regular,
-single-link, non-writable file whose SHA-256 equals --contention-sha; the same bytes must be committed at
---freeze-commit (reports/explore/x4s4/receipts/contention-exclusion.json) and that commit must be an ancestor of
-origin/main in --repo; the schema must be x4s4.contention.v2; the reporting phases on disk must equal the receipt's
-phases and every phase's source inventory (census/launch/exit/SETTLED and block/game listings) must re-verify. This
-gate applies to every reduction, including --allow-prefix. Output is confined to <job>/analysis/ (Sol F10).
+C5 freeze gate (Sol F4, R2-F4), before any OUTCOME field is used (the gate hashes approved files and reads mtimes only):
+<job>/receipts/contention-exclusion.json must be a regular, single-link, non-writable file whose SHA-256 equals
+--contention-sha; the identical bytes must be the blob at reports/explore/x4s4/receipts/contention-exclusion.json of
+--freeze-commit, obtained by the self-verifying commit -> tree -> blob walk (no replace objects, no grafts, scrubbed
+environment), and that commit must be reachable from origin/main; schema x4s4.contention.v3; the reporting phases on
+disk must equal the receipt's, every phase's inventory (census/launch/exit/SETTLED/block listing and every counted
+game's SHA-256, size and exact st_mtime_ns) must re-derive identically, and driver/retired.json must have the frozen
+SHA. This gate applies to every reduction, including --allow-prefix. Output is confined to <job>/analysis/.
 
 Counts a game only via its block proof (SHA-matched); requires bank E (game metadata `study` reads X4S-3 because the
 unchanged x4s3/run.py is reused) and all four primary students. Fixed N: every non-retired index terminal in both arms for every reduced student, unless
@@ -20,12 +22,12 @@ the C5 contention-excluded view (an explicit no-estimate entry when every paired
 averaged contrast also separately by arm (Sol F14); prefix seed counts for the primary and for R5W; the E10 parity
 table (disclosed, no exclusion).
 """
-import argparse, hashlib, json, math, os, random, re, stat, subprocess, sys
+import argparse, hashlib, json, math, os, random, re, stat, sys, time
 from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import confine, contention                       # noqa: E402
+import x4s4io as io, contention                  # noqa: E402
 
 ARMS = ('K4S-120', 'S-200')
 ORDER = ('R3a', 'R3a-rep', 'R5', 'R5-rep', 'R5W')
@@ -33,69 +35,76 @@ PAIRS = (('R5', 'R3a'), ('R5-rep', 'R3a'), ('R5', 'R3a-rep'), ('R3a-rep', 'R3a')
 E_BASE, E_COUNT = 4503606307370496, 1200
 
 
-def utc(): return subprocess.check_output(['date', '-u', '+%FT%TZ'], text=True).strip()
+def utc(): return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
 def pct(xs, q):
     xs = sorted(xs)
     if not xs: return 0.
     k = (len(xs)-1)*q/100; f = math.floor(k); c = min(f+1, len(xs)-1)
     return xs[f]+(xs[c]-xs[f])*(k-f)
 def ci(xs): return [pct(xs, 2.5), pct(xs, 97.5)]
-def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def sha(p): return io.sha256_file(str(p))
 FREEZE_PATH = 'reports/explore/x4s4/receipts/contention-exclusion.json'
 
 
 def verify_freeze(job, contention_sha, commit, repo):
-    """Sol F4: authenticate the frozen C5 receipt, its commit and its source inventory before any game read."""
-    ex = Path(job)/contention.RECEIPT
-    try: st = os.lstat(ex)
-    except FileNotFoundError: raise SystemExit('C5 contention receipt must be frozen before any reduction (E1)')
+    """R2-F4: authenticate the frozen C5 receipt, its commit and every selection-relevant input before reduction."""
+    job = str(job); ex = f'{job}/{contention.RECEIPT}'
+    st = io.lstat(ex)
+    if st is None: raise SystemExit('C5 contention receipt must be frozen before any reduction (E1)')
     if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_mode & 0o222:
         raise SystemExit('C5 receipt must be a regular, single-link, non-writable file')
-    data = ex.read_bytes()
+    try: data = io.read_bytes(ex, 256 << 20)
+    except io.Refusal as e: raise SystemExit(f'C5 receipt unreadable: {e}')
     if not re.fullmatch(r'[0-9a-f]{64}', contention_sha or '') or hashlib.sha256(data).hexdigest() != contention_sha:
         raise SystemExit('C5 receipt SHA differs from --contention-sha')
     if not re.fullmatch(r'[0-9a-f]{40}', commit or ''): raise SystemExit('--freeze-commit must be a full commit SHA')
-    show = subprocess.run(['git', '-C', str(repo), 'cat-file', 'blob', f'{commit}:{FREEZE_PATH}'], capture_output=True)
-    if show.returncode or hashlib.sha256(show.stdout).hexdigest() != contention_sha:
+    try:
+        committed = io.git_committed_blob(str(repo), commit, FREEZE_PATH)
+        on_main = io.git_is_ancestor(str(repo), commit)
+    except io.Refusal as e:
+        raise SystemExit(f'C5 freeze commit cannot be authenticated: {e}')
+    if hashlib.sha256(committed).hexdigest() != contention_sha:
         raise SystemExit(f'C5 receipt is not committed with this SHA at {commit}:{FREEZE_PATH}')
-    if subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', commit, 'origin/main']).returncode:
-        raise SystemExit('the C5 freeze commit is not on origin/main')
-    try: body = json.loads(data)
-    except ValueError: raise SystemExit('C5 receipt is not JSON')
+    if not on_main: raise SystemExit('the C5 freeze commit is not on origin/main')
+    try: body = io.loads_strict(data, 'C5 receipt')
+    except io.Refusal: raise SystemExit('C5 receipt is not strict JSON')
     if not isinstance(body, dict) or body.get('schema') != contention.SCHEMA:
         raise SystemExit(f'C5 receipt schema must be {contention.SCHEMA}')
-    for k in ('phases', 'coverage', 'excluded_indices', 'bad_periods', 'games_checked'):
+    for k in ('phases', 'coverage', 'excluded_indices', 'bad_periods', 'games_checked', 'retired_sha256'):
         if k not in body: raise SystemExit(f'C5 receipt lacks {k}')
-    disk = sorted(str(d.relative_to(job)) for d in contention.phase_dirs(job))
+    disk = sorted(d[len(job)+1:] for d in contention.phase_dirs(job))
     if disk != sorted(body['phases']) or sorted(body['coverage']) != disk:
         raise SystemExit('reporting phases on disk differ from the frozen C5 receipt')
     for rel in disk:
-        try: now = contention.inventory(job, Path(job)/rel)
-        except (OSError, ValueError) as e: raise SystemExit(f'C5 inventory of {rel} unreadable: {e!r}')
+        try: now = contention.inventory(job, f'{job}/{rel}')
+        except io.Refusal as e: raise SystemExit(f'C5 inventory of {rel} unreadable: {e}')
         then = {k: v for k, v in body['coverage'][rel].items() if k != 'census_samples'}
-        if now != then: raise SystemExit(f'C5 source inventory of {rel} changed since the freeze')
+        if now != then: raise SystemExit(f'C5 source inventory of {rel} (content or mtime) changed since the freeze')
+    if contention.retired_sha(job) != body['retired_sha256']:
+        raise SystemExit('driver/retired.json changed since the C5 freeze')
     if not all(isinstance(i, int) and 0 <= i < E_COUNT for i in body['excluded_indices']):
         raise SystemExit('C5 excluded indices outside bank E')
     return body, contention_sha
 
 
 def load_student(job, sid, plan, retired, checks):
-    rt = json.loads((job/f'rt-{sid}'/'READY.json').read_text())['student'] if sid != 'R3a' else plan['student']
+    job = str(job)
+    rt = io.read_json(f'{job}/rt-{sid}/READY.json', 4 << 20)['student'] if sid != 'R3a' else plan['student']
     base = plan['seed_ranges']['reporting']['base']; rows = {}
     for arm in ARMS:
         sp = plan['arms'][arm]; width = 1 if sp['threads'] == 1 else 5
         rows[arm] = {}
-        for d in sorted((job/'games'/sid/arm).glob('a*')):
-            if not d.is_dir(): continue
-            sched = json.loads((d/'schedule.json').read_text())
+        for d in sorted(x for x in contention.phase_dirs(job) if x.split('/')[-3:-1] == [sid, arm]):
+            sched = io.read_json(d+'/schedule.json', 64 << 20)
             if not (sched['range'] == 'reporting' and all(c[2] == arm for c in sched['cases'])): raise SystemExit(d)
-            for proof_path in sorted((d/'blocks').glob('*.json')):
-                proof = json.loads(proof_path.read_text()); i = proof['index']
+            for bi, _ in contention.counted_games(d):
+                proof = io.read_json(f'{d}/blocks/{bi:04d}.json', 1 << 20); i = proof['index']
                 if not (i not in rows[arm]): raise SystemExit(('duplicate', sid, arm, i))
                 if not (proof['seed'] == base+i and proof['order'] == [arm] and len(proof['slot_cores']) == width): raise SystemExit("reduce.py: check failed: proof['seed'] == base+i and proof['order'] == [arm] and len(proof['slot_cores']) == width")
-                p = d/'games'/f'sim-{i:04d}-d27-{arm}.json'
-                if not (sha(p) == proof['games'][p.name]): raise SystemExit("reduce.py: check failed: sha(p) == proof['games'][p.name]")
-                r = json.loads(p.read_text()); m = r['metadata']; s = r['search_ab']
+                p = f'{d}/games/sim-{i:04d}-d27-{arm}.json'
+                raw = io.read_bytes(p, 256 << 20)
+                if not (hashlib.sha256(raw).hexdigest() == proof['games'][p.split('/')[-1]]): raise SystemExit("reduce.py: check failed: sha(p) == proof['games'][name]")
+                r = io.loads_strict(raw, p); m = r['metadata']; s = r['search_ab']
                 if not (m['seed'] == base+i and m['arm'] == arm == r['cohort'] and m['terminal'] and m['opponent'] == 'v1-policy'): raise SystemExit("reduce.py: check failed: m['seed'] == base+i and m['arm'] == arm == r['cohort'] and m['terminal'] and m['opponent'] == '")
                 if not (m['student_id'] == sid and m['checkpoint_sha256'] == rt['checkpoint_sha256'] and m['study'].startswith('X4S-3')): raise SystemExit("reduce.py: check failed: m['student_id'] == sid and m['checkpoint_sha256'] == rt['checkpoint_sha256'] and m['study'].sta")
                 if not (m['threads'] == sp['threads'] and m['coarse_horizon'] == 160 and m['budget_ms'] == round(sp['deadline_seconds']*1000)): raise SystemExit("reduce.py: check failed: m['threads'] == sp['threads'] and m['coarse_horizon'] == 160 and m['budget_ms'] == round(sp['de")
@@ -208,19 +217,20 @@ def readout(res, contrasts, data):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--job', type=Path, required=True)
+    ap.add_argument('--job', required=True)
     ap.add_argument('--students', nargs='+', required=True)
-    ap.add_argument('--out', type=Path, required=True, help='confined below <job>/analysis/')
+    ap.add_argument('--out', required=True, help='confined below <job>/analysis/')
     ap.add_argument('--contention-sha', required=True, help='SHA-256 of the frozen C5 receipt')
     ap.add_argument('--freeze-commit', required=True, help='commit on origin/main that contains the C5 receipt')
-    ap.add_argument('--repo', type=Path, default=Path('/mpac/sdicks02/repos/clasher'))
+    ap.add_argument('--repo', default=io.REPO)
     ap.add_argument('--allow-prefix', action='store_true', help='E8 hard-stop cut: largest seed-index prefix (disclosed)')
     a = ap.parse_args()
-    if a.job != confine.JOB: raise SystemExit(f'--job must be {confine.JOB}')
-    out_path = confine.writable(str(a.out), roles=('analysis',))
-    plan = json.loads((a.job/'base/repo/reports/explore/x4s3/plan.json').read_text()) if (a.job/'base').exists() else \
-        json.loads((Path(__file__).parent/'plan.json').read_text())
-    retired_doc = json.loads((a.job/'driver'/'retired.json').read_text()) if (a.job/'driver'/'retired.json').exists() else dict(indices=[], why=[])
+    if a.job != io.JOB: raise SystemExit(f'--job must be {io.JOB}')
+    out_path = io.check_writable(a.out, roles=('analysis',))
+    base_plan = a.job+'/base/repo/reports/explore/x4s3/plan.json'
+    plan = io.read_json(base_plan if io.lexists(a.job+'/base') else str(Path(__file__).parent/'plan.json'), 16 << 20)
+    rp = a.job+'/driver/retired.json'
+    retired_doc = io.read_json(rp, 16 << 20) if io.lexists(rp) else dict(indices=[], why=[])
     retired = set(retired_doc['indices'])
     if not (plan['seed_ranges']['reporting'] == dict(base=E_BASE, count=E_COUNT)): raise SystemExit('evaluation bank E expected')
     if not (set(PRIMARY) <= set(a.students)): raise SystemExit('all four primary students are always reduced (E1)')
@@ -286,8 +296,7 @@ def main():
                            gap_gt_2pp_disclosed=(max(cut)-min(cut) > 2) or (max(sd)-min(sd) > 2),
                            note='E10: disclosed next to the C5 sensitivity; triggers no exclusion; wall p99 descriptive')
     ro['timing_parity'] = parity
-    tmp = confine.writable(str(out_path)+'.tmp', roles=('analysis',))
-    tmp.write_text(json.dumps(out, indent=2)+'\n'); tmp.replace(out_path)
+    io.replace_json(out_path, out, roles=('analysis',))
     print(json.dumps({k: out[k] for k in ('utc', 'paired_seeds', 'students', 'checks', 'truncation')}))
 
 

@@ -1,9 +1,13 @@
 """Render X4S-4 RESULTS.md (exploration, NEVER ADOPTABLE; PLAN r3 frozen at 87809ae0). Stdlib only.
-r2 after Sol script review r1 (F10, F14).
+r3 after Sol script review r2 (R2-F1, R2-F9). Every read and write goes through x4s4io.
 
-Inputs (read-only, SHA-recorded in the report): results.json from reduce.py (<job>/analysis/), the frozen label plan
-(O composition, dedup, 600-tick feature-only duplicates), the O and O_W gates (|O|, O_W single-candidate root share)
-and, if present, the O-holdout diagnostic. The output is confined to <repo>/reports/explore/x4s4/RESULTS.md.
+Inputs are FIXED job paths, not caller choices, and their identities must chain (R2-F9): <job>/analysis/results.json
+(reduce.py; its contention view names the frozen receipt SHA and commit), <job>/data/label-plan.json (the O gate must
+carry this plan's SHA, and the plan's kept O count must cover the gate's rows within the 0.1% drop limit),
+<job>/data/O-VERIFIED.json, <job>/data/OW-VERIFIED.json (must carry the O gate's SHA) and, if present,
+<job>/analysis/diagnostic.json (must carry the HOLDOUT-VERIFIED SHA and all five students). A missing diagnostic is
+rendered as an explicit "unavailable" entry per student (it stays descriptive; it never changes the outcome rule).
+The output is confined to <repo>/reports/explore/x4s4/RESULTS.md.
 Always rendered (Sol F14): the primary pooled and separately by arm; prefix seed counts for the primary and for R5W;
 the contention view (an explicit no-estimate line when it is empty); the composition table; the fixed control-data
 disclosures; and the decision-table row selected by the primary outcome, with its harmful/attribution follow-up.
@@ -12,7 +16,9 @@ import argparse, hashlib, json, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import confine                                   # noqa: E402
+import x4s4io as io                              # noqa: E402
+
+STUDENTS = ('R3a', 'R3a-rep', 'R5', 'R5-rep', 'R5W')
 
 ARMS = ('K4S-120', 'S-200')
 FIXED_DISCLOSURES = [
@@ -33,7 +39,7 @@ FIXED_DISCLOSURES = [
 def f(x, d=1): return f'{x:+.{d}f}' if x is not None else 'n/a'
 def ci(c): return f'[{c[0]:+.1f}, {c[1]:+.1f}]'
 def pc(c): return f'[{c[0]:.1f}, {c[1]:.1f}]'
-def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def sha(p): return io.sha256_file(str(p))
 
 
 def next_step(p, sw):
@@ -132,36 +138,56 @@ def render(r, plan, o_gate, ow_gate, diag, inputs, notes):
         L.append(f"| {b} | {v['states']} | {v['feature_duplicates']} | {100*v['rate']:.1f}% |")
     L += ['', f"|O| (scored roots) = {o_gate['rows']}; O_W roots = {ow_gate['roots']} (rows {ow_gate['rows']}); "
               f"O_W single-candidate root share = {100*ow_gate['single_candidate_root_share']:.1f}% (no dedup in O_W, E11)."]
-    if diag:
-        L += ['', '## O-holdout diagnostic (descriptive only; never a gate)', '', '| Student | Slice | Top-1 agreement | Gate accuracy | Listwise CE | Frozen objective |', '|---|---|---:|---:|---:|---:|']
-        for s, slices in diag['students'].items():
-            for sl, m in slices.items():
-                L.append(f"| {s} | {sl} | {m['top1_agreement']:.3f} | {m['gate_accuracy']:.3f} | {m['listwise_ce']:.3f} | {m.get('frozen_objective', float('nan')):.3f} |")
+    L += ['', '## O-holdout diagnostic (descriptive only; never a gate)', '', '| Student | Slice | Top-1 agreement | Gate accuracy | Listwise CE | Frozen objective |', '|---|---|---:|---:|---:|---:|']
+    for s in STUDENTS:
+        slices = (diag or {}).get('students', {}).get(s)
+        if not slices:
+            L.append(f"| {s} | — | unavailable | unavailable | unavailable | unavailable |"); continue
+        for sl, m in slices.items():
+            L.append(f"| {s} | {sl} | {m['top1_agreement']:.3f} | {m['gate_accuracy']:.3f} | {m['listwise_ce']:.3f} | {m['frozen_objective']:.3f} |")
+    if not diag:
+        L.append('**The O-holdout diagnostic is unavailable (not completed before the hard stop); disclosed, descriptive only.**')
     L += ['', '## Disclosures', ''] + [f'- {x}' for x in FIXED_DISCLOSURES + list(notes)]
     L += ['', '## Inputs', ''] + [f'- `{k}` sha256 {v}' for k, v in inputs.items()]
     return '\n'.join(L)+'\n'
 
 
+def authenticate(J):
+    """R2-F9: fixed inputs whose recorded identities chain; returns (docs, input SHAs)."""
+    paths = dict(results=f'{J}/analysis/results.json', label_plan=f'{J}/data/label-plan.json', o_gate=f'{J}/data/O-VERIFIED.json',
+                 ow_gate=f'{J}/data/OW-VERIFIED.json')
+    if io.lexists(f'{J}/analysis/diagnostic.json'):
+        paths.update(diagnostic=f'{J}/analysis/diagnostic.json', holdout_gate=f'{J}/data/HOLDOUT-VERIFIED.json')
+    docs = {k: io.read_json(v, 1 << 30) for k, v in paths.items()}
+    shas = {k: sha(v) for k, v in paths.items()}
+    def need(cond, msg):
+        if not cond: raise SystemExit('write_report.py: input binding failed: '+msg)
+    need(docs['o_gate'].get('label_plan_sha256') == shas['label_plan'], 'O gate was not verified against this label plan')
+    need(docs['ow_gate'].get('o_gate_sha256') == shas['o_gate'], 'O_W gate was not verified against this O gate')
+    kept, rows = docs['label_plan']['stats']['O']['kept'], docs['o_gate']['rows']
+    need(rows <= kept and kept-rows <= 0.001*kept+1, f'label plan kept O ({kept}) does not cover the gate rows ({rows})')
+    r = docs['results']
+    need(set(STUDENTS) <= set(r['students']) or set(STUDENTS[:4]) <= set(r['students']), 'results do not reduce the primary students')
+    cs = r['readout']['contention_sensitivity']
+    need(isinstance(cs.get('exclusion_sha256'), str) and isinstance(cs.get('freeze_commit'), str), 'results lack the C5 freeze identity')
+    if 'diagnostic' in docs:
+        d = docs['diagnostic']
+        need(d.get('holdout_gate_sha256') == shas['holdout_gate'], 'diagnostic was not run on the verified O-holdout')
+        need(sorted(d.get('students', {})) == sorted(STUDENTS), 'diagnostic must cover exactly the five students')
+    return docs, shas
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--results', type=Path, default=confine.JOB/'analysis'/'results.json')
-    ap.add_argument('--label-plan', type=Path, default=confine.JOB/'data'/'label-plan.json')
-    ap.add_argument('--o-gate', type=Path, default=confine.JOB/'data'/'O-VERIFIED.json')
-    ap.add_argument('--ow-gate', type=Path, default=confine.JOB/'data'/'OW-VERIFIED.json')
-    ap.add_argument('--diagnostic', type=Path)
     ap.add_argument('--notes', default='[]', help='JSON list of extra disclosure lines (in addition to the fixed ones)')
-    ap.add_argument('--out', type=Path, default=confine.REPORT_ROOT/'RESULTS.md')
+    ap.add_argument('--out', default=io.REPORT_ROOT+'/RESULTS.md')
     a = ap.parse_args()
-    out = confine.writable(str(a.out), roles=('RESULTS.md',), roots=[confine.REPORT_ROOT])
-    paths = dict(results=a.results, label_plan=a.label_plan, o_gate=a.o_gate, ow_gate=a.ow_gate)
-    if a.diagnostic: paths['diagnostic'] = a.diagnostic
-    docs = {k: json.loads(Path(v).read_text()) for k, v in paths.items()}
+    io.check_writable(a.out, report=True)
+    docs, shas = authenticate(io.JOB)
     notes = json.loads(a.notes)
     if not (isinstance(notes, list) and all(isinstance(x, str) for x in notes)): raise SystemExit('--notes must be a JSON list of strings')
-    text = render(docs['results'], docs['label_plan'], docs['o_gate'], docs['ow_gate'], docs.get('diagnostic'),
-                  {k: sha(v) for k, v in paths.items()}, notes)
-    tmp = confine.writable(str(out)+'.tmp', roles=('RESULTS.md.tmp',), roots=[confine.REPORT_ROOT])
-    tmp.write_text(text); tmp.replace(out)
+    text = render(docs['results'], docs['label_plan'], docs['o_gate'], docs['ow_gate'], docs.get('diagnostic'), shas, notes)
+    io.replace_bytes(a.out, text.encode(), report=True)
 
 
 if __name__ == '__main__':
