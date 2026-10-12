@@ -101,3 +101,31 @@ Hard stop is 2026-10-12T23:30:00Z.
 - **12:59:22Z:** R4-D fit launched on the 14-shard union (seed 2026101201, 2,500 steps); expected done about
   14:30Z.
 - **13:00Z:** R3a K4S-120 at 1,013/1,167, then R3a S-200 (one-core lanes), then R3a-rep.
+- **13:00:55Z, R4-D fit attempt 1:** EMFILE at store load. The union holds about 1,000 mmapped arrays, over the soft
+  nofile limit of 1,024. `run_fit.sh` now sets `ulimit -Sn 65536` (operational only; the hard limit is 1,048,576).
+  The attempt is kept in `attempts/fit-R4-D-attempt1`. R4-D relaunched at 13:10:19Z.
+- **13:09:33Z:** R3a K4S-120 complete: 1,167/1,167, rc 0, 4,376 s wall.
+- **ANOMALY, 13:10–13:34Z: page-cache thrash.** R4-D's 14-shard loaders (working set about 78 GB) ran beside 50
+  S-200 lanes.
+  - Memory PSI avg10 peaked at 91.6% ("full" ≈ "some"). The fit slowed to about 9.8 s/step, and game
+    throughput dropped to about 400/h.
+  - In-timer S-200 metrics stayed flat by 5-min window: cutoff 71–74%, overrun ≤0.3%, p99 193 ms.
+  - 13:34Z: I paused R4-D by SIGTERM. The group signal killed its loaders, so the fit resumes from step 250.
+    The driver now SIGTERMs only the trainer PID. PSI fell to about 0 immediately.
+- **13:41:58Z:** R3a S-200 complete: 1,167/1,167, rc 0. **All of R3a's games are complete.**
+- **13:42:30Z:** R4-D resumed alone from step-00000250.pt, with game dispatch held. PSI stayed ≤ about 18% during
+  the reload, then 0.00, at 1.8 s/step. The train.jsonl rows for steps 251–280 are duplicated by the resume.
+- **13:51:10Z:** dispatch restored; R3a-rep K4S-120 is running beside R4-D. Over 8 min: PSI 0.00, fit 1.8 s/step,
+  games about 1,000/h. So union fits overlap K4S-120 safely, but not S-200.
+- **13:52Z:** pre-declared S-200 thrash-window sensitivity committed (e8a22a2d) before any reduction: window
+  [13:10:02Z, 13:33:05Z], 793 seeds excluded and 374 kept, frozen in receipts/s200-thrash-exclusion.json.
+- **14:00:54Z:** driver r5 (the union-fit vs S-200 exclusion) was restarted.
+  - A union fit never starts while an S-200 phase is live or dispatchable.
+  - While a union fit runs, only K4S-120 phases dispatch.
+  - While a union fit waits, S-200 phases dispatch first.
+  - Expected sequence:
+    - R4-D fit until about 14:55Z, R3a-rep K4S-120 until about 15:05Z;
+    - R3a-rep S-200, then R4-D S-200;
+    - then the R4-DC fit, alongside R4-D K4S-120;
+    - R4-DC games (if gated in) about 19:00–21:00Z;
+    - R4-DC is dropped first if time runs short.

@@ -95,6 +95,8 @@ class Fits:
             if FITS[fid]['needs_data'] and not (J/'data'/'G-UNION-VERIFIED.json').is_file(): continue
             if fid == 'R4-DC' and gate_r4dc() is False:
                 event(kind='skip', what='R4-DC fit', reason='R4-D minus R3a point estimate >= 0'); continue
+            if fid in UNION and (s200_live() or s200_dispatchable()):
+                return  # S-200 phases first; the union fit waits (no overlap)
             self.launch(fid, st); return
     def launch(self, fid, st):
         out = J/'fits'/fid; extra = []
@@ -142,6 +144,39 @@ class Fits:
             else:
                 try: os.killpg(rec['pgid'], signal.SIGKILL)
                 except ProcessLookupError: pass
+
+
+# ---------------- union fit vs S-200 exclusion (PLAN: overlap only while memory PSI stays <= 10%) ----------------
+# Measured 13:10-13:34Z: a 14-shard union fit beside 50 S-200 lanes thrashes the page cache (PSI ~80%);
+# beside a 10-slot K4S-120 phase it does not (PSI 0.00). So union fits and S-200 phases never overlap.
+UNION = ('R4-D', 'R4-DC')
+
+
+def union_fit_running():
+    return any(fit_state(f)[0] == 'running' for f in UNION)
+
+
+def s200_live():
+    r = live_supervisor()
+    return bool(r and '/S-200/' in r['phase'])
+
+
+def s200_dispatchable():
+    retired, _ = retired_set()
+    for sid in ready_students():
+        if sid == 'R4-DC' and gate_r4dc() is not True: continue
+        done = phase_status(sid, 'S-200', retired)
+        if any(i not in done and i not in retired for i in range(N)): return True
+    return False
+
+
+def union_fit_waiting():
+    for fid in UNION:
+        st, _ = fit_state(fid)
+        if st in ('pending', 'stopped') and (J/'data'/'G-UNION-VERIFIED.json').is_file() \
+                and not (D/f'ANOMALY-fit-{fid}.json').exists() and not (fid == 'R4-DC' and gate_r4dc() is False):
+            return True
+    return False
 
 
 # ---------------- calibration / runtimes ----------------
@@ -263,13 +298,17 @@ def gate_r4dc():
 
 def next_phase():
     retired, _ = retired_set()
-    for sid in ready_students():
-        if sid == 'R4-DC' and gate_r4dc() is not True: continue
-        for arm in ARMS:
-            if (D/f'ANOMALY-phase-{sid}-{arm}.json').exists(): return None
-            done = phase_status(sid, arm, retired)
-            todo = [i for i in range(N) if i not in done and i not in retired]
-            if todo: return sid, arm, todo
+    order = [(sid, arm) for sid in ready_students() for arm in ARMS
+             if not (sid == 'R4-DC' and gate_r4dc() is not True)]
+    if union_fit_running():
+        order = [x for x in order if x[1] == 'K4S-120']   # never overlap a union fit with S-200
+    elif union_fit_waiting():
+        order = [x for x in order if x[1] == 'S-200'] + [x for x in order if x[1] == 'K4S-120']  # clear S-200 first
+    for sid, arm in order:
+        if (D/f'ANOMALY-phase-{sid}-{arm}.json').exists(): return None
+        done = phase_status(sid, arm, retired)
+        todo = [i for i in range(N) if i not in done and i not in retired]
+        if todo: return sid, arm, todo
     return None
 
 
