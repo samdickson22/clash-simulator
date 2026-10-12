@@ -1,0 +1,20 @@
+{
+  "attempt_registered": false,
+  "bash_syntax_pass": true,
+  "frozen_sources_and_budgets_unchanged": true,
+  "local_full_seal_hash_verification_required": true,
+  "measurement_retry": false,
+  "no_owned_copier_registration": true,
+  "no_ssh_during_timing": true,
+  "outcomes_sealed": true,
+  "post_exit_checksum_transfer": true,
+  "r1_copier_withdrawn_unlaunched": true,
+  "r1_verdict": "REQUEST_CHANGES",
+  "r2_candidate_source": "reports/explore/t1/end_exit_push.sh",
+  "r2_diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-exit-push-candidate-r2.diff",
+  "r2_diff_sha256": "701a1478048c86688d86a00491c5a00cfd368ad08db96b224bcecaba1de94615",
+  "r2_review_status": "REQUIRES coordinator-routed independent Opus5.5 review before ANY timing",
+  "r2_sha256": "8886028110814eaa1fe9b7662b4a1fbb4d88184198212c19859f7014f3db3b4f",
+  "timing_started": false,
+  "utc": "2026-10-12T00:40:49Z"
+}
