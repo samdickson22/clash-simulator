@@ -188,3 +188,33 @@ def test_main_inconsistent_failed_ids_is_unknown(tmp_path,capsys):
 
 def test_invalid_phase_refused_without_assert(capsys):
  ok(C.main(['checkpoint.py','bad;phase'])==2)
+
+# ---- Sol checkpoint review r2: the k alert survives unknown host data --------------------------------------------
+def ledger_k(kp,kg):
+ return dict(events=synth('primary',3,kmax=kp,cell=10)+synth('guard',3,kmax=kg,cell=3))
+
+def has_k(anoms):return any(a.startswith('replacement k at limit-2') for a in anoms)
+def has_cum_unknown(anoms):return any('cumulative UNKNOWN' in a for a in anoms)
+
+@pytest.mark.parametrize('kp,kg,alert',[(8,6,True),(8,0,True),(0,6,True),(9,7,True),(7,5,False)])
+def test_gate_k_alert_with_unknown_host_failures(tmp_path,kp,kg,alert):
+ p=write(tmp_path,ledger_k(kp,kg))
+ rec,anom,part=C.ledger_gate(p,None)
+ ok(rec['status']=='UNKNOWN' and rec['ledger_max_k']=={'primary':kp,'guard':kg},rec)
+ ok(has_cum_unknown(anom),anom);ok(has_k(anom)==alert,(kp,kg,anom))
+
+def failing_run(cmd,**kw):
+ raise subprocess.TimeoutExpired(cmd,60)
+
+def rc255_run(cmd,**kw):
+ return subprocess.CompletedProcess(cmd,255,'','ssh: connect to host: Connection refused')
+
+@pytest.mark.parametrize('runner',['mismatch','timeout','ssh_rc_255'])
+def test_main_k_alert_and_cumulative_unknown_both_reported(tmp_path,capsys,runner):
+ run={'mismatch':fake_run(failed='primary-0001',lostpop='0 0'),'timeout':failing_run,'ssh_rc_255':rc255_run}[runner]
+ rc,line,rec=runmain(tmp_path,json.dumps(ledger_k(8,6)),run,capsys)
+ ok(rc==2,rc)
+ for anoms in (line['anomalies'],rec['anomalies']):
+  ok(has_k(anoms) and has_cum_unknown(anoms),(runner,anoms))
+ ok(line['anomalies']==rec['anomalies'])
+ ok(rec['cumulative_lost']['status']=='UNKNOWN' and rec['cumulative_lost']['ledger_max_k']=={'primary':8,'guard':6},rec['cumulative_lost'])

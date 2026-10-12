@@ -1,0 +1,27 @@
+--- a/candidate-r2/checkpoint.py@bb5d7685
++++ b/candidate-r2/checkpoint.py
+@@ -8,6 +8,7 @@
+ Sol checkpoint review r1 fixes (SOL-REVIEW-CHECKPOINT-r1): k alert at zero-based k >= 8/6 (R1); the ledger is read
+ unconditionally, validated and aggregated inside the anomaly boundary, failing closed to an UNKNOWN anomaly + receipt +
+ exit 2 (R2); cumulative losses count the per-population union of ledger lost IDs and current-phase failed IDs (R3).
++Sol checkpoint review r2 fix: the k alert is evaluated as soon as the ledger validates, so it survives unknown host data.
+ Every check is explicit (no assert), so it also holds under python -O."""
+ import datetime,hashlib,json,re,shlex,subprocess,sys
+ from pathlib import Path
+@@ -110,6 +111,8 @@
+   anom.append(f'ledger UNKNOWN: {type(e).__name__}: {e}')
+   rec=dict(status='UNKNOWN',primary=None,guard=None,ledger_events=None,ledger_max_k=None,overlap=None)
+   return rec,anom,'cumulative UNKNOWN (ledger); ledger max k UNKNOWN'
++ # The k alert depends only on the validated ledger: evaluate it before any host-dependent early return (Sol r2).
++ if kmax['primary']>=8 or kmax['guard']>=6:anom.append(f'replacement k at limit-2: {kmax}')
+  if current_failed is None:
+   anom.append('cumulative UNKNOWN: current-phase failed IDs unavailable for a host')
+   rec=dict(status='UNKNOWN',primary=None,guard=None,ledger_events=len(doc['events']),ledger_max_k=kmax,overlap=None)
+@@ -118,7 +121,6 @@
+  cum={p:len(lost[p]|current_failed[p]) for p in CELLS}
+  cp,cg=cum['primary'],cum['guard']
+  if cp>=CUM_ALERT['primary'] or cg>=CUM_ALERT['guard']:anom.append(f'cumulative lost at 50% of a replacement cap: primary {cp}/300, guard {cg}/90')
+- if kmax['primary']>=8 or kmax['guard']>=6:anom.append(f'replacement k at limit-2: {kmax}')
+  rec=dict(status='OK',primary=cp,guard=cg,ledger_events=len(doc['events']),ledger_max_k=kmax,
+           overlap={p:len(v) for p,v in overlap.items()},overlap_ids=overlap)
+  part=f'cumulative primary {cp}/300 guard {cg}/90 (union; already in ledger {len(overlap["primary"])}/{len(overlap["guard"])}); ledger max k {kmax}'
