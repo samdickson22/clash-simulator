@@ -9,6 +9,20 @@
     "pid": 1893012,
     "start_ticks": 156374136
   },
+  "RF1_review_arrival_gap": {
+    "accepted_by_coordinator": "13d98e0f",
+    "coordinator_instruction": "Leave01runninguntouched/C5throughitsCd; fullC5preexecgateappliesfrom08r2onward.",
+    "explicit_exact_shell_byte_command_comparison_not_recorded": true,
+    "later_fail_closed_enforcement": {
+      "SCHED_OTHER_and_nice": "Frozen E4 pinned_profile refuses before fleet-identity if incorrect; refusal handled by mechanical RF1 C1/C2.",
+      "measurement_argv": "Approved753 verifier V3 byte-compares argv.nul against this receipt measurement_argv before any ACK."
+    },
+    "no_retroactive_probe_or_fabricated_proof": true,
+    "parent_nice_zero_checked_before_exec": true,
+    "review_update_arrived_after_launch": true,
+    "scheduler_preexec_proof_not_recorded": true,
+    "wrapper_nice_ten_confirmed_before_SSH_close": true
+  },
   "RF1_wrapper_nice_pass": true,
   "SSH_closed_before_admission_required": true,
   "detach_receipt": {
