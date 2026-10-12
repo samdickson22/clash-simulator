@@ -1,0 +1,23 @@
+{
+  "R5_draft_binding_commit": "fc0d74a60227953f9dd14e22077972176f1dd96e",
+  "R5_sealed": false,
+  "R6_R7_invoked": false,
+  "builder_phase2_released_receipt_commit": "fa8e700a",
+  "builder_phase3_status_last_reported": "assembling on 05; no completed delivery relayed",
+  "coordinator_timeline_position_read_through": 9341,
+  "final_R3_check_sha256": "cf3be4dd9e3815f2e02c32a064fa9b5385150e38371c2d0e97ce362f4427c7c2",
+  "final_R3_commit": "041de8101f44f416d8b895a78d8ba5582e11135f",
+  "landing_review": "APPROVE, verbatim retained in fc0d74a6",
+  "latest_coordinator_T1_status": "A4 builder input package and direct coordinator go still pending",
+  "mirror_remains_paused_no_action": true,
+  "no_additional_timer_watcher_or_subagent": true,
+  "outcomes_sealed": true,
+  "pool_PC4_R3_T4_verifiers_L1_repeated": false,
+  "registration_sealed": false,
+  "same_END_timer_remains_active": true,
+  "schema": "clasher.t1.A5.A4-input-hold-health.v1",
+  "second_PC4": "PASS, verbatim retained in fc0d74a6",
+  "source_host_contact_this_checkpoint": false,
+  "source_host_writes_this_checkpoint": false,
+  "utc": "2026-10-12T09:05:33Z"
+}
