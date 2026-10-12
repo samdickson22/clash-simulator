@@ -3347,3 +3347,25 @@ The review (`k4s-audits/K4S-END-PLAN-REVIEW-r1.md`) returned ADOPT_WITH_CHANGES.
 **Mac phase C** is covered by Sam's 2026-10-11 authorization (TIERS + K4S replay-only); a standalone authorization file will cite it. It runs after the TIERS Mac session.
 
 **Target:** launch 03 overnight, around 02:00–04:00Z on 10-13, with a pooled END by mid-morning on 10-13.
+
+## 2026-10-12 15:41Z: K4S END: rulings on runtime, inputs and guard (Q2–Q6, Q9)
+
+**Assembler status.** The S4 assembler and guard design are committed at 3585da6d, with 92/92 tests passing. It goes to Sol review together with S1–S7.
+
+**Rulings:**
+- **Q3:** the guard job's `repo/` is a K4S-owned git clone that contains b2f9e25e and ce042b97. Preflight runs `git cat-file -e` on both first.
+- **Q5:** the runtime is built at the END-JOB commit, which must be at or after 133f3ae4 and match the 74314eda pins.
+  - The 33 pinned files that aren't in git are taken **only from bytes already on 05, matched by SHA**: T1's A5 runtime trees there, or a K4S overlay copy kept on 05.
+  - They are copied read-only, byte for byte. 01, 08 and the T1 trees are never touched.
+  - If a pin is missing, stop for a ruling.
+  - The same tree goes to both 03 and 04.
+- **Q6:** background-load inputs come from T1's byte-exact copies on 05:
+  - `states.pkl` 0addf7c0 from `end-a5-pool-context-20261012-r1/bundle`;
+  - the A3 index and bin (bcd30777 / 8cc2f611).
+
+  These are read-only byte copies, never re-serialized, with SHAs checked at both ends. T1 has been notified.
+- **Q2:** each guard job gets a byte copy of its host's latest K4S `system-bus-admission.json`, plus `idle-services.json` on 03. They are fetched by the reviewed exact-path reader and committed outcome-blind before the END-JOB.
+- **Q4:** one fresh guard job per attempt, at the namespaces the runner proposed.
+- **Q9:** END runs under T1 guard semantics. 5 of the 9 modules differ from K4S; plan v2 discloses this.
+
+Every host step still needs a Sol review and then the coordinator's authorization.
