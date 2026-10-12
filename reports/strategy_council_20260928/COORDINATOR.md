@@ -2531,3 +2531,32 @@ The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8
 **K4S END is no longer held for the guard race.** It now waits only on its normal prerequisites: reporting complete, the END window, and a runbook ruling. **Deploying the amended `mac/` bytes into the reporting overlay is forbidden**, because it would fail `barrier.reporting_release`.
 
 **A5 smoke on 08** (`end-a5-smoke-127x08-0a87166f-r1`, launched 04:55:46Z) has no early exit as of 05:04Z. Both old-code attempts on 08 had failed about 6 minutes after launch, so the fix appears to clear the race on 08. The pass/fail verdict still waits for the smoke's exit, C-d, ACK and the A6 pass criteria.
+
+## 2026-10-12 06:03Z: A5 smoke review PASS_WITH_NOTES; A5 references cleared (conditions)
+
+**Verdict.** The independent review (`END-A5-SMOKE-INDEPENDENT-REVIEW-r1.md`, T1 job dir) is PASS_WITH_NOTES.
+- The 08 smoke ran on A5 bytes: all 18 `measurement_files` equal the 8799a0d6 inventory, including `fleet_validity` 0775b704.
+- It used the pinned argv and exited 0, with 29/29 outputs matching 476b50b5.
+- Every A6-style gate was recomputed from raw and passes:
+  - EXACT 125/125 and 250/250;
+  - census 2124 rows and 238 blocks, all passing;
+  - zero SSH, dbus or apt interference;
+  - MHz 1.0023;
+  - memory far inside budget.
+- **The fix was exercised in the failing regime.** D was about 1.092 s, and the first sample came +1 ms after admit. All 10 workers were spawned in the snapshot gap, yet all were owned at row 0. `foreign_compute` stayed empty on all rows.
+- No outcome exposure.
+
+**The smoke counts as "passed" only after T1's approved verifier ACK** (status complete, at or after C-d 06:13:24Z).
+
+**A5 references are cleared**, under R-ord, with each host independent.
+- **08:** launch as soon as the smoke ACK and C1 on 08 are done, **if** it can launch inside 08's C2 clearance before its 08:49:07Z apt-daily. Otherwise defer to after that apt-daily, with no relaxation.
+- **01:** launch after its actual 06:17:43Z apt-daily has run and exited, with fresh C2 and motd.
+
+**Conditions:**
+- Before each launch, record the end-kind = `counted-reporting` / no-synthetic / C1-plan assertions explicitly.
+- C5/C6 pre-exec gate, with no SSH or ControlMaster session at admission.
+- After exit, the 18-file check, native, 11 slots, warmup 300 and `poolable == true`.
+- Duration basis is now ≥ **55 m 58 s** plus the 1300 s C-d.
+- Per-cell lateness is reported against each cell's own budget.
+
+**Hygiene:** fix the stale `A5_adopted:false` in `END-A5-runtime-manifest-inventory-diff.json`.
