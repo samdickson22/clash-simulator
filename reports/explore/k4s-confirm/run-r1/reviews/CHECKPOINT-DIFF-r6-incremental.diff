@@ -1,0 +1,59 @@
+--- a/candidate-r4/checkpoint.py@96df3861
++++ b/candidate-r4/checkpoint.py
+@@ -13,7 +13,8 @@
+ rounds/history.json and bound by sha256 to both the history entry and the host's launch.json; on a supervisor exit the
+ exit receipt's completed/failed/unstarted counts must account for every dispatched block. Sol checkpoint review r4:
+ both remote readers parse JSON strictly (launch dispatch_sha256 must be a full 64-hex string, compared whole; the three
+-exit collections must be lists) and print INVALID otherwise, which main() treats as an anomaly. Any missing, unreadable or
++exit collections must be lists) and print INVALID otherwise, which main() treats as an anomaly. Sol r5: each reader's
++output and exit status are captured before its line is emitted, and parse() rejects unknown, empty or duplicate keys. Any missing, unreadable or
+ mismatched input is an anomaly (exit 2), never a silent pass.
+ Every check is explicit (no assert), so it also holds under python -O."""
+ import datetime,hashlib,json,re,shlex,subprocess,sys
+@@ -43,22 +44,22 @@
+ echo "FAILEDIDS $(grep -l '"complete": false' "$J/$P"/exits/*.json 2>/dev/null | sed 's#.*/##; s#[.]json$##' | tr '\\n' ' ')"
+ test -e "$J/$P/stop-reason.json" && echo "STOPREASON $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"utc": *"[^"]*"' | head -1) $(tr -d '\\n' < "$J/$P/stop-reason.json" | grep -o '"reason": *"[^"]*"' | head -1)"
+ test -e "$J/$P/supervisor-exit.json" && echo "SUPEXIT $(tr -d '\\n' < "$J/$P/supervisor-exit.json" | grep -o '"reason": *[^,]*' | head -1)"
+-test -e "$J/$P/supervisor-exit.json" && echo "SUPEXITN $(python3 -c '
++test -e "$J/$P/supervisor-exit.json" && {{ if out=$(python3 -c '
+ import json,sys
+ try:
+  e=json.load(open(sys.argv[1]))
+  k=("completed","failed","unstarted")
+  print(" ".join(str(len(e[x])) for x in k) if isinstance(e,dict) and all(isinstance(e.get(x),list) for x in k) else "INVALID")
+ except Exception:
+- print("INVALID")' "$J/$P/supervisor-exit.json" 2>/dev/null || echo INVALID)"
+-echo "LAUNCHDISPATCH $(python3 -c '
++ print("INVALID")' "$J/$P/supervisor-exit.json" 2>/dev/null); then echo "SUPEXITN $out"; else echo "SUPEXITN INVALID"; fi; }}
++if out=$(python3 -c '
+ import json,re,sys
+ try:
+  d=json.load(open(sys.argv[1]))
+  v=d.get("dispatch_sha256") if isinstance(d,dict) else None
+  print(v if isinstance(v,str) and re.fullmatch("[0-9a-f]{{64}}",v) else "INVALID")
+ except Exception:
+- print("INVALID")' "$J/$P/launch.json" 2>/dev/null || echo INVALID)"
++ print("INVALID")' "$J/$P/launch.json" 2>/dev/null); then echo "LAUNCHDISPATCH $out"; else echo "LAUNCHDISPATCH INVALID"; fi
+ echo "SRCRECEIPT $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"pid": *[0-9]*' | head -1) $(tr -d '\\n' < "$J/owned-copier-admission.json" 2>/dev/null | grep -o '"active": *[a-z]*')"
+ S=$(grep -o '"supervisor_pid": *[0-9]*' "$J/$P/launch.json" 2>/dev/null | grep -o '[0-9]*$')
+ test -n "$S" && echo "SUPPROC $S $(ps -o stat= -p $S 2>/dev/null | tr -d ' ')"
+@@ -70,10 +71,18 @@
+ def need(cond,msg):
+  if not cond:raise HealthDataError(msg)
+ 
++KEYS=frozenset({'WHO','STOPFILES','PROGRESS','COMPLETE','HUBACK','EXITS','LOSTPOP','FAILEDIDS','STOPREASON','SUPEXIT','SUPEXITN',
++                 'LAUNCHDISPATCH','SRCRECEIPT','SUPPROC'})
++
+ def parse(text):
++ """Remote output -> {KEY: value}. Every line must start with a known key, and each key may appear once (Sol r5:
++ a reader that prints a payload and then fails must not leave a stray line or a second value behind)."""
+  out={}
+  for line in text.splitlines():
+-  k,_,v=line.partition(' ');out[k]=v.strip()
++  k,_,v=line.partition(' ')
++  need(k in KEYS,f'remote line with unknown or empty key {line[:40]!r}')
++  need(k not in out,f'duplicate remote key {k}')
++  out[k]=v.strip()
+  return out
+ 
+ def ints(s,n):

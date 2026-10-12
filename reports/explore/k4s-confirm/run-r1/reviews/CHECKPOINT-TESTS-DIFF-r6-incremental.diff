@@ -1,0 +1,112 @@
+--- a/candidate-r4/test_checkpoint.py@4099bd96
++++ b/candidate-r4/test_checkpoint.py
+@@ -1,7 +1,7 @@
+ """Offline regression tests for checkpoint.py (Sol checkpoint review r1: R1 k >= 8/6, R2 fail-closed ledger, R3 union).
+ No ssh, no host, no outcome file: the ssh runner, job directories, copier identity and clock are injected.
+ Checks use ok() (explicit raise), so the suite is meaningful under python -O as well."""
+-import copy,json,subprocess,sys
++import copy,json,os,subprocess,sys
+ from pathlib import Path
+ import pytest
+ 
+@@ -305,7 +305,20 @@
+ # ---- Sol checkpoint review r4: the remote readers themselves (extraction -> main) --------------------------------
+ import shlex
+ 
+-def real_meta(tmp,host,phase,launch,exit_doc):
++CANNED=('WHO','STOPFILES','PROGRESS','COMPLETE','HUBACK','EXITS','LOSTPOP','FAILEDIDS','SRCRECEIPT','SUPPROC','STOPREASON')
++REAL_PY=subprocess.run(['bash','-c','command -v python3'],capture_output=True,text=True).stdout.strip()
++
++def fail_wrapper(tmp,readers):
++ """A python3 shim first on PATH: runs the real interpreter, then exits 7 for the named readers (valid stdout, then a
++ nonzero status), so the template's own capture/status handling is exercised."""
++ b=tmp/'shim';b.mkdir(exist_ok=True)
++ conds=[]
++ if 'launch' in readers:conds.append('[[ "$2" == *dispatch_sha256* ]] && exit 7')
++ if 'exit' in readers:conds.append('[[ "$2" == *unstarted* ]] && exit 7')
++ (b/'python3').write_text('#!/bin/bash\n"'+REAL_PY+'" "$@"; rc=$?\n'+'\n'.join(conds)+'\nexit $rc\n');(b/'python3').chmod(0o755)
++ return str(b)
++
++def real_meta(tmp,host,phase,launch,exit_doc,fail=()):
+  """Run the REAL remote template with bash against synthetic local metadata and return its LAUNCHDISPATCH / SUPEXIT /
+  SUPEXITN lines (the rest of the template's output is discarded). launch/exit_doc: bytes, or None for an absent file."""
+  J=tmp/'meta'/host;(J/phase).mkdir(parents=True,exist_ok=True)
+@@ -314,17 +327,20 @@
+   if data is None:
+    if f.exists():f.unlink()
+   else:f.write_bytes(data)
+- out=subprocess.run(['bash','-c',C.REMOTE.format(J=shlex.quote(str(J)),P=shlex.quote(phase))],capture_output=True,text=True,timeout=60).stdout
+- return [l for l in out.splitlines() if l.split(' ',1)[0] in ('LAUNCHDISPATCH','SUPEXIT','SUPEXITN')]
++ env=dict(os.environ)
++ if fail:env['PATH']=fail_wrapper(tmp,fail)+':'+env['PATH']
++ out=subprocess.run(['bash','-c',C.REMOTE.format(J=shlex.quote(str(J)),P=shlex.quote(phase))],capture_output=True,text=True,timeout=60,env=env).stdout
++ # keep every reader line, including any stray line a failing reader might leave behind
++ return [l for l in out.splitlines() if l.split(' ',1)[0] not in CANNED]
+ 
+ def launch_bytes(sha):return json.dumps(dict(host='x',dispatch_sha256=sha,supervisor_pid=None)).encode()
+ 
+ def exit_bytes(**kw):
+  d=dict(utc=UTC,host='x',reason=None,completed=[],failed=[],unstarted=[]);d.update(kw);return json.dumps(d).encode()
+ 
+-def meta_run(tmp,phase,per_host,complete):
++def meta_run(tmp,phase,per_host,complete,fail=None):
+  """per_host: {host: (launch_bytes_or_None, exit_bytes_or_None)}; other lines are canned and healthy."""
+- lines={h:real_meta(tmp,h,phase,*per_host[h]) for h in per_host}
++ lines={h:real_meta(tmp,h,phase,*per_host[h],fail=(fail or {}).get(h,())) for h in per_host}
+  def run(cmd,**kw):
+   host=cmd[len(C.SSH)]
+   running=not any(l.startswith('SUPEXIT ') for l in lines[host])
+@@ -415,3 +431,53 @@
+ 
+ def test_exit_counts_valid():
+  ok(C.exit_counts('3 0 0')==(3,0,0) and C.exit_counts('0 0 0')==(0,0,0))
++
++
++# ---- Sol checkpoint review r5: valid stdout followed by a nonzero reader status --------------------------------
++FULL03=lambda:(launch_bytes(DSHA),exit_bytes(completed=ROWS(3)))
++FULL04=lambda:(launch_bytes(DSHA),exit_bytes(completed=ROWS(2)))
++
++def test_shim_control_passes(tmp_path,capsys):
++ """Control: the shim with no failing reader leaves a valid exited run clean (exit 0)."""
++ lines=real_meta(tmp_path,'probe','replacement-r2',*FULL03(),fail=('none',))
++ ok(lines==['SUPEXIT "reason": null','SUPEXITN 3 0 0',f'LAUNCHDISPATCH {DSHA}'],lines)
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':FULL03(),'127x04':FULL04()},{'127x03':3,'127x04':2},fail={'127x03':('none',)}),capsys)
++ ok(rc==0 and line['anomalies']==[],line)
++
++@pytest.mark.parametrize('readers,expect',[
++ (('launch',),{'LAUNCHDISPATCH INVALID'}),
++ (('exit',),{'SUPEXITN INVALID'}),
++ (('launch','exit'),{'LAUNCHDISPATCH INVALID','SUPEXITN INVALID'}),
++])
++def test_valid_stdout_then_nonzero_status_to_main(tmp_path,capsys,readers,expect):
++ lines=real_meta(tmp_path,'probe','replacement-r2',*FULL03(),fail=readers)
++ ok(expect<=set(lines) and not any(l in ('INVALID','') for l in lines),(readers,lines))
++ if 'launch' in readers:ok(f'LAUNCHDISPATCH {DSHA}' not in lines,lines)
++ if 'exit' in readers:ok('SUPEXITN 3 0 0' not in lines,lines)
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':FULL03(),'127x04':FULL04()},{'127x03':3,'127x04':2},fail={'127x03':readers}),capsys)
++ ok(rc==2,(readers,rc,line))
++ if 'launch' in readers:ok(has(line['anomalies'],'127x03: launch dispatch_sha256 invalid'),line['anomalies'])
++ if 'exit' in readers:ok(has(line['anomalies'],"127x03: supervisor-exit counts unreadable ('INVALID')"),line['anomalies'])
++ ok(rec['anomalies']==line['anomalies'])
++
++@pytest.mark.parametrize('text,msg',[
++ ('WHO 0\nINVALID\n','unknown or empty key'),
++ ('WHO 0\n\n','unknown or empty key'),
++ ('WHO 0\nWHO 0\n','duplicate remote key WHO'),
++ ('SUPEXITN 3 0 0\nINVALID\nLAUNCHDISPATCH '+DSHA+'\nINVALID\n','unknown or empty key'),
++ ('LAUNCHDISPATCH '+DSHA+'\nLAUNCHDISPATCH INVALID\n','duplicate remote key LAUNCHDISPATCH'),
++ ('BOGUS 1\n','unknown or empty key'),
++])
++def test_parse_rejects_unknown_empty_duplicate(text,msg):
++ with pytest.raises(ValueError,match=msg):C.parse(text)
++
++@pytest.mark.parametrize('extra',['INVALID','','WHO 0','BOGUS x'])
++def test_main_stray_or_duplicate_line_is_anomaly(tmp_path,capsys,extra):
++ base=meta_run(tmp_path,'replacement-r2',{'127x03':FULL03(),'127x04':FULL04()},{'127x03':3,'127x04':2})
++ def run(cmd,**kw):
++  p=base(cmd,**kw)
++  if cmd[len(C.SSH)]=='127x03':p=subprocess.CompletedProcess(cmd,0,p.stdout+extra+'\n','')
++  return p
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
++ ok(rc==2 and has(line['anomalies'],'127x03: health check failed'),(extra,line['anomalies']))
++ ok(rec['anomalies']==line['anomalies'])
