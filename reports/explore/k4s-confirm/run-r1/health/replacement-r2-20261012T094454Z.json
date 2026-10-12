@@ -1,0 +1,143 @@
+{
+ "schema": "clasher.k4s.run-health.v2",
+ "study": "PREREG-K4S",
+ "sealed": true,
+ "outcomes_read": false,
+ "utc": "2026-10-12T09:44:54Z",
+ "phase": "replacement-r2",
+ "tag": "watch",
+ "hosts": {
+  "127x03": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T09:44:54Z\",  \"host\": \"127x03\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 96,  \"complete_local_games\": 768,  \"failed_blocks\": 0,  \"queued\": 448,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 117.13415908813477,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "96",
+    "HUBACK": "96",
+    "EXITS": "96 0",
+    "LOSTPOP": "0 0",
+    "FAILEDIDS": "",
+    "SRCRECEIPT": "\"pid\": 485959 \"active\": true",
+    "SUPPROC": "2116555 SNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T09:44:54Z",
+    "phase": "replacement",
+    "complete_local_blocks": 96,
+    "failed_blocks": 0,
+    "queued": 448,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 117.13415908813477
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 96,
+    "returned": 96,
+    "flags": {
+     "interfered": 0,
+     "dbus": 0,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 485959,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T09:44:48Z",
+     "listed": 96,
+     "durable_on_hub": 96,
+     "ack_returned": 96,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  },
+  "127x04": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T09:44:53Z\",  \"host\": \"127x04\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 90,  \"complete_local_games\": 720,  \"failed_blocks\": 0,  \"queued\": 453,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.7120590209961,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "90",
+    "HUBACK": "90",
+    "EXITS": "90 0",
+    "LOSTPOP": "0 0",
+    "FAILEDIDS": "",
+    "SRCRECEIPT": "\"pid\": 494063 \"active\": true",
+    "SUPPROC": "1140717 RNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T09:44:53Z",
+    "phase": "replacement",
+    "complete_local_blocks": 90,
+    "failed_blocks": 0,
+    "queued": 453,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.7120590209961
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 90,
+    "returned": 90,
+    "flags": {
+     "interfered": 87,
+     "dbus": 87,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 494063,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T09:44:55Z",
+     "listed": 90,
+     "durable_on_hub": 90,
+     "ack_returned": 90,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  }
+ },
+ "cumulative_lost": {
+  "status": "OK",
+  "primary": 41,
+  "guard": 14,
+  "ledger_events": 55,
+  "ledger_max_k": {
+   "primary": 2,
+   "guard": 1
+  },
+  "overlap": {
+   "primary": 0,
+   "guard": 0
+  },
+  "overlap_ids": {
+   "primary": [],
+   "guard": []
+  }
+ },
+ "lost_total": {
+  "primary": 0,
+  "guard": 0
+ },
+ "anomalies": [],
+ "summary": "127x03 complete 96 acked 96 hub 96/96 failed 0 stopevent - inflight 11 queued 448 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 90 acked 90 hub 90/90 failed 0 stopevent - inflight 11 queued 453 reason None who 0 flags[dbus 87 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 41/300 guard 14/90 (union; already in ledger 0/0); ledger max k {'primary': 2, 'guard': 1}"
+}
