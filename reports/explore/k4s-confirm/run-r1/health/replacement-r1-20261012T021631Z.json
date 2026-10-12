@@ -1,0 +1,132 @@
+{
+ "schema": "clasher.k4s.run-health.v2",
+ "study": "PREREG-K4S",
+ "sealed": true,
+ "outcomes_read": false,
+ "utc": "2026-10-12T02:16:31Z",
+ "phase": "replacement-r1",
+ "tag": "watch",
+ "hosts": {
+  "127x03": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T02:16:30Z\",  \"host\": \"127x03\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 435,  \"complete_local_games\": 3480,  \"failed_blocks\": 0,  \"queued\": 1308,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.94472122192383,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "435",
+    "HUBACK": "435",
+    "EXITS": "435 0",
+    "LOSTPOP": "0 0",
+    "SRCRECEIPT": "\"pid\": 702958 \"active\": true",
+    "SUPPROC": "1002822 RNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T02:16:30Z",
+    "phase": "replacement",
+    "complete_local_blocks": 435,
+    "failed_blocks": 0,
+    "queued": 1308,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.94472122192383
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 435,
+    "returned": 435,
+    "flags": {
+     "interfered": 0,
+     "dbus": 0,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 702958,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T02:16:30Z",
+     "listed": 435,
+     "durable_on_hub": 435,
+     "ack_returned": 435,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  },
+  "127x04": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T02:16:31Z\",  \"host\": \"127x04\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 434,  \"complete_local_games\": 3472,  \"failed_blocks\": 0,  \"queued\": 1309,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.42071914672852,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "434",
+    "HUBACK": "434",
+    "EXITS": "434 0",
+    "LOSTPOP": "0 0",
+    "SRCRECEIPT": "\"pid\": 711250 \"active\": true",
+    "SUPPROC": "37363 RNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T02:16:31Z",
+    "phase": "replacement",
+    "complete_local_blocks": 434,
+    "failed_blocks": 0,
+    "queued": 1309,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.42071914672852
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 434,
+    "returned": 434,
+    "flags": {
+     "interfered": 429,
+     "dbus": 429,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 711250,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T02:16:29Z",
+     "listed": 434,
+     "durable_on_hub": 434,
+     "ack_returned": 434,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  }
+ },
+ "cumulative_lost": {
+  "primary": 25,
+  "guard": 8,
+  "ledger_events": 33,
+  "ledger_max_k": {
+   "primary": 1,
+   "guard": 0
+  }
+ },
+ "lost_total": {
+  "primary": 0,
+  "guard": 0
+ },
+ "anomalies": [],
+ "summary": "127x03 complete 435 acked 435 hub 435/435 failed 0 stopevent - inflight 11 queued 1308 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 434 acked 434 hub 434/434 failed 0 stopevent - inflight 11 queued 1309 reason None who 0 flags[dbus 429 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}"
+}
