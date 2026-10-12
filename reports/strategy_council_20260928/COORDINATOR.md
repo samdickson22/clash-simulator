@@ -4084,3 +4084,24 @@ The GO is byte-identical to the draft `l1/prepared/b08-stage-and-placement-go-r1
 **Before the stage runs,** three things are still required: the second placement, a C-6 audit, and a separate explicit run GO.
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT ca6b5ac89accaa513cb81ea21c1f2c3c40338ef724b6703c0d8fde032d7ca891
+
+## 2026-10-12 21:37Z: Perception B second authority-placement GO issued
+
+The GO is byte-identical to the draft `l1/prepared/b08-stage-and-placement-go-r1/DRAFT-AUTHORIZE_B_AUTHORITY_PLACEMENT-r2.json` (SHA eb334bb2).
+
+**What it places:** exactly one receipt on 127x08, the CPU stage GO ca6b5ac8, at `B_ROOT/authority/<sha>.json`.
+
+**Limits:**
+- Procedure 20e58965, operator d6cb3690.
+- cpus [0, 1]; between phases.
+- No GPU and no heldout data.
+- Window: 2026-10-12 22:10Z to 23:40Z.
+- No retry.
+
+**Pre-issue check (C-5):** the CPU GO SHA shows exactly one ISSUED line.
+
+**Issued copies:**
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r2.json` (0444)
+- `reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r2.json`
+
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT eb334bb229081bcb49757762d76e45b3d18037c815c23b9ec60063ac3e6c1f68
