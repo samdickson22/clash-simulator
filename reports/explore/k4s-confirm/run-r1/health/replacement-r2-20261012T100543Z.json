@@ -1,0 +1,143 @@
+{
+ "schema": "clasher.k4s.run-health.v2",
+ "study": "PREREG-K4S",
+ "sealed": true,
+ "outcomes_read": false,
+ "utc": "2026-10-12T10:05:43Z",
+ "phase": "replacement-r2",
+ "tag": "watch",
+ "hosts": {
+  "127x03": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T10:05:42Z\",  \"host\": \"127x03\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 138,  \"complete_local_games\": 1104,  \"failed_blocks\": 0,  \"queued\": 406,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 117.01148986816406,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "138",
+    "HUBACK": "138",
+    "EXITS": "138 0",
+    "LOSTPOP": "0 0",
+    "FAILEDIDS": "",
+    "SRCRECEIPT": "\"pid\": 485959 \"active\": true",
+    "SUPPROC": "2116555 SNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T10:05:42Z",
+    "phase": "replacement",
+    "complete_local_blocks": 138,
+    "failed_blocks": 0,
+    "queued": 406,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 117.01148986816406
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 138,
+    "returned": 138,
+    "flags": {
+     "interfered": 0,
+     "dbus": 0,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 485959,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T10:05:35Z",
+     "listed": 138,
+     "durable_on_hub": 138,
+     "ack_returned": 138,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  },
+  "127x04": {
+   "remote": {
+    "WHO": "0",
+    "STOPFILES": "0 0",
+    "PROGRESS": "{  \"utc\": \"2026-10-12T10:05:42Z\",  \"host\": \"127x04\",  \"phase\": \"replacement\",  \"complete_local_blocks\": 135,  \"complete_local_games\": 1080,  \"failed_blocks\": 0,  \"queued\": 408,  \"inflight\": 11,  \"console\": {    \"who\": \"\",    \"console_count\": 0,    \"positive\": false  },  \"console_over_one_core_seconds\": 0.0,  \"memavailable_GiB\": 116.76876449584961,  \"reason\": null,  \"sealed\": true}",
+    "COMPLETE": "135",
+    "HUBACK": "135",
+    "EXITS": "135 0",
+    "LOSTPOP": "0 0",
+    "FAILEDIDS": "",
+    "SRCRECEIPT": "\"pid\": 494063 \"active\": true",
+    "SUPPROC": "1140717 RNs"
+   },
+   "ssh_rc": 0,
+   "progress": {
+    "utc": "2026-10-12T10:05:42Z",
+    "phase": "replacement",
+    "complete_local_blocks": 135,
+    "failed_blocks": 0,
+    "queued": 408,
+    "inflight": 11,
+    "reason": null,
+    "memavailable_GiB": 116.76876449584961
+   },
+   "lost": {
+    "primary": 0,
+    "guard": 0
+   },
+   "hub": {
+    "durable": 135,
+    "returned": 135,
+    "flags": {
+     "interfered": 132,
+     "dbus": 132,
+     "ssh": 0,
+     "apt": 0,
+     "idle": 0
+    },
+    "copier_pid": 494063,
+    "copier_live": true,
+    "receipt_active": true,
+    "copy_health": {
+     "utc": "2026-10-12T10:05:34Z",
+     "listed": 135,
+     "durable_on_hub": 135,
+     "ack_returned": 135,
+     "pending_return": [],
+     "error": null,
+     "block_errors": {},
+     "lifecycle_error": null,
+     "fatal_error": null
+    }
+   }
+  }
+ },
+ "cumulative_lost": {
+  "status": "OK",
+  "primary": 41,
+  "guard": 14,
+  "ledger_events": 55,
+  "ledger_max_k": {
+   "primary": 2,
+   "guard": 1
+  },
+  "overlap": {
+   "primary": 0,
+   "guard": 0
+  },
+  "overlap_ids": {
+   "primary": [],
+   "guard": []
+  }
+ },
+ "lost_total": {
+  "primary": 0,
+  "guard": 0
+ },
+ "anomalies": [],
+ "summary": "127x03 complete 138 acked 138 hub 138/138 failed 0 stopevent - inflight 11 queued 406 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 135 acked 135 hub 135/135 failed 0 stopevent - inflight 11 queued 408 reason None who 0 flags[dbus 132 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 41/300 guard 14/90 (union; already in ledger 0/0); ledger max k {'primary': 2, 'guard': 1}"
+}
