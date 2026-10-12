@@ -3900,3 +3900,17 @@ Authority-placement review: `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-AUTHO
 ISSUED APPROVE_B_COMBINED_REVIEW 59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282
 
 This approves the B1–B11/B4 package review only. It is **not** a deployment, CPU, GPU or heldout authorization.
+
+## 2026-10-12 20:27Z: Perception B authority-placement r2 review; 08 quiet-read AUTHORIZED (once)
+
+**Review.** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-AUTHORITY-PLACEMENT-REVIEW-r2.md` (e90d567b). Verdicts:
+- **F1 transport: APPROVE_WITH_CONDITIONS.** P1, P2, P4 and P5 are fixed. Revocation fails open (R1, R2). This must be fixed in an r3 before the first **placement** GO.
+- **Operator and inspection changes: APPROVE.**
+- **Quiet-read: APPROVE_WITH_AMENDMENTS.** Only the amended command may run: `evidence/B-AUTHORITY-PLACEMENT-REVIEW-r2-quiet-read-amended.sh`, SHA e36f8538be95987b7db202df2ca6f3f28ee8c7a026ed2377a281e71459ff6917.
+- **Deployment GO: correctly not issuable yet.**
+
+**Authorization.** The coordinator runs the amended quiet-read e36f8538 **exactly once**, from 127x05.
+- It opens one non-interactive SSH session to 127x08, with ControlMaster off.
+- It reads only: UTC, the `who` count, the `/mpac` available and total size, loadavg, and the allowed CPUs.
+- There is no retry. A nonzero exit means no deployment until a new decision.
+- The output goes to `l1/receipts/b08-quiet-read-r1/` and is committed through a temp index after a secret scan.
