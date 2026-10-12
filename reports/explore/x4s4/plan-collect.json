@@ -1,0 +1,47 @@
+{
+  "max_ticks": 6001,
+  "return_reserve_seconds": 0.008,
+  "arms": {
+    "K4S-120": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.12,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "student-cached",
+      "default_source": "student-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; student-if-nothing-complete"
+    },
+    "S-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 1,
+      "coarse_horizon": 160,
+      "kernel": "coarse-first",
+      "policy": "student-cached",
+      "default_source": "student-cached-sample-if-no-complete-score; student top-8 proposals enter the frozen candidate generator (S1 S-200)"
+    }
+  },
+  "purpose": "X4S-4 on-policy collection (O and O-holdout) with the R3a student-tier agent via run_collect.py + collect.py (not an evaluation; outcomes never reduced)",
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503606317370496,
+      "count": 4000
+    },
+    "smoke": {
+      "base": 4503606327370496,
+      "count": 8
+    },
+    "qualification": {
+      "base": 4503606337370496,
+      "count": 8
+    }
+  },
+  "capture": {
+    "nonhit_rate": 0.25,
+    "all": false,
+    "verify_belief": false,
+    "fair_check": false
+  }
+}

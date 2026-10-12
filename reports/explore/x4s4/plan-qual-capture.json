@@ -1,0 +1,47 @@
+{
+  "max_ticks": 6001,
+  "return_reserve_seconds": 0.008,
+  "arms": {
+    "K4S-long": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 1000.0,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "student-cached",
+      "default_source": "student-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; student-if-nothing-complete"
+    },
+    "S-long": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 1000.0,
+      "threads": 1,
+      "coarse_horizon": 160,
+      "kernel": "coarse-first",
+      "policy": "student-cached",
+      "default_source": "student-cached-sample-if-no-complete-score; student top-8 proposals enter the frozen candidate generator (S1 S-200)"
+    }
+  },
+  "purpose": "X4S-4 qualification: x4s3/run.py vs run_collect.py+collect.py on the same config (1000 s budgets, no cutoffs); capture-all with live-belief hash and fair-information permutation checks",
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503606317370496,
+      "count": 4000
+    },
+    "smoke": {
+      "base": 4503606327370496,
+      "count": 8
+    },
+    "qualification": {
+      "base": 4503606337370496,
+      "count": 8
+    }
+  },
+  "capture": {
+    "nonhit_rate": 0.25,
+    "all": true,
+    "verify_belief": true,
+    "fair_check": true
+  }
+}

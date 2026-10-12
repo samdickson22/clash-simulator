@@ -1,0 +1,41 @@
+{"case": "capture_rng deterministic and domain-separated", "ok": true}
+{"case": "persistent_id guard rejects a nested PlayerState", "ok": true}
+{"case": "persistent_id guard rejects a BattleState", "ok": true}
+{"case": "persistent_id guard passes plain data", "ok": true}
+{"case": "eligible() reasons", "ok": true}
+{"case": "permutation moves only unrevealed cards, keeps the multiset, leaves the original intact", "ok": true, "permuted": 7}
+{"case": "fair-information check: identical when the payload ignores hidden state", "ok": true}
+{"case": "fair-information check DETECTS a payload that reads the opponent hidden hand", "ok": true}
+{"case": "belief-hash check: unchanged for a read-only capture", "ok": true}
+{"case": "belief-hash check DETECTS a capture that mutates the live belief", "ok": true}
+{"case": "Battle reference in a capture raises (C9 guard)", "ok": true}
+{"case": "per-game capture file: SHA, counts (hit captured, non-hit unsampled at rate 0, single-candidate excluded)", "ok": true, "counts": {"captured": 2, "not_sampled": 1, "not_search": 1}}
+{"case": "label plan: holdout split, interruption drop, dedup, per-arm cap", "ok": true, "stats": {"kept": 46, "duplicate": 6, "over_cap": 6, "dropped_no_block": 1}}
+{"case": "feature-only duplicate report by 600-tick bucket", "ok": true}
+{"case": "labeling: digest mismatch dropped and counted; resume skips sealed games", "ok": true}
+{"case": "verify O: passes, seals, writes the O gate", "ok": true}
+{"case": "verify O rejects packed rows != label receipt rows", "ok": true, "error": "ValidationError('packed rows 45 != label receipts rows 46')"}
+{"case": "verify O rejects a failed label receipt", "ok": true, "error": "ValidationError('label receipts not passed for this set')"}
+{"case": "verify O rejects a digest-mismatch rate above 0.1% (C6)", "ok": true, "rate": 0.0217, "error": "ValidationError('label receipts not passed for this set')"}
+{"case": "verify O rejects O below the gate minimum", "ok": true, "error": "ValidationError('O rows 45 outside [1000, 100]')"}
+{"case": "verify O rejects a symlink inside a batch", "ok": true, "error": "ValidationError('symlink: TMP/test_pipeline/neg-symlink/data/onpolicy/batch-0000/train/evil.npy')"}
+{"case": "verify OW: roots counted by the RootTeacherStore rule (non-root rows ignored), within [|O|, |O|+last game]", "ok": true, "roots": 60, "error": null}
+{"case": "verify OW rejects roots above |O| + last game roots", "ok": true, "error": "ValidationError('O_W roots 60 outside [|O|, |O| + last game roots]')"}
+{"case": "verify OW rejects a bank-C seed in O_W", "ok": true, "error": "ValidationError('batch-0000 seed outside its bank range')"}
+{"case": "driver: no reporting phase while any fit is not done", "ok": true}
+{"case": "driver: ABBA order, all ten phases, no futility skip", "ok": true, "order": ["R3a/K4S-120", "R3a/S-200", "R5/K4S-120", "R5/S-200", "R5-rep/K4S-120", "R5-rep/S-200", "R3a-rep/K4S-120", "R3a-rep/S-200", "R5W/K4S-120", "R5W/S-200"]}
+{"case": "driver never reads a game outcome", "ok": true}
+{"case": "contention: PSI, host-wide foreign CPU, yield window and a capped phase all flag; union over students", "ok": true, "excluded": [0, 1, 2, 3, 4]}
+{"case": "contention parses only wall_seconds from a game JSON", "ok": true}
+{"case": "contention receipt is O_EXCL (frozen once)", "ok": true}
+{"case": "reducer refuses to run before the C5 receipt is frozen (E1)", "ok": true}
+{"case": "reducer refuses an incomplete student without --allow-prefix (fixed N)", "ok": true}
+{"case": "reducer: primary on the full primary prefix (R5W never cuts it), three-way outcome, sub-labels", "ok": true, "outcome": "helps", "delta": -22.03}
+{"case": "reducer: R5W secondaries on R5W's own prefix with an attribution sub-label", "ok": true, "seeds": 49, "attribution": "on-policy beyond matched data"}
+{"case": "reducer: contention view excludes the frozen indices", "ok": true}
+{"case": "reducer: parity table disclosed with no exclusion semantics", "ok": true}
+{"case": "write_report renders the primary, sub-labels, attribution and parity", "ok": true}
+{"case": "collect_w: emitter-derived (own, opponent, seat) equals the X4S mapping for g in 0..199; 50 cells", "ok": true}
+{"case": "supervisor: X4S-4 tree groups include driver/child/own; host-wide foreign CPU is a number", "ok": true, "foreign": 1.706}
+{"case": "run_fit.sh: R5 lists each O batch x4 with seed 2026101301; R5W refuses without the O_W gate", "ok": true, "rc": 0}
+{"all_ok": true, "cases": 40, "failed": [], "python_optimize": 0}
