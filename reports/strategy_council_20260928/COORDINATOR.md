@@ -3369,3 +3369,27 @@ The review (`k4s-audits/K4S-END-PLAN-REVIEW-r1.md`) returned ADOPT_WITH_CHANGES.
 - **Q9:** END runs under T1 guard semantics. 5 of the 9 modules differ from K4S; plan v2 discloses this.
 
 Every host step still needs a Sol review and then the coordinator's authorization.
+
+## 2026-10-12 16:00Z: K4S END package 1 r1: REQUEST_CHANGES; scope ruling
+
+Sol's review (`k4s-audits/SOL-REVIEW-END-PKG1-r1.md`) returned REQUEST_CHANGES on S1, S2 and S4. The tests pass, but independent probes broke the read/write boundaries and the frozen-code verification. For example, S2 imports the frozen modules before verifying their pins.
+
+**Scope ruling.** These are single-operator, non-adversarial hosts, so TOCTOU (concurrent replacement between a check and the open) is accepted as a residual risk. Every other finding is required.
+
+**Required changes:**
+- **S1:**
+  - remote checks of type, size cap and aliasing before any read;
+  - a confined destination on 05, written exclusively and without following links;
+  - bounded streams;
+  - receipts for every refusal.
+- **S2:**
+  - a stdlib-only bootstrap verification **before import**; test-only flags must never produce a production receipt;
+  - exact path, role and confinement checks before any read;
+  - extra controls.
+- **S4:**
+  - confined inventories;
+  - production pins: the Q6 bytes, the T1 own-tier sets, the idle admission on 03 and the Q2 bus admission;
+  - index checks equivalent to `StateRows`.
+- **Diagnostics:** an outcome-blind census/MHz mismatch diagnosis, while keeping the frozen refusal.
+
+The overnight K4S END target may slip. Correctness comes first.
