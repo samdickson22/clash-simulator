@@ -1,0 +1,120 @@
+--- a/tools/test_checkpoint.py@e1ae76e8
++++ b/tools/candidate-r4/test_checkpoint.py
+@@ -134,6 +134,16 @@
+ 
+ # ---- end to end: main() with injected ssh / jobs / identity (no host contact) ------------------------------------
+ UTC='2026-10-12T09:30:00Z'
++import hashlib
++# Phase dispatch fixture: 3 rows on 127x03, 2 on 127x04 (expected counts come from here, round r3 audit F1).
++DISPATCH=json.dumps(dict(blocks=[dict(id=f'primary-{i:04d}',host=h) for i,h in enumerate(['127x03','127x03','127x03','127x04','127x04'])]),indent=1).encode()
++DSHA=hashlib.sha256(DISPATCH).hexdigest()
++
++def write_history(root,phase='replacement-r2',dispatch=DISPATCH,sha=None,name='replacement-r2.json',extra=()):
++ (root/'rounds').mkdir(parents=True,exist_ok=True);(root/'dispatch').mkdir(parents=True,exist_ok=True)
++ if dispatch is not None:(root/'dispatch'/name).write_bytes(dispatch)
++ hist=[dict(phase=phase,namespace='k4s-confirm-'+phase,dispatch_file=name,dispatch_sha256=sha or DSHA,launched_utc=UTC)]+list(extra)
++ (root/'rounds'/'history.json').write_text(json.dumps(hist))
+ IDENT=dict(pid=4242,pgid=4242,start_ticks=1,cmdline_sha256='c'*64,uid=1)
+ 
+ def host_dirs(tmp,phase):
+@@ -145,18 +155,26 @@
+   jobs[h]=str(J)
+  return jobs
+ 
+-def fake_run(failed='',lostpop='0 0',exits='11 0'):
++def fake_run(failed='',lostpop='0 0',exits='11 0',launch=None,supexit=None,supexitn=None,complete=0,supproc='SUPPROC 99 SNs'):
+  def run(cmd,**kw):
+-  out='\n'.join([
++  host=cmd[len(C.SSH)]
++  ld=DSHA if launch is None else launch
++  c=complete[host] if isinstance(complete,dict) else complete
++  sx=supexit[host] if isinstance(supexit,dict) else supexit
++  sn=supexitn[host] if isinstance(supexitn,dict) else supexitn
++  lines=[f'LAUNCHDISPATCH {ld}']+([f'SUPEXIT "reason": {sx}'] if sx is not None else [])+([f'SUPEXITN {sn}'] if sn is not None else [])
++  out='\n'.join(lines+[
+    'WHO 0','STOPFILES 0 0',
+    'PROGRESS '+json.dumps(dict(utc=UTC,phase='replacement-r2',complete_local_blocks=0,failed_blocks=0,queued=1,inflight=11,reason=None)),
+-   'COMPLETE 0','HUBACK 0',f'EXITS {exits}',f'LOSTPOP {lostpop}',f'FAILEDIDS {failed}',
+-   'SRCRECEIPT "pid": 4242 "active": true','SUPPROC 99 SNs'])+'\n'
++   f'COMPLETE {c}',f'HUBACK {c}',f'EXITS {exits}',f'LOSTPOP {lostpop}',f'FAILEDIDS {failed}',
++   'SRCRECEIPT "pid": 4242 "active": true']+([supproc] if sx is None else []))+'\n'
+   return subprocess.CompletedProcess(cmd,0,out,'')
+  return run
+ 
+-def runmain(tmp,ledger_doc,run,capsys,ack=None):
++def runmain(tmp,ledger_doc,run,capsys,ack=None,history=True):
+  root=tmp/'run';(root/'ledger').mkdir(parents=True);(root/'health').mkdir()
++ if history is True:write_history(root)
++ elif callable(history):history(root)
+  if ack is not None:(root/'health'/'acknowledged-events.json').write_text(json.dumps(ack))
+  if ledger_doc is not None:(root/'ledger'/'blind-ledger.json').write_text(ledger_doc if isinstance(ledger_doc,str) else json.dumps(ledger_doc))
+  rc=C.main(['checkpoint.py','replacement-r2','test'],run=run,root=root,jobs=host_dirs(tmp,'replacement-r2'),identity=lambda pid:dict(state='S',**{k:IDENT[k] for k in ('pgid','start_ticks','cmdline_sha256','uid')}),utc=UTC)
+@@ -218,3 +236,68 @@
+   ok(has_k(anoms) and has_cum_unknown(anoms),(runner,anoms))
+  ok(line['anomalies']==rec['anomalies'])
+  ok(rec['cumulative_lost']['status']=='UNKNOWN' and rec['cumulative_lost']['ledger_max_k']=={'primary':8,'guard':6},rec['cumulative_lost'])
++
++
++# ---- round r3 audit F1: expected counts from the phase's own dispatch ------------------------------------------
++def test_expected_counts_from_dispatch(tmp_path):
++ write_history(tmp_path)
++ counts,sha=C.expected_counts(tmp_path,'replacement-r2')
++ ok(counts=={'127x03':3,'127x04':2} and sha==DSHA,(counts,sha))
++
++@pytest.mark.parametrize('case',['no_history','no_entry','two_entries','no_dispatch_file','sha_mismatch','bad_name','bad_blocks','row_without_host'])
++def test_expected_counts_fail_closed(tmp_path,case):
++ if case=='no_history':pass
++ elif case=='no_entry':write_history(tmp_path,phase='replacement-r1')
++ elif case=='two_entries':write_history(tmp_path,extra=[dict(phase='replacement-r2',dispatch_file='replacement-r2.json',dispatch_sha256=DSHA)])
++ elif case=='no_dispatch_file':write_history(tmp_path,dispatch=None)
++ elif case=='sha_mismatch':write_history(tmp_path,sha='0'*64)
++ elif case=='bad_name':write_history(tmp_path,name='../x.json')
++ elif case=='bad_blocks':d=json.dumps(dict(blocks={})).encode();write_history(tmp_path,dispatch=d,sha=hashlib.sha256(d).hexdigest())
++ elif case=='row_without_host':d=json.dumps(dict(blocks=[dict(id='primary-0001')])).encode();write_history(tmp_path,dispatch=d,sha=hashlib.sha256(d).hexdigest())
++ with pytest.raises((ValueError,OSError)):C.expected_counts(tmp_path,'replacement-r2')
++
++def has(anoms,text):return any(text in a for a in anoms)
++
++@pytest.mark.parametrize('history',[False,lambda root:write_history(root,sha='0'*64),lambda root:write_history(root,phase='replacement-r1')])
++def test_main_no_expected_counts_is_anomaly(tmp_path,capsys,history):
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(),capsys,history=history)
++ ok(rc==2 and has(line['anomalies'],'expected counts UNKNOWN'),line)
++ ok(rec['anomalies']==line['anomalies'])
++
++def test_main_launch_dispatch_mismatch_is_anomaly(tmp_path,capsys):
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(launch='f'*64),capsys)
++ ok(rc==2 and has(line['anomalies'],'launch dispatch_sha256'),line)
++
++def test_main_host_without_rows_is_anomaly(tmp_path,capsys):
++ d=json.dumps(dict(blocks=[dict(id='primary-0001',host='127x03')])).encode();sha=hashlib.sha256(d).hexdigest()
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(launch=sha),capsys,history=lambda root:write_history(root,dispatch=d,sha=sha))
++ ok(rc==2 and has(line['anomalies'],'127x04: expected count UNKNOWN'),line)
++
++def test_main_running_phase_records_expected(tmp_path,capsys):
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(),capsys)
++ ok(rc==0,line);ok(rec['hosts']['127x03']['expected']==3 and rec['hosts']['127x04']['expected']==2,rec['hosts'])
++
++def test_main_r4_shape_null_exit_short_is_flagged(tmp_path,capsys):
++ """The r4 shape: a supervisor exit with a null reason and fewer completions than dispatched must be flagged."""
++ run=fake_run(supexit='null',supexitn={'127x03':'2 0 1','127x04':'2 0 0'},complete={'127x03':2,'127x04':2})
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
++ ok(rc==2,line);ok(has(line['anomalies'],'127x03: supervisor exited ("reason": null) with complete 2 < expected 3'),line['anomalies'])
++ ok(has(line['anomalies'],'127x03: null-reason exit left 1 unstarted'),line['anomalies'])
++ ok(not any(a.startswith('127x04: supervisor') or a.startswith('127x04: null') for a in line['anomalies']),line['anomalies'])
++ ok(rec['anomalies']==line['anomalies'])
++
++def test_main_null_exit_complete_passes(tmp_path,capsys):
++ run=fake_run(supexit='null',supexitn={'127x03':'3 0 0','127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
++ ok(rc==0 and line['anomalies']==[],line);ok(rec['hosts']['127x03']['exit_counts']==dict(completed=3,failed=0,unstarted=0))
++
++@pytest.mark.parametrize('sn,text',[(None,'supervisor-exit counts unreadable'),('3 0','supervisor-exit counts unreadable'),('3 1 0','counts 3+1+0 != dispatched 3'),('2 1 0','completed 2 != complete.json count 3')])
++def test_main_exit_counts_must_account_for_every_block(tmp_path,capsys,sn,text):
++ run=fake_run(supexit='null',supexitn={'127x03':sn,'127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
++ ok(rc==2 and has(line['anomalies'],text),(sn,line['anomalies']))
++
++def test_main_nonnull_exit_still_flagged(tmp_path,capsys):
++ run=fake_run(supexit='"owned_STOP"',supexitn={'127x03':'3 0 0','127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
++ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
++ ok(rc==2 and has(line['anomalies'],'127x03: supervisor exited ("reason": "owned_STOP"'),line['anomalies'])
