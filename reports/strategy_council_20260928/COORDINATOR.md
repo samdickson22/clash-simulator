@@ -3653,3 +3653,14 @@ This is a deliberate, recorded idle, not an oversight. It will be revisited when
 **Hosts.** 01 is idle; 08 was never used. Mirror: 14,140 files, SHA-verified, at `05:<job>/mirror/final/`.
 
 **Direction.** The next student lever is **on-policy cutoff-state labels** (states the student actually reaches, labelled by the search teacher), or student capacity. An Opus design brief for the next exploration on 01 and 08 follows. Its scripts need Sol review before any host run.
+
+## 2026-10-12 17:23Z: K4S END rulings R6/R7 (S4 r3 open questions)
+
+**Status.** S4 r3 is complete (252/252 tests, normally and under -O; 27/27 mutants killed; `st_nlink == 1` enforced in the walk and at the descriptor). r3b adds the E4 list. S4 r3b and S2 r3 will be sent to Sol together.
+
+**R6. Runtime tree versus the strict `reports/explore/k4s-confirm/end/` namespace.**
+- **Primary route.** Build and stage the runtime at the **evidence commit**, where `end/` does not yet exist. S9 `build` must assert that the subtree is absent, failing closed if it isn't. After the END-JOB commit, the `s9 equivalence` proof is a hard gate showing identical runtime_files and measurement_files, and the END-JOB commit's diff must be exactly `end/END-JOB.json`. Final adoption of this route waits for Sol's package-2 verdict on decision (1).
+- **Fallback, only if Sol rejects (1).** Stage with `end/` excluded by an exact path filter. The build must prove that the staged runtime membership equals the frozen manifest's runtime_files name list (not just per-file hashes), and that the excluded subtree holds only the enumerated END JSON files.
+- **The `--repository` clone** keeps `end/` by design, for claims. It is not part of the hashed runtime.
+
+**R7. Plain copies only (binding).** Every staged input must be an independent regular file with link count 1. **Never use `cp -l`, `ln`, reflink-to-shared, or hard-link dedup.** S10's bytewise copy already complies, and the S4/S10 `st_nlink` gates enforce it.
