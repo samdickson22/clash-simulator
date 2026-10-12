@@ -1,0 +1,373 @@
+diff --git a/reports/explore/t1/release_run.py b/reports/explore/t1/release_run.py
+new file mode 100644
+index 00000000..02391ad7
+--- /dev/null
++++ b/reports/explore/t1/release_run.py
+@@ -0,0 +1,192 @@
++"""Reviewed separately before use. Never invoke without explicit release authority.
++
++Run the committed driver by absolute path, with cwd canonical R/reports/explore/t1.
++The reducer and its imports always come from R, never the driver's checkout.
++"""
++import argparse
++import contextlib
++import hashlib
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++CANONICAL = Path('/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source')
++BLOCK_ROOT = Path('/mpac/sdicks02/jobs/clasher/t1-20261010-r1/release-blocks-0108-r3')
++PRIVATE = Path('/mpac/sdicks02/jobs/clasher/t1-20261010-r1/release-private')
++PYTHON = '/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python'
++PRIVATE_COMMIT = '9bb349b1d4f467866f802a859c142c4adc7c0402'
++PRIVATE_REF = 'refs/private/t1-registration-20261012'
++BLIND_SHA = '866e6f7f7e41af4112602a643372d8424d951abb1c6952230d25d106a840d8fa'
++SIDECAR_SHA = '16e1b34f7e376e42f3a18a7d9bb8b2ac09613d9f3555bfd2f97f8c7cad388f2e'
++R5_SHA = '3b7d2295657be87c76a07dfc9d278e2f96b262d436b04504e4556352d23ba5f9'
++COPY_SHA = 'd433dd54556a6040428e0a6791df67db441eb7637c03cae59db8ca8e5b25d3ef'
++PINS = {'reduce.py': 'aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79',
++        'ssh_sensitivity.py': 'bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5'}
++
++
++def require(condition, label):
++    if not condition:
++        raise ValueError(label)
++
++
++def sha(path):
++    h = hashlib.sha256()
++    with Path(path).open('rb') as stream:
++        for part in iter(lambda: stream.read(1024 * 1024), b''):
++            h.update(part)
++    return h.hexdigest()
++
++
++def read(path):
++    return json.loads(Path(path).read_text())
++
++
++def write(path, value):
++    with Path(path).open('x') as stream:
++        json.dump(value, stream, indent=2)
++        stream.write('\n')
++
++
++def without_utc(value):
++    return {k: v for k, v in value.items() if k != 'utc'}
++
++
++def postcheck(output, sidecar):
++    emitted = output.with_name(output.name + '.ssh-sensitivity-ledger.json')
++    require(without_utc(read(emitted)) == without_utc(sidecar), 'emitted health differs')
++    digest = sha(emitted)
++    result = read(output)
++    for key in ('ssh_sensitivity', 'apt_sensitivity', 'ssh_or_apt_sensitivity'):
++        require(result[key]['ledger_sha256'] == digest, 'sensitivity binding differs')
++    return digest
++
++
++def execute_guarded(root, ledger, sidecar, directory, health_fn, barrier_fn, reducer_fn):
++    """Callbacks permit offline synthetic tests; production supplies pinned R code."""
++    stage = 'pre_guard'
++    created = False
++    try:
++        computed = health_fn(root, read(ledger)['events'], sha(ledger))
++        require(without_utc(computed) == without_utc(sidecar), 'pre-outcome health differs')
++        directory.mkdir(mode=0o700, exist_ok=False)
++        created = True
++        write(directory / 'pre-guard-ledger.json', computed)
++        output = directory / 'reduce.json'
++        stage = 'barrier'
++        with (directory / 'barrier.stdout').open('x') as out, (directory / 'barrier.stderr').open('x') as err:
++            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
++                barrier_fn()
++        stage = 'reducer'
++        with (directory / 'reducer.stdout').open('x') as out, (directory / 'reducer.stderr').open('x') as err:
++            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
++                code = reducer_fn(output, out, err)
++        require(code == 0, 'reducer exit')
++        stage = 'post_check'
++        emitted_sha = postcheck(output, sidecar)
++        record = dict(passes=True, reducer_exit_code=code, output_sha256=sha(output),
++                      pre_guard_ledger_sha256=sha(directory / 'pre-guard-ledger.json'),
++                      emitted_ledger_sha256=emitted_sha, sidecar_sha256=SIDECAR_SHA)
++        write(directory / 'checked-health.json', record)
++        return record
++    except BaseException as exc:
++        # Exception messages or repr may contain result bytes. Publish type/stage only.
++        if created:
++            os.chmod(directory, 0o000)
++        raise ReleaseFailure(stage, type(exc).__name__, created) from None
++
++
++class ReleaseFailure(Exception):
++    def __init__(self, stage, exception_type, locked):
++        self.health = dict(passes=False, stage=stage, exception_type=exception_type,
++                           outputs_locked=locked, no_result_reported=True)
++        super().__init__('Release failed; health record only')
++
++
++def git(*args):
++    return subprocess.check_output(['git', '-C', str(CANONICAL), *args], text=True).strip()
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--release', type=Path, required=True)
++    parser.add_argument('--release-sha256', required=True)
++    parser.add_argument('--r5', type=Path, required=True)
++    parser.add_argument('--copy-receipt', type=Path, required=True)
++    parser.add_argument('--private-name', required=True)
++    args = parser.parse_args()
++    os.umask(0o077)
++    owns_output = False
++    try:
++        require(__debug__ and sys.version_info[:3] == (3, 12, 12), 'interpreter version')
++        require(sys.executable == PYTHON and sys.dont_write_bytecode and
++                os.environ.get('PYTHONDONTWRITEBYTECODE') == '1', 'interpreter flags')
++        require(Path.cwd() == CANONICAL / 'reports/explore/t1', 'canonical cwd')
++        require(git('status', '--porcelain', '--ignored') == '', 'canonical checkout dirty')
++        head = git('rev-parse', 'HEAD')
++        require(git('rev-parse', PRIVATE_REF) == PRIVATE_COMMIT, 'private ref changed')
++        subprocess.run(['git', '-C', str(CANONICAL), 'merge-base', '--is-ancestor', PRIVATE_COMMIT, head], check=True)
++        require(sha(args.release) == args.release_sha256, 'release receipt pin')
++        require(sha(args.r5) == R5_SHA, 'sealed R5 pin')
++        release = read(args.release)
++        require(release['amendment_1_prerelease'] == read(args.r5)['amendment_1_prerelease'], 'R5 envelope')
++        here = CANONICAL / 'reports/explore/t1'
++        for name, digest in PINS.items():
++            require(sha(here / name) == digest, 'reviewed code pin')
++        ledger = here / 'receipts/blind-ledger-final-op7-r3.json'
++        sidecar_path = here / 'receipts/PC4/ssh-sensitivity-pc4-landed.json'
++        require(sha(ledger) == BLIND_SHA and sha(sidecar_path) == SIDECAR_SHA, 'blind/PC4 pin')
++        require(BLOCK_ROOT.is_dir() and not BLOCK_ROOT.is_symlink(), 'C2 root')
++        require(sha(args.copy_receipt) == COPY_SHA, 'C2 receipt pin')
++        copy = read(args.copy_receipt)
++        require(copy['destination'] == str(BLOCK_ROOT) and copy['exit_code'] == 0 and
++                copy['complete_proofs'] == 3072 and copy['verified_game_files'] == 24576 and
++                copy['verified_hub_ack'] == 1100 and copy['game_parse_or_summary'] is False and
++                copy['complete_proof_set_sha256'] == 'd0f010695064c0b5d397ce8f24afede30a679a571a989daa4e058c1571c23fe0', 'C2 binding')
++        require(Path(args.private_name).name == args.private_name and args.private_name not in ('.', '..'), 'private name')
++        require(PRIVATE.is_dir() and not PRIVATE.is_symlink() and PRIVATE.stat().st_mode & 0o777 == 0o700, 'private parent')
++        directory = PRIVATE / args.private_name
++        # Health-only parent is forbidden from opening any game path throughout.
++        def audit(event, values):
++            if event == 'open' and isinstance(values[0], (str, bytes, os.PathLike)):
++                require('games' not in Path(os.fsdecode(values[0])).parts, 'parent game access refused')
++        sys.addaudithook(audit)
++        sys.path.insert(0, str(here))
++        from ssh_sensitivity import health_ledger
++        from barrier import outcome_release
++        from common import ROOT
++        require(ROOT == CANONICAL, 'imported repository root')
++        argv = [PYTHON, '-B', str(here / 'reduce.py'), '--root', str(BLOCK_ROOT),
++                '--release', str(args.release), '--ledger', str(ledger), '--out', str(directory / 'reduce.json')]
++        if release['reason'] == 'committed_mac_summary':
++            argv += ['--mac-summary', str(CANONICAL / release['mac_summary_path'])]
++        before = set(Path('/mpac/sdicks02/tmp').glob('t1-release-recheck-*/check.json'))
++        def barrier():
++            outcome_release(CANONICAL, args.release)
++        def reducer(output, out, err):
++            return subprocess.run(argv, cwd=here, stdout=out, stderr=err,
++                                  env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'}).returncode
++        record = execute_guarded(BLOCK_ROOT, ledger, read(sidecar_path), directory, health_ledger, barrier, reducer)
++        owns_output = True
++        fresh = set(Path('/mpac/sdicks02/tmp').glob('t1-release-recheck-*/check.json')) - before
++        require(len(fresh) == 2, 'parent/reducer barrier checks not both retained')
++        record.update(canonical_HEAD=head, sys_executable=sys.executable, version=sys.version,
++                      driver_argv=sys.orig_argv, reducer_argv=argv, release_receipt_sha256=args.release_sha256,
++                      barrier_exit_code=0, fresh_checks={str(p): sha(p) for p in sorted(fresh)},
++                      root=str(BLOCK_ROOT), blind_ledger_sha256=BLIND_SHA, output_path=str(directory / 'reduce.json'))
++        require(git('rev-parse', 'HEAD') == head and git('status', '--porcelain', '--ignored') == '', 'canonical state changed')
++        write(directory / 'release-health-receipt.json', record)
++        # Only the checked health receipt is visible; stdout/results remain private.
++        print(json.dumps(record))
++        return 0
++    except BaseException as exc:
++        if owns_output:
++            os.chmod(directory, 0o000)
++        health = exc.health if isinstance(exc, ReleaseFailure) else dict(passes=False, stage='preflight_or_record', exception_type=type(exc).__name__, no_result_reported=True)
++        print(json.dumps(health))
++        return 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+diff --git a/reports/explore/t1/test_release_run.py b/reports/explore/t1/test_release_run.py
+new file mode 100644
+index 00000000..7dd24846
+--- /dev/null
++++ b/reports/explore/t1/test_release_run.py
+@@ -0,0 +1,169 @@
++"""Offline synthetic fixtures only. No canonical checkout or real game access."""
++import contextlib
++import io
++import json
++import os
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++import release_run as driver
++
++
++class GuardTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory(prefix='t1-release-driver-synthetic-')
++        self.base = Path(self.temp.name)
++        self.ledger = self.base / 'blind.json'
++        self.ledger.write_text('{"events": []}')
++        self.sidecar = {'utc': 'old', 'schema': 'synthetic', 'blocks': [{'id': 'synthetic-0'}]}
++        self.calls = []
++        self.directory = self.base / 'private'
++
++    def tearDown(self):
++        if self.directory.exists():
++            os.chmod(self.directory, 0o700)
++        self.temp.cleanup()
++
++    def health(self, root, events, digest):
++        self.calls.append('health')
++        self.assertEqual(root, self.base)
++        self.assertEqual(events, [])
++        self.assertEqual(digest, driver.sha(self.ledger))
++        return {**self.sidecar, 'utc': 'new'}
++
++    def barrier(self):
++        self.calls.append('barrier')
++
++    def reducer(self, output, out, err):
++        self.calls.append('reducer')
++        # Deliberately sensitive synthetic output, never printed by the wrapper.
++        print('SYNTHETIC SECRET stdout')
++        emitted = output.with_name(output.name + '.ssh-sensitivity-ledger.json')
++        emitted.write_text(json.dumps({**self.sidecar, 'utc': 'newer'}))
++        digest = driver.sha(emitted)
++        result = {key: {'ledger_sha256': digest} for key in
++                  ('ssh_sensitivity', 'apt_sensitivity', 'ssh_or_apt_sensitivity')}
++        result['synthetic_secret'] = 'SYNTHETIC SECRET result'
++        output.write_text(json.dumps(result))
++        return 0
++
++    def run_guard(self, health=None, barrier=None, reducer=None):
++        return driver.execute_guarded(self.base, self.ledger, self.sidecar, self.directory,
++                                      health or self.health, barrier or self.barrier, reducer or self.reducer)
++
++    def test_matching_except_utc_orders_barrier_before_reducer_and_hides_output(self):
++        stdout = io.StringIO()
++        with contextlib.redirect_stdout(stdout):
++            record = self.run_guard()
++        self.assertEqual(self.calls, ['health', 'barrier', 'reducer'])
++        self.assertTrue(record['passes'])
++        self.assertNotIn('SECRET', json.dumps(record))
++        self.assertEqual(stdout.getvalue(), '')
++        self.assertIn('SECRET stdout', (self.directory / 'reducer.stdout').read_text())
++        self.assertEqual(self.directory.stat().st_mode & 0o777, 0o700)
++
++    def test_preguard_mismatch_never_invokes_barrier_or_reducer(self):
++        with self.assertRaises(driver.ReleaseFailure) as caught:
++            self.run_guard(health=lambda *a: {**self.sidecar, 'blocks': []})
++        self.assertEqual(self.calls, [])
++        self.assertFalse(self.directory.exists())
++        self.assertEqual(caught.exception.health['stage'], 'pre_guard')
++
++    def test_health_exception_aborts_before_output_or_game_reader(self):
++        def broken(*args):
++            raise RuntimeError('SECRET never disclose')
++        with self.assertRaises(driver.ReleaseFailure) as caught:
++            self.run_guard(health=broken)
++        self.assertEqual(self.calls, [])
++        self.assertFalse(self.directory.exists())
++        self.assertNotIn('SECRET', json.dumps(caught.exception.health))
++
++    def test_barrier_failure_prevents_reducer_and_locks(self):
++        def broken():
++            self.calls.append('barrier')
++            raise ValueError('SECRET')
++        self.assert_locked_failure(barrier=broken, stage='barrier')
++        self.assertEqual(self.calls, ['health', 'barrier'])
++
++    def assert_locked_failure(self, stage='post_check', **kwargs):
++        stdout = io.StringIO()
++        with contextlib.redirect_stdout(stdout), self.assertRaises(driver.ReleaseFailure) as caught:
++            self.run_guard(**kwargs)
++        self.assertEqual(stdout.getvalue(), '')
++        self.assertEqual(self.directory.stat().st_mode & 0o777, 0)
++        self.assertTrue(caught.exception.health['outputs_locked'])
++        self.assertEqual(caught.exception.health['stage'], stage)
++        self.assertNotIn('SECRET', json.dumps(caught.exception.health))
++
++    def test_reducer_nonzero_locks_stdout_and_output(self):
++        def bad(*args):
++            self.reducer(*args)
++            return 23
++        self.assert_locked_failure(reducer=bad, stage='reducer')
++
++    def test_reducer_exception_locks_and_hides_exception_text(self):
++        def bad(*args):
++            self.reducer(*args)
++            raise RuntimeError('SECRET')
++        self.assert_locked_failure(reducer=bad, stage='reducer')
++
++    def test_emitted_ledger_difference_locks(self):
++        def bad(output, *rest):
++            self.reducer(output, *rest)
++            output.with_name(output.name + '.ssh-sensitivity-ledger.json').write_text('{"blocks": []}')
++            return 0
++        self.assert_locked_failure(reducer=bad)
++
++    def test_each_sensitivity_binding_checked(self):
++        for key in ('ssh_sensitivity', 'apt_sensitivity', 'ssh_or_apt_sensitivity'):
++            with self.subTest(key=key):
++                def bad(output, *rest):
++                    self.reducer(output, *rest)
++                    value=json.loads(output.read_text());value[key]['ledger_sha256']='wrong'
++                    output.write_text(json.dumps(value));return 0
++                self.assert_locked_failure(reducer=bad)
++                os.chmod(self.directory, 0o700)
++                # Each subcase has a fresh exclusive destination.
++                self.directory = self.base / (key + '-next')
++
++    def test_missing_apt_and_union_both_rejected(self):
++        for key in ('apt_sensitivity', 'ssh_or_apt_sensitivity'):
++            with self.subTest(key=key):
++                def bad(output, *rest):
++                    self.reducer(output, *rest)
++                    value=json.loads(output.read_text());del value[key]
++                    output.write_text(json.dumps(value));return 0
++                self.assert_locked_failure(reducer=bad)
++                os.chmod(self.directory, 0o700)
++                self.directory = self.base / (key + '-next')
++
++    def test_existing_output_directory_is_not_overwritten(self):
++        self.directory.mkdir();(self.directory / 'sentinel').write_text('keep')
++        with self.assertRaises(driver.ReleaseFailure):
++            self.run_guard()
++        self.assertEqual((self.directory / 'sentinel').read_text(), 'keep')
++        self.assertEqual(self.calls, ['health'])
++
++    def test_real_health_function_reads_only_synthetic_metadata(self):
++        from ssh_sensitivity import health_ledger
++        block = self.base / 'synthetic-0'
++        (block / 'games').mkdir(parents=True)
++        (block / 'games/not-json').write_bytes(b'synthetic opaque bytes')
++        (block / 'complete.json').write_text(json.dumps(dict(
++            host='127x01', descriptor=dict(id='synthetic-0', population='primary', cell=0),
++            interference={})))
++        opened = []
++        original = Path.open
++        def guarded_open(path, *args, **kwargs):
++            self.assertNotIn('games', path.parts)
++            opened.append(path)
++            return original(path, *args, **kwargs)
++        with patch.object(Path, 'open', guarded_open):
++            health = health_ledger(self.base, [], driver.sha(self.ledger))
++        self.assertEqual(health['blocks'][0]['id'], 'synthetic-0')
++        self.assertTrue(opened)
++
++
++if __name__ == '__main__':
++    unittest.main()

@@ -1,0 +1,52 @@
+{
+  "schema": "clasher.t1.release-driver-candidate.v1",
+  "utc": "2026-10-12T11:13:58Z",
+  "coordinator_ruling": "2e2753120a768ec03d0354e47650c61c8fd34820",
+  "author": "GPT-6.1-Sol",
+  "independent_review": "PENDING_COORDINATOR_ROUTING",
+  "production_driver_run": false,
+  "barrier_run": false,
+  "reducer_run": false,
+  "outcomes_sealed": true,
+  "driver_path": "reports/explore/t1/release_run.py",
+  "driver_sha256": "51520e9b8f04e86ff1db4d607305c6b80c5ede84398f1767391999a8f1b97a44",
+  "tests_path": "reports/explore/t1/test_release_run.py",
+  "tests_sha256": "168140a8c87b27ccb474d2a7b37ff0901412c0ffb83b2c4af22477500476cd12",
+  "code_diff_path": "reports/explore/t1/receipts/END-C1-release-driver-r1.diff",
+  "code_diff_private_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-release-driver-r1.diff",
+  "code_diff_sha256": "d0cf5aa0c33681bc31102d45a7d0bafe8aadc347a841e334e7b004f368ecd6e3",
+  "tests": {
+    "passes": true,
+    "count": 11,
+    "synthetic_only": true,
+    "argv": [
+      "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "test_release_run"
+    ],
+    "cwd": "/mpac/sdicks02/jobs/clasher/t1-health-stop-reconcile-20261010/reports/explore/t1",
+    "sys_executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+    "version": "3.12.12 (main, Dec 17 2025, 21:10:06) [Clang 21.1.4 ]",
+    "env": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "stdout_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-synthetic-tests-r1.stdout",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-synthetic-tests-r1.stderr",
+    "stderr_sha256": "07b30a3bc3d28616d7033aa34d0f7c8708c00aa50b7adb128119fc1f83c0a747",
+    "exit_code": 0
+  },
+  "R7_verbatim_sha256": "bb93495cf82a3eb555e9d11b0a4ba798acdbe3a7623e77b1ec6dc66a0f98e666",
+  "C2_receipt_sha256": "d433dd54556a6040428e0a6791df67db441eb7637c03cae59db8ca8e5b25d3ef",
+  "copy_helper_sha256": "d0becc7741a448c503cc72b536110eccd63b260ea5d43f77c2759a5043610585",
+  "canonical_R": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source",
+  "canonical_R_HEAD": "9bb349b1d4f467866f802a859c142c4adc7c0402",
+  "canonical_R_clean": true,
+  "private_ref_intact": true,
+  "canonical_R_never_pushed": true,
+  "reducer_sha256": "aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79",
+  "host_ownership_ruling": "01 CPUs available; four job directories and A5 host roots01/08 frozen untilrelease; mirrorpaused"
+}
