@@ -436,3 +436,14 @@ with rc 0 and the lock fd inherited; the exception path writes the post receipt 
   - bundle: on 05 at `/mpac/sdicks02/jobs/clasher/mac-e4-private/bundles/`, restored and inventory-verified;
   - binding: `D/private-commit-binding.json`;
   - Chrome relaunched (open_rc 0, running).
+
+### 2026-10-12T16:22:20Z: coordinator ack (446e9901); T1 release cleared; HOLD for K4S phase C
+
+- The TIERS Mac session and collection are accepted; T1's release sequence is cleared.
+- **K4S Mac phase C** waits for the K4S END reference (planned overnight into tomorrow; scripts in review).
+  K4S Amendment 2 was adopted earlier; the current K4S manifest is **A3 74314eda** (not 8bb20a75).
+- **Until the coordinator's word:** the Mac stays idle; Chrome, Claude and ChatGPT keep running.
+- **When told:** prepare the standalone K4S session, re-checking the K4S manifest 74314eda pins against runtime-a5;
+  stage K4-states.pkl a97b1fbf with a SHA check; write a K4S launcher using the nonce/__RC wrapper, with Sol pre-run
+  review. The TIERS receipts K4S P3 needs are private commit 174c4a0a at
+  `reports/explore/mac-e4-session/tiers-session-r1/sealed` (receipt-manifest SHA f411b9b4).
