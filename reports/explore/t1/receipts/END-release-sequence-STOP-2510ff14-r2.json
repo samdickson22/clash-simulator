@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-12T16:34:37Z",
+  "authorization_commit": "2510ff14e8772a2c88d794a6a6a1d1f9fa9b3775",
+  "stage": "driver_launch_preflight",
+  "failure_type": "FileNotFoundError",
+  "retry": false
+}
