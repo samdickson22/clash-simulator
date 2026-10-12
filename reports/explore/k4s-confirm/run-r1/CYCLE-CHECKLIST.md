@@ -80,11 +80,14 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
 
 ## 6. Prelaunch (both hosts)
 - The cut's timer has fired (`systemctl list-timers` LAST time after the cut).
-- Quiet read (coordinator ruling on audit F1; replaces the shelved `aptquiet_remote.sh`). Run exactly this, one ssh per
-  host, and record the full stdout and the exit code:
-  `bash -c 'set -euo pipefail; for u in apt-daily.service apt-daily-upgrade.service; do printf "%s=%s\n" "$u" "$(systemctl is-active "$u" || true)"; done; P=$(ps -eo comm=); test -n "$P"; printf "maint=%s\n" "$(printf "%s\n" "$P" | grep -cE "^(apt|apt-get|apt-check|dpkg|unattended-upgr|update-notifier|check-new-rele)" || true)"; who | wc -l'`
-  A non-zero exit, or empty `ps`, is a FAIL. Quiet means both units are not `active`, `maint=0` and the `who` count
-  is 0.
+- Quiet read v2 (coordinator ruling after the 09:08Z test; supersedes the first inline command, which counted the idle
+  boot-time `unattended-upgrade-shutdown --wait-for-signal` helper). Run exactly `rounds/r3/quiet-read-v2.cmd`
+  (sha256 08aabe92…), one ssh per host, and record the full stdout and the exit code of EVERY read:
+  `bash -c 'set -euo pipefail; for u in apt-daily.service apt-daily-upgrade.service; do printf "%s=%s\n" "$u" "$(systemctl is-active "$u" || true)"; done; P=$(ps -eo pid=,lstart=,comm=,args=); test -n "$P"; M=$(printf "%s\n" "$P" | grep -E "[0-9]{4} +(apt|apt-get|apt-check|dpkg|unattended-upgr|update-notifier|check-new-rele) " | grep -vF "/usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal" || true); H=$(printf "%s\n" "$P" | grep -F "/usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal" | grep -v grep || true); printf "helper=%s\n" "$H"; printf "maint_lines=<<%s>>\n" "$M"; printf "maint=%s\n" "$(printf "%s" "$M" | grep -c . || true)"; printf "who=%s\n" "$(who | wc -l)"'`
+  Quiet = rc 0, both units not `active`, `maint=0`, `who=0`, and `helper` shows at most that exact helper. Record its
+  PID and lstart; a change from the pinned baseline (03 PID 2368, 04 PID 2296) is noted but is not a FAIL by itself.
+  Two consecutive quiet reads 30 s apart are required. A non-quiet read is retried up to 3 more times at 30 s intervals;
+  without two consecutive quiet reads it is a FAIL: STOP and escalate.
 - Stamps: `release-upgrade-available` younger than 24 h minus the round window; `updates-available` newer than
   `/var/lib/apt/lists`. If either is stale: one ordinary login, wait for the checks to exit, re-read.
 - Record the next timers.

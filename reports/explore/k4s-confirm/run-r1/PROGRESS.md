@@ -250,3 +250,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   - Quiet-read test 09:08Z (read-only): both hosts maint=1 at baseline (boot-time unattended-upgrade-shutdown
     --wait-for-signal: 03 PID 2368, 04 PID 2296). One 04 read at 09:08:15Z showed maint=2 (transient, unidentified).
     Coordinator ruling requested before the cut-2 prelaunch.
+- 2026-10-12T09:10:36Z Quiet-read v2 (coordinator ruling; cmd sha 08aabe92) tested read-only 09:09:53Z and 09:10:24Z on both hosts: rc 0, units inactive, maint=0, who=0, helper 03 PID 2368 (lstart Wed Sep 23 17:37:32 2026 local) / 04 PID 2296 (Mon Sep 28 15:01:03 2026 local). Two consecutive quiet reads per host. Max k gate 8/6 adopted.
