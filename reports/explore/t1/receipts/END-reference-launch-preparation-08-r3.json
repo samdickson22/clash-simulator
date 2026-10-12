@@ -1,0 +1,169 @@
+{
+  "C3_binding_preflight": "PASS",
+  "RG1": "92acdf02",
+  "admissions": [
+    "idle-services.json",
+    "owned-supervisor-admission.json",
+    "system-bus-admission.json"
+  ],
+  "argv": [
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "ffd2d96ea0c23a46d8843bfb79f24b29481b76e3f617d24b072253c3e222e975"
+  ],
+  "argv_nul_sha256": "8bf5828c4447c11cd0fe0f950a48fde1001ccd88c33bdc4b5b303bb7b524bcae",
+  "binding_changes": [
+    "guard.job",
+    "remove owned-copier admission"
+  ],
+  "bundle": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/bundle",
+  "detach_sha256": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+  "frozen_launch_argv_nul_sha256": "ee062475a48a524ebca09e965b931c731ad51e14169faba5d6386a1ead6c559e",
+  "frozen_launch_command": [
+    "nice",
+    "-n",
+    "10",
+    "taskset",
+    "-c",
+    "61",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-frozen-detach-aeeb3003.sh",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/detach.log",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/detach.json",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-approved-exit-push-0a87166f.sh",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3",
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/imitation/evaluation/runtime_dependencies:/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py",
+    "--bundle",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/bundle",
+    "--runtime-root",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a3-f6cebbaa-0108-r1/runtime",
+    "--native",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/native/clasher_core.abi3.so",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3/measurement",
+    "--fleet-reference",
+    "--manifest-sha256",
+    "ffd2d96ea0c23a46d8843bfb79f24b29481b76e3f617d24b072253c3e222e975"
+  ],
+  "host": "127x08",
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08/end-reference-127x08-0a87166f-r3",
+  "layout": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    [
+      [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      [
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      [
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      [
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      [
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      [
+        50,
+        51,
+        52,
+        53,
+        54
+      ]
+    ],
+    63
+  ],
+  "manifest_sha256": "ffd2d96ea0c23a46d8843bfb79f24b29481b76e3f617d24b072253c3e222e975",
+  "outcomes_sealed": true,
+  "prepare_proof_sha256": "4cc61a1f8d7d00537f604065b232ef4b83e8542d55110cca20f5789a7bfe7176",
+  "python": "3.12.13",
+  "slot_count": 11,
+  "source_inputs_unchanged": true,
+  "source_manifest_sha256": "1bd8a4c734e79a615f2f86f9354ff7724ae12b23cebf152c79404a84e918ff88",
+  "technical_repeat_index": 1,
+  "timing_started": false,
+  "unpoolable": false,
+  "utc": "2026-10-12T03:53:04Z",
+  "warmup_seconds": 300,
+  "wrapper_sha256": "0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1"
+}
