@@ -82,7 +82,10 @@ cut ends phase `replacement-r{N-1}` and starts `replacement-rN` in namespace `k4
 - Stamps: `release-upgrade-available` younger than 24 h minus the round window; `updates-available` newer than
   `/var/lib/apt/lists`. If either is stale: one ordinary login, wait for the checks to exit, re-read.
 - Record the next timers.
-- 08:40Z cut only: post "03 quiet" to the coordinator. Wait for "released", or 30 minutes.
+- 03 read window (COORDINATOR 89b28b6d, sequencing in P2 adc12f36), only if the coordinator has DECLARED it: confirm
+  that the 03 phase has exited (supervisor-exit, no owned groups) and that `apt-daily.service` / `apt-daily-upgrade.service`
+  are inactive. Then post "03 quiet" and hold the 03 launch until the builder posts "released" (P2: or 30 minutes).
+  Only then do the motd/timer reads above. If no window is declared, there is no hold.
 - Escalation gates clear.
 
 ## 7. Launch (per host)
