@@ -2934,3 +2934,24 @@ The staging driver is in Sol pre-run review r3; it will be the first host script
 - Record the before and after state, and relaunch the same apps at restore, alongside the software-update preferences.
 - If memory is still under 6 GiB after that, do not start; the coordinator rules.
 - The formal 5-minute precondition check gets its own receipt before GO.
+
+## 2026-10-12 11:22Z: 01 idle compute: X4S-3 student data-scaling exploration APPROVED and launched
+
+Plan: `/mpac/sdicks02/jobs/clasher/planning/01-idle-compute-plan-20261012.md` (Opus planner). **X4S-3** asks whether refitting the R3a student on about 46% more W teacher roots lowers its loss vs v1. The test is run in the two deployment configurations where the student actually decides actions: K4S-120 and the 1-core S-200. This exploration is **NEVER ADOPTABLE** into confirmatory work.
+
+**Arms:**
+- R3a (control);
+- R4-D (r1 plus G-01 and G-08, about 8.8M roots, equal compute);
+- R3a-rep (fit-seed noise floor);
+- R4-DC (2× steps, optional).
+
+Each arm plays 1,200 fresh paired seeds on the X decks only against v1. Seeds must pass the repo-wide audit. The readout is pre-declared.
+
+**On 01:**
+- New prefix only. T1 paths, release roots and the hub mirror stay frozen.
+- Cores: 0–49 for games, 56–61 for the fit, 50–55 and 62–63 kept free. The GPU carries one fit at a time, ≤40 GB.
+- Yield to any console user. Hard stop at 12 h.
+
+**08 pull:** one read-only rsync of the G-08 shards (about 25 GB). The command gets a narrow Sol review before it runs. 08 isn't GPU-busy yet, and T1 and perception paths there stay untouched.
+
+**Owner:** an Opus-high worker. It runs detached and keeps PROGRESS resumable.
