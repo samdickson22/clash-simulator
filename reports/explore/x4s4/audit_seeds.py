@@ -6,7 +6,7 @@ reviewed deterministic rule from tree METADATA alone, and every blob is read by 
 (x4s4io.git_blobs: replace objects disabled, scrubbed environment). Hard links, symlinks, working-tree races and
 indirection therefore cannot alias a source to anything else.
 
-Inventory rule (derive_inventory; version x4s4.seed-sources.v1), per tracked entry of the pinned commit:
+Inventory rule (derive_inventory; version x4s4.seed-sources.v2), per tracked entry of the pinned commit:
   * not a regular blob (symlink, gitlink) -> omitted 'not_regular';
   * the study's own directory reports/explore/x4s4/ -> omitted 'own';
   * suffix outside .json/.md/.py/.txt/.yaml/.sh -> omitted 'not_text'; blob > 50 MB -> omitted 'size';
@@ -14,8 +14,9 @@ Inventory rule (derive_inventory; version x4s4.seed-sources.v1), per tracked ent
     loss, release, sealed, games) -> omitted 'outcome_path' (R2-F6: ancestors count, e.g. t1/outcomes/plan.json);
   * inside a sealed tree (reports/explore/t1/, reports/explore/k4s-confirm/, reports/explore/mac-e4-session/,
     reports/strategy_council_20260928/live-loop/, or any component containing 'tiers'): only a seed declaration
-    (basename seed-audit*.json, *seed*audit*.json or PREREG*.md) is a source ('sealed_declaration', listed by path and
-    blob id in seed-sources.json for review); everything else -> omitted 'sealed';
+    (basename seed-audit*.json, *seed*audit*.json or PREREG*.md, and - v2, Sol r3 - no review/response/check/
+    conformance support document) is a source ('sealed_declaration', listed by path and blob id in seed-sources.json
+    for review); everything else -> omitted 'sealed';
   * otherwise a 'scan' source; JSON declarations (seed-audit, plan, freeze names and the fixed historical paths) are
     also parsed for base/count ranges;
   * any selected blob whose object id also occurs at an omitted sealed/outcome path -> omitted 'alias_of_excluded'
@@ -33,13 +34,14 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import x4s4io as io                              # noqa: E402
 
-RULE = 'x4s4.seed-sources.v1'
+RULE = 'x4s4.seed-sources.v2'
 OFFSETS = (0, 13, 100000, 100001, 100002, 100003, 271828, 271829)
 TEXT = ('.json', '.md', '.py', '.txt', '.yaml', '.sh')
 SEALED = ('reports/explore/t1/', 'reports/explore/k4s-confirm/', 'reports/explore/mac-e4-session/',
           'reports/strategy_council_20260928/live-loop/')
 OUTCOME_TOKENS = ('result', 'outcome', 'complete', 'readout', 'verdict', 'reduc', 'score', 'loss', 'release', 'sealed', 'games')
 SEALED_DECL = ('seed-audit*.json', '*seed*audit*.json', 'PREREG*.md')
+SUPPORT_TOKENS = ('review', 'response', 'check', 'conformance')     # v2 (Sol r3): declarations only, not plan discussion
 DECL_JSON = ('seed-audit*.json', '*seed*audit*.json', 'plan*.json', '*freeze*.json', '*FREEZE*.json')
 FIXED_DECL = ('reports/strategy_council_20260928/PLAN-NEXT-20261010.md',
               'reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json',
@@ -86,7 +88,7 @@ def derive_inventory(entries):
         if path.startswith(OWN): omit('own'); continue
         if outcome_path(path): omit('outcome_path'); excluded_oids.add(oid); continue
         if sealed(path):
-            if match(name, SEALED_DECL) and name.endswith(TEXT):
+            if match(name, SEALED_DECL) and name.endswith(TEXT) and not any(t in name.lower() for t in SUPPORT_TOKENS):
                 if size is not None and size > MAX_BLOB: omit('size'); continue
                 picked.append([path, oid, 'sealed_declaration']); continue
             omit('sealed'); excluded_oids.add(oid); continue

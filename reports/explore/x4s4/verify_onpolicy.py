@@ -245,6 +245,8 @@ def main(argv=None):
         if a.mode in ('O', 'holdout'):
             raw = io.read_bytes(JOB+'/data/label-plan.json', 1 << 30)
             label_plan = io.loads_strict(raw); label_plan['__sha256__'] = ids['label_plan_sha256'] = hashlib.sha256(raw).hexdigest()
+            import label                                              # R3-F5: re-run parity admission on the plan's receipt
+            label.recheck_parity(label_plan); ids['parity_receipt_sha256'] = label_plan['parity_receipt_sha256']
             check(a.selection is None, '--selection only for OW')
         else:
             check(a.selection == JOB+'/data/raw-OW-selection.json', '--selection must be <job>/data/raw-OW-selection.json')
@@ -254,7 +256,7 @@ def main(argv=None):
             acceptance = io.read_json(accp, 16 << 20); ids['acceptance_sha256'] = io.sha256_file(accp)
         verify(a.mode, root, plan, receipts, selection, o_gate, label_plan, result, acceptance)
         result['passed'] = True
-    except (ValidationError, io.Refusal, KeyError, ValueError, TypeError) as e:
+    except Exception as e:                                         # any failure is a failed, receipted verification
         result['error'] = repr(e)
     result.update(ids, utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), wall_seconds=time.monotonic()-t0)
     io.write_json_once(root+'/'+RECEIPT, result, roles=('data',), mode=0o444)

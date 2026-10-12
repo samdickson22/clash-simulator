@@ -1,13 +1,13 @@
 {
-  "schema": "x4s4.seed-sources.v1",
+  "schema": "x4s4.seed-sources.v2",
   "commit": "7f82af0d4b3b6a465cba9a1b6dd26c708bcf25d1",
-  "rule": "(derive_inventory; version x4s4.seed-sources.v1), per tracked entry of the pinned commit:\n  * not a regular blob (symlink, gitlink) -> omitted 'not_regular';\n  * the study's own directory reports/explore/x4s4/ -> omitted 'own';\n  * suffix outside .json/.md/.py/.txt/.yaml/.sh -> omitted 'not_text'; blob > 50 MB -> omitted 'size';\n  * an outcome token in ANY component of the full path (result, outcome, complete, readout, verdict, reduc, score,\n    loss, release, sealed, games) -> omitted 'outcome_path' (R2-F6: ancestors count, e.g. t1/outcomes/plan.json);\n  * inside a sealed tree (reports/explore/t1/, reports/explore/k4s-confirm/, reports/explore/mac-e4-session/,\n    reports/strategy_council_20260928/live-loop/, or any component containing 'tiers'): only a seed declaration\n    (basename seed-audit*.json, *seed*audit*.json or PREREG*.md) is a source ('sealed_declaration', listed by path and\n    blob id in seed-sources.json for review); everything else -> omitted 'sealed';\n  * otherwise a 'scan' source; JSON declarations (seed-audit, plan, freeze names and the fixed historical paths) are\n    also parsed for base/count ranges;\n  * any selected blob whose object id also occurs at an omitted sealed/outcome path -> omitted 'alias_of_excluded'\n    (a copy or hard-linked twin of an excluded file is never read).",
-  "sources": 7711,
-  "sources_sha256": "c21efa1085ffbeacb1153a373b4555356193d06b13f35f8f316b8761d63b8f59",
+  "rule": "(derive_inventory; version x4s4.seed-sources.v2), per tracked entry of the pinned commit:\n  * not a regular blob (symlink, gitlink) -> omitted 'not_regular';\n  * the study's own directory reports/explore/x4s4/ -> omitted 'own';\n  * suffix outside .json/.md/.py/.txt/.yaml/.sh -> omitted 'not_text'; blob > 50 MB -> omitted 'size';\n  * an outcome token in ANY component of the full path (result, outcome, complete, readout, verdict, reduc, score,\n    loss, release, sealed, games) -> omitted 'outcome_path' (R2-F6: ancestors count, e.g. t1/outcomes/plan.json);\n  * inside a sealed tree (reports/explore/t1/, reports/explore/k4s-confirm/, reports/explore/mac-e4-session/,\n    reports/strategy_council_20260928/live-loop/, or any component containing 'tiers'): only a seed declaration\n    (basename seed-audit*.json, *seed*audit*.json or PREREG*.md, and - v2, Sol r3 - no review/response/check/\n    conformance support document) is a source ('sealed_declaration', listed by path and blob id in seed-sources.json\n    for review); everything else -> omitted 'sealed';\n  * otherwise a 'scan' source; JSON declarations (seed-audit, plan, freeze names and the fixed historical paths) are\n    also parsed for base/count ranges;\n  * any selected blob whose object id also occurs at an omitted sealed/outcome path -> omitted 'alias_of_excluded'\n    (a copy or hard-linked twin of an excluded file is never read).",
+  "sources": 7705,
+  "sources_sha256": "844ab58918b8e56ed6e367e21073e796fcc4ee90d7901584207add27c8e3f5af",
   "omitted": {
     "not_text": 458,
     "outcome_path": 812,
-    "sealed": 2681,
+    "sealed": 2687,
     "own": 28,
     "not_regular": 1,
     "alias_of_excluded": 55
@@ -74,11 +74,6 @@
       "sealed_declaration"
     ],
     [
-      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-CONFORMANCE-r2.md",
-      "bb0d4b72f725f9e9133128d95531a4e4da49c226",
-      "sealed_declaration"
-    ],
-    [
       "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-DRAFT-r1.md",
       "80e8e7969b076567f0e07e2864051a357b2abf5b",
       "sealed_declaration"
@@ -94,33 +89,8 @@
       "sealed_declaration"
     ],
     [
-      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-FREEZE-20261011-CHECK-OPUS-r1.md",
-      "6b2af093d934e019d365d7ebfd689989788891c3",
-      "sealed_declaration"
-    ],
-    [
       "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-FREEZE-20261011.md",
       "e086206d5e16707c752a464c720b2a5c90f2e57c",
-      "sealed_declaration"
-    ],
-    [
-      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-RECHECK-r3.md",
-      "cefd9679117954bcbc8c2890136b44dde865adce",
-      "sealed_declaration"
-    ],
-    [
-      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-RESPONSE-r1.md",
-      "44eccd01b9828dea50c5cdfc079421fb222d38dc",
-      "sealed_declaration"
-    ],
-    [
-      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-RESPONSE-r2.md",
-      "e6db0aef42465c1d3dba5a3cb10f04d0f13b67b7",
-      "sealed_declaration"
-    ],
-    [
-      "reports/strategy_council_20260928/live-loop/v4/PREREG-K4S-REVIEW-r1.md",
-      "12315da5632e0e44d9477cf1c548261496740b4d",
       "sealed_declaration"
     ],
     [

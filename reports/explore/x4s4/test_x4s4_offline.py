@@ -141,6 +141,33 @@ def test_io(tmp):
                relative_argv=raises(lambda: io.run_checked(['sh', '-c', 'true'], 10, 100), io.Refusal, 'absolute'),
                timeout=raises(lambda: io.run_checked(['/bin/sleep', '5'], 0.5, 100), io.Refusal, 'timed out'))
     case('run_checked: nonzero rc (with valid stdout), relative argv and timeout all refuse', all(sub.values()), sub=sub)
+    # R3-F7: append classifies the leaf BEFORE opening; a FIFO with no reader is refused promptly (never a blocking open)
+    os.mkfifo(job/'data'/'events.fifo')
+    signal.signal(signal.SIGALRM, lambda *a: (_ for _ in ()).throw(TimeoutError('blocked'))); signal.alarm(5)
+    try: fifo = raises(lambda: io.append_bytes(f'{job}/data/events.fifo', b'x'), io.Refusal, 'not-regular')
+    except TimeoutError: fifo = False
+    finally: signal.alarm(0)
+    strict = dict(exponent_overflow=raises(lambda: io.loads_strict(b'{"x": 1e999}'), io.Refusal, 'non-finite'),
+                  negative_overflow=raises(lambda: io.loads_strict(b'[-1e400]'), io.Refusal, 'non-finite'),
+                  finite_ok=io.loads_strict(b'{"x": 1.5e3}') == dict(x=1500.0))
+    (job/'data'/'dup.json').write_text('{"metadata": {"terminal": true}, "loss": 1, "loss": 0}')
+    strict['projected_duplicate_of_dropped_key'] = raises(lambda: io.project_json(f'{job}/data/dup.json', ('metadata', 'terminal')), io.Refusal, 'duplicate')
+    case('R3-F7 probes (Sol): append to a FIFO is refused without a blocking open; 1e999-style overflow and projected duplicate keys refuse',
+         fifo and all(strict.values()), strict=strict)
+    t0 = time.monotonic()
+    marker = '31.%d' % random.randrange(10**8, 10**9)              # unique sleep argument of this run's helper only
+    helper = raises(lambda: io.run_checked(['/bin/sh', '-c', f'/bin/sleep {marker} & /bin/sleep {marker}'], 0.5, 100), io.Refusal)
+    time.sleep(0.5)
+    def argv(pid):
+        try: return open(f'/proc/{pid}/cmdline', 'rb').read().split(b'\x00')
+        except OSError: return []
+    left = [pid for pid in io.all_pids() if argv(pid)[:2] == [b'/bin/sleep', marker.encode()]]
+    ctl = io.spawn(['/bin/sleep', marker], f'{job}/logs/ctl.log', dict(PATH='/usr/bin:/bin'))      # control: the matcher sees a live one
+    seen = [pid for pid in io.all_pids() if argv(pid)[:2] == [b'/bin/sleep', marker.encode()]] == [ctl['pid']]
+    io.stop_owned(ctl['pgid'], ctl['starttime'], term_grace=5, kill_grace=5, poll=0.1); ctl['popen'].wait()
+    src = (HERE/'x4s4io.py').read_text()
+    case('R3-F8: run_checked stops a timed-out helper AND its grandchild by verified individual PIDs (no group signal anywhere)',
+         helper and not left and seen and time.monotonic()-t0 < 30 and 'killpg' not in src, left=left)
     child = io.spawn(['/bin/sleep', '30'], f'{job}/logs/sleep.log', dict(PATH='/usr/bin:/bin'))
     pids = io.owned_pids(child['pgid'], child['starttime'])
     wrong = io.owned_pids(child['pgid'], child['starttime']+1)
@@ -349,11 +376,17 @@ def write_collect_game(phase, arm, index, ticks, dup_of=None, block=True, base=C
     if block: wjson(phase/'blocks'/f'{index:04d}.json', dict(index=index, seed=seed, order=[arm], games={g.name: sha(g)}))
 
 
-def parity_doc(tmp, phases, passed=True, final=True, name=None):
+def finish_phase(ph):
+    wjson(Path(ph)/'schedule.json', dict(range='reporting')); wjson(Path(ph)/'launch.json', dict(workers=10)); wjson(Path(ph)/'supervisor-exit.json', dict(reason=None))
+
+
+def parity_doc(tmp, phases, passed=True, final=True, name=None, bank='collection'):
     import qualify4
+    for ph in phases:
+        if not (Path(ph)/'supervisor-exit.json').exists(): finish_phase(ph)
     inv = qualify4.parity_inventory([str(p) for p in phases])
-    return wjson(Path(tmp)/(name or f'parity-{passed}-{final}-{len(inv)}.json'), dict(check='parity', passed=passed, final=final,
-                 phases=sorted(str(p) for p in phases), inventory=inv))
+    return wjson(Path(tmp)/(name or f'parity-{passed}-{final}-{len(inv)}-{bank}.json'), dict(check='parity', passed=passed, final=final, bank=bank,
+                 phases=sorted(str(p) for p in phases), inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phases])))
 
 
 def ow_game(d, seed, n_roots, index=None, extra_rows=2, replay_exact=None):
@@ -426,9 +459,13 @@ def test_pipeline(tmp):
                                                                                 parity_doc(j2, phs))[1], text='parity/pending'),
         failed_parity_no_exception=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, passed=False), text='authentic'),
         not_final=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, final=False), text='not final'),
-        stale_parity=plan_fails(lambda ph: write_collect_game(ph, 'K4S-120', 7, range(100, 130, 10)), text='stale parity'))
-    case('R2-F8/F13 probes: the plan refuses a stale block proof, a NON-TERMINAL game, a STALE parity receipt (games added after it), '
-         'a non-final receipt, public-parity false and a failed parity without an authentic exception',
+        stale_parity=plan_fails(lambda ph: write_collect_game(ph, 'K4S-120', 7, range(100, 130, 10)), text='stale parity'),
+        final_evidence_deleted=plan_fails(lambda ph: (ph/'supervisor-exit.json').unlink(), text='supervisor-exit'),
+        final_evidence_changed=plan_fails(lambda ph: wjson(ph/'supervisor-exit.json', dict(reason='memory_guard')), text='evidence changed'),
+        smoke_bank_receipt=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, bank='smoke'), text='bank-C'))
+    case('R2-F8/F13/R3-F5 probes: the plan refuses a stale block proof, a NON-TERMINAL game, a STALE parity receipt (games added after '
+         'it), deleted or changed final phase evidence (Sol R3-F5), a smoke-bank receipt, a non-final receipt, public-parity false and a '
+         'failed parity without an authentic exception',
          all(v[0] for v in probes.values()), probes={k: v[1][:70] for k, v in probes.items()})
     # authentic coordinator exception: a commit on origin/main whose COORDINATOR.md names the failed receipt's SHA
     j3 = Path(tmp)/'exc'; shutil.copytree(job/'collect', j3/'collect'); (j3/'data').mkdir()
@@ -582,7 +619,11 @@ def parity_doc_raw(j2, phs):
     """Parity receipt WITHOUT re-proving games (used to plant a receipt over a non-terminal game)."""
     inv = [[str(p), n, sha(Path(p)/'games'/n)] for p in sorted(map(str, phs)) for n in sorted(os.listdir(Path(p)/'games'))
            if (Path(p)/'blocks'/f"{n.split('-')[1]}.json").exists()]
-    return wjson(Path(j2)/'parity-raw.json', dict(check='parity', passed=True, final=True, phases=sorted(str(p) for p in phs), inventory=inv))
+    import qualify4
+    for ph in phs:
+        if not (Path(ph)/'supervisor-exit.json').exists(): finish_phase(ph)
+    return wjson(Path(j2)/'parity-raw.json', dict(check='parity', passed=True, final=True, bank='collection', phases=sorted(str(p) for p in phs),
+                                                  inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phs])))
 
 
 # ================================================================ driver (R2-F1, R2-F2, R2-F3)
@@ -721,6 +762,65 @@ def test_driver(tmp):
     adm['live diagnostic lock'] = not drv.resources_ok()
     case('R2-F3 probes: admission fails closed on unreadable PSI/memory/GPU, PSI > 10, GPU already 50,000 MiB, a reservation that would '
          'exceed 70 processes, and a live diagnostic lock', base_ok and all(adm.values()), adm=adm)
+    # R3-F2 probes (Sol): live study caps on a running fit and the guard through teardown
+    drv, job = driver_module(tmp/'g2')
+    rec = dict(pid=os.getpid(), pgid=os.getpgrp(), starttime=io.proc_stat(os.getpgrp())['starttime'], launch_id='G', launched_at_utc=drv.utc())
+    drv.fit_state = lambda fid: ('running', rec)
+    sent2 = []; drv.io = types.SimpleNamespace(**{k: getattr(io, k) for k in dir(io) if not k.startswith('__')})
+    drv.io.signal_pid = lambda *a: sent2.append('pid') or True; drv.io.stop_owned = lambda *a, **k: True; drv.io.group_alive = lambda *a: False
+    drv.mem_available = lambda: 100*2**30; drv.gpu_used_mib = lambda: 1000
+    drv.studytree = types.SimpleNamespace(**{k: getattr(drv.studytree, k) for k in dir(drv.studytree) if not k.startswith('__')})
+    drv.studytree.pss_bytes = lambda pids: 1 << 30
+    drv.studytree.admission = lambda job, add=0, disk=True: (False, '71 X4S-4 processes')
+    drv.Fits().guard('R5')
+    cap = bool(sent2) and json.loads((job/'driver'/'ANOMALY-fit-R5.json').read_text())['reason'] == 'study_tree_cap'
+    (job/'driver'/'ANOMALY-fit-R5.json').unlink(); sent2.clear()
+    drv.studytree.admission = lambda job, add=0, disk=True: (True, None)
+    wjson(job/'fits'/'R5'/'complete.json', dict(stopped=False, step=2500)); drv.mem_available = lambda: 0
+    drv.Fits().guard('R5')
+    teardown = bool(sent2) and json.loads((job/'driver'/'ANOMALY-fit-R5.json').read_text())['reason'] == 'memory_floor'
+    case('R3-F2 probes (Sol): a live fit is stopped by the study process/disk cap, and MemAvailable 0 during teardown still stops it',
+         cap and teardown)
+    # R3-F6 probes (Sol): generic ACKs
+    drv, job = driver_module(tmp/'g3')
+    drv.anomaly('driver-exception', error='x')
+    (job/'driver'/'ACK-driver-exception.json').write_text('NOT JSON OR AN ATTEMPT ACK')
+    malformed = drv.unresolved_anomalies() == ['driver-exception'] and (job/'driver'/'ACK-driver-exception.json').exists()
+    (job/'driver'/'ACK-driver-exception.json').unlink(); os.symlink(job/'nowhere', job/'driver'/'ACK-driver-exception.json')
+    dangling = drv.unresolved_anomalies() == ['driver-exception']; (job/'driver'/'ACK-driver-exception.json').unlink()
+    wjson(job/'driver'/'ACK-driver-exception.json', dict(anomaly_sha256='0'*64, disposition='continue', owner='sam'))
+    stale = drv.unresolved_anomalies() == ['driver-exception']; (job/'driver'/'ACK-driver-exception.json').unlink()
+    wjson(job/'driver'/'ACK-driver-exception.json', dict(anomaly_sha256=sha(job/'driver'/'ANOMALY-driver-exception.json'), disposition='continue', owner='sam'))
+    resolved = drv.unresolved_anomalies() == [] and not (job/'driver'/'ACK-driver-exception.json').exists() and list((job/'driver').glob('RESOLVED-driver-exception-*.json'))
+    drv.anomaly('exit-games_R3a_K4S-120_a1', reason='x'); wjson(job/'driver'/'ACK-exit-games_R3a_K4S-120_a1.json', dict(anomaly_sha256=sha(job/'driver'/'ANOMALY-exit-games_R3a_K4S-120_a1.json'), disposition='continue', owner='sam'))
+    attempt_needs_attempt_ack = drv.unresolved_anomalies() == ['exit-games_R3a_K4S-120_a1']
+    case("R3-F6 probes (Sol): a malformed, dangling or stale generic ACK keeps blocking; a valid one (anomaly SHA + 'continue' + owner) is "
+         'consumed and archived; an attempt anomaly cannot be cleared by a generic ACK', malformed and dangling and stale and bool(resolved) and attempt_needs_attempt_ack)
+    # R3-F1 probes (Sol): the frozen fit writer's existing tree is validated before every (resumed) launch
+    drv, job = driver_module(tmp/'g4')
+    sentinel = Path(tmp)/'fit-sentinel'; sentinel.write_bytes(b'SENTINEL')
+    (job/'fits'/'R5').mkdir(parents=True, exist_ok=True); os.symlink(sentinel, job/'fits'/'R5'/'runtime.json')
+    fit_probes = dict(symlinked_runtime_json=raises(lambda: drv.prepare_fit_dirs('R5'), io.Refusal, 'symlink'))
+    (job/'fits'/'R5'/'runtime.json').unlink(); os.link(sentinel, job/'fits'/'R5'/'train.jsonl')
+    fit_probes['hard_linked_train_jsonl'] = raises(lambda: drv.prepare_fit_dirs('R5'), io.Refusal, 'hard-linked')
+    (job/'fits'/'R5'/'train.jsonl').unlink(); (job/'cache'/'fit'/'tmp').mkdir(parents=True, exist_ok=True); os.symlink(sentinel, job/'cache'/'fit'/'tmp'/'x')
+    fit_probes['symlink_in_cache'] = raises(lambda: drv.prepare_fit_dirs('R5'), io.Refusal, 'symlink')
+    (job/'cache'/'fit'/'tmp'/'x').unlink()
+    (job/'fit').mkdir(exist_ok=True); (job/'fit'/'run_fit.sh').write_text('#'); (job/'fit'/'loader6.json').write_text('{}')
+    wjson(job/'RUNTIME-INVENTORY.json', {'fit/run_fit.sh': sha(job/'fit'/'run_fit.sh'), 'fit/loader6.json': '0'*64})
+    fit_probes['loader_not_pinned'] = raises(lambda: drv.prepare_fit_dirs('R5'), io.Refusal, 'loader6')
+    wjson(job/'RUNTIME-INVENTORY.json', {'fit/run_fit.sh': sha(job/'fit'/'run_fit.sh'), 'fit/loader6.json': sha(job/'fit'/'loader6.json')})
+    fit_probes['gate_not_authenticated'] = raises(lambda: drv.prepare_fit_dirs('R5'), io.Refusal)
+    drv.studytree = types.SimpleNamespace(**{k: getattr(drv.studytree, k) for k in dir(drv.studytree) if not k.startswith('__')})
+    drv.studytree.authenticate_gate = lambda j, mode: ([f'{j}/data/onpolicy/batch-0000', f'{j}/data/onpolicy/batch-0001'], 'G'*64, {})
+    spawned = []; drv.io = types.SimpleNamespace(**{k: getattr(io, k) for k in dir(io) if not k.startswith('__')})
+    drv.io.spawn = lambda argv, log, env, roles=('logs',), cwd=None: spawned.append(argv) or dict(pid=4243, pgid=4243, starttime=1, popen=None)
+    drv.Fits().launch('R5', 'pending')
+    launched_ok = spawned and spawned[0][-3:] == ['-', 'batch-0000', 'batch-0001'] and json.loads((job/'receipts'/'fit-R5-launch.json').read_text())['gate_sha256'] == 'G'*64
+    case('R3-F1 probes (Sol): before a fit launch the driver refuses a symlinked runtime.json (the frozen writer target), a hard-linked '
+         'train.jsonl, a link inside cache/fit, an unpinned loader amendment and an unauthenticated gate; the launch passes the '
+         'authenticated batch names (no JSON read by the shell) and records the gate SHA; the outside sentinel is unchanged',
+         all(fit_probes.values()) and bool(launched_ok) and sentinel.read_bytes() == b'SENTINEL', probes=fit_probes)
     drv, job = driver_module(tmp/'i')
     st = {'R5': 'stopped', 'R5-rep': 'pending', 'R5W': 'pending'}
     drv.fit_state = lambda f: (st[f], None); drv.live_supervisor = lambda: None; drv.resources_ok = lambda for_fit=False: True
@@ -769,6 +869,18 @@ def test_supervise(tmp):
                   phase_absolute=raises(run_main(['--job', str(job), '--phase', '/etc/x', *common]), io.Refusal),
                   phase_role=raises(run_main(['--job', str(job), '--phase', 'fits/x', *common]), io.Refusal))
     case('R2-F1: the supervisor refuses a non-canonical --job and absolute/traversing/wrong-role --phase before any write', all(probes.values()) and not (job/'fits'/'x').exists())
+    # R3-F2 probe (Sol): a direct collection launch with MemAvailable 0 / PSI 90 is refused BEFORE the child is spawned
+    import studytree as ST
+    saved = (ST.mem_available, ST.psi_some_avg10, ST.admission)
+    ST.admission = lambda job, add=0, disk=True: (True, None)
+    ST.mem_available = lambda: 0; low_mem = sup.admit_phase(str(job), 51)
+    ST.mem_available = lambda: 100*2**30; ST.psi_some_avg10 = lambda: 90.0; high_psi = sup.admit_phase(str(job), 51)
+    ST.psi_some_avg10 = lambda: 1.0; fine = sup.admit_phase(str(job), 51)
+    ST.admission = lambda job, add=0, disk=True: (add <= 10, 'reservation'); reserve = sup.admit_phase(str(job), 51)
+    ST.mem_available, ST.psi_some_avg10, ST.admission = saved
+    order = src.index('admit_phase(job, workers*width+3)') < src.index('io.spawn(cmd')
+    case('R3-F2 probes (Sol): the supervisor refuses MemAvailable 0, PSI 90 and an over-reservation before io.spawn; admits a healthy phase',
+         'MemAvailable' in (low_mem or '') and 'PSI' in (high_psi or '') and fine is None and 'reservation' in (reserve or '') and order)
     # R2-F8: the in-supervisor parity watch pauses out of band and fails closed on a broken phase
     ph = job/'collect'/'S-200'/'a1'
     for i in range(2000, 2100): write_game(ph, 'S-200', i, C, hit=70, n=100); wjson(ph/'blocks'/f'{i:04d}.json', dict(index=i, seed=C+i, order=['S-200'], games={f'sim-{i:04d}-d27-S-200.json': sha(ph/'games'/f'sim-{i:04d}-d27-S-200.json')}))
@@ -946,6 +1058,12 @@ def test_reduce(tmp):
                                                '--contention-sha', digest, '--freeze-commit', head]), red.main()), io.Refusal))
     incomplete = run([], sha_=digest, commit=head, repo=repo)
     case('reducer refuses an incomplete student without --allow-prefix (fixed N), after the freeze gate', 'fixed N' in incomplete and reads)
+    lp = dict(stats={s: dict(games=3, dropped_no_block=1, captured=10, duplicate=1, over_cap=0, kept=400000, kept_per_arm={'K4S-120': 5, 'S-200': 4},
+                             strata={'hit': 7}, student_default=1, fallback=0, plays=4) for s in ('O', 'holdout')},
+              feature_only_duplicates_by_600_tick_bucket={'0': dict(states=10, feature_duplicates=2, rate=.2)})
+    lpp = wjson(job/'data'/'label-plan.json', lp)
+    og = wjson(job/'data'/'O-VERIFIED.json', dict(rows=399900, label_plan_sha256=sha(lpp)))
+    ogw = wjson(job/'data'/'OW-VERIFIED.json', dict(roots=400100, rows=420000, single_candidate_root_share=.1, o_gate_sha256=sha(og)))
     ok = run(['--allow-prefix'], sha_=digest, commit=head, repo=repo)
     r = json.loads(out.read_text()); ro = r['readout']; p = ro['primary']
     case('reducer: primary on the full primary prefix (R5W never cuts it); per-arm mean equals pooled; contention view [0,1] with SHA + commit',
@@ -978,29 +1096,54 @@ def test_reduce(tmp):
     rd = red.readout(res, res['contrasts'], data); half = 1.96*(rd['se_boot_pp']**2+0.65**2)**.5
     case('exact formulas by hand (-37.5, 0, -18.75 pp) and fit-inflated half-width', abs(dk+37.5) < 1e-9 and abs(ds) < 1e-9
          and abs(d['point_pp']+18.75) < 1e-9 and abs(rd['fit_inflated_interval_pp'][1]-rd['point_pp']-half) < 1e-9)
-    # R2-F9: report inputs must chain
-    import write_report as wr
-    lp = dict(stats={s: dict(games=3, dropped_no_block=1, captured=10, duplicate=1, over_cap=0, kept=400000, kept_per_arm={'K4S-120': 5, 'S-200': 4},
-                             strata={'hit': 7}, student_default=1, fallback=0, plays=4) for s in ('O', 'holdout')},
-              feature_only_duplicates_by_600_tick_bucket={'0': dict(states=10, feature_duplicates=2, rate=.2)})
-    lpp = wjson(job/'data'/'label-plan.json', lp)
-    og = wjson(job/'data'/'O-VERIFIED.json', dict(rows=399900, label_plan_sha256=sha(lpp)))
-    wjson(job/'data'/'OW-VERIFIED.json', dict(roots=400100, rows=420000, single_candidate_root_share=.1, o_gate_sha256=sha(og)))
-    docs, shas = wr.authenticate(str(job))
-    txt = wr.render(docs['results'], docs['label_plan'], docs['o_gate'], docs['ow_gate'], docs.get('diagnostic'), shas, [])
-    need = ['Primary Δ by arm', 'R5W secondaries 49 seeds', 'O composition and duplicates', 'single-candidate root share = 10.0%',
-            'R3a-rep differs from R3a', 'decision table', 'unavailable (not completed before the hard stop)', '| R5W | — | unavailable']
-    bind = {}
-    wjson(job/'data'/'OW-VERIFIED.json', dict(roots=1, rows=1, single_candidate_root_share=.1, o_gate_sha256='0'*64))
-    bind['O_W gate not built on this O gate'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'O_W gate')
-    wjson(job/'data'/'OW-VERIFIED.json', dict(roots=400100, rows=420000, single_candidate_root_share=.1, o_gate_sha256=sha(og)))
-    wjson(job/'data'/'label-plan.json', dict(lp, utc='other'))
-    bind['stale label plan'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'label plan'); wjson(job/'data'/'label-plan.json', lp)
-    wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='holdout')); wjson(job/'analysis'/'diagnostic.json', dict(holdout_gate_sha256='0'*64, students={}))
-    bind['diagnostic not on the verified holdout'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'holdout')
+    # R2-F9/R3-F4: report inputs must chain to the current study evidence
+    import write_report as wr, studytree
+    saved = (io.REPO, studytree.authenticate_gate)
+    io.REPO = repo
+    studytree.authenticate_gate = lambda j, mode: ([], sha(Path(j)/'data'/{'O': 'O-VERIFIED.json', 'OW': 'OW-VERIFIED.json', 'holdout': 'HOLDOUT-VERIFIED.json'}[mode]), {})
+    try:
+        docs, shas = wr.authenticate(str(job))
+        txt = wr.render(docs['results'], docs['label_plan'], docs['o_gate'], docs['ow_gate'], docs.get('diagnostic'), shas, [])
+        need = ['Primary Δ by arm', 'R5W secondaries 49 seeds', 'O composition and duplicates', 'single-candidate root share = 10.0%',
+                'R3a-rep differs from R3a', 'decision table', 'unavailable (not completed before the hard stop)', '| R5W | — | unavailable']
+        bind = {}
+        def tamper_results(**ch):
+            rr = json.loads(out.read_text()); keep_r = out.read_bytes()
+            for k, v in ch.items():
+                tgt = rr
+                for part in k.split('.')[:-1]: tgt = tgt[part]
+                tgt[k.split('.')[-1]] = v
+            out.chmod(0o644); out.write_text(json.dumps(rr))
+            res_ = raises(lambda: wr.authenticate(str(job)), SystemExit); out.write_bytes(keep_r); return res_
+        bind["Sol R3-F4: fake C5 identity strings"] = tamper_results(**{'identities.contention_receipt_sha256': 'not-a-sha', 'identities.freeze_commit': 'not-a-commit',
+                                                                        'readout.contention_sensitivity.exclusion_sha256': 'not-a-sha'})
+        bind['results reduced under other gates'] = tamper_results(**{'identities.gates': dict(O='0'*64, OW='0'*64)})
+        bind['results reduced with other checkpoints'] = tamper_results(**{'identities.students': dict(r['identities']['students'], R5=dict(checkpoint_sha256='WRONG', threshold=None))})
+        bind['results without identities (pre-r4 reducer)'] = tamper_results(identities=None)
+        ogw_keep = ogw.read_bytes()
+        wjson(job/'data'/'OW-VERIFIED.json', dict(roots=1, rows=1, single_candidate_root_share=.1, o_gate_sha256='0'*64))
+        bind['O_W gate not built on this O gate'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'O_W gate'); ogw.write_bytes(ogw_keep)
+        wjson(job/'data'/'label-plan.json', dict(lp, utc='other'))
+        bind['stale label plan'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'label plan'); wjson(job/'data'/'label-plan.json', lp)
+        hg = wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='holdout'))
+        staged = {k: v for k, v in r['identities']['students'].items()}
+        good_diag = dict(holdout_gate_sha256=sha(hg), heldout64_sha256=wr.HELDOUT64_SHA, students={k: {} for k in wr.STUDENTS}, student_checkpoints=staged)
+        wjson(job/'analysis'/'diagnostic.json', good_diag); diag_ok = wr.authenticate(str(job))[0].get('diagnostic') is not None
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, student_checkpoints={k: dict(checkpoint_sha256='WRONG', threshold=None) for k in staged}))
+        bind["Sol R3-F4: diagnostic with WRONG checkpoints"] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'checkpoints')
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, heldout64_sha256='0'*64))
+        bind['diagnostic without the fixed held-out64'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'held-out64')
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, holdout_gate_sha256='0'*64))
+        bind['diagnostic not on the verified holdout'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'holdout')
+        (job/'analysis'/'diagnostic.json').unlink()
+        io.REPO = repo_side
+        bind['C5 commit not on this repository\'s origin/main'] = raises(lambda: wr.authenticate(str(job)), SystemExit, 'C5')
+    finally:
+        io.REPO, studytree.authenticate_gate = saved
     sys.argv = ['write_report.py', '--out', str(Path(tmp)/'RESULTS.md')]
-    case('R2-F9/F14: the report renders every required section and an explicit unavailable diagnostic; stale or unchained inputs and '
-         'an out-of-root --out are refused', all(n in txt for n in need) and all(bind.values()) and raises(lambda: wr.main(), io.Refusal),
+    case('R2-F9/R3-F4: the report renders every section and an explicit unavailable diagnostic; it refuses fake C5 identities, results '
+         'reduced under other gates or checkpoints, unchained gates, a stale plan, diagnostics with wrong checkpoints/held-out64/holdout, '
+         'an off-main C5 commit and an out-of-root --out', all(n in txt for n in need) and diag_ok and all(bind.values()) and raises(lambda: wr.main(), io.Refusal),
          missing=[n for n in need if n not in txt], bind=bind)
 
 
@@ -1075,10 +1218,21 @@ def test_qualify(tmp):
     def run_parity(phases, out, watch='0'):
         try: Q.main(['parity', '--phases', *map(str, phases), '--min-games', '3', '--watch', watch, '--out', str(out)])
         except SystemExit as e: return e.code
+    def run_parity_bank(phases, out, bank):
+        try: Q.main(['parity', '--phases', *map(str, phases), '--min-games', '3', '--bank', bank, '--out', str(out)])
+        except SystemExit as e: return e.code
     rc = run_parity([pk, pbad], job/'receipts'/'pw.json', '1')
     case('C7b: out of band the parity command writes PARITY-PAUSE, creates STOP and exits 1',
          rc == 1 and list((job/'receipts').glob('PARITY-PAUSE-*.json')) and os.path.lexists(job/'STOP'))
     (job/'STOP').unlink()
+    sm = job/'collect'/'smoke-par'
+    for i, arm in ((0, 'K4S-120'), (1, 'K4S-120'), (2, 'K4S-120'), (3, 'S-200'), (4, 'S-200'), (5, 'S-200')):
+        g = write_game(sm, arm, i, SMOKE, hit=642 if arm == 'K4S-120' else 753, n=1000, sd=223 if arm == 'K4S-120' else 0)
+        wjson(sm/'blocks'/f'{i:04d}.json', dict(index=i, seed=SMOKE+i, order=[arm], games={g.name: sha(g)}))
+    wjson(sm/'supervisor-exit.json', {})
+    rc_s = run_parity_bank([sm], job/'receipts'/'smoke-par.json', 'smoke'); rc_c = run_parity_bank([sm], job/'receipts'/'smoke-as-c.json', 'collection')
+    case('R3-F5 probe (Sol): --bank smoke runs PLAN §6.2 deadline parity on block-proved smoke-bank games (passes); the same games are '
+         'refused as bank C', rc_s == 0 and json.loads((job/'receipts'/'smoke-par.json').read_text())['bank'] == 'smoke' and rc_c == 1)
     pnf = parity_phase('pnf', 'S-200', 3, 753, 2200)
     rc2 = run_parity([pk, pnf], job/'receipts'/'pnf.json')
     case('R2-F8: a parity receipt over a phase without supervisor-exit is not final and does not pass',
@@ -1113,7 +1267,24 @@ def test_diagnose(tmp):
     (job/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
     unauth = raises(lambda: Dg.students_of(str(job)), io.Refusal) and raises(lambda: Dg.holdout_of(str(job)), io.Refusal)
     wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='O', batches=[dict(name='batch-0000')]))
-    wrong_gate = raises(lambda: Dg.holdout_of(str(job)), SystemExit, 'holdout gate')
+    wrong_gate = raises(lambda: Dg.holdout_of(str(job)), io.Refusal, 'holdout gate')
+    # R3-F3 probe (Sol): a fully sealed TRAINING corpus (seed C+0) swapped into the holdout path is refused before any loader
+    stub_torch_imports()
+    from imitation.exit_r1 import pack as packmod
+    hroot = job/'data'/'onpolicy-holdout'
+    ow_game(Path(tmp)/'hraw'/'game-00000', C+3500, 4, index=56); ow_game(Path(tmp)/'traw'/'game-00000', C+0, 4, index=56)
+    packmod.pack([Path(tmp)/'hraw'], hroot/'batch-0000')
+    mh = hashlib.sha256((hroot/'batch-0000'/'manifest.json').read_bytes()).hexdigest()
+    rc = wjson(hroot/'VERIFY-RECEIPT.json', dict(passed=True, mode='holdout'))
+    wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='holdout', batches=[dict(name='batch-0000', manifest_sha256=mh)], receipt_sha256=sha(rc)))
+    authentic = Dg.holdout_of(str(job))[0] == [str(hroot/'batch-0000')]
+    shutil.move(str(hroot/'batch-0000'), str(Path(tmp)/'orig-batch')); packmod.pack([Path(tmp)/'traw'], hroot/'batch-0000')
+    substituted = raises(lambda: Dg.holdout_of(str(job)), io.Refusal, 'manifest pin')
+    shutil.rmtree(hroot/'batch-0000'); shutil.move(str(Path(tmp)/'orig-batch'), str(hroot/'batch-0000'))
+    (hroot/'batch-0001').mkdir(); extra_batch = raises(lambda: Dg.holdout_of(str(job)), io.Refusal, 'inventory'); (hroot/'batch-0001').rmdir()
+    rc.write_text(json.dumps(dict(passed=True, mode='holdout', note='edited'))); receipt_changed = raises(lambda: Dg.holdout_of(str(job)), io.Refusal, 'receipt')
+    case('R3-F3 probes (Sol): the holdout selector authenticates the current corpus - a substituted sealed training corpus, an extra batch '
+         'and an edited verifier receipt are refused; the authentic gate passes', authentic and substituted and extra_batch and receipt_changed)
     case('R2-F3/F9 probes: the diagnostic lock (pid + starttime) is taken under the DISPATCH flock and refused while reporting/fit work lives; '
          'live guards abort on STOP and the hard stop; inputs come only from the verified holdout gate and the staged students',
          ok and refused and stops and hard and unauth and wrong_gate)
@@ -1200,6 +1371,92 @@ def test_studytree(tmp):
          'unreadable or > 50 GiB PSS, a dangling STOP and an unreadable deadline', all(res.values()), res=res)
 
 
+# ================================================================ live dispatch / acceptance paths (R3-F2)
+def _echo(e): return dict(status='sealed', e=e)
+
+
+def emitter_game(d, seed, index, own_deck, opp_deck, replay_exact=True):
+    from imitation.exit_r1.rows import seal, write_json
+    d = Path(d); seat = index % 2
+    r = dict(seed=seed, index=index, opponent='v1', seat=seat, root_decisions=3, outcome=1.0, cpu_seconds=1.0,
+             episode=dict(decks=[own_deck, opp_deck] if seat == 0 else [opp_deck, own_deck]))
+    write_json(d/'replay.json', r)
+    rows, scores = [], []
+    for t in range(3):
+        row = synth_row(seed, t); row.update(expert_actions=np.int16(2304), expert_action_supervision_valid=np.bool_(True),
+            submitted_ticks=np.int32(t), teacher_search_action=np.int16(2304), teacher_root=np.bool_(True), teacher_wait_kind=np.int8(0),
+            recorded_play_ticks=np.int32(-1), recorded_world_positions=np.array([np.nan, np.nan], np.float32),
+            submitted_world_positions=np.array([np.nan, np.nan], np.float32), recorded_millitiles=np.array([-1, -1], np.int32))
+        rows.append(row); scores.append(dict(candidates=[5, 2304], scores=[.1, .2]))
+    r = dict(r, replay_exact=replay_exact); seal(d, rows, scores, r)
+    return r
+
+
+def test_live_paths(tmp):
+    stub_torch_imports()
+    import label, collect_w, studytree as ST
+    saved = (ST.mem_available, ST.psi_some_avg10)
+    ST.mem_available = lambda: 100*2**30; ST.psi_some_avg10 = lambda: 1.0
+    fake_me = dict(pid=os.getpid(), pgid=2**22+77, leader_start=1)       # an empty group: stop_workers can signal nothing here
+    try:
+        # Sol R3-F2 probe 3: valid PSI 90 must DELAY label dispatch (no work runs), while the live monitor keeps running
+        calls = dict(n=0)
+        def monitor():
+            calls['n'] += 1; return 'owned_STOP' if calls['n'] >= 4 else None
+        res, halted = label.dispatch([1, 2], 1, _echo, fake_me, monitor=monitor, admit=lambda: (False, 'memory PSI > 10'), poll=0.05)
+        gated = res == [] and halted == 'owned_STOP' and calls['n'] >= 4
+        res2, halted2 = label.dispatch([1, 2], 1, _echo, fake_me, monitor=lambda: None, admit=lambda: (True, None), poll=0.05)
+        ST.psi_some_avg10 = lambda: 90.0; real_admit = ST.dispatch_ok(); ST.psi_some_avg10 = lambda: 1.0
+        case('R3-F2 probe (Sol): with valid PSI 90 label dispatch submits nothing (the real dispatch admission refuses) and the live monitor '
+             'still runs; with admission it dispatches normally', gated and sorted(r['e'] for r in res2) == [1, 2] and halted2 is None
+             and real_admit == (False, 'memory PSI unreadable or > 10'))
+        # Sol R3-F2 probe 1: an acceptance game straddling the hard stop is rejected and the smoke does not pass
+        job = new_job(tmp); collect_w.JOB = str(job)
+        collect_w.X = [[f'deck{d}-{c}' for c in range(8)] for d in range(5)]
+        def straddle(seed, index, directory, opponent, stop, acceptance):
+            g = seed-QUAL
+            r = emitter_game(directory, seed, index, collect_w.X[g % 5], collect_w.X[(g//5) % 5])
+            if g == 1: (job/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+            return r
+        collect_w.emitter = types.SimpleNamespace(run_game=straddle)
+        passed = collect_w.acceptance_smoke(fake_me, monitor=lambda: None, poll=0.1)
+        rows = json.loads((job/'data'/'raw-OW-acceptance-smoke.json').read_text())['games']
+        case('R3-F2 probe (Sol): an acceptance game finishing after the hard stop is rejected; the smoke receipt says passed=false',
+             passed is False and [r['status'] for r in rows] == ['sealed', 'past_hard_stop'])
+    finally:
+        ST.mem_available, ST.psi_some_avg10 = saved
+    # in-flight STOP during an acceptance game: an isolated session (its own group), the parent stops the worker by PID
+    job2 = new_job(tmp, 'inflight')
+    script = Path(tmp)/'acc.py'
+    script.write_text(f"""import sys, json, time, types, threading, os
+sys.path[:0] = {[str(REPO), str(REPO/'src'), str(HERE)]!r}
+import x4s4io as io
+io.JOB = {str(job2)!r}
+import collect_w, studytree as ST
+collect_w.JOB = io.JOB
+ST.mem_available = lambda: 100*2**30; ST.psi_some_avg10 = lambda: 1.0
+collect_w.X = [['d%d-%d' % (d, c) for c in range(8)] for d in range(5)]
+def slow(seed, index, directory, opponent, stop, acceptance):
+    open('/proc/self/comm', 'w').write('x4s4accslow'); time.sleep(60)
+collect_w.emitter = types.SimpleNamespace(run_game=slow)
+threading.Timer(1.0, lambda: os.symlink(io.JOB+'/nowhere', io.JOB+'/STOP')).start()
+t0 = time.monotonic()
+ok = collect_w.acceptance_smoke(collect_w.identity(), poll=0.2)
+print(json.dumps(dict(passed=ok, seconds=time.monotonic()-t0)))
+""")
+    r = subprocess.run([PY, '-B', str(script)], capture_output=True, text=True, timeout=120, start_new_session=True)
+    try: info = json.loads(r.stdout.strip().splitlines()[-1])
+    except Exception: info = dict(raw=r.stdout[-300:], err=r.stderr[-500:])
+    rows = json.loads((job2/'data'/'raw-OW-acceptance-smoke.json').read_text())['games'] if (job2/'data'/'raw-OW-acceptance-smoke.json').exists() else []
+    def comm(pid):
+        try: return open(f'/proc/{pid}/comm').read().strip()
+        except OSError: return ''
+    leftover = [p for p in io.all_pids() if comm(p) == 'x4s4accslow']
+    case('R3-F2 probe (Sol): a STOP (dangling link) during an in-flight acceptance game makes the parent stop the worker by PID within '
+         'seconds; passed=false with a halted row', info.get('passed') is False and info.get('seconds', 99) < 30 and rows and rows[0]['status'] == 'halted'
+         and not leftover, info=info, rows=rows)
+
+
 # ================================================================ static (F11, F17, R2-F10), run_fit.sh (F5)
 def test_static(tmp):
     owned = [p for p in sorted(HERE.glob('*.py')) if p.name not in ('run_collect.py', 'test_x4s4_offline.py')]
@@ -1233,19 +1490,23 @@ def test_static(tmp):
         c = json.loads((HERE/f).read_text())
         case(f'{f} is a full staged runtime config (student R3a, policy v1, capture block)',
              c['student']['checkpoint_sha256'] == plan['student']['checkpoint_sha256'] and c['policy']['checkpoint_sha256'] == plan['policy']['checkpoint_sha256'] and 'capture' in c)
-    fj = Path(tmp)/'fjob'; (fj/'data').mkdir(parents=True); (fj/'fit').mkdir()
+    fj = Path(tmp)/'fjob'; (fj/'data').mkdir(parents=True); (fj/'fit').mkdir(); (fj/'cache'/'fit'/'tmp').mkdir(parents=True)
     wjson(fj/'data'/'O-VERIFIED.json', dict(batches=[dict(name='batch-0000'), dict(name='batch-0001')]))
     src = (HERE/'run_fit.sh').read_text().replace('J=/mpac/sdicks02/jobs/clasher/x4s4-onpolicy', f'J={fj}')
     src = src.replace('exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B', 'printf "%s\\n"').replace('cd "$J/fit/source"', 'true')
     src = src.replace('EXIT_LOADER_AMENDMENT_SHA256=$(sha256sum "$EXIT_LOADER_AMENDMENT" | cut -d \' \' -f 1)', 'EXIT_LOADER_AMENDMENT_SHA256=x')
     (Path(tmp)/'rf.sh').write_text(src)
-    out = subprocess.run(['bash', str(Path(tmp)/'rf.sh'), 'R5'], capture_output=True, text=True)
+    rf = lambda *a, env=None: subprocess.run(['bash', str(Path(tmp)/'rf.sh'), *a], capture_output=True, text=True, env=env)
+    out = rf('R5', '-', 'batch-0000', 'batch-0001')
     roots = [l for l in out.stdout.split('\n') if l.endswith(('/batch-0000', '/batch-0001'))]
-    bad = subprocess.run(['bash', str(Path(tmp)/'rf.sh'), 'R5W'], capture_output=True, text=True)
-    fake = Path(tmp)/'fakebin'; fake.mkdir(); (fake/'python3').write_text('#!/bin/sh\necho batch-0000\nexit 17\n'); (fake/'python3').chmod(0o755)
-    prod = subprocess.run(['bash', str(Path(tmp)/'rf.sh'), 'R5'], capture_output=True, text=True, env=dict(os.environ, PATH=f'{fake}:{os.environ["PATH"]}'))
-    case('F5: run_fit.sh lists each O batch x4 (seed 2026101301); R5W refuses without its gate; a failing producer aborts it',
-         out.returncode == 0 and len(roots) == 8 and '2026101301' in out.stdout and bad.returncode != 0 and prod.returncode == 3 and 'batch-0000' not in prod.stdout)
+    shell = dict(ok=out.returncode == 0 and len(roots) == 8 and '2026101301' in out.stdout and '--resume' not in out.stdout,
+                 resume=('--resume' in rf('R5', '/x/ck.pt', 'batch-0000').stdout), r5w_without_gate=rf('R5W', '-', 'batch-0000').returncode != 0,
+                 no_batches=rf('R5', '-').returncode == 3, bad_name=rf('R5', '-', '../evil').returncode != 0,
+                 reads_no_json='json.load' not in (HERE/'run_fit.sh').read_text() and 'mkdir' not in (HERE/'run_fit.sh').read_text())
+    shutil.rmtree(fj/'cache'/'fit'/'tmp'); os.symlink(Path(tmp), fj/'cache'/'fit'/'tmp')
+    shell['tmpdir_symlink'] = rf('R5', '-', 'batch-0000').returncode == 3
+    case('R3-F1: run_fit.sh takes the driver-authenticated batch names (x4, seed 2026101301), reads no JSON and creates no directory, '
+         'refuses no/bad batch names, R5W without its gate, and a TMPDIR the driver did not prepare', all(shell.values()), shell=shell)
     import collect_w
     collect_w.X = [[f'deck{d}-{c}' for c in range(8)] for d in range(5)]
     ok = all(collect_w.game_inputs(g)[4][collect_w.game_inputs(g)[3] % 8] == collect_w.X[g % 5] and collect_w.game_inputs(g)[4][7] == collect_w.X[(g//5) % 5] for g in range(200))
@@ -1261,7 +1522,7 @@ def main():
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
         for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
-                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_static):
+                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
             except Exception as e:

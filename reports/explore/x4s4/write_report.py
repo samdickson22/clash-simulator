@@ -16,7 +16,7 @@ import argparse, hashlib, json, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import x4s4io as io                              # noqa: E402
+import x4s4io as io, studytree                   # noqa: E402
 
 STUDENTS = ('R3a', 'R3a-rep', 'R5', 'R5-rep', 'R5W')
 
@@ -152,8 +152,21 @@ def render(r, plan, o_gate, ow_gate, diag, inputs, notes):
     return '\n'.join(L)+'\n'
 
 
+FREEZE_PATH = 'reports/explore/x4s4/receipts/contention-exclusion.json'
+HELDOUT64_SHA = '0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f'
+
+
+def current_students(J, r_ids):
+    """The staged students' current checkpoint/threshold (R3a from the plan the reduction used, others from READY)."""
+    out = {}
+    for sid in r_ids['students']:
+        s = io.read_json(r_ids['plan_path'], 16 << 20)['student'] if sid == 'R3a' else io.read_json(f'{J}/rt-{sid}/READY.json', 4 << 20)['student']
+        out[sid] = dict(checkpoint_sha256=s['checkpoint_sha256'], threshold=s.get('threshold'))
+    return out
+
+
 def authenticate(J):
-    """R2-F9: fixed inputs whose recorded identities chain; returns (docs, input SHAs)."""
+    """R2-F9 + R3-F4: fixed inputs whose identities must chain to the CURRENT study evidence; returns (docs, SHAs)."""
     paths = dict(results=f'{J}/analysis/results.json', label_plan=f'{J}/data/label-plan.json', o_gate=f'{J}/data/O-VERIFIED.json',
                  ow_gate=f'{J}/data/OW-VERIFIED.json')
     if io.lexists(f'{J}/analysis/diagnostic.json'):
@@ -166,14 +179,40 @@ def authenticate(J):
     need(docs['ow_gate'].get('o_gate_sha256') == shas['o_gate'], 'O_W gate was not verified against this O gate')
     kept, rows = docs['label_plan']['stats']['O']['kept'], docs['o_gate']['rows']
     need(rows <= kept and kept-rows <= 0.001*kept+1, f'label plan kept O ({kept}) does not cover the gate rows ({rows})')
-    r = docs['results']
-    need(set(STUDENTS) <= set(r['students']) or set(STUDENTS[:4]) <= set(r['students']), 'results do not reduce the primary students')
+    r = docs['results']; ids = r.get('identities')
+    need(isinstance(ids, dict), 'results carry no study identities (not produced by the r4 reducer)')
+    need(set(STUDENTS[:4]) <= set(r['students']), 'results do not reduce the primary students')
+    # C5: the receipt the reduction names is the current frozen receipt, committed at the named commit on origin/main
     cs = r['readout']['contention_sensitivity']
-    need(isinstance(cs.get('exclusion_sha256'), str) and isinstance(cs.get('freeze_commit'), str), 'results lack the C5 freeze identity')
+    rec = f'{J}/receipts/contention-exclusion.json'
+    need(io.lexists(rec) and sha(rec) == ids['contention_receipt_sha256'] == cs.get('exclusion_sha256'), 'C5 receipt differs from the reduction')
+    try:
+        committed = io.git_committed_blob(io.REPO, ids['freeze_commit'], FREEZE_PATH)
+        on_main = io.git_is_ancestor(io.REPO, ids['freeze_commit'])
+    except io.Refusal as e:
+        need(False, f'C5 freeze commit cannot be authenticated: {e}')
+    need(hashlib.sha256(committed).hexdigest() == ids['contention_receipt_sha256'] and on_main and cs.get('freeze_commit') == ids['freeze_commit'],
+         'C5 receipt is not committed at the named freeze commit on origin/main')
+    retired = f'{J}/driver/retired.json'
+    need((sha(retired) if io.lexists(retired) else None) == ids['retired_sha256'], 'retired.json changed since the reduction')
+    need(sha(ids['plan_path']) == ids['plan_sha256'], 'the reduction plan changed')
+    # data gates: the ones the reduction recorded are the current ones, re-authenticated against the current corpora
+    need(ids['gates'].get('O') == shas['o_gate'] and ids['gates'].get('OW') == shas['ow_gate'], 'results were reduced under other data gates')
+    for mode in ('O', 'OW'):
+        try: studytree.authenticate_gate(J, mode)
+        except io.Refusal as e: need(False, f'{mode} corpus no longer matches its gate: {e}')
+    # models: the reduced students are the currently staged ones
+    staged = current_students(J, ids)
+    need(staged == ids['students'], 'reduced student checkpoints/thresholds differ from the staged students')
     if 'diagnostic' in docs:
         d = docs['diagnostic']
-        need(d.get('holdout_gate_sha256') == shas['holdout_gate'], 'diagnostic was not run on the verified O-holdout')
+        try: _, hsha, _ = studytree.authenticate_gate(J, 'holdout')
+        except io.Refusal as e: need(False, f'holdout corpus no longer matches its gate: {e}')
+        need(d.get('holdout_gate_sha256') == shas['holdout_gate'] == hsha, 'diagnostic was not run on the verified O-holdout')
+        need(d.get('heldout64_sha256') == HELDOUT64_SHA, 'diagnostic did not use the fixed R1 held-out64 slice')
         need(sorted(d.get('students', {})) == sorted(STUDENTS), 'diagnostic must cover exactly the five students')
+        dc = {k: dict(checkpoint_sha256=v['checkpoint_sha256'], threshold=v.get('threshold')) for k, v in d.get('student_checkpoints', {}).items()}
+        need(all(dc.get(k) == v for k, v in staged.items()), 'diagnostic student checkpoints/thresholds differ from the reduced students')
     return docs, shas
 
 

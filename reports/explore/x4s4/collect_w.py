@@ -14,7 +14,9 @@ unselected completed games renamed into <job>/data/raw-OW-unused/.
 Acceptance smoke (PLAN §6.6, R2-F5): exactly TWO games on the declared QUALIFICATION bank (4503606337370496 + g,
 g = 0, 1), never on C', so they are excluded from O_W by construction; written to <job>/data/raw-OW-acceptance/ and
 receipted in <job>/data/raw-OW-acceptance-smoke.json with each game's seed, index, seat, decks, replay_exact, manifest
-SHA and the v1/emitter SHAs; verify_onpolicy re-verifies those seals and identities.
+SHA and the v1/emitter SHAs; verify_onpolicy re-verifies those seals and identities. r4 (R3-F2): each acceptance game
+runs in an owned worker process under a polling parent (live guards; breach -> verified worker PIDs stopped); a game
+completing after the hard stop is rejected and passed also requires the deadline unmet at the end.
 
 Every game, fresh or resumed, must match its realized identity (seed, index, opponent v1, seat, deck multisets); a
 resumed game's seal is re-verified completely. Dispatch stops once the contiguous completed prefix holds >= target
@@ -120,23 +122,48 @@ def identity():
     return dict(pid=ident['pid'], pgid=ident['pgid'], leader_start=lead['starttime'] if lead else ident['starttime'])
 
 
-def acceptance_smoke(me):
-    """Two emitter acceptance-replay games on the qualification bank (excluded from C' by construction)."""
-    acc = JOB+'/data/raw-OW-acceptance'
-    io.mkdirs(acc, roles=('data',))
+def acceptance_game(g):
+    """One acceptance-replay game on the qualification bank, run inside an owned worker process."""
+    own, opp, seat, index, decks = game_inputs(g)
+    d = f'{JOB}/data/raw-OW-acceptance/game-{g:05d}'
+    io.check_writable(d, roles=('data',), must_not_exist=True)
+    emitter.decks = lambda: [list(x) for x in decks]
+    r = emitter.run_game(QUAL_BASE+g, index, Path(d), opponent='v1', stop=JOB+'/STOP', acceptance=True)
+    if not r: return dict(g=g, status='stopped')
+    if hard_stop_passed(): return dict(g=g, status='past_hard_stop')         # completed after the deadline: rejected
+    check_identity(r, g, QUAL_BASE, own, opp, seat, index)
+    return dict(identity_row(d, g, QUAL_BASE, r), replay_exact=bool(r.get('replay_exact')), status='sealed')
+
+
+def acceptance_smoke(me, monitor=None, poll=10.0):
+    """R3-F2: two emitter acceptance-replay games on the qualification bank (excluded from C' by construction), each in
+    an owned worker under a supervising parent: dispatch waits for memory/PSI admission; while a game runs the parent
+    polls the live guards and, on a breach (STOP incl. a dangling link, hard stop, memory, PSS, tree, disk), stops the
+    worker's verified PIDs; a game finishing after the hard stop is rejected; passed also requires the deadline unmet
+    at the end."""
+    monitor = monitor or (lambda: studytree.monitor(JOB, own=(me['pgid'], me['leader_start'])))
+    io.mkdirs(JOB+'/data/raw-OW-acceptance', roles=('data',))
     rows = []
-    for g in range(ACCEPTANCE_GAMES):
-        why = studytree.monitor(JOB, own=(me['pgid'], me['leader_start']))
-        if why: rows.append(dict(g=g, status='halted', reason=why)); break
-        own, opp, seat, index, decks = game_inputs(g)
-        d = f'{acc}/game-{g:05d}'
-        io.check_writable(d, roles=('data',), must_not_exist=True)
-        emitter.decks = lambda dd=decks: [list(x) for x in dd]
-        r = emitter.run_game(QUAL_BASE+g, index, Path(d), opponent='v1', stop=JOB+'/STOP', acceptance=True)
-        if not r: rows.append(dict(g=g, status='stopped')); break
-        check_identity(r, g, QUAL_BASE, own, opp, seat, index)
-        rows.append(dict(identity_row(d, g, QUAL_BASE, r), replay_exact=bool(r.get('replay_exact')), status='sealed'))
-    passed = len(rows) == ACCEPTANCE_GAMES and all(x.get('status') == 'sealed' and x.get('replay_exact') is True for x in rows)
+    with ProcessPoolExecutor(max_workers=1, mp_context=multiprocessing.get_context('fork')) as pool:
+        for g in range(ACCEPTANCE_GAMES):
+            why = monitor()
+            while why is None and not studytree.dispatch_ok()[0]:
+                time.sleep(poll); why = monitor()
+            if why: rows.append(dict(g=g, status='halted', reason=why)); break
+            fut = pool.submit(acceptance_game, g)
+            while True:
+                done, _ = wait([fut], timeout=poll)
+                if done: break
+                why = monitor()
+                if why: stop_workers(me); break
+            if why:
+                rows.append(dict(g=g, status='halted', reason=why)); break
+            try: r = fut.result()
+            except Exception as e: r = dict(g=g, status='failed', error=repr(e))
+            rows.append(r)
+            if r.get('status') != 'sealed': break
+    passed = (len(rows) == ACCEPTANCE_GAMES and all(x.get('status') == 'sealed' and x.get('replay_exact') is True for x in rows)
+              and not hard_stop_passed())
     io.write_json_once(JOB+'/data/raw-OW-acceptance-smoke.json', dict(
         schema='x4s4.ow-acceptance.v2', utc=utc(), bank='qualification', base=QUAL_BASE, games=rows, passed=passed,
         v1_sha256=V1_SHA, emitter_sha256=EMITTER_SHA, label='X4S-4 O_W acceptance smoke (excluded), NEVER ADOPTABLE'),

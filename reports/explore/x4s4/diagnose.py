@@ -146,11 +146,11 @@ def students_of(job):
 
 
 def holdout_of(job):
-    """The verified O-holdout batches (HOLDOUT-VERIFIED.json, C 3500-3999) and the gate's SHA."""
-    gate = job+'/data/HOLDOUT-VERIFIED.json'
-    g = io.read_json(gate, 64 << 20)
-    if g.get('mode') != 'holdout' or not g.get('batches'): raise SystemExit('HOLDOUT-VERIFIED.json is not a holdout gate')
-    return [f"{job}/data/onpolicy-holdout/{b['name']}" for b in g['batches']], io.sha256_file(gate)
+    """R3-F3: the verified O-holdout NOW - studytree.authenticate_gate re-verifies the HOLDOUT-VERIFIED receipt chain,
+    the exact batch inventory and every batch's complete seal against the gate's manifest pins (bank C 3500-3999 was
+    checked by the verifier over exactly those bytes), so a substituted corpus is refused before the frozen loader."""
+    batches, gate_sha, _ = studytree.authenticate_gate(job, 'holdout')
+    return batches, gate_sha
 
 
 def guard_factory(job):

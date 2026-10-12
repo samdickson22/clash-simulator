@@ -120,7 +120,11 @@ def check_parity(phases, parity):
     names = sorted(str(p) for p in phases)
     if not (pr.get('check') == 'parity' and sorted(map(str, pr.get('phases', []))) == names):
         raise PlanError('a C7b parity receipt for exactly these collection phases is required')
-    if pr.get('final') is not True: raise PlanError('the parity receipt is not final (a phase had not exited)')
+    if pr.get('bank') != 'collection': raise PlanError('label admission accepts only a bank-C collection parity receipt')
+    evidence = qualify4.phase_evidence(names)                 # R3-F5: re-derive the final phase evidence NOW
+    if pr.get('final') is not True or any(e['supervisor-exit.json'] is None for e in evidence.values()):
+        raise PlanError('the parity receipt is not final, or a phase no longer has its supervisor-exit evidence')
+    if pr.get('evidence') != evidence: raise PlanError('stale parity receipt: phase schedule/launch/exit evidence changed')
     try: current = qualify4.parity_inventory(names)
     except (qualify4.QualError, io.Refusal) as e: raise PlanError(f'parity inventory cannot be re-derived: {e}')
     if pr.get('inventory') != current:
@@ -141,6 +145,12 @@ def check_parity(phases, parity):
         if not ok:
             raise PlanError('C7b parity failed and there is no authentic coordinator PARITY-EXCEPTION for this receipt')
     return pr, exception
+
+
+def recheck_parity(plan):
+    """Later consumers (label run, O/holdout verification) re-run the full parity admission on the plan's receipt."""
+    if sha_file(plan['parity_receipt']) != plan['parity_receipt_sha256']: raise PlanError('parity receipt changed since the plan')
+    check_parity(plan['parity_phases'], plan['parity_receipt'])
 
 
 def make_plan(phases, parity, out):
@@ -192,7 +202,8 @@ def make_plan(phases, parity, out):
                                 game_sha256=game_sha, keep_sha256=sha_bytes(json.dumps(sorted(keep)).encode())))
     dup = {b: dict(states=v[0], feature_duplicates=v[1], rate=v[1]/v[0]) for b, v in sorted(buckets.items(), key=lambda x: int(x[0]))}
     io.write_json_once(str(out), dict(utc=utc(), schema='x4s4.label-plan.v4', caps=CAPS, allocation=ALLOC, c_base=C_BASE,
-                       parity_receipt_sha256=sha_file(parity), parity_inventory_sha256=pr.get('inventory_sha256'), parity_passed=pr.get('passed'),
+                       parity_receipt_sha256=sha_file(parity), parity_receipt=str(parity), parity_phases=phases,
+                       parity_inventory_sha256=pr.get('inventory_sha256'), parity_passed=pr.get('passed'),
                        parity_exception=exception, order='arm K4S-120,S-200; index; tick',
                        dedup='sha256(row bytes)+root_digest (multiple determinizations kept)',
                        feature_only_duplicates_by_600_tick_bucket=dup, stats=stats, sets=sets), roles=('data',), mode=0o444)
@@ -329,18 +340,23 @@ def stop_workers(me):
     io.stop_owned(me['pgid'], me['leader_start'], term_grace=30, kill_grace=30, exclude=(me['pid'],))
 
 
-def dispatch(entries, workers, work, me, monitor=None):
-    """Submit one entry per free worker; between dispatches run the parent's live guards. Returns (results, halted)."""
+def dispatch(entries, workers, work, me, monitor=None, admit=None, poll=10.0):
+    """Submit one entry per free worker. Before every submission the dispatch admission must hold (R3-F2: MemAvailable
+    >= 24 GiB and PSI readable and <= 10 - this only DELAYS new work); between dispatches the parent runs the live
+    guards (STOP, hard stop, memory, PSS, tree, disk), whose breach stops the workers. Returns (results, halted)."""
     monitor = monitor or (lambda: studytree.monitor(JOB, own=(me['pgid'], me['leader_start'])))
+    admit = admit or studytree.dispatch_ok
     results, halted, inflight, todo = [], None, {}, list(entries)
     with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context('fork'), initializer=pin) as pool:
         while todo or inflight:
             why = monitor()
             if why and not halted:
                 halted = why; stop_workers(me); break
-            while todo and len(inflight) < workers:
+            while todo and len(inflight) < workers and admit()[0]:
                 e = todo.pop(0); inflight[pool.submit(work, e)] = e
-            done, _ = wait(list(inflight), timeout=10, return_when=FIRST_COMPLETED)
+            if not inflight:
+                time.sleep(poll); continue                         # gated: wait, keep monitoring
+            done, _ = wait(list(inflight), timeout=poll, return_when=FIRST_COMPLETED)
             for f in done:
                 inflight.pop(f)
                 r = f.result()                                             # undeclared exceptions propagate
@@ -364,6 +380,7 @@ def run_labels(plan_path, which, workers, threads):
     me = dict(pid=ident['pid'], pgid=ident['pgid'], leader_start=lead['starttime'] if lead else ident['starttime'])
     RAW, THREADS, PLAN_SHA = JOB+f'/data/raw-{which}', threads, sha_file(plan_path)
     plan = io.read_json(plan_path, 1 << 30)
+    recheck_parity(plan)                                     # R3-F5: the parity chain still holds at labeling time
     sys.path.insert(0, str(HERE.parent/'x4s3'))
     import run as run_module
     run = run_module

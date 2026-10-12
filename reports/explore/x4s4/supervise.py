@@ -7,7 +7,8 @@ X4S-4 behaviour:
     supervisor disappears (R2-F8 monitor death).
   * All I/O goes through x4s4io (R2-F1): --job must be the canonical job, --phase a fresh confined relative path,
     every file is created exclusively, replaced atomically or appended without following links.
-  * Admission (R2-F3): the study tree plus this phase's workers must stay <= 70 processes and the job <= 100 GB.
+  * Admission (R2-F3, R3-F2), immediately before spawning: MemAvailable >= 24 GiB, memory PSI readable and <= 10, and
+    the study tree plus this phase's workers <= 70 processes with the job <= 100 GB.
   * Live stops (R2-F3): STOP (lexists), the study hard stop (--stop-at must equal <job>/HARD-STOP-UTC.txt, T+24 h),
     MemAvailable < 24 GiB or unreadable, the child group's PSS > 50 GiB or unreadable, the study tree > 70 processes
     or > 100 GB, a console user (yield). Stops signal verified PIDs of the owned child group only (TERM, then KILL).
@@ -88,6 +89,16 @@ def collection_phases(job, phase_dir):
     return [arm_dir+'/'+n for n in io.listdir(arm_dir) if n.startswith('a') and io.is_real_dir(arm_dir+'/'+n)]
 
 
+def admit_phase(job, add):
+    """R3-F2: admission immediately before the child is spawned - also for direct collection/qualification calls,
+    not only driver launches: MemAvailable >= 24 GiB and memory PSI readable and <= 10 (dispatch inhibition only),
+    and the study tree + this phase's processes <= 70 with the job <= 100 GB. Returns None or the refusal reason."""
+    ok, why = studytree.dispatch_ok()
+    if not ok: return 'admission: '+why
+    ok, why = studytree.admission(job, add=add)
+    return None if ok else 'admission: '+why
+
+
 def parity_watch(job, out):
     """One C7b watch step for a collection phase: None if in band, else the stop reason (pause or monitor failure)."""
     try:
@@ -138,9 +149,9 @@ def main():
     if io.lexists(job+'/STOP'):
         io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason='STOP present before launch'), roles=PHASE_ROLES)
         raise SystemExit(3)
-    ok, why = studytree.admission(job, add=workers*width+3)  # runner + pool + this supervisor (R2-F3 reservation)
-    if not ok:
-        io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason='admission: '+why), roles=PHASE_ROLES)
+    why = admit_phase(job, workers*width+3)                 # runner + pool + this supervisor (reservation)
+    if why:
+        io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason=why), roles=PHASE_ROLES)
         raise SystemExit(3)
     me = io.own_identity()
     rt_runtime = a.rt+'/repo/reports/explore/x4s3/runtime.sh'

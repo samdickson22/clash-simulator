@@ -17,7 +17,10 @@ wall_overrun); loss/winner/outcome are dropped while parsing.
       C7b deadline-mode parity over the block-proved, SHA-verified, projected-terminal games of the phases. The receipt
       carries the exact game inventory (phase, game, SHA-256) and final = every phase has its supervisor-exit.json;
       passed requires final, both arms evaluated (>= N games each) and both in the +-2 pp band. label.py recomputes
-      the inventory and refuses a receipt that no longer matches the phases (stale parity). Running collection is
+      the inventory and refuses a receipt that no longer matches the phases (stale parity). r4 (R3-F5): the receipt
+      also pins each phase's schedule/launch/supervisor-exit SHAs (final evidence), re-derived by every consumer, and
+      --bank smoke runs the same check on the collection smoke (PLAN §6.2); label admission accepts only bank C.
+      Running collection is
       watched inside supervise.py (parity_once every 300 s; PARITY-PAUSE + STOP when out of band).
   roundtrip --phases DIR... --threads T --out R.json
       Every capture of the smoke collection (indices 0-7 x K4S-120/S-200), each game authenticated by its block proof,
@@ -199,8 +202,22 @@ def roundtrip(a):
     return dict(res, threads=a.threads, native=native, coverage='100% of smoke captures')
 
 
-def parity_inventory(phases):
-    """[(phase, game name, sha256)] of every block-proved, SHA-verified, projected-terminal bank-C collection game."""
+BANKS = {'collection': C_BASE, 'smoke': SMOKE_BASE}
+
+
+def phase_evidence(phases):
+    """R3-F5: per phase, the SHA-256 of schedule.json, launch.json and supervisor-exit.json (None while unfinished).
+    The parity receipt pins this; label admission and later consumers re-derive it, so a phase whose final evidence
+    disappeared or changed no longer matches."""
+    ev = {}
+    for p in sorted(map(str, phases)):
+        ev[p] = {n: (io.sha256_file(f'{p}/{n}') if io.lexists(f'{p}/{n}') else None)
+                 for n in ('schedule.json', 'launch.json', 'supervisor-exit.json')}
+    return ev
+
+
+def parity_inventory(phases, base=C_BASE):
+    """[(phase, game name, sha256)] of every block-proved, SHA-verified, projected-terminal game of the bank."""
     inv = []
     for phase in sorted(map(str, phases)):
         bdir = phase+'/blocks'
@@ -210,14 +227,14 @@ def parity_inventory(phases):
             i = int(n[:-5])
             proof = io.read_json(f'{bdir}/{n}', 1 << 20)
             for arm in proof.get('order', []):
-                g, digest = proved_game(phase, i, arm, C_BASE)
+                g, digest = proved_game(phase, i, arm, base)
                 inv.append([phase, Path(g).name, digest])
     return inv
 
 
-def parity_once(phases, min_games, require_both=True):
+def parity_once(phases, min_games, require_both=True, bank='collection'):
     agg = {}
-    inv = parity_inventory(phases)
+    inv = parity_inventory(phases, BANKS[bank])
     for phase, name, digest in inv:
         arm = name[:-5].split('-d27-')[1]
         ds = game_meta(f'{phase}/games/{name}')['search_ab']['deadline_stats']      # timing metadata only
@@ -233,7 +250,7 @@ def parity_once(phases, min_games, require_both=True):
     enough = all(arm in rows and rows[arm]['evaluated'] for arm in X4S3_R3A)
     out_of_band = sorted(arm for arm, r in rows.items() if r['evaluated'] and not all(r['within_2pp'].values()))
     return dict(arms=rows, band_pp=2.0, min_games=min_games, both_arms_evaluated=enough, out_of_band=out_of_band,
-                inventory=inv, inventory_sha256=hashlib.sha256(json.dumps(inv).encode()).hexdigest(),
+                bank=bank, inventory=inv, inventory_sha256=hashlib.sha256(json.dumps(inv).encode()).hexdigest(),
                 passed=bool((enough or not require_both) and not out_of_band))
 
 
@@ -250,7 +267,7 @@ def pause(job, res):
 def parity(a):
     phases = [str(p) for p in a.phases]
     while True:
-        res = parity_once(phases, a.min_games)
+        res = parity_once(phases, a.min_games, bank=a.bank)
         if res['out_of_band']:
             res['paused'] = pause(io.JOB, res); break
         final = all(io.lexists(p+'/supervisor-exit.json') for p in phases)
@@ -258,21 +275,29 @@ def parity(a):
         if io.lexists(io.JOB+'/STOP'): res['stopped_by_STOP'] = True; break
         time.sleep(a.watch)
     res['phases'] = sorted(phases)
-    res['final'] = all(io.lexists(p+'/supervisor-exit.json') for p in phases)
+    res['evidence'] = phase_evidence(phases)
+    res['final'] = all(e['supervisor-exit.json'] is not None for e in res['evidence'].values())
     res['passed'] = bool(res['passed'] and res['final'])
     return res
 
 
 def trainer(a):
+    """R3-F3: the packed smoke batch must lie under <job>/qual and re-verify completely; the assets must match the
+    RUNTIME-INVENTORY pin; only then does the frozen loader open them."""
     import numpy as np
     from exit_r3.student import RootTeacherStore, teacher_targets
-    store = RootTeacherStore(a.packed, a.assets)
+    packed = str(a.packed)
+    if not packed.startswith(io.JOB+'/qual/'): raise QualError('the packed smoke batch must lie under <job>/qual/')
+    _, manifest_sha = io.verify_sealed_dir(packed)
+    inv = io.read_json(io.JOB+'/RUNTIME-INVENTORY.json', 4 << 20)
+    if io.sha256_file(str(a.assets)) != inv.get('inputs/assets.npz'): raise QualError('assets differ from RUNTIME-INVENTORY')
+    store = RootTeacherStore(packed, a.assets)
     n = len(store); rows = len(store.arrays['teacher_root'])
     b, y = store.batch(np.arange(min(64, n)))
     q = teacher_targets(y, .003)
     finite = bool(np.isfinite(q.numpy()).all()) and bool((abs(q.sum(-1).numpy()-1) < 1e-5).all())
     return dict(rows=rows, roots=n, all_rows_roots=n == rows, batch=int(len(y['action'])), targets_finite_normalized=finite,
-                passed=n == rows and n > 0 and finite)
+                packed_manifest_sha256=manifest_sha, passed=n == rows and n > 0 and finite)
 
 
 def main(argv=None):
@@ -282,6 +307,7 @@ def main(argv=None):
     h.add_argument('--config', required=True)
     q = sub.add_parser('parity'); q.add_argument('--phases', nargs='+', required=True)
     q.add_argument('--min-games', type=int, required=True); q.add_argument('--watch', type=int, default=0)
+    q.add_argument('--bank', choices=sorted(BANKS), default='collection', help='smoke: PLAN §6.2 deadline parity on the collection smoke')
     r = sub.add_parser('roundtrip'); r.add_argument('--phases', nargs='+', required=True); r.add_argument('--threads', type=int, default=1)
     t = sub.add_parser('trainer'); t.add_argument('--packed', required=True); t.add_argument('--assets', required=True)
     for p in (f, h, q, r, t): p.add_argument('--out', required=True)

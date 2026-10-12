@@ -26,6 +26,12 @@ r3 (Sol r2):
     driver/DISPATCH.lock, so the diagnostic lock check and a launch cannot interleave. Signals go to verified PIDs of
     owned groups only (the trainer PID first, then the group's remaining verified PIDs).
   * Only a wall_over_2x fit auto-resumes, after the O_W gate (R2-11); divergence never does.
+r4 (Sol r3): R3-F1 - before every fit launch (fresh or resumed) prepare_fit_dirs validates the complete trees the
+unchanged shell/frozen writers open (fits/<id>, cache/fit: no link, hard link or special file), pins run_fit.sh and
+loader6.json, re-authenticates the data gate (studytree.authenticate_gate) and passes the authenticated batch names to
+run_fit.sh. R3-F2 - the live fit guard also enforces the study process/disk caps and keeps memory/GPU/PSS checks
+through teardown. R3-F6 - a non-attempt anomaly is resolved only by an ACK naming the anomaly file's SHA-256, an
+explicit 'continue' disposition and an owner; it is consumed and archived (RESOLVED-*); anything else keeps blocking.
 """
 import datetime, fcntl, json, math, os, secrets, signal, sys, time
 from pathlib import Path
@@ -75,14 +81,41 @@ def anomaly(name, **kw):
     if not io.lexists(p): jwrite(p, dict(utc=utc(), **kw)); event(kind='anomaly', name=name, **kw)
 
 
+ATTEMPT_KEYS = ('exit-',)                                # resolved only by the attempt-bound ACK in settle/fit_state
+
+
+def attempt_key(key): return key.startswith(ATTEMPT_KEYS) or (key.startswith('fit-') and key.endswith('-exit'))
+
+
 def unresolved_anomalies():
-    """Every ANOMALY-* without its ACK blocks all new dispatch (fits and phases)."""
+    """Every ANOMALY-* blocks all new dispatch until RESOLVED (R3-F6). Attempt anomalies (exit-*, fit-*-exit) resolve
+    only through their attempt-bound ACK. Any other anomaly resolves only through ACK-<key>.json = {anomaly_sha256:
+    SHA-256 of the exact ANOMALY file, disposition: 'continue', owner}; a valid ACK is consumed and the anomaly + ACK
+    are archived in RESOLVED-<key>-<t>.json. A malformed, stale, linked or mismatched ACK keeps the anomaly blocking."""
     out = []
     for n in io.listdir(D):
-        if n.startswith('ANOMALY-') and n.endswith('.json'):
-            key = n[len('ANOMALY-'):-len('.json')]
-            if not io.lexists(f'{D}/ACK-{key}.json'): out.append(key)
+        if not (n.startswith('ANOMALY-') and n.endswith('.json')): continue
+        key = n[len('ANOMALY-'):-len('.json')]
+        if attempt_key(key) or not resolve_generic(key): out.append(key)
     return out
+
+
+def resolve_generic(key):
+    ap, an = f'{D}/ACK-{key}.json', f'{D}/ANOMALY-{key}.json'
+    if not io.lexists(ap): return False
+    try:
+        a = io.read_json(ap, 1 << 20)
+        ok = (isinstance(a, dict) and a.get('anomaly_sha256') == sha(an) and a.get('disposition') == 'continue'
+              and isinstance(a.get('owner'), str) and a['owner'].strip() != '')
+    except io.Refusal:
+        ok = False
+    if not ok: return False
+    t = int(time.time())
+    io.write_json_once(f'{D}/RESOLVED-{key}-{t}.json', dict(utc=utc(), anomaly=io.read_json(an, 1 << 20), ack=a), roles=('driver',))
+    io.rename_path(ap, f'{D}/ACK-{key}.consumed-{t}.json', roles=('driver',))
+    io.rename_path(an, f'{D}/ANOMALY-{key}.resolved-{t}', roles=('driver',))
+    event(kind='anomaly_resolved', key=key)
+    return True
 
 
 def mem_available(): return studytree.mem_available()
@@ -126,13 +159,13 @@ class DispatchLock:
         fcntl.flock(self.fd, fcntl.LOCK_UN); os.close(self.fd); return False
 
 
-def launch(name, argv, log, receipt, env, cwd=None):
+def launch(name, argv, log, receipt, env, cwd=None, extra_rec=None):
     """Spawn an owned child and record its launch receipt (launch_id, pid, pgid, starttime)."""
     lid = secrets.token_hex(8)
     child = io.spawn(argv, log, env, roles=('logs',), cwd=cwd)
     LAUNCHED[child['pid']] = lid
     rec = dict(launched_at_utc=utc(), launch_id=lid, pid=child['pid'], pgid=child['pgid'], starttime=child['starttime'],
-               command=argv, name=name)
+               command=argv, name=name, **(extra_rec or {}))
     io.write_json_once(receipt, rec, roles=('receipts',), mode=0o444)
     event(kind='launch', name=name, launch_id=lid, pid=child['pid'])
     return rec
@@ -195,12 +228,22 @@ def fit_state(fid):
 
 
 def prepare_fit_dirs(fid):
-    """Validate/create every directory the frozen trainer and run_fit.sh will write, before launch (R2-F1)."""
+    """R3-F1 write contract for the UNCHANGED shell/frozen fit writers (they use ordinary path calls and are not
+    routed through x4s4io): immediately before every launch, fresh or resumed, the driver creates the directories
+    they write and validates the COMPLETE existing trees they may open or append - fits/<id> (checkpoints, train.jsonl,
+    timing.jsonl, runtime.json, segment.json, complete.json) and cache/fit (TMPDIR, CUDA/torch/Triton caches): every
+    component a real directory, every file regular and single-link, no symlink, hard link or special file anywhere;
+    the log is opened by the driver itself through the gate. It also re-authenticates the input data gate and pins the
+    executed shell and loader amendment against RUNTIME-INVENTORY. Returns the authenticated batch names."""
     for d in (f'fits/{fid}', 'cache/fit/cuda', 'cache/fit/torch', 'cache/fit/triton', 'cache/fit/tmp', 'logs'):
         io.mkdirs(f'{J}/{d}')
+    io.tree_files(f'{J}/fits/{fid}'); io.tree_files(f'{J}/cache/fit')
     inv = jload(J+'/RUNTIME-INVENTORY.json') or {}
-    if inv.get('fit/run_fit.sh') is None or sha(J+'/fit/run_fit.sh') != inv['fit/run_fit.sh']:
-        raise io.Refusal('inventory', 'fit/run_fit.sh differs from RUNTIME-INVENTORY')
+    for rel in ('fit/run_fit.sh', 'fit/loader6.json'):
+        if inv.get(rel) is None or sha(f'{J}/{rel}') != inv[rel]:
+            raise io.Refusal('inventory', f'{rel} differs from RUNTIME-INVENTORY')
+    batches, gate_sha, _ = studytree.authenticate_gate(J, 'OW' if fid == 'R5W' else 'O')
+    return [b.rsplit('/', 1)[1] for b in batches], gate_sha
 
 
 class Fits:
@@ -226,18 +269,19 @@ class Fits:
             return
 
     def launch(self, fid, st):
-        out = f'{J}/fits/{fid}'; extra = []
-        prepare_fit_dirs(fid)
+        out = f'{J}/fits/{fid}'; extra = ['-']
+        batches, gate_sha = prepare_fit_dirs(fid)
         if st == 'stopped':
             done = jload(out+'/complete.json'); ck = f"{out}/step-{done['step']:08d}.pt"
             k = len([n for n in io.listdir(out) if n.startswith('segment-attempt')])+1
             for n in ('segment', 'complete'):
                 if io.lexists(f'{out}/{n}.json'): io.rename_path(f'{out}/{n}.json', f'{out}/{n}-attempt{k}.json', roles=('fits',))
             extra = [ck]
+            io.stat_leaf(ck)                                       # the resume checkpoint: regular, single-link
         rp = fit_receipt(fid)
         if io.lexists(rp): io.rename_path(rp, f'{J}/receipts/fit-{fid}-launch-{int(time.time())}.json', roles=('receipts',))
-        launch(f'fit-{fid}', ['/usr/bin/taskset', '-c', '56-61', '/bin/bash', J+'/fit/run_fit.sh', fid, *extra],
-               f'{J}/logs/fit-{fid}.log', rp, dict(os.environ))
+        launch(f'fit-{fid}', ['/usr/bin/taskset', '-c', '56-61', '/bin/bash', J+'/fit/run_fit.sh', fid, *extra, *batches],
+               f'{J}/logs/fit-{fid}.log', rp, dict(os.environ), extra_rec=dict(gate_sha256=gate_sha, batches=batches))
 
     def guard(self, fid):
         st, rec = fit_state(fid)
@@ -246,16 +290,19 @@ class Fits:
         elif now() >= STOP_AT: why = 'hard_stop'
         else:
             done = jload(f'{J}/fits/{fid}/complete.json')
-            if done and not done['stopped'] and done['step'] == FITS[fid]['steps']: return   # tearing down
-            start = datetime.datetime.strptime(rec['launched_at_utc'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc)
-            if (now()-start).total_seconds() > 2*(FITS[fid]['steps']*STEP_SECONDS+LOAD_SECONDS): why = 'wall_over_2x'
-            losses = []
-            tj = f'{J}/fits/{fid}/train.jsonl'
-            if io.lexists(tj):
-                for line in io.read_text(tj, 512 << 20).splitlines()[-200:]:
-                    try: losses.append(float(json.loads(line)['loss']))      # the fit's TRAINING loss, not a game outcome
-                    except (ValueError, KeyError, TypeError): losses.append(float('nan'))
-            if losses and (not all(math.isfinite(x) for x in losses) or losses[-1] > 10*min(losses+[1e9])): why = 'nan_or_divergent'
+            tearing_down = bool(done and not done['stopped'] and done['step'] == FITS[fid]['steps'])
+            if not tearing_down:                                       # wall/loss rules apply while training only
+                start = datetime.datetime.strptime(rec['launched_at_utc'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc)
+                if (now()-start).total_seconds() > 2*(FITS[fid]['steps']*STEP_SECONDS+LOAD_SECONDS): why = 'wall_over_2x'
+                losses = []
+                tj = f'{J}/fits/{fid}/train.jsonl'
+                if io.lexists(tj):
+                    for line in io.read_text(tj, 512 << 20).splitlines()[-200:]:
+                        try: losses.append(float(json.loads(line)['loss']))      # the fit's TRAINING loss, not a game outcome
+                        except (ValueError, KeyError, TypeError): losses.append(float('nan'))
+                if losses and (not all(math.isfinite(x) for x in losses) or losses[-1] > 10*min(losses+[1e9])): why = 'nan_or_divergent'
+            # R3-F2: memory, GPU, PSS and the study-wide process/disk caps stay live through teardown.
+            if not studytree.admission(J, 0)[0]: why = 'study_tree_cap'
             mem = mem_available()
             if mem is None or mem < studytree.MEM_FLOOR: why = 'memory_floor'
             g = gpu_used_mib()

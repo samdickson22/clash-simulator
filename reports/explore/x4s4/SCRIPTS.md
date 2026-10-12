@@ -1,115 +1,78 @@
-# X4S-4 scripts, r3 for Sol re-review (exploration, NEVER ADOPTABLE)
+# X4S-4 scripts, r4 for Sol re-review (exploration, NEVER ADOPTABLE)
 
 The design is frozen at PLAN r3 87809ae0. The history of the script set:
 
 | Round | Script set | Sol verdict |
 |---|---|---|
-| r1 | 13fb31d0 | REQUEST_CHANGES, 18 findings |
-| r2 | f15691b5 | REQUEST_CHANGES (a556419e): F1, F2, F3, F8, F11 fixed; R2-F1–R2-F10 open |
-| r3 | this commit | — |
+| r1 | 13fb31d0 | REQUEST_CHANGES (18 findings) |
+| r2 | f15691b5 | REQUEST_CHANGES (R2-F1–F10) |
+| r3 | 8c443f23 | REQUEST_CHANGES (e839e1dc, R3-F1–F8), with several groups APPROVE_WITH_CONDITIONS |
+| r4 | this commit | — |
 
-r3 fixes R2-F1 to R2-F10. Nothing has been run on any host. Everything below was done offline on 127x05, using synthetic fixtures and disposable git repositories under /dev/shm.
+r4 fixes R3-F1 to R3-F8 and adds a negative test for each of Sol's 15 r3 edge probes. Nothing has been run on any host. Everything below was done offline on 127x05, using synthetic fixtures and disposable git repositories under /dev/shm.
 
 ## Index
 
-| File | Kind | SHA-256 |
+| File | Status in r4 | SHA-256 |
 |---|---|---|
-| `x4s4io.py` | **new in r3**: the one I/O, subprocess and signal gate | `5b5080324db052584f54303f8267cd440905727deeec9f5647eb7dc0683419f6` |
-| `studytree.py` | r3: shared live guards | `94ad2e752ccfc49d2e364f89959b10944613dbfea8e1545f62a709d9c5bc930f` |
-| `run_collect.py` | unchanged since r2 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
-| `collect.py` | new | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
-| `label.py` | new | `d5782818e42d013f1a45b6af2917827a9afe851f367c47ab4b60328fe2dc1532` |
-| `collect_w.py` | new | `a0c9d322996b2396bcbb9e600970d91f5ff08ab31c9a27d4c8567a5ef958bc03` |
-| `verify_onpolicy.py` | new | `767259e6f54b10b99ff7517a0a8c339b0593bfefab47bb987f7421d2c63acc1f` |
-| `diagnose.py` | new | `3a4e6c1c7b12d8c0987a01747c3075622b3df063188b82f815aef6921e066dbc` |
-| `contention.py` | new | `0139abc5590fdb1bd5698bde97b9d63362ebc929c2eb85b14f27cb5d0ae53be3` |
-| `qualify4.py` | new | `8dcd13056b2d18bfd02434e4090cc02ba069b465673cb0c7abee7b7b8b34af08` |
-| `supervise.py` | modified (from x4s3) | `b333b12f1f41d471bbcb3a06d7f96b7e1f7672e6e79e5e1e64e28d4d3fc9e987` |
-| `run_fit.sh` | unchanged since r2 | `0dda76798d83b508274a42c771105a64842b7d7f2efd23091dd8e38cfeb35fa0` |
-| `driver.py` | modified (from x4s3) | `fe70dbb71487b7be6e5789defe51bd5104e072306469d18375f670a3bba445ff` |
-| `reduce.py` | modified (from x4s3) | `8757c77fc9ae8bb260397eb716956a3e79c33db61013f91d836791a3c8a74911` |
-| `write_report.py` | modified (from x4s3) | `db3df449df258cbf339af9acda86324490097869be50aa6caac26a079617bc7b` |
-| `audit_seeds.py` | modified (from x4s3) | `36b4d037386514b1bc840e8e20690af9cadf1902d6b9f165462b4c802facd022` |
-| `seed-sources.json` | **new in r3**: the reviewed seed-source inventory | `b221a75e27f97f9aa2ef6602e3142c1c4ec013fe9ae7545253c50c3213fb90d1` |
-| `plan.json` | config | `13840cc60834dd6c46ff1aa9bc4b75ca752a6df9bc9e95939bab544b2d04c4e1` |
-| `plan-collect.json` | config, unchanged | `57f6a1427a584a607fe1e8da79e14340736f90bbf909795a8f125ffd1b9fedea` |
-| `plan-qual-capture.json` | config, unchanged | `450522158dccbe73216c3cc2b86054cdde4fbe62f4d55dafd0e75c87470461d4` |
-| `idx-qual.json`, `idx-smoke.json` | config | `4587c7edd4a17da602e224777e96b98af33e570cea9fcbf3e5ed9543b82d606b` |
-| `test_x4s4_offline.py` | test | `9b838960afb50ab49111aeb996ff1dbacbbe575f1a33461d380194864593c97d` |
+| `x4s4io.py` | changed (R3-F7, R3-F8) | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
+| `studytree.py` | changed (`dispatch_ok`, `authenticate_gate`) | `7ebb6e4e0c1c516c69689febc52dd5b631c28a21c5b09026697c066a6fab524c` |
+| `run_collect.py` | unchanged | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
+| `collect.py` | unchanged | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
+| `label.py` | changed | `ecd88cc00143be41ebc7b3c4c1d1bf103767f45acb27278617dd389a3fb3c57e` |
+| `collect_w.py` | changed | `68c187e0f2dabd3cf708083522e618c0b264b499d9efc560a950d415d2711a3a` |
+| `verify_onpolicy.py` | changed | `b85837d704aa7b1f1cf4a18a47099efce1b8108def97b59af1efb527a0152040` |
+| `diagnose.py` | changed | `aef97380a6de1885938b929240536a6cf8c2e75ec9e1bc0bd7c54db0e18c8a17` |
+| `contention.py` | unchanged | `0139abc5590fdb1bd5698bde97b9d63362ebc929c2eb85b14f27cb5d0ae53be3` |
+| `qualify4.py` | changed | `da45ee8c92e10c8cb9d13a7d1d42ae5be86d20841553ff1b0de24b62aff0382a` |
+| `supervise.py` | changed | `fc7c4c50e52833e747067b042b59f52494f90e695c3ae8e847448a8599a1e5df` |
+| `run_fit.sh` | changed | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
+| `driver.py` | changed | `1f09b6d5136a879c98d48000cb371cb3dca1f8e1defd70a5a560a476d0dfdd47` |
+| `reduce.py` | changed (identities) | `bb6fc580d3d3e84457edd67b45ff799ab5c1fab2393d2b74b89e0108267201bf` |
+| `write_report.py` | changed | `17bb025cbee72ec57fd3489f8b59c714eef1dd2c98358226e9d43d48b48eb95e` |
+| `audit_seeds.py` | changed (rule v2) | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
+| `seed-sources.json` | regenerated (v2) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
+| `plan.json`, `plan-collect.json`, `plan-qual-capture.json` | unchanged | `13840cc6…`, `57f6a142…`, `45052215…` |
+| `idx-qual.json`, `idx-smoke.json` | unchanged | `4587c7ed…` |
+| `test_x4s4_offline.py` | changed | `774a2f9f654b4de7569c5fcb7c05cfeb13faeb13a54b58a3d1af67aa33178cf9` |
 
-`confine.py` is removed; `x4s4io.py` replaces it. Byte-identical reuse is unchanged: `x4s3/run.py` (e7f90d76…), `runtime.sh`, `detach.sh`, `calibrate.py`, the frozen trainer, and `imitation/exit_r1/{rows,pack,emitter}.py`. Every owned file compiles under both `/usr/bin/python3` 3.8.10 (the fleet's system python, which runs the driver) and 3.12.
+Every owned Python file compiles under `/usr/bin/python3` 3.8.10 and under 3.12. `bash -n run_fit.sh` passes. The evaluation runner and the reused files remain byte-identical.
 
-**Staging consequence.** The runtime inventory checked before every reporting launch now lists:
-- `x4s4/supervise.py`, `x4s4io.py`, `studytree.py`, `qualify4.py`;
-- `x4s3/run.py`, `runtime.sh`;
-- `fit/run_fit.sh`, checked before every fit;
-- `inputs/assets.npz`, checked by the diagnostic.
+**Wording correction (Sol R3-F1).** x4s4io routes every read, write, subprocess and signal of the X4S-4-owned Python. The unchanged shell and frozen consumers do not use it: `run_fit.sh`, the frozen `fit_runtime.py` and trainer, the frozen loader, `calibrate.py`, the inherited runner, and the emitter. For them, r4 instead validates their write destinations and authenticates their inputs immediately before launch, as described under R3-F1. They are not described as routed through the module.
 
-## Shared I/O layer (the coordinator's advice)
+## Sol r3 findings → fixes → fixtures
 
-`x4s4io.py` vendors the tested primitives of the K4S shared layer safe_input r1 (blob c7e3fce7…, commit 4c9439de):
-- the component-wise `O_DIRECTORY|O_NOFOLLOW` walk with a dev/ino re-check;
-- the descriptor gate (regular, `st_nlink == 1`, cap, same inode after open);
-- exact-size reads;
-- strict JSON (no duplicate keys, no NaN or Infinity);
-- exclusive creation;
-- `run_checked` (absolute argv, exact environment, bounded output, group watchdog, rc checked before stdout is used).
-
-It does not vendor the K4S name policy, which forbids a `games` path component and so cannot serve X4S-4. X4S-4 declares its own roots instead: job roles plus three exact report-root names.
-
-It adds:
-- atomic replacement over single-link files only;
-- `O_APPEND|O_NOFOLLOW` appends;
-- fd-based removal that never follows a link;
-- fresh-tree copy (links copied as links);
-- `(pgid, leader starttime)` process ownership with PID-only signalling;
-- complete sealed-directory re-verification;
-- a self-verifying git object walker: `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS`, a null graft file, no hooks, a scrubbed environment, and every commit, tree and blob hashed against its id.
-
-An AST test checks that no owned script reads, writes, renames, removes, spawns or group-signals outside it. Only `/proc` pseudo-files are read directly.
-
-## Sol r2 findings → fixes → fixtures
-
-Each Sol r2 probe has a named fixture (`R2-F<n> probe`). Write-safety negatives assert that the outside sentinel is unchanged.
+Every probe in Sol's r3 edge record (15 entries) has a named fixture.
 
 | # | Fix | Fixtures |
 |---|---|---|
-| R2-F1 | Every writer goes through x4s4io before its first mutation: the driver (events, state, logs, receipts, checkpoint copies, runtime overlay and its `plan.json`, calibration output, fit and cache directories), collection, labeling, O_W, supervisor, qualification, reducer, report, contention, diagnostic and audit. The collection entry validates `--out` before the inherited runner runs. | Sol's three probes, all rejected with the sentinel unchanged: the hard-linked `receipt.json.tmp` with `label.write_json`, a symlinked `driver/events.jsonl`, and a collection entry pointed outside (directory not created). Also replace/create/append through hard links and symlinks, read gates (symlink, hard link, ancestor, FIFO not opened), fd removal and the overlay copy. |
-| R2-F2 | A reporting attempt settles only if the reaped child status (a durable `child_exit` event carrying the launch's `launch_id`) agrees with the supervisor receipt. Otherwise, including after a restart with unknown status, it needs an ACK bound to that exact attempt (`launch_id`, pid, starttime, receipt SHA, disposition, owner). The ACK is consumed and its anomaly archived, and the evidence is kept in `SETTLED.json`. Fits use the same mechanism. | Sol's probe (child 17 with a clean receipt) gives an anomaly, no SETTLED and no dispatch. An unknown status gives an anomaly; a wrong-attempt ACK gives a stale-ACK anomaly; the exact ACK settles and is consumed. Guard-stop and clean controls pass. Fit states: unknown, another launch's event, ACK-resolved once, known nonzero. |
-| R2-F3 | Running fits are stopped when memory is below 24 GiB or unreadable, the GPU is unreadable or over 40 GB, or PSS exceeds **50 GiB (the frozen rule, restored)** or is unreadable. Fit admission requires the GPU to be readable with ≤ 8 GiB already used. Admission reserves the new workers (fit 10, phase 53, label/O_W workers+1). Label, O_W, acceptance and diagnostic run `studytree.monitor` live: STOP, hard stop, memory, PSI, own PSS, tree size and disk. On a breach the parent stops its own verified worker PIDs, so in-flight O_W work has a real hard-stop path, and a game finishing after the deadline is not counted. The supervisor applies the tree and disk caps itself. The diagnostic takes its lock inside the driver's exclusive `DISPATCH.lock` flock. All signals are PID-only on verified `(pgid, starttime)` members; the one exception is `run_checked`'s kill of the short helper session it created itself. | Sol's probes all stop: MemAvailable 0, GPU unreadable, 50,000 MiB admission. Also PSS over 50 GiB or unreadable, the reservation over 70, the diagnostic lock, the O_W game straddling the deadline, and the studytree monitor cases (dangling STOP, unreadable deadline). |
-| R2-F4 | Contention schema v3 freezes every counted game's SHA, size and exact `st_mtime_ns`, the census/launch/exit/SETTLED SHAs and the `retired.json` SHA. The reducer re-derives all of it. Committed bytes come from the verified commit → tree → blob walk, and ancestry from the replace-free graph. The wording now says "before any outcome field is used". | Sol's mtime probe is refused, and the rebuild would change the exclusion from [0,1] to []. Sol's git-replace probe is refused even though plain git returns the substituted bytes. Also retired, census and phase-set changes, wrong SHA, uncommitted bytes, a commit off main, and writable or hard-linked receipts. |
-| R2-F5 | Every packed source is re-verified completely (exact inventory and every file re-hashed). Packed bytes must equal the source arrays under pack.py's exact transforms. O sources must match plan, teacher and threads. O_W sources must match the selection identity rows. The acceptance smoke is exactly 2 games on the **qualification bank** (excluded from C′), with seals, replay identity and producer SHAs verified. | Sol's teacher-edit probe and Sol's Boolean-only acceptance receipt are both rejected. Also forged packed bytes (with the batch's own seal forged to match), a one-game or C′ acceptance, and a selection without identity rows. |
-| R2-F6 | The seed audit reads only hash-verified git blobs of a pinned commit, selected from tree metadata by a reviewed rule. Outcome tokens anywhere in the path exclude a file, as does any content alias of an excluded file. Sealed trees contribute only listed declarations. `seed-sources.json` pins the commit (7f82af0d), the rule and the derived-list SHA: 7,711 sources and 35 sealed declarations, each listed by path and blob id. Omissions are counted per reason (`sealed` 2,681, `outcome_path` 812, `alias_of_excluded` 55, …). | Sol's hard-link alias and `t1/outcomes/plan.json` probes: never read (blob-request spy). A list differing from the reviewed one is refused. Literal-scan and range controls. |
-| R2-F7 | Census values must be finite and admissible (PSI in [0,100], foreign CPU in [0,1024], reduced-concurrency flag exactly false) and in chronological order. Non-JSON rows, including NaN or Infinity, are bad. Readers return None for non-finite values. | Sol's all-NaN phase and Infinity, negative, overflowing, chronology and non-boolean flag cases are each bad in an uncapped phase. |
-| R2-F8 | Games are projected (outcome fields dropped) to require a terminal flag, seed, arm, budget and student checkpoint. Smoke games are proof-authenticated. Parity receipts carry the exact game inventory and a `final` flag, and label admission re-derives the inventory. The C7b watch runs inside the collection supervisor. A collection runner without a live supervisor refuses to start, and exits 70 with a receipt if the supervisor dies. A failed parity needs an exception bound to a coordinator commit on origin/main whose COORDINATOR.md names the receipt SHA. | Sol's 16 non-terminal games fail. Sol's stale-parity probe (games added after the receipt) is refused. Also a non-final receipt, a forged smoke game, the watch pause and watch failure, monitor death, and a bare exception string refused while a commit-bound one is accepted. |
-| R2-F9 | Gates carry the plan, receipt, selection, acceptance, O-gate and source SHAs. The report reads fixed job inputs and refuses unchained ones. The diagnostic takes inputs only from the verified holdout gate and the five staged students, records the holdout gate SHA, and reports a missing diagnostic explicitly as unavailable. | Rejected: an O_W gate not built on this O gate, a stale label plan, a diagnostic not run on the verified holdout. Also tested: the unavailable rendering, the diagnostic input refusals, and an out-of-root output. |
-| R2-F10 | `plan.json` `ordering.interrupted` now states the fixed-N / largest-prefix / R5W-separation rule; the supervisor docstring says T+24 h. | Static checks. The suite asserts "not writable", never an exact mode, and runs under umask 022 and 077. |
+| R3-F1 | **Fit write contract.** `prepare_fit_dirs` runs before every fit launch, fresh or resumed. It creates the directories and validates the complete existing trees the frozen writers open or append, `fits/<id>` and `cache/fit`: no symlink, hard link or special file anywhere. It pins `run_fit.sh` and `loader6.json` against RUNTIME-INVENTORY, checks the resume checkpoint is single-link, and re-authenticates the data gate (`studytree.authenticate_gate`). It passes the authenticated batch names to `run_fit.sh`, which no longer reads JSON or creates directories and refuses a TMPDIR the driver did not prepare. The gate SHA is recorded in the launch receipt. | **Sol's probe:** a symlinked `fits/R5/runtime.json` (the frozen writer's target) is refused before launch, and the sentinel is unchanged. Also refused: a hard-linked `train.jsonl`, a link inside `cache/fit`, an unpinned loader amendment and an unauthenticated gate. The batch-argument launch is tested. The shell refuses no or bad batches, a missing gate and a symlinked TMPDIR. |
+| R3-F2 | **Live and stop paths.**<br>(1) Each acceptance game runs in an owned worker under a polling parent. A breach (STOP, including a dangling link; hard stop; memory; PSS; tree; disk) stops the worker's verified PIDs. A game completing after the hard stop is rejected, and passing also requires the deadline unmet at the end.<br>(2) The live fit guard enforces the study process and disk caps, and its memory, GPU and PSS checks continue through teardown. Only the wall and loss rules are skipped there.<br>(3) Label dispatch and acceptance dispatch wait while `studytree.dispatch_ok` fails (MemAvailable below 24 GiB, or PSI unreadable or above 10). This only delays; high PSI never becomes a kill threshold.<br>(4) `supervise.admit_phase` applies memory/PSI and the reserved process/disk caps immediately before `io.spawn`, including for direct collection and qualification launches. | **Sol's probes:** acceptance passing past the deadline is now false, with a `past_hard_stop` row. An in-flight STOP during acceptance makes the parent kill the worker by PID within seconds; this runs in an isolated session. A live fit at 71 processes is stopped. Teardown with MemAvailable 0 is stopped. High-PSI label dispatch submits nothing, while the monitor keeps running. The low-memory / high-PSI supervisor launch is refused before spawn (also checked statically: admission precedes `io.spawn`). |
+| R3-F3 | `studytree.authenticate_gate` checks, before any frozen loader opens a corpus:<br>• the gate's mode;<br>• the verifier receipt SHA pinned in the gate, and that the receipt passed in the same mode;<br>• the exact batch inventory;<br>• every batch's complete seal re-verification against the gate's manifest pin.<br>The diagnostic holdout uses it, and so do fit admission and report authentication. The trainer-qualification consumer requires a packed batch under `<job>/qual`, its seal re-verified, and assets matching the inventory. | **Sol's probe:** a fully sealed training corpus (seed C+0) swapped into the holdout path is refused. An extra batch and an edited verifier receipt are refused. The authentic gate passes. |
+| R3-F4 | `reduce.py` writes `identities` into the results: plan path and SHA, C5 receipt SHA and freeze commit, retired SHA, each reduced student's checkpoint and threshold, and the gate SHAs. `write_report.authenticate` reconciles all of them with the current evidence:<br>• the C5 receipt bytes are committed at the named commit (verified git walk) on origin/main;<br>• retired.json and the plan are unchanged;<br>• the gates match and are re-authenticated against their corpora;<br>• the staged students match;<br>• the diagnostic's holdout gate equals the authenticated gate, its heldout64 SHA is the fixed pin, and its checkpoints and thresholds equal the reduced students'. | **Sol's probes:** the report refuses fake C5 strings (`not-a-sha`/`not-a-commit`) and a diagnostic with `WRONG` checkpoints. It also refuses results reduced under other gates or checkpoints, results without identities, a diagnostic with another held-out64 or holdout, and an off-main C5 commit. The valid chain is accepted. |
+| R3-F5 | Parity receipts pin each phase's `schedule.json`, `launch.json` and `supervisor-exit.json` SHAs (`evidence`) and the bank. Label admission accepts only bank C, re-derives the evidence and refuses missing or changed final evidence. The plan records the receipt path and phases, and `label run` and O/holdout verification re-run the full parity admission (`recheck_parity`). `qualify4 parity --bank smoke` runs PLAN §6.2 parity on the smoke bank. | **Sol's probe:** deleting both phases' supervisor-exit after a passing receipt is now refused. Changed exit evidence and a smoke-bank receipt are refused for labeling. **Sol's probe:** valid smoke-bank games pass with `--bank smoke` and are refused as bank C. |
+| R3-F6 | Attempt anomalies (`exit-*`, `fit-*-exit`) clear only through the attempt-bound ACK. Every other anomaly clears only through `ACK-<key>.json = {anomaly_sha256: SHA-256 of the exact ANOMALY file, disposition: continue, owner}`. That ACK is consumed, and the anomaly and ACK are archived in `RESOLVED-<key>-<t>.json`. Anything else keeps blocking. | **Sol's probe:** a malformed `ACK-driver-exception.json` blocks and is not consumed. A dangling-link ACK, a stale-SHA ACK, and a generic ACK on an attempt anomaly also block. A valid ACK is consumed and archived. |
+| R3-F7 | `open_append` classifies the leaf with `fstatat` before any open, and refuses a non-regular, linked or hard-linked leaf. It opens with `O_NONBLOCK|O_NOCTTY|O_NOFOLLOW` (creation `O_EXCL`), re-checks the inode after open, then clears `O_NONBLOCK`. `loads_strict` refuses numbers that decode to non-finite floats (`1e999`). Projections refuse duplicates of dropped keys. | **Sol's probe:** append to a FIFO with no reader is refused under a 5 s alarm. Exponent overflow (positive and negative) and a projected duplicate are refused. |
+| R3-F8 | `run_checked` no longer calls `killpg`. On timeout, overflow or lingering pipes it enumerates the helper session's verified `(pgid, starttime)` members and kills each PID. No group signal remains in any owned file. | **Sol's probe:** a timed-out helper and its background grandchild are both gone (unique-marker match, with a live-helper positive control). Static check: no `killpg`. |
 
-**Owner decisions after Sol's opinion.**
-1. The exception must now be bound to a coordinator commit on origin/main whose COORDINATOR.md names the receipt SHA; a bare ruling string is refused, per Sol's condition.
-2. ACKs are attempt-bound and consumed (adopted).
-3. The 15/30/15 tolerances are kept, now only after the validity and chronology checks.
-4. Coverage is unchanged.
-5. Replaced by the inventory-based audit (R2-F6).
-
-The rest is a mapping and adds no new judgement.
+**Seed inventory (Sol decision 5).** Rule v2 excludes the six review/response/check/conformance support documents from the sealed-declaration list, as Sol asked. It is regenerated at the same pinned commit 7f82af0d: 7,705 sources, source-list SHA 844ab589…, **29 sealed declarations** (3 seed audits and 26 PREREG/draft/freeze/amendment files). Omissions now include `sealed` 2,687, `outcome_path` 812 and `alias_of_excluded` 55. Sol's approved rules for decisions 1–4 are unchanged.
 
 ## Offline test results (127x05, /dev/shm, nice 19, cores 0–3, no host contact)
 
-`test_x4s4_offline.py` passes **81/81 under -O0, -O and -OO with umask 077**, and also under umask 022. Receipts (umask 077 runs):
+`test_x4s4_offline.py` passes **92/92 under -O0, -O and -OO with umask 077 and 022** (exit 0 in all six). Receipts (umask 077 runs):
 
 | Mode | Receipt | SHA-256 |
 |---|---|---|
-| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `0e4b8110b2139d04a01633f730f01eb3e464c4c88913f990e17f54e384aa7af6` |
-| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `c80c6b493ef6ce75065f9d309949423abcd554c7389f88b06677e7a793687222` |
-| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `6f5e1dd432b50f943168d7a0c21bf5b9adff9c26318f7d0f1bceb4ed54dc4811` |
-
-The r3 suite was also run against the r2 scripts of f15691b5, with r3's `x4s4io.py` added so imports resolve. It recorded 30 cases, of which 14 failed ([receipts/r3-suite-vs-f15691b5.json](receipts/r3-suite-vs-f15691b5.json)). 11 of those are test-group exceptions on r2 interfaces, so this is weak evidence. The discriminating evidence is the named per-probe fixtures above.
+| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `0beca248188689c5493f87c27929c50144881ca50fe2011c0a6d7b2c34b2e8c2` |
+| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `b9da73d8ea2701174c140598f734551260fb266a071f652b0388573746412217` |
+| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `3127453b4f418252de8aa3fcef055532067e0ea9bdfffc49b56575f2ff206c89` |
 
 **Not covered offline** (qualification §6 on 01, after a GO):
 - real W scoring and the 125 native references;
-- real command hashes and C8/root round trips;
+- command hashes and C8/root round trips;
 - the emitter acceptance replay;
 - RootTeacherStore compatibility;
 - the GPU diagnostic;
-- the real seed audit run against `seed-sources.json`.
+- the real seed audit (`seed-sources.json` v2) with completeness evidence;
+- the live STOP test;
+- the staged RUNTIME-INVENTORY: x4s4/supervise.py, x4s4io.py, studytree.py, qualify4.py, x4s3/run.py, runtime.sh, fit/run_fit.sh, fit/loader6.json, inputs/assets.npz.

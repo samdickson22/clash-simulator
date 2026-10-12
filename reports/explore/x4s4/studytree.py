@@ -160,3 +160,43 @@ def register(job, name):
     io.write_json_once(path, dict(name=name, pid=me['pid'], pgid=me['pgid'], starttime=lead['starttime'] if lead else me['starttime'],
                                   utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())), roles=('receipts',), mode=0o644)
     return path
+
+
+def dispatch_ok():
+    """(ok, reason) for STARTING new work (R3-F2): MemAvailable >= 24 GiB and memory PSI readable and <= 10. This only
+    inhibits dispatch; high PSI is never itself a kill threshold (the frozen kill rules are memory/PSS)."""
+    mem, psi = mem_available(), psi_some_avg10()
+    if mem is None or mem < MEM_FLOOR: return False, 'MemAvailable below 24 GiB or unreadable'
+    if psi is None or psi > 10.0: return False, 'memory PSI unreadable or > 10'
+    return True, None
+
+
+GATES = {'O': ('onpolicy', 'O-VERIFIED.json'), 'holdout': ('onpolicy-holdout', 'HOLDOUT-VERIFIED.json'),
+         'OW': ('onpolicy-w', 'OW-VERIFIED.json')}
+
+
+def authenticate_gate(job, mode):
+    """R3-F1/R3-F3: a consumer of a verified set re-authenticates it NOW: the gate's mode; its verifier receipt
+    (SHA pinned in the gate, passed, same mode); the exact batch directory inventory; and every batch's current
+    manifest SHA equal to the gate's pin after a complete seal re-verification (so a substituted corpus - e.g. a
+    training corpus swapped into the holdout path - is refused before any loader sees it).
+    Returns (batch directory paths, gate SHA-256, gate document)."""
+    job = job or io.JOB
+    root, name = GATES[mode]
+    gate_path, rdir = f'{job}/data/{name}', f'{job}/data/{root}'
+    g = io.read_json(gate_path, 64 << 20)
+    io.require(g.get('mode') == mode and g.get('batches'), 'gate', f'{name} is not a {mode} gate')
+    rec_path = rdir+'/VERIFY-RECEIPT.json'
+    io.require(io.sha256_file(rec_path) == g.get('receipt_sha256'), 'gate', f'{mode} verifier receipt differs from the gate pin')
+    rec = io.read_json(rec_path, 64 << 20)
+    io.require(rec.get('passed') is True and rec.get('mode') == mode, 'gate', f'{mode} verifier receipt not passed')
+    names = sorted(b['name'] for b in g['batches'])
+    present = sorted(n for n in io.listdir(rdir) if n not in ('VERIFY-RECEIPT.json', 'pack-log.txt'))
+    io.require(present == names, 'gate', f'{mode} batch inventory differs from the gate ({present} vs {names})')
+    out = []
+    for b in g['batches']:
+        d = f"{rdir}/{b['name']}"
+        _, msha = io.verify_sealed_dir(d)
+        io.require(msha == b['manifest_sha256'], 'gate', f"{mode} batch {b['name']} differs from the gate's manifest pin")
+        out.append(d)
+    return out, io.sha256_file(gate_path), g

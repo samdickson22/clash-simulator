@@ -215,6 +215,18 @@ def readout(res, contrasts, data):
     return d
 
 
+def study_identities(job, students, plan, plan_path, body, ex_sha, commit):
+    """R3-F4: the identities this reduction used, for write_report to reconcile with current evidence."""
+    st = {}
+    for sid in students:
+        s = plan['student'] if sid == 'R3a' else io.read_json(f'{job}/rt-{sid}/READY.json', 4 << 20)['student']
+        st[sid] = dict(checkpoint_sha256=s['checkpoint_sha256'], threshold=s.get('threshold'))
+    gates = {m: io.sha256_file(f'{job}/data/{n}') for m, n in (('O', 'O-VERIFIED.json'), ('OW', 'OW-VERIFIED.json'), ('holdout', 'HOLDOUT-VERIFIED.json'))
+             if io.lexists(f'{job}/data/{n}')}
+    return dict(plan_path=plan_path, plan_sha256=io.sha256_file(plan_path), contention_receipt_sha256=ex_sha, freeze_commit=commit,
+                retired_sha256=body['retired_sha256'], students=st, gates=gates)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--job', required=True)
@@ -228,7 +240,8 @@ def main():
     if a.job != io.JOB: raise SystemExit(f'--job must be {io.JOB}')
     out_path = io.check_writable(a.out, roles=('analysis',))
     base_plan = a.job+'/base/repo/reports/explore/x4s3/plan.json'
-    plan = io.read_json(base_plan if io.lexists(a.job+'/base') else str(Path(__file__).parent/'plan.json'), 16 << 20)
+    plan_path = base_plan if io.lexists(a.job+'/base') else str(Path(__file__).parent/'plan.json')
+    plan = io.read_json(plan_path, 16 << 20)
     rp = a.job+'/driver/retired.json'
     retired_doc = io.read_json(rp, 16 << 20) if io.lexists(rp) else dict(indices=[], why=[])
     retired = set(retired_doc['indices'])
@@ -247,7 +260,8 @@ def main():
     out = dict(utc=utc(), label='X4S-4 exploration, NEVER ADOPTABLE', paired_seeds=res['n'], students=a.students,
                retired=sorted(retired), checks=dict(checks), bootstrap=plan['bootstrap'],
                truncation=dict(truncated=truncated, primary_prefix_seeds=len(idx), non_retired=len(need), rule='E8 largest seed-index prefix'),
-               cells=dict(Counter(str(i % 50) for i in idx)), arms=res['arms'], contrasts=res['contrasts'])
+               cells=dict(Counter(str(i % 50) for i in idx)), arms=res['arms'], contrasts=res['contrasts'],
+               identities=study_identities(a.job, a.students, plan, plan_path, body, ex_sha, a.freeze_commit))
     ro = out['readout'] = {}
     ro['primary'] = readout(res, res['contrasts'], data)
     ro['primary_by_arm'] = {arm: dict(res['delta_arm'](['R5', 'R5-rep'], ['R3a', 'R3a-rep'], arm),

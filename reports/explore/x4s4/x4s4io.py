@@ -22,8 +22,8 @@ X4S-4 additions:
     of that group (never a pattern, never a bare group signal), re-checking each PID's starttime just before kill.
     (/proc pseudo-files - stat, meminfo, pressure, smaps_rollup - are kernel interfaces read directly by
     x4s4io/studytree/supervise; they are not filesystem data and cannot be aliased.)
-    The one group-level signal is run_checked's watchdog/limit kill of the short helper it started itself in a
-    NEW session (du, git, nvidia-smi, who); no other code signals a group.
+    r4 (Sol R3-F8): there is NO group-level signal anywhere - run_checked's watchdog/limit kill of the short helper it
+    started in a new session also enumerates that session's verified members and signals each PID individually.
   * Git: scrubbed exact environment, --no-replace-objects, GIT_NO_REPLACE_OBJECTS, a null graft file, no hooks, no
     optional locks; committed bytes are obtained by walking commit -> tree -> blob objects whose bytes are each
     hashed against their object id (replace refs and indirection cannot substitute content).
@@ -181,11 +181,18 @@ def _no_dups(pairs):
 def _no_constant(name): refuse('json', 'non-finite constant %s' % name)
 
 
+def _finite_float(text):
+    v = float(text)
+    if v != v or v in (float('inf'), float('-inf')): refuse('json', 'non-finite number %s (exponent overflow)' % text[:40])
+    return v
+
+
 def loads_strict(data, label='json', object_pairs_hook=None):
-    """Strict UTF-8 JSON: duplicate keys and NaN/Infinity refuse. A projection hook may replace the dup check."""
+    """Strict UTF-8 JSON: duplicate keys, NaN/Infinity literals and numbers that decode to a non-finite float (e.g.
+    1e999) refuse. A projection hook replaces the plain duplicate check with its own (which also refuses duplicates)."""
     try: text = data.decode('utf-8')
     except UnicodeDecodeError: refuse('json', '%s: not UTF-8' % label)
-    try: return json.loads(text, object_pairs_hook=object_pairs_hook or _no_dups, parse_constant=_no_constant)
+    try: return json.loads(text, object_pairs_hook=object_pairs_hook or _no_dups, parse_constant=_no_constant, parse_float=_finite_float)
     except ValueError as error: refuse('json', '%s: %s' % (label, error))
 
 
@@ -239,10 +246,10 @@ def project_json(path, keep, cap=256 << 20):
     """Parse keeping only the allowlisted keys at every level (outcome fields are never materialized)."""
     keep = frozenset(keep)
     def hook(pairs):
-        out = {}
+        out, seen = {}, set()
         for k, v in pairs:
-            if k in keep:
-                require(k not in out, 'json', 'duplicate key %r' % k); out[k] = v
+            require(k not in seen, 'json', 'duplicate key %r' % k); seen.add(k)   # duplicates refuse even for dropped keys
+            if k in keep: out[k] = v
         return out
     return loads_strict(read_bytes(path, cap), str(path), object_pairs_hook=hook)
 
@@ -413,12 +420,27 @@ def open_append(path, roles=None):
     byte is written. The caller owns the fd (e.g. a child's log)."""
     pfd, leaf = _parent_fd(path, roles, create=True)
     try:
-        try: fd = os.open(leaf, os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC, 0o644, dir_fd=pfd)
+        pre = None
+        try:                                                    # R3-F7: classify the leaf BEFORE any open attempt
+            pre = os.stat(leaf, dir_fd=pfd, follow_symlinks=False)
+            require(not stat.S_ISLNK(pre.st_mode), 'symlink', '%s is a symlink' % path)
+            require(stat.S_ISREG(pre.st_mode), 'not-regular', '%s is not a regular file (mode %o)' % (path, pre.st_mode))
+            require(pre.st_nlink == 1, 'nlink', '%s is hard-linked' % path)
+        except FileNotFoundError:
+            pass
+        flags = os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_NOCTTY | os.O_CLOEXEC
+        try: fd = os.open(leaf, flags if pre is not None else flags | os.O_CREAT | os.O_EXCL, 0o644, dir_fd=pfd)
         except OSError as error: refuse(_classify(error), '%s: %s' % (path, os.strerror(error.errno)))
     finally: os.close(pfd)
     st = os.fstat(fd)
-    if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
-        os.close(fd); refuse('nlink' if stat.S_ISREG(st.st_mode) else 'not-regular', '%s is not a single-link regular file' % path)
+    problem = None
+    if not stat.S_ISREG(st.st_mode): problem = ('not-regular', 'opened object is not a regular file')
+    elif st.st_nlink != 1: problem = ('nlink', 'hard-linked at open')
+    elif pre is not None and (st.st_dev, st.st_ino) != (pre.st_dev, pre.st_ino): problem = ('changed', 'leaf changed between check and open')
+    if problem:
+        os.close(fd); refuse(problem[0], '%s: %s' % (path, problem[1]))
+    import fcntl
+    fcntl.fcntl(fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) & ~os.O_NONBLOCK)
     return fd
 
 
@@ -553,9 +575,10 @@ def run_checked(argv, timeout, stdout_limit, stderr_limit=1 << 16, env=None, env
     except OSError as error:
         refuse('subprocess', 'cannot start %s: %s' % (argv[0], error))
     state = {'out': b'', 'err': b'', 'over': None, 'timed_out': False, 'stdin_error': None}
-    def kill():
-        try: os.killpg(proc.pid, signal.SIGKILL)          # the helper's OWN new session (start_new_session)
-        except (ProcessLookupError, PermissionError): pass
+    lead = proc_stat(proc.pid)
+    helper_start = lead['starttime'] if lead else None
+    def kill():                                          # R3-F8: verified individual PIDs of the helper's own session
+        if helper_start is not None: signal_owned(proc.pid, helper_start, signal.SIGKILL)
     def drain(stream, key, limit):
         chunks, total = [], 0
         while True:
