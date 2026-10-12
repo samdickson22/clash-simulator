@@ -375,3 +375,28 @@ See `receipts/reviews-20261011/REVIEWS.md`.
   8.01 GiB; swap free 1.33 GiB; 0 swapouts; disk 20.9 GiB. Receipt `receipts/phase-b-staging-20261012/preconditions-r2.json`.
 - **Session launcher:** `run_session.sh` plus `session_wrapper.py` (daemonized, caffeinate -i -w, lock held
   through verify/build/measure, pre and post receipts), in Sol pre-run review.
+
+### 2026-10-12T12:05:15Z: coordinator CONDITIONAL GO
+
+- Launch autonomously once all of these hold:
+  1. Sol pre-run review of `run_session.sh`/`session_wrapper.py` is APPROVE or APPROVE_WITH_CONDITIONS, with every
+     condition met;
+  2. preconditions-r3 passes in the 5-minute window immediately before launch;
+  3. the manifest is 273ef196, the runtime is runtime-a5 at 2e275312, and there is no 94d0e7f2;
+  4. every remote step uses the nonce/__RC status.
+- GO_REF = this coordinator message plus the review verdict.
+- After launch, post the launch time and PID, then health about every 30 minutes, opening no outcome or summary
+  values.
+- On any failure: don't launch; report. An auto-update or restart mid-session fails closed; report and reschedule.
+
+### 2026-10-12T12:09:23Z: Sol session-launch review APPROVE_WITH_CONDITIONS; all 3 conditions met
+
+1. The post receipt records this invocation's `--verify-bundle` receipt: exact new file, SHA, helper_used, methods
+   and file SHAs; stdout must equal the file and the tiers-pins must equal the approved SHA.
+2. try/except/finally: the post receipt is always written, while the lock is held, with every step, any exception
+   and the prefs. `prefs()` never raises (a mock found that it could).
+3. The launcher waits on a 60 s wall-clock deadline; every ssh is bounded (`timeout 90`, ConnectTimeout,
+   ServerAlive); a timeout message warns that the session may already be running.
+
+Local mocks (Python 3.12.12, platform and caffeinate patched): the success path runs verify, build and measure
+with rc 0 and the lock fd inherited; the exception path writes the post receipt with the failure.
