@@ -137,6 +137,10 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   REJECTs r1/r2 kept); after each round commit rounds/rN/RECEIPT.json and post "round rN receipt committed <sha>" → Opus audit;
   blocking findings stop the next cycle.
 
+- 03:5xZ coordinator 92acdf02: E4 ReportingGuard snapshot race (fleet_validity 94d0e7f2 -> fix eae5db3f in Sol review) also
+  affects K4S end_reference.py: NO K4S END reference until ruled; a fix would require re-pinning K4S manifest c1fb1e9a.
+  Reporting (supervise/run.py) unaffected.
+
 ## Running (owned PGIDs only)
 - CURRENT: replacement-r1 in k4s-confirm-replacement-r1: 03 sup PGID 1002822, 04 sup PGID 37363; copiers on 05 702958 / 711250.
   (Reporting-phase PGIDs below are dead/superseded.)
@@ -196,3 +200,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-12T03:27:12Z SEALED health: 127x03 complete 582 acked 581 hub 582/581 failed 0 stopevent - inflight 11 queued 1161 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 582 acked 581 hub 581/581 failed 0 stopevent - inflight 11 queued 1161 reason None who 0 flags[dbus 576 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
 - 2026-10-12T03:42:06Z SEALED health: 127x03 complete 613 acked 613 hub 613/613 failed 0 stopevent - inflight 11 queued 1130 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 612 acked 612 hub 612/612 failed 0 stopevent - inflight 11 queued 1131 reason None who 0 flags[dbus 607 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
 - 2026-10-12T03:57:00Z SEALED health: 127x03 complete 646 acked 645 hub 645/645 failed 0 stopevent - inflight 11 queued 1097 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 643 acked 642 hub 642/642 failed 0 stopevent - inflight 11 queued 1100 reason None who 0 flags[dbus 637 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
+- 2026-10-12T04:12:00Z SEALED health: 127x03 complete 675 acked 675 hub 675/675 failed 0 stopevent - inflight 11 queued 1068 reason None who 0 flags[dbus 0 ssh 0 apt 0 idle 0]; 127x04 complete 673 acked 673 hub 673/673 failed 0 stopevent - inflight 11 queued 1070 reason None who 0 flags[dbus 668 ssh 0 apt 0 idle 0]; lost this phase primary 0 guard 0; cumulative primary 25/300 guard 8/90; ledger max k {'primary': 1, 'guard': 0}; no anomalies
