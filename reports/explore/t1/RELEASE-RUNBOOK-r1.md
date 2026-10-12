@@ -102,19 +102,55 @@ The hub mirror remains paused. C2 does not authorize deletion or relocation.
 
 ## Exact builder and HEAD activation steps — documentation only, not authorized now
 
-The builder is awaiting its narrow independent review. Neither this section nor
+Builder dd644cdc is APPROVED_WITH_CONDITIONS in the verbatim
+`receipts/END-C1-BUILDER-REVIEW-r1.md` (coordinator ee0aa034). It may run
+**once** on canonical R, only after explicit release-sequence GO. Neither this section nor
 driver approval authorizes running the builder or moving canonical R. Execute
-only after builder approval, Mac outputs/A3-P and explicit coordinator state-change
+only after Mac outputs/A3-P and explicit coordinator state-change
 and release GO. Any failed check stops; preserve evidence and request a ruling.
 
 Use the coordinator's full public Mac metadata source SHA and a fresh unused ref.
 The target must start with `refs/private/` and must never be
-`refs/private/t1-registration-20261012`. Candidate builder SHA (pending review):
+`refs/private/t1-registration-20261012`. Approved builder SHA (BC1/BC2 conditions):
 `dd644cdcde6c9a6d6994aac891ecd4cf20d8b810873b8cef3fab56ef21647259`.
 The builder directory's `release_run.py` must be the reviewed Mac-route r3 SHA
 above, and the directory must contain only its committed tree. Before and after
 building, the protection ref must still resolve to
 `9bb349b1d4f467866f802a859c142c4adc7c0402`.
+
+**BC1, immediately before the builder:** record that the target ref is completely
+unused, including dangling symbolic refs. All commands run under `env -i` from
+canonical R. The following helper is documentation for that later authorized
+sequence, not a command to run now:
+
+```bash
+release_r=/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source
+release_git() {
+  env -i HOME="$HOME" PATH=/usr/bin:/bin \
+    git -c core.hooksPath=/dev/null --no-optional-locks -C "$release_r" "$@"
+}
+release_git check-ref-format "$release_fresh_ref" # must exit 0
+release_git symbolic-ref -q "$release_fresh_ref" # must exit exactly 1
+release_git for-each-ref "$release_fresh_ref"    # must be empty
+release_git for-each-ref "$release_fresh_ref/"   # must be empty
+release_common_raw=$(release_git rev-parse --git-common-dir)
+release_common_dir=$(env -i HOME="$HOME" PATH=/usr/bin:/bin \
+  PYTHONDONTWRITEBYTECODE=1 \
+  /mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python -B -c \
+  'import pathlib,sys; p=pathlib.Path(sys.argv[2]); print((p if p.is_absolute() else pathlib.Path(sys.argv[1])/p).resolve(strict=True))' \
+  "$release_r" "$release_common_raw")
+env -i HOME="$HOME" PATH=/usr/bin:/bin \
+  test ! -e "$release_common_dir/$release_fresh_ref" # must exit 0
+env -i HOME="$HOME" PATH=/usr/bin:/bin \
+  test ! -L "$release_common_dir/$release_fresh_ref" # must exit 0
+```
+
+Record the absolute common-directory path. Do not guess the main checkout's
+`.git` path. Thus no loose file, directory or dangling symlink exists at that name.
+Any other symbolic-ref exit, exact/child ref, or loose path stops before builder
+invocation. Record each exit and empty result. Do not rely on `show-ref` or
+`rev-parse --verify` alone: both miss dangling symbolic refs. No `--no-deref`
+code change is part of this approval.
 
 Launch the builder with a clean environment, no GIT_* variables, and -B. Here
 `release_source_sha` is the full coordinator-bound source SHA, and
@@ -130,18 +166,31 @@ env -i HOME="$HOME" PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 \
 
 The builder creates the target only with a zero old-value compare-and-swap; an
 existing ref is never overwritten. It checks the protection ref on both sides.
-Set `release_descendant_sha` from that preserved receipt. The exact HEAD move is:
+Set `release_descendant_sha` from that preserved receipt. **BC1 after the builder,
+before switching:** under the same clean environment, record that
+`release_git symbolic-ref -q "$release_fresh_ref"` exits exactly 1,
+`release_git rev-parse "$release_fresh_ref"` equals the receipt's full `commit`, and
+`release_git for-each-ref --contains "$release_descendant_sha" refs/heads refs/tags
+refs/remotes` is empty. The protection ref must still equal the pinned9bb349b1.
+Stop on any difference; never push the descendant or either private ref.
+
+**BC2:** the exact HEAD move is:
 
 ```bash
-git -C /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source \
+env -i HOME="$HOME" PATH=/usr/bin:/bin \
+  git -c core.hooksPath=/dev/null \
+  -C /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source \
   switch --detach "$release_descendant_sha"
-cd /mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-release-r1/source
 ```
 
 Immediately afterwards, under the same clean environment and -B interpreter,
 verify **all** of the following using the preserved builder receipt:
-All Git queries below run from that canonical directory; they must never query
-the public worker checkout by accident.
+All Git queries below use `release_git` above (each invokes `env -i` with
+HOME/PATH, hooks disabled and explicit canonical `-C`). Every filesystem and
+pin check also runs under `env -i HOME="$HOME" PATH=/usr/bin:/bin`, adding only
+`PYTHONDONTWRITEBYTECODE=1` for the pinned Python `-B` checks. No post-check
+inherits GIT_* or PYTHON* variables. They must never query the public worker
+checkout by accident.
 
 - `git rev-parse HEAD` equals its `commit`, and `git rev-list --parents -n 1 HEAD`
   has exactly three SHA tokens: descendant, private base9bb349b1, and the receipt's

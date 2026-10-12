@@ -577,8 +577,6 @@ class DescendantTests(unittest.TestCase):
                 builder.build_descendant(repo,bad,'refs/private/refused')
 
 
-if __name__ == '__main__':
-    unittest.main()
 
 class MacGateContractTests(unittest.TestCase):
     def invoke(self, change=None):
@@ -694,6 +692,11 @@ class BuilderRefTests(unittest.TestCase):
     def test_changed_protection_ref_before_build_is_rejected(self):
         self.git('update-ref',self.builder.PRIVATE_REF,self.source)
         with self.assertRaises(ValueError):self.build()
+        # Refusal must occur before creating the descendant ref; an after-only
+        # check also raises, but has already written this ref (BP4/BP9).
+        import subprocess
+        absent=subprocess.run(['git','-C',str(self.repo),'show-ref','--verify','--quiet','refs/private/fresh'])
+        self.assertEqual(absent.returncode,1)
     def test_changed_protection_ref_after_build_is_detected(self):
         original=self.builder.subprocess.check_output
         def fault(argv,**kwargs):
@@ -712,3 +715,7 @@ class BuilderRefTests(unittest.TestCase):
     def test_source_without_allowed_metadata_refused(self):
         self.source=self.git('rev-parse',self.source+'^')
         with self.assertRaises(ValueError):self.build()
+
+
+if __name__ == '__main__':
+    unittest.main()

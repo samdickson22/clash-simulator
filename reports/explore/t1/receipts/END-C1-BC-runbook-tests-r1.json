@@ -1,0 +1,70 @@
+{
+  "schema": "t1-builder-BC-runbook-tests-r1",
+  "synthetic_only": true,
+  "real_R_touched": false,
+  "host_contact": false,
+  "outcomes_read": false,
+  "review_sha256": "ad29e5ceb2ed37c107e7e82b56d960c900c72c69c6af3065d6efc6162fd42368",
+  "reviewer_runner": {
+    "path": "/tmp/sdicks02/c1rev/builder-r1/tools/mut_b1.py",
+    "sha256": "751e5422ca0294e65dd35cbbc4e69a7ac0b70b62187dac7a81861b9a7599d266",
+    "adaptation": "SRC/OUT changed only; BP4/BP9 selector"
+  },
+  "initial_export_failure": {
+    "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-BC-tests-20261012T1250Z/module.stderr",
+    "exit_code": 1,
+    "error": "ModuleNotFoundError: No module named ssh_sensitivity; 55 ran with two import errors; retained",
+    "correction": "fresh synthetic export includes all committed t1 Python files plus plan.json"
+  },
+  "tests": [
+    {
+      "label": "module",
+      "argv": [
+        "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "test_release_run"
+      ],
+      "cwd": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-BC-tests-20261012T1253Z/export",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "....fatal: update_ref failed for ref 'refs/private/existing': cannot lock ref 'refs/private/existing': reference already exists\n............................fatal: Not a valid commit name 0000000000000000000000000000000000000000\n.......................\n----------------------------------------------------------------------\nRan 55 tests in 4.931s\n\nOK\n"
+    },
+    {
+      "label": "direct",
+      "argv": [
+        "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+        "-B",
+        "test_release_run.py"
+      ],
+      "cwd": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-BC-tests-20261012T1253Z/export",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "....fatal: update_ref failed for ref 'refs/private/existing': cannot lock ref 'refs/private/existing': reference already exists\n............................fatal: Not a valid commit name 0000000000000000000000000000000000000000\n.......................\n----------------------------------------------------------------------\nRan 55 tests in 4.738s\n\nOK\n"
+    },
+    {
+      "label": "mutants",
+      "argv": [
+        "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+        "-B",
+        "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-BC-tests-20261012T1253Z/mut_b1.py",
+        "BP4",
+        "BP9"
+      ],
+      "cwd": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/END-C1-BC-tests-20261012T1253Z",
+      "exit_code": 0,
+      "stdout": "KILLED    BP4 drop before-check\nKILLED    BP9 before-check only existence\n",
+      "stderr": ""
+    }
+  ],
+  "release_run.py": "9ffbd2e197e58b5c56b3d58cefe4008d47cb4fdf50764808e841218294408bca",
+  "prepare_release_descendant.py": "dd644cdcde6c9a6d6994aac891ecd4cf20d8b810873b8cef3fab56ef21647259",
+  "utc": "2026-10-12T12:50:21Z",
+  "runbook_conditions": [
+    "BC1 unused exact/child/loose name and symbolic-ref exit 1 before builder",
+    "BC1 new ref equals receipt and no heads/tags/remotes reachability afterwards",
+    "BC2 env -i HOME/PATH hooks disabled for HEAD switch and all post-checks"
+  ],
+  "release_sequence_held": true
+}
