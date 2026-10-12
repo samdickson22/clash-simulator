@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-12T12:22:50Z",
+  "label": "X4S-3 exploration, NEVER ADOPTABLE",
+  "r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "roots": {
+    "r1": 6009681,
+    "g01": 149385,
+    "g08": 2645689,
+    "union": 8804755
+  },
+  "shards": {
+    "g01": [
+      "batch-00000",
+      "batch-00001"
+    ],
+    "g08": [
+      "batch-00000",
+      "batch-00001",
+      "batch-00002",
+      "batch-00003",
+      "batch-00004",
+      "batch-00005",
+      "batch-00006",
+      "batch-00007",
+      "batch-00008",
+      "batch-00009",
+      "batch-00010"
+    ]
+  },
+  "receipts": {
+    "g01": "e4990d3bb81ad8e4cb5c514c7e82f5c173f3710f4717a01c92eabb925015d625",
+    "g08": "f340596c813b768c77c49ed55bbfeca43d594a79acf1d2138c89cc705b9eed35"
+  }
+}

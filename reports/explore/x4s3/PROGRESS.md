@@ -70,3 +70,19 @@ Hard stop is 2026-10-12T23:30:00Z.
 - **11:59Z:** G-08 pull r3 sent for the narrow delta check (pull_g08.sh 834d1598, verify_g.py eef8cdfd; tests 14/14
   and 28/28 × 3 optimization levels). The coordinator ruling accepts R2-1, R2-2 and R2-3 as residuals, on
   condition that the pull runs in the foreground, attended. mirror.sh was also sent for review. Not run yet.
+- **12:11Z:** throughput check on R3a K4S-120 a4: about 980 games/h over the last 10 min (target about 1,000).
+  Memory PSI peaked at 20.9 during the phase; it is logged only and is not a kill condition. MemAvailable ≥ 105.6
+  GiB, no console users.
+- **G-08 pull (coordinator APPROVE of r3; mirror.sh withdrawn):** deployed `pull_g08.sh` SHA 834d1598 and
+  `verify_g.py` SHA eef8cdfd on 01 (SHA-checked).
+  - Ran once, in the foreground and attended, from an ssh session: 12:11:09Z → exit **0** at 12:21:23Z.
+    stdout/stderr were empty ([receipts/g08-pull-run.log](receipts/g08-pull-run.log)).
+  - Stamps: start 12:11:10Z, end 12:21:21Z.
+  - Preflight: all 17 source paths were `directory`
+    ([receipts/g08-source-stat.txt](receipts/g08-source-stat.txt)).
+  - During the transfer, timeout, rsync and ssh were in owned PGID 2108760 at nice 19. After exit, no process
+    remained in that PGID. 24 GB copied.
+- **12:21:29–12:22:46Z:** `verify_g.py --mode g08` exit **0**: passed, sealed, 2,645,689 roots, 11 shards, 792
+  files read-only ([receipts/g08-verify.json](receipts/g08-verify.json)).
+- **12:22:50Z:** union gate written ([receipts/G-UNION-VERIFIED.json](receipts/G-UNION-VERIFIED.json)): r1 + G-01
+  + G-08 = 8,804,755 roots. The R4-D fit starts when R3a-rep frees the GPU (about 13:00Z).

@@ -1,0 +1,18 @@
+total 64
+drwxr-sr-x 13 sdicks02 csc-local-users 4096 Oct 12 05:21 .
+drwxr-sr-x  4 sdicks02 csc-local-users 4096 Oct 12 05:11 ..
+-rw-r--r--  1 sdicks02 csc-local-users   21 Oct 12 05:21 pull-end-utc.txt
+-rw-r--r--  1 sdicks02 csc-local-users   21 Oct 12 05:11 pull-start-utc.txt
+-rw-r--r--  1 sdicks02 csc-local-users 1105 Oct 12 05:11 source-stat.txt
+Mon 12 Oct 2026 12:21:29 PM UTC
+{"passed": true, "sealed": true, "mode": "g08", "host": "127x08", "root": "/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/data/g08", "shards": [{"name": "batch-00000", "manifest_sha256": "bde4d9df909df845c88ff1a428fbc424e8ad9ad9af88e194e47624734438a60a", "files": 71, "eligible_roots": 248152}, {"name": "batch-00001", "manifest_sha256": "7d751a602adb3622fb12a4837ededdef155531e811087bb8a265be4fbf660d10", "files": 71, "eligible_roots": 247022}, {"name": "batch-00002", "manifest_sha256": "871413a6f44c917516493226690343ed0a55b1f28a65b0bb5a61452fe9d9ce20", "files": 71, "eligible_roots": 249019}, {"name": "batch-00003", "manifest_sha256": "2cbc63e490307c81e9c5ddbf31b808649fb00616394a6a679a22e5ca058fe29a", "files": 71, "eligible_roots": 249668}, {"name": "batch-00004", "manifest_sha256": "a5b95fbd5ff557915b0ccb063d02d8e49c9466b7766d50a63ad777b7b3b90784", "files": 71, "eligible_roots": 248074}, {"name": "batch-00005", "manifest_sha256": "54a6b08dac189610f0d7a6fb0f4b9f07bc973b147446d49cc3b3ee2091c3262b", "files": 71, "eligible_roots": 248059}, {"name": "batch-00006", "manifest_sha256": "2e1b2fefaef6e96d1b3ef408b3a3b3e5b89593d612c00d8080fbda0022194b00", "files": 71, "eligible_roots": 248123}, {"name": "batch-00007", "manifest_sha256": "cb6f28110fb5e62ba1620359f1d8bc0e83031414386f4f76d5c9e6614283c1bc", "files": 71, "eligible_roots": 247600}, {"name": "batch-00008", "manifest_sha256": "41eab91e5410334943f86116366da0becadac2b1a452fce8b2f7f728eecb2d96", "files": 71, "eligible_roots": 246533}, {"name": "batch-00009", "manifest_sha256": "8755467cee78ad96750f2ab2ba459e70d80d99193433c854cdd3a6779b61cc66", "files": 71, "eligible_roots": 247824}, {"name": "batch-00010", "manifest_sha256": "dd72db163d8bc59c7975c5cff87a26e116012818412dba0e83dd39b688c53ee9", "files": 71, "eligible_roots": 165615}], "concat_manifest_sha256": "7e21f90a14f96fbd462dc29f0e109e80775eded5cf27bdc91417714a4e8268d2", "label": "X4S-3 exploration, NEVER ADOPTABLE", "python_optimize": 0, "eligible_roots": 2645689, "sealed_files": 792, "utc": "2026-10-12T12:22:46Z", "wall_seconds": 77.01837912295014}
+
+real	1m17.255s
+user	1m7.010s
+sys	0m8.462s
+VERIFY_EXIT=0
+g08/pull-start-utc.txt
+g08/VERIFY-RECEIPT.json
+g08/pull-end-utc.txt
+g08/source-stat.txt
+Mon 12 Oct 2026 12:22:46 PM UTC

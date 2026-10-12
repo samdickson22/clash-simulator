@@ -1,0 +1,17 @@
+directory|/mpac
+directory|/mpac/sdicks02
+directory|/mpac/sdicks02/jobs
+directory|/mpac/sdicks02/jobs/clasher
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00006
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00007
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00008
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00009
+directory|/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00010
