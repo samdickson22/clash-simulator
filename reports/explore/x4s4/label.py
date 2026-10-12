@@ -52,6 +52,7 @@ run = None
 THREADS = 1
 RAW = None
 PLAN_SHA = None
+DATA_ROLE = 'data'           # qualify4 smoke-pack labels the smoke bank under <job>/qual (role 'qual'), never <job>/data
 
 
 class PlanError(Exception):
@@ -287,7 +288,7 @@ def label_game(entry):
     from imitation.exit_r1.rows import seal
     out_root = f"{RAW}/{entry['arm']}"
     final = f"{out_root}/game-{entry['index']:04d}"
-    io.check_writable(final, roles=('data',))
+    io.check_writable(final, roles=(DATA_ROLE,))
     base = dict(index=entry['index'], arm=entry['arm'], attempted=len(entry['keep']))
     if io.lexists(final+'/manifest.json'):
         r = verify_sealed(final, entry)
@@ -315,10 +316,10 @@ def label_game(entry):
         raise RuntimeError(f"kept captures missing from the capture file: {entry['file']}")
     if not rows:
         return dict(base, status='no_rows', rows=0, drops=drops)
-    io.mkdirs(out_root, roles=('data',))
+    io.mkdirs(out_root, roles=(DATA_ROLE,))
     tmp = f"{out_root}/game-{entry['index']:04d}.tmp"
-    if io.lexists(tmp): io.remove_tree(tmp, roles=('data',))          # our own confined temp; links never followed
-    io.check_writable(tmp, roles=('data',), must_not_exist=True)
+    if io.lexists(tmp): io.remove_tree(tmp, roles=(DATA_ROLE,))          # our own confined temp; links never followed
+    io.check_writable(tmp, roles=(DATA_ROLE,), must_not_exist=True)
     receipt = dict(seed=entry['seed'], index=entry['index'], arm=entry['arm'], outcome=0, outcome_withheld=True,
                    rows=len(rows), root_decisions=len(rows), drops=drops, capture_sha256=entry['sha256'], plan_sha256=PLAN_SHA,
                    keep_sha256=entry['keep_sha256'], teacher=TEACHER, search_threads=THREADS,
@@ -326,7 +327,7 @@ def label_game(entry):
                    label='X4S-4 on-policy labels, exploration, NEVER ADOPTABLE')
     seal(tmp, rows, score_rows, receipt)                                   # frozen writer into the validated fresh dir
     io.verify_sealed_dir(tmp)
-    io.rename_path(tmp, final, roles=('data',))
+    io.rename_path(tmp, final, roles=(DATA_ROLE,))
     return dict(base, status='sealed', rows=len(rows), drops=drops, cpu_seconds=receipt['cpu_seconds'])
 
 

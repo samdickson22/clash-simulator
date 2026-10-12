@@ -52,7 +52,7 @@ def groups(job=None):
     me = io.own_identity(); lead = io.proc_stat(me['pgid'])
     out = {(me['pgid'], lead['starttime'] if lead else me['starttime'])}
     recs = [job+'/driver/driver.pid'] + _glob(job+'/receipts', 'fit-') + _glob(job+'/receipts', 'phase-') \
-        + _glob(job+'/receipts', 'cpujob-')
+        + _glob(job+'/receipts', 'cpujob-') + _glob(job+'/receipts', 'calibrate-')    # R5-F2: calibration is owned work
     for p in recs:
         g = _rec(p)
         if g: out.add(g)

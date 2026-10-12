@@ -37,6 +37,13 @@ monitored, exclusive GPU work (run_calibration: DISPATCH-flock admission with no
 PID-only stop on breach, nonzero or post-deadline results rejected). R4-F3 - a stopped (partial) completion is
 reconciled exactly like a final one: segment 'returned' and a known zero exit of this launch (or an exact-attempt
 ACK), else 'failed' (blocking anomaly, never resumed).
+r6 (Sol r5): R5-F1 - final_gate() (STOP, hard stop, unresolved anomaly, live diagnostic/calibration/phase/fit) runs
+inside launch() immediately before every spawn, after all lock waits and slow preparation; a refused fit resume rolls
+its renames back, a refused phase sets its indices file aside; STOP after a calibrator's last poll rejects its result,
+and READY is never published after STOP. R5-F2 - calibration groups are owned study work (studytree.groups,
+diagnose.live_study_work, final_gate, resources_ok); each tick first reconciles a live calibration left by an earlier
+driver (verified-PID stop, output set aside, disposition receipt) and sets aside any output without an acceptance
+receipt. R5-F4 - unknown-exit resolutions are launch-specific (fit-<id>-exit-resolution-<launch_id>.json).
 """
 import datetime, fcntl, json, math, os, secrets, signal, sys, time
 from pathlib import Path
@@ -152,7 +159,7 @@ def resources_ok(for_fit=False):
     if for_fit:
         g = gpu_used_mib()
         if g is None or g > GPU_ADMIT_MIB: return False
-    return not diagnostic_live()
+    return not diagnostic_live() and not live_calibration()
 
 
 class DispatchLock:
@@ -165,8 +172,41 @@ class DispatchLock:
         fcntl.flock(self.fd, fcntl.LOCK_UN); os.close(self.fd); return False
 
 
+def live_calibrations():
+    """Every live calibration group from any driver incarnation (receipts/calibrate-*-launch-*.json)."""
+    base = J+'/receipts'; out = []
+    for n in sorted(io.listdir(base)):
+        if n.startswith('calibrate-') and '-launch-' in n and n.endswith('.json'):
+            r = jload(f'{base}/{n}')
+            if r and io.group_alive(r['pgid'], r['starttime']): out.append(dict(r, receipt=f'{base}/{n}'))
+    return out
+
+
+def live_calibration():
+    live = live_calibrations()
+    return live[0] if live else None
+
+
+def final_gate():
+    """R5-F1: the LAST check before any child is created, evaluated inside launch() after every lock wait and every slow
+    preparation/admission step: STOP (lexists), the immutable hard stop, unresolved anomalies, and exclusion of every
+    other GPU/reporting activity (a live diagnostic, calibration, reporting phase or fit). Returns None or the reason."""
+    if stop_present(): return 'STOP'
+    if now() >= STOP_AT: return 'hard_stop'
+    if unresolved_anomalies(): return 'unresolved anomaly'
+    if diagnostic_live(): return 'diagnostic live'
+    if live_calibration(): return 'calibration live'
+    if live_supervisor(): return 'reporting phase live'
+    if any(fit_state(f)[0] == 'running' for f in FIT_ORDER): return 'fit live'
+    return None
+
+
 def launch(name, argv, log, receipt, env, cwd=None, extra_rec=None):
-    """Spawn an owned child and record its launch receipt (launch_id, pid, pgid, starttime)."""
+    """Spawn an owned child and record its launch receipt (launch_id, pid, pgid, starttime). The final gate runs here,
+    immediately before the spawn; a refusal returns None and creates nothing (R5-F1)."""
+    why = final_gate()
+    if why:
+        event(kind='launch_refused', name=name, reason=why); return None
     lid = secrets.token_hex(8)
     child = io.spawn(argv, log, env, roles=('logs',), cwd=cwd)
     LAUNCHED[child['pid']] = lid; POPEN[child['pid']] = child['popen']
@@ -202,7 +242,7 @@ def ack_for(key, rec, receipt_path):
 
 def consume_ack(key):
     """Archive a used ACK and the anomaly it resolved (an ACK is never reusable for a later attempt)."""
-    t = int(time.time())
+    t = f'{int(time.time())}-{secrets.token_hex(4)}'                 # unique: two attempts may settle in one second
     io.rename_path(f'{D}/ACK-{key}.json', f'{D}/ACK-{key}.consumed-{t}.json', roles=('driver',))
     if io.lexists(f'{D}/ANOMALY-{key}.json'):
         io.rename_path(f'{D}/ANOMALY-{key}.json', f'{D}/RESOLVED-{key}-{t}.json', roles=('driver',))
@@ -224,13 +264,13 @@ def fit_state(fid):
     if done is None:
         return ('failed', rec) if rec else ('pending', rec)
     status = exit_status(rec) if rec else None
-    res = jload(f'{J}/receipts/fit-{fid}-exit-resolution.json')
+    res_path = f"{J}/receipts/fit-{fid}-exit-resolution-{rec['launch_id']}.json" if rec else None   # R5-F4: per launch
+    res = jload(res_path) if res_path else None
     if status is None and rec and not (res and res.get('launch_id') == rec['launch_id']):
         a = ack_for(f'fit-{fid}-exit', rec, rp)
         if a and a['disposition'] == 'success':
-            io.write_json_once(f'{J}/receipts/fit-{fid}-exit-resolution.json', dict(utc=utc(), launch_id=rec['launch_id'], ack=a),
-                               roles=('receipts',))
-            consume_ack(f'fit-{fid}-exit'); res = jload(f'{J}/receipts/fit-{fid}-exit-resolution.json')
+            io.write_json_once(res_path, dict(utc=utc(), launch_id=rec['launch_id'], ack=a), roles=('receipts',))
+            consume_ack(f'fit-{fid}-exit'); res = jload(res_path)
     clean = rec is not None and seg is not None and seg.get('status') == 'returned' and (
         status == 0 or (status is None and bool(res) and res.get('launch_id') == rec['launch_id']))
     if not clean: return 'failed', rec
@@ -282,18 +322,28 @@ class Fits:
 
     def launch(self, fid, st):
         out = f'{J}/fits/{fid}'; extra = ['-']
-        batches, gate_sha = prepare_fit_dirs(fid)
+        batches, gate_sha = prepare_fit_dirs(fid)                     # slow: tree walk + corpus re-verification
+        why = final_gate()                                          # R5-F1: recheck before any state is moved
+        if why:
+            event(kind='launch_refused', name=f'fit-{fid}', reason=why); return
+        moved = []                                                  # (archived, original): rolled back on a refusal
         if st == 'stopped':
             done = jload(out+'/complete.json'); ck = f"{out}/step-{done['step']:08d}.pt"
+            io.stat_leaf(ck)                                       # the resume checkpoint: regular, single-link
             k = len([n for n in io.listdir(out) if n.startswith('segment-attempt')])+1
             for n in ('segment', 'complete'):
-                if io.lexists(f'{out}/{n}.json'): io.rename_path(f'{out}/{n}.json', f'{out}/{n}-attempt{k}.json', roles=('fits',))
+                if io.lexists(f'{out}/{n}.json'):
+                    io.rename_path(f'{out}/{n}.json', f'{out}/{n}-attempt{k}.json', roles=('fits',))
+                    moved.append((f'{out}/{n}-attempt{k}.json', f'{out}/{n}.json', 'fits'))
             extra = [ck]
-            io.stat_leaf(ck)                                       # the resume checkpoint: regular, single-link
         rp = fit_receipt(fid)
-        if io.lexists(rp): io.rename_path(rp, f'{J}/receipts/fit-{fid}-launch-{int(time.time())}.json', roles=('receipts',))
-        launch(f'fit-{fid}', ['/usr/bin/taskset', '-c', '56-61', '/bin/bash', J+'/fit/run_fit.sh', fid, *extra, *batches],
-               f'{J}/logs/fit-{fid}.log', rp, dict(os.environ), extra_rec=dict(gate_sha256=gate_sha, batches=batches))
+        if io.lexists(rp):
+            old = f'{J}/receipts/fit-{fid}-launch-{int(time.time())}.json'
+            io.rename_path(rp, old, roles=('receipts',)); moved.append((old, rp, 'receipts'))
+        rec = launch(f'fit-{fid}', ['/usr/bin/taskset', '-c', '56-61', '/bin/bash', J+'/fit/run_fit.sh', fid, *extra, *batches],
+                     f'{J}/logs/fit-{fid}.log', rp, dict(os.environ), extra_rec=dict(gate_sha256=gate_sha, batches=batches))
+        if rec is None:                                             # the in-launch gate refused: restore the attempt state
+            for src, dst, role in reversed(moved): io.rename_path(src, dst, roles=(role,))
 
     def guard(self, fid):
         st, rec = fit_state(fid)
@@ -372,6 +422,7 @@ def run_calibration(fid, dest, cal):
         rec = launch(f'calibrate-{fid}', ['/usr/bin/taskset', '-c', '56-61', GPU_PY, '-B', f'{J}/fit/ops/calibrate.py', '--id', fid,
                                           '--checkpoint', dest, '--assets', f'{J}/inputs/assets.npz', '--out', cal],
                      f'{J}/logs/calibrate-{fid}.log', f'{J}/receipts/calibrate-{fid}-launch-{int(time.time())}.json', env, cwd=f'{J}/fit/source')
+        if rec is None: return 'not_admitted'                       # the final gate refused (R5-F1)
     proc = POPEN[rec['pid']]
     while proc.poll() is None:
         why = calibration_breach(rec)
@@ -385,12 +436,50 @@ def run_calibration(fid, dest, cal):
         time.sleep(CALIBRATION_POLL)
     EXIT[rec['pid']] = proc.returncode
     event(kind='child_exit', pid=rec['pid'], launch_id=rec['launch_id'], exit_code=proc.returncode)
-    late = now() >= STOP_AT
+    late = now() >= STOP_AT or stop_present()                       # R5-F1: STOP after the last poll also rejects
     if proc.returncode != 0 or late or not io.lexists(cal):
         if io.lexists(cal): io.rename_path(cal, f'{cal}.rejected-{int(time.time())}', roles=('calibration',))
         if not late: anomaly(f'calibration-{fid}', reason=f'calibrate exit {proc.returncode}, output present={io.lexists(cal)}')
-        return 'failed'
+        return 'stopped' if late else 'failed'
+    io.write_json_once(f'{J}/receipts/calibration-{fid}-accepted-{rec["launch_id"]}.json',
+                       dict(utc=utc(), launch_id=rec['launch_id'], calibration_sha256=sha(cal)), roles=('receipts',))
     return 'ok'
+
+
+def accepted_calibration(fid, cal):
+    """The acceptance receipt written by run_calibration for exactly this output (any launch), or None."""
+    base = J+'/receipts'; want = sha(cal)
+    for n in io.listdir(base):
+        if n.startswith(f'calibration-{fid}-accepted-') and n.endswith('.json'):
+            r = jload(f'{base}/{n}')
+            if r and r.get('calibration_sha256') == want: return r
+    return None
+
+
+def reconcile_calibrations():
+    """R5-F2: calibration groups are owned study work (studytree.groups, diagnose.live_study_work, final_gate). The
+    driver runs calibration synchronously, so at the top of a tick any live calibration group belongs to an earlier
+    driver incarnation: its status cannot be observed, so it is stopped by verified PIDs, any output it wrote is set
+    aside (.orphaned, never accepted) and the receipt records the disposition; the calibration is redone later under
+    the normal admission. An output with no acceptance receipt (an earlier incarnation's unknown exit) gets the same
+    disposition. Nothing else is dispatched in the tick that found a live orphan."""
+    found = False
+    for r in live_calibrations():
+        if r['pid'] in POPEN: continue
+        found = True
+        io.stop_owned(r['pgid'], r['starttime'], term_grace=30, kill_grace=30)
+        fid = r['name'].split('-', 1)[1]; cal = f'{J}/calibration/{fid}.json'; t = int(time.time())
+        if io.lexists(cal): io.rename_path(cal, f'{cal}.orphaned-{t}', roles=('calibration',))
+        io.write_json_once(f"{J}/receipts/calibration-{fid}-orphan-{r['launch_id']}.json",
+                           dict(utc=utc(), launch_id=r['launch_id'], pid=r['pid'], starttime=r['starttime'],
+                                disposition='stopped_by_restarted_driver; output set aside; recalibrate'), roles=('receipts',))
+        event(kind='calibration_orphan_stopped', fit=fid, launch_id=r['launch_id'])
+    for fid in FIT_ORDER:
+        cal = f'{J}/calibration/{fid}.json'
+        if io.lexists(cal) and not io.lexists(f'{J}/rt-{fid}/READY.json') and accepted_calibration(fid, cal) is None:
+            io.rename_path(cal, f'{cal}.orphaned-{int(time.time())}', roles=('calibration',))
+            event(kind='calibration_unaccepted_set_aside', fit=fid)
+    return found
 
 
 def prepare_students():
@@ -409,12 +498,15 @@ def prepare_students():
         c = jload(cal)
         if c['checkpoint_sha256'] != sha(dest) or not 0 < c['threshold'] < 1: anomaly(f'calibration-{fid}', reason='bad calibration'); continue
         rt = f'{J}/rt-{fid}'
+        if accepted_calibration(fid, cal) is None: anomaly(f'calibration-{fid}', reason='calibration without acceptance receipt'); continue
+        if stop_present() or now() >= STOP_AT: return              # R5-F1: recheck before building/publishing READY
         if io.lexists(rt): io.remove_tree(rt)                      # an unfinished overlay (no READY): rebuild it
         io.copy_tree_fresh(J+'/base', rt)                           # fresh confined copy; links copied as links
         pj = rt+'/repo/reports/explore/x4s3/plan.json'; plan = io.read_json(pj, 4 << 20)
         plan['student'] = dict(id=fid, checkpoint=dest, checkpoint_sha256=c['checkpoint_sha256'], threshold=c['threshold'],
                                calibration_sha256=sha(cal), status=f'X4S-4 {fid} student; exploration only; NEVER ADOPTABLE')
         io.replace_json(pj, plan)                                    # refuses a symlinked/hard-linked plan or ancestor
+        if stop_present() or now() >= STOP_AT: return              # R5-F1: last check before READY is published
         io.write_json_once(rt+'/READY.json', dict(utc=utc(), id=fid, plan_sha256=sha(pj), student=plan['student']), mode=0o444)
         event(kind='student_ready', id=fid, threshold=c['threshold'], play_rate=c.get('actual_play_rate'), checkpoint_sha256=c['checkpoint_sha256'])
 
@@ -527,13 +619,17 @@ def launch_phase(sid, arm, todo):
         p = f'{rt}/repo/{rel}'
         if not (rel in inv and io.lexists(p) and sha(p) == inv[rel]):
             anomaly(f'phase-{sid}-{arm}', reason=f'runtime inventory mismatch: {rel}'); return
+    why = final_gate()                                          # R5-F1: recheck after the inventory checks
+    if why:
+        event(kind='launch_refused', name=f'phase-{sid}-{arm}-a{k}', reason=why); return
     idx = f'{J}/games/{sid}/{arm}/indices-a{k}.json'
     io.write_json_once(idx, todo, roles=('games',), mode=0o444)
     cmd = ['/usr/bin/taskset', '-c', '0-49', '/bin/bash', rt+'/repo/reports/explore/x4s3/runtime.sh', 'reports/explore/x4s4/supervise.py',
            '--job', J, '--rt', rt, '--phase', name, '--range', 'reporting', '--indices', idx, '--arms', arm,
            '--stop-at', STOP_AT.strftime('%Y-%m-%dT%H:%M:%SZ')]
-    launch(f'phase-{sid}-{arm}-a{k}', cmd, f'{J}/logs/phase-{sid}-{arm}-a{k}.log', f'{J}/receipts/phase-{sid}-{arm}-a{k}-launch.json',
-           dict(os.environ, X4S3_RT=rt))
+    rec = launch(f'phase-{sid}-{arm}-a{k}', cmd, f'{J}/logs/phase-{sid}-{arm}-a{k}.log', f'{J}/receipts/phase-{sid}-{arm}-a{k}-launch.json',
+                 dict(os.environ, X4S3_RT=rt))
+    if rec is None: io.rename_path(idx, f'{idx[:-5]}.refused-{int(time.time())}.json', roles=('games',))
 
 
 def games_tick():
@@ -586,7 +682,8 @@ def main():
             EXIT[pid] = exit_code(status)
             event(kind='child_exit', pid=pid, launch_id=LAUNCHED.get(pid), exit_code=EXIT[pid])
         try:
-            fits.tick(); prepare_students(); games_tick()
+            if not reconcile_calibrations():                       # R5-F2: earlier incarnations' calibration first
+                fits.tick(); prepare_students(); games_tick()
         except Exception as e:
             anomaly('driver-exception', error=repr(e))      # blocks every new dispatch until ACKed
             time.sleep(60)

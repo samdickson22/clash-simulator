@@ -103,6 +103,14 @@ def admit_phase(job, add, stop_at=None):
     return None if ok else 'admission: '+why
 
 
+def final_check(job, stop_at):
+    """R5-F1: the cheap STOP/deadline check repeated immediately before io.spawn, after every slow step."""
+    if io.lexists(job+'/STOP'): return 'final: STOP present'
+    if studytree.hard_stop_passed(job) or datetime.datetime.now(datetime.timezone.utc) >= stop_at:
+        return 'final: study hard stop reached'
+    return None
+
+
 def parity_watch(job, out):
     """One C7b watch step for a collection phase: None if in band, else the stop reason (pause or monitor failure)."""
     try:
@@ -166,6 +174,10 @@ def main():
     t0 = time.monotonic(); before = resource.getrusage(resource.RUSAGE_CHILDREN)
     reason = None; min_mem = studytree.mem_available() or 0; max_pss = 0
     census_cpu = ForeignCensus(job)                                   # host/own baseline before the child exists
+    late = final_check(job, stop_at)                                  # R5-F1: after the slow admission and census
+    if late:
+        io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason=late), roles=PHASE_ROLES)
+        raise SystemExit(3)
     child = io.spawn(cmd, out+'/worker.log', env, roles=PHASE_ROLES)
     proc, pgid, cstart = child['popen'], child['pgid'], child['starttime']
     io.write_json_once(out+'/launch.json', dict(

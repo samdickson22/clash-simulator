@@ -18,7 +18,8 @@ wall_overrun); loss/winner/outcome are dropped while parsing.
       carries the exact game inventory (phase, game, SHA-256) and final = every phase has its supervisor-exit.json;
       passed requires final, both arms evaluated (>= N games each) and both in the +-2 pp band. label.py recomputes
       the inventory and refuses a receipt that no longer matches the phases (stale parity). r4 (R3-F5): the receipt
-      also pins each phase's schedule/launch/supervisor-exit SHAs (final evidence), re-derived by every consumer, and
+      also pins each phase's schedule/launch/supervisor-exit SHAs (final evidence), re-derived by every consumer (r6,
+      R5-F3: case-level schedule/proof binding, full coverage for a clean exit, typed exit status), and
       --bank smoke runs the same check on the collection smoke (PLAN §6.2); label admission accepts only bank C.
       Running collection is
       watched inside supervise.py (parity_once every 300 s; PARITY-PAUSE + STOP when out of band).
@@ -26,6 +27,10 @@ wall_overrun); loss/winner/outcome are dropped while parsing.
       Every capture of the smoke collection (indices 0-7 x K4S-120/S-200), each game authenticated by its block proof,
       projected terminal metadata and capture identity: C8 triple + hash, empty pending, digest rebuild and repeat
       labeling identity.
+  smoke-pack --phases DIR... --threads T --out R.json      (r6, coordinator Q-D2(a))
+      PLAN §6.5 input: every authenticated smoke capture is labelled by the unchanged label.label_game (frozen teacher,
+      label thread count) under <job>/qual/smoke-raw, sealed, and packed once by the frozen pack() into the fresh
+      <job>/qual/smoke-pack/batch-0000 (plan <job>/qual/smoke-plan.json); smoke bank only, never production data.
   trainer   --packed DIR --assets FILE --out R.json      (clasher-gpu python, fit PYTHONPATH)
 Receipts are confined below <job>/qual/ or <job>/receipts/ and created exclusively (0444). Any failed check exits 1.
 """
@@ -159,10 +164,11 @@ def hashes(a):
     return dict(same_schedule=same_sched, config_sha256=cfg_sha, cases=len(rows), games=rows, passed=bool(ok))
 
 
-def all_captures(phases, label):
-    """Every capture of the smoke collection; each game authenticated (proof SHA, projected terminal identity) and each
-    capture file bound to its game's identity; the phases must cover indices 0-7 x K4S-120/S-200."""
-    caps, seen = [], set()
+def smoke_games(phases, label):
+    """[(phase, index, arm, capture file, captures, summary)] of the smoke collection: each game authenticated (proof
+    SHA, projected terminal identity) and each capture file bound to its game's identity; the phases must cover
+    indices 0-7 x K4S-120/S-200 exactly once."""
+    games, seen = [], set()
     for phase in map(str, phases):
         sched = io.read_json(f'{phase}/schedule.json', 16 << 20)
         if sched['range'] != 'smoke': raise QualError(f'{phase}: round trip runs on the smoke collection')
@@ -174,9 +180,61 @@ def all_captures(phases, label):
             if not (summary['seed'] == SMOKE_BASE+i and summary['index'] == i and summary['arm'] == arm and summary.get('identity_ok') is True
                     and all(x['seed'] == SMOKE_BASE+i and x['index'] == i and x['arm'] == arm for x in got)):
                 raise QualError(f'{phase}: capture identity of {i} {arm}')
-            caps += got; seen.add((i, arm))
+            if (i, arm) in seen: raise QualError(f'{phase}: smoke case {i} {arm} appears twice')
+            games.append((phase, i, arm, f'{phase}/captures/sim-{i:04d}-d27-{arm}.pkl', got, summary)); seen.add((i, arm))
     if seen != {(i, arm) for i in INDICES for arm in COLLECT_ARMS}: raise QualError('smoke captures must cover 0-7 x K4S-120/S-200')
-    return caps
+    return games
+
+
+def all_captures(phases, label):
+    """Every capture of the authenticated smoke collection (smoke_games)."""
+    return [c for g in smoke_games(phases, label) for c in g[4]]
+
+
+SMOKE_RAW, SMOKE_PLAN, SMOKE_BATCH = 'qual/smoke-raw', 'qual/smoke-plan.json', 'qual/smoke-pack/batch-0000'
+
+
+def smoke_pack_into(phases, label, pack):
+    """Q-D2(a), PLAN §6.5 input: label EVERY authenticated smoke capture (smoke bank only; never production data) with
+    the unchanged label.label_game (frozen teacher at label.THREADS), seal each game under <job>/qual/smoke-raw, and
+    pack once with the frozen pack() into the fresh <job>/qual/smoke-pack/batch-0000, which `trainer` then re-verifies
+    and opens. All three destinations must not exist (no resume); STOP/hard stop end labelling (label.halt_reason) and
+    fail the check. Returns the receipt body."""
+    J = io.JOB
+    raw, plan_path, batch = f'{J}/{SMOKE_RAW}', f'{J}/{SMOKE_PLAN}', f'{J}/{SMOKE_BATCH}'
+    for p in (raw, plan_path, batch): io.check_writable(p, roles=('qual',), must_not_exist=True)
+    entries = []
+    for phase, i, arm, pkl, got, summary in smoke_games(phases, label):
+        keep = sorted(c['id'] for c in got)
+        entries.append(dict(file=pkl, sha256=summary['sha256'], arm=arm, index=i, seed=summary['seed'], keep=keep, phase=phase,
+                            keep_sha256=hashlib.sha256(json.dumps(keep).encode()).hexdigest()))
+    io.write_json_once(plan_path, dict(utc=utc(), schema='x4s4.smoke-label-plan.v1', phases=sorted(map(str, phases)),
+                                       threads=label.THREADS, entries=entries,
+                                       label='X4S-4 smoke trainer-compatibility labels, exploration, NEVER ADOPTABLE'),
+                       roles=('qual',), mode=0o444)
+    label.RAW, label.PLAN_SHA, label.DATA_ROLE = raw, io.sha256_file(plan_path), 'qual'
+    results = [label.label_game(e) for e in entries]
+    statuses = {}
+    for r in results: statuses[r['status']] = statuses.get(r['status'], 0)+1
+    drops = {}
+    for r in results:
+        for k, v in (r.get('drops') or {}).items(): drops[k] = drops.get(k, 0)+v
+    rows = sum(r.get('rows', 0) for r in results)
+    body = dict(phases=sorted(map(str, phases)), games=len(entries), captures=sum(len(e['keep']) for e in entries),
+                statuses=statuses, rows=rows, drops=drops, threads=label.THREADS, plan=plan_path, plan_sha256=label.PLAN_SHA,
+                raw=raw, packed=batch, passed=False)
+    if set(statuses) - {'sealed', 'no_rows'} or not statuses.get('sealed'):
+        body['error'] = 'labelling did not seal every smoke game (stopped, hard stop or no sealed game)'; return body
+    pack([f'{raw}/{arm}' for arm in COLLECT_ARMS], batch)          # frozen packer into the validated fresh path
+    _, manifest_sha = io.verify_sealed_dir(batch)
+    body.update(packed_manifest_sha256=manifest_sha, passed=True)
+    return body
+
+
+def smoke_pack(a):
+    run, label, native = init_label(a.threads)
+    from imitation.exit_r1.pack import pack
+    return dict(smoke_pack_into(a.phases, label, pack), native=native)
 
 
 def roundtrip_check(caps, score):
@@ -205,19 +263,28 @@ def roundtrip(a):
 BANKS = {'collection': C_BASE, 'smoke': SMOKE_BASE}
 
 
+# R5-F3: the child statuses a declared guard stop can produce: 0 (the runner finished as the guard fired), -SIGTERM /
+# -SIGKILL (the supervisor's verified-PID teardown) and 1 (Python's exit after its pool workers were stopped first).
+INTERRUPTED_RETURNCODES = (0, 1, -15, -9)
 PERMITTED_PHASE_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap', 'parity_pause')
 COLLECT_ALLOC = {'K4S-120': ((0, 2000), (3500, 3750)), 'S-200': ((2000, 3500), (3750, 4000))}
 BANK_RANGE = {'collection': 'reporting', 'smoke': 'smoke'}
 
 
 def phase_evidence(phases, bank='collection'):
-    """R3-F5/R4-F5: validated execution identity of every phase. schedule.json and launch.json must exist; the schedule
-    is the bank's range with seeds base+index; a bank-C phase runs exactly one arm inside its allocation; schedule and
-    launch name the same config, and all phases the same config; every block proof is a scheduled index. The exit is
-    classified: absent -> 'running'; reason None and returncode 0 with no live group -> 'clean'; a declared guard stop
-    (PERMITTED_PHASE_STOPS: an interruption whose incomplete captures are dropped) with no live group -> 'interrupted';
-    anything else (e.g. returncode 17 with no reason) is an unexpected failure and refuses. The pinned record carries
-    the three file SHAs plus this classification, and every consumer re-derives it."""
+    """R3-F5/R4-F5/R5-F3: validated execution identity of every phase.
+    * schedule.json and launch.json must exist and name the same config (all phases one config);
+    * the schedule is the bank's range; its cases are unique (index, seed, arm) triples with seed base+index, the
+      case indices are exactly the declared sorted unique `indices`, and every index has the same arm set (a bank-C
+      phase: exactly one arm, inside its allocation);
+    * every block proof is bound to one scheduled index: proof index/seed equal the case, its `order` is exactly that
+      index's scheduled arms and its `games` names exactly those cases;
+    * the exit is typed: `reason`, `returncode` and `remaining_group_pids` (a list) must all be present, the list empty.
+      'clean' = reason None, returncode 0 and FULL coverage (every scheduled index proved, complete_blocks equal);
+      'interrupted' = a declared guard stop (PERMITTED_PHASE_STOPS) with a returncode in INTERRUPTED_RETURNCODES, whose
+      unproved indices are recorded as dropped; no exit -> 'running'; anything else refuses (e.g. returncode 17, a
+      reason-only exit, a clean exit with missing cases).
+    The pinned record carries the three file SHAs plus this classification, and every consumer re-derives it."""
     base, want = BANKS[bank], BANK_RANGE[bank]
     ev, cfgs = {}, set()
     for p in sorted(map(str, phases)):
@@ -225,30 +292,60 @@ def phase_evidence(phases, bank='collection'):
             if not io.lexists(f'{p}/{n}'): raise QualError(f'{p}: {n} missing (no execution identity)')
         sched, launch = io.read_json(p+'/schedule.json', 16 << 20), io.read_json(p+'/launch.json', 4 << 20)
         if sched.get('range') != want: raise QualError(f"{p}: schedule range {sched.get('range')!r} is not the {bank} bank")
-        cases = sched.get('cases') or []
+        cases, indices = sched.get('cases') or [], sched.get('indices')
+        if not (isinstance(indices, list) and indices and all(type(i) is int and i >= 0 for i in indices) and indices == sorted(set(indices))):
+            raise QualError(f'{p}: schedule indices are not a sorted unique list')
+        if any(not isinstance(c, list) or len(c) < 3 or type(c[0]) is not int or type(c[1]) is not int or not isinstance(c[2], str) for c in cases):
+            raise QualError(f'{p}: malformed schedule case')
         if not cases or any(c[1] != base+c[0] for c in cases): raise QualError(f'{p}: schedule seeds are not bank {bank} (base+index)')
-        arms = sorted({c[2] for c in cases})
+        keys = [(c[0], c[2]) for c in cases]
+        if len(set(keys)) != len(keys): raise QualError(f'{p}: duplicate scheduled case')
+        by_index = {}
+        for i, arm in keys: by_index.setdefault(i, set()).add(arm)
+        if sorted(by_index) != indices: raise QualError(f'{p}: scheduled cases do not cover exactly the declared indices')
+        arms = sorted({arm for _, arm in keys})
+        if any(v != set(arms) for v in by_index.values()): raise QualError(f'{p}: indices scheduled with different arm sets')
         if bank == 'collection':
             if len(arms) != 1 or arms[0] not in COLLECT_ALLOC: raise QualError(f'{p}: a collection phase runs exactly one arm')
-            if any(not any(lo <= c[0] < hi for lo, hi in COLLECT_ALLOC[arms[0]]) for c in cases):
+            if any(not any(lo <= i < hi for lo, hi in COLLECT_ALLOC[arms[0]]) for i in indices):
                 raise QualError(f'{p}: indices outside the {arms[0]} bank-C allocation')
         if not sched.get('config_sha256') or sched.get('config_sha256') != launch.get('config_sha256'):
             raise QualError(f'{p}: schedule and launch name different configs')
         cfgs.add(sched['config_sha256'])
-        scheduled = {c[0] for c in cases}
-        blocks = sorted(int(n[:-5]) for n in io.listdir(p+'/blocks') if n.endswith('.json')) if io.lexists(p+'/blocks') else []
-        if any(i not in scheduled for i in blocks): raise QualError(f'{p}: a block proof is not a scheduled index')
+        names = sorted(n for n in io.listdir(p+'/blocks') if n.endswith('.json')) if io.lexists(p+'/blocks') else []
+        proved = []
+        for n in names:
+            try: i = int(n[:-5])
+            except ValueError: raise QualError(f'{p}: block proof name {n!r}')
+            if n != f'{i:04d}.json' or i not in by_index: raise QualError(f'{p}: block proof {n} is not a scheduled index')
+            proof = io.read_json(f'{p}/blocks/{n}', 1 << 20)
+            order = proof.get('order')
+            if proof.get('index') != i or proof.get('seed') != base+i: raise QualError(f'{p}: block proof {n} identity is not its scheduled case')
+            if not isinstance(order, list) or len(order) != len(set(order)) or set(order) != by_index[i]:
+                raise QualError(f'{p}: block proof {n} arms {order!r} are not the scheduled arms {sorted(by_index[i])}')
+            if set(proof.get('games') or {}) != {f'sim-{i:04d}-d27-{arm}.json' for arm in order}:
+                raise QualError(f'{p}: block proof {n} games are not exactly its scheduled cases')
+            proved.append(i)
+        dropped = sorted(set(indices)-set(proved))
         if io.lexists(p+'/supervisor-exit.json'):
             ex = io.read_json(p+'/supervisor-exit.json', 4 << 20)
-            if ex.get('remaining_group_pids'): raise QualError(f'{p}: the phase exited with live group members')
-            if ex.get('reason') is None and ex.get('returncode') == 0: status = 'clean'
-            elif ex.get('reason') in PERMITTED_PHASE_STOPS: status = 'interrupted'
-            else: raise QualError(f"{p}: unexpected phase exit (reason={ex.get('reason')!r}, returncode={ex.get('returncode')!r})")
+            if not all(k in ex for k in ('reason', 'returncode', 'remaining_group_pids')) or not isinstance(ex['remaining_group_pids'], list):
+                raise QualError(f'{p}: incomplete exit evidence (reason, returncode and remaining_group_pids are required)')
+            rc, reason = ex['returncode'], ex['reason']
+            if ex['remaining_group_pids']: raise QualError(f'{p}: the phase exited with live group members')
+            if reason is None and rc == 0 and type(rc) is int:
+                if dropped or ex.get('complete_blocks', len(proved)) != len(proved):
+                    raise QualError(f'{p}: clean exit but {len(dropped)} scheduled indices have no block proof')
+                status = 'clean'
+            elif reason in PERMITTED_PHASE_STOPS and type(rc) is int and rc in INTERRUPTED_RETURNCODES:
+                status = 'interrupted'
+            else: raise QualError(f"{p}: unexpected phase exit (reason={reason!r}, returncode={rc!r})")
         else:
             status = 'running'
         ev[p] = {'schedule.json': io.sha256_file(p+'/schedule.json'), 'launch.json': io.sha256_file(p+'/launch.json'),
                  'supervisor-exit.json': io.sha256_file(p+'/supervisor-exit.json') if status != 'running' else None,
-                 'status': status, 'config_sha256': sched['config_sha256'], 'arms': arms, 'scheduled': len(cases), 'proved': len(blocks)}
+                 'status': status, 'config_sha256': sched['config_sha256'], 'arms': arms, 'scheduled': len(indices),
+                 'proved': len(proved), 'dropped': len(dropped)}
     if len(cfgs) > 1: raise QualError('the phases ran different configs')
     return ev
 
@@ -346,13 +443,16 @@ def main(argv=None):
     q.add_argument('--min-games', type=int, required=True); q.add_argument('--watch', type=int, default=0)
     q.add_argument('--bank', choices=sorted(BANKS), default='collection', help='smoke: PLAN §6.2 deadline parity on the collection smoke')
     r = sub.add_parser('roundtrip'); r.add_argument('--phases', nargs='+', required=True); r.add_argument('--threads', type=int, default=1)
+    s = sub.add_parser('smoke-pack', help='Q-D2(a): label + seal + pack the smoke captures into <job>/qual/smoke-pack/batch-0000')
+    s.add_argument('--phases', nargs='+', required=True); s.add_argument('--threads', type=int, default=1)
     t = sub.add_parser('trainer'); t.add_argument('--packed', required=True); t.add_argument('--assets', required=True)
-    for p in (f, h, q, r, t): p.add_argument('--out', required=True)
+    for p in (f, h, q, r, s, t): p.add_argument('--out', required=True)
     a = ap.parse_args(argv)
     io.check_writable(a.out, roles=('qual', 'receipts'), must_not_exist=True)       # before any work
     if a.cmd == 'parity' and a.min_games < 1: raise SystemExit('--min-games must be >= 1')
     try:
-        result = dict(frozen=frozen, hashes=hashes, parity=parity, roundtrip=roundtrip, trainer=trainer)[a.cmd](a)
+        result = {'frozen': frozen, 'hashes': hashes, 'parity': parity, 'roundtrip': roundtrip, 'smoke-pack': smoke_pack,
+                  'trainer': trainer}[a.cmd](a)
     except (QualError, io.Refusal) as e:
         result = dict(passed=False, error=str(e))
     result.update(check=a.cmd, utc=utc(), label='X4S-4 qualification, exploration, NEVER ADOPTABLE')

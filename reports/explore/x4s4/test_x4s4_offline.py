@@ -379,15 +379,20 @@ def write_collect_game(phase, arm, index, ticks, dup_of=None, block=True, base=C
 ALLOC_T = {'K4S-120': list(range(0, 2000))+list(range(3500, 3750)), 'S-200': list(range(2000, 3500))+list(range(3750, 4000))}
 
 
-def finish_phase(ph, arm=None, rng='reporting', base=C, cfg='c'*64, reason=None, rc=0, exit_=True, indices=None):
+def finish_phase(ph, arm=None, rng='reporting', base=C, cfg='c'*64, reason='auto', rc=0, exit_=True, indices=None):
     """Complete phase execution evidence as the supervisor/runner write it: schedule (range, seeded cases of one arm),
-    launch (same config), supervisor-exit (status, no live group)."""
+    launch (same config), supervisor-exit (status, no live group). r6 (Sol R5-F3): by default the schedule holds
+    exactly the cases the phase attempted (its games); a phase with an unproved attempted case cannot have exited clean,
+    so reason='auto' gives it the guard interruption the supervisor would record (memory_guard, SIGTERM)."""
     ph = Path(ph)
     if arm is None: arm = next(n[:-5].split('-d27-')[1] for n in sorted(os.listdir(ph/'games')))
-    idx = indices if indices is not None else ALLOC_T[arm]
+    games = sorted(int(n.split('-')[1]) for n in os.listdir(ph/'games')) if (ph/'games').is_dir() else []
+    proved = sorted(int(n[:-5]) for n in os.listdir(ph/'blocks')) if (ph/'blocks').is_dir() else []
+    idx = indices if indices is not None else sorted(set(games) | set(proved))
+    if reason == 'auto': reason, rc = (None, rc) if set(idx) <= set(proved) else ('memory_guard', -15)
     wjson(ph/'schedule.json', dict(range=rng, indices=idx, cases=[[i, base+i, arm] for i in idx], config_sha256=cfg))
     wjson(ph/'launch.json', dict(workers=10, lane_width=5, config_sha256=cfg))
-    if exit_: wjson(ph/'supervisor-exit.json', dict(reason=reason, returncode=rc, remaining_group_pids=[]))
+    if exit_: wjson(ph/'supervisor-exit.json', dict(reason=reason, returncode=rc, remaining_group_pids=[], complete_blocks=len(proved)))
 
 
 def parity_doc(tmp, phases, passed=True, final=True, name=None, bank='collection'):
@@ -469,9 +474,10 @@ def test_pipeline(tmp):
                                                                                 parity_doc(j2, phs))[1], text='parity/pending'),
         failed_parity_no_exception=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, passed=False), text='authentic'),
         not_final=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, final=False), text='not final'),
-        stale_parity=plan_fails(lambda ph: write_collect_game(ph, 'K4S-120', 7, range(100, 130, 10)), text='stale parity'),
+        stale_parity=plan_fails(lambda ph: write_collect_game(ph, 'K4S-120', 7, range(100, 130, 10)), text='not a scheduled index'),   # r6: case binding refuses first
         final_evidence_deleted=plan_fails(lambda ph: (ph/'supervisor-exit.json').unlink(), text='supervisor-exit'),
-        final_evidence_changed=plan_fails(lambda ph: wjson(ph/'supervisor-exit.json', dict(reason='memory_guard')), text='evidence changed'),
+        final_evidence_changed=plan_fails(lambda ph: wjson(ph/'supervisor-exit.json', dict(reason='memory_guard', returncode=-15, remaining_group_pids=[])),
+                                          text='evidence changed'),
         smoke_bank_receipt=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, bank='smoke'), text='bank-C'))
     case('R2-F8/F13/R3-F5 probes: the plan refuses a stale block proof, a NON-TERMINAL game, a STALE parity receipt (games added after '
          'it), deleted or changed final phase evidence (Sol R3-F5), a smoke-bank receipt, a non-final receipt, public-parity false and a '
@@ -840,7 +846,7 @@ def test_driver(tmp):
     drv, job, started = cal_driver('c2'); cal = f'{job}/calibration/R5.json'; (job/'calibration').mkdir(exist_ok=True)
     drv.calibration_breach = lambda rec: None; drv._cmd = f'sleep 0.6; echo {{}} > {cal}'
     drv.STOP_AT = datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(seconds=0.3)
-    late = drv.run_calibration('R5', 'x', cal) == 'failed' and not os.path.exists(cal) and list((job/'calibration').glob('R5.json.rejected-*'))
+    late = drv.run_calibration('R5', 'x', cal) == 'stopped' and not os.path.exists(cal) and list((job/'calibration').glob('R5.json.rejected-*'))
     drv.STOP_AT = datetime.datetime(2030, 1, 1, tzinfo=datetime.timezone.utc); good = drv.run_calibration('R5', 'x', cal) == 'ok' and os.path.exists(cal)
     drv3, job3, _ = cal_driver('c3'); spy = []
     drv3.fit_state = lambda f: ('done', None); drv3.run_calibration = lambda *a: spy.append(a) or 'ok'
@@ -1339,14 +1345,14 @@ def test_qualify(tmp):
     case('C7b: out of band the parity command writes PARITY-PAUSE, creates STOP and exits 1',
          rc == 1 and list((job/'receipts').glob('PARITY-PAUSE-*.json')) and os.path.lexists(job/'STOP'))
     (job/'STOP').unlink()
-    sm = job/'collect'/'smoke-par'
-    for i, arm in ((0, 'K4S-120'), (1, 'K4S-120'), (2, 'K4S-120'), (3, 'S-200'), (4, 'S-200'), (5, 'S-200')):
-        g = write_game(sm, arm, i, SMOKE, hit=642 if arm == 'K4S-120' else 753, n=1000, sd=223 if arm == 'K4S-120' else 0)
-        wjson(sm/'blocks'/f'{i:04d}.json', dict(index=i, seed=SMOKE+i, order=[arm], games={g.name: sha(g)}))
-    finish_phase(sm, 'K4S-120', rng='smoke', base=SMOKE, indices=list(range(8)))
-    sch = json.loads((sm/'schedule.json').read_text()); sch['cases'] = [[i, SMOKE+i, 'K4S-120' if i < 3 else 'S-200'] for i in range(6)]
-    (sm/'schedule.json').write_text(json.dumps(sch))
-    rc_s = run_parity_bank([sm], job/'receipts'/'smoke-par.json', 'smoke'); rc_c = run_parity_bank([sm], job/'receipts'/'smoke-as-c.json', 'collection')
+    smp = []
+    for arm, idx in (('K4S-120', (0, 1, 2)), ('S-200', (3, 4, 5))):
+        sm = job/'collect'/f'smoke-par-{arm}'; smp.append(sm)
+        for i in idx:
+            g = write_game(sm, arm, i, SMOKE, hit=642 if arm == 'K4S-120' else 753, n=1000, sd=223 if arm == 'K4S-120' else 0)
+            wjson(sm/'blocks'/f'{i:04d}.json', dict(index=i, seed=SMOKE+i, order=[arm], games={g.name: sha(g)}))
+        finish_phase(sm, arm, rng='smoke', base=SMOKE)
+    rc_s = run_parity_bank(smp, job/'receipts'/'smoke-par.json', 'smoke'); rc_c = run_parity_bank(smp, job/'receipts'/'smoke-as-c.json', 'collection')
     case('R3-F5 probe (Sol): --bank smoke runs PLAN §6.2 deadline parity on block-proved smoke-bank games (passes); the same games are '
          'refused as bank C', rc_s == 0 and json.loads((job/'receipts'/'smoke-par.json').read_text())['bank'] == 'smoke' and rc_c == 1)
     # R4-F5 probes (Sol): the producer refuses deficient execution evidence; a declared guard stop is an allowed interruption
@@ -1593,6 +1599,289 @@ print(json.dumps(dict(passed=ok, seconds=time.monotonic()-t0)))
          and not leftover, info=info, rows=rows)
 
 
+# ================================================================ r6: Sol r5 findings R5-F1..F4 and the Q-D2(a) smoke-pack
+def test_r6(tmp):
+    import studytree as ST
+    past = datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc)
+    def stop_link(job): os.symlink(Path(job)/'nowhere', Path(job)/'STOP')
+    def r6_driver(sub):
+        """A driver over a fresh job with healthy measurements; io.spawn is a spy that records any child creation."""
+        drv, job = driver_module(tmp/sub)
+        spawned = []
+        ns = types.SimpleNamespace(**{k: getattr(io, k) for k in dir(io) if not k.startswith('__')})
+        def spy(argv, *a, **k):
+            spawned.append(argv); raise RuntimeError('spawn reached')
+        ns.spawn = spy; drv.io = ns
+        drv.mem_available = lambda: 100*2**30; drv.psi_some_avg10 = lambda: 0.0; drv.gpu_used_mib = lambda: 0
+        drv.studytree = types.SimpleNamespace(**{k: getattr(ST, k) for k in dir(ST) if not k.startswith('__')})
+        drv.studytree.admission = lambda job, add=0, disk=True: (True, None)
+        return drv, job, spawned
+    def lock_hook(drv, hook):
+        class Lock:
+            def __enter__(self): hook(); return self
+            def __exit__(self, *e): return False
+        drv.DispatchLock = Lock
+    def refused(job): return [e for e in map(json.loads, (Path(job)/'driver'/'events.jsonl').read_text().splitlines()) if e['kind'] == 'launch_refused'] \
+        if (Path(job)/'driver'/'events.jsonl').exists() else []
+    def attempt(fn):
+        try: return fn()
+        except RuntimeError as e: return 'SPAWNED' if 'spawn reached' in str(e) else repr(e)
+
+    # ---- R5-F1: STOP / deadline crossing during the lock wait, resource admission and corpus preparation
+    def fit_case(sub, where, kind):
+        drv, job, spawned = r6_driver(sub)
+        drv.fit_state = lambda f: ('pending', None); drv.live_supervisor = lambda: None
+        wjson(job/'data'/'O-VERIFIED.json', {})
+        cross = (lambda: stop_link(job)) if kind == 'STOP' else (lambda: setattr(drv, 'STOP_AT', past))
+        lock_hook(drv, cross if where == 'lock' else (lambda: None))
+        real_ok = drv.resources_ok
+        drv.resources_ok = (lambda for_fit=False: (cross(), real_ok(for_fit))[1]) if where == 'resources' else real_ok
+        drv.prepare_fit_dirs = (lambda fid: (cross(), (['batch-0000'], 'g'*64))[1]) if where == 'corpus' else (lambda fid: (['batch-0000'], 'g'*64))
+        r = attempt(lambda: drv.Fits().tick())
+        return r != 'SPAWNED' and not spawned and not (job/'receipts'/'fit-R5-launch.json').exists()
+    fits_cross = {f'{w}/{k}': fit_case(f'f1-{w}-{k}', w, k) for w in ('lock', 'corpus') for k in ('STOP', 'deadline')}
+    # a STOP after the resume renames: the in-launch gate refuses and the attempt state is restored (no spawn)
+    drv, job, spawned = r6_driver('f1-resume')
+    out = job/'fits'/'R5'; out.mkdir(parents=True, exist_ok=True)
+    wjson(out/'complete.json', dict(stopped=True, step=250)); wjson(out/'segment.json', dict(status='returned')); (out/'step-00000250.pt').write_bytes(b'ck')
+    wjson(job/'receipts'/'fit-R5-launch.json', dict(launch_id='OLD', pid=2**22+3, pgid=2**22+3, starttime=1))
+    drv.fit_state = lambda f: ('pending', None); drv.prepare_fit_dirs = lambda fid: (['batch-0000'], 'g'*64)
+    real_rename = io.rename_path
+    def rn(src, dst, roles=None):
+        real_rename(src, dst, roles=roles)
+        if '/fit-R5-launch-' in dst: stop_link(job)
+    drv.io.rename_path = rn
+    r = attempt(lambda: drv.Fits().launch('R5', 'stopped'))
+    rollback = (r != 'SPAWNED' and not spawned and (out/'segment.json').exists() and (out/'complete.json').exists()
+                and (job/'receipts'/'fit-R5-launch.json').exists() and not list(out.glob('*-attempt*')) and not list((job/'receipts').glob('fit-R5-launch-*')))
+    case("R5-F1 (Sol): a fit launch crossing STOP or the hard stop while it waits for DISPATCH.lock or re-verifies the corpus never "
+         "reaches a child; a STOP after the resume renames is refused inside launch() and the attempt state is restored",
+         all(fits_cross.values()) and rollback, fits=fits_cross, rollback=rollback)
+
+    def phase_case(sub, where, kind):
+        drv, job, spawned = r6_driver(sub)
+        (job/'REPORTING.GO').write_text('go'); drv.live_supervisor = lambda: None
+        drv.next_phase = lambda: ('R3a', 'K4S-120', [0, 1]); drv.fit_state = lambda f: ('done', None)
+        inv = {}
+        for rel in drv.RUNTIME_FILES:
+            f = job/'rt-R3a'/'repo'/rel; f.parent.mkdir(parents=True, exist_ok=True); f.write_text(rel); inv[rel] = sha(f)
+        wjson(job/'RUNTIME-INVENTORY.json', inv); (job/'games'/'R3a'/'K4S-120').mkdir(parents=True)
+        cross = (lambda: stop_link(job)) if kind == 'STOP' else (lambda: setattr(drv, 'STOP_AT', past))
+        lock_hook(drv, cross if where == 'lock' else (lambda: None))
+        real_ok = drv.resources_ok
+        drv.resources_ok = (lambda for_fit=False: (cross(), real_ok(for_fit))[1]) if where == 'resources' else real_ok
+        r = attempt(drv.games_tick)
+        return r != 'SPAWNED' and not spawned and not list((job/'games'/'R3a'/'K4S-120').glob('indices-*')) and bool(refused(job))
+    phase_cross = {f'{w}/{k}': phase_case(f'p1-{w}-{k}', w, k) for w in ('lock', 'resources') for k in ('STOP', 'deadline')}
+    case("R5-F1 (Sol): a reporting launch crossing STOP or the hard stop while it waits for DISPATCH.lock or for resource admission is "
+         "refused at the final gate: no indices file, no supervisor child", all(phase_case_v for phase_case_v in phase_cross.values()), phases=phase_cross)
+
+    def cal_case(sub, kind):
+        drv, job, spawned = r6_driver(sub); (job/'calibration').mkdir(exist_ok=True)
+        drv.live_supervisor = lambda: None; drv.fit_state = lambda f: ('done', None)
+        cross = (lambda: stop_link(job)) if kind == 'STOP' else (lambda: setattr(drv, 'STOP_AT', past))
+        real_ok = drv.resources_ok
+        drv.resources_ok = lambda for_fit=False: (cross(), real_ok(for_fit))[1]
+        r = attempt(lambda: drv.run_calibration('R5', str(job/'inputs'/'R5.pt'), str(job/'calibration'/'R5.json')))
+        return r == 'not_admitted' and not spawned
+    cal_cross = {k: cal_case(f'c1-{k}', k) for k in ('STOP', 'deadline')}
+    # post-return STOP control (Sol): the calibrator creates STOP, writes its output and exits 0 between two parent polls
+    drv, job = driver_module(tmp/'c1-post'); (job/'calibration').mkdir(exist_ok=True); cal = f'{job}/calibration/R5.json'
+    drv.resources_ok = lambda for_fit=False: True; drv.CALIBRATION_POLL = 0.2; drv.calibration_breach = lambda rec: None
+    drv.live_supervisor = lambda: None; drv.fit_state = lambda f: ('done', None)
+    def fake_launch(name, argv, log, receipt, env, cwd=None, extra_rec=None):
+        child = io.spawn(['/bin/sh', '-c', f'ln -s nowhere {job}/STOP; echo {{}} > {cal}'], log, dict(PATH='/usr/bin:/bin'))
+        drv.POPEN[child['pid']] = child['popen']; drv.LAUNCHED[child['pid']] = 'POST'
+        return dict(launch_id='POST', pid=child['pid'], pgid=child['pgid'], starttime=child['starttime'])
+    drv.launch = fake_launch
+    post = drv.run_calibration('R5', 'x', cal)
+    post_ok = (post == 'stopped' and not os.path.exists(cal) and list((job/'calibration').glob('R5.json.rejected-*'))
+               and not list((job/'receipts').glob('calibration-R5-accepted-*')))
+    # READY is never published after STOP, even with an accepted calibration in hand
+    def ready_case(sub, stop):
+        drv, job = driver_module(tmp/sub)
+        drv.fit_state = lambda f: ('done', None) if f == 'R5' else ('pending', None)
+        ck = job/'fits'/'R5'/'step-00002500.pt'; ck.parent.mkdir(parents=True, exist_ok=True); ck.write_bytes(b'checkpoint')
+        pj = job/'base'/'repo'/'reports'/'explore'/'x4s3'/'plan.json'; pj.parent.mkdir(parents=True); wjson(pj, {})
+        def fake_cal(fid, dest, cal):
+            wjson(cal, dict(checkpoint_sha256=sha(dest), threshold=0.5))
+            wjson(job/'receipts'/f'calibration-{fid}-accepted-X.json', dict(launch_id='X', calibration_sha256=sha(cal)))
+            if stop: stop_link(job)
+            return 'ok'
+        drv.run_calibration = fake_cal; drv.prepare_students()
+        return (job/'rt-R5'/'READY.json').exists()
+    ready_stop, ready_ok = ready_case('c1-ready-stop', True), ready_case('c1-ready-ok', False)
+    case("R5-F1 (Sol): calibration admission crossing STOP or the hard stop during resource admission never reaches a child; a "
+         "calibrator that creates STOP and exits 0 between polls is rejected (stopped, output set aside, no acceptance); READY is not "
+         "published after STOP (control: published without STOP)",
+         all(cal_cross.values()) and bool(post_ok) and not ready_stop and ready_ok, cal=cal_cross, post=post, ready=[ready_stop, ready_ok])
+    sup_src = (HERE/'supervise.py').read_text()
+    sup = load_fresh('supervise_r6', HERE/'supervise.py'); sj = new_job(tmp/'s1')
+    future = datetime.datetime(2030, 1, 1, tzinfo=datetime.timezone.utc)
+    healthy = sup.final_check(str(sj), future); stop_link(sj); st_ = sup.final_check(str(sj), future); (sj/'STOP').unlink()
+    dl = sup.final_check(str(sj), past)
+    order = (sup_src.index('admit_phase(job, workers*width+3, stop_at)') < sup_src.index('census_cpu = ForeignCensus(job)')
+             < sup_src.index('late = final_check(job, stop_at)') < sup_src.index('child = io.spawn(cmd'))
+    case('R5-F1 (Sol): the supervisor repeats the STOP/deadline check after admission and the census, immediately before io.spawn',
+         healthy is None and 'STOP' in (st_ or '') and 'hard stop' in (dl or '') and order)
+
+    # ---- R5-F2: calibration is owned, counted and excluding study work; a restarted driver reconciles a live old one
+    import diagnose
+    drv, job, spawned = r6_driver('c2')
+    old = io.spawn(['/bin/sleep', '60'], f'{job}/logs/old-cal.log', dict(PATH='/usr/bin:/bin'))
+    try:
+        wjson(job/'receipts'/'calibrate-R5-launch-100.json', dict(launch_id='OLD', pid=old['pid'], pgid=old['pgid'], starttime=old['starttime'], name='calibrate-R5'))
+        (job/'calibration').mkdir(exist_ok=True); wjson(job/'calibration'/'R5.json', dict(partial=True))
+        census = (old['pgid'], old['starttime']) in ST.groups(str(job)) and old['pid'] in ST.processes(ST.groups(str(job)))
+        diag_live = any('calibrate-R5' in n for n in diagnose.live_study_work(str(job)))
+        diag_refused = raises(lambda: diagnose.acquire_lock(str(job)), SystemExit, 'calibration') and not (job/'driver'/'DIAGNOSTIC.lock').exists()
+        drv.live_supervisor = lambda: None; drv.fit_state = lambda f: ('pending', None)
+        excl = dict(resources=drv.resources_ok(for_fit=True) is False, final_gate=drv.final_gate() == 'calibration live',
+                    second_calibration=attempt(lambda: drv.run_calibration('R5', 'x', str(job/'calibration'/'R6.json'))) == 'not_admitted')
+        wjson(job/'data'/'O-VERIFIED.json', {}); drv.prepare_fit_dirs = lambda fid: (['batch-0000'], 'g'*64)
+        excl['fit'] = attempt(lambda: drv.Fits().tick()) != 'SPAWNED'
+        excl['no_spawn'] = not spawned
+        found = drv.reconcile_calibrations()
+        try: old['popen'].wait(timeout=30)
+        except subprocess.TimeoutExpired: found = False                # not stopped: the reconciliation failed
+        recon = (found and not io.group_alive(old['pgid'], old['starttime']) and (job/'receipts'/'calibration-R5-orphan-OLD.json').exists()
+                 and not (job/'calibration'/'R5.json').exists() and list((job/'calibration').glob('R5.json.orphaned-*'))
+                 and drv.reconcile_calibrations() is False)
+    finally:
+        if old['popen'].poll() is None: io.stop_owned(old['pgid'], old['starttime'], term_grace=5, kill_grace=5); old['popen'].wait()
+    # the other direction: a live diagnostic lock excludes calibration
+    drv2, job2, spawned2 = r6_driver('c2-diag'); drv2.live_supervisor = lambda: None; drv2.fit_state = lambda f: ('pending', None)
+    me = io.own_identity(); wjson(job2/'driver'/'DIAGNOSTIC.lock', dict(pid=me['pid'], starttime=me['starttime']))
+    diag_excl = attempt(lambda: drv2.run_calibration('R5', 'x', str(job2/'calibration'/'R5.json'))) == 'not_admitted' and not spawned2
+    # an output without an acceptance receipt (an earlier incarnation's unknown exit) is set aside, never used
+    drv3, job3 = driver_module(tmp/'c2-unacc'); (job3/'calibration').mkdir(exist_ok=True); wjson(job3/'calibration'/'R5.json', dict(threshold=0.5))
+    drv3.reconcile_calibrations(); unacc = not (job3/'calibration'/'R5.json').exists()
+    main_src = (HERE/'driver.py').read_text()
+    gated = main_src.index('if not reconcile_calibrations():') < main_src.index('fits.tick(); prepare_students(); games_tick()')
+    case("R5-F2 (Sol): a live calibration group is in studytree.groups and the process census, refuses the diagnostic lock, and "
+         "blocks fit/calibration admission and the final gate; a live diagnostic blocks calibration; a restarted driver stops the "
+         "old calibration by verified PID, sets its output aside and records the disposition before any other dispatch; an "
+         "unaccepted output is set aside", census and diag_live and diag_refused and all(excl.values()) and bool(recon) and diag_excl
+         and unacc and gated, excl=excl, census=census, diag=[diag_live, diag_refused], recon=bool(recon), diag_excl=diag_excl)
+
+    # ---- R5-F4: two resumed attempts with unknown exits, each reconciled by its own ACK
+    drv, job = driver_module(tmp/'f4'); out = job/'fits'/'R5'; out.mkdir(parents=True, exist_ok=True)
+    rp = job/'receipts'/'fit-R5-launch.json'
+    def fs():
+        try: return drv.fit_state('R5')[0]
+        except io.Refusal as e: return 'refused: '+str(e)[-60:]          # Sol's r5 failure mode
+    def attempt_files(lid, pid):
+        wjson(out/'complete.json', dict(stopped=True, step=250)); wjson(out/'segment.json', dict(status='returned'))
+        rec = dict(pid=pid, pgid=pid, starttime=7, launch_id=lid, launched_at_utc='2026-10-13T00:00:00Z'); wjson(rp, rec); return rec
+    def ack(rec, receipt): wjson(job/'driver'/'ACK-fit-R5-exit.json', dict(launch_id=rec['launch_id'], pid=rec['pid'], starttime=rec['starttime'],
+                                                                           receipt_sha256=sha(receipt), disposition='success', owner='sam'))
+    r1 = attempt_files('A1', 2**22+501)
+    s1_before = fs(); ack(r1, rp); s1 = fs()
+    first = s1_before == 'failed' and s1 == 'stopped' and (job/'receipts'/'fit-R5-exit-resolution-A1.json').exists() and not (job/'driver'/'ACK-fit-R5-exit.json').exists()
+    os.rename(out/'segment.json', out/'segment-attempt1.json'); os.rename(out/'complete.json', out/'complete-attempt1.json')
+    os.rename(rp, job/'receipts'/'fit-R5-launch-1.json')
+    r2 = attempt_files('A2', 2**22+502)
+    s2_before = fs()                                   # the first resolution does not authorize the second
+    ack(r1, job/'receipts'/'fit-R5-launch-1.json'); s2_stale = fs()
+    stale = s2_stale == 'failed' and (job/'driver'/'ANOMALY-stale-ack-fit-R5-exit.json').exists()
+    (job/'driver'/'ACK-fit-R5-exit.json').unlink(); ack(r2, rp); s2 = fs()
+    second = (s2_before == 'failed' and s2 == 'stopped' and (job/'receipts'/'fit-R5-exit-resolution-A2.json').exists()
+              and json.loads((job/'receipts'/'fit-R5-exit-resolution-A1.json').read_text())['launch_id'] == 'A1'
+              and len(list((job/'driver').glob('ACK-fit-R5-exit.consumed-*.json'))) == 2)
+    case("R5-F4 (Sol): a second resumed attempt with an unknown exit is reconciled by its own exact-attempt ACK into a launch-specific "
+         "resolution; the first resolution neither authorizes nor obstructs it, a first-attempt ACK is stale, both ACKs are kept consumed",
+         first and stale and second, got=[s1_before, s1, s2_before, s2_stale, s2])
+
+    # ---- R5-F3: case-level schedule/proof binding, clean-exit coverage, typed exit status (Sol's four cases + controls)
+    import qualify4 as Q
+    job = new_job(tmp/'q'); base = job/'collect'
+    def ph(name, arm, idx):
+        p = base/name
+        for i in idx:
+            g = write_game(p, arm, i, C, hit=642 if arm == 'K4S-120' else 753, n=1000, sd=223 if arm == 'K4S-120' else 0)
+            wjson(p/'blocks'/f'{i:04d}.json', dict(index=i, seed=C+i, order=[arm], games={g.name: sha(g)}))
+        return p
+    def run_parity(phases, name):
+        out = job/'receipts'/f'{name}.json'
+        try: Q.main(['parity', '--phases', *map(str, phases), '--min-games', '3', '--out', str(out)]); rc = 0
+        except SystemExit as e: rc = e.code
+        return rc, json.loads(out.read_text())
+    def probe(name, edit):
+        a, b = ph(name+'-k', 'K4S-120', (0, 1, 2)), ph(name+'-s', 'S-200', (2000, 2001, 2002))
+        finish_phase(a); finish_phase(b); edit(a, b); return run_parity([a, b], name)
+    sol = dict(
+        scheduled4_proved3_clean=probe('c4', lambda a, b: finish_phase(a, indices=[0, 1, 2, 3], reason=None, rc=0)),
+        reason_only_exit=probe('ro', lambda a, b: wjson(a/'supervisor-exit.json', dict(reason='memory_guard'))),
+        permitted_reason_rc17=probe('r17', lambda a, b: finish_phase(a, reason='memory_guard', rc=17)),
+        k4s_schedule_s200_proofs=(lambda: (lambda x, y: (finish_phase(x), finish_phase(y, 'K4S-120'), run_parity([x, y], 'xs'))[2])(
+            ph('xs-k', 'K4S-120', (0, 1, 2)), ph('xs-s', 'S-200', (3500, 3501, 3502))))(),
+        duplicate_case=probe('dc', lambda a, b: wjson(a/'schedule.json', dict(json.loads((a/'schedule.json').read_text()),
+                                                       cases=[[0, C, 'K4S-120'], [0, C, 'K4S-120'], [1, C+1, 'K4S-120'], [2, C+2, 'K4S-120']]))),
+        proof_game_not_scheduled=probe('pg', lambda a, b: wjson(a/'blocks'/'0000.json', dict(json.loads((a/'blocks'/'0000.json').read_text()),
+                                                            games={'sim-0000-d27-K4S-120.json': sha(a/'games'/'sim-0000-d27-K4S-120.json'), 'sim-0000-d27-S-200.json': '0'*64}))),
+        exit_without_pid_list=probe('np', lambda a, b: wjson(a/'supervisor-exit.json', dict(reason=None, returncode=0))),
+        unknown_returncode=probe('ur', lambda a, b: wjson(a/'supervisor-exit.json', dict(reason=None, returncode=None, remaining_group_pids=[]))))
+    def interrupted(a, b):
+        finish_phase(a, indices=[0, 1, 2, 3], reason='memory_guard', rc=-15)
+    ok_int = probe('oi', interrupted)
+    healthy = probe('hc', lambda a, b: None)
+    ev_int = sorted((e['status'], e['dropped']) for e in ok_int[1].get('evidence', {}).values())
+    case("R5-F3 (Sol): parity refuses a clean exit with 4 scheduled / 3 proved, a reason-only exit, a permitted reason beside "
+         "returncode 17, a K4S schedule whose proofs are S-200 cases, a duplicate case, a proof naming an unscheduled game, an exit "
+         "without its process list and an unknown returncode; a SIGTERM guard interruption passes with its dropped case recorded; "
+         "the complete healthy control passes",
+         all(v[0] == 1 and v[1]['passed'] is False for v in sol.values()) and ok_int[0] == 0 and ev_int == [('clean', 0), ('interrupted', 1)]
+         and healthy[0] == 0, errors={k: v[1].get('error', '')[-70:] for k, v in sol.items()}, interrupted=ev_int)
+    import label
+    good_k, good_s = base/'hc-k', base/'hc-s'
+    pr = job/'receipts'/'hc.json'
+    adm_ok = label.check_parity([str(good_k), str(good_s)], str(pr))[0]['passed'] is True
+    finish_phase(good_k, indices=[0, 1, 2, 3], reason=None, rc=0)                # evidence changed after the receipt
+    adm_bad = raises(lambda: label.check_parity([str(good_k), str(good_s)], str(pr)), label.PlanError, 'evidence')
+    case("R5-F3: label admission re-derives the strengthened evidence: the healthy receipt is admitted; after the schedule is widened "
+         "to an uncovered clean case the same receipt is refused", adm_ok and adm_bad)
+
+    # ---- Q-D2(a): smoke-pack labels, seals and packs the smoke collection into <job>/qual/smoke-pack/batch-0000
+    stub_torch_imports()
+    from imitation.exit_r1 import pack as packmod
+    def smoke_job(sub):
+        j = new_job(tmp/sub); phases = []
+        for arm in Q.COLLECT_ARMS:
+            p = j/'collect'/'smoke'/arm; phases.append(p)
+            for i in range(8): write_collect_game(p, arm, i, (100, 110, 120), base=SMOKE)
+            wjson(p/'schedule.json', dict(range='smoke', indices=list(range(8)), cases=[[i, SMOKE+i, arm] for i in range(8)]))
+        return j, [str(p) for p in phases]
+    saved = (label.score_state, label.THREADS, label.RAW, label.PLAN_SHA, label.DATA_ROLE)
+    try:
+        label.score_state = lambda *a, **k: (5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None]); label.THREADS = 1
+        sj, phases = smoke_job('sp')
+        body = Q.smoke_pack_into(phases, label, packmod.pack)
+        batch = sj/'qual'/'smoke-pack'/'batch-0000'
+        sealed_ok = body['passed'] and batch.is_dir() and io.verify_sealed_dir(str(batch))[1] == body['packed_manifest_sha256']
+        shape = (body['games'] == 16 and body['statuses'] == {'sealed': 16} and body['rows'] == 48 and body['captures'] == 48
+                 and str(batch).startswith(io.JOB+'/qual/') and readonly(sj/'qual'/'smoke-plan.json')
+                 and not list((sj/'data').iterdir()))
+        label.DATA_ROLE = 'data'
+        again = raises(lambda: Q.smoke_pack_into(phases, label, packmod.pack), io.Refusal, 'exists')
+        label.DATA_ROLE = 'data'
+        sj2, phases2 = smoke_job('sp-stop'); stop_link(sj2)
+        stopped = Q.smoke_pack_into(phases2, label, packmod.pack)
+        stop_ok = stopped['passed'] is False and not (sj2/'qual'/'smoke-pack').exists() and 'stopped' in stopped['statuses']
+        label.DATA_ROLE = 'data'
+        sj3, phases3 = smoke_job('sp-forged')
+        (Path(phases3[0])/'games'/'sim-0003-d27-K4S-120.json').write_text('{"forged": 1}')
+        forged = raises(lambda: Q.smoke_pack_into(phases3, label, packmod.pack), Q.QualError, 'block proof') and not (sj3/'qual'/'smoke-plan.json').exists()
+    finally:
+        label.score_state, label.THREADS, label.RAW, label.PLAN_SHA, label.DATA_ROLE = saved
+    q_src = (HERE/'qualify4.py').read_text()
+    case("Q-D2(a) smoke-pack: all 16 authenticated smoke games (48 captures) are labelled by the unchanged label_game under <job>/qual, "
+         "sealed and packed once by the frozen pack() into a seal-verified <job>/qual/smoke-pack/batch-0000 that the trainer check "
+         "accepts by location; nothing is written under <job>/data; a rerun refuses (no overwrite), STOP halts labelling with no pack, "
+         "and a forged smoke game is refused before any write",
+         sealed_ok and shape and again and stop_ok and forged and "'smoke-pack': smoke_pack" in q_src,
+         body={k: body.get(k) for k in ('games', 'statuses', 'rows', 'captures', 'passed')}, stop=stopped.get('statuses'))
+
+
 # ================================================================ static (F11, F17, R2-F10), run_fit.sh (F5)
 def test_static(tmp):
     owned = [p for p in sorted(HERE.glob('*.py')) if p.name not in ('run_collect.py', 'test_x4s4_offline.py')]
@@ -1658,7 +1947,7 @@ def main():
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
         for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
-                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_static):
+                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
             except Exception as e:

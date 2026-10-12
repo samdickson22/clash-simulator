@@ -107,10 +107,12 @@ class Abort(Exception):
 
 
 def live_study_work(job):
-    """Reporting supervisors and fits launched by the driver (receipts) that are still alive (verified owned PIDs)."""
+    """Reporting supervisors, fits and calibrations launched by the driver (receipts) that are still alive (verified owned
+    PIDs). R5-F2: calibration is GPU work and excludes the diagnostic exactly like a fit."""
     live = []
     for n in io.listdir(job+'/receipts'):
-        if (n.startswith('phase-') and n.endswith('-launch.json')) or n.startswith('fit-') and '-launch' in n:
+        if (n.startswith('phase-') and n.endswith('-launch.json')) or (n.startswith('fit-') and '-launch' in n) \
+                or (n.startswith('calibrate-') and '-launch-' in n and n.endswith('.json')):
             try: r = io.read_json(f'{job}/receipts/{n}', 1 << 20)
             except io.Refusal: live.append(f'{n} unreadable'); continue
             if io.group_alive(r.get('pgid'), r.get('starttime')): live.append(n)
@@ -125,7 +127,7 @@ def acquire_lock(job):
     try:
         fcntl.flock(fd, fcntl.LOCK_EX)
         live = live_study_work(job)
-        if live: raise SystemExit(f'diagnostic refused: live reporting/fit work {live}')
+        if live: raise SystemExit(f'diagnostic refused: live reporting/fit/calibration work {live}')
         me = io.own_identity()
         io.write_json_once(lock, dict(pid=me['pid'], starttime=me['starttime'], utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())),
                            roles=('driver',), mode=0o644)
