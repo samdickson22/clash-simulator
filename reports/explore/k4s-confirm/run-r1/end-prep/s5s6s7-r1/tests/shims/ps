@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Fake ps. Quiet-read format: synthetic lines only. pid/ppid/ni/cls/args format: the real table with the gate
+process ($PPID) and its parent forced to FAKE_GATE_NI (default 0), FAKE_CHILD_MARK processes forced to
+FAKE_CHILD_NI (default 10), real sshd lines dropped and FAKE_PS_EXTRA lines appended. Other formats: real ps."""
+import os, subprocess, sys
+args = sys.argv[1:]
+real = "/bin/ps" if os.path.exists("/bin/ps") else "/usr/bin/ps"
+if args == ["-eo", "pid=,lstart=,comm=,args="]:
+    path = os.environ.get("FAKE_QUIET_PS")
+    sys.stdout.write(open(path).read() if path else "    1 Mon Sep 28 15:00:00 2026 systemd /sbin/init\n")
+    sys.exit(0)
+if args == ["-eo", "pid=,ppid=,ni=,cls=,args="]:
+    out = subprocess.run([real] + args, capture_output=True, text=True).stdout
+    gate = os.getppid()
+    rows = []
+    for line in out.splitlines():
+        parts = line.split(None, 4)
+        if len(parts) < 4:
+            continue
+        pid, ppid = int(parts[0]), int(parts[1])
+        rows.append([pid, ppid, parts[2], parts[3], parts[4] if len(parts) > 4 else ""])
+    table = {r[0]: r for r in rows}
+    gate_parent = table[gate][1] if gate in table else None
+    mark = os.environ.get("FAKE_CHILD_MARK", "\0")
+    for r in rows:
+        if r[4].startswith("sshd: "):
+            continue
+        if r[0] in (gate, gate_parent):
+            r[2] = os.environ.get("FAKE_GATE_NI", "0")
+        elif mark in r[4]:
+            r[2] = os.environ.get("FAKE_CHILD_NI", "10")
+        print("%7d %7d %3s %3s %s" % tuple(r))
+    extra = os.environ.get("FAKE_PS_EXTRA")
+    if extra:
+        sys.stdout.write(open(extra).read())
+    sys.exit(0)
+os.execv(real, [real] + args)

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+case "$1" in
+  is-active)
+    var="FAKE_ACTIVE_$(printf '%s' "$2" | tr -c 'A-Za-z0-9' '_')"
+    state=${!var:-inactive}; echo "$state"; [ "$state" = active ] && exit 0; exit 3 ;;
+  list-timers)
+    printf 'TZ=%s LC_ALL=%s ARGS=%s\n' "${TZ:-}" "${LC_ALL:-}" "$*" >> "${FAKE_LOG:-/dev/null}"
+    cat "${FAKE_TIMERS:?FAKE_TIMERS}"; exit "${FAKE_TIMERS_RC:-0}" ;;
+esac
+exit 1

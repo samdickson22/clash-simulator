@@ -1,0 +1,93 @@
+--- t1/end_verify_push.py@753722c9
++++ k4s_end_verify_push.py
+@@ -18,12 +18,12 @@
+     if not condition:
+         raise ValueError(message)
+ 
+-BASE = Path('/mpac/sdicks02/jobs/clasher/t1-20261010-r1')
++BASE = Path('/mpac/sdicks02/k4s-runner/run-r1')
+ 
+ 
+ def namespace(root):
+     require(root.is_absolute() and root == root.resolve(), 'Noncanonical receive path')
+-    require(root.parent.name in ('127x01', '127x08'), 'Missing host namespace')
++    require(root.parent.name in ('127x03', '127x04'), 'Missing host namespace')
+     require(root.parent.parent == BASE / 'end-received', 'Wrong receive namespace')
+     require(re.fullmatch(r'[A-Za-z0-9._-]+', root.name) and '..' not in root.name, 'Verification check failed')
+ 
+@@ -47,6 +47,25 @@
+     return h.hexdigest()
+ 
+ 
++def registry_claims(root, registry_exists):
++    """Health-only listing of the pushed claim directory (RC-5): every claim and this attempt's claims."""
++    registry = root / 'registry'
++    require(registry_exists == registry.is_dir() and not registry.is_symlink(), 'Registry/exit observation mismatch')
++    if not registry_exists:
++        return [], []
++    entries = sorted(registry.iterdir())
++    names = [p.name for p in entries]
++    require(names == ['attempt-%02d.json' % i for i in range(len(names))], 'Registry is not a contiguous claim sequence')
++    claims = []
++    for index, path in enumerate(entries):
++        require(path.is_file() and not path.is_symlink(), 'Verification check failed')
++        claim = json.loads(path.read_text())
++        require(claim['host'] == root.parent.name and claim['attempt'] == index, 'Registry claim namespace mismatch')
++        claims.append(dict(name=path.name, sha256=sha(path), attempt=claim['attempt'], round=claim['round'],
++                           receipt_directory=claim['receipt_directory'], launched_utc=claim['launched_utc']))
++    return claims, [c for c in claims if c['receipt_directory'] == root.name]
++
++
+ def verify(root, launch, prepared):
+     """Return a health receipt; emit no ACK for missing or inconsistent seals."""
+     namespace(root)
+@@ -74,11 +93,14 @@
+     exit_epoch = datetime.datetime.strptime(exit_['utc'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).timestamp()
+     require((root / 'TRANSFER-COMPLETE.json').stat().st_mtime >= exit_epoch, 'Transfer marker predates recorded exit')
+     require(proof['utc'] < launch['utc'] <= exit_['utc'] <= marker['utc'], 'Preparation must precede launch; transfer must follow exit')
+-    require(launch['wrapper_sha256'] == '0a87166f23f1eec742605da1f15e94f40602546a6926c7a53bc15d2a6b8d61b1', 'Unapproved END campaign wrapper')
++    require(launch['wrapper_sha256'] == '62cdda778f05c3538d6356235aab00fc259d738dceaa83707b674e476d15666c', 'Unapproved END campaign wrapper')
+     expected_argv = b''.join(value.encode() + b'\0' for value in launch['measurement_argv'])
+     require((root / 'argv.nul').read_bytes() == expected_argv, 'Recorded argv differs from approved launch')
+     require(type(exit_['measurement_exists']) is bool, 'Verification check failed')
+     require(marker['measurement_exists'] == exit_['measurement_exists'], 'Verification check failed')
++    require(type(exit_['registry_exists']) is bool, 'Verification check failed')
++    claims, mine = registry_claims(root, exit_['registry_exists'])
++    require(len(mine) <= 1, 'Several registry claims name this attempt')
+     for name in ('detach.log', 'detach.json', 'argv.nul'):
+         require((root / name).is_file() and not (root / name).is_symlink(), name)
+     data = root / 'durable-measurement'
+@@ -87,12 +109,14 @@
+     stamp = data / 'receipt-manifest.sha256'
+     if not seal.is_file() or not stamp.is_file():
+         return dict(utc=time.time(), host=root.parent.name, attempt=root.name,
+-                    classification='UNSEALED', exit_code=code, ack_allowed=False)
++                    classification='UNSEALED', exit_code=code, ack_allowed=False,
++                    registry_claims=claims, claim_without_receipt=bool(mine))
+     require(data == data.resolve(), 'Symlink measurement directory')
+     fields = stamp.read_text().split()
+     require(fields == [sha(seal), 'receipt-manifest.json'], 'Seal SHA mismatch')
+     manifest = json.loads(seal.read_text())
+     require(manifest['status'] in ('complete', 'failed'), 'Verification check failed')
++    require(manifest['scope'] == 'K4S-END-REFERENCE', 'Unexpected seal scope')
+     require((code == 0) == (manifest['status'] == 'complete'), 'Exit/status mismatch')
+     files = manifest['files']
+     require(isinstance(files, dict) and files, 'Verification check failed')
+@@ -108,12 +132,16 @@
+     require(not any(p.is_symlink() for p in entries), 'Symlink in measurement')
+     actual = {str(p.relative_to(data)) for p in entries if p.is_file()}
+     require(actual == set(files) | {'receipt-manifest.json', 'receipt-manifest.sha256'}, 'Extra/missing files')
++    copy = json.loads((data / 'attempt-claim.json').read_text())
++    require(len(mine) == 1 and copy['claim_sha256'] == mine[0]['sha256'], 'Sealed receipt lacks its registry claim')
++    require(copy['claim'] == json.loads((root / 'registry' / mine[0]['name']).read_text()), 'Sealed claim copy differs')
+     return dict(utc=time.time(), host=root.parent.name, attempt=root.name,
+                 classification='SEALED', status=manifest['status'], exit_code=code,
+                 ack_allowed=True, files=len(files), all_hashes_verified=True,
+                 receipt_manifest_sha256=sha(seal), outcomes_sealed=True,
+                 legacy_PUSH_FAILED_without_exit_code_is_failure=True,
+-                prepared_nonce=proof['nonce'], approved_legacy_wrapper=True)
++                prepared_nonce=proof['nonce'], approved_legacy_wrapper=True,
++                registry_claims=claims, claim_without_receipt=False, claim_bound=True)
+ 
+ 
+ def main():

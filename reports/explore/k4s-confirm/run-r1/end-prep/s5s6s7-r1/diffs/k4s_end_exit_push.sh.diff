@@ -1,0 +1,113 @@
+--- t1/end_exit_push.sh@0a87166f
++++ k4s_end_exit_push.sh
+@@ -1,53 +1,82 @@
+ #!/usr/bin/env bash
+-# Narrow r3 candidate: independent delta approval required before launch.
++# Narrow K4S END candidate (delta of T1 0a87166f): independent delta approval required before launch.
+ # Frozen detach.sh must use $job/detach.log and $job/detach.json.
+ set -u
+-base=/mpac/sdicks02/jobs/clasher/t1-20261010-r1
+ job=${1:?JOB}
+ shift
+ host=$(hostname)
+-case "$host" in 127x01|127x08) ;; *) exit 90 ;; esac
++case "$host" in
++  127x03) base=/mpac/sdicks02/jobs/clasher/k4s-end-r1 ;;
++  127x04) base=/mpac/sdicks02/jobs-k4s/k4s-end-r1 ;;
++  *) exit 90 ;;
++esac
+ case "$job" in */|*..*|*[[:space:]]*) exit 90 ;; esac
+ attempt=${job##*/}
+ [[ "$attempt" =~ ^[A-Za-z0-9._-]+$ ]] || exit 90
+ parent=${job%/*}
+ case "$parent" in
+-  "$base"|"$base/fleet-end-attempts-0108/$host") ;;
++  "$base/attempts") ;;
+   *) exit 90 ;;
+ esac
++# The claim records only basename(--out), so it must be unique per attempt: the attempt name.
++measurement=$job/$attempt
++repository=$base/repository
+ test -d "$job" && test ! -L "$job" || exit 90
+-test ! -e "$job/measurement" && test ! -e "$job/exit.json" || exit 90
++test ! -e "$measurement" && test ! -e "$job/exit.json" || exit 90
+ test -f "$job/detach.log" && test -s "$job/detach.json" || exit 90
+ output_count=0
+ expect_output=false
++repository_count=0
++expect_repository=false
++round_count=0
++expect_round=false
+ for arg in "$@"; do
+   if "$expect_output"; then
+-    test "$arg" = "$job/measurement" || exit 90
++    test "$arg" = "$measurement" || exit 90
+     expect_output=false
+-  elif test "$arg" = --output; then
++  elif "$expect_repository"; then
++    test "$arg" = "$repository" || exit 90
++    expect_repository=false
++  elif "$expect_round"; then
++    [[ "$arg" =~ ^(0|[1-9][0-9]?)$ ]] || exit 90
++    round=$arg
++    expect_round=false
++  elif test "$arg" = --out; then
+     output_count=$((output_count + 1))
+     expect_output=true
++  elif test "$arg" = --repository; then
++    repository_count=$((repository_count + 1))
++    expect_repository=true
++  elif test "$arg" = --round; then
++    round_count=$((round_count + 1))
++    expect_round=true
+   else
+-    case "$arg" in --output=*) exit 90 ;; esac
++    # Also refuses argparse abbreviations/=-forms of --out, --repository and --round.
++    case "$arg" in --o*|--rep*|--ro*) exit 90 ;; esac
+   fi
+ done
+ test "$output_count" = 1 && ! "$expect_output" || exit 90
++test "$repository_count" = 1 && ! "$expect_repository" || exit 90
++test "$round_count" = 1 && ! "$expect_round" || exit 90
+ test "$#" -gt 0 || exit 90
+-receive="$base/end-received/$host/$attempt"
++registry="$repository/reports/explore/k4s-confirm/end/registry/round-$(printf '%02d' "$round")/$host"
++receive="/mpac/sdicks02/k4s-runner/run-r1/end-received/$host/$attempt"
+ # 05 pre-creates this exact exclusive receive directory empty before launch.
+ printf '%s\0' "$@" > "$job/argv.nul" || exit 91
+ 
+-# No trap, polling, timer or network call while the foreground E4 command runs.
++# No trap, polling, timer or network call while the foreground END command runs.
+ "$@"
+ measurement_exit=$?
+ exit_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+ measurement_exists=false
+-test ! -d "$job/measurement" || measurement_exists=true
+-printf '{"utc":"%s","host":"%s","attempt":"%s","exit_code":%s,"command_exited":true,"measurement_exists":%s}\n' \
+-  "$exit_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" > "$job/exit.json.tmp"
++test ! -d "$measurement" || measurement_exists=true
++registry_exists=false
++test ! -d "$registry" || registry_exists=true
++printf '{"utc":"%s","host":"%s","attempt":"%s","exit_code":%s,"command_exited":true,"measurement_exists":%s,"registry_exists":%s}\n' \
++  "$exit_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" "$registry_exists" > "$job/exit.json.tmp"
+ mv "$job/exit.json.tmp" "$job/exit.json" || exit 91
+ 
+-# Count and total deadline bound post-exit transport; never retry E4.
++# Count and total deadline bound post-exit transport; never retry END.
+ deadline=$((SECONDS + 1200))
+ push_file() {
+   local source=$1 target=$2 limit=$3 tries=0 rc=0 remaining
+@@ -70,8 +99,12 @@
+ for name in exit.json detach.log detach.json argv.nul; do
+   push_file "$job/$name" "$receive/" 30 || failed=1
+ done
++# The registry claim directory is pushed whenever it exists, with or without a measurement (RC-5).
++if "$registry_exists"; then
++  push_file "$registry/" "$receive/registry/" 30 || failed=1
++fi
+ if "$measurement_exists"; then
+-  push_file "$job/measurement/" "$receive/durable-measurement/" 900 || failed=1
++  push_file "$measurement/" "$receive/durable-measurement/" 900 || failed=1
+ fi
+ if test "$failed" = 0; then
+   copied_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')

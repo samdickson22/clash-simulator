@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Fake ssh: -O check -> FAKE_MUX_RC; a session runs the remote python locally on stdin.
+printf 'SSH %s\n' "$*" >> "${FAKE_LOG:-/dev/null}"
+if [ "$1" = -O ]; then echo "Control socket connect: No such file or directory" >&2; exit "${FAKE_MUX_RC:-255}"; fi
+case " $* " in *" ControlMaster=no "*) ;; *) exit 97 ;; esac
+case " $* " in *" ControlPath=none "*) ;; *) exit 97 ;; esac
+case " $* " in *" BatchMode=yes "*) ;; *) exit 97 ;; esac
+exec "${FAKE_REMOTE_PY:-/usr/bin/python3}" -I -B -

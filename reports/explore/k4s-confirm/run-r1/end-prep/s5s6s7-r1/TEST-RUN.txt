@@ -1,0 +1,20 @@
+........................................................................ [ 92%]
+...........                                                              [100%]
+155 passed in 54.04s
+--- python -O
+    self._warn_about_missing_assertion(mode)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_s6_verifier.py:62: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:71: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:78: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:85: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:92: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:105: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:131: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:141: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:153: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:164: verifier refuses -O at import
+SKIPPED [1] tests/test_s6_verifier.py:174: verifier refuses -O at import
+145 passed, 11 skipped, 1 warning in 53.62s
