@@ -32,6 +32,11 @@ loader6.json, re-authenticates the data gate (studytree.authenticate_gate) and p
 run_fit.sh. R3-F2 - the live fit guard also enforces the study process/disk caps and keeps memory/GPU/PSS checks
 through teardown. R3-F6 - a non-attempt anomaly is resolved only by an ACK naming the anomaly file's SHA-256, an
 explicit 'continue' disposition and an owner; it is consumed and archived (RESOLVED-*); anything else keeps blocking.
+r5 (Sol r4): R4-F2 - nothing new starts after STOP or the hard stop (prepare_students returns first); calibration is
+monitored, exclusive GPU work (run_calibration: DISPATCH-flock admission with no live fit/phase, parent live guards,
+PID-only stop on breach, nonzero or post-deadline results rejected). R4-F3 - a stopped (partial) completion is
+reconciled exactly like a final one: segment 'returned' and a known zero exit of this launch (or an exact-attempt
+ACK), else 'failed' (blocking anomaly, never resumed).
 """
 import datetime, fcntl, json, math, os, secrets, signal, sys, time
 from pathlib import Path
@@ -57,7 +62,8 @@ FIT_PROCESSES, PHASE_PROCESSES = 10, 53
 PERMITTED_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap')
 RUNTIME_FILES = ('reports/explore/x4s4/supervise.py', 'reports/explore/x4s4/x4s4io.py', 'reports/explore/x4s4/studytree.py',
                  'reports/explore/x4s4/qualify4.py', 'reports/explore/x4s3/run.py', 'reports/explore/x4s3/runtime.sh')
-EXIT, LAUNCHED = {}, {}                                  # reaped pid -> exit code; live child pid -> launch_id
+EXIT, LAUNCHED, POPEN = {}, {}, {}                       # reaped pid -> exit code; child pid -> launch_id / Popen
+CALIBRATION_POLL = 5.0
 
 
 def utc(): return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -163,7 +169,7 @@ def launch(name, argv, log, receipt, env, cwd=None, extra_rec=None):
     """Spawn an owned child and record its launch receipt (launch_id, pid, pgid, starttime)."""
     lid = secrets.token_hex(8)
     child = io.spawn(argv, log, env, roles=('logs',), cwd=cwd)
-    LAUNCHED[child['pid']] = lid
+    LAUNCHED[child['pid']] = lid; POPEN[child['pid']] = child['popen']
     rec = dict(launched_at_utc=utc(), launch_id=lid, pid=child['pid'], pgid=child['pgid'], starttime=child['starttime'],
                command=argv, name=name, **(extra_rec or {}))
     io.write_json_once(receipt, rec, roles=('receipts',), mode=0o444)
@@ -207,24 +213,30 @@ def fit_receipt(fid): return f'{J}/receipts/fit-{fid}-launch.json'
 
 
 def fit_state(fid):
+    """R4-F3: the same reconciliation for a FINAL and a STOPPED (partial) completion. The frozen trainer, on the driver's
+    SIGTERM or a stop file, writes complete.json(stopped=true), returns normally (segment 'returned') and exits 0; so
+    either state counts only with segment 'returned' AND a known zero exit of THIS launch (or, if the status is
+    unknown after a driver restart, an exact-attempt ACK resolution). A known nonzero exit, a failed segment or an
+    unresolved unknown exit is 'failed' (an anomaly that blocks; never auto-resumed)."""
     out = f'{J}/fits/{fid}'; done = jload(out+'/complete.json'); rp = fit_receipt(fid); rec = jload(rp)
     if rec and io.group_alive(rec['pgid'], rec['starttime']): return 'running', rec
     seg = jload(out+'/segment.json')
-    if done and not done['stopped'] and done['step'] == FITS[fid]['steps']:
-        status = exit_status(rec) if rec else None
-        res = jload(f'{J}/receipts/fit-{fid}-exit-resolution.json')
-        if status is None and rec and not (res and res.get('launch_id') == rec['launch_id']):
-            a = ack_for(f'fit-{fid}-exit', rec, rp)
-            if a and a['disposition'] == 'success':
-                io.write_json_once(f'{J}/receipts/fit-{fid}-exit-resolution.json', dict(utc=utc(), launch_id=rec['launch_id'], ack=a),
-                                   roles=('receipts',))
-                consume_ack(f'fit-{fid}-exit'); res = jload(f'{J}/receipts/fit-{fid}-exit-resolution.json')
-        clean = status == 0 or (status is None and rec is not None and bool(res) and res.get('launch_id') == rec['launch_id'])
-        if seg and seg.get('status') == 'returned' and clean: return 'done', rec
-        return 'failed', rec                                       # completion without a clean return + known zero exit
-    if done and done['stopped']: return 'stopped', rec
-    if rec: return 'failed', rec
-    return 'pending', rec
+    if done is None:
+        return ('failed', rec) if rec else ('pending', rec)
+    status = exit_status(rec) if rec else None
+    res = jload(f'{J}/receipts/fit-{fid}-exit-resolution.json')
+    if status is None and rec and not (res and res.get('launch_id') == rec['launch_id']):
+        a = ack_for(f'fit-{fid}-exit', rec, rp)
+        if a and a['disposition'] == 'success':
+            io.write_json_once(f'{J}/receipts/fit-{fid}-exit-resolution.json', dict(utc=utc(), launch_id=rec['launch_id'], ack=a),
+                               roles=('receipts',))
+            consume_ack(f'fit-{fid}-exit'); res = jload(f'{J}/receipts/fit-{fid}-exit-resolution.json')
+    clean = rec is not None and seg is not None and seg.get('status') == 'returned' and (
+        status == 0 or (status is None and bool(res) and res.get('launch_id') == rec['launch_id']))
+    if not clean: return 'failed', rec
+    if not done['stopped'] and done['step'] == FITS[fid]['steps']: return 'done', rec
+    if done['stopped']: return 'stopped', rec
+    return 'failed', rec
 
 
 def prepare_fit_dirs(fid):
@@ -332,7 +344,57 @@ def ready_students():
                                       jload(f'{J}/rt-{s}/READY.json')['utc'] if s not in FIXED else ''))
 
 
+def calibration_breach(rec):
+    """Live guards for a running calibration (GPU work): STOP, deadline, memory, GPU, its PSS, study caps."""
+    if stop_present(): return 'STOP'
+    if now() >= STOP_AT: return 'hard_stop'
+    mem = mem_available()
+    if mem is None or mem < studytree.MEM_FLOOR: return 'memory_floor'
+    g = gpu_used_mib()
+    if g is None: return 'gpu_unreadable'
+    if g > GPU_LIMIT_MIB: return 'gpu_over_40GB'
+    p = studytree.pss_bytes(io.owned_pids(rec['pgid'], rec['starttime']))
+    if p is None or p > studytree.PSS_LIMIT: return 'pss_over_50GiB_or_unreadable'
+    if not studytree.admission(J, 0)[0]: return 'study_tree_cap'
+    return None
+
+
+def run_calibration(fid, dest, cal):
+    """R4-F2: the unchanged calibrator as monitored, exclusive GPU work. Admission (under the DISPATCH flock shared with
+    diagnose.py): no STOP, deadline unmet, no unresolved anomaly, no live fit or reporting phase, resources and GPU
+    admissible. While it runs the parent polls calibration_breach and stops its verified PIDs on a breach; a non-zero
+    exit or a result returned after the deadline is never accepted. Returns 'ok', 'not_admitted', 'stopped' or 'failed'."""
+    with DispatchLock():
+        if stop_present() or now() >= STOP_AT or unresolved_anomalies(): return 'not_admitted'
+        if live_supervisor() or any(fit_state(f)[0] == 'running' for f in FIT_ORDER) or not resources_ok(for_fit=True): return 'not_admitted'
+        env = dict(PATH='/usr/bin:/bin', PYTHONPATH=f'{J}/fit/source:{J}/fit/source/src:{J}/fit/ops', PYTHONDONTWRITEBYTECODE='1',
+                   OMP_NUM_THREADS='1', HOME=os.environ.get('HOME', '/nonexistent'))
+        rec = launch(f'calibrate-{fid}', ['/usr/bin/taskset', '-c', '56-61', GPU_PY, '-B', f'{J}/fit/ops/calibrate.py', '--id', fid,
+                                          '--checkpoint', dest, '--assets', f'{J}/inputs/assets.npz', '--out', cal],
+                     f'{J}/logs/calibrate-{fid}.log', f'{J}/receipts/calibrate-{fid}-launch-{int(time.time())}.json', env, cwd=f'{J}/fit/source')
+    proc = POPEN[rec['pid']]
+    while proc.poll() is None:
+        why = calibration_breach(rec)
+        if why:
+            io.stop_owned(rec['pgid'], rec['starttime'], term_grace=30, kill_grace=30)
+            proc.wait(); EXIT[rec['pid']] = proc.returncode
+            event(kind='child_exit', pid=rec['pid'], launch_id=rec['launch_id'], exit_code=proc.returncode)
+            if why not in ('STOP', 'hard_stop'): anomaly(f'calibration-{fid}', reason=f'calibration stopped: {why}')
+            if io.lexists(cal): io.rename_path(cal, f'{cal}.stopped-{int(time.time())}', roles=('calibration',))
+            return 'stopped'
+        time.sleep(CALIBRATION_POLL)
+    EXIT[rec['pid']] = proc.returncode
+    event(kind='child_exit', pid=rec['pid'], launch_id=rec['launch_id'], exit_code=proc.returncode)
+    late = now() >= STOP_AT
+    if proc.returncode != 0 or late or not io.lexists(cal):
+        if io.lexists(cal): io.rename_path(cal, f'{cal}.rejected-{int(time.time())}', roles=('calibration',))
+        if not late: anomaly(f'calibration-{fid}', reason=f'calibrate exit {proc.returncode}, output present={io.lexists(cal)}')
+        return 'failed'
+    return 'ok'
+
+
 def prepare_students():
+    if stop_present() or now() >= STOP_AT: return              # R4-F2: nothing new after STOP or the hard stop
     for fid in FIT_ORDER:
         if fit_state(fid)[0] != 'done' or io.lexists(f'{J}/rt-{fid}/READY.json'): continue
         if io.lexists(f'{D}/ANOMALY-calibration-{fid}.json'): continue
@@ -342,16 +404,8 @@ def prepare_students():
         cal = f'{J}/calibration/{fid}.json'
         if not io.lexists(cal):
             io.check_writable(cal, roles=('calibration',), must_not_exist=True); io.mkdirs(J+'/calibration')
-            env = dict(PATH='/usr/bin:/bin', PYTHONPATH=f'{J}/fit/source:{J}/fit/source/src:{J}/fit/ops', PYTHONDONTWRITEBYTECODE='1',
-                       OMP_NUM_THREADS='1', HOME=os.environ.get('HOME', '/nonexistent'))
-            try:
-                r = io.run_checked(['/usr/bin/taskset', '-c', '56-61', GPU_PY, '-B', f'{J}/fit/ops/calibrate.py', '--id', fid,
-                                    '--checkpoint', dest, '--assets', f'{J}/inputs/assets.npz', '--out', cal], 1800, 16 << 20,
-                                   env=env, cwd=f'{J}/fit/source')
-                io.replace_bytes(f'{J}/logs/calibrate-{fid}.log', r.stdout+r.stderr, roles=('logs',))
-            except io.Refusal as e:
-                anomaly(f'calibration-{fid}', reason=f'calibrate failed: {e}'); continue
-            if not io.lexists(cal): anomaly(f'calibration-{fid}', reason='calibrate wrote no output'); continue
+            outcome = run_calibration(fid, dest, cal)
+            if outcome != 'ok': continue                            # not admitted now, stopped, or an anomaly was raised
         c = jload(cal)
         if c['checkpoint_sha256'] != sha(dest) or not 0 < c['threshold'] < 1: anomaly(f'calibration-{fid}', reason='bad calibration'); continue
         rt = f'{J}/rt-{fid}'

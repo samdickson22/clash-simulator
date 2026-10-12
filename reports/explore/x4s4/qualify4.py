@@ -205,14 +205,51 @@ def roundtrip(a):
 BANKS = {'collection': C_BASE, 'smoke': SMOKE_BASE}
 
 
-def phase_evidence(phases):
-    """R3-F5: per phase, the SHA-256 of schedule.json, launch.json and supervisor-exit.json (None while unfinished).
-    The parity receipt pins this; label admission and later consumers re-derive it, so a phase whose final evidence
-    disappeared or changed no longer matches."""
-    ev = {}
+PERMITTED_PHASE_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap', 'parity_pause')
+COLLECT_ALLOC = {'K4S-120': ((0, 2000), (3500, 3750)), 'S-200': ((2000, 3500), (3750, 4000))}
+BANK_RANGE = {'collection': 'reporting', 'smoke': 'smoke'}
+
+
+def phase_evidence(phases, bank='collection'):
+    """R3-F5/R4-F5: validated execution identity of every phase. schedule.json and launch.json must exist; the schedule
+    is the bank's range with seeds base+index; a bank-C phase runs exactly one arm inside its allocation; schedule and
+    launch name the same config, and all phases the same config; every block proof is a scheduled index. The exit is
+    classified: absent -> 'running'; reason None and returncode 0 with no live group -> 'clean'; a declared guard stop
+    (PERMITTED_PHASE_STOPS: an interruption whose incomplete captures are dropped) with no live group -> 'interrupted';
+    anything else (e.g. returncode 17 with no reason) is an unexpected failure and refuses. The pinned record carries
+    the three file SHAs plus this classification, and every consumer re-derives it."""
+    base, want = BANKS[bank], BANK_RANGE[bank]
+    ev, cfgs = {}, set()
     for p in sorted(map(str, phases)):
-        ev[p] = {n: (io.sha256_file(f'{p}/{n}') if io.lexists(f'{p}/{n}') else None)
-                 for n in ('schedule.json', 'launch.json', 'supervisor-exit.json')}
+        for n in ('schedule.json', 'launch.json'):
+            if not io.lexists(f'{p}/{n}'): raise QualError(f'{p}: {n} missing (no execution identity)')
+        sched, launch = io.read_json(p+'/schedule.json', 16 << 20), io.read_json(p+'/launch.json', 4 << 20)
+        if sched.get('range') != want: raise QualError(f"{p}: schedule range {sched.get('range')!r} is not the {bank} bank")
+        cases = sched.get('cases') or []
+        if not cases or any(c[1] != base+c[0] for c in cases): raise QualError(f'{p}: schedule seeds are not bank {bank} (base+index)')
+        arms = sorted({c[2] for c in cases})
+        if bank == 'collection':
+            if len(arms) != 1 or arms[0] not in COLLECT_ALLOC: raise QualError(f'{p}: a collection phase runs exactly one arm')
+            if any(not any(lo <= c[0] < hi for lo, hi in COLLECT_ALLOC[arms[0]]) for c in cases):
+                raise QualError(f'{p}: indices outside the {arms[0]} bank-C allocation')
+        if not sched.get('config_sha256') or sched.get('config_sha256') != launch.get('config_sha256'):
+            raise QualError(f'{p}: schedule and launch name different configs')
+        cfgs.add(sched['config_sha256'])
+        scheduled = {c[0] for c in cases}
+        blocks = sorted(int(n[:-5]) for n in io.listdir(p+'/blocks') if n.endswith('.json')) if io.lexists(p+'/blocks') else []
+        if any(i not in scheduled for i in blocks): raise QualError(f'{p}: a block proof is not a scheduled index')
+        if io.lexists(p+'/supervisor-exit.json'):
+            ex = io.read_json(p+'/supervisor-exit.json', 4 << 20)
+            if ex.get('remaining_group_pids'): raise QualError(f'{p}: the phase exited with live group members')
+            if ex.get('reason') is None and ex.get('returncode') == 0: status = 'clean'
+            elif ex.get('reason') in PERMITTED_PHASE_STOPS: status = 'interrupted'
+            else: raise QualError(f"{p}: unexpected phase exit (reason={ex.get('reason')!r}, returncode={ex.get('returncode')!r})")
+        else:
+            status = 'running'
+        ev[p] = {'schedule.json': io.sha256_file(p+'/schedule.json'), 'launch.json': io.sha256_file(p+'/launch.json'),
+                 'supervisor-exit.json': io.sha256_file(p+'/supervisor-exit.json') if status != 'running' else None,
+                 'status': status, 'config_sha256': sched['config_sha256'], 'arms': arms, 'scheduled': len(cases), 'proved': len(blocks)}
+    if len(cfgs) > 1: raise QualError('the phases ran different configs')
     return ev
 
 
@@ -275,8 +312,8 @@ def parity(a):
         if io.lexists(io.JOB+'/STOP'): res['stopped_by_STOP'] = True; break
         time.sleep(a.watch)
     res['phases'] = sorted(phases)
-    res['evidence'] = phase_evidence(phases)
-    res['final'] = all(e['supervisor-exit.json'] is not None for e in res['evidence'].values())
+    res['evidence'] = phase_evidence(phases, a.bank)
+    res['final'] = all(e['status'] != 'running' for e in res['evidence'].values())
     res['passed'] = bool(res['passed'] and res['final'])
     return res
 

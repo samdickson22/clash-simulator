@@ -121,8 +121,9 @@ def check_parity(phases, parity):
     if not (pr.get('check') == 'parity' and sorted(map(str, pr.get('phases', []))) == names):
         raise PlanError('a C7b parity receipt for exactly these collection phases is required')
     if pr.get('bank') != 'collection': raise PlanError('label admission accepts only a bank-C collection parity receipt')
-    evidence = qualify4.phase_evidence(names)                 # R3-F5: re-derive the final phase evidence NOW
-    if pr.get('final') is not True or any(e['supervisor-exit.json'] is None for e in evidence.values()):
+    try: evidence = qualify4.phase_evidence(names, 'collection')   # R3-F5/R4-F5: re-derive validated phase evidence NOW
+    except (qualify4.QualError, io.Refusal) as e: raise PlanError(f'phase evidence invalid: {e}')
+    if pr.get('final') is not True or any(e['status'] == 'running' for e in evidence.values()):
         raise PlanError('the parity receipt is not final, or a phase no longer has its supervisor-exit evidence')
     if pr.get('evidence') != evidence: raise PlanError('stale parity receipt: phase schedule/launch/exit evidence changed')
     try: current = qualify4.parity_inventory(names)

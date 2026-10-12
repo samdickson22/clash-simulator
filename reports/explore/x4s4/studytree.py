@@ -175,26 +175,41 @@ GATES = {'O': ('onpolicy', 'O-VERIFIED.json'), 'holdout': ('onpolicy-holdout', '
          'OW': ('onpolicy-w', 'OW-VERIFIED.json')}
 
 
+GATE_SHARED = ('batches', 'rows', 'roots', 'rows_per_arm', 'single_candidate_root_share', 'sources_sha256')
+GATE_IDS = {'O': ('label_plan_sha256', 'label_receipts_sha256', 'parity_receipt_sha256'),
+            'holdout': ('label_plan_sha256', 'label_receipts_sha256', 'parity_receipt_sha256'),
+            'OW': ('selection_sha256', 'o_gate_sha256', 'acceptance_sha256', 'label_receipts_sha256')}
+
+
 def authenticate_gate(job, mode):
-    """R3-F1/R3-F3: a consumer of a verified set re-authenticates it NOW: the gate's mode; its verifier receipt
-    (SHA pinned in the gate, passed, same mode); the exact batch directory inventory; and every batch's current
-    manifest SHA equal to the gate's pin after a complete seal re-verification (so a substituted corpus - e.g. a
-    training corpus swapped into the holdout path - is refused before any loader sees it).
+    """R3-F1/R3-F3/R4-F1: a consumer of a verified set re-authenticates it NOW.
+      * the verifier receipt is the one the gate pins (SHA), has the complete successful shape (passed, sealed, mode,
+        the shared fields and the mode's identity fields) and AGREES with the gate on every shared field - the exact
+        batch list (names, manifest SHAs, rows, roots, games), rows, roots, rows per arm, single-candidate share, the
+        source-list SHA - and on every input identity (label plan / receipts / parity, or selection / O gate /
+        acceptance), so a gate re-pinned to other batches no longer matches its receipt;
+      * the exact batch directory inventory equals that list;
+      * every batch's complete seal re-verifies and its manifest SHA equals the pin.
     Returns (batch directory paths, gate SHA-256, gate document)."""
     job = job or io.JOB
     root, name = GATES[mode]
     gate_path, rdir = f'{job}/data/{name}', f'{job}/data/{root}'
     g = io.read_json(gate_path, 64 << 20)
-    io.require(g.get('mode') == mode and g.get('batches'), 'gate', f'{name} is not a {mode} gate')
+    io.require(isinstance(g, dict) and g.get('mode') == mode and g.get('batches'), 'gate', f'{name} is not a {mode} gate')
     rec_path = rdir+'/VERIFY-RECEIPT.json'
     io.require(io.sha256_file(rec_path) == g.get('receipt_sha256'), 'gate', f'{mode} verifier receipt differs from the gate pin')
     rec = io.read_json(rec_path, 64 << 20)
-    io.require(rec.get('passed') is True and rec.get('mode') == mode, 'gate', f'{mode} verifier receipt not passed')
-    names = sorted(b['name'] for b in g['batches'])
+    io.require(isinstance(rec, dict) and rec.get('passed') is True and rec.get('sealed') is True and rec.get('mode') == mode,
+               'gate', f'{mode} verifier receipt not a passed, sealed {mode} verification')
+    for k in GATE_SHARED + GATE_IDS[mode]:
+        io.require(k in rec and k in g, 'gate', f'{mode} receipt/gate lacks {k}')
+        io.require(rec[k] == g[k], 'gate', f'{mode} gate field {k} differs from its verifier receipt')
+    names = [b['name'] for b in rec['batches']]
+    io.require(len(set(names)) == len(names), 'gate', f'{mode} receipt lists a batch twice')
     present = sorted(n for n in io.listdir(rdir) if n not in ('VERIFY-RECEIPT.json', 'pack-log.txt'))
-    io.require(present == names, 'gate', f'{mode} batch inventory differs from the gate ({present} vs {names})')
+    io.require(present == sorted(names), 'gate', f'{mode} batch inventory differs from the gate ({present} vs {sorted(names)})')
     out = []
-    for b in g['batches']:
+    for b in rec['batches']:
         d = f"{rdir}/{b['name']}"
         _, msha = io.verify_sealed_dir(d)
         io.require(msha == b['manifest_sha256'], 'gate', f"{mode} batch {b['name']} differs from the gate's manifest pin")

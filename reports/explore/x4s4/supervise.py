@@ -89,10 +89,14 @@ def collection_phases(job, phase_dir):
     return [arm_dir+'/'+n for n in io.listdir(arm_dir) if n.startswith('a') and io.is_real_dir(arm_dir+'/'+n)]
 
 
-def admit_phase(job, add):
-    """R3-F2: admission immediately before the child is spawned - also for direct collection/qualification calls,
-    not only driver launches: MemAvailable >= 24 GiB and memory PSI readable and <= 10 (dispatch inhibition only),
-    and the study tree + this phase's processes <= 70 with the job <= 100 GB. Returns None or the refusal reason."""
+def admit_phase(job, add, stop_at=None):
+    """R3-F2/R4-F2: admission immediately before the child is spawned - also for direct collection/qualification
+    calls, not only driver launches: no STOP (lexists), the study hard stop not reached (both the --stop-at value and
+    <job>/HARD-STOP-UTC.txt), MemAvailable >= 24 GiB and memory PSI readable and <= 10 (dispatch inhibition only), and
+    the study tree + this phase's processes <= 70 with the job <= 100 GB. Returns None or the refusal reason."""
+    if io.lexists(job+'/STOP'): return 'admission: STOP present'
+    if studytree.hard_stop_passed(job) or (stop_at is not None and datetime.datetime.now(datetime.timezone.utc) >= stop_at):
+        return 'admission: study hard stop reached'
     ok, why = studytree.dispatch_ok()
     if not ok: return 'admission: '+why
     ok, why = studytree.admission(job, add=add)
@@ -149,7 +153,7 @@ def main():
     if io.lexists(job+'/STOP'):
         io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason='STOP present before launch'), roles=PHASE_ROLES)
         raise SystemExit(3)
-    why = admit_phase(job, workers*width+3)                 # runner + pool + this supervisor (reservation)
+    why = admit_phase(job, workers*width+3, stop_at)        # runner + pool + this supervisor (reservation)
     if why:
         io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason=why), roles=PHASE_ROLES)
         raise SystemExit(3)

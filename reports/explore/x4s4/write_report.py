@@ -8,6 +8,9 @@ carry this plan's SHA, and the plan's kept O count must cover the gate's rows wi
 <job>/analysis/diagnostic.json (must carry the HOLDOUT-VERIFIED SHA and all five students). A missing diagnostic is
 rendered as an explicit "unavailable" entry per student (it stays descriptive; it never changes the outcome rule).
 The output is confined to <repo>/reports/explore/x4s4/RESULTS.md.
+r5 (Sol r4 R4-F4, R4-F6): --contention-sha and --freeze-commit are required; the reducer's full C5 freeze gate
+(reduce.verify_freeze) runs on them BEFORE results.json is opened; the model identity set must equal the reduced
+student list exactly and the diagnostic must carry staged identities for all five students.
 Always rendered (Sol F14): the primary pooled and separately by arm; prefix seed counts for the primary and for R5W;
 the contention view (an explicit no-estimate line when it is empty); the composition table; the fixed control-data
 disclosures; and the decision-table row selected by the primary outcome, with its harmful/attribution follow-up.
@@ -152,58 +155,59 @@ def render(r, plan, o_gate, ow_gate, diag, inputs, notes):
     return '\n'.join(L)+'\n'
 
 
-FREEZE_PATH = 'reports/explore/x4s4/receipts/contention-exclusion.json'
 HELDOUT64_SHA = '0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f'
 
 
-def current_students(J, r_ids):
-    """The staged students' current checkpoint/threshold (R3a from the plan the reduction used, others from READY)."""
+def staged_students(J, plan_path):
+    """The five staged students' current checkpoint/threshold (R3a from the reduction plan, the rest from READY)."""
     out = {}
-    for sid in r_ids['students']:
-        s = io.read_json(r_ids['plan_path'], 16 << 20)['student'] if sid == 'R3a' else io.read_json(f'{J}/rt-{sid}/READY.json', 4 << 20)['student']
+    for sid in STUDENTS:
+        s = io.read_json(plan_path, 16 << 20)['student'] if sid == 'R3a' else io.read_json(f'{J}/rt-{sid}/READY.json', 4 << 20)['student']
         out[sid] = dict(checkpoint_sha256=s['checkpoint_sha256'], threshold=s.get('threshold'))
     return out
 
 
-def authenticate(J):
-    """R2-F9 + R3-F4: fixed inputs whose identities must chain to the CURRENT study evidence; returns (docs, SHAs)."""
+def authenticate(J, contention_sha, freeze_commit, repo=None):
+    """R2-F9, R3-F4, R4-F4, R4-F6. Order matters: the FULL C5 freeze gate of the reducer (reduce.verify_freeze: readonly
+    single-link receipt, SHA, committed bytes by the verified git walk on origin/main, schema, phase set, every phase's
+    census/launch/exit/SETTLED/block/game SHA/size/st_mtime_ns inventory, retired.json) runs on the declared freeze
+    BEFORE results.json or any other outcome-bearing input is opened. Then every input identity must chain to the
+    current evidence: results name exactly that receipt/commit; the reduced student list equals the identity set
+    exactly (no omission, extra or duplicate) and equals the staged students; gates match and are re-authenticated;
+    the diagnostic covers exactly the five students with the staged checkpoints/thresholds, the fixed held-out64 and
+    the authenticated holdout gate. Returns (docs, input SHAs)."""
+    import reduce
+    def need(cond, msg):
+        if not cond: raise SystemExit('write_report.py: input binding failed: '+msg)
+    reduce.verify_freeze(J, contention_sha, freeze_commit, repo or io.REPO)        # raises SystemExit on any failure
     paths = dict(results=f'{J}/analysis/results.json', label_plan=f'{J}/data/label-plan.json', o_gate=f'{J}/data/O-VERIFIED.json',
                  ow_gate=f'{J}/data/OW-VERIFIED.json')
     if io.lexists(f'{J}/analysis/diagnostic.json'):
         paths.update(diagnostic=f'{J}/analysis/diagnostic.json', holdout_gate=f'{J}/data/HOLDOUT-VERIFIED.json')
     docs = {k: io.read_json(v, 1 << 30) for k, v in paths.items()}
     shas = {k: sha(v) for k, v in paths.items()}
-    def need(cond, msg):
-        if not cond: raise SystemExit('write_report.py: input binding failed: '+msg)
     need(docs['o_gate'].get('label_plan_sha256') == shas['label_plan'], 'O gate was not verified against this label plan')
     need(docs['ow_gate'].get('o_gate_sha256') == shas['o_gate'], 'O_W gate was not verified against this O gate')
     kept, rows = docs['label_plan']['stats']['O']['kept'], docs['o_gate']['rows']
     need(rows <= kept and kept-rows <= 0.001*kept+1, f'label plan kept O ({kept}) does not cover the gate rows ({rows})')
     r = docs['results']; ids = r.get('identities')
     need(isinstance(ids, dict), 'results carry no study identities (not produced by the r4 reducer)')
-    need(set(STUDENTS[:4]) <= set(r['students']), 'results do not reduce the primary students')
-    # C5: the receipt the reduction names is the current frozen receipt, committed at the named commit on origin/main
+    reduced = r.get('students')
+    need(isinstance(reduced, list) and len(set(reduced)) == len(reduced) and set(STUDENTS[:4]) <= set(reduced) <= set(STUDENTS),
+         'reduced student list must hold the four primary students, only declared students, no duplicates')
+    need(isinstance(ids.get('students'), dict) and sorted(ids['students']) == sorted(reduced), 'model identities must cover exactly the reduced students')
     cs = r['readout']['contention_sensitivity']
-    rec = f'{J}/receipts/contention-exclusion.json'
-    need(io.lexists(rec) and sha(rec) == ids['contention_receipt_sha256'] == cs.get('exclusion_sha256'), 'C5 receipt differs from the reduction')
-    try:
-        committed = io.git_committed_blob(io.REPO, ids['freeze_commit'], FREEZE_PATH)
-        on_main = io.git_is_ancestor(io.REPO, ids['freeze_commit'])
-    except io.Refusal as e:
-        need(False, f'C5 freeze commit cannot be authenticated: {e}')
-    need(hashlib.sha256(committed).hexdigest() == ids['contention_receipt_sha256'] and on_main and cs.get('freeze_commit') == ids['freeze_commit'],
-         'C5 receipt is not committed at the named freeze commit on origin/main')
+    need(ids.get('contention_receipt_sha256') == contention_sha == cs.get('exclusion_sha256') and ids.get('freeze_commit') == freeze_commit
+         == cs.get('freeze_commit'), 'results were not reduced under the authenticated C5 freeze')
     retired = f'{J}/driver/retired.json'
     need((sha(retired) if io.lexists(retired) else None) == ids['retired_sha256'], 'retired.json changed since the reduction')
     need(sha(ids['plan_path']) == ids['plan_sha256'], 'the reduction plan changed')
-    # data gates: the ones the reduction recorded are the current ones, re-authenticated against the current corpora
     need(ids['gates'].get('O') == shas['o_gate'] and ids['gates'].get('OW') == shas['ow_gate'], 'results were reduced under other data gates')
     for mode in ('O', 'OW'):
         try: studytree.authenticate_gate(J, mode)
         except io.Refusal as e: need(False, f'{mode} corpus no longer matches its gate: {e}')
-    # models: the reduced students are the currently staged ones
-    staged = current_students(J, ids)
-    need(staged == ids['students'], 'reduced student checkpoints/thresholds differ from the staged students')
+    staged = staged_students(J, ids['plan_path'])
+    need(all(ids['students'][k] == staged[k] for k in reduced), 'reduced student checkpoints/thresholds differ from the staged students')
     if 'diagnostic' in docs:
         d = docs['diagnostic']
         try: _, hsha, _ = studytree.authenticate_gate(J, 'holdout')
@@ -211,18 +215,22 @@ def authenticate(J):
         need(d.get('holdout_gate_sha256') == shas['holdout_gate'] == hsha, 'diagnostic was not run on the verified O-holdout')
         need(d.get('heldout64_sha256') == HELDOUT64_SHA, 'diagnostic did not use the fixed R1 held-out64 slice')
         need(sorted(d.get('students', {})) == sorted(STUDENTS), 'diagnostic must cover exactly the five students')
-        dc = {k: dict(checkpoint_sha256=v['checkpoint_sha256'], threshold=v.get('threshold')) for k, v in d.get('student_checkpoints', {}).items()}
-        need(all(dc.get(k) == v for k, v in staged.items()), 'diagnostic student checkpoints/thresholds differ from the reduced students')
+        dc = d.get('student_checkpoints')
+        need(isinstance(dc, dict) and sorted(dc) == sorted(STUDENTS)
+             and all(dict(checkpoint_sha256=dc[k].get('checkpoint_sha256'), threshold=dc[k].get('threshold')) == staged[k] for k in STUDENTS),
+             'diagnostic student checkpoints/thresholds differ from the staged students')
     return docs, shas
 
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('--contention-sha', required=True, help='SHA-256 of the frozen C5 receipt (as given to reduce.py)')
+    ap.add_argument('--freeze-commit', required=True, help='commit on origin/main that contains the C5 receipt')
     ap.add_argument('--notes', default='[]', help='JSON list of extra disclosure lines (in addition to the fixed ones)')
     ap.add_argument('--out', default=io.REPORT_ROOT+'/RESULTS.md')
     a = ap.parse_args()
     io.check_writable(a.out, report=True)
-    docs, shas = authenticate(io.JOB)
+    docs, shas = authenticate(io.JOB, a.contention_sha, a.freeze_commit)
     notes = json.loads(a.notes)
     if not (isinstance(notes, list) and all(isinstance(x, str) for x in notes)): raise SystemExit('--notes must be a JSON list of strings')
     text = render(docs['results'], docs['label_plan'], docs['o_gate'], docs['ow_gate'], docs.get('diagnostic'), shas, notes)
