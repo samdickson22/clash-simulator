@@ -1,0 +1,22 @@
+{
+  "A6_review_relay_required": "PASS or PASS_WITH_NOTES before launch; BLOCK holds pending ruling",
+  "assembly_receipt_required": [
+    "host measurement to release immediate-child mapping",
+    "file count/full SHA equality",
+    "ACK binding",
+    "wrapper metadata binding",
+    "release root listing equals launched-attempt set",
+    "original host listings and launch receipts for PC1 review"
+  ],
+  "coordinator_layout_ruling": "9f919cb3",
+  "heading_timestamp_correction": "462de9fc",
+  "host_job": "BASE/fleet-end-attempts-0108/<host>/<attempt>",
+  "host_measurement": "<attempt>/measurement",
+  "no_code_change": true,
+  "outcomes_sealed": true,
+  "production_timing_started": false,
+  "release_assembly": "Only after verifier ACK, byte-identical plain files/no symlinks/no archives/full receipt-manifest hash check; preserve every passing/failed/refused attempt and original host directories. If nothing received STOP/escalate.",
+  "release_copy": "BASE/fleet-end-attempts-0108/<host>/<attempt>",
+  "release_copy_source": "ACKed end-received/<host>/<attempt>/durable-measurement",
+  "utc": "2026-10-12T02:39:58Z"
+}
