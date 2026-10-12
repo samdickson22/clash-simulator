@@ -1,7 +1,7 @@
 {
   "purpose": "X4S-4 exploration, NEVER ADOPTABLE: does refitting the R3a recipe on r1 plus W-labelled on-policy cutoff states of the current student-tier agent lower loss vs v1 in K4S-120 and S-200?",
   "status": "exploration only; NEVER ADOPTABLE; no student here enters any frozen manifest (SD1 stays R3a)",
-  "planning_doc": "reports/explore/x4s4/PLAN.md (r2 a72b3213)",
+  "planning_doc": "reports/explore/x4s4/PLAN.md (r3 87809ae0, frozen)",
   "paired_seeds": 1200,
   "arms": {
     "K4S-120": {
@@ -123,7 +123,7 @@
       "data": "same as R5",
       "steps": 2500,
       "train_seed": 2026101302,
-      "role": "treatment replicate, mandatory fit (C1); games skipped only under the futility stop"
+      "role": "treatment replicate, mandatory fit and games (C1, E1); no futility stop"
     },
     "R5W": {
       "data": "r1 6,009,681 + matched off-policy set O_W (W vs v1, X decks, bank C_prime; root-matched to |O|), listed x4",
@@ -155,15 +155,19 @@
   },
   "readout": {
     "primary": "Delta = mean(R5, R5-rep) minus mean(R3a, R3a-rep), paired by seed, pooled over K4S-120 and S-200 with equal arm weight; each arm also separately",
-    "helps": "upper95CI(Delta) < 0 AND point(R5 minus R3a) < 0 AND point(R5-rep minus R3a) < 0",
+    "helps": "upper95CI(Delta) < 0 AND pooled point(R5 minus R3a) < 0 AND pooled point(R5-rep minus R3a) < 0 (E2)",
     "no_material_effect": "not helps AND lower95CI(Delta) > -2.0 pp",
     "inconclusive": "otherwise",
     "mde_pp": 2.1,
     "secondaries": "R5 minus R5W; mean(R5,R5-rep) minus R5W; single-fit contrasts; sigma_fit from R5 minus R5-rep and R3a-rep minus R3a (2-df, descriptive)",
     "decision": "only the primary selects the decision-table row",
-    "also": "parity table; contention-sensitivity primary; O-holdout diagnostic; cutoff/student-default/play/wall/overrun per student and arm",
-    "stop_rule": "fixed N=1200; R5-rep games skipped only if pooled R5 minus R3a point >= 0; reporting block fit-free",
-    "contention": "flag a game if [mtime-wall, mtime] meets a census sample with memory PSI avg10 > 10 or foreign CPU > 2 cores on 0-49; union of flagged seeds excluded for all students; SHA-frozen before reduction"
+    "also": "per-arm primary; parity table (E10, disclosed, no exclusion); contention-sensitivity primary (explicit no-estimate if empty); O-holdout diagnostic; O composition/dedup/600-tick duplicate table; O_W single-candidate share; cutoff/student-default/play/wall/overrun per student and arm",
+    "stop_rule": "fixed N=1200 for all five students (E1), no futility stop; no reduction before the C5 receipt is SHA-frozen and committed; hard-stop cut to the largest complete seed-index prefix (E8; R5W never cuts the primary); reporting block fit-free (C4)",
+    "contention": "flag a game if [mtime-wall, mtime] meets a bad census period: memory PSI avg10 > 10 or unreadable, foreign CPU > 2 cores host-wide outside the X4S-4 tree (R2-9) or unreadable, reduced concurrency (E7), or uncovered time; a phase launched below full workers flags all its games; union of flagged seeds excluded for all students; SHA-frozen and committed before reduction (C5)",
+    "mde_range_pp": "2.1 (game sampling) to 2.8 (with sigma_fit 0.65)",
+    "fit_inflated_interval": "Delta +- 1.96*sqrt(SE_boot^2 + 0.65^2), sigma_fit fixed at 0.65 pp (E3); helps not robust to it is labelled so",
+    "harmful": "descriptive sub-label: lower95CI(Delta) > 0 (E9)",
+    "attribution": "descriptive sub-label from the CI of mean(R5, R5-rep) minus R5W (E4); default: attribution unresolved"
   },
   "onpolicy": {
     "behavior": "R3a student-tier agent in the X4S-3 deployment configs K4S-120 and S-200 on 127x01",
@@ -189,7 +193,7 @@
         ]
       }
     },
-    "capture": "student-seat search decisions with >1 candidate, no preparation cutoff, no suspended belief, empty pending; every deadline hit + domain-separated 25% of non-hit",
+    "capture": "student-seat search decisions with >1 candidate, no preparation cutoff, no suspended belief, empty pre-decision (input) pending; every deadline hit + domain-separated 25% of non-hit",
     "nonhit_rate": 0.25,
     "dedup": "sha256(row arrays)+root_digest; first in order arm K4S-120,S-200; index; tick",
     "upweight": 4,
@@ -216,9 +220,10 @@
   },
   "students_order": [
     "R3a",
-    "R3a-rep",
     "R5",
     "R5-rep",
+    "R3a-rep",
     "R5W"
-  ]
+  ],
+  "students_order_rule": "fixed ABBA order (E6), K4S-120 then S-200 per student; all phases only after the three fits are done and calibrated (C4)"
 }

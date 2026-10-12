@@ -1,32 +1,38 @@
-"""X4S-4 on-policy state collection (exploration, NEVER ADOPTABLE).
+"""X4S-4 on-policy state collection (exploration, NEVER ADOPTABLE). r2 after Sol script review r1.
 
-Plays deployment games with run_collect.py (a byte copy of the reviewed x4s3/run.py plus one explicit
-post-timer CAPTURE(...) call) and captures student-seat decision states for offline W labeling.
-The hook runs after the decision timer closed and lateness was computed, so it is never charged to a
-decision; it reads its keyword arguments only and writes nothing back into the game.
+Plays deployment games with run_collect.py, a byte copy of the reviewed x4s3/run.py plus two explicit hooks:
+CAPTURE(...) right after apply_lateness (the decision timer has closed) and CAPTURE_END(pair, seed, arm) right
+after the game JSON is durable and before the block proof. run_game is NEVER replaced (Sol F1: its nested
+inference_check locates its own frame through the module-global run_game).
 
-Capture rule (config "capture" block; plan-collect.json):
-  search decisions only: no preparation cutoff, no suspended belief transaction, more than one
-  candidate after the 2305 filter, empty pending channel (else counted and skipped);
-  captured if deadline hit, else with probability nonhit_rate from a domain-separated draw;
-  `all: true` captures every eligible decision (qualification only).
+Eligibility (Sol F2: the pending test uses the PRE-decision input transaction p.core.pending, which run.py sets
+from the channel before candidates are generated; a play submitted by this decision is not "pending input"):
+  search decisions only: no preparation cutoff, no suspended belief transaction, more than one candidate after the
+  2305 filter, empty pre-decision pending (else counted and skipped); captured if deadline hit, else with
+  probability nonhit_rate from a domain-separated draw; `all: true` captures every eligible decision (qualification).
 
-Per capture: the gate-c training row of the student's own reserved packet, policy mask and D1 (and a
-parity flag vs build_public), deep copies of info, reserved_packet and opponent_elixir, pending (empty),
-one opponent hidden state sampled from a DEEP COPY of the agent's belief, root RNG state and digest, a SHA-256
-of the pickled (reserved_packet, opponent_elixir, pending) triple for the round-trip test (R2-11),
-candidate RNG state, and deadline stats. RNGs are seeded from SHA-256("x4s4-capture|label|seed|tick").
-Captures are pickled with a persistent_id guard that raises on any BattleState/PlayerState object.
+Per capture: the gate-c training row of the student's own reserved packet, policy mask and D1 (and a parity flag
+vs build_public of the battle passed in kw['b']), deep copies of info, reserved_packet, opponent_elixir and the
+pre-decision pending tuple (with a SHA-256 of that triple), one opponent hidden state sampled from a DEEP COPY of
+the agent's belief, root RNG state and digest, candidate RNG state, and deadline stats. RNGs are seeded from
+SHA-256("x4s4-capture|label|seed|tick"). Captures are pickled with a persistent_id guard that raises on any
+BattleState/PlayerState object.
 
-Qualification switches (capture block): verify_belief (pickle-hash of the live belief before/after
-every capture must match) and fair_check (deep-copy the battle, permute the opponent's unrevealed
-hand/cycle, reseed the battle RNG; the capture payload built from the altered battle must be byte-identical).
+Qualification switches (capture block): verify_belief (pickle hash of the live belief before/after every capture
+must match) and fair_check (Sol F3: the payload is rebuilt from kw with kw['b'] REPLACED by a deep copy whose
+opponent never-revealed hand/cycle cards are permuted and whose battle RNG is reseeded; the payload must be
+byte-identical; the number of decisions with an actual card permutation is counted for coverage).
 """
 import copy, hashlib, io, json, pickle, random, sys, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-CAPTURE_SCHEMA = 'x4s4.capture.v2'
+sys.path.insert(0, str(HERE))
+import confine                                   # noqa: E402
+
+CAPTURE_SCHEMA = 'x4s4.capture.v3'
+CAPTURE_ROLES = ('collect', 'qual', 'smoke')
+EARLY_TICKS = 600                                 # first 30 s of game time (fair-check coverage counters)
 _captures, _counts, _checks = [], {}, {}
 _cfg = None
 _costs = None
@@ -72,6 +78,11 @@ def config():
     return _cfg
 
 
+def input_pending(kw):
+    """The decision's INPUT transaction: run.py sets p.core.pending = tuple(ch.pending) before candidates."""
+    return tuple(getattr(kw['p'].core, 'pending', ()) or ())
+
+
 def eligible(kw):
     if kw['preparation_hit'] or kw['stats'].get('preparation_cutoff'):
         return 'preparation_cutoff'
@@ -79,19 +90,20 @@ def eligible(kw):
         return 'belief_pending'
     if kw['candidates'] is None or len(kw['candidates']) <= 1:
         return 'not_search'
-    if tuple(kw['ch'].pending):
-        return 'pending_nonempty'
+    if input_pending(kw):
+        return 'pending_nonempty_input'
     return None
 
 
-def payload(kw, b):
-    """Capture payload for one decision; `b` is passed separately so fair_check can substitute a copy."""
+def payload(kw):
+    """Capture payload for one decision. Every battle read goes through kw['b'] (so fair_check can substitute it)."""
     import numpy as np
     global _costs
     from imitation.exit_r1.rows import observation, feature_bytes
     from imitation.model.features import build_row
     from imitation.evaluation.d1 import model_packet
     R = run.R
+    b = kw['b']
     seed, actor, tick = int(kw['seed']), int(kw['actor']), int(b.tick)
     policy, reserved, info, p, stats, spec = kw['policy'], kw['reserved'], kw['info'], kw['p'], kw['stats'], kw['spec']
     d1 = copy.deepcopy(policy.player.last_d1)
@@ -105,20 +117,22 @@ def payload(kw, b):
     rebuilt = feature_bytes(row, _costs)
     features_equal = all(np.asarray(v).tobytes() == np.asarray(student_input[k]).tobytes() for k, v in rebuilt.items())
     public = observation(R.builder.build_public(b, actor), mask, d1, R.builder)
-    public_equal = all(public[k].tobytes() == row[k].tobytes() for k in row)
+    public_equal = all(np.asarray(public[k]).tobytes() == np.asarray(row[k]).tobytes() for k in row)
     opponent = copy.deepcopy(p.belief).sample(capture_rng('opponent', seed, tick))   # deep copy: live belief untouched
     root_rng = capture_rng('root', seed, tick)
     root_rng_state = copy.deepcopy(root_rng.bit_generator.state)
     root = R.root(copy.deepcopy(info), copy.deepcopy(opponent), root_rng)
     hit = bool(stats['hit'])
-    c8 = (copy.deepcopy(reserved.packet), copy.deepcopy(getattr(p.core, 'opponent_elixir', None)), tuple(kw['ch'].pending))
-    return dict(c8_sha256=hashlib.sha256(pickle.dumps(c8, protocol=pickle.HIGHEST_PROTOCOL)).hexdigest(),
+    pending = input_pending(kw)
+    c8 = (copy.deepcopy(reserved.packet), copy.deepcopy(getattr(p.core, 'opponent_elixir', None)), pending)
+    return dict(
         schema=CAPTURE_SCHEMA, id=f"{kw['arm']}/{seed}/{tick}", arm=kw['arm'], index=int(kw['pair']), seed=seed,
         tick=tick, seat=actor, row=row, features_equal_student_input=bool(features_equal),
         row_equals_build_public=bool(public_equal), info=copy.deepcopy(info),
-        reserved_packet=copy.deepcopy(reserved.packet), opponent_elixir=copy.deepcopy(getattr(p.core, 'opponent_elixir', None)),
-        pending=tuple(kw['ch'].pending), opponent=copy.deepcopy(opponent), root_rng_state=root_rng_state,
-        root_digest=root.digest(), candidate_rng_state=copy.deepcopy(capture_rng('candidates', seed, tick).bit_generator.state),
+        reserved_packet=c8[0], opponent_elixir=c8[1], pending=pending,
+        c8_sha256=hashlib.sha256(pickle.dumps(c8, protocol=pickle.HIGHEST_PROTOCOL)).hexdigest(),
+        opponent=copy.deepcopy(opponent), root_rng_state=root_rng_state, root_digest=root.digest(),
+        candidate_rng_state=copy.deepcopy(capture_rng('candidates', seed, tick).bit_generator.state),
         candidates_at_decision=[int(a) for a in kw['candidates']], agent_action=int(kw['action']),
         budget_ms=round(spec['deadline_seconds']*1000), kernel=spec['kernel'],
         stats={k: (v if isinstance(v, (bool, int, float, str, type(None))) else repr(v)) for k, v in stats.items()},
@@ -134,15 +148,17 @@ def permuted_battle(b, actor, opponent_events):
     cycle = list(opp.cycle_queue)
     slots += [('cycle', i) for i, c in enumerate(cycle) if c not in revealed]
     names = [opp.hand[i] if k == 'hand' else cycle[i] for k, i in slots]
-    if len(names) > 1:
+    moved = 0
+    if len(set(names)) > 1:
         rot = names[1:]+names[:1]             # deterministic non-identity permutation of unrevealed cards
         for (k, i), n in zip(slots, rot):
             if k == 'hand': opp.hand[i] = n
             else: cycle[i] = n
         opp.cycle_queue.clear(); opp.cycle_queue.extend(cycle)
+        moved = sum(a != c for a, c in zip(names, rot))
     if hasattr(b2, 'rng'):
         b2.rng = random.Random(0x5EED)
-    return b2, len(names)
+    return b2, moved
 
 
 def capture(**kw):
@@ -157,20 +173,49 @@ def capture(**kw):
         _counts[why] = _counts.get(why, 0)+1
         return
     before = hashlib.sha256(pickle.dumps(kw['p'].belief, protocol=pickle.HIGHEST_PROTOCOL)).hexdigest() if cfg['verify_belief'] else None
-    cap = payload(kw, kw['b'])
-    blob = guarded_dumps(cap)                 # raises ForbiddenObject on any BattleState/PlayerState reference
+    blob = guarded_dumps(payload(kw))         # raises ForbiddenObject on any BattleState/PlayerState reference
     if cfg['verify_belief']:
         after = hashlib.sha256(pickle.dumps(kw['p'].belief, protocol=pickle.HIGHEST_PROTOCOL)).hexdigest()
         _checks['belief_unchanged'] = _checks.get('belief_unchanged', 0)+(before == after)
         _checks['belief_checked'] = _checks.get('belief_checked', 0)+1
     if cfg['fair_check']:
-        b2, permuted = permuted_battle(kw['b'], int(kw['actor']), kw['opponent_events'])
-        same = guarded_dumps(payload(kw, b2)) == blob
+        b2, moved = permuted_battle(kw['b'], int(kw['actor']), kw['opponent_events'])
+        same = guarded_dumps(payload(dict(kw, b=b2))) == blob      # altered battle in EVERY path (kw['b'])
         _checks['fair_identical'] = _checks.get('fair_identical', 0)+same
         _checks['fair_checked'] = _checks.get('fair_checked', 0)+1
-        _checks['fair_permuted_cards'] = _checks.get('fair_permuted_cards', 0)+permuted
+        _checks['fair_perturbed_decisions'] = _checks.get('fair_perturbed_decisions', 0)+(moved >= 2)
+        _checks['fair_moved_cards'] = _checks.get('fair_moved_cards', 0)+moved
+        if tick < EARLY_TICKS:                # early game: most opponent cards unrevealed (qualification coverage)
+            _checks['fair_checked_early'] = _checks.get('fair_checked_early', 0)+1
+            _checks['fair_perturbed_early'] = _checks.get('fair_perturbed_early', 0)+(moved >= 2)
     _captures.append(blob)
     _counts['captured'] = _counts.get('captured', 0)+1
+
+
+def capture_end(pair, seed, arm):
+    """Write this game's captures durably (before run.py writes the block proof); reset per-game state."""
+    caps_blobs = list(_captures)
+    out = confine.writable(str(Path(run.OPTIONS['out'])/'captures'), roles=CAPTURE_ROLES)
+    if not out.exists(): confine.mkdirs(str(out), roles=CAPTURE_ROLES)
+    target = confine.writable(str(out/f'sim-{pair:04d}-d27-{arm}.pkl'), roles=CAPTURE_ROLES, must_not_exist=True)
+    body = pickle.dumps(caps_blobs, protocol=pickle.HIGHEST_PROTOCOL)
+    tmp = confine.writable(str(target)+'.tmp', roles=CAPTURE_ROLES)
+    tmp.write_bytes(body); run.durable(tmp); tmp.replace(target); run.durable(target)
+    caps = [pickle.loads(x) for x in caps_blobs]
+    summary = dict(schema=CAPTURE_SCHEMA, index=int(pair), seed=int(seed), arm=arm, captures=len(caps), counts=dict(_counts),
+                   checks=dict(_checks), sha256=hashlib.sha256(body).hexdigest(),
+                   features_equal_all=all(c['features_equal_student_input'] for c in caps),
+                   public_equal_all=all(c['row_equals_build_public'] for c in caps),
+                   pending_empty_all=all(c['pending'] == () for c in caps),
+                   identity_ok=all(c['index'] == pair and c['seed'] == seed and c['arm'] == arm for c in caps),
+                   strata={s: sum(c['stratum'] == s for c in caps) for s in ('hit', 'nonhit_sample', 'all')},
+                   student_default=sum(bool(c['stats'].get('student_default')) for c in caps),
+                   fallback=sum(bool(c['stats'].get('fallback')) for c in caps),
+                   plays_captured=sum(c['agent_action'] < 2304 for c in caps))
+    sj = confine.writable(str(target.with_suffix('.json')), roles=CAPTURE_ROLES, must_not_exist=True)
+    tj = confine.writable(str(sj)+'.tmp', roles=CAPTURE_ROLES)
+    tj.write_text(json.dumps(summary)+'\n'); run.durable(tj); tj.replace(sj); run.durable(sj)
+    _captures.clear(); _counts.clear(); _checks.clear()
 
 
 def install(module):
@@ -179,41 +224,40 @@ def install(module):
     from clasher.battle import BattleState
     from clasher.player import PlayerState
     GuardedPickler.forbidden = (BattleState, PlayerState)
-    original_game = run.run_game
+    before = module.run_game
+    module.CAPTURE = capture
+    module.CAPTURE_END = capture_end
+    if module.run_game is not before:
+        raise RuntimeError('run_game identity must be preserved (inference_check)')
 
-    def run_game(case):
-        _captures.clear(); _counts.clear(); _checks.clear()
-        t0 = time.monotonic()
-        result = original_game(case)
-        pair, seed, arm = case[0], case[1], case[2]
-        out = Path(run.OPTIONS['out'])/'captures'; out.mkdir(exist_ok=True)
-        target = out/f'sim-{pair:04d}-d27-{arm}.pkl'
-        if target.exists():
-            raise FileExistsError(str(target))
-        body = pickle.dumps(list(_captures), protocol=pickle.HIGHEST_PROTOCOL)   # list of guarded blobs
-        tmp = target.with_suffix('.pkl.tmp'); tmp.write_bytes(body); run.durable(tmp); tmp.replace(target); run.durable(target)
-        caps = [pickle.loads(x) for x in _captures]
-        summary = dict(schema=CAPTURE_SCHEMA, index=pair, seed=seed, arm=arm, captures=len(caps), counts=dict(_counts),
-                       checks=dict(_checks), sha256=hashlib.sha256(body).hexdigest(),
-                       features_equal_all=all(c['features_equal_student_input'] for c in caps),
-                       public_equal_all=all(c['row_equals_build_public'] for c in caps),
-                       pending_empty_all=all(c['pending'] == () for c in caps),
-                       strata={s: sum(c['stratum'] == s for c in caps) for s in ('hit', 'nonhit_sample', 'all')},
-                       student_default=sum(bool(c['stats'].get('student_default')) for c in caps),
-                       fallback=sum(bool(c['stats'].get('fallback')) for c in caps),
-                       game_wall_seconds_incl_capture=time.monotonic()-t0)
-        sj = target.with_suffix('.json'); tj = sj.with_suffix('.json.tmp')
-        tj.write_text(json.dumps(summary)+'\n'); run.durable(tj); tj.replace(sj); run.durable(sj)
-        _captures.clear()
-        return result
 
-    run.CAPTURE = capture
-    run.run_game = run_game
+C_BASE = 4503606317370496
+ALLOC = {'K4S-120': ((0, 2000), (3500, 3750)), 'S-200': ((2000, 3500), (3750, 4000))}   # O, O-holdout (PLAN r3 §2)
+
+
+def check_allocation(argv):
+    """Sol F13: a bank-C ('reporting' range of the collection config) run names one arm, and every index lies in that
+    arm's O or O-holdout allocation; smoke/qualification banks are checked by run.py's own range bound."""
+    def arg(k, n=1):
+        i = argv.index(k); return argv[i+1:i+1+n]
+    rng = arg('--range')[0]
+    if rng != 'reporting': return
+    cfg = json.loads(Path(arg('--config')[0]).read_text())
+    if cfg['seed_ranges']['reporting'] != dict(base=C_BASE, count=4000): raise SystemExit('collection must use bank C')
+    arms = []
+    for x in (argv[argv.index('--arms')+1:] if '--arms' in argv else []):
+        if x.startswith('--'): break
+        arms.append(x)
+    if len(arms) != 1 or arms[0] not in ALLOC:
+        raise SystemExit('a bank-C collection phase runs exactly one arm (--arms K4S-120 or S-200)')
+    idx = json.loads(Path(arg('--indices')[0]).read_text())
+    bad = [i for i in idx if not any(lo <= i < hi for lo, hi in ALLOC[arms[0]])]
+    if bad: raise SystemExit(f'indices outside the {arms[0]} bank-C allocation: {bad[:5]}')
 
 
 def main():
-    sys.path.insert(0, str(HERE))
-    import run_collect                       # byte copy of x4s3/run.py + the explicit hook
+    import run_collect                       # byte copy of x4s3/run.py + the two explicit hooks
+    check_allocation(sys.argv)
     config()
     install(run_collect)
     run_collect.main()

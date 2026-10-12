@@ -1,19 +1,31 @@
 """X4S-4 reducer (exploration, NEVER ADOPTABLE; PLAN r3, frozen at 87809ae0), derived from the X4S-3 reducer; stdlib only.
+r2 after Sol script review r1 (F4, F10, F11, F14): every check is an explicit raise (no assert; identical under -O/-OO).
 
-Counts a game only via its block proof (SHA-matched); asserts bank E (game metadata `study` reads X4S-3 because the
-unchanged x4s3/run.py is reused). Requires the C5 contention receipt to exist (frozen before any reduction, E1) and
-all four primary students. Fixed N: every non-retired index terminal in both arms for every reduced student, unless
+C5 freeze gate (Sol F4), BEFORE any game is opened: <job>/receipts/contention-exclusion.json must be a regular,
+single-link, non-writable file whose SHA-256 equals --contention-sha; the same bytes must be committed at
+--freeze-commit (reports/explore/x4s4/receipts/contention-exclusion.json) and that commit must be an ancestor of
+origin/main in --repo; the schema must be x4s4.contention.v2; the reporting phases on disk must equal the receipt's
+phases and every phase's source inventory (census/launch/exit/SETTLED and block/game listings) must re-verify. This
+gate applies to every reduction, including --allow-prefix. Output is confined to <job>/analysis/ (Sol F10).
+
+Counts a game only via its block proof (SHA-matched); requires bank E (game metadata `study` reads X4S-3 because the
+unchanged x4s3/run.py is reused) and all four primary students. Fixed N: every non-retired index terminal in both arms for every reduced student, unless
 --allow-prefix (E8 hard-stop cut: the largest seed-index prefix complete for the four primary students; R5W
 secondaries use their own prefix and never cut the primary). Paired-seed bootstrap (5,000 reps, seed 2026101301),
 percentile 95% CIs, unadjusted; pooled = equal arm weight.
 Readout: primary Delta = mean(R5, R5-rep) - mean(R3a, R3a-rep) with the three-way outcome (helps requires the pooled
 single-fit points R5 - R3a and R5-rep - R3a < 0); fit-inflated interval with sigma_fit fixed at 0.65 (E3); harmful
 sub-label (E9); attribution sub-label from the CI of mean(R5, R5-rep) - R5W (E4, default unresolved); 2-df sigma_fit;
-the C5 contention-excluded view; the E10 parity table (disclosed, no exclusion).
+the C5 contention-excluded view (an explicit no-estimate entry when every paired seed is excluded); the primary
+averaged contrast also separately by arm (Sol F14); prefix seed counts for the primary and for R5W; the E10 parity
+table (disclosed, no exclusion).
 """
-import argparse, hashlib, json, math, random, subprocess
+import argparse, hashlib, json, math, os, random, re, stat, subprocess, sys
 from collections import Counter
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import confine, contention                       # noqa: E402
 
 ARMS = ('K4S-120', 'S-200')
 ORDER = ('R3a', 'R3a-rep', 'R5', 'R5-rep', 'R5W')
@@ -29,6 +41,42 @@ def pct(xs, q):
     return xs[f]+(xs[c]-xs[f])*(k-f)
 def ci(xs): return [pct(xs, 2.5), pct(xs, 97.5)]
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+FREEZE_PATH = 'reports/explore/x4s4/receipts/contention-exclusion.json'
+
+
+def verify_freeze(job, contention_sha, commit, repo):
+    """Sol F4: authenticate the frozen C5 receipt, its commit and its source inventory before any game read."""
+    ex = Path(job)/contention.RECEIPT
+    try: st = os.lstat(ex)
+    except FileNotFoundError: raise SystemExit('C5 contention receipt must be frozen before any reduction (E1)')
+    if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_mode & 0o222:
+        raise SystemExit('C5 receipt must be a regular, single-link, non-writable file')
+    data = ex.read_bytes()
+    if not re.fullmatch(r'[0-9a-f]{64}', contention_sha or '') or hashlib.sha256(data).hexdigest() != contention_sha:
+        raise SystemExit('C5 receipt SHA differs from --contention-sha')
+    if not re.fullmatch(r'[0-9a-f]{40}', commit or ''): raise SystemExit('--freeze-commit must be a full commit SHA')
+    show = subprocess.run(['git', '-C', str(repo), 'cat-file', 'blob', f'{commit}:{FREEZE_PATH}'], capture_output=True)
+    if show.returncode or hashlib.sha256(show.stdout).hexdigest() != contention_sha:
+        raise SystemExit(f'C5 receipt is not committed with this SHA at {commit}:{FREEZE_PATH}')
+    if subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', commit, 'origin/main']).returncode:
+        raise SystemExit('the C5 freeze commit is not on origin/main')
+    try: body = json.loads(data)
+    except ValueError: raise SystemExit('C5 receipt is not JSON')
+    if not isinstance(body, dict) or body.get('schema') != contention.SCHEMA:
+        raise SystemExit(f'C5 receipt schema must be {contention.SCHEMA}')
+    for k in ('phases', 'coverage', 'excluded_indices', 'bad_periods', 'games_checked'):
+        if k not in body: raise SystemExit(f'C5 receipt lacks {k}')
+    disk = sorted(str(d.relative_to(job)) for d in contention.phase_dirs(job))
+    if disk != sorted(body['phases']) or sorted(body['coverage']) != disk:
+        raise SystemExit('reporting phases on disk differ from the frozen C5 receipt')
+    for rel in disk:
+        try: now = contention.inventory(job, Path(job)/rel)
+        except (OSError, ValueError) as e: raise SystemExit(f'C5 inventory of {rel} unreadable: {e!r}')
+        then = {k: v for k, v in body['coverage'][rel].items() if k != 'census_samples'}
+        if now != then: raise SystemExit(f'C5 source inventory of {rel} changed since the freeze')
+    if not all(isinstance(i, int) and 0 <= i < E_COUNT for i in body['excluded_indices']):
+        raise SystemExit('C5 excluded indices outside bank E')
+    return body, contention_sha
 
 
 def load_student(job, sid, plan, retired, checks):
@@ -57,7 +105,8 @@ def load_student(job, sid, plan, retired, checks):
                 if not (s['worker_affinity'] == proof['slot_cores'][:width] and set(proof['slot_cores']) <= set(range(50))): raise SystemExit("reduce.py: check failed: s['worker_affinity'] == proof['slot_cores'][:width] and set(proof['slot_cores']) <= set(range(5")
                 if not (s['nice'] == 10 and s['scheduler'] == 0 and s['host'] == '127x01' and s['worker_pid'] == proof['worker_pid']): raise SystemExit("reduce.py: check failed: s['nice'] == 10 and s['scheduler'] == 0 and s['host'] == '127x01' and s['worker_pid'] == proof[")
                 if not (all(not e['during_decision'] for e in s.get('gc_maintenance', []))): raise SystemExit("reduce.py: check failed: all(not e['during_decision'] for e in s.get('gc_maintenance', []))")
-                pc = s['policy_cache_counts']; assert pc['forward'] == pc['fallback'] == s['policy_polls'][str(m['seat'])]
+                pc = s['policy_cache_counts']
+                if not (pc['forward'] == pc['fallback'] == s['policy_polls'][str(m['seat'])]): raise SystemExit("reduce.py: check failed: pc['forward'] == pc['fallback'] == s['policy_polls'][str(m['seat'])]")
                 for wall, dd in zip(s['latency_seconds'], s['deadline_stats']):
                     over = max(0., wall-sp['deadline_seconds'])
                     if not (dd['wall_seconds'] == wall and dd['overrun_seconds'] == over and dd['delayed_ticks'] == math.ceil(over*20)): raise SystemExit("reduce.py: check failed: dd['wall_seconds'] == wall and dd['overrun_seconds'] == over and dd['delayed_ticks'] == math.ce")
@@ -84,7 +133,8 @@ def prefix(data, students, retired, n_total):
 
 
 def analyze(data, students, idx, plan):
-    n = len(idx); assert n > 0
+    n = len(idx)
+    if n <= 0: raise SystemExit('reduce.py: no paired seeds to analyze')
     for i in idx:  # identical deck/seat pairing across every (student, arm)
         keys = {(tuple(data[s][arm][i]['metadata']['own_deck']), tuple(data[s][arm][i]['metadata']['opponent_deck']),
                  data[s][arm][i]['metadata']['seat']) for s in students for arm in ARMS}
@@ -127,7 +177,12 @@ def analyze(data, students, idx, plan):
         boot = [100*sum(per[j] for j in smp)/n for smp in samples]
         mean = sum(boot)/len(boot)
         return dict(point_pp=100*sum(per)/n, ci95_pp=ci(boot), seeds=n, se_boot_pp=(sum((x-mean)**2 for x in boot)/(len(boot)-1))**.5)
-    return dict(n=n, idx=idx, arms=arms, contrasts=contrasts, delta=delta, loss=loss)
+
+    def delta_arm(members_t, members_c, arm):     # Sol F14: the same averaged contrast within one arm
+        per = [sum(loss[(t, arm)][k] for t in members_t)/len(members_t) - sum(loss[(u, arm)][k] for u in members_c)/len(members_c)
+               for k in range(n)]
+        return dict(point_pp=100*sum(per)/n, ci95_pp=ci([100*sum(per[j] for j in smp)/n for smp in samples]), seeds=n, arm=arm)
+    return dict(n=n, idx=idx, arms=arms, contrasts=contrasts, delta=delta, delta_arm=delta_arm, loss=loss)
 
 
 def classify(d, contrasts):
@@ -155,17 +210,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--job', type=Path, required=True)
     ap.add_argument('--students', nargs='+', required=True)
-    ap.add_argument('--out', type=Path, required=True)
+    ap.add_argument('--out', type=Path, required=True, help='confined below <job>/analysis/')
+    ap.add_argument('--contention-sha', required=True, help='SHA-256 of the frozen C5 receipt')
+    ap.add_argument('--freeze-commit', required=True, help='commit on origin/main that contains the C5 receipt')
+    ap.add_argument('--repo', type=Path, default=Path('/mpac/sdicks02/repos/clasher'))
     ap.add_argument('--allow-prefix', action='store_true', help='E8 hard-stop cut: largest seed-index prefix (disclosed)')
     a = ap.parse_args()
+    if a.job != confine.JOB: raise SystemExit(f'--job must be {confine.JOB}')
+    out_path = confine.writable(str(a.out), roles=('analysis',))
     plan = json.loads((a.job/'base/repo/reports/explore/x4s3/plan.json').read_text()) if (a.job/'base').exists() else \
         json.loads((Path(__file__).parent/'plan.json').read_text())
     retired_doc = json.loads((a.job/'driver'/'retired.json').read_text()) if (a.job/'driver'/'retired.json').exists() else dict(indices=[], why=[])
     retired = set(retired_doc['indices'])
     if not (plan['seed_ranges']['reporting'] == dict(base=E_BASE, count=E_COUNT)): raise SystemExit('evaluation bank E expected')
     if not (set(PRIMARY) <= set(a.students)): raise SystemExit('all four primary students are always reduced (E1)')
-    ex = a.job/'receipts'/'contention-exclusion.json'
-    if not (ex.exists()): raise SystemExit('C5 contention receipt must be frozen before any reduction (E1)')
+    body, ex_sha = verify_freeze(a.job, a.contention_sha, a.freeze_commit, a.repo)   # before any game read (F4)
     checks = Counter(); data = {}; complete = {}
     for sid in a.students:
         data[sid], complete[sid] = load_student(a.job, sid, plan, retired, checks)
@@ -181,19 +240,31 @@ def main():
                cells=dict(Counter(str(i % 50) for i in idx)), arms=res['arms'], contrasts=res['contrasts'])
     ro = out['readout'] = {}
     ro['primary'] = readout(res, res['contrasts'], data)
+    ro['primary_by_arm'] = {arm: dict(res['delta_arm'](['R5', 'R5-rep'], ['R3a', 'R3a-rep'], arm),
+                                      definition=f'mean(R5, R5-rep) minus mean(R3a, R3a-rep), {arm} only; descriptive, no outcome rule')
+                            for arm in ARMS}
     within = [res['delta']([l], [r]) for l, r in (('R5', 'R5-rep'), ('R3a-rep', 'R3a'))]
     est = (sum(w['point_pp']**2 for w in within)/2 - sum(w['se_boot_pp']**2 for w in within)/2)/2
     ro['sigma_fit_pp'] = dict(value=max(0.0, est)**.5, df=2, note='descriptive; within-group differences minus bootstrap sampling variance')
     ro['fit_seed_noise_ge_4pp'] = {k: abs(v['loss_change_pp']) >= 4 for k, v in res['contrasts'].items() if k.startswith('R3a-rep minus R3a')}
-    body = json.loads(ex.read_text()); excluded = set(body['excluded_indices'])
+    excluded = set(body['excluded_indices'])
     kept = [i for i in idx if i not in excluded]
     if kept:
         rk = analyze(data, list(PRIMARY), kept, plan)
         sens = readout(rk, rk['contrasts'], data)
-        sens.update(exclusion_sha256=sha(ex), excluded_paired_seeds=len(idx)-len(kept))
+        sens.update(exclusion_sha256=ex_sha, freeze_commit=a.freeze_commit, excluded_paired_seeds=len(idx)-len(kept), estimate=True)
         ro['contention_sensitivity'] = sens
+    else:                                  # Sol F14: an empty view is reported, never silently dropped
+        ro['contention_sensitivity'] = dict(estimate=None, exclusion_sha256=ex_sha, freeze_commit=a.freeze_commit,
+                                            excluded_paired_seeds=len(idx), seeds=0,
+                                            note='every paired seed is contention-excluded; no sensitivity estimate can be computed')
+    idx_w = prefix(data, list(PRIMARY)+['R5W'], retired, E_COUNT) if 'R5W' in data else []
+    out['truncation'].update(r5w_prefix_seeds=len(idx_w), r5w_truncated=('R5W' in data and len(idx_w) < len(idx)),
+                             r5w_reduced='R5W' in data)
+    if not idx_w:
+        ro['secondary_mean_R5_minus_R5W'] = dict(estimate=None, seeds=0, attribution='on-policy or deployment-matched data helps; attribution unresolved',
+                                                 note='R5W not reduced or no complete R5W prefix; attribution stays at its default')
     if 'R5W' in data:                      # secondaries on R5W's own complete prefix (E8: never cuts the primary)
-        idx_w = prefix(data, list(PRIMARY)+['R5W'], retired, E_COUNT)
         if idx_w:
             rw = analyze(data, list(PRIMARY)+['R5W'], idx_w, plan)
             m = rw['delta'](['R5', 'R5-rep'], ['R5W'])
@@ -215,7 +286,8 @@ def main():
                            gap_gt_2pp_disclosed=(max(cut)-min(cut) > 2) or (max(sd)-min(sd) > 2),
                            note='E10: disclosed next to the C5 sensitivity; triggers no exclusion; wall p99 descriptive')
     ro['timing_parity'] = parity
-    a.out.write_text(json.dumps(out, indent=2)+'\n')
+    tmp = confine.writable(str(out_path)+'.tmp', roles=('analysis',))
+    tmp.write_text(json.dumps(out, indent=2)+'\n'); tmp.replace(out_path)
     print(json.dumps({k: out[k] for k in ('utc', 'paired_seeds', 'students', 'checks', 'truncation')}))
 
 

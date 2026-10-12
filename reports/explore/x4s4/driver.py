@@ -6,19 +6,24 @@ X4S-4 deltas (PLAN r3, design frozen at 87809ae0): job path; hard stop read from
 no fit is running and all three fits are done and calibrated (C4), in the fixed ABBA order R3a, R5, R5-rep,
 R3a-rep, R5W (K4S-120 then S-200 each; E6); every student's games always run (E1: no futility stop, and the driver
 never reads a game outcome); R3a-rep is a staged fixed student (rt-R3a-rep/READY.json); the X4S-3 union-fit/S-200
-juggling and the R4-DC gate are removed.
-X4S-3 description follows (fit and student names there read R3a-rep/R4-D/R4-DC).
-
-
-Sequences, from on-disk state only:
-  fits (one at a time on the GPU): R3a-rep, R4-D (after data/G-UNION-VERIFIED.json), R4-DC;
+juggling and the R4-DC gate are removed. r2 after Sol r1: reporting launches the X4S-4 supervisor and every executed
+runtime file is checked against <job>/RUNTIME-INVENTORY.json (F8); reaped exit statuses are recorded, a fit is done only
+with complete.json + segment 'returned' + a zero exit, and a phase exit is retired/resumed only for a permitted guard
+reason (else an anomaly stops dispatch); exit codes are also durable child_exit events, and an unknown fit exit
+(driver restarted) needs <driver>/ACK-fit-<id>-exit (F5); admission is fail-closed on unreadable memory/PSI/GPU, <= 70 X4S-4
+processes, <= 100 GB under the job, a fit-tree PSS cap of 60 GiB and a live diagnostic lock; only a wall_over_2x fit
+auto-resumes, after the O_W gate (F9, R2-11).
+Sequences (X4S-4, from on-disk state only; Sol r1 F17 replaced the inherited X4S-3 text):
+  fits (one at a time on the GPU, cores 56-61): R5, R5-rep after data/O-VERIFIED.json, R5W after data/OW-VERIFIED.json;
   calibration -> <job>/inputs/<ID>.pt (read-only) -> runtime copy <job>/rt-<ID> (plan.json student block);
-  reporting phases, one (student, arm) at a time on cores 0-49, via supervise.py, only after <job>/REPORTING.GO.
-Guards: no new phase is dispatched while MemAvailable < 24 GiB or memory PSI some avg10 > 10%;
-<job>/STOP (-e or -L) stops the fit (SIGTERM; the trainer checkpoints) and pauses everything;
-hard stop; fit NaN/divergence, 2x wall and GPU > 40 GB. Seeds of interrupted games are retired for every
-later phase and never re-run. R4-DC games run only if the pooled R4-D minus R3a point estimate is < 0
-(computed once both are terminal). Anomalies go to <job>/driver/ANOMALY-*.json and pause the affected lane.
+  reporting phases, one (student, arm) at a time on cores 0-49 via reports/explore/x4s4/supervise.py, only after
+  <job>/REPORTING.GO and only when all three fits are done and calibrated and no fit runs; fixed ABBA order, no
+  futility stop, no outcome read.
+Guards: no new phase or fit is dispatched while MemAvailable < 24 GiB, memory PSI some avg10 > 10% or unreadable,
+the X4S-4 tree holds > 70 processes, the job holds > 100 GB, or a diagnostic lock is live; <job>/STOP (-e or -L)
+stops the fit (SIGTERM; the trainer checkpoints) and pauses everything; hard stop; fit NaN/divergence, 2x wall,
+GPU > 40 GB or unreadable, fit tree PSS > 60 GiB. Seeds of interrupted games are retired for every later phase and
+never re-run. Anomalies go to <job>/driver/ANOMALY-*.json and pause the affected lane.
 """
 import datetime, hashlib, json, math, os, shutil, signal, subprocess, sys, time
 from pathlib import Path
@@ -63,15 +68,79 @@ def group_alive(pgid):
     except ProcessLookupError: return False
     except PermissionError: return True
 def mem_available():
-    return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
+    try: return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
+    except Exception: return 0                                   # unreadable -> below the floor (fail closed)
 def psi_some_avg10():
     try: return float(Path('/proc/pressure/memory').read_text().split()[1].split('=')[1])
-    except Exception: return 0.
+    except Exception: return None                                # unreadable -> blocks dispatch
 def gpu_used_mib():
     try:
         return int(subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
                                   capture_output=True, text=True, timeout=20).stdout.split()[0])
-    except Exception: return -1
+    except Exception: return None                                # unreadable -> blocks fit dispatch; anomaly while running
+
+
+# ---------------- study-wide resource policy (Sol r1 F9) ----------------
+MAX_PROCESSES, MAX_DISK_BYTES, FIT_PSS_LIMIT = 70, 100*10**9, 60*2**30
+EXIT = {}                                                         # reaped child pid -> wait status (Sol r1 F5)
+_disk = dict(t=0.0, bytes=None)
+
+
+def tree_groups():
+    groups = {os.getpgrp()}
+    for f in [*sorted((J/'receipts').glob('fit-*-launch*.json')), *sorted((J/'receipts').glob('phase-*-launch.json'))]:
+        r = jload(f)
+        if r: groups.add(int(r['pgid']))
+    for f in (J/'receipts').glob('cpujob-*.json'):                 # labeler / O_W CPU jobs (studytree.register)
+        r = jload(f)
+        if r: groups.add(int(r['pgid']))
+    for role in ('games', 'collect', 'qual', 'smoke'):
+        for f in (J/role).glob('**/launch.json'):
+            r = jload(f)
+            if r: groups |= {int(r[k]) for k in ('child_pgid', 'supervisor_pgid') if isinstance(r.get(k), int)}
+    return groups
+
+
+def tree_processes(groups):
+    pids = []
+    for d in Path('/proc').iterdir():
+        if not d.name.isdigit(): continue
+        try:
+            if int((d/'stat').read_text().rsplit(')', 1)[1].split()[2]) in groups: pids.append(int(d.name))
+        except (FileNotFoundError, ProcessLookupError, IndexError, ValueError): pass
+    return pids
+
+
+def pss_bytes(pids):
+    total = 0
+    for pid in pids:
+        try:
+            total += sum(int(l.split()[1])*1024 for l in Path(f'/proc/{pid}/smaps_rollup').read_text().splitlines() if l.startswith('Pss:'))
+        except (FileNotFoundError, ProcessLookupError, PermissionError): pass
+    return total
+
+
+def disk_bytes():
+    if time.time()-_disk['t'] > 300 or _disk['bytes'] is None:
+        try:
+            out = subprocess.run(['du', '-sb', str(J)], capture_output=True, text=True, timeout=600)
+            _disk['bytes'] = int(out.stdout.split()[0]) if out.returncode == 0 else None
+        except Exception: _disk['bytes'] = None
+        _disk['t'] = time.time()
+    return _disk['bytes']
+
+
+def diagnostic_live():
+    r = jload(D/'DIAGNOSTIC.lock')
+    return bool(r and Path(f"/proc/{r['pid']}").exists())
+
+
+def resources_ok(for_fit=False):
+    """Dispatch admission. Any unreadable measurement blocks dispatch (fail closed)."""
+    psi = psi_some_avg10(); disk = disk_bytes(); n = len(tree_processes(tree_groups()))
+    ok = mem_available() >= 24*2**30 and psi is not None and psi <= 10. and disk is not None and disk <= MAX_DISK_BYTES and n <= MAX_PROCESSES
+    if for_fit: ok = ok and gpu_used_mib() is not None
+    return ok and not diagnostic_live()
 
 
 def detach(log, receipt, cmd, cpus):
@@ -83,11 +152,29 @@ def detach(log, receipt, cmd, cpus):
     return p
 
 
+def exit_status(rec):
+    """Reaped exit code of a launched child: this driver's EXIT map, else the durable child_exit events written since
+    its launch (a restarted driver keeps the record); None if never reaped by a driver."""
+    if rec['pid'] in EXIT: return EXIT[rec['pid']]
+    code = None
+    try:
+        for line in (D/'events.jsonl').read_text().splitlines():
+            e = json.loads(line)
+            if e.get('kind') == 'child_exit' and e.get('pid') == rec['pid'] and e['utc'] >= rec['launched_at_utc']: code = e['exit_code']
+    except (FileNotFoundError, ValueError, KeyError): return None
+    return code
+
+
 # ---------------- fits ----------------
 def fit_state(fid):
     out = J/'fits'/fid; done = jload(out/'complete.json'); rec = jload(J/'receipts'/f'fit-{fid}-launch.json')
     if rec and group_alive(rec['pgid']): return 'running', rec
-    if done and not done['stopped'] and done['step'] == FITS[fid]['steps']: return 'done', rec
+    seg = jload(out/'segment.json')
+    if done and not done['stopped'] and done['step'] == FITS[fid]['steps']:
+        status = exit_status(rec) if rec else None
+        clean = status == 0 or (status is None and (D/f'ACK-fit-{fid}-exit').exists())   # unknown only after a driver restart
+        if seg and seg.get('status') == 'returned' and clean: return 'done', rec
+        return 'failed', rec                                       # completion file without a clean return + zero exit
     if done and done['stopped']: return 'stopped', rec
     if rec: return 'failed', rec
     return 'pending', rec
@@ -102,10 +189,18 @@ class Fits:
         for fid in FIT_ORDER:
             st, rec = fit_state(fid)
             if st in ('done',): continue
-            if (D/f'ANOMALY-fit-{fid}.json').exists(): return  # owner must clear
-            if st == 'failed': anomaly(f'fit-{fid}', reason='fit process gone without complete.json'); return
+            an = jload(D/f'ANOMALY-fit-{fid}.json')
+            if an:
+                # R2-11: a fit stretched past 2x beside O_W generation resumes from its checkpoint once O_W is gated;
+                # NaN/divergence, GPU and every other anomaly need the owner.
+                if not (an.get('reason') == 'wall_over_2x' and st == 'stopped' and (J/'data'/'OW-VERIFIED.json').is_file()):
+                    return
+                (D/f'ANOMALY-fit-{fid}.json').rename(D/f'ANOMALY-fit-{fid}.autoresumed-{int(time.time())}.json')
+                event(kind='fit_autoresume', fit=fid, after='wall_over_2x')
+            if st == 'failed': anomaly(f'fit-{fid}', reason='fit process gone without a clean return (complete/segment/exit status)'); return
             if not FITS[fid]['gate'].is_file(): continue           # all fits are mandatory (C1, C3)
             if live_supervisor(): return                            # never beside a reporting phase (C4)
+            if not resources_ok(for_fit=True): return               # fail-closed admission (Sol r1 F9)
             self.launch(fid, st); return
     def launch(self, fid, st):
         out = J/'fits'/fid; extra = []
@@ -139,7 +234,9 @@ class Fits:
             except (FileNotFoundError, json.JSONDecodeError): pass
             if losses and (not all(math.isfinite(x) for x in losses) or losses[-1] > 10*min(losses+[1e9])): why = 'nan_or_divergent'
             g = gpu_used_mib()
-            if g > GPU_LIMIT_MIB: why = 'gpu_over_40GB'
+            if g is None: anomaly(f'fit-{fid}-gpu-unreadable', reason='nvidia-smi unreadable while the fit runs')
+            elif g > GPU_LIMIT_MIB: why = 'gpu_over_40GB'
+            if pss_bytes(tree_processes({rec['pgid']})) > FIT_PSS_LIMIT: why = 'fit_pss_over_60GiB'
         if why:
             # SIGTERM the trainer itself (run_fit.sh execs python, so pid == trainer): it finishes the step,
             # checkpoints and shuts its loaders down. A group signal would kill the loaders first.
@@ -231,11 +328,20 @@ def settle_attempt(d):
     horizon = (max(pos)+1 if pos else 0)+workers+1
     started = {x for i, x in enumerate(order[:horizon]) if x not in done}
     started |= {int(p.name.split('-')[1]) for p in (d/'games').glob('sim-*.json')} - done
-    if ex.get('reason') is not None or ex.get('returncode') != 0:
-        retire(started, f'interrupted {d.relative_to(J)}: {ex.get("reason")} rc={ex.get("returncode")}')
-    elif started:
-        anomaly(f'unfinished-{d.parent.parent.name}-{d.parent.name}-{d.name}', reason='clean exit with unfinished indices', indices=sorted(started))
+    reason, rc = ex.get('reason'), ex.get('returncode')
+    ack = (D/f'ACK-{d.relative_to(J).as_posix().replace("/", "_")}').exists()
+    if reason is None and rc == 0:
+        pass
+    elif reason in PERMITTED_STOPS or ack:
+        retire(started, f'interrupted {d.relative_to(J)}: {reason} rc={rc}')
+    else:                                     # Sol r1 F5: unexpected failure; dispatch stops until the owner resolves it
+        anomaly(f'exit-{d.relative_to(J).as_posix().replace("/", "_")}', reason=reason, rc=rc); return
+    if reason is None and rc == 0 and started and not ack:
+        anomaly(f'exit-{d.relative_to(J).as_posix().replace("/", "_")}', reason='clean exit with unfinished indices', indices=sorted(started)); return
     jwrite(d/'SETTLED.json', dict(utc=utc(), completed=len(done), retired_or_flagged=sorted(started), exit=ex))
+
+
+PERMITTED_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM')
 
 
 def live_supervisor():
@@ -273,7 +379,12 @@ def launch_phase(sid, arm, todo):
     (J/'games'/sid/arm).mkdir(parents=True, exist_ok=True)
     idx = J/'games'/sid/arm/f'indices-a{k}.json'; idx.write_text(json.dumps(todo)+'\n')
     rt = J/f'rt-{sid}'
-    cmd = ['bash', str(rt/'repo/reports/explore/x4s3/runtime.sh'), 'reports/explore/x4s3/supervise.py', '--job', str(J), '--rt', str(rt),
+    inv = jload(J/'RUNTIME-INVENTORY.json') or {}
+    for rel in ('reports/explore/x4s4/supervise.py', 'reports/explore/x4s4/confine.py', 'reports/explore/x4s3/run.py',
+                'reports/explore/x4s3/runtime.sh'):           # Sol r1 F8: the executed files are the reviewed bytes
+        if not (rel in inv and (rt/'repo'/rel).is_file() and sha(rt/'repo'/rel) == inv[rel]):
+            anomaly(f'phase-{sid}-{arm}', reason=f'runtime inventory mismatch: {rel}'); return
+    cmd = ['bash', str(rt/'repo/reports/explore/x4s3/runtime.sh'), 'reports/explore/x4s4/supervise.py', '--job', str(J), '--rt', str(rt),
            '--phase', name, '--range', 'reporting', '--indices', str(idx), '--arms', arm, '--stop-at', STOP_AT.strftime('%Y-%m-%dT%H:%M:%SZ')]
     env_rt = dict(os.environ, X4S3_RT=str(rt))
     rec = J/'receipts'/f'phase-{sid}-{arm}-a{k}-launch.json'
@@ -293,7 +404,9 @@ def games_tick():
         if d.is_dir() and not (d/'supervisor-exit.json').exists():
             # supervisor gone without exit receipt
             anomaly(f'phase-{d.parent.parent.name}-{d.parent.name}', reason=f'{d.relative_to(J)} has no supervisor-exit.json and no live supervisor'); return
-    # waits after guard stops
+    for an in D.glob('ANOMALY-exit-*.json'):                     # unresolved unexpected exits stop dispatch
+        if not (D/('ACK-'+an.stem[len('ANOMALY-exit-'):])).exists(): return
+    if any(not (d/'SETTLED.json').exists() for d in (J/'games').glob('*/*/a*') if (d/'supervisor-exit.json').exists()): return
     last = sorted((J/'games').glob('*/*/a*/supervisor-exit.json'), key=lambda p: p.stat().st_mtime)
     if last:
         ex = jload(last[-1])
@@ -301,11 +414,8 @@ def games_tick():
         if ex.get('reason') == 'hard_stop_time': return
         if ex.get('reason') == 'owned_STOP' and not (D/'RESUME-AFTER-STOP').exists(): return
         if ex.get('reason') == 'console_user' and time.time()-last[-1].stat().st_mtime < 120: return
-        if ex.get('reason') not in (None, 'memory_guard', 'console_user', 'owned_STOP'):
-            if not (D/f'ACK-{last[-1].parent.relative_to(J).as_posix().replace("/", "_")}').exists():
-                anomaly(f'exit-{last[-1].parent.relative_to(J).as_posix().replace("/", "_")}', reason=ex.get('reason'), rc=ex.get('returncode')); return
-    # Plan: stop dispatching while MemAvailable < 24 GiB or memory PSI some avg10 > 10%.
-    if mem_available() < 24*2**30 or psi_some_avg10() > 10.:
+    # Plan: stop dispatching while MemAvailable < 24 GiB or memory PSI some avg10 > 10% (fail closed; Sol r1 F9).
+    if not resources_ok():
         return
     nxt = next_phase()
     if nxt: launch_phase(*nxt)
@@ -328,10 +438,12 @@ def main():
         # Reap exited children (supervisors, fits) so a zombie never keeps its process group "alive".
         while True:
             try:
-                pid, _ = os.waitpid(-1, os.WNOHANG)
+                pid, status = os.waitpid(-1, os.WNOHANG)
             except ChildProcessError:
                 break
             if pid == 0: break
+            EXIT[pid] = os.waitstatus_to_exitcode(status)
+            event(kind='child_exit', pid=pid, exit_code=EXIT[pid])
         try:
             fits.tick(True); prepare_students(); games_tick()
         except Exception as e:

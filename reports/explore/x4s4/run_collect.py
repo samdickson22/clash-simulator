@@ -23,8 +23,9 @@ ROOT = Path(__file__).resolve().parents[3]
 COUNCIL = ROOT / 'reports/strategy_council_20260928'
 sys.path[:0] = [str(ROOT / 'src'), str(Path(__file__).resolve().parent)]
 R = CAT = PRIOR = OPTIONS = POLICY = STUDENT = None
-# X4S-4 collection hook (the only delta from x4s3/run.py besides the call below): set by collect.py.
-CAPTURE = None
+# X4S-4 collection hooks (the only deltas from x4s3/run.py besides the two calls below): set by collect.py.
+# run_game itself is never replaced, so its inference-frame guard keeps its identity (Sol r1 F1).
+CAPTURE = CAPTURE_END = None
 SLOT_CORES = None
 
 
@@ -285,6 +286,8 @@ def run_game(case):
     result['cpu_seconds']=time.process_time()-cpu
     write(Path(OPTIONS['out'])/'games'/f'{ident}.json', result)
     durable(Path(OPTIONS['out'])/'games'/f'{ident}.json')
+    if CAPTURE_END is not None:  # X4S-4: durable per-game capture file, before the block proof
+        CAPTURE_END(pair=pair, seed=seed, arm=arm)
     print(json.dumps(dict(game=ident, terminal=terminal, loss=loss, ticks=b.tick,
                           cpu=result['cpu_seconds'], wall=result['wall_seconds'])), flush=True)
     return dict(game=ident, terminal=terminal, cpu=result['cpu_seconds'])

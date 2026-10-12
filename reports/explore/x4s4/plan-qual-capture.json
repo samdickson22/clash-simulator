@@ -1,6 +1,7 @@
 {
-  "max_ticks": 6001,
-  "return_reserve_seconds": 0.008,
+  "purpose": "X4S-4 qualification: x4s3/run.py vs run_collect.py+collect.py on the same config (1000 s budgets, no cutoffs); capture-all with live-belief hash and fair-information permutation checks",
+  "status": "exploration only; NEVER ADOPTABLE; staged runtime config for qualification (full x4s3/run.py config: student R3a, policy v1, arms, banks, capture block)",
+  "planning_doc": "reports/explore/x4s4/PLAN.md (r3 87809ae0, frozen)",
   "arms": {
     "K4S-long": {
       "own": "W-screen8",
@@ -23,7 +24,6 @@
       "default_source": "student-cached-sample-if-no-complete-score; student top-8 proposals enter the frozen candidate generator (S1 S-200)"
     }
   },
-  "purpose": "X4S-4 qualification: x4s3/run.py vs run_collect.py+collect.py on the same config (1000 s budgets, no cutoffs); capture-all with live-belief hash and fair-information permutation checks",
   "seed_ranges": {
     "reporting": {
       "base": 4503606317370496,
@@ -37,6 +37,78 @@
       "base": 4503606337370496,
       "count": 8
     }
+  },
+  "seed_reservation": {
+    "block_start": 4503606307370496,
+    "block_stop_exclusive": 4503606407370496,
+    "note": "2^52+[6.68e9,6.78e9): evaluation E, collection C (O + O-holdout 3500-3999), smoke, qualification, collection C_prime (O_W); audited repo-wide"
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101301,
+    "unit": "paired seed, stratified by arm (each resampled seed carries both arms)",
+    "confidence": 0.95
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  },
+  "policy": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "student": {
+    "id": "R3a",
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "threshold": 0.5005528330802917,
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "status": "R3a control (existing checkpoint, no fit); killed in R3 Stage 1; NEVER ADOPTABLE"
+  },
+  "compute": {
+    "host": "127x01",
+    "game_physical_cores": "0-49 (10 five-core K4S-120 slots, or 50 one-core S-200 lanes); SMT siblings unassigned",
+    "fit_cores": "56-61 parent, loaders on siblings 120-125",
+    "free_cores": "50-55, 62-63",
+    "nice": 10,
+    "scheduler": "SCHED_OTHER",
+    "max_processes": 70,
+    "gpu_GiB_max": 40,
+    "disk_GB_max": 100,
+    "min_memavailable_GiB": 24,
+    "max_memory_psi_some_avg10": 10,
+    "console_user": "yield (stop) then <=16 game processes",
+    "cuda_games": "disabled (CPU inference, as S1/X4S)"
   },
   "capture": {
     "nonhit_rate": 0.25,

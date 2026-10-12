@@ -1,0 +1,29 @@
+{
+  "what": "r2 offline suite run against the r1 scripts of 13fb31d0 (plus r2 confine.py/studytree.py so imports resolve); /dev/shm export, 127x05, no host contact",
+  "cases_recorded": 31,
+  "failed": 21,
+  "failed_cases": [
+    "run_collect.py = x4s3/run.py + only the two explicit hooks (no removed line, no run_game change)",
+    "F1 probe: inference_check passes through the collection install (run_game identity kept); the r1 wrapper fails it",
+    "F2 probe: a play whose own command is in ch.pending is eligible; WAIT eligible; a non-empty INPUT transaction is rejected",
+    "F3 probe: the real payload is byte-identical under the permutation, with cards actually moved (early-game coverage)",
+    "F3 probe: hidden hand, hidden cycle and future-RNG reads through kw[b] are each DETECTED",
+    "C7a/C9: live-belief mutation detected; a Battle reference raises the graph guard",
+    "real payload stores the C8 triple with its SHA, empty input pending and an explicit play (F2 play retained)",
+    "test_collect raised",
+    "test_pipeline raised",
+    "F5 probe: a reporting exit with rc 17 and no reason is an anomaly: nothing retired, no SETTLED, no further dispatch",
+    "test_driver raised",
+    "test_supervise raised",
+    "test_contention raised",
+    "test_reduce raised",
+    "test_qualify raised",
+    "test_diagnose raised",
+    "test_audit raised",
+    "test_studytree raised",
+    "F11: no assert statement in any X4S-4-owned script (run_collect.py keeps x4s3/run.py's bytes)",
+    "F17: plan.json describes r3 (87809ae0), the ABBA order used by the driver, no futility stop, host-wide contention",
+    "test_static raised"
+  ],
+  "note": "each test group that errors stops at its first incompatible r1 interface, so later probes in that group are not recorded; the r2 scripts pass all 76"
+}

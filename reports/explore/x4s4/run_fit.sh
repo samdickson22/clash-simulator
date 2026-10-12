@@ -16,7 +16,10 @@ esac
 # r1 plus the verified set (O for R5/R5-rep, O_W for R5W), each packed batch listed x4 (pre-declared
 # up-weighting; the trainer samples rows uniformly across listed shards).
 [[ -s $J/data/$gate ]]
-mapfile -t batches < <(python3 -c 'import json,sys;print("\n".join(b["name"] for b in json.load(open(sys.argv[1]))["batches"]))' "$J/data/$gate")
+# Sol r1 F5: command substitution (not process substitution), so a failing producer aborts the script.
+listing=$(python3 -c 'import json,sys;print("\n".join(b["name"] for b in json.load(open(sys.argv[1]))["batches"]))' "$J/data/$gate") \
+  || { echo "run_fit.sh: cannot read the batch list of $gate" >&2; exit 3; }
+mapfile -t batches <<<"$listing"
 (( ${#batches[@]} >= 1 && ${#batches[@]} <= 15 ))
 for rep in 1 2 3 4; do
   for b in "${batches[@]}"; do

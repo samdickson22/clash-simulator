@@ -1,17 +1,20 @@
 """X4S-4 (exploration, NEVER ADOPTABLE): verify, seal and gate packed training/diagnostic sets.
 
-Modes (fixed roots and gates under <job>/data):
+Modes (fixed roots and gates under <job>/data); r2 after Sol r1 F6/F13:
   O        onpolicy/          -> O-VERIFIED.json        bank C indices < 3500; every row a supervised scored root;
                                  recorded_outcome 0; 300,000 <= rows <= 450,000; per arm K4S-120 <= 200,000 and
-                                 S-200 <= 250,000; rows == the passed O label receipts' rows (digest-mismatch rate
-                                 <= 0.1%, complete).
-  holdout  onpolicy-holdout/  -> HOLDOUT-VERIFIED.json  bank C indices >= 3500 (never trained on); root-only; outcome 0;
-                                 rows == the passed holdout label receipts' rows.
-  OW       onpolicy-w/        -> OW-VERIFIED.json       PLAN r3 E11: bank C' only (no seed in C or E); emitter
-                                 shards (all rows); every selected game sealed and SHA-verified; source games == the
-                                 contiguous selected prefix exactly; scored-root count (RootTeacherStore rule) ==
-                                 the selection's selected_roots, within [|O|, |O| + last selected game's roots];
-                                 no dedup; single-candidate root share reported.
+                                 S-200 <= 250,000. SOURCE BINDING: every packed source game is a sealed game under
+                                 data/raw-O/<arm>/ whose manifest SHA re-verifies, whose receipt identity (plan SHA,
+                                 capture SHA, kept-id SHA, arm, index, seed, teacher) equals the frozen label plan
+                                 entry, whose rows equal its packed episode rows, and whose packed perspective seeds
+                                 all equal its seed; the packed game set equals exactly the label receipts' game set,
+                                 which must be passed and bound to the same plan SHA.
+  holdout  onpolicy-holdout/  -> HOLDOUT-VERIFIED.json  the same binding with data/raw-holdout and the holdout plan set.
+  OW       onpolicy-w/        -> OW-VERIFIED.json       PLAN r3 E11: bank C' only (no seed in C or E); selection is exactly
+                                 range(n); per-game scored-root counts derived from the packed rows; strict minimality
+                                 (roots of games 0..n-2 < |O| <= roots of 0..n-1); every source game is
+                                 data/raw-OW/game-<g:05d> with a re-verified manifest, packed seeds == C'+g; the emitter
+                                 acceptance smoke receipt passed; no dedup; single-candidate root share reported.
 Every mode: no seed of the evaluation bank E. Safety primitives are those of x4s3/verify_g.py r3: explicit
 raises (valid under -O), lstat ancestor chain, link-free scandir inventory, O_NOFOLLOW|O_NONBLOCK reads with
 fstat, single-link regular files, exact seal inventory, mandatory fd-based sealing re-checked before success,
@@ -94,7 +97,20 @@ def safe_key(k):
           f'unsafe seal key: {k!r}')
 
 
-def verify(mode, root, plan, label_receipts, selection, o_gate, result):
+def episodes_of(d, roots_mask, src):
+    """Per packed episode: (source path, row count, scored-root count, set of perspective seeds)."""
+    ep = np.asarray(np.load(d/'train'/'episode_ids.npy', mmap_mode='r'))
+    seeds = np.asarray(np.load(d/'train'/'perspective_ids.npy', mmap_mode='r'))
+    out = []
+    for e, g in enumerate(src['games']):
+        sel = ep == e
+        out.append(dict(path=Path(g['path']), manifest_sha256=g['manifest_sha256'], rows=int(sel.sum()), roots=int(roots_mask[sel].sum()),
+                        seeds={int(x) for x in np.unique(seeds[sel])}, declared_rows=int(g['rows'])))
+    check(int(ep.max())+1 == len(src['games']) if len(ep) else not src['games'], 'episode ids do not match sources')
+    return out
+
+
+def verify(mode, root, plan, label_receipts, selection, o_gate, label_plan, result):
     banks = plan['seed_ranges']
     E = banks['reporting']
     B = banks['collection_w'] if mode == 'OW' else banks['collection']
@@ -116,7 +132,7 @@ def verify(mode, root, plan, label_receipts, selection, o_gate, result):
     check(not extra, f'unexpected root entries: {sorted(extra)}')
     for n in sorted(OPERATIONAL & set(entries)):
         st = os.lstat(root/n); check(stat.S_ISREG(st.st_mode) and st.st_nlink == 1, f'operational file {n} not single-link regular')
-    total_rows, total_roots, per_arm, corpus_files, out, games, single = 0, 0, {}, [], [], [], 0
+    total_rows, total_roots, per_arm, corpus_files, out, single, eps = 0, 0, {}, [], [], 0, []
     for name in batches:
         d = root/name
         raw, digest = read_regular(d/'manifest.json'); seal = json.loads(raw)
@@ -137,9 +153,7 @@ def verify(mode, root, plan, label_receipts, selection, o_gate, result):
         if mode in ('O', 'holdout'):
             check(bool(roots.all()), f'{name} non-root rows present')
             check(bool((np.asarray(a['recorded_outcome']) == 0).all()), f'{name} outcome stored')
-        offs = np.asarray(a['root_offsets'])
-        valid = np.asarray(a['root_valid'])
-        ridx = np.flatnonzero(roots)
+        offs = np.asarray(a['root_offsets']); valid = np.asarray(a['root_valid']); ridx = np.flatnonzero(roots)
         check(all(bool(valid[offs[i]:offs[i+1]].any()) for i in ridx), f'{name} root without a valid score')
         seeds = np.asarray(a['perspective_ids'])
         check(bool(((seeds >= lo) & (seeds < hi)).all()), f'{name} seed outside its bank range')
@@ -149,27 +163,60 @@ def verify(mode, root, plan, label_receipts, selection, o_gate, result):
             check(not bool(((seeds >= Cb['base']) & (seeds < Cb['base']+Cb['count'])).any()), f'{name} collection-bank C seed in O_W')
         single += int((sizes[ridx] == 1).sum())
         src = json.loads(read_regular(d/'sources.json')[0])
-        for g in src['games']:
-            arm = Path(g['path']).parent.name; per_arm[arm] = per_arm.get(arm, 0)+int(g['rows'])
-            games.append(Path(g['path']).name)
+        eps += episodes_of(d, roots, src)
         total_rows += n; total_roots += int(roots.sum()); corpus_files += [d/'manifest.json'] + [d/k for k in keys]
         out.append(dict(name=name, manifest_sha256=digest, rows=n, roots=int(roots.sum()), games=len(src['games'])))
+    for e in eps:                                              # every source game: real, sealed, unchanged since packing
+        check(len(e['seeds']) == 1, f"episode {e['path']} mixes seeds")
+        check(e['rows'] == e['declared_rows'], f"episode {e['path']} rows differ from sources.json")
+        check(sha(e['path']/'manifest.json') == e['manifest_sha256'], f"source game {e['path']} changed since packing")
     if mode in ('O', 'holdout'):
-        check(all(r.get('passed') is True and r.get('set') == mode and r.get('digest_mismatch_rate', 1) <= MISMATCH_LIMIT
-                  for r in label_receipts) and label_receipts, 'label receipts not passed for this set')
+        raw_root = JOB/'data'/f'raw-{mode}'
+        check(label_plan is not None, 'label plan required')
+        plan_sha = label_plan['__sha256__']
+        check(label_receipts and all(r.get('passed') is True and r.get('set') == mode and r.get('plan_sha256') == plan_sha
+                                     and r.get('drop_rate', 1) <= MISMATCH_LIMIT for r in label_receipts),
+              'label receipts not passed for this set and plan')
+        planned = {(g['arm'], g['index']): g for g in label_plan['sets'][mode]}
+        receipt_games = {tuple(x) for r in label_receipts for x in r['games']}
+        packed = set()
+        for e in eps:
+            check(e['path'].parent.parent == raw_root and e['path'].parent.name in ARM_CAPS and e['path'].name.startswith('game-'),
+                  f"source {e['path']} is not under {raw_root}/<arm>/")
+            arm, index = e['path'].parent.name, int(e['path'].name.split('-')[1])
+            g = planned.get((arm, index)); check(g is not None, f'source game {arm}/{index} not in the label plan set {mode}')
+            r = json.loads(read_regular(e['path']/'receipt.json')[0])
+            for k, v in dict(arm=arm, index=index, seed=g['seed'], capture_sha256=g['sha256'], plan_sha256=plan_sha,
+                             keep_sha256=g['keep_sha256'], rows=e['rows']).items():
+                check(r.get(k) == v, f'source game {arm}/{index} receipt {k} {r.get(k)!r} != {v!r}')
+            check(e['seeds'] == {g['seed']}, f'source game {arm}/{index} packed seeds != planned seed')
+            packed.add((arm, index))
+            per_arm[arm] = per_arm.get(arm, 0)+e['rows']
+        check(packed == receipt_games, f'packed games != label receipt games ({len(packed)} vs {len(receipt_games)})')
         labeled = sum(int(r['rows']) for r in label_receipts)
         check(total_rows == labeled, f'packed rows {total_rows} != label receipts rows {labeled}')
-        check(set(per_arm) <= set(ARM_CAPS), f'unknown arms {sorted(per_arm)}')
     if mode == 'O':
         check(O_MIN <= total_rows <= O_MAX, f'O rows {total_rows} outside [{O_MIN}, {O_MAX}]')
         check(all(per_arm.get(k, 0) <= v for k, v in ARM_CAPS.items()), f'per-arm caps exceeded {per_arm}')
     if mode == 'OW':
-        check(selection.get('reached') is True, 'O_W selection did not reach its target')
+        acc = JOB/'data'/'raw-OW-acceptance-smoke.json'
+        check(json.loads(read_regular(acc)[0]).get('passed') is True, 'emitter acceptance smoke not passed')
+        sel_games = selection.get('selected_games')
+        nsel = len(sel_games or [])
+        check(selection.get('reached') is True and sel_games == list(range(nsel)) and nsel > 0, 'selection is not exactly range(n)')
         check(selection['target_roots'] == o_gate['rows'], 'O_W target != |O|')
-        check(total_roots == selection['selected_roots'], f'O_W roots {total_roots} != selection {selection["selected_roots"]}')
-        check(o_gate['rows'] <= total_roots <= o_gate['rows']+int(selection['last_game_roots']),
-              f'O_W roots {total_roots} outside [|O|, |O| + last game roots]')
-        check(sorted(games) == [f'game-{g:05d}' for g in selection['selected_games']], 'O_W sources != selected prefix')
+        by_g = {}
+        for e in eps:
+            check(e['path'].parent == JOB/'data'/'raw-OW' and e['path'].name.startswith('game-'), f"source {e['path']} not under raw-OW")
+            g = int(e['path'].name.split('-')[1]); check(g not in by_g, f'duplicate source game {g}')
+            check(e['seeds'] == {B['base']+g}, f'source game {g} seed != C\'+{g}')
+            by_g[g] = e['roots']
+        check(sorted(by_g) == list(range(nsel)), 'O_W sources != the selected prefix range(n)')
+        prefix_before = sum(by_g[g] for g in range(nsel-1))
+        check(prefix_before < o_gate['rows'] <= total_roots, f'O_W prefix not minimal or short: {prefix_before} < {o_gate["rows"]} <= {total_roots}')
+        check(total_roots == selection['selected_roots'] and by_g[nsel-1] == selection.get('last_game_roots'),
+              'selection root counts differ from the packed rows')
+        per_arm['O_W'] = total_rows
     for p in corpus_files:
         fd = open_regular(p)
         try: os.fchmod(fd, stat.S_IMODE(os.fstat(fd).st_mode) & ~0o222)
@@ -185,7 +232,7 @@ def main(argv=None):
     ap.add_argument('--mode', choices=sorted(MODES), required=True)
     ap.add_argument('--plan', type=Path, required=True)                 # x4s4 plan.json (banks)
     ap.add_argument('--label-receipts', type=Path, nargs='*', default=[])
-    ap.add_argument('--selection', type=Path)                            # OW only
+    ap.add_argument('--selection', type=Path)                            # OW only: <job>/data/raw-OW-selection.json
     a = ap.parse_args(argv)
     root = JOB/'data'/MODES[a.mode][0]; gate = JOB/'data'/MODES[a.mode][1]
     t0 = time.monotonic()
@@ -195,14 +242,17 @@ def main(argv=None):
         check(not os.path.lexists(gate), 'gate already exists')
         plan = json.loads(read_regular(a.plan)[0])
         receipts = [json.loads(read_regular(p)[0]) for p in a.label_receipts]
-        selection = o_gate = None
+        selection = o_gate = label_plan = None
+        if a.mode in ('O', 'holdout'):
+            raw_plan, plan_digest = read_regular(JOB/'data'/'label-plan.json')
+            label_plan = json.loads(raw_plan); label_plan['__sha256__'] = plan_digest
         if a.mode == 'OW':
-            check(a.selection is not None, '--selection required for OW')
+            check(a.selection is not None and a.selection.resolve() == JOB/'data'/'raw-OW-selection.json', '--selection must be <job>/data/raw-OW-selection.json')
             selection = json.loads(read_regular(a.selection)[0])
             o_gate = json.loads(read_regular(JOB/'data'/MODES['O'][1])[0])
         else:
             check(a.selection is None, '--selection only for OW')
-        verify(a.mode, root, plan, receipts, selection, o_gate, result)
+        verify(a.mode, root, plan, receipts, selection, o_gate, label_plan, result)
         result['passed'] = True
     except Exception as e:
         result['error'] = repr(e)
