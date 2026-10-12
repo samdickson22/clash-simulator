@@ -4018,3 +4018,27 @@ ISSUED AUTHORIZE_B_DEPLOYMENT 06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 4433d54c18e3228971ae3f03fda6b40af8e0fba9d8d3b7387416daff0a70b706
 
 **Not authorized by this GO:** the CPU preflight, GPU or heldout work, or any other placement. After placement, the coordinator runs the C-6 audit.
+
+## 2026-10-12 21:28Z: K4S safe_input r2 committed; rulings E5, full clone, frozen-reader wrapper
+
+**Status.** safe_input r2 is committed at 7f82af0d (`end-prep/safe-input-r2/`, safe_input.py f9ca4926).
+- **Tests.** 472 tests across py3.8 and two 3.12 environments, each run normally and under -O. Mutation testing killed 244 of 247 mutants. The 3 survivors are redundant with stronger gates.
+- **Git helper (P2-4).** Implemented. It refuses alternates, grafts, shallow clones and driver configs. On git 2.25 the explicit refusal of grafts is the load-bearing part.
+- **Metadata pass first.** `git_plan` screens all metadata before reading any object.
+- **D1–D4** are implemented.
+- **E4 blob check.** The runner independently matched each of the four E4 blob OIDs to its ruled SHA.
+
+**Ruling E5: exact exemptions.** Nine runtime members match the outcome-name family denylist only because of their names. They are exempt at exact path plus blob OID; the runner records the OIDs in the code constant. They are copied byte-exact, hashed, and never parsed by END tooling:
+- 8 tracked Python source files whose names contain "games":
+  - `reports/explore/k4s-confirm/{check_games,qualify_games}.py`
+  - `…/engine-speed/canonical/certify_games.py`
+  - `…/exit-r3/round2/{,timing03/}eval-ops/reduce_games.py`
+  - `…/search-tuning/timing_games.py`
+  - `scripts/{collect_public_development_games,compare_native_public_games}.py`
+- the test fixture `tests/fixtures/native_friendly_completed_15_535_86.json`. It was added on 2026-09-28, before any sealed study existed, and is listed in runtime-pin-r2.
+
+The family pattern is **not** narrowed. Any other member that matches is refused.
+
+**Ruling: full clone.** S9 builds only from a dedicated runner-owned full clone at `/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full`. It is cloned from origin with no filter. safe_input checks that it has no promisor, alternates, grafts, hooks or driver config. It is checked out at evidence commit P. The shared checkout at `/mpac/sdicks02/repos/clasher` is never used as a build source, because it is a partial clone.
+
+**Ruling: frozen-reader interim.** Frozen code (`k4s_logic.git_bytes()` and the frozen END `git show`) runs only under a wrapper that scrubs `GIT_*` and sets the P2-4 environment. It runs only on clones that safe_input has pre-verified (no replace refs, alternates, grafts, hooks or driver config). S5 and S7 perform that check on the host clone before running.
