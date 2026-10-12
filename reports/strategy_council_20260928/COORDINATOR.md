@@ -3266,3 +3266,29 @@ The investigation is in `k4s-audits/K4S-DBUS-FLAG-INVESTIGATION-r1.md`. The flag
   - (b) a reviewed amendment sets a 04-relative threshold;
   - (c) the ratio-unavailable path is declared in advance.
 - **R5.** Audits treat 04's DBus level as known and constant, and alert only if it changes or the daemon disappears.
+
+## 2026-10-12 14:48Z: K4S REPORTING COMPLETE (3,900 counted; outcomes SEALED)
+
+**Completion.** K4S reporting completed at 14:45:34Z.
+- r4 exited null-reason at 71/68.
+- The final drain was done by hand and hashed.
+- `final_pass` covered 3,900 counted blocks (3,000 primary + 900 guard), each logical block exactly once:
+  - all 33,000 game files match their SHAs; they were hashed only, never parsed;
+  - every hub-ack is OK;
+  - no counted block is a ledger loss.
+- Final ledger: 99 events. Cumulative lost: 73 primary of a 300 cap, 26 guard of a 90 cap.
+
+**Artifacts (bb7c7f88):**
+- `REPORTING-COMPLETION.json` ed7d11b7;
+- counted inventory f10ab943;
+- R2 DBus disclosure 128d66a0: 04 at 98.7%, 03 at 0%, and §5.3(2) drops nothing.
+
+**Sealed reducer and verifier runs (309893e1).** Both refuse before any game read: `reduce` fails closed in `outcome_release`, and `verify_k4s` refuses with no release receipt. No outcome was opened.
+
+**Next:**
+1. R4: a read-only 30-minute baseline of 04's bus, ending about 15:15Z.
+2. Plan K4S END, with the A5 guard fix via K4S A3 and DBus per R4. The coordinator rules after R4.
+3. The K4S Mac phase C (manifest 74314eda), which runs after the TIERS Mac session.
+4. K4S release, which needs an explicit coordinator GO.
+
+**03 and 04** are no longer running K4S reporting. They stay reserved for K4S END until it is planned. 03's T1 corpus copy and 04's perception storage remain off-limits.
