@@ -4,7 +4,8 @@ Sequences, from on-disk state only:
   fits (one at a time on the GPU): R3a-rep, R4-D (after data/G-UNION-VERIFIED.json), R4-DC;
   calibration -> <job>/inputs/<ID>.pt (read-only) -> runtime copy <job>/rt-<ID> (plan.json student block);
   reporting phases, one (student, arm) at a time on cores 0-49, via supervise.py, only after <job>/REPORTING.GO.
-Guards: <job>/STOP (-e or -L) stops the fit (SIGTERM; the trainer checkpoints) and pauses everything;
+Guards: no new phase is dispatched while MemAvailable < 24 GiB or memory PSI some avg10 > 10%;
+<job>/STOP (-e or -L) stops the fit (SIGTERM; the trainer checkpoints) and pauses everything;
 hard stop; fit NaN/divergence, 2x wall and GPU > 40 GB. Seeds of interrupted games are retired for every
 later phase and never re-run. R4-DC games run only if the pooled R4-D minus R3a point estimate is < 0
 (computed once both are terminal). Anomalies go to <job>/driver/ANOMALY-*.json and pause the affected lane.
@@ -51,6 +52,9 @@ def group_alive(pgid):
     except PermissionError: return True
 def mem_available():
     return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
+def psi_some_avg10():
+    try: return float(Path('/proc/pressure/memory').read_text().split()[1].split('=')[1])
+    except Exception: return 0.
 def gpu_used_mib():
     try:
         return int(subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
@@ -302,6 +306,9 @@ def games_tick():
         if ex.get('reason') not in (None, 'memory_guard', 'console_user', 'owned_STOP'):
             if not (D/f'ACK-{last[-1].parent.relative_to(J).as_posix().replace("/", "_")}').exists():
                 anomaly(f'exit-{last[-1].parent.relative_to(J).as_posix().replace("/", "_")}', reason=ex.get('reason'), rc=ex.get('returncode')); return
+    # Plan: stop dispatching while MemAvailable < 24 GiB or memory PSI some avg10 > 10%.
+    if mem_available() < 24*2**30 or psi_some_avg10() > 10.:
+        return
     nxt = next_phase()
     if nxt: launch_phase(*nxt)
 

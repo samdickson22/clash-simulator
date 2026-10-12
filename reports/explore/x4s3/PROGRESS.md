@@ -52,3 +52,21 @@ Hard stop is 2026-10-12T23:30:00Z.
   - x4s3 S-none equals S1's own run.py S-none on 8/8.
 - **11:47Z:** G-01 local copy verified and sealed with `verify_g.py --mode g01`: 149,385 roots, 144 files.
 - **11:48Z:** smoke (8 seeds) launched through the supervisor, starting with K4S-120.
+- **11:49:56Z:** freeze commit 12db49a1: PLAN, harness, seed audit and qualification receipts, pushed before any
+  reporting game.
+- **11:49–11:51Z:** smoke R3a: 8 K4S-120 games (about 32 s/game; student-default 10–23% of decisions) and 8 S-200
+  games (one-core lanes, about 43 s/game), both rc 0. Live STOP test: STOP at 11:51:31.9Z, supervisor exit
+  11:51:33.97Z, 0 group processes left.
+- **11:52:39Z:** REPORTING.GO written and driver launched. R3a K4S-120 phase a1 started.
+- **ANOMALY, 11:52:50–11:54:06Z:** attempts a1 and a2 were stopped by the supervisor's memory-PSI kill guard (some
+  avg10 > 10%). This was a page-cache burst while 10 workers started alongside the fit's corpus streaming;
+  MemAvailable was about 105 GiB. I halted the driver and a3 by hand at 11:54Z.
+  - Fix (guard-only, with no game-code change): the supervisor kills only on MemAvailable < 24 GiB or owned PSS
+    > 50 GiB. The driver withholds new dispatch while memory PSI some avg10 > 10%, which is the plan's "stop
+    dispatching".
+  - The declared rule retired 33 seeds (indices 0–32) for every student; none of those games had finished. 1,167
+    paired seeds remain.
+  - Driver relaunched at 11:55:37Z; a3's exit acknowledged; R3a K4S-120 a4 started at 11:56:37Z with PSI 0.0.
+- **11:59Z:** G-08 pull r3 sent for the narrow delta check (pull_g08.sh 834d1598, verify_g.py eef8cdfd; tests 14/14
+  and 28/28 × 3 optimization levels). The coordinator ruling accepts R2-1, R2-2 and R2-3 as residuals, on
+  condition that the pull runs in the foreground, attended. mirror.sh was also sent for review. Not run yet.

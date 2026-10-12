@@ -2,7 +2,7 @@
 
 Deltas: host 127x01, nice 10, games on physical cores 0-49 only (1-core lanes or
 5-core slots), one runtime copy per student (--rt), console-user yield via
-fleet-console-users, memory PSI guard, 12 h hard stop passed explicitly.
+fleet-console-users, PSI logged (the driver gates dispatch on it), 12 h hard stop passed explicitly.
 
 Owns exactly one child process group (run.py + its fork pool). Polls every 10 s:
 STOP file, hard stop time, host MemAvailable floor and the owned tree's PSS cap.
@@ -138,7 +138,8 @@ def main():
                 stop('owned_STOP'); break
             if datetime.datetime.now(datetime.timezone.utc) >= stop_at:
                 stop('hard_stop_time'); break
-            if mem < 24*2**30 or tree > 50*2**30 or psi_some_avg10() > 10.:
+            # Kill only on real memory exhaustion; memory PSI (logged in census) gates new dispatch in the driver.
+            if mem < 24*2**30 or tree > 50*2**30:
                 stop('memory_guard'); break
             if not seats and console_users():
                 stop('console_user'); break

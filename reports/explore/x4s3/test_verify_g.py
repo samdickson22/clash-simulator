@@ -1,9 +1,9 @@
-"""Fixture tests for verify_g.py r2 (X4S-3, exploration). Run with and without -O:
+"""Fixture tests for verify_g.py r3 (X4S-3, exploration). Run with and without -O:
     python test_verify_g.py && python -O test_verify_g.py
 Synthetic trees only, under a fresh temporary directory. Module constants JOB, PACKED,
 CONCAT and MODES['g08'] are pointed at the fixture; verification code is unchanged.
 """
-import hashlib, json, os, shutil, stat, sys, tempfile
+import hashlib, json, os, shutil, signal, socket, stat, sys, tempfile, time
 from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -47,30 +47,49 @@ def fixture(tmp, **kw):
     return job, root, concat
 
 
-def run_case(name, mutate=None, expect=False, **kw):
+class Hang(Exception):
+    pass
+
+
+def alarm(*_):
+    raise Hang('verification blocked > 10 s')
+
+
+def run_case(name, mutate=None, expect=False, want=None, **kw):
     tmp = Path(tempfile.mkdtemp(prefix='x4s3-vg-'))
     outside = tmp/'outside.npy'; outside.write_bytes(b'outside'); outside.chmod(0o644)
+    victims = [outside]; socks = []
     try:
         job, root, concat = fixture(tmp, **kw)
-        if mutate: mutate(root, tmp, outside)
+        if mutate:
+            extra = mutate(root, tmp, outside)
+            if isinstance(extra, list): victims += [x for x in extra if isinstance(x, Path)]; socks += [x for x in extra if not isinstance(x, Path)]
+        t0 = time.monotonic(); signal.signal(signal.SIGALRM, alarm); signal.alarm(10)
         try:
             rc = V.main(['--mode', 'g08', '--concat', str(concat)])
-        except Exception as e:  # receipt could not be written (confinement failure)
+        except Exception as e:  # receipt could not be written (confinement failure) or a hang
             rc, raised = 'raised', repr(e)
         else:
             raised = None
+        finally:
+            signal.alarm(0)
+        seconds = round(time.monotonic()-t0, 3)
         rec_path = root/V.RECEIPT
         rec = json.loads(rec_path.read_text()) if rec_path.is_file() and not rec_path.is_symlink() and not kw.get('pre_receipt') else None
         passed = bool(rec and rec['passed'])
-        outside_writable = bool(outside.stat().st_mode & 0o200)
-        ok = (passed == expect) and outside_writable and (rc == 0) == expect
+        outside_writable = all(v.stat().st_mode & 0o200 for v in victims)
+        error = (rec or {}).get('error') or raised
+        ok = (passed == expect) and outside_writable and (rc == 0) == expect and seconds < 10 and 'Hang' not in str(error)
+        if want is not None:
+            ok = ok and want in str(error)
         if expect:
             data = [p for p in root.rglob('*') if p.is_file() and p.name != V.RECEIPT and p.parent != root]
             ok = ok and rec['sealed'] and all(not (p.stat().st_mode & 0o222) for p in data)
-        print(json.dumps(dict(case=name, ok=ok, rc=rc, passed=passed, error=(rec or {}).get('error') or raised,
-                              outside_still_writable=outside_writable, optimize=sys.flags.optimize)))
+        print(json.dumps(dict(case=name, ok=ok, rc=rc, passed=passed, error=error, want=want, seconds=seconds,
+                              victims_still_writable=outside_writable, optimize=sys.flags.optimize)))
         return ok
     finally:
+        for sk in socks: sk.close()
         for p in tmp.rglob('*'):
             if not p.is_symlink(): p.chmod(0o755 if p.is_dir() else 0o644)
         shutil.rmtree(tmp)
@@ -82,7 +101,25 @@ def symlink_file(root, tmp, outside):
 
 
 def hardlink_file(root, tmp, outside):
-    os.link(root/'batch-00000'/'sources.json', tmp/'hl')
+    os.link(root/'batch-00000'/'sources.json', tmp/'hl'); (tmp/'hl').chmod(0o644)
+    return [tmp/'hl']  # the linked inode itself must keep its write bit
+
+
+def fifo_at(rel):
+    def m(root, tmp, outside):
+        p = root/rel; p.unlink() if p.exists() else None; os.mkfifo(p)
+    return m
+
+
+def socket_at(rel):
+    def m(root, tmp, outside):
+        p = root/rel; p.unlink() if p.exists() else None
+        sk = socket.socket(socket.AF_UNIX); sk.bind(str(p)); return [sk]
+    return m
+
+
+def fifo_concat(root, tmp, outside):
+    c = tmp/'concat.json'; c.unlink(); os.mkfifo(c)
 
 
 def symlink_ancestor(root, tmp, outside):
@@ -91,25 +128,33 @@ def symlink_ancestor(root, tmp, outside):
 
 def main():
     cases = [
-        ('valid', None, True, {}),
-        ('wrong_concat_pin', None, False, dict(genuine_pin=True)),
-        ('concat_incomplete', None, False, dict(complete=False)),
-        ('empty_selection', None, False, dict(no_08=True)),
-        ('extra_root_file', lambda r, t, o: (r/'stray.txt').write_text('x'), False, {}),
-        ('unlisted_train_manifest', lambda r, t, o: (r/'batch-00000'/'train'/'manifest.json').write_text('{}'), False, {}),
-        ('dangling_symlink', lambda r, t, o: (r/'batch-00001'/'dangling').symlink_to(t/'nope'), False, {}),
-        ('extra_empty_dir', lambda r, t, o: (r/'batch-00001'/'empty').mkdir(), False, {}),
-        ('extra_root_dir', lambda r, t, o: (r/'batch-00002').mkdir(), False, {}),
-        ('symlinked_listed_file', symlink_file, False, {}),
-        ('hardlinked_file', hardlink_file, False, {}),
-        ('symlink_ancestor', symlink_ancestor, False, {}),
-        ('missing_file', lambda r, t, o: (r/'batch-00000'/'sources.json').unlink(), False, {}),
-        ('data_sha_mismatch', lambda r, t, o: (r/'batch-00000'/'sources.json').write_text('{"x":1}'), False, {}),
-        ('fifo', lambda r, t, o: os.mkfifo(r/'batch-00000'/'fifo'), False, {}),
-        ('invalid_wait', None, False, dict(bad_wait=True)),
-        ('receipt_preexists', lambda r, t, o: (r/V.RECEIPT).write_text('{}'), False, dict(pre_receipt=True)),
+        ('valid', None, True, None, {}),
+        ('wrong_concat_pin', None, False, 'concat manifest SHA', dict(genuine_pin=True)),
+        ('concat_incomplete', None, False, 'not complete', dict(complete=False)),
+        ('empty_selection', None, False, 'empty selection', dict(no_08=True)),
+        ('extra_root_file', lambda r, t, o: (r/'stray.txt').write_text('x'), False, 'unexpected root entries', {}),
+        ('unlisted_train_manifest', lambda r, t, o: (r/'batch-00000'/'train'/'manifest.json').write_text('{}'), False, 'file inventory differs', {}),
+        ('dangling_symlink', lambda r, t, o: (r/'batch-00001'/'dangling').symlink_to(t/'nope'), False, 'symlink', {}),
+        ('extra_empty_dir', lambda r, t, o: (r/'batch-00001'/'empty').mkdir(), False, 'unexpected directories', {}),
+        ('extra_root_dir', lambda r, t, o: (r/'batch-00002').mkdir(), False, 'root directories != expected shards', {}),
+        ('symlinked_listed_file', symlink_file, False, 'symlink', {}),
+        ('hardlinked_file', hardlink_file, False, 'multiply-linked', {}),
+        ('symlink_ancestor', symlink_ancestor, False, 'not a real directory', {}),
+        ('missing_file', lambda r, t, o: (r/'batch-00000'/'sources.json').unlink(), False, 'file inventory differs', {}),
+        ('data_sha_mismatch', lambda r, t, o: (r/'batch-00000'/'sources.json').write_text('{"x":1}'), False, 'sources.json SHA', {}),
+        ('fifo_in_shard', fifo_at('batch-00000/fifo'), False, 'special file', {}),
+        ('invalid_wait', None, False, 'without valid WAIT', dict(bad_wait=True)),
+        ('receipt_preexists', lambda r, t, o: (r/V.RECEIPT).write_text('{}'), False, 'File exists', dict(pre_receipt=True)),
+        ('fifo_root_other_name', fifo_at('stray.fifo'), False, 'special root entries', {}),
+        ('socket_root_other_name', socket_at('stray.sock'), False, 'special root entries', {}),
+        ('fifo_shard_manifest', fifo_at('batch-00000/manifest.json'), False, 'not a single-link regular file', {}),
+        ('fifo_concat', fifo_concat, False, 'not a single-link regular file', {}),
+        ('hardlinked_receipt', lambda r, t, o: (os.link(r/'pull-start-utc.txt', t/'hl-receipt'), (t/'hl-receipt').chmod(0o644), [t/'hl-receipt'])[-1], False, 'is not a single-link regular file', {}),
     ]
-    results = [run_case(n, m, e, **kw) for n, m, e, kw in cases]
+    for n in sorted(V.MODES['g08']['receipts']):
+        cases += [(f'fifo_receipt_{n}', fifo_at(n), False, 'special root entries', {}),
+                  (f'socket_receipt_{n}', socket_at(n), False, 'special root entries', {})]
+    results = [run_case(n, m, e, w, **kw) for n, m, e, w, kw in cases]
     print(json.dumps(dict(all_ok=all(results), cases=len(results), optimize=sys.flags.optimize)))
     return 0 if all(results) else 1
 

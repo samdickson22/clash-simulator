@@ -1,5 +1,9 @@
 """X4S-3 (exploration, NEVER ADOPTABLE): local-only verification and sealing of copied
-G shards against the six-million concat manifest 7e21f90a. r2 (Sol review r1 P1-P4, P6).
+G shards against the six-million concat manifest 7e21f90a. r3 = r2 + coordinator items
+R2-4 (operational receipts must be single-link regular files; every special root entry is
+rejected whatever its name) and R2-6 (non-blocking O_NOFOLLOW open + fstat before any read;
+manifests are hashed and parsed from the same bytes). R2-1 (concurrent replacement) is an
+accepted residual per coordinator ruling: attended, single-operator use only.
 
 Modes are fixed: g08 = 127x08 batch-00000..00010 (2,645,689 roots) in <job>/data/g08;
 g01 = 127x01 batch-00000..00001 (149,385 roots) in <job>/data/g01. Root, receipt path,
@@ -57,9 +61,10 @@ def real_dir_chain(path):
 
 
 def open_regular(path):
-    """Open without following a final symlink; require a single-link regular file."""
+    """Non-blocking open without following a final symlink (a FIFO cannot block), then
+    fstat: require a single-link regular file before any read."""
     try:
-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     except OSError as e:
         raise ValidationError(f'cannot open without following links: {path}: {e!r}')
     st = os.fstat(fd)
@@ -76,6 +81,14 @@ def sha(path):
         for b in iter(lambda: f.read(1 << 20), b''):
             h.update(b)
     return h.hexdigest()
+
+
+def read_regular(path):
+    """(bytes, sha256) of one regular-file instance: the same bytes are hashed and parsed."""
+    fd = open_regular(path)
+    with os.fdopen(fd, 'rb') as f:
+        data = f.read()
+    return data, hashlib.sha256(data).hexdigest()
 
 
 def scan(top):
@@ -108,8 +121,9 @@ def safe_key(k):
 def verify(mode, concat_path, root, result):
     m_spec = MODES[mode]
     real_dir_chain(root)
-    check(sha(concat_path) == CONCAT, 'concat manifest SHA')
-    m = json.loads(Path(concat_path).read_text())
+    raw, digest = read_regular(concat_path)
+    check(digest == CONCAT, 'concat manifest SHA')
+    m = json.loads(raw)
     check(m.get('complete') is True and m.get('parent_r1_manifest_sha256') == R1, 'concat manifest not complete / wrong parent')
     items = [s for s in m['shards'] if s['host'] == m_spec['host']]
     check(len(items) > 0, 'empty selection')
@@ -124,17 +138,21 @@ def verify(mode, concat_path, root, result):
         for e in it:
             check(not e.is_symlink(), f'symlink at root: {e.name}')
             entries[e.name] = 'dir' if e.is_dir(follow_symlinks=False) else 'file' if e.is_file(follow_symlinks=False) else 'special'
+    special = sorted(n for n, t in entries.items() if t == 'special')
+    check(not special, f'special root entries: {special}')
     check(RECEIPT not in entries, 'receipt already exists')
     check(sorted(n for n, t in entries.items() if t == 'dir') == m_spec['shards'], 'root directories != expected shards')
     extra = {n for n, t in entries.items() if t != 'dir'} - m_spec['receipts']
     check(not extra, f'unexpected root entries: {sorted(extra)}')
-    for n in m_spec['receipts'] & set(entries):
-        check(os.lstat(root/n).st_nlink == 1, f'multiply-linked receipt {n}')
+    for n in sorted(m_spec['receipts'] & set(entries)):
+        st = os.lstat(root/n)
+        check(stat.S_ISREG(st.st_mode) and st.st_nlink == 1, f'operational receipt {n} is not a single-link regular file')
     roots, corpus_files = 0, []
     for item in items:
         d = root/Path(item['path']).name
-        check(sha(d/'manifest.json') == item['manifest_sha256'], f'{d.name} manifest SHA')
-        seal = json.loads((d/'manifest.json').read_text())
+        raw, digest = read_regular(d/'manifest.json')
+        check(digest == item['manifest_sha256'], f'{d.name} manifest SHA')
+        seal = json.loads(raw)
         check(seal.get('complete') is True and seal.get('schema') == SCHEMA, f'{d.name} seal')
         keys = set(seal['files'])
         for k in keys: safe_key(k)
