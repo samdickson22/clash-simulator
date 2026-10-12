@@ -1,0 +1,10 @@
+# E5 exact path + git blob OID (git ls-tree 104fa8578f283b194a5bb838fad31149f52879ef; metadata only, no blob read), 2026-10-12T21:28:36Z
+100644 blob 32b3e4d1154febcff73303a31c99bb1e711182ec	reports/explore/k4s-confirm/check_games.py
+100644 blob 5f0b97b0586cd38f380e4bfb539741c783b5dc57	reports/explore/k4s-confirm/qualify_games.py
+100644 blob da72f140cc89df0eab0960b03009204c88c66991	reports/strategy_council_20260928/engine-speed/canonical/certify_games.py
+100644 blob d91d35a244d30dc6c3758360e8670749ae75ceda	reports/strategy_council_20260928/imitation/exit-r3/round2/eval-ops/reduce_games.py
+100644 blob 2ebf150ddb79c90ea79b40a75d09ec5ed4c1bcca	reports/strategy_council_20260928/imitation/exit-r3/round2/timing03/eval-ops/reduce_games.py
+100644 blob 6ff285d6874df1f7c5ea9451203d294518bfe70c	reports/strategy_council_20260928/search-tuning/timing_games.py
+100644 blob 63a4e37396bedab7943db87d85ace99dad614bfb	scripts/collect_public_development_games.py
+100644 blob 9e128c268482a292297019e67df6eb068e2fe1d8	scripts/compare_native_public_games.py
+100644 blob c46248eb7cfb551b1a75c695265743a48d625801	tests/fixtures/native_friendly_completed_15_535_86.json
