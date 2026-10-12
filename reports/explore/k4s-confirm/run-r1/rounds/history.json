@@ -1,0 +1,16 @@
+[
+ {
+  "namespace": "k4s-confirm-reporting-r1",
+  "phase": "reporting",
+  "dispatch_file": "reporting-dispatch.json",
+  "dispatch_sha256": "78335dc40094b404848088e55c287a536034e739c56789aa6f46af9a9b8af5b2",
+  "launched_utc": "2026-10-11T20:08:22Z"
+ },
+ {
+  "namespace": "k4s-confirm-replacement-r1",
+  "phase": "replacement-r1",
+  "dispatch_file": "replacement-r1.json",
+  "dispatch_sha256": "46eba59b8a282ea50eac34f873100771fa09738a30370e75abb5e28d89bcd220",
+  "launched_utc": "2026-10-11T22:30:38Z"
+ }
+]

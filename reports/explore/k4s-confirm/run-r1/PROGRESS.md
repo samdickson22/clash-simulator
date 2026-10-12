@@ -133,6 +133,10 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
   motd stamps with one login, record timers/stamps). At 08:40Z only: after 03's apt finishes post "03 quiet" to the coordinator,
   wait for the builder's "released" (max 30 min), then relaunch. Cycle automation: tools/round.sh (Sol review requested).
 
+- 02:2xZ **Proposal M adopted (2c847954)**: every P2 cycle by hand from CYCLE-CHECKLIST.md; round.py/round.sh shelved (Sol
+  REJECTs r1/r2 kept); after each round commit rounds/rN/RECEIPT.json and post "round rN receipt committed <sha>" → Opus audit;
+  blocking findings stop the next cycle.
+
 ## Running (owned PGIDs only)
 - CURRENT: replacement-r1 in k4s-confirm-replacement-r1: 03 sup PGID 1002822, 04 sup PGID 37363; copiers on 05 702958 / 711250.
   (Reporting-phase PGIDs below are dead/superseded.)
