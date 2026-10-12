@@ -3803,3 +3803,19 @@ The outcome-name gate becomes a reviewed, case-insensitive family/pattern denyli
 **Note on F16.** Sealed K4S and T1 outcomes are not committed to the repo. They live in host job directories. So the X4S-3 audit very likely read no outcome bytes. The fix is still required: a pre-read allowlist of seed-declaration sources.
 
 **Next.** The owner fixes all 18 findings in a new script commit, adding regression fixtures for each Sol probe, and the scripts go back for a Sol r2 review. No host contact until GO.
+
+## 2026-10-12 18:19Z: K4S safe_input r1 candidate; rulings D1–D4
+
+**Status.** safe_input r1 is commit 4c9439de (`end-prep/safe-input-r1/`, safe_input.py 5a42036c).
+- 246 tests pass on py3.8 and on both 3.12 environments, normally and under -O. 139/139 mutants are killed.
+- It reproduces all four package-2 Sol probes.
+- r2 is in progress: the P2-4 git helper, a two-phase tree-then-blob API, the shared family denylist, and regression tests for the r3 findings.
+
+**Rulings (the runner's recommendations, adopted):**
+- **D1. S9 exports only the runtime member set.** The set is computed by the frozen runtime_pins rule from tree metadata alone. Non-member blobs are never read. A denylisted name inside the member set is refused unless it is on the E list.
+  - The two tracked `hub-ack.returned.json` OA-1 evidence files, and the r2 `*-complete.json` family files, are non-members. They need no exemption.
+- **D2. E1 is amended to "materialised".** The committed entry must be the exact 120000 link `visualize_battle.py` → `examples/visualize_battle.py`. The runtime ships a regular file whose bytes equal the gated target blob, matching T1's END runtime convention. S9 and S4 apply the same rule.
+- **D3. S6-only hash-only role.** It covers exactly `end-raw.json` and `end-complete.json`, and applies only inside a sealed attempt directory under the declared attempt parent. The files are never parsed; their SHA is compared with the seal manifest. Nothing else gets this role.
+- **D4. S10 drops on-host `tar -x`.** It is replaced by a shipped receiver: the layer's remote program gains a `receive` mode with exclusive creation, the denylist, nlink and no-follow checks, and hash verification.
+
+**Residual accepted.** A same-size, in-place rewrite by another local actor during a read goes undetected unless an expected SHA is supplied. All production reads must pass expected SHAs.
