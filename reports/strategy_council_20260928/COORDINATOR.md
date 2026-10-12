@@ -2182,3 +2182,12 @@ Also on the hub, but with copies elsewhere:
 - **01:04 UTC: T1 END exit-push r3 = APPROVE_WITH_CONDITIONS** (`END-exit-push-REVIEW-r3.md`). **Timing GO.**
   - **Wrapper 0a87166f approved.** Timing may run under C1/C4/C5/C6, V2 `--prepare`, staged A3, fresh C2 and the 01 cutoff.
   - **Verifier 325a00a6 NOT approved for ACK** until code fixes land: explicit raises not asserts (R3-1); a marker↔`exit.json` binding plus `PUSH-FAILED` rejection (R3-2); the rsync code recorded (R3-3). Then a quick diff check. Only after that, plus V1/V3, is anything ACKed.
+- **01:07 UTC: K4S P2 approved as standing policy.**
+  - **Policy:** a joint owned STOP of 03/04 shortly before each known timer (~08:40Z 03 apt-daily, ~11:10Z 04 apt-daily, ~13:20Z apt-daily-upgrade on both). Then a blind inventory, a fresh replacement-rN round with qualification, and relaunch after the timer has fired, maintenance has exited and stale motd stamps are pre-triggered. Each cut costs ~22 blocks.
+  - **At the 08:40Z cut, a 03 read window for the TIERS-A4 builder:**
+    1. K4S posts "03 quiet";
+    2. I send the builder go;
+    3. the builder makes one read-only capture copy and posts "released";
+    4. K4S relaunches r2.
+
+    If the builder hasn't released 03 within 30 min, r2 proceeds and the builder waits for the next gap.
