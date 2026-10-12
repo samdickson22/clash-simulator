@@ -2519,3 +2519,15 @@ The branch `e4-guard-race-fix-20261012` (head 23a39863) is merged to main as **8
 **Companions, separate rulings to come:**
 - (a) K4S END adopts the fix through K4S Amendment 3 / a c1fb1e9a re-pin. K4S END stays held until then.
 - (b) The Mac/A4 erratum: `stage_nocopy.py`, the staged Mac runtime, and no TIERS Mac session on 94d0e7f2 bytes.
+
+## 2026-10-12 05:05Z: K4S AMENDMENT 3 ADOPTED (merge 133f3ae4); A5 smoke past the race point
+
+**K4S Amendment 3 is adopted.** It is A5 companion (a).
+- The Mac/END manifest moves from c1fb1e9a to **74314eda**.
+- Sol r1 APPROVE (`k4s-a3-review-wt-SOL-REVIEW-r1.md`). Sol reproduced the one-leaf regeneration with the unchanged frozen builder, so the only change is `fleet_validity` 94d0e7f2 → 0775b704.
+- **Reporting is untouched.** FROZEN-K4S 416f6e51 is unchanged, and the running overlay keeps d89cab16.
+- The known Mac test failure is pre-existing and "by construction", so it is not caused by A3.
+
+**K4S END is no longer held for the guard race.** It now waits only on its normal prerequisites: reporting complete, the END window, and a runbook ruling. **Deploying the amended `mac/` bytes into the reporting overlay is forbidden**, because it would fail `barrier.reporting_release`.
+
+**A5 smoke on 08** (`end-a5-smoke-127x08-0a87166f-r1`, launched 04:55:46Z) has no early exit as of 05:04Z. Both old-code attempts on 08 had failed about 6 minutes after launch, so the fix appears to clear the race on 08. The pass/fail verdict still waits for the smoke's exit, C-d, ACK and the A6 pass criteria.
