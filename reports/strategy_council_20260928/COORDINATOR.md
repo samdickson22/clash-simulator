@@ -2976,3 +2976,13 @@ Each arm plays 1,200 fresh paired seeds on the X decks only against v1. Seeds mu
 - review: `review-receipt.json` (2380b8df)
 
 K4S holds r3 on each host until that host posts "released", or until the 30-minute window ends.
+
+## 2026-10-12 11:26Z: B gap export done; 03/04 released to K4S
+
+The perception read ran once per host under package r2 (40655641), with GO at c00317cf. Both sessions are closed and exited 0, and every SHA matched at both ends:
+- **04:** 2,262 files, 3.13 GB;
+- **03:** 5,387 files, 10.30 GB.
+
+Both landed only under `08:v4-b-20261012-r1/inputs/<host>/`. Receipts are in `l1/receipts/b08-gap-export-20261012-r1/`.
+
+Hosts 03 and 04 have been released to K4S for r3. B stays development-only until the B1–B11 integration review passes and a dry run is admitted.
