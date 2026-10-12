@@ -1,0 +1,35 @@
+{
+  "01_launch_utc": "2026-10-12T02:57:15Z",
+  "08_r1_Cd_utc": "2026-10-12T03:09:58Z",
+  "RF1_parent_shell": {
+    "cmdline_sha256": "88bd0fbfc483e7a67a7459ed0230d33457c308a1efd64ae2e45f6dfc0d8199ee",
+    "nice": 0,
+    "pid": 1893012,
+    "start_ticks": 156374136
+  },
+  "RF1_review_sha256": "511174df9e6c16dde0c01f706922e5c4ffa63e517664cf2a71589d0528e97566",
+  "actual_command_argv_retained": true,
+  "adopted_future_conditions": "15b10ef2 supersedes RF1 item2; C5 exact remote shell ps nice0/SCHED_OTHER/pinnedbytecommand beforeexec; C6 no signals onwrongnice, selfrefusal thenescalate. C1-C4/C7/C8 all retained for08r1/r2.",
+  "awaiting_disposition_for_proof_gap": true,
+  "coordinator_informed_immediately": true,
+  "exact_shell_byte_compare_not_explicitly_recorded": true,
+  "launch_SSH_closed_utc": "2026-10-12T02:57:15Z",
+  "mirror_paused": true,
+  "new_review_update_received_after_launch": true,
+  "noSSH01": true,
+  "no_retroactive_source_probe": true,
+  "no_signal_sent": true,
+  "old_RF1_wrong_nice_signal_branch_taken": false,
+  "outcomes_sealed": true,
+  "preexec_scheduler_proof_not_recorded": true,
+  "registration_unsealed": true,
+  "utc": "2026-10-12T02:59:42Z",
+  "wrapper_identity": {
+    "cmdline_sha256": "d1908be44f3cccec10b1bc9c44380843cc49b61ffc6f727c46a17576919bc468",
+    "exe": "/usr/bin/bash",
+    "nice": 10,
+    "pgid": 1893019,
+    "pid": 1893019,
+    "start_ticks": 156374143
+  }
+}
