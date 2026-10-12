@@ -1,7 +1,7 @@
 """Offline regression tests for checkpoint.py (Sol checkpoint review r1: R1 k >= 8/6, R2 fail-closed ledger, R3 union).
 No ssh, no host, no outcome file: the ssh runner, job directories, copier identity and clock are injected.
 Checks use ok() (explicit raise), so the suite is meaningful under python -O as well."""
-import copy,json,subprocess,sys
+import copy,json,os,subprocess,sys
 from pathlib import Path
 import pytest
 
@@ -134,6 +134,16 @@ def test_failed_ids_consistency():
 
 # ---- end to end: main() with injected ssh / jobs / identity (no host contact) ------------------------------------
 UTC='2026-10-12T09:30:00Z'
+import hashlib
+# Phase dispatch fixture: 3 rows on 127x03, 2 on 127x04 (expected counts come from here, round r3 audit F1).
+DISPATCH=json.dumps(dict(blocks=[dict(id=f'primary-{i:04d}',host=h) for i,h in enumerate(['127x03','127x03','127x03','127x04','127x04'])]),indent=1).encode()
+DSHA=hashlib.sha256(DISPATCH).hexdigest()
+
+def write_history(root,phase='replacement-r2',dispatch=DISPATCH,sha=None,name='replacement-r2.json',extra=()):
+ (root/'rounds').mkdir(parents=True,exist_ok=True);(root/'dispatch').mkdir(parents=True,exist_ok=True)
+ if dispatch is not None:(root/'dispatch'/name).write_bytes(dispatch)
+ hist=[dict(phase=phase,namespace='k4s-confirm-'+phase,dispatch_file=name,dispatch_sha256=sha or DSHA,launched_utc=UTC)]+list(extra)
+ (root/'rounds'/'history.json').write_text(json.dumps(hist))
 IDENT=dict(pid=4242,pgid=4242,start_ticks=1,cmdline_sha256='c'*64,uid=1)
 
 def host_dirs(tmp,phase):
@@ -145,18 +155,26 @@ def host_dirs(tmp,phase):
   jobs[h]=str(J)
  return jobs
 
-def fake_run(failed='',lostpop='0 0',exits='11 0'):
+def fake_run(failed='',lostpop='0 0',exits='11 0',launch=None,supexit=None,supexitn=None,complete=0,supproc='SUPPROC 99 SNs'):
  def run(cmd,**kw):
-  out='\n'.join([
+  host=cmd[len(C.SSH)]
+  ld=DSHA if launch is None else launch
+  c=complete[host] if isinstance(complete,dict) else complete
+  sx=supexit[host] if isinstance(supexit,dict) else supexit
+  sn=supexitn[host] if isinstance(supexitn,dict) else supexitn
+  lines=[f'LAUNCHDISPATCH {ld}']+([f'SUPEXIT "reason": {sx}'] if sx is not None else [])+([f'SUPEXITN {sn}'] if sn is not None else [])
+  out='\n'.join(lines+[
    'WHO 0','STOPFILES 0 0',
    'PROGRESS '+json.dumps(dict(utc=UTC,phase='replacement-r2',complete_local_blocks=0,failed_blocks=0,queued=1,inflight=11,reason=None)),
-   'COMPLETE 0','HUBACK 0',f'EXITS {exits}',f'LOSTPOP {lostpop}',f'FAILEDIDS {failed}',
-   'SRCRECEIPT "pid": 4242 "active": true','SUPPROC 99 SNs'])+'\n'
+   f'COMPLETE {c}',f'HUBACK {c}',f'EXITS {exits}',f'LOSTPOP {lostpop}',f'FAILEDIDS {failed}',
+   'SRCRECEIPT "pid": 4242 "active": true']+([supproc] if sx is None else []))+'\n'
   return subprocess.CompletedProcess(cmd,0,out,'')
  return run
 
-def runmain(tmp,ledger_doc,run,capsys,ack=None):
+def runmain(tmp,ledger_doc,run,capsys,ack=None,history=True):
  root=tmp/'run';(root/'ledger').mkdir(parents=True);(root/'health').mkdir()
+ if history is True:write_history(root)
+ elif callable(history):history(root)
  if ack is not None:(root/'health'/'acknowledged-events.json').write_text(json.dumps(ack))
  if ledger_doc is not None:(root/'ledger'/'blind-ledger.json').write_text(ledger_doc if isinstance(ledger_doc,str) else json.dumps(ledger_doc))
  rc=C.main(['checkpoint.py','replacement-r2','test'],run=run,root=root,jobs=host_dirs(tmp,'replacement-r2'),identity=lambda pid:dict(state='S',**{k:IDENT[k] for k in ('pgid','start_ticks','cmdline_sha256','uid')}),utc=UTC)
@@ -218,3 +236,248 @@ def test_main_k_alert_and_cumulative_unknown_both_reported(tmp_path,capsys,runne
   ok(has_k(anoms) and has_cum_unknown(anoms),(runner,anoms))
  ok(line['anomalies']==rec['anomalies'])
  ok(rec['cumulative_lost']['status']=='UNKNOWN' and rec['cumulative_lost']['ledger_max_k']=={'primary':8,'guard':6},rec['cumulative_lost'])
+
+
+# ---- round r3 audit F1: expected counts from the phase's own dispatch ------------------------------------------
+def test_expected_counts_from_dispatch(tmp_path):
+ write_history(tmp_path)
+ counts,sha=C.expected_counts(tmp_path,'replacement-r2')
+ ok(counts=={'127x03':3,'127x04':2} and sha==DSHA,(counts,sha))
+
+@pytest.mark.parametrize('case',['no_history','no_entry','two_entries','no_dispatch_file','sha_mismatch','bad_name','bad_blocks','row_without_host'])
+def test_expected_counts_fail_closed(tmp_path,case):
+ if case=='no_history':pass
+ elif case=='no_entry':write_history(tmp_path,phase='replacement-r1')
+ elif case=='two_entries':write_history(tmp_path,extra=[dict(phase='replacement-r2',dispatch_file='replacement-r2.json',dispatch_sha256=DSHA)])
+ elif case=='no_dispatch_file':write_history(tmp_path,dispatch=None)
+ elif case=='sha_mismatch':write_history(tmp_path,sha='0'*64)
+ elif case=='bad_name':write_history(tmp_path,name='../x.json')
+ elif case=='bad_blocks':d=json.dumps(dict(blocks={})).encode();write_history(tmp_path,dispatch=d,sha=hashlib.sha256(d).hexdigest())
+ elif case=='row_without_host':d=json.dumps(dict(blocks=[dict(id='primary-0001')])).encode();write_history(tmp_path,dispatch=d,sha=hashlib.sha256(d).hexdigest())
+ with pytest.raises((ValueError,OSError)):C.expected_counts(tmp_path,'replacement-r2')
+
+def has(anoms,text):return any(text in a for a in anoms)
+
+@pytest.mark.parametrize('history',[False,lambda root:write_history(root,sha='0'*64),lambda root:write_history(root,phase='replacement-r1')])
+def test_main_no_expected_counts_is_anomaly(tmp_path,capsys,history):
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(),capsys,history=history)
+ ok(rc==2 and has(line['anomalies'],'expected counts UNKNOWN'),line)
+ ok(rec['anomalies']==line['anomalies'])
+
+def test_main_launch_dispatch_mismatch_is_anomaly(tmp_path,capsys):
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(launch='f'*64),capsys)
+ ok(rc==2 and has(line['anomalies'],'launch dispatch_sha256'),line)
+
+def test_main_host_without_rows_is_anomaly(tmp_path,capsys):
+ d=json.dumps(dict(blocks=[dict(id='primary-0001',host='127x03')])).encode();sha=hashlib.sha256(d).hexdigest()
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(launch=sha),capsys,history=lambda root:write_history(root,dispatch=d,sha=sha))
+ ok(rc==2 and has(line['anomalies'],'127x04: expected count UNKNOWN'),line)
+
+def test_main_running_phase_records_expected(tmp_path,capsys):
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),fake_run(),capsys)
+ ok(rc==0,line);ok(rec['hosts']['127x03']['expected']==3 and rec['hosts']['127x04']['expected']==2,rec['hosts'])
+
+def test_main_r4_shape_null_exit_short_is_flagged(tmp_path,capsys):
+ """The r4 shape: a supervisor exit with a null reason and fewer completions than dispatched must be flagged."""
+ run=fake_run(supexit='null',supexitn={'127x03':'2 0 1','127x04':'2 0 0'},complete={'127x03':2,'127x04':2})
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
+ ok(rc==2,line);ok(has(line['anomalies'],'127x03: supervisor exited ("reason": null) with complete 2 < expected 3'),line['anomalies'])
+ ok(has(line['anomalies'],'127x03: null-reason exit left 1 unstarted'),line['anomalies'])
+ ok(not any(a.startswith('127x04: supervisor') or a.startswith('127x04: null') for a in line['anomalies']),line['anomalies'])
+ ok(rec['anomalies']==line['anomalies'])
+
+def test_main_null_exit_complete_passes(tmp_path,capsys):
+ run=fake_run(supexit='null',supexitn={'127x03':'3 0 0','127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
+ ok(rc==0 and line['anomalies']==[],line);ok(rec['hosts']['127x03']['exit_counts']==dict(completed=3,failed=0,unstarted=0))
+
+@pytest.mark.parametrize('sn,text',[(None,'supervisor-exit counts unreadable'),('3 0','supervisor-exit counts unreadable'),('3 1 0','counts 3+1+0 != dispatched 3'),('2 1 0','completed 2 != complete.json count 3')])
+def test_main_exit_counts_must_account_for_every_block(tmp_path,capsys,sn,text):
+ run=fake_run(supexit='null',supexitn={'127x03':sn,'127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
+ ok(rc==2 and has(line['anomalies'],text),(sn,line['anomalies']))
+
+def test_main_nonnull_exit_still_flagged(tmp_path,capsys):
+ run=fake_run(supexit='"owned_STOP"',supexitn={'127x03':'3 0 0','127x04':'2 0 0'},complete={'127x03':3,'127x04':2})
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: supervisor exited ("reason": "owned_STOP"'),line['anomalies'])
+
+# ---- Sol checkpoint review r4: the remote readers themselves (extraction -> main) --------------------------------
+import shlex
+
+CANNED=('WHO','STOPFILES','PROGRESS','COMPLETE','HUBACK','EXITS','LOSTPOP','FAILEDIDS','SRCRECEIPT','SUPPROC','STOPREASON')
+REAL_PY=subprocess.run(['bash','-c','command -v python3'],capture_output=True,text=True).stdout.strip()
+
+def fail_wrapper(tmp,readers):
+ """A python3 shim first on PATH: runs the real interpreter, then exits 7 for the named readers (valid stdout, then a
+ nonzero status), so the template's own capture/status handling is exercised."""
+ b=tmp/'shim';b.mkdir(exist_ok=True)
+ conds=[]
+ if 'launch' in readers:conds.append('[[ "$2" == *dispatch_sha256* ]] && exit 7')
+ if 'exit' in readers:conds.append('[[ "$2" == *unstarted* ]] && exit 7')
+ (b/'python3').write_text('#!/bin/bash\n"'+REAL_PY+'" "$@"; rc=$?\n'+'\n'.join(conds)+'\nexit $rc\n');(b/'python3').chmod(0o755)
+ return str(b)
+
+def real_meta(tmp,host,phase,launch,exit_doc,fail=()):
+ """Run the REAL remote template with bash against synthetic local metadata and return its LAUNCHDISPATCH / SUPEXIT /
+ SUPEXITN lines (the rest of the template's output is discarded). launch/exit_doc: bytes, or None for an absent file."""
+ J=tmp/'meta'/host;(J/phase).mkdir(parents=True,exist_ok=True)
+ for name,data in (('launch.json',launch),('supervisor-exit.json',exit_doc)):
+  f=J/phase/name
+  if data is None:
+   if f.exists():f.unlink()
+  else:f.write_bytes(data)
+ env=dict(os.environ)
+ if fail:env['PATH']=fail_wrapper(tmp,fail)+':'+env['PATH']
+ out=subprocess.run(['bash','-c',C.REMOTE.format(J=shlex.quote(str(J)),P=shlex.quote(phase))],capture_output=True,text=True,timeout=60,env=env).stdout
+ # keep every reader line, including any stray line a failing reader might leave behind
+ return [l for l in out.splitlines() if l.split(' ',1)[0] not in CANNED]
+
+def launch_bytes(sha):return json.dumps(dict(host='x',dispatch_sha256=sha,supervisor_pid=None)).encode()
+
+def exit_bytes(**kw):
+ d=dict(utc=UTC,host='x',reason=None,completed=[],failed=[],unstarted=[]);d.update(kw);return json.dumps(d).encode()
+
+def meta_run(tmp,phase,per_host,complete,fail=None):
+ """per_host: {host: (launch_bytes_or_None, exit_bytes_or_None)}; other lines are canned and healthy."""
+ lines={h:real_meta(tmp,h,phase,*per_host[h],fail=(fail or {}).get(h,())) for h in per_host}
+ def run(cmd,**kw):
+  host=cmd[len(C.SSH)]
+  running=not any(l.startswith('SUPEXIT ') for l in lines[host])
+  out='\n'.join(lines[host]+['WHO 0','STOPFILES 0 0',
+   'PROGRESS '+json.dumps(dict(utc=UTC,phase=phase,complete_local_blocks=0,failed_blocks=0,queued=1,inflight=11,reason=None)),
+   f'COMPLETE {complete[host]}',f'HUBACK {complete[host]}','EXITS 0 0','LOSTPOP 0 0','FAILEDIDS ',
+   'SRCRECEIPT "pid": 4242 "active": true']+(['SUPPROC 99 SNs'] if running else []))+'\n'
+  return subprocess.CompletedProcess(cmd,0,out,'')
+ return run
+
+ROWS=lambda n:[dict(id=f'primary-{i:04d}') for i in range(n)]
+GOOD04=lambda: (launch_bytes(DSHA),None)
+
+@pytest.mark.parametrize('case,value,alert',[
+ ('exact',DSHA,None),
+ ('h_plus_hex',DSHA+'a','launch dispatch_sha256 invalid'),
+ ('h_plus_h',DSHA+DSHA,'launch dispatch_sha256 invalid'),
+ ('short',DSHA[:63],'launch dispatch_sha256 invalid'),
+ ('different','e'*64,'launch dispatch_sha256 eeeeeeeeeeeeeeee != history'),
+ ('uppercase',DSHA.upper(),'launch dispatch_sha256 invalid'),
+ ('number',12345,'launch dispatch_sha256 invalid'),
+ ('null',None,'launch dispatch_sha256 invalid'),
+])
+def test_launch_reader_to_main(tmp_path,capsys,case,value,alert):
+ lines=real_meta(tmp_path,'probe','replacement-r2',launch_bytes(value),None)
+ ok(lines==([f'LAUNCHDISPATCH {DSHA}'] if alert is None or 'history' in alert else ['LAUNCHDISPATCH INVALID']) or (case=='different' and lines==['LAUNCHDISPATCH '+'e'*64]),(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(value),None),'127x04':GOOD04()},{'127x03':0,'127x04':0}),capsys)
+ if alert is None:ok(rc==0 and line['anomalies']==[],(case,line))
+ else:ok(rc==2 and has(line['anomalies'],'127x03: '+alert) and not has(line['anomalies'],'127x04: launch'),(case,line['anomalies']))
+
+@pytest.mark.parametrize('case,raw',[('malformed_json',b'{"dispatch_sha256": "'+DSHA.encode()+b'"'),('not_object',json.dumps([DSHA]).encode()),
+ ('missing_key',json.dumps(dict(host='x')).encode()),('absent_file',None),('empty_file',b''),('trailing_garbage',launch_bytes(DSHA)+b'x')])
+def test_launch_reader_malformed_to_main(tmp_path,capsys,case,raw):
+ lines=real_meta(tmp_path,'probe','replacement-r2',raw,None)
+ ok(lines==['LAUNCHDISPATCH INVALID'],(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(raw,None),'127x04':GOOD04()},{'127x03':0,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: launch dispatch_sha256 invalid'),(case,line['anomalies']))
+ ok(rec['anomalies']==line['anomalies'])
+
+@pytest.mark.parametrize('case,doc',[
+ ('completed_string',dict(completed='abc',failed='',unstarted='')),
+ ('completed_object',dict(completed={'a':1,'b':2,'c':3},failed={},unstarted={})),
+ ('string_with_lists',dict(completed='abc',failed=[],unstarted=[])),
+ ('missing_failed',dict(completed=ROWS(3),unstarted=[],failed=None,_drop='failed')),
+ ('null_unstarted',dict(completed=ROWS(3),failed=[],unstarted=None)),
+ ('scalar_completed',dict(completed=3,failed=[],unstarted=[])),
+ ('bool_failed',dict(completed=ROWS(3),failed=False,unstarted=[])),
+])
+def test_exit_reader_invalid_to_main(tmp_path,capsys,case,doc):
+ d=dict(utc=UTC,host='x',reason=None);d.update({k:v for k,v in doc.items() if k!='_drop'})
+ if doc.get('_drop'):d.pop(doc['_drop'])
+ raw=json.dumps(d).encode()
+ lines=real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw)
+ ok('SUPEXITN INVALID' in lines,(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':3,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],"127x03: supervisor-exit counts unreadable ('INVALID')"),(case,line['anomalies']))
+ ok(rec['anomalies']==line['anomalies'])
+
+@pytest.mark.parametrize('case,raw',[('malformed_json',b'{"reason": null, "completed": ['),('not_object',b'[]'),('empty_file',b'')])
+def test_exit_reader_malformed_to_main(tmp_path,capsys,case,raw):
+ lines=real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw)
+ ok('SUPEXITN INVALID' in lines,(case,lines))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':3,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: supervisor-exit counts unreadable'),(case,line['anomalies']))
+
+def test_exit_reader_valid_full_lists_pass(tmp_path,capsys):
+ raw03=exit_bytes(completed=ROWS(3));raw04=exit_bytes(completed=ROWS(2))
+ ok('SUPEXITN 3 0 0' in real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw03))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw03),'127x04':(launch_bytes(DSHA),raw04)},{'127x03':3,'127x04':2}),capsys)
+ ok(rc==0 and line['anomalies']==[],line);ok(rec['hosts']['127x03']['exit_counts']==dict(completed=3,failed=0,unstarted=0))
+
+def test_exit_reader_valid_empty_lists_flag_shortfall(tmp_path,capsys):
+ """Valid (empty) lists are read as 0 0 0: accepted by the reader, then flagged as unaccounted blocks."""
+ raw=exit_bytes()
+ ok('SUPEXITN 0 0 0' in real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':0,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: supervisor-exit counts 0+0+0 != dispatched 3') and has(line['anomalies'],'complete 0 < expected 3'),line['anomalies'])
+
+def test_exit_reader_valid_with_failures_and_unstarted(tmp_path,capsys):
+ raw=exit_bytes(completed=ROWS(1),failed=ROWS(1),unstarted=ROWS(1))
+ ok('SUPEXITN 1 1 1' in real_meta(tmp_path,'probe','replacement-r2',launch_bytes(DSHA),raw))
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':(launch_bytes(DSHA),raw),'127x04':GOOD04()},{'127x03':1,'127x04':0}),capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: null-reason exit left 1 unstarted'),line['anomalies'])
+
+@pytest.mark.parametrize('v',['-1 0 0','3 0','3 0 0 0','3 x 0','+3 0 0','3.0 0 0','',None,'INVALID'])
+def test_exit_counts_strict(v):
+ with pytest.raises(ValueError):C.exit_counts(v)
+
+def test_exit_counts_valid():
+ ok(C.exit_counts('3 0 0')==(3,0,0) and C.exit_counts('0 0 0')==(0,0,0))
+
+
+# ---- Sol checkpoint review r5: valid stdout followed by a nonzero reader status --------------------------------
+FULL03=lambda:(launch_bytes(DSHA),exit_bytes(completed=ROWS(3)))
+FULL04=lambda:(launch_bytes(DSHA),exit_bytes(completed=ROWS(2)))
+
+def test_shim_control_passes(tmp_path,capsys):
+ """Control: the shim with no failing reader leaves a valid exited run clean (exit 0)."""
+ lines=real_meta(tmp_path,'probe','replacement-r2',*FULL03(),fail=('none',))
+ ok(lines==['SUPEXIT "reason": null','SUPEXITN 3 0 0',f'LAUNCHDISPATCH {DSHA}'],lines)
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':FULL03(),'127x04':FULL04()},{'127x03':3,'127x04':2},fail={'127x03':('none',)}),capsys)
+ ok(rc==0 and line['anomalies']==[],line)
+
+@pytest.mark.parametrize('readers,expect',[
+ (('launch',),{'LAUNCHDISPATCH INVALID'}),
+ (('exit',),{'SUPEXITN INVALID'}),
+ (('launch','exit'),{'LAUNCHDISPATCH INVALID','SUPEXITN INVALID'}),
+])
+def test_valid_stdout_then_nonzero_status_to_main(tmp_path,capsys,readers,expect):
+ lines=real_meta(tmp_path,'probe','replacement-r2',*FULL03(),fail=readers)
+ ok(expect<=set(lines) and not any(l in ('INVALID','') for l in lines),(readers,lines))
+ if 'launch' in readers:ok(f'LAUNCHDISPATCH {DSHA}' not in lines,lines)
+ if 'exit' in readers:ok('SUPEXITN 3 0 0' not in lines,lines)
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),meta_run(tmp_path,'replacement-r2',{'127x03':FULL03(),'127x04':FULL04()},{'127x03':3,'127x04':2},fail={'127x03':readers}),capsys)
+ ok(rc==2,(readers,rc,line))
+ if 'launch' in readers:ok(has(line['anomalies'],'127x03: launch dispatch_sha256 invalid'),line['anomalies'])
+ if 'exit' in readers:ok(has(line['anomalies'],"127x03: supervisor-exit counts unreadable ('INVALID')"),line['anomalies'])
+ ok(rec['anomalies']==line['anomalies'])
+
+@pytest.mark.parametrize('text,msg',[
+ ('WHO 0\nINVALID\n','unknown or empty key'),
+ ('WHO 0\n\n','unknown or empty key'),
+ ('WHO 0\nWHO 0\n','duplicate remote key WHO'),
+ ('SUPEXITN 3 0 0\nINVALID\nLAUNCHDISPATCH '+DSHA+'\nINVALID\n','unknown or empty key'),
+ ('LAUNCHDISPATCH '+DSHA+'\nLAUNCHDISPATCH INVALID\n','duplicate remote key LAUNCHDISPATCH'),
+ ('BOGUS 1\n','unknown or empty key'),
+])
+def test_parse_rejects_unknown_empty_duplicate(text,msg):
+ with pytest.raises(ValueError,match=msg):C.parse(text)
+
+@pytest.mark.parametrize('extra',['INVALID','','WHO 0','BOGUS x'])
+def test_main_stray_or_duplicate_line_is_anomaly(tmp_path,capsys,extra):
+ base=meta_run(tmp_path,'replacement-r2',{'127x03':FULL03(),'127x04':FULL04()},{'127x03':3,'127x04':2})
+ def run(cmd,**kw):
+  p=base(cmd,**kw)
+  if cmd[len(C.SSH)]=='127x03':p=subprocess.CompletedProcess(cmd,0,p.stdout+extra+'\n','')
+  return p
+ rc,line,rec=runmain(tmp_path,FIX.read_text(),run,capsys)
+ ok(rc==2 and has(line['anomalies'],'127x03: health check failed'),(extra,line['anomalies']))
+ ok(rec['anomalies']==line['anomalies'])
