@@ -3627,3 +3627,16 @@ The exploration owner declined 08: its students all ran on 01, and moving would 
 - Mask v2 has no owner since Astra retired. It is not scheduled.
 
 This is a deliberate, recorded idle, not an oversight. It will be revisited when the B review lands or a reviewed lane appears.
+
+## 2026-10-12 17:12Z: K4S END ruling E4: tracked `complete.json` files in the git runtime export
+
+**What these files are.** Four `complete.json` files are tracked at origin/main. The coordinator verified each one from metadata only: `git log`, blob SHA and path, with no contents read. **None can carry a sealed K4S or T1 outcome.**
+- **E2 (already ruled):** `imitation/model/receipts/throughput-0935/complete.json` d1492d0f…, from 2026-10-08. It is a model-throughput receipt.
+- `reports/strategy_council_20260928/live-loop/v4/emulator-host/complete.json` **0a4906396b270206e900b62ca9dbc0f44e2de6aefb512c7990824a4b2fed836f**, last changed 1a40041a on 2026-10-07. That is before any T1 confirmatory game (T1 started 2026-10-10) and before any K4S game (2026-10-11), so it cannot contain either study's outcomes.
+- `…/v4/l1/receipts/b08-gap-export-20261012-r1/complete.json` **9c84b7a8b8c821921dd9cd0ddf1e814a24dc99c56d82829ff5894add34040c81** (10a928e5), and
+- `…/v4/l1/receipts/b08-supplemental-proof-export-20261012-r1/complete.json` **724ee1d7032442e192994236a28abf0cd61951ffc096f412b50c359737049d2d** (cb9a2469). These two are the perception gap-export transfer receipts written under coordinator GOs (cut 2 and cut 3). They are file-transfer completions, not game results.
+
+**Ruling E4.**
+- **Exempt list.** These three, plus E2, are exempt at their **exact path and SHA**. They may be hashed as part of the runtime export and must **never be parsed**.
+- **Fail-closed.** S9 and S4 must refuse **any** tracked `complete.json` at the build commit that is not on this list of four (exact path and SHA). Later additions need a new ruling.
+- **Not a reading grant.** This permits the runtime to carry the files. It does not permit any tool to read them.
