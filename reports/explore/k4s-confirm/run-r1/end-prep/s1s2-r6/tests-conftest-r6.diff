@@ -1,0 +1,15 @@
+--- ../s1s2-r5/tests/conftest.py	2026-10-12 14:43:17.006752928 -0700
++++ tests/conftest.py	2026-10-12 21:21:03.920519864 -0700
+@@ -307,6 +307,12 @@
+                 f.write(str(sent))
+ except BrokenPipeError:
+     pass
++linger = os.environ.get("FAKE_SSH_LINGER", "")
++if linger:                                    # r6: like OpenSSH, deliver stdout EOF, then take a while to exit
++    import time
++    devnull = os.open(os.devnull, os.O_WRONLY)
++    os.dup2(devnull, 1)                       # closes the pipe's write end: the reader sees EOF now
++    time.sleep(float(linger))
+ sys.stderr.buffer.write(err)
+ if streaming and target("FAKE_SSH_MUTATE"):
+     with open(target("FAKE_SSH_MUTATE"), "ab") as f:
