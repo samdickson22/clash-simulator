@@ -53,3 +53,25 @@ If the driver is not live (check the PID in driver.pid via /proc) and STOP is ab
   - a scheduling simulation of the edited driver: 1,167 todo per phase, R3a never scheduled, no fit launch while
     S-200 is live or dispatchable, only K4S-120 dispatched while a replicate fit runs.
 - No host contact. Waiting for the diff-only review and the coordinator's GO.
+- **Review:** Sol diff r1 APPROVE_WITH_CONDITIONS (`x4s4-review/SOL-REVIEW-X4S3B-DIFF-r1.md`, 840c9733);
+  coordinator GO. Conditions: (1) run_fit.sh mode restored to 100644, invoked via `bash` by the driver;
+  (2) all writes under J2, reducer `--out J2/analysis/...`; (3) STOP_AT = **2026-10-13T09:35:00Z** (≤ launch + 8 h),
+  assertion kept. The post-STOP counting rule is pre-declared in READOUT (Sol finding 5).
+- **01:29:00Z preflight (01):** 0 console users; MemAvailable 122 GiB; PSI 0.00; GPU 107 MiB, 0%, no compute apps;
+  /mpac 806 GB free; no X4S-3/X4S-4 processes (only the paused hub mirror PGID 516161, untouched); R1, R2 held-out,
+  clasher-gpu and repo-venv paths present. J pins: run_fit a95aea44, main02 d77005d5, R3a 37509a43, native
+  44874fd6, harness driver 0b0ee8b1 / supervise 730b0527 / run e7f90d76 / runtime 5716149c / detach 23a5dfaa /
+  calibrate 82a4d442.
+- **01:29:28Z copy:** `cp -a` of J/{base,fit,inputs}, games/{R3a,R3a-rep}, driver/retired.json,
+  rt-R3a-rep/READY.json into J2 (590 MB). `diff -r` identical; 0 symlinks, 0 multi-link files. J-path references
+  remain only in base plan.json (rewritten for new students), non-executed files (base driver/run_fit/pull_g08/
+  mirror/PLAN, fit/ops union.py/verify_g.py, J2/fit/run_fit.sh before replacement), and run records in copied games
+  and rt-R3a-rep/READY.json (reducer reads only its SHA).
+- **Install:** J2/fit/run_fit.sh (a95aea44 → 7e9c57d1, mode 644), J2/x4s3b/reduce.py a670d2af, driver.py from the
+  launch commit. Smoke runtime J2/rt-R3a = copy of J2/base with plan policy/student checkpoint paths → J2/inputs
+  (SHA pins unchanged).
+- **01:29:53–01:30:55Z smoke K4S-120:** 8/8 blocks, rc 0, reason null, 61 s, group empty; student R3a 37509a43,
+  host 127x01, nice 10, student-default 4–22% of decisions.
+- **01:31:08–01:32:41Z smoke S-200:** 8/8 blocks, rc 0, reason null, group empty.
+- **Live STOP test (S-200 smoke phase):** STOP touched 01:33:26.144Z with 51 child-group members; supervisor gone
+  01:33:28.690Z (2.5 s), reason owned_STOP, 0 members left in either group; STOP removed.

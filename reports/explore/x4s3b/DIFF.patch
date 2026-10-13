@@ -1,5 +1,5 @@
 diff --git a/x4s3/driver.py b/x4s3b/driver.py
-index 7e33e62c9..8f40f9cb5 100644
+index 7e33e62c9..5775c137e 100644
 --- a/x4s3/driver.py
 +++ b/x4s3b/driver.py
 @@ -1,7 +1,7 @@
@@ -19,7 +19,7 @@ index 7e33e62c9..8f40f9cb5 100644
 +J = Path('/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013')
  D = J/'driver'
 -STOP_AT = datetime.datetime(2026, 10, 12, 23, 30, tzinfo=datetime.timezone.utc)
-+STOP_AT = datetime.datetime(2026, 10, 13, 11, 0, tzinfo=datetime.timezone.utc)
++STOP_AT = datetime.datetime(2026, 10, 13, 9, 35, tzinfo=datetime.timezone.utc)
  ARMS = ['K4S-120', 'S-200']
  N = 1200
 -FITS = {'R3a-rep': dict(steps=2500, needs_data=False), 'R4-D': dict(steps=2500, needs_data=True),
@@ -101,7 +101,9 @@ index 7e33e62c9..8f40f9cb5 100644
      other = jload(lock)
      if other and Path(f"/proc/{other['pid']}").exists() and other['pid'] != os.getpid():
 diff --git a/x4s3/run_fit.sh b/x4s3b/run_fit.sh
-index 2d4486ec0..08e466608 100755
+old mode 100755
+new mode 100644
+index 2d4486ec0..08e466608
 --- a/x4s3/run_fit.sh
 +++ b/x4s3b/run_fit.sh
 @@ -4,13 +4,15 @@

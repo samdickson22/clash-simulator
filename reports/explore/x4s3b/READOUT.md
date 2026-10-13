@@ -25,10 +25,17 @@ here is cited in K4S, TIERS or T1 reporting. No T1, K4S or TIERS outcome is read
 - **Scheduling:** one fit at a time on the GPU; a fit never runs beside an S-200 phase (the X4S-3 union rule, here
   applied to the replicate fits); a fit may run beside a K4S-120 phase. Dispatch is withheld while MemAvailable
   < 24 GiB or memory PSI some avg10 > 10%.
-- **Stop:** fixed N per student; STOP_AT 2026-10-13T11:00:00Z (the driver refuses to start more than 8 h before it),
-  or the coordinator's "STOP U2" at the X4S-4 GO, whichever is first. Under H-1-style counting, nothing completed
-  after a STOP or STOP_AT is counted (the supervisor's phase that is cut is incomplete and that student is not
-  reduced).
+- **Stop:** fixed N per student; **STOP_AT 2026-10-13T09:35:00Z** (set at launch per Sol r1 finding 6; the driver
+  refuses to start before 01:35:00Z, i.e. STOP_AT ≤ launch + 8 h), or the coordinator's "STOP U2" at the X4S-4 GO,
+  whichever is first.
+- **Counting rule after a STOP (pre-declared, outcome-independent; Sol r1 finding 5).** The inherited reducer does not
+  check completion times, so the owner enforces this by the `--students` list, recorded in RESULTS: a student is
+  reduced only if both of its reporting phases ended with supervisor-exit reason `null` and rc 0 before any STOP U2
+  or STOP_AT. A student whose phase was cut by STOP or STOP_AT is **not reduced** in this run, even if seed
+  retirement would make it formally complete over the remaining indices. Phases interrupted by the inherited
+  memory/console guards follow X4S-3's declared rule (started seeds retired for every later phase, phase resumed).
+- **Reducer invocation:** `--job J2 --out J2/analysis/<name>.json` only; never an output under J. A copy goes to the
+  05 mirror under the J2 prefix.
 
 ## Readout (reducer: x4s3b/reduce.py on J2 or its 05 mirror)
 Inputs are only students for which every non-retired index is terminal in both arms (the X4S-3 fixed-N assertion).
@@ -68,5 +75,7 @@ imprecise either way; that is disclosed with the number.
 - External read-only inputs, as in X4S-3: the R1 human store and corpus
   (`exit-r1-student-screen-20261009-r1`), the R2 held-out calibration slice (`exit-r2-20261010-r1/heldout-corpus`),
   the clasher-gpu env, and the 01 repo venv used by runtime.sh.
+- `run_fit.sh` keeps the baseline git mode 100644 (Sol r1 finding 1: the r1 candidate had 100755, restored);
+  the driver invokes it through `bash`.
 - The driver rewrites each new student runtime's `policy.checkpoint` to the J2 copy of main02.pt (same SHA pin
   d77005d5, asserted by run.py), so the reporting games read nothing from J.

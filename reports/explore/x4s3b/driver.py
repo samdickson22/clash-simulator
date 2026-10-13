@@ -15,7 +15,7 @@ from pathlib import Path
 
 J = Path('/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013')
 D = J/'driver'
-STOP_AT = datetime.datetime(2026, 10, 13, 11, 0, tzinfo=datetime.timezone.utc)
+STOP_AT = datetime.datetime(2026, 10, 13, 9, 35, tzinfo=datetime.timezone.utc)
 ARMS = ['K4S-120', 'S-200']
 N = 1200
 FITS = {'R3a-rep2': dict(steps=2500, needs_data=False), 'R3a-rep3': dict(steps=2500, needs_data=False)}
