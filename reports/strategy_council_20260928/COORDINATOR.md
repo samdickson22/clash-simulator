@@ -5187,3 +5187,33 @@ Q6 passed. Q5 failed: in O_W acceptance, game 0 raised `ValueError('invalid acti
 **Residual:** the native `score_wait_screen8` path in the runtime native is tested only by the Q5 rerun.
 
 Together with SA-1, this is the second staging-layout gap in X4S-4. Per memory `require-end-to-end-integration-before-host-go`, future studies must run the full chain offline against the real staged tree before any host GO.
+
+## 2026-10-13 05:50Z: FSC epoch-2 GO (9aa1cce6, STOP_AT 11:30Z); epoch-1 STOP protected
+
+**The diff.** The coordinator checked `git diff c7df6fac 9aa1cce6 -- reports/explore/fsc` directly. It contains:
+- **DEADLINE** set to 11:30Z.
+- **A `resume` path:**
+  - `session.sh` allows it once, and only after a successful stop. History reads fail closed, and "stopped" means the newest successful stop is newer than the newest successful resume.
+  - `remote_bootstrap.sh` handles resume mode by writing a fresh `J/bundle-e2`.
+  - `host_session.sh` resume requires all of these before launching anything:
+    - J/STOP is present;
+    - the host has not already been resumed;
+    - every epoch-1 instance ended with a clean exit and an empty census;
+    - the runtime files are byte-identical to the e2 bundle;
+    - preflight passes.
+
+    It then runs a fresh `rep0N-e2` instance capped at STOP_AT, with its own permanent stop at `J/STOP2`. No STOP file is ever removed.
+- **`remaining.py`:** reruns the unproven wl blocks, including interrupted ones, in order, then the untouched `wl-ext` segment.
+- **`reduce.py`:** the prefix order becomes wl then wl-ext.
+- **Extension worklists:** the reserved, seed-audited indices, 3900–5899 on 03 and 5900–7899 on 04, all at 200 ms.
+
+All 10 offline test groups pass in the coordinator's rerun, and MANIFEST c6574764 matches. The seam is clean: interrupted blocks are rerun, so the prefix continues until 11:30Z.
+
+**GO, with these amendments:**
+1. **Protect the epoch-1 STOP.** Verify by `/proc` cmdline and start time, then kill the 07:30Z runner (PID 239670, sleep child 239707) by exact PID. Re-arm a 07:30Z runner from a **frozen `git archive` export of c7df6fac**, never the shared worktree, for **127x03 only**.
+2. **04 early.** Once `rep04` has exited (wl-04 complete), or at once if you prefer, run `session.sh stop 127x04` with C=c7df6fac/M=2f16b70d from that frozen export. Verify `__RC=0`, the proof and the mirror.
+3. **Arm the epoch-2 runner** from the 9aa1cce6 export: 11:30Z, both hosts.
+4. **Resume each host after its own epoch-1 STOP is verified:** 04 right after step 2, 03 right after its 07:30Z stop.
+5. Keep progress checks to at most one per host every 2 h.
+
+The K4S A2 window opens no earlier than 12:30Z.
