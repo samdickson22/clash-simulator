@@ -5277,3 +5277,27 @@ Deployment, stage and environment (G6) for package r3 stay accepted as records. 
 1. A minimal package fix, r4, plus an **end-to-end offline run of the epoch-1 path on the real package inputs**, following memory `require-end-to-end-integration-before-host-go`. Fixture-only tests are not enough: this is the second package-r3-era failure that the offline tests didn't catch.
 2. A Sol diff review of the fix, then a coordinator combined-review receipt.
 3. A fresh chain as the same-package rules require.
+
+## 2026-10-13 06:15Z: X4S-4 PE-3: P1 low-side in-loop pause, disclose (per pre-ruling at b98fda79)
+
+**The pause.** P1 (collect/K4S-120/a1) stopped on the in-loop C7b watch after 147 games. The receipt is `PARITY-PAUSE-2026-10-13T061133Z.json` (sha256 b63b4a993902de41c01cf216dc2bc64e7b706820a08cb3bf8da97fa6c622a4b9).
+
+| K4S-120 | Reading | Reference | Status |
+|---|---|---|---|
+| Cutoff | 61.30 % | 64.2 | −2.90 pp, low side only |
+| Student default | 20.96 % | — | in band |
+| Overrun | 0.12 % | — | in band |
+
+Exit: `parity_pause`, rc −15, no remaining PIDs.
+
+**PE-3 decision: disclose.** This is the low-side, shifted-reference case already ruled in advance. The supervise.py watch has no exception file, so this ledger entry is the authority for the receipt above.
+
+**Resuming:**
+- Resume happens only with **SA-4** installed. The coordinator verifies the diff first, then the owner follows the proposed install procedure:
+  - archive and SHA-verify the new supervise.py;
+  - copy it into all three runtime trees;
+  - re-seal RUNTIME-INVENTORY (r1 kept, new file 0444, only the supervise.py entry changed);
+  - `watchdog.py resume`, then a fresh phase `collect/K4S-120/a2`.
+- **Do not replay a1's games.** If the supervisor or collect.py does not skip indices already proved in a1, a2's index file must be exactly a1's index file minus a1's proved indices, in the same order, and it is recorded with its SHA. a1's 147 proved games are kept.
+
+**Note for P3.** `J/data/PARITY-EXCEPTION.json` currently binds the PE-1 smoke receipt, and label.py reads only that one path. The owner must say before P3 how a P3 exception will be bound without overwriting the PE-1 file. Raise any needed change for review then.
