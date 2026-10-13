@@ -1,0 +1,105 @@
+{
+  "available_bytes": 1214292750336,
+  "between_phases": true,
+  "conditions": {
+    "C1": "Accepted same-package stage C4; fresh quiet-read and between-phases/no-active-phase attestation after stage ends.",
+    "C2": "Keep all held package/transport bytes unchanged except coordinator-only reviewed binding procedure; no git clean.",
+    "C3": "Canonical full lowercase SHA revocation line at column zero and coordinator STOP",
+    "C4": "One invocation of pinned detached fetch-then-send operator; five exported variables; no retry",
+    "C5": "Coordinator performs pre-issue ledger check",
+    "C6": "Coordinator audits revocation_tip_commit..origin/main after placement",
+    "C7": "Place only the new environment CPU GO; prior review and stage authority files remain unchanged.",
+    "C8": "Bound transport r4 exact pins; environment CPU GO alone never authorizes a run.",
+    "C9": "Preserve claims and partials. No retry or additional phase from placement authority."
+  },
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_AUTHORITY_PLACEMENT",
+  "deployment_prerequisite": {
+    "complete_sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce",
+    "coordinator_acceptance_ledger_commit": "9cc43d12a73140b033271332ccf9e742f23c74a2",
+    "go_sha256": "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c",
+    "status": "COORDINATOR_DEPLOYMENT_ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "expires_epoch": 1791945000,
+  "git_sources": {
+    "c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-environment-go-r5.json"
+  },
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at exact signed paths; separate explicit GO; placement C6 before separate environment run GO."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r14.json",
+  "no_active_cpu_or_gpu_phase": true,
+  "no_retry": true,
+  "not_before_epoch": 1791937800,
+  "observation_provenance": {
+    "commit": "d7dcb63c7de5db87074a3bfb16f2adaf39143519",
+    "sha256": "c10a1a8baf2c9c40747829e6c76dfd3e3860c425e24d264378e6a0febbec2996",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r13/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T23:16:49.985657+00:00"
+  },
+  "operator_command": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-authority-placement-review-r6/placement-operator-command.sh",
+    "sha256": "21a101213b73043ff7b14ba20b867361c136b905cdfa983e163d52d0c315400c"
+  },
+  "operator_exports": {
+    "APPROVED_CPUS": {
+      "value": "0,1"
+    },
+    "COORDINATOR_COMMIT": {
+      "source": "full 40-hex coordinator issuance commit containing this GO and its anchored ISSUED line"
+    },
+    "PLACEMENT_GO_GIT_PATH": {
+      "value": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r14.json"
+    },
+    "PLACEMENT_GO_SHA": {
+      "source": "SHA256 of the byte-identical issued GO file"
+    },
+    "PROCEDURE_SHA": {
+      "value": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a"
+    }
+  },
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "placement_scope": "Place only the new r5 environment CPU GO. Review r5 already placed by r13; never overwrite it. No phase execution.",
+  "procedure_sha256": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+  "receipts": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861.json",
+      "sha256": "c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861"
+    }
+  ],
+  "retained_observation_provenance": {
+    "commit": "9cc43d12a73140b033271332ccf9e742f23c74a2",
+    "sha256": "2c0407da6b5de1b25db8fd6227a956c548e60f749d05fc3c185b469b7c5c602c",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r12/observation.json",
+    "status": "OBSERVED",
+    "use": "Historical stage-chain observation; not a fresh environment admission census.",
+    "utc": "2026-10-13T22:02:37.438413+00:00"
+  },
+  "review_status": {
+    "combined_review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+    "combined_review_sha256": "69cc87846ccb6dda42543ce94a8d15cd220d91b327ae2520e7497fe2d3c5bc7f",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "55ba8ad7db6ee18f91bb6ea2d89e1a3b11f80cc0f0f20ff82a7f68b25bf13198"
+  },
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r14.json",
+  "stage_prerequisite": {
+    "complete_sha256": "7f67aa54ddcc87c7c79f52d8c0e23f4c8f08be13fe3e58d779501e7c6aab1010",
+    "coordinator_acceptance_ledger_commit": "d7dcb63c7de5db87074a3bfb16f2adaf39143519",
+    "go_sha256": "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef",
+    "run_go_sha256": "b2bff6540341419ad3dfd9097132e3f42e47d380ef213f209ac64d85d8528ac6",
+    "status": "ACCEPTED"
+  },
+  "who_count": 0,
+  "window_policy": {
+    "duration_seconds": 7200,
+    "lead_seconds_minimum": 1800
+  }
+}

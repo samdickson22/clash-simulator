@@ -6318,3 +6318,28 @@ The 03 S7 session refused, with nothing created (receipt `LAUNCH-RECEIPT.json` 7
 - **For the timed END runs (A5+), no exception is granted now.** Prefer a window in local night: anacron.timer is quiet from about 06:30Z to 14:00Z. Any END timer exception needs its own ruling.
 
 **A4 re-GO.** Run 03 again with the same argv 12404bca and receive dir, plus the three `--allow-timer` entries with these justifications, once the apt-daily condition holds. Then 04 under the same GO and the same rules, after 03 is verified. All b0f49dfe conditions stand, and any further refusal stops for a ruling.
+
+## 2026-10-13 23:23Z: B r5 environment CPU GO r5 and placement GO r14 issued
+
+**Source drafts.** The owner's drafts in `b08-r5-environment-chain-drafts-r2` (manifest 6deb8550).
+- The stage acceptance is d7dcb63c (complete 7f67aa54), and the observation is quiet-read r13 (c10a1a8b).
+- The CPU GO is issued byte-identical to the draft.
+- In the placement, the coordinator filled in only the between-phase attestations and the blockers. Since stage C-4 at d7dcb63c, no other CPU or GPU phase has run on 08.
+- The placement holds only the environment CPU GO. Review r5 was already placed by r13 and is not overwritten.
+- The run draft is repinned and held at `v4-b-gap-review/env-r5-final/DRAFT-…` (3508e974) until C-6.
+
+**Checks:**
+- transport r4 `validate_cpu(current=False)` passes;
+- F1 r6 `receipt()` passes;
+- `validate_go` passes inside the window and refuses before it;
+- C-5 is clean, with 0 `REVOKED` lines;
+- no path collides.
+
+**Scope.** The environment phase only: 08, cpus [0,1], the conservative budget, no GPU and no heldout data.
+
+**Windows (2026-10-14):**
+- placement: 00:30Z to 02:30Z, operator 21a10121, one invocation, no retry;
+- environment CPU: 00:45Z to 02:45Z.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 1765daf2669152bf044467d78862cb2cbe7b8868edfddc0161a83cdaf0ab5a56
