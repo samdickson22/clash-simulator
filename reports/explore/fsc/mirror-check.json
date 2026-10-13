@@ -1,0 +1,109 @@
+{
+ "127x03": {
+  "rep03": {
+   "proofs": 2400,
+   "started": 2400,
+   "interrupted": 0,
+   "games": 4800,
+   "sha_mismatch": [],
+   "exit_reason": null,
+   "exit_returncode": 0,
+   "remaining": []
+  },
+  "rep03-e2": {
+   "proofs": 2000,
+   "started": 2000,
+   "interrupted": 0,
+   "games": 4000,
+   "sha_mismatch": [],
+   "exit_reason": null,
+   "exit_returncode": 0,
+   "remaining": []
+  },
+  "smoke-03": {
+   "proofs": 8,
+   "started": 8,
+   "interrupted": 0,
+   "games": 16,
+   "sha_mismatch": [],
+   "exit_reason": null,
+   "exit_returncode": 0,
+   "remaining": []
+  },
+  "stoptest-03": {
+   "proofs": 0,
+   "started": 4,
+   "interrupted": 4,
+   "games": 0,
+   "sha_mismatch": [],
+   "exit_reason": "owned_STOP",
+   "exit_returncode": -15,
+   "remaining": []
+  },
+  "epoch1_files_identical_in_e2": true,
+  "epoch1_diffs": [],
+  "stop_1130": {
+   "log": "127x03-stop-20261013T113000Z.log",
+   "rc": "__RC=0",
+   "proof_pass": true,
+   "recorded_pids": 44,
+   "alive": [],
+   "extras": 0,
+   "orphans": 0
+  }
+ },
+ "127x04": {
+  "rep04": {
+   "proofs": 1500,
+   "started": 1500,
+   "interrupted": 0,
+   "games": 3000,
+   "sha_mismatch": [],
+   "exit_reason": null,
+   "exit_returncode": 0,
+   "remaining": []
+  },
+  "rep04-e2": {
+   "proofs": 2000,
+   "started": 2000,
+   "interrupted": 0,
+   "games": 4000,
+   "sha_mismatch": [],
+   "exit_reason": null,
+   "exit_returncode": 0,
+   "remaining": []
+  },
+  "smoke-04": {
+   "proofs": 8,
+   "started": 8,
+   "interrupted": 0,
+   "games": 16,
+   "sha_mismatch": [],
+   "exit_reason": null,
+   "exit_returncode": 0,
+   "remaining": []
+  },
+  "stoptest-04": {
+   "proofs": 0,
+   "started": 4,
+   "interrupted": 4,
+   "games": 0,
+   "sha_mismatch": [],
+   "exit_reason": "owned_STOP",
+   "exit_returncode": -15,
+   "remaining": []
+  },
+  "epoch1_files_identical_in_e2": true,
+  "epoch1_diffs": [],
+  "stop_1130": {
+   "log": "127x04-stop-20261013T113000Z.log",
+   "rc": "__RC=0",
+   "proof_pass": true,
+   "recorded_pids": 44,
+   "alive": [],
+   "extras": 0,
+   "orphans": 0
+  }
+ },
+ "pass": true
+}

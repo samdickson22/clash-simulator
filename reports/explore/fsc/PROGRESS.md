@@ -89,3 +89,9 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
     and preflight found no foreign process. The pinned v4 cache service (started Sat Oct 10 04:39:11, in the 03:12Z
     baseline, idle 7603 -> 7605 ticks at 03:12–03:15Z) seems to have exited between 03:15Z and 07:31Z.
     FSC never signals it, and memory stayed low (PSS ≤ 3.6 GiB, MemAvailable ≥ 118 GiB). Reported to the coordinator.
+- 2026-10-13T11:30Z: epoch-2 STOP for both hosts (runner 1827204, rc=0; both logs __RC=0; proofs passed, 44 recorded
+  PIDs each, no extras). rep03-e2 completed 2,000/2,000 blocks at 10:57:49Z and rep04-e2 2,000/2,000 at 09:51:47Z.
+- 2026-10-13T12:53Z: mirrors checked (verify_mirror.py, PASS) and reduced (reduce.py 072a215c…).
+  - **Primary Δ200 = −0.50 pp [−1.30, +0.30]** over 6,400 seeds: always-on supported.
+  - Δ180 = −1.60 [−3.33, +0.13] (descriptive).
+  - RESULTS.md written. Done; no further host contact.
