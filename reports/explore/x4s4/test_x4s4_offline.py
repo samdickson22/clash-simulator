@@ -8,7 +8,7 @@ BattleState/PlayerState/DiscreteTileActionSpace and the scripts' own logic run u
 a discriminating fixture ("F<n> probe" / "R2-F<n> probe"); write-safety negatives assert that the outside sentinel is
 unchanged. Real engine paths (W scoring, native references, command hashes, trainer, GPU) remain qualification §6.
 """
-import ast, contextlib, copy, datetime, hashlib, json, os, pickle, random, shutil, signal, stat, subprocess, sys, tempfile, time, types
+import ast, contextlib, copy, datetime, threading, hashlib, json, os, pickle, random, shutil, signal, stat, subprocess, sys, tempfile, time, types
 from pathlib import Path
 import numpy as np
 
@@ -63,7 +63,16 @@ def new_job(tmp, name='job', hard_stop='2030-01-01T00:00:00Z'):
     for d in ('data', 'receipts', 'driver', 'analysis', 'qual', 'collect', 'games', 'logs', 'smoke', 'inputs', 'calibration', 'fits', 'fit'):
         (job/d).mkdir(parents=True, exist_ok=True)
     (job/'HARD-STOP-UTC.txt').write_text(hard_stop+'\n')
+    fake_watchdog(job)
     return use_job(job)
+
+
+def fake_watchdog(job):
+    """r9 fixture: a recorded watchdog (this live test process) with a heartbeat, so watchdog_ok() holds; the real
+    watchdog.py is exercised separately in test_r9. The heartbeat age limit is relaxed for the suite in main()."""
+    (Path(job)/'watchdog').mkdir(exist_ok=True)
+    wjson(Path(job)/'watchdog'/'pid.json', dict(pid=os.getpid(), starttime=io.proc_stat(os.getpid())['starttime']))
+    wjson(Path(job)/'watchdog'/'heartbeat.json', dict(pid=os.getpid(), epoch=time.time(), halted=None))
 
 
 def git(repo, *args, check=True):
@@ -488,7 +497,7 @@ def test_pipeline(tmp):
          and st['O']['over_cap'] == 6 and st['holdout']['kept'] == 6 and lp['feature_only_duplicates_by_600_tick_bucket']['0']['feature_duplicates'] == 6
          and lp['parity_receipt_sha256'] == sha(good_parity))
     def plan_fails(mutate, parity=None, text=''):
-        j2 = Path(tmp)/f'plan-{len(list(Path(tmp).glob("plan-*")))}'; shutil.copytree(job/'collect', j2/'collect'); (j2/'data').mkdir()
+        j2 = Path(tmp)/f'plan-{len(list(Path(tmp).glob("plan-*")))}'; shutil.copytree(job/'collect', j2/'collect'); (j2/'data').mkdir(); (j2/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')   # r9: H-1 needs the deadline
         phases = [j2/'collect'/'K4S-120'/'a1', j2/'collect'/'S-200'/'a1']
         q = parity_doc(j2, phases) if parity is None else parity(j2, phases)
         mutate(phases[0]); use_job(j2)
@@ -514,7 +523,7 @@ def test_pipeline(tmp):
          'failed parity without an authentic exception',
          all(v[0] for v in probes.values()), probes={k: v[1][:70] for k, v in probes.items()})
     # authentic coordinator exception: a commit on origin/main whose COORDINATOR.md names the failed receipt's SHA
-    j3 = Path(tmp)/'exc'; shutil.copytree(job/'collect', j3/'collect'); (j3/'data').mkdir()
+    j3 = Path(tmp)/'exc'; shutil.copytree(job/'collect', j3/'collect'); (j3/'data').mkdir(); (j3/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')   # r9: H-1 needs the deadline
     phases3 = [j3/'collect'/'K4S-120'/'a1', j3/'collect'/'S-200'/'a1']
     q3 = parity_doc(j3, phases3, passed=False)
     repo, head = git_repo(Path(tmp)/'coord', {'reports/strategy_council_20260928/COORDINATOR.md': f'C7b ruling: continue; receipt {sha(q3)}\n'.encode()})
@@ -565,6 +574,7 @@ def test_pipeline(tmp):
         if selection: args += ['--selection', str(selection)]
         root = j/'data'/V.MODES[mode][0]                          # r8: what the guarded producers would have recorded
         bless_into(j, *[d for d in sorted(root.glob('batch-*')) if (d/'manifest.json').exists()], *[Path(r) for r in rec if Path(r).exists()],
+                   *[x for x in (j/'data'/'label-plan.json',) if x.exists()],
                    *[x for x in (Path(selection) if selection else None, j/'data'/'raw-OW-acceptance-smoke.json') if x and x.exists()])
         rc = V.main(args); body = json.loads(next((j/'data').rglob('VERIFY-RECEIPT.json')).read_text())
         gate = j/'data'/V.MODES[mode][1]
@@ -630,7 +640,7 @@ def test_pipeline(tmp):
             msha = ow_game(j/'data'/'raw-OW'/f'game-{g:05d}', CW+g+(1 if seed_shift == g else 0), 15, index=56+g % 2)
             rows.append(dict(g=g, seed=CW+g, index=56+g % 2, seat=g % 2, own=g % 5, opponent=(g//5) % 5, roots=15, manifest_sha256=msha))
         packmod.pack([j/'data'/'raw-OW'], j/'data'/'onpolicy-w'/'batch-0000')
-        wjson(j/'data'/'O-VERIFIED.json', dict(rows=target))
+        og = wjson(j/'data'/'O-VERIFIED.json', dict(rows=target))
         arows = []
         for g in (0, 1):
             m = ow_game(j/'data'/'raw-OW-acceptance'/f'game-{g:05d}', QUAL+g, 5, index=56+g % 2, replay_exact=True)
@@ -641,8 +651,16 @@ def test_pipeline(tmp):
                  games=rows, v1_sha256=V.V1_SHA, emitter_sha256=V.EMITTER_SHA)
         s.update(sel or {}); wjson(j/'data'/'raw-OW-selection.json', s)
         bless_into(j, *[d for d in sorted((j/'data'/'onpolicy-w').glob('batch-*')) if (d/'manifest.json').exists()],
-                   j/'data'/'raw-OW-selection.json', j/'data'/'raw-OW-acceptance-smoke.json')   # r8: the guarded producers
-        rc_ = V.main(['--mode', 'OW', '--plan', str(planf), '--selection', str(j/'data'/'raw-OW-selection.json')])
+                   j/'data'/'raw-OW-selection.json', j/'data'/'raw-OW-acceptance-smoke.json', og)   # r8: the guarded producers
+        import studytree as _st
+        real_ag = _st.authenticate_gate
+        def synthetic_o_gate(job_, mode):                       # r9 (R8-F4): verify OW authenticates the O gate; the
+            if mode != 'O': return real_ag(job_, mode)          # synthetic O gate here has no corpus, so only its
+            if _st.guarded_output(job_, str(og)) is None: raise io.Refusal('gate', 'O gate has no passed guard receipt')
+            return [], sha(og), json.loads(og.read_text())      # guard is real; the corpus checks are tested elsewhere
+        _st.authenticate_gate = synthetic_o_gate
+        try: rc_ = V.main(['--mode', 'OW', '--plan', str(planf), '--selection', str(j/'data'/'raw-OW-selection.json')])
+        finally: _st.authenticate_gate = real_ag
         body = json.loads((j/'data'/'onpolicy-w'/'VERIFY-RECEIPT.json').read_text()); use_job(job)
         return rc_, body
     rc, body = ow_case('ok', 46)
@@ -1202,7 +1220,7 @@ def test_reduce(tmp):
     lp = dict(stats={s: dict(games=3, dropped_no_block=1, captured=10, duplicate=1, over_cap=0, kept=400000, kept_per_arm={'K4S-120': 5, 'S-200': 4},
                              strata={'hit': 7}, student_default=1, fallback=0, plays=4) for s in ('O', 'holdout')},
               feature_only_duplicates_by_600_tick_bucket={'0': dict(states=10, feature_duplicates=2, rate=.2)})
-    lpp = wjson(job/'data'/'label-plan.json', lp)
+    lpp = wjson(job/'data'/'label-plan.json', lp); bless(lpp)           # r9 (R8-F4): the guarded label plan run
     og = wjson(job/'data'/'O-VERIFIED.json', dict(rows=399900, label_plan_sha256=sha(lpp)))
     ogw = wjson(job/'data'/'OW-VERIFIED.json', dict(roots=400100, rows=420000, single_candidate_root_share=.1, o_gate_sha256=sha(og)))
     ok = run(['--allow-prefix'], sha_=digest, commit=head, repo=repo)
@@ -1281,8 +1299,9 @@ def test_reduce(tmp):
         ogw_keep = ogw.read_bytes()
         wjson(job/'data'/'OW-VERIFIED.json', dict(roots=1, rows=1, single_candidate_root_share=.1, o_gate_sha256='0'*64))
         bind['O_W gate not built on this O gate'] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'O_W gate'); ogw.write_bytes(ogw_keep)
-        wjson(job/'data'/'label-plan.json', dict(lp, utc='other'))
-        bind['stale label plan'] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'label plan'); wjson(job/'data'/'label-plan.json', lp)
+        wjson(job/'data'/'label-plan.json', dict(lp, utc='other')); bless(job/'data'/'label-plan.json')
+        bind['stale label plan'] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'O gate was not verified against this label plan')
+        wjson(job/'data'/'label-plan.json', lp)
         hg = wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='holdout'))
         staged = {k: v for k, v in r['identities']['students'].items()}
         good_diag = dict(holdout_gate_sha256=sha(hg), heldout64_sha256=wr.HELDOUT64_SHA, students={k: {} for k in wr.STUDENTS}, student_checkpoints=staged)
@@ -1660,7 +1679,7 @@ print(json.dumps(dict(passed=ok, seconds=time.monotonic()-t0)))
 def test_r6(tmp):
     import studytree as ST
     past = datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc)
-    def stop_link(job): os.symlink(Path(job)/'nowhere', Path(job)/'STOP')
+    def stop_link(job): time.sleep(0.02); os.symlink(Path(job)/'nowhere', Path(job)/'STOP')   # r9: strictly after prior outputs (H-1)
     def r6_driver(sub):
         """A driver over a fresh job with healthy measurements; io.spawn is a spy that records any child creation."""
         drv, job = driver_module(tmp/sub)
@@ -2388,13 +2407,237 @@ def test_r8(tmp):
          not unguarded and len(packs) >= 2 and all('--output $J/data/' in l for l in packs), unguarded=unguarded)
 
 
+# ================================================================ r9: SR-1 external watchdog, R8-F4 edges, rule H-1
+def test_r9(tmp):
+    import studytree as ST, guard as G, qualify4 as Q, label, verify_onpolicy as V, write_report as wr, collect_w
+    WD = HERE/'watchdog.py'; PYX = sys.executable
+    def fake(path, body):
+        Path(path).write_text('#!/bin/sh\n'+body+'\n'); os.chmod(path, 0o755); return str(path)
+    def wjob(sub, deadline='2030-01-01T00:00:00Z'):
+        j = Path(tmp)/sub/'job'; (j/'watchdog').mkdir(parents=True); (j/'receipts').mkdir(); (j/'qual').mkdir()
+        if deadline: (j/'HARD-STOP-UTC.txt').write_text(deadline+'\n')
+        ctl = Path(tmp)/sub/'ctl'; ctl.mkdir(); (ctl/'du').write_text('1000'); (ctl/'gpu').write_text('100')
+        (ctl/'psi').write_text('some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n')
+        du = fake(ctl/'du.sh', f'[ -f {ctl}/du-sleep ] && sleep $(cat {ctl}/du-sleep); [ -f {ctl}/du-fail ] && exit 1; echo "$(cat {ctl}/du)\t$3"')
+        gpu = fake(ctl/'gpu.sh', f'[ -f {ctl}/gpu-fail ] && exit 1; cat {ctl}/gpu')
+        return j, ctl, du, gpu
+    def marker(j, extra_sh=None, readout=False):
+        cmd = ['/bin/sh', '-c', extra_sh] if extra_sh else ['/bin/sleep', '60']
+        env = {'X4S4_STUDY': str(j), 'PATH': '/usr/bin:/bin', **({'X4S4_READOUT': '1'} if readout else {})}
+        return subprocess.Popen(cmd, env=env, start_new_session=True)
+    def wd_run(j, du, gpu, *opts):
+        env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY',)}
+        return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '0.3', '--stall', '3', '--stop-grace', '1.5',
+                                 '--kill-grace', '1', '--du', du, '--nvidia-smi', gpu, '--du-timeout', '2', '--gpu-timeout', '2',
+                                 '--mem-floor', '1', '--psi', str(Path(du).parent/'psi'), *opts],     # host-independent defaults
+                                env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    def until(cond, limit=15):
+        t0 = time.monotonic()
+        while time.monotonic()-t0 < limit:
+            if cond(): return True
+            time.sleep(0.1)
+        return False
+    def halt_doc(j): return json.loads((j/'HALT.json').read_text()) if (j/'HALT.json').exists() else {}
+    def cleanup(*ps):
+        for p in ps:
+            if p.poll() is None: p.kill()                                # our own direct children (by PID)
+            p.wait()
+    old_age = ST.WATCHDOG_MAX_AGE; ST.WATCHDOG_MAX_AGE = 30.0
+    res = {}
+    try:
+        # ---- healthy: heartbeat, no HALT, study processes untouched; watchdog_ok holds
+        j, ctl, du, gpu = wjob('w-ok'); m = marker(j); w = wd_run(j, du, gpu)
+        ok_hb = until(lambda: (j/'watchdog'/'heartbeat.json').exists()); time.sleep(1.5)
+        res['healthy'] = ok_hb and m.poll() is None and not (j/'HALT.json').exists() and ST.watchdog_ok(str(j)) is None \
+            and json.loads((j/'watchdog'/'heartbeat.json').read_text())['readings']['processes'] == 1
+        # STOP honoured: STOP appears, the study process exits by itself before the grace -> no HALT; STOP period logged
+        (j/'STOP').symlink_to(j/'nowhere'); time.sleep(0.4); m.terminate(); m.wait(); time.sleep(2.2)
+        res['stop_honoured_no_halt'] = not (j/'HALT.json').exists()
+        (j/'STOP').unlink(); time.sleep(0.8)
+        sp = [json.loads(l)['kind'] for l in (j/'watchdog'/'stop-periods.jsonl').read_text().splitlines()]
+        res['stop_period_logged'] = sp == ['start', 'end'] and len(ST.stop_periods(str(j))) == 1
+        cleanup(w)
+        # ---- every breach -> HALT.json + STOP, the study tree stopped one PID at a time, other jobs untouched
+        def breach(sub, setup, want, opts=(), deadline='2030-01-01T00:00:00Z', stubborn=False):
+            j, ctl, du, gpu = wjob(sub, deadline)
+            ms = [marker(j), marker(j, 'trap "" TERM; sleep 60 & wait') if stubborn else marker(j)]; late = None
+            other = marker(Path(tmp)/'other-job')                      # a different study marker: never touched
+            setup(j, ctl)
+            w = wd_run(j, du, gpu, *opts)
+            try:
+                halted = until(lambda: (j/'HALT.json').exists())
+                emptied = until(lambda: all(p.poll() is not None for p in ms))
+                late = marker(j); late_killed = until(lambda: late.poll() is not None)       # HALT is a hard stop
+                h = halt_doc(j)
+                ok = halted and emptied and late_killed and want in h.get('reason', '') and os.path.lexists(j/'STOP') \
+                    and other.poll() is None and oct((j/'HALT.json').stat().st_mode & 0o777) == '0o444'
+                return ok, h.get('reason')
+            finally:
+                cleanup(*[x for x in (w, other, *ms, late) if x is not None])
+        cases = dict(
+            deadline=breach('w-dl', lambda j, c: None, 'after the deadline', deadline='2000-01-01T00:00:00Z'),
+            no_deadline=breach('w-nodl', lambda j, c: None, 'before the deadline file', deadline=None),
+            deadline_changed=breach('w-dlc', lambda j, c: threading.Timer(1.0, lambda: (j/'HARD-STOP-UTC.txt').write_text('2031-01-01T00:00:00Z\n')).start(), 'deadline file changed'),
+            memory=breach('w-mem', lambda j, c: None, 'MemAvailable', opts=('--mem-floor', str(10**15))),
+            psi_unreadable=breach('w-psi', lambda j, c: None, 'PSI unreadable', opts=('--psi', '/nonexistent/psi')),
+            processes=breach('w-procs', lambda j, c: None, 'study processes > 1', opts=('--max-procs', '1')),
+            pss=breach('w-pss', lambda j, c: None, 'study PSS', opts=('--tree-pss', '1')),
+            disk=breach('w-disk', lambda j, c: (c/'du').write_text(str(101*10**9)), 'disk'),
+            du_failed=breach('w-duf', lambda j, c: (c/'du-fail').write_text('1'), 'measurement failed'),
+            du_timeout=breach('w-dut', lambda j, c: (c/'du-sleep').write_text('5'), 'measurement failed'),
+            gpu_over=breach('w-gpu', lambda j, c: (c/'gpu').write_text('50000'), 'GPU'),
+            gpu_failed=breach('w-gpuf', lambda j, c: (c/'gpu-fail').write_text('1'), 'measurement failed'),
+            stop_not_honoured=breach('w-stop', lambda j, c: (j/'STOP').symlink_to(j/'nowhere'), 'STOP not honoured', stubborn=True),
+            cycle_stall=breach('w-stall', lambda j, c: (c/'du-sleep').write_text('6'), 'stalled', opts=('--du-timeout', '30', '--stall', '1')))
+        res['breaches'] = {k: v[0] for k, v in cases.items()}
+        # the E8 readout may run after the deadline: readout-marked processes alone never HALT; a production one does
+        j, ctl, du, gpu = wjob('w-ro', '2000-01-01T00:00:00Z'); ro = marker(j, readout=True); w = wd_run(j, du, gpu)
+        time.sleep(3.0); ro_ok = not (j/'HALT.json').exists() and ro.poll() is None
+        prod = marker(j); ro_mixed = until(lambda: (j/'HALT.json').exists()) and 'after the deadline' in halt_doc(j).get('reason', '')
+        cleanup(w, ro, prod)
+        res['deadline_readout_only'] = ro_ok and ro_mixed
+        # ---- after HALT: watchdog_ok refuses, and every entry point refuses new work
+        j = Path(tmp)/'w-dl'/'job'
+        res['after_halt_watchdog_ok'] = ST.watchdog_ok(str(j)) is not None
+        jj = new_job(tmp/'w-entry'); wjson(jj/'HALT.json', dict(epoch=time.time())); wjson(jj/'watchdog'/'heartbeat.json', dict(pid=os.getpid(), epoch=time.time(), halted='x'))
+        r = G.Runner(str(jj), 'after-halt', ['/bin/true']); r.exit = lambda c: None
+        res['runner_refuses'] = 'watchdog' in (r.run() or {}).get('error', '')
+        sup = load_fresh('supervise_r9', HERE/'supervise.py')
+        res['supervisor_refuses'] = 'watchdog' in (sup.admit_phase(str(jj), 1) or '')
+        drv, djob = driver_module(tmp/'w-drv'); wjson(djob/'watchdog'/'heartbeat.json', dict(pid=os.getpid(), epoch=time.time(), halted='HALT'))
+        res['driver_final_gate_refuses'] = 'watchdog' in (drv.final_gate() or '')
+        # ---- launcher: detached, own session, outside the study tree even when launched from a marked shell
+        j, ctl, du, gpu = wjob('w-start')
+        env = dict(os.environ, X4S4_STUDY=str(j))
+        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '0.3', '--du', du, '--nvidia-smi', gpu,
+                             '--mem-floor', '1', '--psi', str(ctl/'psi')],
+                            env=env, capture_output=True, text=True, timeout=30)
+        pidrec = json.loads((j/'watchdog'/'pid.json').read_text()); wpid = pidrec['pid']
+        with open(f'/proc/{wpid}/environ', 'rb') as f: wenv = f.read()
+        res['launcher'] = st.returncode == 0 and b'X4S4_STUDY' not in wenv and os.getsid(wpid) == wpid and \
+            subprocess.run([PYX, '-B', str(WD), 'status', '--job', str(j)], capture_output=True).returncode == 0 and \
+            subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j)], capture_output=True).returncode != 0
+        if io.proc_stat(wpid) and io.proc_stat(wpid)['starttime'] == pidrec['starttime']: os.kill(wpid, signal.SIGTERM)   # verified PID
+        until(lambda: io.proc_stat(wpid) is None or io.proc_stat(wpid)['state'] == 'Z', 10)
+        # ---- static: one stdlib-only file; verified one-by-one PID signals; never results
+        src = WD.read_text(); tree_ = ast.parse(src)
+        imports = {a.name.split('.')[0] for n in ast.walk(tree_) if isinstance(n, ast.Import) for a in n.names} | \
+                  {n.module.split('.')[0] for n in ast.walk(tree_) if isinstance(n, ast.ImportFrom)}
+        kt = src[src.index('def kill_tree'):src.index('# ---------------------------------------------------------------- the loop')]
+        res['static'] = imports <= {'argparse', 'calendar', 'json', 'os', 'signal', 'subprocess', 'sys', 'threading', 'time'} \
+            and 'killpg' not in src and 'os.kill(-' not in src and kt.index('s[0] != start or not marked(pid') < kt.index('os.kill(pid, sig)') \
+            and not any(w in c.value for c in ast.walk(tree_) if isinstance(c, ast.Constant) and isinstance(c.value, str) and len(c.value) < 80
+                        for w in ('/games', '/analysis', '/data', '/collect', '/qual', '/fits', 'results', 'outcome', 'loss'))
+    finally:
+        ST.WATCHDOG_MAX_AGE = old_age
+    case("r9 SR-1 watchdog (real process, fake du/nvidia-smi): healthy -> heartbeat, no HALT, study processes untouched; STOP "
+         "honoured within the grace -> no HALT, STOP period logged; each breach (deadline reached / missing / changed, memory, "
+         "unreadable PSI, process count, PSS, disk, du failure/timeout, GPU over/failure, STOP not honoured, a stalled cycle) -> "
+         "read-only HALT.json + STOP, every study process stopped one by one (a TERM-ignoring one by KILL), a later study process "
+         "stopped too, another job's process untouched; after HALT the runner, supervisor and driver refuse new work; the launcher "
+         "detaches the watchdog outside the study tree; stdlib-only, verified PID signals, no result paths",
+         all(v for k, v in res.items() if k != 'breaches') and all(res['breaches'].values()), res=res,
+         reasons={k: v[1] for k, v in cases.items()})
+
+    # ---- R8-F4: every producer -> consumer edge needs the producer's matching passed receipt
+    f4 = {}
+    j = new_job(tmp/'f4')
+    stub_torch_imports(); from imitation.exit_r1 import pack as packmod
+    ow_game(Path(tmp)/'f4raw'/'game-00000', C+0, 4, index=56); batch = j/'qual'/'smoke-pack'/'batch-0000'
+    packmod.pack([Path(tmp)/'f4raw'], batch)
+    ta = types.SimpleNamespace(packed=str(batch), assets=str(j/'inputs'/'assets.npz'))
+    f4['trainer_unguarded'] = raises(lambda: Q.trainer(ta), BaseException, 'R8-F4')
+    wjson(j/'receipts'/'guard-failed-sp.json', dict(schema='x4s4.guard.v1', passed=False, outputs={str(batch): ST.output_identity(str(batch))}))
+    f4['trainer_failed_receipt'] = raises(lambda: Q.trainer(ta), BaseException, 'R8-F4')
+    bless(batch); f4['trainer_guarded_proceeds'] = not raises(lambda: Q.trainer(ta), BaseException, 'R8-F4')   # then offline imports fail
+    wjson(j/'data'/'O-VERIFIED.json', dict(mode='O', rows=5)); collect_w.JOB = str(j)
+    f4['collect_w_o_gate'] = raises(collect_w.o_target, io.Refusal, 'guard receipt')
+    collect_w.JOB = io.JOB
+    wjson(j/'data'/'label-plan.json', {}); (j/'data'/'onpolicy').mkdir(); V.JOB = str(j)
+    V.main(['--mode', 'O', '--plan', str(HERE/'plan.json')]) if not (j/'data'/'O-VERIFIED.json').unlink() else None
+    f4['verify_label_plan'] = 'label plan has no passed guard' in json.loads((j/'data'/'onpolicy'/'VERIFY-RECEIPT.json').read_text())['error']
+    wjson(j/'data'/'O-VERIFIED.json', dict(mode='O', rows=5)); (j/'data'/'onpolicy-w').mkdir()
+    sel = wjson(j/'data'/'raw-OW-selection.json', {}); acc = wjson(j/'data'/'raw-OW-acceptance-smoke.json', {}); bless(sel, acc)
+    V.main(['--mode', 'OW', '--plan', str(HERE/'plan.json'), '--selection', str(sel)])
+    f4['verify_ow_o_gate'] = 'O-VERIFIED.json has no passed guard receipt' in json.loads((j/'data'/'onpolicy-w'/'VERIFY-RECEIPT.json').read_text())['error']
+    vsrc = (HERE/'verify_onpolicy.py').read_text(); wsrc = (HERE/'write_report.py').read_text()
+    f4['write_report_label_plan'] = "guarded_output(J, paths['label_plan'])" in wsrc
+    use_job(j)
+    case("r9 R8-F4: the trainer refuses a smoke batch without its passed smoke-pack receipt (missing or failed) before opening it, and "
+         "proceeds past the check with one; O_W generation and O_W verification authenticate the guarded O gate; O/holdout verification "
+         "and the report require the guarded label plan", all(f4.values()), f4=f4)
+
+    # ---- H-1: outputs completing at/after HALT, at/after the deadline or during STOP are never counted
+    h1 = {}
+    j = new_job(tmp/'h1'); out = wjson(j/'qual'/'o.json', dict(a=1)); rec = bless(out)
+    t_rec = os.stat(rec).st_mtime
+    h1['counted'] = ST.guarded_output(str(j), str(out)) is not None
+    wjson(j/'HALT.json', dict(epoch=t_rec-1)); h1['after_halt'] = ST.guarded_output(str(j), str(out)) is None and ST.h1_reason(str(j), t_rec) == 'after HALT'
+    wjson(j/'HALT.json', dict(epoch=t_rec+1)); h1['before_halt'] = ST.guarded_output(str(j), str(out)) is not None
+    (j/'HALT.json').write_text('not json'); h1['halt_unreadable'] = ST.guarded_output(str(j), str(out)) is None
+    (j/'HALT.json').unlink()
+    (j/'watchdog'/'stop-periods.jsonl').write_text(json.dumps(dict(kind='start', epoch=t_rec-5))+'\n'+json.dumps(dict(kind='end', epoch=t_rec+5))+'\n')
+    h1['during_stop'] = ST.guarded_output(str(j), str(out)) is None and ST.h1_reason(str(j), t_rec) == 'during STOP'
+    (j/'watchdog'/'stop-periods.jsonl').write_text(json.dumps(dict(kind='start', epoch=t_rec-9))+'\n'+json.dumps(dict(kind='end', epoch=t_rec-5))+'\n')
+    h1['after_stop_period'] = ST.guarded_output(str(j), str(out)) is not None
+    (j/'HARD-STOP-UTC.txt').write_text(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(t_rec-1))+'\n')
+    h1['after_deadline'] = ST.guarded_output(str(j), str(out)) is None and ST.h1_reason(str(j), t_rec) == 'after deadline'
+    rro = wjson(j/'receipts'/'guard-readout-x.json', dict(json.loads(Path(rec).read_text()), readout=True))   # a --readout run
+    h1['readout_after_deadline_counts'] = ST.guarded_output(str(j), str(out))['readout'] is True
+    rro.unlink()
+    (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
+    os.symlink(j/'nowhere', j/'STOP'); h1['stop_present_now'] = ST.h1_reason(str(j), time.time()+1) == 'during STOP'; (j/'STOP').unlink()
+    # block level: a game pair whose proof completed after HALT is not counted by label admission, parity or the reducer
+    pk = j/'collect'/'K4S-120'/'a1'
+    for i in range(3): write_collect_game(pk, 'K4S-120', i, (100, 110))
+    late = pk/'blocks'/'0002.json'; tl = os.stat(late).st_mtime
+    for n in ('0000.json', '0001.json'): os.utime(pk/'blocks'/n, (tl-100, tl-100))
+    wjson(j/'HALT.json', dict(epoch=tl-50))
+    h1['label_block'] = label.authenticate_block(str(pk), 'K4S-120', 2) is None and label.authenticate_block(str(pk), 'K4S-120', 1) is not None
+    h1['parity_inventory'] = sorted(int(x[1].split('-')[1]) for x in Q.parity_inventory([str(pk)])) == [0, 1]
+    h1['proved_game'] = raises(lambda: Q.proved_game(str(pk), 2, 'K4S-120', C), Q.QualError, 'H-1')
+    (j/'HALT.json').unlink()
+    # reducer: a reporting block completed after HALT is excluded and counted in checks
+    import reduce as rdc
+    rj = reduce_fixture(Path(tmp)/'h1-red'); fake_watchdog(rj); use_job(rj)
+    plan = json.loads((rj/'x'/'plan.json').read_text())
+    d = sorted((rj/'games'/'R5'/'K4S-120').glob('a*'))[0]; blocks = sorted((d/'blocks').glob('*.json'))
+    tb = time.time()
+    for b in (rj/'games'/'R5').rglob('blocks/*.json'): os.utime(b, (tb-100, tb-100))     # every R5 block in time ...
+    os.utime(blocks[-1], (tb, tb)); wjson(rj/'HALT.json', dict(epoch=tb-50))              # ... except this one
+    chk = __import__('collections').Counter()
+    rows, _complete = rdc.load_student(str(rj), 'R5', plan, set(), chk)
+    h1['reducer'] = chk['h1_excluded'] == 1 and int(blocks[-1].name[:-5]) not in rows['K4S-120']
+    # driver: a READY written during STOP does not make the student ready (R8-F7's late READY)
+    drv, djob = driver_module(tmp/'h1-drv'); rd = djob/'rt-R5'/'READY.json'; rd.parent.mkdir(parents=True)
+    os.symlink(djob/'nowhere', djob/'STOP'); time.sleep(0.02); wjson(rd, dict(utc='x'))
+    h1['late_READY'] = drv.ready('R5') is False and 'R5' not in drv.ready_students()
+    (djob/'STOP').unlink(); (djob/'watchdog'/'stop-periods.jsonl').write_text('')
+    h1['READY_in_time'] = (wjson(rd, dict(utc='y')) and drv.ready('R5')) is True
+    use_job(io.JOB)
+    case("r9 rule H-1: a guarded output counts only if its receipt completed before any HALT (unreadable HALT fails closed), before "
+         "the deadline and outside every STOP period (watchdog log, or a STOP present now); a game block completed after HALT is "
+         "not counted by label admission, parity or proved_game, and the reducer excludes it (counted in checks); a READY written "
+         "during STOP does not make a student ready", all(h1.values()), h1=h1)
+
+    # ---- markers and STOP exit (static): every study entry point requires X4S4_STUDY=<job>; calibration env carries it;
+    # the driver leaves its loop under STOP/HALT once nothing lives, so the watchdog's stop grace can be met
+    gs, ss, ds = (HERE/'guard.py').read_text(), (HERE/'supervise.py').read_text(), (HERE/'driver.py').read_text()
+    case("r9 study marker and STOP exit: guard.py, supervise.py and driver.py require X4S4_STUDY=<job>; the calibration child's "
+         "explicit environment carries it; the driver exits under STOP/HALT when no supervisor, calibration or fit lives",
+         "os.environ.get('X4S4_STUDY') != io.JOB" in gs and "(os.environ.get('X4S4_READOUT') == '1') != bool(a.readout)" in gs
+         and "os.environ.get('X4S4_STUDY') != job or 'X4S4_READOUT' in os.environ" in ss
+         and "os.environ.get('X4S4_STUDY') != J or 'X4S4_READOUT' in os.environ" in ds and "X4S4_STUDY=J," in ds and "reason='STOP/HALT; nothing live" in ds)
+
+
 # ================================================================ static (F11, F17, R2-F10), run_fit.sh (F5)
 def test_static(tmp):
     owned = [p for p in sorted(HERE.glob('*.py')) if p.name not in ('run_collect.py', 'test_x4s4_offline.py')]
+    routed = [p for p in owned if p.name != 'watchdog.py']        # SR-1: the watchdog is deliberately stdlib-only (test_r9)
     asserts = {p.name: sum(isinstance(n, ast.Assert) for n in ast.walk(ast.parse(p.read_text()))) for p in owned}
     case('F11: no assert statement in any X4S-4-owned script', not any(asserts.values()), asserts=asserts)
     bypass = {}
-    for p in owned:
+    for p in routed:
         if p.name in ('x4s4io.py',): continue
         src = p.read_text(); tree = ast.parse(src)
         fs_attrs = ('write_text', 'write_bytes', 'read_text', 'read_bytes', 'mkdir', 'unlink', 'rmdir', 'rename', 'symlink_to', 'chmod',
@@ -2452,11 +2695,12 @@ def main():
     # r8: owned entry points run only under guard.py (studytree.require_guard); in-process test calls run as the child of
     # this live process. Negative tests unset/forge X4S4_GUARD explicitly.
     os.environ['X4S4_GUARD'] = f"{os.getpid()}:{io.proc_stat(os.getpid())['starttime']}:offline-tests"
+    import studytree as _st; _st.WATCHDOG_MAX_AGE = 1e9          # r9: fixture heartbeats do not age; test_r9 restores 30 s
     canonical, canonical_repo = io.JOB, io.REPO
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
         for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
-                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_static):
+                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
             except Exception as e:

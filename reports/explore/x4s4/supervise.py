@@ -94,6 +94,8 @@ def admit_phase(job, add, stop_at=None):
     calls, not only driver launches: no STOP (lexists), the study hard stop not reached (both the --stop-at value and
     <job>/HARD-STOP-UTC.txt), MemAvailable >= 24 GiB and memory PSI readable and <= 10 (dispatch inhibition only), and
     the study tree + this phase's processes <= 70 with the job <= 100 GB. Returns None or the refusal reason."""
+    why = studytree.watchdog_ok(job)                    # SR-1: no study work without the external watchdog
+    if why: return 'admission: watchdog: '+why
     if io.lexists(job+'/STOP'): return 'admission: STOP present'
     if studytree.hard_stop_passed(job) or (stop_at is not None and datetime.datetime.now(datetime.timezone.utc) >= stop_at):
         return 'admission: study hard stop reached'
@@ -159,6 +161,8 @@ def main():
     host = socket.gethostname()
     if not (host == '127x01' and os.sched_getaffinity(0) == set(range(50))): raise SystemExit('supervise.py: requires 127x01 on cores 0-49')
     if not (os.getpriority(os.PRIO_PROCESS, 0) == 10 and os.sched_getscheduler(0) == os.SCHED_OTHER): raise SystemExit('supervise.py: requires nice 10, SCHED_OTHER')
+    if os.environ.get('X4S4_STUDY') != job or 'X4S4_READOUT' in os.environ:
+        raise SystemExit(f'supervise.py requires X4S4_STUDY={job} and no X4S4_READOUT (the watchdog study markers)')
     if a.stop_at != studytree.hard_stop_at(job).strftime('%Y-%m-%dT%H:%M:%SZ'): raise SystemExit('--stop-at must equal <job>/HARD-STOP-UTC.txt')
     stop_at = datetime.datetime.strptime(a.stop_at, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc)
     console = who(); seats = console_users()

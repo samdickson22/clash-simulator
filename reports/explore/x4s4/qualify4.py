@@ -142,6 +142,8 @@ def proved_game(phase, i, arm, base, budget_ms=None, checkpoint=None):
     phase = str(phase)
     bp = f'{phase}/blocks/{i:04d}.json'
     if not io.lexists(bp): raise QualError(f'{phase}: index {i} has no block proof')
+    h1 = block_h1(bp)
+    if h1: raise QualError(f'{phase}: block {i} completed {h1} (rule H-1: never counted)')
     proof = io.read_json(bp, 1 << 20)
     if proof.get('index') != i or proof.get('seed') != base+i or arm not in proof.get('order', []):
         raise QualError(f'{phase}: block proof {i} identity')
@@ -155,6 +157,12 @@ def proved_game(phase, i, arm, base, budget_ms=None, checkpoint=None):
     if budget_ms is not None and m.get('budget_ms') != budget_ms: raise QualError(f'{phase}: {i} {arm} budget {m.get("budget_ms")}')
     if checkpoint is not None and m.get('checkpoint_sha256') != checkpoint: raise QualError(f'{phase}: {i} {arm} student checkpoint differs')
     return g, digest
+
+
+def block_h1(bp):
+    """Rule H-1 for a game pair: its block proof (written when the block completed) must not complete at/after HALT,
+    at/after the deadline or during STOP."""
+    return studytree.h1_reason(io.JOB, studytree.completed_at(bp))
 
 
 def init_label(threads):
@@ -455,6 +463,7 @@ def parity_inventory(phases, base=C_BASE):
         if not io.lexists(bdir): continue
         for n in io.listdir(bdir):
             if not n.endswith('.json'): continue
+            if block_h1(f'{bdir}/{n}'): continue                      # H-1: a late block is never counted
             i = int(n[:-5])
             proof = io.read_json(f'{bdir}/{n}', 1 << 20)
             for arm in proof.get('order', []):
@@ -515,11 +524,14 @@ def parity(a):
 
 def trainer(a):
     """R3-F3: the packed smoke batch must lie under <job>/qual and re-verify completely; the assets must match the
-    RUNTIME-INVENTORY pin; only then does the frozen loader open them."""
-    import numpy as np
-    from exit_r3.student import RootTeacherStore, teacher_targets
+    RUNTIME-INVENTORY pin; only then does the frozen loader open them. R8-F4: the batch must also be the passed,
+    in-time (H-1) guarded output of its smoke-pack run, checked before anything is imported or opened."""
     packed = str(a.packed)
     if not packed.startswith(io.JOB+'/qual/'): raise QualError('the packed smoke batch must lie under <job>/qual/')
+    if studytree.guarded_output(io.JOB, packed) is None:
+        raise QualError('the packed smoke batch has no passed, in-time guard receipt from its smoke-pack run (R8-F4)')
+    import numpy as np
+    from exit_r3.student import RootTeacherStore, teacher_targets
     _, manifest_sha = io.verify_sealed_dir(packed)
     inv = io.read_json(io.JOB+'/RUNTIME-INVENTORY.json', 4 << 20)
     if io.sha256_file(str(a.assets)) != inv.get('inputs/assets.npz'): raise QualError('assets differ from RUNTIME-INVENTORY')

@@ -249,6 +249,7 @@ def main(argv=None):
         ids['label_receipts_sha256'] = sorted(io.sha256_file(p) for p in a.label_receipts)
         selection = o_gate = label_plan = acceptance = None
         if a.mode in ('O', 'holdout'):
+            check(studytree.guarded_output(JOB, JOB+'/data/label-plan.json') is not None, 'the label plan has no passed guard receipt (R8-F4)')
             raw = io.read_bytes(JOB+'/data/label-plan.json', 1 << 30)
             label_plan = io.loads_strict(raw); label_plan['__sha256__'] = ids['label_plan_sha256'] = hashlib.sha256(raw).hexdigest()
             import label                                              # R3-F5: re-run parity admission on the plan's receipt
@@ -258,7 +259,7 @@ def main(argv=None):
             check(a.selection == JOB+'/data/raw-OW-selection.json', '--selection must be <job>/data/raw-OW-selection.json')
             check(studytree.guarded_output(JOB, a.selection) is not None, 'the O_W selection has no passed guard receipt')
             selection = io.read_json(a.selection, 64 << 20); ids['selection_sha256'] = io.sha256_file(a.selection)
-            o_gate = io.read_json(JOB+'/data/'+MODES['O'][1], 64 << 20); ids['o_gate_sha256'] = io.sha256_file(JOB+'/data/'+MODES['O'][1])
+            _, ids['o_gate_sha256'], o_gate = studytree.authenticate_gate(JOB, 'O')     # R8-F4: the current, guarded O gate
             accp = JOB+'/data/raw-OW-acceptance-smoke.json'
             check(studytree.guarded_output(JOB, accp) is not None, 'the O_W acceptance smoke has no passed guard receipt')
             acceptance = io.read_json(accp, 16 << 20); ids['acceptance_sha256'] = io.sha256_file(accp)

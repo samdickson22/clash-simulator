@@ -100,6 +100,9 @@ def load_student(job, sid, plan, retired, checks):
             sched = io.read_json(d+'/schedule.json', 64 << 20)
             if not (sched['range'] == 'reporting' and all(c[2] == arm for c in sched['cases'])): raise SystemExit(d)
             for bi, _ in contention.counted_games(d):
+                h1 = studytree.h1_reason(job, studytree.completed_at(f'{d}/blocks/{bi:04d}.json'))
+                if h1:                                                       # rule H-1: never counted (disclosed)
+                    checks['h1_excluded'] += 1; continue
                 proof = io.read_json(f'{d}/blocks/{bi:04d}.json', 1 << 20); i = proof['index']
                 if not (i not in rows[arm]): raise SystemExit(('duplicate', sid, arm, i))
                 if not (proof['seed'] == base+i and proof['order'] == [arm] and len(proof['slot_cores']) == width): raise SystemExit("reduce.py: check failed: proof['seed'] == base+i and proof['order'] == [arm] and len(proof['slot_cores']) == width")

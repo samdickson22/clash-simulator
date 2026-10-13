@@ -119,6 +119,8 @@ class Runner:
     def _run(self, env=None):
         for p in [self.receipt]+self.outputs:
             io.check_writable(p, roles=io.ROLES, must_not_exist=True, report=p.startswith(io.REPORT_ROOT+'/'))
+        why = studytree.watchdog_ok(self.job)                         # SR-1: no study work without the watchdog
+        if why: return self.fail('admission: watchdog: '+why)
         why = studytree.admit(self.job, self.add, gpu_admit if self.gpu else None, deadline=not self.readout)
         if why: return self.fail(why)
         before = {p: set(self._matches(p)) for p in self.new_prefixes}
@@ -143,6 +145,9 @@ class Runner:
             self.breach_done.wait(180); return None
         if self.finalized: return None
         if rc != 0: return self.fail(f'child exit {rc}', code=1)
+        if io.owned_pids(self.child['pgid'], self.child['starttime']):     # R8-F2: no success with live workers
+            io.stop_owned(self.child['pgid'], self.child['starttime'], term_grace=30, kill_grace=30)
+            return self.fail('child exited 0 with live group members (stopped by verified PIDs)', code=1)
         outputs, new_files = {}, {}
         try:
             for p in self.outputs:
@@ -182,6 +187,9 @@ def main(argv=None):
     a = ap.parse_args(argv[:k])
     if not 1 <= a.add <= studytree.MAX_PROCESSES: raise SystemExit('--add must be within 1..70')
     if os.getpriority(os.PRIO_PROCESS, 0) < 10: raise SystemExit('guard.py runs at nice >= 10')
+    if os.environ.get('X4S4_STUDY') != io.JOB: raise SystemExit(f'guard.py requires X4S4_STUDY={io.JOB} (the watchdog study marker)')
+    if (os.environ.get('X4S4_READOUT') == '1') != bool(a.readout):          # the watchdog's deadline exemption is readout-only
+        raise SystemExit('X4S4_READOUT=1 must be set exactly for --readout steps')
     r = Runner(io.JOB, a.name, argv[k+1:], a.add, a.gpu, a.readout, a.cwd, a.output, a.new_files)
     body = r.run()
     raise SystemExit(0 if body and body.get('passed') is True else 1)

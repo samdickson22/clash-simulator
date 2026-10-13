@@ -27,6 +27,14 @@ r8 (Sol r7, R7-F1..F3 - one mechanism for every long-running or spawning path; s
     guard.py after its final fresh guards) names it with its current identity.
   * require_guard(): an owned entry point runs only as the child of a live guard.py runner and ends itself if the
     runner disappears.
+
+r9 (coordinator ruling SR-1): host safety is enforced by the external watchdog.py. The in-process guards remain as
+defence in depth. Here:
+  * watchdog_ok(): new study work starts only with a live watchdog (fresh heartbeat, not halted).
+  * HALT.json counts like STOP in cheap_halt/monitor.
+  * h1_reason(): rule H-1. An output whose completion time is at or after a HALT, at or after the deadline, or inside
+    a STOP period is never counted. guarded_output enforces it on the guard receipt's completion time; the game
+    consumers enforce it on block proofs.
 """
 import datetime, math, os, threading, time
 
@@ -158,7 +166,7 @@ def monitor(job=None, own=None, pss_limit=PSS_LIMIT, disk=True, check_psi=True, 
     """The frozen live stop rules for a running owned task (own = (pgid, starttime) of that task's group). deadline=False
     only for the post-study readout steps (guard.py --readout: contention, reduce, report)."""
     job = job or io.JOB
-    if io.lexists(job+'/STOP'): return 'owned_STOP'
+    if io.lexists(job+'/HALT.json') or io.lexists(job+'/STOP'): return 'owned_STOP'
     if deadline and hard_stop_passed(job): return 'hard_stop_time'
     mem = mem_available()
     if mem is None or mem < MEM_FLOOR: return 'memory_guard'
@@ -208,8 +216,9 @@ def bounded(fn, timeout=None):
 
 
 def cheap_halt(job=None, deadline=True):
-    """STOP (lexists, so a dangling link counts) and the immutable deadline - no measurement."""
+    """HALT, STOP (lexists, so a dangling link counts) and the immutable deadline - no measurement."""
     job = job or io.JOB
+    if io.lexists(job+'/HALT.json'): return 'HALT'
     if io.lexists(job+'/STOP'): return 'owned_STOP'
     if deadline and hard_stop_passed(job): return 'hard_stop_time'
     return None
@@ -223,6 +232,7 @@ def admit(job=None, add=0, extra=None, deadline=True, timeout=None):
     why = cheap_halt(job, deadline)
     if why: return 'admission: '+why
     def measure():
+        _disk['bytes'] = None                            # R8-F3: admission measures disk now, not from the cache
         ok, w = dispatch_ok()
         if not ok: return w
         ok, w = admission(job, add)
@@ -239,7 +249,10 @@ def fresh_verdict(job=None, own=None, extra=None, deadline=True, timeout=None):
     """R7-F1: a FRESH running-resource verdict (monitor [+ extra, e.g. the GPU rule]) inside one bounded measurement (a
     miss is a breach), then the cheap STOP/deadline checks LAST. High readable PSI is not a breach here (frozen rule)."""
     job = job or io.JOB
-    try: why = bounded(lambda: monitor(job, own=own, deadline=deadline) or (extra() if extra else None), timeout)
+    def measure():
+        _disk['bytes'] = None                            # R8-F3: a fresh verdict measures disk now
+        return monitor(job, own=own, deadline=deadline) or (extra() if extra else None)
+    try: why = bounded(measure, timeout)
     except MeasureTimeout: why = 'measurement_timeout'
     return why or cheap_halt(job, deadline)
 
@@ -298,6 +311,61 @@ def output_identity(path):
     return io.sha256_file(path+'/manifest.json') if io.is_real_dir(path) else io.sha256_file(path)
 
 
+WATCHDOG_MAX_AGE = 30.0
+
+
+def watchdog_ok(job=None):
+    """SR-1: None if the external watchdog for this job is alive (recorded pid + start time) with a heartbeat younger
+    than 30 s and not halted; else the reason. New study work (guard.py, supervise.py, driver launches) requires it."""
+    job = job or io.JOB
+    try:
+        p = io.read_json(job+'/watchdog/pid.json', 1 << 16); hb = io.read_json(job+'/watchdog/heartbeat.json', 1 << 20)
+    except io.Refusal as exc:
+        return f'watchdog files unreadable: {exc}'
+    st = io.proc_stat(p.get('pid', -1))
+    if not (st and st['starttime'] == p.get('starttime') and st['state'] != 'Z'): return 'watchdog not alive'
+    if hb.get('pid') != p.get('pid') or time.time()-float(hb.get('epoch', 0)) > WATCHDOG_MAX_AGE: return 'watchdog heartbeat stale'
+    if hb.get('halted') or io.lexists(job+'/HALT.json'): return 'HALT'
+    return None
+
+
+def stop_periods(job):
+    """[(start, end or None)] epochs of the STOP periods the watchdog observed, plus a STOP present now."""
+    out, open_ = [], None
+    path = job+'/watchdog/stop-periods.jsonl'
+    if io.lexists(path):
+        for line in io.read_text(path, 64 << 20).splitlines():
+            e = io.loads_strict(line.encode())
+            if e.get('kind') == 'start': open_ = float(e['epoch'])
+            elif e.get('kind') == 'end' and open_ is not None: out.append((open_, float(e['epoch']))); open_ = None
+    if open_ is not None: out.append((open_, None))
+    if io.lexists(job+'/STOP'): out.append((os.lstat(job+'/STOP').st_mtime, None))
+    return out
+
+
+def h1_reason(job, t, deadline=True):
+    """Rule H-1 for an output completed at epoch t: 'after HALT', 'after deadline', 'during STOP', or None (counts).
+    Unreadable HALT/deadline evidence fails closed. deadline=False only for the post-study readout (guard --readout
+    receipts: contention, reduce, report), which follows the stop by design (E8); HALT and STOP still apply."""
+    job = job or io.JOB
+    if io.lexists(job+'/HALT.json'):
+        try: h = float(io.read_json(job+'/HALT.json', 1 << 20)['epoch'])
+        except (io.Refusal, KeyError, TypeError, ValueError): return 'HALT marker unreadable'
+        if t >= h: return 'after HALT'
+    try: dl = hard_stop_at(job).timestamp()
+    except (io.Refusal, ValueError): return 'deadline unreadable'
+    if deadline and t >= dl: return 'after deadline'
+    try: periods = stop_periods(job)
+    except (io.Refusal, ValueError, KeyError) as exc: return f'STOP periods unreadable: {exc}'
+    if any(a <= t and (b is None or t < b) for a, b in periods): return 'during STOP'
+    return None
+
+
+def completed_at(path):
+    """Completion time of a written output: its own mtime (single-link regular file, lstat; no read)."""
+    return io.stat_leaf(str(path)).st_mtime
+
+
 def guarded_output(job, path):
     """R7 acceptance: the PASSED guard receipt (receipts/guard-*.json, written by guard.py only after the child exited 0
     and its final fresh guards held) that names `path` with its CURRENT identity, else None."""
@@ -309,7 +377,7 @@ def guarded_output(job, path):
         except io.Refusal: continue
         if isinstance(r, dict) and r.get('passed') is True and r.get('schema') == 'x4s4.guard.v1' \
                 and ((r.get('outputs') or {}).get(path) == want or (r.get('new_files') or {}).get(path) == want):
-            return r
+            if h1_reason(job, completed_at(f'{job}/receipts/{n}'), deadline=not r.get('readout')) is None: return r   # H-1
     return None
 
 

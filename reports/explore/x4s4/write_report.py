@@ -183,6 +183,7 @@ def authenticate(J, contention_sha, freeze_commit, repo=None):
     paths = dict(results=f'{J}/analysis/results.json', label_plan=f'{J}/data/label-plan.json', o_gate=f'{J}/data/O-VERIFIED.json',
                  ow_gate=f'{J}/data/OW-VERIFIED.json')
     need(studytree.guarded_output(J, paths['results']) is not None, 'results.json has no passed guard receipt (R7: guarded reduce.py)')
+    need(studytree.guarded_output(J, paths['label_plan']) is not None, 'the label plan has no passed guard receipt (R8-F4)')
     # R7: a diagnostic counts only if its guarded run passed; otherwise it is rendered as unavailable (disclosed)
     if io.lexists(f'{J}/analysis/diagnostic.json') and studytree.guarded_output(J, f'{J}/analysis/diagnostic.json') is not None:
         paths.update(diagnostic=f'{J}/analysis/diagnostic.json', holdout_gate=f'{J}/data/HOLDOUT-VERIFIED.json')

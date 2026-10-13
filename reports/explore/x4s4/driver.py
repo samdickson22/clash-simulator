@@ -199,6 +199,8 @@ def final_gate():
     live diagnostic, calibration, reporting phase or fit - fit_state may read the whole events log); only then the
     cheap STOP (lexists) and immutable hard-stop checks, so nothing slow lies between them and io.spawn. Returns None
     or the reason."""
+    why = studytree.watchdog_ok(J)                                  # SR-1: no launch without the external watchdog
+    if why: return 'watchdog: '+why
     if unresolved_anomalies(): return 'unresolved anomaly'
     if diagnostic_live(): return 'diagnostic live'
     if live_calibration(): return 'calibration live'
@@ -428,10 +430,17 @@ class Fits:
 
 
 # ---------------- calibration / runtimes ----------------
+def ready(sid):
+    """A student runtime counts only if its READY receipt completed in time (rule H-1: not after HALT/deadline or
+    during STOP; covers R8-F7's late READY)."""
+    p = f'{J}/rt-{sid}/READY.json'
+    return io.lexists(p) and studytree.h1_reason(J, studytree.completed_at(p)) is None
+
+
 def ready_students():
-    out = ['R3a'] + [s for s in FIXED[1:] if io.lexists(f'{J}/rt-{s}/READY.json')]
+    out = ['R3a'] + [s for s in FIXED[1:] if ready(s)]
     for fid in FIT_ORDER:
-        if io.lexists(f'{J}/rt-{fid}/READY.json'): out.append(fid)
+        if ready(fid): out.append(fid)
     return sorted(out, key=lambda s: (s not in FIXED, FIXED.index(s) if s in FIXED else 0,
                                       jload(f'{J}/rt-{s}/READY.json')['utc'] if s not in FIXED else ''))
 
@@ -459,7 +468,7 @@ def run_calibration(fid, dest, cal):
     with DispatchLock():
         if stop_present() or now() >= STOP_AT or unresolved_anomalies(): return 'not_admitted'
         if live_supervisor() or any(fit_state(f)[0] == 'running' for f in FIT_ORDER) or not resources_ok(for_fit=True): return 'not_admitted'
-        env = dict(PATH='/usr/bin:/bin', PYTHONPATH=f'{J}/fit/source:{J}/fit/source/src:{J}/fit/ops', PYTHONDONTWRITEBYTECODE='1',
+        env = dict(PATH='/usr/bin:/bin', PYTHONPATH=f'{J}/fit/source:{J}/fit/source/src:{J}/fit/ops', PYTHONDONTWRITEBYTECODE='1', X4S4_STUDY=J,
                    OMP_NUM_THREADS='1', HOME=os.environ.get('HOME', '/nonexistent'))
         rec = launch(f'calibrate-{fid}', ['/usr/bin/taskset', '-c', '56-61', GPU_PY, '-B', f'{J}/fit/ops/calibrate.py', '--id', fid,
                                           '--checkpoint', dest, '--assets', f'{J}/inputs/assets.npz', '--out', cal],
@@ -645,7 +654,7 @@ def live_supervisor():
 
 
 def fits_settled():
-    return all(fit_state(f)[0] == 'done' for f in FIT_ORDER) and all(io.lexists(f'{J}/rt-{f}/READY.json') for f in FIT_ORDER)
+    return all(fit_state(f)[0] == 'done' for f in FIT_ORDER) and all(ready(f) for f in FIT_ORDER)
 
 
 def next_phase():
@@ -717,6 +726,10 @@ def exit_code(status):
 def main():
     io.mkdirs(D)
     if not (os.uname().nodename == '127x01' and os.getpriority(os.PRIO_PROCESS, 0) == 10): raise SystemExit('driver.py: requires 127x01 at nice 10')
+    if os.environ.get('X4S4_STUDY') != J or 'X4S4_READOUT' in os.environ:
+        raise SystemExit(f'driver.py requires X4S4_STUDY={J} and no X4S4_READOUT (the watchdog study markers)')
+    why = studytree.watchdog_ok(J)
+    if why: raise SystemExit(f'driver.py: the external watchdog is required ({why})')
     other = jload(D+'/driver.pid')
     if other and io.group_alive(other.get('pgid'), other.get('starttime')) and other.get('pid') != os.getpid():
         raise SystemExit('another driver is live')
@@ -767,6 +780,9 @@ def loop(fits, stop):
             time.sleep(60)
         if now() >= STOP_AT and not live_supervisor() and all(fit_state(f)[0] != 'running' for f in FIT_ORDER):
             event(kind='driver_exit', reason='hard stop reached; nothing live'); break
+        if (stop_present() or io.lexists(J+'/HALT.json')) and not live_supervisor() and not live_calibration() \
+                and all(fit_state(f)[0] != 'running' for f in FIT_ORDER):   # SR-1: STOP empties the study tree
+            event(kind='driver_exit', reason='STOP/HALT; nothing live (restart after the coordinator resumes)'); break
         if time.time()-beat > 300:
             mem = mem_available()
             jwrite(D+'/heartbeat.json', dict(utc=utc(), mem_available_GiB=None if mem is None else mem/2**30, gpu_used_MiB=gpu_used_mib(),

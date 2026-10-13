@@ -171,6 +171,11 @@ def acceptance_smoke(me, monitor=None, poll=10.0):
     return passed
 
 
+def o_target():
+    """R8-F4: the O_W target comes from the CURRENT authenticated O gate (guarded, receipt-bound, corpus re-verified)."""
+    return studytree.authenticate_gate(JOB, 'O')[2]['rows']
+
+
 def main():
     global emitter, X, OUT
     ap = argparse.ArgumentParser()
@@ -200,7 +205,7 @@ def main():
     if X != [list(d) for d in expect]: raise SystemExit('X decks differ from the X4S run.py selection')
     if a.acceptance_smoke:
         raise SystemExit(0 if acceptance_smoke(me) else 1)
-    target = io.read_json(JOB+'/data/O-VERIFIED.json', 64 << 20)['rows']
+    target = o_target()
     OUT = JOB+'/data/raw-OW'
     io.mkdirs(OUT, roles=('data',))
     started, done, inflight, nxt, failed, halted = utc(), {}, {}, 0, None, None

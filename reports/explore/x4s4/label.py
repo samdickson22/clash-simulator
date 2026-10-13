@@ -106,6 +106,7 @@ def authenticate_block(phase, arm, index):
     """None if the game has no block proof (interrupted); otherwise the proof, game SHA and projected terminal
     identity must all hold (R2-F8), else PlanError."""
     if not io.lexists(f'{phase}/blocks/{index:04d}.json'): return None
+    if qualify4.block_h1(f'{phase}/blocks/{index:04d}.json'): return None      # H-1: completed late -> not counted
     try:
         g, digest = qualify4.proved_game(str(phase), index, arm, C_BASE)
     except (qualify4.QualError, io.Refusal) as e:
