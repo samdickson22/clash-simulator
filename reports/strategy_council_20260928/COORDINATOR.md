@@ -6069,3 +6069,14 @@ ISSUED APPROVE_B_COMBINED_REVIEW 7dca4033021e82f10bcca3cdd988364e552ebf59690cf36
 **Window:** 14:30Z to 16:00Z. At most one failure inspection, per the GO, and it must finish by 16:30Z.
 
 ISSUED AUTHORIZE_B_DEPLOYMENT c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c
+
+## 2026-10-13 13:49Z: X4S-3b final fit-seed noise readout (4f4014ca)
+
+**U2b.** R3a-rep3's 2 × 1,167 games ran on 03/04 within STOP_AT, with every phase at rc 0. Both hosts drained and the census was clean.
+
+**Final readout (3 fits, 2 df): σ̂_fit = 0.58 pp**, below the 1.0 pp threshold. X4S-4's assumed σ_fit of 0.65 pp is not contradicted.
+- **Within-host control:** σ̂_w = 0.78 pp, also below 1.0.
+- **Host effect** between 03/04 and 01: +0.39 pp [−1.67, +2.49], not resolved.
+- **Implication:** fit-to-fit noise is about the same size as game-sampling error at 1,167 seeds.
+
+Exploration only, never adoptable.
