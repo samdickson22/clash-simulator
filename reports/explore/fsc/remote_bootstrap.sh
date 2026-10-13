@@ -4,7 +4,7 @@
 # /mpac/sdicks02/jobs/clasher, which is perception storage on 04), extracts the bundle, refuses any
 # non-regular entry, verifies MANIFEST.json against the expected hash and every file against MANIFEST.json, then execs
 # host_session.sh (which prints its own __RC). Every failure before that prints __RC=<nonzero>.
-# MODE resume (epoch 2, COORDINATOR 7f93dbbf): the prefix must already exist; the bundle goes to a fresh J/bundle-e2.
+# MODE resume (epoch 2, COORDINATOR 7f93dbbf): the prefix must already exist; the bundle goes to a fresh J/bundle-e2r (J/bundle-e2 holds the failed 06:10Z attempt on 04).
 set -euo pipefail
 shopt -s inherit_errexit
 export LC_ALL=C
@@ -23,7 +23,7 @@ R=/mpac/sdicks02; P=$R/jobs-fsc; J=$P/fsc-${host#127x}-20261013; [ "$host" != 12
 if [ "$mode" = launch ] && [ ! -e "$P" ] && [ ! -L "$P" ]; then mkdir "$P"; fi
 [ ! -L "$P" ]
 [ "$(realpath -e "$P")" = "$P" ]
-if [ "$mode" = launch ]; then mkdir "$J"; D=$J/bundle; else D=$J/bundle-e2; fi
+if [ "$mode" = launch ]; then mkdir "$J"; D=$J/bundle; else D=$J/bundle-e2r; fi
 [ "$(realpath -e "$J")" = "$J" ]
 mkdir "$D"
 [ "$(realpath -e "$D")" = "$D" ]

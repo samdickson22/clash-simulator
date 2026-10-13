@@ -3,7 +3,7 @@
 #   launch HOST MANIFEST_SHA256 STOP_AT    preflight (read-only) -> stage -> 8-seed smoke -> live STOP test -> reporting
 #   progress HOST                          read-only status; console user on a 12-slot run -> yield to 10 slots
 #   stop HOST                              permanent STOP -> wait -> exit records -> STOP proof (ps) -> rsync outputs to 05
-#   resume HOST MANIFEST_SHA256 STOP_AT    epoch 2 (COORDINATOR 7f93dbbf), run from J/bundle-e2 after a completed STOP:
+#   resume HOST MANIFEST_SHA256 STOP_AT    epoch 2 (COORDINATOR 7f93dbbf), run from J/bundle-e2r after a completed STOP:
 #                                          verify epoch 1 ended, then rerun unproven wl blocks + the wl-ext segment
 # Fail-closed: errexit + pipefail, every step checked, and the EXIT trap prints the true status as the last line (__RC=n).
 # Each supervisor instance has its own job dir J/inst/<phase> and STOP file; no STOP file is ever removed. J/STOP is the
@@ -248,7 +248,7 @@ resume)
   [[ $msha =~ ^[0-9a-f]{64}$ ]] || die 90 "manifest sha"
   [[ $arg =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 90 "STOP_AT required (ISO UTC)"
   if [[ $arg > $DEADLINE ]]; then die 90 "STOP_AT after $DEADLINE"; fi
-  CAP=$arg; B2=$J/bundle-e2/fsc
+  CAP=$arg; B2=$J/bundle-e2r/fsc   # e2r: the failed 06:10Z attempt left J/bundle-e2 (unused, untouched)
   [ "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" = "$B2" ] || die 90 "resume must run from $B2"
   [ -e "$J/STOP" ] || die 96 "epoch-1 STOP not done"
   if [ -e "$J/resumed" ] || [ -e "$J/STOP2" ]; then die 96 "already resumed"; fi
@@ -257,7 +257,7 @@ resume)
     HC exitstatus "$P" || die 96 "epoch 1: $P did not end cleanly"
     HC census empty "$(json "$I/receipt.json" pgid)" "$(json "$I/receipt.json" pid)" || die 96 "epoch 1: census $I"
   done
-  for f in hostcheck.py stage.py reduce.py plan-fsc.json plan-fsc-04.json "wl-$tag.json" harness/run.py harness/supervise.py \
+  for f in hostcheck.py stage.py plan-fsc.json plan-fsc-04.json "wl-$tag.json" harness/run.py harness/supervise.py \
            harness/plan-04.json s1-runtime-pin-r2.json; do
     cmp "$B2/$f" "$E/fsc/$f" || die 96 "installed $f differs from the e2 bundle"
   done

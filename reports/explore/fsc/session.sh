@@ -4,7 +4,7 @@
 #   session.sh progress HOST COMMIT MANIFEST_SHA256      (refused within 2 h of the last session to HOST)
 #   session.sh stop     HOST COMMIT MANIFEST_SHA256
 #   session.sh resume   HOST COMMIT MANIFEST_SHA256 STOP_AT   (epoch 2, COORDINATOR 7f93dbbf: once, only after a successful
-#                       stop; progress/stop then run J/bundle-e2's host_session.sh and the epoch-2 mirror is <host>-e2)
+#                       stop; progress/stop then run J/bundle-e2r's host_session.sh and the epoch-2 mirror is <host>-e2)
 # One SSH session per call: non-persistent (no ControlMaster/ControlPersist), batch mode, provisioned host keys only.
 # The bundle is rebuilt from COMMIT and must match MANIFEST_SHA256 before anything is sent or executed. The call fails
 # unless both the SSH exit status and the remote's last __RC line are 0; it prints its own __RC last.
@@ -84,7 +84,7 @@ progress|stop)
   hs=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["files"]["fsc/host_session.sh"])' "$B/MANIFEST.json")
   f=$J/repo/reports/explore/fsc/host_session.sh; dest=$host
   r2=$(last_ok resume "$host") || die 4 "resume history"
-  if [ "$r2" -gt 0 ]; then f=$J/bundle-e2/fsc/host_session.sh; dest=$host-e2; fi   # epoch 2
+  if [ "$r2" -gt 0 ]; then f=$J/bundle-e2r/fsc/host_session.sh; dest=$host-e2; fi   # epoch 2
   remote="set -euo pipefail; trap 'echo \"__RC=\$?\"' EXIT; [ \"\$(hostname)\" = $host ]; [ ! -L $f ];
     [ \"\$(realpath -e $f)\" = $f ]; echo '$hs  $f' | sha256sum -c --quiet; trap - EXIT; exec nice -n 19 bash $f $cmd $host"
   if [ "$cmd" = stop ]; then
