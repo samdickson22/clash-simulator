@@ -4720,3 +4720,26 @@ No other logic changed. On a fresh export on 05, all 8 offline test groups pass 
 All of K1–K7 hold as cleared by the K4S runner. Output after STOP_AT is not counted (H-1). K4S A1 on 03/04 is no earlier than STOP + 1 h.
 
 **Disclosed residual:** the bootstrap may create the parent `/mpac/sdicks02/jobs-fsc` on each host.
+
+## 2026-10-13 03:03Z: B package-r3 deployment accepted; FSC-1 (03 resident cache service); X4S-4 r10 to Sol fix-check
+
+**Perception B deployment r3: ACCEPTED.** Coordinator checks:
+- the operator exit code is 0;
+- `complete-from-stdout.json` hashes to c5c13a5e, which matches the compact receipt `l1/receipts/b08-r3-deployment-result-r1.json`;
+- it covers 334 files and 46,418,437 B;
+- its schema is `b08-deployment-complete.v1`;
+- package 7c86e49a, GO 8b38cd19 and review f50ec605 all match the issued authorities;
+- `runtime_admitted=false`;
+- there was one SSH session, no inspection and no retry, and the one-use wake-up was disabled.
+
+Next: the perception owner drafts placement r6, which carries the r3 combined review receipt and the stage CPU GO, with fresh windows under the r4 procedure (C-6 to C-9). No phase action happens until the coordinator issues it.
+
+**FSC-1, the 03 preflight refusal.** The 03 launch stopped correctly at preflight (`__RC=91`, nothing staged; 6bcb10c6). The cause is the perception v4 validation cache service PID 2180947 (PGID 2180934). K4S already pins it as 03's idle resident (start_ticks 139691386), and nobody may touch it. Ruling:
+- FSC may add an exact-identity exemption to `foreign_sample`/`preflight`, on 127x03 only, for PGID 2180934's three processes (2180934, 2180946, 2180947), with 2180947 at start_ticks 139691386.
+- The exemption holds only while the service is idle: its CPU ticks may grow by at most 1 % of one core across the existing 15 s two-sample window.
+- Any other identity, a changed start time, or activity is foreign, as before.
+- FSC never signals, traces or reads anything of the service beyond /proc stat.
+
+This is a narrow integrity-neutral fix, so the coordinator checks the diff directly under PR-1. A new GO is needed. The STOP_AT stays 07:30Z, and the stop runner already armed stays in place.
+
+**X4S-4 scripts r10** (8bde7397, runbook pin 8a1a0595) went to a Sol diff-only fix-check under SR-2.
