@@ -108,3 +108,28 @@ If the driver is not live (check the PID in driver.pid via /proc) and STOP is ab
 - **04:42:38Z** interim reduction on the 05 mirror → `mirror/final/analysis/x4s3b-interim-r1.json` (00926d0d;
   copy at results-interim.json): rep2 − rep pooled +0.26 pp, V 1.108 pp², σ̂_fit = 0.0 pp (interim, 1 df).
   [RESULTS](RESULTS.md) written. U2 complete; no further 01 contact unless the coordinator OKs resuming rep3's games.
+- **U2b GO (COORDINATOR d28ce370):** rep3 games on 03/04, STOP_AT 13:30:00Z, K4S not on 03/04 before 14:30Z.
+  **11:50Z** constants commit 127dce775 (host tuples run.py:300, supervise.py:72, reduce.py:53; index split
+  33–615 → 03, 616–1199 → 04; READOUT amendment U2b). Staging tree built on 05 at `J2/mirror/u2b-stage/` (296 MB,
+  3,364 files, 0 links; rt-R3a-rep3, rt-R3a-rep2 with the edited run.py/supervise.py and J-free checkpoint paths;
+  inputs main02/R3a-rep3/R3a-rep2/R3a; qual config).
+- **11:50:56Z preflight** 03 and 04: 0 console users, MemAvailable ~122 GiB, PSI 0, idle; 3990X; venv python
+  3.12.13, numpy 2.3.5, torch 2.10.0+cu128. **11:51:17Z** staged to `/mpac/sdicks02/jobs-x4s3b/rep3-20261013/`
+  on both (aggregate SHA 9d178195 = 05).
+- **11:51:25–11:52:19Z identity gate** K4S-none(R3a) on X4S qual indices [0,1]: `command_sha256` af630cf0 and
+  d530982b MATCH on both hosts, rc 0.
+- **11:52:28Z rep3 K4S-120 launched:** 03 `games/R3a-rep3/K4S-120/a03` PID/PGID 397636 (583 todo); 04 `…/a04`
+  PID/PGID 3754093 (584 todo); `--stop-at 2026-10-13T13:30:00Z`.
+- **Resume / STOP:** on each host `touch $P/STOP`; wait on supervisor PIDs from `$P/receipts/*-launch.json`; census
+  PGIDs (supervisor + `child_pgid` in each phase `launch.json`).
+- **12:03Z throughput:** 173 (03) / 174 (04) K4S-120 games in 10.5 min ≈ 16.4/min per host (guard 13). PSI 0.
+- **Phases (all rc 0, reason null, full index sets):** 03 rep3 K4S-120 → 12:27:18Z, S-200 12:27:21–12:39:03Z,
+  rep2′ S-200 12:39:11–12:50:49Z, rep2′ K4S-120 12:50:51–13:25:39Z; 04 rep3 K4S-120 → 12:27:42Z, S-200
+  12:27:51–12:39:36Z, rep2′ S-200 12:39:41–12:51:28Z, rep2′ K4S-120 12:51:31–13:26:46Z.
+- **STOP:** touched 13:27:02.914Z (03), 13:27:27.971Z (04). Census: all supervisor PIDs gone, all supervisor and
+  child PGIDs 0 members, no cwd under the prefix, on both hosts.
+- **13:28Z mirrors** `05:J2/mirror/u2b-03` (8,082 files), `u2b-04` (8,090) match by aggregate SHA. Reduction trees
+  `J2/mirror/reduce-u2b-final` and `reduce-u2b-within` (plain copies).
+- **13:28:56Z FINAL:** σ̂_fit = 0.58 pp (df 2; terms −0.52, +0.53, +0.99 pp²). Within-host σ̂_w = 0.78 pp.
+  Host effect rep2′ − rep2 pooled +0.39 [−1.67, +2.49]. RESULTS updated. **U2/U2b complete; no live processes on
+  01/03/04; prefixes left in place (03/04 `/mpac/sdicks02/jobs-x4s3b/rep3-20261013`, 296 MB + games).**
