@@ -6036,3 +6036,21 @@ F1 r6 `receipt()` passes.
 The owner deferred the `CLASHER_ROOT` change. The working-directory precedence risk stays disclosed.
 
 ISSUED APPROVE_B_COMBINED_REVIEW 7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96
+
+## 2026-10-13 13:42Z: Generic transport r4 bound to review r5; quiet-read r11
+
+**Binding.** Bound per plan 949e3b2b. Each output equals its projection:
+
+| File | SHA |
+|---|---|
+| transport.py | 38cb5faf |
+| guard.sh | a8ce87b8 |
+| launcher.sh | 42bcb81d |
+| retrieval.sh | 6bbd2cae |
+| bound manifest | 55ba8ad7 |
+
+- Status: BOUND_REVIEW_RECEIPT_NO_RUNTIME_AUTHORITY.
+- The owner had held the files at mode 0444. They were made writable only for the substitution and returned to 0444.
+- Pre-bind backup: `v4-b-gap-review/generic-r4-prebind-backup-*`.
+
+**Quiet-read r11.** Taken with `coordinator-quiet-read-r11.sh` (only the `Q=` line changed). Exit 0, who 0.
