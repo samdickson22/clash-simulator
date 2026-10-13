@@ -5243,3 +5243,16 @@ Two effects follow:
 **P3, ruled in advance:**
 - If the P3 collection-bank parity fails **only on the low side**, meaning cutoff/default below X4S-3 because the reference shifted, the coordinator will issue an exact-receipt "disclose" exception as soon as it is asked.
 - A failure on the **high side**, with collection more than 2 pp above X4S-3 in any arm, keeps the pause until a ruling.
+
+## 2026-10-13 06:02Z: X4S-4 SA-3 applied (test B: contention); production P1 running; SA-4 one-sided in-loop watch (prepare)
+
+**Test B** (c1f5a8d5) ran with S-200 at 10 workers. The paired collection − evaluation cutoff gap was −0.70 pp (≤ 3 pp), which points to contention. **SA-3** applies: P2 (S-200 collection) runs at `--workers 10`. Disclosure: the same seeds vary a lot between runs (S-200 evaluation 55.8 % at 50 lanes vs 66.7 % at 10). Production P1 started.
+
+**SA-4 (prepared in advance).** `supervise.py`'s in-loop C7b watch pauses when any metric deviates two-sided from X4S-3 R3a (±2 pp), and it has no exception path. Low-side deviations come from the shifted reference that PE-1/PE-2 already established, so P1 is expected to pause on them repeatedly.
+
+The amendment is a minimal change to `supervise.parity_watch` only. qualify4 and label.py's `check_parity` stay unchanged.
+- **Pause (as now):** only if an evaluated arm has any metric **above** its X4S-3 reference by more than 2 pp.
+- **Low side only:** out-of-band on the low side writes a disclosure record and does not pause.
+- **Monitor failure:** still stops.
+
+The owner prepares it offline with tests for low-side no-pause, high-side pause, failure stop, and mutants. The coordinator checks the diff directly. It is installed into J's staged runtime and used when P1 next stops, either from its first low-side pause or by plan. That pause is handled with the existing STOP/resume procedure, and its receipt gets a "disclose" exception under the P3 pre-ruling at b98fda79.
