@@ -1,0 +1,112 @@
+"""Scratch request builder (not a reviewed tool): writes the S4 request JSONs (schema
+clasher.k4s.end-fleet-reference-request.v2) and the derived T1 own-tier sets file. Every SHA is computed here;
+files are created exclusively (O_EXCL) and made 0444. Reads only: repo-full (git show + work tree, read-only),
+the S9 runtime manifest, and the six Q6/model files in T1's pool-context bundle (hash only)."""
+import hashlib, json, os, subprocess, sys
+
+P = "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb"
+REPO = "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full"
+STAGING = "/mpac/sdicks02/k4s-runner/run-r1/end-staging"
+RUNTIME = STAGING + "/runtime-98566c032d0b"
+Q6 = "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle"
+MODELS = ("v1.pt", "R3a.pt", "R3a-calibration.json", "states.pkl", "states-rows.json", "states-rows.bin")
+GUARD_MODULES = ("common", "host_audit", "idle_services", "system_bus", "ssh_transport",
+                 "perception_confirmation", "owned_supervisor", "ssh_budget", "parent_source_seed")
+PARENTS = {"127x03": "/mpac/sdicks02/jobs/clasher", "127x04": "/mpac/sdicks02/jobs-k4s"}
+ADMISSIONS = {"127x03": ("system-bus-admission.json", "idle-services.json"), "127x04": ("system-bus-admission.json",)}
+TOPOLOGY = {"P": list(range(128)), "E": [], "label": "Linux logical IDs; physical masks pinned by reporting plan"}
+
+
+def canonical(v):
+    return json.dumps(v, sort_keys=True, separators=(",", ":"), allow_nan=False)
+
+
+def sha_file(path):
+    st = os.lstat(path)
+    assert os.path.isfile(path) and not os.path.islink(path) and st.st_nlink == 1, path
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 22), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def git_show(rel):
+    return subprocess.run(["git", "-C", REPO, "show", P + ":" + rel], check=True, stdout=subprocess.PIPE).stdout
+
+
+def write_excl(path, data):
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o444)
+    with os.fdopen(fd, "wb") as f:
+        f.write(data)
+        f.flush()
+        os.fsync(f.fileno())
+    return hashlib.sha256(data).hexdigest()
+
+
+def entry(path, cache={}):
+    if path not in cache:
+        cache[path] = sha_file(path)
+    return {"source": path, "sha256": cache[path]}
+
+
+def main(jobs):
+    head = subprocess.run(["git", "-C", REPO, "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE).stdout.decode().strip()
+    assert head == P, head
+    out = {}
+    # sets: T1's own-tier sets, from the committed A3 manifests at P (both must agree)
+    sets = None
+    for m in ("01", "08"):
+        rel = "reports/explore/t1/receipts/END-A3-manifest-%s-f6cebbaa.json" % m
+        raw = git_show(rel)
+        out["a3_manifest_" + m] = dict(rel=rel, sha256=hashlib.sha256(raw).hexdigest())
+        s = json.loads(raw)["sets"]
+        assert sets is None or s == sets
+        sets = s
+    out["sets_canonical_sha256"] = hashlib.sha256(canonical(sets).encode()).hexdigest()
+    sets_path = STAGING + "/requests/inputs/t1-own-tier-sets-f6cebbaa.json"
+    if os.path.lexists(sets_path):
+        sys.exit("sets file exists: " + sets_path)
+    out["sets_file"] = dict(path=sets_path, sha256=write_excl(sets_path, (canonical(sets) + "\n").encode()))
+    # runtime pins from the S9 manifest
+    rm = RUNTIME + "/runtime-manifest.json"
+    out["runtime_manifest_sha256"] = sha_file(rm)
+    manifest = json.load(open(rm))
+    assert manifest["commit"] == P
+    common = dict(runtime_root=RUNTIME + "/runtime", runtime_files_sha256=manifest["runtime_files_sha256"],
+                  measurement_files_sha256=manifest["measurement_files_sha256"], topology=TOPOLOGY,
+                  sets=entry(sets_path), models={n: entry(Q6 + "/" + n) for n in MODELS})
+    ev = REPO + "/reports/explore/k4s-confirm"
+    common["end_evidence"] = dict(source=ev + "/end-evidence.json", sha256=sha_file(ev + "/end-evidence.json"),
+                                  artifacts_root=ev)
+    freeze_path = REPO + "/reports/explore/t1/FROZEN-T1.json"
+    freeze = json.load(open(freeze_path))
+    modules = {m + ".py": entry(REPO + "/reports/explore/t1/" + m + ".py") for m in GUARD_MODULES}
+    seeds = {}
+    for b in freeze["parent_source_seeds"]:
+        seeds[b["path"]] = entry(REPO + "/" + b["path"])
+        if b["path"].endswith("127x08.json"):
+            receipt = json.load(open(REPO + "/" + b["path"]))
+            for side in ("server", "client"):
+                p = receipt["source_join"][side]["path"]
+                seeds[p] = entry(REPO + "/" + p)
+    out["requests"] = {}
+    for host, job in jobs:
+        adm = {n: entry(ev + "/end-guard-admissions/%s-%s" % (host, n)) for n in ADMISSIONS[host]}
+        request = dict(schema="clasher.k4s.end-fleet-reference-request.v2", host=host, **common,
+                       guard=dict(job=PARENTS[host] + "/" + job, freeze=entry(freeze_path), modules=modules,
+                                  admissions=adm, seed_inputs=seeds))
+        path = STAGING + "/requests/request-%s-%s.json" % (host, job.replace("k4s-end-guard-r1-", ""))
+        if os.path.lexists(path):
+            sys.exit("request exists: " + path)
+        out["requests"][path] = dict(host=host, job=PARENTS[host] + "/" + job,
+                                     sha256=write_excl(path, (json.dumps(request, indent=1, sort_keys=True) + "\n").encode()),
+                                     admissions={n: e["sha256"] for n, e in adm.items()})
+    out["model_sha256"] = {n: entry(Q6 + "/" + n)["sha256"] for n in MODELS}
+    out["evidence_sha256"] = common["end_evidence"]["sha256"]
+    out["freeze_sha256"] = entry(freeze_path)["sha256"]
+    print(json.dumps(out, indent=1, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main([tuple(a.split(":")) for a in sys.argv[1:]])

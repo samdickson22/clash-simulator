@@ -1,0 +1,265 @@
+{
+ "admissions": {
+  "idle-services.json": {
+   "identity": {
+    "name": "idle-services.json",
+    "pid": 2180947,
+    "start_ticks": 139691386,
+    "utc": "2026-10-12T14:03:17Z"
+   },
+   "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x03-idle-services.json",
+   "s1b_remote_path": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/idle-services.json",
+   "s1b_remote_sha256": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+   "sha256": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+   "size": 3779
+  },
+  "system-bus-admission.json": {
+   "identity": {
+    "name": "system-bus-admission.json",
+    "pid": 2049,
+    "start_ticks": 1273,
+    "utc": "2026-10-12T14:04:36Z"
+   },
+   "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x03-system-bus-admission.json",
+   "s1b_remote_path": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/system-bus-admission.json",
+   "s1b_remote_sha256": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df",
+   "sha256": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df",
+   "size": 411
+  }
+ },
+ "bindings": [
+  {
+   "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+   "label": "seed-03",
+   "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+   "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+  },
+  {
+   "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+   "label": "seed-08",
+   "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+   "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+  },
+  {
+   "commit": "0e137378ff251896d7a27899a9453f278945276b",
+   "label": "join-08-server",
+   "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+   "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+  },
+  {
+   "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+   "label": "join-08-client",
+   "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+   "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+  }
+ ],
+ "bytes": 63800082,
+ "commit_proofs": [
+  {
+   "cat_file_e": 0,
+   "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623"
+  },
+  {
+   "cat_file_e": 0,
+   "commit": "ce042b9775f80cb495c327b14a4712730ae95c85"
+  },
+  {
+   "cat_file_e": 0,
+   "commit": "0e137378ff251896d7a27899a9453f278945276b"
+  },
+  {
+   "cat_file_e": 0,
+   "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a"
+  }
+ ],
+ "common_sha256": "c9465351b2d427db62fa9365707b21b7e52c422eb7a2ff1fc4fa58203545c4b6",
+ "dirs": [
+  "repo",
+  "repo/.git",
+  "repo/reports",
+  "repo/.git/objects",
+  "repo/.git/refs",
+  "repo/reports/explore",
+  "repo/reports/strategy_council_20260928",
+  "repo/.git/objects/info",
+  "repo/.git/objects/pack",
+  "repo/.git/refs/heads",
+  "repo/.git/refs/k4s-end",
+  "repo/.git/refs/tags",
+  "repo/reports/explore/t1",
+  "repo/reports/strategy_council_20260928/live-loop",
+  "repo/reports/explore/t1/receipts",
+  "repo/reports/strategy_council_20260928/live-loop/v4",
+  "repo/reports/strategy_council_20260928/live-loop/v4/l1",
+  "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts",
+  "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1"
+ ],
+ "files": 17,
+ "frozen_seed_check": {
+  "admit_accepted": [],
+  "admit_host": "127x05",
+  "committed_binding_hosts": [
+   "127x03",
+   "127x08",
+   "127x08",
+   null
+  ],
+  "module": "parent_source_seed.py",
+  "optimize": 0
+ },
+ "frozen_t1_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+ "full_clone": {
+  "absent": [
+   ".git/hooks",
+   ".git/shallow",
+   ".git/info/grafts",
+   ".git/objects/info/alternates",
+   ".git/objects/info/http-alternates",
+   ".git/commondir",
+   ".git/config.worktree"
+  ],
+  "bare": false,
+  "commits": [
+   "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+   "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+   "ce042b9775f80cb495c327b14a4712730ae95c85",
+   "0e137378ff251896d7a27899a9453f278945276b",
+   "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a"
+  ],
+  "config_keys": [
+   "branch.main.merge",
+   "branch.main.remote",
+   "core.bare",
+   "core.filemode",
+   "core.logallrefupdates",
+   "core.repositoryformatversion",
+   "remote.origin.fetch",
+   "remote.origin.url"
+  ],
+  "packs": [
+   "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.idx",
+   "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.pack"
+  ],
+  "replace_refs": 0,
+  "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+  "root_dev": 66304,
+  "root_ino": 56758974,
+  "shallow": false
+ },
+ "git_version": "git version 2.25.1",
+ "host": "127x03",
+ "inventory": [
+  {
+   "path": "FROZEN-T1.json",
+   "sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+   "size": 35043
+  },
+  {
+   "path": "idle-services.json",
+   "sha256": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+   "size": 3779
+  },
+  {
+   "path": "repo/.git/HEAD",
+   "sha256": "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10",
+   "size": 23
+  },
+  {
+   "path": "repo/.git/config",
+   "sha256": "cfe7ba1238c9a78be7535d7c63bcaf5a4d5011d46b07c9b45d3bbf7d6c312dfe",
+   "size": 92
+  },
+  {
+   "path": "repo/.git/index",
+   "sha256": "25a891599c903084470f1df12c97f44c29bb945123017feeeb41c2fc64cf4cc3",
+   "size": 652
+  },
+  {
+   "path": "repo/.git/objects/pack/pack-c486f3f7c14583d7aa47bd192b12d9b324e7c684.idx",
+   "sha256": "50fa0dc4fb1e52af917093030f62ed94ed37737b9713370ab8430bfebbb87a21",
+   "size": 276256
+  },
+  {
+   "path": "repo/.git/objects/pack/pack-c486f3f7c14583d7aa47bd192b12d9b324e7c684.pack",
+   "sha256": "bc5f8d477827e7a19bde84b60ad6932fa399368e349122305e4db1cd915be51d",
+   "size": 63393721
+  },
+  {
+   "path": "repo/.git/refs/k4s-end/join-08-client",
+   "sha256": "74254517c5be41fccf8be4e48dde0475ee7dba65bf858c909de1e22d1de3127b",
+   "size": 41
+  },
+  {
+   "path": "repo/.git/refs/k4s-end/join-08-server",
+   "sha256": "9f7e73beb31c3017b0175a52cece56c91af27e41a3320dfedbc69439f31592d4",
+   "size": 41
+  },
+  {
+   "path": "repo/.git/refs/k4s-end/seed-03",
+   "sha256": "a5e172e553a7dc4ffef4741eafef2cb8ba67ea4c56ba093cbefbb724a1588681",
+   "size": 41
+  },
+  {
+   "path": "repo/.git/refs/k4s-end/seed-08",
+   "sha256": "47a161ea7a7cc5139c1dc263cacacfcb3547c7a897d88ff1858316a28186afef",
+   "size": 41
+  },
+  {
+   "path": "repo/.git/shallow",
+   "sha256": "74152c74def090213d0e511250d3e80547fc357bf9ffcb619cb0f20656328dd8",
+   "size": 164
+  },
+  {
+   "path": "repo/reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+   "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f",
+   "size": 62616
+  },
+  {
+   "path": "repo/reports/explore/t1/receipts/op5-parent-source-127x03.json",
+   "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
+   "size": 2030
+  },
+  {
+   "path": "repo/reports/explore/t1/receipts/op5-parent-source-127x08.json",
+   "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27",
+   "size": 1410
+  },
+  {
+   "path": "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+   "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
+   "size": 23721
+  },
+  {
+   "path": "system-bus-admission.json",
+   "sha256": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df",
+   "size": 411
+  }
+ ],
+ "inventory_sha256": "ab48ffd7606dd6ae7383bac190dfd66f8dc755499a153a38da5cd18c6600a928",
+ "job": {
+  "attempt": "01",
+  "kind": "attempt",
+  "round": "00"
+ },
+ "job_name": "k4s-end-guard-r1-rd00-a01",
+ "q3_commits": [
+  "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+  "ce042b9775f80cb495c327b14a4712730ae95c85"
+ ],
+ "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+ "repository_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "s1b_manifest_sha256": "64c2fc8ded40e695c9fc2eb1e635204d6cc8af5bd48f040845211bc78ede3e84",
+ "s1b_module_sha256": "7515d5fe60f2883a84bb8f1cf23bc5596d3c6108cb82f635baf2aa4f104ac3f3",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-guard-job.v2",
+ "script_sha256": "bf99e74b5f86306e03975801ae3d4cb597fd246c6c12cc7f74ca50d2885f31fd",
+ "status": "CANDIDATE-built",
+ "target_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01",
+ "top_level": [
+  "FROZEN-T1.json",
+  "idle-services.json",
+  "repo",
+  "system-bus-admission.json"
+ ],
+ "utc": "2026-10-13T05:02:53Z"
+}

@@ -1,0 +1,67 @@
+"""Scratch: RC-6 roots CANDIDATE (not a reviewed tool). Every SHA computed from files here; written O_EXCL 0444."""
+import hashlib, json, os, sys, time
+
+S = "/mpac/sdicks02/k4s-runner/run-r1/end-staging"
+PR = sys.argv[1]                       # S10 --print-roots output (scratch copy)
+DRAFT = "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r3/RC6-ROOTS-DRAFT.json"
+OUT = S + "/RC6-ROOTS-k4s-end-r1.json"
+RUNTIME_LEAF = "runtime-98566c032d0b"
+TAGS = ("pf00", "rd00-a00", "rd00-a01")
+
+
+def sha(path):
+    return hashlib.sha256(open(path, "rb").read()).hexdigest()
+
+
+roots = json.load(open(PR))
+s7_hosts, s10_hosts, guard_jobs = {}, {}, {}
+for host, r in sorted(roots["hosts"].items()):
+    base = r["base"]
+    bundles = {}
+    for tag in TAGS:
+        name = "end-ref-%s-%s" % (host, tag)
+        job = r["guard_job_parent"] + "/k4s-end-guard-r1-" + tag
+        bundles[name] = {"path": base + "/bundles/" + name, "tiers_pins_sha256": "PENDING-S4-BLOCKED", "guard_job": job}
+        out = "%s/guard-jobs/guard-%s-%s" % (S, host, tag)
+        guard_jobs[job] = {"host": host, "local_s3_out": out,
+                           "guard_job_manifest_sha256": sha(out + "/guard-job-manifest.json"),
+                           "bundle": name, "kind": "preflight" if tag.startswith("pf") else "attempt"}
+    s7_hosts[host] = {"base": base, "runtime": base + "/" + RUNTIME_LEAF, "bundles": bundles,
+                      "repository": base + "/repository", "attempts": r["attempts"], "preflight": r["preflight"],
+                      "tools": base + "/tools", "guard_parent": r["guard_job_parent"]}
+    s10_hosts[host] = dict(r, runtime_dir=r["runtime"] + "/" + RUNTIME_LEAF,
+                           bundle_dirs=[r["bundles"] + "/" + n for n in bundles])
+doc = {
+    "schema": "clasher.k4s.end-rc6-roots-candidate.v1",
+    "status": "CANDIDATE for coordinator adoption — NOT adoptable as-is (see blocking)",
+    "created_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "created_on": os.uname().nodename,
+    "evidence_commit_P": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "end_branch": "k4s-end-r1",
+    "runtime": {"local": S + "/" + RUNTIME_LEAF, "runtime_manifest_sha256": sha(S + "/" + RUNTIME_LEAF + "/runtime-manifest.json")},
+    "sources": {"s10_print_roots_sha256": sha(PR), "rc6_roots_draft_sha256": sha(DRAFT),
+                "print_roots_equals_draft": sha(PR) == sha(DRAFT)},
+    "s7_roots_declaration": {"schema": "clasher.k4s.end-roots-declaration.v1",
+                             "commit": "PENDING-40-hex-commit-that-declares-it", "hosts": s7_hosts},
+    "s10_roots_filled": s10_hosts,
+    "guard_jobs_built_locally": guard_jobs,
+    "blocking": [
+        "RUNTIME PATH CONFLICT: S10 (s10_stage_host.py roots(): runtime=<base>/runtime, leaf runtime-<P12>) stages to "
+        "<base>/runtime/" + RUNTIME_LEAF + "; S5 layout() (k4s_end_preflight.py:403-405) and S7 RC-6 check "
+        "(k4s_end_launch_gate.py:319-320) require <base>/" + RUNTIME_LEAF + ". s7_roots_declaration uses the S5/S7 "
+        "form; s10_roots_filled.runtime_dir shows where S10 would put it. One tool must change (ruling + review).",
+        "BUNDLES: S4 b3-r5 refuses every production run (S4-REFUSAL-b3r5-runtime-pin-files-shape.md); "
+        "tiers_pins_sha256 are PENDING (placeholder fails S7's SHA check by design).",
+        "tools: S7 requires <base>/tools (detach.sh, both wrappers, k4s_end_preflight.py, safe_input.py, "
+        "k4s_end_host_tool.py); S10 neither creates nor stages it; no reviewed staging tool.",
+        "repository: <base>/repository full clone (S5/S7 verify_clone role 'repository', shallow refused); "
+        "'provisioned separately' — no reviewed tool.",
+        "commit: filled by the runner when the declaration is committed (S7 pins it by --roots-sha256).",
+    ],
+}
+data = (json.dumps(doc, indent=1, sort_keys=True) + "\n").encode()
+fd = os.open(OUT, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o444)
+with os.fdopen(fd, "wb") as f:
+    f.write(data)
+    os.fsync(f.fileno())
+print(OUT, hashlib.sha256(data).hexdigest())

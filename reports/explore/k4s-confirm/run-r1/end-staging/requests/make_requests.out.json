@@ -1,0 +1,79 @@
+{
+ "a3_manifest_01": {
+  "rel": "reports/explore/t1/receipts/END-A3-manifest-01-f6cebbaa.json",
+  "sha256": "bd9804c32a6ba661f18f124f63a47bb99e6f653c3ea48bb4a7c0947e2f7747e7"
+ },
+ "a3_manifest_08": {
+  "rel": "reports/explore/t1/receipts/END-A3-manifest-08-f6cebbaa.json",
+  "sha256": "1bd8a4c734e79a615f2f86f9354ff7724ae12b23cebf152c79404a84e918ff88"
+ },
+ "evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+ "freeze_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+ "model_sha256": {
+  "R3a-calibration.json": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+  "R3a.pt": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+  "states-rows.bin": "8cc2f611e867dc3891cdab643365193be685057b802cf73847c7fd6c91d6a1cb",
+  "states-rows.json": "bcd307770b70394878f7da17a97e4a1baa10f6efd7ea06d6b4240901dc0336e5",
+  "states.pkl": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+  "v1.pt": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+ },
+ "requests": {
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-pf00.json": {
+   "admissions": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "host": "127x03",
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00",
+   "sha256": "85e9c3859ee311e29deb6ad4ab88e4f174d1fe1f30dd1150762e5a93cb6f35f6"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-rd00-a00.json": {
+   "admissions": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "host": "127x03",
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+   "sha256": "ed3a13018a8157ea1cb12e09fab8991f3bd484ba88782a754953923363ace4d0"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-rd00-a01.json": {
+   "admissions": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "host": "127x03",
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01",
+   "sha256": "18d8411ca0434debbe3723820dcbc073986bee4f564ba57679b6a84592a6ea54"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-pf00.json": {
+   "admissions": {
+    "system-bus-admission.json": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+   },
+   "host": "127x04",
+   "job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-pf00",
+   "sha256": "60895f3ad0c71958317297ca777dd316f56bc7926abf53a119b4ffc6d12a5c95"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-rd00-a00.json": {
+   "admissions": {
+    "system-bus-admission.json": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+   },
+   "host": "127x04",
+   "job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a00",
+   "sha256": "43f2ca41f7256e6565bb681129442772322e9b486263f0b12415cc177478def9"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-rd00-a01.json": {
+   "admissions": {
+    "system-bus-admission.json": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+   },
+   "host": "127x04",
+   "job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+   "sha256": "bd6f3dc3656b9811451405be60ba928ab1be36056946fee00a3f2b2cc9c1a91e"
+  }
+ },
+ "runtime_manifest_sha256": "4dd88461caa82f09bb27bc6adad1756f62dbc8d21aa041441f8c106ef9b80e04",
+ "sets_canonical_sha256": "d84b07f6de0ac1cffbbb199221b6fbd795e9f7169aebcbdc445bba282e0c3ae2",
+ "sets_file": {
+  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/inputs/t1-own-tier-sets-f6cebbaa.json",
+  "sha256": "aef11a305820d8190a158a13f7c578d231a809d2d78afb37d317975a9ab1e9e2"
+ }
+}

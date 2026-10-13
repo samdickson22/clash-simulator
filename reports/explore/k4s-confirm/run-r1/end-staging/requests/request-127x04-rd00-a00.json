@@ -1,0 +1,245 @@
+{
+ "end_evidence": {
+  "artifacts_root": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/k4s-confirm",
+  "sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+  "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/k4s-confirm/end-evidence.json"
+ },
+ "guard": {
+  "admissions": {
+   "system-bus-admission.json": {
+    "sha256": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/k4s-confirm/end-guard-admissions/127x04-system-bus-admission.json"
+   }
+  },
+  "freeze": {
+   "sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+   "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/FROZEN-T1.json"
+  },
+  "job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a00",
+  "modules": {
+   "common.py": {
+    "sha256": "36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/common.py"
+   },
+   "host_audit.py": {
+    "sha256": "5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/host_audit.py"
+   },
+   "idle_services.py": {
+    "sha256": "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/idle_services.py"
+   },
+   "owned_supervisor.py": {
+    "sha256": "fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/owned_supervisor.py"
+   },
+   "parent_source_seed.py": {
+    "sha256": "3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/parent_source_seed.py"
+   },
+   "perception_confirmation.py": {
+    "sha256": "6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/perception_confirmation.py"
+   },
+   "ssh_budget.py": {
+    "sha256": "0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/ssh_budget.py"
+   },
+   "ssh_transport.py": {
+    "sha256": "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/ssh_transport.py"
+   },
+   "system_bus.py": {
+    "sha256": "785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/system_bus.py"
+   }
+  },
+  "seed_inputs": {
+   "reports/explore/t1/receipts/op5-parent-generation-127x08.json": {
+    "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/receipts/op5-parent-generation-127x08.json"
+   },
+   "reports/explore/t1/receipts/op5-parent-source-127x03.json": {
+    "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/receipts/op5-parent-source-127x03.json"
+   },
+   "reports/explore/t1/receipts/op5-parent-source-127x08.json": {
+    "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/explore/t1/receipts/op5-parent-source-127x08.json"
+   },
+   "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json": {
+    "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
+    "source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json"
+   }
+  }
+ },
+ "host": "127x04",
+ "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+ "models": {
+  "R3a-calibration.json": {
+   "sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/R3a-calibration.json"
+  },
+  "R3a.pt": {
+   "sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/R3a.pt"
+  },
+  "states-rows.bin": {
+   "sha256": "8cc2f611e867dc3891cdab643365193be685057b802cf73847c7fd6c91d6a1cb",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/states-rows.bin"
+  },
+  "states-rows.json": {
+   "sha256": "bcd307770b70394878f7da17a97e4a1baa10f6efd7ea06d6b4240901dc0336e5",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/states-rows.json"
+  },
+  "states.pkl": {
+   "sha256": "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/states.pkl"
+  },
+  "v1.pt": {
+   "sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-pool-context-20261012-r1/bundle/v1.pt"
+  }
+ },
+ "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+ "runtime_root": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime",
+ "schema": "clasher.k4s.end-fleet-reference-request.v2",
+ "sets": {
+  "sha256": "aef11a305820d8190a158a13f7c578d231a809d2d78afb37d317975a9ab1e9e2",
+  "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/inputs/t1-own-tier-sets-f6cebbaa.json"
+ },
+ "topology": {
+  "E": [],
+  "P": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33,
+   34,
+   35,
+   36,
+   37,
+   38,
+   39,
+   40,
+   41,
+   42,
+   43,
+   44,
+   45,
+   46,
+   47,
+   48,
+   49,
+   50,
+   51,
+   52,
+   53,
+   54,
+   55,
+   56,
+   57,
+   58,
+   59,
+   60,
+   61,
+   62,
+   63,
+   64,
+   65,
+   66,
+   67,
+   68,
+   69,
+   70,
+   71,
+   72,
+   73,
+   74,
+   75,
+   76,
+   77,
+   78,
+   79,
+   80,
+   81,
+   82,
+   83,
+   84,
+   85,
+   86,
+   87,
+   88,
+   89,
+   90,
+   91,
+   92,
+   93,
+   94,
+   95,
+   96,
+   97,
+   98,
+   99,
+   100,
+   101,
+   102,
+   103,
+   104,
+   105,
+   106,
+   107,
+   108,
+   109,
+   110,
+   111,
+   112,
+   113,
+   114,
+   115,
+   116,
+   117,
+   118,
+   119,
+   120,
+   121,
+   122,
+   123,
+   124,
+   125,
+   126,
+   127
+  ],
+  "label": "Linux logical IDs; physical masks pinned by reporting plan"
+ }
+}
