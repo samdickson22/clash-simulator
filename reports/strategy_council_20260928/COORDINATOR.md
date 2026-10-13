@@ -5560,3 +5560,21 @@ The stage run follows C-6, under a separate run GO.
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 632ed2fbae410a87c5b66fe4d080b0eff40bf8928d1c18929804fcca6236a461
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 1c0d3c07dd4d58c0e044de77e122609fb5d6393869bce60fd638c874be0c75bd
+
+## 2026-10-13 11:19Z: B placement r9, C-6 ACCEPTED
+
+Placement GO 1c0d3c07 completed once.
+
+**Completion record:**
+- launcher and sender exit codes 0;
+- complete 9236f1f3, schema `b08-authority-placement-complete.v1`;
+- package 89b1582e, procedure f47939b1;
+- receipts exactly f6cf2f1d and 632ed2fb;
+- `runtime_admitted=false`.
+
+**C-6 audit:**
+- the revocation tip equals the fetched tip, fde21105, and it is an ancestor of origin/main;
+- `git log -p` from that tip carries none of 632ed2fb, 1c0d3c07 or f6cf2f1d;
+- 0 `^REVOKED` lines.
+
+**ACCEPTED.** The stage run GO follows next.
