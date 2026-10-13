@@ -5703,3 +5703,29 @@ The owner will:
 3. Run P4.
 
 **Disclose in RESULTS:** the O states for S-200 come from collection run at 10 lanes, with fewer cutoffs than X4S-3's 50-lane reference.
+
+## 2026-10-13 11:49Z: FSC epoch-2 STOP verified on 03/04; U2b GO (R3a-rep3 games on 03/04, STOP_AT 13:30Z); K4S host steps ≥ 14:30Z
+
+**FSC.** The 11:30Z runner's stop sessions returned `__RC=0` on both hosts (`fsc-sessions/127x0{3,4}-stop-20261013T113000Z.log`). FSC games are over, and the reducer and RESULTS are next.
+
+**U2b GO.** R3a-rep3's abandoned games, 2 × 1,167 seeds (K4S-120 and S-200), now run on 03 and 04. This follows the U2 owner's plan, which is CPU-only and needs constants changes only.
+
+**Changes and staging:**
+- **Host-tuple edits:** `x4s3/run.py:300`, `x4s3/supervise.py:72` and `x4s3b/reduce.py:53` are changed under `x4s3b` and SHA-checked into the staged runtime. This is the PR-1 harness-reuse lane, and the coordinator checks the diff.
+- **Prefix:** a fresh `/mpac/sdicks02/jobs-x4s3b/rep3-20261013/` on each host. Nothing goes under `/mpac/sdicks02/jobs/clasher` on 04.
+- **Inputs:** about 230 MB per host from the 05 mirror, SHA-checked.
+
+**Gates before the games run:**
+- a read-only preflight on each host;
+- an identity gate on the two X4S qualification seeds, where each game's `command_sha256` must equal the 01 value. Any mismatch drops that host.
+
+**Split and counting rules:**
+- 03 runs indices 33–615 and 04 runs 616–1199. Each host plays both arms of its seeds.
+- Every supervisor has `--stop-at 2026-10-13T13:30:00Z`.
+- rep3 counts only if all four phases end rc 0 before STOP. Otherwise the interim σ̂ (0.0 pp, 1 df) stands.
+- The cross-host bias amendment is recorded before any game.
+- The rep2 host-control run is best effort only.
+
+**Throughput guard:** the owner STOPs if K4S-120 runs below about 13 games/min per host.
+
+**K4S.** No END host step on 03/04 before **14:30Z**: STOP at 13:30Z plus the 1 h gap. A2 is not ready anyway, because the integration fixes and the Sol fix-check are still pending.
