@@ -5808,3 +5808,28 @@ The HALT itself behaved correctly. It stopped all 51 study processes by verified
 **Quiet-read r10:** `coordinator-quiet-read-r10.sh` (only `Q=` changed), exit 0.
 
 **Next:** the epoch-1 chain (CPU, placement r11, run). The owner fills this commit as the environment acceptance and quiet-read r10 as the observation.
+
+## 2026-10-13 12:18Z: B r4 epoch-1 CPU GO r3 and placement GO r11 issued
+
+**Source drafts.** The owner's drafts in `b08-r4-epoch01-chain-drafts-r2` (5202a031, ce9561b7). The coordinator filled in only:
+- quiet-read r10 (53d8cc1c, at aa7e608d; who 0);
+- `environment_prerequisite`: ACCEPTED at aa7e608d, environment 4f29c998, with the G6 comparison values and PASS;
+- `g6_environment_accepted=true`, which corrects the stale false carried on r3;
+- the placement's between-phase attestations;
+- `draft_status` and the blockers.
+
+The CPU GO was hashed first and the placement repinned to it. The run draft was also repinned and is held at `v4-b-gap-review/epoch01-r4-final/DRAFT-…` (caa7dab9) until C-6.
+
+**Checks.** F1 r5 `validate_go` passes, and `receipt()` passes for phase `current-graph`. C-5 is clean and there are no collisions.
+
+**Scope.** Epoch 1 only, run serially and alone:
+- 32 GiB worker on cpus [0,1], concurrency off;
+- no GPU and no heldout data;
+- the earlier failed chains stay consumed.
+
+**Windows:**
+- placement: 12:45Z to 14:15Z;
+- epoch-1 CPU: 13:00Z to 15:00Z.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 8c4d27dd288ee15c3daf2f6e6a58fbc2cc4b879e4f8cbb18d34a501f64ecbf62
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT e16c22061981da6a409acd93fe5e9584699574046f022f389b6c2f638f4f5015

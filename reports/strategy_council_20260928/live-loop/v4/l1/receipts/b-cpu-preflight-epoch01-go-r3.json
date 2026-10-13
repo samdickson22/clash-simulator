@@ -1,0 +1,137 @@
+{
+  "available_bytes": 1216483766272,
+  "code_root": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-89b1582e628e",
+  "concurrency_enabled": false,
+  "cpu_preflight_plan_sha256": "5beb26d209563b83d3cdb29ec01cd07f890fbc631f803884230d808e6bc80328",
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_CPU_PREFLIGHT",
+  "deployment_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc6d8296d254d43a/complete.json",
+    "sha256": "ceb6acc56fcf74cf1f96ae9d05983be712ecd196fb3e231aa8a379fb02376f1f"
+  },
+  "deployment_prerequisite": {
+    "complete_sha256": "ceb6acc56fcf74cf1f96ae9d05983be712ecd196fb3e231aa8a379fb02376f1f",
+    "coordinator_acceptance_ledger_commit": "381bc68b38795fc3489cb662a02fb3b086dab641",
+    "go_sha256": "b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc6d8296d254d43a",
+    "status": "ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "duration_reporting": {
+    "calculation": "completed_epoch minus started_epoch using exact decimal representations of the retained JSON values; report unrounded seconds alongside raw values. Never substitute guard/launcher/sender elapsed time.",
+    "g5_condition": "Every one of 24 authenticated epoch durations must be <=3600s before any reducer GO.",
+    "g5_threshold_seconds": 3600,
+    "missing_or_invalid_timestamps": "No inferred duration or gate pass; stop and report unavailable evidence.",
+    "source": "Authenticated epoch.json started_epoch and completed_epoch; retain raw JSON numeric values and UTC renderings.",
+    "u1_condition": "Only after coordinator C4 accepts epoch1 and measured unit wall-clock duration <=2400s; otherwise remain serial.",
+    "u1_pairing_threshold_seconds": 2400
+  },
+  "environment": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-baaea907b1e9535aff2dd280b026959842c9a8e7369ffa9486e32d0ce4b3c842/environment.json",
+    "sha256": "4f29c998db548de2e96ae50eab1840ecb062ff1de455509f91c278a0e3229142"
+  },
+  "environment_prerequisite": {
+    "coordinator_acceptance_ledger_commit": "aa7e608dc81967829bf3c742d2244d3ee611215d",
+    "g6_comparison": {
+      "approved_reference": "2026-10-08 environment",
+      "coordinator_ledger_commit": "aa7e608dc81967829bf3c742d2244d3ee611215d",
+      "observed": {
+        "cuda_build": "11.8",
+        "numpy": "1.26.4",
+        "opencv-python": "4.10.0.84",
+        "python": "3.12.12",
+        "torch": "2.7.1+cu118",
+        "ultralytics": "8.1.24"
+      },
+      "result": "PASS"
+    },
+    "go_sha256": "baaea907b1e9535aff2dd280b026959842c9a8e7369ffa9486e32d0ce4b3c842",
+    "observation": {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-baaea907b1e9535aff2dd280b026959842c9a8e7369ffa9486e32d0ce4b3c842/environment.json",
+      "sha256": "4f29c998db548de2e96ae50eab1840ecb062ff1de455509f91c278a0e3229142"
+    },
+    "run_go_sha256": "3645860d46b686f46ae569567fe7ba07bdb58a5755734e255c76f644e88ff20c",
+    "status": "ACCEPTED"
+  },
+  "epoch": 1,
+  "execution_preconditions": [
+    "New-package environment receipt accepted by coordinator C4 and G6; fresh observation before issuance.",
+    "Publish this CPU GO at its exact signed path, then placement r11; run needs accepted placement C6 and separate issued explicit GO.",
+    "Epoch 1 only, serial alone, 32 GiB, cpus [0,1], threads1/nice19/CUDAhidden. No groups or reducer.",
+    "Bound generic guard only, exactly once; first30min launch, no retry or inspection/repair on nonzero or UNKNOWN.",
+    "Report actual epoch receipt start/completion and duration for G5; no batching authority."
+  ],
+  "expires_epoch": 1791903600,
+  "g6_environment_accepted": true,
+  "gpu_authorized": false,
+  "graph_unit": "epoch",
+  "heldout_authorized": false,
+  "host": "127x08",
+  "interpreter": "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+  "interpreter_flags": [
+    "-B",
+    "-s"
+  ],
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at exact signed paths; separate explicit GO; placement C6 before separate epoch-1 run GO."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-epoch01-go-r3.json",
+  "max_launches": 1,
+  "nice": 19,
+  "no_retry": true,
+  "not_before_epoch": 1791896400,
+  "observation_provenance": {
+    "commit": "aa7e608dc81967829bf3c742d2244d3ee611215d",
+    "sha256": "53d8cc1c2303c0f9f7225d38a2f95dab03175f13a81f02e1d2d5d5298218378f",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r10/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T12:17:12.013029+00:00"
+  },
+  "one_attempt_per_go": true,
+  "operator_command": "env -u BASH_ENV -u ENV PATH=/usr/bin:/bin PYTHONPATH=/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-89b1582e628e/src CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 0,1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -s /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-89b1582e628e/b08_cpu_preflight.py --phase current-graph --epoch 1 --plan /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/review-package-89b1582e628e/cpu-preflight-plan.json --plan-sha256 5beb26d209563b83d3cdb29ec01cd07f890fbc631f803884230d808e6bc80328 --review /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91.json --review-sha256 f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91 --go /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/${CPU_GO_SHA}.json --go-sha256 ${CPU_GO_SHA} --package-sha256 89b1582e628e977ef928447547d378ef4919acb1928805e1e18f62c09894591a",
+  "operator_variable": {
+    "CPU_GO_SHA": "Full SHA256 of this byte-identical coordinator-issued CPU GO; resolve after issuance"
+  },
+  "package_sha256": "89b1582e628e977ef928447547d378ef4919acb1928805e1e18f62c09894591a",
+  "phase_scope": "CPU-only current-graph epoch unit 1 alone against the nine retained A2 rows. No other epoch, group, reducer, GPU, heldout or refit.",
+  "phases": [
+    "current-graph"
+  ],
+  "retained_observation_provenance": {
+    "commit": "61062b173e3f25c7d46d1fbca846b692948866ae",
+    "sha256": "ad0ab0f70c8af8bb608c693cc9e82b2920a0842c803a514c41c631314bed44bc",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r9/observation.json",
+    "status": "OBSERVED",
+    "use": "Historical environment-chain observation; not a fresh epoch admission census.",
+    "utc": "2026-10-13T11:33:02.314473+00:00"
+  },
+  "review_receipt_sha256": "f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91",
+  "review_status": {
+    "combined_review_receipt_sha256": "f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91",
+    "combined_review_sha256": "8748dd6d51d9ce909aa6b96f9ca2f525957502baacc56152938fc43badc7f841",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "519860b79c92361aebde46765eda00fa576ba40f6be5d2747eb69ad6494deb8d"
+  },
+  "scientific_constraints": "C1 qualification references are SHA-only; selected decoder input SHAs, mapping, R16, verified_bounds, A1 bytes and recovered sources remain unchanged. T6 verification is not repeated; Tier2 and heldout remain disabled.",
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch01-go-r3.json",
+  "stage_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-632ed2fbae410a87c5b66fe4d080b0eff40bf8928d1c18929804fcca6236a461/complete.json",
+    "sha256": "cdafab0dc0b55d43909f488a7364e88163b9f8cff88948da1b0864f0e4bd04a2"
+  },
+  "stage_prerequisite": {
+    "complete_sha256": "cdafab0dc0b55d43909f488a7364e88163b9f8cff88948da1b0864f0e4bd04a2",
+    "coordinator_acceptance_ledger_commit": "61062b173e3f25c7d46d1fbca846b692948866ae",
+    "go_sha256": "632ed2fbae410a87c5b66fe4d080b0eff40bf8928d1c18929804fcca6236a461",
+    "run_go_sha256": "0d700046f1e543e3959c09dd05ba1a4595cf22932e682191ed47b9e89bf28a23",
+    "status": "ACCEPTED"
+  },
+  "who_count": 0,
+  "window_policy": {
+    "condition": "Proposed only; refresh before issuance if environment C4/G6 and observation cannot leave at least20min placement lead.",
+    "duration_seconds": 7200,
+    "lead_seconds_minimum": 1200
+  },
+  "worker_address_space_limit_bytes": 34359738368
+}
