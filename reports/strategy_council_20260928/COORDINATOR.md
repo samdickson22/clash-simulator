@@ -5102,3 +5102,27 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 49b819b8883ef6aa09b000eacf82a41fd2dd6bc6c
 - **Audit:** the integration audit must confirm that no downstream check assumes main.
 
 **FSC extension.** 03/04 are not needed by K4S before the A2 GO. The FSC owner will propose the smallest reviewed way to continue the same worklists after the verified 07:30Z STOP, using the existing yield/leftover relaunch path, with a new STOP_AT of 11:30Z. That leaves A2 able to start at 12:30Z or later. Any change goes to the coordinator for a diff check before it is used.
+
+## 2026-10-13 05:29Z: X4S-4 smoke PARITY-EXCEPTION PE-1 (decision: disclose), with a Q7 control check
+
+Q4 smoke parity failed (062e28d6). Cutoff % came in about 5.5 pp below X4S-3 R3a in both arms (K4S-120 58.67 vs 64.2; S-200 69.75 vs 75.3). K4S-120 student-default was −2.36 pp. Overrun and S-200 default stayed in band. Q1–Q3 and the Q4 round trip pass (0 digest mismatches).
+
+The reference comparison is weak here:
+- the smoke check is 8 games on smoke seeds, while the reference is about 1,167 reporting seeds;
+- 01 is now nearly idle, while the X4S-3 reference ran under full load;
+- fewer deadline cutoffs on a quieter host is the expected direction. Capture overhead would push the other way.
+
+**PE-1: exact-receipt PARITY-EXCEPTION for**
+- parity receipt `parity-smoke.json` sha256 10c68b04df32c436325cc966a34b243810f351f98eb1d80f0a93ed2aaaf3b972
+- PARITY-PAUSE cd48d0d8b5a6585dc99a22c5c85d5ca7530c7a55d69978ba82fea40e8a024c1b
+
+Decision: **disclose**. The owner writes `J/data/PARITY-EXCEPTION.json` with that `parity_receipt_sha256`, `decision` "disclose" and `coordinator_commit` set to this commit. Then `watchdog.py resume`, check status, and continue Q6 → Q5 → Q7 → Q8 as written.
+
+**Condition (control check, read-only):**
+- After Q7, compute the same three parity metrics on Q7's two capture-free evaluation phases. Use the same 8 smoke seeds, R3a and host.
+- Do it on 05 from a copy, using the reviewed metric code. Write nothing into J and raise no STOP.
+- Report the numbers before production.
+
+**Reading it:**
+- If Q7's cutoff % lands within 2 pp of the smoke values (about 58.7 and 69.8), the gap is the bank or host and production proceeds under the combined GO. P3 (≥ 100 collection-bank games) stays the binding C7b check.
+- If Q7 lands near X4S-3 (about 64 and 75) instead, capture is implicated. Stop before production and ask.
