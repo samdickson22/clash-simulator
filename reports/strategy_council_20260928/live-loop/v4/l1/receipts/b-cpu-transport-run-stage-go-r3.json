@@ -1,0 +1,104 @@
+{
+  "additional_authorities": [],
+  "artifact_sha256": {
+    "guard.sh": "e973d2654c32d3fd442dbdebae31e363e274c0626b74743636316b57762454c2",
+    "launcher.sh": "4818d07321f77819e4e02df9acfae6c06b9f0de11c41f9597f5b22708567cffd",
+    "retrieval.sh": "e5f6bed834aa45405c500d516961aac275f691edf6fa8dfcc594e3b3a3c76535",
+    "transport.py": "80d52b1472366c9ec3f92d9f56e1976bc7c78cfd0f5e827f9b548f517304e457"
+  },
+  "available_bytes": 1218634481664,
+  "concurrency_enabled": false,
+  "cpu_go_sha256": "632ed2fbae410a87c5b66fe4d080b0eff40bf8928d1c18929804fcca6236a461",
+  "decision": "AUTHORIZE_B_CPU_TRANSPORT_RUN",
+  "deployment_prerequisite": {
+    "complete_sha256": "ceb6acc56fcf74cf1f96ae9d05983be712ecd196fb3e231aa8a379fb02376f1f",
+    "coordinator_acceptance_ledger_commit": "381bc68b38795fc3489cb662a02fb3b086dab641",
+    "go_sha256": "b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc6d8296d254d43a",
+    "status": "ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "execution_preconditions": [
+    "Fresh stage coverage in approving combined review and actual bound source/shell/manifest pins.",
+    "Only after preceding placement succeeds and coordinator accepts C-6.",
+    "All actual resources attested at issuance; no live-host census claimed by this draft.",
+    "C-5 over full recursive closure; full authority SHAs only on their own ISSUED lines.",
+    "Separate explicit run GO; exact guard once from / on05 in foreground within first30min; no retry.",
+    "Run end >=3600 seconds before CPU deadline; one SSH, no preprobe.",
+    "Failure/UNKNOWN stops and preserves; retrieval needs separate accepted UNKNOWN and own explicit GO.",
+    "Keep large artifacts local; compact metadata only in public repo."
+  ],
+  "expires_epoch": 1791894600,
+  "git_sources": {
+    "1c0d3c07dd4d58c0e044de77e122609fb5d6393869bce60fd638c874be0c75bd": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r9.json",
+    "632ed2fbae410a87c5b66fe4d080b0eff40bf8928d1c18929804fcca6236a461": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-stage-go-r3.json",
+    "b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc6d8296d254d43a": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-deployment-go-receipt-r4.json",
+    "f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-combined-review-receipt-r4.json"
+  },
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at the exact signed path; separate explicit run GO required."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-transport-run-stage-go-r3.json",
+  "manifest_sha256": "519860b79c92361aebde46765eda00fa576ba40f6be5d2747eb69ad6494deb8d",
+  "max_launches": 1,
+  "no_retry": true,
+  "not_before_epoch": 1791891000,
+  "observation_provenance": {
+    "commit": "381bc68b38795fc3489cb662a02fb3b086dab641",
+    "sha256": "ba0bd04210e48ba52418e389d063529ea055d1263a68aff992a9cfa9f0ff937e",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r8/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T10:49:25.953967+00:00"
+  },
+  "operator_command": "cd / &&\n/usr/bin/printf '%s  %s\\n' e973d2654c32d3fd442dbdebae31e363e274c0626b74743636316b57762454c2 /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-generic-transport-review-r3/guard.sh | /usr/bin/sha256sum -c - &&\n/usr/bin/env -i PATH=/usr/bin:/bin /bin/bash --noprofile --norc /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-generic-transport-review-r3/guard.sh <FULL_RUN_GO_SHA>",
+  "operator_host": "127x05",
+  "package_sha256": "89b1582e628e977ef928447547d378ef4919acb1928805e1e18f62c09894591a",
+  "placement_c6_accepted": true,
+  "placement_completion": {
+    "complete_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/placements/1c0d3c07dd4d58c0e044de77e122609fb5d6393869bce60fd638c874be0c75bd/complete.json",
+    "complete_sha256": "9236f1f3e050fdb879e97adb0c8a4a12010c6c7278ebea30c2f5d74989618a07",
+    "coordinator_c6_commit": "3759a8e168a165bb05bd0bd7a5c110b65be79d9d",
+    "fetched_tip": "fde21105fb28c733fc66130546bebce53bf4f930",
+    "launcher_exit_code": 0,
+    "revocation_tip_commit": "fde21105fb28c733fc66130546bebce53bf4f930",
+    "sender_exit_code": 0
+  },
+  "placement_go_sha256": "1c0d3c07dd4d58c0e044de77e122609fb5d6393869bce60fd638c874be0c75bd",
+  "resource_budget": {
+    "host_address_space_limit": 51539607552,
+    "host_process_limit": 16,
+    "other_address_space": 32212254720,
+    "other_processes": 8,
+    "worker_address_space": 17179869184
+  },
+  "resource_budget_basis": "Conservative remaining union allowance, not a measured census: reserve 8 processes and 18 GiB for this serial transport/worker, leaving at most 8 processes and 30 GiB for all other owned Clasher activity. Worker RLIMIT_AS 16 GiB, keeper allowance 2 GiB. Coordinator confirms fit at issuance.",
+  "retained_observation_provenance": {
+    "commit": "9eab2a1794d26037581716dd4e6a499ad185ac6c",
+    "sha256": "65e9d7aa14fe23ff0f617377d5f630c3a0f8c31f90db4687bbaa8b92c68bbb47",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r7/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T10:20:48.039519+00:00"
+  },
+  "review_receipt_sha256": "f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91",
+  "review_status": {
+    "combined_review_receipt_sha256": "f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91",
+    "combined_review_sha256": "8748dd6d51d9ce909aa6b96f9ca2f525957502baacc56152938fc43badc7f841",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "519860b79c92361aebde46765eda00fa576ba40f6be5d2747eb69ad6494deb8d"
+  },
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-transport-run-stage-go-r3.json",
+  "transport_review": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-C1-PLAN-PIN-DELTA-REVIEW-r1.md",
+    "sha256": "8748dd6d51d9ce909aa6b96f9ca2f525957502baacc56152938fc43badc7f841"
+  },
+  "who_count": 0,
+  "window_policy": {
+    "duration_seconds": 3600,
+    "end": "CPU expires_epoch - 3600",
+    "launch_within_first_seconds": 1800,
+    "lead_seconds_minimum": 1800,
+    "start": "same as corresponding CPU window"
+  }
+}

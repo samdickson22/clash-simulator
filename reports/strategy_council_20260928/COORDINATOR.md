@@ -5578,3 +5578,21 @@ Placement GO 1c0d3c07 completed once.
 - 0 `^REVOKED` lines.
 
 **ACCEPTED.** The stage run GO follows next.
+
+## 2026-10-13 11:19Z: B r4 stage run GO r3 issued
+
+Built from the owner's draft `b08-r4-stage-run-draft-r1` (e82b8e6c). The coordinator filled in only the placement r9 completion fields:
+- complete 9236f1f3, exit codes 0, tips fde21105;
+- C-6 accepted at 3759a8e1;
+- `placement_c6_accepted=true`;
+- `draft_status` and the blocker.
+
+**What it authorizes:**
+- The bound generic transport r3 (519860b7), CPU GO 632ed2fb and placement 1c0d3c07.
+- 127x08 driven from 05, on cpus [0,1], with a 16 GiB worker inside the 48 GiB union budget.
+- No GPU and no heldout data.
+- One launch, no retry.
+
+**Window:** 11:30Z to 12:30Z. The CPU GO ends at 13:30Z. C-5 is clean.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0d700046f1e543e3959c09dd05ba1a4595cf22932e682191ed47b9e89bf28a23
