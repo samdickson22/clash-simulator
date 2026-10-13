@@ -1101,6 +1101,113 @@ def test_supervise(tmp):
          bool(paused) and failed, why=why)
 
 
+# ================================================================ HR-2: slow-but-healthy readings never HALT; stuck ones still do
+def hr2_bigjob(tmp, name, n_dirs=150, n_files=1000):
+    """A job whose walk is slow but healthy (n_dirs * n_files entries; ~1 s on /dev/shm), like J with 564,490 entries."""
+    j = Path(tmp)/name/'job'; (j/'watchdog').mkdir(parents=True); (j/'receipts').mkdir()
+    (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
+    for d_ in range(n_dirs):
+        bd = j/'data'/f'd{d_:04d}'; bd.mkdir(parents=True)
+        for f_ in range(n_files): (bd/f'f{f_:04d}').touch()
+    ctl = Path(tmp)/name/'ctl'; ctl.mkdir(); (ctl/'gpu').write_text('100')
+    (ctl/'psi').write_text('some avg10=0.00 avg60=0.00 avg300=0.00 total=0\n')
+    (ctl/'gpu.sh').write_text(f'#!/bin/sh\ncat {ctl}/gpu\n'); os.chmod(ctl/'gpu.sh', 0o755)
+    return j, ctl
+
+
+def hr2_run(code, j, ctl, opts=(), secs=6.0):
+    """The real watchdog (from `code`) over `j` with a marked study process; returns (halt reason or None, heartbeats)."""
+    env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
+    m = subprocess.Popen(['/bin/sleep', '60'], env={'X4S4_STUDY': str(j), 'PATH': '/usr/bin:/bin'}, start_new_session=True)
+    w = subprocess.Popen([sys.executable, '-B', str(Path(code)/'watchdog.py'), 'run', '--job', str(j), '--cycle', '0.5', '--measure-budget', '0.3',
+                          '--stall', '3', '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', str(ctl/'gpu.sh'), '--gpu-timeout', '0.3',
+                          '--mem-floor', '1', '--psi', str(ctl/'psi'), '--slow-cycle', '0.5', '--slow-budget', '5', '--slow-max-age', '8', *opts],
+                         env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    beats = {}
+    try:
+        t0 = time.monotonic()
+        while time.monotonic()-t0 < secs and not (j/'HALT.json').exists():
+            try: hb = json.loads((j/'watchdog'/'heartbeat.json').read_text()); beats[hb['epoch']] = hb.get('readings') or {}
+            except (OSError, ValueError, KeyError): pass
+            time.sleep(0.05)
+        t1 = time.monotonic()
+        while time.monotonic()-t1 < 3 and (j/'HALT.json').exists() and m.poll() is None: time.sleep(0.05)
+        reason = json.loads((j/'HALT.json').read_text()).get('reason') if (j/'HALT.json').exists() else None
+        return reason, beats, m.poll() is not None
+    finally:
+        for p in (w, m):
+            if p.poll() is None: p.kill()
+            p.wait()
+
+
+def hr2_scenarios(tmp, code=None):
+    """Each HR-2 rule as one discriminating scenario -> {name: passed}. Used by test_hr2 and by the mutation check."""
+    code = Path(code or HERE); W = load_fresh('watchdog_hr2', code/'watchdog.py')
+    out = {}
+    def run(name, fn):
+        try: out[name] = bool(fn())
+        except Exception as e: out[name] = False; print('hr2 scenario', name, 'raised', repr(e), flush=True)
+    big = {}
+    def bigjob():
+        if 'j' not in big: big['j'], big['ctl'] = hr2_bigjob(tmp, 'hr2-big')
+        return big['j'], big['ctl']
+    def slow_positive():      # the incident: a walk slower than the FAST budget (0.3 s) is healthy -> no HALT, heartbeats continue
+        j, ctl = bigjob(); reason, beats, _ = hr2_run(code, j, ctl)
+        disk_s = [b['slow_timing']['disk'] for b in beats.values() if b.get('slow_timing')]
+        print('hr2 slow walk seconds', disk_s[:5], 'beats', len(beats), 'reason', reason, flush=True)
+        return reason is None and len(beats) >= 8 and disk_s and max(disk_s) > 0.3 and all(b.get('slow_age', 0) <= 8 for b in beats.values())
+    def slow_bounded():       # a walk slower than the SLOW budget (0.2 s here) is bounded -> HALT, tree stopped
+        j, ctl = hr2_bigjob(tmp, 'hr2-bound', n_dirs=150)
+        reason, _, stopped = hr2_run(code, j, ctl, opts=('--slow-budget', '0.2', '--slow-max-age', '8'))
+        return reason is not None and ('measurement failed' in reason or 'overdue' in reason) and stopped
+    def slow_breach():        # slow-lane limits still HALT: disk over and PSS over
+        j, ctl = hr2_bigjob(tmp, 'hr2-disk', n_dirs=2, n_files=10); r1, _, s1 = hr2_run(code, j, ctl, opts=('--max-disk', '1'))
+        j2, ctl2 = hr2_bigjob(tmp, 'hr2-pss', n_dirs=2, n_files=10); r2, _, s2 = hr2_run(code, j2, ctl2, opts=('--tree-pss', '1'))
+        return r1 and r1.startswith('disk') and s1 and r2 and 'study PSS' in r2 and s2
+    def slow_failed():        # a failed slow reading (unreadable dir) still HALTs
+        j, ctl = hr2_bigjob(tmp, 'hr2-fail', n_dirs=2, n_files=10); (j/'locked').mkdir(); os.chmod(j/'locked', 0)
+        try: reason, _, stopped = hr2_run(code, j, ctl)
+        finally: os.chmod(j/'locked', 0o755)
+        return reason and 'measurement failed' in reason and stopped
+    def unit_due():           # a STUCK slow pass (no return) HALTs after SLOW_BUDGET; a finished one does not; the fast rule is unchanged
+        dog = W.Watchdog.__new__(W.Watchdog); dog.a = types.SimpleNamespace(cycle=1.0, measure_budget=0.8, stall=3.0, slow_budget=2.0, slow_max_age=3.0)
+        dog.breach = None; now = time.monotonic(); dog.progress = now; dog.m_start = dog.last_start = now-0.1; dog.m_done = now-0.05
+        dog.s_start, dog.s_done = now-2.5, None; stuck = 'slow measurement (PSS/disk) overdue' in (dog.due(now)[0] or '')
+        dog.s_start, dog.s_done = now-2.5, now-0.5; done = dog.due(now)[0] is None
+        dog.s_start, dog.s_done = now-1.0, None; running = dog.due(now)[0] is None
+        dog.m_start, dog.m_done = now-0.9, None; fast = 'measurement overdue' in (dog.due(now)[0] or '')
+        return stuck and done and running and fast
+    def unit_verdict():       # stale / missing slow results HALT; a fresh one is copied into the readings
+        dog = W.Watchdog.__new__(W.Watchdog); dog.a = types.SimpleNamespace(slow_max_age=3.0); mono = time.monotonic(); now = time.time()
+        res = lambda age: dict(epoch=now-age, tree_pss=5, disk=7, disk_vanished=0, timing=dict(pss=0.1, disk=0.2))
+        dog.started = mono-1.0; dog.slow = None; r = {}; startup = dog.slow_verdict(now, mono, r) is None
+        dog.started = mono-4.0; missing = 'no slow measurement' in (dog.slow_verdict(now, mono, {}) or '')
+        dog.slow = res(4.0); stale = 'older than' in (dog.slow_verdict(now, mono, {}) or '')
+        dog.slow = res(1.0); r = {}; fresh = dog.slow_verdict(now, mono, r) is None and r.get('disk') == 7 and r.get('tree_pss') == 5
+        return startup and missing and stale and fresh
+    def args_check():         # SLOW_MAX_AGE must exceed SLOW_CYCLE + SLOW_BUDGET (a healthy pass can never look stale)
+        r = subprocess.run([sys.executable, '-B', str(code/'watchdog.py'), 'status', '--job', str(Path(tmp)/'nojob'), '--slow-cycle', '30',
+                            '--slow-budget', '120', '--slow-max-age', '150'], capture_output=True, text=True)
+        return r.returncode != 0 and 'slow-max-age' in r.stderr
+    for name, fn in (('unit_due', unit_due), ('unit_verdict', unit_verdict), ('args_check', args_check), ('slow_positive', slow_positive),
+                     ('slow_bounded', slow_bounded), ('slow_breach', slow_breach), ('slow_failed', slow_failed)):
+        run(name, fn)
+    return out
+
+
+def test_hr2(tmp):
+    r = hr2_scenarios(tmp)
+    case('HR-2 regression (the 14:32:50Z HALT): the real watchdog over a 150k-entry job whose walk exceeds the FAST budget '
+         '(0.3 s) runs without HALT, heartbeats continue, and the slow result stays within its age bound', r['slow_positive'], scenarios=r)
+    case('HR-2: a slow pass beyond its own budget HALTs (bounded; tree stopped); a stuck slow pass (no return) HALTs after '
+         'SLOW_BUDGET in the main thread; a finished or still-in-budget pass does not; the fast overdue rule is unchanged',
+         r['slow_bounded'] and r['unit_due'])
+    case('HR-2: a stale slow result or none within SLOW_MAX_AGE of start HALTs; a fresh one feeds the readings; SLOW_MAX_AGE must '
+         'exceed SLOW_CYCLE + SLOW_BUDGET', r['unit_verdict'] and r['args_check'])
+    case('HR-2: slow-lane limits and failures still HALT and stop the tree (disk over, PSS over, an unreadable directory)',
+         r['slow_breach'] and r['slow_failed'])
+
+
 # ================================================================ HR-1 (COORDINATOR 77a01d88): the disk walk vs benign concurrent writers
 def hr1_churn(root, stop, kind='rename'):
     """A benign concurrent writer like label.py's 48 workers: build game-N.tmp/ trees, rename them to game-N/, remove old ones."""
@@ -1219,7 +1326,7 @@ def hr1_live(tmp, code=None):
     menv = {'X4S4_STUDY': str(j), 'PATH': '/usr/bin:/bin'}
     m = subprocess.Popen(['/bin/sleep', '60'], env=menv, start_new_session=True)
     w = subprocess.Popen([sys.executable, '-B', str(code/'watchdog.py'), 'run', '--job', str(j), '--cycle', '0.5', '--measure-budget', '0.45',
-                          '--stall', '3', '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', str(ctl/'gpu.sh'), '--du-timeout', '0.4',
+                          '--stall', '3', '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', str(ctl/'gpu.sh'), '--slow-cycle', '0.5', '--slow-budget', '2', '--slow-max-age', '3',
                           '--gpu-timeout', '0.5', '--mem-floor', '1', '--psi', str(ctl/'psi')],
                          env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     stop = threading.Event(); ths = [threading.Thread(target=hr1_churn, args=(j/'data'/'raw-O'/f'w{i}', stop)) for i in range(8)]
@@ -2850,7 +2957,7 @@ def test_r9(tmp):
     def wd_run(j, du, gpu, *opts):
         env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY',)}
         return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
-                                 '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
+                                 '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu, '--slow-cycle', '0.5', '--slow-budget', '2', '--slow-max-age', '3', '--gpu-timeout', '0.5',
                                  '--mem-floor', '1', '--psi', str(Path(du).parent/'psi'), *opts],     # host-independent defaults
                                 env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     def until(cond, limit=15):
@@ -2907,7 +3014,7 @@ def test_r9(tmp):
             pss=breach('w-pss', lambda j, c: None, 'study PSS', opts=('--tree-pss', '1')),
             disk=breach('w-disk', lambda j, c: None, 'disk', opts=('--max-disk', '1')),                  # HR-1: the real walk of the job
             du_failed=breach('w-duf', lambda j, c: ((j/'locked').mkdir(), os.chmod(j/'locked', 0)), 'measurement failed'),   # unreadable dir
-            du_timeout=breach('w-dut', lambda j, c: None, 'measurement failed', opts=('--du-timeout', '0')),   # the walk's own bound
+            du_timeout=breach('w-dut', lambda j, c: None, 'measurement failed', opts=('--slow-budget', '0')),   # HR-2: the walk's bound = the slow pass budget
             gpu_over=breach('w-gpu', lambda j, c: (c/'gpu').write_text('50000'), 'GPU'),
             gpu_failed=breach('w-gpuf', lambda j, c: (c/'gpu-fail').write_text('1'), 'measurement failed'),
             stop_not_honoured=breach('w-stop', lambda j, c: (j/'STOP').symlink_to(j/'nowhere'), 'STOP not honoured', stubborn=True),
@@ -2931,7 +3038,7 @@ def test_r9(tmp):
         # ---- launcher: detached, own session, outside the study tree even when launched from a marked shell
         j, ctl, du, gpu = wjob('w-start')
         env = dict(os.environ, X4S4_STUDY=str(j))
-        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--nvidia-smi', gpu,
+        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--slow-cycle', '0.5', '--slow-budget', '2', '--slow-max-age', '3', '--nvidia-smi', gpu,
                              '--mem-floor', '1', '--psi', str(ctl/'psi')],
                             env=env, capture_output=True, text=True, timeout=30)
         pidrec = json.loads((j/'watchdog'/'pid.json').read_text()); wpid = pidrec['pid']
@@ -3073,7 +3180,7 @@ def test_r10(tmp):
     def wd(j, ctl, du, gpu, *opts):
         env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
         return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
-                                 '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu, '--du-timeout', '0.5',
+                                 '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu, '--slow-cycle', '0.5', '--slow-budget', '2', '--slow-max-age', '3',
                                  '--gpu-timeout', '0.5', '--mem-floor', '1', '--psi', str(ctl/'psi'), *opts],
                                 env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     def marked(j, cmd, readout=False):
@@ -3107,8 +3214,9 @@ def test_r10(tmp):
     f1['heartbeat_fifo'] = halted_with('f1-hb', lambda j, c: os.mkfifo(j/'watchdog'/'heartbeat.json'), 'watchdog write failed')
     f1['log_fifo_teardown'] = halted_with('f1-log', lambda j, c: os.mkfifo(j/'watchdog'/'watchdog.log'), 'MemAvailable',
                                           opts=('--mem-floor', str(10**15)))
-    a = types.SimpleNamespace(cycle=1.0, measure_budget=0.8, stall=3.0)
+    a = types.SimpleNamespace(cycle=1.0, measure_budget=0.8, stall=3.0, slow_budget=2.0, slow_max_age=3.0)
     dog = W.Watchdog.__new__(W.Watchdog); dog.a = a; dog.breach = None; dog.m_start = dog.m_done = dog.last_start = None
+    dog.s_start = dog.s_done = None
     now = time.monotonic(); dog.progress = now-4.0
     f1['stall_unit'] = 'stalled' in (dog.due(now)[0] or '')
     case("R9-F1 (Sol): a FIFO at heartbeat.json (a stuck or failed watchdog write) HALTs and stops the tree; with a FIFO at "
@@ -3191,7 +3299,7 @@ def test_r10(tmp):
     (jx/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
     env_w = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
     w3 = subprocess.Popen([PYX, '-B', str(xd/'watchdog.py'), 'run', '--job', str(jx), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
-                           '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu2, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
+                           '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu2, '--slow-cycle', '0.5', '--slow-budget', '2', '--slow-max-age', '3', '--gpu-timeout', '0.5',
                            '--mem-floor', '1', '--psi', str(ctl2/'psi')], env=env_w, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     runner, kids, bare = None, [], None
     try:
@@ -3460,7 +3568,7 @@ def main():
     canonical, canonical_repo = io.JOB, io.REPO
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
-        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_sa5, test_hr1, test_contention,
+        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_sa5, test_hr1, test_hr2, test_contention,
                   test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_r10, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)

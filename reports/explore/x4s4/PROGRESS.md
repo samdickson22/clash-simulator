@@ -518,3 +518,40 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   - HOLDOUT-VERIFIED.json eb969538…: 49,183 rows. Guard 81e1ea1b….
 - P9 `p9-collect-w` (--count 6000 --workers 48), launched 13:31:26Z. P10 driver launched 13:31:46Z (cores 56–61): R5
   and R5-rep after the O gate, R5W after the O_W gate.
+
+## 2026-10-13T14:32:50Z — second HALT (under T2): "measurement overdue (> 8 s)"; HR-2 prepared (two measurement lanes)
+
+- HALT.json: 2026-10-13T14:32:50Z, "measurement overdue (> 8 s)", readings {}.
+  - The last heartbeat reading (14:32:42.87Z) was healthy: 58 processes, MemAvailable 95 GiB, PSI 2.94, PSS 35 GB,
+    disk 38 GB, GPU 2.6 GB.
+  - 111 signals were sent by verified PID: P9 collect-w (runner and 48 workers), the driver, and the R5 trainer and
+    its loaders.
+  - The thread was down from 14:32Z (API rate limit). The coordinator resumed it at about 22:00Z; 01 had been idle
+    about 7.5 h. Watchdog pid 657762 is still alive, halted and in kill mode. It is left alone until the GO.
+- Read-only diagnosis (the watchdog had no per-phase timings):
+  - **There was no host-wide stall:** O_W games completed up to 0.8 s before the HALT.
+  - The R5 fit had one 7.3 s step ending at 14:32:45.7Z (normally 2.0 s).
+  - **J has grown to 564,490 entries:** the HR-1 walk takes 2.45 s on the now-idle host (0.24 s at 62k entries).
+  - smaps_rollup can't explain it alone: offline on 05, an 8 GB-mapped process under fault and mmap churn read in
+    35 ms median, 67 ms max; environ is instant.
+  - meminfo, PSI, nvidia-smi and the /proc scan take ≤ 0.03 s idle.
+  - **Best-supported cause:** the single 8 s budget held a 4 s-bounded walk, a 2 s-bounded nvidia-smi, and the
+    unbounded scan and PSS sum. Each part stayed inside its own bound while the sum crossed 8 s, so the reason was
+    "overdue" rather than "failed". This is the measurement-path robustness class, not a resource breach.
+- HR-2 (watchdog.py only) splits the readings into two lanes:
+  - **fast lane:** scan, STOP, deadline, MemAvailable, PSI, count, GPU, still 8 s;
+  - **slow lane:** member PSS and the walk. It starts a pass every 30 s, each pass bounded at 120 s (the walk's
+    timeout, plus a main-thread HALT if a pass overruns). The last good result must be ≤ 180 s old, and none within
+    180 s of start also HALTs. Breaches and failed readings still HALT.
+  - Per-phase timings for both lanes go into the heartbeat.
+  - Tests: test_hr2, 4 cases over 7 scenarios. 8/8 mutants killed, including "walk back in the fast lane", which
+    reproduces the incident. Full suite 149/149. The matrix is running.
+- Resume facts (read-only):
+  - **P9** left 2,741 sealed raw-OW games, no partial directory, and no selection receipt (guard-p9-collect-w
+    failed: runner_SIGTERM). By R9-F7, games without the guarded selection never count, and collect_w would set each
+    aside and replay it. So P9 restarts: set data/raw-OW aside and run P9 again as p9-collect-w-r2.
+  - **R5** wrote complete.json (step 1590, stopped) but no segment.json "returned": its DataLoader workers were TERMed
+    by the HALT teardown and the trainer raised RuntimeError. step-00001590.pt (14:32:51.26) is after the HALT and is
+    H-1-excluded; step-00001500.pt (14:29:34) is admissible.
+  - Without a "returned" segment, fit_state is 'failed', which can't be resumed through the reviewed driver path. So
+    R5 restarts from step 0: set fits/R5 and receipts/fit-R5-launch.json aside, and resolve ANOMALY-fit-R5 by its ACK.

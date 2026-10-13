@@ -1,0 +1,78 @@
+{
+ "original": {
+  "unit_due": true,
+  "unit_verdict": true,
+  "args_check": true,
+  "slow_positive": true,
+  "slow_bounded": true,
+  "slow_breach": true,
+  "slow_failed": true
+ },
+ "original_all_pass": true,
+ "mutants": {
+  "disk walk back in the fast lane": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "slow_positive"
+   ]
+  },
+  "no stuck-pass overdue": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "unit_due"
+   ]
+  },
+  "no stale-age check": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "unit_verdict"
+   ]
+  },
+  "no missing-at-start check": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "unit_verdict"
+   ]
+  },
+  "slow breach ignored": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "slow_bounded",
+    "slow_breach",
+    "slow_failed"
+   ]
+  },
+  "slow worker not started": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "slow_positive",
+    "slow_bounded",
+    "slow_breach",
+    "slow_failed"
+   ]
+  },
+  "max-age validation removed": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "args_check"
+   ]
+  },
+  "slow pass unbounded (walk and main thread)": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "unit_due",
+    "slow_bounded"
+   ]
+  }
+ },
+ "all_applied": true,
+ "all_killed": true
+}

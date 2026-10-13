@@ -257,6 +257,61 @@ detached with `start_new_session`, the study marker stripped, waits for the firs
   - The launcher leaves the watchdog unmarked in its own session; `status` works, and a second start is refused.
   - Static checks: stdlib only, verified one-by-one PID signals, no result paths.
 
+## HR-2: two measurement lanes; the 14:32:50Z HALT
+
+**The HALT.** At 14:32:50Z (T2 + 1.9 h), during P9 O_W collection beside the R5 fit, the watchdog HALTed with
+"measurement overdue (> 8 s)". The last completed reading at 14:32:42.87Z was healthy (58 processes, 95 GiB
+MemAvailable, PSI 2.94, PSS 35 GB, disk 38 GB). There was no host stall: O_W games completed up to 0.8 s before
+the HALT. The watchdog recorded no per-phase timings, so this is the best-supported diagnosis:
+- **The budget didn't add up.** The single 8 s measurement held the 4 s-bounded disk walk, the 2 s-bounded
+  nvidia-smi, and the unbounded scan and PSS sum. Each part could stay inside its own bound while the sum crossed
+  8 s, which is exactly an "overdue" rather than a "failed" reading.
+- **The walk grew.** J had reached 564,490 entries. The walk took 2.45 s on the idle host afterwards (against
+  0.24 s at 62k entries), more under the fit's page-cache pressure, and ABBA would grow J further.
+- **PSS alone can't explain it.** smaps_rollup was checked offline on 05: an 8 GB-mapped process under fault and
+  mmap churn read in 35 ms median, 67 ms max. environ was instant.
+- The R5 fit had one 7.3 s step ending 14:32:45.7Z (normally 2.0 s), consistent with host I/O contention in that
+  window.
+
+**The class.** A reading whose cost grows with the study must not share the fast lane's budget. A slow but healthy
+reading must not HALT, and a stuck one must still be bounded.
+
+**The change (`watchdog.py` only).**
+- **Fast lane:** the existing worker, cycle 9.5 s, budget 8 s. It keeps the scan, STOP and the stop grace, the
+  deadline, MemAvailable, PSI, the process count and nvidia-smi (2 s).
+- **Slow lane:** a new worker for member PSS (smaps_rollup) and the job's apparent size (the HR-1 walk).
+  - It starts a pass every SLOW_CYCLE (30 s). Each pass is bounded by SLOW_BUDGET (120 s): the walk's own timeout is
+    the pass's remainder, and the main thread HALTs a pass still running after SLOW_BUDGET.
+  - Only a complete, in-limit pass becomes the last good result.
+  - Its limit breaches (PSS > 96 GiB, disk > 100 GB) and failed readings HALT as before.
+- **Age checks in the fast lane:** it HALTs if the last good result is older than SLOW_MAX_AGE (180 s), or if none
+  arrived within SLOW_MAX_AGE of start. SLOW_MAX_AGE must exceed SLOW_CYCLE + SLOW_BUDGET, so a healthy pass can
+  never look stale; this is validated at start.
+- **Diagnosability:** per-phase timings of both lanes (`timing`, `slow_timing`, `slow_age`) are in the heartbeat.
+- **What changes for safety:** PSS and disk are now checked every ≤ 150 s instead of ≤ 10 s. Memory safety rests
+  on the MemAvailable floor, which stays in the fast lane. Disk growth is GBs per hour, against a 100 GB cap.
+
+**Tests (`test_hr2`).**
+- **The regression:** the real watchdog over a 150k-entry job. Its walk (0.55–0.62 s) exceeds the fast budget
+  (0.3 s), yet there is no HALT, heartbeats continue, and the slow result stays within its age bound.
+- **A bounded slow pass:** a walk beyond SLOW_BUDGET HALTs and stops the tree.
+- **due() unit:** a stuck pass with no return HALTs after SLOW_BUDGET; a finished or in-budget pass does not; the
+  fast overdue rule is unchanged.
+- **slow_verdict() unit:** stale results, and none at start, HALT; a fresh result feeds the readings.
+- **Arguments:** the max-age validation.
+- **Slow-lane HALTs:** disk over, PSS over and an unreadable directory all still HALT.
+- All r9/r10 watchdog cases, including R9-F2's timing and overdue checks, pass with small slow-lane settings.
+
+**Mutation check:** 8 mutants, each killed:
+- the walk back in the fast lane (this reproduces the incident);
+- no stuck-pass overdue;
+- no stale-age check;
+- no missing-at-start check;
+- slow breaches ignored;
+- the slow worker not started;
+- the max-age validation removed;
+- the slow pass unbounded in both the walk and the main thread.
+
 ## HR-1 (COORDINATOR 77a01d88): the disk reading is an own bounded walk; the 11:57:58Z HALT
 
 **The HALT.** At 11:57:58Z, during P5 labelling, the watchdog's `du -sb <job>` exited 1. label.py's 48 workers seal

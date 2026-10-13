@@ -24,7 +24,7 @@ environment. guard.py accepts --readout only for the exact invocation
 Schedule (R9-F1/F2). A worker thread performs measurement cycles, each a complete set of checks, starting every CYCLE
 (9.5 s). Every heartbeat, log and control-file write also happens in that worker. The main thread never measures and
 never writes to job files while checking. It HALTs on any of these:
-  * a measurement still running after MEASURE_BUDGET (8 s);
+  * a fast measurement still running after MEASURE_BUDGET (8 s); a slow-lane pass still running after SLOW_BUDGET;
   * no new measurement started within CYCLE + 0.5 s of the previous start, so checks are always <= 10 s apart;
   * no worker progress of any kind (including a stuck heartbeat or log write) for STALL (30 s);
   * a breach or a failed or malformed measurement.
@@ -34,10 +34,15 @@ Checks, every cycle:
     processes before it exists is a breach. Production members still alive STOP_GRACE after the deadline are a
     breach; the readout subtree is exempt.
   * MemAvailable >= 24 GiB. Memory PSI must be well formed (0 <= avg10 <= 100); a readable high value is not a breach.
-  * <= 70 members, member PSS <= 96 GiB (every smaps_rollup must carry a Pss line).
-  * the job's apparent size (HR-1: an own bounded scandir/lstat walk, studytree.tree_bytes; entries vanishing mid-walk are
-    skipped and counted, every other error HALTs) <= 100 GB within 4 s; nvidia-smi memory.used <= 40 GiB within 2 s,
-    strictly parsed.
+  * <= 70 members; nvidia-smi memory.used <= 40 GiB within 2 s, strictly parsed.
+  HR-2 (the 14:32:50Z HALT): the readings whose cost grows with the study - member PSS (smaps_rollup of every member)
+  and the job's apparent size (the HR-1 tree_bytes walk) - run in a SECOND worker, the slow lane, so the fast checks
+  above keep their tight budget. The slow lane starts a pass every SLOW_CYCLE (30 s); each pass is bounded by
+  SLOW_BUDGET (120 s: the walk's own timeout, and the main thread HALTs a pass still running after it). The fast
+  lane HALTs if the last good slow result is older than SLOW_MAX_AGE (180 s, > SLOW_CYCLE + SLOW_BUDGET) or, after
+  start, none arrived within it. A slow-lane breach (member PSS > 96 GiB, every smaps_rollup must carry a Pss line;
+  apparent size > 100 GB; vanishing entries skipped, any other walk error) or failure HALTs as before. Per-phase
+  timings of both lanes are in the heartbeat.
 HALT is run by the main thread, so it never waits on the worker's I/O:
   1. HALT.json (exclusive, 0444, fsync'd; the first reason wins) and STOP are written by a helper thread bounded at 5 s.
   2. Every member is stopped one at a time by PID, re-verified by (pid, starttime, membership) immediately before
@@ -242,14 +247,16 @@ class Watchdog:
         self.stop_since = None
         self.halted, self.breach = None, None
         self.m_start = self.m_done = self.last_start = None
-        self.progress = time.monotonic()
+        self.s_start = self.s_done = None                   # HR-2: the slow lane's current pass
+        self.slow, self.members_now = None, {}              # HR-2: last good slow result; the fast lane's latest members
+        self.started = self.progress = time.monotonic()
         self.logq = queue.Queue()
 
     # ---- one bounded set of checks (worker thread)
     def measure(self):
-        a, now = self.a, time.time()
-        r = dict(epoch=now)
-        members, roots = self.tree.scan(); r['processes'] = len(members)
+        a, now, m0 = self.a, time.time(), time.monotonic()
+        r = dict(epoch=now); tm = r['timing'] = {}                            # HR-2: per-phase seconds (diagnosis)
+        members, roots = self.tree.scan(); r['processes'] = len(members); tm['scan'] = round(time.monotonic()-m0, 3)
         if exists(self.jfd, 'STOP'):                                       # STOP periods (H-1) + the stop grace
             if self.stop_since is None:
                 self.stop_since = os.stat('STOP', dir_fd=self.jfd, follow_symlinks=False).st_mtime
@@ -283,23 +290,54 @@ class Watchdog:
             return f'memory PSI unreadable or malformed: {exc}', r
         r['psi_some_avg10'] = psi
         if len(members) > a.max_procs: return f'{len(members)} study processes > {a.max_procs}', r
-        pss = 0
-        for pid in members:
-            try:
-                with open(f'/proc/{pid}/smaps_rollup') as f: rows = [l for l in f if l.startswith('Pss:')]
-            except (FileNotFoundError, ProcessLookupError): continue          # exited since the scan
-            if len(rows) != 1 or rows[0].split()[2:] != ['kB']: return f'measurement failed: smaps_rollup of {pid} has no Pss line', r
-            pss += nonneg_int(rows[0].split()[1], 'Pss')*1024
-        r['tree_pss'] = pss
-        if pss > a.tree_pss: return f'study PSS {pss} > {a.tree_pss}', r
-        disk, r['disk_vanished'] = tree_bytes(self.job, a.du_timeout)    # HR-1: own bounded walk (was du); errors raise -> HALT
-        r['disk'] = disk
-        if disk > a.max_disk: return f'disk {disk} > {a.max_disk}', r
+        self.members_now = dict(members)                                     # HR-2: the slow lane's PSS set
+        why = self.slow_verdict(now, time.monotonic(), r)                    # HR-2: the slow lane's last good result
+        if why: return why, r
+        g0 = time.monotonic()
         lines = [l.strip() for l in run_bounded([a.nvidia_smi, '--query-gpu=memory.used', '--format=csv,noheader,nounits'], a.gpu_timeout).splitlines() if l.strip()]
+        tm['gpu'] = round(time.monotonic()-g0, 3); tm['fast'] = round(time.monotonic()-m0, 3)
         if not lines: return 'measurement failed: nvidia-smi printed nothing', r
         gpu = sum(nonneg_int(l, 'GPU memory') for l in lines); r['gpu_mib'] = gpu
         if gpu > a.gpu_limit_mib: return f'GPU {gpu} MiB > {a.gpu_limit_mib}', r
         return None, r
+
+    def slow_verdict(self, now, mono, r):
+        """HR-2 (fast lane, no I/O): the last good slow-lane result must exist within SLOW_MAX_AGE of start and be no older
+        than SLOW_MAX_AGE; its values are copied into the readings. Returns a breach reason or None."""
+        a, slow = self.a, self.slow
+        if slow is None:
+            return f'no slow measurement (PSS/disk) within {a.slow_max_age:g} s' if mono-self.started > a.slow_max_age else None
+        r.update(tree_pss=slow['tree_pss'], disk=slow['disk'], disk_vanished=slow['disk_vanished'], slow_age=round(now-slow['epoch'], 3),
+                 slow_timing=slow['timing'])
+        return f'slow measurement (PSS/disk) older than {a.slow_max_age:g} s' if now-slow['epoch'] > a.slow_max_age else None
+
+    # ---- HR-2 slow lane: member PSS and the job's apparent size, bounded per pass by SLOW_BUDGET
+    def measure_slow(self):
+        a, t0 = self.a, time.monotonic()
+        res = dict(epoch=None, tree_pss=None, disk=None, disk_vanished=None, timing={})
+        pss = 0
+        for pid in list(self.members_now):
+            try:
+                with open(f'/proc/{pid}/smaps_rollup') as f: rows = [l for l in f if l.startswith('Pss:')]
+            except (FileNotFoundError, ProcessLookupError): continue          # exited since the scan
+            if len(rows) != 1 or rows[0].split()[2:] != ['kB']: return f'measurement failed: smaps_rollup of {pid} has no Pss line', res
+            pss += nonneg_int(rows[0].split()[1], 'Pss')*1024
+        t1 = time.monotonic(); res.update(tree_pss=pss); res['timing']['pss'] = round(t1-t0, 3)
+        if pss > a.tree_pss: return f'study PSS {pss} > {a.tree_pss}', res
+        disk, vanished = tree_bytes(self.job, max(0.0, a.slow_budget-(t1-t0)))   # HR-1 walk; its timeout is the pass's remainder
+        res.update(disk=disk, disk_vanished=vanished, epoch=time.time()); res['timing']['disk'] = round(time.monotonic()-t1, 3)
+        if disk > a.max_disk: return f'disk {disk} > {a.max_disk}', res
+        return None, res
+
+    def slow_worker(self):
+        while self.halted is None:
+            t0 = time.monotonic(); self.s_done = None; self.s_start = t0
+            try: why, res = self.measure_slow()
+            except Exception as exc: why, res = f'measurement failed: {exc!r}', {}
+            self.s_done = time.monotonic()
+            if why is None: self.slow = res                                  # only a complete, in-limit pass is "good"
+            elif self.breach is None: self.breach = (why, res)
+            time.sleep(max(0.0, self.a.slow_cycle-(time.monotonic()-t0)))
 
     # ---- worker: measurements, heartbeat and queued log lines; every step marks progress
     def worker(self):
@@ -333,6 +371,7 @@ class Watchdog:
         if not ok or isinstance(err, BaseException): raise SystemExit(f'cannot publish the watchdog pid: {err!r}')
         if exists(self.jfd, 'HALT.json'): self.halt('HALT.json present at start', {})
         threading.Thread(target=self.worker, daemon=True).start()
+        threading.Thread(target=self.slow_worker, daemon=True).start()     # HR-2
         while True:
             time.sleep(0.2)
             if self.halted is not None: self.kill_tree(); continue        # hard stop: nothing may run again
@@ -345,6 +384,8 @@ class Watchdog:
         if self.breach: return self.breach
         if self.m_done is None and self.m_start is not None and now-self.m_start > self.a.measure_budget:
             return f'measurement overdue (> {self.a.measure_budget:g} s)', {}
+        if self.s_done is None and self.s_start is not None and now-self.s_start > self.a.slow_budget:     # HR-2: a stuck slow pass
+            return f'slow measurement (PSS/disk) overdue (> {self.a.slow_budget:g} s)', {}
         if self.last_start is not None and now-self.last_start > self.a.cycle+0.5:
             return f'no measurement started within {self.a.cycle+0.5:g} s', {}
         if now-self.progress > self.a.stall: return f'watchdog stalled > {self.a.stall:g} s', {}
@@ -448,7 +489,8 @@ def operator_resume(job):
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('cmd', choices=['start', 'status', 'stop', 'resume', 'run']); ap.add_argument('--job', default=DEFAULT_JOB)
-    for k, v in dict(cycle=9.5, measure_budget=8.0, stall=30.0, stop_grace=180.0, kill_grace=20.0, du_timeout=4.0, gpu_timeout=2.0,
+    for k, v in dict(cycle=9.5, measure_budget=8.0, stall=30.0, stop_grace=180.0, kill_grace=20.0, gpu_timeout=2.0,
+                     slow_cycle=30.0, slow_budget=120.0, slow_max_age=180.0,
                      mem_floor=24*2**30, max_procs=70, tree_pss=96*2**30, max_disk=100*10**9, gpu_limit_mib=40*1024).items():
         ap.add_argument('--'+k.replace('_', '-'), type=type(v), default=v)
     for k, v in dict(nvidia_smi='/usr/bin/nvidia-smi', meminfo='/proc/meminfo', psi='/proc/pressure/memory').items():
@@ -457,6 +499,7 @@ def main(argv=None):
     a = ap.parse_args(args)
     a.job = os.path.abspath(a.job)
     if a.measure_budget >= a.cycle: raise SystemExit('--measure-budget must be below --cycle')
+    if a.slow_max_age <= a.slow_cycle+a.slow_budget: raise SystemExit('--slow-max-age must exceed --slow-cycle + --slow-budget')
     if a.cmd == 'run':
         Watchdog(a).run()
     elif a.cmd == 'status':
