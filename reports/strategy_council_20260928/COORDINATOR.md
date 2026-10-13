@@ -5482,3 +5482,23 @@ ISSUED APPROVE_B_COMBINED_REVIEW f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e
 The pre-bind backup is `v4-b-gap-review/generic-r3-prebind-backup-*`.
 
 **Quiet-read r7.** `coordinator-quiet-read-r7.sh` (d8f965dc), exit 0. Observation 65e9d7aa: who 0, 1,218,681,679,872 B available.
+
+## 2026-10-13 10:21Z: B package-r4 deployment GO issued
+
+The issued GO is the owner's draft `b08-package-r4-chain-drafts-r1/b-deployment-go-receipt-r4.json` (bcde9a42). The coordinator changed only:
+- the observation from quiet-read r7 (65e9d7aa at 9eab2a17, who 0);
+- the generic binding status, now COORDINATOR_BOUND_VERIFIED_OFFLINE with manifest 519860b7;
+- `draft_status` and the remaining blocker.
+
+The r4 `deploy_b08.authority()` check passes with the issued review receipt f6cf2f1d, package 89b1582e and script 6de7be45, and it refuses before the window opens. C-5 is clean and there are no collisions.
+
+**What it authorizes:**
+- deploying package r4 to 127x08 through F1 r5, into fresh `*-89b1582e628e` prefixes plus the journal for this GO;
+- cpus [0,1];
+- one invocation, one SSH, no retry.
+
+It does not authorize GPU use or heldout data.
+
+**Window:** 2026-10-13 10:30Z to 12:00Z. At most one failure inspection, as the GO allows.
+
+ISSUED AUTHORIZE_B_DEPLOYMENT b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc6d8296d254d43a
