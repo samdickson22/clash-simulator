@@ -1,0 +1,749 @@
+{
+ "adopted_s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+ "common_sha256": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
+ "components": [
+  {
+   "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "assembly_receipt_sha256": "f563d2c05e69e066f2c5d64e0ad451d1abe5b3619f55d5df024a7f133c9502ad",
+   "bytes": 23475392007,
+   "dirs": 41,
+   "files": 69,
+   "final": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01",
+   "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+   "guard_job_bytes_equal": true,
+   "inventory_sha256": "4e95504c3386d48e30c9d3991897c531d01e966d90d4126cb3de3a7e7b41004c",
+   "kind": "bundle",
+   "name": "end-ref-127x04-rd00-a01",
+   "partial": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01.partial",
+   "production": true,
+   "runtime_consistent": true,
+   "tiers_pins_sha256": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458"
+  },
+  {
+   "bindings": [
+    {
+     "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "label": "seed-03",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+     "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+     "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+     "label": "seed-08",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+     "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+    },
+    {
+     "commit": "0e137378ff251896d7a27899a9453f278945276b",
+     "label": "join-08-server",
+     "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+     "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    {
+     "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "label": "join-08-client",
+     "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+     "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+   ],
+   "bytes": 63786662,
+   "dirs": 19,
+   "files": 16,
+   "final": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+   "guard_manifest_sha256": "5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac",
+   "inventory_sha256": "38c3fce53a5086564d86a845059f6aab2632d3f594006b92ffbc532bf5fd5fb3",
+   "job": "k4s-end-guard-r1-rd00-a01",
+   "kind": "guard-job",
+   "kind_detail": {
+    "attempt": "01",
+    "kind": "attempt",
+    "round": "00"
+   },
+   "partial": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01.partial"
+  }
+ ],
+ "create_base": false,
+ "final": {
+  "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01": {
+   "dev": 66304,
+   "ino": 58860096,
+   "mode": "0o2755"
+  },
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01": {
+   "dev": 66304,
+   "ino": 58859985,
+   "mode": "0o2555"
+  }
+ },
+ "finished_utc": "2026-10-13T23:13:42Z",
+ "host": "127x04",
+ "inspect": {
+  "free_bytes": 890768584704,
+  "interpreter": {
+   "base_prefix": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu",
+   "exec_prefix": "/mpac/sdicks02/repos/clasher/.venv",
+   "executable": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+   "failed_imports": [],
+   "flags": {
+    "dont_write_bytecode": 1,
+    "isolated": 0,
+    "no_user_site": 0,
+    "optimize": 0
+   },
+   "imports": {
+    "numpy": {
+     "ok": true,
+     "origin": "/mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages/numpy/__init__.py",
+     "origin_realpath": "/mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages/numpy/__init__.py",
+     "version": "2.3.5"
+    },
+    "torch": {
+     "ok": true,
+     "origin": "/mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages/torch/__init__.py",
+     "origin_realpath": "/mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages/torch/__init__.py",
+     "version": "2.10.0+cu128"
+    }
+   },
+   "ok": true,
+   "path": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+   "prefix": "/mpac/sdicks02/repos/clasher/.venv",
+   "prefix_realpath": "/mpac/sdicks02/repos/clasher/.venv",
+   "pyvenv_cfg": {
+    "keys": {
+     "home": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin",
+     "implementation": "CPython",
+     "include-system-site-packages": "false",
+     "prompt": "clasher",
+     "uv": "0.12.23",
+     "version_info": "3.12.13"
+    },
+    "path": "/mpac/sdicks02/repos/clasher/.venv/pyvenv.cfg",
+    "sha256": "57be729cd9094d6f47ec1decea1cfdb2772ee20b88d924c625d86810274fbeec",
+    "size": 190
+   },
+   "realpath": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+   "realpath_sha256": "021044895e95be79dc2f110367607e684119afbc8ce75f6f0eec94844e0acec7",
+   "site_packages": [
+    {
+     "exists": true,
+     "kind": "site",
+     "on_sys_path": true,
+     "path": "/mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages",
+     "realpath": "/mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages"
+    },
+    {
+     "exists": false,
+     "kind": "user",
+     "on_sys_path": false,
+     "path": "//home/sdicks02/.local/lib/python3.12/site-packages",
+     "realpath": "/home/sdicks02/.local/lib/python3.12/site-packages"
+    }
+   ],
+   "venv_problems": [],
+   "version": "3.12.13"
+  },
+  "interpreter_candidates_informational": [],
+  "need_bytes": 23539178669,
+  "who_lines": 0
+ },
+ "inventories": {
+  "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01": [
+   [
+    "FROZEN-T1.json",
+    35043,
+    "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+    292
+   ],
+   [
+    "repo/.git/HEAD",
+    23,
+    "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10",
+    292
+   ],
+   [
+    "repo/.git/config",
+    92,
+    "cfe7ba1238c9a78be7535d7c63bcaf5a4d5011d46b07c9b45d3bbf7d6c312dfe",
+    292
+   ],
+   [
+    "repo/.git/index",
+    652,
+    "0b9db8448a4fb4a084d208362d30167dc1456a181a67a285f9163f7f15bcb2f3",
+    292
+   ],
+   [
+    "repo/.git/objects/pack/pack-e30edbfca25573b025d34c2f687f7071954e69f3.idx",
+    276256,
+    "4f932a860bd6c245d3916b92e9fa3b7b361277b015b30903cdfc3da84fa9bceb",
+    292
+   ],
+   [
+    "repo/.git/objects/pack/pack-e30edbfca25573b025d34c2f687f7071954e69f3.pack",
+    63384080,
+    "7621090426e83f1a954b887f9ee38d928b4f91998bf1b48ff2f4582e8913ee63",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/join-08-client",
+    41,
+    "74254517c5be41fccf8be4e48dde0475ee7dba65bf858c909de1e22d1de3127b",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/join-08-server",
+    41,
+    "9f7e73beb31c3017b0175a52cece56c91af27e41a3320dfedbc69439f31592d4",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/seed-03",
+    41,
+    "a5e172e553a7dc4ffef4741eafef2cb8ba67ea4c56ba093cbefbb724a1588681",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/seed-08",
+    41,
+    "47a161ea7a7cc5139c1dc263cacacfcb3547c7a897d88ff1858316a28186afef",
+    292
+   ],
+   [
+    "repo/.git/shallow",
+    164,
+    "74152c74def090213d0e511250d3e80547fc357bf9ffcb619cb0f20656328dd8",
+    292
+   ],
+   [
+    "repo/reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+    62616,
+    "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f",
+    292
+   ],
+   [
+    "repo/reports/explore/t1/receipts/op5-parent-source-127x03.json",
+    2030,
+    "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
+    292
+   ],
+   [
+    "repo/reports/explore/t1/receipts/op5-parent-source-127x08.json",
+    1410,
+    "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27",
+    292
+   ],
+   [
+    "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+    23721,
+    "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
+    292
+   ],
+   [
+    "system-bus-admission.json",
+    411,
+    "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27",
+    292
+   ]
+  ],
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01": [
+   [
+    "R3a-calibration.json",
+    440,
+    "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    292
+   ],
+   [
+    "R3a.pt",
+    36143486,
+    "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    292
+   ],
+   [
+    "assembly-receipt.json",
+    1548,
+    "f563d2c05e69e066f2c5d64e0ad451d1abe5b3619f55d5df024a7f133c9502ad",
+    292
+   ],
+   [
+    "guard-admissions/system-bus-admission.json",
+    411,
+    "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-evidence.json",
+    15056,
+    "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r1/census.jsonl",
+    4953459,
+    "d383d77013996b3d1c6c86a4f13602c709b67d8650622a9b5f9a313ae258d076",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r1/mhz.jsonl",
+    22487655,
+    "0252be4ce4b70abddc64bb3506549d8eb7b3acc739904e39f23851e8de3fa5fe",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r2/census.jsonl",
+    1086119,
+    "a4008ad004cd9d2a0e2e7fc2843fa5cc96cafe808492d2e73751569d652eb340",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r2/mhz.jsonl",
+    4951932,
+    "406be5a51591ad1d740c94bb162d7e19407e1999e6f861f99cd3263391574339",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r3/census.jsonl",
+    890235,
+    "236b960c44384e6cc31c0e1a9ac6a1b667c8a888ad6d0a9eb9f10503e531dede",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r3/mhz.jsonl",
+    4063873,
+    "4b76cbe4f9f2c805a74a849a70d5c9f81d25e67b57260e5825e46c292f85194e",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r4/census.jsonl",
+    326565,
+    "0de381c8c328db24c2243aa37b1f1a7d45c1f56f2375b72b43804097837d63b0",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/replacement-r4/mhz.jsonl",
+    1498780,
+    "8e94fbf9f8c78acde47968882a4ce08c7e0ceac5d2e18c3116936c9a8a721f7a",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/reporting/census.jsonl",
+    1017801,
+    "13cb55a11edd20a872c4a8fef39424cb17a641940d003fce9550c44f9e8319a1",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x03/reporting/mhz.jsonl",
+    4656787,
+    "bfb7e1c11993f6d290f0bf868826d6a3579225769a219d1c1b2a6ab40bb3b7a3",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r1/census.jsonl",
+    5166385,
+    "2780a1774fa7f866c65b95f0fd05a22b85c2043bfde398fb003ec4b70f5b631f",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r1/mhz.jsonl",
+    23452515,
+    "946ce32f1306d220c5b71c95c157b4e5e06326678ba23897c03d0684d405957e",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r2/census.jsonl",
+    1138476,
+    "90f20d387b25d2799dc495150e4b0858cd16140c26a626ae66fe1254889259f0",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r2/mhz.jsonl",
+    5190644,
+    "3a420c7ee18b97c8b09bc1bc7fcb968f9e181e957d4cbdf17b811e212af3024c",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r3/census.jsonl",
+    933035,
+    "ce7fdd6549da9d04cdd35d1440ac4381feb289a6d3e5ee5f9c3f188b5fdae2ef",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r3/mhz.jsonl",
+    4258914,
+    "d8d35dbbd7a35acae9103542cb5998f34b4a60809bec3448e6163e0f8b25e5ec",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r4/census.jsonl",
+    312799,
+    "5e6d3fd0d39eba0f50e9532915b297aaf6c1325bf5230f51feaf7945d43787e1",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/replacement-r4/mhz.jsonl",
+    1436373,
+    "12d74b5ebb348a972c9ef50c9d412b166c23e6180f00ab6f540d879f8d978f7f",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/reporting/census.jsonl",
+    1005858,
+    "e8bc6276fd634adf3649743d97ae47aabc0a16d49ade9cc97a34c44bcd2e04bc",
+    292
+   ],
+   [
+    "k4s-end-evidence/end-sources/127x04/reporting/mhz.jsonl",
+    4600484,
+    "85685a978be56a5f9c126fa29f7c979e0c78ee30a1c8f6c06cac90033e06fc77",
+    292
+   ],
+   [
+    "k4s-end-evidence/plan.json",
+    16814,
+    "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/completion-v2/REPORTING-COMPLETION.json",
+    5357,
+    "3794d953efb2c8af47a09ccb086cc0441f1c0dd9ea7a4f46e331315972c6e891",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/completion-v2/counted-inventory.json",
+    2140491,
+    "22c41cb7624ca04d111b08af9273af074d016efd439a7b0f7f8cccb103aa0f7e",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/ledger/blind-ledger-final.json",
+    138182,
+    "649272bdae066e49a524bd46e0155cdaf99f6d1b543e78014d357e1eb18a4f08",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r1/launch.json",
+    350,
+    "b864703e102d9dea314e1b332ee1415518f90153a0a633a9c2b1b0ac0ca1a70b",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r1/supervisor-exit.json",
+    935429,
+    "bffde5d4008b2a47fc867e690f18d6ae087fd09e58464816f9a2fa60dddb5efa",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r2/launch.json",
+    350,
+    "1d917968d9875f89c2024ba173fb1a16fcdaf8b7a5f6a5504fe3bc7b6b9df299",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r2/supervisor-exit.json",
+    293706,
+    "834fc2475b5a071d1564076b77403d83b983dbdf2026f4ccccf7df84012c3e3f",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r3/launch.json",
+    350,
+    "6c49a6679c1c654879a071c44a86cda952fb40bc1722af43e3b2c22914b13efb",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r3/supervisor-exit.json",
+    151749,
+    "cccb86839ef970ae6e9bda6a8bb3b10451aa73baad8ac0978750f7c654688616",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r4/launch.json",
+    350,
+    "e8f72fb483e73b5bcbb78b4aa129e5b31c61b4e2f0c45fec67d6b9637f65f2e6",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-replacement-r4/supervisor-exit.json",
+    38051,
+    "c9066d63cd1aa73de74d2214498dc7543d2d863282d3593887aec2f65642027c",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-reporting/launch.json",
+    346,
+    "116f1ed5f998649ba950fbde08846b47b052294acbbb6432b4a04b2a324e0159",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x03-reporting/supervisor-exit.json",
+    1045508,
+    "88debddf7bf33c1b0bc2f14002339c87072be956398d90bfb727c2d0c36a1033",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r1/launch.json",
+    346,
+    "420f7ec1076885ddb0c0211a39bcfa0d0ced72b9c9c3856c382eef1f4f727f0e",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r1/supervisor-exit.json",
+    935428,
+    "c11ae500e34504872095ba1d2b50d836546923c14641684d6ab97f635e4114b2",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r2/launch.json",
+    350,
+    "ea88e4d5c11590390875bfc8c044f5027950349e70bdd3f5b3eef82f3683cf32",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r2/supervisor-exit.json",
+    293313,
+    "37aafa6a128757e80082d0fbad6a1e518de88a277e342538cb2f33dbbdfc8e8b",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r3/launch.json",
+    350,
+    "9cd6bc37da5638dbc95a065cfd47ad467980d9b348bef2d7a711f8f9a7b4264e",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r3/supervisor-exit.json",
+    153090,
+    "91475244cc702e33dbf0a4fd20635dcb5b2fa435b21361094263723fc4cd414c",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r4/launch.json",
+    350,
+    "38730d445b2a8095cbad8b393f709fbf5e0a79eb0267d6eb69c9875c2ee6c69a",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-replacement-r4/supervisor-exit.json",
+    36487,
+    "21269aa00b3340f8b75a02de5526c5f20d525d3af27a2b1c0ac6d56f8fc47cb9",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-reporting/launch.json",
+    348,
+    "7cd6b140551d8f1d66858d98b3cf2d74b14339e7d334e6b4fc3650a3fa383c48",
+    292
+   ],
+   [
+    "k4s-end-evidence/run-r1/phase-meta/127x04-reporting/supervisor-exit.json",
+    1045522,
+    "c0a935f6cd1ecf022bf197dc3e88604769491bb461973bcd3c106e393aa71084",
+    292
+   ],
+   [
+    "seed-inputs/reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+    62616,
+    "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f",
+    292
+   ],
+   [
+    "seed-inputs/reports/explore/t1/receipts/op5-parent-source-127x03.json",
+    2030,
+    "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
+    292
+   ],
+   [
+    "seed-inputs/reports/explore/t1/receipts/op5-parent-source-127x08.json",
+    1410,
+    "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27",
+    292
+   ],
+   [
+    "seed-inputs/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+    23721,
+    "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
+    292
+   ],
+   [
+    "states-rows.bin",
+    11651404503,
+    "8cc2f611e867dc3891cdab643365193be685057b802cf73847c7fd6c91d6a1cb",
+    292
+   ],
+   [
+    "states-rows.json",
+    353160,
+    "bcd307770b70394878f7da17a97e4a1baa10f6efd7ea06d6b4240901dc0336e5",
+    292
+   ],
+   [
+    "states.pkl",
+    11649583550,
+    "0addf7c0176c358e19f816a1079208eea370a2764d43a44fc9c1993811ead6f1",
+    292
+   ],
+   [
+    "t1-freeze.json",
+    35043,
+    "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+    292
+   ],
+   [
+    "t1-guard/common.py",
+    695,
+    "36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0",
+    292
+   ],
+   [
+    "t1-guard/host_audit.py",
+    12447,
+    "5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7",
+    292
+   ],
+   [
+    "t1-guard/idle_services.py",
+    3841,
+    "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
+    292
+   ],
+   [
+    "t1-guard/owned_supervisor.py",
+    3059,
+    "fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249",
+    292
+   ],
+   [
+    "t1-guard/parent_source_seed.py",
+    5524,
+    "3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e",
+    292
+   ],
+   [
+    "t1-guard/perception_confirmation.py",
+    7574,
+    "6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680",
+    292
+   ],
+   [
+    "t1-guard/ssh_budget.py",
+    7024,
+    "0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d",
+    292
+   ],
+   [
+    "t1-guard/ssh_transport.py",
+    3313,
+    "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f",
+    292
+   ],
+   [
+    "t1-guard/system_bus.py",
+    1936,
+    "785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11",
+    292
+   ],
+   [
+    "tiers-pins.json",
+    581469,
+    "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458",
+    292
+   ],
+   [
+    "tiers-pins.sha256",
+    82,
+    "a9a4e43e9d8d0928d3e8947cf454ddf3789b1e965bd3f617ebf30fdd5a41a249",
+    292
+   ],
+   [
+    "v1.pt",
+    36476763,
+    "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    292
+   ]
+  ]
+ },
+ "logins": [
+  {
+   "host": "127x04",
+   "label": "P-check",
+   "request_sha256": "4e6790e7874fffd32afa7084693bda8b50a6deb08e314e0d27a40a0854748e75",
+   "utc": "2026-10-13T23:11:32Z"
+  },
+  {
+   "host": "127x04",
+   "label": "P-facts",
+   "utc": "2026-10-13T23:11:32Z"
+  },
+  {
+   "bytes": 23475392007,
+   "files": 69,
+   "host": "127x04",
+   "label": "receive-bundle",
+   "partial": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01.partial",
+   "utc": "2026-10-13T23:11:35Z"
+  },
+  {
+   "bytes": 63786662,
+   "files": 16,
+   "host": "127x04",
+   "label": "receive-guard-job",
+   "partial": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01.partial",
+   "utc": "2026-10-13T23:13:40Z"
+  },
+  {
+   "host": "127x04",
+   "label": "F",
+   "request_sha256": "cef008858731b0373359116dbdf2f77eceb71fc61e762802d2b1121c646e58ce",
+   "utc": "2026-10-13T23:13:41Z"
+  },
+  {
+   "host": "127x04",
+   "label": "POST",
+   "utc": "2026-10-13T23:13:41Z"
+  }
+ ],
+ "outside_end_window": "A2 GO 3d64ca6277c8d4eb9bdb78f58f4ba3302ec7a95f, 2026-10-13T23:10:56Z",
+ "reader_program_sha256": "2d2f212d73b49176c53b1a03a621b64fbc6a8d4c15bd18051ac31f91016a6152",
+ "receipts": {
+  "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01.partial": {
+   "files": 16,
+   "receipt_sha256": "369836b17197e66f61109a065c7e54eadb8ad0f8631a3dbec4555953490ec268",
+   "root": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01.partial"
+  },
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01.partial": {
+   "files": 69,
+   "receipt_sha256": "ef1d5bb60f508ae34eefc48b8286f0acc58f0c3752ce4af271a277ba565bdd8d",
+   "root": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01.partial"
+  }
+ },
+ "receive_program_sha256": "39a92e9d55f9ffefba57bae453677bad7c834f7761283268b84e40bb2d1210b4",
+ "roots": {
+  "attempts": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/attempts",
+  "base": "/mpac/sdicks02/jobs-k4s/k4s-end-r1",
+  "bundles": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles",
+  "corpus": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1/K4-states.pkl",
+  "end_inputs": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1",
+  "guard_parent": "/mpac/sdicks02/jobs-k4s",
+  "native": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1/clasher_core.abi3.so",
+  "preflight": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight",
+  "repository": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository",
+  "runtime": null,
+  "tools": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools"
+ },
+ "s3_sha256": "776ded238be655f4f9ef84ec217afbcd214c73a186baad009d0d4fa2f53bb8ce",
+ "s9_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-staging.v3",
+ "script_sha256": "f368097f830eb2d50851f360c2fc0baf5c289016cd7db9037665ea6a718e46d5",
+ "ssh_logins": 6,
+ "started_utc": "2026-10-13T23:10:56Z",
+ "status": "staged",
+ "tool_pins": {
+  "detach.sh": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+  "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
+  "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "k4s_end_preflight.py": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
+  "k4s_preflight_push.sh": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ }
+}

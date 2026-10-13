@@ -1,0 +1,41 @@
+__START s10-pf00 2026-10-13T23:04:48Z
+S9 VERIFY OK: manifest 9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43; runtime_files fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7; inventory 74fc01a72632e813d8a51511f304d1aa7561914fd095c5b1fadba1ca8f4092b5
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-pf00/k4s-end-guard-r1-pf00 manifest 8eb50146d98b726d6be75839d5e9dd394cbde7cef254da9f8d9e52aa2c7bacde
+[2026-10-13T23:05:29Z] ssh P-check 127x04
+[2026-10-13T23:05:29Z] ssh P-facts 127x04
+[2026-10-13T23:05:32Z] ssh base 127x04
+[2026-10-13T23:05:32Z] ssh receive-runtime 127x04
+[2026-10-13T23:05:43Z] ssh receive-tools 127x04
+[2026-10-13T23:05:43Z] ssh receive-end-inputs 127x04
+[2026-10-13T23:06:00Z] ssh receive-bundle 127x04
+[2026-10-13T23:08:09Z] ssh receive-guard-job 127x04
+[2026-10-13T23:08:10Z] ssh F 127x04
+[2026-10-13T23:08:10Z] ssh POST 127x04
+S10 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/a2/s10-127x04-pf00-r2/s10-staging-manifest.json sha256 0e9ba9694c08c8f6002dcb4b32fe7c6a786a69eb4501754ae32d61fff096ae85
+__RC s10-pf00 0 2026-10-13T23:08:10Z
+__START s10-rd00-a00 2026-10-13T23:08:10Z
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a00/k4s-end-guard-r1-rd00-a00 manifest 065e1a10fdd15f9a34e05c35449d007aa996d12ebafc7e2f6376bca29dfeb3d9
+[2026-10-13T23:08:44Z] ssh P-check 127x04
+[2026-10-13T23:08:44Z] ssh P-facts 127x04
+[2026-10-13T23:08:46Z] ssh receive-bundle 127x04
+[2026-10-13T23:10:54Z] ssh receive-guard-job 127x04
+[2026-10-13T23:10:55Z] ssh F 127x04
+[2026-10-13T23:10:56Z] ssh POST 127x04
+S10 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/a2/s10-127x04-rd00-a00-r2/s10-staging-manifest.json sha256 a0f6fe940bdc86a1b5bc3943d8f67d96e549359959c3a26439745d06b34ba836
+__RC s10-rd00-a00 0 2026-10-13T23:10:56Z
+__START s10-rd00-a01 2026-10-13T23:10:56Z
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a01/k4s-end-guard-r1-rd00-a01 manifest 5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac
+[2026-10-13T23:11:32Z] ssh P-check 127x04
+[2026-10-13T23:11:32Z] ssh P-facts 127x04
+[2026-10-13T23:11:35Z] ssh receive-bundle 127x04
+[2026-10-13T23:13:40Z] ssh receive-guard-job 127x04
+[2026-10-13T23:13:41Z] ssh F 127x04
+[2026-10-13T23:13:41Z] ssh POST 127x04
+S10 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/a2/s10-127x04-rd00-a01-r2/s10-staging-manifest.json sha256 46be55c993b7fcfb718c1f6831fef030c287b07e087d4f423d692631120a455d
+__RC s10-rd00-a01 0 2026-10-13T23:13:42Z
+__START s11-provision 2026-10-13T23:13:42Z
+[2026-10-13T23:13:43Z] ssh session-provision 127x04
+S11 OK: provision /mpac/sdicks02/jobs-k4s/k4s-end-r1/repository at 98566c032d0b on 127x04 (record /mpac/sdicks02/k4s-runner/run-r1/end-staging/a2/s11-127x04-provision-r2/s11-provision.json sha256 610f780176c5e21d682a708fdecc8bec67e9f16e31f1982f9ff0ac5e74118997)
+__RC s11-provision 0 2026-10-13T23:13:51Z
+__A2_DONE 127x04 2026-10-13T23:13:51Z
+__EXIT=0 2026-10-13T23:13:51Z

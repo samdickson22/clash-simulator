@@ -434,3 +434,6 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-13T22:30:32Z Runner verified s3s9s10-r7 (SHA256SUMS d85c9e7f) from pristine copy: 1315 passed x4. Committing r7 + a2-r7.sh (f657084a; diff vs a2.sh = s3s9s10-r6->r7 paths and -r1->-r2 record suffixes).
 - 2026-10-13T22:55:31Z A2 re-GO 3d64ca62: precheck OK; launched a2-r7.sh 127x03 detached (log end-staging/a2/a2r7-127x03.log).
 - 2026-10-13T23:04:21Z A2 127x03 DONE (re-GO 3d64ca62, a2-r7.sh): 22:55:29Z-23:04:04Z, all rc 0; logins 23 (pf00 10, a00 6, a01 6, S11 1); probe: prefix /mpac/sdicks02/repos/clasher/.venv, base uv cpython-3.12.13, numpy 2.3.5, torch 2.10.0+cu128; staging manifests pf00 c4752bb3, a00 0a715d5b, a01 0623620e; S11 provision fb0fde11 (repository at P' 98566c032d0b).
+- 2026-10-13T23:04:42Z 04 who check (1 login): others=[]
+- 2026-10-13T23:04:49Z launched a2-r7.sh 127x04 detached (log end-staging/a2/a2r7-127x04.log).
+- 2026-10-13T23:14:31Z A2 127x04 DONE (re-GO 3d64ca62, a2-r7.sh) after who check 23:04Z (no users; 1 login): 23:04:48Z-23:13:51Z, all rc 0; logins 23 (10/6/6/1) + 1 who = 24; probe: .venv prefix, numpy 2.3.5, torch 2.10.0+cu128; manifests pf00 0e9ba969, a00 a0f6fe94, a01 46be55c9; S11 provision 610f7801 (repository at P'). A2 complete on both hosts.
