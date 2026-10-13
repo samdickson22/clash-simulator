@@ -35,7 +35,9 @@ Checks, every cycle:
     breach; the readout subtree is exempt.
   * MemAvailable >= 24 GiB. Memory PSI must be well formed (0 <= avg10 <= 100); a readable high value is not a breach.
   * <= 70 members, member PSS <= 96 GiB (every smaps_rollup must carry a Pss line).
-  * du -sb <job> <= 100 GB within 4 s; nvidia-smi memory.used <= 40 GiB within 2 s. Both outputs are strictly parsed.
+  * the job's apparent size (HR-1: an own bounded scandir/lstat walk, studytree.tree_bytes; entries vanishing mid-walk are
+    skipped and counted, every other error HALTs) <= 100 GB within 4 s; nvidia-smi memory.used <= 40 GiB within 2 s,
+    strictly parsed.
 HALT is run by the main thread, so it never waits on the worker's I/O:
   1. HALT.json (exclusive, 0444, fsync'd; the first reason wins) and STOP are written by a helper thread bounded at 5 s.
   2. Every member is stopped one at a time by PID, re-verified by (pid, starttime, membership) immediately before
@@ -45,7 +47,8 @@ HALT is run by the main thread, so it never waits on the worker's I/O:
 Confined I/O (R9-F8). The watchdog's own files live under <job> and <job>/watchdog only. They are opened from
 directory fds reached by an O_NOFOLLOW walk. Leaves are opened O_NOFOLLOW|O_NONBLOCK and must be single-link regular
 files. Temps are exclusive (O_EXCL) and uniquely named. Symlinks, hard links, FIFOs and other special files are refused.
-It never reads results: it reads only /proc, STOP, the deadline file, du/nvidia-smi output and its own files.
+It never reads results: it reads only /proc, STOP, the deadline file, directory metadata (lstat), nvidia-smi output and
+its own files.
 The options after `--job` exist for the offline tests; the runbook uses the defaults.
 """
 import argparse, calendar, json, math, os, queue, secrets, signal, stat as stat_, subprocess, sys, threading, time
@@ -58,6 +61,7 @@ GUARD_PATH = os.path.join(HERE, 'guard.py')         # SR-3: the reviewed guard.p
 PY_FLAGS = ('-B', '-u', '-E', '-s', '-I', '-O', '-OO')
 sys.path.insert(0, HERE)
 from studytree import readout_invocation           # noqa: E402  SR-3: guard.py's own allowlist (pure), not a copy
+from studytree import tree_bytes                   # noqa: E402  HR-1: the bounded disk walk (pure stdlib)
 
 
 def utc(t=None): return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(t))
@@ -288,9 +292,8 @@ class Watchdog:
             pss += nonneg_int(rows[0].split()[1], 'Pss')*1024
         r['tree_pss'] = pss
         if pss > a.tree_pss: return f'study PSS {pss} > {a.tree_pss}', r
-        out = run_bounded([a.du, '-sb', '--', self.job], a.du_timeout).split('\n')[0].split('\t')
-        if len(out) != 2 or out[1] != self.job: return 'measurement failed: du output malformed', r
-        disk = nonneg_int(out[0], 'du'); r['disk'] = disk
+        disk, r['disk_vanished'] = tree_bytes(self.job, a.du_timeout)    # HR-1: own bounded walk (was du); errors raise -> HALT
+        r['disk'] = disk
         if disk > a.max_disk: return f'disk {disk} > {a.max_disk}', r
         lines = [l.strip() for l in run_bounded([a.nvidia_smi, '--query-gpu=memory.used', '--format=csv,noheader,nounits'], a.gpu_timeout).splitlines() if l.strip()]
         if not lines: return 'measurement failed: nvidia-smi printed nothing', r
@@ -448,7 +451,7 @@ def main(argv=None):
     for k, v in dict(cycle=9.5, measure_budget=8.0, stall=30.0, stop_grace=180.0, kill_grace=20.0, du_timeout=4.0, gpu_timeout=2.0,
                      mem_floor=24*2**30, max_procs=70, tree_pss=96*2**30, max_disk=100*10**9, gpu_limit_mib=40*1024).items():
         ap.add_argument('--'+k.replace('_', '-'), type=type(v), default=v)
-    for k, v in dict(du='/usr/bin/du', nvidia_smi='/usr/bin/nvidia-smi', meminfo='/proc/meminfo', psi='/proc/pressure/memory').items():
+    for k, v in dict(nvidia_smi='/usr/bin/nvidia-smi', meminfo='/proc/meminfo', psi='/proc/pressure/memory').items():
         ap.add_argument('--'+k.replace('_', '-'), default=v)
     args = list(sys.argv[1:] if argv is None else argv)
     a = ap.parse_args(args)

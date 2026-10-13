@@ -1,0 +1,97 @@
+{
+ "original": {
+  "du_parity": true,
+  "det_vanish": true,
+  "det_errors": true,
+  "churn_walk": true,
+  "churn_disk_bytes": true,
+  "static": true,
+  "live": true
+ },
+ "original_all_pass": true,
+ "mutants": {
+  "vanished entry raises": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_vanish",
+    "churn_walk",
+    "churn_disk_bytes"
+   ]
+  },
+  "EACCES tolerated": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_errors",
+    "churn_disk_bytes"
+   ]
+  },
+  "EIO tolerated": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_errors"
+   ]
+  },
+  "root errors tolerated": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_errors"
+   ]
+  },
+  "ENOTDIR not tolerated": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_vanish"
+   ]
+  },
+  "no timeout": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_errors"
+   ]
+  },
+  "hard links twice": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "du_parity"
+   ]
+  },
+  "symlinks followed": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "du_parity"
+   ]
+  },
+  "mid-iteration vanish raises": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "det_vanish"
+   ]
+  },
+  "disk_bytes 0 on error": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "churn_disk_bytes"
+   ]
+  },
+  "watchdog back to du": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "static",
+    "live"
+   ]
+  }
+ },
+ "all_applied": true,
+ "all_killed": true
+}

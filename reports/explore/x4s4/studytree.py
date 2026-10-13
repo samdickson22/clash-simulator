@@ -7,14 +7,14 @@ supervisor/child group of a games/collect/qual/smoke phase (<phase>/launch.json)
 (receipts/cpujob-*.json: labeler, O_W generator, acceptance smoke, diagnostic). A group number whose leader
 starttime differs is a reused number and owns nothing.
 
-admission(job, add): the tree after adding `add` new processes must hold <= 70, the job <= 100 GB (du, cached
-300 s; unreadable blocks) - the RESERVATION covers the workers a new pool/fit/phase will create.
+admission(job, add): the tree after adding `add` new processes must hold <= 70, the job <= 100 GB (HR-1: own bounded
+disk walk tree_bytes, cached 300 s; unreadable blocks) - the RESERVATION covers the workers a new pool/fit/phase will create.
 monitor(job, own=None, pss_limit): the frozen live stop rules for a running owned task - STOP (lexists), the study
 hard stop, MemAvailable < 24 GiB (unreadable = breach), memory PSI unreadable/non-finite, the owned task's PSS
 > 50 GiB (any unreadable process = breach), tree > 70 processes, disk > 100 GB or unreadable. Returns a reason or None.
 
 r8 (Sol r7, R7-F1..F3 - one mechanism for every long-running or spawning path; see SCRIPTS.md "Guard audit"):
-  * Every potentially blocking measurement is bounded: du has DISK_TIMEOUT (40 s, was 900 s), nvidia-smi 20 s, and
+  * Every potentially blocking measurement is bounded: the disk walk (HR-1; was du) has DISK_TIMEOUT (40 s), nvidia-smi 20 s, and
     bounded() runs any measurement with a deadline whose miss is a breach (MeasureTimeout).
   * admit(): dispatch admission (dispatch_ok + admission [+ extra, e.g. GPU]) with every measurement bounded, then the
     cheap STOP/deadline checks LAST.
@@ -36,12 +36,12 @@ defence in depth. Here:
     a STOP period is never counted. guarded_output enforces it on the guard receipt's completion time; the game
     consumers enforce it on block proofs.
 """
-import datetime, math, os, threading, time
+import datetime, errno, math, os, stat, threading, time
 
 import x4s4io as io
 
 MAX_PROCESSES, MAX_DISK_BYTES, DISK_CACHE_SECONDS = 70, 100*10**9, 300
-DISK_TIMEOUT = 40                                   # r8: du is bounded well inside the stop budget (was 900 s)
+DISK_TIMEOUT = 40                                   # r8: the disk walk is bounded well inside the stop budget (was 900 s)
 ENFORCER_TICK, MONITOR_PERIOD, MONITOR_STALE, MEASURE_TIMEOUT = 1.0, 5.0, 75.0, 75.0
 MEM_FLOOR, PSS_LIMIT = 24*2**30, 50*2**30
 _disk = dict(t=0.0, bytes=None)
@@ -126,13 +126,51 @@ def psi_some_avg10():
     return v if math.isfinite(v) and 0.0 <= v <= 100.0 else None
 
 
+VANISHED = (errno.ENOENT, errno.ENOTDIR)              # HR-1: an entry renamed/removed during the walk (benign)
+
+
+def tree_bytes(root, timeout, scandir=os.scandir):
+    """HR-1 (COORDINATOR 77a01d88): the apparent size of `root` (as `du -sb`: the root and every entry's lstat st_size,
+    each inode once) by an own bounded os.scandir/lstat walk. Returns (bytes, vanished). An entry or a directory that
+    VANISHES mid-walk (ENOENT, or ENOTDIR for a replaced/vanished parent) is skipped and counted: the study's writers
+    rename and remove while it is measured. Every other error raises - a missing or unreadable root (any errno),
+    permission, I/O, and running past `timeout` seconds (TimeoutError). Pure stdlib; follows no symlink."""
+    end = time.monotonic()+timeout
+    st = os.lstat(root)
+    if not stat.S_ISDIR(st.st_mode): raise NotADirectoryError(errno.ENOTDIR, 'measurement root is not a directory', root)
+    total, vanished, seen, todo = st.st_size, 0, {(st.st_dev, st.st_ino)}, [root]
+    while todo:
+        d = todo.pop()
+        if time.monotonic() > end: raise TimeoutError(errno.ETIMEDOUT, f'tree walk exceeded {timeout:g} s', root)
+        try: it = scandir(d)
+        except OSError as exc:
+            if d != root and exc.errno in VANISHED: vanished += 1; continue
+            raise
+        with it:
+            while True:
+                try: e = next(it)
+                except StopIteration: break
+                except OSError as exc:
+                    if d != root and exc.errno in VANISHED: vanished += 1; break
+                    raise
+                try: s = e.stat(follow_symlinks=False)
+                except OSError as exc:
+                    if exc.errno in VANISHED: vanished += 1; continue
+                    raise
+                key = (s.st_dev, s.st_ino)
+                if key in seen: continue                          # hard links once, as du
+                seen.add(key); total += s.st_size
+                if stat.S_ISDIR(s.st_mode): todo.append(e.path)
+                if time.monotonic() > end: raise TimeoutError(errno.ETIMEDOUT, f'tree walk exceeded {timeout:g} s', root)
+    return total, vanished
+
+
 def disk_bytes(job=None):
     job = job or io.JOB
     if _disk['bytes'] is None or time.time()-_disk['t'] > DISK_CACHE_SECONDS:
         try:
-            r = io.run_checked(['/usr/bin/du', '-sb', '--', job], DISK_TIMEOUT, 4096, env={'LC_ALL': 'C'})
-            v = int(r.stdout.split()[0]); _disk['bytes'] = v if v >= 0 else None
-        except (io.Refusal, ValueError, IndexError):
+            _disk['bytes'] = tree_bytes(job, DISK_TIMEOUT)[0]                # HR-1: own walk (was du, which raced renames)
+        except OSError:                                                      # incl. TimeoutError: unreadable = None (fail closed)
             _disk['bytes'] = None
         _disk['t'] = time.time()
     return _disk['bytes']

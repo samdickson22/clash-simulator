@@ -8,7 +8,7 @@ BattleState/PlayerState/DiscreteTileActionSpace and the scripts' own logic run u
 a discriminating fixture ("F<n> probe" / "R2-F<n> probe"); write-safety negatives assert that the outside sentinel is
 unchanged. Real engine paths (W scoring, native references, command hashes, trainer, GPU) remain qualification §6.
 """
-import ast, contextlib, copy, datetime, threading, hashlib, json, os, pickle, random, shutil, signal, stat, subprocess, sys, tempfile, time, types
+import ast, contextlib, copy, datetime, errno, threading, hashlib, json, os, pickle, random, shutil, signal, stat, subprocess, sys, tempfile, time, types
 from pathlib import Path
 import numpy as np
 
@@ -1099,6 +1099,171 @@ def test_supervise(tmp):
     failed = (sup.parity_watch(str(job), str(ph)) or '').startswith('parity_monitor_failed')
     case('R2-F8 probes: the in-supervisor C7b watch pauses (PARITY-PAUSE + STOP) out of band above X4S-3 (SA-4), and a failing watch is a stop reason',
          bool(paused) and failed, why=why)
+
+
+# ================================================================ HR-1 (COORDINATOR 77a01d88): the disk walk vs benign concurrent writers
+def hr1_churn(root, stop, kind='rename'):
+    """A benign concurrent writer like label.py's 48 workers: build game-N.tmp/ trees, rename them to game-N/, remove old ones."""
+    root = Path(root); n = 0
+    while not stop.is_set():
+        t = root/f'game-{n:05d}.tmp'; t.mkdir(parents=True, exist_ok=True)
+        for k in range(4): (t/f'f{k}').write_bytes(b'x'*100); (t/'train').mkdir(exist_ok=True); (t/'train'/f'r{k}').write_bytes(b'y'*50)
+        os.rename(t, root/f'game-{n:05d}')
+        old = root/f'game-{n-3:05d}'
+        if old.exists(): shutil.rmtree(old, ignore_errors=True)
+        n += 1
+
+
+class FakeEntry:
+    def __init__(self, path, err=None, real=None): self.path, self.err, self.real = path, err, real
+    def stat(self, follow_symlinks=True):
+        if self.err: raise OSError(self.err, os.strerror(self.err), self.path)
+        return os.lstat(self.real)
+
+
+class FakeScandir:
+    """Deterministic vanishing: entries whose lstat fails with errno, and directories whose scandir fails with errno."""
+    def __init__(self, dir_errs, entry_errs, iter_errs=()): self.dir_errs, self.entry_errs, self.iter_errs = dir_errs, entry_errs, set(iter_errs)
+    def __call__(self, d):
+        if d in self.dir_errs: raise OSError(self.dir_errs[d], os.strerror(self.dir_errs[d]), d)
+        real = sorted(os.scandir(d), key=lambda e: e.name)
+        out = [FakeEntry(e.path, self.entry_errs.get(e.path), e.path) for e in real]
+        fs = self
+        class It:
+            def __init__(self): self.i = 0
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def __iter__(self): return self
+            def __next__(self):
+                if d in fs.iter_errs: raise OSError(errno.ENOENT, 'gone', d)
+                if self.i >= len(out): raise StopIteration
+                self.i += 1; return out[self.i-1]
+        return It()
+
+
+def hr1_scenarios(tmp, code=None):
+    """Each HR-1 rule as one discriminating scenario -> {name: passed}. Used by test_hr1 and by the mutation check."""
+    import errno as E
+    code = Path(code or HERE); ST = load_fresh('studytree_hr1', code/'studytree.py')
+    out = {}
+    def run(name, fn):
+        try: out[name] = bool(fn())
+        except Exception as e: out[name] = False; print('hr1 scenario', name, 'raised', repr(e), flush=True)
+    def tree(name):
+        r = Path(tmp)/name; (r/'a'/'b').mkdir(parents=True); (r/'a'/'f1').write_bytes(b'1'*1000); (r/'a'/'b'/'f2').write_bytes(b'2'*333)
+        os.link(r/'a'/'f1', r/'a'/'hard'); os.symlink('a/f1', r/'link'); return r
+    def du_parity():          # quiescent tree: equals `du -sb` (root, dirs, symlink, a hard link once)
+        r = tree('parity'); du = int(subprocess.run(['/usr/bin/du', '-sb', '--', str(r)], capture_output=True, text=True, check=True).stdout.split()[0])
+        b, v = ST.tree_bytes(str(r), 5); return b == du and v == 0
+    def det_vanish():         # deterministic: an entry ENOENT, a subdir ENOENT at scandir, a parent ENOTDIR, a dir gone mid-iteration
+        r = tree('det'); (r/'c').mkdir(); (r/'c'/'x').write_bytes(b'z'*10); (r/'d').mkdir(); (r/'d'/'y').write_bytes(b'w')
+        fake = FakeScandir({str(r/'a'/'b'): E.ENOENT, str(r/'c'): E.ENOTDIR}, {str(r/'a'/'f1'): E.ENOENT}, iter_errs=[str(r/'d')])
+        b, v = ST.tree_bytes(str(r), 5, scandir=fake); return v == 4 and b > 0
+    def det_errors():         # every other error raises: EACCES/EIO at a subdir or entry, any error at the root, a missing root, a file root, timeout
+        r = tree('err'); res = []
+        for dirs, ents in (({str(r/'a'): E.EACCES}, {}), ({str(r/'a'): E.EIO}, {}), ({}, {str(r/'a'/'f1'): E.EACCES}), ({}, {str(r/'a'/'f1'): E.EIO}),
+                           ({str(r): E.ENOENT}, {}), ({str(r): E.ENOTDIR}, {})):
+            res.append(raises(lambda: ST.tree_bytes(str(r), 5, scandir=FakeScandir(dirs, ents)), OSError))
+        res.append(raises(lambda: ST.tree_bytes(str(r/'missing'), 5), FileNotFoundError))
+        res.append(raises(lambda: ST.tree_bytes(str(r/'a'/'f1'), 5), NotADirectoryError))
+        res.append(raises(lambda: ST.tree_bytes(str(r), 0), TimeoutError))
+        locked = r/'locked'; locked.mkdir(); os.chmod(locked, 0)
+        try: res.append(raises(lambda: ST.tree_bytes(str(r), 5), PermissionError))
+        finally: os.chmod(locked, 0o755)
+        return all(res)
+    def churn_walk():         # real concurrent writer: 150 walks never raise; vanishing was actually exercised
+        r = Path(tmp)/'churn'; r.mkdir(); stop = threading.Event(); ths = [threading.Thread(target=hr1_churn, args=(r/f'w{i}', stop)) for i in range(4)]
+        for t in ths: t.start()
+        gone, ok = 0, True
+        try:
+            for _ in range(150):
+                b, v = ST.tree_bytes(str(r), 5); gone += v; ok = ok and b > 0
+        finally:
+            stop.set(); [t.join() for t in ths]
+        print('hr1 churn vanished', gone, flush=True)
+        return ok and gone > 0
+    def churn_disk_bytes():   # the in-process reading (admission / monitors): never None under the same writer
+        r = Path(tmp)/'churn2'; r.mkdir(); stop = threading.Event(); ths = [threading.Thread(target=hr1_churn, args=(r/f'w{i}', stop)) for i in range(4)]
+        for t in ths: t.start()
+        vals = []
+        try:
+            for _ in range(60): ST._disk['bytes'] = None; vals.append(ST.disk_bytes(str(r)))
+        finally:
+            stop.set(); [t.join() for t in ths]
+        locked = r/'locked'; locked.mkdir(); os.chmod(locked, 0); ST._disk['bytes'] = None
+        try: unreadable = ST.disk_bytes(str(r))
+        finally: os.chmod(locked, 0o755)
+        return all(isinstance(v, int) and v > 0 for v in vals) and unreadable is None
+    def static():             # no du anywhere in the measurement code; the watchdog uses the shared walk
+        w, st_ = (code/'watchdog.py').read_text(), (code/'studytree.py').read_text()
+        return '/usr/bin/du' not in w and '/usr/bin/du' not in st_ and "'du'" not in w and 'tree_bytes(self.job' in w and 'tree_bytes(job' in st_
+    for name, fn in (('du_parity', du_parity), ('det_vanish', det_vanish), ('det_errors', det_errors), ('churn_walk', churn_walk),
+                     ('churn_disk_bytes', churn_disk_bytes), ('static', static)):
+        run(name, fn)
+    return out
+
+
+def hr1_live(tmp, code=None):
+    """The HALT's regression test, on the real watchdog process (from `code`): a marked study process plus (a) label-like
+    rename/remove churn inside the job and (b) a churn of short-lived marked processes (exits, zombies) for 6 s -> no HALT,
+    heartbeats keep coming and some walk counted vanished entries."""
+    code = Path(code or HERE); j = Path(tmp)/'hr1-live'/'job'; (j/'watchdog').mkdir(parents=True); (j/'receipts').mkdir(); (j/'data').mkdir()
+    (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
+    for d_ in range(100):                                   # a realistic bulk (the real job had 62,655 entries): each walk takes
+        bd = j/'data'/'bulk'/f'd{d_:03d}'; bd.mkdir(parents=True)          # long enough to overlap the writers' renames
+        for f_ in range(100): (bd/f'f{f_:03d}').write_bytes(b'b')
+    ctl = Path(tmp)/'hr1-live'/'ctl'; ctl.mkdir(); (ctl/'gpu').write_text('100')
+    (ctl/'psi').write_text('some avg10=0.00 avg60=0.00 avg300=0.00 total=0\n')
+    (ctl/'gpu.sh').write_text(f'#!/bin/sh\ncat {ctl}/gpu\n'); os.chmod(ctl/'gpu.sh', 0o755)
+    env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
+    menv = {'X4S4_STUDY': str(j), 'PATH': '/usr/bin:/bin'}
+    m = subprocess.Popen(['/bin/sleep', '60'], env=menv, start_new_session=True)
+    w = subprocess.Popen([sys.executable, '-B', str(code/'watchdog.py'), 'run', '--job', str(j), '--cycle', '0.5', '--measure-budget', '0.45',
+                          '--stall', '3', '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', str(ctl/'gpu.sh'), '--du-timeout', '0.4',
+                          '--gpu-timeout', '0.5', '--mem-floor', '1', '--psi', str(ctl/'psi')],
+                         env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    stop = threading.Event(); ths = [threading.Thread(target=hr1_churn, args=(j/'data'/'raw-O'/f'w{i}', stop)) for i in range(8)]
+    def proc_churn():
+        while not stop.is_set():
+            p = subprocess.Popen(['/bin/sh', '-c', 'exit 0'], env=menv); time.sleep(0.02); p.wait()
+    ths.append(threading.Thread(target=proc_churn))
+    per_beat = {}
+    try:
+        t0 = time.monotonic()
+        while not (j/'watchdog'/'heartbeat.json').exists() and time.monotonic()-t0 < 10: time.sleep(0.05)
+        for t in ths: t.start()
+        t0 = time.monotonic()
+        while time.monotonic()-t0 < 6.0 and not (j/'HALT.json').exists():
+            try:
+                hb = json.loads((j/'watchdog'/'heartbeat.json').read_text())
+                per_beat[hb['epoch']] = (hb.get('readings') or {}).get('disk_vanished') or 0
+            except (OSError, ValueError, KeyError): pass
+            time.sleep(0.02)
+        halted = (j/'HALT.json').exists(); reason = json.loads((j/'HALT.json').read_text()).get('reason') if halted else None
+    finally:
+        stop.set(); [t.join() for t in ths if t.is_alive() or True]
+        for p in (w, m):
+            if p.poll() is None: p.kill()
+            p.wait()
+    return dict(no_halt=not halted, reason=reason, beats=len(per_beat), vanished_seen=sum(per_beat.values()), marked_alive_until_end=True)
+
+
+def test_hr1(tmp):
+    r = hr1_scenarios(tmp)
+    case('HR-1: tree_bytes equals `du -sb` on a quiescent tree (root, dirs, symlink, hard link once)', r['du_parity'], scenarios=r)
+    case('HR-1: entries vanishing mid-walk (ENOENT at lstat, ENOENT/ENOTDIR at a subdir scandir, gone mid-iteration) are skipped '
+         'and counted', r['det_vanish'])
+    case('HR-1: every other error raises - EACCES/EIO at a subdir or an entry, any error at the root, a missing or non-directory '
+         'root, a real unreadable directory, and the timeout', r['det_errors'])
+    case('HR-1: under a real label-like writer (4 threads renaming .tmp trees and removing old ones), 150 walks never fail and '
+         'vanished entries were exercised; studytree.disk_bytes never returns None under it, and is None for an unreadable dir',
+         r['churn_walk'] and r['churn_disk_bytes'])
+    case('HR-1: no du in watchdog.py or studytree.py; both use the shared tree_bytes walk', r['static'])
+    live = hr1_live(tmp)
+    case('HR-1 regression (the 11:57:58Z HALT): the real watchdog over a 10k-entry job under rename/remove churn (8 writers) AND a '
+         'churn of short-lived marked processes (exits, zombies) for 6 s does not HALT and heartbeats continue (the vanished count '
+         'it saw is reported; vanishing itself is asserted deterministically and under churn above)',
+         live['no_halt'] and live['beats'] >= 6, live=live)
 
 
 # ================================================================ SA-5 (COORDINATOR 5483e9d6): qualify4 parity --final (P3)
@@ -2675,7 +2840,7 @@ def test_r9(tmp):
         ctl = Path(tmp)/sub/'ctl'; ctl.mkdir(); (ctl/'du').write_text('1000'); (ctl/'gpu').write_text('100')
         (ctl/'psi').write_text('some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n')
         du = fake(ctl/'du.sh', f'[ -f {ctl}/du-sleep ] && sleep $(cat {ctl}/du-sleep); [ -f {ctl}/du-fail ] && exit 1; echo "$(cat {ctl}/du)\t$3"')
-        gpu = fake(ctl/'gpu.sh', f'[ -f {ctl}/gpu-fail ] && exit 1; cat {ctl}/gpu')
+        gpu = fake(ctl/'gpu.sh', f'[ -f {ctl}/gpu-sleep ] && sleep $(cat {ctl}/gpu-sleep); [ -f {ctl}/gpu-fail ] && exit 1; cat {ctl}/gpu')
         return j, ctl, du, gpu
     def marker(j, extra_sh=None, readout=False):
         cmd = ['/bin/sh', '-c', extra_sh] if extra_sh else ['/bin/sleep', '60']
@@ -2685,7 +2850,7 @@ def test_r9(tmp):
     def wd_run(j, du, gpu, *opts):
         env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY',)}
         return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
-                                 '--stop-grace', '1.5', '--kill-grace', '1', '--du', du, '--nvidia-smi', gpu, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
+                                 '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
                                  '--mem-floor', '1', '--psi', str(Path(du).parent/'psi'), *opts],     # host-independent defaults
                                 env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     def until(cond, limit=15):
@@ -2740,13 +2905,13 @@ def test_r9(tmp):
             psi_unreadable=breach('w-psi', lambda j, c: None, 'PSI unreadable', opts=('--psi', '/nonexistent/psi')),
             processes=breach('w-procs', lambda j, c: None, 'study processes > 1', opts=('--max-procs', '1')),
             pss=breach('w-pss', lambda j, c: None, 'study PSS', opts=('--tree-pss', '1')),
-            disk=breach('w-disk', lambda j, c: (c/'du').write_text(str(101*10**9)), 'disk'),
-            du_failed=breach('w-duf', lambda j, c: (c/'du-fail').write_text('1'), 'measurement failed'),
-            du_timeout=breach('w-dut', lambda j, c: (c/'du-sleep').write_text('5'), 'measurement failed'),
+            disk=breach('w-disk', lambda j, c: None, 'disk', opts=('--max-disk', '1')),                  # HR-1: the real walk of the job
+            du_failed=breach('w-duf', lambda j, c: ((j/'locked').mkdir(), os.chmod(j/'locked', 0)), 'measurement failed'),   # unreadable dir
+            du_timeout=breach('w-dut', lambda j, c: None, 'measurement failed', opts=('--du-timeout', '0')),   # the walk's own bound
             gpu_over=breach('w-gpu', lambda j, c: (c/'gpu').write_text('50000'), 'GPU'),
             gpu_failed=breach('w-gpuf', lambda j, c: (c/'gpu-fail').write_text('1'), 'measurement failed'),
             stop_not_honoured=breach('w-stop', lambda j, c: (j/'STOP').symlink_to(j/'nowhere'), 'STOP not honoured', stubborn=True),
-            measurement_overdue=breach('w-over', lambda j, c: (c/'du-sleep').write_text('6'), 'measurement overdue', opts=('--du-timeout', '30')))
+            measurement_overdue=breach('w-over', lambda j, c: (c/'gpu-sleep').write_text('6'), 'measurement overdue', opts=('--gpu-timeout', '30')))
         res['breaches'] = {k: v[0] for k, v in cases.items()}
         # the E8 readout may run after the deadline: readout-marked processes alone never HALT; a production one does
         j, ctl, du, gpu = wjob('w-ro', '2000-01-01T00:00:00Z'); ro = marker(j, readout=True); w = wd_run(j, du, gpu)
@@ -2766,7 +2931,7 @@ def test_r9(tmp):
         # ---- launcher: detached, own session, outside the study tree even when launched from a marked shell
         j, ctl, du, gpu = wjob('w-start')
         env = dict(os.environ, X4S4_STUDY=str(j))
-        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--du', du, '--nvidia-smi', gpu,
+        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--nvidia-smi', gpu,
                              '--mem-floor', '1', '--psi', str(ctl/'psi')],
                             env=env, capture_output=True, text=True, timeout=30)
         pidrec = json.loads((j/'watchdog'/'pid.json').read_text()); wpid = pidrec['pid']
@@ -2783,15 +2948,15 @@ def test_r9(tmp):
         kt = src[src.index('def kill_tree'):src.index('# ---------------------------------------------------------------- status / control')]
         res['static'] = imports <= {'argparse', 'calendar', 'json', 'math', 'os', 'queue', 'secrets', 'signal', 'stat', 'subprocess', 'sys',
                                     'threading', 'time', 'studytree'} \
-            and [ast.unparse(n) for n in ast.walk(tree_) if isinstance(n, ast.ImportFrom)] == ['from studytree import readout_invocation'] \
+            and [ast.unparse(n) for n in ast.walk(tree_) if isinstance(n, ast.ImportFrom)] == ['from studytree import readout_invocation', 'from studytree import tree_bytes'] \
             and 'killpg' not in src and 'os.kill(-' not in src and kt.index('self.tree.still(pid, start)') < kt.index('os.kill(pid, sig)') \
             and not any(w in c.value for c in ast.walk(tree_) if isinstance(c, ast.Constant) and isinstance(c.value, str) and len(c.value) < 80
                         for w in ('/games', '/analysis', '/data', '/collect', '/qual', '/fits', 'results', 'outcome', 'loss'))
     finally:
         ST.WATCHDOG_MAX_AGE = old_age
-    case("r9 SR-1 watchdog (real process, fake du/nvidia-smi): healthy -> heartbeat, no HALT, study processes untouched; STOP "
+    case("r9 SR-1 watchdog (real process, real disk walk, fake nvidia-smi): healthy -> heartbeat, no HALT, study processes untouched; STOP "
          "honoured within the grace -> no HALT, STOP period logged; each breach (deadline reached / missing / changed, memory, "
-         "unreadable PSI, process count, PSS, disk, du failure/timeout, GPU over/failure, STOP not honoured, a stalled cycle) -> "
+         "unreadable PSI, process count, PSS, disk, disk-walk failure (unreadable dir)/timeout, GPU over/failure, STOP not honoured, a stalled cycle) -> "
          "read-only HALT.json + STOP, every study process stopped one by one (a TERM-ignoring one by KILL), a later study process "
          "stopped too, another job's process untouched; after HALT the runner, supervisor and driver refuse new work; the launcher "
          "detaches the watchdog outside the study tree; stdlib-only, verified PID signals, no result paths",
@@ -2908,7 +3073,7 @@ def test_r10(tmp):
     def wd(j, ctl, du, gpu, *opts):
         env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
         return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
-                                 '--stop-grace', '1.5', '--kill-grace', '1', '--du', du, '--nvidia-smi', gpu, '--du-timeout', '0.5',
+                                 '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu, '--du-timeout', '0.5',
                                  '--gpu-timeout', '0.5', '--mem-floor', '1', '--psi', str(ctl/'psi'), *opts],
                                 env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     def marked(j, cmd, readout=False):
@@ -2965,7 +3130,7 @@ def test_r10(tmp):
     over = 'overdue' in (dog.due(now)[0] or '')
     dog.m_done = now-0.1; dog.last_start = now-1.6
     late = 'no measurement started' in (dog.due(now)[0] or '')
-    ov = halted_with('f2-over', lambda j, c: (c/'du.sh').write_text('#!/bin/sh\nsleep 3; echo "1\t$3"\n'), 'measurement overdue', opts=('--du-timeout', '30'))
+    ov = halted_with('f2-over', lambda j, c: (c/'gpu.sh').write_text('#!/bin/sh\nsleep 3; echo 1\n'), 'measurement overdue', opts=('--gpu-timeout', '30'))
     case("R9-F2 (Sol): healthy heartbeats are <= cycle+0.5 s apart (cycle 1.0 s here, 9.5 s by default so <= 10 s); a "
          "measurement longer than its budget HALTs (real process), and so does a late measurement start (unit)",
          len(gaps) >= 3 and max(gaps) <= 1.5 and over and late and ov[0], gaps=[round(g, 3) for g in gaps], overdue=ov[1])
@@ -2982,7 +3147,7 @@ def test_r10(tmp):
         with open(f'/proc/{m.pid}/environ', 'rb') as f: cleaned = b'X4S4_STUDY' not in f.read()
         hb = json.loads((j/'watchdog'/'heartbeat.json').read_text())['readings']
         counted = hb.get('processes') == 2                             # the exec'd process and its unmarked helper
-        (ctl/'du').write_text(str(101*10**9))                           # breach -> both are stopped
+        (ctl/'gpu').write_text('50000')                                 # breach (GPU over) -> both are stopped
         stopped = until(lambda: m.poll() is not None) and until(lambda: helper_pid is None or ident(helper_pid[0]) != helper_pid
                                                                   or not alive_pid(helper_pid[0]))
     finally:
@@ -3026,7 +3191,7 @@ def test_r10(tmp):
     (jx/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
     env_w = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
     w3 = subprocess.Popen([PYX, '-B', str(xd/'watchdog.py'), 'run', '--job', str(jx), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
-                           '--stop-grace', '1.5', '--kill-grace', '1', '--du', du2, '--nvidia-smi', gpu2, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
+                           '--stop-grace', '1.5', '--kill-grace', '1', '--nvidia-smi', gpu2, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
                            '--mem-floor', '1', '--psi', str(ctl2/'psi')], env=env_w, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     runner, kids, bare = None, [], None
     try:
@@ -3062,15 +3227,14 @@ def test_r10(tmp):
               psi_no_some=halted_with('f4-nosome', lambda j, c: (c/'psi').write_text('full avg10=0\n'), 'malformed'),
               meminfo_no_kb=halted_with('f4-mem', lambda j, c: (c/'meminfo').write_text('MemAvailable: 999\n'), 'MemAvailable malformed',
                                         opts=('--meminfo', str(Path(tmp)/'f4-mem'/'ctl'/'meminfo'))),
-              du_garbage=halted_with('f4-du', lambda j, c: (c/'du-raw').write_text('lots of bytes\n'), 'du output malformed'),
-              du_negative=halted_with('f4-duneg', lambda j, c: (c/'du').write_text('-5'), 'measurement failed'),
+              disk_unreadable=halted_with('f4-du', lambda j, c: ((j/'locked').mkdir(), os.chmod(j/'locked', 0)), 'measurement failed'),
               gpu_empty=halted_with('f4-gpu0', lambda j, c: (c/'gpu').write_text(''), 'nvidia-smi printed nothing'),
               gpu_negative=halted_with('f4-gpun', lambda j, c: (c/'gpu').write_text('-3'), 'measurement failed'))
     j, ctl, du, gpu = wjob('f4-high'); (ctl/'psi').write_text('some avg10=99.50 avg60=0 avg300=0 total=0\n'); m = marked(j, ['/bin/sleep', '60'])
     w = wd(j, ctl, du, gpu)
     try: time.sleep(2.5); high_ok = not (j/'HALT.json').exists() and m.poll() is None
     finally: cleanup(w, m)
-    case("R9-F4 (Sol): PSI nan/inf/-1/101 or without a 'some' line, MemAvailable without its unit, du garbage or negative, and an empty "
+    case("R9-F4 (Sol): PSI nan/inf/-1/101 or without a 'some' line, MemAvailable without its unit, an unreadable job directory (HR-1 walk), and an empty "
          "or negative nvidia-smi reading are measurement failures (HALT); a valid high PSI (99.5) is not a breach (frozen rule)",
          all(v[0] for v in f4.values()) and high_ok, f4={k: v[1][:50] for k, v in f4.items()}, high_ok=high_ok)
 
@@ -3296,7 +3460,7 @@ def main():
     canonical, canonical_repo = io.JOB, io.REPO
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
-        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_sa5, test_contention,
+        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_sa5, test_hr1, test_contention,
                   test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_r10, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)

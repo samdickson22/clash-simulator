@@ -257,6 +257,62 @@ detached with `start_new_session`, the study marker stripped, waits for the firs
   - The launcher leaves the watchdog unmarked in its own session; `status` works, and a second start is refused.
   - Static checks: stdlib only, verified one-by-one PID signals, no result paths.
 
+## HR-1 (COORDINATOR 77a01d88): the disk reading is an own bounded walk; the 11:57:58Z HALT
+
+**The HALT.** At 11:57:58Z, during P5 labelling, the watchdog's `du -sb <job>` exited 1. label.py's 48 workers seal
+each game into `game-NNNN.tmp/` and rename it, and GNU du exits 1 when an entry vanishes between readdir and stat.
+Rule R9-F4 (a failed reading HALTs) then ended the study. `studytree.disk_bytes`, used by admission and the in-process
+monitors, ran the same du; it returned None on failure, which fails closed in-process.
+
+**The change.** Every earlier `du -sb` line in this file is superseded by `studytree.tree_bytes(root, timeout)`, a
+pure-stdlib os.scandir/lstat walk.
+- It computes the apparent size as `du -sb` does: the root and every entry's st_size, each inode once, no symlink
+  followed.
+- An entry that **vanishes** mid-walk is skipped and counted. That means ENOENT at lstat, ENOENT or ENOTDIR at a
+  subdirectory's scandir, or a directory gone mid-iteration.
+- **Everything else raises:** EACCES, EIO, any error at the root, a missing or non-directory root, and running past
+  the timeout. The watchdog still HALTs on these.
+- The watchdog uses it with the same 4 s bound (`--du-timeout`) and records `disk_vanished`. `--du` is gone.
+  `studytree.disk_bytes` uses it with DISK_TIMEOUT 40 s (None on any error).
+- On the real job (62,655 entries, 33 GB) the walk took 0.24 s and matched `du -sb` apart from the root's own size.
+
+**Other measurement paths, audited against the same "benign concurrent writer" class:**
+- The process scans (watchdog `Tree.scan`/`pstat`/`penv`, `x4s4io.owned_pids`/`proc_stat`) skip vanished pids and
+  zombies.
+- The PSS readers (watchdog and `studytree.pss_bytes`) skip exits. A zombie's smaps_rollup raises ESRCH, which was
+  checked on 05.
+- MemAvailable, PSI and nvidia-smi have no concurrent-writer exposure.
+
+**Tests (`test_hr1`):**
+- parity with `du -sb` (a symlink and a hard link included);
+- deterministic vanishing (4 kinds) through an injected scandir;
+- every other error raises: 6 injected errors, a missing root, a file root, a real chmod-000 directory, timeout 0;
+- 150 walks under 4 real label-like writers renaming and removing, with hundreds of vanished entries and no failure;
+- `disk_bytes` is never None under the writers, and is None for an unreadable directory;
+- statically, no du remains;
+- the regression: the real watchdog over a 10k-entry job with 8 writers plus a churn of short-lived marked processes
+  (exits and zombies) runs 6 s with no HALT.
+
+The r9 and r10 watchdog cases now run on the real walk:
+- disk over: `--max-disk 1`;
+- disk-walk failure: a chmod-000 directory;
+- timeout: `--du-timeout 0`;
+- an overdue measurement: a slow fake nvidia-smi;
+- the `du garbage` and `negative du` parse cases are replaced by the unreadable-directory case.
+
+**Mutation check:** 11 mutants, each killed:
+- a vanished entry raises;
+- EACCES tolerated;
+- EIO tolerated;
+- root errors tolerated;
+- ENOTDIR not tolerated;
+- no timeout;
+- hard links counted twice;
+- symlinks followed;
+- a mid-iteration vanish raises;
+- disk_bytes returns 0 on error;
+- the watchdog goes back to du, which also HALTs in the live test and so reproduces the incident.
+
 ## SA-5 (COORDINATOR 5483e9d6): `qualify4 parity --final` for P3
 
 **The defect.** A failed P3 could never reach label.py's exact-receipt exception, for two reasons:
