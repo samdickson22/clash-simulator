@@ -1,0 +1,36 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p4-label-plan",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/label.py",
+    "plan",
+    "--phases",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/collect/K4S-120/a1",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/collect/K4S-120/a2",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/collect/S-200/a1",
+    "--parity",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/receipts/parity-collection-r2.json",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-plan.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 502997,
+    "pgid": 502997,
+    "starttime": 168197847
+  },
+  "passed": true,
+  "utc": "2026-10-13T11:52:10Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-plan.json": "2cc0f62597c2c171015226f4bb2512aa723891de15f3d240dd140093f7e5d2b5"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

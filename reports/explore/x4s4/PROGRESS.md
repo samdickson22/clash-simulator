@@ -422,3 +422,24 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   --workers 48`, launched at 11:52:21Z.
 - To disclose in RESULTS (PE-4): S-200 O-states come from 10-lane collection (SA-3), which had fewer cutoffs than
   X4S-3's 50-lane reference (63.32 % vs 75.3 %).
+
+## 2026-10-13T11:57:58Z — **HALT**: the watchdog's du measurement failed during P5 labelling. X4S-4 is ended under this T
+
+- J/HALT.json (0444) 67e792c0371d4f624188fac9b1c4c7a867129aca5dd98893d4b6b0657035bd98:
+  `measurement failed: CalledProcessError(1, ['/usr/bin/du', '-sb', '--', '/mpac/sdicks02/jobs/clasher/x4s4-onpolicy'])`,
+  readings {}.
+- The watchdog stopped all 51 study processes one at a time by verified (pid, starttime) at 11:57:58–59Z: the P5
+  guard runner 517537, label.py and 48 workers. STOP → HALT.json. The study tree is now empty; only the watchdog
+  (pid 3283869) remains, halted.
+- guard-p5-label-O.json (6a7375a7…): passed=false, breach runner_SIGTERM, rc −15. data/raw-O/K4S-120 holds 523
+  sealed games completed before the HALT, with no label receipt; nothing after the HALT counts (H-1).
+- watchdog.log 528ed6b9…; stop-periods.jsonl 690c8afb….
+- Probable cause (my design defect, not a host breach):
+  - label.py seals each game into `<raw>/game-NNNN.tmp` and renames it to `game-NNNN`, with 48 workers doing so
+    concurrently.
+  - GNU `du` exits 1 when an entry vanishes between readdir and stat (a rename or removal during the walk).
+  - The watchdog treats any failed reading as a HALT (R9-F4), so the measurement raced the labeller.
+  - The offline matrix never ran du against a tree with concurrent renames. Collection only adds files, and the Q6
+    smoke-pack ran single-threaded.
+- Per the GO, a HALT ends X4S-4: nothing is restarted under T = 2026-10-13T04:55:07Z. HALT evidence is in
+  receipts/halt/. Reported to the coordinator.

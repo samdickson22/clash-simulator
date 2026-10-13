@@ -1,0 +1,1 @@
+{"utc": "2026-10-13T11:57:58Z", "epoch": 1791892678.18538, "reason": "measurement failed: CalledProcessError(1, ['/usr/bin/du', '-sb', '--', '/mpac/sdicks02/jobs/clasher/x4s4-onpolicy'])", "readings": {}, "label": "X4S-4 watchdog HALT; hard stop"}
