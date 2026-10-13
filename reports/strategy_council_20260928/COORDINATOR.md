@@ -6170,3 +6170,22 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 5b454761f7d81874b3921ff7f5b7dc154a7eeccdd
 - **Conditions:** no retry. The first nonzero rc stops everything for a coordinator ruling. No concurrent staging. 03 is fully done before 04 starts.
 - **04 user-presence rule:** immediately before 04, run `who` on 04. If any non-sdicks02 user is logged in, wait and recheck every 15 min. Start 04 only once `who` shows no other user, so a staging job of about 74 GB doesn't load a host someone is using.
 - **After each host:** commit the staging records and report logins, SHAs and the probe result. The A4 preflights get their own GO request.
+
+## 2026-10-13 22:53Z: X4S-4 HR-2 Sol fix-check r1: REQUEST_CHANGES (3 slow-lane defects); restart procedure pre-approved
+
+The HR-2 fix is at 4d3b130e. Its diagnosis: a single 8 s fast budget covered the disk walk, which has grown with the job tree to about 564k entries and 2.45 s idle, plus the PSS, scan and GPU readings. The fix moves PSS and the disk walk to a slow lane (a 30 s cycle with a 120 s budget) with a 180 s last-good age bound.
+
+Sol r1 (`x4s4-review/SOL-FIXCHECK-HR2-r1.md`, 54f6ba4829f8f399a25113659fda9cbd48988c4ef8886ddcfd94630a4bfbda6e) accepts the design and the coarser cadence, and finds three defects:
+- **F1:** a non-atomic pass-state transition can raise a false HALT at the next pass's start.
+- **F2:** a successful pass that returns over budget is accepted as last good.
+- **F3:** last-good freshness uses the wall clock, so a forward or backward clock step gives a false HALT or delays detection of a dead slow thread.
+
+All three go back to the owner with a close-the-class instruction, and Sol r2 will be diff-only.
+
+**Pre-approved for the GO after Sol APPROVE:** the owner's restart procedure.
+- Set-asides are moves with bytes unchanged.
+- PID 657762 is stopped by a SIGTERM to its verified (pid, starttime).
+- HALT is archived to `receipts/halt-r2/`.
+- P9 restarts as `p9-collect-w-r2`. R5 restarts from step 0, because its last checkpoints are H-1-excluded or lack a returned segment.
+- `ACK-fit-R5` is authorized with disposition "continue".
+- T3 is the write time, and the hard stop is T3 + 24 h. The planned completion is about T3 + 14.75 h.
