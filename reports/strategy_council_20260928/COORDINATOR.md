@@ -5628,3 +5628,20 @@ The coordinator checks the diff directly. After that:
 6. P4.
 
 The label.py-side alternative is rejected, because it would weaken R7 for every consumer.
+
+## 2026-10-13 11:33Z: B r4 stage C-4 ACCEPTED; quiet-read r9
+
+**Stage run** 0d700046 (CPU 632ed2fb) ran once and reported SUCCESS. Both exit codes were 0.
+- `complete.json` (cdafab0d): schema `b08-stage-complete.v1`, package 89b1582e. `runtime_admitted`, `gpu_work` and `heldout_opened` are all false. 2,136,818,985 B staged.
+- `result.json`: 6954417e.
+
+**C-4 audit:**
+- Claim tip 5483e9d6 is an ancestor of origin/main.
+- The log from that tip contains none of 632ed2fb, 0d700046, 1c0d3c07 or f6cf2f1d.
+- 0 `^REVOKED` lines.
+
+**ACCEPTED.**
+
+**Quiet-read r9:** run with `coordinator-quiet-read-r9.sh` (only `Q=` changed), exit 0.
+
+**Next:** the environment CPU GO, placement r10 and the environment run GO, from the owner's drafts.
