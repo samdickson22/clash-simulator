@@ -17,7 +17,7 @@ trap 'echo "__RC=$?"' EXIT
 log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" >&2; }
 die() { log "FAIL: $2"; exit "$1"; }
 cmd=${1:-}; host=${2:-}
-J03=/mpac/sdicks02/jobs-fsc/fsc-03-20261013; J04=/mpac/sdicks02/jobs-fsc/fsc-04-20261013
+J03=/mpac/sdicks02/jobs-fsc/fsc-03-20261013b; J04=/mpac/sdicks02/jobs-fsc/fsc-04-20261013
 DEADLINE=$(cat "$(dirname "${BASH_SOURCE[0]}")/DEADLINE")   # the single cap (fsc/DEADLINE): latest STOP_AT for any phase
 [[ $DEADLINE =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 90 "bad DEADLINE file"
 case $host in

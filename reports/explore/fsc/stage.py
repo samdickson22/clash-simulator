@@ -27,7 +27,7 @@ X4S2 = {'anchor_x.py': 'cf528473278d4fbf9ffd8aecfd4a3350fe1dbb6bbeb0d441870c9f88
         'plan-ext.json': '31c5cd4a12faf9f5f46f2bf5cee02d89971d0fe9a76ff97c8b48333c3a5b816f',
         'reduce.py': '0abcf12733224550962bd6307c278c2a0649fa4afe01ef04f0b7a1a1b8d78097',
         'leftover.py': 'bb68fe43d2919b504ce57782dba76f165525cfbeb60c37c932340c595833e382'}
-JOBS = {'127x03': '/mpac/sdicks02/jobs-fsc/fsc-03-20261013', '127x04': '/mpac/sdicks02/jobs-fsc/fsc-04-20261013'}
+JOBS = {'127x03': '/mpac/sdicks02/jobs-fsc/fsc-03-20261013b', '127x04': '/mpac/sdicks02/jobs-fsc/fsc-04-20261013'}
 PROTECTED = ('t1', 'corpus', 'x4s', 'x4s2', 'fsc', 'k4s-confirm', 'jobs-k4s', 'perception')
 # Runtime import directories (runtime.sh PYTHONPATH and run.py's sys.path inserts), relative to the repo.
 IMPORT_DIRS = ('', 'src', 'engine-rs', 'reports/explore/x4s2', 'reports/explore/s1', 'student-source', 'reports/explore/e1',

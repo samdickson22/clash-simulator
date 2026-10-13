@@ -16,7 +16,7 @@ host=${1:-}; msha=${2:-}; stop_at=${3:-}
 free=$(df -BG --output=avail /mpac | tail -n 1 | tr -dc 0-9)
 [[ $free =~ ^[0-9]+$ ]]
 [ "$free" -ge 20 ]
-R=/mpac/sdicks02; P=$R/jobs-fsc; J=$P/fsc-${host#127x}-20261013
+R=/mpac/sdicks02; P=$R/jobs-fsc; J=$P/fsc-${host#127x}-20261013; [ "$host" != 127x03 ] || J=${J}b   # 03: fresh leaf after the failed 02:52Z attempt (its prefix holds only bundle/, left untouched)
 [ "$(realpath -e "$R")" = "$R" ]
 if [ ! -e "$P" ] && [ ! -L "$P" ]; then mkdir "$P"; fi
 [ ! -L "$P" ]

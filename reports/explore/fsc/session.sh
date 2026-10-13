@@ -28,7 +28,7 @@ fi
 [ "$(hostname)" = 127x05 ] || die 2 "run on 127x05"
 REPO=/mpac/sdicks02/repos/clasher
 P=/mpac/sdicks02/jobs/clasher; S=$P/fsc-sessions; MIRROR=$P/fsc-mirror-20261013
-J=/mpac/sdicks02/jobs-fsc/fsc-${host#127x}-20261013
+J=/mpac/sdicks02/jobs-fsc/fsc-${host#127x}-20261013; [ "$host" != 127x03 ] || J=${J}b   # 03: fresh leaf (see remote_bootstrap.sh)
 SSH=(ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ControlPersist=no -o StrictHostKeyChecking=yes
      -o UpdateHostKeys=no)
 [ "$(realpath -e "$P")" = "$P" ] || die 3 "$P not canonical"
