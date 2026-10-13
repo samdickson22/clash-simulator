@@ -1,5 +1,5 @@
 """FSC offline tests (05, stdlib): prefix rule, outcome labels, per-game checks on real X4S2 phase-E games."""
-import json, sys, tempfile
+import json, os, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -67,6 +67,78 @@ def test_game_checks():
         pass
     else:
         raise AssertionError('wrong checkpoint accepted')
+
+
+def _tmp():
+    return Path(os.path.realpath(tempfile.mkdtemp(prefix='fsc-test-')))
+
+
+def test_nolinks_and_inside():
+    import stage
+    d = _tmp(); (d/'a').mkdir(); (d/'a/f').write_text('x')
+    assert stage.nolinks(d) == 2
+    os.symlink('/tmp', d/'a/link')
+    for bad in (lambda: stage.nolinks(d), lambda: stage.inside(d, d/'a/link/escape.txt')):
+        try: bad()
+        except AssertionError: pass
+        else: raise AssertionError('symlink accepted')
+    assert stage.inside(d, d/'a/new/file.txt') == d/'a/new/file.txt'
+    shutil.rmtree(d)
+
+
+def test_shadowscan():
+    import stage
+    bundle = HERE.parent  # bundle/fsc/s1-runtime-pin-r2.json resolves to this directory
+    d = _tmp(); (d/'src').mkdir(); (d/'src/unique_zz_module.py').write_text('')
+    assert stage.shadowscan(d, bundle)['shadowscan'] == 'ok'
+    (d/'src/belief.py').write_text('')  # unpinned module that shadows the pinned reports/explore/s1/belief.py
+    try: stage.shadowscan(d, bundle)
+    except AssertionError: pass
+    else: raise AssertionError('shadow accepted')
+    shutil.rmtree(d)
+
+
+def _hc(*args):
+    return subprocess.run([sys.executable, '-I', str(HERE/'hostcheck.py'), *map(str, args)], capture_output=True, text=True)
+
+
+def test_hostcheck_stop_paths():
+    d = _tmp(); phase = d/'stoptest-03'; (phase/'blocks').mkdir(parents=True)
+    group = subprocess.Popen(['bash', '-c', 'sleep 120 & sleep 120; wait'], start_new_session=True)
+    sup = subprocess.Popen(['sleep', '120'], start_new_session=True)
+    time.sleep(0.5)
+    (phase/'launch.json').write_text(json.dumps(dict(child_pgid=group.pid, supervisor_pid=sup.pid)))
+    assert _hc('prestop', phase).returncode == 10  # no started block yet
+    (phase/'blocks/X0000.started').write_text('{}')
+    r = _hc('prestop', phase); assert r.returncode == 0, r.stdout+r.stderr
+    (d/'pre.json').write_text(r.stdout)
+    assert _hc('census', 'live', group.pid, sup.pid).returncode == 0
+    assert _hc('census', 'empty', group.pid, sup.pid).returncode == 10
+    touch = time.time()
+    os.killpg(group.pid, 9); sup.kill(); group.wait(); sup.wait(); time.sleep(0.5)
+    (phase/'supervisor-exit.json').write_text(json.dumps(dict(reason='owned_STOP', returncode=-15, remaining_group_pids=[])))
+    assert _hc('census', 'empty', group.pid, sup.pid).returncode == 0
+    r = _hc('stoptest', phase, touch, d/'pre.json'); assert r.returncode == 0, r.stdout+r.stderr
+    assert _hc('stoptest', phase, touch-200, d/'pre.json').returncode == 10       # exit beyond the 120 s bound
+    (phase/'blocks/X0000.json').write_text('{}')
+    assert _hc('stoptest', phase, touch, d/'pre.json').returncode == 10           # nothing was interrupted
+    (phase/'supervisor-exit.json').write_text(json.dumps(dict(reason='memory_guard', returncode=1, remaining_group_pids=[])))
+    assert _hc('exitstatus', phase).returncode == 10
+    (phase/'supervisor-exit.json').write_text('not json')
+    assert _hc('exitstatus', phase).returncode not in (0, 10)
+    shutil.rmtree(d)
+
+
+def test_wrappers_fail_closed():
+    def last(r): return [l for l in r.stdout.splitlines() if l.startswith('__RC=')][-1]
+    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x09'], capture_output=True, text=True)
+    assert r.returncode == 2 and last(r) == '__RC=2'
+    r = subprocess.run(['bash', str(HERE/'remote_bootstrap.sh'), '127x03', '0'*64, '-'], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    assert r.returncode != 0 and last(r) == f'__RC={r.returncode}' and not os.path.exists('/mpac/sdicks02/jobs/clasher/fsc-03-20261013')
+    r = subprocess.run(['bash', str(HERE/'host_session.sh'), 'launch', '127x03'], capture_output=True, text=True)
+    assert r.returncode == 90 and last(r) == '__RC=90'
+    r = subprocess.run(['bash', str(HERE/'lan_copy_04.sh')], capture_output=True, text=True)
+    assert r.returncode == 1 and 'not 127x04' in r.stderr
 
 
 if __name__ == '__main__':

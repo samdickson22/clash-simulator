@@ -1,133 +1,184 @@
 #!/usr/bin/env bash
-# FSC (U3/U4) host session, exploration, NEVER ADOPTABLE. One SSH session per call; prints __RC=<n> last.
-#   launch HOST [STOP_AT]  preflight (read-only) -> stage -> 8-seed smoke -> live STOP test -> detached reporting run
-#   progress HOST          read-only status; if a console user appeared on a 12-slot run: yield to 10 slots
-#   stop HOST              touch STOP -> wait for supervisor exit -> census by PID -> rsync outputs to 05
-# Never pattern-kills; never writes outside J (and the 05 mirror on stop). Reads the X4S2 job on 03 only to copy it.
-set -uo pipefail
-cmd=${1:?cmd}; host=${2:?host}; arg=${3:-}
+# FSC (U3/U4) host session, exploration, NEVER ADOPTABLE. Started only by session.sh (one SSH session per call).
+#   launch HOST MANIFEST_SHA256 [STOP_AT]  preflight (read-only) -> stage -> 8-seed smoke -> live STOP test -> reporting
+#   progress HOST                          read-only status; console user on a 12-slot run -> yield to 10 slots
+#   stop HOST                              permanent STOP -> wait -> PID census -> exit records -> rsync outputs to 05
+# Fail-closed: errexit + pipefail, every step checked, and the EXIT trap prints the true status as the last line (__RC=n).
+# Each supervisor instance has its own job dir J/inst/<phase> and STOP file; no STOP file is ever removed. J/STOP is the
+# permanent stop: once present nothing is (re)launched. Never pattern-kills; writes only under J (and, on stop, the
+# coordinator-authorized 05 mirror directory, which session.sh creates fresh on 05).
+set -euo pipefail
+shopt -s inherit_errexit nullglob
+export LC_ALL=C
+trap 'echo "__RC=$?"' EXIT
+log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" >&2; }
+die() { log "FAIL: $2"; exit "$1"; }
+cmd=${1:-}; host=${2:-}
 J03=/mpac/sdicks02/jobs/clasher/fsc-03-20261013; J04=/mpac/sdicks02/jobs/clasher/fsc-04-20261013
 case $host in
   127x03) J=$J03; tag=03; cfg=plan-fsc.json;;
   127x04) J=$J04; tag=04; cfg=plan-fsc-04.json;;
-  *) echo "__RC=90"; exit 90;;
+  *) die 90 "bad host '$host'";;
 esac
-BASE=/mpac/sdicks02/jobs/clasher/x4s2-20261011           # 03 only, read-only copy source (X4S2's finished job)
+[ "$(hostname)" = "$host" ] || die 90 "hostname is not $host"
+[ "$(realpath -e "$J")" = "$J" ] || die 90 "$J missing or not canonical"
+BASE=/mpac/sdicks02/jobs/clasher/x4s2-20261011           # 03 only: read-only copy source (X4S2's finished job)
 PY=/mpac/sdicks02/repos/clasher/.venv/bin/python
-MIRROR=/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013   # on 127x05
+MIRROR=/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013   # on 127x05; created fresh by session.sh (coordinator-authorized)
+SSHOPT='ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ControlPersist=no -o StrictHostKeyChecking=yes -o UpdateHostKeys=no'
 E=$J/repo/reports/explore
-log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*"; }
-die() { log "FAIL: $2"; echo "__RC=$1"; exit "$1"; }
-[ "$(hostname)" = "$host" ] || die 90 "hostname $(hostname) != $host"
-renice -n 19 -p $$ >/dev/null
+HC() { python3 -I "$E/fsc/hostcheck.py" "$@"; }
+renice -n 19 -p $$ >/dev/null || die 90 "renice"
 
-foreign_now() {
-  ps -u sdicks02 -o pid=,pgid=,args= | awk -v me="$(ps -o pgid= -p $$ | tr -d ' ')" \
-    '$2 != me && $0 ~ /python|rsync|clasher_core|supervise|runtime\.sh/ && !($0 ~ /rsync --server/ && $NF ~ /^\/mpac\/sdicks02\/mirrors\//)' | sort
+int() { [[ ${1:-} =~ ^[0-9]+$ ]] || die 91 "non-numeric probe output '${1:-}' ($2)"; }
+console_users() {
+  local helper whoout other
+  helper=$(~/.local/bin/fleet-console-users) || die 91 "fleet-console-users failed"; int "$helper" console
+  loginctl list-sessions --no-legend >/dev/null || die 91 "loginctl failed"
+  whoout=$(who) || die 91 "who failed"
+  other=$(printf '%s\n' "$whoout" | awk 'NF && $1 != "sdicks02"' | wc -l); int "$other" who
+  echo $(( helper > other ? helper : other ))   # conservative: any other user's login counts
+}
+# Foreign = sdicks02 python/rsync/clasher processes outside this session's process group (the hub mirror's rsync
+# into /mpac/sdicks02/mirrors/ excepted); a process counts only if present in two checked samples 15 s apart.
+foreign_sample() {
+  local me out
+  me=$(ps -o pgid= -p $$) || return 1; me=${me// /}; [[ $me =~ ^[0-9]+$ ]] || return 1
+  out=$(ps -u sdicks02 -o pid=,pgid=,args=) || return 1; [ -n "$out" ] || return 1
+  printf '%s\n' "$out" | awk -v me="$me" '$2 != me && $0 ~ /python|rsync|clasher_core|supervise|runtime\.sh/ &&
+    !($0 ~ /rsync --server/ && $NF ~ /^\/mpac\/sdicks02\/mirrors\//)' | sort
 }
 preflight() {
-  local console mem free foreign
-  console=$(~/.local/bin/fleet-console-users); mem=$(awk '/MemAvailable/ {print int($2/1048576)}' /proc/meminfo)
-  free=$(df -BG --output=avail /mpac | tail -1 | tr -dc 0-9)
-  # Foreign = any sdicks02 python/rsync/clasher process outside this session's process group that is present in
-  # two samples 15 s apart (transient status probes pass). The hub mirror's rsync into /mpac/sdicks02/mirrors/ is allowed.
-  foreign=$(comm -12 <(foreign_now) <(sleep 15; foreign_now))
-  log "preflight console_users=$console memavailable_GiB=$mem mpac_free_GiB=$free loadavg=$(cut -d' ' -f1-3 /proc/loadavg)"
+  local s1 s2 foreign mem free
+  CONSOLE=$(console_users)
+  mem=$(awk '/^MemAvailable:/ {print int($2/1048576)}' /proc/meminfo); int "$mem" memavailable
+  free=$(df -BG --output=avail /mpac | tail -n 1 | tr -dc 0-9); int "$free" df
+  s1=$(foreign_sample) || die 91 "process sample 1 failed"; sleep 15
+  s2=$(foreign_sample) || die 91 "process sample 2 failed"
+  foreign=$(comm -12 <(printf '%s\n' "$s1") <(printf '%s\n' "$s2"))
+  log "preflight console_users=$CONSOLE memavailable_GiB=$mem mpac_free_GiB=$free loadavg=$(cut -d' ' -f1-3 /proc/loadavg)"
   log "other users' CPU%: $(ps -eo user=,pcpu= | awk '$1 != "sdicks02" {s += $2} END {print s+0}')"
   [ -z "$foreign" ] || { printf '%s\n' "$foreign"; die 91 "foreign sdicks02 processes present"; }
   [ "$mem" -ge 24 ] || die 92 "MemAvailable < 24 GiB"
   [ "$free" -ge 20 ] || die 93 "/mpac free < 20 GiB"
   [ -x "$PY" ] || die 94 "no runtime python"
-  [ ! -e "$J/STOP" ] || die 95 "STOP present"
-  CONSOLE=$console
+  [ ! -e "$J/STOP" ] || die 95 "permanent STOP present"
 }
-
-# run_sup PHASE WORKLIST WORKERS STOP_AT: detached (setsid) supervisor; prints the PID/PGID receipt.
-run_sup() {
-  bash "$E/x4s2/detach.sh" "$J/logs/$1.log" "$J/logs/$1.receipt.json" nice -n 19 taskset -c 62 env X4S2_JOB="$J" \
-    bash "$E/x4s2/runtime.sh" reports/explore/x4s2/supervise.py --job "$J" --phase "$1" --worklist "$2" \
-    --config "$E/fsc/$cfg" --workers "$3" --stop-at "$4"
+json() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; assert isinstance(v,int) and not isinstance(v,bool) and v>1; print(v)' "$1" "$2"; }
+# start PHASE WORKLIST WORKERS STOP_AT: fresh instance J/inst/PHASE (own job dir and STOP file), detached supervisor.
+start() {
+  local I=$J/inst/$1 n
+  [ ! -e "$J/STOP" ] || die 95 "permanent STOP present"
+  mkdir "$I" "$I/repo" "$I/repo/reports" "$I/repo/reports/explore" "$I/repo/reports/explore/x4s2"
+  cp "$E/x4s2/runtime.sh" "$I/repo/reports/explore/x4s2/runtime.sh"   # only file the supervisor needs under --job
+  cmp "$E/x4s2/runtime.sh" "$I/repo/reports/explore/x4s2/runtime.sh"
+  bash "$E/x4s2/detach.sh" "$I/supervisor.log" "$I/receipt.json" nice -n 19 taskset -c 62 env X4S2_JOB="$J" \
+    bash "$E/x4s2/runtime.sh" reports/explore/x4s2/supervise.py --job "$I" --phase "$1" --worklist "$2" \
+    --config "$E/fsc/$cfg" --workers "$3" --stop-at "$4" || die 101 "detach $1"
+  for ((n = 0; n < 60; n++)); do [ -s "$I/$1/launch.json" ] && break; sleep 1; done
+  [ -s "$I/$1/launch.json" ] || { touch "$I/STOP"; die 101 "$1: no launch.json in 60 s (instance STOP touched)"; }
+  [ "$(json "$I/receipt.json" pid)" = "$(json "$I/$1/launch.json" supervisor_pid)" ] || die 101 "$1: receipt/launch PID mismatch"
+  cat "$I/receipt.json" "$I/$1/launch.json"
 }
-# wait_exit PHASE SECONDS: wait for supervisor-exit.json (the supervisor's own bounded stop is <= ~110 s).
-wait_exit() {
-  local i; for ((i = 0; i < $2; i += 2)); do [ -s "$J/$1/supervisor-exit.json" ] && return 0; sleep 2; done; return 1
+wait_exit() {  # wait_exit PHASE_DIR SECONDS
+  local i; for ((i = 0; i < $2; i += 2)); do [ -s "$1/supervisor-exit.json" ] && return 0; sleep 2; done; return 1
 }
-in_hours() { date -u -d "+$1" +%Y-%m-%dT%H:%M:%SZ; }
+in_minutes() { date -u -d "+$1 minutes" +%Y-%m-%dT%H:%M:%SZ; }
+current() { local I; I=$(cat "$J/current-instance"); [[ $I == "$J"/inst/rep"$tag"* ]] || die 90 "bad current-instance"; echo "$I"; }
 
 case $cmd in
 launch)
-  [ -d "$J/bundle" ] && [ ! -e "$J/repo" ] || die 96 "expected fresh $J with only bundle/"
+  msha=${3:-}; arg=${4:-}
+  [[ $msha =~ ^[0-9a-f]{64}$ ]] || die 90 "manifest sha"
+  [[ -z $arg || $arg =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 90 "STOP_AT format"
+  [ "$(ls -A "$J")" = bundle ] || die 96 "expected fresh $J holding only bundle/"
+  python3 -I "$J/bundle/fsc/stage.py" nolinks "$J"
   preflight
-  mkdir -p "$J/logs" "$J/cache"
+  mkdir "$J/logs" "$J/cache" "$J/inst"
   if [ "$host" = 127x03 ]; then
-    for d in repo native inputs; do [ -d "$BASE/$d" ] || die 97 "missing $BASE/$d"; done
-    rsync -a --exclude=/reports/explore/x4s/ --exclude=/reports/explore/x4s2/ --exclude=/reports/explore/k4s-confirm/ \
-      --exclude=/reports/explore/t1/ --exclude='t1-*' --exclude='k4s-*' --exclude=__pycache__ --exclude='*.pyc' \
-      "$BASE/repo/" "$J/repo/" || die 97 "repo copy"
-    cp -a "$BASE/native" "$J/native" && mkdir "$J/inputs" && \
-      cp -a "$BASE/inputs/main02.pt" "$BASE/inputs/R3a.pt" "$BASE/inputs/R3a-calibration.json" "$J/inputs/" || die 97 "copy"
+    for d in "$BASE" "$BASE/repo" "$BASE/native" "$BASE/inputs"; do
+      if [ -L "$d" ] || [ ! -d "$d" ] || [ "$(realpath -e "$d")" != "$d" ]; then die 97 "source $d missing, linked or not canonical"; fi
+    done
+    python3 -I "$J/bundle/fsc/stage.py" shadowscan "$BASE/repo" "$J/bundle"
+    python3 -I "$J/bundle/fsc/stage.py" allowlist "$J/bundle" "$J/logs/repo-allowlist.txt"
+    printf '%s\n' main02.pt R3a.pt R3a-calibration.json > "$J/logs/inputs-allowlist.txt"
+    # Allowlist copies only (the S1 pin's files; the native dir; three inputs). Symlinks are never copied (--no-links).
+    nice -n 19 rsync -rt --no-links --files-from="$J/logs/repo-allowlist.txt" "$BASE/repo/" "$J/repo/"
+    nice -n 19 rsync -rt --no-links "$BASE/native/" "$J/native/"
+    nice -n 19 rsync -rt --no-links --files-from="$J/logs/inputs-allowlist.txt" "$BASE/inputs/" "$J/inputs/"
   else
-    bash "$J/bundle/fsc/lan_copy_04.sh" || die 97 "LAN copy from 03"
+    bash "$J/bundle/fsc/lan_copy_04.sh"
   fi
-  python3 -I "$J/bundle/fsc/stage.py" install "$J" "$J/bundle" "$host" || die 98 "staging verification"
+  python3 -I "$J/bundle/fsc/stage.py" install "$J" "$J/bundle" "$host" "$msha"
   log "staged: $(du -sh "$J" | cut -f1)"
-  # 8-seed smoke (8 workers), then the live STOP test (4 workers); both excluded from every analysis.
-  run_sup "smoke-$tag" "$E/fsc/wl-smoke-$tag.json" 8 "$(in_hours '30 minutes')" || die 99 "smoke launch"
-  wait_exit "smoke-$tag" 1500 || { touch "$J/STOP"; wait_exit "smoke-$tag" 240; die 99 "smoke did not exit in 25 min (STOP left in place)"; }
-  python3 -I "$E/fsc/hostcheck.py" smoke "$J/smoke-$tag" "$E/fsc/$cfg" "$host" || die 99 "smoke gate"
-  run_sup "stoptest-$tag" "$E/fsc/wl-stoptest-$tag.json" 4 "$(in_hours '30 minutes')" || die 100 "stoptest launch"
-  for ((i = 0; i < 180; i += 2)); do compgen -G "$J/stoptest-$tag/blocks/*.started" >/dev/null && break; sleep 2; done
-  sleep 20; touch "$J/STOP"; log "STOP touched for the STOP test"
-  wait_exit "stoptest-$tag" 240 || die 100 "STOP test: no supervisor exit in 240 s (STOP left in place)"
-  python3 -I "$E/fsc/hostcheck.py" stoptest "$J/stoptest-$tag" || die 100 "STOP test gate (STOP left in place)"
-  rm -f "$J/STOP"
-  # Reporting run: 12 slots, or 10 with a console user; stop-at = min(now + 8 h - 5 min, optional STOP_AT).
+  # 8-seed smoke (8 workers; smoke range; excluded from every analysis).
+  start "smoke-$tag" "$E/fsc/wl-smoke-$tag.json" 8 "$(in_minutes 30)"
+  P=$J/inst/smoke-$tag/smoke-$tag
+  wait_exit "$P" 1500 || { touch "$J/inst/smoke-$tag/STOP"; wait_exit "$P" 240 || true; die 99 "smoke: no exit in 25 min"; }
+  HC smoke "$P" "$E/fsc/$cfg" "$host" || die 99 "smoke gate"
+  # Live STOP test (4 workers; STOP-test range): STOP only once a block has started and workers are live.
+  start "stoptest-$tag" "$E/fsc/wl-stoptest-$tag.json" 4 "$(in_minutes 30)"
+  I=$J/inst/stoptest-$tag; P=$I/stoptest-$tag; ok=0
+  for ((n = 0; n < 90; n++)); do
+    if HC prestop "$P" > "$I/pre-stop.json"; then ok=1; break; fi; sleep 2
+  done
+  [ "$ok" = 1 ] || { touch "$I/STOP"; die 100 "STOP test: no live started block within 180 s"; }
+  touch "$I/STOP"; t=$(date +%s.%N); log "STOP test: instance STOP touched at epoch $t"
+  wait_exit "$P" 240 || die 100 "STOP test: no supervisor exit in 240 s"
+  HC stoptest "$P" "$t" "$I/pre-stop.json" || die 100 "STOP test gate"
+  # Reporting run: 12 slots, or 10 with a console user; stop-at = min(now + 7 h 55 min, STOP_AT).
   preflight
-  workers=12; [ "$CONSOLE" -gt 0 ] && workers=10
-  stop_at=$(in_hours '475 minutes'); [ -n "$arg" ] && [[ "$arg" < "$stop_at" ]] && stop_at=$arg
-  echo "rep$tag" > "$J/current-phase"; echo "$E/fsc/wl-$tag.json" > "$J/current-worklist"; echo "$stop_at" > "$J/stop-at"
-  run_sup "rep$tag" "$E/fsc/wl-$tag.json" "$workers" "$stop_at" || die 101 "reporting launch"
-  for ((i = 0; i < 60; i++)); do [ -s "$J/rep$tag/launch.json" ] && break; sleep 1; done
-  cat "$J/rep$tag/launch.json" || die 101 "no launch.json"
+  workers=12; [ "$CONSOLE" -eq 0 ] || workers=10
+  stop_at=$(in_minutes 475); if [ -n "$arg" ] && [[ $arg < $stop_at ]]; then stop_at=$arg; fi
+  printf '%s\n' "$stop_at" > "$J/stop-at"; printf '%s\n' "$E/fsc/wl-$tag.json" > "$J/current-worklist"
+  printf '%s\n' "$J/inst/rep$tag" > "$J/current-instance"
+  start "rep$tag" "$E/fsc/wl-$tag.json" "$workers" "$stop_at"
   sleep 60
-  python3 -I "$E/fsc/hostcheck.py" census "$(python3 -c "import json;print(json.load(open('$J/rep$tag/launch.json'))['child_pgid'])")" \
-    >/dev/null && die 101 "reporting group empty after 60 s"
-  log "reporting running: phase rep$tag workers=$workers stop_at=$stop_at started_blocks=$(ls "$J/rep$tag/blocks" 2>/dev/null | wc -l)"
-  echo "__RC=0" ;;
+  P=$J/inst/rep$tag/rep$tag
+  HC census live "$(json "$P/launch.json" child_pgid)" "$(json "$P/launch.json" supervisor_pid)" \
+    || { touch "$J/inst/rep$tag/STOP"; die 101 "reporting run not live after 60 s (instance STOP touched)"; }
+  log "reporting running: rep$tag workers=$workers stop_at=$stop_at started=$(find "$P/blocks" -name '*.started' | wc -l)"
+  ;;
 
 progress)
-  ph=$(cat "$J/current-phase"); p=$J/$ph
-  [ -s "$p/progress.json" ] && cat "$p/progress.json"
-  [ -s "$p/supervisor-exit.json" ] && { cat "$p/supervisor-exit.json"; echo "__RC=0"; exit 0; }
-  console=$(~/.local/bin/fleet-console-users); workers=$(python3 -c "import json;print(json.load(open('$p/launch.json'))['workers'])")
-  log "phase=$ph workers=$workers console_users=$console proofs=$(ls "$p/blocks" | grep -c '\.json$')"
+  I=$(current); ph=$(basename "$I"); P=$I/$ph
+  if [ -s "$P/progress.json" ]; then cat "$P/progress.json"; fi
+  if [ -e "$P/supervisor-exit.json" ]; then HC exitstatus "$P" || die 102 "run ended for an unplanned reason"; exit 0; fi
+  HC census live "$(json "$P/launch.json" child_pgid)" "$(json "$P/launch.json" supervisor_pid)" \
+    || die 102 "run not live and no exit record"
+  console=$(console_users); workers=$(json "$P/launch.json" workers)
+  log "phase=$ph workers=$workers console_users=$console proofs=$(find "$P/blocks" -name '*.json' | wc -l)"
   if [ "$console" -gt 0 ] && [ "$workers" -gt 10 ]; then
-    # Yield: stop this phase, keep its never-started blocks in order, relaunch them on 10 slots (same stop-at).
-    log "console user present: yielding to 10 slots"; touch "$J/STOP"
-    wait_exit "$ph" 240 || die 102 "yield: no supervisor exit (STOP left in place)"
-    rm -f "$J/STOP"; n=$(ls -d "$J"/rep$tag* | wc -l); new="rep$tag-y$n"
-    python3 -I "$E/x4s2/leftover.py" "$(cat "$J/current-worklist")" "$p" "$J/logs/wl-$new.json" || die 102 "leftover"
-    echo "$new" > "$J/current-phase"; echo "$J/logs/wl-$new.json" > "$J/current-worklist"
-    run_sup "$new" "$J/logs/wl-$new.json" 10 "$(cat "$J/stop-at")" || die 102 "yield relaunch"
+    # Yield: stop this instance by its own STOP, prove it is gone, relaunch its never-started blocks on 10 slots.
+    [ ! -e "$J/STOP" ] || die 95 "permanent STOP present: no yield relaunch"
+    log "console user present: yielding to 10 slots"; touch "$I/STOP"
+    wait_exit "$P" 240 || die 102 "yield: no supervisor exit in 240 s"
+    HC exitstatus "$P" || die 102 "yield: exit record or census not clean"
+    python3 -I -c 'import json,sys; assert json.load(open(sys.argv[1]))["reason"]=="owned_STOP"' "$P/supervisor-exit.json"
+    n=$(find "$J/inst" -mindepth 1 -maxdepth 1 -name "rep$tag*" | wc -l); new=rep$tag-y$n
+    python3 -I "$E/x4s2/leftover.py" "$(cat "$J/current-worklist")" "$P" "$J/logs/wl-$new.json"
+    printf '%s\n' "$J/logs/wl-$new.json" > "$J/current-worklist"; printf '%s\n' "$J/inst/$new" > "$J/current-instance"
+    start "$new" "$J/logs/wl-$new.json" 10 "$(cat "$J/stop-at")"
+    sleep 60
+    HC census live "$(json "$J/inst/$new/$new/launch.json" child_pgid)" "$(json "$J/inst/$new/$new/launch.json" supervisor_pid)" \
+      || { touch "$J/inst/$new/STOP"; die 102 "yield relaunch not live (instance STOP touched)"; }
   fi
-  echo "__RC=0" ;;
+  ;;
 
 stop)
-  touch "$J/STOP"; log "STOP touched"; ph=$(cat "$J/current-phase")
-  wait_exit "$ph" 240 || log "no supervisor-exit.json after 240 s"
-  rc=0
-  for r in "$J"/logs/*.receipt.json; do
-    pid=$(python3 -c "import json;print(json.load(open('$r'))['pid'])")
-    d=$J/$(basename "$r" .receipt.json); pg=0
-    [ -s "$d/launch.json" ] && pg=$(python3 -c "import json;print(json.load(open('$d/launch.json'))['child_pgid'])")
-    python3 -I "$E/fsc/hostcheck.py" census "$pg" "$pid" || rc=103
+  touch "$J/STOP"; for I in "$J"/inst/*/; do touch "$I/STOP"; done; log "permanent and instance STOP files touched"
+  I=$(current); P=$I/$(basename "$I")
+  wait_exit "$P" 240 || die 103 "no supervisor-exit.json in 240 s (STOP files stay)"
+  for I in "$J"/inst/*/; do
+    I=${I%/}; P=$I/$(basename "$I")
+    HC census empty "$(json "$I/receipt.json" pgid)" "$(json "$I/receipt.json" pid)" || die 103 "census $I"
+    HC exitstatus "$P" || die 103 "exit record $P"
   done
-  [ "$rc" = 0 ] || die 103 "processes remain (by PID census above)"
-  cat "$J/$ph/supervisor-exit.json"
-  rsync -a --rsync-path="mkdir -p $MIRROR/$host && nice -n 19 rsync" \
+  python3 -I "$E/fsc/stage.py" nolinks "$J"
+  nice -n 19 rsync -rt --no-links -e "$SSHOPT" --rsync-path='nice -n 19 rsync' \
     --exclude=/repo/ --exclude=/native/ --exclude=/inputs/ --exclude=/cache/ --exclude=/bundle/ \
-    "$J/" "127x05:$MIRROR/$host/" || die 104 "rsync to 05"
+    "$J/" "127x05:$MIRROR/$host/"
   log "outputs mirrored to 127x05:$MIRROR/$host"
-  echo "__RC=0" ;;
-*) die 90 "unknown command $cmd" ;;
+  ;;
+*) die 90 "unknown command '$cmd'";;
 esac

@@ -45,38 +45,63 @@ Unchanged (byte-identical, SHA-checked at staging): `anchor_x.py`, `sdefault.py`
 `plan.json` (03), `reduce.py`, `leftover.py`, and the 1,557-file S1 runtime pin f81f3655 (repo), plus native 44874fd6,
 v1 d77005d5, R3a 37509a43 and calibration e3003533. There are no game, kernel or student changes.
 
-## Host procedure ([host_session.sh](host_session.sh); new host-touching code, so it gets a narrow review)
-The bundle is built from committed bytes by [make_bundle.sh](make_bundle.sh) (fsc at the commit, plus the X4S2 files from
-1501be97f, plus MANIFEST.json). Every SSH below is a single session; there are no pollers, cron entries, timers or
-units. Everything runs under nice 19 (supervisors also taskset 62, game slots 0–59).
+## Host procedure (r2, after Sol r1 REQUEST_CHANGES; see [REVIEW-RESPONSE-r1.md](REVIEW-RESPONSE-r1.md))
+Every contact goes through [session.sh](session.sh) on 05: `session.sh launch|progress|stop HOST COMMIT MANIFEST_SHA256 [STOP_AT]`.
 
-1. **Launch, one session per host:** `tar -C BUNDLE -cf - . | ssh 127x0N '<fresh J check>; mkdir -p $J/bundle && tar -xf - -C $J/bundle && exec nice -n 19 bash $J/bundle/fsc/host_session.sh launch 127x0N [STOP_AT]'`
-   1. **Read-only preflight:**
-      - `fleet-console-users`;
-      - MemAvailable ≥ 24 GiB;
-      - /mpac free ≥ 20 GiB;
-      - no foreign sdicks02 python/rsync/clasher process in two samples 15 s apart;
-      - runtime python present;
-      - no STOP file.
-   2. **Stage:**
-      - **03:** local copy of the X4S2 job's repo, excluding the x4s, x4s2, k4s-confirm and t1 overlays and any `t1-*`/`k4s-*` path, plus native and the three inputs. The source is read-only.
-      - **04:** [lan_copy_04.sh](lan_copy_04.sh).
-      - Then `stage.py install` installs the overlay and verifies the S1 pin, native, inputs, the X4S2 pins and the FSC files. It writes `staging.json`.
-   3. **8-seed smoke** (8 workers, smoke range): `hostcheck.py smoke` gate. It checks proofs, X4S2 game checks, deck, checkpoint, `s_default`, and a clean exit. No losses are printed.
-   4. **Live STOP test** (4 workers, STOP-test range): STOP is touched about 20 s after the first block starts. `hostcheck.py stoptest` requires `owned_STOP`, an empty group, a PID census of 0, and reports the STOP-to-exit time. STOP is then removed.
-   5. **Detached reporting run** (`setsid`): 12 slots, or 10 with a console user, with `--stop-at` = min(now + 7 h 55 min, the coordinator's STOP_AT). The session prints the PID/PGID receipt and `launch.json`, checks the group is alive 60 s later, prints `__RC`, and disconnects.
-2. **Progress:** at most one SSH per host every 2 h (`progress`), read-only. **Yield:** if a console user is present on a 12-slot run, the session touches STOP, waits for exit, keeps the never-started blocks in order (`leftover.py`, X4S2, unchanged), and relaunches them on 10 slots with the same stop-at.
-3. **STOP session, one per host** (the coordinator's STOP, or after the code stop-at):
-   1. touch STOP and wait for `supervisor-exit.json`;
-   2. run a PID census of every receipt (supervisor PID + child PGID), which must be 0;
-   3. rsync outputs, excluding repo/native/inputs/cache/bundle, to `127x05:/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/<host>/` (fresh directory, no `--delete`);
-   4. print `__RC`.
+**What session.sh enforces:**
+- It rebuilds the bundle from COMMIT ([make_bundle.sh](make_bundle.sh)) and refuses it unless MANIFEST.json matches the given hash.
+- One SSH session per call: BatchMode, no ControlMaster/ControlPath/ControlPersist, StrictHostKeyChecking=yes, UpdateHostKeys=no.
+- A call succeeds only if the SSH exit status and the remote's last `__RC` are both 0.
+- It refuses:
+  - a second launch;
+  - a progress call within 2 h of the last session;
+  - any call after a successful stop;
+  - a 04 launch once 03 is stopped.
 
-   **After this, no further contact with that host.**
-4. **The coordinator's STOP** comes ≥ 3 h before the first K4S END host step on that host. A K4S-runner request triggers an immediate STOP.
+**Launch.** [remote_bootstrap.sh](remote_bootstrap.sh) creates the fresh prefix atomically (`mkdir`, canonical parent) and
+extracts the bundle. It refuses non-regular entries and checks the manifest hash and every file, then execs
+[host_session.sh](host_session.sh) `launch`. That session runs under errexit and pipefail, every step is checked, and an EXIT trap prints the true `__RC`:
+1. **Read-only preflight, fail-closed.** Every probe's status and numeric output is validated. Console users =
+   max(`fleet-console-users`, other users' logins in `who`), and `loginctl` must succeed. Foreign processes come from two checked
+   `ps` samples taken 15 s apart.
+2. **Staging by exact allowlist, never copying symlinks** (`rsync --no-links`). The repo gets exactly the S1 pin's
+   1,557 files, plus the native dir and three inputs.
+   - **03:** the copy comes from the X4S2 job (read-only). Source roots must be canonical, non-symlinked directories. A shadow scan refuses
+     any unpinned module in a runtime import directory that shares a name with a pinned or overlay module.
+   - **04:** [lan_copy_04.sh](lan_copy_04.sh) runs instead.
+   - `stage.py install` then refuses symlinks anywhere under the prefix and any write that resolves outside it. It verifies that the repo is exactly
+     the pin plus the overlay, and checks the native, input and checkpoint pins plus the runtime python's return code.
+3. **Smoke:** 8 seeds; the `hostcheck.py smoke` gate must pass.
+4. **Live STOP test.**
+   - Before STOP: a block must have started, the run group must have ≥ 2 live processes, and the supervisor must be alive. Otherwise the test fails.
+   - STOP is touched and its time recorded. Exit must follow within ≤ 120 s, with reason `owned_STOP`, an empty census of every pre-STOP PID, and
+     ≥ 1 started block left without proof.
+5. **Reporting run,** detached; the group must be live 60 s later.
 
-**04 depends on 03.** The 04 copy reads 03's staged prefix, so 04 must launch while 03 is still in contact, before 03's
-STOP session.
+**Supervisor instances.** Each one runs with its own job dir `J/inst/<phase>` and its own STOP file, and **no STOP file is ever removed**.
+The supervisor needs only `runtime.sh` under `--job`, which is a checked copy. `X4S2_JOB=J` keeps the runtime in J.
+`J/STOP` is the permanent stop: once it exists, nothing launches or relaunches.
+
+**Progress.** Read-only; an unplanned exit reason fails the call. **Yield:** this applies when a console user is present on a 12-slot
+run and `J/STOP` is absent. The session touches that instance's STOP and requires reason `owned_STOP` plus an empty group and
+census. It then relaunches the never-started blocks (`leftover.py`) as a fresh instance on 10 slots, with the same stop-at.
+
+**Stop.**
+1. Touch `J/STOP` and every instance's STOP, then wait for exit.
+2. Every instance must show an empty census (receipt PID/PGID plus child PGID and supervisor PID) and a planned exit reason.
+3. Check the prefix is link-free, then rsync outputs (`--no-links`, explicit non-persistent `-e ssh`) into
+   `127x05:/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/<host>/`. session.sh creates that directory fresh and canonical before the
+   session and checks it link-free after. This path is coordinator-authorized (F6).
+
+**After stop there is no further contact.** The coordinator's STOP comes ≥ 3 h before the first K4S END host step on that
+host.
+
+**Disclosed and accepted (F8).** The reused X4S2 supervisor stops its run by `os.killpg` (TERM, then KILL) on **its own
+child process group only**. This is the reviewed harness behaviour. The FSC scripts themselves never signal groups or
+pattern-kill; they verify by PID census.
+
+**04 depends on 03.** The 04 copy reads 03's staged prefix (two rsync connections), so 04 must launch while 03 is still in
+contact, before 03's STOP session.
 
 ## Never touched
 - K4S paths (`k4s-*`, `jobs-k4s`, `k4s-end-r1`), `t1-*`, and 03's T1 corpus copy. The X4S2 job's `corpus/` is not copied.

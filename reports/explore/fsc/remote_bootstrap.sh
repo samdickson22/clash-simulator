@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# FSC launch bootstrap, run on the host by session.sh as `bash -c <this file> _ HOST MANIFEST_SHA256 STOP_AT|-`, with the
+# bundle tar on stdin. Creates the fresh prefix atomically under the canonical jobs dir, extracts the bundle, refuses any
+# non-regular entry, verifies MANIFEST.json against the expected hash and every file against MANIFEST.json, then execs
+# host_session.sh (which prints its own __RC). Every failure before that prints __RC=<nonzero>.
+set -euo pipefail
+shopt -s inherit_errexit
+export LC_ALL=C
+trap 'echo "__RC=$?"' EXIT
+host=${1:-}; msha=${2:-}; stop_at=${3:-}
+[[ $host == 127x03 || $host == 127x04 ]]
+[[ $msha =~ ^[0-9a-f]{64}$ ]]
+[[ $stop_at == - || $stop_at =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]]
+[ "$(hostname)" = "$host" ]
+P=/mpac/sdicks02/jobs/clasher; J=$P/fsc-${host#127x}-20261013
+[ "$(realpath -e "$P")" = "$P" ]
+mkdir "$J"
+mkdir "$J/bundle"
+[ "$(realpath -e "$J/bundle")" = "$J/bundle" ]
+tar -x -f - -C "$J/bundle" --no-same-owner --no-same-permissions
+cd "$J/bundle"
+odd=$(find . ! -type f ! -type d)
+[ -z "$odd" ]
+got=$(sha256sum MANIFEST.json)
+[ "${got:0:64}" = "$msha" ]
+python3 -I -c '
+import hashlib, json, pathlib
+m = json.load(open("MANIFEST.json"))
+files = {str(p) for p in pathlib.Path(".").rglob("*") if p.is_file()} - {"MANIFEST.json"}
+assert files == set(m["files"]), "bundle file set differs from MANIFEST"
+for rel, h in m["files"].items():
+    assert hashlib.sha256(open(rel, "rb").read()).hexdigest() == h, rel
+'
+cd /
+args=(launch "$host" "$msha"); [ "$stop_at" = - ] || args+=("$stop_at")
+trap - EXIT
+exec nice -n 19 bash "$J/bundle/fsc/host_session.sh" "${args[@]}"
