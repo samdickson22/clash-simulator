@@ -5056,3 +5056,28 @@ All match. **G6 PASS.**
 - loadavg 0.14.
 
 **Next:** epoch-1 CPU GO and placement r8, issued from the owner's drafts. The run GO follows C-6.
+
+## 2026-10-13 05:03Z: B epoch-1 CPU GO r2 and placement GO r8 issued (package r3)
+
+These are the owner's drafts in `l1/prepared/b08-r3-epoch01-chain-drafts-r1/` (94e54587, 43b36ea9). The coordinator changed only:
+- the fresh observation (quiet-read r6, 6a010615 at b3d10ce5: who 0);
+- the environment prerequisite (environment.json 65579011, C-4 and G6 accepted at b3d10ce5, the G6 comparison values) and the CPU `environment.sha256`;
+- on the placement, `between_phases` and `no_active_cpu_or_gpu_phase` set to true (the environment completed and was accepted, and nothing is active);
+- `draft_status` and the remaining blocker.
+
+The CPU GO was hashed first and the placement GO repinned to it. The placement GO passes F1 `validate_go`, the CPU GO passes `receipt()` (phase `current-graph`), C-5 is clean and there are no collisions.
+
+**Scope:** epoch 1 only, serial and alone, 32 GiB worker address space, cpus [0,1], concurrency off. No GPU and no heldout data. The failed earlier chain (fd4132c1, 0ac52112) stays consumed and is not reused.
+
+**Windows:**
+- placement: 05:40Z to 07:10Z, operator 2c22b94e, one invocation;
+- epoch-1 CPU: 06:00Z to 08:00Z.
+
+The run GO follows C-6.
+
+**Decision rules that follow:**
+- U1 pairing (epochs 2 and 3) only if epoch 1 takes ≤ 2,400 s.
+- G5 requires every epoch to take ≤ 3,600 s before the reducer.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 24498e3d70beda75b7364d695fd1ad6896c913e7725a41d48f246d70685715bf
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 49b819b8883ef6aa09b000eacf82a41fd2dd6bc6c12c1cdea0119493812ec938
