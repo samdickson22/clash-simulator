@@ -5004,3 +5004,20 @@ ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e09712aa47bcf83cee406bf0734d26c6da1aaf4c3e1
 - **Review:** the coordinator verified the 5-line diff directly. There is no other subprocess handler with this race; the rest go through `safe_input.run_checked`.
 
 **Re-GO:** A1 with S1 r6 (16cbbf57), then A1b, but only if A1 exits 0. Commands and conditions are otherwise as in ea3f7686.
+
+## 2026-10-13 04:52Z: X4S-4 staging amendment SA-1 approved (S2 stop at d0c43065)
+
+S2 stopped correctly at 38/41 checks. `base/repo/imitation/exit_r1/{rows,pack,emitter}.py` were absent, because the X4S-3 base has no exit_r1 package, and `base/corpus/` was absent. The runbook's own S2 rule already requires these files: exit_r1 must equal origin/main, and the corpus must equal the X4S-3 pins. So this is a staging-layout gap, not a code change.
+
+The coordinator verified that at both 04c068f5 and origin/main the files have these hashes:
+- `__init__` 441385ea
+- rows 835a4104
+- pack 5442af29
+- emitter dab61651
+
+**SA-1, approved exactly as proposed:**
+1. **S1b:** `git archive 04c068f5` of those 4 files into `$J/staging`, then `cp -a` to `$J/base/repo/imitation/exit_r1`.
+2. **S1c:** `cp -a $J3/corpus $J/base/corpus`. J3 is only read.
+3. Rerun the full S2 with `__init__` added. Then the overlay, S3 and W0, as written.
+
+No script changes. Any further S2 failure stops the run again.
