@@ -28,7 +28,7 @@ Today's estimate is +2.2 [−0.3, +4.7] pp on X and +0.6 [−0.8, +2.2] pooled (
 | 127x03 | [wl-03.json](wl-03.json): 200 pair, indices 0–2399 (primary) | 2,400 × 2 |
 | 127x04 | [wl-04.json](wl-04.json): 180 pair, indices 2400–3899 | 1,500 × 2 |
 
-**r2: the top-ups were dropped** under the K4S runner's 05:00Z hard STOP. The supervisor's `--stop-at` is ≤ 04:50Z,
+**r2: the top-ups were dropped** under the K4S runner's hard STOP (cap first 04:50Z, raised by the coordinator to 07:30Z). Every phase's `--stop-at` is ≤ STOP_AT ≤ [DEADLINE](DEADLINE),
 enforced in session.sh, the bootstrap and host_session.sh. At about 1,100 games/h per host, roughly 2 h of reporting
 gives about 1,100 seeds per host. Both results are cut at their prefixes (READOUT). Indices 3900–7899 stay reserved and
 unused, and the configs and seed audit are unchanged.
@@ -55,8 +55,10 @@ unused, and the configs and seed audit are unchanged.
 6. **Source read-only:** `x4s2-20261011` is only read by rsync (as sender) and lstat/scandir. No git, chmod, touch or
    locks. On 03, /mpac free space is checked first (bootstrap ≥ 20 GiB before any write; then ≥ copy size + 20 GiB
    before copying).
-7. **Hard STOP:** STOP_AT is required and must be ≤ 04:50Z. The stop runner starts the stop sessions at STOP_AT, so STOP
-   is verified by 05:00Z.
+7. **Hard STOP:** STOP_AT is required and must be ≤ the single cap in [DEADLINE](DEADLINE) (07:30Z), checked by session.sh, the
+   bootstrap, host_session.sh and stop_runner.sh. Every phase (smoke, STOP test, reporting, yield) is capped at STOP_AT, and `start`
+   refuses a stop-at beyond the cap or already passed. The stop runner is armed before the launches and runs the stop sessions at
+   STOP_AT; the stop session also covers incomplete launches.
 
 ## Harness (X4S2 at 1501be97f; the diff is constants only)
 `harness/run.py` and `harness/supervise.py` are installed as `reports/explore/x4s2/{run,supervise}.py`. The edits:

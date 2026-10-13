@@ -23,3 +23,9 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
 - 2026-10-13T01:54Z: the K4S runner cleared U3/U4 with seven binding conditions; all are built into r2 (prefix moved to
   /mpac/sdicks02/jobs-fsc, top-ups dropped, STOP_AT ≤ 04:50Z, memory guards, STOP proof, stop_runner on 05). Tests and
   shellcheck pass. Committing the final r2 for Sol (PR-1 last round). No host contact.
+- 2026-10-13T02:19Z: the coordinator raised the STOP_AT cap to 07:30Z (K4S A1 never before STOP + 1 h). Committed **d59cce54a**: DEADLINE
+  04:50Z → 07:30Z in host_session.sh, session.sh and stop_runner.sh; the test's over-cap example moved to 08:30Z. Bundle
+  MANIFEST 661fcb92…. Primary-only worklists kept. Holding for Sol r2 (report: coordinator-notes/SOL-REVIEW-FSC-HOST-SCRIPTS-r2.md) and GO.
+- 2026-10-13T02:30Z: Sol r2 (31097eec) REQUEST_CHANGES on R2-1 (stop-history reads), R2-2 (console false zero) and R2-3 (cap on every
+  phase), plus a single cap constant. All fixed (single cap in fsc/DEADLINE = 07:30Z). The coordinator verifies the diff
+  against 3dc9ab25 directly (PR-1 final round). No host contact.

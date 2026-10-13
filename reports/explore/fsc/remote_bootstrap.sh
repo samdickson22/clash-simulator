@@ -38,6 +38,9 @@ assert files == set(m["files"]), "bundle file set differs from MANIFEST"
 for rel, h in m["files"].items():
     assert hashlib.sha256(open(rel, "rb").read()).hexdigest() == h, rel
 '
+dl=$(cat fsc/DEADLINE)   # the single cap, from the verified bundle
+[[ $dl =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]]
+[[ ! $stop_at > $dl ]]
 cd /
 trap - EXIT
 exec nice -n 19 bash "$J/bundle/fsc/host_session.sh" launch "$host" "$msha" "$stop_at"

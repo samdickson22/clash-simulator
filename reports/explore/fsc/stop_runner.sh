@@ -2,13 +2,14 @@
 # FSC one-shot STOP runner on 127x05 (exploration, NEVER ADOPTABLE). Not cron, not a timer, not a unit: started once,
 # detached with setsid right after the launches, exits after one STOP session per host. It never polls hosts.
 #   stop_runner.sh AT COMMIT MANIFEST_SHA256 HOST...
-# Sleeps until AT (the coordinator's STOP time, <= 04:50Z), then runs `session.sh stop HOST` for every HOST in parallel
+# Arm it BEFORE the launches. Sleeps until AT (the coordinator's STOP time, <= fsc/DEADLINE), then runs `session.sh stop HOST` for every HOST in parallel
 # (each a single SSH session) and waits for each by PID. A host already stopped by hand is refused by session.sh.
 set -euo pipefail
 shopt -s inherit_errexit
 export LC_ALL=C
 trap 'echo "__RC=$?"' EXIT
-DEADLINE=2026-10-13T07:30:00Z
+DEADLINE=$(cat "$(dirname "${BASH_SOURCE[0]}")/DEADLINE")   # the single cap (fsc/DEADLINE)
+[[ $DEADLINE =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || exit 2
 at=${1:-}; commit=${2:-}; msha=${3:-}; shift 3 || exit 2
 [[ $at =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || exit 2
 if [[ $at > $DEADLINE ]]; then echo "AT after $DEADLINE" >&2; exit 2; fi

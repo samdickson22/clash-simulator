@@ -13,7 +13,9 @@ export LC_ALL=C
 trap 'echo "__RC=$?"' EXIT
 die() { echo "session FAIL: $2" >&2; exit "$1"; }
 cmd=${1:-}; host=${2:-}; commit=${3:-}; msha=${4:-}; stop_at=${5:--}
-DEADLINE=2026-10-13T07:30:00Z   # latest supervisor stop-at; STOP verified by 05:00Z (K4S condition 7)
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+DEADLINE=$(cat "$HERE/DEADLINE")   # the single cap (fsc/DEADLINE); the bundle's copy must be identical
+[[ $DEADLINE =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 2 "bad DEADLINE file"
 [[ $cmd == launch || $cmd == progress || $cmd == stop ]] || die 2 "command"
 [[ $host == 127x03 || $host == 127x04 ]] || die 2 "host"
 [[ $commit =~ ^[0-9a-f]{40}$ ]] || die 2 "full 40-hex commit"
@@ -31,9 +33,15 @@ SSH=(ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ControlPers
      -o UpdateHostKeys=no)
 [ "$(realpath -e "$P")" = "$P" ] || die 3 "$P not canonical"
 mkdir -p "$S"; [ "$(realpath -e "$S")" = "$S" ] || die 3 "$S not canonical"
+# Fail-closed stop history: a stop log that is a link, unreadable or not a regular file, or a grep read error, aborts.
 stopped() {
-  local f r
-  for f in "$S/$1"-stop-*.log; do r=$(grep '^__RC=' "$f" | tail -n 1 || true); if [ "$r" = __RC=0 ]; then return 0; fi; done
+  local f r g
+  for f in "$S/$1"-stop-*.log; do
+    if [ -L "$f" ] || [ ! -f "$f" ] || [ ! -r "$f" ]; then die 4 "stop log $f is not a readable regular file"; fi
+    set +e; r=$(grep '^__RC=' "$f"); g=$?; set -e
+    case $g in 0|1) ;; *) die 4 "cannot read stop log $f (grep $g)";; esac
+    if [ "${r##*$'\n'}" = __RC=0 ]; then return 0; fi
+  done
   return 1
 }
 if stopped "$host"; then die 4 "$host already stopped: no further contact"; fi
@@ -50,6 +58,7 @@ B=$S/bundle-$host-$cmd-$stamp
 ( cd "$REPO" && bash "$REPO/reports/explore/fsc/make_bundle.sh" "$commit" "$B" ) >&2
 got=$(sha256sum "$B/MANIFEST.json"); [ "${got:0:64}" = "$msha" ] || die 5 "bundle manifest ${got:0:64} != $msha"
 odd=$(find "$B" ! -type f ! -type d); [ -z "$odd" ] || die 5 "non-regular entries in bundle"
+cmp "$HERE/DEADLINE" "$B/fsc/DEADLINE" || die 5 "bundle DEADLINE differs from $HERE/DEADLINE"
 log=$S/$host-$cmd-$stamp.log
 case $cmd in
 launch)

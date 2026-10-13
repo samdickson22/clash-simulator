@@ -11,7 +11,7 @@ session. During the run only counts are read (`progress.json`, proof counts).
 - **Prefix rule (as X4S-4 [E8]).** Each host's blocks are cut to the **largest complete prefix in that host's worklist
   order**: `wl-03.json` has indices 0–2399 at 200 ms and `wl-04.json` has 2400–3899 at 180 ms.
   - **Amendment r2, before any game:** the top-up segments (3900–7899) are dropped. Under the K4S runner's condition, STOP
-    must be verified by 05:00Z (supervisor `--stop-at` ≤ 04:50Z). Neither worklist is expected to finish, so both
+    must be verified shortly after STOP_AT, and every phase's `--stop-at` is ≤ STOP_AT ≤ `DEADLINE` (07:30Z since the coordinator's 2026-10-13 raise). Neither worklist is expected to finish, so both
     outcomes come from time-cut prefixes.
   The prefix ends at the first block that is not complete. Complete blocks beyond it are dropped and their count is
   disclosed. So the sample is never selected by game duration.

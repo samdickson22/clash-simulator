@@ -40,4 +40,10 @@ other missing file fails the smoke.
 | K4 | Memory caps | `choom -n 1000` + `prlimit --as=8 GiB` on every supervisor tree, verified live by `guard`/`prestop`. Supervisor budget: MemAvailable < 40 GiB or owned PSS > 16 GiB stops the run. Preflight needs ≥ 64 GiB. | `test_guard_and_proof`, `test_hostcheck_stop_paths` |
 | K5 | Nothing persistent | No cron, timers, units, reboots or restarts. `stop_runner.sh` is a one-shot setsid process on 05 only. | code |
 | K6 | Source read-only; check /mpac first | rsync sender, lstat and scandir only. Free space is checked before any write (bootstrap) and against the copy size (`stage.py need`) before copying. | code |
-| K7 | STOP verified by 05:00Z | STOP_AT is required and ≤ 04:50Z (session.sh, bootstrap, host_session, stop_runner). Top-ups are dropped. | `test_wrappers_fail_closed` |
+| K7 | STOP verified by 05:00Z (cap later raised to 07:30Z) | STOP_AT is required and ≤ the single cap `fsc/DEADLINE` (session.sh, bootstrap, host_session, stop_runner). Top-ups are dropped. | `test_wrappers_fail_closed` |
+
+## Sol r2 (31097eec): last items
+- **R2-1 (F3):** `session.sh stopped()` now aborts on any stop log that is a link, unreadable or not a regular file, and on a grep read error. A readable log is classified by its last `__RC` line.
+- **R2-2 (F4):** `console_users` is the max of the helper, our own checked `loginctl show-session` detail queries (user-class sessions other than our own remote ones) and other users' or seat logins in `who`. Any failed or unparsable probe counts as a console user present, and so does a disagreement, by taking the max.
+- **R2-3 (K7):** every phase's stop-at is `min(now + n, STOP_AT)`. `start` refuses a stop-at beyond the cap or already passed, and touches its STOP if the permanent STOP appears while it starts. `stop` no longer needs `current-instance`: it stops, waits for and censuses every instance, so incomplete launches are covered. The stop runner is armed before the launches.
+- **Cap:** one constant, the file `fsc/DEADLINE` (2026-10-13T07:30:00Z), read by all four consumers; session.sh also checks that the bundle's copy is identical.

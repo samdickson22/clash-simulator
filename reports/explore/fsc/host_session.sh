@@ -18,7 +18,8 @@ log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" >&2; }
 die() { log "FAIL: $2"; exit "$1"; }
 cmd=${1:-}; host=${2:-}
 J03=/mpac/sdicks02/jobs-fsc/fsc-03-20261013; J04=/mpac/sdicks02/jobs-fsc/fsc-04-20261013
-DEADLINE=2026-10-13T07:30:00Z   # latest --stop-at (STOP verified by 05:00Z; K4S condition 7)
+DEADLINE=$(cat "$(dirname "${BASH_SOURCE[0]}")/DEADLINE")   # the single cap (fsc/DEADLINE): latest STOP_AT for any phase
+[[ $DEADLINE =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 90 "bad DEADLINE file"
 case $host in
   127x03) J=$J03; tag=03; cfg=plan-fsc.json;;
   127x04) J=$J04; tag=04; cfg=plan-fsc-04.json;;
@@ -36,13 +37,30 @@ ST() { python3 -I -B "$J/bundle/fsc/stage.py" "$@"; }
 renice -n 19 -p $$ >/dev/null || die 90 "renice"
 
 int() { [[ ${1:-} =~ ^[0-9]+$ ]] || die 91 "non-numeric probe output '${1:-}' ($2)"; }
+# Console users, fail-closed: max of the helper, our own checked logind detail queries (user-class sessions other than
+# our own remote ones) and other users' or seat logins in `who`. Any failed or unparsable probe counts as a console user
+# present (so 10 slots / yield), and so does any disagreement, since the max of the three is taken.
 console_users() {
-  local helper whoout other
-  helper=$(~/.local/bin/fleet-console-users) || die 91 "fleet-console-users failed"; int "$helper" console
-  loginctl list-sessions --no-legend >/dev/null || die 91 "loginctl failed"
-  whoout=$(who) || die 91 "who failed"
-  other=$(printf '%s\n' "$whoout" | awk 'NF && $1 != "sdicks02"' | wc -l); int "$other" who
-  echo $(( helper > other ? helper : other ))   # conservative: any other user's login counts
+  local helper=0 lc=0 whoc=0 bad=0 h sessions s props name class remote state whoout
+  if h=$(~/.local/bin/fleet-console-users) && [[ $h =~ ^[0-9]+$ ]]; then helper=$h; else bad=1; log "console: helper failed"; fi
+  if sessions=$(loginctl list-sessions --no-legend); then
+    while read -r s _; do
+      [ -n "$s" ] || continue
+      if props=$(loginctl show-session "$s" -p Name -p Class -p Remote -p State); then
+        name=$(printf '%s\n' "$props" | sed -n 's/^Name=//p'); class=$(printf '%s\n' "$props" | sed -n 's/^Class=//p')
+        remote=$(printf '%s\n' "$props" | sed -n 's/^Remote=//p'); state=$(printf '%s\n' "$props" | sed -n 's/^State=//p')
+        if [ -z "$name" ] || [ -z "$class" ] || [ -z "$remote" ] || [ -z "$state" ]; then bad=1; log "console: session $s unparsable"; continue; fi
+        if [ "$class" = user ] && [ "$state" != closing ] && ! { [ "$remote" = yes ] && [ "$name" = sdicks02 ]; }; then lc=$((lc + 1)); fi
+      else bad=1; log "console: show-session $s failed"; fi
+    done <<< "$sessions"
+  else bad=1; log "console: loginctl list-sessions failed"; fi
+  if whoout=$(who); then
+    whoc=$(printf '%s\n' "$whoout" | awk 'NF && ($1 != "sdicks02" || $2 ~ /^(tty[0-9]+|:[0-9]+)$/)' | wc -l)
+    [[ $whoc =~ ^[0-9]+$ ]] || { bad=1; whoc=0; }
+  else bad=1; log "console: who failed"; fi
+  local n=$helper; [ "$lc" -le "$n" ] || n=$lc; [ "$whoc" -le "$n" ] || n=$whoc; [ "$bad" = 0 ] || [ "$n" -ge 1 ] || n=1
+  log "console: helper=$helper logind=$lc who=$whoc probe_failures=$bad -> $n"
+  echo "$n"
 }
 # Foreign = sdicks02 python/rsync/clasher processes outside this session's process group (the hub mirror's rsync
 # into /mpac/sdicks02/mirrors/ excepted); a process counts only if present in two checked samples 15 s apart.
@@ -71,9 +89,12 @@ preflight() {
 }
 json() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; assert isinstance(v,int) and not isinstance(v,bool) and v>1; print(v)' "$1" "$2"; }
 # start PHASE WORKLIST WORKERS STOP_AT: fresh instance J/inst/PHASE (own job dir and STOP file), detached supervisor.
+# Every phase is capped: STOP_AT <= CAP (the session's STOP_AT, itself <= DEADLINE) and still in the future.
 start() {
   local I=$J/inst/$1 n
   [ ! -e "$J/STOP" ] || die 95 "permanent STOP present"
+  [[ -n ${CAP:-} && ! $4 > $CAP && ! $CAP > $DEADLINE ]] || die 101 "$1: stop-at $4 beyond cap ${CAP:-unset}"
+  [[ $4 > $(date -u +%Y-%m-%dT%H:%M:%SZ) ]] || die 101 "$1: stop-at $4 already passed"
   mkdir "$I" "$I/repo" "$I/repo/reports" "$I/repo/reports/explore" "$I/repo/reports/explore/x4s2"
   cp "$E/x4s2/runtime.sh" "$I/repo/reports/explore/x4s2/runtime.sh"   # only file the supervisor needs under --job
   cmp "$E/x4s2/runtime.sh" "$I/repo/reports/explore/x4s2/runtime.sh"
@@ -85,7 +106,10 @@ start() {
   [ -s "$I/$1/launch.json" ] || { touch "$I/STOP"; die 101 "$1: no launch.json in 60 s (instance STOP touched)"; }
   [ "$(json "$I/receipt.json" pid)" = "$(json "$I/$1/launch.json" supervisor_pid)" ] || die 101 "$1: receipt/launch PID mismatch"
   cat "$I/receipt.json" "$I/$1/launch.json"
+  if [ -e "$J/STOP" ]; then touch "$I/STOP"; die 95 "$1: permanent STOP appeared during start (instance STOP touched)"; fi
 }
+# capped MINUTES: min(now + MINUTES, CAP).
+capped() { local t; t=$(in_minutes "$1"); if [[ $t > $CAP ]]; then echo "$CAP"; else echo "$t"; fi; }
 wait_exit() {  # wait_exit PHASE_DIR SECONDS
   local i; for ((i = 0; i < $2; i += 2)); do [ -s "$1/supervisor-exit.json" ] && return 0; sleep 2; done; return 1
 }
@@ -98,6 +122,7 @@ launch)
   [[ $msha =~ ^[0-9a-f]{64}$ ]] || die 90 "manifest sha"
   [[ $arg =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 90 "STOP_AT required (ISO UTC)"
   if [[ $arg > $DEADLINE ]]; then die 90 "STOP_AT after $DEADLINE"; fi
+  CAP=$arg
   [ "$(ls -A "$J")" = bundle ] || die 96 "expected fresh $J holding only bundle/"
   ST nolinks "$J"
   preflight
@@ -124,12 +149,12 @@ launch)
   ST install "$J" "$J/bundle" "$host" "$msha"
   log "staged: $(du -sh "$J" | cut -f1)"
   # 8-seed smoke (8 workers; smoke range; excluded from every analysis).
-  start "smoke-$tag" "$E/fsc/wl-smoke-$tag.json" 8 "$(in_minutes 30)"
+  start "smoke-$tag" "$E/fsc/wl-smoke-$tag.json" 8 "$(capped 30)"
   P=$J/inst/smoke-$tag/smoke-$tag
   wait_exit "$P" 1500 || { touch "$J/inst/smoke-$tag/STOP"; wait_exit "$P" 240 || true; die 99 "smoke: no exit in 25 min"; }
   HC smoke "$P" "$E/fsc/$cfg" "$host" || die 99 "smoke gate"
   # Live STOP test (4 workers; STOP-test range): STOP only once a block has started and workers are live.
-  start "stoptest-$tag" "$E/fsc/wl-stoptest-$tag.json" 4 "$(in_minutes 30)"
+  start "stoptest-$tag" "$E/fsc/wl-stoptest-$tag.json" 4 "$(capped 30)"
   I=$J/inst/stoptest-$tag; P=$I/stoptest-$tag; ok=0
   for ((n = 0; n < 90; n++)); do
     if HC prestop "$P" > "$I/pre-stop.json"; then ok=1; break; fi; sleep 2
@@ -141,8 +166,7 @@ launch)
   # Reporting run: 12 slots, or 10 with a console user; stop-at = min(now + 7 h 55 min, STOP_AT <= DEADLINE).
   preflight
   workers=12; [ "$CONSOLE" -eq 0 ] || workers=10
-  stop_at=$(in_minutes 475); if [[ $arg < $stop_at ]]; then stop_at=$arg; fi
-  if [[ ! $stop_at > $(date -u +%Y-%m-%dT%H:%M:%SZ) ]]; then die 101 "stop-at $stop_at already passed"; fi
+  stop_at=$(capped 475)
   printf '%s\n' "$stop_at" > "$J/stop-at"; printf '%s\n' "$E/fsc/wl-$tag.json" > "$J/current-worklist"
   printf '%s\n' "$J/inst/rep$tag" > "$J/current-instance"
   start "rep$tag" "$E/fsc/wl-$tag.json" "$workers" "$stop_at"
@@ -155,7 +179,7 @@ launch)
   ;;
 
 progress)
-  I=$(current); ph=$(basename "$I"); P=$I/$ph
+  I=$(current); ph=$(basename "$I"); P=$I/$ph; CAP=$(cat "$J/stop-at")
   if [ -s "$P/progress.json" ]; then cat "$P/progress.json"; fi
   if [ -e "$P/supervisor-exit.json" ]; then HC exitstatus "$P" || die 102 "run ended for an unplanned reason"; exit 0; fi
   HC census live "$(json "$P/launch.json" child_pgid)" "$(json "$P/launch.json" supervisor_pid)" \
@@ -180,15 +204,22 @@ progress)
   ;;
 
 stop)
+  # Covers incomplete launches too: every instance that exists is stopped, waited for and censused (no current-instance needed).
   touch "$J/STOP"; for I in "$J"/inst/*/; do touch "$I/STOP"; done; log "permanent and instance STOP files touched"
-  I=$(current); P=$I/$(basename "$I")
-  wait_exit "$P" 240 || die 103 "no supervisor-exit.json in 240 s (STOP files stay)"
+  sleep 5; for I in "$J"/inst/*/; do touch "$I/STOP"; done   # an instance created by a racing start also gets its STOP
   for I in "$J"/inst/*/; do
     I=${I%/}; P=$I/$(basename "$I")
+    if [ ! -e "$I/receipt.json" ]; then log "$I: never detached (no receipt)"; continue; fi
+    if [ -e "$P/launch.json" ]; then
+      wait_exit "$P" 240 || die 103 "$P: no supervisor-exit.json in 240 s (STOP files stay)"
+      HC exitstatus "$P" || die 103 "exit record $P"
+    fi
     HC census empty "$(json "$I/receipt.json" pgid)" "$(json "$I/receipt.json" pid)" || die 103 "census $I"
-    HC exitstatus "$P" || die 103 "exit record $P"
   done
-  proof=0; HC proof "$J" || proof=$?   # mirror the outputs even if the proof fails, then report the failure
+  proof=0
+  if [ -e "$J/logs/baseline-ps.json" ]; then HC proof "$J" || proof=$?   # mirror even if the proof fails, then report
+  elif compgen -G "$J/inst/*" >/dev/null; then proof=1; log "instances exist but no baseline"
+  else log "launch never reached the baseline: no supervisor was started"; fi
   ST nolinks "$J"
   nice -n 19 rsync -rt --no-links -e "$SSHOPT" --rsync-path='nice -n 19 rsync' \
     --exclude=/repo/ --exclude=/native/ --exclude=/inputs/ --exclude=/cache/ --exclude=/bundle/ \
