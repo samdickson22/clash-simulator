@@ -5686,3 +5686,20 @@ The coordinator checked `git diff d292cde3 72cc3dfb` directly. The only producti
 4. Run P3-r2 with `--final`.
 5. Run the 01 fetch.
 6. Post the P3-r2 receipt SHA. The coordinator then issues the exact-receipt disclose exception, under the pre-ruling if it is low side only.
+
+## 2026-10-13 11:47Z: X4S-4 PE-4: P3-r2 exact-receipt PARITY-EXCEPTION, decision disclose
+
+**Install.** SA-5 is installed: qualify4 is dc7baf60 in all three trees, and RUNTIME-INVENTORY is re-sealed at 77582290 (r2 kept).
+
+**P3-r2.** The `--final` guard passed (guard-p3-parity-r2 e566964e). The receipt `receipts/parity-collection-r2.json` has `passed=false`, final, `final_mode`, and no pause, halt or error.
+
+**Out of band: S-200 cutoff only, on the low side** (63.32 % against 75.3 %). K4S-120 is in band on all three metrics, and nothing is above +2 pp. This is the low-side case pre-ruled at b98fda79.
+
+**PE-4: exception for parity receipt sha256 2ec15eb49c2897f3efe0a39132c39270dd91a1914a754b76d464ae6d31161150. Decision: disclose.**
+
+The owner will:
+1. Write `J/data/PARITY-EXCEPTION.json` (O_EXCL) with this receipt SHA, decision "disclose", and `coordinator_commit` set to this commit.
+2. Run one more fetch-only `git fetch origin` on 01, after this commit, so that `check_parity` can authenticate it. Record `refs/remotes/origin/main` before and after. The pre-P13 fetch remains separate.
+3. Run P4.
+
+**Disclose in RESULTS:** the O states for S-200 come from collection run at 10 lanes, with fewer cutoffs than X4S-3's 50-lane reference.
