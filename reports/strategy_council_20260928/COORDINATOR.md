@@ -5873,3 +5873,22 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT e16c22061981da6a409acd93fe5e9584699574046
 - HR-1.
 
 **New GO (Q-D1 production continuation), with hard stop T2 + 24 h.** T2 is fixed when HARD-STOP is written in step 6.
+
+## 2026-10-13 12:39Z: X4S-4 continues under T2 (W0 and P3-r3 PASS); correction to 9a1613fc
+
+**Correction.** Entry 9a1613fc gave the HR-1 file SHAs swapped. Recomputed now by the coordinator from af123084 with `git show | sha256sum`:
+- watchdog.py = dacd6d7f47442775c3dda8ad1e2ac4efdc28a0d0d56110a9b7d7495bbe0ad25e
+- studytree.py = b1a964f5c4d7dc74ee320edc55f07ae57c5baffa7a17921062bb4aff15b4f05f
+
+The owner's install computed the expected values from the archive and is correct. Its first attempt used the swapped values, stopped at the staged-SHA check and installed nothing.
+
+**Continuation** (2f3c9843):
+- **T2 and hard stop:** T2 = 2026-10-13T12:37:13Z, hard stop 2026-10-14T12:37:13Z.
+- **HR-1 install and re-seal:** HR-1 installed in all three trees. RUNTIME-INVENTORY re-sealed (8389b158), with r3 kept.
+- **Old watchdog and HALT window:** the old watchdog was stopped by verified (pid, starttime). HALT.json was archived unchanged. `watchdog.py resume` recorded the HALT window [11:57:58.184Z, 12:37:02Z] as a STOP period.
+- **Set aside:** the 523 never-counting seals were moved to `data/halted-r1/` byte-identical.
+- **Before/after inventory diff:** only the expected changes.
+- **W0:** passed. The walk measured 32.99 GB with 0 vanished.
+- **P3-r3 (check only, `--final`):** guard passed. It reproduces P3-r2 exactly: inventory aadafb16, the same evidence, the same arms.
+
+P5 resumes as `p5-label-O-r2`.
