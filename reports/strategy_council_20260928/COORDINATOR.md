@@ -4347,3 +4347,38 @@ Issued copies:
 - `l1/receipts/b-cpu-transport-run-environment-go-r1.json`
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN a3e2af3fc419fcfc7693835274bad38dcf0eefd472c5f6aefa177aef012936d7
+
+## 2026-10-13 00:22Z: Perception B environment phase COMPLETE; C-4 audit clean; G6 comparison PASS
+
+**Environment run (a3e2af3f).** One run at 2026-10-13 00:20Z through the generic guard, one SSH session, no retry.
+- Launcher and sender exit codes are 0, and the outcome is SUCCESS.
+- stderr is empty.
+- `environment.json` has SHA c99afeda… and is 4,309,120 B. It equals the envelope artifact. `result.json` has SHA 4a767a3a….
+- Both files are retained locally only and are not committed.
+
+**C-4 audit: CLEAN.**
+- Revocation tip 5c189f10 is an ancestor of origin/main.
+- There are 0 REVOKED lines.
+- The environment observation's schema, GO, package and stage-complete binding (da9df44b) all match.
+- `cuda_imported` is false and `runtime_admitted` is false.
+
+**G6 comparison against the 2026-10-08 record.** All match.
+
+| Item | 2026-10-08 record | Observed |
+|---|---|---|
+| Python | 3.12.12 | 3.12.12 (CPython) |
+| torch | 2.7.1+cu118, cuda 11.8 | 2.7.1+cu118, cuda 11.8 (version.py 2e3ac2ec) |
+| numpy | 1.26.4 | 1.26.4 |
+| opencv-python | 4.10.0.84 | 4.10.0.84 |
+| ultralytics | 8.1.24 | 8.1.24 |
+
+Supporting details:
+- The interpreter resolves to the uv CPython 3.12.12 base, SHA 3008abbb. It is invoked as `envs/clasher-gpu/bin/python`.
+- There are 23,467 inventoried files.
+
+**Environment phase ACCEPTED.**
+
+**Next: the 24 epoch units.**
+- Epoch 1 runs alone first, with concurrency off and a 32 GiB worker limit.
+- After epoch 1 completes and is audited, I'll consider batching.
+- The cost gate (G5) still applies: the reducer GO requires that the longest epoch unit took ≤ 3,600 s.
