@@ -1,0 +1,484 @@
+{
+  "purpose": "X4S2 exploration, NEVER ADOPTABLE: stress-test X4S (K4 + R3a cutoff default) under honest slow-core inference scaling, held-out guard decks, and a lite default rule",
+  "status": "exploration only; NEVER ADOPTABLE; R3a remains killed under its original Stage 1 gates",
+  "arms": {
+    "K4Sh-160": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.16,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "inference",
+      "inference_scale": 1.25
+    },
+    "K4Sh-140": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.14,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "inference",
+      "inference_scale": 1.4285714285714286
+    },
+    "K4Sh-120": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.12,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "inference",
+      "inference_scale": 1.6666666666666667
+    },
+    "K4Sh-100": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.1,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "inference",
+      "inference_scale": 2.0
+    },
+    "K4Sf-140": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.14,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "prep",
+      "inference_scale": 1.4285714285714286
+    },
+    "K4Sf-120": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.12,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "prep",
+      "inference_scale": 1.6666666666666667
+    },
+    "K4S-140r": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.14,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4-100": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.1,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4S-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4-140": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.14,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4S-140": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.14,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4Sl-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-slite",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score-and-coarse-scan-incomplete; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4Sl-140": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.14,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-slite",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score-and-coarse-scan-incomplete; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    }
+  },
+  "budgets_ms": {
+    "200": "~1.0x",
+    "160": "~0.8x",
+    "140": "~0.7x",
+    "120": "~0.6x",
+    "100": "~0.5x"
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "X-reporting": {
+      "base": 4503604807370496,
+      "count": 600,
+      "name": "X4S reporting (paired reuse, not fresh)"
+    },
+    "G-reporting": {
+      "base": 4503605107370496,
+      "count": 1080
+    },
+    "smoke": {
+      "base": 4503605117370496,
+      "count": 8
+    },
+    "qualification": {
+      "base": 4503605127370496,
+      "count": 8
+    }
+  },
+  "seed_reservation": {
+    "block_start": 4503605107370496,
+    "block_stop_exclusive": 4503605207370496,
+    "note": "X4S2 fresh block 2^52+[5.48e9,5.58e9); X-reporting is an explicit paired reuse of X4S seeds"
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101105,
+    "unit": "paired seed (per population)",
+    "confidence": 0.95
+  },
+  "policy": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/fsc-04-20261013/inputs/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "student": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/fsc-04-20261013/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "threshold": 0.5005528330802917,
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "status": "killed in R3 Stage 1; NEVER ADOPTABLE; used only as an exploration cutoff default"
+  },
+  "compute": {
+    "hosts": {
+      "127x03": {
+        "physical_cpus": "0-59",
+        "supervisor_cpu": 62,
+        "hard_stop": "2026-10-11T13:30:00Z"
+      },
+      "127x08": {
+        "physical_cpus": "0-59",
+        "supervisor_cpu": 62,
+        "hard_stop": "supervisor --stop-at 2026-10-11T09:15:00Z (code ceiling 09:25Z); sync no-contact from 09:27Z; must be empty by 09:30Z"
+      }
+    },
+    "slots": "12 disjoint 5-physical-core slots per host; SMT siblings unassigned; 10 if a console user is present",
+    "nice": 19,
+    "scheduler": "SCHED_OTHER",
+    "cuda": "disabled",
+    "max_threads_per_host": 60,
+    "max_memory_GiB_per_host": 60,
+    "cache_root": "/mpac/sdicks02/jobs/clasher/x4s2-20261011/cache"
+  },
+  "ordering": {
+    "blocks": "all of a seed's phase arms consecutively on one 5-core slot, rotated by index",
+    "host_split": "08: A indices with (i//50) odd, then B indices with (i//18) odd; 03: A (i//50) even, then B (i//18) even, then C all 600. Unstarted blocks of a stopped host may be re-dispatched to the other host in a new output directory",
+    "interrupted": "games of an incomplete block are excluded; that (pop,index,phase) is retired"
+  },
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  },
+  "decision_rules": {
+    "primary": "descriptive, paired 95% CIs, no adoption possible",
+    "readings": {
+      "survives_honest_scaling": "for b in 160/140/120: upper95CI(K4Sh-b minus X4S K4-b) < 0 (rescue) and the K4Sh-b minus X4S K4S-b point estimate reported with CI",
+      "holds": "upper95CI(K4Sh-b minus X4S K4-200) <= +5pp",
+      "generalizes": "guard decks: upper95CI(K4S-140 minus K4-140) < 0 and upper95CI(K4Sh-140 minus K4-140) < 0",
+      "lite_cost": "K4Sl-200 minus K4-200 and K4Sl-200 minus K4S-200; K4Sl-140 minus K4S-140",
+      "drift": "K4S-140r minus X4S K4S-140 (same seeds, separate run)"
+    }
+  },
+  "source_reference": {
+    "X4S_freeze": "63538665",
+    "X4S_results": "4bc4acb1",
+    "S1_freeze": "dfefec9f74b8e9af6709051c218680a527f573bb",
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "runtime_base": "127x03:/mpac/sdicks02/jobs/clasher/x4s-20261011/{repo,native,native-source,inputs} copied locally + git reports/explore/x4s2 overlay"
+  },
+  "phases": {
+    "A": {
+      "population": "X",
+      "arms": [
+        "K4Sh-160",
+        "K4Sh-140",
+        "K4Sh-120",
+        "K4Sh-100",
+        "K4Sf-140",
+        "K4Sf-120",
+        "K4S-140r",
+        "K4-100"
+      ],
+      "indices": "0..599 (X4S reporting seeds, paired with X4S games)"
+    },
+    "B": {
+      "population": "G",
+      "arms": [
+        "K4-200",
+        "K4S-200",
+        "K4-140",
+        "K4S-140",
+        "K4Sh-140"
+      ],
+      "indices": "0..539 dispatched in index order; target >=432"
+    },
+    "C": {
+      "population": "X",
+      "arms": [
+        "K4Sl-200",
+        "K4Sl-140"
+      ],
+      "indices": "0..599 (X4S reporting seeds)"
+    },
+    "D": {
+      "population": "G",
+      "arms": [
+        "K4-200",
+        "K4S-200",
+        "K4-140",
+        "K4S-140",
+        "K4Sh-140"
+      ],
+      "indices": "540..1079, dispatched after B (08) / after C (03) in increasing index order; spare-capacity extension declared before any reporting game; stopped by time only; pooled with B as the G population"
+    }
+  },
+  "populations": {
+    "X": {
+      "decks": [
+        [
+          "Cannon",
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "IceSpirit",
+          "Log",
+          "Musketeer",
+          "Skeletons"
+        ],
+        [
+          "Archers",
+          "ElectroSpirit",
+          "Fireball",
+          "Knight",
+          "Log",
+          "Skeletons",
+          "Tesla",
+          "Xbow"
+        ],
+        [
+          "Arrows",
+          "FireSpirits",
+          "Giant",
+          "HogRider",
+          "Knight",
+          "Minions",
+          "Valkyrie",
+          "Wizard"
+        ],
+        [
+          "BlowdartGoblin",
+          "Cannon",
+          "GoblinBarrel",
+          "IceSpirit",
+          "Princess",
+          "SkeletonArmy",
+          "Valkyrie",
+          "Wallbreakers"
+        ],
+        [
+          "DarkPrince",
+          "ElectroSpirit",
+          "Log",
+          "Miner",
+          "Rocket",
+          "RoyalDelivery",
+          "Skeletons",
+          "Tesla"
+        ]
+      ],
+      "note": "X4S five archetype decks (most frequent catalogue deck per archetype); own=decks[i%5], opponent=decks[(i//5)%5], seat=i%2"
+    },
+    "G": {
+      "own_decks": [
+        [
+          "HogRider",
+          "Musketeer",
+          "Cannon",
+          "Fireball",
+          "Log",
+          "IceGolem",
+          "IceSpirit",
+          "Skeletons"
+        ],
+        [
+          "Xbow",
+          "Tesla",
+          "Knight",
+          "Archers",
+          "Fireball",
+          "Log",
+          "Skeletons",
+          "ElectroSpirit"
+        ],
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "GoblinHut",
+          "Berserker",
+          "Ghost",
+          "Fireball",
+          "Log",
+          "ElectroSpirit"
+        ]
+      ],
+      "opponent_decks": [
+        [
+          "HogRider",
+          "Earthquake",
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "ElectroSpirit",
+          "Log",
+          "Skeletons"
+        ],
+        [
+          "RoyalHogs",
+          "Goblinstein",
+          "BombTower",
+          "Lightning",
+          "BarbLog",
+          "Archers",
+          "ElectroSpirit",
+          "Skeletons"
+        ],
+        [
+          "RoyalHogs",
+          "ArcherQueen",
+          "RoyalDelivery",
+          "Earthquake",
+          "Cannon",
+          "IceSpirit",
+          "Log",
+          "Skeletons"
+        ]
+      ],
+      "cells": "18: seat i%2, own (i//2)%3, opponent (i//6)%3",
+      "source": "own = L2-v4 families as in imitation/exit_r1/emitter.py decks()[5:8]; opponents = the three held-out guard decks listed in PREREG-SEARCH-TIERS-r3-DRAFT \u00a73 (catalogue sha 80de4afb...), transcribed from the pinned catalogue on 127x03"
+    }
+  },
+  "scaling": {
+    "s": "budget/200",
+    "inference_scale": "1/s",
+    "inference": "after each charged search-seat policy poll (decision ticks), sleep (1/s-1) x measured poll wall time, inside the timer (K4Sh)",
+    "prep": "sleep (1/s-1) x measured wall of all pre-scoring work (observation..candidates, then belief sample + root), inside the timer (K4Sf); on a belief/sample timeout, charge the work before that step plus only the post-cutoff tail of the cancelled step",
+    "not_scaled": "opponent (v1, no deadline); K4 arms' v1 poll (so K4 references are flattered, i.e. conservative for S)",
+    "interpretation": "budget equivalence already scales all in-timer work by 1/s for a uniform slow core; K4Sh/K4Sf are stress tests of a student/preparation that is a further 1/s slower relative to search"
+  },
+  "qualification": {
+    "unit": "test_sdefault.py (full + lite rules, 4-thread late-collector coarse_complete, empty plays), test_charge.py (make_charger/tail), S1 anchor tests against anchor_x, S1 latency tests",
+    "corpus": "125 frozen states: anchor_x K4, K4S, K4Sl with no deadline reproduce frozen screen8 action/candidates/scores; anchor_x == anchor under injected cutoffs; zero budget -> R3a; 4-thread S-lite rule consistency vs derived coarse_complete",
+    "games": "no-deadline K4 vs K4S vs K4Sl games (both populations) on qualification seeds: identical command hashes; no-deadline K4Sh (inference scale 2) also identical",
+    "stop": "STOP test on 127x08 with the new supervisor"
+  }
+}

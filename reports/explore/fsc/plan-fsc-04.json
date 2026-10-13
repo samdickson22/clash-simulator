@@ -1,0 +1,315 @@
+{
+  "purpose": "FSC (U3/U4) exploration, NEVER ADOPTABLE: full-speed cost of always-on S-default (K4S-200 minus K4-200) and the 0.9x pair (K4S-180 minus K4-180) on fresh X-population seeds",
+  "status": "exploration only; NEVER ADOPTABLE; R3a remains killed under its original Stage 1 gates",
+  "arms": {
+    "K4-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4S-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4-180": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.18,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime",
+      "policy": "v1-unmodified",
+      "default_source": "frozen-best-complete-wait; v1-polled-sample-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    },
+    "K4S-180": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.18,
+      "threads": 4,
+      "coarse_horizon": 160,
+      "kernel": "K4-anytime-sdefault",
+      "policy": "R3a-cached",
+      "default_source": "R3a-calibrated-play-if-cutoff-and-no-complete-play-score; else frozen-best-complete-wait; R3a-if-nothing-complete",
+      "scale_mode": "none",
+      "inference_scale": 1.0
+    }
+  },
+  "budgets_ms": {
+    "200": "~1.0x",
+    "160": "~0.8x",
+    "140": "~0.7x",
+    "120": "~0.6x",
+    "100": "~0.5x"
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "X-reporting": {
+      "base": 4503607007370496,
+      "count": 7900,
+      "name": "FSC X reporting (fresh)"
+    },
+    "smoke": {
+      "base": 4503607017370496,
+      "count": 8,
+      "name": "FSC smoke (fresh)"
+    },
+    "qualification": {
+      "base": 4503607027370496,
+      "count": 8,
+      "name": "FSC STOP test (fresh)"
+    }
+  },
+  "seed_reservation": {
+    "block_start": 4503607007370496,
+    "block_stop_exclusive": 4503607107370496,
+    "note": "FSC fresh block, the next unused 1e8 block on the X4S2 grid chosen by pick_seed_block.py"
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101301,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "policy": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s2-20261011/inputs/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "student": {
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s2-20261011/inputs/R3a.pt",
+    "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "threshold": 0.5005528330802917,
+    "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+    "status": "killed in R3 Stage 1; NEVER ADOPTABLE; used only as an exploration cutoff default"
+  },
+  "compute": {
+    "hosts": {
+      "127x03": {
+        "physical_cpus": "0-59",
+        "supervisor_cpu": 62,
+        "hard_stop": "supervisor start + 8 h (code)"
+      },
+      "127x04": {
+        "physical_cpus": "0-59",
+        "supervisor_cpu": 62,
+        "hard_stop": "supervisor start + 8 h (code)"
+      }
+    },
+    "slots": "12 disjoint 5-physical-core slots; 10 if a console user is present",
+    "nice": 19,
+    "scheduler": "SCHED_OTHER",
+    "cuda": "disabled",
+    "max_threads_per_host": 60
+  },
+  "ordering": {
+    "blocks": "both arms of a seed consecutively on one 5-core slot, rotated by index (X4S2 run.py)",
+    "interrupted": "a block with a .started marker and no proof is retired; see READOUT.md for the prefix rule"
+  },
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  },
+  "decision_rules": {
+    "primary": "see READOUT.md (pre-declared)"
+  },
+  "source_reference": {
+    "X4S_freeze": "63538665",
+    "X4S_results": "4bc4acb1",
+    "S1_freeze": "dfefec9f74b8e9af6709051c218680a527f573bb",
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "runtime_base": "127x03:/mpac/sdicks02/jobs/clasher/x4s-20261011/{repo,native,native-source,inputs} copied locally + git reports/explore/x4s2 overlay",
+    "X4S2_harness": "1501be97f"
+  },
+  "phases": {
+    "03": {
+      "arms": [
+        "K4-200",
+        "K4S-200"
+      ],
+      "indices": "0..2399 then 3900..5899"
+    },
+    "04": {
+      "arms": {
+        "first": [
+          "K4-180",
+          "K4S-180"
+        ],
+        "then": [
+          "K4-200",
+          "K4S-200"
+        ]
+      },
+      "indices": "2400..3899 (180) then 5900..7899 (200)"
+    }
+  },
+  "populations": {
+    "X": {
+      "decks": [
+        [
+          "Cannon",
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "IceSpirit",
+          "Log",
+          "Musketeer",
+          "Skeletons"
+        ],
+        [
+          "Archers",
+          "ElectroSpirit",
+          "Fireball",
+          "Knight",
+          "Log",
+          "Skeletons",
+          "Tesla",
+          "Xbow"
+        ],
+        [
+          "Arrows",
+          "FireSpirits",
+          "Giant",
+          "HogRider",
+          "Knight",
+          "Minions",
+          "Valkyrie",
+          "Wizard"
+        ],
+        [
+          "BlowdartGoblin",
+          "Cannon",
+          "GoblinBarrel",
+          "IceSpirit",
+          "Princess",
+          "SkeletonArmy",
+          "Valkyrie",
+          "Wallbreakers"
+        ],
+        [
+          "DarkPrince",
+          "ElectroSpirit",
+          "Log",
+          "Miner",
+          "Rocket",
+          "RoyalDelivery",
+          "Skeletons",
+          "Tesla"
+        ]
+      ],
+      "note": "X4S five archetype decks (most frequent catalogue deck per archetype); own=decks[i%5], opponent=decks[(i//5)%5], seat=i%2"
+    },
+    "G": {
+      "own_decks": [
+        [
+          "HogRider",
+          "Musketeer",
+          "Cannon",
+          "Fireball",
+          "Log",
+          "IceGolem",
+          "IceSpirit",
+          "Skeletons"
+        ],
+        [
+          "Xbow",
+          "Tesla",
+          "Knight",
+          "Archers",
+          "Fireball",
+          "Log",
+          "Skeletons",
+          "ElectroSpirit"
+        ],
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "GoblinHut",
+          "Berserker",
+          "Ghost",
+          "Fireball",
+          "Log",
+          "ElectroSpirit"
+        ]
+      ],
+      "opponent_decks": [
+        [
+          "HogRider",
+          "Earthquake",
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "ElectroSpirit",
+          "Log",
+          "Skeletons"
+        ],
+        [
+          "RoyalHogs",
+          "Goblinstein",
+          "BombTower",
+          "Lightning",
+          "BarbLog",
+          "Archers",
+          "ElectroSpirit",
+          "Skeletons"
+        ],
+        [
+          "RoyalHogs",
+          "ArcherQueen",
+          "RoyalDelivery",
+          "Earthquake",
+          "Cannon",
+          "IceSpirit",
+          "Log",
+          "Skeletons"
+        ]
+      ],
+      "cells": "18: seat i%2, own (i//2)%3, opponent (i//6)%3",
+      "source": "own = L2-v4 families as in imitation/exit_r1/emitter.py decks()[5:8]; opponents = the three held-out guard decks listed in PREREG-SEARCH-TIERS-r3-DRAFT \u00a73 (catalogue sha 80de4afb...), transcribed from the pinned catalogue on 127x03"
+    }
+  }
+}
