@@ -1,0 +1,37 @@
+FOUND    ef1ed5d91a51  imitation/__init__.py
+FOUND    b4af3e9bddb3  imitation/evaluation/legacy_audit.py
+FOUND    92b72418c3a1  imitation/evaluation/runtime_dependencies/derived_d1.py
+FOUND    18cf0aaa12e0  imitation/evaluation/runtime_dependencies/own_cycle.py
+FOUND    cdb2d8300421  imitation/evaluation/runtime_dependencies/sidecar_observer.py
+FOUND    d5897eefeb72  imitation/evaluation/seed_compat.py
+FOUND    80de4afb5b63  reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json
+FOUND    44a69f6dfa5d  reports/strategy_council_20260928/m0/data/roles_v2/training.json
+FOUND    80de4afb5b63  reports/strategy_council_20260928/search-noise-s6/runtime/support/human_deck_catalog.json
+FOUND    de2eda3e0200  reports/strategy_council_20260928/search-noise-s6/runtime/support/selection.json
+FOUND    8b539bfd6226  src/clasher/analysis/loss_review/delay_fixes.py
+FOUND    c39b311923a3  src/clasher/analysis/loss_review/delay_runtime.py
+FOUND    b4bdcf07aac5  src/clasher/analysis/loss_review/delay_simulate.py
+FOUND    1db540482b8a  src/clasher/analysis/loss_review/scheduling.py
+FOUND    2ce4b1d1e77a  src/clasher/analysis/loss_review/search_ab.py
+FOUND    11d42225d0c3  src/clasher/analysis/loss_review/tempo.py
+FOUND    da4d6b5d538c  src/clasher/analysis/loss_review/throughput_guard.py
+FOUND    441385ea7a0f  student-source/exit_r3/__init__.py
+FOUND    5f5c7e6c6fd2  student-source/exit_r3/network.py
+FOUND    835a4104fbd4  student-source/exit_r3/rows.py
+FOUND    dd59fa136230  student-source/exit_r3/student.py
+FOUND    6237a96ab5e2  student-source/exit_r3/teacher_batch.py
+FOUND    58641244e3c9  student-source/exit_r3/test_r3.py
+FOUND    fc7c5785e643  student-source/exit_r3/test_round2.py
+FOUND    947f8147e44c  student-source/exit_r3/train.py
+FOUND    745968094c17  tests/analysis/test_delay_fixes.py
+FOUND    60dd12e17c89  tests/analysis/test_delay_fixes_summary.py
+FOUND    86b356164c3b  tests/analysis/test_search_ab.py
+FOUND    9d8ee3988edd  tests/analysis/test_search_ab_guard.py
+FOUND    010e462fa8c3  tests/analysis/test_tempo.py
+FOUND    2cd18eda00b7  tests/analysis/test_tempo_launch.py
+FOUND    79a4c564b128  tests/analysis/test_throughput_guard.py
+FOUND    26e6e487f651  tests/test_l1_v4.py
+locate: 33/33 found; missing 0
+S9 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime-manifest.json sha256 1fa0ebf5e4724711a27673236aa4800c97189890621c36c8ac2ee55585b8dde3
+  runtime_files 4307 canonical fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7
+  measurement_files canonical 42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25; inventory 4316 files, 84895928 bytes, canonical 74fc01a72632e813d8a51511f304d1aa7561914fd095c5b1fadba1ca8f4092b5

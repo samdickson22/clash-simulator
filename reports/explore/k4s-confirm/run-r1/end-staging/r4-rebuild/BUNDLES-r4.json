@@ -1,0 +1,83 @@
+{
+ "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+ "rows": [
+  {
+   "host": "127x03",
+   "tag": "pf00",
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b3-r7/requests-ir03/request-127x03-pf00.json",
+   "request_sha256": "6c913789c6832d89fdd8414a38fa246adba4f9a8d4232a395c1b5bf435093eae",
+   "rc": 0,
+   "started_utc": "2026-10-13T09:52:56Z",
+   "finished_utc": "2026-10-13T09:54:12Z",
+   "stderr_tail": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03\",\"out\":\"/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-pf00\",\"production_pins\":true}\n",
+   "out": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-pf00",
+   "tiers-pins.json": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03",
+   "assembly-receipt.json": "c0874a6f6a33dc17a166e2fde415b3a22947f849f00868ac582f82a73700535a"
+  },
+  {
+   "host": "127x03",
+   "tag": "rd00-a00",
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b3-r7/requests-ir03/request-127x03-rd00-a00.json",
+   "request_sha256": "c403446424d3ada6e915a90b88eb2bb5aaeb054780405ff838f749ba4bc096e5",
+   "rc": 0,
+   "started_utc": "2026-10-13T09:54:12Z",
+   "finished_utc": "2026-10-13T09:55:28Z",
+   "stderr_tail": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070\",\"out\":\"/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-rd00-a00\",\"production_pins\":true}\n",
+   "out": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-rd00-a00",
+   "tiers-pins.json": "39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070",
+   "assembly-receipt.json": "49b96b98bc65a9f27adfa65c46b51620f27189fa1ac74c5432a4fba30f5ab857"
+  },
+  {
+   "host": "127x03",
+   "tag": "rd00-a01",
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b3-r7/requests-ir03/request-127x03-rd00-a01.json",
+   "request_sha256": "dd55582d2942e99dbb84c1095dec06a962a49db5a0bc1a9d313c147c3612dabb",
+   "rc": 0,
+   "started_utc": "2026-10-13T09:55:28Z",
+   "finished_utc": "2026-10-13T09:56:56Z",
+   "stderr_tail": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5\",\"out\":\"/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-rd00-a01\",\"production_pins\":true}\n",
+   "out": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-rd00-a01",
+   "tiers-pins.json": "03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5",
+   "assembly-receipt.json": "7e0814a7afb54e264135052aed3c6f3d277aab74cdc70cfed13004b954b1c173"
+  },
+  {
+   "host": "127x04",
+   "tag": "pf00",
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-pf00.json",
+   "request_sha256": "60895f3ad0c71958317297ca777dd316f56bc7926abf53a119b4ffc6d12a5c95",
+   "rc": 0,
+   "started_utc": "2026-10-13T09:56:56Z",
+   "finished_utc": "2026-10-13T09:58:12Z",
+   "stderr_tail": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f\",\"out\":\"/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-pf00\",\"production_pins\":true}\n",
+   "out": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-pf00",
+   "tiers-pins.json": "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f",
+   "assembly-receipt.json": "9fc01c8053e958e637a34de44fed1123ae53b88aaec6aa5c4ea66fd7a3883729"
+  },
+  {
+   "host": "127x04",
+   "tag": "rd00-a00",
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-rd00-a00.json",
+   "request_sha256": "43f2ca41f7256e6565bb681129442772322e9b486263f0b12415cc177478def9",
+   "rc": 0,
+   "started_utc": "2026-10-13T09:58:12Z",
+   "finished_utc": "2026-10-13T09:59:23Z",
+   "stderr_tail": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e\",\"out\":\"/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-rd00-a00\",\"production_pins\":true}\n",
+   "out": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-rd00-a00",
+   "tiers-pins.json": "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e",
+   "assembly-receipt.json": "ce9d6c2a8ce75132bb1ef4cd0c536731cb1e3bec71d73ce7acda3473806a63d5"
+  },
+  {
+   "host": "127x04",
+   "tag": "rd00-a01",
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-rd00-a01.json",
+   "request_sha256": "bd6f3dc3656b9811451405be60ba928ab1be36056946fee00a3f2b2cc9c1a91e",
+   "rc": 0,
+   "started_utc": "2026-10-13T09:59:23Z",
+   "finished_utc": "2026-10-13T10:01:07Z",
+   "stderr_tail": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458\",\"out\":\"/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-rd00-a01\",\"production_pins\":true}\n",
+   "out": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-rd00-a01",
+   "tiers-pins.json": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458",
+   "assembly-receipt.json": "f563d2c05e69e066f2c5d64e0ad451d1abe5b3619f55d5df024a7f133c9502ad"
+  }
+ ]
+}

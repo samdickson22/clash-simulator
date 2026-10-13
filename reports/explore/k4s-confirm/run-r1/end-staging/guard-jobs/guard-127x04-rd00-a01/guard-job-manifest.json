@@ -59,7 +59,7 @@
    "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a"
   }
  ],
- "common_sha256": "c9465351b2d427db62fa9365707b21b7e52c422eb7a2ff1fc4fa58203545c4b6",
+ "common_sha256": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
  "dirs": [
   "repo",
   "repo/.git",
@@ -153,7 +153,7 @@
   },
   {
    "path": "repo/.git/index",
-   "sha256": "8ee676a33e76d498fb80599662204d1d6de70e9b88bdf4471c2743d81bd26404",
+   "sha256": "0b9db8448a4fb4a084d208362d30167dc1456a181a67a285f9163f7f15bcb2f3",
    "size": 652
   },
   {
@@ -217,7 +217,7 @@
    "size": 411
   }
  ],
- "inventory_sha256": "c093ce33958139d71ed874777e06fe24e993e7fbc4eb98eb2faada32b738daf2",
+ "inventory_sha256": "bbbacb4074c122058914c906071b7fa5d1f42f78475b8e184f258976e3944aaa",
  "job": {
   "attempt": "01",
   "kind": "attempt",
@@ -231,10 +231,10 @@
  "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
  "repository_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
  "s1b_manifest_sha256": "64c2fc8ded40e695c9fc2eb1e635204d6cc8af5bd48f040845211bc78ede3e84",
- "s1b_module_sha256": "7515d5fe60f2883a84bb8f1cf23bc5596d3c6108cb82f635baf2aa4f104ac3f3",
+ "s1b_module_sha256": "abbb581f8b6948c50042a965c0c9e10a5b2d5bc16bbb5f4da2c135e3f87afa1d",
  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
  "schema": "clasher.k4s.end-guard-job.v2",
- "script_sha256": "bf99e74b5f86306e03975801ae3d4cb597fd246c6c12cc7f74ca50d2885f31fd",
+ "script_sha256": "7dcf34122d164b45254cd7b4c61c7d59332f5767788e60cff5af4b6eecd4cd79",
  "status": "CANDIDATE-built",
  "target_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
  "top_level": [
@@ -242,5 +242,5 @@
   "repo",
   "system-bus-admission.json"
  ],
- "utc": "2026-10-13T05:02:56Z"
+ "utc": "2026-10-13T09:53:31Z"
 }

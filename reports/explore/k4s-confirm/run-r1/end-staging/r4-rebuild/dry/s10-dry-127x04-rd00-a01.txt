@@ -1,0 +1,124 @@
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a01/k4s-end-guard-r1-rd00-a01 manifest 5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac
+{
+ "bytes": 23539178669,
+ "components": [
+  {
+   "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "assembly_receipt_sha256": "f563d2c05e69e066f2c5d64e0ad451d1abe5b3619f55d5df024a7f133c9502ad",
+   "bytes": 23475392007,
+   "dirs": 41,
+   "files": 69,
+   "final": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01",
+   "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+   "guard_job_bytes_equal": true,
+   "inventory_sha256": "4e95504c3386d48e30c9d3991897c531d01e966d90d4126cb3de3a7e7b41004c",
+   "kind": "bundle",
+   "name": "end-ref-127x04-rd00-a01",
+   "partial": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01.partial",
+   "production": true,
+   "runtime_consistent": true,
+   "tiers_pins_sha256": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458"
+  },
+  {
+   "bindings": [
+    {
+     "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "label": "seed-03",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+     "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+     "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+     "label": "seed-08",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+     "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+    },
+    {
+     "commit": "0e137378ff251896d7a27899a9453f278945276b",
+     "label": "join-08-server",
+     "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+     "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    {
+     "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "label": "join-08-client",
+     "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+     "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+   ],
+   "bytes": 63786662,
+   "dirs": 19,
+   "files": 16,
+   "final": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+   "guard_manifest_sha256": "5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac",
+   "inventory_sha256": "38c3fce53a5086564d86a845059f6aab2632d3f594006b92ffbc532bf5fd5fb3",
+   "job": "k4s-end-guard-r1-rd00-a01",
+   "kind": "guard-job",
+   "kind_detail": {
+    "attempt": "01",
+    "kind": "attempt",
+    "round": "00"
+   },
+   "partial": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01.partial"
+  }
+ ],
+ "create_base": false,
+ "host": "127x04",
+ "mode": "dry-run",
+ "reader_program_sha256": "2d2f212d73b49176c53b1a03a621b64fbc6a8d4c15bd18051ac31f91016a6152",
+ "receive_program_sha256": "39a92e9d55f9ffefba57bae453677bad7c834f7761283268b84e40bb2d1210b4"
+}
+# P-check request {"host":"127x04","items":[{"grants":[],"kind":"dir","rel":"","root":"/mpac/sdicks02/jobs-k4s/k4s-end-r1"},{"grants":[],"kind":"dir","rel":"attempts","root":"/mpac/sdicks02/jobs-k4s/k4s-end-r1"},{"grants":[],"kind":"dir","rel":"preflight","root":"/mpac/sdicks02/jobs-k4s/k4s-end-r1"},{"grants":[],"kind":"dir","rel":"bundles","root":"/mpac/sdicks02/jobs-k4s/k4s-end-r1"},{"grants":[],"kind":"absent","rel":"end-ref-127x04-rd00-a01","root":"/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles"},{"grants":[],"kind":"absent","rel":"end-ref-127x04-rd00-a01.partial","root":"/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles"},{"grants":["guard-job"],"kind":"dir","rel":"","root":"/mpac/sdicks02/jobs-k4s"},{"grants":["guard-job"],"kind":"absent","rel":"k4s-end-guard-r1-rd00-a01","root":"/mpac/sdicks02/jobs-k4s"},{"grants":["guard-job"],"kind":"absent","rel":"k4s-end-guard-r1-rd00-a01.partial","root":"/mpac/sdicks02/jobs-k4s"}],"max_content":0,"schema":"clasher.k4s.safe-input.remote-request.v1"}
+/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 nice -n 19 /usr/bin/python3 -I -S - 7b22686f7374223a22313237783034222c226974656d73223a5b7b226772616e7473223a5b5d2c226b696e64223a22646972222c2272656c223a22222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b34732f6b34732d656e642d7231227d2c7b226772616e7473223a5b5d2c226b696e64223a22646972222c2272656c223a22617474656d707473222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b34732f6b34732d656e642d7231227d2c7b226772616e7473223a5b5d2c226b696e64223a22646972222c2272656c223a22707265666c69676874222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b34732f6b34732d656e642d7231227d2c7b226772616e7473223a5b5d2c226b696e64223a22646972222c2272656c223a2262756e646c6573222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b34732f6b34732d656e642d7231227d2c7b226772616e7473223a5b5d2c226b696e64223a22616273656e74222c2272656c223a22656e642d7265662d3132377830342d726430302d613031222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b34732f6b34732d656e642d72312f62756e646c6573227d2c7b226772616e7473223a5b5d2c226b696e64223a22616273656e74222c2272656c223a22656e642d7265662d3132377830342d726430302d6130312e7061727469616c222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b34732f6b34732d656e642d72312f62756e646c6573227d2c7b226772616e7473223a5b2267756172642d6a6f62225d2c226b696e64223a22646972222c2272656c223a22222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b3473227d2c7b226772616e7473223a5b2267756172642d6a6f62225d2c226b696e64223a22616273656e74222c2272656c223a226b34732d656e642d67756172642d72312d726430302d613031222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b3473227d2c7b226772616e7473223a5b2267756172642d6a6f62225d2c226b696e64223a22616273656e74222c2272656c223a226b34732d656e642d67756172642d72312d726430302d6130312e7061727469616c222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b3473227d5d2c226d61785f636f6e74656e74223a302c22736368656d61223a22636c61736865722e6b34732e736166652d696e7075742e72656d6f74652d726571756573742e7631227d
+# P-facts
+/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 '/bin/sh -c '"'"'export LC_ALL=C
+out=$(/usr/bin/hostname)
+echo "@@RC|hostname|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|hostname\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(/usr/bin/df -P -B1 -- /mpac/sdicks02)
+echo "@@RC|df|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|df\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(/usr/bin/who)
+echo "@@RC|who|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|who\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(cd / && /usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 HOME="$HOME" /usr/bin/nice -n 19 /mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12 -B -c '"'"'"'"'"'"'"'"'
+import hashlib, importlib, json, os, sys
+rec = dict(executable=sys.executable, realpath=os.path.realpath(sys.executable),
+           version="%d.%d.%d" % sys.version_info[:3], prefix=sys.prefix, base_prefix=sys.base_prefix,
+           flags=dict(isolated=sys.flags.isolated, no_user_site=sys.flags.no_user_site, optimize=sys.flags.optimize,
+                      dont_write_bytecode=sys.flags.dont_write_bytecode), imports={})
+with open(rec["realpath"], "rb") as stream:
+    rec["realpath_sha256"] = hashlib.sha256(stream.read()).hexdigest()
+for name in sys.argv[1:]:
+    try:
+        module = importlib.import_module(name)
+        rec["imports"][name] = dict(ok=True, origin=getattr(module, "__file__", None),
+                                    version=str(getattr(module, "__version__", "")))
+    except BaseException as error:
+        rec["imports"][name] = dict(ok=False, error="%s: %s" % (type(error).__name__, str(error)[:200]))
+sys.stdout.write("@@PY " + json.dumps(rec, sort_keys=True) + "\n")
+'"'"'"'"'"'"'"'"' numpy torch cv2 scipy)
+echo "@@RC|python|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|python\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(cd / && /usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 HOME="$HOME" /usr/bin/nice -n 19 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c '"'"'"'"'"'"'"'"'
+import hashlib, importlib, json, os, sys
+rec = dict(executable=sys.executable, realpath=os.path.realpath(sys.executable),
+           version="%d.%d.%d" % sys.version_info[:3], prefix=sys.prefix, base_prefix=sys.base_prefix,
+           flags=dict(isolated=sys.flags.isolated, no_user_site=sys.flags.no_user_site, optimize=sys.flags.optimize,
+                      dont_write_bytecode=sys.flags.dont_write_bytecode), imports={})
+with open(rec["realpath"], "rb") as stream:
+    rec["realpath_sha256"] = hashlib.sha256(stream.read()).hexdigest()
+for name in sys.argv[1:]:
+    try:
+        module = importlib.import_module(name)
+        rec["imports"][name] = dict(ok=True, origin=getattr(module, "__file__", None),
+                                    version=str(getattr(module, "__version__", "")))
+    except BaseException as error:
+        rec["imports"][name] = dict(ok=False, error="%s: %s" % (type(error).__name__, str(error)[:200]))
+sys.stdout.write("@@PY " + json.dumps(rec, sort_keys=True) + "\n")
+'"'"'"'"'"'"'"'"' numpy torch cv2 scipy)
+echo "@@RC|python-info-0|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|python-info-0\n%s\n'"'"'"'"'"'"'"'"' "$out"
+echo @@DONE'"'"''
+# receive bundle -> /mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01.partial (69 files, 41 dirs, 23475392007 bytes)
+# receive guard-job -> /mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01.partial (16 files, 19 dirs, 63786662 bytes)

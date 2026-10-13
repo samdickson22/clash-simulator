@@ -1,0 +1,60 @@
+S9 VERIFY OK: manifest 1fa0ebf5e4724711a27673236aa4800c97189890621c36c8ac2ee55585b8dde3; runtime_files fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7; inventory 74fc01a72632e813d8a51511f304d1aa7561914fd095c5b1fadba1ca8f4092b5
+{
+ "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "hosts": {
+  "127x03": {
+   "attempts": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts",
+   "base": "/mpac/sdicks02/jobs/clasher/k4s-end-r1",
+   "bundles": {
+    "end-ref-127x03-pf00": {
+     "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00",
+     "path": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-pf00",
+     "tiers_pins_sha256": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03"
+    },
+    "end-ref-127x03-rd00-a00": {
+     "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+     "path": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00",
+     "tiers_pins_sha256": "39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070"
+    },
+    "end-ref-127x03-rd00-a01": {
+     "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01",
+     "path": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a01",
+     "tiers_pins_sha256": "03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5"
+    }
+   },
+   "guard_parent": "/mpac/sdicks02/jobs/clasher",
+   "preflight": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/preflight",
+   "repository": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository",
+   "runtime": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b",
+   "tools": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools"
+  },
+  "127x04": {
+   "attempts": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/attempts",
+   "base": "/mpac/sdicks02/jobs-k4s/k4s-end-r1",
+   "bundles": {
+    "end-ref-127x04-pf00": {
+     "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-pf00",
+     "path": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-pf00",
+     "tiers_pins_sha256": "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f"
+    },
+    "end-ref-127x04-rd00-a00": {
+     "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a00",
+     "path": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a00",
+     "tiers_pins_sha256": "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e"
+    },
+    "end-ref-127x04-rd00-a01": {
+     "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+     "path": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a01",
+     "tiers_pins_sha256": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458"
+    }
+   },
+   "guard_parent": "/mpac/sdicks02/jobs-k4s",
+   "preflight": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight",
+   "repository": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository",
+   "runtime": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime-98566c032d0b",
+   "tools": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools"
+  }
+ },
+ "schema": "clasher.k4s.end-roots-declaration.v1"
+}
+RC-6 ROOTS-DECLARATION sha256 872ced5028db256e3b587f7fd5f2a9a4f6a5247f0b1a0548adb3e7accb628a40 -> /mpac/sdicks02/k4s-runner/run-r1/end-staging/r4-rebuild/ROOTS-DECLARATION.json (runtime runtime-98566c032d0b; 6 bundles; inputs: [{"assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016", "assembly_receipt_sha256": "c0874a6f6a33dc17a166e2fde415b3a22947f849f00868ac582f82a73700535a", "host": "127x03", "name": "end-ref-127x03-pf00", "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-pf00", "tiers_pins_sha256": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03"}, {"assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016", "assembly_receipt_sha256": "49b96b98bc65a9f27adfa65c46b51620f27189fa1ac74c5432a4fba30f5ab857", "host": "127x03", "name": "end-ref-127x03-rd00-a00", "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-rd00-a00", "tiers_pins_sha256": "39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070"}, {"assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016", "assembly_receipt_sha256": "7e0814a7afb54e264135052aed3c6f3d277aab74cdc70cfed13004b954b1c173", "host": "127x03", "name": "end-ref-127x03-rd00-a01", "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x03-rd00-a01", "tiers_pins_sha256": "03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5"}, {"assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016", "assembly_receipt_sha256": "9fc01c8053e958e637a34de44fed1123ae53b88aaec6aa5c4ea66fd7a3883729", "host": "127x04", "name": "end-ref-127x04-pf00", "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-pf00", "tiers_pins_sha256": "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f"}, {"assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016", "assembly_receipt_sha256": "ce9d6c2a8ce75132bb1ef4cd0c536731cb1e3bec71d73ce7acda3473806a63d5", "host": "127x04", "name": "end-ref-127x04-rd00-a00", "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-rd00-a00", "tiers_pins_sha256": "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e"}, {"assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016", "assembly_receipt_sha256": "f563d2c05e69e066f2c5d64e0ad451d1abe5b3619f55d5df024a7f133c9502ad", "host": "127x04", "name": "end-ref-127x04-rd00-a01", "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/bundles/end-ref-127x04-rd00-a01", "tiers_pins_sha256": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458"}])

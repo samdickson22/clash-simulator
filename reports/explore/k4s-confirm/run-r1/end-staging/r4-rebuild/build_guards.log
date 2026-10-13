@@ -1,0 +1,49 @@
+S3 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-pf00/k4s-end-guard-r1-pf00 -> /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00
+  /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-pf00/guard-job-manifest.json sha256 a068acdd508b5da79fa5b786784c98215ff5bae7e2bb0b283c0fc7ec18c2ff50
+__BUILD 127x03 pf00 rc=0
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-pf00/k4s-end-guard-r1-pf00 manifest a068acdd508b5da79fa5b786784c98215ff5bae7e2bb0b283c0fc7ec18c2ff50
+__VERIFY 127x03 pf00 job=k4s-end-guard-r1-pf00 manifest=a068acdd508b5da79fa5b786784c98215ff5bae7e2bb0b283c0fc7ec18c2ff50 rc=0
+FROZEN-T1.json
+repo
+system-bus-admission.json
+S3 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a00/k4s-end-guard-r1-rd00-a00 -> /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00
+  /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a00/guard-job-manifest.json sha256 86e396c05912ea7ba737c01a798dd0fef369469c7d289044dcea3c87519743a9
+__BUILD 127x03 rd00-a00 rc=0
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a00/k4s-end-guard-r1-rd00-a00 manifest 86e396c05912ea7ba737c01a798dd0fef369469c7d289044dcea3c87519743a9
+__VERIFY 127x03 rd00-a00 job=k4s-end-guard-r1-rd00-a00 manifest=86e396c05912ea7ba737c01a798dd0fef369469c7d289044dcea3c87519743a9 rc=0
+FROZEN-T1.json
+repo
+system-bus-admission.json
+S3 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a01/k4s-end-guard-r1-rd00-a01 -> /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01
+  /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a01/guard-job-manifest.json sha256 ec474156bab1564d315d8c61aba84f75ee0dbe3e072d415181383acde9bfab6e
+__BUILD 127x03 rd00-a01 rc=0
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a01/k4s-end-guard-r1-rd00-a01 manifest ec474156bab1564d315d8c61aba84f75ee0dbe3e072d415181383acde9bfab6e
+__VERIFY 127x03 rd00-a01 job=k4s-end-guard-r1-rd00-a01 manifest=ec474156bab1564d315d8c61aba84f75ee0dbe3e072d415181383acde9bfab6e rc=0
+FROZEN-T1.json
+repo
+system-bus-admission.json
+S3 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-pf00/k4s-end-guard-r1-pf00 -> /mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-pf00
+  /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-pf00/guard-job-manifest.json sha256 8eb50146d98b726d6be75839d5e9dd394cbde7cef254da9f8d9e52aa2c7bacde
+__BUILD 127x04 pf00 rc=0
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-pf00/k4s-end-guard-r1-pf00 manifest 8eb50146d98b726d6be75839d5e9dd394cbde7cef254da9f8d9e52aa2c7bacde
+__VERIFY 127x04 pf00 job=k4s-end-guard-r1-pf00 manifest=8eb50146d98b726d6be75839d5e9dd394cbde7cef254da9f8d9e52aa2c7bacde rc=0
+FROZEN-T1.json
+repo
+system-bus-admission.json
+S3 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a00/k4s-end-guard-r1-rd00-a00 -> /mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a00
+  /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a00/guard-job-manifest.json sha256 065e1a10fdd15f9a34e05c35449d007aa996d12ebafc7e2f6376bca29dfeb3d9
+__BUILD 127x04 rd00-a00 rc=0
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a00/k4s-end-guard-r1-rd00-a00 manifest 065e1a10fdd15f9a34e05c35449d007aa996d12ebafc7e2f6376bca29dfeb3d9
+__VERIFY 127x04 rd00-a00 job=k4s-end-guard-r1-rd00-a00 manifest=065e1a10fdd15f9a34e05c35449d007aa996d12ebafc7e2f6376bca29dfeb3d9 rc=0
+FROZEN-T1.json
+repo
+system-bus-admission.json
+S3 OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a01/k4s-end-guard-r1-rd00-a01 -> /mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01
+  /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a01/guard-job-manifest.json sha256 5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac
+__BUILD 127x04 rd00-a01 rc=0
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x04-rd00-a01/k4s-end-guard-r1-rd00-a01 manifest 5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac
+__VERIFY 127x04 rd00-a01 job=k4s-end-guard-r1-rd00-a01 manifest=5c391e34b602a20bc7c8ef7a2bc4abd6041d56f06cef1ebbbe4dd3a0a0e663ac rc=0
+FROZEN-T1.json
+repo
+system-bus-admission.json
+__EXIT=0

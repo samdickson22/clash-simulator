@@ -1,18 +1,5 @@
 {
  "admissions": {
-  "idle-services.json": {
-   "identity": {
-    "name": "idle-services.json",
-    "pid": 2180947,
-    "start_ticks": 139691386,
-    "utc": "2026-10-12T14:03:17Z"
-   },
-   "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x03-idle-services.json",
-   "s1b_remote_path": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/idle-services.json",
-   "s1b_remote_sha256": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
-   "sha256": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
-   "size": 3779
-  },
   "system-bus-admission.json": {
    "identity": {
     "name": "system-bus-admission.json",
@@ -53,7 +40,7 @@
    "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
   }
  ],
- "bytes": 63800082,
+ "bytes": 63795370,
  "commit_proofs": [
   {
    "cat_file_e": 0,
@@ -72,7 +59,7 @@
    "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a"
   }
  ],
- "common_sha256": "c9465351b2d427db62fa9365707b21b7e52c422eb7a2ff1fc4fa58203545c4b6",
+ "common_sha256": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
  "dirs": [
   "repo",
   "repo/.git",
@@ -94,7 +81,7 @@
   "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts",
   "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1"
  ],
- "files": 17,
+ "files": 16,
  "frozen_seed_check": {
   "admit_accepted": [],
   "admit_host": "127x05",
@@ -155,11 +142,6 @@
    "size": 35043
   },
   {
-   "path": "idle-services.json",
-   "sha256": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
-   "size": 3779
-  },
-  {
    "path": "repo/.git/HEAD",
    "sha256": "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10",
    "size": 23
@@ -171,18 +153,18 @@
   },
   {
    "path": "repo/.git/index",
-   "sha256": "25a891599c903084470f1df12c97f44c29bb945123017feeeb41c2fc64cf4cc3",
+   "sha256": "5d24d3b281b1b4e3bc10656eae3fe76cee31bd796edd440476ed30f5f2df278b",
    "size": 652
   },
   {
-   "path": "repo/.git/objects/pack/pack-c486f3f7c14583d7aa47bd192b12d9b324e7c684.idx",
-   "sha256": "50fa0dc4fb1e52af917093030f62ed94ed37737b9713370ab8430bfebbb87a21",
+   "path": "repo/.git/objects/pack/pack-3e1419b17166d4d49419673dd20545c940e93a48.idx",
+   "sha256": "59757f902ae38e9b47decf370fe32305d67fc6e01bafb4e9c19ce204ee95bb8d",
    "size": 276256
   },
   {
-   "path": "repo/.git/objects/pack/pack-c486f3f7c14583d7aa47bd192b12d9b324e7c684.pack",
-   "sha256": "bc5f8d477827e7a19bde84b60ad6932fa399368e349122305e4db1cd915be51d",
-   "size": 63393721
+   "path": "repo/.git/objects/pack/pack-3e1419b17166d4d49419673dd20545c940e93a48.pack",
+   "sha256": "5d22af8ab937f926ccc278896b69ff78652be5c27f731af63f863c38571d9566",
+   "size": 63392788
   },
   {
    "path": "repo/.git/refs/k4s-end/join-08-client",
@@ -235,7 +217,7 @@
    "size": 411
   }
  ],
- "inventory_sha256": "ab48ffd7606dd6ae7383bac190dfd66f8dc755499a153a38da5cd18c6600a928",
+ "inventory_sha256": "bfde29fc6043eeb4b1f6279003fffadb2075674ee82264bbbf8668f6bf43d359",
  "job": {
   "attempt": "01",
   "kind": "attempt",
@@ -249,17 +231,16 @@
  "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
  "repository_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
  "s1b_manifest_sha256": "64c2fc8ded40e695c9fc2eb1e635204d6cc8af5bd48f040845211bc78ede3e84",
- "s1b_module_sha256": "7515d5fe60f2883a84bb8f1cf23bc5596d3c6108cb82f635baf2aa4f104ac3f3",
+ "s1b_module_sha256": "abbb581f8b6948c50042a965c0c9e10a5b2d5bc16bbb5f4da2c135e3f87afa1d",
  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
  "schema": "clasher.k4s.end-guard-job.v2",
- "script_sha256": "bf99e74b5f86306e03975801ae3d4cb597fd246c6c12cc7f74ca50d2885f31fd",
+ "script_sha256": "7dcf34122d164b45254cd7b4c61c7d59332f5767788e60cff5af4b6eecd4cd79",
  "status": "CANDIDATE-built",
  "target_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01",
  "top_level": [
   "FROZEN-T1.json",
-  "idle-services.json",
   "repo",
   "system-bus-admission.json"
  ],
- "utc": "2026-10-13T05:02:53Z"
+ "utc": "2026-10-13T09:53:22Z"
 }

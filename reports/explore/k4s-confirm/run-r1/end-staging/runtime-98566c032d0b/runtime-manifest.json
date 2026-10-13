@@ -1,7 +1,7 @@
 {
  "base_commit": "133f3ae4f414c9b8a3715eb8f44832fc96a6e5db",
  "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
- "common_sha256": "c9465351b2d427db62fa9365707b21b7e52c422eb7a2ff1fc4fa58203545c4b6",
+ "common_sha256": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
  "e1": {
   "alias": "visualize_battle.py",
   "link": "examples/visualize_battle.py",
@@ -225,7 +225,7 @@
    "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/test_l1_v4.py"
   }
  ],
- "finished_utc": "2026-10-13T04:56:32Z",
+ "finished_utc": "2026-10-13T09:52:22Z",
  "frozen_check": {
   "k4s_logic": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b.partial/runtime/reports/explore/k4s-confirm/mac/k4s_logic.py",
   "k4s_manifest_schema": "clasher.k4s.mac-manifest.v1",
@@ -241,7 +241,12 @@
     "reports/explore/k4s-confirm/mac/k4s_logic.py"
    ],
    "k4s_pins_verified": 31,
-   "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25"
+   "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+   "support_pins_verified": [
+    "reports/explore/k4s-confirm/DELTA-MANIFEST.json",
+    "reports/explore/k4s-confirm/SD1-MANIFEST.json",
+    "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json"
+   ]
   }
  },
  "frozen_runtime_files_equal": true,
@@ -3697,6 +3702,16 @@
   },
   {
    "mode": "100644",
+   "oid": "2f7fcb8fc13d2a3ef68fbba69c422e903fae357c",
+   "path": "reports/explore/k4s-confirm/DELTA-MANIFEST.json"
+  },
+  {
+   "mode": "100644",
+   "oid": "1549377ada458516dc5edb70cbe84c46550f161d",
+   "path": "reports/explore/k4s-confirm/SD1-MANIFEST.json"
+  },
+  {
+   "mode": "100644",
    "oid": "87f735327271c20ac709ebdf105435d4a532424c",
    "path": "reports/explore/k4s-confirm/anchor.py"
   },
@@ -5814,6 +5829,11 @@
    "mode": "100644",
    "oid": "f3976a93215401766e6a45a3c6f61a6f3f33729a",
    "path": "reports/explore/t1/common.py"
+  },
+  {
+   "mode": "100644",
+   "oid": "27f08654d4f43c98c055f743429b69bcf2f94926",
+   "path": "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json"
   },
   {
    "mode": "100644",
@@ -21681,7 +21701,7 @@
    "path": "visualize_battle.py"
   }
  ],
- "git_members_sha256": "ed87f8716ebb8e7a32381aa7716d6c3d4b9d768f84a19273057caa99950494fe",
+ "git_members_sha256": "89cff3363556bed7091f8ef57f5b723aaba79f25e4b173573b3d99face8147eb",
  "inventory": {
   "dirs": [
    "engine-rs",
@@ -21858,6 +21878,7 @@
    "reports/explore/mac-registration/receipts",
    "reports/explore/mac-registration/tests",
    "reports/explore/s1/receipts",
+   "reports/explore/t1/corpora",
    "reports/explore/t1/inherited",
    "reports/explore/t1/receipts",
    "reports/explore/t1/verifier",
@@ -21940,6 +21961,7 @@
    "reports/explore/mac-e4-session/receipts/phase-a-preflight-20261011",
    "reports/explore/mac-e4-session/receipts/phase-b-prep-20261011",
    "reports/explore/mac-registration/receipts/phase3-20261012",
+   "reports/explore/t1/corpora/corpus-03-a51ea64c",
    "reports/explore/t1/inherited/k2",
    "reports/explore/t1/inherited/r1",
    "reports/explore/t1/inherited/s1",
@@ -25546,6 +25568,16 @@
     "sha256": "8b301881d4eb00ff41cb43aa674d5cae8b1880c4f125ada5f5af8a935ae72ea2",
     "size": 8986
    },
+   "reports/explore/k4s-confirm/DELTA-MANIFEST.json": {
+    "executable": false,
+    "sha256": "34eca2b74c0345649d350c9cc33bf5b557a4ed3cf533a72fbaf85a2f0a690056",
+    "size": 51768
+   },
+   "reports/explore/k4s-confirm/SD1-MANIFEST.json": {
+    "executable": false,
+    "sha256": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+    "size": 6148
+   },
    "reports/explore/k4s-confirm/anchor.py": {
     "executable": false,
     "sha256": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
@@ -27667,6 +27699,11 @@
     "executable": false,
     "sha256": "36e5eec3bf3cd4e285bc4d2c10631038cbe8cad54d2c25a2245336c251ee20c0",
     "size": 695
+   },
+   "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json": {
+    "executable": false,
+    "sha256": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+    "size": 202182
    },
    "reports/explore/t1/corpus.py": {
     "executable": false,
@@ -43677,9 +43714,9 @@
    }
   }
  },
- "inventory_bytes": 84635830,
- "inventory_files": 4313,
- "inventory_sha256": "16f57cd706f29f1dbf8884f9eec74cb99274d1c23e0d3f365250b5731b47d480",
+ "inventory_bytes": 84895928,
+ "inventory_files": 4316,
+ "inventory_sha256": "74fc01a72632e813d8a51511f304d1aa7561914fd095c5b1fadba1ca8f4092b5",
  "k4s_manifest_sha256": "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
  "measurement_files": {
   "build_tiers.sh": "3656f88ecf80cd9aec83c94607dad44088e0b7fbb2d244d06d47c74561e45372",
@@ -43702,7 +43739,7 @@
   "tier_backend.py": "02e2139f9ddc6e795e8e102f278ccd5cc53363c55d8a90288b4715adb724ca1d"
  },
  "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
- "member_rule": "runtime-pin-r2 files U every *.py U SUPPORT_MEMBERS (D1; tree metadata only)",
+ "member_rule": "runtime-pin-r2 files U every *.py U SUPPORT_MEMBERS (D1 + r4 extension; tree metadata only)",
  "python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
  "q5_source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime",
  "qualified_source_binding_sha256": "56b67dd430636c90462156f3790f3a03df40410a77ffbd3d2d4c0b11acc0dce6",
@@ -48023,17 +48060,25 @@
  "runtime_pin_r2_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
  "schema": "clasher.k4s.end-runtime.v2",
- "script_sha256": "1875a32ec5155cbd3355c912b8114bb8654b0fd9593d421474476f3c069bf651",
- "started_utc": "2026-10-13T04:56:04Z",
+ "script_sha256": "80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff",
+ "started_utc": "2026-10-13T09:51:55Z",
  "status": "CANDIDATE-built",
  "support_members": [
+  "reports/explore/k4s-confirm/DELTA-MANIFEST.json",
+  "reports/explore/k4s-confirm/SD1-MANIFEST.json",
   "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json",
   "reports/explore/k4s-confirm/mac/K4S-MAC-PROCEDURE.md",
   "reports/explore/s1/receipts/qualified-source-binding.json",
   "reports/explore/s1/receipts/runtime-pin-r2.json",
+  "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
   "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/build_tiers.sh",
   "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/spec-pins.json"
  ],
+ "support_pins": {
+  "reports/explore/k4s-confirm/DELTA-MANIFEST.json": "34eca2b74c0345649d350c9cc33bf5b557a4ed3cf533a72fbaf85a2f0a690056",
+  "reports/explore/k4s-confirm/SD1-MANIFEST.json": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"
+ },
  "tracked_pin_sha_differs_from_git": [
   {
    "git_sha256": "df84904079c5ea95543dadef7a733b3af65b4e162906301063cb6d65aed2b5fa",
