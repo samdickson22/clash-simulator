@@ -1,0 +1,11 @@
+# s5s6s7-r3 final test matrix (safe_input r3 806e5ebb pin; canonical bootstrap r1 5611c604/1ed816fa), 127x05, from a pristine cp -a copy /dev/shm/s567r3-pristine/s5s6s7-r3
+# command: nice -n 19 taskset -c 8-15 <python> [-O] -B -m pytest -q -p no:cacheprovider tests   (PYTHONDONTWRITEBYTECODE=1; pytest 8.3.5 for 3.8 from /dev/shm/s567r3-pytest38)
+--- py312
+611 passed in 288.30s (0:04:48)
+--- py312_-O
+561 passed, 50 skipped, 1 warning in 272.14s (0:04:32)
+--- py38
+611 passed in 359.32s (0:05:59)
+--- py38_-O
+561 passed, 50 skipped, 1 warning in 356.25s (0:05:56)
+--- F2 integration vs s3s9s10-r3 (K4S_PARTA_DIR): 17 passed in each of py312, py312 -O, py38, py38 -O

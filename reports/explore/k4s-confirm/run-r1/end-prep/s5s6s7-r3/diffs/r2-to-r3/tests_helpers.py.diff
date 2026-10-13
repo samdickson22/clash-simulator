@@ -1,0 +1,79 @@
+--- ../s5s6s7-r2/tests/helpers.py	2026-10-12 15:01:56.513357524 -0700
++++ tests/helpers.py	2026-10-12 17:19:18.961200456 -0700
+@@ -101,6 +101,24 @@
+     return tuple(out)
+ 
+ 
++def shallow_guard_repo(repo, source, commits=2):
++    """A Q3-shaped guard repo stand-in (the shape S3 builds: s3_guard_job.build_repo): `git init`, a depth-1 fetch of
++    the seed commits from a separate full `source` repo over file://, loose refs refs/k4s-end/seed-N, no remote, no
++    FETCH_HEAD; .git/shallow lists the fetched commits. Returns the seed commits. The real S3-built job is exercised
++    in test_f2_s3_guard_integration.py."""
++    seeds = git_repo(source, commits=commits + 1)[1:]          # every seed has a parent, as b2f9e25e/ce042b97 do
++    git(source, "config", "uploadpack.allowAnySHA1InWant", "true")    # fetch by SHA (S3: --upload-pack override)
++    repo = Path(repo)
++    repo.mkdir(parents=True, exist_ok=True)
++    git(repo, "init", "-q", "--template=")
++    git(repo, "-c", "protocol.file.allow=always", "fetch", "-q", "--depth=1", "--no-tags", "file://" + str(source),
++        *seeds)
++    os.unlink(repo / ".git" / "FETCH_HEAD")
++    for i, commit in enumerate(seeds):
++        git(repo, "update-ref", "refs/k4s-end/seed-%d" % i, commit)
++    return tuple(seeds)
++
++
+ class Store:
+     """Same file semantics as k4s_logic.K4SStore (exclusive files, scope key, seal + sidecar)."""
+ 
+@@ -138,7 +156,31 @@
+     return subprocess.run([str(a) for a in argv], env=env, capture_output=True, text=True, **kw)
+ 
+ 
++SHIM_NAMES = ("hostname", "nice", "rsync", "taskset", "timeout")
++
++
++def require_executable_shims():
++    """END-FULL-F6: the PATH shims must be regular files with every execute bit (0755 on disk; the runner's commit
++    helper preserves 100755 from the exec bit). A 0644 checkout would make the shell silently fall through to the
++    REAL hostname/rsync/...: refuse loudly instead (conftest.pytest_sessionstart and every shim_env call)."""
++    bad = []
++    for name in SHIM_NAMES:
++        path = SHIMS / name
++        try:
++            st = os.lstat(path)
++        except FileNotFoundError:
++            bad.append(name + " (missing)")
++            continue
++        if not stat.S_ISREG(st.st_mode) or stat.S_IMODE(st.st_mode) & 0o111 != 0o111 or not os.access(path, os.X_OK):
++            bad.append("%s (mode %o)" % (name, stat.S_IMODE(st.st_mode)))
++    if bad:
++        raise RuntimeError("tests/shims not executable (chmod 0755 tests/shims/*; the fakes would otherwise be "
++                           "bypassed by the real binaries): " + ", ".join(bad))
++    return SHIM_NAMES
++
++
+ def shim_env(tmp, **extra):
++    require_executable_shims()
+     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+     env["PATH"] = str(SHIMS) + os.pathsep + "/usr/bin:/bin"
+     env["FAKE_LOG"] = str(Path(tmp) / "fake.log")
+@@ -154,6 +196,19 @@
+     return path
+ 
+ 
++def make_writable(path):
++    """u+w on every directory/file under `path` (no symlink followed): S3 jobs are read-only; tmp cleanup needs it."""
++    path = Path(path)
++    if not path.exists() or path.is_symlink():
++        return
++    for directory, dirs, files in os.walk(path):
++        os.chmod(directory, os.lstat(directory).st_mode | 0o700)
++        for name in files:
++            full = os.path.join(directory, name)
++            if not os.path.islink(full):
++                os.chmod(full, os.lstat(full).st_mode | 0o600)
++
++
+ def nlink(path):
+     return os.lstat(path).st_nlink
+ 

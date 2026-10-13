@@ -1,0 +1,321 @@
+--- ../s5s6s7-r2/k4s_end_preflight.py	2026-10-12 15:30:05.314816389 -0700
++++ k4s_end_preflight.py	2026-10-12 17:23:32.683861376 -0700
+@@ -1,4 +1,9 @@
+-"""K4S END on-host PREFLIGHT (S5 candidate r2, RC-2 / P2-3). Non-claiming, non-timing. Never launches games.
++"""K4S END on-host PREFLIGHT (S5 candidate r3, RC-2 / P2-3). Non-claiming, non-timing. Never launches games.
++
++r3 (SOL END-FULL): the guard repo is checked in the explicit "guard-repo" role (the S3 depth-1 shallow Q3 repo; F2),
++the --repository clone in the "repository" role (full); the frozen-reader environment is the single object built and
++checked by k4s_end_host_tool.frozen_env_checked (F3); the result (schema v3) exports the native/corpus/corpus-inventory
++identities and the bundle's guard-job-free manifest digest that S7 binds to the END argv (F5).
+ 
+ r2: every read, hash, stat, open, write, subprocess and git call goes through the pinned safe_input layer
+ (ruling P2-1/P2-4), loaded from this directory only after its SHA-256 and constants fingerprint match.
+@@ -44,12 +49,11 @@
+ from pathlib import Path
+ from types import SimpleNamespace
+ 
+-HERE = os.path.dirname(os.path.abspath(__file__))
+ SAFE_INPUT_SHA256 = "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ SAFE_INPUT_FINGERPRINT = "33f594ed75c3b3b6416ec8b4804490b82a85521533056b57c1d582529207f592"
+-HOST_TOOL_SHA256 = "cf19269071d57f0d1fe9b7ce5f865b4641ecda62c88e418cd73b711a57a5d6f3"
+-SCHEMA = "clasher.k4s.end-preflight.v2"
+-VERIFIED_SCHEMA = "clasher.k4s.end-preflight-verified.v2"
++HOST_TOOL_SHA256 = "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647"
++SCHEMA = "clasher.k4s.end-preflight.v3"
++VERIFIED_SCHEMA = "clasher.k4s.end-preflight-verified.v3"
+ SCOPE = "K4S-END-PREFLIGHT"
+ STUDY_REL = "reports/explore/k4s-confirm"
+ HOSTS = ("127x03", "127x04")
+@@ -75,6 +79,12 @@
+ SEED_COMMITS = ("b2f9e25e1002d43cc910a4bb476716cc4cd32623",   # FROZEN-T1 parent_source_seeds (03; 08 join)
+                 "ce042b9775f80cb495c327b14a4712730ae95c85")   # coordinator 15:41Z Q3: git cat-file -e first
+ MANIFEST_REL = STUDY_REL + "/mac/K4S-MAC-MANIFEST.json"
++# r3 (END-FULL-F5a): launch-input identities the preflight exports and S7 binds to the END argv. Native and corpus:
++# the frozen identities end_reference.frozen_identity enforces (k4s_logic.py:29 NATIVE_PROVENANCE_SHA, :53
++# T1_K4_CORPUS_SHA); corpus inventory: corpora.json at the manifest's inventory_commit 81f2483e.
++NATIVE_SHA256 = "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"
++CORPUS_SHA256 = "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8"
++CORPUS_INVENTORY_SHA256 = "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"
+ K4S_MANIFEST_SHA256 = "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357"   # S5-F1: fixed anchor
+ END_SOURCES = (STUDY_REL + "/end_reference.py", STUDY_REL + "/end_pool.py", STUDY_REL + "/end_background.py",
+                STUDY_REL + "/end_evidence.py", STUDY_REL + "/mac/k4s_backend.py", STUDY_REL + "/mac/k4s_logic.py")
+@@ -136,44 +146,180 @@
+ 
+ 
+ # ---------------------------------------------------------------- pinned layers (stdlib bootstrap, then safe_input)
+-
+-def read_pinned(path, sha256, cap=1 << 23):
+-    """Bootstrap read before safe_input exists: canonical path, O_NOFOLLOW, regular, st_nlink 1, cap, exact size,
+-    SHA-256 equal to the pin (same rule as k4s_end_host_tool.read_pinned)."""
++# r3 (END-FULL-F1): safe_input and the host tool are read ONLY through the canonical bootstrap r1 below
++# (bootstrap-r1/k4s_bootstrap_r1.py, verbatim between its BEGIN/END lines; pins outside): normalized absolute path
++# (default: next to __file__, never resolved), outcome-name gate on every component, O_DIRECTORY|O_NOFOLLOW walk,
++# single-link regular leaf of exactly the pinned size BEFORE any byte is read, SHA-256, execute exactly those bytes.
++SAFE_INPUT_SIZE = 133606
++HOST_TOOL_SIZE = 34444
++
++# ==== BEGIN K4S CANONICAL BOOTSTRAP r1 (bootstrap-r1/k4s_bootstrap_r1.py; paste verbatim, byte for byte) ====
++# END-FULL-F1. The only way a K4S END component may read a pinned stdlib-loaded file (its vendored safe_input layer,
++# or a host tool) before the shared layer exists. Stdlib only, Python 3.8+, Linux, no assert (holds under -O), no
++# single-quote character (so the same text can sit inside a single-quoted shell word). Contract, in order:
++#   1. the path is absolute and already normalized (normpath(p) == p; no empty, "." or ".." component, no trailing
++#      slash, no control or backslash character). Nothing is canonicalized: realpath is never called;
++#   2. every component (ancestors and leaf) passes the safe_input r3 OUTCOME name families (casefolded fullmatch,
++#      the same regex literals; conformance-tested against si.outcome_family);
++#   3. a component-wise walk from "/": each ancestor is opened O_DIRECTORY|O_NOFOLLOW relative to its parent fd and
++#      fstat must say directory (a symlink, a non-directory or a missing ancestor refuses);
++#   4. the leaf is fstatat-ed without following (regular, st_nlink == 1, exactly the pinned size) BEFORE it is opened,
++#      then opened O_NOFOLLOW|O_NONBLOCK relative to the parent fd and fstat-ed again (same dev/ino, regular,
++#      st_nlink == 1, pinned size) BEFORE any byte is read;
++#   5. exactly the pinned size is read from THAT descriptor, EOF is confirmed, the SHA-256 must equal the pin, and
++#      exactly those bytes are compiled and executed in a fresh module registered under the caller-given name. The
++#      code object is compiled under a "<k4s-bootstrap ...>" filename (linecache is given the verified lines) so no
++#      traceback, import or inspect call ever re-opens the path after hashing;
++#   6. every refusal is `raise refusal(message)`, the caller-chosen refusal convention (an exception class, or a
++#      callable returning the exception to raise).
++K4S_BOOTSTRAP_RELEASE = "k4s-bootstrap-r1"
++K4S_BOOTSTRAP_OUTCOME_FAMILIES = (                      # == safe_input r3 OUTCOME_FAMILIES (literal copy, tested)
++    ("games", r"(?:.*[^a-z])?" + r"games" + r"(?:[^a-z].*)?"),
++    ("hub-blocks", r"(?:.*[^a-z])?" + r"hub[-_.]?blocks?" + r"(?:[^a-z].*)?"),
++    ("complete-json", r".*complete.*\.json.*"),
++    ("interference-json", r".*interference.*\.json.*"),
++    ("hub-ack-json", r".*hub[-_.]?ack.*\.json.*"),
++    ("end-raw-json", r".*end[-_.]?raw.*\.json.*"),
++)
++K4S_BOOTSTRAP_MAX_SIZE = 1 << 24
++
++
++def k4s_bootstrap_name_family(component):
++    """The OUTCOME family label of one path component (casefolded fullmatch), or None."""
++    import re
++    folded = component.casefold()
++    for label, rx in K4S_BOOTSTRAP_OUTCOME_FAMILIES:
++        if re.fullmatch(rx, folded, re.S):
++            return label
++    return None
++
++
++def k4s_bootstrap_default_path(module_file, leaf):
++    """The sibling `leaf` of `module_file`, made absolute without resolving or normalizing anything: an alias or a
++    non-normalized __file__ stays visible, so the walk refuses it."""
++    import os
++    directory = os.path.dirname(module_file)
++    if not directory.startswith("/"):
++        directory = os.getcwd() + ("/" + directory if directory else "")
++    return directory + "/" + leaf
++
++
++def k4s_bootstrap_read_verified(path, sha256, size, refusal):
++    """Steps 1-5 up to the hash: return exactly the pinned bytes, or raise refusal(message) having read nothing that
++    fails a name, walk or descriptor gate."""
++    import hashlib
++    import os
+     import stat
+-    require(path.startswith("/") and not path.startswith("//") and os.path.realpath(path) == path,
+-            "pinned file path is not canonical: " + path)
+-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK)
++
++    def refused(reason):
++        return refusal("k4s bootstrap refused: " + reason + ": " + repr(path))
++
++    if not isinstance(sha256, str) or len(sha256) != 64 or any(c not in "0123456789abcdef" for c in sha256):
++        raise refused("the SHA-256 pin is not 64 lowercase hex digits")
++    if type(size) is not int or not 0 < size <= K4S_BOOTSTRAP_MAX_SIZE:
++        raise refused("the size pin is not an int in 1..%d" % K4S_BOOTSTRAP_MAX_SIZE)
++    if (not isinstance(path, str) or not path.startswith("/") or path.startswith("//") or path.endswith("/")
++            or os.path.normpath(path) != path):
++        raise refused("not an absolute normalized path")
++    if "\\" in path or any(ord(c) < 32 or ord(c) == 127 for c in path):
++        raise refused("control or backslash character in the path")
++    parts = path[1:].split("/")
++    if any(p in ("", ".", "..") for p in parts):
++        raise refused("empty, . or .. component")
++    for p in parts:
++        family = k4s_bootstrap_name_family(p)
++        if family is not None:
++            raise refused("outcome name family " + family + " in component " + repr(p))
++    fd = os.open("/", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+     try:
+-        st = os.fstat(fd)
+-        require(stat.S_ISREG(st.st_mode) and st.st_nlink == 1 and st.st_size <= cap,
+-                "pinned file is not a single-link regular file within the cap: " + path)
+-        chunks, left = [], st.st_size
+-        while left:
+-            chunk = os.read(fd, min(left, 1 << 20))
+-            require(chunk, "pinned file shrank: " + path)
+-            chunks.append(chunk)
+-            left -= len(chunk)
+-        require(not os.read(fd, 1), "pinned file grew: " + path)
++        if not stat.S_ISDIR(os.fstat(fd).st_mode):
++            raise refused("/ is not a directory")
++        for name in parts[:-1]:
++            try:
++                child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=fd)
++            except OSError as error:
++                raise refused("ancestor " + repr(name) + " is a symlink, not a directory or missing ("
++                              + os.strerror(error.errno) + ")")
++            previous, fd = fd, child
++            os.close(previous)
++            if not stat.S_ISDIR(os.fstat(fd).st_mode):
++                raise refused("ancestor " + repr(name) + " is not a directory")
++        leaf = parts[-1]
++        try:
++            before = os.stat(leaf, dir_fd=fd, follow_symlinks=False)
++        except OSError as error:
++            raise refused("leaf cannot be inspected (" + os.strerror(error.errno) + ")")
++        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size != size:
++            raise refused("leaf is not a single-link regular file of the pinned size %d" % size)
++        try:
++            leaf_fd = os.open(leaf, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_NOCTTY | os.O_CLOEXEC,
++                              dir_fd=fd)
++        except OSError as error:
++            raise refused("leaf cannot be opened without following (" + os.strerror(error.errno) + ")")
++        try:
++            info = os.fstat(leaf_fd)
++            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size != size
++                    or (info.st_dev, info.st_ino) != (before.st_dev, before.st_ino)):
++                raise refused("opened leaf is not the inspected single-link regular file of the pinned size")
++            chunks, left = [], size
++            while left > 0:
++                chunk = os.read(leaf_fd, left)
++                if not chunk:
++                    raise refused("leaf shrank while read")
++                chunks.append(chunk)
++                left -= len(chunk)
++            if os.read(leaf_fd, 1) != b"":
++                raise refused("leaf grew while read")
++        finally:
++            os.close(leaf_fd)
+     finally:
+         os.close(fd)
+     data = b"".join(chunks)
+-    require(hashlib.sha256(data).hexdigest() == sha256, "pinned file SHA-256 mismatch: " + path)
++    if len(data) != size or hashlib.sha256(data).hexdigest() != sha256:
++        raise refused("bytes are not the pinned SHA-256 " + sha256)
+     return data
+ 
+ 
+-def load_module(name, path, sha256):
+-    module = types.ModuleType(name)
++def k4s_bootstrap_exec(data, path, sha256, module_name):
++    """Step 5 tail: compile and execute exactly `data` (already verified) in a fresh module named `module_name`."""
++    import linecache
++    import sys
++    import types
++    filename = "<k4s-bootstrap sha256=" + sha256 + " " + path + ">"
++    linecache.cache[filename] = (len(data), None, data.decode("utf-8", "replace").splitlines(True), filename)
++    code = compile(data, filename, "exec", dont_inherit=True)
++    module = types.ModuleType(module_name)
+     module.__file__ = path
+-    exec(compile(read_pinned(path, sha256), path, "exec"), module.__dict__)
++    module.__k4s_bootstrap__ = (K4S_BOOTSTRAP_RELEASE, path, sha256, len(data))
++    previous = sys.modules.get(module_name)
++    sys.modules[module_name] = module
++    try:
++        exec(code, module.__dict__)
++    except BaseException:
++        if previous is None:
++            sys.modules.pop(module_name, None)
++        else:
++            sys.modules[module_name] = previous
++        raise
+     return module
+ 
+ 
+-def load_layers(directory=HERE):
+-    """(safe_input, k4s_end_host_tool), both SHA-pinned; the host tool reuses this safe_input module."""
+-    si = load_module("safe_input", os.path.join(directory, "safe_input.py"), SAFE_INPUT_SHA256)
++def k4s_bootstrap_load(path, sha256, size, module_name, refusal):
++    """Read `path` through the full contract and execute exactly the verified bytes as module `module_name`."""
++    data = k4s_bootstrap_read_verified(path, sha256, size, refusal)
++    return k4s_bootstrap_exec(data, path, sha256, module_name)
++# ==== END K4S CANONICAL BOOTSTRAP r1 ====
++
++
++def load_layers(directory=None):
++    """(safe_input, k4s_end_host_tool), both through the canonical bootstrap; the host tool reuses this safe_input
++    module. `directory` (tests): an absolute normalized directory used instead of the one next to this file."""
++    def path(leaf):
++        return k4s_bootstrap_default_path(__file__, leaf) if directory is None else str(directory) + "/" + leaf
++    si = k4s_bootstrap_load(path("safe_input.py"), SAFE_INPUT_SHA256, SAFE_INPUT_SIZE, "safe_input", PreflightRefusal)
+     require(si.constants_fingerprint() == SAFE_INPUT_FINGERPRINT, "safe_input constants fingerprint differs")
+-    tool = load_module("k4s_end_host_tool", os.path.join(directory, "k4s_end_host_tool.py"), HOST_TOOL_SHA256)
++    tool = k4s_bootstrap_load(path("k4s_end_host_tool.py"), HOST_TOOL_SHA256, HOST_TOOL_SIZE, "k4s_end_host_tool",
++                              PreflightRefusal)
+     tool.check_safe_input(si)
+     return si, tool
+ 
+@@ -278,6 +424,8 @@
+     for label in ("bundle_pins_sha256", "corpus_inventory_sha256", "end_evidence_sha256", "sd1_manifest_sha256"):
+         require(isinstance(getattr(a, label), str) and re.fullmatch(r"[0-9a-f]{64}", getattr(a, label)),
+                 "--" + label.replace("_", "-") + " must be a SHA-256")
++    require(a.corpus_inventory_sha256 == CORPUS_INVENTORY_SHA256,
++            "--corpus-inventory-sha256 is not the corpora.json of the K4S manifest (3501e2ac)")
+     require((a.compare_bundle is None) == (a.compare_bundle_pins_sha256 is None),
+             "--compare-bundle and --compare-bundle-pins-sha256 go together")
+     return dict(base=base, runtime_root=runtime, bundle=bundle, compare_bundle=compare, job=job, out=out, attempt=name)
+@@ -608,6 +756,12 @@
+             T = F.bundle_tools()
+             manifest, pins, host_pins = F.ER.frozen_identity(r, T.validate_bundle, T.NATIVE_SHA)
+             require(canonical(manifest) == canonical(ctx.manifest), "Frozen bundle manifest differs from the pinned one")
++            require(pins["native_sha256"] == NATIVE_SHA256 and r.corpus_sha256 == CORPUS_SHA256,
++                    "Frozen native/corpus identity differs from the K4S END identities")
++            result["identity"] = dict(native=str(r.native), native_sha256=pins["native_sha256"], corpus=str(r.corpus),
++                                      corpus_sha256=r.corpus_sha256, corpus_inventory=str(a.corpus_inventory),
++                                      corpus_inventory_sha256=a.corpus_inventory_sha256,
++                                      verified_by="end_reference.frozen_identity (+ post_pins native re-hash)")
+         W = F.guard_tools()
+         profile = manifest["reference_load_profile"]
+         if a.compare_bundle:
+@@ -900,6 +1054,10 @@
+                 ctx.compare_manifest, _ = bundle_stamp(si, policy, "compare-bundle", a.compare_bundle_pins_sha256)
+                 guard_job_of(si, ctx.compare_manifest, host, preflight=False)
+             require(manifest["reference_load_profile"].get("host") == host, "Bundle profile names another host")
++            result["bundle_identity"] = dict(
++                bundle_sans_guard_sha256=tool.bundle_sans_guard_sha256(manifest),
++                compare_bundle_sans_guard_sha256=tool.bundle_sans_guard_sha256(ctx.compare_manifest)
++                if ctx.compare_manifest is not None else None)
+             require(str(a.end_evidence) == paths["bundle"] + "/" + manifest["reference_load_profile"]["end_evidence"],
+                     "--end-evidence is not the bundle-pinned END evidence")
+             row.update(guard_job=guard_job, synthetic_stamp=False)
+@@ -908,17 +1066,16 @@
+                 si.open_input(policy, role, os.path.basename(paths[role])).close()
+         with checks("guard_repo", "frozen-reader ruling 21:28Z; coordinator 15:41Z Q3; parent_source_seed.py:62-69") \
+                 as row:
+-            row.update(tool.verify_clone(si, host, guard_job + "/repo", grants=("guard-job",)))
+-            row.update(commits=tool.seed_commits(si, guard_job + "/repo", SEED_COMMITS))
++            row.update(tool.verify_clone(si, host, guard_job + "/repo", grants=("guard-job",), role="guard-repo"))
++            row.update(commits=tool.seed_commits(si, guard_job + "/repo", SEED_COMMITS, role="guard-repo"))
+         with checks("repository_clone", "frozen-reader ruling 21:28Z (frozen evidence/END-JOB git reads)") as row:
+-            row.update(tool.verify_clone(si, host, str(a.repository)))
++            row.update(tool.verify_clone(si, host, str(a.repository), role="repository"))
+         with checks("frozen_git_env", "frozen-reader ruling 21:28Z; P2-4 environment for frozen git") as row:
+-            inherited = dict(os.environ)
+-            checked = tool.check_global_git_config(si, inherited)
++            env, record = tool.frozen_env_checked(si, host, dict(os.environ))
+             os.environ.clear()
+-            os.environ.update(tool.frozen_git_env(si, inherited))
+-            row.update(global_config_checked=checked,
+-                       git_keys=sorted(k for k in os.environ if k.startswith("GIT_")))
++            os.environ.update(env)                         # the very env whose config files were checked (F3)
++            require(dict(os.environ) == env, "Process environment differs from the checked frozen-reader env")
++            row.update(record)
+         with checks("pre_import_pins", "Sol PKG2 S5-F1: fixed 74314eda + closure via safe_input before import") as row:
+             row.update(pre_import_pins(si, policy))
+             ctx.corpus_inventory = si.read_json(policy, "runtime", CORPUS_INVENTORY_REL, 64 << 20,
+@@ -1002,10 +1159,13 @@
+             "Exit/status/result mismatch")
+     require(result.get("claim") is False and result.get("measure_called") is False, "Preflight claimed or measured")
+     bus = (result.get("summaries") or {}).get("bus") or {}
++    loaded = bus.get("cumulative_loaded")
+     return dict(schema=VERIFIED_SCHEMA, scope=SCOPE, verified_utc=iso(), host=host, attempt=attempt, receive=root,
+                 status=manifest["status"], passed=result["passed"], mode=result.get("mode"),
+                 qualifying=result.get("qualifying") is True, load=result.get("load"), duration=result.get("duration"),
+-                bus_cumulative_loaded=bus.get("cumulative_loaded"), bus_band=result.get("bus_band"),
++                bus_cumulative_loaded=dict(loaded, hz=bus.get("hz")) if isinstance(loaded, dict) else loaded,
++                bus_band=result.get("bus_band"), identity=result.get("identity"),
++                bundle_identity=result.get("bundle_identity"),
+                 bus_gate=result.get("bus_gate"),
+                 login_detected_during_hold=((result.get("summaries") or {}).get("sshd") or {}).get(
+                     "login_detected_during_hold"),

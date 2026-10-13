@@ -1,0 +1,15 @@
+K4S END canonical bootstrap r1 — CANONICAL-READY (END-FULL-F1). Written 2026-10-13T00:13:28Z by the bootstrap-r1 worker on 127x05.
+These three files are final; they will never change under this marker. Adopt them byte for byte (see README.md).
+
+5611c6049b5495a6cec283bd57ee662bcb4601873fb0300ece32e27ed8da760b  k4s_bootstrap_r1.py
+378c2b138677d7c8077fb24d25baff7decc54cea3b723949d5cb73bc31cf8332  k4s_bootstrap_loader_r1.py
+1ed816fa777c3121454796d18977f68a19bf824e5bd0d9c45adfc91225333f77  k4s_bootstrap_shell_r1.sh
+
+sizes:
+8372  k4s_bootstrap_r1.py
+9986  k4s_bootstrap_loader_r1.py
+10976  k4s_bootstrap_shell_r1.sh
+
+Python adopters: paste k4s_bootstrap_r1.py verbatim (BEGIN..END markers included); pins stay OUTSIDE the region.
+Shell wrappers: paste k4s_bootstrap_shell_r1.sh verbatim after setting python, host_tool, host_tool_sha, host_tool_size.
+Conformance kit: tests/k4s_bootstrap_kit.py + tests/kit_harness.py (usage in README.md §Kit).

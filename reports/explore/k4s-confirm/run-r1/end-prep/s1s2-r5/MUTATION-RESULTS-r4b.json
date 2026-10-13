@@ -1,0 +1,694 @@
+{
+ "s2_sha256": "25573984a614a5a6e9c6c8d8663b115ec1ba6aee0f94bd311d998037771b667c",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "tests_sha256": {
+  "tests/test_s2.py": "d9905ede53b09d4313c98a1799cd735de59bf3da0322317e291cb9377bed5a2c",
+  "tests/test_s2_gate_profile.py": "1ddf587519d2b799b12c967f033efe2e73cf9474f1da4e75a0e1c53ffa27fba8",
+  "tests/test_s2_r4_git.py": "d74c2a82acce6e13ff234cb0b7cdd2ec02329cd546f33d322bea6e13d4def969"
+ },
+ "finished_utc": "2026-10-12T23:11:47Z",
+ "total": 63,
+ "killed": 60,
+ "survived": [
+  "R-bootstrap-si-sha-off",
+  "R-bootstrap-compare-off",
+  "W-check-absent-off"
+ ],
+ "survived_equivalent": {
+  "R-bootstrap-si-sha-off": "masked by the explicit SHA compare on the cached bytes (JOINT R-bootstrap-both-off)",
+  "R-bootstrap-compare-off": "masked by si.read_bytes' expected-SHA check (JOINT R-bootstrap-both-off)",
+  "W-check-absent-off": "masked by si.Writer.create_excl (O_EXCL; refuses '[exists]') (JOINT W-both-off)"
+ },
+ "survived_unexplained": [],
+ "invalid": [],
+ "null_controls": {
+  "NULL-0": "SURVIVED",
+  "NULL-1": "SURVIVED",
+  "NULL-2": "SURVIVED"
+ },
+ "optimize": true,
+ "python": "3.12.12",
+ "executable": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "results": [
+  {
+   "name": "L-sha-pin-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 102.2,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_loader_refuses_a_layer_with_other_bytes",
+   "tail": [
+    "1 failed, 231 passed, 1 warning in 100.71s (0:01:40)"
+   ]
+  },
+  {
+   "name": "L-fingerprint-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 102.5,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_loader_refuses_a_changed_constants_fingerprint",
+   "tail": [
+    "1 failed, 232 passed, 1 warning in 100.81s (0:01:40)"
+   ]
+  },
+  {
+   "name": "L-nlink-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 102.8,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_loader_refuses_a_hard_linked_layer - Ass...",
+   "tail": [
+    "1 failed, 233 passed, 1 warning in 101.04s (0:01:41)"
+   ]
+  },
+  {
+   "name": "G-show-raw-git",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 4.5,
+   "first_failure": "FAILED tests/test_s2.py::test_build_refuses_uncommitted_sources - AssertionEr...",
+   "tail": [
+    "1 failed, 5 passed, 1 warning in 4.14s"
+   ]
+  },
+  {
+   "name": "G-run-raw-git",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 3.4,
+   "first_failure": "FAILED tests/test_s2.py::test_validate_reads_only_the_allowlist - AssertionEr...",
+   "tail": [
+    "1 failed, 1 passed, 1 warning in 3.04s"
+   ]
+  },
+  {
+   "name": "G-replace-ref-check-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 73.6,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_replace_ref_validate_refuses_before_the_frozen_reader",
+   "tail": [
+    "1 failed, 191 passed, 1 warning in 72.91s (0:01:12)"
+   ]
+  },
+  {
+   "name": "G-frozen-env-inherited",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 81.7,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_inherited_git_environment_validate_frozen_reader_scrubbed[GIT_OBJECT_DIRECTORY]",
+   "tail": [
+    "1 failed, 204 passed, 1 warning in 80.80s (0:01:20)"
+   ]
+  },
+  {
+   "name": "G-frozen-env-not-used",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 75.0,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_replace_ref_validate_refuses_before_the_frozen_reader",
+   "tail": [
+    "1 failed, 191 passed, 1 warning in 74.28s (0:01:14)"
+   ]
+  },
+  {
+   "name": "G-frozen-env-no-declared-gitdir",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 89.3,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_frozen_git_env_is_exact_and_restored - A...",
+   "tail": [
+    "1 failed, 211 passed, 1 warning in 88.38s (0:01:28)"
+   ]
+  },
+  {
+   "name": "G-preread-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 96.7,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_committed_blob_is_checked_by_si_before_the_frozen_reader",
+   "tail": [
+    "1 failed, 235 passed, 1 warning in 95.70s (0:01:35)"
+   ]
+  },
+  {
+   "name": "G-worktree-hash-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 25.0,
+   "first_failure": "FAILED tests/test_s2.py::test_validate_refuses_worktree_artifact_differing_from_commit",
+   "tail": [
+    "1 failed, 32 passed, 1 warning in 24.47s"
+   ]
+  },
+  {
+   "name": "G-gitrepo-undeclared",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 93.6,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_linked_worktree_checkout_needs_declared_git_dirs",
+   "tail": [
+    "1 failed, 219 passed, 1 warning in 92.60s (0:01:32)"
+   ]
+  },
+  {
+   "name": "G-worktree-rule-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 94.4,
+   "first_failure": "FAILED tests/test_s2_r4_git.py::test_worktree_git_dirs_production_rule - Fail...",
+   "tail": [
+    "1 failed, 220 passed, 1 warning in 93.43s (0:01:33)"
+   ]
+  },
+  {
+   "name": "N-name-gate-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 4.1,
+   "first_failure": "FAILED tests/test_s2.py::test_build_refuses_authority_like_name - assert (2 =...",
+   "tail": [
+    "1 failed, 3 passed, 1 warning in 3.77s"
+   ]
+  },
+  {
+   "name": "N-name-code-filter-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 4.1,
+   "first_failure": "FAILED tests/test_s2.py::test_build_refuses_authority_like_name - assert (2 =...",
+   "tail": [
+    "1 failed, 3 passed, 1 warning in 3.78s"
+   ]
+  },
+  {
+   "name": "NULL-0",
+   "status": "SURVIVED",
+   "returncode": 0,
+   "seconds": 103.5,
+   "first_failure": null,
+   "tail": [
+    "236 passed, 1 warning in 102.11s (0:01:42)"
+   ]
+  },
+  {
+   "name": "N-local-end-rule-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 51.3,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_validate_profile_at_forbidden_location_never_touched[end/receipts/round-00/127x03/raw-00/reference-warmup.json]",
+   "tail": [
+    "1 failed, 64 passed, 1 warning in 50.44s"
+   ]
+  },
+  {
+   "name": "N-t1-tree-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 51.2,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_validate_profile_at_forbidden_location_never_touched[t1-20261010-r1/profile.json]",
+   "tail": [
+    "1 failed, 66 passed, 1 warning in 50.53s"
+   ]
+  },
+  {
+   "name": "N-host-roots-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 60.5,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_lexical_gate_production_roots[/mpac/sdicks02/jobs/clasher/e4v3-venv/profile.json-prep-host job tree]",
+   "tail": [
+    "1 failed, 103 passed, 1 warning in 59.97s"
+   ]
+  },
+  {
+   "name": "N-touch-before-all-lexical",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 49.3,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_validate_profile_at_forbidden_location_never_touched[reports/explore/k4s-confirm/end/end-raw.json]",
+   "tail": [
+    "1 failed, 55 passed, 1 warning in 48.57s"
+   ]
+  },
+  {
+   "name": "R-read-gated-no-sha",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 10.7,
+   "first_failure": "FAILED tests/test_s2.py::test_load_s1_production_refuses_test_receipt - Faile...",
+   "tail": [
+    "1 failed, 14 passed, 1 warning in 10.29s"
+   ]
+  },
+  {
+   "name": "R-bootstrap-si-sha-off",
+   "status": "SURVIVED",
+   "returncode": 0,
+   "seconds": 103.7,
+   "first_failure": null,
+   "tail": [
+    "236 passed, 1 warning in 102.53s (0:01:42)"
+   ]
+  },
+  {
+   "name": "R-bootstrap-compare-off",
+   "status": "SURVIVED",
+   "returncode": 0,
+   "seconds": 105.3,
+   "first_failure": null,
+   "tail": [
+    "236 passed, 1 warning in 104.04s (0:01:44)"
+   ]
+  },
+  {
+   "name": "R-bootstrap-both-off-JOINT",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 11.1,
+   "first_failure": "FAILED tests/test_s2.py::test_pre_import_canary_never_executes - AssertionErr...",
+   "tail": [
+    "1 failed, 15 passed, 1 warning in 10.67s"
+   ]
+  },
+  {
+   "name": "R-load-s1-lexical-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 70.7,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_load_s1_direct_call_at_end_namespace_refused_purely",
+   "tail": [
+    "1 failed, 185 passed, 1 warning in 69.93s (0:01:09)"
+   ]
+  },
+  {
+   "name": "R-evidence-no-sha",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 23.7,
+   "first_failure": "FAILED tests/test_s2.py::test_validate_refuses_evidence_sha_mismatch - assert...",
+   "tail": [
+    "1 failed, 31 passed, 1 warning in 23.17s"
+   ]
+  },
+  {
+   "name": "R-s1-copy-no-pin",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 46.2,
+   "first_failure": "FAILED tests/test_s2.py::test_diagnose_clock_clean_and_s1_dest_mode - assert ...",
+   "tail": [
+    "1 failed, 52 passed, 1 warning in 45.54s"
+   ]
+  },
+  {
+   "name": "R-strict-json-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 68.1,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_profile_json_strict_parse[{\"127x03\": {\"host\": \"127x03\", \"host\": \"127x03\"}}-[json]: duplicate key]",
+   "tail": [
+    "1 failed, 163 passed, 1 warning in 67.32s (0:01:07)"
+   ]
+  },
+  {
+   "name": "W-check-absent-off",
+   "status": "SURVIVED",
+   "returncode": 0,
+   "seconds": 107.9,
+   "first_failure": null,
+   "tail": [
+    "236 passed, 1 warning in 106.79s (0:01:46)"
+   ]
+  },
+  {
+   "name": "W-both-off-JOINT",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 5.8,
+   "first_failure": "FAILED tests/test_s2.py::test_build_refuses_overwrite_and_planted_symlink - a...",
+   "tail": [
+    "1 failed, 7 passed, 1 warning in 5.40s"
+   ]
+  },
+  {
+   "name": "F1-no-allowed-root",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 10.0,
+   "first_failure": "FAILED tests/test_s2.py::test_production_confines_result_and_refuses_test_root_setting",
+   "tail": [
+    "1 failed, 12 passed, 1 warning in 9.55s"
+   ]
+  },
+  {
+   "name": "F1-no-normalisation",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 61.1,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_lexical_gate_production_roots[/mpac/sdicks02/k4s-runner/run-r1/end-prep/../hub-view/p.json-prep-not an absolute normalised path]",
+   "tail": [
+    "1 failed, 111 passed, 1 warning in 60.33s (0:01:00)"
+   ]
+  },
+  {
+   "name": "NULL-1",
+   "status": "SURVIVED",
+   "returncode": 0,
+   "seconds": 106.2,
+   "first_failure": null,
+   "tail": [
+    "236 passed, 1 warning in 105.02s (0:01:45)"
+   ]
+  },
+  {
+   "name": "F1-repo-relative-no-predicate",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 4.0,
+   "first_failure": "FAILED tests/test_s2.py::test_build_refuses_authority_like_name - assert (2 =...",
+   "tail": [
+    "1 failed, 3 passed, 1 warning in 3.62s"
+   ]
+  },
+  {
+   "name": "F1-s1-name-rule-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 58.1,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_profile_and_receipt_name_rules - A...",
+   "tail": [
+    "1 failed, 87 passed, 1 warning in 57.30s"
+   ]
+  },
+  {
+   "name": "F1-json-name-rule-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 59.0,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_profile_and_receipt_name_rules - A...",
+   "tail": [
+    "1 failed, 87 passed, 1 warning in 58.20s"
+   ]
+  },
+  {
+   "name": "F1-dest-receipt-pairing-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 56.7,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_diagnose_s1_receipt_must_be_the_dest_receipt",
+   "tail": [
+    "1 failed, 81 passed, 1 warning in 55.96s"
+   ]
+  },
+  {
+   "name": "F1-production-accepts-test-root",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 10.1,
+   "first_failure": "FAILED tests/test_s2.py::test_production_confines_result_and_refuses_test_root_setting",
+   "tail": [
+    "1 failed, 12 passed, 1 warning in 9.71s"
+   ]
+  },
+  {
+   "name": "F1-test-root-anywhere",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 62.0,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_test_root_must_be_below_tmp - Fail...",
+   "tail": [
+    "1 failed, 126 passed, 1 warning in 61.28s (0:01:01)"
+   ]
+  },
+  {
+   "name": "F1-production-out-anywhere",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 62.3,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_production_build_out_is_the_evidence_path_of_the_repository[/tmp/k4s-s2-build/reports/explore/k4s-confirm/end-evidence.json]",
+   "tail": [
+    "1 failed, 122 passed, 1 warning in 61.54s (0:01:01)"
+   ]
+  },
+  {
+   "name": "F1-s1-rows-untyped",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 72.3,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_s1_receipt_rows_refused[<lambda>-wrong type]",
+   "tail": [
+    "1 failed, 179 passed, 1 warning in 71.54s (0:01:11)"
+   ]
+  },
+  {
+   "name": "F1-s1-rows-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 73.0,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_s1_receipt_rows_refused[<lambda>-rows are malformed0]",
+   "tail": [
+    "1 failed, 181 passed, 1 warning in 72.17s (0:01:12)"
+   ]
+  },
+  {
+   "name": "F1-s1-lenient-json",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 74.1,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_s1_receipt_duplicate_key_refused",
+   "tail": [
+    "1 failed, 184 passed, 1 warning in 73.42s (0:01:13)"
+   ]
+  },
+  {
+   "name": "F2-r2-fallback-restored",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 63.5,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[console-int]",
+   "tail": [
+    "1 failed, 127 passed, 1 warning in 62.75s (0:01:02)"
+   ]
+  },
+  {
+   "name": "F2-r2-behaviour-restored",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 63.5,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[console-int]",
+   "tail": [
+    "1 failed, 127 passed, 1 warning in 62.81s (0:01:02)"
+   ]
+  },
+  {
+   "name": "F2-empty-allowed",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 64.2,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[empty-objects]",
+   "tail": [
+    "1 failed, 133 passed, 1 warning in 63.43s (0:01:03)"
+   ]
+  },
+  {
+   "name": "F2-missing-allowed",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 65.3,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[missing-console_rule]",
+   "tail": [
+    "1 failed, 140 passed, 1 warning in 64.57s (0:01:04)"
+   ]
+  },
+  {
+   "name": "F2-unknown-allowed",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 70.2,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[unknown-field]",
+   "tail": [
+    "1 failed, 158 passed, 1 warning in 69.33s (0:01:09)"
+   ]
+  },
+  {
+   "name": "NULL-2",
+   "status": "SURVIVED",
+   "returncode": 0,
+   "seconds": 106.0,
+   "first_failure": null,
+   "tail": [
+    "236 passed, 1 warning in 105.05s (0:01:45)"
+   ]
+  },
+  {
+   "name": "F2-host-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 65.6,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[host-int]",
+   "tail": [
+    "1 failed, 137 passed, 1 warning in 64.69s (0:01:04)"
+   ]
+  },
+  {
+   "name": "F2-slot-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 68.4,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[slot-1]",
+   "tail": [
+    "1 failed, 151 passed, 1 warning in 67.74s (0:01:07)"
+   ]
+  },
+  {
+   "name": "F2-count-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 63.9,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[count-10]",
+   "tail": [
+    "1 failed, 130 passed, 1 warning in 63.16s (0:01:03)"
+   ]
+  },
+  {
+   "name": "F2-console-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 62.7,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[console-int]",
+   "tail": [
+    "1 failed, 127 passed, 1 warning in 61.99s (0:01:01)"
+   ]
+  },
+  {
+   "name": "F2-warmup-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 69.0,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[warmup-299]",
+   "tail": [
+    "1 failed, 159 passed, 1 warning in 68.27s (0:01:08)"
+   ]
+  },
+  {
+   "name": "F2-perception-unchecked",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 67.5,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[perception]",
+   "tail": [
+    "1 failed, 149 passed, 1 warning in 66.85s (0:01:06)"
+   ]
+  },
+  {
+   "name": "F2-extras-untyped",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 64.4,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_malformed_profile_refused_no_fallback[extra-guard-empty]",
+   "tail": [
+    "1 failed, 134 passed, 1 warning in 63.63s (0:01:03)"
+   ]
+  },
+  {
+   "name": "F2-both-sources-allowed",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 70.9,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_profile_source_choice_is_exactly_one",
+   "tail": [
+    "1 failed, 167 passed, 1 warning in 70.24s (0:01:10)"
+   ]
+  },
+  {
+   "name": "F2-neither-source-allowed",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 70.5,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_profile_source_choice_is_exactly_one",
+   "tail": [
+    "1 failed, 167 passed, 1 warning in 69.83s (0:01:09)"
+   ]
+  },
+  {
+   "name": "F2-sha-pairing-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 71.1,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_profile_source_choice_is_exactly_one",
+   "tail": [
+    "1 failed, 167 passed, 1 warning in 70.43s (0:01:10)"
+   ]
+  },
+  {
+   "name": "F2-source-mislabelled",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 48.7,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_valid_profile_and_receipt_accepted_with_recorded_source",
+   "tail": [
+    "1 failed, 53 passed, 1 warning in 48.00s"
+   ]
+  },
+  {
+   "name": "F2-source-path-unrecorded",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 49.1,
+   "first_failure": "FAILED tests/test_s2_gate_profile.py::test_valid_profile_and_receipt_accepted_with_recorded_source",
+   "tail": [
+    "1 failed, 53 passed, 1 warning in 48.45s"
+   ]
+  },
+  {
+   "name": "R2-bootstrap-skipped",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 2.0,
+   "first_failure": "FAILED tests/test_s2.py::test_build_and_validate_happy_path - assert (True is...",
+   "tail": [
+    "1 failed, 1 warning in 1.67s"
+   ]
+  },
+  {
+   "name": "R2-closure-finder-permissive",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 15.3,
+   "first_failure": "FAILED tests/test_s2.py::test_closure_finder_refuses_non_stdlib_imports - Fai...",
+   "tail": [
+    "1 failed, 21 passed, 1 warning in 14.85s"
+   ]
+  },
+  {
+   "name": "R2-exact-role-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 16.3,
+   "first_failure": "FAILED tests/test_s2.py::test_outcome_dir_item_refused_before_any_read - asse...",
+   "tail": [
+    "1 failed, 22 passed, 1 warning in 15.78s"
+   ]
+  },
+  {
+   "name": "R2-finite-positive-mhz-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 32.1,
+   "first_failure": "FAILED tests/test_s2.py::test_nonfinite_or_nonpositive_full_occupancy_mhz_refused[nan]",
+   "tail": [
+    "1 failed, 39 passed, 1 warning in 31.52s"
+   ]
+  },
+  {
+   "name": "R2-s1-meta-crosscheck-off",
+   "status": "KILLED",
+   "returncode": 1,
+   "seconds": 30.4,
+   "first_failure": "FAILED tests/test_s2.py::test_validate_refuses_s1_launch_meta_mismatch_with_correct_telemetry",
+   "tail": [
+    "1 failed, 37 passed, 1 warning in 29.81s"
+   ]
+  }
+ ]
+}

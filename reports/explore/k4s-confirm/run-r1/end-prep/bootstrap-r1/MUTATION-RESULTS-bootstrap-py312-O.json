@@ -1,0 +1,739 @@
+{
+ "all_as_expected": true,
+ "counts": {
+  "INVALID": 0,
+  "KILLED": 60,
+  "SURVIVED": 6
+ },
+ "expected_kill": 60,
+ "mutants": [
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_outcome_named_component_refuses_before_any_open[ancestor-games]"
+   ],
+   "label": "N name gate off",
+   "rc": 1,
+   "seconds": 0.8,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_name_gate_agrees_with_safe_input_on_a_broad_corpus"
+   ],
+   "label": "N no casefold",
+   "rc": 1,
+   "seconds": 0.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_name_gate_agrees_with_safe_input_on_a_broad_corpus"
+   ],
+   "label": "N lower not casefold",
+   "rc": 1,
+   "seconds": 0.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_family_literals_equal_safe_input_r3"
+   ],
+   "label": "N games family dropped",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_family_literals_equal_safe_input_r3"
+   ],
+   "label": "N end-raw family dropped",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_name_gate_agrees_with_safe_input_on_a_broad_corpus"
+   ],
+   "label": "N match not fullmatch",
+   "rc": 1,
+   "seconds": 0.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_name_gate_agrees_with_safe_input_on_a_broad_corpus"
+   ],
+   "label": "N search not fullmatch",
+   "rc": 1,
+   "seconds": 0.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_name_gate_agrees_with_safe_input_on_a_broad_corpus"
+   ],
+   "label": "N no DOTALL",
+   "rc": 1,
+   "seconds": 0.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_outcome_named_component_refuses_before_any_open[leaf-games]"
+   ],
+   "label": "N leaf not gated",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_outcome_named_component_refuses_before_any_open[ancestor-games]"
+   ],
+   "label": "N ancestors not gated",
+   "rc": 1,
+   "seconds": 0.8,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_bad_pins_refuse_without_any_syscall[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-10-SHA-256 pin]"
+   ],
+   "label": "P sha pin format off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_bad_pins_refuse_without_any_syscall[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-0-size pin]"
+   ],
+   "label": "P size pin off",
+   "rc": 1,
+   "seconds": 0.8,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_bad_pins_refuse_without_any_syscall[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-True-size pin]"
+   ],
+   "label": "P size pin accepts bool",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_non_normalized_path_refuses_without_any_syscall[relative]"
+   ],
+   "label": "P not-absolute off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "P double-slash-start off",
+   "rc": 0,
+   "seconds": 14.2,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "P trailing-slash off",
+   "rc": 0,
+   "seconds": 14.3,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "P normpath off",
+   "rc": 0,
+   "seconds": 14.1,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_component_check_is_independent_of_normpath"
+   ],
+   "label": "P component check off",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_non_normalized_path_refuses_without_any_syscall[dot]"
+   ],
+   "label": "P JOINT normpath+component off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_non_normalized_path_refuses_without_any_syscall[double-slash-start]"
+   ],
+   "label": "P JOINT slashes+component off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_non_normalized_path_refuses_without_any_syscall[control]"
+   ],
+   "label": "P control/backslash off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_ancestor_symlink_refuses_with_zero_canary_bytes"
+   ],
+   "label": "W ancestor follows symlinks",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_ancestor_that_is_a_file_or_missing_refuses"
+   ],
+   "label": "W ancestor without O_DIRECTORY",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_ancestor_must_be_a_directory_even_if_open_succeeds"
+   ],
+   "label": "W ancestor S_ISDIR off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_root_must_be_a_directory"
+   ],
+   "label": "W root S_ISDIR off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_ancestor_symlink_refuses_with_zero_canary_bytes"
+   ],
+   "label": "W full-path open (no walk)",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [],
+   "label": "W walk not from /",
+   "rc": 1,
+   "seconds": 0.3,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_symlink_refuses_unopened"
+   ],
+   "label": "L pre-open inspection off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_hard_linked_leaf_refuses_unread"
+   ],
+   "label": "L pre-open nlink off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_kit_selftest.py::test_canonical_bootstrap_meets_every_scenario[run_path-wrong-size-larger]"
+   ],
+   "label": "L pre-open size off",
+   "rc": 1,
+   "seconds": 1.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_symlink_refuses_unopened"
+   ],
+   "label": "L pre-open stat follows",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_walk_opens_only_directory_nofollow_components_relative_to_parents"
+   ],
+   "label": "L leaf open follows",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_walk_opens_only_directory_nofollow_components_relative_to_parents"
+   ],
+   "label": "L JOINT pre-open off + leaf follows",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [],
+   "label": "L leaf open not relative to parent",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_replaced_between_inspection_and_open_refuses_unread"
+   ],
+   "label": "L post-open checks off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_replaced_between_inspection_and_open_refuses_unread"
+   ],
+   "label": "L post-open dev/ino off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_hard_linked_between_inspection_and_open_refuses_unread"
+   ],
+   "label": "L post-open nlink off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_grown_between_inspection_and_open_refuses_unread"
+   ],
+   "label": "L post-open size off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_leaf_turned_non_regular_after_open_refuses"
+   ],
+   "label": "L post-open S_ISREG off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_short_read_refuses"
+   ],
+   "label": "R shrink check breaks",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_growth_after_size_bytes_refuses"
+   ],
+   "label": "R EOF probe off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_same_size_mismatch_is_read_once_and_refused_by_the_pin"
+   ],
+   "label": "R sha compare off",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "R length compare off",
+   "rc": 0,
+   "seconds": 15.1,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_load_executes_exactly_the_hashed_bytes_and_never_reopens"
+   ],
+   "label": "X re-read by path before exec",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_traceback_shows_verified_lines_without_reopening"
+   ],
+   "label": "X filename is the path",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_traceback_shows_verified_lines_without_reopening"
+   ],
+   "label": "X linecache not seeded",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_failed_exec_restores_sys_modules"
+   ],
+   "label": "X sys.modules not restored",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_module_is_registered_before_exec"
+   ],
+   "label": "X registered after exec",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_load_executes_exactly_the_hashed_bytes_and_never_reopens"
+   ],
+   "label": "X __file__ not set",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_load_executes_exactly_the_hashed_bytes_and_never_reopens"
+   ],
+   "label": "X tag not set",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_default_path_never_resolves_or_normalizes"
+   ],
+   "label": "D default path normalizes",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_default_path_never_resolves_or_normalizes"
+   ],
+   "label": "D default path resolves",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_loader_refuses_without_isolated_no_site[flags0-python]"
+   ],
+   "label": "S isolation check off",
+   "rc": 1,
+   "seconds": 13.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_loader_usage_refusals[no-dashdash-python]"
+   ],
+   "label": "S usage check off",
+   "rc": 1,
+   "seconds": 12.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_loader_usage_refusals[verify-extra-python]"
+   ],
+   "label": "S verify-only extra args allowed",
+   "rc": 1,
+   "seconds": 12.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_loader_usage_refusals[size-lead-zero-python]"
+   ],
+   "label": "S size regex off",
+   "rc": 1,
+   "seconds": 13.1,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_verify_only_executes_nothing_and_leaves_stdin_unread[python]"
+   ],
+   "label": "S verify-only executes",
+   "rc": 1,
+   "seconds": 12.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_real_loader_process_meets_every_scenario[ancestor-symlink-python]"
+   ],
+   "label": "S refusal status 1",
+   "rc": 1,
+   "seconds": 6.6,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_kit_selftest.py::test_canonical_bootstrap_meets_every_scenario[loader-control]"
+   ],
+   "label": "S argv not set",
+   "rc": 1,
+   "seconds": 4.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_kit_selftest.py::test_canonical_bootstrap_meets_every_scenario[loader-control]"
+   ],
+   "label": "S not run as __main__",
+   "rc": 1,
+   "seconds": 4.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_kit_selftest.py::test_canonical_bootstrap_meets_every_scenario[loader-control]"
+   ],
+   "label": "S runs the path, not the bytes",
+   "rc": 1,
+   "seconds": 4.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_bash_fragment_verify_step_meets_the_scenarios[ancestor-symlink-python]"
+   ],
+   "label": "F initial verify dropped",
+   "rc": 1,
+   "seconds": 11.1,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_shell_loader.py::test_a_mid_run_tool_change_refuses_with_status_90"
+   ],
+   "label": "F tool runs the path directly",
+   "rc": 1,
+   "seconds": 14.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED end-prep/bootstrap-r1/tests/test_bootstrap_conformance.py::test_shell_fragment_is_regenerated_exactly_and_bash_passes_the_loader_unchanged"
+   ],
+   "label": "F verify via sha256sum",
+   "rc": 1,
+   "seconds": 1.2,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "null",
+   "killed_by": [],
+   "label": "NULL snippet comment",
+   "rc": 0,
+   "seconds": 14.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "null",
+   "killed_by": [],
+   "label": "NULL main comment",
+   "rc": 0,
+   "seconds": 15.0,
+   "status": "SURVIVED"
+  }
+ ],
+ "optimize": true,
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "sha256": {
+  "build_shell_fragment.py": "05bddee79b514104943ea9dab211fb88685ac7e115e1e23b34b28753a0793926",
+  "k4s_bootstrap_loader_r1.py": "378c2b138677d7c8077fb24d25baff7decc54cea3b723949d5cb73bc31cf8332",
+  "k4s_bootstrap_r1.py": "5611c6049b5495a6cec283bd57ee662bcb4601873fb0300ece32e27ed8da760b",
+  "k4s_bootstrap_shell_r1.sh": "1ed816fa777c3121454796d18977f68a19bf824e5bd0d9c45adfc91225333f77"
+ },
+ "tests_sha256": {
+  "conftest.py": "877f446893b76612021e31ab17553938ae49d953fc938a2fee82e3c9d93284c3",
+  "k4s_bootstrap_kit.py": "a1d2021c006b128b4ac60eaf6d9011c36268efd69d8fd478edf19326d856522f",
+  "kit_harness.py": "57ffa09921225a769d5ea8d45015bad79e4bb7ad1ebbcb99855e0c05d1e32515",
+  "test_bootstrap_conformance.py": "4e9662d51bc8cc710cc35fb9e9b8b6bae8d6629717e4ca0b848eb8465ee2f39f",
+  "test_kit_selftest.py": "a5c1153c3ad6c7756d26ca604329b4ea7f01bdf57328e2ff5976f8df0e19a7a7",
+  "test_shell_loader.py": "fa146d9185e21ab09953e97125b1ab08fa29908fb9d7732f6e83a476d2c2d062"
+ },
+ "tool": "bootstrap-r1 mutate_bootstrap.py",
+ "utc": "2026-10-13T01:08:05Z"
+}

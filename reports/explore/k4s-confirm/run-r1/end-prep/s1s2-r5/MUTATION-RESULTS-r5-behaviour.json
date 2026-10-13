@@ -1,0 +1,645 @@
+{
+ "adopter": "s2",
+ "all_as_expected": true,
+ "by_expectation": {
+  "equivalent": {
+   "INVALID": 0,
+   "KILLED": 0,
+   "SURVIVED": 4
+  },
+  "kill": {
+   "INVALID": 0,
+   "KILLED": 27,
+   "SURVIVED": 0
+  },
+  "null": {
+   "INVALID": 0,
+   "KILLED": 0,
+   "SURVIVED": 1
+  },
+  "unit": {
+   "INVALID": 0,
+   "KILLED": 2,
+   "SURVIVED": 26
+  }
+ },
+ "campaign": "behaviour (canonical-text test excluded)",
+ "counts": {
+  "INVALID": 0,
+  "KILLED": 29,
+  "SURVIVED": 31
+ },
+ "kit_sha256": {
+  "k4s_bootstrap_kit.py": "a1d2021c006b128b4ac60eaf6d9011c36268efd69d8fd478edf19326d856522f",
+  "kit_harness.py": "57ffa09921225a769d5ea8d45015bad79e4bb7ad1ebbcb99855e0c05d1e32515"
+ },
+ "mutants": [
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-outcome-named-ancestor:games]"
+   ],
+   "label": "N name gate off",
+   "rc": 1,
+   "seconds": 3.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-outcome-named-ancestor:GAMES]"
+   ],
+   "label": "N no casefold",
+   "rc": 1,
+   "seconds": 3.6,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-outcome-named-ancestor:game\\u017f]"
+   ],
+   "label": "N lower not casefold",
+   "rc": 1,
+   "seconds": 5.1,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-outcome-named-ancestor:games]"
+   ],
+   "label": "N games family dropped",
+   "rc": 1,
+   "seconds": 3.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-outcome-named-ancestor:END-RAW.json.bak]"
+   ],
+   "label": "N end-raw family dropped",
+   "rc": 1,
+   "seconds": 4.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "N match not fullmatch",
+   "rc": 0,
+   "seconds": 75.6,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "N search not fullmatch",
+   "rc": 0,
+   "seconds": 76.2,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "N no DOTALL",
+   "rc": 0,
+   "seconds": 74.6,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "N leaf not gated",
+   "rc": 0,
+   "seconds": 76.2,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-outcome-named-ancestor:games]"
+   ],
+   "label": "N ancestors not gated",
+   "rc": 1,
+   "seconds": 3.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P sha pin format off",
+   "rc": 0,
+   "seconds": 74.7,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P size pin off",
+   "rc": 0,
+   "seconds": 76.0,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P size pin accepts bool",
+   "rc": 0,
+   "seconds": 53.5,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P not-absolute off",
+   "rc": 0,
+   "seconds": 53.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "P double-slash-start off",
+   "rc": 0,
+   "seconds": 54.1,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "P trailing-slash off",
+   "rc": 0,
+   "seconds": 53.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "P normpath off",
+   "rc": 0,
+   "seconds": 53.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P component check off",
+   "rc": 0,
+   "seconds": 53.4,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-non-normalized-dot]"
+   ],
+   "label": "P JOINT normpath+component off",
+   "rc": 1,
+   "seconds": 3.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P JOINT slashes+component off",
+   "rc": 0,
+   "seconds": 61.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "P control/backslash off",
+   "rc": 0,
+   "seconds": 63.5,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-ancestor-symlink]"
+   ],
+   "label": "W ancestor follows symlinks",
+   "rc": 1,
+   "seconds": 1.0,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "W ancestor without O_DIRECTORY",
+   "rc": 0,
+   "seconds": 62.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "W ancestor S_ISDIR off",
+   "rc": 0,
+   "seconds": 62.6,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "W root S_ISDIR off",
+   "rc": 0,
+   "seconds": 62.0,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "W full-path open (no walk)",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "W walk not from /",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-hard-link]"
+   ],
+   "label": "L pre-open inspection off",
+   "rc": 1,
+   "seconds": 1.6,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-hard-link]"
+   ],
+   "label": "L pre-open nlink off",
+   "rc": 1,
+   "seconds": 1.8,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-wrong-size-larger]"
+   ],
+   "label": "L pre-open size off",
+   "rc": 1,
+   "seconds": 1.8,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L pre-open stat follows",
+   "rc": 0,
+   "seconds": 62.2,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L leaf open follows",
+   "rc": 0,
+   "seconds": 47.7,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-leaf-symlink]"
+   ],
+   "label": "L JOINT pre-open off + leaf follows",
+   "rc": 1,
+   "seconds": 1.6,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-control]"
+   ],
+   "label": "L leaf open not relative to parent",
+   "rc": 1,
+   "seconds": 0.5,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L post-open checks off",
+   "rc": 0,
+   "seconds": 47.0,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L post-open dev/ino off",
+   "rc": 0,
+   "seconds": 51.4,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L post-open nlink off",
+   "rc": 0,
+   "seconds": 50.5,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L post-open size off",
+   "rc": 0,
+   "seconds": 50.3,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "L post-open S_ISREG off",
+   "rc": 0,
+   "seconds": 49.6,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "R shrink check breaks",
+   "rc": 0,
+   "seconds": 49.8,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "R EOF probe off",
+   "rc": 1,
+   "seconds": 0.6,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-same-size-mismatch]"
+   ],
+   "label": "R sha compare off",
+   "rc": 1,
+   "seconds": 2.6,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "equivalent",
+   "killed_by": [],
+   "label": "R length compare off",
+   "rc": 0,
+   "seconds": 51.3,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-control]"
+   ],
+   "label": "X re-read by path before exec",
+   "rc": 1,
+   "seconds": 0.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-swap-ok]"
+   ],
+   "label": "X filename is the path",
+   "rc": 1,
+   "seconds": 0.7,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "X linecache not seeded",
+   "rc": 0,
+   "seconds": 50.9,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "X sys.modules not restored",
+   "rc": 0,
+   "seconds": 50.9,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "X registered after exec",
+   "rc": 0,
+   "seconds": 50.4,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "unit",
+   "killed_by": [],
+   "label": "X __file__ not set",
+   "rc": 0,
+   "seconds": 48.5,
+   "status": "SURVIVED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "X tag not set",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "D default path normalizes",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "D default path resolves",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "G size pin off by one",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_fingerprint_still_checked_after_the_bootstrap"
+   ],
+   "label": "G fingerprint check off",
+   "rc": 1,
+   "seconds": 9.2,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_end_full_f1_alias_substitutions_before_bootstrap[script-ancestor-symlink]"
+   ],
+   "label": "G refusal convention SystemExit",
+   "rc": 1,
+   "seconds": 0.9,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_fingerprint_still_checked_after_the_bootstrap"
+   ],
+   "label": "G explicit path ignored",
+   "rc": 1,
+   "seconds": 7.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "G old abspath default",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "G realpath default",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "kill",
+   "killed_by": [
+    "FAILED tests/test_s2_r5_bootstrap.py::test_layer_pins_match_the_vendored_file_and_the_old_loader_is_gone"
+   ],
+   "label": "G sha pin wrong",
+   "rc": 1,
+   "seconds": 0.4,
+   "status": "KILLED"
+  },
+  {
+   "detail": "",
+   "expect": "null",
+   "killed_by": [],
+   "label": "NULL adopter comment",
+   "rc": 0,
+   "seconds": 39.1,
+   "status": "SURVIVED"
+  }
+ ],
+ "optimize": true,
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "sha256": {
+  "s2_end_evidence.py": "4cd127ee9e996769e5c6558e5eec02477048892e10b928f61666e170ee81697c",
+  "tests/test_s2_r4_git.py": "ddc343deb7199158b9dca21f9c27b3d7e8bb08eb62da1cba267c83c9e6503e8a",
+  "tests/test_s2_r5_bootstrap.py": "951218875bd1a1a403c4cd7d48ed36c053ec2df28ff05caa3750a47084b8b5a5"
+ },
+ "tool": "bootstrap-r1 mutate_adopter.py",
+ "utc": "2026-10-13T01:05:25Z"
+}
