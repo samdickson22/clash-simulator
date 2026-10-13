@@ -1,0 +1,35 @@
+{
+  "complete": {
+    "bytes": 331011,
+    "envelope_binding": "Exact decoded bytes/SHA/size/path and reviewed validate_output PASS",
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-cpu-transport/ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef/complete.json",
+    "remote_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef/complete.json",
+    "sha256": "7f67aa54ddcc87c7c79f52d8c0e23f4c8f08be13fe3e58d779501e7c6aab1010"
+  },
+  "completed_epoch": 1791933342.243221,
+  "completed_utc": "2026-10-13T23:15:42.243221+00:00",
+  "copied_bytes": 2136818985,
+  "copied_files": 1238,
+  "cpu_go_sha256": "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef",
+  "extra_remote_inspection": false,
+  "gpu_work": false,
+  "heldout_opened": false,
+  "launcher_exit_code": 0,
+  "main20min_unchanged": true,
+  "no_retry": true,
+  "outcome": "SUCCESS",
+  "phase": "stage",
+  "plan_file_map_match": true,
+  "plan_total_byte_cap_pass": true,
+  "result": {
+    "bytes": 441998,
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-cpu-transport/ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef/result.json",
+    "sha256": "84d728b7941d53bca25e2c03c685e13b8405db6d34a3036ef8accdfae7eca035"
+  },
+  "revocation_tip_commit": "0a32044b8987ccb7153a3382b53dc91fa6a48c0a",
+  "run_go_sha256": "b2bff6540341419ad3dfd9097132e3f42e47d380ef213f209ac64d85d8528ac6",
+  "runtime_admitted": false,
+  "sender_exit_code": 0,
+  "status": "SUCCESS_PENDING_COORDINATOR_C4",
+  "utc": "2026-10-13T23:15:50.104775+00:00"
+}

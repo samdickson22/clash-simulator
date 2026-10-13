@@ -6251,3 +6251,22 @@ A2 ran under the re-GO 3d64ca62 with `a2-r7.sh`. Every step returned rc 0, and t
 - **04:** records at 61b5a98e. The `who` check came back empty, then 23 logins; the probe matches 03.
 
 Both repositories are provisioned at P' 98566c03. Next is the runner's A4 preflight GO request.
+
+## 2026-10-13 23:17Z: B r5 stage C-4 ACCEPTED; quiet-read r13
+
+Stage run GO b2bff654 ran once from `/` on 05, launched in the first 30 min. It completed at 23:15:42Z.
+
+**Checks:**
+- launcher and sender exit codes 0, outcome SUCCESS;
+- result.json 84d728b7 (441,998 B) and complete.json 7f67aa54 (331,011 B), both recomputed locally;
+- 1,238 plan files, 2,136,818,985 B, within the cap;
+- `runtime_admitted=false`, `gpu_work=false`, `heldout_opened=false`;
+- the revocation tip 0a32044b is an ancestor of origin/main, `git log -p` after it contains none of the relied-on SHAs (run b2bff654, CPU ebc133ff, placement 5b454761, review 7dca4033, package a0046c1d), and there are 0 `REVOKED` lines.
+
+The compact receipt is `l1/receipts/b08-r5-stage-result-r1.json` (c32edb043c7b9147aa559d579b81e17bd143b9b5d347fb038774c3e1de710d45).
+
+**C-4 ACCEPTED.**
+
+**Quiet-read r13.** Run with `evidence/coordinator-quiet-read-r13.sh` (1af74836), which is r12 with only the `Q=` directory changed. Exit code 0, no retry. Observation c10a1a8baf2c9c40747829e6c76dfd3e3860c425e24d264378e6a0febbec2996: who 0, available 1,214,292,750,336 B, loadavg 0.36.
+
+**Next:** the owner fills the environment chain (`b08-r5-environment-chain-drafts-r1`, manifest aa3ce14e) in a fresh version. This commit is the stage acceptance and quiet-read r13 is the observation. Hash order is CPU, then placement, then run. The coordinator adds the between-phase attestations at issuance.
