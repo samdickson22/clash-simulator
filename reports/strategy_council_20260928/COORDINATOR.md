@@ -5374,3 +5374,26 @@ qualify4 and label.py are unchanged. Tests: `test_sa4` has 11 scenarios, 10/10 m
 - **Likely cause:** the cache services' authorized hard stop at 2026-10-13T04:00Z. The perception owner confirms it, and must not restart the service.
 
 **Perception B.** The package r4 candidate (89b1582e) routes restricted C1 plan pins through the `reference` role only, and keeps every pin. The owner reports that a real-input end-to-end run is **blocked**: the C1 reference, decoder, truth and frame payloads exist only on 08, and 05 holds no payloads. The r4 delta goes to an Opus review, because the code is Astra's. That review covers C1 consistency, a sweep of all call sites, unchanged semantics, the impact list, and the next-failure risks it can find from code reading. After the review, the coordinator decides how real-input verification happens before any new epoch attempt.
+
+## 2026-10-13 08:33Z: B r4 fix APPROVED (Opus review); ruling RV-1 on real-input verification
+
+**Review.** Opus reviewed the r4 delta (`v4-b-gap-review/B-C1-PLAN-PIN-DELTA-REVIEW-r1.md`, 8748dd6d) and returned **APPROVE for the code fix**:
+- the C1 reference-only routing is correct;
+- the only plan-pin loops are the 4 fixed sites, and all 4 were live problems;
+- nothing scientific changed;
+- 436/436 package files re-hash, the patch reproduces r4, and 430/430 tests pass.
+
+**One omission in IMPACT.** 5 F1 files still hard-code the r3 package, CPU-plan, deploy-script pins and receipt names: `authority_placement.py:10-12`, `launch_deploy_detached.py`, `operator_deploy_once.sh`, `inspect_deployment.py:5` and `operator_inspect_once.py:14`. They need an old→new pin table and a pin-only check.
+
+**Ruling RV-1 (real-input verification).** The payloads exist only on 127x08, and 05 may not hold them. A full offline real-input end-to-end run is therefore not feasible without a new harness and a new host authority. The coordinator rules:
+
+1. **Pre-chain read-only probe of 08.** This addresses risk R1 and whatever else can be checked read-only: inventories (R3), free disk (R10), the presence of every pinned input path and its size, and hashes for small files.
+   - The coordinator runs it with the one-shot reader pattern used for the diagnosis reads: O_RDONLY|O_NOFOLLOW, named paths only, nice 19, one SSH.
+   - The owner supplies the exact path list and expected SHAs.
+2. **F1 pin table and pin-only diff**, which the coordinator checks directly, constants only.
+3. **One behavioural regression test** for the nested-audit and R16 sites, as the review recommended.
+4. **Then the full r4 chain:** new review receipt, deployment, stage, environment/G6, placements and epoch 1.
+   - **Epoch 1 on 08 is the real-input integration test.** Every epoch-path check reads before it writes and fails closed, as both earlier failures did: an IntegrityIncident before any graph work, nothing damaged.
+   - A failure consumes only that attempt's authorities. It is diagnosed by a coordinator read-only stderr read, with no retry.
+
+The release-blocker status of real-input end-to-end is waived in this form and disclosed.
