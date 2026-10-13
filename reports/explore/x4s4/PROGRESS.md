@@ -88,3 +88,36 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   X4S-3). guard-q1-unit-tests.json passed=true, returncode 0, SHA-256
   36ef38cb09011e496e302479016bc44c13406325cc4b3a13fd37183c50bf4f0b.
 - Watchdog status ok afterwards; no HALT.
+
+## 2026-10-13T05:05:19Z — Q2 capture non-perturbation: PASS
+
+- `watchdog.py status` ok before each step.
+- qual/run: launched 04:56:43Z; exit rc 0, reason null, 8/8 blocks, no remaining pids, 121 s wall (supervisor-exit
+  SHA-256 1fe120b0ef0131ba446461698e6da64c2c16764e2f730472fd0852e758b4a35c).
+- qual/collect: launched 05:01:05Z; exit rc 0, reason null, 8/8 blocks, 142 s wall (supervisor-exit SHA-256
+  74700c0703fe5fe699e9d629d58e6a95ee829dbea59859c7d3e87b9ba1b719d2).
+- Both phases ran much faster than the runbook estimate of 15–40 min each. `hashes` enforces the 1,000 s budget in
+  each game's projected metadata, so the budget was in force.
+- `$GRD --name q2-hashes` as written: passed. hashes.json SHA-256
+  0545d4203475f8f65d2fe13bb87fedae9aadb5380efe68f461f44daa346604d7; guard-q2-hashes.json SHA-256
+  1a9796a8091421bbb724dfd16a220b4c5dac19696498c41dd9f0b118cbdfa4b5.
+  - same_schedule; 16 cases, each block-proved and terminal.
+  - Every game: equal command hashes, capture SHA, identity, features/public equal, empty pending, count_ok.
+  - Belief unchanged on every decision; fair-identical on every decision.
+  - Fair coverage: 23–83 perturbed decisions per game, and every early check perturbed.
+
+## 2026-10-13T05:06:08Z — Q3 labeler equals the frozen teacher: PASS
+
+- `watchdog.py status` ok before the step; `$DET … $GRD --name q3-frozen` as written.
+- 125/125 equal, no mismatches, threads 1. frozen.json SHA-256
+  7cc7afcb2081d89c1fcff05985c8390ccb661673eb31edd46a2ddfde3f853c44; guard-q3-frozen.json passed, rc 0, SHA-256
+  db627c1fb5f1cf691907df725db97f862cdcb2bcb4b3a39c16c80ced12661282.
+
+## 2026-10-13T05:12:17Z — Q4 smoke collection phases done; round trip launched
+
+- `watchdog.py status` ok before each step.
+- smoke/collect-K4S-120: rc 0, reason null, 8/8 blocks, 81 s wall (exit SHA-256
+  5d95f494a36057cd1ac48bc5d82aa5914cf6eb40f18579334490ee2a11b08f6d).
+- smoke/collect-S-200: 50 lanes; rc 0, reason null, 8/8 blocks, 115 s wall (exit SHA-256
+  c7a37337c19a310be336a487598df43f98a24bacd5e43257185903127477507d).
+- The q4-roundtrip guard step was launched detached at 05:12:17Z, as written.
