@@ -385,3 +385,22 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
     reading, no error, no halt); the verdict stays in `passed`.
   - test_sa5: real guard.py + real qualify4 child, the end-to-end label.make_plan check, the fixtures fixed. 9/9
     mutants killed. The matrix is running.
+
+## 2026-10-13T11:46:42Z — SA-5 installed (COORDINATOR 6d70070d); P3-r2 low side only; 01 fetch #1
+
+- `git archive 72cc3dfb` of qualify4.py (dc7baf60…) was installed into base, rt-R3a and rt-R3a-rep: PASS ×3, from
+  05cc98fd… to dc7baf60….
+- RUNTIME-INVENTORY re-sealed. r2 (027e468a…) is kept as receipts/RUNTIME-INVENTORY.r2.json. The new file is
+  77582290433fc9d8137b91a19d3697914e53d39373867b4d06df732a3d575fe6, with only the qualify4 entry changed; all 12
+  entries match. Staging transcript be918eaf….
+- `watchdog.py resume`: the P3 STOP period (11:20:15Z onward) is closed. Status ok.
+- P3-r2 (`--final`): receipts/parity-collection-r2.json
+  2ec15eb49c2897f3efe0a39132c39270dd91a1914a754b76d464ae6d31161150.
+  - passed=false, final=true, final_mode=true, out_of_band ['S-200']; no pause, halt or error.
+  - The inventory aadafb16… is the same as r1's.
+  - guard-p3-parity-r2.json e566964eac2a839e80978aa8bc8e6d2e9781ac848ee530ff2df348eac679de07: passed=true, rc 0.
+  - Values as in r1: K4S-120 in band; S-200 cutoff 63.32 vs 75.3 is the only metric out of band, on the low side.
+- 01 fetch #1 (approved; fetch only): refs/remotes/origin/main went from 2df9501b… (11:46:38Z) to
+  6d70070dffeb603b757381bf0bf7e84963902575 (11:46:42Z). HEAD db1d17a0 unchanged.
+  - A further fetch after the coordinator's exception commit has been requested, because check_parity needs that
+    commit on 01's origin/main.
