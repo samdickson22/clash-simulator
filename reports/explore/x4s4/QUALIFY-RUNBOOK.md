@@ -35,7 +35,7 @@ about 2.5–4 h. E8 truncation rules apply if it runs out.
 | Host | 127x01 only. No other host; 03/04/Mac never. |
 | Job root `J` | `/mpac/sdicks02/jobs/clasher/x4s4-onpolicy`. It must not exist before staging. |
 | X4S-3 job `J3` (read-only source) | `/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012` |
-| Script commit `C` | `8bde7397eacf2c787aa1a95646320a8745953862` (scripts r10, pending the SR-2 fix-check) |
+| Script commit `C` | `d09bdef9aecc416cb83b002fcff002ff57579fde` (scripts r10.1, SR-3 closures; the coordinator verifies the diff) |
 | Runtime python | `/mpac/sdicks02/repos/clasher/.venv/bin/python`, via `x4s3/runtime.sh` |
 | GPU python | `/mpac/sdicks02/envs/clasher-gpu/bin/python` |
 | Pins | native `44874fd6…`; v1 `d77005d5…`; R3a `37509a43…` (threshold 0.5005528330802917); R3a-rep `8d537a78…` (threshold 0.49952925741672516); emitter `dab61651…`; `x4s3/run.py` `e7f90d76…` |
@@ -194,7 +194,7 @@ cp -a $J3/fit/source $J3/fit/ops $J3/fit/loader6.json $J/fit/
 From 127x05, stream exactly the reviewed X4S-4 files from git (no worktree file):
 
 ```bash
-git -C /mpac/sdicks02/repos/clasher archive 8bde7397 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
+git -C /mpac/sdicks02/repos/clasher archive d09bdef9 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
 ```
 
 **S2: verify, then overlay.**
@@ -262,7 +262,7 @@ SUP="nice -n 10 taskset -c 0-49 env X4S4_STUDY=$J X4S3_RT=$RT bash $R/reports/ex
 
 ```bash
 Q=/dev/shm/x4s4-q0; rm -rf $Q; mkdir -p $Q
-git -C /mpac/sdicks02/repos/clasher archive 8bde7397 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
+git -C /mpac/sdicks02/repos/clasher archive d09bdef9 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
 git -C /mpac/sdicks02/repos/clasher cat-file -e 7f82af0d4b3b6a465cba9a1b6dd26c708bcf25d1
 nice -n 19 taskset -c 0-3 /dev/shm/x4s4-venv/bin/python -B -c "import sys; sys.path.insert(0, '$Q/reports/explore/x4s4')
 import x4s4io as io; io.REPORT_ROOT = '$Q/reports/explore/x4s4'
