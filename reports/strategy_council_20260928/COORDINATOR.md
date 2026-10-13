@@ -4557,3 +4557,23 @@ No code-change route is taken.
 **Cause.** The materialized execution plan lists truth-bundle members that are not among its `bundle_files`. That is a defect in the frozen package's execution-plan template or materializer, or a mismatch with the GO's `environment` field. It is **not** RLIMIT_AS or torch.
 
 **The fix needs new bytes.** The owner diagnoses offline, from the frozen template and the issued GO. A fix will probably need a new package revision with a delta review and redeployment, or a corrected GO field if the GO is the cause.
+
+## 2026-10-13 01:28Z: U2 (fit-seed replicates on 01): Sol diff review APPROVE_WITH_CONDITIONS; GO issued
+
+**Review.** Sol's diff review is at `/mpac/sdicks02/jobs/clasher/x4s4-review/SOL-REVIEW-X4S3B-DIFF-r1.md` (840c9733). Its verdict on commit ab4efe030 is APPROVE_WITH_CONDITIONS:
+- the scheduler still keeps fits away from S-200;
+- the checkpoint SHA check is preserved;
+- the σ̂ estimator and its interim/final labels are correct;
+- STOP is preserved.
+
+**GO for U2 on 127x01** (exploration, NEVER ADOPTABLE), under these conditions:
+1. **Shell mode.** Restore `run_fit.sh`'s executable mode, or launch it explicitly with `bash`, and disclose which.
+2. **Write locations.** Every write, including the reducer output, must go under J2 = `/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013`. The X4S-3 job directory J is read-only.
+3. **Stop time.** Set `STOP_AT` to no later than the actual launch plus 8 h, keep the assertion, and record the value in PROGRESS and READOUT. A small constant-only commit is enough; it needs no new review.
+4. **Before launch, in order:**
+   - copy the staging inputs with plain copies, never links;
+   - audit J2 for symlinks and references to J;
+   - run the 8-seed smoke;
+   - run the live STOP test;
+   - then launch detached, using X4S-3's core map at nice 10.
+5. **Stopping for X4S-4.** On "STOP U2" (the X4S-4 GO), stop immediately and drain by PID.
