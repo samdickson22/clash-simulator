@@ -4889,3 +4889,26 @@ The diff was checked field by field.
 - the 0444 copy in `v4-b-gap-review/receipts/`
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0f0f198efce295812d8690c4703292432fa6ba09ea76ddaa725e827b5ef6ce87
+
+## 2026-10-13 04:05Z: B stage r3 C-4 ACCEPTED; 08 quiet-read r5
+
+**Stage run 0f0f198e** (CPU fc424a30) ran once and reported SUCCESS. Launcher and sender exit codes were both 0.
+- `complete.json` is ace2d686: schema `b08-stage-complete.v1`, package 7c86e49a.
+  - `runtime_admitted`, `gpu_work` and `heldout_opened` are all false.
+  - 2,136,818,985 B staged.
+  - It completed inside the window.
+- `result.json` is dc5f44fe.
+
+**C-4 audit:**
+- The claim tip 542eac9e is an ancestor of origin/main.
+- `git log -p` from that tip to origin/main contains none of fc424a30, 0f0f198e, e49db313 or f50ec605.
+- 0 `^REVOKED` lines.
+
+**Result: ACCEPTED.**
+
+**Quiet-read r5:** `evidence/coordinator-quiet-read-r5.sh` (cd17cc83), which is e36f8538 with only `Q=` changed. Exit 0, one SSH, no retry. `l1/receipts/b08-quiet-read-r5/observation.json` (c9a4e74a):
+- who 0;
+- 1,218,691,829,760 B available;
+- loadavg 0.18.
+
+**Next:** environment CPU GO r3 and placement r7, issued from the owner's drafts.
