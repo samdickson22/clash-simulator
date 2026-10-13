@@ -4992,3 +4992,15 @@ The issued GO is the owner's draft 9ae4256b. The coordinator changed only the pl
 C-5 passed and there are no path collisions.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e09712aa47bcf83cee406bf0734d26c6da1aaf4c3e14bd2f48260650f3a98c3e
+
+## 2026-10-13 04:49Z: U2 drained (X4S-4 starts); K4S A1 refusal fixed (S1 r6), A1/A1b re-GO
+
+**U2 drained** (14d8bdb7). The R3a-rep2 S-200 phase finished cleanly, all U2 process groups are empty and the 01 GPU is free. Interim fit-seed σ̂ = 0.0 pp (1 df, interim). "U2 drained" was forwarded to the X4S-4 owner, who starts S0 under GO 4b33d68d. The final 3-pair readout needs R3a-rep3's games on 01, which waits until X4S-4 frees the host.
+
+**K4S A1, first attempt (GO ea3f7686).** S1 refused at login P on 03 with rc -9. Nothing was copied, the destination was never created and A1b was not run (b3349328).
+- **Cause:** S1 `_finish` SIGKILLed ssh after stdout EOF but before ssh itself had exited.
+- **Fix:** `s1s2-r6` (bfbc3221). S1 is the only changed production file, now 16cbbf57. `_finish` waits up to `EXIT_GRACE = 30 s` for ssh's own exit and kills only after that. The hard per-login timeouts are unchanged.
+- **Tests:** 3 new tests, each of which fails on the r5 bytes; 334 pass on 3.12/3.8, normal and -O.
+- **Review:** the coordinator verified the 5-line diff directly. There is no other subprocess handler with this race; the rest go through `safe_input.run_checked`.
+
+**Re-GO:** A1 with S1 r6 (16cbbf57), then A1b, but only if A1 exits 0. Commands and conditions are otherwise as in ea3f7686.
