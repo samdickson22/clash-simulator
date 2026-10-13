@@ -4813,3 +4813,13 @@ Sol's fix-check (`x4s4-review/SOL-FIXCHECK-R10-r1.md`, e5b71aae) returned REQUES
 - **F7:** refuse (do not skip) any `game-*` entry that is not a real directory. Assert that the authenticated inventory equals the packer's glob inventory before calling the packer. Add a negative with one authenticated game plus one linked, unevidenced game.
 
 The full matrix must pass under -O0/1/2. Nothing else changes.
+
+## 2026-10-13 03:34Z: K4S END tooling approved (Sol r2); first 03/04 END host step ≥ FSC STOP + 1 h
+
+Sol's full-package r2 review (`k4s-runner/run-r1/reviews/SOL-REVIEW-END-FULL-r2.md`, a770a69e) returned **APPROVE**: F1–F6 are fixed and no new blocking defect was found. Package 9ecf50b1, index 50cc06bc.
+
+There are two non-blocking notes:
+- The double-slash HOME normalisation accepts any `//…` HOME, not only `//home/sdicks02`. The runner either corrects the index text or narrows the code and tests, at its choice.
+- The test-mode assumptions need documenting: `tar.umask=0022` and process umask 0022.
+
+The END tooling is now frozen at these SHA256SUMS. The runner may do any 05-only preparation now. Any step that touches **03 or 04** (A1 onward) needs a coordinator GO, and comes no earlier than **1 h after the FSC STOP is verified**. STOP_AT is 07:30Z.
