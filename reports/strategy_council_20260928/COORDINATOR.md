@@ -5126,3 +5126,23 @@ Decision: **disclose**. The owner writes `J/data/PARITY-EXCEPTION.json` with tha
 **Reading it:**
 - If Q7's cutoff % lands within 2 pp of the smoke values (about 58.7 and 69.8), the gap is the bank or host and production proceeds under the combined GO. P3 (≥ 100 collection-bank games) stays the binding C7b check.
 - If Q7 lands near X4S-3 (about 64 and 75) instead, capture is implicated. Stop before production and ask.
+
+## 2026-10-13 05:42Z: B placement r8, C-6 ACCEPTED
+
+Placement GO 49b819b8 completed once (operator 2c22b94e, one SSH, no retry).
+
+**Checks:**
+- launcher and sender exit codes 0;
+- `complete-from-stdout.json` e75ddf4a, schema `b08-authority-placement-complete.v1`;
+- package 7c86e49a and procedure 3fc7166d;
+- exactly one receipt, the epoch-1 CPU GO 24498e3d;
+- `runtime_admitted=false`.
+
+**C-6 audit:**
+- `revocation_tip_commit` = `fetched_tip` = a063d272, which is an ancestor of origin/main;
+- `git log -p` from that tip to origin/main contains none of 24498e3d, 49b819b8 or f50ec605;
+- 0 `^REVOKED` lines.
+
+**Placement r8 is ACCEPTED.** The epoch-1 run GO follows, from the owner's draft a7ac7fb1.
+
+**Disclosure.** The issued epoch-1 CPU GO (24498e3d) and placement GO (49b819b8) still carry `g6_environment_accepted=false` from the drafts. It is not a gate in either document: only the run GO's field is checked, and G6 was accepted at b3d10ce5. The issued bytes stay unchanged.
