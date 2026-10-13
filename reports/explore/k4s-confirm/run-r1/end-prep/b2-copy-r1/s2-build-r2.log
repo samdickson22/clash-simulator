@@ -1,0 +1,11 @@
+{
+ "status": "built",
+ "test_mode": false,
+ "evidence": "/tmp/k4s-s2-build/reports/explore/k4s-confirm/end-evidence.json",
+ "evidence_repository_path": "reports/explore/k4s-confirm/end-evidence.json",
+ "sha256": "774eb4a9d5da062bbdb5f939340329b133b304cbe3fba16e89392c58c953bcc3",
+ "commit": "04c068f59600d1f875da9ac74ee0dd68c812841a",
+ "phases": 10,
+ "s1_manifest_sha256": "6926c5fad6a01fa419e030984ef87c31d1c2adb68af636f6f3445573e253ac28",
+ "utc": "2026-10-13T04:51:37Z"
+}
