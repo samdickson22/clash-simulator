@@ -6096,3 +6096,29 @@ This acceptance was recorded about 7.5 h after the 14:30Z report. The coordinato
 **Quiet-read r12.** The coordinator read 08 once, read-only, with `evidence/coordinator-quiet-read-r12.sh` (bb4b04ef). It is the reviewed e36f8538 lineage, with only the `Q=` output directory changed from r11. Exit code 0, no retry. Observation `l1/receipts/b08-quiet-read-r12/observation.json` (2c0407da): who 0, available 1,216,433,364,992 B, loadavg 0.14.
 
 **Next:** the stage-chain r2 drafts' windows have lapsed. The owner re-drafts r3 with fresh windows: stage CPU GO, then placement r13, then run GO, hashed in that order. Inputs are this commit as the deployment acceptance and quiet-read r12 as the observation. No phase action happens until the coordinator issues it.
+
+## 2026-10-13 22:04Z: Coordinator stall report; X4S-4 monitoring HALT ruling (HR-2); K4S r6 PR-1 diff check PASS
+
+**Stall.** No coordinator action happened from about 14:30Z until 22:00Z. In the same window:
+- the K4S runner and the X4S-4 owner both failed on an API rate limit, at 15:04Z and 14:32Z;
+- 01, 03 and 04 sat idle;
+- the B r5 deployment waited about 7.5 h for acceptance, which was recorded at 9cc43d12.
+
+All three workers were woken with RESUME messages that name the exact next step.
+
+**X4S-4 HALT (J on 01).** `HALT.json` is dated 2026-10-13T14:32:50Z with reason "measurement overdue (> 8 s)". The last readings were healthy: 58 processes, MemAvailable about 95 GiB, PSI some avg10 2.94, Pss 35.0 GB, disk 38.1 GB, GPU 2.6 GiB. P9 collect-w and the R5 fit (step about 1,167) were sent SIGTERM. This is the second measurement-path HALT after HR-1, and it is the same class of problem: monitoring robustness, not a resource breach.
+
+**Ruling HR-2.** Path (a) again: continue in J under a new GO with T3.
+- The owner proposes a minimal diff that closes the class. A slow but healthy measurement must not HALT; a truly stuck one must still be bounded; breach semantics stay unchanged. Tests must include a slow-du positive and a stuck-du negative, and keep every R9-F2 test passing.
+- Then a Sol diff-only fix-check, then the coordinator GO.
+- The hard stop becomes T3 + 24 h, as HR-1 set it. Until the GO, nothing relaunches.
+
+**K4S END r6: PR-1 coordinator diff check PASS**, against the r5 lineage. The check covered the staged `end-prep/s3s9s10-r6` and `s5s6s7-r6`, compared with r5:
+- S9 `GIT_WRITE_GUARD` r6 adds `gw_refs`. Every planned `direct` ref has to be either absent or a regular single-link loose file holding exactly 40 hex digits and a newline. A `ref:` file refuses, `packed-refs` must parse strictly, and a peeled entry refuses (conservative).
+- `require_direct_ref` asks git itself through `for-each-ref %(symref)`. S9 refresh does this before both the fetch and the checkout, and S11 `_guarded` before every writing command.
+- Both checks run before any write. Sol's three U10 repros (leaf symlink, hardlink, symbolic ref) now refuse before the fetch.
+- S10, S1b, S3 and S11 change only in their sibling pins. The builder changes only in its S9/manifest pins and the audit-rerun paths.
+- Pins checked against computed hashes: S9 = bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7, runtime manifest = 9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43.
+- The single-operator TOCTOU residual is unchanged and accepted.
+
+This is conditional on the runner's pristine four-mode verification and an r6 commit whose blobs equal these bytes. The A2 GO follows the runner's request.
