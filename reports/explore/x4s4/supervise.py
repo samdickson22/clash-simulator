@@ -20,7 +20,7 @@ X4S-4 behaviour:
     receipt, creates <job>/STOP and stops with reason parity_pause; a watch failure stops with parity_monitor_failed.
 Exit status: 0 only if the child exited 0 with no stop reason; 1 otherwise; 3 if it never launched.
 """
-import argparse, datetime, hashlib, json, math, os, resource, signal, socket, sys, time
+import argparse, datetime, hashlib, json, math, os, resource, signal, socket, sys, threading, time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -97,10 +97,24 @@ def admit_phase(job, add, stop_at=None):
     if io.lexists(job+'/STOP'): return 'admission: STOP present'
     if studytree.hard_stop_passed(job) or (stop_at is not None and datetime.datetime.now(datetime.timezone.utc) >= stop_at):
         return 'admission: study hard stop reached'
-    ok, why = studytree.dispatch_ok()
-    if not ok: return 'admission: '+why
-    ok, why = studytree.admission(job, add=add)
-    return None if ok else 'admission: '+why
+    why = studytree.admit(job, add)                     # R7-F2: one bounded measurement, then STOP/deadline LAST
+    if why: return why
+    if stop_at is not None and datetime.datetime.now(datetime.timezone.utc) >= stop_at: return 'admission: study hard stop reached'
+    return None
+
+
+def guard_reason(why):
+    """Map a studytree verdict onto the supervisor's declared guard-stop reasons (PERMITTED stops)."""
+    if why in ('owned_STOP', 'hard_stop_time', 'monitor_stale'): return why
+    if why.startswith('study_tree_cap'): return 'study_tree_cap'
+    if why == 'measurement_timeout' or why.startswith('enforcer_failed'): return 'monitor_stale'
+    return 'memory_guard'                                # memory, PSS or PSI unreadable
+
+
+def final_reason(job):
+    """R7-F1: before a clean exit is recorded - a fresh bounded resource verdict, then STOP/deadline LAST."""
+    why = studytree.fresh_verdict(job)
+    return guard_reason(why) if why else None
 
 
 def final_check(job, stop_at):
@@ -187,13 +201,17 @@ def main():
         indices_sha256=io.sha256_file(a.indices), config_sha256=io.sha256_file(config), stop_at=a.stop_at, script=a.script),
         roles=PHASE_ROLES, mode=0o444)
 
-    requested = []
+    requested = []; stop_lock = threading.Lock()
     def stop(why):
         nonlocal reason
-        if reason is not None: return
-        reason = why
+        with stop_lock:                                               # main loop and the Enforcer thread
+            if reason is not None: return
+            reason = why
         io.replace_json(out+'/stop-reason.json', dict(utc=utc(), reason=reason), roles=PHASE_ROLES)
         io.stop_owned(pgid, cstart)                                   # verified PIDs of the owned child group only
+    # R7-F2: independent expiry - STOP, the deadline, or no completed loop iteration (all measurements) for
+    # MONITOR_STALE s stops the child from the Enforcer thread, even while the loop is blocked in a measurement.
+    enforcer = studytree.Enforcer(job, lambda why: stop(guard_reason(why))).start()
 
     signal.signal(signal.SIGTERM, lambda s, f: requested.append('supervisor_SIGTERM'))
     signal.signal(signal.SIGINT, lambda s, f: requested.append('supervisor_SIGINT'))
@@ -216,6 +234,7 @@ def main():
 
     try:
         while True:
+            if reason is not None: break                              # the Enforcer stopped the child
             if requested: stop(requested[0]); break
             if proc.poll() is not None:
                 if io.owned_pids(pgid, cstart): stop('runner_exited_with_live_workers')
@@ -227,18 +246,23 @@ def main():
                 stop('memory_guard'); break                            # also unreadable memory/PSS (fail closed)
             ok, why = studytree.admission(job, 0)
             if not ok: stop('study_tree_cap'); break
+            enforcer.verdict(None)                                    # each bounded measurement block completed
+
             if not seats and console_users(): stop('console_user'); break
             if collecting and time.monotonic()-last_parity >= PARITY_PERIOD:
                 last_parity = time.monotonic()
                 why = parity_watch(job, out)
                 if why: stop(why); break
+                enforcer.verdict(None)
             census_row(final=False)
+            enforcer.verdict(None)                                    # a complete, healthy iteration
             for _ in range(10):
                 if requested or proc.poll() is not None or io.lexists(job+'/STOP'): break
                 time.sleep(1)
     except BaseException as exc:
         stop(f'supervisor_exception: {exc!r}')
     finally:
+        enforcer.stop()
         if io.owned_pids(pgid, cstart): stop(reason or 'supervisor_finally')
         rc = proc.poll()
         if rc is None:
@@ -247,6 +271,8 @@ def main():
         try: census_row(final=True)                                   # cover the final interval
         except Exception: pass
     left = io.owned_pids(pgid, cstart)
+    if reason is None and rc == 0 and not left:
+        reason = final_reason(job)                                    # R7-F1: fresh guards before a clean exit
     after = resource.getrusage(resource.RUSAGE_CHILDREN); own = resource.getrusage(resource.RUSAGE_SELF)
     result = dict(utc=utc(), host=host, returncode=rc, reason=reason, remaining_group_pids=left,
                   min_memavailable_GiB=min_mem/2**30, max_owned_pss_GiB=max_pss/2**30, wall_seconds=time.monotonic()-t0,

@@ -1,4 +1,4 @@
-# X4S-4 scripts, r7 for Sol re-review (exploration, NEVER ADOPTABLE)
+# X4S-4 scripts, r8 for Sol re-review (exploration, NEVER ADOPTABLE)
 
 The design is frozen at PLAN r3 87809ae0. The history of the script set:
 
@@ -10,42 +10,148 @@ The design is frozen at PLAN r3 87809ae0. The history of the script set:
 | r4 | 15048bd4 | REQUEST_CHANGES (2a933467: R4-F1–F6) |
 | r5 | ffde20ac | REQUEST_CHANGES (3fcf0d2f: R5-F1–F4). R4-F1, F4 and F6 resolved; 96/96 reproduced in all modes and umasks. |
 | r6 | 0fc0f243 | REQUEST_CHANGES (10385f37: R6-F1–F3). R5-F2–F4 resolved; 105/105 reproduced. |
-| r7 | this commit | — |
+| r7 | 81d78349 | REQUEST_CHANGES (4cd3331f: R7-F1–F3). R6-F1 and R6-F3 resolved; R6-F2 partial. |
+| r8 | this commit | — |
 
-r7 fixes R6-F1 to R6-F3 narrowly (driver.py, qualify4.py, tests). Sol's cases are named negative tests. The r6 text
-below the r7 section is kept as the record of R5-F1–F4 and the Q-D2(a) smoke-pack. The QUALIFY-RUNBOOK is updated in a
-separate commit that pins this one.
+r8 closes the guard class, not only R7-F1 to R7-F3. Every long-running or spawning path, in qualification and in
+production, was audited against one checklist. The table in "Guard audit (r8)" below records each path, and every row
+has a named test. The sections for r7, r6 and r5 below are kept as the record of the earlier findings. The
+QUALIFY-RUNBOOK is updated in a separate commit that pins this one.
 
 Nothing has been run on any host. Everything below was done offline on 127x05, using synthetic fixtures and disposable
 git repositories under /dev/shm.
 
 ## Index
 
-| File | r7 vs r6 (0fc0f243) | SHA-256 |
+| File | r8 vs r7 (81d78349) | SHA-256 |
 |---|---|---|
-| `x4s4io.py` | unchanged since r6 | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
-| `studytree.py` | unchanged since r6 | `0cd352b5b02b0e29d0c6929eeba6766cb343e5b923077372a0a6153f9b3525c5` |
-| `driver.py` | changed (R6-F1) | `818fc3d4ee7f8a784b7a33a0db54b7df2ebb5811f041a123151ebfa38fe480dc` |
-| `supervise.py` | unchanged since r6 | `b4662a66a4a5ce808ab668f7e2831a195581e00355ee3561bfd98a795ce2b5b4` |
-| `label.py` | unchanged since r6 | `78622dcb8f0cc4eed3e2f89da614df76f8df3d06e6cd0c6507c4a07642673b06` |
-| `qualify4.py` | changed (R6-F2, R6-F3) | `c6166c888912d51db8972fe1b9f9256664921930ea06a395ad409b2894adce0a` |
-| `write_report.py` | unchanged since r6 | `1e634d034e55f24ac442b2288f0212b71d0bfed6f47ff43b749ecdb991d4e96e` |
-| `test_x4s4_offline.py` | changed (r7 negatives) | `8f74b25e000aeee2ddaff82db49978535fec0322c73f585ab1d513ab833e01f2` |
-| `collect_w.py` | unchanged since r6 | `68c187e0f2dabd3cf708083522e618c0b264b499d9efc560a950d415d2711a3a` |
-| `verify_onpolicy.py` | unchanged since r6 | `b85837d704aa7b1f1cf4a18a47099efce1b8108def97b59af1efb527a0152040` |
-| `diagnose.py` | unchanged since r6 | `f691989bab7d7fc672645402e74bd53e8fce5fbaf6db5d2b8ae80638a738e3a4` |
-| `reduce.py` | unchanged since r6 | `bb6fc580d3d3e84457edd67b45ff799ab5c1fab2393d2b74b89e0108267201bf` |
-| `audit_seeds.py` | unchanged since r6 | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
-| `run_fit.sh` | unchanged since r6 | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
-| `seed-sources.json` | unchanged since r6 (v2, 29 sealed declarations) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
-| `run_collect.py` | unchanged since r6 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
-| `collect.py` | unchanged since r6 | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
-| `contention.py` | unchanged since r6 | `0139abc5590fdb1bd5698bde97b9d63362ebc929c2eb85b14f27cb5d0ae53be3` |
+| `guard.py` | new (R7-F1–F3: the generic guard runner) | `545ab3b42de7652f0a08cee8fda9f4c980afcc3b824fc6ba190f1091e62de9fb` |
+| `x4s4io.py` | unchanged since r7 | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
+| `studytree.py` | changed (bounded measurements, admit, Enforcer, fresh_verdict, guarded_output, require_guard) | `51a74b001df910840c83eaf540c436afb41e9c92863648f0d58358c07be19eaa` |
+| `driver.py` | changed (GPU Enforcer, fresh acceptance, stop_live_fits) | `6138d9d3e5ed8ec58dc3709967f6757147d79ef9c8331874c8e4b9c245a43943` |
+| `supervise.py` | changed (bounded admission, Enforcer, final_reason) | `7b5c887513803ba9838516641df930de92ef2640d3483aeac22f005ed612b030` |
+| `label.py` | changed (guarded parity/plan; runs under guard.py) | `ff91730f4ef3536d53d97b28dca813afb522b87e9ded7248c4844a98d3f28c19` |
+| `qualify4.py` | changed (runs under guard.py; child-side QualGuard) | `c0d0732f6a09c7a2084d35dfb3c8cccb7ae412ee03fd2e1e3babb5e64eac0b1c` |
+| `write_report.py` | changed (guarded results/diagnostic; runs under guard.py) | `26f101006b6f823e96ab0ba20652305c693d4f99983458aec794c441df6dcb48` |
+| `test_x4s4_offline.py` | changed (r8 guard-audit rows, fixtures) | `9fd165046d543f6a3abdafe5903d671868072b89aa8f52520bcaf0d3ec3d52de` |
+| `collect_w.py` | changed (runs under guard.py) | `4fdee319e93e859e2ddbc8988d06e00d3f1047b95a9eef35c2fb16ea3f193729` |
+| `verify_onpolicy.py` | changed (guarded batches, label receipts, OW inputs; runs under guard.py) | `3e5af9100fdcee1d989d8971ca29596a49dba3db95b4b3193f32f82ab3426cbe` |
+| `diagnose.py` | changed (runs under guard.py) | `7511eff3e644ab7226fe1b59d7f379a838902d264123cfef71645e37c80ffbfa` |
+| `reduce.py` | changed (guarded C5 receipt; runs under guard.py) | `8258a858fc03ac546cca9ec984344cfe25e23c6bb91f51d3e9b6255ec356c1bb` |
+| `audit_seeds.py` | unchanged since r7 | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
+| `run_fit.sh` | unchanged since r7 | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
+| `seed-sources.json` | unchanged since r7 (v2, 29 sealed declarations) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
+| `run_collect.py` | unchanged since r7 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
+| `collect.py` | unchanged since r7 | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
+| `contention.py` | changed (runs under guard.py) | `994d0391a4e577a9f1a8bc7f9b90401bae0d9cb31ea6bd3ee8fcf5dbded99a8c` |
 | `plan.json`, `plan-collect.json`, `plan-qual-capture.json`, `idx-*.json` | unchanged | `13840cc6…`, `57f6a142…`, `45052215…`, `4587c7ed…` |
 
 Every owned Python file compiles under `/usr/bin/python3` 3.8.10 and under 3.12. `bash -n run_fit.sh` passes. The
 evaluation runner and the reused files are byte-identical. No frozen consumer changed: `label_game`'s write role
 became a module global (default `'data'`, unchanged behaviour) so that smoke-pack can confine its labels to `<job>/qual`.
+
+## Guard audit (r8): every long-running or spawning path × one checklist
+
+The checklist, applied to every row:
+- **(A) Admission:** a fresh, bounded resource admission before any work.
+- **(M) Live monitor:** the frozen running-work rules, with every measurement bounded.
+- **(E) Independent expiry:** expiry that a blocked measurement, native call or loop cannot stall.
+- **(L) STOP/deadline last:** checked last, immediately before the spawn and before any receipt.
+- **(F) Fresh guards at final acceptance:** an output counts only after fresh guards, and its consumer enforces that.
+
+These are shared mechanisms in `studytree.py`:
+- `bounded()`: any measurement runs with a deadline, and a miss is a breach. `du` is now bounded at 40 s (it was
+  900 s), and `nvidia-smi` at 20 s.
+- `admit()`: cheap STOP/deadline, then one bounded measurement (dispatch_ok, admission and an optional GPU rule), then
+  STOP/deadline again, last.
+- `Enforcer`: a thread that every 1 s does only cheap checks: STOP (lexists), the immutable deadline, and the age of
+  the last completed verdict. It never measures. A verdict older than `MONITOR_STALE` = 75 s is a breach. It can be
+  re-armed for each child.
+- `fresh_verdict()`: a fresh bounded monitor verdict, then STOP/deadline last.
+- `guarded_output()`: an output counts only through a PASSED `receipts/guard-*.json` that names it with its current
+  identity: a file SHA, or a sealed directory's manifest SHA.
+- `require_guard()`: the child side. It refuses to run without a live `guard.py` runner, and a watchdog ends the child
+  if the runner disappears.
+
+`guard.py` is the generic runner (new in r8). It provides A, M, E, L and F for any command, including the
+byte-identical frozen packer.
+
+| # | Path (runbook steps) | A admission | M live monitor (bounded) | E independent expiry | L STOP/deadline last | F acceptance (consumer) | Test |
+|---|---|---|---|---|---|---|---|
+| 1 | `guard.py` runner (every row marked "runner") | `studytree.admit` + cheap check after registration, immediately before spawn | thread: `studytree.monitor` on the child group (+ GPU ≤ 40 GB with `--gpu`) every 5 s | Enforcer (STOP, deadline, verdict > 75 s) → verified-PID TERM/KILL, failed receipt, exit 3; SIGTERM to the runner does the same; owned children exit if the runner dies | before spawn; under the acceptance lock before the passed receipt | exit 0 + declared outputs (seals verified) + `fresh_verdict` + cheap last → `guard-<name>.json`; consumers use `guarded_output` | "row 1 - guard.py runner", "shared Enforcer", "process exits" |
+| 2 | Q1 unit tests (pytest) | runner | runner | runner | runner | the guard receipt is Q1's evidence | row 1; runbook row |
+| 3 | `qualify4` Q2 hashes, Q3 frozen, Q4 round trip/parity, Q6 smoke-pack/trainer (`--gpu`), P3 parity | runner | runner; inside, cheap halts per state/capture/game/parity iteration | runner; the child refuses to run without it | runner; and `QualGuard.finalize` (fresh verdict, then cheap) | runner; smoke-pack takes a fresh verdict before and after the pack; label admission requires a guarded parity receipt | "R6-F2 (child side)", "guarded acceptance", "child binding" |
+| 4 | `collect_w` Q5 acceptance, P9 O_W collection | runner (`--add`); plus its own admission | runner; plus its own dispatch monitor | runner; the child refuses to run without it | runner | runner; verify OW requires a guarded selection and acceptance receipt | "guarded acceptance", "child binding" |
+| 5 | `label.py` P4 plan, P5 run | runner (`--add 50` for the run) | runner; plus the run's own dispatch monitor | runner; the child refuses to run without it | runner | runner; the run requires a guarded plan; verify requires guarded label receipts (`--new-files`) | "guarded acceptance", "child binding" |
+| 6 | frozen packer P6 (O, holdout), P9 (O_W) — R7-F3 | runner (`--add 2`) | runner | runner (verified-PID stop; the packer stays byte-identical) | runner | runner verifies the sealed `--output` batch; verify_onpolicy refuses any batch without a passed guard (a post-STOP pack never counts, even with a valid seal) | "guarded acceptance" (verify_batch), row 1, runbook row |
+| 7 | `verify_onpolicy` P7 (O, holdout), P9 (OW) | runner | runner | runner; the child refuses to run without it | runner | runner; `authenticate_gate` (fit admission, diagnostic, report) requires a guarded gate | "guarded acceptance" (gate), "child binding" |
+| 8 | `diagnose` P11 | runner `--gpu`; plus its own lock | runner (+ GPU); plus its own `guard_factory` | runner; the child refuses to run without it | runner | runner; write_report renders an unguarded diagnostic as unavailable | "guarded acceptance", "child binding" |
+| 9 | `contention` P13, `reduce` P14, `write_report` P15 | runner `--readout`: deadline-exempt for these three scripts only; STOP and resources still apply | runner | runner | runner (STOP last) | runner; reduce requires a guarded C5 receipt; write_report requires a guarded results.json | row 1 (`--readout`), "guarded acceptance", "child binding" |
+| 10 | `supervise.py` phases: Q2 run/collect, Q4 smoke collection, Q7, Q8, P1, P2, P12 reporting | `admit_phase` = `studytree.admit` (bounded) + `--stop-at` | its loop: memory, PSS, admission (du ≤ 40 s), console helper (≤ 15 s), parity watch; a heartbeat after each bounded block | Enforcer → thread-safe `stop()` (verified PIDs) on STOP, deadline or verdict > 75 s | `final_check` after admission and census, immediately before spawn; `final_reason` before a clean exit | `final_reason` = fresh verdict + cheap last before a clean exit is recorded; consumers `phase_evidence` and driver settle | "supervise.py" row; R5-F1 supervisor case |
+| 11 | `driver.py` P10/P12: fits, calibration, READY, reporting launches | `resources_ok` (bounded measurements) + `final_gate` | `Fits.guard` each tick; `calibration_breach` each poll; each healthy verdict feeds the Enforcer | Enforcer re-armed per GPU child → trainer-PID SIGTERM / verified-PID stop on STOP, deadline or a stale guard; any driver exit stops live fits (`finally`) | `final_gate` inside `launch()` (cheap last); calibration rejects STOP after the last poll | calibration result and READY only after a fresh verdict; reporting via the supervisor's final verdict | "driver.py" row; "process exits"; R5/R6 driver cases |
+| 12 | Q0 seed audit | — | — | — | — | — | Runs on 127x05 from a /dev/shm export over pinned blobs only. It is not study work on 01. |
+| 13 | Staging S0–S3 | S0 preflight (memory, PSI, GPU, disk, absent `J`) | — | — | — | the staging check transcript | Runs before T exists (no HARD-STOP yet), so the guards cannot apply; the copies write only into `J`. |
+
+Runbook: a static test joins continued shell lines and requires every qualify4, label, verify, collect_w, pack,
+diagnose, readout and pytest command to run under `$GRD`/`$GRDG`. It also requires both production packs to declare
+their batch as a guarded `--output`.
+
+**Residuals (disclosed).** SIGKILL cannot be handled in-process:
+- If the driver is SIGKILLed, a running fit continues under its frozen stop file until the driver restarts. The
+  restarted driver guards it on its first tick.
+- If a supervisor is SIGKILLed, an evaluation runner child continues until the driver flags the attempt, as since r2.
+- If `guard.py` is SIGKILLed, owned children exit within about 2 s. A frozen packer or pytest child may finish, but its
+  output never counts, because no passed guard receipt exists for it.
+
+The runbook uses only STOP and PID-only SIGTERM, never SIGKILL by pattern.
+
+## Sol r7 findings → fixes (r8)
+
+- **R7-F1 (fresh acceptance):**
+  - `QualGuard` (now the child side) takes a fresh bounded verdict, then STOP/deadline, before the smoke pack, after it,
+    and in `finalize`.
+  - `guard.py` takes a fresh bounded verdict, then STOP/deadline under its acceptance lock, before any passed receipt.
+    Consumers accept only that receipt.
+  - The same rule now applies to supervisor clean exits, driver calibration results and READY.
+  - Tests:
+    - a memory breach or STOP arriving after the child exits 0 → a failed guard receipt and no guarded output;
+    - the supervisor's `final_reason` under memory 0 or STOP;
+    - a calibrator returning while memory is breached → rejected.
+- **R7-F2 (expiry independent of measurement):**
+  - The Enforcer never measures. A verdict older than 75 s is a breach, and measurements are bounded (du 40 s, GPU
+    20 s, `bounded()` deadlines).
+  - Admission is one bounded measurement, followed by cheap checks last.
+  - qualify4 checks STOP/deadline again before and after scientific initialization.
+  - Tests:
+    - with the live monitor blocked inside du, STOP, the deadline, and staleness each stop the child within the budget;
+    - a blocked admission measurement and STOP during the measurement are refused with no spawn;
+    - the Enforcer fires while a measurement is stuck;
+    - inactive Enforcers never go stale;
+    - `fresh_verdict` turns a measurement deadline miss into a breach.
+- **R7-F3 (production packer):**
+  - P6 and P9 run the byte-identical packer under `guard.py --output <batch>`.
+  - `verify_onpolicy` refuses any batch without a passed guard receipt for its current manifest. So a pack completed
+    after STOP or a breach is never accepted, even with a valid seal.
+  - Test: verify refuses an unguarded batch.
+
+**Mutation check (r8)**, observed. Each batch ran the whole suite. The originals were restored and their hashes
+verified before the matrix.
+- **Batch A** removed Enforcer staleness, made admission unbounded, and removed the runner's fresh acceptance verdict
+  and its STOP/deadline-last check. These cases failed:
+  - row 1: blocked admission measurement, live staleness while blocked, STOP at the end;
+  - the shared Enforcer: staleness;
+  - supervise.py: blocked admission;
+  - driver.py: stale guard.
+- **Fresh acceptance verdict alone removed:** the end-of-run memory breach fails. That test was first made
+  deterministic: the breach appears only after the live monitor has finished, so only acceptance can see it.
+- **Batch B** made `guarded_output` accept anything, made `require_guard` a no-op and made `stop_live_fits` a no-op.
+  These failed:
+  - row 1's acceptance sub-checks;
+  - the guarded-acceptance row;
+  - the child-binding row;
+  - the process-exits row.
+
+  Three probes were hardened so that a mutant which runs on is recorded as a failure rather than aborting the group.
 
 ## Sol r6 findings → fixes → named negatives (r7)
 
@@ -245,19 +351,20 @@ The originals were restored and their hashes verified before the matrix below.
 
 ## Offline test results (127x05, /dev/shm, nice 19, cores 0–3, no host contact)
 
-`test_x4s4_offline.py` passes **108/108 under -O0, -O and -OO with umask 077 and 022** (exit 0 in all six).
+`test_x4s4_offline.py` passes **116/116 under -O0, -O and -OO with umask 077 and 022** (exit 0 in all six).
 Receipts (umask 077 runs):
 
 | Mode | Receipt | SHA-256 |
 |---|---|---|
-| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `69db7363327d36341d3e9a136434d061e72a1a8af7084567566fca8a679cf09c` |
-| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `f6aacdda08a4093e77f6197a0407915d740d66942a8e7899b46040d85f297734` |
-| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `090e2546ae341207f2e510591426dc7bb93ecd45608eda4191f0ca752cc866da` |
+| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `24d4ac49dd0b609463caffca678d523aa7bc6efd1dcb72b4f0a983caabad47c8` |
+| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `ddaddc5908908cd13b545c0c334aca80458a5c1b2d37f6559a794fd9f3e7bff9` |
+| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `d80308d90c6554ef203e913b6903e20e5e10e8537a865b959a1f4587ef932422` |
 
 **Not covered offline** (qualification §6 on 01, after a GO):
 - the native §6 checks;
 - the real v2 seed audit with range/count completeness;
 - the live STOP test;
 - real smoke-pack labelling (native scorer) and the GPU trainer check (Q6);
-- the staged RUNTIME-INVENTORY: x4s4/supervise.py, x4s4io.py, studytree.py, qualify4.py, x4s3/run.py, runtime.sh,
+- guard.py against real host measurements (it was tested offline with stubbed readings and real child processes);
+- the staged RUNTIME-INVENTORY: x4s4/supervise.py, x4s4io.py, studytree.py, qualify4.py, guard.py, x4s3/run.py, runtime.sh,
   fit/run_fit.sh, fit/loader6.json, inputs/assets.npz.

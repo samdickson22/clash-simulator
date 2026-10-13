@@ -178,6 +178,7 @@ def main():
     ap.add_argument('--count', type=int, required=True); ap.add_argument('--workers', type=int, required=True)
     ap.add_argument('--acceptance-smoke', action='store_true', help='qualification: the two acceptance-replay games')
     a = ap.parse_args()
+    studytree.require_guard('collect_w')                           # R7: runs only under guard.py
     if socket.gethostname() != '127x01' or os.getpriority(os.PRIO_PROCESS, 0) < 10:
         raise SystemExit('requires 127x01 at nice >= 10')
     if not os.sched_getaffinity(0) <= set(range(50)) or not 1 <= a.workers <= min(50, len(os.sched_getaffinity(0))):

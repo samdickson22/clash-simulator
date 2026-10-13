@@ -168,6 +168,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=io.JOB+'/analysis/diagnostic.json')
     a = ap.parse_args()
+    studytree.require_guard('diagnose')                            # R7: runs only under guard.py --gpu
     job = io.JOB
     io.check_writable(a.out, roles=('analysis',), must_not_exist=True)
     guard = guard_factory(job)

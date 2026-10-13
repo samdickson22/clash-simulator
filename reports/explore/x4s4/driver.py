@@ -37,6 +37,9 @@ monitored, exclusive GPU work (run_calibration: DISPATCH-flock admission with no
 PID-only stop on breach, nonzero or post-deadline results rejected). R4-F3 - a stopped (partial) completion is
 reconciled exactly like a final one: segment 'returned' and a known zero exit of this launch (or an exact-attempt
 ACK), else 'failed' (blocking anomaly, never resumed).
+r8 (Sol r7): R7-F2 - a studytree.Enforcer (cheap checks only, re-armed per GPU child) stops a live fit or calibration
+on STOP, the deadline, or no completed guard verdict for MONITOR_STALE s, even while the main loop is blocked in a
+measurement. R7-F1 - a calibration result and READY are accepted only after a fresh bounded resource verdict.
 r7 (Sol r6): R6-F1 - final_gate() runs its exclusion/status scans first and the cheap STOP/hard-stop checks last.
 r6 (Sol r5): R5-F1 - final_gate() (STOP, hard stop, unresolved anomaly, live diagnostic/calibration/phase/fit) runs
 inside launch() immediately before every spawn, after all lock waits and slow preparation; a refused fit resume rolls
@@ -67,10 +70,12 @@ STEP_SECONDS, LOAD_SECONDS = 1.9, 600
 GPU_LIMIT_MIB, GPU_ADMIT_MIB = 40*1024, 8*1024
 GPU_PY = '/mpac/sdicks02/envs/clasher-gpu/bin/python'
 FIT_PROCESSES, PHASE_PROCESSES = 10, 53
-PERMITTED_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap')
+PERMITTED_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap', 'monitor_stale')
 RUNTIME_FILES = ('reports/explore/x4s4/supervise.py', 'reports/explore/x4s4/x4s4io.py', 'reports/explore/x4s4/studytree.py',
                  'reports/explore/x4s4/qualify4.py', 'reports/explore/x4s3/run.py', 'reports/explore/x4s3/runtime.sh')
 EXIT, LAUNCHED, POPEN = {}, {}, {}                       # reaped pid -> exit code; child pid -> launch_id / Popen
+LIVE, GPU_BREACH = {}, {}                                # the live GPU child (fit or calibration); launch_id -> breach
+ENFORCER = None
 CALIBRATION_POLL = 5.0
 
 
@@ -301,9 +306,41 @@ def prepare_fit_dirs(fid):
     return [b.rsplit('/', 1)[1] for b in batches], gate_sha
 
 
+def gpu_live(kind, fid, rec):
+    """R7-F2: register the live GPU child with the independent Enforcer (re-armed per child)."""
+    if LIVE.get('launch_id') != rec['launch_id']:
+        LIVE.clear(); LIVE.update(kind=kind, fid=fid, launch_id=rec['launch_id'], pid=rec['pid'], pgid=rec['pgid'], starttime=rec['starttime'])
+        if ENFORCER: ENFORCER.arm()
+
+
+def gpu_done():
+    LIVE.clear()
+
+
+def on_gpu_breach(why):
+    """Enforcer callback (cheap checks only; never measures): STOP, the deadline, or no completed guard verdict for
+    MONITOR_STALE s while a fit/calibration lives. The fit's verified trainer PID gets SIGTERM (it checkpoints), then
+    the group's verified PIDs TERM/KILL; a calibration group is stopped by verified PIDs. Not STOP/deadline -> anomaly."""
+    live = dict(LIVE)
+    if not live: return
+    GPU_BREACH[live['launch_id']] = why
+    if live['kind'] == 'fit':
+        io.signal_pid(live['pid'], live['pgid'], live['starttime'], signal.SIGTERM)
+        for _ in range(120):
+            if not io.group_alive(live['pgid'], live['starttime']): break
+            time.sleep(1)
+        else:
+            io.stop_owned(live['pgid'], live['starttime'], term_grace=15, kill_grace=60)
+    else:
+        io.stop_owned(live['pgid'], live['starttime'], term_grace=30, kill_grace=30)
+    event(kind='gpu_enforcer_stop', target=live['kind'], fit=live['fid'], launch_id=live['launch_id'], reason=why)
+    if why not in ('owned_STOP', 'hard_stop_time'): anomaly(f"{'fit' if live['kind'] == 'fit' else 'calibration'}-{live['fid']}", reason=why)
+
+
 class Fits:
     def tick(self):
         running = [f for f in FIT_ORDER if fit_state(f)[0] == 'running']
+        if not running and LIVE.get('kind') == 'fit': gpu_done()
         for fid in running: self.guard(fid)
         if running or stop_present() or now() >= STOP_AT: return
         for fid in FIT_ORDER:
@@ -350,6 +387,7 @@ class Fits:
 
     def guard(self, fid):
         st, rec = fit_state(fid)
+        gpu_live('fit', fid, rec)
         why = None
         if stop_present(): why = 'STOP'
         elif now() >= STOP_AT: why = 'hard_stop'
@@ -375,6 +413,7 @@ class Fits:
             elif g > GPU_LIMIT_MIB: why = 'gpu_over_40GB'
             p = studytree.pss_bytes(io.owned_pids(rec['pgid'], rec['starttime']))
             if p is None or p > studytree.PSS_LIMIT: why = 'fit_pss_over_50GiB_or_unreadable'
+        if why is None and ENFORCER: ENFORCER.verdict(None)               # a complete, healthy guard verdict
         if why:
             # SIGTERM the verified trainer PID (run_fit.sh execs python, so pid == trainer): it finishes the step and
             # checkpoints. Then the group's remaining verified PIDs get TERM/KILL.
@@ -427,18 +466,28 @@ def run_calibration(fid, dest, cal):
                      f'{J}/logs/calibrate-{fid}.log', f'{J}/receipts/calibrate-{fid}-launch-{int(time.time())}.json', env, cwd=f'{J}/fit/source')
         if rec is None: return 'not_admitted'                       # the final gate refused (R5-F1)
     proc = POPEN[rec['pid']]
+    gpu_live('calibration', fid, rec)
     while proc.poll() is None:
         why = calibration_breach(rec)
+        if why is None and ENFORCER: ENFORCER.verdict(None)
         if why:
             io.stop_owned(rec['pgid'], rec['starttime'], term_grace=30, kill_grace=30)
             proc.wait(); EXIT[rec['pid']] = proc.returncode
             event(kind='child_exit', pid=rec['pid'], launch_id=rec['launch_id'], exit_code=proc.returncode)
             if why not in ('STOP', 'hard_stop'): anomaly(f'calibration-{fid}', reason=f'calibration stopped: {why}')
             if io.lexists(cal): io.rename_path(cal, f'{cal}.stopped-{int(time.time())}', roles=('calibration',))
-            return 'stopped'
+            gpu_done(); return 'stopped'
         time.sleep(CALIBRATION_POLL)
+    gpu_done()
     EXIT[rec['pid']] = proc.returncode
     event(kind='child_exit', pid=rec['pid'], launch_id=rec['launch_id'], exit_code=proc.returncode)
+    if rec['launch_id'] in GPU_BREACH:                               # the Enforcer stopped it (event/anomaly recorded)
+        if io.lexists(cal): io.rename_path(cal, f'{cal}.stopped-{int(time.time())}', roles=('calibration',))
+        return 'stopped'
+    fresh = studytree.fresh_verdict(J)                               # R7-F1: fresh guards before acceptance
+    if fresh and fresh not in ('owned_STOP', 'hard_stop_time'):
+        if io.lexists(cal): io.rename_path(cal, f'{cal}.rejected-{int(time.time())}', roles=('calibration',))
+        anomaly(f'calibration-{fid}', reason=f'final guard: {fresh}'); return 'stopped'
     late = now() >= STOP_AT or stop_present()                       # R5-F1: STOP after the last poll also rejects
     if proc.returncode != 0 or late or not io.lexists(cal):
         if io.lexists(cal): io.rename_path(cal, f'{cal}.rejected-{int(time.time())}', roles=('calibration',))
@@ -509,7 +558,7 @@ def prepare_students():
         plan['student'] = dict(id=fid, checkpoint=dest, checkpoint_sha256=c['checkpoint_sha256'], threshold=c['threshold'],
                                calibration_sha256=sha(cal), status=f'X4S-4 {fid} student; exploration only; NEVER ADOPTABLE')
         io.replace_json(pj, plan)                                    # refuses a symlinked/hard-linked plan or ancestor
-        if stop_present() or now() >= STOP_AT: return              # R5-F1: last check before READY is published
+        if studytree.fresh_verdict(J): return                       # R7-F1: fresh guards, then STOP/deadline LAST
         io.write_json_once(rt+'/READY.json', dict(utc=utc(), id=fid, plan_sha256=sha(pj), student=plan['student']), mode=0o444)
         event(kind='student_ready', id=fid, threshold=c['threshold'], play_rate=c.get('actual_play_rate'), checkpoint_sha256=c['checkpoint_sha256'])
 
@@ -674,8 +723,34 @@ def main():
     me = io.own_identity()
     jwrite(D+'/driver.pid', dict(pid=me['pid'], pgid=me['pgid'], starttime=me['starttime'], started=utc()))
     event(kind='driver_start', pid=me['pid'])
+    global ENFORCER                                  # R7-F2: independent expiry for live GPU work
+    ENFORCER = studytree.Enforcer(J, on_gpu_breach, active=lambda: bool(LIVE)).start()
     fits = Fits(); stop = []
     signal.signal(signal.SIGTERM, lambda *a: stop.append('SIGTERM'))
+    try:
+        loop(fits, stop)
+    finally:
+        stop_live_fits(stop[0] if stop else 'driver_exit')            # r8: no fit outlives its guarding driver
+        ENFORCER.stop()
+
+
+def stop_live_fits(why):
+    """r8: when the driver leaves its loop for any reason (SIGTERM, an exception, the end), every running fit is stopped
+    through its verified trainer PID (SIGTERM: the frozen trainer checkpoints; a stopped completion stays resumable),
+    then its verified group PIDs. Reporting supervisors carry their own Enforcer; calibration runs synchronously."""
+    for fid in FIT_ORDER:
+        st, rec = fit_state(fid)
+        if st != 'running': continue
+        io.signal_pid(rec['pid'], rec['pgid'], rec['starttime'], signal.SIGTERM)
+        for _ in range(120):
+            if not io.group_alive(rec['pgid'], rec['starttime']): break
+            time.sleep(1)
+        else:
+            io.stop_owned(rec['pgid'], rec['starttime'], term_grace=15, kill_grace=60)
+        event(kind='fit_stop', fit=fid, reason=f'driver exit: {why}')
+
+
+def loop(fits, stop):
     beat = 0
     while not stop:
         while True:                                    # reap: zombies never keep a group alive; statuses are durable

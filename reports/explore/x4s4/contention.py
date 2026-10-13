@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import x4s4io as io                                  # noqa: E402
+import studytree                                     # noqa: E402
 
 SCHEMA = 'x4s4.contention.v3'
 PSI_LIMIT, FOREIGN_LIMIT, FOREIGN_MAX = 10.0, 2.0, 1024.0
@@ -164,6 +165,7 @@ def write_once(job, body):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--job', required=True); a = ap.parse_args()
+    studytree.require_guard('contention')                          # R7: runs only under guard.py --readout
     if a.job != io.JOB: raise SystemExit(f'--job must be {io.JOB}')
     try:
         body = build(a.job)

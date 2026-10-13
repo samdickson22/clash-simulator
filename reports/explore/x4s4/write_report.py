@@ -149,7 +149,7 @@ def render(r, plan, o_gate, ow_gate, diag, inputs, notes):
         for sl, m in slices.items():
             L.append(f"| {s} | {sl} | {m['top1_agreement']:.3f} | {m['gate_accuracy']:.3f} | {m['listwise_ce']:.3f} | {m['frozen_objective']:.3f} |")
     if not diag:
-        L.append('**The O-holdout diagnostic is unavailable (not completed before the hard stop); disclosed, descriptive only.**')
+        L.append('**The O-holdout diagnostic is unavailable (not completed before the hard stop, or its guarded run did not pass); disclosed, descriptive only.**')
     L += ['', '## Disclosures', ''] + [f'- {x}' for x in FIXED_DISCLOSURES + list(notes)]
     L += ['', '## Inputs', ''] + [f'- `{k}` sha256 {v}' for k, v in inputs.items()]
     return '\n'.join(L)+'\n'
@@ -182,7 +182,9 @@ def authenticate(J, contention_sha, freeze_commit, repo=None):
     reduce.verify_freeze(J, contention_sha, freeze_commit, repo or io.REPO)        # raises SystemExit on any failure
     paths = dict(results=f'{J}/analysis/results.json', label_plan=f'{J}/data/label-plan.json', o_gate=f'{J}/data/O-VERIFIED.json',
                  ow_gate=f'{J}/data/OW-VERIFIED.json')
-    if io.lexists(f'{J}/analysis/diagnostic.json'):
+    need(studytree.guarded_output(J, paths['results']) is not None, 'results.json has no passed guard receipt (R7: guarded reduce.py)')
+    # R7: a diagnostic counts only if its guarded run passed; otherwise it is rendered as unavailable (disclosed)
+    if io.lexists(f'{J}/analysis/diagnostic.json') and studytree.guarded_output(J, f'{J}/analysis/diagnostic.json') is not None:
         paths.update(diagnostic=f'{J}/analysis/diagnostic.json', holdout_gate=f'{J}/data/HOLDOUT-VERIFIED.json')
     docs = {k: io.read_json(v, 1 << 30) for k, v in paths.items()}
     shas = {k: sha(v) for k, v in paths.items()}
@@ -229,6 +231,7 @@ def main():
     ap.add_argument('--notes', default='[]', help='JSON list of extra disclosure lines (in addition to the fixed ones)')
     ap.add_argument('--out', default=io.REPORT_ROOT+'/RESULTS.md')
     a = ap.parse_args()
+    studytree.require_guard('write_report')                        # R7: runs only under guard.py --readout
     io.check_writable(a.out, report=True)
     docs, shas = authenticate(io.JOB, a.contention_sha, a.freeze_commit)
     notes = json.loads(a.notes)

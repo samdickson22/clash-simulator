@@ -32,9 +32,9 @@ wall_overrun); loss/winner/outcome are dropped while parsing.
       label thread count) under <job>/qual/smoke-raw, sealed, and packed once by the frozen pack() into the fresh
       <job>/qual/smoke-pack/batch-0000 (plan <job>/qual/smoke-plan.json); smoke bank only, never production data.
   trainer   --packed DIR --assets FILE --out R.json      (clasher-gpu python, fit PYTHONPATH)
-r7 (Sol r6, R6-F2): every subcommand runs under QualGuard - study admission and registration before any work, the
-frozen live rules on a watcher thread, halt checks between items, and a final STOP/deadline/breach check before the
-receipt; a receipt never passes after a STOP, the deadline or a breach. R6-F3: smoke-pack fails on any digest mismatch.
+r7 (Sol r6): R6-F3 - smoke-pack fails on any digest mismatch. r8 (Sol r7): every subcommand runs only as the child of
+guard.py (admission, live monitor, independent expiry, fresh final guards, guarded acceptance); inside, QualGuard
+checks STOP/deadline between items and takes a fresh bounded resource verdict before packing and before the receipt.
 Receipts are confined below <job>/qual/ or <job>/receipts/ and created exclusively (0444). Any failed check exits 1.
 """
 import argparse, hashlib, json, os, pickle, secrets, sys, threading, time
@@ -66,8 +66,6 @@ def write_receipt(path, obj, roles=('qual', 'receipts')):
     return str(path)
 
 
-GUARD_PERIOD, GUARD_GRACE = 5.0, 60.0
-QUAL_PROCESSES = 2
 GPU_ADMIT_MIB, GPU_LIMIT_MIB = 8*1024, 40*1024                # the fit rules (driver.py), for the trainer check
 
 
@@ -80,97 +78,47 @@ def gpu_used_mib():
         return None
 
 
+def gpu_live():
+    g = gpu_used_mib()
+    return None if g is not None and g <= GPU_LIMIT_MIB else 'gpu_unreadable_or_over_40GB'
+
+
 class QualHalt(Exception):
     pass
 
 
 class QualGuard:
-    """R6-F2: every qualification subcommand is owned, admitted and live-guarded like production work.
-    * admit(): no STOP (lexists), the immutable hard stop not reached, MemAvailable >= 24 GiB with memory PSI readable
-      and <= 10 (studytree.dispatch_ok - dispatch inhibition only), the study tree + this job <= 70 processes and the
-      job <= 100 GB (studytree.admission); then the process group is registered (receipts/cpujob-qual-*) so every other
-      admission counts it.
-    * A watcher thread applies the frozen running-work rules every GUARD_PERIOD s (studytree.monitor: STOP, hard stop,
-      MemAvailable < 24 GiB or unreadable, PSI unreadable, own PSS > 50 GiB or unreadable, study process/disk caps; high
-      PSI is NOT a kill rule). A breach is latched; the work checks check() between items and stops with QualHalt. If
-      the work does not reach a check within GUARD_GRACE s (a long native call), the watcher itself writes the failed
-      receipt and ends the process (os._exit(3)).
-    * finalize(): STOP, deadline and the latched breach are checked once more immediately before the receipt is
-      written; any of them turns the result into passed=false. A qualification receipt therefore never passes after a
-      STOP, the deadline or a breach.
-    The GPU step (trainer) additionally uses the fit rules: admitted only with the GPU readable and <= 8 GiB used;
-    stopped if it becomes unreadable or exceeds 40 GB."""
+    """R6-F2/R7: the child side of a guarded qualification step. Admission, the live monitor and the independent
+    expiry belong to the parent guard.py runner (main() refuses to run without it; the work ends itself if the runner
+    disappears). In the child:
+    * check(): the cheap STOP/deadline checks between items (each state, capture, game, parity iteration);
+    * fresh(): a FRESH bounded running-resource verdict (studytree.fresh_verdict: monitor [+ the GPU rule for the
+      trainer], a missed measurement deadline is a breach), then STOP/deadline LAST - before packing and at acceptance;
+    * finalize(): fresh() immediately before the receipt; any reason turns the result into passed=false.
+    guard.py then repeats the fresh verdict after the child exits before its own receipt, which is what consumers
+    accept (studytree.guarded_output)."""
     def __init__(self, job, name, out, gpu=False):
         self.job, self.name, self.out, self.gpu = job, name, str(out), gpu
-        self.halt, self.halt_at, self.finalized = None, None, False
-        self.lock, self.done = threading.Lock(), threading.Event()
-        self.exit = os._exit
-        self.thread = None
-
-    def quick(self):
-        if io.lexists(self.job+'/STOP'): return 'owned_STOP'
-        if studytree.hard_stop_passed(self.job): return 'hard_stop_time'
-        return None
-
-    def admit(self):
-        why = self.quick()
-        if why: raise QualHalt('admission: '+why)
-        ok, why = studytree.dispatch_ok()
-        if not ok: raise QualHalt('admission: '+why)
-        ok, why = studytree.admission(self.job, QUAL_PROCESSES)
-        if not ok: raise QualHalt('admission: '+why)
-        if self.gpu:
-            g = gpu_used_mib()
-            if g is None or g > GPU_ADMIT_MIB: raise QualHalt(f'admission: GPU unreadable or {g} MiB already used')
-        studytree.register(self.job, f'qual-{self.name}-{secrets.token_hex(3)}')
         me = io.own_identity(); lead = io.proc_stat(me['pgid'])
         self.own = (me['pgid'], lead['starttime'] if lead else me['starttime'])
-        self.thread = threading.Thread(target=self._watch, daemon=True); self.thread.start()
-
-    def poll(self):
-        """One live-guard evaluation (the watcher's step); latches and returns the breach."""
-        if self.halt is None:
-            why = studytree.monitor(self.job, own=self.own)
-            if why is None and self.gpu:
-                g = gpu_used_mib()
-                if g is None or g > GPU_LIMIT_MIB: why = 'gpu_unreadable_or_over_40GB'
-            if why: self.halt, self.halt_at = why, time.monotonic()
-        return self.halt
-
-    def _watch(self):
-        while not self.done.wait(GUARD_PERIOD):
-            try: self.poll()
-            except Exception as exc:                                      # a failing monitor is itself a breach
-                if self.halt is None: self.halt, self.halt_at = f'monitor_failed: {exc!r}', time.monotonic()
-            if self.halt is not None and time.monotonic()-self.halt_at >= GUARD_GRACE: self.expire()
-
-    def expire(self):
-        """The work did not acknowledge a breach in time: record the failure and end this process."""
-        with self.lock:
-            if self.finalized: return
-            self.finalized = True
-            try: write_receipt(self.out, dict(passed=False, check=self.name, utc=utc(), error=f'qualification halted: {self.halt} '
-                                              f'(no acknowledgement within {GUARD_GRACE:.0f} s)', label='X4S-4 qualification, exploration, NEVER ADOPTABLE'))
-            finally: self.exit(3)
 
     def reason(self):
-        return self.halt or self.quick()
+        return studytree.cheap_halt(self.job)
 
     def check(self):
         why = self.reason()
         if why: raise QualHalt(f'qualification halted: {why}')
 
+    def fresh(self):
+        why = studytree.fresh_verdict(self.job, own=self.own, extra=gpu_live if self.gpu else None)
+        if why: raise QualHalt(f'qualification halted: {why}')
+
     def finalize(self, result):
-        """Final STOP/deadline/breach check immediately before the receipt is written; returns the receipt body."""
-        with self.lock:
-            if self.finalized: return None
-            self.finalized = True; self.done.set()
-            why = self.reason()
-            if why and result.get('passed') is True:
-                result = dict(result, passed=False, error=f'qualification halted: {why}')
-            if why: result['halted'] = why
-            write_receipt(self.out, result)
-            return result
+        why = studytree.fresh_verdict(self.job, own=self.own, extra=gpu_live if self.gpu else None)
+        if why and result.get('passed') is True: result = dict(result, passed=False, error=f'qualification halted: {why}')
+        if why: result['halted'] = why
+        write_receipt(self.out, result)
+        return result
 
 
 GUARD = None                                         # the running subcommand's QualGuard (main)
@@ -178,6 +126,10 @@ GUARD = None                                         # the running subcommand's 
 
 def guard_check():
     if GUARD is not None: GUARD.check()
+
+
+def guard_fresh():
+    if GUARD is not None: GUARD.fresh()
 
 
 def game_meta(path):
@@ -206,11 +158,13 @@ def proved_game(phase, i, arm, base, budget_ms=None, checkpoint=None):
 
 
 def init_label(threads):
+    guard_check()                                                    # R7-F2: STOP/deadline before scientific initialization
     sys.path.insert(0, str(HERE.parent/'x4s3'))
     import run, label
     native = run.initialize()
     import torch; torch.set_num_threads(1)
     label.run, label.THREADS = run, threads
+    guard_check()
     return run, label, native
 
 
@@ -361,12 +315,12 @@ def smoke_pack_into(phases, label, pack):
     if set(drops) - {'no_scored_root'}: body['error'] = f'undeclared drop reasons {sorted(drops)}'; return body
     if not statuses.get('sealed') or body['attempted'] != body['captures']:
         body['error'] = 'no sealed smoke game, or not every capture attempted'; return body
-    guard_check()                                                    # immediately before the pack
+    guard_fresh()                                                    # R7-F1: a FRESH bounded verdict before the pack
     def pack_guard():
         from imitation.exit_r1.pack import check_memory
-        check_memory(); guard_check()                                # frozen floor + the qualification guard, per source
+        check_memory(); guard_check()                                # frozen floor + the cheap halt checks, per source
     pack([f'{raw}/{arm}' for arm in COLLECT_ARMS], batch, memory_guard=pack_guard)
-    guard_check()                                                    # a batch packed across a halt is not accepted
+    guard_fresh()                                                    # a batch packed across a breach is not accepted
     _, manifest_sha = io.verify_sealed_dir(batch)
     body.update(packed_manifest_sha256=manifest_sha, passed=True)
     return body
@@ -408,7 +362,8 @@ BANKS = {'collection': C_BASE, 'smoke': SMOKE_BASE}
 # R5-F3: the child statuses a declared guard stop can produce: 0 (the runner finished as the guard fired), -SIGTERM /
 # -SIGKILL (the supervisor's verified-PID teardown) and 1 (Python's exit after its pool workers were stopped first).
 INTERRUPTED_RETURNCODES = (0, 1, -15, -9)
-PERMITTED_PHASE_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap', 'parity_pause')
+PERMITTED_PHASE_STOPS = ('memory_guard', 'console_user', 'owned_STOP', 'hard_stop_time', 'supervisor_SIGTERM', 'study_tree_cap', 'parity_pause',
+                         'monitor_stale')
 COLLECT_ALLOC = {'K4S-120': ((0, 2000), (3500, 3750)), 'S-200': ((2000, 3500), (3750, 4000))}
 BANK_RANGE = {'collection': 'reporting', 'smoke': 'smoke'}
 
@@ -594,10 +549,11 @@ def main(argv=None):
     a = ap.parse_args(argv)
     io.check_writable(a.out, roles=('qual', 'receipts'), must_not_exist=True)       # before any work
     if a.cmd == 'parity' and a.min_games < 1: raise SystemExit('--min-games must be >= 1')
+    studytree.require_guard(f'qualify4 {a.cmd}')                                   # R7: admission/monitor/expiry in guard.py
     global GUARD
-    GUARD = QualGuard(io.JOB, a.cmd, a.out, gpu=a.cmd == 'trainer')                                          # R6-F2: owned, admitted, guarded
+    GUARD = QualGuard(io.JOB, a.cmd, a.out, gpu=a.cmd == 'trainer')
     try:
-        GUARD.admit()
+        GUARD.check()
         result = {'frozen': frozen, 'hashes': hashes, 'parity': parity, 'roundtrip': roundtrip, 'smoke-pack': smoke_pack,
                   'trainer': trainer}[a.cmd](a)
     except (QualError, QualHalt, io.Refusal) as e:
@@ -607,7 +563,6 @@ def main(argv=None):
         final = GUARD.finalize(result)
     finally:
         GUARD = None
-    if final is None: raise SystemExit(3)                             # the watcher already failed this check
     print(json.dumps({k: v for k, v in final.items() if k not in ('games', 'inventory')}))
     raise SystemExit(0 if final['passed'] is True else 1)
 

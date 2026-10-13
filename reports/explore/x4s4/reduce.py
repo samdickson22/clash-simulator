@@ -27,7 +27,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import x4s4io as io, contention                  # noqa: E402
+import x4s4io as io, contention, studytree      # noqa: E402
 
 ARMS = ('K4S-120', 'S-200')
 ORDER = ('R3a', 'R3a-rep', 'R5', 'R5-rep', 'R5W')
@@ -55,6 +55,8 @@ def verify_freeze(job, contention_sha, commit, repo):
         raise SystemExit('C5 receipt must be a regular, single-link, non-writable file')
     try: data = io.read_bytes(ex, 256 << 20)
     except io.Refusal as e: raise SystemExit(f'C5 receipt unreadable: {e}')
+    if studytree.guarded_output(job, ex) is None:
+        raise SystemExit('C5 receipt has no passed guard receipt (R7: guarded acceptance of contention.py)')
     if not re.fullmatch(r'[0-9a-f]{64}', contention_sha or '') or hashlib.sha256(data).hexdigest() != contention_sha:
         raise SystemExit('C5 receipt SHA differs from --contention-sha')
     if not re.fullmatch(r'[0-9a-f]{40}', commit or ''): raise SystemExit('--freeze-commit must be a full commit SHA')
@@ -237,6 +239,7 @@ def main():
     ap.add_argument('--repo', default=io.REPO)
     ap.add_argument('--allow-prefix', action='store_true', help='E8 hard-stop cut: largest seed-index prefix (disclosed)')
     a = ap.parse_args()
+    studytree.require_guard('reduce')                              # R7: runs only under guard.py --readout
     if a.job != io.JOB: raise SystemExit(f'--job must be {io.JOB}')
     out_path = io.check_writable(a.out, roles=('analysis',))
     base_plan = a.job+'/base/repo/reports/explore/x4s3/plan.json'

@@ -395,13 +395,43 @@ def finish_phase(ph, arm=None, rng='reporting', base=C, cfg='c'*64, reason='auto
     if exit_: wjson(ph/'supervisor-exit.json', dict(reason=reason, returncode=rc, remaining_group_pids=[], complete_blocks=len(proved)))
 
 
+def job_of(path):
+    """The job directory containing `path` (the nearest ancestor holding receipts/, collect/ or HARD-STOP-UTC.txt)."""
+    for d in [Path(path)]+list(Path(path).parents):
+        if (d/'receipts').is_dir() or (d/'collect').is_dir() or (d/'HARD-STOP-UTC.txt').exists(): return d
+    raise AssertionError(f'no job above {path}')
+
+
+def bless_into(job, *paths):
+    """bless() for outputs that live outside the job tree (fixture receipts under tmp), recorded in `job`'s receipts."""
+    import studytree as ST
+    n = f'test-{random.randrange(16**10):010x}'; (Path(job)/'receipts').mkdir(exist_ok=True)
+    return wjson(Path(job)/'receipts'/f'guard-{n}.json', dict(schema='x4s4.guard.v1', name=n, passed=True,
+                                                              outputs={str(p): ST.output_identity(str(p)) for p in paths}, new_files={}))
+
+
+def bless(*paths, name=None):
+    """r8 fixture: exactly what a PASSED guard.py run records for its declared outputs (receipts/guard-*.json naming each
+    output with its current identity) - stands in for the guarded producer of a fixture file."""
+    import studytree as ST
+    if not paths: return None
+    job = job_of(paths[0]); outs = {}; (job/'receipts').mkdir(exist_ok=True)
+    for p in paths:
+        try: outs[str(p)] = ST.output_identity(str(p))
+        except io.Refusal: pass
+    n = name or f'test-{random.randrange(16**10):010x}'
+    return wjson(job/'receipts'/f'guard-{n}.json', dict(schema='x4s4.guard.v1', name=n, passed=True, outputs=outs, new_files={}))
+
+
 def parity_doc(tmp, phases, passed=True, final=True, name=None, bank='collection'):
     import qualify4
     for ph in phases:
         if not (Path(ph)/'supervisor-exit.json').exists(): finish_phase(ph)
     inv = qualify4.parity_inventory([str(p) for p in phases])
-    return wjson(Path(tmp)/(name or f'parity-{passed}-{final}-{len(inv)}-{bank}.json'), dict(check='parity', passed=passed, final=final, bank=bank,
-                 phases=sorted(str(p) for p in phases), inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phases], 'collection')))
+    doc = wjson(Path(tmp)/(name or f'parity-{passed}-{final}-{len(inv)}-{bank}.json'), dict(check='parity', passed=passed, final=final, bank=bank,
+                phases=sorted(str(p) for p in phases), inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phases], 'collection')))
+    bless_into(job_of(phases[0]), doc)                         # r8: as recorded by the guarded qualify4 parity run
+    return doc
 
 
 def ow_game(d, seed, n_roots, index=None, extra_rows=2, replay_exact=None):
@@ -533,7 +563,13 @@ def test_pipeline(tmp):
         rec = [str(j/'data'/'label-receipt-O-1.json')] if receipts is None else [str(r) for r in receipts]
         args = ['--mode', mode, '--plan', str(planf), '--label-receipts', *rec]
         if selection: args += ['--selection', str(selection)]
-        rc = V.main(args); body = json.loads(next((j/'data').rglob('VERIFY-RECEIPT.json')).read_text()); use_job(job)
+        root = j/'data'/V.MODES[mode][0]                          # r8: what the guarded producers would have recorded
+        bless_into(j, *[d for d in sorted(root.glob('batch-*')) if (d/'manifest.json').exists()], *[Path(r) for r in rec if Path(r).exists()],
+                   *[x for x in (Path(selection) if selection else None, j/'data'/'raw-OW-acceptance-smoke.json') if x and x.exists()])
+        rc = V.main(args); body = json.loads(next((j/'data').rglob('VERIFY-RECEIPT.json')).read_text())
+        gate = j/'data'/V.MODES[mode][1]
+        if gate.exists(): bless_into(j, gate)                      # the guarded verifier run's declared output
+        use_job(job)
         return rc, body.get('error', '')
     def fresh(name, mutate=lambda j: None, pre=lambda j: None):
         j2 = Path(tmp)/('v-'+name); shutil.copytree(job, j2, symlinks=True)
@@ -553,7 +589,7 @@ def test_pipeline(tmp):
         rp_ = jok/'data'/'onpolicy'/'VERIFY-RECEIPT.json'; rkeep = rp_.read_bytes()
         if rec_mutate:
             rr = json.loads(rkeep); rec_mutate(rr); rp_.chmod(0o644); rp_.write_text(json.dumps(rr)); g['receipt_sha256'] = sha(rp_)
-        gp.write_text(json.dumps(g))
+        gp.write_text(json.dumps(g)); bless_into(jok, gp)          # as if written by a guarded run: the field checks decide
         r_ = raises(lambda: ST.authenticate_gate(str(jok), 'O'), io.Refusal, 'gate')
         gp.write_bytes(gkeep); rp_.chmod(0o644); rp_.write_bytes(rkeep); return r_
     bdir = jok/'data'/'onpolicy'/'batch-0000'; train = Path(tmp)/'train-corpus'
@@ -604,6 +640,8 @@ def test_pipeline(tmp):
         s = dict(reached=True, target_roots=target, selected_games=list(range(len(games))), selected_roots=15*len(games), last_game_roots=15,
                  games=rows, v1_sha256=V.V1_SHA, emitter_sha256=V.EMITTER_SHA)
         s.update(sel or {}); wjson(j/'data'/'raw-OW-selection.json', s)
+        bless_into(j, *[d for d in sorted((j/'data'/'onpolicy-w').glob('batch-*')) if (d/'manifest.json').exists()],
+                   j/'data'/'raw-OW-selection.json', j/'data'/'raw-OW-acceptance-smoke.json')   # r8: the guarded producers
         rc_ = V.main(['--mode', 'OW', '--plan', str(planf), '--selection', str(j/'data'/'raw-OW-selection.json')])
         body = json.loads((j/'data'/'onpolicy-w'/'VERIFY-RECEIPT.json').read_text()); use_job(job)
         return rc_, body
@@ -666,8 +704,10 @@ def parity_doc_raw(j2, phs):
     import qualify4
     for ph in phs:
         if not (Path(ph)/'supervisor-exit.json').exists(): finish_phase(ph)
-    return wjson(Path(j2)/'parity-raw.json', dict(check='parity', passed=True, final=True, bank='collection', phases=sorted(str(p) for p in phs),
-                                                  inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phs], 'collection')))
+    doc = wjson(Path(j2)/'parity-raw.json', dict(check='parity', passed=True, final=True, bank='collection', phases=sorted(str(p) for p in phs),
+                                                 inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phs], 'collection')))
+    bless_into(job_of(phs[0]), doc)
+    return doc
 
 
 # ================================================================ driver (R2-F1, R2-F2, R2-F3)
@@ -1123,6 +1163,7 @@ def test_reduce(tmp):
     rx = job/'receipts'/'contention-exclusion.json'; rx.write_text(json.dumps(dict(excluded_indices=[0, 1])))
     gate['sol_r1_writable_minimal'] = run([], sha_=sha(rx)); rx.unlink()
     body = contention.build(str(job)); rx_path, digest = contention.write_once(str(job), body)
+    bless(rx_path)                                                  # r8: the guarded contention.py run's output
     data = Path(rx_path).read_bytes()
     repo, head = git_repo(Path(tmp)/'g1', {FREEZE: data})
     repo_bad, head_bad = git_repo(Path(tmp)/'g2', {FREEZE: data+b' '})
@@ -1165,6 +1206,7 @@ def test_reduce(tmp):
     og = wjson(job/'data'/'O-VERIFIED.json', dict(rows=399900, label_plan_sha256=sha(lpp)))
     ogw = wjson(job/'data'/'OW-VERIFIED.json', dict(roots=400100, rows=420000, single_candidate_root_share=.1, o_gate_sha256=sha(og)))
     ok = run(['--allow-prefix'], sha_=digest, commit=head, repo=repo)
+    bless(out)                                                      # r8: the guarded reduce.py run's output
     r = json.loads(out.read_text()); ro = r['readout']; p = ro['primary']
     case('reducer: primary on the full primary prefix (R5W never cuts it); per-arm mean equals pooled; contention view [0,1] with SHA + commit',
          ok == 'ok' and r['paired_seeds'] == 59 and r['truncation']['r5w_prefix_seeds'] == 49 and r['truncation']['r5w_truncated']
@@ -1173,7 +1215,7 @@ def test_reduce(tmp):
          and ro['contention_sensitivity']['freeze_commit'] == head)
     job2 = reduce_fixture(Path(tmp)/'b', forward=99)
     red.__dict__['__file__'] = str(job2/'x'/'reduce.py'); use_job(job2)
-    rx2, d2 = contention.write_once(str(job2), contention.build(str(job2))); repo2, h2 = git_repo(Path(tmp)/'g4', {FREEZE: Path(rx2).read_bytes()})
+    rx2, d2 = contention.write_once(str(job2), contention.build(str(job2))); bless(rx2); repo2, h2 = git_repo(Path(tmp)/'g4', {FREEZE: Path(rx2).read_bytes()})
     sys.argv = ['reduce.py', '--job', str(job2), '--students', 'R3a', 'R5', 'R5-rep', 'R3a-rep', '--out', str(job2/'analysis'/'r.json'),
                 '--contention-sha', d2, '--freeze-commit', h2, '--repo', repo2, '--allow-prefix']
     case('F11 probe: a policy-cache mismatch is refused in this optimization mode too', raises(lambda: red.main(), SystemExit, "pc['forward']"), optimize=sys.flags.optimize)
@@ -1205,7 +1247,7 @@ def test_reduce(tmp):
         docs, shas = wr.authenticate(str(job), digest, head)
         txt = wr.render(docs['results'], docs['label_plan'], docs['o_gate'], docs['ow_gate'], docs.get('diagnostic'), shas, [])
         need = ['Primary Δ by arm', 'R5W secondaries 49 seeds', 'O composition and duplicates', 'single-candidate root share = 10.0%',
-                'R3a-rep differs from R3a', 'decision table', 'unavailable (not completed before the hard stop)', '| R5W | — | unavailable']
+                'R3a-rep differs from R3a', 'decision table', 'unavailable (not completed before the hard stop, or its guarded run did not pass)', '| R5W | — | unavailable']
         bind = {}
         def tamper_results(**ch):
             rr = json.loads(out.read_text()); keep_r = out.read_bytes()
@@ -1213,7 +1255,7 @@ def test_reduce(tmp):
                 tgt = rr
                 for part in k.split('.')[:-1]: tgt = tgt[part]
                 tgt[k.split('.')[-1]] = v
-            out.chmod(0o644); out.write_text(json.dumps(rr))
+            out.chmod(0o644); out.write_text(json.dumps(rr)); bless(out)   # guarded, so the binding checks decide
             res_ = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit); out.write_bytes(keep_r); return res_
         bind["Sol R3-F4: fake C5 identity strings"] = tamper_results(**{'identities.contention_receipt_sha256': 'not-a-sha', 'identities.freeze_commit': 'not-a-commit',
                                                                         'readout.contention_sensitivity.exclusion_sha256': 'not-a-sha'})
@@ -1244,14 +1286,14 @@ def test_reduce(tmp):
         hg = wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='holdout'))
         staged = {k: v for k, v in r['identities']['students'].items()}
         good_diag = dict(holdout_gate_sha256=sha(hg), heldout64_sha256=wr.HELDOUT64_SHA, students={k: {} for k in wr.STUDENTS}, student_checkpoints=staged)
-        wjson(job/'analysis'/'diagnostic.json', good_diag); diag_ok = wr.authenticate(str(job), digest, head)[0].get('diagnostic') is not None
-        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, student_checkpoints={k: dict(checkpoint_sha256='WRONG', threshold=None) for k in staged}))
+        wjson(job/'analysis'/'diagnostic.json', good_diag); bless(job/'analysis'/'diagnostic.json'); diag_ok = wr.authenticate(str(job), digest, head)[0].get('diagnostic') is not None
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, student_checkpoints={k: dict(checkpoint_sha256='WRONG', threshold=None) for k in staged})); bless(job/'analysis'/'diagnostic.json')
         bind["Sol R3-F4: diagnostic with WRONG checkpoints"] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'checkpoints')
-        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, student_checkpoints={k: v for k, v in staged.items() if k != 'R5W'}))
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, student_checkpoints={k: v for k, v in staged.items() if k != 'R5W'})); bless(job/'analysis'/'diagnostic.json')
         bind['R4-F4: diagnostic omits R5W checkpoints'] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'checkpoints')
-        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, heldout64_sha256='0'*64))
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, heldout64_sha256='0'*64)); bless(job/'analysis'/'diagnostic.json')
         bind['diagnostic without the fixed held-out64'] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'held-out64')
-        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, holdout_gate_sha256='0'*64))
+        wjson(job/'analysis'/'diagnostic.json', dict(good_diag, holdout_gate_sha256='0'*64)); bless(job/'analysis'/'diagnostic.json')
         bind['diagnostic not on the verified holdout'] = raises(lambda: wr.authenticate(str(job), digest, head), SystemExit, 'holdout')
         (job/'analysis'/'diagnostic.json').unlink()
         io.REPO = repo_side
@@ -1419,7 +1461,7 @@ def test_diagnose(tmp):
     (job/'STOP').unlink(); (job/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n'); hard = raises(guard, Dg.Abort, 'hard_stop')
     (job/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
     unauth = raises(lambda: Dg.students_of(str(job)), io.Refusal) and raises(lambda: Dg.holdout_of(str(job)), io.Refusal)
-    wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='O', batches=[dict(name='batch-0000')]))
+    wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(mode='O', batches=[dict(name='batch-0000')])); bless(job/'data'/'HOLDOUT-VERIFIED.json')
     wrong_gate = raises(lambda: Dg.holdout_of(str(job)), io.Refusal, 'holdout gate')
     # R3-F3 probe (Sol): a fully sealed TRAINING corpus (seed C+0) swapped into the holdout path is refused before any loader
     stub_torch_imports()
@@ -1432,7 +1474,7 @@ def test_diagnose(tmp):
                   single_candidate_root_share=0.25, sources_sha256='5'*64, label_plan_sha256='6'*64, label_receipts_sha256=['7'*64],
                   parity_receipt_sha256='8'*64)
     rc = wjson(hroot/'VERIFY-RECEIPT.json', dict(shared, passed=True, sealed=True, mode='holdout'))
-    wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(shared, mode='holdout', receipt_sha256=sha(rc)))
+    wjson(job/'data'/'HOLDOUT-VERIFIED.json', dict(shared, mode='holdout', receipt_sha256=sha(rc))); bless(job/'data'/'HOLDOUT-VERIFIED.json')
     authentic = Dg.holdout_of(str(job))[0] == [str(hroot/'batch-0000')]
     shutil.move(str(hroot/'batch-0000'), str(Path(tmp)/'orig-batch')); packmod.pack([Path(tmp)/'traw'], hroot/'batch-0000')
     substituted = raises(lambda: Dg.holdout_of(str(job)), io.Refusal, 'manifest pin')
@@ -1614,6 +1656,7 @@ print(json.dumps(dict(passed=ok, seconds=time.monotonic()-t0)))
 
 
 # ================================================================ r6: Sol r5 findings R5-F1..F4 and the Q-D2(a) smoke-pack
+@healthy_host
 def test_r6(tmp):
     import studytree as ST
     past = datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc)
@@ -1848,7 +1891,7 @@ def test_r6(tmp):
          and healthy[0] == 0, errors={k: v[1].get('error', '')[-70:] for k, v in sol.items()}, interrupted=ev_int)
     import label
     good_k, good_s = base/'hc-k', base/'hc-s'
-    pr = job/'receipts'/'hc.json'
+    pr = job/'receipts'/'hc.json'; bless(pr)                       # r8: what the guarded parity run records
     adm_ok = label.check_parity([str(good_k), str(good_s)], str(pr))[0]['passed'] is True
     finish_phase(good_k, indices=[0, 1, 2, 3], reason=None, rc=0)                # evidence changed after the receipt
     adm_bad = raises(lambda: label.check_parity([str(good_k), str(good_s)], str(pr)), label.PlanError, 'evidence')
@@ -1934,9 +1977,9 @@ def test_r7(tmp):
     case("R6-F1 (Sol): STOP or the hard stop crossing during the final gate's own events-log/fit-status scan is caught: launch() "
          "returns None and io.spawn is never reached; the cheap checks are statically last", all(g.values()) and order, gate=g, order=order)
 
-    # ---- R6-F2: qualification work is admitted, owned and live-guarded; it never passes after STOP/deadline/breach
+    # ---- R6-F2 (child side since r8): STOP/deadline/breach halts every qualification item; a receipt never passes after one
     def guard_for(job, name, out='g.json'):
-        gd = Q.QualGuard(str(job), name, str(Path(job)/'qual'/out)); return gd
+        return Q.QualGuard(str(job), name, str(Path(job)/'qual'/out))
     def smoke_job(sub):
         j = new_job(tmp/sub); phases = []
         for arm in Q.COLLECT_ARMS:
@@ -1946,118 +1989,68 @@ def test_r7(tmp):
         return j, [str(p) for p in phases]
     saved = (label.score_state, label.THREADS, label.RAW, label.PLAN_SHA, label.DATA_ROLE, label.halt_reason)
     def restore(): label.score_state, label.THREADS, label.RAW, label.PLAN_SHA, label.DATA_ROLE, label.halt_reason = saved
-    def score_n(n_fire, fire):
-        calls = []
+    ok_score = (5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None])
+    batch = lambda j: Path(j)/'qual'/'smoke-pack'/'batch-0000'
+    def run_smoke(sub, fire_at=None, fire=None, pk=None):
+        j, phases = smoke_job(sub); calls = []
         def score(*a, **k):
             calls.append(1)
-            if len(calls) == n_fire: fire()
-            return 5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None]
-        return score, calls
-    batch = lambda j: Path(j)/'qual'/'smoke-pack'/'batch-0000'
+            if fire_at is not None and len(calls) == fire_at: fire(j)
+            return ok_score
+        Q.GUARD = guard_for(j, 'smoke-pack'); label.score_state, label.THREADS = score, 1
+        try:
+            try: out = Q.smoke_pack_into(phases, label, pk(j) if pk else packmod.pack)
+            except Q.QualHalt as e: out = 'halt: '+str(e)
+        finally: Q.GUARD = None; restore()
+        return out, j, calls
+    def sealed(j):
+        if not batch(j).exists(): return False
+        try: io.verify_sealed_dir(str(batch(j))); return True
+        except io.Refusal: return False
     res = {}
-    for kind in ('STOP', 'deadline'):
-        holder = {}
-        def fire(kind=kind, holder=holder):
-            if kind == 'STOP': stop_link(holder['j'])
-            else: (Path(holder['j'])/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
-        j, phases = smoke_job(f'r7-late-{kind}'); holder['j'] = j
-        gd = guard_for(j, 'smoke-pack'); gd.admit(); Q.GUARD = gd
-        sc, calls = score_n(48, fire); label.score_state, label.THREADS = sc, 1
-        try:
-            try: out = Q.smoke_pack_into(phases, label, packmod.pack)
-            except Q.QualHalt as e: out = 'halt: '+str(e)
-        finally: Q.GUARD = None; gd.done.set(); restore()
+    for kind, fire in (('STOP', stop_link), ('deadline', lambda j: (Path(j)/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n'))):
+        out, j, calls = run_smoke(f'r7-late-{kind}', 48, fire)
         res[f'late_score_{kind}'] = isinstance(out, str) and out.startswith('halt') and len(calls) == 48 and not batch(j).exists()
-    # STOP during the frozen packer (its per-source guard callback) and STOP right after the pack returns
+    def pack_with(when):
+        def make(j):
+            def pk(roots, output, memory_guard=None):
+                n = []
+                def mg():
+                    n.append(1)
+                    if when == 'in_pack' and len(n) == 3: stop_link(j)
+                    memory_guard()
+                r = packmod.pack(roots, output, memory_guard=mg)
+                if when == 'after_pack': stop_link(j)
+                return r
+            return pk
+        return make
     for when in ('in_pack', 'after_pack'):
-        j, phases = smoke_job(f'r7-{when}')
-        def pk(roots, output, memory_guard=None, j=j, when=when):
-            n = []
-            def mg():
-                n.append(1)
-                if when == 'in_pack' and len(n) == 3: stop_link(j)
-                memory_guard()
-            r = packmod.pack(roots, output, memory_guard=mg)
-            if when == 'after_pack': stop_link(j)
-            return r
-        gd = guard_for(j, 'smoke-pack'); gd.admit(); Q.GUARD = gd
-        label.score_state, label.THREADS = (lambda *a, **k: (5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None])), 1
-        try:
-            try: out = Q.smoke_pack_into(phases, label, pk)
-            except Q.QualHalt as e: out = 'halt: '+str(e)
-        finally: Q.GUARD = None; gd.done.set(); restore()
-        sealed = False
-        if batch(j).exists():
-            try: io.verify_sealed_dir(str(batch(j))); sealed = True
-            except io.Refusal: sealed = False
-        res[when] = isinstance(out, str) and out.startswith('halt') and (when == 'after_pack' or not sealed)
-    # admission: PSI 11 or unreadable refuses before any work (PSI is measured); a STOP link refuses
-    psi_calls = []
-    j, _ = smoke_job('r7-psi')
-    for val, key in ((11.0, 'psi_11'), (None, 'psi_unreadable')):
-        ST.psi_some_avg10 = lambda v=val: (psi_calls.append(v), v)[1]
-        res[key] = raises(lambda: guard_for(j, 'smoke-pack').admit(), Q.QualHalt, 'PSI')
-    ST.psi_some_avg10 = lambda: 1.0
-    res['psi_measured'] = len(psi_calls) >= 2
-    stop_link(j); res['admission_STOP'] = raises(lambda: guard_for(j, 'parity').admit(), Q.QualHalt, 'STOP'); (j/'STOP').unlink()
-    # live breach: MemAvailable 0 is latched by the watcher and halts the work; PSI unreadable while running is a breach;
-    # high PSI while running is not (dispatch inhibition only)
-    gd = guard_for(j, 'roundtrip'); gd.admit()
-    ST.psi_some_avg10 = lambda: 50.0; res['high_psi_not_kill'] = gd.poll() is None
-    ST.psi_some_avg10 = lambda: None; res['psi_unreadable_live'] = gd.poll() == 'psi_unreadable'
-    ST.psi_some_avg10 = lambda: 1.0; gd.done.set()
-    gd2 = guard_for(j, 'roundtrip', 'g2.json'); gd2.admit()
-    ST.mem_available = lambda: 0
-    res['memory_breach'] = gd2.poll() == 'memory_guard' and raises(gd2.check, Q.QualHalt, 'memory_guard')
-    ST.mem_available = lambda: 100*2**30; gd2.done.set()
-    # the watcher thread itself: an unacknowledged breach is failed by the watcher (receipt + exit 3) within the grace
-    saved_t = (Q.GUARD_PERIOD, Q.GUARD_GRACE); Q.GUARD_PERIOD, Q.GUARD_GRACE = 0.05, 0.3
-    gd3 = guard_for(j, 'frozen', 'g3.json'); exits = []; gd3.exit = exits.append; gd3.admit()
-    ST.mem_available = lambda: 0
-    t0 = time.monotonic()
-    while not exits and time.monotonic()-t0 < 10: time.sleep(0.05)
-    ST.mem_available = lambda: 100*2**30; gd3.done.set(); Q.GUARD_PERIOD, Q.GUARD_GRACE = saved_t
-    g3 = json.loads((j/'qual'/'g3.json').read_text()) if (j/'qual'/'g3.json').exists() else {}
-    res['watcher_expires'] = exits == [3] and g3.get('passed') is False and 'memory_guard' in g3.get('error', '') and gd3.finalize(dict(passed=True)) is None
-    # roundtrip loop: STOP on the first scoring call halts before the next capture (Sol: 96 calls, passed, exit 0)
-    gd4 = guard_for(j, 'roundtrip', 'g4.json'); gd4.admit(); Q.GUARD = gd4
-    calls = []
+        out, j, _ = run_smoke(f'r7-{when}', pk=pack_with(when))
+        res[when] = isinstance(out, str) and out.startswith('halt') and (when == 'after_pack' or not sealed(j))
+    # the round-trip loop halts at the next capture after STOP (Sol r6: 96 scoring calls, passed, exit 0)
+    j, _ = smoke_job('r7-rt'); Q.GUARD = guard_for(j, 'roundtrip', 'g4.json'); calls = []
     def rscore(*a):
         calls.append(1); stop_link(j); return (5, [5], [0.1])
     caps = [dict(info=None, opponent=None, root_rng_state=None, candidate_rng_state=None, seed=0, root_digest=None) for _ in range(48)]
     try: rt_halt = raises(lambda: Q.roundtrip_check(caps, rscore), Q.QualHalt, 'owned_STOP')
     finally: Q.GUARD = None
     res['roundtrip_halts'] = rt_halt and len(calls) == 2
-    # finalize: a result computed as passed is written passed=false when STOP/deadline is present at the receipt
-    fin = gd4.finalize(dict(passed=True, check='roundtrip'))
+    # finalize: a result computed as passed is written passed=false under STOP / the deadline
+    fin = guard_for(j, 'roundtrip', 'g4.json').finalize(dict(passed=True, check='roundtrip'))
     res['finalize_STOP'] = fin['passed'] is False and json.loads((j/'qual'/'g4.json').read_text())['passed'] is False
-    (j/'STOP').unlink()
-    (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
-    gd5 = guard_for(j, 'hashes', 'g5.json'); gd5.halt = None; gd5.own = None
-    res['finalize_deadline'] = gd5.finalize(dict(passed=True))['passed'] is False
+    (j/'STOP').unlink(); (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+    res['finalize_deadline'] = guard_for(j, 'hashes', 'g5.json').finalize(dict(passed=True))['passed'] is False
     (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
-    # CLI: the real main() refuses at admission with STOP present and writes a failed receipt (exit 1)
+    # CLI: the real main() halts before any work with STOP present and writes a failed receipt (exit 1)
     stop_link(j)
     try: Q.main(['parity', '--phases', str(j/'collect'/'smoke'/'K4S-120'), '--min-games', '1', '--bank', 'smoke', '--out', str(j/'qual'/'cli.json')]); rc = 0
     except SystemExit as e: rc = e.code
     cli = json.loads((j/'qual'/'cli.json').read_text())
-    res['cli_admission_STOP'] = rc == 1 and cli['passed'] is False and 'admission' in cli['error']
+    res['cli_STOP'] = rc == 1 and cli['passed'] is False and 'owned_STOP' in cli['error']
     (j/'STOP').unlink()
-    # GPU step: admitted only with the GPU readable and <= 8 GiB used; live > 40 GB or unreadable is a breach
-    saved_gpu = Q.gpu_used_mib
-    gg = Q.QualGuard(str(j), 'trainer', str(j/'qual'/'gt.json'), gpu=True)
-    Q.gpu_used_mib = lambda: None; gpu_unread = raises(gg.admit, Q.QualHalt, 'GPU')
-    Q.gpu_used_mib = lambda: 50000; gpu_busy = raises(gg.admit, Q.QualHalt, 'GPU')
-    Q.gpu_used_mib = lambda: 1000; gg.admit(); Q.gpu_used_mib = lambda: 45*1024; gpu_live = gg.poll() == 'gpu_unreadable_or_over_40GB'
-    gg.done.set(); Q.gpu_used_mib = saved_gpu
-    res['gpu_rules'] = gpu_unread and gpu_busy and gpu_live
-    res['registered'] = bool(list((j/'receipts').glob('cpujob-qual-*.json')))
-    case("R6-F2 (Sol): a STOP or the deadline at the last (48th) score, a STOP inside the frozen packer and a STOP right after it "
-         "all halt smoke-pack with no accepted batch; admission refuses PSI 11, unreadable PSI and STOP (PSI is measured); a "
-         "live MemAvailable 0 or unreadable PSI is a breach while high PSI is not; an unacknowledged breach is failed by the "
-         "watcher (receipt + exit 3); the round-trip loop halts at the next capture; finalize writes passed=false under STOP or "
-         "the deadline; the real CLI refuses at admission; the trainer gets the GPU fit rules; jobs are registered",
-         all(res.values()), res=res)
+    case("R6-F2 (Sol, child side): a STOP or the deadline at the last (48th) score, a STOP inside the frozen packer and a STOP right "
+         "after it all halt smoke-pack with no accepted batch; the round-trip loop halts at the next capture; finalize writes "
+         "passed=false under STOP or the deadline; the real CLI halts before any work under STOP", all(res.values()), res=res)
 
     # ---- R6-F3: digest failures fail smoke-pack; legitimate no-scored-root games are allowed
     def drops_case(sub, score):
@@ -2085,6 +2078,314 @@ def test_r7(tmp):
     case("R6-F3 (Sol): smoke-pack fails on digest mismatches - a game whose roots all fail (no_rows) and a single failed root in a "
          "sealed game - with no packed batch; legitimate no-scored-root games and roots pass with complete attempted/row/drop accounting",
          all(f3.values()), f3=f3, d1=d1.get('error'), h1={k: h1.get(k) for k in ('statuses', 'drops', 'rows', 'attempted', 'error')})
+
+
+# ================================================================ r8: Sol r7 R7-F1..F3 - the guard audit, one case per row
+class FastGuards:
+    """Shrinks only the guard timing constants (tick/period/stale/measurement deadline) and stubs healthy host readings;
+    restores everything on exit. The mechanisms under test are unchanged."""
+    def __enter__(self):
+        import studytree as ST
+        self.ST = ST
+        self.saved = {k: getattr(ST, k) for k in ('ENFORCER_TICK', 'MONITOR_PERIOD', 'MONITOR_STALE', 'MEASURE_TIMEOUT',
+                                                 'mem_available', 'psi_some_avg10', 'disk_bytes', 'pss_bytes')}
+        ST.ENFORCER_TICK, ST.MONITOR_PERIOD, ST.MONITOR_STALE, ST.MEASURE_TIMEOUT = 0.05, 0.05, 0.6, 0.5
+        ST.mem_available, ST.psi_some_avg10, ST.disk_bytes = (lambda: 100*2**30), (lambda: 1.0), (lambda j=None: 10**9)
+        return ST
+    def __exit__(self, *e):
+        for k, v in self.saved.items(): setattr(self.ST, k, v)
+        return False
+
+
+def test_r8(tmp):
+    import guard as G, threading
+    def stop_link(job):
+        if not os.path.lexists(Path(job)/'STOP'): os.symlink(Path(job)/'nowhere', Path(job)/'STOP')
+    def mk(sub):
+        j = new_job(tmp/sub); return j
+    def runner(j, name, argv, **kw):
+        r = G.Runner(str(j), name, argv, **kw); exits = []; r.exit = exits.append; return r, exits
+    def receipt(j, name): return json.loads((Path(j)/'receipts'/f'guard-{name}.json').read_text())
+    def gone(r): return r.child is not None and not io.group_alive(r.child['pgid'], r.child['starttime'])
+    def spawn_spy(r):
+        calls = []; real = io.spawn
+        def spy(*a, **k): calls.append(a[0]); return real(*a, **k)
+        G.io = types.SimpleNamespace(**{k: getattr(io, k) for k in dir(io) if not k.startswith('__')}); G.io.spawn = spy
+        return calls
+    rows = {}
+
+    # ---- row 1: guard.py runner - admission (bounded, STOP/deadline LAST before spawn)
+    with FastGuards() as ST:
+        adm = {}
+        for kind in ('STOP', 'deadline', 'psi_11', 'blocked_measurement', 'stop_during_measurement'):
+            j = mk(f'g1-{kind}'); r, exits = runner(j, 'adm', ['/bin/sleep', '30']); calls = spawn_spy(r)
+            if kind == 'STOP': stop_link(j)
+            if kind == 'deadline': (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+            if kind == 'psi_11': ST.psi_some_avg10 = lambda: 11.0
+            gate = threading.Event()
+            if kind == 'blocked_measurement': ST.disk_bytes = lambda j_=None: (gate.wait(5), 10**9)[1]
+            if kind == 'stop_during_measurement': ST.disk_bytes = lambda j_=None, j=j: (stop_link(j), 10**9)[1]
+            try: body = r.run()
+            finally: gate.set(); G.io = io; ST.psi_some_avg10 = lambda: 1.0; ST.disk_bytes = lambda j_=None: 10**9
+            adm[kind] = body is not None and body['passed'] is False and 'admission' in body['error'] and not calls and exits == [3]
+        rows['runner_admission'] = adm
+        # live monitor + independent expiry: the monitor is BLOCKED in a measurement when STOP / the deadline appears,
+        # or simply stays blocked (no completed verdict -> monitor_stale); the child is stopped by verified PIDs
+        live = {}
+        for kind in ('STOP_while_blocked', 'deadline_while_blocked', 'stale_while_blocked', 'memory_breach'):
+            j = mk(f'g1-live-{kind}'); r, exits = runner(j, 'live', ['/bin/sleep', '30'])
+            gate, entered = threading.Event(), threading.Event()
+            n = []
+            def disk(j_=None, gate=gate, entered=entered, n=n):
+                n.append(1)
+                if len(n) > 1: entered.set(); gate.wait(20)               # admission passes; the live monitor blocks
+                return 10**9
+            if kind != 'memory_breach': ST.disk_bytes = disk
+            def trigger(j=j, kind=kind, entered=entered):
+                if kind == 'memory_breach':
+                    time.sleep(0.2); ST.mem_available = lambda: 0; return
+                entered.wait(5)
+                if kind == 'STOP_while_blocked': stop_link(j)
+                if kind == 'deadline_while_blocked': (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+            t = threading.Thread(target=trigger, daemon=True); t.start()
+            t0 = time.monotonic()
+            try: r.run()
+            finally: gate.set(); ST.disk_bytes = lambda j_=None: 10**9; ST.mem_available = lambda: 100*2**30
+            el = time.monotonic()-t0; rc_ = receipt(j, 'live')
+            want = {'STOP_while_blocked': 'owned_STOP', 'deadline_while_blocked': 'hard_stop_time', 'stale_while_blocked': 'monitor_stale',
+                    'memory_breach': 'memory_guard'}[kind]
+            live[kind] = rc_['passed'] is False and rc_['breach'] == want and gone(r) and el < 10 and exits and exits[0] == 3
+        rows['runner_live_expiry'] = live
+        # acceptance: fresh guards after the child exits 0; STOP/deadline LAST; outputs verified
+        acc = {}
+        def accept_case(kind):
+            j = mk(f'g1-acc-{kind}'); out = j/'qual'/'out.json'
+            cmd = ['/bin/sh', '-c', f'echo {{}} > {out}' + ('; exit 7' if kind == 'nonzero' else '')]
+            if kind == 'missing_output': cmd = ['/bin/true']
+            r, exits = runner(j, 'acc', cmd, outputs=[str(out)], new_files=[str(j/'qual'/'new-')])
+            real_wait = None
+            if kind in ('memory_at_end', 'stop_at_end'):
+                orig = r.run
+                def hooked_spawn(*a, **k):
+                    ch = io.spawn(*a, **k); real = ch['popen'].wait
+                    def w(*aa, **kk):
+                        rc = real(*aa, **kk)
+                        r.done.set(); time.sleep(4*ST.MONITOR_PERIOD)   # the live monitor has finished: only acceptance sees it
+                        if kind == 'memory_at_end': ST.mem_available = lambda: 0
+                        else: stop_link(j)
+                        return rc
+                    ch['popen'].wait = w; return ch
+                G.io = types.SimpleNamespace(**{k: getattr(io, k) for k in dir(io) if not k.startswith('__')}); G.io.spawn = hooked_spawn
+            try: body = r.run()
+            finally: G.io = io; ST.mem_available = lambda: 100*2**30
+            rc_ = receipt(j, 'acc')
+            if kind == 'healthy':
+                return body['passed'] is True and rc_['outputs'] == {str(out): sha(out)} and rc_['returncode'] == 0 and \
+                    ST.guarded_output(str(j), str(out))['name'] == 'acc'
+            return rc_['passed'] is False and ST.guarded_output(str(j), str(out)) is None
+        for kind in ('healthy', 'nonzero', 'missing_output', 'memory_at_end', 'stop_at_end'): acc[kind] = accept_case(kind)
+        rows['runner_acceptance'] = acc
+        # --readout: the deadline does not apply to the readout scripts only; STOP still refuses
+        j = mk('g1-readout'); (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+        r, exits = runner(j, 'ro', ['/bin/sh', '-c', 'true', 'reports/explore/x4s4/reduce.py'], readout=True)
+        ro_ok = r.run()['passed'] is True
+        stop_link(j); r2, _ = runner(j, 'ro2', ['/bin/sh', '-c', 'true', 'reports/explore/x4s4/reduce.py'], readout=True)
+        ro_stop = r2.run()['passed'] is False
+        rows['runner_readout'] = dict(deadline_exempt=ro_ok, stop_refuses=ro_stop,
+                                      other_scripts_refused=raises(lambda: G.Runner(str(j), 'x', ['/bin/true'], readout=True), SystemExit, 'readout'))
+    case("r8 guard audit row 1 - guard.py runner (Q1, Q2 hashes, Q3, Q4 round trip/parity, Q5, Q6, P3-P9 non-supervisor steps, P11, "
+         "P13-P15): bounded admission refuses STOP, the deadline, PSI 11, a blocked measurement and STOP during the measurement with no "
+         "spawn; with the live monitor BLOCKED in a measurement, STOP, the deadline and staleness (and a memory breach) stop the child "
+         "by verified PIDs with a failed receipt; acceptance needs exit 0, the declared outputs, a fresh verdict and STOP/deadline last; "
+         "--readout is deadline-exempt only for the readout scripts",
+         all(all(v.values()) for v in rows.values()), rows=rows)
+
+    # ---- row: the shared Enforcer itself (supervise.py, driver.py, guard.py) - cheap checks only, re-armable
+    with FastGuards() as ST:
+        j = mk('enf'); fired = []
+        e = ST.Enforcer(str(j), fired.append).start()
+        blocked = threading.Event()
+        def stuck(): ST.disk_bytes(); blocked.wait(5)
+        ST.disk_bytes = lambda j_=None: (blocked.wait(5), 1)[1]
+        threading.Thread(target=lambda: ST.monitor(str(j)), daemon=True).start()          # a measurement stuck in du
+        time.sleep(0.1); stop_link(j); t0 = time.monotonic()
+        while not fired and time.monotonic()-t0 < 3: time.sleep(0.02)
+        enf_stop = fired == ['owned_STOP']; blocked.set(); e.stop(); (j/'STOP').unlink()
+        fired2 = []; e2 = ST.Enforcer(str(j), fired2.append, active=lambda: True).start()
+        t0 = time.monotonic()
+        while not fired2 and time.monotonic()-t0 < 3: time.sleep(0.02)
+        enf_stale = fired2 == ['monitor_stale']
+        e2.arm(); fired2.clear(); e2.verdict(None); time.sleep(0.2); rearm_quiet = fired2 == []
+        e2.stop()
+        fired3 = []; e3 = ST.Enforcer(str(j), fired3.append, active=lambda: False).start(); time.sleep(1.0); idle_quiet = fired3 == []; e3.stop()
+        timeout = ST.fresh_verdict(str(j), extra=lambda: (time.sleep(2), None)[1]) == 'measurement_timeout'
+    case("r8 guard audit - shared Enforcer: STOP fires within ticks while a measurement is stuck in du; no verdict for MONITOR_STALE "
+         "while active fires monitor_stale; re-armed it stays quiet with fresh verdicts; inactive it never goes stale; a measurement past "
+         "its deadline is a breach (fresh_verdict -> measurement_timeout)", enf_stop and enf_stale and rearm_quiet and idle_quiet and timeout,
+         got=[enf_stop, enf_stale, rearm_quiet, idle_quiet, timeout])
+
+    # ---- row: supervise.py (Q2, Q4 smoke collection, Q7, Q8, P1, P2, driver-launched reporting phases)
+    sup = load_fresh('supervise_r8', HERE/'supervise.py'); src = (HERE/'supervise.py').read_text()
+    with FastGuards() as ST:
+        j = mk('sup'); gate = threading.Event()
+        ST.disk_bytes = lambda j_=None: (gate.wait(5), 1)[1]
+        blocked_adm = (sup.admit_phase(str(j), 51) or '').startswith('admission: admission measurement missed')
+        gate.set(); ST.disk_bytes = lambda j_=None: 10**9
+        healthy = sup.final_reason(str(j)) is None
+        ST.mem_available = lambda: 0; mem_end = sup.final_reason(str(j)) == 'memory_guard'; ST.mem_available = lambda: 100*2**30
+        stop_link(j); stop_end = sup.final_reason(str(j)) == 'owned_STOP'; (j/'STOP').unlink()
+        maps = [sup.guard_reason(x) for x in ('owned_STOP', 'hard_stop_time', 'monitor_stale', 'study_tree_cap: 71', 'measurement_timeout', 'pss_guard', 'psi_unreadable')]
+    m = src[src.index('def main():'):]
+    wired = (m.index('child = io.spawn(cmd') < m.index('enforcer = studytree.Enforcer(') < m.index('while True:') < m.index('enforcer.verdict(None)')
+             < m.index('enforcer.stop()') < m.index('reason = final_reason(job)') < m.index("write_json_once(out+'/supervisor-exit.json'")
+             and 'with stop_lock:' in m and 'if reason is not None: break' in m)
+    import qualify4 as Q
+    permitted = 'monitor_stale' in Q.PERMITTED_PHASE_STOPS
+    case("r8 guard audit row - supervise.py: admission is one bounded measurement (a blocked du refuses), the Enforcer is started "
+         "after the spawn with a heartbeat per complete loop iteration and stops the child (thread-safe stop) on STOP, the deadline or "
+         "staleness; a clean exit is recorded only after a fresh verdict (memory 0 or STOP at the end -> a declared guard reason); "
+         "monitor_stale is a permitted phase stop", blocked_adm and healthy and mem_end and stop_end and wired and permitted
+         and maps == ['owned_STOP', 'hard_stop_time', 'monitor_stale', 'study_tree_cap', 'monitor_stale', 'memory_guard', 'memory_guard'],
+         got=dict(blocked_adm=blocked_adm, healthy=healthy, mem_end=mem_end, stop_end=stop_end, wired=wired, maps=maps))
+
+    # ---- row: driver.py (P10/P12) - fits and calibration under the Enforcer; acceptance after fresh guards
+    with FastGuards() as ST:
+        drv, job = driver_module(tmp/'drv8'); events = lambda: [json.loads(l) for l in (job/'driver'/'events.jsonl').read_text().splitlines()] if (job/'driver'/'events.jsonl').exists() else []
+        out = {}
+        for kind in ('STOP', 'stale'):
+            ch = io.spawn(['/bin/sleep', '30'], f'{job}/logs/fit-{kind}.log', dict(PATH='/usr/bin:/bin'))
+            rec = dict(launch_id=f'F-{kind}', pid=ch['pid'], pgid=ch['pgid'], starttime=ch['starttime'])
+            drv.ENFORCER = ST.Enforcer(drv.J, drv.on_gpu_breach, active=lambda: bool(drv.LIVE)).start()
+            drv.gpu_live('fit', 'R5', rec)
+            if kind == 'STOP': stop_link(job)
+            t0 = time.monotonic()
+            while ch['popen'].poll() is None and time.monotonic()-t0 < 10: time.sleep(0.05)
+            dead = ch['popen'].poll() is not None
+            ev = []
+            while not ev and time.monotonic()-t0 < 10:              # the callback records after the verified-PID stop
+                ev = [e for e in events() if e['kind'] == 'gpu_enforcer_stop' and e['launch_id'] == rec['launch_id']]; time.sleep(0.05)
+            time.sleep(0.1); drv.ENFORCER.stop()
+            out[kind] = dead and ev and ev[0]['reason'] == ('owned_STOP' if kind == 'STOP' else 'monitor_stale') and \
+                ((job/'driver'/'ANOMALY-fit-R5.json').exists() == (kind == 'stale'))
+            if (job/'STOP').exists() or os.path.lexists(job/'STOP'): (job/'STOP').unlink()
+            if (job/'driver'/'ANOMALY-fit-R5.json').exists(): (job/'driver'/'ANOMALY-fit-R5.json').unlink()
+            drv.gpu_done()
+        # calibration acceptance: a calibrator that exits 0 while memory is breached at the end is rejected (fresh verdict)
+        (job/'calibration').mkdir(exist_ok=True); cal = f'{job}/calibration/R5.json'
+        drv.resources_ok = lambda for_fit=False: True; drv.CALIBRATION_POLL = 0.05; drv.calibration_breach = lambda rec: None
+        drv.live_supervisor = lambda: None; drv.fit_state = lambda f: ('done', None); drv.ENFORCER = None
+        def fake_launch(name, argv, log, receipt_, env, cwd=None, extra_rec=None):
+            ch = io.spawn(['/bin/sh', '-c', f'echo {{}} > {cal}'], log, dict(PATH='/usr/bin:/bin'))
+            drv.POPEN[ch['pid']] = ch['popen']; drv.LAUNCHED[ch['pid']] = 'CALM'
+            return dict(launch_id='CALM', pid=ch['pid'], pgid=ch['pgid'], starttime=ch['starttime'])
+        drv.launch = fake_launch
+        ST.mem_available = lambda: 0                    # breached when the calibrator returns (in-flight guards stubbed healthy)
+        try: cal_res = drv.run_calibration('R5', 'x', cal)
+        finally: ST.mem_available = lambda: 100*2**30
+        out['calibration_final_guard'] = cal_res == 'stopped' and not os.path.exists(cal) and not list((job/'receipts').glob('calibration-R5-accepted-*')) \
+            and (job/'driver'/'ANOMALY-calibration-R5.json').exists()
+        dsrc = (HERE/'driver.py').read_text()
+        ps = dsrc[dsrc.index('def prepare_students():'):dsrc.index('# ---------------- games')]
+        out['ready_after_fresh'] = ps.index('if studytree.fresh_verdict(J): return') < ps.index("io.write_json_once(rt+'/READY.json'")
+        out['enforcer_in_main'] = 'ENFORCER = studytree.Enforcer(J, on_gpu_breach, active=lambda: bool(LIVE)).start()' in dsrc
+    case("r8 guard audit row - driver.py: a live fit (verified trainer PID) is stopped by the Enforcer on STOP and on a stale guard "
+         "(anomaly), even with the main loop not ticking; a calibration that exits 0 while memory is breached at the end is rejected by "
+         "the fresh verdict (anomaly, no acceptance receipt); READY is published only after a fresh verdict", all(out.values()), got=out)
+
+    # ---- rows: guarded acceptance by every consumer (a failed or stale guard receipt never counts)
+    import studytree as ST, label, verify_onpolicy as V, write_report as wr, reduce as rdc
+    j = mk('acc8'); f = wjson(j/'qual'/'x.json', dict(a=1))
+    none = ST.guarded_output(str(j), str(f)) is None
+    wjson(j/'receipts'/'guard-failed.json', dict(schema='x4s4.guard.v1', passed=False, outputs={str(f): sha(f)}))
+    failed_no = ST.guarded_output(str(j), str(f)) is None
+    bless(f); ok_ = ST.guarded_output(str(j), str(f)) is not None
+    wjson(f, dict(a=2)); stale_no = ST.guarded_output(str(j), str(f)) is None
+    cons = dict(none=none, failed_receipt=failed_no, passed=ok_, changed_output=stale_no)
+    use_job(j)
+    pr = wjson(j/'receipts'/'p.json', dict(check='parity'))
+    cons['label_parity'] = raises(lambda: label.check_parity([], str(pr)), label.PlanError, 'guard receipt')
+    wjson(j/'data'/'label-plan.json', {})
+    cons['label_run_plan'] = raises(lambda: label.run_labels(str(j/'data'/'label-plan.json'), 'O', 1, 1), SystemExit, 'guard receipt')
+    wjson(j/'data'/'O-VERIFIED.json', dict(mode='O'))
+    cons['gate'] = raises(lambda: ST.authenticate_gate(str(j), 'O'), io.Refusal, 'guard receipt')
+    (j/'data'/'onpolicy'/'batch-0000').mkdir(parents=True); wjson(j/'data'/'onpolicy'/'batch-0000'/'manifest.json', {})
+    V.JOB = str(j)
+    try: V.verify('O', str(j/'data'/'onpolicy'), json.loads((HERE/'plan.json').read_text()), [], None, None, None, {}); vb = False
+    except Exception as e: vb = 'guard receipt' in str(e)
+    cons['verify_batch'] = vb
+    (j/'data'/'O-VERIFIED.json').chmod(0o644); (j/'data'/'O-VERIFIED.json').unlink()
+    rc_ = V.main(['--mode', 'O', '--plan', str(HERE/'plan.json'), '--label-receipts', str(f)])
+    vr = json.loads((j/'data'/'onpolicy'/'VERIFY-RECEIPT.json').read_text())
+    cons['verify_label_receipt'] = rc_ == 1 and 'guard receipt' in vr['error']
+    rx = j/'receipts'/'contention-exclusion.json'; rx.write_text('{}'); rx.chmod(0o444)
+    cons['reduce_contention'] = raises(lambda: rdc.verify_freeze(str(j), sha(rx), '0'*40, str(tmp)), SystemExit, 'guard receipt')
+    wjson(j/'analysis'/'results.json', {})
+    saved_vf = rdc.verify_freeze; rdc.verify_freeze = lambda *a, **k: None
+    try: cons['report_results'] = raises(lambda: wr.authenticate(str(j), '0'*64, '0'*40), BaseException, 'results.json has no passed guard')
+    finally: rdc.verify_freeze = saved_vf
+    use_job(job)
+    case("r8 guard audit rows - guarded acceptance: an output counts only through a PASSED guard receipt naming its CURRENT identity "
+         "(a failed receipt or a changed output never counts); label plan admission (parity receipt), label run (plan), every gate "
+         "consumer (authenticate_gate), verify_onpolicy (packed batches = R7-F3's pack, label receipts), reduce (C5 receipt) and "
+         "write_report (results.json; an unguarded diagnostic is rendered unavailable) refuse unguarded inputs", all(cons.values()), got=cons)
+
+    # ---- rows: every owned long-running entry point refuses to run outside guard.py (and with a dead runner)
+    saved_env = os.environ.pop('X4S4_GUARD')
+    ent = {}
+    try:
+        def entry(name, fn, argv=None):
+            if argv is not None: sys.argv = argv
+            ent[name] = raises(fn, BaseException, 'guard.py')       # a mutant that runs on is recorded, not fatal
+        jj = mk('ent8')
+        entry('qualify4', lambda: Q.main(['parity', '--phases', str(jj), '--min-games', '1', '--out', str(jj/'qual'/'e.json')]))
+        entry('label', lambda: label.main(), ['label.py', 'plan', '--phases', 'x', '--parity', 'y', '--out', str(jj/'data'/'p.json')])
+        entry('verify_onpolicy', lambda: V.main(['--mode', 'O', '--plan', 'x']))
+        import collect_w, diagnose, contention
+        entry('collect_w', lambda: collect_w.main(), ['collect_w.py', '--checkpoint', 'x', '--count', '1', '--workers', '1'])
+        entry('diagnose', lambda: diagnose.main(), ['diagnose.py'])
+        entry('contention', lambda: contention.main(), ['contention.py', '--job', str(jj)])
+        entry('reduce', lambda: rdc.main(), ['reduce.py', '--job', str(jj), '--students', 'R3a', '--out', 'x', '--contention-sha', '0', '--freeze-commit', '0'])
+        entry('write_report', lambda: wr.main(), ['write_report.py', '--contention-sha', '0', '--freeze-commit', '0'])
+        os.environ['X4S4_GUARD'] = f"{os.getpid()}:{io.proc_stat(os.getpid())['starttime']+987654}:dead"   # wrong start time
+        ent['dead_runner'] = raises(lambda: ST.require_guard('x'), SystemExit, 'not alive')
+    finally:
+        os.environ['X4S4_GUARD'] = saved_env
+    case("r8 guard audit rows - child binding: qualify4, label, verify_onpolicy, collect_w, diagnose, contention, reduce and "
+         "write_report refuse to run outside guard.py, and a runner that is not alive is refused", all(ent.values()), got=ent)
+
+    # ---- process-exit paths: SIGTERM to a runner stops its child; a driver leaving its loop stops a live fit
+    with FastGuards() as ST:
+        j = mk('sigterm'); r, exits = runner(j, 'sig', ['/bin/sleep', '30'])
+        threading.Timer(0.4, lambda: os.kill(os.getpid(), signal.SIGTERM)).start()
+        t0 = time.monotonic(); r.run(); el = time.monotonic()-t0
+        sig_ok = receipt(j, 'sig')['breach'] == 'runner_SIGTERM' and gone(r) and el < 10 and signal.getsignal(signal.SIGTERM) is not None
+        drv, djob = driver_module(tmp/'drvexit')
+        ch = io.spawn(['/bin/sleep', '30'], f'{djob}/logs/fx.log', dict(PATH='/usr/bin:/bin'))
+        rec = dict(launch_id='FX', pid=ch['pid'], pgid=ch['pgid'], starttime=ch['starttime'])
+        drv.fit_state = lambda f: ('running', rec) if f == 'R5' else ('pending', None)
+        drv.stop_live_fits('SIGTERM')
+        try: ch['popen'].wait(timeout=10)
+        except subprocess.TimeoutExpired:                          # not stopped: record, then clean up by verified PID
+            io.stop_owned(ch['pgid'], ch['starttime'], term_grace=5, kill_grace=5); ch['popen'].wait()
+        evs = (djob/'driver'/'events.jsonl').read_text().splitlines() if (djob/'driver'/'events.jsonl').exists() else []
+        exit_ok = ch['popen'].returncode == -signal.SIGTERM and any(json.loads(l).get('reason') == 'driver exit: SIGTERM' for l in evs)
+        msrc = (HERE/'driver.py').read_text(); mm = msrc[msrc.index('def main():'):]
+        exit_wired = mm.index('try:') < mm.index('loop(fits, stop)') < mm.index('finally:') < mm.index('stop_live_fits(')
+    case("r8 guard audit - process exits: SIGTERM to a guard.py runner stops its child by verified PIDs (breach runner_SIGTERM, "
+         "failed receipt) and the runner restores the previous handler; a driver leaving its loop for any reason (finally) stops "
+         "every live fit through its verified trainer PID", sig_ok and exit_ok and exit_wired, got=[sig_ok, exit_ok, exit_wired])
+
+    # ---- row: the runbook invokes every long-running step through its guard (static)
+    rb = (HERE/'QUALIFY-RUNBOOK.md').read_text().replace('\\\n', ' ')        # join continued shell lines
+    cmds = [l for l in rb.splitlines() if 'qualify4.py ' in l or 'label.py ' in l or 'verify_onpolicy.py ' in l or 'collect_w.py ' in l
+            or 'imitation.exit_r1.pack' in l or 'diagnose.py' in l or 'contention.py' in l or 'reduce.py ' in l or 'write_report.py ' in l
+            or 'pytest' in l]
+    unguarded = [l.strip()[:90] for l in cmds if l.lstrip().startswith(('cd ', '| P', '$', 'test ', '/')) and '$GRD' not in l and 'guard.py' not in l
+                 and not l.lstrip().startswith(('| P8', '| P10', '| P12'))]
+    packs = [l for l in rb.splitlines() if 'imitation.exit_r1.pack' in l]
+    case("r8 guard audit row - runbook: every qualify4/label/verify/collect_w/pack/diagnose/readout/pytest command runs under $GRD "
+         "(guard.py); both production packs (P6, P9) declare their batch as a guarded --output",
+         not unguarded and len(packs) >= 2 and all('--output $J/data/' in l for l in packs), unguarded=unguarded)
 
 
 # ================================================================ static (F11, F17, R2-F10), run_fit.sh (F5)
@@ -2148,11 +2449,14 @@ UMASK = os.umask(0); os.umask(UMASK)
 
 
 def main():
+    # r8: owned entry points run only under guard.py (studytree.require_guard); in-process test calls run as the child of
+    # this live process. Negative tests unset/forge X4S4_GUARD explicitly.
+    os.environ['X4S4_GUARD'] = f"{os.getpid()}:{io.proc_stat(os.getpid())['starttime']}:offline-tests"
     canonical, canonical_repo = io.JOB, io.REPO
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
         for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
-                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_static):
+                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
             except Exception as e:

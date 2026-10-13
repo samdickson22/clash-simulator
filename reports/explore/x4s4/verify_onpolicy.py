@@ -27,6 +27,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import x4s4io as io                                      # noqa: E402
+import studytree                                          # noqa: E402
 
 JOB = io.JOB
 MODES = {'O': ('onpolicy', 'O-VERIFIED.json'), 'holdout': ('onpolicy-holdout', 'HOLDOUT-VERIFIED.json'),
@@ -132,6 +133,8 @@ def verify(mode, root, plan, label_receipts, selection, o_gate, label_plan, resu
     check(RECEIPT not in names, 'receipt already exists')
     batches = sorted(n for n in names if io.is_real_dir(f'{root}/{n}'))
     check(batches and all(n.startswith('batch-') and n[6:].isdigit() and len(n) == 10 for n in batches), f'root directories {batches}')
+    for n in batches:                                        # R7-F3: only a pack accepted by its guard.py run counts
+        check(studytree.guarded_output(JOB, f'{root}/{n}') is not None, f'{root}/{n} has no passed guard receipt (guarded pack)')
     extra = set(names)-set(batches)-OPERATIONAL
     check(not extra, f'unexpected root entries: {sorted(extra)}')
     for n in sorted(OPERATIONAL & set(names)): io.stat_leaf(f'{root}/{n}')
@@ -231,6 +234,7 @@ def main(argv=None):
     ap.add_argument('--label-receipts', nargs='*', default=[])
     ap.add_argument('--selection')                                 # OW only: <job>/data/raw-OW-selection.json
     a = ap.parse_args(argv)
+    studytree.require_guard(f'verify_onpolicy {a.mode}')                   # R7: runs only under guard.py
     root = JOB+'/data/'+MODES[a.mode][0]; gate = JOB+'/data/'+MODES[a.mode][1]
     t0 = time.monotonic()
     result = dict(passed=False, sealed=False, mode=a.mode, root=root, label='X4S-4 exploration, NEVER ADOPTABLE',
@@ -239,6 +243,8 @@ def main(argv=None):
     try:
         check(not io.lexists(gate), 'gate already exists')
         plan = io.read_json(a.plan, 16 << 20)
+        for p in a.label_receipts:                               # R7: guarded acceptance of every label run
+            check(studytree.guarded_output(JOB, p) is not None, f'label receipt {p} has no passed guard receipt')
         receipts = [io.read_json(p, 64 << 20) for p in a.label_receipts]
         ids['label_receipts_sha256'] = sorted(io.sha256_file(p) for p in a.label_receipts)
         selection = o_gate = label_plan = acceptance = None
@@ -250,9 +256,11 @@ def main(argv=None):
             check(a.selection is None, '--selection only for OW')
         else:
             check(a.selection == JOB+'/data/raw-OW-selection.json', '--selection must be <job>/data/raw-OW-selection.json')
+            check(studytree.guarded_output(JOB, a.selection) is not None, 'the O_W selection has no passed guard receipt')
             selection = io.read_json(a.selection, 64 << 20); ids['selection_sha256'] = io.sha256_file(a.selection)
             o_gate = io.read_json(JOB+'/data/'+MODES['O'][1], 64 << 20); ids['o_gate_sha256'] = io.sha256_file(JOB+'/data/'+MODES['O'][1])
             accp = JOB+'/data/raw-OW-acceptance-smoke.json'
+            check(studytree.guarded_output(JOB, accp) is not None, 'the O_W acceptance smoke has no passed guard receipt')
             acceptance = io.read_json(accp, 16 << 20); ids['acceptance_sha256'] = io.sha256_file(accp)
         verify(a.mode, root, plan, receipts, selection, o_gate, label_plan, result, acceptance)
         result['passed'] = True

@@ -117,6 +117,8 @@ def authenticate_block(phase, arm, index):
 
 def check_parity(phases, parity):
     """R2-F8: final, exact-phase, current-inventory parity receipt; failed parity needs an authentic exception."""
+    if studytree.guarded_output(JOB, str(parity)) is None:
+        raise PlanError('the parity receipt has no passed guard receipt (R7: guarded acceptance)')
     pr = io.read_json(str(parity), 256 << 20)
     names = sorted(str(p) for p in phases)
     if not (pr.get('check') == 'parity' and sorted(map(str, pr.get('phases', []))) == names):
@@ -368,13 +370,14 @@ def dispatch(entries, workers, work, me, monitor=None, admit=None, poll=10.0):
 
 def run_labels(plan_path, which, workers, threads):
     global run, RAW, THREADS, PLAN_SHA
+    plan_path = str(plan_path)
+    if plan_path != JOB+'/data/label-plan.json': raise SystemExit('plan must be <job>/data/label-plan.json')
+    if studytree.guarded_output(JOB, plan_path) is None: raise SystemExit('the label plan has no passed guard receipt (R7)')
     if socket.gethostname() != '127x01' or os.getpriority(os.PRIO_PROCESS, 0) < 10:
         raise SystemExit('label run requires 127x01 at nice >= 10')
     if not os.sched_getaffinity(0) <= set(range(50)) or not 1 <= workers <= min(50, len(os.sched_getaffinity(0))):
         raise SystemExit('label run requires cores within 0-49 and 1 <= workers <= cores')
     if halt_reason(): raise SystemExit('halted before start: '+halt_reason())
-    plan_path = str(plan_path)
-    if plan_path != JOB+'/data/label-plan.json': raise SystemExit('plan must be <job>/data/label-plan.json')
     ok, why = studytree.admission(JOB, add=workers+1)
     if not ok: raise SystemExit('study admission: '+why)
     studytree.register(JOB, f'label-{which}')
@@ -423,6 +426,7 @@ def main():
     r = sub.add_parser('run'); r.add_argument('--plan', required=True); r.add_argument('--set', choices=['O', 'holdout'], required=True)
     r.add_argument('--workers', type=int, required=True); r.add_argument('--threads', type=int, default=1)
     a = ap.parse_args()
+    studytree.require_guard(f'label {a.cmd}')                      # R7: runs only under guard.py
     if a.cmd == 'plan': make_plan(a.phases, a.parity, a.out)
     else: run_labels(a.plan, a.set, a.workers, a.threads)
 

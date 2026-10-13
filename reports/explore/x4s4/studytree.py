@@ -12,12 +12,29 @@ admission(job, add): the tree after adding `add` new processes must hold <= 70, 
 monitor(job, own=None, pss_limit): the frozen live stop rules for a running owned task - STOP (lexists), the study
 hard stop, MemAvailable < 24 GiB (unreadable = breach), memory PSI unreadable/non-finite, the owned task's PSS
 > 50 GiB (any unreadable process = breach), tree > 70 processes, disk > 100 GB or unreadable. Returns a reason or None.
+
+r8 (Sol r7, R7-F1..F3 - one mechanism for every long-running or spawning path; see SCRIPTS.md "Guard audit"):
+  * Every potentially blocking measurement is bounded: du has DISK_TIMEOUT (40 s, was 900 s), nvidia-smi 20 s, and
+    bounded() runs any measurement with a deadline whose miss is a breach (MeasureTimeout).
+  * admit(): dispatch admission (dispatch_ok + admission [+ extra, e.g. GPU]) with every measurement bounded, then the
+    cheap STOP/deadline checks LAST.
+  * Enforcer: independent expiry - a thread that only does cheap checks (STOP lexists, the immutable deadline, the age
+    of the last completed monitor verdict) and never measures, so a stuck scan or native call cannot stall it; STOP,
+    the deadline, a breach verdict or no completed verdict for MONITOR_STALE s fires on_breach once.
+  * fresh_verdict(): a fresh bounded running-resource verdict, then STOP/deadline LAST - used before packing and before
+    any acceptance.
+  * guarded_output(): acceptance - an output counts only if a PASSED guard receipt (receipts/guard-*.json, written by
+    guard.py after its final fresh guards) names it with its current identity.
+  * require_guard(): an owned entry point runs only as the child of a live guard.py runner and ends itself if the
+    runner disappears.
 """
-import datetime, math, os, time
+import datetime, math, os, threading, time
 
 import x4s4io as io
 
 MAX_PROCESSES, MAX_DISK_BYTES, DISK_CACHE_SECONDS = 70, 100*10**9, 300
+DISK_TIMEOUT = 40                                   # r8: du is bounded well inside the stop budget (was 900 s)
+ENFORCER_TICK, MONITOR_PERIOD, MONITOR_STALE, MEASURE_TIMEOUT = 1.0, 5.0, 75.0, 75.0
 MEM_FLOOR, PSS_LIMIT = 24*2**30, 50*2**30
 _disk = dict(t=0.0, bytes=None)
 
@@ -105,7 +122,7 @@ def disk_bytes(job=None):
     job = job or io.JOB
     if _disk['bytes'] is None or time.time()-_disk['t'] > DISK_CACHE_SECONDS:
         try:
-            r = io.run_checked(['/usr/bin/du', '-sb', '--', job], 900, 4096, env={'LC_ALL': 'C'})
+            r = io.run_checked(['/usr/bin/du', '-sb', '--', job], DISK_TIMEOUT, 4096, env={'LC_ALL': 'C'})
             v = int(r.stdout.split()[0]); _disk['bytes'] = v if v >= 0 else None
         except (io.Refusal, ValueError, IndexError):
             _disk['bytes'] = None
@@ -137,11 +154,12 @@ def admission(job=None, add=0, disk=True):
     return True, None
 
 
-def monitor(job=None, own=None, pss_limit=PSS_LIMIT, disk=True, check_psi=True):
-    """The frozen live stop rules for a running owned task (own = (pgid, starttime) of that task's group)."""
+def monitor(job=None, own=None, pss_limit=PSS_LIMIT, disk=True, check_psi=True, deadline=True):
+    """The frozen live stop rules for a running owned task (own = (pgid, starttime) of that task's group). deadline=False
+    only for the post-study readout steps (guard.py --readout: contention, reduce, report)."""
     job = job or io.JOB
     if io.lexists(job+'/STOP'): return 'owned_STOP'
-    if hard_stop_passed(job): return 'hard_stop_time'
+    if deadline and hard_stop_passed(job): return 'hard_stop_time'
     mem = mem_available()
     if mem is None or mem < MEM_FLOOR: return 'memory_guard'
     if check_psi and psi_some_avg10() is None: return 'psi_unreadable'
@@ -171,6 +189,158 @@ def dispatch_ok():
     return True, None
 
 
+class MeasureTimeout(Exception):
+    pass
+
+
+def bounded(fn, timeout=None):
+    """Run a potentially blocking measurement in a daemon thread; its value, its exception, or MeasureTimeout if it has
+    not completed within `timeout` s (the abandoned thread can no longer influence the caller)."""
+    timeout = MEASURE_TIMEOUT if timeout is None else timeout
+    box = {}
+    def run():
+        try: box['v'] = fn()
+        except BaseException as exc: box['e'] = exc
+    t = threading.Thread(target=run, daemon=True); t.start(); t.join(timeout)
+    if t.is_alive(): raise MeasureTimeout(f'measurement exceeded {timeout:g} s')
+    if 'e' in box: raise box['e']
+    return box['v']
+
+
+def cheap_halt(job=None, deadline=True):
+    """STOP (lexists, so a dangling link counts) and the immutable deadline - no measurement."""
+    job = job or io.JOB
+    if io.lexists(job+'/STOP'): return 'owned_STOP'
+    if deadline and hard_stop_passed(job): return 'hard_stop_time'
+    return None
+
+
+def admit(job=None, add=0, extra=None, deadline=True, timeout=None):
+    """R7-F2: dispatch admission for new work - cheap halt, then dispatch_ok (MemAvailable >= 24 GiB, PSI readable and
+    <= 10), admission(add) and `extra` (e.g. a GPU rule) inside ONE bounded measurement (a miss refuses), then the cheap
+    STOP/deadline checks again LAST. Returns None or the refusal reason."""
+    job = job or io.JOB
+    why = cheap_halt(job, deadline)
+    if why: return 'admission: '+why
+    def measure():
+        ok, w = dispatch_ok()
+        if not ok: return w
+        ok, w = admission(job, add)
+        if not ok: return w
+        return extra() if extra else None
+    try: why = bounded(measure, timeout)
+    except MeasureTimeout as exc: why = f'admission measurement missed its deadline ({exc})'
+    if why: return 'admission: '+why
+    why = cheap_halt(job, deadline)
+    return 'admission: '+why if why else None
+
+
+def fresh_verdict(job=None, own=None, extra=None, deadline=True, timeout=None):
+    """R7-F1: a FRESH running-resource verdict (monitor [+ extra, e.g. the GPU rule]) inside one bounded measurement (a
+    miss is a breach), then the cheap STOP/deadline checks LAST. High readable PSI is not a breach here (frozen rule)."""
+    job = job or io.JOB
+    try: why = bounded(lambda: monitor(job, own=own, deadline=deadline) or (extra() if extra else None), timeout)
+    except MeasureTimeout: why = 'measurement_timeout'
+    return why or cheap_halt(job, deadline)
+
+
+class Enforcer:
+    """R7-F2: independent expiry. A daemon thread that every ENFORCER_TICK s performs ONLY cheap checks - STOP (lexists),
+    the immutable deadline (unless deadline=False) and the age of the last completed monitor verdict - and never calls
+    a potentially blocking measurement, so a stuck scan or native call cannot stall it. The measuring side reports each
+    completed verdict with verdict(why). STOP, the deadline, a breach verdict or no completed verdict for MONITOR_STALE s
+    ('monitor_stale') calls on_breach(reason) exactly once, from the thread that detected it. active() may restrict
+    the staleness rule to periods when guarded work is live."""
+    def __init__(self, job, on_breach, deadline=True, active=None):
+        self.job, self.on_breach, self.deadline, self.active = job, on_breach, deadline, active
+        self.lock, self.stopped = threading.Lock(), threading.Event()
+        self.last, self.fired, self.thread = time.monotonic(), None, None
+
+    def start(self):
+        self.last = time.monotonic()
+        self.thread = threading.Thread(target=self._run, daemon=True); self.thread.start()
+        return self
+
+    def stop(self): self.stopped.set()
+
+    def arm(self):
+        """Re-arm for a new guarded child (long-lived parents such as the driver): clears the fired state."""
+        with self.lock: self.fired = None
+        self.last = time.monotonic()
+
+    def verdict(self, why):
+        self.last = time.monotonic()
+        if why: self.fire(why)
+
+    def fire(self, why):
+        with self.lock:
+            if self.fired: return
+            self.fired = why
+        self.on_breach(why)
+
+    def check(self):
+        """One cheap evaluation (the thread's step); returns the reason it fired, or None."""
+        why = cheap_halt(self.job, self.deadline)
+        if why is None and (self.active is None or self.active()) and time.monotonic()-self.last > MONITOR_STALE:
+            why = 'monitor_stale'
+        if why: self.fire(why)
+        return why
+
+    def _run(self):
+        while not self.stopped.wait(ENFORCER_TICK):
+            try: self.check()
+            except Exception as exc: self.fire(f'enforcer_failed: {exc!r}')
+
+
+def output_identity(path):
+    """A sealed directory's identity is the SHA-256 of its manifest.json; a file's is its SHA-256."""
+    path = str(path)
+    return io.sha256_file(path+'/manifest.json') if io.is_real_dir(path) else io.sha256_file(path)
+
+
+def guarded_output(job, path):
+    """R7 acceptance: the PASSED guard receipt (receipts/guard-*.json, written by guard.py only after the child exited 0
+    and its final fresh guards held) that names `path` with its CURRENT identity, else None."""
+    job = job or io.JOB; path = str(path)
+    if not io.lexists(path): return None
+    want = output_identity(path)
+    for n in sorted(_names(job+'/receipts', 'guard-')):
+        try: r = io.read_json(f'{job}/receipts/{n}', 16 << 20)
+        except io.Refusal: continue
+        if isinstance(r, dict) and r.get('passed') is True and r.get('schema') == 'x4s4.guard.v1' \
+                and ((r.get('outputs') or {}).get(path) == want or (r.get('new_files') or {}).get(path) == want):
+            return r
+    return None
+
+
+def _names(directory, prefix):
+    try: return [n for n in io.listdir(directory) if n.startswith(prefix) and n.endswith('.json')]
+    except io.Refusal: return []
+
+
+_WATCHDOG = {}
+
+
+def require_guard(name=None):
+    """R7: an owned long-running entry point runs only as the child of a live guard.py runner (X4S4_GUARD =
+    '<pid>:<starttime>:<name>', that process alive with that start time); a watchdog thread ends this process (exit
+    70) if the runner disappears, so the work never outlives its enforcement. Returns the runner identity."""
+    spec = os.environ.get('X4S4_GUARD', '')
+    try:
+        pid, start, gname = spec.split(':', 2); pid, start = int(pid), int(start)
+    except ValueError:
+        raise SystemExit(f'{name or "this step"} runs only under reports/explore/x4s4/guard.py (X4S4_GUARD unset or malformed)')
+    def alive():
+        st = io.proc_stat(pid); return st is not None and st['starttime'] == start and st['state'] != 'Z'
+    if not alive(): raise SystemExit(f'guard runner {pid} is not alive')
+    if spec not in _WATCHDOG:
+        def loop():
+            while alive(): time.sleep(2.0)
+            os._exit(70)
+        t = threading.Thread(target=loop, daemon=True); t.start(); _WATCHDOG[spec] = t
+    return dict(pid=pid, starttime=start, name=gname)
+
+
 GATES = {'O': ('onpolicy', 'O-VERIFIED.json'), 'holdout': ('onpolicy-holdout', 'HOLDOUT-VERIFIED.json'),
          'OW': ('onpolicy-w', 'OW-VERIFIED.json')}
 
@@ -194,6 +364,7 @@ def authenticate_gate(job, mode):
     job = job or io.JOB
     root, name = GATES[mode]
     gate_path, rdir = f'{job}/data/{name}', f'{job}/data/{root}'
+    io.require(guarded_output(job, gate_path) is not None, 'gate', f'{name} has no passed guard receipt (R7: guarded acceptance)')
     g = io.read_json(gate_path, 64 << 20)
     io.require(isinstance(g, dict) and g.get('mode') == mode and g.get('batches'), 'gate', f'{name} is not a {mode} gate')
     rec_path = rdir+'/VERIFY-RECEIPT.json'
