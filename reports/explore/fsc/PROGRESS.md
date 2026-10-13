@@ -61,3 +61,20 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
 - 2026-10-13T05:25Z: epoch-2 extension proposal committed **9aa1cce6** (MANIFEST c6574764…), not GO.
   - Prepared in an isolated scratch copy; the live worktree stays at c7df6fac bytes for the armed 07:30Z runner.
   - The run dir for epoch 2 is /mpac/sdicks02/scratch/fsc-e2-run-9aa1cce6d.
+- 2026-10-13T05:50Z: epoch-2 GO (COORDINATOR 2ee0f32a).
+  - Runner 239670 (identity checked) killed by exact PID, then its sleep child 239707; both gone.
+  - Frozen 03-only 07:30Z runner 1959653 armed from a git-archive export of c7df6fac.
+  - Epoch-2 runner 2011028 armed (9aa1cce6).
+- 2026-10-13T06:10Z: 04 epoch-1 stop __RC=0.
+  - rep04 had finished all 1,500 blocks.
+  - STOP proof passed: 30 recorded PIDs, none alive, no extras or orphans.
+  - Mirrored to fsc-mirror-20261013/127x04 (1,500 proofs).
+- 2026-10-13T06:10:49Z: the 04 resume failed closed (__RC=96, reduce.py in the equality list; my bug). Nothing started.
+  - Fix 89f01fbb (MANIFEST 69dc22c8), approved under COORDINATOR 877b83a0.
+  - Failed log archived to fsc-sessions/resume-attempt1-04/.
+  - Runner 2011028 killed by exact PID, then its sleep child 2011080; both gone.
+  - Epoch-2 runner re-armed: PID 1827204 (sleep child 1827279), 89f01fbb, AT 11:30:00Z, hosts 03 and 04.
+- 2026-10-13T06:20:41Z: **04 resumed** (__RC=0).
+  - rep04-e2: supervisor PID/PGID 2820890, child PGID 2820905, workers 12, stop-at 11:30:00Z.
+  - 2,000 blocks: wl-04 fully proven, so nothing reruns; the work is the ext segment 5900–7899.
+  - Guards: 14 processes OK.
