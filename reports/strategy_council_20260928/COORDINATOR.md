@@ -5344,3 +5344,17 @@ qualify4 and label.py are unchanged. Tests: `test_sa4` has 11 scenarios, 10/10 m
 2. **a2:** relaunch as fresh phase `collect/K4S-120/a2` with the index file idx-K4S-120 minus a1's 147 proved indices, in the same order (2,103 indices). Report its SHA before the launch.
 3. **PE-1 file:** move it, bytes unchanged (afeaf7cb, 0444), to `receipts/PARITY-EXCEPTION-PE1-smoke.json`. Any P3 exception is then written with O_EXCL at `data/PARITY-EXCEPTION.json`.
 4. **01 repo fetch:** `git -C /mpac/sdicks02/repos/clasher fetch origin` on 01, with no checkout, reset, gc or other ref change. It may run once before any P3 exception is used and once before P13. Each run is recorded with the before and after `refs/remotes/origin/main` values.
+
+## 2026-10-13 07:49Z: FSC epoch 2 running on both hosts; 03 cache service (K4S idle pin) has exited
+
+**FSC epoch 2.** The 03 epoch-1 STOP was verified at 07:30Z: `__RC=0`, all 2,400 blocks were proven, the proof passed and the outputs are mirrored. 03 resumed at 07:32Z with the 2,000-block extension. Both hosts now run 12 workers until the 11:30Z runner (PID 1827204, 89f01fbb).
+
+**The 03 cache service is gone (2eb4ac9c).**
+- **What was seen:** 03's perception v4 validation cache service (PGID 2180934, PIDs 2180934/2180946/2180947, started 2026-10-10 04:39) was absent at 07:31Z. It was present and idle at 03:12Z–03:15Z.
+- **FSC is not the cause:** FSC signals only its own groups, and its memory stayed small (owned PSS ≤ 3.6 GiB, MemAvailable ≥ 118 GiB).
+- **No ledger record:** nothing records an authorized retirement of this service.
+- **Why it matters for K4S END:** the END plan pins this service as 03's idle resident (`idle-services.json`, PID 2180947 / start_ticks 139691386). The plan says a vanished service, or a restart before END, needs a new ruling.
+
+**Actions:**
+1. The perception owner states whether the service ended by design (for example its renewal lease) and whether it is still needed. It must not be restarted without a coordinator ruling, because a restart would change the K4S pin again.
+2. The K4S runner treats the 03 idle-service pin as retired. Its END integration fix round proposes the minimal pin and ruling change: 03 with no idle resident, consistent with 08's earlier retirement. The coordinator decides on that proposal before A2.
