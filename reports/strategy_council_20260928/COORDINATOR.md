@@ -4542,3 +4542,18 @@ No code-change route is taken.
 - draft a single-use retrieval GO.
 
 **Known candidate cause, not yet evidence.** The generic-transport review flagged RLIMIT_AS interacting with a CUDA-torch import in epoch units. A fast exit-1 matches that risk.
+
+## 2026-10-13 01:26Z: Perception B epoch-1 failure cause found: IntegrityIncident "Unexpected truth bundle member" (a package or plan bug, not a resource limit)
+
+**How the logs were read.** The approved retrieval refuses KNOWN_FAILURE results. So the coordinator ran a single read-only read on 08 itself, using one SSH session with no ControlMaster.
+- The reader is a stdlib stub, sha 864b608d. It opens only the 6 exact paths from the owner's proposed read set (ce0a924d) and refuses symlinks, irregular files, nlink > 1 and oversize files.
+- It made no remote writes and started no processes.
+- Its output is retained at `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/epoch01-diag-read-r1/`.
+
+**Findings.**
+- `stderr.log` (1,376 B, sha 25e8d8b6) contains the traceback, which ends in `b08_cpu_preflight.main` → `b08_current_graph.run` → `context` → `materialize`. The failing check is `require(set(p['truth_bundle_members']) <= set(p['bundle_files']), 'Unexpected truth bundle member')`, which raised `b08_authority.IntegrityIncident: Unexpected truth bundle member`.
+- The phase claim `preflight-<CPU>/claim.json` is **missing**. The failure happened before the claim, during plan materialization. No computation ran.
+
+**Cause.** The materialized execution plan lists truth-bundle members that are not among its `bundle_files`. That is a defect in the frozen package's execution-plan template or materializer, or a mismatch with the GO's `environment` field. It is **not** RLIMIT_AS or torch.
+
+**The fix needs new bytes.** The owner diagnoses offline, from the frozen template and the issued GO. A fix will probably need a new package revision with a delta review and redeployment, or a corrected GO field if the GO is the cause.
