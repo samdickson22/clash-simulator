@@ -175,6 +175,30 @@ def test_guard_and_proof():
     shutil.rmtree(d)
 
 
+def test_resident_exemption():
+    """FSC-1: idle + exact identity passes; changed start_ticks, busy service, or the same PIDs on 04 fail."""
+    import hostcheck as H
+    def mock(ticks, start=139691386, pgid=2180934):
+        d = _tmp()
+        for pid in (2180934, 2180946, 2180947):
+            (d/str(pid)).mkdir()
+            f = ['S', '1', str(pgid), str(pgid)] + ['0']*7 + [str(ticks), '0'] + ['0']*6 + [str(start if pid == 2180947 else 1)] + ['0']*30
+            (d/str(pid)/'stat').write_text(f'{pid} (python (cache)) ' + ' '.join(f) + '\n')
+        return d
+    def sample(d, host='127x03'):
+        t = H.resident_ticks(host, d); return 'none' if t is None else str(t)
+    a, b = mock(100), mock(105)
+    assert sample(a) == '300' and H.resident_idle(sample(a), sample(b))          # +15 ticks over 3 PIDs: idle
+    busy = mock(106)
+    assert not H.resident_idle(sample(a), sample(busy))                          # +18 ticks: busy -> foreign
+    assert sample(mock(100, start=139691387)) == 'none'                          # changed start_ticks
+    assert sample(mock(100, pgid=2180935)) == 'none'                             # different group
+    assert sample(a, host='127x04') == 'none' and not H.resident_idle('none', 'none')   # same PIDs on 04
+    assert not H.resident_idle(sample(b), sample(a))                             # ticks went backwards
+    r = _hc('resident-idle', '300', '315'); assert r.returncode == 0
+    assert _hc('resident-idle', '300', '316').returncode == 10 and _hc('resident-idle', 'none', '300').returncode == 10
+
+
 if __name__ == '__main__':
     for name, f in list(globals().items()):
         if name.startswith('test_'):

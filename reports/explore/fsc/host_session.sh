@@ -76,9 +76,17 @@ preflight() {
   CONSOLE=$(console_users)
   mem=$(awk '/^MemAvailable:/ {print int($2/1048576)}' /proc/meminfo); int "$mem" memavailable
   free=$(df -BG --output=avail /mpac | tail -n 1 | tr -dc 0-9); int "$free" df
+  # Ruling FSC-1: on 127x03 only, the pinned idle resident (PGID 2180934 = PIDs 2180934/2180946/2180947, exact
+  # start_ticks) is not foreign if its utime+stime grows by <= 15 ticks across the two samples. /proc stat reads only.
+  r1=$(python3 -I -B "$J/bundle/fsc/hostcheck.py" resident "$host") || r1=none
   s1=$(foreign_sample) || die 91 "process sample 1 failed"; sleep 15
   s2=$(foreign_sample) || die 91 "process sample 2 failed"
+  r2=$(python3 -I -B "$J/bundle/fsc/hostcheck.py" resident "$host") || r2=none
   foreign=$(comm -12 <(printf '%s\n' "$s1") <(printf '%s\n' "$s2"))
+  if python3 -I -B "$J/bundle/fsc/hostcheck.py" resident-idle "$r1" "$r2"; then
+    log "FSC-1 resident exempt: ticks $r1 -> $r2"
+    foreign=$(printf '%s\n' "$foreign" | awk '!($2 == 2180934 && ($1 == 2180934 || $1 == 2180946 || $1 == 2180947))')
+  else log "FSC-1 resident not exempt (ticks $r1 -> $r2)"; fi
   log "preflight console_users=$CONSOLE memavailable_GiB=$mem mpac_free_GiB=$free loadavg=$(cut -d' ' -f1-3 /proc/loadavg)"
   log "other users' CPU%: $(ps -eo user=,pcpu= | awk '$1 != "sdicks02" {s += $2} END {print s+0}')"
   [ -z "$foreign" ] || { printf '%s\n' "$foreign"; die 91 "foreign sdicks02 processes present"; }

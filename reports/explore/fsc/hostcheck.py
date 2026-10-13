@@ -16,12 +16,42 @@ Exit 0 = the stated expectation holds; any other status (10 = expectation not me
                                      exit reason owned_STOP within 120 s of the STOP touch, every pre-STOP PID gone,
                                      and at least one started block left without proof (an interrupted live block)
   smoke PHASE CONFIG HOST            8-seed smoke gate (no losses printed)
+  resident HOST                      ruling FSC-1: 127x03's pinned idle resident (v4 validation cache service, PGID
+                                     2180934 = PIDs 2180934/2180946/2180947, start_ticks of 2180947 = 139691386).
+                                     Reads /proc/<pid>/stat only; prints their summed utime+stime if every identity
+                                     holds on 127x03, else "none"
+  resident-idle T1 T2                exit 0 only if both samples are tick counts and T2 - T1 is in [0, 15] (1 % of one
+                                     core over the 15 s window at 100 Hz)
 """
 import json, os, subprocess, sys, time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 STOP_BOUND_S = 120
+RESIDENT = dict(host='127x03', pgid=2180934, pids=(2180934, 2180946, 2180947), anchor=2180947, start_ticks=139691386)
+RESIDENT_IDLE_TICKS = 15
+
+
+def resident_ticks(host, proc='/proc'):
+    """Summed utime+stime of the exempt resident's PIDs, or None unless every identity holds (FSC-1)."""
+    if host != RESIDENT['host']:
+        return None
+    total = 0
+    for pid in RESIDENT['pids']:
+        try:
+            f = Path(proc, str(pid), 'stat').read_text().rsplit(')', 1)[1].split()
+        except (OSError, IndexError):
+            return None
+        # After the ')' of comm: f[0] = field 3 (state), so field N is f[N-3].
+        pgid, utime, stime, start = int(f[2]), int(f[11]), int(f[12]), int(f[19])
+        if pgid != RESIDENT['pgid'] or (pid == RESIDENT['anchor'] and start != RESIDENT['start_ticks']):
+            return None
+        total += utime + stime
+    return total
+
+
+def resident_idle(t1, t2):
+    return t1.isdigit() and t2.isdigit() and 0 <= int(t2) - int(t1) <= RESIDENT_IDLE_TICKS
 AS_LIMIT = 8*2**30
 PS_ENV = dict(os.environ, TZ='UTC', LC_ALL='C')
 
@@ -105,6 +135,10 @@ def done(ok, info):
 
 def main():
     cmd = sys.argv[1]
+    if cmd == 'resident':
+        t = resident_ticks(sys.argv[2]); print('none' if t is None else t); sys.exit(0)
+    if cmd == 'resident-idle':
+        sys.exit(0 if resident_idle(sys.argv[2], sys.argv[3]) else 10)
     if cmd == 'census':
         want, pgid = sys.argv[2], int(sys.argv[3]); pids = {int(x) for x in sys.argv[4:]}
         assert want in ('empty', 'live') and pgid > 1
