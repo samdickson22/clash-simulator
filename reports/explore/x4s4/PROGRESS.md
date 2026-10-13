@@ -361,3 +361,27 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - P2: `$SUP --phase collect/S-200/a1 --range reporting --indices $J/collect/idx-S-200.json (2e96a28e…) --config
   $X/plan-collect.json --arms S-200 --script reports/explore/x4s4/collect.py --workers 10 --stop-at …`, launched at
   08:48:57Z. `watchdog.py status` was ok beforehand and there was no console user.
+
+## 2026-10-13T11:20:16Z — P2 done; P3: K4S-120 in band, S-200 low side only; the exception path is blocked, so SA-5 (approved in principle)
+
+- P2 collect/S-200/a1 (`--workers 10`, SA-3): rc 0, reason null, 1,750/1,750 blocks, 8,727 s wall (exit e8de3a16…).
+  The SA-4 watch recorded low-side readings only (39 lines in parity-lowside.jsonl by 11:09Z); no pauses.
+- P3: `$GRD --name p3-parity --output receipts/parity-collection.json -- … qualify4.py parity --phases
+  collect/K4S-120/a1 collect/K4S-120/a2 collect/S-200/a1 --bank collection --min-games 100`.
+  - a2 (from PE-3) is included because check_parity requires exactly the phases that feed the plan.
+  - K4S-120: 2,250 games and 276,281 decisions; cutoff 62.46 / student-default 21.53 / overrun 0.15, all within
+    ±2 pp.
+  - S-200: 1,750 games and 268,769 decisions; cutoff **63.32 vs 75.3 (−11.98, low)**; student-default 0.00 and
+    overrun 0.06 in band.
+  - parity-collection.json f4082f32524664a4347d7b47417b3b0e1aea3633c949b81b06834d2064facf79: passed=false,
+    final=true, halted=owned_STOP.
+  - PARITY-PAUSE-2026-10-13T112015Z.json 158d651f…; guard-p3-parity.json b1983061… (passed=false, child exit 1).
+  - STOP is in place (created by qualify4's pause path).
+- Defect: a failed P3 can never be accepted by label.check_parity, because (1) its guard always fails (exit 1) and
+  (2) H-1 excludes it, since the receipt completes inside the STOP that pause() created. The offline fixture had
+  blessed the failed receipt.
+- SA-5 (COORDINATOR 5483e9d6, approved in principle), prepared offline:
+  - `qualify4 parity --final`: no pause, refuses `--watch`, and exits 0 iff `final_check_completed` (final, per-arm
+    reading, no error, no halt); the verdict stays in `passed`.
+  - test_sa5: real guard.py + real qualify4 child, the end-to-end label.make_plan check, the fixtures fixed. 9/9
+    mutants killed. The matrix is running.

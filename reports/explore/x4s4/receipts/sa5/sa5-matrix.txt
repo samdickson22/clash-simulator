@@ -1,0 +1,11 @@
+O0 u022 rc=0 load=13.16 {"all_ok": true, "cases": 139, "failed": [], "python_optimize": 0, "umask": "0o22"}
+O0 u077 rc=0 load=13.21 {"all_ok": true, "cases": 139, "failed": [], "python_optimize": 0, "umask": "0o77"}
+O1 u022 rc=0 load=13.18 {"all_ok": true, "cases": 139, "failed": [], "python_optimize": 1, "umask": "0o22"}
+O1 u077 rc=0 load=11.91 {"all_ok": true, "cases": 139, "failed": [], "python_optimize": 1, "umask": "0o77"}
+O2 u022 rc=0 load=11.97 {"all_ok": true, "cases": 139, "failed": [], "python_optimize": 2, "umask": "0o22"}
+O2 u077 rc=0 load=11.51 {"all_ok": true, "cases": 139, "failed": [], "python_optimize": 2, "umask": "0o77"}
+reports/explore/x4s4/qualify4.py: OK
+reports/explore/x4s4/test_x4s4_offline.py: OK
+reports/explore/x4s4/SCRIPTS.md: OK
+
+[exited with code 0]

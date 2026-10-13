@@ -504,12 +504,23 @@ def pause(job, res):
     return rec
 
 
+def final_check_completed(rec):
+    """SA-5: a `parity --final` check completed iff its receipt is final, carries the per-arm reading, and has neither an
+    error nor a halt. Only then does the guarded step pass; the C7b verdict itself is rec['passed']."""
+    return rec.get('final') is True and 'arms' in rec and not rec.get('error') and not rec.get('halted')
+
+
 def parity(a):
+    """C7b parity. Default (Q4 smoke, live use): out of band writes PARITY-PAUSE + STOP. SA-5 (COORDINATOR 5483e9d6)
+    `--final` (P3): one final check after collection; never pauses; the verdict is carried in `passed` only."""
     phases = [str(p) for p in a.phases]
+    final_mode = bool(getattr(a, 'final', False))
+    if final_mode and a.watch: raise QualError('--final is a single final check (no --watch)')
     while True:
         res = parity_once(phases, a.min_games, bank=a.bank)
         if res['out_of_band']:
-            res['paused'] = pause(io.JOB, res); break
+            if not final_mode: res['paused'] = pause(io.JOB, res)
+            break
         final = all(io.lexists(p+'/supervisor-exit.json') for p in phases)
         if not a.watch or final: break
         if io.lexists(io.JOB+'/STOP'): res['stopped_by_STOP'] = True; break
@@ -553,6 +564,8 @@ def main(argv=None):
     q = sub.add_parser('parity'); q.add_argument('--phases', nargs='+', required=True)
     q.add_argument('--min-games', type=int, required=True); q.add_argument('--watch', type=int, default=0)
     q.add_argument('--bank', choices=sorted(BANKS), default='collection', help='smoke: PLAN §6.2 deadline parity on the collection smoke')
+    q.add_argument('--final', action='store_true', help='SA-5 (P3): final check; never pauses; exit 0 when a final receipt is '
+                   'written without error or halt (the verdict stays in passed)')
     r = sub.add_parser('roundtrip'); r.add_argument('--phases', nargs='+', required=True); r.add_argument('--threads', type=int, default=1)
     s = sub.add_parser('smoke-pack', help='Q-D2(a): label + seal + pack the smoke captures into <job>/qual/smoke-pack/batch-0000')
     s.add_argument('--phases', nargs='+', required=True); s.add_argument('--threads', type=int, default=1)
@@ -570,12 +583,16 @@ def main(argv=None):
                   'trainer': trainer}[a.cmd](a)
     except (QualError, QualHalt, io.Refusal) as e:
         result = dict(passed=False, error=str(e))
+    final_mode = a.cmd == 'parity' and a.final
+    if final_mode: result['final_mode'] = True
     result.update(check=a.cmd, utc=utc(), label='X4S-4 qualification, exploration, NEVER ADOPTABLE')
     try:
         final = GUARD.finalize(result)
     finally:
         GUARD = None
     print(json.dumps({k: v for k, v in final.items() if k not in ('games', 'inventory')}))
+    if final_mode:      # SA-5: the check completed -> 0; the C7b verdict stays in final['passed']
+        raise SystemExit(0 if final_check_completed(final) else 1)
     raise SystemExit(0 if final['passed'] is True else 1)
 
 

@@ -413,19 +413,34 @@ def job_of(path):
     raise AssertionError(f'no job above {path}')
 
 
-def bless_into(job, *paths):
-    """bless() for outputs that live outside the job tree (fixture receipts under tmp), recorded in `job`'s receipts."""
+def refuse_failed_bless(paths):
+    """SA-5: a fixture may never bless a FAILED receipt (a JSON whose top-level `passed` is not True). A real guard.py run
+    exits 1 on a failed verdict and never yields a passed guard receipt, so blessing one would test an impossible state."""
+    for p in paths:
+        p = Path(p)
+        if p.is_file() and p.suffix == '.json':
+            try: d = json.loads(p.read_text())
+            except ValueError: continue
+            if isinstance(d, dict) and 'passed' in d and d['passed'] is not True:
+                raise AssertionError(f'fixture tried to bless a failed receipt: {p}')
+
+
+def bless_into(job, *paths, allow_failed=False):
+    """bless() for outputs that live outside the job tree (fixture receipts under tmp), recorded in `job`'s receipts.
+    allow_failed=True only for a NEGATIVE that must still be refused downstream (defence in depth)."""
     import studytree as ST
+    if not allow_failed: refuse_failed_bless(paths)
     n = f'test-{random.randrange(16**10):010x}'; (Path(job)/'receipts').mkdir(exist_ok=True)
     return wjson(Path(job)/'receipts'/f'guard-{n}.json', dict(schema='x4s4.guard.v1', name=n, passed=True,
                                                               outputs={str(p): ST.output_identity(str(p)) for p in paths}, new_files={}))
 
 
-def bless(*paths, name=None):
+def bless(*paths, name=None, allow_failed=False):
     """r8 fixture: exactly what a PASSED guard.py run records for its declared outputs (receipts/guard-*.json naming each
     output with its current identity) - stands in for the guarded producer of a fixture file."""
     import studytree as ST
     if not paths: return None
+    if not allow_failed: refuse_failed_bless(paths)
     job = job_of(paths[0]); outs = {}; (job/'receipts').mkdir(exist_ok=True)
     for p in paths:
         try: outs[str(p)] = ST.output_identity(str(p))
@@ -441,8 +456,31 @@ def parity_doc(tmp, phases, passed=True, final=True, name=None, bank='collection
     inv = qualify4.parity_inventory([str(p) for p in phases])
     doc = wjson(Path(tmp)/(name or f'parity-{passed}-{final}-{len(inv)}-{bank}.json'), dict(check='parity', passed=passed, final=final, bank=bank,
                 phases=sorted(str(p) for p in phases), inventory=inv, evidence=qualify4.phase_evidence([str(p) for p in phases], 'collection')))
-    bless_into(job_of(phases[0]), doc)                         # r8: as recorded by the guarded qualify4 parity run
+    if passed is True:                                         # SA-5: a FAILED receipt is never blessed; failed receipts
+        bless_into(job_of(phases[0]), doc)                     # come only from the real guarded `qualify4 parity --final` run
     return doc
+
+
+def guarded_parity(job, phases, name, final=True, min_games=1, extra=(), code=None):
+    """SA-5: run the REAL qualify4 parity (in a child, io.JOB = job) under the REAL guard.py Runner, exactly as P3 does.
+    Returns (receipt path, guard body, runner exits). `code` selects the x4s4 directory (mutation check)."""
+    import guard as G
+    code = Path(code or HERE); fake_watchdog(job); (Path(job)/'receipts').mkdir(exist_ok=True)
+    out = Path(job)/'receipts'/f'parity-{name}.json'
+    argv = ['parity', '--phases', *[str(p) for p in phases], '--bank', 'collection', '--min-games', str(min_games),
+            *(['--final'] if final else []), *extra, '--out', str(out)]
+    src = (f"import sys; sys.path[:0] = {[str(code), str(REPO), str(REPO/'src')]!r}; import x4s4io as io; io.JOB = {str(job)!r}; "
+           f"import qualify4; qualify4.main({argv!r})")
+    saved_job = io.JOB; use_job(job)
+    try:
+        with FastGuards():
+            r = G.Runner(str(job), f'p3-{name}', [PY, '-B', '-c', src], outputs=[str(out)]); exits = []; r.exit = exits.append
+            body = r.run()
+    finally:
+        use_job(saved_job)
+    if body is None and (Path(job)/'receipts'/f'guard-p3-{name}.json').exists():      # a failing run returns no body: read the receipt
+        body = json.loads((Path(job)/'receipts'/f'guard-p3-{name}.json').read_text())
+    return out, body, exits
 
 
 def ow_game(d, seed, n_roots, index=None, extra_rows=2, replay_exact=None):
@@ -513,7 +551,8 @@ def test_pipeline(tmp):
         seed_mismatch=plan_fails(lambda ph: write_collect_game(ph, 'K4S-120', 2, range(100, 130, 10), seed=C+99), text='identity'),
         public_parity_false=plan_fails(lambda ph: None, parity=lambda j2, phs: (write_collect_game(phs[0], 'K4S-120', 2, range(100, 130, 10), row_equals_build_public=False),
                                                                                 parity_doc(j2, phs))[1], text='parity/pending'),
-        failed_parity_no_exception=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, passed=False), text='authentic'),
+        failed_parity_no_exception=plan_fails(lambda ph: None, parity=lambda j2, phs: guarded_parity(j2, phs, 'noexc')[0], text='authentic'),
+        failed_parity_unguarded=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, passed=False), text='guard receipt'),
         not_final=plan_fails(lambda ph: None, parity=lambda j2, phs: parity_doc(j2, phs, final=False), text='not final'),
         stale_parity=plan_fails(lambda ph: write_collect_game(ph, 'K4S-120', 7, range(100, 130, 10)), text='not a scheduled index'),   # r6: case binding refuses first
         final_evidence_deleted=plan_fails(lambda ph: (ph/'supervisor-exit.json').unlink(), text='supervisor-exit'),
@@ -527,7 +566,8 @@ def test_pipeline(tmp):
     # authentic coordinator exception: a commit on origin/main whose COORDINATOR.md names the failed receipt's SHA
     j3 = Path(tmp)/'exc'; shutil.copytree(job/'collect', j3/'collect'); (j3/'data').mkdir(); (j3/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n'); (j3/'watchdog').mkdir(); (j3/'watchdog'/'stop-periods.jsonl').write_text('')   # H-1 evidence
     phases3 = [j3/'collect'/'K4S-120'/'a1', j3/'collect'/'S-200'/'a1']
-    q3 = parity_doc(j3, phases3, passed=False)
+    q3, g3, _ = guarded_parity(j3, phases3, 'exc')              # SA-5: real guard.py + qualify4 parity --final (no bless)
+    assert g3 and g3['passed'] is True and json.loads(q3.read_text())['passed'] is False, (g3, q3)
     repo, head = git_repo(Path(tmp)/'coord', {'reports/strategy_council_20260928/COORDINATOR.md': f'C7b ruling: continue; receipt {sha(q3)}\n'.encode()})
     saved_repo = io.REPO; io.REPO = repo; use_job(j3)
     wjson(j3/'data'/'PARITY-EXCEPTION.json', dict(parity_receipt_sha256=sha(q3), coordinator_ruling='x', decision='disclose'))
@@ -571,7 +611,7 @@ def test_pipeline(tmp):
     (job/'data'/'onpolicy').mkdir()
     planf = wjson(Path(tmp)/'plan.json', json.loads((HERE/'plan.json').read_text()))
     V.O_MIN, V.O_MAX, V.ARM_CAPS = 10, 100, {'K4S-120': 30, 'S-200': 1000}
-    def verify(j, mode='O', receipts=None, selection=None):
+    def verify(j, mode='O', receipts=None, selection=None, negative=False):
         use_job(j)
         rec = [str(j/'data'/'label-receipt-O-1.json')] if receipts is None else [str(r) for r in receipts]
         args = ['--mode', mode, '--plan', str(planf), '--label-receipts', *rec]
@@ -579,7 +619,8 @@ def test_pipeline(tmp):
         root = j/'data'/V.MODES[mode][0]                          # r8: what the guarded producers would have recorded
         bless_into(j, *[d for d in sorted(root.glob('batch-*')) if (d/'manifest.json').exists()], *[Path(r) for r in rec if Path(r).exists()],
                    *[x for x in (j/'data'/'label-plan.json',) if x.exists()],
-                   *[x for x in (Path(selection) if selection else None, j/'data'/'raw-OW-acceptance-smoke.json') if x and x.exists()])
+                   *[x for x in (Path(selection) if selection else None, j/'data'/'raw-OW-acceptance-smoke.json') if x and x.exists()],
+                   allow_failed=negative)                  # SA-5: a failed receipt is blessed only for a negative (must be refused)
         rc = V.main(args); body = json.loads(next((j/'data').rglob('VERIFY-RECEIPT.json')).read_text())
         gate = j/'data'/V.MODES[mode][1]
         if gate.exists(): bless_into(j, gate)                      # the guarded verifier run's declared output
@@ -623,7 +664,7 @@ def test_pipeline(tmp):
          'beside its unchanged authentic receipt, changed counts/sources/plan identity, and an incomplete or unsealed receipt body',
          gate_ok and all(gprobe.values()), probes=gprobe)
     neg = {}
-    neg['mismatch receipt'] = verify(fresh('mm'), receipts=[mism_receipt])
+    neg['mismatch receipt'] = verify(fresh('mm'), receipts=[mism_receipt], negative=True)
     def teacher(j):        # Sol R2-F5 probe: raw-O receipt teacher changed, manifest and packed corpus unchanged
         g = next((j/'data'/'raw-O'/'K4S-120').glob('game-*')); r = json.loads((g/'receipt.json').read_text())
         r['teacher'] = 'UNREVIEWED_TEACHER'; (g/'receipt.json').write_text(json.dumps(r))
@@ -1058,6 +1099,110 @@ def test_supervise(tmp):
     failed = (sup.parity_watch(str(job), str(ph)) or '').startswith('parity_monitor_failed')
     case('R2-F8 probes: the in-supervisor C7b watch pauses (PARITY-PAUSE + STOP) out of band above X4S-3 (SA-4), and a failing watch is a stop reason',
          bool(paused) and failed, why=why)
+
+
+# ================================================================ SA-5 (COORDINATOR 5483e9d6): qualify4 parity --final (P3)
+def sa5_job(tmp, name):
+    """A finished bank-C collection (both arms, 1 game each, cutoff 0 %: out of band on the LOW side at --min-games 1)."""
+    j = new_job(Path(tmp)/name)
+    pk, ps = j/'collect'/'K4S-120'/'a1', j/'collect'/'S-200'/'a1'
+    write_collect_game(pk, 'K4S-120', 0, range(100, 130, 10)); write_collect_game(ps, 'S-200', 2000, range(100, 130, 10))
+    import qualify4; qualify4.parity_inventory([str(pk), str(ps)])          # the fixture is block-proved and terminal
+    for ph in (pk, ps): finish_phase(ph)
+    return j, [pk, ps]
+
+
+def sa5_scenarios(tmp, code=None):
+    """Each SA-5 rule as one discriminating scenario -> {name: passed}. Used by test_sa5 and by the mutation check."""
+    stub_torch_imports()
+    import label
+    out = {}
+    def run(name, fn):
+        try: out[name] = bool(fn())
+        except Exception as e: out[name] = False; print('sa5 scenario', name, 'raised', repr(e), flush=True)
+    def stopped(j): return os.path.lexists(Path(j)/'STOP') or bool(list((Path(j)/'receipts').glob('PARITY-PAUSE-*.json')))
+    def final_low():      # --final, low side: guard PASSED, receipt passed=false/final/final_mode, no STOP, no PARITY-PAUSE
+        j, phs = sa5_job(tmp, 'final_low'); q, body, exits = guarded_parity(j, phs, 'fl', code=code); d = json.loads(q.read_text())
+        return (body['passed'] is True and d['passed'] is False and d['final'] is True and d.get('final_mode') is True
+                and d['out_of_band'] == ['K4S-120', 'S-200'] and not stopped(j))
+    def default_unchanged():   # without --final: exit 1 (guard failed), PARITY-PAUSE + STOP, exactly as before
+        j, phs = sa5_job(tmp, 'default'); q, body, exits = guarded_parity(j, phs, 'df', final=False, code=code)
+        d = json.loads(q.read_text())
+        return body['passed'] is False and d['passed'] is False and 'final_mode' not in d and os.path.lexists(j/'STOP') and stopped(j)
+    def not_final():      # --final over a phase without supervisor-exit: not a completed final check -> exit 1
+        j, phs = sa5_job(tmp, 'not_final'); (phs[1]/'supervisor-exit.json').unlink()
+        q, body, exits = guarded_parity(j, phs, 'nf', code=code)
+        return body['passed'] is False and not stopped(j)
+    def watch_refused():  # --final --watch: refused (error) -> exit 1
+        j, phs = sa5_job(tmp, 'watch'); q, body, exits = guarded_parity(j, phs, 'wt', extra=('--watch', '5'), code=code)
+        return body['passed'] is False and 'final' in json.loads(q.read_text()).get('error', '')
+    def halted():         # --final whose final fresh verdict halts (finalize sets `halted`, passed stays false): exit 1
+        j, phs = sa5_job(tmp, 'halted'); use_job(j); fake_watchdog(j)
+        Q = load_fresh('qualify4_sa5', Path(code or HERE)/'qualify4.py')
+        import studytree as ST
+        saved = ST.fresh_verdict; ST.fresh_verdict = lambda *a, **k: 'memory_guard'
+        q = j/'receipts'/'parity-ht.json'; rc = None
+        try: Q.main(['parity', '--phases', *map(str, phs), '--bank', 'collection', '--min-games', '1', '--final', '--out', str(q)])
+        except SystemExit as e: rc = e.code
+        finally: ST.fresh_verdict = saved
+        d = json.loads(q.read_text())
+        return rc == 1 and d.get('halted') == 'memory_guard' and d['final'] is True and not stopped(j)
+    def error_exit():     # --final whose check raises (a tampered game): an error receipt -> exit 1
+        j, phs = sa5_job(tmp, 'error'); (phs[0]/'games'/'sim-0000-d27-K4S-120.json').write_text('{"tampered": 1}')
+        q, body, exits = guarded_parity(j, phs, 'er', code=code)
+        return body['passed'] is False and json.loads(q.read_text()).get('error')
+    def plan_e2e():       # end to end: guarded --final receipt + authentic exception -> label.make_plan accepts; wrong SHA refused
+        j, phs = sa5_job(tmp, 'e2e'); q, body, exits = guarded_parity(j, phs, 'e2e', code=code)
+        if not (body['passed'] is True and json.loads(q.read_text())['passed'] is False): return False
+        repo, head = git_repo(Path(tmp)/'sa5coord', {'reports/strategy_council_20260928/COORDINATOR.md': f'PE: disclose {sha(q)}\n'.encode()})
+        saved_repo = io.REPO; io.REPO = repo; use_job(j)
+        try:
+            wjson(j/'data'/'PARITY-EXCEPTION.json', dict(parity_receipt_sha256='0'*64, coordinator_commit=head, decision='disclose'))
+            wrong = raises(lambda: label.make_plan([str(p) for p in phs], str(q), str(j/'data'/'p-wrong.json')), label.PlanError, 'authentic')
+            (j/'data'/'PARITY-EXCEPTION.json').unlink()
+            none = raises(lambda: label.make_plan([str(p) for p in phs], str(q), str(j/'data'/'p-none.json')), label.PlanError, 'authentic')
+            wjson(j/'data'/'PARITY-EXCEPTION.json', dict(parity_receipt_sha256=sha(q), coordinator_commit=head, decision='disclose'))
+            label.make_plan([str(p) for p in phs], str(q), str(j/'data'/'label-plan.json'))
+            ok = json.loads((j/'data'/'label-plan.json').read_text())['parity_exception']['parity_receipt_sha256'] == sha(q)
+        finally:
+            io.REPO = saved_repo
+        return wrong and none and ok
+    def plan_default_blocked():   # the pre-SA-5 blocker, demonstrated: a default (non --final) failed receipt is refused even WITH
+        j, phs = sa5_job(tmp, 'blocked'); q, body, exits = guarded_parity(j, phs, 'bk', final=False, code=code)   # an exception
+        repo, head = git_repo(Path(tmp)/'sa5coord2', {'reports/strategy_council_20260928/COORDINATOR.md': f'PE: disclose {sha(q)}\n'.encode()})
+        saved_repo = io.REPO; io.REPO = repo; use_job(j)
+        try:
+            wjson(j/'data'/'PARITY-EXCEPTION.json', dict(parity_receipt_sha256=sha(q), coordinator_commit=head, decision='disclose'))
+            return raises(lambda: label.make_plan([str(p) for p in phs], str(q), str(j/'data'/'p.json')), label.PlanError, 'guard receipt')
+        finally:
+            io.REPO = saved_repo
+    def rule_unit():      # the exit rule itself: only final + arms + no error + no halt completes
+        Q = load_fresh('qualify4_sa5r', Path(code or HERE)/'qualify4.py'); base = dict(final=True, arms={}, passed=False)
+        f = Q.final_check_completed
+        return (f(base) and f(dict(base, passed=True)) and not f(dict(base, final=False)) and not f({k: v for k, v in base.items() if k != 'arms'})
+                and not f(dict(base, error='x')) and not f(dict(base, halted='owned_STOP')))
+    for name, fn in (('rule_unit', rule_unit), ('final_low', final_low), ('default_unchanged', default_unchanged), ('not_final', not_final),
+                     ('watch_refused', watch_refused), ('halted', halted), ('error_exit', error_exit), ('plan_e2e', plan_e2e), ('plan_default_blocked', plan_default_blocked)):
+        run(name, fn)
+    return out
+
+
+def test_sa5(tmp):
+    canonical_job = io.JOB
+    try: r = sa5_scenarios(tmp)
+    finally: use_job(canonical_job)
+    case('SA-5: P3 `qualify4 parity --final` under the real guard.py: low side -> guard PASSED, receipt passed=false (final, '
+         'final_mode), no STOP and no PARITY-PAUSE', r['final_low'], scenarios=r)
+    case('SA-5: without --final the behaviour is unchanged (exit 1, guard failed, PARITY-PAUSE + STOP)', r['default_unchanged'])
+    case('SA-5: --final exits 1 (no passed guard) for a non-final phase set, with --watch, on a check error, and when the final fresh '
+         'verdict halts; the exit rule completes only for final + per-arm reading + no error + no halt',
+         r['not_final'] and r['watch_refused'] and r['error_exit'] and r['halted'] and r['rule_unit'])
+    probe = Path(tmp)/'failed-probe.json'; probe.write_text(json.dumps(dict(passed=False)))
+    case('SA-5: the bless fixtures refuse a failed receipt (no test can pass a failed receipt by blessing it)',
+         raises(lambda: bless_into(Path(tmp)/'bj', probe), AssertionError, 'failed receipt') and raises(lambda: bless(probe), AssertionError, 'failed receipt'))
+    case('SA-5 end to end: real guard.py -> qualify4 parity --final -> label.make_plan accepts the failed receipt only with an '
+         'authentic exact-receipt exception (none or a wrong SHA is refused); a default-mode failed receipt stays refused (guard)',
+         r['plan_e2e'] and r['plan_default_blocked'])
 
 
 # ================================================================ SA-4 (COORDINATOR 08723c23): one-sided in-loop C7b watch
@@ -3151,7 +3296,7 @@ def main():
     canonical, canonical_repo = io.JOB, io.REPO
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
-        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_contention,
+        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_sa5, test_contention,
                   test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_r10, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)

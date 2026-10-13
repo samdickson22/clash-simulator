@@ -1,0 +1,94 @@
+{
+ "original": {
+  "rule_unit": true,
+  "final_low": true,
+  "default_unchanged": true,
+  "not_final": true,
+  "watch_refused": true,
+  "halted": true,
+  "error_exit": true,
+  "plan_e2e": true,
+  "plan_default_blocked": true
+ },
+ "original_all_pass": true,
+ "mutants": {
+  "final mode still pauses": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "final_low",
+    "not_final",
+    "halted",
+    "plan_e2e"
+   ]
+  },
+  "final flag ignored in parity": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "final_low",
+    "not_final",
+    "watch_refused",
+    "halted",
+    "plan_e2e"
+   ]
+  },
+  "final exit by verdict": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "final_low",
+    "plan_e2e"
+   ]
+  },
+  "final exit always 0": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "not_final",
+    "watch_refused",
+    "halted",
+    "error_exit"
+   ]
+  },
+  "rule ignores final": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "rule_unit",
+    "not_final"
+   ]
+  },
+  "rule ignores arms": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "rule_unit"
+   ]
+  },
+  "rule ignores error": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "rule_unit"
+   ]
+  },
+  "rule ignores halt": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "rule_unit",
+    "halted"
+   ]
+  },
+  "--watch allowed": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "watch_refused"
+   ]
+  }
+ },
+ "all_applied": true,
+ "all_killed": true
+}

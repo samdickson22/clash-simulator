@@ -257,6 +257,47 @@ detached with `start_new_session`, the study marker stripped, waits for the firs
   - The launcher leaves the watchdog unmarked in its own session; `status` works, and a second start is refused.
   - Static checks: stdlib only, verified one-by-one PID signals, no result paths.
 
+## SA-5 (COORDINATOR 5483e9d6): `qualify4 parity --final` for P3
+
+**The defect.** A failed P3 could never reach label.py's exact-receipt exception, for two reasons:
+1. `check_parity` accepts a parity receipt only through a passed guard receipt (R7), but `qualify4 parity` exits 1
+   whenever passed=false, so its guard failed.
+2. The default mode calls `pause()`, creating STOP, and only then writes its receipt. The receipt therefore completed
+   inside a STOP period, and rule H-1 excludes it.
+
+The offline test missed both because its fixture blessed the failed receipt with a synthetic passed guard receipt.
+
+**The change, in `qualify4.py` only:**
+- `parity --final` is a single final check. It never calls `pause()`, and it refuses `--watch`.
+- The step exits 0 iff `final_check_completed(receipt)`: the receipt is final, carries the per-arm reading, and has
+  neither an error nor a halt. The C7b verdict stays in `passed`, and the receipt records `final_mode: true`.
+- Without `--final`, behaviour is unchanged: the Q4 smoke check and live use still pause and exit 1.
+- label.py is unchanged. The coordinator rejected the label-side alternative.
+
+**Tests (`test_sa5`):** every check runs the REAL `guard.py` Runner over a child running the real `qualify4.main`,
+with `io.JOB` set to the fixture job.
+- A low side with `--final` passes the guard, writes passed=false, final and final_mode, and raises no STOP or
+  PARITY-PAUSE.
+- The default mode is unchanged: the guard fails, and PARITY-PAUSE and STOP appear.
+- With `--final`, each of these exits 1: a non-final phase set, `--watch`, a check error, a halted final verdict.
+- The exit rule is unit-tested on its own.
+- **End to end:** real guard → `parity --final` → `label.make_plan`. The plan accepts the receipt only with an authentic
+  exact-receipt exception; none, or a wrong SHA, is refused. A default-mode failed receipt stays refused even with an
+  exception, which is the pre-SA-5 blocker.
+- **Fixtures:** `parity_doc` never blesses a failed receipt; failed receipts now come only from the real guarded run.
+  `bless`/`bless_into` refuse any JSON whose `passed` is not True, unless the call is an explicit negative
+  (`allow_failed=True`). The only such call is the label-receipt mismatch negative, which must still be refused.
+- **Mutation check:** 9 mutants, each killed:
+  - final mode still pauses;
+  - `--final` ignored;
+  - exit by verdict;
+  - exit always 0;
+  - the rule ignores final;
+  - the rule ignores the per-arm reading;
+  - the rule ignores error;
+  - the rule ignores halt;
+  - `--watch` allowed.
+
 ## SA-4 (COORDINATOR 08723c23): the in-loop C7b watch is one-sided
 
 `supervise.parity_watch` is the only code change. qualify4 and label.py `check_parity` are unchanged.
