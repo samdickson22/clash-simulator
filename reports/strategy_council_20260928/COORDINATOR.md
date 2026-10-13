@@ -5729,3 +5729,16 @@ The owner will:
 **Throughput guard:** the owner STOPs if K4S-120 runs below about 13 games/min per host.
 
 **K4S.** No END host step on 03/04 before **14:30Z**: STOP at 13:30Z plus the 1 h gap. A2 is not ready anyway, because the integration fixes and the Sol fix-check are still pending.
+
+## 2026-10-13 12:02Z: B placement r10, C-6 ACCEPTED
+
+Placement GO 7b3fc7dc completed once. Both exit codes are 0.
+
+The stdout `complete` record is schema `b08-authority-placement-complete.v1`. It names GO 7b3fc7dc, package 89b1582e and procedure f47939b1, carries exactly one receipt (baaea907), and has `runtime_admitted=false`. Re-serialised exactly by the coordinator, it hashes to f718fde5. The owner did not save a `complete-from-stdout.json`.
+
+**C-6 audit:**
+- Revocation tip = fetched tip = bd4af8d2, an ancestor of origin/main.
+- The log from that tip carries none of baaea907, 7b3fc7dc or f6cf2f1d.
+- 0 `^REVOKED` lines.
+
+**ACCEPTED.**
