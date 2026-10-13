@@ -6297,3 +6297,24 @@ The compact receipt is `l1/receipts/b08-r5-stage-result-r1.json` (c32edb043c7b91
   - between that and 0.7 % goes to a coordinator BUS-DECISION;
   - 0.7 % or more is a STOP and a re-ruling before any claim.
 - **Disclosure:** outcome-blind only.
+
+## 2026-10-13 23:22Z: K4S A4 03 preflight refused (S7 rc 3, nothing launched); rulings PF-1 (sessions) and PF-2 (timers); A4 re-GO
+
+The 03 S7 session refused, with nothing created (receipt `LAUNCH-RECEIPT.json` 7af3ba08). There were two causes.
+
+**PF-1, the "other SSH sessions: 2" on 03.** The coordinator found the source: the coordinator's own fleetweb dashboard poller on 05 (pid 1307113), using ControlPersist=60 mux masters over the fleet key. Its quiet-file entries for 01/03/04/08 expired at 2026-10-13T00:00Z, so it resumed polling.
+- **Fixed.** `~/.config/fleet-top/quiet` now holds 127x03, 127x04 and 127x08 quiet until 2026-10-16T00:00Z. 01 stays polled, because X4S-4 does not need quiet.
+- A 90 s watch on 05 afterwards showed no new ssh to 03/04/08. The persisted masters expire 60 s after their last use.
+- Lesson: renew quiet entries together with each multi-day host-measurement plan.
+
+**PF-2, timers inside the 7,200 s clearance.** Ruled for **A4 preflights only** (non-claiming, no END attempt). The gate's 7,200 s minimum stays.
+- **Allowed through `--allow-timer`, once per unit:**
+  - `anacron.timer`: hourly in local daytime, and it is a no-op once cron.daily has run for the day.
+  - `systemd-tmpfiles-clean.timer`: a brief cleanup of old temporary files.
+  - `ua-timer.timer`: a short status refresh.
+- **Why this is safe:** any activity during a preflight hold can only raise 04's measured loaded bus, which makes the ≤0.3 % gate conservative. S5's own samples record it.
+- **Never allowed:** apt-daily and apt-daily-upgrade, man-db, logrotate, or any other unit. If any of those falls inside the clearance, wait until it has fired and its service is inactive.
+- So 03 starts only after apt-daily.timer (23:51Z) has fired and the apt units are inactive. 04 uses the same rule.
+- **For the timed END runs (A5+), no exception is granted now.** Prefer a window in local night: anacron.timer is quiet from about 06:30Z to 14:00Z. Any END timer exception needs its own ruling.
+
+**A4 re-GO.** Run 03 again with the same argv 12404bca and receive dir, plus the three `--allow-timer` entries with these justifications, once the apt-daily condition holds. Then 04 under the same GO and the same rules, after 03 is verified. All b0f49dfe conditions stand, and any further refusal stops for a ruling.
