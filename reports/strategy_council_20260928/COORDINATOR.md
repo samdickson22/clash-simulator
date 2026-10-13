@@ -4931,3 +4931,25 @@ The environment run still needs C-6 acceptance and a separate run GO. G6 must be
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 2f015cb75f11ed70f123fe6f80e242fd76ad0d16345cbac10b57f4e2e244809c
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 4c26f8a78aba1afc6797eb47dbfa72e8e7773b930ae8a8a5625d75fe579caea4
+
+## 2026-10-13 04:18Z: K4S END A1/A1b GO (read-only copy during FSC; gap kept for A2 onward)
+
+**Request:** the K4S runner's A1-GO-REQUEST (ccce58e1).
+
+**Runner's analysis:** A1/A1b are 8 short read-only logins from 05 at nice 19.
+- They copy closed records of completed K4S phases and the r4 admission JSONs.
+- They are byte- and SHA-checked, with an inode/size stability check, and take no measurements.
+- FSC writes only under its own prefixes. Login-refreshed motd stamps are re-read live before A5/S7.
+
+**Ruling.** The FSC STOP + ≥ 1 h gap applies to A2 onward: staging, S10 df/who checks, S5 preflight measurement, A5 stamps and END launches. It does not apply to A1/A1b.
+
+**GO:** A1 (S1 b987ab97) and then A1b (S1b 7515d5fe), but only if A1 exits 0. Run them exactly as in the request:
+- repo-full;
+- commit 72426428;
+- the k4s-freeze python with `-I -B` and `env -i`.
+
+Conditions:
+- Any refusal stops the sequence, with no retry.
+- No other step on 03/04.
+- Commit via `commit_paths_end.sh` only.
+- Then do the 05-only prep (S2/S9/S4/S3/RC-6) and send the A2 GO request for after the gap.
