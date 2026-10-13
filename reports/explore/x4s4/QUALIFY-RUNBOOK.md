@@ -113,6 +113,34 @@ No `pkill`, no pattern kills: every stop is the reviewed PID-only path or `J/STO
 
 Every command below runs as `ssh 127x01 '…'` from 127x05, one command per call, and I record each exit status.
 
+**S-U2: hand-off from U2 (read-only; before S0).** U2, the fit-seed replicates, may be live on 01 when the GO arrives.
+It belongs to another thread and runs only under `J2=/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013`. Its GO
+says that on "STOP U2" (the X4S-4 GO) it stops immediately and drains by PID.
+- **No touching U2.** I never write under `J2`, never signal a U2 process and never create its STOP. The coordinator
+  or U2's own thread issues "STOP U2".
+- **U2 may already be gone.** It might have finished by its own `STOP_AT` (launch + ≤ 8 h).
+- **What I wait for.** I verify, read-only, that U2 has drained, polling every 60 s:
+
+```bash
+ssh 127x01 'ls -la /mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/STOP 2>&1'             # STOP U2 recorded (or U2 finished)
+ssh 127x01 'ps -eo pid,lstart,args | grep "x4s3b-fitseed-2026101[3]"; echo __RC=done'       # must list nothing
+ssh 127x01 'for d in /proc/[0-9]*; do readlink $d/cwd 2>/dev/null; done | grep -c -F x4s3b-fitseed-20261013'   # must print 0
+ssh 127x01 'nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits; grep MemAvailable /proc/meminfo'
+```
+
+The bracket in the pattern stops the check from matching its own command line. Nothing is written on 01.
+- **Go/no-go for S0:**
+  - no process command line or working directory refers to `J2`;
+  - GPU used ≤ 8 GiB;
+  - MemAvailable ≥ 64 GiB.
+- **Why U2 must be fully drained before W0.** The watchdog's GPU and memory checks are host-wide. A still-running
+  U2 fit would be outside the study tree, so the watchdog would not stop it, but it could push GPU memory over 40 GB
+  or MemAvailable under 24 GiB. That would HALT X4S-4.
+- **If U2 is still live after 15 min:** I post its PIDs (read-only listing) to the coordinator and wait. I do not
+  stop it myself.
+- **Timing.** T starts at Q1, so this wait does not consume T. The U2 drain (about 2 min for a fit checkpoint) is
+  reported in PROGRESS.
+
 **S0: read-only preflight on 01.**
 
 ```bash
@@ -127,6 +155,7 @@ sha256sum /mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012/inputs/{main02
 
 **Go/no-go:**
 - no console user;
+- S-U2 passed: no U2 process, and U2's GPU memory released;
 - MemAvailable ≥ 64 GiB;
 - PSI ≤ 10;
 - GPU used ≤ 8 GiB;
@@ -367,7 +396,8 @@ cat $J/smoke/stoptest/supervisor-exit.json; rm $J/STOP
 About 4 min.
 
 **Expected total wall time** is about 1.7–3.3 h, plus 10–20 min of staging. It is CPU-bound on cores 0–49, and the GPU
-is idle except Q6. The order is Q0 (05) → S0–S3 → W0 (watchdog) → Q1 → Q2 → Q3 → Q4 → Q6 → Q5 → Q7 → Q8.
+is idle except Q6. The order is Q0 (05) → S-U2 (U2 drained) → S0–S3 → W0 (watchdog) → Q1 → Q2 → Q3 → Q4 → Q6 → Q5 →
+Q7 → Q8.
 Independent CPU steps never overlap phases: one supervisor phase at a time.
 
 ## G. Conditional production (Q-D1): runs only after every §6 gate passes
