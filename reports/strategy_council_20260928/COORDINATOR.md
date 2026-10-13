@@ -4784,3 +4784,20 @@ The stage run itself still needs C-6 acceptance of the placement and a separate 
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT fc424a303bca687eb7a2925d7ef1783b08b5c9846d37836a8f3439d0d040d47d
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT e49db31347ccdad5ce4d11d0982beb4830caa1204aa7b5c223aff9f00c2abab0
+
+## 2026-10-13 03:12Z: U3/U4 re-GO with FSC-1 (c7df6fac, STOP_AT 07:30Z)
+
+The coordinator verified `git diff d4c7d646 c7df6fac -- reports/explore/fsc` directly. It contains:
+- **The FSC-1 exemption.** `hostcheck.py resident` reads only `/proc/<pid>/stat` on 127x03. It requires exactly PGID 2180934 with PIDs {2180934, 2180946, 2180947}, and start_ticks 139691386 for 2180947, and treats the service as idle only if it uses ≤ 15 ticks over the preflight window. Otherwise the gate stays as before.
+- **A fresh leaf for 03,** `fsc-03-20261013b`, via 5 path constants. The failed attempt's prefix (bundle only) is left untouched.
+
+On a fresh export, the 9 offline test groups pass (coordinator rerun), including the new `test_resident_exemption`.
+
+**Approved:**
+- Move the 02:52Z attempt's local launch log and wrapper output on 05 into `fsc-sessions/attempt1-0252Z/`.
+- Replace the stop runner armed against d4c7d646. First verify that `/proc/2050067/cmdline` and its start time match the runner receipt, then `kill -KILL 2050067` and `kill 2050100`, then confirm both are gone with `ps -p`. Exact PIDs only, no pattern kill.
+- Arm a new runner with C=c7df6fac, M=2f16b70d and AT 07:30Z before the launches.
+
+**GO:** the same sequence as at 19047ce7. 03 launches first, and 04 launches only after 03 returns `__RC=0`.
+
+**Disclosed residual:** the FSC slots on 03 (cores 0–59, supervisor 62) overlap the idle service's pinned cores 48–63 and 112–127. This is harmless while the service is idle.
