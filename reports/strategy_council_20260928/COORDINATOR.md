@@ -6008,3 +6008,31 @@ This is exploration and **never adoptable**. It informs the direction: the stude
 **Next steps:** review receipt r5, deployment, stage, environment/G6, then epoch 1.
 
 **Residual risk:** code after the r4 failure point has never run on 08. If epoch 1 fails, the most likely place is an A2-equality check.
+
+## 2026-10-13 13:42Z: B combined review receipt r5 issued; F1 r6 and transport r4 pin-only verified
+
+**Receipt.** The owner's draft is issued **byte-identical**. The coordinator verified each binding against the files:
+
+| Binding | Value |
+|---|---|
+| package | a0046c1d |
+| CPU plan | d503730b |
+| deploy script | 708a1356 |
+| F1 r6 manifest | d761f33a |
+| generic r4 unbound manifest | ed1ace40 |
+| review manifest | c86ce01c |
+| delta review (Opus) | 69cc8784 |
+| prior C1 review | 8748dd6d |
+| B1–B11 review | 35b7cf4f |
+| PC-1 approval | 67fd36b1 |
+| RV-1 probe bindings | as in r4 |
+
+F1 r6 `receipt()` passes.
+
+**Pin-only checks (coordinator):**
+- **F1 r6 patch (7e21747c).** It changes only the package, CPU-plan and deploy SHAs; the r4→r5 receipt filenames, package directory and `PREFIX`; and the helper path in `placement-operator-command.sh`.
+- **Transport r4 patch (e61cd3e0).** In `transport.py` only the BUNDLE, PACKAGE and PLAN lines change, and REVIEW is set back to its placeholder. In guard, launcher and retrieval, only the transport path and SHA change (d8566f57).
+
+The owner deferred the `CLASHER_ROOT` change. The working-directory precedence risk stays disclosed.
+
+ISSUED APPROVE_B_COMBINED_REVIEW 7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96
