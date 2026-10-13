@@ -1,0 +1,161 @@
+diff --git a/x4s3/driver.py b/x4s3b/driver.py
+index 7e33e62c9..8f40f9cb5 100644
+--- a/x4s3/driver.py
++++ b/x4s3b/driver.py
+@@ -1,7 +1,7 @@
+ """X4S-3 driver on 127x01 (exploration, NEVER ADOPTABLE). Stdlib only; restartable.
+ 
+ Sequences, from on-disk state only:
+-  fits (one at a time on the GPU): R3a-rep, R4-D (after data/G-UNION-VERIFIED.json), R4-DC;
++  fits (one at a time on the GPU): X4S-3b r1-only replicates R3a-rep2, R3a-rep3 (never beside S-200);
+   calibration -> <job>/inputs/<ID>.pt (read-only) -> runtime copy <job>/rt-<ID> (plan.json student block);
+   reporting phases, one (student, arm) at a time on cores 0-49, via supervise.py, only after <job>/REPORTING.GO.
+ Guards: no new phase is dispatched while MemAvailable < 24 GiB or memory PSI some avg10 > 10%;
+@@ -13,14 +13,13 @@ later phase and never re-run. R4-DC games run only if the pooled R4-D minus R3a
+ import datetime, hashlib, json, math, os, shutil, signal, subprocess, sys, time
+ from pathlib import Path
+ 
+-J = Path('/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012')
++J = Path('/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013')
+ D = J/'driver'
+-STOP_AT = datetime.datetime(2026, 10, 12, 23, 30, tzinfo=datetime.timezone.utc)
++STOP_AT = datetime.datetime(2026, 10, 13, 11, 0, tzinfo=datetime.timezone.utc)
+ ARMS = ['K4S-120', 'S-200']
+ N = 1200
+-FITS = {'R3a-rep': dict(steps=2500, needs_data=False), 'R4-D': dict(steps=2500, needs_data=True),
+-        'R4-DC': dict(steps=5000, needs_data=True)}
+-FIT_ORDER = ['R3a-rep', 'R4-D', 'R4-DC']
++FITS = {'R3a-rep2': dict(steps=2500, needs_data=False), 'R3a-rep3': dict(steps=2500, needs_data=False)}
++FIT_ORDER = ['R3a-rep2', 'R3a-rep3']
+ STEP_SECONDS, LOAD_SECONDS = 1.9, 600
+ GPU_LIMIT_MIB = 40 * 1024
+ GPU_PY = '/mpac/sdicks02/envs/clasher-gpu/bin/python'
+@@ -93,8 +92,6 @@ class Fits:
+             if (D/f'ANOMALY-fit-{fid}.json').exists(): return  # owner must clear
+             if st == 'failed': anomaly(f'fit-{fid}', reason='fit process gone without complete.json'); return
+             if FITS[fid]['needs_data'] and not (J/'data'/'G-UNION-VERIFIED.json').is_file(): continue
+-            if fid == 'R4-DC' and gate_r4dc() is False:
+-                event(kind='skip', what='R4-DC fit', reason='R4-D minus R3a point estimate >= 0'); continue
+             if fid in UNION and (s200_live() or s200_dispatchable()):
+                 return  # S-200 phases first; the union fit waits (no overlap)
+             self.launch(fid, st); return
+@@ -149,7 +146,7 @@ class Fits:
+ # ---------------- union fit vs S-200 exclusion (PLAN: overlap only while memory PSI stays <= 10%) ----------------
+ # Measured 13:10-13:34Z: a 14-shard union fit beside 50 S-200 lanes thrashes the page cache (PSI ~80%);
+ # beside a 10-slot K4S-120 phase it does not (PSI 0.00). So union fits and S-200 phases never overlap.
+-UNION = ('R4-D', 'R4-DC')
++UNION = ('R3a-rep2', 'R3a-rep3')  # X4S-3b: keeps the no-fit-beside-S-200 rule for the replicate fits
+ 
+ 
+ def union_fit_running():
+@@ -164,7 +161,6 @@ def s200_live():
+ def s200_dispatchable():
+     retired, _ = retired_set()
+     for sid in ready_students():
+-        if sid == 'R4-DC' and gate_r4dc() is not True: continue
+         done = phase_status(sid, 'S-200', retired)
+         if any(i not in done and i not in retired for i in range(N)): return True
+     return False
+@@ -174,7 +170,7 @@ def union_fit_waiting():
+     for fid in UNION:
+         st, _ = fit_state(fid)
+         if st in ('pending', 'stopped') and (J/'data'/'G-UNION-VERIFIED.json').is_file() \
+-                and not (D/f'ANOMALY-fit-{fid}.json').exists() and not (fid == 'R4-DC' and gate_r4dc() is False):
++                and not (D/f'ANOMALY-fit-{fid}.json').exists():
+             return True
+     return False
+ 
+@@ -182,7 +178,7 @@ def union_fit_waiting():
+ # ---------------- calibration / runtimes ----------------
+ def ready_students():
+     """Students with a runtime copy, in order of readiness (R3a first)."""
+-    out = ['R3a']
++    out = []
+     for fid in FIT_ORDER:
+         if (J/f'rt-{fid}'/'READY.json').is_file(): out.append(fid)
+     return sorted(out, key=lambda s: (s != 'R3a', jload(J/f'rt-{s}'/'READY.json')['utc'] if s != 'R3a' else ''))
+@@ -211,6 +207,7 @@ def prepare_students():
+         if rt.exists(): shutil.rmtree(rt)
+         shutil.copytree(J/'base', rt, symlinks=True)
+         pj = rt/'repo/reports/explore/x4s3/plan.json'; plan = json.loads(pj.read_text())
++        plan['policy']['checkpoint'] = str(J/'inputs'/'main02.pt')  # same SHA-pinned v1 bytes, J2 copy
+         plan['student'] = dict(id=fid, checkpoint=str(dest), checkpoint_sha256=c['checkpoint_sha256'], threshold=c['threshold'],
+                                calibration_sha256=sha(cal), status=f'X4S-3 {fid} student; exploration only; NEVER ADOPTABLE')
+         pj.write_text(json.dumps(plan, indent=2)+'\n')
+@@ -298,8 +295,7 @@ def gate_r4dc():
+ 
+ def next_phase():
+     retired, _ = retired_set()
+-    order = [(sid, arm) for sid in ready_students() for arm in ARMS
+-             if not (sid == 'R4-DC' and gate_r4dc() is not True)]
++    order = [(sid, arm) for sid in ready_students() for arm in ARMS]
+     if union_fit_running():
+         order = [x for x in order if x[1] == 'K4S-120']   # never overlap a union fit with S-200
+     elif union_fit_waiting():
+@@ -360,6 +356,7 @@ def games_tick():
+ def main():
+     D.mkdir(exist_ok=True)
+     assert os.uname().nodename == '127x01' and os.getpriority(os.PRIO_PROCESS, 0) == 10
++    assert now() >= STOP_AT-datetime.timedelta(hours=8), 'STOP_AT must be <= launch + 8 h'
+     lock = D/'driver.pid'
+     other = jload(lock)
+     if other and Path(f"/proc/{other['pid']}").exists() and other['pid'] != os.getpid():
+diff --git a/x4s3/run_fit.sh b/x4s3b/run_fit.sh
+index 2d4486ec0..08e466608 100755
+--- a/x4s3/run_fit.sh
++++ b/x4s3b/run_fit.sh
+@@ -4,13 +4,15 @@
+ # steps and paths changed. Usage: run_fit.sh ID [RESUME_CHECKPOINT]
+ set -euo pipefail
+ id=${1:?}
+-J=/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012
++J=/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013
+ R1=/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1
+ extra=()
+ case "$id" in
+   R3a-rep) steps=2500; seed=2026101202 ;;
+   R4-D)    steps=2500; seed=2026101201 ;;
+   R4-DC)   steps=5000; seed=2026101203 ;;
++  R3a-rep2) steps=2500; seed=2026101204 ;;
++  R3a-rep3) steps=2500; seed=2026101205 ;;
+   *) exit 2 ;;
+ esac
+ if [[ $id == R4-* ]]; then
+diff --git a/x4s3/reduce.py b/x4s3b/reduce.py
+index 675f44b60..d7573b8d3 100644
+--- a/x4s3/reduce.py
++++ b/x4s3b/reduce.py
+@@ -11,7 +11,9 @@ from pathlib import Path
+ 
+ ARMS = ('K4S-120', 'S-200')
+ ORDER = ('R3a', 'R4-D', 'R3a-rep', 'R4-DC')
+-PAIRS = (('R4-D', 'R3a'), ('R3a-rep', 'R3a'), ('R4-D', 'R3a-rep'), ('R4-DC', 'R4-D'), ('R4-DC', 'R3a'))
++PAIRS = (('R4-D', 'R3a'), ('R3a-rep', 'R3a'), ('R4-D', 'R3a-rep'), ('R4-DC', 'R4-D'), ('R4-DC', 'R3a'),
++         ('R3a-rep2', 'R3a-rep'), ('R3a-rep3', 'R3a-rep'), ('R3a-rep3', 'R3a-rep2'), ('R3a-rep2', 'R3a'), ('R3a-rep3', 'R3a'))
++REPS = (('R3a-rep2', 'R3a-rep'), ('R3a-rep3', 'R3a-rep'), ('R3a-rep3', 'R3a-rep2'))  # X4S-3b r1-only replicate pairs
+ 
+ 
+ def utc(): return subprocess.check_output(['date', '-u', '+%FT%TZ'], text=True).strip()
+@@ -116,8 +118,9 @@ def main():
+             out['contrasts'][f'{l} minus {r} [{arm}]'] = dict(loss_change_pp=100*(sum(dl)-sum(dr))/n,
+                 ci95_pp=ci([100*sum(dl[j]-dr[j] for j in smp)/n for smp in samples]))
+         pooled = [sum(per_seed(l, arm)[k]-per_seed(r, arm)[k] for arm in ARMS)/len(ARMS) for k in range(n)]
++        bs = [100*sum(pooled[j] for j in smp)/n for smp in samples]; mb = sum(bs)/len(bs)
+         out['contrasts'][f'{l} minus {r} [pooled]'] = dict(loss_change_pp=100*sum(pooled)/n,
+-            ci95_pp=ci([100*sum(pooled[j] for j in smp)/n for smp in samples]))
++            ci95_pp=ci(bs), boot_var_pp2=sum((x-mb)**2 for x in bs)/(len(bs)-1))
+     # Pre-declared S-200 thrash-window sensitivity (PLAN): same kept-seed set for every student.
+     excl_path = a.job/'receipts'/'s200-thrash-exclusion.json'
+     if not excl_path.exists(): excl_path = Path(__file__).parent/'receipts'/'s200-thrash-exclusion.json'
+@@ -145,6 +148,11 @@ def main():
+         out.setdefault('readout', {})['fit_seed_noise_ge_4pp'] = {k: abs(v['loss_change_pp']) >= 4 for k, v in c.items() if k.startswith('R3a-rep minus R3a')}
+     if 'R4-DC minus R4-D [pooled]' in c:
+         out.setdefault('readout', {})['compute_scales_point'] = c['R4-DC minus R4-D [pooled]']['loss_change_pp'] < 0
++    terms = [(c[k]['loss_change_pp']**2-c[k]['boot_var_pp2'])/2 for k in (f'{l} minus {r} [pooled]' for l, r in REPS) if k in c]
++    if terms:  # READOUT.md: sigma_fit^2 = mean over replicate pairs of (D^2 - V)/2, floored at 0; df = fits - 1
++        s2 = max(0., sum(terms)/len(terms)); nf = len({x for l, r in REPS for x in (l, r) if x in data})
++        out.setdefault('readout', {})['sigma_fit'] = dict(sigma2_hat_pp2=s2, sigma_hat_pp=math.sqrt(s2), pair_terms_pp2=terms, df=nf-1,
++            final=len(terms) == 3, sigma_hat_ge_1pp=math.sqrt(s2) >= 1.0, rule='mean_ij (D_ij^2 - V_ij)/2 floored at 0, pooled arms')
+     a.out.write_text(json.dumps(out, indent=2)+'\n')
+     print(json.dumps({k: out[k] for k in ('utc', 'paired_seeds', 'students', 'checks')}))
+ 
