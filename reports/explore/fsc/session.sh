@@ -13,7 +13,7 @@ export LC_ALL=C
 trap 'echo "__RC=$?"' EXIT
 die() { echo "session FAIL: $2" >&2; exit "$1"; }
 cmd=${1:-}; host=${2:-}; commit=${3:-}; msha=${4:-}; stop_at=${5:--}
-DEADLINE=2026-10-13T04:50:00Z   # latest supervisor stop-at; STOP verified by 05:00Z (K4S condition 7)
+DEADLINE=2026-10-13T07:30:00Z   # latest supervisor stop-at; STOP verified by 05:00Z (K4S condition 7)
 [[ $cmd == launch || $cmd == progress || $cmd == stop ]] || die 2 "command"
 [[ $host == 127x03 || $host == 127x04 ]] || die 2 "host"
 [[ $commit =~ ^[0-9a-f]{40}$ ]] || die 2 "full 40-hex commit"

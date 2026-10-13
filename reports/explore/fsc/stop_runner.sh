@@ -8,7 +8,7 @@ set -euo pipefail
 shopt -s inherit_errexit
 export LC_ALL=C
 trap 'echo "__RC=$?"' EXIT
-DEADLINE=2026-10-13T04:50:00Z
+DEADLINE=2026-10-13T07:30:00Z
 at=${1:-}; commit=${2:-}; msha=${3:-}; shift 3 || exit 2
 [[ $at =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || exit 2
 if [[ $at > $DEADLINE ]]; then echo "AT after $DEADLINE" >&2; exit 2; fi

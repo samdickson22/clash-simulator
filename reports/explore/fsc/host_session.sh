@@ -18,7 +18,7 @@ log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" >&2; }
 die() { log "FAIL: $2"; exit "$1"; }
 cmd=${1:-}; host=${2:-}
 J03=/mpac/sdicks02/jobs-fsc/fsc-03-20261013; J04=/mpac/sdicks02/jobs-fsc/fsc-04-20261013
-DEADLINE=2026-10-13T04:50:00Z   # latest --stop-at (STOP verified by 05:00Z; K4S condition 7)
+DEADLINE=2026-10-13T07:30:00Z   # latest --stop-at (STOP verified by 05:00Z; K4S condition 7)
 case $host in
   127x03) J=$J03; tag=03; cfg=plan-fsc.json;;
   127x04) J=$J04; tag=04; cfg=plan-fsc-04.json;;

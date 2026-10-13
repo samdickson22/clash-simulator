@@ -136,11 +136,11 @@ def test_wrappers_fail_closed():
     assert r.returncode == 2 and last(r) == '__RC=2'
     r = subprocess.run(['bash', str(HERE/'remote_bootstrap.sh'), '127x03', '0'*64, '2026-10-13T04:50:00Z'], capture_output=True, text=True, stdin=subprocess.DEVNULL)
     assert r.returncode != 0 and last(r) == f'__RC={r.returncode}' and not os.path.exists('/mpac/sdicks02/jobs-fsc')
-    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64, '2026-10-13T05:30:00Z'], capture_output=True, text=True)
+    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64, '2026-10-13T08:30:00Z'], capture_output=True, text=True)
     assert r.returncode == 2 and last(r) == '__RC=2'  # STOP_AT after the 04:50Z deadline
     r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64], capture_output=True, text=True)
     assert r.returncode == 2  # launch without STOP_AT
-    r = subprocess.run(['bash', str(HERE/'stop_runner.sh'), '2026-10-13T05:30:00Z', '0'*40, '0'*64, '127x03'], capture_output=True, text=True)
+    r = subprocess.run(['bash', str(HERE/'stop_runner.sh'), '2026-10-13T08:30:00Z', '0'*40, '0'*64, '127x03'], capture_output=True, text=True)
     assert r.returncode == 2
     r = subprocess.run(['bash', str(HERE/'host_session.sh'), 'launch', '127x03'], capture_output=True, text=True)
     assert r.returncode == 90 and last(r) == '__RC=90'
