@@ -4845,3 +4845,19 @@ The END tooling is now frozen at these SHA256SUMS. The runner may do any 05-only
 - U2 continues until R3a-rep2's S-200 phase completes, which gives the interim fit-seed σ̂ (1 pair).
 - U2 then STOPs. The rep3 fit or games in progress are abandoned and disclosed.
 - U2 reports when it has drained, and X4S-4 starts S0 only after that report. The expected cost is about 1 h of X4S-4 start delay, and 01 stays busy throughout.
+
+## 2026-10-13 03:48Z: B placement r6, C-6 ACCEPTED
+
+Placement GO e49db313 completed once (operator 2c22b94e, one SSH, no retry, no extra inspection). Coordinator checks:
+- the launcher exit code is 0, and the sender's `exit.json` reports `exit_code` 0;
+- `complete-from-stdout.json` hashes to 4e31288b with schema `b08-authority-placement-complete.v1`;
+- package 7c86e49a, procedure 3fc7166d and GO e49db313 match;
+- the receipts are exactly the review receipt f50ec605 and the stage CPU GO fc424a30;
+- `runtime_admitted=false`.
+
+**C-6 audit:**
+- `revocation_tip_commit` = `fetched_tip` = ccce58e1, which is an ancestor of origin/main.
+- `git log -p ccce58e1..origin/main` contains none of the three placed or authorizing SHAs.
+- 0 `^REVOKED` lines.
+
+**Placement r6 is ACCEPTED.** Next: the stage run GO, issued from the owner's draft af547ef8 with these completion fields filled in.
