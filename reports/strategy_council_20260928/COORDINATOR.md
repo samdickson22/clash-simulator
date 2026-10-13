@@ -4522,3 +4522,23 @@ The perception-B owner correctly pointed out a conflict between U1 and the appro
 Members run on cores [0] and [1], with RLIMIT_AS ≤ 20 GiB each and starts at least 60 s apart. The epoch-1 gates are unchanged: C-4 accepted and ≤ 2,400 s.
 
 No code-change route is taken.
+
+## 2026-10-13 01:21Z: Perception B epoch-1 unit: KNOWN_FAILURE (phase exit 1); diagnosis needed
+
+**What happened.** Run GO 0ac52112 ran once through the guard at 2026-10-13 01:20Z.
+- The SSH session completed and returned a failure envelope: schema `b08-cpu-transport-result.v1`, `phase_exit_code` 1, no artifacts, `runtime_admitted` false. The launcher and sender both exited 1.
+- Every local file is timestamped within the same minute, so the phase failed almost immediately rather than mid-computation.
+- The envelope carries **no failure reason**, and stderr is empty.
+- There was no retry and no repair. All partial outputs are kept.
+
+**Effects:**
+- The G5 duration gate cannot be assessed.
+- The pair drafts for epochs 2 and 3 stay **unissued**.
+- U1 pairing stays on hold.
+
+**Next.** We need the remote failure reason, which should be in the phase's own log or claim files on 08. The B owner is to:
+- identify, offline, the exact remote files that would hold it;
+- say whether the approved generic retrieval (8ac48b0b) can read them for a KNOWN_FAILURE;
+- draft a single-use retrieval GO.
+
+**Known candidate cause, not yet evidence.** The generic-transport review flagged RLIMIT_AS interacting with a CUDA-torch import in epoch units. A fast exit-1 matches that risk.
