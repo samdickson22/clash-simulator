@@ -5524,3 +5524,15 @@ ISSUED AUTHORIZE_B_DEPLOYMENT b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc
 - add the alias tests.
 
 Then the U4 interpreter change, then a diff-only Sol fix-check.
+
+## 2026-10-13 10:49Z: B r4 deployment ACCEPTED; quiet-read r8
+
+**Deployment GO b503559c.** It ran once with exit code 0: one SSH, no inspection, no retry.
+- The `complete` record, re-serialised exactly from the returned stdout (6cd240e1), hashes to ceb6acc5.
+- It matches the GO in full: schema `b08-deployment-complete.v1`, package 89b1582e, GO b503559c, review f6cf2f1d, 334 files, 46,419,256 B, `runtime_admitted=false`.
+
+**ACCEPTED.**
+
+**Quiet-read r8.** `coordinator-quiet-read-r8.sh`, with only `Q=` changed, exit 0. Result at `l1/receipts/b08-quiet-read-r8/`.
+
+**Next:** stage CPU GO r3 and placement r9, from the owner's drafts in `b08-r4-stage-chain-drafts-r1`.
