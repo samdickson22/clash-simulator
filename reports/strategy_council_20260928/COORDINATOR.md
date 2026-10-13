@@ -4861,3 +4861,31 @@ Placement GO e49db313 completed once (operator 2c22b94e, one SSH, no retry, no e
 - 0 `^REVOKED` lines.
 
 **Placement r6 is ACCEPTED.** Next: the stage run GO, issued from the owner's draft af547ef8 with these completion fields filled in.
+
+## 2026-10-13 03:48Z: B stage run GO r2 issued (generic transport, package r3)
+
+The issued GO is the owner's draft af547ef8. The coordinator changed only these fields:
+- placement r6 completion: complete 4e31288b; launcher and sender exit codes 0; revocation and fetched tip ccce58e1;
+- C-6 acceptance commit d6ba3393;
+- `placement_c6_accepted=true`, `draft_status` READY, and the one remaining issuance blocker.
+
+The diff was checked field by field.
+
+**What it authorizes:**
+- Bound generic transport manifest 205309ae.
+- Review f50ec605, stage CPU GO fc424a30, placement e49db313.
+- 127x08 driven from 05, cpus [0,1].
+- No GPU and no heldout data.
+- One launch only, with no retry.
+
+**Window:** 2026-10-13 04:00Z to 05:00Z. No action after it ends. The first launch starts after 04:00Z.
+
+**C-5:** passed, no prior line.
+
+**After the run:** the C-4 audit, then environment drafts with G6.
+
+**Published:**
+- `l1/receipts/b-cpu-transport-run-stage-go-r2.json`
+- the 0444 copy in `v4-b-gap-review/receipts/`
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0f0f198efce295812d8690c4703292432fa6ba09ea76ddaa725e827b5ef6ce87
