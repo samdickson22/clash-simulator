@@ -6054,3 +6054,18 @@ ISSUED APPROVE_B_COMBINED_REVIEW 7dca4033021e82f10bcca3cdd988364e552ebf59690cf36
 - Pre-bind backup: `v4-b-gap-review/generic-r4-prebind-backup-*`.
 
 **Quiet-read r11.** Taken with `coordinator-quiet-read-r11.sh` (only the `Q=` line changed). Exit 0, who 0.
+
+## 2026-10-13 13:43Z: B package-r5 deployment GO issued
+
+**Source.** This is the owner's draft fd5d2f41. The coordinator changed only these fields:
+- the quiet-read r11 observation (76009c7a at c74d0794, who 0);
+- the generic binding status, now COORDINATOR_BOUND_VERIFIED_OFFLINE with manifest 55ba8ad7;
+- `draft_status` and the blocker.
+
+**Checks.** r5 `deploy_b08.authority()` passes with review 7dca4033, package a0046c1d and script 708a1356. C-5 is clean.
+
+**What it authorizes:** deploying package r5 to 127x08 through F1 r6, writing only to fresh `*-a0046c1d27bf` prefixes on cpus [0,1]. One SSH, no retry. No GPU and no heldout data.
+
+**Window:** 14:30Z to 16:00Z. At most one failure inspection, per the GO, and it must finish by 16:30Z.
+
+ISSUED AUTHORIZE_B_DEPLOYMENT c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c

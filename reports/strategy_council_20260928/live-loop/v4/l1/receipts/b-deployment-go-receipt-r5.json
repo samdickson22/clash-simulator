@@ -1,0 +1,81 @@
+{
+  "available_bytes": 1216483713024,
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_DEPLOYMENT",
+  "deployment_launcher_sha256": "4f571ae20ea923bd73be7671c62d54553622387ab1049fe4c3d0595e17351e51",
+  "deployment_record_prefix": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-${DEPLOY_GO_SHA}",
+  "deployment_script_sha256": "708a1356438ba67363e532eeeac4ba8c03c69d50144661fa96c07bf57da6051d",
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "execution_preconditions": [
+    "Only verified F1 r6 detached launcher/operator with exact pinned bytes.",
+    "All existing local launcher/operator claims for this GO must be absent; any claim means no relaunch.",
+    "Coordinator authenticates full recursive single-ISSUED closure and no STOP/revocation before invocation.",
+    "Exactly one deployment inside issued window; one SSH, no preprobe, no retry; preserve all partials.",
+    "Only fresh r5 code/upload/review-package prefixes plus GO journal; retain every earlier package prefix.",
+    "Completion requires operator exit-code and authenticated deployment complete.json; launcher PID is not completion.",
+    "Coordinator accepts complete.json before first placement. No CPU/phase launch under deployment authority.",
+    "At most one read-only failure inspection if expressly retained in issued GO, after recorded nonzero exit, before expiry; no retry.",
+    "Before issuance, coordinator verifies both pin-only diffs, issues the exact review receipt and checks actual transport binding equals the projected manifest. Recalculate all dependent pins if any issued bytes differ."
+  ],
+  "expires_epoch": 1791907200,
+  "failure_inspection": {
+    "expires_epoch": 1791909000,
+    "helper_sha256": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+    "listing_and_sha_only": true,
+    "max_sessions": 1,
+    "only_after_nonzero_or_timeout": true,
+    "operator_command": "/usr/bin/env -u BASH_ENV -u ENV PATH=/usr/bin:/bin CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 /usr/bin/taskset -c 0,1 /usr/bin/nice -n 19 /mpac/sdicks02/venvs/perception-b-dev/bin/python -I -B -s /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-authority-placement-review-r6/operator_inspect_once.py --go-sha256 \"$DEPLOY_GO_SHA\" --helper-sha256 d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+    "operator_script_sha256": "aefc5f125458b726a9054ea9b3d389d83462e0df4db2ff32f756fba410e9fd9f",
+    "read_only": true,
+    "script_sha256": "26d11ac8ed3a46fa5874913f8dce797d4e85db524f98beaf35efe7cb0fbcfc97"
+  },
+  "git_sources": {
+    "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-combined-review-receipt-r5.json"
+  },
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "issuance_blockers": [
+    "Coordinator verifies publication/C5 and issues exact signed path; separate explicit deployment GO required."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-deployment-go-receipt-r5.json",
+  "no_retry": true,
+  "not_before_epoch": 1791901800,
+  "observation_provenance": {
+    "commit": "c74d07947b7b5f41a6c330f902f76ad558c9cdd4",
+    "sha256": "76009c7ab8fdcbf0fc93184e1df4a27d3d996de1e13094b281b679b883753092",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r11/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T13:42:36.407625+00:00"
+  },
+  "operator_command": "/usr/bin/env -u BASH_ENV -u ENV PATH=/usr/bin:/bin /mpac/sdicks02/venvs/perception-b-dev/bin/python -I -B -s /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-authority-placement-review-r6/launch_deploy_detached.py --go-sha256 \"$DEPLOY_GO_SHA\" --review-sha256 \"$REVIEW_RECEIPT_SHA\"",
+  "operator_script_sha256": "ec48a751b4541684928414de08fd5d90fa57f884279018335b088ac884126deb",
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "payload_destination_prefixes": [
+    "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-a0046c1d27bf",
+    "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/upload-a0046c1d27bf",
+    "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/review-package-a0046c1d27bf"
+  ],
+  "retained_probe_disk_evidence": {
+    "available_bytes": 1218681679872,
+    "capacity_bytes": 2015104376832,
+    "coordinator_commit": "b2acad3d8b99192a16f1e099b866f69684a875c8",
+    "does_not_establish_who_or_future_quiet": true,
+    "observed_utc": "2026-10-13T09:25:44Z",
+    "raw_sha256": "49e8d915901f8dcd4927ebebc85bb98c221d385f342e1cd0a47afe88d4044a89"
+  },
+  "review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+  "review_status": {
+    "combined_review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+    "combined_review_sha256": "69cc87846ccb6dda42543ce94a8d15cd220d91b327ae2520e7497fe2d3c5bc7f",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "55ba8ad7db6ee18f91bb6ea2d89e1a3b11f80cc0f0f20ff82a7f68b25bf13198",
+    "package_approval_commit": "67fd36b1c2868d58a545fe8191ea0f6ce754d60b",
+    "transport_binding_plan_sha256": "949e3b2b1b6d594f30b52849b166c4a4e8fb3ecb3bf31ca7cf699ac6fd26504c"
+  },
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-deployment-go-receipt-r5.json",
+  "who_count": 0
+}
