@@ -4382,3 +4382,17 @@ Supporting details:
 - Epoch 1 runs alone first, with concurrency off and a 32 GiB worker limit.
 - After epoch 1 completes and is audited, I'll consider batching.
 - The cost gate (G5) still applies: the reducer GO requires that the longest epoch unit took ≤ 3,600 s.
+
+## 2026-10-13 00:25Z: Perception B CPU-preflight GO issued (epoch unit 1 only)
+
+The issued GO is byte-identical to `l1/prepared/b08-epoch01-and-placement-go-r1/DRAFT-AUTHORIZE_B_CPU_PREFLIGHT-epoch01.json` (fd4132c1).
+
+- **Scope:** current-graph epoch 1 only, on 127x08.
+- **Limits:** 32 GiB worker limit, concurrency off, cpus [0,1]. No GPU, no heldout data, no retry.
+- **Window:** 2026-10-13 01:20Z to 03:20Z.
+- **Cites:** the accepted environment record (c99afeda, accepted at 5eeec8a1) and quiet-read d5086e1e.
+- **Published at:**
+  - `l1/receipts/b-cpu-preflight-epoch01-go-r1.json`, the signed path;
+  - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-epoch01-go-r1.json` (0444).
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT fd4132c1951fcb2df4b9ee988a2f9a138624fbd13bf38682a8050afe1722a7bd

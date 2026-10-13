@@ -1,0 +1,98 @@
+{
+  "available_bytes": 1220889788416,
+  "code_root": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9",
+  "concurrency_enabled": false,
+  "cpu_preflight_plan_sha256": "8d5d338e269ef4c3e56dbf3f90b3017c5a8e628e46baef5388322ae8eb319ea6",
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_CPU_PREFLIGHT",
+  "deployment_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9be5d1396e79b1a/complete.json",
+    "sha256": "46fad651c776ec847660f03c003727826b1488065ec19dd7060ae0f944cac9e9"
+  },
+  "deployment_prerequisite": {
+    "complete_sha256": "46fad651c776ec847660f03c003727826b1488065ec19dd7060ae0f944cac9e9",
+    "coordinator_acceptance_ledger_commit": "4d685b554abac07329f60b22b376102a9c065fa5",
+    "go_sha256": "06f8d1b0721f12f6ff9ab3153f01a09df7ca11843297d572f9be5d1396e79b1a",
+    "status": "ACCEPTED"
+  },
+  "environment": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-0925060b75dc26220bdd802a0ce25c647bf44f7e611d652211bd204988a40fc5/environment.json",
+    "sha256": "c99afedac4556bc497b6b160fbf61a07236f77f5c74d33a6bd400aac4bb2a9ab"
+  },
+  "environment_prerequisite": {
+    "audit": "C-4 CLEAN; G6 PASS against historical Python/torch/CUDA/numpy/opencv/ultralytics record",
+    "coordinator_acceptance_ledger_commit": "5eeec8a1f88ed6efaffa75aa175d54c08049fab2",
+    "observation": {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-0925060b75dc26220bdd802a0ce25c647bf44f7e611d652211bd204988a40fc5/environment.json",
+      "sha256": "c99afedac4556bc497b6b160fbf61a07236f77f5c74d33a6bd400aac4bb2a9ab"
+    },
+    "status": "ACCEPTED"
+  },
+  "epoch": 1,
+  "execution_preconditions": [
+    "Coordinator commits this epoch1 CPU GO at git_publication_path with its single anchored ISSUED line before placement r4 issuance.",
+    "Placement r4 completes and coordinator accepts its C-6 audit before issuing the run GO.",
+    "Use only the unchanged approved generic transport/launcher/guard under review62cf641a section9 and the separate coordinator-issued run GO.",
+    "Separate explicit epoch1 run GO required; CPU01:20\u201303:20Z,run01:20\u201302:20Z; launch in first30minutes. One attempt, no retry or extension.",
+    "Epoch1 runs alone. No other epoch, group or reducer is authorized. Coordinator audits this receipt and its duration before deciding subsequent batching.",
+    "Stop on coordinator STOP/revocation, nonzero or UNKNOWN; preserve partials; no inspection or repair without separate authority."
+  ],
+  "expires_epoch": 1791861600,
+  "g6_environment_accepted": true,
+  "git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch01-go-r1.json",
+  "gpu_authorized": false,
+  "graph_unit": "epoch",
+  "heldout_authorized": false,
+  "host": "127x08",
+  "interpreter": "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+  "interpreter_flags": [
+    "-B",
+    "-s"
+  ],
+  "nice": 19,
+  "no_retry": true,
+  "not_before_epoch": 1791854400,
+  "observation_provenance": {
+    "commit": "b2c367e6ccfaa792debda13971ad99c23623d16e",
+    "sha256": "d5086e1e773b656b771f01ca66654dc4af3168b0c3bd840ac7fd15bc98d29ccf",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r2/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-12T23:21:49.439240+00:00"
+  },
+  "one_attempt_per_go": true,
+  "operator_command": "env -u BASH_ENV -u ENV PATH=/usr/bin:/bin PYTHONPATH=/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9/src CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 0,1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -s /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9/b08_cpu_preflight.py --phase current-graph --epoch 1 --plan /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/review-package-374325696dc9/cpu-preflight-plan.json --plan-sha256 8d5d338e269ef4c3e56dbf3f90b3017c5a8e628e46baef5388322ae8eb319ea6 --review /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282.json --review-sha256 59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282 --go /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/${CPU_GO_SHA}.json --go-sha256 ${CPU_GO_SHA} --package-sha256 374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "operator_variable": {
+    "CPU_GO_SHA": "Full SHA256 of this byte-identical coordinator-issued CPU GO; resolve after issuance"
+  },
+  "package_sha256": "374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "phase_scope": "CPU-only current-graph epoch unit 1 in one fresh process: verify frozen code/environment and exact epoch inputs against the nine retained A2 bound rows; write only its exclusive epoch receipt. No reducer/candidate, GPU work, heldout access or refit.",
+  "phases": [
+    "current-graph"
+  ],
+  "process_environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONPATH": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-374325696dc9/src"
+  },
+  "review_receipt_sha256": "59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282",
+  "scientific_constraints": "C1 qualification references are SHA-only; selected decoder input SHAs, mapping, R16, verified_bounds, A1 bytes and recovered sources remain unchanged. T6 verification is not repeated; Tier2 and heldout remain disabled.",
+  "stage_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-ca6b5ac89accaa513cb81ea21c1f2c3c40338ef724b6703c0d8fde032d7ca891/complete.json",
+    "sha256": "da9df44b6759a0e569438ace345f1d4ea52a0b7b8a9f92ce10e2ff0533e00f7d"
+  },
+  "stage_prerequisite": {
+    "audit": "C-4 CLEAN",
+    "complete_sha256": "da9df44b6759a0e569438ace345f1d4ea52a0b7b8a9f92ce10e2ff0533e00f7d",
+    "coordinator_acceptance_ledger_commit": "9f3c406efe84534192457d141ad353c056670350",
+    "go_sha256": "ca6b5ac89accaa513cb81ea21c1f2c3c40338ef724b6703c0d8fde032d7ca891",
+    "status": "ACCEPTED"
+  },
+  "who_count": 0,
+  "worker_address_space_limit_bytes": 34359738368
+}
