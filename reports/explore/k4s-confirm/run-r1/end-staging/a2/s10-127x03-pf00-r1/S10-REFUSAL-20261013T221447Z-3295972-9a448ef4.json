@@ -1,0 +1,25 @@
+{
+ "code": "interpreter",
+ "component": "S10",
+ "context": {
+  "host_paths_created_or_attempted_needing_authorized_cleanup": [],
+  "logins": [
+   {
+    "host": "127x03",
+    "label": "P-check",
+    "request_sha256": "44ddd6d13787a7b6334a7d3ee2d929943af3d786d5ac85ca0dc02c3a5fcf84a5",
+    "utc": "2026-10-13T22:14:45Z"
+   },
+   {
+    "host": "127x03",
+    "label": "P-facts",
+    "utc": "2026-10-13T22:14:45Z"
+   }
+  ],
+  "started_utc": "2026-10-13T22:14:00Z"
+ },
+ "pid": 3295972,
+ "reason": "interpreter: declared interpreter /mpac/sdicks02/repos/clasher/.venv/bin/python cannot import ['cv2', 'scipy']: {'cv2': {'error': \"ModuleNotFoundError: No module named 'cv2'\", 'ok': False}, 'scipy': {'error': \"ModuleNotFoundError: No module named 'scipy'\", 'ok': False}}",
+ "schema": "clasher.k4s.safe-input-refusal.v1",
+ "utc": "2026-10-13T22:14:47Z"
+}

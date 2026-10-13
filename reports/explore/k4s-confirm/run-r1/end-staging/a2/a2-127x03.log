@@ -1,0 +1,8 @@
+__START s10-pf00 2026-10-13T22:14:00Z
+S10 REFUSED: interpreter: declared interpreter /mpac/sdicks02/repos/clasher/.venv/bin/python cannot import ['cv2', 'scipy']: {'cv2': {'error': "ModuleNotFoundError: No module named 'cv2'", 'ok': False}, 'scipy': {'error': "ModuleNotFoundError: No module named 'scipy'", 'ok': False}}
+S9 VERIFY OK: manifest 9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43; runtime_files fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7; inventory 74fc01a72632e813d8a51511f304d1aa7561914fd095c5b1fadba1ca8f4092b5
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-pf00/k4s-end-guard-r1-pf00 manifest a068acdd508b5da79fa5b786784c98215ff5bae7e2bb0b283c0fc7ec18c2ff50
+[2026-10-13T22:14:45Z] ssh P-check 127x03
+[2026-10-13T22:14:45Z] ssh P-facts 127x03
+__RC s10-pf00 2 2026-10-13T22:14:47Z
+__EXIT=2 2026-10-13T22:14:47Z
