@@ -6343,3 +6343,12 @@ The 03 S7 session refused, with nothing created (receipt `LAUNCH-RECEIPT.json` 7
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 1765daf2669152bf044467d78862cb2cbe7b8868edfddc0161a83cdaf0ab5a56
+
+## 2026-10-13 23:36Z: X4S-4 HR-2 Sol r2: F1–F3 closed; one completion-order regression (HR2R2-F1); r3 gets a coordinator direct check
+
+HR-2 r2 is at 62a5456e. Sol r2 (`x4s4-review/SOL-FIXCHECK-HR2-r2.md`, 1b6c003fb1baeb03e9c06fac6acdcce76426f131bdd9330e79c6e07a269f2354) finds:
+- F1 (start transition), F2 (late return) and F3 (monotonic freshness) closed in both lanes, with the fast-lane late-return breach intended.
+- **HR2R2-F1:** the last-good result is published before its pass is marked complete, so a false HALT is possible right at the budget. Reproduced: a 119.964 s pass HALTed at 120.018 s.
+- **N1 (non-blocking):** the shared-state table omits `Tree.known`/`readout_known`, shared between the fast scan and teardown. That is a pre-existing teardown-overlap residual and will be documented. It also omits the constant fields and the logging threads.
+
+This is the third round, so under PR-1 the coordinator checks the r3 diff directly. The restart procedure stays pre-approved.
