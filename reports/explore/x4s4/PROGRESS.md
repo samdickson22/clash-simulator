@@ -465,3 +465,40 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   5. W0, then a P3-r3 check that reproduces inventory aadafb16.
   6. P5-r2 onward.
   Alternative (b): a clean restart in J2 with a runbook r2 (about 19 h). Awaiting the coordinator's choice.
+
+## 2026-10-13T12:38Z — GO 9a1613fc (HR-1 path a): J continues under T2; W0 PASS; P3-r3 reproduces P3-r2
+
+- Step 1, HR-1 install: `git archive af123084` into J/staging/hr1, then base, rt-R3a and rt-R3a-rep: PASS ×6.
+  - watchdog.py aad317db… → **dacd6d7f47442775c3dda8ad1e2ac4efdc28a0d0d56110a9b7d7495bbe0ad25e**.
+  - studytree.py 39b0c151… → **b1a964f5c4d7dc74ee320edc55f07ae57c5baffa7a17921062bb4aff15b4f05f**.
+  - The first attempt stopped at the staged-SHA check, because I had swapped the two expected SHAs (also swapped in my
+    HR-1 message to the coordinator). Nothing was installed by it.
+  - RUNTIME-INVENTORY re-sealed: r3 (77582290…) kept; new
+    8389b158b8cb0c8240d9dd9fef0c87e74bd2b5d2f91dc447b60708db24415c5e; all 12 entries match. Staging transcript 502cdecf….
+- Before-inventory of J, taken after step 1 (62,661 entries; path/type/size/mtime/mode/link, SHA-256 for regular
+  files ≤ 64 MiB): x4s4-inv-before.jsonl 9ec05706…, gz 110a2802…. Script x4s4-inv.py f03124c1….
+- Step 2: watchdog pid 3283869, starttime 165713612, verified against watchdog/pid.json and its cmdline. SIGTERM at
+  12:36:55Z; it exited.
+- Step 3: HALT.json moved to receipts/halt-r1/HALT.json, unchanged (67e792c0…). The dangling STOP link was kept
+  (mtime 1791892678.184).
+- Step 4: `watchdog.py resume` recorded the HALT window as the STOP period [1791892678.184 (11:57:58.184Z),
+  1791895022.219 (12:37:02Z)]. STOP was removed.
+- Step 5: grep found no consumer listing data/ except for label-receipt-* names. data/raw-O (523 game dirs, 38,704
+  entries) was moved to data/halted-r1/raw-O.
+- Step 6: HARD-STOP-UTC.txt (bf6804f0…) went to receipts/halt-r1/HARD-STOP-UTC.r1.txt, and receipts/T.json (002f86db…)
+  to receipts/halt-r1/T.r1.json.
+  - **T2 = 2026-10-13T12:37:13Z.** HARD-STOP-UTC.txt = 2026-10-14T12:37:13Z (0444, 7165844f…).
+  - receipts/T2.json (0444) 04c2447d776a4cd16d900ecf6d14fbe5ce8a79bf160e5350c6baa582e212d42b.
+- After-inventory (62,664 entries): 6ab3a856…, gz 034afd12…. Diff:
+  - all 38,704 raw-O entries are identical (type, size, SHA, mtime) under data/halted-r1/raw-O;
+  - gone: HALT.json, STOP, receipts/T.json;
+  - new: T2.json and receipts/halt-r1/{HALT.json, HARD-STOP-UTC.r1.txt, T.r1.json};
+  - changed: only HARD-STOP-UTC.txt and watchdog/stop-periods.jsonl (two appended lines).
+- Step 7, W0: the runbook command. The watchdog is pid 657762 (own session, nice 10, core 62, no X4S4_* env).
+  Deadline 1791981433. Disk via the walk: 32.99 GB, 0 vanished. Status ok, rc 0.
+- Step 8, P3-r3 (check only): `$GRD --name p3-parity-r3 … qualify4.py parity --phases <3 phases> --bank collection
+  --min-games 100 --final`. Guard passed, rc 0 (d92541b6…). parity-collection-r3.json d12bd561….
+  - **inventory_sha256 aadafb16…, the same as r2**; the inventory list, phase evidence and arms are identical.
+  - Readings: K4S-120 62.46 / 21.53 / 0.15; S-200 63.32 / 0.00 / 0.06.
+  - So the carried-over evidence holds under the T2 H-1 history.
+- Next, step 9: P5 with new guard names (p5-label-O-r2, then holdout).
