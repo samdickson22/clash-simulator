@@ -79,3 +79,26 @@ imprecise either way; that is disclosed with the number.
   the driver invokes it through `bash`.
 - The driver rewrites each new student runtime's `policy.checkpoint` to the J2 copy of main02.pt (same SHA pin
   d77005d5, asserted by run.py), so the reporting games read nothing from J.
+
+## Amendment U2b (pre-declared before any U2b game; COORDINATOR d28ce370)
+R3a-rep3's games (fit and calibration done on 01: checkpoint 43621ce4, threshold 0.49953630566596985) run on
+127x03 and 127x04, CPU only, under `/mpac/sdicks02/jobs-x4s3b/rep3-20261013/`, with the X4S-3 runtime copy
+`rt-R3a-rep3`. Only changes: host tuples in run.py:300, supervise.py:72 (→ 127x03/127x04) and reduce.py:53
+(→ 01/03/04), the two checkpoint paths in the runtime plan, and index files.
+- **Split:** 03 plays indices 33–615 ([idx-rep3-03.json](idx-rep3-03.json), 583), 04 plays 616–1199
+  ([idx-rep3-04.json](idx-rep3-04.json), 584); each host runs K4S-120 then S-200, so both arms of a seed share a host.
+  Seeds, decks, opponent, cores 0–49, nice 10 are unchanged.
+- **Identity gate per host:** K4S-none(R3a) on X4S qualification indices [0, 1] must reproduce `command_sha256`
+  af630cf0… and d530982b…; a host with any mismatch is not used.
+- **Stop:** `--stop-at 2026-10-13T13:30:00Z` in every supervisor; STOP before 13:30Z; throughput guard: STOP if
+  K4S-120 runs below about 13 games/min on a host.
+- **Counting rule:** rep3 is reduced only if all four rep3 phases (2 hosts × 2 arms) end rc 0, reason null, with all
+  their indices, before STOP; otherwise the interim readout (1 pair) stands.
+- **Primary final readout:** the 3-pair σ̂_fit formula above, with rep3's games from 03/04. The pairs rep3−rep and
+  rep3−rep2 cross hosts: a host effect δ adds about δ² to each of those two terms, so σ̂_fit is biased **upward**
+  (conservative for the ≥ 1.0 pp question). Disclosed with the number.
+- **Secondary (only if complete):** a host control, R3a-rep2 re-played as rep2′ on the same split and hosts
+  (S-200 first, then K4S-120), best effort. If rep2′ completes in both arms on both hosts (same counting rule),
+  report the within-host estimate σ̂_w² = max(0, mean of (D²−V)/2 over {rep2−rep on 01, rep3−rep2′ on 03/04}), 3 fits,
+  df 2, and rep2′−rep2 (same fit, host 03/04 vs 01) descriptively as the host effect. If only rep2′ S-200 completes,
+  report rep2′−rep2 [S-200] descriptively only.

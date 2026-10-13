@@ -50,7 +50,7 @@ def load_student(job, sid, plan, retired, checks):
                 assert r['loss'] == float(m['winner'] is not None and m['winner'] != m['seat'])
                 assert m['seat'] == i % 2 and m['channel']['peak_pending'] <= 1
                 assert s['worker_affinity'] == proof['slot_cores'][:width] and set(proof['slot_cores']) <= set(range(50))
-                assert s['nice'] == 10 and s['scheduler'] == 0 and s['host'] == '127x01' and s['worker_pid'] == proof['worker_pid']
+                assert s['nice'] == 10 and s['scheduler'] == 0 and s['host'] in ('127x01', '127x03', '127x04') and s['worker_pid'] == proof['worker_pid']
                 assert all(not e['during_decision'] for e in s.get('gc_maintenance', []))
                 pc = s['policy_cache_counts']; assert pc['forward'] == pc['fallback'] == s['policy_polls'][str(m['seat'])]
                 for wall, dd in zip(s['latency_seconds'], s['deadline_stats']):
