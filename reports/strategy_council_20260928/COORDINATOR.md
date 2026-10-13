@@ -4411,3 +4411,37 @@ The issued GO is byte-identical to `…/b08-epoch01-and-placement-go-r1/DRAFT-AU
   - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r4.json` (0444).
 
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 18f17da0405e4b741845e72da24752b35c20332cdfe6b37920d94ea6e9318bc9
+
+## 2026-10-13 00:47Z: X4S-4 script review r8: REQUEST_CHANGES (8); scope ruling SR-1, an external watchdog as the host-safety backstop
+
+**Review.** Sol r8 is `/mpac/sdicks02/jobs/clasher/x4s4-review/SOL-REVIEW-SCRIPTS-r8.md` (bc8255f0). The R7 cases are repaired and all 116 tests pass, but there are 8 new findings. Each round has added in-process guard machinery and each round finds new gaps in it. The finding count went 18 → 10 → 8 → 6 → 4 → 3 → 3 → 8. This loop is no longer converging.
+
+**Ruling SR-1 (coordinator, owner decision).** Host safety on 01 moves to **one small, independent, external watchdog**. It is the authoritative backstop and runs outside the study's process tree. The in-process guards stay as defence in depth, and they are no longer required to be perfect.
+
+**Watchdog requirements:**
+- A single short file, stdlib only.
+- It starts before any study process and has its own launcher.
+- Every ≤10 s it checks:
+  - STOP;
+  - the hard deadline;
+  - MemAvailable;
+  - PSI;
+  - study-tree process count and RSS/PSS;
+  - disk use under the job prefix (bounded measurement);
+  - GPU memory (bounded).
+- On any breach or measurement failure, it writes a durable **HALT marker**. It then stops every study-tree process, identified by verified (pid, starttime) and killed one by one by PID, with no group signals. It re-scans until the tree is empty.
+- It never reads results.
+- Its own blocking calls are bounded by timeouts. If its loop stalls for more than 30 s, that is itself a HALT.
+
+**What stays blocking: integrity, not resource enforcement.**
+- **R8-F4.** Every consumer must refuse any dependency that lacks its matching guard receipt.
+- **New rule H-1.** Any output whose completion time is at or after a HALT marker, or after STOP or the deadline, is never counted. All consumers and the reducer enforce this.
+
+**Non-blocking findings.** R8-F1, F2, F3, F5, F6, F7 (including the late READY, which H-1 covers) and F8 become disclosed residuals, because the watchdog covers them. Fix them only if trivial.
+
+**Sol r9 scope:**
+1. the watchdog;
+2. the R8-F4 fix and H-1;
+3. a check that nothing in r8/r9 regresses correctness, evaluation identity, outcome-blindness or I/O confinement.
+
+If Sol approves, the qualification-plus-conditional-production GO follows Q-D1 to Q-D4.
