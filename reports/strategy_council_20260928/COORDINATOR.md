@@ -5021,3 +5021,38 @@ The coordinator verified that at both 04c068f5 and origin/main the files have th
 3. Rerun the full S2 with `__init__` added. Then the overlay, S3 and W0, as written.
 
 No script changes. Any further S2 failure stops the run again.
+
+## 2026-10-13 05:02Z: B environment r3 C-4 + G6 ACCEPTED; 08 quiet-read r6
+
+**Environment run e09712aa** (CPU 2f015cb7) ran once and reported SUCCESS. Launcher and sender exit codes were both 0.
+- `environment.json` is 65579011 with schema `b08-environment-observation.v1`. It records:
+  - package 7c86e49a and stage ace2d686;
+  - interpreter `/mpac/sdicks02/envs/clasher-gpu/bin/python` (Python 3.12.12);
+  - `cuda_imported=false`, `runtime_admitted=false`.
+- `result.json` is f139dc54.
+
+**C-4 audit:**
+- The claim tip 283125ad is an ancestor of origin/main.
+- `git log -p` from that tip contains none of 2f015cb7, e09712aa, 4c26f8a7 or f50ec605.
+- 0 `^REVOKED` lines.
+
+**C-4 ACCEPTED.**
+
+**G6:** the coordinator compared the versions against the approved environment of 2026-10-08:
+
+| Package | Observed |
+|---|---|
+| Python | 3.12.12 |
+| torch | 2.7.1+cu118 (`torch/version.py` cuda 11.8, git e2d141db) |
+| numpy | 1.26.4 |
+| opencv-python | 4.10.0.84 |
+| ultralytics | 8.1.24 |
+
+All match. **G6 PASS.**
+
+**Quiet-read r6:** `evidence/coordinator-quiet-read-r6.sh` (70134967), with only `Q=` changed. Exit 0, one SSH. `l1/receipts/b08-quiet-read-r6/observation.json` (6a010615):
+- who 0;
+- 1,218,681,729,024 B available;
+- loadavg 0.14.
+
+**Next:** epoch-1 CPU GO and placement r8, issued from the owner's drafts. The run GO follows C-6.
