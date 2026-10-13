@@ -5965,3 +5965,18 @@ This is again a package-content defect. Nothing was damaged.
 - Then Opus checks the diff, and the r5 chain runs as before. Deployment, stage and environment must be redone because the package SHA changes.
 
 This is the third package-content gap in a row: the B r3 truth payloads, the r3 C1 roles, and now r4's `gamedata.json`. The closure audit is meant to end this class of failure in one pass.
+
+## 2026-10-13 13:19Z: FSC result recorded (f840f042): always-on student cutoff default supported (exploration)
+
+**Primary result.** Over 6,400 fresh paired X-deck seeds across 03 and 04, K4S-200 minus K4-200 = **−0.50 pp [−1.30, +0.30]**. The upper bound is below +1.0 pp, so the pre-declared outcome is "always-on supported".
+
+**Secondary results:**
+- **0.9× budget (descriptive):** K4S-180 minus K4-180 = −1.60 pp [−3.33, +0.13]. Pooled with X4S2 phase E: −1.76 pp [−3.29, −0.24].
+- **Earlier estimate:** X4S's +2.2 pp from 600 seeds was most likely noise.
+
+**Quality checks:**
+- The mirrors are complete, and every host prefix is complete.
+- Both STOP proofs passed.
+- Every disclosure is in RESULTS.
+
+This is exploration and **never adoptable**. It informs the direction: the student default costs nothing measurable at full speed and helps under time pressure. Confirmation is the K4S END line.
