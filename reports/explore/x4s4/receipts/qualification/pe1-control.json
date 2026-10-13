@@ -1,0 +1,61 @@
+{
+ "arms": {
+  "K4S-120": {
+   "decisions": 924,
+   "evaluated": true,
+   "games": 8,
+   "pct": {
+    "cutoff": 56.06060606060606,
+    "overrun": 0.0,
+    "student_default": 16.125541125541126
+   },
+   "within_2pp": {
+    "cutoff": false,
+    "overrun": true,
+    "student_default": false
+   },
+   "x4s3_r3a": {
+    "cutoff": 64.2,
+    "overrun": 0.16,
+    "student_default": 22.3
+   }
+  },
+  "S-200": {
+   "decisions": 1056,
+   "evaluated": true,
+   "games": 8,
+   "pct": {
+    "cutoff": 55.77651515151515,
+    "overrun": 0.2840909090909091,
+    "student_default": 0.0
+   },
+   "within_2pp": {
+    "cutoff": false,
+    "overrun": true,
+    "student_default": true
+   },
+   "x4s3_r3a": {
+    "cutoff": 75.3,
+    "overrun": 0.14,
+    "student_default": 0.0
+   }
+  }
+ },
+ "band_pp": 2.0,
+ "bank": "smoke",
+ "both_arms_evaluated": true,
+ "check": "pe1-control",
+ "code_commit": "d09bdef9aecc416cb83b002fcff002ff57579fde",
+ "inventory_sha256": "e21ce368f6eac50ad52596ad31a5dc4d713bc6aa6b6da9d34f46aa9eb9286ac6",
+ "label": "X4S-4 PE-1 control check, exploration, NEVER ADOPTABLE",
+ "min_games": 8,
+ "out_of_band": [
+  "K4S-120",
+  "S-200"
+ ],
+ "passed": false,
+ "phases": [
+  "/dev/shm/x4s4-pe1/job/smoke/eval-K4S-120",
+  "/dev/shm/x4s4-pe1/job/smoke/eval-S-200"
+ ]
+}

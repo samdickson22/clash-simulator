@@ -1,0 +1,36 @@
+{
+  "schema": "x4s4.ow-acceptance.v2",
+  "utc": "2026-10-13T05:47:46Z",
+  "bank": "qualification",
+  "base": 4503606337370496,
+  "games": [
+    {
+      "g": 0,
+      "seed": 4503606337370496,
+      "index": 56,
+      "seat": 0,
+      "own": 0,
+      "opponent": 0,
+      "roots": 153,
+      "manifest_sha256": "0b581e714317bf21f05bb67e8126b1bdbec533d91b992d102d51f4fa79d5ab1b",
+      "replay_exact": true,
+      "status": "sealed"
+    },
+    {
+      "g": 1,
+      "seed": 4503606337370497,
+      "index": 57,
+      "seat": 1,
+      "own": 1,
+      "opponent": 0,
+      "roots": 111,
+      "manifest_sha256": "e45ac8e0fc41e7cc3b5798dffbded387cbfc7b8703b1d3c2af0937d7546e440e",
+      "replay_exact": true,
+      "status": "sealed"
+    }
+  ],
+  "passed": true,
+  "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "emitter_sha256": "dab616517ea6b33ae1de6a34909526cf5409ec4ad71c180188d95d9716cfecc1",
+  "label": "X4S-4 O_W acceptance smoke (excluded), NEVER ADOPTABLE"
+}

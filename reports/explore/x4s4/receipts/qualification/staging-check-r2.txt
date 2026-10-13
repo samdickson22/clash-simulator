@@ -1,0 +1,55 @@
+# X4S-4 staging check r2 2026-10-13T04:52:43Z (scripts d09bdef9; runbook 7b3ec27b; amendment SA-1 69345e4a)
+## sha256sum -c: x4s4 vs d09bdef9; x4s3 runtime vs c86d928d; exit_r1 __init__/rows/pack/emitter vs origin/main (=04c068f5); corpus pins
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/PLAN.md: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/QUALIFY-RUNBOOK.md: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/SCRIPTS.md: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/audit_seeds.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/collect.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/collect_w.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/contention.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/diagnose.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/driver.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/guard.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/idx-qual.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/idx-smoke.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/label.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/packw.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/plan-collect.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/plan-qual-capture.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/plan.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/qualify4.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/receipts/offline-tests-O0.jsonl: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/receipts/offline-tests-O1.jsonl: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/receipts/offline-tests-O2.jsonl: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/receipts/r2-suite-vs-13fb31d0.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/receipts/r3-suite-vs-f15691b5.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/reduce.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/run_collect.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/run_fit.sh: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/seed-sources.json: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/studytree.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/supervise.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/test_x4s4_offline.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/verify_onpolicy.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/watchdog.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/write_report.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging/reports/explore/x4s4/x4s4io.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/reports/explore/x4s3/run.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/reports/explore/x4s3/runtime.sh: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/reports/explore/x4s3/detach.sh: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/reports/explore/x4s3/calibrate.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/imitation/exit_r1/rows.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/imitation/exit_r1/pack.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/imitation/exit_r1/emitter.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/imitation/exit_r1/__init__.py: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/corpus/states-ready.pkl: OK
+/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/corpus/symmetric-screen-samples.json: OK
+rc=0
+## S2 overlay done; rt-R3a plan = 13840cc60834dd6c46ff1aa9bc4b75ca752a6df9bc9e95939bab544b2d04c4e1; rt-R3a-rep plan = 9fd84588626588cc97b936b342b948faf541d69b786778c2ca31d78d11e47897; rt-R3a-rep/READY.json = ce05febd726af65f1d8a70de394ddf822355a77981e4d33d18e0a9d9a963a796
+## S3 RUNTIME-INVENTORY.json = 5e7a9cf2e351238dcd2afa337409de697ddbaef7d8a86ef4ac587162ff2b93f1 (every value cross-checked against d09bdef9 / c86d928d / J3 loader6 / assets pin)
+
+== SA-2 (COORDINATOR 55254853) 2026-10-13T05:45:31Z: delay.py from git archive origin/main
+PASS base/repo/reports/strategy_council_20260928/search-noise-s6/delay.py before=96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2 after=fa3d32965e9153f3ef9aed4ad890796574c8e954c9b5f5656ebea7e58a82d67d
+PASS rt-R3a/repo/reports/strategy_council_20260928/search-noise-s6/delay.py before=96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2 after=fa3d32965e9153f3ef9aed4ad890796574c8e954c9b5f5656ebea7e58a82d67d
+PASS rt-R3a-rep/repo/reports/strategy_council_20260928/search-noise-s6/delay.py before=96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2 after=fa3d32965e9153f3ef9aed4ad890796574c8e954c9b5f5656ebea7e58a82d67d
+SA-2 step 2 2026-10-13T05:45:36Z: moved data/raw-OW-acceptance-smoke.json (6881ba19...) to receipts/q5-r1-failed/; rmdir empty data/raw-OW-acceptance

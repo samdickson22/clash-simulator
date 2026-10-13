@@ -1,0 +1,34 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q5-ow-acceptance-r2",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "reports/explore/x4s4/collect_w.py",
+    "--checkpoint",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/main02.pt",
+    "--count",
+    "1",
+    "--workers",
+    "1",
+    "--acceptance-smoke"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 3,
+  "child": {
+    "pid": 3455047,
+    "pgid": 3455047,
+    "starttime": 166024913
+  },
+  "passed": true,
+  "utc": "2026-10-13T05:47:48Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/raw-OW-acceptance-smoke.json": "88b884d6117dbe4d6c8059db5d36319c17d49a09a5a57fd9b2cb3bdaba46ecfa"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

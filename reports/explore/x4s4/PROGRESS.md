@@ -199,3 +199,87 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
     the imitation/evaluation runtime_dependencies edits and delay.py. 13 are not on main. Only delay.py lies on the
     emitter's W-screen8 path.
 - RUNTIME-INVENTORY.json does not pin delay.py.
+
+## 2026-10-13T05:47:48Z — SA-2 (COORDINATOR 55254853) applied; Q5 r2: PASS
+
+- Step 1: `git archive 55254853` (origin/main) of search-noise-s6/delay.py went into J/staging/sa2 (staged SHA-256
+  fa3d3296…). From there it was copied, using a temp file and mv, into base/repo, rt-R3a/repo and rt-R3a-rep/repo.
+  - All three went from 96b0637c… to fa3d32965e9153f3ef9aed4ad890796574c8e954c9b5f5656ebea7e58a82d67d: PASS ×3.
+  - No delay pycache existed. The lines were appended to receipts/staging-check-r2.txt.
+- Step 2: the failed data/raw-OW-acceptance-smoke.json (6881ba19…) was moved to receipts/q5-r1-failed/, and the empty
+  data/raw-OW-acceptance/ was removed with rmdir. Both were logged to the staging transcript.
+- Step 3: `watchdog.py status` ok, then Q5 as written, with `--name q5-ow-acceptance-r2`.
+  - The DET log and launch receipt were named logs/q-ow-acc-r2.log and receipts/q-ow-acc-r2-launch.json, so the r1
+    files are not overwritten.
+  - Result: passed. g=0 (seed …496, index 56, seat 0, 153 roots) and g=1 (seed …497, index 57, seat 1, 111 roots)
+    are both `sealed` with replay_exact=true, and the v1/emitter SHAs are as pinned.
+  - raw-OW-acceptance-smoke.json 88b884d6117dbe4d6c8059db5d36319c17d49a09a5a57fd9b2cb3bdaba46ecfa;
+    guard-q5-ow-acceptance-r2.json passed, rc 0, 0edf5437588b63ab49c42599495d888563977e5406a731853b532b5a1a7753af.
+- Q7 smoke/eval-K4S-120 was launched at 05:48:01Z after the tree drained to 0.
+
+## 2026-10-13T05:50:21Z — Q7 evaluation smoke: PASS
+
+- smoke/eval-K4S-120 (05:48:01Z): rc 0, reason null, 8/8 block proofs, 58 s wall (exit b001d6b9…).
+- smoke/eval-S-200 (05:49:12Z): rc 0, reason null, 8/8 block proofs, 68 s wall (exit 7a631fe1…).
+- Outcomes were not inspected.
+
+## 2026-10-13T05:51Z — PE-1 control check (on 05, read-only, no STOP): neither outcome the ruling defined; the S-200 capture path is implicated
+
+- Method: the two Q7 phases' blocks/ and games/ were copied with rsync from 01 to /dev/shm on 05, together with
+  HARD-STOP-UTC.txt and stop-periods.jsonl. The copy was then deleted.
+  - pe1_check.py (ec0745c0…) runs the reviewed `qualify4.parity_once` from a d09bdef9 export, with io.JOB set to the
+    copy, so nothing is written into J.
+  - On the Q4 phases, the same procedure reproduced the Q4 receipt exactly.
+- pe1-control.json (a2937fb5…):
+
+  | Arm | Path | Games | Decisions | Cutoff % | Student-default % | Overrun % |
+  |---|---|---:|---:|---:|---:|---:|
+  | K4S-120 | collection (Q4) | 8 | 1,038 | 58.67 | 19.94 | 0.10 |
+  | K4S-120 | evaluation (Q7) | 8 | 924 | 56.06 | 16.13 | 0.00 |
+  | K4S-120 | X4S-3 R3a | — | — | 64.2 | 22.3 | 0.16 |
+  | S-200 | collection (Q4) | 8 | 1,362 | 69.75 | 0.00 | 0.22 |
+  | S-200 | evaluation (Q7) | 8 | 1,056 | 55.78 | 0.00 | 0.28 |
+  | S-200 | X4S-3 R3a | — | — | 75.3 | 0.0 | 0.14 |
+
+- Against the ruling's thresholds:
+  - K4S-120 evaluation is 2.61 pp below the smoke collection value: just outside the ±2 pp "bank/host" band, and
+    8.1 pp from X4S-3.
+  - S-200 evaluation is 13.97 pp below the smoke collection value, and 19.5 pp from X4S-3.
+  - Neither "within 2 pp of smoke" nor "near X4S-3" holds.
+- A descriptive per-seed pairing (pe1_perseed.py 0bc1b873…, output pe1-perseed.json 4290835c…) uses the reviewed
+  proved_game/game_meta projection on the same index in both phases, with timing metadata only:
+  - S-200: collection cutoff % > evaluation on 8/8 seeds; mean per-seed Δ +9.7 pp (range +0.4 to +26.4); sign test
+    p ≈ 0.008.
+  - K4S-120: 5/8 seeds; mean Δ +2.2 pp (range −26.0 to +23.9); noisy.
+  - The S-200 collection games also have more decisions on 6/8 seeds (for example 299 vs 146).
+- Reading:
+  - Both paths sit well below X4S-3, so a bank/host effect exists.
+  - In addition, the capture/collection path itself raises S-200 cutoffs on the same seeds. This is consistent with
+    capture overhead inside S-200's 200 ms deadline.
+  - Per PE-1, production does not start; the coordinator is asked.
+
+## 2026-10-13T05:53:25Z — Q8 live STOP test: PASS
+
+- smoke/stoptest launched at 05:52:05Z. `ln -s nowhere $J/STOP` was made at 05:53:05.69Z, 60 s after launch, as a
+  dangling link.
+- supervisor-exit (a187b9af…): reason owned_STOP, rc −15, remaining_group_pids [], at 05:53:07Z (1.3 s after STOP).
+  The tree count is back to 0.
+- Block proofs 0002, 0003, 0004 and 0007 all completed before STOP (last at 05:53:04.63Z). Indices 0, 1, 5 and 6 have
+  no game and no block proof.
+- `watchdog.py resume` returned {"resumed": true}. The STOP period 05:53:05.69–05:53:25.15Z is recorded. Status is
+  ok, with 0 processes.
+
+## Qualification verdict (2026-10-13 ~05:55Z)
+
+- Every §6 gate passes:
+  - Q0, Q1, Q2 and Q3;
+  - Q4: round trip passed; parity carries the PE-1 exact-receipt PARITY-EXCEPTION, decision "disclose";
+  - Q5: r2 after SA-2;
+  - Q6, Q7 and Q8.
+- PE-1's control condition for production is NOT met; see above. Production (G) has not started, and the
+  coordinator is asked.
+- The SA-2 follow-up sweep (sa2-module-sweep.md) found no other W-screen8/delay skew. The runtime-imported
+  differences are the frozen X4S-3 base's paths.py edit and its untracked loss_review/runtime_dependencies modules.
+  Nothing was changed.
+- search-noise-s6/delay.py (fa3d3296…, in all three runtime copies) is on my pre-production check list.
+- T+1.0 h of 24 h is used.

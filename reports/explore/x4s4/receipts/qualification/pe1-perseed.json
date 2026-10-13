@@ -1,0 +1,206 @@
+{
+ "K4S-120": {
+  "rows": [
+   {
+    "index": 0,
+    "collect": {
+     "decisions": 115,
+     "cutoff_pct": 58.26
+    },
+    "eval": {
+     "decisions": 122,
+     "cutoff_pct": 62.3
+    },
+    "delta_pp": -4.04
+   },
+   {
+    "index": 1,
+    "collect": {
+     "decisions": 107,
+     "cutoff_pct": 42.06
+    },
+    "eval": {
+     "decisions": 122,
+     "cutoff_pct": 68.03
+    },
+    "delta_pp": -25.97
+   },
+   {
+    "index": 2,
+    "collect": {
+     "decisions": 137,
+     "cutoff_pct": 46.72
+    },
+    "eval": {
+     "decisions": 110,
+     "cutoff_pct": 36.36
+    },
+    "delta_pp": 10.36
+   },
+   {
+    "index": 3,
+    "collect": {
+     "decisions": 105,
+     "cutoff_pct": 54.29
+    },
+    "eval": {
+     "decisions": 106,
+     "cutoff_pct": 38.68
+    },
+    "delta_pp": 15.61
+   },
+   {
+    "index": 4,
+    "collect": {
+     "decisions": 112,
+     "cutoff_pct": 54.46
+    },
+    "eval": {
+     "decisions": 102,
+     "cutoff_pct": 52.94
+    },
+    "delta_pp": 1.52
+   },
+   {
+    "index": 5,
+    "collect": {
+     "decisions": 126,
+     "cutoff_pct": 75.4
+    },
+    "eval": {
+     "decisions": 130,
+     "cutoff_pct": 80.0
+    },
+    "delta_pp": -4.6
+   },
+   {
+    "index": 6,
+    "collect": {
+     "decisions": 185,
+     "cutoff_pct": 77.84
+    },
+    "eval": {
+     "decisions": 115,
+     "cutoff_pct": 53.91
+    },
+    "delta_pp": 23.93
+   },
+   {
+    "index": 7,
+    "collect": {
+     "decisions": 151,
+     "cutoff_pct": 50.33
+    },
+    "eval": {
+     "decisions": 117,
+     "cutoff_pct": 49.57
+    },
+    "delta_pp": 0.76
+   }
+  ],
+  "mean_delta_pp": 2.2,
+  "positive": 5
+ },
+ "S-200": {
+  "rows": [
+   {
+    "index": 0,
+    "collect": {
+     "decisions": 232,
+     "cutoff_pct": 82.33
+    },
+    "eval": {
+     "decisions": 135,
+     "cutoff_pct": 60.0
+    },
+    "delta_pp": 22.33
+   },
+   {
+    "index": 1,
+    "collect": {
+     "decisions": 154,
+     "cutoff_pct": 65.58
+    },
+    "eval": {
+     "decisions": 132,
+     "cutoff_pct": 50.76
+    },
+    "delta_pp": 14.82
+   },
+   {
+    "index": 2,
+    "collect": {
+     "decisions": 121,
+     "cutoff_pct": 49.59
+    },
+    "eval": {
+     "decisions": 105,
+     "cutoff_pct": 44.76
+    },
+    "delta_pp": 4.83
+   },
+   {
+    "index": 3,
+    "collect": {
+     "decisions": 123,
+     "cutoff_pct": 56.91
+    },
+    "eval": {
+     "decisions": 115,
+     "cutoff_pct": 56.52
+    },
+    "delta_pp": 0.39
+   },
+   {
+    "index": 4,
+    "collect": {
+     "decisions": 206,
+     "cutoff_pct": 68.45
+    },
+    "eval": {
+     "decisions": 155,
+     "cutoff_pct": 63.23
+    },
+    "delta_pp": 5.22
+   },
+   {
+    "index": 5,
+    "collect": {
+     "decisions": 299,
+     "cutoff_pct": 85.95
+    },
+    "eval": {
+     "decisions": 146,
+     "cutoff_pct": 59.59
+    },
+    "delta_pp": 26.36
+   },
+   {
+    "index": 6,
+    "collect": {
+     "decisions": 145,
+     "cutoff_pct": 67.59
+    },
+    "eval": {
+     "decisions": 153,
+     "cutoff_pct": 66.67
+    },
+    "delta_pp": 0.92
+   },
+   {
+    "index": 7,
+    "collect": {
+     "decisions": 82,
+     "cutoff_pct": 39.02
+    },
+    "eval": {
+     "decisions": 115,
+     "cutoff_pct": 36.52
+    },
+    "delta_pp": 2.5
+   }
+  ],
+  "mean_delta_pp": 9.67,
+  "positive": 8
+ }
+}
