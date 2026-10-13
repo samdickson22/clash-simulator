@@ -1,11 +1,12 @@
 # X4S-4 PLAN §6 qualification-stage launch runbook (exploration, NEVER ADOPTABLE)
 
-This was prepared offline on 127x05 on 2026-10-12 and updated for scripts r9 (commit `C` below), which implement
-coordinator ruling SR-1 (the external watchdog) after Sol r8 returned REQUEST_CHANGES on 86fa3c5d (earlier rounds: r7
-81d78349, r6 0fc0f243, r5 ffde20ac). It authorizes nothing: every step on 127x01 waits for an explicit coordinator GO,
-and runs only if Sol approves the script set (now r9). If a later
-round asks for changes, the commit and SHAs below are updated before use. Production (collection, labeling, fits,
-reporting) is **not** part of this runbook; it needs its own GO after the qualification evidence is reviewed.
+This was prepared offline on 127x05 on 2026-10-12 and updated for scripts r10 (commit `C` below). r10 fixes Sol r9's
+eight findings under ruling SR-2. Earlier rounds: r9 a701d610, r8 86fa3c5d, r7 81d78349, r6 0fc0f243, r5 ffde20ac. It
+authorizes nothing: every step on 127x01 waits for an explicit coordinator GO, and runs only after Sol's SR-2 fix-check
+confirms the set. If a later
+round asks for changes, the commit and SHAs below are updated before use. Under Q-D1, one combined GO covers §6
+qualification and the **conditional** production in section G. Production continues only if every qualification
+gate passes with its exact receipts; there is no separate production GO.
 
 **Coordinator decisions Q-D1 to Q-D4** (COORDINATOR 2026-10-12 22:50Z; effective once Sol approves the script set):
 - **Q-D1. One combined GO:** §6 qualification plus **conditional** production (section G). Production continues
@@ -34,7 +35,7 @@ about 2.5–4 h. E8 truncation rules apply if it runs out.
 | Host | 127x01 only. No other host; 03/04/Mac never. |
 | Job root `J` | `/mpac/sdicks02/jobs/clasher/x4s4-onpolicy`. It must not exist before staging. |
 | X4S-3 job `J3` (read-only source) | `/mpac/sdicks02/jobs/clasher/x4s3-student-scale-20261012` |
-| Script commit `C` | `a701d610bb2e4f95100251ee74fc769d70cd5711` (scripts r9, pending Sol r9) |
+| Script commit `C` | `8bde7397eacf2c787aa1a95646320a8745953862` (scripts r10, pending the SR-2 fix-check) |
 | Runtime python | `/mpac/sdicks02/repos/clasher/.venv/bin/python`, via `x4s3/runtime.sh` |
 | GPU python | `/mpac/sdicks02/envs/clasher-gpu/bin/python` |
 | Pins | native `44874fd6…`; v1 `d77005d5…`; R3a `37509a43…` (threshold 0.5005528330802917); R3a-rep `8d537a78…` (threshold 0.49952925741672516); emitter `dab61651…`; `x4s3/run.py` `e7f90d76…` |
@@ -64,21 +65,34 @@ No `pkill`, no pattern kills: every stop is the reviewed PID-only path or `J/STO
 - **The external watchdog (r9, coordinator ruling SR-1) is the authoritative host-safety backstop.**
   - **Placement:** `watchdog.py` starts right after staging (W0 below), before any study process, and runs outside
     the study tree: its own session, no study marker, core 62.
-  - **The study tree:** every process whose environment carries `X4S4_STUDY=$J`. The driver, `supervise.py` and
-    `guard.py` refuse to start without that marker and without a live watchdog, and every study child inherits it.
-  - **Checks:** every ≤ 10 s, with each measurement bounded:
+  - **The study tree:** every process whose environment carries `X4S4_STUDY=$J`, plus every descendant of such a
+    process, plus anything seen as a member before (by pid and start time). Helpers launched with an exact
+    environment, and processes that exec with a cleaned environment, therefore stay members (R9-F3). The driver,
+    `supervise.py` and `guard.py` refuse to start without the marker and without a live watchdog.
+  - **Schedule (R9-F1/F2).** A full measurement starts every 9.5 s and must finish within 8 s, so checks are always
+    ≤ 10 s apart. The watchdog's own heartbeat and log writes run in the same worker. Any of these is a HALT:
+    - an overdue measurement;
+    - a late measurement start;
+    - 30 s without worker progress;
+    - a failed or malformed reading (R9-F4).
+  - **Own files (R9-F8).** The watchdog's files under `J` and `J/watchdog` are written through a small confined
+    writer: an O_NOFOLLOW walk, single-link regular files only, exclusive temps. FIFOs, symlinks and hard links are
+    refused.
+  - **Checks:** with each measurement bounded:
     - STOP;
     - the deadline;
     - MemAvailable ≥ 24 GiB;
-    - PSI readable (readable high PSI only inhibits dispatch, the frozen rule);
+    - PSI well formed, 0 ≤ avg10 ≤ 100 (readable high PSI only inhibits dispatch, the frozen rule);
     - ≤ 70 study processes;
     - study PSS ≤ 96 GiB;
-    - `du` of `J` ≤ 100 GB, within 5 s;
-    - GPU ≤ 40 GB via nvidia-smi, within 3 s.
+    - `du` of `J` ≤ 100 GB, within 4 s;
+    - GPU ≤ 40 GB via nvidia-smi, within 2 s.
   - **The deadline works like STOP.** At T+24 h the study's guards stop production work, and production study
-    processes still alive 180 s later are a breach. Only the E8 readout steps (P13–P15, `X4S4_READOUT=1` with
-    `guard.py --readout`) may run after the deadline. `guard.py` refuses that marker on any other step, and the
-    driver and supervisor refuse it too.
+    processes still alive 180 s later are a breach. Only the subtree of an E8 readout runner may run after the
+    deadline (P13–P15: `X4S4_READOUT=1` with `guard.py --readout`). `guard.py` accepts `--readout` only for the exact
+    invocation `$RTPY $X/{contention,reduce,write_report}.py`. It and the driver and supervisor refuse the marker
+    anywhere else. The watchdog detects survivors on its next cycle after deadline + 180 s, so expect up to about
+    10 s more, plus the 20 s KILL grace.
   - **Breaches:** any breach, failed measurement, or watchdog cycle stalled for more than 30 s causes a **HALT**:
     1. the watchdog writes `J/HALT.json` (read-only, fsync'd) and `J/STOP`;
     2. it stops every study process one at a time by verified (pid, starttime): TERM, then KILL after 20 s;
@@ -90,9 +104,12 @@ No `pkill`, no pattern kills: every stop is the reviewed PID-only path or `J/STO
   - The study's own guards stop their work; the driver leaves its loop once nothing lives.
   - The tree must be empty within 180 s, which covers the frozen trainer's 120 s checkpoint grace. Otherwise the
     watchdog HALTs.
-  - The watchdog logs STOP periods, and outputs completing during a STOP never count (H-1).
-  - To resume after a coordinator decision: remove STOP, check `watchdog.py status`, then relaunch the step or the
-    driver.
+  - STOP periods are durable evidence for H-1 (R9-F5), and outputs completing during a STOP never count.
+  - **STOP is never removed with `rm`.** It is created with `ln -s …` or `watchdog.py stop`, and removed only with
+    `python3 $X/watchdog.py resume`. That command records the period's start before removing STOP and its end after,
+    and it is refused after a HALT. A missing STOP history fails H-1 closed.
+  - To resume after a coordinator decision: `watchdog.py resume`, check `watchdog.py status`, then relaunch the step
+    or the driver.
 - **Rule H-1 (enforced by every consumer and the reducer):** an output whose completion time is at or after a HALT,
   at or after the deadline, or inside a STOP period is never counted. The readout outputs (P13–P15) are exempt from
   the deadline only, by design (E8). The completion time is:
@@ -177,7 +194,7 @@ cp -a $J3/fit/source $J3/fit/ops $J3/fit/loader6.json $J/fit/
 From 127x05, stream exactly the reviewed X4S-4 files from git (no worktree file):
 
 ```bash
-git -C /mpac/sdicks02/repos/clasher archive a701d610 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
+git -C /mpac/sdicks02/repos/clasher archive 8bde7397 reports/explore/x4s4 | ssh 127x01 'tar -x -C /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/staging'
 ```
 
 **S2: verify, then overlay.**
@@ -204,7 +221,7 @@ id R3a-rep, checkpoint $J/inputs/R3a-rep.pt, checkpoint_sha256 8d537a78…, thre
 It is written by a one-line python3 `json` edit; then `rt-R3a-rep/READY.json` is written.
 
 **S3: `J/RUNTIME-INVENTORY.json`.** The files and their SHAs from the reviewed commit and pins:
-- `reports/explore/x4s4/{supervise.py,x4s4io.py,studytree.py,qualify4.py,guard.py,watchdog.py}`;
+- `reports/explore/x4s4/{supervise.py,x4s4io.py,studytree.py,qualify4.py,guard.py,watchdog.py,packw.py}`;
 - `reports/explore/x4s3/{run.py,runtime.sh}`;
 - `fit/run_fit.sh`, `fit/loader6.json`;
 - `inputs/assets.npz`.
@@ -245,7 +262,7 @@ SUP="nice -n 10 taskset -c 0-49 env X4S4_STUDY=$J X4S3_RT=$RT bash $R/reports/ex
 
 ```bash
 Q=/dev/shm/x4s4-q0; rm -rf $Q; mkdir -p $Q
-git -C /mpac/sdicks02/repos/clasher archive a701d610 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
+git -C /mpac/sdicks02/repos/clasher archive 8bde7397 reports/explore/x4s4 | tar -x -C $Q    # the reviewed code, not the worktree
 git -C /mpac/sdicks02/repos/clasher cat-file -e 7f82af0d4b3b6a465cba9a1b6dd26c708bcf25d1
 nice -n 19 taskset -c 0-3 /dev/shm/x4s4-venv/bin/python -B -c "import sys; sys.path.insert(0, '$Q/reports/explore/x4s4')
 import x4s4io as io; io.REPORT_ROOT = '$Q/reports/explore/x4s4'
@@ -383,7 +400,7 @@ cd $J && $DET logs/s-stop.log receipts/s-stop-launch.json $SUP --phase smoke/sto
    --stop-at $(cat $J/HARD-STOP-UTC.txt)
 sleep 60; ln -s nowhere $J/STOP          # a DANGLING link: exercises lexists, not exists()
 # wait for smoke/stoptest/supervisor-exit.json, then:
-cat $J/smoke/stoptest/supervisor-exit.json; rm $J/STOP
+cat $J/smoke/stoptest/supervisor-exit.json; /usr/bin/python3 -B $X/watchdog.py resume    # never rm: H-1 evidence first
 ```
 
 **Pass:**
@@ -414,10 +431,10 @@ supervisor, the driver, or `$GRD` (`guard.py`); `…` after `$DET` stands for th
 | P3 | `$GRD --name p3-parity --output $J/receipts/parity-collection.json -- $RTPY $X/qualify4.py parity --phases $J/collect/K4S-120/a1 $J/collect/S-200/a1 --bank collection --min-games 100 --out $J/receipts/parity-collection.json` | passed and final, guard passed; otherwise the Q-D3 pause |
 | P4 | `$GRD --name p4-label-plan --output $J/data/label-plan.json -- $RTPY $X/label.py plan --phases <P1,P2 phases> --parity $J/receipts/parity-collection.json --out $J/data/label-plan.json` | plan written; guard passed |
 | P5 | `$DET … $GRD --name p5-label-O --add 50 --new-files $J/data/label-receipt-O- -- $RTPY $X/label.py run --plan $J/data/label-plan.json --set O --workers 48`, then the same with `p5-label-holdout`, `label-receipt-holdout-` and `--set holdout` (≈0.8 h) | both run receipts passed; both guards passed |
-| P6 | `$DET … $GRD --name p6-pack-O --add 2 --output $J/data/onpolicy/batch-0000 -- $RTPY -m imitation.exit_r1.pack --roots $J/data/raw-O/K4S-120 $J/data/raw-O/S-200 --output $J/data/onpolicy/batch-0000`; then `p6-pack-holdout` the same way, with raw-holdout and `--output $J/data/onpolicy-holdout/batch-0000` | both guards passed. The packer stays byte-identical; its batch counts only through the guard receipt. |
+| P6 | `$DET … $GRD --name p6-pack-O --add 2 --output $J/data/onpolicy/batch-0000 -- $RTPY $X/packw.py --set O --output $J/data/onpolicy/batch-0000`; then `p6-pack-holdout` with `packw.py --set holdout --output $J/data/onpolicy-holdout/batch-0000` | both guards passed. `packw.py` refuses any raw game without its producer's passed, in-time label receipt (R9-F7). It then calls the byte-identical frozen packer, and its batch counts only through the guard receipt. |
 | P7 | `$GRD --name p7-verify-O --output $J/data/O-VERIFIED.json -- $RTPY $X/verify_onpolicy.py --mode O --plan $X/plan.json --label-receipts <O receipts>`, then `p7-verify-holdout` with `--output $J/data/HOLDOUT-VERIFIED.json … --mode holdout …` | gates written; guards passed (0.30–0.45 M rows) |
 | P8 | Not used: Q-D2 resolved to variant (a), and §6.5 trainer compatibility is Q6 in the qualification stage. | — |
-| P9 | `$DET … $GRD --name p9-collect-w --add 50 --output $J/data/raw-OW-selection.json -- $RTPY reports/explore/x4s4/collect_w.py --checkpoint $J/inputs/main02.pt --count 6000 --workers 48` (≈1.2 h, beside the R5 fit); `$GRD --name p9-pack-OW --add 2 --output $J/data/onpolicy-w/batch-0000 -- $RTPY -m imitation.exit_r1.pack --roots $J/data/raw-OW --output $J/data/onpolicy-w/batch-0000`; `$GRD --name p9-verify-OW --output $J/data/OW-VERIFIED.json -- $RTPY $X/verify_onpolicy.py --mode OW --plan $X/plan.json --selection $J/data/raw-OW-selection.json` | selection reached; `OW-VERIFIED.json`; all three guards passed |
+| P9 | `$DET … $GRD --name p9-collect-w --add 50 --output $J/data/raw-OW-selection.json -- $RTPY reports/explore/x4s4/collect_w.py --checkpoint $J/inputs/main02.pt --count 6000 --workers 48` (≈1.2 h, beside the R5 fit); `$GRD --name p9-pack-OW --add 2 --output $J/data/onpolicy-w/batch-0000 -- $RTPY $X/packw.py --set OW --output $J/data/onpolicy-w/batch-0000` (inputs need the guarded selection); `$GRD --name p9-verify-OW --output $J/data/OW-VERIFIED.json -- $RTPY $X/verify_onpolicy.py --mode OW --plan $X/plan.json --selection $J/data/raw-OW-selection.json` | selection reached; `OW-VERIFIED.json`; all three guards passed |
 | P10 | Driver (after P7; in parallel with P9): `$DET logs/driver.log receipts/driver-launch.json nice -n 10 taskset -c 56-61 env X4S4_STUDY=$J python3 -u $R/reports/explore/x4s4/driver.py`. After a STOP, the driver leaves its loop once nothing lives; it is relaunched with the same command after the coordinator resumes. It runs the R5 and R5-rep fits after the O gate and R5W after the O_W gate, then calibrations and runtimes. | all three fits done and calibrated; no ANOMALY |
 | P11 | Diagnostic, once no fit is live and before reporting: `env PYTHONPATH=… $GRDG --name p11-diagnose --gpu --output $J/analysis/diagnostic.json -- /mpac/sdicks02/envs/clasher-gpu/bin/python -B $X/diagnose.py` | descriptive only. A failure, or a guard that did not pass, is disclosed as "unavailable" and does not block. |
 | P12 | `touch $J/REPORTING.GO`; the driver runs the ABBA block (≈8.5 h) | every phase settled; no ANOMALY |
