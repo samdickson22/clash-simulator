@@ -1,0 +1,18 @@
+{
+  "b1_b11_review_sha256": "35b7cf4f00b38bbf0683c2134eb92486a9cac9e347eccf32212a278c0e407fa9",
+  "cache_payload_bindings_sha256": "ec7832680da518592a4e0b6e04890ca520000761a8350e78474e378b5a85504b",
+  "cpu_preflight_plan_sha256": "5beb26d209563b83d3cdb29ec01cd07f890fbc631f803884230d808e6bc80328",
+  "decision": "APPROVE_B_COMBINED_REVIEW",
+  "delta_review_sha256": "8748dd6d51d9ce909aa6b96f9ca2f525957502baacc56152938fc43badc7f841",
+  "deployment_script_sha256": "6de7be45406f325e404c261d4b5549ff9fb7c21a7f4e2285d51a99de6be823a4",
+  "f1_manifest_sha256": "bf450efa6e902eae2b7bb17057350266a1ee3b51dab49338ed0f38cd103073ef",
+  "f1_pin_only_verified_commit": "f9f183fbb8a7872e956ed0cf2dacecdba01e373c",
+  "generic_template_manifest_sha256": "a828d7555896f974b7034c8fbba996d180d2c5d8d79164faa1bd7555e5dd62e4",
+  "input_registry_sha256": "288a805734aff5ff7060ec600aaa077da2df7aa9ef399f095222d7aab3e2e776",
+  "package_sha256": "89b1582e628e977ef928447547d378ef4919acb1928805e1e18f62c09894591a",
+  "review_manifest_sha256": "b71ea34bd68acbd04ba086160999e5693fbdc00fd2b418f35196bb8f964fad83",
+  "rv1_probe_acceptance_commit": "b2acad3d8b99192a16f1e099b866f69684a875c8",
+  "rv1_probe_raw_sha256": "49e8d915901f8dcd4927ebebc85bb98c221d385f342e1cd0a47afe88d4044a89",
+  "rv1_ruling_commit": "d830dbd3c17e3b65730dc9a919e73d200f5b29f8",
+  "rv1_supplement_manifest_sha256": "af1ca31f40ee15632ecbd88d6b5b6b74e52768e72b5eae1b8bd6c5517470a13c"
+}

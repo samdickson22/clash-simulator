@@ -5438,3 +5438,29 @@ Remaining risks R2 and R4–R9 are behavioural: they concern comparison, replay,
 **Next steps:**
 1. The owner binds the 128 cache payload hashes from the returned indices. If they are not already covered, the coordinator may run one more small named-path probe.
 2. The full r4 chain: combined review receipt r4, transport binding, deployment, stage, environment/G6, then epoch 1.
+
+## 2026-10-13 10:20Z: B combined review receipt r4 issued; generic transport r3 checked as pin-only
+
+The issued receipt is the owner's draft `b08-package-r4-chain-drafts-r1/b-combined-review-receipt-r4.json`, byte-identical. The coordinator verified every binding against the files:
+
+| Binding | Value |
+|---|---|
+| package | 89b1582e |
+| CPU plan | 5beb26d2 |
+| deploy script | 6de7be45 |
+| B1–B11 review | 35b7cf4f |
+| delta review (Opus) | 8748dd6d |
+| F1 r5 manifest | bf450efa (pin-only verified at f9f183fb) |
+| generic r3 manifest | a828d755 |
+| review packet | b71ea34b |
+| input registry | 288a8057 |
+| cache-payload bindings | ec783268 |
+| RV-1 ruling, probe and acceptance | d830dbd3, 49e8d915, b2acad3d |
+
+F1 r5 `receipt()` accepts it.
+
+**Generic transport r3** against the r2 template: only the PACKAGE, PLAN, BUNDLE-directory and unbound-placeholder lines change in `transport.py`, plus the transport source path and SHA in guard, launcher and retrieval. It is pin-only. It stays unbound until it is bound to this receipt.
+
+C-5 is clean and there are no collisions. Published at `l1/receipts/b-combined-review-receipt-r4.json` and as a 0444 copy.
+
+ISSUED APPROVE_B_COMBINED_REVIEW f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91
