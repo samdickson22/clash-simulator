@@ -1,6 +1,6 @@
 # K4S END A2 (staging on 03 then 04) — GO request
 
-Prepared 2026-10-13T13:58:45Z by the K4S runner on 127x05. No host contact since A1/A1b (04:49Z). Code: s3s9s10-r6 (SHA256SUMS d6c4815b7a9b91bfaadd6312a0f2d7c585e0dbdca8a1e550e507a1a26bf87124) and s5s6s7-r6 (2b4b6f215514103e97542012d4f314438d7969cd1da33503ffd22f20cade2cb6), coordinator diff-check pending; b3-r7 bundles.
+Prepared 2026-10-13T22:05:32Z (refreshed after the r6 commit) by the K4S runner on 127x05. No host contact since A1/A1b (04:49Z). Code: s3s9s10-r6 (SHA256SUMS d6c4815b7a9b91bfaadd6312a0f2d7c585e0dbdca8a1e550e507a1a26bf87124) and s5s6s7-r6 (2b4b6f215514103e97542012d4f314438d7969cd1da33503ffd22f20cade2cb6), committed on main at e8a8e32b9b0f9f19d89ca9613b5dbaf9431d2c86 (coordinator PR-1 diff-check pending); b3-r7 bundles.
 
 ## What A2 does, per host (03 to completion first, then 04)
 
@@ -27,7 +27,7 @@ S10's P-facts login also runs the read-only **interpreter probe** of `/mpac/sdic
 
 1. Coordinator GO for A2, at or after 14:30Z, after confirming the FSC STOP on 03/04 and the >= 1 h gap.
 2. Coordinator diff-check of r6 (s3s9s10-r6, s5s6s7-r6) accepted.
-3. RC-6 declaration committed to **main** at `reports/explore/k4s-confirm/run-r1/end-launch/ROOTS-DECLARATION.json` (872ced5028db256e3b587f7fd5f2a9a4f6a5247f0b1a0548adb3e7accb628a40) before A2 (B6); `k4s-end-r1` stays at P'.
+3. DONE (946cd3ea05320c24a3084bfa180d421fd75e8851): RC-6 declaration committed to **main** at `reports/explore/k4s-confirm/run-r1/end-launch/ROOTS-DECLARATION.json` (872ced5028db256e3b587f7fd5f2a9a4f6a5247f0b1a0548adb3e7accb628a40) before A2 (B6); `k4s-end-r1` stays at P'.
 4. No END window, preflight or other K4S/T1 copier on 03/04; no perception read window; 03: nothing restarted since IR-03.
 5. Runner rechecks immediately before each host: SHA256SUMS, runtime manifest, record dirs absent, `date -u`.
 
