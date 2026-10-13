@@ -6218,3 +6218,27 @@ Placement GO 5b454761 ran once, at 23:02:09Z, with F1 r6 operator 21a10121. The 
 - `runtime_admitted=false`, and the stage has not started.
 
 **ACCEPTED.** The stage run GO follows, issued from the coordinator-held draft 6db23f8b with the completion fields filled in.
+
+## 2026-10-13 23:04Z: B r5 stage run GO r5 issued
+
+**Source.** The coordinator-held draft 6db23f8b. The coordinator filled in only:
+- `placement_c6_accepted=true`;
+- `placement_completion`: complete 23af7b67, C-6 commit 87923218e89abeed175cd5dbb84b6d906f05449d, fetched and revocation tip 3d64ca62, exit codes 0/0;
+- the blockers.
+
+**Bindings:** bound transport r4, CPU GO ebc133ff, placement 5b454761.
+
+**Checks:**
+- transport r4 `authorize_run(active=False)` passes against the exact CPU, placement and review documents;
+- C-5 is clean, with 0 `REVOKED` lines;
+- no publication path collides.
+
+**Scope.** The stage only, on 08:
+- cpus [0,1], with the conservative budget (16 GiB worker, 8 processes);
+- no GPU and no heldout data;
+- the exact guard runs once, from `/` on 05, in the foreground, within the first 30 min of the window, with no retry;
+- a failure or UNKNOWN stops and preserves.
+
+**Window:** 2026-10-13 23:15Z to 2026-10-14 00:15Z.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN b2bff6540341419ad3dfd9097132e3f42e47d380ef213f209ac64d85d8528ac6

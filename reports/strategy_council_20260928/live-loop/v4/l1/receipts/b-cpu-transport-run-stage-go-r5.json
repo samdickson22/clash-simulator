@@ -1,0 +1,103 @@
+{
+  "additional_authorities": [],
+  "artifact_sha256": {
+    "guard.sh": "a8ce87b8d302668281414b6ec1b4e2b51b3b82f62892801c5f23c80e4689d51e",
+    "launcher.sh": "42bcb81dd8d3ad178de761ba17bf5bd7e3455f5a0ad053928faddb4f39e08f00",
+    "retrieval.sh": "6bbd2cae1a7988d21df09a36fd3d8178b5a113d12b625b7fa45c3b4340198817",
+    "transport.py": "38cb5faf166b3c055d472e971d297f210f8b8beb4d5c44145df1cd535a94b3f2"
+  },
+  "available_bytes": 1216433364992,
+  "concurrency_enabled": false,
+  "cpu_go_sha256": "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef",
+  "decision": "AUTHORIZE_B_CPU_TRANSPORT_RUN",
+  "deployment_prerequisite": {
+    "complete_sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce",
+    "coordinator_acceptance_ledger_commit": "9cc43d12a73140b033271332ccf9e742f23c74a2",
+    "go_sha256": "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c",
+    "status": "COORDINATOR_DEPLOYMENT_ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "execution_preconditions": [
+    "Fresh stage coverage in approving combined review and actual bound source/shell/manifest pins.",
+    "Only after preceding placement succeeds and coordinator accepts C-6.",
+    "All actual resources attested at issuance; no live-host census claimed by this draft.",
+    "C-5 over full recursive closure; full authority SHAs only on their own ISSUED lines.",
+    "Separate explicit run GO; exact guard once from / on05 in foreground within first30min; no retry.",
+    "Run end >=3600 seconds before CPU deadline; one SSH, no preprobe.",
+    "Failure/UNKNOWN stops and preserves; retrieval needs separate accepted UNKNOWN and own explicit GO.",
+    "Keep large artifacts local; compact metadata only in public repo."
+  ],
+  "expires_epoch": 1791936900,
+  "git_sources": {
+    "5b454761f7d81874b3921ff7f5b7dc154a7eeccdd2c13ec348eaa2ce04aaea2a": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r13.json",
+    "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-combined-review-receipt-r5.json",
+    "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-deployment-go-receipt-r5.json",
+    "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-stage-go-r5.json"
+  },
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at the exact signed path; separate explicit run GO required."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-transport-run-stage-go-r5.json",
+  "manifest_sha256": "55ba8ad7db6ee18f91bb6ea2d89e1a3b11f80cc0f0f20ff82a7f68b25bf13198",
+  "max_launches": 1,
+  "no_retry": true,
+  "not_before_epoch": 1791933300,
+  "observation_provenance": {
+    "commit": "9cc43d12a73140b033271332ccf9e742f23c74a2",
+    "sha256": "2c0407da6b5de1b25db8fd6227a956c548e60f749d05fc3c185b469b7c5c602c",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r12/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T22:02:37.438413+00:00"
+  },
+  "operator_command": "cd / &&\n/usr/bin/printf '%s  %s\\n' a8ce87b8d302668281414b6ec1b4e2b51b3b82f62892801c5f23c80e4689d51e /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-generic-transport-review-r4/guard.sh | /usr/bin/sha256sum -c - &&\n/usr/bin/env -i PATH=/usr/bin:/bin /bin/bash --noprofile --norc /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-generic-transport-review-r4/guard.sh <FULL_RUN_GO_SHA>",
+  "operator_host": "127x05",
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "placement_c6_accepted": true,
+  "placement_completion": {
+    "complete_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/placements/5b454761f7d81874b3921ff7f5b7dc154a7eeccdd2c13ec348eaa2ce04aaea2a/complete.json",
+    "complete_sha256": "23af7b67c3e8512e5751a0d03121f73c96de5245ccea8ed5ca20c973fe43019f",
+    "coordinator_c6_commit": "87923218e89abeed175cd5dbb84b6d906f05449d",
+    "fetched_tip": "3d64ca6277c8d4eb9bdb78f58f4ba3302ec7a95f",
+    "launcher_exit_code": 0,
+    "revocation_tip_commit": "3d64ca6277c8d4eb9bdb78f58f4ba3302ec7a95f",
+    "sender_exit_code": 0
+  },
+  "placement_go_sha256": "5b454761f7d81874b3921ff7f5b7dc154a7eeccdd2c13ec348eaa2ce04aaea2a",
+  "resource_budget": {
+    "host_address_space_limit": 51539607552,
+    "host_process_limit": 16,
+    "other_address_space": 32212254720,
+    "other_processes": 8,
+    "worker_address_space": 17179869184
+  },
+  "retained_observation_provenance": {
+    "commit": "c74d07947b7b5f41a6c330f902f76ad558c9cdd4",
+    "sha256": "76009c7ab8fdcbf0fc93184e1df4a27d3d996de1e13094b281b679b883753092",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r11/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T13:42:36.407625+00:00"
+  },
+  "review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+  "review_status": {
+    "combined_review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+    "combined_review_sha256": "69cc87846ccb6dda42543ce94a8d15cd220d91b327ae2520e7497fe2d3c5bc7f",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "55ba8ad7db6ee18f91bb6ea2d89e1a3b11f80cc0f0f20ff82a7f68b25bf13198"
+  },
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-transport-run-stage-go-r5.json",
+  "transport_review": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-RESOURCE-CLOSURE-REVIEW-r1.md",
+    "sha256": "69cc87846ccb6dda42543ce94a8d15cd220d91b327ae2520e7497fe2d3c5bc7f"
+  },
+  "who_count": 0,
+  "window_policy": {
+    "duration_seconds": 3600,
+    "end": "CPU expires_epoch - 3600",
+    "launch_within_first_seconds": 1800,
+    "lead_seconds_minimum": 1800,
+    "start": "same as corresponding CPU window"
+  }
+}
