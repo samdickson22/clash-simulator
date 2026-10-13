@@ -5833,3 +5833,43 @@ The CPU GO was hashed first and the placement repinned to it. The run draft was 
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 8c4d27dd288ee15c3daf2f6e6a58fbc2cc4b879e4f8cbb18d34a501f64ecbf62
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT e16c22061981da6a409acd93fe5e9584699574046f022f389b6c2f638f4f5015
+
+## 2026-10-13 12:34Z: X4S-4 HR-1 fix approved (af123084); path (a) continue in J under new GO with T2
+
+**The fix.** The coordinator checked `git diff 77a01d88 af123084` directly. Production changes are limited to the measurement functions:
+- `studytree.tree_bytes`, a bounded `scandir`/`lstat` walk:
+  - matches `du -sb`;
+  - counts each inode once;
+  - never follows symlinks;
+  - skips and counts entries that vanish mid-walk (ENOENT/ENOTDIR);
+  - every other error, a root failure or a timeout raises.
+- `disk_bytes` and `watchdog.measure` both use the walk. The `--du` option is removed.
+- Versions: watchdog.py b1a964f5, studytree.py dacd6d7f.
+
+**Audit and tests:**
+- The "benign concurrent writer" audit covers process scans, PSS and the other readings.
+- Tests include a live regression: the real watchdog plus 8 rename/remove writers and process churn, with no HALT.
+- Mutants: 11/11, including reverting to du, which reproduces the incident.
+- Matrix: 145 tests × 6 runs.
+
+**Ruling: path (a), continue in J.** A carry-over into a new root would need path-rebinding code, because receipts embed absolute J paths. Only 7 entries in J are timed at or after the HALT, and none of them is a consumable output.
+
+**Procedure (approved):**
+1. **Install HR-1** into the three runtime trees. Re-seal RUNTIME-INVENTORY, keeping r3 and changing only those 2 entries.
+2. **Stop the HALTed watchdog** (pid 3283869) with SIGTERM, after verifying (pid, starttime) against `watchdog/pid.json`.
+3. **Move `HALT.json`** to `receipts/halt-r1/` with its bytes unchanged. The dangling STOP link stays.
+4. **Run `watchdog.py resume`.** It records the HALT window from the STOP link's mtime through now, so H-1 excludes it permanently.
+5. **Set aside the 523 never-counting seals** (`data/raw-O` → `data/halted-r1/raw-O`). First grep-verify that no consumer reads that path.
+6. **Archive the T1 files** (HARD-STOP and T.json) into `receipts/halt-r1/`. Write the new HARD-STOP (T2 + 24 h) once, plus `receipts/T2.json`.
+7. **W0:** start the watchdog, then check status.
+8. **P3-r3 check-only:** a guarded `parity --final` must reproduce inventory aadafb16 and the same arms. If it does not, stop and ask.
+9. **Resume at P5** with new guard names, then follow G as written. P3-r2, PE-4 and P4 are unchanged.
+
+**Evidence:** take a full before/after inventory of J (path, size, mtime, SHA for files ≤ 64 MiB) around steps 2–6, and commit both.
+
+**Disclose:**
+- J spans T1 and T2;
+- the HALT;
+- HR-1.
+
+**New GO (Q-D1 production continuation), with hard stop T2 + 24 h.** T2 is fixed when HARD-STOP is written in step 6.
