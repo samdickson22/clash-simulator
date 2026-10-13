@@ -5169,3 +5169,21 @@ The issued GO is the owner's draft a7ac7fb1. The coordinator changed only the pl
 C-5 passed and there are no path collisions.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0f6b4e416320481004e4f1d8ef607ddcd38cd39349d4c688c58ab15d189bf647
+
+## 2026-10-13 05:45Z: X4S-4 staging amendment SA-2 approved (Q5 stop at a9e1cd72)
+
+Q6 passed. Q5 failed: in O_W acceptance, game 0 raised `ValueError('invalid action')`.
+
+**Cause.** The X4S-3 base's `search-noise-s6/delay.py` is the 20cff68a version (96b0637c). It lacks the two-line W-screen8 hand-off in `DelayAwarePlanner.score_candidates` that 59454e1a added. As a result the emitter's `wait_screen8=True` candidates (2400 and up) reached `CommandChannel.submit`.
+
+**Coordinator check.** `git diff 20cff68a origin/main` on that file is exactly those 2 added lines, both guarded by `if self.config.wait_screen8:`. Every other runtime path builds `wait_screen8=False`, so Q2/Q3/Q4/Q6 and the X4S-3 student runtimes are behaviourally unaffected.
+
+**SA-2, approved as proposed:**
+1. `git archive` origin/main's delay.py (fa3d3296) into `base/repo`, `rt-R3a/repo` and `rt-R3a-rep/repo`. Verify all three, and append the result to the staging transcript.
+2. Move the failed `raw-OW-acceptance-smoke.json` to `receipts/q5-r1-failed/` and remove the empty `raw-OW-acceptance/` directory.
+3. Run `watchdog.py status`, then Q5 as written with `--name q5-ow-acceptance-r2`. A second Q5 failure means stop and ask.
+4. Disclose SA-2 in RESULTS.
+
+**Residual:** the native `score_wait_screen8` path in the runtime native is tested only by the Q5 rerun.
+
+Together with SA-1, this is the second staging-layout gap in X4S-4. Per memory `require-end-to-end-integration-before-host-go`, future studies must run the full chain offline against the real staged tree before any host GO.
