@@ -4577,3 +4577,27 @@ No code-change route is taken.
    - run the live STOP test;
    - then launch detached, using X4S-3's core map at nice 10.
 5. **Stopping for X4S-4.** On "STOP U2" (the X4S-4 GO), stop immediately and drain by PID.
+
+## 2026-10-13 02:07Z: X4S-4 r9 scoped review: 8 findings; ruling SR-2 caps the loop (fix plus one diff-only fix-check, then GO)
+
+**Review.** Sol r9 (`/mpac/sdicks02/jobs/clasher/x4s4-review/SOL-REVIEW-SCRIPTS-r9.md`, 1b68d637) returned REQUEST_CHANGES with 8 findings:
+- **Watchdog:**
+  - F1: the stall timer excludes the watchdog's own writes and teardown.
+  - F2: cadence can exceed 10 s.
+  - F3: process membership and the readout exemption are not closed over work launched from inside the study.
+  - F4: a malformed but "successful" measurement is treated as healthy.
+- **Integrity:**
+  - F5: a STOP interval can disappear before H-1 has durable evidence of it.
+  - F6: H-1 omits dependency completions and some READY consumers.
+  - F7: raw packing and resume edges are missing from the receipt table.
+- **Regression:** F8: the watchdog's own artifact I/O bypasses confinement.
+
+Sol endorses the deadline interpretation (#2).
+
+**Ruling SR-2 (final process for X4S-4):**
+1. The owner fixes **all 8** and adds a test for each.
+2. Sol does **one diff-only fix-check**: for each of the 8, it says fixed or not fixed, with evidence, and checks for regressions in the changed lines only. There is no open-ended re-review.
+3. If all 8 are confirmed fixed, I issue the qualification-plus-conditional-production GO.
+   - New findings of the watchdog-robustness or "other" class become disclosed residuals.
+   - Only a newly found integrity or regression defect can block the GO, and it would be fixed and checked the same narrow way.
+4. **The watchdog is now part of the host-safety contract.** If it ever HALTs, X4S-4 ends, and that is reported as an outcome. It is never silently restarted.
