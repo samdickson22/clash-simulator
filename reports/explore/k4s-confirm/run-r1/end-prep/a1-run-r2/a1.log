@@ -1,0 +1,18 @@
+A1 start 2026-10-13T04:49:26Z
+[2026-10-13T04:49:26Z] ssh P 127x03
+[2026-10-13T04:49:27Z] ssh P 127x04
+[2026-10-13T04:49:29Z] ssh C 127x03
+[2026-10-13T04:49:30Z] ssh V 127x03
+[2026-10-13T04:49:30Z] ssh C 127x04
+[2026-10-13T04:49:31Z] ssh V 127x04
+S1 OK: 20 files, 6 ssh logins, manifest 6926c5fad6a01fa419e030984ef87c31d1c2adb68af636f6f3445573e253ac28
+__RC_A1=0 2026-10-13T04:49:31Z
+A1b start 2026-10-13T04:49:31Z
+[2026-10-13T04:49:31Z] ssh 127x03
+[2026-10-13T04:49:32Z] ssh 127x04
+  /mpac/sdicks02/k4s-runner/run-r1/end-prep/admissions-copy-r1/end-guard-admissions/127x03-system-bus-admission.json  sha256 8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df
+  /mpac/sdicks02/k4s-runner/run-r1/end-prep/admissions-copy-r1/end-guard-admissions/127x03-idle-services.json  sha256 3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237
+  /mpac/sdicks02/k4s-runner/run-r1/end-prep/admissions-copy-r1/end-guard-admissions/127x04-system-bus-admission.json  sha256 e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27
+S1b OK: 3 files, 2 logins, manifest sha256 64c2fc8ded40e695c9fc2eb1e635204d6cc8af5bd48f040845211bc78ede3e84
+__RC_A1B=0 2026-10-13T04:49:32Z
+__EXIT=0
