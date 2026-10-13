@@ -4601,3 +4601,37 @@ Sol endorses the deadline interpretation (#2).
    - New findings of the watchdog-robustness or "other" class become disclosed residuals.
    - Only a newly found integrity or regression defect can block the GO, and it would be fixed and checked the same narrow way.
 4. **The watchdog is now part of the host-safety contract.** If it ever HALTs, X4S-4 ends, and that is reported as an outcome. It is never silently restarted.
+
+## 2026-10-13 02:12Z: Perception B combined delta review: APPROVE_WITH_CONDITIONS; new combined receipt r3 ISSUED
+
+**Review.** `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-TRUTH-DELTA-COMBINED-REVIEW-r1.md`, SHA **3c6dfd49aac9ee35589924ea31a0f242a305e0eb3ab8256291b3d1574a28973f**. The verdict is APPROVE_WITH_CONDITIONS and covers:
+- package r3 (7c86e49a);
+- generic transport template r2 together with its binding procedure;
+- F1 r4 (1b7a64f4);
+- the baseline + delta authority model.
+
+It also confirms that the bound generic transport may run the **stage** phase (C-7.1).
+
+**C-1 records:**
+- **Cause of the epoch-1 failure.** It was package defect (a). The template carried 192 external truth payloads (64 each of events, objects and rich-objects) that the frozen materializer and `epoch_inputs` adapter required to appear in `bundle_files`. It was **not** the GO's environment reference and not the accepted observation.
+- **Fix.** r3 authenticates those payloads through pinned validation receipts and keeps `bundle_files` equal to the original inventory.
+- **Superseded text.** `BINDING-PROCEDURE.md` (59de4149) and this review supersede the package `REVIEW.md` paragraph about the zero digest and post-issuance acceptance.
+
+**C-2: new combined receipt.** It binds:
+- package 7c86e49a;
+- CPU plan b3a90f96;
+- deploy script f9fe2ea6;
+- baseline scientific review 35b7cf4f;
+- delta review 3c6dfd49.
+
+Provenance: review manifest bf6a0d6b, generic template 6ca8b0c6, F1 r4 1b7a64f4.
+
+Published copies:
+- `l1/receipts/b-combined-review-receipt-r3.json`
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-combined-review-receipt-r3.json` (0444)
+
+The C-5 pre-check passed. Every downstream GO for package r3 uses this single receipt.
+
+**Next.** The coordinator runs the C-3 mechanical binding of `REVIEW` in the generic transport, then redeploys, places, stages, checks the environment, and runs epoch 1 (C-5 to C-8). The failed epoch-1 chain stays consumed.
+
+ISSUED APPROVE_B_COMBINED_REVIEW f50ec6051708dbb3f962612ea133cd0bb48fd745cca95e5aa4aa4ddc2b9e9e60

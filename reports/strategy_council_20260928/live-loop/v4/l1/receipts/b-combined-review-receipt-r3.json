@@ -1,0 +1,11 @@
+{
+  "b1_b11_review_sha256": "35b7cf4f00b38bbf0683c2134eb92486a9cac9e347eccf32212a278c0e407fa9",
+  "cpu_preflight_plan_sha256": "b3a90f964e3e6772bd2954b9912d2fd02055a3acccb3935fa989570afea0727a",
+  "decision": "APPROVE_B_COMBINED_REVIEW",
+  "delta_review_sha256": "3c6dfd49aac9ee35589924ea31a0f242a305e0eb3ab8256291b3d1574a28973f",
+  "deployment_script_sha256": "f9fe2ea673e500228684c8302c347223ae882bd441d3455c07f88714e10d19da",
+  "f1_manifest_sha256": "1b7a64f4ef9abdfc1cdff0754e873b97b92a493fcc1e2cd9b2bcf395482777b2",
+  "generic_template_manifest_sha256": "6ca8b0c657d2a2682291f9fc7db8f32bedadcac5a0855edf45226df77b670748",
+  "package_sha256": "7c86e49a105d24597fa135e64bfbc82a2aa447691b91e61aa7cbbdf25fe1ea2c",
+  "review_manifest_sha256": "bf6a0d6bea74c1c686b1577b5990c17d30ba5d2842016aceaba63cfc83ae90ae"
+}
