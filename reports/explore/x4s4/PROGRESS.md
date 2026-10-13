@@ -48,3 +48,33 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   imitation.model.*, exit_r3). Inside exit_r1, pack and emitter import only `.rows`.
 - T has not started (Q1 has not run). No study process exists, the watchdog is not started, and nothing outside J
   was written.
+
+## 2026-10-13T04:52:29Z — SA-1 approved (COORDINATOR 69345e4a): S1b and S1c done
+
+- S1b: `git archive 04c068f5` of imitation/exit_r1/{__init__,rows,pack,emitter}.py into J/staging, then `cp -a` into
+  base/repo/imitation/exit_r1.
+- S1c: `cp -a J3/corpus J/base/corpus` (J3 read-only).
+
+## 2026-10-13T04:52:43Z — S2 r2: PASS 44/44
+
+- Every x4s4 file matches d09bdef9; x4s3 run.py, runtime.sh, detach.sh and calibrate.py match c86d928d.
+- exit_r1 __init__ 441385ea, rows 835a4104, pack 5442af29 and emitter dab61651 match origin/main.
+- Corpus states-ready 8b188918… and samples 86ecbb60… match the pins.
+- Transcript: J/receipts/staging-check-r2.txt (final SHA-256 c2dd5ce9e907ebfc341c403d8cf40badda2f90ca3b2b9e3fcbefa365aa552ebe,
+  with the S2-overlay and S3 lines appended).
+
+## 2026-10-13T04:53:10Z — S2 overlay and S3 done
+
+- Overlay as written; rt-R3a plan.json = 13840cc6… (the pinned x4s4 plan).
+- rt-R3a-rep: one JSON edit of the student block (R3a-rep checkpoint J/inputs/R3a-rep.pt 8d537a78…, threshold
+  0.49952925741672516, calibration_sha256 bc98ac28… from X4S-3's rt-R3a-rep). Plan 9fd84588…; READY.json (0444)
+  ce05febd….
+- S3: J/RUNTIME-INVENTORY.json (0444), SHA-256 5e7a9cf2e351238dcd2afa337409de697ddbaef7d8a86ef4ac587162ff2b93f1. Every
+  value was cross-checked against d09bdef9 / c86d928d / the assets pin / J3's loader6.json (30c64b1d…). J is 1.1 GB.
+
+## 2026-10-13T04:53:50Z — W0 watchdog: PASS
+
+- `watchdog.py start` as written: pid 3283869, its own session (sid = pid), nice 10, core 62, no X4S4_* variables in
+  its environment.
+- `watchdog.py status`: ok=true, exit 0. Heartbeats arrive 9.55 s apart.
+- First readings: 0 study processes, MemAvailable 121.8 GiB, PSI 0.0, disk 1.10 GB, GPU 107 MiB. No HALT.
