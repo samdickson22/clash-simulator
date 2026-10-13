@@ -1,0 +1,813 @@
+--- s3s9s10-r4/s10_stage_host.py
++++ s3s9s10-r5/s10_stage_host.py
+@@ -212,8 +212,8 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's3_guard_job.py': ('7dcf34122d164b45254cd7b4c61c7d59332f5767788e60cff5af4b6eecd4cd79', 38873),
+-    's9_end_runtime.py': ('80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff', 63200),
++    's3_guard_job.py': ('5e99f653749f9f273c61e54678ba056b87ffb2614c0cde080b3ea648147ae168', 38873),
++    's9_end_runtime.py': ('4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60', 78380),
+ }
+ 
+ 
+@@ -261,6 +261,8 @@
+ # staged from the adopted Part B package (--tools-source s5s6s7-r4, SHA256SUMS d04c6ca1; detach.sh is its
+ # t1-originals/ copy, T1 1648dfdc unchanged; k4s_end_preflight.py is r4's L6 c7793451). name -> (path under
+ # --tools-source, sha256, size). RE-PIN whenever another Part B package is adopted: a stale pin refuses before login.
++# r5: s5s6s7-r5/TOOLS-FINAL (10:36:33Z) lists exactly these six files, paths and SHAs (unchanged from r4); the r5
++# package may be given as --tools-source.
+ TOOL_PINS = {
+     "detach.sh": ("t1-originals/detach.sh", "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb", 599),
+     "k4s_end_exit_push.sh": ("k4s_end_exit_push.sh",
+@@ -286,14 +288,21 @@
+                       "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8", 2829766847),
+ }
+ NATIVE_NAME, CORPUS_NAME = "clasher_core.abi3.so", "K4-states.pkl"
+-# r4 (U4): the END interpreter, checked read-only in the existing P-facts login. PENDING COORDINATOR RULING (A3): the
+-# K4S reporting supervisor's /proc exe (receipts/reporting-supervisor-admission-127x0{3,4}.json). NOTE (committed
+-# evidence): reporting and T1's END launched /mpac/sdicks02/repos/clasher/.venv/bin/python (a venv on that base;
+-# k4s-confirm/runtime.sh 67249aac, stop-drill host-admission-smoke.json), so torch came from that venv's
+-# site-packages; the probe also records that candidate (informational, never refusing).
+-HOST_PYTHON = "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
++# r5 (U4 ruling, COORDINATOR 2026-10-13 10:33Z): the END interpreter is the one P' runtime.sh actually executes,
++# `exec /mpac/sdicks02/repos/clasher/.venv/bin/python -B "$@"` (reports/explore/k4s-confirm/runtime.sh at P' 98566c03,
++# blob sha256 67249aac), checked read-only in the existing P-facts login; the bare uv binary is NOT ratified (r4's pin
++# removed). = S7's HOST_PYTHON (s5s6s7-r5 k4s_end_launch_gate.py:109). The probe refuses unless sys.executable, the venv
++# prefix, its base (the uv cpython-3.12.13 the committed reporting-supervisor admissions show as /proc exe,
++# receipts/reporting-supervisor-admission-127x0{3,4}.json), the resolved binary, pyvenv.cfg's home and the version are
++# exactly these, and every HOST_PYTHON_IMPORTS module resolves inside the venv's own site-packages.
++HOST_PYTHON = "/mpac/sdicks02/repos/clasher/.venv/bin/python"
+ HOST_PYTHON_VERSION = "3.12.13"
+-HOST_PYTHON_INFO = ("/mpac/sdicks02/repos/clasher/.venv/bin/python",)
++HOST_PYTHON_PREFIX = "/mpac/sdicks02/repos/clasher/.venv"
++HOST_PYTHON_BASE_PREFIX = "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu"
++HOST_PYTHON_REALPATH = HOST_PYTHON_BASE_PREFIX + "/bin/python3.12"
++HOST_PYTHON_SOURCE = ("reports/explore/k4s-confirm/runtime.sh",
++                      "67249aac5f7ff0027bb7bf5fb19c4275f1fe7d9b56a9ab4977a731169b8570f3")
++HOST_PYTHON_INFO = ()                                  # r5: no informational candidate (r4 probed the venv beside the pin)
+ # Third-party top-level modules the frozen END path imports (static AST scan of the r4 runtime from end_reference /
+ # end_background / end_pool / tier_backend / replay_load and their local closure): numpy and torch
+ # (tier_backend.py:48,77-103; imitation/model), cv2 (replay_load.py:34, clasher/live/capture.py:65 replay_frames),
+@@ -346,7 +355,9 @@
+                 created_by_s10_create_base=["base"] + ["base/" + d for d in BASE_SUBDIRS],
+                 provisioned_by_s11=["repository"], written_by_s7=["attempts/<attempt>", "preflight/<preflight>"],
+                 tools=sorted(TOOL_PINS), end_inputs=dict((n, v[2]) for n, v in sorted(END_INPUTS.items())),
+-                interpreter=dict(path=HOST_PYTHON, version=HOST_PYTHON_VERSION, status="PENDING coordinator ruling"))
++                interpreter=dict(path=HOST_PYTHON, flags="-B", version=HOST_PYTHON_VERSION, prefix=HOST_PYTHON_PREFIX,
++                                 base_prefix=HOST_PYTHON_BASE_PREFIX, source=list(HOST_PYTHON_SOURCE),
++                                 status="U4 ruling COORDINATOR 2026-10-13 10:33Z; qualified by the S10 probe per host"))
+ 
+ 
+ class Component(object):
+@@ -570,18 +581,40 @@
+ # interpreter's own site-packages apply; -B; the S7 single-thread environment; cwd /): version, prefixes, the
+ # interpreter binary's SHA-256, and an import of each HOST_PYTHON_IMPORTS module (code only: no model, state or data
+ # file is opened). One "@@PY <json>" line; Python 3.8+ stdlib.
++# r5 (U4 ruling): also the venv facts: exec_prefix, the realpaths of sys.prefix and of every site-packages directory
++# on sys.path (site.getsitepackages() and the user site, with whether each is on sys.path), pyvenv.cfg (SHA-256 and
++# its key = value pairs), and per module its origin, the origin's realpath and its version.
+ PYTHON_PROBE = r"""
+-import hashlib, importlib, json, os, sys
+-rec = dict(executable=sys.executable, realpath=os.path.realpath(sys.executable),
++import hashlib, importlib, json, os, site, sys
++real = os.path.realpath
++rec = dict(executable=sys.executable, realpath=real(sys.executable),
+            version="%d.%d.%d" % sys.version_info[:3], prefix=sys.prefix, base_prefix=sys.base_prefix,
++           exec_prefix=sys.exec_prefix, prefix_realpath=real(sys.prefix),
+            flags=dict(isolated=sys.flags.isolated, no_user_site=sys.flags.no_user_site, optimize=sys.flags.optimize,
+                       dont_write_bytecode=sys.flags.dont_write_bytecode), imports={})
+ with open(rec["realpath"], "rb") as stream:
+     rec["realpath_sha256"] = hashlib.sha256(stream.read()).hexdigest()
++on_path = set(real(p) for p in sys.path if p)
++sites = [(p, "site") for p in site.getsitepackages()] + [(site.getusersitepackages(), "user")]
++rec["site_packages"] = [dict(path=p, kind=k, realpath=real(p), exists=os.path.isdir(p), on_sys_path=real(p) in on_path)
++                        for p, k in sites]
++cfg = os.path.join(sys.prefix, "pyvenv.cfg")
++try:
++    with open(cfg, "rb") as stream:
++        raw = stream.read(1 << 16)
++    pairs = {}
++    for line in raw.decode("utf-8", "replace").splitlines():
++        key, eq, value = line.partition("=")
++        if eq:
++            pairs[key.strip()] = value.strip()
++    rec["pyvenv_cfg"] = dict(path=cfg, sha256=hashlib.sha256(raw).hexdigest(), size=len(raw), keys=pairs)
++except OSError as error:
++    rec["pyvenv_cfg"] = dict(path=cfg, error="%s: %s" % (type(error).__name__, error))
+ for name in sys.argv[1:]:
+     try:
+         module = importlib.import_module(name)
+-        rec["imports"][name] = dict(ok=True, origin=getattr(module, "__file__", None),
++        origin = getattr(module, "__file__", None)
++        rec["imports"][name] = dict(ok=True, origin=origin, origin_realpath=real(origin) if origin else None,
+                                     version=str(getattr(module, "__version__", "")))
+     except BaseException as error:
+         rec["imports"][name] = dict(ok=False, error="%s: %s" % (type(error).__name__, str(error)[:200]))
+@@ -610,9 +643,38 @@
+     return "\n".join(lines)
+ 
+ 
++def venv_problems(rec, python):
++    """r5 (U4): every way the probe record differs from the pinned venv interpreter (empty = the pin holds):
++    sys.executable is the pinned path; version; sys.prefix and its realpath are the venv; base_prefix and the resolved
++    binary are the pinned uv base; pyvenv.cfg exists and its home is the base's bin; and every HOST_PYTHON_IMPORTS
++    module was imported from a site-packages directory of the venv itself (realpath inside the venv's realpath)."""
++    problems = []
++    want = dict(executable=python, version=HOST_PYTHON_VERSION, prefix=HOST_PYTHON_PREFIX,
++                prefix_realpath=HOST_PYTHON_PREFIX, base_prefix=HOST_PYTHON_BASE_PREFIX, realpath=HOST_PYTHON_REALPATH)
++    for key, value in sorted(want.items()):
++        if rec.get(key) != value:
++            problems.append("%s is %r, not %r" % (key, rec.get(key), value))
++    cfg = rec.get("pyvenv_cfg") if isinstance(rec.get("pyvenv_cfg"), dict) else {}
++    keys = cfg.get("keys") if isinstance(cfg.get("keys"), dict) else {}
++    if not C.is_sha256(cfg.get("sha256")) or keys.get("home") != HOST_PYTHON_BASE_PREFIX + "/bin":
++        problems.append("pyvenv.cfg %r does not name home %s/bin" % (cfg.get("error") or keys.get("home"),
++                                                                    HOST_PYTHON_BASE_PREFIX))
++    venv = HOST_PYTHON_PREFIX + "/"
++    sites = [s.get("realpath") for s in rec.get("site_packages") or [] if isinstance(s, dict) and s.get("on_sys_path")
++             and isinstance(s.get("realpath"), str) and s["realpath"].startswith(venv)]
++    if not sites:
++        problems.append("no site-packages directory of the venv is on sys.path")
++    for name in HOST_PYTHON_IMPORTS:
++        got = rec["imports"].get(name) or {}
++        origin = got.get("origin_realpath")
++        if got.get("ok") and not (isinstance(origin, str) and any(origin.startswith(d + "/") for d in sites)):
++            problems.append("%s was imported from %r, outside the venv site-packages" % (name, origin))
++    return problems
++
++
+ def parse_python(lines, python, required):
+     """The @@PY record of one interpreter probe: exactly one such line; for the declared interpreter (`required`)
+-    the executable, the version and every HOST_PYTHON_IMPORTS import must be as declared, else refuse."""
++    every HOST_PYTHON_IMPORTS import must succeed and the r5 venv pin must hold (venv_problems), else refuse."""
+     found = [line[len("@@PY "):] for line in lines if line.startswith("@@PY ")]
+     if not required and len(found) != 1:
+         return dict(path=python, ok=False, error="no probe record")
+@@ -620,14 +682,16 @@
+     rec = si.loads_strict(found[0].encode(), "interpreter probe")
+     require(isinstance(rec, dict) and isinstance(rec.get("imports"), dict), "interpreter", "malformed probe record")
+     failed = sorted(m for m in HOST_PYTHON_IMPORTS if not (rec["imports"].get(m) or {}).get("ok"))
+-    good = rec.get("executable") == python and rec.get("version") == HOST_PYTHON_VERSION and not failed
++    problems = venv_problems(rec, python)
+     if required:
+         require(rec.get("executable") == python and rec.get("version") == HOST_PYTHON_VERSION, "interpreter",
+                 "declared interpreter %s is %r %r, not %s" % (python, rec.get("executable"), rec.get("version"),
+                                                               HOST_PYTHON_VERSION))
+         require(not failed, "interpreter", "declared interpreter %s cannot import %s: %r"
+                 % (python, failed, {m: rec["imports"].get(m) for m in failed}))
+-    return dict(rec, path=python, ok=good, failed_imports=failed)
++        require(not problems, "interpreter", "declared interpreter %s is not the pinned venv: %s"
++                % (python, "; ".join(problems)[:2000]))
++    return dict(rec, path=python, ok=not failed and not problems, failed_imports=failed, venv_problems=problems)
+ 
+ 
+ def reader_words(host, request):
+--- s3s9s10-r4/s11_host_repository.py
++++ s3s9s10-r5/s11_host_repository.py
+@@ -36,6 +36,12 @@
+ --untracked-files=all` empty); REQUIRED_ANCESTOR is an ancestor of HEAD; .git/config exactly the four `init` core keys
+ (no remote, no promisor, no extensions); no hooks / shallow / alternates / grafts; the work tree root and the study
+ directory are owner-writable.
++r5 (Sol integration r1 finding 2): every WRITING git command of the host program (provision fetch + checkout, advance
++fetch + checkout) runs through _guarded: S9's GIT_WRITE_GUARD (composed verbatim into the host program) checks the
++whole git write set and its ancestors BEFORE the command (FETCH_HEAD, HEAD / branch reflogs, index, packed-refs, refs,
++lock siblings, .git/objects, the checkout's work-tree paths: no symlink, no hard link, no stale lock), the command runs
++with the write-reducing GW_CONFIG (_git_w: si.git_run's preflight, flags and environment plus GW_CONFIG), and gw_post
++re-checks afterwards (detection only). advance's checkout must write exactly END-JOB.json (diff-tree P' X).
+ Nothing is ever deleted on a host: the transfer directory (and, after a refusal, repository.partial) stay and are
+ listed in the record as needing a separately authorized cleanup. Exit codes: 0 ok; 2 refused; 1 unexpected (closed).
+ """
+@@ -211,7 +217,7 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10 <- s11). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's10_stage_host.py': ('4437467182830d9594e9bd2543db982a456a56e87b459ba335e374cbe3605382', 64359),
++    's10_stage_host.py': ('e950ab171985914c0cc2fc5cf5d09b7e152fcd1f02eea9e9bb03041c9efd31c5', 68891),
+ }
+ 
+ 
+@@ -264,6 +270,7 @@
+ # canonical bootstrap with the S7 pins); composed after the canonical block taken from THIS file's own verified bytes.
+ HOST_MAIN = r'''
+ import base64 as _b64, ctypes as _ctypes, errno as _errno, hashlib, json as _json, os as _os, stat as _stat, sys as _sys
++import tempfile as _tempfile
+ 
+ 
+ class _Refused(Exception):
+@@ -310,6 +317,37 @@
+     return _git(si, path, args).stdout.decode("utf-8", "replace")
+ 
+ 
++def _gw_refuse(reason):
++    return _Refused("git-write", reason)
++
++
++def _git_w(si, path, args, protocols=()):
++    """r5: the WRITING git commands (fetch, checkout): exactly si.git_run's static preflight, argv flags and
++    environment (fixed env, fresh empty HOME), plus the write-reducing GW_CONFIG, which si.git_run cannot pass
++    (its first argument must be the subcommand)."""
++    _require(args and args[0] in ("fetch", "checkout"), "argv", "not a writing git command: %r" % (args[:1],))
++    repo = si.GitRepo(work_tree=path, protocols=protocols)
++    si._git_preflight(repo)
++    argv = [si.GIT_BINARY] + list(si.GIT_GLOBAL_ARGS) + list(GW_CONFIG)
++    for proto in repo.protocols:
++        argv += ["-c", "protocol.%s.allow=always" % proto]
++    argv += ["--git-dir=" + repo.git_dir, "--work-tree=" + path] + list(args)
++    env = dict(si.GIT_FIXED_ENV)
++    home = _tempfile.mkdtemp(prefix="k4s-s11-git-home-")
++    env["HOME"], env["XDG_CONFIG_HOME"] = home, home + "/xdg-config-absent"
++    try:
++        return si.run_checked(argv, 3600, 64 << 20, env=env, cwd=path)
++    finally:
++        _os.rmdir(home)                                           # fails (refusal) if git wrote into it
++
++
++def _guarded(si, path, plan, args, protocols=()):
++    """gw_scan BEFORE the command (refuses with nothing written), the command, gw_post after (detection only)."""
++    before = gw_scan(path, plan, _gw_refuse)
++    _git_w(si, path, args, protocols)
++    return gw_summary(gw_post(path, plan, before, _gw_refuse))
++
++
+ def _verify(si, tool, p, path, commit):
+     rec = tool.verify_clone(si, p["host"], path, role="repository")
+     head = _text(si, path, ["rev-parse", "HEAD"]).strip()
+@@ -426,21 +464,31 @@
+         finally:
+             writer.close()
+         _git(si, partial, ["init", "-q", "--template="])
+-        _git(si, partial, ["fetch", "-q", "--no-tags", bundle, "%s:refs/heads/%s" % (p["bundle_ref"], p["branch"])],
+-             protocols=("file",))
+-        _git(si, partial, ["checkout", "-q", p["branch"]])
++        plan = gw_plan("refs/heads/" + p["branch"], worktree_only=(".git",))      # r5: a fresh work tree root
++        result["git_write_guard"] = dict(
++            fetch=_guarded(si, partial, plan, ["fetch"] + list(GW_FETCH_FLAGS) + [
++                bundle, "%s:refs/heads/%s" % (p["bundle_ref"], p["branch"])], protocols=("file",)),
++            checkout=_guarded(si, partial, plan, ["checkout", "-q", p["branch"]]), config=list(GW_CONFIG))
+         result["partial"] = _verify(si, tool, p, partial, p["commit"])
+         _publish(si, base, p["partial_leaf"], p["repository_leaf"])
+         result["final"] = _verify(si, tool, p, final, p["commit"])
+     else:
+         result["before"] = _verify(si, tool, p, final, p["prior"])
+-        _git(si, final, ["fetch", "-q", "--no-tags", bundle, p["bundle_ref"]], protocols=("file",))
++        ref = "refs/heads/" + p["branch"]
++        guard = dict(fetch=_guarded(si, final, gw_plan(ref), ["fetch"] + list(GW_FETCH_FLAGS) + [
++            bundle, p["bundle_ref"]], protocols=("file",)), config=list(GW_CONFIG))
+         _git(si, final, ["cat-file", "-e", p["commit"] + "^{commit}"])
+         _require(p["prior"] != p["commit"] and _git(si, final, ["merge-base", "--is-ancestor", p["prior"],
+                                                                  p["commit"]], ok_rcs=(0, 1)).rc == 0,
+                  "check", "X is not a strict descendant of the provisioned commit (fast-forward only)")
+         result["end_job_committed"] = _end_job(si, p, final, p["commit"])     # BEFORE the work tree moves
+-        _git(si, final, ["checkout", "-q", "-B", p["branch"], p["commit"]])
++        raw = _git(si, final, ["diff-tree", "-r", "-z", "--no-renames", "--name-only", p["prior"], p["commit"]]).stdout
++        paths = sorted(x for x in raw.decode("utf-8", "surrogateescape").split("\x00") if x)
++        _require(paths == [p["end_job_rel"]], "check", "the checkout P' -> X would write %r, not exactly %s"
++                 % (paths[:4], p["end_job_rel"]))
++        guard["checkout"] = _guarded(si, final, gw_plan(ref, worktree=paths), ["checkout", "-q", "-B", p["branch"],
++                                                                                p["commit"]])
++        result["git_write_guard"] = guard
+         result["final"] = _verify(si, tool, p, final, p["commit"])
+         result["end_job"] = _end_job(si, p, final, "HEAD")
+     _out("RESULT", result)
+@@ -472,7 +520,9 @@
+ 
+ 
+ def host_program(policy):
+-    data = (canonical_block(policy) + HOST_MAIN).encode("utf-8")
++    """The canonical block (from this file's verified bytes), then S9's git write guard source (r5: the same text S9
++    refresh-clone executes), then HOST_MAIN."""
++    data = (canonical_block(policy) + S9.GIT_WRITE_GUARD + HOST_MAIN).encode("utf-8")
+     return data, C.sha_bytes(data)
+ 
+ 
+--- s3s9s10-r4/s1b_copy_admissions.py
++++ s3s9s10-r5/s1b_copy_admissions.py
+@@ -194,7 +194,7 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's9_end_runtime.py': ('80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff', 63200),
++    's9_end_runtime.py': ('4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60', 78380),
+ }
+ 
+ 
+--- s3s9s10-r4/s3_guard_job.py
++++ s3s9s10-r5/s3_guard_job.py
+@@ -198,8 +198,8 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's1b_copy_admissions.py': ('abbb581f8b6948c50042a965c0c9e10a5b2d5bc16bbb5f4da2c135e3f87afa1d', 26106),
+-    's9_end_runtime.py': ('80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff', 63200),
++    's1b_copy_admissions.py': ('255accc836b859e128ba466283aff2a04aaf906afb2a79da60c12c93503636fe', 26106),
++    's9_end_runtime.py': ('4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60', 78380),
+ }
+ 
+ 
+--- s3s9s10-r4/s9_end_runtime.py
++++ s3s9s10-r5/s9_end_runtime.py
+@@ -4,6 +4,9 @@
+ equivalence, and of S3 / S1b on the clone) and END-FULL-F1 (siblings through the canonical bootstrap).
+ r4 (integration audit B3/B5/U10): SD1-MANIFEST.json, the t1 corpora.json and DELTA-MANIFEST.json join the SHA-pinned
+ support members (SUPPORT_PINS; a D1 extension pending ratification); `refresh-clone` brings X into REPO_FULL.
++r5 (Sol integration r1 finding 2): GIT_WRITE_GUARD, the git write confinement shared with the S11 host program:
++before refresh-clone's fetch and --checkout, every path git may write and every ancestor is checked (no symlink, no
++hard link, no stale lock, regular single-link leaves, real directories), with write-reducing config (GW_CONFIG).
+ 
+ CANDIDATE: needs Sol review before any use. No ssh, no host.
+ 
+@@ -37,6 +40,7 @@
+                  with prepare-clone's hygiene (scrubbed env, no filter, fsck, https only, no auto-gc); the live
+                  verify_clone() before and after (with X); proofs that every pre-existing .git/objects file is unchanged,
+                  that no other ref moved and that the tip is exactly X; HEAD untouched unless --checkout.
++                 r5: the git write guard (gw_check) before the fetch and before --checkout, gw_after after each.
+   verify         Re-hash a built runtime against its manifest (pinned by --manifest-sha256).
+   equivalence    P2-2 hard gate: X (END-JOB commit) is a strict descendant of P (the built runtime's commit), the
+                  P..X diff is exactly reports/explore/k4s-confirm/end/END-JOB.json (names only; the blob is never
+@@ -537,6 +541,276 @@
+     return facts
+ 
+ 
++# ---------------------------------------------------------------- r5 (Sol integration r1 finding 2): git write confinement
++
++# The git write guard: Python 3.8 stdlib source, executed here (S9 refresh-clone) AND composed verbatim into the S11
++# host program (s11_host_repository.host_program), so both mutation paths run the same checks. Contract: BEFORE any
++# git command that writes, every path git may write during it (GW write-set table, README r5) and every ancestor of
++# each is inspected without following anything: directories must be real directories (no symlink), every existing
++# leaf git writes/appends/replaces must be a regular single-link file, every lock sibling must be absent, and every
++# file under .git/objects a regular single-link file. Only lstat/fstatat and O_PATH directory descriptors are used
++# (no file content is read; os.listdir only under .git/objects and the provision work-tree root). gw_post re-runs the
++# scan after the command and requires every pre-existing directory to keep its identity: detection only, never the
++# guard. Refusals: raise refuse(reason) (the caller's convention).
++GIT_WRITE_GUARD = r'''
++import os as _gw_os
++import stat as _gw_stat
++
++GW_RELEASE = "k4s-git-write-guard-r5"
++# Write-reducing configuration for every writing git command (git 2.25.1 on 05 and on the Ubuntu 20.04 hosts). These
++# REDUCE the write set; the scan confines what remains. core.logAllRefUpdates=false stops reflog CREATION but git
++# still appends to an existing reflog, so reflogs stay in the scanned set. git 2.25 has no --no-write-fetch-head, so
++# FETCH_HEAD is confined, not disabled.
++GW_CONFIG = ("-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false", "-c", "core.logAllRefUpdates=false",
++             "-c", "core.splitIndex=false", "-c", "core.untrackedCache=false", "-c", "gc.auto=0",
++             "-c", "gc.autoDetach=false", "-c", "maintenance.auto=false", "-c", "fetch.writeCommitGraph=false",
++             "-c", "fetch.recurseSubmodules=false", "-c", "submodule.recurse=false", "-c", "fetch.prune=false",
++             "-c", "fetch.pruneTags=false")
++GW_FETCH_FLAGS = ("-q", "--no-tags", "--no-auto-gc", "--no-recurse-submodules")
++# Directories that must already exist as real directories.
++GW_DIRS = (".git", ".git/objects", ".git/objects/pack", ".git/refs")
++# Directories git may create; an existing one must be a real directory.
++GW_MAY_DIRS = (".git/objects/info", ".git/refs/heads", ".git/logs", ".git/logs/refs", ".git/logs/refs/heads")
++# Leaves git writes in place (FETCH_HEAD: fopen "w"; reflogs: O_APPEND), replaces through a lock file (HEAD, index,
++# packed-refs, config, refs: lock + rename; the index / packed-refs / config locks RESOLVE a symlinked target) or might
++# write (ORIG_HEAD, gc.pid, gc.log, commit-graph, info/packs): absent, or a regular single-link file.
++GW_FILES = (".git/HEAD", ".git/index", ".git/FETCH_HEAD", ".git/ORIG_HEAD", ".git/packed-refs", ".git/config",
++            ".git/logs/HEAD", ".git/gc.pid", ".git/gc.log", ".git/objects/info/commit-graph",
++            ".git/objects/info/packs")
++# Must not exist in any form (indirections, hooks, the split-index / commit-graph chain directories).
++GW_ABSENT = (".git/hooks", ".git/shallow", ".git/commondir", ".git/config.worktree", ".git/objects/info/alternates",
++             ".git/objects/info/http-alternates", ".git/objects/info/commit-graphs", ".git/info/grafts",
++             ".git/modules", ".git/worktrees")
++GW_TREES = (".git/objects",)
++_GW_PATH = _gw_os.O_PATH | _gw_os.O_DIRECTORY | _gw_os.O_NOFOLLOW | _gw_os.O_CLOEXEC
++_GW_LIST = _gw_os.O_RDONLY | _gw_os.O_DIRECTORY | _gw_os.O_NOFOLLOW | _gw_os.O_CLOEXEC
++
++
++def gw_plan(ref, worktree=(), worktree_only=None):
++    """The write set of one fetch/checkout that updates `ref` (refs/heads/... or refs/remotes/...): GW_* plus the ref
++    file, its reflog, their parent directories, every lock sibling, and the work-tree paths the checkout writes
++    (`worktree`: exactly the paths that differ; `worktree_only`: the names allowed in a fresh work-tree root)."""
++    parts = ref.split("/")
++    if len(parts) < 3 or parts[0] != "refs" or any(p in ("", ".", "..") for p in parts):
++        raise ValueError("bad ref %r" % ref)
++    may = list(GW_MAY_DIRS)
++    for top in (".git/", ".git/logs/"):
++        for i in range(2, len(parts)):
++            may.append(top + "/".join(parts[:i]))
++    files = list(GW_FILES) + [".git/" + ref, ".git/logs/" + ref]
++    absent = list(GW_ABSENT) + [f + ".lock" for f in files]
++    return dict(release=GW_RELEASE, ref=ref, dirs=list(GW_DIRS), may_dirs=sorted(set(may) - set(GW_DIRS)),
++                files=files, absent=absent, trees=list(GW_TREES), worktree=list(worktree),
++                worktree_only=None if worktree_only is None else sorted(worktree_only))
++
++
++def _gw_parts(rel, refuse):
++    parts = rel.split("/") if isinstance(rel, str) else [""]
++    if not rel or rel.startswith("/") or any(p in ("", ".", "..") or "\x00" in p for p in parts):
++        raise refuse("bad write-set path %r" % (rel,))
++    return parts
++
++
++def _gw_lstat(fd, name, rel, refuse):
++    try:
++        return _gw_os.stat(name, dir_fd=fd, follow_symlinks=False)
++    except FileNotFoundError:
++        return None
++    except OSError as error:
++        raise refuse("%s cannot be inspected (%s)" % (rel, _gw_os.strerror(error.errno)))
++
++
++def _gw_open_dir(fd, name, st, rel, refuse, flags=_GW_PATH):
++    try:
++        child = _gw_os.open(name, flags, dir_fd=fd)
++    except OSError as error:
++        raise refuse("%s is not a real directory (%s)" % (rel, _gw_os.strerror(error.errno)))
++    info = _gw_os.fstat(child)
++    if not _gw_stat.S_ISDIR(info.st_mode) or (info.st_dev, info.st_ino) != (st.st_dev, st.st_ino):
++        _gw_os.close(child)
++        raise refuse("%s changed while it was checked" % rel)
++    return child
++
++
++def gw_open_root(path, refuse):
++    """The repository root, walked from / one component at a time without following anything."""
++    if not isinstance(path, str) or not path.startswith("/") or path == "/" or _gw_os.path.normpath(path) != path:
++        raise refuse("repository path %r is not absolute and normalized" % (path,))
++    fd = _gw_os.open("/", _GW_PATH)
++    try:
++        done = ""
++        for name in path[1:].split("/"):
++            done += "/" + name
++            st = _gw_lstat(fd, name, done, refuse)
++            if st is None or not _gw_stat.S_ISDIR(st.st_mode):
++                raise refuse("repository path component %s is not a real directory" % done)
++            child = _gw_open_dir(fd, name, st, done, refuse)
++            _gw_os.close(fd)
++            fd = child
++    except BaseException:
++        _gw_os.close(fd)
++        raise
++    return fd
++
++
++def _gw_dirs(root, parts, must, refuse, facts):
++    """Walk `parts` below root: each existing component a real directory (recorded in facts); returns its fd, or None
++    at the first absent component (allowed only when not `must`)."""
++    fd = _gw_os.dup(root)
++    try:
++        for i, name in enumerate(parts):
++            rel = "/".join(parts[:i + 1])
++            st = _gw_lstat(fd, name, rel, refuse)
++            if st is None:
++                if must:
++                    raise refuse("%s is missing (a real directory is required)" % rel)
++                facts.setdefault(rel, ("absent",))
++                _gw_os.close(fd)
++                return None
++            if not _gw_stat.S_ISDIR(st.st_mode):
++                raise refuse("%s is not a real directory (a symlink or another file type)" % rel)
++            child = _gw_open_dir(fd, name, st, rel, refuse)
++            _gw_os.close(fd)
++            fd = child
++            facts[rel] = ("dir", st.st_dev, st.st_ino)
++        return fd
++    except BaseException:
++        _gw_os.close(fd)
++        raise
++
++
++def _gw_leaf(root, rel, absent_only, refuse, facts):
++    parts = _gw_parts(rel, refuse)
++    fd = _gw_dirs(root, parts[:-1], False, refuse, facts)
++    if fd is None:
++        facts[rel] = ("absent",)
++        return
++    try:
++        st = _gw_lstat(fd, parts[-1], rel, refuse)
++    finally:
++        _gw_os.close(fd)
++    if st is None:
++        facts[rel] = ("absent",)
++        return
++    if absent_only:
++        raise refuse("%s exists; it must not exist in any form" % rel)
++    if not _gw_stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
++        raise refuse("%s is not a regular single-link file (a symlink, a hard link or another file type)" % rel)
++    facts[rel] = ("file", st.st_dev, st.st_ino)
++
++
++def _gw_tree(root, rel, refuse, facts):
++    """Every entry below rel: real directories and regular single-link files only (no symlink, no hard link)."""
++    parts = _gw_parts(rel, refuse)
++    top = _gw_dirs(root, parts[:-1], True, refuse, facts)
++    stack = []
++    try:
++        st = _gw_lstat(top, parts[-1], rel, refuse)
++        if st is None or not _gw_stat.S_ISDIR(st.st_mode):
++            raise refuse("%s is not a real directory" % rel)
++        stack.append((_gw_open_dir(top, parts[-1], st, rel, refuse, _GW_LIST), rel))
++        facts[rel] = ("dir", st.st_dev, st.st_ino)
++        while stack:
++            fd, here = stack.pop()
++            try:
++                names = sorted(_gw_os.listdir(fd))
++                for name in names:
++                    sub = here + "/" + name
++                    st = _gw_lstat(fd, name, sub, refuse)
++                    if st is None:
++                        raise refuse("%s vanished while it was checked" % sub)
++                    if _gw_stat.S_ISDIR(st.st_mode):
++                        stack.append((_gw_open_dir(fd, name, st, sub, refuse, _GW_LIST), sub))
++                        facts[sub] = ("dir", st.st_dev, st.st_ino)
++                    elif _gw_stat.S_ISREG(st.st_mode) and st.st_nlink == 1:
++                        facts[sub] = ("file", st.st_dev, st.st_ino)
++                    else:
++                        raise refuse("%s is not a real directory or a regular single-link file" % sub)
++            finally:
++                _gw_os.close(fd)
++    finally:
++        _gw_os.close(top)
++        for fd, _ in stack:
++            _gw_os.close(fd)
++
++
++def gw_scan(path, plan, refuse):
++    """Check the whole write set of `plan` in the repository at `path`; returns {rel: state} (dir/file identities,
++    absences). Raises refuse(reason) at the first violation, before git runs."""
++    if not isinstance(plan, dict) or plan.get("release") != GW_RELEASE:
++        raise refuse("not a %s write-set plan" % GW_RELEASE)
++    facts = {}
++    root = gw_open_root(path, refuse)
++    try:
++        for rel in plan["dirs"]:
++            _gw_os.close(_gw_dirs(root, _gw_parts(rel, refuse), True, refuse, facts))
++        for rel in plan["may_dirs"]:
++            fd = _gw_dirs(root, _gw_parts(rel, refuse), False, refuse, facts)
++            if fd is not None:
++                _gw_os.close(fd)
++        for rel in plan["files"]:
++            _gw_leaf(root, rel, False, refuse, facts)
++        for rel in plan["absent"]:
++            _gw_leaf(root, rel, True, refuse, facts)
++        for rel in plan["trees"]:
++            _gw_tree(root, rel, refuse, facts)
++        if plan["worktree_only"] is not None:
++            listing = _gw_os.open(".", _GW_LIST, dir_fd=root)
++            try:
++                names = sorted(_gw_os.listdir(listing))
++            finally:
++                _gw_os.close(listing)
++            if names != plan["worktree_only"]:
++                raise refuse("the work tree root holds %r, not exactly %r" % (names[:6], plan["worktree_only"]))
++        for rel in plan["worktree"]:
++            if rel == ".git" or rel.startswith(".git/"):
++                raise refuse("work-tree path %r is inside .git" % rel)
++            _gw_leaf(root, rel, False, refuse, facts)
++    finally:
++        _gw_os.close(root)
++    return facts
++
++
++def gw_post(path, plan, before, refuse):
++    """After the git command (detection only, never the guard): the write set still passes gw_scan, and every
++    directory that existed before is still the same directory."""
++    after = gw_scan(path, dict(plan, worktree_only=None), refuse)         # a checkout populates a fresh root
++    moved = sorted(rel for rel, state in before.items() if state[0] == "dir" and after.get(rel) != state)
++    if moved:
++        raise refuse("directories in the git write set changed identity during the command: %r" % moved[:4])
++    return after
++
++
++def gw_summary(facts):
++    kinds = {}
++    for state in facts.values():
++        kinds[state[0]] = kinds.get(state[0], 0) + 1
++    return dict(release=GW_RELEASE, checked=len(facts), kinds=dict(sorted(kinds.items())))
++'''
++_GW = {"__name__": "k4s_git_write_guard"}
++exec(compile(GIT_WRITE_GUARD, "<k4s-git-write-guard>", "exec"), _GW)
++GW_CONFIG, GW_FETCH_FLAGS = _GW["GW_CONFIG"], _GW["GW_FETCH_FLAGS"]
++
++
++def gw_refusal(reason):
++    return si.Refusal("git-write", reason)
++
++
++def gw_check(path, plan):
++    return _GW["gw_scan"](path, plan, gw_refusal)
++
++
++def gw_after(path, plan, before):
++    return _GW["gw_post"](path, plan, before, gw_refusal)
++
++
++def changed_paths(g, old, new):
++    """Every work-tree path a checkout from `old` to `new` writes or removes (tree metadata only)."""
++    raw = si.git_run(g, ["diff-tree", "-r", "-z", "--no-renames", "--name-only", old, new], timeout=3600,
++                     stdout_limit=64 << 20).stdout
++    return sorted(p for p in raw.decode("utf-8", "surrogateescape").split("\x00") if p)
++
++
+ # ---------------------------------------------------------------- refresh-clone (r4, U10)
+ 
+ def objects_role(path=None):
+@@ -565,15 +839,22 @@
+ 
+ def fetch_argv():
+     """The one network fetch (the second git call outside si.git_run, beside prepare-clone's clone): the fixed P2-4
+-    flags plus https only, fsck on receive, no auto-gc / commit-graph / submodules / tags / prune, an explicit
+-    git dir and the ORIGIN_URL (never the config remote), and exactly the END branch into its remote-tracking ref
+-    WITHOUT '+' (git itself refuses a non-fast-forward update)."""
+-    return [si.GIT_BINARY, "--no-replace-objects", "--no-optional-locks", "-c", "core.hooksPath=/dev/null",
+-            "-c", "core.fsmonitor=false", "-c", "protocol.allow=never", "-c", "protocol.%s.allow=always" % CLONE_PROTOCOL,
+-            "-c", "transfer.fsckObjects=true", "-c", "gc.auto=0", "-c", "fetch.writeCommitGraph=false",
+-            "-c", "fetch.recurseSubmodules=false", "-c", "fetch.prune=false", "--git-dir=" + REPO_FULL + "/.git",
+-            "fetch", "-q", "--no-tags", "--no-recurse-submodules", "--", ORIGIN_URL,
+-            "refs/heads/%s:%s" % (END_BRANCH, END_BRANCH_REF)]
++    flags plus https only, fsck on receive, the r5 write-reducing GW_CONFIG (no reflog creation, auto-gc,
++    maintenance, commit-graph, submodules or prune) and GW_FETCH_FLAGS (no tags, --no-auto-gc), an explicit git dir
++    and the ORIGIN_URL (never the config remote), and exactly the END branch into its remote-tracking ref WITHOUT '+'
++    (git itself refuses a non-fast-forward update)."""
++    return ([si.GIT_BINARY, "--no-replace-objects", "--no-optional-locks"] + list(GW_CONFIG)
++            + ["-c", "protocol.allow=never", "-c", "protocol.%s.allow=always" % CLONE_PROTOCOL,
++               "-c", "transfer.fsckObjects=true", "--git-dir=" + REPO_FULL + "/.git", "fetch"] + list(GW_FETCH_FLAGS)
++            + ["--", ORIGIN_URL, "refs/heads/%s:%s" % (END_BRANCH, END_BRANCH_REF)])
++
++
++def checkout_argv(commit):
++    """r5: refresh-clone --checkout (the third git call outside si.git_run): si.git_run's fixed flags plus GW_CONFIG
++    (git_run cannot take global -c options), explicit git dir and work tree, detached X."""
++    return ([si.GIT_BINARY, "--no-replace-objects", "--no-optional-locks"] + list(GW_CONFIG)
++            + ["-c", "protocol.allow=never", "--git-dir=" + REPO_FULL + "/.git", "--work-tree=" + REPO_FULL,
++               "checkout", "-q", "--detach", full_commit(commit, "commit")])
+ 
+ 
+ def refresh_clone(a, record, log=print):
+@@ -582,7 +863,11 @@
+     fast-forward only); then the full live verify_clone() with X. Proofs: every pre-existing file under .git/objects
+     is byte-identical afterwards (objects are only added); every other ref is unchanged; the remote-tracking ref moved
+     from its old value to exactly X, a descendant of the old value (and of --base-commit when given). HEAD and the
+-    work tree are untouched unless --checkout (then: detached X, clean status)."""
++    work tree are untouched unless --checkout (then: detached X, clean status).
++    r5 (Sol integration r1 finding 2): immediately before the fetch, and before the --checkout, the git write guard
++    (gw_check) confines every path git may write (FETCH_HEAD, the remote-tracking ref and its reflog, HEAD and its
++    reflog, index, packed-refs, lock siblings, .git/objects, the checkout's work-tree paths, and all their ancestors);
++    gw_after re-checks after each command (detection only)."""
+     commit = full_commit(a.commit, "--commit")
+     base = full_commit(a.base_commit, "--base-commit") if a.base_commit else None
+     policy = si.Policy(C.local_host(), [clone_role(), objects_role(), repo_role(), C.code_role()])
+@@ -593,8 +878,11 @@
+     require(old is not None, "check", "the full clone has no %s (prepare-clone fetches every branch)" % END_BRANCH_REF)
+     head_before = si.git_run(g, ["rev-parse", "HEAD"], timeout=60).stdout.decode().strip()
+     objects_before = objects_snapshot(policy)
++    plan = _GW["gw_plan"](END_BRANCH_REF)
++    guard = gw_check(REPO_FULL, plan)                                  # r5: the write set, BEFORE the fetch
+     with C.ScrubbedEnv() as env:
+         si.run_checked(fetch_argv(), 3600, 1 << 20, env=env, cwd=REPO_FULL)
++    gw_after(REPO_FULL, plan, guard)
+     after = require_full_clone((commit,) + ((base,) if base else ()))  # F4: the full live verification again
+     refs_after = ref_table(g)
+     require(refs_after.get(END_BRANCH_REF) == commit, "check", "%s is %s after the fetch, not the given X %s"
+@@ -609,8 +897,13 @@
+     require(not lost, "check", "pre-existing object files changed or vanished: %r" % lost[:4])
+     head = si.git_run(g, ["rev-parse", "HEAD"], timeout=60).stdout.decode().strip()
+     require(head == head_before, "check", "HEAD moved during the fetch")
++    checkout_guard = None
+     if a.checkout:
+-        si.git_run(g, ["checkout", "-q", "--detach", commit], timeout=3600)
++        plan = _GW["gw_plan"](END_BRANCH_REF, worktree=changed_paths(g, head, commit))
++        before_checkout = gw_check(REPO_FULL, plan)                    # r5: BEFORE the checkout
++        with C.ScrubbedEnv() as env:
++            si.run_checked(checkout_argv(commit), 3600, 1 << 20, env=env, cwd=REPO_FULL)
++        checkout_guard = _GW["gw_summary"](gw_after(REPO_FULL, plan, before_checkout))
+         head = si.git_run(g, ["rev-parse", "HEAD"], timeout=60).stdout.decode().strip()
+         require(head == commit, "check", "checkout HEAD %s is not %s" % (head, commit))
+         status = si.git_run(g, ["status", "--porcelain", "--untracked-files=no"], timeout=3600).stdout
+@@ -620,6 +913,7 @@
+                   refs_changed=changed, objects_before=len(objects_before),
+                   objects_added=sorted(set(objects_after) - set(objects_before)), objects_unchanged=True,
+                   head_before=head_before, head=head, checkout=bool(a.checkout), full_clone_before=before,
++                  git_write_guard=dict(_GW["gw_summary"](guard), config=list(GW_CONFIG), checkout=checkout_guard),
+                   full_clone=after, safe_input_sha256=C.SAFE_INPUT_SHA256,
+                   script_sha256=C.code_sha(policy, "s9_end_runtime.py"))
+     sha = record.write("s9-refresh-clone.json", result)
+--- s5s6s7-r4/k4s_a6_builder.py
++++ s5s6s7-r5/k4s_a6_builder.py
+@@ -1,4 +1,4 @@
+-"""K4S END-JOB builder, 05 only (candidate r4; INTEGRATION-AUDIT-r1 U8; plan v2 A6). Sol review before any use.
++"""K4S END-JOB builder, 05 only (candidate r5; INTEGRATION-AUDIT-r1 U8; plan v2 A6). Sol review before any use.
+ 
+ Never reads outcomes: every repository byte is a named health-only blob read through safe_input's gated git reader
+ (git_show_file: name gate, one regular blob, object hash checked) from the 05 full clone REPO_FULL (read only).
+@@ -15,8 +15,11 @@
+       On a /dev/shm scratch copy of REPO_FULL/.git ONLY (no work tree is copied; nothing outside scratch is written):
+       commit the END-JOB alone on P' (X), require diff-tree P' X == [END-JOB path]; materialize only the evidence
+       and its artifacts (git show of their committed blobs) and run the FROZEN end_evidence.end_evidence + end_job
+-      (the S9 runtime's own files, pinned) against the scratch clone at X; then run S9 (s3s9s10-r3, pinned)
+-      `equivalence` with REPO_FULL pointed at the scratch clone. Writes DIR/SELF-CHECK.json exclusively; the scratch
++      (the S9 runtime's own files, pinned) against the scratch clone at X; then run the ADOPTED S9 (s3s9s10-r5,
++      pinned) `equivalence` with REPO_FULL pointed at the scratch clone. r5 (SOL-REVIEW-END-INTEGRATION-r1 finding 1):
++      the S9 code and the PRODUCTION runtime manifest are pinned from the S9-FINAL / RUNTIME-r5-READY markers
++      (record: ADOPTED-S9-RUNTIME.json), and the manifest must name that S9 as its builder (script_sha256), P' as its
++      commit, REPO_FULL as its repository and FROZEN_PYTHON as its frozen interpreter. Writes DIR/SELF-CHECK.json exclusively; the scratch
+       directory is removed in every case.
+ 
+ The real commit (A6) is a coordinator step: copy END-JOB.json byte for byte to reports/explore/k4s-confirm/end/
+@@ -229,9 +232,12 @@
+ END_GRANTS = ("end-json-exact", "end-claim-exact")
+ COMMIT = re.compile(r"[0-9a-f]{40}")
+ DECLARED_BY = re.compile(r"[ -~]{1,200}")
+-# self-check inputs (read only, pinned): the S9 runtime built at P' and the frozen files the drivers import
++# self-check inputs (read only, pinned): the S9 runtime built at P' and the frozen files the drivers import.
++# r5 (finding 1): S9_PATH/S9_SHA256 and FROZEN_RUNTIME/FROZEN_RUNTIME_MANIFEST_SHA256 are written by
++# tests/adopt_pins.py from the S9-FINAL and RUNTIME-r5-READY markers (computed, never typed; record
++# ADOPTED-S9-RUNTIME.json, tied to these constants by tests/test_r5.py).
+ FROZEN_RUNTIME = RUNNER + "/end-staging/runtime-98566c032d0b"
+-FROZEN_RUNTIME_MANIFEST_SHA256 = "4dd88461caa82f09bb27bc6adad1756f62dbc8d21aa041441f8c106ef9b80e04"
++FROZEN_RUNTIME_MANIFEST_SHA256 = "d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02"
+ E4V3 = "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3"
+ FROZEN_PINS = {                                                             # = k4s_end_preflight.FROZEN_CLOSURE
+     'reports/explore/k4s-confirm/end_evidence.py': '6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e',
+@@ -240,8 +246,8 @@
+     'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts.py': '839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6',
+ }
+ FROZEN_PYTHON = "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python"         # = S9 DEFAULT_PYTHON
+-S9_PATH = RUNNER + "/end-prep/s3s9s10-r3/s9_end_runtime.py"
+-S9_SHA256 = "1875a32ec5155cbd3355c912b8114bb8654b0fd9593d421474476f3c069bf651"
++S9_PATH = RUNNER + "/end-prep/s3s9s10-r5/s9_end_runtime.py"
++S9_SHA256 = "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60"
+ SCRATCH_PARENT = "/dev/shm"
+ SCRATCH_GIT_ENV = {"GIT_AUTHOR_NAME": "k4s-end-job self-check", "GIT_AUTHOR_EMAIL": "scratch@127x05",
+                    "GIT_COMMITTER_NAME": "k4s-end-job self-check", "GIT_COMMITTER_EMAIL": "scratch@127x05",
+@@ -399,17 +405,26 @@
+ # ---------------------------------------------------------------- self-check (scratch only)
+ 
+ def frozen_inputs(si):
+-    """The S9 runtime manifest and the frozen files the driver imports, each with its pin, and the S9 code."""
++    """The S9 runtime manifest and the frozen files the driver imports, each with its pin, and the S9 code. r5: the
++    manifest must have been built by exactly the adopted S9, at P', from REPO_FULL, with FROZEN_PYTHON."""
+     P = si.Policy("127x05", [
+         si.Role("rt", FROZEN_RUNTIME, "read", 256 << 20, exact=("runtime-manifest.json",)),
+         si.Role("rt-files", FROZEN_RUNTIME + "/runtime", "read", 64 << 20, exact=tuple(FROZEN_PINS)),
+         si.Role("s9", os.path.dirname(S9_PATH), "read", 16 << 20, exact=(os.path.basename(S9_PATH),))])
+-    require(si.sha256_input(P, "rt", "runtime-manifest.json")["sha256"] == FROZEN_RUNTIME_MANIFEST_SHA256,
++    raw = si.read_bytes(P, "rt", "runtime-manifest.json", max_size=256 << 20)
++    require(sha_bytes(raw) == FROZEN_RUNTIME_MANIFEST_SHA256,
+             "S9 runtime manifest differs from its pin")
++    manifest = si.loads_strict(raw, "runtime-manifest.json")
++    require(isinstance(manifest, dict) and manifest.get("script_sha256") == S9_SHA256,
++            "S9 runtime manifest was not built by the adopted S9 (script_sha256 != S9_SHA256)")
++    require(manifest.get("commit") == EVIDENCE_COMMIT and manifest.get("repository") == REPO_FULL
++            and manifest.get("python") == FROZEN_PYTHON,
++            "S9 runtime manifest is not P' / REPO_FULL / FROZEN_PYTHON")
+     for rel, pin in sorted(FROZEN_PINS.items()):
+         require(si.sha256_input(P, "rt-files", rel)["sha256"] == pin, "frozen file differs from its pin: " + rel)
+     require(si.sha256_input(P, "s9", os.path.basename(S9_PATH))["sha256"] == S9_SHA256,
+             "S9 s9_end_runtime.py differs from its pin")
++    return manifest
+ 
+ 
+ def scratch_commit(si, clone, data, commit):
+@@ -467,7 +482,7 @@
+     require(isinstance(job, dict) and tuple(sorted(job)) == JOB_FIELDS and job_bytes(job) == data,
+             "END-JOB.json is not the builder's canonical END-JOB")
+     si.check_absent(P, "out-read", "SELF-CHECK.json")
+-    frozen_inputs(si)
++    manifest = frozen_inputs(si)
+     scratch = tempfile.mkdtemp(prefix="k4s-a6-scratch-", dir=SCRATCH_PARENT)
+     try:
+         clone = os.path.join(scratch, "clone")
+@@ -499,7 +514,9 @@
+                       builder_sha256=own_sha256(si),
+                       scratch_end_job_commit=x, scratch_diff=[END_JOB_REL], evidence_files_materialized=count,
+                       frozen=dict(frozen_result, python=FROZEN_PYTHON, runtime=FROZEN_RUNTIME,
+-                                  runtime_manifest_sha256=FROZEN_RUNTIME_MANIFEST_SHA256),
++                                  runtime_manifest_sha256=FROZEN_RUNTIME_MANIFEST_SHA256,
++                                  runtime_manifest_script_sha256=manifest["script_sha256"],
++                                  runtime_manifest_git_members_sha256=manifest.get("git_members_sha256")),
+                       s9_equivalence=dict(s9=S9_PATH, s9_sha256=S9_SHA256, python=sys.executable,
+                                           git_members=equivalence.get("git_members"),
+                                           git_members_sha256=equivalence.get("git_members_sha256"),
+--- s5s6s7-r4/k4s_end_launch_gate.py
++++ s5s6s7-r5/k4s_end_launch_gate.py
+@@ -3,7 +3,7 @@
+ r4 (INTEGRATION-AUDIT-r1 U5, U6, L1, U12):
+ ``build-argv``: writes RUNNER/end-launch/<host>/<attempt>/launch-argv.json exclusively from verified inputs only (the
+   pinned RC-6 declaration, the S4 bundle receipts on 05, the END-JOB blob at commit X of the 05 full clone, the
+-  launching host's pinned PREFLIGHT-VERIFIED identity, the gate constants incl. the A3 host python); the composed argv
++  launching host's pinned PREFLIGHT-VERIFIED identity, the gate constants incl. the U4 host python); the composed argv
+   must pass validate_argv first; prints the NUL-joined SHA-256 for ``launch --argv-sha256``.
+ ``prepare-preflight-receive``: creates the EMPTY RUNNER/preflight-received/<host>/<attempt>/ (0700) the preflight push
+   wrapper targets and ``launch`` requires.
+@@ -104,7 +104,10 @@
+ CORPUS_INVENTORY_SHA256 = "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"  # = k4s_end_preflight
+ BUS_PROCEED_MAX, BUS_STOP_MIN = 0.3, 0.7                    # P2-3, = k4s_end_preflight.BUS_PROCEED_MAX/BUS_STOP_MIN
+ # r4 (INTEGRATION-AUDIT-r1 U5/L1): the END argv values S7 now pins itself, so every single-field change refuses.
+-HOST_PYTHON = "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"   # A3: PENDING RULING
++# r5 (U4 ruling, COORDINATOR 2026-10-13 10:33Z): the interpreter P' runtime.sh actually executes, run with -B
++# (`exec /mpac/sdicks02/repos/clasher/.venv/bin/python -B "$@"`, RUNTIME_SH_REL at P'); NOT the bare uv binary.
++HOST_PYTHON = "/mpac/sdicks02/repos/clasher/.venv/bin/python"
++RUNTIME_SH_REL = "reports/explore/k4s-confirm/runtime.sh"                 # the frozen launcher HOST_PYTHON is taken from
+ SD1_MANIFEST_SHA256 = "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76"   # = k4s_end_preflight FROZEN_CLOSURE SD1
+ END_EVIDENCE_SHA256 = "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd"  # end-evidence.json at P' 98566c03 (plan v2 A6)
+ END_EVIDENCE_REL = "k4s-end-evidence/end-evidence.json"                   # S4 EVIDENCE_NAME (bundle-relative)
+@@ -417,7 +420,7 @@
+     python, flag, script = m_argv[i:i + 3]
+     require(os.path.isabs(python) and os.path.basename(python).startswith("python") and flag == "-B",
+             "Interpreter must be an absolute python run with exactly -B")
+-    require(python == HOST_PYTHON, "Interpreter must be the declared host python " + HOST_PYTHON + " (A3)")
++    require(python == HOST_PYTHON, "Interpreter must be the declared host python " + HOST_PYTHON + " (U4)")
+     if kind == "end":
+         opts = options(m_argv[i + 3:], END_REQUIRED, ())
+         require(set(opts) == set(END_REQUIRED), "END argv must give exactly the required options")
