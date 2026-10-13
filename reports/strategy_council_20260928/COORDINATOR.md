@@ -5742,3 +5742,26 @@ The stdout `complete` record is schema `b08-authority-placement-complete.v1`. It
 - 0 `^REVOKED` lines.
 
 **ACCEPTED.**
+
+## 2026-10-13 12:02Z: B r4 environment run GO r3 issued
+
+Built from the owner's draft fcfccb47. The only changes are the placement r10 completion fields:
+- complete f718fde5;
+- exit codes 0;
+- tips bd4af8d2;
+- C-6 at 84a98fd4;
+- `placement_c6_accepted`, `draft_status` and the blocker.
+
+**What it authorizes:**
+- The bound transport r3 runs with CPU GO baaea907 and placement 7b3fc7dc.
+- It runs on 127x08 from 05, on cpus [0,1].
+- No GPU and no heldout data.
+- One launch, no retry.
+
+**Window:** 12:15Z to 13:15Z.
+
+**Before any epoch GO:** the coordinator does the G6 comparison.
+
+**C-5:** clean.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 3645860d46b686f46ae569567fe7ba07bdb58a5755734e255c76f644e88ff20c
