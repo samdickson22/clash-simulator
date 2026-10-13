@@ -5645,3 +5645,22 @@ The label.py-side alternative is rejected, because it would weaken R7 for every 
 **Quiet-read r9:** run with `coordinator-quiet-read-r9.sh` (only `Q=` changed), exit 0.
 
 **Next:** the environment CPU GO, placement r10 and the environment run GO, from the owner's drafts.
+
+## 2026-10-13 11:36Z: B r4 environment CPU GO r4 and placement GO r10 issued
+
+**Source.** These are the owner's drafts in `b08-r4-environment-chain-drafts-r2`, issued **byte-identical**. The owner filled the stage acceptance (61062b17, complete cdafab0d) and quiet-read r9 (ad0ab0f7, who 0) exactly as instructed.
+
+**Checks:**
+- F1 r5 `validate_go` passes, with procedure f47939b1.
+- `receipt()` accepts the environment CPU GO (phase environment).
+- C-5 is clean and there are no collisions.
+- Placement r10 carries only the environment CPU GO, because review r4 is already placed.
+
+**Windows:**
+- Placement: 12:00Z to 13:30Z.
+- Environment CPU: 12:15Z to 14:15Z.
+
+The run GO follows C-6.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT baaea907b1e9535aff2dd280b026959842c9a8e7369ffa9486e32d0ce4b3c842
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 7b3fc7dc8784a1aa8171d64039fa4b1846be73c41f332ac42de3d4f489c1123d
