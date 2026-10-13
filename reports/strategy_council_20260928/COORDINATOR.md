@@ -4701,3 +4701,22 @@ The issued GO is byte-identical to the draft `l1/prepared/b08-package-r3-deploym
 - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-deployment-go-receipt-r3.json` (0444)
 
 ISSUED AUTHORIZE_B_DEPLOYMENT 8b38cd19c0c960f205463d1612416da6dd8fb51defce9d0b7ba25743832c0bf7
+
+## 2026-10-13 02:51Z: U3/U4 GO (CPU K4-vs-K4S pairs on 127x03 and 127x04, STOP_AT 07:30Z)
+
+The coordinator checked the fix commit d4c7d646 without another review round, as PR-1 allows, against 3dc9ab25 (path `reports/explore/fsc`). The diff covers only the following:
+- **Sol r2 R2-1:** stop history fails closed. Both scripts set `nullglob`, so a host with no stop logs is not refused.
+- **R2-2:** console users = the max of the helper, checked logind sessions and `who`. Any failed probe counts as 1.
+- **R2-3:** every phase's stop-at is `min(now + n, STOP_AT)`. `start` refuses a stop-at past the cap or already passed. `stop` covers every instance. The stop runner is armed before the launches.
+- **The single cap:** the file `fsc/DEADLINE` = 2026-10-13T07:30:00Z.
+
+No other logic changed. On a fresh export on 05, all 8 offline test groups pass (coordinator rerun), and nothing in `/mpac/sdicks02/jobs-fsc` was created locally.
+
+**GO**, using commit d4c7d646 and bundle MANIFEST 8978a588:
+1. arm `stop_runner.sh` on 05 at 07:30Z for 127x03 and 127x04;
+2. `session.sh launch 127x03` with STOP_AT 07:30Z;
+3. `session.sh launch 127x04` after 03 returns `__RC=0`.
+
+All of K1–K7 hold as cleared by the K4S runner. Output after STOP_AT is not counted (H-1). K4S A1 on 03/04 is no earlier than STOP + 1 h.
+
+**Disclosed residual:** the bootstrap may create the parent `/mpac/sdicks02/jobs-fsc` on each host.
