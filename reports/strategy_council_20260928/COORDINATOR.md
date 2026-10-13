@@ -5980,3 +5980,31 @@ This is the third package-content gap in a row: the B r3 truth payloads, the r3 
 - Every disclosure is in RESULTS.
 
 This is exploration and **never adoptable**. It informs the direction: the student default costs nothing measurable at full speed and helps under time pressure. Confirmation is the K4S END line.
+
+## 2026-10-13 13:34Z: B package r5 APPROVED (Opus resource-closure review)
+
+**Review.** Opus reviewed `v4-b-gap-review/B-RESOURCE-CLOSURE-REVIEW-r1.md` (69cc8784) and approved **package r5** (a0046c1d). It adds `gamedata.json`, `decks.json`, `hitboxes.json`, `pyproject.toml` and `contract_v5_tokens.json`. The 165 existing members are unchanged.
+
+**What the review confirmed:**
+- **Closure:** an independent scan of 163 modules finds that nothing the epoch or reducer path opens is missing.
+- **Inputs:** every template SHA, 1,536 relocations and 13,938 proof digests are present.
+- **gamedata.json:** its SHA equals the frozen manifest value.
+- **Path resolution on 08:** files resolve to `code-a0046c1d27bf/`.
+- **Smoke test:** it is hermetic, and it would have caught r4.
+
+**Corrections required before drafting** (none of them changes the package):
+1. **F1 r6 repins:**
+   - `placement-operator-command.sh:13`
+   - the r4→r5 receipt filenames and package directory names in the F1 scripts
+   - `inspect_deployment.py:5`
+   - the package, CPU-plan and deploy pins
+2. **Transport r4:**
+   - `transport.py` PACKAGE/PLAN/BUNDLE pins
+   - `guard.sh`, `launcher.sh` and `retrieval.sh` each repin the `transport.py` SHA and path
+3. **Optional:** add `CLASHER_ROOT=<code root>` to the canonical epoch command. This removes a hazard where the working directory takes precedence. It is harmless under the current transport. It is a CPU-plan change, so it is the owner's choice and must be stated.
+
+**Coordinator checks.** The coordinator checks both pin-only diffs directly, as for r4.
+
+**Next steps:** review receipt r5, deployment, stage, environment/G6, then epoch 1.
+
+**Residual risk:** code after the r4 failure point has never run on 08. If epoch 1 fails, the most likely place is an A2-equality check.
