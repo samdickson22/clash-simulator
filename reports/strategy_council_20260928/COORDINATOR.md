@@ -5397,3 +5397,28 @@ qualify4 and label.py are unchanged. Tests: `test_sa4` has 11 scenarios, 10/10 m
    - A failure consumes only that attempt's authorities. It is diagnosed by a coordinator read-only stderr read, with no retry.
 
 The release-blocker status of real-input end-to-end is waived in this form and disclosed.
+
+## 2026-10-13 09:25Z: RV-1 probe of 08 started; F1 r5 pin-only verified; 03 cache answer
+
+**Probe scope.** The perception owner's PROBE-LIST covers 9,127 B-job-root paths. OWNED-OUTSIDE adds 1,779 paths under `/mpac/sdicks02/repos/clasher-v4-cache/post0500-validation-20261008-r1/{bundle,cache}`: B's own pinned bundle and cache inputs, which the runtime hard-codes. The coordinator **permits those exact named paths**.
+- Unknown expected sizes are established by the probe, recorded only and never treated as passing.
+- The 64 cache index JSONs (each ≤ 1 MiB) are returned, so the owner can bind the 128 cache-payload hashes offline. Nothing else is returned.
+
+**Probe script.** `v4-b-gap-review/probe-r4-r1/`: remote_probe.py e7d82f8f, run_probe.sh 64763f14, spec e8f9a2ca. The coordinator wrote it and Sol reviewed it (FIX). Five of Sol's six points were fixed and the edge tests re-run:
+- statvfs goes through the safe walk;
+- I/O errors are reported per row;
+- the time deadline is checked on every read;
+- a changed ctime, or the name being replaced, counts as UNSTABLE;
+- results stream as one JSON line per row.
+
+The sixth point, a worker timeout per file, is a residual risk. It is limited by a whole-run `timeout --kill-after`.
+
+How the probe runs: one SSH, read-only (O_NOFOLLOW at every path step), nice 19 / ionice -c3, hashes only files ≤ 64 MiB, budget 2,400 s, no retry. It started now.
+
+**F1 r5 (pin-only).** The coordinator checked `b08-authority-placement-review-r5` against r4:
+- only the package (89b1582e), CPU-plan (5beb26d2) and deploy-script (6de7be45) pins changed, plus the r4 receipt names, the package directory and one helper path;
+- all three pins match the r4 candidate's files.
+
+**Verified for use in the r4 chain.**
+
+**03 cache service.** The owner confirms it is bound by plan 9277fb80 to stop on its own at 2026-10-13T04:00Z. Its disappearance is consistent with that design, and no 03/04 cache service is needed.
