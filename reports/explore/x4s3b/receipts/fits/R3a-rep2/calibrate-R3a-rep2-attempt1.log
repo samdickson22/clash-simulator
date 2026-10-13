@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/fit/ops/calibrate.py", line 68, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/fit/ops/calibrate.py", line 64, in main
+    a.out.write_text(json.dumps(result, indent=2)+'\n'); print(json.dumps(result), flush=True)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/calibration/R3a-rep2.json'

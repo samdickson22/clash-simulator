@@ -1,0 +1,11 @@
+{
+  "launched_at_utc": "2026-10-13T01:35:06Z",
+  "pid": 2610994,
+  "pgid": 2610994,
+  "command": [
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/fit/run_fit.sh",
+    "R3a-rep2"
+  ],
+  "cpus": "56-61"
+}

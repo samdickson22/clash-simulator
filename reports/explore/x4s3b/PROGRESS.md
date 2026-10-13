@@ -75,3 +75,18 @@ If the driver is not live (check the PID in driver.pid via /proc) and STOP is ab
 - **01:31:08–01:32:41Z smoke S-200:** 8/8 blocks, rc 0, reason null, group empty.
 - **Live STOP test (S-200 smoke phase):** STOP touched 01:33:26.144Z with 51 child-group members; supervisor gone
   01:33:28.690Z (2.5 s), reason owned_STOP, 0 members left in either group; STOP removed.
+- **01:34:32Z** first driver launch refused by the STOP_AT assertion (28 s early); PID 2609188 confirmed gone.
+- **01:35:06Z driver launched:** PID/PGID 2610986 (`receipts/driver-launch-0135.json`). R3a-rep2 fit PID/PGID
+  2610994 on 56–61, loaders 120–125, nice 10. **01:37:09Z:** step 32, 1.8 s/step, GPU 2.5 GB, PSI 0.00; ETA about
+  02:53Z. Launch receipts and smoke mirrored to `05:J2/mirror/launch/`.
+- **02:51:57Z R3a-rep2 fit returned** 2,500/2,500 steps, stopped=false (~4,610 s); checkpoint 72d73375. Driver launched
+  the R3a-rep3 fit (PID/PGID 2859387, 56–61) on the same tick, before rep2's runtime was READY (expected path).
+- **02:52:02Z ANOMALY (staging omission, fixed):** rep2 calibration rc 1, `FileNotFoundError` writing
+  `J2/calibration/R3a-rep2.json`: my J2 staging created no `calibration/` dir (J had one). No code change: at
+  03:02:46Z I created `J2/{calibration,analysis,attempts}`, moved the anomaly and attempt-1 log to `J2/attempts/`
+  (copies in receipts/fits/R3a-rep2/), and the driver retried. Cost: about 11 min of idle game cores.
+- **03:02:54Z R3a-rep2 calibrated:** threshold 0.49848902225494385, play rate 0.345944609297725 (same count as R3a),
+  seed 2026101204 in checkpoint meta; runtime plan points only at J2. **R3a-rep2 K4S-120 a1** launched, 1,167 todo,
+  10 workers, beside the rep3 fit (PSI 0.00).
+- **03:03:20Z mirror:** `05:J2/mirror/rep2-fit/` (checkpoint, calibration, READY, fit receipts, driver, logs);
+  SHAs match.
