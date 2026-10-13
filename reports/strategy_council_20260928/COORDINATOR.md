@@ -5941,3 +5941,27 @@ ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e4615dba1bebfe1831410cb41b73c3764b75c768ba3
 - Add Sol's 3 cases, each with explicit pre-fetch refusal and an unchanged-foreign-bytes assertion.
 
 Sol has had two rounds on this package, so under PR-1 **the coordinator checks this last diff directly.** After that, the runner sends the A2 GO request. No END host step on 03/04 before 14:30Z.
+
+## 2026-10-13 13:03Z: B r4 epoch-1 KNOWN_FAILURE: package r4 lacks `gamedata.json`; chain consumed; ruling PC-1 (package completeness closure)
+
+**What happened.** Run GO e4615dba (CPU 8c4d27dd, placement e16c2206) launched once. Launcher and sender both exited 1. There was no retry.
+
+**Diagnosis.** The coordinator made one read-only SSH read of 08 (`v4-b-gap-review/epoch01-diag-read-r3/raw.json`, f38b5810), using the same reader with only the CPU SHA changed. The trace:
+- r4 got **past the C1 plan-pin audits**, so the r4 fix works.
+- It then failed in `b08_local_inputs.epoch_inputs:165` → `validation_score_v4.card_kinds` → `CardDataLoader()` → `paths.gamedata_path`.
+- The error was `FileNotFoundError: …/code-89b1582e628e/gamedata.json`.
+- The package's code tree does not include the repo-root `gamedata.json` that `CardDataLoader` needs.
+
+This is again a package-content defect. Nothing was damaged.
+
+**Consumed:** CPU 8c4d27dd, placement e16c2206, run e4615dba, and both post-epoch-1 variant drafts.
+
+**Ruling PC-1.** Before package r5, the owner produces a **complete resource-dependency closure** for the code tree. That means every non-Python file any deployed module can open: `gamedata_path`, `resolve_path`, `open()`, `Path(...).read_*`, `json.load` targets, `importlib.resources` and data-file defaults, traced from every module the epoch and reducer paths import.
+
+**Requirements:**
+- Each file is either in the package manifest with a SHA pin, or a pinned staged input.
+- An offline import-and-load smoke on 05 resolves every package-relative resource against a scratch copy of the r5 code tree.
+- The fix is to add the missing resources to the package. No code-path changes beyond that unless needed.
+- Then Opus checks the diff, and the r5 chain runs as before. Deployment, stage and environment must be redone because the package SHA changes.
+
+This is the third package-content gap in a row: the B r3 truth payloads, the r3 C1 roles, and now r4's `gamedata.json`. The closure audit is meant to end this class of failure in one pass.
