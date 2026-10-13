@@ -4676,3 +4676,28 @@ The coordinator carried out BINDING-PROCEDURE steps 1–6 in `l1/prepared/b08-ge
   - load average: 0.16 / 0.21 / 0.19;
   - CPUs: 128.
 - **Gates:** all pass.
+
+## 2026-10-13 02:22Z: Perception B package-r3 deployment GO issued (copy to 08, once)
+
+The issued GO is byte-identical to the draft `l1/prepared/b08-package-r3-deployment-final-r1/b-deployment-go-receipt-r3.json` (8b38cd19).
+
+**What it authorizes:**
+- Deploying package r3 (7c86e49a) to 127x08, using:
+  - deploy script f9fe2ea6;
+  - the F1 r4 deployment operator files;
+  - combined receipt r3.
+- Writes go only to the new `*-7c86e49a105d` prefixes.
+- cpus [0,1].
+- No GPU, no heldout data, no retry.
+
+**Window:** 2026-10-13 03:00Z to 04:30Z. The single failure inspection must finish by 05:00Z.
+
+**Quiet-read:** e3ee4522 (who 0).
+
+**C-5 pre-issue check:** passed.
+
+**Issued copies:**
+- `l1/receipts/b-deployment-go-receipt-r3.json`
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-deployment-go-receipt-r3.json` (0444)
+
+ISSUED AUTHORIZE_B_DEPLOYMENT 8b38cd19c0c960f205463d1612416da6dd8fb51defce9d0b7ba25743832c0bf7
