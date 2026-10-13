@@ -1,0 +1,150 @@
+{
+ "check": "pe2-paired",
+ "arm": "S-200",
+ "collect_phase": "collect-S-200-w10",
+ "eval_phase": "eval-S-200-w10",
+ "pooled": {
+  "collect": {
+   "games": 8,
+   "decisions": 1245,
+   "pct": {
+    "cutoff": 64.81927710843374,
+    "student_default": 0.0,
+    "overrun": 0.24096385542168675
+   },
+   "x4s3_r3a": {
+    "cutoff": 75.3,
+    "student_default": 0.0,
+    "overrun": 0.14
+   },
+   "within_2pp": {
+    "cutoff": false,
+    "student_default": true,
+    "overrun": true
+   },
+   "evaluated": true
+  },
+  "eval": {
+   "games": 8,
+   "decisions": 1381,
+   "pct": {
+    "cutoff": 66.6908037653874,
+    "student_default": 0.0,
+    "overrun": 0.2172338884866039
+   },
+   "x4s3_r3a": {
+    "cutoff": 75.3,
+    "student_default": 0.0,
+    "overrun": 0.14
+   },
+   "within_2pp": {
+    "cutoff": false,
+    "student_default": true,
+    "overrun": true
+   },
+   "evaluated": true
+  }
+ },
+ "rows": [
+  {
+   "index": 0,
+   "collect": {
+    "decisions": 161,
+    "cutoff_pct": 75.78
+   },
+   "eval": {
+    "decisions": 164,
+    "cutoff_pct": 76.22
+   },
+   "delta_pp": -0.44
+  },
+  {
+   "index": 1,
+   "collect": {
+    "decisions": 138,
+    "cutoff_pct": 57.25
+   },
+   "eval": {
+    "decisions": 138,
+    "cutoff_pct": 60.14
+   },
+   "delta_pp": -2.89
+  },
+  {
+   "index": 2,
+   "collect": {
+    "decisions": 109,
+    "cutoff_pct": 49.54
+   },
+   "eval": {
+    "decisions": 132,
+    "cutoff_pct": 58.33
+   },
+   "delta_pp": -8.79
+  },
+  {
+   "index": 3,
+   "collect": {
+    "decisions": 97,
+    "cutoff_pct": 45.36
+   },
+   "eval": {
+    "decisions": 89,
+    "cutoff_pct": 42.7
+   },
+   "delta_pp": 2.66
+  },
+  {
+   "index": 4,
+   "collect": {
+    "decisions": 200,
+    "cutoff_pct": 67.5
+   },
+   "eval": {
+    "decisions": 185,
+    "cutoff_pct": 66.49
+   },
+   "delta_pp": 1.01
+  },
+  {
+   "index": 5,
+   "collect": {
+    "decisions": 259,
+    "cutoff_pct": 81.08
+   },
+   "eval": {
+    "decisions": 272,
+    "cutoff_pct": 74.63
+   },
+   "delta_pp": 6.45
+  },
+  {
+   "index": 6,
+   "collect": {
+    "decisions": 160,
+    "cutoff_pct": 69.38
+   },
+   "eval": {
+    "decisions": 288,
+    "cutoff_pct": 80.56
+   },
+   "delta_pp": -11.18
+  },
+  {
+   "index": 7,
+   "collect": {
+    "decisions": 121,
+    "cutoff_pct": 42.98
+   },
+   "eval": {
+    "decisions": 113,
+    "cutoff_pct": 35.4
+   },
+   "delta_pp": 7.58
+  }
+ ],
+ "mean_delta_pp": -0.7,
+ "positive": 4,
+ "code_commit": "d09bdef9aecc416cb83b002fcff002ff57579fde",
+ "label": "X4S-4 PE-2 test B, exploration, NEVER ADOPTABLE"
+}

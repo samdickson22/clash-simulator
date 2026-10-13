@@ -283,3 +283,28 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   Nothing was changed.
 - search-noise-s6/delay.py (fa3d3296…, in all three runtime copies) is on my pre-production check list.
 - T+1.0 h of 24 h is used.
+
+## 2026-10-13T06:01:25Z — PE-2 test B (COORDINATOR b98fda79): contention branch, so SA-3; production started (P1)
+
+- `watchdog.py status` ok before each step.
+- smoke/collect-S-200-w10 (05:56:17Z, `--workers 10`, otherwise as in Q4): rc 0, 8/8, 104 s (exit 69df22fd…).
+- smoke/eval-S-200-w10 (05:58:29Z, `--workers 10`, otherwise as in Q7): rc 0, 8/8, 107 s (exit 6300dad8…).
+- The paired control on 05 used the same procedure: a read-only copy (since deleted), pe2_paired.py (e09fd28e…, the
+  reviewed parity_once and proved_game/game_meta at d09bdef9). Output pe2-paired-w10.json is 33396743….
+  - Pooled at 10 workers: collection cutoff 64.82 % (1,245 decisions), evaluation 66.69 % (1,381 decisions).
+    Overrun 0.24 / 0.22 %.
+  - Paired per-seed collection − evaluation: mean **−0.70 pp**; collection higher on 4/8 seeds; range −11.2 to +7.6.
+  - This is ≤ 3 pp, so PE-2's contention branch applies. **SA-3:** S-200 collection (P2) runs at `--workers 10`.
+  - Disclosure: run-to-run variance on the same seeds is large. Pooled S-200 evaluation cutoff was 55.78 % at 50
+    lanes and 66.69 % at 10. So the 8-seed contrasts are noisy, and both 8-game paired tests should be read with that
+    in mind.
+- Pre-production check list: search-noise-s6/delay.py is fa3d3296… in base, rt-R3a and rt-R3a-rep (3/3). The
+  watchdog is ok. No console user.
+- P1: collect/idx-K4S-120.json is [0,2000) ∪ [3500,3750), 2,250 indices (36ad48a2…). collect/idx-S-200.json
+  ([2000,3500) ∪ [3750,4000), 1,750 indices, 2e96a28e…) was also written; the two are disjoint, and their union is
+  4,000.
+  - `$DET logs/p1-collect-k.log receipts/p1-collect-k-launch.json $SUP --phase collect/K4S-120/a1 --range reporting …`
+    as in G, launched at 06:01:25Z.
+- Risk raised with the coordinator: supervise.py's in-loop C7b watch (every 300 s, at ≥ 100 games) compares against
+  X4S-3's R3a and has no exception path. If K4S-120 collection stays about 5 pp low, as in the smoke, P1 will
+  PARITY-PAUSE, and any relaunch would pause again.
