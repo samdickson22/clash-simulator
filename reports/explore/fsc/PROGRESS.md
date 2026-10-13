@@ -54,3 +54,10 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
   - STOP test passed: 1.8 s, 4 blocks interrupted, 0 left alive.
   - rep04: supervisor PID/PGID 2301414, child PGID 2301450 (13 processes), workers 12, stop-at 07:30:00Z.
   - Guards: 14 processes OK.
+- 2026-10-13T05:21Z: progress check (one session per host).
+  - 03 rep03: 1,225 blocks / 2,451 games, 12 workers live, PSS 3.5 GiB, MemAvailable 119 GiB, console users 0.
+  - 04 rep04: 1,158 blocks / 2,322 games, 12 workers live, PSS 3.8 GiB, console users 0.
+  - Projection: 04 finishes wl-04 around 06:00Z, and 03 finishes wl-03 around 07:15–07:30Z.
+- 2026-10-13T05:25Z: epoch-2 extension proposal committed **9aa1cce6** (MANIFEST c6574764…), not GO.
+  - Prepared in an isolated scratch copy; the live worktree stays at c7df6fac bytes for the armed 07:30Z runner.
+  - The run dir for epoch 2 is /mpac/sdicks02/scratch/fsc-e2-run-9aa1cce6d.
