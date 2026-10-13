@@ -1,0 +1,1490 @@
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/MUTATION-RESULTS-s3s9s10-r6-py312-O-r6set.json s3s9s10-r6/MUTATION-RESULTS-s3s9s10-r6-py312-O-r6set.json
+--- s3s9s10-r5/MUTATION-RESULTS-s3s9s10-r6-py312-O-r6set.json	1969-12-31 16:00:00.000000000 -0800
++++ s3s9s10-r6/MUTATION-RESULTS-s3s9s10-r6-py312-O-r6set.json	2026-10-13 06:32:21.572850849 -0700
+@@ -0,0 +1,284 @@
++{
++ "equivalent_survivors": {},
++ "killed": 19,
++ "mutants": 19,
++ "new_tmp_leftovers": [],
++ "nulls": 4,
++ "nulls_survived": 3,
++ "optimize": 1,
++ "outside_writes": false,
++ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
++ "results": [
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 196.3,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D01",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D01-kb548c_d/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
++    "1 failed, 1076 passed, 1 warning in 149.35s (0:02:29)"
++   ],
++   "rc": 1,
++   "seconds": 149.8,
++   "verdict": "KILLED",
++   "what": "gw_scan runs gw_refs"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D02",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D02-5dw4tqy3/tests/test_common.py::test_scrubbed_env",
++    "1 failed, 22 passed, 1 warning in 1.10s"
++   ],
++   "rc": 1,
++   "seconds": 1.5,
++   "verdict": "KILLED",
++   "what": "loose destination: 'ref:' symbolic ref refused"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D03",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D03-01rwmj2k/tests/test_r6_symref.py::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[loose-no-newline]",
++    "1 failed, 1080 passed, 1 warning in 150.14s (0:02:30)"
++   ],
++   "rc": 1,
++   "seconds": 150.5,
++   "verdict": "KILLED",
++   "what": "loose destination: exactly one object name"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D04",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D04-j7pd7plz/tests/test_r6_symref.py::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[packed-peeled]",
++    "1 failed, 1082 passed, 1 warning in 149.82s (0:02:29)"
++   ],
++   "rc": 1,
++   "seconds": 150.2,
++   "verdict": "KILLED",
++   "what": "packed-refs: no peeled entry for the destination"
++  },
++  {
++   "id": "NULL",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-NULL-n0otqz53/tests/test_common.py::test_scrubbed_env",
++    "1 failed, 22 passed, 1 warning in 1.12s"
++   ],
++   "rc": 1,
++   "seconds": 1.5,
++   "verdict": "KILLED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D05",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D05-ak1xum01/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[symref-line-s9]",
++    "1 failed, 1102 passed, 1 warning in 150.88s (0:02:30)"
++   ],
++   "rc": 1,
++   "seconds": 151.3,
++   "verdict": "KILLED",
++   "what": "packed-refs: '<oid> <ref>' line grammar"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D06",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D06-3zuuztyv/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[peel-first-s9]",
++    "1 failed, 1104 passed, 1 warning in 150.49s (0:02:30)"
++   ],
++   "rc": 1,
++   "seconds": 150.9,
++   "verdict": "KILLED",
++   "what": "packed-refs: a peeled line only after a ref line"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D07",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D07-u4bt48kz/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[no-final-newline-s9]",
++    "1 failed, 1114 passed, 1 warning in 152.19s (0:02:32)"
++   ],
++   "rc": 1,
++   "seconds": 152.6,
++   "verdict": "KILLED",
++   "what": "packed-refs: ends with a newline"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D08",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D08-xi3r5_3l/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[non-ascii-s9]",
++    "1 failed, 1116 passed, 1 warning in 152.19s (0:02:32)"
++   ],
++   "rc": 1,
++   "seconds": 152.6,
++   "verdict": "KILLED",
++   "what": "packed-refs: ASCII"
++  },
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 233.2,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D09",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D09-kque6s2v/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[identity-s9]",
++    "1 failed, 1124 passed, 1 warning in 174.74s (0:02:54)"
++   ],
++   "rc": 1,
++   "seconds": 175.3,
++   "verdict": "KILLED",
++   "what": "read leaf: the validated inode"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D10",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D10-3il6uv6v/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[not-validated-s9]",
++    "1 failed, 1122 passed, 1 warning in 174.49s (0:02:54)"
++   ],
++   "rc": 1,
++   "seconds": 174.9,
++   "verdict": "KILLED",
++   "what": "read only a leaf the scan validated"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D11",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D11-a3sbm4fi/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[dir-identity-s9]",
++    "1 failed, 1128 passed, 1 warning in 174.70s (0:02:54)"
++   ],
++   "rc": 1,
++   "seconds": 175.1,
++   "verdict": "KILLED",
++   "what": "read leaf: the validated directories above it"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D12",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D12-g71762rs/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[limit-s9]",
++    "1 failed, 1126 passed, 1 warning in 174.56s (0:02:54)"
++   ],
++   "rc": 1,
++   "seconds": 175.0,
++   "verdict": "KILLED",
++   "what": "read leaf: bounded"
++  },
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 238.4,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D13",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D13-kpa6whaw/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[symlink-to-same-s9]",
++    "1 failed, 1130 passed, 1 warning in 177.97s (0:02:57)"
++   ],
++   "rc": 1,
++   "seconds": 178.4,
++   "verdict": "KILLED",
++   "what": "read leaf: O_NOFOLLOW"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D14",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D14-frsktipc/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
++    "1 failed, 1076 passed, 1 warning in 172.48s (0:02:52)"
++   ],
++   "rc": 1,
++   "seconds": 172.9,
++   "verdict": "KILLED",
++   "what": "plan: the updated ref is a direct-ref row"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D15",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D15-zxx0c7nh/tests/test_r6_symref.py::test_s9_git_view_check_isolated_from_the_guard",
++    "1 failed, 1084 passed, 1 warning in 179.38s (0:02:59)"
++   ],
++   "rc": 1,
++   "seconds": 179.9,
++   "verdict": "KILLED",
++   "what": "S9: git's view of the destination before the fetch"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D16",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D16-zmvtg0of/tests/test_r6_symref.py::test_s9_checkout_rechecks_the_destination[git-view]",
++    "1 failed, 1086 passed, 1 warning in 179.80s (0:02:59)"
++   ],
++   "rc": 1,
++   "seconds": 180.3,
++   "verdict": "KILLED",
++   "what": "S9: git's view of the destination before the checkout"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D17",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D17-nsvonbp2/tests/test_r6_symref.py::test_s9_git_view_check_isolated_from_the_guard",
++    "1 failed, 1084 passed, 1 warning in 180.16s (0:03:00)"
++   ],
++   "rc": 1,
++   "seconds": 180.6,
++   "verdict": "KILLED",
++   "what": "S9 require_direct_ref: no symbolic target"
++  },
++  {
++   "file": "s11_host_repository.py",
++   "id": "D18",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D18-27bged7d/tests/test_r6_symref.py::test_s11_host_advance_symbolic_destination_isolated_from_verify[git-view]",
++    "1 failed, 1137 passed, 1 warning in 188.81s (0:03:08)"
++   ],
++   "rc": 1,
++   "seconds": 189.3,
++   "verdict": "KILLED",
++   "what": "S11 host _guarded: git's view, no symbolic target"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D19",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D19-cycywfqz/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[double-peel-s9]",
++    "1 failed, 1106 passed, 1 warning in 179.00s (0:02:59)"
++   ],
++   "rc": 1,
++   "seconds": 179.4,
++   "verdict": "KILLED",
++   "what": "packed-refs: one peeled line per ref"
++  }
++ ],
++ "sources_sha256": {
++  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
++  "s10_stage_host.py": "ad3e4f995b006c3b7cb5e3383cf0e2402d72abbfbbd7154ce34b7fbec738f999",
++  "s11_host_repository.py": "fdc8d12e1eb0e03a1b3911ba9367ea2b4391da323f34f28d8a99c0ee685e8498",
++  "s1b_copy_admissions.py": "2424573f3845697d4559d1c9e708703d1508dcb788b89f6bf6fabd29511a5544",
++  "s3_guard_job.py": "776ded238be655f4f9ef84ec217afbcd214c73a186baad009d0d4fa2f53bb8ce",
++  "s9_end_runtime.py": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
++  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
++ },
++ "survived": [],
++ "unexplained_survivors": [],
++ "version": "3.12.12"
++}
+\ No newline at end of file
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/MUTATION-RESULTS-s3s9s10-r6-py312-O-rerun.json s3s9s10-r6/MUTATION-RESULTS-s3s9s10-r6-py312-O-rerun.json
+--- s3s9s10-r5/MUTATION-RESULTS-s3s9s10-r6-py312-O-rerun.json	1969-12-31 16:00:00.000000000 -0800
++++ s3s9s10-r6/MUTATION-RESULTS-s3s9s10-r6-py312-O-rerun.json	2026-10-13 06:32:21.576850964 -0700
+@@ -0,0 +1,44 @@
++{
++ "equivalent_survivors": {},
++ "killed": 1,
++ "mutants": 1,
++ "new_tmp_leftovers": [],
++ "nulls": 1,
++ "nulls_survived": 1,
++ "optimize": 1,
++ "outside_writes": false,
++ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
++ "results": [
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 165.1,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D02",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D02-hmxjb4af/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
++    "1 failed, 1076 passed, 1 warning in 133.84s (0:02:13)"
++   ],
++   "rc": 1,
++   "seconds": 134.2,
++   "verdict": "KILLED",
++   "what": "loose destination: 'ref:' symbolic ref refused"
++  }
++ ],
++ "sources_sha256": {
++  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
++  "s10_stage_host.py": "ad3e4f995b006c3b7cb5e3383cf0e2402d72abbfbbd7154ce34b7fbec738f999",
++  "s11_host_repository.py": "fdc8d12e1eb0e03a1b3911ba9367ea2b4391da323f34f28d8a99c0ee685e8498",
++  "s1b_copy_admissions.py": "2424573f3845697d4559d1c9e708703d1508dcb788b89f6bf6fabd29511a5544",
++  "s3_guard_job.py": "776ded238be655f4f9ef84ec217afbcd214c73a186baad009d0d4fa2f53bb8ce",
++  "s9_end_runtime.py": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
++  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
++ },
++ "survived": [],
++ "unexplained_survivors": [],
++ "version": "3.12.12"
++}
+\ No newline at end of file
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/MUTATION-RESULTS-s3s9s10-r6-py38-O-r6set.json s3s9s10-r6/MUTATION-RESULTS-s3s9s10-r6-py38-O-r6set.json
+--- s3s9s10-r5/MUTATION-RESULTS-s3s9s10-r6-py38-O-r6set.json	1969-12-31 16:00:00.000000000 -0800
++++ s3s9s10-r6/MUTATION-RESULTS-s3s9s10-r6-py38-O-r6set.json	2026-10-13 06:42:33.886125328 -0700
+@@ -0,0 +1,281 @@
++{
++ "equivalent_survivors": {},
++ "killed": 19,
++ "mutants": 19,
++ "new_tmp_leftovers": [],
++ "nulls": 4,
++ "nulls_survived": 4,
++ "optimize": 1,
++ "outside_writes": false,
++ "python": "/usr/bin/python3",
++ "results": [
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 215.3,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D01",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D01-vx5uk1ix/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
++    "1 failed, 1076 passed, 1 warning in 168.89s (0:02:48)"
++   ],
++   "rc": 1,
++   "seconds": 169.5,
++   "verdict": "KILLED",
++   "what": "gw_scan runs gw_refs"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D02",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D02-ign31l3_/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
++    "1 failed, 1076 passed, 1 warning in 168.93s (0:02:48)"
++   ],
++   "rc": 1,
++   "seconds": 169.5,
++   "verdict": "KILLED",
++   "what": "loose destination: 'ref:' symbolic ref refused"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D03",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D03-xme0sxpl/tests/test_r6_symref.py::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[loose-no-newline]",
++    "1 failed, 1080 passed, 1 warning in 169.35s (0:02:49)"
++   ],
++   "rc": 1,
++   "seconds": 169.9,
++   "verdict": "KILLED",
++   "what": "loose destination: exactly one object name"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D04",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D04-aw3qqrzf/tests/test_r6_symref.py::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[packed-peeled]",
++    "1 failed, 1082 passed, 1 warning in 168.49s (0:02:48)"
++   ],
++   "rc": 1,
++   "seconds": 169.1,
++   "verdict": "KILLED",
++   "what": "packed-refs: no peeled entry for the destination"
++  },
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 214.9,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D05",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D05-0x53_yci/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[symref-line-s9]",
++    "1 failed, 1102 passed, 1 warning in 170.60s (0:02:50)"
++   ],
++   "rc": 1,
++   "seconds": 171.2,
++   "verdict": "KILLED",
++   "what": "packed-refs: '<oid> <ref>' line grammar"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D06",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D06-2713m3_n/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[peel-first-s9]",
++    "1 failed, 1104 passed, 1 warning in 170.26s (0:02:50)"
++   ],
++   "rc": 1,
++   "seconds": 170.8,
++   "verdict": "KILLED",
++   "what": "packed-refs: a peeled line only after a ref line"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D07",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D07-iqlf_blu/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[no-final-newline-s9]",
++    "1 failed, 1114 passed, 1 warning in 168.95s (0:02:48)"
++   ],
++   "rc": 1,
++   "seconds": 169.6,
++   "verdict": "KILLED",
++   "what": "packed-refs: ends with a newline"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D08",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D08-1m4iqf68/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[non-ascii-s9]",
++    "1 failed, 1116 passed, 1 warning in 169.29s (0:02:49)"
++   ],
++   "rc": 1,
++   "seconds": 169.9,
++   "verdict": "KILLED",
++   "what": "packed-refs: ASCII"
++  },
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 228.2,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D09",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D09-8dbjev6e/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[identity-s9]",
++    "1 failed, 1124 passed, 1 warning in 169.52s (0:02:49)"
++   ],
++   "rc": 1,
++   "seconds": 170.2,
++   "verdict": "KILLED",
++   "what": "read leaf: the validated inode"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D10",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D10-sitzub2k/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[not-validated-s9]",
++    "1 failed, 1122 passed, 1 warning in 169.64s (0:02:49)"
++   ],
++   "rc": 1,
++   "seconds": 170.2,
++   "verdict": "KILLED",
++   "what": "read only a leaf the scan validated"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D11",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D11-q1rrv8rq/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[dir-identity-s9]",
++    "1 failed, 1128 passed, 1 warning in 169.92s (0:02:49)"
++   ],
++   "rc": 1,
++   "seconds": 170.5,
++   "verdict": "KILLED",
++   "what": "read leaf: the validated directories above it"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D12",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D12-vcfm9gq8/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[limit-s9]",
++    "1 failed, 1126 passed, 1 warning in 172.88s (0:02:52)"
++   ],
++   "rc": 1,
++   "seconds": 173.5,
++   "verdict": "KILLED",
++   "what": "read leaf: bounded"
++  },
++  {
++   "id": "NULL",
++   "killed_by": [],
++   "rc": 0,
++   "seconds": 236.2,
++   "verdict": "SURVIVED"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D13",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D13-c3b6xtlf/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[symlink-to-same-s9]",
++    "1 failed, 1130 passed, 1 warning in 204.42s (0:03:24)"
++   ],
++   "rc": 1,
++   "seconds": 205.0,
++   "verdict": "KILLED",
++   "what": "read leaf: O_NOFOLLOW"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D14",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D14-wr9ew8fv/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
++    "1 failed, 1076 passed, 1 warning in 201.94s (0:03:21)"
++   ],
++   "rc": 1,
++   "seconds": 202.6,
++   "verdict": "KILLED",
++   "what": "plan: the updated ref is a direct-ref row"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D15",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D15-afpe6fli/tests/test_r6_symref.py::test_s9_git_view_check_isolated_from_the_guard",
++    "1 failed, 1084 passed, 1 warning in 202.12s (0:03:22)"
++   ],
++   "rc": 1,
++   "seconds": 202.8,
++   "verdict": "KILLED",
++   "what": "S9: git's view of the destination before the fetch"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D16",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D16-4iubcb6b/tests/test_r6_symref.py::test_s9_checkout_rechecks_the_destination[git-view]",
++    "1 failed, 1086 passed, 1 warning in 202.61s (0:03:22)"
++   ],
++   "rc": 1,
++   "seconds": 203.2,
++   "verdict": "KILLED",
++   "what": "S9: git's view of the destination before the checkout"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D17",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D17-qqsn30aq/tests/test_r6_symref.py::test_s9_git_view_check_isolated_from_the_guard",
++    "1 failed, 1084 passed, 1 warning in 201.77s (0:03:21)"
++   ],
++   "rc": 1,
++   "seconds": 202.4,
++   "verdict": "KILLED",
++   "what": "S9 require_direct_ref: no symbolic target"
++  },
++  {
++   "file": "s11_host_repository.py",
++   "id": "D18",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D18-flm82_p_/tests/test_r6_symref.py::test_s11_host_advance_symbolic_destination_isolated_from_verify[git-view]",
++    "1 failed, 1137 passed, 1 warning in 200.54s (0:03:20)"
++   ],
++   "rc": 1,
++   "seconds": 201.2,
++   "verdict": "KILLED",
++   "what": "S11 host _guarded: git's view, no symbolic target"
++  },
++  {
++   "file": "s9_end_runtime.py",
++   "id": "D19",
++   "killed_by": [
++    "FAILED ../dev/shm/s3s9s10-mut-D19-kpd1yv1x/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[double-peel-s9]",
++    "1 failed, 1106 passed, 1 warning in 194.94s (0:03:14)"
++   ],
++   "rc": 1,
++   "seconds": 195.5,
++   "verdict": "KILLED",
++   "what": "packed-refs: one peeled line per ref"
++  }
++ ],
++ "sources_sha256": {
++  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
++  "s10_stage_host.py": "ad3e4f995b006c3b7cb5e3383cf0e2402d72abbfbbd7154ce34b7fbec738f999",
++  "s11_host_repository.py": "fdc8d12e1eb0e03a1b3911ba9367ea2b4391da323f34f28d8a99c0ee685e8498",
++  "s1b_copy_admissions.py": "2424573f3845697d4559d1c9e708703d1508dcb788b89f6bf6fabd29511a5544",
++  "s3_guard_job.py": "776ded238be655f4f9ef84ec217afbcd214c73a186baad009d0d4fa2f53bb8ce",
++  "s9_end_runtime.py": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
++  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
++ },
++ "survived": [],
++ "unexplained_survivors": [],
++ "version": "3.8.10"
++}
+\ No newline at end of file
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/README.md s3s9s10-r6/README.md
+--- s3s9s10-r5/README.md	2026-10-13 04:55:52.376947006 -0700
++++ s3s9s10-r6/README.md	2026-10-13 06:42:33.906125882 -0700
+@@ -1,3 +1,68 @@
++# K4S END prep: S1b, S3, S9, S10, S11 — CANDIDATES r6 (Sol fix-check r5: U10 symbolic destination ref)
++
++## r6 — narrow fix round (SOL-FIXCHECK-END-INTEGRATION-r5: U1/U10 NOT FIXED, the sole blocker)
++
++- **Scope:** `reviews/SOL-FIXCHECK-END-INTEGRATION-r5.md`. S9 `refresh-clone` built the ref/reflog write set from the literal destination ref and accepted a regular single-link ref file without resolving it; a pre-existing `ref: refs/remotes/victim/branch` destination moved the fetch's ref and reflog writes to the victim, whose aliased reflog (leaf symlink, hard link, symlinked ancestor) received a foreign append before the late ref comparison refused. Sol did not claim the bypass for S11. This directory began as `cp -a s3s9s10-r5`; r5 is unchanged. **`RESPONSE-r6.md`** maps each item to file:line and named tests; **`DIFF-r6.patch`** is `diff -ruN s3s9s10-r5 s3s9s10-r6` (SHA256SUMS and PROGRESS files excluded).
++- **Offline only:** synthetic world, namespaced fake hosts, scratch repositories in `tempfile` dirs / `/dev/shm/s3s9s10r6-*` (removed). No ssh, no network, no host, nothing committed. One read-only metadata check of the real `repo-full/.git` write set (the new guard passes on the production clone: `checked 52`, no refusal).
++- **S9 is final:** `S9-FINAL` (r6) holds the SHA-256 of `s9_end_runtime.py` (`bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7`) and of the unchanged chain it loads (`end_prep_common.py` 2a84775b…, `safe_input.py` 806e5ebb…). The runner rebuilt the production runtime with it (`end-staging/RUNTIME-r6-READY`); `s5s6s7-r6` adopted both.
++- **Unchanged:** `ADOPTED_S4_SHA256` (b3-r7 `2b8f5fb3…`), the canonical bootstrap block (byte-identical, `test_f1.py`), `TOOL_PINS` (no tool file changed; `s5s6s7-r6/TOOLS-FINAL` = r5's six rows), S1b, S3, S10 except its re-pinned `K4S_SIBLING_PINS`.
++
++### r6.1 The fix: every ref a writing git command updates must be a DIRECT ref, checked before the command
++
++Two independent checks, both **before** the fetch (and again before `--checkout` / each S11 command), after the existing leaf/ancestor scan; the existing late ref comparison (S9 `:996`) is kept.
++
++1. **Shared guard (`GIT_WRITE_GUARD`, so S9 and the S11 host program run the same code).** `gw_plan(ref)` now carries `direct=[ref]` (the ref the command updates: S9 `refs/remotes/origin/k4s-end-r1`; S11 `refs/heads/k4s-end-r1`). After the `files` / `absent` / `trees` rows are validated, `gw_scan` calls `gw_refs`:
++   - the loose ref file, when present, must be exactly `<40 lowercase hex>\n`: a content starting `ref:` refuses as a **symbolic ref**; any other form (empty, no newline, upper case, trailing bytes, two lines) refuses;
++   - `packed-refs`, when present, must be well formed: optional `# pack-refs with:` header, `<oid> <refs/...>` lines (no space in the name, no duplicate), each optionally followed by exactly one `^<oid>` peeled line; anything else refuses (a `ref:` line, a peel line first or doubled, a bad oid, a non-`refs/` name, no final newline, non-ASCII), and the destination must have **no peeled entry**;
++   - both leaves are read by `_gw_read` only after this scan validated them: the parent directories are re-walked no-follow and must be the identities the scan recorded, the leaf is opened `O_RDONLY|O_NOFOLLOW|O_NONBLOCK|O_NOCTTY|O_CLOEXEC` relative to that directory, and its `fstat` must be the validated regular single-link inode; bounded (4 KiB loose ref, 64 MiB packed-refs). These are the guard's only content reads (`test_git_write_guard_source_is_metadata_only` now admits exactly one `os.read`, inside `_gw_read`).
++2. **git's own view (read-only, scrubbed environment).** `git symbolic-ref` is **not** in the pinned `safe_input.GIT_SUBCOMMANDS` allowlist (safe_input is unchanged and pinned), so both programs ask the equivalent allowlisted question through `si.git_run`: `for-each-ref --format=%(refname) %(symref) <ref>`; the output must be empty (absent ref) or exactly `<ref> \n` (no symbolic target), else `git-write` refusal. S9: `require_direct_ref` (after `gw_check`, before the fetch and before `--checkout`); S11 host: in `_guarded`, after `gw_scan`, before `_git_w`.
++
++`GW_RELEASE` is now `k4s-git-write-guard-r6` (the plan shape changed). The guard's composition into the host program is unchanged: canonical block + `S9.GIT_WRITE_GUARD` + `HOST_MAIN`.
++
++**Other refs the commands update.** S9 `fetch` updates only the destination (plus `logs/HEAD` when HEAD points at it: a planned leaf). S9 `checkout --detach X` updates `HEAD` with no-deref (HEAD itself, a planned leaf; a symbolic HEAD is the normal state of a clone and is not followed): `test_s9_checkout_detach_with_a_symbolic_head_writes_no_referent_reflog` points HEAD at a victim branch whose reflog is a symlink to the marker, runs `refresh-clone --checkout` and requires the marker unchanged. S11 provision `checkout k4s-end-r1` and advance `checkout -B k4s-end-r1 X` write HEAD as a symref (the HEAD file itself) and update `refs/heads/k4s-end-r1` (the direct row).
++
++**S11 (confirmed by code reading + tests).** advance already refused a symbolic `refs/heads/k4s-end-r1` before any mutation, at the `[check]` stage: `_verify` requires `rev-parse --symbolic-full-name HEAD` == `refs/heads/k4s-end-r1` (git resolves the whole chain, so a symbolic branch shows its referent) and exactly one ref. r6 adds the shared-guard and git-view checks to `_guarded` as well (provision + advance), and tests each with `_verify` stubbed so the earlier layer cannot mask them. provision creates `repository.partial` exclusively, so a pre-existing symbolic ref cannot occur there; the test injects one after `git init` to prove the check.
++
++### r6.2 Pin chain, files
++
++- `tests/k4s_adopt.py` re-pinned the chain (S9 changed; S1b/S3/S10/S11 pins follow); `--check` clean. Canonical block byte-identical; `ADOPTED_S4_SHA256` unchanged; `TOOL_PINS` unchanged.
++- New: `tests/test_r6_symref.py`. Updated: `tests/test_r5_git_write.py` (release string r5 → r6, three lines), `tests/test_common.py` (the guard-source rule admits the one `_gw_read`), `tests/mutate.py` (+ `test_r6_symref.py`, + D01–D19).
++
++### r6.3 Tests (offline; final runs on the final bytes)
++
++| Interpreter | normal | `-O` |
++|---|---|---|
++| `/mpac/sdicks02/venvs/k4s-freeze/bin/python` 3.12.12 | **1315 passed** (171.9 s) | **1315 passed** (171.9 s; 1 warning) |
++| `/usr/bin/python3` 3.8.10 (pytest from `/dev/shm/s3s9s10r2-pytest38`) | **1315 passed** (189.0 s) | **1315 passed** (219.0 s; 1 warning) |
++
++Runs 2026-10-13T13:15:57Z–13:19:37Z (the four in parallel): `env -i`, `nice -n 19 taskset -c 8-23`, umask 022, `PYTHONDONTWRITEBYTECODE=1`, `-B`, `-p no:cacheprovider`, cwd `/tmp`. The `-O` warning is pytest's PytestConfigWarning, as before. r5 had 1252; r6 adds 63 (`test_r6_symref.py`).
++
++**`tests/test_r6_symref.py` (63):**
++- `test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink, hardlink, ancestor-symlink]` — **Sol's three cases** on the real S9 refresh fixture: `git symbolic-ref refs/remotes/origin/k4s-end-r1 refs/remotes/victim/branch` (victim at P), the victim's reflog aliased to a synthetic marker outside the clone (leaf symlink / hard link / symlinked `logs/refs/remotes/victim` directory), origin advanced to X; `require_full_clone` passes (as Sol saw); refresh must refuse `git-write` naming the symbolic destination, **no writing git command ran** (spy on `si.run_checked`), **FETCH_HEAD byte-identical**, the marker byte-identical (and its tree's identities), only `S9-REFUSAL-*` in the record directory. All three FAIL on unmodified r5 code (checked: copy of r5 + this test file).
++- `test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[onelevel-symref, loose-no-newline, loose-two-lines, packed-peeled, packed-symref-line]` (the last is refused even earlier by git itself, `subprocess`: git cannot read such a packed-refs; still before any write).
++- `test_s9_git_view_check_isolated_from_the_guard` (gw_refs disabled by fault injection: `require_direct_ref` alone refuses Sol's case before the fetch), `test_s9_checkout_rechecks_the_destination[guard, git-view]` (destination made symbolic after every post-fetch check: each layer alone refuses before the checkout), `test_s9_checkout_detach_with_a_symbolic_head_writes_no_referent_reflog`.
++- Shared guard, **both copies** (S9's executed source and the S11 host program's): `test_guard_loose_destination_must_be_one_object_name[6 rows x 2]`, `test_guard_packed_refs_must_be_well_formed_and_direct[10 rows x 2]`, `test_guard_accepts_direct_refs_and_peeled_tags[2]`, `test_guard_reads_only_the_validated_leaf[not-validated, identity, limit, dir-identity, symlink-to-same; x 2]` (the last: the same validated inode behind a symlink, which only `O_NOFOLLOW` refuses).
++- S11 on the fake host: `test_s11_advance_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink, hardlink, ancestor-symlink, onelevel]` (refused at `[check]` by the existing exact-ref VERIFY: X not fetched, FETCH_HEAD unchanged, marker unchanged, refusal receipt only, no `s11-advance.json`); host `_main` locally with `_verify` stubbed: `test_s11_host_advance_symbolic_destination_isolated_from_verify[guard, git-view]`, `test_s11_host_provision_symbolic_destination_refused_before_the_fetch`.
++
++### r6.4 Mutation (new checks; `tests/mutate.py` under `-O`, each mutant = the whole suite with `-x` on a /dev/shm copy re-pinned by `k4s_adopt.py`)
++
++19 mutants, **D01–D19** (`tests/mutate.py`; `--check-edits`: 237 mutants, all valid): the `gw_refs` call in `gw_scan` (D01), the loose `ref:` rule (D02) and one-object-name rule (D03), the packed-refs peeled-destination rule (D04), line grammar (D05), peel-after-ref rule (D06), final newline (D07), ASCII (D08), one peel per ref (D19), `_gw_read`'s validated inode (D09), validated-leaf precondition (D10), validated parent directories (D11), bound (D12) and `O_NOFOLLOW` (D13), the plan's `direct` row (D14), S9 `require_direct_ref` before the fetch (D15), before `--checkout` (D16) and its condition (D17), and the S11 host's git-view check (D18).
++
++| Campaign | Result | NULL controls | outside_writes | File |
++|---|---|---|---|---|
++| py3.12.12 `-O`, r6 set | 19/19 killed (see note) | 3/4 survived (see note) | false | `MUTATION-RESULTS-s3s9s10-r6-py312-O-r6set.json` |
++| py3.12.12 `-O`, rerun of D02 + 1 NULL | **D02 killed** by `test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]` | 1/1 survived | false | `MUTATION-RESULTS-s3s9s10-r6-py312-O-rerun.json` |
++| py3.8.10 `-O`, r6 set | **19/19 killed** | 4/4 survived | false | `MUTATION-RESULTS-s3s9s10-r6-py38-O-r6set.json` |
++
++Every mutant was killed by a `test_r6_symref.py` test aimed at it (the `killed_by` field). The guard-row mutants are killed by the `-s9` copy rows, which run first; the host copy runs the same source. **Note (pre-existing test race, not code):** in the first py3.12 campaign, D02 and one NULL started together and were both "killed" after 1.5 s by `test_common.py::test_scrubbed_env`. That r1 test removes every `/tmp/k4s-frozen-home-*` that holds a `planted` file, so concurrent suites can delete each other's HOME. The rerun shows D02 killed by its own test and the NULL surviving, and py3.8 is clean. The test is unchanged in r6 (outside this round).
++
++### r6.5 Not covered / for the reviewer
++
++- The `for-each-ref %(symref)` git-view check replaces the requested `git symbolic-ref -q`, which the pinned safe_input does not allow; it answers the same question through the same gated runner. For a dangling symbolic ref git prints nothing (absent); the guard's content check refuses that case (the loose `ref:` file).
++- Races (a concurrent writer between the scan and git) remain outside the cases, as in r5 (single operator); the descriptor checks narrow only the guard's own window.
++
++# (r5 README follows, unchanged except where §r6 supersedes it)
++
+ # K4S END prep: S1b, S3, S9, S10, S11 — CANDIDATES r5 (Sol integration r1 finding 2: git write confinement; U4 venv interpreter)
+ 
+ ## r5 — diff-only fix round (Sol integration review r1: finding 2 BLOCKING; U4 ruling)
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/RESPONSE-r6.md s3s9s10-r6/RESPONSE-r6.md
+--- s3s9s10-r5/RESPONSE-r6.md	1969-12-31 16:00:00.000000000 -0800
++++ s3s9s10-r6/RESPONSE-r6.md	2026-10-13 06:42:41.798344886 -0700
+@@ -0,0 +1,27 @@
++# RESPONSE r6 — Part A (S9, S11) to SOL-FIXCHECK-END-INTEGRATION-r5 (U1/U10: symbolic destination ref)
++
++Candidate: `run-r1/end-prep/s3s9s10-r6/` (began as `cp -a s3s9s10-r5`; r5 unchanged). Review: `k4s-runner/run-r1/reviews/SOL-FIXCHECK-END-INTEGRATION-r5.md`. Narrow fix round. Offline only: fake hosts, scratch repositories, no ssh / network, nothing committed. Line numbers are those of the r6 files as shipped. Part B (`s5s6s7-r6`) re-pins the A6 builder to this S9 and the runtime the runner rebuilt with it (`end-staging/RUNTIME-r6-READY`).
++
++| Item | Finding | Fix | Where (file:line) | Named tests |
++|---|---|---|---|---|
++| **U10, S9 refresh-clone** | the write set was built from the literal destination ref; a regular single-link `refs/remotes/origin/k4s-end-r1` holding `ref: refs/remotes/victim/branch` passed, and the fetch appended to the victim's aliased reflog (leaf symlink / hard link / symlinked ancestor) before the late ref comparison refused | (1) shared guard: `gw_plan` carries `direct=[ref]`; `gw_scan` calls `gw_refs` after the leaf/ancestor rows: the validated loose ref must be exactly `<oid>\n` (`ref:` → symbolic, refused; any other form refused), `packed-refs` (validated the same way) must be well formed with no peeled entry for it; both read by `_gw_read` (no-follow, validated inode and parent identities, bounded). (2) `require_direct_ref`: git's own view via the allowlisted `for-each-ref --format=%(refname) %(symref)` (read-only, `si.git_run`'s scrubbed environment); output must be empty or `<ref> \n`. Both run after the existing guard, **before the fetch**, and again before `--checkout`. The late check (`:996`) is kept | `s9_end_runtime.py:610` (`direct`), `:744` (`_gw_read`), `:785` (`_gw_packed`), `:811` (`gw_refs`), `:820` (symbolic), `:824` (peeled), `:848` (called from `gw_scan`), `:899` (`require_direct_ref`), `:987` (before the fetch), `:1009` (before `--checkout`) | `test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink, hardlink, ancestor-symlink]` (Sol's three: refusal `git-write` naming the symbolic destination; no fetch/checkout argv ran; FETCH_HEAD byte-identical; marker byte-identical; only `S9-REFUSAL-*`; all three fail on r5), `::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[onelevel-symref, loose-no-newline, loose-two-lines, packed-peeled, packed-symref-line]`, `::test_s9_git_view_check_isolated_from_the_guard`, `::test_s9_checkout_rechecks_the_destination[guard, git-view]`, `::test_s9_checkout_detach_with_a_symbolic_head_writes_no_referent_reflog` |
++| **U10, the class (shared guard)** | indirection changes the write set; the 186 table rows could not establish completeness | the guard now refuses every indirect form of each updated ref, row by row, in both guard copies | `s9_end_runtime.py:744-826` | `::test_guard_loose_destination_must_be_one_object_name[6 x 2 copies]`, `::test_guard_packed_refs_must_be_well_formed_and_direct[10 x 2]`, `::test_guard_accepts_direct_refs_and_peeled_tags[2]`, `::test_guard_reads_only_the_validated_leaf[not-validated, identity, limit, dir-identity, symlink-to-same; x 2]`, `test_common.py::test_git_write_guard_source_is_metadata_only` (exactly one `os.read`, inside `_gw_read`) |
++| **S11 advance** | (Sol: bypass not claimed for S11) | confirmed by code reading: `_verify` at `[check]` refuses a symbolic `refs/heads/k4s-end-r1` (HEAD's fully resolved name must be the branch; exactly one ref) before the bundle is received. r6 adds the same two checks in `_guarded` (shared guard via the composed source; git view via `for-each-ref %(symref)`) | `s11_host_repository.py:350` (gw_scan, now incl. `gw_refs`), `:351-355` (git view) | `::test_s11_advance_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink, hardlink, ancestor-symlink, onelevel]` (stops at `[check]`; X absent; FETCH_HEAD unchanged; marker unchanged; refusal receipt only), `::test_s11_host_advance_symbolic_destination_isolated_from_verify[guard, git-view]` (`_verify` stubbed: each r6 layer alone refuses before the fetch) |
++| **S11 provision** | — | the fresh `repository.partial` is created exclusively (no pre-existing ref possible); the `_guarded` checks apply to both provision commands | `s11_host_repository.py:350-355` | `::test_s11_host_provision_symbolic_destination_refused_before_the_fetch` (symbolic ref injected after `git init`: refused, no FETCH_HEAD, no victim ref) |
++| **S9-FINAL** | write the final S9 marker early | `S9-FINAL` (r6): s9 `bdc2deeb…`, end_prep_common and safe_input unchanged | `S9-FINAL` | the runner's `RUNTIME-r6-READY` names this S9 |
++| **Re-pin** | module chain; canonical block; adopted S4; TOOL_PINS | `tests/k4s_adopt.py` re-pinned, `--check` clean; block byte-identical; `ADOPTED_S4_SHA256` b3-r7 `2b8f5fb3…` unchanged; TOOL_PINS unchanged (no tool file changed) | `K4S_SIBLING_PINS` blocks | `test_f1.py`, `test_r4_s10.py::test_production_constants` |
++
++## Deviation (disclosed)
++
++The brief asked for `git symbolic-ref -q <ref>`. `symbolic-ref` is not in the pinned `safe_input.GIT_SUBCOMMANDS` allowlist and safe_input must not change, so both programs ask the same question through the allowlisted, gated `for-each-ref --format=%(refname) %(symref) <ref>` (git 2.25.1 prints the symbolic target; nothing for an absent or dangling ref, where the guard's content check refuses the `ref:` file).
++
++## Mutation (new checks)
++
++D01–D19 (every new check: the `gw_refs` call, loose symbolic / form rules, packed-refs grammar / peel / newline / ASCII / one-peel rules, `_gw_read`'s validated-leaf, identity, directory-identity, bound and `O_NOFOLLOW`, the plan's `direct` row, S9 `require_direct_ref` before fetch and before checkout and its condition, the S11 host git-view check). Results: py3.12 `-O` 19/19 killed (D02 needed a rerun after the pre-existing `test_scrubbed_env` /tmp race hit it and a NULL; in the rerun D02 was killed by its own test and the NULL survived); py3.8 `-O` **19/19 killed**, 4/4 NULLs survived; outside_writes false (README r6.4, `MUTATION-RESULTS-s3s9s10-r6-*.json`).
++
++Tests: **1315 passed** in each of py3.12 normal / `-O` and py3.8 normal / `-O` (README r6.3).
++
++## Not changed / limits
++
++- Races: a concurrent writer between the scan and git remains outside the cases (single operator), as ruled for r5.
++- S1b, S3, S10 code unchanged (S10's `K4S_SIBLING_PINS` re-pinned only). U11 (S8) remains deferred.
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/s10_stage_host.py s3s9s10-r6/s10_stage_host.py
+--- s3s9s10-r5/s10_stage_host.py	2026-10-13 04:02:35.144414118 -0700
++++ s3s9s10-r6/s10_stage_host.py	2026-10-13 06:07:46.316366590 -0700
+@@ -212,8 +212,8 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's3_guard_job.py': ('5e99f653749f9f273c61e54678ba056b87ffb2614c0cde080b3ea648147ae168', 38873),
+-    's9_end_runtime.py': ('4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60', 78380),
++    's3_guard_job.py': ('776ded238be655f4f9ef84ec217afbcd214c73a186baad009d0d4fa2f53bb8ce', 38873),
++    's9_end_runtime.py': ('bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7', 84364),
+ }
+ 
+ 
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/s11_host_repository.py s3s9s10-r6/s11_host_repository.py
+--- s3s9s10-r5/s11_host_repository.py	2026-10-13 04:02:35.192415426 -0700
++++ s3s9s10-r6/s11_host_repository.py	2026-10-13 06:07:46.316366590 -0700
+@@ -42,6 +42,8 @@
+ lock siblings, .git/objects, the checkout's work-tree paths: no symlink, no hard link, no stale lock), the command runs
+ with the write-reducing GW_CONFIG (_git_w: si.git_run's preflight, flags and environment plus GW_CONFIG), and gw_post
+ re-checks afterwards (detection only). advance's checkout must write exactly END-JOB.json (diff-tree P' X).
++r6 (Sol fix-check r5, U10): the ref each command updates (refs/heads/k4s-end-r1) must be a direct ref before it runs:
++gw_scan (no 'ref:' loose file, no peeled packed-refs entry) and git's own for-each-ref %(symref), in _guarded.
+ Nothing is ever deleted on a host: the transfer directory (and, after a refusal, repository.partial) stay and are
+ listed in the record as needing a separately authorized cleanup. Exit codes: 0 ok; 2 refused; 1 unexpected (closed).
+ """
+@@ -217,7 +219,7 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10 <- s11). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's10_stage_host.py': ('e950ab171985914c0cc2fc5cf5d09b7e152fcd1f02eea9e9bb03041c9efd31c5', 68891),
++    's10_stage_host.py': ('ad3e4f995b006c3b7cb5e3383cf0e2402d72abbfbbd7154ce34b7fbec738f999', 68891),
+ }
+ 
+ 
+@@ -342,8 +344,15 @@
+ 
+ 
+ def _guarded(si, path, plan, args, protocols=()):
+-    """gw_scan BEFORE the command (refuses with nothing written), the command, gw_post after (detection only)."""
++    """gw_scan BEFORE the command (refuses with nothing written), the command, gw_post after (detection only).
++    r6: gw_scan requires every ref the command updates to be a direct ref; git's own view is then asked (read-only):
++    each must be absent or have no symbolic target (for-each-ref %(symref); symbolic-ref is not in si's allowlist)."""
+     before = gw_scan(path, plan, _gw_refuse)
++    for ref in plan["direct"]:
++        out = _text(si, path, ["for-each-ref", "--format=%(refname) %(symref)", ref])
++        if out not in ("", ref + " \n"):
++            raise _gw_refuse("%s is a symbolic or indirect ref (%r): git would update its referent instead"
++                             % (ref, out[:200]))
+     _git_w(si, path, args, protocols)
+     return gw_summary(gw_post(path, plan, before, _gw_refuse))
+ 
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/s1b_copy_admissions.py s3s9s10-r6/s1b_copy_admissions.py
+--- s3s9s10-r5/s1b_copy_admissions.py	2026-10-13 03:47:23.235250327 -0700
++++ s3s9s10-r6/s1b_copy_admissions.py	2026-10-13 06:07:46.316366590 -0700
+@@ -194,7 +194,7 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's9_end_runtime.py': ('4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60', 78380),
++    's9_end_runtime.py': ('bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7', 84364),
+ }
+ 
+ 
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/s3_guard_job.py s3s9s10-r6/s3_guard_job.py
+--- s3s9s10-r5/s3_guard_job.py	2026-10-13 03:47:23.235250327 -0700
++++ s3s9s10-r6/s3_guard_job.py	2026-10-13 06:07:46.316366590 -0700
+@@ -198,8 +198,8 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's1b_copy_admissions.py': ('255accc836b859e128ba466283aff2a04aaf906afb2a79da60c12c93503636fe', 26106),
+-    's9_end_runtime.py': ('4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60', 78380),
++    's1b_copy_admissions.py': ('2424573f3845697d4559d1c9e708703d1508dcb788b89f6bf6fabd29511a5544', 26106),
++    's9_end_runtime.py': ('bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7', 84364),
+ }
+ 
+ 
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/s9_end_runtime.py s3s9s10-r6/s9_end_runtime.py
+--- s3s9s10-r5/s9_end_runtime.py	2026-10-13 03:47:23.191249085 -0700
++++ s3s9s10-r6/s9_end_runtime.py	2026-10-13 06:07:39.596185851 -0700
+@@ -552,11 +552,15 @@
+ # (no file content is read; os.listdir only under .git/objects and the provision work-tree root). gw_post re-runs the
+ # scan after the command and requires every pre-existing directory to keep its identity: detection only, never the
+ # guard. Refusals: raise refuse(reason) (the caller's convention).
++# r6 (Sol fix-check r5, U10): a symbolic or indirect destination ref would move the ref and reflog writes to paths
++# outside the plan, so gw_scan also requires every ref the command updates (plan "direct") to be a DIRECT ref: its
++# loose file (already validated as a regular single-link file) holds exactly one object name, and packed-refs
++# (validated the same way) is well formed and has no peeled line for it. These two leaves are the only content read.
+ GIT_WRITE_GUARD = r'''
+ import os as _gw_os
+ import stat as _gw_stat
+ 
+-GW_RELEASE = "k4s-git-write-guard-r5"
++GW_RELEASE = "k4s-git-write-guard-r6"
+ # Write-reducing configuration for every writing git command (git 2.25.1 on 05 and on the Ubuntu 20.04 hosts). These
+ # REDUCE the write set; the scan confines what remains. core.logAllRefUpdates=false stops reflog CREATION but git
+ # still appends to an existing reflog, so reflogs stay in the scanned set. git 2.25 has no --no-write-fetch-head, so
+@@ -584,6 +588,9 @@
+ GW_TREES = (".git/objects",)
+ _GW_PATH = _gw_os.O_PATH | _gw_os.O_DIRECTORY | _gw_os.O_NOFOLLOW | _gw_os.O_CLOEXEC
+ _GW_LIST = _gw_os.O_RDONLY | _gw_os.O_DIRECTORY | _gw_os.O_NOFOLLOW | _gw_os.O_CLOEXEC
++_GW_READ = _gw_os.O_RDONLY | _gw_os.O_NOFOLLOW | _gw_os.O_NONBLOCK | _gw_os.O_NOCTTY | _gw_os.O_CLOEXEC
++GW_PACKED = ".git/packed-refs"
++_GW_HEX = frozenset("0123456789abcdef")
+ 
+ 
+ def gw_plan(ref, worktree=(), worktree_only=None):
+@@ -600,7 +607,7 @@
+     files = list(GW_FILES) + [".git/" + ref, ".git/logs/" + ref]
+     absent = list(GW_ABSENT) + [f + ".lock" for f in files]
+     return dict(release=GW_RELEASE, ref=ref, dirs=list(GW_DIRS), may_dirs=sorted(set(may) - set(GW_DIRS)),
+-                files=files, absent=absent, trees=list(GW_TREES), worktree=list(worktree),
++                files=files, absent=absent, trees=list(GW_TREES), direct=[ref], worktree=list(worktree),
+                 worktree_only=None if worktree_only is None else sorted(worktree_only))
+ 
+ 
+@@ -734,6 +741,90 @@
+             _gw_os.close(fd)
+ 
+ 
++def _gw_read(root, rel, facts, limit, refuse):
++    """r6: the bytes of a leaf this scan has just validated (facts: absent, or a regular single-link file), read through
++    a no-follow descriptor whose fstat must be that same file; None when it is absent."""
++    state = facts.get(rel)
++    if state is None or state[0] not in ("absent", "file"):
++        raise refuse("%s was not validated before it is read" % rel)
++    if state[0] == "absent":
++        return None
++    parts = _gw_parts(rel, refuse)
++    walked = {}
++    fd = _gw_dirs(root, parts[:-1], True, refuse, walked)
++    try:
++        if any(facts.get(d) != s for d, s in walked.items()):
++            raise refuse("the directories above %s changed while they were checked" % rel)
++        try:
++            leaf = _gw_os.open(parts[-1], _GW_READ, dir_fd=fd)
++        except OSError as error:
++            raise refuse("%s cannot be opened without following (%s)" % (rel, _gw_os.strerror(error.errno)))
++    finally:
++        _gw_os.close(fd)
++    try:
++        info = _gw_os.fstat(leaf)
++        if not _gw_stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or (info.st_dev, info.st_ino) != state[1:]:
++            raise refuse("%s changed while it was checked" % rel)
++        chunks, size = [], 0
++        while True:
++            chunk = _gw_os.read(leaf, 1 << 16)
++            if not chunk:
++                return b"".join(chunks)
++            size += len(chunk)
++            if size > limit:
++                raise refuse("%s is larger than %d bytes" % (rel, limit))
++            chunks.append(chunk)
++    finally:
++        _gw_os.close(leaf)
++
++
++def _gw_oid(text):
++    return len(text) == 40 and set(text) <= _GW_HEX
++
++
++def _gw_packed(data, refuse):
++    """packed-refs as {ref: peeled}: an optional '# pack-refs with:' header, then '<oid> <ref>' lines, each optionally
++    followed by one '^<oid>' line. Anything else refuses (git itself never writes it)."""
++    try:
++        text = data.decode("ascii")
++    except UnicodeDecodeError:
++        raise refuse("%s is not ASCII" % GW_PACKED)
++    if text and not text.endswith("\n"):
++        raise refuse("%s does not end with a newline" % GW_PACKED)
++    entries, last = {}, None
++    for n, line in enumerate(text.split("\n")[:-1]):
++        if n == 0 and line.startswith("# pack-refs with:"):
++            continue
++        if line.startswith("^"):
++            if last is None or not _gw_oid(line[1:]):
++                raise refuse("%s line %d is an unexpected peeled line" % (GW_PACKED, n + 1))
++            entries[last], last = True, None
++            continue
++        oid, sep, name = line.partition(" ")
++        if not sep or not _gw_oid(oid) or not name.startswith("refs/") or " " in name or name in entries:
++            raise refuse("%s line %d is not '<object name> <ref>' (an indirection or another form)" % (GW_PACKED,
++                                                                                                      n + 1))
++        entries[name], last = False, name
++    return entries
++
++
++def gw_refs(root, plan, facts, refuse):
++    """r6 (Sol fix-check r5, U10): every ref the command updates is a DIRECT ref, so git writes exactly the planned
++    ref and reflog leaves: its loose file, when present, is exactly '<40 hex>\\n' (a 'ref:' symbolic ref or any other
++    form refuses), and packed-refs is well formed with no peeled line for it."""
++    data = _gw_read(root, GW_PACKED, facts, 64 << 20, refuse)
++    packed = {} if data is None else _gw_packed(data, refuse)
++    for ref in plan["direct"]:
++        rel = ".git/" + ref
++        data = _gw_read(root, rel, facts, 4096, refuse)
++        if data is not None and data.startswith(b"ref:"):
++            raise refuse("%s is a symbolic ref (%r): git would update its referent instead" % (rel, data[:120]))
++        if data is not None and not (len(data) == 41 and data[40:] == b"\n" and _gw_oid(data[:40].decode("latin-1"))):
++            raise refuse("%s is not exactly one object name (%r)" % (rel, data[:120]))
++        if packed.get(ref):
++            raise refuse("%s has a peeled (indirect) entry for %s" % (GW_PACKED, ref))
++
++
+ def gw_scan(path, plan, refuse):
+     """Check the whole write set of `plan` in the repository at `path`; returns {rel: state} (dir/file identities,
+     absences). Raises refuse(reason) at the first violation, before git runs."""
+@@ -754,6 +845,7 @@
+             _gw_leaf(root, rel, True, refuse, facts)
+         for rel in plan["trees"]:
+             _gw_tree(root, rel, refuse, facts)
++        gw_refs(root, plan, facts, refuse)                              # r6: after its leaves are validated
+         if plan["worktree_only"] is not None:
+             listing = _gw_os.open(".", _GW_LIST, dir_fd=root)
+             try:
+@@ -804,6 +896,16 @@
+     return _GW["gw_post"](path, plan, before, gw_refusal)
+ 
+ 
++def require_direct_ref(g, ref):
++    """r6 (Sol fix-check r5, U10): git's own reading of `ref` (read-only, through si.git_run's scrubbed environment;
++    `symbolic-ref` is not in the pinned safe_input's subcommand allowlist, for-each-ref's %(symref) is the same
++    answer): `ref` must be absent or a ref with no symbolic target; anything else refuses before any write."""
++    out = si.git_run(g, ["for-each-ref", "--format=%(refname) %(symref)", ref], timeout=60).stdout
++    if out not in (b"", (ref + " \n").encode()):
++        raise gw_refusal("%s is a symbolic or indirect ref (%r): git would update its referent instead"
++                         % (ref, out[:200].decode("utf-8", "replace")))
++
++
+ def changed_paths(g, old, new):
+     """Every work-tree path a checkout from `old` to `new` writes or removes (tree metadata only)."""
+     raw = si.git_run(g, ["diff-tree", "-r", "-z", "--no-renames", "--name-only", old, new], timeout=3600,
+@@ -867,7 +969,9 @@
+     r5 (Sol integration r1 finding 2): immediately before the fetch, and before the --checkout, the git write guard
+     (gw_check) confines every path git may write (FETCH_HEAD, the remote-tracking ref and its reflog, HEAD and its
+     reflog, index, packed-refs, lock siblings, .git/objects, the checkout's work-tree paths, and all their ancestors);
+-    gw_after re-checks after each command (detection only)."""
++    gw_after re-checks after each command (detection only).
++    r6 (Sol fix-check r5, U10): gw_check also requires the destination ref to be a DIRECT ref (no 'ref:' loose file,
++    no peeled packed-refs entry), then require_direct_ref asks git itself; both before the fetch and the checkout."""
+     commit = full_commit(a.commit, "--commit")
+     base = full_commit(a.base_commit, "--base-commit") if a.base_commit else None
+     policy = si.Policy(C.local_host(), [clone_role(), objects_role(), repo_role(), C.code_role()])
+@@ -880,6 +984,7 @@
+     objects_before = objects_snapshot(policy)
+     plan = _GW["gw_plan"](END_BRANCH_REF)
+     guard = gw_check(REPO_FULL, plan)                                  # r5: the write set, BEFORE the fetch
++    require_direct_ref(g, END_BRANCH_REF)                              # r6: and git's own view of the destination
+     with C.ScrubbedEnv() as env:
+         si.run_checked(fetch_argv(), 3600, 1 << 20, env=env, cwd=REPO_FULL)
+     gw_after(REPO_FULL, plan, guard)
+@@ -901,6 +1006,7 @@
+     if a.checkout:
+         plan = _GW["gw_plan"](END_BRANCH_REF, worktree=changed_paths(g, head, commit))
+         before_checkout = gw_check(REPO_FULL, plan)                    # r5: BEFORE the checkout
++        require_direct_ref(g, END_BRANCH_REF)                          # r6 (HEAD itself: --detach never dereferences)
+         with C.ScrubbedEnv() as env:
+             si.run_checked(checkout_argv(commit), 3600, 1 << 20, env=env, cwd=REPO_FULL)
+         checkout_guard = _GW["gw_summary"](gw_after(REPO_FULL, plan, before_checkout))
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/S9-FINAL s3s9s10-r6/S9-FINAL
+--- s3s9s10-r5/S9-FINAL	2026-10-13 03:49:51.359408137 -0700
++++ s3s9s10-r6/S9-FINAL	2026-10-13 06:15:21.244600273 -0700
+@@ -1,6 +1,6 @@
+-# s3s9s10-r5 S9-FINAL: the final S9 of round r5 and the chain it loads (S9 -> end_prep_common -> safe_input). Never changed after this marker (a change would be announced as S9-FINAL-2).
++# s3s9s10-r6 S9-FINAL: the final S9 of round r6 and the chain it loads (S9 -> end_prep_common -> safe_input). Never changed after this marker (a change would be announced as S9-FINAL-2).
+ # columns: sha256 size file
+-4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60 78380 s9_end_runtime.py
++bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7 84364 s9_end_runtime.py
+ 2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877 22617 end_prep_common.py
+ 806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00 133606 safe_input.py
+-# written 2026-10-13T10:49:51Z
++# written 2026-10-13T13:15:21Z
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/tests/mutate.py s3s9s10-r6/tests/mutate.py
+--- s3s9s10-r5/tests/mutate.py	2026-10-13 04:02:19.111977318 -0700
++++ s3s9s10-r6/tests/mutate.py	2026-10-13 06:14:48.455718610 -0700
+@@ -26,7 +26,8 @@
+ TESTS = ("conftest.py", "fixture_guard_job.py", "k4s_adopt.py", "k4s_bootstrap_r1.py", "k4s_bootstrap_kit.py",
+          "kit_harness.py", "test_common.py", "test_flow.py", "test_s1b.py", "test_s3.py", "test_s9.py", "test_s10.py",
+          "test_f1.py", "test_f4.py", "test_fixture_guard_job.py", "test_r4_s9.py", "test_r4_s10.py", "test_r4_s11.py",
+-         "gw_observe.py", "test_r5_git_write.py", "test_r5_u4.py")                      # r5
++         "gw_observe.py", "test_r5_git_write.py", "test_r5_u4.py",                      # r5
++         "test_r6_symref.py")                                                            # r6
+ VENDOR = ("vendor_s5s6s7_r5",)                     # r4: byte copies of the Part B consumers (tools source, S5, S7)
+ WATCH = ("/mpac/sdicks02/repos", "/mpac/sdicks02/k4s-runner", "/mpac/sdicks02/k4s-runner/run-r1",
+          "/mpac/sdicks02/k4s-runner/run-r1/end-prep", "/mpac/sdicks02")
+@@ -495,6 +496,44 @@
+        "U4: the bare uv binary is not the pin")
+ 
+ 
++# ---------------------------------------------------------------- r6 (Sol fix-check r5, U10): direct destination refs (D)
++mutant("D01", S9F, '        gw_refs(root, plan, facts, refuse)                              # r6: after its leaves are validated',
++       '        pass', "gw_scan runs gw_refs")
++mutant("D02", S9F, '        if data is not None and data.startswith(b"ref:"):', '        if False:',
++       "loose destination: 'ref:' symbolic ref refused")
++mutant("D03", S9F, '        if data is not None and not (len(data) == 41 and data[40:] == b"\\n" and _gw_oid(',
++       '        if False and not (len(data) == 41 and data[40:] == b"\\n" and _gw_oid(',
++       "loose destination: exactly one object name")
++mutant("D04", S9F, '        if packed.get(ref):', '        if False:', "packed-refs: no peeled entry for the destination")
++mutant("D05", S9F, '        if not sep or not _gw_oid(oid) or not name.startswith("refs/") or " " in name or name in entries:',
++       '        if not sep:', "packed-refs: '<oid> <ref>' line grammar")
++mutant("D06", S9F, '            if last is None or not _gw_oid(line[1:]):', '            if False:',
++       "packed-refs: a peeled line only after a ref line")
++mutant("D07", S9F, '    if text and not text.endswith("\\n"):', '    if False:', "packed-refs: ends with a newline")
++mutant("D08", S9F, '        text = data.decode("ascii")', '        text = data.decode("latin-1")', "packed-refs: ASCII")
++mutant("D09", S9F, '        if not _gw_stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or (info.st_dev, info.st_ino) != state[1:]:',
++       '        if not _gw_stat.S_ISREG(info.st_mode):', "read leaf: the validated inode")
++mutant("D10", S9F, '    if state is None or state[0] not in ("absent", "file"):', '    if False:',
++       "read only a leaf the scan validated")
++mutant("D11", S9F, '        if any(facts.get(d) != s for d, s in walked.items()):', '        if False:',
++       "read leaf: the validated directories above it")
++mutant("D12", S9F, '            if size > limit:', '            if False:', "read leaf: bounded")
++mutant("D13", S9F, '_GW_READ = _gw_os.O_RDONLY | _gw_os.O_NOFOLLOW | _gw_os.O_NONBLOCK',
++       '_GW_READ = _gw_os.O_RDONLY | _gw_os.O_NONBLOCK', "read leaf: O_NOFOLLOW")
++mutant("D14", S9F, 'trees=list(GW_TREES), direct=[ref],', 'trees=list(GW_TREES), direct=[],',
++       "plan: the updated ref is a direct-ref row")
++mutant("D15", S9F, '    require_direct_ref(g, END_BRANCH_REF)                              # r6: and git',
++       '    pass  # ', "S9: git's view of the destination before the fetch")
++mutant("D16", S9F, '        require_direct_ref(g, END_BRANCH_REF)                          # r6 (HEAD',
++       '        pass  # ', "S9: git's view of the destination before the checkout")
++mutant("D17", S9F, '    if out not in (b"", (ref + " \\n").encode()):', '    if False:',
++       "S9 require_direct_ref: no symbolic target")
++mutant("D18", S11F, '        if out not in ("", ref + " \\n"):', '        if False:',
++       "S11 host _guarded: git's view, no symbolic target")
++mutant("D19", S9F, '            entries[last], last = True, None', '            entries[last] = True',
++       "packed-refs: one peeled line per ref")
++
++
+ EQUIVALENT = {
+     "N20": "complete-runtime check: an incomplete runtime is also refused by the frozen runtime_pins cross-check, "
+            "which runs on every build",
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/tests/test_common.py s3s9s10-r6/tests/test_common.py
+--- s3s9s10-r5/tests/test_common.py	2026-10-13 04:00:57.665756673 -0700
++++ s3s9s10-r6/tests/test_common.py	2026-10-13 06:09:57.323889859 -0700
+@@ -229,7 +229,8 @@
+ 
+ def test_git_write_guard_source_is_metadata_only():
+     """r5: the guard source (executed by S9 and by the S11 host program) uses only lstat/fstatat, O_PATH / O_DIRECTORY
+-    descriptors, fstat, dup, close and listdir: no assert, no open/exec/eval, no subprocess, no content read."""
++    descriptors, fstat, dup, close and listdir: no assert, no open/exec/eval, no subprocess. r6: the one content read
++    (os.read) is inside _gw_read, through an O_RDONLY|O_NOFOLLOW|O_NONBLOCK descriptor (ref files and packed-refs)."""
+     from conftest import S9
+     tree = ast.parse(S9.GIT_WRITE_GUARD)
+     ok(not [n for n in ast.walk(tree) if isinstance(n, ast.Assert)])
+@@ -245,10 +246,13 @@
+             ok(all(a.name in ("os", "stat") for a in node.names), ast.dump(node))
+     os_calls = {c for c in calls if c.startswith("_gw_os.")}
+     ok(os_calls == {"_gw_os.open", "_gw_os.close", "_gw_os.stat", "_gw_os.fstat", "_gw_os.dup", "_gw_os.listdir",
+-                    "_gw_os.strerror"}, sorted(os_calls))
++                    "_gw_os.strerror", "_gw_os.read"}, sorted(os_calls))
++    readers = [f.name for f in tree.body if isinstance(f, ast.FunctionDef) and "_gw_os.read(" in
++               ast.get_source_segment(S9.GIT_WRITE_GUARD, f)]
++    ok(readers == ["_gw_read"] and S9.GIT_WRITE_GUARD.count("_gw_os.read(") == 1, readers)
+     flags = [n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name)
+              and n.value.id == "_gw_os" and n.attr.startswith("O_")]
+-    ok(set(flags) == {"O_PATH", "O_DIRECTORY", "O_NOFOLLOW", "O_CLOEXEC", "O_RDONLY"}, flags)
++    ok(set(flags) == {"O_PATH", "O_DIRECTORY", "O_NOFOLLOW", "O_CLOEXEC", "O_RDONLY", "O_NONBLOCK", "O_NOCTTY"}, flags)
+     ok("O_WRONLY" not in S9.GIT_WRITE_GUARD and "O_RDWR" not in S9.GIT_WRITE_GUARD and "O_CREAT" not in
+        S9.GIT_WRITE_GUARD)
+     ok(all("follow_symlinks=False" in ast.get_source_segment(S9.GIT_WRITE_GUARD, n)
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/tests/test_r5_git_write.py s3s9s10-r6/tests/test_r5_git_write.py
+--- s3s9s10-r5/tests/test_r5_git_write.py	2026-10-13 04:26:37.104560745 -0700
++++ s3s9s10-r6/tests/test_r5_git_write.py	2026-10-13 06:09:57.299889214 -0700
+@@ -152,8 +152,8 @@
+     origin_branch(world.X2)
+     result = refresh(tmpdir_, world.X2, base=world.P, checkout=True)
+     g = result["git_write_guard"]
+-    ok(g["release"] == "k4s-git-write-guard-r5" and g["checked"] > 10 and g["config"] == list(S9.GW_CONFIG))
+-    ok(g["checkout"]["release"] == "k4s-git-write-guard-r5")
++    ok(g["release"] == "k4s-git-write-guard-r6" and g["checked"] > 10 and g["config"] == list(S9.GW_CONFIG))
++    ok(g["checkout"]["release"] == "k4s-git-write-guard-r6")
+     fetch, checkout = [r for r in fetch_spy if "fetch" in r], [r for r in fetch_spy if "checkout" in r]
+     ok(len(fetch) == 1 and len(checkout) == 1, fetch_spy)
+     for argv in (fetch[0], checkout[0]):
+@@ -489,7 +489,7 @@
+     prov = json.loads(read(os.path.join(tmpdir_, "prov", "s11-provision.json")))
+     gp = prov["result"]["git_write_guard"]
+     ok(gp["config"] == list(S9.GW_CONFIG) and gp["fetch"]["release"] == gp["checkout"]["release"] ==
+-       "k4s-git-write-guard-r5")
++       "k4s-git-write-guard-r6")
+     ok(not os.path.exists(os.path.join(repo, ".git/logs")))             # r5: no reflog is created any more
+     doc = T11.run(T11.advance_args(world, tmpdir_, advanced_clone))
+     ga = doc["result"]["git_write_guard"]
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s3s9s10-r5/tests/test_r6_symref.py s3s9s10-r6/tests/test_r6_symref.py
+--- s3s9s10-r5/tests/test_r6_symref.py	1969-12-31 16:00:00.000000000 -0800
++++ s3s9s10-r6/tests/test_r6_symref.py	2026-10-13 06:14:48.455718610 -0700
+@@ -0,0 +1,376 @@
++"""r6 (Sol fix-check r5, U10): a symbolic or indirect DESTINATION ref moves git's ref and reflog writes to paths the
++write-set plan never inspected. Sol's reproduction: refs/remotes/origin/k4s-end-r1 -> `ref: refs/remotes/victim/branch`
++with the victim's reflog aliased (leaf symlink, hard link, symlinked ancestor) to a SYNTHETIC foreign marker; the fetch
++appended to the marker and only the late ref comparison refused. Now every ref a command updates must be a direct ref
++BEFORE it runs: the shared guard (gw_refs: the validated loose file holds exactly one object name; packed-refs is well
++formed with no peeled line for it) and git's own view (for-each-ref %(symref)). Each case requires refusal before the
++fetch (no writing git command ran; FETCH_HEAD unchanged), the foreign marker byte-identical, and no success record."""
++import base64
++import os
++
++import pytest
++
++from conftest import C, S9, make_file, ok, read, refused, si
++import test_r4_s11 as T11
++from test_r4_s11 import advanced_clone, ready  # noqa: F401  (fixtures)
++from test_r4_s9 import origin_branch, refresh  # noqa: F401  (fixture)
++from test_r5_git_write import (FOREIGN_NS, HOST_REF, MARKER, copy_host, fetch_spy, git_writes, gw_refuse,  # noqa: F401
++                               local_main, scratch, tree_state)
++
++GW = S9._GW
++END_REF = S9.END_BRANCH_REF
++VICTIM = "refs/remotes/victim/branch"
++ALIASES = ["leaf-symlink", "hardlink", "ancestor-symlink"]                 # Sol's three, in his order
++
++
++def plant_victim_log(repo, victim, alias, foreign, target_prefix=None):
++    """Alias .git/logs/<victim> to the foreign marker: the leaf as a symlink or a hard link, or a symlinked ancestor
++    directory holding the marker under the leaf's name. Returns the foreign file that git would append to."""
++    log = os.path.join(repo, ".git/logs", victim)
++    name = os.path.basename(log)
++    os.makedirs(foreign, exist_ok=True)
++    if alias == "ancestor-symlink":
++        sub = os.path.join(foreign, "victim-dir")
++        os.makedirs(sub)
++        make_file(os.path.join(sub, name), MARKER)
++        os.makedirs(os.path.dirname(os.path.dirname(log)), exist_ok=True)
++        os.symlink((target_prefix or foreign) + "/victim-dir", os.path.dirname(log))
++        return os.path.join(sub, name)
++    target = os.path.join(foreign, "victim-log")
++    make_file(target, MARKER)
++    os.makedirs(os.path.dirname(log), exist_ok=True)
++    if alias == "leaf-symlink":
++        os.symlink((target_prefix or foreign) + "/victim-log", log)
++    else:
++        os.link(target, log)
++    return target
++
++
++def fetch_head(repo):
++    path = os.path.join(repo, ".git/FETCH_HEAD")
++    return read(path) if os.path.lexists(path) else None
++
++
++def only_refusal(record_dir, prefix="S9-REFUSAL-"):
++    names = os.listdir(record_dir)
++    ok(len(names) == 1 and names[0].startswith(prefix), names)
++
++
++# ---------------------------------------------------------------- S9 refresh-clone: Sol's three cases
++
++@pytest.mark.parametrize("alias", ALIASES)
++def test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch(world, repo_copy, origin_branch, tmpdir_,
++                                                                    fetch_spy, alias):
++    make_file(os.path.join(repo_copy, ".git", VICTIM), (world.P + "\n").encode())
++    world.git(repo_copy, "symbolic-ref", END_REF, VICTIM)
++    foreign_dir = os.path.join(tmpdir_, "perception-synthetic")
++    marker = plant_victim_log(repo_copy, VICTIM, alias, foreign_dir)
++    state, fh = tree_state(foreign_dir), fetch_head(repo_copy)
++    origin_branch(world.X2)
++    S9.require_full_clone((world.P,))                                  # Sol: the earlier layers pass this state
++    error = refused("git-write", refresh, tmpdir_, world.X2, base=world.P)
++    ok(".git/" + END_REF in error.reason and "symbolic ref" in error.reason, error.reason)
++    ok(git_writes(fetch_spy) == [], "a writing git command ran: %r" % git_writes(fetch_spy))
++    ok(fetch_head(repo_copy) == fh, "FETCH_HEAD changed")
++    ok(read(marker) == MARKER and tree_state(foreign_dir) == state, "the foreign marker changed")
++    only_refusal(os.path.join(tmpdir_, "rec"))
++
++
++PACKED_LINE = "%s " + END_REF + "\n"
++
++
++@pytest.mark.parametrize("case", ["onelevel-symref", "loose-no-newline", "loose-two-lines", "packed-peeled",
++                                  "packed-symref-line"])
++def test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch(world, repo_copy, origin_branch, tmpdir_,
++                                                                         fetch_spy, case):
++    """The other indirect / unexpected forms of the destination: a symbolic ref to a one-level name, a loose file that
++    is not exactly '<oid>\\n', a peeled packed-refs entry, a packed-refs line that is not '<oid> <ref>'."""
++    loose = os.path.join(repo_copy, ".git", END_REF)
++    packed = os.path.join(repo_copy, ".git/packed-refs")
++    text = read(packed).decode()
++    ok((PACKED_LINE % world.P) in text, "the fixture's destination ref is packed")
++    if case == "onelevel-symref":
++        make_file(os.path.join(repo_copy, ".git/VICTIM_HEAD"), (world.P + "\n").encode())
++        make_file(loose, b"ref: VICTIM_HEAD\n")
++    elif case == "loose-no-newline":
++        make_file(loose, world.P.encode())
++    elif case == "loose-two-lines":
++        make_file(loose, (world.P + "\n" + world.P + "\n").encode())
++    else:
++        extra = ("^" + world.P + "\n") if case == "packed-peeled" else ("ref: " + VICTIM + "\n")
++        text = text.replace(PACKED_LINE % world.P, PACKED_LINE % world.P + extra)
++        os.chmod(packed, 0o644)
++        make_file(packed, text.encode())
++    fh = fetch_head(repo_copy)
++    origin_branch(world.X2)
++    if case == "packed-symref-line":                # git itself cannot read it: an earlier S9 git call refuses first
++        error = refused("subprocess", refresh, tmpdir_, world.X2)
++        ok("unexpected line" in error.reason and "packed-refs" in error.reason, error.reason)
++    else:
++        error = refused("git-write", refresh, tmpdir_, world.X2)
++        ok(("packed-refs" if case.startswith("packed") else ".git/" + END_REF) in error.reason, error.reason)
++    ok(git_writes(fetch_spy) == [] and fetch_head(repo_copy) == fh)
++    only_refusal(os.path.join(tmpdir_, "rec"))
++
++
++def test_s9_git_view_check_isolated_from_the_guard(world, repo_copy, origin_branch, tmpdir_, fetch_spy, monkeypatch):
++    """require_direct_ref on its own: gw_refs disabled (fault injection), Sol's case must still refuse before the
++    fetch, by git's own for-each-ref %(symref) answer."""
++    monkeypatch.setitem(GW, "gw_refs", lambda *a: None)
++    make_file(os.path.join(repo_copy, ".git", VICTIM), (world.P + "\n").encode())
++    world.git(repo_copy, "symbolic-ref", END_REF, VICTIM)
++    foreign_dir = os.path.join(tmpdir_, "perception-synthetic")
++    marker = plant_victim_log(repo_copy, VICTIM, "leaf-symlink", foreign_dir)
++    origin_branch(world.X2)
++    error = refused("git-write", refresh, tmpdir_, world.X2)
++    ok("symbolic or indirect ref" in error.reason and VICTIM in error.reason, error.reason)
++    ok(git_writes(fetch_spy) == [] and read(marker) == MARKER)
++
++
++@pytest.mark.parametrize("layer", ["guard", "git-view"])
++def test_s9_checkout_rechecks_the_destination(world, repo_copy, origin_branch, tmpdir_, monkeypatch, layer):
++    """Both r6 checks also run before --checkout: the destination turned symbolic after the fetch refuses before the
++    checkout (with gw_refs disabled for the git-view row), HEAD unchanged."""
++    if layer == "git-view":
++        monkeypatch.setitem(GW, "gw_refs", lambda *a: None)
++    runs, real, real_paths = [], si.run_checked, S9.changed_paths
++    monkeypatch.setattr(si, "run_checked", lambda argv, *a, **k: runs.append(list(argv)) or real(argv, *a, **k))
++
++    def paths_then_symref(g_, old, new):                     # after every post-fetch check, before the checkout guard
++        make_file(os.path.join(repo_copy, ".git", VICTIM), (world.X2 + "\n").encode())
++        os.unlink(os.path.join(repo_copy, ".git", END_REF))
++        make_file(os.path.join(repo_copy, ".git", END_REF), ("ref: %s\n" % VICTIM).encode())
++        return real_paths(g_, old, new)
++    monkeypatch.setattr(S9, "changed_paths", paths_then_symref)
++    origin_branch(world.X2)
++    error = refused("git-write", refresh, tmpdir_, world.X2, checkout=True)
++    ok(("symbolic ref (" if layer == "guard" else "symbolic or indirect ref") in error.reason, error.reason)
++    ok([r for r in runs if "fetch" in r] and not [r for r in runs if "checkout" in r], runs)
++    ok(world.git(repo_copy, "rev-parse", "HEAD").decode().strip() == world.P)
++
++
++def test_s9_checkout_detach_with_a_symbolic_head_writes_no_referent_reflog(world, repo_copy, origin_branch, tmpdir_):
++    """HEAD is not a planned direct ref: `checkout --detach` updates HEAD without dereferencing it. A HEAD that points
++    at a victim branch whose reflog is aliased: refresh --checkout succeeds and the foreign marker is unchanged."""
++    victim = "refs/heads/victim"
++    make_file(os.path.join(repo_copy, ".git", victim), (world.P + "\n").encode())
++    world.git(repo_copy, "symbolic-ref", "HEAD", victim)
++    foreign_dir = os.path.join(tmpdir_, "perception-synthetic")
++    marker = plant_victim_log(repo_copy, victim, "leaf-symlink", foreign_dir)
++    state = tree_state(foreign_dir)
++    origin_branch(world.X2)
++    result = refresh(tmpdir_, world.X2, base=world.P, checkout=True)
++    ok(result["head"] == world.X2 and result["git_write_guard"]["release"] == "k4s-git-write-guard-r6")
++    ok(read(marker) == MARKER and tree_state(foreign_dir) == state)
++
++
++# ---------------------------------------------------------------- gw_refs on the shared guard (both copies)
++
++LOOSE_ROWS = [("symref", b"ref: refs/heads/victim\n", "symbolic ref"), ("symref-onelevel", b"ref: VICTIM\n",
++              "symbolic ref"), ("empty", b"", "not exactly one object name"),
++              ("no-newline", None, "not exactly one object name"), ("upper-hex", None, "not exactly one object name"),
++              ("trailing", None, "not exactly one object name")]
++PACKED_ROWS = [("peeled", "peeled (indirect) entry"), ("symref-line", "not '<object name> <ref>'"),
++               ("peel-first", "unexpected peeled line"), ("double-peel", "unexpected peeled line"),
++               ("bad-oid", "not '<object name> <ref>'"), ("not-refs", "not '<object name> <ref>'"),
++               ("duplicate", "not '<object name> <ref>'"), ("no-final-newline", "does not end with a newline"),
++               ("non-ascii", "is not ASCII"), ("space-in-name", "not '<object name> <ref>'")]
++
++
++def both_guards(scratch):
++    return [("s9", GW), ("host", scratch["ns"])]
++
++
++@pytest.mark.parametrize("copy", ["s9", "host"])
++@pytest.mark.parametrize("row", LOOSE_ROWS, ids=[r[0] for r in LOOSE_ROWS])
++def test_guard_loose_destination_must_be_one_object_name(scratch, tmpdir_, copy, row):
++    ns = dict(both_guards(scratch))[copy]
++    repo = copy_host(scratch, tmpdir_)
++    p = scratch["P"]
++    data = {"no-newline": p.encode(), "upper-hex": (p.upper() + "\n").encode(),
++            "trailing": (p + "\n ").encode()}.get(row[0], row[1])
++    path = os.path.join(repo, ".git", HOST_REF)
++    os.unlink(path)
++    make_file(path, data)
++    with pytest.raises(si.Refusal) as caught:
++        ns["gw_scan"](repo, ns["gw_plan"](HOST_REF), gw_refuse)
++    ok(caught.value.code == "git-write" and row[2] in caught.value.reason and HOST_REF in caught.value.reason,
++       caught.value)
++
++
++def packed_text(p, row):
++    head = "# pack-refs with: peeled fully-peeled sorted \n"
++    line = "%s %s\n" % (p, HOST_REF)
++    body = {"peeled": line + "^" + p + "\n",
++            "symref-line": "ref: refs/heads/victim\n",
++            "peel-first": "^" + p + "\n" + line,
++            "double-peel": "%s refs/tags/t\n^%s\n^%s\n" % (p, p, p),
++            "bad-oid": "%s %s\n" % (p[:39], HOST_REF),
++            "not-refs": "%s HEAD\n" % p,
++            "duplicate": line + line,
++            "no-final-newline": line[:-1],
++            "non-ascii": "%s refs/heads/v\xe9\n" % p,
++            "space-in-name": "%s refs/heads/a b\n" % p}[row]
++    return (head + body).encode("latin-1")
++
++
++@pytest.mark.parametrize("copy", ["s9", "host"])
++@pytest.mark.parametrize("row", PACKED_ROWS, ids=[r[0] for r in PACKED_ROWS])
++def test_guard_packed_refs_must_be_well_formed_and_direct(scratch, tmpdir_, copy, row):
++    ns = dict(both_guards(scratch))[copy]
++    repo = copy_host(scratch, tmpdir_)
++    make_file(os.path.join(repo, ".git/packed-refs"), packed_text(scratch["P"], row[0]))
++    with pytest.raises(si.Refusal) as caught:
++        ns["gw_scan"](repo, ns["gw_plan"](HOST_REF), gw_refuse)
++    ok(caught.value.code == "git-write" and row[1] in caught.value.reason and "packed-refs" in caught.value.reason,
++       caught.value)
++
++
++@pytest.mark.parametrize("copy", ["s9", "host"])
++def test_guard_accepts_direct_refs_and_peeled_tags(scratch, tmpdir_, copy):
++    """The healthy forms pass: a loose '<oid>\\n', and a packed-refs with a header, the ref and a peeled TAG entry."""
++    ns = dict(both_guards(scratch))[copy]
++    repo = copy_host(scratch, tmpdir_)
++    p = scratch["P"]
++    make_file(os.path.join(repo, ".git/packed-refs"), ("# pack-refs with: peeled fully-peeled sorted \n%s %s\n"
++                                                       "%s refs/tags/t\n^%s\n" % (p, HOST_REF, p, p)).encode())
++    facts = ns["gw_scan"](repo, ns["gw_plan"](HOST_REF), gw_refuse)
++    ok(facts[".git/packed-refs"][0] == "file" and facts[".git/" + HOST_REF][0] == "file")
++    ok(ns["gw_plan"](HOST_REF)["direct"] == [HOST_REF])
++
++
++@pytest.mark.parametrize("copy", ["s9", "host"])
++@pytest.mark.parametrize("case", ["not-validated", "identity", "limit", "dir-identity", "symlink-to-same"])
++def test_guard_reads_only_the_validated_leaf(scratch, tmpdir_, copy, case):
++    """_gw_read: only a leaf this scan validated, through a no-follow descriptor whose fstat is that same file (and
++    the same directories above it), bounded."""
++    ns = dict(both_guards(scratch))[copy]
++    repo = copy_host(scratch, tmpdir_)
++    rel = ".git/" + HOST_REF
++    facts = ns["gw_scan"](repo, ns["gw_plan"](HOST_REF), gw_refuse)
++    if case == "not-validated":
++        facts.pop(rel)
++        want = "was not validated"
++    elif case == "identity":
++        make_file(os.path.join(repo, rel + ".new"), (scratch["P"] + "\n").encode())
++        os.rename(os.path.join(repo, rel + ".new"), os.path.join(repo, rel))
++        want = "changed while it was checked"
++    elif case == "dir-identity":
++        heads = os.path.join(repo, ".git/refs/heads")
++        os.rename(heads, heads + ".old")
++        os.makedirs(heads)
++        make_file(os.path.join(heads, S9.END_BRANCH), (scratch["P"] + "\n").encode())
++        want = "changed while they were checked"
++    elif case == "symlink-to-same":                # the same validated inode behind a symlink: only O_NOFOLLOW sees it
++        moved = os.path.join(tmpdir_, "moved-ref")
++        os.rename(os.path.join(repo, rel), moved)
++        os.symlink(moved, os.path.join(repo, rel))
++        want = "cannot be opened without following"
++    fd = ns["gw_open_root"](repo, gw_refuse)
++    try:
++        if case == "limit":
++            with pytest.raises(si.Refusal) as caught:
++                ns["_gw_read"](fd, rel, facts, 40, gw_refuse)
++            want = "larger than 40 bytes"
++        else:
++            with pytest.raises(si.Refusal) as caught:
++                ns["_gw_read"](fd, rel, facts, 4096, gw_refuse)
++        if case == "limit":
++            ok(ns["_gw_read"](fd, rel, facts, 41, gw_refuse) == (scratch["P"] + "\n").encode())
++    finally:
++        os.close(fd)
++    ok(want in caught.value.reason, caught.value)
++
++
++# ---------------------------------------------------------------- S11 advance (fake host, one login)
++
++@pytest.mark.parametrize("alias", ALIASES + ["onelevel"])
++def test_s11_advance_refuses_a_symbolic_destination_before_the_fetch(world, ready, tmpdir_, repo_copy,
++                                                                     advanced_clone, monkeypatch, alias):
++    """refs/heads/k4s-end-r1 made a symbolic ref (to a victim branch whose reflog is aliased: Sol's three forms; or to
++    a one-level name) on the provisioned host repository: refused at the [check] stage by the existing exact-ref
++    VERIFY (HEAD must resolve to refs/heads/k4s-end-r1, the only ref), before the bundle is received or fetched."""
++    _, repo = T11.provision_at_p(world, ready, tmpdir_, repo_copy, monkeypatch)
++    foreign_dir = ready.path(T11.HOST, FOREIGN_NS)
++    if alias == "onelevel":
++        make_file(os.path.join(repo, ".git/VICTIM_HEAD"), (world.P + "\n").encode())
++        target, marker = "VICTIM_HEAD", None
++        os.makedirs(foreign_dir, exist_ok=True)
++        make_file(os.path.join(foreign_dir, "marker"), MARKER)
++    else:
++        target = "refs/heads/victim"
++        make_file(os.path.join(repo, ".git", target), (world.P + "\n").encode())
++        marker = plant_victim_log(repo, target, alias, foreign_dir, target_prefix=FOREIGN_NS)
++    os.unlink(os.path.join(repo, ".git", HOST_REF))
++    make_file(os.path.join(repo, ".git", HOST_REF), ("ref: %s\n" % target).encode())
++    state, fh = tree_state(foreign_dir), fetch_head(repo)
++    a = T11.advance_args(world, tmpdir_, advanced_clone)
++    error = refused("remote-refused", T11.run, a)
++    ok('"check"' in error.reason and "stages ['@@RC|check|3']" in error.reason, error.reason)
++    ok(T11.git(repo, "cat-file", "-e", world.X2 + "^{commit}")[0] != 0, "the fetch ran")
++    ok(fetch_head(repo) == fh, "FETCH_HEAD changed")
++    ok(marker is None or read(marker) == MARKER)
++    ok(tree_state(foreign_dir) == state, "the foreign marker changed")
++    T11.receipt(a.record)
++    ok(not os.path.exists(os.path.join(a.record, "s11-advance.json")))
++
++
++def run_local_main(ns, mode, p):
++    saved = {m: os.sys.modules.get(m) for m in ("safe_input", "k4s_end_host_tool")}
++    try:
++        with pytest.raises(ns["_Refused"]) as caught:
++            ns["_main"](["x", mode, base64.b64encode(C.canonical(p).encode()).decode()])
++    finally:
++        for m, v in saved.items():
++            if v is None:
++                os.sys.modules.pop(m, None)
++            else:
++                os.sys.modules[m] = v
++    return caught.value
++
++
++@pytest.mark.parametrize("layer", ["guard", "git-view"])
++def test_s11_host_advance_symbolic_destination_isolated_from_verify(world, ready, tmpdir_, repo_copy, advanced_clone,
++                                                                     monkeypatch, layer):
++    """The host program's own r6 checks, with _verify stubbed (so the exact-ref VERIFY cannot refuse first): the
++    advance fetch refuses `git-write` before it runs (X absent, no FETCH_HEAD), the aliased victim reflog unchanged.
++    git-view row: gw_refs disabled too, so only the _guarded for-each-ref %(symref) check remains."""
++    p, local = local_main(world, ready, tmpdir_, repo_copy, advanced_clone, monkeypatch, "advance")
++    repo = os.path.join(local, "repository")
++    target = "refs/heads/victim"
++    make_file(os.path.join(repo, ".git", target), (world.P + "\n").encode())
++    foreign_dir = os.path.join(tmpdir_, "perception-synthetic")
++    marker = plant_victim_log(repo, target, "leaf-symlink", foreign_dir)
++    os.unlink(os.path.join(repo, ".git", HOST_REF))
++    make_file(os.path.join(repo, ".git", HOST_REF), ("ref: %s\n" % target).encode())
++    fh = fetch_head(repo)
++    ns = T11.host_namespace()
++    ns["_verify"] = lambda si_, tool, p_, path, commit: dict(head=commit)
++    if layer == "git-view":
++        ns["gw_refs"] = lambda *a: None
++    error = run_local_main(ns, "advance", p)
++    want = "symbolic ref (" if layer == "guard" else "symbolic or indirect ref"
++    ok(error.code == "git-write" and want in error.reason and HOST_REF in error.reason, error)
++    ok(T11.git(repo, "cat-file", "-e", world.X2 + "^{commit}")[0] != 0, "the fetch ran")
++    ok(fetch_head(repo) == fh and read(marker) == MARKER)
++
++
++def test_s11_host_provision_symbolic_destination_refused_before_the_fetch(world, ready, tmpdir_, repo_copy,
++                                                                          advanced_clone, monkeypatch):
++    """provision: a symbolic refs/heads/k4s-end-r1 appearing in the fresh repository (injected right after `git init`;
++    the partial directory is created exclusively, so this only proves the check) refuses before the fetch."""
++    p, local = local_main(world, ready, tmpdir_, repo_copy, advanced_clone, monkeypatch, "provision")
++    ns = T11.host_namespace()
++    real = ns["_git"]
++
++    def init_then_symref(si_, path, args, **kw):
++        out = real(si_, path, args, **kw)
++        if args[0] == "init":
++            make_file(os.path.join(path, ".git", HOST_REF), b"ref: refs/heads/victim\n")
++        return out
++    ns["_git"] = init_then_symref
++    error = run_local_main(ns, "provision", p)
++    ok(error.code == "git-write" and "symbolic ref (" in error.reason, error)
++    partial = os.path.join(local, "repository.partial")
++    ok(not os.path.lexists(os.path.join(partial, ".git/FETCH_HEAD")))
++    ok(not os.path.lexists(os.path.join(partial, ".git/refs/heads/victim")))

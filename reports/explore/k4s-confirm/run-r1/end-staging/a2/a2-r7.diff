@@ -1,0 +1,12 @@
+8c8
+< for d in s3s9s10-r6 s5s6s7-r6; do (cd $E/$d && sha256sum -c --quiet SHA256SUMS) || { echo "SHA256SUMS $d FAILED"; exit 2; }; done
+---
+> for d in s3s9s10-r7 s5s6s7-r6; do (cd $E/$d && sha256sum -c --quiet SHA256SUMS) || { echo "SHA256SUMS $d FAILED"; exit 2; }; done
+20c20
+<   run s10-$t $PY -I -B $E/s3s9s10-r6/s10_stage_host.py --host $H "${first[@]}" --bundle $S/bundles/end-ref-$H-$t ${!tp} ${!rc} --guard-job $S/guard-jobs/guard-$H-$t --guard-job-name k4s-end-guard-r1-$t --guard-manifest-sha256 ${!gm} --record $S/a2/s10-$H-$t-r1 --outside-end-window "A2 GO $GO, $(date -u +%FT%TZ)"
+---
+>   run s10-$t $PY -I -B $E/s3s9s10-r7/s10_stage_host.py --host $H "${first[@]}" --bundle $S/bundles/end-ref-$H-$t ${!tp} ${!rc} --guard-job $S/guard-jobs/guard-$H-$t --guard-job-name k4s-end-guard-r1-$t --guard-manifest-sha256 ${!gm} --record $S/a2/s10-$H-$t-r2 --outside-end-window "A2 GO $GO, $(date -u +%FT%TZ)"
+22c22
+< run s11-provision $PY -I -B $E/s3s9s10-r6/s11_host_repository.py provision --host $H --commit $P --record $S/a2/s11-$H-provision-r1 --outside-end-window "A2 GO $GO, $(date -u +%FT%TZ)"
+---
+> run s11-provision $PY -I -B $E/s3s9s10-r7/s11_host_repository.py provision --host $H --commit $P --record $S/a2/s11-$H-provision-r2 --outside-end-window "A2 GO $GO, $(date -u +%FT%TZ)"
