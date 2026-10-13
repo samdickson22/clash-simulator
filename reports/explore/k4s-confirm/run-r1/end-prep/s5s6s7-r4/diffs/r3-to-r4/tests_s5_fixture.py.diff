@@ -1,0 +1,11 @@
+--- s5s6s7-r3/tests/s5_fixture.py	2026-10-12 17:05:34.631116737 -0700
++++ s5s6s7-r4/tests/s5_fixture.py	2026-10-12 22:57:53.275715656 -0700
+@@ -66,6 +66,8 @@
+     manifest_bytes = (json.dumps(synthetic_manifest(closure), sort_keys=True) + "\n").encode()
+     H.write(runtime / S.MANIFEST_REL, manifest_bytes)
+     inventory = H.write(runtime / S.CORPUS_INVENTORY_REL, b'{"synthetic": "corpus inventory"}\n')
++    delta = H.write(runtime / S.DELTA_MANIFEST_REL, b'{"synthetic": "DELTA-MANIFEST"}\n')     # r4 L6
++    monkeypatch.setattr(S, "DELTA_MANIFEST_SHA256", H.sha(delta))
+     monkeypatch.setattr(S, "K4S_MANIFEST_SHA256", H.sha_bytes(manifest_bytes))
+     monkeypatch.setattr(S, "FROZEN_CLOSURE", closure)
+     monkeypatch.setattr(S, "MIN_HOLD_SECONDS", {"127x03": 0.4, "127x04": 0.4})

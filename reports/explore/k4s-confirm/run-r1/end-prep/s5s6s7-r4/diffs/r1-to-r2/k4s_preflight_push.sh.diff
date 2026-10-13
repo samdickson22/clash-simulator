@@ -1,0 +1,129 @@
+--- ../s5s6s7-r1/k4s_preflight_push.sh	2026-10-12 09:04:58.551786263 -0700
++++ k4s_preflight_push.sh	2026-10-12 15:30:05.314816389 -0700
+@@ -1,32 +1,40 @@
+ #!/usr/bin/env bash
+-# K4S END PREFLIGHT candidate (S5; derived from k4s_end_exit_push.sh): review required before any use.
+-# Runs k4s_end_preflight.py once in the foreground (never end_reference.py), then pushes the preflight
+-# directory to 05. Records that neither the registry root nor the declared attempt parent changed.
++# K4S END PREFLIGHT wrapper r2 (S5; derived from k4s_end_exit_push.sh r2, safe_input adoption). Review required.
++# Runs k4s_end_preflight.py once in the foreground through frozen-exec (never end_reference.py), then pushes the
++# preflight directory to 05. No shell redirection writes any file: argv.nul, exit.json, TRANSFER-DONE.json and
++# PUSH-FAILED.json are created through the pinned safe_input CLI (exclusive, no-follow, never replaced). The
++# registry/attempt-parent listings are taken by the preflight itself through safe_input.
+ # Frozen detach.sh must use $job/detach.log and $job/detach.json.
+-set -u
++set -u -o pipefail
+ job=${1:?JOB}
+ shift
+-host=$(hostname)
++python=/usr/bin/python3
++host=$(hostname) || exit 90
+ case "$host" in
+   127x03) base=/mpac/sdicks02/jobs/clasher/k4s-end-r1 ;;
+   127x04) base=/mpac/sdicks02/jobs-k4s/k4s-end-r1 ;;
+   *) exit 90 ;;
+ esac
++receive_base=/mpac/sdicks02/k4s-runner/run-r1/preflight-received
++tools=$base/tools
++host_tool=$tools/k4s_end_host_tool.py
++host_tool_sha=cf19269071d57f0d1fe9b7ce5f865b4641ecda62c88e418cd73b711a57a5d6f3
+ case "$job" in */|*..*|*[[:space:]]*) exit 90 ;; esac
+ attempt=${job##*/}
+-[[ "$attempt" =~ ^[A-Za-z0-9._-]+$ ]] || exit 90
++[[ "$attempt" =~ ^preflight-${host}-l[0-9]{2}$ ]] || exit 90
+ parent=${job%/*}
+-case "$parent" in
+-  "$base/preflight") ;;
+-  *) exit 90 ;;
+-esac
++test "$parent" = "$base/preflight" || exit 90
+ measurement=$job/$attempt
+ repository=$base/repository
+ attempts=$base/attempts
+-registry_root=$repository/reports/explore/k4s-confirm/end/registry
+ test -d "$job" && test ! -L "$job" || exit 90
+-test ! -e "$measurement" && test ! -e "$job/exit.json" || exit 90
+-test -f "$job/detach.log" && test -s "$job/detach.json" || exit 90
++for name in "$attempt" exit.json exit.json.tmp argv.nul TRANSFER-DONE.json TRANSFER-DONE.json.tmp PUSH-FAILED.json; do
++  test ! -e "$job/$name" && test ! -L "$job/$name" || exit 90
++done
++test -f "$job/detach.log" && test ! -L "$job/detach.log" || exit 90
++test -s "$job/detach.json" && test ! -L "$job/detach.json" || exit 90
++test -f "$host_tool" && test ! -L "$host_tool" || exit 90
++printf '%s  %s\n' "$host_tool_sha" "$host_tool" | sha256sum --check --status --strict || exit 90
+ output_count=0
+ expect_output=false
+ repository_count=0
+@@ -56,7 +64,7 @@
+   else
+     case "$arg" in --o*|--rep*|--at*) exit 90 ;; esac
+     case "$arg" in */end_reference.py|end_reference.py) exit 90 ;; esac
+-    case "$arg" in */k4s_end_preflight.py) script_count=$((script_count + 1)) ;; esac
++    case "$arg" in "$tools/k4s_end_preflight.py") script_count=$((script_count + 1)) ;; esac
+   fi
+ done
+ test "$output_count" = 1 && ! "$expect_output" || exit 90
+@@ -64,26 +72,21 @@
+ test "$parent_count" = 1 && ! "$expect_parent" || exit 90
+ test "$script_count" = 1 || exit 90
+ test "$#" -gt 0 || exit 90
+-receive="/mpac/sdicks02/k4s-runner/run-r1/preflight-received/$host/$attempt"
+-listing() {
+-  if test -e "$1"; then (cd "$1" && find . -print0 | LC_ALL=C sort -z | sha256sum | cut -d' ' -f1); else echo absent; fi
+-}
+-registry_before=$(listing "$registry_root")
+-attempts_before=$(listing "$attempts")
+-printf '%s\0' "$@" > "$job/argv.nul" || exit 91
++receive="$receive_base/$host/$attempt"
++tool() { "$python" -I -S "$host_tool" "$@"; }
++receipt=$(printf '%s\0' "$@" | tool si -- create-excl --host "$host" --root "$job" --rel argv.nul --max-size 65536) \
++  || exit 91
+ 
+ # No trap, polling, timer or network call while the foreground preflight runs.
+-"$@"
++tool frozen-exec -- "$@"
+ measurement_exit=$?
+ exit_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+ measurement_exists=false
+ test ! -d "$measurement" || measurement_exists=true
+-registry_after=$(listing "$registry_root")
+-attempts_after=$(listing "$attempts")
+-printf '{"utc":"%s","host":"%s","attempt":"%s","exit_code":%s,"command_exited":true,"measurement_exists":%s,"registry_listing_before":"%s","registry_listing_after":"%s","attempts_listing_before":"%s","attempts_listing_after":"%s"}\n' \
+-  "$exit_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" "$registry_before" "$registry_after" \
+-  "$attempts_before" "$attempts_after" > "$job/exit.json.tmp"
+-mv "$job/exit.json.tmp" "$job/exit.json" || exit 91
++receipt=$(printf '{"utc":"%s","host":"%s","attempt":"%s","exit_code":%s,"command_exited":true,"measurement_exists":%s}\n' \
++  "$exit_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" \
++  | tool si -- create-excl --host "$host" --root "$job" --rel exit.json.tmp --max-size 4096) || exit 91
++tool si -- publish-excl --host "$host" --root "$job" --rel exit.json.tmp --final exit.json || exit 91
+ 
+ # Count and total deadline bound post-exit transport; never retry the preflight.
+ deadline=$((SECONDS + 1200))
+@@ -112,14 +115,21 @@
+ fi
+ if test "$failed" = 0; then
+   copied_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+-  printf '{"utc":"%s","host":"%s","attempt":"%s","transfer_complete":true,"measurement_exit_code":%s,"measurement_exists":%s}\n' \
+-    "$copied_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" > "$job/TRANSFER-COMPLETE.json.tmp"
+-  mv "$job/TRANSFER-COMPLETE.json.tmp" "$job/TRANSFER-COMPLETE.json"
+-  push_file "$job/TRANSFER-COMPLETE.json" "$receive/" 30 || failed=1
++  receipt=$(printf '{"utc":"%s","host":"%s","attempt":"%s","transfer_complete":true,"measurement_exit_code":%s,"measurement_exists":%s}\n' \
++    "$copied_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" \
++    | tool si -- create-excl --host "$host" --root "$job" --rel TRANSFER-DONE.json.tmp --max-size 4096) || failed=1
++fi
++if test "$failed" = 0; then
++  tool si -- publish-excl --host "$host" --root "$job" --rel TRANSFER-DONE.json.tmp --final TRANSFER-DONE.json \
++    || failed=1
++fi
++if test "$failed" = 0; then
++  push_file "$job/TRANSFER-DONE.json" "$receive/" 30 || failed=1
+ fi
+ if test "$failed" != 0; then
+-  printf '{"transfer_complete":false,"measurement_exit_code":%s,"transport_failed":true}\n' \
+-    "$measurement_exit" > "$job/PUSH-FAILED.json"
++  receipt=$(printf '{"transfer_complete":false,"measurement_exit_code":%s,"transport_failed":true}\n' \
++    "$measurement_exit" \
++    | tool si -- create-excl --host "$host" --root "$job" --rel PUSH-FAILED.json --max-size 4096) || exit 92
+   timeout -k 30 30 nice -n 9 taskset -c 62 rsync -a --checksum \
+     "$job/PUSH-FAILED.json" "127x05:$receive/" || true
+   exit 92

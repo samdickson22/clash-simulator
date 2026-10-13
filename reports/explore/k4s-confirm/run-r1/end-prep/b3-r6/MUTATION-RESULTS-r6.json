@@ -1,0 +1,329 @@
+{
+ "assembler_sha256": "76b7b7cf4b9a7ebf9cbcaa46a6d6f1baefca36b40148f6f104d5055cafa4dd63",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "driver_sha256": "01e6565a38162af90dd3a553d395a3ca4846271e438a919e217e96b3cd3164ad",
+ "tests_sha256": {
+  "test_assemble_fleet_reference.py": "5ad70116b0e808366f7510b15a011e105c67dac0e1a538fc4c25089bb50fe56d",
+  "test_s4_r4_git.py": "415d1502eb6d97ba0425d962a8868586b8d0a8dcc3565808d8afd23b5752dbfe",
+  "test_s4_r6_runtime_pin.py": "e21f6d0e60185beebaa81fb505773b1fc241b4bd94d9e9abef33b84f1e79c0b2"
+ },
+ "frozen_root": true,
+ "finished_utc": "2026-10-13T05:52:46Z",
+ "optimize": true,
+ "python": "3.12.12",
+ "executable": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "total": 13,
+ "killed": 13,
+ "not_killed": [],
+ "null_controls": {
+  "NULL-0": "SURVIVED",
+  "NULL-1": "SURVIVED"
+ },
+ "results": [
+  {
+   "mutant": "B1 list only (the b3-r5 rule)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_real_pin_bytes_through_members_in_synthetic_world",
+    "test_s4_r6_runtime_pin.py::test_r6_dict_membership_is_the_keys_not_the_values",
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_real_pin_bytes_through_members_in_synthetic_world",
+    "test_s4_r6_runtime_pin.py::test_r6_dict_membership_is_the_keys_not_the_values",
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "named_summary": "1 failed, 1 warning, 3 errors in 0.79s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "suite_summary": "1 passed, 2 deselected, 1 warning, 1 error in 0.25s",
+   "seconds": 1.6
+  },
+  {
+   "mutant": "B1 dict only (a list refused)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_list_form_gives_the_same_set_as_frozen"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_list_form_gives_the_same_set_as_frozen"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.20s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_list_form_gives_the_same_set_as_frozen"
+   ],
+   "suite_summary": "1 failed, 469 passed, 2 deselected, 1 warning in 57.69s",
+   "seconds": 60.2
+  },
+  {
+   "mutant": "B1 membership = the dict values",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_membership_is_the_keys_not_the_values",
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_dict_membership_is_the_keys_not_the_values"
+   ],
+   "named_summary": "1 failed, 1 warning, 1 error in 0.60s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "suite_summary": "1 passed, 2 deselected, 1 warning, 1 error in 0.26s",
+   "seconds": 1.4
+  },
+  {
+   "mutant": "B1 per-file SHAs compared (stricter than frozen)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_per_file_shas_are_never_compared[ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_real_pin_bytes_through_members_in_synthetic_world"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_per_file_shas_are_never_compared[ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_real_pin_bytes_through_members_in_synthetic_world"
+   ],
+   "named_summary": "3 failed, 1 warning in 2.09s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r4_git.py::test_e5_each_ruled_member_accepted_hash_only[m8]"
+   ],
+   "suite_summary": "1 failed, 434 passed, 2 deselected, 1 warning in 50.39s",
+   "seconds": 54.2
+  },
+  {
+   "mutant": "NULL-0",
+   "result": "SURVIVED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_result": "SURVIVED",
+   "named_failed": [],
+   "named_summary": "2 passed, 1 warning in 2.01s",
+   "every_named_test_failed": false,
+   "suite_result": "SURVIVED",
+   "suite_first_failure": [],
+   "suite_summary": "482 passed, 2 deselected, 1 warning in 59.17s",
+   "seconds": 63.1
+  },
+  {
+   "mutant": "B1 per-file SHAs must be 64-hex (S9's shape rule, not frozen)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_per_file_shas_are_never_compared[None]",
+    "test_s4_r6_runtime_pin.py::test_r6_dict_per_file_shas_are_never_compared[7]"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_per_file_shas_are_never_compared[None]",
+    "test_s4_r6_runtime_pin.py::test_r6_dict_per_file_shas_are_never_compared[7]"
+   ],
+   "named_summary": "2 failed, 1 warning in 0.29s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_membership_is_the_keys_not_the_values"
+   ],
+   "suite_summary": "1 failed, 464 passed, 2 deselected, 1 warning in 56.70s",
+   "seconds": 59.3
+  },
+  {
+   "mutant": "B1 a string accepted as an iterable of names",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[string]"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[string]"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.24s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[string]"
+   ],
+   "suite_summary": "1 failed, 470 passed, 2 deselected, 1 warning in 58.23s",
+   "seconds": 60.4
+  },
+  {
+   "mutant": "B1 name type check off",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-int]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-null]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-list]"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-int]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-null]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-list]"
+   ],
+   "named_summary": "3 failed, 1 warning in 0.54s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[list-int]"
+   ],
+   "suite_summary": "1 failed, 475 passed, 2 deselected, 1 warning in 58.93s",
+   "seconds": 62.5
+  },
+  {
+   "mutant": "B1 shape check off",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[null]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[int]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[no-files]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[top-list]"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[null]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[int]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[no-files]",
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[top-list]"
+   ],
+   "named_summary": "4 failed, 1 warning in 0.85s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_other_files_shapes_refused[string]"
+   ],
+   "suite_summary": "1 failed, 470 passed, 2 deselected, 1 warning in 58.68s",
+   "seconds": 62.5
+  },
+  {
+   "mutant": "NULL-1",
+   "result": "SURVIVED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_real_runtime_membership_equals_frozen_rule_and_s9",
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_result": "SURVIVED",
+   "named_failed": [],
+   "named_summary": "2 passed, 1 warning in 1.98s",
+   "every_named_test_failed": false,
+   "suite_result": "SURVIVED",
+   "suite_first_failure": [],
+   "suite_summary": "482 passed, 2 deselected, 1 warning in 59.51s",
+   "seconds": 63.4
+  },
+  {
+   "mutant": "B1 dict keys not path-checked",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_keys_are_gated_like_list_items",
+    "test_assemble_fleet_reference.py::test_f1_dotdot_runtime_pin_entry_refused_before_read"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_dict_keys_are_gated_like_list_items",
+    "test_assemble_fleet_reference.py::test_f1_dotdot_runtime_pin_entry_refused_before_read"
+   ],
+   "named_summary": "2 failed, 1 warning in 0.43s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_f1_absolute_runtime_pin_entry_refused_before_read"
+   ],
+   "suite_summary": "1 failed, 45 passed, 2 deselected, 1 warning in 6.05s",
+   "seconds": 8.0
+  },
+  {
+   "mutant": "L4 receipt assembler_sha256 dropped",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.35s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "suite_summary": "1 failed, 481 passed, 2 deselected, 1 warning in 59.52s",
+   "seconds": 67.8
+  },
+  {
+   "mutant": "L4 receipt assembler_sha256 = the request SHA",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.38s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "suite_summary": "1 failed, 481 passed, 2 deselected, 1 warning in 59.34s",
+   "seconds": 67.9
+  },
+  {
+   "mutant": "L4 dry-run summary assembler_sha256 dropped",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.24s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "suite_summary": "1 failed, 481 passed, 2 deselected, 1 warning in 59.28s",
+   "seconds": 67.7
+  },
+  {
+   "mutant": "L4 real-run summary assembler_sha256 dropped",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.35s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r6_runtime_pin.py::test_r6_receipt_and_summary_carry_assembler_sha256"
+   ],
+   "suite_summary": "1 failed, 481 passed, 2 deselected, 1 warning in 58.96s",
+   "seconds": 63.9
+  }
+ ]
+}

@@ -1,0 +1,345 @@
+--- ../s5s6s7-r2/tests/test_s7_gate.py	2026-10-12 15:28:03.247498964 -0700
++++ tests/test_s7_gate.py	2026-10-12 17:40:40.366688894 -0700
+@@ -68,6 +68,7 @@
+         self.pre_script = "import time\ntime.sleep(2)\n"
+         mp.setattr(G, "PREFLIGHT_SHA256", H.sha_bytes(self.pre_script.encode()))
+         self.decl = dict(schema=G.ROOTS_SCHEMA, commit="c" * 40, hosts={})
++        self.sans, self.pf_used = {}, {}
+         for h in G.END_HOSTS:
+             self.decl["hosts"][h] = self.host_fs(h)
+         Path(G.LAUNCH_BASE).mkdir(parents=True)
+@@ -116,9 +117,10 @@
+         bundles = {}
+         for name, guard in GUARDS.items():
+             job = q4 / ("k4s-end-guard-r1-" + guard)
+-            seeds = H.git_repo(job / "repo", commits=2)
++            seeds = H.shallow_guard_repo(job / "repo", fs / "seed-sources" / guard)
+             manifest = dict(profile="fleet-reference", reference_load_profile=dict(host=h, guard=dict(job=str(job))))
+             digest = H.sha(H.write(base / "bundles" / name / "tiers-pins.json", H.canonical(manifest) + "\n"))
++            self.sans[h] = self.tool.bundle_sans_guard_sha256(manifest)
+             bundles[name] = dict(path=str(base / "bundles" / name), tiers_pins_sha256=digest, guard_job=str(job))
+         self.mp.setattr(G, "SEED_COMMITS", seeds)
+         return dict(base=str(base), runtime=str(base / RUNTIME), bundles=bundles, repository=str(base / "repository"),
+@@ -179,51 +181,81 @@
+         sha = H.sha(H.write(self.launch_dir(attempt, h) / "PREPARE-PROOF.json", json.dumps(proof, sort_keys=True) + "\n"))
+         return ["--prepare-proof-sha256", sha]
+ 
+-    def verified(self, h, **over):
+-        """A PREFLIGHT-VERIFIED.json (schema v2) + the sealed files it binds, under the declared receive path."""
++    def verified(self, h, bus_percent=0.05, **over):
++        """A PREFLIGHT-VERIFIED.json (schema v3) + the sealed files it binds, under the declared receive path. The bus
++        evidence is numerically consistent (percent = 100 ticks / hz / span) and banded by the P2-3 rule."""
+         d = self.decl["hosts"][h]
+         attempt = "preflight-%s-l00" % h
+         root = Path(G.RECEIVE["preflight"]) / h / attempt
+         seal = H.write(root / "preflight/receipt-manifest.json", b'{"synthetic": "seal"}\n')
+         result = H.write(root / "preflight/preflight-result.json", b'{"synthetic": "result"}\n')
+         pf, at = d["bundles"]["pf00"], d["bundles"]["a00"]
++        seconds, hz = (958.0 if h == "127x04" else 118.0), 100
++        band = G.bus_band(bus_percent)
++        native, corpus = d["base"] + "/inputs/native.so", d["base"] + "/inputs/k4-states.pkl"
++        inventory = d["runtime"] + "/" + G.CORPUS_INVENTORY_REL
+         doc = dict(schema=G.VERIFIED_SCHEMA, scope="K4S-END-PREFLIGHT", host=h, attempt=attempt, receive=str(root),
+                    status="passed", passed=True, mode="binding", qualifying=True, failed_checks=[],
+                    registry_and_attempt_parent_unchanged=True, attempt_parent_empty=True,
+                    login_detected_during_hold=False,
+                    load=dict(reference_slot_work=True, reference_slot_states_worked=4000, background_slots_ready=10,
+                              background_slots_expected=10, slot_count=11),
+-                   duration=dict(loaded_seconds_measured=958.0 if h == "127x04" else 118.0),
+-                   bus_band="proceed" if h == "127x04" else "proceed",
+-                   bus_gate="proceed" if h == "127x04" else "not-gated-on-127x03",
+-                   bus_cumulative_loaded=dict(percent=0.05),
++                   duration=dict(loaded_seconds_measured=seconds),
++                   bus_band=band, bus_gate=band if h == "127x04" else "not-gated-on-" + h,
++                   bus_cumulative_loaded=dict(percent=bus_percent, seconds=seconds, hz=hz,
++                                              cpu_ticks=bus_percent * hz * seconds / 100.),
+                    inputs=dict(runtime_root=d["runtime"], repository=d["repository"],
+                                k4s_manifest_sha256=G.K4S_MANIFEST_SHA256, bundle=pf["path"],
+                                bundle_pins_sha256=pf["tiers_pins_sha256"], guard_job=pf["guard_job"],
+                                compare_bundle=at["path"], compare_bundle_pins_sha256=at["tiers_pins_sha256"],
+-                               end_evidence_sha256="e" * 64, sd1_manifest_sha256="5" * 64),
++                               end_evidence_sha256="e" * 64, sd1_manifest_sha256="5" * 64, native=native,
++                               corpus=corpus, corpus_inventory=inventory,
++                               corpus_inventory_sha256=G.CORPUS_INVENTORY_SHA256),
++                   identity=dict(native=native, native_sha256=G.NATIVE_SHA256, corpus=corpus,
++                                 corpus_sha256=G.CORPUS_SHA256, corpus_inventory=inventory,
++                                 corpus_inventory_sha256=G.CORPUS_INVENTORY_SHA256),
++                   bundle_identity=dict(bundle_sans_guard_sha256=self.sans[h],
++                                        compare_bundle_sans_guard_sha256=self.sans[h]),
+                    safe_input_sha256=G.SAFE_INPUT_SHA256, receipt_manifest_sha256=H.sha(seal),
+                    preflight_result_sha256=H.sha(result))
+         for k, v in over.items():
+             if v is None:
+                 doc.pop(k, None)
++            elif isinstance(v, dict) and k in ("inputs", "identity", "bundle_identity", "bus_cumulative_loaded") \
++                    and v.pop("_merge", False):
++                doc[k] = dict(doc[k], **v)
+             else:
+                 doc[k] = v
+         path = root / "PREFLIGHT-VERIFIED.json"
+         if path.exists():
+             os.chmod(path, 0o644)
+-        return ["--preflight-verified", "%s=%s:%s" % (h, attempt, H.sha(H.write(path, json.dumps(doc))))]
++        digest = H.sha(H.write(path, json.dumps(doc)))
++        self.pf_used[h] = (attempt, digest)
++        return ["--preflight-verified", "%s=%s:%s" % (h, attempt, digest)]
+ 
+     def prior_03(self, attempt="end-127x03-r00-l00", **over):
++        """03's SEALED complete ACK, its RC-7 admission record and its LAUNCH-RECEIPT (the lineage this 04 launch
++        must share: same round, RC-6 declaration and qualifying preflight receipts)."""
+         root = Path(G.RECEIVE["end"]) / "127x03" / attempt
+         seal = H.write(root / "durable-measurement/receipt-manifest.json", b'{"synthetic": "seal"}\n')
++        round_ = str(int(G.ATTEMPT["end"].fullmatch(attempt).group(2)))
++        receipt = dict(schema=G.RECEIPT_SCHEMA, kind="end", host="127x03", attempt=attempt, launched=True,
++                       roots_sha256=self.roots_sha, measurement_argv=["env", "x", "--round", round_],
++                       prerequisites=dict(preflights={h: dict(attempt=a, sha256=s) for h, (a, s) in
++                                                      sorted(self.pf_used.items())}))
++        receipt.update(over.pop("receipt", {}))
++        rpath = self.launch_dir(attempt, "127x03") / "LAUNCH-RECEIPT.json"
++        if rpath.exists():
++            os.chmod(rpath, 0o644)
++        receipt_sha = H.sha(H.write(rpath, json.dumps(receipt)))
+         ack = dict(schema=G.ACK_SCHEMA, host="127x03", attempt=attempt, classification="SEALED", status="complete",
+                    ack_allowed=True, c_d_satisfied=True, exit_epoch=1000.0, verified_epoch=2300.0,
+-                   receipt_manifest_sha256=H.sha(seal))
++                   receipt_manifest_sha256=H.sha(seal), launch_receipt_sha256=receipt_sha)
+         ack.update(over.pop("ack", {}))
+-        adm = dict(schema=G.ADMISSION_SCHEMA, host="127x03", attempt=attempt, closed_before_admission=True)
+-        adm.update(over.pop("admission", {}))
+         a = H.sha(H.write(root / "DURABLE-ACK.json", json.dumps(ack)))
++        adm = dict(schema=G.ADMISSION_SCHEMA, host="127x03", attempt=attempt, kind="end", closed_before_admission=True,
++                   verified_sha256=a, launch_receipt_sha256=receipt_sha)
++        adm.update(over.pop("admission", {}))
+         b = H.sha(H.write(self.launch_dir(attempt, "127x03") / "ADMISSION.json", json.dumps(adm)))
+         return ["--prior-03", "%s:%s:%s" % (attempt, a, b)]
+ 
+@@ -448,9 +480,11 @@
+                     background_slots_expected=10, slot_count=11)), "full reference load"),
+     (dict(duration=dict(loaded_seconds_measured=899.0)), "duration"),
+     (dict(login_detected_during_hold=True), "login"),
+-    (dict(bus_band="stop", bus_gate="stop"), "STOP"),
+-    (dict(bus_band="unavailable", bus_gate="unavailable"), "STOP"),
+-    (dict(bus_band="coordinator-decision", bus_gate="coordinator-decision"), "SHA-256 pin is required"),
++    (dict(bus_percent=0.8), "STOP"),
++    (dict(bus_band="unavailable", bus_gate="unavailable", bus_cumulative_loaded=dict(percent=None, seconds=None,
++                                                                                     hz=100, cpu_ticks=None)),
++     "missing or not finite"),
++    (dict(bus_percent=0.5), "SHA-256 pin is required"),
+     (dict(safe_input_sha256="0" * 64), "binding differs"),
+     (dict(receipt_manifest_sha256="0" * 64), "sealed receipt differs"),
+ ], ids=["no-schema", "scope", "not-passed", "failed-check", "diagnostic", "no-reference-work", "slots", "duration",
+@@ -471,8 +505,7 @@
+ 
+ 
+ def test_rc9_bus_decision_band(site):
+-    extra = site.verified("127x03") + site.verified("127x04", bus_band="coordinator-decision",
+-                                                     bus_gate="coordinator-decision")
++    extra = site.verified("127x03") + site.verified("127x04", bus_percent=0.5)
+     seal = H.sha(Path(G.RECEIVE["preflight"]) / "127x04/preflight-127x04-l00/preflight/receipt-manifest.json")
+     rel = Path(G.LAUNCH_BASE) / "127x04" / "BUS-DECISION-preflight-127x04-l00.json"
+     bad = H.sha(H.write(rel, json.dumps(dict(schema="clasher.k4s.end-bus-decision.v1", decision="stop",
+@@ -496,7 +529,7 @@
+                       guard_job=d["bundles"]["pf00"]["guard_job"], compare_bundle=d["bundles"]["a00"]["path"],
+                       compare_bundle_pins_sha256=d["bundles"]["a00"]["tiers_pins_sha256"],
+                       end_evidence_sha256="0" * 64, sd1_manifest_sha256="5" * 64)
+-    extra = site.verified("127x03", inputs=bad_inputs) + site.verified("127x04")
++    extra = site.verified("127x03", inputs=dict(bad_inputs, _merge=True)) + site.verified("127x04")
+     raises(G.GateRefusal, rc9(site, extra), match="evidence/SD1")
+ 
+ 
+@@ -526,6 +559,195 @@
+     ok(doc["prerequisites"]["prior_03"]["verified_epoch"] >= doc["prerequisites"]["prior_03"]["exit_epoch"] + 1300)
+ 
+ 
++# ---------------------------------------------------------------- r3 frozen-reader env on the host (END-FULL-F3)
++
++@pytest.mark.parametrize("xdg,needle", [("xdg", "relative"), ("", "empty"), ("//x/y", "normalized")])
++def test_host_program_refuses_relative_empty_or_odd_xdg(site, xdg, needle):
++    """The launched wrapper inherits this environment: a relative/empty/non-normalized XDG_CONFIG_HOME refuses before
++    any launch (frozen-exec re-checks the same at exec)."""
++    site.shims.set(XDG_CONFIG_HOME=xdg)
++    code, doc, job = site.launch()
++    refused_on_host(code, doc, job, needle)
++
++
++def test_host_program_checks_the_global_config_files(site):
++    H.write(site.tmp / "home" / ".gitconfig", "[include]\n\tpath = %s\n" % (site.tmp / "elsewhere"))
++    code, doc, job = site.launch()
++    refused_on_host(code, doc, job, "indirection")
++
++
++def test_host_program_home_double_slash_checked_canonically(site):
++    H.write(site.tmp / "home" / ".gitconfig", "[user]\n\tname = t\n")
++    site.shims.set(HOME="/" + str(site.tmp / "home"))
++    code, doc, _ = site.launch()
++    ok(code == 0 and doc["launched"], doc and doc["host_gate"]["failures"])
++    record = doc["host_gate"]["frozen_reader"]["global_git_config"]
++    ok(record["global_config_checked"] == [str(site.tmp / "home") + "/.gitconfig"], record)
++
++
++# ---------------------------------------------------------------- r3 RC-9 binding (Sol END-FULL-F5 probes)
++
++def rebundle(site, h, name, **fields):
++    """Rewrite a declared bundle's tiers-pins.json with extra top-level fields; update the RC-6 declaration."""
++    d = site.decl["hosts"][h]
++    b = d["bundles"][name]
++    path = Path(b["path"]) / "tiers-pins.json"
++    manifest = dict(json.loads(path.read_text()), **fields)
++    os.chmod(path, 0o644)
++    b["tiers_pins_sha256"] = H.sha(H.write(path, H.canonical(manifest) + "\n"))
++    decl = Path(G.LAUNCH_BASE) / "ROOTS-DECLARATION.json"
++    os.chmod(decl, 0o644)
++    site.roots_sha = H.sha(H.write(decl, json.dumps(site.decl, sort_keys=True)))
++
++
++def end_with(site, host="127x03", bundle=None, verified=None, prior=None, **argv_opts):
++    site.host = host
++    site.shims.set(FAKE_HOST=host)
++    argv, attempt = site.argv(bundle=bundle, **argv_opts)
++    extra = site.verified("127x03", **(verified or {}).get("127x03", {})) + \
++        site.verified("127x04", **(verified or {}).get("127x04", {}))
++    if host == "127x04":
++        extra += site.prior_03(**(prior or {}))
++    return site.launch("end", argv=argv, attempt=attempt, extra=extra, rc9=False)
++
++
++@pytest.mark.parametrize("option,needle", [("--native", "native/corpus/corpus-inventory differ"),
++                                           ("--corpus", "native/corpus/corpus-inventory differ")])
++def test_f5_probe_changed_native_or_corpus_path_refused(site, option, needle):
++    """Sol probe: the qualifying preflight used inputs/native.so and inputs/k4-states.pkl; an END argv naming another
++    K4S-owned native/corpus file under the base is refused before any SSH session."""
++    d = site.decl["hosts"]["127x03"]
++    other = H.write(Path(d["base"]) / "inputs" / ("other-" + option[2:] + ".bin"), b"o")
++    raises(G.GateRefusal, end_with, site, **{option: str(other)}, match=needle)
++    ok(not [l for l in site.log.read_text().splitlines() if l.startswith("SSH ") and " -O " not in l]
++       if site.log.exists() else True)
++
++
++@pytest.mark.parametrize("over,needle", [
++    (dict(identity=dict(native_sha256="0" * 64, _merge=True)), "identity is missing"),
++    (dict(identity=dict(corpus_sha256="0" * 64, _merge=True)), "identity is missing"),
++    (dict(identity=dict(corpus_inventory_sha256="0" * 64, _merge=True)), "identity is missing"),
++    (dict(inputs=dict(corpus_inventory_sha256="0" * 64, _merge=True)), "identity is missing"),
++    (dict(identity=None), "identity is missing"),
++    (dict(identity=dict(native="/elsewhere/native.so", _merge=True)), "identity paths"),
++    (dict(inputs=dict(corpus_inventory="/x/corpora.json", _merge=True)), "identity paths"),
++], ids=["native-sha", "corpus-sha", "inventory-sha", "inputs-inventory-sha", "no-identity", "native-path",
++        "inventory-path"])
++def test_f5_preflight_identity_binding(site, over, needle):
++    raises(G.GateRefusal, end_with, site, verified={"127x03": over}, match=needle)
++
++
++def test_f5_probe_other_host_preflight_identity_also_bound(site):
++    raises(G.GateRefusal, end_with, site, verified={"127x04": dict(identity=dict(native_sha256="0" * 64,
++                                                                                  _merge=True))},
++           match="identity is missing")
++
++
++def test_f5_exact_bundle_binding_recorded(site):
++    code, doc, _ = end_with(site)
++    ok(code == 0 and doc["launched"], doc and doc["host_gate"]["failures"])
++    binding = doc["prerequisites"]["preflights"]["127x03"]["bundle_binding"]
++    ok(binding["mode"] == "exact" and binding["bundle_sans_guard_sha256"] == site.sans["127x03"], binding)
++    ok(doc["host_gate"]["frozen_reader"]["bundle_sans_guard_sha256"] == site.sans["127x03"])
++    ok(doc["prerequisites"]["preflights"]["127x04"]["bundle_binding"] is None)
++
++
++def test_f5_probe_attempt_bundle_a01_vs_preflight_a00(site):
++    """Sol probe: the preflight qualified compare bundle a00; the END launch uses a01 (fresh guard job). r3 accepts it
++    only as a host-VERIFIED guard-job-only equivalence: identical a01 launches (mode guard-job-equivalent) ..."""
++    code, doc, _ = end_with(site, bundle="a01", attempt="end-127x03-r00-l01")
++    ok(code == 0 and doc["launched"], doc and doc["host_gate"]["failures"])
++    binding = doc["prerequisites"]["preflights"]["127x03"]["bundle_binding"]
++    ok(binding["mode"] == "guard-job-equivalent" and binding["bundle"].endswith("/a01"), binding)
++
++
++def test_f5_probe_a01_differing_beyond_guard_job_refused_on_host(site):
++    """... and an a01 whose pinned manifest differs from the preflight's bundles beyond guard.job is refused by the
++    host program from its bytes (nothing launched)."""
++    rebundle(site, "127x03", "a01", runtime_files={"extra.py": "0" * 64})
++    code, doc, job = end_with(site, bundle="a01", attempt="end-127x03-r00-l01")
++    refused_on_host(code, doc, job, "beyond guard.job")
++
++
++def test_f5_preflight_bundle_identity_required(site):
++    for ids in (None, dict(bundle_sans_guard_sha256="1" * 64, compare_bundle_sans_guard_sha256="2" * 64),
++                dict(bundle_sans_guard_sha256="x", compare_bundle_sans_guard_sha256="x")):
++        raises(G.GateRefusal, end_with, site, verified={"127x03": dict(bundle_identity=ids)}, match="bundle identity")
++
++
++def test_f5_preflight_digest_must_match_the_host_bundle(site):
++    """A preflight receipt whose (self-consistent) digest is not the attempt bundle's: refused on the host."""
++    code, doc, job = end_with(site, verified={"127x03": dict(bundle_identity=dict(
++        bundle_sans_guard_sha256="1" * 64, compare_bundle_sans_guard_sha256="1" * 64))})
++    refused_on_host(code, doc, job, "beyond guard.job")
++
++
++@pytest.mark.parametrize("prior,needle", [
++    (dict(attempt="end-127x03-r01-l00"), "not of round 00"),
++    (dict(receipt=dict(measurement_argv=["env", "--round", "1"])), "of this round"),
++    (dict(receipt=dict(launched=False)), "of this round"),
++    (dict(receipt=dict(host="127x04")), "of this round"),
++    (dict(receipt=dict(roots_sha256="0" * 64)), "different RC-6"),
++    (dict(receipt=dict(prerequisites=dict(preflights={}))), "different qualifying preflights"),
++    (dict(admission=dict(verified_sha256="0" * 64)), "not made from this ACK"),
++    (dict(admission=dict(launch_receipt_sha256="0" * 64)), "not made from this ACK"),
++    (dict(admission=dict(kind="preflight")), "not made from this ACK"),
++    (dict(ack=dict(launch_receipt_sha256=None)), "not made from this ACK"),
++], ids=["other-round-ack", "receipt-round", "not-launched", "receipt-host", "roots", "preflights", "adm-ack",
++        "adm-receipt", "adm-kind", "ack-no-receipt"])
++def test_f5_probe_03_completion_must_be_this_round_and_lineage(site, prior, needle):
++    """Sol probe: a 03 ACK naming round 01 for a round-00 04 launch (and every lineage break) is refused."""
++    raises((G.GateRefusal, site.si.Refusal), end_with, site, host="127x04", prior=prior, match=needle)
++
++
++def test_f5_03_receipt_bound_by_ack_sha(site):
++    site.host = "127x04"
++    extra = site.verified("127x03") + site.verified("127x04") + site.prior_03()
++    receipt = site.launch_dir("end-127x03-r00-l00", "127x03") / "LAUNCH-RECEIPT.json"
++    os.chmod(receipt, 0o644)
++    with open(receipt, "a") as stream:
++        stream.write(" ")
++    raises(site.si.Refusal, rc9(site, extra, host="127x04"), match="sha")
++
++
++@pytest.mark.parametrize("h,over,needle", [
++    ("127x04", dict(bus_percent=0.8, bus_band="proceed", bus_gate="proceed"), "not the P2-3 band"),
++    ("127x04", dict(bus_percent=0.5, bus_band="proceed", bus_gate="proceed"), "not the P2-3 band"),
++    ("127x04", dict(bus_percent=0.2, bus_band="stop", bus_gate="stop"), "not the P2-3 band"),
++    ("127x03", dict(bus_percent=0.8, bus_band="proceed"), "not the P2-3 band"),
++    ("127x04", dict(bus_cumulative_loaded=None), "evidence missing"),
++    ("127x04", dict(bus_cumulative_loaded=dict(percent=0.05, seconds=958.0, cpu_ticks=47.9)), "not finite"),
++    ("127x04", dict(bus_cumulative_loaded=dict(percent=True, seconds=958.0, hz=100, cpu_ticks=47.9)), "not finite"),
++    ("127x04", dict(bus_cumulative_loaded=dict(percent=-0.1, seconds=958.0, hz=100, cpu_ticks=-95.8)), "not finite"),
++    ("127x04", dict(bus_cumulative_loaded=dict(percent=0.05, seconds=958.0, hz=100, cpu_ticks=900.0)),
++     "inconsistent"),
++    ("127x04", dict(bus_cumulative_loaded=dict(percent=0.05, seconds=900.0, hz=100, cpu_ticks=45.0)),
++     "inconsistent"),
++    ("127x03", dict(bus_gate="proceed"), "gate/band mismatch"),
++    ("127x04", dict(bus_gate="not-gated-on-127x04"), "gate/band mismatch"),
++], ids=["04-0.8-proceed", "04-0.5-proceed", "04-0.2-stop", "03-0.8-proceed", "missing", "no-hz", "bool", "negative",
++        "ticks", "span", "03-gate", "04-gate"])
++def test_f5_probe_inconsistent_bus_evidence_refused(site, h, over, needle):
++    """Sol probe: numeric loaded bus 0.8 % recorded with band/gate "proceed" (and every other inconsistency)."""
++    raises(G.GateRefusal, end_with, site, verified={h: over}, match=needle)
++
++
++def test_f5_nonfinite_bus_refused(site):
++    raises((G.GateRefusal, site.si.Refusal), end_with, site,
++           verified={"127x04": dict(bus_cumulative_loaded=dict(percent=float("nan"), seconds=958.0, hz=100,
++                                                               cpu_ticks=1.0))})
++
++
++def test_f5_bus_constants_equal_the_preflight_and_band_boundaries():
++    import k4s_end_preflight as S
++    ok((G.BUS_PROCEED_MAX, G.BUS_STOP_MIN) == (S.BUS_PROCEED_MAX, S.BUS_STOP_MIN) == (0.3, 0.7))
++    for pct in (0.0, 0.29, 0.3, 0.31, 0.5, 0.69, 0.7, 0.8, 5.0):
++        ok(G.bus_band(pct) == S.band(pct), pct)
++    ok((G.NATIVE_SHA256, G.CORPUS_SHA256, G.CORPUS_INVENTORY_SHA256) ==
++       (S.NATIVE_SHA256, S.CORPUS_SHA256, S.CORPUS_INVENTORY_SHA256))
++    ok(G.VERIFIED_SCHEMA == S.VERIFIED_SCHEMA)
++
++
+ # ---------------------------------------------------------------- local refusals and RC-6
+ 
+ def test_local_refusals(site):

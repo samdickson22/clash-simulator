@@ -1,0 +1,14 @@
+--- ../s5s6s7-r2/tests/test_s6_wrapper.py	2026-10-12 15:06:20.744525000 -0700
++++ tests/test_s6_wrapper.py	2026-10-12 17:28:03.130810987 -0700
+@@ -286,6 +286,9 @@
+     the wrapper creates goes through the safe_input CLI (Sol S6-F2)."""
+     import re
+     for name in ("k4s_end_exit_push.sh", "k4s_preflight_push.sh"):
+-        for line in (ROOT / name).read_text().splitlines():
+-            code = re.sub(r"'[^']*'", "", line).split("#", 1)[0]
++        # r3: single-quoted words may span lines (the canonical bootstrap's k4s_loader='...' Python text, which by
++        # contract contains no single quote); remove them from the whole text first, then scan line by line.
++        text = re.sub(r"'[^']*'", "''", (ROOT / name).read_text())
++        for line in text.splitlines():
++            code = line.split("#", 1)[0]
+             ok(">" not in code, (name, line))

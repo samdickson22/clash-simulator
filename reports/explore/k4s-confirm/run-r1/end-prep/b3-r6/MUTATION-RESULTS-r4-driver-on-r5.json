@@ -1,0 +1,461 @@
+{
+ "assembler_sha256": "5c1c958e4fd769667fc48544145b9d8d938ddc7fbe62b3154dae60e6a6ab8543",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "tests_sha256": {
+  "test_assemble_fleet_reference.py": "8289bdc54dee0b053ca29477f14d0f9c2cfc555efd9f7af65d52879ed99b7a41",
+  "test_s4_r4_git.py": "51c02bc1c27e89823e849729390734b052db568715f31682bd33826a131f2a3f"
+ },
+ "frozen_root": true,
+ "finished_utc": "2026-10-13T01:31:57Z",
+ "optimize": true,
+ "python": "3.12.12",
+ "executable": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "total": 41,
+ "killed": 36,
+ "survived": [
+  "L sha pin off",
+  "N Sources leaf gate off",
+  "N guard job remote gate off",
+  "N --out name gate off",
+  "X E5 all-hashed check off"
+ ],
+ "survived_equivalent": {
+  "N Sources leaf gate off": "the full-path si.name_gate pass covers every leaf first (JOINT killed)",
+  "N guard job remote gate off": "the leaf is fixed by JOB_NAME (k4s-end-guard-...), which no family matches, and the parent is name-gated when the remote si.Policy is built",
+  "N --out name gate off": "si.check_absent(<out>) name-gates the same leaf before any access (JOINT killed)",
+  "X E5 all-hashed check off": "every walked E5 entry must be a runtime member (stray check) and every member is hashed by members(), so the set equality is implied (JOINT with the stray check killed)"
+ },
+ "survived_unexplained": [
+  "L sha pin off"
+ ],
+ "invalid": [],
+ "null_controls": {
+  "NULL-0": "SURVIVED",
+  "NULL-1": "SURVIVED",
+  "NULL-2": "SURVIVED"
+ },
+ "results": [
+  {
+   "mutant": "L sha pin off",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 51.54s",
+   "seconds": 66.9
+  },
+  {
+   "mutant": "L fingerprint pin off",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_loader_pins_the_layer[fingerprint-constants"
+   ],
+   "summary": "1 failed, 452 passed, 2 deselected, 1 warning in 51.14s",
+   "seconds": 66.3
+  },
+  {
+   "mutant": "L nlink check off JOINT",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_loader_pins_the_layer[hard-link-single-link"
+   ],
+   "summary": "1 failed, 453 passed, 2 deselected, 1 warning in 51.32s",
+   "seconds": 66.7
+  },
+  {
+   "mutant": "L production in-process re-check off",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_production_run_refuses_an_in_process_edited_e5_list"
+   ],
+   "summary": "1 failed, 450 passed, 2 deselected, 1 warning in 50.57s",
+   "seconds": 61.3
+  },
+  {
+   "mutant": "N Sources full-path gate off",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_request_sources_in_outcome_or_job_trees_refused_by_name[/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/127x03-r4/system-bus-admission.json]"
+   ],
+   "summary": "1 failed, 56 passed, 2 deselected, 1 warning in 7.34s",
+   "seconds": 7.8
+  },
+  {
+   "mutant": "N Sources leaf gate off",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 51.68s",
+   "seconds": 66.8
+  },
+  {
+   "mutant": "N Sources both gates off JOINT",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_request_sources_in_outcome_or_job_trees_refused_by_name[/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/127x03-r4/system-bus-admission.json]"
+   ],
+   "summary": "1 failed, 56 passed, 2 deselected, 1 warning in 7.14s",
+   "seconds": 7.6
+  },
+  {
+   "mutant": "N evidence artifact pre-open gate off",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_evidence_artifact_label_is_the_pre_open_name_gate"
+   ],
+   "summary": "1 failed, 460 passed, 2 deselected, 1 warning in 51.54s",
+   "seconds": 53.1
+  },
+  {
+   "mutant": "N runtime pin entries not gated",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_r3_f2_end_namespace_runtime_member_and_metadata_refused"
+   ],
+   "summary": "1 failed, 201 passed, 2 deselected, 1 warning in 24.92s",
+   "seconds": 25.8
+  },
+  {
+   "mutant": "N guard job remote gate off",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 52.22s",
+   "seconds": 63.5
+  },
+  {
+   "mutant": "NULL-0",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 52.15s",
+   "seconds": 63.9
+  },
+  {
+   "mutant": "N --out name gate off",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 51.68s",
+   "seconds": 62.8
+  },
+  {
+   "mutant": "N --out leaf never gated JOINT",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_out_checks"
+   ],
+   "summary": "1 failed, 65 passed, 2 deselected, 1 warning in 8.94s",
+   "seconds": 9.4
+  },
+  {
+   "mutant": "X E4 SHAs not bound to the layer",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_pinned_outcome_name_exception_is_path_and_sha_bound"
+   ],
+   "summary": "1 failed, 52 passed, 2 deselected, 1 warning in 7.08s",
+   "seconds": 7.5
+  },
+  {
+   "mutant": "X E5 runtime role without the E5 exemption",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_list_is_the_ruled_list_from_the_layer"
+   ],
+   "summary": "1 failed, 424 passed, 2 deselected, 1 warning in 46.35s",
+   "seconds": 55.9
+  },
+  {
+   "mutant": "X E5 entry hashed by sha256_input (ordinary read path)",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_each_ruled_member_accepted_hash_only[m0]"
+   ],
+   "summary": "1 failed, 426 passed, 2 deselected, 1 warning in 47.13s",
+   "seconds": 55.8
+  },
+  {
+   "mutant": "X E5 runtime pin entries gated without the E5 flag",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_each_ruled_member_accepted_hash_only[m8]"
+   ],
+   "summary": "1 failed, 434 passed, 2 deselected, 1 warning in 47.94s",
+   "seconds": 49.5
+  },
+  {
+   "mutant": "X E5 non-members accepted",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_member_must_be_a_runtime_member"
+   ],
+   "summary": "1 failed, 446 passed, 2 deselected, 1 warning in 52.25s",
+   "seconds": 54.3
+  },
+  {
+   "mutant": "X E5 all-hashed check off",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 53.40s",
+   "seconds": 66.2
+  },
+  {
+   "mutant": "X E5 non-members accepted and all-hashed check off JOINT",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_member_must_be_a_runtime_member"
+   ],
+   "summary": "1 failed, 446 passed, 2 deselected, 1 warning in 52.42s",
+   "seconds": 64.5
+  },
+  {
+   "mutant": "G E5 runtime/committed binding skipped",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_runtime_member_not_committed_at_head_refused"
+   ],
+   "summary": "1 failed, 444 passed, 2 deselected, 1 warning in 51.95s",
+   "seconds": 65.1
+  },
+  {
+   "mutant": "NULL-1",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 53.35s",
+   "seconds": 65.6
+  },
+  {
+   "mutant": "G E5 committed OID not compared",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_runtime_member_not_committed_at_head_refused"
+   ],
+   "summary": "1 failed, 444 passed, 2 deselected, 1 warning in 51.80s",
+   "seconds": 61.4
+  },
+  {
+   "mutant": "G repository role without the E5 exemption",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_each_ruled_member_accepted_hash_only[m0]"
+   ],
+   "summary": "1 failed, 426 passed, 2 deselected, 1 warning in 49.92s",
+   "seconds": 51.5
+  },
+  {
+   "mutant": "G E5 paths not planned at HEAD",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e5_each_ruled_member_accepted_hash_only[m0]"
+   ],
+   "summary": "1 failed, 426 passed, 2 deselected, 1 warning in 51.39s",
+   "seconds": 52.9
+  },
+  {
+   "mutant": "G git_plan screens the whole tree (no D1-style members)",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_happy_path_bundle"
+   ],
+   "summary": "1 failed, 1 passed, 2 deselected, 1 warning in 0.30s",
+   "seconds": 0.6
+  },
+  {
+   "mutant": "G E4 committed hashes skipped",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_pinned_outcome_name_exception_is_path_and_sha_bound"
+   ],
+   "summary": "1 failed, 52 passed, 2 deselected, 1 warning in 6.18s",
+   "seconds": 6.6
+  },
+  {
+   "mutant": "G E1 committed check skipped",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_r3_e1_alias_must_be_the_committed_mode_120000_entry"
+   ],
+   "summary": "1 failed, 224 passed, 2 deselected, 1 warning in 26.46s",
+   "seconds": 27.4
+  },
+  {
+   "mutant": "G E1 shipped copy not verified",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_runtime_alias_is_exactly_pinned"
+   ],
+   "summary": "1 failed, 53 passed, 2 deselected, 1 warning in 6.92s",
+   "seconds": 7.4
+  },
+  {
+   "mutant": "G E3 committed admission blob not checked",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f2_committed_admission_binding_checks[<lambda>-Committed"
+   ],
+   "summary": "1 failed, 80 passed, 2 deselected, 1 warning in 10.58s",
+   "seconds": 11.2
+  },
+  {
+   "mutant": "G evidence committed blob not checked",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_evidence_must_be_committed_at_head_and_at_its_repository_path"
+   ],
+   "summary": "1 failed, 44 passed, 2 deselected, 1 warning in 5.81s",
+   "seconds": 6.2
+  },
+  {
+   "mutant": "R runtime pin/qualified read without SHA",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_s1_runtime_pin_is_read_with_its_pinned_sha"
+   ],
+   "summary": "1 failed, 457 passed, 2 deselected, 1 warning in 55.66s",
+   "seconds": 57.3
+  },
+  {
+   "mutant": "NULL-2",
+   "result": "SURVIVED",
+   "returncode": 0,
+   "killing_test": [],
+   "summary": "461 passed, 2 deselected, 1 warning in 55.47s",
+   "seconds": 58.0
+  },
+  {
+   "mutant": "R E4 non-member runtime entries not hashed",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_e4_four_entries_accepted_hashed_once_never_parsed"
+   ],
+   "summary": "1 failed, 255 passed, 2 deselected, 1 warning in 30.69s",
+   "seconds": 31.7
+  },
+  {
+   "mutant": "R pinned_json without SHA",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_json_inputs_are_read_with_the_request_sha"
+   ],
+   "summary": "1 failed, 459 passed, 2 deselected, 1 warning in 54.47s",
+   "seconds": 56.1
+  },
+  {
+   "mutant": "R pinned_source SHA not compared",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_model_bytes_changed"
+   ],
+   "summary": "1 failed, 17 passed, 2 deselected, 1 warning in 2.39s",
+   "seconds": 2.8
+  },
+  {
+   "mutant": "R request read without SHA",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_request_sha_mismatch"
+   ],
+   "summary": "1 failed, 6 passed, 2 deselected, 1 warning in 1.38s",
+   "seconds": 1.8
+  },
+  {
+   "mutant": "R synthetic pins read with a plain open",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_r3_f1_hard_link_canary_refused_before_any_read[synthetic-pins-consistent-shas]"
+   ],
+   "summary": "1 failed, 190 passed, 2 deselected, 1 warning in 24.62s",
+   "seconds": 26.4
+  },
+  {
+   "mutant": "R runtime role without the E4 exemption",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [],
+   "summary": "1 passed, 2 deselected, 1 warning, 1 error in 0.26s",
+   "seconds": 0.6
+  },
+  {
+   "mutant": "W copy without expected SHA",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_open_refuses_a_leaf_replaced_after_the_walk"
+   ],
+   "summary": "1 failed, 64 passed, 2 deselected, 1 warning in 8.39s",
+   "seconds": 8.9
+  },
+  {
+   "mutant": "W copy re-hash off",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_copy_verification_failure_removes_partial"
+   ],
+   "summary": "1 failed, 66 passed, 2 deselected, 1 warning in 9.07s",
+   "seconds": 9.7
+  },
+  {
+   "mutant": "W copy unchecked and re-hash off JOINT",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_open_refuses_a_leaf_replaced_after_the_walk"
+   ],
+   "summary": "1 failed, 64 passed, 2 deselected, 1 warning in 8.45s",
+   "seconds": 9.0
+  },
+  {
+   "mutant": "W previous partial accepted",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_f1_open_refuses_a_leaf_replaced_after_the_walk"
+   ],
+   "summary": "1 failed, 64 passed, 2 deselected, 1 warning in 7.96s",
+   "seconds": 9.0
+  },
+  {
+   "mutant": "W manifest writable",
+   "result": "KILLED",
+   "returncode": 1,
+   "killing_test": [
+    "test_happy_path_bundle"
+   ],
+   "summary": "1 failed, 1 passed, 2 deselected, 1 warning in 0.35s",
+   "seconds": 0.7
+  }
+ ]
+}

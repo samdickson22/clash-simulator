@@ -1,0 +1,8 @@
+{
+ "_template": "Copy to RUNNER/end-launch/127x04/BUS-DECISION-<preflight attempt>.json, delete this key, fill every <...> from commands (never type a SHA): preflight_attempt = the 04 preflight attempt name; receipt_manifest_sha256 = receipt_manifest_sha256 of that preflight's PREFLIGHT-VERIFIED.json; coordinator_ref = the COORDINATOR ruling heading. Only decision 'proceed' is accepted (k4s_end_launch_gate.check_bus_decision). Pass its SHA-256 as launch --bus-decision-sha256.",
+ "schema": "clasher.k4s.end-bus-decision.v1",
+ "decision": "proceed",
+ "preflight_attempt": "<preflight-127x04-lNN>",
+ "receipt_manifest_sha256": "<64 hex: PREFLIGHT-VERIFIED.json receipt_manifest_sha256>",
+ "coordinator_ref": "<COORDINATOR heading of the bus ruling>"
+}

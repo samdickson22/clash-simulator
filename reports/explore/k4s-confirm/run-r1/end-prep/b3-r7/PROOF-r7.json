@@ -1,0 +1,315 @@
+{
+ "negative": [
+  {
+   "cites_ir03": true,
+   "committed_admissions": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "control": "argv bus + idle (b3-r6 shape)",
+   "finished_utc": "2026-10-13T08:08:40Z",
+   "nothing_written": true,
+   "rc": 2,
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-pf00.json",
+   "request_sha256": "85e9c3859ee311e29deb6ad4ab88e4f174d1fe1f30dd1150762e5a93cb6f35f6",
+   "started_utc": "2026-10-13T08:08:40Z",
+   "status": "REFUSED-IR03",
+   "stderr_last_line": "ASSEMBLY REFUSED: --committed-admission idle-services.json on 127x03 refused: ruling IR-03 (127x03 has no idle resident for K4S END; 127x03 admissions are system-bus-admission.json only; the committed 127x03-idle-services.json is a retired historical admission and is never placed in a guard job or bundle)",
+   "stdout_bytes": 0
+  },
+  {
+   "cites_ir03": true,
+   "committed_admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "control": "argv bus only",
+   "finished_utc": "2026-10-13T08:08:55Z",
+   "nothing_written": true,
+   "rc": 2,
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-pf00.json",
+   "request_sha256": "85e9c3859ee311e29deb6ad4ab88e4f174d1fe1f30dd1150762e5a93cb6f35f6",
+   "started_utc": "2026-10-13T08:08:40Z",
+   "status": "REFUSED-IR03",
+   "stderr_last_line": "ASSEMBLY REFUSED: guard.admissions idle-services.json on 127x03 refused: ruling IR-03 (127x03 has no idle resident for K4S END; 127x03 admissions are system-bus-admission.json only; the committed 127x03-idle-services.json is a retired historical admission and is never placed in a guard job or bundle)",
+   "stdout_bytes": 0
+  }
+ ],
+ "positive": [
+  {
+   "assembly_receipt_sha256": "c0874a6f6a33dc17a166e2fde415b3a22947f849f00868ac582f82a73700535a",
+   "bundle_admission_files": [
+    "guard-admissions/system-bus-admission.json"
+   ],
+   "bundle_bytes": 23475392007,
+   "committed_admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "deleted": true,
+   "finished_utc": "2026-10-13T08:03:44Z",
+   "guard_admissions": {
+    "system-bus-admission.json": "guard-admissions/system-bus-admission.json"
+   },
+   "host": "127x03",
+   "rc": 0,
+   "receipt": {
+    "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+    "committed_admissions": {
+     "system-bus-admission.json": {
+      "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x03-system-bus-admission.json",
+      "sha256": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+     }
+    },
+    "files": 66,
+    "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00",
+    "host": "127x03",
+    "manifest_sha256": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03",
+    "production_pins": true,
+    "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "status": "CANDIDATE"
+   },
+   "request": "requests-ir03/request-127x03-pf00.json",
+   "request_sha256": "6c913789c6832d89fdd8414a38fa246adba4f9a8d4232a395c1b5bf435093eae",
+   "request_sha_matches_out_json": true,
+   "runtime_files": 4307,
+   "runtime_files_canonical_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "started_utc": "2026-10-13T08:02:47Z",
+   "status": "PASS",
+   "stderr": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03\",\"out\":\"/dev/shm/b3r7-proof-GFttlT/end-ref-127x03-pf00\",\"production_pins\":true}",
+   "stdout_bytes": 0,
+   "tiers_pins_sha256": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03",
+   "tiers_pins_sha256_file": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03  tiers-pins.json"
+  },
+  {
+   "assembly_receipt_sha256": "49b96b98bc65a9f27adfa65c46b51620f27189fa1ac74c5432a4fba30f5ab857",
+   "bundle_admission_files": [
+    "guard-admissions/system-bus-admission.json"
+   ],
+   "bundle_bytes": 23475392015,
+   "committed_admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "deleted": true,
+   "finished_utc": "2026-10-13T08:04:43Z",
+   "guard_admissions": {
+    "system-bus-admission.json": "guard-admissions/system-bus-admission.json"
+   },
+   "host": "127x03",
+   "rc": 0,
+   "receipt": {
+    "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+    "committed_admissions": {
+     "system-bus-admission.json": {
+      "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x03-system-bus-admission.json",
+      "sha256": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+     }
+    },
+    "files": 66,
+    "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+    "host": "127x03",
+    "manifest_sha256": "39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070",
+    "production_pins": true,
+    "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "status": "CANDIDATE"
+   },
+   "request": "requests-ir03/request-127x03-rd00-a00.json",
+   "request_sha256": "c403446424d3ada6e915a90b88eb2bb5aaeb054780405ff838f749ba4bc096e5",
+   "request_sha_matches_out_json": true,
+   "runtime_files": 4307,
+   "runtime_files_canonical_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "started_utc": "2026-10-13T08:03:49Z",
+   "status": "PASS",
+   "stderr": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070\",\"out\":\"/dev/shm/b3r7-proof-GFttlT/end-ref-127x03-rd00-a00\",\"production_pins\":true}",
+   "stdout_bytes": 0,
+   "tiers_pins_sha256": "39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070",
+   "tiers_pins_sha256_file": "39e3f2566a2dd528053101f982934898f24821ba58db6d960a92e4a0ca428070  tiers-pins.json"
+  },
+  {
+   "assembly_receipt_sha256": "7e0814a7afb54e264135052aed3c6f3d277aab74cdc70cfed13004b954b1c173",
+   "bundle_admission_files": [
+    "guard-admissions/system-bus-admission.json"
+   ],
+   "bundle_bytes": 23475392015,
+   "committed_admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "deleted": true,
+   "finished_utc": "2026-10-13T08:05:41Z",
+   "guard_admissions": {
+    "system-bus-admission.json": "guard-admissions/system-bus-admission.json"
+   },
+   "host": "127x03",
+   "rc": 0,
+   "receipt": {
+    "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+    "committed_admissions": {
+     "system-bus-admission.json": {
+      "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x03-system-bus-admission.json",
+      "sha256": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+     }
+    },
+    "files": 66,
+    "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01",
+    "host": "127x03",
+    "manifest_sha256": "03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5",
+    "production_pins": true,
+    "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "status": "CANDIDATE"
+   },
+   "request": "requests-ir03/request-127x03-rd00-a01.json",
+   "request_sha256": "dd55582d2942e99dbb84c1095dec06a962a49db5a0bc1a9d313c147c3612dabb",
+   "request_sha_matches_out_json": true,
+   "runtime_files": 4307,
+   "runtime_files_canonical_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "started_utc": "2026-10-13T08:04:47Z",
+   "status": "PASS",
+   "stderr": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5\",\"out\":\"/dev/shm/b3r7-proof-GFttlT/end-ref-127x03-rd00-a01\",\"production_pins\":true}",
+   "stdout_bytes": 0,
+   "tiers_pins_sha256": "03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5",
+   "tiers_pins_sha256_file": "03b8f52e08447141cb436fcd683867376ca482bf7689eb1550d7d0380f825fc5  tiers-pins.json"
+  },
+  {
+   "assembly_receipt_sha256": "9fc01c8053e958e637a34de44fed1123ae53b88aaec6aa5c4ea66fd7a3883729",
+   "bundle_admission_files": [
+    "guard-admissions/system-bus-admission.json"
+   ],
+   "bundle_bytes": 23475391999,
+   "committed_admissions": {
+    "system-bus-admission.json": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+   },
+   "deleted": true,
+   "finished_utc": "2026-10-13T08:06:40Z",
+   "guard_admissions": {
+    "system-bus-admission.json": "guard-admissions/system-bus-admission.json"
+   },
+   "host": "127x04",
+   "rc": 0,
+   "receipt": {
+    "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+    "committed_admissions": {
+     "system-bus-admission.json": {
+      "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x04-system-bus-admission.json",
+      "sha256": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+     }
+    },
+    "files": 66,
+    "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-pf00",
+    "host": "127x04",
+    "manifest_sha256": "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f",
+    "production_pins": true,
+    "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "status": "CANDIDATE"
+   },
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-pf00.json",
+   "request_sha256": "60895f3ad0c71958317297ca777dd316f56bc7926abf53a119b4ffc6d12a5c95",
+   "request_sha_matches_out_json": true,
+   "runtime_files": 4307,
+   "runtime_files_canonical_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "started_utc": "2026-10-13T08:05:46Z",
+   "status": "PASS",
+   "stderr": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f\",\"out\":\"/dev/shm/b3r7-proof-GFttlT/end-ref-127x04-pf00\",\"production_pins\":true}",
+   "stdout_bytes": 0,
+   "tiers_pins_sha256": "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f",
+   "tiers_pins_sha256_file": "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f  tiers-pins.json"
+  },
+  {
+   "assembly_receipt_sha256": "ce9d6c2a8ce75132bb1ef4cd0c536731cb1e3bec71d73ce7acda3473806a63d5",
+   "bundle_admission_files": [
+    "guard-admissions/system-bus-admission.json"
+   ],
+   "bundle_bytes": 23475392007,
+   "committed_admissions": {
+    "system-bus-admission.json": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+   },
+   "deleted": true,
+   "finished_utc": "2026-10-13T08:07:38Z",
+   "guard_admissions": {
+    "system-bus-admission.json": "guard-admissions/system-bus-admission.json"
+   },
+   "host": "127x04",
+   "rc": 0,
+   "receipt": {
+    "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+    "committed_admissions": {
+     "system-bus-admission.json": {
+      "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x04-system-bus-admission.json",
+      "sha256": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+     }
+    },
+    "files": 66,
+    "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a00",
+    "host": "127x04",
+    "manifest_sha256": "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e",
+    "production_pins": true,
+    "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "status": "CANDIDATE"
+   },
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-rd00-a00.json",
+   "request_sha256": "43f2ca41f7256e6565bb681129442772322e9b486263f0b12415cc177478def9",
+   "request_sha_matches_out_json": true,
+   "runtime_files": 4307,
+   "runtime_files_canonical_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "started_utc": "2026-10-13T08:06:44Z",
+   "status": "PASS",
+   "stderr": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e\",\"out\":\"/dev/shm/b3r7-proof-GFttlT/end-ref-127x04-rd00-a00\",\"production_pins\":true}",
+   "stdout_bytes": 0,
+   "tiers_pins_sha256": "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e",
+   "tiers_pins_sha256_file": "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e  tiers-pins.json"
+  },
+  {
+   "assembly_receipt_sha256": "f563d2c05e69e066f2c5d64e0ad451d1abe5b3619f55d5df024a7f133c9502ad",
+   "bundle_admission_files": [
+    "guard-admissions/system-bus-admission.json"
+   ],
+   "bundle_bytes": 23475392007,
+   "committed_admissions": {
+    "system-bus-admission.json": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+   },
+   "deleted": true,
+   "finished_utc": "2026-10-13T08:08:36Z",
+   "guard_admissions": {
+    "system-bus-admission.json": "guard-admissions/system-bus-admission.json"
+   },
+   "host": "127x04",
+   "rc": 0,
+   "receipt": {
+    "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+    "committed_admissions": {
+     "system-bus-admission.json": {
+      "repository_path": "reports/explore/k4s-confirm/end-guard-admissions/127x04-system-bus-admission.json",
+      "sha256": "e97b17cbc917a9c6931bfe7c16e4f78b6f76a8529b74a0ab75a74ef9092ceb27"
+     }
+    },
+    "files": 66,
+    "guard_job": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-rd00-a01",
+    "host": "127x04",
+    "manifest_sha256": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458",
+    "production_pins": true,
+    "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "status": "CANDIDATE"
+   },
+   "request": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x04-rd00-a01.json",
+   "request_sha256": "bd6f3dc3656b9811451405be60ba928ab1be36056946fee00a3f2b2cc9c1a91e",
+   "request_sha_matches_out_json": true,
+   "runtime_files": 4307,
+   "runtime_files_canonical_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "s4_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "started_utc": "2026-10-13T08:07:42Z",
+   "status": "PASS",
+   "stderr": "{\"assembler_sha256\":\"2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016\",\"dry_run\":false,\"files\":66,\"manifest_sha256\":\"d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458\",\"out\":\"/dev/shm/b3r7-proof-GFttlT/end-ref-127x04-rd00-a01\",\"production_pins\":true}",
+   "stdout_bytes": 0,
+   "tiers_pins_sha256": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458",
+   "tiers_pins_sha256_file": "d1292b2eff22e2449237187d6bc8d8dc45e623d43f164bd639a920a549d2a458  tiers-pins.json"
+  }
+ ]
+}

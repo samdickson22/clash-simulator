@@ -1,0 +1,22 @@
+#!/usr/bin/python3 -IS
+# r4 CHAIN fake ssh (body = s3s9s10-r4 tests/conftest.py SHIM, plus: the real 05 e4v3-venv bound read-only at its usual
+# path inside the fake host = SIMULATED A3 interpreter, as the audit's ns.sh did). Hygiene options required.
+import os, subprocess, sys
+LOG, ROOT = '/tmp/k4s-r4chainb-H1qWfE/logs/fake-ssh.log', '/tmp/k4s-r4chainb-H1qWfE/hosts'
+argv = sys.argv[1:]
+with open(LOG, "a") as stream:
+    stream.write(" ".join(argv).replace("\n", "~") + "\n")
+words = " " + " ".join(argv) + " "
+for need in ("BatchMode=yes", "ControlMaster=no", "ControlPath=none", "StrictHostKeyChecking=yes"):
+    if " " + need + " " not in words:
+        sys.stderr.write("shim: missing %s\n" % need)
+        sys.exit(255)
+i = argv.index("--")
+host, command = argv[i + 1], " ".join(argv[i + 2:])
+venv = "/mpac/sdicks02/jobs/clasher/e4v3-venv"
+inner = ('if [ -d "$1/jobs/clasher/e4v3-venv" ]; then mount --bind -o ro %s "$1/jobs/clasher/e4v3-venv" || exit 97; fi; '
+         'mount --rbind "$1" /mpac/sdicks02 && hostname "$2" && cd / && exec /bin/sh -c "$3"') % venv
+done = subprocess.run(["/usr/bin/unshare", "-Urmu", "/bin/sh", "-c", inner, "shim", ROOT + "/" + host, host, command],
+                      env={"PATH": "/usr/bin:/bin", "LC_ALL": "C", "HOME": "/home/sdicks02"}, stdout=subprocess.PIPE)
+sys.stdout.buffer.write(done.stdout)
+sys.exit(done.returncode)

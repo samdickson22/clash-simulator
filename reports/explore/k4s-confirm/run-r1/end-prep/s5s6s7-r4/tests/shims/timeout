@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# timeout -k 30 N cmd...  -> cmd...
+[ "$1" = -k ] && shift 2
+shift
+exec "$@"

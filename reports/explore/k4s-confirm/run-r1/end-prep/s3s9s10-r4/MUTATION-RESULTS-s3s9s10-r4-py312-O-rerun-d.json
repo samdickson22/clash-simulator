@@ -1,0 +1,44 @@
+{
+ "equivalent_survivors": {},
+ "killed": 1,
+ "mutants": 1,
+ "new_tmp_leftovers": [],
+ "nulls": 1,
+ "nulls_survived": 1,
+ "optimize": 1,
+ "outside_writes": false,
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "results": [
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 108.2,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U03-zjcefqhq/tests/test_r4_s11.py::test_advance_requires_a_strict_descendant_before_any_bundle",
+    "1 failed, 749 passed, 1 warning in 82.70s (0:01:22)"
+   ],
+   "rc": 1,
+   "seconds": 83.1,
+   "verdict": "KILLED",
+   "what": "advance: strict descendant of P'"
+  }
+ ],
+ "sources_sha256": {
+  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
+  "s10_stage_host.py": "53dcc922387ba617fcd0744d7898dd3f85a5a8d5267b134c5e5d33d64418df93",
+  "s11_host_repository.py": "64fb42383de0b85fa1d759d4347529b112b0deb6ab8362ec244fa44dcbacdafc",
+  "s1b_copy_admissions.py": "abbb581f8b6948c50042a965c0c9e10a5b2d5bc16bbb5f4da2c135e3f87afa1d",
+  "s3_guard_job.py": "7dcf34122d164b45254cd7b4c61c7d59332f5767788e60cff5af4b6eecd4cd79",
+  "s9_end_runtime.py": "80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "survived": [],
+ "unexplained_survivors": [],
+ "version": "3.12.12"
+}

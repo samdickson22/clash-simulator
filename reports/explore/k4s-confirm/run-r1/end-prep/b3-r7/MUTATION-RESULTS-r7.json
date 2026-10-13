@@ -1,0 +1,274 @@
+{
+ "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "driver_sha256": "201bcea540ed45e2fe46a56327724c863a0efc542fe4fdfb170a9f86afe04a1b",
+ "tests_sha256": {
+  "test_assemble_fleet_reference.py": "b6e158e4372157139076022a5c21e85b42ae14f177b38e9a7fbb47a8309dec6f",
+  "test_s4_r4_git.py": "415d1502eb6d97ba0425d962a8868586b8d0a8dcc3565808d8afd23b5752dbfe",
+  "test_s4_r6_runtime_pin.py": "e21f6d0e60185beebaa81fb505773b1fc241b4bd94d9e9abef33b84f1e79c0b2",
+  "test_s4_r7_ir03.py": "c21abb62fcb4764bb8dae4979cd6123a30b7269518eda89529db2bbde2d72c89"
+ },
+ "frozen_root": true,
+ "finished_utc": "2026-10-13T08:04:17Z",
+ "optimize": true,
+ "python": "3.12.12",
+ "executable": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "total": 9,
+ "killed": 9,
+ "not_killed": [],
+ "null_controls": {
+  "NULL-0": "SURVIVED",
+  "NULL-1": "SURVIVED"
+ },
+ "results": [
+  {
+   "mutant": "IR-03 pin: the r6 03 idle-service pin restored",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_production_admission_pins_are_bus_only_on_both_hosts",
+    "test_s4_r7_ir03.py::test_r7_every_other_pin_is_the_r6_value",
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_bus_only_passes_under_the_production_admission_pins[127x03]",
+    "test_s4_r7_ir03.py::test_r7_03_bus_only_ignores_the_retired_committed_idle_copy",
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure",
+    "test_assemble_fleet_reference.py::test_f2_production_pins_are_the_verified_constants"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_production_admission_pins_are_bus_only_on_both_hosts",
+    "test_s4_r7_ir03.py::test_r7_every_other_pin_is_the_r6_value",
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_bus_only_passes_under_the_production_admission_pins[127x03]",
+    "test_s4_r7_ir03.py::test_r7_03_bus_only_ignores_the_retired_committed_idle_copy",
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure",
+    "test_assemble_fleet_reference.py::test_f2_production_pins_are_the_verified_constants"
+   ],
+   "named_summary": "8 failed, 1 warning in 0.77s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_f2_production_pins_are_the_verified_constants"
+   ],
+   "suite_summary": "1 failed, 69 passed, 2 deselected, 1 warning in 9.74s",
+   "seconds": 11.4
+  },
+  {
+   "mutant": "IR-03 --committed-admission check off",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure"
+   ],
+   "named_summary": "2 failed, 1 warning in 0.24s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03"
+   ],
+   "suite_summary": "1 failed, 491 passed, 2 deselected, 1 warning in 60.35s (0:01:00)",
+   "seconds": 87.6
+  },
+  {
+   "mutant": "IR-03 guard.admissions check off",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_03_idle_only_still_refuses_the_missing_bus"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_03_idle_only_still_refuses_the_missing_bus"
+   ],
+   "named_summary": "2 failed, 1 warning in 0.56s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it"
+   ],
+   "suite_summary": "1 failed, 490 passed, 2 deselected, 1 warning in 60.81s (0:01:00)",
+   "seconds": 89.5
+  },
+  {
+   "mutant": "NULL-0",
+   "result": "SURVIVED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_production_admission_pins_are_bus_only_on_both_hosts",
+    "test_s4_r7_ir03.py::test_r7_03_bus_only_bundle",
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it"
+   ],
+   "named_result": "SURVIVED",
+   "named_failed": [],
+   "named_summary": "3 passed, 1 warning in 0.42s",
+   "every_named_test_failed": false,
+   "suite_result": "SURVIVED",
+   "suite_first_failure": [],
+   "suite_summary": "499 passed, 3 skipped, 2 deselected, 1 warning in 61.04s (0:01:01)",
+   "seconds": 89.7
+  },
+  {
+   "mutant": "IR-03 both checks off (generic r6 messages only)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure",
+    "test_s4_r7_ir03.py::test_r7_03_idle_only_still_refuses_the_missing_bus"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure",
+    "test_s4_r7_ir03.py::test_r7_03_idle_only_still_refuses_the_missing_bus"
+   ],
+   "named_summary": "4 failed, 1 warning in 0.73s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only"
+   ],
+   "suite_summary": "1 failed, 485 passed, 2 deselected, 1 warning in 59.83s",
+   "seconds": 87.2
+  },
+  {
+   "mutant": "IR-03 message does not cite the ruling",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure",
+    "test_s4_r7_ir03.py::test_r7_03_idle_only_still_refuses_the_missing_bus"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it",
+    "test_s4_r7_ir03.py::test_r7_03_committed_idle_binding_refuses_citing_ir03",
+    "test_s4_r7_ir03.py::test_r7_committed_bindings_refusal_is_pure",
+    "test_s4_r7_ir03.py::test_r7_03_idle_only_still_refuses_the_missing_bus"
+   ],
+   "named_summary": "4 failed, 1 warning in 0.68s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it"
+   ],
+   "suite_summary": "1 failed, 490 passed, 2 deselected, 1 warning in 59.89s",
+   "seconds": 87.4
+  },
+  {
+   "mutant": "NULL-1",
+   "result": "SURVIVED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_production_admission_pins_are_bus_only_on_both_hosts",
+    "test_s4_r7_ir03.py::test_r7_03_bus_only_bundle",
+    "test_s4_r7_ir03.py::test_r7_03_request_naming_idle_refuses_citing_ir03_before_reading_it"
+   ],
+   "named_result": "SURVIVED",
+   "named_failed": [],
+   "named_summary": "3 passed, 1 warning in 0.41s",
+   "every_named_test_failed": false,
+   "suite_result": "SURVIVED",
+   "suite_first_failure": [],
+   "suite_summary": "499 passed, 3 skipped, 2 deselected, 1 warning in 61.39s (0:01:01)",
+   "seconds": 89.7
+  },
+  {
+   "mutant": "IR-03 on every host (04 loses its r6 refusal)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_04_idle_in_request_keeps_the_r6_refusal",
+    "test_assemble_fleet_reference.py::test_f2_idle_admission_refused_on_04"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_04_idle_in_request_keeps_the_r6_refusal",
+    "test_assemble_fleet_reference.py::test_f2_idle_admission_refused_on_04"
+   ],
+   "named_summary": "3 failed, 1 warning in 0.56s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_f2_idle_admission_refused_on_04"
+   ],
+   "suite_summary": "1 failed, 78 passed, 2 deselected, 1 warning in 10.95s",
+   "seconds": 12.4
+  },
+  {
+   "mutant": "IR-03 ignores the pins (a re-pin cannot lift it)",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_03_repinned_idle_is_accepted_test_only",
+    "test_assemble_fleet_reference.py::test_f2_idle_admission_required_on_03_when_repinned"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_03_repinned_idle_is_accepted_test_only",
+    "test_assemble_fleet_reference.py::test_f2_idle_admission_required_on_03_when_repinned"
+   ],
+   "named_summary": "3 failed, 1 warning in 0.41s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_f2_idle_admission_required_on_03_when_repinned"
+   ],
+   "suite_summary": "1 failed, 77 passed, 2 deselected, 1 warning in 11.29s",
+   "seconds": 12.6
+  },
+  {
+   "mutant": "IR-03 retires the bus admission too",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_03_bus_only_bundle",
+    "test_s4_r7_ir03.py::test_r7_bus_only_passes_under_the_production_admission_pins[127x03]",
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_retired_idle_is_pin_driven_and_03_only",
+    "test_s4_r7_ir03.py::test_r7_03_bus_only_bundle",
+    "test_s4_r7_ir03.py::test_r7_bus_only_passes_under_the_production_admission_pins[127x03]",
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "named_summary": "4 failed, 1 warning in 0.65s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_assemble_fleet_reference.py::test_happy_path_bundle"
+   ],
+   "suite_summary": "1 failed, 1 passed, 2 deselected, 1 warning in 0.38s",
+   "seconds": 1.8
+  },
+  {
+   "mutant": "kept :989 plan idle-host check off",
+   "result": "KILLED",
+   "named_tests": [
+    "test_s4_r7_ir03.py::test_r7_plan_idle_host_check_unchanged"
+   ],
+   "named_result": "KILLED",
+   "named_failed": [
+    "test_s4_r7_ir03.py::test_r7_plan_idle_host_check_unchanged"
+   ],
+   "named_summary": "1 failed, 1 warning in 0.36s",
+   "every_named_test_failed": true,
+   "suite_result": "KILLED",
+   "suite_first_failure": [
+    "test_s4_r7_ir03.py::test_r7_plan_idle_host_check_unchanged"
+   ],
+   "suite_summary": "1 failed, 496 passed, 2 deselected, 1 warning in 58.80s",
+   "seconds": 76.1
+  }
+ ]
+}

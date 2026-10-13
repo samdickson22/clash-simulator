@@ -1,0 +1,14 @@
+- 2026-10-12T23:53:52Z START r3: cp -a s5s6s7-r2 -> s5s6s7-r3; read SOL-REVIEW-END-FULL-r1
+- 2026-10-13T00:02:33Z F2/F3/F5 code edits in HT/PF/LG/LR (roles, frozen_env_checked, identity/bundle/lineage/bus); repinned; runner /dev/shm/s567r3-runtests.sh
+- 2026-10-13T00:05:08Z HOME is //home/sdicks02 on fleet passwd -> HOME leading // canonicalized+installed, XDG strict refusal; test_host_tool.py r3 77 pass py312
+- 2026-10-13T00:12:06Z S5/S7 fixtures -> shallow Q3 stand-ins + v3 receipts; F5 tests added (40) pass
+- 2026-10-13T00:20:33Z F2 integration test (real S3 jobs from s3s9s10-r2 via tests/s3_guard_builder.py) 19 pass; F6 shim checks + 0755; S5 F3/F5 tests added
+- 2026-10-13T00:23:36Z bootstrap-r1 CANONICAL-READY seen (SHAs verified); canonical region pasted in HT/PF/LG/EV, shell fragment in EW/PW (sha256sum + test -f removed), size pins + repin, fakepy -c
+- 2026-10-13T00:32:20Z F1 adoption tests: tests/test_f1_bootstrap.py (vendored kit tests/bootstrap_kit/, 6 Python loaders x kit scenarios, both wrappers x 18 alias scenarios, post-verify swap) 214 pass py312
+- 2026-10-13T00:43:22Z full matrix pre-mutation: py312 606 / -O 556+50skip; py38 606 / -O 556+50skip. mutate.py r3: 127 mutants (53 new) + 8 NULL; campaign py312 -O started -> /dev/shm/s567r3-MUT-py312.json
+- 2026-10-13T00:46:09Z README r3 drafted (@@TESTS@@ placeholder), RESPONSE-r3.md written; py312 -O mutation running
+- 2026-10-13T00:46:35Z TODO after py312 campaign: F2 integration default -> deterministic s3s9s10-r2 (K4S_PARTA_DIR override); rerun F2 integration vs s3s9s10-r3 when its PROGRESS says DONE
+- 2026-10-13T01:07:21Z py312 -O mutation DONE: 125/127 killed (P14,P22 equivalent), 8/8 NULL survived, all kills FAILED lines. F2 integration default -> s3s9s10-r2 (K4S_PARTA_DIR override). py38 -O campaign started.
+- 2026-10-13T01:26:47Z py38 -O mutation DONE: 125/127 (P14,P22 equivalent), 8/8 NULL; results installed
+- 2026-10-13T01:29:46Z F2 integration vs s3s9s10-r3 (DONE, 30 sums verified, s3_guard_job bf99e74b): 17 passed x4 modes
+- 2026-10-13T01:37:06Z DONE. Pristine cp -a matrix: py312 611 passed / -O 561 passed + 50 skipped; py38 611 passed / -O 561 passed + 50 skipped (r2: 276 / 254+22). Mutation -O: py312 125/127, py38 125/127 (P14,P22 equivalent), NULL 8/8 both; all 53 new mutants killed. F2 integration vs s3s9s10-r3: 17 passed x4. F1-WRAPPERS ADOPTED (bootstrap-r1 canonical, byte for byte). No ssh, no host step, no commit/push.

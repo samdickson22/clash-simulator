@@ -1,0 +1,88 @@
+--- s5s6s7-r3/k4s_end_verify_push.py	2026-10-12 17:23:32.687861478 -0700
++++ s5s6s7-r4/k4s_end_verify_push.py	2026-10-12 23:14:46.857178835 -0700
+@@ -6,6 +6,7 @@
+   receive dir     /mpac/sdicks02/k4s-runner/run-r1/end-received/<host>/<attempt>   (= si.D3_RECEIVE_BASE)
+   launch receipt  /mpac/sdicks02/k4s-runner/run-r1/end-launch/<host>/<attempt>/LAUNCH-RECEIPT.json   (S7, pinned SHA)
+   prepare proof   /mpac/sdicks02/k4s-runner/run-r1/end-launch/<host>/<attempt>/PREPARE-PROOF.json    (committed copy)
++                  r4 (INTEGRATION-AUDIT-r1 U7): written by --prepare itself, byte-equal to PREPARED.json, exclusive
+ 
+ * C-d: no ACK earlier than exit_utc + 1300 s; the ACK records exit/verified epochs and c_d_satisfied.
+ * Registry (RC-5): the wrapper's safe_input snapshot registry/attempt-NN.json is read through an exact
+@@ -243,29 +244,59 @@
+ 
+ 
+ def prepare(si, root):
+-    """Create <receive>/<host>/<attempt>/ (mode 0700) and PREPARED.json exclusively through safe_input."""
++    """Create <receive>/<host>/<attempt>/ (mode 0700) and PREPARED.json exclusively through safe_input.
++
++    r4 (INTEGRATION-AUDIT-r1 U7): the SAME bytes are also written exclusively to
++    end-launch/<host>/<attempt>/PREPARE-PROOF.json, the pinned copy that S7 `launch` (check_receive: PREPARE-PROOF read
++    with --prepare-proof-sha256 and compared with PREPARED.json) and this verifier's main (--prepare-proof-sha256)
++    read. end-launch/ must already exist (canonical); its <host>/<attempt>/ levels are created if absent (S7
++    build-argv may have made them). Both files are checked absent before either is created (only shared parent
++    directory levels can precede a refusal)."""
+     host, attempt, _ = namespace(root)
++    launch_host = LAUNCH_BASE + "/" + host
+     P = si.Policy("127x05", [si.Role("base", BASE, "write", 1, exact=("end-received",)),
+                              si.Role("base-read", BASE, "read", 1, exact=("end-received",)),
+                              si.Role("recv-base", RECEIVE_BASE, "write", 1, exact=(host,)),
+                              si.Role("recv-base-read", RECEIVE_BASE, "read", 1, exact=(host,)),
+                              si.Role("host", RECEIVE_BASE + "/" + host, "write", 4096,
+-                                     exact=(attempt + "/PREPARED.json",))])
+-    for role, writer_role, leaf in (("base-read", "base", "end-received"), ("recv-base-read", "recv-base", host)):
++                                     exact=(attempt + "/PREPARED.json",)),
++                             si.Role("host-read", RECEIVE_BASE + "/" + host, "read", 1, exact=(attempt,)),
++                             si.Role("launch-base", LAUNCH_BASE, "read", 1, exact=(host,)),
++                             si.Role("launch-base-write", LAUNCH_BASE, "write", 1, exact=(host,)),
++                             si.Role("launch-host", launch_host, "read", 1, exact=(attempt,)),
++                             si.Role("launch-host-write", launch_host, "write", 1, exact=(attempt,)),
++                             si.Role("launch-attempt", launch_host + "/" + attempt, "read", 1,
++                                     exact=("PREPARE-PROOF.json",)),
++                             si.Role("launch-proof", launch_host + "/" + attempt, "write", 4096,
++                                     exact=("PREPARE-PROOF.json",))])
++    si.check_dir(P, "launch-base")                                 # end-launch/ is never created here
++
++    def ensure(role, writer_role, leaf):
+         try:
+             si.check_absent(P, role, leaf)
+         except si.Refusal as error:
+             require(error.code == "exists", str(error))
+             si.check_dir(P, role, leaf)
+-            continue
++            return
+         with si.Writer(P, writer_role) as writer:
+             writer.mkdir_excl(leaf)
++    ensure("base-read", "base", "end-received")
++    ensure("recv-base-read", "recv-base", host)
++    si.check_absent(P, "host-read", attempt)                       # both files absent before either is created
++    ensure("launch-base", "launch-base-write", host)
++    ensure("launch-host", "launch-host-write", attempt)
++    si.check_absent(P, "launch-attempt", "PREPARE-PROOF.json")
+     proof = dict(receive=root, host=host, attempt=attempt, created_empty=True, nonce=uuid.uuid4().hex,
+                  utc=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
++    data = (json.dumps(proof, sort_keys=True) + '\n').encode()
+     with si.Writer(P, "host") as writer:
+         writer.mkdir_excl(attempt, mode=0o700)
+-        writer.create_excl(attempt + "/PREPARED.json", (json.dumps(proof, sort_keys=True) + '\n').encode())
+-    return proof
++        prepared = writer.create_excl(attempt + "/PREPARED.json", data)
++    with si.Writer(P, "launch-proof") as writer:
++        copy = writer.create_excl("PREPARE-PROOF.json", data)
++    require(prepared["sha256"] == copy["sha256"] == hashlib.sha256(data).hexdigest(), 'Prepare proof copy differs')
++    return dict(proof, prepare_proof_sha256=copy["sha256"],
++                prepare_proof=launch_host + "/" + attempt + "/PREPARE-PROOF.json")
+ 
+ 
+ def gated_mtime(si, policy, role, rel):
+@@ -458,8 +489,9 @@
+     require(si.hostname_checked().split('.')[0] == '127x05', 'Verification check failed')
+     require(os.getpriority(os.PRIO_PROCESS, 0) == 19 and os.sched_getaffinity(0) == {63}, 'Verification check failed')
+     if a.prepare:
+-        prepare(si, a.receive)
+-        print(json.dumps(dict(receive=a.receive, created_empty=True)))
++        made = prepare(si, a.receive)
++        print(json.dumps(dict(receive=a.receive, created_empty=True, prepare_proof=made["prepare_proof"],
++                              prepare_proof_sha256=made["prepare_proof_sha256"]), sort_keys=True))
+         return 0
+     require(all((a.launch_receipt_sha256, a.prepare_proof_sha256)),
+             'Verification requires pinned launch and preparation proofs')

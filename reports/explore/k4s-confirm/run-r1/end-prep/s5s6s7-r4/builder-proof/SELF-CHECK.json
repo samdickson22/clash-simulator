@@ -1,0 +1,56 @@
+{
+ "builder_sha256": "a76da2b6e8650cfcb8faa6df16f9f9a0d8ae98e92d4dbb8b471dc89507b6c384",
+ "end_job_sha256": "06939fa706bbe080f08a838baef0b4422a8c1d0f618addcc4dd73da7770c07ae",
+ "evidence_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "evidence_files_materialized": 45,
+ "frozen": {
+  "end_evidence": {
+   "completion_sha256": "3794d953efb2c8af47a09ccb086cc0441f1c0dd9ea7a4f46e331315972c6e891",
+   "counted_hosts": [
+    "127x03",
+    "127x04"
+   ],
+   "plan_sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+   "sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd"
+  },
+  "end_job": {
+   "commit": "5b43acf1a27f6c2741c3273a0bb8bd4ebb84c084",
+   "registry_root": "reports/explore/k4s-confirm/end/registry",
+   "repository_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+   "sha256": "06939fa706bbe080f08a838baef0b4422a8c1d0f618addcc4dd73da7770c07ae"
+  },
+  "end_job_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+  "job_fields": [
+   "completion_sha256",
+   "counted_hosts",
+   "declared_by",
+   "declared_utc",
+   "end_evidence_sha256",
+   "k4s_manifest_sha256",
+   "plan_sha256",
+   "schema",
+   "study"
+  ],
+  "job_schema": "clasher.k4s.end-job.v1",
+  "python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "runtime": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b",
+  "runtime_manifest_sha256": "4dd88461caa82f09bb27bc6adad1756f62dbc8d21aa041441f8c106ef9b80e04"
+ },
+ "note": "scratch clone = byte copy of REPO_FULL/.git only; removed after the check",
+ "ok": true,
+ "s9_equivalence": {
+  "git_members": 4280,
+  "git_members_sha256": "ed87f8716ebb8e7a32381aa7716d6c3d4b9d768f84a19273057caa99950494fe",
+  "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+  "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+  "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+  "s9": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r3/s9_end_runtime.py",
+  "s9_sha256": "1875a32ec5155cbd3355c912b8114bb8654b0fd9593d421474476f3c069bf651"
+ },
+ "schema": "clasher.k4s.end-job-self-check.v1",
+ "scratch_diff": [
+  "reports/explore/k4s-confirm/end/END-JOB.json"
+ ],
+ "scratch_end_job_commit": "5b43acf1a27f6c2741c3273a0bb8bd4ebb84c084",
+ "utc": "2026-10-13T06:15:47Z"
+}

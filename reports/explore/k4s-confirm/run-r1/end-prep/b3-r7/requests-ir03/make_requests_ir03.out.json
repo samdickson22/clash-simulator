@@ -1,0 +1,45 @@
+{
+ "requests": {
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b3-r7/requests-ir03/request-127x03-pf00.json": {
+   "admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "host": "127x03",
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00",
+   "removed": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237"
+   },
+   "sha256": "6c913789c6832d89fdd8414a38fa246adba4f9a8d4232a395c1b5bf435093eae",
+   "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-pf00.json",
+   "source_sha256": "85e9c3859ee311e29deb6ad4ab88e4f174d1fe1f30dd1150762e5a93cb6f35f6"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b3-r7/requests-ir03/request-127x03-rd00-a00.json": {
+   "admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "host": "127x03",
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+   "removed": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237"
+   },
+   "sha256": "c403446424d3ada6e915a90b88eb2bb5aaeb054780405ff838f749ba4bc096e5",
+   "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-rd00-a00.json",
+   "source_sha256": "ed3a13018a8157ea1cb12e09fab8991f3bd484ba88782a754953923363ace4d0"
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b3-r7/requests-ir03/request-127x03-rd00-a01.json": {
+   "admissions": {
+    "system-bus-admission.json": "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df"
+   },
+   "host": "127x03",
+   "job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a01",
+   "removed": {
+    "idle-services.json": "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237"
+   },
+   "sha256": "dd55582d2942e99dbb84c1095dec06a962a49db5a0bc1a9d313c147c3612dabb",
+   "source": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/requests/request-127x03-rd00-a01.json",
+   "source_sha256": "18d8411ca0434debbe3723820dcbc073986bee4f564ba57679b6a84592a6ea54"
+  }
+ },
+ "ruling": "IR-03 (proposed): 127x03 has no idle resident for K4S END; guard.admissions = system-bus-admission.json only",
+ "writer": "json.dumps(indent=1, sort_keys=True) + newline"
+}

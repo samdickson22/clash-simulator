@@ -1,0 +1,97 @@
+--- ../s5s6s7-r2/tests/test_s5_preflight.py	2026-10-12 15:26:19.540682504 -0700
++++ tests/test_s5_preflight.py	2026-10-12 17:19:48.757998717 -0700
+@@ -341,6 +341,77 @@
+     ok(seen["GIT_CONFIG_PARAMETERS"] == env.tool.GIT_CONFIG_PARAMETERS)
+ 
+ 
++def test_frozen_reader_env_is_the_checked_env_object(tmp_path, monkeypatch):
++    """F3: the process environment the frozen code runs with equals the env frozen_env_checked returned, and the
++    recorded config files are derived from it (HOME=//x installed as /x)."""
++    env = X.build(tmp_path, monkeypatch)
++    monkeypatch.setenv("HOME", "/" + str(tmp_path / "home"))
++    H.write(tmp_path / "home" / ".gitconfig", "[user]\n\tname = t\n")
++    built, seen = {}, {}
++    original = env.tool.frozen_env_checked
++
++    def spy(si, host, inherited):
++        built["env"], built["record"] = original(si, host, inherited)
++        return built["env"], built["record"]
++
++    def factory(root):
++        seen.update(os.environ)
++        return env.F
++    monkeypatch.setattr(env.tool, "frozen_env_checked", spy)
++    code, result, _ = X.go(env, frozen_factory=factory)
++    ok(code == 0, result.get("error"))
++    ok(seen == built["env"] and seen["HOME"] == str(tmp_path / "home"))
++    row = by_name(result)["frozen_git_env"]
++    ok(row["config_files"] == list(env.tool.git_config_files(env.si, built["env"])))
++    ok(row["global_config_checked"] == [str(tmp_path / "home") + "/.gitconfig"], row)
++
++
++@pytest.mark.parametrize("xdg", ["xdg", ""])
++def test_relative_or_empty_xdg_refused_before_any_frozen_import(tmp_path, monkeypatch, xdg):
++    """Sol END-FULL-F3 probe in S5: a relative (or empty) XDG_CONFIG_HOME fails the run before frozen code runs."""
++    env = X.build(tmp_path, monkeypatch)
++    repo = Path(env.a.repository)
++    H.write(repo / "games/synthetic-config", "[synthetic]\n\tcanary = SYNTHETIC-CONFIG-CANARY\n")
++    H.write(repo / "xdg/git/config", "[include]\n\tpath = %s\n" % (repo / "games/synthetic-config"))
++    monkeypatch.setenv("XDG_CONFIG_HOME", xdg)
++    called = []
++    code, result, seal = X.go(env, frozen_factory=lambda root: called.append(root) or env.F)
++    row = by_name(result)["frozen_git_env"]
++    ok(code == 1 and seal["status"] == "failed" and row["passed"] is False and not called, row)
++    ok(("relative" if xdg else "empty") in row["error"], row["error"])
++
++
++def test_identities_exported_for_rc9(tmp_path, monkeypatch):
++    """F5(a,b): the result exports the verified native/corpus/inventory identities and the guard-job-free digest of
++    its own and its compare bundle (equal: S5 bundle parity)."""
++    env = X.build(tmp_path, monkeypatch)
++    code, result, _ = X.go(env)
++    ok(code == 0 and result["schema"] == "clasher.k4s.end-preflight.v3", result.get("error"))
++    ident = result["identity"]
++    ok(ident["native"] == env.a.native and ident["native_sha256"] == S.NATIVE_SHA256 == H.sha(env.a.native))
++    ok(ident["corpus"] == env.a.corpus and ident["corpus_sha256"] == S.CORPUS_SHA256)
++    ok(ident["corpus_inventory"] == env.a.corpus_inventory
++       and ident["corpus_inventory_sha256"] == S.CORPUS_INVENTORY_SHA256 == env.a.corpus_inventory_sha256)
++    ids = result["bundle_identity"]
++    ok(ids["bundle_sans_guard_sha256"] == ids["compare_bundle_sans_guard_sha256"]
++       == env.tool.bundle_sans_guard_sha256(env.F.manifest), ids)
++
++
++def test_frozen_identity_must_be_the_k4s_end_identity(tmp_path, monkeypatch):
++    env = X.build(tmp_path, monkeypatch)
++    monkeypatch.setattr(S, "NATIVE_SHA256", "0" * 64)
++    code, result, _ = X.go(env)
++    row = by_name(result)["frozen_identity"]
++    ok(code == 1 and row["passed"] is False and "identity" in row["error"] and "identity" not in result)
++
++
++def test_corpus_inventory_pin_is_the_k4s_inventory(tmp_path, monkeypatch):
++    env = X.build(tmp_path, monkeypatch)
++    env.a.corpus_inventory_sha256 = "0" * 64
++    raises(S.PreflightRefusal, S.layout, env.a, env.host, str(env.base), match="3501e2ac")
++    ok(S.CORPUS_INVENTORY_SHA256 != "0" * 64)
++
++
+ # ---------------------------------------------------------------- orchestration (P2-3 mode, load, duration, bus)
+ 
+ ORDER = ["listings_before", "bundle_stamp", "input_locations", "guard_repo", "repository_clone", "frozen_git_env",
+@@ -519,6 +590,16 @@
+     ok(summary["receipt_manifest_sha256"] == H.sha(root / "preflight/receipt-manifest.json"))
+     ok(summary["preflight_result_sha256"] == H.sha(root / "preflight/preflight-result.json"))
+     ok(summary["inputs"]["bundle_pins_sha256"] == env.a.bundle_pins_sha256 and summary["failed_checks"] == [])
++    ok(summary["identity"] == result["identity"] and summary["bundle_identity"] == result["bundle_identity"])
++    loaded = summary["bus_cumulative_loaded"]
++    ok(loaded["hz"] == os.sysconf("SC_CLK_TCK") and loaded["seconds"] == summary["duration"]["loaded_seconds_measured"])
++    # the S5 output is exactly what the S7 RC-9 checks consume (schema/field compatibility, F5 a+d)
++    import k4s_end_launch_gate as G
++    for name in ("NATIVE_SHA256", "CORPUS_SHA256", "CORPUS_INVENTORY_SHA256"):
++        monkeypatch.setattr(G, name, getattr(S, name))
++    d = dict(base=str(env.base), runtime=str(env.runtime))
++    ok(G.launch_identity(summary, d, env.host)["native"] == env.a.native)
++    ok(G.bus_evidence(summary, env.host, summary["duration"])["band"] == summary["bus_band"])
+     if sys.flags.optimize:                                    # verify-received refuses -O (explicit raise)
+         raises(S.PreflightRefusal, S.main, ["verify-received", "--receive", str(root)], layers=(env.si, env.tool),
+                match="-O")

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Fake rsync: last two args are SRC and 127x05:TARGET; copies under $FAKE_REMOTE_ROOT (empty = absolute).
+printf '%s\n' "$*" >> "${FAKE_LOG:-/dev/null}"
+n=$#; src=${!#}; eval "src=\${$((n-1))}"; dst=${!#}
+case "$dst" in 127x05:*) dst=${dst#127x05:} ;; *) exit 2 ;; esac
+if [ -n "${FAKE_RSYNC_FAIL:-}" ] && [[ "$src" == *"$FAKE_RSYNC_FAIL"* ]]; then exit "${FAKE_RSYNC_RC:-12}"; fi
+mkdir -p "$dst" || exit 3
+if [[ "$src" == */ ]]; then cp -a "$src." "$dst" ; else cp -a "$src" "$dst"; fi

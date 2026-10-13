@@ -1,0 +1,45 @@
+--- ../s5s6s7-r2/k4s_end_launch_remote.py	2026-10-12 14:52:52.662470163 -0700
++++ k4s_end_launch_remote.py	2026-10-12 17:02:23.922007788 -0700
+@@ -1,4 +1,4 @@
+-"""K4S END launch gate, HOST side (S7 candidate r2). Python 3.8 stdlib + the shipped, SHA-pinned safe_input layer.
++"""K4S END launch gate, HOST side (S7 candidate r3). Python 3.8 stdlib + the shipped, SHA-pinned safe_input layer.
+ 
+ k4s_end_launch_gate.py (on 05) sends ONE program over ONE ``ssh -T -o ControlMaster=no -o ControlPath=none ...
+ HOST /usr/bin/python3 -I -B -`` session: a prelude that base64-decodes safe_input.py and k4s_end_host_tool.py,
+@@ -14,8 +14,10 @@
+   6  si.ps_checked table (rc 0, every line parsed, own process present with its real parent): other sshd sessions
+   7  staged tool SHAs through the descriptor gate
+   8  host base: canonical, no symlinked base or ancestor (si.check_dir); job parent canonical; job absent
+-  9  frozen-reader ruling: bundle tiers-pins.json read with its declared SHA; its guard job equals the declared one,
+-     is fresh, and its repo/ and the --repository clone pass k4s_end_host_tool.verify_clone; Q3 seed commits
++  9  frozen-reader ruling: bundle tiers-pins.json read with its declared SHA; its guard job equals the declared one;
++     END: its guard-job-free digest equals the qualifying preflight's (r3 F5b); the guard job is fresh; its repo/
++     (role "guard-repo": the S3 shallow Q3 repo) and the --repository clone (role "repository": full) pass
++     k4s_end_host_tool.verify_clone; Q3 seed commits; the frozen-reader env check (r3 F3)
+  10  END: registry names-only (k4s_end_host_tool.registry_listing); second attempt only with a pinned ruling
+  11  C5 pre-exec gate from the rc-checked ps table (this process and its parent ni 0 / TS; argv byte-equal)
+  12  job created exclusively (si.Writer.mkdir_excl), the pinned argv run once through /usr/bin/env (no shell, the
+@@ -222,13 +224,19 @@
+         if guard != cfg["guard_job"] or "k4s_s4_synthetic" in manifest:
+             failures.append("bundle: guard job differs from the declared one, or S4 test-only bundle")
+             return
++        digest = out["bundle_sans_guard_sha256"] = tool.bundle_sans_guard_sha256(manifest)
++        if cfg["kind"] == "end" and digest != cfg.get("bundle_sans_guard_sha256"):
++            failures.append("bundle: differs from the qualifying preflight's bundles beyond guard.job (RC-9, F5)")
++            return
+         for name in tuple(cfg["guard_side_files"]) + ("STOP", "STOP-" + cfg["host"]):
+             si.check_absent(P, "guard-job", name)
+         out["guard_job_fresh"] = True
+-        out["repository"] = tool.verify_clone(si, cfg["host"], cfg["repository"])
+-        out["guard_repo"] = tool.verify_clone(si, cfg["host"], cfg["guard_job"] + "/repo", grants=("guard-job",))
+-        out["seed_commits"] = tool.seed_commits(si, cfg["guard_job"] + "/repo", cfg["seed_commits"])
+-        out["global_git_config"] = tool.check_global_git_config(si, dict(os.environ))
++        out["repository"] = tool.verify_clone(si, cfg["host"], cfg["repository"], role="repository")
++        out["guard_repo"] = tool.verify_clone(si, cfg["host"], cfg["guard_job"] + "/repo", grants=("guard-job",),
++                                              role="guard-repo")
++        out["seed_commits"] = tool.seed_commits(si, cfg["guard_job"] + "/repo", cfg["seed_commits"], role="guard-repo")
++        # the environment the launched wrapper inherits (dict(os.environ) below); frozen-exec re-checks it at exec
++        out["global_git_config"] = tool.frozen_env_checked(si, cfg["host"], dict(os.environ))[1]
+     except (si.Refusal, tool.HostRefusal, OSError, ValueError, KeyError) as error:
+         failures.append("frozen-reader: %s" % error)
+ 

@@ -1,0 +1,37 @@
+{
+ "builder_sha256": "a76da2b6e8650cfcb8faa6df16f9f9a0d8ae98e92d4dbb8b471dc89507b6c384",
+ "end_job_repository_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+ "end_job_sha256": "06939fa706bbe080f08a838baef0b4422a8c1d0f618addcc4dd73da7770c07ae",
+ "outcomes_read": false,
+ "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-job-build.v1",
+ "sources": {
+  "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+  "completion": {
+   "commit": "022ec7bf298caaab81bc6e70fe917d3e75b21bde",
+   "path": "run-r1/completion-v2/REPORTING-COMPLETION.json",
+   "repository_path": "reports/explore/k4s-confirm/run-r1/completion-v2/REPORTING-COMPLETION.json",
+   "sha256": "3794d953efb2c8af47a09ccb086cc0441f1c0dd9ea7a4f46e331315972c6e891"
+  },
+  "counted_hosts": [
+   "127x03",
+   "127x04"
+  ],
+  "evidence": {
+   "path": "reports/explore/k4s-confirm/end-evidence.json",
+   "sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd"
+  },
+  "k4s_manifest": {
+   "path": "reports/explore/k4s-confirm/mac/K4S-MAC-MANIFEST.json",
+   "sha256": "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357"
+  },
+  "plan": {
+   "commit": "022ec7bf298caaab81bc6e70fe917d3e75b21bde",
+   "path": "plan.json",
+   "repository_path": "reports/explore/k4s-confirm/plan.json",
+   "sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf"
+  }
+ },
+ "utc": "2026-10-13T06:15:40Z"
+}

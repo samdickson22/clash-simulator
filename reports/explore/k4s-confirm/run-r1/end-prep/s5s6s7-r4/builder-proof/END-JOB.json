@@ -1,0 +1,14 @@
+{
+ "completion_sha256": "3794d953efb2c8af47a09ccb086cc0441f1c0dd9ea7a4f46e331315972c6e891",
+ "counted_hosts": [
+  "127x03",
+  "127x04"
+ ],
+ "declared_by": "s5s6s7-r4 builder proof on 127x05 (scratch self-check only; NOT the A6 declaration)",
+ "declared_utc": "2026-10-13T06:15:40Z",
+ "end_evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+ "k4s_manifest_sha256": "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+ "plan_sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+ "schema": "clasher.k4s.end-job.v1",
+ "study": "PREREG-K4S"
+}
