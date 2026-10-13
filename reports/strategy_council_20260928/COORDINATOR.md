@@ -5536,3 +5536,27 @@ Then the U4 interpreter change, then a diff-only Sol fix-check.
 **Quiet-read r8.** `coordinator-quiet-read-r8.sh`, with only `Q=` changed, exit 0. Result at `l1/receipts/b08-quiet-read-r8/`.
 
 **Next:** stage CPU GO r3 and placement r9, from the owner's drafts in `b08-r4-stage-chain-drafts-r1`.
+
+## 2026-10-13 10:50Z: B r4 stage CPU GO r3 and placement GO r9 issued
+
+**Source.** These are the owner's drafts in `b08-r4-stage-chain-drafts-r1` (8b4a01bd, cb647bd0). The coordinator changed only:
+- the observation fields, from quiet-read r8 (ba0bd042 at 381bc68b; who 0);
+- `deployment_prerequisite`: ACCEPTED at 381bc68b, complete ceb6acc5;
+- the placement's between-phase attestations;
+- `draft_status` and the blockers.
+
+The CPU GO was hashed first, then the placement GO was repinned to it.
+
+**Checks.**
+- F1 r5 `validate_go` passes, with procedure f47939b1, which is r5's `authority_placement.py`, and operator d472e558.
+- `receipt()` passes for review r4 and for the stage CPU GO.
+- C-5 is clean and there are no collisions.
+
+**Windows.**
+- Placement: 11:15Z to 12:45Z, with exactly the receipts f6cf2f1d and 632ed2fb.
+- Stage CPU: 11:30Z to 13:30Z.
+
+The stage run follows C-6, under a separate run GO.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 632ed2fbae410a87c5b66fe4d080b0eff40bf8928d1c18929804fcca6236a461
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 1c0d3c07dd4d58c0e044de77e122609fb5d6393869bce60fd638c874be0c75bd
