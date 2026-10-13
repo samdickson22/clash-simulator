@@ -6189,3 +6189,18 @@ All three go back to the owner with a close-the-class instruction, and Sol r2 wi
 - P9 restarts as `p9-collect-w-r2`. R5 restarts from step 0, because its last checkpoints are H-1-excluded or lack a returned segment.
 - `ACK-fit-R5` is authorized with disposition "continue".
 - T3 is the write time, and the hard stop is T3 + 24 h. The planned completion is about T3 + 14.75 h.
+
+## 2026-10-13 22:55Z: K4S END A2 on 03 refused at the interpreter probe; r7 PR-1 PASS; A2 re-GO with a2-r7.sh
+
+**The refusal** (records at 340f498e). S10 run A's probe of the host venv found that numpy and torch import, but cv2 and scipy are absent. It used 2 logins and created nothing on 03. Per the GO there was no retry, and 04 was not started.
+
+**r7** (c03fb50a91a2cb13e31b6ac969755ce9840b7e09) sets `HOST_PYTHON_IMPORTS = ("numpy", "torch")`. S11 repins S10, and S10 now hashes to f368097f830eb2d50851f360c2fc0baf5c289016cd7db9037665ea6a718e46d5. One test expectation changes.
+
+**PR-1 coordinator check: PASS.**
+- In the e4v3 fleet path, `fleet_reference.py` → `replay_load.FleetBackground` → `TierBackend` has no top-level cv2 or scipy import. cv2 is imported only inside the perception `load_worker`, at `replay_load.py:34`, and fleet references never use it.
+- S5's host preflight still builds the backend and the background slots, so it checks what END actually imports.
+- S9 (bdc2deeb), the runtime manifest (9d6ab1f7), the bundles, the guard jobs and RC-6 are unchanged.
+
+**The wrapper.** `a2-r7.sh` (f657084afef751f3d628c835dbfd626bad188e2eec3ec4219aa44cce308253be, 0555) differs from the Sol-approved `a2.sh` in exactly two substitutions, both checked: s3s9s10-r6 becomes s3s9s10-r7, and the record directories go from -r1 to -r2.
+
+**GO A2 (re-GO).** Run `a2-r7.sh 127x03 <this commit>` once, to completion, then `a2-r7.sh 127x04 <this commit>`, both detached. All conditions of eb73333e stand: no retry, first nonzero rc stops, no concurrent staging, and the 04 `who` rule.
