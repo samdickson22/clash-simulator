@@ -4912,3 +4912,22 @@ ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0f0f198efce295812d8690c4703292432fa6ba09ea7
 - loadavg 0.18.
 
 **Next:** environment CPU GO r3 and placement r7, issued from the owner's drafts.
+
+## 2026-10-13 04:05Z: B environment CPU GO r3 and placement GO r7 issued (package r3)
+
+These are the owner's drafts in `l1/prepared/b08-r3-environment-placement-drafts-r1/` (dc5001c8, d75da062). The coordinator changed only:
+- the fresh observation from quiet-read r5 (c9a4e74a at commit c0e4b880: who 0);
+- the stage prerequisite (complete ace2d686, C-4 accepted at c0e4b880);
+- the placement's `between_phases`/`no_active_cpu_or_gpu_phase=true`: the stage completed and was accepted, and no phase is active;
+- `draft_status` and the remaining issuance blocker.
+
+The CPU GO was hashed first, then the placement GO's `receipts` and `git_sources` were repinned to it. The diffs were checked field by field. The placement GO passes F1 r4 `validate_go`, and the CPU GO passes `receipt()` (phase environment). C-5 is clean and there are no path collisions.
+
+**Windows:**
+- placement: 04:40Z to 06:10Z, operator 2c22b94e, one invocation;
+- environment CPU: 05:00Z to 07:00Z.
+
+The environment run still needs C-6 acceptance and a separate run GO. G6 must be compared before any epoch GO.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 2f015cb75f11ed70f123fe6f80e242fd76ad0d16345cbac10b57f4e2e244809c
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 4c26f8a78aba1afc6797eb47dbfa72e8e7773b930ae8a8a5625d75fe579caea4
