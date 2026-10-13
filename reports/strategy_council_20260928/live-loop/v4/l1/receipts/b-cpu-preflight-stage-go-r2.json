@@ -1,0 +1,94 @@
+{
+  "available_bytes": 1220832444416,
+  "code_root": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-7c86e49a105d",
+  "concurrency_enabled": false,
+  "cpu_preflight_plan_sha256": "b3a90f964e3e6772bd2954b9912d2fd02055a3acccb3935fa989570afea0727a",
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_CPU_PREFLIGHT",
+  "deployment_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-8b38cd19c0c960f205463d1612416da6dd8fb51defce9d0b7ba25743832c0bf7/complete.json",
+    "sha256": "c5c13a5e4494d7b638134035f4cccc69bda6bd991b8c2f922e106281261eeded"
+  },
+  "deployment_prerequisite": {
+    "complete_sha256": "c5c13a5e4494d7b638134035f4cccc69bda6bd991b8c2f922e106281261eeded",
+    "coordinator_acceptance_ledger_commit": "dfc637c04b51801bd0b912b062cfbb11e60b3cb3",
+    "go_sha256": "8b38cd19c0c960f205463d1612416da6dd8fb51defce9d0b7ba25743832c0bf7",
+    "status": "ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONPATH": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-7c86e49a105d/src"
+  },
+  "execution_preconditions": [
+    "New-package deployment complete accepted; new review approved and receipt issued.",
+    "This CPU GO and new review receipt published exactly once; placement completed and C-6 accepted before run issuance.",
+    "Run only approved bound generic guard after separate issued and explicit run GO; no direct CLI.",
+    "No retry, inspection or repair on nonzero/UNKNOWN; preserve all claims and partials.",
+    "No GPU, heldout, epoch or reducer action."
+  ],
+  "expires_epoch": 1791871200,
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "interpreter": "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+  "interpreter_flags": [
+    "-B",
+    "-s"
+  ],
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at exact signed paths; separate explicit GO; placement C6 acceptance before stage run issuance."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-stage-go-r2.json",
+  "max_launches": 1,
+  "nice": 19,
+  "no_retry": true,
+  "not_before_epoch": 1791864000,
+  "observation_provenance": {
+    "commit": "1841fb840273bbd7a669de62bba9ee228fa8e5e4",
+    "sha256": "045b24b3bf9e766e10d0c1b5c0e2e545e75969e89c6a33e1fee0b6ed4179b49b",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r4/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-13T03:06:10.682272+00:00"
+  },
+  "one_attempt_per_go": true,
+  "operator_command": "env -u BASH_ENV -u ENV PATH=/usr/bin:/bin PYTHONPATH=/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-7c86e49a105d/src CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 0,1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -s /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-7c86e49a105d/b08_cpu_preflight.py --phase stage --plan /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/review-package-7c86e49a105d/cpu-preflight-plan.json --plan-sha256 b3a90f964e3e6772bd2954b9912d2fd02055a3acccb3935fa989570afea0727a --review /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/f50ec6051708dbb3f962612ea133cd0bb48fd745cca95e5aa4aa4ddc2b9e9e60.json --review-sha256 f50ec6051708dbb3f962612ea133cd0bb48fd745cca95e5aa4aa4ddc2b9e9e60 --go /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/${CPU_GO_SHA}.json --go-sha256 ${CPU_GO_SHA} --package-sha256 7c86e49a105d24597fa135e64bfbc82a2aa447691b91e61aa7cbbdf25fe1ea2c",
+  "operator_variable": {
+    "CPU_GO_SHA": "Full SHA256 of this byte-identical coordinator-issued CPU GO; resolve after issuance"
+  },
+  "package_sha256": "7c86e49a105d24597fa135e64bfbc82a2aa447691b91e61aa7cbbdf25fe1ea2c",
+  "phase_scope": "New-package stage only: exact CPU-plan input copies and reviewed cheap precheck; no environment inventory or graph work.",
+  "phases": [
+    "stage"
+  ],
+  "retained_observation_provenance": {
+    "commit": "de789a65540a29a46296c67880d76d0cf6c7dd75",
+    "sha256": "e3ee45222f9c7c9b796087d2969e0e1d574eadf7f3cdd24c1dbe4f98cae0e267",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r3/observation.json",
+    "status": "OBSERVED",
+    "use": "Historical deployment observation only; replace pending active provenance with fresh coordinator quiet-read before issuance.",
+    "utc": "2026-10-13T02:20:56.399083+00:00"
+  },
+  "review_receipt_sha256": "f50ec6051708dbb3f962612ea133cd0bb48fd745cca95e5aa4aa4ddc2b9e9e60",
+  "review_status": {
+    "combined_review_receipt_sha256": "f50ec6051708dbb3f962612ea133cd0bb48fd745cca95e5aa4aa4ddc2b9e9e60",
+    "combined_review_sha256": "3c6dfd49aac9ee35589924ea31a0f242a305e0eb3ab8256291b3d1574a28973f",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "205309ae90a77cfbdcad5530047e12751737deea3257f32846facf43713a0462"
+  },
+  "scientific_constraints": "C1 qualification references are SHA-only; selected decoder input SHAs, mapping, R16, verified_bounds, A1 bytes and recovered sources remain unchanged. T6 verification is not repeated; Tier2 and heldout remain disabled.",
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-stage-go-r2.json",
+  "who_count": 0,
+  "window_policy": {
+    "duration_seconds": 7200,
+    "lead_seconds_minimum": 1800
+  },
+  "worker_address_space_limit_bytes": 17179869184
+}

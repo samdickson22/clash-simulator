@@ -4755,3 +4755,32 @@ Result in `l1/receipts/b08-quiet-read-r4/observation.json` (045b24b3):
 | who | 0 |
 | available | 1,220,832,444,416 B |
 | loadavg | 0.08 |
+
+## 2026-10-13 03:07Z: Perception B issues stage CPU GO r2 and placement GO r6 (package r3)
+
+These are the perception owner's drafts (`l1/prepared/b08-r3-stage-placement-drafts-r1/`, f2d3a06b and 19eaf068). The coordinator changed only:
+- the fresh observation from quiet-read r4 (who 0, about 1.22 TB free; provenance commit 1841fb84, observation 045b24b3);
+- `draft_status`, set to READY;
+- the two resolved issuance blockers, which were removed.
+
+After that, the CPU GO was hashed first and its new SHA was substituted into the placement GO's `receipts` and `git_sources`. The diffs were checked field by field.
+
+**Checks:**
+- The placement GO passes the reviewed F1 r4 `validate_go`: procedure 3fc7166d, package 7c86e49a, 08, cpus [0,1], between phases, observation, exact authority paths. It is refused before its window.
+- Both receipt references pass F1 `receipt()`: the combined review receipt f50ec605 and the stage CPU GO fc424a30.
+- C-5: no prior ledger line holds either SHA. There are 0 `REVOKED` lines.
+- Between phases: since the deployment was accepted at dfc637c0, no new-package CPU or GPU phase has launched.
+
+**Windows:**
+- Placement: 2026-10-13 03:45Z to 05:15Z, operator 2c22b94e, one invocation, no retry.
+- Stage CPU: 04:00Z to 06:00Z.
+
+The stage run itself still needs C-6 acceptance of the placement and a separate run GO. The stage run must end by 05:00Z.
+
+**Published:**
+- `l1/receipts/b-cpu-preflight-stage-go-r2.json`
+- `l1/receipts/b-authority-placement-go-r6.json`
+- 0444 copies in `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/`
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT fc424a303bca687eb7a2925d7ef1783b08b5c9846d37836a8f3439d0d040d47d
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT e49db31347ccdad5ce4d11d0982beb4830caa1204aa7b5c223aff9f00c2abab0
