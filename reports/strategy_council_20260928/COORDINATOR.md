@@ -5422,3 +5422,19 @@ How the probe runs: one SSH, read-only (O_NOFOLLOW at every path step), nice 19 
 **Verified for use in the r4 chain.**
 
 **03 cache service.** The owner confirms it is bound by plan 9277fb80 to stop on its own at 2026-10-13T04:00Z. Its disappearance is consistent with that design, and no 03/04 cache service is needed.
+
+## 2026-10-13 09:26Z: RV-1 probe of 08 result: 10,906 / 10,906 HASH_PASS
+
+The probe ran once: exit 0, one SSH, about 23 s. Raw output is `v4-b-gap-review/probe-r4-r1/raw.jsonl` (49e8d915, mode 0444).
+
+- **All 10,906 named inputs are HASH_PASS:** the 9,127 B-job-root paths and the 1,779 bundle/cache paths. None were missing, refused, unstable or over the size cap.
+- **Sizes:** 2,942 had a recorded size, and all of them matched. The other 7,964 were recorded for the first time.
+- **R1 (restricted references in `inputs-final-dependencies-r1`):** present and exact.
+- **R3:** the 64 cache index files were returned to 05 for the owner's offline binding of the 128 cache payloads.
+- **R10:** 1,218,681,679,872 B available of 2,015,104,376,832 (60.5 % free). After a 32 GiB stage, that is still above the ≥ 280 GB and ≥ 40 % floors.
+
+Remaining risks R2 and R4–R9 are behavioural: they concern comparison, replay, equality and memory. Only running epoch 1 can test them.
+
+**Next steps:**
+1. The owner binds the 128 cache payload hashes from the returned indices. If they are not already covered, the coordinator may run one more small named-path probe.
+2. The full r4 chain: combined review receipt r4, transport binding, deployment, stage, environment/G6, then epoch 1.
