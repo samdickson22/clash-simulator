@@ -4474,3 +4474,37 @@ Conditions:
 - `l1/receipts/b-cpu-transport-run-epoch01-go-r1.json`
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0ac52112a9203f52001949a757d5f1a248d5616634f8ce82af424b25b05e23dc
+
+## 2026-10-13 01:15Z: Fleet utilization plan adopted (U1–U4) and process ruling PR-1
+
+Sam flagged that the fleet sits idle. The plan is `/mpac/sdicks02/jobs/clasher/coordinator-notes/fleet-utilization-plan-r1.md`, written by an Opus planner from read-only sources. Adopted in full.
+
+**U1 (08): pair perception-B epoch units.** From epoch 2 onward, B runs as two-member groups, using the already-approved generic transport.
+- Each group gets disjoint cpus {0,1} and {2,3} and a memory limit of 20 GiB per member.
+- Each group gets one CPU GO, one placement and one run GO.
+- **Condition:** epoch 1 must be accepted and take ≤ 2,400 s. Otherwise B stays serial.
+- The next pair's GOs are drafted while the current pair runs.
+
+**U2 (01): fit-seed noise replicates while X4S-4 is in review.**
+- Uses the reviewed X4S-3 harness, with a constants-only edit of 20 lines or fewer, in the new prefix `x4s3b-fitseed-20261013`.
+- Runs two more r1-only fits: R3a-rep2 and R3a-rep3.
+- Games use paired reuse of the X4S-3 seed bank.
+- Readout: σ̂_fit, descriptive only, NEVER ADOPTABLE.
+- STOP happens at the X4S-4 GO.
+- Review: one diff-only round.
+
+**U3 (03): full-speed cost of always-on S-default.**
+- Uses the X4S2 harness with a ceiling-constant edit.
+- Runs K4-200 against K4S-200 on 2,400 fresh X-deck seeds, about 4.4 h on CPU.
+- **U4 (04)** adds the 0.9× pair after one narrowly reviewed LAN runtime copy.
+- **Precondition:** the K4S runner confirms that non-K4S CPU load and the sessions don't affect any K4S END admission, bus or stamp procedure.
+- **STOP:** at least 3 h before the first K4S END host step on that host. After the STOP session, no further SSH to that host until END completes.
+
+**PR-1, process ruling.**
+- **Review cap.** Exploratory, never-adoptable script reviews are capped at **2 rounds**. After round 2:
+  - integrity findings (outcome-blindness, fair information, I/O confinement, evaluation identity, seed provenance) **must be fixed**, with a narrow fix-check only;
+  - host-safety findings are covered by the external watchdog and H-1;
+  - all other findings are disclosed residuals.
+- **Harness-reuse lane.** A byte-identical harness, or one changed only in host, ceiling or path constants, with new config/worklist/seeds, needs only a coordinator checklist: diff, git-export seed audit, 8-seed smoke, live STOP test.
+- **Review time box.** Any review that takes more than 3 h goes to the coordinator.
+- **Confirmatory work** (T1, K4S, TIERS, B) keeps full review.
