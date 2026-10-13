@@ -4953,3 +4953,19 @@ Conditions:
 - No other step on 03/04.
 - Commit via `commit_paths_end.sh` only.
 - Then do the 05-only prep (S2/S9/S4/S3/RC-6) and send the A2 GO request for after the gap.
+
+## 2026-10-13 04:42Z: B placement r7, C-6 ACCEPTED
+
+Placement GO 4c26f8a7 completed once (operator 2c22b94e, one SSH, no retry).
+
+**Completion checks:**
+- launcher and sender exit codes 0;
+- `complete-from-stdout.json` 2a0fb4a9: schema `b08-authority-placement-complete.v1`, package 7c86e49a, procedure 3fc7166d, and exactly one receipt, the environment CPU GO 2f015cb7;
+- `runtime_admitted=false`.
+
+**C-6 audit:**
+- `revocation_tip_commit` = `fetched_tip` = bfbc3221, which is an ancestor of origin/main;
+- `git log -p bfbc3221..origin/main` contains none of 2f015cb7, 4c26f8a7 or f50ec605;
+- 0 `^REVOKED` lines.
+
+**Placement r7 is ACCEPTED.** Next: the environment run GO, issued from the owner's draft 9ae4256b.
