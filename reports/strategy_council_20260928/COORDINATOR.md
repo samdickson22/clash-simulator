@@ -5781,3 +5781,30 @@ The HALT itself behaved correctly. It stopped all 51 study processes by verified
 
    Prefer (a) only if the carry-over is a small, testable change. Otherwise take (b). The 523 sealed games without label receipts never count.
 3. **No changes to J or the HALTed watchdog** until the new GO.
+
+## 2026-10-13 12:17Z: B r4 environment C-4 + G6 ACCEPTED; quiet-read r10
+
+**Environment run** 3645860d (CPU baaea907) reported SUCCESS. Launcher and sender exit codes were both 0.
+- `environment.json` 4f29c998: package 89b1582e, stage cdafab0d, `cuda_imported=false`, `runtime_admitted=false`.
+- `result.json` 96439357.
+
+**C-4 audit:**
+- Claim tip 77a01d88 is an ancestor of origin/main.
+- The log from that tip contains none of baaea907, 3645860d, 7b3fc7dc or f6cf2f1d.
+- 0 `^REVOKED` lines.
+
+**C-4 ACCEPTED.**
+
+**G6 (coordinator comparison).** Every observed version matches the approved environment of 2026-10-08, and matches the r3 G6 (b3d10ce5):
+- Python 3.12.12;
+- torch 2.7.1+cu118, with `version.py` cuda 11.8, git e2d141db, `version.py` sha 2e3ac2ec;
+- numpy 1.26.4;
+- opencv-python 4.10.0.84;
+- ultralytics 8.1.24;
+- invoked interpreter `/mpac/sdicks02/envs/clasher-gpu/bin/python`.
+
+**G6 PASS.**
+
+**Quiet-read r10:** `coordinator-quiet-read-r10.sh` (only `Q=` changed), exit 0.
+
+**Next:** the epoch-1 chain (CPU, placement r11, run). The owner fills this commit as the environment acceptance and quiet-read r10 as the observation.
