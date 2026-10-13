@@ -5892,3 +5892,18 @@ The owner's install computed the expected values from the archive and is correct
 - **P3-r3 (check only, `--final`):** guard passed. It reproduces P3-r2 exactly: inventory aadafb16, the same evidence, the same arms.
 
 P5 resumes as `p5-label-O-r2`.
+
+## 2026-10-13 12:46Z: B placement r11, C-6 ACCEPTED
+
+Placement GO e16c2206 completed once. Both exit codes are 0.
+
+- **Completion record:** complete ab9ca4fd, with schema, GO, package 89b1582e and procedure f47939b1 all matching.
+- **Receipts:** exactly 8c4d27dd.
+- **Runtime:** `runtime_admitted=false`.
+
+**C-6 audit:**
+- Revocation tip = fetched tip = 62a82156, which is an ancestor of origin/main.
+- The log after that tip contains none of 8c4d27dd, e16c2206 or f6cf2f1d.
+- There are 0 `^REVOKED` lines.
+
+**ACCEPTED.** The epoch-1 run GO follows, issued from the coordinator-held draft caa7dab9.
