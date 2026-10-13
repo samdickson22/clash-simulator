@@ -29,3 +29,11 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
 - 2026-10-13T02:30Z: Sol r2 (31097eec) REQUEST_CHANGES on R2-1 (stop-history reads), R2-2 (console false zero) and R2-3 (cap on every
   phase), plus a single cap constant. All fixed (single cap in fsc/DEADLINE = 07:30Z). The coordinator verifies the diff
   against 3dc9ab25 directly (PR-1 final round). No host contact.
+- 2026-10-13T02:51:46Z: GO (COORDINATOR 19047ce7). Stop runner armed on 05: PID 2050067 (own session; sleep child 2050100),
+  AT 07:30:00Z for 127x03 and 127x04 (receipt fsc-sessions/stop-runner.receipt.json).
+- 2026-10-13T02:52:03Z: 03 launch session (05 wrapper PID 2082227). The bootstrap created /mpac/sdicks02/jobs-fsc and
+  fsc-03-20261013/bundle (manifest verified). The console check was clean (0). **Preflight FAILED at 02:52:20Z, __RC=91:**
+  a persistent foreign sdicks02 process, the v4 validation cache service (fleet_run.sh PGID 2180934, python
+  v4-cache-renewal-r2/validation_cache_service_renewal_v4.py, taskset 48-63,112-127). Nothing was staged or started on 03;
+  the prefix holds only bundle/. 04 was not launched (the GO sequence needs 03 at __RC=0). Halted; reported to the
+  coordinator; no relaunch without approval.
