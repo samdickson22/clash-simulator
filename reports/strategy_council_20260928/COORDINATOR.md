@@ -4969,3 +4969,26 @@ Placement GO 4c26f8a7 completed once (operator 2c22b94e, one SSH, no retry).
 - 0 `^REVOKED` lines.
 
 **Placement r7 is ACCEPTED.** Next: the environment run GO, issued from the owner's draft 9ae4256b.
+
+## 2026-10-13 04:42Z: B environment run GO r2 issued (package r3)
+
+The issued GO is the owner's draft 9ae4256b. The coordinator changed only the placement r7 completion fields:
+- complete 2a0fb4a9, exit codes 0, tips bfbc3221;
+- C-6 acceptance at 991ab1c8;
+- `placement_c6_accepted=true`;
+- `draft_status` and the remaining blocker.
+
+**What it authorizes:**
+- The bound generic transport 205309ae, CPU GO 2f015cb7 and placement GO 4c26f8a7.
+- The accepted stage ace2d686.
+- 127x08 driven from 05, cpus [0,1], 16 GiB, concurrency off.
+- No GPU and no heldout data.
+- One launch only, with no retry.
+
+**Window:** 05:00Z to 06:00Z. The CPU GO ends at 07:00Z.
+
+**Next:** C-4, then a coordinator G6 comparison before any epoch GO.
+
+C-5 passed and there are no path collisions.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e09712aa47bcf83cee406bf0734d26c6da1aaf4c3e14bd2f48260650f3a98c3e
