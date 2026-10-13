@@ -5325,3 +5325,22 @@ MANIFEST is 69dc22c8, and all 10 test groups pass (owner).
    - re-arm from the 89f01fbb export for 11:30Z on both hosts.
 3. Resume 04 now from that export.
 4. Resume 03 after the frozen runner's 07:30Z stop of 03 is verified.
+
+## 2026-10-13 06:27Z: X4S-4 SA-4 approved (d292cde3); a2 index plan, PE-1 file move and 01 repo fetch approved
+
+**SA-4.** The coordinator checked `git diff d09bdef9 d292cde3` directly. The only production change is `supervise.parity_watch`, with a new `high_side()`, taking supervise.py from ae51e9b9 to 35797248:
+- **Pause:** only if an evaluated arm has any of cutoff, student_default or overrun above its X4S-3 reference by more than 2 pp.
+- **Low side only:** the reading goes to `receipts/parity-lowside.jsonl` and the run does not pause.
+- **Failures:** a monitor exception or a failed record write stops the run.
+
+qualify4 and label.py are unchanged. Tests: `test_sa4` has 11 scenarios, 10/10 mutants are killed, and the matrix passes 6/6 at 134. One run failed transiently: the O2 run hit the watchdog `no_deadline` real-process sub-case under load 15 on 05; it passed on rerun and is disclosed.
+
+**Approved:**
+1. The SA-4 install procedure as proposed:
+   - archive the file and verify its SHA;
+   - install it in the 3 runtime trees;
+   - re-seal RUNTIME-INVENTORY, keeping the r1 file and changing only the supervise.py entry;
+   - `watchdog.py resume`.
+2. **a2:** relaunch as fresh phase `collect/K4S-120/a2` with the index file idx-K4S-120 minus a1's 147 proved indices, in the same order (2,103 indices). Report its SHA before the launch.
+3. **PE-1 file:** move it, bytes unchanged (afeaf7cb, 0444), to `receipts/PARITY-EXCEPTION-PE1-smoke.json`. Any P3 exception is then written with O_EXCL at `data/PARITY-EXCEPTION.json`.
+4. **01 repo fetch:** `git -C /mpac/sdicks02/repos/clasher fetch origin` on 01, with no checkout, reset, gc or other ref change. It may run once before any P3 exception is used and once before P13. Each run is recorded with the before and after `refs/remotes/origin/main` values.
