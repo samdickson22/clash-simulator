@@ -5464,3 +5464,21 @@ F1 r5 `receipt()` accepts it.
 C-5 is clean and there are no collisions. Published at `l1/receipts/b-combined-review-receipt-r4.json` and as a 0444 copy.
 
 ISSUED APPROVE_B_COMBINED_REVIEW f6cf2f1df81efc599eb2c45d83dcc4acb57c015768b6c8e9fa657e1264327b91
+
+## 2026-10-13 10:21Z: Cache-payload probe 128/128 HASH_PASS; generic transport r3 bound; quiet-read r7
+
+**Probe r2.** The 128 named cache payloads (47,356,690,057 B) were read once with the reviewed probe (e7d82f8f), with the hash cap raised to 1 GiB. All **128 are HASH_PASS**, and every size matches its index binding. Raw output: `v4-b-gap-review/probe-r4-r2/raw.jsonl` (bbf8bcb1). Together with r1, every named epoch-1 input on 08 has now been hashed.
+
+**Transport binding (per plan 0bf1cd59).** In `b08-generic-transport-review-r3`, `__REVIEW_RECEIPT_SHA__` was replaced by the issued f6cf2f1d (1 occurrence). Then the transport SHA was replaced in guard, launcher and retrieval (1 each). Every output equals its projection:
+
+| File | SHA |
+|---|---|
+| transport.py | 80d52b14 |
+| guard.sh | e973d265 |
+| launcher.sh | 4818d073 |
+| retrieval.sh | e5f6bed8 |
+| bound manifest | 519860b7, status BOUND_REVIEW_RECEIPT_NO_RUNTIME_AUTHORITY |
+
+The pre-bind backup is `v4-b-gap-review/generic-r3-prebind-backup-*`.
+
+**Quiet-read r7.** `coordinator-quiet-read-r7.sh` (d8f965dc), exit 0. Observation 65e9d7aa: who 0, 1,218,681,679,872 B available.
