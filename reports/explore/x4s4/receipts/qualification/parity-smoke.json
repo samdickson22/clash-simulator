@@ -1,0 +1,174 @@
+{
+  "arms": {
+    "K4S-120": {
+      "games": 8,
+      "decisions": 1038,
+      "pct": {
+        "cutoff": 58.67052023121387,
+        "student_default": 19.942196531791907,
+        "overrun": 0.09633911368015415
+      },
+      "x4s3_r3a": {
+        "cutoff": 64.2,
+        "student_default": 22.3,
+        "overrun": 0.16
+      },
+      "within_2pp": {
+        "cutoff": false,
+        "student_default": false,
+        "overrun": true
+      },
+      "evaluated": true
+    },
+    "S-200": {
+      "games": 8,
+      "decisions": 1362,
+      "pct": {
+        "cutoff": 69.7503671071953,
+        "student_default": 0.0,
+        "overrun": 0.22026431718061673
+      },
+      "x4s3_r3a": {
+        "cutoff": 75.3,
+        "student_default": 0.0,
+        "overrun": 0.14
+      },
+      "within_2pp": {
+        "cutoff": false,
+        "student_default": true,
+        "overrun": true
+      },
+      "evaluated": true
+    }
+  },
+  "band_pp": 2.0,
+  "min_games": 8,
+  "both_arms_evaluated": true,
+  "out_of_band": [
+    "K4S-120",
+    "S-200"
+  ],
+  "bank": "smoke",
+  "inventory": [
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0000-d27-K4S-120.json",
+      "df2b651e8a7b7bde92118d618e6a75c3e739b7dc3dc413926cd4ba8fc540c103"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0001-d27-K4S-120.json",
+      "24625ef376c36b6b767555850cc81a7aac0583be359fbf51955c8dd723b4dcf4"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0002-d27-K4S-120.json",
+      "3c999919baa6c28e3c502adee8fc792892aeb2dab820d8c93481d795543b2fd9"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0003-d27-K4S-120.json",
+      "9004d07c28df71ca7b8a6ac87246fcc5e631d17f6a9b1b76d07fee5fff0e5d9a"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0004-d27-K4S-120.json",
+      "601177bae734d83e26606a0ae4707d56e2f5e8538aebcedc7346154adcdebc59"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0005-d27-K4S-120.json",
+      "055fb557344e9a4f72940ce8d8f76949f50271dee8bd26550cdaaf576c25e4f7"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0006-d27-K4S-120.json",
+      "e707a167aa32d81f5fd4c1c958535a4ac6078287579384727651a8ecb66473f7"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+      "sim-0007-d27-K4S-120.json",
+      "a41074345094b489b8b8948d4937f1e06fd0043e3adc5dedb6699e09709e76bb"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0000-d27-S-200.json",
+      "b0787fd96f077f324a04abbe6fa23b2103bfa99639fb92100e4050bde4f7507d"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0001-d27-S-200.json",
+      "84252c45952b0c52906f83ba4903490d42e3db8005a95e86f8ccbab9e1f32594"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0002-d27-S-200.json",
+      "093eb940fd225a33761a1eebf2f504847135bbb1d68716ed1d06dddb8fdd5db7"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0003-d27-S-200.json",
+      "af7d0b7befc00de74f99cfd9b41bb22305e9bcb5970363461859c01b89a5e091"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0004-d27-S-200.json",
+      "c3792574c748ec44dbdfc467065fdc6a2407addb3da0c575d49403fac4563153"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0005-d27-S-200.json",
+      "7bd0f5b944c22d43bd2d0140bff851142d0177d7d833dfb91be6a296d9d81042"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0006-d27-S-200.json",
+      "bce6398dccdaf8848a7cb0b0e102849e548abe8fe8a5881ac92080adeba6b8f5"
+    ],
+    [
+      "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+      "sim-0007-d27-S-200.json",
+      "b24e289a2844176a7e63178d363310270094d6fb53c7e54d61a01883e028ce20"
+    ]
+  ],
+  "inventory_sha256": "36de81caaa80c705e3df41b0c3075ddf88e9df887e831e7e3474ea60b1329b4a",
+  "passed": false,
+  "paused": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/receipts/PARITY-PAUSE-2026-10-13T052734Z.json",
+  "phases": [
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200"
+  ],
+  "evidence": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120": {
+      "schedule.json": "bf2312f5e4159c2d5423a11c5e3d93fa5de69ab8a2effccdc2fd76ac46c35aa8",
+      "launch.json": "70ea6a82ea403298e8f514f60046905e280a5298749056b3eefe78cb76ea6976",
+      "supervisor-exit.json": "5d95f494a36057cd1ac48bc5d82aa5914cf6eb40f18579334490ee2a11b08f6d",
+      "status": "clean",
+      "config_sha256": "57f6a1427a584a607fe1e8da79e14340736f90bbf909795a8f125ffd1b9fedea",
+      "arms": [
+        "K4S-120"
+      ],
+      "scheduled": 8,
+      "proved": 8,
+      "dropped": 0
+    },
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200": {
+      "schedule.json": "54233f6dbb417feb77ed60ec33c764f3ffa710f7595e5ac6055696f8aad8c81e",
+      "launch.json": "61d5c100655712ddf0233dc382c09e2f412ed46796c4b7efdc80404f8127b9fe",
+      "supervisor-exit.json": "c7a37337c19a310be336a487598df43f98a24bacd5e43257185903127477507d",
+      "status": "clean",
+      "config_sha256": "57f6a1427a584a607fe1e8da79e14340736f90bbf909795a8f125ffd1b9fedea",
+      "arms": [
+        "S-200"
+      ],
+      "scheduled": 8,
+      "proved": 8,
+      "dropped": 0
+    }
+  },
+  "final": true,
+  "check": "parity",
+  "utc": "2026-10-13T05:27:34Z",
+  "label": "X4S-4 qualification, exploration, NEVER ADOPTABLE",
+  "halted": "owned_STOP"
+}

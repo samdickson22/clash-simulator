@@ -121,3 +121,28 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - smoke/collect-S-200: 50 lanes; rc 0, reason null, 8/8 blocks, 115 s wall (exit SHA-256
   c7a37337c19a310be336a487598df43f98a24bacd5e43257185903127477507d).
 - The q4-roundtrip guard step was launched detached at 05:12:17Z, as written.
+
+## 2026-10-13T05:27:34Z — Q4 round trip PASS; smoke parity OUT OF BAND: decision point 3, paused for the coordinator
+
+- Round trip (`$DET … $GRD --name q4-roundtrip`, as written): passed. 1,762 captures checked (100% of smoke
+  captures), 0 digest mismatches, 0 repeat-unequal, 0 missing C8 fields. roundtrip.json e905ec5f…;
+  guard-q4-roundtrip.json passed, rc 0, 3a0536a0….
+- Parity (`$GRD --name q4-parity`, as written): FAILED. Both arms were evaluated (8 games each), and both are
+  outside the ±2 pp band:
+
+  | Arm | Metric | X4S-4 smoke, 8 games | X4S-3 R3a | Within ±2 pp |
+  |---|---|---:|---:|---|
+  | K4S-120 (1,038 decisions) | cutoff % | 58.67 | 64.2 | no (−5.53) |
+  | | student-default % | 19.94 | 22.3 | no (−2.36) |
+  | | overrun % | 0.10 | 0.16 | yes |
+  | S-200 (1,362 decisions) | cutoff % | 69.75 | 75.3 | no (−5.55) |
+  | | student-default % | 0.00 | 0.0 | yes |
+  | | overrun % | 0.22 | 0.14 | yes |
+
+- qualify4's pause path wrote receipts/PARITY-PAUSE-2026-10-13T052734Z.json (cd48d0d8…) and J/STOP, a 0-byte regular
+  file. The parity output parity-smoke.json (10c68b04…) has passed=false, final=true, halted=owned_STOP.
+  guard-q4-parity.json (721806ce…) has passed=false, rc 1.
+- After the step: the watchdog is ok and saw 0 study processes. There is no HALT. STOP stays in place, and I resume
+  only through `watchdog.py resume` after a coordinator decision.
+- Per the runbook, this is decision point 3. Q6, Q5, Q7 and Q8 have not run. The receipts are copied, byte-identical,
+  to receipts/qualification/.

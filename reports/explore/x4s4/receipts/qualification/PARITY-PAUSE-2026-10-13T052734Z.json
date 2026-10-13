@@ -1,0 +1,56 @@
+{
+  "arms": {
+    "K4S-120": {
+      "games": 8,
+      "decisions": 1038,
+      "pct": {
+        "cutoff": 58.67052023121387,
+        "student_default": 19.942196531791907,
+        "overrun": 0.09633911368015415
+      },
+      "x4s3_r3a": {
+        "cutoff": 64.2,
+        "student_default": 22.3,
+        "overrun": 0.16
+      },
+      "within_2pp": {
+        "cutoff": false,
+        "student_default": false,
+        "overrun": true
+      },
+      "evaluated": true
+    },
+    "S-200": {
+      "games": 8,
+      "decisions": 1362,
+      "pct": {
+        "cutoff": 69.7503671071953,
+        "student_default": 0.0,
+        "overrun": 0.22026431718061673
+      },
+      "x4s3_r3a": {
+        "cutoff": 75.3,
+        "student_default": 0.0,
+        "overrun": 0.14
+      },
+      "within_2pp": {
+        "cutoff": false,
+        "student_default": true,
+        "overrun": true
+      },
+      "evaluated": true
+    }
+  },
+  "band_pp": 2.0,
+  "min_games": 8,
+  "both_arms_evaluated": true,
+  "out_of_band": [
+    "K4S-120",
+    "S-200"
+  ],
+  "bank": "smoke",
+  "inventory_sha256": "36de81caaa80c705e3df41b0c3075ddf88e9df887e831e7e3474ea60b1329b4a",
+  "passed": false,
+  "utc": "2026-10-13T05:27:34Z",
+  "reason": "C7b parity band exceeded; collection paused; the coordinator decides (explicit PARITY-EXCEPTION)"
+}

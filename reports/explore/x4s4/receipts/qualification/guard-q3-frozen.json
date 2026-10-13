@@ -1,0 +1,34 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q3-frozen",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/qualify4.py",
+    "frozen",
+    "--corpus",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/corpus",
+    "--threads",
+    "1",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/frozen.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 3322988,
+    "pgid": 3322988,
+    "starttime": 165784270
+  },
+  "passed": true,
+  "utc": "2026-10-13T05:06:08Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/frozen.json": "7cc7afcb2081d89c1fcff05985c8390ccb661673eb31edd46a2ddfde3f853c44"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

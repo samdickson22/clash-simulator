@@ -1,0 +1,459 @@
+{
+  "same_schedule": true,
+  "config_sha256": "450522158dccbe73216c3cc2b86054cdde4fbe62f4d55dafd0e75c87470461d4",
+  "cases": 16,
+  "games": [
+    {
+      "game": "sim-0000-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 131,
+      "decisions": 131,
+      "counts": {
+        "captured": 131
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 131,
+        "belief_checked": 131,
+        "fair_identical": 131,
+        "fair_checked": 131,
+        "fair_perturbed_decisions": 41,
+        "fair_moved_cards": 177,
+        "fair_checked_early": 18,
+        "fair_perturbed_early": 18
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0000-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 128,
+      "decisions": 128,
+      "counts": {
+        "captured": 128
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 128,
+        "belief_checked": 128,
+        "fair_identical": 128,
+        "fair_checked": 128,
+        "fair_perturbed_decisions": 57,
+        "fair_moved_cards": 210,
+        "fair_checked_early": 16,
+        "fair_perturbed_early": 16
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0001-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 132,
+      "decisions": 132,
+      "counts": {
+        "captured": 132
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 132,
+        "belief_checked": 132,
+        "fair_identical": 132,
+        "fair_checked": 132,
+        "fair_perturbed_decisions": 45,
+        "fair_moved_cards": 186,
+        "fair_checked_early": 14,
+        "fair_perturbed_early": 14
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0001-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 96,
+      "decisions": 96,
+      "counts": {
+        "captured": 96
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 96,
+        "belief_checked": 96,
+        "fair_identical": 96,
+        "fair_checked": 96,
+        "fair_perturbed_decisions": 55,
+        "fair_moved_cards": 183,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0002-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 124,
+      "decisions": 124,
+      "counts": {
+        "captured": 124
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 124,
+        "belief_checked": 124,
+        "fair_identical": 124,
+        "fair_checked": 124,
+        "fair_perturbed_decisions": 29,
+        "fair_moved_cards": 136,
+        "fair_checked_early": 16,
+        "fair_perturbed_early": 16
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0002-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 107,
+      "decisions": 107,
+      "counts": {
+        "captured": 107
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 107,
+        "belief_checked": 107,
+        "fair_identical": 107,
+        "fair_checked": 107,
+        "fair_perturbed_decisions": 36,
+        "fair_moved_cards": 144,
+        "fair_checked_early": 14,
+        "fair_perturbed_early": 14
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0003-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 113,
+      "decisions": 113,
+      "counts": {
+        "captured": 113
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 113,
+        "belief_checked": 113,
+        "fair_identical": 113,
+        "fair_checked": 113,
+        "fair_perturbed_decisions": 27,
+        "fair_moved_cards": 120,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0003-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 109,
+      "decisions": 109,
+      "counts": {
+        "captured": 109
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 109,
+        "belief_checked": 109,
+        "fair_identical": 109,
+        "fair_checked": 109,
+        "fair_perturbed_decisions": 46,
+        "fair_moved_cards": 172,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0004-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 131,
+      "decisions": 131,
+      "counts": {
+        "captured": 131
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 131,
+        "belief_checked": 131,
+        "fair_identical": 131,
+        "fair_checked": 131,
+        "fair_perturbed_decisions": 34,
+        "fair_moved_cards": 160,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0004-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 110,
+      "decisions": 110,
+      "counts": {
+        "captured": 110
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 110,
+        "belief_checked": 110,
+        "fair_identical": 110,
+        "fair_checked": 110,
+        "fair_perturbed_decisions": 52,
+        "fair_moved_cards": 156,
+        "fair_checked_early": 16,
+        "fair_perturbed_early": 16
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0005-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 118,
+      "decisions": 118,
+      "counts": {
+        "captured": 118
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 118,
+        "belief_checked": 118,
+        "fair_identical": 118,
+        "fair_checked": 118,
+        "fair_perturbed_decisions": 31,
+        "fair_moved_cards": 139,
+        "fair_checked_early": 16,
+        "fair_perturbed_early": 16
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0005-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 162,
+      "decisions": 162,
+      "counts": {
+        "captured": 162
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 162,
+        "belief_checked": 162,
+        "fair_identical": 162,
+        "fair_checked": 162,
+        "fair_perturbed_decisions": 36,
+        "fair_moved_cards": 151,
+        "fair_checked_early": 17,
+        "fair_perturbed_early": 17
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0006-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 123,
+      "decisions": 123,
+      "counts": {
+        "captured": 123
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 123,
+        "belief_checked": 123,
+        "fair_identical": 123,
+        "fair_checked": 123,
+        "fair_perturbed_decisions": 83,
+        "fair_moved_cards": 266,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0006-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 104,
+      "decisions": 104,
+      "counts": {
+        "captured": 104
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 104,
+        "belief_checked": 104,
+        "fair_identical": 104,
+        "fair_checked": 104,
+        "fair_perturbed_decisions": 45,
+        "fair_moved_cards": 179,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0007-d27-K4S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 103,
+      "decisions": 103,
+      "counts": {
+        "captured": 103
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 103,
+        "belief_checked": 103,
+        "fair_identical": 103,
+        "fair_checked": 103,
+        "fair_perturbed_decisions": 23,
+        "fair_moved_cards": 120,
+        "fair_checked_early": 16,
+        "fair_perturbed_early": 16
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    },
+    {
+      "game": "sim-0007-d27-S-long.json",
+      "equal": true,
+      "capture_sha_ok": true,
+      "identity_ok": true,
+      "features_equal_all": true,
+      "public_equal_all": true,
+      "pending_empty_all": true,
+      "captures": 101,
+      "decisions": 101,
+      "counts": {
+        "captured": 101
+      },
+      "count_ok": true,
+      "checks": {
+        "belief_unchanged": 101,
+        "belief_checked": 101,
+        "fair_identical": 101,
+        "fair_checked": 101,
+        "fair_perturbed_decisions": 37,
+        "fair_moved_cards": 158,
+        "fair_checked_early": 15,
+        "fair_perturbed_early": 15
+      },
+      "belief_unchanged": true,
+      "fair_invariant": true,
+      "fair_coverage": true
+    }
+  ],
+  "passed": true,
+  "check": "hashes",
+  "utc": "2026-10-13T05:05:18Z",
+  "label": "X4S-4 qualification, exploration, NEVER ADOPTABLE"
+}

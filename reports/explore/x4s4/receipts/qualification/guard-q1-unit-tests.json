@@ -1,0 +1,30 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q1-unit-tests",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "-m",
+    "pytest",
+    "-q",
+    "reports/explore/x4s/test_sdefault.py",
+    "reports/explore/s1/test_anchor.py",
+    "reports/explore/s1/test_latency.py"
+  ],
+  "cwd": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo",
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 3288472,
+    "pgid": 3288472,
+    "starttime": 165721908
+  },
+  "passed": true,
+  "utc": "2026-10-13T04:55:14Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {},
+  "new_files": {},
+  "final_verdict": null
+}

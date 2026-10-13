@@ -1,0 +1,13 @@
+{
+  "checked": 1762,
+  "digest_mismatches": 0,
+  "repeat_unequal": 0,
+  "c8_fields_missing": 0,
+  "passed": true,
+  "threads": 1,
+  "native": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/native/clasher_core.abi3.so",
+  "coverage": "100% of smoke captures",
+  "check": "roundtrip",
+  "utc": "2026-10-13T05:25:41Z",
+  "label": "X4S-4 qualification, exploration, NEVER ADOPTABLE"
+}

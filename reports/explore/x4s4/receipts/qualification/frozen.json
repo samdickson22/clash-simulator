@@ -1,0 +1,11 @@
+{
+  "states": 125,
+  "equal": 125,
+  "mismatches": [],
+  "threads": 1,
+  "native": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/native/clasher_core.abi3.so",
+  "passed": true,
+  "check": "frozen",
+  "utc": "2026-10-13T05:06:07Z",
+  "label": "X4S-4 qualification, exploration, NEVER ADOPTABLE"
+}

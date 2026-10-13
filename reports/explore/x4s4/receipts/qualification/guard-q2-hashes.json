@@ -1,0 +1,36 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q2-hashes",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/qualify4.py",
+    "hashes",
+    "--run-phase",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/run",
+    "--collect-phase",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/collect",
+    "--config",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/plan-qual-capture.json",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/hashes.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 3321884,
+    "pgid": 3321884,
+    "starttime": 165782390
+  },
+  "passed": true,
+  "utc": "2026-10-13T05:05:19Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/hashes.json": "0545d4203475f8f65d2fe13bb87fedae9aadb5380efe68f461f44daa346604d7"
+  },
+  "new_files": {},
+  "final_verdict": null
+}
