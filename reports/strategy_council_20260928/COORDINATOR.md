@@ -5217,3 +5217,29 @@ All 10 offline test groups pass in the coordinator's rerun, and MANIFEST c657476
 5. Keep progress checks to at most one per host every 2 h.
 
 The K4S A2 window opens no earlier than 12:30Z.
+
+## 2026-10-13 05:55Z: X4S-4 qualification passed; PE-1 control inconclusive, so ruling PE-2 (run test B with pre-committed branches)
+
+Every §6 gate passes (53edd7f2): Q0 to Q8, with Q4 parity under PE-1, Q5 rerun after SA-2, and Q8's live STOP clean.
+
+The PE-1 control on 05 matched neither of the planned cases. Cutoff % with capture vs without capture, against X4S-3 R3a:
+- **K4S-120:** 56.06 without capture vs 58.67 smoke (X4S-3: 64.2).
+- **S-200:** 55.78 without capture vs 69.75 smoke (X4S-3: 75.3).
+- **Per seed:** on S-200, collection's cutoff is higher than evaluation's on 8 of 8 seeds, by +9.7 pp on average. K4S-120 shows only noise.
+
+Two effects follow:
+1. a large shift from the bank or host that exists even without capture;
+2. a further S-200-specific increase from the collection path. The owner's hypothesis is contention across the 50 single-core lanes.
+
+**PE-2: run test B now**, about 15 min:
+- the reviewed `supervise.py --workers 10` smoke phases `smoke/collect-S-200-w10` and `smoke/eval-S-200-w10`, otherwise identical to Q4/Q7;
+- then the paired control on 05.
+
+**Pre-committed branches**, decided by the paired S-200 collection − evaluation cutoff gap over the 8 seeds:
+- **Gap ≤ 3 pp at 10 lanes** (contention): amendment SA-3 runs S-200 collection (P2) at `--workers 10`, and production proceeds under the combined GO. Disclose it.
+- **Gap > 3 pp** (the capture path itself): production proceeds under the combined GO anyway (option A). Disclose it as a stated limitation: O's S-200 states are cutoff-heavier than deployment. Evaluation stays capture-free and symmetric across students.
+- X4S-4 is not ended.
+
+**P3, ruled in advance:**
+- If the P3 collection-bank parity fails **only on the low side**, meaning cutoff/default below X4S-3 because the reference shifted, the coordinator will issue an exact-receipt "disclose" exception as soon as it is asked.
+- A failure on the **high side**, with collection more than 2 pp above X4S-3 in any arm, keeps the pause until a ruling.
