@@ -3,9 +3,12 @@
 #   launch HOST MANIFEST_SHA256 STOP_AT    preflight (read-only) -> stage -> 8-seed smoke -> live STOP test -> reporting
 #   progress HOST                          read-only status; console user on a 12-slot run -> yield to 10 slots
 #   stop HOST                              permanent STOP -> wait -> exit records -> STOP proof (ps) -> rsync outputs to 05
+#   resume HOST MANIFEST_SHA256 STOP_AT    epoch 2 (COORDINATOR 7f93dbbf), run from J/bundle-e2 after a completed STOP:
+#                                          verify epoch 1 ended, then rerun unproven wl blocks + the wl-ext segment
 # Fail-closed: errexit + pipefail, every step checked, and the EXIT trap prints the true status as the last line (__RC=n).
 # Each supervisor instance has its own job dir J/inst/<phase> and STOP file; no STOP file is ever removed. J/STOP is the
-# permanent stop: once present nothing is (re)launched. Never pattern-kills; writes only under J (and, on stop, the
+# permanent stop: once present nothing is (re)launched. Epoch 2 (after `resume`) has its own permanent stop, J/STOP2;
+# J/STOP stays in place. Never pattern-kills; writes only under J (and, on stop, the
 # coordinator-authorized 05 mirror directory, which session.sh creates fresh on 05). Prefixes are under /mpac/sdicks02/jobs-fsc
 # (on 04, /mpac/sdicks02/jobs/clasher is perception storage). Every supervisor runs under oom_score_adj 1000 (ours die
 # first) and RLIMIT_AS 8 GiB per process; its host budget is MemAvailable >= 40 GiB and owned PSS <= 16 GiB.
@@ -32,6 +35,7 @@ PY=/mpac/sdicks02/repos/clasher/.venv/bin/python
 MIRROR=/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013   # on 127x05; created fresh by session.sh (coordinator-authorized)
 SSHOPT='ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ControlPersist=no -o StrictHostKeyChecking=yes -o UpdateHostKeys=no'
 E=$J/repo/reports/explore
+PSTOP=$J/STOP; if [ -e "$J/resumed" ]; then PSTOP=$J/STOP2; fi   # this epoch's permanent STOP
 HC() { python3 -I -B "$E/fsc/hostcheck.py" "$@"; }
 ST() { python3 -I -B "$J/bundle/fsc/stage.py" "$@"; }
 renice -n 19 -p $$ >/dev/null || die 90 "renice"
@@ -93,14 +97,14 @@ preflight() {
   [ "$mem" -ge 64 ] || die 92 "MemAvailable < 64 GiB"
   [ "$free" -ge 20 ] || die 93 "/mpac free < 20 GiB"
   [ -x "$PY" ] || die 94 "no runtime python"
-  [ ! -e "$J/STOP" ] || die 95 "permanent STOP present"
+  [ ! -e "$PSTOP" ] || die 95 "permanent STOP present"
 }
 json() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; assert isinstance(v,int) and not isinstance(v,bool) and v>1; print(v)' "$1" "$2"; }
 # start PHASE WORKLIST WORKERS STOP_AT: fresh instance J/inst/PHASE (own job dir and STOP file), detached supervisor.
 # Every phase is capped: STOP_AT <= CAP (the session's STOP_AT, itself <= DEADLINE) and still in the future.
 start() {
   local I=$J/inst/$1 n
-  [ ! -e "$J/STOP" ] || die 95 "permanent STOP present"
+  [ ! -e "$PSTOP" ] || die 95 "permanent STOP present"
   [[ -n ${CAP:-} && ! $4 > $CAP && ! $CAP > $DEADLINE ]] || die 101 "$1: stop-at $4 beyond cap ${CAP:-unset}"
   [[ $4 > $(date -u +%Y-%m-%dT%H:%M:%SZ) ]] || die 101 "$1: stop-at $4 already passed"
   mkdir "$I" "$I/repo" "$I/repo/reports" "$I/repo/reports/explore" "$I/repo/reports/explore/x4s2"
@@ -114,7 +118,7 @@ start() {
   [ -s "$I/$1/launch.json" ] || { touch "$I/STOP"; die 101 "$1: no launch.json in 60 s (instance STOP touched)"; }
   [ "$(json "$I/receipt.json" pid)" = "$(json "$I/$1/launch.json" supervisor_pid)" ] || die 101 "$1: receipt/launch PID mismatch"
   cat "$I/receipt.json" "$I/$1/launch.json"
-  if [ -e "$J/STOP" ]; then touch "$I/STOP"; die 95 "$1: permanent STOP appeared during start (instance STOP touched)"; fi
+  if [ -e "$PSTOP" ]; then touch "$I/STOP"; die 95 "$1: permanent STOP appeared during start (instance STOP touched)"; fi
 }
 # capped MINUTES: min(now + MINUTES, CAP).
 capped() { local t; t=$(in_minutes "$1"); if [[ $t > $CAP ]]; then echo "$CAP"; else echo "$t"; fi; }
@@ -196,7 +200,7 @@ progress)
   log "phase=$ph workers=$workers console_users=$console proofs=$(find "$P/blocks" -name '*.json' | wc -l)"
   if [ "$console" -gt 0 ] && [ "$workers" -gt 10 ]; then
     # Yield: stop this instance by its own STOP, prove it is gone, relaunch its never-started blocks on 10 slots.
-    [ ! -e "$J/STOP" ] || die 95 "permanent STOP present: no yield relaunch"
+    [ ! -e "$PSTOP" ] || die 95 "permanent STOP present: no yield relaunch"
     log "console user present: yielding to 10 slots"; touch "$I/STOP"
     wait_exit "$P" 240 || die 102 "yield: no supervisor exit in 240 s"
     HC exitstatus "$P" || die 102 "yield: exit record or census not clean"
@@ -213,7 +217,7 @@ progress)
 
 stop)
   # Covers incomplete launches too: every instance that exists is stopped, waited for and censused (no current-instance needed).
-  touch "$J/STOP"; for I in "$J"/inst/*/; do touch "$I/STOP"; done; log "permanent and instance STOP files touched"
+  touch "$PSTOP"; for I in "$J"/inst/*/; do touch "$I/STOP"; done; log "permanent ($PSTOP) and instance STOP files touched"
   sleep 5; for I in "$J"/inst/*/; do touch "$I/STOP"; done   # an instance created by a racing start also gets its STOP
   for I in "$J"/inst/*/; do
     I=${I%/}; P=$I/$(basename "$I")
@@ -229,11 +233,49 @@ stop)
   elif compgen -G "$J/inst/*" >/dev/null; then proof=1; log "instances exist but no baseline"
   else log "launch never reached the baseline: no supervisor was started"; fi
   ST nolinks "$J"
+  dest=$host; if [ -e "$J/resumed" ]; then dest=$host-e2; fi   # epoch 2 mirrors into a fresh <host>-e2 directory
   nice -n 19 rsync -rt --no-links -e "$SSHOPT" --rsync-path='nice -n 19 rsync' \
     --exclude=/repo/ --exclude=/native/ --exclude=/inputs/ --exclude=/cache/ --exclude=/bundle/ \
-    "$J/" "127x05:$MIRROR/$host/"
-  log "outputs mirrored to 127x05:$MIRROR/$host"
+    "$J/" "127x05:$MIRROR/$dest/"
+  log "outputs mirrored to 127x05:$MIRROR/$dest"
   [ "$proof" = 0 ] || die 104 "STOP proof failed (see JSON above); STOP files stay"
+  ;;
+resume)
+  # Epoch 2: the epoch-1 STOP session completed (J/STOP), every instance ended for a planned reason with an empty census,
+  # and the runtime files this host uses are byte-identical to the e2 bundle's. Then rerun the unproven blocks of the
+  # original worklist (interrupted blocks included) in order, followed by the wl-ext top-up segment, in a fresh instance.
+  msha=${3:-}; arg=${4:-}
+  [[ $msha =~ ^[0-9a-f]{64}$ ]] || die 90 "manifest sha"
+  [[ $arg =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 90 "STOP_AT required (ISO UTC)"
+  if [[ $arg > $DEADLINE ]]; then die 90 "STOP_AT after $DEADLINE"; fi
+  CAP=$arg; B2=$J/bundle-e2/fsc
+  [ "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" = "$B2" ] || die 90 "resume must run from $B2"
+  [ -e "$J/STOP" ] || die 96 "epoch-1 STOP not done"
+  if [ -e "$J/resumed" ] || [ -e "$J/STOP2" ]; then die 96 "already resumed"; fi
+  for I in "$J"/inst/*/; do
+    I=${I%/}; P=$I/$(basename "$I")
+    HC exitstatus "$P" || die 96 "epoch 1: $P did not end cleanly"
+    HC census empty "$(json "$I/receipt.json" pgid)" "$(json "$I/receipt.json" pid)" || die 96 "epoch 1: census $I"
+  done
+  for f in hostcheck.py stage.py reduce.py plan-fsc.json plan-fsc-04.json "wl-$tag.json" harness/run.py harness/supervise.py \
+           harness/plan-04.json s1-runtime-pin-r2.json; do
+    cmp "$B2/$f" "$E/fsc/$f" || die 96 "installed $f differs from the e2 bundle"
+  done
+  date -u +%Y-%m-%dT%H:%M:%SZ > "$J/resumed"; PSTOP=$J/STOP2
+  preflight
+  python3 -I -B "$B2/remaining.py" "$E/fsc/wl-$tag.json" "$B2/wl-$tag-ext.json" "$J/logs/wl-rep$tag-e2.json" \
+    "$J"/inst/rep"$tag"*/rep"$tag"*
+  workers=12; [ "$CONSOLE" -eq 0 ] || workers=10
+  stop_at=$(capped 475)
+  printf '%s\n' "$stop_at" > "$J/stop-at"; printf '%s\n' "$J/logs/wl-rep$tag-e2.json" > "$J/current-worklist"
+  printf '%s\n' "$J/inst/rep$tag-e2" > "$J/current-instance"
+  start "rep$tag-e2" "$J/logs/wl-rep$tag-e2.json" "$workers" "$stop_at"
+  sleep 60
+  P=$J/inst/rep$tag-e2/rep$tag-e2
+  HC census live "$(json "$P/launch.json" child_pgid)" "$(json "$P/launch.json" supervisor_pid)" \
+    || { touch "$J/inst/rep$tag-e2/STOP"; die 101 "e2 run not live after 60 s (instance STOP touched)"; }
+  HC guard "$P" || { touch "$J/inst/rep$tag-e2/STOP"; die 101 "memory guards missing on the e2 run (instance STOP touched)"; }
+  log "e2 running: rep$tag-e2 workers=$workers stop_at=$stop_at"
   ;;
 *) die 90 "unknown command '$cmd'";;
 esac

@@ -14,7 +14,7 @@ X = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(X)
 NATIVE = '44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2'
 POLICY = 'd77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed'
 STUDENT = '37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85'
-HOST_WL = {'127x03': 'wl-03.json', '127x04': 'wl-04.json'}
+HOST_WL = {'127x03': ('wl-03.json', 'wl-03-ext.json'), '127x04': ('wl-04.json', 'wl-04-ext.json')}  # dispatch order: wl, then epoch-2 ext
 X4S2_MIRROR = Path('/mpac/sdicks02/jobs/clasher/x4s2-20261011/mirror')
 X4S2_E = [X4S2_MIRROR/'127x03/rep03EF', X4S2_MIRROR/'127x08/rep08EF']
 
@@ -41,7 +41,7 @@ def check_more(rows, cfg, arms_of):
 
 def load_host(host, phases, cfg, config_shas):
     """Rows of one host, cut to the largest complete prefix of its worklist order."""
-    wl = json.loads((HERE/HOST_WL[host]).read_text())
+    wl = dict(blocks=[b for name in HOST_WL[host] for b in json.loads((HERE/name).read_text())['blocks']])
     rows, retired, per_phase = {}, set(), {}
     for n, phase in enumerate(phases):
         sched = json.loads((phase/'schedule.json').read_text())

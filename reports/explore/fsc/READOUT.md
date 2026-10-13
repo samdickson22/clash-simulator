@@ -13,6 +13,12 @@ session. During the run only counts are read (`progress.json`, proof counts).
   - **Amendment r2, before any game:** the top-up segments (3900–7899) are dropped. Under the K4S runner's condition, STOP
     must be verified shortly after STOP_AT, and every phase's `--stop-at` is ≤ STOP_AT ≤ `DEADLINE` (07:30Z since the coordinator's 2026-10-13 raise). Neither worklist is expected to finish, so both
     outcomes come from time-cut prefixes.
+  - **Amendment e2 (COORDINATOR 7f93dbbf), declared before any epoch-2 game:** after the verified 07:30Z STOP, each
+    host resumes in a fresh instance (`rep03-e2`/`rep04-e2`, STOP_AT ≤ 11:30Z). It reruns, in worklist order, every
+    `wl` block without a proof (**interrupted blocks included**, so the seam does not end the prefix; their partial
+    games are never read), then runs the reserved extension segment: `wl-03-ext.json` (indices 3900–5899) on 03 and
+    `wl-04-ext.json` (5900–7899) on 04, both K4-200/K4S-200. Each host's prefix order is `wl` then `wl-ext`. The final
+    11:30Z STOP ends the prefix. The 200 ms blocks on 04 join the primary Δ200, as in the r1 readout.
   The prefix ends at the first block that is not complete. Complete blocks beyond it are dropped and their count is
   disclosed. So the sample is never selected by game duration.
   - Blocks interrupted by the final STOP or `--stop-at` are retired and end the prefix.

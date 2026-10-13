@@ -42,9 +42,11 @@ def test_prefix():
     kept, info = run([(list(range(5)), [5]), (list(range(6, 9)), [9])])
     assert sorted(i for _, i in kept) == [0, 1, 2, 3, 4, 6, 7, 8] and info['yield_retired_skipped'] == [5]
     assert info['first_incomplete_index'] == 9
-    # 03's worklist is the primary segment only (top-ups dropped for the 05:00Z hard STOP).
+    # 03's order is wl-03 (0-2399) then the epoch-2 extension wl-03-ext (3900-5899).
     kept, info = run([(list(range(2400)), [])])
-    assert len(kept) == 2400 and info['first_incomplete_index'] is None
+    assert len(kept) == 2400 and info['first_incomplete_index'] == 3900
+    kept, info = run([(list(range(2400))+[3900, 3901], [])])
+    assert len(kept) == 2402 and info['first_incomplete_index'] == 3902
 
 
 def test_outcome():
@@ -136,11 +138,11 @@ def test_wrappers_fail_closed():
     assert r.returncode == 2 and last(r) == '__RC=2'
     r = subprocess.run(['bash', str(HERE/'remote_bootstrap.sh'), '127x03', '0'*64, '2026-10-13T04:50:00Z'], capture_output=True, text=True, stdin=subprocess.DEVNULL)
     assert r.returncode != 0 and last(r) == f'__RC={r.returncode}' and not os.path.exists('/mpac/sdicks02/jobs-fsc')
-    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64, '2026-10-13T08:30:00Z'], capture_output=True, text=True)
+    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64, '2026-10-13T12:30:00Z'], capture_output=True, text=True)
     assert r.returncode == 2 and last(r) == '__RC=2'  # STOP_AT after the 04:50Z deadline
     r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64], capture_output=True, text=True)
     assert r.returncode == 2  # launch without STOP_AT
-    r = subprocess.run(['bash', str(HERE/'stop_runner.sh'), '2026-10-13T08:30:00Z', '0'*40, '0'*64, '127x03'], capture_output=True, text=True)
+    r = subprocess.run(['bash', str(HERE/'stop_runner.sh'), '2026-10-13T12:30:00Z', '0'*40, '0'*64, '127x03'], capture_output=True, text=True)
     assert r.returncode == 2
     r = subprocess.run(['bash', str(HERE/'host_session.sh'), 'launch', '127x03'], capture_output=True, text=True)
     assert r.returncode == 90 and last(r) == '__RC=90'
@@ -197,6 +199,43 @@ def test_resident_exemption():
     assert not H.resident_idle(sample(b), sample(a))                             # ticks went backwards
     r = _hc('resident-idle', '300', '315'); assert r.returncode == 0
     assert _hc('resident-idle', '300', '316').returncode == 10 and _hc('resident-idle', 'none', '300').returncode == 10
+
+
+def test_remaining_and_epochs():
+    """Epoch 2: unproven wl blocks (interrupted ones rerun) in order, then the ext segment; stop/resume history."""
+    d = _tmp()
+    wl = dict(range='reporting', blocks=[dict(pop='X', index=i, arms=['K4-200', 'K4S-200']) for i in range(6)])
+    ext = dict(range='reporting', blocks=[dict(pop='X', index=i, arms=['K4-200', 'K4S-200']) for i in (100, 101)])
+    (d/'wl.json').write_text(json.dumps(wl)); (d/'ext.json').write_text(json.dumps(ext))
+    ph = d/'rep03'; (ph/'blocks').mkdir(parents=True)
+    (ph/'schedule.json').write_text(json.dumps(dict(cases=[['X', i, 0, 'K4-200'] for i in range(6)])))
+    for i in (0, 1, 2, 4):
+        (ph/f'blocks/X{i:04d}.started').write_text('{}')
+    for i in (0, 1, 4):
+        (ph/f'blocks/X{i:04d}.json').write_text('{}')
+    r = subprocess.run([sys.executable, '-I', str(HERE/'remaining.py'), d/'wl.json', d/'ext.json', d/'out.json', ph], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    assert [b['index'] for b in json.loads((d/'out.json').read_text())['blocks']] == [2, 3, 5, 100, 101]
+    assert json.loads(r.stdout)['rerun_interrupted'] == [2]
+    (ph/'blocks/X0100.started').write_text('{}')  # an ext block already touched -> refused
+    assert subprocess.run([sys.executable, '-I', str(HERE/'remaining.py'), d/'wl.json', d/'ext.json', d/'out2.json', ph], capture_output=True).returncode != 0
+    # session.sh history: stopped iff the newest successful stop is newer than the newest successful resume.
+    S = d/'S'; S.mkdir()
+    fn = "eval \"$(sed -n '/^last_ok() {/,/^}/p;/^stopped() {/,/^}/p' \"$2\")\""
+    def stopped():
+        return subprocess.run(['bash', '-c', 'set -euo pipefail; shopt -s nullglob; die() { echo "die $2"; exit "$1"; }; S=$1; '
+                               + fn + '; if stopped 127x03; then echo yes; else echo no; fi', '_', str(S), str(HERE/'session.sh')],
+                              capture_output=True, text=True)
+    assert stopped().stdout.strip() == 'no'
+    (S/'127x03-stop-a.log').write_text('x\n__RC=0\n'); os.utime(S/'127x03-stop-a.log', (1000, 1000))
+    assert stopped().stdout.strip() == 'yes'
+    (S/'127x03-resume-b.log').write_text('__RC=0\n'); os.utime(S/'127x03-resume-b.log', (2000, 2000))
+    assert stopped().stdout.strip() == 'no'
+    (S/'127x03-stop-c.log').write_text('__RC=0\n'); os.utime(S/'127x03-stop-c.log', (3000, 3000))
+    assert stopped().stdout.strip() == 'yes'
+    os.symlink('/nonexistent', S/'127x03-resume-d.log')
+    r = stopped(); assert r.returncode == 4, (r.returncode, r.stdout)
+    shutil.rmtree(d)
 
 
 if __name__ == '__main__':
