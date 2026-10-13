@@ -437,3 +437,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-13T23:04:42Z 04 who check (1 login): others=[]
 - 2026-10-13T23:04:49Z launched a2-r7.sh 127x04 detached (log end-staging/a2/a2r7-127x04.log).
 - 2026-10-13T23:14:31Z A2 127x04 DONE (re-GO 3d64ca62, a2-r7.sh) after who check 23:04Z (no users; 1 login): 23:04:48Z-23:13:51Z, all rc 0; logins 23 (10/6/6/1) + 1 who = 24; probe: .venv prefix, numpy 2.3.5, torch 2.10.0+cu128; manifests pf00 0e9ba969, a00 a0f6fe94, a01 46be55c9; S11 provision 610f7801 (repository at P'). A2 complete on both hosts.
+- 2026-10-13T23:16:07Z A4 prep on 05: receive dirs created; build-argv 03 (hold 600) argv 12404bca046ccd6b81fd52f4dccf3ef674293305e43a512887c309535c7725a3, 04 (hold 1200) argv 24f9c0ba48415ebe4e932bba7591bae78e728a291577dd5640c9318987a36575; S7 launch --dry-run rc 0 both; A4-GO-REQUEST written.

@@ -1,0 +1,1 @@
+{"attempt": "preflight-127x04-l00", "created": {"base": false, "host": true}, "created_empty": true, "dev": 66304, "host": "127x04", "ino": 57297346, "mode": "2700", "receive": "/mpac/sdicks02/k4s-runner/run-r1/preflight-received/127x04/preflight-127x04-l00", "schema": "clasher.k4s.end-preflight-receive-prepared.v1", "utc": "2026-10-13T23:15:15Z"}
