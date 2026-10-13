@@ -308,3 +308,24 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - Risk raised with the coordinator: supervise.py's in-loop C7b watch (every 300 s, at ≥ 100 games) compares against
   X4S-3's R3a and has no exception path. If K4S-120 collection stays about 5 pp low, as in the smoke, P1 will
   PARITY-PAUSE, and any relaunch would pause again.
+
+## 2026-10-13T06:11:35Z — P1 a1 paused, low side; PE-3 (COORDINATOR f4a2bc1f) disclose; SA-4 prepared
+
+- P1 a1 stopped with reason parity_pause, rc −15, no pids left, 147 blocks (exit 32320f1e…).
+  - Receipt PARITY-PAUSE-2026-10-13T061133Z.json, b63b4a993902de41c01cf216dc2bc64e7b706820a08cb3bf8da97fa6c622a4b9.
+  - Reading: K4S-120, 147 games, cutoff 61.30 % vs 64.2 (−2.90 pp, low side); student-default 20.96 % and overrun
+    0.12 % in band.
+  - STOP is kept in place. PE-3 grants "disclose" for this exact receipt; resume only with SA-4 installed.
+- a1 holds 147 captures, 147 blocks and 147 games, all completing before STOP, so there are no H-1-late blocks.
+  - The runner runs exactly the `--indices` it is given and does not skip indices other phases already proved.
+  - label.py make_plan refuses duplicate (arm, index) capture files across phases.
+  - So a2's index file is a1's indices minus a1's 147 proved indices, in the same order: 2,103 indices.
+- SA-4 (COORDINATOR 08723c23) changes `supervise.parity_watch` only.
+  - It is one-sided: a pause only if any evaluated metric is more than 2 pp above X4S-3. A low-side reading is
+    appended to receipts/parity-lowside.jsonl. Monitor or record failures give parity_monitor_failed.
+  - Tests: test_sa4 has 6 cases over 11 scenarios, and the R2-F8 fixture moved to the high side.
+  - Mutation check: 10/10 mutants killed.
+  - Matrix: 6/6 at 134 cases. One O2/u022 run first failed in the r9 SR-1 real-process watchdog case: the no_deadline
+    breach HALTed first on "measurement overdue (> 0.8 s)" with 05's load average around 15. watchdog.py is not
+    touched by SA-4. The rerun passed.
+  - supervise.py goes from ae51e9b9… to 357972487727d2f1471682fc273dd167cc71afb25a3cb7c138ad233780665189.

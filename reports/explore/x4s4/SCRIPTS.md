@@ -257,6 +257,39 @@ detached with `start_new_session`, the study marker stripped, waits for the firs
   - The launcher leaves the watchdog unmarked in its own session; `status` works, and a second start is refused.
   - Static checks: stdlib only, verified one-by-one PID signals, no result paths.
 
+## SA-4 (COORDINATOR 08723c23): the in-loop C7b watch is one-sided
+
+`supervise.parity_watch` is the only code change. qualify4 and label.py `check_parity` are unchanged.
+- **High side pauses.** If any evaluated arm has any metric (cutoff, student-default or overrun %) more than 2 pp
+  above its X4S-3 reference (`pct[k] > x4s3_r3a[k] + 2.0`), the watch writes PARITY-PAUSE and STOP as before. The
+  receipt also lists `high_side`.
+- **Low side is recorded, not paused.** If the reading is out of band but nothing is above +2 pp, the watch appends
+  the reading, without the game inventory but with its SHA, to `<job>/receipts/parity-lowside.jsonl` through the
+  confined append. That file is disclosed in RESULTS.
+- **Failures stop.** A monitor exception, or a low-side record that cannot be written, stops with
+  `parity_monitor_failed`.
+- **P3 stays the binding check.** It is unchanged, with the coordinator's low-side pre-ruling.
+- **Tests (`test_sa4`, plus the R2-F8 fixture moved to the high side).** Each rule has one discriminating scenario:
+  - low side only: no pause, and one record per watch;
+  - high side;
+  - the strict threshold: 77.4 pauses; 77.2 and 73.4 are in band;
+  - a low cutoff with another metric above its reference but by less than 2 pp: recorded, not paused;
+  - a low cutoff with high student-default (S-200) or high overrun (K4S-120): pauses;
+  - an unevaluated arm, including `high_side()` on two arms;
+  - a monitor exception;
+  - a failed low-side record through a symlink, with the outside sentinel unchanged.
+- **Mutation check.** 10 mutants, each killed:
+  - direction flipped;
+  - no +2 pp margin;
+  - any → all;
+  - cutoff only;
+  - `evaluated` ignored;
+  - low side pauses;
+  - low side not recorded;
+  - record failure ignored;
+  - monitor exception ignored;
+  - high side not paused.
+
 ## R8-F4 (r9): every producer → consumer edge requires the producer's matching passed receipt
 
 | Producer (receipt) | Output | Consumer(s) | Check |

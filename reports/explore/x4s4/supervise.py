@@ -16,8 +16,11 @@ X4S-4 behaviour:
     minus the X4S-4 tree's own CPU, own processes keyed by (pid, starttime)); None when unreadable or non-finite; a
     baseline before the child starts and a final row at exit; reduced_concurrency.
   * Collection (x4s4/collect.py on bank C): the C7b parity watch runs INSIDE this loop every 300 s over every
-    collection phase of the arm; out of band (>= 100 block-proved games per evaluated arm) writes a PARITY-PAUSE
-    receipt, creates <job>/STOP and stops with reason parity_pause; a watch failure stops with parity_monitor_failed.
+    collection phase of the arm (>= 100 block-proved games per evaluated arm). SA-4 (COORDINATOR 08723c23), one-sided:
+    if any evaluated arm has a metric (cutoff, student-default, overrun %) MORE than 2 pp ABOVE its X4S-3 reference it
+    writes a PARITY-PAUSE receipt, creates <job>/STOP and stops with reason parity_pause; out of band on the low side
+    only, it appends the reading to <job>/receipts/parity-lowside.jsonl (disclosed) and does not pause; a watch
+    failure, including a failed low-side record, stops with parity_monitor_failed.
 Exit status: 0 only if the child exited 0 with no stop reason; 1 otherwise; 3 if it never launched.
 """
 import argparse, datetime, hashlib, json, math, os, resource, signal, socket, sys, threading, time
@@ -127,15 +130,36 @@ def final_check(job, stop_at):
     return None
 
 
+PARITY_METRICS = ('cutoff', 'student_default', 'overrun')
+
+
+def high_side(res):
+    """SA-4: the evaluated arms with any metric more than 2 pp ABOVE its X4S-3 reference (the side that pauses)."""
+    return sorted(arm for arm, r in res['arms'].items()
+                  if r['evaluated'] and any(r['pct'][k] > r['x4s3_r3a'][k] + 2.0 for k in PARITY_METRICS))
+
+
 def parity_watch(job, out):
-    """One C7b watch step for a collection phase: None if in band, else the stop reason (pause or monitor failure)."""
+    """One C7b watch step for a collection phase (SA-4, one-sided): None if in band or out of band on the low side only
+    (that reading is appended to <job>/receipts/parity-lowside.jsonl and does not pause); 'parity_pause' if any evaluated
+    arm is more than 2 pp above X4S-3; a monitor failure (including a failed low-side record) is a stop reason."""
     try:
         import qualify4
         res = qualify4.parity_once(collection_phases(job, out), PARITY_MIN_GAMES, require_both=False)
     except Exception as exc:
         return f'parity_monitor_failed: {exc!r}'
-    if res['out_of_band']:
-        qualify4.pause(job, res); return 'parity_pause'
+    if not res['out_of_band']:
+        return None
+    high = high_side(res)
+    if high:
+        qualify4.pause(job, dict(res, high_side=high)); return 'parity_pause'
+    try:
+        io.append_json_line(job+'/receipts/parity-lowside.jsonl', dict(
+            {k: v for k, v in res.items() if k != 'inventory'}, utc=utc(), phase=out,
+            reason='SA-4 (COORDINATOR 08723c23): out of band below X4S-3 only; recorded for disclosure, not paused'),
+            roles=('receipts',))
+    except Exception as exc:
+        return f'parity_monitor_failed: low-side record: {exc!r}'
     return None
 
 

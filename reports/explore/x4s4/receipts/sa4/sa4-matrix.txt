@@ -1,0 +1,10 @@
+O0 u022 rc=0 {"all_ok": true, "cases": 134, "failed": [], "python_optimize": 0, "umask": "0o22"}
+O0 u077 rc=0 {"all_ok": true, "cases": 134, "failed": [], "python_optimize": 0, "umask": "0o77"}
+O1 u022 rc=0 {"all_ok": true, "cases": 134, "failed": [], "python_optimize": 1, "umask": "0o22"}
+O1 u077 rc=0 {"all_ok": true, "cases": 134, "failed": [], "python_optimize": 1, "umask": "0o77"}
+O2 u022 rc=1 {"all_ok": false, "cases": 134, "failed": ["r9 SR-1 watchdog (real process, fake du/nvidia-smi): healthy -> heartbeat, no HALT, study processes untouched; STOP 
+O2 u077 rc=0 {"all_ok": true, "cases": 134, "failed": [], "python_optimize": 2, "umask": "0o77"}
+
+[exited with code 0]
+O2 u022 RERUN rc=0 {"all_ok": true, "cases": 134, "failed": [], "python_optimize": 2, "umask": "0o22"}
+first O2 u022 failure: r9 SR-1 watchdog sub-case no_deadline HALTed first on 'measurement overdue (> 0.8 s)' (05 load avg ~15); watchdog.py untouched by SA-4

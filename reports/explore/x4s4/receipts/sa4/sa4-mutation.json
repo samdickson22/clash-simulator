@@ -1,0 +1,95 @@
+{
+ "original_all_pass": true,
+ "mutants": {
+  "direction flipped (< instead of >)": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "low",
+    "high",
+    "helper_two_arms",
+    "just_high",
+    "low_small_above",
+    "record_failure"
+   ]
+  },
+  "no +2 pp margin": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "low_small_above"
+   ]
+  },
+  "any -> all metrics": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "high",
+    "helper_two_arms",
+    "just_high",
+    "mixed_sd",
+    "mixed_overrun"
+   ]
+  },
+  "cutoff only": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "helper_two_arms",
+    "mixed_sd",
+    "mixed_overrun"
+   ]
+  },
+  "evaluated ignored": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "helper_two_arms"
+   ]
+  },
+  "low side pauses": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "low",
+    "low_small_above",
+    "record_failure"
+   ]
+  },
+  "low side not recorded": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "low",
+    "low_small_above",
+    "record_failure"
+   ]
+  },
+  "record failure ignored": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "record_failure"
+   ]
+  },
+  "monitor exception ignored": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "monitor_failure"
+   ]
+  },
+  "high side not paused": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "high",
+    "just_high",
+    "mixed_sd",
+    "mixed_overrun"
+   ]
+  }
+ },
+ "all_applied": true,
+ "all_killed": true
+}

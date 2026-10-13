@@ -1048,16 +1048,114 @@ def test_supervise(tmp):
          'an expired deadline (--stop-at or HARD-STOP-UTC.txt); it admits a healthy phase',
          'MemAvailable' in (low_mem or '') and 'PSI' in (high_psi or '') and fine is None and 'reservation' in (reserve or '') and order
          and 'STOP' in (stop_pre or '') and 'hard stop' in (past or '') and 'hard stop' in (past_file or ''))
-    # R2-F8: the in-supervisor parity watch pauses out of band and fails closed on a broken phase
+    # R2-F8: the in-supervisor parity watch pauses out of band (SA-4: high side) and fails closed on a broken phase
     ph = job/'collect'/'S-200'/'a1'
-    for i in range(2000, 2100): write_game(ph, 'S-200', i, C, hit=70, n=100); wjson(ph/'blocks'/f'{i:04d}.json', dict(index=i, seed=C+i, order=['S-200'], games={f'sim-{i:04d}-d27-S-200.json': sha(ph/'games'/f'sim-{i:04d}-d27-S-200.json')}))
+    for i in range(2000, 2100): write_game(ph, 'S-200', i, C, hit=80, n=100); wjson(ph/'blocks'/f'{i:04d}.json', dict(index=i, seed=C+i, order=['S-200'], games={f'sim-{i:04d}-d27-S-200.json': sha(ph/'games'/f'sim-{i:04d}-d27-S-200.json')}))
     why = sup.parity_watch(str(job), str(ph))
     paused = why == 'parity_pause' and os.path.lexists(job/'STOP') and list((job/'receipts').glob('PARITY-PAUSE-*.json'))
     (job/'STOP').unlink()
     (ph/'games'/'sim-2000-d27-S-200.json').write_text('{"tampered": 1}')
     failed = (sup.parity_watch(str(job), str(ph)) or '').startswith('parity_monitor_failed')
-    case('R2-F8 probes: the in-supervisor C7b watch pauses (PARITY-PAUSE + STOP) out of band, and a failing watch is a stop reason',
+    case('R2-F8 probes: the in-supervisor C7b watch pauses (PARITY-PAUSE + STOP) out of band above X4S-3 (SA-4), and a failing watch is a stop reason',
          bool(paused) and failed, why=why)
+
+
+# ================================================================ SA-4 (COORDINATOR 08723c23): one-sided in-loop C7b watch
+def sa4_phase(job, arm, hit, sd=0, ov=0, n=1000, count=100, k=1):
+    """A collection phase of `count` block-proved games, each with n decisions: hit cutoffs, sd student-defaults, ov overruns."""
+    ph = Path(job)/'collect'/arm/f'a{k}'; first = 2000 if arm == 'S-200' else 0
+    for i in range(first, first+count):
+        g = ph/'games'/f'sim-{i:04d}-d27-{arm}.json'; g.parent.mkdir(parents=True, exist_ok=True)
+        ds = [dict(hit=j < hit, student_default=j < sd, wall_overrun=j < ov) for j in range(n)]
+        g.write_text(json.dumps(dict(metadata=dict(terminal=True, seed=C+i, arm=arm, seat=i % 2, winner=0, budget_ms=120), loss=1.0,
+                                     search_ab=dict(command_sha256='h', deadline_stats=ds))))
+        wjson(ph/'blocks'/f'{i:04d}.json', dict(index=i, seed=C+i, order=[arm], games={g.name: sha(g)}))
+    return ph
+
+
+def sa4_scenarios(sup, tmp):
+    """Each SA-4 rule as one discriminating scenario -> {name: passed}. Used by test_sa4 and by the mutation check."""
+    out = {}
+    def fresh(name):
+        return new_job(Path(tmp)/name)
+    def pauses(job): return sorted((Path(job)/'receipts').glob('PARITY-PAUSE-*.json'))
+    def lowside(job):
+        p = Path(job)/'receipts'/'parity-lowside.jsonl'
+        return [json.loads(x) for x in p.read_text().splitlines()] if p.exists() else []
+    def run(name, fn):
+        try: out[name] = bool(fn())
+        except Exception as e: out[name] = False; print('sa4 scenario', name, 'raised', repr(e), flush=True)
+    def low():          # S-200 cutoff 70.0 < 75.3 - 2: low side only -> no pause, appended record (twice = two lines)
+        job = fresh('low'); ph = sa4_phase(job, 'S-200', hit=700)
+        w1, w2 = sup.parity_watch(str(job), str(ph)), sup.parity_watch(str(job), str(ph)); recs = lowside(job)
+        return (w1 is None and w2 is None and not os.path.lexists(job/'STOP') and not pauses(job) and len(recs) == 2
+                and all(r['out_of_band'] == ['S-200'] and 'inventory' not in r and len(r['inventory_sha256']) == 64
+                        and r['phase'] == str(ph) and abs(r['arms']['S-200']['pct']['cutoff']-70.0) < 1e-9 for r in recs))
+    def high():         # S-200 cutoff 80.0 > 75.3 + 2 -> PARITY-PAUSE + STOP, no low-side record
+        job = fresh('high'); ph = sa4_phase(job, 'S-200', hit=800)
+        why = sup.parity_watch(str(job), str(ph)); p = pauses(job)
+        return (why == 'parity_pause' and os.path.lexists(job/'STOP') and len(p) == 1
+                and json.loads(p[0].read_text()).get('high_side') == ['S-200'] and not lowside(job))
+    def just_high():    # cutoff 77.4 (> 77.3) pauses; cutoff 77.2 is in band: neither pause nor record
+        job = fresh('just_high'); ph = sa4_phase(job, 'S-200', hit=774)
+        a = sup.parity_watch(str(job), str(ph)) == 'parity_pause'
+        job2 = fresh('in_band_top'); ph2 = sa4_phase(job2, 'S-200', hit=772)
+        b = sup.parity_watch(str(job2), str(ph2)) is None and not pauses(job2) and not lowside(job2) and not os.path.lexists(job2/'STOP')
+        return a and b
+    def in_band_low():  # cutoff 73.4 (>= 73.3) is in band: no record
+        job = fresh('in_band_low'); ph = sa4_phase(job, 'S-200', hit=734)
+        return sup.parity_watch(str(job), str(ph)) is None and not lowside(job) and not pauses(job)
+    def low_small_above():  # low cutoff (70.0) with overrun 0.3 % (above 0.14 but within +2 pp) -> still low side: record, no pause
+        job = fresh('low_small_above'); ph = sa4_phase(job, 'S-200', hit=700, ov=3)
+        recs = lowside(job) if sup.parity_watch(str(job), str(ph)) is None else None
+        return recs is not None and len(recs) == 1 and not pauses(job) and not os.path.lexists(job/'STOP')
+    def mixed_sd():     # S-200 cutoff low (70.0) but student-default 5.0 % > 0.0 + 2 -> pause
+        job = fresh('mixed_sd'); ph = sa4_phase(job, 'S-200', hit=700, sd=50)
+        return sup.parity_watch(str(job), str(ph)) == 'parity_pause' and os.path.lexists(job/'STOP') and not lowside(job)
+    def mixed_overrun():  # K4S-120 cutoff low (50.0), student-default in band (22.3), overrun 3.0 % > 0.16 + 2 -> pause
+        job = fresh('mixed_ov'); ph = sa4_phase(job, 'K4S-120', hit=500, sd=223, ov=30)
+        return sup.parity_watch(str(job), str(ph)) == 'parity_pause' and not lowside(job)
+    def not_evaluated():  # 99 games far above: below PARITY_MIN_GAMES -> neither pause nor record
+        job = fresh('not_eval'); ph = sa4_phase(job, 'S-200', hit=950, count=99)
+        return sup.parity_watch(str(job), str(ph)) is None and not pauses(job) and not lowside(job) and not os.path.lexists(job/'STOP')
+    def monitor_failure():  # a tampered game: the watch fails closed (stop reason), creating neither STOP nor a record
+        job = fresh('mon_fail'); ph = sa4_phase(job, 'S-200', hit=700)
+        (ph/'games'/'sim-2000-d27-S-200.json').write_text('{"tampered": 1}')
+        why = sup.parity_watch(str(job), str(ph)) or ''
+        return why.startswith('parity_monitor_failed') and not lowside(job) and not os.path.lexists(job/'STOP')
+    def record_failure():   # the low-side record cannot be written (symlink): stop reason; the outside target untouched
+        job = fresh('rec_fail'); ph = sa4_phase(job, 'S-200', hit=700)
+        outside = Path(tmp)/'outside-sa4.txt'; outside.write_text('sentinel\n')
+        os.symlink(outside, job/'receipts'/'parity-lowside.jsonl')
+        why = sup.parity_watch(str(job), str(ph)) or ''
+        return why.startswith('parity_monitor_failed') and outside.read_text() == 'sentinel\n' and not pauses(job)
+    def helper_two_arms():  # high_side() itself: an unevaluated high arm never pauses; an evaluated one does (any metric)
+        ref = dict(cutoff=75.3, student_default=0.0, overrun=0.14)
+        def arm(cut, ev, sd=0.0): return dict(evaluated=ev, pct=dict(cutoff=cut, student_default=sd, overrun=0.1), x4s3_r3a=ref)
+        return (sup.high_side(dict(arms={'A': arm(70.0, True), 'B': arm(90.0, False)})) == []
+                and sup.high_side(dict(arms={'A': arm(70.0, True), 'B': arm(90.0, True)})) == ['B']
+                and sup.high_side(dict(arms={'A': arm(70.0, True, sd=2.5)})) == ['A'])
+    for name, fn in (('low', low), ('high', high), ('helper_two_arms', helper_two_arms), ('just_high', just_high), ('in_band_low', in_band_low), ('low_small_above', low_small_above), ('mixed_sd', mixed_sd),
+                     ('mixed_overrun', mixed_overrun), ('not_evaluated', not_evaluated), ('monitor_failure', monitor_failure),
+                     ('record_failure', record_failure)):
+        run(name, fn)
+    return out
+
+
+def test_sa4(tmp):
+    sup = load_fresh('supervise_sa4', HERE/'supervise.py')
+    r = sa4_scenarios(sup, tmp)
+    case('SA-4: low side only (cutoff 70.0 vs 75.3) -> no pause, no STOP; each watch appends one record (no inventory) to '
+         'receipts/parity-lowside.jsonl', r['low'], scenarios=r)
+    case('SA-4: high side (cutoff 80.0) -> PARITY-PAUSE (high_side recorded) + STOP, no low-side record', r['high'])
+    case('SA-4: threshold is strict +2 pp: 77.4 pauses; 77.2 and 73.4 are in band (no pause, no record); a low cutoff with a metric '
+         'above its reference by less than 2 pp is low side (record, no pause)', r['just_high'] and r['in_band_low'] and r['low_small_above'])
+    case('SA-4: mixed low cutoff with a high student-default (S-200) or a high overrun (K4S-120) -> pause, no record',
+         r['mixed_sd'] and r['mixed_overrun'])
+    case('SA-4: an arm below PARITY_MIN_GAMES is not evaluated (no pause, no record); high_side() ignores unevaluated arms',
+         r['not_evaluated'] and r['helper_two_arms'])
+    case('SA-4: a monitor exception, or a failed low-side record (symlink; outside sentinel unchanged), is parity_monitor_failed',
+         r['monitor_failure'] and r['record_failure'])
 
 
 # ================================================================ contention (F7, R2-F4, R2-F7)
@@ -3053,7 +3151,7 @@ def main():
     canonical, canonical_repo = io.JOB, io.REPO
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
-        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
+        for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_sa4, test_contention,
                   test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_r10, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
