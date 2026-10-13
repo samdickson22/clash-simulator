@@ -1,0 +1,7 @@
+A1 start 2026-10-13T04:19:14Z
+S1 REFUSED: ssh P 127x03 failed rc=-9: 
+  receipt: /mpac/sdicks02/k4s-runner/run-r1/end-prep/s1-refusals/S1-REFUSAL-20261013T041916Z-3820611-a2d9b471.json
+[2026-10-13T04:19:15Z] ssh P 127x03
+__RC_A1=2 2026-10-13T04:19:16Z
+A1 failed; A1b NOT run
+__EXIT=2

@@ -1,0 +1,55 @@
+{
+ "argv": [
+  "--repository",
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+  "--commit",
+  "72426428cd48db0342b2cb6358211424ebc686d0",
+  "--dest",
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b2-copy-r1/end-sources",
+  "--outside-end-window",
+  "A1 GO ea3f7686c3293d0b9d72283e905b69c14d47e039, 2026-10-13T04:19:14Z"
+ ],
+ "dest": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b2-copy-r1/end-sources",
+ "dest_created": false,
+ "error": "ssh P 127x03 failed rc=-9: ",
+ "error_type": "Refusal",
+ "logins": [
+  {
+   "argv": [
+    "/usr/bin/ssh",
+    "-T",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ControlPath=none",
+    "-o",
+    "StrictHostKeyChecking=yes",
+    "-o",
+    "ConnectTimeout=20",
+    "-o",
+    "ServerAliveInterval=15",
+    "-o",
+    "ServerAliveCountMax=4",
+    "-o",
+    "ClearAllForwardings=yes",
+    "-o",
+    "RequestTTY=no",
+    "--",
+    "127x03",
+    "set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '\nimport errno, hashlib, os, stat, sys\nD = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC\nF = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY\ndef refuse(why, path):\n    os.write(2, (\"REFUSE|\" + why + \"|\" + path + \"\\n\").encode())\n    if mode == \"inspect\":\n        sys.stdout.write(\"REFUSE|\" + why + \"|\" + path + \"\\n\")\n        sys.stdout.flush()\n    os._exit(3)\ndef opened(path):\n    parts = path.split(\"/\")\n    if len(parts) < 3 or parts[0] or any(p in (\"\", \".\", \"..\") for p in parts[1:]):\n        refuse(\"not a normalised absolute path\", path)\n    fd = os.open(\"/\", D)\n    for i, part in enumerate(parts[1:]):\n        leaf = i == len(parts) - 2\n        try:\n            nxt = os.open(part, F if leaf else D, dir_fd=fd)\n        except OSError as e:\n            refuse(\"open of component %r failed: %s (symlink/alias, missing or not a directory)\"\n                   % (part, errno.errorcode.get(e.errno, e.errno)), path)\n        os.close(fd)\n        fd = nxt\n    st = os.fstat(fd)\n    if not stat.S_ISREG(st.st_mode):\n        refuse(\"not a regular file\", path)\n    if st.st_nlink != 1:\n        refuse(\"hard-link alias: st_nlink=%d\" % st.st_nlink, path)\n    return fd, st\ndef exactly(fd, size, path, sink):\n    left = size\n    while left:\n        chunk = os.read(fd, min(1 << 20, left))\n        if not chunk:\n            refuse(\"file shrank while read\", path)\n        sink(chunk)\n        left -= len(chunk)\n    if os.read(fd, 1) or os.fstat(fd).st_size != size:\n        refuse(\"file grew while read\", path)\nmode, items = sys.argv[1], sys.argv[2:]\nif mode not in (\"inspect\", \"stream\") or not items:\n    refuse(\"bad mode\", mode)\ngated = []\nfor item in items:\n    if mode == \"inspect\":\n        kind, n, path = item.split(\":\", 2)\n        if kind not in (\"exact\", \"max\") or not n.isdigit():\n            refuse(\"bad size rule\", path)\n        fd, st = opened(path)\n        if kind == \"exact\" and st.st_size != int(n):\n            refuse(\"size %d != committed size %s\" % (st.st_size, n), path)\n        if kind == \"max\" and not 0 < st.st_size <= int(n):\n            refuse(\"size %d outside 1..%s bytes\" % (st.st_size, n), path)\n    else:\n        size, dev, ino, path = item.split(\":\", 3)\n        if not 0 < int(size) <= 99614720:\n            refuse(\"stream size outside 1..99614720 bytes\", path)\n        fd, st = opened(path)\n        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):\n            refuse(\"size/device/inode changed since login P\", path)\n    gated.append((fd, st, path))\nfor fd, st, path in gated:\n    if mode == \"inspect\":\n        h = hashlib.sha256()\n        exactly(fd, st.st_size, path, h.update)\n        sys.stdout.write(\"OK|%d|%d|%d|%d|%s|%s\\n\" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))\n    else:\n        def sink(chunk):\n            view = memoryview(chunk)\n            while view:\n                view = view[os.write(1, view):]\n        exactly(fd, st.st_size, path, sink)\nsys.stdout.flush()\n' inspect exact:346:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/launch.json exact:1045508:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/launch.json exact:935429:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/launch.json exact:293706:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/launch.json exact:151749:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/launch.json exact:38051:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/census.jsonl"
+   ],
+   "finished_utc": "2026-10-13T04:19:16Z",
+   "host": "127x03",
+   "label": "P",
+   "returncode": -9,
+   "started_utc": "2026-10-13T04:19:15Z"
+  }
+ ],
+ "partial_files": [],
+ "schema": "clasher.k4s.end-sources-copy-refusal.v2",
+ "status": "refused",
+ "test_mode": false,
+ "utc": "2026-10-13T04:19:16Z"
+}
