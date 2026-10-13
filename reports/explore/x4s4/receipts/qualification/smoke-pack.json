@@ -1,0 +1,25 @@
+{
+  "phases": [
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200"
+  ],
+  "games": 16,
+  "captures": 1762,
+  "threads": 1,
+  "plan": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-plan.json",
+  "plan_sha256": "9fcd1659bc46df143df6b158c47b123f3d51ea000555e33c541f3e90a1a4ac93",
+  "raw": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-raw",
+  "packed": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-pack/batch-0000",
+  "passed": true,
+  "statuses": {
+    "sealed": 16
+  },
+  "rows": 1762,
+  "drops": {},
+  "attempted": 1762,
+  "packed_manifest_sha256": "1dc15961a65d91c2cd10c3907fcec245891f13b3c5489e5e7760c878917aa981",
+  "native": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/native/clasher_core.abi3.so",
+  "check": "smoke-pack",
+  "utc": "2026-10-13T05:37:29Z",
+  "label": "X4S-4 qualification, exploration, NEVER ADOPTABLE"
+}

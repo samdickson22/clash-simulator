@@ -146,3 +146,56 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   only through `watchdog.py resume` after a coordinator decision.
 - Per the runbook, this is decision point 3. Q6, Q5, Q7 and Q8 have not run. The receipts are copied, byte-identical,
   to receipts/qualification/.
+
+## 2026-10-13T05:30:28Z — PE-1 (COORDINATOR f6afe586): exception written, resumed
+
+- f6afe586 is on origin/main, and its COORDINATOR.md contains the full parity receipt SHA (10c68b04…).
+- J/data/PARITY-EXCEPTION.json was written once, O_EXCL, 0444, fsync'd: `{"parity_receipt_sha256": "10c68b04df32c436325cc966a34b243810f351f98eb1d80f0a93ed2aaaf3b972", "decision": "disclose", "coordinator_commit": "f6afe586288f0f05376d103deeada9d480c526f5"}`.
+  Its SHA-256 is afeaf7cb290eec3d3835290f1dfd15d13cf7ac6192df7d27970de98a73badb8f, and the shape matches label.py `check_parity`.
+- `watchdog.py resume` returned {"resumed": true}, rc 0. stop-periods.jsonl recorded the period start (05:27:34Z,
+  epoch 1791869254.55) and its end (epoch 1791869428.23). STOP is gone, and status is ok.
+- The PE-1 control-check procedure was prepared on 05: a fresh export of d09bdef9 (qualify4.py 05cc98fd…) runs
+  `parity_once` read-only on a copy, with io.JOB set to the copy.
+  - It was validated on a copy of the Q4 smoke-collect phases and reproduced the receipt exactly (58.67 / 19.94 / 0.10
+    and 69.75 / 0.00 / 0.22). The validation copy was then deleted.
+
+## 2026-10-13T05:38:54Z — Q6 trainer compatibility: PASS
+
+- smoke-pack (`$DET … $GRD --name q6-smoke-pack`, as written): passed.
+  - 16 games, every one `sealed`; 1,762 captures attempted, 1,762 rows, 0 drops.
+  - Packed manifest 1dc15961…. smoke-pack.json e3e63c9f12b209573a484be4f73efcafac32ad06916f63fc466d716bd3ace483.
+  - guard-q6-smoke-pack.json passed, rc 0, 6624f2eaef159a5a76be3889bc578c116f72fc25351bb87e574fcd448c8b520e.
+- trainer (`$GRDG --name q6-trainer --gpu`, as written): passed.
+  - rows = roots = 1,762, batch 64, the targets are finite and normalized.
+  - trainer.json f5252547fd5216daa158976bd1648263fcece50fe2493ce732e6ab22b02bb681.
+  - guard-q6-trainer.json passed, rc 0, d73c984de54fc7a5e38e01cb723f77013c2afe42c50609168bf5909eb56e61c6.
+- Q5 was launched at 05:38:59Z, as written.
+
+## 2026-10-13T05:39:19Z — Q5 emitter acceptance smoke: FAILED (stage stopped; coordinator asked)
+
+- `watchdog.py status` ok before the step; `$DET … $GRD --name q5-ow-acceptance --add 3 …` as written.
+- data/raw-OW-acceptance-smoke.json (0444, SHA-256 6881ba19380bfcb6f6ebddf34e54e683bc5c8b9ababec3f0acc2e84adf797cfb)
+  has passed=false. Game g=0 failed with `ValueError('invalid action')`, so g=1 was never dispatched.
+  data/raw-OW-acceptance/ is empty.
+- guard-q5-ow-acceptance.json: passed=false, "child exit 1", rc 1, no breach (SHA-256
+  095a0a95b89f8896aafff80330410cf08c8711758cf60e0ab630fb2fd962581c).
+- There is no STOP and no HALT, and the watchdog is ok with 0 study processes.
+- Root cause, from offline reading on 05 plus read-only SHA checks on 01. This is a staging version skew of the
+  same class as SA-1:
+  - The runtime's `reports/strategy_council_20260928/search-noise-s6/delay.py` is the 20cff68a version (SHA-256
+    96b0637c…), the same in base/, rt-R3a/ and rt-R3a-rep/.
+  - The O_W emitter (imitation/exit_r1/emitter.py dab61651…, staged by SA-1 from origin/main) builds its teacher with
+    `C56SearchConfig(threads=1, wait_screen8=True)` and `DelayAwarePlanner(delay_aware=True, command_delay=27)`.
+  - With W-screen8 on, `C56RolloutPlanner.candidates` (runtime = main, 4fa6940f…) appends the timed waits 2400–2402.
+  - 59454e1a ("native W-screen8 in shared S6") added two lines to `DelayAwarePlanner.score_candidates`:
+    `if self.config.wait_screen8: return super().score_candidates(...)`, which dispatches to the native W-screen8
+    scorer. The runtime file lacks them, so it runs its delayed rollouts: `candidate_root` → `CommandChannel.submit(2400)`
+    → `ValueError('invalid action')`, since actions above 2305 are rejected.
+  - delay.py (origin/main blob 2f7626dc…, SHA-256 fa3d3296…) is the only W-screen8 file that differs.
+    c56_rollout_planner.py and wait_screen8.py match origin/main, and the runtime native exports `score_wait_screen8`.
+  - Every other runtime path builds `wait_screen8=False`: x4s3/run.py, x4s/run.py, s1/run.py, e1/run.py,
+    x4s4/run_collect.py, x4s4/label.py and x4s3/qualify.py. For them the two added lines never execute.
+  - Of 602 runtime .py files on the import roots, 574 match origin/main. 15 differ: the frozen X4S-3 base, including
+    the imitation/evaluation runtime_dependencies edits and delay.py. 13 are not on main. Only delay.py lies on the
+    emitter's W-screen8 path.
+- RUNTIME-INVENTORY.json does not pin delay.py.

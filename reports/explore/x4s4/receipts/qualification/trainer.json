@@ -1,0 +1,12 @@
+{
+  "rows": 1762,
+  "roots": 1762,
+  "all_rows_roots": true,
+  "batch": 64,
+  "targets_finite_normalized": true,
+  "packed_manifest_sha256": "1dc15961a65d91c2cd10c3907fcec245891f13b3c5489e5e7760c878917aa981",
+  "passed": true,
+  "check": "trainer",
+  "utc": "2026-10-13T05:38:53Z",
+  "label": "X4S-4 qualification, exploration, NEVER ADOPTABLE"
+}

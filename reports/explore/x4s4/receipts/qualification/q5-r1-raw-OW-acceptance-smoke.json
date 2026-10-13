@@ -1,0 +1,17 @@
+{
+  "schema": "x4s4.ow-acceptance.v2",
+  "utc": "2026-10-13T05:39:19Z",
+  "bank": "qualification",
+  "base": 4503606337370496,
+  "games": [
+    {
+      "g": 0,
+      "status": "failed",
+      "error": "ValueError('invalid action')"
+    }
+  ],
+  "passed": false,
+  "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "emitter_sha256": "dab616517ea6b33ae1de6a34909526cf5409ec4ad71c180188d95d9716cfecc1",
+  "label": "X4S-4 O_W acceptance smoke (excluded), NEVER ADOPTABLE"
+}
