@@ -6150,3 +6150,23 @@ The stage run GO follows only after placement completes and C-6 is accepted.
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 5b454761f7d81874b3921ff7f5b7dc154a7eeccdd2c13ec348eaa2ce04aaea2a
+
+## 2026-10-13 22:13Z: K4S END A2 (staging on 03/04) GO
+
+**Inputs:**
+- r6 is committed at e8a8e32b9b0f9f19d89ca9613b5dbaf9431d2c86, and every production `.py` blob in both r6 directories equals the bytes the coordinator checked under PR-1 (4a20e95e). With that, the PR-1 condition is met.
+- The runner's pristine verification passed: s3s9s10-r6 1,315 in all four modes, and s5s6s7-r6 744, or 689 plus 55 skipped under `-O`.
+- RC-6 is on main (946cd3ea).
+- The A2 request is `end-staging/a2/A2-GO-REQUEST.md` (68c406de17d111c837c8cdf49281a659e82068494cec2443f2c0702182cdd788).
+
+**Wrapper review.** Sol reviewed `a2.sh` (49c22eec9918699f47e5e873fbcc5c19894c3af25bf91eb101d64bca3d24e603) before its first run, per the host-script rule: **APPROVE** (`reports/explore/k4s-confirm/reviews/SOL-REVIEW-A2-WRAPPER-r1.md`, 419290278194743a4bda53983b17dbbee3747d5bd92efdeca78fcb2230cbb069). It recomputed all 18 bundle and guard pins, plus RM and P, and the argparse matches. One Low note, the unchecked `cd /tmp`, is accepted as non-blocking: every path is absolute.
+
+**Host state** (coordinator read-only read, about 22:08Z):
+- No FSC or K4S processes run on 03 or 04. FSC stopped at about 13:20Z, more than 1 h ago.
+- 03: who 0, loadavg 0.49.
+- 04: one remote ssh user who is not ours, loadavg 0.54.
+
+**GO A2.** Run `a2.sh 127x03 <this commit>` once, to completion, then `a2.sh 127x04 <this commit>`.
+- **Conditions:** no retry. The first nonzero rc stops everything for a coordinator ruling. No concurrent staging. 03 is fully done before 04 starts.
+- **04 user-presence rule:** immediately before 04, run `who` on 04. If any non-sdicks02 user is logged in, wait and recheck every 15 min. Start 04 only once `who` shows no other user, so a staging job of about 74 GB doesn't load a host someone is using.
+- **After each host:** commit the staging records and report logins, SHAs and the probe result. The A4 preflights get their own GO request.
