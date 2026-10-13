@@ -329,3 +329,23 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
     breach HALTed first on "measurement overdue (> 0.8 s)" with 05's load average around 15. watchdog.py is not
     touched by SA-4. The rerun passed.
   - supervise.py goes from ae51e9b9… to 357972487727d2f1471682fc273dd167cc71afb25a3cb7c138ad233780665189.
+
+## 2026-10-13T06:27:49Z — SA-4 installed (COORDINATOR f0156bef); PE-1 file moved; resumed; a2 index file
+
+- `git archive d292cde3` of supervise.py went into J/staging/sa4 (357972487727d2f1…). It was copied, via a temp file
+  and mv, into base/repo, rt-R3a/repo and rt-R3a-rep/repo: PASS ×3, from ae51e9b9… to 35797248….
+- RUNTIME-INVENTORY was re-sealed. r1 (5e7a9cf2e351238dcd2afa337409de697ddbaef7d8a86ef4ac587162ff2b93f1) is kept,
+  unchanged, as receipts/RUNTIME-INVENTORY.r1.json.
+  - The new J/RUNTIME-INVENTORY.json is O_EXCL, 0444, fsync'd: 027e468afc3d2459c65536a659b0b7fe9153f3a0cf8706502e81d291745fe280.
+  - Only the supervise.py value changed, with r1's formatting kept.
+  - All 12 entries match the files in rt-R3a, rt-R3a-rep and base (repo files) and in J (fit and inputs files).
+- PE-1 file: data/PARITY-EXCEPTION.json was moved to receipts/PARITY-EXCEPTION-PE1-smoke.json, bytes unchanged
+  (afeaf7cb… before and after).
+- The staging transcript (receipts/staging-check-r2.txt) is now 122629f8….
+- `watchdog.py resume` returned {"resumed": true}, closing the PE-3 STOP period at epoch 1791872869.54. Status ok,
+  0 processes.
+- **a2 index file**: J/collect/idx-K4S-120-a2.json (0444) =
+  **ff40ae398292cb9eb66ca07ed3a1b6986b817d84668feb540e943cfff9400d76**.
+  - It is idx-K4S-120 minus a1's 147 proved indices (the proved set equals the captured set), in the same order:
+    2,103 indices, first 144, 148, 149, last 3749.
+  - The runner does not skip sibling phases, so the index file excludes a1's indices.
