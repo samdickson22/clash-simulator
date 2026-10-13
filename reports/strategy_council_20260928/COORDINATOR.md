@@ -5927,3 +5927,17 @@ Built from the coordinator-held draft caa7dab9. The only additions are placement
 C-5 is clean.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e4615dba1bebfe1831410cb41b73c3764b75c768ba3fb817a2dded98d96df581
+
+## 2026-10-13 13:01Z: K4S END r5 fix-check: U8 and U4 fixed; one U10 gap (symbolic refs); the last fix gets a coordinator diff check
+
+**Result.** Sol's fix-check (`k4s-runner/run-r1/reviews/SOL-FIXCHECK-END-INTEGRATION-r5.md`, afaed636) found two items fixed and one still open:
+- **U8 is FIXED.** The builder pins S9 r5 (4778f6f6) and the d1767f78 manifest. The manifest differs from 1fa0ebf5 only in its timestamps and the S9 SHA.
+- **U4 is pinned as ruled.**
+- **U1/U10 is NOT FIXED in one case.** In `s9_end_runtime.py:589–604/682–699`, S9 `refresh-clone` builds the ref/reflog write set from the literal destination ref only. A destination ref that is a git **symbolic ref** therefore redirects the ref and reflog writes. Sol reproduced 3 variants in which a foreign append happens before the later refusal at `:890`.
+- **The disclosed TOCTOU residual is acceptable**, given the single-operator assumption.
+
+**Ruling.** One narrow fix:
+- Refuse a symbolic or indirect fetch-destination ref before any mutation. This applies in S9 `refresh-clone`, and S11 must be verified to do the same.
+- Add Sol's 3 cases, each with explicit pre-fetch refusal and an unchanged-foreign-bytes assertion.
+
+Sol has had two rounds on this package, so under PR-1 **the coordinator checks this last diff directly.** After that, the runner sends the A2 GO request. No END host step on 03/04 before 14:30Z.
