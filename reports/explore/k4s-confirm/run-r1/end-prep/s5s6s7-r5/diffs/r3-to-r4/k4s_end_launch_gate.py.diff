@@ -1,0 +1,410 @@
+--- s5s6s7-r3/k4s_end_launch_gate.py	2026-10-12 17:23:32.687861478 -0700
++++ s5s6s7-r4/k4s_end_launch_gate.py	2026-10-12 22:52:52.031658108 -0700
+@@ -1,4 +1,16 @@
+-"""K4S END launch & prelaunch gate, 05 side (S7 candidate r3). Review required before any use. Never reads outcomes.
++"""K4S END launch & prelaunch gate, 05 side (S7 candidate r4). Review required before any use. Never reads outcomes.
++
++r4 (INTEGRATION-AUDIT-r1 U5, U6, L1, U12):
++``build-argv``: writes RUNNER/end-launch/<host>/<attempt>/launch-argv.json exclusively from verified inputs only (the
++  pinned RC-6 declaration, the S4 bundle receipts on 05, the END-JOB blob at commit X of the 05 full clone, the
++  launching host's pinned PREFLIGHT-VERIFIED identity, the gate constants incl. the A3 host python); the composed argv
++  must pass validate_argv first; prints the NUL-joined SHA-256 for ``launch --argv-sha256``.
++``prepare-preflight-receive``: creates the EMPTY RUNNER/preflight-received/<host>/<attempt>/ (0700) the preflight push
++  wrapper targets and ``launch`` requires.
++validate_argv pins the host python, the SD1 / END-evidence SHAs, the bundle's evidence path and the corpus-inventory
++SHA (every single-field change refuses). The host program (L1) also confirms the staged runtime (canonical dir,
++end_reference.py pin), the native/corpus files, and that HEAD of --repository holds the pinned END-JOB.
++BUS-DECISION / REPEAT-RULING validators are factored (check_bus_decision / check_repeat_ruling; templates/).
+ 
+ r2 (safe_input adoption; Sol PKG2 S7-F1..F3, RC-6/7/9, P2-3, C-d): every local read, hash, write and subprocess goes
+ through the pinned safe_input layer, and every input is at a FIXED role path (no free path arguments):
+@@ -40,8 +52,8 @@
+ DETACH_SHA256 = "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb"
+ WRAPPER_SHA256 = {"end": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",        # exit_push r2
+                   "preflight": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580"}  # preflight_push
+-PREFLIGHT_SHA256 = "62532c18ad1e517458131596c2fee24dd8640fbf97fcf96f60c7c87e32a4f69b"
+-REMOTE_SHA256 = "4b933bd1031e48c3536d9ff1a9d62da23c777aa74f3701d99d5d20a5cfd030c4"
++PREFLIGHT_SHA256 = "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5"
++REMOTE_SHA256 = "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d"
+ K4S_MANIFEST_SHA256 = "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357"
+ SEED_COMMITS = ("b2f9e25e1002d43cc910a4bb476716cc4cd32623", "ce042b9775f80cb495c327b14a4712730ae95c85")
+ GUARD_SIDE_FILES = ("allowlist-occurrences.jsonl", "op2-confirmations.jsonl", "ssh-family-occurrences.jsonl",
+@@ -91,6 +103,22 @@
+ CORPUS_SHA256 = "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8"            # = k4s_end_preflight
+ CORPUS_INVENTORY_SHA256 = "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"  # = k4s_end_preflight
+ BUS_PROCEED_MAX, BUS_STOP_MIN = 0.3, 0.7                    # P2-3, = k4s_end_preflight.BUS_PROCEED_MAX/BUS_STOP_MIN
++# r4 (INTEGRATION-AUDIT-r1 U5/L1): the END argv values S7 now pins itself, so every single-field change refuses.
++HOST_PYTHON = "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"   # A3: PENDING RULING
++SD1_MANIFEST_SHA256 = "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76"   # = k4s_end_preflight FROZEN_CLOSURE SD1
++END_EVIDENCE_SHA256 = "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd"  # end-evidence.json at P' 98566c03 (plan v2 A6)
++END_EVIDENCE_REL = "k4s-end-evidence/end-evidence.json"                   # S4 EVIDENCE_NAME (bundle-relative)
++END_REFERENCE_REL = "reports/explore/k4s-confirm/end_reference.py"
++END_REFERENCE_SHA256 = "5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9"  # = FROZEN_CLOSURE end_reference.py
++END_JOB_REL = "reports/explore/k4s-confirm/end/END-JOB.json"               # frozen end_evidence.END_JOB_PATH
++END_JOB_SCHEMA = "clasher.k4s.end-job.v1"
++END_GRANTS = ("end-json-exact", "end-claim-exact")
++REPO_FULL = RUNNER + "/end-prep/repo-full"                                 # S9 REPO_FULL (05 full clone; read only)
++STAGING_BUNDLES = RUNNER + "/end-staging/bundles"                         # S4 outputs on 05 (A2-GO-REQUEST)
++ASSEMBLY_SCHEMA = "clasher.k4s.end-fleet-reference-assembly.v2"           # = k4s_end_preflight.ASSEMBLY_SCHEMA
++BUNDLE_FILES = ("tiers-pins.json", "tiers-pins.sha256", "assembly-receipt.json")
++BUS_DECISION_SCHEMA = "clasher.k4s.end-bus-decision.v1"
++REPEAT_RULING_SCHEMA = "clasher.k4s.end-second-attempt-ruling.v1"
+ 
+ 
+ class GateRefusal(ValueError):
+@@ -389,6 +417,7 @@
+     python, flag, script = m_argv[i:i + 3]
+     require(os.path.isabs(python) and os.path.basename(python).startswith("python") and flag == "-B",
+             "Interpreter must be an absolute python run with exactly -B")
++    require(python == HOST_PYTHON, "Interpreter must be the declared host python " + HOST_PYTHON + " (A3)")
+     if kind == "end":
+         opts = options(m_argv[i + 3:], END_REQUIRED, ())
+         require(set(opts) == set(END_REQUIRED), "END argv must give exactly the required options")
+@@ -433,6 +462,15 @@
+             "--corpus-inventory must be the declared runtime's " + CORPUS_INVENTORY_REL)
+     require(opts["--end-evidence"].startswith(opts["--bundle"] + "/") and ".." not in opts["--end-evidence"].split("/"),
+             "--end-evidence must be inside the declared bundle")
++    require(opts["--end-evidence"] == opts["--bundle"] + "/" + END_EVIDENCE_REL,
++            "--end-evidence must be the bundle's " + END_EVIDENCE_REL + " (S4 evidence copy)")
++    require(opts["--end-evidence-sha256"] == END_EVIDENCE_SHA256,
++            "--end-evidence-sha256 is not the END evidence of record (P' end-evidence.json)")
++    require(opts["--sd1-manifest-sha256"] == SD1_MANIFEST_SHA256, "--sd1-manifest-sha256 is not the frozen SD1 pin")
++    require(kind == "end" or opts["--corpus-inventory-sha256"] == CORPUS_INVENTORY_SHA256,
++            "--corpus-inventory-sha256 is not the K4S corpus inventory")
++    job_sha = opts.get("--end-job-sha256")
++    require(job_sha is None or SHA.fullmatch(job_sha), "--end-job-sha256 must be a SHA-256")
+     for label in ("--native", "--corpus"):
+         path = opts[label]
+         require(path.startswith(d["base"] + "/") and os.path.normpath(path) == path and not any(
+@@ -442,7 +480,7 @@
+     pins.update({d["tools"] + "/safe_input.py": SAFE_INPUT_SHA256, d["tools"] + "/k4s_end_host_tool.py": HOST_TOOL_SHA256})
+     return dict(job=job, attempt=attempt, attempt_parent=parent, measurement_argv=m_argv, python_marker=marker,
+                 file_pins=pins, wrapper=d["tools"] + "/" + TOOLS[kind], options=opts, round=round_index,
+-                bundle=bundle, mode="diagnostic" if "--no-reference-work" in opts else "binding")
++                bundle=bundle, mode="diagnostic" if "--no-reference-work" in opts else "binding", end_job_sha256=job_sha)
+ 
+ 
+ # ---------------------------------------------------------------- local inputs (fixed role paths)
+@@ -564,12 +602,8 @@
+     if host == "127x04":
+         if v.get("bus_band") == "coordinator-decision":
+             rel = "127x04/BUS-DECISION-%s.json" % attempt
+-            decision = pinned_json(si, P, "launch", rel, a.bus_decision_sha256, "Bus decision")
+-            require(decision.get("schema") == "clasher.k4s.end-bus-decision.v1" and decision.get("decision") ==
+-                    "proceed" and decision.get("preflight_attempt") == attempt
+-                    and decision.get("receipt_manifest_sha256") == v.get("receipt_manifest_sha256")
+-                    and isinstance(decision.get("coordinator_ref"), str) and decision["coordinator_ref"].strip(),
+-                    "Bus decision is not a coordinator 'proceed' ruling for this 04 preflight")
++            decision = check_bus_decision(pinned_json(si, P, "launch", rel, a.bus_decision_sha256, "Bus decision"),
++                                          attempt, v.get("receipt_manifest_sha256"))
+             bus["coordinator_decision"] = dict(sha256=a.bus_decision_sha256, ref=decision["coordinator_ref"])
+         else:
+             require(v.get("bus_band") == "proceed",
+@@ -578,6 +612,26 @@
+                 loaded_seconds=duration.get("loaded_seconds_measured"), identity=identity, bundle_binding=binding)
+ 
+ 
++def check_bus_decision(decision, attempt, receipt_manifest_sha256):
++    """U12: BUS-DECISION-<preflight>.json (templates/BUS-DECISION.template.json): a coordinator 'proceed' ruling for
++    exactly this 04 preflight, bound to its sealed receipt manifest."""
++    require(isinstance(decision, dict) and decision.get("schema") == BUS_DECISION_SCHEMA
++            and decision.get("decision") == "proceed" and decision.get("preflight_attempt") == attempt
++            and decision.get("receipt_manifest_sha256") == receipt_manifest_sha256
++            and isinstance(decision.get("coordinator_ref"), str) and decision["coordinator_ref"].strip(),
++            "Bus decision is not a coordinator 'proceed' ruling for this 04 preflight")
++    return decision
++
++
++def check_repeat_ruling(ruling, host, attempt):
++    """U12: REPEAT-RULING.json (templates/REPEAT-RULING.template.json): the coordinator ruling that admits a host's
++    second claim in a round, for exactly this host and attempt."""
++    require(isinstance(ruling, dict) and ruling.get("schema") == REPEAT_RULING_SCHEMA and ruling.get("host") == host
++            and ruling.get("attempt") == attempt and isinstance(ruling.get("coordinator_ref"), str)
++            and ruling["coordinator_ref"].strip(), "Second-attempt ruling is not for this host/attempt")
++    return ruling
++
++
+ def launch_identity(v, d, host):
+     """F5(a): the identities the qualifying preflight verified (frozen_identity) are the K4S END identities, and its
+     native/corpus/corpus-inventory paths are the ones it actually used (inputs) under this host's declared roots."""
+@@ -763,11 +817,9 @@
+         allow[unit] = reason
+     ruling = None
+     if a.second_attempt_ruling_sha256:
+-        ruling = pinned_json(si, P, "launch", mine + "REPEAT-RULING.json", a.second_attempt_ruling_sha256,
+-                             "Second-attempt ruling")
+-        require(ruling.get("schema") == "clasher.k4s.end-second-attempt-ruling.v1" and ruling.get("host") == a.host
+-                and ruling.get("attempt") == a.attempt and isinstance(ruling.get("coordinator_ref"), str)
+-                and ruling["coordinator_ref"].strip(), "Second-attempt ruling is not for this host/attempt")
++        ruling = check_repeat_ruling(pinned_json(si, P, "launch", mine + "REPEAT-RULING.json",
++                                                 a.second_attempt_ruling_sha256, "Second-attempt ruling"),
++                                     a.host, a.attempt)
+     d = roots[a.host]
+     record = dict(schema=RECEIPT_SCHEMA, kind=a.kind, host=a.host, job=shape["job"], attempt=a.attempt,
+                   mode=shape["mode"], qualifying_preflight=a.kind == "preflight" and shape["mode"] == "binding",
+@@ -795,7 +847,12 @@
+                   python_marker=shape["python_marker"], postexec_seconds=POSTEXEC_SECONDS, path=HOST_PATH,
+                   bin=HOST_BIN, safe_input_sha256=SAFE_INPUT_SHA256, host_tool_sha256=HOST_TOOL_SHA256,
+                   bundle_sans_guard_sha256=((record["prerequisites"].get("preflights") or {}).get(a.host) or {}).get(
+-                      "bundle_binding", {}).get("bundle_sans_guard_sha256") if a.kind == "end" else None)
++                      "bundle_binding", {}).get("bundle_sans_guard_sha256") if a.kind == "end" else None,
++                  runtime=d["runtime"], end_reference_rel=END_REFERENCE_REL, end_reference_sha256=END_REFERENCE_SHA256,
++                  inputs=[shape["options"]["--native"], shape["options"]["--corpus"]], end_job_rel=END_JOB_REL,
++                  end_job_sha256=shape["end_job_sha256"], end_job_schema=END_JOB_SCHEMA,
++                  end_evidence_sha256=shape["options"]["--end-evidence-sha256"],
++                  k4s_manifest_sha256=K4S_MANIFEST_SHA256, end_grants=list(END_GRANTS))
+     program = compose(si, P, config)
+     record["composed_program_sha256"] = sha_bytes(program)
+     ssh = [SSH_BINARY] + list(si.SSH_OPTIONS) + [a.host, REMOTE_COMMAND]
+@@ -873,6 +930,214 @@
+     return 0 if out["closed_before_admission"] else 2
+ 
+ 
++# ---------------------------------------------------------------- r4: launch-input producers (05 only, before any session)
++
++BUNDLE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
++
++
++def ensure_dir(si, P, read_role, write_role, leaf, mode=0o755):
++    """The leaf directory under a canonical parent: created exclusively if absent, else it must already be a canonical
++    directory (no symlink, no file). Returns True if this call created it."""
++    try:
++        si.check_absent(P, read_role, leaf)
++    except si.Refusal as error:
++        require(error.code == "exists", str(error))
++        si.check_dir(P, read_role, leaf)
++        return False
++    with si.Writer(P, write_role) as writer:
++        writer.mkdir_excl(leaf, mode=mode)
++    return True
++
++
++def launch_dir_roles(si, host, attempt, out_names):
++    """Roles that make RUNNER/end-launch/<host>/<attempt>/ (each level exact) and write exactly `out_names` in it."""
++    R = si.Role
++    return [R("lb-read", LAUNCH_BASE, "read", 1, exact=(host,)), R("lb-write", LAUNCH_BASE, "write", 1, exact=(host,)),
++            R("lh-read", LAUNCH_BASE + "/" + host, "read", 1, exact=(attempt,)),
++            R("lh-write", LAUNCH_BASE + "/" + host, "write", 1, exact=(attempt,)),
++            R("la-read", LAUNCH_BASE + "/" + host + "/" + attempt, "read", 1, exact=tuple(out_names)),
++            R("la-write", LAUNCH_BASE + "/" + host + "/" + attempt, "write", 1 << 20, exact=tuple(out_names))]
++
++
++def make_launch_dir(si, P, host, attempt):
++    si.check_dir(P, "launch")                                   # RUNNER/end-launch: canonical, never created here
++    return dict(host_created=ensure_dir(si, P, "lb-read", "lb-write", host),
++                attempt_created=ensure_dir(si, P, "lh-read", "lh-write", attempt))
++
++
++def staged_bundle(si, P, name, declared, host):
++    """S4 bundle receipts on 05 (RUNNER/end-staging/bundles/<name>/): tiers-pins.json read with the RC-6 SHA, its
++    sidecar, and a production CANDIDATE assembly receipt for this host / manifest / guard job; the bundle carries the
++    END evidence of record at END_EVIDENCE_REL."""
++    manifest = si.read_json(P, "staging", name + "/tiers-pins.json", 64 << 20,
++                            expected_sha256=declared["tiers_pins_sha256"])
++    require(si.read_bytes(P, "staging", name + "/tiers-pins.sha256", max_size=4096)
++            == (declared["tiers_pins_sha256"] + "  tiers-pins.json\n").encode(), name + ": tiers-pins.sha256 differs")
++    receipt = si.read_json(P, "staging", name + "/assembly-receipt.json", 1 << 20)
++    require(receipt.get("schema") == ASSEMBLY_SCHEMA and receipt.get("production_pins") is True
++            and receipt.get("status") == "CANDIDATE" and receipt.get("manifest_sha256") == declared["tiers_pins_sha256"]
++            and receipt.get("host") == host and receipt.get("guard_job") == declared["guard_job"],
++            name + ": assembly receipt is not a production receipt for this host/manifest/guard job")
++    profile = manifest.get("reference_load_profile") or {}
++    require("k4s_s4_synthetic" not in manifest and manifest.get("profile") == "fleet-reference"
++            and profile.get("host") == host and (profile.get("guard") or {}).get("job") == declared["guard_job"]
++            and profile.get("end_evidence") == END_EVIDENCE_REL
++            and (manifest.get("files") or {}).get(END_EVIDENCE_REL) == END_EVIDENCE_SHA256,
++            name + ": bundle manifest is not the declared fleet-reference bundle with the END evidence of record")
++    return dict(name=name, tiers_pins_sha256=declared["tiers_pins_sha256"],
++                assembly_receipt_sha256=si.sha256_input(P, "staging", name + "/assembly-receipt.json")["sha256"])
++
++
++def end_job_at(si, commit):
++    """The committed END-JOB at commit X of the 05 full clone (read only, through the gated git reader): its SHA-256
++    is the --end-job-sha256 of every END argv; it must bind the END evidence of record and the K4S manifest."""
++    require(isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit), "--end-job-commit must be 40 hex")
++    P = si.Policy("127x05", [si.Role("repo", REPO_FULL, "read", 1 << 16, exact=(END_JOB_REL,), grants=END_GRANTS)])
++    data = si.git_show_file(P, "repo", si.GitRepo(work_tree=REPO_FULL), commit, END_JOB_REL, max_size=1 << 16)
++    job = si.loads_strict(data, END_JOB_REL)
++    require(isinstance(job, dict) and job.get("schema") == END_JOB_SCHEMA and job.get("study") == "PREREG-K4S"
++            and job.get("end_evidence_sha256") == END_EVIDENCE_SHA256
++            and job.get("k4s_manifest_sha256") == K4S_MANIFEST_SHA256,
++            "END-JOB at %s does not bind the END evidence of record / K4S manifest" % commit[:12])
++    return dict(commit=commit, sha256=sha_bytes(data))
++
++
++def compose_argv(kind, host, attempt, d, bundle, native, corpus, end_job_sha256=None, compare=None, hold=None,
++                 diagnostic=False):
++    """The one argv layout validate_argv accepts (END: exactly the 13 frozen options, in END_REQUIRED order)."""
++    m = ATTEMPT[kind].fullmatch(attempt)
++    parent = d["attempts"] if kind == "end" else d["preflight"]
++    job = parent + "/" + attempt
++    argv = ["nice", "-n", "10", "taskset", "-c", SUPERVISOR_CPU, "bash", d["tools"] + "/detach.sh",
++            job + "/detach.log", job + "/detach.json", "bash", d["tools"] + "/" + TOOLS[kind], job, "env"]
++    argv += ["%s=%s" % (k, v) for k, v in ENV_REQUIRED.items()] + [HOST_PYTHON, "-B"]
++    common = {"--bundle": bundle["path"], "--runtime-root": d["runtime"], "--native": native, "--corpus": corpus,
++              "--corpus-inventory": d["runtime"] + "/" + CORPUS_INVENTORY_REL,
++              "--k4s-manifest-sha256": K4S_MANIFEST_SHA256, "--sd1-manifest-sha256": SD1_MANIFEST_SHA256,
++              "--end-evidence": bundle["path"] + "/" + END_EVIDENCE_REL, "--end-evidence-sha256": END_EVIDENCE_SHA256,
++              "--repository": d["repository"], "--out": job + "/" + attempt}
++    if kind == "end":
++        argv.append(d["runtime"] + "/" + END_REFERENCE_REL)
++        values = dict(common, **{"--end-job-sha256": end_job_sha256, "--round": str(int(m.group(2)))})
++        names = END_REQUIRED
++    else:
++        argv += [d["tools"] + "/k4s_end_preflight.py", "run"]
++        values = dict(common, **{"--bundle-pins-sha256": bundle["tiers_pins_sha256"],
++                                 "--corpus-inventory-sha256": CORPUS_INVENTORY_SHA256, "--attempt-parent": d["attempts"],
++                                 "--hold-seconds": hold, "--compare-bundle": compare["path"],
++                                 "--compare-bundle-pins-sha256": compare["tiers_pins_sha256"]})
++        names = PREFLIGHT_REQUIRED + (("--end-job-sha256",) if end_job_sha256 else ())
++        if end_job_sha256:
++            values["--end-job-sha256"] = end_job_sha256
++    for name in names:
++        argv += [name, values[name]]
++    if diagnostic:
++        argv.append("--no-reference-work")
++    return argv
++
++
++def build_argv(a, layers=None):
++    """U5 (r4): write RUNNER/end-launch/<host>/<attempt>/launch-argv.json, the exact argv `launch` later validates,
++    from verified inputs only: the pinned RC-6 declaration (roots, bundle paths, tiers-pins SHAs, guard jobs), the S4
++    bundle receipts on 05, the END-JOB at the given commit of the 05 full clone (its SHA), the launching host's
++    pinned PREFLIGHT-VERIFIED identity (END: native/corpus) and the gate's own constants. The composed argv must pass
++    validate_argv before anything is written; the file is created exclusively (O_EXCL, no-follow); its NUL-joined
++    SHA-256 is printed for `launch --argv-sha256`."""
++    require(not optimized(), "The gate refuses -O")
++    si, tool = layers or load_layers()
++    require(si.hostname_checked().split(".")[0] == "127x05", "build-argv runs on 127x05")
++    m = ATTEMPT[a.kind].fullmatch(a.attempt)
++    require(m is not None and m.group(1) == a.host, "Attempt name is not a %s name for %s" % (a.kind, a.host))
++    names = [a.bundle] + ([a.compare_bundle] if a.kind == "preflight" else [])
++    require(all(isinstance(n, str) and BUNDLE_NAME.fullmatch(n) for n in names), "Bundle names required")
++    pf = parse_pf(a.preflight_verified)
++    if a.kind == "end":
++        require(a.end_job_commit and sorted(pf) == [a.host] and a.native is None and a.corpus is None
++                and a.compare_bundle is None and a.hold_seconds is None and not a.diagnostic_preflight,
++                "END: --end-job-commit and this host's --preflight-verified only (native/corpus come from it)")
++    else:
++        require(a.native and a.corpus and a.compare_bundle and a.hold_seconds is not None and not pf,
++                "preflight: --compare-bundle, --native, --corpus and --hold-seconds are required")
++    R = si.Role
++    pf_names = ["%s/%s/PREFLIGHT-VERIFIED.json" % (h, att) for h, (att, _) in pf.items()]
++    P = si.Policy("127x05", [R("launch", LAUNCH_BASE, "read", 64 << 20, exact=("ROOTS-DECLARATION.json",)),
++                             R("staging", STAGING_BUNDLES, "read", 64 << 20,
++                               exact=tuple(n + "/" + f for n in names for f in BUNDLE_FILES))]
++                  + ([R("pf-recv", RECEIVE["preflight"], "read", 64 << 20, exact=tuple(pf_names))] if pf else [])
++                  + launch_dir_roles(si, a.host, a.attempt, ("launch-argv.json",)))
++    declaration = pinned_json(si, P, "launch", "ROOTS-DECLARATION.json", a.roots_sha256, "RC-6")
++    roots = validate_roots(si, declaration)
++    d = roots[a.host]
++    declared = {}
++    for n in names:
++        require(n in d["bundles"], "Not a declared RC-6 bundle for %s: %s" % (a.host, n))
++        declared[n] = d["bundles"][n]
++    receipts = [staged_bundle(si, P, n, declared[n], a.host) for n in names]
++    job = end_job_at(si, a.end_job_commit) if a.end_job_commit else None
++    if a.kind == "end":
++        attempt_, digest = pf[a.host]
++        v = pinned_json(si, P, "pf-recv", pf_names[0], digest, "Preflight verification " + a.host)
++        require(v.get("schema") == VERIFIED_SCHEMA and v.get("host") == a.host and v.get("attempt") == attempt_,
++                "--preflight-verified is not this host's verified preflight")
++        identity = launch_identity(v, d, a.host)
++        native, corpus = identity["native"], identity["corpus"]
++        hold = None
++    else:
++        native, corpus = a.native, a.corpus
++        hold = "%d" % a.hold_seconds
++    argv = compose_argv(a.kind, a.host, a.attempt, d, declared[a.bundle], native, corpus,
++                        job["sha256"] if job else None, declared.get(a.compare_bundle), hold, a.diagnostic_preflight)
++    shape = validate_argv(si, argv, a.kind, a.host, a.attempt, roots, a.diagnostic_preflight)
++    data = (json.dumps(argv, indent=1) + "\n").encode()
++    require(si.loads_strict(data, "launch-argv.json") == argv, "launch-argv.json does not round-trip")
++    made = make_launch_dir(si, P, a.host, a.attempt)
++    with si.Writer(P, "la-write") as writer:
++        out = writer.create_excl("launch-argv.json", data)
++    result = dict(schema="clasher.k4s.end-launch-argv-build.v1", kind=a.kind, host=a.host, attempt=a.attempt,
++                  launch_argv=LAUNCH_BASE + "/%s/%s/launch-argv.json" % (a.host, a.attempt),
++                  argv_sha256=sha_bytes(argv_nul(argv)), argv_json_sha256=out["sha256"], roots_sha256=a.roots_sha256,
++                  bundles=receipts, end_job=job, preflight_verified=pf.get(a.host), mode=shape["mode"],
++                  host_python=HOST_PYTHON, created=made)
++    print(json.dumps(result, sort_keys=True))
++    return result
++
++
++def prepare_preflight_receive(a, layers=None):
++    """U6 (r4): create RUNNER/preflight-received/<host>/<attempt>/ exclusively (mode 0700; the base and host levels
++    are created if absent, else must be canonical directories), exactly where k4s_preflight_push.sh pushes
++    ("127x05:$receive_base/$host/$attempt/") and where `launch` (check_receive) and S5 verify-received read; then
++    prove it is EMPTY with the gate's own names-only listing."""
++    require(not optimized(), "The gate refuses -O")
++    si, tool = layers or load_layers()
++    require(si.hostname_checked().split(".")[0] == "127x05", "prepare-preflight-receive runs on 127x05")
++    m = ATTEMPT["preflight"].fullmatch(a.attempt)
++    require(m is not None and m.group(1) == a.host, "Attempt name is not a preflight name for " + a.host)
++    base = RECEIVE["preflight"]
++    runner, leaf = base.rsplit("/", 1)
++    R = si.Role
++    host_dir = base + "/" + a.host
++    P = si.Policy("127x05", [R("runner-read", runner, "read", 1, exact=(leaf,)),
++                             R("runner-write", runner, "write", 1, exact=(leaf,)),
++                             R("recv-read", base, "read", 1, exact=(a.host,)),
++                             R("recv-write", base, "write", 1, exact=(a.host,)),
++                             R("host-read", host_dir, "read", 1, exact=(a.attempt,)),
++                             R("host-write", host_dir, "write", 1, exact=(a.attempt,))])
++    created = dict(base=ensure_dir(si, P, "runner-read", "runner-write", leaf),
++                   host=ensure_dir(si, P, "recv-read", "recv-write", a.host))
++    si.check_absent(P, "host-read", a.attempt)                 # a used receive dir is never reused
++    with si.Writer(P, "host-write") as writer:
++        writer.mkdir_excl(a.attempt, mode=0o700)
++    root = host_dir + "/" + a.attempt
++    Q = si.Policy("127x05", [R("receive-dir", root, "read", 1, patterns=("*",))])
++    require(tool.names_only(si, Q, "receive-dir") == [], "Preflight receive directory is not empty")
++    identity = si.check_dir(Q, "receive-dir")
++    result = dict(schema="clasher.k4s.end-preflight-receive-prepared.v1", receive=root, host=a.host,
++                  attempt=a.attempt, created_empty=True, mode="%o" % (identity["mode"] & 0o7777),
++                  dev=identity["dev"], ino=identity["ino"], created=created, utc=iso())
++    print(json.dumps(result, sort_keys=True))
++    return result
++
++
+ def parser():
+     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
+                                  allow_abbrev=False)
+@@ -894,6 +1159,23 @@
+     p.add_argument("--diagnostic-preflight", action="store_true",
+                    help="allow a background-only (--no-reference-work) NON-QUALIFYING preflight")
+     p.add_argument("--dry-run", action="store_true")
++    b = sub.add_parser("build-argv", allow_abbrev=False, help="r4 U5: write launch-argv.json from verified inputs")
++    b.add_argument("--host", choices=END_HOSTS, required=True)
++    b.add_argument("--kind", choices=("end", "preflight"), required=True)
++    b.add_argument("--attempt", required=True)
++    b.add_argument("--roots-sha256", required=True, help="RC-6 ROOTS-DECLARATION.json SHA-256")
++    b.add_argument("--bundle", required=True, help="declared RC-6 bundle NAME (END: the attempt bundle)")
++    b.add_argument("--compare-bundle", help="preflight: the declared attempt bundle NAME")
++    b.add_argument("--end-job-commit", help="END (optional for preflight): END-JOB commit X in the 05 full clone")
++    b.add_argument("--preflight-verified", action="append", metavar="HOST=ATTEMPT:SHA256",
++                   help="END: this host's verified preflight (source of --native/--corpus)")
++    b.add_argument("--native", help="preflight: staged native under the declared base")
++    b.add_argument("--corpus", help="preflight: staged K4 corpus under the declared base")
++    b.add_argument("--hold-seconds", type=int, help="preflight hold (>= the host minimum)")
++    b.add_argument("--diagnostic-preflight", action="store_true", help="preflight: add --no-reference-work")
++    r = sub.add_parser("prepare-preflight-receive", allow_abbrev=False, help="r4 U6: empty preflight receive dir")
++    r.add_argument("--host", choices=END_HOSTS, required=True)
++    r.add_argument("--attempt", required=True)
+     q = sub.add_parser("admission", allow_abbrev=False)
+     q.add_argument("--host", choices=END_HOSTS, required=True)
+     q.add_argument("--kind", choices=("end", "preflight"), required=True)
+@@ -905,6 +1187,12 @@
+ 
+ def main(argv=None, layers=None):
+     a = parser().parse_args(argv)
++    if a.command == "build-argv":
++        build_argv(a, layers)
++        return 0
++    if a.command == "prepare-preflight-receive":
++        prepare_preflight_receive(a, layers)
++        return 0
+     return launch(a, layers) if a.command == "launch" else admission(a, layers)
+ 
+ 

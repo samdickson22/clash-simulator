@@ -1,0 +1,9 @@
+adopted pins current
+{"end_job": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r5/builder-proof/END-JOB.json", "end_job_sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233"}
+{"end_job_commit_scratch": "505ad5db5c50b81ae6a217a67ca18bca43d2b611", "ok": true, "self_check": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r5/builder-proof/SELF-CHECK.json", "sha256": "971e1f3ea7670cc2ae1771d881f0d3a10e763906b3000e6c8af92649baaf91d3"}
+s10_stage_host.py: FAILED
+s11_host_repository.py: FAILED
+s1b_copy_admissions.py: FAILED
+s3_guard_job.py: FAILED
+s9_end_runtime.py: FAILED
+sha256sum: WARNING: 5 computed checksums did NOT match

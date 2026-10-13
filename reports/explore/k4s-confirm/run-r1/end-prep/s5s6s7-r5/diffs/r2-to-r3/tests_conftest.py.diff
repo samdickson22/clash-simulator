@@ -1,0 +1,12 @@
+--- ../s5s6s7-r2/tests/conftest.py	2026-10-12 08:43:52.863552860 -0700
++++ tests/conftest.py	2026-10-12 17:19:18.961200456 -0700
+@@ -5,3 +5,9 @@
+ for p in (str(HERE), str(HERE.parent)):
+     if p not in sys.path:
+         sys.path.insert(0, p)
++
++
++def pytest_sessionstart(session):
++    """END-FULL-F6: fail the whole run loudly if the PATH shims lost their execute bits."""
++    import helpers
++    helpers.require_executable_shims()

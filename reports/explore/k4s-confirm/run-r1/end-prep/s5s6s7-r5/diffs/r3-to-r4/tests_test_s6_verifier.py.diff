@@ -1,0 +1,28 @@
+--- s5s6s7-r3/tests/test_s6_verifier.py	2026-10-12 15:21:07.276217854 -0700
++++ s5s6s7-r4/tests/test_s6_verifier.py	2026-10-12 22:58:05.604045413 -0700
+@@ -40,6 +40,7 @@
+         self.job = self.h.job()
+         self.root = str(recv / "end-received" / host / self.job.name)
+         recv.mkdir(exist_ok=True)
++        (tmp / "end-launch").mkdir(exist_ok=True)              # r4 (U7): prepare also writes the PREPARE-PROOF copy
+         V.prepare(self.si, self.root)
+         proof = json.loads(Path(self.root, "PREPARED.json").read_text())
+         proof["utc"] = "2026-10-12T00:00:00Z"                       # synthetic: well before the launch
+@@ -57,6 +58,7 @@
+ 
+     def write_launch(self):
+         receipt = H.write(self.launch_dir / "LAUNCH-RECEIPT.json", json.dumps(self.launch, sort_keys=True))
++        os.chmod(self.launch_dir / "PREPARE-PROOF.json", 0o644)   # test-only: the synthetic utc rewrite above
+         proof = H.write(self.launch_dir / "PREPARE-PROOF.json", json.dumps(self.proof, sort_keys=True))
+         return H.sha(receipt), H.sha(proof)
+ 
+@@ -183,7 +185,9 @@
+     base = tmp_path / "recv"
+     monkeypatch.setattr(V, "BASE", str(base))
+     monkeypatch.setattr(V, "RECEIVE_BASE", str(base / "end-received"))
++    monkeypatch.setattr(V, "LAUNCH_BASE", str(tmp_path / "end-launch"))
+     base.mkdir()
++    (tmp_path / "end-launch").mkdir()
+     root = str(base / "end-received" / "127x03" / "end-127x03-r00-l00")
+     proof = V.prepare(si, root)
+     ok(proof["created_empty"] and sorted(os.listdir(root)) == ["PREPARED.json"])

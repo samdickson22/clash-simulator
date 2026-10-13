@@ -1,0 +1,27 @@
+{
+ "adopted_utc": "2026-10-13T10:51:51Z",
+ "runtime": {
+  "manifest_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+  "manifest_git_members_sha256": "89cff3363556bed7091f8ef57f5b723aaba79f25e4b173573b3d99face8147eb",
+  "manifest_measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+  "manifest_python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "manifest_runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+  "manifest_script_sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+  "manifest_sha256": "d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02",
+  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b"
+ },
+ "runtime_ready_marker": {
+  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/RUNTIME-r5-READY",
+  "sha256": "74b5682b71ff9339023b90ff61470f6b1deb5d2568888a8a27baa4bdcdccd79c"
+ },
+ "s9": {
+  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r5/s9_end_runtime.py",
+  "sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+  "size": 78380
+ },
+ "s9_final_marker": {
+  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r5/S9-FINAL",
+  "sha256": "933d0314c7fea7225d541389b7304be1d36d6a40582a1ecc6c20b08875f1d79d"
+ },
+ "schema": "clasher.k4s.end-job-builder-adopted-pins.v1"
+}

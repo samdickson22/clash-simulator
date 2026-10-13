@@ -1,0 +1,80 @@
+--- s5s6s7-r3/k4s_end_launch_remote.py	2026-10-12 17:02:23.922007788 -0700
++++ s5s6s7-r4/k4s_end_launch_remote.py	2026-10-12 22:52:06.046428130 -0700
+@@ -1,4 +1,4 @@
+-"""K4S END launch gate, HOST side (S7 candidate r3). Python 3.8 stdlib + the shipped, SHA-pinned safe_input layer.
++"""K4S END launch gate, HOST side (S7 candidate r4). Python 3.8 stdlib + the shipped, SHA-pinned safe_input layer.
+ 
+ k4s_end_launch_gate.py (on 05) sends ONE program over ONE ``ssh -T -o ControlMaster=no -o ControlPath=none ...
+ HOST /usr/bin/python3 -I -B -`` session: a prelude that base64-decodes safe_input.py and k4s_end_host_tool.py,
+@@ -18,6 +18,10 @@
+      END: its guard-job-free digest equals the qualifying preflight's (r3 F5b); the guard job is fresh; its repo/
+      (role "guard-repo": the S3 shallow Q3 repo) and the --repository clone (role "repository": full) pass
+      k4s_end_host_tool.verify_clone; Q3 seed commits; the frozen-reader env check (r3 F3)
++ 9b  r4 (audit L1): the declared runtime is a canonical directory and its end_reference.py has the frozen pin; the
++     argv's native/corpus exist as regular single-link files (opened, never read); when the argv carries
++     --end-job-sha256, `git show HEAD:<END-JOB>` of the --repository clone has exactly that SHA-256 and binds this
++     argv's evidence and the K4S manifest
+  10  END: registry names-only (k4s_end_host_tool.registry_listing); second attempt only with a pinned ruling
+  11  C5 pre-exec gate from the rc-checked ps table (this process and its parent ni 0 / TS; argv byte-equal)
+  12  job created exclusively (si.Writer.mkdir_excl), the pinned argv run once through /usr/bin/env (no shell, the
+@@ -241,6 +245,52 @@
+         failures.append("frozen-reader: %s" % error)
+ 
+ 
++def staged_runtime_and_job(cfg, res, failures):
++    """r4 (INTEGRATION-AUDIT-r1 L1): what the frozen END would otherwise only find after the launch window opened.
++    The runtime root is a canonical directory (no symlinked ancestor) and end_reference.py has its frozen SHA; the
++    native and corpus the argv names exist as regular single-link files (descriptor gate, never read); and the END-JOB
++    the argv pins (--end-job-sha256) is the blob at HEAD of the verified --repository clone, bound to this argv's
++    END evidence and the K4S manifest of record."""
++    out = res["staged"] = {}
++    R = si.Role
++    try:
++        P = si.Policy(cfg["host"], [
++            R("runtime", cfg["runtime"], "read", 64 << 20, exact=(cfg["end_reference_rel"],)),
++            R("repository-end", cfg["repository"], "read", 1 << 16, exact=(cfg["end_job_rel"],),
++              grants=tuple(cfg["end_grants"]))] + [
++            R("input-%d" % i, os.path.dirname(p), "read", 64 << 30, exact=(os.path.basename(p),))
++            for i, p in enumerate(cfg["inputs"])])
++        out["runtime"] = si.check_dir(P, "runtime")
++        got = out["end_reference_sha256"] = si.sha256_input(P, "runtime", cfg["end_reference_rel"])["sha256"]
++        if got != cfg["end_reference_sha256"]:
++            failures.append("runtime: %s differs from its frozen pin" % cfg["end_reference_rel"])
++        for i, path in enumerate(cfg["inputs"]):
++            role = "input-%d" % i
++            si.gate_names(P, role, os.path.basename(path))
++            root = si.open_root(os.path.dirname(path))
++            try:
++                fd, _ = si.open_leaf(root, os.path.basename(path), 64 << 30, None, path)
++                os.close(fd)
++            finally:
++                os.close(root)
++        out["inputs_present"] = True
++        if cfg.get("end_job_sha256"):
++            repo = si.GitRepo(work_tree=cfg["repository"])
++            head = si.git_run(repo, ["rev-parse", "--verify", "HEAD^{commit}"], timeout=60,
++                              stdout_limit=256).stdout.decode().strip()
++            data = si.git_show_file(P, "repository-end", repo, head, cfg["end_job_rel"], max_size=1 << 16,
++                                    expected_sha256=cfg["end_job_sha256"])
++            job = si.loads_strict(data, cfg["end_job_rel"])
++            bound = (isinstance(job, dict) and job.get("schema") == cfg["end_job_schema"]
++                     and job.get("end_evidence_sha256") == cfg["end_evidence_sha256"]
++                     and job.get("k4s_manifest_sha256") == cfg["k4s_manifest_sha256"])
++            out["end_job"] = dict(head=head, sha256=cfg["end_job_sha256"], bound=bound)
++            if not bound:
++                failures.append("END-JOB at HEAD does not bind this argv's END evidence / K4S manifest")
++    except (si.Refusal, OSError, ValueError) as error:
++        failures.append("staged: %s" % error)
++
++
+ def main(cfg):
+     res = CURRENT
+     res.update(schema="clasher.k4s.end-launch-gate-host.v2", started_utc=iso(), kind=cfg["kind"],
+@@ -298,6 +348,7 @@
+         res["job_parent_ready"] = False
+         failures.append("job: %s" % error)
+     frozen_reader(cfg, P, res, failures)
++    staged_runtime_and_job(cfg, res, failures)
+     if cfg["kind"] == "end":
+         try:
+             listing = tool.registry_listing(si, cfg["host"], cfg["repository"])

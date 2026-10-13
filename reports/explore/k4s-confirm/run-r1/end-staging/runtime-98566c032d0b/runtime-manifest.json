@@ -225,7 +225,7 @@
    "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/test_l1_v4.py"
   }
  ],
- "finished_utc": "2026-10-13T09:52:22Z",
+ "finished_utc": "2026-10-13T10:50:58Z",
  "frozen_check": {
   "k4s_logic": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b.partial/runtime/reports/explore/k4s-confirm/mac/k4s_logic.py",
   "k4s_manifest_schema": "clasher.k4s.mac-manifest.v1",
@@ -48060,8 +48060,8 @@
  "runtime_pin_r2_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
  "schema": "clasher.k4s.end-runtime.v2",
- "script_sha256": "80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff",
- "started_utc": "2026-10-13T09:51:55Z",
+ "script_sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+ "started_utc": "2026-10-13T10:50:30Z",
  "status": "CANDIDATE-built",
  "support_members": [
   "reports/explore/k4s-confirm/DELTA-MANIFEST.json",

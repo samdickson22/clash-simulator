@@ -1,0 +1,167 @@
+--- k4s_end_exit_push.sh	2026-10-12 17:23:32.687861478 -0700
++++ k4s_preflight_push.sh	2026-10-12 17:23:32.687861478 -0700
+@@ -1,11 +1,10 @@
+ #!/usr/bin/env bash
+-# K4S END exit-push wrapper r3 (S6; delta of T1 0a87166f, safe_input adoption). Review required before launch.
++# K4S END PREFLIGHT wrapper r3 (S5; derived from k4s_end_exit_push.sh r2, safe_input adoption). Review required.
++# Runs k4s_end_preflight.py once in the foreground through frozen-exec (never end_reference.py), then pushes the
++# preflight directory to 05. No shell redirection writes any file: argv.nul, exit.json, TRANSFER-DONE.json and
++# PUSH-FAILED.json are created through the pinned safe_input CLI (exclusive, no-follow, never replaced). The
++# registry/attempt-parent listings are taken by the preflight itself through safe_input.
+ # Frozen detach.sh must use $job/detach.log and $job/detach.json.
+-# r2: no shell redirection writes any file. Every host file this wrapper creates goes through the pinned safe_input
+-# CLI (create-excl / publish-excl: O_CREAT|O_EXCL|O_NOFOLLOW under a canonical, symlink-free job path; a
+-# pre-existing or hard-linked name refuses, nothing is truncated or replaced). The END command runs through
+-# frozen-exec (repository clone verified, GIT_* scrubbed, P2-4 git environment). The round registry is snapshotted
+-# through safe_input and pushed whenever END exited (RC-5).
+ set -u -o pipefail
+ job=${1:?JOB}
+ shift
+@@ -16,21 +15,20 @@
+   127x04) base=/mpac/sdicks02/jobs-k4s/k4s-end-r1 ;;
+   *) exit 90 ;;
+ esac
+-receive_base=/mpac/sdicks02/k4s-runner/run-r1/end-received
++receive_base=/mpac/sdicks02/k4s-runner/run-r1/preflight-received
+ tools=$base/tools
+ host_tool=$tools/k4s_end_host_tool.py
+ host_tool_sha=22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647
+ case "$job" in */|*..*|*[[:space:]]*) exit 90 ;; esac
+ attempt=${job##*/}
+-[[ "$attempt" =~ ^end-${host}-r[0-9]{2}-l[0-9]{2}$ ]] || exit 90
++[[ "$attempt" =~ ^preflight-${host}-l[0-9]{2}$ ]] || exit 90
+ parent=${job%/*}
+-test "$parent" = "$base/attempts" || exit 90
+-# The claim records only basename(--out), so it must be unique per attempt: the attempt name.
++test "$parent" = "$base/preflight" || exit 90
+ measurement=$job/$attempt
+ repository=$base/repository
++attempts=$base/attempts
+ test -d "$job" && test ! -L "$job" || exit 90
+-for name in "$attempt" exit.json exit.json.tmp argv.nul TRANSFER-DONE.json TRANSFER-DONE.json.tmp PUSH-FAILED.json \
+-            registry registry-listing.json; do
++for name in "$attempt" exit.json exit.json.tmp argv.nul TRANSFER-DONE.json TRANSFER-DONE.json.tmp PUSH-FAILED.json; do
+   test ! -e "$job/$name" && test ! -L "$job/$name" || exit 90
+ done
+ test -f "$job/detach.log" && test ! -L "$job/detach.log" || exit 90
+@@ -239,8 +237,9 @@
+ expect_output=false
+ repository_count=0
+ expect_repository=false
+-round_count=0
+-expect_round=false
++parent_count=0
++expect_parent=false
++script_count=0
+ for arg in "$@"; do
+   if "$expect_output"; then
+     test "$arg" = "$measurement" || exit 90
+@@ -248,52 +247,45 @@
+   elif "$expect_repository"; then
+     test "$arg" = "$repository" || exit 90
+     expect_repository=false
+-  elif "$expect_round"; then
+-    [[ "$arg" =~ ^(0|[1-9][0-9]?)$ ]] || exit 90
+-    round=$arg
+-    expect_round=false
++  elif "$expect_parent"; then
++    test "$arg" = "$attempts" || exit 90
++    expect_parent=false
+   elif test "$arg" = --out; then
+     output_count=$((output_count + 1))
+     expect_output=true
+   elif test "$arg" = --repository; then
+     repository_count=$((repository_count + 1))
+     expect_repository=true
+-  elif test "$arg" = --round; then
+-    round_count=$((round_count + 1))
+-    expect_round=true
++  elif test "$arg" = --attempt-parent; then
++    parent_count=$((parent_count + 1))
++    expect_parent=true
+   else
+-    # Also refuses argparse abbreviations/=-forms of --out, --repository and --round.
+-    case "$arg" in --o*|--rep*|--ro*) exit 90 ;; esac
++    case "$arg" in --o*|--rep*|--at*) exit 90 ;; esac
++    case "$arg" in */end_reference.py|end_reference.py) exit 90 ;; esac
++    case "$arg" in "$tools/k4s_end_preflight.py") script_count=$((script_count + 1)) ;; esac
+   fi
+ done
+ test "$output_count" = 1 && ! "$expect_output" || exit 90
+ test "$repository_count" = 1 && ! "$expect_repository" || exit 90
+-test "$round_count" = 1 && ! "$expect_round" || exit 90
++test "$parent_count" = 1 && ! "$expect_parent" || exit 90
++test "$script_count" = 1 || exit 90
+ test "$#" -gt 0 || exit 90
+-[[ "$attempt" =~ ^end-${host}-r$(printf '%02d' "$round")-l[0-9]{2}$ ]] || exit 90
+ receive="$receive_base/$host/$attempt"
+-# 05 pre-creates this exact exclusive receive directory empty before launch.
+ receipt=$(printf '%s\0' "$@" | tool si -- create-excl --host "$host" --root "$job" --rel argv.nul --max-size 65536) \
+   || exit 91
+ 
+-# No trap, polling, timer or network call while the foreground END command runs.
++# No trap, polling, timer or network call while the foreground preflight runs.
+ tool frozen-exec -- "$@"
+ measurement_exit=$?
+ exit_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+ measurement_exists=false
+ test ! -d "$measurement" || measurement_exists=true
+-# RC-5: copy this host's round registry through safe_input into $job/registry/ (+ registry-listing.json).
+-snapshot=false
+-listing=$(tool registry-snapshot --host "$host" --repository "$repository" --round "$round" --job "$job") \
+-  && snapshot=true
+-registry_exists=false
+-test ! -d "$job/registry" || registry_exists=true
+-receipt=$(printf '{"utc":"%s","host":"%s","attempt":"%s","exit_code":%s,"command_exited":true,"measurement_exists":%s,"registry_exists":%s,"registry_snapshot":%s}\n' \
+-  "$exit_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" "$registry_exists" "$snapshot" \
++receipt=$(printf '{"utc":"%s","host":"%s","attempt":"%s","exit_code":%s,"command_exited":true,"measurement_exists":%s}\n' \
++  "$exit_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" \
+   | tool si -- create-excl --host "$host" --root "$job" --rel exit.json.tmp --max-size 4096) || exit 91
+ tool si -- publish-excl --host "$host" --root "$job" --rel exit.json.tmp --final exit.json || exit 91
+ 
+-# Count and total deadline bound post-exit transport; never retry END.
++# Count and total deadline bound post-exit transport; never retry the preflight.
+ deadline=$((SECONDS + 1200))
+ push_file() {
+   local source=$1 target=$2 limit=$3 tries=0 rc=0 remaining
+@@ -312,24 +304,15 @@
+   return "$rc"
+ }
+ failed=0
+-"$snapshot" || failed=1
+-# Metadata is attempted independently and before any measurement directory.
+ for name in exit.json detach.log detach.json argv.nul; do
+   push_file "$job/$name" "$receive/" 30 || failed=1
+ done
+-if "$snapshot"; then
+-  push_file "$job/registry-listing.json" "$receive/" 30 || failed=1
+-fi
+-# The registry claim directory is pushed whenever it exists, with or without a measurement (RC-5).
+-if "$registry_exists"; then
+-  push_file "$job/registry/" "$receive/registry/" 30 || failed=1
+-fi
+ if "$measurement_exists"; then
+-  push_file "$measurement/" "$receive/durable-measurement/" 900 || failed=1
++  push_file "$measurement/" "$receive/preflight/" 900 || failed=1
+ fi
+ if test "$failed" = 0; then
+   copied_utc=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+-  receipt=$(printf '{"utc":"%s","host":"%s","attempt":"%s","transfer_complete":true,"measurement_exit_code":%s,"measurement_exists":%s,"hash_verification_pending":true}\n' \
++  receipt=$(printf '{"utc":"%s","host":"%s","attempt":"%s","transfer_complete":true,"measurement_exit_code":%s,"measurement_exists":%s}\n' \
+     "$copied_utc" "$host" "$attempt" "$measurement_exit" "$measurement_exists" \
+     | tool si -- create-excl --host "$host" --root "$job" --rel TRANSFER-DONE.json.tmp --max-size 4096) || failed=1
+ fi
+@@ -341,11 +324,9 @@
+   push_file "$job/TRANSFER-DONE.json" "$receive/" 30 || failed=1
+ fi
+ if test "$failed" != 0; then
+-  # Exclusive: an existing PUSH-FAILED.json (or alias) is never overwritten; originals and partials stay.
+-  receipt=$(printf '{"transfer_complete":false,"measurement_exit_code":%s,"transport_failed":true,"registry_snapshot":%s}\n' \
+-    "$measurement_exit" "$snapshot" \
++  receipt=$(printf '{"transfer_complete":false,"measurement_exit_code":%s,"transport_failed":true}\n' \
++    "$measurement_exit" \
+     | tool si -- create-excl --host "$host" --root "$job" --rel PUSH-FAILED.json --max-size 4096) || exit 92
+-  # One final bounded metadata attempt; original evidence remains on the host.
+   timeout -k 30 30 nice -n 9 taskset -c 62 rsync -a --checksum \
+     "$job/PUSH-FAILED.json" "127x05:$receive/" || true
+   exit 92

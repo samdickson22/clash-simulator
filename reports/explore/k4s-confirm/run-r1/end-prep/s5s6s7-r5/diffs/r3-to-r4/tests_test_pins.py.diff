@@ -1,0 +1,12 @@
+--- s5s6s7-r3/tests/test_pins.py	2026-10-12 15:30:05.290815737 -0700
++++ s5s6s7-r4/tests/test_pins.py	2026-10-12 23:09:21.771657125 -0700
+@@ -27,7 +27,8 @@
+     si, tool = H.load_layers()
+     import k4s_end_launch_gate as G
+     import k4s_end_preflight as S
+-    for module in (S, G, tool):
++    import k4s_a6_builder as J
++    for module in (S, G, tool, J):
+         ok(module.SAFE_INPUT_SHA256 == digest and module.SAFE_INPUT_FINGERPRINT == si.constants_fingerprint())
+     if __debug__:
+         import k4s_end_verify_push as V

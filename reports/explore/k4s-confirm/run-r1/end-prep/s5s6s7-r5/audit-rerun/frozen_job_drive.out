@@ -1,0 +1,4 @@
+end_evidence OK ['127x03', '127x04'] 38064dcdeff9 3794d953efb2
+end_job OK commit b4098f674db8b64e5683e6e9d5595c8944e9e1ab sha e521f3a2a762
+producer_registry OK /dev/shm/s567r5/audit/eqclone/reports/explore/k4s-confirm/end/registry/round-00/127x03 []
+producer_claim OK {"attempt": 0, "end_evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd", "host": "127x03", "job_sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233", "launched_utc": 1791888797.1192348, "nonce": "2643c1bf9034049b44fa56ab15b406c1", "pid": 3367065, "receipt_directory": "end-127x03-r00-l00", "round": 0, "schema": "clasher.k4s.end-attempt-claim.v2"} 8cc0db07a428

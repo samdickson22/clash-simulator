@@ -1,0 +1,5 @@
+# RUNTIME-r5-READY: production runtime rebuilt by the runner with s3s9s10-r5 S9 and verified --frozen. Never changed after this marker.
+# columns: sha256 path
+d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02 /mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime-manifest.json
+4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60 /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r5/s9_end_runtime.py
+# written 2026-10-13T10:51:06Z

@@ -1,0 +1,39 @@
+{
+ "added": [
+  "reports/explore/k4s-confirm/DELTA-MANIFEST.json",
+  "reports/explore/k4s-confirm/SD1-MANIFEST.json",
+  "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json"
+ ],
+ "added_sha256": {
+  "reports/explore/k4s-confirm/DELTA-MANIFEST.json": "34eca2b74c0345649d350c9cc33bf5b557a4ed3cf533a72fbaf85a2f0a690056",
+  "reports/explore/k4s-confirm/SD1-MANIFEST.json": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"
+ },
+ "changed": [],
+ "commit_new": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "commit_old": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "frozen_check_support": [
+  "reports/explore/k4s-confirm/DELTA-MANIFEST.json",
+  "reports/explore/k4s-confirm/SD1-MANIFEST.json",
+  "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json"
+ ],
+ "git_members_equal_except_added": true,
+ "git_members_new": 4283,
+ "git_members_old": 4280,
+ "inventory_files_new": 4316,
+ "inventory_files_old": 4313,
+ "measurement_files_sha256_new": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+ "measurement_files_sha256_old": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+ "new_manifest_sha256": "3863cfd361d0257c4867277f5cb910e46d95ea737948ca7a0e72f9c71f927d08",
+ "old_manifest_sha256": "4dd88461caa82f09bb27bc6adad1756f62dbc8d21aa041441f8c106ef9b80e04",
+ "removed": [],
+ "runtime_files_equal": true,
+ "runtime_files_sha256_new": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+ "runtime_files_sha256_old": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+ "schema": "clasher.k4s.s3s9s10-r4.real-s9-membership-proof.v1",
+ "support_pins": {
+  "reports/explore/k4s-confirm/DELTA-MANIFEST.json": "34eca2b74c0345649d350c9cc33bf5b557a4ed3cf533a72fbaf85a2f0a690056",
+  "reports/explore/k4s-confirm/SD1-MANIFEST.json": "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"
+ }
+}
