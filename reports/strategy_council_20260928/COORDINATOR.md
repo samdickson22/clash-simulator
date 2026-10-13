@@ -5664,3 +5664,25 @@ The run GO follows C-6.
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT baaea907b1e9535aff2dd280b026959842c9a8e7369ffa9486e32d0ce4b3c842
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 7b3fc7dc8784a1aa8171d64039fa4b1846be73c41f332ac42de3d4f489c1123d
+
+## 2026-10-13 11:45Z: X4S-4 SA-5 approved (72cc3dfb)
+
+The coordinator checked `git diff d292cde3 72cc3dfb` directly. The only production file changed is `qualify4.py` (05cc98fd → dc7baf60), with a 19-line diff:
+- `--final` never calls `pause()` and refuses `--watch`.
+- `final_check_completed` gives exit 0 only when the receipt is final, has a reading for each arm, and records no error and no halt. The verdict stays in `passed`.
+- Default mode is unchanged.
+
+**Tests:**
+- Real `guard.py` → `qualify4 parity --final` → `label.make_plan` runs end to end.
+- An exact-receipt exception is accepted. No exception, or one with the wrong SHA, is refused.
+- A failed receipt in default mode is still refused, which reproduces the blocker.
+- The bless fixtures now refuse failed receipts.
+- Mutants: 9/9 killed. Matrix: 139 × 6, all passing.
+
+**The install is approved as proposed:**
+1. Install `qualify4.py` into all 3 runtime trees.
+2. Re-seal RUNTIME-INVENTORY, keeping r2 and changing only the qualify4 entry.
+3. Run `watchdog.py resume`.
+4. Run P3-r2 with `--final`.
+5. Run the 01 fetch.
+6. Post the P3-r2 receipt SHA. The coordinator then issues the exact-receipt disclose exception, under the pre-ruling if it is low side only.
