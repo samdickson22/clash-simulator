@@ -4743,3 +4743,15 @@ Next: the perception owner drafts placement r6, which carries the r3 combined re
 This is a narrow integrity-neutral fix, so the coordinator checks the diff directly under PR-1. A new GO is needed. The STOP_AT stays 07:30Z, and the stop runner already armed stays in place.
 
 **X4S-4 scripts r10** (8bde7397, runbook pin 8a1a0595) went to a Sol diff-only fix-check under SR-2.
+
+## 2026-10-13 03:06Z: 08 quiet-read r4, for the stage CPU GO r2 and placement r6
+
+The coordinator read 08 once, read-only, with `evidence/coordinator-quiet-read-r4.sh` (069ec8bb). It is the reviewed e36f8538 with only the `Q=` output directory changed. Exit code 0, no retry.
+
+Result in `l1/receipts/b08-quiet-read-r4/observation.json` (045b24b3):
+
+| Field | Value |
+|---|---|
+| who | 0 |
+| available | 1,220,832,444,416 B |
+| loadavg | 0.08 |
