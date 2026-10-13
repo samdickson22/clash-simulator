@@ -5256,3 +5256,24 @@ The amendment is a minimal change to `supervise.parity_watch` only. qualify4 and
 - **Monitor failure:** still stops.
 
 The owner prepares it offline with tests for low-side no-pause, high-side pause, failure stop, and mutants. The coordinator checks the diff directly. It is installed into J's staged runtime and used when P1 next stops, either from its first low-side pause or by plan. That pause is handled with the existing STOP/resume procedure, and its receipt gets a "disclose" exception under the P3 pre-ruling at b98fda79.
+
+## 2026-10-13 06:04Z: B epoch-1 (package r3) KNOWN_FAILURE: package defect in the qualification-evidence path; chain consumed
+
+**What happened.** Run GO 0f6b4e41 (CPU 24498e3d, placement 49b819b8) launched once. Launcher and sender both exited 1, giving KNOWN_FAILURE. The envelope `artifacts` is empty and there is no `epoch.json`, so no duration was recorded. There was no retry, inspection or repair, and all claims are kept.
+
+**Coordinator diagnosis read.** One read-only SSH to 127x08 from 05, using the same reader as `epoch01-diag-read-r1` with only the CPU SHA changed (remote.py b75fae54). It read 6 named files, opened O_RDONLY|O_NOFOLLOW, and the result is `v4-b-gap-review/epoch01-diag-read-r2/raw.json` (11b888ce). The phase stderr shows:
+
+`b08_current_graph.run → verify_epoch → b08_local_inputs.epoch_inputs:130 → NestedAudits.verify → b08_qualification.verify:96` (`for pin in plan['pins'].values(): self.bytes(pin,'evidence')`) `→ bytes:31 require(role=='reference', 'C1 restricted bytes are qualification-reference-only')` raised `IntegrityIncident`.
+
+This happens before any graph work. It is a defect in package r3's code: the nested audit asks for C1-restricted pins in the `evidence` role. It is not a host or environment problem.
+
+**Consumed and never to be reused:**
+- CPU 24498e3d, placement 49b819b8, run 0f6b4e41;
+- both post-epoch-1 variant drafts.
+
+Deployment, stage and environment (G6) for package r3 stay accepted as records. Whether a fixed package can reuse them depends on the same-package checks, which the owner must state.
+
+**Required before any new B host step:**
+1. A minimal package fix, r4, plus an **end-to-end offline run of the epoch-1 path on the real package inputs**, following memory `require-end-to-end-integration-before-host-go`. Fixture-only tests are not enough: this is the second package-r3-era failure that the offline tests didn't catch.
+2. A Sol diff review of the fix, then a coordinator combined-review receipt.
+3. A fresh chain as the same-package rules require.
