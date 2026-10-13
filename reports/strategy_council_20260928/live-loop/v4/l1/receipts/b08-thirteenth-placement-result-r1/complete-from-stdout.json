@@ -1,0 +1,18 @@
+{
+  "completed_epoch": 1791932534.2727623,
+  "go_sha256": "5b454761f7d81874b3921ff7f5b7dc154a7eeccdd2c13ec348eaa2ce04aaea2a",
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "procedure_sha256": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+  "receipts": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96.json",
+      "sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef.json",
+      "sha256": "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef"
+    }
+  ],
+  "runtime_admitted": false,
+  "schema": "clasher.v4.b08-authority-placement-complete.v1"
+}

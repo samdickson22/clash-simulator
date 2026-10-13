@@ -6204,3 +6204,17 @@ All three go back to the owner with a close-the-class instruction, and Sol r2 wi
 **The wrapper.** `a2-r7.sh` (f657084afef751f3d628c835dbfd626bad188e2eec3ec4219aa44cce308253be, 0555) differs from the Sol-approved `a2.sh` in exactly two substitutions, both checked: s3s9s10-r6 becomes s3s9s10-r7, and the record directories go from -r1 to -r2.
 
 **GO A2 (re-GO).** Run `a2-r7.sh 127x03 <this commit>` once, to completion, then `a2-r7.sh 127x04 <this commit>`, both detached. All conditions of eb73333e stand: no retry, first nonzero rc stops, no concurrent staging, and the 04 `who` rule.
+
+## 2026-10-13 23:03Z: B placement r13, C-6 ACCEPTED
+
+Placement GO 5b454761 ran once, at 23:02:09Z, with F1 r6 operator 21a10121. The remote completion was at 23:02:14Z, inside the window.
+
+**Checks:**
+- `complete-from-stdout.json` hashes to 23af7b67c3e8512e5751a0d03121f73c96de5245ccea8ed5ca20c973fe43019f.
+- The launch and operator exit codes are both 0. There was no retry, no preprobe and no extra SSH.
+- fetched_tip = revocation_tip_commit = 3d64ca6277c8d4eb9bdb78f58f4ba3302ec7a95f, an ancestor of origin/main.
+- `git log -p 3d64ca62..origin/main` contains none of the relied-on SHAs: CPU ebc133ff, placement 5b454761, review 7dca4033, deployment GO c048baf2, package a0046c1d.
+- There are 0 `REVOKED` lines.
+- `runtime_admitted=false`, and the stage has not started.
+
+**ACCEPTED.** The stage run GO follows, issued from the coordinator-held draft 6db23f8b with the completion fields filled in.
