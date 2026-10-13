@@ -78,3 +78,14 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
   - rep04-e2: supervisor PID/PGID 2820890, child PGID 2820905, workers 12, stop-at 11:30:00Z.
   - 2,000 blocks: wl-04 fully proven, so nothing reruns; the work is the ext segment 5900–7899.
   - Guards: 14 processes OK.
+- 2026-10-13T07:30:31Z: 03 epoch-1 stop __RC=0 (frozen runner 1959653, c7df6fac; runner rc=0).
+  - rep03 had finished all 2,400 blocks.
+  - STOP proof passed: 30 recorded PIDs, none alive, no extras or orphans.
+  - Mirrored to fsc-mirror-20261013/127x03 (2,400 proofs).
+- 2026-10-13T07:32:07Z: **03 resumed** (__RC=0).
+  - rep03-e2: supervisor PID/PGID 3921740, child PGID 3921772, workers 12, stop-at 11:30:00Z.
+  - 2,000 ext blocks (3900–5899); wl-03 fully proven, so nothing reruns. Guards: 14 processes OK.
+  - **Observation:** at 07:31:06Z the FSC-1 identity check found no PGID 2180934 resident on 03 (ticks none -> none),
+    and preflight found no foreign process. The pinned v4 cache service (started Sat Oct 10 04:39:11, in the 03:12Z
+    baseline, idle 7603 -> 7605 ticks at 03:12–03:15Z) seems to have exited between 03:15Z and 07:31Z.
+    FSC never signals it, and memory stayed low (PSS ≤ 3.6 GiB, MemAvailable ≥ 118 GiB). Reported to the coordinator.
