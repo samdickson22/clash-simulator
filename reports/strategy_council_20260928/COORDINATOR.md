@@ -4664,3 +4664,15 @@ The coordinator carried out BINDING-PROCEDURE steps 1–6 in `l1/prepared/b08-ge
 **Step 6: re-check.** Re-running `check_binding.py` against the bound directory still gives PASS.
 
 **Next.** C-5: a fresh deployment GO for package r3. Before it, a fresh quiet-read of 08.
+
+## 2026-10-13 02:21Z: 08 quiet-read r3, for the package-r3 deployment GO
+
+- **Script:** the reviewed quiet-read with one change, its output directory set to `b08-quiet-read-r3`. Script SHA is 17e56b2d.
+- **Run:** exit 0, one SSH session.
+- **Output:** `l1/receipts/b08-quiet-read-r3/observation.json`, SHA **e3ee45222f9c7c9b796087d2969e0e1d574eadf7f3cdd24c1dbe4f98cae0e267**.
+- **Readings (remote UTC 2026-10-13T02:20:56.399083Z):**
+  - who: 0;
+  - available on `/mpac`: 1,220,879,642,624 bytes out of 2,015,104,376,832 (60.6%);
+  - load average: 0.16 / 0.21 / 0.19;
+  - CPUs: 128.
+- **Gates:** all pass.
