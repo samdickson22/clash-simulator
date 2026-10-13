@@ -120,7 +120,7 @@ def main():
                 stop('owned_STOP'); break
             if datetime.datetime.now(datetime.timezone.utc) >= stop_at:
                 stop('hard_stop_time'); break
-            if mem < 24*2**30 or tree > 50*2**30:
+            if mem < 40*2**30 or tree > 16*2**30:  # FSC host budget (K4S condition 4); X4S2 was 24 / 50 GiB
                 stop('memory_guard'); break
             progress = dict(utc=utc(), host=host, phase=a.phase, completed_games=len(list((out/'games').glob('*.json'))),
                             complete_blocks=len(list((out/'blocks').glob('*.json'))), memavailable_GiB=mem/2**30,

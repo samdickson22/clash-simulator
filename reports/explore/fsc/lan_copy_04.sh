@@ -9,9 +9,9 @@ set -euo pipefail
 shopt -s inherit_errexit
 export LC_ALL=C
 fail() { echo "lan_copy_04 FAIL: $*" >&2; exit 1; }
-J03=/mpac/sdicks02/jobs/clasher/fsc-03-20261013; J04=/mpac/sdicks02/jobs/clasher/fsc-04-20261013
+J03=/mpac/sdicks02/jobs-fsc/fsc-03-20261013; J04=/mpac/sdicks02/jobs-fsc/fsc-04-20261013
 SSHOPT='ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ControlPersist=no -o StrictHostKeyChecking=yes -o UpdateHostKeys=no'
-STAGE="python3 -I $J04/bundle/fsc/stage.py"
+STAGE="python3 -I -B $J04/bundle/fsc/stage.py"
 if [ "$(hostname)" != 127x04 ]; then fail "not 127x04"; fi
 if [ "$(realpath -e "$J04")" != "$J04" ]; then fail "$J04 not canonical"; fi
 if [ ! -d "$J04/bundle" ] || [ -L "$J04/bundle" ]; then fail "no bundle"; fi

@@ -5,18 +5,70 @@ Exit 0 = the stated expectation holds; any other status (10 = expectation not me
   exitstatus PHASE                   supervisor-exit.json is valid and its reason is a planned end
                                      (worklist done, owned STOP, hard stop time) with an empty group and empty census
   prestop PHASE                      before a STOP test: a block has started and the run's group is live (>= 2
-                                     processes, supervisor alive); prints the JSON that stoptest consumes
+                                     processes, supervisor alive) under the memory guards; prints the JSON stoptest consumes
+  guard PHASE                        the live run's group and supervisor carry oom_score_adj 1000 and RLIMIT_AS 8 GiB
+  snapshot OUT                       baseline: every sdicks02 process (ps, exact fields) except this session's own
+  proof J                            STOP proof: every recorded PID gone (ps -p, exact PIDs), no process in a recorded
+                                     PGID/SID, and no sdicks02 process outside the launch baseline (no orphans), the
+                                     last in two samples 15 s apart
   stoptest PHASE TOUCH_EPOCH PRE_STOP_JSON
                                      live STOP test: work was live before STOP (started block, >= 2 group processes),
                                      exit reason owned_STOP within 120 s of the STOP touch, every pre-STOP PID gone,
                                      and at least one started block left without proof (an interrupted live block)
   smoke PHASE CONFIG HOST            8-seed smoke gate (no losses printed)
 """
-import json, os, sys
+import json, os, subprocess, sys, time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 STOP_BOUND_S = 120
+AS_LIMIT = 8*2**30
+PS_ENV = dict(os.environ, TZ='UTC', LC_ALL='C')
+
+
+def ps_table(all_users=False):
+    """[{pid, ppid, pgid, sid, lstart, args}] from one ps call (exact fields; no pattern matching)."""
+    sel = ['-e'] if all_users else ['-u', str(os.getuid())]
+    r = subprocess.run(['ps', *sel, '-o', 'pid=,ppid=,pgid=,sid=,lstart=,args='], capture_output=True, text=True, env=PS_ENV, timeout=60)
+    assert r.returncode == 0 and r.stdout.strip(), ('ps failed', r.returncode, r.stderr[-300:])
+    rows = []
+    for line in r.stdout.splitlines():
+        f = line.split(None, 9)
+        assert len(f) >= 9, line
+        rows.append(dict(pid=int(f[0]), ppid=int(f[1]), pgid=int(f[2]), sid=int(f[3]), lstart=' '.join(f[4:9]),
+                         args=f[9] if len(f) > 9 else ''))
+    return rows
+
+
+def own_session(rows):
+    """This session: the ancestors of this process owned by us (sshd child, shells) and everything in our SID."""
+    by = {r['pid']: r for r in rows}; me = by[os.getpid()]
+    own, cur = {r['pid'] for r in rows if r['sid'] == me['sid']}, me
+    while cur is not None:
+        own.add(cur['pid']); cur = by.get(cur['ppid'])
+    return own
+
+
+def ps_alive(pids):
+    if not pids:
+        return []
+    r = subprocess.run(['ps', '-p', ','.join(map(str, sorted(pids))), '-o', 'pid='], capture_output=True, text=True, env=PS_ENV, timeout=60)
+    assert r.returncode in (0, 1) and not r.stderr.strip(), ('ps -p failed', r.returncode, r.stderr[-300:])
+    return sorted(int(x) for x in r.stdout.split())
+
+
+def guards(pids):
+    checked, bad = 0, []
+    for pid in pids:
+        try:
+            adj = Path(f'/proc/{pid}/oom_score_adj').read_text().strip()
+            line = next(l for l in Path(f'/proc/{pid}/limits').read_text().splitlines() if l.startswith('Max address space'))
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+        soft, hard = line.split()[3:5]; checked += 1
+        if adj != '1000' or soft != str(AS_LIMIT) or hard != str(AS_LIMIT):
+            bad.append(dict(pid=pid, oom_score_adj=adj, as_soft=soft, as_hard=hard))
+    return checked, bad
 PLANNED = {None, 'owned_STOP', 'hard_stop_time'}
 
 
@@ -62,12 +114,52 @@ def main():
     phase = Path(sys.argv[2])
     if cmd == 'exitstatus':
         done(*exit_ok(phase))
+    if cmd == 'snapshot':
+        out = Path(sys.argv[2]); assert not os.path.lexists(out)
+        rows = ps_table(); own = own_session(rows)
+        base = [r for r in rows if r['pid'] not in own]
+        out.write_text(json.dumps(dict(utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), processes=base), indent=1)+'\n')
+        done(True, dict(snapshot=str(out), processes=len(base), own_session_excluded=len(own)))
+    if cmd == 'proof':
+        J = Path(sys.argv[2]); base = load(J/'logs/baseline-ps.json')['processes']
+        pids, pgids = set(), set()
+        for inst in sorted((J/'inst').iterdir()):
+            rec = load(inst/'receipt.json'); pids.add(rec['pid']); pgids.add(rec['pgid'])
+            ph = inst/inst.name
+            if (ph/'launch.json').exists():
+                la = load(ph/'launch.json')
+                pids |= {la['supervisor_pid'], la['child_pid']}; pgids |= {la['supervisor_pgid'], la['child_pgid']}
+            for m in sorted((ph/'blocks').glob('*.started')) if (ph/'blocks').is_dir() else []:
+                pids.add(load(m)['pid'])
+            for m in sorted((ph/'blocks').glob('*.json')) if (ph/'blocks').is_dir() else []:
+                b = load(m); pids.add(b['worker_pid']); pgids.add(b['worker_pgid'])
+        alive = ps_alive(pids)
+        keys = {(r['pid'], r['lstart']) for r in base}
+        samples = []
+        for n in range(2):
+            if n: time.sleep(15)
+            rows = ps_table(); own = own_session(rows); everyone = ps_table(all_users=True)
+            in_groups = sorted({r['pid'] for r in everyone if r['pgid'] in pgids or r['sid'] in pgids})
+            extra = {(r['pid'], r['lstart']): r for r in rows if r['pid'] not in own and (r['pid'], r['lstart']) not in keys}
+            samples.append((in_groups, extra))
+        persistent = [samples[1][1][k] for k in sorted(set(samples[0][1]) & set(samples[1][1]))]
+        orphans = [r for r in persistent if r['ppid'] == 1]
+        ok = not alive and not samples[0][0] and not samples[1][0] and not persistent
+        done(ok, dict(recorded_pids=len(pids), recorded_pgids=sorted(pgids), recorded_alive=alive,
+                      in_recorded_groups=sorted(set(samples[0][0]) | set(samples[1][0])),
+                      extra_sdicks02_processes=persistent, orphans_under_init=orphans, baseline_processes=len(base)))
+    if cmd == 'guard':
+        launch = load(phase/'launch.json')
+        group, listed = census(launch['child_pgid'], {launch['supervisor_pid']})
+        checked, bad = guards(group+listed)
+        done(checked >= 2 and not bad, dict(phase=str(phase), checked=checked, bad=bad))
     if cmd == 'prestop':
         launch = load(phase/'launch.json')
         group, listed = census(launch['child_pgid'], {launch['supervisor_pid']})
         started = sorted(p.name for p in (phase/'blocks').glob('*.started')) if (phase/'blocks').is_dir() else []
-        done(len(group) >= 2 and listed == [launch['supervisor_pid']] and bool(started),
-             dict(phase=str(phase), group=group, supervisor=listed, started=started))
+        checked, bad = guards(group+listed)
+        done(len(group) >= 2 and listed == [launch['supervisor_pid']] and bool(started) and checked >= 2 and not bad,
+             dict(phase=str(phase), group=group, supervisor=listed, started=started, guards_checked=checked, guards_bad=bad))
     if cmd == 'stoptest':
         touch, pre = float(sys.argv[3]), load(sys.argv[4])
         ok, info = exit_ok(phase)

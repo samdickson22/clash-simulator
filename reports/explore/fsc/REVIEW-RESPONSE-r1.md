@@ -29,3 +29,15 @@ other missing file fails the smoke.
 - Each host gets one launch session, at most one progress session per 2 h (enforced by session.sh), and one stop session.
 - 04's launch session also makes exactly two non-persistent read-only pulls from 03 (a dry run and the real copy).
 - Each stop session makes one push to the 05 mirror.
+
+## K4S runner's binding conditions (added to r2; see PLAN.md "K4S runner's binding conditions")
+
+| # | Condition | r2 implementation | Test |
+|---|---|---|---|
+| K1 | STOP proof: empty process table | `hostcheck.py proof J` in the stop session checks: recorded PIDs (receipts, launch records, `.started` markers, block proofs) are absent by `ps -p <exact PIDs>`; no process of any user is in a recorded PGID/SID; and the sdicks02 table minus this session has nothing outside the launch baseline (`hostcheck snapshot`, PID + start time), using two samples 15 s apart. It also reports orphans under init. Outputs are mirrored, then the session fails if the proof failed. | `test_guard_and_proof` |
+| K2 | `ControlMaster=no ControlPath=none` on every hop | Outer SSH (session.sh), 04→03 pulls and host→05 mirror: all use the same explicit option set. | shellcheck; code |
+| K3 | Prefix `/mpac/sdicks02/jobs-fsc/fsc-0N-20261013/` | Bootstrap, host_session, stage, LAN copy and the 04 checkpoint paths (`harness/plan-04.json`). Nothing under `/mpac/sdicks02/jobs/clasher/` on 03/04. | `test_wrappers_fail_closed` (bootstrap writes nothing off-host) |
+| K4 | Memory caps | `choom -n 1000` + `prlimit --as=8 GiB` on every supervisor tree, verified live by `guard`/`prestop`. Supervisor budget: MemAvailable < 40 GiB or owned PSS > 16 GiB stops the run. Preflight needs ≥ 64 GiB. | `test_guard_and_proof`, `test_hostcheck_stop_paths` |
+| K5 | Nothing persistent | No cron, timers, units, reboots or restarts. `stop_runner.sh` is a one-shot setsid process on 05 only. | code |
+| K6 | Source read-only; check /mpac first | rsync sender, lstat and scandir only. Free space is checked before any write (bootstrap) and against the copy size (`stage.py need`) before copying. | code |
+| K7 | STOP verified by 05:00Z | STOP_AT is required and ≤ 04:50Z (session.sh, bootstrap, host_session, stop_runner). Top-ups are dropped. | `test_wrappers_fail_closed` |

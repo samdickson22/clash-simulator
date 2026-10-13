@@ -232,13 +232,13 @@
     "confidence": 0.95
   },
   "policy": {
-    "checkpoint": "/mpac/sdicks02/jobs/clasher/fsc-04-20261013/inputs/main02.pt",
+    "checkpoint": "/mpac/sdicks02/jobs-fsc/fsc-04-20261013/inputs/main02.pt",
     "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
     "temperature": 1,
     "seed_offset": 271828
   },
   "student": {
-    "checkpoint": "/mpac/sdicks02/jobs/clasher/fsc-04-20261013/inputs/R3a.pt",
+    "checkpoint": "/mpac/sdicks02/jobs-fsc/fsc-04-20261013/inputs/R3a.pt",
     "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
     "threshold": 0.5005528330802917,
     "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",

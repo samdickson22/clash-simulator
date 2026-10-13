@@ -3,6 +3,7 @@
   allowlist BUNDLE OUT          files-from list for the repo copy: exactly the S1 runtime pin's files (no protected path)
   shadowscan BASE_REPO BUNDLE   03 only, read-only: refuse if the source repo holds an unpinned top-level module/package in
                                 a runtime import directory that shares a name with a pinned or overlay module
+  need BASE BUNDLE              03 only, read-only (lstat): bytes the allowlisted copy will write (pin files, native, inputs)
   nolinks DIR                   refuse if DIR is not canonical or anything under it is a symlink or non-regular file
   install J BUNDLE HOST MANIFEST_SHA256
                                 install the overlay into J/repo/reports/explore/{x4s2,fsc}, refusing symlinks and any
@@ -26,7 +27,7 @@ X4S2 = {'anchor_x.py': 'cf528473278d4fbf9ffd8aecfd4a3350fe1dbb6bbeb0d441870c9f88
         'plan-ext.json': '31c5cd4a12faf9f5f46f2bf5cee02d89971d0fe9a76ff97c8b48333c3a5b816f',
         'reduce.py': '0abcf12733224550962bd6307c278c2a0649fa4afe01ef04f0b7a1a1b8d78097',
         'leftover.py': 'bb68fe43d2919b504ce57782dba76f165525cfbeb60c37c932340c595833e382'}
-JOBS = {'127x03': '/mpac/sdicks02/jobs/clasher/fsc-03-20261013', '127x04': '/mpac/sdicks02/jobs/clasher/fsc-04-20261013'}
+JOBS = {'127x03': '/mpac/sdicks02/jobs-fsc/fsc-03-20261013', '127x04': '/mpac/sdicks02/jobs-fsc/fsc-04-20261013'}
 PROTECTED = ('t1', 'corpus', 'x4s', 'x4s2', 'fsc', 'k4s-confirm', 'jobs-k4s', 'perception')
 # Runtime import directories (runtime.sh PYTHONPATH and run.py's sys.path inserts), relative to the repo.
 IMPORT_DIRS = ('', 'src', 'engine-rs', 'reports/explore/x4s2', 'reports/explore/s1', 'student-source', 'reports/explore/e1',
@@ -188,6 +189,13 @@ def main():
         result = dict(allowlist=str(out), files=len(pin_files(sys.argv[2])))
     elif cmd == 'shadowscan':
         result = shadowscan(sys.argv[2], sys.argv[3])
+    elif cmd == 'need':
+        base = Path(sys.argv[2]); assert os.path.realpath(base) == str(base)
+        total = sum(os.lstat(base/'repo'/f).st_size for f in pin_files(sys.argv[3]))
+        for root, dirs, files in os.walk(base/'native', followlinks=False):
+            total += sum(os.lstat(os.path.join(root, f)).st_size for f in files)
+        total += sum(os.lstat(base/'inputs'/n).st_size for n in INPUTS)
+        result = dict(need_bytes=total, need_GiB=-(-total//2**30))
     elif cmd == 'nolinks':
         result = dict(nolinks=sys.argv[2], entries=nolinks(sys.argv[2]))
     elif cmd == 'install':

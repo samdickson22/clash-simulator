@@ -42,9 +42,9 @@ def test_prefix():
     kept, info = run([(list(range(5)), [5]), (list(range(6, 9)), [9])])
     assert sorted(i for _, i in kept) == [0, 1, 2, 3, 4, 6, 7, 8] and info['yield_retired_skipped'] == [5]
     assert info['first_incomplete_index'] == 9
-    # 03 order continues from 2399 to the top-up segment at 3900.
-    kept, info = run([(list(range(2400))+[3900, 3901], [])])
-    assert len(kept) == 2402 and info['first_incomplete_index'] == 3902
+    # 03's worklist is the primary segment only (top-ups dropped for the 05:00Z hard STOP).
+    kept, info = run([(list(range(2400)), [])])
+    assert len(kept) == 2400 and info['first_incomplete_index'] is None
 
 
 def test_outcome():
@@ -104,8 +104,9 @@ def _hc(*args):
 
 def test_hostcheck_stop_paths():
     d = _tmp(); phase = d/'stoptest-03'; (phase/'blocks').mkdir(parents=True)
-    group = subprocess.Popen(['bash', '-c', 'sleep 120 & sleep 120; wait'], start_new_session=True)
-    sup = subprocess.Popen(['sleep', '120'], start_new_session=True)
+    G = ['choom', '-n', '1000', '--', 'prlimit', '--as=8589934592']
+    group = subprocess.Popen(G+['bash', '-c', 'sleep 120 & sleep 120; wait'], start_new_session=True)
+    sup = subprocess.Popen(G+['sleep', '120'], start_new_session=True)
     time.sleep(0.5)
     (phase/'launch.json').write_text(json.dumps(dict(child_pgid=group.pid, supervisor_pid=sup.pid)))
     assert _hc('prestop', phase).returncode == 10  # no started block yet
@@ -133,12 +134,45 @@ def test_wrappers_fail_closed():
     def last(r): return [l for l in r.stdout.splitlines() if l.startswith('__RC=')][-1]
     r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x09'], capture_output=True, text=True)
     assert r.returncode == 2 and last(r) == '__RC=2'
-    r = subprocess.run(['bash', str(HERE/'remote_bootstrap.sh'), '127x03', '0'*64, '-'], capture_output=True, text=True, stdin=subprocess.DEVNULL)
-    assert r.returncode != 0 and last(r) == f'__RC={r.returncode}' and not os.path.exists('/mpac/sdicks02/jobs/clasher/fsc-03-20261013')
+    r = subprocess.run(['bash', str(HERE/'remote_bootstrap.sh'), '127x03', '0'*64, '2026-10-13T04:50:00Z'], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    assert r.returncode != 0 and last(r) == f'__RC={r.returncode}' and not os.path.exists('/mpac/sdicks02/jobs-fsc')
+    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64, '2026-10-13T05:30:00Z'], capture_output=True, text=True)
+    assert r.returncode == 2 and last(r) == '__RC=2'  # STOP_AT after the 04:50Z deadline
+    r = subprocess.run(['bash', str(HERE/'session.sh'), 'launch', '127x03', '0'*40, '0'*64], capture_output=True, text=True)
+    assert r.returncode == 2  # launch without STOP_AT
+    r = subprocess.run(['bash', str(HERE/'stop_runner.sh'), '2026-10-13T05:30:00Z', '0'*40, '0'*64, '127x03'], capture_output=True, text=True)
+    assert r.returncode == 2
     r = subprocess.run(['bash', str(HERE/'host_session.sh'), 'launch', '127x03'], capture_output=True, text=True)
     assert r.returncode == 90 and last(r) == '__RC=90'
     r = subprocess.run(['bash', str(HERE/'lan_copy_04.sh')], capture_output=True, text=True)
     assert r.returncode == 1 and 'not 127x04' in r.stderr
+
+
+def test_guard_and_proof():
+    plain = subprocess.Popen(['bash', '-c', 'sleep 60 & sleep 60; wait'], start_new_session=True)
+    guarded = subprocess.Popen(['choom', '-n', '1000', '--', 'prlimit', '--as=8589934592', 'bash', '-c', 'sleep 60 & sleep 60; wait'],
+                               start_new_session=True)
+    time.sleep(0.5)
+    d = _tmp()
+    for name, proc in (('plain', plain), ('guarded', guarded)):
+        ph = d/name; ph.mkdir()
+        (ph/'launch.json').write_text(json.dumps(dict(child_pgid=proc.pid, supervisor_pid=proc.pid)))
+    assert _hc('guard', d/'plain').returncode == 10
+    r = _hc('guard', d/'guarded'); assert r.returncode == 0, r.stdout
+    # STOP proof: a recorded PID/PGID still alive fails; once gone, the recorded checks are clean.
+    J = d/'J'; (J/'logs').mkdir(parents=True); inst = J/'inst/rep03'; (inst/'rep03/blocks').mkdir(parents=True)
+    assert _hc('snapshot', J/'logs/baseline-ps.json').returncode == 0
+    (inst/'receipt.json').write_text(json.dumps(dict(pid=guarded.pid, pgid=guarded.pid)))
+    (inst/'rep03/launch.json').write_text(json.dumps(dict(supervisor_pid=guarded.pid, supervisor_pgid=guarded.pid,
+                                                           child_pid=plain.pid, child_pgid=plain.pid)))
+    r = _hc('proof', J); out = json.loads(r.stdout)
+    assert r.returncode == 10 and guarded.pid in out['recorded_alive'] and out['in_recorded_groups']
+    for proc in (plain, guarded):
+        os.killpg(proc.pid, 9); proc.wait()
+    time.sleep(0.5)
+    out = json.loads(_hc('proof', J).stdout)
+    assert not out['recorded_alive'] and not out['in_recorded_groups']  # extras on 05 itself are not asserted here
+    shutil.rmtree(d)
 
 
 if __name__ == '__main__':

@@ -20,3 +20,6 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
 - 2026-10-13T01:48Z: Sol r1 on the host scripts: REQUEST_CHANGES (eaf0e6be). The coordinator authorized the 05 mirror (F6) and accepted the
   supervisor's own-PGID signals (F8). r2 fixes F1–F5, F7, F9 and F10 (REVIEW-RESPONSE-r1.md); offline tests and shellcheck
   pass. Committed for Sol r2. No host contact.
+- 2026-10-13T01:54Z: the K4S runner cleared U3/U4 with seven binding conditions; all are built into r2 (prefix moved to
+  /mpac/sdicks02/jobs-fsc, top-ups dropped, STOP_AT ≤ 04:50Z, memory guards, STOP proof, stop_runner on 05). Tests and
+  shellcheck pass. Committing the final r2 for Sol (PR-1 last round). No host contact.

@@ -9,12 +9,12 @@ from pathlib import Path
 
 PIN = '1501be97f'
 HERE = Path(__file__).resolve().parent
-J04 = '/mpac/sdicks02/jobs/clasher/fsc-04-20261013'
+J04 = '/mpac/sdicks02/jobs-fsc/fsc-04-20261013'  # off /mpac/sdicks02/jobs/clasher (perception storage on 04)
 # Index segments of the one fresh X bank (dispatch order per host; see PLAN.md).
 S1 = range(0, 2400)       # 03: K4-200 / K4S-200 (primary)
 S2 = range(2400, 3900)    # 04: K4-180 / K4S-180
-S3 = range(3900, 5900)    # 03 top-up: K4-200 / K4S-200
-S4 = range(5900, 7900)    # 04 top-up: K4-200 / K4S-200
+S3 = range(3900, 5900)    # reserved (top-up dropped: hard STOP 05:00Z, K4S condition 7)
+S4 = range(5900, 7900)    # reserved (top-up dropped)
 COUNT = 7900
 A200, A180 = ['K4-200', 'K4S-200'], ['K4-180', 'K4S-180']
 
@@ -60,7 +60,7 @@ def main():
                           slots='12 disjoint 5-physical-core slots; 10 if a console user is present', nice=19,
                           scheduler='SCHED_OTHER', cuda='disabled', max_threads_per_host=60)
     cfg['phases'] = {'03': dict(arms=A200, indices=f'{S1.start}..{S1.stop-1} then {S3.start}..{S3.stop-1}'),
-                     '04': dict(arms=dict(first=A180, then=A200), indices=f'{S2.start}..{S2.stop-1} (180) then {S4.start}..{S4.stop-1} (200)')}
+                     '04': dict(arms=dict(first=A180, then=A200), indices=f'{S2.start}..{S2.stop-1} (180) then {S4.start}..{S4.stop-1} (200)')}  # r1 wording kept so the audited configs stay byte-identical; the worklists are authoritative
     cfg['ordering'] = dict(blocks='both arms of a seed consecutively on one 5-core slot, rotated by index (X4S2 run.py)',
                            interrupted='a block with a .started marker and no proof is retired; see READOUT.md for the prefix rule')
     cfg['decision_rules'] = dict(primary='see READOUT.md (pre-declared)')
@@ -82,8 +82,8 @@ def main():
     p04['policy']['checkpoint'] = f'{J04}/inputs/main02.pt'
     p04['student']['checkpoint'] = f'{J04}/inputs/R3a.pt'
     dump(out/'harness/plan-04.json', p04)
-    dump(out/'wl-03.json', wl('reporting', [(S1, A200), (S3, A200)]), None)
-    dump(out/'wl-04.json', wl('reporting', [(S2, A180), (S4, A200)]), None)
+    dump(out/'wl-03.json', wl('reporting', [(S1, A200)]), None)
+    dump(out/'wl-04.json', wl('reporting', [(S2, A180)]), None)
     dump(out/'wl-smoke-03.json', wl('smoke', [(range(8), A200)]), None)
     dump(out/'wl-smoke-04.json', wl('smoke', [(range(4), A180), (range(4, 8), A200)]), None)
     dump(out/'wl-stoptest-03.json', wl('qualification', [(range(8), A200)]), None)

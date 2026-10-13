@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # FSC session wrapper, run on 127x05 only (exploration, NEVER ADOPTABLE). The only way FSC contacts 03/04.
-#   session.sh launch   HOST COMMIT MANIFEST_SHA256 [STOP_AT]
+#   session.sh launch   HOST COMMIT MANIFEST_SHA256 STOP_AT   (STOP_AT <= DEADLINE; the coordinator's STOP time)
 #   session.sh progress HOST COMMIT MANIFEST_SHA256      (refused within 2 h of the last session to HOST)
 #   session.sh stop     HOST COMMIT MANIFEST_SHA256
 # One SSH session per call: non-persistent (no ControlMaster/ControlPersist), batch mode, provisioned host keys only.
@@ -13,15 +13,20 @@ export LC_ALL=C
 trap 'echo "__RC=$?"' EXIT
 die() { echo "session FAIL: $2" >&2; exit "$1"; }
 cmd=${1:-}; host=${2:-}; commit=${3:-}; msha=${4:-}; stop_at=${5:--}
+DEADLINE=2026-10-13T04:50:00Z   # latest supervisor stop-at; STOP verified by 05:00Z (K4S condition 7)
 [[ $cmd == launch || $cmd == progress || $cmd == stop ]] || die 2 "command"
 [[ $host == 127x03 || $host == 127x04 ]] || die 2 "host"
 [[ $commit =~ ^[0-9a-f]{40}$ ]] || die 2 "full 40-hex commit"
 [[ $msha =~ ^[0-9a-f]{64}$ ]] || die 2 "manifest sha"
 [[ $stop_at == - || $stop_at =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]] || die 2 "STOP_AT"
+if [ "$cmd" = launch ]; then
+  [ "$stop_at" != - ] || die 2 "launch needs STOP_AT"
+  if [[ $stop_at > $DEADLINE ]]; then die 2 "STOP_AT after $DEADLINE"; fi
+fi
 [ "$(hostname)" = 127x05 ] || die 2 "run on 127x05"
 REPO=/mpac/sdicks02/repos/clasher
 P=/mpac/sdicks02/jobs/clasher; S=$P/fsc-sessions; MIRROR=$P/fsc-mirror-20261013
-J=$P/fsc-${host#127x}-20261013
+J=/mpac/sdicks02/jobs-fsc/fsc-${host#127x}-20261013
 SSH=(ssh -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ControlPersist=no -o StrictHostKeyChecking=yes
      -o UpdateHostKeys=no)
 [ "$(realpath -e "$P")" = "$P" ] || die 3 "$P not canonical"

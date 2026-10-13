@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# FSC launch bootstrap, run on the host by session.sh as `bash -c <this file> _ HOST MANIFEST_SHA256 STOP_AT|-`, with the
-# bundle tar on stdin. Creates the fresh prefix atomically under the canonical jobs dir, extracts the bundle, refuses any
+# FSC launch bootstrap, run on the host by session.sh as `bash -c <this file> _ HOST MANIFEST_SHA256 STOP_AT`, with the
+# bundle tar on stdin. Checks /mpac free space, then creates the fresh prefix atomically under /mpac/sdicks02/jobs-fsc (never
+# /mpac/sdicks02/jobs/clasher, which is perception storage on 04), extracts the bundle, refuses any
 # non-regular entry, verifies MANIFEST.json against the expected hash and every file against MANIFEST.json, then execs
 # host_session.sh (which prints its own __RC). Every failure before that prints __RC=<nonzero>.
 set -euo pipefail
@@ -10,9 +11,15 @@ trap 'echo "__RC=$?"' EXIT
 host=${1:-}; msha=${2:-}; stop_at=${3:-}
 [[ $host == 127x03 || $host == 127x04 ]]
 [[ $msha =~ ^[0-9a-f]{64}$ ]]
-[[ $stop_at == - || $stop_at =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]]
+[[ $stop_at =~ ^20[0-9]{2}-[01][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z$ ]]
 [ "$(hostname)" = "$host" ]
-P=/mpac/sdicks02/jobs/clasher; J=$P/fsc-${host#127x}-20261013
+free=$(df -BG --output=avail /mpac | tail -n 1 | tr -dc 0-9)
+[[ $free =~ ^[0-9]+$ ]]
+[ "$free" -ge 20 ]
+R=/mpac/sdicks02; P=$R/jobs-fsc; J=$P/fsc-${host#127x}-20261013
+[ "$(realpath -e "$R")" = "$R" ]
+if [ ! -e "$P" ] && [ ! -L "$P" ]; then mkdir "$P"; fi
+[ ! -L "$P" ]
 [ "$(realpath -e "$P")" = "$P" ]
 mkdir "$J"
 mkdir "$J/bundle"
@@ -32,6 +39,5 @@ for rel, h in m["files"].items():
     assert hashlib.sha256(open(rel, "rb").read()).hexdigest() == h, rel
 '
 cd /
-args=(launch "$host" "$msha"); [ "$stop_at" = - ] || args+=("$stop_at")
 trap - EXIT
-exec nice -n 19 bash "$J/bundle/fsc/host_session.sh" "${args[@]}"
+exec nice -n 19 bash "$J/bundle/fsc/host_session.sh" launch "$host" "$msha" "$stop_at"
