@@ -6270,3 +6270,30 @@ The compact receipt is `l1/receipts/b08-r5-stage-result-r1.json` (c32edb043c7b91
 **Quiet-read r13.** Run with `evidence/coordinator-quiet-read-r13.sh` (1af74836), which is r12 with only the `Q=` directory changed. Exit code 0, no retry. Observation c10a1a8baf2c9c40747829e6c76dfd3e3860c425e24d264378e6a0febbec2996: who 0, available 1,214,292,750,336 B, loadavg 0.36.
 
 **Next:** the owner fills the environment chain (`b08-r5-environment-chain-drafts-r1`, manifest aa3ce14e) in a fresh version. This commit is the stage acceptance and quiet-read r13 is the observation. Hash order is CPU, then placement, then run. The coordinator adds the between-phase attestations at issuance.
+
+## 2026-10-13 23:17Z: K4S END A4 preflight GO (03, then 04)
+
+**Request.** `end-staging/a4/A4-GO-REQUEST.md` (f5e72b7336db030ffe6d1cf996399cc94a87100c49c562449010a0fdb69e96be, at 437f2e7f). It uses the Sol-approved s5s6s7-r6 tools (2b4b6f21) and RC-6 872ced50. Both S7 dry runs returned rc 0 with no SSH.
+
+| Host | Argv | Hold |
+|---|---|---|
+| 03 | 12404bca | 600 s |
+| 04 | 24f9c0ba | 1,200 s |
+
+**GO A4.** For 127x03:
+1. One S7 `launch --kind preflight` session, as written in the request.
+2. S5 runs non-claiming and never calls `measure()`.
+3. Then `verify-received` on 05.
+
+127x04 follows the same way, only after 03's PREFLIGHT-VERIFIED result is reported to the coordinator.
+
+**Conditions:**
+- **No SSH to a host while it is being preflighted, from any thread.** That includes the coordinator. Every other thread stays off 03/04 for the duration.
+- **Any S7 refusal (exit 3) stops for a coordinator ruling, with no retry.** This covers stale stamps, a timer inside 2 h, `who` non-empty, and an extra sshd.
+- **Preflights consume no END attempt.**
+- **Gate after both:**
+  - both must pass;
+  - 04's loaded cumulative bus at most about 0.3 % proceeds;
+  - between that and 0.7 % goes to a coordinator BUS-DECISION;
+  - 0.7 % or more is a STOP and a re-ruling before any claim.
+- **Disclosure:** outcome-blind only.
