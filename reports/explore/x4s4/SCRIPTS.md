@@ -13,7 +13,8 @@ The design is frozen at PLAN r3 87809ae0. The history of the script set:
 | r7 | 81d78349 | REQUEST_CHANGES (4cd3331f: R7-F1–F3). R6-F1 and R6-F3 resolved; R6-F2 partial. |
 | r8 | 86fa3c5d | REQUEST_CHANGES (bc8255f0: R8-F1–F8). Coordinator ruling SR-1: an external watchdog becomes the host-safety backstop. |
 | r9 | a701d610 | REQUEST_CHANGES (1b68d637: R9-F1–F8). Ruling SR-2: fix all eight, then one diff-only fix-check. |
-| r10 | this commit | — |
+| r10 | 8bde7397 | Fix-check (e5b71aae): six FIXED; R9-F3 and R9-F7 NOT FIXED. Ruling SR-3: one narrow closure each. |
+| r10.1 | this commit | — (the coordinator verifies the diff) |
 
 r10 fixes Sol r9's eight findings, each with a named test, and changes nothing else (ruling SR-2). The sections
 below it (r9, r8 and earlier) are kept as the record. The QUALIFY-RUNBOOK is updated in a separate commit that pins
@@ -24,34 +25,72 @@ processes against temporary jobs (fake du/nvidia-smi/PSI) and disposable git rep
 
 ## Index
 
-| File | r10 vs r9 (a701d610) | SHA-256 |
+| File | r10.1 vs r10 (8bde7397) | SHA-256 |
 |---|---|---|
-| `watchdog.py` | changed (R9-F1–F5, F8) | `4a4b9619c1bab958142af63150db96be2c459a21e652e2ac750244f645da1962` |
-| `packw.py` | new (R9-F7: input-authenticating pack wrapper) | `9302cd878e93ccba15d2d7ee7e0ce7f8477a577247e3f9e3ac178216b9d87e53` |
-| `guard.py` | changed (R9-F3: exact readout invocation) | `0c9bbd20cc0a08f617c1bc8902f040ea24d5ab78cee5f508ffb33c4c35c7893c` |
-| `x4s4io.py` | unchanged since r9 | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
-| `studytree.py` | changed (R9-F3/F5/F6/F7: readout binding, durable STOP history, H-1 margin, ready_student, raw_evidence) | `39b0c1513ef3e8ce491991894db7d137fff2ed831dae4083e4bda2d47fd9e5c5` |
-| `driver.py` | changed (R9-F6: fit/checkpoint/calibration H-1) | `98ab91c4e5383285afb8607a40e3e81b543a96d6cc40b6467a8ff009971e43bf` |
-| `supervise.py` | unchanged since r9 | `ae51e9b937385d7f66fb1f465a5775d792c536f80c0de0592103b97bcc9a7f42` |
-| `label.py` | changed (R9-F6/F7: evidence-bound resume, game_manifests) | `72cf7e2a6affebcfaf7269ce2d1851a2705a32b468344cb0e579e7910e96b7b1` |
-| `qualify4.py` | unchanged since r9 | `05cc98fdcac7f22d429ce497630e39e68185672b4dfe9053944e1822256225fd` |
-| `write_report.py` | changed (R9-F6: READY H-1) | `0ab155b24203a16eefac6cf53c2a30f624779321505e2d9a48a60ecb22df8ed9` |
-| `test_x4s4_offline.py` | changed (r10 rows R9-F1–F8, fixtures) | `94e736855efeeafe8e790be3c8bf8a3b4c4360f71face1b04868d4423c3bc62f` |
-| `collect_w.py` | changed (R9-F6/F7: evidence-bound resume) | `0cb4167206e27ef97c4352d68aa5ac2e2ba9a46ddfd25e36393442c8015324f8` |
-| `verify_onpolicy.py` | unchanged since r9 | `80351c3ba544aae1f37ff2a83aa7aff7d71127964a8e1b46ae49b972cbfd4c7a` |
-| `diagnose.py` | changed (R9-F6: READY H-1) | `a199d3ed64c87117a5c5746ca9145ca1eb12f1bcb24f65a3f38c5ae13fb4ed01` |
-| `reduce.py` | changed (R9-F6: READY H-1) | `db3530934869ef962f1e040092e9953d94501a915de3e9d436e49dbb655b0ba4` |
-| `audit_seeds.py` | unchanged since r9 | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
-| `run_fit.sh` | unchanged since r9 | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
-| `seed-sources.json` | unchanged since r9 (v2, 29 sealed declarations) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
-| `run_collect.py` | unchanged since r9 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
-| `collect.py` | unchanged since r9 | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
-| `contention.py` | unchanged since r9 | `994d0391a4e577a9f1a8bc7f9b90401bae0d9cb31ea6bd3ee8fcf5dbded99a8c` |
+| `watchdog.py` | changed (SR-3: R9-F3 readout root) | `aad317db1e68068ea73c1764818fcef7e494cc8c4777a97bd54e3815c4d1300d` |
+| `packw.py` | changed (SR-3: R9-F7 inventory) | `664b9dc085f055f3bf64e39ca62cd1b5466d3e57ddc92e55479b737d5f156b8b` |
+| `guard.py` | unchanged since r10 | `0c9bbd20cc0a08f617c1bc8902f040ea24d5ab78cee5f508ffb33c4c35c7893c` |
+| `x4s4io.py` | unchanged since r10 | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
+| `studytree.py` | unchanged since r10 | `39b0c1513ef3e8ce491991894db7d137fff2ed831dae4083e4bda2d47fd9e5c5` |
+| `driver.py` | unchanged since r10 | `98ab91c4e5383285afb8607a40e3e81b543a96d6cc40b6467a8ff009971e43bf` |
+| `supervise.py` | unchanged since r10 | `ae51e9b937385d7f66fb1f465a5775d792c536f80c0de0592103b97bcc9a7f42` |
+| `label.py` | unchanged since r10 | `72cf7e2a6affebcfaf7269ce2d1851a2705a32b468344cb0e579e7910e96b7b1` |
+| `qualify4.py` | unchanged since r10 | `05cc98fdcac7f22d429ce497630e39e68185672b4dfe9053944e1822256225fd` |
+| `write_report.py` | unchanged since r10 | `0ab155b24203a16eefac6cf53c2a30f624779321505e2d9a48a60ecb22df8ed9` |
+| `test_x4s4_offline.py` | changed (SR-3 tests) | `545ea9d60ee2db6b6084e40213e957311eb59a371c224abeddb9778fbd6a7006` |
+| `collect_w.py` | unchanged since r10 | `0cb4167206e27ef97c4352d68aa5ac2e2ba9a46ddfd25e36393442c8015324f8` |
+| `verify_onpolicy.py` | unchanged since r10 | `80351c3ba544aae1f37ff2a83aa7aff7d71127964a8e1b46ae49b972cbfd4c7a` |
+| `diagnose.py` | unchanged since r10 | `a199d3ed64c87117a5c5746ca9145ca1eb12f1bcb24f65a3f38c5ae13fb4ed01` |
+| `reduce.py` | unchanged since r10 | `db3530934869ef962f1e040092e9953d94501a915de3e9d436e49dbb655b0ba4` |
+| `audit_seeds.py` | unchanged since r10 | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
+| `run_fit.sh` | unchanged since r10 | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
+| `seed-sources.json` | unchanged since r10 (v2, 29 sealed declarations) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
+| `run_collect.py` | unchanged since r10 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
+| `collect.py` | unchanged since r10 | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
+| `contention.py` | unchanged since r10 | `994d0391a4e577a9f1a8bc7f9b90401bae0d9cb31ea6bd3ee8fcf5dbded99a8c` |
 | `plan.json`, `plan-collect.json`, `plan-qual-capture.json`, `idx-*.json` | unchanged | `13840cc6…`, `57f6a142…`, `45052215…`, `4587c7ed…` |
 
 Every owned Python file compiles under `/usr/bin/python3` 3.8.10 and under 3.12. `bash -n run_fit.sh` passes. The
 evaluation runner and the reused files are byte-identical. No frozen consumer changed: `label_game`'s write role
 became a module global (default `'data'`, unchanged behaviour) so that smoke-pack can confine its labels to `<job>/qual`.
+
+## SR-3 closures (r10.1): exactly two changes
+
+1. **R9-F3, the readout root (`watchdog.py`).** A readout root must meet all of these:
+   - its environment has `X4S4_READOUT=1`;
+   - `argv[0]` is a Python executable;
+   - the interpreter's script position, after plain flags only (`-B -u -E -s -I -O -OO`, never `-c` or `-m`), is
+     exactly `GUARD_PATH`, the reviewed `guard.py` in the watchdog's own directory;
+   - guard.py's options before `--` include `--readout`;
+   - the wrapped command after `--` passes guard.py's own allowlist `studytree.readout_invocation`. That function is
+     pure and imported from the same directory, not copied; it is the watchdog's only non-stdlib import.
+
+   Tests:
+   - eight argv unit cases (real, `-c`, `-m`, another guard path, no `--readout`, `--readout` only after `--`, a
+     non-allowlisted wrapped command, a non-Python executable);
+   - the former `-c` positive fixture is now a negative and HALTs after the deadline (in both the r9 and r10 tests);
+   - the positive is a **real guard.py Runner** subtree. It uses a temp copy of watchdog/guard/studytree whose
+     `x4s4io.JOB` names the temp job and is otherwise byte-identical. The Runner admits, spawns its allowlisted child,
+     and that subtree keeps running after deadline + grace, while a bare READOUT-marked process HALTs and the HALT then
+     stops the Runner tree.
+
+   The ancestry and cleaned-environment checks are unchanged.
+2. **R9-F7, the pack inventory (`packw.py`).** Any `game-*` entry that is not a real directory is **refused**, not
+   skipped. `check_inventory` then asserts, immediately before the frozen packer is called, that the authenticated set
+   equals exactly the packer's `game-*/manifest.json` glob under each root.
+
+   Tests:
+   - an authenticated real game plus a `game-*` symlink to a sealed game with no evidence is refused, and the packer
+     (spied) never runs;
+   - a game appearing after authentication is refused by the inventory check;
+   - equal inventories pass.
+
+**Mutants (r10.1)**, observed:
+- reverting the readout predicate to "a guard.py token anywhere" makes both inert-token negatives fail;
+- making `check_inventory` a no-op makes the inventory-change negative fail;
+- skipping non-real `game-*` entries again makes the symlink negative fail.
+
+The originals were restored and their hashes verified before the matrix.
 
 ## Sol r9 findings → r10 fixes → tests (SR-2)
 
@@ -589,9 +628,9 @@ Receipts (umask 077 runs):
 
 | Mode | Receipt | SHA-256 |
 |---|---|---|
-| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `2025156c943952ff028b366387cbc409b0c06ed60944be805559506379c82bf6` |
-| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `652c81bbe261db8c5582b037086f5ff453528ea14ee0cc2e8565e3ab7fad81ec` |
-| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `778ece41c0db77f23a89bb331f17552e1a147eda781aeb7997b58e74bb57206f` |
+| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `091ca62add843832d0c8492e2151605ac293a981907472f32b1a5c589ba927ec` |
+| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `ab7033615f639c55389d5950fe27b54cd439fafbd32bf68482ec28aa005ec834` |
+| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `26cd76db667aa840f9bcb6b18db2c65ceddb9b41feb456cc8144ee2bac6a471a` |
 
 **Not covered offline** (qualification §6 on 01, after a GO):
 - the native §6 checks;

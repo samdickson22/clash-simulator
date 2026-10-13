@@ -15,8 +15,10 @@ Study tree (R9-F3). A process is a member if any of these holds:
   * its parent is a member and it started no earlier than that parent, so helpers launched with an exact
     environment (io.run_checked) and processes that exec with a cleaned environment are members;
   * it was seen as a member before with the same start time. Membership is retained by (pid, starttime).
-The deadline exemption covers only the subtree of a readout runner: a member whose command line is guard.py with
---readout and whose environment carries X4S4_READOUT=1. guard.py accepts --readout only for the exact invocation
+The deadline exemption covers only the subtree of a readout runner (SR-3): a member that is a Python process
+executing exactly the guard.py beside this file, in --readout mode, whose wrapped command passes guard.py's own
+allowlist (studytree.readout_invocation, imported from this directory: a pure function), with X4S4_READOUT=1 in its
+environment. guard.py accepts --readout only for the exact invocation
 `/bin/bash <repo>/reports/explore/x4s3/runtime.sh <repo>/reports/explore/x4s4/{contention,reduce,write_report}.py`.
 
 Schedule (R9-F1/F2). A worker thread performs measurement cycles, each a complete set of checks, starting every CYCLE
@@ -51,6 +53,11 @@ import argparse, calendar, json, math, os, queue, secrets, signal, stat as stat_
 MARK, READOUT = 'X4S4_STUDY', 'X4S4_READOUT'
 DEFAULT_JOB = '/mpac/sdicks02/jobs/clasher/x4s4-onpolicy'
 NF = os.O_NOFOLLOW | os.O_CLOEXEC
+HERE = os.path.dirname(os.path.abspath(__file__))
+GUARD_PATH = os.path.join(HERE, 'guard.py')         # SR-3: the reviewed guard.py beside this watchdog, exactly
+PY_FLAGS = ('-B', '-u', '-E', '-s', '-I', '-O', '-OO')
+sys.path.insert(0, HERE)
+from studytree import readout_invocation           # noqa: E402  SR-3: guard.py's own allowlist (pure), not a copy
 
 
 def utc(t=None): return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(t))
@@ -188,13 +195,26 @@ class Tree:
         return {p: procs[p][0] for p in members}, roots & members
 
     def readout_root(self, pid):
-        a = pargs(pid)
-        return (READOUT+'=1').encode() in penv(pid) and any(x.endswith('/reports/explore/x4s4/guard.py') for x in a) and '--readout' in a
+        """SR-3: a readout root is a Python process executing exactly GUARD_PATH (the interpreter's script position:
+        only plain flags before it, so never -c/-m), in --readout mode, whose wrapped command (after '--') passes
+        guard.py's allowlist (studytree.readout_invocation), with X4S4_READOUT=1 in its environment."""
+        return (READOUT+'=1').encode() in penv(pid) and readout_argv(pargs(pid))
 
     def still(self, pid, start):
         """Re-verification immediately before a signal: same pid and start time, and a member."""
         s = pstat(pid)
         return bool(s and s[0] == start and s[1] != 'Z' and ((pid, start) in self.known or self.mark in penv(pid)))
+
+
+def readout_argv(a):
+    if not a or not os.path.basename(a[0]).startswith('python'): return False
+    i = 1
+    while i < len(a) and a[i] in PY_FLAGS: i += 1
+    if i >= len(a) or a[i] != GUARD_PATH: return False
+    rest = a[i+1:]
+    if '--' not in rest: return False
+    k = rest.index('--')
+    return '--readout' in rest[:k] and readout_invocation(rest[k+1:]) is not None
 
 
 def run_bounded(argv, timeout):

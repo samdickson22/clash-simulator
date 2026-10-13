@@ -2507,10 +2507,9 @@ def test_r9(tmp):
         res['breaches'] = {k: v[0] for k, v in cases.items()}
         # the E8 readout may run after the deadline: readout-marked processes alone never HALT; a production one does
         j, ctl, du, gpu = wjob('w-ro', '2000-01-01T00:00:00Z'); ro = marker(j, readout=True); w = wd_run(j, du, gpu)
-        time.sleep(3.0); ro_ok = not (j/'HALT.json').exists() and ro.poll() is None
-        prod = marker(j); ro_mixed = until(lambda: (j/'HALT.json').exists()) and 'after the deadline' in halt_doc(j).get('reason', '')
-        cleanup(w, ro, prod)
-        res['deadline_readout_only'] = ro_ok and ro_mixed
+        fake_halts = until(lambda: (j/'HALT.json').exists()) and 'after the deadline' in halt_doc(j).get('reason', '')
+        cleanup(w, ro)
+        res['deadline_inert_readout_tokens_halt'] = fake_halts       # SR-3: a real Runner subtree is the positive (test_r10)
         # ---- after HALT: watchdog_ok refuses, and every entry point refuses new work
         j = Path(tmp)/'w-dl'/'job'
         res['after_halt_watchdog_ok'] = ST.watchdog_ok(str(j)) is not None
@@ -2540,7 +2539,8 @@ def test_r9(tmp):
                   {n.module.split('.')[0] for n in ast.walk(tree_) if isinstance(n, ast.ImportFrom)}
         kt = src[src.index('def kill_tree'):src.index('# ---------------------------------------------------------------- status / control')]
         res['static'] = imports <= {'argparse', 'calendar', 'json', 'math', 'os', 'queue', 'secrets', 'signal', 'stat', 'subprocess', 'sys',
-                                    'threading', 'time'} \
+                                    'threading', 'time', 'studytree'} \
+            and [ast.unparse(n) for n in ast.walk(tree_) if isinstance(n, ast.ImportFrom)] == ['from studytree import readout_invocation'] \
             and 'killpg' not in src and 'os.kill(-' not in src and kt.index('self.tree.still(pid, start)') < kt.index('os.kill(pid, sig)') \
             and not any(w in c.value for c in ast.walk(tree_) if isinstance(c, ast.Constant) and isinstance(c.value, str) and len(c.value) < 80
                         for w in ('/games', '/analysis', '/data', '/collect', '/qual', '/fits', 'results', 'outcome', 'loss'))
@@ -2756,26 +2756,60 @@ def test_r10(tmp):
     r1 = rec_for(res_, good); exempt_ok = ST.guarded_output(str(jj), str(res_)) is not None; r1.unlink()
     r2 = rec_for(res_, ['/bin/sh', '-c', 'x', str(rr/'reports/explore/x4s4/reduce.py')]); inert_no = ST.guarded_output(str(jj), str(res_)) is None; r2.unlink()
     r3 = rec_for(other, good); undeclared_no = ST.guarded_output(str(jj), str(other)) is None; r3.unlink()
-    # watchdog: after the deadline only a readout runner's subtree is exempt; a bare X4S4_READOUT=1 process is not
+    # SR-3: the readout root is a real guard.py Runner. Unit: the argv predicate. Negative: Python -c with inert guard.py /
+    # --readout tokens HALTs after the deadline. Positive: a real Runner subtree (a test copy of watchdog/guard/studytree
+    # whose x4s4io.JOB names the temp job; byte-identical otherwise) keeps running after the deadline.
+    GP, gcmd = W.GUARD_PATH, ['/bin/bash', '/r/reports/explore/x4s3/runtime.sh', '/r/reports/explore/x4s4/reduce.py']
+    argv_cases = dict(
+        real=W.readout_argv([PYX, '-B', GP, '--name', 'x', '--readout', '--', *gcmd]) is True,
+        dash_c=W.readout_argv([PYX, '-c', 'x', GP, '--readout', '--', *gcmd]) is False,
+        dash_m=W.readout_argv([PYX, '-m', 'guard', '--readout', '--', *gcmd]) is False,
+        other_guard_path=W.readout_argv([PYX, '-B', '/x/reports/explore/x4s4/guard.py', '--readout', '--', *gcmd]) is False,
+        no_readout_flag=W.readout_argv([PYX, '-B', GP, '--name', 'x', '--', *gcmd]) is False,
+        readout_only_after_dashdash=W.readout_argv([PYX, '-B', GP, '--name', 'x', '--', *gcmd, '--readout']) is False,
+        wrapped_not_allowlisted=W.readout_argv([PYX, '-B', GP, '--readout', '--', '/bin/sh', '-c', 'x', '/r/reports/explore/x4s4/reduce.py']) is False,
+        not_python=W.readout_argv(['/bin/bash', GP, '--readout', '--', *gcmd]) is False)
     j2, ctl2, du2, gpu2 = wjob('f3-ro', '2000-01-01T00:00:00Z')
-    root = marked(j2, [PYX, '-c', 'import subprocess, time; p = subprocess.Popen(["/bin/sleep", "60"], env={}); time.sleep(60)',
-                       '/x/reports/explore/x4s4/guard.py', '--readout'], readout=True)
-    w2 = wd(j2, ctl2, du2, gpu2); bare = None
-    time.sleep(1.0); root_kids = [ident(int(p)) for p in os.listdir('/proc') if p.isdigit() and (io.proc_stat(int(p)) or {}).get('ppid') == root.pid]
+    inert_proc = marked(j2, [PYX, '-c', 'import time; time.sleep(60)', '/x/reports/explore/x4s4/guard.py', '--readout', '--', *gcmd], readout=True)
+    w2 = wd(j2, ctl2, du2, gpu2)
+    try: inert_halts = until(lambda: (j2/'HALT.json').exists()) and 'after the deadline' in reason(j2)
+    finally: cleanup(w2, inert_proc)
+    cr = Path(tmp)/'f3-copy'; xd = cr/'reports'/'explore'/'x4s4'; xd.mkdir(parents=True); jx = cr/'job'
+    for f_ in ('watchdog.py', 'guard.py', 'studytree.py'): shutil.copy(HERE/f_, xd/f_)
+    src_io = (HERE/'x4s4io.py').read_text(); line = "JOB = '/mpac/sdicks02/jobs/clasher/x4s4-onpolicy'"; assert src_io.count(line) == 1
+    (xd/'x4s4io.py').write_text(src_io.replace(line, f"JOB = '{jx}'"))                       # test copy only
+    (cr/'reports'/'explore'/'x4s3').mkdir(parents=True); (cr/'reports'/'explore'/'x4s3'/'runtime.sh').write_text('exec /bin/sleep 60\n')
+    for d_ in ('watchdog', 'receipts', 'logs'): (jx/d_).mkdir(parents=True)
+    (jx/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+    env_w = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
+    w3 = subprocess.Popen([PYX, '-B', str(xd/'watchdog.py'), 'run', '--job', str(jx), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
+                           '--stop-grace', '1.5', '--kill-grace', '1', '--du', du2, '--nvidia-smi', gpu2, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
+                           '--mem-floor', '1', '--psi', str(ctl2/'psi')], env=env_w, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    runner, kids, bare = None, [], None
     try:
-        time.sleep(2.0); subtree_ok = not (j2/'HALT.json').exists() and root.poll() is None
-        bare = marked(j2, ['/bin/sleep', '60'], readout=True)
-        bare_halts = until(lambda: (j2/'HALT.json').exists()) and 'after the deadline' in reason(j2)
-        until(lambda: root.poll() is not None and not any(k and ident(k[0]) == k for k in root_kids))   # teardown completes first
+        until(lambda: (jx/'watchdog'/'heartbeat.json').exists())
+        runner = subprocess.Popen([PYX, '-B', str(xd/'guard.py'), '--name', 'ro', '--readout', '--', '/bin/bash',
+                                   str(cr/'reports'/'explore'/'x4s3'/'runtime.sh'), str(xd/'reduce.py')],
+                                  env={'X4S4_STUDY': str(jx), 'X4S4_READOUT': '1', 'PATH': '/usr/bin:/bin'}, preexec_fn=lambda: os.nice(10),
+                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        until(lambda: any((io.proc_stat(int(p)) or {}).get('ppid') == runner.pid for p in os.listdir('/proc') if p.isdigit()), 20)
+        kids = [ident(int(p)) for p in os.listdir('/proc') if p.isdigit() and (io.proc_stat(int(p)) or {}).get('ppid') == runner.pid]
+        time.sleep(3.0)                                                      # past deadline + grace, several cycles
+        runner_ok = bool(kids) and runner.poll() is None and all(k and ident(k[0]) == k for k in kids) and not (jx/'HALT.json').exists()
+        bare = marked(jx, ['/bin/sleep', '60'], readout=True)               # a READOUT-marked process outside the Runner
+        bare_halts = until(lambda: (jx/'HALT.json').exists()) and 'after the deadline' in reason(jx)
+        until(lambda: runner.poll() is not None and not any(k and ident(k[0]) == k for k in kids))   # HALT stops the Runner tree
     finally:
-        cleanup(w2, root, bare)
-        for k in root_kids: kill_pid(k)
+        cleanup(w3, runner, bare)
+        for k in kids: kill_pid(k)
     f3 = dict(cleaned_env_exec_counted=cleaned and counted, stopped=stopped, inert_token_refused=inert, exempt_ok=exempt_ok,
-              inert_receipt_not_exempt=inert_no, undeclared_output_not_exempt=undeclared_no, readout_subtree_ok=subtree_ok,
-              bare_readout_marker_halts=bare_halts)
+              inert_receipt_not_exempt=inert_no, undeclared_output_not_exempt=undeclared_no, **{f'argv_{k}': v for k, v in argv_cases.items()},
+              inert_tokens_halt=inert_halts, real_runner_subtree_exempt=runner_ok, bare_readout_marker_halts=bare_halts)
     case("R9-F3 (Sol): a process that execs with a cleaned environment and its exact-environment helper stay members (counted, "
          "stopped on HALT); guard.py refuses an inert script token as --readout; the deadline H-1 exemption needs the exact "
-         "invocation AND the script's declared output; after the deadline only a readout runner's subtree is exempt",
+         "invocation AND the script's declared output; SR-3: a readout root must be Python running exactly the adjacent guard.py "
+         "in --readout mode with an allowlisted wrapped command (argv unit cases); Python -c with inert guard.py/--readout tokens "
+         "HALTs after the deadline, while a real guard.py Runner's subtree keeps running and a bare READOUT-marked process HALTs",
          all(f3.values()), f3=f3)
 
     # ---- R9-F4: malformed measurements are failures (valid high PSI is still not a breach)
@@ -2889,8 +2923,23 @@ def test_r10(tmp):
     f7['failed_receipt'] = raises(lambda: packw.authenticate_inputs(str(pj), 'O'), io.Refusal, 'provenance')
     lr2 = wjson(pj/'data'/'label-receipt-O-2.json', dict(game_manifests=[['K4S-120', 0, '0'*64]])); bless(lr2)
     f7['changed_identity'] = raises(lambda: packw.authenticate_inputs(str(pj), 'O'), io.Refusal, 'provenance')
-    bless(lr); roots, n = packw.authenticate_inputs(str(pj), 'O')
+    bless(lr); roots, n, authed = packw.authenticate_inputs(str(pj), 'O')
+    packw.check_inventory(roots, authed)
     packmod.pack(roots, pj/'data'/'onpolicy'/'batch-0000'); f7['with_evidence_packs'] = n == 1 and (pj/'data'/'onpolicy'/'batch-0000'/'manifest.json').exists()
+    # SR-3: one authenticated real game + one game-* symlink to a sealed game WITHOUT evidence -> refused before the packer runs
+    unauth = Path(tmp)/'f7-unauth'/'game-0009'; ow_game(unauth, C+9, 4, index=56)
+    link = pj/'data'/'raw-O'/'K4S-120'/'game-0001'; os.symlink(unauth, link)
+    packed_calls = []; real_pack = packmod.pack; packmod.pack = lambda *a_, **k_: packed_calls.append(a_)
+    use_job(pj)
+    try: link_refused = raises(lambda: packw.main(['--set', 'O', '--output', f'{pj}/data/onpolicy/batch-0001']), io.Refusal, 'not a real directory')
+    finally: packmod.pack = real_pack; use_job(io.JOB)
+    f7['symlinked_game_refused_before_pack'] = link_refused and not packed_calls and not (pj/'data'/'onpolicy'/'batch-0001').exists()
+    link.unlink()
+    # SR-3: the packer's glob must equal the authenticated inventory right before packing (a game appearing afterwards)
+    roots, n, authed = packw.authenticate_inputs(str(pj), 'O')
+    ow_game(pj/'data'/'raw-O'/'K4S-120'/'game-0002', C+2, 4, index=56)
+    f7['inventory_changed_refused'] = raises(lambda: packw.check_inventory(roots, authed), io.Refusal, 'inventory')
+    shutil.rmtree(pj/'data'/'raw-O'/'K4S-120'/'game-0002'); f7['inventory_equal_ok'] = packw.check_inventory(roots, authed) is None
     ow = pj/'data'/'raw-OW'/'game-00000'; ow_game(ow, CW+0, 4, index=56)
     f7['ow_without_selection'] = raises(lambda: packw.authenticate_inputs(str(pj), 'OW'), io.Refusal, 'provenance')
     bless(wjson(pj/'data'/'raw-OW-selection.json', dict(games=[dict(g=0, manifest_sha256=hashlib.sha256((ow/'manifest.json').read_bytes()).hexdigest())])))
@@ -2898,8 +2947,9 @@ def test_r10(tmp):
     rb = (HERE/'QUALIFY-RUNBOOK.md').read_text()
     f7['runbook_packs_via_packw'] = rb.count('packw.py --set') >= 3 and 'imitation.exit_r1.pack' not in rb
     case("R9-F7 (Sol): packw refuses raw label games without a passed receipt, with only a failed one, or listed with another "
-         "manifest; with their evidence the unchanged packer packs them; O_W games need the guarded selection; the runbook's "
-         "production packs go through packw", all(f7.values()), f7=f7)
+         "manifest; with their evidence the unchanged packer packs them; SR-3: a game-* symlink to an unevidenced sealed game "
+         "beside an authenticated one is refused before the packer runs, and the packer's glob must equal the authenticated "
+         "inventory; O_W games need the guarded selection; the runbook's production packs go through packw", all(f7.values()), f7=f7)
 
     # ---- R9-F8: the watchdog's own I/O is confined (sentinels preserved; no symlink/hard link/FIFO/ancestor redirect)
     cj = new_job(tmp/'f8'); sentinel = Path(tmp)/'f8-sentinel.txt'; sentinel.write_text('KEEP')
