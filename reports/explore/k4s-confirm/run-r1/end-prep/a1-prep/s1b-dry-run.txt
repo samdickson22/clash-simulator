@@ -1,0 +1,48 @@
+{
+ "expected_identities": {
+  "bus": {
+   "127x03": {
+    "cmdline_sha256": "f481db6887b1454cde723322eee10a57f08a0789ab8db6f16d41ac2ad3329749",
+    "exe": "/usr/bin/dbus-daemon",
+    "pid": 2049,
+    "start_ticks": 1273,
+    "uid": 103
+   },
+   "127x04": {
+    "cmdline_sha256": "f481db6887b1454cde723322eee10a57f08a0789ab8db6f16d41ac2ad3329749",
+    "exe": "/usr/bin/dbus-daemon",
+    "pid": 2005,
+    "start_ticks": 1032,
+    "uid": 103
+   }
+  },
+  "idle_127x03": {
+   "cmdline_sha256": "16152ceb7942621141a2d8d91189affdeacde28ad1a9059ffbadde5e9bde799a",
+   "pgid": 2180934,
+   "pid": 2180947,
+   "ppid": 2180946,
+   "start_ticks": 139691386,
+   "uid": 3822945
+  }
+ },
+ "files": {
+  "127x03": [
+   "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/system-bus-admission.json",
+   "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/idle-services.json"
+  ],
+  "127x04": [
+   "/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/system-bus-admission.json"
+  ]
+ },
+ "logins": 2,
+ "mode": "dry-run",
+ "next_probe": {
+  "127x03": "/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r5",
+  "127x04": "/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r5"
+ },
+ "reader_program_sha256": "2d2f212d73b49176c53b1a03a621b64fbc6a8d4c15bd18051ac31f91016a6152"
+}
+# login 127x03; request {"host":"127x03","items":[{"grants":["reporting-job-exact"],"kind":"absent","rel":"k4s-confirm-replacement-r5","root":"/mpac/sdicks02/jobs/clasher"},{"content":true,"e4":false,"expected_size":null,"grants":["reporting-job-exact"],"kind":"file","max_size":1048576,"rel":"k4s-confirm-replacement-r4/system-bus-admission.json","root":"/mpac/sdicks02/jobs/clasher"},{"content":true,"e4":false,"expected_size":null,"grants":["reporting-job-exact"],"kind":"file","max_size":1048576,"rel":"k4s-confirm-replacement-r4/idle-services.json","root":"/mpac/sdicks02/jobs/clasher"}],"max_content":2097152,"schema":"clasher.k4s.safe-input.remote-request.v1"}
+/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x03 nice -n 19 /usr/bin/python3 -I -S - 7b22686f7374223a22313237783033222c226974656d73223a5b7b226772616e7473223a5b227265706f7274696e672d6a6f622d6578616374225d2c226b696e64223a22616273656e74222c2272656c223a226b34732d636f6e6669726d2d7265706c6163656d656e742d7235222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d2c7b22636f6e74656e74223a747275652c226534223a66616c73652c2265787065637465645f73697a65223a6e756c6c2c226772616e7473223a5b227265706f7274696e672d6a6f622d6578616374225d2c226b696e64223a2266696c65222c226d61785f73697a65223a313034383537362c2272656c223a226b34732d636f6e6669726d2d7265706c6163656d656e742d72342f73797374656d2d6275732d61646d697373696f6e2e6a736f6e222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d2c7b22636f6e74656e74223a747275652c226534223a66616c73652c2265787065637465645f73697a65223a6e756c6c2c226772616e7473223a5b227265706f7274696e672d6a6f622d6578616374225d2c226b696e64223a2266696c65222c226d61785f73697a65223a313034383537362c2272656c223a226b34732d636f6e6669726d2d7265706c6163656d656e742d72342f69646c652d73657276696365732e6a736f6e222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d5d2c226d61785f636f6e74656e74223a323039373135322c22736368656d61223a22636c61736865722e6b34732e736166652d696e7075742e72656d6f74652d726571756573742e7631227d
+# login 127x04; request {"host":"127x04","items":[{"grants":["reporting-job-exact"],"kind":"absent","rel":"k4s-confirm-replacement-r5","root":"/mpac/sdicks02/jobs-k4s"},{"content":true,"e4":false,"expected_size":null,"grants":["reporting-job-exact"],"kind":"file","max_size":1048576,"rel":"k4s-confirm-replacement-r4/system-bus-admission.json","root":"/mpac/sdicks02/jobs-k4s"}],"max_content":1048576,"schema":"clasher.k4s.safe-input.remote-request.v1"}
+/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 nice -n 19 /usr/bin/python3 -I -S - 7b22686f7374223a22313237783034222c226974656d73223a5b7b226772616e7473223a5b227265706f7274696e672d6a6f622d6578616374225d2c226b696e64223a22616273656e74222c2272656c223a226b34732d636f6e6669726d2d7265706c6163656d656e742d7235222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b3473227d2c7b22636f6e74656e74223a747275652c226534223a66616c73652c2265787065637465645f73697a65223a6e756c6c2c226772616e7473223a5b227265706f7274696e672d6a6f622d6578616374225d2c226b696e64223a2266696c65222c226d61785f73697a65223a313034383537362c2272656c223a226b34732d636f6e6669726d2d7265706c6163656d656e742d72342f73797374656d2d6275732d61646d697373696f6e2e6a736f6e222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732d6b3473227d5d2c226d61785f636f6e74656e74223a313034383537362c22736368656d61223a22636c61736865722e6b34732e736166652d696e7075742e72656d6f74652d726571756573742e7631227d

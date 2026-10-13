@@ -1,0 +1,21 @@
+{
+ "argv": [
+  "--repository",
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+  "--commit",
+  "72426428cd48db0342b2cb6358211424ebc686d0",
+  "--dest",
+  "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b2-copy-r1",
+  "--dry-run"
+ ],
+ "dest": null,
+ "dest_created": false,
+ "error": "[Errno 32] Broken pipe",
+ "error_type": "BrokenPipeError",
+ "logins": [],
+ "partial_files": [],
+ "schema": "clasher.k4s.end-sources-copy-refusal.v2",
+ "status": "failed",
+ "test_mode": false,
+ "utc": "2026-10-13T03:36:47Z"
+}

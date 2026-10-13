@@ -1,0 +1,585 @@
+{
+ "mode": "dry-run",
+ "commit": "72426428cd48db0342b2cb6358211424ebc686d0",
+ "logins": 6,
+ "max_bytes": 99614720,
+ "test_mode": false,
+ "expected": {
+  "127x03/reporting": {
+   "launch.json": {
+    "sha256": "116f1ed5f998649ba950fbde08846b47b052294acbbb6432b4a04b2a324e0159",
+    "size": 346,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-reporting/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "88debddf7bf33c1b0bc2f14002339c87072be956398d90bfb727c2d0c36a1033",
+    "size": 1045508,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-reporting/supervisor-exit.json"
+   }
+  },
+  "127x03/replacement-r1": {
+   "launch.json": {
+    "sha256": "b864703e102d9dea314e1b332ee1415518f90153a0a633a9c2b1b0ac0ca1a70b",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r1/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "bffde5d4008b2a47fc867e690f18d6ae087fd09e58464816f9a2fa60dddb5efa",
+    "size": 935429,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r1/supervisor-exit.json"
+   }
+  },
+  "127x03/replacement-r2": {
+   "launch.json": {
+    "sha256": "1d917968d9875f89c2024ba173fb1a16fcdaf8b7a5f6a5504fe3bc7b6b9df299",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r2/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "834fc2475b5a071d1564076b77403d83b983dbdf2026f4ccccf7df84012c3e3f",
+    "size": 293706,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r2/supervisor-exit.json"
+   }
+  },
+  "127x03/replacement-r3": {
+   "launch.json": {
+    "sha256": "6c49a6679c1c654879a071c44a86cda952fb40bc1722af43e3b2c22914b13efb",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r3/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "cccb86839ef970ae6e9bda6a8bb3b10451aa73baad8ac0978750f7c654688616",
+    "size": 151749,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r3/supervisor-exit.json"
+   }
+  },
+  "127x03/replacement-r4": {
+   "launch.json": {
+    "sha256": "e8f72fb483e73b5bcbb78b4aa129e5b31c61b4e2f0c45fec67d6b9637f65f2e6",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r4/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "c9066d63cd1aa73de74d2214498dc7543d2d863282d3593887aec2f65642027c",
+    "size": 38051,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r4/supervisor-exit.json"
+   }
+  },
+  "127x04/reporting": {
+   "launch.json": {
+    "sha256": "7cd6b140551d8f1d66858d98b3cf2d74b14339e7d334e6b4fc3650a3fa383c48",
+    "size": 348,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-reporting/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "c0a935f6cd1ecf022bf197dc3e88604769491bb461973bcd3c106e393aa71084",
+    "size": 1045522,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-reporting/supervisor-exit.json"
+   }
+  },
+  "127x04/replacement-r1": {
+   "launch.json": {
+    "sha256": "420f7ec1076885ddb0c0211a39bcfa0d0ced72b9c9c3856c382eef1f4f727f0e",
+    "size": 346,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r1/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "c11ae500e34504872095ba1d2b50d836546923c14641684d6ab97f635e4114b2",
+    "size": 935428,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r1/supervisor-exit.json"
+   }
+  },
+  "127x04/replacement-r2": {
+   "launch.json": {
+    "sha256": "ea88e4d5c11590390875bfc8c044f5027950349e70bdd3f5b3eef82f3683cf32",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r2/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "37aafa6a128757e80082d0fbad6a1e518de88a277e342538cb2f33dbbdfc8e8b",
+    "size": 293313,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r2/supervisor-exit.json"
+   }
+  },
+  "127x04/replacement-r3": {
+   "launch.json": {
+    "sha256": "9cd6bc37da5638dbc95a065cfd47ad467980d9b348bef2d7a711f8f9a7b4264e",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r3/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "91475244cc702e33dbf0a4fd20635dcb5b2fa435b21361094263723fc4cd414c",
+    "size": 153090,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r3/supervisor-exit.json"
+   }
+  },
+  "127x04/replacement-r4": {
+   "launch.json": {
+    "sha256": "38730d445b2a8095cbad8b393f709fbf5e0a79eb0267d6eb69c9875c2ee6c69a",
+    "size": 350,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r4/launch.json"
+   },
+   "supervisor-exit.json": {
+    "sha256": "21269aa00b3340f8b75a02de5526c5f20d525d3af27a2b1c0ac6d56f8fc47cb9",
+    "size": 36487,
+    "repository_path": "reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r4/supervisor-exit.json"
+   }
+  }
+ }
+}
+# login P 127x03
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x03 'set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '"'"'
+import errno, hashlib, os, stat, sys
+D = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+F = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY
+def refuse(why, path):
+    os.write(2, ("REFUSE|" + why + "|" + path + "\n").encode())
+    if mode == "inspect":
+        sys.stdout.write("REFUSE|" + why + "|" + path + "\n")
+        sys.stdout.flush()
+    os._exit(3)
+def opened(path):
+    parts = path.split("/")
+    if len(parts) < 3 or parts[0] or any(p in ("", ".", "..") for p in parts[1:]):
+        refuse("not a normalised absolute path", path)
+    fd = os.open("/", D)
+    for i, part in enumerate(parts[1:]):
+        leaf = i == len(parts) - 2
+        try:
+            nxt = os.open(part, F if leaf else D, dir_fd=fd)
+        except OSError as e:
+            refuse("open of component %r failed: %s (symlink/alias, missing or not a directory)"
+                   % (part, errno.errorcode.get(e.errno, e.errno)), path)
+        os.close(fd)
+        fd = nxt
+    st = os.fstat(fd)
+    if not stat.S_ISREG(st.st_mode):
+        refuse("not a regular file", path)
+    if st.st_nlink != 1:
+        refuse("hard-link alias: st_nlink=%d" % st.st_nlink, path)
+    return fd, st
+def exactly(fd, size, path, sink):
+    left = size
+    while left:
+        chunk = os.read(fd, min(1 << 20, left))
+        if not chunk:
+            refuse("file shrank while read", path)
+        sink(chunk)
+        left -= len(chunk)
+    if os.read(fd, 1) or os.fstat(fd).st_size != size:
+        refuse("file grew while read", path)
+mode, items = sys.argv[1], sys.argv[2:]
+if mode not in ("inspect", "stream") or not items:
+    refuse("bad mode", mode)
+gated = []
+for item in items:
+    if mode == "inspect":
+        kind, n, path = item.split(":", 2)
+        if kind not in ("exact", "max") or not n.isdigit():
+            refuse("bad size rule", path)
+        fd, st = opened(path)
+        if kind == "exact" and st.st_size != int(n):
+            refuse("size %d != committed size %s" % (st.st_size, n), path)
+        if kind == "max" and not 0 < st.st_size <= int(n):
+            refuse("size %d outside 1..%s bytes" % (st.st_size, n), path)
+    else:
+        size, dev, ino, path = item.split(":", 3)
+        if not 0 < int(size) <= 99614720:
+            refuse("stream size outside 1..99614720 bytes", path)
+        fd, st = opened(path)
+        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):
+            refuse("size/device/inode changed since login P", path)
+    gated.append((fd, st, path))
+for fd, st, path in gated:
+    if mode == "inspect":
+        h = hashlib.sha256()
+        exactly(fd, st.st_size, path, h.update)
+        sys.stdout.write("OK|%d|%d|%d|%d|%s|%s\n" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))
+    else:
+        def sink(chunk):
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(1, view):]
+        exactly(fd, st.st_size, path, sink)
+sys.stdout.flush()
+'"'"' inspect exact:346:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/launch.json exact:1045508:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/launch.json exact:935429:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/launch.json exact:293706:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/launch.json exact:151749:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/launch.json exact:38051:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/census.jsonl'
+# login P 127x04
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 'set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '"'"'
+import errno, hashlib, os, stat, sys
+D = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+F = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY
+def refuse(why, path):
+    os.write(2, ("REFUSE|" + why + "|" + path + "\n").encode())
+    if mode == "inspect":
+        sys.stdout.write("REFUSE|" + why + "|" + path + "\n")
+        sys.stdout.flush()
+    os._exit(3)
+def opened(path):
+    parts = path.split("/")
+    if len(parts) < 3 or parts[0] or any(p in ("", ".", "..") for p in parts[1:]):
+        refuse("not a normalised absolute path", path)
+    fd = os.open("/", D)
+    for i, part in enumerate(parts[1:]):
+        leaf = i == len(parts) - 2
+        try:
+            nxt = os.open(part, F if leaf else D, dir_fd=fd)
+        except OSError as e:
+            refuse("open of component %r failed: %s (symlink/alias, missing or not a directory)"
+                   % (part, errno.errorcode.get(e.errno, e.errno)), path)
+        os.close(fd)
+        fd = nxt
+    st = os.fstat(fd)
+    if not stat.S_ISREG(st.st_mode):
+        refuse("not a regular file", path)
+    if st.st_nlink != 1:
+        refuse("hard-link alias: st_nlink=%d" % st.st_nlink, path)
+    return fd, st
+def exactly(fd, size, path, sink):
+    left = size
+    while left:
+        chunk = os.read(fd, min(1 << 20, left))
+        if not chunk:
+            refuse("file shrank while read", path)
+        sink(chunk)
+        left -= len(chunk)
+    if os.read(fd, 1) or os.fstat(fd).st_size != size:
+        refuse("file grew while read", path)
+mode, items = sys.argv[1], sys.argv[2:]
+if mode not in ("inspect", "stream") or not items:
+    refuse("bad mode", mode)
+gated = []
+for item in items:
+    if mode == "inspect":
+        kind, n, path = item.split(":", 2)
+        if kind not in ("exact", "max") or not n.isdigit():
+            refuse("bad size rule", path)
+        fd, st = opened(path)
+        if kind == "exact" and st.st_size != int(n):
+            refuse("size %d != committed size %s" % (st.st_size, n), path)
+        if kind == "max" and not 0 < st.st_size <= int(n):
+            refuse("size %d outside 1..%s bytes" % (st.st_size, n), path)
+    else:
+        size, dev, ino, path = item.split(":", 3)
+        if not 0 < int(size) <= 99614720:
+            refuse("stream size outside 1..99614720 bytes", path)
+        fd, st = opened(path)
+        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):
+            refuse("size/device/inode changed since login P", path)
+    gated.append((fd, st, path))
+for fd, st, path in gated:
+    if mode == "inspect":
+        h = hashlib.sha256()
+        exactly(fd, st.st_size, path, h.update)
+        sys.stdout.write("OK|%d|%d|%d|%d|%s|%s\n" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))
+    else:
+        def sink(chunk):
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(1, view):]
+        exactly(fd, st.st_size, path, sink)
+sys.stdout.flush()
+'"'"' inspect exact:348:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/launch.json exact:1045522:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/census.jsonl exact:346:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/launch.json exact:935428:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/census.jsonl exact:350:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/launch.json exact:293313:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/census.jsonl exact:350:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/launch.json exact:153090:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/census.jsonl exact:350:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/launch.json exact:36487:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/census.jsonl'
+# login C 127x03
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x03 'set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '"'"'
+import errno, hashlib, os, stat, sys
+D = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+F = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY
+def refuse(why, path):
+    os.write(2, ("REFUSE|" + why + "|" + path + "\n").encode())
+    if mode == "inspect":
+        sys.stdout.write("REFUSE|" + why + "|" + path + "\n")
+        sys.stdout.flush()
+    os._exit(3)
+def opened(path):
+    parts = path.split("/")
+    if len(parts) < 3 or parts[0] or any(p in ("", ".", "..") for p in parts[1:]):
+        refuse("not a normalised absolute path", path)
+    fd = os.open("/", D)
+    for i, part in enumerate(parts[1:]):
+        leaf = i == len(parts) - 2
+        try:
+            nxt = os.open(part, F if leaf else D, dir_fd=fd)
+        except OSError as e:
+            refuse("open of component %r failed: %s (symlink/alias, missing or not a directory)"
+                   % (part, errno.errorcode.get(e.errno, e.errno)), path)
+        os.close(fd)
+        fd = nxt
+    st = os.fstat(fd)
+    if not stat.S_ISREG(st.st_mode):
+        refuse("not a regular file", path)
+    if st.st_nlink != 1:
+        refuse("hard-link alias: st_nlink=%d" % st.st_nlink, path)
+    return fd, st
+def exactly(fd, size, path, sink):
+    left = size
+    while left:
+        chunk = os.read(fd, min(1 << 20, left))
+        if not chunk:
+            refuse("file shrank while read", path)
+        sink(chunk)
+        left -= len(chunk)
+    if os.read(fd, 1) or os.fstat(fd).st_size != size:
+        refuse("file grew while read", path)
+mode, items = sys.argv[1], sys.argv[2:]
+if mode not in ("inspect", "stream") or not items:
+    refuse("bad mode", mode)
+gated = []
+for item in items:
+    if mode == "inspect":
+        kind, n, path = item.split(":", 2)
+        if kind not in ("exact", "max") or not n.isdigit():
+            refuse("bad size rule", path)
+        fd, st = opened(path)
+        if kind == "exact" and st.st_size != int(n):
+            refuse("size %d != committed size %s" % (st.st_size, n), path)
+        if kind == "max" and not 0 < st.st_size <= int(n):
+            refuse("size %d outside 1..%s bytes" % (st.st_size, n), path)
+    else:
+        size, dev, ino, path = item.split(":", 3)
+        if not 0 < int(size) <= 99614720:
+            refuse("stream size outside 1..99614720 bytes", path)
+        fd, st = opened(path)
+        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):
+            refuse("size/device/inode changed since login P", path)
+    gated.append((fd, st, path))
+for fd, st, path in gated:
+    if mode == "inspect":
+        h = hashlib.sha256()
+        exactly(fd, st.st_size, path, h.update)
+        sys.stdout.write("OK|%d|%d|%d|%d|%s|%s\n" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))
+    else:
+        def sink(chunk):
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(1, view):]
+        exactly(fd, st.st_size, path, sink)
+sys.stdout.flush()
+'"'"' stream '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/census.jsonl'"'"''
+# login V 127x03
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x03 'set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '"'"'
+import errno, hashlib, os, stat, sys
+D = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+F = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY
+def refuse(why, path):
+    os.write(2, ("REFUSE|" + why + "|" + path + "\n").encode())
+    if mode == "inspect":
+        sys.stdout.write("REFUSE|" + why + "|" + path + "\n")
+        sys.stdout.flush()
+    os._exit(3)
+def opened(path):
+    parts = path.split("/")
+    if len(parts) < 3 or parts[0] or any(p in ("", ".", "..") for p in parts[1:]):
+        refuse("not a normalised absolute path", path)
+    fd = os.open("/", D)
+    for i, part in enumerate(parts[1:]):
+        leaf = i == len(parts) - 2
+        try:
+            nxt = os.open(part, F if leaf else D, dir_fd=fd)
+        except OSError as e:
+            refuse("open of component %r failed: %s (symlink/alias, missing or not a directory)"
+                   % (part, errno.errorcode.get(e.errno, e.errno)), path)
+        os.close(fd)
+        fd = nxt
+    st = os.fstat(fd)
+    if not stat.S_ISREG(st.st_mode):
+        refuse("not a regular file", path)
+    if st.st_nlink != 1:
+        refuse("hard-link alias: st_nlink=%d" % st.st_nlink, path)
+    return fd, st
+def exactly(fd, size, path, sink):
+    left = size
+    while left:
+        chunk = os.read(fd, min(1 << 20, left))
+        if not chunk:
+            refuse("file shrank while read", path)
+        sink(chunk)
+        left -= len(chunk)
+    if os.read(fd, 1) or os.fstat(fd).st_size != size:
+        refuse("file grew while read", path)
+mode, items = sys.argv[1], sys.argv[2:]
+if mode not in ("inspect", "stream") or not items:
+    refuse("bad mode", mode)
+gated = []
+for item in items:
+    if mode == "inspect":
+        kind, n, path = item.split(":", 2)
+        if kind not in ("exact", "max") or not n.isdigit():
+            refuse("bad size rule", path)
+        fd, st = opened(path)
+        if kind == "exact" and st.st_size != int(n):
+            refuse("size %d != committed size %s" % (st.st_size, n), path)
+        if kind == "max" and not 0 < st.st_size <= int(n):
+            refuse("size %d outside 1..%s bytes" % (st.st_size, n), path)
+    else:
+        size, dev, ino, path = item.split(":", 3)
+        if not 0 < int(size) <= 99614720:
+            refuse("stream size outside 1..99614720 bytes", path)
+        fd, st = opened(path)
+        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):
+            refuse("size/device/inode changed since login P", path)
+    gated.append((fd, st, path))
+for fd, st, path in gated:
+    if mode == "inspect":
+        h = hashlib.sha256()
+        exactly(fd, st.st_size, path, h.update)
+        sys.stdout.write("OK|%d|%d|%d|%d|%s|%s\n" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))
+    else:
+        def sink(chunk):
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(1, view):]
+        exactly(fd, st.st_size, path, sink)
+sys.stdout.flush()
+'"'"' inspect exact:346:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/launch.json exact:1045508:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-reporting-r1/reporting/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/launch.json exact:935429:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r1/replacement-r1/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/launch.json exact:293706:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r2/replacement-r2/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/launch.json exact:151749:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r3/replacement-r3/census.jsonl exact:350:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/launch.json exact:38051:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl max:99614720:/mpac/sdicks02/jobs/clasher/k4s-confirm-replacement-r4/replacement-r4/census.jsonl'
+# login C 127x04
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 'set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '"'"'
+import errno, hashlib, os, stat, sys
+D = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+F = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY
+def refuse(why, path):
+    os.write(2, ("REFUSE|" + why + "|" + path + "\n").encode())
+    if mode == "inspect":
+        sys.stdout.write("REFUSE|" + why + "|" + path + "\n")
+        sys.stdout.flush()
+    os._exit(3)
+def opened(path):
+    parts = path.split("/")
+    if len(parts) < 3 or parts[0] or any(p in ("", ".", "..") for p in parts[1:]):
+        refuse("not a normalised absolute path", path)
+    fd = os.open("/", D)
+    for i, part in enumerate(parts[1:]):
+        leaf = i == len(parts) - 2
+        try:
+            nxt = os.open(part, F if leaf else D, dir_fd=fd)
+        except OSError as e:
+            refuse("open of component %r failed: %s (symlink/alias, missing or not a directory)"
+                   % (part, errno.errorcode.get(e.errno, e.errno)), path)
+        os.close(fd)
+        fd = nxt
+    st = os.fstat(fd)
+    if not stat.S_ISREG(st.st_mode):
+        refuse("not a regular file", path)
+    if st.st_nlink != 1:
+        refuse("hard-link alias: st_nlink=%d" % st.st_nlink, path)
+    return fd, st
+def exactly(fd, size, path, sink):
+    left = size
+    while left:
+        chunk = os.read(fd, min(1 << 20, left))
+        if not chunk:
+            refuse("file shrank while read", path)
+        sink(chunk)
+        left -= len(chunk)
+    if os.read(fd, 1) or os.fstat(fd).st_size != size:
+        refuse("file grew while read", path)
+mode, items = sys.argv[1], sys.argv[2:]
+if mode not in ("inspect", "stream") or not items:
+    refuse("bad mode", mode)
+gated = []
+for item in items:
+    if mode == "inspect":
+        kind, n, path = item.split(":", 2)
+        if kind not in ("exact", "max") or not n.isdigit():
+            refuse("bad size rule", path)
+        fd, st = opened(path)
+        if kind == "exact" and st.st_size != int(n):
+            refuse("size %d != committed size %s" % (st.st_size, n), path)
+        if kind == "max" and not 0 < st.st_size <= int(n):
+            refuse("size %d outside 1..%s bytes" % (st.st_size, n), path)
+    else:
+        size, dev, ino, path = item.split(":", 3)
+        if not 0 < int(size) <= 99614720:
+            refuse("stream size outside 1..99614720 bytes", path)
+        fd, st = opened(path)
+        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):
+            refuse("size/device/inode changed since login P", path)
+    gated.append((fd, st, path))
+for fd, st, path in gated:
+    if mode == "inspect":
+        h = hashlib.sha256()
+        exactly(fd, st.st_size, path, h.update)
+        sys.stdout.write("OK|%d|%d|%d|%d|%s|%s\n" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))
+    else:
+        def sink(chunk):
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(1, view):]
+        exactly(fd, st.st_size, path, sink)
+sys.stdout.flush()
+'"'"' stream '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/census.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl'"'"' '"'"'<P size>:<P dev>:<P ino>:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/census.jsonl'"'"''
+# login V 127x04
+ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 'set -eu; LC_ALL=C; export LC_ALL; exec nice -n 19 /usr/bin/python3 -I -S -c '"'"'
+import errno, hashlib, os, stat, sys
+D = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+F = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC | os.O_NOCTTY
+def refuse(why, path):
+    os.write(2, ("REFUSE|" + why + "|" + path + "\n").encode())
+    if mode == "inspect":
+        sys.stdout.write("REFUSE|" + why + "|" + path + "\n")
+        sys.stdout.flush()
+    os._exit(3)
+def opened(path):
+    parts = path.split("/")
+    if len(parts) < 3 or parts[0] or any(p in ("", ".", "..") for p in parts[1:]):
+        refuse("not a normalised absolute path", path)
+    fd = os.open("/", D)
+    for i, part in enumerate(parts[1:]):
+        leaf = i == len(parts) - 2
+        try:
+            nxt = os.open(part, F if leaf else D, dir_fd=fd)
+        except OSError as e:
+            refuse("open of component %r failed: %s (symlink/alias, missing or not a directory)"
+                   % (part, errno.errorcode.get(e.errno, e.errno)), path)
+        os.close(fd)
+        fd = nxt
+    st = os.fstat(fd)
+    if not stat.S_ISREG(st.st_mode):
+        refuse("not a regular file", path)
+    if st.st_nlink != 1:
+        refuse("hard-link alias: st_nlink=%d" % st.st_nlink, path)
+    return fd, st
+def exactly(fd, size, path, sink):
+    left = size
+    while left:
+        chunk = os.read(fd, min(1 << 20, left))
+        if not chunk:
+            refuse("file shrank while read", path)
+        sink(chunk)
+        left -= len(chunk)
+    if os.read(fd, 1) or os.fstat(fd).st_size != size:
+        refuse("file grew while read", path)
+mode, items = sys.argv[1], sys.argv[2:]
+if mode not in ("inspect", "stream") or not items:
+    refuse("bad mode", mode)
+gated = []
+for item in items:
+    if mode == "inspect":
+        kind, n, path = item.split(":", 2)
+        if kind not in ("exact", "max") or not n.isdigit():
+            refuse("bad size rule", path)
+        fd, st = opened(path)
+        if kind == "exact" and st.st_size != int(n):
+            refuse("size %d != committed size %s" % (st.st_size, n), path)
+        if kind == "max" and not 0 < st.st_size <= int(n):
+            refuse("size %d outside 1..%s bytes" % (st.st_size, n), path)
+    else:
+        size, dev, ino, path = item.split(":", 3)
+        if not 0 < int(size) <= 99614720:
+            refuse("stream size outside 1..99614720 bytes", path)
+        fd, st = opened(path)
+        if (st.st_size, st.st_dev, st.st_ino) != (int(size), int(dev), int(ino)):
+            refuse("size/device/inode changed since login P", path)
+    gated.append((fd, st, path))
+for fd, st, path in gated:
+    if mode == "inspect":
+        h = hashlib.sha256()
+        exactly(fd, st.st_size, path, h.update)
+        sys.stdout.write("OK|%d|%d|%d|%d|%s|%s\n" % (st.st_size, st.st_nlink, st.st_dev, st.st_ino, h.hexdigest(), path))
+    else:
+        def sink(chunk):
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(1, view):]
+        exactly(fd, st.st_size, path, sink)
+sys.stdout.flush()
+'"'"' inspect exact:348:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/launch.json exact:1045522:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-reporting-r1/reporting/census.jsonl exact:346:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/launch.json exact:935428:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r1/replacement-r1/census.jsonl exact:350:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/launch.json exact:293313:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r2/replacement-r2/census.jsonl exact:350:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/launch.json exact:153090:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r3/replacement-r3/census.jsonl exact:350:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/launch.json exact:36487:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/supervisor-exit.json max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/mhz.jsonl max:99614720:/mpac/sdicks02/jobs-k4s/k4s-confirm-replacement-r4/replacement-r4/census.jsonl'
