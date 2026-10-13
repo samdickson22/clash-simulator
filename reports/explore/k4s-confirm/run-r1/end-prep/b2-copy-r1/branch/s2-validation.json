@@ -1,0 +1,165 @@
+{
+ "code_root": "/tmp/k4s-s2-check",
+ "commit": "022ec7bf298caaab81bc6e70fe917d3e75b21bde",
+ "completion_sha256": "3794d953efb2c8af47a09ccb086cc0441f1c0dd9ea7a4f46e331315972c6e891",
+ "counted_hosts": [
+  "127x03",
+  "127x04"
+ ],
+ "evidence": "/tmp/k4s-s2-check/reports/explore/k4s-confirm/end-evidence.json",
+ "evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+ "executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+ "finished_utc": "2026-10-13T04:55:43Z",
+ "frozen_bootstrap": {
+  "files_verified": 32,
+  "manifest_sha256": "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+  "served": {
+   "end_evidence": "6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e",
+   "fleet_end": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+   "fleet_profile": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+   "k4s_logic": "2e4d7a5ce5363a9778eb088be7487d5f1ef7291706f743e9dd4c7c65ee5d4864",
+   "receipts": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6"
+  }
+ },
+ "frozen_git_env": "P2-4 (si.GIT_FIXED_ENV)",
+ "frozen_manifest_verified": true,
+ "frozen_module_sha256": {
+  "end_evidence": "6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e",
+  "fleet_end": "76d5ce317915b2c6364310e1bd6a513d7906ce13521029b9737c80e31cbd2260",
+  "fleet_profile": "5e482f0adc43ec1ffb56a7fc271fbf93e3258b9704a7d2e32c15594c0249fc8a",
+  "k4s_logic": "2e4d7a5ce5363a9778eb088be7487d5f1ef7291706f743e9dd4c7c65ee5d4864",
+  "receipts": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6"
+ },
+ "hosts": {
+  "127x03": {
+   "background_slots": 10,
+   "census_cpu": 63,
+   "census_rows_by_phase": {
+    "replacement-r1": 13824,
+    "replacement-r2": 3044,
+    "replacement-r3": 2498,
+    "replacement-r4": 923,
+    "reporting": 2863
+   },
+   "full_occupancy_rows": 23004,
+   "full_occupancy_rows_by_phase": {
+    "replacement-r1": 13824,
+    "replacement-r2": 3044,
+    "replacement-r3": 2497,
+    "replacement-r4": 776,
+    "reporting": 2863
+   },
+   "profile": {
+    "console_rule": false,
+    "host": "127x03",
+    "perception": "none",
+    "reference_slot": 0,
+    "slot_count": 11,
+    "warmup_seconds": 300.0
+   },
+   "reference_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  "127x04": {
+   "background_slots": 10,
+   "census_cpu": 63,
+   "census_rows_by_phase": {
+    "replacement-r1": 14418,
+    "replacement-r2": 3191,
+    "replacement-r3": 2618,
+    "replacement-r4": 884,
+    "reporting": 2828
+   },
+   "full_occupancy_rows": 23824,
+   "full_occupancy_rows_by_phase": {
+    "replacement-r1": 14417,
+    "replacement-r2": 3190,
+    "replacement-r3": 2617,
+    "replacement-r4": 772,
+    "reporting": 2828
+   },
+   "profile": {
+    "console_rule": false,
+    "host": "127x04",
+    "perception": "none",
+    "reference_slot": 0,
+    "slot_count": 11,
+    "warmup_seconds": 300.0
+   },
+   "reference_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ]
+  }
+ },
+ "kind": "counted-reporting",
+ "membership": {
+  "blocks": 3900,
+  "host_phases": [
+   [
+    "127x03",
+    "replacement-r1"
+   ],
+   [
+    "127x03",
+    "replacement-r2"
+   ],
+   [
+    "127x03",
+    "replacement-r3"
+   ],
+   [
+    "127x03",
+    "replacement-r4"
+   ],
+   [
+    "127x03",
+    "reporting"
+   ],
+   [
+    "127x04",
+    "replacement-r1"
+   ],
+   [
+    "127x04",
+    "replacement-r2"
+   ],
+   [
+    "127x04",
+    "replacement-r3"
+   ],
+   [
+    "127x04",
+    "replacement-r4"
+   ],
+   [
+    "127x04",
+    "reporting"
+   ]
+  ],
+  "losses": 99
+ },
+ "ok": true,
+ "optimize": 0,
+ "plan_sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+ "profile_json_path": null,
+ "profile_json_sha256": null,
+ "profile_source": "declared-default",
+ "python": "3.12.12",
+ "repository_head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "s1_manifest_path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/b2-copy-r1/end-sources/s1-copy-manifest.json",
+ "s1_manifest_sha256": "6926c5fad6a01fa419e030984ef87c31d1c2adb68af636f6f3445573e253ac28",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-evidence-validation.v2",
+ "slot_layout_offline_note": "host/nice supplied offline (plan nice); live gate runs on host pre-claim",
+ "started_utc": "2026-10-13T04:55:38Z",
+ "test_mode": false
+}

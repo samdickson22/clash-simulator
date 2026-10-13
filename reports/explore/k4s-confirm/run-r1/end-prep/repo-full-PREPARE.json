@@ -1,0 +1,41 @@
+{
+ "absent": [
+  ".git/hooks",
+  ".git/shallow",
+  ".git/info/grafts",
+  ".git/objects/info/alternates",
+  ".git/objects/info/http-alternates",
+  ".git/commondir",
+  ".git/config.worktree"
+ ],
+ "bare": false,
+ "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "commits": [
+  "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb"
+ ],
+ "config_keys": [
+  "branch.main.merge",
+  "branch.main.remote",
+  "core.bare",
+  "core.filemode",
+  "core.logallrefupdates",
+  "core.repositoryformatversion",
+  "remote.origin.fetch",
+  "remote.origin.url"
+ ],
+ "head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "origin": "https://github.com/samdickson22/clash-simulator.git",
+ "packs": [
+  "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.idx",
+  "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.pack"
+ ],
+ "replace_refs": 0,
+ "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+ "root_dev": 66304,
+ "root_ino": 56758974,
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-runtime-full-clone.v1",
+ "script_sha256": "1875a32ec5155cbd3355c912b8114bb8654b0fd9593d421474476f3c069bf651",
+ "shallow": false,
+ "utc": "2026-10-13T04:56:04Z"
+}

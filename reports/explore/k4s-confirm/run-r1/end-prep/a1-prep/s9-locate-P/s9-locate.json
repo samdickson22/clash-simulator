@@ -1,0 +1,276 @@
+{
+ "commit": "a082a341bcbc011a34c390617987d9b6ec139783",
+ "files": [
+  {
+   "expected_sha256": "ef1ed5d91a51cd08740cc7a1222712647ae2ba477caa38de9e36f6301832e722",
+   "found": true,
+   "path": "imitation/__init__.py",
+   "sha256": "ef1ed5d91a51cd08740cc7a1222712647ae2ba477caa38de9e36f6301832e722",
+   "size": 44,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/imitation/__init__.py"
+  },
+  {
+   "expected_sha256": "b4af3e9bddb3cd2536d715a301b35dbd401cf61bcd6ec411e9aa88f4a7ee8f5f",
+   "found": true,
+   "path": "imitation/evaluation/legacy_audit.py",
+   "sha256": "b4af3e9bddb3cd2536d715a301b35dbd401cf61bcd6ec411e9aa88f4a7ee8f5f",
+   "size": 2668,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/imitation/evaluation/legacy_audit.py"
+  },
+  {
+   "expected_sha256": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+   "found": true,
+   "path": "imitation/evaluation/runtime_dependencies/derived_d1.py",
+   "sha256": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+   "size": 3902,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/imitation/evaluation/runtime_dependencies/derived_d1.py"
+  },
+  {
+   "expected_sha256": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+   "found": true,
+   "path": "imitation/evaluation/runtime_dependencies/own_cycle.py",
+   "sha256": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+   "size": 1041,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/imitation/evaluation/runtime_dependencies/own_cycle.py"
+  },
+  {
+   "expected_sha256": "cdb2d830042189b6d9b3e03aede152d2bb441e6f47c3ce113e3dce96f79c22e5",
+   "found": true,
+   "path": "imitation/evaluation/runtime_dependencies/sidecar_observer.py",
+   "sha256": "cdb2d830042189b6d9b3e03aede152d2bb441e6f47c3ce113e3dce96f79c22e5",
+   "size": 9145,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/imitation/evaluation/runtime_dependencies/sidecar_observer.py"
+  },
+  {
+   "expected_sha256": "d5897eefeb722eb7bf01bc39e7ac69fb03543ae95f5eed2bfdfdf334774f4673",
+   "found": true,
+   "path": "imitation/evaluation/seed_compat.py",
+   "sha256": "d5897eefeb722eb7bf01bc39e7ac69fb03543ae95f5eed2bfdfdf334774f4673",
+   "size": 727,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/imitation/evaluation/seed_compat.py"
+  },
+  {
+   "expected_sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+   "found": true,
+   "path": "reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json",
+   "sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+   "size": 655636,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json"
+  },
+  {
+   "expected_sha256": "44a69f6dfa5d04e874310bb4673212281f10f1cf66ac3d14b52fd16f42497c4f",
+   "found": true,
+   "path": "reports/strategy_council_20260928/m0/data/roles_v2/training.json",
+   "sha256": "44a69f6dfa5d04e874310bb4673212281f10f1cf66ac3d14b52fd16f42497c4f",
+   "size": 8751,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/m0/data/roles_v2/training.json"
+  },
+  {
+   "expected_sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+   "found": true,
+   "path": "reports/strategy_council_20260928/search-noise-s6/runtime/support/human_deck_catalog.json",
+   "sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+   "size": 655636,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/search-noise-s6/runtime/support/human_deck_catalog.json"
+  },
+  {
+   "expected_sha256": "de2eda3e0200d5a257f9f3d9d5efd0ba699b34e6ed797dbf7481e2896cb200b4",
+   "found": true,
+   "path": "reports/strategy_council_20260928/search-noise-s6/runtime/support/selection.json",
+   "sha256": "de2eda3e0200d5a257f9f3d9d5efd0ba699b34e6ed797dbf7481e2896cb200b4",
+   "size": 74763,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/reports/strategy_council_20260928/search-noise-s6/runtime/support/selection.json"
+  },
+  {
+   "expected_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/delay_fixes.py",
+   "sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+   "size": 12993,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/delay_fixes.py"
+  },
+  {
+   "expected_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/delay_runtime.py",
+   "sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+   "size": 5029,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/delay_runtime.py"
+  },
+  {
+   "expected_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/delay_simulate.py",
+   "sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+   "size": 16082,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/delay_simulate.py"
+  },
+  {
+   "expected_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/scheduling.py",
+   "sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+   "size": 1230,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/scheduling.py"
+  },
+  {
+   "expected_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/search_ab.py",
+   "sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+   "size": 8895,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/search_ab.py"
+  },
+  {
+   "expected_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/tempo.py",
+   "sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+   "size": 6036,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/tempo.py"
+  },
+  {
+   "expected_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+   "found": true,
+   "path": "src/clasher/analysis/loss_review/throughput_guard.py",
+   "sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+   "size": 5755,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/src/clasher/analysis/loss_review/throughput_guard.py"
+  },
+  {
+   "expected_sha256": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087",
+   "found": true,
+   "path": "student-source/exit_r3/__init__.py",
+   "sha256": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087",
+   "size": 71,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/__init__.py"
+  },
+  {
+   "expected_sha256": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b",
+   "found": true,
+   "path": "student-source/exit_r3/network.py",
+   "sha256": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b",
+   "size": 9020,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/network.py"
+  },
+  {
+   "expected_sha256": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+   "found": true,
+   "path": "student-source/exit_r3/rows.py",
+   "sha256": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+   "size": 5840,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/rows.py"
+  },
+  {
+   "expected_sha256": "dd59fa136230eaf46bee31c53555c6843376032f093d1d633e801f21cf520d67",
+   "found": true,
+   "path": "student-source/exit_r3/student.py",
+   "sha256": "dd59fa136230eaf46bee31c53555c6843376032f093d1d633e801f21cf520d67",
+   "size": 11173,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/student.py"
+  },
+  {
+   "expected_sha256": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+   "found": true,
+   "path": "student-source/exit_r3/teacher_batch.py",
+   "sha256": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+   "size": 956,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/teacher_batch.py"
+  },
+  {
+   "expected_sha256": "58641244e3c9e53d98809e5a5fd0de3a29e503325b9c89c1a12ada10ae84c96e",
+   "found": true,
+   "path": "student-source/exit_r3/test_r3.py",
+   "sha256": "58641244e3c9e53d98809e5a5fd0de3a29e503325b9c89c1a12ada10ae84c96e",
+   "size": 4060,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/test_r3.py"
+  },
+  {
+   "expected_sha256": "fc7c5785e643da9718a7e7cfdbda5db12e146c04e214141924cb5a63ca93b106",
+   "found": true,
+   "path": "student-source/exit_r3/test_round2.py",
+   "sha256": "fc7c5785e643da9718a7e7cfdbda5db12e146c04e214141924cb5a63ca93b106",
+   "size": 1017,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/test_round2.py"
+  },
+  {
+   "expected_sha256": "947f8147e44c4c4a3d039cd054a22932b163486fcbcbeb3ec9d03b7ad54a6ee8",
+   "found": true,
+   "path": "student-source/exit_r3/train.py",
+   "sha256": "947f8147e44c4c4a3d039cd054a22932b163486fcbcbeb3ec9d03b7ad54a6ee8",
+   "size": 11162,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/student-source/exit_r3/train.py"
+  },
+  {
+   "expected_sha256": "745968094c1767079882e55bc0fb803c2b977ce1eee13cec49be4cd02d4c78be",
+   "found": true,
+   "path": "tests/analysis/test_delay_fixes.py",
+   "sha256": "745968094c1767079882e55bc0fb803c2b977ce1eee13cec49be4cd02d4c78be",
+   "size": 6561,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_delay_fixes.py"
+  },
+  {
+   "expected_sha256": "60dd12e17c89413b825add79eff73209d9a88d44448c2bcb845ab9d3382824d1",
+   "found": true,
+   "path": "tests/analysis/test_delay_fixes_summary.py",
+   "sha256": "60dd12e17c89413b825add79eff73209d9a88d44448c2bcb845ab9d3382824d1",
+   "size": 3053,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_delay_fixes_summary.py"
+  },
+  {
+   "expected_sha256": "86b356164c3b2c97854c6acdd7730411144a28c2fbb2fde573478ce1044dee2a",
+   "found": true,
+   "path": "tests/analysis/test_search_ab.py",
+   "sha256": "86b356164c3b2c97854c6acdd7730411144a28c2fbb2fde573478ce1044dee2a",
+   "size": 8180,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_search_ab.py"
+  },
+  {
+   "expected_sha256": "9d8ee3988edd574642a937f284d2830dae44e1d06bd37254e8d2e6847a33ee41",
+   "found": true,
+   "path": "tests/analysis/test_search_ab_guard.py",
+   "sha256": "9d8ee3988edd574642a937f284d2830dae44e1d06bd37254e8d2e6847a33ee41",
+   "size": 3477,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_search_ab_guard.py"
+  },
+  {
+   "expected_sha256": "010e462fa8c3aefab8937e5665fdd5a32d350b597d11239f3b87a9ec4b46041a",
+   "found": true,
+   "path": "tests/analysis/test_tempo.py",
+   "sha256": "010e462fa8c3aefab8937e5665fdd5a32d350b597d11239f3b87a9ec4b46041a",
+   "size": 4231,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_tempo.py"
+  },
+  {
+   "expected_sha256": "2cd18eda00b76d62243f6f0116e85cfa543b54d5b316ec6888033c445b12b0bb",
+   "found": true,
+   "path": "tests/analysis/test_tempo_launch.py",
+   "sha256": "2cd18eda00b76d62243f6f0116e85cfa543b54d5b316ec6888033c445b12b0bb",
+   "size": 3299,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_tempo_launch.py"
+  },
+  {
+   "expected_sha256": "79a4c564b128d17c82e3ab3bf8e933ffd9b5c056084b33bdec127d6c8405c486",
+   "found": true,
+   "path": "tests/analysis/test_throughput_guard.py",
+   "sha256": "79a4c564b128d17c82e3ab3bf8e933ffd9b5c056084b33bdec127d6c8405c486",
+   "size": 2949,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/analysis/test_throughput_guard.py"
+  },
+  {
+   "expected_sha256": "26e6e487f65180ea91f4426ec0946a1e8974e74f7d98f551cb2aaecbb12cdd6b",
+   "found": true,
+   "path": "tests/test_l1_v4.py",
+   "sha256": "26e6e487f65180ea91f4426ec0946a1e8974e74f7d98f551cb2aaecbb12cdd6b",
+   "size": 9247,
+   "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime/tests/test_l1_v4.py"
+  }
+ ],
+ "found": 33,
+ "missing": [],
+ "ok": true,
+ "schema": "clasher.k4s.end-runtime-locate.v2",
+ "source": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/end-a5-CANDIDATE-0775b704-0108-r1/runtime",
+ "utc": "2026-10-13T04:53:06Z",
+ "wanted": 33
+}
