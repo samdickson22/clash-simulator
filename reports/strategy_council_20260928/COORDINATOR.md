@@ -5596,3 +5596,35 @@ Built from the owner's draft `b08-r4-stage-run-draft-r1` (e82b8e6c). The coordin
 **Window:** 11:30Z to 12:30Z. The CPU GO ends at 13:30Z. C-5 is clean.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0d700046f1e543e3959c09dd05ba1a4595cf22932e682191ed47b9e89bf28a23
+
+## 2026-10-13 11:21Z: X4S-4 P2 done; P3 low side only; SA-5 approved in principle
+
+**P2.** S-200 collection finished: 1,750 of 1,750 games at `--workers 10`, rc 0. The SA-4 watch recorded only low-side readings.
+
+**P3.** The collection-bank parity run (receipt f4082f32) is out of band on the **low side only**:
+- **S-200:** cutoff 63.32 % against 75.3 %.
+- **K4S-120:** in band on all three metrics.
+- This is the case the coordinator ruled on in advance at b98fda79: disclose.
+
+**The defect.** The owner found that label.py's `check_parity` can never accept a failed P3, so the planned exception path cannot work. Two reasons:
+1. `qualify4 parity` exits 1 whenever the verdict fails, so the guard receipt is never PASSED.
+2. `pause()` creates STOP before the receipt is written, so H-1 rejects the receipt.
+
+The offline test missed this because its fixture blessed the receipt instead of running the real guard.
+
+**SA-5, approved in principle:** a minimal `--final` mode for `qualify4 parity`.
+- No `pause()`.
+- Exit 0 whenever a final receipt was written without error.
+- The verdict stays in the receipt's `passed` field.
+- Behaviour without `--final` is unchanged.
+- Tests run end to end through the real `guard.py` → `qualify4 parity --final` → `label.make_plan`, with no bless fixture.
+
+The coordinator checks the diff directly. After that:
+1. install (re-seal RUNTIME-INVENTORY if qualify4 is listed);
+2. `watchdog.py resume`;
+3. P3-r2 with `--final`;
+4. the 01 fetch;
+5. a "disclose" exception for the exact P3-r2 receipt;
+6. P4.
+
+The label.py-side alternative is rejected, because it would weaken R7 for every consumer.
