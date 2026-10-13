@@ -4635,3 +4635,32 @@ The C-5 pre-check passed. Every downstream GO for package r3 uses this single re
 **Next.** The coordinator runs the C-3 mechanical binding of `REVIEW` in the generic transport, then redeploys, places, stages, checks the environment, and runs epoch 1 (C-5 to C-8). The failed epoch-1 chain stays consumed.
 
 ISSUED APPROVE_B_COMBINED_REVIEW f50ec6051708dbb3f962612ea133cd0bb48fd745cca95e5aa4aa4ddc2b9e9e60
+
+## 2026-10-13 02:13Z: Perception B generic transport bound (C-3 mechanical binding, PASS)
+
+The coordinator carried out BINDING-PROCEDURE steps 1–6 in `l1/prepared/b08-generic-transport-review-r2/`.
+
+**Step 1: pre-checks.**
+- The review set (manifest bf6a0d6b) re-hashes: 27/27 members, `check_binding.py` 6838a770, template manifest 6ca8b0c6.
+- Before the edit, the bound directory was byte-identical to `template/`.
+- A pre-bind backup was kept under `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/generic-r2-prebind-backup-*`.
+
+**Step 2: the one-line source change.** In `transport.py` line 17, `REVIEW = 'REVIEW_SHA'` was replaced with the issued combined receipt r3 (`REVIEW = 'f50ec605…'`). That is the only source change.
+
+**Step 3: derived pins.** The transport hash was updated in `guard.sh`, `launcher.sh` and `retrieval.sh`. The manifest's status is now `COORDINATOR_BOUND`, and its four records were recomputed with the canonical encoder. Afterwards the 5 edited files were set back to 0444.
+
+**Step 4: `check_binding.py` result PASS.** The receipt for this run is `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/binding-check-r3.json`.
+
+| Artifact | SHA-256 |
+|---|---|
+| transport.py | d3dc83a98a556481ca56b0d029ea265074b21870153e670c075a499ae56fcc21 (template version 96267dcd) |
+| guard.sh | c9cb67e2475e37867f30d762662a95f4c0ef95c6d2051ad89bcfc587701854d7 |
+| launcher.sh | 6eb6b725765b18959ffb79eab199f05377f52408706368d69b77850b19a61759 |
+| retrieval.sh | 609cac0fa28db0baffc25c740466433a82ba0a23bb10fdef443c3da7c570712f |
+| bound REVIEW-MANIFEST | 205309ae90a77cfbdcad5530047e12751737deea3257f32846facf43713a0462 |
+
+**Step 5: tests.** The 30 generic tests pass on a `/dev/shm` copy. The log is kept outside the bound directory, at `…/v4-b-gap-review/generic-bound-tests-r3.log`.
+
+**Step 6: re-check.** Re-running `check_binding.py` against the bound directory still gives PASS.
+
+**Next.** C-5: a fresh deployment GO for package r3. Before it, a fresh quiet-read of 08.
