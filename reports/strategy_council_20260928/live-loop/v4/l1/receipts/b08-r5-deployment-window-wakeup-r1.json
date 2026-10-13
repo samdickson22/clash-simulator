@@ -1,0 +1,32 @@
+{
+  "complete_sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce",
+  "completion_notification": {
+    "client_request_id": "b08-r5-deployment-c048baf2-complete-r1",
+    "thread_id": "0523ae6f-baa3-4d4e-b233-b392671670db"
+  },
+  "completion_notification_delivery": "started",
+  "disable_first_on_wakeup": true,
+  "exit_code": 0,
+  "go_sha256": "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c",
+  "host_action": true,
+  "inspection": false,
+  "issuance_commit": "4b4d533614bed04076a6b46ceaf78cfb8e504796",
+  "local_claims_absent_at_preflight": true,
+  "main20min_unchanged": true,
+  "next_run_at": "2026-10-13T14:30:06.189Z",
+  "no_retry": true,
+  "one_invocation": true,
+  "preflight": "l1/prepared/b08-r5-stage-chain-drafts-r1/deployment-preflight-early.json",
+  "retry": false,
+  "schedule": {
+    "everyMs": 2320000,
+    "type": "interval"
+  },
+  "scheduled_task_enabled": false,
+  "scheduled_task_id": "scheduled-task:command:mcp:5eaa8034-8c9f-4cbb-a098-e5ccf5d5f81f:schedule-task:clasher-b08-r5-deployment-c048baf2-wakeup-r1",
+  "ssh_sessions": 1,
+  "stage_draft_manifest_sha256": "291b28b504e00ca8df956d3e98c77a023b09600de4f486ad41793afb2b44e0e2",
+  "stage_drafts_revision": "b08-r5-stage-chain-drafts-r2",
+  "status": "DEPLOYMENT_SUCCESS_PENDING_COORDINATOR_ACCEPTANCE",
+  "utc": "2026-10-13T14:32:05.917849+00:00"
+}

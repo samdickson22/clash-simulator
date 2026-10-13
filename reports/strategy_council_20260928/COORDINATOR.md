@@ -6080,3 +6080,19 @@ ISSUED AUTHORIZE_B_DEPLOYMENT c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586ab
 - **Implication:** fit-to-fit noise is about the same size as game-sampling error at 1,167 seeds.
 
 Exploration only, never adoptable.
+
+## 2026-10-13 22:02Z: B package-r5 deployment ACCEPTED; quiet-read r12
+
+**Perception B deployment r5: ACCEPTED.** Coordinator checks:
+- the operator exit code (`l1/receipts/b08-deployment-operator/c048baf2…/exit-code`) is 0;
+- `complete-from-stdout.json` hashes to 9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce, matching the compact receipt `l1/receipts/b08-r5-deployment-result-r1.json` (cd86810f);
+- it covers 339 files and 49,561,121 B, schema `b08-deployment-complete.v1`;
+- package a0046c1d, GO c048baf2 and review 7dca4033 match the issued authorities (c11ec490, 4b4d5336);
+- `runtime_admitted=false`;
+- one SSH session, no inspection, no retry; the one-use wake-up was disabled.
+
+This acceptance was recorded about 7.5 h after the 14:30Z report. The coordinator stalled; the cause was not on the owner's side.
+
+**Quiet-read r12.** The coordinator read 08 once, read-only, with `evidence/coordinator-quiet-read-r12.sh` (bb4b04ef). It is the reviewed e36f8538 lineage, with only the `Q=` output directory changed from r11. Exit code 0, no retry. Observation `l1/receipts/b08-quiet-read-r12/observation.json` (2c0407da): who 0, available 1,216,433,364,992 B, loadavg 0.14.
+
+**Next:** the stage-chain r2 drafts' windows have lapsed. The owner re-drafts r3 with fresh windows: stage CPU GO, then placement r13, then run GO, hashed in that order. Inputs are this commit as the deployment acceptance and quiet-read r12 as the observation. No phase action happens until the coordinator issues it.

@@ -1,0 +1,29 @@
+{
+  "complete_local_path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-r5-deployment-preflight-r1/complete-from-stdout.json",
+  "complete_remote_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c/complete.json",
+  "complete_sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce",
+  "coordinator_acceptance": null,
+  "exit_code": 0,
+  "exit_code_path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-deployment-operator/c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c/exit-code",
+  "extra_remote_read": false,
+  "failure_inspection_used": false,
+  "hash_provenance": "Derived from returned stdout record using exact reviewed receive() serialization; no independently echoed remote hash.",
+  "one_invocation": true,
+  "result": {
+    "bytes": 49561121,
+    "completed_epoch": 1791901834.4462008,
+    "files": 339,
+    "go_sha256": "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c",
+    "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+    "review_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+    "runtime_admitted": false,
+    "schema": "clasher.v4.b08-deployment-complete.v1"
+  },
+  "retry": false,
+  "runtime_admitted": false,
+  "ssh_sessions": 1,
+  "status": "DEPLOYMENT_SUCCESS_PENDING_COORDINATOR_ACCEPTANCE",
+  "stdout_path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-deployment-operator/c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c/stdout.log",
+  "stdout_sha256": "ad8415fd07e819f6c4315122cbce49cc91321ba218934092bb043ad320dfede7",
+  "utc": "2026-10-13T14:30:43Z"
+}
