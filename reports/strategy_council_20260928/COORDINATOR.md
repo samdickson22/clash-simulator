@@ -4801,3 +4801,15 @@ On a fresh export, the 9 offline test groups pass (coordinator rerun), including
 **GO:** the same sequence as at 19047ce7. 03 launches first, and 04 launches only after 03 returns `__RC=0`.
 
 **Disclosed residual:** the FSC slots on 03 (cores 0–59, supervisor 62) overlap the idle service's pinned cores 48–63 and 112–127. This is harmless while the service is idle.
+
+## 2026-10-13 03:12Z: X4S-4 r10 Sol fix-check: 6/8 fixed; two narrow closures, then the coordinator verifies and GOs
+
+Sol's fix-check (`x4s4-review/SOL-FIXCHECK-R10-r1.md`, e5b71aae) returned REQUEST_CHANGES. R9-F1, F2, F4, F5, F6 and F8 are FIXED, and the late 0.05 s H-1 widening is conservative at all four boundaries. Two items remain:
+- **R9-F3:** the watchdog's readout-root predicate (`watchdog.py:192`) accepts a `guard.py` token anywhere in argv. A process that never runs guard.py can make its subtree deadline-exempt. Output admission is already bound to the exact invocation in `studytree`, so this is a host-safety/deadline gap, not a counting gap.
+- **R9-F7:** `packw.py` silently skips non-real `game-*` entries, but the frozen packer still globs them, so a linked, unevidenced game could be packed. This is an integrity gap.
+
+**Ruling SR-3:** these two get one narrow closure each. There is no further Sol round. The coordinator verifies the diff directly, as PR-1's final round, and then issues the X4S-4 GO.
+- **F3:** a readout root must be a process whose executable is Python and whose script argument, in the interpreter's script position and not anywhere in argv, is the exact `guard.py`. It must run `--readout` with an allowed command that matches `guard.py`'s own allowlist. Turn the existing `-c` fixture into a negative; the positive must be a real Runner subtree.
+- **F7:** refuse (do not skip) any `game-*` entry that is not a real directory. Assert that the authenticated inventory equals the packer's glob inventory before calling the packer. Add a negative with one authenticated game plus one linked, unevidenced game.
+
+The full matrix must pass under -O0/1/2. Nothing else changes.
