@@ -5358,3 +5358,19 @@ qualify4 and label.py are unchanged. Tests: `test_sa4` has 11 scenarios, 10/10 m
 **Actions:**
 1. The perception owner states whether the service ended by design (for example its renewal lease) and whether it is still needed. It must not be restarted without a coordinator ruling, because a restart would change the K4S pin again.
 2. The K4S runner treats the 03 idle-service pin as retired. Its END integration fix round proposes the minimal pin and ruling change: 03 with no idle resident, consistent with 08's earlier retirement. The coordinator decides on that proposal before A2.
+
+## 2026-10-13 08:19Z: IR-03 adopted (03 has no idle resident for K4S END); B r4 fix to Opus review
+
+**Ruling IR-03 is adopted as proposed** (d34dc24d, `end-prep/IDLE-03-RETIREMENT-PROPOSAL.md`). For K4S END, 127x03 has no idle resident.
+- **Guard jobs and bundles:** the 03 guard jobs and bundles carry only `system-bus-admission.json`.
+- **The old admission file:** A′'s `127x03-idle-services.json` stays on `k4s-end-r1` as a retired historical admission. It is never placed in a guard job or bundle.
+- **If a cache service is restarted on 03:** it is foreign, not exempt, and needs a new ruling before the next 03 step.
+- **Code changes, in the integration fix round:**
+  - S3 builds from an END admission constant;
+  - S4 `PRODUCTION_PINS` for 03 is bus-only;
+  - the 03 guard jobs and bundles are rebuilt;
+  - the tests listed in the proposal are added.
+- **Why it's needed:** the runner showed that keeping the stale pin would make every 03 END block fail qualification (`fleet_validity.py:243–244`, `:271–272`).
+- **Likely cause:** the cache services' authorized hard stop at 2026-10-13T04:00Z. The perception owner confirms it, and must not restart the service.
+
+**Perception B.** The package r4 candidate (89b1582e) routes restricted C1 plan pins through the `reference` role only, and keeps every pin. The owner reports that a real-input end-to-end run is **blocked**: the C1 reference, decoder, truth and frame payloads exist only on 08, and 05 holds no payloads. The r4 delta goes to an Opus review, because the code is Astra's. That review covers C1 consistency, a sweep of all call sites, unchanged semantics, the impact list, and the next-failure risks it can find from code reading. After the review, the coordinator decides how real-input verification happens before any new epoch attempt.
