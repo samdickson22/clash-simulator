@@ -502,3 +502,19 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   - Readings: K4S-120 62.46 / 21.53 / 0.15; S-200 63.32 / 0.00 / 0.06.
   - So the carried-over evidence holds under the T2 H-1 history.
 - Next, step 9: P5 with new guard names (p5-label-O-r2, then holdout).
+
+## 2026-10-13T13:31:46Z — P5, P6 and P7 PASS (under T2); P9 and P10 launched
+
+- P5 O, `p5-label-O-r2` (12:39:29Z–13:18:35Z): guard passed (5b6aeb28…).
+  - label-receipt-O-1791897512.json ead48010…: sealed 3,500/3,500; 339,846 rows; 0 drops; passed.
+  - Through the walk, the watchdog stayed ok, with disk_vanished 0 at every sampled heartbeat.
+- P5 holdout, `p5-label-holdout` (13:19:54Z–13:26:43Z): guard passed (605ed4f5…).
+  - label-receipt-holdout-1791897994.json 9fa781b9…: sealed 500/500; 49,183 rows; 0 drops.
+- P6, packw: O batch-0000 manifest 7d01f55f… (guard bfc1d3ca…, 84 s, 521 MB); holdout batch-0000 14cb7013… (guard
+  50720fc4…, 25 s, 76 MB).
+- P7:
+  - O-VERIFIED.json e6d19a81…: 339,846 rows = roots, within the 0.30–0.45 M band; single-candidate share 0; plan
+    2cc0f625 and parity 2ec15eb4 bound. Guard 10690fe2….
+  - HOLDOUT-VERIFIED.json eb969538…: 49,183 rows. Guard 81e1ea1b….
+- P9 `p9-collect-w` (--count 6000 --workers 48), launched 13:31:26Z. P10 driver launched 13:31:46Z (cores 56–61): R5
+  and R5-rep after the O gate, R5W after the O_W gate.
