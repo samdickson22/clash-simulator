@@ -1,0 +1,9 @@
+{"utc": "2026-10-13T01:35:06Z", "kind": "driver_start", "pid": 2610986}
+{"utc": "2026-10-13T01:35:06Z", "kind": "fit_launch", "fit": "R3a-rep2", "resume": []}
+{"utc": "2026-10-13T02:51:57Z", "kind": "fit_launch", "fit": "R3a-rep3", "resume": []}
+{"utc": "2026-10-13T02:52:02Z", "kind": "anomaly", "name": "calibration-R3a-rep2", "reason": "calibrate rc 1"}
+{"utc": "2026-10-13T03:02:54Z", "kind": "student_ready", "id": "R3a-rep2", "threshold": 0.49848902225494385, "play_rate": 0.345944609297725, "checkpoint_sha256": "72d733757fe04e00125fbc053951b2a0b2734a4120b9f13bf8ea153daeda1afd"}
+{"utc": "2026-10-13T03:02:54Z", "kind": "phase_launch", "student": "R3a-rep2", "arm": "K4S-120", "attempt": 1, "todo": 1167}
+{"utc": "2026-10-13T04:10:07Z", "kind": "student_ready", "id": "R3a-rep3", "threshold": 0.49953630566596985, "play_rate": 0.345944609297725, "checkpoint_sha256": "43621ce44315fffa2d7146e5dc895859090e5821991b32c017b3db8ebd2f09c1"}
+{"utc": "2026-10-13T04:16:09Z", "kind": "phase_launch", "student": "R3a-rep2", "arm": "S-200", "attempt": 1, "todo": 1167}
+{"utc": "2026-10-13T04:41:19Z", "kind": "driver_exit", "reason": "SIGTERM"}

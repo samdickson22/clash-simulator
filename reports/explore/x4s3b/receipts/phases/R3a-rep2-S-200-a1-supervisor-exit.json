@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-13T04:40:54Z",
+  "host": "127x01",
+  "returncode": 0,
+  "reason": null,
+  "remaining_group_pids": [],
+  "min_memavailable_GiB": 109.2861213684082,
+  "max_owned_pss_GiB": 12.702740669250488,
+  "wall_seconds": 1484.6956520369276,
+  "children_cpu_seconds": 70285.25976,
+  "parent_cpu_seconds": 86.557298,
+  "complete_blocks": 1167
+}

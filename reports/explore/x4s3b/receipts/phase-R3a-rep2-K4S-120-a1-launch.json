@@ -1,0 +1,26 @@
+{
+  "launched_at_utc": "2026-10-13T03:02:54Z",
+  "pid": 2894975,
+  "pgid": 2894975,
+  "command": [
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/rt-R3a-rep2/repo/reports/explore/x4s3/runtime.sh",
+    "reports/explore/x4s3/supervise.py",
+    "--job",
+    "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013",
+    "--rt",
+    "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/rt-R3a-rep2",
+    "--phase",
+    "games/R3a-rep2/K4S-120/a1",
+    "--range",
+    "reporting",
+    "--indices",
+    "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/games/R3a-rep2/K4S-120/indices-a1.json",
+    "--arms",
+    "K4S-120",
+    "--stop-at",
+    "2026-10-13T09:35:00Z"
+  ],
+  "phase": "games/R3a-rep2/K4S-120/a1",
+  "todo": 1167
+}

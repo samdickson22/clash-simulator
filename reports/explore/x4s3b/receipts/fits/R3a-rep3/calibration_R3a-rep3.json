@@ -1,0 +1,30 @@
+{
+  "id": "R3a-rep3",
+  "threshold": 0.49953630566596985,
+  "target_play_rate": 0.346,
+  "actual_play_rate": 0.345944609297725,
+  "rows": 8088,
+  "legal_rows": 6167,
+  "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s3b-fitseed-20261013/inputs/R3a-rep3.pt",
+  "checkpoint_sha256": "43621ce44315fffa2d7146e5dc895859090e5821991b32c017b3db8ebd2f09c1",
+  "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+  "checkpoint_meta": {
+    "step": 2500,
+    "width": 192,
+    "seed": 2026101205,
+    "steps": 2500,
+    "advantage_weight": 0.0,
+    "teacher_manifests": [
+      "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b"
+    ],
+    "init_checkpoint": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737"
+  },
+  "labels_not_used_for_threshold": true,
+  "exploratory_calibration_reuse": true,
+  "device": "CUDA float32, TF32 off",
+  "torch": "2.7.1+cu118",
+  "gpu_wall_seconds": 3.940743651939556,
+  "label": "X4S-3 exploration, NEVER ADOPTABLE",
+  "utc": "2026-10-13T04:10:06Z"
+}

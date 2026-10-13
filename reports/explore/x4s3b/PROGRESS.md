@@ -90,3 +90,21 @@ If the driver is not live (check the PID in driver.pid via /proc) and STOP is ab
   10 workers, beside the rep3 fit (PSI 0.00).
 - **03:03:20Z mirror:** `05:J2/mirror/rep2-fit/` (checkpoint, calibration, READY, fit receipts, driver, logs);
   SHAs match.
+- **STOP U2, amended (COORDINATOR 4b33d68d; X4S-4 GO):** let rep2 finish K4S-120 and S-200, start nothing after,
+  then the STOP procedure; rep3 fit/games abandoned. **03:36:42Z** state: rep2 K4S-120 528/1,167; rep3 fit step 1,424.
+  **03:36:52Z** owner holds `driver/ANOMALY-phase-R3a-rep3-{K4S-120,S-200}.json` placed (next_phase returns None at a
+  held entry, so nothing dispatches after rep2 S-200). If the rep3 fit is still running when rep2 K4S-120 exits, it is
+  stopped by owner hold `ANOMALY-fit-R3a-rep3.json` + `FIT.STOP` (trainer checkpoints) so rep2 S-200 can dispatch.
+- **04:09:40Z** R3a-rep3 fit returned (2,500/2,500, stopped=false; checkpoint 43621ce4); **04:10:07Z** calibrated,
+  threshold 0.49953630566596985, same play rate. Held: it plays no games (abandoned under the amended STOP).
+- **04:16:08Z** rep2 K4S-120 a1 complete: 1,167/1,167, rc 0, reason null. **04:16:09Z** rep2 S-200 a1 dispatched (no
+  fit live). **04:40:54Z** rep2 S-200 complete: 1,167/1,167, rc 0, reason null.
+- **STOP U2 executed:** `touch J2/STOP J2/FIT.STOP` at 04:41:03.854Z; supervisor 3154215 already gone; driver
+  2610986 SIGTERM 04:41:18Z, exited 04:41:19Z (`driver_exit SIGTERM`). PID census: 2610986, 2610994, 2859387,
+  3154215 gone; all 14 owned PGIDs (smoke, stop test, driver, fits, phase supervisors and children) have 0 members;
+  no process with cwd under J2 (the first census saw only my own census shell); GPU 107 MiB, no compute apps.
+  **Abandoned (disclosed):** R3a-rep3's 2 × 1,167 games; its checkpoint and calibration are kept.
+- **04:42:13Z** full J2 mirrored to `05:J2/mirror/final/` (21,456 files, 1.8 GB; aggregate SHA match).
+- **04:42:38Z** interim reduction on the 05 mirror → `mirror/final/analysis/x4s3b-interim-r1.json` (00926d0d;
+  copy at results-interim.json): rep2 − rep pooled +0.26 pp, V 1.108 pp², σ̂_fit = 0.0 pp (interim, 1 df).
+  [RESULTS](RESULTS.md) written. U2 complete; no further 01 contact unless the coordinator OKs resuming rep3's games.
