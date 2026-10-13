@@ -5502,3 +5502,25 @@ It does not authorize GPU use or heldout data.
 **Window:** 2026-10-13 10:30Z to 12:00Z. At most one failure inspection, as the GO allows.
 
 ISSUED AUTHORIZE_B_DEPLOYMENT b503559ca0cdd95150a59f222bc5c26f97a9db43864679eddc6d8296d254d43a
+
+## 2026-10-13 10:33Z: K4S END integration review: REQUEST_CHANGES (2 blockers); rulings B6, D1, U4, U11
+
+**Review.** Sol's integration review (`k4s-runner/run-r1/reviews/SOL-REVIEW-END-INTEGRATION-r1.md`, 63fae416) reviewed the package as one chain. **Two blockers:**
+
+1. **U8.** The END-JOB builder (`s5s6s7-r4/k4s_a6_builder.py:233-244`) is still pinned to the old runtime manifest (4dd88461, rebuilt manifest is 1fa0ebf5) and to S9 r3 (1875a32e, r4 is 80c15b5f). Its own healthy control test fails.
+2. **U1/U10.** S11 `advance` and S9 `refresh-clone` run git fetch/checkout without checking the metadata files git writes: FETCH_HEAD and the reflogs. A symlinked or hard-linked FETCH_HEAD or reflog therefore causes writes outside the repository. Sol reproduced 6 cases on synthetic fixtures, all of which reported success.
+
+**Rows that pass.** B1, B2, B3, B5, B7, U2, U3, U5, U6, U7, U9, U12 and IR-03.
+
+**Rulings:**
+- **B6, endorsed.** RC-6 and other pre-X paperwork go to main. `k4s-end-r1` stays at P′ until the single END-JOB commit produces X.
+- **D1 extension, endorsed.** The three SHA-pinned support files (SD1 b8ce7b4c, corpora 3501e2ac, DELTA 34eca2b7) stay outside `runtime_files` and the measurement set.
+- **U4.** The END host interpreter is the one P′'s `runtime.sh` actually executes (`/mpac/sdicks02/repos/clasher/.venv/bin/python -B` on the host), not the bare uv binary. The S10 probe and S7 builder must check and pin exactly that path and its resolved site-packages. The bare binary is not ratified.
+- **U11 (S8, post-END finalization), deferred as a phase decision.** It is not reported as closed, and a reviewed S8 is required before post-END finalization.
+
+**Next.** One fix round covering U8 and U1/U10:
+- validate every git-writable metadata leaf and its ancestors (FETCH_HEAD, the HEAD, branch and remote reflogs, and the rest of the fetch/checkout write paths): no symlinks, regular files only, single link;
+- disable unneeded writes, such as `core.logAllRefUpdates=false`;
+- add the alias tests.
+
+Then the U4 interpreter change, then a diff-only Sol fix-check.
