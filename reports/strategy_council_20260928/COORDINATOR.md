@@ -5081,3 +5081,24 @@ The run GO follows C-6.
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 24498e3d70beda75b7364d695fd1ad6896c913e7725a41d48f246d70685715bf
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 49b819b8883ef6aa09b000eacf82a41fd2dd6bc6c12c1cdea0119493812ec938
+
+## 2026-10-13 05:19Z: K4S END branch ruling BR-1; A2 delayed by integration gaps; FSC extension requested
+
+**K4S status (7ae87f4b).**
+- A1 and A1b completed. S3 and the S10 dry runs pass.
+- A2 is not ready. The runner found four tool-to-tool mismatches:
+  - B1: S4's `files` field is a list, but the real pin stores a dict;
+  - B2: the runtime path layout differs between S10 and S5/S7;
+  - B3: S9 does not export SD1-MANIFEST or `corpora.json`;
+  - B4: host setup for the repository clone, `tools/`, native and corpus has no reviewed tool.
+- An end-to-end integration audit runs offline on 05. Then one fix round, then one package to Sol.
+- A2 is estimated at 13:00Z–14:00Z at the earliest.
+
+**Ruling BR-1: END branch `k4s-end-r1`.** Its tip is 98566c03. It is rooted at main commit 72426428 and carries 3 evidence-only commits: end-sources, E3 admissions and end-evidence. It is approved as the END evidence line, under these conditions:
+- **Append-only:** it is never force-pushed, rebased or rewritten.
+- **Scope:** it holds only K4S END evidence and END-job commits.
+- **Record:** every commit that a host step relies on is cited in the ledger by its full SHA.
+- **After END:** it is merged into main with a merge commit, never squashed or rebased.
+- **Audit:** the integration audit must confirm that no downstream check assumes main.
+
+**FSC extension.** 03/04 are not needed by K4S before the A2 GO. The FSC owner will propose the smallest reviewed way to continue the same worklists after the verified 07:30Z STOP, using the existing yield/leftover relaunch path, with a new STOP_AT of 11:30Z. That leaves A2 able to start at 12:30Z or later. Any change goes to the coordinator for a diff check before it is used.
