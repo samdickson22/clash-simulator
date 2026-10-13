@@ -443,3 +443,25 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
     smoke-pack ran single-threaded.
 - Per the GO, a HALT ends X4S-4: nothing is restarted under T = 2026-10-13T04:55:07Z. HALT evidence is in
   receipts/halt/. Reported to the coordinator.
+
+## 2026-10-13 — HR-1 (COORDINATOR 77a01d88): watchdog disk-walk fix prepared; reuse proposal sent
+
+- Commit af123084: `studytree.tree_bytes` replaces du in the watchdog and in `studytree.disk_bytes`. It is an own
+  bounded scandir/lstat walk: vanishing entries are skipped and counted; every other error raises.
+  - watchdog.py b1a964f5…; studytree.py dacd6d7f….
+  - test_hr1: 6 cases, including the real-watchdog regression under rename and process churn. The r9/r10 watchdog
+    cases now run on the real walk.
+  - 11/11 mutants killed; matrix 6/6 at 145 cases.
+- Read-only facts about J:
+  - 7 entries are timed at or after the HALT (HALT.json, STOP, watchdog/, watchdog.log, receipts/, the p5 log, the
+    failed guard-p5 receipt).
+  - The HALT window has no STOP-period record.
+  - data/raw-O holds 523 seals (206 MB) that never count.
+- Proposed (a): continue in J under T2, using HR-1 and reviewed tools only.
+  1. Archive HALT.json.
+  2. Run `watchdog.py resume` on the dangling STOP, which records the HALT window as a STOP period.
+  3. Set raw-O aside.
+  4. Write a new HARD-STOP and T2.
+  5. W0, then a P3-r3 check that reproduces inventory aadafb16.
+  6. P5-r2 onward.
+  Alternative (b): a clean restart in J2 with a runbook r2 (about 19 h). Awaiting the coordinator's choice.
