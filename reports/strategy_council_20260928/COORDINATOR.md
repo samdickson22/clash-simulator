@@ -5765,3 +5765,19 @@ Built from the owner's draft fcfccb47. The only changes are the placement r10 co
 **C-5:** clean.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 3645860d46b686f46ae569567fe7ba07bdb58a5755734e255c76f644e88ff20c
+
+## 2026-10-13 12:04Z: X4S-4 HALT during P5; ruling HR-1 (fix, then continue under a new GO)
+
+**What happened** (586206fd). The watchdog HALTed during P5 labelling. Its `du -sb` disk measurement exited 1 because label.py's 48 workers were renaming `.tmp` → `game-NNNN` directories while it ran. Under R9-F4, any failed reading HALTs.
+
+The HALT itself behaved correctly. It stopped all 51 study processes by verified (pid, starttime), and the tree is empty. All readings until then were healthy. This is a design defect, the same class as R9-F4: a reading that fails closed must not fail on harmless concurrent writes. The study under T 04:55:07Z has ended, as the GO requires.
+
+**Ruling HR-1.** X4S-4 continues under a **new GO with a new T**, provided the following hold.
+
+1. **Watchdog fix (narrow).** The disk measurement becomes a bounded walk the watchdog does itself (`os.scandir`/`lstat`). Entries that vanish during the walk (ENOENT, or ENOTDIR on a vanished parent) are skipped and counted. Every other error HALTs, as today: an unreadable or missing root, a timeout, or a permission error. Tests must run concurrent rename/remove while measuring, plus mutants. The coordinator checks the diff directly, and Sol fix-checks it only if it goes beyond the measurement function.
+2. **Reuse or restart.** The owner proposes one of two paths:
+   - **(a)** Carry the pre-HALT, H-1-valid collection (K4S-120 2,250 and S-200 1,750 games) and P3-r2/PE-4/P4 into the new instance, through a small reviewed carry-over. It must preserve producer evidence and completion times strictly before the HALT.
+   - **(b)** Restart from S0 in a fresh job root with the fixed watchdog. Collection takes about 5 h, and the whole run fits a new 24 h T.
+
+   Prefer (a) only if the carry-over is a small, testable change. Otherwise take (b). The 523 sealed games without label receipts never count.
+3. **No changes to J or the HALTed watchdog** until the new GO.
