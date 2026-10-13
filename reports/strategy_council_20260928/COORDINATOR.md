@@ -5907,3 +5907,23 @@ Placement GO e16c2206 completed once. Both exit codes are 0.
 - There are 0 `^REVOKED` lines.
 
 **ACCEPTED.** The epoch-1 run GO follows, issued from the coordinator-held draft caa7dab9.
+
+## 2026-10-13 12:47Z: B r4 epoch-1 run GO r3 issued
+
+Built from the coordinator-held draft caa7dab9. The only additions are placement r11's completion details and the issuance status:
+- complete ab9ca4fd, exit codes 0, tips 62a82156, C-6 accepted at a7105fd4;
+- `placement_c6_accepted`, `draft_status` and the blocker.
+
+**Bindings:** bound transport r3, CPU GO 8c4d27dd, placement e16c2206. `stage_accepted` and `g6_environment_accepted` are both true.
+
+**Scope:** epoch 1 only, run serially and alone on 127x08 from 05, cpus [0,1], one launch, no retry. No GPU and no heldout data.
+
+**Budget:** a 32 GiB worker inside the 48 GiB union budget (other processes ≤ 14 GiB), and at most 16 processes.
+
+**Window:** 13:00Z to 14:00Z. The CPU GO expires at 15:00Z.
+
+**Reporting:** keep the raw `epoch.json` started and completed epochs. Their difference decides U1 (≤ 2,400 s) and G5 (≤ 3,600 s).
+
+C-5 is clean.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e4615dba1bebfe1831410cb41b73c3764b75c768ba3fb817a2dded98d96df581
