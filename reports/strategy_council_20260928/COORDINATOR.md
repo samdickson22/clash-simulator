@@ -4823,3 +4823,25 @@ There are two non-blocking notes:
 - The test-mode assumptions need documenting: `tar.umask=0022` and process umask 0022.
 
 The END tooling is now frozen at these SHA256SUMS. The runner may do any 05-only preparation now. Any step that touches **03 or 04** (A1 onward) needs a coordinator GO, and comes no earlier than **1 h after the FSC STOP is verified**. STOP_AT is 07:30Z.
+
+## 2026-10-13 03:36Z: X4S-4 GO (scripts d09bdef9, runbook 7b3ec27b); U2 drains after R3a-rep2
+
+**SR-3 verification.** The coordinator read `git diff 8bde7397 d09bdef9`. The code changes are only in `watchdog.py` (`readout_argv`) and `packw.py` (refuse non-real `game-*`, plus `check_inventory`), plus tests, SCRIPTS.md and receipts.
+- **F3:** a readout root now needs all of these:
+  - a Python argv[0] with only plain flags, then exactly the `guard.py` beside the watchdog;
+  - `--readout` before `--`;
+  - a wrapped command that passes guard.py's own `studytree.readout_invocation`;
+  - `X4S4_READOUT=1`.
+
+  This matches the runbook's GRD/RTPY invocations: the watchdog and guard.py both live in `$J/rt-R3a/repo/reports/explore/x4s4/`.
+- **F7:** a non-real `game-*` is refused, and the authenticated inventory must equal the packer's glob immediately before `pack()`.
+- **Tests:** mutants were observed for both. The 128/128 matrix passes under -O0/1/2.
+- **Residual:** a game that appears between the inventory check and the packer's own glob. That window is milliseconds long, inside a guarded single-writer job.
+- **Runbook pin:** 7b3ec27b changes only the `C` pin and two archive commands.
+
+**GO (Q-D1, a single combined GO for qualification plus conditional production)** on 127x01, per QUALIFY-RUNBOOK at 7b3ec27b (c55ba41d) with scripts d09bdef9. X4S-4 is NEVER ADOPTABLE.
+
+**U2 sequencing amendment (supersedes "STOP U2 at the X4S-4 GO"):**
+- U2 continues until R3a-rep2's S-200 phase completes, which gives the interim fit-seed σ̂ (1 pair).
+- U2 then STOPs. The rep3 fit or games in progress are abandoned and disclosed.
+- U2 reports when it has drained, and X4S-4 starts S0 only after that report. The expected cost is about 1 h of X4S-4 start delay, and 01 stays busy throughout.
