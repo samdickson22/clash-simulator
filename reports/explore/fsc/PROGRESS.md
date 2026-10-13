@@ -37,3 +37,20 @@ Mirror on 05: `/mpac/sdicks02/jobs/clasher/fsc-mirror-20261013/`.
   v4-cache-renewal-r2/validation_cache_service_renewal_v4.py, taskset 48-63,112-127). Nothing was staged or started on 03;
   the prefix holds only bundle/. 04 was not launched (the GO sequence needs 03 at __RC=0). Halted; reported to the
   coordinator; no relaunch without approval.
+- 2026-10-13T03:12Z: GO 5f1a28be (commit c7df6fac, MANIFEST 2f16b70d). The attempt-1 logs moved to fsc-sessions/attempt1-0252Z/.
+  Old runner 2050067 (identity checked) killed by exact PID, then its sleep child 2050100; `ps -p` showed none left.
+  New runner: PID 239670 (sleep child 239707), started 03:12:30Z, AT 07:30:00Z, hosts 03 and 04 (fsc-sessions/stop-runner.receipt.json).
+- 2026-10-13T03:16:18Z: **127x03 reporting launched** (__RC=0), prefix /mpac/sdicks02/jobs-fsc/fsc-03-20261013b.
+  - FSC-1 exempt (resident ticks 7603 → 7603).
+  - Staged 424 MB, all pins verified.
+  - Smoke passed: 8 blocks / 16 games in 101 s.
+  - STOP test passed: owned_STOP, exit 1.8 s after STOP, 4 blocks interrupted, 0 left alive.
+  - rep03: supervisor PID/PGID 3244110, child PGID 3244144 (13 processes), workers 12, stop-at 07:30:00Z.
+  - Guards: 14 processes at oom_score_adj 1000 / RLIMIT_AS 8 GiB.
+- 2026-10-13T03:20:16Z: **127x04 reporting launched** (__RC=0), prefix /mpac/sdicks02/jobs-fsc/fsc-04-20261013.
+  - Console users 0, no foreign processes (no resident service found on 04).
+  - LAN copy: 2,019 files, 0 deletions; native (458 files) and inputs equal at 03 and 04.
+  - Smoke passed: 16 games in 101 s.
+  - STOP test passed: 1.8 s, 4 blocks interrupted, 0 left alive.
+  - rep04: supervisor PID/PGID 2301414, child PGID 2301450 (13 processes), workers 12, stop-at 07:30:00Z.
+  - Guards: 14 processes OK.
