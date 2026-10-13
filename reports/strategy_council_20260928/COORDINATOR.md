@@ -4508,3 +4508,17 @@ Sam flagged that the fleet sits idle. The plan is `/mpac/sdicks02/jobs/clasher/c
 - **Harness-reuse lane.** A byte-identical harness, or one changed only in host, ceiling or path constants, with new config/worklist/seeds, needs only a coordinator checklist: diff, git-export seed audit, 8-seed smoke, live STOP test.
 - **Review time box.** Any review that takes more than 3 h goes to the coordinator.
 - **Confirmatory work** (T1, K4S, TIERS, B) keeps full review.
+
+## 2026-10-13 01:16Z: U1 amended to match the approved transport (no code change)
+
+The perception-B owner correctly pointed out a conflict between U1 and the approved transport (8d348859) and its review (62cf641a, X6). That transport binds **one** epoch per CPU GO and one CPU GO per run GO. Group members need distinct CPU GOs, with exactly one CPU each, cores [0] and [1], started at least 60 s apart.
+
+**U1 is amended to the compatible form.** Per pair:
+- **two** CPU GOs, one epoch each;
+- **one** placement carrying both;
+- **one** group authority;
+- **two** run GOs.
+
+Members run on cores [0] and [1], with RLIMIT_AS ≤ 20 GiB each and starts at least 60 s apart. The epoch-1 gates are unchanged: C-4 accepted and ≤ 2,400 s.
+
+No code-change route is taken.
