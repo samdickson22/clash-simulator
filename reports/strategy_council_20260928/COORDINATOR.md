@@ -4445,3 +4445,32 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 18f17da0405e4b741845e72da24752b35c20332cd
 3. a check that nothing in r8/r9 regresses correctness, evaluation identity, outcome-blindness or I/O confinement.
 
 If Sol approves, the qualification-plus-conditional-production GO follows Q-D1 to Q-D4.
+
+## 2026-10-13 01:01Z: Perception B fourth placement complete, C-6 clean; epoch-1 run GO issued
+
+**Placement r4 (18f17da0).** Ran once at 2026-10-13T01:00:42Z.
+- Both exit codes were 0. One SSH session, no retry.
+- Exactly one receipt was placed on 08: the epoch-1 CPU GO (fd4132c1).
+
+**C-6 audit: CLEAN.**
+- The revocation tip and the fetched tip are both 0778defe, an ancestor of the current state.
+- No REVOKED lines.
+- Each relied-on authority appears only on its single ISSUED line.
+
+**Epoch-1 run GO issued.** It is byte-identical to the draft (0ac52112). It binds:
+- the epoch-1 CPU GO and the r4 placement;
+- the approved generic transport, launcher and guard.
+
+Conditions:
+- Launch exactly once, through the guard, from 127x05.
+- Slot: 2026-10-13 01:20Z to 02:20Z. The CPU deadline is 03:20Z.
+- Worker limit 32 GiB, concurrency off, cpus [0,1].
+- No GPU, no heldout data, no retry.
+
+**Duration matters for G5.** The epoch-1 unit's measured duration feeds the G5 cost gate: the longest unit must take ≤ 3,600 s.
+
+**Issued copies:**
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-transport-run-epoch01-go-r1.json` (0444)
+- `l1/receipts/b-cpu-transport-run-epoch01-go-r1.json`
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0ac52112a9203f52001949a757d5f1a248d5616634f8ce82af424b25b05e23dc
