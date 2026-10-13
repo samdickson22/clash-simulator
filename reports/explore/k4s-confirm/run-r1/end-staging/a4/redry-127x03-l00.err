@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/k4s_end_launch_gate.py", line 1203, in <module>
+    raise SystemExit(main())
+  File "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/k4s_end_launch_gate.py", line 1199, in main
+    return launch(a, layers) if a.command == "launch" else admission(a, layers)
+  File "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/k4s_end_launch_gate.py", line 806, in launch
+    si.check_absent(P, "launch-out", mine + "LAUNCH-RECEIPT.json")
+  File "<k4s-bootstrap sha256=806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00 /mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/safe_input.py>", line 913, in check_absent
+  File "<safe_input _CORE>", line 87, in refuse
+safe_input.Refusal: exists: launch-out:127x03/preflight-127x03-l00/LAUNCH-RECEIPT.json exists
