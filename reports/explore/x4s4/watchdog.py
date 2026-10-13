@@ -24,7 +24,8 @@ environment. guard.py accepts --readout only for the exact invocation
 Schedule (R9-F1/F2). A worker thread performs measurement cycles, each a complete set of checks, starting every CYCLE
 (9.5 s). Every heartbeat, log and control-file write also happens in that worker. The main thread never measures and
 never writes to job files while checking. It HALTs on any of these:
-  * a fast measurement still running after MEASURE_BUDGET (8 s); a slow-lane pass still running after SLOW_BUDGET;
+  * a fast measurement still running after MEASURE_BUDGET (8 s), or one that RETURNED after it; a slow-lane pass still
+    running after SLOW_BUDGET, or one that returned after it (HR-2 r2: a late return never becomes the last good result);
   * no new measurement started within CYCLE + 0.5 s of the previous start, so checks are always <= 10 s apart;
   * no worker progress of any kind (including a stuck heartbeat or log write) for STALL (30 s);
   * a breach or a failed or malformed measurement.
@@ -39,7 +40,8 @@ Checks, every cycle:
   and the job's apparent size (the HR-1 tree_bytes walk) - run in a SECOND worker, the slow lane, so the fast checks
   above keep their tight budget. The slow lane starts a pass every SLOW_CYCLE (30 s); each pass is bounded by
   SLOW_BUDGET (120 s: the walk's own timeout, and the main thread HALTs a pass still running after it). The fast
-  lane HALTs if the last good slow result is older than SLOW_MAX_AGE (180 s, > SLOW_CYCLE + SLOW_BUDGET) or, after
+  lane HALTs if the last good slow result is older than SLOW_MAX_AGE (180 s, > SLOW_CYCLE + SLOW_BUDGET; measured on the
+  monotonic clock, as all pass timing is, so wall-clock steps neither age nor rejuvenate it) or, after
   start, none arrived within it. A slow-lane breach (member PSS > 96 GiB, every smaps_rollup must carry a Pss line;
   apparent size > 100 GB; vanishing entries skipped, any other walk error) or failure HALTs as before. Per-phase
   timings of both lanes are in the heartbeat.
@@ -246,9 +248,11 @@ class Watchdog:
         self.deadline = self.deadline_text = None
         self.stop_since = None
         self.halted, self.breach = None, None
-        self.m_start = self.m_done = self.last_start = None
-        self.s_start = self.s_done = None                   # HR-2: the slow lane's current pass
-        self.slow, self.members_now = None, {}              # HR-2: last good slow result; the fast lane's latest members
+        # HR-2 r2 (Sol HR2-F1): each lane's pass state is ONE immutable (start, done-or-None) tuple, monotonic, replaced by a
+        # single assignment, so the main thread never pairs a new "unfinished" with an old start (or the reverse).
+        self.fast_pass = self.slow_pass = None
+        self.slow, self.members_now = None, {}              # HR-2: last good slow result (immutable dict, swapped whole);
+                                                            # the fast lane's latest members (replaced whole)
         self.started = self.progress = time.monotonic()
         self.logq = queue.Queue()
 
@@ -303,13 +307,15 @@ class Watchdog:
 
     def slow_verdict(self, now, mono, r):
         """HR-2 (fast lane, no I/O): the last good slow-lane result must exist within SLOW_MAX_AGE of start and be no older
-        than SLOW_MAX_AGE; its values are copied into the readings. Returns a breach reason or None."""
+        than SLOW_MAX_AGE, both on the MONOTONIC clock (wall-clock steps cannot age or rejuvenate it); its values are
+        copied into the readings. Returns a breach reason or None."""
         a, slow = self.a, self.slow
         if slow is None:
             return f'no slow measurement (PSS/disk) within {a.slow_max_age:g} s' if mono-self.started > a.slow_max_age else None
-        r.update(tree_pss=slow['tree_pss'], disk=slow['disk'], disk_vanished=slow['disk_vanished'], slow_age=round(now-slow['epoch'], 3),
+        age = mono-slow['mono']                             # HR-2 r2 (HR2-F3): monotonic age; 'epoch' is diagnostic only
+        r.update(tree_pss=slow['tree_pss'], disk=slow['disk'], disk_vanished=slow['disk_vanished'], slow_age=round(age, 3),
                  slow_timing=slow['timing'])
-        return f'slow measurement (PSS/disk) older than {a.slow_max_age:g} s' if now-slow['epoch'] > a.slow_max_age else None
+        return f'slow measurement (PSS/disk) older than {a.slow_max_age:g} s' if age > a.slow_max_age else None
 
     # ---- HR-2 slow lane: member PSS and the job's apparent size, bounded per pass by SLOW_BUDGET
     def measure_slow(self):
@@ -331,22 +337,27 @@ class Watchdog:
 
     def slow_worker(self):
         while self.halted is None:
-            t0 = time.monotonic(); self.s_done = None; self.s_start = t0
+            t0 = time.monotonic(); self.slow_pass = (t0, None)              # HR2-F1: one atomic publish
             try: why, res = self.measure_slow()
             except Exception as exc: why, res = f'measurement failed: {exc!r}', {}
-            self.s_done = time.monotonic()
-            if why is None: self.slow = res                                  # only a complete, in-limit pass is "good"
-            elif self.breach is None: self.breach = (why, res)
+            t1 = time.monotonic()
+            if why is None and t1-t0 > self.a.slow_budget:                  # HR2-F2: a pass that RETURNED late is a breach,
+                why = f'slow measurement (PSS/disk) returned after {t1-t0:.3f} s > {self.a.slow_budget:g} s'   # whether or not
+            if why is None: self.slow = dict(res, mono=t1)                   # a poll saw it overdue; only an in-budget,
+            elif self.breach is None: self.breach = (why, res)               # in-limit pass replaces the last good result
+            self.slow_pass = (t0, t1)
             time.sleep(max(0.0, self.a.slow_cycle-(time.monotonic()-t0)))
 
     # ---- worker: measurements, heartbeat and queued log lines; every step marks progress
     def worker(self):
         me = os.getpid()
         while self.halted is None:
-            t0 = time.monotonic(); self.m_done = None; self.last_start = self.m_start = t0
+            t0 = time.monotonic(); self.fast_pass = (t0, None)              # HR2-F1 class (fast lane, since R9): one atomic publish
             try: why, readings = self.measure()
             except Exception as exc: why, readings = f'measurement failed: {exc!r}', {}
-            self.m_done = time.monotonic(); self.progress = self.m_done
+            t1 = time.monotonic(); self.fast_pass = (t0, t1); self.progress = t1
+            if why is None and t1-t0 > self.a.measure_budget:               # HR2-F2 class: a late return is a breach too
+                why = f'measurement overdue (returned after {t1-t0:.3f} s > {self.a.measure_budget:g} s)'
             if why and self.breach is None: self.breach = (why, readings)
             try:
                 write_atomic(self.wfd, 'heartbeat.json', dict(utc=utc(), epoch=time.time(), pid=me, halted=self.halted, readings=readings))
@@ -382,11 +393,12 @@ class Watchdog:
         """The main thread's decision (no I/O): a reported breach, an overdue measurement, a late measurement start
         (checks must stay <= cycle+0.5 s apart) or no worker progress for STALL s."""
         if self.breach: return self.breach
-        if self.m_done is None and self.m_start is not None and now-self.m_start > self.a.measure_budget:
+        fp, sp = self.fast_pass, self.slow_pass                             # HR2-F1: each read once, coherent
+        if fp is not None and fp[1] is None and now-fp[0] > self.a.measure_budget:
             return f'measurement overdue (> {self.a.measure_budget:g} s)', {}
-        if self.s_done is None and self.s_start is not None and now-self.s_start > self.a.slow_budget:     # HR-2: a stuck slow pass
+        if sp is not None and sp[1] is None and now-sp[0] > self.a.slow_budget:   # HR-2: a stuck slow pass
             return f'slow measurement (PSS/disk) overdue (> {self.a.slow_budget:g} s)', {}
-        if self.last_start is not None and now-self.last_start > self.a.cycle+0.5:
+        if fp is not None and now-fp[0] > self.a.cycle+0.5:
             return f'no measurement started within {self.a.cycle+0.5:g} s', {}
         if now-self.progress > self.a.stall: return f'watchdog stalled > {self.a.stall:g} s', {}
         return None, {}

@@ -1133,6 +1133,7 @@ def hr2_run(code, j, ctl, opts=(), secs=6.0):
         t1 = time.monotonic()
         while time.monotonic()-t1 < 3 and (j/'HALT.json').exists() and m.poll() is None: time.sleep(0.05)
         reason = json.loads((j/'HALT.json').read_text()).get('reason') if (j/'HALT.json').exists() else None
+        hr2_run.alive = (w.poll() is None, m.poll() is None)              # (watchdog, marked study process) at the end
         return reason, beats, m.poll() is not None
     finally:
         for p in (w, m):
@@ -1155,7 +1156,8 @@ def hr2_scenarios(tmp, code=None):
         j, ctl = bigjob(); reason, beats, _ = hr2_run(code, j, ctl)
         disk_s = [b['slow_timing']['disk'] for b in beats.values() if b.get('slow_timing')]
         print('hr2 slow walk seconds', disk_s[:5], 'beats', len(beats), 'reason', reason, flush=True)
-        return reason is None and len(beats) >= 8 and disk_s and max(disk_s) > 0.3 and all(b.get('slow_age', 0) <= 8 for b in beats.values())
+        return (reason is None and len(beats) >= 8 and disk_s and max(disk_s) > 0.3 and all(b.get('slow_age', 0) <= 8 for b in beats.values())
+                and hr2_run.alive == (True, True))                    # Sol r1 note: the watchdog and the study process stay alive
     def slow_bounded():       # a walk slower than the SLOW budget (0.2 s here) is bounded -> HALT, tree stopped
         j, ctl = hr2_bigjob(tmp, 'hr2-bound', n_dirs=150)
         reason, _, stopped = hr2_run(code, j, ctl, opts=('--slow-budget', '0.2', '--slow-max-age', '8'))
@@ -1171,15 +1173,15 @@ def hr2_scenarios(tmp, code=None):
         return reason and 'measurement failed' in reason and stopped
     def unit_due():           # a STUCK slow pass (no return) HALTs after SLOW_BUDGET; a finished one does not; the fast rule is unchanged
         dog = W.Watchdog.__new__(W.Watchdog); dog.a = types.SimpleNamespace(cycle=1.0, measure_budget=0.8, stall=3.0, slow_budget=2.0, slow_max_age=3.0)
-        dog.breach = None; now = time.monotonic(); dog.progress = now; dog.m_start = dog.last_start = now-0.1; dog.m_done = now-0.05
-        dog.s_start, dog.s_done = now-2.5, None; stuck = 'slow measurement (PSS/disk) overdue' in (dog.due(now)[0] or '')
-        dog.s_start, dog.s_done = now-2.5, now-0.5; done = dog.due(now)[0] is None
-        dog.s_start, dog.s_done = now-1.0, None; running = dog.due(now)[0] is None
-        dog.m_start, dog.m_done = now-0.9, None; fast = 'measurement overdue' in (dog.due(now)[0] or '')
+        dog.breach = None; now = time.monotonic(); dog.progress = now; dog.fast_pass = (now-0.1, now-0.05)
+        dog.slow_pass = (now-2.5, None); stuck = 'slow measurement (PSS/disk) overdue' in (dog.due(now)[0] or '')
+        dog.slow_pass = (now-2.5, now-0.5); done = dog.due(now)[0] is None
+        dog.slow_pass = (now-1.0, None); running = dog.due(now)[0] is None
+        dog.fast_pass = (now-0.9, None); fast = 'measurement overdue' in (dog.due(now)[0] or '')
         return stuck and done and running and fast
     def unit_verdict():       # stale / missing slow results HALT; a fresh one is copied into the readings
         dog = W.Watchdog.__new__(W.Watchdog); dog.a = types.SimpleNamespace(slow_max_age=3.0); mono = time.monotonic(); now = time.time()
-        res = lambda age: dict(epoch=now-age, tree_pss=5, disk=7, disk_vanished=0, timing=dict(pss=0.1, disk=0.2))
+        res = lambda age: dict(epoch=now-age, mono=mono-age, tree_pss=5, disk=7, disk_vanished=0, timing=dict(pss=0.1, disk=0.2))
         dog.started = mono-1.0; dog.slow = None; r = {}; startup = dog.slow_verdict(now, mono, r) is None
         dog.started = mono-4.0; missing = 'no slow measurement' in (dog.slow_verdict(now, mono, {}) or '')
         dog.slow = res(4.0); stale = 'older than' in (dog.slow_verdict(now, mono, {}) or '')
@@ -1189,7 +1191,81 @@ def hr2_scenarios(tmp, code=None):
         r = subprocess.run([sys.executable, '-B', str(code/'watchdog.py'), 'status', '--job', str(Path(tmp)/'nojob'), '--slow-cycle', '30',
                             '--slow-budget', '120', '--slow-max-age', '150'], capture_output=True, text=True)
         return r.returncode != 0 and 'slow-max-age' in r.stderr
-    for name, fn in (('unit_due', unit_due), ('unit_verdict', unit_verdict), ('args_check', args_check), ('slow_positive', slow_positive),
+    def virtual(dog_cls, clock):
+        """Run one lane's REAL worker loop on a virtual monotonic clock; the supervisor (due) checks after EVERY publish."""
+        saved = W.time
+        W.time = types.SimpleNamespace(monotonic=lambda: clock['t'], time=time.time, strftime=time.strftime, gmtime=time.gmtime,
+                                       sleep=lambda d: clock['sleep'](d))
+        return saved
+    class Hooked(W.Watchdog):
+        def __setattr__(self, k, v):
+            object.__setattr__(self, k, v)
+            if k in ('fast_pass', 'slow_pass', 'slow', 'breach') and self.__dict__.get('_armed'):
+                self.__dict__['_seen'].append((k, v, self.due(self.__dict__['_clock']['t'])[0]))
+    def hooked(clock, **a_):
+        d = Hooked.__new__(Hooked)
+        a = types.SimpleNamespace(cycle=9.5, measure_budget=8.0, stall=1e9, slow_cycle=30.0, slow_budget=120.0, slow_max_age=180.0)
+        for k, v in a_.items(): setattr(a, k, v)
+        for k, v in dict(a=a, breach=None, halted=None, fast_pass=None, slow_pass=None, slow=None, members_now={}, started=clock['t'],
+                         progress=clock['t'], _seen=[], _clock=clock, _armed=True, wfd=None, logq=None).items(): d.__dict__[k] = v
+        return d
+    def drive_slow(durations, delay):
+        """slow_worker on a virtual clock: pass i takes durations[i]; the next pass starts `delay` s late (scheduling)."""
+        clock = dict(t=1000.0); dog = hooked(clock); it = iter(durations); n = [0]
+        def ms():
+            clock['t'] += next(it); return None, dict(epoch=time.time(), tree_pss=0, disk=0, disk_vanished=0, timing={})
+        dog.__dict__['measure_slow'] = ms
+        def sl(d):
+            clock['t'] += max(0.0, d)+delay; n[0] += 1
+            if n[0] >= len(durations): dog.__dict__['halted'] = 'end'
+        clock['sleep'] = sl; saved = virtual(Hooked, clock)
+        try: dog.slow_worker()
+        finally: W.time = saved
+        return dog
+    def drive_fast(durations, delay):
+        clock = dict(t=1000.0); dog = hooked(clock); it = iter(durations); n = [0]
+        def m():
+            clock['t'] += next(it); return None, dict(epoch=time.time())
+        dog.__dict__['measure'] = m; dog.__dict__['flush_log'] = lambda: None
+        def sl(d):
+            clock['t'] += max(0.0, d)+delay; n[0] += 1
+            if n[0] >= len(durations): dog.__dict__['halted'] = 'end'
+        clock['sleep'] = sl; saved = virtual(Hooked, clock); saved_w = W.write_atomic; W.write_atomic = lambda *a, **k: None
+        try: dog.worker()
+        finally: W.time = saved; W.write_atomic = saved_w
+        return dog
+    def f1_transition():      # HR2-F1: Sol's scenario (119.9 s passes, next start 0.15 s late) and its fast-lane twin
+        sd = drive_slow([119.9, 119.9, 119.9], 0.15)           # (0.5 s passes every 9.5 s: an old start is 9.5 s > 8 s old)
+        fd = drive_fast([0.5, 0.5, 0.5], 0.0)
+        bad = [x for x in sd._seen+fd._seen if x[2] is not None]
+        return not bad and sd.breach is None and fd.breach is None and len(sd._seen) >= 6 and len(fd._seen) >= 6
+    def f2_late():            # HR2-F2: exactly at budget is accepted; just over (returned between polls) is a breach and the
+        d = drive_slow([120.0], 0.0); at = d.breach is None and d.slow is not None and d.slow['mono'] == 1120.0   # previous
+        d2 = drive_slow([10.0, 120.15], 0.0)                                                                        # good stays
+        late = d2.breach is not None and 'returned after 120.150 s > 120 s' in d2.breach[0] and d2.slow['mono'] == 1010.0
+        f = drive_fast([8.0], 0.0); fat = f.breach is None
+        f2 = drive_fast([1.0, 8.15], 0.0); flate = f2.breach is not None and 'returned after 8.150 s > 8 s' in f2.breach[0]
+        return at and late and fat and flate
+    def f3_clock():           # HR2-F3: wall-clock steps never age or rejuvenate the last good result; a dead thread expires
+        dog = W.Watchdog.__new__(W.Watchdog); dog.a = types.SimpleNamespace(slow_max_age=180.0); m0, w0 = 5000.0, time.time()
+        dog.started = m0-500; dog.slow = dict(epoch=w0, mono=m0, tree_pss=1, disk=2, disk_vanished=0, timing={})
+        fwd = dog.slow_verdict(w0+200, m0+1, {}) is None                       # wall +200 s, 1 s real: fresh
+        back = 'older than' in (dog.slow_verdict(w0-3600, m0+181, {}) or '')  # wall -1 h, 181 s real: stale
+        r = {}; dog.slow_verdict(w0-3000, m0+10, r); age_ok = r['slow_age'] == 10.0   # reported age is monotonic
+        dog.a = types.SimpleNamespace(cycle=9.5, measure_budget=8.0, stall=1e9, slow_budget=120.0, slow_max_age=180.0)
+        dog.breach = None; dog.progress = m0+181; dog.fast_pass = (m0+180, m0+180.5); dog.slow_pass = (m0-10, m0)   # thread died
+        dead = dog.due(m0+181)[0] is None and 'older than' in (dog.slow_verdict(w0-3600, m0+181, {}) or '')         # after a pass
+        return fwd and back and age_ok and dead
+    def dead_real():          # a REAL watchdog whose slow thread dies after its first good pass HALTs on age; study stopped
+        tmpc = Path(tmp)/'hr2-dead-code'; shutil.copytree(code, tmpc, ignore=shutil.ignore_patterns('__pycache__'))
+        src = (tmpc/'watchdog.py').read_text(); hook = "            self.slow_pass = (t0, t1)\n"
+        assert src.count(hook) == 1
+        (tmpc/'watchdog.py').write_text(src.replace(hook, hook+"            return                                           # TEST: the thread dies\n"))
+        j, ctl = hr2_bigjob(tmp, 'hr2-dead', n_dirs=2, n_files=10)
+        reason, _, stopped = hr2_run(tmpc, j, ctl, opts=('--slow-cycle', '0.5', '--slow-budget', '1', '--slow-max-age', '2'), secs=8)
+        return reason and 'older than' in reason and stopped
+    for name, fn in (('f1_transition', f1_transition), ('f2_late', f2_late), ('f3_clock', f3_clock), ('dead_real', dead_real),
+                     ('unit_due', unit_due), ('unit_verdict', unit_verdict), ('args_check', args_check), ('slow_positive', slow_positive),
                      ('slow_bounded', slow_bounded), ('slow_breach', slow_breach), ('slow_failed', slow_failed)):
         run(name, fn)
     return out
@@ -1206,6 +1282,13 @@ def test_hr2(tmp):
          'exceed SLOW_CYCLE + SLOW_BUDGET', r['unit_verdict'] and r['args_check'])
     case('HR-2: slow-lane limits and failures still HALT and stop the tree (disk over, PSS over, an unreadable directory)',
          r['slow_breach'] and r['slow_failed'])
+    case('HR2-F1 (Sol r1): with the supervisor checked after EVERY publish, the real slow worker (119.9 s passes, next start '
+         '0.15 s late) and the real fast worker (0.5 s passes every 9.5 s) never yield a false HALT', r['f1_transition'])
+    case('HR2-F2 (Sol r1): a pass returning exactly at its budget is accepted; one returning just over it (between polls) is a '
+         'breach and the previous good result stays the last good one - slow lane (120 s) and fast lane (8 s)', r['f2_late'])
+    case('HR2-F3 (Sol r1): freshness is monotonic - a +200 s wall step keeps a 1 s-old result fresh, a -1 h step cannot hide a '
+         '181 s-old one, slow_age is monotonic; a slow thread dead between passes expires (unit) and HALTs a real watchdog, '
+         'stopping the study process', r['f3_clock'] and r['dead_real'])
 
 
 # ================================================================ HR-1 (COORDINATOR 77a01d88): the disk walk vs benign concurrent writers
@@ -3215,8 +3298,7 @@ def test_r10(tmp):
     f1['log_fifo_teardown'] = halted_with('f1-log', lambda j, c: os.mkfifo(j/'watchdog'/'watchdog.log'), 'MemAvailable',
                                           opts=('--mem-floor', str(10**15)))
     a = types.SimpleNamespace(cycle=1.0, measure_budget=0.8, stall=3.0, slow_budget=2.0, slow_max_age=3.0)
-    dog = W.Watchdog.__new__(W.Watchdog); dog.a = a; dog.breach = None; dog.m_start = dog.m_done = dog.last_start = None
-    dog.s_start = dog.s_done = None
+    dog = W.Watchdog.__new__(W.Watchdog); dog.a = a; dog.breach = None; dog.fast_pass = dog.slow_pass = None
     now = time.monotonic(); dog.progress = now-4.0
     f1['stall_unit'] = 'stalled' in (dog.due(now)[0] or '')
     case("R9-F1 (Sol): a FIFO at heartbeat.json (a stuck or failed watchdog write) HALTs and stops the tree; with a FIFO at "
@@ -3234,9 +3316,9 @@ def test_r10(tmp):
             time.sleep(0.05)
     finally: cleanup(w)
     gaps = [b-a_ for a_, b in zip(seen, seen[1:])]
-    dog.progress = now; dog.m_start = now-0.9; dog.m_done = None; dog.last_start = now-0.9
+    dog.progress = now; dog.fast_pass = (now-0.9, None)
     over = 'overdue' in (dog.due(now)[0] or '')
-    dog.m_done = now-0.1; dog.last_start = now-1.6
+    dog.fast_pass = (now-1.6, now-0.1)
     late = 'no measurement started' in (dog.due(now)[0] or '')
     ov = halted_with('f2-over', lambda j, c: (c/'gpu.sh').write_text('#!/bin/sh\nsleep 3; echo 1\n'), 'measurement overdue', opts=('--gpu-timeout', '30'))
     case("R9-F2 (Sol): healthy heartbeats are <= cycle+0.5 s apart (cycle 1.0 s here, 9.5 s by default so <= 10 s); a "

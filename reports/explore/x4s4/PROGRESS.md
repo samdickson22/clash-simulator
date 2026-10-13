@@ -555,3 +555,21 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
     H-1-excluded; step-00001500.pt (14:29:34) is admissible.
   - Without a "returned" segment, fit_state is 'failed', which can't be resumed through the reviewed driver path. So
     R5 restarts from step 0: set fits/R5 and receipts/fit-R5-launch.json aside, and resolve ANOMALY-fit-R5 by its ACK.
+
+## 2026-10-13 — HR-2 r2 after Sol fix-check r1 (REQUEST_CHANGES: HR2-F1..F3)
+
+- Sol's review is /mpac/sdicks02/jobs/clasher/x4s4-review/SOL-FIXCHECK-HR2-r1.md (54f6ba48…). The two-lane design and
+  the coarser cadence were accepted.
+- **F1:** each lane's pass state is now one immutable monotonic (start, done) tuple, swapped atomically. The same
+  hazard existed in the fast lane since R9; it is fixed there too.
+- **F2:** a late return is a breach and never replaces the last good result; exactly at the budget is allowed. Both
+  lanes.
+- **F3:** the last good result carries a monotonic `mono`; age and slow_age are monotonic, and epoch is diagnostic
+  only.
+- Audit of shared state: SCRIPTS.md has a table of every cross-thread field.
+- Tests:
+  - f1_transition: the supervisor checks after every publish, with both real workers on a virtual clock;
+  - f2_late: at-budget and just-over returns, both lanes;
+  - f3_clock: wall steps of ±, a dead-between-passes unit, and a real dead-thread HALT;
+  - the positive test also asserts that the watchdog and study process stay alive.
+- Results: 14/14 mutants killed; matrix 6/6 at 152 cases.

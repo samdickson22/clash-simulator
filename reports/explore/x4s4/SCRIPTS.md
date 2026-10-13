@@ -257,6 +257,59 @@ detached with `start_new_session`, the study marker stripped, waits for the firs
   - The launcher leaves the watchdog unmarked in its own session; `status` works, and a second start is refused.
   - Static checks: stdlib only, verified one-by-one PID signals, no result paths.
 
+## HR-2 r2 (Sol fix-check r1, REQUEST_CHANGES): coherent pass state, late returns, monotonic freshness
+
+- **HR2-F1, a false HALT at a pass transition.** The worker cleared `done` before assigning the new `start`, so the
+  main thread could pair "unfinished" with the old start. The same pattern existed in the **fast lane since R9**:
+  `m_done = None` before `m_start = t0`. With a 9.5 s cycle and an 8 s budget, a poll between the two statements
+  would see a start 9.5 s old and HALT. It did not cause 14:32:50Z, whose heartbeat shows a measurement genuinely
+  running from 14:32:42.87 to 14:32:50.97.
+  - **Fix:** each lane's pass state is one immutable monotonic `(start, done-or-None)` tuple (`fast_pass`,
+    `slow_pass`). It is replaced by a single assignment and read once by `due()`. No lock is held across I/O.
+- **HR2-F2, a late return accepted.** Both workers now compare the monotonic completion with that pass's own start.
+  A pass returning after its budget (slow 120 s, fast 8 s) is a breach whether or not a poll saw it overdue, and it
+  never replaces the last good result. A return exactly at the budget is allowed.
+- **HR2-F3, wall-clock freshness.** The last good slow result is a new immutable dict stamped with its monotonic
+  completion (`mono`). The age check and the reported `slow_age` use the monotonic clock; `epoch` is diagnostic
+  only. The startup check was already monotonic.
+
+**Shared state across the three threads** (fast worker, slow worker, main), each read once per decision:
+
+| Field | Writer | Readers | Publication | Hazard |
+|---|---|---|---|---|
+| `fast_pass` | fast worker | main `due()` | one tuple assignment | none (was F1 in the fast lane) |
+| `slow_pass` | slow worker | main `due()` | one tuple assignment | none (was F1) |
+| `slow` (last good) | slow worker | fast `slow_verdict` (local copy) | a new dict swapped whole; only in-budget, in-limit passes | none |
+| `members_now` | fast worker | slow worker (`list()` once) | a dict replaced whole | none (Sol confirmed) |
+| `breach` | both workers | main | goes None → value only; `if self.breach is None` | either worker's reason may win; both HALT (benign) |
+| `progress` | fast worker | main (one read) | float assignment | none |
+| `halted` | main | both workers (loop condition) | set once | none |
+| `started` | `__init__` | fast `slow_verdict` | constant | none |
+| `logq` | all | fast worker (`flush`) | `queue.Queue` | thread-safe |
+
+**Tests (added to `test_hr2`):**
+- **F1:** the real slow worker (Sol's 119.9 s passes, the next start 0.15 s late) and the real fast worker (0.5 s
+  passes every 9.5 s) run on a virtual monotonic clock. The supervisor `due()` is evaluated after EVERY publish of
+  pass state, last-good result or breach. There is no false HALT.
+- **F2:** exactly at the budget is accepted; just over it (120.15 s; fast 8.15 s) is a breach, and the previous good
+  result stays intact. Both lanes are covered.
+- **F3:**
+  - a +200 s wall step keeps a 1 s-old result fresh;
+  - a −1 h step cannot hide a 181 s-old one;
+  - `slow_age` is monotonic;
+  - a slow thread dead between passes expires (unit), and a real watchdog whose slow thread dies after its first pass
+    HALTs and stops the study process.
+- **Sol's non-blocking note:** the positive slow-walk test also asserts that the watchdog and the marked process stay
+  alive.
+
+**Mutation check:** 14 mutants, each killed. These are the 8 from HR-2 and 6 new ones:
+- F1 two-step publish (slow);
+- F1 two-step publish (fast);
+- F2 late return accepted (slow);
+- F2 late return accepted (fast);
+- F2 boundary made inclusive (`>=`);
+- F3 wall-clock age.
+
 ## HR-2: two measurement lanes; the 14:32:50Z HALT
 
 **The HALT.** At 14:32:50Z (T2 + 1.9 h), during P9 O_W collection beside the R5 fit, the watchdog HALTed with
