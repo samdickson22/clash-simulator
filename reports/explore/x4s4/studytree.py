@@ -330,17 +330,23 @@ def watchdog_ok(job=None):
 
 
 def stop_periods(job):
-    """[(start, end or None)] epochs of the STOP periods the watchdog observed, plus a STOP present now."""
+    """[(start, end or None)] epochs of the durable STOP history (watchdog observations, `watchdog.py stop/resume`), plus
+    a STOP present now. R9-F5: the history file is created by the watchdog at start; a missing or unreadable history
+    raises (H-1 then fails closed), and a period keeps its EARLIEST recorded start until an end closes it."""
     out, open_ = [], None
     path = job+'/watchdog/stop-periods.jsonl'
-    if io.lexists(path):
-        for line in io.read_text(path, 64 << 20).splitlines():
-            e = io.loads_strict(line.encode())
-            if e.get('kind') == 'start': open_ = float(e['epoch'])
-            elif e.get('kind') == 'end' and open_ is not None: out.append((open_, float(e['epoch']))); open_ = None
+    if not io.lexists(path): raise ValueError('STOP history unavailable (no watchdog/stop-periods.jsonl)')
+    for line in io.read_text(path, 64 << 20).splitlines():
+        e = io.loads_strict(line.encode())
+        if e.get('kind') == 'start':
+            open_ = float(e['epoch']) if open_ is None else min(open_, float(e['epoch']))
+        elif e.get('kind') == 'end' and open_ is not None: out.append((open_, float(e['epoch']))); open_ = None
     if open_ is not None: out.append((open_, None))
     if io.lexists(job+'/STOP'): out.append((os.lstat(job+'/STOP').st_mtime, None))
     return out
+
+
+H1_MARGIN = 0.05          # s: file mtimes use the kernel's coarse clock (<= 1 tick behind time.time()); boundaries widen
 
 
 def h1_reason(job, t, deadline=True):
@@ -351,19 +357,80 @@ def h1_reason(job, t, deadline=True):
     if io.lexists(job+'/HALT.json'):
         try: h = float(io.read_json(job+'/HALT.json', 1 << 20)['epoch'])
         except (io.Refusal, KeyError, TypeError, ValueError): return 'HALT marker unreadable'
-        if t >= h: return 'after HALT'
+        if t >= h-H1_MARGIN: return 'after HALT'
     try: dl = hard_stop_at(job).timestamp()
     except (io.Refusal, ValueError): return 'deadline unreadable'
-    if deadline and t >= dl: return 'after deadline'
+    if deadline and t >= dl-H1_MARGIN: return 'after deadline'
     try: periods = stop_periods(job)
     except (io.Refusal, ValueError, KeyError) as exc: return f'STOP periods unreadable: {exc}'
-    if any(a <= t and (b is None or t < b) for a, b in periods): return 'during STOP'
+    if any(a-H1_MARGIN <= t and (b is None or t < b+H1_MARGIN) for a, b in periods): return 'during STOP'
     return None
 
 
 def completed_at(path):
     """Completion time of a written output: its own mtime (single-link regular file, lstat; no read)."""
     return io.stat_leaf(str(path)).st_mtime
+
+
+def h1_path(job, path):
+    """Rule H-1 for one completed file (or a sealed directory's manifest.json)."""
+    path = str(path)
+    return h1_reason(job, completed_at(path+'/manifest.json' if io.is_real_dir(path) else path))
+
+
+def ready_student(job, sid):
+    """R9-F6: a runtime READY counts at EVERY consumer only if it completed in time (rule H-1); returns its student."""
+    p = f'{job}/rt-{sid}/READY.json'
+    why = h1_path(job, p)
+    io.require(why is None, 'h1', f'{sid} READY completed {why} (rule H-1: never counted)')
+    return io.read_json(p, 4 << 20)['student']
+
+
+READOUT_OUTPUTS = {'contention.py': ('receipts/contention-exclusion.json',), 'reduce.py': ('analysis/results.json',), 'write_report.py': ()}
+
+
+def readout_invocation(argv):
+    """R9-F3: the script of an allowed readout invocation - exactly `/bin/bash <repo>/reports/explore/x4s3/runtime.sh
+    <repo>/reports/explore/x4s4/<contention|reduce|write_report>.py ...` (the same staged repo) - else None."""
+    if len(argv) < 3 or argv[0] != '/bin/bash' or not argv[1].endswith('/reports/explore/x4s3/runtime.sh'): return None
+    repo = argv[1][:-len('/reports/explore/x4s3/runtime.sh')]
+    for name in READOUT_OUTPUTS:
+        if argv[2] == f'{repo}/reports/explore/x4s4/{name}': return name
+    return None
+
+
+def readout_exempt(job, r, path):
+    """The deadline exemption of H-1 applies only to a --readout receipt whose argv is an allowed readout invocation and
+    only to that script's declared output."""
+    name = readout_invocation(r.get('argv') or []) if r.get('readout') is True else None
+    return bool(name) and str(path) in tuple(f'{job}/{o}' for o in READOUT_OUTPUTS[name])
+
+
+def raw_evidence(job, game_dir):
+    """R9-F6/F7: a sealed raw game counts for packing or resume only with its producer's passed, in-time evidence: a
+    label game (data/raw-<set>/<arm>/game-NNNN) must be listed with its current manifest SHA in a guarded label
+    receipt; an O_W game (data/raw-OW/game-NNNNN) in the guarded selection. Its own completion must pass H-1, and so
+    must the evidence (guarded_output). Returns None or the reason it does not count."""
+    job = job or io.JOB; game_dir = str(game_dir)
+    if not io.lexists(game_dir+'/manifest.json'): return 'not sealed'
+    why = h1_path(job, game_dir)
+    if why: return f'completed {why}'
+    msha = io.sha256_file(game_dir+'/manifest.json')
+    parent, name = game_dir.rsplit('/', 1)
+    if parent == f'{job}/data/raw-OW':
+        sel = f'{job}/data/raw-OW-selection.json'
+        if not io.lexists(sel) or guarded_output(job, sel) is None: return 'no passed, in-time O_W selection'
+        g = int(name.split('-')[1])
+        return None if any(r.get('g') == g and r.get('manifest_sha256') == msha for r in io.read_json(sel, 64 << 20).get('games', [])) \
+            else 'not in the guarded O_W selection with this manifest'
+    arm, rawset = parent.rsplit('/', 1)[1], parent.rsplit('/', 2)[1]
+    if not rawset.startswith('raw-'): return 'unknown raw producer'
+    index = int(name.split('-')[1])
+    for n in sorted(io.listdir(f'{job}/data')):
+        p = f'{job}/data/{n}'
+        if n.startswith(f'label-receipt-{rawset[4:]}-') and n.endswith('.json') and guarded_output(job, p) is not None:
+            if [arm, index, msha] in io.read_json(p, 64 << 20).get('game_manifests', []): return None
+    return 'not in a passed, in-time label receipt with this manifest'
 
 
 def guarded_output(job, path):
@@ -377,7 +444,7 @@ def guarded_output(job, path):
         except io.Refusal: continue
         if isinstance(r, dict) and r.get('passed') is True and r.get('schema') == 'x4s4.guard.v1' \
                 and ((r.get('outputs') or {}).get(path) == want or (r.get('new_files') or {}).get(path) == want):
-            if h1_reason(job, completed_at(f'{job}/receipts/{n}'), deadline=not r.get('readout')) is None: return r   # H-1
+            if h1_reason(job, completed_at(f'{job}/receipts/{n}'), deadline=not readout_exempt(job, r, path)) is None: return r   # H-1
     return None
 
 

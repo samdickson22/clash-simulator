@@ -142,7 +142,7 @@ def students_of(job):
     out = {'R3a': dict(checkpoint=plan['student']['checkpoint'], checkpoint_sha256=plan['student']['checkpoint_sha256'],
                        threshold=plan['student']['threshold'])}
     for sid in STUDENTS[1:]:
-        st = io.read_json(f'{job}/rt-{sid}/READY.json', 4 << 20)['student']
+        st = studytree.ready_student(job, sid)                       # R9-F6: H-1 on READY
         out[sid] = dict(checkpoint=st['checkpoint'], checkpoint_sha256=st['checkpoint_sha256'], threshold=st['threshold'])
     return out
 

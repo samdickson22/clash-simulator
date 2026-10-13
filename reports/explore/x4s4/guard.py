@@ -32,7 +32,6 @@ sys.path.insert(0, str(HERE))
 import x4s4io as io                                    # noqa: E402
 import studytree                                        # noqa: E402
 
-READOUT_SCRIPTS = ('reports/explore/x4s4/contention.py', 'reports/explore/x4s4/reduce.py', 'reports/explore/x4s4/write_report.py')
 GPU_ADMIT_MIB, GPU_LIMIT_MIB = 8*1024, 40*1024
 
 
@@ -62,8 +61,9 @@ class Runner:
     def __init__(self, job, name, argv, add=1, gpu=False, readout=False, cwd=None, outputs=(), new_files=()):
         if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,80}', name): raise SystemExit('--name: [A-Za-z0-9._-], at most 81 characters')
         if not argv: raise SystemExit('a command is required after --')
-        if readout and not any(a.endswith(READOUT_SCRIPTS) for a in argv):
-            raise SystemExit('--readout is only for contention.py, reduce.py and write_report.py')
+        if readout and not studytree.readout_invocation(list(argv)):        # R9-F3: the exact readout invocation only
+            raise SystemExit('--readout is only for `/bin/bash <repo>/reports/explore/x4s3/runtime.sh <repo>/reports/explore/x4s4/'
+                             '{contention,reduce,write_report}.py ...`')
         self.job, self.name, self.argv, self.add, self.gpu, self.readout = job, name, list(argv), add, gpu, readout
         self.cwd, self.outputs, self.new_prefixes = cwd, [str(p) for p in outputs], [str(p) for p in new_files]
         self.receipt = f'{job}/receipts/guard-{name}.json'

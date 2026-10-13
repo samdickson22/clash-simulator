@@ -91,7 +91,7 @@ def verify_freeze(job, contention_sha, commit, repo):
 
 def load_student(job, sid, plan, retired, checks):
     job = str(job)
-    rt = io.read_json(f'{job}/rt-{sid}/READY.json', 4 << 20)['student'] if sid != 'R3a' else plan['student']
+    rt = studytree.ready_student(job, sid) if sid != 'R3a' else plan['student']        # R9-F6: H-1 on READY
     base = plan['seed_ranges']['reporting']['base']; rows = {}
     for arm in ARMS:
         sp = plan['arms'][arm]; width = 1 if sp['threads'] == 1 else 5

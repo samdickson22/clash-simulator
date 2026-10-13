@@ -95,7 +95,10 @@ def play(args):
         except io.Refusal as e: raise AssertionError(f'resumed game {g} fails its seal: {e}')
         r = replay_view(directory)
         check_identity(r, g, base, own, opp, seat, index)
-        return dict(identity_row(directory, g, base, r), status='already_sealed')
+        if studytree.raw_evidence(JOB, directory) is None:         # R9-F6/F7: reuse needs passed, in-time producer evidence
+            return dict(identity_row(directory, g, base, r), status='already_sealed')
+        io.rename_path(directory, f'{OUT}/unaccepted-game-{g:05d}-{int(time.time())}', roles=('data',))   # set aside
+                                                                    # (outside the packer's game-* glob); played anew
     if io.lexists(directory): raise AssertionError(f'unsealed game directory present: {directory}')
     io.check_writable(directory, roles=('data',), must_not_exist=True)
     emitter.decks = lambda: [list(d) for d in decks]          # per-game input; emitter code unchanged

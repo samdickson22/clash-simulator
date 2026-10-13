@@ -295,7 +295,12 @@ def label_game(entry):
     base = dict(index=entry['index'], arm=entry['arm'], attempted=len(entry['keep']))
     if io.lexists(final+'/manifest.json'):
         r = verify_sealed(final, entry)
-        return dict(base, status='already_sealed', rows=r['rows'], drops=r['drops'])
+        why = studytree.raw_evidence(JOB, final) if DATA_ROLE == 'data' else 'qualification labels never resume'
+        if why is None:                                             # R9-F6/F7: reuse needs passed, in-time producer evidence
+            return dict(base, status='already_sealed', rows=r['rows'], drops=r['drops'], manifest_sha256=io.sha256_file(final+'/manifest.json'))
+        io.rename_path(final, f"{out_root}/unaccepted-game-{entry['index']:04d}-{int(time.time())}", roles=(DATA_ROLE,))   # set aside
+                                                                    # (outside the packer's game-* glob); labelled anew
+
     if io.lexists(final): raise RuntimeError(f'unsealed labeled game directory present: {final}')
     why = halt_reason()
     if why: return dict(base, status=why)
@@ -329,9 +334,9 @@ def label_game(entry):
                    cpu_seconds=time.process_time()-cpu0, wall_seconds=time.monotonic()-t0, host=socket.gethostname(),
                    label='X4S-4 on-policy labels, exploration, NEVER ADOPTABLE')
     seal(tmp, rows, score_rows, receipt)                                   # frozen writer into the validated fresh dir
-    io.verify_sealed_dir(tmp)
+    _, msha = io.verify_sealed_dir(tmp)
     io.rename_path(tmp, final, roles=(DATA_ROLE,))
-    return dict(base, status='sealed', rows=len(rows), drops=drops, cpu_seconds=receipt['cpu_seconds'])
+    return dict(base, status='sealed', rows=len(rows), drops=drops, cpu_seconds=receipt['cpu_seconds'], manifest_sha256=msha)
 
 
 def pin():
@@ -411,7 +416,8 @@ def summarize(results, n_entries):
     rate = sum(drops.values())/max(1, attempted)
     return dict(status_counts=status, complete=complete, attempted=attempted, rows=sum(r.get('rows', 0) for r in done), drops=drops,
                 drop_rate=rate, digest_mismatch_rate=drops['digest_mismatch']/max(1, attempted), drop_limit=DROP_LIMIT,
-                passed=bool(complete and rate <= DROP_LIMIT), games=sorted([r['arm'], r['index']] for r in done if r.get('rows')))
+                passed=bool(complete and rate <= DROP_LIMIT), games=sorted([r['arm'], r['index']] for r in done if r.get('rows')),
+                game_manifests=sorted([r['arm'], r['index'], r['manifest_sha256']] for r in done if r.get('rows') and r.get('manifest_sha256')))
 
 
 def finish(path, body):

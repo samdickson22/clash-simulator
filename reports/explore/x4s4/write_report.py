@@ -162,7 +162,7 @@ def staged_students(J, plan_path):
     """The five staged students' current checkpoint/threshold (R3a from the reduction plan, the rest from READY)."""
     out = {}
     for sid in STUDENTS:
-        s = io.read_json(plan_path, 16 << 20)['student'] if sid == 'R3a' else io.read_json(f'{J}/rt-{sid}/READY.json', 4 << 20)['student']
+        s = io.read_json(plan_path, 16 << 20)['student'] if sid == 'R3a' else studytree.ready_student(J, sid)   # R9-F6
         out[sid] = dict(checkpoint_sha256=s['checkpoint_sha256'], threshold=s.get('threshold'))
     return out
 

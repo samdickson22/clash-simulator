@@ -284,9 +284,22 @@ def fit_state(fid):
     clean = rec is not None and seg is not None and seg.get('status') == 'returned' and (
         status == 0 or (status is None and bool(res) and res.get('launch_id') == rec['launch_id']))
     if not clean: return 'failed', rec
-    if not done['stopped'] and done['step'] == FITS[fid]['steps']: return 'done', rec
+    if not done['stopped'] and done['step'] == FITS[fid]['steps']:
+        final_ck = f"{out}/step-{FITS[fid]['steps']:08d}.pt"            # R9-F6: a late final completion is not accepted
+        if studytree.h1_path(J, out+'/complete.json') or (io.lexists(final_ck) and studytree.h1_path(J, final_ck)):
+            return 'stopped', rec                                     # resumed from an H-1-admissible checkpoint
+        return 'done', rec
     if done['stopped']: return 'stopped', rec
     return 'failed', rec
+
+
+def admissible_checkpoint(out):
+    """R9-F6: the newest step-*.pt whose completion passes rule H-1 (not at/after HALT or the deadline, not during
+    STOP), or None. A checkpoint the trainer wrote while stopping under STOP is therefore never resumed from."""
+    steps = sorted((int(n[5:13]), n) for n in io.listdir(out) if n.startswith('step-') and n.endswith('.pt') and n[5:13].isdigit())
+    for _, n in reversed(steps):
+        if studytree.h1_path(J, f'{out}/{n}') is None: return f'{out}/{n}'
+    return None
 
 
 def prepare_fit_dirs(fid):
@@ -370,7 +383,9 @@ class Fits:
             event(kind='launch_refused', name=f'fit-{fid}', reason=why); return
         moved = []                                                  # (archived, original): rolled back on a refusal
         if st == 'stopped':
-            done = jload(out+'/complete.json'); ck = f"{out}/step-{done['step']:08d}.pt"
+            ck = admissible_checkpoint(out)                         # R9-F6: only a checkpoint completed in time (H-1)
+            if ck is None:
+                anomaly(f'fit-{fid}-resume', reason='no H-1-admissible checkpoint to resume from'); return
             io.stat_leaf(ck)                                       # the resume checkpoint: regular, single-link
             k = len([n for n in io.listdir(out) if n.startswith('segment-attempt')])+1
             for n in ('segment', 'complete'):
@@ -512,6 +527,7 @@ def accepted_calibration(fid, cal):
     base = J+'/receipts'; want = sha(cal)
     for n in io.listdir(base):
         if n.startswith(f'calibration-{fid}-accepted-') and n.endswith('.json'):
+            if studytree.h1_path(J, f'{base}/{n}') or studytree.h1_path(J, cal): continue   # R9-F6: completed in time
             r = jload(f'{base}/{n}')
             if r and r.get('calibration_sha256') == want: return r
     return None

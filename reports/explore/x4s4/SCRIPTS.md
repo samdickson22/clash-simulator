@@ -1,4 +1,4 @@
-# X4S-4 scripts, r9 for Sol re-review (exploration, NEVER ADOPTABLE)
+# X4S-4 scripts, r10 for the SR-2 fix-check (exploration, NEVER ADOPTABLE)
 
 The design is frozen at PLAN r3 87809ae0. The history of the script set:
 
@@ -12,49 +12,153 @@ The design is frozen at PLAN r3 87809ae0. The history of the script set:
 | r6 | 0fc0f243 | REQUEST_CHANGES (10385f37: R6-F1–F3). R5-F2–F4 resolved; 105/105 reproduced. |
 | r7 | 81d78349 | REQUEST_CHANGES (4cd3331f: R7-F1–F3). R6-F1 and R6-F3 resolved; R6-F2 partial. |
 | r8 | 86fa3c5d | REQUEST_CHANGES (bc8255f0: R8-F1–F8). Coordinator ruling SR-1: an external watchdog becomes the host-safety backstop. |
-| r9 | this commit | — |
+| r9 | a701d610 | REQUEST_CHANGES (1b68d637: R9-F1–F8). Ruling SR-2: fix all eight, then one diff-only fix-check. |
+| r10 | this commit | — |
 
-r9 implements coordinator ruling SR-1 (COORDINATOR 2026-10-13 00:47Z). The Sol r9 scope is:
-1. the external watchdog;
-2. R8-F4 and rule H-1;
-3. no regressions in correctness, evaluation identity, outcome-blindness or I/O confinement.
+r10 fixes Sol r9's eight findings, each with a named test, and changes nothing else (ruling SR-2). The sections
+below it (r9, r8 and earlier) are kept as the record. The QUALIFY-RUNBOOK is updated in a separate commit that pins
+this one.
 
-Under SR-1 the in-process guards become defence in depth. R8-F1/F2/F3/F5/F6/F7/F8 are disclosed residuals covered by
-the watchdog; the trivial ones are fixed (see "Sol r8 dispositions"). The guard audit (r8), r7, r6 and r5 sections
-below are kept as the record. The QUALIFY-RUNBOOK is updated in a separate commit that pins this one.
-
-Nothing has been run on any host. Everything below was done offline on 127x05, using synthetic fixtures, real
-watchdog processes against temporary jobs with fake du/nvidia-smi, and disposable git repositories under /dev/shm.
+Nothing has been run on any host. Everything was done offline on 127x05, with synthetic fixtures, real watchdog
+processes against temporary jobs (fake du/nvidia-smi/PSI) and disposable git repositories under /dev/shm.
 
 ## Index
 
-| File | r9 vs r8 (86fa3c5d) | SHA-256 |
+| File | r10 vs r9 (a701d610) | SHA-256 |
 |---|---|---|
-| `watchdog.py` | new (SR-1: the external watchdog) | `903618a8fb0c697015a0fcca65b8fcdf1bf3ebce80f7c6da22644d163b437885` |
-| `guard.py` | changed (watchdog required, study/readout markers, live-worker refusal) | `a66b04dd2acbf572bcc86852bc551ca7220252484f43d809f7f6877f4b9f57ef` |
-| `x4s4io.py` | unchanged since r8 | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
-| `studytree.py` | changed (watchdog_ok, HALT, h1_reason, guarded_output H-1, uncached fresh disk) | `28d93ef3d8b23f5bb4bb3c5398599f18009bc7317bd36e028efcc701b651ffb5` |
-| `driver.py` | changed (watchdog in final_gate/main, markers, STOP exit, READY H-1) | `07881c1ab463965e7f0320b1cfcf0262cf9496ac4fb792ce33c99337a922daa5` |
-| `supervise.py` | changed (watchdog required, markers) | `ae51e9b937385d7f66fb1f465a5775d792c536f80c0de0592103b97bcc9a7f42` |
-| `label.py` | changed (block H-1) | `00d8f9634d9e62f1685af981d80341f1a02d6c2f74ecfdbfad9a3b740d7ab9e3` |
-| `qualify4.py` | changed (trainer receipt; block H-1) | `05cc98fdcac7f22d429ce497630e39e68185672b4dfe9053944e1822256225fd` |
-| `write_report.py` | changed (guarded label plan) | `d4a1b9cfb5f8d8fbb9af8a134eebaf73b376840cb7c3c11af641e796f9746da2` |
-| `test_x4s4_offline.py` | changed (r9 watchdog, R8-F4, H-1 rows) | `9456d9cc641443482bbd6783bb7ebe190ba7258ef93f235bee8b4a9bb51f2949` |
-| `collect_w.py` | changed (authenticated O gate) | `ed69531e209049019ef56665fcb2723c906df7fd9f4ffe95108b346ac413871e` |
-| `verify_onpolicy.py` | changed (authenticated O gate; guarded label plan) | `80351c3ba544aae1f37ff2a83aa7aff7d71127964a8e1b46ae49b972cbfd4c7a` |
-| `diagnose.py` | unchanged since r8 | `7511eff3e644ab7226fe1b59d7f379a838902d264123cfef71645e37c80ffbfa` |
-| `reduce.py` | changed (block H-1) | `22652490abb1cafc03b619dd2c99694f2440853a07656c171ea476ae590175a1` |
-| `audit_seeds.py` | unchanged since r8 | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
-| `run_fit.sh` | unchanged since r8 | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
-| `seed-sources.json` | unchanged since r8 (v2, 29 sealed declarations) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
-| `run_collect.py` | unchanged since r8 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
-| `collect.py` | unchanged since r8 | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
-| `contention.py` | unchanged since r8 | `994d0391a4e577a9f1a8bc7f9b90401bae0d9cb31ea6bd3ee8fcf5dbded99a8c` |
+| `watchdog.py` | changed (R9-F1–F5, F8) | `4a4b9619c1bab958142af63150db96be2c459a21e652e2ac750244f645da1962` |
+| `packw.py` | new (R9-F7: input-authenticating pack wrapper) | `9302cd878e93ccba15d2d7ee7e0ce7f8477a577247e3f9e3ac178216b9d87e53` |
+| `guard.py` | changed (R9-F3: exact readout invocation) | `0c9bbd20cc0a08f617c1bc8902f040ea24d5ab78cee5f508ffb33c4c35c7893c` |
+| `x4s4io.py` | unchanged since r9 | `2e8e626831a1807cac99534e3d71c134fa9345ef214bfb312f44752172e9ec56` |
+| `studytree.py` | changed (R9-F3/F5/F6/F7: readout binding, durable STOP history, H-1 margin, ready_student, raw_evidence) | `39b0c1513ef3e8ce491991894db7d137fff2ed831dae4083e4bda2d47fd9e5c5` |
+| `driver.py` | changed (R9-F6: fit/checkpoint/calibration H-1) | `98ab91c4e5383285afb8607a40e3e81b543a96d6cc40b6467a8ff009971e43bf` |
+| `supervise.py` | unchanged since r9 | `ae51e9b937385d7f66fb1f465a5775d792c536f80c0de0592103b97bcc9a7f42` |
+| `label.py` | changed (R9-F6/F7: evidence-bound resume, game_manifests) | `72cf7e2a6affebcfaf7269ce2d1851a2705a32b468344cb0e579e7910e96b7b1` |
+| `qualify4.py` | unchanged since r9 | `05cc98fdcac7f22d429ce497630e39e68185672b4dfe9053944e1822256225fd` |
+| `write_report.py` | changed (R9-F6: READY H-1) | `0ab155b24203a16eefac6cf53c2a30f624779321505e2d9a48a60ecb22df8ed9` |
+| `test_x4s4_offline.py` | changed (r10 rows R9-F1–F8, fixtures) | `94e736855efeeafe8e790be3c8bf8a3b4c4360f71face1b04868d4423c3bc62f` |
+| `collect_w.py` | changed (R9-F6/F7: evidence-bound resume) | `0cb4167206e27ef97c4352d68aa5ac2e2ba9a46ddfd25e36393442c8015324f8` |
+| `verify_onpolicy.py` | unchanged since r9 | `80351c3ba544aae1f37ff2a83aa7aff7d71127964a8e1b46ae49b972cbfd4c7a` |
+| `diagnose.py` | changed (R9-F6: READY H-1) | `a199d3ed64c87117a5c5746ca9145ca1eb12f1bcb24f65a3f38c5ae13fb4ed01` |
+| `reduce.py` | changed (R9-F6: READY H-1) | `db3530934869ef962f1e040092e9953d94501a915de3e9d436e49dbb655b0ba4` |
+| `audit_seeds.py` | unchanged since r9 | `1e1ac591afc936359f29b7b2d25ddd83ff24709a7558492c0d45655a35e3d76c` |
+| `run_fit.sh` | unchanged since r9 | `867dc31b87cd7ce20771a2fdd31a67d30b38d283f080265e9e6f5aa13c298b9c` |
+| `seed-sources.json` | unchanged since r9 (v2, 29 sealed declarations) | `bf57cda0b925cc99de6765a3fcf88053a89ef228d7e24fc1fcb36b5ca0bec002` |
+| `run_collect.py` | unchanged since r9 | `f945ac6c266267d52689df9cd0b3a658705740a513b86866e16d3786dc64780b` |
+| `collect.py` | unchanged since r9 | `ce29b1311cc0489a32f09885fd8f44c5df40ed9d9d7292597b4567c9fa006494` |
+| `contention.py` | unchanged since r9 | `994d0391a4e577a9f1a8bc7f9b90401bae0d9cb31ea6bd3ee8fcf5dbded99a8c` |
 | `plan.json`, `plan-collect.json`, `plan-qual-capture.json`, `idx-*.json` | unchanged | `13840cc6…`, `57f6a142…`, `45052215…`, `4587c7ed…` |
 
 Every owned Python file compiles under `/usr/bin/python3` 3.8.10 and under 3.12. `bash -n run_fit.sh` passes. The
 evaluation runner and the reused files are byte-identical. No frozen consumer changed: `label_game`'s write role
 became a module global (default `'data'`, unchanged behaviour) so that smoke-pack can confine its labels to `<job>/qual`.
+
+## Sol r9 findings → r10 fixes → tests (SR-2)
+
+**Watchdog.**
+- **R9-F1 (stall covers writes and teardown).** The worker thread does every measurement, heartbeat and log write,
+  and marks progress after each step. A failed write (for example a FIFO or symlink at a control file) is itself a
+  breach. The main thread never touches job files while supervising.
+  - HALT runs from the main thread. HALT.json and STOP are written by a helper bounded at 5 s; teardown uses only /proc
+    scans and PID signals, and its log records are queued for best-effort writing. So neither a stuck log nor a stuck
+    measurement can delay stopping the tree.
+  - Test: a FIFO at heartbeat.json HALTs and stops the tree. A FIFO at watchdog.log plus a memory breach still HALTs
+    and stops the tree. Stall detection is unit-tested through `due()`.
+- **R9-F2 (≤ 10 s cadence).** Measurements start every CYCLE = 9.5 s and must finish within MEASURE_BUDGET = 8 s
+  (du 4 s, nvidia-smi 2 s). The main thread HALTs on an overdue measurement or when no measurement has started within
+  CYCLE + 0.5 = 10 s. The separate 30 s no-progress stall rule remains.
+  - Test: real heartbeats are about 1.0 s apart with a 1.0 s cycle (max gap ≤ 1.5 s). A 3 s measurement HALTs as
+    overdue. A late start is unit-tested.
+- **R9-F3 (membership and readout binding).** A process is a member if it carries `X4S4_STUDY=<job>`, descends from a
+  member (started no earlier than its parent), or was seen as a member before with the same (pid, starttime). So
+  exact-environment helpers (`io.run_checked`) and cleaned-environment execs stay counted and stoppable. Every kill
+  re-verifies (pid, starttime, membership).
+  - The deadline exemption covers only the subtree of a readout runner (a member whose command line is guard.py with
+    `--readout` and whose environment has `X4S4_READOUT=1`).
+  - `guard.py --readout` accepts only the exact invocation `/bin/bash <repo>/reports/explore/x4s3/runtime.sh
+    <repo>/reports/explore/x4s4/{contention,reduce,write_report}.py …` (`studytree.readout_invocation`).
+  - H-1's deadline exemption needs that invocation and that script's declared output (`readout_exempt`: contention →
+    `receipts/contention-exclusion.json`, reduce → `analysis/results.json`, report → none).
+  - Test: a cleaned-env exec and its `env -i` helper are counted (2) and stopped on HALT. Sol's inert-token argv is
+    refused. A receipt with the inert argv, or with an undeclared output, is not exempt; the exact one is. After the
+    deadline a readout runner's subtree runs while a bare `X4S4_READOUT=1` process HALTs.
+- **R9-F4 (malformed readings).** These are measurement failures:
+  - PSI without a `some` line, or with avg10 non-finite or outside [0, 100];
+  - MemAvailable without exactly one `kB` line;
+  - a smaps_rollup without exactly one Pss line;
+  - du output that is not `<int ≥ 0>\t<job>`;
+  - nvidia-smi output empty or negative.
+
+  A valid high PSI is still not a breach (frozen rule).
+  - Test: nan, inf, −1, 101 and no-`some` PSI, MemAvailable without its unit, du garbage and negative du, and
+    empty and negative GPU readings all HALT. PSI 99.5 does not.
+
+**Integrity.**
+- **R9-F5 (durable STOP evidence).**
+  - `watchdog.py resume` is the only sanctioned STOP removal. It durably records the period's start (the existing
+    open record, or STOP's own mtime) before unlinking STOP, and the end after, and it is refused after HALT.
+  - `watchdog.py stop` records the start before creating STOP.
+  - The watchdog creates the history file at start. `studytree.stop_periods` fails closed when the history is missing,
+    and keeps a period's earliest start.
+  - The runbook never uses `rm STOP`; Q8 uses `watchdog.py resume`.
+  - **Clock margin.** File mtimes come from the kernel's coarse clock, which can trail `time.time()` by up to one
+    tick. So H-1 widens every boundary (HALT, deadline, both ends of each STOP period) by `H1_MARGIN` = 0.05 s, the
+    conservative direction. The matrix found this: one of six runs counted an output written milliseconds after a STOP
+    record.
+  - Test: a stop/resume pulse completed before the next watchdog cycle leaves start + end, and an output completed
+    inside it is excluded while an earlier one counts. A raw STOP is recorded before removal. Missing history fails
+    closed. Resume after HALT is refused. An mtime 10 ms before the recorded start is still inside the period.
+- **R9-F6 (H-1 on dependencies).**
+  - A final fit completion whose `complete.json` or final checkpoint fails H-1 is `stopped`, not `done`.
+  - A resume uses `admissible_checkpoint`, the newest step whose completion passes H-1. If there is none, the
+    driver raises a blocking `fit-<id>-resume` anomaly.
+  - `accepted_calibration` requires the receipt and the output to pass H-1.
+  - READY is checked at every consumer (`studytree.ready_student`): the driver, the reducer, the diagnostic and the
+    report.
+  - Raw seal reuse requires `raw_evidence` (below), which includes H-1 on the seal. A seal without evidence is set
+    aside as `unaccepted-game-…` (outside the packer's `game-*` glob) and redone.
+  - Test: each of these, including a raw label seal completed during STOP that is set aside even with a passed
+    receipt, and the in-time controls.
+- **R9-F7 (packing and resume edges).**
+  - `studytree.raw_evidence` requires each raw label game to appear with its current manifest SHA in a passed, in-time
+    label receipt of its set (label receipts now carry `game_manifests`). Each O_W game must appear in the guarded
+    selection, and the seal itself must pass H-1.
+  - The new `packw.py` authenticates every input game before calling the byte-identical frozen packer. The runbook's
+    P6/P9 use it.
+  - Test: missing, failed-only and changed-identity producer evidence are refused; with evidence the packer packs.
+    O_W packing needs the selection. The runbook has no direct packer call.
+
+**Regression.**
+- **R9-F8 (watchdog confinement).** The watchdog keeps a small stdlib confined writer for its own files, documented
+  as the narrow routing exception:
+  - directory fds come from an O_NOFOLLOW walk from `/`;
+  - leaves are O_NOFOLLOW|O_NONBLOCK and must be single-link regular files;
+  - temps are exclusive (O_EXCL), uniquely named and cleaned up;
+  - HALT.json is exclusive and 0444.
+  - Test: a symlinked heartbeat target, a hard-linked history, a FIFO log (no blocking) and a symlinked pid file are
+    refused, and the outside sentinels are unchanged. A symlinked job path or watchdog directory is refused. Static
+    checks: builtin `open()` only for /proc and the host meminfo/PSI, and every `os.open` is O_NOFOLLOW.
+
+**Editorial.** The runbook's introduction now states Q-D1's single combined GO.
+
+**Producer → consumer edges added by r10 (R9-F7, R9-F6)**, extending the r9 table below:
+
+| Producer (evidence) | Output | Consumer | Check |
+|---|---|---|---|
+| guard.py label run (passed, in-time label receipt with `game_manifests`) | raw label games `data/raw-<set>/<arm>/game-NNNN` | packw (P6); label resume | `raw_evidence`: listed with the current manifest SHA, and the seal passes H-1 |
+| guard.py collect_w (guarded selection) | raw O_W games `data/raw-OW/game-NNNNN` | packw (P9); collect_w resume | `raw_evidence`: in the guarded selection with this manifest, and the seal passes H-1 |
+| driver fit (complete.json, step-*.pt) | final model / resume checkpoint | `fit_state` (done), `Fits.launch` (resume) | H-1 on complete.json and the checkpoint; `admissible_checkpoint` |
+| driver calibration (acceptance receipt) | calibration | `prepare_students` → READY | H-1 on the receipt and the output |
+| driver READY | runtime/student identity | driver dispatch, reduce, diagnose, report | `ready_student` (H-1) at every consumer |
+
+**Mutation check (r10)**, observed on the r10 bytes before the H1_MARGIN edit (a three-line change with its own test
+in R9-F5). The originals were restored and their hashes verified before the matrix.
+- **Batch A** made five watchdog mutations: write failures ignored, the overdue rule removed, the ancestry closure
+  removed, the PSI range check removed, O_NOFOLLOW dropped. Each of R9-F1, F2, F3, F4 and F8 failed.
+- **Batch B** made these integrity mutations, and each of R9-F5, F6 and F7 failed:
+  - resume without the durable start, and missing history tolerated;
+  - fit, calibration and READY H-1 checks removed;
+  - raw-reuse evidence and packw input authentication removed.
 
 ## SR-1 external watchdog (r9): `watchdog.py`
 
@@ -480,14 +584,14 @@ The originals were restored and their hashes verified before the matrix below.
 
 ## Offline test results (127x05, /dev/shm, nice 19, cores 0–3, no host contact)
 
-`test_x4s4_offline.py` passes **120/120 under -O0, -O and -OO with umask 077 and 022** (exit 0 in all six).
+`test_x4s4_offline.py` passes **128/128 under -O0, -O and -OO with umask 077 and 022** (exit 0 in all six).
 Receipts (umask 077 runs):
 
 | Mode | Receipt | SHA-256 |
 |---|---|---|
-| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `69076bd791d6415659eb95ee091082358e4f0ae759e478839d8754f3de4ff7f8` |
-| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `c4fa4807e16dda26348ff448423a445c3bda002f5aada0937f97e86926f987cb` |
-| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `6f408c8f848ede2f1947400056fd7e862b67e843294f11cadc6aa2ae294987fd` |
+| -O0 | [receipts/offline-tests-O0.jsonl](receipts/offline-tests-O0.jsonl) | `2025156c943952ff028b366387cbc409b0c06ed60944be805559506379c82bf6` |
+| -O | [receipts/offline-tests-O1.jsonl](receipts/offline-tests-O1.jsonl) | `652c81bbe261db8c5582b037086f5ff453528ea14ee0cc2e8565e3ab7fad81ec` |
+| -OO | [receipts/offline-tests-O2.jsonl](receipts/offline-tests-O2.jsonl) | `778ece41c0db77f23a89bb331f17552e1a147eda781aeb7997b58e74bb57206f` |
 
 **Not covered offline** (qualification §6 on 01, after a GO):
 - the native §6 checks;

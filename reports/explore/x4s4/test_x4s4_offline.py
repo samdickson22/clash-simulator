@@ -73,6 +73,8 @@ def fake_watchdog(job):
     (Path(job)/'watchdog').mkdir(exist_ok=True)
     wjson(Path(job)/'watchdog'/'pid.json', dict(pid=os.getpid(), starttime=io.proc_stat(os.getpid())['starttime']))
     wjson(Path(job)/'watchdog'/'heartbeat.json', dict(pid=os.getpid(), epoch=time.time(), halted=None))
+    hist = Path(job)/'watchdog'/'stop-periods.jsonl'
+    if not hist.exists(): hist.write_text('')                   # r10 (R9-F5): the durable STOP history the watchdog creates
 
 
 def git(repo, *args, check=True):
@@ -497,7 +499,7 @@ def test_pipeline(tmp):
          and st['O']['over_cap'] == 6 and st['holdout']['kept'] == 6 and lp['feature_only_duplicates_by_600_tick_bucket']['0']['feature_duplicates'] == 6
          and lp['parity_receipt_sha256'] == sha(good_parity))
     def plan_fails(mutate, parity=None, text=''):
-        j2 = Path(tmp)/f'plan-{len(list(Path(tmp).glob("plan-*")))}'; shutil.copytree(job/'collect', j2/'collect'); (j2/'data').mkdir(); (j2/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')   # r9: H-1 needs the deadline
+        j2 = Path(tmp)/f'plan-{len(list(Path(tmp).glob("plan-*")))}'; shutil.copytree(job/'collect', j2/'collect'); (j2/'data').mkdir(); (j2/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n'); (j2/'watchdog').mkdir(); (j2/'watchdog'/'stop-periods.jsonl').write_text('')   # H-1 evidence
         phases = [j2/'collect'/'K4S-120'/'a1', j2/'collect'/'S-200'/'a1']
         q = parity_doc(j2, phases) if parity is None else parity(j2, phases)
         mutate(phases[0]); use_job(j2)
@@ -523,7 +525,7 @@ def test_pipeline(tmp):
          'failed parity without an authentic exception',
          all(v[0] for v in probes.values()), probes={k: v[1][:70] for k, v in probes.items()})
     # authentic coordinator exception: a commit on origin/main whose COORDINATOR.md names the failed receipt's SHA
-    j3 = Path(tmp)/'exc'; shutil.copytree(job/'collect', j3/'collect'); (j3/'data').mkdir(); (j3/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')   # r9: H-1 needs the deadline
+    j3 = Path(tmp)/'exc'; shutil.copytree(job/'collect', j3/'collect'); (j3/'data').mkdir(); (j3/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n'); (j3/'watchdog').mkdir(); (j3/'watchdog'/'stop-periods.jsonl').write_text('')   # H-1 evidence
     phases3 = [j3/'collect'/'K4S-120'/'a1', j3/'collect'/'S-200'/'a1']
     q3 = parity_doc(j3, phases3, passed=False)
     repo, head = git_repo(Path(tmp)/'coord', {'reports/strategy_council_20260928/COORDINATOR.md': f'C7b ruling: continue; receipt {sha(q3)}\n'.encode()})
@@ -541,6 +543,8 @@ def test_pipeline(tmp):
     label.score_state = score_ok
     label.RAW = f'{job}/data/raw-O'; label.THREADS = 1; label.PLAN_SHA = sha(plan_path)
     res = [label.label_game(e) for e in lp['sets']['O'] if e['keep']]
+    first_receipt = wjson(job/'data'/'label-receipt-O-0.json', dict(label.summarize(res, len(res)), set='O', plan_sha256=sha(plan_path)))
+    bless(first_receipt)                                            # r10 (R9-F6/F7): reuse needs the passed producer receipt
     again = [label.label_game(e) for e in lp['sets']['O'] if e['keep']]
     case('labeling seals every planned game; resume re-verifies the complete seal + identity and skips',
          all(r['status'] == 'sealed' for r in res) and all(r['status'] == 'already_sealed' for r in again))
@@ -696,7 +700,12 @@ def test_pipeline(tmp):
                 submitted_world_positions=np.array([np.nan, np.nan], np.float32), recorded_millitiles=np.array([-1, -1], np.int32))
             rows.append(row); scores.append(dict(candidates=[5, 2304], scores=[.1, .2]))
         seal(d, rows, scores, r); return d
-    sealed_game(3); ok = collect_w.play((3, CW))['status'] == 'already_sealed'
+    d3 = sealed_game(3)
+    saved_em = collect_w.emitter; collect_w.emitter = types.SimpleNamespace(run_game=lambda *a, **k: None)   # a replay would stop at once
+    no_ev = collect_w.play((3, CW))['status'] == 'stopped' and not d3.exists() and list(d3.parent.glob('unaccepted-game-00003-*'))
+    d3 = sealed_game(3); m3 = hashlib.sha256((d3/'manifest.json').read_bytes()).hexdigest()   # r10: reuse needs the guarded selection
+    bless(wjson(cw/'data'/'raw-OW-selection.json', dict(games=[dict(g=3, manifest_sha256=m3)])))
+    ok = collect_w.play((3, CW))['status'] == 'already_sealed' and bool(no_ev); collect_w.emitter = saved_em
     sealed_game(4, seed=CW+99); bad_seed = raises(lambda: collect_w.play((4, CW)), AssertionError, 'identity')
     sealed_game(5, opponent='script'); bad_opp = raises(lambda: collect_w.play((5, CW)), AssertionError, 'identity')
     d6 = sealed_game(6); (d6/'replay.json').write_text((d6/'replay.json').read_text().replace('"root_decisions": 3', '"root_decisions": 4'))
@@ -1679,7 +1688,7 @@ print(json.dumps(dict(passed=ok, seconds=time.monotonic()-t0)))
 def test_r6(tmp):
     import studytree as ST
     past = datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc)
-    def stop_link(job): time.sleep(0.02); os.symlink(Path(job)/'nowhere', Path(job)/'STOP')   # r9: strictly after prior outputs (H-1)
+    def stop_link(job): time.sleep(0.1); os.symlink(Path(job)/'nowhere', Path(job)/'STOP')   # strictly after prior outputs (H-1 margin)
     def r6_driver(sub):
         """A driver over a fresh job with healthy measurements; io.spawn is a spy that records any child creation."""
         drv, job = driver_module(tmp/sub)
@@ -1973,6 +1982,7 @@ def test_r7(tmp):
         drv, job = driver_module(tmp/sub)
         out = job/'fits'/'R5'; out.mkdir(parents=True, exist_ok=True)
         wjson(out/'complete.json', dict(stopped=False, step=2500)); wjson(out/'segment.json', dict(status='returned'))
+        os.utime(out/'complete.json', (time.time()-100, time.time()-100))   # completed well before the STOP (H-1)
         rec = dict(launch_id='DONE', pid=2**22+77, pgid=2**22+77, starttime=5, launched_at_utc='2026-10-13T00:00:00Z')
         wjson(job/'receipts'/'fit-R5-launch.json', rec)
         with (job/'driver'/'events.jsonl').open('a') as f: f.write(json.dumps(dict(utc='x', kind='child_exit', pid=rec['pid'], launch_id='DONE', exit_code=0))+'\n')
@@ -2206,9 +2216,12 @@ def test_r8(tmp):
         rows['runner_acceptance'] = acc
         # --readout: the deadline does not apply to the readout scripts only; STOP still refuses
         j = mk('g1-readout'); (j/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
-        r, exits = runner(j, 'ro', ['/bin/sh', '-c', 'true', 'reports/explore/x4s4/reduce.py'], readout=True)
+        rr = Path(tmp)/'fakerepo'; (rr/'reports'/'explore'/'x4s3').mkdir(parents=True, exist_ok=True)
+        (rr/'reports'/'explore'/'x4s3'/'runtime.sh').write_text('exit 0\n')          # r10: the exact readout invocation form
+        ro_argv = ['/bin/bash', str(rr/'reports'/'explore'/'x4s3'/'runtime.sh'), str(rr/'reports'/'explore'/'x4s4'/'reduce.py')]
+        r, exits = runner(j, 'ro', ro_argv, readout=True)
         ro_ok = r.run()['passed'] is True
-        stop_link(j); r2, _ = runner(j, 'ro2', ['/bin/sh', '-c', 'true', 'reports/explore/x4s4/reduce.py'], readout=True)
+        stop_link(j); r2, _ = runner(j, 'ro2', ro_argv, readout=True)
         ro_stop = r2.run()['passed'] is False
         rows['runner_readout'] = dict(deadline_exempt=ro_ok, stop_refuses=ro_stop,
                                       other_scripts_refused=raises(lambda: G.Runner(str(j), 'x', ['/bin/true'], readout=True), SystemExit, 'readout'))
@@ -2397,11 +2410,11 @@ def test_r8(tmp):
     # ---- row: the runbook invokes every long-running step through its guard (static)
     rb = (HERE/'QUALIFY-RUNBOOK.md').read_text().replace('\\\n', ' ')        # join continued shell lines
     cmds = [l for l in rb.splitlines() if 'qualify4.py ' in l or 'label.py ' in l or 'verify_onpolicy.py ' in l or 'collect_w.py ' in l
-            or 'imitation.exit_r1.pack' in l or 'diagnose.py' in l or 'contention.py' in l or 'reduce.py ' in l or 'write_report.py ' in l
+            or 'imitation.exit_r1.pack' in l or 'packw.py' in l or 'diagnose.py' in l or 'contention.py' in l or 'reduce.py ' in l or 'write_report.py ' in l
             or 'pytest' in l]
     unguarded = [l.strip()[:90] for l in cmds if l.lstrip().startswith(('cd ', '| P', '$', 'test ', '/')) and '$GRD' not in l and 'guard.py' not in l
                  and not l.lstrip().startswith(('| P8', '| P10', '| P12'))]
-    packs = [l for l in rb.splitlines() if 'imitation.exit_r1.pack' in l]
+    packs = [l for l in rb.splitlines() if 'packw.py --set' in l]          # r10 (R9-F7): production packs through packw
     case("r8 guard audit row - runbook: every qualify4/label/verify/collect_w/pack/diagnose/readout/pytest command runs under $GRD "
          "(guard.py); both production packs (P6, P9) declare their batch as a guarded --output",
          not unguarded and len(packs) >= 2 and all('--output $J/data/' in l for l in packs), unguarded=unguarded)
@@ -2423,12 +2436,13 @@ def test_r9(tmp):
         return j, ctl, du, gpu
     def marker(j, extra_sh=None, readout=False):
         cmd = ['/bin/sh', '-c', extra_sh] if extra_sh else ['/bin/sleep', '60']
+        if readout: cmd = [PYX, '-c', 'import time; time.sleep(60)', '/x/reports/explore/x4s4/guard.py', '--readout']   # a readout root
         env = {'X4S4_STUDY': str(j), 'PATH': '/usr/bin:/bin', **({'X4S4_READOUT': '1'} if readout else {})}
         return subprocess.Popen(cmd, env=env, start_new_session=True)
     def wd_run(j, du, gpu, *opts):
         env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY',)}
-        return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '0.3', '--stall', '3', '--stop-grace', '1.5',
-                                 '--kill-grace', '1', '--du', du, '--nvidia-smi', gpu, '--du-timeout', '2', '--gpu-timeout', '2',
+        return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
+                                 '--stop-grace', '1.5', '--kill-grace', '1', '--du', du, '--nvidia-smi', gpu, '--du-timeout', '0.5', '--gpu-timeout', '0.5',
                                  '--mem-floor', '1', '--psi', str(Path(du).parent/'psi'), *opts],     # host-independent defaults
                                 env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     def until(cond, limit=15):
@@ -2453,8 +2467,9 @@ def test_r9(tmp):
         # STOP honoured: STOP appears, the study process exits by itself before the grace -> no HALT; STOP period logged
         (j/'STOP').symlink_to(j/'nowhere'); time.sleep(0.4); m.terminate(); m.wait(); time.sleep(2.2)
         res['stop_honoured_no_halt'] = not (j/'HALT.json').exists()
-        (j/'STOP').unlink(); time.sleep(0.8)
-        sp = [json.loads(l)['kind'] for l in (j/'watchdog'/'stop-periods.jsonl').read_text().splitlines()]
+        (j/'STOP').unlink()
+        until(lambda: '"end"' in (j/'watchdog'/'stop-periods.jsonl').read_text())    # the next cycle records the end
+        sp = [k for k in (json.loads(l)['kind'] for l in (j/'watchdog'/'stop-periods.jsonl').read_text().splitlines()) if k in ('start', 'end')]
         res['stop_period_logged'] = sp == ['start', 'end'] and len(ST.stop_periods(str(j))) == 1
         cleanup(w)
         # ---- every breach -> HALT.json + STOP, the study tree stopped one PID at a time, other jobs untouched
@@ -2488,7 +2503,7 @@ def test_r9(tmp):
             gpu_over=breach('w-gpu', lambda j, c: (c/'gpu').write_text('50000'), 'GPU'),
             gpu_failed=breach('w-gpuf', lambda j, c: (c/'gpu-fail').write_text('1'), 'measurement failed'),
             stop_not_honoured=breach('w-stop', lambda j, c: (j/'STOP').symlink_to(j/'nowhere'), 'STOP not honoured', stubborn=True),
-            cycle_stall=breach('w-stall', lambda j, c: (c/'du-sleep').write_text('6'), 'stalled', opts=('--du-timeout', '30', '--stall', '1')))
+            measurement_overdue=breach('w-over', lambda j, c: (c/'du-sleep').write_text('6'), 'measurement overdue', opts=('--du-timeout', '30')))
         res['breaches'] = {k: v[0] for k, v in cases.items()}
         # the E8 readout may run after the deadline: readout-marked processes alone never HALT; a production one does
         j, ctl, du, gpu = wjob('w-ro', '2000-01-01T00:00:00Z'); ro = marker(j, readout=True); w = wd_run(j, du, gpu)
@@ -2509,7 +2524,7 @@ def test_r9(tmp):
         # ---- launcher: detached, own session, outside the study tree even when launched from a marked shell
         j, ctl, du, gpu = wjob('w-start')
         env = dict(os.environ, X4S4_STUDY=str(j))
-        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '0.3', '--du', du, '--nvidia-smi', gpu,
+        st = subprocess.run([PYX, '-B', str(WD), 'start', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--du', du, '--nvidia-smi', gpu,
                              '--mem-floor', '1', '--psi', str(ctl/'psi')],
                             env=env, capture_output=True, text=True, timeout=30)
         pidrec = json.loads((j/'watchdog'/'pid.json').read_text()); wpid = pidrec['pid']
@@ -2523,9 +2538,10 @@ def test_r9(tmp):
         src = WD.read_text(); tree_ = ast.parse(src)
         imports = {a.name.split('.')[0] for n in ast.walk(tree_) if isinstance(n, ast.Import) for a in n.names} | \
                   {n.module.split('.')[0] for n in ast.walk(tree_) if isinstance(n, ast.ImportFrom)}
-        kt = src[src.index('def kill_tree'):src.index('# ---------------------------------------------------------------- the loop')]
-        res['static'] = imports <= {'argparse', 'calendar', 'json', 'os', 'signal', 'subprocess', 'sys', 'threading', 'time'} \
-            and 'killpg' not in src and 'os.kill(-' not in src and kt.index('s[0] != start or not marked(pid') < kt.index('os.kill(pid, sig)') \
+        kt = src[src.index('def kill_tree'):src.index('# ---------------------------------------------------------------- status / control')]
+        res['static'] = imports <= {'argparse', 'calendar', 'json', 'math', 'os', 'queue', 'secrets', 'signal', 'stat', 'subprocess', 'sys',
+                                    'threading', 'time'} \
+            and 'killpg' not in src and 'os.kill(-' not in src and kt.index('self.tree.still(pid, start)') < kt.index('os.kill(pid, sig)') \
             and not any(w in c.value for c in ast.walk(tree_) if isinstance(c, ast.Constant) and isinstance(c.value, str) and len(c.value) < 80
                         for w in ('/games', '/analysis', '/data', '/collect', '/qual', '/fits', 'results', 'outcome', 'loss'))
     finally:
@@ -2583,7 +2599,7 @@ def test_r9(tmp):
     (j/'HARD-STOP-UTC.txt').write_text(time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(t_rec-1))+'\n')
     h1['after_deadline'] = ST.guarded_output(str(j), str(out)) is None and ST.h1_reason(str(j), t_rec) == 'after deadline'
     rro = wjson(j/'receipts'/'guard-readout-x.json', dict(json.loads(Path(rec).read_text()), readout=True))   # a --readout run
-    h1['readout_after_deadline_counts'] = ST.guarded_output(str(j), str(out))['readout'] is True
+    h1['readout_flag_alone_not_exempt'] = ST.guarded_output(str(j), str(out)) is None      # r10 (R9-F3): invocation + output bound
     rro.unlink()
     (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
     os.symlink(j/'nowhere', j/'STOP'); h1['stop_present_now'] = ST.h1_reason(str(j), time.time()+1) == 'during STOP'; (j/'STOP').unlink()
@@ -2604,6 +2620,7 @@ def test_r9(tmp):
     d = sorted((rj/'games'/'R5'/'K4S-120').glob('a*'))[0]; blocks = sorted((d/'blocks').glob('*.json'))
     tb = time.time()
     for b in (rj/'games'/'R5').rglob('blocks/*.json'): os.utime(b, (tb-100, tb-100))     # every R5 block in time ...
+    for rd_ in rj.glob('rt-*/READY.json'): os.utime(rd_, (tb-100, tb-100))                 # (and its READY: R9-F6)
     os.utime(blocks[-1], (tb, tb)); wjson(rj/'HALT.json', dict(epoch=tb-50))              # ... except this one
     chk = __import__('collections').Counter()
     rows, _complete = rdc.load_student(str(rj), 'R5', plan, set(), chk)
@@ -2628,6 +2645,293 @@ def test_r9(tmp):
          "os.environ.get('X4S4_STUDY') != io.JOB" in gs and "(os.environ.get('X4S4_READOUT') == '1') != bool(a.readout)" in gs
          and "os.environ.get('X4S4_STUDY') != job or 'X4S4_READOUT' in os.environ" in ss
          and "os.environ.get('X4S4_STUDY') != J or 'X4S4_READOUT' in os.environ" in ds and "X4S4_STUDY=J," in ds and "reason='STOP/HALT; nothing live" in ds)
+
+
+# ================================================================ r10: Sol r9 R9-F1..F8 (ruling SR-2), one case each
+def test_r10(tmp):
+    import studytree as ST, guard as G, label
+    WD = HERE/'watchdog.py'; PYX = sys.executable
+    sys.path.insert(0, str(HERE)); import watchdog as W, packw
+    def fake(path, body):
+        Path(path).write_text('#!/bin/sh\n'+body+'\n'); os.chmod(path, 0o755); return str(path)
+    def wjob(sub, deadline='2030-01-01T00:00:00Z'):
+        j = Path(tmp)/sub/'job'; (j/'watchdog').mkdir(parents=True); (j/'receipts').mkdir()
+        if deadline: (j/'HARD-STOP-UTC.txt').write_text(deadline+'\n')
+        ctl = Path(tmp)/sub/'ctl'; ctl.mkdir(); (ctl/'du').write_text('1000'); (ctl/'gpu').write_text('100')
+        (ctl/'psi').write_text('some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n')
+        du = fake(ctl/'du.sh', f'[ -f {ctl}/du-raw ] && {{ cat {ctl}/du-raw; exit 0; }}; echo "$(cat {ctl}/du)\t$3"')
+        gpu = fake(ctl/'gpu.sh', f'cat {ctl}/gpu')
+        return j, ctl, du, gpu
+    def wd(j, ctl, du, gpu, *opts):
+        env = {k: v for k, v in os.environ.items() if k not in ('X4S4_STUDY', 'X4S4_READOUT')}
+        return subprocess.Popen([PYX, '-B', str(WD), 'run', '--job', str(j), '--cycle', '1.0', '--measure-budget', '0.8', '--stall', '3',
+                                 '--stop-grace', '1.5', '--kill-grace', '1', '--du', du, '--nvidia-smi', gpu, '--du-timeout', '0.5',
+                                 '--gpu-timeout', '0.5', '--mem-floor', '1', '--psi', str(ctl/'psi'), *opts],
+                                env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    def marked(j, cmd, readout=False):
+        env = {'X4S4_STUDY': str(j), 'PATH': '/usr/bin:/bin', **({'X4S4_READOUT': '1'} if readout else {})}
+        return subprocess.Popen(cmd, env=env, start_new_session=True)
+    def until(cond, limit=15):
+        t0 = time.monotonic()
+        while time.monotonic()-t0 < limit:
+            if cond(): return True
+            time.sleep(0.1)
+        return False
+    def reason(j): return json.loads((j/'HALT.json').read_text()).get('reason', '') if (j/'HALT.json').exists() else ''
+    def alive_pid(pid): s_ = io.proc_stat(pid); return bool(s_ and s_['state'] != 'Z')
+    def cleanup(*ps):
+        for p in ps:
+            if p is not None and p.poll() is None: p.kill()
+            if p is not None: p.wait()
+    def ident(pid): s_ = io.proc_stat(pid); return (pid, s_['starttime']) if s_ else None
+    def kill_pid(pid_start):                                        # stray test descendants, by verified (pid, starttime)
+        if pid_start and ident(pid_start[0]) == pid_start and alive_pid(pid_start[0]): os.kill(pid_start[0], signal.SIGKILL)
+    def halted_with(sub, setup, want, opts=(), extra=None):
+        j, ctl, du, gpu = wjob(sub); m = marked(j, ['/bin/sleep', '60']); setup(j, ctl)
+        w = wd(j, ctl, du, gpu, *opts)
+        try:
+            ok = until(lambda: (j/'HALT.json').exists()) and until(lambda: m.poll() is not None) and want in reason(j)
+            return ok and (extra(j) if extra else True), reason(j)
+        finally: cleanup(w, m)
+
+    # ---- R9-F1: stalls and failures in the watchdog's OWN writes HALT, and teardown never depends on its log
+    f1 = {}
+    f1['heartbeat_fifo'] = halted_with('f1-hb', lambda j, c: os.mkfifo(j/'watchdog'/'heartbeat.json'), 'watchdog write failed')
+    f1['log_fifo_teardown'] = halted_with('f1-log', lambda j, c: os.mkfifo(j/'watchdog'/'watchdog.log'), 'MemAvailable',
+                                          opts=('--mem-floor', str(10**15)))
+    a = types.SimpleNamespace(cycle=1.0, measure_budget=0.8, stall=3.0)
+    dog = W.Watchdog.__new__(W.Watchdog); dog.a = a; dog.breach = None; dog.m_start = dog.m_done = dog.last_start = None
+    now = time.monotonic(); dog.progress = now-4.0
+    f1['stall_unit'] = 'stalled' in (dog.due(now)[0] or '')
+    case("R9-F1 (Sol): a FIFO at heartbeat.json (a stuck or failed watchdog write) HALTs and stops the tree; with a FIFO at "
+         "watchdog.log, a memory breach still HALTs and stops the tree (teardown never waits on its log); no worker progress "
+         "for STALL is a HALT", all(v[0] if isinstance(v, tuple) else v for v in f1.values()), f1={k: (v[1] if isinstance(v, tuple) else v) for k, v in f1.items()})
+
+    # ---- R9-F2: checks every <= cycle+0.5 s; an overdue measurement or a late start HALTs
+    j, ctl, du, gpu = wjob('f2'); w = wd(j, ctl, du, gpu); seen = []
+    try:
+        t0 = time.monotonic()
+        while time.monotonic()-t0 < 5.0:
+            try: e = json.loads((j/'watchdog'/'heartbeat.json').read_text())['epoch']
+            except (OSError, ValueError, KeyError): e = None
+            if e and (not seen or e != seen[-1]): seen.append(e)
+            time.sleep(0.05)
+    finally: cleanup(w)
+    gaps = [b-a_ for a_, b in zip(seen, seen[1:])]
+    dog.progress = now; dog.m_start = now-0.9; dog.m_done = None; dog.last_start = now-0.9
+    over = 'overdue' in (dog.due(now)[0] or '')
+    dog.m_done = now-0.1; dog.last_start = now-1.6
+    late = 'no measurement started' in (dog.due(now)[0] or '')
+    ov = halted_with('f2-over', lambda j, c: (c/'du.sh').write_text('#!/bin/sh\nsleep 3; echo "1\t$3"\n'), 'measurement overdue', opts=('--du-timeout', '30'))
+    case("R9-F2 (Sol): healthy heartbeats are <= cycle+0.5 s apart (cycle 1.0 s here, 9.5 s by default so <= 10 s); a "
+         "measurement longer than its budget HALTs (real process), and so does a late measurement start (unit)",
+         len(gaps) >= 3 and max(gaps) <= 1.5 and over and late and ov[0], gaps=[round(g, 3) for g in gaps], overdue=ov[1])
+
+    # ---- R9-F3: membership closed over launched work (cleaned-env exec, exact-env helpers); the readout exemption is
+    # bound to a readout runner's subtree, the exact invocation and its declared output
+    j, ctl, du, gpu = wjob('f3'); w = wd(j, ctl, du, gpu)
+    m = marked(j, ['/bin/sh', '-c', 'env -i /bin/sleep 60 & sleep 2; exec env -i /bin/sleep 61'])
+    helper_pid = None
+    try:
+        time.sleep(3.0)
+        kids = [ident(int(p)) for p in os.listdir('/proc') if p.isdigit() and (io.proc_stat(int(p)) or {}).get('ppid') == m.pid]
+        helper_pid = kids[0] if kids else None
+        with open(f'/proc/{m.pid}/environ', 'rb') as f: cleaned = b'X4S4_STUDY' not in f.read()
+        hb = json.loads((j/'watchdog'/'heartbeat.json').read_text())['readings']
+        counted = hb.get('processes') == 2                             # the exec'd process and its unmarked helper
+        (ctl/'du').write_text(str(101*10**9))                           # breach -> both are stopped
+        stopped = until(lambda: m.poll() is not None) and until(lambda: helper_pid is None or ident(helper_pid[0]) != helper_pid
+                                                                  or not alive_pid(helper_pid[0]))
+    finally:
+        cleanup(w, m)
+        if helper_pid: kill_pid(helper_pid)
+    rr = Path(tmp)/'f3repo'; (rr/'reports'/'explore'/'x4s3').mkdir(parents=True); (rr/'reports'/'explore'/'x4s3'/'runtime.sh').write_text('exit 0\n')
+    good = ['/bin/bash', str(rr/'reports/explore/x4s3/runtime.sh'), str(rr/'reports/explore/x4s4/reduce.py')]
+    inert = raises(lambda: G.Runner(str(j), 'x', ['/bin/sh', '-c', 'printf "{}" > "$1"', 'reports/explore/x4s4/reduce.py', 'o'], readout=True), SystemExit, 'readout')
+    jj = new_job(tmp/'f3-h1'); res_ = wjson(jj/'analysis'/'results.json', {}); other = wjson(jj/'qual'/'other.json', {})
+    (jj/'HARD-STOP-UTC.txt').write_text('2000-01-01T00:00:00Z\n')
+    def rec_for(path, argv):
+        return wjson(jj/'receipts'/f'guard-ro-{random.randrange(10**9)}.json', dict(schema='x4s4.guard.v1', passed=True, readout=True, argv=argv,
+                                                                                   outputs={str(path): sha(path)}, new_files={}))
+    r1 = rec_for(res_, good); exempt_ok = ST.guarded_output(str(jj), str(res_)) is not None; r1.unlink()
+    r2 = rec_for(res_, ['/bin/sh', '-c', 'x', str(rr/'reports/explore/x4s4/reduce.py')]); inert_no = ST.guarded_output(str(jj), str(res_)) is None; r2.unlink()
+    r3 = rec_for(other, good); undeclared_no = ST.guarded_output(str(jj), str(other)) is None; r3.unlink()
+    # watchdog: after the deadline only a readout runner's subtree is exempt; a bare X4S4_READOUT=1 process is not
+    j2, ctl2, du2, gpu2 = wjob('f3-ro', '2000-01-01T00:00:00Z')
+    root = marked(j2, [PYX, '-c', 'import subprocess, time; p = subprocess.Popen(["/bin/sleep", "60"], env={}); time.sleep(60)',
+                       '/x/reports/explore/x4s4/guard.py', '--readout'], readout=True)
+    w2 = wd(j2, ctl2, du2, gpu2); bare = None
+    time.sleep(1.0); root_kids = [ident(int(p)) for p in os.listdir('/proc') if p.isdigit() and (io.proc_stat(int(p)) or {}).get('ppid') == root.pid]
+    try:
+        time.sleep(2.0); subtree_ok = not (j2/'HALT.json').exists() and root.poll() is None
+        bare = marked(j2, ['/bin/sleep', '60'], readout=True)
+        bare_halts = until(lambda: (j2/'HALT.json').exists()) and 'after the deadline' in reason(j2)
+        until(lambda: root.poll() is not None and not any(k and ident(k[0]) == k for k in root_kids))   # teardown completes first
+    finally:
+        cleanup(w2, root, bare)
+        for k in root_kids: kill_pid(k)
+    f3 = dict(cleaned_env_exec_counted=cleaned and counted, stopped=stopped, inert_token_refused=inert, exempt_ok=exempt_ok,
+              inert_receipt_not_exempt=inert_no, undeclared_output_not_exempt=undeclared_no, readout_subtree_ok=subtree_ok,
+              bare_readout_marker_halts=bare_halts)
+    case("R9-F3 (Sol): a process that execs with a cleaned environment and its exact-environment helper stay members (counted, "
+         "stopped on HALT); guard.py refuses an inert script token as --readout; the deadline H-1 exemption needs the exact "
+         "invocation AND the script's declared output; after the deadline only a readout runner's subtree is exempt",
+         all(f3.values()), f3=f3)
+
+    # ---- R9-F4: malformed measurements are failures (valid high PSI is still not a breach)
+    psi = lambda v: (lambda j, c: (c/'psi').write_text(f'some avg10={v} avg60=0 avg300=0 total=0\n'))
+    f4 = dict(psi_nan=halted_with('f4-nan', psi('nan'), 'malformed'), psi_inf=halted_with('f4-inf', psi('inf'), 'malformed'),
+              psi_neg=halted_with('f4-neg', psi('-1'), 'malformed'), psi_101=halted_with('f4-101', psi('101'), 'malformed'),
+              psi_no_some=halted_with('f4-nosome', lambda j, c: (c/'psi').write_text('full avg10=0\n'), 'malformed'),
+              meminfo_no_kb=halted_with('f4-mem', lambda j, c: (c/'meminfo').write_text('MemAvailable: 999\n'), 'MemAvailable malformed',
+                                        opts=('--meminfo', str(Path(tmp)/'f4-mem'/'ctl'/'meminfo'))),
+              du_garbage=halted_with('f4-du', lambda j, c: (c/'du-raw').write_text('lots of bytes\n'), 'du output malformed'),
+              du_negative=halted_with('f4-duneg', lambda j, c: (c/'du').write_text('-5'), 'measurement failed'),
+              gpu_empty=halted_with('f4-gpu0', lambda j, c: (c/'gpu').write_text(''), 'nvidia-smi printed nothing'),
+              gpu_negative=halted_with('f4-gpun', lambda j, c: (c/'gpu').write_text('-3'), 'measurement failed'))
+    j, ctl, du, gpu = wjob('f4-high'); (ctl/'psi').write_text('some avg10=99.50 avg60=0 avg300=0 total=0\n'); m = marked(j, ['/bin/sleep', '60'])
+    w = wd(j, ctl, du, gpu)
+    try: time.sleep(2.5); high_ok = not (j/'HALT.json').exists() and m.poll() is None
+    finally: cleanup(w, m)
+    case("R9-F4 (Sol): PSI nan/inf/-1/101 or without a 'some' line, MemAvailable without its unit, du garbage or negative, and an empty "
+         "or negative nvidia-smi reading are measurement failures (HALT); a valid high PSI (99.5) is not a breach (frozen rule)",
+         all(v[0] for v in f4.values()) and high_ok, f4={k: v[1][:50] for k, v in f4.items()}, high_ok=high_ok)
+
+    # ---- R9-F5: STOP history is durable before STOP goes; missing history fails closed
+    j, ctl, du, gpu = wjob('f5'); w = wd(j, ctl, du, gpu, '--cycle', '5.0', '--measure-budget', '0.8')
+    try:
+        until(lambda: (j/'watchdog'/'heartbeat.json').exists()); time.sleep(0.3)
+        t_stop = time.time()
+        subprocess.run([PYX, '-B', str(WD), 'stop', '--job', str(j)], check=True, capture_output=True)
+        out = j/'receipts'/'late.json'; out.write_text('{}'); t_mid = os.stat(out).st_mtime
+        subprocess.run([PYX, '-B', str(WD), 'resume', '--job', str(j)], check=True, capture_output=True)   # before the next cycle
+        hist = [json.loads(l) for l in (j/'watchdog'/'stop-periods.jsonl').read_text().splitlines()]
+    finally: cleanup(w)
+    kinds = [h['kind'] for h in hist if h['kind'] in ('start', 'end')]
+    (j/'HARD-STOP-UTC.txt').write_text('2030-01-01T00:00:00Z\n')
+    t_start = next(h['epoch'] for h in hist if h['kind'] == 'start')
+    pulse = kinds[:2] == ['start', 'end'] and ST.h1_reason(str(j), t_mid) == 'during STOP' and ST.h1_reason(str(j), t_stop-5) is None \
+        and ST.h1_reason(str(j), t_start-0.01) == 'during STOP'                # coarse-clock mtimes: the boundary is widened
+    os.symlink('nowhere', j/'STOP'); time.sleep(0.02)
+    subprocess.run([PYX, '-B', str(WD), 'resume', '--job', str(j)], check=True, capture_output=True)   # a raw STOP: recorded first
+    raw_rec = [json.loads(l) for l in (j/'watchdog'/'stop-periods.jsonl').read_text().splitlines()][-2:]
+    raw_ok = [r['kind'] for r in raw_rec] == ['start', 'end'] and raw_rec[0]['source'] == 'resume' and not os.path.lexists(j/'STOP')
+    (j/'watchdog'/'stop-periods.jsonl').rename(j/'watchdog'/'gone.jsonl')
+    missing_closed = (ST.h1_reason(str(j), time.time()) or '').startswith('STOP periods unreadable')
+    (j/'watchdog'/'gone.jsonl').rename(j/'watchdog'/'stop-periods.jsonl')
+    wjson(j/'HALT.json', dict(epoch=time.time())); os.symlink('nowhere', j/'STOP')
+    no_resume_after_halt = subprocess.run([PYX, '-B', str(WD), 'resume', '--job', str(j)], capture_output=True).returncode != 0
+    case("R9-F5 (Sol): a STOP pulse made and removed through `watchdog.py stop/resume` before the next watchdog cycle leaves a durable "
+         "start+end, and an output completed inside it is excluded by H-1 while an earlier one counts; resuming a raw STOP records "
+         "its start before removal; a missing STOP history fails H-1 closed; resume is refused after HALT",
+         pulse and raw_ok and missing_closed and no_resume_after_halt, kinds=kinds, raw=[r['kind'] for r in raw_rec])
+
+    # ---- R9-F6: H-1 on reused dependencies: fit completions/checkpoints, calibrations, raw seals, READY at every consumer
+    f6 = {}
+    drv, djob = driver_module(tmp/'f6'); out = djob/'fits'/'R5'; out.mkdir(parents=True)
+    hist = djob/'watchdog'/'stop-periods.jsonl'
+    for st_ in (250, 2500): (out/f'step-{st_:08d}.pt').write_bytes(b'ck')
+    t = time.time(); os.utime(out/'step-00000250.pt', (t-200, t-200))
+    hist.write_text(json.dumps(dict(kind='start', epoch=t-100))+'\n'+json.dumps(dict(kind='end', epoch=t+100))+'\n')   # STOP covers "now"
+    wjson(out/'complete.json', dict(stopped=False, step=2500)); wjson(out/'segment.json', dict(status='returned'))
+    rec = dict(pid=2**22+901, pgid=2**22+901, starttime=7, launch_id='F6', launched_at_utc='2026-10-13T00:00:00Z'); wjson(djob/'receipts'/'fit-R5-launch.json', rec)
+    with (djob/'driver'/'events.jsonl').open('a') as f: f.write(json.dumps(dict(utc='x', kind='child_exit', pid=rec['pid'], launch_id='F6', exit_code=0))+'\n')
+    f6['late_final_not_done'] = drv.fit_state('R5')[0] == 'stopped'
+    f6['resume_from_admissible'] = drv.admissible_checkpoint(str(out)) == str(out/'step-00000250.pt')
+    os.utime(out/'step-00000250.pt', (t, t)); f6['no_admissible_none'] = drv.admissible_checkpoint(str(out)) is None
+    drv.prepare_fit_dirs = lambda fid: (['batch-0000'], 'g'*64); drv.final_gate = lambda: None
+    drv.Fits().launch('R5', 'stopped'); f6['no_admissible_anomaly'] = (djob/'driver'/'ANOMALY-fit-R5-resume.json').exists()
+    cal = djob/'calibration'/'R5.json'; wjson(cal, dict(threshold=.5)); acc = wjson(djob/'receipts'/'calibration-R5-accepted-X.json', dict(calibration_sha256=sha(cal)))
+    f6['late_calibration_refused'] = drv.accepted_calibration('R5', str(cal)) is None
+    hist.write_text(''); f6['in_time_calibration_ok'] = drv.accepted_calibration('R5', str(cal)) is not None
+    for sid_ in ('R3a-rep', 'R5', 'R5-rep', 'R5W'):
+        rd = djob/f'rt-{sid_}'/'READY.json'; rd.parent.mkdir(exist_ok=True); wjson(rd, dict(student=dict(checkpoint='x', checkpoint_sha256='c', threshold=.5)))
+    bp = djob/'base'/'repo'/'reports'/'explore'/'x4s3'/'plan.json'; bp.parent.mkdir(parents=True)
+    wjson(bp, dict(student=dict(id='R3a', checkpoint='x', checkpoint_sha256='c', threshold=.5)))
+    wjson(djob/'HALT.json', dict(epoch=time.time()-50))
+    import reduce as rdc, diagnose as dg, write_report as wr
+    f6['ready_reduce'] = raises(lambda: rdc.load_student(str(djob), 'R5', json.loads((HERE/'plan.json').read_text()), set(), __import__('collections').Counter()), io.Refusal, 'H-1')
+    f6['ready_diagnose'] = raises(lambda: dg.students_of(str(djob)), io.Refusal, 'H-1')
+    f6['ready_report'] = raises(lambda: wr.staged_students(str(djob), str(HERE/'plan.json')), io.Refusal, 'H-1')
+    f6['ready_studytree'] = raises(lambda: ST.ready_student(str(djob), 'R5'), io.Refusal, 'H-1')
+    (djob/'HALT.json').unlink()
+    # raw label seal completed during STOP: reuse refused even with a guarded receipt listing it -> set aside, relabelled
+    use_job(djob); lj = djob
+    stub_torch_imports()
+    caps_dir = lj/'collect'/'K4S-120'/'a1'; write_collect_game(caps_dir, 'K4S-120', 0, (100, 110))
+    pkl = caps_dir/'captures'/'sim-0000-d27-K4S-120.pkl'; summ = json.loads(pkl.with_suffix('.json').read_text())
+    keep = sorted(pickle.loads(c)['id'] for c in pickle.loads(pkl.read_bytes()))
+    entry = dict(file=str(pkl), sha256=summ['sha256'], arm='K4S-120', index=0, seed=C, keep=keep, keep_sha256=hashlib.sha256(json.dumps(keep).encode()).hexdigest())
+    saved = (label.score_state, label.RAW, label.PLAN_SHA, label.THREADS, label.DATA_ROLE)
+    label.score_state = lambda *a, **k: (5, [5, 600, 2304, 2401], [0.3, 0.1, 0.2, None]); label.RAW = f'{lj}/data/raw-O'; label.PLAN_SHA = 'p'*64; label.THREADS = 1; label.DATA_ROLE = 'data'
+    try:
+        first = label.label_game(entry); gdir = lj/'data'/'raw-O'/'K4S-120'/'game-0000'
+        bless(wjson(lj/'data'/'label-receipt-O-9.json', dict(label.summarize([first], 1), set='O')))
+        ok_reuse = label.label_game(entry)['status'] == 'already_sealed'
+        tm = os.stat(gdir/'manifest.json').st_mtime
+        hist.write_text(json.dumps(dict(kind='start', epoch=tm-1))+'\n'+json.dumps(dict(kind='end', epoch=tm+1))+'\n')
+        late_seal = label.label_game(entry)['status'] == 'sealed' and list(gdir.parent.glob('unaccepted-game-0000-*'))
+    finally:
+        label.score_state, label.RAW, label.PLAN_SHA, label.THREADS, label.DATA_ROLE = saved; hist.write_text(''); use_job(io.JOB)
+    f6['raw_seal_reuse_in_time'] = ok_reuse; f6['raw_seal_during_stop_set_aside'] = bool(late_seal)
+    case("R9-F6 (Sol): a final fit completion inside a STOP period is not 'done' (resumed from the newest H-1-admissible checkpoint; "
+         "none -> a blocking anomaly); a calibration accepted during STOP is refused; a READY after HALT is refused by the reducer, "
+         "the diagnostic, the report and studytree; a raw label seal completed during STOP is not reused even with a passed receipt "
+         "(set aside, relabelled), while an in-time one with its receipt is", all(f6.values()), f6=f6)
+
+    # ---- R9-F7: the packer's inputs need producer evidence (missing / failed / changed identity refused)
+    pj = new_job(tmp/'f7'); from imitation.exit_r1 import pack as packmod
+    g0 = pj/'data'/'raw-O'/'K4S-120'/'game-0000'; ow_game(g0, C+0, 4, index=56)
+    m0 = hashlib.sha256((g0/'manifest.json').read_bytes()).hexdigest()
+    f7 = dict(missing=raises(lambda: packw.authenticate_inputs(str(pj), 'O'), io.Refusal, 'provenance'))
+    lr = wjson(pj/'data'/'label-receipt-O-1.json', dict(game_manifests=[['K4S-120', 0, m0]]))
+    wjson(pj/'receipts'/'guard-failed-lr.json', dict(schema='x4s4.guard.v1', passed=False, outputs={str(lr): sha(lr)}))
+    f7['failed_receipt'] = raises(lambda: packw.authenticate_inputs(str(pj), 'O'), io.Refusal, 'provenance')
+    lr2 = wjson(pj/'data'/'label-receipt-O-2.json', dict(game_manifests=[['K4S-120', 0, '0'*64]])); bless(lr2)
+    f7['changed_identity'] = raises(lambda: packw.authenticate_inputs(str(pj), 'O'), io.Refusal, 'provenance')
+    bless(lr); roots, n = packw.authenticate_inputs(str(pj), 'O')
+    packmod.pack(roots, pj/'data'/'onpolicy'/'batch-0000'); f7['with_evidence_packs'] = n == 1 and (pj/'data'/'onpolicy'/'batch-0000'/'manifest.json').exists()
+    ow = pj/'data'/'raw-OW'/'game-00000'; ow_game(ow, CW+0, 4, index=56)
+    f7['ow_without_selection'] = raises(lambda: packw.authenticate_inputs(str(pj), 'OW'), io.Refusal, 'provenance')
+    bless(wjson(pj/'data'/'raw-OW-selection.json', dict(games=[dict(g=0, manifest_sha256=hashlib.sha256((ow/'manifest.json').read_bytes()).hexdigest())])))
+    f7['ow_with_selection'] = packw.authenticate_inputs(str(pj), 'OW')[1] == 1
+    rb = (HERE/'QUALIFY-RUNBOOK.md').read_text()
+    f7['runbook_packs_via_packw'] = rb.count('packw.py --set') >= 3 and 'imitation.exit_r1.pack' not in rb
+    case("R9-F7 (Sol): packw refuses raw label games without a passed receipt, with only a failed one, or listed with another "
+         "manifest; with their evidence the unchanged packer packs them; O_W games need the guarded selection; the runbook's "
+         "production packs go through packw", all(f7.values()), f7=f7)
+
+    # ---- R9-F8: the watchdog's own I/O is confined (sentinels preserved; no symlink/hard link/FIFO/ancestor redirect)
+    cj = new_job(tmp/'f8'); sentinel = Path(tmp)/'f8-sentinel.txt'; sentinel.write_text('KEEP')
+    jfd, wfd = W.dirs(str(cj))
+    f8 = {}
+    try:
+        (cj/'watchdog'/'heartbeat.json').unlink(); os.symlink(sentinel, cj/'watchdog'/'heartbeat.json')
+        f8['symlink_target_refused'] = raises(lambda: W.write_atomic(wfd, 'heartbeat.json', dict(x=1)), OSError) and sentinel.read_text() == 'KEEP'
+        (cj/'watchdog'/'heartbeat.json').unlink()
+        hl = cj/'watchdog'/'stop-periods.jsonl'; hl.unlink(); os.link(sentinel, hl)
+        f8['hardlink_append_refused'] = raises(lambda: W.append(wfd, 'stop-periods.jsonl', dict(x=1)), OSError) and sentinel.read_text() == 'KEEP'
+        hl.unlink(); os.mkfifo(cj/'watchdog'/'watchdog.log'); t0 = time.monotonic()
+        f8['fifo_append_refused_fast'] = raises(lambda: W.append(wfd, 'watchdog.log', dict(x=1)), OSError) and time.monotonic()-t0 < 1.0
+        (cj/'watchdog'/'pid.json').unlink(); os.symlink(sentinel, cj/'watchdog'/'pid.json')
+        f8['symlink_read_refused'] = raises(lambda: W.read_small(wfd, 'pid.json'), OSError)
+        W.write_atomic(wfd, 'heartbeat.json', dict(x=2))
+        f8['no_temp_left'] = not [n for n in os.listdir(cj/'watchdog') if '.tmp-' in n]
+    finally:
+        os.close(wfd); os.close(jfd)
+    link_job = Path(tmp)/'f8-linkjob'; os.symlink(cj, link_job)
+    f8['symlinked_job_refused'] = raises(lambda: W.dirs(str(link_job)), OSError)
+    cj2 = new_job(tmp/'f8b'); shutil.rmtree(cj2/'watchdog'); os.symlink(Path(tmp), cj2/'watchdog')
+    f8['symlinked_watchdog_dir_refused'] = raises(lambda: W.dirs(str(cj2)), OSError)
+    src = WD.read_text(); tree_ = ast.parse(src)
+    opens = [ast.unparse(n.args[0]) for n in ast.walk(tree_) if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == 'open']
+    f8['builtin_open_only_proc_and_host_files'] = all(o.startswith("f'/proc/") or o in ('a.meminfo', 'a.psi') for o in opens)
+    osopens = [n for n in ast.walk(tree_) if isinstance(n, ast.Call) and ast.unparse(n.func) == 'os.open']
+    f8['os_open_nofollow'] = all('NF' in ast.unparse(n) or ast.unparse(n.args[0]) == "'/'" for n in osopens)
+    case("R9-F8 (Sol): the watchdog's own writer refuses a symlinked heartbeat target, a hard-linked history, a FIFO log (without "
+         "blocking) and a symlinked pid file, leaving outside sentinels unchanged; a symlinked job path or watchdog directory is "
+         "refused; temps are exclusive and cleaned; builtin open() is used only for /proc and the host's meminfo/PSI; every os.open "
+         "is O_NOFOLLOW", all(f8.values()), f8=f8)
 
 
 # ================================================================ static (F11, F17, R2-F10), run_fit.sh (F5)
@@ -2700,7 +3004,7 @@ def main():
     tmp = Path(tempfile.mkdtemp(prefix='x4s4-test-', dir='/dev/shm'))
     try:
         for t in (test_io, test_runner_identity, test_collect, test_pipeline, test_driver, test_supervise, test_contention,
-                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_static):
+                  test_reduce, test_qualify, test_diagnose, test_audit, test_studytree, test_live_paths, test_r6, test_r7, test_r8, test_r9, test_r10, test_static):
             d = tmp/t.__name__; d.mkdir()
             try: t(d)
             except Exception as e:
