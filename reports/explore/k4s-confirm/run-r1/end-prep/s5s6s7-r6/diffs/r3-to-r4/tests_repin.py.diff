@@ -1,0 +1,21 @@
+--- s5s6s7-r3/tests/repin.py	2026-10-12 17:23:32.659860765 -0700
++++ s5s6s7-r4/tests/repin.py	2026-10-12 23:09:21.763656887 -0700
+@@ -37,7 +37,8 @@
+     check = "--check" in sys.argv
+     stale = []
+     si = sha("safe_input.py")
+-    for name in ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_verify_push.py", "k4s_end_launch_gate.py"):
++    for name in ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_verify_push.py", "k4s_end_launch_gate.py",
++                 "k4s_a6_builder.py"):
+         put(name, r'(\nSAFE_INPUT_SHA256 = ")[0-9a-f]{64}(")', si, check, stale)
+         put(name, r'(\nSAFE_INPUT_SIZE = )[0-9]+(\n)', size("safe_input.py"), check, stale)   # r3: bootstrap size pin
+     tool = sha("k4s_end_host_tool.py")
+@@ -55,7 +56,7 @@
+     put(gate, r'(\nPREFLIGHT_SHA256 = ")[0-9a-f]{64}(")', sha("k4s_end_preflight.py"), check, stale)
+     put(gate, r'(\nREMOTE_SHA256 = ")[0-9a-f]{64}(")', sha("k4s_end_launch_remote.py"), check, stale)
+     for name in ("safe_input.py", "k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_exit_push.sh",
+-                 "k4s_preflight_push.sh", "k4s_end_verify_push.py", "k4s_end_launch_remote.py", gate):
++                 "k4s_preflight_push.sh", "k4s_end_verify_push.py", "k4s_end_launch_remote.py", gate, "k4s_a6_builder.py"):
+         print(sha(name), name)
+     if check and stale:
+         print("STALE:", *stale, sep="\n  ")

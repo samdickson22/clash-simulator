@@ -1,0 +1,58 @@
+{
+ "builder_sha256": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
+ "end_job_sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5",
+ "evidence_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "evidence_files_materialized": 45,
+ "frozen": {
+  "end_evidence": {
+   "completion_sha256": "3794d953efb2c8af47a09ccb086cc0441f1c0dd9ea7a4f46e331315972c6e891",
+   "counted_hosts": [
+    "127x03",
+    "127x04"
+   ],
+   "plan_sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+   "sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd"
+  },
+  "end_job": {
+   "commit": "5c847855c53b61eaaa35b502529d81289916ba3e",
+   "registry_root": "reports/explore/k4s-confirm/end/registry",
+   "repository_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+   "sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5"
+  },
+  "end_job_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+  "job_fields": [
+   "completion_sha256",
+   "counted_hosts",
+   "declared_by",
+   "declared_utc",
+   "end_evidence_sha256",
+   "k4s_manifest_sha256",
+   "plan_sha256",
+   "schema",
+   "study"
+  ],
+  "job_schema": "clasher.k4s.end-job.v1",
+  "python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "runtime": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b",
+  "runtime_manifest_git_members_sha256": "89cff3363556bed7091f8ef57f5b723aaba79f25e4b173573b3d99face8147eb",
+  "runtime_manifest_script_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
+  "runtime_manifest_sha256": "9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43"
+ },
+ "note": "scratch clone = byte copy of REPO_FULL/.git only; removed after the check",
+ "ok": true,
+ "s9_equivalence": {
+  "git_members": 4283,
+  "git_members_sha256": "89cff3363556bed7091f8ef57f5b723aaba79f25e4b173573b3d99face8147eb",
+  "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+  "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+  "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+  "s9": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r6/s9_end_runtime.py",
+  "s9_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7"
+ },
+ "schema": "clasher.k4s.end-job-self-check.v1",
+ "scratch_diff": [
+  "reports/explore/k4s-confirm/end/END-JOB.json"
+ ],
+ "scratch_end_job_commit": "5c847855c53b61eaaa35b502529d81289916ba3e",
+ "utc": "2026-10-13T13:18:09Z"
+}

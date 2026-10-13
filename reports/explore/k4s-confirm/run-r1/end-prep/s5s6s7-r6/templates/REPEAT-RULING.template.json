@@ -1,0 +1,7 @@
+{
+ "_template": "Copy to RUNNER/end-launch/<host>/<attempt>/REPEAT-RULING.json for a host's SECOND claim in a round, delete this key, fill every <...>: host = 127x03 or 127x04; attempt = the new END attempt name end-<host>-rRR-lNN; coordinator_ref = the COORDINATOR ruling heading (k4s_end_launch_gate.check_repeat_ruling). Pass its SHA-256 as launch --second-attempt-ruling-sha256.",
+ "schema": "clasher.k4s.end-second-attempt-ruling.v1",
+ "host": "<127x03|127x04>",
+ "attempt": "<end-<host>-rRR-lNN>",
+ "coordinator_ref": "<COORDINATOR heading of the second-attempt ruling>"
+}

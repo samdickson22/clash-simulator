@@ -1,0 +1,26 @@
+{
+ "bundle": {
+  "path": null,
+  "prerequisites": [],
+  "refs": [
+   [
+    "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "refs/remotes/origin/k4s-end-r1"
+   ]
+  ],
+  "sha256": "b4fecc736e99747ebed7ff947cfd367d59ef2c937d8966c513f97166696838b1",
+  "size": 135217169,
+  "spec": "refs/remotes/origin/k4s-end-r1"
+ },
+ "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "dry_run": true,
+ "host": "127x04",
+ "host_program_sha256": "ccca5594d9666783429f0ec4f9f26ac8e22656f2813f701650f5bc56c1de0db8",
+ "logins_planned": 1,
+ "mode": "provision",
+ "prior": null,
+ "receive_program_sha256": "39a92e9d55f9ffefba57bae453677bad7c834f7761283268b84e40bb2d1210b4",
+ "target": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository",
+ "transfer": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository-transfer-98566c032d0b"
+}
+# session (one login): /usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x04 <script 104023 bytes>

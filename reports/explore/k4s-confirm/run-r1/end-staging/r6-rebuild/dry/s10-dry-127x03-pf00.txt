@@ -1,0 +1,173 @@
+S9 VERIFY OK: manifest 9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43; runtime_files fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7; inventory 74fc01a72632e813d8a51511f304d1aa7561914fd095c5b1fadba1ca8f4092b5
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-pf00/k4s-end-guard-r1-pf00 manifest a068acdd508b5da79fa5b786784c98215ff5bae7e2bb0b283c0fc7ec18c2ff50
+{
+ "bytes": 26460843595,
+ "components": [
+  {
+   "bytes": 84895928,
+   "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+   "dirs": 416,
+   "files": 4316,
+   "final": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b",
+   "inventory_sha256": "1a66d7f28abca0ef2ddec6718173d15eb20232250d3581d2c8857e7d04d42f89",
+   "kind": "runtime",
+   "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b.partial",
+   "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+   "runtime_manifest_sha256": "9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43"
+  },
+  {
+   "bytes": 280019,
+   "dirs": 0,
+   "files": 6,
+   "final": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools",
+   "inventory_sha256": "896e194f0d117c3ac3edd79fb5569b8d15be587c6b14f7a22e22bde519db4375",
+   "kind": "tools",
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools.partial",
+   "tool_pins": {
+    "detach.sh": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+    "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
+    "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+    "k4s_end_preflight.py": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
+    "k4s_preflight_push.sh": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
+    "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+   },
+   "tools_source": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6"
+  },
+  {
+   "bytes": 2836480271,
+   "corpus": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/end-inputs-r1/K4-states.pkl",
+   "dirs": 0,
+   "files": 2,
+   "final": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/end-inputs-r1",
+   "inventory_sha256": "a4e61990aa90f46a0a0e73e0b724df6b4d8fde42b1c1ea49b8ab87c36892bda7",
+   "kind": "end-inputs",
+   "native": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/end-inputs-r1/clasher_core.abi3.so",
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/end-inputs-r1.partial",
+   "sources": {
+    "K4-states.pkl": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-publication-staging-r1/K4-states.pkl",
+    "clasher_core.abi3.so": "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/native/clasher_core.abi3.so"
+   }
+  },
+  {
+   "assembler_sha256": "2b8f5fb3b79b85103394e18c39330b772fbf2deb28d95fbd01d2d73273d7f016",
+   "assembly_receipt_sha256": "c0874a6f6a33dc17a166e2fde415b3a22947f849f00868ac582f82a73700535a",
+   "bytes": 23475392007,
+   "dirs": 41,
+   "files": 69,
+   "final": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-pf00",
+   "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00",
+   "guard_job_bytes_equal": true,
+   "inventory_sha256": "81c8cce73c295e144f625b8d6f30b95813f9d573ee73c4b7175e0d630a285722",
+   "kind": "bundle",
+   "name": "end-ref-127x03-pf00",
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-pf00.partial",
+   "production": true,
+   "runtime_consistent": true,
+   "tiers_pins_sha256": "5082e8b21f687c7e92af9e93ed5c1b0c21e9af858ad3ab90955ed49e07fd1b03"
+  },
+  {
+   "bindings": [
+    {
+     "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "label": "seed-03",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+     "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+     "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+     "label": "seed-08",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+     "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+    },
+    {
+     "commit": "0e137378ff251896d7a27899a9453f278945276b",
+     "label": "join-08-server",
+     "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+     "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    {
+     "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "label": "join-08-client",
+     "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+     "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+   ],
+   "bytes": 63795370,
+   "dirs": 19,
+   "files": 16,
+   "final": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00",
+   "guard_manifest_sha256": "a068acdd508b5da79fa5b786784c98215ff5bae7e2bb0b283c0fc7ec18c2ff50",
+   "inventory_sha256": "a36f7517fab280c5b65ce6e890f915eec21fea8f4d8c210735d87b32b57b89b1",
+   "job": "k4s-end-guard-r1-pf00",
+   "kind": "guard-job",
+   "kind_detail": {
+    "kind": "preflight",
+    "preflight": "00"
+   },
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00.partial"
+  }
+ ],
+ "create_base": true,
+ "host": "127x03",
+ "mode": "dry-run",
+ "reader_program_sha256": "2d2f212d73b49176c53b1a03a621b64fbc6a8d4c15bd18051ac31f91016a6152",
+ "receive_program_sha256": "39a92e9d55f9ffefba57bae453677bad7c834f7761283268b84e40bb2d1210b4"
+}
+# P-check request {"host":"127x03","items":[{"grants":[],"kind":"dir","rel":"","root":"/mpac/sdicks02/jobs/clasher"},{"grants":[],"kind":"absent","rel":"k4s-end-r1","root":"/mpac/sdicks02/jobs/clasher"},{"grants":["guard-job"],"kind":"dir","rel":"","root":"/mpac/sdicks02/jobs/clasher"},{"grants":["guard-job"],"kind":"absent","rel":"k4s-end-guard-r1-pf00","root":"/mpac/sdicks02/jobs/clasher"},{"grants":["guard-job"],"kind":"absent","rel":"k4s-end-guard-r1-pf00.partial","root":"/mpac/sdicks02/jobs/clasher"}],"max_content":0,"schema":"clasher.k4s.safe-input.remote-request.v1"}
+/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x03 nice -n 19 /usr/bin/python3 -I -S - 7b22686f7374223a22313237783033222c226974656d73223a5b7b226772616e7473223a5b5d2c226b696e64223a22646972222c2272656c223a22222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d2c7b226772616e7473223a5b5d2c226b696e64223a22616273656e74222c2272656c223a226b34732d656e642d7231222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d2c7b226772616e7473223a5b2267756172642d6a6f62225d2c226b696e64223a22646972222c2272656c223a22222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d2c7b226772616e7473223a5b2267756172642d6a6f62225d2c226b696e64223a22616273656e74222c2272656c223a226b34732d656e642d67756172642d72312d70663030222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d2c7b226772616e7473223a5b2267756172642d6a6f62225d2c226b696e64223a22616273656e74222c2272656c223a226b34732d656e642d67756172642d72312d706630302e7061727469616c222c22726f6f74223a222f6d7061632f736469636b7330322f6a6f62732f636c6173686572227d5d2c226d61785f636f6e74656e74223a302c22736368656d61223a22636c61736865722e6b34732e736166652d696e7075742e72656d6f74652d726571756573742e7631227d
+# P-facts
+/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no -- 127x03 '/bin/sh -c '"'"'export LC_ALL=C
+out=$(/usr/bin/hostname)
+echo "@@RC|hostname|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|hostname\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(/usr/bin/df -P -B1 -- /mpac/sdicks02)
+echo "@@RC|df|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|df\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(/usr/bin/who)
+echo "@@RC|who|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|who\n%s\n'"'"'"'"'"'"'"'"' "$out"
+out=$(cd / && /usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 HOME="$HOME" /usr/bin/nice -n 19 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c '"'"'"'"'"'"'"'"'
+import hashlib, importlib, json, os, site, sys
+real = os.path.realpath
+rec = dict(executable=sys.executable, realpath=real(sys.executable),
+           version="%d.%d.%d" % sys.version_info[:3], prefix=sys.prefix, base_prefix=sys.base_prefix,
+           exec_prefix=sys.exec_prefix, prefix_realpath=real(sys.prefix),
+           flags=dict(isolated=sys.flags.isolated, no_user_site=sys.flags.no_user_site, optimize=sys.flags.optimize,
+                      dont_write_bytecode=sys.flags.dont_write_bytecode), imports={})
+with open(rec["realpath"], "rb") as stream:
+    rec["realpath_sha256"] = hashlib.sha256(stream.read()).hexdigest()
+on_path = set(real(p) for p in sys.path if p)
+sites = [(p, "site") for p in site.getsitepackages()] + [(site.getusersitepackages(), "user")]
+rec["site_packages"] = [dict(path=p, kind=k, realpath=real(p), exists=os.path.isdir(p), on_sys_path=real(p) in on_path)
+                        for p, k in sites]
+cfg = os.path.join(sys.prefix, "pyvenv.cfg")
+try:
+    with open(cfg, "rb") as stream:
+        raw = stream.read(1 << 16)
+    pairs = {}
+    for line in raw.decode("utf-8", "replace").splitlines():
+        key, eq, value = line.partition("=")
+        if eq:
+            pairs[key.strip()] = value.strip()
+    rec["pyvenv_cfg"] = dict(path=cfg, sha256=hashlib.sha256(raw).hexdigest(), size=len(raw), keys=pairs)
+except OSError as error:
+    rec["pyvenv_cfg"] = dict(path=cfg, error="%s: %s" % (type(error).__name__, error))
+for name in sys.argv[1:]:
+    try:
+        module = importlib.import_module(name)
+        origin = getattr(module, "__file__", None)
+        rec["imports"][name] = dict(ok=True, origin=origin, origin_realpath=real(origin) if origin else None,
+                                    version=str(getattr(module, "__version__", "")))
+    except BaseException as error:
+        rec["imports"][name] = dict(ok=False, error="%s: %s" % (type(error).__name__, str(error)[:200]))
+sys.stdout.write("@@PY " + json.dumps(rec, sort_keys=True) + "\n")
+'"'"'"'"'"'"'"'"' numpy torch cv2 scipy)
+echo "@@RC|python|$?"
+printf '"'"'"'"'"'"'"'"'@@OUT|python\n%s\n'"'"'"'"'"'"'"'"' "$out"
+echo @@DONE'"'"''
+# receive runtime -> /mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b.partial (4316 files, 416 dirs, 84895928 bytes)
+# receive tools -> /mpac/sdicks02/jobs/clasher/k4s-end-r1/tools.partial (6 files, 0 dirs, 280019 bytes)
+# receive end-inputs -> /mpac/sdicks02/jobs/clasher/k4s-end-r1/end-inputs-r1.partial (2 files, 0 dirs, 2836480271 bytes)
+# receive bundle -> /mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-pf00.partial (69 files, 41 dirs, 23475392007 bytes)
+# receive guard-job -> /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00.partial (16 files, 19 dirs, 63795370 bytes)

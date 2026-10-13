@@ -1,0 +1,52 @@
+--- s5s6s7-r3/k4s_end_preflight.py	2026-10-12 17:23:32.683861376 -0700
++++ s5s6s7-r4/k4s_end_preflight.py	2026-10-12 22:52:51.999657252 -0700
+@@ -1,4 +1,7 @@
+-"""K4S END on-host PREFLIGHT (S5 candidate r3, RC-2 / P2-3). Non-claiming, non-timing. Never launches games.
++"""K4S END on-host PREFLIGHT (S5 candidate r4, RC-2 / P2-3). Non-claiming, non-timing. Never launches games.
++
++r4 (INTEGRATION-AUDIT-r1 L6): pre_import_pins also reads the runtime's DELTA-MANIFEST.json (frozen end_reference.py:128
++reads it inside frozen_identity) with its pin at P' 98566c03, so a runtime without it refuses before any import.
+ 
+ r3 (SOL END-FULL): the guard repo is checked in the explicit "guard-repo" role (the S3 depth-1 shallow Q3 repo; F2),
+ the --repository clone in the "repository" role (full); the frozen-reader environment is the single object built and
+@@ -20,7 +23,7 @@
+     frozen_git_env    global git config checked; inherited GIT_* scrubbed; P2-4 git environment set
+     pre_import_pins   the K4S manifest of record (FIXED constant 74314eda, never caller-supplied) and every file of
+                       its frozen closure (k4s_files, end_files, reused_readonly, k4s_kernel.files, SD1 manifest),
+-                      each read through safe_input with its pinned SHA-256
++                      each read through safe_input with its pinned SHA-256; r4: plus DELTA-MANIFEST.json (pinned)
+     frozen_import     end_reference, end_background; every loaded runtime module must be a verified closure file
+   then end_reference.reference() order, except the claim and the measurement (r1 table, README §S5)
+     frozen_helpers .. post_pins, cleanup; NEVER pool_context / producer_claim / K4SStore(REFERENCE_SCOPE) / measure()
+@@ -86,6 +89,10 @@
+ CORPUS_SHA256 = "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8"
+ CORPUS_INVENTORY_SHA256 = "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13"
+ K4S_MANIFEST_SHA256 = "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357"   # S5-F1: fixed anchor
++# r4 (INTEGRATION-AUDIT-r1 L6/B5): frozen end_reference.k4s_pins reads HERE/DELTA-MANIFEST.json (end_reference.py:128)
++# inside frozen_identity; it is outside the 74314eda closure, so S5 pins it itself (the blob at P' 98566c03).
++DELTA_MANIFEST_REL = STUDY_REL + "/DELTA-MANIFEST.json"
++DELTA_MANIFEST_SHA256 = "34eca2b74c0345649d350c9cc33bf5b557a4ed3cf533a72fbaf85a2f0a690056"
+ END_SOURCES = (STUDY_REL + "/end_reference.py", STUDY_REL + "/end_pool.py", STUDY_REL + "/end_background.py",
+                STUDY_REL + "/end_evidence.py", STUDY_REL + "/mac/k4s_backend.py", STUDY_REL + "/mac/k4s_logic.py")
+ # The frozen closure of 74314eda (k4s_files + end_files + reused_readonly + k4s_kernel.files + the SD1 manifest):
+@@ -436,7 +443,8 @@
+     R = si.Role
+     roles = [
+         R("runtime", paths["runtime_root"], "read", 64 << 20, exact=tuple(FROZEN_CLOSURE) + (MANIFEST_REL,
+-                                                                                          CORPUS_INVENTORY_REL)),
++                                                                                          CORPUS_INVENTORY_REL,
++                                                                                          DELTA_MANIFEST_REL)),
+         R("bundle", paths["bundle"], "read", 64 << 20, exact=BUNDLE_FILES),
+         R("guard-job", guard_job, "read", 64 << 20, exact=GUARD_SIDE_FILES + ("STOP", "STOP-" + host),
+           grants=("guard-job",)),
+@@ -544,7 +552,9 @@
+         si.read_bytes(policy, "runtime", rel, max_size=64 << 20, expected_sha256=pin)
+     for rel in END_SOURCES:
+         require(rel in FROZEN_CLOSURE, "END source outside the frozen closure: " + rel)
+-    return dict(k4s_manifest_sha256=K4S_MANIFEST_SHA256, closure_files=len(FROZEN_CLOSURE), all_sha256_verified=True)
++    si.read_bytes(policy, "runtime", DELTA_MANIFEST_REL, max_size=4 << 20, expected_sha256=DELTA_MANIFEST_SHA256)
++    return dict(k4s_manifest_sha256=K4S_MANIFEST_SHA256, closure_files=len(FROZEN_CLOSURE), all_sha256_verified=True,
++                delta_manifest_sha256=DELTA_MANIFEST_SHA256)
+ 
+ 
+ def runtime_modules(runtime_root):

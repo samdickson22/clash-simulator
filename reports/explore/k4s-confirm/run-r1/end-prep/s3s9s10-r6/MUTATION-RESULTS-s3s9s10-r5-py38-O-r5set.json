@@ -1,0 +1,725 @@
+{
+ "equivalent_survivors": {},
+ "killed": 56,
+ "mutants": 56,
+ "new_tmp_leftovers": [],
+ "nulls": 4,
+ "nulls_survived": 4,
+ "optimize": 1,
+ "outside_writes": false,
+ "python": "/usr/bin/python3",
+ "results": [
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 228.6,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R15",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R15-e9d_0wm9/tests/test_r4_s9.py::test_refresh_brings_x_and_proves_nothing_else_changed",
+    "1 failed, 764 passed, 1 warning in 104.93s (0:01:44)"
+   ],
+   "rc": 1,
+   "seconds": 105.5,
+   "verdict": "KILLED",
+   "what": "no forced refspec"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R16",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R16-lxd5ngv8/tests/test_common.py::test_scrubbed_env",
+    "1 failed, 22 passed, 1 warning in 0.96s"
+   ],
+   "rc": 1,
+   "seconds": 1.5,
+   "verdict": "KILLED",
+   "what": "fsck on fetch"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V08-hml61drz/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[version]",
+    "1 failed, 1060 passed, 1 warning in 163.60s (0:02:43)"
+   ],
+   "rc": 1,
+   "seconds": 164.2,
+   "verdict": "KILLED",
+   "what": "U4: declared interpreter path and version"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V09",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V09-7mwhmhp7/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[bare-binary]",
+    "1 failed, 1052 passed, 1 warning in 162.83s (0:02:42)"
+   ],
+   "rc": 1,
+   "seconds": 163.4,
+   "verdict": "KILLED",
+   "what": "U4: imports"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V10-q90yystj/tests/test_r4_s10.py::test_interpreter_probe_refusals[missing-subprocess]",
+    "1 failed, 665 passed, 1 warning in 68.11s (0:01:08)"
+   ],
+   "rc": 1,
+   "seconds": 68.7,
+   "verdict": "KILLED",
+   "what": "U4: probe status"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V11",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V11-pp99rk1l/tests/test_r4_s10.py::test_parse_python_requires_exactly_one_record",
+    "1 failed, 701 passed, 1 warning in 75.84s (0:01:15)"
+   ],
+   "rc": 1,
+   "seconds": 76.4,
+   "verdict": "KILLED",
+   "what": "U4: exactly one probe record"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V12",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V12-m5ow1ef9/tests/test_r4_s10.py::test_interpreter_probe_recorded",
+    "1 failed, 662 passed, 1 warning in 67.78s (0:01:07)"
+   ],
+   "rc": 1,
+   "seconds": 68.4,
+   "verdict": "KILLED",
+   "what": "U4: probe runs python as END does (no -I)"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W01",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W01-__8vfn7t/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[FETCH_HEAD-hardlink]",
+    "1 failed, 781 passed, 1 warning in 107.58s (0:01:47)"
+   ],
+   "rc": 1,
+   "seconds": 108.2,
+   "verdict": "KILLED",
+   "what": "write-set leaf: single link (hard link refused)"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W02-p_4fy7za/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[FETCH_HEAD-symlink]",
+    "1 failed, 780 passed, 1 warning in 126.35s (0:02:06)"
+   ],
+   "rc": 1,
+   "seconds": 126.9,
+   "verdict": "KILLED",
+   "what": "write-set leaf: regular file (symlink refused)"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W03-bua1a9ac/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[index.lock-exists]",
+    "1 failed, 799 passed, 1 warning in 127.74s (0:02:07)"
+   ],
+   "rc": 1,
+   "seconds": 128.3,
+   "verdict": "KILLED",
+   "what": "lock siblings / forbidden names must be absent"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W04-aczfwvll/tests/test_r5_git_write.py::test_guard_lstat_rule_isolated_from_the_nofollow_open[write-set-dir]",
+    "1 failed, 1049 passed, 1 warning in 196.71s (0:03:16)"
+   ],
+   "rc": 1,
+   "seconds": 197.3,
+   "verdict": "KILLED",
+   "what": "write-set ancestors: lstat says directory"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W05-tmc9um7v/tests/test_r5_git_write.py::test_guard_descriptor_must_be_the_inspected_directory",
+    "1 failed, 1048 passed, 1 warning in 203.52s (0:03:23)"
+   ],
+   "rc": 1,
+   "seconds": 204.3,
+   "verdict": "KILLED",
+   "what": "opened directory is the inspected one"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W06-5d9hq3nh/tests/test_r5_git_write.py::test_guard_table_every_row_refuses_its_alias[heads:objects:hardlink-inside]",
+    "1 failed, 897 passed, 1 warning in 148.01s (0:02:28)"
+   ],
+   "rc": 1,
+   "seconds": 148.7,
+   "verdict": "KILLED",
+   "what": ".git/objects: no hard-linked file"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W07-ecni3xdj/tests/test_r5_git_write.py::test_guard_table_every_row_refuses_its_alias[heads:objects:symlink-inside]",
+    "1 failed, 896 passed, 1 warning in 142.62s (0:02:22)"
+   ],
+   "rc": 1,
+   "seconds": 143.3,
+   "verdict": "KILLED",
+   "what": ".git/objects: no symlink / special file"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 273.9,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W08-aqxs06o_/tests/test_r5_git_write.py::test_guard_root_and_plan_shape[fresh-root-not-empty]",
+    "1 failed, 1003 passed, 1 warning in 144.16s (0:02:24)"
+   ],
+   "rc": 1,
+   "seconds": 144.8,
+   "verdict": "KILLED",
+   "what": "provision: fresh work-tree root"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W09",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W09-5j1xnrwx/tests/test_r5_git_write.py::test_s9_checkout_refuses_a_work_tree_alias_before_the_checkout[dir-symlink]",
+    "1 failed, 807 passed, 1 warning in 141.77s (0:02:21)"
+   ],
+   "rc": 1,
+   "seconds": 142.4,
+   "verdict": "KILLED",
+   "what": "checkout work-tree paths"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W10-0rzbuucc/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[FETCH_HEAD-symlink]",
+    "1 failed, 780 passed, 1 warning in 138.82s (0:02:18)"
+   ],
+   "rc": 1,
+   "seconds": 139.6,
+   "verdict": "KILLED",
+   "what": "write-set leaves"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W11",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W11-8_xfinnf/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[index.lock-exists]",
+    "1 failed, 799 passed, 1 warning in 146.36s (0:02:26)"
+   ],
+   "rc": 1,
+   "seconds": 147.0,
+   "verdict": "KILLED",
+   "what": "absent rows"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W12",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W12-59fab_ac/tests/test_r5_git_write.py::test_guard_table_every_row_refuses_its_alias[heads:objects:symlink-inside]",
+    "1 failed, 896 passed, 1 warning in 146.02s (0:02:26)"
+   ],
+   "rc": 1,
+   "seconds": 146.7,
+   "verdict": "KILLED",
+   "what": ".git/objects tree"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W13",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W13-ukbnlz3i/tests/test_r5_git_write.py::test_guard_table_every_row_refuses_its_alias[remotes:logs/refs/heads:dir-symlink]",
+    "1 failed, 934 passed, 1 warning in 146.09s (0:02:26)"
+   ],
+   "rc": 1,
+   "seconds": 146.7,
+   "verdict": "KILLED",
+   "what": "may-create directories"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W14",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W14-qsjd8njy/tests/test_r5_git_write.py::test_guard_table_every_row_refuses_its_alias[heads:objects/pack:missing]",
+    "1 failed, 848 passed, 1 warning in 144.87s (0:02:24)"
+   ],
+   "rc": 1,
+   "seconds": 145.5,
+   "verdict": "KILLED",
+   "what": "required directories"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W15",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W15-_at1xkjb/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[index.lock-exists]",
+    "1 failed, 799 passed, 1 warning in 142.05s (0:02:22)"
+   ],
+   "rc": 1,
+   "seconds": 142.7,
+   "verdict": "KILLED",
+   "what": "lock siblings in the plan"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W16",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W16-vrsi0u5k/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[logs_refs_remotes_origin_k4s-end-r1-symlink]",
+    "1 failed, 782 passed, 1 warning in 139.55s (0:02:19)"
+   ],
+   "rc": 1,
+   "seconds": 140.2,
+   "verdict": "KILLED",
+   "what": "the updated ref and its reflog in the plan"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W17",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W17-irod008c/tests/test_r5_git_write.py::test_guard_table_is_complete_and_shared",
+    "1 failed, 993 passed, 1 warning in 139.58s (0:02:19)"
+   ],
+   "rc": 1,
+   "seconds": 140.2,
+   "verdict": "KILLED",
+   "what": "the ref's directories in the plan"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W18",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W18-sycpufnk/tests/test_r5_git_write.py::test_guard_lstat_rule_isolated_from_the_nofollow_open[repository-ancestor]",
+    "1 failed, 1050 passed, 1 warning in 199.97s (0:03:19)"
+   ],
+   "rc": 1,
+   "seconds": 200.6,
+   "verdict": "KILLED",
+   "what": "repository path: no symlinked ancestor"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W19",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W19-gjl9h77k/tests/test_r5_git_write.py::test_guard_post_detects_a_changed_write_set[dir-replaced]",
+    "1 failed, 1005 passed, 1 warning in 146.27s (0:02:26)"
+   ],
+   "rc": 1,
+   "seconds": 146.9,
+   "verdict": "KILLED",
+   "what": "post: directory identities"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W20",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W20-o2qrl01w/tests/test_r5_git_write.py::test_guard_post_detects_a_changed_write_set[dir-replaced]",
+    "1 failed, 1005 passed, 1 warning in 145.44s (0:02:25)"
+   ],
+   "rc": 1,
+   "seconds": 146.0,
+   "verdict": "KILLED",
+   "what": "post: the write set re-scanned"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W21",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W21-qc9u_8da/tests/test_r5_git_write.py::test_guard_root_and_plan_shape[inside-git]",
+    "1 failed, 1002 passed, 1 warning in 144.12s (0:02:24)"
+   ],
+   "rc": 1,
+   "seconds": 144.8,
+   "verdict": "KILLED",
+   "what": "work-tree path not in .git"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 273.7,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W22",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W22-wo32nasx/tests/test_r5_git_write.py::test_guard_root_and_plan_shape[bad-rel]",
+    "1 failed, 1001 passed, 1 warning in 144.10s (0:02:24)"
+   ],
+   "rc": 1,
+   "seconds": 144.7,
+   "verdict": "KILLED",
+   "what": "plan paths stay inside the repository"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W23",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W23-q9hw8gdm/tests/test_r5_git_write.py::test_guard_table_is_complete_and_shared",
+    "1 failed, 997 passed, 1 warning in 143.94s (0:02:23)"
+   ],
+   "rc": 1,
+   "seconds": 144.6,
+   "verdict": "KILLED",
+   "what": "plan release"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W24",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W24-rhfyog31/tests/test_r5_git_write.py::test_s9_refresh_refuses_a_write_set_alias_before_the_fetch[FETCH_HEAD-symlink]",
+    "1 failed, 780 passed, 1 warning in 134.76s (0:02:14)"
+   ],
+   "rc": 1,
+   "seconds": 135.4,
+   "verdict": "KILLED",
+   "what": "S9: guard BEFORE the fetch"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W25",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W25-l1b4a8lb/tests/test_r5_git_write.py::test_s9_checkout_refuses_a_work_tree_alias_before_the_checkout[dir-symlink]",
+    "1 failed, 807 passed, 1 warning in 137.84s (0:02:17)"
+   ],
+   "rc": 1,
+   "seconds": 138.5,
+   "verdict": "KILLED",
+   "what": "S9: guard BEFORE --checkout"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W26",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W26-md5eadvn/tests/test_r5_git_write.py::test_s9_checkout_refuses_a_work_tree_alias_before_the_checkout[dir-symlink]",
+    "1 failed, 807 passed, 1 warning in 145.69s (0:02:25)"
+   ],
+   "rc": 1,
+   "seconds": 146.3,
+   "verdict": "KILLED",
+   "what": "S9: --checkout work-tree paths in the plan"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W27",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W27-rn_egydl/tests/test_r5_git_write.py::test_s9_refresh_record_names_the_guard_and_the_config",
+    "1 failed, 810 passed, 1 warning in 146.50s (0:02:26)"
+   ],
+   "rc": 1,
+   "seconds": 147.1,
+   "verdict": "KILLED",
+   "what": "GW_CONFIG: no reflog creation"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W28",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W28-32v43klg/tests/test_r5_git_write.py::test_s9_refresh_record_names_the_guard_and_the_config",
+    "1 failed, 810 passed, 1 warning in 147.26s (0:02:27)"
+   ],
+   "rc": 1,
+   "seconds": 147.9,
+   "verdict": "KILLED",
+   "what": "fetch: --no-auto-gc"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W29",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W29-x4dngzdo/tests/test_r5_git_write.py::test_s9_post_fetch_detection",
+    "1 failed, 1045 passed, 1 warning in 203.44s (0:03:23)"
+   ],
+   "rc": 1,
+   "seconds": 204.1,
+   "verdict": "KILLED",
+   "what": "S9: post-fetch detection"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "W30",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W30-6gt5kmyq/tests/test_r4_s9.py::test_refresh_checkout_only_when_asked",
+    "1 failed, 765 passed, 1 warning in 139.75s (0:02:19)"
+   ],
+   "rc": 1,
+   "seconds": 140.4,
+   "verdict": "KILLED",
+   "what": "S9 checkout_argv carries GW_CONFIG"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W31",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W31-qu0wdqz1/tests/test_r5_git_write.py::test_s11_advance_refuses_a_write_set_alias_before_the_fetch[FETCH_HEAD-symlink]",
+    "1 failed, 1013 passed, 1 warning in 148.34s (0:02:28)"
+   ],
+   "rc": 1,
+   "seconds": 149.0,
+   "verdict": "KILLED",
+   "what": "S11 host: guard BEFORE each command"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W32",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W32-fbp962ya/tests/test_r5_git_write.py::test_s11_host_guarded_post_check_detects[after-checkout]",
+    "1 failed, 1046 passed, 1 warning in 201.02s (0:03:21)"
+   ],
+   "rc": 1,
+   "seconds": 201.6,
+   "verdict": "KILLED",
+   "what": "S11 host: post-command detection"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W33",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W33-afec2cyb/tests/test_r5_git_write.py::test_s11_host_main_other_checkout_guards[fresh-root-not-empty]",
+    "1 failed, 1043 passed, 1 warning in 204.14s (0:03:24)"
+   ],
+   "rc": 1,
+   "seconds": 204.9,
+   "verdict": "KILLED",
+   "what": "S11 provision: fresh work-tree root"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W34",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W34-kn_rpiox/tests/test_r5_git_write.py::test_s11_host_main_other_checkout_guards[extra-path]",
+    "1 failed, 1042 passed, 1 warning in 203.12s (0:03:23)"
+   ],
+   "rc": 1,
+   "seconds": 203.8,
+   "verdict": "KILLED",
+   "what": "S11 advance: the checkout writes exactly END-JOB.json"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W35",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W35-bs8hu5pd/tests/test_r5_git_write.py::test_s11_host_checkout_guard_isolated_from_the_clean_check",
+    "1 failed, 1041 passed, 1 warning in 203.72s (0:03:23)"
+   ],
+   "rc": 1,
+   "seconds": 204.4,
+   "verdict": "KILLED",
+   "what": "S11 advance: checkout work-tree paths in the plan"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 274.6,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W36",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W36-7t4dowfd/tests/test_r5_git_write.py::test_s11_advance_healthy_records_the_guard",
+    "1 failed, 1040 passed, 1 warning in 201.12s (0:03:21)"
+   ],
+   "rc": 1,
+   "seconds": 201.8,
+   "verdict": "KILLED",
+   "what": "S11 host git: GW_CONFIG"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W37",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W37-jgy5fxpx/tests/test_r5_git_write.py::test_s11_host_git_w_argv",
+    "1 failed, 1044 passed, 1 warning in 203.02s (0:03:23)"
+   ],
+   "rc": 1,
+   "seconds": 203.6,
+   "verdict": "KILLED",
+   "what": "S11 host git: si static preflight"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W38",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W38-2t7or8ha/tests/test_r5_git_write.py::test_s11_host_git_w_argv",
+    "1 failed, 1044 passed, 1 warning in 201.82s (0:03:21)"
+   ],
+   "rc": 1,
+   "seconds": 202.5,
+   "verdict": "KILLED",
+   "what": "S11 host _git_w: writing commands only"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "W39",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-W39-ypgl8tda/tests/test_r5_git_write.py::test_guard_table_every_row_refuses_its_alias[heads:HEAD:symlink]",
+    "1 failed, 811 passed, 1 warning in 140.71s (0:02:20)"
+   ],
+   "rc": 1,
+   "seconds": 141.4,
+   "verdict": "KILLED",
+   "what": "the host program carries S9's guard verbatim"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y01",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y01-hsg1ry5r/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[prefix]",
+    "1 failed, 1053 passed, 1 warning in 207.07s (0:03:27)"
+   ],
+   "rc": 1,
+   "seconds": 207.7,
+   "verdict": "KILLED",
+   "what": "U4: venv prefix"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y02-5evx45f9/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[base-prefix]",
+    "1 failed, 1054 passed, 1 warning in 207.49s (0:03:27)"
+   ],
+   "rc": 1,
+   "seconds": 208.2,
+   "verdict": "KILLED",
+   "what": "U4: base prefix and resolved binary"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y03-ekh3o22t/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[pyvenv-home]",
+    "1 failed, 1056 passed, 1 warning in 205.84s (0:03:25)"
+   ],
+   "rc": 1,
+   "seconds": 206.5,
+   "verdict": "KILLED",
+   "what": "U4: pyvenv.cfg home"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y04-tjrwjtsx/tests/test_r5_u4.py::test_u4_venv_problems_row_by_row[site-not-on-path]",
+    "1 failed, 1070 passed, 1 warning in 204.01s (0:03:24)"
+   ],
+   "rc": 1,
+   "seconds": 204.7,
+   "verdict": "KILLED",
+   "what": "U4: a venv site-packages on sys.path"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y05-me106dh5/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[import-outside-venv]",
+    "1 failed, 1058 passed, 1 warning in 201.45s (0:03:21)"
+   ],
+   "rc": 1,
+   "seconds": 202.1,
+   "verdict": "KILLED",
+   "what": "U4: imports from the venv site-packages"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y06-s4k5h69g/tests/test_r5_u4.py::test_u4_probe_refuses_anything_but_the_pinned_venv[prefix]",
+    "1 failed, 1053 passed, 1 warning in 204.12s (0:03:24)"
+   ],
+   "rc": 1,
+   "seconds": 204.7,
+   "verdict": "KILLED",
+   "what": "U4: refusal"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y07-5xydzqr3/tests/test_r5_u4.py::test_u4_venv_problems_row_by_row[site-outside-venv]",
+    "1 failed, 1071 passed, 1 warning in 203.63s (0:03:23)"
+   ],
+   "rc": 1,
+   "seconds": 204.2,
+   "verdict": "KILLED",
+   "what": "U4: site-packages inside the venv"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y08-qm__h90r/tests/test_r5_u4.py::test_u4_venv_problems_row_by_row[site-not-on-path]",
+    "1 failed, 1070 passed, 1 warning in 200.10s (0:03:20)"
+   ],
+   "rc": 1,
+   "seconds": 200.7,
+   "verdict": "KILLED",
+   "what": "U4: on sys.path"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y09",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y09-wpygog51/tests/test_r5_u4.py::test_u4_venv_problems_row_by_row[executable]",
+    "1 failed, 1061 passed, 1 warning in 184.64s (0:03:04)"
+   ],
+   "rc": 1,
+   "seconds": 185.3,
+   "verdict": "KILLED",
+   "what": "U4: ok flag"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Y10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Y10-wkv1gncs/tests/test_r4_s10.py::test_production_constants",
+    "1 failed, 651 passed, 1 warning in 81.75s (0:01:21)"
+   ],
+   "rc": 1,
+   "seconds": 82.4,
+   "verdict": "KILLED",
+   "what": "U4: the bare uv binary is not the pin"
+  }
+ ],
+ "sources_sha256": {
+  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
+  "s10_stage_host.py": "e950ab171985914c0cc2fc5cf5d09b7e152fcd1f02eea9e9bb03041c9efd31c5",
+  "s11_host_repository.py": "107a44bc30fff834b33d38d6c32ce3b1d36420292a105b78d6ebc3d1c3f69929",
+  "s1b_copy_admissions.py": "255accc836b859e128ba466283aff2a04aaf906afb2a79da60c12c93503636fe",
+  "s3_guard_job.py": "5e99f653749f9f273c61e54678ba056b87ffb2614c0cde080b3ea648147ae168",
+  "s9_end_runtime.py": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "survived": [],
+ "unexplained_survivors": [],
+ "version": "3.8.10"
+}

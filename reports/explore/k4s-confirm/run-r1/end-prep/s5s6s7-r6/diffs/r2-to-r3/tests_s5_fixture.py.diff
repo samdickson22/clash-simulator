@@ -1,0 +1,22 @@
+--- ../s5s6s7-r2/tests/s5_fixture.py	2026-10-12 15:01:56.513357524 -0700
++++ tests/s5_fixture.py	2026-10-12 17:05:34.631116737 -0700
+@@ -73,7 +73,7 @@
+     monkeypatch.setattr(S, "MIN_SAMPLES", 3)
+     monkeypatch.setattr(S, "BLOCK_SECONDS_RANGE", (0.1, 300))
+     pf_job, at_job = q4 / "k4s-end-guard-r1-pf00", q4 / "k4s-end-guard-r1-rd00-a00"
+-    seeds = H.git_repo(pf_job / "repo", commits=2)
++    seeds = H.shallow_guard_repo(pf_job / "repo", tmp / "seed-source")
+     monkeypatch.setattr(S, "SEED_COMMITS", seeds)
+     F = fake_frozen.make(pf_job, fake, host=host, slot_count=slot_count)
+     pf_bundle, at_bundle = base / "bundles" / "pf00", base / "bundles" / "a00"
+@@ -88,6 +88,10 @@
+     job.mkdir(parents=True)
+     native = H.write(base / "inputs" / "native.so", b"synthetic native\n")
+     corpus = H.write(base / "inputs" / "k4-states.pkl", b"synthetic corpus\n")
++    # test-only: the synthetic native/corpus/inventory identities replace the production K4S END identities
++    monkeypatch.setattr(S, "NATIVE_SHA256", H.sha(native))
++    monkeypatch.setattr(S, "CORPUS_SHA256", F.ER.K4_CORPUS_SHA256)
++    monkeypatch.setattr(S, "CORPUS_INVENTORY_SHA256", H.sha(inventory))
+     a = SimpleNamespace(bundle=str(pf_bundle), bundle_pins_sha256=pf_sha, runtime_root=str(runtime),
+                         native=str(native), corpus=str(corpus), corpus_inventory=str(inventory),
+                         corpus_inventory_sha256=H.sha(inventory), k4s_manifest_sha256=H.sha_bytes(manifest_bytes),

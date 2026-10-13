@@ -1,0 +1,113 @@
+--- s5s6s7-r3/tests/test_s7_gate.py	2026-10-12 17:40:40.366688894 -0700
++++ s5s6s7-r4/tests/test_s7_gate.py	2026-10-12 23:02:00.206320541 -0700
+@@ -29,9 +29,19 @@
+              "/usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal\n")
+ RUNTIME = "runtime-0123456789ab"
+ GUARDS = {"pf00": "pf00", "a00": "rd00-a00", "a01": "rd00-a01", "r1a00": "rd01-a00"}
++END_REFERENCE_STUB = "import time\ntime.sleep(2)\n"
+ STUB_WRAPPER = '#!/usr/bin/env bash\njob=$1; shift\necho ran > "$job/WRAPPER-RAN"\n"$@"\necho $? > "$job/STUB-EXIT"\n'
+ 
+ 
++def end_job_bytes(**over):
++    """A synthetic END-JOB (frozen JOB_FIELDS) bound to the gate's END evidence of record and K4S manifest."""
++    job = dict(schema=G.END_JOB_SCHEMA, study="PREREG-K4S", end_evidence_sha256=G.END_EVIDENCE_SHA256,
++               completion_sha256="3" * 64, plan_sha256="9" * 64, k4s_manifest_sha256=G.K4S_MANIFEST_SHA256,
++               counted_hosts=["127x03", "127x04"], declared_utc="2026-10-13T00:00:00Z", declared_by="test")
++    job.update(over)
++    return (json.dumps(job, indent=1, sort_keys=True) + "\n").encode()
++
++
+ def timer_line(unit, seconds_from_now):
+     if seconds_from_now is None:
+         return "n/a                         n/a      Mon 2026-10-12 04:20:06 UTC 2h ago  %s  x.service" % unit
+@@ -67,6 +77,13 @@
+                                          "preflight": H.sha_bytes(STUB_WRAPPER.encode())})
+         self.pre_script = "import time\ntime.sleep(2)\n"
+         mp.setattr(G, "PREFLIGHT_SHA256", H.sha_bytes(self.pre_script.encode()))
++        # r4: the gate pins the host python (A3) and end_reference.py (L1); test-only stand-ins
++        python = tmp / "uv-python" / "bin" / "python3.12"
++        python.parent.mkdir(parents=True)
++        os.symlink("/usr/bin/python3", python)
++        mp.setattr(G, "HOST_PYTHON", str(python))
++        mp.setattr(G, "END_REFERENCE_SHA256", H.sha_bytes(END_REFERENCE_STUB.encode()))
++        self.end_job_sha = {}
+         self.decl = dict(schema=G.ROOTS_SCHEMA, commit="c" * 40, hosts={})
+         self.sans, self.pf_used = {}, {}
+         for h in G.END_HOSTS:
+@@ -106,21 +123,26 @@
+         for name in ("k4s_end_exit_push.sh", "k4s_preflight_push.sh"):
+             H.write(tools / name, self.stub_wrapper, 0o755)
+         H.write(tools / "k4s_end_preflight.py", self.pre_script)
+-        H.write(base / RUNTIME / "reports/explore/k4s-confirm/end_reference.py", "import time\ntime.sleep(2)\n")
++        H.write(base / RUNTIME / "reports/explore/k4s-confirm/end_reference.py", END_REFERENCE_STUB)
+         H.write(base / RUNTIME / G.CORPUS_INVENTORY_REL, b"{}\n")
+         for d in ("attempts", "preflight", "venv/bin"):
+             (base / d).mkdir(parents=True, exist_ok=True)
+         os.symlink("/usr/bin/python3", base / "venv/bin/python")
+         H.write(base / "inputs/native.so", b"n")
+         H.write(base / "inputs/k4-states.pkl", b"c")
+-        H.git_repo(base / "repository", files={"reports/explore/k4s-confirm/README": b"study\n"})
++        job = end_job_bytes()
++        self.end_job_sha[h] = H.sha_bytes(job)
++        H.git_repo(base / "repository", files={"reports/explore/k4s-confirm/README": b"study\n", G.END_JOB_REL: job})
+         bundles = {}
++        self.manifests = getattr(self, "manifests", {})
+         for name, guard in GUARDS.items():
+             job = q4 / ("k4s-end-guard-r1-" + guard)
+             seeds = H.shallow_guard_repo(job / "repo", fs / "seed-sources" / guard)
+-            manifest = dict(profile="fleet-reference", reference_load_profile=dict(host=h, guard=dict(job=str(job))))
++            manifest = dict(profile="fleet-reference", files={G.END_EVIDENCE_REL: G.END_EVIDENCE_SHA256},
++                            reference_load_profile=dict(host=h, guard=dict(job=str(job)), end_evidence=G.END_EVIDENCE_REL))
+             digest = H.sha(H.write(base / "bundles" / name / "tiers-pins.json", H.canonical(manifest) + "\n"))
+             self.sans[h] = self.tool.bundle_sans_guard_sha256(manifest)
++            self.manifests[(h, name)] = manifest
+             bundles[name] = dict(path=str(base / "bundles" / name), tiers_pins_sha256=digest, guard_job=str(job))
+         self.mp.setattr(G, "SEED_COMMITS", seeds)
+         return dict(base=str(base), runtime=str(base / RUNTIME), bundles=bundles, repository=str(base / "repository"),
+@@ -137,9 +159,10 @@
+             o = {"--bundle": d["bundles"][bundle or "a00"]["path"], "--runtime-root": d["runtime"],
+                  "--native": d["base"] + "/inputs/native.so", "--corpus": d["base"] + "/inputs/k4-states.pkl",
+                  "--corpus-inventory": d["runtime"] + "/" + G.CORPUS_INVENTORY_REL,
+-                 "--k4s-manifest-sha256": G.K4S_MANIFEST_SHA256, "--sd1-manifest-sha256": "5" * 64,
+-                 "--end-evidence": d["bundles"][bundle or "a00"]["path"] + "/end-evidence.json",
+-                 "--end-evidence-sha256": "e" * 64, "--repository": d["repository"], "--end-job-sha256": "4" * 64,
++                 "--k4s-manifest-sha256": G.K4S_MANIFEST_SHA256, "--sd1-manifest-sha256": G.SD1_MANIFEST_SHA256,
++                 "--end-evidence": d["bundles"][bundle or "a00"]["path"] + "/" + G.END_EVIDENCE_REL,
++                 "--end-evidence-sha256": G.END_EVIDENCE_SHA256, "--repository": d["repository"],
++                 "--end-job-sha256": self.end_job_sha[h],
+                  "--round": "0", "--out": job + "/" + attempt}
+             tail = [d["runtime"] + "/reports/explore/k4s-confirm/end_reference.py"]
+             wrapper = d["tools"] + "/k4s_end_exit_push.sh"
+@@ -150,9 +173,10 @@
+             o = {"--bundle": pf["path"], "--bundle-pins-sha256": pf["tiers_pins_sha256"], "--runtime-root": d["runtime"],
+                  "--native": d["base"] + "/inputs/native.so", "--corpus": d["base"] + "/inputs/k4-states.pkl",
+                  "--corpus-inventory": d["runtime"] + "/" + G.CORPUS_INVENTORY_REL,
+-                 "--corpus-inventory-sha256": "1" * 64, "--k4s-manifest-sha256": G.K4S_MANIFEST_SHA256,
+-                 "--sd1-manifest-sha256": "5" * 64, "--end-evidence": pf["path"] + "/end-evidence.json",
+-                 "--end-evidence-sha256": "e" * 64, "--repository": d["repository"], "--attempt-parent": d["attempts"],
++                 "--corpus-inventory-sha256": G.CORPUS_INVENTORY_SHA256, "--k4s-manifest-sha256": G.K4S_MANIFEST_SHA256,
++                 "--sd1-manifest-sha256": G.SD1_MANIFEST_SHA256, "--end-evidence": pf["path"] + "/" + G.END_EVIDENCE_REL,
++                 "--end-evidence-sha256": G.END_EVIDENCE_SHA256, "--repository": d["repository"],
++                 "--attempt-parent": d["attempts"],
+                  "--out": job + "/" + attempt, "--hold-seconds": "960" if h == "127x04" else "120",
+                  "--compare-bundle": at["path"], "--compare-bundle-pins-sha256": at["tiers_pins_sha256"]}
+             tail = [d["tools"] + "/k4s_end_preflight.py", "run"]
+@@ -160,7 +184,7 @@
+         o.update(opts)
+         argv = ["nice", "-n", "10", "taskset", "-c", "61", "bash", d["tools"] + "/detach.sh", job + "/detach.log",
+                 job + "/detach.json", "bash", wrapper, job, "env", "OMP_NUM_THREADS=1", "OPENBLAS_NUM_THREADS=1",
+-                "MKL_NUM_THREADS=1", d["base"] + "/venv/bin/python", "-B"] + tail
++                "MKL_NUM_THREADS=1", G.HOST_PYTHON, "-B"] + tail
+         for k, v in o.items():
+             if v is not None:
+                 argv += [k] if v is True else [k, v]
+@@ -208,7 +232,8 @@
+                                k4s_manifest_sha256=G.K4S_MANIFEST_SHA256, bundle=pf["path"],
+                                bundle_pins_sha256=pf["tiers_pins_sha256"], guard_job=pf["guard_job"],
+                                compare_bundle=at["path"], compare_bundle_pins_sha256=at["tiers_pins_sha256"],
+-                               end_evidence_sha256="e" * 64, sd1_manifest_sha256="5" * 64, native=native,
++                               end_evidence_sha256=G.END_EVIDENCE_SHA256, sd1_manifest_sha256=G.SD1_MANIFEST_SHA256,
++                               native=native,
+                                corpus=corpus, corpus_inventory=inventory,
+                                corpus_inventory_sha256=G.CORPUS_INVENTORY_SHA256),
+                    identity=dict(native=native, native_sha256=G.NATIVE_SHA256, corpus=corpus,

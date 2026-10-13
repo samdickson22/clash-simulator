@@ -1,0 +1,191 @@
+{
+ "created_utc": "2026-10-13T13:20:27Z",
+ "equivalent_survivors": [],
+ "killed": 10,
+ "mutants": 10,
+ "nulls": 3,
+ "nulls_survived": 3,
+ "package_sha256": {
+  "k4s_a6_builder.py": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
+  "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
+  "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "k4s_end_launch_gate.py": "4fc53765a506d1b9c5c9e740b515cc77b6a657bc6289b4e4337b7be4c91ad72c",
+  "k4s_end_launch_remote.py": "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d",
+  "k4s_end_preflight.py": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
+  "k4s_end_verify_push.py": "84ddf65c24d9ef59d30ee7b534a7d31a74558681ed1332020c0eabab24da85d2",
+  "k4s_preflight_push.sh": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "results": [
+  {
+   "description": "U8: scratch directory kept",
+   "file": "k4s_a6_builder.py",
+   "id": "J17",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 10.1,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_real_a6_builder_proof_frozen_and_s9 - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 passed, 1 warning in 9.77s\n",
+   "tests": [
+    "tests/test_a6_builder.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8: S9 runtime manifest pin not checked",
+   "file": "k4s_a6_builder.py",
+   "id": "J18",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 11.2,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_frozen_inputs_are_pinned[runtime-manifest]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 27 passed, 1 warning in 10.91s\n",
+   "tests": [
+    "tests/test_a6_builder.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8: frozen driver files not checked against their pins",
+   "file": "k4s_a6_builder.py",
+   "id": "J19",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 11.2,
+   "tail": "it__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_frozen_inputs_are_pinned[frozen-file]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 28 passed, 1 warning in 10.92s\n",
+   "tests": [
+    "tests/test_a6_builder.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8: S9 code not checked against its pin",
+   "file": "k4s_a6_builder.py",
+   "id": "J20",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 11.6,
+   "tail": "assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[s9-pin-differs from its pin]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 37 passed, 1 warning in 11.26s\n",
+   "tests": [
+    "tests/test_a6_builder.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8 r5: runtime manifest not bound to the adopted S9 (script_sha256)",
+   "file": "k4s_a6_builder.py",
+   "id": "J21",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 8.3,
+   "tail": "test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[built-by-another-s9-not built by the adopted S9]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 1 warning in 8.05s\n",
+   "tests": [
+    "tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8 r5: runtime manifest commit/repository/python not bound",
+   "file": "k4s_a6_builder.py",
+   "id": "J22",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 8.3,
+   "tail": " in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[other-commit-P' / REPO_FULL / FROZEN_PYTHON]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 1 warning in 8.05s\n",
+   "tests": [
+    "tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8 r5: builder S9 path drifts to the predecessor package",
+   "file": "k4s_a6_builder.py",
+   "id": "J23",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 0.4,
+   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.08s\n",
+   "tests": [
+    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8 r5: builder S9 SHA drifts from the adoption record",
+   "file": "k4s_a6_builder.py",
+   "id": "J24",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 0.4,
+   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.09s\n",
+   "tests": [
+    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8 r5: builder runtime-manifest SHA drifts from the adoption record",
+   "file": "k4s_a6_builder.py",
+   "id": "J25",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 0.3,
+   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
+   "tests": [
+    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "U8 r5: builder runtime path drifts to the superseded runtime",
+   "file": "k4s_a6_builder.py",
+   "id": "J26",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 0.3,
+   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
+   "tests": [
+    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N09",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 53.6,
+   "tail": "= warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n51 passed, 5 skipped, 1 warning in 53.37s\n",
+   "tests": [
+    "tests/test_r4.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N10",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 11.2,
+   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n38 passed, 1 warning in 10.90s\n",
+   "tests": [
+    "tests/test_a6_builder.py"
+   ],
+   "verdict": "SURVIVED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N11",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 1.4,
+   "tail": "=== warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 2 skipped, 1 warning in 1.14s\n",
+   "tests": [
+    "tests/test_r5.py"
+   ],
+   "verdict": "SURVIVED"
+  }
+ ]
+}

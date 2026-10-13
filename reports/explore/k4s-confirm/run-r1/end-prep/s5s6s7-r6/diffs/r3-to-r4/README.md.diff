@@ -1,0 +1,139 @@
+--- s5s6s7-r3/README.md	2026-10-12 18:36:53.870825064 -0700
++++ s5s6s7-r4/README.md	2026-10-13 00:12:51.848979166 -0700
+@@ -1,4 +1,9 @@
+-# K4S END S5 / S6 / S7 candidates r3: preflight, exit-push + verifier, launch gate on safe_input
++# K4S END S5 / S6 / S7 candidates r4: preflight, exit-push + verifier, launch gate on safe_input, END-JOB builder
++
++- **r4 (2026-10-13 UTC, 127x05, offline): INTEGRATION-AUDIT-r1 Part B rows U5, U6, U7, U8, L1, L6, U12.** New copy of
++  `s5s6s7-r3/` (`cp -a`, r3 SHA256SUMS verified in the copy; r3 immutable). Row → fix file:line → named tests:
++  [RESPONSE-r4.md](RESPONSE-r4.md). Resume log: [PROGRESS-r4.md](PROGRESS-r4.md). Section **r4** below. Nothing was
++  run against a host; no SSH, commit or push. The r3 text below is kept as the r3 record (its counts are r3's).
+ 
+ - **Status: CANDIDATES for Sol review (SOL-REVIEW-END-FULL-r1 response, Part B). Nothing here has been run against
+   any host.** No SSH was made, nothing was committed or pushed, and no existing directory was edited: this directory
+@@ -67,6 +72,10 @@
+ | `k4s_end_launch_gate.py` | **S7** 05 side: RC-6, argv, RC-9, the one SSH session, the receipt, `admission` |
+ | `k4s_end_launch_remote.py` | **S7** host program body (shipped with safe_input + host tool) |
+ | `quiet-read-v3.cmd` | Approved quiet read, byte copy of `rounds/r4/quiet-read-v3.cmd` (a293207e) |
++| `k4s_a6_builder.py` | **r4 (U8)** END-JOB builder, 05 only: `build` (exact frozen fields from committed bytes at P') and `self-check` (scratch `.git` copy: END-JOB alone on P', frozen `end_job`, S9 `equivalence`) |
++| `templates/` | **r4 (U12)** `BUS-DECISION.template.json`, `REPEAT-RULING.template.json` (the schemas `launch` checks) |
++| `builder-proof/` | **r4** recorded U8 proof: `END-JOB.json` (declared_by marks it NOT the A6 declaration), `BUILD.json`, `SELF-CHECK.json` |
++| `audit-rerun/` | **r4** the audit's `frozen_job_drive.py` / `s9_equiv_drive.py` re-run against the builder output (`rerun.sh` regenerates `builder-proof/` and these outputs) |
+ | `t1-originals/` | T1 bytes the S6 diffs are taken against; `detach.sh` 1648dfdc is used unchanged |
+ | `diffs/` | S6 vs T1, preflight wrapper vs S6 wrapper (regenerated for r3), every file vs `s5s6s7-r1` (`r1-to-r2/`) and every changed file vs `s5s6s7-r2` (`r2-to-r3/`) |
+ | `tests/` | Offline suites, generated host shims, `repin.py` (pin chain incl. r3 size pins), `mutate.py` (mutation driver); r3: `test_f1_bootstrap.py`, `test_f2_s3_guard_integration.py` + `s3_guard_builder.py`, `bootstrap_kit/` (byte copies of bootstrap-r1's kit, harness, loader and canonical files) |
+@@ -76,7 +85,8 @@
+ 
+ **Pin chain** (`tests/repin.py` rewrites it in dependency order; `tests/test_pins.py` fails on any stale pin):
+ safe_input → host tool → preflight + both wrappers → verifier (END wrapper) → gate (host tool, wrappers, preflight,
+-host program, detach, quiet read). Editing any of these files means re-pinning, which changes the gate's SHA.
++host program, detach, quiet read); r4: safe_input → `k4s_a6_builder.py`. Editing any of these files means re-pinning,
++which changes the gate's SHA.
+ 
+ ## 0. Layout (from `si.END_BASES` / `si.Q4_GUARD_PARENTS`; must equal the RC-6 declaration)
+ 
+@@ -437,3 +447,104 @@
+    Part A `s3_guard_job.build` (from `s3s9s10-r3` once its PROGRESS says DONE, else `s3s9s10-r2`; `$K4S_PARTA_DIR`
+    overrides; its SHA256SUMS is verified first) in Part A's own synthetic world, then places that job byte/mode-copied
+    at the Q4 path for the S5 preflight run and the S7 host program.
++
++---
++
++## r4 (INTEGRATION-AUDIT-r1 Part B)
++
++**Inputs read:** `end-staging/INTEGRATION-AUDIT-r1/REPORT.md` (rows U5–U8, U12, L1, L6, §4 items 5–7) and its
++`runlog/drivers/` + `runlog/simulated/` (how the audit hand-built these artifacts); `s5s6s7-r3/{README,RESPONSE-r3}.md`;
++`end-plan/K4S-END-PLAN-v2.md` (A3, A6, RC-6); the frozen `end_evidence.py` / `end_reference.py` / `fleet_end.py` in the
++S9 runtime `end-staging/runtime-98566c032d0b` (read only); `s3s9s10-r3/s9_end_runtime.py` (equivalence, REPO_FULL);
++S4 `b3-r5/assemble_fleet_reference.py` (bundle evidence name, receipt fields); `end-staging/{A2-GO-REQUEST.md,
++RC6-ROOTS-k4s-end-r1.json}` (05 bundle staging path). Repository data: only named health-only blobs at P' 98566c03 of
++`repo-full` (end-evidence.json, DELTA-MANIFEST.json, SD1-MANIFEST.json, K4S manifest, corpora.json, the evidence's plan
++/ completion / ledger / inventory / phase artifacts), via `git cat-file`/`git show` or safe_input's gated reader; every
++SHA in the code came from a command. No game, `games/` directory, outcome complete.json, end-raw/end-complete, reducer
++or verifier output was opened.
++
++**Disclosure (PROGRESS-r4.md, 05:4xZ):** to read those five blobs I first made a full `cp -a` of `repo-full` (work
++tree included) under `/dev/shm`. That byte-copied the work tree's tracked files, among them 4 `complete.json` files
++(names counted with `find`; 0 `games/` directories); nothing was parsed or displayed, and the copy was deleted at once.
++From then on every scratch clone copies `repo-full/.git` ONLY and materializes just the evidence and its artifacts.
++
++### What is new
++
++| Command | Where | Does |
++|---|---|---|
++| `k4s_end_launch_gate.py build-argv --kind end --host H --attempt end-H-rRR-lNN --roots-sha256 S --bundle NAME --end-job-commit X --preflight-verified H=preflight-H-lNN:SHA` | 05 | Writes `end-launch/H/<attempt>/launch-argv.json` (O_EXCL, no-follow, 0444) from the pinned RC-6 declaration (bundle path, tiers-pins SHA, guard job), the S4 receipts in `end-staging/bundles/NAME/` (sidecar, production CANDIDATE receipt for this host / manifest / guard job, evidence of record inside the bundle), the END-JOB blob at X in `repo-full` (its SHA = `--end-job-sha256`), the launching host's pinned PREFLIGHT-VERIFIED identity (native / corpus) and the gate constants. The composed argv must pass `validate_argv` first. Prints `argv_sha256` (for `launch --argv-sha256`) |
++| `… build-argv --kind preflight --host H --attempt preflight-H-lNN --roots-sha256 S --bundle PF_NAME --compare-bundle RD_NAME --native P --corpus P --hold-seconds N [--end-job-commit X] [--diagnostic-preflight]` | 05 | The same for the preflight argv S5 runs (`--hold-seconds` ≥ the host minimum) |
++| `k4s_end_launch_gate.py prepare-preflight-receive --host H --attempt preflight-H-lNN` | 05 | Creates the EMPTY `preflight-received/H/<attempt>/` (0700, exclusive) the preflight push wrapper rsyncs into and `launch` requires |
++| `k4s_end_verify_push.py --receive …/end-received/H/<attempt> --prepare` | 05 (nice 19, CPU 63) | As r3, plus the byte-equal `end-launch/H/<attempt>/PREPARE-PROOF.json` (exclusive); prints `prepare_proof_sha256` for `launch --prepare-proof-sha256` and the verifier |
++| `k4s_a6_builder.py build --declared-by TEXT --out NEW_DIR` | 05 | `NEW_DIR/END-JOB.json` with exactly the frozen fields from committed bytes at P' + `BUILD.json`; prints the SHA |
++| `k4s_a6_builder.py self-check --out DIR --job-sha256 S` | 05 | Scratch-only proof: frozen `end_evidence`+`end_job` accept the END-JOB at X = P' + END-JOB alone, and S9 r3 `equivalence` passes; `DIR/SELF-CHECK.json` |
++
++`validate_argv` now also pins the host python (`HOST_PYTHON`, A3 **pending ruling**), the evidence path inside the
++bundle (`k4s-end-evidence/end-evidence.json`), the END evidence SHA of record, the SD1 SHA, the preflight
++corpus-inventory SHA and the `--end-job-sha256` format; the host program (L1) checks the staged runtime directory and
++`end_reference.py` pin, the presence of the native/corpus files, and the END-JOB at HEAD of `--repository`. S5 (L6)
++pins `DELTA-MANIFEST.json` before any import.
++
++**05 order for one END attempt (A6 onwards):** `k4s_a6_builder.py build` → coordinator commits `END-JOB.json` alone on
++`k4s-end-r1` (B6), pushes, fast-forwards the host clones (S11) and the 05 full clone (S9 r4 `refresh-clone`) →
++`self-check` on that END-JOB → `k4s_end_verify_push.py --prepare` → `build-argv --kind end` → `launch` with the printed
++SHAs. For a preflight: `prepare-preflight-receive` → `build-argv --kind preflight` → `launch --kind preflight`.
++
++### U8 proof (recorded)
++
++`builder-proof/` (builder `k4s_a6_builder.py` SHA recorded in `BUILD.json` and `SELF-CHECK.json`): built from P';
++fields `completion_sha256` = the completion of record, `counted_hosts` [127x03, 127x04], `k4s_manifest_sha256` 74314eda,
++`end_evidence_sha256` = end-evidence.json at P'. The self-check committed it alone on a scratch copy of P' (`diff-tree`
++= exactly the END-JOB path), the FROZEN `end_evidence` + `end_job` accepted it at that commit, and S9 r3
++`equivalence` passed (4280 git members; runtime_files / measurement_files identical). `audit-rerun/` repeats this
++with the audit's own drivers (`frozen_job_drive.py --claim`, `s9_equiv_drive.py`; only their scratch paths
++substituted): both rc 0.
++
++### Tests (r4)
++
++Final matrix on 127x05 from a pristine `cp -a` copy (`/dev/shm/s567r4/pristine/s5s6s7-r4`; 0 `__pycache__`/`.pyc`
++before and after); `umask 022`, `PYTHONDONTWRITEBYTECODE=1`, `-B`, `-p no:cacheprovider`, `nice -n 19 taskset -c 16-23`;
++3.8 with `PYTHONPATH=/dev/shm/s3s9s10r2-pytest38`. Output summary: `TEST-RUN.txt`.
++
++| Interpreter | normal | `-O` |
++|---|---|---|
++| `/mpac/sdicks02/venvs/k4s-freeze/bin/python` 3.12.12 | **726 passed** | **671 passed, 55 skipped** |
++| `/usr/bin/python3` 3.8.10 | **726 passed** | **671 passed, 55 skipped** |
++
++r3 was 611 / 561 + 50. The 55 `-O` skips: the 50 r3 verifier skips plus the 5 r4 verifier tests in `test_r4.py` (the
++verifier refuses `-O` at import). Tests per file: `test_host_tool.py` 79, `test_s5_preflight.py` 70, `test_s6_wrapper.py`
++50, `test_s6_verifier.py` 23, `test_s7_gate.py` 154, `test_pins.py` 4, `test_f1_bootstrap.py` 243 (r3 214 + the 28
++kit scenarios of `k4s_a6_builder.py` + its region test), `test_f2_s3_guard_integration.py` 17, **`test_r4.py` 56**,
++**`test_a6_builder.py` 30**. Existing fixtures changed only to the new contracts (diffs in `diffs/r3-to-r4/`): the S7
++`Site` uses the gate's pinned python / SD1 / evidence SHAs, the bundle evidence path, an END-JOB committed at HEAD of
++the host `--repository`, and stage-able bundle manifests; the S5 fixture adds a DELTA-MANIFEST; the verifier Setup
++provides `end-launch/`. The integration tests `test_a6_builder.py::test_real_a6_builder_proof_frozen_and_s9` and
++`test_r4.py::test_production_pins_equal_the_committed_blobs_at_p_prime` read `repo-full` (read only) and the S9 runtime.
++
++### Mutation (r4)
++
++`tests/mutate.py` now has 178 mutants (127 from r3 + **51 new**: R01–R19 gate / build-argv / U12, L01–L08 host L1
++and S5 L6, U01–U04 verifier U7, J01–J20 the A6 builder) and 10 NULL controls (N09 `test_r4.py`, N10
++`test_a6_builder.py` added). Same method as r3: fresh `/dev/shm/s567r4-mut-*` copy, re-pinned, named tests with
++`-O -B -x` (verifier mutants without `-O`), `test_pins.py` never included; run under `nice -n 19 taskset -c 24-31`,
++8 jobs.
++
++| Campaign (package SHAs in the JSON; builder a76da2b6…, gate e346a71f…) | Killed | NULL survived |
++|---|---|---|
++| 3.12.12 -O (`MUTATION-RESULTS-py312-O.json`) | **176/178** | 10/10 |
++| 3.8.10 -O (`MUTATION-RESULTS-py38-O.json`) | **176/178** | 10/10 |
++
++All 51 new mutants were killed in both campaigns, each by a pytest FAILED line. The two survivors are r3's documented
++equivalents P14 and P22. J17 ("scratch directory kept") leaves its scratch directory by construction; the two it left
++(one per campaign) were removed afterwards. Guards with no mutant because they are unreachable defence in depth:
++`ensure_dir`'s `check_dir` of an existing level (a symlinked level is refused again by the canonical root open of the
++next level), the second absence check / emptiness proof in `prepare-preflight-receive` (the directory was just made
++with `mkdir_excl`), the builder's `JOB_FIELDS` equality after constructing exactly those keys (J12 mutates the constant
++instead), and the host program's `check_dir(runtime)` (the pinned read of `end_reference.py` opens the same root
++canonically).
++
++### r4 open items
++
++See RESPONSE-r4.md "Rulings / open items": A3 host python ruling; S10 r4 must stage the r4 `k4s_end_preflight.py`
++(its SHA changed with L6); native/corpus location (S10 r4 end-inputs); B6 ruling; S9 r4 (B3/B5, U10) before the
++runtime and X exist on 05.

@@ -1,0 +1,902 @@
+{
+ "equivalent_survivors": {
+  "U09": "r4: host HEAD == commit is implied by the next two host checks: HEAD is the symbolic ref refs/heads/k4s-end-r1 (U10, killed) and the only ref is refs/heads/k4s-end-r1 at the commit (U11, killed)",
+  "U23": "r4: the host re-hash of the received bundle is masked by the D4 receive program's own SHA-256 check of the same bytes in the same session (and the local stream re-hash); defense in depth",
+  "V17": "r4: same runtime on both hosts is implied by the per-host rule runtime == runtime-<commit12> (V14, killed)"
+ },
+ "killed": 68,
+ "mutants": 71,
+ "new_tmp_leftovers": [],
+ "nulls": 4,
+ "nulls_survived": 4,
+ "optimize": 1,
+ "outside_writes": true,
+ "python": "/usr/bin/python3",
+ "results": [
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 139.7,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s3_guard_job.py",
+   "id": "T06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-T06-ow0y_fop/tests/test_s10.py::test_bundle_refusals_before_any_login[guard-outside-q4-policy]",
+    "1 failed, 818 passed, 1 warning in 113.04s (0:01:53)"
+   ],
+   "rc": 1,
+   "seconds": 113.6,
+   "verdict": "KILLED",
+   "what": "Q4 parent"
+  },
+  {
+   "file": "s3_guard_job.py",
+   "id": "T17",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-T17-x6_32fa5/tests/test_s3.py::test_s1b_manifest_gates[other-name-policy]",
+    "1 failed, 868 passed, 1 warning in 121.38s (0:02:01)"
+   ],
+   "rc": 1,
+   "seconds": 122.0,
+   "verdict": "KILLED",
+   "what": "S1b manifest exact name (masked by the exact-name role; expected equivalent)"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "N04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-N04-f1bmob9i/tests/test_s9.py::test_tampered_k4s_logic_never_executes",
+    "1 failed, 931 passed, 1 warning in 134.59s (0:02:14)"
+   ],
+   "rc": 1,
+   "seconds": 135.2,
+   "verdict": "KILLED",
+   "what": "stdlib K4S pin verification before frozen import"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "N05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-N05-zh3axpbe/tests/test_s9.py::test_measurement_change_refused",
+    "1 failed, 950 passed, 1 warning in 137.53s (0:02:17)"
+   ],
+   "rc": 1,
+   "seconds": 138.1,
+   "verdict": "KILLED",
+   "what": "measurement inventory 42b8986d"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "N07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-N07-_kherca4/tests/test_s9.py::test_equivalence_same_tree_but_not_a_descendant",
+    "1 failed, 952 passed, 1 warning in 138.88s (0:02:18)"
+   ],
+   "rc": 1,
+   "seconds": 139.5,
+   "verdict": "KILLED",
+   "what": "X strict descendant of P"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "X03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-X03-fqkv1m6y/tests/test_s10.py::test_bundle_refusals_before_any_login[receipt-not-production-check]",
+    "1 failed, 803 passed, 1 warning in 112.66s (0:01:52)"
+   ],
+   "rc": 1,
+   "seconds": 113.2,
+   "verdict": "KILLED",
+   "what": "receipt production_pins"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "X05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-X05-b34x2fps/tests/test_s10.py::test_bundle_refusals_before_any_login[production-identity-check]",
+    "1 failed, 813 passed, 1 warning in 112.85s (0:01:52)"
+   ],
+   "rc": 1,
+   "seconds": 113.4,
+   "verdict": "KILLED",
+   "what": "production identities"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "X07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-X07-9j5tf_21/tests/test_s10.py::test_bundle_refusals_before_any_login[runtime-mismatch-check]",
+    "1 failed, 816 passed, 1 warning in 114.47s (0:01:54)"
+   ],
+   "rc": 1,
+   "seconds": 115.1,
+   "verdict": "KILLED",
+   "what": "runtime/measurement consistency"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R01",
+   "killed_by": [
+    "ERROR ../dev/shm/s3s9s10-mut-R01-i1esufv7/tests/test_f4.py::test_every_entrypoint_refuses_a_corrupted_clone[promisor-s1b]"
+   ],
+   "rc": 1,
+   "seconds": 52.9,
+   "verdict": "KILLED",
+   "what": "the three r4 files are support members"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R02-ddrmaepd/tests/test_r4_s9.py::test_a_pre_r4_runtime_is_refused_by_verify",
+    "1 failed, 752 passed, 1 warning in 102.29s (0:01:42)"
+   ],
+   "rc": 1,
+   "seconds": 102.9,
+   "verdict": "KILLED",
+   "what": "support member pin"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R03-vleodyir/tests/test_r4_s9.py::test_support_pins_cross_checked_against_the_k4s_manifest[sd1-sha]",
+    "1 failed, 756 passed, 1 warning in 104.26s (0:01:44)"
+   ],
+   "rc": 1,
+   "seconds": 104.9,
+   "verdict": "KILLED",
+   "what": "SD1 pin == the K4S manifest's"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R04-mcbzz377/tests/test_r4_s9.py::test_support_pins_cross_checked_against_the_k4s_manifest[corpora-sha]",
+    "1 failed, 758 passed, 1 warning in 106.39s (0:01:46)"
+   ],
+   "rc": 1,
+   "seconds": 107.1,
+   "verdict": "KILLED",
+   "what": "corpus inventory pin == the K4S manifest's"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R05-i99wa5s2/tests/test_r4_s9.py::test_a_pre_r4_runtime_is_refused_by_verify",
+    "1 failed, 752 passed, 1 warning in 104.29s (0:01:44)"
+   ],
+   "rc": 1,
+   "seconds": 105.0,
+   "verdict": "KILLED",
+   "what": "verify refuses a pre-r4 runtime"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R06-zuaxnchh/tests/test_r4_s9.py::test_support_pin_mismatch_refuses_the_build[reports/explore/k4s-confirm/DELTA-MANIFEST.json]",
+    "1 failed, 753 passed, 1 warning in 105.54s (0:01:45)"
+   ],
+   "rc": 1,
+   "seconds": 106.1,
+   "verdict": "KILLED",
+   "what": "stdlib closure check hashes the support members"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R07-afsheojz/tests/test_r4_s9.py::test_refresh_refuses_a_corrupted_clone_before_the_fetch[promisor]",
+    "1 failed, 769 passed, 1 warning in 107.20s (0:01:47)"
+   ],
+   "rc": 1,
+   "seconds": 107.8,
+   "verdict": "KILLED",
+   "what": "live clone check before the fetch"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R08-w2ol1pot/tests/test_r4_s9.py::test_refresh_brings_x_and_proves_nothing_else_changed",
+    "1 failed, 763 passed, 1 warning in 103.57s (0:01:43)"
+   ],
+   "rc": 1,
+   "seconds": 104.2,
+   "verdict": "KILLED",
+   "what": "live clone check (with X) after the fetch"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R09",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R09-mzzmdiob/tests/test_r4_s9.py::test_refresh_refusals[tip-not-x]",
+    "1 failed, 765 passed, 1 warning in 105.05s (0:01:45)"
+   ],
+   "rc": 1,
+   "seconds": 105.7,
+   "verdict": "KILLED",
+   "what": "the tip is exactly X"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 141.9,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R10-elnebol8/tests/test_r4_s9.py::test_refresh_other_refs_must_not_move",
+    "1 failed, 778 passed, 1 warning in 108.03s (0:01:48)"
+   ],
+   "rc": 1,
+   "seconds": 108.7,
+   "verdict": "KILLED",
+   "what": "no other ref moved"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R11",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R11-bqxud65g/tests/test_r4_s9.py::test_refresh_forced_fetch_is_still_fast_forward_only",
+    "1 failed, 776 passed, 1 warning in 109.88s (0:01:49)"
+   ],
+   "rc": 1,
+   "seconds": 110.5,
+   "verdict": "KILLED",
+   "what": "fast-forward of the old tip"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R12",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R12-ng_vvlrm/tests/test_r4_s9.py::test_refresh_refusals[not-descendant-of-base]",
+    "1 failed, 767 passed, 1 warning in 108.69s (0:01:48)"
+   ],
+   "rc": 1,
+   "seconds": 109.4,
+   "verdict": "KILLED",
+   "what": "strict descendant of --base-commit"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R13",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R13-4nhlmx80/tests/test_r4_s9.py::test_refresh_never_rewrites_existing_objects",
+    "1 failed, 773 passed, 1 warning in 109.24s (0:01:49)"
+   ],
+   "rc": 1,
+   "seconds": 109.9,
+   "verdict": "KILLED",
+   "what": "objects never rewritten"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R14",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R14-g91ejpgy/tests/test_r4_s9.py::test_refresh_head_must_not_move",
+    "1 failed, 777 passed, 1 warning in 109.91s (0:01:49)"
+   ],
+   "rc": 1,
+   "seconds": 110.5,
+   "verdict": "KILLED",
+   "what": "HEAD untouched"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R15",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R15-b8h4m8sb/tests/test_r4_s9.py::test_refresh_brings_x_and_proves_nothing_else_changed",
+    "1 failed, 763 passed, 1 warning in 105.66s (0:01:45)"
+   ],
+   "rc": 1,
+   "seconds": 106.3,
+   "verdict": "KILLED",
+   "what": "no forced refspec"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "R16",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-R16-ylig4tqs/tests/test_r4_s9.py::test_refresh_brings_x_and_proves_nothing_else_changed",
+    "1 failed, 763 passed, 1 warning in 102.85s (0:01:42)"
+   ],
+   "rc": 1,
+   "seconds": 103.5,
+   "verdict": "KILLED",
+   "what": "fsck on fetch"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V01",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V01-16ziwuf9/tests/test_flow.py::test_s10_stage_runtime_bundle_guard",
+    "1 failed, 649 passed, 1 warning in 63.95s (0:01:03)"
+   ],
+   "rc": 1,
+   "seconds": 64.6,
+   "verdict": "KILLED",
+   "what": "B2: no runtime/ subdir"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V02-zczd1ayy/tests/test_flow.py::test_s10_stage_runtime_bundle_guard",
+    "1 failed, 649 passed, 1 warning in 65.81s (0:01:05)"
+   ],
+   "rc": 1,
+   "seconds": 66.5,
+   "verdict": "KILLED",
+   "what": "B2: runtime at <base>/runtime-<P12>"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V03-dgow65p6/tests/test_r4_s10.py::test_tools_refused_before_any_login[wrong-bytes-sha]",
+    "1 failed, 653 passed, 1 warning in 67.93s (0:01:07)"
+   ],
+   "rc": 1,
+   "seconds": 68.6,
+   "verdict": "KILLED",
+   "what": "U2: tool pin"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V04-grb70mvl/tests/test_r4_s10.py::test_tools_refused_before_any_login[size-size]",
+    "1 failed, 657 passed, 1 warning in 68.42s (0:01:08)"
+   ],
+   "rc": 1,
+   "seconds": 69.1,
+   "verdict": "KILLED",
+   "what": "U2: tool size before any byte"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V05-tc4xapdl/tests/test_r4_s10.py::test_end_inputs_refused_before_any_login[wrong-bytes-sha]",
+    "1 failed, 658 passed, 1 warning in 68.00s (0:01:08)"
+   ],
+   "rc": 1,
+   "seconds": 68.6,
+   "verdict": "KILLED",
+   "what": "U3: end-input pin"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V06-gj_ypz5u/tests/test_r4_s10.py::test_bundle_from_another_s4_refused",
+    "1 failed, 669 passed, 1 warning in 67.38s (0:01:07)"
+   ],
+   "rc": 1,
+   "seconds": 68.0,
+   "verdict": "KILLED",
+   "what": "L4: a pending adopted-S4 pin refuses"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V07-g0659ofj/tests/test_r4_s10.py::test_bundle_from_another_s4_refused",
+    "1 failed, 669 passed, 1 warning in 66.53s (0:01:06)"
+   ],
+   "rc": 1,
+   "seconds": 67.2,
+   "verdict": "KILLED",
+   "what": "L4: the adopted S4 only"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V08-ipj75jxu/tests/test_r4_s10.py::test_interpreter_probe_refusals[version-interpreter]",
+    "1 failed, 662 passed, 1 warning in 65.04s (0:01:05)"
+   ],
+   "rc": 1,
+   "seconds": 65.6,
+   "verdict": "KILLED",
+   "what": "U4: declared interpreter path and version"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V09",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V09-0fbcm4oa/tests/test_r4_s10.py::test_interpreter_probe_refusals[import-interpreter]",
+    "1 failed, 663 passed, 1 warning in 67.65s (0:01:07)"
+   ],
+   "rc": 1,
+   "seconds": 68.3,
+   "verdict": "KILLED",
+   "what": "U4: imports"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V10-lz4lvqz2/tests/test_r4_s10.py::test_interpreter_probe_refusals[missing-subprocess]",
+    "1 failed, 664 passed, 1 warning in 68.68s (0:01:08)"
+   ],
+   "rc": 1,
+   "seconds": 69.3,
+   "verdict": "KILLED",
+   "what": "U4: probe status"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 141.2,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V11",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V11-68amg69g/tests/test_r4_s10.py::test_parse_python_requires_exactly_one_record",
+    "1 failed, 700 passed, 1 warning in 78.15s (0:01:18)"
+   ],
+   "rc": 1,
+   "seconds": 78.8,
+   "verdict": "KILLED",
+   "what": "U4: exactly one probe record"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V12",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V12-h45r3f8a/tests/test_r4_s10.py::test_interpreter_probe_recorded",
+    "1 failed, 661 passed, 1 warning in 68.95s (0:01:08)"
+   ],
+   "rc": 1,
+   "seconds": 69.6,
+   "verdict": "KILLED",
+   "what": "U4: probe runs python as END does (no -I)"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V13",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V13-9ni_00nl/tests/test_r4_s10.py::test_validate_roots_matches_s7_rule_for_rule[host-key]",
+    "1 failed, 685 passed, 1 warning in 73.31s (0:01:13)"
+   ],
+   "rc": 1,
+   "seconds": 73.9,
+   "verdict": "KILLED",
+   "what": "B7: exact host keys"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V14",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V14-8ihl341t/tests/test_r4_s10.py::test_validate_roots_runtime_is_runtime_commit12_on_both_hosts",
+    "1 failed, 701 passed, 1 warning in 74.73s (0:01:14)"
+   ],
+   "rc": 1,
+   "seconds": 75.3,
+   "verdict": "KILLED",
+   "what": "B7: runtime-<commit12>"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V15",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V15-4hi5wdnb/tests/test_r4_s10.py::test_validate_roots_matches_s7_rule_for_rule[bundle-sha]",
+    "1 failed, 690 passed, 1 warning in 72.59s (0:01:12)"
+   ],
+   "rc": 1,
+   "seconds": 73.2,
+   "verdict": "KILLED",
+   "what": "B7: tiers-pins SHA, never a placeholder"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V16",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V16-tmyw0bet/tests/test_r4_s10.py::test_declare_roots_refusals[shared-guard-job-check]",
+    "1 failed, 681 passed, 1 warning in 72.32s (0:01:12)"
+   ],
+   "rc": 1,
+   "seconds": 72.9,
+   "verdict": "KILLED",
+   "what": "B7: one guard job per bundle"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V17",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 144.2,
+   "verdict": "SURVIVED",
+   "what": "B7: same runtime on both hosts"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V18",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V18-e_yivd4p/tests/test_r4_s10.py::test_declare_roots_refusals[commit-not-runtime-check]",
+    "1 failed, 671 passed, 1 warning in 69.24s (0:01:09)"
+   ],
+   "rc": 1,
+   "seconds": 69.9,
+   "verdict": "KILLED",
+   "what": "B7: --commit is the runtime's commit"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V19",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V19-qk2cfwo2/tests/test_r4_s10.py::test_declare_roots_refusals[duplicate-policy]",
+    "1 failed, 675 passed, 1 warning in 70.38s (0:01:10)"
+   ],
+   "rc": 1,
+   "seconds": 71.0,
+   "verdict": "KILLED",
+   "what": "B7: a bundle declared once"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "V20",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-V20-y8uxlib4/tests/test_r4_s10.py::test_declare_roots_refusals[only-one-host-check]",
+    "1 failed, 680 passed, 1 warning in 71.36s (0:01:11)"
+   ],
+   "rc": 1,
+   "seconds": 72.0,
+   "verdict": "KILLED",
+   "what": "B7: self-check before writing"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U01",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U01-asp329nc/tests/test_r4_s11.py::test_tip_mismatch_refused_before_any_bundle",
+    "1 failed, 743 passed, 1 warning in 99.01s (0:01:39)"
+   ],
+   "rc": 1,
+   "seconds": 99.6,
+   "verdict": "KILLED",
+   "what": "the END tip is --commit"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U02-u306fdav/tests/test_r4_s11.py::test_provision_refusals[not-descendant-check-0]",
+    "1 failed, 711 passed, 1 warning in 81.12s (0:01:21)"
+   ],
+   "rc": 1,
+   "seconds": 81.8,
+   "verdict": "KILLED",
+   "what": "descends from 022ec7bf"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U03-tjch6wop/tests/test_r4_s11.py::test_advance_requires_a_strict_descendant_before_any_bundle",
+    "1 failed, 749 passed, 1 warning in 121.76s (0:02:01)"
+   ],
+   "rc": 1,
+   "seconds": 122.4,
+   "verdict": "KILLED",
+   "what": "advance: strict descendant of P'"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U04-kq6rs4u6/tests/test_r4_s11.py::test_advance_refusals[equivalence-other-check-0]",
+    "1 failed, 717 passed, 1 warning in 114.23s (0:01:54)"
+   ],
+   "rc": 1,
+   "seconds": 114.8,
+   "verdict": "KILLED",
+   "what": "advance: the equivalence record is for P' -> X"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U05-iiaphba1/tests/test_r4_s11.py::test_bundle_heads_are_checked_independently_of_the_header",
+    "1 failed, 744 passed, 1 warning in 136.03s (0:02:16)"
+   ],
+   "rc": 1,
+   "seconds": 136.6,
+   "verdict": "KILLED",
+   "what": "bundle heads"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U06-apb49vms/tests/test_r4_s11.py::test_bundle_identity_is_checked[prerequisite-missing]",
+    "1 failed, 741 passed, 1 warning in 140.09s (0:02:20)"
+   ],
+   "rc": 1,
+   "seconds": 140.7,
+   "verdict": "KILLED",
+   "what": "bundle prerequisites"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U07-eeot20pr/tests/test_r4_s11.py::test_provision_refusals[corrupted-clone-indirection-0]",
+    "1 failed, 712 passed, 1 warning in 114.96s (0:01:54)"
+   ],
+   "rc": 1,
+   "seconds": 115.6,
+   "verdict": "KILLED",
+   "what": "live clone check before the bundle"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 196.2,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U08-n7su3gdp/tests/test_r4_s11.py::test_advance_refusals[end-job-sha-remote-refused-1]",
+    "1 failed, 719 passed, 1 warning in 109.79s (0:01:49)"
+   ],
+   "rc": 1,
+   "seconds": 110.4,
+   "verdict": "KILLED",
+   "what": "every session stage must succeed"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U09",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 191.9,
+   "verdict": "SURVIVED",
+   "what": "host: HEAD"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U10-fx92km0y/tests/test_r4_s11.py::test_host_verify_branches[detached]",
+    "1 failed, 726 passed, 1 warning in 115.52s (0:01:55)"
+   ],
+   "rc": 1,
+   "seconds": 116.2,
+   "verdict": "KILLED",
+   "what": "host: HEAD on k4s-end-r1"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U11",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U11-3g5mhlqj/tests/test_r4_s11.py::test_host_verify_branches[extra-ref]",
+    "1 failed, 727 passed, 1 warning in 116.91s (0:01:56)"
+   ],
+   "rc": 1,
+   "seconds": 117.5,
+   "verdict": "KILLED",
+   "what": "host: the only ref"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U12",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U12-3wsgiioo/tests/test_r4_s11.py::test_advance_refusals[dirty-claim-remote-refused-1]",
+    "1 failed, 718 passed, 1 warning in 109.50s (0:01:49)"
+   ],
+   "rc": 1,
+   "seconds": 110.2,
+   "verdict": "KILLED",
+   "what": "host: clean, no claim"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U13",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U13-ft405ccf/tests/test_r4_s11.py::test_host_verify_branches[config-key]",
+    "1 failed, 730 passed, 1 warning in 121.56s (0:02:01)"
+   ],
+   "rc": 1,
+   "seconds": 122.2,
+   "verdict": "KILLED",
+   "what": "host: plain init config"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U14",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U14-os_96oam/tests/test_r4_s11.py::test_host_verify_branches[not-writable]",
+    "1 failed, 732 passed, 1 warning in 120.97s (0:02:00)"
+   ],
+   "rc": 1,
+   "seconds": 121.6,
+   "verdict": "KILLED",
+   "what": "host: writable work tree"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U15",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U15-f_vd4a_z/tests/test_r4_s11.py::test_host_publish_is_no_replace[exists]",
+    "1 failed, 735 passed, 1 warning in 117.71s (0:01:57)"
+   ],
+   "rc": 1,
+   "seconds": 118.3,
+   "verdict": "KILLED",
+   "what": "host: RENAME_NOREPLACE"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U16",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U16-mpqb82o6/tests/test_r4_s11.py::test_host_end_job_checks[oid]",
+    "1 failed, 746 passed, 1 warning in 104.50s (0:01:44)"
+   ],
+   "rc": 1,
+   "seconds": 105.2,
+   "verdict": "KILLED",
+   "what": "host: END-JOB OID"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U17",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U17-ugnrb9uh/tests/test_r4_s11.py::test_host_end_job_checks[worktree-bytes]",
+    "1 failed, 747 passed, 1 warning in 105.97s (0:01:45)"
+   ],
+   "rc": 1,
+   "seconds": 106.6,
+   "verdict": "KILLED",
+   "what": "host: END-JOB bytes"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U18",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U18-gjsplru1/tests/test_r4_s11.py::test_host_layers_refuse_a_foreign_fingerprint",
+    "1 failed, 738 passed, 1 warning in 108.70s (0:01:48)"
+   ],
+   "rc": 1,
+   "seconds": 109.3,
+   "verdict": "KILLED",
+   "what": "host: safe_input fingerprint"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U19",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U19-662h2rih/tests/test_r4_s11.py::test_provision_refusals[repository-exists-remote-refused-1]",
+    "1 failed, 705 passed, 1 warning in 81.71s (0:01:21)"
+   ],
+   "rc": 1,
+   "seconds": 82.3,
+   "verdict": "KILLED",
+   "what": "host check: repository absent before any transfer"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U20",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U20-1ws4rxae/tests/test_r4_s11.py::test_advance_refusals[dirty-claim-remote-refused-1]",
+    "1 failed, 718 passed, 1 warning in 104.04s (0:01:44)"
+   ],
+   "rc": 1,
+   "seconds": 104.7,
+   "verdict": "KILLED",
+   "what": "host check (advance): the repository is at P' and clean before any transfer"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U21",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U21-e4b22y1q/tests/test_r4_s11.py::test_host_verify_branches[ancestor]",
+    "1 failed, 733 passed, 1 warning in 117.99s (0:01:57)"
+   ],
+   "rc": 1,
+   "seconds": 118.6,
+   "verdict": "KILLED",
+   "what": "host: REQUIRED_ANCESTOR"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U22",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-U22-de_x2t3t/tests/test_r4_s11.py::test_advance_fast_forward_to_x_one_login",
+    "1 failed, 715 passed, 1 warning in 101.80s (0:01:41)"
+   ],
+   "rc": 1,
+   "seconds": 102.4,
+   "verdict": "KILLED",
+   "what": "host: END-JOB checked before the work tree moves"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "U23",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 154.9,
+   "verdict": "SURVIVED",
+   "what": "host: the received bundle re-hashed"
+  },
+  {
+   "file": "s3_guard_job.py",
+   "id": "Z01",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Z01-w3nu9q99/tests/test_r4_s10.py::test_ir03_guard_job_with_idle_services_is_refused[manifest-row]",
+    "1 failed, 698 passed, 1 warning in 76.84s (0:01:16)"
+   ],
+   "rc": 1,
+   "seconds": 77.5,
+   "verdict": "KILLED",
+   "what": "IR-03: verify requires exactly the END admissions"
+  },
+  {
+   "file": "s3_guard_job.py",
+   "id": "Z02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Z02-ivirjm_1/tests/test_flow.py::test_s3_build_and_verify",
+    "1 failed, 647 passed, 1 warning in 63.67s (0:01:03)"
+   ],
+   "rc": 1,
+   "seconds": 64.3,
+   "verdict": "KILLED",
+   "what": "IR-03: 03 is bus only"
+  },
+  {
+   "file": "s3_guard_job.py",
+   "id": "Z03",
+   "killed_by": [
+    "ERROR ../dev/shm/s3s9s10-mut-Z03-yvuo352z/tests/test_f4.py::test_every_entrypoint_refuses_a_corrupted_clone[promisor-s1b]"
+   ],
+   "rc": 1,
+   "seconds": 54.6,
+   "verdict": "KILLED",
+   "what": "IR-03: S1b's extra 03 idle row is not used"
+  },
+  {
+   "file": "s10_stage_host.py",
+   "id": "Z04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-Z04-eghs1t14/tests/test_flow.py::test_s10_stage_runtime_bundle_guard",
+    "1 failed, 649 passed, 1 warning in 63.68s (0:01:03)"
+   ],
+   "rc": 1,
+   "seconds": 64.3,
+   "verdict": "KILLED",
+   "what": "IR-03: bundle guard admissions = the END admissions"
+  }
+ ],
+ "sources_sha256": {
+  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
+  "s10_stage_host.py": "53dcc922387ba617fcd0744d7898dd3f85a5a8d5267b134c5e5d33d64418df93",
+  "s11_host_repository.py": "64fb42383de0b85fa1d759d4347529b112b0deb6ab8362ec244fa44dcbacdafc",
+  "s1b_copy_admissions.py": "abbb581f8b6948c50042a965c0c9e10a5b2d5bc16bbb5f4da2c135e3f87afa1d",
+  "s3_guard_job.py": "7dcf34122d164b45254cd7b4c61c7d59332f5767788e60cff5af4b6eecd4cd79",
+  "s9_end_runtime.py": "80c15b5f7704a397d03bc3ad65fb57d2d59973c6d91319547514fae7381b92ff",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "survived": [
+  "V17",
+  "U09",
+  "U23"
+ ],
+ "unexplained_survivors": [],
+ "version": "3.8.10"
+}
