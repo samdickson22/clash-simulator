@@ -1,0 +1,7 @@
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-rd00-a00/k4s-end-guard-r1-rd00-a00 manifest 22b14d7ba344c71be2d5ea1d66c68e5ab4c60ab3585efb7a4ef6ae918212d25b
+[2026-10-13T05:23:06Z] ssh P-check 127x03
+[2026-10-13T05:23:06Z] ssh P-facts 127x03
+[2026-10-13T05:23:07Z] ssh receive-guard-job 127x03
+[2026-10-13T05:23:07Z] ssh F 127x03
+[2026-10-13T05:23:07Z] ssh POST 127x03
+S10 OK: /tmp/ia-r1-rec-4LOdiU/s10-127x03-B/s10-staging-manifest.json sha256 e08ebdd1a6169fd79c6ddfa5327f23e05ff98ea455fb2fa6034e1103a9e88c06

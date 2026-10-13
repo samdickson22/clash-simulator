@@ -1,0 +1,15 @@
+{
+ "claims": [
+  {
+   "name": "attempt-00.json",
+   "sha256": "0db51b6bb12f2404ed99327593eb9e0a6da487d14c6bbdf07629815dfd078144",
+   "size": 385
+  }
+ ],
+ "end_exists": true,
+ "host": "127x03",
+ "other_rounds": {},
+ "registry_exists": true,
+ "round": 0,
+ "schema": "clasher.k4s.end-registry-listing.v1"
+}

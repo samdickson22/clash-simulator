@@ -1,0 +1,3 @@
+607a608,609
+>         if isinstance(listed, dict):                   # AUDIT-ONLY PATCH IA-P1 (B1): accept the pinned dict form (keys)
+>             listed = list(listed)

@@ -1,0 +1,5 @@
+{"note":"AUDIT-ONLY simulated host provisioning on the FAKE 127x03 (/tmp/ia-r1-hosts-gCOn62/127x03 = /mpac/sdicks02 in the namespace); NOT a tool output",
+ "tools":"cp of s5s6s7-r3 {detach.sh(t1-originals),k4s_end_exit_push.sh,k4s_preflight_push.sh,k4s_end_preflight.py,safe_input.py,k4s_end_host_tool.py} -> <base>/tools (UNTOOLED step)",
+ "repository":"cp -a of end-prep/repo-full (HEAD P' detached, GitHub origin config) -> <base>/repository (UNTOOLED step; real step must clone/fetch branch k4s-end-r1)",
+ "native":"<base>/native/clasher_core.abi3.so STUB bytes (UNTOOLED step)","corpus":"<base>/corpus/K4-states.pkl STUB bytes (UNTOOLED step)",
+ "bundle_a00":"<base>/bundles/end-ref-127x03-rd00-a00: ONLY tiers-pins.json (byte-exact S4(IA-P1) dry-run output, sha 783db178f76c79c358b1e806138072396f6eb72e8b1e1b405a531bfb953d9001), its .sha256 sidecar and a SYNTHESIZED assembly-receipt.json; large files absent (S5/S7 read only these three)"}

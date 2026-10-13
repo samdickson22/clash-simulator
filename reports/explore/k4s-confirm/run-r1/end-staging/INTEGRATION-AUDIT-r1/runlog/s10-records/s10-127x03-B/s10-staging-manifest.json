@@ -1,0 +1,228 @@
+{
+ "common_sha256": "c9465351b2d427db62fa9365707b21b7e52c422eb7a2ff1fc4fa58203545c4b6",
+ "components": [
+  {
+   "bindings": [
+    {
+     "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "label": "seed-03",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+     "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+     "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+     "label": "seed-08",
+     "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+     "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
+    },
+    {
+     "commit": "0e137378ff251896d7a27899a9453f278945276b",
+     "label": "join-08-server",
+     "path": "reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+     "sha256": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f"
+    },
+    {
+     "commit": "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "label": "join-08-client",
+     "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+     "sha256": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    }
+   ],
+   "bytes": 63799149,
+   "dirs": 19,
+   "files": 17,
+   "final": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+   "guard_manifest_sha256": "22b14d7ba344c71be2d5ea1d66c68e5ab4c60ab3585efb7a4ef6ae918212d25b",
+   "inventory_sha256": "52b6b1360df5f7b3360b9639d702af2fefeff92430bf8c5302de51f664449024",
+   "job": "k4s-end-guard-r1-rd00-a00",
+   "kind": "guard-job",
+   "kind_detail": {
+    "attempt": "00",
+    "kind": "attempt",
+    "round": "00"
+   },
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial"
+  }
+ ],
+ "create_base": false,
+ "final": {
+  "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00": {
+   "dev": 66307,
+   "ino": 8953913,
+   "mode": "0o755"
+  }
+ },
+ "finished_utc": "2026-10-13T05:23:07Z",
+ "host": "127x03",
+ "inspect": {
+  "free_bytes": 70303350784,
+  "need_bytes": 63799149,
+  "who_lines": 0
+ },
+ "inventories": {
+  "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00": [
+   [
+    "FROZEN-T1.json",
+    35043,
+    "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+    292
+   ],
+   [
+    "idle-services.json",
+    3779,
+    "3bb3b2c68af1ff460b8b50633ac8a54c7e9ce97425b4e36dd0e6132c47954237",
+    292
+   ],
+   [
+    "repo/.git/HEAD",
+    23,
+    "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10",
+    292
+   ],
+   [
+    "repo/.git/config",
+    92,
+    "cfe7ba1238c9a78be7535d7c63bcaf5a4d5011d46b07c9b45d3bbf7d6c312dfe",
+    292
+   ],
+   [
+    "repo/.git/index",
+    652,
+    "74cf34b9885b7ed3e3dc99634bae11e03ca3cbe6d53fedda9b99da8d5c37335b",
+    292
+   ],
+   [
+    "repo/.git/objects/pack/pack-3e1419b17166d4d49419673dd20545c940e93a48.idx",
+    276256,
+    "59757f902ae38e9b47decf370fe32305d67fc6e01bafb4e9c19ce204ee95bb8d",
+    292
+   ],
+   [
+    "repo/.git/objects/pack/pack-3e1419b17166d4d49419673dd20545c940e93a48.pack",
+    63392788,
+    "5d22af8ab937f926ccc278896b69ff78652be5c27f731af63f863c38571d9566",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/join-08-client",
+    41,
+    "74254517c5be41fccf8be4e48dde0475ee7dba65bf858c909de1e22d1de3127b",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/join-08-server",
+    41,
+    "9f7e73beb31c3017b0175a52cece56c91af27e41a3320dfedbc69439f31592d4",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/seed-03",
+    41,
+    "a5e172e553a7dc4ffef4741eafef2cb8ba67ea4c56ba093cbefbb724a1588681",
+    292
+   ],
+   [
+    "repo/.git/refs/k4s-end/seed-08",
+    41,
+    "47a161ea7a7cc5139c1dc263cacacfcb3547c7a897d88ff1858316a28186afef",
+    292
+   ],
+   [
+    "repo/.git/shallow",
+    164,
+    "74152c74def090213d0e511250d3e80547fc357bf9ffcb619cb0f20656328dd8",
+    292
+   ],
+   [
+    "repo/reports/explore/t1/receipts/op5-parent-generation-127x08.json",
+    62616,
+    "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f",
+    292
+   ],
+   [
+    "repo/reports/explore/t1/receipts/op5-parent-source-127x03.json",
+    2030,
+    "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
+    292
+   ],
+   [
+    "repo/reports/explore/t1/receipts/op5-parent-source-127x08.json",
+    1410,
+    "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27",
+    292
+   ],
+   [
+    "repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json",
+    23721,
+    "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
+    292
+   ],
+   [
+    "system-bus-admission.json",
+    411,
+    "8dbe3d10a653de25813197e24815f7f2b964b2f2b9125731895a6a76da6372df",
+    292
+   ]
+  ]
+ },
+ "logins": [
+  {
+   "host": "127x03",
+   "label": "P-check",
+   "request_sha256": "ec10c1875786307bc96b51bac3a02326f6d55e2e189ff33dbf65c22f73c2d21f",
+   "utc": "2026-10-13T05:23:06Z"
+  },
+  {
+   "host": "127x03",
+   "label": "P-facts",
+   "utc": "2026-10-13T05:23:06Z"
+  },
+  {
+   "bytes": 63799149,
+   "files": 17,
+   "host": "127x03",
+   "label": "receive-guard-job",
+   "partial": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial",
+   "utc": "2026-10-13T05:23:07Z"
+  },
+  {
+   "host": "127x03",
+   "label": "F",
+   "request_sha256": "ccd246f91c3107231570fd49a002886fb78012a2de9a128b82a291f17ed92e0c",
+   "utc": "2026-10-13T05:23:07Z"
+  },
+  {
+   "host": "127x03",
+   "label": "POST",
+   "utc": "2026-10-13T05:23:07Z"
+  }
+ ],
+ "outside_end_window": "AUDIT-ONLY fake host",
+ "reader_program_sha256": "2d2f212d73b49176c53b1a03a621b64fbc6a8d4c15bd18051ac31f91016a6152",
+ "receipts": {
+  "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial": {
+   "files": 17,
+   "receipt_sha256": "d43b3db0a5323c9f100399c12f1ded51ca04a15fcd22b1c95b564862496e9d44",
+   "root": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00.partial"
+  }
+ },
+ "receive_program_sha256": "39a92e9d55f9ffefba57bae453677bad7c834f7761283268b84e40bb2d1210b4",
+ "roots": {
+  "attempts": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts",
+  "base": "/mpac/sdicks02/jobs/clasher/k4s-end-r1",
+  "bundles": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles",
+  "guard_job_names": "k4s-end-guard-r1-(?:rd([0-9]{2})-a([0-9]{2})|pf([0-9]{2}))",
+  "guard_job_parent": "/mpac/sdicks02/jobs/clasher",
+  "preflight": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/preflight",
+  "repository": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository",
+  "runtime": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime"
+ },
+ "s3_sha256": "bf99e74b5f86306e03975801ae3d4cb597fd246c6c12cc7f74ca50d2885f31fd",
+ "s9_sha256": "1875a32ec5155cbd3355c912b8114bb8654b0fd9593d421474476f3c069bf651",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-staging.v2",
+ "script_sha256": "af34f20c85c68571362bdc0ea7607ca20c20f762bfd200eddb120dc9f6f2f6e9",
+ "ssh_logins": 5,
+ "started_utc": "2026-10-13T05:23:06Z",
+ "status": "staged"
+}

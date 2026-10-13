@@ -1,0 +1,18 @@
+frozen-exec: {"git_env": {"config_files": ["/home/sdicks02/.config/git/config", "/home/sdicks02/.gitconfig"], "git_keys": ["GIT_ASKPASS", "GIT_ATTR_NOSYSTEM", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_PARAMETERS", "GIT_LITERAL_PATHSPECS", "GIT_NO_LAZY_FETCH", "GIT_NO_REPLACE_OBJECTS", "GIT_OPTIONAL_LOCKS", "GIT_PAGER", "GIT_TERMINAL_PROMPT"], "global_config_checked": ["/home/sdicks02/.gitconfig"]}, "hooks": [], "promisor": false, "replace_refs": 0, "role": "repository", "static_preflight": true, "work_tree": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository"}
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/k4s-confirm/end_reference.py", line 445, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/k4s-confirm/end_reference.py", line 440, in main
+    reference(a)
+  File "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/k4s-confirm/end_reference.py", line 294, in reference
+    manifest, pins, host_pins = frozen_identity(a, validate_bundle, NATIVE_SHA)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/k4s-confirm/end_reference.py", line 101, in frozen_identity
+    manifest = validate_bundle(a.bundle, Path(a.runtime_root), dry_run=True, require_references=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py", line 456, in validate_bundle
+    verify_files(bundle, manifest["files"])
+  File "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts.py", line 33, in verify_files
+    raise ValueError("Pin mismatch: " + name)
+ValueError: Pin mismatch: R3a-calibration.json

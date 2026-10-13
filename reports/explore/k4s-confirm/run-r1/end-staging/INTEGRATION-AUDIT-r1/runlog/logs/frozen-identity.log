@@ -1,0 +1,12 @@
+== RT=/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime
+    pins = k4s_pins(a, manifest)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime/reports/explore/k4s-confirm/end_reference.py", line 128, in k4s_pins
+    delta = json.loads((HERE / "DELTA-MANIFEST.json").read_text())
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime/reports/explore/k4s-confirm/DELTA-MANIFEST.json'
+NATIVE_SHA(tier_backend) == k4s NATIVE_PROVENANCE_SHA: True
+FROZEN_IDENTITY_FAILED: FileNotFoundError [Errno 2] No such file or directory: '/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b/runtime/reports/explore/k4s-confirm/DELTA-MANIFEST.json'
+== RT=/dev/shm/ia-r1/rt-overlay/runtime-98566c032d0b
+NATIVE_SHA(tier_backend) == k4s NATIVE_PROVENANCE_SHA: True
+frozen_identity OK; host_pins {'bundle_manifest_sha256': 'ca4ce6ef49d460ecce37bad3c6d29229b03a10697b8cd69148163c9cb8d17499', 'bundle_profile_host': '127x03'} pins keys ['bundle_measurement_files_sha256', 'bundle_model_files', 'bundle_runtime_files_sha256', 'corpus_sha256', 'k4s_manifest_sha256', 'kernel_sha256', 'measurement_files', 'native_sha256']

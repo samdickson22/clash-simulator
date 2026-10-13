@@ -1,0 +1,5 @@
+-O check 127x03
+-O check 127x03
+-T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no 127x03 /usr/bin/python3 -I -B -
+-O check 127x03
+-T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 -o ClearAllForwardings=yes -o RequestTTY=no 127x03 /usr/bin/python3 -I -B -

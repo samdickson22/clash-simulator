@@ -1,0 +1,433 @@
+{
+ "C5_no_further_SSH": true,
+ "C5_preexec_gate": {
+  "SCHED_OTHER": true,
+  "command_byte_equal": true,
+  "exact_exec_pid": 3826414,
+  "frozen_launch_argv_nul_sha256": "4650512dd4bd57420ddbd13048c663f399f4dbc1a695df271bfde179aa790db0",
+  "outside_priority_prefix": false,
+  "parent_pid": 3826392,
+  "parent_ps_nice": "19",
+  "parent_scheduler": "TS",
+  "preexec_gate_pass": false,
+  "ps_nice": "19",
+  "scheduler": "TS",
+  "utc": "2026-10-13T05:32:15Z"
+ },
+ "allow_timers": {},
+ "argv_json_sha256": "32eba96c4acbc829e4821ad316d2e79745f2c7ffdd84af99b3edc735fcff51e7",
+ "argv_nul_sha256": "4650512dd4bd57420ddbd13048c663f399f4dbc1a695df271bfde179aa790db0",
+ "attempt": "end-127x03-r00-l00",
+ "composed_program_sha256": "ef5f68a9da1d32621c019f8cf10dbb26877645d1032786301d8316662c062ac5",
+ "gate_sha256": "2e7c23721ca4884588745b4212a7a023e8185a6192fb161d7237269aeedb28df",
+ "host": "127x03",
+ "host_gate": {
+  "C5_preexec_gate": {
+   "SCHED_OTHER": true,
+   "command_byte_equal": true,
+   "exact_exec_pid": 3826414,
+   "frozen_launch_argv_nul_sha256": "4650512dd4bd57420ddbd13048c663f399f4dbc1a695df271bfde179aa790db0",
+   "outside_priority_prefix": false,
+   "parent_pid": 3826392,
+   "parent_ps_nice": "19",
+   "parent_scheduler": "TS",
+   "preexec_gate_pass": false,
+   "ps_nice": "19",
+   "scheduler": "TS",
+   "utc": "2026-10-13T05:32:15Z"
+  },
+  "base": {
+   "dev": 66307,
+   "ino": 8693506,
+   "mode": 16877
+  },
+  "exit_code": 3,
+  "failures": [
+   "quiet: apt-daily.service is ''",
+   "quiet: apt-daily-upgrade.service is ''",
+   "quiet: apt-daily.service is ''",
+   "quiet: apt-daily-upgrade.service is ''",
+   "timers: no timer parsed",
+   "timers: subprocess: /usr/bin/systemctl exited 1 (stdout discarded): Failed to connect to bus: Operation not permitted\n",
+   "stamps: release-upgrade-available 112535s old; stale within the window",
+   "other SSH sessions open on the host (ControlMaster/login): 2",
+   "C5 pre-exec gate failed"
+  ],
+  "file_pins": {
+   "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools/detach.sh": {
+    "expected": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools/k4s_end_exit_push.sh": {
+    "expected": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools/k4s_end_host_tool.py": {
+    "expected": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools/safe_input.py": {
+    "expected": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "matches": true
+   }
+  },
+  "finished_utc": "2026-10-13T05:32:15Z",
+  "frozen_reader": {
+   "bundle_sans_guard_sha256": "8e06dc4007cb509a6715b0abffc9acdc666178ddf4939434a810a17a1dcbf7d7",
+   "global_git_config": {
+    "config_files": [
+     "/home/sdicks02/.config/git/config",
+     "/home/sdicks02/.gitconfig"
+    ],
+    "git_keys": [
+     "GIT_ASKPASS",
+     "GIT_ATTR_NOSYSTEM",
+     "GIT_CONFIG_GLOBAL",
+     "GIT_CONFIG_NOSYSTEM",
+     "GIT_CONFIG_PARAMETERS",
+     "GIT_LITERAL_PATHSPECS",
+     "GIT_NO_LAZY_FETCH",
+     "GIT_NO_REPLACE_OBJECTS",
+     "GIT_OPTIONAL_LOCKS",
+     "GIT_PAGER",
+     "GIT_TERMINAL_PROMPT"
+    ],
+    "global_config_checked": [
+     "/home/sdicks02/.gitconfig"
+    ]
+   },
+   "guard_job_fresh": true,
+   "guard_repo": {
+    "hooks": [],
+    "promisor": false,
+    "replace_refs": 0,
+    "role": "guard-repo",
+    "shallow_commits": [
+     "0e137378ff251896d7a27899a9453f278945276b",
+     "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "ce042b9775f80cb495c327b14a4712730ae95c85"
+    ],
+    "static_preflight": true,
+    "work_tree": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00/repo"
+   },
+   "repository": {
+    "hooks": [],
+    "promisor": false,
+    "replace_refs": 0,
+    "role": "repository",
+    "static_preflight": true,
+    "work_tree": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository"
+   },
+   "seed_commits": {
+    "b2f9e25e1002d43cc910a4bb476716cc4cd32623": true,
+    "ce042b9775f80cb495c327b14a4712730ae95c85": true
+   }
+  },
+  "host": "127x03",
+  "host_expected": "127x03",
+  "host_tool_sha256": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "job_parent_ready": true,
+  "kind": "end",
+  "launched": false,
+  "other_ssh_session_pids": [
+   1307174,
+   1307334
+  ],
+  "ps": {
+   "rc": 0,
+   "rows": 1298
+  },
+  "quiet_1": {
+   "failures": [
+    "quiet: apt-daily.service is ''",
+    "quiet: apt-daily-upgrade.service is ''"
+   ],
+   "helper_changed": true,
+   "helper_pids": [
+    2289
+   ],
+   "rc": 0,
+   "read_utc": "2026-10-13T05:31:45Z",
+   "stderr": "Failed to connect to bus: Operation not permitted\nFailed to connect to bus: Operation not permitted\n",
+   "stdout": "apt-daily.service=\napt-daily-upgrade.service=\nhelper=   2289 Wed Sep 23 17:37:20 2026 unattended-upgr /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal\nmaint_lines=<<>>\nmaint=0\nwho=0\n",
+   "values": {
+    "apt-daily-upgrade.service": "",
+    "apt-daily.service": "",
+    "maint": 0,
+    "who": 0
+   }
+  },
+  "quiet_2": {
+   "failures": [
+    "quiet: apt-daily.service is ''",
+    "quiet: apt-daily-upgrade.service is ''"
+   ],
+   "helper_changed": true,
+   "helper_pids": [
+    2289
+   ],
+   "rc": 0,
+   "read_utc": "2026-10-13T05:32:15Z",
+   "stderr": "Failed to connect to bus: Operation not permitted\nFailed to connect to bus: Operation not permitted\n",
+   "stdout": "apt-daily.service=\napt-daily-upgrade.service=\nhelper=   2289 Wed Sep 23 17:37:20 2026 unattended-upgr /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal\nmaint_lines=<<>>\nmaint=0\nwho=0\n",
+   "values": {
+    "apt-daily-upgrade.service": "",
+    "apt-daily.service": "",
+    "maint": 0,
+    "who": 0
+   }
+  },
+  "registry": {
+   "claims": {},
+   "claims_this_round": 0,
+   "end_exists": true,
+   "exists": false
+  },
+  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+  "schema": "clasher.k4s.end-launch-gate-host.v2",
+  "stamps": {
+   "failures": [
+    "stamps: release-upgrade-available 112535s old; stale within the window"
+   ],
+   "stamps": {
+    "apt_lists": {
+     "mtime": 1791809878.4060361,
+     "mtime_utc": "2026-10-12T12:57:58Z",
+     "path": "/var/lib/apt/lists"
+    },
+    "release_upgrade_age_seconds": 112535.94281363487,
+    "release_upgrade_available": {
+     "mtime": 1791756999.4214258,
+     "mtime_utc": "2026-10-11T22:16:39Z",
+     "path": "/var/lib/ubuntu-release-upgrader/release-upgrade-available"
+    },
+    "updates_available": {
+     "mtime": 1791809889.4783401,
+     "mtime_utc": "2026-10-12T12:58:09Z",
+     "path": "/var/lib/update-notifier/updates-available"
+    }
+   }
+  },
+  "started_utc": "2026-10-13T05:31:45Z",
+  "timers": {
+   "failures": [
+    "timers: no timer parsed",
+    "timers: subprocess: /usr/bin/systemctl exited 1 (stdout discarded): Failed to connect to bus: Operation not permitted\n"
+   ],
+   "raw": "",
+   "rc": null,
+   "stderr": "",
+   "timers": []
+  },
+  "who": {
+   "lines": 0,
+   "rc": 0,
+   "refused": null
+  }
+ },
+ "host_tool_sha256": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+ "job": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts/end-127x03-r00-l00",
+ "kind": "end",
+ "launch_SSH_argv": [
+  "/dev/shm/ia-r1/drivers/fake-ssh-s7",
+  "-T",
+  "-o",
+  "BatchMode=yes",
+  "-o",
+  "ControlMaster=no",
+  "-o",
+  "ControlPath=none",
+  "-o",
+  "StrictHostKeyChecking=yes",
+  "-o",
+  "ConnectTimeout=20",
+  "-o",
+  "ServerAliveInterval=15",
+  "-o",
+  "ServerAliveCountMax=4",
+  "-o",
+  "ClearAllForwardings=yes",
+  "-o",
+  "RequestTTY=no",
+  "127x03",
+  "/usr/bin/python3 -I -B -"
+ ],
+ "launch_SSH_exit_code": 3,
+ "launch_SSH_stderr": "",
+ "launch_command": [
+  "nice",
+  "-n",
+  "10",
+  "taskset",
+  "-c",
+  "61",
+  "bash",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools/detach.sh",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts/end-127x03-r00-l00/detach.log",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts/end-127x03-r00-l00/detach.json",
+  "bash",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools/k4s_end_exit_push.sh",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts/end-127x03-r00-l00",
+  "env",
+  "OMP_NUM_THREADS=1",
+  "OPENBLAS_NUM_THREADS=1",
+  "MKL_NUM_THREADS=1",
+  "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "-B",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/k4s-confirm/end_reference.py",
+  "--bundle",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00",
+  "--runtime-root",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b",
+  "--native",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/native/clasher_core.abi3.so",
+  "--corpus",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/corpus/K4-states.pkl",
+  "--corpus-inventory",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+  "--k4s-manifest-sha256",
+  "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+  "--sd1-manifest-sha256",
+  "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "--end-evidence",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00/k4s-end-evidence/end-evidence.json",
+  "--end-evidence-sha256",
+  "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+  "--repository",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository",
+  "--end-job-sha256",
+  "338016b50ce50a8fc266dd4aa24fe3614b772595dc816f73e78b625d14902586",
+  "--round",
+  "0",
+  "--out",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts/end-127x03-r00-l00/end-127x03-r00-l00"
+ ],
+ "launched": false,
+ "local_controlmaster": {
+  "ssh_O_check_rc": 255,
+  "stderr": ""
+ },
+ "measurement_argv": [
+  "env",
+  "OMP_NUM_THREADS=1",
+  "OPENBLAS_NUM_THREADS=1",
+  "MKL_NUM_THREADS=1",
+  "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "-B",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/k4s-confirm/end_reference.py",
+  "--bundle",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00",
+  "--runtime-root",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b",
+  "--native",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/native/clasher_core.abi3.so",
+  "--corpus",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/corpus/K4-states.pkl",
+  "--corpus-inventory",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+  "--k4s-manifest-sha256",
+  "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+  "--sd1-manifest-sha256",
+  "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "--end-evidence",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00/k4s-end-evidence/end-evidence.json",
+  "--end-evidence-sha256",
+  "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+  "--repository",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository",
+  "--end-job-sha256",
+  "338016b50ce50a8fc266dd4aa24fe3614b772595dc816f73e78b625d14902586",
+  "--round",
+  "0",
+  "--out",
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/attempts/end-127x03-r00-l00/end-127x03-r00-l00"
+ ],
+ "mode": "binding",
+ "outcomes_sealed": true,
+ "postexec": null,
+ "prerequisites": {
+  "preflights": {
+   "127x03": {
+    "attempt": "preflight-127x03-l05",
+    "bundle_binding": {
+     "bundle": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00",
+     "bundle_sans_guard_sha256": "8e06dc4007cb509a6715b0abffc9acdc666178ddf4939434a810a17a1dcbf7d7",
+     "guard_job": "/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-rd00-a00",
+     "mode": "exact",
+     "preflight_compare_bundle": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/bundles/end-ref-127x03-rd00-a00",
+     "tiers_pins_sha256": "783db178f76c79c358b1e806138072396f6eb72e8b1e1b405a531bfb953d9001",
+     "verified_on_host": true
+    },
+    "bus": {
+     "band": "proceed",
+     "cumulative_loaded": {
+      "cpu_ticks": 9.0,
+      "hz": 100,
+      "percent": 0.075,
+      "seconds": 120.0
+     },
+     "gate": "not-gated-on-127x03",
+     "percent": 0.075
+    },
+    "identity": {
+     "corpus": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/corpus/K4-states.pkl",
+     "corpus_inventory": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/runtime-98566c032d0b/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+     "corpus_inventory_sha256": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+     "corpus_sha256": "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8",
+     "native": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/native/clasher_core.abi3.so",
+     "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"
+    },
+    "loaded_seconds": 120.0,
+    "receipt_manifest_sha256": "74aded5e0d54a19b0873f3884c8e41447f02ca9a3750416e6fb9e6d9f1230a85",
+    "sha256": "69d97d358b1c407404412568a2a2fa3d076730e5e40d800538fb59d9e39862a4"
+   },
+   "127x04": {
+    "attempt": "preflight-127x04-l00",
+    "bundle_binding": null,
+    "bus": {
+     "band": "proceed",
+     "cumulative_loaded": {
+      "cpu_ticks": 9.0,
+      "hz": 100,
+      "percent": 0.01,
+      "seconds": 900.0
+     },
+     "gate": "proceed",
+     "percent": 0.01
+    },
+    "identity": {
+     "corpus": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/corpus/K4-states.pkl",
+     "corpus_inventory": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime-98566c032d0b/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+     "corpus_inventory_sha256": "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+     "corpus_sha256": "a97b1fbf6cbc33a7b65aa5fc91eb0acdd07c922aaf0737620a849163aaadbfe8",
+     "native": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/native/clasher_core.abi3.so",
+     "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"
+    },
+    "loaded_seconds": 900.0,
+    "receipt_manifest_sha256": "54e702960dc1dffb84c5ba3a74cced9a774ad1b83cb35c4d6b5491099e7afec0",
+    "sha256": "29c8685160906dceb7cd7c27271c62cf0ae63a0c2443b8b383fc6263d6487735"
+   }
+  }
+ },
+ "qualifying_preflight": false,
+ "quiet_read_v3_sha256": "a293207e601498d8e7b374a610eddba6f7223e64af34dae00ce52defa30f7c9c",
+ "receive": {
+  "prepare_proof_sha256": "706f74e5f985df7e81d88a9568d674694788cc8ec4dd06fdb74932708fd35446",
+  "prepared_utc": "2026-10-13T05:00:00Z",
+  "receive": "/mpac/sdicks02/k4s-runner/run-r1/end-received/127x03/end-127x03-r00-l00"
+ },
+ "remote_sha256": "4b933bd1031e48c3536d9ff1a9d62da23c777aa74f3701d99d5d20a5cfd030c4",
+ "roots_commit": "0000000000000000000000000000000000000000",
+ "roots_sha256": "6ef9827e218b278b94d1d755c2b3a8da6b0246b0f5e75ecbd32a4c676c9bda80",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-launch-receipt.v2",
+ "scientific_games": false,
+ "second_attempt_ruling": null,
+ "session_close_epoch": 1791869535.512268,
+ "session_close_utc": "2026-10-13T05:32:15.512268Z",
+ "session_open_epoch": 1791869505.0222356,
+ "session_open_utc": "2026-10-13T05:31:45.022236Z",
+ "utc": null,
+ "wrapper_sha256": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af"
+}

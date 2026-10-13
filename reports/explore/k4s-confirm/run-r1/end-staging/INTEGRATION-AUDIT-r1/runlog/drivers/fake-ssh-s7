@@ -1,0 +1,18 @@
+#!/usr/bin/python3 -IS
+# AUDIT fake ssh for the S7 gate: '-O check' -> 255 (no master); otherwise the hygiene options are required and the
+# remote command runs with this stdin inside the fake-host namespace (drivers/ns.sh), host = the token after options.
+import subprocess, sys
+argv = sys.argv[1:]
+open("/dev/shm/ia-r1/logs/fake-ssh-s7.log", "a").write(" ".join(argv) + "\n")
+if argv[:1] == ["-O"]:
+    sys.exit(255)
+for need in ("BatchMode=yes", "ControlMaster=no", "ControlPath=none", "StrictHostKeyChecking=yes"):
+    if need not in argv:
+        sys.exit(255)
+i = 0
+while i < len(argv) and argv[i].startswith("-"):
+    i += 2 if argv[i] == "-o" else 1
+host, command = argv[i], argv[i + 1:]
+done = subprocess.run(["/dev/shm/ia-r1/drivers/ns.sh", host, "/bin/sh", "-c", " ".join(command)],
+                      env={"PATH": "/usr/bin:/bin", "LC_ALL": "C", "HOME": "/home/sdicks02", "FAKEROOT": "/tmp/ia-r1-hosts-gCOn62"})
+sys.exit(done.returncode)

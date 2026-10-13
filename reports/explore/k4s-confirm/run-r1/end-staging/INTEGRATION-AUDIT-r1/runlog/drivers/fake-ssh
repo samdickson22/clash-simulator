@@ -1,0 +1,32 @@
+#!/usr/bin/python3 -IS
+# AUDIT COPY of the s3s9s10-r3 test fake ssh (byte-equal body; LOG/ROOT filled). Fake ssh for the S1b/S10 r2 tests only: hygiene options required; the remote words run under /bin/sh in a
+# user+mount+UTS namespace whose /mpac/sdicks02 is a bind mount of ROOT/<host> and whose hostname is <host>.
+import os, subprocess, sys
+LOG, ROOT, MODE, FAILAT = '/dev/shm/ia-r1/logs/fake-ssh.log', '/tmp/ia-r1-hosts-gCOn62', None, None
+argv = sys.argv[1:]
+with open(LOG, "a") as stream:
+    stream.write(" ".join(argv).replace("\n", "~") + "\n")
+with open(LOG) as stream:
+    n = sum(1 for _ in stream)
+words = " " + " ".join(argv) + " "
+for need in ("BatchMode=yes", "ControlMaster=no", "ControlPath=none", "StrictHostKeyChecking=yes"):
+    if " " + need + " " not in words:
+        sys.stderr.write("shim: missing %s\n" % need)
+        sys.exit(255)
+i = argv.index("--")
+host, command = argv[i + 1], " ".join(argv[i + 2:])
+if FAILAT is not None and n == FAILAT:
+    sys.stdin.buffer.read()
+    sys.stderr.write("shim: connection refused\n")
+    sys.exit(255)
+inner = 'mount --bind "$1" /mpac/sdicks02 && hostname "$2" && cd / && exec /bin/sh -c "$3"'
+done = subprocess.run(["/usr/bin/unshare", "-Urmu", "/bin/sh", "-c", inner, "shim", ROOT + "/" + host, host, command],
+                      env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"}, stdout=subprocess.PIPE)
+out = done.stdout
+if MODE == "junk" and n == (FAILAT or n):
+    out += b"junk"
+elif MODE == "flip" and b'"content_b64":"' in out:
+    k = out.index(b'"content_b64":"') + len(b'"content_b64":"') + 4
+    out = out[:k] + (b"A" if out[k:k + 1] != b"A" else b"B") + out[k + 1:]
+sys.stdout.buffer.write(out)
+sys.exit(done.returncode)

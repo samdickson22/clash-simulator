@@ -1,0 +1,4 @@
+run_gate () 
+{ 
+    FAKEROOT=$H env -i PATH=/usr/bin:/bin HOME=/home/sdicks02 LANG=C.UTF-8 FAKEROOT=$H nice -n 19 taskset -c 0-15 $W/drivers/ns.sh 127x05 /mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python -I -B $W/drivers/s7_drive.py "$@"
+}

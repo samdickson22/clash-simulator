@@ -1,0 +1,49 @@
+{
+ "diff": [
+  "reports/explore/k4s-confirm/end/END-JOB.json"
+ ],
+ "end_job_commit": "927f53c96e10f72cd00f66a9a084b208c12a9ef9",
+ "externals_unchanged": true,
+ "full_clone": {
+  "absent": [
+   ".git/hooks",
+   ".git/shallow",
+   ".git/info/grafts",
+   ".git/objects/info/alternates",
+   ".git/objects/info/http-alternates",
+   ".git/commondir",
+   ".git/config.worktree"
+  ],
+  "bare": false,
+  "commits": [],
+  "config_keys": [
+   "branch.main.merge",
+   "branch.main.remote",
+   "core.bare",
+   "core.filemode",
+   "core.logallrefupdates",
+   "core.repositoryformatversion",
+   "remote.origin.fetch",
+   "remote.origin.url"
+  ],
+  "packs": [
+   "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.idx",
+   "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.pack"
+  ],
+  "replace_refs": 0,
+  "repository": "/dev/shm/ia-r1/eqclone",
+  "root_dev": 26,
+  "root_ino": 52152611,
+  "shallow": false
+ },
+ "git_members": 4280,
+ "git_members_sha256": "ed87f8716ebb8e7a32381aa7716d6c3d4b9d768f84a19273057caa99950494fe",
+ "measurement_files_identical": true,
+ "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+ "runtime_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "runtime_files_identical": true,
+ "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+ "runtime_manifest_sha256": "4dd88461caa82f09bb27bc6adad1756f62dbc8d21aa041441f8c106ef9b80e04",
+ "schema": "clasher.k4s.end-runtime-equivalence.v2",
+ "utc": "2026-10-13T05:20:41Z"
+}

@@ -1,0 +1,11 @@
+S9 VERIFY OK: manifest 4dd88461caa82f09bb27bc6adad1756f62dbc8d21aa041441f8c106ef9b80e04; runtime_files fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7; inventory 16f57cd706f29f1dbf8884f9eec74cb99274d1c23e0d3f365250b5731b47d480
+S3 VERIFY OK: /mpac/sdicks02/k4s-runner/run-r1/end-staging/guard-jobs/guard-127x03-pf00/k4s-end-guard-r1-pf00 manifest ced24d01718b18941da39b6d2afc4dc230a744c45a07806581ebe0325af2045d
+[2026-10-13T05:19:52Z] ssh P-check 127x03
+[2026-10-13T05:19:52Z] ssh P-facts 127x03
+[2026-10-13T05:19:52Z] ssh base 127x03
+[2026-10-13T05:19:52Z] ssh receive-runtime 127x03
+[2026-10-13T05:20:05Z] ssh receive-bundle 127x03
+[2026-10-13T05:22:25Z] ssh receive-guard-job 127x03
+[2026-10-13T05:22:26Z] ssh F 127x03
+[2026-10-13T05:22:26Z] ssh POST 127x03
+S10 OK: /tmp/ia-r1-rec-4LOdiU/s10-127x03-A/s10-staging-manifest.json sha256 deb837a06254af6b282f3e0886609497ec6e52c361cbf5bdb6e6b193250cc65a
