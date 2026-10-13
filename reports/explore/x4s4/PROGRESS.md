@@ -349,3 +349,15 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   - It is idx-K4S-120 minus a1's 147 proved indices (the proved set equals the captured set), in the same order:
     2,103 indices, first 144, 148, 149, last 3749.
   - The runner does not skip sibling phases, so the index file excludes a1's indices.
+
+## 2026-10-13T08:45:47Z — P1 done (K4S-120: a1 147 + a2 2,103 = 2,250); P2 launched 08:48:57Z at --workers 10 (SA-3)
+
+- collect/K4S-120/a2: rc 0, reason null, remaining_group_pids [], 2,103/2,103 blocks, 8,253 s wall (exit f0678e1f…).
+  a1 has 147 blocks and 147 captures, a2 has 2,103 and 2,103, which covers all 2,250 K4S-120 collection indices.
+- SA-4 watch in production: 13 low-side records (receipts/parity-lowside.jsonl, 9bd6c4c8…). The last, at 07:35:15Z
+  over 1,164 games, read cutoff 62.19 %, student-default 21.42 % and overrun 0.15 %. Later checks were in band, so
+  nothing was recorded. There were no pauses and no STOP.
+- Watchdog ok throughout. J is 17 GB.
+- P2: `$SUP --phase collect/S-200/a1 --range reporting --indices $J/collect/idx-S-200.json (2e96a28e…) --config
+  $X/plan-collect.json --arms S-200 --script reports/explore/x4s4/collect.py --workers 10 --stop-at …`, launched at
+  08:48:57Z. `watchdog.py status` was ok beforehand and there was no console user.
