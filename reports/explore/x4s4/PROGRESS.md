@@ -78,3 +78,13 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   its environment.
 - `watchdog.py status`: ok=true, exit 0. Heartbeats arrive 9.55 s apart.
 - First readings: 0 study processes, MemAvailable 121.8 GiB, PSI 0.0, disk 1.10 GB, GPU 107 MiB. No HALT.
+
+## 2026-10-13T04:55:07Z — Q1: T started; unit tests PASS
+
+- T = 2026-10-13T04:55:07Z. HARD-STOP-UTC.txt = 2026-10-14T04:55:07Z (written once, 0444, SHA-256
+  bf6804f010e38fe4d6442b23cf807454978990f7cb42d9b3f75962a827eaaef2). receipts/T.json (0444) SHA-256
+  002f86dbfd2d1bd30d7ea80a44402f7a85db7329d71fb788d8ab4697d77f59fe.
+- `watchdog.py status` ok before the step. Then `$GRD --name q1-unit-tests …` as written: 31 passed in 0.24 s (as in
+  X4S-3). guard-q1-unit-tests.json passed=true, returncode 0, SHA-256
+  36ef38cb09011e496e302479016bc44c13406325cc4b3a13fd37183c50bf4f0b.
+- Watchdog status ok afterwards; no HALT.
