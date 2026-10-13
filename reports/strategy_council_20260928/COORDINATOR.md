@@ -4319,3 +4319,31 @@ Tests: 1,766 pass normally and 1,744 under -O, after fixing the test shim modes.
 - Disclosures 2–9 are accepted as Sol states them: the S9 clone exception, the S3 `FETCH_HEAD` removal, the S10 receive receipt, the TRANSFER-DONE rename and names-only exceptions, the S2 commit-bound diagnostic, the S4 partials, the erratum, and the residuals.
 
 **Next.** The runner fixes F1–F6 and resubmits for Sol r2. No host step until then.
+
+## 2026-10-13 00:02Z: Perception B third placement complete, C-6 clean; environment run GO issued
+
+**Placement r3 (d2824e27).** Ran exactly once at 2026-10-13T00:00:54Z, using corrected commit 72426428.
+- Both exit codes 0. One SSH session, no retry, empty stderr.
+- Exactly one receipt was placed on 08: the environment CPU GO (0925060b). `runtime_admitted` is false.
+
+**C-6 audit: CLEAN.**
+- The revocation tip and fetched tip are both e1f29ee7, an ancestor of origin/main.
+- There are 0 REVOKED lines.
+- Each relied-on authority has only its single ISSUED line.
+
+**Environment run GO issued.** It is byte-identical to the draft (a3e2af3f) and binds:
+- the CPU GO 0925060b and placement d2824e27;
+- the approved generic transport, launcher and guard (8d348859, 2679fc3e, cd35c65f);
+- the fresh quiet-read d5086e1e.
+
+Run constraints:
+- Launch exactly once, through the guard only, from 127x05.
+- Slot: 2026-10-13 00:20Z to 01:20Z. CPU hard deadline 02:20Z.
+- 16 GiB worker limit, concurrency off, cpus [0,1].
+- No GPU, no heldout data, no retry.
+
+Issued copies:
+- `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-transport-run-environment-go-r1.json` (0444)
+- `l1/receipts/b-cpu-transport-run-environment-go-r1.json`
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN a3e2af3fc419fcfc7693835274bad38dcf0eefd472c5f6aefa177aef012936d7

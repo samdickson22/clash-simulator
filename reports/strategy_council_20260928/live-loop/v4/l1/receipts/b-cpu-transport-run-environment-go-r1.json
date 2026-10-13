@@ -1,0 +1,56 @@
+{
+  "additional_authorities": [],
+  "artifact_sha256": {
+    "guard.sh": "cd35c65fc5c4199e14c15f357e8e636f95ce1fa59a591b3e30a365260eddbd0a",
+    "launcher.sh": "2679fc3ef3ee0225da4ab01ebadb88242756385f007e539d034c92c2e369fbdb",
+    "retrieval.sh": "8ac48b0b5ea5102357b120db6987d027e67ef0a787b952a18cb3695e00361e53",
+    "transport.py": "8d348859b822d9a9cde9795794e01a2f1e10fc4844386afc609a76de89ed35c1"
+  },
+  "available_bytes": 1220889788416,
+  "concurrency_enabled": false,
+  "cpu_go_sha256": "0925060b75dc26220bdd802a0ce25c647bf44f7e611d652211bd204988a40fc5",
+  "decision": "AUTHORIZE_B_CPU_TRANSPORT_RUN",
+  "execution_preconditions": [
+    "Issue only after placement r3 completes and coordinator accepts its C-6 audit; placement_c6_accepted is an attestation by issuance, not a claim of completion by this draft.",
+    "Coordinator confirms 08 idle by decision and resource reservations before issuance; no live host measurement is asserted here.",
+    "Apply C-5 to the full recursive authority closure before issuance; full authority SHAs occur only on their own ISSUED lines.",
+    "Separate explicit run GO required. Section9 exact guard invocation from / on05 in foreground, once within first30minutes; no retry.",
+    "No inspection or repair on failure; UNKNOWN retrieval requires separate coordinator acceptance and own issued/explicit GO.",
+    "Large environment/transport artifacts remain local and are never committed to the public repo.",
+    "Coordinator G6 comparison is required before any epoch GO."
+  ],
+  "expires_epoch": 1791854400,
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "manifest_sha256": "32a4a36f4a528505d62730bae629a8ff53eea413e89b5eb2ea724a54b5395949",
+  "max_launches": 1,
+  "no_retry": true,
+  "not_before_epoch": 1791850800,
+  "observation_provenance": {
+    "commit": "b2c367e6ccfaa792debda13971ad99c23623d16e",
+    "sha256": "d5086e1e773b656b771f01ca66654dc4af3168b0c3bd840ac7fd15bc98d29ccf",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r2/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-12T23:21:49.439240+00:00"
+  },
+  "operator_command": "cd / &&\n/usr/bin/printf '%s  %s\\n' cd35c65fc5c4199e14c15f357e8e636f95ce1fa59a591b3e30a365260eddbd0a /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-generic-transport-review-r1/guard.sh | /usr/bin/sha256sum -c - &&\n/usr/bin/env -i PATH=/usr/bin:/bin /bin/bash --noprofile --norc /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-generic-transport-review-r1/guard.sh <FULL_RUN_GO_SHA>",
+  "operator_host": "127x05",
+  "package_sha256": "374325696dc94f5e84ecc1ed97e42419b956a4680e1a3684f8e95781a9a41cdd",
+  "placement_c6_accepted": true,
+  "placement_go_sha256": "d2824e27091dbb3790be1c460522d899445b91cc28a28c05a2f778848548ea23",
+  "resource_budget": {
+    "host_address_space_limit": 51539607552,
+    "host_process_limit": 16,
+    "other_address_space": 0,
+    "other_processes": 0,
+    "worker_address_space": 17179869184
+  },
+  "review_receipt_sha256": "59ffe41a9f3a244834cc98b6e3414e4f8d49592362e808f47f319243d90d3282",
+  "stage_accepted": true,
+  "transport_review": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/B-GENERIC-TRANSPORT-REVIEW-r1.md",
+    "sha256": "62cf641ae3daadc3b40e5523884ae19c52a974b30ac5679c1464bd58ff0241c3"
+  },
+  "who_count": 0
+}
