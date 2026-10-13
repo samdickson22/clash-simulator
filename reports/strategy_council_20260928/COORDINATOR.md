@@ -5301,3 +5301,27 @@ Exit: `parity_pause`, rc −15, no remaining PIDs.
 - **Do not replay a1's games.** If the supervisor or collect.py does not skip indices already proved in a1, a2's index file must be exactly a1's index file minus a1's proved indices, in the same order, and it is recorded with its SHA. a1's 147 proved games are kept.
 
 **Note for P3.** `J/data/PARITY-EXCEPTION.json` currently binds the PE-1 smoke receipt, and label.py reads only that one path. The owner must say before P3 how a P3 exception will be bound without overwriting the PE-1 file. Raise any needed change for review then.
+
+## 2026-10-13 06:18Z: FSC epoch-2 fix approved (89f01fbb); 04 resume and runner replacement
+
+**What happened.** The 04 epoch-1 STOP succeeded at 06:10Z (`__RC=0`):
+- `rep04` had finished all 1,500 blocks;
+- the census was empty and the proof passed;
+- the mirror is in place.
+
+The 04 resume then failed closed (`__RC=96`): resume's byte-equality list included `reduce.py`, which 9aa1cce6 itself changed. Nothing started.
+
+**The fix.** The coordinator checked `git diff 9aa1cce6 89f01fbb` directly:
+- `reduce.py` is dropped from the list. It is a 05-only reducer that no epoch-2 host step uses.
+- The resume bundle directory becomes `J/bundle-e2r`, because the unused `J/bundle-e2` stays untouched.
+
+MANIFEST is 69dc22c8, and all 10 test groups pass (owner).
+
+**Approved:**
+1. Archive the failed resume log and wrapper output to `fsc-sessions/resume-attempt1-04/`.
+2. Replace the epoch-2 runner:
+   - first verify PID 2011028 against its receipt;
+   - then `kill -KILL 2011028` and `kill 2011080`, and confirm with `ps -p`;
+   - re-arm from the 89f01fbb export for 11:30Z on both hosts.
+3. Resume 04 now from that export.
+4. Resume 03 after the frozen runner's 07:30Z stop of 03 is verified.
