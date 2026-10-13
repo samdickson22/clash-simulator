@@ -6242,3 +6242,12 @@ Placement GO 5b454761 ran once, at 23:02:09Z, with F1 r6 operator 21a10121. The 
 **Window:** 2026-10-13 23:15Z to 2026-10-14 00:15Z.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN b2bff6540341419ad3dfd9097132e3f42e47d380ef213f209ac64d85d8528ac6
+
+## 2026-10-13 23:15Z: K4S END A2 complete on 03 and 04
+
+A2 ran under the re-GO 3d64ca62 with `a2-r7.sh`. Every step returned rc 0, and there was no retry.
+
+- **03:** records at 43fac268. 23 logins; the probe shows the repo .venv with numpy 2.3.5 and torch 2.10.0+cu128.
+- **04:** records at 61b5a98e. The `who` check came back empty, then 23 logins; the probe matches 03.
+
+Both repositories are provisioned at P' 98566c03. Next is the runner's A4 preflight GO request.
