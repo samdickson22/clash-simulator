@@ -1,0 +1,233 @@
+{
+ "bundle": {
+  "path": null,
+  "prerequisites": [],
+  "refs": [
+   [
+    "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+    "refs/remotes/origin/k4s-end-r1"
+   ]
+  ],
+  "sha256": "b4fecc736e99747ebed7ff947cfd367d59ef2c937d8966c513f97166696838b1",
+  "size": 135217169,
+  "spec": "refs/remotes/origin/k4s-end-r1"
+ },
+ "check": {
+  "git_version": "git version 2.25.1",
+  "host": "127x03",
+  "host_tool_sha256": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "mode": "check",
+  "python": "3.8.10",
+  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "common_sha256": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
+ "end_job": null,
+ "equivalence": null,
+ "equivalence_sha256": null,
+ "finished_utc": "2026-10-13T23:04:04Z",
+ "full_clone": {
+  "absent": [
+   ".git/hooks",
+   ".git/shallow",
+   ".git/info/grafts",
+   ".git/objects/info/alternates",
+   ".git/objects/info/http-alternates",
+   ".git/commondir",
+   ".git/config.worktree"
+  ],
+  "bare": false,
+  "commits": [
+   "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb"
+  ],
+  "config_keys": [
+   "branch.main.merge",
+   "branch.main.remote",
+   "core.bare",
+   "core.filemode",
+   "core.logallrefupdates",
+   "core.repositoryformatversion",
+   "remote.origin.fetch",
+   "remote.origin.url"
+  ],
+  "packs": [
+   "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.idx",
+   "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.pack"
+  ],
+  "replace_refs": 0,
+  "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+  "root_dev": 66304,
+  "root_ino": 56758974,
+  "shallow": false
+ },
+ "host": "127x03",
+ "host_paths_kept_needing_authorized_cleanup": [
+  "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository-transfer-98566c032d0b"
+ ],
+ "host_program_sha256": "ccca5594d9666783429f0ec4f9f26ac8e22656f2813f701650f5bc56c1de0db8",
+ "logins": [
+  {
+   "host": "127x03",
+   "label": "session-provision",
+   "script_sha256": "2e3b6b9075f503900eff08472b201192aad4c97bd9edaeeb3dad1377e42fefcb",
+   "utc": "2026-10-13T23:03:58Z"
+  }
+ ],
+ "logins_planned": 1,
+ "mode": "provision",
+ "outside_end_window": "A2 GO 3d64ca6277c8d4eb9bdb78f58f4ba3302ec7a95f, 2026-10-13T23:03:56Z",
+ "params": {
+  "base": "/mpac/sdicks02/jobs/clasher/k4s-end-r1",
+  "branch": "k4s-end-r1",
+  "bundle_name": "k4s-end-r1.bundle",
+  "bundle_ref": "refs/remotes/origin/k4s-end-r1",
+  "bundle_sha256": "b4fecc736e99747ebed7ff947cfd367d59ef2c937d8966c513f97166696838b1",
+  "bundle_size": 135217169,
+  "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+  "core_keys": [
+   "core.bare",
+   "core.filemode",
+   "core.logallrefupdates",
+   "core.repositoryformatversion"
+  ],
+  "end_job_oid": null,
+  "end_job_rel": "reports/explore/k4s-confirm/end/END-JOB.json",
+  "end_job_sha256": null,
+  "host": "127x03",
+  "host_tool_sha256": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "host_tool_size": 34444,
+  "mode": "provision",
+  "partial_leaf": "repository.partial",
+  "prior": null,
+  "repository_leaf": "repository",
+  "required_ancestor": "022ec7bf298caaab81bc6e70fe917d3e75b21bde",
+  "safe_input_fingerprint": "33f594ed75c3b3b6416ec8b4804490b82a85521533056b57c1d582529207f592",
+  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+  "safe_input_size": 133606,
+  "study": "reports/explore/k4s-confirm",
+  "tools": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/tools",
+  "transfer_leaf": "repository-transfer-98566c032d0b"
+ },
+ "prior": null,
+ "receive_program_sha256": "39a92e9d55f9ffefba57bae453677bad7c834f7761283268b84e40bb2d1210b4",
+ "receive_receipt_sha256": "466b5be2e5bab5454185cb079077ea860111351a2189f5041dc754a04e7af625",
+ "result": {
+  "bundle": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository-transfer-98566c032d0b/k4s-end-r1.bundle",
+  "bundle_sha256": "b4fecc736e99747ebed7ff947cfd367d59ef2c937d8966c513f97166696838b1",
+  "commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+  "final": {
+   "clean": true,
+   "config_keys": [
+    "core.bare",
+    "core.filemode",
+    "core.logallrefupdates",
+    "core.repositoryformatversion"
+   ],
+   "head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+   "refs": [
+    "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb refs/heads/k4s-end-r1"
+   ],
+   "required_ancestor": "022ec7bf298caaab81bc6e70fe917d3e75b21bde",
+   "root_dev": 66304,
+   "root_ino": 39059495,
+   "shallow": false,
+   "symbolic_head": "refs/heads/k4s-end-r1",
+   "verify_clone": {
+    "hooks": [],
+    "promisor": false,
+    "replace_refs": 0,
+    "role": "repository",
+    "static_preflight": true,
+    "work_tree": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository"
+   },
+   "writable": true
+  },
+  "git_write_guard": {
+   "checkout": {
+    "checked": 46,
+    "kinds": {
+     "absent": 33,
+     "dir": 6,
+     "file": 7
+    },
+    "release": "k4s-git-write-guard-r6"
+   },
+   "config": [
+    "-c",
+    "core.hooksPath=/dev/null",
+    "-c",
+    "core.fsmonitor=false",
+    "-c",
+    "core.logAllRefUpdates=false",
+    "-c",
+    "core.splitIndex=false",
+    "-c",
+    "core.untrackedCache=false",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "gc.autoDetach=false",
+    "-c",
+    "maintenance.auto=false",
+    "-c",
+    "fetch.writeCommitGraph=false",
+    "-c",
+    "fetch.recurseSubmodules=false",
+    "-c",
+    "submodule.recurse=false",
+    "-c",
+    "fetch.prune=false",
+    "-c",
+    "fetch.pruneTags=false"
+   ],
+   "fetch": {
+    "checked": 46,
+    "kinds": {
+     "absent": 34,
+     "dir": 6,
+     "file": 6
+    },
+    "release": "k4s-git-write-guard-r6"
+   }
+  },
+  "host": "127x03",
+  "mode": "provision",
+  "partial": {
+   "clean": true,
+   "config_keys": [
+    "core.bare",
+    "core.filemode",
+    "core.logallrefupdates",
+    "core.repositoryformatversion"
+   ],
+   "head": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+   "refs": [
+    "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb refs/heads/k4s-end-r1"
+   ],
+   "required_ancestor": "022ec7bf298caaab81bc6e70fe917d3e75b21bde",
+   "root_dev": 66304,
+   "root_ino": 39059495,
+   "shallow": false,
+   "symbolic_head": "refs/heads/k4s-end-r1",
+   "verify_clone": {
+    "hooks": [],
+    "promisor": false,
+    "replace_refs": 0,
+    "role": "repository",
+    "static_preflight": true,
+    "work_tree": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository.partial"
+   },
+   "writable": true
+  }
+ },
+ "s10_sha256": "f368097f830eb2d50851f360c2fc0baf5c289016cd7db9037665ea6a718e46d5",
+ "s9_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-host-repository.v1",
+ "script_sha256": "51b93afdd263807e9d942aa13fe116ef89fc0908896ecff92917c9409285401d",
+ "ssh_logins": 1,
+ "started_utc": "2026-10-13T23:03:57Z",
+ "status": "provisioned",
+ "target": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository",
+ "transfer": "/mpac/sdicks02/jobs/clasher/k4s-end-r1/repository-transfer-98566c032d0b"
+}
