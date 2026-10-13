@@ -5146,3 +5146,26 @@ Placement GO 49b819b8 completed once (operator 2c22b94e, one SSH, no retry).
 **Placement r8 is ACCEPTED.** The epoch-1 run GO follows, from the owner's draft a7ac7fb1.
 
 **Disclosure.** The issued epoch-1 CPU GO (24498e3d) and placement GO (49b819b8) still carry `g6_environment_accepted=false` from the drafts. It is not a gate in either document: only the run GO's field is checked, and G6 was accepted at b3d10ce5. The issued bytes stay unchanged.
+
+## 2026-10-13 05:42Z: B epoch-1 run GO r2 issued (package r3)
+
+The issued GO is the owner's draft a7ac7fb1. The coordinator changed only the placement r8 completion fields:
+- complete e75ddf4a, exit codes 0, tips a063d272;
+- C-6 acceptance at bd3ca777;
+- `placement_c6_accepted=true`;
+- `draft_status` and the remaining blocker.
+
+**What it authorizes:**
+- Bound transport 205309ae, CPU GO 24498e3d, placement GO 49b819b8.
+- `stage_accepted` and `g6_environment_accepted` are true (G6 accepted at b3d10ce5).
+- Epoch 1 only, serial and alone, on 127x08 from 05, cpus [0,1].
+- 32 GiB worker inside a 48 GiB union budget (other processes ≤ 14 GiB), at most 16 processes.
+- No GPU and no heldout data. One launch, no retry.
+
+**Window:** 06:00Z to 07:00Z. The CPU GO ends at 08:00Z.
+
+**Reporting:** the raw `started_epoch`/`completed_epoch` from `epoch.json` must be kept. Its duration decides U1 (≤ 2,400 s) and G5 (≤ 3,600 s).
+
+C-5 passed and there are no path collisions.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 0f6b4e416320481004e4f1d8ef607ddcd38cd39349d4c688c58ab15d189bf647
