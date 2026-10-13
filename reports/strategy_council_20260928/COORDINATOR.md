@@ -4396,3 +4396,18 @@ The issued GO is byte-identical to `l1/prepared/b08-epoch01-and-placement-go-r1/
   - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-epoch01-go-r1.json` (0444).
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT fd4132c1951fcb2df4b9ee988a2f9a138624fbd13bf38682a8050afe1722a7bd
+
+## 2026-10-13 00:25Z: Perception B fourth authority-placement GO issued
+
+The issued GO is byte-identical to `…/b08-epoch01-and-placement-go-r1/DRAFT-AUTHORIZE_B_AUTHORITY_PLACEMENT-r4.json` (18f17da0).
+
+- **What it places:** exactly one receipt, the epoch-1 CPU GO (fd4132c1).
+- **Procedure:** 20e58965, operator d6cb3690.
+- **Limits:** cpus [0,1], between phases. No GPU, no heldout data, no retry.
+- **Window:** 2026-10-13 01:00Z to 02:30Z.
+- **C-5 check:** the CPU GO SHA appears on exactly one ISSUED line.
+- **Published at:**
+  - `l1/receipts/b-authority-placement-go-r4.json`, the signed path;
+  - `/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r4.json` (0444).
+
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 18f17da0405e4b741845e72da24752b35c20332cdfe6b37920d94ea6e9318bc9
