@@ -6122,3 +6122,31 @@ All three workers were woken with RESUME messages that name the exact next step.
 - The single-operator TOCTOU residual is unchanged and accepted.
 
 This is conditional on the runner's pristine four-mode verification and an r6 commit whose blobs equal these bytes. The A2 GO follows the runner's request.
+
+## 2026-10-13 22:07Z: B r5 stage CPU GO r5 and placement GO r13 issued
+
+**Source drafts.** The owner's drafts are in `b08-r5-stage-chain-drafts-r3` (manifest aff830e1). The CPU GO is issued byte-identical to the draft. In the placement, the coordinator filled in only:
+- the between-phase attestations: `between_phases=true` and `no_active_cpu_or_gpu_phase=true`. Since the r5 deployment was accepted at 9cc43d12, no new-package CPU or GPU phase has launched on 08. Quiet-read r12 (2c0407da) shows who 0 and loadavg 0.14. Every earlier r4 chain stays consumed.
+- the blockers.
+
+The placement was then rehashed. The stage run draft was repinned to the new placement SHA and is held at `v4-b-gap-review/stage-r5-final/DRAFT-…` (6db23f8b) until C-6.
+
+**Checks:**
+- transport r4 `validate_cpu(current=False)` passes;
+- F1 r6 `receipt()` passes for the review receipt r5 and the CPU GO;
+- F1 r6 `validate_go` passes inside the window and refuses before it ("Placement window invalid");
+- C-5 is clean: neither SHA is on origin/main, and there are 0 `REVOKED` lines;
+- no publication path collides.
+
+**Scope.** The stage only, on 08:
+- cpus [0,1], with the conservative budget unchanged (16 GiB worker + 2 GiB keeper, 8 processes);
+- no GPU and no heldout data.
+
+**Windows:**
+- placement: 2026-10-13 23:00Z to 2026-10-14 01:00Z, operator 21a10121, one invocation, no retry;
+- stage CPU: 23:15Z to 01:15Z.
+
+The stage run GO follows only after placement completes and C-6 is accepted.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 5b454761f7d81874b3921ff7f5b7dc154a7eeccdd2c13ec348eaa2ce04aaea2a
