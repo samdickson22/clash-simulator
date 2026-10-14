@@ -62,3 +62,14 @@ PLAN: stop both ~08:00Z by SIGINT to receipt PIDs; eval checkpoint series of bot
 - 2026-10-14T05:45:01Z LAUNCHED rlppo-r5 on 08 (PID/PGID 1527125): 64ch x 4 net, batch 4096 x 3 ep (48 Adam steps/update),
   lr 3e-4, same league fixes, 32 workers + 12 eval workers, vram 0.5. ~2300 steps/s (update 28 s / 66k).
   Both: same command resumes (args in <save_dir>/rext_train_args.json). Stop target ~08:45Z.
+- 2026-10-14T06:41Z r4 passed gates v1,v2 (70 s each, 200 games) -> snapshot-index workaround works. Gates failed to
+  promote (vs v0: 0.51, 0.545; needs lower bound >= 0.52). r4 18.3M steps: entropy_norm 0.86, elo_readout 1467, hold rate
+  0.4% -> 11%. r5 7.6M steps (2400/s). Ladder evals (03, 40 games/rung; mean of 5 non-noop rungs): r2-v1 0.435,
+  r3-v2 0.47, r5-ck4.05M 0.415, r4-ck10.2M 0.525. Eval tooling on 03: /mpac/sdicks02/jobs/clasher/bot-ext-eval
+  (run_evalset.sh MODEL TAG; models/ = bot dirs built from gate snapshots; runs/ = mirrored run dirs).
+  cycle.sh (reports dir) = mirror.sh + eval newest r4/r5 checkpoint; background loop every 40 min (log cycle.log).
+- 2026-10-14T08:52Z STOPPED r4 (48.55M decisions / 32.37M env steps) and r5 (20.34M / 13.56M) by SIGINT: clean, final
+  checkpoints + bot/ saved; mirrored. Final ladder evals (100/rung) mean5: r4 0.576, r5 0.542; head-to-head r4 110-90 r5.
+  -> rext-models/rlppo = r4 (actor 9cca3773...), rlppo-r5 = r5 (df48912d...) on 03+04.
+- Smoke on 04 (final-{a,b}): K4S-b64 vs rext-rlppo 4/4, vs rext-rlppo-r5 4/4; reps identical. NOTES.md written. DONE.
+  No trainer processes left on 04/08 (verified 0 learnvenv procs).
