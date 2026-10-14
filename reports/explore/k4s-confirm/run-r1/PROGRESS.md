@@ -453,3 +453,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-14T00:50:02Z r3 usage comment fixed (r2->r3 name); tests rerun 41/41.
 - 2026-10-14T00:51:49Z RO-1 GO 0139032d: ro1-results-r3.sh 127x03 exit 0 (00:51:41Z; BEFORE/AFTER parent dr-xr-sr-x 2555, results dr-xr-sr-x 2555 empty), 127x04 exit 0 (00:51:45Z; same). 1 login each.
 - 2026-10-14T00:52:43Z A4 03 l02 S7 REFUSED rc 3 (00:52:03-00:52:34Z, 1 login): stamps: release-upgrade-available 79228 s old (> 24 h - 7200 s window = 79200 s); everything else passed. Receipt de2cda0d. Stop for ruling (A5 stale-stamp pre-trigger needed).
+- 2026-10-14T00:53:19Z 03 l03 prepared on 05: argv 34b9ca439f8d08ed01935ab31374d2c011654dbae69d1080579a5ae5a0e200a9, dry run rc 0 expected above.
