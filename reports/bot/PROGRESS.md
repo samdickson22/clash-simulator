@@ -39,20 +39,26 @@ tier). Report to coordinator thread 0523ae6f.
     calibrate ours behind the 577-fixture gate (`DECISION-ENGINE.md`).
 - The v1-τ arm collapsed (−45 pp): thresholds must be calibrated on-policy.
 
-## Running (2026-10-14 04:40Z)
+- **2026-10-14 afternoon:**
+  - The engine calibration batch 1+2 is merged into main (0ecdd97d, tag `engine-r1`). Fidelity is 72.3/74.5%; parity 574/577.
+  - The planner A/B on r2 vs r1 is null. Learned leaf value: negative. Candidate round 2: R3a top-16 confirmed.
+  - **Best bot: K4C-r16** (fresh-bank +0.021 over K4S-st). RoyaleSim P1 0.921, v3 0.924.
+  - **Best student: it5s2** (ExIt; 0.883 vs v1). HEADLINE-v3 adds the human-clone external `rext-bc`.
 
-- **HEADLINE-v2 external opponents:** K4S-b64 vs rgym-{patient,push,defend,first-affordable} in RoyaleSim, on 04.
-  Out `bot-headline-v2-rsim-r1`, launch script `bot-headline-v2-rsim-r1.sh` (sets `ROYALEGYM_SRC`).
-- **`bot-lead-external-opponents-r1`** (Opus): RoyaleLearn/RoyaleImitate baselines plus a RoyaleLearn-trained
-  policy on our decks. Writes `reports/bot/external-opponents/` and `bot/players/rext_*`.
-- **`bot-lead-exit-pipeline-r1`** (Opus): ExIt on 08. Writes `bot/exit/` and `reports/bot/exit/`.
-- **`bot-lead-search-scaling-r1`** (Opus): on 03. Writes `bot/search/` and `reports/bot/search-scaling/`.
-- **`bot-lead-calib-batch1-r1`** (Opus): engine calibration batch 1, fidelity-gated. Writes
-  `reports/bot/calibration/`.
-- **Daily headline:** T3 scheduled task at 06:00 local (13:00Z).
+## Running (2026-10-14 17:59Z)
+
+- **ExIt iteration 6+ owner** (`bot-lead-exit-it6-r1`, Opus) on 01/04/08.
+  - CPU feeders: `bot/exit/cpu_feeder.sh`, state in `<J>/cpu-feed/`.
+  - GPU queues with keep-alives: `<J>/gpuq/`.
+  - The teacher is being switched to K4C-r16.
+  - J1=/mpac/sdicks02/jobs/clasher/bot-exit-r1-01, J4=…-04, J8=/mpac/sdicks02/jobs/clasher/bot-exit-r1.
+- **Daily headline:** T3 scheduled task at 13:00Z (v1 + v3).
+- **Hosts:** 01, 03, 04, 08 (05 light only).
+  - Exclusions: 01 PGID 516161, x4s4-onpolicy, t1-*; 08 v4-b-20261012-r1.
 
 ## Next
 
-1. HEADLINE-v2 numbers, then report.
-2. Integrate ExIt and search-scaling winners into the best bot, and re-headline.
-3. Runtime r2 with the calibrated engine.
+1. ExIt: next best student, both engines plus rext-bc. Feeders switch to on-policy behaviour.
+2. Search scorer: the scripted opponent models inside rollouts. These are the remaining lever after the candidate and
+   leaf nulls.
+3. Re-headline the best bot when the code changes. Live play is a separate, later authorization.
