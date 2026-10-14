@@ -6751,3 +6751,46 @@ Placement GO 0119bdbf ran once, at 03:16:21Z, with F1 r6 operator 21a10121. The 
 - 0 `REVOKED` lines.
 
 **ACCEPTED.** The 23 serial run GOs follow, co-issued under SQ-1.
+
+## 2026-10-14 03:18Z: B r5 SQ-1: 23 serial epoch run GOs (epochs 2–24) co-issued
+
+**Source.** The held drafts `serial-r5-final/DRAFT-*`, repinned to placement 0119bdbf. The coordinator filled in only:
+- `placement_c6_accepted=true`;
+- `placement_completion`: complete 48042e71, C-6 commit 796a89298331c9da2df74f24be6c66c8a7b3a6f0, tip 4f42dada, exit codes 0/0;
+- the blockers.
+
+**Checks:**
+- each run passes transport r4 `authorize_run(active=False)` against its own CPU GO, the placement and the review;
+- C-5 is clean on all 23, with 0 `REVOKED` lines;
+- no path collides.
+
+**SQ-1 applies (3632efb2):**
+- strictly serial and alone on 08, in epoch order, one exact guard invocation each, inside each run's first 30 min;
+- **auto-advance** to epoch k+1 only after both exit codes are 0, epoch k shows authenticated PASS with `bound_count 9` and matching plan, package and review, its duration is ≤3,600 s, and a direct C-4 report has been sent;
+- any failure, UNKNOWN, missing evidence or excess duration **stops the whole sequence**, with no retry or repair;
+- the coordinator's C-4 acceptances are batched;
+- after epoch 24, the reducer chain follows separately.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 1c508bca91c4aefde3fa12a3ecbbf7b145913e2381d9eae3a76c9f2864cd9faf
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN d0c723ad6dc724954a8907ac7862de99730377412a26104a71485287b9c984c3
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 85f56cbd3a764338b879eaffb9cffe29b26db5afab6f180a78294a2937ad3951
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 01f65710a9d6a2c45915e419b7121d786982b8bf3c60f4e02dd26a9d0e55a994
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN fc4fbb479b0a224f55c8142f2cfae1b0022f10f9c474a77a7b4323f6226fa30c
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 9e638e0c0279531d72f83d6bac2595bd2df96511426692a6b0e03564175847cc
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 42d4da35eb76a66e387b25dacff3de8219eb229f0a661608271017d8f2b55ce1
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 36571dfca7d22ae17b9676fe2a01bd61a6a8de336e5913b8225c43012e1005e0
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 345ae75506f9f492d40d834ad3b8b6253985da09e448ab99b215698ed574017d
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 96265c2dd977a21679c08e8d684b7cdc4fcb9e27a80235c10b120e85b70cbff3
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN cfb620f2654e49810fc5e9a90408d617602e0f76c509a9f49a35a9d0b39956b3
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 36da4089668eff799d8ea4bc6e22c6c16f20b2b965b050a1131c5a9cfe233328
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 4d3f89ba642d3ee38d1b318712414437be8f19576b2aa8f6a21bf2607b0c9b1f
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 2b1ffebfa3b110ddbb1f17e5cfdb47839fcc2a31eba58b69b967afe3e34716b5
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN e99469eb46bf0c4acd424b732f36eea3e092a64db63460a0907816e3319e894e
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 111a14a26d13a353de7b0e04a1a8085e0e06b1c1ed2b73813a01dfd3319b044b
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 90e053d31b10c8c6fb2dbb395b862d87c1cb5a98c63b0314349fc33d404b7524
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 016951d75d6f0cd388ca2ceccae0687a8863cd94563b4b04878df42f1ca99ea4
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN d40aaf433b25c1a53cb1d7d3c3ff87735a2b08d739627e060dba8d30692d6bc0
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 97f7a739bae7e97e6dd0cd6ad0cb8bbf545a5bbf00a2fa453594dbdc00455fe6
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN b9a54ecd0577a3382e285e1576539218e51dda2017c1b707b1566db677b1852c
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 16a65076ce0e058e9ff8651bef02a456e375bb1142cfc83c89821ed2db2ba247
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 8fb52aa4e6c1dfbcf6aaf9704a5bfe4c8564da7770647c59e9c39a828c4b6ed2
