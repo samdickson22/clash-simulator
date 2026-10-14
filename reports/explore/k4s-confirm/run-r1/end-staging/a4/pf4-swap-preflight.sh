@@ -19,7 +19,7 @@ H=${1:-}
 case "$H" in 127x03) BASE=/mpac/sdicks02/jobs/clasher/k4s-end-r1;; 127x04) BASE=/mpac/sdicks02/jobs-k4s/k4s-end-r1;;
   *) echo "usage: $0 127x03|127x04" >&2; exit 2;; esac
 OLD_SHA=c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5; OLD_SIZE=76609
-NEW_SHA=__NEW_SHA__; NEW_SIZE=__NEW_SIZE__
+NEW_SHA=c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3; NEW_SIZE=78954
 SRC=/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r7/k4s_end_preflight.py
 T=$BASE/tools
 LOG=/mpac/sdicks02/k4s-runner/run-r1/end-staging/a4/pf4-swap-$H.log

@@ -1,0 +1,44 @@
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r8/s10_stage_host.py	2026-10-13 17:04:25.384490830 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r9/s10_stage_host.py	2026-10-13 18:25:35.789353094 -0700
+@@ -270,7 +270,7 @@
+     "k4s_preflight_push.sh": ("k4s_preflight_push.sh",
+                               "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580", 16749),
+     "k4s_end_preflight.py": ("k4s_end_preflight.py",
+-                             "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5", 76609),
++                             "c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3", 78954),   # r9 PF-4: s5s6s7-r7 S5
+     "safe_input.py": ("safe_input.py", "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00", 133606),
+     "k4s_end_host_tool.py": ("k4s_end_host_tool.py",
+                              "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647", 34444),
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r8/s11_host_repository.py	2026-10-13 17:04:25.824503093 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r9/s11_host_repository.py	2026-10-13 18:25:36.269366298 -0700
+@@ -219,7 +219,7 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10 <- s11). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's10_stage_host.py': ('9c634a8955a46741fa921e4ad9f813dd0038f6784945f5db0a7a514502376868', 70224),
++    's10_stage_host.py': ('91534e2de025b98b01d1cfa380eb95b0f935963bd703632da51ab0ce63b64448', 70250),
+ }
+ 
+ 
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r8/tests/test_r4_s10.py	2026-10-13 15:17:02.842994714 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r9/tests/test_r4_s10.py	2026-10-13 18:25:35.789353094 -0700
+@@ -1,7 +1,7 @@
+ """r4 S10 on namespaced fake hosts: the runtime at <base>/runtime-<P12> (B2), the exact S7 RC-6 declaration (B7/U9),
+ the tools (U2) and end-inputs (U3) components, the interpreter probe in the P-facts login (U4) and the adopted-S4 pin
+ (L4). The CONSUMERS are the approved Part B code itself: S5's layout() and S7's validate_roots / validate_argv are
+-loaded from byte copies of s5s6s7-r4 (tests/vendor_s5s6s7_r5/, SHA-pinned below; the adopted Part B package, its
++loaded from byte copies of s5s6s7-r4 (r9: gate + preflight from s5s6s7-r7; tests/vendor_s5s6s7_r5/, SHA-pinned below; the adopted Part B package, its
+ SHA256SUMS d04c6ca1 verified when copied) and run on what S10 produces."""
+ import hashlib
+ import importlib.util
+@@ -21,8 +21,8 @@
+ # gate is s5s6s7-r5's (U4: HOST_PYTHON = the runtime.sh venv python); every other file is byte-identical in r4 and r5
+ # (s5s6s7-r5/TOOLS-FINAL lists the six tools files with these SHAs).
+ VENDOR_SHA256 = {
+-    "k4s_end_launch_gate.py": "4fc53765a506d1b9c5c9e740b515cc77b6a657bc6289b4e4337b7be4c91ad72c",
+-    "k4s_end_preflight.py": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
++    "k4s_end_launch_gate.py": "92e60241961daadf56ca1e90d8e3dd53c807b1e624e43caf64a929cec4a68c96",
++    "k4s_end_preflight.py": "c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3",
+     "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+     "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+     "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",

@@ -1,0 +1,280 @@
+diff -ruN -x __pycache__ s5s6s7-r6/tests/fake_frozen.py s5s6s7-r7/tests/fake_frozen.py
+--- s5s6s7-r6/tests/fake_frozen.py	2026-10-12 15:00:19.570702507 -0700
++++ s5s6s7-r7/tests/fake_frozen.py	2026-10-13 18:11:58.251423003 -0700
+@@ -103,6 +103,8 @@
+         self.check_external()
+ 
+     def __exit__(self, *exc):
++        if self.fake.get("exit_fails") and exc[0] is None:      # r7: the frozen close/check failing after the hold
++            raise RuntimeError("Fleet background failure at exit")
+         return False
+ 
+ 
+@@ -144,7 +146,9 @@
+     """A Frozen-compatible object; its bundle manifest is what the test writes as the pinned tiers-pins.json."""
+     fake = dict(fake or {})
+     tmp = Path(guard_job).parent
+-    profile = dict(host=host, reference_slot=0, slot_count=slot_count, console_rule=False, warmup_seconds=300,
++    # r7: the frozen warm-up (>= 300 s on a host) scaled to the sub-second test hold; fake["warmup_seconds"] overrides
++    profile = dict(host=host, reference_slot=0, slot_count=slot_count, console_rule=False,
++                   warmup_seconds=fake.get("warmup_seconds", 0.2),
+                    perception="none", plan="plan.json", end_evidence="end-evidence.json",
+                    guard=dict(job=str(guard_job), freeze="FROZEN-T1.json", root="guard"))
+     manifest = dict(profile="fleet-reference", reference_load_profile=profile, topology=dict(P=[0], E=[]),
+@@ -158,7 +162,10 @@
+     def compare_mhz(reporting, census, cpus, slots):
+         measured = [r for r in census if r["phase"] in ("reference-speed", "reference-deadlines")]
+         ok = not fake.get("mhz_fails")
+-        return dict(passes=ok, absolute_relative_difference=0.01 if ok else 0.2, reference_rows=len(measured))
++        if len(measured) < 2:                                   # fleet_profile.py:61-62
++            raise ValueError("Missing/invalid independent reporting or reference MHz census")
++        return dict(passes=ok, absolute_relative_difference=0.01 if ok else 0.2, reference_rows=len(measured),
++                    first_reference_timestamp=min(r["timestamp"] for r in measured))
+ 
+     def validate_blocks(rows, require_measurement=True):
+         if not any(r["event"] == "end" for r in rows):
+@@ -171,8 +178,9 @@
+         evidence_spec=lambda *a: dict(spec=a),
+         frozen_helpers=lambda spec, root: ({}, (SimpleNamespace(), fleet_profile, fleet_validity)),
+         FrozenHooks=lambda: SimpleNamespace(host=lambda: dict(system="Linux", node=host, nice=10, sched_other=True)),
+-        k4s_reporting_profile=lambda bundle, m, spec, h, fe, fp: (
+-            profile, {}, ([0, 1], [[2, 3], [4, 5]][:slot_count - 1], 7), dict(sha256="e" * 64), [dict(slots=3)]),
++        k4s_reporting_profile=lambda bundle, m, spec, h, fe, fp: (       # r7: fake["layout"] = [search, masks, census]
++            profile, {}, tuple(fake["layout"]) if "layout" in fake else ([0, 1], [[2, 3], [4, 5]][:slot_count - 1], 7),
++            dict(sha256="e" * 64), [dict(slots=3)]),
+         K4SFleetBackground=lambda *a: Background(fake, slot_count - 1))
+     L = SimpleNamespace(sha=sha, MANIFEST_NAME="K4S-MAC-MANIFEST.json",
+                         check_corpus=lambda a, b, inv, pub, ids: list(ids), claim_attempt=forbidden("claim_attempt"))
+diff -ruN -x __pycache__ s5s6s7-r6/tests/mutate.py s5s6s7-r7/tests/mutate.py
+--- s5s6s7-r6/tests/mutate.py	2026-10-13 06:17:40.740351099 -0700
++++ s5s6s7-r7/tests/mutate.py	2026-10-13 18:15:26.904989107 -0700
+@@ -332,6 +332,22 @@
+     ('J25', 'U8 r5: builder runtime-manifest SHA drifts from the adoption record', AJ, [_drift(AJ, "FROZEN_RUNTIME_MANIFEST_SHA256")], [R5REC]),
+     ('J26', 'U8 r5: builder runtime path drifts to the superseded runtime', AJ, [('FROZEN_RUNTIME = RUNNER + "/end-staging/runtime-98566c032d0b"', 'FROZEN_RUNTIME = RUNNER + "/end-staging/SUPERSEDED-r3-runtime-98566c032d0b"')], [R5REC]),
+ ]
++R7T = T + "test_r7.py"
++MUTANTS += [
++    # ---- r7 (ruling PF-4): background affinity subset, MHz warm-up window, error outside every check row
++    ('PF01', 'PF-4: affinity readback check reverted to r6 equality', PF, [('require(len(slots["background_affinity"]) == len(masks)\n                    and all(got and set(got) <= set(want) for got, want in zip(slots["background_affinity"], masks))\n                    and len(set().union(*map(set, masks))) == sum(map(len, masks)),', 'require(slots["background_affinity"] == masks,')], [R7T]),
++    ('PF02', 'PF-4: an empty readback accepted', PF, [('all(got and set(got) <= set(want) for', 'all(set(got) <= set(want) for')], [R7T]),
++    ('PF03', 'PF-4: readback not required to be a subset of its mask', PF, [('all(got and set(got) <= set(want) for', 'all(got for')], [R7T]),
++    ('PF04', 'PF-4: pinned masks not required to be disjoint', PF, [('\n                    and len(set().union(*map(set, masks))) == sum(map(len, masks)),', ',')], [R7T]),
++    ('PF05', 'PF-4: readback count not compared with the masks', PF, [('require(len(slots["background_affinity"]) == len(masks)\n', 'require(True\n')], [R7T]),
++    ('PF06', 'PF-4 kept check: slot priority readback not checked', PF, [('require(slots["reference_nice"] == 10 and set(slots["background_nice"]) == {10},', 'require(True,')], [R7T]),
++    ('PF07', 'PF-4: slot evidence recorded differently from the frozen END', PF, [('background_affinity=[sorted(os.sched_getaffinity(w.pid)) for w in background.workers],', 'background_affinity=[sorted(os.sched_getaffinity(w.pid))[:1] for w in background.workers],')], [R7T]),
++    ('PF08', 'PF-4: MHz window includes the frozen warm-up again (all hold rows)', PF, [('\n                          and x["timestamp"] >= settled else x for x in census]', ' else x for x in census]')], [R7T]),
++    ('PF09', 'PF-4: MHz warm-up anchored at the first hold row without warmup_seconds', PF, [('settled = held[0]["timestamp"] + profile["warmup_seconds"] if held else None', 'settled = held[0]["timestamp"] if held else None')], [R7T]),
++    ('PF10', 'PF-4: an unavailable MHz window refuses a reference-work run', PF, [('require(clocks["passes"] is not False or not a.reference_work,', 'require(clocks["passes"] or not a.reference_work,')], [R7T]),
++    ('PF11', 'PF-4: MHz compared with fewer than 2 post-warm-up rows', PF, [('if window["compared_rows"] >= 2:', 'if window["compared_rows"] >= 0:')], [R7T]),
++    ('PF12', 'PF-4: an error outside every check row no longer fails the run', PF, [('ok = (checks.all_passed() and "error" not in result\n', 'ok = (checks.all_passed()\n')], [R7T]),
++]
+ # Equivalent mutants (masked by a stronger check on the same path; documented, not test gaps):
+ EQUIVALENT = {
+     "P14": "load['reference_slot_work'] and mode_requested == 'binding' both derive from the same --no-reference-work "
+@@ -340,7 +356,8 @@
+            "hashed (a missing one refuses as missing), so the set equality cannot fail on its own",
+ }
+ NULLS = [("N%02d" % i, "NULL control (unmodified)", None, [], files)
+-         for i, files in enumerate([[HT, S5], [S6W, S6V], [S7], [S5], [S7], [S6W], [F2I], [F1], [R4T], [A6T], [R5T]],
++         for i, files in enumerate([[HT, S5], [S6W, S6V], [S7], [S5], [S7], [S6W], [F2I], [F1], [R4T], [A6T], [R5T],
++                                   [R7T]],
+                                    1)]
+ 
+ 
+diff -ruN -x __pycache__ s5s6s7-r6/tests/test_r7.py s5s6s7-r7/tests/test_r7.py
+--- s5s6s7-r6/tests/test_r7.py	1969-12-31 16:00:00.000000000 -0800
++++ s5s6s7-r7/tests/test_r7.py	2026-10-13 18:13:45.474281685 -0700
+@@ -0,0 +1,193 @@
++"""r7 (ruling PF-4, COORDINATOR c14b40e8): the S5 checks that were stricter than the frozen END.
++
++- background_ready: the frozen END only RECORDS slot-evidence.json (end_reference.py:371-374); the frozen backends
++  narrow each background worker to search_cpus[:width] per tier (tier_backend.py:238, k4s_backend.py:100). The
++  readbacks observed on 127x04 l00 (preflight-result.json slot_evidence, metadata only) must pass; each readback must
++  be a non-empty subset of its pinned mask and the masks pairwise disjoint.
++- mhz_comparison: END compares only rows after its frozen warmup_seconds (end_reference.py:375-390); so does S5.
++- an error raised while no check row is open fails the run (END: end_reference.py:225-230).
++Class table: CLASS-TABLE-PF4.md."""
++import ast
++import hashlib
++import json
++import os
++from pathlib import Path
++
++import pytest
++
++import k4s_end_preflight as S
++import s5_fixture as X
++from helpers import ok
++
++RUNNER = "/mpac/sdicks02/k4s-runner/run-r1"
++FROZEN_END = RUNNER + "/end-staging/runtime-98566c032d0b/runtime/reports/explore/k4s-confirm/end_reference.py"
++EVIDENCE_04 = RUNNER + "/preflight-received/127x04/preflight-127x04-l00/preflight/preflight-result.json"
++END_REFERENCE_PIN = dict(S.FROZEN_CLOSURE)["reports/explore/k4s-confirm/end_reference.py"]
++
++# 127x04 l00 (r6 S5, failed at background_ready): the recorded slot evidence. Pinned masks: reference [0..4], then
++# ten disjoint five-CPU masks 5-9 .. 50-54 (11 slots).
++SEARCH_04 = [0, 1, 2, 3, 4]
++MASKS_04 = [list(range(5 + 5 * i, 10 + 5 * i)) for i in range(10)]
++OBSERVED_04 = dict(reference_affinity=SEARCH_04, reference_nice=10,
++                   background_affinity=[[5], [10], [15, 16, 17], [20, 21, 22, 23, 24], [25], [30], [35, 36, 37],
++                                        [40, 41, 42, 43, 44], [45], [50]],
++                   background_nice=[10] * 10)
++WORKER0 = 900001                                       # fake_frozen.Background worker pids
++
++
++@pytest.fixture(autouse=True)
++def host_os(monkeypatch):
++    saved = dict(os.environ)
++    state = dict(readbacks=[[2, 3], [4, 5]], nice={})        # fake_frozen default layout; 04 tests set their own
++    monkeypatch.setattr(os, "sched_setaffinity", lambda pid, cpus: None)
++    monkeypatch.setattr(os, "sched_getaffinity",
++                        lambda pid: set(state["readbacks"][pid - WORKER0]) if pid >= WORKER0 else set(SEARCH_04))
++    monkeypatch.setattr(os, "getpriority", lambda which, pid: state["nice"].get(pid, 10))
++    yield state
++    os.environ.clear()
++    os.environ.update(saved)
++
++
++def by_name(result):
++    return {c["name"]: c for c in result["checks"]}
++
++
++def run_04(tmp_path, monkeypatch, masks=MASKS_04, slot_count=11, **fake):
++    env = X.build(tmp_path, monkeypatch, host="127x04", slot_count=slot_count,
++                  fake=dict(fake, layout=[SEARCH_04, masks, 63]))
++    return X.go(env)
++
++
++# ---------------------------------------------------------------- background_ready: affinity subset (PF-4 item 1)
++
++@pytest.mark.skipif(not os.path.isfile(EVIDENCE_04), reason="04 l00 preflight evidence not on this machine")
++def test_pf4_regression_data_is_the_recorded_04_slot_evidence():
++    """The literal below is exactly what 04 l00 recorded (read-only, preflight metadata)."""
++    ok(json.loads(Path(EVIDENCE_04).read_text())["slot_evidence"] == OBSERVED_04)
++
++
++def test_pf4_observed_04_readbacks_pass(tmp_path, monkeypatch, host_os):
++    """The readbacks that failed r6's equality check pass; the evidence is recorded with END's four fields."""
++    host_os["readbacks"] = OBSERVED_04["background_affinity"]
++    ok(OBSERVED_04["background_affinity"] != MASKS_04)          # an equality-only rule refuses this run
++    code, result, seal = run_04(tmp_path, monkeypatch)
++    rows = by_name(result)
++    ok(code == 0 and result["passed"] and seal["status"] == "passed", result.get("error"))
++    ok(rows["background_ready"]["passed"] is True and rows["background_ready"]["workers"] == 10)
++    ok(result["slot_evidence"] == OBSERVED_04)
++    ok(result["load"]["background_slots_ready"] == result["load"]["background_slots_expected"] == 10)
++    ok(result["mode"] == "binding" and result["qualifying"] is True)
++
++
++def test_pf4_full_mask_readbacks_still_pass(tmp_path, monkeypatch, host_os):
++    """A K4-width worker reads back its whole mask (tier_backend.py:238 width 5): equality is a subset too."""
++    host_os["readbacks"] = MASKS_04
++    code, result, _ = run_04(tmp_path, monkeypatch)
++    ok(code == 0 and by_name(result)["background_ready"]["passed"] is True, result.get("error"))
++
++
++def _cross(readbacks):
++    return [list(r) for r in readbacks]
++
++
++NEGATIVES = {
++    "cpu-of-the-next-mask": (MASKS_04, 11, lambda r: r[:3] + [[20, 25]] + r[4:]),
++    "reference-cpu": (MASKS_04, 11, lambda r: [[0]] + r[1:]),
++    "empty-readback": (MASKS_04, 11, lambda r: r[:5] + [[]] + r[6:]),
++    "overlapping-masks": ([[5, 6, 7], [7, 8, 9]], 3, lambda r: [[5], [8]]),
++    "fewer-workers-than-masks": ([[5, 6], [7, 8], [9, 10]], 3, lambda r: [[5], [7]]),
++}
++
++
++@pytest.mark.parametrize("case", sorted(NEGATIVES))
++def test_pf4_non_subset_or_overlapping_masks_refused(tmp_path, monkeypatch, host_os, case):
++    masks, slots, make = NEGATIVES[case]
++    host_os["readbacks"] = make(_cross(OBSERVED_04["background_affinity"]))
++    code, result, seal = run_04(tmp_path, monkeypatch, masks=masks, slot_count=slots)
++    row = by_name(result)["background_ready"]
++    ok(code == 1 and seal["status"] == "failed" and row["passed"] is False, row)
++    ok("not a non-empty subset of its pinned (disjoint) mask" in row["error"], row["error"])
++    ok(result["slot_evidence"]["background_affinity"] == [sorted(x) for x in host_os["readbacks"][:slots - 1]])
++    ok("loaded_hold" not in by_name(result) and by_name(result)["cleanup"]["passed"] is True)
++
++
++@pytest.mark.parametrize("who", ["reference", "background"])
++def test_pf4_priority_readback_still_required(tmp_path, monkeypatch, host_os, who):
++    """Kept: nice 10 is the pinned reporting priority END itself enforces (fleet_profile.py:13 via
++    end_background.py:84-85,113; every worker re-checks it); a renice after start is refused."""
++    host_os["readbacks"] = OBSERVED_04["background_affinity"]
++    host_os["nice"] = {0: 0} if who == "reference" else {WORKER0 + 4: 5}
++    code, result, _ = run_04(tmp_path, monkeypatch)
++    row = by_name(result)["background_ready"]
++    ok(code == 1 and row["passed"] is False and "nice 10" in row["error"], row)
++
++
++def _slot_dict_in(tree, match):
++    for node in ast.walk(tree):
++        if match(node):
++            return node
++    raise AssertionError("slot evidence expression not found")
++
++
++def test_pf4_slot_evidence_is_recorded_exactly_as_the_frozen_end():
++    """The S5 slot record is the frozen END's slot-evidence.json expression, field for field (AST-equal)."""
++    data = Path(FROZEN_END).read_bytes() if os.path.isfile(FROZEN_END) else None
++    if data is None:
++        pytest.skip("frozen runtime not on this machine")
++    ok(hashlib.sha256(data).hexdigest() == END_REFERENCE_PIN)       # the closure-pinned end_reference.py
++    end = _slot_dict_in(ast.parse(data), lambda n: isinstance(n, ast.Call) and getattr(n.func, "attr", None) == "write"
++                        and n.args and isinstance(n.args[0], ast.Constant) and n.args[0].value == "slot-evidence.json")
++    ours = _slot_dict_in(ast.parse(Path(S.__file__).read_text()),
++                         lambda n: isinstance(n, ast.Assign) and getattr(n.targets[0], "id", None) == "slots")
++    ok(ast.dump(end.args[1]) == ast.dump(ours.value))
++    ok(sorted(k.arg for k in ours.value.keywords) == sorted(OBSERVED_04))
++
++
++# ---------------------------------------------------------------- mhz_comparison: END's warm-up exclusion
++
++def _hold_rows(result_dir):
++    rows = [json.loads(s) for s in (Path(result_dir) / "capacity.jsonl").read_text().splitlines()]
++    return [r for r in rows if r["phase"] == S.HOLD_PHASE]
++
++
++def test_pf4_mhz_window_leaves_out_the_frozen_warmup(tmp_path, monkeypatch):
++    env = X.build(tmp_path, monkeypatch, fake=dict(warmup_seconds=0.4))
++    code, result, _ = X.go(env)
++    ok(code == 0 and result["passed"], result.get("error"))
++    held = _hold_rows(env.a.out)
++    settled = held[0]["timestamp"] + 0.4
++    compared = [r for r in held if r["timestamp"] >= settled]
++    m = result["mhz_comparison"]
++    ok(2 <= len(compared) < len(held), (len(compared), len(held)))
++    ok(m["window"] == dict(warmup_seconds=0.4, hold_rows=len(held), compared_rows=len(compared)), m["window"])
++    ok(m["reference_rows"] == len(compared) and m["first_reference_timestamp"] >= settled)
++    ok(by_name(result)["mhz_comparison"]["gate"] is True and m["passes"] is True)
++
++
++def test_pf4_mhz_gate_still_applies_after_the_warmup(tmp_path, monkeypatch):
++    env = X.build(tmp_path, monkeypatch, fake=dict(warmup_seconds=0.4, mhz_fails=True))
++    code, result, _ = X.go(env)
++    ok(code == 1 and by_name(result)["mhz_comparison"]["passed"] is False and result["passed"] is False)
++
++
++def test_pf4_hold_shorter_than_the_warmup_is_recorded_not_gated(tmp_path, monkeypatch):
++    """No row the frozen END would compare: recorded as unavailable, never a refusal (END is never weaker here)."""
++    env = X.build(tmp_path, monkeypatch, fake=dict(warmup_seconds=60, mhz_fails=True))
++    code, result, _ = X.go(env)
++    row = by_name(result)["mhz_comparison"]
++    ok(code == 0 and result["passed"] and row["passed"] is True and row["gate"] is False, result.get("error"))
++    m = result["mhz_comparison"]
++    ok(m["passes"] is None and m["window"]["compared_rows"] == 0 and m["window"]["hold_rows"] > 0 and m["unavailable"])
++
++
++# ---------------------------------------------------------------- an error outside every check row
++
++def test_pf4_error_outside_any_check_fails_the_run(tmp_path, monkeypatch):
++    """The frozen background __exit__ (check + close) raising after loaded_hold ended: no row is open, every recorded
++    row passed, and the run must still fail (r6 sealed it passed)."""
++    env = X.build(tmp_path, monkeypatch, fake=dict(exit_fails=True))
++    code, result, seal = X.go(env)
++    ok(code == 1 and result["passed"] is False and seal["status"] == "failed" and result["qualifying"] is False)
++    ok("Fleet background failure at exit" in result["error"])
++    ok(all(c["passed"] is True or c.get("skipped") for c in result["checks"]))
++    ok("loaded_hold" in by_name(result) and "monitor_stop" not in by_name(result))

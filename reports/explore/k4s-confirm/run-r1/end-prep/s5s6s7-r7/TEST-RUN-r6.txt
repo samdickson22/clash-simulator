@@ -1,0 +1,6 @@
+s5s6s7-r6 final test matrix (127x05; in place, sibling s3s9s10-r6 beside it with its final SHA256SUMS; env -i, umask 022, PYTHONDONTWRITEBYTECODE=1, -B, -p no:cacheprovider, nice -n 19 taskset -c 8-23, cwd /tmp; 3.8 PYTHONPATH=/dev/shm/s3s9s10r2-pytest38; package tree (path/size/mtime) identical before and after, 0 .pyc)
+py312: 744 passed in 285.31s (0:04:45)
+py312-O: 689 passed, 55 skipped, 1 warning in 271.53s (0:04:31)
+py38: 744 passed in 398.17s (0:06:38)
+py38-O: 689 passed, 55 skipped, 1 warning in 386.54s (0:06:26)
+runs 2026-10-13T13:43:25Z..2026-10-13T13:50:03Z (four in parallel)

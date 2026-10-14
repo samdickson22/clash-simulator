@@ -1,0 +1,44 @@
+{
+ "audit_only_deviations": [
+  "the bundle's guard admissions minus idle-services.json are applied IN MEMORY (the b3-r7 shape, not yet built); the bundle files are the b3-r6 ones",
+  "the frozen e4v3 code is a byte copy of end-staging/runtime-98566c032d0b's e4v3 directory placed under the scratch dir (visible inside the namespace)",
+  "case 'stale idle file': a copy of the staged job (k4s-end-guard-r1-pf09) with the committed 03 idle-services.json added"
+ ],
+ "consequence": "b3-r6 03 bundles (idle pinned) fail the frozen guard once the 03 job has no idle file: the 03 bundles must be rebuilt by the IR-03 S4 (b3-r7); S10 r4 refuses a 03 bundle whose guard admissions include idle-services.json",
+ "frozen_reporting_guard": {
+  "b3r6_shape_idle_pinned": "GUARD_REFUSED FileNotFoundError [Errno 2] No such file or directory: '/mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00/idle-services.json'",
+  "ir03_bus_only": "GUARD_OK job /mpac/sdicks02/jobs/clasher/k4s-end-guard-r1-pf00 admissions ['FROZEN-T1.json', 'system-bus-admission.json'] seed deps 4",
+  "ir03_with_stale_idle_file_in_job": "GUARD_REFUSED ValueError Every existing guard admission must be pinned"
+ },
+ "guard_admissions": [
+  "system-bus-admission.json"
+ ],
+ "guard_manifest_sha256": "0f4e075491694f73a4a6678de7805b3d393725445673bc4a9d24ef10a42a59b2",
+ "guard_top_level": [
+  "FROZEN-T1.json",
+  "repo",
+  "system-bus-admission.json"
+ ],
+ "s10_logins": [
+  "P-check",
+  "P-facts",
+  "base",
+  "receive-guard-job",
+  "F",
+  "POST"
+ ],
+ "s1b_manifest_sha256": "64c2fc8ded40e695c9fc2eb1e635204d6cc8af5bd48f040845211bc78ede3e84",
+ "s4_b3r6_03pf00": "{\"assembler_sha256\":\"76b7b7cf4b9a7ebf9cbcaa46a6d6f1baefca36b40148f6f104d5055cafa4dd63\",\"dry_run\":false,\"files\":67,\"manifest_sha256\":\"ca4ce6ef49d460ecce37bad3c6d29229b03a10697b8cd69148163c9cb8d17499\",\"out\":\"/tmp/k4s-r4chainc-ieyb5y/bundles/end-ref-127x03-pf00\",\"production_pins\":true}",
+ "schema": "clasher.k4s.s3s9s10-r4.real-input-chain-c-ir03.v1",
+ "steps": [
+  "2026-10-13T08:07:36Z s3-build rc=0",
+  "2026-10-13T08:07:37Z s3-verify rc=0",
+  "2026-10-13T08:09:55Z s4-127x03-pf00 rc=0",
+  "2026-10-13T08:09:58Z s10-guard rc=0",
+  "2026-10-13T08:09:59Z guard-ir03 rc=0",
+  "2026-10-13T08:09:59Z guard-orig rc=3",
+  "2026-10-13T08:09:59Z guard-ir03-stale-idle-file rc=3",
+  "2026-10-13T08:09:59Z chain-c DONE"
+ ],
+ "what": "IR-03 (proposed ruling; 03 has no idle resident): r4 S3 built and verified a REAL 03 preflight guard job from repo-full at P' and the REAL A1b S1b manifest (which still has the 03 idle row); S10 staged it to a fake 03; the FROZEN fleet_validity.ReportingGuard constructor + check_admissions (fleet_validity.py:110-114, :125-128) ran on it against a real b3-r6 03-pf00 bundle."
+}

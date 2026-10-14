@@ -1,0 +1,18 @@
+s5s6s7-r5 final test matrix (127x05; umask 022, PYTHONDONTWRITEBYTECODE=1, -B, -p no:cacheprovider, nice -n 19 taskset -c 16-23; 3.8 PYTHONPATH=/dev/shm/s3s9s10r2-pytest38)
+== pristine cp -a copy (sibling-package tests skip there by design), then test_r5.py in place (sibling s3s9s10-r5 SHA256SUMS not yet final: 1 expected failure)
+pyc before: 0
+pristine /mpac/sdicks02/venvs/k4s-freeze/bin/python normal: 742 passed, 2 skipped in 398.06s (0:06:38)
+pristine /mpac/sdicks02/venvs/k4s-freeze/bin/python -O: 687 passed, 57 skipped, 1 warning in 370.34s (0:06:10)
+pristine /usr/bin/python3 normal: 742 passed, 2 skipped in 545.24s (0:09:05)
+pristine /usr/bin/python3 -O: 687 passed, 57 skipped, 1 warning in 531.63s (0:08:51)
+pyc after: 0
+in-place test_r5.py /mpac/sdicks02/venvs/k4s-freeze/bin/python normal: 1 failed, 9 passed in 9.19s
+in-place test_r5.py /mpac/sdicks02/venvs/k4s-freeze/bin/python -O: 1 failed, 9 passed, 1 warning in 10.02s
+in-place test_r5.py /usr/bin/python3 normal: 1 failed, 9 passed in 1.31s
+in-place test_r5.py /usr/bin/python3 -O: 1 failed, 9 passed, 1 warning in 1.41s
+pyc in place: 0
+== test_r5.py in place after s3s9s10-r5 SHA256SUMS became final (sha256sum -c OK)
+in-place test_r5.py /mpac/sdicks02/venvs/k4s-freeze/bin/python normal: 10 passed in 0.90s
+in-place test_r5.py /mpac/sdicks02/venvs/k4s-freeze/bin/python -O: 10 passed, 1 warning in 0.88s
+in-place test_r5.py /usr/bin/python3 normal: 10 passed in 1.19s
+in-place test_r5.py /usr/bin/python3 -O: 10 passed, 1 warning in 1.20s

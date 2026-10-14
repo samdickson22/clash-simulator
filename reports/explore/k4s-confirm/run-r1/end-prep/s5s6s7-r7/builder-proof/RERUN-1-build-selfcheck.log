@@ -1,0 +1,9 @@
+adopted pins current
+{"end_job": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/builder-proof/END-JOB.json", "end_job_sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5"}
+{"end_job_commit_scratch": "5c847855c53b61eaaa35b502529d81289916ba3e", "ok": true, "self_check": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/builder-proof/SELF-CHECK.json", "sha256": "1485fe7a0e3d553fea9b2b7248ce115aa5a9c423844a3c332d873449bb168cce"}
+materialized 45
+rerun OK X=f84b146251eb8cb963b45fc74dbbc21c4cc3e156
+
+real	0m14.587s
+user	0m10.290s
+sys	0m4.962s

@@ -1,0 +1,30 @@
+--- s5s6s7-r3/tests/test_f1_bootstrap.py	2026-10-12 17:30:51.015179430 -0700
++++ s5s6s7-r4/tests/test_f1_bootstrap.py	2026-10-12 23:09:21.775657246 -0700
+@@ -36,7 +36,8 @@
+ PY_BEGIN, PY_END = b"# ==== BEGIN K4S CANONICAL BOOTSTRAP r1 ", b"# ==== END K4S CANONICAL BOOTSTRAP r1 ====\n"
+ SH_BEGIN = b"# ==== BEGIN K4S CANONICAL SHELL BOOTSTRAP r1 "
+ SH_END = b"# ==== END K4S CANONICAL SHELL BOOTSTRAP r1 ====\n"
+-PY_COMPONENTS = ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_launch_gate.py", "k4s_end_verify_push.py")
++PY_COMPONENTS = ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_launch_gate.py", "k4s_end_verify_push.py",
++                 "k4s_a6_builder.py")                                  # r4: the END-JOB builder (U8)
+ WRAPPERS = ("k4s_end_exit_push.sh", "k4s_preflight_push.sh")
+ SI = (ROOT / "safe_input.py").read_bytes()
+ HT = (ROOT / "k4s_end_host_tool.py").read_bytes()
+@@ -88,7 +89,8 @@
+     import k4s_end_launch_gate as G
+     import k4s_end_preflight as S
+     import k4s_end_host_tool as T
+-    ok(S.SAFE_INPUT_SIZE == G.SAFE_INPUT_SIZE == T.SAFE_INPUT_SIZE == len(SI))
++    import k4s_a6_builder as J
++    ok(S.SAFE_INPUT_SIZE == G.SAFE_INPUT_SIZE == T.SAFE_INPUT_SIZE == J.SAFE_INPUT_SIZE == len(SI))
+     ok(S.HOST_TOOL_SIZE == G.HOST_TOOL_SIZE == len(HT))
+ 
+ 
+@@ -124,6 +126,7 @@
+     "gate:safe_input": entrypoint("lg", "k4s_end_launch_gate.py", "load_layers()", "safe_input.py", True),
+     "gate:host_tool": entrypoint("lgt", "k4s_end_launch_gate.py", "load_layers()", "k4s_end_host_tool.py", True),
+     "verifier:safe_input": entrypoint("ev", "k4s_end_verify_push.py", "load_si()", "safe_input.py"),
++    "a6-builder:safe_input": entrypoint("aj", "k4s_a6_builder.py", "load_si()", "safe_input.py"),     # r4 (U8)
+ }
+ CASES = [(ep, sc) for ep in sorted(EPS) for sc in EPS[ep].scenarios()]
+ 

@@ -1,0 +1,10 @@
+# s5s6s7-r7 TOOLS-FINAL (ruling PF-4): the six files S10 stages as <base>/tools (TOOL_PINS). Final for r7.
+# Only k4s_end_preflight.py differs from s5s6s7-r6/TOOLS-FINAL (the other five rows are byte-identical).
+# columns: staged-name sha256 size source-path-in-s5s6s7-r7
+detach.sh 1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb 599 t1-originals/detach.sh
+k4s_end_exit_push.sh 65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af 18012 k4s_end_exit_push.sh
+k4s_preflight_push.sh c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580 16749 k4s_preflight_push.sh
+k4s_end_preflight.py c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3 78954 k4s_end_preflight.py
+safe_input.py 806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00 133606 safe_input.py
+k4s_end_host_tool.py 22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647 34444 k4s_end_host_tool.py
+# written 2026-10-14T01:19:57Z
