@@ -1,6 +1,7 @@
 """Adapters between ordinary native clocks and the legacy cooldown projection."""
 
 from .attack_clock import OrdinaryAttackClock
+from .cards.firecracker import AttackRecoil
 from .cards.ice_spirit import IceSpiritFreeze
 from .mechanics.mechanic_base import BaseMechanic
 
@@ -24,11 +25,14 @@ def supported(entity) -> bool:
     if getattr(stats, "first_hit_time", None) != hit - load:
         return False
     # Ice Spirit uses the ordinary clock until its launch hook replaces the
-    # character with a projectile. Other custom handlers await native coverage.
+    # character with a projectile. AttackRecoil only pushes the attacker after
+    # an ordinary launch; native Firecracker load/hit timelines (rich
+    # snapshots, calibration batch 2 cards) follow this clock exactly. Other
+    # custom handlers await native coverage.
     return all(
         getattr(type(mechanic), method, None) is getattr(BaseMechanic, method)
         for mechanic in entity.mechanics
-        if not isinstance(mechanic, IceSpiritFreeze)
+        if not isinstance(mechanic, (IceSpiritFreeze, AttackRecoil))
         for method in ("on_attack_start", "on_attack_committed")
     )
 

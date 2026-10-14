@@ -54,7 +54,7 @@ def test_reachable_children_use_current_nested_stats_and_mechanics():
     )
     expected = {
         # child: (level-11 hitpoints, level-11 damage, mechanics)
-        "Barbarian": (691, 192, ()),
+        "Barbarian": (716, 192, ()),  # base 280 (calibration BATCH2.md §2)
         "DeliveryRecruit": (547, 133, ("Shield",)),
         "Goblin": (202, 120, ()),
         "Golemite": (1039, 84, ("DeathDamage",)),

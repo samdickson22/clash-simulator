@@ -47,10 +47,19 @@ def test_different_levels_do_not_mutate_shared_entry(entries):
     assert json.dumps(entry, sort_keys=True) == before
 
 
-@pytest.mark.parametrize("name", ["Earthquake", "Poison", "Tornado"])
+@pytest.mark.parametrize("name", ["Earthquake", "Tornado"])
 def test_unreconciled_tournament_overrides_are_explicit(entries, name):
     with pytest.raises(ValueError, match="level.*override"):
         create_spell_from_json(entries[name], level=12)
+
+
+def test_poison_crown_override_is_reconciled_with_native_ceiling(entries):
+    # Calibration batch 2 §9c (reports/bot/calibration/BATCH2.md): native
+    # 15.535 crown towers drop 22 per Poison pulse, which is the native ceiling
+    # 92 * 23% rounded up. The level-11 override now agrees with that
+    # arithmetic, so other levels derive their crown pulse instead of raising.
+    pulses = [create_spell_from_json(entries["Poison"], level=lv) for lv in (11, 12)]
+    assert [(s.damage, s.crown_tower_damage) for s in pulses] == [(92, 22), (101, 24)]
 
 
 @pytest.mark.parametrize("level", [0, 21, 1.5, True])

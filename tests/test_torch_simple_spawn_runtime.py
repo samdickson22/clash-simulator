@@ -91,7 +91,7 @@ def _slot_zero_action(
 @pytest.mark.parametrize(
     ("root_name", "child_name", "count", "radius", "hp", "damage", "deploy"),
     (
-        ("BattleRam", "Barbarian", 2, 600, 691.0, 192.0, 20),
+        ("BattleRam", "Barbarian", 2, 600, 716.0, 192.0, 20),  # Barbarian HP base 280 (calibration BATCH2.md §2)
         ("LavaHound", "LavaPups", 6, 2_500, 215.0, 81.0, 0),
     ),
 )
