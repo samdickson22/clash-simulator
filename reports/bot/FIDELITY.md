@@ -29,6 +29,10 @@ spawning**: missed or shifted tower and unit hits, spawner and formation output,
   - Both sides are our scripted bots on C56 decks. All cards and towers are level 11; there are no evolutions.
   - Object rows are sampled every 1–4 ticks (about 3,300 frames per match).
   - Matches end by the normal rules: regulation 3601, or an overtime tower.
+  - Each recording is a **window** of a battle. It starts at a varied tick (340 up to 4,800, i.e. into overtime),
+    fast-forwarded with full towers and 10 elixir, and runs to the real end.
+  - Fixture length: median 1,388 ticks, IQR 782–2,402, max 5,640; 96 of 577 are ≥3,000 ticks. 1.01M ticks in total.
+  - So "winner agrees" means crowns at the end of the window.
 - **RoyaleSim's own corpus is not available.** Its 73 recordings (client 16.402) are private. The repo ships one
   sample fixture. So both engines are measured on our corpus only.
 - **Version note:** the recordings are from client 15.535.

@@ -23,6 +23,10 @@ tier). Report to coordinator thread 0523ae6f.
   - No towers, within ¼ tile: RoyaleSim 15.535 **78.8%**, ours **51.4%**, RoyaleSim 16.402 72.1%.
   - Paired: +26.1 pp for RoyaleSim, better in 530/577 fixtures.
 
+- **2026-10-14 ~03:25Z, step 2 speed:** `reports/bot/SPEED.md`.
+  - Rust core 34.3k ticks/s with a 5 µs clone; RoyaleSim 30.8k (16.402 rules) or 14.2k (15.535 rules) with a ~5 ms
+    save+load branch; Python 521.
+
 ## Running
 
 - Delegated Opus task `bot-lead-inventory-r1` (bot inventory + `bot/players/` adapters). It writes
@@ -30,8 +34,6 @@ tier). Report to coordinator thread 0523ae6f.
 
 ## Next
 
-1. Step 2 speed: same host (03), single core, same decks/seeds; ticks/s and state clone/save cost for ours (Python
-   and Rust) and RoyaleSim.
 2. Step 3 strength baseline: fixed opponent pool plus deck/seed protocol; headline in both engines; greedy vs sampled
    play/wait for the student.
 3. Step 4 engine decision, then train at scale.
