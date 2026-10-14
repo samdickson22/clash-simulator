@@ -1201,19 +1201,29 @@ def hr2_scenarios(tmp, code=None):
         def __setattr__(self, k, v):
             object.__setattr__(self, k, v)
             if k in ('fast_pass', 'slow_pass', 'slow', 'breach') and self.__dict__.get('_armed'):
-                self.__dict__['_seen'].append((k, v, self.due(self.__dict__['_clock']['t'])[0]))
+                d, clock = self.__dict__, self.__dict__['_clock']
+                completion = (k == 'slow') or (k in ('fast_pass', 'slow_pass') and v is not None and v[1] is not None)
+                if completion and d.get('_pause'): clock['t'] += d['_pause']      # HR2R2-F1: descheduled after this publish
+                if completion and k.endswith('_pass'): d['_breach_at_done'].append(d.get('breach'))
+                verdict = self.slow_verdict(time.time(), clock['t'], {}) if d.get('_check_verdict') else None
+                d['_seen'].append((k, v, self.due(clock['t'])[0] or verdict))
     def hooked(clock, **a_):
         d = Hooked.__new__(Hooked)
         a = types.SimpleNamespace(cycle=9.5, measure_budget=8.0, stall=1e9, slow_cycle=30.0, slow_budget=120.0, slow_max_age=180.0)
         for k, v in a_.items(): setattr(a, k, v)
         for k, v in dict(a=a, breach=None, halted=None, fast_pass=None, slow_pass=None, slow=None, members_now={}, started=clock['t'],
-                         progress=clock['t'], _seen=[], _clock=clock, _armed=True, wfd=None, logq=None).items(): d.__dict__[k] = v
+                         progress=clock['t'], _seen=[], _clock=clock, _armed=True, wfd=None, logq=None, _pause=0.0,
+                         _breach_at_done=[], _check_verdict=False).items(): d.__dict__[k] = v
         return d
-    def drive_slow(durations, delay):
-        """slow_worker on a virtual clock: pass i takes durations[i]; the next pass starts `delay` s late (scheduling)."""
+    def drive_slow(durations, delay, pause=0.0, fail=None):
+        """slow_worker on a virtual clock: pass i takes durations[i]; the next pass starts `delay` s late (scheduling);
+        `pause` s pass between the completion publications (HR2R2-F1); `fail` = index of a pass that fails."""
         clock = dict(t=1000.0); dog = hooked(clock); it = iter(durations); n = [0]
+        dog.__dict__['_pause'] = pause; dog.__dict__['_check_verdict'] = True; k = [0]
         def ms():
-            clock['t'] += next(it); return None, dict(epoch=time.time(), tree_pss=0, disk=0, disk_vanished=0, timing={})
+            clock['t'] += next(it); k[0] += 1
+            if fail is not None and k[0]-1 == fail: return 'measurement failed: injected', {}
+            return None, dict(epoch=time.time(), tree_pss=0, disk=0, disk_vanished=0, timing={})
         dog.__dict__['measure_slow'] = ms
         def sl(d):
             clock['t'] += max(0.0, d)+delay; n[0] += 1
@@ -1222,8 +1232,8 @@ def hr2_scenarios(tmp, code=None):
         try: dog.slow_worker()
         finally: W.time = saved
         return dog
-    def drive_fast(durations, delay):
-        clock = dict(t=1000.0); dog = hooked(clock); it = iter(durations); n = [0]
+    def drive_fast(durations, delay, pause=0.0):
+        clock = dict(t=1000.0); dog = hooked(clock); it = iter(durations); n = [0]; dog.__dict__['_pause'] = pause
         def m():
             clock['t'] += next(it); return None, dict(epoch=time.time())
         dog.__dict__['measure'] = m; dog.__dict__['flush_log'] = lambda: None
@@ -1246,6 +1256,19 @@ def hr2_scenarios(tmp, code=None):
         f = drive_fast([8.0], 0.0); fat = f.breach is None
         f2 = drive_fast([1.0, 8.15], 0.0); flate = f2.breach is not None and 'returned after 8.150 s > 8 s' in f2.breach[0]
         return at and late and fat and flate
+    def completion_order():   # HR2R2-F1: the worker is descheduled 0.15 s between its completion publications while time
+        ok = []                # crosses the budget: an accepted pass (119.9 s; exactly 120 s) stays healthy at every check;
+        for dur in (119.9, 120.0):                    # a late (120.1 s) or failed pass shows its breach BEFORE it looks
+            d = drive_slow([10.0, dur], 0.0, pause=0.15)                                   # complete, and keeps the old good
+            ok.append(not [x for x in d._seen if x[2] is not None] and d.breach is None and d.slow['mono'] == 1030.0+dur)   # 2nd pass at 1030
+        d = drive_slow([10.0, 120.1], 0.0, pause=0.15)
+        ok.append(d.breach is not None and 'returned after' in d.breach[0] and d._breach_at_done[-1] is not None and d.slow['mono'] == 1010.0)
+        d = drive_slow([10.0, 5.0], 0.0, pause=0.15, fail=1)
+        ok.append(d.breach is not None and 'injected' in d.breach[0] and d._breach_at_done[-1] is not None and d.slow['mono'] == 1010.0)
+        f = drive_fast([1.0, 8.15], 0.0, pause=0.15)                                    # fast lane: the same order
+        ok.append(f.breach is not None and f._breach_at_done[-1] is not None)
+        f = drive_fast([0.5, 0.5, 0.5], 0.0, pause=0.15); ok.append(not [x for x in f._seen if x[2] is not None] and f.breach is None)
+        return all(ok)
     def f3_clock():           # HR2-F3: wall-clock steps never age or rejuvenate the last good result; a dead thread expires
         dog = W.Watchdog.__new__(W.Watchdog); dog.a = types.SimpleNamespace(slow_max_age=180.0); m0, w0 = 5000.0, time.time()
         dog.started = m0-500; dog.slow = dict(epoch=w0, mono=m0, tree_pss=1, disk=2, disk_vanished=0, timing={})
@@ -1258,13 +1281,14 @@ def hr2_scenarios(tmp, code=None):
         return fwd and back and age_ok and dead
     def dead_real():          # a REAL watchdog whose slow thread dies after its first good pass HALTs on age; study stopped
         tmpc = Path(tmp)/'hr2-dead-code'; shutil.copytree(code, tmpc, ignore=shutil.ignore_patterns('__pycache__'))
-        src = (tmpc/'watchdog.py').read_text(); hook = "            self.slow_pass = (t0, t1)\n"
+        src = (tmpc/'watchdog.py').read_text(); hook = "            if why is None: self.slow = dict(res, mono=t1)\n"
         assert src.count(hook) == 1
         (tmpc/'watchdog.py').write_text(src.replace(hook, hook+"            return                                           # TEST: the thread dies\n"))
         j, ctl = hr2_bigjob(tmp, 'hr2-dead', n_dirs=2, n_files=10)
         reason, _, stopped = hr2_run(tmpc, j, ctl, opts=('--slow-cycle', '0.5', '--slow-budget', '1', '--slow-max-age', '2'), secs=8)
         return reason and 'older than' in reason and stopped
-    for name, fn in (('f1_transition', f1_transition), ('f2_late', f2_late), ('f3_clock', f3_clock), ('dead_real', dead_real),
+    for name, fn in (('f1_transition', f1_transition), ('f2_late', f2_late), ('completion_order', completion_order),
+                     ('f3_clock', f3_clock), ('dead_real', dead_real),
                      ('unit_due', unit_due), ('unit_verdict', unit_verdict), ('args_check', args_check), ('slow_positive', slow_positive),
                      ('slow_bounded', slow_bounded), ('slow_breach', slow_breach), ('slow_failed', slow_failed)):
         run(name, fn)
@@ -1286,6 +1310,10 @@ def test_hr2(tmp):
          '0.15 s late) and the real fast worker (0.5 s passes every 9.5 s) never yield a false HALT', r['f1_transition'])
     case('HR2-F2 (Sol r1): a pass returning exactly at its budget is accepted; one returning just over it (between polls) is a '
          'breach and the previous good result stays the last good one - slow lane (120 s) and fast lane (8 s)', r['f2_late'])
+    case('HR2R2-F1 (Sol r2): descheduled 0.15 s between its completion publications while time crosses the budget, an accepted '
+         'slow pass (119.9 s, exactly 120 s) stays healthy at every supervisor/freshness check; a late (120.1 s) or failed pass '
+         'shows its breach before it looks complete and keeps the previous good result; the fast lane publishes in the same order',
+         r['completion_order'])
     case('HR2-F3 (Sol r1): freshness is monotonic - a +200 s wall step keeps a 1 s-old result fresh, a -1 h step cannot hide a '
          '181 s-old one, slow_age is monotonic; a slow thread dead between passes expires (unit) and HALTs a real watchdog, '
          'stopping the study process', r['f3_clock'] and r['dead_real'])

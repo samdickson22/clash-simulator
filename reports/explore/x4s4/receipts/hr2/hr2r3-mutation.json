@@ -1,0 +1,158 @@
+{
+ "original": {
+  "f1_transition": true,
+  "f2_late": true,
+  "completion_order": true,
+  "f3_clock": true,
+  "dead_real": true,
+  "unit_due": true,
+  "unit_verdict": true,
+  "args_check": true,
+  "slow_positive": true,
+  "slow_bounded": true,
+  "slow_breach": true,
+  "slow_failed": true
+ },
+ "original_all_pass": true,
+ "mutants": {
+  "disk walk back in the fast lane": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "slow_positive"
+   ]
+  },
+  "no stuck-pass overdue": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "unit_due"
+   ]
+  },
+  "no stale-age check": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f3_clock",
+    "dead_real",
+    "unit_verdict"
+   ]
+  },
+  "no missing-at-start check": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "unit_verdict"
+   ]
+  },
+  "slow breach ignored": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f2_late",
+    "completion_order",
+    "slow_bounded",
+    "slow_breach",
+    "slow_failed"
+   ]
+  },
+  "slow worker not started": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "dead_real",
+    "slow_positive",
+    "slow_bounded",
+    "slow_breach",
+    "slow_failed"
+   ]
+  },
+  "max-age validation removed": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "args_check"
+   ]
+  },
+  "slow pass unbounded (walk, main thread, late check)": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f2_late",
+    "completion_order",
+    "unit_due",
+    "slow_bounded"
+   ]
+  },
+  "F1 slow: two-step publish": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f1_transition"
+   ]
+  },
+  "F1 fast: two-step publish": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f1_transition",
+    "completion_order"
+   ]
+  },
+  "F2 slow: late return accepted": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f2_late",
+    "completion_order"
+   ]
+  },
+  "F2 fast: late return accepted": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f2_late",
+    "completion_order"
+   ]
+  },
+  "F2 boundary inclusive (>=)": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f2_late",
+    "completion_order"
+   ]
+  },
+  "F3 wall-clock age": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "f3_clock"
+   ]
+  },
+  "R2F1 r2 completion order restored (slow)": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "completion_order",
+    "dead_real"
+   ]
+  },
+  "R2F1 slow breach after completion": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "completion_order"
+   ]
+  },
+  "R2F1 fast breach after completion": {
+   "applied": true,
+   "killed": true,
+   "failing": [
+    "completion_order"
+   ]
+  }
+ },
+ "all_applied": true,
+ "all_killed": true
+}

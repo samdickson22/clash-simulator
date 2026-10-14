@@ -273,19 +273,59 @@ detached with `start_new_session`, the study marker stripped, waits for the firs
   completion (`mono`). The age check and the reported `slow_age` use the monotonic clock; `epoch` is diagnostic
   only. The startup check was already monotonic.
 
-**Shared state across the three threads** (fast worker, slow worker, main), each read once per decision:
+**HR-2 r3 (Sol fix-check r2, HR2R2-F1): completion order.** r2 published the last good slow result before marking its
+pass complete. A supervisor poll in that gap, with time just past the budget, HALTed an accepted in-budget pass; Sol
+reproduced this at 119.964 s, with a HALT at 120.018 s. Both lanes now publish in one order:
+1. a failed or late outcome's breach;
+2. the pass completion `(t0, t1)`;
+3. on success only, the slow lane's last good result.
 
-| Field | Writer | Readers | Publication | Hazard |
+In every gap the supervisor sees a consistent state. Until step 3, the previous good result stands, and it is at most
+SLOW_CYCLE + SLOW_BUDGET = 150 s old, under the 180 s age bound.
+- **Test (`completion_order`):** the worker is descheduled 0.15 s after each completion publication while time
+  crosses the budget.
+  - An accepted 119.9 s pass and an exactly-120 s pass stay healthy at every `due()` and freshness check.
+  - A late (120.1 s) or failed pass shows its breach before it looks complete and keeps the previous good result.
+  - The fast lane follows the same order.
+- **Mutants:**
+  - the r2 order restored (slow);
+  - the breach published after completion (slow);
+  - the breach published after completion (fast).
+
+**Shared state across the watchdog's threads** (r3, complete per Sol HR2R2-N1). The threads are the fast worker,
+the slow worker, the main thread, the bounded HALT `mark()` helper and the `best_effort_log` thread started by
+`halt()`. Each decision reads a field once.
+
+| Field | Writer(s) | Reader(s) | Publication | Hazard |
 |---|---|---|---|---|
-| `fast_pass` | fast worker | main `due()` | one tuple assignment | none (was F1 in the fast lane) |
-| `slow_pass` | slow worker | main `due()` | one tuple assignment | none (was F1) |
-| `slow` (last good) | slow worker | fast `slow_verdict` (local copy) | a new dict swapped whole; only in-budget, in-limit passes | none |
+| `fast_pass` | fast worker | main `due()` | one tuple assignment; the breach first, then completion | none |
+| `slow_pass` | slow worker | main `due()` | one tuple assignment; the breach, then completion, then the result | none |
+| `slow` (last good) | slow worker | fast `slow_verdict` (local copy) | a new dict swapped whole, after completion; only in-budget, in-limit passes | none |
 | `members_now` | fast worker | slow worker (`list()` once) | a dict replaced whole | none (Sol confirmed) |
-| `breach` | both workers | main | goes None → value only; `if self.breach is None` | either worker's reason may win; both HALT (benign) |
+| `breach` | both workers | main | None → value only; `if self.breach is None` | either worker's reason may win; both HALT (benign) |
 | `progress` | fast worker | main (one read) | float assignment | none |
-| `halted` | main | both workers (loop condition) | set once | none |
+| `halted` | main | both workers, `kill_tree` | set once | a worker already mid-pass finishes that pass; nothing restarts |
 | `started` | `__init__` | fast `slow_verdict` | constant | none |
-| `logq` | all | fast worker (`flush`) | `queue.Queue` | thread-safe |
+| `a`, `job`, `jfd`, `wfd` | `__init__` | all threads | constant config, paths and directory fds (`*at` syscalls are thread-safe) | none |
+| `deadline`, `deadline_text`, `stop_since` | fast worker | fast worker only | confined | none |
+| `logq` | fast worker, main (`halt`, `kill_tree`) | fast worker `flush_log`; after HALT also `best_effort_log` | `queue.Queue` (thread-safe); each record is taken once | after HALT two drainers may append to watchdog.log in interleaved order (diagnostic only, best-effort) |
+| HALT.json / STOP | main via the bounded `mark()` helper | consumers via files | `create_excl`, then symlink, bounded at 5 s | unchanged (R9-F1) |
+| `self.tree` (`Tree.known`, `Tree.readout_known`) | fast `measure()` → `scan()`; main `kill_tree()` → `scan()` | the same | in-place set updates (`&=`, `\|=`) | **known residual, pre-existing (R9):** see below |
+
+**Known residual (Sol HR2R2-N1, pre-existing in the base, not introduced by HR-2).** `halted` stops new worker
+iterations but not a fast scan already in flight. So the main thread's `kill_tree()` scan can overlap an unfinished
+fast `scan()`, and both mutate `Tree.known` and `Tree.readout_known` in place. Sol showed a synthetic interleaving:
+1. teardown captures an older process inventory;
+2. the fast scan retains a newly appeared marked process;
+3. that process execs with a cleaned environment;
+4. teardown's `known &= live`, using the older inventory, drops the new identity.
+
+The orphan is then neither marked, retained nor a descendant of a member.
+
+It needs a HALT during an in-flight fast scan, plus a new study process appearing in that window, plus an immediate
+cleaned exec. After HALT the entry points refuse new work (the HALT and watchdog checks in guard, supervise and the
+driver). A fix would serialize `Tree.scan` under a metadata lock (scan I/O outside it). That is left out of HR-2 to
+keep the diff minimal and is recorded for a later review.
 
 **Tests (added to `test_hr2`):**
 - **F1:** the real slow worker (Sol's 119.9 s passes, the next start 0.15 s late) and the real fast worker (0.5 s

@@ -343,9 +343,12 @@ class Watchdog:
             t1 = time.monotonic()
             if why is None and t1-t0 > self.a.slow_budget:                  # HR2-F2: a pass that RETURNED late is a breach,
                 why = f'slow measurement (PSS/disk) returned after {t1-t0:.3f} s > {self.a.slow_budget:g} s'   # whether or not
-            if why is None: self.slow = dict(res, mono=t1)                   # a poll saw it overdue; only an in-budget,
-            elif self.breach is None: self.breach = (why, res)               # in-limit pass replaces the last good result
+            # HR2R2-F1 (Sol r2): completion order. A failed or late outcome is published first, then the pass completion,
+            # then (only for an in-budget, in-limit pass) the last good result it vouches for. In each gap the supervisor
+            # sees a consistent state; until the swap the previous good result (<= SLOW_CYCLE + SLOW_BUDGET old) stands.
+            if why is not None and self.breach is None: self.breach = (why, res)
             self.slow_pass = (t0, t1)
+            if why is None: self.slow = dict(res, mono=t1)
             time.sleep(max(0.0, self.a.slow_cycle-(time.monotonic()-t0)))
 
     # ---- worker: measurements, heartbeat and queued log lines; every step marks progress
@@ -355,10 +358,11 @@ class Watchdog:
             t0 = time.monotonic(); self.fast_pass = (t0, None)              # HR2-F1 class (fast lane, since R9): one atomic publish
             try: why, readings = self.measure()
             except Exception as exc: why, readings = f'measurement failed: {exc!r}', {}
-            t1 = time.monotonic(); self.fast_pass = (t0, t1); self.progress = t1
+            t1 = time.monotonic()
             if why is None and t1-t0 > self.a.measure_budget:               # HR2-F2 class: a late return is a breach too
                 why = f'measurement overdue (returned after {t1-t0:.3f} s > {self.a.measure_budget:g} s)'
-            if why and self.breach is None: self.breach = (why, readings)
+            if why and self.breach is None: self.breach = (why, readings)   # HR2R2-F1 order: the breach, then completion
+            self.fast_pass = (t0, t1); self.progress = t1
             try:
                 write_atomic(self.wfd, 'heartbeat.json', dict(utc=utc(), epoch=time.time(), pid=me, halted=self.halted, readings=readings))
                 self.flush_log()

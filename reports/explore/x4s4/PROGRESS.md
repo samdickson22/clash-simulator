@@ -573,3 +573,15 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   - f3_clock: wall steps of ±, a dead-between-passes unit, and a real dead-thread HALT;
   - the positive test also asserts that the watchdog and study process stay alive.
 - Results: 14/14 mutants killed; matrix 6/6 at 152 cases.
+
+## 2026-10-13 — HR-2 r3 after Sol fix-check r2 (REQUEST_CHANGES: HR2R2-F1; N1 non-blocking)
+
+- Sol's review is /mpac/sdicks02/jobs/clasher/x4s4-review/SOL-FIXCHECK-HR2-r2.md (1b6c003f…). F1, F2 and F3 are
+  closed in both lanes, and the fast-lane late-return breach was judged intended and appropriate.
+- **HR2R2-F1, completion order:** both workers publish the breach of a failed or late outcome, then the pass
+  completion, then (slow lane, success only) the last good result. Test `completion_order`: the worker is descheduled
+  0.15 s between publications while time crosses the budget. 3 new mutants.
+- **N1:** the shared-state table is now complete. It adds `self.tree` with the pre-existing teardown-overlap residual
+  recorded, the constant fields, the HALT helper and best_effort_log/logq, and the worker-confined fields.
+- Results: 17/17 mutants killed; matrix 6/6 at 153 cases. Per PR-1 (round 3), the coordinator checks the diff
+  directly.
