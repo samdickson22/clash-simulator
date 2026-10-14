@@ -2,8 +2,8 @@
 # Overlapping CPU feeder for ExIt label generation: start the next batch before the current one's tail ends.
 #   bot/exit/cpu_feeder.sh STATE_DIR TEMPLATE_FILE TARGET_WORKERS BATCH_GAMES NEXT_START STOP_AT [CAP] [MAX_BATCHES]
 # TEMPLATE_FILE holds one generate command containing the literal tokens __OUT__, __START__, __GAMES__, __WORKERS__.
-# Every 30 s: if live (non-zombie) generate processes < TARGET/2 and the host has room under CAP live python processes,
-# launch a batch on [NEXT_START, NEXT_START+BATCH) with workers = min(TARGET, CAP - live - 4) (min 8), detached, out
+# Every 30 s: if live (non-zombie) generate processes < TARGET and the host has room under CAP live python processes,
+# launch a batch on [NEXT_START, NEXT_START+BATCH) with workers = min(TARGET - live gen, CAP - live - 4 - leases) (min 8), detached, out
 # STATE_DIR/../gen-ka-s<start>. NEXT_START is persisted in STATE_DIR/next_start (restarts never reuse a range).
 # Stops when NEXT_START+BATCH > STOP_AT, after MAX_BATCHES, or if a finished batch produced no games.
 set -uo pipefail
@@ -12,6 +12,21 @@ repo=/mpac/sdicks02/repos/clasher-bot
 mkdir -p "$state"; [[ -s "$state/next_start" ]] || echo "$first" > "$state/next_start"
 jobs_dir=$(dirname "$state"); n=0
 live_py() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep -c '[p]ython'; }
+claimed() {  # processes reserved by bot/exit/cpu_room.sh waiters (full N) and by running leases (N minus the
+    # lease's live python processes, so gaps between a job's phases are not handed to new batches); dead pids ignored
+    local t=0 f n g used
+    for f in /mpac/sdicks02/jobs/clasher/bot-cpu-claims/claim-*; do
+        [[ -e "$f" ]] && kill -0 "${f##*claim-}" 2>/dev/null && t=$(( t + $(cat "$f") ))
+    done
+    local seen=" "
+    for f in /mpac/sdicks02/jobs/clasher/bot-cpu-claims/lease-*; do
+        [[ -e "$f" ]] && kill -0 "${f##*lease-}" 2>/dev/null || continue
+        read -r n g < "$f"
+        [[ "$seen" == *" $g "* ]] && continue   # several lease files for one process group count once
+        seen="$seen$g "
+        used=$(ps -u "$USER" -o pgid=,stat=,args= | awk -v g="$g" '$1 == g && $2 !~ /^Z/ && /[p]ython/' | wc -l)
+        (( n > used )) && t=$(( t + n - used ))
+    done; echo "$t"; }
 live_gen() { ps -u "$USER" -o stat=,args= | grep -v '^Z' | grep -c '[b]ot\.exit\.generate'; }
 while (( n < max )); do
     # guard: every batch whose launcher has exited must have produced games
@@ -25,8 +40,8 @@ while (( n < max )); do
         fi
     done
     g=$(live_gen); p=$(live_py)
-    if (( g < target / 2 )); then
-        room=$(( cap - p - 4 )); w=$(( room < target ? room : target ))
+    if (( g < target )); then
+        room=$(( cap - p - 4 - $(claimed) )); want=$(( target - g )); w=$(( room < want ? room : want ))
         start=$(cat "$state/next_start")
         if (( start + batch > stop_at )); then echo "$(date -u +%FT%TZ) block exhausted at $start"; exit 0; fi
         if (( w >= 8 )); then
