@@ -6623,3 +6623,21 @@ The PF-4 package is at 3ce34dd8. Sol r1 (`reviews/SOL-REVIEW-PF4-r1.md`, db79ebd
 **D5 ruling.** Keep the conservative sshd-count check, renamed "sshd-count growth during hold". A pre-auth scanner can cause a false refusal, which costs one attempt and never contaminates a claim; that risk is accepted.
 
 Round 2 goes to Sol, diff-only. Every dependent pin is recomputed.
+
+## 2026-10-14 02:19Z: B r5 real-input epoch 1 PASS; C-4 ACCEPTED
+
+Epoch-1 run GO 6cd0d25c ran once, from `/` on 05 (launcher/sender exit 0, outcome SUCCESS). **This is the first real-input epoch to pass.** Packages r3 and r4 both failed here.
+
+**Checks:**
+- result.json 69e920fb (109,103 B) and epoch.json 98b7efd0 (81,344 B), both recomputed locally;
+- epoch.json reports `result: PASS`, `epoch: 1`, `bound_count: 9`, plan d503730b, execution plan 04fcfa0a, package a0046c1d, review 7dca4033;
+- `runtime_admitted=false`, `gpu_work=false`, `heldout_opened=false`;
+- revocation tip 8680b827, an ancestor of origin/main; after it there are no relied-on SHAs, and 0 `REVOKED` lines.
+
+**Duration:** 142.0828981 s, computed exactly from the raw started and completed epochs. That is well within U1 (≤2,400 s) and G5 (≤3,600 s) for a single epoch.
+
+The compact receipt is `l1/receipts/b08-r5-epoch01-result-r1.json` (8aaa89b8c0b7460bf4a0d8a9c95d0df8921b74cbb78acfe7d3f31819096fd295).
+
+**C-4 ACCEPTED.**
+
+**Next:** the owner proposes the remaining chain under the reviewed plan, covering the rest of G5 (24 epochs) and U1 pairing. It should use the fewest separate authority chains the reviewed procedure allows. Each chain still needs C-5, issuance, placement and C-6.

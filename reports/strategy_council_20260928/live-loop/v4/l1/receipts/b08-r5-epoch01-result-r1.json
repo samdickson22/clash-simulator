@@ -1,0 +1,45 @@
+{
+  "bound_count": 9,
+  "complete": {
+    "bytes": 81344,
+    "envelope_binding": "Exact decoded bytes/SHA/size/path and reviewed validate_output PASS",
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-cpu-transport/a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b/epoch.json",
+    "remote_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b/epoch.json",
+    "sha256": "98b7efd096e868f222170204a630edfebbcce3b60f807bd9667b1c275d84408e"
+  },
+  "cpu_go_sha256": "a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b",
+  "duration": {
+    "completed_epoch_raw": "1791944281.9868555",
+    "completed_utc": "2026-10-14T02:18:01.986856+00:00",
+    "g5_all24_not_yet_complete": true,
+    "g5_this_epoch_within_budget": true,
+    "g5_threshold_seconds": 3600,
+    "source": "Authenticated epoch.json numeric values parsed as Decimal; never launcher elapsed",
+    "started_epoch_raw": "1791944139.9039574",
+    "started_utc": "2026-10-14T02:15:39.903957+00:00",
+    "u1_coordinator_c4_still_required": true,
+    "u1_duration_eligible": true,
+    "u1_threshold_seconds": 2400,
+    "unrounded_seconds": "142.0828981"
+  },
+  "epoch": 1,
+  "extra_remote_inspection": false,
+  "gpu_work": false,
+  "heldout_opened": false,
+  "launcher_exit_code": 0,
+  "main20min_unchanged": true,
+  "no_retry": true,
+  "outcome": "SUCCESS",
+  "phase": "epoch",
+  "result": {
+    "bytes": 109103,
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-cpu-transport/a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b/result.json",
+    "sha256": "69e920fb32fbc9877a9e39aeddc47182deac27d3cbf30d5ef4661a2d6c486a0d"
+  },
+  "revocation_tip_commit": "8680b82795e6d94857238fecc36c689cabd2c97d",
+  "run_go_sha256": "6cd0d25c42a7e220215f2aa92ff9a5e1c862bb366233af2fe18887da131edc7f",
+  "runtime_admitted": false,
+  "sender_exit_code": 0,
+  "status": "SUCCESS_PENDING_COORDINATOR_C4",
+  "utc": "2026-10-14T02:18:09.422154+00:00"
+}
