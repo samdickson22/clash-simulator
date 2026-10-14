@@ -6528,3 +6528,24 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 6cc864c893c7616635df19a306b611beefa2c5b51
 3. A4 preflight on 04 as attempt l00 (argv 24f9c0ba) with the PF-2 flags. Then `verify-received` and a report.
 
 All b0f49dfe and 556bb6e0 conditions stand: no SSH from any thread to a host under preflight; the RO-1 login itself must finish before that host's S7 session; the bus gate applies.
+
+## 2026-10-14 00:54Z: K4S RO-1 done on 03/04; 03 l02 refused (stale release-upgrade stamp); ruling PF-3 (order swap, A5 pre-trigger)
+
+**RO-1 is done.** `ro1-results-r3.sh` exited 0 on both hosts (logs at 1b2f4259). On each host the parent and `results` are now `dr-xr-sr-x`, and `results` is empty.
+
+**03 l02 refused.** S7 refused (rc 3, nothing launched; receipt de2cda0d at d1c4bf3d). The only failure was the stamps check: `release-upgrade-available` is 79,228 s old, beyond the 24 h − 7,200 s limit. Everything else passed.
+
+**Ruling PF-3.**
+- **The mechanism** (precedent: ledger entry of 2026-10-12 21:38): pam_motd's release-upgrade check fires `check-new-release` on any ssh login once the stamp is **more than 24 h** old.
+  - 03's stamp, at 2026-10-13T02:52:06Z, reaches 24 h only at **2026-10-14T02:52:06Z**. Before that, a pre-trigger login cannot refresh it.
+  - 04's stamp was last refreshed 2026-10-12T21:32:48Z, so it was past 24 h during the A2 logins on 04 (23:04–23:13Z). It is very likely fresh now; S7's stamp check confirms either way.
+- **Order swap:**
+  1. **04 now.** Run preflight l00 (argv 24f9c0ba) with the PF-2 flags, then `verify-received`, then report. If S7 refuses on 04's stamp, stop and report.
+  2. **03 A5 pre-trigger**, after `date -u` shows ≥ 2026-10-14T02:53Z and 04's preflight has finished:
+     - one plain login: `ssh -o ControlMaster=no -o ControlPath=none -o BatchMode=yes 127x03 true`;
+     - then quiet-read v3 reads, at least 2 min apart, until no `check-new-release` or maintenance process remains;
+     - record the new stamp time;
+     - three logins at most, counted and committed.
+  3. **03 preflight as l03.** Prepare it on 05 (receive dir, argv, dry run, PF-2 flags), then S7, then `verify-received`, then report.
+- **Gate after both:** unchanged.
+- **For the timed END runs:** read both stamps first, and pre-trigger any stamp that would go stale inside an END window.
