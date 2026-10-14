@@ -6832,3 +6832,15 @@ Plans, package and review match on both. Epoch 1 (142.08 s) was accepted earlier
 This is still exactly one fetch, it still happens before any reduction, and it involves no other git operation on 01.
 
 No hold is needed: the owner may proceed through steps 1–4 without waiting for another ruling. Any refusal stops everything for a ruling.
+
+## 2026-10-14 11:53Z: X4S-4 readout ruling RF-2 (P15 report dir on 01)
+
+**Issue.** P15 `write_report.py` writes `REPORT_ROOT/RESULTS.md`, where REPORT_ROOT is `/mpac/sdicks02/repos/clasher/reports/explore/x4s4` on 01. 01's checkout predates x4s4, so that directory doesn't exist and `open_root` would refuse.
+
+**Ruling RF-2: option (A).** Before P15, run once on 01: `mkdir /mpac/sdicks02/repos/clasher/reports/explore/x4s4`.
+- This creates a single new, empty, untracked directory, with no `-p` and no other write.
+- Record `ls -ld` before (absent) and after.
+- P15 then writes RESULTS.md there, and the owner commits it from 05 via a temp index.
+- Any refusal stops everything for a ruling.
+
+The owner proceeds through P13 → `<C>` → fetch → P14 → mkdir → P15 without holding.
