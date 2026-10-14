@@ -19,6 +19,12 @@ pub(super) struct State {
     pending: usize,
     unit_elapsed: f64,
     wave_spawned: usize,
+    /// GoblinHut aim (Python GoblinHutProduction._facing / _target_vector; calibration batch 2 huts (a)):
+    /// 0 = not yet initialised, else +1/-1; target = logic-unit vector to the nearest in-range enemy.
+    #[serde(default)]
+    facing: i64,
+    #[serde(default)]
+    target: Option<(i64, i64)>,
 }
 
 impl BattleState {
@@ -81,13 +87,17 @@ impl BattleState {
         }
         (px + 1, py)
     }
-    fn production_child(&mut self, i: usize, index: usize, count: usize, spec: &Spec) {
+    fn production_child(&mut self, i: usize, index: usize, count: usize, spec: &Spec, aim: Option<(i64, i64, i64)>) {
         let parent = &self.entities[i];
         let mut child = self.config.production_children[parent.stats.key()].clone();
         Self::clone_payload(&mut child, parent);
         let (px, py) = (units(parent.x), units(parent.y));
         let (x, y) = if spec.radius > 0.0 {
-            let base = if spec.angle != 0 {
+            let base = if let Some((tx, ty, sign)) = aim {
+                // GoblinHut: the angle to the nearest in-range enemy, shifted by -facing * (-1)^wave
+                // * SpawnAngleShift (calibration batch 2 huts (a)).
+                self.vector_angle(tx, ty) + sign * spec.angle
+            } else if spec.angle != 0 {
                 self.vector_angle(parent.facing.0, parent.facing.1) + spec.angle
             } else {
                 0
@@ -109,15 +119,30 @@ impl BattleState {
         child.birth = self.tick;
         self.entities.push(child);
     }
+    fn hut_aim(spec: &Spec, state: &State) -> Option<(i64, i64, i64)> {
+        if !spec.gated {
+            return None;
+        }
+        state.target.map(|(tx, ty)| (tx, ty, -state.facing * if state.waves % 2 == 0 { 1 } else { -1 }))
+    }
     pub(super) fn production_tick(&mut self, i: usize) {
+        if self.entities[i].stats.spawner.as_ref().is_some_and(|s| s.gated) {
+            let owner = self.entities[i].owner;
+            let state = self.entities[i].production.as_mut().unwrap();
+            if state.facing == 0 {
+                state.facing = if owner == 0 { 1 } else { -1 };
+            }
+        }
         if self.entities[i].stun > 1e-9 {
             return;
         }
         let spec = self.entities[i].stats.spawner.clone().unwrap();
         if spec.gated {
             let a = &self.entities[i];
-            let nearby = self.entities.iter().any(|e| {
-                e.alive
+            let mut nearest: Option<(f64, i64, i64)> = None;
+            for e in self.entities.iter() {
+                let d = ((e.x - a.x).powi(2) + (e.y - a.y).powi(2)).sqrt();
+                if e.alive
                     && e.owner != a.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && !e.spirit
@@ -126,12 +151,25 @@ impl BattleState {
                     && e.death_immunity.is_none()
                     && e.stagger <= 1e-9
                     && e.stealth_until <= self.tick * 50
-                    && ((e.x - a.x).powi(2) + (e.y - a.y).powi(2)).sqrt() <= 6.0 + e.stats.radius
-            });
-            if !nearby {
+                    && d <= 6.0 + a.stats.radius + e.stats.radius
+                    && nearest.map_or(true, |n| d < n.0)
+                {
+                    nearest = Some((d, units(e.x) - units(a.x), units(e.y) - units(a.y)));
+                }
+            }
+            let state = self.entities[i].production.as_mut().unwrap();
+            state.target = nearest.map(|n| (n.1, n.2));
+            if let Some((dx, _)) = state.target {
+                if dx != 0 {
+                    state.facing = dx.signum();
+                }
+            }
+            if nearest.is_none() {
+                // The clock keeps running while idle (capped: no banked waves); a due
+                // wave fires on the wake tick (calibration batch 1 #4b).
                 let state = self.entities[i].production.as_mut().unwrap();
-                state.elapsed = 0.0;
-                state.waves = 0;
+                let threshold = if state.waves == 0 { spec.first.unwrap_or(spec.interval) } else { spec.interval };
+                state.elapsed = threshold.min(state.elapsed + 50.0);
                 return;
             }
         }
@@ -149,7 +187,7 @@ impl BattleState {
                 }
                 budget -= needed;
                 state.unit_elapsed = 0.0;
-                self.production_child(i, state.wave_spawned, spec.count.max(1), &spec);
+                self.production_child(i, state.wave_spawned, spec.count.max(1), &spec, Self::hut_aim(&spec, &state));
                 state.wave_spawned += 1;
                 state.pending -= 1;
                 if state.pending == 0 {
@@ -179,13 +217,13 @@ impl BattleState {
             state.elapsed = 0.0;
             let count = spec.count.max(1);
             if spec.intra > 0.0 && count > 1 {
-                self.production_child(i, 0, count, &spec);
+                self.production_child(i, 0, count, &spec, Self::hut_aim(&spec, &state));
                 state.wave_spawned = 1;
                 state.pending = count - 1;
                 state.unit_elapsed = 0.0;
             } else {
                 for index in 0..count {
-                    self.production_child(i, index, count, &spec);
+                    self.production_child(i, index, count, &spec, Self::hut_aim(&spec, &state));
                 }
                 state.waves += 1;
             }

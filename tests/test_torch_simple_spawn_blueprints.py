@@ -144,7 +144,7 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
     )
 
     expected_stats = {
-        ram_row: ("Barbarian", 691.0, 192.0),
+        ram_row: ("Barbarian", 716.0, 192.0),  # base 280 (calibration BATCH2.md §2)
         pups_row: ("LavaPups", 215.0, 81.0),
         barrel_row: ("Goblin", 202.0, 120.0),
     }
@@ -242,7 +242,7 @@ def test_fixed_shape_allocator_materializes_blueprint_stats_and_is_atomic(
     pups_id = int(catalog.child_card_id[pups_row])
     assert state.card_id[0, 2:4].tolist() == [ram_id, ram_id]
     assert state.card_id[1, 2:8].tolist() == [pups_id] * 6
-    torch.testing.assert_close(state.hp[0, 2:4], torch.full((2,), 691.0, device=device))
+    torch.testing.assert_close(state.hp[0, 2:4], torch.full((2,), 716.0, device=device))
     torch.testing.assert_close(
         state.damage[1, 2:8], torch.full((6,), 81.0, device=device)
     )

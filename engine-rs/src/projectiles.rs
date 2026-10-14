@@ -141,7 +141,11 @@ impl BattleState {
             work += e.push_velocity;
         }
         e.push_preserve = true;
-        e.push_reset = false;
+        // Calibration batch 2 (cards): the recoil stops the started hit on its
+        // first movement frame while the weapon keeps loading (Python
+        // AttackRecoil reset_hit_on_movement=True; Firecracker is now an
+        // ordinary clock via differential.config()).
+        e.push_reset = true;
     }
 
     pub(super) fn projectile_children(&mut self, i: usize) {

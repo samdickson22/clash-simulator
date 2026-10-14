@@ -248,10 +248,15 @@ def test_furnace_walks_and_spawns_deploying_kamikaze_spirits():
     _steps(battle, 50)
     assert furnace.position.y > initial_y
     production = next(m for m in furnace.mechanics if isinstance(m, PeriodicSpawner))
-    assert (production.spawn_interval_ms, production.first_spawn_delay_ms) == (5000, 3050)
+    # First spirit 1000 ms after the deploy ends = 1900 ms after the play on native T1 recordings
+    # (calibration batch 1 #4a).
+    assert (production.spawn_interval_ms, production.first_spawn_delay_ms) == (5000, 1000)
     # Exercise the production clock without troop combat hiding the children.
     production.time_since_spawn_ms = 0
-    production.on_object_tick(furnace, 3000)
+    production.spawns_created = 0
+    for spirit in _units(battle, 0, "FireSpirits"):
+        del battle.entities[spirit.id]
+    production.on_object_tick(furnace, 950)
     assert not _units(battle, 0, "FireSpirits")
     production.on_object_tick(furnace, 50)
     spirit = _units(battle, 0, "FireSpirits")[0]
@@ -276,7 +281,9 @@ def test_miner_retains_live_runtime_crown_damage():
     assert len(losses) >= 2 and set(losses) == {39}
 
 
-def test_goblin_hut_sleeps_wakes_spawns_and_resets_after_enemy_leaves():
+def test_goblin_hut_sleeps_wakes_spawns_and_fires_due_wave_on_wake():
+    # Native T1 recordings (calibration batch 1 #4b): the production clock keeps running while
+    # no enemy is in range (capped, no banked waves) and a due wave fires on the wake tick.
     from clasher.cards.goblin_hut import GoblinHutProduction
 
     battle = _battle(["GoblinHut"])
@@ -288,9 +295,7 @@ def test_goblin_hut_sleeps_wakes_spawns_and_resets_after_enemy_leaves():
     battle._spawn_unit_at_position(Position(9.5, 15.5), 1, battle.card_loader.get_card("Knight"), deploy_delay_override=0)
     knight = _units(battle, 1, "Knight")[0]
     knight.position = Position(9.5, 15.5)  # exact wake-range fixture, after terrain snapping
-    production.on_object_tick(hut, 950)
-    assert not _units(battle, 0, "SpearGoblin")
-    production.on_object_tick(hut, 50)
+    production.on_object_tick(hut, 50)  # first wave was already due while asleep
     goblin = _units(battle, 0, "SpearGoblin")[0]
     assert goblin.deploy_delay_remaining == 0.5 and goblin.hitpoints == 133
     assert abs(goblin.position.distance_to(hut.position) - 1.2) < 0.003
@@ -299,11 +304,11 @@ def test_goblin_hut_sleeps_wakes_spawns_and_resets_after_enemy_leaves():
     assert len(_units(battle, 0, "SpearGoblin")) == 2
     knight.position = Position(9.5, 25.5)
     production.on_object_tick(hut, 5000)
-    assert len(_units(battle, 0, "SpearGoblin")) == 2
+    assert len(_units(battle, 0, "SpearGoblin")) == 2  # asleep: no wave, nothing banked
     knight.position = Position(9.5, 15.5)
-    production.on_object_tick(hut, 950)
-    assert len(_units(battle, 0, "SpearGoblin")) == 2
     production.on_object_tick(hut, 50)
+    assert len(_units(battle, 0, "SpearGoblin")) == 3  # due wave fires on wake
+    production.on_object_tick(hut, 2100)  # 50 + 2100 < 2200: only one wave was due
     assert len(_units(battle, 0, "SpearGoblin")) == 3
 
 

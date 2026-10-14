@@ -46,15 +46,34 @@ def formation_offset(
         return 0.0, 0.0
 
     radius_units = tiles_to_logic_units(radius)
+    if count == 1 and secondary_count == 1:
+        # One primary plus one secondary (Goblinstein). Measured on native
+        # T1 train recordings (reports/bot/calibration/BATCH1.md #3, 144
+        # spawns): the primary stands on the anchor; the secondary is one
+        # tile toward the arena centre (+x on path 1, -x on path 2) and one
+        # summon radius behind. This is not a ring position.
+        if index == 0:
+            return 0.0, 0.0
+        x_units = -1000 if int(lane_id) == 2 else 1000
+        if reverse_x:
+            x_units = -x_units
+        behind_units = -radius_units if player_id == 0 else radius_units
+        return logic_units_to_tiles(x_units), logic_units_to_tiles(behind_units)
     width_units = tiles_to_logic_units(width)
     angle_shift = int(angle_shift_degrees)
     native_index = int(index)
     base_angle = 0
+    # Path 2 also mirrors 5-, 6- and 15-slot rings (Bats, MinionHorde,
+    # GoblinGang, SkeletonArmy). Measured on the native T1 train recordings
+    # (reports/bot/calibration/BATCH1.md #2): first-frame positions and
+    # native spawn order (object ids) match the mirrored ring on path 2 and
+    # the unmirrored ring on path 1, for both sides. Other counts >= 5 are
+    # not in the corpus and keep world order.
     lane_flip_x = (
         LOGIC_LANE_ID_BASED_DEPLOY_SEQUENCE
         and (
             (int(lane_id) == 1 and slot_count in {2, 3})
-            or (int(lane_id) == 2 and slot_count == 4)
+            or (int(lane_id) == 2 and slot_count in {4, 5, 6, 15})
         )
     )
 

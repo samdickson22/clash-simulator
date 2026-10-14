@@ -86,7 +86,9 @@ class SpawnerRegressions(unittest.TestCase):
                             copy.step()
                             imported.step()
                             self.assert_same(copy, imported)
-                self.assertEqual(births[:3], [80, 180, 280])
+                # Native first spirit 1900 ms after the play, then every 5000 ms
+                # (reports/bot/calibration/BATCH1.md §4a; was 80/180/280 before calibration).
+                self.assertEqual(births[:3], [39, 139, 239])
                 self.assertGreater(
                     (furnace.position.y - start_y) * (1 if seat == 0 else -1), 0
                 )
@@ -160,7 +162,9 @@ class SpawnerRegressions(unittest.TestCase):
                                 copy.step()
                                 imported.step()
                                 self.assert_same(copy, imported)
-                    self.assertEqual(birth, [20])
+                    # The hut clock runs while idle and a due wave fires on the wake tick
+                    # (reports/bot/calibration/BATCH1.md §4b; was [20] with the reset-on-sleep rule).
+                    self.assertEqual(birth, [1])
                     if cycle == 0:
                         knight.position = Position(13.5, 25.5 if seat == 0 else 6.5)
                         r = clasher_core.BattleState(snapshot(b, cfg))
@@ -169,8 +173,9 @@ class SpawnerRegressions(unittest.TestCase):
                             r.step()
                             self.assert_same(b, r)
                         state = hut.mechanics[-1]
-                        self.assertEqual(state.time_since_spawn_ms, 0)
-                        self.assertEqual(state.spawns_created, 0)
+                        # Asleep, the clock advances to the next threshold and holds (no banking).
+                        self.assertEqual(state.time_since_spawn_ms, state.spawn_interval_ms)
+                        self.assertEqual(state.spawns_created, 1)
                         knight.position = Position(near.x, near.y)
 
     def test_hut_immediate_death_child_inherits_freeze(self):

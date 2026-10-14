@@ -1879,9 +1879,11 @@ def test_building_targeter_routes_around_friendly_building_to_attack(
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_hovering_ground_troop_passes_through_buildings_without_detouring(
+def test_hovering_ground_troop_detours_around_buildings_like_ground_troops(
     fast_path,
 ):
+    # research/ghost/REPORT.md (batch 2): native Ghosts are ground bodies (pushed by ground troops
+    # and buildings, not by flying ones) that walk the LogicPathFinder route.
     battle = BattleState(fast_path=fast_path)
     battle.entities.clear()
     battle.next_entity_id = 0
@@ -1907,10 +1909,10 @@ def test_hovering_ground_troop_passes_through_buildings_without_detouring(
             ghost.position.distance_to(cannon.position),
         )
 
-    assert ghost.position.x == pytest.approx(initial_x)
-    assert minimum_distance < (
-        ghost.get_collision_radius() + cannon.get_collision_radius()
-    )
+    # The route detours around the building's cost cells (lateral shift);
+    # body separation itself belongs to the avoidance/collision passes.
+    assert abs(ghost.position.x - initial_x) > 0.2
+    assert minimum_distance > 0.5
 
 
 def test_ground_pathfinder_uses_native_world_scan_for_displaced_river_target():
@@ -2955,7 +2957,9 @@ def test_native_deploy_sequence_mirrors_small_formations_on_path_one(count):
     )
 
 
-def test_native_deploy_sequence_does_not_mirror_five_slot_formation():
+def test_native_deploy_sequence_mirrors_five_slot_formation_on_path_two():
+    # Calibration batch 1 #2: native T1 recordings mirror 5-, 6- and 15-slot rings on path 2
+    # (first-frame positions and spawn order), so path 2 is the x-mirror of path 1.
     path_one = [
         formation_offset(index, 5, 0.5, 0, lane_id=1)
         for index in range(5)
@@ -2965,7 +2969,7 @@ def test_native_deploy_sequence_does_not_mirror_five_slot_formation():
         for index in range(5)
     ]
 
-    assert path_one == path_two
+    assert path_two == [(-x, y) for x, y in path_one]
 
 
 def test_symmetric_deploy_snap_nudges_shared_ground_anchor_by_one_logic_unit():
@@ -3172,12 +3176,13 @@ def test_bats_use_native_rotated_ring_and_mixed_swarms_face_the_opponent():
         bats_battle._spawn_troop(Position(9.0, 12.0), player_id, bat_stats)
         bats = [entity for entity in bats_battle.entities.values() if isinstance(entity, Troop)]
         assert len(bats) == 5
+        # x = 9.0 resolves to path 2, which mirrors the 5-slot ring (calibration batch 1 #2).
         expected_offsets = [
-            (0.993, 0.993 * direction),
-            (1.251, -0.638 * direction),
-            (-0.219, -1.387 * direction),
-            (-1.387, -0.219 * direction),
-            (-0.638, 1.251 * direction),
+            (-0.993, 0.993 * direction),
+            (-1.251, -0.638 * direction),
+            (0.219, -1.387 * direction),
+            (1.387, -0.219 * direction),
+            (0.638, 1.251 * direction),
         ]
         actual_offsets = [
             (bat.position.x - 9.0, bat.position.y - 12.0)
@@ -5130,12 +5135,21 @@ def test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled():
         650,
         reached_radius_from_speed=False,
     ) == 26
+    # The deploy itself follows the routed spawn path (calibration batch 1 #5b); the straight
+    # count above remains the helper's contract for unrouted transports (MightyMiner ability).
+    from clasher.pathfinding import native_spawn_path_trajectory
+    routed = native_spawn_path_trajectory(
+        origin, destination, 650, battle.arena.native_path_id_at(destination)
+    )
+    travel_ticks = len(routed) - 2
     travel_seconds = travel_ticks * battle.dt
     tunnel = miner.mechanics[1]
     assert tunnel.travel_speed_logic_units_per_tick == 650
     assert miner.card_stats._raw_entry["summonCharacterData"]["spawnPathfindSpeed"] == 650
     assert miner.position == origin
-    assert miner.placement_delay_total == pytest.approx(travel_seconds + 1.0)
+    # The arrival tick is also the first emergence tick (calibration batch 2, towers: native
+    # deployRemainingMs reads 950 on the arrival tick), so the clock is one tick shorter.
+    assert miner.placement_delay_total == pytest.approx(travel_seconds + 1.0 - battle.dt)
 
     assert miner._special_move_active
     assert not enemy._is_valid_target(miner)
@@ -5152,8 +5166,11 @@ def test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled():
     for _ in range(travel_ticks - 1):
         battle.step()
     assert miner.position.y == pytest.approx(destination.y)
-    assert miner._special_move_active
-    assert enemy.position == Position(9.0, 20.5)
+    # Arrived: the emergence is an ordinary deploy and he is targetable (native T1 ep
+    # 1975100702: towers lock on and hit during emergence; calibration batch 1 #5c).
+    assert not miner._special_move_active
+    assert miner.placement_pending
+    assert enemy._is_valid_target(miner)
 
     while miner.placement_pending:
         battle.step()
@@ -5223,8 +5240,10 @@ def test_miner_underground_travel_time_depends_on_distance_and_rotates():
     assert near.placement_delay_total < far.placement_delay_total
     raw_distance = battle.arena.BLUE_KING_TOWER.distance_to(Position(4.0, 22.0))
     continuous_duration = raw_distance / (650.0 / 50.0)
-    assert near._underground_travel_duration == 1.5
-    assert near.placement_delay_total == 2.5
+    # Routed spawn path (calibration batch 1 #5b): 31 ticks, not the straight-line 30.
+    assert near._underground_travel_duration == pytest.approx(1.55)
+    # Arrival tick doubles as the first emergence tick (calibration batch 2, towers).
+    assert near.placement_delay_total == pytest.approx(2.50)
     assert near._underground_travel_duration != pytest.approx(continuous_duration)
     assert rotated.position == battle.arena.RED_KING_TOWER
 
@@ -9221,6 +9240,7 @@ def test_enemy_commits_attack_before_royal_ghost_recloaks_in_object_phase():
     fade = ghost.mechanics[0]
     fade.on_attack_start(ghost, musketeer)
     fade.time_since_attack_ms = fade.fade_delay_ms - 50
+    fade.attack_state_open = False  # already walking again since that attack (batch 2)
     ghost.target_id = None
     musketeer.target_id = ghost.id
     musketeer.attack_cooldown = 0.0
@@ -10099,7 +10119,8 @@ def test_battle_ram_connect_deals_one_charge_hit_then_releases_barbarians():
             barbarian.card_stats.load_time,
             barbarian.card_stats.first_hit_time,
         )
-        == (691, 1400, 1000, 400)
+        # Barbarian max HP 716 at level 11 (base 280; reports/bot/calibration/BATCH2.md §2, native BarbLog bodies).
+        == (716, 1400, 1000, 400)
         for barbarian in barbarians
     )
     # SpawnAngleShift=180 is relative to the ram's retained +y facing. The
@@ -11192,7 +11213,9 @@ def test_native_avoidance_only_compares_objects_on_the_same_height_plane():
     assert air._native_avoidance == -190
 
 
-def test_hovering_avoidance_uses_air_body_collision_plane():
+def test_hovering_avoidance_uses_ground_body_collision_plane():
+    # research/ghost/REPORT.md (batch 2): native Ghosts are ground bodies (pushed by ground troops
+    # and buildings, not by flying ones) that walk the LogicPathFinder route.
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -11204,7 +11227,7 @@ def test_hovering_avoidance_uses_air_body_collision_plane():
 
     ghost._update_native_avoidance(battle)
 
-    assert ghost._native_avoidance == -190
+    assert ghost._native_avoidance == 0
 
     ghost._native_avoidance = 0
     bats.position = Position(20.0, 20.0)
@@ -11214,7 +11237,7 @@ def test_hovering_avoidance_uses_air_body_collision_plane():
 
     ghost._update_native_avoidance(battle)
 
-    assert ghost._native_avoidance == 0
+    assert ghost._native_avoidance == -190
 
 
 def test_native_avoidance_chargers_plow_through_lighter_but_yield_to_heavier_units():
@@ -11599,9 +11622,11 @@ def test_air_units_collide_with_air_but_not_ground_units(fast_path):
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_hovering_troops_use_air_body_collision_but_remain_ground_targets(
+def test_hovering_troops_use_ground_body_collision_and_remain_ground_targets(
     fast_path,
 ):
+    # research/ghost/REPORT.md (batch 2): native Ghosts are ground bodies (pushed by ground troops
+    # and buildings, not by flying ones) that walk the LogicPathFinder route.
     ground_battle = BattleState(fast_path=fast_path)
     ground_battle.entities.clear()
     ground_battle.next_entity_id = 1
@@ -11625,8 +11650,8 @@ def test_hovering_troops_use_air_body_collision_but_remain_ground_targets(
 
     _consume_collision_vectors(ground_battle, ground_ghost, knight)
 
-    assert ground_ghost.position == ground_starts[0]
-    assert knight.position == ground_starts[1]
+    assert ground_ghost.position.x < ground_starts[0].x
+    assert knight.position.x > ground_starts[1].x
     assert knight.can_attack_target(ground_ghost)
 
     air_battle = BattleState(fast_path=fast_path)
@@ -11647,8 +11672,8 @@ def test_hovering_troops_use_air_body_collision_but_remain_ground_targets(
 
     _consume_collision_vectors(air_battle, air_ghost, bats)
 
-    assert air_ghost.position.x < 9.0
-    assert bats.position.x > 9.2
+    assert air_ghost.position.x == pytest.approx(9.0)
+    assert bats.position.x == pytest.approx(9.2)
 
     building_battle = BattleState(fast_path=fast_path)
     building_battle.entities.clear()
@@ -11673,7 +11698,7 @@ def test_hovering_troops_use_air_body_collision_but_remain_ground_targets(
     _consume_collision_vectors(building_battle, building_ghost)
 
     assert cannon.is_alive
-    assert building_ghost.position == ghost_start
+    assert building_ghost.position.x < ghost_start.x
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
@@ -11713,7 +11738,7 @@ def test_hovering_troops_remain_on_ground_plane_for_every_attack_payload_shape(
         direct_battle,
     )
 
-    assert uses_air_collision_plane(direct_ghost)
+    assert not uses_air_collision_plane(direct_ghost)  # batch 2: ground body plane
     assert not is_airborne_target(direct_ghost)
     assert not is_above_ground_surface(direct_ghost)
     assert direct_hp - direct_ghost.hitpoints == knight.damage

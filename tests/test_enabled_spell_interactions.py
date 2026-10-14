@@ -404,7 +404,7 @@ def test_hidden_tesla_uses_serialized_area_affects_hidden_flag():
         ("Fireball", 688, 172),
         ("Freeze", 148, 37),
         ("Snowball", 179, 45),
-        ("Poison", 92, 21),
+        ("Poison", 92, 22),  # crown pulse 22 = ceil(92 x 23%) (calibration BATCH2.md §9c)
         ("Rocket", 1484, 342),
         ("Log", 268, 35),
         ("Zap", 192, 48),
@@ -525,7 +525,7 @@ def test_graveyard_first_skeleton_uses_published_total_delay_from_card_play():
 @pytest.mark.parametrize(
     ("name", "troop_damage", "tower_damage", "ticks"),
     [
-        ("Poison", 736, 168, 8),
+        ("Poison", 736, 176, 8),  # 8 crown pulses of 22 (calibration BATCH2.md §9c)
         ("Earthquake", 252, 147, 3),
         ("Freeze", 148, 37, 1),
         ("Tornado", 84, 25, 1),
@@ -1908,7 +1908,7 @@ def test_barbarian_barrel_spawn_keeps_current_one_second_deploy_time():
         and entity.player_id == 0
         and entity.card_stats.name == "Barbarian"
     )
-    assert (barbarian.max_hitpoints, barbarian.damage) == (691, 192)
+    assert (barbarian.max_hitpoints, barbarian.damage) == (716, 192)  # Barbarian HP base 280 (calibration BATCH2.md §2)
     assert (
         barbarian.card_stats.hit_speed,
         barbarian.card_stats.load_time,
@@ -1918,13 +1918,15 @@ def test_barbarian_barrel_spawn_keeps_current_one_second_deploy_time():
         1000,
         400,
     )
-    assert barbarian.deploy_delay_remaining == pytest.approx(1.0)
+    # A projectile-spawned troop keeps its full deploy time through its spawn tick: native reads
+    # 1000 ms after that tick (calibration BATCH2.md §9d), so 1.05 before the tick's own step.
+    assert barbarian.deploy_delay_remaining == pytest.approx(1.05)
     assert barbarian.placement_pending
 
     position = Position(barbarian.position.x, barbarian.position.y)
     barbarian.update(0.99, battle)
     assert barbarian.position == position
-    assert barbarian.deploy_delay_remaining == pytest.approx(0.01)
+    assert barbarian.deploy_delay_remaining == pytest.approx(0.06)
 
 
 def test_barbarian_barrel_endpoint_spawn_keeps_projectile_impact_coordinate():
@@ -2081,15 +2083,15 @@ def test_royal_delivery_uses_payload_spawn_time_for_recruit_action_delay():
         if isinstance(entity, Troop)
         and entity.card_stats.name == "DeliveryRecruit"
     )
-    # The area object creates the Recruit during the manager's object phase.
-    # The dynamically extended object loop then ticks the new character in
-    # that same frame, consuming 50 ms of its serialized 250 ms action delay.
-    assert recruit.deploy_delay_remaining == pytest.approx(0.20)
+    # The area object creates the Recruit during the manager's object phase. Native reads the full
+    # serialized 250 ms on that tick (calibration BATCH2.md §9d: 103 train samples), so the
+    # same-frame object tick no longer consumes 50 ms of it.
+    assert recruit.deploy_delay_remaining == pytest.approx(0.25)
     assert recruit.placement_pending
 
     position = Position(recruit.position.x, recruit.position.y)
     recruit.update(0.19, battle)
-    assert recruit.deploy_delay_remaining == pytest.approx(0.01)
+    assert recruit.deploy_delay_remaining == pytest.approx(0.06)
     assert recruit.position == position
 
 

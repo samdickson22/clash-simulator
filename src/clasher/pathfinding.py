@@ -640,20 +640,23 @@ def ground_path_waypoint(
         mover._ground_path_backwards = route_moves_backwards((desired,))
         return desired
     desired_waypoint = _cell_center(desired_cell)
-    if is_hover_unit_card(getattr(mover, "card_stats", None)):
-        waypoint = (
-            native_single_node_waypoint(mover, target_entity)
-            if target_entity is not None
-            else desired_waypoint
-        )
-        mover._ground_path_backwards = route_moves_backwards((waypoint,))
-        return waypoint
+    # Hovering characters (Royal Ghost) walk the ordinary LogicPathFinder
+    # route, not a FlyingHeight single node; river cells cost as for a
+    # JumpHeight character, so they float straight over the water. Native T1
+    # train (reports/bot/calibration/BATCH2.md ghost): headings snap to cell
+    # centres (e.g. exact 63/63 diagonals), and on 708 Ghosts the full route
+    # with water cost 7 gives 44.3% within 1/4 tile vs 28.2% single-node
+    # (water 50: 43.4%, 8: 44.0%); off-bridge river Ghosts 59.4% vs 28.6% at 50.
+    route_profile = bool(
+        getattr(getattr(mover, "card_stats", None), "jump_height", None)
+        or is_hover_unit_card(getattr(mover, "card_stats", None))
+    )
     building_cells = native_building_cost_cells(battle_state)
     cache_key = (
         desired_cell,
         building_cells,
         int(getattr(mover, "_native_lane_id", 0) or 0),
-        bool(getattr(getattr(mover, "card_stats", None), "jump_height", None)),
+        route_profile,
     )
     previous_key = getattr(mover, "_ground_path_cache_key", None)
     friendly_signature = native_friendly_building_signature(battle_state, mover.player_id)
@@ -693,7 +696,7 @@ def ground_path_waypoint(
         start,
         desired_cell,
         int(getattr(mover, "_native_lane_id", 0) or 0),
-        bool(getattr(mover.card_stats, "jump_height", None)),
+        route_profile,
         building_cells,
     )
     if route_cells is None or len(route_cells) < 2:
@@ -804,3 +807,120 @@ def skip_native_ground_route_node_inside_static(
     )
     if dx * dx + dy * dy < radius * radius:
         route_cells.pop(0)
+
+
+# Underground (spawn-path) routing, measured on native T1 train Miners
+# (reports/bot/calibration/BATCH1.md #5b): uniform-cost grid, water blocked,
+# only the destination lane's bridge. Each leg is searched from its goal back
+# to its start, which yields straight-first, diagonal-last segments. Across
+# the river: start -> bridge entry, straight over the bridge, exit -> goal.
+_SPAWN_PATH_RIVER_ROWS = range(30, 34)
+
+
+def _spawn_path_tile_cost(lane_id: int) -> Callable[[tuple[int, int]], int | None]:
+    def cost(cell: tuple[int, int]) -> int | None:
+        cell_x, cell_y = cell
+        if not (0 <= cell_x < STANDARD_PATH_WIDTH and 0 <= cell_y < STANDARD_PATH_HEIGHT):
+            return None
+        if native_spawn_tile_blocked(cell_x, cell_y):
+            return None
+        if cell_y in _SPAWN_PATH_RIVER_ROWS and (cell_x < STANDARD_PATH_WIDTH // 2) != (lane_id == 1):
+            return None
+        return 1
+    return cost
+
+
+@lru_cache(maxsize=4096)
+def native_spawn_path_route(
+    start: tuple[int, int],
+    goal: tuple[int, int],
+    lane_id: int,
+) -> tuple[tuple[int, int], ...] | None:
+    """Cells from ``start`` to ``goal`` (both inclusive) for an underground transport."""
+    cost = _spawn_path_tile_cost(lane_id)
+
+    def leg(a: tuple[int, int], b: tuple[int, int]) -> list[tuple[int, int]] | None:
+        route = _native_grid_route(b, a, cost)
+        return None if route is None else list(reversed(route))
+
+    start_south = start[1] < _SPAWN_PATH_RIVER_ROWS.start
+    goal_south = goal[1] < _SPAWN_PATH_RIVER_ROWS.start
+    if start_south == goal_south:
+        route = leg(start, goal)
+        return None if route is None else tuple(route)
+    bridge_x = 8 if lane_id == 1 else STANDARD_PATH_WIDTH - 1 - 8
+    rows = list(range(_SPAWN_PATH_RIVER_ROWS.start - 1, _SPAWN_PATH_RIVER_ROWS.stop + 1))
+    if not start_south:
+        rows.reverse()
+    first = leg(start, (bridge_x, rows[0]))
+    last = leg((bridge_x, rows[-1]), goal)
+    if first is None or last is None:
+        return None
+    return tuple(first + [(bridge_x, y) for y in rows[1:-1]] + last)
+
+
+def native_spawn_path_trajectory(
+    start: Position,
+    destination: Position,
+    speed_units_per_tick: int,
+    lane_id: int,
+) -> list[tuple[int, int]] | None:
+    """Per-tick logic-unit positions (index 0 = start) of an underground transport.
+
+    The mover heads for the next route-cell centre in 250-unit substeps,
+    carrying leftover budget past a reached centre; after each frame it drops
+    the active node once its projected remainder is below 1001 (as ordinary
+    ground routing does). Dropping the last node (the destination) completes
+    the path and snaps the mover there.
+    """
+    from .kinematics import NATIVE_MOVEMENT_SUBSTEP_UNITS
+
+    route = native_spawn_path_route(
+        _cell_for_position(start), _cell_for_position(destination), lane_id
+    )
+    if route is None:
+        return None
+    dest = (tiles_to_logic_units(destination.x), tiles_to_logic_units(destination.y))
+    nodes = [
+        (tiles_to_logic_units(p.x), tiles_to_logic_units(p.y))
+        for p in (_cell_center(c) for c in route[1:])
+    ]
+    if nodes:
+        nodes[-1] = dest
+    else:
+        nodes = [dest]
+    speed = max(1, int(speed_units_per_tick))
+    x, y = tiles_to_logic_units(start.x), tiles_to_logic_units(start.y)
+    trajectory = [(x, y)]
+    direction = None
+    for _ in range(400):
+        if not nodes:
+            break
+        node_x, node_y = nodes[0]
+        if direction is None:
+            direction = normalized_vector_logic_units(node_x - x, node_y - y, 256)
+        budget = speed
+        while budget > 0:
+            step = min(NATIVE_MOVEMENT_SUBSTEP_UNITS, budget)
+            dx, dy = node_x - x, node_y - y
+            distance = math.isqrt(dx * dx + dy * dy)
+            if distance <= step:
+                x, y = node_x, node_y
+                if len(nodes) > 1:
+                    nodes.pop(0)
+                    node_x, node_y = nodes[0]
+                    direction = normalized_vector_logic_units(node_x - x, node_y - y, 256)
+                    budget -= distance
+                    continue
+            else:
+                move_x, move_y = normalized_vector_logic_units(dx, dy, step)
+                x, y = x + move_x, y + move_y
+            budget -= step
+        rx, ry = nodes[0][0] - x, nodes[0][1] - y
+        if trunc_div(direction[1] * ry, 256) + trunc_div(direction[0] * rx, 256) < 1001:
+            nodes.pop(0)
+            direction = None
+            if not nodes:  # path complete: snap to the stored deploy coordinate
+                x, y = dest
+        trajectory.append((x, y))
+    return trajectory if not nodes else None

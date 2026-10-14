@@ -107,7 +107,7 @@ impl Entity {
         self.airborne() || (self.leap_airborne() && !self.grounded)
     }
     pub(super) fn collision_air(&self, tick: i64) -> bool {
-        self.above_surface() || self.stats.hover || self.landed_tick == tick
+        self.above_surface() || self.landed_tick == tick
     }
 }
 
