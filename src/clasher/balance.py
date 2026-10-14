@@ -94,9 +94,10 @@ LOGIC_LOAD_FIRST_HIT_RESET_TIMER_AFTER_ATTACK = True
 LOGIC_LOAD_FIRST_HIT_RESET_TIMER_WHEN_ZAPPED = True
 LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD = True
 
-# Native getSpawnOffset mirrors the horizontal ordering of two-, three-, and
-# four-slot formations when the shared deployment anchor resolves to path 1.
-# Larger formations deliberately retain their ordinary world-space order.
+# Native getSpawnOffset mirrors the horizontal ordering of two- and three-slot
+# formations on path 1, and of four-, five-, six- and fifteen-slot formations
+# on path 2 (formations.py; the 5/6/15 cases were measured on native
+# recordings in calibration batch 1). Other formations keep world order.
 LOGIC_LANE_ID_BASED_DEPLOY_SEQUENCE = True
 
 # LogicSummoner nudges the one resolved deployment anchor by one integer
@@ -877,8 +878,10 @@ def _furnace_entry(entry: dict[str, Any]) -> None:
         attacksAir=True,
         projectileStartRadius=2000,
         spawnPauseTime=5000,
-        # ActionInterval starts at 1950. Native first-wave phase awaits a trace.
-        spawnStartTime=3050,
+        # First spirit at deploy + 1900 ms: native T1 train recordings put it
+        # 38-39 ticks after the play in 299/383 huts (calibration batch 1 #4a).
+        # The spawner clock starts after the 1000 ms deploy, so 1000 here.
+        spawnStartTime=1000,
         spawnNumber=1,
         spawnCharacterWithDeploy=True,
         spawnCharacterData={**deepcopy(spawn), "deployTime": 500},

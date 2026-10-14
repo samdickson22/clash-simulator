@@ -126,12 +126,15 @@ impl BattleState {
                     && e.death_immunity.is_none()
                     && e.stagger <= 1e-9
                     && e.stealth_until <= self.tick * 50
-                    && ((e.x - a.x).powi(2) + (e.y - a.y).powi(2)).sqrt() <= 6.0 + e.stats.radius
+                    && ((e.x - a.x).powi(2) + (e.y - a.y).powi(2)).sqrt()
+                        <= 6.0 + a.stats.radius + e.stats.radius
             });
             if !nearby {
+                // The clock keeps running while idle (capped: no banked waves); a due
+                // wave fires on the wake tick (calibration batch 1 #4b).
                 let state = self.entities[i].production.as_mut().unwrap();
-                state.elapsed = 0.0;
-                state.waves = 0;
+                let threshold = if state.waves == 0 { spec.first.unwrap_or(spec.interval) } else { spec.interval };
+                state.elapsed = threshold.min(state.elapsed + 50.0);
                 return;
             }
         }

@@ -132,7 +132,8 @@ def entity(e, *, clone_prototype=True):
         multi_attack=dict(count=multi.target_count, fill_primary=multi.all_targets_hit, scale=multi.damage_scale) if multi else None,
         souls=dict(radius=souls.soul_collection_radius, maximum=souls.max_souls) if souls else None,
         hit_buff=dict(duration=hit_buff.duration_ms / 1000.0, axes=(hit_buff.movement_multiplier, hit_buff.attack_multiplier, hit_buff.spawn_multiplier)) if hit_buff else None,
-        skip_deploy_snap=float(getattr(s, "speed", 0) or 0) <= 0,
+        skip_deploy_snap=float(getattr(s, "speed", 0) or 0) <= 0
+        or bool(getattr(s, "can_deploy_on_enemy_side", False)),
         break_on_building_hit=any(type(m).__name__ == "BattleRamCharge" for m in e.mechanics),
         death_spawn_radius=death_spawn.radius_tiles if death_spawn else float(getattr(e,'death_spawn_radius',0)),
         death_spawn_angle=int(getattr(s, "spawn_angle_shift", 0) or 0) if death_spawn else 0,
@@ -325,6 +326,7 @@ def entity(e, *, clone_prototype=True):
         tunnel_destination=coord(getattr(e, "_underground_destination", None)),
         tunnel_duration=float(getattr(e, "_underground_travel_duration", 0)),
         tunnel_total=float(getattr(e, "placement_delay_total", 0)),
+        tunnel_path=[list(p) for p in (getattr(e, "_underground_trajectory", None) or [])],
         death_immunity=(
             e._death_spawn_target_immunity_elapsed_ms
             if e._death_spawn_target_immunity_elapsed_ms >= 0
@@ -568,7 +570,8 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             footprint=size,
             anywhere=bool(getattr(stats, "can_deploy_on_enemy_side", False)),
             margin=int(getattr(stats, "deploy_w_tile_margin", 0) or 0),
-            mirror_x=len(units) in (2, 3, 4),
+            # Lane-2 x-mirrored rings (formations.lane_flip_x): 2-4 slots, and 5/6/15 (batch 1 #2).
+            mirror_x=len(units) in (2, 3, 4, 5, 6, 15),
             recruits_line=card == "RoyalRecruits",
         )
         if card == "MightyMiner":

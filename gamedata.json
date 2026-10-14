@@ -4,7 +4,7 @@
     "canonicalization": {
       "admitted_source": "reports/strategy_council_20260928/m0/runtime-snapshots/pilot-runtime-v5/gamedata.json",
       "admitted_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3",
-      "note": "Canonical native-validated P16 values: IceSpirits summonCharacterData hitpoints 90 -> 84; Goblin_Stab damage 47 -> 49 at all 11 admitted paths. Original workspace fingerprint retained."
+      "note": "Canonical native-validated P16 values: IceSpirits summonCharacterData hitpoints 90 -> 84; Goblin_Stab damage 47 -> 49 at all 11 admitted paths. Original workspace fingerprint retained. Calibration batch 1 (reports/bot/calibration/BATCH1.md): FireSpirits and ElectroSpirit hitpoints 90 -> 84 at all 5 paths; native T1 train recordings show max_hp 215 at level 11 for both (84 x 256% = 215; 90 x 256% = 230), same as IceSpirits."
     }
   },
   "items": {
@@ -2361,7 +2361,7 @@
           "collisionRadius": 400,
           "deployTime": 1000,
           "hitSpeed": 300,
-          "hitpoints": 90,
+          "hitpoints": 84,
           "kamikaze": true,
           "loadTime": 100,
           "name": "FireSpirits",
@@ -6679,7 +6679,7 @@
           "collisionRadius": 400,
           "deployTime": 1000,
           "hitSpeed": 300,
-          "hitpoints": 90,
+          "hitpoints": 84,
           "kamikaze": true,
           "loadTime": 100,
           "name": "ElectroSpirit",
@@ -8616,7 +8616,7 @@
                     "collisionRadius": 400,
                     "deployTime": 1000,
                     "hitSpeed": 300,
-                    "hitpoints": 90,
+                    "hitpoints": 84,
                     "kamikaze": true,
                     "loadTime": 100,
                     "name": "FireSpirits",
@@ -8658,7 +8658,7 @@
                       "collisionRadius": 400,
                       "deployTime": 1000,
                       "hitSpeed": 300,
-                      "hitpoints": 90,
+                      "hitpoints": 84,
                       "kamikaze": true,
                       "loadTime": 100,
                       "name": "FireSpirits",
@@ -8726,7 +8726,7 @@
                 "collisionRadius": 400,
                 "deployTime": 1000,
                 "hitSpeed": 300,
-                "hitpoints": 90,
+                "hitpoints": 84,
                 "kamikaze": true,
                 "loadTime": 100,
                 "name": "FireSpirits",

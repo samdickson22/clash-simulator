@@ -332,6 +332,9 @@ struct Entity {
     tunnel_duration: f64,
     #[serde(default)]
     tunnel_total: f64,
+    /// Per-tick logic-unit positions of a routed underground transport (Miner).
+    #[serde(default)]
+    tunnel_path: Vec<(i64, i64)>,
     #[serde(default)]
     placement_radius: Option<f64>,
     #[serde(default)]
@@ -3040,7 +3043,9 @@ impl BattleState {
                     e.deploy = (e.deploy - 0.05).max(0.0);
                     if e.deploy < 1e-9 {
                         e.deploy = 0.0;
-                        if e.underground {
+                        // Routed tunnels leave `underground` on arrival; Python's on_spawn still
+                        // re-snaps the surfaced Miner to its destination when the deploy ends.
+                        if e.underground || !e.tunnel_path.is_empty() {
                             e.x = units(e.tunnel_destination.0) as f64 / 1000.0;
                             e.y = units(e.tunnel_destination.1) as f64 / 1000.0;
                             e.underground = false;
@@ -3820,15 +3825,32 @@ impl BattleState {
             e.birth = self.tick;
             if e.stats.tunnel_speed > 0 && e.underground {
                 e.tunnel_destination = (e.x, e.y);
-                let (dx, dy) = (
-                    units(e.x - e.tunnel_origin.0),
-                    units(e.y - e.tunnel_origin.1),
-                );
-                e.tunnel_duration = c56::tunnel_duration(
-                    isqrt(dx * dx + dy * dy),
+                let lane = if units(e.x) < 9000 { 1 } else { 2 };
+                match c56::spawn_path_trajectory(
+                    &self.config.water,
+                    e.tunnel_origin,
+                    e.tunnel_destination,
                     e.stats.tunnel_speed,
-                    e.stats.tunnel_reached_from_speed,
-                );
+                    lane,
+                ) {
+                    Some(path) => {
+                        // Native's first transport frame shows one more move than ours: lead a tick.
+                        e.tunnel_duration = path.len().saturating_sub(2) as f64 * 0.05;
+                        e.tunnel_path = path;
+                    }
+                    None => {
+                        let (dx, dy) = (
+                            units(e.x - e.tunnel_origin.0),
+                            units(e.y - e.tunnel_origin.1),
+                        );
+                        e.tunnel_duration = c56::tunnel_duration(
+                            isqrt(dx * dx + dy * dy),
+                            e.stats.tunnel_speed,
+                            e.stats.tunnel_reached_from_speed,
+                        );
+                        e.tunnel_path.clear();
+                    }
+                }
                 e.deploy = e.tunnel_duration + e.stats.tunnel_emergence;
                 e.tunnel_total = e.deploy;
                 e.x = e.tunnel_origin.0;

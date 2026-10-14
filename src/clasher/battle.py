@@ -1402,6 +1402,10 @@ class BattleState:
             card_type == "building"
             or is_air_unit_card(card_stats)
             or float(getattr(card_stats, "speed", 0) or 0) <= 0.0
+            # Enemy-side (underground) deployers surface on the exact anchor:
+            # native T1 Miners land on the tap in 572/601 train plays
+            # (calibration batch 1 #5a). The Miner is the only such troop.
+            or bool(getattr(card_stats, "can_deploy_on_enemy_side", False))
         ):
             return position
 

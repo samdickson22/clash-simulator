@@ -12,6 +12,95 @@ pub(super) struct Periodic {
     pub affects_hidden: bool,
 }
 
+/// Port of clasher.pathfinding.native_spawn_path_route: uniform-cost grid, water blocked,
+/// only the destination lane's bridge; each leg searched goal-to-start; across the river
+/// start -> bridge entry, straight over the bridge, exit -> goal (calibration batch 1 #5b).
+fn spawn_path_route(water: &[bool], start: (i32, i32), goal: (i32, i32), lane: i32) -> Option<Vec<(i32, i32)>> {
+    let mut cost = vec![1i64; 36 * 64];
+    for cy in 0..64i32 {
+        for cx in 0..36i32 {
+            let i = (cy * 36 + cx) as usize;
+            if water[i] || ((30..34).contains(&cy) && (cx < 18) != (lane == 1)) {
+                cost[i] = -1;
+            }
+        }
+    }
+    let leg = |a: (i32, i32), b: (i32, i32)| {
+        astar::find(&cost, b, a).map(|mut r| {
+            r.reverse();
+            r
+        })
+    };
+    let (start_south, goal_south) = (start.1 < 30, goal.1 < 30);
+    if start_south == goal_south {
+        return leg(start, goal);
+    }
+    let bridge_x = if lane == 1 { 8 } else { 27 };
+    let mut rows: Vec<i32> = (29..=34).collect();
+    if !start_south {
+        rows.reverse();
+    }
+    let mut route = leg(start, (bridge_x, rows[0]))?;
+    let last = leg((bridge_x, rows[rows.len() - 1]), goal)?;
+    route.extend(rows[1..rows.len() - 1].iter().map(|&y| (bridge_x, y)));
+    route.extend(last);
+    Some(route)
+}
+
+/// Port of clasher.pathfinding.native_spawn_path_trajectory (index 0 = origin).
+pub(super) fn spawn_path_trajectory(
+    water: &[bool], origin: (f64, f64), dest: (f64, f64), speed: i64, lane: i32,
+) -> Option<Vec<(i64, i64)>> {
+    let route = spawn_path_route(water, cell(origin.0, origin.1), cell(dest.0, dest.1), lane)?;
+    let goal = (units(dest.0), units(dest.1));
+    let mut nodes: std::collections::VecDeque<(i64, i64)> = route[1..].iter().map(|&c| center(c)).collect();
+    if let Some(last) = nodes.back_mut() {
+        *last = goal;
+    } else {
+        nodes.push_back(goal);
+    }
+    let speed = speed.max(1);
+    let (mut x, mut y) = (units(origin.0), units(origin.1));
+    let mut path = vec![(x, y)];
+    let mut direction: Option<(i64, i64)> = None;
+    for _ in 0..400 {
+        let Some(&(mut nx, mut ny)) = nodes.front() else { break };
+        let mut dir = direction.unwrap_or_else(|| norm(nx - x, ny - y, 256));
+        let mut budget = speed;
+        while budget > 0 {
+            let step = budget.min(250);
+            let (dx, dy) = (nx - x, ny - y);
+            let distance = isqrt(dx * dx + dy * dy);
+            if distance <= step {
+                (x, y) = (nx, ny);
+                if nodes.len() > 1 {
+                    nodes.pop_front();
+                    (nx, ny) = nodes[0];
+                    dir = norm(nx - x, ny - y, 256);
+                    budget -= distance;
+                    continue;
+                }
+            } else {
+                let (mx, my) = norm(dx, dy, step);
+                x += mx;
+                y += my;
+            }
+            budget -= step;
+        }
+        direction = Some(dir);
+        let (rx, ry) = (nodes[0].0 - x, nodes[0].1 - y);
+        if dir.1 * ry / 256 + dir.0 * rx / 256 < 1001 {
+            nodes.pop_front();
+            direction = None;
+            if nodes.is_empty() {
+                (x, y) = goal;
+            }
+        }
+        path.push((x, y));
+    }
+    nodes.is_empty().then_some(path)
+}
+
 pub(super) fn tunnel_duration(mut remaining: i64, speed: i64, from_speed: bool) -> f64 {
     let mut ticks = 0;
     let reached = if from_speed { speed } else { 1000 };
@@ -76,6 +165,17 @@ impl BattleState {
         if e.tunnel_duration <= 0.0 || elapsed + 0.05 >= e.tunnel_duration - 1e-12 {
             e.x = units(e.tunnel_destination.0) as f64 / 1000.0;
             e.y = units(e.tunnel_destination.1) as f64 / 1000.0;
+            if !e.tunnel_path.is_empty() {
+                // Arrived: the emergence is an ordinary (targetable) deploy.
+                e.underground = false;
+            }
+            return;
+        }
+        if !e.tunnel_path.is_empty() {
+            let index = (((elapsed + 0.05) / 0.05).round() as usize + 1).min(e.tunnel_path.len() - 1);
+            let (x, y) = e.tunnel_path[index];
+            e.x = x as f64 / 1000.0;
+            e.y = y as f64 / 1000.0;
             return;
         }
         let (dx, dy) = (

@@ -4,6 +4,7 @@ import math
 from ..arena import Position
 from ..balance import LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
 from ..mechanics.mechanic_base import BaseMechanic
+from ..pathfinding import native_spawn_path_trajectory
 from ..kinematics import (
     LOGIC_TICK_SECONDS,
     logic_units_to_tiles,
@@ -48,17 +49,31 @@ class UndergroundDeployment(BaseMechanic):
             else battle.arena.RED_KING_TOWER
         )
         origin = Position(king.x, king.y)
-        dx_units = tiles_to_logic_units(destination.x - origin.x)
-        dy_units = tiles_to_logic_units(destination.y - origin.y)
-        distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
-        travel_ticks = spawn_path_travel_tick_count(
-            distance_units,
+        # Native transports follow the underground spawn route, not a straight
+        # line (calibration batch 1 #5b): the per-tick path is precomputed.
+        trajectory = native_spawn_path_trajectory(
+            origin,
+            destination,
             max(1, round(self.travel_speed_logic_units_per_tick)),
-            reached_radius_from_speed=(
-                LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
-            ),
+            battle.arena.native_path_id_at(destination),
         )
+        if trajectory is not None:
+            # Native's first frame of a transport already shows two moves at
+            # the play's execution tick, one more than ours: lead by a tick.
+            travel_ticks = max(0, len(trajectory) - 2)
+        else:
+            dx_units = tiles_to_logic_units(destination.x - origin.x)
+            dy_units = tiles_to_logic_units(destination.y - origin.y)
+            distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
+            travel_ticks = spawn_path_travel_tick_count(
+                distance_units,
+                max(1, round(self.travel_speed_logic_units_per_tick)),
+                reached_radius_from_speed=(
+                    LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
+                ),
+            )
         travel_duration = travel_ticks * LOGIC_TICK_SECONDS
+        entity._underground_trajectory = trajectory
 
         entity._underground_origin = origin
         entity._underground_destination = destination
@@ -93,6 +108,20 @@ class UndergroundDeployment(BaseMechanic):
             or elapsed + frame_seconds >= travel_duration - 1e-12
         ):
             entity.position = Position(destination.x, destination.y)
+            if getattr(entity, "_underground_trajectory", None):
+                # The transport has arrived; the emergence is an ordinary
+                # deploy. Native towers lock on and hit it during emergence
+                # (T1 ep 1975100702: target at 2528, first hit 2532, surfaced
+                # ~2531), so it stops being underground now.
+                entity._underground_deployment = False
+                entity._special_move_active = False
+            return
+
+        trajectory = getattr(entity, "_underground_trajectory", None)
+        if trajectory:
+            index = min(len(trajectory) - 1, round((elapsed + frame_seconds) / LOGIC_TICK_SECONDS) + 1)
+            x_units, y_units = trajectory[index]
+            entity.position = Position(logic_units_to_tiles(x_units), logic_units_to_tiles(y_units))
             return
 
         dx_units = tiles_to_logic_units(destination.x - entity.position.x)

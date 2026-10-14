@@ -2955,7 +2955,9 @@ def test_native_deploy_sequence_mirrors_small_formations_on_path_one(count):
     )
 
 
-def test_native_deploy_sequence_does_not_mirror_five_slot_formation():
+def test_native_deploy_sequence_mirrors_five_slot_formation_on_path_two():
+    # Calibration batch 1 #2: native T1 recordings mirror 5-, 6- and 15-slot rings on path 2
+    # (first-frame positions and spawn order), so path 2 is the x-mirror of path 1.
     path_one = [
         formation_offset(index, 5, 0.5, 0, lane_id=1)
         for index in range(5)
@@ -2965,7 +2967,7 @@ def test_native_deploy_sequence_does_not_mirror_five_slot_formation():
         for index in range(5)
     ]
 
-    assert path_one == path_two
+    assert path_two == [(-x, y) for x, y in path_one]
 
 
 def test_symmetric_deploy_snap_nudges_shared_ground_anchor_by_one_logic_unit():
@@ -3172,12 +3174,13 @@ def test_bats_use_native_rotated_ring_and_mixed_swarms_face_the_opponent():
         bats_battle._spawn_troop(Position(9.0, 12.0), player_id, bat_stats)
         bats = [entity for entity in bats_battle.entities.values() if isinstance(entity, Troop)]
         assert len(bats) == 5
+        # x = 9.0 resolves to path 2, which mirrors the 5-slot ring (calibration batch 1 #2).
         expected_offsets = [
-            (0.993, 0.993 * direction),
-            (1.251, -0.638 * direction),
-            (-0.219, -1.387 * direction),
-            (-1.387, -0.219 * direction),
-            (-0.638, 1.251 * direction),
+            (-0.993, 0.993 * direction),
+            (-1.251, -0.638 * direction),
+            (0.219, -1.387 * direction),
+            (1.387, -0.219 * direction),
+            (0.638, 1.251 * direction),
         ]
         actual_offsets = [
             (bat.position.x - 9.0, bat.position.y - 12.0)
@@ -5130,6 +5133,13 @@ def test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled():
         650,
         reached_radius_from_speed=False,
     ) == 26
+    # The deploy itself follows the routed spawn path (calibration batch 1 #5b); the straight
+    # count above remains the helper's contract for unrouted transports (MightyMiner ability).
+    from clasher.pathfinding import native_spawn_path_trajectory
+    routed = native_spawn_path_trajectory(
+        origin, destination, 650, battle.arena.native_path_id_at(destination)
+    )
+    travel_ticks = len(routed) - 2
     travel_seconds = travel_ticks * battle.dt
     tunnel = miner.mechanics[1]
     assert tunnel.travel_speed_logic_units_per_tick == 650
@@ -5152,8 +5162,11 @@ def test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled():
     for _ in range(travel_ticks - 1):
         battle.step()
     assert miner.position.y == pytest.approx(destination.y)
-    assert miner._special_move_active
-    assert enemy.position == Position(9.0, 20.5)
+    # Arrived: the emergence is an ordinary deploy and he is targetable (native T1 ep
+    # 1975100702: towers lock on and hit during emergence; calibration batch 1 #5c).
+    assert not miner._special_move_active
+    assert miner.placement_pending
+    assert enemy._is_valid_target(miner)
 
     while miner.placement_pending:
         battle.step()
@@ -5223,8 +5236,9 @@ def test_miner_underground_travel_time_depends_on_distance_and_rotates():
     assert near.placement_delay_total < far.placement_delay_total
     raw_distance = battle.arena.BLUE_KING_TOWER.distance_to(Position(4.0, 22.0))
     continuous_duration = raw_distance / (650.0 / 50.0)
-    assert near._underground_travel_duration == 1.5
-    assert near.placement_delay_total == 2.5
+    # Routed spawn path (calibration batch 1 #5b): 31 ticks, not the straight-line 30.
+    assert near._underground_travel_duration == pytest.approx(1.55)
+    assert near.placement_delay_total == pytest.approx(2.55)
     assert near._underground_travel_duration != pytest.approx(continuous_duration)
     assert rotated.position == battle.arena.RED_KING_TOWER
 
