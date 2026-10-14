@@ -48,7 +48,16 @@ def make_player(rt, name):
         from bot.players.rext_policy import RextPolicyPlayer
         model = name[5:]
         greedy = model.endswith('-greedy')
-        return RextPolicyPlayer(model.removesuffix('-greedy'), greedy=greedy)
+        model = model.removesuffix('-greedy')
+        if model.startswith('bc'):  # rext-bc*/rext-bcppo*: IL_Replay-derived, internal eval only; weights stay in the /mpac job dir
+            model = os.path.join(os.environ.get('REXT_EXT2_MODELS', '/mpac/sdicks02/jobs/clasher/bot-ext2-models'), model)
+        return RextPolicyPlayer(model, greedy=greedy)
+    if name.startswith('K4SV-'):  # K4S-st with a learned leaf value V(state, seat) (bot/value/players.py)
+        from bot.value.players import make_value_player
+        return make_value_player(rt, name)
+    if name.startswith('K4S') and '@student' in name:  # search with a student proposer/default (bot/exit/teacher.py)
+        from bot.exit.teacher import student_search
+        return student_search(rt, name)
     if name.startswith('K4SP'):  # K4S + proposer top-k as extra candidates (bot/exit/teacher.py)
         from bot.exit.teacher import from_spec
         return from_spec(rt, name)

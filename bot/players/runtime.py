@@ -29,6 +29,21 @@ PINS = dict(
     r3a_threshold=0.5005528330802917,
 )
 
+# Per-runtime pin sets, selected by CLASHER_BOT_RUNTIME_PINS (default r1 = PINS, unchanged).
+# r2 = r1 plus the calibrated engine (reports/bot/calibration/BATCH1.md, BATCH2.md) and its rebuilt native core;
+# the checkpoints are r1's. Set CLASHER_BOT_RUNTIME to the matching root (clasher-bot-runtime/r2).
+PIN_SETS = dict(
+    r1=PINS,
+    r2=dict(PINS, native_sha256='c50cb06622e42c5ba9bd43854e9bdf10b615ce84a3d08309e5067d82e776ef27'),
+)
+
+
+def selected_pins():
+    name = os.environ.get('CLASHER_BOT_RUNTIME_PINS', 'r1')
+    if name not in PIN_SETS:
+        raise ValueError(f'CLASHER_BOT_RUNTIME_PINS={name!r}; known: {sorted(PIN_SETS)}')
+    return PIN_SETS[name]
+
 
 def sha256(path):
     h = hashlib.sha256()
@@ -47,10 +62,11 @@ class Runtime:
         self.v1_path = Path(v1 or self.root / 'main02.pt')
         self.student_path = Path(student or self.root / 'R3a.pt')
         self._bootstrap_paths()
+        self.pins = selected_pins()
         if verify:
-            assert sha256(self.native_dir / 'clasher_core.abi3.so') == PINS['native_sha256'], 'native pin'
-            assert sha256(self.v1_path) == PINS['v1_sha256'], 'v1 checkpoint pin'
-            assert sha256(self.student_path) == PINS['r3a_sha256'], 'R3a checkpoint pin'
+            assert sha256(self.native_dir / 'clasher_core.abi3.so') == self.pins['native_sha256'], 'native pin'
+            assert sha256(self.v1_path) == self.pins['v1_sha256'], 'v1 checkpoint pin'
+            assert sha256(self.student_path) == self.pins['r3a_sha256'], 'R3a checkpoint pin'
         import torch
         torch.set_num_threads(1)
         from fair_player import Resources
@@ -69,7 +85,7 @@ class Runtime:
     def STUDENT(self):
         if self._student is None:
             from proposals import load_student
-            self._student = load_student(self.student_path, PINS['r3a_threshold'])
+            self._student = load_student(self.student_path, self.pins['r3a_threshold'])
         return self._student
 
     def _bootstrap_paths(self):

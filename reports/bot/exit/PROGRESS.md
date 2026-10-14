@@ -36,7 +36,17 @@ Drawn with os.urandom at 2026-10-14T04:05:19Z. It is disjoint from HEADLINE 1455
 | [400000, 402064) | first rate calibrations (case noise; superseded) | 08/04 |
 | [410000, 410128) / [411000, …) / [412000, …) | rate calibration of A / B / W (common cases) | 08/04 |
 | [500000, 500224) | teacher plays/game and K4SP4 vs K4S paired test | 04/08 |
-| [1000000, 1001500) / [1100000, 1101000) | gen-it2 (08 / 04) | 08/04 |
+| [1000000, 1001500) / [1100000, 1101000) | gen-it2, K4SP4-b64 teacher (08 / 04) | 08/04 |
+| [2000000, 2001500) / [2100000, 2101500) | gen-it3st, K4S-st teacher (08 / 04) | 08/04 |
+| [420000, 420128) / [421000, 421128) | rate calibration of C / D (128 common cases) | 08/04 |
+| [422000, …) / [423000, …) / [424000, …) / [425000, …) / [426000, …) | rate calibration of E / F / G / H / I | 08/04 |
+| [3000000, 3001500) / [3100000, 3101500) | gen-it3D: behavior D, K4S-st teacher (08 / 04) | 08/04 |
+| [3101500, 3103000) | gen-it3D2: behavior D, K4S-st teacher | 04 |
+| [4000000, 4001500) / [4100000, 4101500) | gen-it4: behavior D, teacher K4S-st@student:D (08 / 04) | 08/04 |
+| [427000, …) J, [428000, …) K, [429000, …) D-rep, [430000, …) it4a, [431000, …) it4mix, [432000, …) Drep2, [433000, …) Drep3; next free [434000, …) | rate calibrations | 04/08 |
+| [4001500, 4003000) | gen-it4x: D behavior, K4S-st@student:D teacher, 34 workers | 08 |
+| [5000000, 5001500) | gen-it4s: D behavior, K4S-st teacher, 12 workers (`$J3=/mpac/sdicks02/jobs/clasher/bot-exit-r1-03`, PID 3753047) | 03 |
+| [600000, 600002) | K4S-st@student equivalence smoke | 04 |
 | [1000000, …) | iteration-2 generation | |
 
 ## Done
@@ -91,23 +101,96 @@ These are the 300 HEADLINE cases. Paired Δ = student vs v1 − R3a vs v1 on the
 **Teacher candidate:** K4SP4-b64 (`bot/exit/teacher.py`) − K4S-b64 = +0.031 [−0.031, +0.094] paired vs v1 over 224
 training-bank cases. So it is at least as strong.
 
-## Running (06:14Z; PID = process-group leader from the detach receipt)
+## Iteration 2 (teacher K4SP4-b64, behavior B)
 
-| host | job | PID | receipt |
+- gen-it2: **962,854 labels** (08: 577,277 from 1,500 games; 04: 385,577 from 1,000 games).
+  - The teacher plays at 24.7% of the student's states and the student at 7.7%; they agree on 73%, against 66%
+    under K4S.
+  - Packed: `packed-it2-08` and `packed-it2-04` on both hosts.
+- **K4SP4-b64 on HEADLINE (04):** vs v1 0.857 [0.817, 0.897], vs R3a 0.720 [0.670, 0.770]. This equals the lead's
+  K4S-st.
+
+### Iteration-2 HEADLINE results (300 cases; paired Δ against R3a vs v1 = 0.743)
+
+| student | init / data | threshold (rate) | vs v1 | paired Δ vs R3a | vs R3a h2h | plays/game vs v1 |
+|---|---|---|---|---|---|---|
+| **D** | B + it2 (K4SP4 labels) only, 1,200 steps | 0.5375 | **0.827 [0.783, 0.867]** | **+0.083 [+0.033, +0.133]** | **0.627 [0.573, 0.680]** | 37.6 |
+| C | R3a + it2 + r1 at 50/50, 1,500 steps | 0.5142 | 0.777 [0.730, 0.823] | +0.033 [−0.023, +0.093] | 0.520 [0.463, 0.577] | 38.6 |
+| E | B + it3st-a (557 k K4S-st labels on B states), 1,200 steps | 0.5373 | 0.783 [0.737, 0.830] | +0.040 [−0.020, +0.103] | 0.627 [0.570, 0.680] | 36.9 |
+| F | B + it2 + it3st-a, 1,500 steps | 0.5088 | 0.800 [0.753, 0.843] | +0.057 [−0.003, +0.117] | 0.537 [0.480, 0.590] | 38.4 |
+| H | D + it3D-a + it3st-a + it2 (all teachers), 1,500 steps | 0.5104 | 0.817 [0.770, 0.860] | +0.073 [+0.020, +0.130] | 0.577 [0.520, 0.633]; vs D 0.528 [0.472, 0.585] | 38.1 |
+| J | D + it3D (04 full + 08a), 1,000 steps | 0.5123 | 0.830 [0.787, 0.870] | +0.087 [+0.030, +0.147] | 0.557 [0.500, 0.613]; vs D 0.520 [0.460, 0.577] | 36.7 |
+| **K** | D grown to 6 layers / ffn 1536 (4.9 M params, function-preserving), it3D + it2, 2,000 steps, lr 2e-4 | 0.5075 | **0.863 [0.823, 0.900]** | **+0.120 [+0.067, +0.173]** | 0.600 [0.543, 0.657]; vs D 0.527 [0.470, 0.583] | 38.9 |
+| I | D + it3D-a only, 800 steps | 0.5143 | 0.827 [0.783, 0.867] | +0.083 [+0.023, +0.147] | 0.553 [0.497, 0.607]; vs D 0.477 [0.420, 0.533] | 38.0 |
+| G | **D** + it3D-a (462 k, D states, K4S-st) + it3st-a, 1,200 steps | 0.5289 | 0.823 [0.777, 0.867] | +0.080 [+0.023, +0.137] | 0.577 [0.520, 0.633]; **vs D 0.537 [0.480, 0.593]** | 38.1 |
+
+For reference, the K4S-b64 search itself scores 0.830 vs v1 and 0.633 vs R3a. **D, a single network forward per
+decision, is about as strong as the 64-rollout search.** D: `$J4/train-it2D/step-001200.pt` (sha 1888a3f8…),
+copied to `$J8/ckpt-it2D/`.
+
+Held-out curves (it2 rows): D's decision agreement went 0.659 → 0.672 and top-1 on teacher plays 0.120 → 0.165. C
+went 0.656 → 0.667. So small offline gains became a large strength gain once the labels scored the student's own
+proposals.
+
+## Iteration 3 (teacher K4S-st, the lead's best bot = K4S plus R3a's top-8 proposals as candidates)
+
+- **gen-it3st** (behavior B), paused after 854 games (08) + 586 (04): **556,747 labels**, packed as
+  `packed-it3st-08a` and `packed-it3st-04a`, on both hosts. The pause made room for calibration and eval within the
+  110-process cap. The run is resumable.
+- **gen-it3D** (behavior **D**, teacher K4S-st), 04 games [3100000, 3101500); 08 will take [3000000, 3001500).
+
+**Iteration 3 has plateaued.** G, H and I (refits from D) are all within noise of D (vs D 0.48–0.54). D stays
+the reference student.
+
+**Paired against D** (`python -m bot.exit.paired`, same 300 HEADLINE cases; D = 0.827 vs v1, 0.627 vs R3a):
+
+| student | what | vs v1 | Δ vs D (v1) | vs R3a | Δ vs D (R3a) | h2h vs D |
+|---|---|---|---|---|---|---|
+| K | grown D (4.9 M), it3D + it2 | 0.863 | +0.037 [−0.013, +0.087] | 0.600 | −0.027 [−0.090, +0.037] | 0.527 [0.470, 0.583] |
+| it4a | D + it4-a (564 k labels, K4S-st@student:D teacher) | 0.840 | +0.013 [−0.037, +0.067] | 0.603 | −0.023 [−0.080, +0.033] | 0.553 [0.497, 0.610] |
+| it4mix | D + it4-a + it3D (all) | 0.837 | +0.010 [−0.040, +0.063] | 0.590 | −0.037 [−0.093, +0.020] | 0.500 [0.443, 0.557] |
+| D-rep (seed 2) | D recipe | 0.840 | +0.013 [−0.037, +0.063] | 0.597 | −0.030 [−0.087, +0.027] | 0.523 [0.467, 0.580] |
+| Drep2 (seed 3) | D recipe | 0.843 | +0.017 [−0.033, +0.067] | 0.580 | −0.047 [−0.107, +0.013] | 0.500 [0.443, 0.557] |
+
+- **The D recipe replicates:** the seeds score 0.827–0.843 vs v1 and 0.580–0.627 vs R3a. D-rep − R3a vs v1 =
+  +0.097 [+0.037, +0.157].
+- **Every refit or variant since D sits inside D's seed band.** The ExIt student has plateaued at about 0.84 vs
+  v1 and 0.60 vs R3a; head-to-head vs D is 0.50–0.55.
+
+**Lead (11:05Z):** K4S-st@student:D is null against K4S-st, paired in both engines. D in RoyaleSim: P1 0.820, vs v1
+0.807, vs R3a 0.587, vs K4S-st 0.313. **The student is the fast deployable tier; it does not improve the search.**
+Students are judged paired against D.
+
+**K4S-st@student:D** (search with D as proposer and default; `eval-stD` on 04): **0.907 [0.873, 0.937] vs v1, 0.730
+[0.680, 0.777] vs R3a**. The lead is running the full P1 rows on 03.
+
+## Running (11:30Z)
+
+| host | what | PID / receipt | content |
 |---|---|---|---|
-| 08 | gen-it2: behavior B, teacher K4SP4-b64, pool v1,R3a,self, games [1000000, 1001500), 80 workers | 1626915 | `$J8/gen-it2.receipt.json` |
-| 04 | gen-it2: same, games [1100000, 1101000), 56 workers | 2055172 | `$J4/gen-it2.receipt.json` |
-| 08 | mirror → 04 | 1178335 | `$J8/mirror.receipt.json` |
-| 04 | mirror → 08 | 1801987 | `$J4/mirror.receipt.json` |
+| 08 GPU | queue `$J8/gpuq/QUEUE` (runner 2503549) | lead's keep-alive `$J8/gpuq/keepalive.receipt.json` | it4a ✓ → Drep2 ✓ → **Kall** (grown D, all labels incl. it4, 2,500 steps) → Kseed3 (lead's template) → keep-alive fillers |
+| 04 GPU | queue `$J4/gpuq/QUEUE` (runner 2970964) | keep-alive `$J4/gpuq/keepalive.receipt.json` | it4mix ✓ → Drep3 ✓ → **Kseed2** (K recipe, seed 2026101405) |
+| 08 CPU | cal+eval queue `$J8/cpuq/QUEUE` (runner 2525950, 30 workers) | | K ✓ → **D-rep** → soup4 (weight average of D, D-rep, Drep2, Drep3) |
+| 08 CPU | gen-it4x: D behavior, K4S-st@student:D, [4001500, 4003000), 34 workers | 2581978 | |
+| 04 CPU | cal+eval queue `$J4/cpuq/QUEUE` (runner 3045524, 40 workers) | | it4a ✓ → **it4mix** → Drep3 |
+| 04 CPU | cal+eval queue `$J4/cpuq2/QUEUE` (runner 3192422, 30 workers) | | **Drep2** → Krsim (student K, RoyaleSim rsim15535, vs v1, R3a, scripted ×2, K4S-st, D; 300 cases) |
+| 04 CPU | gen-it4y: same teacher, [4103000, 4104500), 25 workers | 3192462 | |
+| 03 CPU | gen-it4s: D behavior, K4S-st, [5000000, 5001500), 12 workers | 3753047 | |
+| both | mirrors 08 ↔ 04 | 1178335 / 1801987 | |
 
-Note: `detach.sh` echoes a stale receipt if the receipt file already exists. Always use a fresh receipt name.
+Finished: gen-it4 on 08 (569,600 labels) and on 04 (1,500 games).
+
+Queues: `bot/exit/gpu_queue.sh QUEUE` runs `<name> <command>` lines one by one; append lines to queue more work;
+done names go to `QUEUE.done`.
+
+04 cap: other users' processes vary; a `bot.fidelity.run` job with 34 processes appeared at 10:29Z. K's
+calibration on 04 was killed at once (123 → 96) and moved to 08's CPU queue.
 
 ## Next
 
-1. Pack gen-it2 on each host. Then train two variants:
-   - **C** (08): init R3a, it2 + r1 at 50/50;
-   - **D** (04): init B, it2 only.
-2. Rate-calibrate both to 37.8 plays/game, then run HEADLINE vs v1 and R3a, paired against R3a.
+1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
+2. J/K: calibrate, then HEADLINE including head-to-head vs D.
+3. Take the best student as next-round behavior and proposer (K4S-st@student:best as the teacher).
 
 ## Commands
 

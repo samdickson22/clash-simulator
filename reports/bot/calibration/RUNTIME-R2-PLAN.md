@@ -41,3 +41,29 @@ So batch 1 applies to an r1 copy as a pure source diff, and the rebuilt native r
 - Rust decides lanes with `x < 9`, Python with the native path map. They are identical for tap tiles.
 - The 7–14-slot formations, the MightyMiner ability tunnel, HealSpirit and GoblinDrill are unchanged and unverified.
 - The calibrated engine is still ~63% within ¼ tile on non-tower units, against RoyaleSim's 79%. r2 improves the planner's model; it does not replace RoyaleSim as the trusted evaluator.
+
+## Executed 2026-10-14 (calibration batch 2 agent)
+
+- **r2 built** at `127x03:/mpac/sdicks02/repos/clasher-bot-runtime/r2`. r1 was not modified (mtimes Oct 10).
+  - It is a copy of r1 plus the engine diff vs `a4a4a97bf`: 22 files (`src/clasher`, `gamedata.json`,
+    `engine-rs/{differential.py, spawn_snapshot.py, test_stage4_spawners.py, src/*.rs}`).
+  - Every file's r1 base md5 was checked equal to `a4a4a97bf` before copying, and its md5 after copying equal to the
+    worktree. Manifest: `jobs/clasher/bot-calib2-r1/rtstage/final/manifest.tsv`, also embedded in
+    `r2/native/build-tiers.json`.
+- **The native recipe is not a plain `engine-rs` build.** r1's `44874fd6` is `engine-rs` plus the E1 stage
+  (`reports/explore/e1/stage_native.py`, which adds `NativeScripts.rollout_e1`; K4S calls it), built with `cargo --locked
+  --release --features extension-module,gil-release` and no RUSTFLAGS.
+  - `jobs/clasher/bot-calib2-r1/build_e1.sh` reproduces `44874fd6` byte for byte from `r1/engine-rs`.
+  - The same recipe on r2's sources gives **`c50cb06622e42c5ba9bd43854e9bdf10b615ce84a3d08309e5067d82e776ef27`**.
+  - An E1 build behaves like the plain build: same first mismatch on 64/64 validation fixtures (checked on the `c10`
+    candidate).
+- **Pins:** `bot/players/runtime.py` `PIN_SETS = {r1: PINS (unchanged), r2: PINS with native c50cb066}`, selected by
+  `CLASHER_BOT_RUNTIME_PINS` (default `r1`).
+  - Use r2 with `CLASHER_BOT_RUNTIME=/mpac/sdicks02/repos/clasher-bot-runtime/r2 CLASHER_BOT_RUNTIME_PINS=r2`.
+  - The checkpoints are r1's (v1 `d77005d5`, R3a `37509a43`).
+- **Gates:**
+  - a. Fidelity on r2's Python: identical sources to the batch-2 final (`c12-spawn`). Train no-tower ≤¼ 72.26,
+    HP 80.51 (BATCH2.md).
+  - b. Python↔Rust parity on the same sources (tree `c12r`): **574/577**. The 3 left are pre-existing HEAD classes.
+  - c./d. HEADLINE in RoyaleSim and in ours, r2 vs r1: see `R2-AB.md`. No game errored. Planner CPU per 1,000 ticks in
+    RoyaleSim is the same as r1's.
