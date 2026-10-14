@@ -6718,3 +6718,23 @@ ISSUED AUTHORIZE_B_CPU_PREFLIGHT dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d00
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT 5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 0119bdbfa6e060d12e20d38eec5193e1e2befb030512a9d8c02831c17090f391
+
+## 2026-10-14 02:50Z: DIRECTION: BOT-FIRST (Sam). Timing study paused; 03/04 to the bot track
+
+**Sam:** "just get to work making the best possible bot. if that means using our sim, use it. Theirs, use theirs." The project's single objective is now the strongest bot. Measurement work continues only where it serves that.
+
+**Decisions:**
+1. **New track, BOT (exploration tier).**
+   - An Opus lead orchestrates and Haiku workers implement. It runs on **127x03 and 127x04** (03 is CPU only; 04 has an A6000), with 05 for light work only.
+   - **Process:** commits via a temp index plus the secret scan. Sol reviews only host-touching scripts that run outside the track's own job dirs. No authority chains, no sealed outcomes, no pre-registration. Every result is labelled exploration until a claim is needed.
+2. **The timing study (K4S END) is PAUSED** as of this commit.
+   - Nothing is lost. The PF-4 package, the staged runtimes and bundles on 03/04, the RO-1 results dirs and the receipts all stay untouched.
+   - The bot track works in its own dirs and must not touch `k4s-end-r1`, `jobs-k4s`, `jobs/clasher/k4s-*` or `jobs-fsc`.
+   - The fleetweb quiet entries for 03/04 are released for this period.
+   - It can resume later: that needs fresh preflights and the A5 stamp pre-trigger.
+3. **Unchanged:** X4S-4 on 01 runs to its readout. The B r5 serial epochs run alone on 08. The perception study's heldout data stays sealed, and so does T1.
+4. **The first 24 h of the bot track, in order:**
+   - (a) fidelity of our engine against real recordings, using the same metric as RoyaleSim (unit within a quarter tile, exact HP), with RoyaleSim measured on the same fixtures;
+   - (b) speed on the same host;
+   - (c) our best bots running in both engines, plus a daily headline win-rate number;
+   - (d) an engine decision, then training at scale on the chosen engine.
