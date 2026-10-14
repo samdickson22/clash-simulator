@@ -6508,3 +6508,23 @@ This is the first real-input test of package r5.
 
 ISSUED AUTHORIZE_B_CPU_PREFLIGHT a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b
 ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 6cc864c893c7616635df19a306b611beefa2c5b513239b5f80b57b4937598668
+
+## 2026-10-14 00:51Z: K4S RO-1 r3 PR-1 PASS; GO RO-1 host step (03, 04) and A4 preflights (03 l02, 04 l00)
+
+**RO-1 history.** Sol r1 (8cf2a030) found 4 issues and Sol r2 (2f126a06) found 3 residuals. The step-1 dynamic trace was CLEAN: the only write is the es_common `results` mkdir (REPORT 80aa8a1d). The r8 fixture is closed, with 1318 passes ×4.
+
+**r3 coordinator direct check under PR-1: PASS.** The script is `ro1-results-r3.sh` (dc8d0860, 0555), at ccef0609.
+- Errexit independence: the body and the EXIT handler begin with `set +e`, and the remote bash runs under `env -u BASH_ENV -u SHELLOPTS`.
+- Cleanup order: the parent's a-w is restored first and checked, then the child, independently.
+- rc 88 with `__CAUSE` if the restore fails.
+- The status is parsed in Bash only. It needs exactly one `__RC=` line matching `^__RC=(0|[1-9][0-9]{0,2})$` with a value ≤255, plus ssh rc 0; anything else exits 255.
+- The login shell on the fleet is /bin/bash, so the `%q` quoting is valid.
+- Tests: 41/41, and 11 of them fail against r2, so they discriminate.
+- One narrow residual is accepted: a signal arriving *during* `on_exit`, after the traps are cleared, would leave no token. The local side then fails closed with 255.
+
+**GO**, in this order, with one invocation each and no retry. Any nonzero result stops for a ruling.
+1. `ro1-results-r3.sh 127x03`, then `ro1-results-r3.sh 127x04`. Each must exit 0 with the BEFORE and AFTER stats recorded. Commit the logs.
+2. A4 preflight on 03 as attempt **l02** (argv 830a0a30, new receive dir) with the PF-2 flags. Then `verify-received` and a report to the coordinator.
+3. A4 preflight on 04 as attempt l00 (argv 24f9c0ba) with the PF-2 flags. Then `verify-received` and a report.
+
+All b0f49dfe and 556bb6e0 conditions stand: no SSH from any thread to a host under preflight; the RO-1 login itself must finish before that host's S7 session; the bus gate applies.
