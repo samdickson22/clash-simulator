@@ -6818,3 +6818,17 @@ Plans, package and review match on both. Epoch 1 (142.08 s) was accepted earlier
 - The owner writes an offline root-cause note and a proposed minimal fix. That covers the schema of every `queue_plans` record across **all 24 epochs**, so the whole class gets fixed at once.
 - After that, no host action. The owner disables its periodic polling.
 - Three of the 24 epochs have passed; the B chain resumes only by a later coordinator decision.
+
+## 2026-10-14 11:53Z: X4S-4 readout ruling RF-1 (fetch timing)
+
+**Issue.** P14/P15 `reduce.verify_freeze` on 01 needs the freeze commit `<C>`, the P13 contention receipt committed from 05, in 01's object store, and needs it to be an ancestor of 01's `refs/remotes/origin/main`. A fetch made before P13 cannot contain `<C>`. This is the same class as the P3 parity fetch.
+
+**Ruling RF-1: option (A).**
+1. Run P13.
+2. Commit and push the receipt bytes via a temp index from 05. That commit is `<C>`.
+3. Run **one** fetch-only on 01: `git -C /mpac/sdicks02/repos/clasher fetch origin`. Record `refs/remotes/origin/main` before and after, and confirm that `<C>` is an ancestor.
+4. Run P14, then P15.
+
+This is still exactly one fetch, it still happens before any reduction, and it involves no other git operation on 01.
+
+No hold is needed: the owner may proceed through steps 1–4 without waiting for another ruling. Any refusal stops everything for a ruling.
