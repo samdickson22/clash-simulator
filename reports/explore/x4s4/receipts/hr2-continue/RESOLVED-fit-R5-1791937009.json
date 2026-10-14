@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-14T00:16:49Z",
+  "anomaly": {
+    "utc": "2026-10-13T14:32:52Z",
+    "reason": "HALT"
+  },
+  "ack": {
+    "anomaly_sha256": "3c9901187a91737fb66371e55161981bb7916b1ed15485d090a71bff307e805b",
+    "disposition": "continue",
+    "owner": "coordinator (GO HR-2, COORDINATOR e0c087daf7846fc1fe01400b38e11209f77a8c66): R5 restarts fresh from step 0"
+  }
+}

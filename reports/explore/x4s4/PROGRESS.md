@@ -606,3 +606,19 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   reached, and games_tick needs REPORTING.GO. So the fits stay pending.
   - Proposed: (A) under a ruling, run the reviewed driver.unresolved_anomalies() once from a one-off process;
     (B) a driver code fix with review.
+
+## 2026-10-14T00:16:49Z — AR-1 (COORDINATOR 424113d7): ACK-fit-R5 consumed by the reviewed function; new driver anomaly
+
+- `watchdog.py status` ok. One-off, from cwd J: `nice -n 10 taskset -c 56-61 env X4S4_STUDY=$J python3 -u -c "import
+  sys; sys.path.insert(0, '$X'); import driver; r = driver.unresolved_anomalies(); print(...)"`. python3 is
+  /usr/bin/python3 3.8.10; driver.py 98ab91c4….
+  - Output: `unresolved_anomalies() -> []`, rc 0.
+  - driver/ diff: the ACK (4468dcb9) became ACK-fit-R5.consumed-1791937009.json; the anomaly (3c990118) became
+    ANOMALY-fit-R5.resolved-1791937009; RESOLVED-fit-R5-1791937009.json was added (57513a5a…); events.jsonl gained
+    an anomaly_resolved line. Before/after listings are in receipts/hr2-continue/x4s4-ar1-{before,after}.txt.
+- At 00:16:55Z on the driver's next tick: ANOMALY-driver-exception.json (8dbd4b82…).
+  - The error: `prepare_fit_dirs` refused cache/fit/tmp/pymp-1phk3kzz/listener-iy0ysu35 as a special file.
+  - That directory holds 6 multiprocessing listener sockets from the old R5 DataLoader (13:35Z), killed by the HALT
+    teardown.
+  - Reported for a ruling (proposed AR-2: move them to fits/halted-r2-R5/cache-fit-tmp/, then
+    ACK-driver-exception, which Fits.tick can now reach). P9 runs on.
