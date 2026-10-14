@@ -1,0 +1,36 @@
+--- ../s5s6s7-r2/tests/repin.py	2026-10-12 14:55:42.891127704 -0700
++++ tests/repin.py	2026-10-12 17:23:32.659860765 -0700
+@@ -1,5 +1,6 @@
+ """Dev tool: rewrite the cross-file SHA pins of this package in dependency order (offline; edits only files in the
+-package directory). safe_input -> host tool -> preflight / wrappers -> verifier -> gate. test_pins.py checks them.
++package directory). safe_input -> host tool -> preflight / wrappers -> verifier -> gate (SHA-256 and, r3, the canonical bootstrap's
++size pins). test_pins.py checks them.
+ 
+   python3 tests/repin.py            rewrite and print every pin
+   python3 tests/repin.py --check    exit 1 if any pin is stale (no write)
+@@ -16,6 +17,10 @@
+     return hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+ 
+ 
++def size(name):
++    return str(len((ROOT / name).read_bytes()))
++
++
+ def put(name, pattern, value, check, stale):
+     path = ROOT / name
+     text = path.read_text()
+@@ -34,10 +39,14 @@
+     si = sha("safe_input.py")
+     for name in ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_verify_push.py", "k4s_end_launch_gate.py"):
+         put(name, r'(\nSAFE_INPUT_SHA256 = ")[0-9a-f]{64}(")', si, check, stale)
++        put(name, r'(\nSAFE_INPUT_SIZE = )[0-9]+(\n)', size("safe_input.py"), check, stale)   # r3: bootstrap size pin
+     tool = sha("k4s_end_host_tool.py")
+     put("k4s_end_preflight.py", r'(\nHOST_TOOL_SHA256 = ")[0-9a-f]{64}(")', tool, check, stale)
++    for name in ("k4s_end_preflight.py", "k4s_end_launch_gate.py"):
++        put(name, r'(\nHOST_TOOL_SIZE = )[0-9]+(\n)', size("k4s_end_host_tool.py"), check, stale)
+     for name in ("k4s_end_exit_push.sh", "k4s_preflight_push.sh"):
+         put(name, r'(\nhost_tool_sha=)[0-9a-f]{64}(\n)', tool, check, stale)
++        put(name, r'(\nhost_tool_size=)[0-9]+(\n)', size("k4s_end_host_tool.py"), check, stale)
+     put("k4s_end_verify_push.py", r'(\nWRAPPER_SHA256 = ")[0-9a-f]{64}(")', sha("k4s_end_exit_push.sh"), check, stale)
+     gate = "k4s_end_launch_gate.py"
+     put(gate, r'(\nHOST_TOOL_SHA256 = ")[0-9a-f]{64}(")', tool, check, stale)

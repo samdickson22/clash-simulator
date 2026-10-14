@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+[ "$1" = -c ] && shift 2
+exec "$@"

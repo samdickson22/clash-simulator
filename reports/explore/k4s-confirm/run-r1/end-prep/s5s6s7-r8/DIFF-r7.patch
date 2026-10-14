@@ -1,0 +1,105 @@
+--- s5s6s7-r6/k4s_end_preflight.py	2026-10-12 22:52:51.999657252 -0700
++++ s5s6s7-r7/k4s_end_preflight.py	2026-10-13 18:15:13.952643228 -0700
+@@ -1,4 +1,8 @@
+-"""K4S END on-host PREFLIGHT (S5 candidate r4, RC-2 / P2-3). Non-claiming, non-timing. Never launches games.
++"""K4S END on-host PREFLIGHT (S5 candidate r7, RC-2 / P2-3). Non-claiming, non-timing. Never launches games.
++
++r7 (ruling PF-4; class table CLASS-TABLE-PF4.md): background affinity readbacks are recorded exactly as the frozen END
++records slot-evidence.json and must each be a non-empty subset of its (pairwise disjoint) pinned mask; the MHz
++comparison leaves out the hold's first frozen warmup_seconds, as END does; an error raised outside any check fails.
+ 
+ r4 (INTEGRATION-AUDIT-r1 L6): pre_import_pins also reads the runtime's DELTA-MANIFEST.json (frozen end_reference.py:128
+ reads it inside frozen_identity) with its pin at P' 98566c03, so a runtime without it refuses before any import.
+@@ -873,8 +877,14 @@
+             result["slot_evidence"] = slots
+             require(slots["reference_nice"] == 10 and set(slots["background_nice"]) == {10},
+                     "Slot priority read back differs from nice 10")
+-            require(slots["background_affinity"] == [sorted(m) for m in background_masks],
+-                    "Background affinity read back differs from the pinned masks")
++            # r7 (A4 04 l00 failure, 2026-10-14T00:57:40Z): the frozen END only RECORDS this slot evidence
++            # (end_reference.py:370-374); frozen tier_backend.py:238 / k4s_backend.py:100 narrow each worker's affinity to
++            # search_cpus[:width] per tier, so a readback is a non-empty SUBSET of its pinned mask, not equal to it.
++            masks = [sorted(m) for m in background_masks]
++            require(len(slots["background_affinity"]) == len(masks)
++                    and all(got and set(got) <= set(want) for got, want in zip(slots["background_affinity"], masks))
++                    and len(set().union(*map(set, masks))) == sum(map(len, masks)),
++                    "Background affinity read back is not a non-empty subset of its pinned (disjoint) mask")
+             result["load"]["background_slots_ready"] = len(background.workers)
+             checks.end(ready, workers=len(background.workers))
+             hold = checks.begin("loaded_hold", "end_reference.py:375-387 (warm-up loop; never measure())")
+@@ -922,15 +932,28 @@
+             fleet_validity.validate_admission(json.loads((store.directory / "guard-admission.json").read_text()))
+             fleet_validity.validate_blocks(F.P.read_lines(store.directory / "guard-blocks.jsonl"),
+                                            require_measurement=False)
+-        source = "end_reference.py:400-403; fleet_profile.py:48-68 (hold rows relabelled reference-speed)"
++        source = ("end_reference.py:375-403; fleet_profile.py:48-68 (hold rows after the frozen warmup_seconds "
++                  "relabelled reference-speed)")
+         with checks("mhz_comparison", source) as row:
+-            relabelled = [dict(x, phase="reference-speed") if x.get("phase") == HOLD_PHASE else x for x in census]
+-            clocks = fleet_profile.compare_mhz(reporting, relabelled, search + sum(background_masks, []),
+-                                               profile["slot_count"])
+-            row.update(gate=bool(a.reference_work), passes=clocks["passes"],
+-                       absolute_relative_difference=clocks["absolute_relative_difference"])
++            # r7 (PF-4 class audit): END compares only the rows after its >= warmup_seconds all-slot warm-up
++            # (end_reference.py:376-390; compare_mhz keeps reference-speed/-deadlines). The hold's first warmup_seconds
++            # are left out the same way; a hold too short to leave 2 rows is recorded, never gated.
++            held = [x for x in census if x.get("phase") == HOLD_PHASE]
++            settled = held[0]["timestamp"] + profile["warmup_seconds"] if held else None
++            relabelled = [dict(x, phase="reference-speed") if x.get("phase") == HOLD_PHASE
++                          and x["timestamp"] >= settled else x for x in census]
++            window = dict(warmup_seconds=profile["warmup_seconds"], hold_rows=len(held),
++                          compared_rows=sum(x.get("phase") == "reference-speed" for x in relabelled))
++            if window["compared_rows"] >= 2:
++                clocks = dict(fleet_profile.compare_mhz(reporting, relabelled, search + sum(background_masks, []),
++                                                        profile["slot_count"]), window=window)
++            else:
++                clocks = dict(passes=None, absolute_relative_difference=None, window=window,
++                              unavailable="fewer than 2 hold rows after the frozen warmup_seconds")
++            row.update(gate=bool(a.reference_work) and clocks["passes"] is not None, passes=clocks["passes"],
++                       absolute_relative_difference=clocks["absolute_relative_difference"], window=window)
+             result["mhz_comparison"] = clocks
+-            require(clocks["passes"] or not a.reference_work, "Preflight/reporting MHz differs by >5%")
++            require(clocks["passes"] is not False or not a.reference_work, "Preflight/reporting MHz differs by >5%")
+         with checks("post_pins", "end_reference.py:404-406; S5-F1 loaded-module closure") as row:
+             T.validate_bundle(r.bundle, r.runtime_root, dry_run=True, require_references=False)
+             require(F.L.sha(r.native) == pins["native_sha256"], "Native changed during the preflight")
+@@ -1000,7 +1023,10 @@
+     empty = unchanged and before["attempt_parent"] == []
+     no_login = result.get("summaries", {}).get("sshd", {}).get("login_detected_during_hold") is False
+     copied = result.get("guard_sources") is not None              # a refused guard-source copy fails the run
+-    ok = checks.all_passed() and unchanged and empty and copied and (host != "127x04" or no_login)
++    # r7 (PF-4 class audit): an error raised while no check row was open (e.g. the frozen background __exit__ after
++    # loaded_hold ended) fails the run, as it fails the END body (end_reference.py:225-230).
++    ok = (checks.all_passed() and "error" not in result
++          and unchanged and empty and copied and (host != "127x04" or no_login))
+     load = result.get("load") or {}
+     loaded = ((result.get("summaries") or {}).get("bus") or {}).get("cumulative_loaded") or {}
+     measured = loaded.get("seconds")
+--- s5s6s7-r6/k4s_end_launch_gate.py	2026-10-13 03:37:14.369400358 -0700
++++ s5s6s7-r7/k4s_end_launch_gate.py	2026-10-13 18:15:14.040645577 -0700
+@@ -52,7 +52,7 @@
+ DETACH_SHA256 = "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb"
+ WRAPPER_SHA256 = {"end": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",        # exit_push r2
+                   "preflight": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580"}  # preflight_push
+-PREFLIGHT_SHA256 = "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5"
++PREFLIGHT_SHA256 = "c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3"
+ REMOTE_SHA256 = "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d"
+ K4S_MANIFEST_SHA256 = "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357"
+ SEED_COMMITS = ("b2f9e25e1002d43cc910a4bb476716cc4cd32623", "ce042b9775f80cb495c327b14a4712730ae95c85")
+--- s5s6s7-r6/TOOLS-FINAL	2026-10-13 03:36:33.724136642 -0700
++++ s5s6s7-r7/TOOLS-FINAL	2026-10-13 18:19:57.520223581 -0700
+@@ -1,9 +1,10 @@
+-# s5s6s7-r5 TOOLS-FINAL: the six files S10 stages as <base>/tools (TOOL_PINS). Final; never changed after this marker.
+-# columns: staged-name sha256 size source-path-in-s5s6s7-r5
++# s5s6s7-r7 TOOLS-FINAL (ruling PF-4): the six files S10 stages as <base>/tools (TOOL_PINS). Final for r7.
++# Only k4s_end_preflight.py differs from s5s6s7-r6/TOOLS-FINAL (the other five rows are byte-identical).
++# columns: staged-name sha256 size source-path-in-s5s6s7-r7
+ detach.sh 1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb 599 t1-originals/detach.sh
+ k4s_end_exit_push.sh 65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af 18012 k4s_end_exit_push.sh
+ k4s_preflight_push.sh c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580 16749 k4s_preflight_push.sh
+-k4s_end_preflight.py c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5 76609 k4s_end_preflight.py
++k4s_end_preflight.py c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3 78954 k4s_end_preflight.py
+ safe_input.py 806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00 133606 safe_input.py
+ k4s_end_host_tool.py 22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647 34444 k4s_end_host_tool.py
+-# written 2026-10-13T10:36:33Z
++# written 2026-10-14T01:19:57Z

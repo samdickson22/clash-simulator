@@ -1,0 +1,6 @@
+s5s6s7-r7 final test matrix (127x05; scratch cp -a copy in /dev/shm/k4s-r7-pf4/suite with s3s9s10-r6 (the sibling the contract tests name) and s3s9s10-r8 beside it, both SHA256SUMS verified; env -i PATH=/usr/bin:/bin, umask 022, PYTHONDONTWRITEBYTECODE=1, -B, -p no:cacheprovider, nice -n 19 taskset -c 8-23, cwd /tmp; 3.8 PYTHONPATH=/dev/shm/s3s9s10r2-pytest38; four runs in parallel; code files byte-equal to the package; scratch tree (path/size/mtime) identical before and after, 0 .pyc)
+  py312-O rc=0 start=2026-10-14T01:16:31Z end=2026-10-14T01:21:30Z :: 704 passed, 55 skipped, 1 warning in 298.81s (0:04:58)
+  py312 rc=0 start=2026-10-14T01:16:31Z end=2026-10-14T01:21:51Z :: 759 passed in 319.65s (0:05:19)
+  py38-O rc=0 start=2026-10-14T01:16:31Z end=2026-10-14T01:23:32Z :: 704 passed, 55 skipped, 1 warning in 421.06s (0:07:01)
+  py38 rc=0 start=2026-10-14T01:16:31Z end=2026-10-14T01:23:56Z :: 759 passed in 445.23s (0:07:25)
+759 = r6 744 + 15 (tests/test_r7.py); -O: 704 passed + the 55 verifier skips (refuses -O), as r6.

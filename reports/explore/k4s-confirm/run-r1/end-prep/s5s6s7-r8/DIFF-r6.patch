@@ -1,0 +1,954 @@
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/ADOPTED-S9-RUNTIME.json s5s6s7-r6/ADOPTED-S9-RUNTIME.json
+--- s5s6s7-r5/ADOPTED-S9-RUNTIME.json	2026-10-13 03:51:51.378748514 -0700
++++ s5s6s7-r6/ADOPTED-S9-RUNTIME.json	2026-10-13 06:17:53.004680863 -0700
+@@ -1,27 +1,27 @@
+ {
+- "adopted_utc": "2026-10-13T10:51:51Z",
++ "adopted_utc": "2026-10-13T13:17:53Z",
+  "runtime": {
+   "manifest_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+   "manifest_git_members_sha256": "89cff3363556bed7091f8ef57f5b723aaba79f25e4b173573b3d99face8147eb",
+   "manifest_measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+   "manifest_python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+   "manifest_runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+-  "manifest_script_sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+-  "manifest_sha256": "d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02",
++  "manifest_script_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
++  "manifest_sha256": "9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43",
+   "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b"
+  },
+  "runtime_ready_marker": {
+-  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/RUNTIME-r5-READY",
+-  "sha256": "74b5682b71ff9339023b90ff61470f6b1deb5d2568888a8a27baa4bdcdccd79c"
++  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/RUNTIME-r6-READY",
++  "sha256": "a8071016eec1c939f61f4b7a3fe775243368a6990f19e320e413ee375b367c03"
+  },
+  "s9": {
+-  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r5/s9_end_runtime.py",
+-  "sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+-  "size": 78380
++  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r6/s9_end_runtime.py",
++  "sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
++  "size": 84364
+  },
+  "s9_final_marker": {
+-  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r5/S9-FINAL",
+-  "sha256": "933d0314c7fea7225d541389b7304be1d36d6a40582a1ecc6c20b08875f1d79d"
++  "path": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r6/S9-FINAL",
++  "sha256": "0188198510f9e90899361fe1e575b1afdf5b1f01fcb2f12224bc88d579935784"
+  },
+  "schema": "clasher.k4s.end-job-builder-adopted-pins.v1"
+ }
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/frozen_job_drive.out s5s6s7-r6/audit-rerun/frozen_job_drive.out
+--- s5s6s7-r5/audit-rerun/frozen_job_drive.out	2026-10-13 03:53:17.117122392 -0700
++++ s5s6s7-r6/audit-rerun/frozen_job_drive.out	2026-10-13 06:18:14.905269722 -0700
+@@ -1,4 +1,4 @@
+ end_evidence OK ['127x03', '127x04'] 38064dcdeff9 3794d953efb2
+-end_job OK commit b4098f674db8b64e5683e6e9d5595c8944e9e1ab sha e521f3a2a762
+-producer_registry OK /dev/shm/s567r5/audit/eqclone/reports/explore/k4s-confirm/end/registry/round-00/127x03 []
+-producer_claim OK {"attempt": 0, "end_evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd", "host": "127x03", "job_sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233", "launched_utc": 1791888797.1192348, "nonce": "2643c1bf9034049b44fa56ab15b406c1", "pid": 3367065, "receipt_directory": "end-127x03-r00-l00", "round": 0, "schema": "clasher.k4s.end-attempt-claim.v2"} 8cc0db07a428
++end_job OK commit f84b146251eb8cb963b45fc74dbbc21c4cc3e156 sha 1197e0b1f13d
++producer_registry OK /dev/shm/s567r6/audit/eqclone/reports/explore/k4s-confirm/end/registry/round-00/127x03 []
++producer_claim OK {"attempt": 0, "end_evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd", "host": "127x03", "job_sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5", "launched_utc": 1791897494.9075108, "nonce": "f5a1fa09b1992671cb4167ab82d2846c", "pid": 3007011, "receipt_directory": "end-127x03-r00-l00", "round": 0, "schema": "clasher.k4s.end-attempt-claim.v2"} 71daaf5b6102
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/frozen_job_drive.py s5s6s7-r6/audit-rerun/frozen_job_drive.py
+--- s5s6s7-r5/audit-rerun/frozen_job_drive.py	2026-10-13 03:53:13.309017146 -0700
++++ s5s6s7-r6/audit-rerun/frozen_job_drive.py	2026-10-13 06:18:11.053166148 -0700
+@@ -5,8 +5,8 @@
+ sys.path[:0] = [RT + "/reports/explore/k4s-confirm/mac", RT + "/reports/explore/k4s-confirm",
+                 RT + "/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3"]
+ import end_evidence as E, fleet_end
+-repo = "/dev/shm/s567r5/audit/eqclone"
+-evp = "/dev/shm/s567r5/audit/evidence/end-evidence.json"
++repo = "/dev/shm/s567r6/audit/eqclone"
++evp = "/dev/shm/s567r6/audit/evidence/end-evidence.json"
+ evsha = hashlib.sha256(open(evp, "rb").read()).hexdigest()
+ ev = E.end_evidence(evp, evsha, repo, fleet_end)
+ print("end_evidence OK", ev["counted_hosts"], ev["plan_sha256"][:12], ev["completion_sha256"][:12])
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/README.md s5s6s7-r6/audit-rerun/README.md
+--- s5s6s7-r5/audit-rerun/README.md	2026-10-13 04:00:12.912535170 -0700
++++ s5s6s7-r6/audit-rerun/README.md	2026-10-13 06:50:48.971777735 -0700
+@@ -1,4 +1,7 @@
+ # INTEGRATION-AUDIT-r1 drivers re-run against s5s6s7-r5 outputs (offline, 127x05, scratch only)
++- r6: unchanged method; the record now names S9 r6 (`s3s9s10-r6`) and the RUNTIME-r6-READY manifest, the scratch is
++  `/dev/shm/s567r6/audit`, and the outputs below were regenerated from the r6 run (one build + self-check + drivers
++  run, `../builder-proof/RERUN-1-build-selfcheck.log`; no audit-only rerun was needed). Text below is the r5 record.
+ 
+ - r5: every pin comes from `../ADOPTED-S9-RUNTIME.json` (adopted S9 = `s3s9s10-r5/s9_end_runtime.py` from S9-FINAL;
+   production runtime `end-staging/runtime-98566c032d0b`, manifest from RUNTIME-r5-READY), re-hashed by `rerun.sh`
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/rerun.sh s5s6s7-r6/audit-rerun/rerun.sh
+--- s5s6s7-r5/audit-rerun/rerun.sh	2026-10-13 03:53:05.296795656 -0700
++++ s5s6s7-r6/audit-rerun/rerun.sh	2026-10-13 06:17:40.744351207 -0700
+@@ -1,10 +1,10 @@
+ #!/bin/bash
+ # Offline, 127x05 only (r5): (1) k4s_a6_builder.py build + self-check into ../builder-proof (must be ABSENT), bound to
+-# the ADOPTED S9 (s3s9s10-r5) and the PRODUCTION runtime manifest named by ../ADOPTED-S9-RUNTIME.json (every pin read
++# the ADOPTED S9 (s3s9s10-r6) and the PRODUCTION runtime manifest named by ../ADOPTED-S9-RUNTIME.json (every pin read
+ # from that record and re-verified against the bytes; nothing typed); (2) the INTEGRATION-AUDIT-r1 drivers
+ # frozen_job_drive.py / s9_equiv_drive.py (scratch paths and the S9 package substituted only) against that END-JOB on
+ # a scratch copy of repo-full/.git ONLY (never the work tree). Writes only ../builder-proof, this directory's
+-# *.out/X/driver copies, and /dev/shm/s567r5/audit (removed on every exit). No network, no host.
++# *.out/X/driver copies, and /dev/shm/s567r6/audit (removed on every exit). No network, no host.
+ # r5: S9 comes from the S9-FINAL chain only (s9_end_runtime.py, end_prep_common.py, safe_input.py, each checked against
+ # its S9-FINAL row), so the audit S9 driver imports s9_end_runtime directly instead of through s10_stage_host (whose
+ # package was not final); that one import line is the only non-path substitution. `--audit-only` skips (1) and
+@@ -29,11 +29,11 @@
+ else
+   test ! -e "$OUT"
+   nice -n 19 taskset -c 16-23 $PY312 -I -B "$PKG/k4s_a6_builder.py" build \
+-    --declared-by "s5s6s7-r5 builder proof on 127x05 (scratch self-check only; NOT the A6 declaration)" --out "$OUT"
++    --declared-by "s5s6s7-r6 builder proof on 127x05 (scratch self-check only; NOT the A6 declaration)" --out "$OUT"
+   S=$(sha256sum "$OUT/END-JOB.json" | cut -c1-64)
+   nice -n 19 taskset -c 16-23 $PY312 -I -B "$PKG/k4s_a6_builder.py" self-check --out "$OUT" --job-sha256 "$S"
+ fi
+-W=/dev/shm/s567r5/audit; rm -rf "$W"; trap 'chmod -R u+w "$W" 2>/dev/null; rm -rf "$W"' EXIT
++W=/dev/shm/s567r6/audit; rm -rf "$W"; trap 'chmod -R u+w "$W" 2>/dev/null; rm -rf "$W"' EXIT
+ mkdir -p "$W/code/$S9NAME" "$W/home" "$W/eqclone"
+ grep -v '^#' "$S9PKG/S9-FINAL" | while read -r sha size name; do
+   cp -p "$S9PKG/$name" "$W/code/$S9NAME/$name"
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/s9_equiv_drive.out s5s6s7-r6/audit-rerun/s9_equiv_drive.out
+--- s5s6s7-r5/audit-rerun/s9_equiv_drive.out	2026-10-13 03:53:18.597163290 -0700
++++ s5s6s7-r6/audit-rerun/s9_equiv_drive.out	2026-10-13 06:18:16.401309948 -0700
+@@ -2,7 +2,7 @@
+  "diff": [
+   "reports/explore/k4s-confirm/end/END-JOB.json"
+  ],
+- "end_job_commit": "b4098f674db8b64e5683e6e9d5595c8944e9e1ab",
++ "end_job_commit": "f84b146251eb8cb963b45fc74dbbc21c4cc3e156",
+  "externals_unchanged": true,
+  "full_clone": {
+   "absent": [
+@@ -31,9 +31,9 @@
+    "pack-112b8194911d5ac49a56384c8d44b1c7c5743524.pack"
+   ],
+   "replace_refs": 0,
+-  "repository": "/dev/shm/s567r5/audit/eqclone",
++  "repository": "/dev/shm/s567r6/audit/eqclone",
+   "root_dev": 26,
+-  "root_ino": 55481145,
++  "root_ino": 61004329,
+   "shallow": false
+  },
+  "git_members": 4283,
+@@ -43,7 +43,7 @@
+  "runtime_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+  "runtime_files_identical": true,
+  "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+- "runtime_manifest_sha256": "d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02",
++ "runtime_manifest_sha256": "9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43",
+  "schema": "clasher.k4s.end-runtime-equivalence.v2",
+- "utc": "2026-10-13T10:53:18Z"
++ "utc": "2026-10-13T13:18:16Z"
+ }
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/s9_equiv_drive.py s5s6s7-r6/audit-rerun/s9_equiv_drive.py
+--- s5s6s7-r5/audit-rerun/s9_equiv_drive.py	2026-10-13 03:53:13.313017257 -0700
++++ s5s6s7-r6/audit-rerun/s9_equiv_drive.py	2026-10-13 06:18:11.057166256 -0700
+@@ -1,7 +1,7 @@
+ # AUDIT driver: S9 (scratch copy, unmodified code) with its documented test hook: the REPO_FULL constant points at a
+-# scratch byte copy of repo-full carrying synthetic END-JOB commits (/dev/shm/s567r5/audit/eqclone). Nothing else patched.
++# scratch byte copy of repo-full carrying synthetic END-JOB commits (/dev/shm/s567r6/audit/eqclone). Nothing else patched.
+ import sys
+-sys.path.insert(0, "/dev/shm/s567r5/audit/code/s3s9s10-r5")
++sys.path.insert(0, "/dev/shm/s567r6/audit/code/s3s9s10-r6")
+ import s9_end_runtime as S9
+-S9.REPO_FULL = "/dev/shm/s567r5/audit/eqclone"
++S9.REPO_FULL = "/dev/shm/s567r6/audit/eqclone"
+ sys.exit(S9.main(sys.argv[1:]))
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/audit-rerun/X s5s6s7-r6/audit-rerun/X
+--- s5s6s7-r5/audit-rerun/X	2026-10-13 03:53:13.313017257 -0700
++++ s5s6s7-r6/audit-rerun/X	2026-10-13 06:18:11.057166256 -0700
+@@ -1 +1 @@
+-X=b4098f674db8b64e5683e6e9d5595c8944e9e1ab
++X=f84b146251eb8cb963b45fc74dbbc21c4cc3e156
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/builder-proof/BUILD.json s5s6s7-r6/builder-proof/BUILD.json
+--- s5s6s7-r5/builder-proof/BUILD.json	2026-10-13 03:52:22.523611916 -0700
++++ s5s6s7-r6/builder-proof/BUILD.json	2026-10-13 06:18:02.320931356 -0700
+@@ -1,7 +1,7 @@
+ {
+- "builder_sha256": "31e7c427e98af872937b93ac8f0cd537f41671164c43f236ac41b6a376610c56",
++ "builder_sha256": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
+  "end_job_repository_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+- "end_job_sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233",
++ "end_job_sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5",
+  "outcomes_read": false,
+  "repository": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/repo-full",
+  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+@@ -33,5 +33,5 @@
+    "sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf"
+   }
+  },
+- "utc": "2026-10-13T10:52:22Z"
++ "utc": "2026-10-13T13:18:02Z"
+ }
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/builder-proof/END-JOB.json s5s6s7-r6/builder-proof/END-JOB.json
+--- s5s6s7-r5/builder-proof/END-JOB.json	2026-10-13 03:52:22.523611916 -0700
++++ s5s6s7-r6/builder-proof/END-JOB.json	2026-10-13 06:18:02.320931356 -0700
+@@ -4,8 +4,8 @@
+   "127x03",
+   "127x04"
+  ],
+- "declared_by": "s5s6s7-r5 builder proof on 127x05 (scratch self-check only; NOT the A6 declaration)",
+- "declared_utc": "2026-10-13T10:52:22Z",
++ "declared_by": "s5s6s7-r6 builder proof on 127x05 (scratch self-check only; NOT the A6 declaration)",
++ "declared_utc": "2026-10-13T13:18:02Z",
+  "end_evidence_sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+  "k4s_manifest_sha256": "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+  "plan_sha256": "38064dcdeff96fb006f6e261c246a458f423d97cc53278c3921888241c8d22cf",
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/builder-proof/RERUN-1-build-selfcheck.log s5s6s7-r6/builder-proof/RERUN-1-build-selfcheck.log
+--- s5s6s7-r5/builder-proof/RERUN-1-build-selfcheck.log	2026-10-13 03:53:27.105398359 -0700
++++ s5s6s7-r6/builder-proof/RERUN-1-build-selfcheck.log	2026-10-13 06:18:26.217573885 -0700
+@@ -1,9 +1,9 @@
+ adopted pins current
+-{"end_job": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r5/builder-proof/END-JOB.json", "end_job_sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233"}
+-{"end_job_commit_scratch": "505ad5db5c50b81ae6a217a67ca18bca43d2b611", "ok": true, "self_check": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r5/builder-proof/SELF-CHECK.json", "sha256": "971e1f3ea7670cc2ae1771d881f0d3a10e763906b3000e6c8af92649baaf91d3"}
+-s10_stage_host.py: FAILED
+-s11_host_repository.py: FAILED
+-s1b_copy_admissions.py: FAILED
+-s3_guard_job.py: FAILED
+-s9_end_runtime.py: FAILED
+-sha256sum: WARNING: 5 computed checksums did NOT match
++{"end_job": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/builder-proof/END-JOB.json", "end_job_sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5"}
++{"end_job_commit_scratch": "5c847855c53b61eaaa35b502529d81289916ba3e", "ok": true, "self_check": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s5s6s7-r6/builder-proof/SELF-CHECK.json", "sha256": "1485fe7a0e3d553fea9b2b7248ce115aa5a9c423844a3c332d873449bb168cce"}
++materialized 45
++rerun OK X=f84b146251eb8cb963b45fc74dbbc21c4cc3e156
++
++real	0m14.587s
++user	0m10.290s
++sys	0m4.962s
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/builder-proof/RERUN-2-audit-only.log s5s6s7-r6/builder-proof/RERUN-2-audit-only.log
+--- s5s6s7-r5/builder-proof/RERUN-2-audit-only.log	2026-10-13 03:53:27.109398469 -0700
++++ s5s6s7-r6/builder-proof/RERUN-2-audit-only.log	1969-12-31 16:00:00.000000000 -0800
+@@ -1,3 +0,0 @@
+-adopted pins current
+-materialized 45
+-rerun OK X=b4098f674db8b64e5683e6e9d5595c8944e9e1ab
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/builder-proof/SELF-CHECK.json s5s6s7-r6/builder-proof/SELF-CHECK.json
+--- s5s6s7-r5/builder-proof/SELF-CHECK.json	2026-10-13 03:52:29.631808791 -0700
++++ s5s6s7-r6/builder-proof/SELF-CHECK.json	2026-10-13 06:18:09.465123449 -0700
+@@ -1,6 +1,6 @@
+ {
+- "builder_sha256": "31e7c427e98af872937b93ac8f0cd537f41671164c43f236ac41b6a376610c56",
+- "end_job_sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233",
++ "builder_sha256": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
++ "end_job_sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5",
+  "evidence_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+  "evidence_files_materialized": 45,
+  "frozen": {
+@@ -14,10 +14,10 @@
+    "sha256": "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd"
+   },
+   "end_job": {
+-   "commit": "505ad5db5c50b81ae6a217a67ca18bca43d2b611",
++   "commit": "5c847855c53b61eaaa35b502529d81289916ba3e",
+    "registry_root": "reports/explore/k4s-confirm/end/registry",
+    "repository_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+-   "sha256": "e521f3a2a7624efff879628ab1ad94f5c8ec78650958e79cdfe8d22268b59233"
++   "sha256": "1197e0b1f13d4655d4b691439f5dd45ccec42418491fa7cf934226b53fa400f5"
+   },
+   "end_job_path": "reports/explore/k4s-confirm/end/END-JOB.json",
+   "job_fields": [
+@@ -35,8 +35,8 @@
+   "python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+   "runtime": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/runtime-98566c032d0b",
+   "runtime_manifest_git_members_sha256": "89cff3363556bed7091f8ef57f5b723aaba79f25e4b173573b3d99face8147eb",
+-  "runtime_manifest_script_sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60",
+-  "runtime_manifest_sha256": "d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02"
++  "runtime_manifest_script_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
++  "runtime_manifest_sha256": "9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43"
+  },
+  "note": "scratch clone = byte copy of REPO_FULL/.git only; removed after the check",
+  "ok": true,
+@@ -46,13 +46,13 @@
+   "measurement_files_sha256": "42b8986d7e7748dd826ddad021ced3573d3ca5bbc21333120f1bf212beef8c25",
+   "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+   "runtime_files_sha256": "fc3dbeb42a7737ab844f1f6033ff42b19cd1d514f9670631e36cc7f72a2008e7",
+-  "s9": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r5/s9_end_runtime.py",
+-  "s9_sha256": "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60"
++  "s9": "/mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r6/s9_end_runtime.py",
++  "s9_sha256": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7"
+  },
+  "schema": "clasher.k4s.end-job-self-check.v1",
+  "scratch_diff": [
+   "reports/explore/k4s-confirm/end/END-JOB.json"
+  ],
+- "scratch_end_job_commit": "505ad5db5c50b81ae6a217a67ca18bca43d2b611",
+- "utc": "2026-10-13T10:52:29Z"
++ "scratch_end_job_commit": "5c847855c53b61eaaa35b502529d81289916ba3e",
++ "utc": "2026-10-13T13:18:09Z"
+ }
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/k4s_a6_builder.py s5s6s7-r6/k4s_a6_builder.py
+--- s5s6s7-r5/k4s_a6_builder.py	2026-10-13 03:51:51.378748514 -0700
++++ s5s6s7-r6/k4s_a6_builder.py	2026-10-13 06:17:53.004680863 -0700
+@@ -15,9 +15,9 @@
+       On a /dev/shm scratch copy of REPO_FULL/.git ONLY (no work tree is copied; nothing outside scratch is written):
+       commit the END-JOB alone on P' (X), require diff-tree P' X == [END-JOB path]; materialize only the evidence
+       and its artifacts (git show of their committed blobs) and run the FROZEN end_evidence.end_evidence + end_job
+-      (the S9 runtime's own files, pinned) against the scratch clone at X; then run the ADOPTED S9 (s3s9s10-r5,
++      (the S9 runtime's own files, pinned) against the scratch clone at X; then run the ADOPTED S9 (s3s9s10-r6,
+       pinned) `equivalence` with REPO_FULL pointed at the scratch clone. r5 (SOL-REVIEW-END-INTEGRATION-r1 finding 1):
+-      the S9 code and the PRODUCTION runtime manifest are pinned from the S9-FINAL / RUNTIME-r5-READY markers
++      the S9 code and the PRODUCTION runtime manifest are pinned from the S9-FINAL / RUNTIME-r6-READY markers
+       (record: ADOPTED-S9-RUNTIME.json), and the manifest must name that S9 as its builder (script_sha256), P' as its
+       commit, REPO_FULL as its repository and FROZEN_PYTHON as its frozen interpreter. Writes DIR/SELF-CHECK.json exclusively; the scratch
+       directory is removed in every case.
+@@ -234,10 +234,10 @@
+ DECLARED_BY = re.compile(r"[ -~]{1,200}")
+ # self-check inputs (read only, pinned): the S9 runtime built at P' and the frozen files the drivers import.
+ # r5 (finding 1): S9_PATH/S9_SHA256 and FROZEN_RUNTIME/FROZEN_RUNTIME_MANIFEST_SHA256 are written by
+-# tests/adopt_pins.py from the S9-FINAL and RUNTIME-r5-READY markers (computed, never typed; record
++# tests/adopt_pins.py from the S9-FINAL and RUNTIME-r6-READY markers (computed, never typed; record
+ # ADOPTED-S9-RUNTIME.json, tied to these constants by tests/test_r5.py).
+ FROZEN_RUNTIME = RUNNER + "/end-staging/runtime-98566c032d0b"
+-FROZEN_RUNTIME_MANIFEST_SHA256 = "d1767f78fdb3652d9f9fb27f63c51bf736828e38a243b4b97fa65f6429eddb02"
++FROZEN_RUNTIME_MANIFEST_SHA256 = "9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43"
+ E4V3 = "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3"
+ FROZEN_PINS = {                                                             # = k4s_end_preflight.FROZEN_CLOSURE
+     'reports/explore/k4s-confirm/end_evidence.py': '6337e4bc2dbfeaf8a5303ac107e0e74174643aa88898dbdf610365dea131c61e',
+@@ -246,8 +246,8 @@
+     'reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/receipts.py': '839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6',
+ }
+ FROZEN_PYTHON = "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python"         # = S9 DEFAULT_PYTHON
+-S9_PATH = RUNNER + "/end-prep/s3s9s10-r5/s9_end_runtime.py"
+-S9_SHA256 = "4778f6f61cb5cb69a7cf476ce5ce00c53e3b3157ca052492a3bc3e3cb3745b60"
++S9_PATH = RUNNER + "/end-prep/s3s9s10-r6/s9_end_runtime.py"
++S9_SHA256 = "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7"
+ SCRATCH_PARENT = "/dev/shm"
+ SCRATCH_GIT_ENV = {"GIT_AUTHOR_NAME": "k4s-end-job self-check", "GIT_AUTHOR_EMAIL": "scratch@127x05",
+                    "GIT_COMMITTER_NAME": "k4s-end-job self-check", "GIT_COMMITTER_EMAIL": "scratch@127x05",
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/MUTATION-RESULTS-r6-py312-O.json s5s6s7-r6/MUTATION-RESULTS-r6-py312-O.json
+--- s5s6s7-r5/MUTATION-RESULTS-r6-py312-O.json	1969-12-31 16:00:00.000000000 -0800
++++ s5s6s7-r6/MUTATION-RESULTS-r6-py312-O.json	2026-10-13 06:23:07.753143552 -0700
+@@ -0,0 +1,191 @@
++{
++ "created_utc": "2026-10-13T13:20:27Z",
++ "equivalent_survivors": [],
++ "killed": 10,
++ "mutants": 10,
++ "nulls": 3,
++ "nulls_survived": 3,
++ "package_sha256": {
++  "k4s_a6_builder.py": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
++  "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
++  "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
++  "k4s_end_launch_gate.py": "4fc53765a506d1b9c5c9e740b515cc77b6a657bc6289b4e4337b7be4c91ad72c",
++  "k4s_end_launch_remote.py": "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d",
++  "k4s_end_preflight.py": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
++  "k4s_end_verify_push.py": "84ddf65c24d9ef59d30ee7b534a7d31a74558681ed1332020c0eabab24da85d2",
++  "k4s_preflight_push.sh": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
++  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
++ },
++ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
++ "results": [
++  {
++   "description": "U8: scratch directory kept",
++   "file": "k4s_a6_builder.py",
++   "id": "J17",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 10.1,
++   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_real_a6_builder_proof_frozen_and_s9 - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 passed, 1 warning in 9.77s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8: S9 runtime manifest pin not checked",
++   "file": "k4s_a6_builder.py",
++   "id": "J18",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 11.2,
++   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_frozen_inputs_are_pinned[runtime-manifest]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 27 passed, 1 warning in 10.91s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8: frozen driver files not checked against their pins",
++   "file": "k4s_a6_builder.py",
++   "id": "J19",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 11.2,
++   "tail": "it__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_frozen_inputs_are_pinned[frozen-file]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 28 passed, 1 warning in 10.92s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8: S9 code not checked against its pin",
++   "file": "k4s_a6_builder.py",
++   "id": "J20",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 11.6,
++   "tail": "assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[s9-pin-differs from its pin]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 37 passed, 1 warning in 11.26s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: runtime manifest not bound to the adopted S9 (script_sha256)",
++   "file": "k4s_a6_builder.py",
++   "id": "J21",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 8.3,
++   "tail": "test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[built-by-another-s9-not built by the adopted S9]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 1 warning in 8.05s\n",
++   "tests": [
++    "tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: runtime manifest commit/repository/python not bound",
++   "file": "k4s_a6_builder.py",
++   "id": "J22",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 8.3,
++   "tail": " in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[other-commit-P' / REPO_FULL / FROZEN_PYTHON]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 1 warning in 8.05s\n",
++   "tests": [
++    "tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder S9 path drifts to the predecessor package",
++   "file": "k4s_a6_builder.py",
++   "id": "J23",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.4,
++   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.08s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder S9 SHA drifts from the adoption record",
++   "file": "k4s_a6_builder.py",
++   "id": "J24",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.4,
++   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.09s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder runtime-manifest SHA drifts from the adoption record",
++   "file": "k4s_a6_builder.py",
++   "id": "J25",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.3,
++   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder runtime path drifts to the superseded runtime",
++   "file": "k4s_a6_builder.py",
++   "id": "J26",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.3,
++   "tail": "/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "NULL control (unmodified)",
++   "file": null,
++   "id": "N09",
++   "optimized": true,
++   "rc": 0,
++   "seconds": 53.6,
++   "tail": "= warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n51 passed, 5 skipped, 1 warning in 53.37s\n",
++   "tests": [
++    "tests/test_r4.py"
++   ],
++   "verdict": "SURVIVED"
++  },
++  {
++   "description": "NULL control (unmodified)",
++   "file": null,
++   "id": "N10",
++   "optimized": true,
++   "rc": 0,
++   "seconds": 11.2,
++   "tail": "============ warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n38 passed, 1 warning in 10.90s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "SURVIVED"
++  },
++  {
++   "description": "NULL control (unmodified)",
++   "file": null,
++   "id": "N11",
++   "optimized": true,
++   "rc": 0,
++   "seconds": 1.4,
++   "tail": "=== warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 2 skipped, 1 warning in 1.14s\n",
++   "tests": [
++    "tests/test_r5.py"
++   ],
++   "verdict": "SURVIVED"
++  }
++ ]
++}
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/MUTATION-RESULTS-r6-py38-O.json s5s6s7-r6/MUTATION-RESULTS-r6-py38-O.json
+--- s5s6s7-r5/MUTATION-RESULTS-r6-py38-O.json	1969-12-31 16:00:00.000000000 -0800
++++ s5s6s7-r6/MUTATION-RESULTS-r6-py38-O.json	2026-10-13 06:23:07.757143658 -0700
+@@ -0,0 +1,191 @@
++{
++ "created_utc": "2026-10-13T13:22:46Z",
++ "equivalent_survivors": [],
++ "killed": 10,
++ "mutants": 10,
++ "nulls": 3,
++ "nulls_survived": 3,
++ "package_sha256": {
++  "k4s_a6_builder.py": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
++  "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
++  "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
++  "k4s_end_launch_gate.py": "4fc53765a506d1b9c5c9e740b515cc77b6a657bc6289b4e4337b7be4c91ad72c",
++  "k4s_end_launch_remote.py": "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d",
++  "k4s_end_preflight.py": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
++  "k4s_end_verify_push.py": "84ddf65c24d9ef59d30ee7b534a7d31a74558681ed1332020c0eabab24da85d2",
++  "k4s_preflight_push.sh": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
++  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
++ },
++ "python": "/usr/bin/python3",
++ "results": [
++  {
++   "description": "U8: scratch directory kept",
++   "file": "k4s_a6_builder.py",
++   "id": "J17",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 13.3,
++   "tail": "py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_real_a6_builder_proof_frozen_and_s9 - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 passed, 1 warning in 12.76s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8: S9 runtime manifest pin not checked",
++   "file": "k4s_a6_builder.py",
++   "id": "J18",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 15.3,
++   "tail": "py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_frozen_inputs_are_pinned[runtime-manifest]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 27 passed, 1 warning in 14.66s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8: frozen driver files not checked against their pins",
++   "file": "k4s_a6_builder.py",
++   "id": "J19",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 15.2,
++   "tail": "it__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_frozen_inputs_are_pinned[frozen-file]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 28 passed, 1 warning in 14.70s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8: S9 code not checked against its pin",
++   "file": "k4s_a6_builder.py",
++   "id": "J20",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 15.5,
++   "tail": "assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[s9-pin-differs from its pin]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 37 passed, 1 warning in 14.74s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: runtime manifest not bound to the adopted S9 (script_sha256)",
++   "file": "k4s_a6_builder.py",
++   "id": "J21",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.7,
++   "tail": "test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[built-by-another-s9-not built by the adopted S9]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 1 warning in 0.08s\n",
++   "tests": [
++    "tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: runtime manifest commit/repository/python not bound",
++   "file": "k4s_a6_builder.py",
++   "id": "J22",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 3.1,
++   "tail": " in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[other-commit-P' / REPO_FULL / FROZEN_PYTHON]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 1 warning in 0.13s\n",
++   "tests": [
++    "tests/test_a6_builder.py::test_r5_frozen_inputs_bind_runtime_to_adopted_s9"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder S9 path drifts to the predecessor package",
++   "file": "k4s_a6_builder.py",
++   "id": "J23",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.6,
++   "tail": "/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.08s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder S9 SHA drifts from the adoption record",
++   "file": "k4s_a6_builder.py",
++   "id": "J24",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.6,
++   "tail": "/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder runtime-manifest SHA drifts from the adoption record",
++   "file": "k4s_a6_builder.py",
++   "id": "J25",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.6,
++   "tail": "/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "U8 r5: builder runtime path drifts to the superseded runtime",
++   "file": "k4s_a6_builder.py",
++   "id": "J26",
++   "optimized": true,
++   "rc": 1,
++   "seconds": 0.5,
++   "tail": "/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 warning in 0.07s\n",
++   "tests": [
++    "tests/test_r5.py::test_u8_builder_constants_equal_the_adopted_record"
++   ],
++   "verdict": "KILLED"
++  },
++  {
++   "description": "NULL control (unmodified)",
++   "file": null,
++   "id": "N09",
++   "optimized": true,
++   "rc": 0,
++   "seconds": 75.6,
++   "tail": "................                 [100%]\n=============================== warnings summary ===============================\n../../s3s9s10r2-pytest38/_pytest/config/__init__.py:1278\n  /dev/shm/s3s9s10r2-pytest38/_pytest/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n51 passed, 5 skipped, 1 warning in 75.13s (0:01:15)\n",
++   "tests": [
++    "tests/test_r4.py"
++   ],
++   "verdict": "SURVIVED"
++  },
++  {
++   "description": "NULL control (unmodified)",
++   "file": null,
++   "id": "N10",
++   "optimized": true,
++   "rc": 0,
++   "seconds": 14.8,
++   "tail": "...................                                   [100%]\n=============================== warnings summary ===============================\n../../s3s9s10r2-pytest38/_pytest/config/__init__.py:1278\n  /dev/shm/s3s9s10r2-pytest38/_pytest/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n38 passed, 1 warning in 14.07s\n",
++   "tests": [
++    "tests/test_a6_builder.py"
++   ],
++   "verdict": "SURVIVED"
++  },
++  {
++   "description": "NULL control (unmodified)",
++   "file": null,
++   "id": "N11",
++   "optimized": true,
++   "rc": 0,
++   "seconds": 1.8,
++   "tail": "                                             [100%]\n=============================== warnings summary ===============================\n../../s3s9s10r2-pytest38/_pytest/config/__init__.py:1278\n  /dev/shm/s3s9s10r2-pytest38/_pytest/config/__init__.py:1278: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 2 skipped, 1 warning in 1.33s\n",
++   "tests": [
++    "tests/test_r5.py"
++   ],
++   "verdict": "SURVIVED"
++  }
++ ]
++}
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/README.md s5s6s7-r6/README.md
+--- s5s6s7-r5/README.md	2026-10-13 04:57:11.779136788 -0700
++++ s5s6s7-r6/README.md	2026-10-13 06:51:06.016245506 -0700
+@@ -1,4 +1,10 @@
+-# K4S END S5 / S6 / S7 candidates r5: preflight, exit-push + verifier, launch gate on safe_input, END-JOB builder
++# K4S END S5 / S6 / S7 candidates r6: preflight, exit-push + verifier, launch gate on safe_input, END-JOB builder
++
++- **r6 (2026-10-13 UTC, 127x05, offline): SOL-FIXCHECK-END-INTEGRATION-r5. The builder is re-pinned to S9 r6
++  (`s3s9s10-r6`, the U10 fix) and to the production runtime the runner rebuilt with it (RUNTIME-r6-READY), and the
++  proof is regenerated. Nothing else changed.** New copy of `s5s6s7-r5/` (`cp -a`, r5 SHA256SUMS verified; r5
++  immutable). [DIFF-r6.patch](DIFF-r6.patch), [RESPONSE-r6.md](RESPONSE-r6.md), [PROGRESS-r6.md](PROGRESS-r6.md);
++  section **r6** at the end. No SSH, commit or push.
+ 
+ - **r5 (2026-10-13 UTC, 127x05, offline): SOL-REVIEW-END-INTEGRATION-r1 finding 1 (U8 builder pins) and the U4
+   interpreter ruling (COORDINATOR 10:33Z).** New copy of `s5s6s7-r4/` (`cp -a`, r4 SHA256SUMS verified in the copy; r4
+@@ -636,3 +642,69 @@
+ 3. The adopted pins deviate from Sol's literal r4 values (80c15b5f / 1fa0ebf5) because finding 2 changed S9; disclosed
+    by the coordinator.
+ 4. U11 (S8) deferred (coordinator); B6 / D1 endorsed and unaffected here.
++
++## r6 (SOL-FIXCHECK-END-INTEGRATION-r5: re-pin to S9 r6)
++
++**Inputs read:** `reviews/SOL-FIXCHECK-END-INTEGRATION-r5.md` (U8 FIXED; the U10 fix is Part A); the markers
++`s3s9s10-r6/S9-FINAL` and `end-staging/RUNTIME-r6-READY` (written by the runner after rebuilding the production runtime
++with S9 r6); the production `runtime-manifest.json` (metadata). No game, `games/`, outcome complete.json,
++end-raw/end-complete, reducer or verifier output was opened; the proof's scratch clone copied `repo-full/.git` only.
++
++**Nothing but the pins changed.** New copy of `s5s6s7-r5/` (`cp -a`, r5 SHA256SUMS verified in the copy; r5
++immutable). Diff: [DIFF-r6.patch](DIFF-r6.patch); response: [RESPONSE-r6.md](RESPONSE-r6.md); resume log:
++[PROGRESS-r6.md](PROGRESS-r6.md).
++
++| File | Change |
++|---|---|
++| `k4s_a6_builder.py` | `S9_PATH` = `s3s9s10-r6/s9_end_runtime.py`, `S9_SHA256` = S9 r6, `FROZEN_RUNTIME_MANIFEST_SHA256` = the RUNTIME-r6-READY manifest (all four written by `tests/adopt_pins.py`, computed from the markers; `FROZEN_RUNTIME` path unchanged); three comment words r5 → r6. No logic change |
++| `ADOPTED-S9-RUNTIME.json` | Re-adopted (r5 copy removed first; `adopt_pins.py` refuses an existing record) |
++| `tests/adopt_pins.py` | Marker / package names r5 → r6 only (`s3s9s10-r6`, `RUNTIME-r6-READY`) |
++| `tests/test_r5.py` | Contract expectations r5 → r6 only (sibling package, adopted S9 path, marker paths) |
++| `tests/test_a6_builder.py` | One skip-reason string r5 → r6 |
++| `tests/mutate.py` | J23's edit target follows the pin (r6 path → the predecessor r5 path) |
++| `audit-rerun/rerun.sh` | Comment, `--declared-by` label and scratch path `s567r5` → `s567r6`; outputs regenerated |
++| `builder-proof/` | Regenerated by `rerun.sh` (r5 copy removed first; the script requires it absent). r5's `RERUN-2-audit-only.log` is gone: the first r6 run passed, so no audit-only rerun was needed |
++| `TOOLS-FINAL` | **Unchanged** (copied; the six files are byte-identical to r5, re-checked by command) |
++
++**Pins (computed by `adopt_pins.py`, record `ADOPTED-S9-RUNTIME.json`):** S9 `s3s9s10-r6/s9_end_runtime.py`
++sha256 `bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7` (84364 bytes; = S9-FINAL); production runtime
++`end-staging/runtime-98566c032d0b`, manifest sha256 `9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43`
++(= RUNTIME-r6-READY; its `script_sha256` = S9 r6, commit P' 98566c03, python e4v3-venv; `git_members_sha256`
++89cff336…, runtime / measurement files fc3dbeb4… / 42b8986d…, the same as r5). `adopt_pins.py --check`: current.
++
++### U8 proof (recorded, `builder-proof/`, regenerated by `audit-rerun/rerun.sh`, first run OK)
++
++Build from P' (END-JOB sha256 `1197e0b1…`, `BUILD.json`). The END-JOB was committed ALONE on a scratch copy of
++`repo-full/.git` ONLY (`/dev/shm/s567r6`, removed); `diff-tree` = exactly END-JOB.json. FROZEN `end_evidence` +
++`end_job` accepted it at X. The ADOPTED S9 r6 `equivalence` then passed against the production manifest: 4283 git members
++(SHA = the manifest's), runtime / measurement files identical. `SELF-CHECK.json` ok = true, s9_sha256 = S9 r6,
++runtime_manifest_sha256 = 9d6ab1f7…. The audit's two drivers (`audit-rerun/*.out`) also pass: frozen end_evidence /
++end_job / producer_registry / producer_claim (scratch work tree only) and S9 r6 equivalence rc 0. Log:
++`builder-proof/RERUN-1-build-selfcheck.log`.
++
++### Tests (r6, `TEST-RUN-r6.txt`)
++
++In place, with `s3s9s10-r6` beside it (so the sibling contract tests run). The package tree was byte-for-byte unchanged
++before and after, with 0 `.pyc`.
++
++| Interpreter | normal | `-O` |
++|---|---|---|
++| `/mpac/sdicks02/venvs/k4s-freeze/bin/python` 3.12.12 | **744 passed** | **689 passed, 55 skipped** |
++| `/usr/bin/python3` 3.8.10 | **744 passed** | **689 passed, 55 skipped** |
++
++744 = r5's 744 (no test added). The `-O` skips are r4's 55 verifier skips (the verifier refuses `-O`). The two
++sibling-package tests that r5 skipped in its pristine copy run here and pass.
++
++### Mutation (r6)
++
++Only the pins changed, so only the U8 binding / pin-drift subset was rerun: `--only J17–J26 N09 N10 N11`, with J23's
++target following the pin (S9 path r6 → the predecessor r5). The method is r5's: a `/dev/shm` copy, re-pinned, named
++tests with `-O -B -x`, 6 jobs. py3.12 `-O`: **10/10 killed, 3/3 NULLs survived**
++(`MUTATION-RESULTS-r6-py312-O.json`). py3.8 `-O`: **10/10 killed, 3/3 NULLs survived**
++(`MUTATION-RESULTS-r6-py38-O.json`). J23–J26 were killed by
++`test_r5.py::test_u8_builder_constants_equal_the_adopted_record`, as in r5.
++
++### r6 open items
++
++1. The r5 disclosures stand (U4 qualification is the S10 probe's host step; U11 deferred).
++2. `RUNTIME-r6-READY` is mode 0444; the record stores its SHA.
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/RESPONSE-r6.md s5s6s7-r6/RESPONSE-r6.md
+--- s5s6s7-r5/RESPONSE-r6.md	1969-12-31 16:00:00.000000000 -0800
++++ s5s6s7-r6/RESPONSE-r6.md	2026-10-13 06:23:39.313992111 -0700
+@@ -0,0 +1,17 @@
++# s5s6s7-r6: re-pin to S9 r6 (SOL-FIXCHECK-END-INTEGRATION-r5)
++
++Scope: Sol's r5 fix-check found U8 (the END-JOB builder pins) FIXED and U10 (S9 symbolic destination ref) NOT FIXED.
++U10 is fixed in Part A (`s3s9s10-r6`), which changed S9; the runner rebuilt the production runtime with it
++(`end-staging/RUNTIME-r6-READY`). This round only re-pins the A6 builder to that S9 and manifest and regenerates the
++proof. Diff: `DIFF-r6.patch` = `diff -ruN s5s6s7-r5 s5s6s7-r6` (SHA256SUMS / PROGRESS excluded).
++
++| Item | Change (file:line) | Named tests | Status |
++|---|---|---|---|
++| Builder pins → S9 r6 + RUNTIME-r6-READY manifest | `k4s_a6_builder.py:240` `FROZEN_RUNTIME_MANIFEST_SHA256` = `9d6ab1f7386894727035c14a95c518b54e9472c9cb90eb6d023c589fe2269b43`, `:249` `S9_PATH` = `s3s9s10-r6/s9_end_runtime.py`, `:250` `S9_SHA256` = `bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7` (`FROZEN_RUNTIME` path unchanged), all written by `tests/adopt_pins.py` from the markers (marker / package names r5 → r6 only). It refuses unless every S9-FINAL row matches the bytes, RUNTIME-r6-READY names exactly the production manifest and the same S9, the manifest hashes to it, and its `script_sha256` is S9 r6. Record: `ADOPTED-S9-RUNTIME.json` | `test_r5.py::test_u8_builder_constants_equal_the_adopted_record`, `::test_u8_adopted_record_matches_the_sibling_s9_package` (s3s9s10-r6 SHA256SUMS, S9 bytes / size, S9-FINAL SHA), `::test_u8_adopted_record_matches_the_production_runtime_manifest` (manifest bytes, `script_sha256` / commit / members, RUNTIME-r6-READY SHA), `::test_u8_recorded_proof_is_of_these_bytes`; `test_a6_builder.py::test_frozen_inputs_are_pinned[*]`, `::test_r5_frozen_inputs_bind_runtime_to_adopted_s9[8]`, `::test_real_a6_builder_proof_frozen_and_s9` | re-pinned |
++| Proof regenerated | `audit-rerun/rerun.sh` (label and scratch path r6 only): build, then self-check on a scratch copy of `repo-full/.git` ONLY (P' plus a scratch END-JOB commit, `diff-tree` = exactly END-JOB.json), frozen `end_evidence` + `end_job` at X, then S9 r6 `equivalence` on the production runtime; then the audit's two drivers | `builder-proof/{BUILD,END-JOB,SELF-CHECK}.json`, `builder-proof/RERUN-1-build-selfcheck.log`; `audit-rerun/*.out`, `X` | **OK** |
++| TOOLS-FINAL | unchanged: copied as is; the six files are byte-identical (re-checked by command) | `test_pins.py` | unchanged |
++
++Nothing else changed. The gate, host tool, S5, the wrappers, the verifier, the host program and safe_input are
++byte-identical to r5. The canonical bootstrap regions are unchanged. Counts: README §r6, `TEST-RUN-r6.txt`.
++Mutation: the U8 subset on the new pins (J17–J26; J23's target follows the pin), with NULL controls N09–N11:
++`MUTATION-RESULTS-r6-py312-O.json` and `MUTATION-RESULTS-r6-py38-O.json`, 10/10 killed and 3/3 NULLs survived in each.
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/TEST-RUN-r6.txt s5s6s7-r6/TEST-RUN-r6.txt
+--- s5s6s7-r5/TEST-RUN-r6.txt	1969-12-31 16:00:00.000000000 -0800
++++ s5s6s7-r6/TEST-RUN-r6.txt	2026-10-13 06:50:29.279237158 -0700
+@@ -0,0 +1,6 @@
++s5s6s7-r6 final test matrix (127x05; in place, sibling s3s9s10-r6 beside it with its final SHA256SUMS; env -i, umask 022, PYTHONDONTWRITEBYTECODE=1, -B, -p no:cacheprovider, nice -n 19 taskset -c 8-23, cwd /tmp; 3.8 PYTHONPATH=/dev/shm/s3s9s10r2-pytest38; package tree (path/size/mtime) identical before and after, 0 .pyc)
++py312: 744 passed in 285.31s (0:04:45)
++py312-O: 689 passed, 55 skipped, 1 warning in 271.53s (0:04:31)
++py38: 744 passed in 398.17s (0:06:38)
++py38-O: 689 passed, 55 skipped, 1 warning in 386.54s (0:06:26)
++runs 2026-10-13T13:43:25Z..2026-10-13T13:50:03Z (four in parallel)
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/tests/adopt_pins.py s5s6s7-r6/tests/adopt_pins.py
+--- s5s6s7-r5/tests/adopt_pins.py	2026-10-13 03:51:44.522558271 -0700
++++ s5s6s7-r6/tests/adopt_pins.py	2026-10-13 06:17:40.732350884 -0700
+@@ -2,7 +2,7 @@
+ two markers, computing every value (nothing typed), and write the record ADOPTED-S9-RUNTIME.json that
+ tests/test_r5.py ties the builder constants to. Offline, 05 only; reads the markers, the S9 file, the sibling
+ SHA256SUMS and runtime-manifest.json (metadata) read-only; writes only k4s_a6_builder.py and the record in this
+-package. Refuses unless the S9-FINAL rows equal the bytes of the chain they list, RUNTIME-r5-READY names exactly the
++package. Refuses unless the S9-FINAL rows equal the bytes of the chain they list, RUNTIME-r6-READY names exactly the
+ production manifest (and, if listed, the same S9), the manifest bytes hash to it, and the manifest's script_sha256 is
+ the S9-FINAL S9. (The sibling SHA256SUMS is checked by tests/test_r5.py once that package is final.)
+ 
+@@ -19,9 +19,9 @@
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ ROOT = os.path.dirname(HERE)
+ RUNNER = "/mpac/sdicks02/k4s-runner/run-r1"
+-S9_PACKAGE = RUNNER + "/end-prep/s3s9s10-r5"
++S9_PACKAGE = RUNNER + "/end-prep/s3s9s10-r6"
+ S9_FINAL = S9_PACKAGE + "/S9-FINAL"
+-RUNTIME_READY = RUNNER + "/end-staging/RUNTIME-r5-READY"
++RUNTIME_READY = RUNNER + "/end-staging/RUNTIME-r6-READY"
+ RUNTIME_EXPECTED = RUNNER + "/end-staging/runtime-98566c032d0b"
+ RECORD = os.path.join(ROOT, "ADOPTED-S9-RUNTIME.json")
+ RECORD_SCHEMA = "clasher.k4s.end-job-builder-adopted-pins.v1"
+@@ -65,14 +65,14 @@
+     named = dict((r[1], r[0]) for r in rows)
+     manifest_path = RUNTIME_EXPECTED + "/runtime-manifest.json"
+     if len(named) != len(rows) or manifest_path not in named:
+-        fail("RUNTIME-r5-READY must name %s exactly once" % manifest_path)
++        fail("RUNTIME-r6-READY must name %s exactly once" % manifest_path)
+     if set(named) - {manifest_path, s9_path} or named.get(s9_path, s9_sha) != s9_sha:
+-        fail("RUNTIME-r5-READY names another runtime or another S9: %r" % sorted(named))
++        fail("RUNTIME-r6-READY names another runtime or another S9: %r" % sorted(named))
+     manifest_sha = named[manifest_path]
+     with open(manifest_path, "rb") as stream:
+         raw = stream.read()
+     if hashlib.sha256(raw).hexdigest() != manifest_sha:
+-        fail("runtime-manifest.json differs from RUNTIME-r5-READY")
++        fail("runtime-manifest.json differs from RUNTIME-r6-READY")
+     manifest = json.loads(raw)
+     if manifest.get("script_sha256") != s9_sha:
+         fail("the production runtime was not built by the S9-FINAL S9 (script_sha256)")
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/tests/mutate.py s5s6s7-r6/tests/mutate.py
+--- s5s6s7-r5/tests/mutate.py	2026-10-13 04:03:06.457266943 -0700
++++ s5s6s7-r6/tests/mutate.py	2026-10-13 06:17:40.740351099 -0700
+@@ -327,7 +327,7 @@
+     ('I03', 'U4: interpreter flag not required to be exactly -B', GATE, [('os.path.basename(python).startswith("python") and flag == "-B",', 'os.path.basename(python).startswith("python"),')], [R5T]),
+     ('J21', 'U8 r5: runtime manifest not bound to the adopted S9 (script_sha256)', AJ, [('require(isinstance(manifest, dict) and manifest.get("script_sha256") == S9_SHA256,', 'require(isinstance(manifest, dict),')], [A6R5]),
+     ('J22', 'U8 r5: runtime manifest commit/repository/python not bound', AJ, [('require(manifest.get("commit") == EVIDENCE_COMMIT and manifest.get("repository") == REPO_FULL', 'require(True or manifest.get("commit") == EVIDENCE_COMMIT and manifest.get("repository") == REPO_FULL')], [A6R5]),
+-    ('J23', 'U8 r5: builder S9 path drifts to the predecessor package', AJ, [('S9_PATH = RUNNER + "/end-prep/s3s9s10-r5/s9_end_runtime.py"', 'S9_PATH = RUNNER + "/end-prep/s3s9s10-r4/s9_end_runtime.py"')], [R5REC]),
++    ('J23', 'U8 r5: builder S9 path drifts to the predecessor package', AJ, [('S9_PATH = RUNNER + "/end-prep/s3s9s10-r6/s9_end_runtime.py"', 'S9_PATH = RUNNER + "/end-prep/s3s9s10-r5/s9_end_runtime.py"')], [R5REC]),
+     ('J24', 'U8 r5: builder S9 SHA drifts from the adoption record', AJ, [_drift(AJ, "S9_SHA256")], [R5REC]),
+     ('J25', 'U8 r5: builder runtime-manifest SHA drifts from the adoption record', AJ, [_drift(AJ, "FROZEN_RUNTIME_MANIFEST_SHA256")], [R5REC]),
+     ('J26', 'U8 r5: builder runtime path drifts to the superseded runtime', AJ, [('FROZEN_RUNTIME = RUNNER + "/end-staging/runtime-98566c032d0b"', 'FROZEN_RUNTIME = RUNNER + "/end-staging/SUPERSEDED-r3-runtime-98566c032d0b"')], [R5REC]),
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/tests/test_a6_builder.py s5s6s7-r6/tests/test_a6_builder.py
+--- s5s6s7-r5/tests/test_a6_builder.py	2026-10-13 04:04:47.008003184 -0700
++++ s5s6s7-r6/tests/test_a6_builder.py	2026-10-13 06:17:40.736350993 -0700
+@@ -290,7 +290,7 @@
+ 
+ 
+ @pytest.mark.skipif(not Path(J.FROZEN_RUNTIME).is_dir() or not Path(J.S9_PATH).is_file(),
+-                    reason="S9 runtime / adopted s3s9s10-r5 not on this machine")
++                    reason="S9 runtime / adopted s3s9s10-r6 not on this machine")
+ @pytest.mark.parametrize("pin", ["none", "runtime-manifest", "frozen-file", "s9"])
+ def test_frozen_inputs_are_pinned(monkeypatch, pin):
+     si = J.load_si(str(ROOT))
+diff -ruN -x SHA256SUMS -x 'PROGRESS-*' -x DIFF-r6.patch s5s6s7-r5/tests/test_r5.py s5s6s7-r6/tests/test_r5.py
+--- s5s6s7-r5/tests/test_r5.py	2026-10-13 04:02:40.320555120 -0700
++++ s5s6s7-r6/tests/test_r5.py	2026-10-13 06:17:40.732350884 -0700
+@@ -2,9 +2,9 @@
+ 
+ U4: the END/preflight interpreter S7 pins and build-argv emits is exactly the one P' runtime.sh executes
+ (`/mpac/sdicks02/repos/clasher/.venv/bin/python -B`), never the bare uv binary.
+-U8: the builder's self-check is bound to the ADOPTED S9 (s3s9s10-r5) and the PRODUCTION runtime manifest; the
++U8: the builder's self-check is bound to the ADOPTED S9 (s3s9s10-r6) and the PRODUCTION runtime manifest; the
+ constants are tied to the committed record `builder-proof/ADOPTED-PINS.json` (always, portable) and, when present,
+-to the sibling package's SHA256SUMS, its S9-FINAL marker, the RUNTIME-r5-READY marker and the real manifest bytes."""
++to the sibling package's SHA256SUMS, its S9-FINAL marker, the RUNTIME-r6-READY marker and the real manifest bytes."""
+ import ast
+ import hashlib
+ import json
+@@ -21,7 +21,7 @@
+ BARE_UV = "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"   # r4 value, not ratified
+ REAL_HOST_PYTHON = G.HOST_PYTHON                                            # before any fixture patches it
+ P_PRIME = "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb"
+-SIBLING_A = ROOT.parent / "s3s9s10-r5"
++SIBLING_A = ROOT.parent / "s3s9s10-r6"
+ 
+ 
+ @pytest.fixture
+@@ -86,7 +86,7 @@
+     raise AssertionError("%s not assigned in %s" % (name, path))
+ 
+ 
+-@pytest.mark.skipif(not (SIBLING_A / "s10_stage_host.py").exists(), reason="sibling s3s9s10-r5 absent")
++@pytest.mark.skipif(not (SIBLING_A / "s10_stage_host.py").exists(), reason="sibling s3s9s10-r6 absent")
+ def test_u4_s10_probe_interpreter_is_the_same_string():
+     ok(_assigned_literal(SIBLING_A / "s10_stage_host.py", "HOST_PYTHON") == REAL_HOST_PYTHON)
+ 
+@@ -94,7 +94,7 @@
+ # ---------------------------------------------------------------- U8 / finding 1: builder bound to the adopted S9
+ 
+ RECORD = ROOT / "ADOPTED-S9-RUNTIME.json"
+-ADOPTED_S9 = G.RUNNER + "/end-prep/s3s9s10-r5/s9_end_runtime.py"
++ADOPTED_S9 = G.RUNNER + "/end-prep/s3s9s10-r6/s9_end_runtime.py"
+ PRODUCTION_RUNTIME = G.RUNNER + "/end-staging/runtime-98566c032d0b"
+ 
+ 
+@@ -108,7 +108,7 @@
+ 
+ def test_u8_builder_constants_equal_the_adopted_record():
+     """Portable: the builder's S9 and runtime-manifest pins are exactly the committed adoption record (S9-FINAL +
+-    RUNTIME-r5-READY), the adopted package's S9 and the production runtime path; the record binds the manifest to
++    RUNTIME-r6-READY), the adopted package's S9 and the production runtime path; the record binds the manifest to
+     that S9 (script_sha256), P' and the frozen interpreter."""
+     import k4s_a6_builder as J
+     r = record()
+@@ -119,11 +119,11 @@
+     ok(J.FROZEN_RUNTIME_MANIFEST_SHA256 == r["runtime"]["manifest_sha256"])
+     ok(r["runtime"]["manifest_commit"] == J.EVIDENCE_COMMIT == P_PRIME and r["runtime"]["manifest_python"]
+        == J.FROZEN_PYTHON)
+-    ok(r["s9_final_marker"]["path"] == G.RUNNER + "/end-prep/s3s9s10-r5/S9-FINAL"
+-       and r["runtime_ready_marker"]["path"] == G.RUNNER + "/end-staging/RUNTIME-r5-READY")
++    ok(r["s9_final_marker"]["path"] == G.RUNNER + "/end-prep/s3s9s10-r6/S9-FINAL"
++       and r["runtime_ready_marker"]["path"] == G.RUNNER + "/end-staging/RUNTIME-r6-READY")
+ 
+ 
+-@pytest.mark.skipif(not (SIBLING_A / "SHA256SUMS").exists(), reason="adopted s3s9s10-r5 not beside this package")
++@pytest.mark.skipif(not (SIBLING_A / "SHA256SUMS").exists(), reason="adopted s3s9s10-r6 not beside this package")
+ def test_u8_adopted_record_matches_the_sibling_s9_package():
+     r = record()
+     sums = dict(reversed(line.split()) for line in (SIBLING_A / "SHA256SUMS").read_text().splitlines()

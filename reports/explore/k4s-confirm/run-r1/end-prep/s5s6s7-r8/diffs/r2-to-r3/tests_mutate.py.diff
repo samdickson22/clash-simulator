@@ -1,0 +1,167 @@
+--- ../s5s6s7-r2/tests/mutate.py	2026-10-12 15:28:03.247498964 -0700
++++ tests/mutate.py	2026-10-12 17:43:08.486610546 -0700
+@@ -1,13 +1,16 @@
+ """Mutation check of the safe_input adoption points and the new gates (offline).
+ 
+-Each mutant: copy the package into a fresh /dev/shm/s567r2-mut-* directory, apply its edits (each old text must occur
++Each mutant: copy the package into a fresh /dev/shm/s567r3-mut-* directory, apply its edits (each old text must occur
+ exactly once), re-pin the copy (tests/repin.py) so the SHA bootstraps load it, then run the named test files with
+ `python -O -B -m pytest -x` (test_pins.py is never included, so no mutant is killed by a pin alone). KILLED = the
+ suite fails. NULL controls (no edit) must SURVIVE. The verifier refuses -O at import (T1 R3-1), so its mutants run
+ without -O and are labelled so. The copy is removed afterwards.
+ 
+   python3 tests/mutate.py --check-edits
+-  python3 tests/mutate.py --python /usr/bin/python3 --pythonpath /dev/shm/s567r2-pytest38 --jobs 12 --out R.json
++  python3 tests/mutate.py --python /usr/bin/python3 --pythonpath /dev/shm/s567r3-pytest38 --jobs 6 --out R.json
++
++r3: test entries may be pytest node ids (file::test) so a mutant of a canonical bootstrap region is judged by the
++BEHAVIOURAL tests only (the byte-equality region tests would kill it trivially).
+ """
+ import argparse
+ import concurrent.futures
+@@ -24,6 +27,9 @@
+ T = "tests/"
+ HT, S5, S6W, S6V, S7 = (T + "test_host_tool.py", T + "test_s5_preflight.py", T + "test_s6_wrapper.py",
+                         T + "test_s6_verifier.py", T + "test_s7_gate.py")
++F2I, F1 = T + "test_f2_s3_guard_integration.py", T + "test_f1_bootstrap.py"
++F1PY, F1SH = F1 + "::test_python_loader_meets_every_kit_scenario", F1 + "::test_wrapper_bootstrap_meets_the_kit_scenarios"
++F1SWAP = F1 + "::test_wrapper_never_executes_a_host_tool_swapped_after_verification"
+ TOOL, PF, EW, PW, VER, GATE, REM = ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_exit_push.sh",
+                                     "k4s_preflight_push.sh", "k4s_end_verify_push.py", "k4s_end_launch_gate.py",
+                                     "k4s_end_launch_remote.py")
+@@ -43,17 +49,20 @@
+                                                           "")], [HT]),
+     ("H07", "global git config not checked",
+      TOOL, [("si._check_git_config(parent, parts[-1], os.path.dirname(path))", "pass")], [HT]),
+-    ("H08", "read_pinned: nlink not checked",
+-     TOOL, [("or st.st_nlink != 1 or st.st_size > cap:", "or st.st_size > cap:")], [HT]),
+-    ("H09", "read_pinned: SHA not checked", TOOL, [("    if hashlib.sha256(data).hexdigest() != sha256:\n"
+-                                                    "        refuse(", "    if False:\n        refuse(")], [HT]),
++    ("H08", "bootstrap (host tool copy): leaf nlink not checked before open (r3: canonical region)",
++     TOOL, [("        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size != size:",
++             "        if not stat.S_ISREG(before.st_mode) or before.st_size != size:")], [F1PY]),
++    ("H09", "bootstrap (host tool copy): SHA not checked (r3: canonical region)",
++     TOOL, [("    if len(data) != size or hashlib.sha256(data).hexdigest() != sha256:",
++             "    if len(data) != size:")], [F1PY]),
+     ("H10", "snapshot copies no claim",
+      TOOL, [('names = listing["claims"].get("round-%02d/%s" % (round_index, host), []) if listing["exists"] else []',
+              "names = []")], [HT, S6W]),
+     ("H11", "Q3 seed commits not checked", TOOL, [("    for commit in commits:\n        si.git_run",
+                                                    "    for commit in commits[:0]:\n        si.git_run")], [HT, S5]),
+     ("H12", "frozen-exec: clone not verified",
+-     TOOL, [('record = verify_clone(si, host, option_value(command, "--repository"))', "record = {}")], [S6W]),
++     TOOL, [('record = verify_clone(si, host, option_value(command, "--repository"), role="repository")',
++             "record = {}")], [S6W]),
+     # ---- k4s_end_preflight.py (S5)
+     ("P01", "caller manifest SHA accepted", PF, [("if k4s_manifest_sha256 != K4S_MANIFEST_SHA256:", "if False:")], [S5]),
+     ("P02", "manifest read without the anchor",
+@@ -73,11 +82,13 @@
+     ("P10", "pf/rd guard-job form not enforced",
+      PF, [('require(m.group(1).startswith("pf") == preflight,', "require(True,")], [S5]),
+     ("P11", "guard repo clone not verified",
+-     PF, [('row.update(tool.verify_clone(si, host, guard_job + "/repo", grants=("guard-job",)))', "pass")], [S5]),
++     PF, [('row.update(tool.verify_clone(si, host, guard_job + "/repo", grants=("guard-job",), role="guard-repo"))',
++           "pass")], [S5]),
+     ("P12", "repository clone not verified",
+-     PF, [("row.update(tool.verify_clone(si, host, str(a.repository)))", "pass")], [S5]),
++     PF, [('row.update(tool.verify_clone(si, host, str(a.repository), role="repository"))', "pass")], [S5]),
+     ("P13", "frozen git env not applied",
+-     PF, [("os.environ.update(tool.frozen_git_env(si, inherited))", "os.environ.update(inherited)")], [S5]),
++     PF, [("env, record = tool.frozen_env_checked(si, host, dict(os.environ))", "env, record = dict(os.environ), {}")],
++     [S5]),
+     ("P14", "binding without reference work",
+      PF, [('result["mode_requested"] == "binding" and load.get("reference_slot_work") is True',
+            'result["mode_requested"] == "binding"')], [S5]),
+@@ -113,8 +124,8 @@
+      EW, [('  test ! -e "$job/$name" && test ! -L "$job/$name" || exit 90', "  true")], [S6W]),
+     ("W03", "END wrapper: command not through frozen-exec", EW, [('tool frozen-exec -- "$@"', '"$@"')], [S6W]),
+     ("W04", "END wrapper: refused registry snapshot ignored", EW, [('"$snapshot" || failed=1', "true")], [S6W]),
+-    ("W05", "END wrapper: host tool SHA not checked",
+-     EW, [('"$host_tool" | sha256sum --check --status --strict || exit 90', '"$host_tool" | true')], [S6W]),
++    ("W05", "END wrapper: canonical verify step skipped (r3; was the sha256sum check)",
++     EW, [("k4s_verify_host_tool || exit 90\n", "true\n")], [F1SH]),
+     ("W06", "END wrapper: PUSH-FAILED by redirection",
+      EW, [("    | tool si -- create-excl --host \"$host\" --root \"$job\" --rel PUSH-FAILED.json --max-size 4096) "
+            "|| exit 92", "    > \"$job/PUSH-FAILED.json\")")], [S6W]),
+@@ -185,6 +196,60 @@
+             'ok = bool(si.sha256_input(P, "tools", os.path.basename(path)))')], [S7]),
+     ("R05", "C5 nice not checked", REM, [('(gate["ps_nice"] == "0" and', '(True and')], [S7]),
+     ("R06", "two claims accepted", REM, [("if len(names) >= 2:", "if False:")], [S7]),
++    # ---- r3 (SOL END-FULL F1/F2/F3/F5/F6): one mutant per new guard
++    ('F2a', 'shallow allowed for every role', TOOL, [('allow=("shallow",) if role == "guard-repo" else ()', 'allow=("shallow",)')], [HT, F2I]),
++    ('F2b', 'unknown clone role accepted', TOOL, [('    if role not in CLONE_ROLES:\n', '    if False:\n')], [HT]),
++    ('F2c', 'guard role need not be shallow', TOOL, [('        if flag != b"true\\n":', '        if False:')], [HT]),
++    ('F2d', 'guard .git/shallow content not checked', TOOL, [('if shallow[-1] != "" or not shallow[:-1] or not all(OID40.fullmatch(s) for s in shallow[:-1]):', 'if False:')], [HT]),
++    ('F2e', 'guard shallow commits not required present', TOOL, [('        for commit in shallow[:-1]:\n', '        for commit in shallow[:0]:\n')], [HT]),
++    ('F2f', 'promisor/partial-clone config accepted', TOOL, [('    if promisor:\n', '    if False:\n')], [HT]),
++    ('F2g', 'promisor pack accepted', TOOL, [('    if any(name.endswith(".promisor") for name in packs):', '    if False:')], [HT]),
++    ('F2h', 'seed_commits outside the guard role', TOOL, [('    if role != "guard-repo":\n', '    if False:\n')], [HT]),
++    ('F2i', 'S5 checks the real S3 guard repo in the repository role', PF, [('grants=("guard-job",), role="guard-repo"))', 'grants=("guard-job",), role="repository"))')], [F2I]),
++    ('F2j', 'S5 checks the --repository clone in the guard role', PF, [('row.update(tool.verify_clone(si, host, str(a.repository), role="repository"))', 'row.update(tool.verify_clone(si, host, str(a.repository), role="guard-repo"))')], [F2I]),
++    ('F2k', 'S7 host checks the guard repo in the repository role', REM, [('out["guard_repo"] = tool.verify_clone(si, cfg["host"], cfg["guard_job"] + "/repo", grants=("guard-job",),\n                                              role="guard-repo")', 'out["guard_repo"] = tool.verify_clone(si, cfg["host"], cfg["guard_job"] + "/repo", grants=("guard-job",),\n                                              role="repository")')], [F2I]),
++    ('F2l', 'S7 host checks the --repository clone in the guard role', REM, [('tool.verify_clone(si, cfg["host"], cfg["repository"], role="repository")', 'tool.verify_clone(si, cfg["host"], cfg["repository"], role="guard-repo")')], [F2I]),
++    ('F3a', 'relative HOME/XDG accepted', TOOL, [('    if not value.startswith("/"):\n        refuse("git-env", "%s is relative', '    if False:\n        refuse("git-env", "%s is relative')], [HT]),
++    ('F3b', 'empty-but-set XDG accepted', TOOL, [('    if not isinstance(value, str) or value == "":', '    if not isinstance(value, str):')], [HT]),
++    ('F3c', 'symlinked HOME/XDG accepted', TOOL, [('    if os.path.realpath(value) != value:', '    if False:')], [HT]),
++    ('F3d', 'canonical HOME not installed in the executed env', TOOL, [('    env["HOME"] = home\n', '')], [HT]),
++    ('F3e', 'GIT_CONFIG_NOSYSTEM not required', TOOL, [('    if env.get("GIT_CONFIG_NOSYSTEM") != "1":', '    if False:')], [HT]),
++    ('F3f', 'XDG location ignored (r2: always $HOME/.config)', TOOL, [('return ((xdg if xdg is not None else home + "/.config") + "/git/config"', 'return ((home + "/.config") + "/git/config"')], [HT]),
++    ('F3g', 'config paths skip the name gate', TOOL, [('        parts = si.name_gate(path, host, ())', '        parts = si.check_abs(path)')], [HT]),
++    ('F3h', 'frozen-exec execs a re-derived env', TOOL, [('os.execvpe(command[0], command, env)', 'os.execvpe(command[0], command, frozen_git_env(si, dict(os.environ)))')], [HT]),
++    ('F3i', 'S7 host program skips the frozen-reader env check', REM, [('out["global_git_config"] = tool.frozen_env_checked(si, cfg["host"], dict(os.environ))[1]', 'out["global_git_config"] = {}')], [S7]),
++    ('F5a', 'preflight native identity not compared', GATE, [('require(isinstance(ident, dict) and ident.get("native_sha256") == NATIVE_SHA256', 'require(isinstance(ident, dict) and True')], [S7]),
++    ('F5b', 'preflight corpus identity not compared', GATE, [('            and ident.get("corpus_sha256") == CORPUS_SHA256\n', '\n')], [S7]),
++    ('F5c', 'preflight corpus-inventory identity not compared', GATE, [('            and ident.get("corpus_inventory_sha256") == inputs.get("corpus_inventory_sha256") == CORPUS_INVENTORY_SHA256,', '            ,')], [S7]),
++    ('F5d', 'native/corpus paths not bound to the END argv', GATE, [('require(inputs.get("native") == identity["native"] == o["--native"]', 'require(True or inputs.get("native") == identity["native"] == o["--native"]')], [S7]),
++    ('F5e', 'preflight compare-bundle identity not required', GATE, [('require(isinstance(digest, str) and SHA.fullmatch(digest) and ids.get("compare_bundle_sans_guard_sha256") == digest,', 'require(True,')], [S7]),
++    ('F5f', 'host does not verify the bundle equivalence', REM, [('if cfg["kind"] == "end" and digest != cfg.get("bundle_sans_guard_sha256"):', 'if False:')], [S7]),
++    ('F5g', 'guard-job-free digest keeps the guard job', TOOL, [('    del guard["job"]\n', '')], [S5, S7]),
++    ('F5h', '03 attempt round not bound', GATE, [('require(int(ATTEMPT["end"].fullmatch(attempt).group(2)) == round_index,', 'require(True,')], [S7]),
++    ('F5i', '03 admission not bound to the ACK/launch receipt', GATE, [('and adm.get("verified_sha256") == ack_sha and adm.get("launch_receipt_sha256") == receipt_sha,', 'and True,')], [S7]),
++    ('F5j', '03 launch receipt round not bound', GATE, [('and rounds == [str(round_index)], "03 launch receipt', ', "03 launch receipt')], [S7]),
++    ('F5k', '03 RC-6 declaration not bound', GATE, [('require(launch_.get("roots_sha256") == a.roots_sha256,', 'require(True,')], [S7]),
++    ('F5l', '03 qualifying preflights not bound', GATE, [('require(sorted(used) == list(END_HOSTS) and all(', 'require(True or all(')], [S7]),
++    ('F5m', '03 lineage check removed', GATE, [('\n                               **lineage_03(si, P, a, shape, pf, attempt, ack, ack_sha, adm))', ')')], [S7]),
++    ('F5n', 'bus band not recomputed from the number', GATE, [('require(v.get("bus_band") == bus_band(pct),', 'require(True,')], [S7]),
++    ('F5o', 'bus evidence finiteness not checked', GATE, [('require(finite(pct) and pct >= 0 and finite(secs)', 'require(True or finite(pct) and pct >= 0 and finite(secs)')], [S7]),
++    ('F5p', 'bus percent/ticks consistency not checked', GATE, [('require(abs(pct - 100. * ticks / hz / secs) <= 1e-9 * max(1., abs(pct))', 'require(True')], [S7]),
++    ('F5q', 'bus span not bound to the measured duration', GATE, [('            and secs == duration.get("loaded_seconds_measured"),\n', '            ,\n')], [S7]),
++    ('F5r', 'bus gate/host not checked', GATE, [('require(v.get("bus_gate") == (v["bus_band"] if host == "127x04" else "not-gated-on-" + host),', 'require(True,')], [S7]),
++    ('F5s', 'S5 frozen identity not the K4S END identity', PF, [('require(pins["native_sha256"] == NATIVE_SHA256 and r.corpus_sha256 == CORPUS_SHA256,', 'require(True,')], [S5]),
++    ('F5t', 'S5 corpus inventory pin not the K4S inventory', PF, [('require(a.corpus_inventory_sha256 == CORPUS_INVENTORY_SHA256,', 'require(True,')], [S5]),
++    ('F5u', 'S5 verified summary drops hz', PF, [('bus_cumulative_loaded=dict(loaded, hz=bus.get("hz")) if isinstance(loaded, dict) else loaded,', 'bus_cumulative_loaded=loaded,')], [S5]),
++    ('F6a', 'non-executable shims tolerated', T + "helpers.py", [('if not stat.S_ISREG(st.st_mode) or stat.S_IMODE(st.st_mode) & 0o111 != 0o111 or not os.access(path, os.X_OK):', 'if False:')], [HT]),
++    ('F1a', 'preflight default layer path normalized (hides aliases)', PF, [('return k4s_bootstrap_default_path(__file__, leaf) if directory is None', 'return os.path.abspath(k4s_bootstrap_default_path(__file__, leaf)) if directory is None')], [F1PY]),
++    ('F1b', 'gate default layer path normalized (hides aliases)', GATE, [('return k4s_bootstrap_default_path(__file__, leaf) if directory is None', 'return os.path.abspath(k4s_bootstrap_default_path(__file__, leaf)) if directory is None')], [F1PY]),
++    ('F1c', 'host tool default safe_input path normalized', TOOL, [('path = k4s_bootstrap_default_path(__file__, SAFE_INPUT_FILE) if path is None else path', 'path = os.path.abspath(k4s_bootstrap_default_path(__file__, SAFE_INPUT_FILE)) if path is None else path')], [F1PY]),
++    ('F1d', 'verifier default safe_input path normalized', VER, [('path = k4s_bootstrap_default_path(__file__, "safe_input.py") if directory is None', 'path = os.path.abspath(k4s_bootstrap_default_path(__file__, "safe_input.py")) if directory is None')], [F1PY]),
++    ('F1e', 'preflight region: ancestor walk follows symlinks', PF, [('child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=fd)', 'child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC, dir_fd=fd)')], [F1PY]),
++    ('F1f', 'gate region: outcome-name gate off', GATE, [('        if family is not None:\n            raise refused("outcome name family "', '        if False:\n            raise refused("outcome name family "')], [F1PY]),
++    ('F1g', 'END wrapper: tool() opens the host tool by path', EW, [('tool() { "$python" -I -S -c "$k4s_loader" "$host_tool" "$host_tool_sha" "$host_tool_size" -- "$@"; }', 'tool() { "$python" -I -S "$host_tool" "$@"; }')], [F1SWAP]),
++    ('F1h', 'preflight wrapper: canonical verify step skipped', PW, [('k4s_verify_host_tool || exit 90\n', 'true\n')], [F1SH]),
++    ('F1i', 'preflight wrapper: tool() opens the host tool by path', PW, [('tool() { "$python" -I -S -c "$k4s_loader" "$host_tool" "$host_tool_sha" "$host_tool_size" -- "$@"; }', 'tool() { "$python" -I -S "$host_tool" "$@"; }')], [F1SWAP]),
++    ('F1j', 'END wrapper loader: nlink checked neither before nor after open (hard-linked canary read)', EW, [('        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size != size:', '        if not stat.S_ISREG(before.st_mode) or before.st_size != size:'), ('            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size != size', '            if (not stat.S_ISREG(info.st_mode) or info.st_size != size')], [F1SH]),
+ ]
+ # Equivalent mutants (masked by a stronger check on the same path; documented, not test gaps):
+ EQUIVALENT = {
+@@ -194,7 +259,7 @@
+            "hashed (a missing one refuses as missing), so the set equality cannot fail on its own",
+ }
+ NULLS = [("N%02d" % i, "NULL control (unmodified)", None, [], files)
+-         for i, files in enumerate([[HT, S5], [S6W, S6V], [S7], [S5], [S7], [S6W]], 1)]
++         for i, files in enumerate([[HT, S5], [S6W, S6V], [S7], [S5], [S7], [S6W], [F2I], [F1]], 1)]
+ 
+ 
+ def apply(root, mutant):
+@@ -213,9 +278,9 @@
+ 
+ def run_one(mutant, python, pythonpath, timeout):
+     ident, desc, name, edits, files = mutant
+-    work = Path(tempfile.mkdtemp(prefix="s567r2-mut-%s-" % ident, dir="/dev/shm"))
++    work = Path(tempfile.mkdtemp(prefix="s567r3-mut-%s-" % ident, dir="/dev/shm"))
+     try:
+-        pkg = work / "s5s6s7-r2"
++        pkg = work / "s5s6s7-r3"
+         shutil.copytree(ROOT, pkg, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+         apply(pkg, mutant)
+         subprocess.run([sys.executable, "-B", str(pkg / "tests" / "repin.py")], check=True, capture_output=True)

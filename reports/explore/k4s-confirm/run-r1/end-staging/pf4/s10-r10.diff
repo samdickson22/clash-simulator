@@ -1,0 +1,11 @@
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r9/s10_stage_host.py	2026-10-13 18:25:35.789353094 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r10/s10_stage_host.py	2026-10-13 19:15:03.878133614 -0700
+@@ -270,7 +270,7 @@
+     "k4s_preflight_push.sh": ("k4s_preflight_push.sh",
+                               "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580", 16749),
+     "k4s_end_preflight.py": ("k4s_end_preflight.py",
+-                             "c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3", 78954),   # r9 PF-4: s5s6s7-r7 S5
++                             "09d747ac4c5ec5e92b74098ffb9996ddec00270fe489051050e134d4301b5c0b", 79878),   # r10 Sol PF4-r1: s5s6s7-r8 S5
+     "safe_input.py": ("safe_input.py", "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00", 133606),
+     "k4s_end_host_tool.py": ("k4s_end_host_tool.py",
+                              "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647", 34444),

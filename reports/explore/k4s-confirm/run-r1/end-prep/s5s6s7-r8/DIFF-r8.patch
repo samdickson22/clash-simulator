@@ -1,0 +1,153 @@
+--- s5s6s7-r7/k4s_end_preflight.py
++++ s5s6s7-r8/k4s_end_preflight.py
+@@ -686,12 +686,14 @@
+ 
+ 
+ def sshd_summary(rows, loaded_phase=HOLD_PHASE):
+-    """sshd process count per 1 Hz census row (names only); a rise during the hold means a login."""
++    """sshd process count per 1 Hz census row (names only). r8 (PF-4 ruling N2/D5): a rise during the hold is
++    reported as sshd-count growth (a login OR a pre-authentication sshd fork; process names cannot tell them apart);
++    it is a conservative 04 refusal that costs a new preflight attempt and never a claim."""
+     counts = [(r.get("phase"), sum(p.get("name") == "sshd" for p in r.get("processes", []))) for r in rows]
+     loaded = [c for phase, c in counts if phase == loaded_phase]
+     return dict(all=quantiles([c for _, c in counts]), loaded=quantiles(loaded),
+                 loaded_first=loaded[0] if loaded else None,
+-                login_detected_during_hold=bool(loaded) and max(loaded) > loaded[0])
++                sshd_count_growth_during_hold=bool(loaded) and max(loaded) > loaded[0])
+ 
+ 
+ def guard_reasons(rows):
+@@ -950,9 +952,15 @@
+             else:
+                 clocks = dict(passes=None, absolute_relative_difference=None, window=window,
+                               unavailable="fewer than 2 hold rows after the frozen warmup_seconds")
+-            row.update(gate=bool(a.reference_work) and clocks["passes"] is not None, passes=clocks["passes"],
++            # r8 (Sol PF4-r1 F1): the frozen END refuses fewer than 2 measured MHz rows (fleet_profile.py:59-62), so a
++            # binding hold (reference work requested) fails closed here; only a deliberately diagnostic hold
++            # (--no-reference-work) may record "unavailable", and it is never qualifying (verdict()).
++            binding_hold = result["mode_requested"] == "binding" and bool(a.reference_work)
++            row.update(gate=binding_hold, passes=clocks["passes"],
+                        absolute_relative_difference=clocks["absolute_relative_difference"], window=window)
+             result["mhz_comparison"] = clocks
++            require(clocks["passes"] is not None or not binding_hold,
++                    "Fewer than 2 MHz rows after the frozen warmup_seconds on a binding hold (frozen END refuses)")
+             require(clocks["passes"] is not False or not a.reference_work, "Preflight/reporting MHz differs by >5%")
+         with checks("post_pins", "end_reference.py:404-406; S5-F1 loaded-module closure") as row:
+             T.validate_bundle(r.bundle, r.runtime_root, dry_run=True, require_references=False)
+@@ -1015,13 +1023,13 @@
+ 
+ def verdict(checks, result, host):
+     """pass = every check passed, attempt parent empty and registry unchanged, guard sources copied through the
+-    descriptor gate, on 04 no login during the hold.
++    descriptor gate, on 04 no sshd-count growth during the hold (PF-4 N2).
+     mode/qualifying (P2-3): BINDING needs reference-slot work, every background slot ready and the measured loaded
+     span >= MIN_LOADED_SECONDS; anything else is a NON-QUALIFYING diagnostic. bus_gate: the loaded band (04)."""
+     before, after = result.get("before"), result.get("after")
+     unchanged = before is not None and before == after
+     empty = unchanged and before["attempt_parent"] == []
+-    no_login = result.get("summaries", {}).get("sshd", {}).get("login_detected_during_hold") is False
++    no_login = result.get("summaries", {}).get("sshd", {}).get("sshd_count_growth_during_hold") is False
+     copied = result.get("guard_sources") is not None              # a refused guard-source copy fails the run
+     # r7 (PF-4 class audit): an error raised while no check row was open (e.g. the frozen background __exit__ after
+     # loaded_hold ended) fails the run, as it fails the END body (end_reference.py:225-230).
+@@ -1033,6 +1041,7 @@
+     duration = dict(hold_seconds_requested=result["hold_seconds"], loaded_seconds_measured=measured,
+                     loaded_seconds_required=MIN_LOADED_SECONDS.get(host))
+     binding = (result["mode_requested"] == "binding" and load.get("reference_slot_work") is True
++               and (result.get("mhz_comparison") or {}).get("passes") is True        # r8 (Sol PF4-r1 F1)
+                and (load.get("reference_slot_states_worked") or 0) > 0
+                and load.get("background_slots_ready") == load.get("background_slots_expected")
+                == (load.get("slot_count") or 0) - 1
+@@ -1203,8 +1212,8 @@
+                 bus_band=result.get("bus_band"), identity=result.get("identity"),
+                 bundle_identity=result.get("bundle_identity"),
+                 bus_gate=result.get("bus_gate"),
+-                login_detected_during_hold=((result.get("summaries") or {}).get("sshd") or {}).get(
+-                    "login_detected_during_hold"),
++                sshd_count_growth_during_hold=((result.get("summaries") or {}).get("sshd") or {}).get(
++                    "sshd_count_growth_during_hold"),
+                 registry_and_attempt_parent_unchanged=result.get("registry_and_attempt_parent_unchanged"),
+                 attempt_parent_empty=result.get("attempt_parent_empty"), inputs=result.get("inputs"),
+                 safe_input_sha256=result.get("safe_input_sha256"), receipt_manifest_sha256=seal_sha,
+--- s5s6s7-r7/k4s_end_launch_gate.py
++++ s5s6s7-r8/k4s_end_launch_gate.py
+@@ -52,7 +52,7 @@
+ DETACH_SHA256 = "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb"
+ WRAPPER_SHA256 = {"end": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",        # exit_push r2
+                   "preflight": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580"}  # preflight_push
+-PREFLIGHT_SHA256 = "c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3"
++PREFLIGHT_SHA256 = "09d747ac4c5ec5e92b74098ffb9996ddec00270fe489051050e134d4301b5c0b"
+ REMOTE_SHA256 = "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d"
+ K4S_MANIFEST_SHA256 = "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357"
+ SEED_COMMITS = ("b2f9e25e1002d43cc910a4bb476716cc4cd32623", "ce042b9775f80cb495c327b14a4712730ae95c85")
+@@ -579,7 +579,8 @@
+             == (load.get("slot_count") or 0) - 1, "Preflight %s: not the agreed full reference load" % host)
+     require((duration.get("loaded_seconds_measured") or 0) >= MIN_LOADED_SECONDS[host],
+             "Preflight %s: loaded duration below the agreed minimum" % host)
+-    require(host != "127x04" or v.get("login_detected_during_hold") is False, "Preflight 04: login during the hold")
++    require(host != "127x04" or v.get("sshd_count_growth_during_hold") is False,
++            "Preflight 04: sshd-count growth during the hold (ruling PF-4 N2)")
+     inputs = v.get("inputs") or {}
+     require(inputs.get("runtime_root") == d["runtime"] and inputs.get("repository") == d["repository"]
+             and inputs.get("k4s_manifest_sha256") == K4S_MANIFEST_SHA256 and v.get("safe_input_sha256") ==
+--- s5s6s7-r7/TOOLS-FINAL
++++ s5s6s7-r8/TOOLS-FINAL
+@@ -1,10 +1,10 @@
+ # s5s6s7-r7 TOOLS-FINAL (ruling PF-4): the six files S10 stages as <base>/tools (TOOL_PINS). Final for r7.
+-# Only k4s_end_preflight.py differs from s5s6s7-r6/TOOLS-FINAL (the other five rows are byte-identical).
++# r8 (Sol PF4-r1 F1, PF-4 N2): only k4s_end_preflight.py differs from s5s6s7-r6/TOOLS-FINAL (the other five rows are byte-identical).
+ # columns: staged-name sha256 size source-path-in-s5s6s7-r7
+ detach.sh 1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb 599 t1-originals/detach.sh
+ k4s_end_exit_push.sh 65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af 18012 k4s_end_exit_push.sh
+ k4s_preflight_push.sh c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580 16749 k4s_preflight_push.sh
+-k4s_end_preflight.py c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3 78954 k4s_end_preflight.py
++k4s_end_preflight.py 09d747ac4c5ec5e92b74098ffb9996ddec00270fe489051050e134d4301b5c0b 79878 k4s_end_preflight.py
+ safe_input.py 806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00 133606 safe_input.py
+ k4s_end_host_tool.py 22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647 34444 k4s_end_host_tool.py
+ # written 2026-10-14T01:19:57Z
+--- s5s6s7-r7/CLASS-TABLE-PF4.md
++++ s5s6s7-r8/CLASS-TABLE-PF4.md
+@@ -24,13 +24,13 @@
+ 
+ "Exercised" says whether the check has passed on a real host: 04 = 04 l00, 03 = 03 l01.
+ 
+-## Counts (r7 state; 51 rows)
++## Counts (r8 state; 51 rows)
+ 
+ | Verdict | Rows | Notes |
+ |---|---|---|
+-| SAME | 18 | includes C20 (MHz window) and D4 (error outside a check), fixed to SAME in r7 |
++| SAME | 18 | includes C20 (MHz window; r7 was LOOSER on its fallback, fixed in r8 per Sol PF4-r1 F1) and D4 (error outside a check), fixed to SAME |
+ | STRICTER | 15 | all kept with a written reason (below); C15 is the PF-4 affinity check, now the ruled subset form |
+-| LOOSER | 0 | r6 had D4 (an error outside any check row sealed `passed`) and the other half of C20: both fixed |
++| LOOSER | 0 | r6 had D4 and the other half of C20; r7 still had C20's fallback (fewer than 2 post-warm-up rows → `unavailable`, yet a binding run could qualify); all fixed by r8 |
+ | S5-ONLY | 18 | each cites the ruling that requires it |
+ 
+ **Fixed in r7.**
+@@ -94,7 +94,7 @@
+ | C17 | `monitor_stop` :919-922 | `ER:392-394` | SAME | never | — |
+ | C18 | `guard_samples` :923-928: ≥ `min_samples` rows with `utc` ≥ admission `utc`, read through safe_input (cap 1 GiB) | none | S5-ONLY | never | keep: RC-2 (≥ 60 1 Hz samples). Field exists (`TE:185`). Size: 04 l00 wrote 11,452,165 B for 81 rows (≈ 141 KB/row), so ≈ 185 MB for a 1200 s hold, about 5× under the cap. Fewer than 60 rows in a ≥ 120 s hold means the monitor stopped, which END fails too (`ER:338-340`) |
+ | C19 | `frozen_guard_validators` :929-935 | `ER:395-399`, `FV:230-283` | SAME | never | — |
+-| C20 | `mhz_comparison` :936-956: r7 compares hold rows from (first hold row + `warmup_seconds`) on; fewer than 2 such rows → recorded `unavailable`, not gated; gate only for reference-work runs | `ER:375-403`: compares only the `measure()` rows (`reference-speed`/`-deadlines`, `FP:59-60`), which start after the ≥ 300 s warm-up; fails closed (`ER:402-403`) | SAME (r6: STRICTER and LOOSER) | never | **FIXED.** r6 relabelled **all** hold rows, so it compared the warm-up rows END leaves out ("an idle reference core would begin its timed work at a different clock", `FR:135-136`). There was no measurement-integrity reason for that. What remains is unavoidable: RC-2 forbids `measure()`, so the comparison runs over warm-up-type `k4s_work` load. The gate is END's own Amendment 1 rule. Hosts use 600 s (03) and 1200 s (04) holds, which leave 300 s and 900 s of compared rows. Tests `test_pf4_mhz_*`; mutants PF08-PF11 |
++| C20 | `mhz_comparison`: compares hold rows from (first hold row + `warmup_seconds`) on. r8: on a binding hold (reference work) fewer than 2 such rows FAILS CLOSED; only a diagnostic hold (`--no-reference-work`) records `unavailable`, and `verdict()` requires a passing comparison for binding/qualifying | `ER:375-403`: compares only the `measure()` rows (`reference-speed`/`-deadlines`, `FP:59-60`), which start after the ≥ 300 s warm-up; fails closed (`ER:402-403`) | SAME (r6: STRICTER and LOOSER; r7: LOOSER fallback, Sol PF4-r1 F1) | never | **FIXED in r7 (window) and r8 (fallback).** r6 relabelled **all** hold rows, so it compared the warm-up rows END leaves out ("an idle reference core would begin its timed work at a different clock", `FR:135-136`). There was no measurement-integrity reason for that. What remains is unavoidable: RC-2 forbids `measure()`, so the comparison runs over warm-up-type `k4s_work` load. The gate is END's own Amendment 1 rule. Hosts use 600 s (03) and 1200 s (04) holds, which leave 300 s and 900 s of compared rows. Tests `test_pf4_mhz_*`; mutants PF08-PF11 |
+ | C21 | `post_pins` :957-961 (`validate_bundle`, native re-hash, `executing_sources`) | `ER:404-406` | SAME | never | — |
+ | C22 | `loaded_modules_check` :962, :583-595: every runtime module loaded in this process is a closure file or a bundle `runtime_files` member re-read through safe_input with its pin | none (`TB:450-469` `validate_bundle` hashes `runtime_files` on disk, `RC:22-33`) | S5-ONLY | never | keep: S5-F1 + P2-1. **Offline proof for this runtime** (`pf4-evidence/loaded-modules-scan.txt`): all 4052 `.py`/`.so` under the staged runtime are pinned (closure or `runtime_files`). safe_input's read gate over all 4023 non-closure `.py` refuses only 8 `*_games.py` (outcome-name family `games`), and none of them is imported by the END chain (grep of import edges). This is a superset of what can load, so the check cannot refuse the production run |
+ | C23 | `cleanup` :966-974 (frozen `cleanup_steps`; a primary failure is never replaced) | `ER:252-279`, `ER:231-239` | SAME | 03, 04 | — |
+@@ -107,7 +107,7 @@
+ | D2 | `summaries` :1132-1136 (bus, blocks, MHz, sshd; never fail) | none | S5-ONLY | 04 | non-gating health record (RC-2: "recording the cumulative and windowed bus and per-core MHz") |
+ | D3 | `copy_guard_sources` :998-1013, :1137-1141; a refused copy fails the run :1025 | the K4S END does not copy them (the TIERS `FR:217-226` does, following links) | S5-ONLY | 04 (2 files) | keep: RC-2 (push the results), P2-1 descriptor gate. Size: `allowlist-occurrences.jsonl` was 22,386 B after 81 s, so ≈ 0.35 MB at 1200 s against the 64 MiB role cap |
+ | D4 | `verdict` :1028: an error recorded with no check row open fails the run | any body exception writes `failure.json` and the seal is `failed` (`ER:222-230,240-248`) | SAME (r6: LOOSER) | — | **FIXED.** r6 sealed `passed` with exit 0 when, for example, the frozen background `__exit__` (`RL:249-256`) raised after `loaded_hold` ended: no row was open and the rest of the checks never ran. Test `test_pf4_error_outside_any_check_fails_the_run`; mutant PF12 |
+-| D5 | 04 only: no sshd-count rise during the hold, `sshd_summary` :688-694, :1024, :1029 | the guard flags `console_user`, foreign compute/activity and ssh-family **CPU budget** (`ssh_budget.py:111-117`, `FV:223`); it does not count sshd processes | STRICTER | 04 (vacuous: no hold) | keep: RC-2 ("with no login in between"), RC-7. The P2-3 bus band must be measured without a login. **Residual false-positive mode (not changed; coordinator's call):** the census has process names only (`TE:131-138`, comm), so a pre-auth `sshd` fork from any TCP connection to :22 (a scanner, another user) counts as a login. It fails the 04 preflight without consuming an END attempt. 04 l00 showed sshd = 1 in all 81 rows |
++| D5 | 04 only: no sshd-count growth during the hold (r8 field `sshd_count_growth_during_hold`, ruling PF-4 N2), `sshd_summary` :688-694, :1024, :1029 | the guard flags `console_user`, foreign compute/activity and ssh-family **CPU budget** (`ssh_budget.py:111-117`, `FV:223`); it does not count sshd processes | STRICTER | 04 (vacuous: no hold) | keep: coordinator ruling PF-4 N2 (conservative; costs a new preflight attempt, never contaminates a claim); RC-2, RC-7. The P2-3 bus band must be measured without a login. **Residual false-positive mode (not changed; coordinator's call):** the census has process names only (`TE:131-138`, comm), so a pre-auth `sshd` fork from any TCP connection to :22 (a scanner, another user) counts as a login. It fails the 04 preflight without consuming an END attempt. 04 l00 showed sshd = 1 in all 81 rows |
+ | D6 | `binding` :1035-1039 (reference work, all slots ready, measured loaded span ≥ 60 s / 900 s) | none | S5-ONLY | — | keep: P2-3 (it sets the mode, not pass/fail; S7 requires binding). Note: a 04 hold of exactly 900 s can never be binding (the span is < 900 s). The runner uses 1200 s |
+ | D7 | `bus_band` / `bus_gate` :640-645, :1040-1043 | none, but the guard itself fails at > 1 % cumulative bus (`system_bus.py:26-30` → `FV:192-193,224` `op1_interference`) | S5-ONLY | — | keep: P2-3 (≤ 0.3 proceed, ≥ 0.7 stop, between: coordinator). Applied by S7 |
+ | D8 | seal, scope `K4S-END-PREFLIGHT`, exit code :1145-1149 | `ER:240-248` seal `complete`/`failed` | S5-ONLY | 03, 04 | keep: the RC-9 receipt S7 consumes. `verify-received` (05-side, :1154-1213) is outside this table: it is no host check |
+@@ -153,3 +153,8 @@
+ | D5 | 04 sshd-count rise | kept: RC-2/RC-7. False-positive residual recorded for the coordinator |
+ 
+ Fixed rows that were not "STRICTER" in r7: C20 (r6 STRICTER and LOOSER), D4 (r6 LOOSER).
++
++## r8 (Sol PF4-r1)
++
++- **F1 / C20:** the r7 fallback let a binding run qualify with fewer than 2 post-warm-up MHz rows; the frozen END refuses that case (`fleet_profile.py:59-62`). r8: a binding hold fails closed (`require` in `mhz_comparison`), only a diagnostic hold records `unavailable`, and `verdict()` requires `mhz_comparison.passes is True` for binding/qualifying. Tests `test_pf4r8_*` (starved sampler on a binding hold fails; short diagnostic hold is non-qualifying; verdict unit). Mutants F1-01..03 killed (MUTATION-RESULTS-r8-F1.json).
++- **N2 / D5 (ruling):** kept, renamed `sshd_count_growth_during_hold` in S5, `verify-received` and the S7 gate ("sshd-count growth during the hold").

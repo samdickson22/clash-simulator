@@ -1,0 +1,191 @@
+{
+ "created_utc": "2026-10-14T01:15:56Z",
+ "equivalent_survivors": [],
+ "killed": 12,
+ "mutants": 12,
+ "nulls": 1,
+ "nulls_survived": 1,
+ "package_sha256": {
+  "k4s_a6_builder.py": "fed915dc8eea2a48d9dc3106f3c9a2781cc00ad8827ce4c1799e3600ebc7ae37",
+  "k4s_end_exit_push.sh": "65625fc0eac95079c83f2664c5a3244dbe19941cb91075eca5b2093f135679af",
+  "k4s_end_host_tool.py": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "k4s_end_launch_gate.py": "92e60241961daadf56ca1e90d8e3dd53c807b1e624e43caf64a929cec4a68c96",
+  "k4s_end_launch_remote.py": "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d",
+  "k4s_end_preflight.py": "c40e663bde4976d96e4de86ba991e23e7289adb9c47b21676eda816fc96e42d3",
+  "k4s_end_verify_push.py": "84ddf65c24d9ef59d30ee7b534a7d31a74558681ed1332020c0eabab24da85d2",
+  "k4s_preflight_push.sh": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "results": [
+  {
+   "description": "PF-4: affinity readback check reverted to r6 equality",
+   "file": "k4s_end_preflight.py",
+   "id": "PF01",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.9,
+   "tail": "_.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_observed_04_readbacks_pass - AssertionError...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 1 warning in 4.28s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: an empty readback accepted",
+   "file": "k4s_end_preflight.py",
+   "id": "PF02",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.7,
+   "tail": ": PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_non_subset_or_overlapping_masks_refused[empty-readback]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 1 warning in 4.12s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: readback not required to be a subset of its mask",
+   "file": "k4s_end_preflight.py",
+   "id": "PF03",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.4,
+   "tail": "stConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_non_subset_or_overlapping_masks_refused[cpu-of-the-next-mask]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 1 warning in 3.73s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: pinned masks not required to be disjoint",
+   "file": "k4s_end_preflight.py",
+   "id": "PF04",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 5.5,
+   "tail": "ytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_non_subset_or_overlapping_masks_refused[overlapping-masks]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 1 warning in 4.86s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: readback count not compared with the masks",
+   "file": "k4s_end_preflight.py",
+   "id": "PF05",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 5.0,
+   "tail": "nfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_non_subset_or_overlapping_masks_refused[fewer-workers-than-masks]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 1 warning in 4.43s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4 kept check: slot priority readback not checked",
+   "file": "k4s_end_preflight.py",
+   "id": "PF06",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.2,
+   "tail": "it__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_priority_readback_still_required[reference]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 8 passed, 1 warning in 5.61s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: slot evidence recorded differently from the frozen END",
+   "file": "k4s_end_preflight.py",
+   "id": "PF07",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 4.9,
+   "tail": "_.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_observed_04_readbacks_pass - AssertionError...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 1 warning in 4.25s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: MHz window includes the frozen warm-up again (all hold rows)",
+   "file": "k4s_end_preflight.py",
+   "id": "PF08",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.8,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_mhz_window_leaves_out_the_frozen_warmup - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 passed, 1 warning in 6.32s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: MHz warm-up anchored at the first hold row without warmup_seconds",
+   "file": "k4s_end_preflight.py",
+   "id": "PF09",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 6.8,
+   "tail": ".py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_mhz_window_leaves_out_the_frozen_warmup - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 passed, 1 warning in 6.36s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: an unavailable MHz window refuses a reference-work run",
+   "file": "k4s_end_preflight.py",
+   "id": "PF10",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 9.1,
+   "tail": "1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_hold_shorter_than_the_warmup_is_recorded_not_gated\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 13 passed, 1 warning in 8.70s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: MHz compared with fewer than 2 post-warm-up rows",
+   "file": "k4s_end_preflight.py",
+   "id": "PF11",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 9.2,
+   "tail": "1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_hold_shorter_than_the_warmup_is_recorded_not_gated\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 13 passed, 1 warning in 8.77s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "PF-4: an error outside every check row no longer fails the run",
+   "file": "k4s_end_preflight.py",
+   "id": "PF12",
+   "optimized": true,
+   "rc": 1,
+   "seconds": 10.4,
+   "tail": "py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_r7.py::test_pf4_error_outside_any_check_fails_the_run - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 14 passed, 1 warning in 10.01s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "description": "NULL control (unmodified)",
+   "file": null,
+   "id": "N12",
+   "optimized": true,
+   "rc": 0,
+   "seconds": 10.4,
+   "tail": "============= warnings summary ===============================\n../../../../mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346\n  /mpac/sdicks02/venvs/k4s-freeze/lib/python3.12/site-packages/_pytest/config/__init__.py:1346: PytestConfigWarning: assertions not in test modules or plugins will be ignored because assert statements are not executed by the underlying Python interpreter (are you using python -O?)\n  \n    self._warn_about_missing_assertion(mode)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n15 passed, 1 warning in 9.90s\n",
+   "tests": [
+    "tests/test_r7.py"
+   ],
+   "verdict": "SURVIVED"
+  }
+ ]
+}

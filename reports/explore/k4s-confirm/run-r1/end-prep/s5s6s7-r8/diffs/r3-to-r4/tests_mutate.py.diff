@@ -1,0 +1,108 @@
+--- s5s6s7-r3/tests/mutate.py	2026-10-12 17:43:08.486610546 -0700
++++ s5s6s7-r4/tests/mutate.py	2026-10-13 00:12:59.365162803 -0700
+@@ -1,6 +1,6 @@
+ """Mutation check of the safe_input adoption points and the new gates (offline).
+ 
+-Each mutant: copy the package into a fresh /dev/shm/s567r3-mut-* directory, apply its edits (each old text must occur
++Each mutant: copy the package into a fresh /dev/shm/s567r4-mut-* directory, apply its edits (each old text must occur
+ exactly once), re-pin the copy (tests/repin.py) so the SHA bootstraps load it, then run the named test files with
+ `python -O -B -m pytest -x` (test_pins.py is never included, so no mutant is killed by a pin alone). KILLED = the
+ suite fails. NULL controls (no edit) must SURVIVE. The verifier refuses -O at import (T1 R3-1), so its mutants run
+@@ -30,6 +30,8 @@
+ F2I, F1 = T + "test_f2_s3_guard_integration.py", T + "test_f1_bootstrap.py"
+ F1PY, F1SH = F1 + "::test_python_loader_meets_every_kit_scenario", F1 + "::test_wrapper_bootstrap_meets_the_kit_scenarios"
+ F1SWAP = F1 + "::test_wrapper_never_executes_a_host_tool_swapped_after_verification"
++R4T, A6T = T + "test_r4.py", T + "test_a6_builder.py"
++AJ = "k4s_a6_builder.py"
+ TOOL, PF, EW, PW, VER, GATE, REM = ("k4s_end_host_tool.py", "k4s_end_preflight.py", "k4s_end_exit_push.sh",
+                                     "k4s_preflight_push.sh", "k4s_end_verify_push.py", "k4s_end_launch_gate.py",
+                                     "k4s_end_launch_remote.py")
+@@ -250,6 +252,58 @@
+     ('F1h', 'preflight wrapper: canonical verify step skipped', PW, [('k4s_verify_host_tool || exit 90\n', 'true\n')], [F1SH]),
+     ('F1i', 'preflight wrapper: tool() opens the host tool by path', PW, [('tool() { "$python" -I -S -c "$k4s_loader" "$host_tool" "$host_tool_sha" "$host_tool_size" -- "$@"; }', 'tool() { "$python" -I -S "$host_tool" "$@"; }')], [F1SWAP]),
+     ('F1j', 'END wrapper loader: nlink checked neither before nor after open (hard-linked canary read)', EW, [('        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size != size:', '        if not stat.S_ISREG(before.st_mode) or before.st_size != size:'), ('            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size != size', '            if (not stat.S_ISREG(info.st_mode) or info.st_size != size')], [F1SH]),
++    # ---- r4 (INTEGRATION-AUDIT-r1): U5 build-argv + argv pins, U6, U7, L1, L6, U12, U8
++    ('R01', 'argv: host python not pinned', GATE, [('require(python == HOST_PYTHON,', 'require(True,')], [R4T]),
++    ('R02', 'argv: evidence path not the bundle copy', GATE, [('require(opts["--end-evidence"] == opts["--bundle"] + "/" + END_EVIDENCE_REL,', 'require(True,')], [R4T]),
++    ('R03', 'argv: evidence SHA not the evidence of record', GATE, [('require(opts["--end-evidence-sha256"] == END_EVIDENCE_SHA256,', 'require(True,')], [R4T]),
++    ('R04', 'argv: SD1 SHA not pinned', GATE, [('require(opts["--sd1-manifest-sha256"] == SD1_MANIFEST_SHA256,', 'require(True,')], [R4T]),
++    ('R05', 'argv: preflight corpus-inventory SHA not pinned', GATE, [('require(kind == "end" or opts["--corpus-inventory-sha256"] == CORPUS_INVENTORY_SHA256,', 'require(True,')], [R4T]),
++    ('R06', 'argv: --end-job-sha256 format not checked', GATE, [('require(job_sha is None or SHA.fullmatch(job_sha),', 'require(True,')], [R4T]),
++    ('R07', 'build-argv: assembly receipt not checked', GATE, [('require(receipt.get("schema") == ASSEMBLY_SCHEMA and receipt.get("production_pins") is True', 'require(True or receipt.get("schema") == ASSEMBLY_SCHEMA and receipt.get("production_pins") is True')], [R4T]),
++    ('R08', 'build-argv: tiers-pins sidecar not checked', GATE, [('require(si.read_bytes(P, "staging", name + "/tiers-pins.sha256", max_size=4096)', 'require(True or si.read_bytes(P, "staging", name + "/tiers-pins.sha256", max_size=4096)')], [R4T]),
++    ('R09', 'build-argv: bundle manifest evidence/profile not checked', GATE, [('require("k4s_s4_synthetic" not in manifest and manifest.get("profile") == "fleet-reference"', 'require(True or "k4s_s4_synthetic" not in manifest and manifest.get("profile") == "fleet-reference"')], [R4T]),
++    ('R10', 'build-argv: tiers-pins read without the RC-6 SHA', GATE, [('                            expected_sha256=declared["tiers_pins_sha256"])', '                            expected_sha256=None)')], [R4T]),
++    ('R11', 'build-argv: END-JOB binding not checked', GATE, [('require(isinstance(job, dict) and job.get("schema") == END_JOB_SCHEMA and job.get("study") == "PREREG-K4S"', 'require(True or isinstance(job, dict) and job.get("schema") == END_JOB_SCHEMA and job.get("study") == "PREREG-K4S"')], [R4T]),
++    ('R12', 'build-argv: composed argv not validated before writing', GATE, [('    shape = validate_argv(si, argv, a.kind, a.host, a.attempt, roots, a.diagnostic_preflight)\n    data =', '    shape = dict(mode="diagnostic" if a.diagnostic_preflight else "binding")\n    data =')], [R4T]),
++    ('R13', 'build-argv: END native/corpus identity not validated', GATE, [('        identity = launch_identity(v, d, a.host)\n', '        identity = v["identity"]\n')], [R4T]),
++    ('R14', 'build-argv: preflight receipt schema/host not checked', GATE, [('require(v.get("schema") == VERIFIED_SCHEMA and v.get("host") == a.host and v.get("attempt") == attempt_,', 'require(True,')], [R4T]),
++    ('R15', 'build-argv: END input set not enforced', GATE, [('require(a.end_job_commit and sorted(pf) == [a.host] and a.native is None', 'require(True or a.end_job_commit and sorted(pf) == [a.host] and a.native is None')], [R4T]),
++    ('R16', 'build-argv: preflight input set not enforced', GATE, [('require(a.native and a.corpus and a.compare_bundle and a.hold_seconds is not None and not pf,', 'require(True,')], [R4T]),
++    ('R17', 'prepare-preflight-receive: not 0700', GATE, [('writer.mkdir_excl(a.attempt, mode=0o700)', 'writer.mkdir_excl(a.attempt, mode=0o755)')], [R4T]),
++    ('R18', 'U12: bus decision value not checked', GATE, [('and decision.get("decision") == "proceed" and decision.get("preflight_attempt") == attempt', 'and decision.get("preflight_attempt") == attempt')], [R4T]),
++    ('R19', 'U12: repeat ruling attempt not checked', GATE, [('and ruling.get("attempt") == attempt and isinstance(ruling.get("coordinator_ref"), str)', 'and isinstance(ruling.get("coordinator_ref"), str)')], [R4T]),
++    ('L01', 'L1: end_reference.py pin not compared', REM, [('if got != cfg["end_reference_sha256"]:', 'if False:')], [R4T]),
++    ('L02', 'L1: native/corpus not checked on the host', REM, [('for i, path in enumerate(cfg["inputs"]):\n            role = "input-%d" % i', 'for i, path in enumerate(cfg["inputs"][:0]):\n            role = "input-%d" % i')], [R4T]),
++    ('L03', 'L1: END-JOB at HEAD not checked', REM, [('        if cfg.get("end_job_sha256"):\n', '        if False:\n')], [R4T]),
++    ('L04', 'L1: END-JOB at HEAD read without its SHA', REM, [('expected_sha256=cfg["end_job_sha256"])', 'expected_sha256=None)')], [R4T]),
++    ('L05', 'L1: END-JOB evidence/manifest binding not checked', REM, [('bound = (isinstance(job, dict) and job.get("schema") == cfg["end_job_schema"]', 'bound = (True or isinstance(job, dict) and job.get("schema") == cfg["end_job_schema"]')], [R4T]),
++    ('L06', 'L1: staged checks never called', REM, [('    staged_runtime_and_job(cfg, res, failures)\n', '')], [R4T]),
++    ('L07', 'L6: S5 does not read DELTA-MANIFEST', PF, [('    si.read_bytes(policy, "runtime", DELTA_MANIFEST_REL, max_size=4 << 20, expected_sha256=DELTA_MANIFEST_SHA256)\n', '')], [R4T]),
++    ('L08', 'L6: S5 reads DELTA-MANIFEST without its pin', PF, [('max_size=4 << 20, expected_sha256=DELTA_MANIFEST_SHA256)', 'max_size=4 << 20, expected_sha256=None)')], [R4T]),
++    ('U01', 'U7: verifier --prepare writes no PREPARE-PROOF copy', VER, [('        copy = writer.create_excl("PREPARE-PROOF.json", data)', '        copy = prepared')], [R4T]),
++    ('U02', 'U7: existing PREPARE-PROOF not checked before creating', VER, [('    si.check_absent(P, "launch-attempt", "PREPARE-PROOF.json")\n', '')], [R4T]),
++    ('U03', 'U7: end-launch base not required canonical first', VER, [('    si.check_dir(P, "launch-base")                                 # end-launch/ is never created here\n', '')], [R4T]),
++    ('J01', 'U8: evidence read without its pin', AJ, [('max_size=16 << 20, expected_sha256=END_EVIDENCE_SHA256)\n    evidence = si.loads_strict(raw, END_EVIDENCE_REL)\n    require(', 'max_size=16 << 20, expected_sha256=None)\n    evidence = si.loads_strict(raw, END_EVIDENCE_REL)\n    require(')], [A6T]),
++    ('J02', 'U8: K4S manifest read without its pin', AJ, [('max_size=1 << 20, expected_sha256=K4S_MANIFEST_SHA256)', 'max_size=1 << 20, expected_sha256=None)')], [A6T]),
++    ('J03', 'U8: completion of record not required', AJ, [('require(completion_item["sha256"] == COMPLETION_SHA256,', 'require(True,')], [A6T]),
++    ('J04', 'U8: counted hosts not required', AJ, [('require(isinstance(hosts, dict) and sorted(hosts) == COUNTED_HOSTS', 'require(isinstance(hosts, dict)')], [A6T]),
++    ('J05', 'U8: plan study not checked', AJ, [('require(isinstance(plan, dict) and plan.get("study") == STUDY,', 'require(True,')], [A6T]),
++    ('J06', 'U8: R6 END namespace at P not checked', AJ, [('require(end_names == [],', 'require(True,')], [A6T]),
++    ('J07', 'U8: item commit ancestry not checked', AJ, [('require(is_ancestor(si, g, item["commit"], commit),', 'require(True,')], [A6T]),
++    ('J08', 'U8: item repository path not checked', AJ, [('require(isinstance(rel, str) and rel == STUDY_DIR + "/" + item["path"] and ".." not in rel.split("/"),\n            "END evidence', 'require(isinstance(rel, str),\n            "END evidence')], [A6T]),
++    ('J09', 'U8: item blob read without its pin', AJ, [('                            expected_sha256=item["sha256"])\n    return item, data', '                            expected_sha256=None)\n    return item, data')], [A6T]),
++    ('J10', 'U8: item keys not exact', AJ, [('require(isinstance(item, dict) and set(item) == {"commit", "path", "repository_path", "sha256"}', 'require(isinstance(item, dict)')], [A6T]),
++    ('J11', 'U8: declared_by not checked', AJ, [('require(isinstance(declared_by, str) and DECLARED_BY.fullmatch(declared_by) and declared_by.strip(),', 'require(isinstance(declared_by, str),')], [A6T]),
++    ('J12', 'U8: JOB_FIELDS drifted from the frozen set', AJ, [('"k4s_manifest_sha256", "plan_sha256", "schema", "study")', '"k4s_manifest_sha256", "plan_sha256", "schema", "study", "extra")')], [A6T]),
++    ('J13', 'U8: scratch diff not exactly the END-JOB', AJ, [('require(x != commit and names == [END_JOB_REL.encode()],', 'require(x != commit,')], [A6T]),
++    ('J14', 'U8: scratch HEAD not required to be P\'', AJ, [('require(head == commit, "scratch clone HEAD is not P\'")', 'require(True, "scratch clone HEAD is not P\'")')], [A6T]),
++    ('J15', 'U8: frozen end_job result not checked', AJ, [('require(frozen_result["end_job"]["commit"] == x and frozen_result["end_job"]["sha256"] == job_sha256', 'require(True or frozen_result["end_job"]["commit"] == x and frozen_result["end_job"]["sha256"] == job_sha256')], [A6T]),
++    ('J16', 'U8: S9 equivalence result not checked', AJ, [('require(equivalence.get("end_job_commit") == x and equivalence.get("runtime_commit") == commit', 'require(True or equivalence.get("end_job_commit") == x and equivalence.get("runtime_commit") == commit')], [A6T]),
++    ('J17', 'U8: scratch directory kept', AJ, [('        shutil.rmtree(scratch, ignore_errors=True)\n    require(not os.path.exists(scratch), "scratch directory not removed: " + scratch)\n', '        pass\n')], [A6T]),
++    ('J18', 'U8: S9 runtime manifest pin not checked', AJ, [('require(si.sha256_input(P, "rt", "runtime-manifest.json")["sha256"] == FROZEN_RUNTIME_MANIFEST_SHA256,', 'require(True,')], [A6T]),
++    ('J19', 'U8: frozen driver files not checked against their pins', AJ, [('require(si.sha256_input(P, "rt-files", rel)["sha256"] == pin,', 'require(True,')], [A6T]),
++    ('J20', 'U8: S9 code not checked against its pin', AJ, [('require(si.sha256_input(P, "s9", os.path.basename(S9_PATH))["sha256"] == S9_SHA256,', 'require(True,')], [A6T]),
++    ('U04', 'U7: receive attempt not checked absent before the launch dirs are made', VER, [('    si.check_absent(P, "host-read", attempt)                       # both files absent before either is created\n', '')], [R4T]),
+ ]
+ # Equivalent mutants (masked by a stronger check on the same path; documented, not test gaps):
+ EQUIVALENT = {
+@@ -259,7 +313,7 @@
+            "hashed (a missing one refuses as missing), so the set equality cannot fail on its own",
+ }
+ NULLS = [("N%02d" % i, "NULL control (unmodified)", None, [], files)
+-         for i, files in enumerate([[HT, S5], [S6W, S6V], [S7], [S5], [S7], [S6W], [F2I], [F1]], 1)]
++         for i, files in enumerate([[HT, S5], [S6W, S6V], [S7], [S5], [S7], [S6W], [F2I], [F1], [R4T], [A6T]], 1)]
+ 
+ 
+ def apply(root, mutant):
+@@ -278,9 +332,9 @@
+ 
+ def run_one(mutant, python, pythonpath, timeout):
+     ident, desc, name, edits, files = mutant
+-    work = Path(tempfile.mkdtemp(prefix="s567r3-mut-%s-" % ident, dir="/dev/shm"))
++    work = Path(tempfile.mkdtemp(prefix="s567r4-mut-%s-" % ident, dir="/dev/shm"))
+     try:
+-        pkg = work / "s5s6s7-r3"
++        pkg = work / "s5s6s7-r4"
+         shutil.copytree(ROOT, pkg, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+         apply(pkg, mutant)
+         subprocess.run([sys.executable, "-B", str(pkg / "tests" / "repin.py")], check=True, capture_output=True)
+@@ -336,7 +390,7 @@
+     summary = dict(python=a.python, equivalent_survivors=sorted(r["id"] for r in results if r["id"] in EQUIVALENT
+                                                                    and r["verdict"] == "SURVIVED"), created_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    package_sha256={n: hashlib.sha256((ROOT / n).read_bytes()).hexdigest()
+-                                   for n in (TOOL, PF, EW, PW, VER, GATE, REM, "safe_input.py")},
++                                   for n in (TOOL, PF, EW, PW, VER, GATE, REM, AJ, "safe_input.py")},
+                    mutants=len([r for r in results if not r["id"].startswith("N")]),
+                    killed=len([r for r in results if not r["id"].startswith("N") and r["verdict"] == "KILLED"]),
+                    nulls_survived=len([r for r in results if r["id"].startswith("N") and r["verdict"] == "SURVIVED"]),

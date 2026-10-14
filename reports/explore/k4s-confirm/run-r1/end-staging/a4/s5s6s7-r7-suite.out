@@ -1,0 +1,4 @@
+== /mpac/sdicks02/venvs/k4s-freeze/bin/python  759 passed in 462.14s (0:07:42)
+== /mpac/sdicks02/venvs/k4s-freeze/bin/python -O 704 passed, 55 skipped, 1 warning in 426.61s (0:07:06)
+== /usr/bin/python3  759 passed in 652.09s (0:10:52)
+== /usr/bin/python3 -O 704 passed, 55 skipped, 1 warning in 617.85s (0:10:17)

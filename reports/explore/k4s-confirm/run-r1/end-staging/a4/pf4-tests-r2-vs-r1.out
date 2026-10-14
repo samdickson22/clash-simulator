@@ -1,0 +1,4 @@
+FAIL rm-fails-reported: want 85 got 76 bad
+FAIL reopen-fails-reported: want 85 got 76 bad
+FAIL temp-survives-reported: want 85 got 76 bad
+FAILS=3

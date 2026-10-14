@@ -1,0 +1,30 @@
+{
+ "interpreter": "k4s-freeze 3.12 -O",
+ "suite": "tests/test_r7.py",
+ "mutants": [
+  {
+   "id": "F1-01",
+   "desc": "binding hold fail-closed removed",
+   "killed": true,
+   "tail": "1 failed, 16 passed, 1 warning in 15.82s"
+  },
+  {
+   "id": "F1-02",
+   "desc": "binding no longer requires a passing MHz comparison",
+   "killed": true,
+   "tail": "1 failed, 16 passed, 1 warning in 10.73s"
+  },
+  {
+   "id": "F1-03",
+   "desc": "gate flag reverts to the r7 expression",
+   "killed": true,
+   "tail": "1 failed, 16 passed, 1 warning in 11.08s"
+  },
+  {
+   "id": "NULL",
+   "desc": "no change",
+   "killed": false,
+   "tail": "17 passed, 1 warning in 10.87s"
+  }
+ ]
+}

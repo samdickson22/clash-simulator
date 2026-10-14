@@ -1,0 +1,534 @@
+--- ../s5s6s7-r2/k4s_end_host_tool.py	2026-10-12 15:30:05.314816389 -0700
++++ k4s_end_host_tool.py	2026-10-12 17:23:01.099059251 -0700
+@@ -1,12 +1,14 @@
+-"""K4S END host-side helpers on safe_input (S5/S6/S7 r2). Python 3.8+ stdlib plus the pinned safe_input layer.
++"""K4S END host-side helpers on safe_input (S5/S6/S7 r3). Python 3.8+ stdlib plus the pinned safe_input layer.
+ 
+ Staged byte-identical next to safe_input.py in <END base>/tools/ on 127x03/127x04. Three users:
+ 
+ * k4s_end_preflight.py (S5) loads it in-process (SHA-pinned) for the registry/attempt-parent listings, the
+   frozen-reader clone checks and the frozen git environment;
+ * the S7 host gate program carries its bytes (SHA-pinned, verified on the host before exec) for the same checks;
+-* k4s_end_exit_push.sh / k4s_preflight_push.sh run it with ``/usr/bin/python3 -I -S`` (so the interpreter opens
+-  only this one script by path; safe_input is loaded by read_pinned: O_NOFOLLOW, st_nlink 1, SHA-256):
++* k4s_end_exit_push.sh / k4s_preflight_push.sh run it through the canonical shell bootstrap r1 (``/usr/bin/python3
++  -I -S -c "$k4s_loader" PATH SHA SIZE -- ...``: the interpreter opens no script by path; this file is walked, gated,
++  hashed and executed from the verified bytes as __main__), and it loads safe_input through the canonical Python
++  bootstrap r1 (k4s_bootstrap_load: name gate, no-follow walk, single-link leaf of the pinned size, SHA-256):
+ 
+     si -- create-excl|mkdir-excl|publish-excl ...
+         The safe_input CLI unchanged (si.main): exclusive, no-follow, never truncating or replacing.
+@@ -17,8 +19,11 @@
+         safe_input (descriptor gate, nlink 1) into J/registry/ (exclusive) and write J/registry-listing.json
+         (exclusive). Prints the listing. The wrapper pushes J/registry/ and the listing (RC-5).
+     frozen-exec -- ARGV...
+-        Verify the --repository clone named in ARGV through safe_input (frozen-reader ruling), then exec ARGV with
+-        every inherited GIT_* variable removed and the P2-4 git environment set (FROZEN_GIT_ENV).
++        Verify the --repository clone named in ARGV through safe_input (frozen-reader ruling, role "repository":
++        full clone), build the frozen-reader environment (every inherited GIT_* variable removed, the P2-4 git keys
++        set, XDG_CONFIG_HOME/HOME absolute+normalized+canonical or refused; HOME=//x installed as /x), statically
++        check exactly the config
++        files THAT environment makes git read, then exec ARGV with that same environment object.
+ 
+ Exit: 0 ok; 3 refused (``REFUSE <code>: <reason>`` on stderr, nothing published); 2 usage.
+ 
+@@ -27,9 +32,13 @@
+   registry is listed names-only: ``si.open_root`` + ``si.open_dirs`` (component-wise O_NOFOLLOW) + ``os.listdir``;
+   every name must match its fixed regex (round-NN / host / attempt-NN.json) BEFORE any fstatat, and claim leaves
+   also pass ``si.name_gate`` with the exact END grants; anything else refuses the whole listing;
+-* the user's global git config cannot be disabled on git 2.25 (GIT_CONFIG_GLOBAL needs git >= 2.32), so it is
+-  checked with safe_input's own repository-config gate (``si._check_git_config``) and overridden for the keys that
+-  run code through GIT_CONFIG_PARAMETERS.
++* the user's global git config cannot be disabled on git 2.25 (GIT_CONFIG_GLOBAL needs git >= 2.32), so the files
++  git_config_files() enumerates for the executed environment are checked with safe_input's own repository-config
++  gate (``si._check_git_config``, after ``si.name_gate``) and the code-running keys are overridden through
++  GIT_CONFIG_PARAMETERS (r3, END-FULL-F3: env_path refuses relative/empty/non-normalized XDG_CONFIG_HOME and HOME,
++  except HOME's leading '//' of the fleet passwd entry, which is replaced by the canonical value IN the executed
++  environment; the checked paths are derived from that environment, so they cannot diverge);
++* r3, END-FULL-F2: clone checks take an explicit role; only "guard-repo" (the S3 Q3 depth-1 repo) may be shallow.
+ """
+ import hashlib
+ import json
+@@ -65,52 +74,188 @@
+ 
+ 
+ # ---------------------------------------------------------------- pinned stdlib loader (before safe_input exists)
+-
+-def read_pinned(path, sha256, cap=1 << 23):
+-    """Bootstrap read of one pinned file before safe_input is available: canonical absolute path, O_NOFOLLOW,
+-    regular, st_nlink == 1, size cap, exact size, SHA-256 equal to the pin. Returns the bytes."""
+-    path = str(path)
+-    if not path.startswith("/") or path.startswith("//") or os.path.realpath(path) != path:
+-        refuse("bootstrap", "pinned file path is not canonical: %r" % path)
+-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK)
++# r3 (END-FULL-F1): the vendored safe_input layer is read ONLY through the canonical bootstrap r1 below
++# (bootstrap-r1/k4s_bootstrap_r1.py, pasted verbatim between its BEGIN/END lines; the pins stay outside): absolute
++# normalized path (default: next to __file__, never resolved), every component outside the outcome-name families, an
++# O_DIRECTORY|O_NOFOLLOW walk from "/", a regular single-link leaf of exactly SAFE_INPUT_SIZE bytes BEFORE any byte is
++# read; exactly those bytes are hashed and executed. The constants fingerprint is checked afterwards.
++SAFE_INPUT_FILE = "safe_input.py"
++SAFE_INPUT_SIZE = 133606
++
++# ==== BEGIN K4S CANONICAL BOOTSTRAP r1 (bootstrap-r1/k4s_bootstrap_r1.py; paste verbatim, byte for byte) ====
++# END-FULL-F1. The only way a K4S END component may read a pinned stdlib-loaded file (its vendored safe_input layer,
++# or a host tool) before the shared layer exists. Stdlib only, Python 3.8+, Linux, no assert (holds under -O), no
++# single-quote character (so the same text can sit inside a single-quoted shell word). Contract, in order:
++#   1. the path is absolute and already normalized (normpath(p) == p; no empty, "." or ".." component, no trailing
++#      slash, no control or backslash character). Nothing is canonicalized: realpath is never called;
++#   2. every component (ancestors and leaf) passes the safe_input r3 OUTCOME name families (casefolded fullmatch,
++#      the same regex literals; conformance-tested against si.outcome_family);
++#   3. a component-wise walk from "/": each ancestor is opened O_DIRECTORY|O_NOFOLLOW relative to its parent fd and
++#      fstat must say directory (a symlink, a non-directory or a missing ancestor refuses);
++#   4. the leaf is fstatat-ed without following (regular, st_nlink == 1, exactly the pinned size) BEFORE it is opened,
++#      then opened O_NOFOLLOW|O_NONBLOCK relative to the parent fd and fstat-ed again (same dev/ino, regular,
++#      st_nlink == 1, pinned size) BEFORE any byte is read;
++#   5. exactly the pinned size is read from THAT descriptor, EOF is confirmed, the SHA-256 must equal the pin, and
++#      exactly those bytes are compiled and executed in a fresh module registered under the caller-given name. The
++#      code object is compiled under a "<k4s-bootstrap ...>" filename (linecache is given the verified lines) so no
++#      traceback, import or inspect call ever re-opens the path after hashing;
++#   6. every refusal is `raise refusal(message)`, the caller-chosen refusal convention (an exception class, or a
++#      callable returning the exception to raise).
++K4S_BOOTSTRAP_RELEASE = "k4s-bootstrap-r1"
++K4S_BOOTSTRAP_OUTCOME_FAMILIES = (                      # == safe_input r3 OUTCOME_FAMILIES (literal copy, tested)
++    ("games", r"(?:.*[^a-z])?" + r"games" + r"(?:[^a-z].*)?"),
++    ("hub-blocks", r"(?:.*[^a-z])?" + r"hub[-_.]?blocks?" + r"(?:[^a-z].*)?"),
++    ("complete-json", r".*complete.*\.json.*"),
++    ("interference-json", r".*interference.*\.json.*"),
++    ("hub-ack-json", r".*hub[-_.]?ack.*\.json.*"),
++    ("end-raw-json", r".*end[-_.]?raw.*\.json.*"),
++)
++K4S_BOOTSTRAP_MAX_SIZE = 1 << 24
++
++
++def k4s_bootstrap_name_family(component):
++    """The OUTCOME family label of one path component (casefolded fullmatch), or None."""
++    import re
++    folded = component.casefold()
++    for label, rx in K4S_BOOTSTRAP_OUTCOME_FAMILIES:
++        if re.fullmatch(rx, folded, re.S):
++            return label
++    return None
++
++
++def k4s_bootstrap_default_path(module_file, leaf):
++    """The sibling `leaf` of `module_file`, made absolute without resolving or normalizing anything: an alias or a
++    non-normalized __file__ stays visible, so the walk refuses it."""
++    import os
++    directory = os.path.dirname(module_file)
++    if not directory.startswith("/"):
++        directory = os.getcwd() + ("/" + directory if directory else "")
++    return directory + "/" + leaf
++
++
++def k4s_bootstrap_read_verified(path, sha256, size, refusal):
++    """Steps 1-5 up to the hash: return exactly the pinned bytes, or raise refusal(message) having read nothing that
++    fails a name, walk or descriptor gate."""
++    import hashlib
++    import os
++    import stat
++
++    def refused(reason):
++        return refusal("k4s bootstrap refused: " + reason + ": " + repr(path))
++
++    if not isinstance(sha256, str) or len(sha256) != 64 or any(c not in "0123456789abcdef" for c in sha256):
++        raise refused("the SHA-256 pin is not 64 lowercase hex digits")
++    if type(size) is not int or not 0 < size <= K4S_BOOTSTRAP_MAX_SIZE:
++        raise refused("the size pin is not an int in 1..%d" % K4S_BOOTSTRAP_MAX_SIZE)
++    if (not isinstance(path, str) or not path.startswith("/") or path.startswith("//") or path.endswith("/")
++            or os.path.normpath(path) != path):
++        raise refused("not an absolute normalized path")
++    if "\\" in path or any(ord(c) < 32 or ord(c) == 127 for c in path):
++        raise refused("control or backslash character in the path")
++    parts = path[1:].split("/")
++    if any(p in ("", ".", "..") for p in parts):
++        raise refused("empty, . or .. component")
++    for p in parts:
++        family = k4s_bootstrap_name_family(p)
++        if family is not None:
++            raise refused("outcome name family " + family + " in component " + repr(p))
++    fd = os.open("/", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+     try:
+-        st = os.fstat(fd)
+-        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_size > cap:
+-            refuse("bootstrap", "pinned file is not a single-link regular file within the cap: %s" % path)
+-        chunks, left = [], st.st_size
+-        while left:
+-            chunk = os.read(fd, min(left, 1 << 20))
+-            if not chunk:
+-                refuse("bootstrap", "pinned file shrank: %s" % path)
+-            chunks.append(chunk)
+-            left -= len(chunk)
+-        if os.read(fd, 1):
+-            refuse("bootstrap", "pinned file grew: %s" % path)
++        if not stat.S_ISDIR(os.fstat(fd).st_mode):
++            raise refused("/ is not a directory")
++        for name in parts[:-1]:
++            try:
++                child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=fd)
++            except OSError as error:
++                raise refused("ancestor " + repr(name) + " is a symlink, not a directory or missing ("
++                              + os.strerror(error.errno) + ")")
++            previous, fd = fd, child
++            os.close(previous)
++            if not stat.S_ISDIR(os.fstat(fd).st_mode):
++                raise refused("ancestor " + repr(name) + " is not a directory")
++        leaf = parts[-1]
++        try:
++            before = os.stat(leaf, dir_fd=fd, follow_symlinks=False)
++        except OSError as error:
++            raise refused("leaf cannot be inspected (" + os.strerror(error.errno) + ")")
++        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size != size:
++            raise refused("leaf is not a single-link regular file of the pinned size %d" % size)
++        try:
++            leaf_fd = os.open(leaf, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_NOCTTY | os.O_CLOEXEC,
++                              dir_fd=fd)
++        except OSError as error:
++            raise refused("leaf cannot be opened without following (" + os.strerror(error.errno) + ")")
++        try:
++            info = os.fstat(leaf_fd)
++            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size != size
++                    or (info.st_dev, info.st_ino) != (before.st_dev, before.st_ino)):
++                raise refused("opened leaf is not the inspected single-link regular file of the pinned size")
++            chunks, left = [], size
++            while left > 0:
++                chunk = os.read(leaf_fd, left)
++                if not chunk:
++                    raise refused("leaf shrank while read")
++                chunks.append(chunk)
++                left -= len(chunk)
++            if os.read(leaf_fd, 1) != b"":
++                raise refused("leaf grew while read")
++        finally:
++            os.close(leaf_fd)
+     finally:
+         os.close(fd)
+     data = b"".join(chunks)
+-    if hashlib.sha256(data).hexdigest() != sha256:
+-        refuse("bootstrap", "pinned file SHA-256 mismatch: %s" % path)
++    if len(data) != size or hashlib.sha256(data).hexdigest() != sha256:
++        raise refused("bytes are not the pinned SHA-256 " + sha256)
+     return data
+ 
+ 
+-def module_from_bytes(name, data, origin):
+-    module = types.ModuleType(name)
+-    module.__file__ = origin
+-    exec(compile(data, origin, "exec"), module.__dict__)
++def k4s_bootstrap_exec(data, path, sha256, module_name):
++    """Step 5 tail: compile and execute exactly `data` (already verified) in a fresh module named `module_name`."""
++    import linecache
++    import sys
++    import types
++    filename = "<k4s-bootstrap sha256=" + sha256 + " " + path + ">"
++    linecache.cache[filename] = (len(data), None, data.decode("utf-8", "replace").splitlines(True), filename)
++    code = compile(data, filename, "exec", dont_inherit=True)
++    module = types.ModuleType(module_name)
++    module.__file__ = path
++    module.__k4s_bootstrap__ = (K4S_BOOTSTRAP_RELEASE, path, sha256, len(data))
++    previous = sys.modules.get(module_name)
++    sys.modules[module_name] = module
++    try:
++        exec(code, module.__dict__)
++    except BaseException:
++        if previous is None:
++            sys.modules.pop(module_name, None)
++        else:
++            sys.modules[module_name] = previous
++        raise
+     return module
+ 
+ 
++def k4s_bootstrap_load(path, sha256, size, module_name, refusal):
++    """Read `path` through the full contract and execute exactly the verified bytes as module `module_name`."""
++    data = k4s_bootstrap_read_verified(path, sha256, size, refusal)
++    return k4s_bootstrap_exec(data, path, sha256, module_name)
++# ==== END K4S CANONICAL BOOTSTRAP r1 ====
++
++
++def bootstrap_refusal(message):
++    return HostRefusal("bootstrap", message)
++
++
+ def check_safe_input(si):
+     if si.constants_fingerprint() != SAFE_INPUT_FINGERPRINT:
+         refuse("bootstrap", "safe_input constants fingerprint differs from the pin")
+     return si
+ 
+ 
+-def load_safe_input(directory):
+-    """safe_input.py from `directory` (the staged tools dir), SHA- and fingerprint-pinned."""
+-    path = os.path.join(directory, "safe_input.py")
+-    return check_safe_input(module_from_bytes("safe_input", read_pinned(path, SAFE_INPUT_SHA256), path))
++def load_safe_input(path=None):
++    """The vendored safe_input (next to this file unless `path` is given) through the canonical bootstrap, then its
++    constants fingerprint."""
++    path = k4s_bootstrap_default_path(__file__, SAFE_INPUT_FILE) if path is None else path
++    return check_safe_input(k4s_bootstrap_load(path, SAFE_INPUT_SHA256, SAFE_INPUT_SIZE, "safe_input",
++                                               bootstrap_refusal))
+ 
+ 
+ # ---------------------------------------------------------------- names-only listings
+@@ -196,34 +341,73 @@
+ 
+ # ---------------------------------------------------------------- frozen-reader ruling: clone checks and git env
+ 
++def env_path(si, env, key, required, leading_double_slash=False):
++    """`env[key]` as an absolute, normalized (si.check_abs: no '//', trailing '/', '.', '..', backslash or control
++    character) and canonical (realpath-equal: no symlinked component) path; None if the key is absent and not required.
++    r3 (END-FULL-F3): a relative value (git resolves it against each ``git -C`` directory), an empty-but-set value
++    (git falls back to another file) and any other non-normalized value are REFUSED. The single exception, allowed
++    only where the caller asks for it (HOME): a leading '//' (the fleet passwd home is ``//home/sdicks02``, so sshd
++    sets HOME=//home/sdicks02) is returned as '/' + rest; the caller installs that canonical value in the executed
++    environment, so the value checked is the value executed."""
++    if key not in env:
++        if required:
++            refuse("git-env", "%s is not set" % key)
++        return None
++    value = env[key]
++    if not isinstance(value, str) or value == "":
++        refuse("git-env", "%s is set but empty" % key)
++    if not value.startswith("/"):
++        refuse("git-env", "%s is relative (%r): git would resolve it against the -C directory" % (key, value))
++    if leading_double_slash and value.startswith("//") and not value.startswith("///"):
++        value = value[1:]
++    try:
++        si.check_abs(value)
++    except si.Refusal:
++        refuse("git-env", "%s is not a normalized absolute path: %r" % (key, value))
++    if os.path.realpath(value) != value:
++        refuse("git-env", "%s is not canonical (symlinked component): %s" % (key, value))
++    return value
++
++
+ def frozen_git_env(si, inherited):
+-    """`inherited` with every GIT_* key removed and the P2-4 git keys set (no other key is changed)."""
++    """THE frozen-reader environment (single source of truth for S5, S6 frozen-exec and S7): `inherited` with every
++    GIT_* key removed and the P2-4 GIT_* keys set; XDG_CONFIG_HOME (optional) must pass env_path unchanged; HOME
++    (required) is replaced by its canonical env_path value (only a leading '//' can differ). No other key is changed.
++    Returns a new dict; git_config_files() derives the checked paths from THIS dict."""
++    home = env_path(si, inherited, "HOME", True, leading_double_slash=True)
++    env_path(si, inherited, "XDG_CONFIG_HOME", False)
+     env = {k: v for k, v in inherited.items() if not k.startswith("GIT_")}
+     env.update({k: v for k, v in si.GIT_FIXED_ENV.items() if k.startswith("GIT_")})
+     env["GIT_CONFIG_PARAMETERS"] = GIT_CONFIG_PARAMETERS
++    env["HOME"] = home
+     return env
+ 
+ 
+-def canonical_home(inherited):
+-    home = inherited.get("HOME") or ""
+-    if not home.startswith("/"):
+-        refuse("git-env", "HOME is not absolute")
+-    home = "/" + home.lstrip("/")                  # git reads //home/x and /home/x alike
+-    if os.path.realpath(home) != home:
+-        refuse("git-env", "HOME is not canonical: %s" % home)
+-    return home
+-
+-
+-def check_global_git_config(si, inherited):
+-    """The user's global git config files (the only config git 2.25 reads besides the repository's once
+-    GIT_CONFIG_NOSYSTEM=1) through safe_input's repository-config gate: no driver/include section, no core key that
+-    runs code or relocates the work tree. Each path is walked component-wise O_NOFOLLOW from '/' (a symlinked
+-    component refuses); an absent file is skipped. Returns the checked file paths."""
+-    home = canonical_home(inherited)
+-    xdg = inherited.get("XDG_CONFIG_HOME") or home + "/.config"
++def git_config_files(si, env):
++    """Every config FILE the installed git (2.25.1; config.c do_git_config_sequence) reads under `env`, besides the
++    repository's own .git/config and .git/config.worktree (si._git_preflight checks those) and GIT_CONFIG_PARAMETERS
++    (set here, no file):
++      system  /etc/gitconfig: never read, because GIT_CONFIG_NOSYSTEM=1 is required in `env`;
++      XDG     $XDG_CONFIG_HOME/git/config when XDG_CONFIG_HOME is set (non-empty), else $HOME/.config/git/config;
++      global  $HOME/.gitconfig (expand_user_path("~/.gitconfig"); HOME is required).
++    GIT_CONFIG (read only by ``git config``) and GIT_CONFIG_GLOBAL/GIT_CONFIG_SYSTEM (git >= 2.32) are GIT_* keys and
++    are removed or fixed by frozen_git_env. include/includeIf sections are refused by the static check, so no other
++    file is reachable. Derived from `env` itself: the paths checked are the paths the executed git reads."""
++    if env.get("GIT_CONFIG_NOSYSTEM") != "1":
++        refuse("git-env", "GIT_CONFIG_NOSYSTEM=1 is required (the system config is not checked)")
++    home = env_path(si, env, "HOME", True)
++    xdg = env_path(si, env, "XDG_CONFIG_HOME", False)
++    return ((xdg if xdg is not None else home + "/.config") + "/git/config", home + "/.gitconfig")
++
++
++def check_global_git_config(si, host, env):
++    """The git_config_files(env) through safe_input: each path passes si.name_gate for `host` (outcome families,
++    END namespace, forbidden prefixes) BEFORE any syscall, is walked component-wise O_NOFOLLOW from '/' (a symlinked
++    component refuses), and an existing file passes si._check_git_config (regular, st_nlink 1, no symlink leaf; no
++    driver/include section, no code-running core key). An absent file is skipped. Returns the checked file paths."""
+     checked = []
+-    for path in (home + "/.gitconfig", "/" + xdg.lstrip("/") + "/git/config"):
+-        parts = si.check_abs(path)
++    for path in git_config_files(si, env):
++        parts = si.name_gate(path, host, ())
+         top = os.open("/", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+         try:
+             if not si._exists_nofollow(top, parts, path):
+@@ -239,19 +423,88 @@
+     return checked
+ 
+ 
+-def verify_clone(si, host, work_tree, grants=()):
+-    """A host clone that frozen code will run git in (frozen-reader ruling): safe_input's static git preflight
+-    (canonical work tree, real .git and objects/, no commondir, alternates, grafts, shallow, driver/include config or
+-    code-running core keys) via si.git_run, no refs under refs/replace/, and .git/hooks absent or holding only
+-    *.sample files (regular, st_nlink 1). Returns a record."""
+-    repo = si.GitRepo(work_tree=work_tree)
++def frozen_env_checked(si, host, inherited):
++    """(env, record): the ONE environment a frozen reader is executed with, and the static check of exactly the
++    config files that environment makes git read. Callers execute `env` itself (never a re-derived one)."""
++    env = frozen_git_env(si, inherited)
++    files = git_config_files(si, env)
++    checked = check_global_git_config(si, host, env)
++    return env, dict(config_files=list(files), global_config_checked=checked,
++                     git_keys=sorted(k for k in env if k.startswith("GIT_")))
++
++
++def canonical(value):                                       # = k4s_logic.canonical (k4s_logic.py:106-107)
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
++
++
++def bundle_sans_guard_sha256(manifest):
++    """SHA-256 of the canonical bundle manifest with reference_load_profile.guard.job removed: the identity two
++    per-attempt bundles share when they differ ONLY in their fresh guard job (RC-3; T1 END-A5). S5 exports it for its
++    own and its compare bundle; the S7 host program recomputes it from the attempt bundle's pinned tiers-pins.json
++    (END-FULL-F5b)."""
++    if not isinstance(manifest, dict):
++        refuse("bundle", "bundle manifest is not an object")
++    stripped = json.loads(json.dumps(manifest))
++    guard = (stripped.get("reference_load_profile") or {}).get("guard")
++    if not isinstance(guard, dict) or not isinstance(guard.get("job"), str):
++        refuse("bundle", "bundle manifest lacks reference_load_profile.guard.job")
++    del guard["job"]
++    return hashlib.sha256(canonical(stripped).encode()).hexdigest()
++
++
++CLONE_ROLES = ("repository", "guard-repo")
++PROMISOR_KEYS = (("extensions", "partialclone"), ("remote", "promisor"), ("remote", "partialclonefilter"),
++                 ("core", "partialclonefilter"))
++SHALLOW_CAP = 1 << 16
++OID40 = re.compile(r"[0-9a-f]{40}")
++
++
++def clone_repo(si, work_tree, role):
++    """The si.GitRepo of a host clone in an explicit role (END-FULL-F2). "repository" (the evidence / END-JOB
++    --repository clone): full, so si refuses .git/shallow. "guard-repo" (the S3 Q3 guard job repo/): the minimal
++    depth-1 SHALLOW clone S3 builds and proves, so shallow is the ONE declared allowance; alternates and grafts
++    still refuse. There is no default role."""
++    if role not in CLONE_ROLES:
++        refuse("policy", "unknown clone role %r (one of %s)" % (role, ", ".join(CLONE_ROLES)))
++    return si.GitRepo(work_tree=work_tree, allow=("shallow",) if role == "guard-repo" else ())
++
++
++def config_sections(text):
++    """(section, key) names of a git config text, casefolded; subsections dropped (names only, values ignored)."""
++    out, section = [], None
++    for line in text.splitlines():
++        line = line.strip()
++        if not line or line[0] in "#;":
++            continue
++        if line.startswith("["):
++            head = line[1:].split("]", 1)[0].strip()
++            section = head.split(None, 1)[0].split(".", 1)[0].strip('"').casefold()
++            line = line.split("]", 1)[1].strip() if "]" in line else ""
++            if not line:
++                continue
++        out.append((section, line.split("=", 1)[0].strip().casefold()))
++    return out
++
++
++def verify_clone(si, host, work_tree, grants=(), *, role):
++    """A host clone that frozen code will run git in (frozen-reader ruling), in an explicit `role` (clone_repo):
++    safe_input's static git preflight (canonical work tree, real .git and objects/, no commondir, alternates, grafts,
++    driver/include config or code-running core keys; shallow only for "guard-repo") via si.git_run; no refs under
++    refs/replace/; .git/hooks absent or holding only *.sample files (regular, st_nlink 1); r3: no promisor/partial
++    clone (extensions.partialClone, remote.*.promisor / partialclonefilter in .git/config, objects/pack/*.promisor);
++    "guard-repo": `rev-parse --is-shallow-repository` is true and .git/shallow (regular, st_nlink 1) lists only
++    40-hex commits present in the repository. Returns a record."""
++    repo = clone_repo(si, work_tree, role)
+     replace = si.git_run(repo, ["for-each-ref", "--format=%(refname)", "refs/replace/"], 60, 1 << 16).stdout
+     if replace != b"":
+         refuse("indirection", "%s has replace refs" % work_tree)
+-    hooks_root = work_tree + "/.git/hooks"
+-    policy = si.Policy(host, [si.Role("clone-git", work_tree + "/.git", "read", 1 << 20, exact=("hooks",),
+-                                      grants=grants),
++    git_dir = work_tree + "/.git"
++    hooks_root = git_dir + "/hooks"
++    policy = si.Policy(host, [si.Role("clone-git", git_dir, "read", 1 << 20,
++                                      exact=("hooks", "config", "shallow", "objects/pack"), grants=grants),
+                               si.Role("clone-hooks", hooks_root, "read", 1 << 20, patterns=("*.sample",),
++                                      grants=grants),
++                              si.Role("clone-pack", git_dir + "/objects/pack", "read", 1, patterns=("*",),
+                                       grants=grants)])
+     try:
+         si.check_absent(policy, "clone-git", "hooks")
+@@ -260,12 +513,40 @@
+         if error.code != "exists":
+             raise
+         hooks = [f["rel"] for f in si.walk_tree(policy, "clone-hooks")["files"]]
+-    return dict(work_tree=work_tree, replace_refs=0, hooks=hooks, static_preflight=True)
+-
+-
+-def seed_commits(si, guard_repo, commits):
+-    """Ruling Q3: `git cat-file -e <c>^{commit}` for each frozen seed commit in the guard job's repo/."""
+-    repo = si.GitRepo(work_tree=guard_repo)
++    config = si.read_bytes(policy, "clone-git", "config", max_size=1 << 20).decode("utf-8", "replace")
++    promisor = sorted("%s.%s" % k for k in config_sections(config) if k in PROMISOR_KEYS)
++    if promisor:
++        refuse("indirection", "%s is a promisor/partial clone (%s)" % (work_tree, ", ".join(promisor)))
++    try:
++        si.check_absent(policy, "clone-git", "objects/pack")
++        packs = []
++    except si.Refusal as error:
++        if error.code != "exists":
++            raise
++        packs = names_only(si, policy, "clone-pack")
++    if any(name.endswith(".promisor") for name in packs):
++        refuse("indirection", "%s has a promisor pack" % work_tree)
++    record = dict(work_tree=work_tree, role=role, replace_refs=0, hooks=hooks, promisor=False, static_preflight=True)
++    if role == "guard-repo":
++        flag = si.git_run(repo, ["rev-parse", "--is-shallow-repository"], 60, 64).stdout
++        if flag != b"true\n":
++            refuse("indirection", "%s is not the depth-1 shallow Q3 guard repository" % work_tree)
++        lines = si.read_bytes(policy, "clone-git", "shallow", max_size=SHALLOW_CAP).decode("ascii", "replace")
++        shallow = lines.split("\n")
++        if shallow[-1] != "" or not shallow[:-1] or not all(OID40.fullmatch(s) for s in shallow[:-1]):
++            refuse("indirection", "%s/.git/shallow is not a list of commit ids" % work_tree)
++        for commit in shallow[:-1]:
++            si.git_run(repo, ["cat-file", "-e", commit + "^{commit}"], 60, 4096)
++        record["shallow_commits"] = shallow[:-1]
++    return record
++
++
++def seed_commits(si, guard_repo, commits, *, role):
++    """Ruling Q3: `git cat-file -e <c>^{commit}` for each frozen seed commit in the guard job's repo/ (role must be
++    "guard-repo": the shallow allowance is declared for that role only)."""
++    if role != "guard-repo":
++        refuse("policy", "Q3 seed commits are checked in the guard-repo role only")
++    repo = clone_repo(si, guard_repo, role)
+     for commit in commits:
+         si.git_run(repo, ["cat-file", "-e", commit + "^{commit}"], 60, 4096)
+     return {c: True for c in commits}
+@@ -314,8 +595,7 @@
+         sys.stderr.write(__doc__)
+         return 2
+     try:
+-        here = os.path.dirname(os.path.abspath(__file__))
+-        si = load_safe_input(here)
++        si = load_safe_input()                          # canonical bootstrap r1 (END-FULL-F1)
+         host = os.uname().nodename.split(".")[0]          # si.Policy re-checks it for every role below
+         if host not in END_HOSTS:
+             refuse("host", "runs on 127x03/127x04 only")
+@@ -332,11 +612,11 @@
+             return si.main(argv[2:])                   # the safe_input CLI (create-excl / mkdir-excl / publish-excl)
+         if argv[0] == "frozen-exec" and len(argv) > 2 and argv[1] == "--":
+             command = argv[2:]
+-            record = verify_clone(si, host, option_value(command, "--repository"))
+-            check_global_git_config(si, os.environ)
++            record = verify_clone(si, host, option_value(command, "--repository"), role="repository")
++            env, record["git_env"] = frozen_env_checked(si, host, dict(os.environ))
+             sys.stderr.write("frozen-exec: %s\n" % json.dumps(record, sort_keys=True))
+             sys.stderr.flush()
+-            os.execvpe(command[0], command, frozen_git_env(si, os.environ))
++            os.execvpe(command[0], command, env)                # the very env whose config files were checked
+         sys.stderr.write("usage: registry-snapshot ... | frozen-exec -- ARGV...\n")
+         return 2
+     except Exception as error:                       # si.Refusal, HostRefusal, OSError: refuse, publish nothing

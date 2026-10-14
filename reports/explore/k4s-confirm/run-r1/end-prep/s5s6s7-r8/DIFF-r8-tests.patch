@@ -1,0 +1,87 @@
+--- s5s6s7-r7/tests/test_r7.py
++++ s5s6s7-r8/tests/test_r7.py
+@@ -170,14 +170,48 @@
+     ok(code == 1 and by_name(result)["mhz_comparison"]["passed"] is False and result["passed"] is False)
+ 
+ 
+-def test_pf4_hold_shorter_than_the_warmup_is_recorded_not_gated(tmp_path, monkeypatch):
+-    """No row the frozen END would compare: recorded as unavailable, never a refusal (END is never weaker here)."""
+-    env = X.build(tmp_path, monkeypatch, fake=dict(warmup_seconds=60, mhz_fails=True))
++def test_pf4r8_binding_hold_with_a_starved_sampler_fails_closed(tmp_path, monkeypatch):
++    """Sol PF4-r1 F1: a binding (reference-work) hold that leaves fewer than 2 rows after the frozen warmup_seconds
++    (here: every sampled row falls inside the warm-up, while total samples and the loaded span are adequate) must fail
++    closed, as the frozen END refuses fewer than 2 measured MHz rows (fleet_profile.py:59-62)."""
++    env = X.build(tmp_path, monkeypatch, fake=dict(warmup_seconds=60))
++    code, result, seal = X.go(env)
++    row = by_name(result)["mhz_comparison"]
++    m = result["mhz_comparison"]
++    ok(m["passes"] is None and m["window"]["compared_rows"] < 2 and m["window"]["hold_rows"] >= 2 and m["unavailable"])
++    ok(row["passed"] is False and row["gate"] is True and "binding hold" in row["error"], row)
++    ok(code == 1 and result["passed"] is False and result["qualifying"] is False and seal["status"] == "failed")
++
++
++def test_pf4r8_short_diagnostic_hold_records_unavailable_and_is_non_qualifying(tmp_path, monkeypatch):
++    """Only a deliberately diagnostic hold (--no-reference-work) may record the MHz window as unavailable."""
++    env = X.build(tmp_path, monkeypatch, fake=dict(warmup_seconds=60, mhz_fails=True), reference_work=False)
+     code, result, _ = X.go(env)
+     row = by_name(result)["mhz_comparison"]
+-    ok(code == 0 and result["passed"] and row["passed"] is True and row["gate"] is False, result.get("error"))
+     m = result["mhz_comparison"]
+-    ok(m["passes"] is None and m["window"]["compared_rows"] == 0 and m["window"]["hold_rows"] > 0 and m["unavailable"])
++    ok(m["passes"] is None and m["unavailable"] and row["passed"] is True and row["gate"] is False, row)
++    ok(code == 0 and result["passed"] and result["mode"] == "diagnostic" and result["qualifying"] is False)
++
++
++class _AllPassed:
++    def all_passed(self):
++        return True
++
++
++def test_pf4r8_binding_mode_requires_a_passing_mhz_comparison():
++    """verdict(): with every other binding condition met, missing or unavailable MHz evidence is never
++    binding/qualifying (Sol PF4-r1 F1)."""
++    snap = dict(attempt_parent=[], registry=dict(claims={}))
++    base = dict(mode_requested="binding", hold_seconds=1200.0, before=snap, after=dict(snap), guard_sources={},
++                load=dict(reference_slot_work=True, reference_slot_states_worked=5, background_slots_ready=10,
++                          background_slots_expected=10, slot_count=11),
++                summaries=dict(bus=dict(cumulative_loaded=dict(seconds=1000.0), loaded_band="proceed"),
++                               sshd=dict(sshd_count_growth_during_hold=False)))
++    for mhz, mode, qualifying in ((dict(passes=True), "binding", True), (dict(passes=None), "diagnostic", False),
++                                  (None, "diagnostic", False)):
++        result = dict(base, **({} if mhz is None else dict(mhz_comparison=mhz)))
++        v = S.verdict(_AllPassed(), result, "127x04")
++        ok(v["passed"] is True and v["mode"] == mode and v["qualifying"] is qualifying, (mhz, v))
+ 
+ 
+ # ---------------------------------------------------------------- an error outside every check row
+--- s5s6s7-r7/tests/test_s5_preflight.py
++++ s5s6s7-r8/tests/test_s5_preflight.py
+@@ -471,7 +471,7 @@
+ def test_04_login_during_hold_fails(tmp_path, monkeypatch):
+     env = X.build(tmp_path, monkeypatch, host="127x04", fake=dict(login_during_hold=True))
+     code, result, seal = X.go(env)
+-    ok(code == 1 and seal["status"] == "failed" and result["summaries"]["sshd"]["login_detected_during_hold"])
++    ok(code == 1 and seal["status"] == "failed" and result["summaries"]["sshd"]["sshd_count_growth_during_hold"])
+ 
+ 
+ @pytest.mark.parametrize("fake,check", [(dict(reason_at_admit="op1_interference"), "guard_admission"),
+--- s5s6s7-r7/tests/test_s7_gate.py
++++ s5s6s7-r8/tests/test_s7_gate.py
+@@ -222,7 +222,7 @@
+         doc = dict(schema=G.VERIFIED_SCHEMA, scope="K4S-END-PREFLIGHT", host=h, attempt=attempt, receive=str(root),
+                    status="passed", passed=True, mode="binding", qualifying=True, failed_checks=[],
+                    registry_and_attempt_parent_unchanged=True, attempt_parent_empty=True,
+-                   login_detected_during_hold=False,
++                   sshd_count_growth_during_hold=False,
+                    load=dict(reference_slot_work=True, reference_slot_states_worked=4000, background_slots_ready=10,
+                              background_slots_expected=10, slot_count=11),
+                    duration=dict(loaded_seconds_measured=seconds),
+@@ -505,7 +505,7 @@
+     (dict(load=dict(reference_slot_work=True, reference_slot_states_worked=9, background_slots_ready=9,
+                     background_slots_expected=10, slot_count=11)), "full reference load"),
+     (dict(duration=dict(loaded_seconds_measured=899.0)), "duration"),
+-    (dict(login_detected_during_hold=True), "login"),
++    (dict(sshd_count_growth_during_hold=True), "sshd-count growth"),
+     (dict(bus_percent=0.8), "STOP"),
+     (dict(bus_band="unavailable", bus_gate="unavailable", bus_cumulative_loaded=dict(percent=None, seconds=None,
+                                                                                      hz=100, cpu_ticks=None)),

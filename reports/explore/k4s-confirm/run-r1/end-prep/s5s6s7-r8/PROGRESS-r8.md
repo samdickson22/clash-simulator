@@ -1,0 +1,1 @@
+- 2026-10-14T02:14:50Z RUNNER r8 (Sol PF4-r1): F1 MHz fail-closed on binding holds; N2 rename; repin; TOOLS-FINAL; class table.
