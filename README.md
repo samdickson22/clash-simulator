@@ -6,6 +6,15 @@ Clasher is a Clash Royale battle simulator with learned policies and search bots
 
 These are simulator results on specific card pools, decks, opponents, and seeds. They do not establish official-client strength or complete game fidelity.
 
+- **Fidelity against recorded native matches:** 577 recordings from the native 15.535 client (train and validation splits; the heldout split was never opened) were replayed through the engine. The metric is the share of non-tower units within a quarter tile of the recording; HP is scored as an exact match.
+  - Before calibration: 51.4% within a quarter tile, 65.1% HP exact.
+  - After two calibration batches, merged 2026-10-14: 72.3% on train and 74.5% on validation, with HP exact 80.5% and 81.1%.
+  - For comparison, the third-party RoyaleSim engine with 15.535 rules scores 78.8%.
+  - Python-to-Rust digest parity now holds on 574 of 577 recordings.
+  - The pre-merge engine is tagged `engine-r1`.
+  - See [fidelity](reports/bot/FIDELITY.md) and [calibration](reports/bot/calibration/BATCH2.md).
+- **Bot strength (exploration tier):** the current best bot is K4S-st, the public search player with the R3a student's top proposals as extra candidates. Against a fixed pool (v1, R3a and two scripted opponents; 300 cases each, played in RoyaleSim) it scores a pool average of 0.901 [0.885, 0.916]. The score is tracked in [HEADLINE](reports/bot/HEADLINE.md); the engine choice is explained in [the engine decision](reports/bot/DECISION-ENGINE.md).
+
 - **Fair public-information search:** the player derives elixir, hand, and cycle information from public history, then samples unresolved hidden state and future randomness. The 896-game evaluation passed its public-information checks. The policy-proposal variant scored 204/256 on holdout and 33/64 on Hog26; Hog26 remained a weakness. See [the report](reports/strategy_council_20260928/srp-public/REPORT.txt).
 - **Search tuning:** the selected three-style opponent mixture scored 161/256 against the previous public player in a preregistered head-to-head confirmation. Wins count as 1 and draws as 0.5. See [the configuration, paired intervals, and limitations](reports/strategy_council_20260928/search-tuning/RESULTS.md).
 - **Rust acceleration:** the P16 Stage 3 report measured a 75.66x aggregate complete-call speedup with exact candidate traces. Later stages extend card and controller coverage to C56. Each stage has its own scope and parity gates; these timings are not a blanket speed or fidelity claim. See [engine-speed reports](reports/strategy_council_20260928/engine-speed/README.md).
