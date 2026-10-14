@@ -59,6 +59,9 @@ class OursEngine:
         self._Troop, self._Building = Troop, Building
         id_to_name = {v: k for k, v in self.name_to_id.items()}
         self.b = b = BattleState()
+        # Seed the spell-spread RNG (Arrows volley jitter, radial spreads): the default
+        # random.Random() is OS-seeded, which made ~95/577 fixtures differ run to run.
+        b.rng.seed(0)
         self.id_of = {}
         for side in (0, 1):
             names = [self._our_name(id_to_name[i]) for i in fix.initial_order[side]]

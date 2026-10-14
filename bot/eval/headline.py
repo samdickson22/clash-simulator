@@ -44,6 +44,14 @@ def make_player(rt, name):
     if name.startswith('rgym-'):  # RoyaleGym's shipped opponents (RoyaleSim engine only)
         from bot.players.royalesim_opponents import RoyaleGymPlayer
         return RoyaleGymPlayer(name[5:])
+    if name.startswith('rext-'):  # external trained policies, RoyaleLearn (RoyaleSim 15.535 only; bot/players/rext_policy.py)
+        from bot.players.rext_policy import RextPolicyPlayer
+        model = name[5:]
+        greedy = model.endswith('-greedy')
+        return RextPolicyPlayer(model.removesuffix('-greedy'), greedy=greedy)
+    if name.startswith('K4SP'):  # K4S + proposer top-k as extra candidates (bot/exit/teacher.py)
+        from bot.exit.teacher import from_spec
+        return from_spec(rt, name)
     if name.startswith('K4S-b'):
         return SearchPlayer(rt, mode='budget', budget=int(name[5:]), default='R3a')
     if name.startswith('K4-b'):

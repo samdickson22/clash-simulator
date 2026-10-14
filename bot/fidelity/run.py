@@ -114,6 +114,12 @@ def run_one(args):
         elapsed = time.time() - t0
         ticks = [t for t in fix.ticks if fix.start_tick <= t <= fix.end_tick]
         res = score(fix.units, sim, ticks, lambda cid: id_to_name.get(cid, f"unrooted:{cid}"))
+        # Diagnostic "live" view: only ticks up to our battle's end, i.e. without the frozen
+        # post-game-over state (one shifted sudden-death crown can dominate a small card).
+        live_end = dlog["engine_game_end_tick"]
+        live = res if live_end is None else score(
+            fix.units, sim, [t for t in ticks if t <= live_end], lambda cid: id_to_name.get(cid, f"unrooted:{cid}"))
+        res["live"] = {"end": live_end, "no_towers": live["no_towers"], "per_card": live["per_card"]}
         last = max(ticks)
         def crowns(units):
             lost = {0: set(), 1: set()}
