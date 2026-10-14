@@ -36,17 +36,23 @@ def make_player(rt, name):
         return VariantPolicyPlayer(rt, 'v1-greedy', tau=float(name[6:]))
     if name == 'v1-logged':
         return VariantPolicyPlayer(rt, 'v1-logged', log_path=os.environ['BOT_PPLAY_LOG'])
-    if name.startswith('student:'):  # 'student:<ckpt>[@threshold]' (bot/exit/student.py)
+    if name.startswith(('student:', 'student10:')):  # 'student:<ckpt>[@threshold]' (bot/exit/student.py)
         from bot.exit.student import StudentPlayer
         return StudentPlayer.from_spec(rt, name)
     if name.startswith('scripted-'):
         return ScriptedPlayer(rt, name.split('-', 1)[1])
+    if name.startswith('rgym-'):  # RoyaleGym's shipped opponents (RoyaleSim engine only)
+        from bot.players.royalesim_opponents import RoyaleGymPlayer
+        return RoyaleGymPlayer(name[5:])
     if name.startswith('K4S-b'):
         return SearchPlayer(rt, mode='budget', budget=int(name[5:]), default='R3a')
     if name.startswith('K4-b'):
         return SearchPlayer(rt, mode='budget', budget=int(name[4:]), default='v1')
     if name == 'KU':
         return SearchPlayer(rt, mode='unbounded', default='R3a')
+    if name.startswith('K4S-'):  # search-compute variants: K4S-m4, K4S-w48, K4S-st, K4S-h320, ... (bot/search)
+        from bot.search.players import make_search_player
+        return make_search_player(rt, name)
     raise ValueError(name)
 
 

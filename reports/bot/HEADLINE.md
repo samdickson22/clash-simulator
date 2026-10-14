@@ -37,10 +37,24 @@ opponent, averaged with equal weight over opponents. It is reported in each engi
   python -m bot.eval.summarize DIR
   ```
 
+## Protocol HEADLINE-v2 (2026-10-14, coordinator request: external opponents)
+
+Everything is as in v1 (same cases, BASE, candidate and match loop), with two changes:
+- **Engine:** RoyaleSim only. The external opponents are RoyaleSim-native and act on RoyaleSim state.
+- **Pool P2 = P1 ∪ external.** The external members are:
+  - RoyaleGym's shipped scripted opponents, from upstream RoyaleGym `royalegym/opponents.py` (MIT), wrapped by
+    `bot/players/royalesim_opponents.py`: `rgym-patient` (ready=3), `rgym-push`, `rgym-defend` and
+    `rgym-first-affordable`;
+  - `rext-*`: any RoyaleLearn/RoyaleImitate reference policies plus a policy trained with RoyaleLearn's own trainer
+    on our decks, when available (`reports/bot/external-opponents/`).
+- **No ClashAI code or checkpoints** (license unclear).
+- **Scores reported:** pool-v2 (all members, equal weight), external-only, and P1, so the v1 number stays continuous.
+
 ## Tracked numbers
 
 | date (UTC) | engine | candidate | pool score [95% CI] | vs v1 | vs R3a | vs scripted-balanced | vs scripted-pressure | games | notes |
 |---|---|---|---|---|---|---|---|---:|---|
 | 2026-10-14 03:50 | ours (Python C56) | K4S-b64 | **0.864 [0.847, 0.882]** | 0.830 [0.787, 0.870] | 0.633 [0.580, 0.687] | 0.997 [0.990, 1.000] | 0.996 [0.990, 1.000] | 1200 | first run, bot-headline-r1 on 03. Scripted opponents are saturated, so the R3a and v1 columns carry the signal. |
 | 2026-10-14 04:35 | **RoyaleSim 0.1.34, 15.535.29 rules (primary from now on)** | K4S-b64 | **0.851 [0.833, 0.869]** | 0.797 [0.750, 0.840] | 0.617 [0.563, 0.673] | 0.993 [0.983, 1.000] | 0.997 [0.990, 1.000] | 1200 | bot-headline-rsim-r1 on 03, same 1200 cases. Paired RoyaleSim − ours: vs v1 −0.033 [−0.093, +0.023], vs R3a −0.017 [−0.077, +0.047]. |
+| 2026-10-14 05:00 | RoyaleSim 15.535, **HEADLINE-v2** | K4S-b64 | pool-v2 0.923 [0.913, 0.932]; external-only 0.994 [0.989, 0.998]; P1 0.851 | 0.797 | 0.617 | 0.993 | 0.997 | 2400 | External opponents: rgym-patient 0.983, rgym-push 1.000, rgym-defend 0.997, rgym-first-affordable 0.997, all **saturated**. The trained external policy (rext-rlppo) is pending. Until then **read P1 and the per-opponent v1/R3a numbers**, not pool-v2. |
 

@@ -33,19 +33,26 @@ tier). Report to coordinator thread 0523ae6f.
   - K4S-b64 pool score 0.864 [0.847, 0.882].
   - Sampling the gate costs −24 pp; v1's calibrated threshold is τ = 0.1387.
 
-## Running (2026-10-14 04:10Z)
+- **2026-10-14 ~04:35Z:**
+  - RoyaleSim headline: K4S-b64 pool 0.851.
+  - Step 4 decision ACCEPTED by the coordinator: plan and train on our Rust core, trusted headline in RoyaleSim,
+    calibrate ours behind the 577-fixture gate (`DECISION-ENGINE.md`).
+- The v1-τ arm collapsed (−45 pp): thresholds must be calibrated on-policy.
 
-- **`bot-lead-rsim-adapter-r1`** (Opus): our bots in RoyaleSim. Writes `bot/players/royalesim_*` and
-  `reports/bot/rsim-adapter/`.
-- **`bot-lead-exit-pipeline-r1`** (Opus): ExIt on 08. Writes `bot/exit/` and `reports/bot/exit/`; job dirs
-  `bot-exit-*`.
-- **`bot-lead-div-{goblinstein,ghost,huts,swarms,towers,miner}-r1`** (Haiku): our-engine divergence notes. Write
-  `reports/bot/divergence/`; scratch `bot-div/` on 03.
-- **v1-τ0.1387 arm:** on 04, `bot-gate-r2.sh`, out `bot-gate-r1`.
-- **Hosts:** 03 (CPU), 04 (A6000), 08 (A6000, from COORDINATOR 19693dce; never `v4-b-20261012-r1` or `t1-*`).
+## Running (2026-10-14 04:40Z)
+
+- **HEADLINE-v2 external opponents:** K4S-b64 vs rgym-{patient,push,defend,first-affordable} in RoyaleSim, on 04.
+  Out `bot-headline-v2-rsim-r1`, launch script `bot-headline-v2-rsim-r1.sh` (sets `ROYALEGYM_SRC`).
+- **`bot-lead-external-opponents-r1`** (Opus): RoyaleLearn/RoyaleImitate baselines plus a RoyaleLearn-trained
+  policy on our decks. Writes `reports/bot/external-opponents/` and `bot/players/rext_*`.
+- **`bot-lead-exit-pipeline-r1`** (Opus): ExIt on 08. Writes `bot/exit/` and `reports/bot/exit/`.
+- **`bot-lead-search-scaling-r1`** (Opus): on 03. Writes `bot/search/` and `reports/bot/search-scaling/`.
+- **`bot-lead-calib-batch1-r1`** (Opus): engine calibration batch 1, fidelity-gated. Writes
+  `reports/bot/calibration/`.
+- **Daily headline:** T3 scheduled task at 06:00 local (13:00Z).
 
 ## Next
 
-1. RoyaleSim headline, then the step-4 engine decision.
-2. Daily headline schedule (T3 `schedule_task`).
-3. Train at scale on the chosen engine.
+1. HEADLINE-v2 numbers, then report.
+2. Integrate ExIt and search-scaling winners into the best bot, and re-headline.
+3. Runtime r2 with the calibrated engine.
