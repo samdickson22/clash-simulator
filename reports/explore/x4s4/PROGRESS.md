@@ -649,3 +649,16 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   "returned"; exit 0. step-00002500.pt dea4b711…; final loss 5.558.
 - fit-R5-rep launched 01:41:12Z (launch 9c22ff0c…, pid 3049169). R5W follows; its O_W gate has passed. Calibrations
   run after the fits (exclusive GPU, under the DISPATCH lock).
+
+## 2026-10-14T04:16Z — all fits done and calibrated (under T3); P11 launched
+
+- R5-rep (9c22ff0c…, 01:41:12Z–02:58:57Z): step 2,500, "returned", exit 0. step-00002500.pt fc68c501…; loss 5.613.
+- R5W (2db3f1f9…, 02:59:01Z–04:15:39Z): step 2,500, "returned", exit 0. step-00002500.pt a8b00a0a…; loss 5.592.
+- Calibrations, each exit 0, then student_ready:
+  - R5 (thr 0.50200, 02:58:47Z);
+  - R5-rep (0.49839, 04:16:02Z);
+  - R5W (0.50276, 04:16:21Z).
+  READY exists for R3a-rep, R5, R5-rep and R5W; R3a uses the staged plan.
+- P11 `p11-diagnose`: `env PYTHONPATH=$J/fit/source:$J/fit/source/src:$J/fit/ops $GRDG --name p11-diagnose --gpu --cwd
+  $J/fit/source --output $J/analysis/diagnostic.json -- /mpac/sdicks02/envs/clasher-gpu/bin/python -B $X/diagnose.py`,
+  detached at 04:16:57Z (runner 3556291). PYTHONPATH and cwd are as in Q6.
