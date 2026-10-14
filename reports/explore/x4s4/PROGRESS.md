@@ -585,3 +585,24 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   recorded, the constant fields, the HALT helper and best_effort_log/logq, and the worker-confined fields.
 - Results: 17/17 mutants killed; matrix 6/6 at 153 cases. Per PR-1 (round 3), the coordinator checks the diff
   directly.
+
+## 2026-10-14T00:10Z — GO HR-2 (COORDINATOR e0c087da): restart in J under T3 = 2026-10-14T00:07:39Z; driver blocked
+
+- Steps 1–9 as pre-approved; every expected SHA was computed from git.
+  - watchdog.py 797320cc… installed ×3. RUNTIME-INVENTORY re-sealed: r4 8389b158… kept; new ba6a42a7….
+  - Before-inventory: 564,495 entries, a0b0d261… (gz e170921d…).
+  - pid 657762 (starttime 168497996) verified, SIGTERM, exited.
+  - HALT.json (f522408f…) moved to receipts/halt-r2/. `resume` recorded the STOP period [1791901970.971, 1791936438.072].
+  - raw-OW (2,741 games) → data/halted-r2/; fits/R5 → fits/halted-r2-R5; fit-R5-launch.json → receipts/halt-r2/.
+  - ACK-fit-R5.json 4468dcb9… ("continue", bound to anomaly 3c990118…).
+  - HARD-STOP and T2.json archived. T3 = 00:07:39Z; HARD-STOP b3f3d278…; T3.json e0fadfb1….
+  - After-inventory: 564,499 entries, e85e52a8… (gz 3be49a40…). All 205,592 moved entries are identical; the other
+    changes are exactly as planned.
+  - W0: pid 2745836, status ok; the slow lane is live (walk 2.5–3.4 s; PSS 0.4 s).
+  - P3-r4 (`--final`) reproduces aadafb16 and identical arms and evidence (323e8c3b…; guard d46fd992…).
+  - P9 `p9-collect-w-r2` runner pid 2749275 (00:09:52Z); driver pid 2750088 (00:10:07Z).
+- **Blocker, reported for a ruling:** the driver never consumes ACK-fit-R5. Fits.tick returns early on any
+  ANOMALY-fit-<fid> that isn't wall_over_2x, before calling unresolved_anomalies(). final_gate/launch are never
+  reached, and games_tick needs REPORTING.GO. So the fits stay pending.
+  - Proposed: (A) under a ruling, run the reviewed driver.unresolved_anomalies() once from a one-off process;
+    (B) a driver code fix with review.
