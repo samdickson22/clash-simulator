@@ -6479,3 +6479,32 @@ The compact receipt is `l1/receipts/b08-r5-environment-result-r1.json` (37d87a1e
 **Quiet-read r13 → r14.** Run with `evidence/coordinator-quiet-read-r14.sh` (a61c99a3), which is r13 with only `Q=` changed. Exit code 0. Observation 5069a8d87f9414aefc0d9fdc41544691a29d3b436469bbb6d62463b25e0cb6a7: who 0, available 1,214,282,649,600 B, loadavg 0.02.
 
 **Next:** the owner fills the epoch-1 chain (`b08-r5-epoch01-chain-drafts-r1`, manifest ce69f97f) in a fresh version. This commit is the environment and G6 acceptance, and quiet-read r14 is the observation. The coordinator adds the between-phase attestations at issuance.
+
+## 2026-10-14 00:50Z: B r5 epoch-1 CPU GO r4 and placement GO r15 issued
+
+**Source drafts.** The owner's drafts in `b08-r5-epoch01-chain-drafts-r2` (manifest 99d901d1).
+- The environment and G6 acceptance is 6b052499, and the observation is quiet-read r14 (5069a8d8).
+- The CPU GO is issued byte-identical to the draft.
+- In the placement, the coordinator filled in only the between-phase attestations and the blockers. Since the environment C-4 at 6b052499, no other CPU or GPU phase has run on 08.
+- The placement holds only the epoch-1 CPU GO.
+- The run draft is repinned and held at `v4-b-gap-review/epoch01-r5-final/DRAFT-…` (3d28edf8) until C-6.
+
+**Checks:**
+- transport r4 `validate_cpu(current=False)` passes;
+- F1 r6 `receipt()` passes;
+- `validate_go` passes inside the window and refuses before it;
+- C-5 is clean, with 0 `REVOKED` lines;
+- no path collides.
+
+**Scope.** Epoch 1 only, serial and alone:
+- 08, cpus [0,1], a 32 GiB worker plus a 2 GiB keeper, 8 processes, concurrency off;
+- no GPU and no heldout data.
+
+This is the first real-input test of package r5.
+
+**Windows (2026-10-14):**
+- placement: 02:00Z to 04:00Z, operator 21a10121, one invocation, no retry;
+- epoch-1 CPU: 02:15Z to 04:15Z.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 6cc864c893c7616635df19a306b611beefa2c5b513239b5f80b57b4937598668
