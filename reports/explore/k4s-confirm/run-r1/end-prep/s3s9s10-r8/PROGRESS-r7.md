@@ -1,0 +1,1 @@
+- 2026-10-13T22:17:17Z RUNNER r7: HOST_PYTHON_IMPORTS -> (numpy, torch); test expectation; k4s_adopt re-pin (s10, s11). S9 unchanged.

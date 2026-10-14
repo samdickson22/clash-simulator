@@ -1,0 +1,46 @@
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r7/s10_stage_host.py	2026-10-13 15:17:02.842994714 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r8/s10_stage_host.py	2026-10-13 17:04:25.384490830 -0700
+@@ -385,6 +385,23 @@
+ 
+ # ---------------------------------------------------------------- local components (verified before any login)
+ 
++# r8 (RO-1, COORDINATOR 02656d67): frozen engine-speed/es_common.py:20 runs RESULTS.mkdir(exist_ok=True) at import (via
++# tier_backend -> fair_player -> differential); nothing under that path is tracked at P', so the S9 export lacks it and
++# the a-w staged runtime made the mkdir fail (A4 03 l01). Staging creates exactly these EMPTY directories (no files).
++RUNTIME_EMPTY_DIRS = ("reports/strategy_council_20260928/engine-speed/results",)
++
++
++def runtime_dirs(manifest):
++    dirs = list(manifest["inventory"]["dirs"])
++    files = manifest["inventory"]["files"]
++    for d in RUNTIME_EMPTY_DIRS:
++        require(d not in dirs and d not in files and not any(f.startswith(d + "/") for f in files)
++                and d.rsplit("/", 1)[0] in dirs, "check", "RO-1 empty dir is already in, or has no parent in, the "
++                "runtime inventory: " + d)
++        dirs.append(d)
++    return sorted(dirs)
++
++
+ def runtime_component(policy, host, sha, log):
+     manifest = S9.verify(policy, "s9", sha, log=log)
+     files = []
+@@ -392,7 +409,7 @@
+         files.append(dict(src_role="s9-runtime", src_rel=rel, dst=rel, size=f["size"], sha256=f["sha256"],
+                           mode=0o555 if f.get("executable") else 0o444, e4=bool(f.get("e4")), e5=bool(f.get("e5"))))
+     leaf = RUNTIME_PREFIX + manifest["commit"][:12]
+-    return Component("runtime", host, END_BASES[host], leaf, files, manifest["inventory"]["dirs"],
++    return Component("runtime", host, END_BASES[host], leaf, files, runtime_dirs(manifest),
+                      dict(commit=manifest["commit"], runtime_files_sha256=manifest["runtime_files_sha256"],
+                           measurement_files_sha256=manifest["measurement_files_sha256"],
+                           runtime_manifest_sha256=sha)), manifest
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r7/s11_host_repository.py	2026-10-13 15:17:02.898996201 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r8/s11_host_repository.py	2026-10-13 17:04:25.824503093 -0700
+@@ -219,7 +219,7 @@
+ # dependency order (safe_input <- end_prep_common <- s9 <- s1b <- s3 <- s10 <- s11). A pin covers the file's bytes.
+ K4S_SIBLING_PINS = {
+     'end_prep_common.py': ('2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877', 22617),
+-    's10_stage_host.py': ('f368097f830eb2d50851f360c2fc0baf5c289016cd7db9037665ea6a718e46d5', 69332),
++    's10_stage_host.py': ('9c634a8955a46741fa921e4ad9f813dd0038f6784945f5db0a7a514502376868', 70224),
+ }
+ 
+ 

@@ -1,0 +1,284 @@
+{
+ "equivalent_survivors": {},
+ "killed": 19,
+ "mutants": 19,
+ "new_tmp_leftovers": [],
+ "nulls": 4,
+ "nulls_survived": 3,
+ "optimize": 1,
+ "outside_writes": false,
+ "python": "/mpac/sdicks02/venvs/k4s-freeze/bin/python",
+ "results": [
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 196.3,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D01",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D01-kb548c_d/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
+    "1 failed, 1076 passed, 1 warning in 149.35s (0:02:29)"
+   ],
+   "rc": 1,
+   "seconds": 149.8,
+   "verdict": "KILLED",
+   "what": "gw_scan runs gw_refs"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D02",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D02-5dw4tqy3/tests/test_common.py::test_scrubbed_env",
+    "1 failed, 22 passed, 1 warning in 1.10s"
+   ],
+   "rc": 1,
+   "seconds": 1.5,
+   "verdict": "KILLED",
+   "what": "loose destination: 'ref:' symbolic ref refused"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D03",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D03-01rwmj2k/tests/test_r6_symref.py::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[loose-no-newline]",
+    "1 failed, 1080 passed, 1 warning in 150.14s (0:02:30)"
+   ],
+   "rc": 1,
+   "seconds": 150.5,
+   "verdict": "KILLED",
+   "what": "loose destination: exactly one object name"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D04",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D04-j7pd7plz/tests/test_r6_symref.py::test_s9_refresh_refuses_other_indirect_destinations_before_the_fetch[packed-peeled]",
+    "1 failed, 1082 passed, 1 warning in 149.82s (0:02:29)"
+   ],
+   "rc": 1,
+   "seconds": 150.2,
+   "verdict": "KILLED",
+   "what": "packed-refs: no peeled entry for the destination"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-NULL-n0otqz53/tests/test_common.py::test_scrubbed_env",
+    "1 failed, 22 passed, 1 warning in 1.12s"
+   ],
+   "rc": 1,
+   "seconds": 1.5,
+   "verdict": "KILLED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D05",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D05-ak1xum01/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[symref-line-s9]",
+    "1 failed, 1102 passed, 1 warning in 150.88s (0:02:30)"
+   ],
+   "rc": 1,
+   "seconds": 151.3,
+   "verdict": "KILLED",
+   "what": "packed-refs: '<oid> <ref>' line grammar"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D06",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D06-3zuuztyv/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[peel-first-s9]",
+    "1 failed, 1104 passed, 1 warning in 150.49s (0:02:30)"
+   ],
+   "rc": 1,
+   "seconds": 150.9,
+   "verdict": "KILLED",
+   "what": "packed-refs: a peeled line only after a ref line"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D07",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D07-u4bt48kz/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[no-final-newline-s9]",
+    "1 failed, 1114 passed, 1 warning in 152.19s (0:02:32)"
+   ],
+   "rc": 1,
+   "seconds": 152.6,
+   "verdict": "KILLED",
+   "what": "packed-refs: ends with a newline"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D08",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D08-xi3r5_3l/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[non-ascii-s9]",
+    "1 failed, 1116 passed, 1 warning in 152.19s (0:02:32)"
+   ],
+   "rc": 1,
+   "seconds": 152.6,
+   "verdict": "KILLED",
+   "what": "packed-refs: ASCII"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 233.2,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D09",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D09-kque6s2v/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[identity-s9]",
+    "1 failed, 1124 passed, 1 warning in 174.74s (0:02:54)"
+   ],
+   "rc": 1,
+   "seconds": 175.3,
+   "verdict": "KILLED",
+   "what": "read leaf: the validated inode"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D10",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D10-3il6uv6v/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[not-validated-s9]",
+    "1 failed, 1122 passed, 1 warning in 174.49s (0:02:54)"
+   ],
+   "rc": 1,
+   "seconds": 174.9,
+   "verdict": "KILLED",
+   "what": "read only a leaf the scan validated"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D11",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D11-a3sbm4fi/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[dir-identity-s9]",
+    "1 failed, 1128 passed, 1 warning in 174.70s (0:02:54)"
+   ],
+   "rc": 1,
+   "seconds": 175.1,
+   "verdict": "KILLED",
+   "what": "read leaf: the validated directories above it"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D12",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D12-g71762rs/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[limit-s9]",
+    "1 failed, 1126 passed, 1 warning in 174.56s (0:02:54)"
+   ],
+   "rc": 1,
+   "seconds": 175.0,
+   "verdict": "KILLED",
+   "what": "read leaf: bounded"
+  },
+  {
+   "id": "NULL",
+   "killed_by": [],
+   "rc": 0,
+   "seconds": 238.4,
+   "verdict": "SURVIVED"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D13",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D13-kpa6whaw/tests/test_r6_symref.py::test_guard_reads_only_the_validated_leaf[symlink-to-same-s9]",
+    "1 failed, 1130 passed, 1 warning in 177.97s (0:02:57)"
+   ],
+   "rc": 1,
+   "seconds": 178.4,
+   "verdict": "KILLED",
+   "what": "read leaf: O_NOFOLLOW"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D14",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D14-frsktipc/tests/test_r6_symref.py::test_s9_refresh_refuses_a_symbolic_destination_before_the_fetch[leaf-symlink]",
+    "1 failed, 1076 passed, 1 warning in 172.48s (0:02:52)"
+   ],
+   "rc": 1,
+   "seconds": 172.9,
+   "verdict": "KILLED",
+   "what": "plan: the updated ref is a direct-ref row"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D15",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D15-zxx0c7nh/tests/test_r6_symref.py::test_s9_git_view_check_isolated_from_the_guard",
+    "1 failed, 1084 passed, 1 warning in 179.38s (0:02:59)"
+   ],
+   "rc": 1,
+   "seconds": 179.9,
+   "verdict": "KILLED",
+   "what": "S9: git's view of the destination before the fetch"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D16",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D16-zmvtg0of/tests/test_r6_symref.py::test_s9_checkout_rechecks_the_destination[git-view]",
+    "1 failed, 1086 passed, 1 warning in 179.80s (0:02:59)"
+   ],
+   "rc": 1,
+   "seconds": 180.3,
+   "verdict": "KILLED",
+   "what": "S9: git's view of the destination before the checkout"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D17",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D17-nsvonbp2/tests/test_r6_symref.py::test_s9_git_view_check_isolated_from_the_guard",
+    "1 failed, 1084 passed, 1 warning in 180.16s (0:03:00)"
+   ],
+   "rc": 1,
+   "seconds": 180.6,
+   "verdict": "KILLED",
+   "what": "S9 require_direct_ref: no symbolic target"
+  },
+  {
+   "file": "s11_host_repository.py",
+   "id": "D18",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D18-27bged7d/tests/test_r6_symref.py::test_s11_host_advance_symbolic_destination_isolated_from_verify[git-view]",
+    "1 failed, 1137 passed, 1 warning in 188.81s (0:03:08)"
+   ],
+   "rc": 1,
+   "seconds": 189.3,
+   "verdict": "KILLED",
+   "what": "S11 host _guarded: git's view, no symbolic target"
+  },
+  {
+   "file": "s9_end_runtime.py",
+   "id": "D19",
+   "killed_by": [
+    "FAILED ../dev/shm/s3s9s10-mut-D19-cycywfqz/tests/test_r6_symref.py::test_guard_packed_refs_must_be_well_formed_and_direct[double-peel-s9]",
+    "1 failed, 1106 passed, 1 warning in 179.00s (0:02:59)"
+   ],
+   "rc": 1,
+   "seconds": 179.4,
+   "verdict": "KILLED",
+   "what": "packed-refs: one peeled line per ref"
+  }
+ ],
+ "sources_sha256": {
+  "end_prep_common.py": "2a84775bfb1365b885cb3944840e631a41eac76243558de41cc234d8ba59b877",
+  "s10_stage_host.py": "ad3e4f995b006c3b7cb5e3383cf0e2402d72abbfbbd7154ce34b7fbec738f999",
+  "s11_host_repository.py": "fdc8d12e1eb0e03a1b3911ba9367ea2b4391da323f34f28d8a99c0ee685e8498",
+  "s1b_copy_admissions.py": "2424573f3845697d4559d1c9e708703d1508dcb788b89f6bf6fabd29511a5544",
+  "s3_guard_job.py": "776ded238be655f4f9ef84ec217afbcd214c73a186baad009d0d4fa2f53bb8ce",
+  "s9_end_runtime.py": "bdc2deeb96bf60a16b8877ffa2038760673d60bb63edcde8d947195fdfdcf3a7",
+  "safe_input.py": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00"
+ },
+ "survived": [],
+ "unexplained_survivors": [],
+ "version": "3.12.12"
+}
