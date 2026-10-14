@@ -13,7 +13,7 @@
 # Local: the status comes ONLY from this invocation's captured output, parsed in Bash: exactly one line starting __RC=,
 # a decimal 0-255 without a leading zero, and ssh exit 0; else fail closed (exit 255). The remote bash is started via
 # `env -u BASH_ENV -u SHELLOPTS` and its body and EXIT handler begin with `set +e`. The log on 05 is append-only evidence.
-# Usage: ro1-results-r2.sh HOST     (127x03 | 127x04)
+# Usage: ro1-results-r3.sh HOST     (127x03 | 127x04)
 set -u
 H=${1:-}
 case "$H" in 127x03) BASE=/mpac/sdicks02/jobs/clasher/k4s-end-r1;; 127x04) BASE=/mpac/sdicks02/jobs-k4s/k4s-end-r1;;
