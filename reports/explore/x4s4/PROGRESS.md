@@ -682,3 +682,9 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - phase-R5-K4S-120-a1 (8d85004b…): exit rc 0, 1,200/1,200, 75.5 min; SETTLED clean (743d11fb…), 0 retired.
 - phase-R5-S-200-a1 (5acbf35e…): exit rc 0, 1,200/1,200, 27.4 min; SETTLED clean (fcb35886…), 0 retired.
 - phase-R5-rep-K4S-120-a1 launched at 07:47:12Z (72fae6ab…).
+
+## 2026-10-14T09:31Z — ABBA: R5-rep settled (both arms clean)
+
+- phase-R5-rep-K4S-120-a1 (72fae6ab…): exit rc 0, 1,200/1,200, 75.6 min; SETTLED clean (8bd09a36…), 0 retired.
+- phase-R5-rep-S-200-a1 (51e1176b…): exit rc 0, 1,200/1,200, 27.8 min; SETTLED clean (cdde9ae9…), 0 retired.
+- phase-R3a-rep-K4S-120-a1 launched at 09:31:10Z (e34d70d3…).
