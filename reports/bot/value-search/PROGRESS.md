@@ -23,3 +23,14 @@ Hosts: CPU 03 (main); GPU 04/08 shared with ExIt (≤20 GB). NEVER run on 05.
   Offline = parity with phi. Models copied to /mpac/sdicks02/jobs/clasher/bot-value-models/ on 03/04/08.
 - 12:05Z 03 gen STOPped (STOP file; ~470 games). screen1 (bot-value-screen1 on 03, pid 3958286): K4SV-lin1,mlp3,mlp4 vs
   R3a,v1 cases 0–149, 30 workers. screen2 (bot-value-screen2): K4SV-mlp3-h80, lin1-h80, 26 workers.
+- 12:20Z SCREEN RESULT (ours, vs K4S-st paired, partial): pure V is much WORSE. lin1 both −0.280 [−0.340,−0.220] (n=300);
+  mlp3-h80 −0.433; lin1-h80 R3a −0.568; mlp3 R3a −0.305 (n=82). changed 22–28% of decisions. Play rate unchanged
+  (~12.6/min) -> card/placement choice is worse. Mechanism: in phi units V's board weight ~0 and elixir weight negative
+  (−0.008/elixir vs phi +0.005): outcome regression on on-policy states can't identify the elixir<->board exchange
+  rate that separates candidates. AUC parity offline was not evidence of ranking quality.
+- 12:22Z screen3 (bot-value-screen3, pid 4020179): hash check K4SV-phi (6 R3a cases), then K4SV-phi-e50/e200/e400
+  (phi elixir_weight tuned by harness outcome = option c done directly) + K4SV-mlp4-x25 vs R3a,v1 cases 0–149, 30 workers.
+- 13:08Z screen3 complete. phi-e50 −0.010 [−0.067,+0.047], e200 −0.007 [−0.063,+0.050], e400 −0.187 [−0.247,−0.127];
+  mlp4-x25 +0.003 [−0.057,+0.063] (changed 12.8%). K4SV-phi hash = K4S-st 6/6. All gen + screen jobs finished/stopped
+  (no bot-value processes left on 03/04/08). RESULTS.md written. DONE (exploration): recommendation = keep K4S-st;
+  no V arm qualified for RoyaleSim.

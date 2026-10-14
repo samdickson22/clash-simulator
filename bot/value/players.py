@@ -7,6 +7,8 @@ Name: 'K4SV-<model>' + optional tokens, e.g. K4SV-mlp1, K4SV-mlp1-h80, K4SV-lin1
            (logit / k_phi of the phi-only fit), clipped to (-1.99, 1.99) so the frozen
            |x|<2 terminal rule and the WAIT bonus keep their meaning. Terminal leaves keep +-2.
 - nost     drop the R3a top-8 student candidates (default: on, as K4S-st).
+- e<P>     phi's elixir_weight = P/100 in every rollout (default 1.0 = frozen). With model 'phi'
+           (no learned V, lambda 0) this is K4S-st with a recalibrated phi exchange rate.
 Everything else is K4S-st (bot/search/players.py): frozen anchor.anytime phase order and
 admission, S-default rule, candidates, belief, root. The rollout is
 `rollout_commands` with exactly rollout_e1's arguments (identical leaf; bot/value/probe.py);
@@ -25,7 +27,7 @@ from bot.search.players import MultiSearchPlayer
 CLIP = 1.99
 
 
-def value_planner_class(base, model, lam):
+def value_planner_class(base, model, lam, elixir_weight=None):
     import anchor
     import sdefault
 
@@ -33,6 +35,8 @@ def value_planner_class(base, model, lam):
         def score_candidates(self, root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
             native, cfg = self.native, self.config
             cd, od, iv, ew = self.command_delay, self.opponent_delay, cfg.interval, cfg.elixir_weight
+            if elixir_weight is not None:
+                ew = elixir_weight
             tick = int(self.info.tick)
             used, resid, raw = [0.], {}, {}
 
@@ -44,7 +48,7 @@ def value_planner_class(base, model, lam):
                     return raw[action, style][1]
                 phi, _, sim = native.rollout_commands(root, seat, action, [], style, cd, od, 1, 1, horizon, iv, iv, ew,
                                                       True, False, False)
-                if abs(phi) >= 2.:
+                if abs(phi) >= 2. or model is None:
                     raw[action, style] = (phi, phi)
                     return phi
                 pv = [json.loads(native.public_view(sim, s)) for s in (0, 1)]
@@ -97,15 +101,17 @@ def value_planner_class(base, model, lam):
 
 
 class ValueSearchPlayer(MultiSearchPlayer):
-    def __init__(self, rt, *, model, lam=1., horizon=160, student=True, name=None):
+    def __init__(self, rt, *, model, lam=1., horizon=160, student=True, elixir_weight=None, name=None):
         super().__init__(rt, student_candidates=student, horizon=horizon, name=name)
         from .model import ValueModel
-        self.model, self.lam = ValueModel.named(model), lam
+        self.model = None if model == 'phi' else ValueModel.named(model)
+        self.lam = 0. if model == 'phi' else lam
+        self.elixir_weight = elixir_weight
 
     def start(self, ctx):
         super().start(ctx)
         core = self.p.core
-        core.__class__ = value_planner_class(type(core), self.model, self.lam)
+        core.__class__ = value_planner_class(type(core), self.model, self.lam, self.elixir_weight)
 
 
 def make_value_player(rt, name):
@@ -114,9 +120,11 @@ def make_value_player(rt, name):
         raise ValueError(name)
     kw = dict(model=tokens[1], name=name)
     for t in tokens[2:]:
-        m = re.fullmatch(r'([hx])(\d+)', t)
+        m = re.fullmatch(r'([hxe])(\d+)', t)
         if m and m[1] == 'h':
             kw['horizon'] = int(m[2])
+        elif m and m[1] == 'e':
+            kw['elixir_weight'] = int(m[2])/100
         elif m:
             kw['lam'] = int(m[2])/100
         elif t == 'nost':
