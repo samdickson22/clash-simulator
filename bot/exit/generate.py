@@ -106,6 +106,15 @@ def worker(wid, games, a, out: Path):
             fh.write(json.dumps(row) + '\n'); fh.flush()
 
 
+
+def reap(procs):
+    """Join workers as they exit (not in list order), so finished workers never linger as zombies."""
+    from multiprocessing.connection import wait
+    live = {p.sentinel: p for p in procs}
+    while live:
+        for sentinel in wait(list(live)):
+            live.pop(sentinel).join()
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', required=True, type=Path)
@@ -133,8 +142,7 @@ def main(argv=None):
     procs = [Process(target=worker, args=(w, s, a, a.out)) for w, s in enumerate(shares) if s]
     for p in procs:
         p.start()
-    for p in procs:
-        p.join()
+    reap(procs)
 
 
 if __name__ == '__main__':
