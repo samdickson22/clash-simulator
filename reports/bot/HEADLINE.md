@@ -50,6 +50,20 @@ Everything is as in v1 (same cases, BASE, candidate and match loop), with two ch
 - **No ClashAI code or checkpoints** (license unclear).
 - **Scores reported:** pool-v2 (all members, equal weight), external-only, and P1, so the v1 number stays continuous.
 
+## Protocol HEADLINE-v3 (2026-10-14): a strong external opponent
+
+Everything is as in v2 (RoyaleSim 15.535, same cases and BASE), but the pool is **P3 = P1 ∪ {rext-bc, rext-bcppo}**:
+- **`rext-bc`:** RoyaleImitate behaviour clone (RoyaleLearn's default 32ch×2 net and observation) trained on
+  IL_Replay human games.
+  - 19,200 matches, 2.89M rows, C56 decks only.
+  - **IL_Replay has no stated license. The coordinator ruled it internal evaluation only:** the data and weights live
+    only under `/mpac/sdicks02/jobs/clasher/bot-ext2-*` and are never committed or published.
+- **`rext-bcppo`:** `rext-bc` plus RoyaleLearn PPO with a KL anchor (24.1M decisions). It is more exploitable than
+  the clone.
+- The saturated RoyaleGym scripted bots and rext-rlppo are dropped from the headline pool. Their rows above stay for
+  the record.
+- **Scores reported:** pool-v3, external-only (rext-bc, rext-bcppo) and P1.
+
 ## Tracked numbers
 
 | date (UTC) | engine | candidate | pool score [95% CI] | vs v1 | vs R3a | vs scripted-balanced | vs scripted-pressure | games | notes |
@@ -68,4 +82,5 @@ Everything is as in v1 (same cases, BASE, candidate and match loop), with two ch
 | 2026-10-14 11:05 | ours | student D alone | P1 0.839 (mean of 4) | 0.827 [0.780, 0.870] | 0.627 [0.570, 0.680] | 0.937 | 0.963 | 1500 | vs K4S-st 0.307 [0.257, 0.360]. |
 | 2026-10-14 13:00 | **RoyaleSim 15.535 (primary)**, DAILY | K4S-st (best bot, unchanged; runtime r1) | **0.901 [0.885, 0.917]** | 0.890 | 0.723 | 0.997 | 0.993 | 1200 | Daily re-confirmation. The candidate and code are unchanged since 06:26, so the existing games were re-summarised rather than re-run. |
 | 2026-10-14 13:00 | ours, DAILY | K4S-st (unchanged) | 0.892 [0.876, 0.909] | 0.860 | 0.720 | 0.997 | 0.993 | 1200 | Daily re-confirmation; same games as 06:26. The engine merge doesn't affect bots, which stay on frozen runtime r1. |
+| 2026-10-14 13:40 | RoyaleSim 15.535, **HEADLINE-v3** | K4S-st (best bot) | **pool-v3 0.895** (mean of 6); external-only 0.883; P1 0.901 | 0.890 | 0.723 | 0.997 | 0.993 | 2400 | vs **rext-bc 0.833 [0.790, 0.877]**, vs rext-bcppo 0.933 [0.903, 0.960]. For reference, v1 scores 0.583 vs rext-bc and 0.480 vs rext-bcppo. Source: external-opponents/NOTES-2.md. |
 

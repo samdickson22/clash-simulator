@@ -55,6 +55,9 @@ def make_player(rt, name):
     if name.startswith('K4SV-'):  # K4S-st with a learned leaf value V(state, seat) (bot/value/players.py)
         from bot.value.players import make_value_player
         return make_value_player(rt, name)
+    if name.startswith('K4C-'):  # K4S-st with other proposal lists: R3a top-N, student K top-M (bot/search/candidates.py)
+        from bot.search.candidates import make_candidate_player
+        return make_candidate_player(rt, name)
     if name.startswith('K4S') and '@student' in name:  # search with a student proposer/default (bot/exit/teacher.py)
         from bot.exit.teacher import student_search
         return student_search(rt, name)

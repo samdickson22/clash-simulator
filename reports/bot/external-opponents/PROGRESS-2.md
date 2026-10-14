@@ -67,3 +67,10 @@ NEXT: bc-r1 done -> ladder eval (40/rung) + launch PPO bcppo-r1 on 04 (r4 config
   03 h2h tool: bot-ext2-eval/h2h03.sh A B TAG [BLOCKS] [GAMES] (rsim .venv + PYTHONPATH).
 PLAN: SIGINT bcppo-r4 (PID 2603063 on 08) at ~13:20Z -> bot/ saved; install as bot-ext2-models/bcppo on 03/04/08;
   finals: ladder 100/rung (04), h2h bcppo vs bc and vs rlppo (03), headline K4S-st and v1 vs rext-bcppo 300 (03).
+- 13:18Z bcppo-r4 STOPPED by SIGINT (PID 2603063, verified): 24.1M decisions / 16.06M env steps, final checkpoint
+  000016055424 + bot/ saved; mirrored to 04 (final 13:17:40Z). Installed bot-ext2-models/bcppo on 03/04/08
+  (actor sha256 5e1bef59bc9cab87...). Gates: v1 0.52, v2 0.525 vs v0 (clone), not promoted.
+- Finals: ladder bcppo (100/rung, 08) mean5 0.760; h2h (08) bcppo vs bc 206-194, bcppo vs rlppo 139-61;
+  headline (04) K4S-st vs rext-bcppo 0.933 [0.903, 0.960], v1 vs rext-bcppo 0.480 [0.423, 0.537].
+  Paired bc->bcppo: K4S-st +0.100 [+0.053, +0.143], v1 -0.103 [-0.167, -0.040].
+- 13:40Z DONE. NOTES-2.md complete. No processes of mine left on 03/04/08 (checked). Nothing committed.

@@ -80,7 +80,38 @@ The best epoch was the last one.
 
 ## 4. PPO fine-tune (rext-bcppo): `bot/players/rext_imitate_ppo.py`
 
-(Filled at the end; see PROGRESS-2.md.)
+**Config.** RoyaleLearn `Learner(opponent="self")`, the same as rext-rlppo r4:
+- 32ch x 2 network; 65,536 steps per update; batch 2048 x 3 epochs; lr 5e-4; the default entropy schedule;
+- league: mirror battles, own snapshots, and all six RoyaleGym scripted rungs;
+- gate every 4M env steps, 200 games;
+- 22 rollout workers x 32 battles, 8 eval workers;
+- the environment is the clone's: X4S decks, level 11, 15.535.29, delay 27/27.
+
+**RoyaleImitate sections:**
+- `warm_start.init` = bc-r1, digest-checked, with a probe self-test;
+- `actor_lr_scale` 0 for the first 1M env steps (critic warm-up), then 1;
+- `imitation`: a `reference_kl` regulariser, KL(clone ‖ policy), with RoyaleImitate's default budget of 0.1 nats per
+  choice row and an adaptive coefficient starting at 1.0.
+
+**Three precision settings,** each needed because a cloned actor is far more peaked than a seeded one:
+- `net.policy_head_float32` on, and TF32 off. bcppo-r1 and r2 died at update 5 on RoyaleLearn's ratio invariant:
+  deviation 0.0056 and 0.0059 against the TF32 tolerance of 0.005;
+- `self_test_atol` 1e-4, because the clone's probe rows were recorded under TF32 and reproduce to 2.8e-5 (bcppo-r3).
+- Both net fields are actor-neutral, so the clone still loads.
+
+**Run.** bcppo-r4 on the 08 GPU, sharing it with ExIt: 10:53–13:18Z (2h24), 24.1M decisions (16.1M env steps),
+2.8k steps/s. It was stopped by SIGINT and saved.
+- **Artifact:** run dir `08:/mpac/sdicks02/jobs/clasher/bot-ext2-train/bcppo-r4`, with a mirror in
+  `04:…/bot-ext2-train/mirror-127x08/`.
+- **Installed as:** `bot-ext2-models/bcppo` on 03, 04 and 08 (actor sha256 `5e1bef59bc9cab87…`).
+- **Curves** (`metrics.jsonl`):
+  - KL(clone) went 0 -> 0.08 at unfreeze, then about 0.13–0.14, inside the coefficient's band, with λ settled at 0.088;
+  - PPO KL 0.03 -> 0.007, and the lr backed off to 1e-4;
+  - normalised entropy 0.16–0.21, no-op rate 0.90 (the clone's), explained variance about 0.9;
+  - ladder Elo readout 1200 -> about 1500.
+- **RoyaleLearn's own gates:** snap:v1 and v2 scored 0.52 and 0.525 vs the clone v0 (n=200 each); neither was
+  promoted.
+- **Ladder, checkpoints at 40/rung:** mean5 0.79 at 6.1M env steps and 0.82 at 10.2M (noisy at n=40).
 
 ## 5. Players
 
@@ -100,4 +131,66 @@ The best epoch was the last one.
 
 ## 6. Evaluation
 
-(Table filled at the end.)
+**Data disclosure:** rext-bc and rext-bcppo are trained from IL_Replay (license unstated); internal evaluation only.
+
+**A. vs RoyaleGym's scripted ladder.** `royalegym.evaluate`, the training env, sampled policy, 100 games per rung, half
+per seat:
+
+| model | noop | random | first-aff. | defend | push | patient | mean5 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| rext-rlppo (round 1, from scratch) | 1.00 | 0.61 | 0.56 | 0.50 | 0.59 | 0.62 | 0.576 |
+| **rext-bc** | 0.995 | 0.85 | 0.76 | 0.80 | 0.72 | 0.69 | **0.764** |
+| **rext-bcppo** | 1.00 | 0.83 | 0.79 | 0.74 | 0.72 | 0.72 | **0.760** |
+
+**B. Head to head in RoyaleGym's env.** The same evaluate call:
+
+| matchup | games | wins–losses | score |
+|---|---:|---|---:|
+| rext-bc vs rext-rlppo | 200 | 152–48 | 0.76 |
+| rext-bcppo vs rext-rlppo | 200 | 139–61 | 0.695 |
+| rext-bcppo vs rext-bc | 400 | 206–194 | 0.515 (too close to call) |
+
+**C. Our harness.** HEADLINE bank (cases 0–299, BASE 1455777415631152), `--engine rsim15535`, our match loop
+(CommandQueue 27/1), 300 games each, 95% bootstrap CI, 0 errors:
+
+| candidate | opponent | score [95% CI] | W-D-L |
+|---|---|---|---|
+| K4S-st | rext-rlppo | 1.000 [1.000, 1.000] | 300-0-0 |
+| K4S-st | **rext-bc** | **0.833 [0.790, 0.877]** | 250-0-50 |
+| K4S-st | **rext-bcppo** | 0.933 [0.903, 0.960] | 280-0-20 |
+| v1 | rext-rlppo | 0.727 [0.673, 0.777] | 218-0-82 |
+| v1 | rext-bc | 0.583 [0.527, 0.640] | 175-0-125 |
+| v1 | rext-bcppo | 0.480 [0.423, 0.537] | 144-0-156 |
+
+Paired on the same cases, moving from rext-bc to rext-bcppo:
+- K4S-st: **+0.100 [+0.053, +0.143]**;
+- v1: **−0.103 [−0.167, −0.040]**.
+
+**Read:**
+- **The clone is the real external opponent.** rext-bc is the first non-Clasher policy K4S-st does not saturate. For
+  comparison, K4S-st scores 0.833 vs rext-bc, about 0.99 vs the RoyaleGym scripted bots, 0.89 vs v1 and 0.72 vs R3a.
+  It sits a little below our v1 human prior (v1 scores 0.583 vs it), from the same corpus with a different
+  architecture and observation.
+- **PPO is non-transitive, not uniformly stronger:**
+  - rext-bcppo ties v1 (0.48) and is level with the clone in RoyaleGym's env (0.515);
+  - but K4S-st beats it more easily than the clone (0.933 vs 0.833).
+  - So in 2.4 h it moved towards beating policy-like play and became more exploitable by search.
+  - One plausible part of that is the train/serve lag difference (several engine-queued commands in training vs one
+    outstanding command in our loop). It was not tested.
+- **What to add to the pool:** rext-bc is the external member with signal for K4S-st. rext-bcppo is worth keeping
+  too, as a diverse member that v1 cannot beat.
+- **Untried:** a looser or no KL anchor, a longer PPO run, and a bigger BC network.
+
+**Results paths:**
+- headline runs: `04:/mpac/sdicks02/jobs/clasher/bot-ext2-eval/hl-*` (the bc and rlppo ones also on 03);
+- ladder and head-to-head JSONs: `04:` and `08:/mpac/sdicks02/jobs/clasher/bot-ext2-eval/results/`.
+
+## Files (code only; no data or weights in the repo)
+
+| File | What |
+|---|---|
+| `bot/players/rext_imitate_replays.py` | IL_Replay -> RoyaleImitate shards in our env: stats, replay with retry and scope, merge |
+| `bot/players/rext_imitate_clone.py` | `royaleimitate.clone` launcher |
+| `bot/players/rext_imitate_ppo.py` | PPO from the clone (warm start, freeze, reference-KL anchor); `make_learner` is shared by both |
+| `bot/players/rext_imitate_h2h.py` | head to head of two RoyaleLearn policies (`royalegym.evaluate`) |
+| `bot/eval/headline.py` | make_player: `rext-bc*`/`rext-bcppo*` -> `/mpac/sdicks02/jobs/clasher/bot-ext2-models/<name>` |
