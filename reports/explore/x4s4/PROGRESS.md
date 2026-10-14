@@ -642,3 +642,10 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - p9-verify-OW: guard passed (af47a58b…). OW-VERIFIED.json 67700e08…: roots 339,892, rows 2,201,951,
   single-candidate share 0.0; it binds the selection, the O gate e6d19a81 and the acceptance 88b884d6.
 - R5 was at step 1,852 at 01:20Z. The watchdog stayed ok throughout: slow lane ≤ 4.7 s, fast lane ≤ 0.07 s.
+
+## 2026-10-14T01:41Z — R5 done (fresh, under T3); R5-rep launched
+
+- fit-R5 (launch 372a7398…, pid 2778983, 00:18:17Z–01:41:10Z): complete.json step 2,500, not stopped; segment
+  "returned"; exit 0. step-00002500.pt dea4b711…; final loss 5.558.
+- fit-R5-rep launched 01:41:12Z (launch 9c22ff0c…, pid 3049169). R5W follows; its O_W gate has passed. Calibrations
+  run after the fits (exclusive GPU, under the DISPATCH lock).
