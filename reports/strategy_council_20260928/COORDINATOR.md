@@ -6584,3 +6584,28 @@ Placement GO 6cc864c8 ran once, at 02:00:41Z, with F1 r6 operator 21a10121. The 
 - `runtime_admitted=false`.
 
 **ACCEPTED.** The epoch-1 run GO follows, issued from the held draft 3d28edf8.
+
+## 2026-10-14 02:02Z: B r5 epoch-1 run GO r4 issued
+
+**Source.** The held draft 3d28edf8. The coordinator filled in only:
+- `placement_c6_accepted=true`;
+- `placement_completion`: complete 61e385bb, C-6 commit 034b18f4a1fff0499587fc080f496895ab724214, tip 75330a01, exit codes 0/0;
+- the blockers.
+
+**Bindings:** epoch-1 CPU a6e4b650, placement 6cc864c8.
+
+**Checks:**
+- transport r4 `authorize_run(active=False)` passes;
+- C-5 is clean, with 0 `REVOKED` lines;
+- no path collides.
+
+**Scope.** Epoch 1 only, serial and alone:
+- 08, cpus [0,1], a 32 GiB worker plus a 2 GiB keeper, concurrency off;
+- no GPU and no heldout data;
+- the exact guard runs once, from `/` on 05, within the first 30 min, with no retry.
+
+This is the first real-input epoch of package r5. A failure or UNKNOWN stops and preserves everything.
+
+**Window:** 2026-10-14 02:15Z to 03:15Z.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 6cd0d25c42a7e220215f2aa92ff9a5e1c862bb366233af2fe18887da131edc7f
