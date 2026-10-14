@@ -14,6 +14,7 @@ while true; do
     name=${next%% *}; cmd=${next#* }
     echo "$(date -u +%FT%TZ) START $name: $cmd"
     bash -c "$cmd" > "$dir/$name.log" 2>&1
-    echo "$(date -u +%FT%TZ) END $name rc=$?"
+    rc=$?
+    echo "$(date -u +%FT%TZ) END $name rc=$rc"
     echo "$name" >> "$done_file"
 done
