@@ -6425,3 +6425,28 @@ Placement GO 1765daf2 ran once, at 00:32:24Z, with F1 r6 operator 21a10121. The 
 - `runtime_admitted=false`.
 
 **ACCEPTED.** The environment run GO follows, issued from the held draft 3508e974.
+
+## 2026-10-14 00:34Z: B r5 environment run GO r4 issued
+
+**Source.** The held draft 3508e974. The coordinator filled in only:
+- `placement_c6_accepted=true`;
+- `placement_completion`: complete 772bb28c, C-6 commit 0c05cef96e781e7112e8d3cffe8f7949c74ac5b4, tip e0f49a38, exit codes 0/0;
+- the blockers.
+
+**Bindings:** environment CPU c663556c, placement 1765daf2.
+
+**Checks:**
+- transport r4 `authorize_run(active=False)` passes;
+- C-5 is clean, with 0 `REVOKED` lines;
+- no path collides.
+
+**Scope.** The environment phase only:
+- 08, cpus [0,1], the conservative budget;
+- no GPU and no heldout data;
+- the exact guard runs once, from `/` on 05, within the first 30 min, with no retry.
+
+The environment C-4 includes the G6 comparison of actual against historical. No epoch phase starts before G6 is accepted.
+
+**Window:** 2026-10-14 00:45Z to 01:45Z.
+
+ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 1d42e2e80ca02d2388ec92eed14f0432e75666bd65e2e4cbd43d17829c056ed4
