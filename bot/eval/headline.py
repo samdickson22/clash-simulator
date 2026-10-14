@@ -36,6 +36,9 @@ def make_player(rt, name):
         return VariantPolicyPlayer(rt, 'v1-greedy', tau=float(name[6:]))
     if name == 'v1-logged':
         return VariantPolicyPlayer(rt, 'v1-logged', log_path=os.environ['BOT_PPLAY_LOG'])
+    if name.startswith('student:'):  # 'student:<ckpt>[@threshold]' (bot/exit/student.py)
+        from bot.exit.student import StudentPlayer
+        return StudentPlayer.from_spec(rt, name)
     if name.startswith('scripted-'):
         return ScriptedPlayer(rt, name.split('-', 1)[1])
     if name.startswith('K4S-b'):
@@ -59,26 +62,35 @@ def done_keys(out: Path):
     return keys
 
 
-def worker(wid, jobs, out: Path, base: int):
+def worker(wid, jobs, out: Path, base: int, engine: str = 'ours'):
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
     from bot.players.ours import play_match, x4s_setup
     rt = Runtime()
+    vocab = None
+    if engine != 'ours':
+        from bot.players.royalesim_vocab import load
+        from bot.players.royalesim_match import play_match as rsim_play_match
+        vocab = load(rt)
+        client = {'rsim15535': '15.535.29', 'rsim16402': '16.402'}[engine]
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     for cand, opp, i in jobs:
         case = x4s_setup(rt, i, base)
         t0 = time.time()
         try:
             players = {case['seat']: make_player(rt, cand), 1 - case['seat']: make_player(rt, opp)}
-            res = play_match(rt, players, seed=case['seed'], decks=case['decks'])
+            if engine == 'ours':
+                res = play_match(rt, players, seed=case['seed'], decks=case['decks'])
+            else:
+                res = rsim_play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab, client=client)
             from bot.players.variants import close_logged
             for pl in players.values():
                 close_logged(pl)
             w = res['winner']
             score = 0.5 if w is None or w == -1 else (1.0 if w == case['seat'] else 0.0)
-            row = dict(candidate=cand, opponent=opp, index=i, seat=case['seat'], seed=case['seed'], score=score,
+            row = dict(engine=engine, candidate=cand, opponent=opp, index=i, seat=case['seat'], seed=case['seed'], score=score,
                        winner=w, terminal=res['terminal'], ticks=res['ticks'], towers=res['towers'],
                        plays=res['plays'], accepted=res['accepted'], command_sha256=res['command_sha256'],
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0)
@@ -96,6 +108,7 @@ def main():
     ap.add_argument('--start', type=int, default=0)
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--base', type=int, default=HEADLINE_BASE)
+    ap.add_argument('--engine', default='ours', choices=['ours', 'rsim15535', 'rsim16402'])
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     done = done_keys(a.out)
@@ -105,7 +118,7 @@ def main():
     shares = [jobs[w::a.workers] for w in range(a.workers)]
     (a.out / 'launch.json').write_text(json.dumps(dict(args={k: str(v) for k, v in vars(a).items()},
                                                        jobs=len(jobs), started=time.time())))
-    procs = [Process(target=worker, args=(w, s, a.out, a.base)) for w, s in enumerate(shares) if s]
+    procs = [Process(target=worker, args=(w, s, a.out, a.base, a.engine)) for w, s in enumerate(shares) if s]
     for p in procs:
         p.start()
     for p in procs:

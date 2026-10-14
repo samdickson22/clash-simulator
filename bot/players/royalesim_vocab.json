@@ -1,0 +1,4456 @@
+{
+ "champion_units": [
+  "ArcherQueen",
+  "MightyMiner",
+  "goblinstein_doctor"
+ ],
+ "meta": {
+  "cards": [
+   "AngryBarbarians",
+   "ArcherQueen",
+   "Archers",
+   "Arrows",
+   "BabyDragon",
+   "Balloon",
+   "BarbLog",
+   "Bats",
+   "Berserker",
+   "BlowdartGoblin",
+   "BombTower",
+   "Cannon",
+   "DarkPrince",
+   "Earthquake",
+   "ElectroSpirit",
+   "FireSpirits",
+   "Fireball",
+   "Firecracker",
+   "FirespiritHut",
+   "Ghost",
+   "Giant",
+   "GoblinBarrel",
+   "GoblinGang",
+   "GoblinHut",
+   "Goblins",
+   "Goblinstein",
+   "Golem",
+   "HogRider",
+   "IceGolem",
+   "IceSpirit",
+   "InfernoTower",
+   "Knight",
+   "Lightning",
+   "Log",
+   "MightyMiner",
+   "Miner",
+   "MiniPekka",
+   "MinionHorde",
+   "Minions",
+   "Musketeer",
+   "Poison",
+   "Prince",
+   "Princess",
+   "Rascals",
+   "Rocket",
+   "RoyalDelivery",
+   "RoyalHogs",
+   "SkeletonArmy",
+   "Skeletons",
+   "Tesla",
+   "Tornado",
+   "Valkyrie",
+   "Wallbreakers",
+   "Wizard",
+   "Xbow",
+   "Zap"
+  ],
+  "client": "15.535.29",
+  "demo_ticks": 200,
+  "push_ticks": 500,
+  "royalesim": "0.1.34",
+  "token_sha256": "41d61169d5b57e7d007444351ee303c97cf18186b7edc639d4854a957c5d7622",
+  "unit_types_digest": "24e66e602ffe1633"
+ },
+ "no_counterpart_firers": [
+  "Lightning"
+ ],
+ "no_counterpart_units": [
+  "SpearGoblin_Dummy"
+ ],
+ "no_static": [],
+ "no_template": [],
+ "projectiles": {
+  "ArcherQueen": 7,
+  "Archers": 5,
+  "BabyDragon": 16,
+  "BlowdartGoblin": 39,
+  "BombTower": 44,
+  "Cannon": 330,
+  "ElectroSpirit": 86,
+  "FireSpirits": 99,
+  "Firecracker": 104,
+  "FirespiritHut": 110,
+  "GoblinGang": 318,
+  "GoblinHut": 318,
+  "Goblinstein": 263,
+  "IceSpirit": 198,
+  "MinionHorde": 237,
+  "Minions": 237,
+  "Musketeer": 251,
+  "Princess": 261,
+  "Rascals": 276,
+  "Wallbreakers": 348,
+  "Wizard": 65,
+  "Xbow": 355,
+  "king": 207,
+  "princess": 329
+ },
+ "rsim_rows": {
+  "AngryBarbarians": [
+   [
+    "projectile",
+    "Archers",
+    114
+   ],
+   [
+    "projectile",
+    -1,
+    251
+   ],
+   [
+    "unit",
+    "AngryBarbarian",
+    0,
+    1042
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    367
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    105
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2514
+   ]
+  ],
+  "ArcherQueen": [
+   [
+    "projectile",
+    "ArcherQueen",
+    53
+   ],
+   [
+    "projectile",
+    "Archers",
+    60
+   ],
+   [
+    "projectile",
+    -1,
+    155
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "ArcherQueen",
+    0,
+    334
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Archers": [
+   [
+    "projectile",
+    "Archers",
+    118
+   ],
+   [
+    "projectile",
+    -1,
+    113
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    861
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Arrows": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    -1,
+    55
+   ],
+   [
+    "spell",
+    "Arrows",
+    0,
+    117
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "BabyDragon": [
+   [
+    "projectile",
+    "Archers",
+    120
+   ],
+   [
+    "projectile",
+    "BabyDragon",
+    65
+   ],
+   [
+    "projectile",
+    -1,
+    147
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "BabyDragon",
+    0,
+    380
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Balloon": [
+   [
+    "projectile",
+    "Archers",
+    68
+   ],
+   [
+    "projectile",
+    -1,
+    178
+   ],
+   [
+    "spell",
+    "Balloon",
+    0,
+    117
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Balloon",
+    0,
+    455
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "BarbLog": [
+   [
+    "projectile",
+    "Archers",
+    18
+   ],
+   [
+    "projectile",
+    -1,
+    115
+   ],
+   [
+    "spell",
+    "BarbLog",
+    1,
+    16
+   ],
+   [
+    "spell",
+    "BarbLog",
+    2,
+    46
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Barbarian",
+    0,
+    149
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Bats": [
+   [
+    "projectile",
+    "Archers",
+    45
+   ],
+   [
+    "projectile",
+    -1,
+    89
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Bat",
+    0,
+    742
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Berserker": [
+   [
+    "projectile",
+    "Archers",
+    51
+   ],
+   [
+    "projectile",
+    -1,
+    92
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Berserker",
+    0,
+    278
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "BlowdartGoblin": [
+   [
+    "projectile",
+    "Archers",
+    33
+   ],
+   [
+    "projectile",
+    "BlowdartGoblin",
+    38
+   ],
+   [
+    "projectile",
+    -1,
+    91
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "BlowdartGoblin",
+    0,
+    177
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "BombTower": [
+   [
+    "projectile",
+    "Archers",
+    80
+   ],
+   [
+    "projectile",
+    "BombTower",
+    20
+   ],
+   [
+    "projectile",
+    -1,
+    38
+   ],
+   [
+    "spell",
+    "BombTower",
+    0,
+    60
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "BombTower",
+    1,
+    622
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Cannon": [
+   [
+    "projectile",
+    "Archers",
+    60
+   ],
+   [
+    "projectile",
+    "Cannon",
+    9
+   ],
+   [
+    "projectile",
+    -1,
+    46
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Cannon",
+    1,
+    601
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "DarkPrince": [
+   [
+    "projectile",
+    "Archers",
+    90
+   ],
+   [
+    "projectile",
+    -1,
+    107
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "DarkPrince",
+    0,
+    422
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Earthquake": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    -1,
+    55
+   ],
+   [
+    "spell",
+    "Earthquake",
+    4,
+    118
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "ElectroSpirit": [
+   [
+    "projectile",
+    "Archers",
+    11
+   ],
+   [
+    "projectile",
+    "ElectroSpirit",
+    14
+   ],
+   [
+    "projectile",
+    -1,
+    72
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "ElectroSpirit",
+    0,
+    109
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "FireSpirits": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    "FireSpirits",
+    7
+   ],
+   [
+    "projectile",
+    -1,
+    72
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "FireSpirits",
+    0,
+    109
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Fireball": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    -1,
+    55
+   ],
+   [
+    "spell",
+    "Fireball",
+    0,
+    57
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Firecracker": [
+   [
+    "projectile",
+    "Archers",
+    25
+   ],
+   [
+    "projectile",
+    "Firecracker",
+    178
+   ],
+   [
+    "projectile",
+    -1,
+    103
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Firecracker",
+    0,
+    197
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "FirespiritHut": [
+   [
+    "projectile",
+    "Archers",
+    60
+   ],
+   [
+    "projectile",
+    "FireSpirits",
+    16
+   ],
+   [
+    "projectile",
+    "FirespiritHut",
+    43
+   ],
+   [
+    "projectile",
+    -1,
+    141
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "FireSpirits",
+    0,
+    88
+   ],
+   [
+    "unit",
+    "Furnace_rework",
+    0,
+    314
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Ghost": [
+   [
+    "projectile",
+    "Archers",
+    45
+   ],
+   [
+    "projectile",
+    -1,
+    95
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Ghost",
+    0,
+    427
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Giant": [
+   [
+    "projectile",
+    "Archers",
+    117
+   ],
+   [
+    "projectile",
+    -1,
+    237
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Giant",
+    0,
+    699
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "GoblinBarrel": [
+   [
+    "projectile",
+    "Archers",
+    35
+   ],
+   [
+    "projectile",
+    -1,
+    65
+   ],
+   [
+    "spell",
+    "GoblinBarrel",
+    0,
+    85
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Goblin",
+    0,
+    339
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "GoblinGang": [
+   [
+    "projectile",
+    "Archers",
+    89
+   ],
+   [
+    "projectile",
+    "GoblinGang",
+    264
+   ],
+   [
+    "projectile",
+    -1,
+    174
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Goblin_Stab",
+    0,
+    482
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "SpearGoblin",
+    0,
+    1051
+   ]
+  ],
+  "GoblinHut": [
+   [
+    "projectile",
+    "Archers",
+    121
+   ],
+   [
+    "projectile",
+    "GoblinGang",
+    6
+   ],
+   [
+    "projectile",
+    "GoblinHut",
+    14
+   ],
+   [
+    "projectile",
+    -1,
+    12
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "GoblinHut_Rework",
+    1,
+    620
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "SpearGoblin",
+    0,
+    39
+   ],
+   [
+    "unit",
+    "SpearGoblin_Dummy",
+    0,
+    128
+   ]
+  ],
+  "Goblins": [
+   [
+    "projectile",
+    "Archers",
+    51
+   ],
+   [
+    "projectile",
+    -1,
+    75
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Goblin_Stab",
+    0,
+    734
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Goblinstein": [
+   [
+    "projectile",
+    "Archers",
+    77
+   ],
+   [
+    "projectile",
+    "Goblinstein",
+    148
+   ],
+   [
+    "projectile",
+    -1,
+    176
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "goblinstein",
+    0,
+    640
+   ],
+   [
+    "unit",
+    "goblinstein_doctor",
+    0,
+    699
+   ]
+  ],
+  "Golem": [
+   [
+    "projectile",
+    "Archers",
+    103
+   ],
+   [
+    "projectile",
+    -1,
+    186
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "Golem",
+    0,
+    699
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "HogRider": [
+   [
+    "projectile",
+    "Archers",
+    69
+   ],
+   [
+    "projectile",
+    -1,
+    114
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "HogRider",
+    0,
+    409
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "IceGolem": [
+   [
+    "projectile",
+    "Archers",
+    63
+   ],
+   [
+    "projectile",
+    -1,
+    129
+   ],
+   [
+    "spell",
+    "IceGolem",
+    3,
+    2
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "IceGolemite",
+    0,
+    375
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "IceSpirit": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    "IceSpirit",
+    7
+   ],
+   [
+    "projectile",
+    -1,
+    68
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "IceSpirits",
+    0,
+    109
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "InfernoTower": [
+   [
+    "projectile",
+    "Archers",
+    120
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    352
+   ],
+   [
+    "unit",
+    "InfernoTower",
+    1,
+    658
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    99
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Knight": [
+   [
+    "projectile",
+    "Archers",
+    90
+   ],
+   [
+    "projectile",
+    -1,
+    112
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    659
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Lightning": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    "Lightning",
+    1
+   ],
+   [
+    "projectile",
+    -1,
+    55
+   ],
+   [
+    "spell",
+    "Lightning",
+    6,
+    54
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Log": [
+   [
+    "projectile",
+    "Archers",
+    16
+   ],
+   [
+    "projectile",
+    -1,
+    51
+   ],
+   [
+    "spell",
+    "Log",
+    1,
+    16
+   ],
+   [
+    "spell",
+    "Log",
+    2,
+    102
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "MightyMiner": [
+   [
+    "projectile",
+    "Archers",
+    121
+   ],
+   [
+    "projectile",
+    -1,
+    140
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    133
+   ],
+   [
+    "unit",
+    "MightyMiner",
+    0,
+    577
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2573
+   ]
+  ],
+  "Miner": [
+   [
+    "projectile",
+    "Archers",
+    72
+   ],
+   [
+    "projectile",
+    -1,
+    97
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "Miner",
+    0,
+    364
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "MiniPekka": [
+   [
+    "projectile",
+    "Archers",
+    68
+   ],
+   [
+    "projectile",
+    -1,
+    100
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "MiniPekka",
+    0,
+    360
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2556
+   ]
+  ],
+  "MinionHorde": [
+   [
+    "projectile",
+    "Archers",
+    114
+   ],
+   [
+    "projectile",
+    "MinionHorde",
+    153
+   ],
+   [
+    "projectile",
+    -1,
+    144
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    361
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    104
+   ],
+   [
+    "unit",
+    "Minion",
+    0,
+    2080
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Minions": [
+   [
+    "projectile",
+    "Archers",
+    120
+   ],
+   [
+    "projectile",
+    "Minions",
+    42
+   ],
+   [
+    "projectile",
+    -1,
+    124
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    188
+   ],
+   [
+    "unit",
+    "Minion",
+    0,
+    746
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Musketeer": [
+   [
+    "projectile",
+    "Archers",
+    60
+   ],
+   [
+    "projectile",
+    "Musketeer",
+    51
+   ],
+   [
+    "projectile",
+    -1,
+    130
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "Musketeer",
+    0,
+    282
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Poison": [
+   [
+    "projectile",
+    -1,
+    62
+   ],
+   [
+    "spell",
+    "Poison",
+    4,
+    318
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    346
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Prince": [
+   [
+    "projectile",
+    "Archers",
+    95
+   ],
+   [
+    "projectile",
+    -1,
+    138
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "Prince",
+    0,
+    523
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2576
+   ]
+  ],
+  "Princess": [
+   [
+    "projectile",
+    "Archers",
+    33
+   ],
+   [
+    "projectile",
+    "Princess",
+    143
+   ],
+   [
+    "projectile",
+    -1,
+    52
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "Princess",
+    0,
+    579
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Rascals": [
+   [
+    "projectile",
+    "Archers",
+    138
+   ],
+   [
+    "projectile",
+    "Rascals",
+    313
+   ],
+   [
+    "projectile",
+    -1,
+    143
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    120
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2590
+   ],
+   [
+    "unit",
+    "RascalBoy",
+    0,
+    498
+   ],
+   [
+    "unit",
+    "RascalGirl",
+    0,
+    1313
+   ]
+  ],
+  "Rocket": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    -1,
+    55
+   ],
+   [
+    "spell",
+    "Rocket",
+    0,
+    98
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "RoyalDelivery": [
+   [
+    "projectile",
+    "Archers",
+    54
+   ],
+   [
+    "projectile",
+    -1,
+    106
+   ],
+   [
+    "spell",
+    "RoyalDelivery",
+    0,
+    2
+   ],
+   [
+    "spell",
+    "RoyalDelivery",
+    6,
+    78
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "DeliveryRecruit",
+    0,
+    253
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "RoyalHogs": [
+   [
+    "projectile",
+    "Archers",
+    117
+   ],
+   [
+    "projectile",
+    -1,
+    141
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2778
+   ],
+   [
+    "unit",
+    "RoyalHog",
+    0,
+    1973
+   ]
+  ],
+  "SkeletonArmy": [
+   [
+    "projectile",
+    "Archers",
+    66
+   ],
+   [
+    "projectile",
+    -1,
+    133
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Skeleton",
+    0,
+    3625
+   ]
+  ],
+  "Skeletons": [
+   [
+    "projectile",
+    "Archers",
+    24
+   ],
+   [
+    "projectile",
+    -1,
+    75
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Skeleton",
+    0,
+    406
+   ]
+  ],
+  "Tesla": [
+   [
+    "projectile",
+    "Archers",
+    60
+   ],
+   [
+    "projectile",
+    -1,
+    82
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    192
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Tesla",
+    1,
+    618
+   ]
+  ],
+  "Tornado": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    -1,
+    62
+   ],
+   [
+    "spell",
+    "Tornado",
+    4,
+    42
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ],
+  "Valkyrie": [
+   [
+    "projectile",
+    "Archers",
+    90
+   ],
+   [
+    "projectile",
+    -1,
+    116
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Valkyrie",
+    0,
+    475
+   ]
+  ],
+  "Wallbreakers": [
+   [
+    "projectile",
+    "Archers",
+    30
+   ],
+   [
+    "projectile",
+    "Wallbreakers",
+    2
+   ],
+   [
+    "projectile",
+    -1,
+    77
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Wallbreaker",
+    0,
+    328
+   ]
+  ],
+  "Wizard": [
+   [
+    "projectile",
+    "Archers",
+    60
+   ],
+   [
+    "projectile",
+    "Wizard",
+    47
+   ],
+   [
+    "projectile",
+    -1,
+    130
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Wizard",
+    0,
+    282
+   ]
+  ],
+  "Xbow": [
+   [
+    "projectile",
+    "Archers",
+    80
+   ],
+   [
+    "projectile",
+    "Xbow",
+    377
+   ],
+   [
+    "projectile",
+    -1,
+    33
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ],
+   [
+    "unit",
+    "Xbow",
+    1,
+    625
+   ]
+  ],
+  "Zap": [
+   [
+    "projectile",
+    "Archers",
+    31
+   ],
+   [
+    "projectile",
+    -1,
+    55
+   ],
+   [
+    "unit",
+    "Archer",
+    0,
+    398
+   ],
+   [
+    "unit",
+    "KingTower",
+    2,
+    1400
+   ],
+   [
+    "unit",
+    "Knight",
+    0,
+    200
+   ],
+   [
+    "unit",
+    "PrincessTower",
+    3,
+    2800
+   ]
+  ]
+ },
+ "spells": {
+  "Arrows/0": [
+   10,
+   2
+  ],
+  "Balloon/0": [
+   17,
+   3
+  ],
+  "BarbLog/1": [
+   20,
+   2
+  ],
+  "BarbLog/2": [
+   20,
+   2
+  ],
+  "BombTower/0": [
+   42,
+   3
+  ],
+  "Earthquake/4": [
+   81,
+   3
+  ],
+  "Fireball/0": [
+   100,
+   2
+  ],
+  "GoblinBarrel/0": [
+   126,
+   2
+  ],
+  "IceGolem/3": [
+   109,
+   3
+  ],
+  "Lightning/6": [
+   214,
+   3
+  ],
+  "Log/1": [
+   218,
+   2
+  ],
+  "Log/2": [
+   218,
+   2
+  ],
+  "Poison/4": [
+   258,
+   3
+  ],
+  "Rocket/0": [
+   280,
+   2
+  ],
+  "RoyalDelivery/0": [
+   286,
+   2
+  ],
+  "RoyalDelivery/6": [
+   286,
+   2
+  ],
+  "Tornado/4": [
+   328,
+   3
+  ]
+ },
+ "statics": {
+  "10/2": {
+   "cols": {
+    "23": 0.453844,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.601523,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 2458
+   },
+   "name": "Arrows"
+  },
+  "100/2": {
+   "cols": {
+    "23": 0.371261,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.816905,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 118
+   },
+   "name": "Fireball"
+  },
+  "102/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.5,
+    "25": 0.666667,
+    "26": 0.166667,
+    "30": 0.521798,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 314,
+    "forward": 86
+   },
+   "name": "Firecracker"
+  },
+  "103/2": {
+   "cols": {
+    "23": 0.347081,
+    "24": 0.5,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.0,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 56
+   },
+   "name": "FirecrackerExplosion"
+  },
+  "104/2": {
+   "cols": {
+    "23": 0.359675,
+    "24": 0.416667,
+    "25": 0.0,
+    "26": 0.166667,
+    "30": 0.521798,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 300
+   },
+   "name": "FirecrackerProjectile"
+  },
+  "109/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.166667,
+    "25": 0.166667,
+    "26": 0.233333,
+    "30": 0.0,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 80
+   },
+   "name": "FreezeIceGolemite"
+  },
+  "110/2": {
+   "cols": {
+    "23": 0.371261,
+    "24": 0.458333,
+    "25": 0.083333,
+    "26": 0.2,
+    "30": 0.64912,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 66
+   },
+   "name": "Furnace_Rework_Projectile"
+  },
+  "111/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.458333,
+    "25": 0.5,
+    "26": 0.2,
+    "30": 0.64912,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 474,
+    "forward": 86
+   },
+   "name": "Furnace_rework"
+  },
+  "114/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.1,
+    "25": 0.458333,
+    "26": 0.2,
+    "30": 0.696043,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 610,
+    "forward": 42
+   },
+   "name": "Ghost"
+  },
+  "115/0": {
+   "cols": {
+    "23": 0.574676,
+    "24": 0.1,
+    "25": 0.625,
+    "26": 0.25,
+    "30": 0.692167,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 924,
+    "forward": 84
+   },
+   "name": "Giant"
+  },
+  "125/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.041667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.604535,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 404,
+    "forward": 264
+   },
+   "name": "Goblin"
+  },
+  "126/2": {
+   "cols": {
+    "23": 0.318035,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.0,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 174
+   },
+   "name": "GoblinBarrel"
+  },
+  "15/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.291667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.641237,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 676,
+    "forward": 86
+   },
+   "name": "BabyDragon"
+  },
+  "152/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.333333,
+    "30": 0.0,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 834
+   },
+   "name": "GoblinHut_Rework"
+  },
+  "155/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.041667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.604535,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 1744,
+    "forward": 708
+   },
+   "name": "Goblin_Stab"
+  },
+  "16/2": {
+   "cols": {
+    "23": 0.347081,
+    "24": 0.291667,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.641237,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 130
+   },
+   "name": "BabyDragonProjectile"
+  },
+  "164/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.1,
+    "25": 0.625,
+    "26": 0.25,
+    "30": 0.607477,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 794,
+    "forward": 84
+   },
+   "name": "Goblinstein"
+  },
+  "166/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.458333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.566575,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 968,
+    "forward": 84
+   },
+   "name": "Goblinstein_doctor"
+  },
+  "17/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.008333,
+    "25": 0.641667,
+    "26": 0.166667,
+    "30": 0.807879,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 830,
+    "forward": 84
+   },
+   "name": "Balloon"
+  },
+  "17/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.166667,
+    "30": 0.0,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 230
+   },
+   "name": "Balloon"
+  },
+  "181/0": {
+   "cols": {
+    "23": 0.580037,
+    "24": 0.0625,
+    "25": 0.583333,
+    "26": 0.25,
+    "30": 0.718275,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 774,
+    "forward": 244
+   },
+   "name": "Golem"
+  },
+  "182/0": {
+   "cols": {
+    "23": 0.554172,
+    "24": 0.020833,
+    "25": 0.583333,
+    "26": 0.166667,
+    "30": 0.555331,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 690,
+    "forward": 28
+   },
+   "name": "Golemite"
+  },
+  "191/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.066667,
+    "25": 0.791667,
+    "26": 0.2,
+    "30": 0.720256,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 738,
+    "forward": 84
+   },
+   "name": "HogRider"
+  },
+  "195/0": {
+   "cols": {
+    "23": 0.574676,
+    "24": 0.0625,
+    "25": 0.583333,
+    "26": 0.233333,
+    "30": 0.555331,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 668,
+    "forward": 84
+   },
+   "name": "IceGolemite"
+  },
+  "197/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.208333,
+    "25": 0.458333,
+    "26": 0.133333,
+    "30": 0.588691,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 138,
+    "forward": 84
+   },
+   "name": "IceSpirits"
+  },
+  "198/2": {
+   "cols": {
+    "23": 0.318035,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.588691,
+    "9": 0.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "none",
+   "motion_counts": {
+    "none": 14
+   },
+   "name": "IceSpiritsProjectile"
+  },
+  "2/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.1,
+    "25": 0.5,
+    "26": 0.166667,
+    "30": 0.744155,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 1708,
+    "forward": 176
+   },
+   "name": "AngryBarbarian"
+  },
+  "20/2": {
+   "cols": {
+    "23": 0.767621,
+    "24": 0.108333,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.68138,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 64
+   },
+   "name": "BarbLog"
+  },
+  "205/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.5,
+    "25": 0.5,
+    "26": 0.2,
+    "30": 0.473024,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 920
+   },
+   "name": "InfernoTower"
+  },
+  "207/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.583333,
+    "25": 0.583333,
+    "26": 0.466667,
+    "30": 0.58756,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 156800
+   },
+   "name": "KingTower"
+  },
+  "207/2": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.583333,
+    "25": 0.083333,
+    "26": 0.466667,
+    "30": 0.58756,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 36
+   },
+   "name": "KingTower"
+  },
+  "208/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.1,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.664151,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 19424,
+    "forward": 2952
+   },
+   "name": "Knight"
+  },
+  "214/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.291667,
+    "25": 0.291667,
+    "26": 0.0,
+    "30": 0.870517,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 120
+   },
+   "name": "Lightning"
+  },
+  "218/2": {
+   "cols": {
+    "23": 0.767621,
+    "24": 0.1625,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.699339,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 120
+   },
+   "name": "Log"
+  },
+  "228/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.133333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.464197,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 948,
+    "forward": 84
+   },
+   "name": "MightyMiner"
+  },
+  "23/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.058333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.657836,
+    "9": 0.383502
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 26,
+    "forward": 40
+   },
+   "name": "Barbarian"
+  },
+  "231/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.1,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.659125,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 576,
+    "forward": 80
+   },
+   "name": "Miner"
+  },
+  "232/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.066667,
+    "25": 0.458333,
+    "26": 0.15,
+    "30": 0.828505,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 638,
+    "forward": 84
+   },
+   "name": "MiniPekka"
+  },
+  "235/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.208333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.585266,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 4746,
+    "forward": 900
+   },
+   "name": "Minion"
+  },
+  "237/2": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.208333,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.585266,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 382
+   },
+   "name": "MinionSpit"
+  },
+  "250/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.5,
+    "25": 0.5,
+    "26": 0.166667,
+    "30": 0.673062,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 482,
+    "forward": 86
+   },
+   "name": "Musketeer"
+  },
+  "251/2": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.5,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.673062,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 102
+   },
+   "name": "MusketeerProjectile"
+  },
+  "258/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.291667,
+    "25": 0.291667,
+    "26": 0.0,
+    "30": 0.566575,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 640
+   },
+   "name": "Poison"
+  },
+  "259/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.133333,
+    "25": 0.458333,
+    "26": 0.2,
+    "30": 0.746408,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 900,
+    "forward": 86
+   },
+   "name": "Prince"
+  },
+  "260/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.75,
+    "25": 0.791667,
+    "26": 0.166667,
+    "30": 0.641237,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 1062,
+    "forward": 100
+   },
+   "name": "Princess"
+  },
+  "261/2": {
+   "cols": {
+    "23": 0.371261,
+    "24": 0.75,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.641237,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 286
+   },
+   "name": "PrincessProjectile"
+  },
+  "263/2": {
+   "cols": {
+    "23": 0.347081,
+    "24": 0.458333,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.566575,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 244
+   },
+   "name": "Prj_goblinstein_doctor"
+  },
+  "274/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.066667,
+    "25": 0.458333,
+    "26": 0.25,
+    "30": 0.673062,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 910,
+    "forward": 84
+   },
+   "name": "RascalBoy"
+  },
+  "275/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.416667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.604535,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 2134,
+    "forward": 168
+   },
+   "name": "RascalGirl"
+  },
+  "276/2": {
+   "cols": {
+    "23": 0.41009,
+    "24": 0.416667,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.604535,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 564
+   },
+   "name": "RascalGirlProjectile"
+  },
+  "280/2": {
+   "cols": {
+    "23": 0.300986,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.912896,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 200
+   },
+   "name": "Rocket"
+  },
+  "286/2": {
+   "cols": {
+    "23": 0.66801,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.760277,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 82
+   },
+   "name": "RoyalDelivery"
+  },
+  "29/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.1,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.55084,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 998,
+    "forward": 500
+   },
+   "name": "Bat"
+  },
+  "292/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.0625,
+    "25": 0.791667,
+    "26": 0.2,
+    "30": 0.539686,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 3010,
+    "forward": 384
+   },
+   "name": "RoyalHog"
+  },
+  "296/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.041667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.55084,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 6598,
+    "forward": 1516
+   },
+   "name": "Skeleton"
+  },
+  "315/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.416667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.55084,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 2054,
+    "forward": 392
+   },
+   "name": "SpearGoblin"
+  },
+  "318/2": {
+   "cols": {
+    "23": 0.347081,
+    "24": 0.416667,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.55084,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 546
+   },
+   "name": "SpearGoblinProjectile"
+  },
+  "325/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.458333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.67477,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 840
+   },
+   "name": "Tesla"
+  },
+  "328/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.458333,
+    "25": 0.458333,
+    "26": 0.0,
+    "30": 0.555331,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 84
+   },
+   "name": "Tornado"
+  },
+  "329/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.625,
+    "25": 0.625,
+    "26": 0.333333,
+    "30": 0.58756,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 311218
+   },
+   "name": "Tower"
+  },
+  "329/2": {
+   "cols": {
+    "23": 0.371261,
+    "24": 0.625,
+    "25": 0.083333,
+    "26": 0.333333,
+    "30": 0.58756,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 10528
+   },
+   "name": "Tower"
+  },
+  "330/2": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.458333,
+    "25": 0.083333,
+    "26": 0.2,
+    "30": 0.664151,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 18
+   },
+   "name": "TowerCannonball"
+  },
+  "331/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.1,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.698406,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 636,
+    "forward": 252
+   },
+   "name": "Valkyrie"
+  },
+  "347/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.041667,
+    "25": 0.583333,
+    "26": 0.133333,
+    "30": 0.732598,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 484,
+    "forward": 176
+   },
+   "name": "Wallbreaker"
+  },
+  "348/2": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.041667,
+    "25": 0.083333,
+    "26": 0.133333,
+    "30": 0.732598,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 4
+   },
+   "name": "WallbreakerProjectile"
+  },
+  "353/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.458333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.705238,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 482,
+    "forward": 86
+   },
+   "name": "Wizard"
+  },
+  "354/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.958333,
+    "25": 0.958333,
+    "26": 0.2,
+    "30": 0.473024,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 856
+   },
+   "name": "Xbow"
+  },
+  "355/2": {
+   "cols": {
+    "23": 0.487395,
+    "24": 0.958333,
+    "25": 0.083333,
+    "26": 0.2,
+    "30": 0.473024,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 644
+   },
+   "name": "Xbow_projectile"
+  },
+  "37/0": {
+   "cols": {
+    "23": 0.652919,
+    "24": 0.066667,
+    "25": 0.458333,
+    "26": 0.15,
+    "30": 0.579341,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 474,
+    "forward": 84
+   },
+   "name": "Berserker"
+  },
+  "38/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.541667,
+    "25": 0.583333,
+    "26": 0.166667,
+    "30": 0.627985,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 272,
+    "forward": 86
+   },
+   "name": "BlowdartGoblin"
+  },
+  "39/2": {
+   "cols": {
+    "23": 0.41009,
+    "24": 0.541667,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.627985,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 76
+   },
+   "name": "BlowdartGoblinProjectile"
+  },
+  "4/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.416667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.590923,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 40282,
+    "forward": 5106
+   },
+   "name": "Archer"
+  },
+  "42/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.5,
+    "25": 0.5,
+    "26": 0.2,
+    "30": 0.675896,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 848
+   },
+   "name": "BombTower"
+  },
+  "42/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.2,
+    "30": 0.0,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 236
+   },
+   "name": "BombTower"
+  },
+  "44/2": {
+   "cols": {
+    "23": 0.347081,
+    "24": 0.5,
+    "25": 0.083333,
+    "26": 0.2,
+    "30": 0.675896,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 40
+   },
+   "name": "BombTowerProjectile"
+  },
+  "5/2": {
+   "cols": {
+    "23": 0.371261,
+    "24": 0.416667,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.590923,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 7302
+   },
+   "name": "ArcherArrow"
+  },
+  "6/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.416667,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.677567,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 584,
+    "forward": 86
+   },
+   "name": "ArcherQueen"
+  },
+  "62/1": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.458333,
+    "25": 0.458333,
+    "26": 0.2,
+    "30": 0.664151,
+    "9": 1.0
+   },
+   "kind": "Building",
+   "level": 11,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 808
+   },
+   "name": "Cannon"
+  },
+  "65/2": {
+   "cols": {
+    "23": 0.371261,
+    "24": 0.458333,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.705238,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 104
+   },
+   "name": "Chr_wizardProjectile"
+  },
+  "7/2": {
+   "cols": {
+    "23": 0.41009,
+    "24": 0.416667,
+    "25": 0.083333,
+    "26": 0.166667,
+    "30": 0.677567,
+    "9": 1.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 106
+   },
+   "name": "ArcherQueenArrow"
+  },
+  "73/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.1,
+    "25": 0.458333,
+    "26": 0.2,
+    "30": 0.698406,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 764,
+    "forward": 84
+   },
+   "name": "DarkPrince"
+  },
+  "79/0": {
+   "cols": {
+    "23": 0.595024,
+    "24": 0.133333,
+    "25": 0.458333,
+    "26": 0.166667,
+    "30": 0.61223,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 116,
+    "forward": 10
+   },
+   "name": "DeliveryRecruit"
+  },
+  "81/3": {
+   "cols": {
+    "23": 0.0,
+    "24": 0.291667,
+    "25": 0.291667,
+    "26": 0.0,
+    "30": 0.555331,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 240
+   },
+   "name": "Earthquake"
+  },
+  "85/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.208333,
+    "25": 0.458333,
+    "26": 0.133333,
+    "30": 0.575646,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 152,
+    "forward": 84
+   },
+   "name": "ElectroSpirit"
+  },
+  "86/2": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.575646,
+    "9": 0.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "none",
+   "motion_counts": {
+    "none": 14
+   },
+   "name": "ElectroSpiritProjectile"
+  },
+  "86/3": {
+   "cols": {
+    "23": 0.440676,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.133333,
+    "30": 0.575646,
+    "9": 1.0
+   },
+   "kind": "AreaEffect",
+   "level": 0,
+   "motion": "forward",
+   "motion_counts": {
+    "forward": 20
+   },
+   "name": "ElectroSpiritProjectile"
+  },
+  "98/0": {
+   "cols": {
+    "23": 0.694161,
+    "24": 0.208333,
+    "25": 0.458333,
+    "26": 0.133333,
+    "30": 0.667192,
+    "9": 1.0
+   },
+   "kind": "Troop",
+   "level": 11,
+   "motion": "dynamic",
+   "motion_counts": {
+    "dynamic": 200,
+    "forward": 124
+   },
+   "name": "FireSpirits"
+  },
+  "99/2": {
+   "cols": {
+    "23": 0.318035,
+    "24": 0.0,
+    "25": 0.0,
+    "26": 0.0,
+    "30": 0.667192,
+    "9": 0.0
+   },
+   "kind": "Projectile",
+   "level": 0,
+   "motion": "none",
+   "motion_counts": {
+    "none": 62
+   },
+   "name": "FireSpiritsProjectile"
+  }
+ },
+ "towers": {
+  "2": [
+   207,
+   1
+  ],
+  "3": [
+   329,
+   1
+  ]
+ },
+ "units": {
+  "AngryBarbarian": [
+   2,
+   0
+  ],
+  "Archer": [
+   4,
+   0
+  ],
+  "ArcherQueen": [
+   6,
+   0
+  ],
+  "BabyDragon": [
+   15,
+   0
+  ],
+  "Balloon": [
+   17,
+   0
+  ],
+  "Barbarian": [
+   23,
+   0
+  ],
+  "Bat": [
+   29,
+   0
+  ],
+  "Berserker": [
+   37,
+   0
+  ],
+  "BlowdartGoblin": [
+   38,
+   0
+  ],
+  "BombTower": [
+   42,
+   1
+  ],
+  "Cannon": [
+   62,
+   1
+  ],
+  "DarkPrince": [
+   73,
+   0
+  ],
+  "DeliveryRecruit": [
+   79,
+   0
+  ],
+  "ElectroSpirit": [
+   85,
+   0
+  ],
+  "FireSpirits": [
+   98,
+   0
+  ],
+  "Firecracker": [
+   102,
+   0
+  ],
+  "Furnace_rework": [
+   111,
+   0
+  ],
+  "Ghost": [
+   114,
+   0
+  ],
+  "Giant": [
+   115,
+   0
+  ],
+  "Goblin": [
+   125,
+   0
+  ],
+  "GoblinHut_Rework": [
+   152,
+   1
+  ],
+  "Goblin_Stab": [
+   155,
+   0
+  ],
+  "Golem": [
+   181,
+   0
+  ],
+  "HogRider": [
+   191,
+   0
+  ],
+  "IceGolemite": [
+   195,
+   0
+  ],
+  "IceSpirits": [
+   197,
+   0
+  ],
+  "InfernoTower": [
+   205,
+   1
+  ],
+  "Knight": [
+   208,
+   0
+  ],
+  "MightyMiner": [
+   228,
+   0
+  ],
+  "Miner": [
+   231,
+   0
+  ],
+  "MiniPekka": [
+   232,
+   0
+  ],
+  "Minion": [
+   235,
+   0
+  ],
+  "Musketeer": [
+   250,
+   0
+  ],
+  "Prince": [
+   259,
+   0
+  ],
+  "Princess": [
+   260,
+   0
+  ],
+  "RascalBoy": [
+   274,
+   0
+  ],
+  "RascalGirl": [
+   275,
+   0
+  ],
+  "RoyalHog": [
+   292,
+   0
+  ],
+  "Skeleton": [
+   296,
+   0
+  ],
+  "SpearGoblin": [
+   315,
+   0
+  ],
+  "Tesla": [
+   325,
+   1
+  ],
+  "Valkyrie": [
+   331,
+   0
+  ],
+  "Wallbreaker": [
+   347,
+   0
+  ],
+  "Wizard": [
+   353,
+   0
+  ],
+  "Xbow": [
+   354,
+   1
+  ],
+  "goblinstein": [
+   164,
+   0
+  ],
+  "goblinstein_doctor": [
+   166,
+   0
+  ]
+ },
+ "unresolved_projectiles": [],
+ "unresolved_spells": [],
+ "unresolved_units": []
+}

@@ -26,4 +26,6 @@ Players:
 - `PolicyPlayer(rt, 'R3a')`: the R3a student alone.
 - `SearchPlayer(..., mode='unbounded'|'budget'|'wall', default='R3a'|'v1')`: K4S or K4 W-screen8 search.
 
-`royalesim_adapter.py` is a sketch. The card map and action→command conversion are verified; the public-view translator is still TODO.
+RoyaleSim: the same Players play inside RoyaleSim 0.1.34 through `royalesim_match.play_match` (same decks, lag, cadence;
+the search still plans on our Rust engine). N games: `bot/players/run.sh -m bot.players.royalesim_run --a search:budget:48 --b v1 --range 0 N --out OUT.jsonl`.
+Design, field map, gaps and smoke numbers: `reports/bot/rsim-adapter/NOTES.md`.
