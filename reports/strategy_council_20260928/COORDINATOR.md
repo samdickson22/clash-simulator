@@ -6641,3 +6641,27 @@ The compact receipt is `l1/receipts/b08-r5-epoch01-result-r1.json` (8aaa89b8c0b7
 **C-4 ACCEPTED.**
 
 **Next:** the owner proposes the remaining chain under the reviewed plan, covering the rest of G5 (24 epochs) and U1 pairing. It should use the fewest separate authority chains the reviewed procedure allows. Each chain still needs C-5, issuance, placement and C-6.
+
+## 2026-10-14 02:24Z: B r5 remaining epochs: ruling SQ-1 (one shared placement, serial sequence); quiet-read r15
+
+**Proposal.** The owner's proposal is `l1/prepared/b08-r5-remaining-serial-chain-drafts-r1/PROPOSAL.md` (9d0b3f01). The reviewed code allows exactly one epoch per process and per single-use run (`b08_current_graph.py:83–101`; transport `:115–128`, `:148–163`, `:292–315`). So 23 separate runs are required. F1 r6 allows 1–28 receipts per placement (`authority_placement.py:78`).
+
+**Ruling SQ-1: APPROVED, with two changes.**
+- **Structure:**
+  - one F1 placement r16 holding all 23 epoch-02..24 CPU GOs, then one C-6;
+  - then 23 separate run GOs, co-issued, run strictly serially and alone;
+  - one exact guard invocation each, with its own C-5, claim and C-4 report.
+- **Auto-advance (pre-authorized).** The owner may launch epoch k+1 only after confirming all of these for epoch k:
+  - both exit codes 0;
+  - an authenticated `result PASS` with `bound_count 9` and the matching plan, package and review;
+  - a duration of at most 3,600 s;
+  - a direct C-4 report sent to the coordinator.
+
+  The coordinator's C-4 acceptances may be batched. Any failure, UNKNOWN, missing evidence or excess duration **stops the whole sequence**, with no retry, repair or extra SSH.
+- **Change 1, offsets.** Use 300 s per epoch, not 120 s. Epoch 1 took about 4 min from launch to report, so with 120 s offsets the later epochs' first-30-min launch windows would lapse. 300 s tolerates cycles up to about 6 min.
+- **Change 2, start time.** Start earlier: the placement window opens 03:15Z if a ≥30 min lead holds after filling, and the epoch-2 CPU and run windows start 03:30Z. The other epochs follow at the 300 s offsets.
+- **Unchanged:** the budget and serial-only operation, with U1 pairing disabled. Every one of the 24 actual durations must be ≤3,600 s for G5. The reducer chain follows afterwards, binding all 24 receipts.
+
+**Quiet-read r15.** Run with `evidence/coordinator-quiet-read-r15.sh` (39c16297), which is r14 with only `Q=` changed. Exit code 0. Observation 3ef9048327a5f3d55548d037f5df3776ee8cfc22c47f5a03ddcde2e051d6ed0b: who 0, available 1,214,282,412,032 B, loadavg 0.00.
+
+**Next:** the owner fills a new version (drafts r2) with epoch-1 C-4 at 49b4fbac, this commit, and quiet-read r15, using the new windows. Hash order: all CPU GOs, then the placement, then all runs. The coordinator sets the attestations at issuance.
