@@ -1,0 +1,42 @@
+PASS normal (0)
+PASS results-exists (93)
+PASS wrong-host (90)
+PASS symlink-leaf (91)
+PASS symlinked-ancestor (92)
+PASS writable-parent (94)
+PASS results-symlink (93)
+PASS pre-find-fails (84)
+PASS post-find-fails (82)
+PASS ls-fails (83)
+PASS stat-fails (81)
+PASS chmod-results-fails (97)
+PASS chmod-parent-fails-restore-fails (88)
+PASS chmod-uw-fails (95)
+PASS mkdir-fails (96)
+PASS term-after-enabling-writes (87)
+PASS INT-after-enabling-writes (87)
+PASS HUP-after-enabling-writes (87)
+FAIL errexit-term-child-chmod-fails: want 87 got  parent-755
+FAIL bashenv-errexit-hup-child-chmod-fails: want 87 got  parent-755
+PASS errexit-child-chmod-fails (97)
+PASS token-ok (0)
+PASS stale-log-token-ssh-fail (255)
+PASS malformed-token (255)
+PASS two-tokens (255)
+PASS unanchored-token (255)
+PASS remote-refusal-propagates (97)
+PASS token-with-ssh-nonzero (255)
+PASS token-255 (255)
+FAIL token-256: want 255 got 0 ok
+FAIL token-512: want 255 got 0 ok
+FAIL token-768: want 255 got 0 ok
+FAIL token-999: want 255 got 231 ok
+FAIL token-007: want 255 got 7 ok
+FAIL token-00: want 255 got 0 ok
+PASS token--1 (255)
+PASS token-200 (200)
+FAIL count-shims-ok: want 0 got 2 ok
+PASS count-shims-ssh-fail (255)
+FAIL valid-plus-malformed: want 255 got 0 ok
+FAIL remote-env-cleared: want yes got no ok
+FAILS=11
