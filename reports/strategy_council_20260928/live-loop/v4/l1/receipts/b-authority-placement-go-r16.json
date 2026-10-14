@@ -1,0 +1,306 @@
+{
+  "available_bytes": 1214282412032,
+  "between_phases": true,
+  "conditions": {
+    "C1": "Epoch1 C4 and environment G6 accepted; fresh quiet-read r15 plus coordinator between-phase/no-active-phase attestations.",
+    "C2": "Keep all held package/transport bytes unchanged except coordinator-only reviewed binding procedure; no git clean.",
+    "C3": "Canonical full lowercase SHA revocation line at column zero and coordinator STOP",
+    "C4": "One invocation of pinned detached fetch-then-send operator; five exported variables; no retry",
+    "C5": "Coordinator performs pre-issue ledger check",
+    "C6": "Coordinator audits revocation_tip_commit..origin/main after placement",
+    "C7": "Exact23 new epoch02..24 CPU GO receipts, all prior authorities unchanged.",
+    "C8": "Bound transport r4 only; placement does not authorize any run.",
+    "C9": "Preserve claims and partials. No retry or additional phase from placement authority."
+  },
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_AUTHORITY_PLACEMENT",
+  "deployment_prerequisite": {
+    "complete_sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce",
+    "coordinator_acceptance_ledger_commit": "9cc43d12a73140b033271332ccf9e742f23c74a2",
+    "go_sha256": "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c",
+    "status": "COORDINATOR_DEPLOYMENT_ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "environment_prerequisite": {
+    "coordinator_acceptance_ledger_commit": "6b05249940f1b64bfca1c2f10245c52b219e2775",
+    "g6_comparison": {
+      "coordinator_ledger_commit": "6b05249940f1b64bfca1c2f10245c52b219e2775",
+      "differences": {},
+      "historical_candidate_reference": "2026-10-08T00:20:00Z; candidate versions, not current observations",
+      "observed": {
+        "numpy": {
+          "actual": "1.26.4",
+          "historical_candidate": "1.26.4",
+          "matches": true
+        },
+        "opencv-python": {
+          "actual": "4.10.0.84",
+          "historical_candidate": "4.10.0.84",
+          "matches": true
+        },
+        "python": {
+          "actual": "3.12.12",
+          "historical_candidate": "3.12.12",
+          "matches": true
+        },
+        "torch": {
+          "actual": "2.7.1+cu118",
+          "historical_candidate": "2.7.1+cu118",
+          "matches": true
+        },
+        "torch_cuda": {
+          "actual": "11.8",
+          "historical_candidate": "11.8",
+          "matches": true
+        },
+        "ultralytics": {
+          "actual": "8.1.24",
+          "historical_candidate": "8.1.24",
+          "matches": true
+        }
+      },
+      "result": "PASS"
+    },
+    "go_sha256": "c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861",
+    "observation": {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861/environment.json",
+      "sha256": "af5841e6331fc4bcd392cc79ac1359c77c108e9a7a1a00f7fb635d3104e4be48"
+    },
+    "run_go_sha256": "1d42e2e80ca02d2388ec92eed14f0432e75666bd65e2e4cbd43d17829c056ed4",
+    "status": "ACCEPTED"
+  },
+  "epoch1_acceptance": {
+    "coordinator_commit": "49b4fbacc4360a9ff417e3780024ccdd70197375",
+    "duration": {
+      "completed_epoch_raw": "1791944281.9868555",
+      "completed_utc": "2026-10-14T02:18:01.986856+00:00",
+      "g5_all24_not_yet_complete": true,
+      "g5_this_epoch_within_budget": true,
+      "g5_threshold_seconds": 3600,
+      "source": "Authenticated epoch.json numeric values parsed as Decimal; never launcher elapsed",
+      "started_epoch_raw": "1791944139.9039574",
+      "started_utc": "2026-10-14T02:15:39.903957+00:00",
+      "u1_coordinator_c4_still_required": true,
+      "u1_duration_eligible": true,
+      "u1_threshold_seconds": 2400,
+      "unrounded_seconds": "142.0828981"
+    },
+    "epoch_receipt": {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b/epoch.json",
+      "sha256": "98b7efd096e868f222170204a630edfebbcce3b60f807bd9667b1c275d84408e"
+    },
+    "execution_plan_sha256": "04fcfa0aa5ea29ab97cfffdcfb06adc23e3d22e0b39436ab202775607d917927",
+    "serial_only_instruction": true,
+    "status": "ACCEPTED",
+    "u1_pairing_enabled": false
+  },
+  "expires_epoch": 1791954900,
+  "g6_environment_accepted": true,
+  "git_sources": {
+    "049c494399b935a6a9424de3eb1a6bbaece8f44e18c4bfc56041c4594989799d": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch16-serial-go-r5.json",
+    "0c28a1615656d81e7d531fb07f7aadf0f6d58f4bd91efafc80c4a54aac3efe76": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch02-serial-go-r5.json",
+    "1ddd9648d9a65837bbc1f811d930684c674a7449dd6fe39aac0816aa07a62481": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch18-serial-go-r5.json",
+    "3a64fd4f55b8b8a90c2c24f5cc1329bfc835742d15d05f75b9aeb1a84068b853": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch06-serial-go-r5.json",
+    "3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch23-serial-go-r5.json",
+    "4489bcb0f0af1b353819f24432ab7cb8881c605cc1a9357da42d4b75c0c280d7": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch09-serial-go-r5.json",
+    "462d1e2e81899bdc4940c6097037e0f8666a7aaf077b43d21e2287af7408f45c": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch17-serial-go-r5.json",
+    "4b5e1f6c8c64aa9287f066961c180ff71ad74d70bb430bd1c8a6beae0f728ee3": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch15-serial-go-r5.json",
+    "547480a16ed8a1dfa7546c7c8313a1f42e94dfc98eeeb456aa07254413081bb9": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch19-serial-go-r5.json",
+    "5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch24-serial-go-r5.json",
+    "5efce10ec1a9be2e5861389490e89c2624a022edf0912ae2936bf5f2f9d6f8cd": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch05-serial-go-r5.json",
+    "6c9541e5d0a78090b54be2bbace22671accf91ca3ed781a943aa5c630b40c875": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch12-serial-go-r5.json",
+    "76998b86dd6fe2fcf141f2f32e289746cf53217ed62fb2ec757d5a362684a073": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch10-serial-go-r5.json",
+    "9811b294504cea2fc00636a3e02fc312bdf62da18cb954ab6168c4714c790c1b": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch13-serial-go-r5.json",
+    "9b9c13d0914fe1acc71b0f2eeff39c8e0235c0a14bcea3fa87e6b0da02701ae5": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch21-serial-go-r5.json",
+    "a1c46c5c4c61c77ecb2626197388e6de5e3062332a27ec8515b9c0051c589efc": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch07-serial-go-r5.json",
+    "a6247fe4f65d80a98b5c1f6a3a72c2c4bf0147c0384c0c2f5ac716f11baeb239": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch04-serial-go-r5.json",
+    "bd6feb0992a2ad48e96a2069b7670ecc482e224c55f2f9248fdfb4601471310d": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch14-serial-go-r5.json",
+    "d9438705ed897f1754a73d2863c607b4bf2c52ba684a429a8e654f5fb0384694": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch03-serial-go-r5.json",
+    "dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d001747f7bcc8d45c5c8": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch22-serial-go-r5.json",
+    "dd2f6d9f6484bd6a2e57a4724b890c90f50af9e3b7a2279ad8ff795932d4e0b1": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch11-serial-go-r5.json",
+    "e6a60687f52d185adf552dcec70413287485091fc85b37a1808f8a9d7f0736dc": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch08-serial-go-r5.json",
+    "fe95c3fea987feb715183f62930d277b748eec676e1896c86d746768e7e6fa3b": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch20-serial-go-r5.json"
+  },
+  "gpu_authorized": false,
+  "heldout_authorized": false,
+  "host": "127x08",
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at exact signed paths; separate explicit GO; placement C6 before the separate serial epoch run GOs (SQ-1)."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-authority-placement-go-r16.json",
+  "no_active_cpu_or_gpu_phase": true,
+  "no_retry": true,
+  "not_before_epoch": 1791947700,
+  "observation_provenance": {
+    "commit": "3632efb280bc36722b61c48b26f04d010354987b",
+    "sha256": "3ef9048327a5f3d55548d037f5df3776ee8cfc22c47f5a03ddcde2e051d6ed0b",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r15/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-14T02:24:40.240916+00:00"
+  },
+  "operator_command": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/b08-authority-placement-review-r6/placement-operator-command.sh",
+    "sha256": "21a101213b73043ff7b14ba20b867361c136b905cdfa983e163d52d0c315400c"
+  },
+  "operator_exports": {
+    "APPROVED_CPUS": {
+      "value": "0,1"
+    },
+    "COORDINATOR_COMMIT": {
+      "source": "full 40-hex coordinator issuance commit containing this GO and its anchored ISSUED line"
+    },
+    "PLACEMENT_GO_GIT_PATH": {
+      "value": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r16.json"
+    },
+    "PLACEMENT_GO_SHA": {
+      "source": "SHA256 of the byte-identical issued GO file"
+    },
+    "PROCEDURE_SHA": {
+      "value": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a"
+    }
+  },
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "placement_scope": "Place only 23 NEW epoch02..24 serial CPU GO receipts in one F1 placement; never overwrite existing authorities; no phase execution.",
+  "procedure_sha256": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+  "receipts": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/0c28a1615656d81e7d531fb07f7aadf0f6d58f4bd91efafc80c4a54aac3efe76.json",
+      "sha256": "0c28a1615656d81e7d531fb07f7aadf0f6d58f4bd91efafc80c4a54aac3efe76"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/d9438705ed897f1754a73d2863c607b4bf2c52ba684a429a8e654f5fb0384694.json",
+      "sha256": "d9438705ed897f1754a73d2863c607b4bf2c52ba684a429a8e654f5fb0384694"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/a6247fe4f65d80a98b5c1f6a3a72c2c4bf0147c0384c0c2f5ac716f11baeb239.json",
+      "sha256": "a6247fe4f65d80a98b5c1f6a3a72c2c4bf0147c0384c0c2f5ac716f11baeb239"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/5efce10ec1a9be2e5861389490e89c2624a022edf0912ae2936bf5f2f9d6f8cd.json",
+      "sha256": "5efce10ec1a9be2e5861389490e89c2624a022edf0912ae2936bf5f2f9d6f8cd"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/3a64fd4f55b8b8a90c2c24f5cc1329bfc835742d15d05f75b9aeb1a84068b853.json",
+      "sha256": "3a64fd4f55b8b8a90c2c24f5cc1329bfc835742d15d05f75b9aeb1a84068b853"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/a1c46c5c4c61c77ecb2626197388e6de5e3062332a27ec8515b9c0051c589efc.json",
+      "sha256": "a1c46c5c4c61c77ecb2626197388e6de5e3062332a27ec8515b9c0051c589efc"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/e6a60687f52d185adf552dcec70413287485091fc85b37a1808f8a9d7f0736dc.json",
+      "sha256": "e6a60687f52d185adf552dcec70413287485091fc85b37a1808f8a9d7f0736dc"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/4489bcb0f0af1b353819f24432ab7cb8881c605cc1a9357da42d4b75c0c280d7.json",
+      "sha256": "4489bcb0f0af1b353819f24432ab7cb8881c605cc1a9357da42d4b75c0c280d7"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/76998b86dd6fe2fcf141f2f32e289746cf53217ed62fb2ec757d5a362684a073.json",
+      "sha256": "76998b86dd6fe2fcf141f2f32e289746cf53217ed62fb2ec757d5a362684a073"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/dd2f6d9f6484bd6a2e57a4724b890c90f50af9e3b7a2279ad8ff795932d4e0b1.json",
+      "sha256": "dd2f6d9f6484bd6a2e57a4724b890c90f50af9e3b7a2279ad8ff795932d4e0b1"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/6c9541e5d0a78090b54be2bbace22671accf91ca3ed781a943aa5c630b40c875.json",
+      "sha256": "6c9541e5d0a78090b54be2bbace22671accf91ca3ed781a943aa5c630b40c875"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/9811b294504cea2fc00636a3e02fc312bdf62da18cb954ab6168c4714c790c1b.json",
+      "sha256": "9811b294504cea2fc00636a3e02fc312bdf62da18cb954ab6168c4714c790c1b"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/bd6feb0992a2ad48e96a2069b7670ecc482e224c55f2f9248fdfb4601471310d.json",
+      "sha256": "bd6feb0992a2ad48e96a2069b7670ecc482e224c55f2f9248fdfb4601471310d"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/4b5e1f6c8c64aa9287f066961c180ff71ad74d70bb430bd1c8a6beae0f728ee3.json",
+      "sha256": "4b5e1f6c8c64aa9287f066961c180ff71ad74d70bb430bd1c8a6beae0f728ee3"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/049c494399b935a6a9424de3eb1a6bbaece8f44e18c4bfc56041c4594989799d.json",
+      "sha256": "049c494399b935a6a9424de3eb1a6bbaece8f44e18c4bfc56041c4594989799d"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/462d1e2e81899bdc4940c6097037e0f8666a7aaf077b43d21e2287af7408f45c.json",
+      "sha256": "462d1e2e81899bdc4940c6097037e0f8666a7aaf077b43d21e2287af7408f45c"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/1ddd9648d9a65837bbc1f811d930684c674a7449dd6fe39aac0816aa07a62481.json",
+      "sha256": "1ddd9648d9a65837bbc1f811d930684c674a7449dd6fe39aac0816aa07a62481"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/547480a16ed8a1dfa7546c7c8313a1f42e94dfc98eeeb456aa07254413081bb9.json",
+      "sha256": "547480a16ed8a1dfa7546c7c8313a1f42e94dfc98eeeb456aa07254413081bb9"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/fe95c3fea987feb715183f62930d277b748eec676e1896c86d746768e7e6fa3b.json",
+      "sha256": "fe95c3fea987feb715183f62930d277b748eec676e1896c86d746768e7e6fa3b"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/9b9c13d0914fe1acc71b0f2eeff39c8e0235c0a14bcea3fa87e6b0da02701ae5.json",
+      "sha256": "9b9c13d0914fe1acc71b0f2eeff39c8e0235c0a14bcea3fa87e6b0da02701ae5"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d001747f7bcc8d45c5c8.json",
+      "sha256": "dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d001747f7bcc8d45c5c8"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6.json",
+      "sha256": "3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0.json",
+      "sha256": "5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0"
+    }
+  ],
+  "retained_observation_provenance": {
+    "commit": "6b05249940f1b64bfca1c2f10245c52b219e2775",
+    "sha256": "5069a8d87f9414aefc0d9fdc41544691a29d3b436469bbb6d62463b25e0cb6a7",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r14/observation.json",
+    "status": "OBSERVED",
+    "use": "Historical only; fresh quiet-read r15 required.",
+    "utc": "2026-10-14T00:47:21.049378+00:00"
+  },
+  "review_status": {
+    "combined_review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+    "combined_review_sha256": "69cc87846ccb6dda42543ce94a8d15cd220d91b327ae2520e7497fe2d3c5bc7f",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "55ba8ad7db6ee18f91bb6ea2d89e1a3b11f80cc0f0f20ff82a7f68b25bf13198"
+  },
+  "sequence_ruling": {
+    "advance_requires": [
+      "Both actual launcher/sender exit codes0",
+      "Authenticated PASS with bound_count9 and matching CPU plan/execution plan/package/review",
+      "Exact authenticated duration<=3600s",
+      "Direct C4 report sent to coordinator"
+    ],
+    "auto_advance_preauthorized": true,
+    "coordinator_c4_acceptances_may_be_batched": true,
+    "coordinator_commit": "3632efb280bc36722b61c48b26f04d010354987b",
+    "epoch_start_offset_seconds": 300,
+    "issued_cpu_placement_and_run_authorities_still_required": true,
+    "on_failure_unknown_missing_or_excess_duration": "STOP_ENTIRE_SEQUENCE_PRESERVE_NO_RETRY_NO_REPAIR_NO_EXTRA_SSH",
+    "ruling": "SQ-1",
+    "serial_only": true,
+    "status": "APPROVED"
+  },
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-authority-placement-go-r16.json",
+  "stage_prerequisite": {
+    "complete_sha256": "7f67aa54ddcc87c7c79f52d8c0e23f4c8f08be13fe3e58d779501e7c6aab1010",
+    "coordinator_acceptance_ledger_commit": "d7dcb63c7de5db87074a3bfb16f2adaf39143519",
+    "go_sha256": "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef",
+    "run_go_sha256": "b2bff6540341419ad3dfd9097132e3f42e47d380ef213f209ac64d85d8528ac6",
+    "status": "ACCEPTED"
+  },
+  "who_count": 0,
+  "window_policy": {
+    "duration_seconds": 7200,
+    "lead_seconds_minimum": 1800
+  }
+}

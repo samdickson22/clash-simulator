@@ -6665,3 +6665,56 @@ The compact receipt is `l1/receipts/b08-r5-epoch01-result-r1.json` (8aaa89b8c0b7
 **Quiet-read r15.** Run with `evidence/coordinator-quiet-read-r15.sh` (39c16297), which is r14 with only `Q=` changed. Exit code 0. Observation 3ef9048327a5f3d55548d037f5df3776ee8cfc22c47f5a03ddcde2e051d6ed0b: who 0, available 1,214,282,412,032 B, loadavg 0.00.
 
 **Next:** the owner fills a new version (drafts r2) with epoch-1 C-4 at 49b4fbac, this commit, and quiet-read r15, using the new windows. Hash order: all CPU GOs, then the placement, then all runs. The coordinator sets the attestations at issuance.
+
+## 2026-10-14 02:28Z: B r5 SQ-1: 23 serial epoch CPU GOs (epochs 2–24) and shared placement GO r16 issued
+
+**Source drafts.** The owner's drafts in `b08-r5-remaining-serial-chain-drafts-r2` (manifest c8a7ed67), filled with:
+- epoch-1 C-4 at 49b4fbac;
+- SQ-1 and quiet-read r15 at 3632efb2 (observation 3ef90483).
+
+**What the coordinator changed.**
+- The 23 CPU GOs are issued byte-identical to the drafts.
+- In placement r16, the coordinator filled in only the between-phase attestations and the blockers. Since the epoch-1 C-4 at 49b4fbac, no other CPU or GPU phase has run on 08.
+- The placement holds exactly the 23 CPU GOs.
+- The 23 run drafts are repinned to the issued placement and held at `v4-b-gap-review/serial-r5-final/DRAFT-*` until C-6.
+
+**Checks:**
+- transport r4 `validate_cpu(current=False)` and F1 r6 `receipt()` pass on all 23;
+- `validate_go` passes inside the window and refuses before it;
+- C-5 is clean on all 24 SHAs, with 0 `REVOKED` lines;
+- no path collides.
+
+**Scope.** Epochs 2–24 only, serial and alone on 08:
+- cpus [0,1], a 32 GiB worker plus a 2 GiB keeper, concurrency off;
+- no GPU and no heldout data.
+
+The SQ-1 auto-advance and stop rules apply.
+
+**Windows (2026-10-14):**
+- placement: 03:15Z to 05:15Z, operator 21a10121, one invocation, no retry;
+- epoch-k CPU windows: from 03:30Z, plus 300 s per epoch.
+
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 0c28a1615656d81e7d531fb07f7aadf0f6d58f4bd91efafc80c4a54aac3efe76
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT d9438705ed897f1754a73d2863c607b4bf2c52ba684a429a8e654f5fb0384694
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT a6247fe4f65d80a98b5c1f6a3a72c2c4bf0147c0384c0c2f5ac716f11baeb239
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 5efce10ec1a9be2e5861389490e89c2624a022edf0912ae2936bf5f2f9d6f8cd
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 3a64fd4f55b8b8a90c2c24f5cc1329bfc835742d15d05f75b9aeb1a84068b853
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT a1c46c5c4c61c77ecb2626197388e6de5e3062332a27ec8515b9c0051c589efc
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT e6a60687f52d185adf552dcec70413287485091fc85b37a1808f8a9d7f0736dc
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 4489bcb0f0af1b353819f24432ab7cb8881c605cc1a9357da42d4b75c0c280d7
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 76998b86dd6fe2fcf141f2f32e289746cf53217ed62fb2ec757d5a362684a073
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT dd2f6d9f6484bd6a2e57a4724b890c90f50af9e3b7a2279ad8ff795932d4e0b1
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 6c9541e5d0a78090b54be2bbace22671accf91ca3ed781a943aa5c630b40c875
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 9811b294504cea2fc00636a3e02fc312bdf62da18cb954ab6168c4714c790c1b
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT bd6feb0992a2ad48e96a2069b7670ecc482e224c55f2f9248fdfb4601471310d
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 4b5e1f6c8c64aa9287f066961c180ff71ad74d70bb430bd1c8a6beae0f728ee3
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 049c494399b935a6a9424de3eb1a6bbaece8f44e18c4bfc56041c4594989799d
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 462d1e2e81899bdc4940c6097037e0f8666a7aaf077b43d21e2287af7408f45c
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 1ddd9648d9a65837bbc1f811d930684c674a7449dd6fe39aac0816aa07a62481
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 547480a16ed8a1dfa7546c7c8313a1f42e94dfc98eeeb456aa07254413081bb9
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT fe95c3fea987feb715183f62930d277b748eec676e1896c86d746768e7e6fa3b
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 9b9c13d0914fe1acc71b0f2eeff39c8e0235c0a14bcea3fa87e6b0da02701ae5
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d001747f7bcc8d45c5c8
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6
+ISSUED AUTHORIZE_B_CPU_PREFLIGHT 5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0
+ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 0119bdbfa6e060d12e20d38eec5193e1e2befb030512a9d8c02831c17090f391

@@ -1,0 +1,217 @@
+{
+  "available_bytes": 1214282412032,
+  "code_root": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-a0046c1d27bf",
+  "concurrency_enabled": false,
+  "cpu_preflight_plan_sha256": "d503730b8799fc798404ef408e834663ae3ff2d3d9d206fd34ade6384c9cebf8",
+  "cpus": [
+    0,
+    1
+  ],
+  "decision": "AUTHORIZE_B_CPU_PREFLIGHT",
+  "deployment_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/deployment-c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c/complete.json",
+    "sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce"
+  },
+  "deployment_prerequisite": {
+    "complete_sha256": "9ea047f057b131ec34ceaa81fbbaee98e097ecc3c49f523c3613955eaf4d77ce",
+    "coordinator_acceptance_ledger_commit": "9cc43d12a73140b033271332ccf9e742f23c74a2",
+    "go_sha256": "c048baf21c6f2dbece901aa4914be56b983d3f63d71d0586abc48945a00f252c",
+    "status": "COORDINATOR_DEPLOYMENT_ACCEPTED"
+  },
+  "draft_status": "READY_FOR_COORDINATOR_C5_AND_ISSUANCE_NOT_ISSUED",
+  "duration_reporting": {
+    "calculation": "completed_epoch minus started_epoch using exact decimal representations of the retained JSON values; report unrounded seconds alongside raw values. Never substitute guard/launcher/sender elapsed time.",
+    "g5_condition": "Every one of 24 authenticated epoch durations must be <=3600s before any reducer GO.",
+    "g5_threshold_seconds": 3600,
+    "missing_or_invalid_timestamps": "No inferred duration or gate pass; stop and report unavailable evidence.",
+    "source": "Authenticated epoch.json started_epoch and completed_epoch; retain raw JSON numeric values and UTC renderings.",
+    "u1_condition": "Only after coordinator C4 accepts epoch1 and measured unit wall-clock duration <=2400s; otherwise remain serial.",
+    "u1_pairing_threshold_seconds": 2400
+  },
+  "environment": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861/environment.json",
+    "sha256": "af5841e6331fc4bcd392cc79ac1359c77c108e9a7a1a00f7fb635d3104e4be48"
+  },
+  "environment_prerequisite": {
+    "coordinator_acceptance_ledger_commit": "6b05249940f1b64bfca1c2f10245c52b219e2775",
+    "g6_comparison": {
+      "coordinator_ledger_commit": "6b05249940f1b64bfca1c2f10245c52b219e2775",
+      "differences": {},
+      "historical_candidate_reference": "2026-10-08T00:20:00Z; candidate versions, not current observations",
+      "observed": {
+        "numpy": {
+          "actual": "1.26.4",
+          "historical_candidate": "1.26.4",
+          "matches": true
+        },
+        "opencv-python": {
+          "actual": "4.10.0.84",
+          "historical_candidate": "4.10.0.84",
+          "matches": true
+        },
+        "python": {
+          "actual": "3.12.12",
+          "historical_candidate": "3.12.12",
+          "matches": true
+        },
+        "torch": {
+          "actual": "2.7.1+cu118",
+          "historical_candidate": "2.7.1+cu118",
+          "matches": true
+        },
+        "torch_cuda": {
+          "actual": "11.8",
+          "historical_candidate": "11.8",
+          "matches": true
+        },
+        "ultralytics": {
+          "actual": "8.1.24",
+          "historical_candidate": "8.1.24",
+          "matches": true
+        }
+      },
+      "result": "PASS"
+    },
+    "go_sha256": "c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861",
+    "observation": {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861/environment.json",
+      "sha256": "af5841e6331fc4bcd392cc79ac1359c77c108e9a7a1a00f7fb635d3104e4be48"
+    },
+    "run_go_sha256": "1d42e2e80ca02d2388ec92eed14f0432e75666bd65e2e4cbd43d17829c056ed4",
+    "status": "ACCEPTED"
+  },
+  "epoch": 16,
+  "epoch1_acceptance": {
+    "coordinator_commit": "49b4fbacc4360a9ff417e3780024ccdd70197375",
+    "duration": {
+      "completed_epoch_raw": "1791944281.9868555",
+      "completed_utc": "2026-10-14T02:18:01.986856+00:00",
+      "g5_all24_not_yet_complete": true,
+      "g5_this_epoch_within_budget": true,
+      "g5_threshold_seconds": 3600,
+      "source": "Authenticated epoch.json numeric values parsed as Decimal; never launcher elapsed",
+      "started_epoch_raw": "1791944139.9039574",
+      "started_utc": "2026-10-14T02:15:39.903957+00:00",
+      "u1_coordinator_c4_still_required": true,
+      "u1_duration_eligible": true,
+      "u1_threshold_seconds": 2400,
+      "unrounded_seconds": "142.0828981"
+    },
+    "epoch_receipt": {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-a6e4b6502b733f6c90b98b6ebf6f955a619b116c6fca852fe0fd694b7ddead7b/epoch.json",
+      "sha256": "98b7efd096e868f222170204a630edfebbcce3b60f807bd9667b1c275d84408e"
+    },
+    "execution_plan_sha256": "04fcfa0aa5ea29ab97cfffdcfb06adc23e3d22e0b39436ab202775607d917927",
+    "serial_only_instruction": true,
+    "status": "ACCEPTED",
+    "u1_pairing_enabled": false
+  },
+  "execution_preconditions": [
+    "Serial and alone on 08; concurrency OFF, cpus [0,1], threads1/nice19/CUDAhidden; unchanged32GiB worker+2GiB keeper budget.",
+    "Each CPU GO authorizes exactly its one epoch in a fresh process; exact bound guard once per run, no batch wrapper.",
+    "Before each next launch require BOTH preceding actual launcher/sender exit0, authenticated PASS epoch receipt, exact duration<=3600s, and direct C4 report. Any nonzero/UNKNOWN/missing evidence stops the whole sequence; no retry or repair.",
+    "Honor each separate issued run GO and actual first30min launch window; do not catch up by overlapping. Expired windows need new versioned authority.",
+    "Shared placement C6 acceptance is required for all run GOs. SQ-1 pre-authorizes serial auto-advance after the four evidence/report gates; all run GOs still require separate issuance after C6.",
+    "No GPU/heldout/refit or reducer. G5 requires all24 individually authenticated durations<=3600s; U1 pairing remains disabled."
+  ],
+  "expires_epoch": 1791960000,
+  "g6_environment_accepted": true,
+  "gpu_authorized": false,
+  "graph_unit": "epoch",
+  "heldout_authorized": false,
+  "host": "127x08",
+  "interpreter": "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+  "interpreter_flags": [
+    "-B",
+    "-s"
+  ],
+  "issuance_blockers": [
+    "Coordinator C5 and anchored issuance at exact signed paths; no host action from these drafts."
+  ],
+  "jobs_publication_path": "/mpac/sdicks02/jobs/clasher/v4-b-gap-review/receipts/b-cpu-preflight-epoch16-serial-go-r5.json",
+  "max_launches": 1,
+  "nice": 19,
+  "no_retry": true,
+  "not_before_epoch": 1791952800,
+  "observation_provenance": {
+    "commit": "3632efb280bc36722b61c48b26f04d010354987b",
+    "sha256": "3ef9048327a5f3d55548d037f5df3776ee8cfc22c47f5a03ddcde2e051d6ed0b",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r15/observation.json",
+    "status": "OBSERVED",
+    "utc": "2026-10-14T02:24:40.240916+00:00"
+  },
+  "one_attempt_per_go": true,
+  "operator_command": "env -u BASH_ENV -u ENV PATH=/usr/bin:/bin PYTHONPATH=/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-a0046c1d27bf/src CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 0,1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -s /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/code-a0046c1d27bf/b08_cpu_preflight.py --phase current-graph --epoch 16 --plan /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/review-package-a0046c1d27bf/cpu-preflight-plan.json --plan-sha256 d503730b8799fc798404ef408e834663ae3ff2d3d9d206fd34ade6384c9cebf8 --review /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96.json --review-sha256 7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96 --go /mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/${CPU_GO_SHA}.json --go-sha256 ${CPU_GO_SHA} --package-sha256 a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "operator_variable": {
+    "CPU_GO_SHA": "Full SHA256 of this byte-identical coordinator-issued CPU GO; resolve after issuance"
+  },
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "phase_scope": "CPU-only current-graph epoch 16 only, serial and alone; no group/reducer/GPU/heldout.",
+  "phases": [
+    "current-graph"
+  ],
+  "retained_observation_provenance": {
+    "commit": "6b05249940f1b64bfca1c2f10245c52b219e2775",
+    "sha256": "5069a8d87f9414aefc0d9fdc41544691a29d3b436469bbb6d62463b25e0cb6a7",
+    "source": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-quiet-read-r14/observation.json",
+    "status": "OBSERVED",
+    "use": "Historical only; fresh quiet-read r15 required.",
+    "utc": "2026-10-14T00:47:21.049378+00:00"
+  },
+  "review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+  "review_status": {
+    "combined_review_receipt_sha256": "7dca4033021e82f10bcca3cdd988364e552ebf59690cf368c47dbb22d6bf3f96",
+    "combined_review_sha256": "69cc87846ccb6dda42543ce94a8d15cd220d91b327ae2520e7497fe2d3c5bc7f",
+    "generic_binding_status": "COORDINATOR_BOUND_VERIFIED_OFFLINE",
+    "generic_manifest_sha256": "55ba8ad7db6ee18f91bb6ea2d89e1a3b11f80cc0f0f20ff82a7f68b25bf13198"
+  },
+  "scientific_constraints": "C1 qualification references are SHA-only; selected decoder input SHAs, mapping, R16, verified_bounds, A1 bytes and recovered sources remain unchanged. T6 verification is not repeated; Tier2 and heldout remain disabled.",
+  "sequence_ruling": {
+    "advance_requires": [
+      "Both actual launcher/sender exit codes0",
+      "Authenticated PASS with bound_count9 and matching CPU plan/execution plan/package/review",
+      "Exact authenticated duration<=3600s",
+      "Direct C4 report sent to coordinator"
+    ],
+    "auto_advance_preauthorized": true,
+    "coordinator_c4_acceptances_may_be_batched": true,
+    "coordinator_commit": "3632efb280bc36722b61c48b26f04d010354987b",
+    "epoch_start_offset_seconds": 300,
+    "issued_cpu_placement_and_run_authorities_still_required": true,
+    "on_failure_unknown_missing_or_excess_duration": "STOP_ENTIRE_SEQUENCE_PRESERVE_NO_RETRY_NO_REPAIR_NO_EXTRA_SSH",
+    "ruling": "SQ-1",
+    "serial_only": true,
+    "status": "APPROVED"
+  },
+  "serial_sequence": {
+    "auto_advance_preauthorized": true,
+    "coordinator_c4_acceptances_may_be_batched": true,
+    "coordinator_can_hold_any_next_run": true,
+    "epoch": 16,
+    "epoch_start_offset_seconds": 300,
+    "order": 15,
+    "previous_epoch": 15,
+    "ruling_commit": "3632efb280bc36722b61c48b26f04d010354987b",
+    "wait_for_actual_predecessor_exit_and_authenticated_pass": true
+  },
+  "signed_git_publication_path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/b-cpu-preflight-epoch16-serial-go-r5.json",
+  "stage_complete": {
+    "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef/complete.json",
+    "sha256": "7f67aa54ddcc87c7c79f52d8c0e23f4c8f08be13fe3e58d779501e7c6aab1010"
+  },
+  "stage_prerequisite": {
+    "complete_sha256": "7f67aa54ddcc87c7c79f52d8c0e23f4c8f08be13fe3e58d779501e7c6aab1010",
+    "coordinator_acceptance_ledger_commit": "d7dcb63c7de5db87074a3bfb16f2adaf39143519",
+    "go_sha256": "ebc133ff95441c8da50d71b923e855fcf14f1f88f831873687ba95dac1206cef",
+    "run_go_sha256": "b2bff6540341419ad3dfd9097132e3f42e47d380ef213f209ac64d85d8528ac6",
+    "status": "ACCEPTED"
+  },
+  "who_count": 0,
+  "window_policy": {
+    "duration_seconds": 7200,
+    "lead_seconds_minimum": 1800,
+    "proposed_only": true,
+    "refresh_if_unissuable": true
+  },
+  "worker_address_space_limit_bytes": 34359738368
+}
