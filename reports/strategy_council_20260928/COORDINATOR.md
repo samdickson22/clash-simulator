@@ -6396,3 +6396,30 @@ Lesson: an integration audit must construct the backend for real; a stub native 
 Any refusal or mismatch stops for a ruling, with no retry.
 
 **Resources** are the existing X4S-4 limits on 01. A console user means yield.
+
+## 2026-10-14 00:16Z: X4S-4 restarted under HR-2 (T3 2026-10-14T00:07:39Z); ruling AR-1 (fit ACK reachability)
+
+**HR-2 steps 1–9 PASS.**
+- watchdog.py 797320cc is installed ×3, and the inventory is re-sealed as ba6a42a7 with only the watchdog entry changed.
+- The old watchdog was stopped by verified PID. HALT is archived to `halt-r2`, and the HALT window is recorded as a STOP period.
+- The set-asides were moves only: the inventory diff shows exactly the planned changes, and all 205,592 moved entries are identical.
+- `ACK-fit-R5` has disposition "continue".
+- **T3 = 2026-10-14T00:07:39Z; hard stop 2026-10-15T00:07:39Z.**
+- W0 passed: watchdog pid 2745836, and the first slow-lane walk took 2.50 s.
+- P3-r4 reproduces inventory aadafb16.
+- P9 `p9-collect-w-r2` is running (pgid 2749275), and the driver is up (pgid 2750088).
+
+**Blocker.** The driver cannot consume `ACK-fit-R5`. `Fits.tick()` returns early while `ANOMALY-fit-<fid>.json` exists, for every reason except wall_over_2x with the O_W gate, so `unresolved_anomalies()`, the only path that consumes an ACK, is never reached for a fit. The R3-F6 resolution path has been unreachable for fits since r4 and stayed hidden until now.
+
+**Ruling AR-1: option (A).** The owner runs the reviewed `driver.unresolved_anomalies()` once, unchanged, as a one-off process on 01 against J:
+- same interpreter and isolation flags as the driver;
+- run as a guarded/STOP-aware step under the existing watchdog;
+- no code changes.
+
+It validates the authorized ACK (4468dcb9, against anomaly 3c990118). It archives `RESOLVED-*` and renames the ACK and the anomaly, exactly as written. The live driver then launches R5 fresh on its next tick. The driver never calls that function concurrently for this fit, so nothing races.
+
+**Rules:**
+- One invocation, no retry. Any validation refusal stops for a ruling.
+- Record the one-off's argv, its output and the file diff.
+- Any later fit anomaly also needs a coordinator ruling for this out-of-band resolution; it is not automatic.
+- The defect (call `unresolved_anomalies()` before the per-fit check) is noted for any later X4S-4 code round. It will not be fixed mid-run.
