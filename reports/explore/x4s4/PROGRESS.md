@@ -669,3 +669,10 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - P12: watchdog ok, no STOP/HALT/ANOMALY, no console user. `REPORTING.GO` was created at 04:20:53Z. The driver
   launched phase-R3a-K4S-120-a1 at 04:21:02Z (launch a027de15…, pid 3570918). ABBA order: R3a, R5, R5-rep, R3a-rep,
   R5W.
+
+## 2026-10-14T06:03Z — ABBA: R3a settled (both arms clean)
+
+- phase-R3a-K4S-120-a1 (a027de15…): exit rc 0, 1,200/1,200, 75.2 min; SETTLED clean (9be7d4c0…), 0 retired.
+- phase-R3a-S-200-a1 (dab04a0a…): exit rc 0, 1,200/1,200, 26.9 min; SETTLED clean (74463401…), 0 retired.
+- phase-R5-K4S-120-a1 launched at 06:03:46Z (8d85004b…). An hourly scheduled watch is active
+  (scheduled-task …x4s4-hourly-watch-t3).
