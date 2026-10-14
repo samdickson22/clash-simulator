@@ -6352,3 +6352,21 @@ HR-2 r2 is at 62a5456e. Sol r2 (`x4s4-review/SOL-FIXCHECK-HR2-r2.md`, 1b6c003fb1
 - **N1 (non-blocking):** the shared-state table omits `Tree.known`/`readout_known`, shared between the fast scan and teardown. That is a pre-existing teardown-overlap residual and will be documented. It also omits the constant fields and the logging threads.
 
 This is the third round, so under PR-1 the coordinator checks the r3 diff directly. The restart procedure stays pre-approved.
+
+## 2026-10-14 00:01Z: K4S A4 03 preflight l01 FAILED (backend_and_corpus); ruling RO-1 (read-only runtime write)
+
+The preflight ran (records at 6fda39eb). S5 exited 1 and `verify-received` returned rc 2: failed, diagnostic, `failed_checks [backend_and_corpus]`. No END attempt is consumed.
+
+**Cause.** An integration defect. The import chain END backend → `tier_backend` → `fair_player` → `engine-rs/differential.py` → `engine-speed/es_common.py:20` runs `RESULTS.mkdir(exist_ok=True)` on `<runtime>/reports/strategy_council_20260928/engine-speed/results`. That directory is untracked at P', so S9 never exports it. S10 stages the runtime read-only, so the mkdir raises PermissionError. K4S reporting ran from a writable checkout and never hit this. The integration audit stopped at a stub native before backend construction.
+
+**Ruling RO-1: option (A).** A minimal reviewed host step, one login per host, inside each staged runtime:
+- Guards: the parent is a real directory (not a symlink); `results` is absent; nothing else under the runtime changes.
+- Action: `chmod u+w` on engine-speed, `mkdir results`, then `chmod a-w` on both.
+- Effect: the runtime file set and manifest 9d6ab1f7 are unchanged, because `validate_bundle` hashes `runtime_files` only. The same empty directory is added to S10 offline for any future staging.
+
+**Before any host step:**
+1. **Close the class dynamically, not only by static scan.** On 05, make a read-only copy of the staged runtime with the empty `results` directory added, and run the full END backend construction exactly as S5 does: real native, real corpus and bundle inputs, the frozen python. It must reach the same point S5 would before its hold, with any write attempt traced. This should catch every remaining write under the runtime or input trees.
+2. **Sol reviews the new host script** under the host-script rule, together with the S10 offline change.
+3. **The coordinator GOs the host step**, then reruns the 03 preflight as l02 (new receive dir and argv), then 04 l00. The PF-2 flags still apply.
+
+Lesson: an integration audit must construct the backend for real; a stub native hides import-time side effects. See memory require-end-to-end-integration-before-host-go.
