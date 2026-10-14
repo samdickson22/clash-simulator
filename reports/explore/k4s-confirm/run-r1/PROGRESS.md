@@ -451,3 +451,4 @@ Job name: clasher-k4s-confirm-run-20261011-r1. Outcomes: **SEALED** (no loss/win
 - 2026-10-14T00:36:28Z s3s9s10-r8 (SHA256SUMS 9cd0374c) full suite 1318 passed x4 (3.12/3.8 normal/-O). Committing RO-1 r2 package.
 - 2026-10-14T00:49:45Z Sol RO1-r2 REQUEST_CHANGES (reviews/SOL-REVIEW-RO1-r2.md 2f126a06): r3 script ro1-results-r3.sh (set +e in body and EXIT handler; env -u BASH_ENV -u SHELLOPTS; parent restored before child; Bash-only token count/parse, 0-255 decimal no leading zero, exactly one __RC line, ssh rc 0, else 255). ro1-tests-r3.sh 41/41 PASS; the same tests vs r2: 11 FAIL (discriminating). Coordinator PR-1 checks r3 directly.
 - 2026-10-14T00:50:02Z r3 usage comment fixed (r2->r3 name); tests rerun 41/41.
+- 2026-10-14T00:51:49Z RO-1 GO 0139032d: ro1-results-r3.sh 127x03 exit 0 (00:51:41Z; BEFORE/AFTER parent dr-xr-sr-x 2555, results dr-xr-sr-x 2555 empty), 127x04 exit 0 (00:51:45Z; same). 1 login each.
