@@ -1,0 +1,14 @@
+{
+  "completed_epoch": 1791937949.468324,
+  "go_sha256": "1765daf2669152bf044467d78862cb2cbe7b8868edfddc0161a83cdaf0ab5a56",
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "procedure_sha256": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+  "receipts": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861.json",
+      "sha256": "c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861"
+    }
+  ],
+  "runtime_admitted": false,
+  "schema": "clasher.v4.b08-authority-placement-complete.v1"
+}

@@ -6411,3 +6411,17 @@ Any refusal or mismatch stops for a ruling, with no retry.
 The driver's own next tick consumes the ACK and launches R5 fresh.
 
 **Standing pre-authorization (AR-2b), for the rest of this X4S-4 run.** If a fit is killed abnormally and a later `prepare_fit_dirs` refuses **only** `pymp-*` multiprocessing listener sockets under `cache/fit/tmp`, the owner may apply the same set-aside to `fits/halted-<tag>/cache-fit-tmp/` and ACK "continue" without a new ruling, then report afterwards. Anything else still needs a ruling.
+
+## 2026-10-14 00:33Z: B placement r14, C-6 ACCEPTED
+
+Placement GO 1765daf2 ran once, at 00:32:24Z, with F1 r6 operator 21a10121. The remote completion was at 00:32:29Z, inside the window.
+
+**Checks:**
+- complete 772bb28c;
+- launch and operator exit codes 0, with no retry, preprobe or extra SSH;
+- fetched_tip = revocation_tip_commit = e0f49a380ed96bd42dfa2e40403b307c069da83e, an ancestor of origin/main;
+- `git log -p` after it contains none of the relied-on SHAs: environment CPU c663556c, placement 1765daf2, stage CPU ebc133ff, stage run b2bff654, review 7dca4033, package a0046c1d;
+- 0 `REVOKED` lines;
+- `runtime_admitted=false`.
+
+**ACCEPTED.** The environment run GO follows, issued from the held draft 3508e974.
