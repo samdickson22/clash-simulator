@@ -6570,3 +6570,17 @@ These checks passed, including the part RO-1 fixed: `reporting_profile`, `physic
 3. **Host step.** A one-file replace of `<base>/tools/k4s_end_preflight.py` on each host, RO-1 style: one login, guarded on the old SHA and size before the change and the new ones after, a-w restored, and the r3 token and cleanup discipline reused.
 4. **Review.** Sol reviews the r7 diff, the class table and the host script as one package. Then the coordinator GO.
 5. **Then** 04 runs as l01, and 03 per PF-3: the A5 pre-trigger at or after 02:53Z, then l03 with the new pins.
+
+## 2026-10-14 02:01Z: B placement r15, C-6 ACCEPTED
+
+Placement GO 6cc864c8 ran once, at 02:00:41Z, with F1 r6 operator 21a10121. The remote completion was at 02:00:45Z, inside the window.
+
+**Checks:**
+- complete 61e385bb;
+- launch and operator exit codes 0, with no retry, preprobe or extra SSH;
+- fetched_tip = revocation_tip_commit = 75330a0180c14d851280266d9e53c0d8e5bf6117, an ancestor of origin/main;
+- `git log -p` after it contains none of the relied-on SHAs: epoch-1 CPU a6e4b650, placement 6cc864c8, environment CPU c663556c, environment run 1d42e2e8, review 7dca4033, package a0046c1d;
+- 0 `REVOKED` lines;
+- `runtime_admitted=false`.
+
+**ACCEPTED.** The epoch-1 run GO follows, issued from the held draft 3d28edf8.

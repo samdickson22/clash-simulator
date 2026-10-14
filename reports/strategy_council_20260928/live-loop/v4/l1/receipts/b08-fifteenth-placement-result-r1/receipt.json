@@ -1,0 +1,17 @@
+{
+  "complete_remote_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/placements/6cc864c893c7616635df19a306b611beefa2c5b513239b5f80b57b4937598668/complete.json",
+  "complete_sha256": "61e385bb840528a2b24de9999134b071efd9991c1ccb01958435f84f2e92c3aa",
+  "completed_utc": "2026-10-14T02:00:45.570831+00:00",
+  "completion_authenticated": true,
+  "epoch_run_started": false,
+  "fetched_tip": "75330a0180c14d851280266d9e53c0d8e5bf6117",
+  "go_sha256": "6cc864c893c7616635df19a306b611beefa2c5b513239b5f80b57b4937598668",
+  "hash_provenance": "Derived from authenticated F1 stdout using reviewed json.dumps(sort_keys=True,indent=2,allow_nan=False)+newline serialization; not independently echoed remote hash.",
+  "launch_exit_code": 0,
+  "operator_exit_code": 0,
+  "revocation_tip_commit": "75330a0180c14d851280266d9e53c0d8e5bf6117",
+  "runtime_admitted": false,
+  "source_journal": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/authority-placement-operator/6cc864c893c7616635df19a306b611beefa2c5b513239b5f80b57b4937598668",
+  "source_launch": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/authority-placement-launch/6cc864c893c7616635df19a306b611beefa2c5b513239b5f80b57b4937598668",
+  "status": "PLACEMENT_COMPLETED_AWAITING_COORDINATOR_C6"
+}
