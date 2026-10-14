@@ -6908,3 +6908,25 @@ All 10 ABBA phases settled clean (1,200 each, 0 retired). The readout ran straig
 - README status updated: fidelity 72.3% train and 74.5% validation (RoyaleSim 78.8%), parity 574/577.
 
 The bots stay on runtime r1. Nothing frozen was re-pinned.
+
+## 2026-10-14 22:43Z: LIVE track launched (Sam: "do that"): real games on the Mac emulator
+
+Sam asked to find out how strong the bot is in real play. A **LIVE LEAD** (Opus, task `clasher-live-lead-20261014-r1`) owns this, at the exploration tier, under the existing authorization:
+- official client, ladder included, on a throwaway account, inside an emulator on the Mac mini only;
+- Training Camp first, then ladder;
+- no detection evasion;
+- fair information only (`live-play-authorization`, 2026-10-04).
+
+**Steps:**
+1. Plan and inventory.
+2. Exploration-tier perception, trained and validated on train/val only. The perception heldout data stays sealed; the formal B chain is not required.
+3. End-to-end replay integration.
+4. Training Camp.
+5. Ladder.
+
+**Constraints:**
+- The T1/TIERS/K4S Mac artifacts and procedures stay untouched; live work goes in its own Mac dir.
+- New host- or Mac-touching scripts get one Sol review.
+- GPU time is carved out of the bot track on request.
+
+Anything needing Sam (account login, captcha, 2FA) is collected as a list and sent to him.
