@@ -6865,3 +6865,34 @@ The owner proceeds through P13 → `<C>` → fetch → P14 → mkdir → P15 wit
 3. The secret scan runs on the merge diff.
 4. Update the README status, which says fidelity is unmeasured, with the fidelity numbers and a link to the reports.
 5. **No impact on frozen work:** X4S-4, the paused timing study, perception and T1 all run from pinned or staged runtimes and commit-addressed sources. Nothing gets re-pinned.
+
+## 2026-10-14 13:03Z: X4S-4 RESULT: on-policy labels HELP (exploration)
+
+All 10 ABBA phases settled clean (1,200 each, 0 retired). The readout ran straight through under RF-1 and RF-2 with every guard passing:
+- P13 contention receipt 025a3bba, frozen at `<C>` 056c64ae before any reduction;
+- the single fetch on 01;
+- P14 results cae1577a;
+- P15 RESULTS.md ae05ee0a, committed at 0b1c04a2.
+
+**Primary pre-declared contrast** (change in loss rate; negative is better):
+
+| Contrast | Value | Interval |
+|---|---|---|
+| mean(R5, R5-rep) − mean(R3a, R3a-rep), 1,200 seeds | **−1.9 pp** | [−3.4, −0.5] |
+| same, fit-inflated | | [−3.9, −0.0] |
+| R5 − R3a | −1.6 pp | |
+| R5-rep − R3a | −3.0 pp | |
+| K4S-120 arm | −2.7 pp | [−4.6, −0.9] |
+| S-200 arm | −1.2 pp | [−3.2, +0.9] |
+
+**Outcome: HELPS.** Both single-fit points are below zero.
+
+**Attribution:** on-policy beats matched off-policy data (mean(R5, R5-rep) − R5W = −2.7 [−4.5, −0.9]).
+
+**Caveats, all disclosed:**
+- the contention sensitivity is inconclusive (−1.8 [−3.7, +0.1]);
+- the S-200 timing parity gap is 2.1 pp.
+
+**Consequence.** On-policy relabelling (DAgger/ExIt) is a confirmed lever for the student. It is already the bot track's strategy (the ExIt students). This is still exploration and NEVER ADOPTABLE as a confirmatory claim.
+
+**01 is being released** to the bot track after a sanctioned shutdown of the driver and watchdog.
