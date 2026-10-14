@@ -6609,3 +6609,17 @@ This is the first real-input epoch of package r5. A failure or UNKNOWN stops and
 **Window:** 2026-10-14 02:15Z to 03:15Z.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 6cd0d25c42a7e220215f2aa92ff9a5e1c862bb366233af2fe18887da131edc7f
+
+## 2026-10-14 02:11Z: K4S PF-4 Sol r1: REQUEST_CHANGES (C20 MHz fallback LOOSER); D5 ruling
+
+The PF-4 package is at 3ce34dd8. Sol r1 (`reviews/SOL-REVIEW-PF4-r1.md`, db79ebd31d6a5635cf8de5308515291c0f9bc386cb536ef5407ad5c2bb29d349) confirms C15, D4, the S10 pins and the 7-bundle RC-6.
+
+**F1 (blocking).** The C20 fallback lets a binding preflight qualify with fewer than 2 post-warmup MHz rows, for example when the sampler starves during the hold. The frozen END raises on fewer than 2 rows (`fleet_profile.py:59–62`), so this is LOOSER, not SAME. **Fix:**
+- a binding hold fails closed when evidence is insufficient;
+- only a short diagnostic hold may record "unavailable", and it is never qualifying.
+
+**N1 (non-blocking).** A failed temp unlink in the swap cleanup goes unreported. It will be fixed in the same round.
+
+**D5 ruling.** Keep the conservative sshd-count check, renamed "sshd-count growth during hold". A pre-auth scanner can cause a false refusal, which costs one attempt and never contaminates a claim; that risk is accepted.
+
+Round 2 goes to Sol, diff-only. Every dependent pin is recomputed.
