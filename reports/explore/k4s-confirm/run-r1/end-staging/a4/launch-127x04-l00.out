@@ -1,0 +1,3 @@
+__START 127x04 preflight-127x04-l00 2026-10-14T00:54:26Z
+{"failures": [], "launched": true, "receipt": "/mpac/sdicks02/k4s-runner/run-r1/end-launch/127x04/preflight-127x04-l00/LAUNCH-RECEIPT.json", "receipt_sha256": "67c7705bab69d23de3e4506d55001d520d4f9c327ad9038d7b02cc51b67a3e13", "ssh_rc": 0}
+__RC 127x04 preflight-127x04-l00 0 2026-10-14T00:54:57Z

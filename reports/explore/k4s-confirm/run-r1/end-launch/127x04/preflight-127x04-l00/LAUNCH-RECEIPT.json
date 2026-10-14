@@ -1,0 +1,511 @@
+{
+ "C5_no_further_SSH": true,
+ "C5_preexec_gate": {
+  "SCHED_OTHER": true,
+  "command_byte_equal": true,
+  "exact_exec_pid": 1413793,
+  "frozen_launch_argv_nul_sha256": "24f9c0ba48415ebe4e932bba7591bae78e728a291577dd5640c9318987a36575",
+  "outside_priority_prefix": false,
+  "parent_pid": 1413792,
+  "parent_ps_nice": "0",
+  "parent_scheduler": "TS",
+  "preexec_gate_pass": true,
+  "ps_nice": "0",
+  "scheduler": "TS",
+  "utc": "2026-10-14T00:54:56Z"
+ },
+ "allow_timers": {
+  "anacron.timer": "hourly daytime anacron; no-op after cron.daily; preflight non-claiming; any load only raises measured bus (conservative)",
+  "systemd-tmpfiles-clean.timer": "brief tmp cleanup; preflight non-claiming; conservative for bus gate",
+  "ua-timer.timer": "short status refresh; preflight non-claiming; conservative for bus gate"
+ },
+ "argv_json_sha256": "3a91417bcd098756b0552c64c12ae3144f06fb027623e1d45c8e1c484c5555c9",
+ "argv_nul_sha256": "24f9c0ba48415ebe4e932bba7591bae78e728a291577dd5640c9318987a36575",
+ "attempt": "preflight-127x04-l00",
+ "composed_program_sha256": "6d864906fcf54bd697f8927d12b7e7a1e1d9e0876657514b121076c74ecaee25",
+ "gate_sha256": "4fc53765a506d1b9c5c9e740b515cc77b6a657bc6289b4e4337b7be4c91ad72c",
+ "host": "127x04",
+ "host_gate": {
+  "C5_preexec_gate": {
+   "SCHED_OTHER": true,
+   "command_byte_equal": true,
+   "exact_exec_pid": 1413793,
+   "frozen_launch_argv_nul_sha256": "24f9c0ba48415ebe4e932bba7591bae78e728a291577dd5640c9318987a36575",
+   "outside_priority_prefix": false,
+   "parent_pid": 1413792,
+   "parent_ps_nice": "0",
+   "parent_scheduler": "TS",
+   "preexec_gate_pass": true,
+   "ps_nice": "0",
+   "scheduler": "TS",
+   "utc": "2026-10-14T00:54:56Z"
+  },
+  "base": {
+   "dev": 66304,
+   "ino": 58597574,
+   "mode": 17901
+  },
+  "detach_receipt": {
+   "launched_at_utc": "2026-10-14T00:54:56Z",
+   "pgid": 1413985,
+   "pid": 1413985
+  },
+  "exit_code": 0,
+  "failures": [],
+  "file_pins": {
+   "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/detach.sh": {
+    "expected": "1648dfdcf85097a54c00b488a5d5570f7c4d0820052a31f89553501084c5b3bb",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/k4s_end_host_tool.py": {
+    "expected": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/k4s_end_preflight.py": {
+    "expected": "c779345116c1bf6c0ab28af8751a36489642c5b9c870326f516361f54bf115f5",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/k4s_preflight_push.sh": {
+    "expected": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580",
+    "matches": true
+   },
+   "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/safe_input.py": {
+    "expected": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+    "matches": true
+   }
+  },
+  "finished_utc": "2026-10-14T00:54:57Z",
+  "frozen_reader": {
+   "bundle_sans_guard_sha256": "9adb181f080ecf6d19d6bcc8d7bef51d86bfc4b27e40fffcb4e5c975eb5ed9e2",
+   "global_git_config": {
+    "config_files": [
+     "/home/sdicks02/.config/git/config",
+     "/home/sdicks02/.gitconfig"
+    ],
+    "git_keys": [
+     "GIT_ASKPASS",
+     "GIT_ATTR_NOSYSTEM",
+     "GIT_CONFIG_GLOBAL",
+     "GIT_CONFIG_NOSYSTEM",
+     "GIT_CONFIG_PARAMETERS",
+     "GIT_LITERAL_PATHSPECS",
+     "GIT_NO_LAZY_FETCH",
+     "GIT_NO_REPLACE_OBJECTS",
+     "GIT_OPTIONAL_LOCKS",
+     "GIT_PAGER",
+     "GIT_TERMINAL_PROMPT"
+    ],
+    "global_config_checked": [
+     "/home/sdicks02/.gitconfig"
+    ]
+   },
+   "guard_job_fresh": true,
+   "guard_repo": {
+    "hooks": [],
+    "promisor": false,
+    "replace_refs": 0,
+    "role": "guard-repo",
+    "shallow_commits": [
+     "0e137378ff251896d7a27899a9453f278945276b",
+     "274aed9a8fcd446ddb5a6f5ec32dc9d3d4163b6a",
+     "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+     "ce042b9775f80cb495c327b14a4712730ae95c85"
+    ],
+    "static_preflight": true,
+    "work_tree": "/mpac/sdicks02/jobs-k4s/k4s-end-guard-r1-pf00/repo"
+   },
+   "repository": {
+    "hooks": [],
+    "promisor": false,
+    "replace_refs": 0,
+    "role": "repository",
+    "static_preflight": true,
+    "work_tree": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository"
+   },
+   "seed_commits": {
+    "b2f9e25e1002d43cc910a4bb476716cc4cd32623": true,
+    "ce042b9775f80cb495c327b14a4712730ae95c85": true
+   }
+  },
+  "host": "127x04",
+  "host_expected": "127x04",
+  "host_tool_sha256": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+  "job_created_utc": "2026-10-14T00:54:56Z",
+  "job_parent_ready": true,
+  "kind": "preflight",
+  "launch": {
+   "rc": 0,
+   "stderr": "",
+   "stdout": "{\"launched_at_utc\":\"2026-10-14T00:54:56Z\",\"pid\":1413985,\"pgid\":1413985}\n"
+  },
+  "launched": true,
+  "other_ssh_session_pids": [],
+  "postexec": {
+   "no_signals_sent": true,
+   "postexec_priority_pass": true,
+   "python": [
+    {
+     "cls": "TS",
+     "ni": "10",
+     "pid": 1414002
+    }
+   ],
+   "python_visible": true,
+   "wrapper": {
+    "cls": "TS",
+    "ni": "10",
+    "pid": 1413985
+   }
+  },
+  "ps": {
+   "rc": 0,
+   "rows": 1285
+  },
+  "quiet_1": {
+   "failures": [],
+   "helper_changed": false,
+   "helper_pids": [
+    2296
+   ],
+   "rc": 0,
+   "read_utc": "2026-10-14T00:54:26Z",
+   "stderr": "",
+   "stdout": "apt-daily.service=inactive\napt-daily-upgrade.service=inactive\nhelper=   2296 Mon Sep 28 15:01:03 2026 unattended-upgr /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal\nmaint_lines=<<>>\nmaint=0\nwho=0\n",
+   "values": {
+    "apt-daily-upgrade.service": "inactive",
+    "apt-daily.service": "inactive",
+    "maint": 0,
+    "who": 0
+   }
+  },
+  "quiet_2": {
+   "failures": [],
+   "helper_changed": false,
+   "helper_pids": [
+    2296
+   ],
+   "rc": 0,
+   "read_utc": "2026-10-14T00:54:56Z",
+   "stderr": "",
+   "stdout": "apt-daily.service=inactive\napt-daily-upgrade.service=inactive\nhelper=   2296 Mon Sep 28 15:01:03 2026 unattended-upgr /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal\nmaint_lines=<<>>\nmaint=0\nwho=0\n",
+   "values": {
+    "apt-daily-upgrade.service": "inactive",
+    "apt-daily.service": "inactive",
+    "maint": 0,
+    "who": 0
+   }
+  },
+  "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+  "schema": "clasher.k4s.end-launch-gate-host.v2",
+  "staged": {
+   "end_reference_sha256": "5cb4751e97436dc1208d5a6d6ab7e46c31a31b4ce53ab1d0d289fc4815f96fa9",
+   "inputs_present": true,
+   "runtime": {
+    "dev": 66304,
+    "ino": 58597578,
+    "mode": 17773
+   }
+  },
+  "stamps": {
+   "failures": [],
+   "stamps": {
+    "apt_lists": {
+     "mtime": 1791925855.7197778,
+     "mtime_utc": "2026-10-13T21:10:55Z",
+     "path": "/var/lib/apt/lists"
+    },
+    "release_upgrade_age_seconds": 6612.3961815834045,
+    "release_upgrade_available": {
+     "mtime": 1791932684.353221,
+     "mtime_utc": "2026-10-13T23:04:44Z",
+     "path": "/var/lib/ubuntu-release-upgrader/release-upgrade-available"
+    },
+    "updates_available": {
+     "mtime": 1791925866.4401019,
+     "mtime_utc": "2026-10-13T21:11:06Z",
+     "path": "/var/lib/update-notifier/updates-available"
+    }
+   }
+  },
+  "started_utc": "2026-10-14T00:54:26Z",
+  "timers": {
+   "failures": [],
+   "raw": "NEXT                        LEFT          LAST                        PASSED        UNIT                         ACTIVATES                     \nWed 2026-10-14 01:02:30 UTC 7min left     Tue 2026-10-13 18:05:51 UTC 6h ago        ua-timer.timer               ua-timer.service              \nWed 2026-10-14 01:30:56 UTC 35min left    Wed 2026-10-14 00:34:38 UTC 20min ago     anacron.timer                anacron.service               \nWed 2026-10-14 03:26:11 UTC 2h 31min left Wed 2026-10-14 00:15:38 UTC 39min ago     fwupd-refresh.timer          fwupd-refresh.service         \nWed 2026-10-14 07:00:00 UTC 6h left       Tue 2026-10-13 07:00:00 UTC 17h ago       logrotate.timer              logrotate.service             \nWed 2026-10-14 07:00:00 UTC 6h left       Tue 2026-10-13 07:00:00 UTC 17h ago       man-db.timer                 man-db.service                \nWed 2026-10-14 07:58:27 UTC 7h left       Tue 2026-10-13 21:10:53 UTC 3h 44min ago  apt-daily.timer              apt-daily.service             \nWed 2026-10-14 13:14:33 UTC 12h left      Tue 2026-10-13 13:55:36 UTC 10h ago       apt-daily-upgrade.timer      apt-daily-upgrade.service     \nWed 2026-10-14 17:20:54 UTC 16h left      Tue 2026-10-13 19:48:32 UTC 5h 6min ago   motd-news.timer              motd-news.service             \nWed 2026-10-14 22:16:47 UTC 21h left      Tue 2026-10-13 22:16:47 UTC 2h 38min ago  systemd-tmpfiles-clean.timer systemd-tmpfiles-clean.service\nSun 2026-10-18 10:10:54 UTC 4 days left   Sun 2026-10-11 10:10:29 UTC 2 days ago    e2scrub_all.timer            e2scrub_all.service           \nMon 2026-10-19 07:00:00 UTC 5 days left   Mon 2026-10-12 07:00:02 UTC 1 day 17h ago fstrim.timer                 fstrim.service                \nn/a                         n/a           n/a                         n/a           snapd.snap-repair.timer      snapd.snap-repair.service     \nn/a                         n/a           n/a                         n/a           ua-license-check.timer       ua-license-check.service      \n\n13 timers listed.\n",
+   "rc": 0,
+   "stderr": "",
+   "timers": [
+    {
+     "allowlisted": "short status refresh; preflight non-claiming; conservative for bus gate",
+     "clear": false,
+     "clearance_seconds": 453.25059747695923,
+     "next_utc": "2026-10-14T01:02:30Z",
+     "unit": "ua-timer.timer"
+    },
+    {
+     "allowlisted": "hourly daytime anacron; no-op after cron.daily; preflight non-claiming; any load only raises measured bus (conservative)",
+     "clear": false,
+     "clearance_seconds": 2159.2505974769592,
+     "next_utc": "2026-10-14T01:30:56Z",
+     "unit": "anacron.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 9074.25059747696,
+     "next_utc": "2026-10-14T03:26:11Z",
+     "unit": "fwupd-refresh.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 21903.25059747696,
+     "next_utc": "2026-10-14T07:00:00Z",
+     "unit": "logrotate.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 21903.25059747696,
+     "next_utc": "2026-10-14T07:00:00Z",
+     "unit": "man-db.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 25410.25059747696,
+     "next_utc": "2026-10-14T07:58:27Z",
+     "unit": "apt-daily.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 44376.25059747696,
+     "next_utc": "2026-10-14T13:14:33Z",
+     "unit": "apt-daily-upgrade.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 59157.25059747696,
+     "next_utc": "2026-10-14T17:20:54Z",
+     "unit": "motd-news.timer"
+    },
+    {
+     "allowlisted": "brief tmp cleanup; preflight non-claiming; conservative for bus gate",
+     "clear": true,
+     "clearance_seconds": 76910.25059747696,
+     "next_utc": "2026-10-14T22:16:47Z",
+     "unit": "systemd-tmpfiles-clean.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 378957.25059747696,
+     "next_utc": "2026-10-18T10:10:54Z",
+     "unit": "e2scrub_all.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": 453903.25059747696,
+     "next_utc": "2026-10-19T07:00:00Z",
+     "unit": "fstrim.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": null,
+     "next_utc": null,
+     "unit": "snapd.snap-repair.timer"
+    },
+    {
+     "allowlisted": null,
+     "clear": true,
+     "clearance_seconds": null,
+     "next_utc": null,
+     "unit": "ua-license-check.timer"
+    }
+   ]
+  },
+  "utc": "2026-10-14T00:54:56Z",
+  "who": {
+   "lines": 0,
+   "rc": 0,
+   "refused": null
+  }
+ },
+ "host_tool_sha256": "22c441b1db0fb7e1cf31cd259a5e838f375a7a935b3c78f5f5f5891869508647",
+ "job": "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight/preflight-127x04-l00",
+ "kind": "preflight",
+ "launch_SSH_argv": [
+  "/usr/bin/ssh",
+  "-T",
+  "-o",
+  "BatchMode=yes",
+  "-o",
+  "ControlMaster=no",
+  "-o",
+  "ControlPath=none",
+  "-o",
+  "StrictHostKeyChecking=yes",
+  "-o",
+  "ConnectTimeout=20",
+  "-o",
+  "ServerAliveInterval=15",
+  "-o",
+  "ServerAliveCountMax=4",
+  "-o",
+  "ClearAllForwardings=yes",
+  "-o",
+  "RequestTTY=no",
+  "127x04",
+  "/usr/bin/python3 -I -B -"
+ ],
+ "launch_SSH_exit_code": 0,
+ "launch_SSH_stderr": "",
+ "launch_command": [
+  "nice",
+  "-n",
+  "10",
+  "taskset",
+  "-c",
+  "61",
+  "bash",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/detach.sh",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight/preflight-127x04-l00/detach.log",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight/preflight-127x04-l00/detach.json",
+  "bash",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/k4s_preflight_push.sh",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight/preflight-127x04-l00",
+  "env",
+  "OMP_NUM_THREADS=1",
+  "OPENBLAS_NUM_THREADS=1",
+  "MKL_NUM_THREADS=1",
+  "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+  "-B",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/k4s_end_preflight.py",
+  "run",
+  "--bundle",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-pf00",
+  "--bundle-pins-sha256",
+  "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f",
+  "--runtime-root",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime-98566c032d0b",
+  "--native",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1/clasher_core.abi3.so",
+  "--corpus",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1/K4-states.pkl",
+  "--corpus-inventory",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime-98566c032d0b/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+  "--corpus-inventory-sha256",
+  "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+  "--k4s-manifest-sha256",
+  "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+  "--sd1-manifest-sha256",
+  "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "--end-evidence",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-pf00/k4s-end-evidence/end-evidence.json",
+  "--end-evidence-sha256",
+  "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+  "--repository",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository",
+  "--attempt-parent",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/attempts",
+  "--out",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight/preflight-127x04-l00/preflight-127x04-l00",
+  "--hold-seconds",
+  "1200",
+  "--compare-bundle",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a00",
+  "--compare-bundle-pins-sha256",
+  "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e"
+ ],
+ "launched": true,
+ "local_controlmaster": {
+  "ssh_O_check_rc": 255,
+  "stderr": "No ControlPath specified for \"-O\" command"
+ },
+ "measurement_argv": [
+  "env",
+  "OMP_NUM_THREADS=1",
+  "OPENBLAS_NUM_THREADS=1",
+  "MKL_NUM_THREADS=1",
+  "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+  "-B",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/tools/k4s_end_preflight.py",
+  "run",
+  "--bundle",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-pf00",
+  "--bundle-pins-sha256",
+  "fd8c9ee5e8fc262f49f17961b62668b2daa156e1c49bfbc26be93754e00faa0f",
+  "--runtime-root",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime-98566c032d0b",
+  "--native",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1/clasher_core.abi3.so",
+  "--corpus",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/end-inputs-r1/K4-states.pkl",
+  "--corpus-inventory",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/runtime-98566c032d0b/reports/explore/t1/corpora/corpus-03-a51ea64c/corpora.json",
+  "--corpus-inventory-sha256",
+  "3501e2acf444c2f23a5ed9f9471ebcabfc66216b412847c033759c3f4b2cde13",
+  "--k4s-manifest-sha256",
+  "74314eda04a7100d7ce10141394282b646723d29d0e7bb3883355d1ef1db6357",
+  "--sd1-manifest-sha256",
+  "b8ce7b4c088e275894b9654a85923aacf428656e71433f60ec32bed1ae63ef76",
+  "--end-evidence",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-pf00/k4s-end-evidence/end-evidence.json",
+  "--end-evidence-sha256",
+  "2ab14a3e3f15d41ff80bef31a0a529eddc78a05e61f42bce1e4bfbc4de50a3fd",
+  "--repository",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/repository",
+  "--attempt-parent",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/attempts",
+  "--out",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/preflight/preflight-127x04-l00/preflight-127x04-l00",
+  "--hold-seconds",
+  "1200",
+  "--compare-bundle",
+  "/mpac/sdicks02/jobs-k4s/k4s-end-r1/bundles/end-ref-127x04-rd00-a00",
+  "--compare-bundle-pins-sha256",
+  "2fb48c3e71ca4dbc6be3300cf557eba94d0f6eab36d994385ef1ac7d92f2fb6e"
+ ],
+ "mode": "binding",
+ "outcomes_sealed": true,
+ "postexec": {
+  "no_signals_sent": true,
+  "postexec_priority_pass": true,
+  "python": [
+   {
+    "cls": "TS",
+    "ni": "10",
+    "pid": 1414002
+   }
+  ],
+  "python_visible": true,
+  "wrapper": {
+   "cls": "TS",
+   "ni": "10",
+   "pid": 1413985
+  }
+ },
+ "prerequisites": {},
+ "qualifying_preflight": true,
+ "quiet_read_v3_sha256": "a293207e601498d8e7b374a610eddba6f7223e64af34dae00ce52defa30f7c9c",
+ "receive": {
+  "empty": true,
+  "receive": "/mpac/sdicks02/k4s-runner/run-r1/preflight-received/127x04/preflight-127x04-l00"
+ },
+ "remote_sha256": "f5c18122370302f3945b7ae5a96e1d3be8d06a65d38ef09d1211bbf78efeb47d",
+ "roots_commit": "98566c032d0b6ea2ec613ed9a45b0dc2a5df33cb",
+ "roots_sha256": "872ced5028db256e3b587f7fd5f2a9a4f6a5247f0b1a0548adb3e7accb628a40",
+ "safe_input_sha256": "806e5ebb882bc7fae8fc10598599d03276bea4c655bba46328dd80af44947f00",
+ "schema": "clasher.k4s.end-launch-receipt.v2",
+ "scientific_games": false,
+ "second_attempt_ruling": null,
+ "session_close_epoch": 1791939297.6147418,
+ "session_close_utc": "2026-10-14T00:54:57.614742Z",
+ "session_open_epoch": 1791939266.1090903,
+ "session_open_utc": "2026-10-14T00:54:26.109090Z",
+ "utc": "2026-10-14T00:54:56Z",
+ "wrapper_sha256": "c9779cfb339b335bb62d09995e6a14e0202a835af337d641a19b25fffe85c580"
+}
