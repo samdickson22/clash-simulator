@@ -1,0 +1,29 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p13-contention",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/contention.py",
+    "--job",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy"
+  ],
+  "cwd": null,
+  "readout": true,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 1214242,
+    "pgid": 1214242,
+    "starttime": 177260241
+  },
+  "passed": true,
+  "utc": "2026-10-14T12:58:56Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/receipts/contention-exclusion.json": "025a3bba388e88849b7a4e549d55b5b296cfd6b7f18a675c61578a098a6ebd1a"
+  },
+  "new_files": {},
+  "final_verdict": null
+}
