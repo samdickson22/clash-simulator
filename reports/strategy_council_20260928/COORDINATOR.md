@@ -6794,3 +6794,27 @@ ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 97f7a739bae7e97e6dd0cd6ad0cb8bbf545a5bbf00a
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN b9a54ecd0577a3382e285e1576539218e51dda2017c1b707b1566db677b1852c
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 16a65076ce0e058e9ff8651bef02a456e375bb1142cfc83c89821ed2db2ba247
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 8fb52aa4e6c1dfbcf6aaf9704a5bfe4c8564da7770647c59e9c39a828c4b6ed2
+
+## 2026-10-14 03:44Z: B r5 epochs 2–3 C-4 ACCEPTED; epoch 4 KNOWN_FAILURE (package defect); SQ-1 stopped; perception PAUSED (bot-first)
+
+**Epochs 2 and 3: C-4 ACCEPTED (batched under SQ-1).**
+
+| Epoch | Result | Exits | Duration | Epoch file | Result file |
+|---|---|---|---|---|---|
+| 2 | PASS, `bound_count` 9 | 0/0 | 153.0113697 s | a5b5ff44 | 158fad78 |
+| 3 | PASS, `bound_count` 9 | 0/0 | 150.5461792 s | b4888285 | a5f2370f |
+
+Plans, package and review match on both. Epoch 1 (142.08 s) was accepted earlier.
+
+**Epoch 4: KNOWN_FAILURE.** Run 85f56cbd / CPU a6247fe4. Launcher and sender exit 1, and no authenticated epoch artifact came back. The SQ-1 stop worked: epochs 5–24 were never launched, and nothing was retried.
+
+**Coordinator diagnosis read.** One read-only SSH to 08 with `epoch04-diag-read-r1/remote.py` (5f9a00d3), which is the reviewed diag-read r3 with only the CPU SHA substituted. rc 0, raw 00a09634.
+- `stderr.log` shows `b08_producer_claims.py:54 verify` raising **`KeyError: 'sha256'`**. The call chain is `epoch_inputs` → `producer_claims.verify(entry)` → `contract['queue_plans'][pin]['sha256']`.
+- The `phase-exit-code` is 1.
+- **Cause: a package r5 content and contract-schema defect.** Epoch 4's input entry references a queue-plan overlay whose producer-contract record has no `sha256` field. Epochs 1–3 never reached such an entry. It is not a host or transport problem.
+
+**Ruling: perception is PAUSED under BOT-FIRST (91e2bb67).**
+- No r6 package round now.
+- The owner writes an offline root-cause note and a proposed minimal fix. That covers the schema of every `queue_plans` record across **all 24 epochs**, so the whole class gets fixed at once.
+- After that, no host action. The owner disables its periodic polling.
+- Three of the 24 epochs have passed; the B chain resumes only by a later coordinator decision.
