@@ -6896,3 +6896,15 @@ All 10 ABBA phases settled clean (1,200 each, 0 retired). The readout ran straig
 **Consequence.** On-policy relabelling (DAgger/ExIt) is a confirmed lever for the student. It is already the bot track's strategy (the ExIt students). This is still exploration and NEVER ADOPTABLE as a confirmatory claim.
 
 **01 is being released** to the bot track after a sanctioned shutdown of the driver and watchdog.
+
+## 2026-10-14 14:30Z: Engine calibration merged to main (verified)
+
+**Merge commit:** 0ecdd97d, `--no-ff`, with parents 0dc77d81 and 54e6a8dc. main is now at d3231388. The tag `engine-r1` points at 3106c5ab, the pre-merge engine.
+
+**Coordinator check:**
+- `git diff c7be6648 0ecdd97d -- src engine-rs` touches only `engine-rs/test_stage4_b2.py`, so the engine is byte-identical to the verified batch-2 code.
+- The full suite shows 0 new failures against baseline. The 7 earlier failures were tests asserting pre-calibration values (Wall Breakers 350→281, Poison 21→22, the Firecracker clock); only tests changed.
+- Secret scan: 0 hits.
+- README status updated: fidelity 72.3% train and 74.5% validation (RoyaleSim 78.8%), parity 574/577.
+
+The bots stay on runtime r1. Nothing frozen was re-pinned.
