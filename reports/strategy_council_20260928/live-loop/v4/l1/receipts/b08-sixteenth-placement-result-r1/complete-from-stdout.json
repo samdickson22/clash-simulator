@@ -1,0 +1,102 @@
+{
+  "completed_epoch": 1791947786.7973228,
+  "go_sha256": "0119bdbfa6e060d12e20d38eec5193e1e2befb030512a9d8c02831c17090f391",
+  "package_sha256": "a0046c1d27bf7b045e6fafad1a3e188afc2134aaa639c330793b8c9e9734d68c",
+  "procedure_sha256": "d82c5ff0c70951376c091c5a3b9cb9029d9f0fe624e02e55a5505d989cb9a65a",
+  "receipts": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/0c28a1615656d81e7d531fb07f7aadf0f6d58f4bd91efafc80c4a54aac3efe76.json",
+      "sha256": "0c28a1615656d81e7d531fb07f7aadf0f6d58f4bd91efafc80c4a54aac3efe76"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/d9438705ed897f1754a73d2863c607b4bf2c52ba684a429a8e654f5fb0384694.json",
+      "sha256": "d9438705ed897f1754a73d2863c607b4bf2c52ba684a429a8e654f5fb0384694"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/a6247fe4f65d80a98b5c1f6a3a72c2c4bf0147c0384c0c2f5ac716f11baeb239.json",
+      "sha256": "a6247fe4f65d80a98b5c1f6a3a72c2c4bf0147c0384c0c2f5ac716f11baeb239"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/5efce10ec1a9be2e5861389490e89c2624a022edf0912ae2936bf5f2f9d6f8cd.json",
+      "sha256": "5efce10ec1a9be2e5861389490e89c2624a022edf0912ae2936bf5f2f9d6f8cd"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/3a64fd4f55b8b8a90c2c24f5cc1329bfc835742d15d05f75b9aeb1a84068b853.json",
+      "sha256": "3a64fd4f55b8b8a90c2c24f5cc1329bfc835742d15d05f75b9aeb1a84068b853"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/a1c46c5c4c61c77ecb2626197388e6de5e3062332a27ec8515b9c0051c589efc.json",
+      "sha256": "a1c46c5c4c61c77ecb2626197388e6de5e3062332a27ec8515b9c0051c589efc"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/e6a60687f52d185adf552dcec70413287485091fc85b37a1808f8a9d7f0736dc.json",
+      "sha256": "e6a60687f52d185adf552dcec70413287485091fc85b37a1808f8a9d7f0736dc"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/4489bcb0f0af1b353819f24432ab7cb8881c605cc1a9357da42d4b75c0c280d7.json",
+      "sha256": "4489bcb0f0af1b353819f24432ab7cb8881c605cc1a9357da42d4b75c0c280d7"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/76998b86dd6fe2fcf141f2f32e289746cf53217ed62fb2ec757d5a362684a073.json",
+      "sha256": "76998b86dd6fe2fcf141f2f32e289746cf53217ed62fb2ec757d5a362684a073"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/dd2f6d9f6484bd6a2e57a4724b890c90f50af9e3b7a2279ad8ff795932d4e0b1.json",
+      "sha256": "dd2f6d9f6484bd6a2e57a4724b890c90f50af9e3b7a2279ad8ff795932d4e0b1"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/6c9541e5d0a78090b54be2bbace22671accf91ca3ed781a943aa5c630b40c875.json",
+      "sha256": "6c9541e5d0a78090b54be2bbace22671accf91ca3ed781a943aa5c630b40c875"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/9811b294504cea2fc00636a3e02fc312bdf62da18cb954ab6168c4714c790c1b.json",
+      "sha256": "9811b294504cea2fc00636a3e02fc312bdf62da18cb954ab6168c4714c790c1b"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/bd6feb0992a2ad48e96a2069b7670ecc482e224c55f2f9248fdfb4601471310d.json",
+      "sha256": "bd6feb0992a2ad48e96a2069b7670ecc482e224c55f2f9248fdfb4601471310d"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/4b5e1f6c8c64aa9287f066961c180ff71ad74d70bb430bd1c8a6beae0f728ee3.json",
+      "sha256": "4b5e1f6c8c64aa9287f066961c180ff71ad74d70bb430bd1c8a6beae0f728ee3"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/049c494399b935a6a9424de3eb1a6bbaece8f44e18c4bfc56041c4594989799d.json",
+      "sha256": "049c494399b935a6a9424de3eb1a6bbaece8f44e18c4bfc56041c4594989799d"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/462d1e2e81899bdc4940c6097037e0f8666a7aaf077b43d21e2287af7408f45c.json",
+      "sha256": "462d1e2e81899bdc4940c6097037e0f8666a7aaf077b43d21e2287af7408f45c"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/1ddd9648d9a65837bbc1f811d930684c674a7449dd6fe39aac0816aa07a62481.json",
+      "sha256": "1ddd9648d9a65837bbc1f811d930684c674a7449dd6fe39aac0816aa07a62481"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/547480a16ed8a1dfa7546c7c8313a1f42e94dfc98eeeb456aa07254413081bb9.json",
+      "sha256": "547480a16ed8a1dfa7546c7c8313a1f42e94dfc98eeeb456aa07254413081bb9"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/fe95c3fea987feb715183f62930d277b748eec676e1896c86d746768e7e6fa3b.json",
+      "sha256": "fe95c3fea987feb715183f62930d277b748eec676e1896c86d746768e7e6fa3b"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/9b9c13d0914fe1acc71b0f2eeff39c8e0235c0a14bcea3fa87e6b0da02701ae5.json",
+      "sha256": "9b9c13d0914fe1acc71b0f2eeff39c8e0235c0a14bcea3fa87e6b0da02701ae5"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d001747f7bcc8d45c5c8.json",
+      "sha256": "dcf707db765fb3bbe4ad2b63c14ba7454ea6c7f8e147d001747f7bcc8d45c5c8"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6.json",
+      "sha256": "3afc9c1ebe30dff895bc04b7d4d7964b23550cd2e001468163795973a901edf6"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0.json",
+      "sha256": "5cc1ad023835e53c342b960248a738730a1eb733c58e46cc2360d2dd285608f0"
+    }
+  ],
+  "runtime_admitted": false,
+  "schema": "clasher.v4.b08-authority-placement-complete.v1"
+}

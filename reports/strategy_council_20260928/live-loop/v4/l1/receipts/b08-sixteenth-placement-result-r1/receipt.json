@@ -1,0 +1,16 @@
+{
+  "complete_hash_provenance": "Derived from authenticated F1 stdout using reviewed serialization; not independently echoed remote hash",
+  "complete_remote_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/authority/placements/0119bdbfa6e060d12e20d38eec5193e1e2befb030512a9d8c02831c17090f391/complete.json",
+  "complete_sha256": "48042e71feddc671713315a70caf37d0ca93061f0ccf5d981ed0f079514d7b1f",
+  "completed_utc": "2026-10-14T03:16:26.797323+00:00",
+  "coordinator_c6_pending": true,
+  "epoch_execution_authorized": false,
+  "fetched_tip": "4f42dada45738ea5661d9d36260f021c3f2ebe8b",
+  "go_sha256": "0119bdbfa6e060d12e20d38eec5193e1e2befb030512a9d8c02831c17090f391",
+  "launcher_exit_code": 0,
+  "operator_exit_code": 0,
+  "placed_cpu_count": 23,
+  "revocation_tip_commit": "4f42dada45738ea5661d9d36260f021c3f2ebe8b",
+  "runtime_admitted": false,
+  "status": "SUCCESS"
+}

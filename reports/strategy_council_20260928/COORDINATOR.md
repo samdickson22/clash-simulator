@@ -6738,3 +6738,16 @@ ISSUED AUTHORIZE_B_AUTHORITY_PLACEMENT 0119bdbfa6e060d12e20d38eec5193e1e2befb030
    - (b) speed on the same host;
    - (c) our best bots running in both engines, plus a daily headline win-rate number;
    - (d) an engine decision, then training at scale on the chosen engine.
+
+## 2026-10-14 03:18Z: B placement r16 (23 serial epoch CPU GOs), C-6 ACCEPTED
+
+Placement GO 0119bdbf ran once, at 03:16:21Z, with F1 r6 operator 21a10121. The remote completion was at 03:16:26Z, inside the window, with 23 CPU receipts placed.
+
+**Checks:**
+- complete 48042e71;
+- launcher and operator exit codes 0 (exit-code file 0, exit.json 0), with no retry, preprobe or extra SSH;
+- fetched_tip = revocation_tip_commit = 4f42dada45738ea5661d9d36260f021c3f2ebe8b, an ancestor of origin/main;
+- `git log -p` after it contains none of the relied-on SHAs: all 23 CPU GOs, placement 0119bdbf, review 7dca4033, package a0046c1d, epoch-1 run 6cd0d25c;
+- 0 `REVOKED` lines.
+
+**ACCEPTED.** The 23 serial run GOs follow, co-issued under SQ-1.
