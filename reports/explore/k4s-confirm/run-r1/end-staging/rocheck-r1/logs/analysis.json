@@ -1,0 +1,1687 @@
+{
+ "by_location": {
+  "INSIDE:runtime": 2,
+  "fd:outside": 1,
+  "fd:pipe/socket/anon": 1,
+  "harness-log": 1,
+  "outside": 15
+ },
+ "corrupt": [],
+ "execs": [
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/plan.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/completion-v2/REPORTING-COMPLETION.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-reporting/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-reporting/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/reporting/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/reporting/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r1/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r1/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r1/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r1/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r2/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r2/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r2/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r2/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r3/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r3/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r3/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r3/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r4/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r4/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r4/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r4/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-reporting/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-reporting/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/reporting/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/reporting/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r1/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r1/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r1/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r1/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r2/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r2/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r2/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r2/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r3/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r3/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r3/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r3/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r4/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r4/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r4/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r4/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-final.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/completion-v2/counted-inventory.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 111142
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/plan.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/completion-v2/REPORTING-COMPLETION.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-reporting/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-reporting/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/reporting/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/reporting/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r1/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r1/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r1/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r1/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r2/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r2/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r2/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r2/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r3/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r3/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r3/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r3/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r4/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x03-replacement-r4/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r4/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x03/replacement-r4/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-reporting/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-reporting/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/reporting/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/reporting/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r1/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r1/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r1/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r1/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r2/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r2/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r2/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r2/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r3/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r3/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r3/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r3/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r4/launch.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/phase-meta/127x04-replacement-r4/supervisor-exit.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r4/mhz.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/end-sources/127x04/replacement-r4/census.jsonl']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/ledger/blind-ledger-final.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'show', '022ec7bf298caaab81bc6e70fe917d3e75b21bde:reports/explore/k4s-confirm/run-r1/completion-v2/counted-inventory.json']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  },
+  {
+   "args": [
+    "'git'",
+    "['git', '-C', '/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository', 'merge-base', '--is-ancestor', '022ec7bf298caaab81bc6e70fe917d3e75b21bde', 'HEAD']"
+   ],
+   "event": "subprocess.Popen",
+   "pid": 234708
+  }
+ ],
+ "info_counts": {
+  "ctypes.dlopen": 4,
+  "mmap.__new__": 1,
+  "os.chdir": 1,
+  "sitecustomize-installed": 3,
+  "subprocess.Popen": 176
+ },
+ "inside_writes": [
+  {
+   "event": "os.mkdir",
+   "flags": null,
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py:1311:mkdir",
+   "loc": "INSIDE:runtime",
+   "mode": null,
+   "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/results",
+   "pid": 111142,
+   "stack": [
+    "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py:1311:mkdir",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/es_common.py:20:<module>",
+    "<frozen importlib._bootstrap>:488:_call_with_frames_removed",
+    "<frozen importlib._bootstrap_external>:999:exec_module",
+    "<frozen importlib._bootstrap>:935:_load_unlocked",
+    "<frozen importlib._bootstrap>:1331:_find_and_load_unlocked",
+    "<frozen importlib._bootstrap>:1360:_find_and_load",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/engine-rs/differential.py:20:<module>"
+   ]
+  },
+  {
+   "event": "os.mkdir",
+   "flags": null,
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py:1311:mkdir",
+   "loc": "INSIDE:runtime",
+   "mode": null,
+   "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/results",
+   "pid": 234708,
+   "stack": [
+    "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py:1311:mkdir",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/es_common.py:20:<module>",
+    "<frozen importlib._bootstrap>:488:_call_with_frames_removed",
+    "<frozen importlib._bootstrap_external>:999:exec_module",
+    "<frozen importlib._bootstrap>:935:_load_unlocked",
+    "<frozen importlib._bootstrap>:1331:_find_and_load_unlocked",
+    "<frozen importlib._bootstrap>:1360:_find_and_load",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/engine-rs/differential.py:20:<module>"
+   ]
+  }
+ ],
+ "inventory_diff": {
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/bundles/end-ref-127x03-pf00": {
+   "added": [],
+   "changed": [],
+   "changed_detail": {},
+   "removed": []
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/end-inputs-r1": {
+   "added": [],
+   "changed": [],
+   "changed_detail": {},
+   "removed": []
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/repository": {
+   "added": [],
+   "changed": [],
+   "changed_detail": {},
+   "removed": []
+  },
+  "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b": {
+   "added": [],
+   "changed": [],
+   "changed_detail": {},
+   "removed": []
+  }
+ },
+ "inventory_diff_empty": true,
+ "outside_writes_grouped": [
+  {
+   "count": 1,
+   "event": "os.truncate",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/multiprocessing/heap.py:88:__init__",
+   "loc": "fd:outside",
+   "path": "fd:8->/dev/shm/pym-111142-fpas4a1x (deleted)",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "open",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/multiprocessing/popen_spawn_posix.py:61:_launch",
+   "loc": "fd:pipe/socket/anon",
+   "path": "fd:17->pipe:[756822662]",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "open",
+   "frame": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/driver/rocheck_driver.py:25:main",
+   "loc": "harness-log",
+   "path": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/logs/driver-steps.jsonl",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 4,
+   "event": "open",
+   "frame": "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/dill/_dill.py:164:get_file_type",
+   "loc": "outside",
+   "path": "/dev/null",
+   "pids": [
+    111142,
+    234708
+   ]
+  },
+  {
+   "count": 4,
+   "event": "open",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/_pyio.py:1563:__init__",
+   "loc": "outside",
+   "path": "/dev/null",
+   "pids": [
+    111142,
+    234708
+   ]
+  },
+  {
+   "count": 1,
+   "event": "tempfile.mkstemp",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/tempfile.py:254:_mkstemp_inner",
+   "loc": "outside",
+   "path": "/dev/shm/pym-111142-fpas4a1x",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "open",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/tempfile.py:256:_mkstemp_inner",
+   "loc": "outside",
+   "path": "/dev/shm/pym-111142-fpas4a1x",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "os.remove",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/multiprocessing/heap.py:86:__init__",
+   "loc": "outside",
+   "path": "/dev/shm/pym-111142-fpas4a1x",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "open",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/tempfile.py:203:_get_default_tempdir",
+   "loc": "outside",
+   "path": "/tmp/rs46hc5e",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "os.remove",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/tempfile.py:210:_get_default_tempdir",
+   "loc": "outside",
+   "path": "/tmp/rs46hc5e",
+   "pids": [
+    111142
+   ]
+  },
+  {
+   "count": 1,
+   "event": "open",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/tempfile.py:203:_get_default_tempdir",
+   "loc": "outside",
+   "path": "/tmp/sld1j1mt",
+   "pids": [
+    234708
+   ]
+  },
+  {
+   "count": 1,
+   "event": "os.remove",
+   "frame": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/tempfile.py:210:_get_default_tempdir",
+   "loc": "outside",
+   "path": "/tmp/sld1j1mt",
+   "pids": [
+    234708
+   ]
+  }
+ ],
+ "processes": [
+  {
+   "argv": [
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/driver/rocheck_driver.py",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/driver/k4s_end_preflight.py",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base"
+   ],
+   "cwd": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/work",
+   "exited": true,
+   "pid": 111142,
+   "ppid": 111133,
+   "read_opens": 6111
+  },
+  {
+   "argv": [
+    "-c"
+   ],
+   "cwd": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/work",
+   "exited": true,
+   "pid": 111967,
+   "ppid": 111142,
+   "read_opens": 24
+  },
+  {
+   "argv": [
+    "-c",
+    "--multiprocessing-fork"
+   ],
+   "cwd": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/work",
+   "exited": true,
+   "pid": 234708,
+   "ppid": 111142,
+   "read_opens": 5930
+  }
+ ],
+ "raises": [
+  {
+   "errno": "EEXIST",
+   "error": "FileExistsError(17, 'File exists')",
+   "filename": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/results",
+   "loc": "INSIDE:runtime",
+   "pid": 111142,
+   "stack": [
+    "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py:1311:mkdir",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/es_common.py:20:<module>",
+    "<frozen importlib._bootstrap>:488:_call_with_frames_removed",
+    "<frozen importlib._bootstrap_external>:999:exec_module"
+   ]
+  },
+  {
+   "errno": "EEXIST",
+   "error": "FileExistsError(17, 'File exists')",
+   "filename": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/results",
+   "loc": "INSIDE:runtime",
+   "pid": 234708,
+   "stack": [
+    "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py:1311:mkdir",
+    "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/base/runtime-98566c032d0b/reports/strategy_council_20260928/engine-speed/es_common.py:20:<module>",
+    "<frozen importlib._bootstrap>:488:_call_with_frames_removed",
+    "<frozen importlib._bootstrap_external>:999:exec_module"
+   ]
+  }
+ ],
+ "shim_counts": {
+  "shim.os.getpriority": 3,
+  "shim.os.sched_setaffinity": 8,
+  "shim.platform.node": 2
+ },
+ "write_events_total": 20
+}

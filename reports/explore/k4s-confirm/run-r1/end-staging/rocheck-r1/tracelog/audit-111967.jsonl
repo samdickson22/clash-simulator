@@ -1,0 +1,3 @@
+{"kind": "start", "pid": 111967, "ppid": 111142, "t": 1791936652.3611698, "argv": ["-c"], "cwd": "/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/work", "executable": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python"}
+{"kind": "info", "event": "sitecustomize-installed", "args": ["/mpac/sdicks02/k4s-runner/run-r1/end-staging/rocheck-r1/audit/sitecustomize.py"], "pid": 111967, "t": 1791936652.3612344}
+{"kind": "exit", "read_opens": 24, "pid": 111967, "t": 1791936768.913791}
