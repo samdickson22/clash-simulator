@@ -1,0 +1,33 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p7-verify-O",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/verify_onpolicy.py",
+    "--mode",
+    "O",
+    "--plan",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/plan.json",
+    "--label-receipts",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-receipt-O-1791897512.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 824173,
+    "pgid": 824173,
+    "starttime": 168803956
+  },
+  "passed": true,
+  "utc": "2026-10-13T13:30:40Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/O-VERIFIED.json": "e6d19a8166712b0879697fd41c62f0245f16f630e8c09c81c5db10d9405435e5"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

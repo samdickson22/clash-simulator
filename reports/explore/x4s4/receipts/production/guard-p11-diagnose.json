@@ -1,0 +1,27 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p11-diagnose",
+  "argv": [
+    "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/diagnose.py"
+  ],
+  "cwd": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/fit/source",
+  "readout": false,
+  "gpu": true,
+  "add": 1,
+  "child": {
+    "pid": 3556670,
+    "pgid": 3556670,
+    "starttime": 174132794
+  },
+  "passed": true,
+  "utc": "2026-10-14T04:20:17Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/analysis/diagnostic.json": "c66ca750d6b6d1a27c25e564e4c57631046ae3ec9851aff1ab5f1b1fe0fa2a42"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q4-roundtrip",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/qualify4.py",
+    "roundtrip",
+    "--phases",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+    "--threads",
+    "1",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/roundtrip.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 3345790,
+    "pgid": 3345790,
+    "starttime": 165824325
+  },
+  "passed": true,
+  "utc": "2026-10-13T05:25:42Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/roundtrip.json": "e905ec5fa1560db1e46668ded9b0acbf43fe388a994cba3b0e799e6be9f3bf66"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

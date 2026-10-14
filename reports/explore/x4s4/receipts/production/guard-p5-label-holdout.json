@@ -1,0 +1,34 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p5-label-holdout",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/label.py",
+    "run",
+    "--plan",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-plan.json",
+    "--set",
+    "holdout",
+    "--workers",
+    "48"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 50,
+  "child": {
+    "pid": 793788,
+    "pgid": 793788,
+    "starttime": 168750247
+  },
+  "passed": true,
+  "utc": "2026-10-13T13:26:38Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {},
+  "new_files": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-receipt-holdout-1791897994.json": "9fa781b9711052c8b7b0b942b638e5bad145d647099ff4c8ab234cb93b88421d"
+  },
+  "final_verdict": null
+}

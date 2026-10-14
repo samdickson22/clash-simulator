@@ -1,0 +1,31 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q5-ow-acceptance",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "reports/explore/x4s4/collect_w.py",
+    "--checkpoint",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/main02.pt",
+    "--count",
+    "1",
+    "--workers",
+    "1",
+    "--acceptance-smoke"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 3,
+  "child": {
+    "pid": 3432672,
+    "pgid": 3432672,
+    "starttime": 165984597
+  },
+  "passed": false,
+  "utc": "2026-10-13T05:39:19Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "error": "child exit 1",
+  "breach": null,
+  "returncode": 1
+}

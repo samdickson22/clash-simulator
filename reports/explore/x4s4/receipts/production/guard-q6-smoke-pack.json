@@ -1,0 +1,36 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q6-smoke-pack",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/qualify4.py",
+    "smoke-pack",
+    "--phases",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-K4S-120",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/smoke/collect-S-200",
+    "--threads",
+    "1",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-pack.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 3405102,
+    "pgid": 3405102,
+    "starttime": 165934025
+  },
+  "passed": true,
+  "utc": "2026-10-13T05:37:31Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-pack.json": "e3e63c9f12b209573a484be4f73efcafac32ad06916f63fc466d716bd3ace483",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-pack/batch-0000": "1dc15961a65d91c2cd10c3907fcec245891f13b3c5489e5e7760c878917aa981"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

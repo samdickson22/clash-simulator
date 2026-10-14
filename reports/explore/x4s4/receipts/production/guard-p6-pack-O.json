@@ -1,0 +1,31 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p6-pack-O",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/packw.py",
+    "--set",
+    "O",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy/batch-0000"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 2,
+  "child": {
+    "pid": 817862,
+    "pgid": 817862,
+    "starttime": 168792304
+  },
+  "passed": true,
+  "utc": "2026-10-13T13:28:18Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy/batch-0000": "7d01f55f42fff2a2c4ee46fccf33f8bfbd72fb1a39ab9399c003b6740a4d51da"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

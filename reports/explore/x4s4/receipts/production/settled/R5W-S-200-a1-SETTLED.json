@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-14T12:57:42Z",
+  "completed": 1200,
+  "retired_or_flagged": [],
+  "exit": {
+    "utc": "2026-10-14T12:57:35Z",
+    "host": "127x01",
+    "returncode": 0,
+    "reason": null,
+    "remaining_group_pids": [],
+    "min_memavailable_GiB": 108.42316436767578,
+    "max_owned_pss_GiB": 12.86314582824707,
+    "wall_seconds": 1619.5951028689742,
+    "children_cpu_seconds": 76399.569765,
+    "parent_cpu_seconds": 510.94522200000006,
+    "complete_blocks": 1200
+  },
+  "child_exit": 0,
+  "launch_id": "033b34d29d81a1c0",
+  "ack": null,
+  "disposition": "clean"
+}

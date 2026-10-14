@@ -1,0 +1,150 @@
+{
+  "utc": "2026-10-14T04:20:11Z",
+  "students": {
+    "R3a": {
+      "O-holdout": {
+        "roots": 49183,
+        "top1_agreement": 0.49110464998068437,
+        "gate_accuracy": 0.6936136469918468,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.933233086039749,
+        "frozen_objective": 5.876811516403763,
+        "gate_den": 49183.0,
+        "play_den": 21943.104454377375
+      },
+      "R1-heldout64": {
+        "roots": 8088,
+        "top1_agreement": 0.5530415430267063,
+        "gate_accuracy": 0.7438180019782393,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.5230666679709,
+        "frozen_objective": 5.658673389847741,
+        "gate_den": 8088.0,
+        "play_den": 3187.6672027190143
+      }
+    },
+    "R3a-rep": {
+      "O-holdout": {
+        "roots": 49183,
+        "top1_agreement": 0.4917552812963829,
+        "gate_accuracy": 0.6944879328223167,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.933589075599146,
+        "frozen_objective": 5.877778287689714,
+        "gate_den": 49183.0,
+        "play_den": 21943.104454377375
+      },
+      "R1-heldout64": {
+        "roots": 8088,
+        "top1_agreement": 0.5535361028684471,
+        "gate_accuracy": 0.7430761622156281,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.5236960214522752,
+        "frozen_objective": 5.6597854102753935,
+        "gate_den": 8088.0,
+        "play_den": 3187.6672027190143
+      }
+    },
+    "R5": {
+      "O-holdout": {
+        "roots": 49183,
+        "top1_agreement": 0.5017587377752476,
+        "gate_accuracy": 0.707500559136287,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.9094881537602464,
+        "frozen_objective": 5.830995764262991,
+        "gate_den": 49183.0,
+        "play_den": 21943.104454377375
+      },
+      "R1-heldout64": {
+        "roots": 8088,
+        "top1_agreement": 0.554030662710188,
+        "gate_accuracy": 0.7450544015825915,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.52390268973764,
+        "frozen_objective": 5.661052917913127,
+        "gate_den": 8088.0,
+        "play_den": 3187.6672027190143
+      }
+    },
+    "R5-rep": {
+      "O-holdout": {
+        "roots": 49183,
+        "top1_agreement": 0.5016977410894008,
+        "gate_accuracy": 0.7069312567350508,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.9104819132761612,
+        "frozen_objective": 5.832798548233421,
+        "gate_den": 49183.0,
+        "play_den": 21943.104454377375
+      },
+      "R1-heldout64": {
+        "roots": 8088,
+        "top1_agreement": 0.5542779426310583,
+        "gate_accuracy": 0.7460435212660732,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.524743930129352,
+        "frozen_objective": 5.662417949758033,
+        "gate_den": 8088.0,
+        "play_den": 3187.6672027190143
+      }
+    },
+    "R5W": {
+      "O-holdout": {
+        "roots": 49183,
+        "top1_agreement": 0.49728564747982024,
+        "gate_accuracy": 0.6973344448284976,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.9210283929022207,
+        "frozen_objective": 5.851661326746483,
+        "gate_den": 49183.0,
+        "play_den": 21943.104454377375
+      },
+      "R1-heldout64": {
+        "roots": 8088,
+        "top1_agreement": 0.5516815034619189,
+        "gate_accuracy": 0.7403560830860534,
+        "frozen_crosscheck_max_rel": 0.0,
+        "listwise_ce": 2.5237005273138045,
+        "frozen_objective": 5.660535521294588,
+        "gate_den": 8088.0,
+        "play_den": 3187.6672027190143
+      }
+    }
+  },
+  "student_checkpoints": {
+    "R3a": {
+      "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/R3a.pt",
+      "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "threshold": 0.5005528330802917
+    },
+    "R3a-rep": {
+      "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/R3a-rep.pt",
+      "checkpoint_sha256": "8d537a782df775617487d2996b7153ded16cee9782797ba688a132380ddc5b8f",
+      "threshold": 0.49952925741672516
+    },
+    "R5": {
+      "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/R5.pt",
+      "checkpoint_sha256": "dea4b711c1db1897bd6e193712a1e76e839aa0b51d1462a0dcf376e13d7a1651",
+      "threshold": 0.502001941204071
+    },
+    "R5-rep": {
+      "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/R5-rep.pt",
+      "checkpoint_sha256": "fc68c501c7ac153b4fdf48b293e8ab2fac8f3986c7b774ac1fc8c62557d757ac",
+      "threshold": 0.4983885884284973
+    },
+    "R5W": {
+      "checkpoint": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/R5W.pt",
+      "checkpoint_sha256": "a8b00a0aa97df32dac07d8443db2db865bb332b11819814e74dd2202673f84a0",
+      "threshold": 0.5027556419372559
+    }
+  },
+  "holdout": [
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy-holdout/batch-0000"
+  ],
+  "holdout_gate_sha256": "eb969538ee2d4da1f1872bed472ebacf3e9a41893b0cd25d415b83fd942d0201",
+  "heldout64_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+  "device": "CUDA float32, TF32 off",
+  "ce_definition": "listwise_ce: per-root gate+card+tile CE vs W T=0.003 targets; frozen_objective: global frozen teacher_loss",
+  "label": "X4S-4 O-holdout diagnostic; descriptive only; never a gate; exploration, NEVER ADOPTABLE"
+}

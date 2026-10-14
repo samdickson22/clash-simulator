@@ -1,0 +1,33 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p7-verify-holdout",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/verify_onpolicy.py",
+    "--mode",
+    "holdout",
+    "--plan",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/plan.json",
+    "--label-receipts",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-receipt-holdout-1791897994.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 830078,
+    "pgid": 830078,
+    "starttime": 168814878
+  },
+  "passed": true,
+  "utc": "2026-10-13T13:31:14Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/HOLDOUT-VERIFIED.json": "eb969538ee2d4da1f1872bed472ebacf3e9a41893b0cd25d415b83fd942d0201"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

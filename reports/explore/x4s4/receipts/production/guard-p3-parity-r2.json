@@ -1,0 +1,39 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p3-parity-r2",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/qualify4.py",
+    "parity",
+    "--phases",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/collect/K4S-120/a1",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/collect/K4S-120/a2",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/collect/S-200/a1",
+    "--bank",
+    "collection",
+    "--min-games",
+    "100",
+    "--final",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/receipts/parity-collection-r2.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 497419,
+    "pgid": 497419,
+    "starttime": 168187483
+  },
+  "passed": true,
+  "utc": "2026-10-13T11:46:31Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/receipts/parity-collection-r2.json": "2ec15eb49c2897f3efe0a39132c39270dd91a1914a754b76d464ae6d31161150"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

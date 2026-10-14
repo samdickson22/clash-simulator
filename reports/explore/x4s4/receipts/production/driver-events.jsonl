@@ -1,0 +1,45 @@
+{"utc": "2026-10-13T13:31:46Z", "kind": "driver_start", "pid": 833578}
+{"utc": "2026-10-13T13:31:49Z", "kind": "launch", "name": "fit-R5", "launch_id": "a07369a49c6db5b5", "pid": 833810}
+{"utc": "2026-10-13T14:32:51Z", "kind": "driver_exit", "reason": "SIGTERM"}
+{"utc": "2026-10-13T14:32:52Z", "kind": "gpu_enforcer_stop", "target": "fit", "fit": "R5", "launch_id": "a07369a49c6db5b5", "reason": "HALT"}
+{"utc": "2026-10-13T14:32:52Z", "kind": "anomaly", "name": "fit-R5", "reason": "HALT"}
+{"utc": "2026-10-13T14:32:52Z", "kind": "fit_stop", "fit": "R5", "reason": "driver exit: SIGTERM"}
+{"utc": "2026-10-14T00:10:07Z", "kind": "driver_start", "pid": 2750088}
+{"utc": "2026-10-14T00:16:49Z", "kind": "anomaly_resolved", "key": "fit-R5"}
+{"utc": "2026-10-14T00:16:55Z", "kind": "anomaly", "name": "driver-exception", "error": "Refusal('not-regular: /mpac/sdicks02/jobs/clasher/x4s4-onpolicy/cache/fit/tmp/pymp-1phk3kzz/listener-iy0ysu35 is a special file')"}
+{"utc": "2026-10-14T00:18:15Z", "kind": "anomaly_resolved", "key": "driver-exception"}
+{"utc": "2026-10-14T00:18:17Z", "kind": "launch", "name": "fit-R5", "launch_id": "372a7398ecab2391", "pid": 2778983}
+{"utc": "2026-10-14T01:41:10Z", "kind": "child_exit", "pid": 2778983, "launch_id": "372a7398ecab2391", "exit_code": 0}
+{"utc": "2026-10-14T01:41:12Z", "kind": "launch", "name": "fit-R5-rep", "launch_id": "9c22ff0c9252c229", "pid": 3049169}
+{"utc": "2026-10-14T02:58:29Z", "kind": "launch", "name": "calibrate-R5", "launch_id": "8f67fc7225d4023f", "pid": 3300916}
+{"utc": "2026-10-14T02:58:36Z", "kind": "child_exit", "pid": 3300916, "launch_id": "8f67fc7225d4023f", "exit_code": 0}
+{"utc": "2026-10-14T02:58:47Z", "kind": "student_ready", "id": "R5", "threshold": 0.502001941204071, "play_rate": 0.345944609297725, "checkpoint_sha256": "dea4b711c1db1897bd6e193712a1e76e839aa0b51d1462a0dcf376e13d7a1651"}
+{"utc": "2026-10-14T02:58:57Z", "kind": "child_exit", "pid": 3049169, "launch_id": "9c22ff0c9252c229", "exit_code": 0}
+{"utc": "2026-10-14T02:59:01Z", "kind": "launch", "name": "fit-R5W", "launch_id": "2db3f1f94c9bab58", "pid": 3302761}
+{"utc": "2026-10-14T04:15:39Z", "kind": "child_exit", "pid": 3302761, "launch_id": "2db3f1f94c9bab58", "exit_code": 0}
+{"utc": "2026-10-14T04:15:45Z", "kind": "launch", "name": "calibrate-R5-rep", "launch_id": "d90d963bc1c2ce12", "pid": 3552153}
+{"utc": "2026-10-14T04:15:51Z", "kind": "child_exit", "pid": 3552153, "launch_id": "d90d963bc1c2ce12", "exit_code": 0}
+{"utc": "2026-10-14T04:16:02Z", "kind": "student_ready", "id": "R5-rep", "threshold": 0.4983885884284973, "play_rate": 0.345944609297725, "checkpoint_sha256": "fc68c501c7ac153b4fdf48b293e8ab2fac8f3986c7b774ac1fc8c62557d757ac"}
+{"utc": "2026-10-14T04:16:04Z", "kind": "launch", "name": "calibrate-R5W", "launch_id": "2732e17eab0ce3aa", "pid": 3553201}
+{"utc": "2026-10-14T04:16:11Z", "kind": "child_exit", "pid": 3553201, "launch_id": "2732e17eab0ce3aa", "exit_code": 0}
+{"utc": "2026-10-14T04:16:21Z", "kind": "student_ready", "id": "R5W", "threshold": 0.5027556419372559, "play_rate": 0.345944609297725, "checkpoint_sha256": "a8b00a0aa97df32dac07d8443db2db865bb332b11819814e74dd2202673f84a0"}
+{"utc": "2026-10-14T04:21:02Z", "kind": "launch", "name": "phase-R3a-K4S-120-a1", "launch_id": "a027de154101d93f", "pid": 3570918}
+{"utc": "2026-10-14T05:36:26Z", "kind": "child_exit", "pid": 3570918, "launch_id": "a027de154101d93f", "exit_code": 0}
+{"utc": "2026-10-14T05:36:32Z", "kind": "launch", "name": "phase-R3a-S-200-a1", "launch_id": "dab04a0a862f1806", "pid": 3838635}
+{"utc": "2026-10-14T06:03:39Z", "kind": "child_exit", "pid": 3838635, "launch_id": "dab04a0a862f1806", "exit_code": 0}
+{"utc": "2026-10-14T06:03:46Z", "kind": "launch", "name": "phase-R5-K4S-120-a1", "launch_id": "8d85004bbe3b27e2", "pid": 3936141}
+{"utc": "2026-10-14T07:19:21Z", "kind": "child_exit", "pid": 3936141, "launch_id": "8d85004bbe3b27e2", "exit_code": 0}
+{"utc": "2026-10-14T07:19:27Z", "kind": "launch", "name": "phase-R5-S-200-a1", "launch_id": "5acbf35ec5035df4", "pid": 12113}
+{"utc": "2026-10-14T07:47:06Z", "kind": "child_exit", "pid": 12113, "launch_id": "5acbf35ec5035df4", "exit_code": 0}
+{"utc": "2026-10-14T07:47:12Z", "kind": "launch", "name": "phase-R5-rep-K4S-120-a1", "launch_id": "72fae6ab5ac3f0a8", "pid": 106777}
+{"utc": "2026-10-14T09:02:58Z", "kind": "child_exit", "pid": 106777, "launch_id": "72fae6ab5ac3f0a8", "exit_code": 0}
+{"utc": "2026-10-14T09:03:04Z", "kind": "launch", "name": "phase-R5-rep-S-200-a1", "launch_id": "51e1176bda3a09d4", "pid": 376826}
+{"utc": "2026-10-14T09:31:03Z", "kind": "child_exit", "pid": 376826, "launch_id": "51e1176bda3a09d4", "exit_code": 0}
+{"utc": "2026-10-14T09:31:10Z", "kind": "launch", "name": "phase-R3a-rep-K4S-120-a1", "launch_id": "e34d70d353863be5", "pid": 472530}
+{"utc": "2026-10-14T10:46:36Z", "kind": "child_exit", "pid": 472530, "launch_id": "e34d70d353863be5", "exit_code": 0}
+{"utc": "2026-10-14T10:46:42Z", "kind": "launch", "name": "phase-R3a-rep-S-200-a1", "launch_id": "ef08bad3e00c28f5", "pid": 744182}
+{"utc": "2026-10-14T11:14:10Z", "kind": "child_exit", "pid": 744182, "launch_id": "ef08bad3e00c28f5", "exit_code": 0}
+{"utc": "2026-10-14T11:14:17Z", "kind": "launch", "name": "phase-R5W-K4S-120-a1", "launch_id": "d943da946b2b97e4", "pid": 839859}
+{"utc": "2026-10-14T12:30:23Z", "kind": "child_exit", "pid": 839859, "launch_id": "d943da946b2b97e4", "exit_code": 0}
+{"utc": "2026-10-14T12:30:30Z", "kind": "launch", "name": "phase-R5W-S-200-a1", "launch_id": "033b34d29d81a1c0", "pid": 1116587}
+{"utc": "2026-10-14T12:57:41Z", "kind": "child_exit", "pid": 1116587, "launch_id": "033b34d29d81a1c0", "exit_code": 0}

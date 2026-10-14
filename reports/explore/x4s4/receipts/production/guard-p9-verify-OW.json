@@ -1,0 +1,33 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p9-verify-OW",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/verify_onpolicy.py",
+    "--mode",
+    "OW",
+    "--plan",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/plan.json",
+    "--selection",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/raw-OW-selection.json"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 2990828,
+    "pgid": 2990828,
+    "starttime": 173091823
+  },
+  "passed": true,
+  "utc": "2026-10-14T01:25:13Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/OW-VERIFIED.json": "67700e08b423f86f4ab1035f77adac6e499d37205ea1525f599b157322c257d9"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

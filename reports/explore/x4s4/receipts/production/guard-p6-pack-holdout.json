@@ -1,0 +1,31 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p6-pack-holdout",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/packw.py",
+    "--set",
+    "holdout",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy-holdout/batch-0000"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 2,
+  "child": {
+    "pid": 822373,
+    "pgid": 822373,
+    "starttime": 168800697
+  },
+  "passed": true,
+  "utc": "2026-10-13T13:28:43Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy-holdout/batch-0000": "14cb7013716146f3f8875f1c3c68ba56723fb6ba018843e00bcdaa5ce329e07f"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

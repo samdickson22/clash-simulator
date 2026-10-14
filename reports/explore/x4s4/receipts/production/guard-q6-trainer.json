@@ -1,0 +1,34 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "q6-trainer",
+  "argv": [
+    "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/qualify4.py",
+    "trainer",
+    "--packed",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/smoke-pack/batch-0000",
+    "--assets",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/assets.npz",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/trainer.json"
+  ],
+  "cwd": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/fit/source",
+  "readout": false,
+  "gpu": true,
+  "add": 1,
+  "child": {
+    "pid": 3432129,
+    "pgid": 3432129,
+    "starttime": 165983766
+  },
+  "passed": true,
+  "utc": "2026-10-13T05:38:54Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/qual/trainer.json": "f5252547fd5216daa158976bd1648263fcece50fe2493ce732e6ab22b02bb681"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

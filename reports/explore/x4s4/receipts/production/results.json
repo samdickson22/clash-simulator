@@ -1,0 +1,833 @@
+{
+  "utc": "2026-10-14T13:00:45Z",
+  "label": "X4S-4 exploration, NEVER ADOPTABLE",
+  "paired_seeds": 1200,
+  "students": [
+    "R3a",
+    "R5",
+    "R5-rep",
+    "R3a-rep",
+    "R5W"
+  ],
+  "retired": [],
+  "checks": {
+    "decisions": 1905204,
+    "games": 12000
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101301,
+    "unit": "paired seed, stratified by arm (each resampled seed carries both arms)",
+    "confidence": 0.95
+  },
+  "truncation": {
+    "truncated": false,
+    "primary_prefix_seeds": 1200,
+    "non_retired": 1200,
+    "rule": "E8 largest seed-index prefix",
+    "r5w_prefix_seeds": 1200,
+    "r5w_truncated": false,
+    "r5w_reduced": true
+  },
+  "cells": {
+    "0": 24,
+    "1": 24,
+    "2": 24,
+    "3": 24,
+    "4": 24,
+    "5": 24,
+    "6": 24,
+    "7": 24,
+    "8": 24,
+    "9": 24,
+    "10": 24,
+    "11": 24,
+    "12": 24,
+    "13": 24,
+    "14": 24,
+    "15": 24,
+    "16": 24,
+    "17": 24,
+    "18": 24,
+    "19": 24,
+    "20": 24,
+    "21": 24,
+    "22": 24,
+    "23": 24,
+    "24": 24,
+    "25": 24,
+    "26": 24,
+    "27": 24,
+    "28": 24,
+    "29": 24,
+    "30": 24,
+    "31": 24,
+    "32": 24,
+    "33": 24,
+    "34": 24,
+    "35": 24,
+    "36": 24,
+    "37": 24,
+    "38": 24,
+    "39": 24,
+    "40": 24,
+    "41": 24,
+    "42": 24,
+    "43": 24,
+    "44": 24,
+    "45": 24,
+    "46": 24,
+    "47": 24,
+    "48": 24,
+    "49": 24
+  },
+  "arms": {
+    "R3a K4S-120": {
+      "losses": 282,
+      "wins": 918,
+      "draws": 0,
+      "loss_pct": 23.5,
+      "loss_ci_pct": [
+        21.166666666666668,
+        25.916666666666668
+      ],
+      "decisions": 147259,
+      "wall_ms_p50": 112.64110310003161,
+      "wall_ms_p99": 113.06022899691015,
+      "returns_past_budget_plus_reserve": 56,
+      "game_cpu_hours": 15.373285192935553,
+      "cutoff_pct": 65.19397795720465,
+      "cutoff_ci_pct": [
+        64.35286057333605,
+        66.03069981199867
+      ],
+      "student_default_pct": 22.73137804820079,
+      "student_default_ci_pct": [
+        22.342985375232715,
+        23.128032190586108
+      ],
+      "play_pct": 31.736600139889582,
+      "play_ci_pct": [
+        31.40603364061525,
+        32.054925869094454
+      ],
+      "overrun_pct": 0.17655966698130504,
+      "overrun_ci_pct": [
+        0.15603171423871706,
+        0.19717833707095586
+      ],
+      "fallback_pct": 1.7194195261410168,
+      "fallback_ci_pct": [
+        1.6743431178266766,
+        1.7640117653258924
+      ]
+    },
+    "R3a S-200": {
+      "losses": 299,
+      "wins": 901,
+      "draws": 0,
+      "loss_pct": 24.916666666666668,
+      "loss_ci_pct": [
+        22.416666666666668,
+        27.416666666666668
+      ],
+      "decisions": 231611,
+      "wall_ms_p50": 192.73886922746897,
+      "wall_ms_p99": 193.2238841895014,
+      "returns_past_budget_plus_reserve": 47,
+      "game_cpu_hours": 21.285120132632223,
+      "cutoff_pct": 78.63141215227256,
+      "cutoff_ci_pct": [
+        77.92158544747792,
+        79.32888953258183
+      ],
+      "student_default_pct": 0.0,
+      "student_default_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "play_pct": 20.961439655284074,
+      "play_ci_pct": [
+        20.722008384968653,
+        21.20366579341698
+      ],
+      "overrun_pct": 0.08505640923790321,
+      "overrun_ci_pct": [
+        0.07273315236467176,
+        0.09734984660939607
+      ],
+      "fallback_pct": 61.94999373950287,
+      "fallback_ci_pct": [
+        61.11855588370205,
+        62.786200733821794
+      ]
+    },
+    "R3a-rep K4S-120": {
+      "losses": 250,
+      "wins": 950,
+      "draws": 0,
+      "loss_pct": 20.833333333333332,
+      "loss_ci_pct": [
+        18.583333333333332,
+        23.166666666666668
+      ],
+      "decisions": 147329,
+      "wall_ms_p50": 112.64906893484294,
+      "wall_ms_p99": 113.05822867900133,
+      "returns_past_budget_plus_reserve": 62,
+      "game_cpu_hours": 15.38667857276833,
+      "cutoff_pct": 65.58179312966219,
+      "cutoff_ci_pct": [
+        64.77305499091293,
+        66.40894863872066
+      ],
+      "student_default_pct": 22.844110799638905,
+      "student_default_ci_pct": [
+        22.47817112330172,
+        23.21432558755945
+      ],
+      "play_pct": 31.54640294850301,
+      "play_ci_pct": [
+        31.227929288355796,
+        31.858105452401645
+      ],
+      "overrun_pct": 0.17376076671938315,
+      "overrun_ci_pct": [
+        0.1533873067272539,
+        0.1945211822717759
+      ],
+      "fallback_pct": 1.7274263722688676,
+      "fallback_ci_pct": [
+        1.6846618402450693,
+        1.7704466958825302
+      ]
+    },
+    "R3a-rep S-200": {
+      "losses": 313,
+      "wins": 887,
+      "draws": 0,
+      "loss_pct": 26.083333333333332,
+      "loss_ci_pct": [
+        23.666666666666668,
+        28.666666666666668
+      ],
+      "decisions": 232763,
+      "wall_ms_p50": 192.74737709201872,
+      "wall_ms_p99": 193.273269017227,
+      "returns_past_budget_plus_reserve": 52,
+      "game_cpu_hours": 21.431746679396113,
+      "cutoff_pct": 78.91159677440143,
+      "cutoff_ci_pct": [
+        78.22604442147244,
+        79.61649231800881
+      ],
+      "student_default_pct": 0.0,
+      "student_default_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "play_pct": 20.909680662304577,
+      "play_ci_pct": [
+        20.648951938145917,
+        21.169896656722113
+      ],
+      "overrun_pct": 0.10955349432684748,
+      "overrun_ci_pct": [
+        0.09340900294953536,
+        0.1258167806518417
+      ],
+      "fallback_pct": 62.50177218887882,
+      "fallback_ci_pct": [
+        61.646671578957786,
+        63.37695897518866
+      ]
+    },
+    "R5 K4S-120": {
+      "losses": 237,
+      "wins": 963,
+      "draws": 0,
+      "loss_pct": 19.75,
+      "loss_ci_pct": [
+        17.416666666666668,
+        22.083333333333332
+      ],
+      "decisions": 146484,
+      "wall_ms_p50": 112.66156903002411,
+      "wall_ms_p99": 113.05588918738067,
+      "returns_past_budget_plus_reserve": 55,
+      "game_cpu_hours": 15.425603027192778,
+      "cutoff_pct": 66.55129570465034,
+      "cutoff_ci_pct": [
+        65.76376809627138,
+        67.35679490720767
+      ],
+      "student_default_pct": 23.18205401272494,
+      "student_default_ci_pct": [
+        22.83341245586423,
+        23.539569750013072
+      ],
+      "play_pct": 31.71540919144753,
+      "play_ci_pct": [
+        31.451665476839747,
+        31.994291894490466
+      ],
+      "overrun_pct": 0.18158979820321675,
+      "overrun_ci_pct": [
+        0.16105753674031104,
+        0.20319573359658208
+      ],
+      "fallback_pct": 1.7694765298599164,
+      "fallback_ci_pct": [
+        1.7245712955939192,
+        1.8164805044395853
+      ]
+    },
+    "R5 S-200": {
+      "losses": 305,
+      "wins": 895,
+      "draws": 0,
+      "loss_pct": 25.416666666666668,
+      "loss_ci_pct": [
+        23.0,
+        27.916666666666668
+      ],
+      "decisions": 237055,
+      "wall_ms_p50": 192.75586702860892,
+      "wall_ms_p99": 193.28774340450764,
+      "returns_past_budget_plus_reserve": 58,
+      "game_cpu_hours": 21.74807075526167,
+      "cutoff_pct": 79.94600409187741,
+      "cutoff_ci_pct": [
+        79.27440033853688,
+        80.61314746444198
+      ],
+      "student_default_pct": 0.0,
+      "student_default_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "play_pct": 20.327350192993187,
+      "play_ci_pct": [
+        20.096846880664664,
+        20.55584150804293
+      ],
+      "overrun_pct": 0.10461707198751345,
+      "overrun_ci_pct": [
+        0.09045545971322626,
+        0.11921937337411098
+      ],
+      "fallback_pct": 64.2703170150387,
+      "fallback_ci_pct": [
+        63.44549773623235,
+        65.07481427453092
+      ]
+    },
+    "R5-rep K4S-120": {
+      "losses": 230,
+      "wins": 970,
+      "draws": 0,
+      "loss_pct": 19.166666666666668,
+      "loss_ci_pct": [
+        16.916666666666668,
+        21.416666666666668
+      ],
+      "decisions": 146206,
+      "wall_ms_p50": 112.6614575041458,
+      "wall_ms_p99": 113.06919588241726,
+      "returns_past_budget_plus_reserve": 54,
+      "game_cpu_hours": 15.419737428775278,
+      "cutoff_pct": 66.46512455029206,
+      "cutoff_ci_pct": [
+        65.6735341416832,
+        67.26266222079732
+      ],
+      "student_default_pct": 23.3232562275146,
+      "student_default_ci_pct": [
+        22.947157647204698,
+        23.697468607220493
+      ],
+      "play_pct": 31.77297785316608,
+      "play_ci_pct": [
+        31.493393947950587,
+        32.04874509910767
+      ],
+      "overrun_pct": 0.1826190443620645,
+      "overrun_ci_pct": [
+        0.16268787273998636,
+        0.2037958428008652
+      ],
+      "fallback_pct": 1.7878883219566912,
+      "fallback_ci_pct": [
+        1.7409265689431286,
+        1.8382959165799126
+      ]
+    },
+    "R5-rep S-200": {
+      "losses": 279,
+      "wins": 921,
+      "draws": 0,
+      "loss_pct": 23.25,
+      "loss_ci_pct": [
+        20.916666666666668,
+        25.666666666666668
+      ],
+      "decisions": 237258,
+      "wall_ms_p50": 192.75482243392617,
+      "wall_ms_p99": 193.2736296625808,
+      "returns_past_budget_plus_reserve": 46,
+      "game_cpu_hours": 21.85933540438111,
+      "cutoff_pct": 79.95178244779945,
+      "cutoff_ci_pct": [
+        79.29923596926852,
+        80.6209867030899
+      ],
+      "student_default_pct": 0.0,
+      "student_default_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "play_pct": 20.379081000429913,
+      "play_ci_pct": [
+        20.1545329236577,
+        20.605773831965465
+      ],
+      "overrun_pct": 0.09272606192415007,
+      "overrun_ci_pct": [
+        0.07945494154066404,
+        0.10631730465629219
+      ],
+      "fallback_pct": 64.21321936457359,
+      "fallback_ci_pct": [
+        63.404826721830574,
+        65.03678866582035
+      ]
+    },
+    "R5W K4S-120": {
+      "losses": 278,
+      "wins": 922,
+      "draws": 0,
+      "loss_pct": 23.166666666666668,
+      "loss_ci_pct": [
+        20.75,
+        25.583333333333332
+      ],
+      "decisions": 148771,
+      "wall_ms_p50": 112.63172491453588,
+      "wall_ms_p99": 113.06681053247303,
+      "returns_past_budget_plus_reserve": 50,
+      "game_cpu_hours": 15.560365567168612,
+      "cutoff_pct": 64.96763482130254,
+      "cutoff_ci_pct": [
+        64.1897967639331,
+        65.78071993048033
+      ],
+      "student_default_pct": 21.948498027169272,
+      "student_default_ci_pct": [
+        21.55549411125464,
+        22.362346005850362
+      ],
+      "play_pct": 31.524961181950783,
+      "play_ci_pct": [
+        31.191157585607215,
+        31.872492526286234
+      ],
+      "overrun_pct": 0.17140437316412474,
+      "overrun_ci_pct": [
+        0.1521765128492162,
+        0.1920974076933245
+      ],
+      "fallback_pct": 1.7321924299762723,
+      "fallback_ci_pct": [
+        1.6906155330384323,
+        1.7746231580268965
+      ],
+      "seeds": 1200
+    },
+    "R5W S-200": {
+      "losses": 313,
+      "wins": 887,
+      "draws": 0,
+      "loss_pct": 26.083333333333332,
+      "loss_ci_pct": [
+        23.583333333333332,
+        28.502083333333303
+      ],
+      "decisions": 230468,
+      "wall_ms_p50": 192.72616249509156,
+      "wall_ms_p99": 193.2612717524171,
+      "returns_past_budget_plus_reserve": 39,
+      "game_cpu_hours": 21.20801470791861,
+      "cutoff_pct": 77.85072114132981,
+      "cutoff_ci_pct": [
+        77.20476336466582,
+        78.51366176555831
+      ],
+      "student_default_pct": 0.0,
+      "student_default_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "play_pct": 21.65767047919885,
+      "play_ci_pct": [
+        21.41264541838132,
+        21.9035387054502
+      ],
+      "overrun_pct": 0.09589183747852197,
+      "overrun_ci_pct": [
+        0.082654120745952,
+        0.11001304817646207
+      ],
+      "fallback_pct": 57.698682680458894,
+      "fallback_ci_pct": [
+        56.871059254211644,
+        58.54377727221053
+      ],
+      "seeds": 1200
+    }
+  },
+  "contrasts": {
+    "R5 minus R3a [K4S-120]": {
+      "loss_change_pp": -3.75,
+      "ci95_pp": [
+        -6.502083333333334,
+        -0.9166666666666666
+      ]
+    },
+    "R5 minus R3a [S-200]": {
+      "loss_change_pp": 0.5,
+      "ci95_pp": [
+        -2.4166666666666665,
+        3.5
+      ]
+    },
+    "R5 minus R3a [pooled]": {
+      "loss_change_pp": -1.625,
+      "ci95_pp": [
+        -3.6666666666666665,
+        0.375
+      ]
+    },
+    "R5-rep minus R3a [K4S-120]": {
+      "loss_change_pp": -4.333333333333333,
+      "ci95_pp": [
+        -7.0,
+        -1.5833333333333333
+      ]
+    },
+    "R5-rep minus R3a [S-200]": {
+      "loss_change_pp": -1.6666666666666667,
+      "ci95_pp": [
+        -4.583333333333333,
+        1.1666666666666667
+      ]
+    },
+    "R5-rep minus R3a [pooled]": {
+      "loss_change_pp": -3.0,
+      "ci95_pp": [
+        -4.958333333333333,
+        -1.0416666666666667
+      ]
+    },
+    "R5 minus R3a-rep [K4S-120]": {
+      "loss_change_pp": -1.0833333333333333,
+      "ci95_pp": [
+        -3.8333333333333335,
+        1.6666666666666667
+      ]
+    },
+    "R5 minus R3a-rep [S-200]": {
+      "loss_change_pp": -0.6666666666666666,
+      "ci95_pp": [
+        -3.5,
+        2.1666666666666665
+      ]
+    },
+    "R5 minus R3a-rep [pooled]": {
+      "loss_change_pp": -0.875,
+      "ci95_pp": [
+        -2.875,
+        1.2083333333333333
+      ]
+    },
+    "R3a-rep minus R3a [K4S-120]": {
+      "loss_change_pp": -2.6666666666666665,
+      "ci95_pp": [
+        -5.416666666666667,
+        0.16666666666666666
+      ]
+    },
+    "R3a-rep minus R3a [S-200]": {
+      "loss_change_pp": 1.1666666666666667,
+      "ci95_pp": [
+        -1.6666666666666667,
+        4.0
+      ]
+    },
+    "R3a-rep minus R3a [pooled]": {
+      "loss_change_pp": -0.75,
+      "ci95_pp": [
+        -2.75,
+        1.2916666666666667
+      ]
+    },
+    "R5 minus R5-rep [K4S-120]": {
+      "loss_change_pp": 0.5833333333333334,
+      "ci95_pp": [
+        -2.0833333333333335,
+        3.3333333333333335
+      ]
+    },
+    "R5 minus R5-rep [S-200]": {
+      "loss_change_pp": 2.1666666666666665,
+      "ci95_pp": [
+        -0.6666666666666666,
+        4.916666666666667
+      ]
+    },
+    "R5 minus R5-rep [pooled]": {
+      "loss_change_pp": 1.375,
+      "ci95_pp": [
+        -0.5416666666666666,
+        3.3333333333333335
+      ]
+    },
+    "R5 minus R5W [K4S-120]": {
+      "loss_change_pp": -3.4166666666666665,
+      "ci95_pp": [
+        -6.333333333333333,
+        -0.5833333333333334
+      ],
+      "seeds": 1200
+    },
+    "R5 minus R5W [S-200]": {
+      "loss_change_pp": -0.6666666666666666,
+      "ci95_pp": [
+        -3.5833333333333335,
+        2.4166666666666665
+      ],
+      "seeds": 1200
+    },
+    "R5 minus R5W [pooled]": {
+      "loss_change_pp": -2.0416666666666665,
+      "ci95_pp": [
+        -4.125,
+        0.125
+      ],
+      "seeds": 1200
+    },
+    "R5-rep minus R5W [K4S-120]": {
+      "loss_change_pp": -4.0,
+      "ci95_pp": [
+        -6.833333333333333,
+        -1.1666666666666667
+      ],
+      "seeds": 1200
+    },
+    "R5-rep minus R5W [S-200]": {
+      "loss_change_pp": -2.8333333333333335,
+      "ci95_pp": [
+        -5.666666666666667,
+        0.0
+      ],
+      "seeds": 1200
+    },
+    "R5-rep minus R5W [pooled]": {
+      "loss_change_pp": -3.4166666666666665,
+      "ci95_pp": [
+        -5.416666666666667,
+        -1.3333333333333333
+      ],
+      "seeds": 1200
+    }
+  },
+  "identities": {
+    "plan_path": "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/base/repo/reports/explore/x4s3/plan.json",
+    "plan_sha256": "13840cc60834dd6c46ff1aa9bc4b75ca752a6df9bc9e95939bab544b2d04c4e1",
+    "contention_receipt_sha256": "025a3bba388e88849b7a4e549d55b5b296cfd6b7f18a675c61578a098a6ebd1a",
+    "freeze_commit": "056c64aec7ef8624b88289aa772256bb6b4bf57e",
+    "retired_sha256": null,
+    "students": {
+      "R3a": {
+        "checkpoint_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+        "threshold": 0.5005528330802917
+      },
+      "R5": {
+        "checkpoint_sha256": "dea4b711c1db1897bd6e193712a1e76e839aa0b51d1462a0dcf376e13d7a1651",
+        "threshold": 0.502001941204071
+      },
+      "R5-rep": {
+        "checkpoint_sha256": "fc68c501c7ac153b4fdf48b293e8ab2fac8f3986c7b774ac1fc8c62557d757ac",
+        "threshold": 0.4983885884284973
+      },
+      "R3a-rep": {
+        "checkpoint_sha256": "8d537a782df775617487d2996b7153ded16cee9782797ba688a132380ddc5b8f",
+        "threshold": 0.49952925741672516
+      },
+      "R5W": {
+        "checkpoint_sha256": "a8b00a0aa97df32dac07d8443db2db865bb332b11819814e74dd2202673f84a0",
+        "threshold": 0.5027556419372559
+      }
+    },
+    "gates": {
+      "O": "e6d19a8166712b0879697fd41c62f0245f16f630e8c09c81c5db10d9405435e5",
+      "OW": "67700e08b423f86f4ab1035f77adac6e499d37205ea1525f599b157322c257d9",
+      "holdout": "eb969538ee2d4da1f1872bed472ebacf3e9a41893b0cd25d415b83fd942d0201"
+    }
+  },
+  "readout": {
+    "primary": {
+      "point_pp": -1.9375,
+      "ci95_pp": [
+        -3.3958333333333335,
+        -0.5
+      ],
+      "seeds": 1200,
+      "se_boot_pp": 0.7355479303219239,
+      "outcome": "helps",
+      "fit_inflated_interval_pp": [
+        -3.861428210502618,
+        -0.013571789497381914
+      ],
+      "fit_inflated_sigma_fit_pp": 0.65,
+      "label": "helps",
+      "harmful": false,
+      "definition": "mean(R5, R5-rep) minus mean(R3a, R3a-rep), pooled, equal arm weight",
+      "mde_pp": "2.1 (game sampling) to 2.8 (sigma_fit 0.65)",
+      "rule": "helps: upper95CI < 0 AND (R5 minus R3a)[pooled] < 0 AND (R5-rep minus R3a)[pooled] < 0; no material effect: lower95CI > -2.0 pp; else inconclusive"
+    },
+    "primary_by_arm": {
+      "K4S-120": {
+        "point_pp": -2.7083333333333335,
+        "ci95_pp": [
+          -4.625,
+          -0.875
+        ],
+        "seeds": 1200,
+        "arm": "K4S-120",
+        "definition": "mean(R5, R5-rep) minus mean(R3a, R3a-rep), K4S-120 only; descriptive, no outcome rule"
+      },
+      "S-200": {
+        "point_pp": -1.1666666666666667,
+        "ci95_pp": [
+          -3.25,
+          0.875
+        ],
+        "seeds": 1200,
+        "arm": "S-200",
+        "definition": "mean(R5, R5-rep) minus mean(R3a, R3a-rep), S-200 only; descriptive, no outcome rule"
+      }
+    },
+    "sigma_fit_pp": {
+      "value": 0.3269296760441151,
+      "df": 2,
+      "note": "descriptive; within-group differences minus bootstrap sampling variance"
+    },
+    "fit_seed_noise_ge_4pp": {
+      "R3a-rep minus R3a [K4S-120]": false,
+      "R3a-rep minus R3a [S-200]": false,
+      "R3a-rep minus R3a [pooled]": false
+    },
+    "contention_sensitivity": {
+      "point_pp": -1.82648401826484,
+      "ci95_pp": [
+        -3.7290715372907153,
+        0.076103500761035
+      ],
+      "seeds": 657,
+      "se_boot_pp": 0.9668943344433156,
+      "outcome": "inconclusive",
+      "fit_inflated_interval_pp": [
+        -4.110018315516388,
+        0.4570502789867077
+      ],
+      "fit_inflated_sigma_fit_pp": 0.65,
+      "label": "inconclusive",
+      "harmful": false,
+      "definition": "mean(R5, R5-rep) minus mean(R3a, R3a-rep), pooled, equal arm weight",
+      "mde_pp": "2.1 (game sampling) to 2.8 (sigma_fit 0.65)",
+      "rule": "helps: upper95CI < 0 AND (R5 minus R3a)[pooled] < 0 AND (R5-rep minus R3a)[pooled] < 0; no material effect: lower95CI > -2.0 pp; else inconclusive",
+      "exclusion_sha256": "025a3bba388e88849b7a4e549d55b5b296cfd6b7f18a675c61578a098a6ebd1a",
+      "freeze_commit": "056c64aec7ef8624b88289aa772256bb6b4bf57e",
+      "excluded_paired_seeds": 543,
+      "estimate": true
+    },
+    "secondary_mean_R5_minus_R5W": {
+      "point_pp": -2.7291666666666665,
+      "ci95_pp": [
+        -4.520833333333333,
+        -0.8536458333333409
+      ],
+      "seeds": 1200,
+      "se_boot_pp": 0.9340783515277521,
+      "attribution": "on-policy beyond matched data"
+    },
+    "timing_parity": {
+      "K4S-120": {
+        "per_student": {
+          "R3a": {
+            "cutoff_pct": 65.19397795720465,
+            "student_default_pct": 22.73137804820079,
+            "wall_ms_p99": 113.06022899691015
+          },
+          "R5": {
+            "cutoff_pct": 66.55129570465034,
+            "student_default_pct": 23.18205401272494,
+            "wall_ms_p99": 113.05588918738067
+          },
+          "R5-rep": {
+            "cutoff_pct": 66.46512455029206,
+            "student_default_pct": 23.3232562275146,
+            "wall_ms_p99": 113.06919588241726
+          },
+          "R3a-rep": {
+            "cutoff_pct": 65.58179312966219,
+            "student_default_pct": 22.844110799638905,
+            "wall_ms_p99": 113.05822867900133
+          },
+          "R5W": {
+            "cutoff_pct": 64.96763482130254,
+            "student_default_pct": 21.948498027169272,
+            "wall_ms_p99": 113.06681053247303
+          }
+        },
+        "cutoff_gap_pp": 1.5836608833478039,
+        "student_default_gap_pp": 1.3747582003453296,
+        "gap_gt_2pp_disclosed": false,
+        "note": "E10: disclosed next to the C5 sensitivity; triggers no exclusion; wall p99 descriptive"
+      },
+      "S-200": {
+        "per_student": {
+          "R3a": {
+            "cutoff_pct": 78.63141215227256,
+            "student_default_pct": 0.0,
+            "wall_ms_p99": 193.2238841895014
+          },
+          "R5": {
+            "cutoff_pct": 79.94600409187741,
+            "student_default_pct": 0.0,
+            "wall_ms_p99": 193.28774340450764
+          },
+          "R5-rep": {
+            "cutoff_pct": 79.95178244779945,
+            "student_default_pct": 0.0,
+            "wall_ms_p99": 193.2736296625808
+          },
+          "R3a-rep": {
+            "cutoff_pct": 78.91159677440143,
+            "student_default_pct": 0.0,
+            "wall_ms_p99": 193.273269017227
+          },
+          "R5W": {
+            "cutoff_pct": 77.85072114132981,
+            "student_default_pct": 0.0,
+            "wall_ms_p99": 193.2612717524171
+          }
+        },
+        "cutoff_gap_pp": 2.1010613064696315,
+        "student_default_gap_pp": 0.0,
+        "gap_gt_2pp_disclosed": true,
+        "note": "E10: disclosed next to the C5 sensitivity; triggers no exclusion; wall p99 descriptive"
+      }
+    }
+  }
+}

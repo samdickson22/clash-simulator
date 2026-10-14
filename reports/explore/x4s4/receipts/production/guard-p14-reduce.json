@@ -1,0 +1,41 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p14-reduce",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/reduce.py",
+    "--job",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy",
+    "--students",
+    "R3a",
+    "R5",
+    "R5-rep",
+    "R3a-rep",
+    "R5W",
+    "--out",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/analysis/results.json",
+    "--contention-sha",
+    "025a3bba388e88849b7a4e549d55b5b296cfd6b7f18a675c61578a098a6ebd1a",
+    "--freeze-commit",
+    "056c64aec7ef8624b88289aa772256bb6b4bf57e"
+  ],
+  "cwd": null,
+  "readout": true,
+  "gpu": false,
+  "add": 1,
+  "child": {
+    "pid": 1219553,
+    "pgid": 1219553,
+    "starttime": 177268738
+  },
+  "passed": true,
+  "utc": "2026-10-14T13:01:35Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/analysis/results.json": "cae1577aeb1b88e8f4725a0712552e56233e008565042208dd2500be7c71d1fc"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

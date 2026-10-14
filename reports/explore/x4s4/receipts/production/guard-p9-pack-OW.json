@@ -1,0 +1,31 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p9-pack-OW",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/packw.py",
+    "--set",
+    "OW",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy-w/batch-0000"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 2,
+  "child": {
+    "pid": 2983022,
+    "pgid": 2983022,
+    "starttime": 173078238
+  },
+  "passed": true,
+  "utc": "2026-10-14T01:23:27Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/onpolicy-w/batch-0000": "2617b6de232861c91f0660a3450f8b5e216421601620e9e9b37b961743655e34"
+  },
+  "new_files": {},
+  "final_verdict": null
+}

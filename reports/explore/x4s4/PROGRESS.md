@@ -694,3 +694,20 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - phase-R3a-rep-K4S-120-a1 (e34d70d3…): exit rc 0, 1,200/1,200, 75.4 min; SETTLED clean (585db949…), 0 retired.
 - phase-R3a-rep-S-200-a1 (ef08bad3…): exit rc 0, 1,200/1,200, 27.5 min; SETTLED clean (9500fd5a…), 0 retired.
 - phase-R5W-K4S-120-a1 launched at 11:14:17Z (d943da94…). 8 of 10 phases settled, all clean.
+
+## 2026-10-14T13:02Z — ABBA complete (10/10 clean); readout P13–P15 done (RF-1, RF-2)
+
+- phase-R5W-K4S-120-a1 (d943da94…): exit rc 0, 1,200/1,200; SETTLED clean (c6f17cfd…), 0 retired.
+- phase-R5W-S-200-a1 (033b34d2…): exit rc 0, 1,200/1,200, settled 12:57:42Z; SETTLED clean (3dbab4ec…), 0 retired.
+  All 10 phases SETTLED clean, 0 retired. The driver stayed idle in its loop (no end-of-block exit).
+- P13 p13-contention (12:58:10Z): guard passed, rc 0. contention-exclusion.json 025a3bba… (543 indices excluded,
+  10 phases); guard c384d569…. Committed as <C> = 056c64aec7ef8624b88289aa772256bb6b4bf57e before any reduction.
+- RF-1 fetch on 01 (the single approved fetch, fetch only): refs/remotes/origin/main 9ecc275a… → 056c64ae…;
+  <C> is an ancestor.
+- P14 p14-reduce (12:59:35Z): guard passed, rc 0. results.json cae1577a…; guard e074fd4d….
+- RF-2: `mkdir /mpac/sdicks02/repos/clasher/reports/explore/x4s4` on 01 (absent before; created 13:01:46Z).
+- P15 p15-report (13:01:47Z): guard passed, rc 0, with 18 notes (sha256 e3e2be38…). RESULTS.md ae05ee0a…;
+  guard e56dba61….
+- Primary readout: Δ = −1.9 pp [−3.4, −0.5] on 1,200 seeds → HELPS; fit-inflated [−3.9, −0.0]; contention
+  sensitivity −1.8 pp [−3.7, +0.1] on 657 seeds (inconclusive); attribution −2.7 pp [−4.5, −0.9] → on-policy beyond
+  matched data. See RESULTS.md. Evidence is in receipts/production/.

@@ -1,0 +1,34 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p5-label-O-r2",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s4/label.py",
+    "run",
+    "--plan",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-plan.json",
+    "--set",
+    "O",
+    "--workers",
+    "48"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 50,
+  "child": {
+    "pid": 663119,
+    "pgid": 663119,
+    "starttime": 168507686
+  },
+  "passed": true,
+  "utc": "2026-10-13T13:18:35Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "returncode": 0,
+  "outputs": {},
+  "new_files": {
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/data/label-receipt-O-1791897512.json": "ead48010ea016f9cf2e8a8235fe9568ee07220c972540c8376c2b75fde0d8573"
+  },
+  "final_verdict": null
+}

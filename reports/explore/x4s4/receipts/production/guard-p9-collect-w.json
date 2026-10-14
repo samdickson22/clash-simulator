@@ -1,0 +1,30 @@
+{
+  "schema": "x4s4.guard.v1",
+  "name": "p9-collect-w",
+  "argv": [
+    "/bin/bash",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/rt-R3a/repo/reports/explore/x4s3/runtime.sh",
+    "reports/explore/x4s4/collect_w.py",
+    "--checkpoint",
+    "/mpac/sdicks02/jobs/clasher/x4s4-onpolicy/inputs/main02.pt",
+    "--count",
+    "6000",
+    "--workers",
+    "48"
+  ],
+  "cwd": null,
+  "readout": false,
+  "gpu": false,
+  "add": 50,
+  "child": {
+    "pid": 832666,
+    "pgid": 832666,
+    "starttime": 168819503
+  },
+  "passed": false,
+  "utc": "2026-10-13T14:32:52Z",
+  "label": "X4S-4 guarded step, exploration, NEVER ADOPTABLE",
+  "error": "guard breach: runner_SIGTERM",
+  "breach": "runner_SIGTERM",
+  "returncode": -15
+}
