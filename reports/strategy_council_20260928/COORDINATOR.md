@@ -6844,3 +6844,24 @@ No hold is needed: the owner may proceed through steps 1–4 without waiting for
 - Any refusal stops everything for a ruling.
 
 The owner proceeds through P13 → `<C>` → fetch → P14 → mkdir → P15 without holding.
+
+## 2026-10-14 12:15Z: Engine calibration batches 1+2: MERGE APPROVED (bot/calib-batch2 → main)
+
+**Results.** Our engine's fidelity on the 577 native fixtures (non-tower units within ¼ tile):
+
+| | Before | After |
+|---|---|---|
+| Train | 50.7% | 72.3% |
+| Validation | 57.6% | 74.5% |
+| HP exact (train) | 65.0% | 80.5% |
+
+- RoyaleSim is at 78.8% on the same fixtures.
+- Rust↔Python parity went from 429/577 to 574/577, and 822 tests pass.
+- Planning on the calibrated runtime brought **no** strength gain (−0.010 [−0.031, +0.010] over 1,800 paired games). The bots stay on runtime r1 for now, and further calibration is deprioritised in favour of strength levers.
+
+**Decision: merge `bot/calib-batch2` (c7be6648) into main.** It is the better reference engine. Conditions:
+1. Before merging, tag the current main engine state as `engine-r1`, so past results stay reproducible.
+2. Use a **merge commit**, with no rebase or squash, after the full test suite passes on the merged tree.
+3. The secret scan runs on the merge diff.
+4. Update the README status, which says fidelity is unmeasured, with the fidelity numbers and a link to the reports.
+5. **No impact on frozen work:** X4S-4, the paused timing study, perception and T1 all run from pinned or staged runtimes and commit-addressed sources. Nothing gets re-pinned.
