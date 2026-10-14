@@ -6549,3 +6549,24 @@ All b0f49dfe and 556bb6e0 conditions stand: no SSH from any thread to a host und
   3. **03 preflight as l03.** Prepare it on 05 (receive dir, argv, dry run, PF-2 flags), then S7, then `verify-received`, then report.
 - **Gate after both:** unchanged.
 - **For the timed END runs:** read both stamps first, and pre-trigger any stamp that would go stale inside an END window.
+
+## 2026-10-14 00:59Z: K4S 04 l00 preflight FAILED (background_ready: affinity readback); ruling PF-4
+
+**The run.** 04 l00 launched cleanly (receipt 67c7705b). The 04 stamp was fresh, refreshed by the A2 login at 23:04:44Z. S5 exited 1 with `failed_checks [background_ready]`, and `verify-received` returned rc 2. No END attempt is consumed. Records are at eeabf8db.
+
+These checks passed, including the part RO-1 fixed: `reporting_profile`, `physical_cpus`, `backend_and_corpus` (300 states) and `topology`.
+
+**Cause: S5 is stricter than the frozen END.**
+- `k4s_end_preflight.py:876` requires each background readback affinity to *equal* its pinned mask.
+- The frozen tier_backend (`:238`) and k4s_backend (`:100`) narrow each worker to the first `width` CPUs of its mask, per tier. The frozen `end_reference.py:370–374` only records slot evidence and compares nothing.
+- The readbacks seen were all non-empty subsets of their masks. The reference [0..4] and nice 10 were correct.
+
+**Ruling PF-4:**
+1. **s5s6s7-r7.**
+   - Change that check to: each background readback is a non-empty subset of its pinned mask, and the pinned masks are pairwise disjoint. Record the readback exactly as the frozen END does.
+   - Add a regression test using the observed readbacks.
+   - Update the S7 PREFLIGHT pin and TOOLS-FINAL, plus the S10 TOOL_PINS offline.
+2. **Close the class before review.** Build a table of **every** S5 `require()` and check against the frozen END's actual behavior: is it the same, stricter or looser, with file:line on both sides. Any check stricter than END without a measurement-integrity reason gets fixed in the same round, or justified in writing. One round, not one per host failure. See memory close-finding-classes-not-instances.
+3. **Host step.** A one-file replace of `<base>/tools/k4s_end_preflight.py` on each host, RO-1 style: one login, guarded on the old SHA and size before the change and the new ones after, a-w restored, and the r3 token and cleanup discipline reused.
+4. **Review.** Sol reviews the r7 diff, the class table and the host script as one package. Then the coordinator GO.
+5. **Then** 04 runs as l01, and 03 per PF-3: the A5 pre-trigger at or after 02:53Z, then l03 with the new pins.
