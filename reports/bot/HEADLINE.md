@@ -66,4 +66,6 @@ Everything is as in v1 (same cases, BASE, candidate and match loop), with two ch
 | 2026-10-14 10:20 | ours | K4S-st@student:D | 0.906 [0.890, 0.921] | 0.907 | 0.730 | 0.993 | 0.993 | 1200 | Paired vs K4S-st: R3a +0.010 [−0.050, +0.067], v1 +0.047 [−0.003, +0.097]. Not significant. |
 | 2026-10-14 11:05 | RoyaleSim 15.535 (primary) | student D alone (ExIt it2; one network forward per decision; deployable tier) | P1 0.820 (mean of 4) | 0.807 [0.760, 0.850] | 0.587 [0.530, 0.640] | 0.937 | 0.950 | 1500 | Head-to-head vs K4S-st **0.313 [0.260, 0.367]**: the best bot beats D 69%. |
 | 2026-10-14 11:05 | ours | student D alone | P1 0.839 (mean of 4) | 0.827 [0.780, 0.870] | 0.627 [0.570, 0.680] | 0.937 | 0.963 | 1500 | vs K4S-st 0.307 [0.257, 0.360]. |
+| 2026-10-14 13:00 | **RoyaleSim 15.535 (primary)**, DAILY | K4S-st (best bot, unchanged; runtime r1) | **0.901 [0.885, 0.917]** | 0.890 | 0.723 | 0.997 | 0.993 | 1200 | Daily re-confirmation. The candidate and code are unchanged since 06:26, so the existing games were re-summarised rather than re-run. |
+| 2026-10-14 13:00 | ours, DAILY | K4S-st (unchanged) | 0.892 [0.876, 0.909] | 0.860 | 0.720 | 0.997 | 0.993 | 1200 | Daily re-confirmation; same games as 06:26. The engine merge doesn't affect bots, which stay on frozen runtime r1. |
 
