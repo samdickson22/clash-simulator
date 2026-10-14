@@ -1,0 +1,11 @@
+--- /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r7/tests/fixture_guard_job.py	2026-10-12 23:08:36.054284368 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-prep/s3s9s10-r8/tests/fixture_guard_job.py	2026-10-13 17:18:54.871913712 -0700
+@@ -209,6 +209,8 @@
+         MAC + "/K4S-MAC-PROCEDURE.md": b"procedure\n",
+         "examples/visualize_battle.py": b"print('visualize')\n",
+         "src/clasher/__init__.py": b"",
++        # r8 RO-1 (Sol RO1-r1 #4): the parent of S10.RUNTIME_EMPTY_DIRS, as at P' (frozen es_common.py lives here)
++        "reports/strategy_council_20260928/engine-speed/es_common.py": b"ES_COMMON = 1\n",
+         "src/clasher/core.py": b"CORE = 1\n",
+         "src/clasher/tool.py": b"#!/usr/bin/env python3\nTOOL = 1\n",
+         "data/catalog.json": b'{"catalog": 1}\n',

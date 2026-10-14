@@ -209,6 +209,8 @@ def world_files():
         MAC + "/K4S-MAC-PROCEDURE.md": b"procedure\n",
         "examples/visualize_battle.py": b"print('visualize')\n",
         "src/clasher/__init__.py": b"",
+        # r8 RO-1 (Sol RO1-r1 #4): the parent of S10.RUNTIME_EMPTY_DIRS, as at P' (frozen es_common.py lives here)
+        "reports/strategy_council_20260928/engine-speed/es_common.py": b"ES_COMMON = 1\n",
         "src/clasher/core.py": b"CORE = 1\n",
         "src/clasher/tool.py": b"#!/usr/bin/env python3\nTOOL = 1\n",
         "data/catalog.json": b'{"catalog": 1}\n',

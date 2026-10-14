@@ -1,0 +1,89 @@
+--- /mpac/sdicks02/k4s-runner/run-r1/end-staging/a4/ro1-results.sh	2026-10-13 17:03:40.803247924 -0700
++++ /mpac/sdicks02/k4s-runner/run-r1/end-staging/a4/ro1-results-r2.sh	2026-10-13 17:22:39.497535237 -0700
+@@ -1,12 +1,18 @@
+ #!/bin/bash
+-# RO-1 host step (COORDINATOR 02656d67, option A). NOT RUN until coordinator GO after Sol review.
++# RO-1 host step r2 (COORDINATOR 02656d67; fixes SOL-REVIEW-RO1-r1 #1-#3). NOT RUN until coordinator GO.
+ # Creates the EMPTY directory <runtime>/reports/strategy_council_20260928/engine-speed/results inside the staged,
+-# read-only runtime (frozen es_common.py:20 mkdirs it at import). One login per host from 05 (ControlMaster off), the
+-# remote side at nice 19. Guards before any change: hostname; realpath(parent) == expected; parent is a real directory
+-# (not a symlink) with no write bits; `results` absent (no file, dir or symlink). Actions: chmod u+w parent; mkdir
+-# results; chmod a-w results; chmod a-w parent. Then verify modes (no write bit on either; results empty). Prints
+-# `stat` of the parent before and of both after. Writes nothing else on the host. Local log only on 05.
+-# Usage: ro1-results.sh HOST     (127x03 | 127x04)          Exit: the host __RC token (0 ok; 9x refused; 255 ssh)
++# read-only runtime (frozen es_common.py:20 mkdirs it at import). One ssh login per host from 05 (ControlMaster off);
++# the remote body runs under nice 19.
++# Remote, in order: guards (hostname 90; real dir, not a symlink 91; realpath == expected 92; results absent 93; parent
++# without write bits 94); a cleanup trap (EXIT, ERR, TERM, INT, HUP) is installed BEFORE writes are enabled and always
++# re-applies a-w to the parent (and results if it exists) when writes may be enabled; chmod u+w parent (95); mkdir
++# results (96); chmod a-w parent IMMEDIATELY (98); chmod a-w results (97); verify: neither has write bits (99), results
++# empty (89). Every probe's exit status is checked before its output is used (stat 81, post-find 82, ls 83, pre-find 84,
++# realpath 92, hostname 90). Other codes: 86 unexpected command failure (ERR), 87 signal; 88 = a failure for which
++# restoring the parent to a-w ALSO failed (the cause is printed as __CAUSE). Exactly one `__RC=<n>` line is printed.
++# Local: the status comes ONLY from this invocation's captured output: exactly one anchored __RC line with an integer
++# and ssh exit 0, else fail closed (exit 255). The log on 05 is append-only evidence.
++# Usage: ro1-results-r2.sh HOST     (127x03 | 127x04)
+ set -u
+ H=${1:-}
+ case "$H" in 127x03) BASE=/mpac/sdicks02/jobs/clasher/k4s-end-r1;; 127x04) BASE=/mpac/sdicks02/jobs-k4s/k4s-end-r1;;
+@@ -15,23 +21,40 @@
+ LOG=/mpac/sdicks02/k4s-runner/run-r1/end-staging/a4/ro1-results-$H.log
+ REMOTE='set -u
+ P='"'$P'"'; H='"'$H'"'
+-rc(){ echo "__RC=$1"; exit 0; }
+-[ "$(hostname -s)" = "$H" ] || rc 90
+-[ -d "$P" ] && [ ! -L "$P" ] || rc 91
+-[ "$(realpath -e -- "$P")" = "$P" ] || rc 92
+-[ ! -e "$P/results" ] && [ ! -L "$P/results" ] || rc 93
+-[ -z "$(find "$P" -maxdepth 0 -perm /222)" ] || rc 94
+-echo "BEFORE $(stat -c "%A %a %U %h %i %n" -- "$P")"
+-chmod u+w -- "$P" || rc 95
+-mkdir -- "$P/results" || { chmod a-w -- "$P"; rc 96; }
+-chmod a-w -- "$P/results" || rc 97
+-chmod a-w -- "$P" || rc 98
+-[ -z "$(find "$P" "$P/results" -maxdepth 0 -perm /222)" ] || rc 99
+-[ -z "$(ls -A -- "$P/results")" ] || rc 89
+-echo "AFTER $(stat -c "%A %a %U %h %i %n" -- "$P")"
+-echo "AFTER $(stat -c "%A %a %U %h %i %n" -- "$P/results")"
+-rc 0'
+-{ echo "== $(date -u +%FT%TZ) ro1-results $H"; /usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none \
+-  -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ClearAllForwardings=yes -o RequestTTY=no -- "$H" \
+-  "nice -n 19 /bin/bash -c $(printf '%q' "$REMOTE")"; echo "__SSH_RC=$?"; } 2>&1 | tee -a "$LOG"
+-tok=$(grep -o '__RC=[0-9]*' "$LOG" | tail -1 | cut -d= -f2); exit "${tok:-255}"
++WRITABLE=0; STATUS=
++fail(){ STATUS=$1; exit 0; }
++on_exit(){
++  trap - EXIT ERR TERM INT HUP
++  if [ "$WRITABLE" = 1 ]; then
++    if [ -d "$P/results" ] && [ ! -L "$P/results" ]; then chmod a-w -- "$P/results"; fi
++    if chmod a-w -- "$P"; then WRITABLE=0; fi
++  fi
++  if [ "$WRITABLE" = 1 ]; then echo "__CAUSE=${STATUS:-none}"; echo "__RC=88"; else echo "__RC=${STATUS:-86}"; fi
++}
++trap on_exit EXIT
++trap "fail 86" ERR
++trap "fail 87" TERM INT HUP
++hn=$(hostname -s) || fail 90; [ "$hn" = "$H" ] || fail 90
++[ -d "$P" ] && [ ! -L "$P" ] || fail 91
++rp=$(realpath -e -- "$P") || fail 92; [ "$rp" = "$P" ] || fail 92
++[ ! -e "$P/results" ] && [ ! -L "$P/results" ] || fail 93
++perm=$(find "$P" -maxdepth 0 -perm /222 -print) || fail 84; [ -z "$perm" ] || fail 94
++before=$(stat -c "%A %a %U %h %i %n" -- "$P") || fail 81; echo "BEFORE $before"
++WRITABLE=1
++chmod u+w -- "$P" || fail 95
++mkdir -- "$P/results" || fail 96
++chmod a-w -- "$P" || fail 98
++WRITABLE=0
++chmod a-w -- "$P/results" || fail 97
++perm=$(find "$P" "$P/results" -maxdepth 0 -perm /222 -print) || fail 82; [ -z "$perm" ] || fail 99
++listing=$(ls -A -- "$P/results") || fail 83; [ -z "$listing" ] || fail 89
++after=$(stat -c "%A %a %U %h %i %n" -- "$P" "$P/results") || fail 81; printf "AFTER %s\n" "$after"
++fail 0'
++out=$(/usr/bin/ssh -T -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o StrictHostKeyChecking=yes \
++  -o ConnectTimeout=20 -o ClearAllForwardings=yes -o RequestTTY=no -- "$H" "nice -n 19 /bin/bash -c $(printf '%q' "$REMOTE")" 2>&1)
++ssh_rc=$?
++{ echo "== $(date -u +%FT%TZ) ro1-results-r2 $H"; printf '%s\n' "$out"; echo "__SSH_RC=$ssh_rc"; } | tee -a "$LOG"
++toks=$(printf '%s\n' "$out" | grep -E '^__RC=[0-9]{1,3}$' || true)
++n=$(printf '%s' "$toks" | grep -c . || true)
++if [ "$ssh_rc" -ne 0 ] || [ "$n" -ne 1 ]; then echo "ro1-results-r2: fail closed (ssh_rc=$ssh_rc, rc tokens=$n)" >&2; exit 255; fi
++exit "${toks#__RC=}"

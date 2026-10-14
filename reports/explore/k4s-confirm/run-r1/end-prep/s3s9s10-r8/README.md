@@ -799,3 +799,7 @@ Change: `HOST_PYTHON_IMPORTS = ("numpy", "torch")` (s10_stage_host.py), test exp
 ## r8 (2026-10-14T00:04:51Z, runner; RO-1 COORDINATOR 02656d67)
 
 S10 stages the declared EMPTY runtime directories `RUNTIME_EMPTY_DIRS = ("reports/strategy_council_20260928/engine-speed/results",)` (frozen es_common.py:20 mkdirs it at import; the a-w staged runtime made A4 03 l01 fail). `runtime_dirs(manifest)` appends them to the S9 inventory dirs after refusing if already tracked, holding files, or parentless; the receive creates them empty before a-w. Runtime files/manifest unchanged. Test: tests/test_r8_ro1.py. Chain re-pinned (s10, s11). For already-staged hosts the one-off host step is end-staging/a4/ro1-results.sh.
+
+### r8 fix (Sol RO1-r1 #4, 2026-10-14T00:23:29Z)
+
+`tests/fixture_guard_job.py` world_files() gains the synthetic `reports/strategy_council_20260928/engine-speed/es_common.py`, the parent of RUNTIME_EMPTY_DIRS, as at P'. The parentless refusal stays tested in test_r8_ro1.py. Full suite rerun in four modes.
