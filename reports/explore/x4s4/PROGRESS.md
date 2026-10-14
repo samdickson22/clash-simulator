@@ -622,3 +622,14 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
     teardown.
   - Reported for a ruling (proposed AR-2: move them to fits/halted-r2-R5/cache-fit-tmp/, then
     ACK-driver-exception, which Fits.tick can now reach). P9 runs on.
+
+## 2026-10-14T00:18:17Z — AR-2 (COORDINATOR cfc3e7c6): pymp sockets set aside; ACK consumed by the driver; R5 launched fresh
+
+- Watchdog ok. The 6 cache/fit/tmp/pymp-* directories (one listener socket each, from the old R5 DataLoader) were moved
+  to fits/halted-r2-R5/cache-fit-tmp/. cache/fit now has no special or linked files.
+- ACK-driver-exception.json 3181508e… (anomaly 8dbd4b82…, "continue", owner "coordinator AR-2 cfc3e7c6"). The driver
+  consumed it (RESOLVED-driver-exception-1791937095.json).
+- fit-R5 was launched at 00:18:17Z: pid/pgid 2778983, launch_id 372a7398…, `run_fit.sh R5 - batch-0000` (fresh;
+  gate e6d19a81). Step 1 at 00:20:01Z, loss 9.871.
+- AR-2b (standing for this run): a later abnormal fit kill leaving only pymp-* sockets gets the same set-aside and a
+  "continue" ACK without asking, then a report.
