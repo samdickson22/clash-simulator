@@ -633,3 +633,12 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
   gate e6d19a81). Step 1 at 00:20:01Z, loss 9.871.
 - AR-2b (standing for this run): a later abnormal fit kill leaving only pymp-* sockets gets the same set-aside and a
   "continue" ACK without asking, then a report.
+
+## 2026-10-14T01:25Z — P9 done; O_W gate PASS (under T3)
+
+- p9-collect-w-r2 (00:09:52Z–01:17:31Z): guard passed (0c718792…). raw-OW-selection.json 5619ed7d…: target 339,846
+  roots; selected 339,892 roots in a 2,907-game contiguous prefix; 2,961 games sealed, 54 to unused; no halt.
+- p9-pack-OW: guard passed (73e18cad…); onpolicy-w/batch-0000 manifest 2617b6de….
+- p9-verify-OW: guard passed (af47a58b…). OW-VERIFIED.json 67700e08…: roots 339,892, rows 2,201,951,
+  single-candidate share 0.0; it binds the selection, the O gate e6d19a81 and the acceptance 88b884d6.
+- R5 was at step 1,852 at 01:20Z. The watchdog stayed ok throughout: slow lane ≤ 4.7 s, fast lane ≤ 0.07 s.
