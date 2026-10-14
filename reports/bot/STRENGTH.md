@@ -39,14 +39,36 @@ Paired R3a-sampled − R3a (calibrated threshold gate) on the same 300 cases:
 - The argmax of v1's gate at each poll **never plays** (P(play) ≥ 0.5 on 0.01% of polls). So "greedy" must mean a
   threshold calibrated to the play rate.
   - Over 700,541 v1 polls the mean P(play) is 0.0436. The matching threshold is τ = 0.1387.
-  - The v1-τ arm (threshold gate, argmax card and tile) is running in `bot-gate-r1` on 04.
+  - **The v1-τ arm (threshold gate, argmax card and tile) collapses.** It plays only 6.9–13.9 cards per game,
+    against 26–32 for sampled v1. Paired against sampled v1 on the same cases:
 
-## RoyaleSim
+    | opponent | v1-τ − sampled v1 |
+    |---|---|
+    | v1 | −0.453 [−0.513, −0.397] |
+    | scripted-balanced | −0.440 |
+    | scripted-pressure | −0.358 |
 
-Pending the RoyaleSim adapter (Opus subagent `bot-lead-rsim-adapter-r1`). It uses the same cases, the pool and the
-15.535 arm.
+    A threshold calibrated on the sampled policy's visited states does not keep the play rate once decoding is
+    greedy, because the greedy policy visits different states.
+  - **Lesson:** calibrate thresholds **on-policy**, iterating on the greedy policy's own trajectories, or use a
+    play-rate controller. R3a's threshold already behaves well (37–38 plays per game).
+
+## RoyaleSim (0.1.34, 15.535.29 rules; our bots via `bot/players/royalesim_*`, search still plans on our engine)
+
+| candidate | vs v1 | vs R3a | vs scripted-balanced | vs scripted-pressure | pool P1 |
+|---|---|---|---|---|---|
+| K4S-b64 | 0.797 [0.750, 0.840] | 0.617 [0.563, 0.673] | 0.993 | 0.997 | **0.851 [0.833, 0.869]** |
+
+Paired RoyaleSim − ours on the same 300 cases:
+- vs v1: −0.033 [−0.093, +0.023]
+- vs R3a: −0.017 [−0.077, +0.047]
+- vs scripted-balanced: −0.003
+- vs scripted-pressure: 0.000
+
+Planner model mismatch costs little at this strength. The engine decision is in `DECISION-ENGINE.md`.
 
 Raw logs:
+- `/mpac/sdicks02/jobs/clasher/bot-headline-rsim-r1/` on 03 (RoyaleSim);
 - `/mpac/sdicks02/jobs/clasher/bot-headline-r1/` on 03;
 - `/mpac/sdicks02/jobs/clasher/bot-gate-r1/` on 04, including `v1-pplay.jsonl`.
 

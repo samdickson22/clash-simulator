@@ -1,6 +1,6 @@
 # HEADLINE: our best bot vs a fixed opponent pool (exploration, tracked daily)
 
-The single tracked number is **pool score**: the candidate's mean score (win 1, draw 0.5, loss 0) against each pool
+The single tracked number is **pool score in RoyaleSim (15.535.29 rules)**, with our engine as a second column (DECISION-ENGINE.md). Pool score is: the candidate's mean score (win 1, draw 0.5, loss 0) against each pool
 opponent, averaged with equal weight over opponents. It is reported in each engine. Every row is exploration-tier.
 
 ## Protocol HEADLINE-v1 (fixed 2026-10-14)
@@ -42,5 +42,5 @@ opponent, averaged with equal weight over opponents. It is reported in each engi
 | date (UTC) | engine | candidate | pool score [95% CI] | vs v1 | vs R3a | vs scripted-balanced | vs scripted-pressure | games | notes |
 |---|---|---|---|---|---|---|---|---:|---|
 | 2026-10-14 03:50 | ours (Python C56) | K4S-b64 | **0.864 [0.847, 0.882]** | 0.830 [0.787, 0.870] | 0.633 [0.580, 0.687] | 0.997 [0.990, 1.000] | 0.996 [0.990, 1.000] | 1200 | first run, bot-headline-r1 on 03. Scripted opponents are saturated, so the R3a and v1 columns carry the signal. |
-| — | RoyaleSim 15.535 | K4S-b64 | pending | | | | | | adapter in progress |
+| 2026-10-14 04:35 | **RoyaleSim 0.1.34, 15.535.29 rules (primary from now on)** | K4S-b64 | **0.851 [0.833, 0.869]** | 0.797 [0.750, 0.840] | 0.617 [0.563, 0.673] | 0.993 [0.983, 1.000] | 0.997 [0.990, 1.000] | 1200 | bot-headline-rsim-r1 on 03, same 1200 cases. Paired RoyaleSim − ours: vs v1 −0.033 [−0.093, +0.023], vs R3a −0.017 [−0.077, +0.047]. |
 
