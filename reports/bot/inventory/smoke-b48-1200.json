@@ -1,0 +1,129 @@
+{
+ "seed": 4503604817370496,
+ "decks": [
+  [
+   "Log",
+   "Skeletons",
+   "Musketeer",
+   "HogRider",
+   "Fireball",
+   "IceSpirit",
+   "IceGolem",
+   "Cannon"
+  ],
+  [
+   "Log",
+   "Fireball",
+   "Skeletons",
+   "Cannon",
+   "Musketeer",
+   "IceSpirit",
+   "HogRider",
+   "IceGolem"
+  ]
+ ],
+ "players": {
+  "0": "K4S-b48",
+  "1": "v1-policy"
+ },
+ "terminal": false,
+ "winner": null,
+ "ticks": 1200,
+ "towers": {
+  "0": [
+   4824.0,
+   13.0,
+   3052.0
+  ],
+  "1": [
+   4824.0,
+   2101.0,
+   3052.0
+  ]
+ },
+ "command_sha256": "b6e0d3e033b11ce07597a91a0ee702068d4b8334c770f37d8610d2cfb97f2d17",
+ "plays": {
+  "0": 11,
+  "1": 7
+ },
+ "accepted": {
+  "0": 11,
+  "1": 7
+ },
+ "channels": {
+  "0": {
+   "submitted": 11,
+   "executed": 11,
+   "rejected": 0,
+   "blocked_polls": 177,
+   "pending_at_end": 0,
+   "peak_pending": 1
+  },
+  "1": {
+   "submitted": 7,
+   "executed": 7,
+   "rejected": 0,
+   "blocked_polls": 35,
+   "pending_at_end": 0,
+   "peak_pending": 1
+  }
+ },
+ "timing": {
+  "0": {
+   "decisions": 40,
+   "wall": 8.097025017952546,
+   "cpu": 8.090962356000006,
+   "overrun_ticks": 0
+  },
+  "1": {
+   "decisions": 187,
+   "wall": 2.2537334121298045,
+   "cpu": 2.2520226099999885,
+   "overrun_ticks": 0
+  }
+ },
+ "cpu_seconds": 13.761416657,
+ "bot_seat": 0,
+ "setup_cpu_seconds": 15.136026704,
+ "total_cpu_seconds": 29.30925592,
+ "runtime_root": "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1",
+ "bot_summary": {
+  "decisions": 40,
+  "searched": 40,
+  "hit": 0,
+  "student_default": 0,
+  "plays": 11,
+  "mean_rollouts": 39.2,
+  "mean_scored_set": 10.8,
+  "mean_wall_ms": 200.95729704480618
+ },
+ "equivalence": [
+  {
+   "tick": 90,
+   "hit": false,
+   "candidates": 24,
+   "rollouts": 45.0,
+   "unbounded": 780,
+   "budget": 780,
+   "equal": true
+  },
+  {
+   "tick": 120,
+   "hit": false,
+   "candidates": 24,
+   "rollouts": 45.0,
+   "unbounded": 1964,
+   "budget": 1964,
+   "equal": true
+  },
+  {
+   "tick": 150,
+   "hit": false,
+   "candidates": 23,
+   "rollouts": 44.0,
+   "unbounded": 1848,
+   "budget": 1848,
+   "equal": true
+  }
+ ]
+}
