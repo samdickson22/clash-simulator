@@ -662,3 +662,10 @@ U2 finishes R3a-rep2's S-200 phase, then drains. There is no contact with 127x01
 - P11 `p11-diagnose`: `env PYTHONPATH=$J/fit/source:$J/fit/source/src:$J/fit/ops $GRDG --name p11-diagnose --gpu --cwd
   $J/fit/source --output $J/analysis/diagnostic.json -- /mpac/sdicks02/envs/clasher-gpu/bin/python -B $X/diagnose.py`,
   detached at 04:16:57Z (runner 3556291). PYTHONPATH and cwd are as in Q6.
+
+## 2026-10-14T04:21Z — P11 PASS; P12 ABBA started
+
+- P11 p11-diagnose: guard passed (9da087c1…); analysis/diagnostic.json c66ca750… (descriptive only).
+- P12: watchdog ok, no STOP/HALT/ANOMALY, no console user. `REPORTING.GO` was created at 04:20:53Z. The driver
+  launched phase-R3a-K4S-120-a1 at 04:21:02Z (launch a027de15…, pid 3570918). ABBA order: R3a, R5, R5-rep, R3a-rep,
+  R5W.
