@@ -1,0 +1,65 @@
+{
+  "complete": {
+    "bytes": 4309120,
+    "envelope_binding": "Exact decoded bytes/SHA/size/path and reviewed validate_output PASS",
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-cpu-transport/c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861/environment.json",
+    "remote_path": "/mpac/sdicks02/jobs/clasher/v4-b-20261012-r1/preflight-c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861/environment.json",
+    "sha256": "af5841e6331fc4bcd392cc79ac1359c77c108e9a7a1a00f7fb635d3104e4be48"
+  },
+  "completion_time_note": "Environment artifact has no completion timestamp; no timestamp inferred.",
+  "cpu_go_sha256": "c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861",
+  "extra_remote_inspection": false,
+  "g6_comparison": {
+    "numpy": {
+      "actual": "1.26.4",
+      "historical_candidate": "1.26.4",
+      "matches": true
+    },
+    "opencv-python": {
+      "actual": "4.10.0.84",
+      "historical_candidate": "4.10.0.84",
+      "matches": true
+    },
+    "python": {
+      "actual": "3.12.12",
+      "historical_candidate": "3.12.12",
+      "matches": true
+    },
+    "torch": {
+      "actual": "2.7.1+cu118",
+      "historical_candidate": "2.7.1+cu118",
+      "matches": true
+    },
+    "torch_cuda": {
+      "actual": "11.8",
+      "historical_candidate": "11.8",
+      "matches": true
+    },
+    "ultralytics": {
+      "actual": "8.1.24",
+      "historical_candidate": "8.1.24",
+      "matches": true
+    }
+  },
+  "g6_coordinator_acceptance_pending": true,
+  "g6_differences": {},
+  "gpu_work": false,
+  "heldout_opened": false,
+  "inventory_file_count": 23467,
+  "launcher_exit_code": 0,
+  "main20min_unchanged": true,
+  "no_retry": true,
+  "outcome": "SUCCESS",
+  "phase": "environment",
+  "result": {
+    "bytes": 5746159,
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/b08-cpu-transport/c663556c298cf479a079db19a08d500cb7860bcc2939db86a3498a21ac350861/result.json",
+    "sha256": "9aa86b5243a04482fe8ef150d8a4a31aacd88b4387bf2464312b78c61514f207"
+  },
+  "revocation_tip_commit": "3e09133d23528041703845b7fb11715960ba5ca4",
+  "run_go_sha256": "1d42e2e80ca02d2388ec92eed14f0432e75666bd65e2e4cbd43d17829c056ed4",
+  "runtime_admitted": false,
+  "sender_exit_code": 0,
+  "status": "SUCCESS_PENDING_COORDINATOR_C4",
+  "utc": "2026-10-14T00:46:19.497523+00:00"
+}

@@ -6450,3 +6450,32 @@ The environment C-4 includes the G6 comparison of actual against historical. No 
 **Window:** 2026-10-14 00:45Z to 01:45Z.
 
 ISSUED AUTHORIZE_B_CPU_TRANSPORT_RUN 1d42e2e80ca02d2388ec92eed14f0432e75666bd65e2e4cbd43d17829c056ed4
+
+## 2026-10-14 00:47Z: B r5 environment C-4 + G6 ACCEPTED; quiet-read r14
+
+Environment run GO 1d42e2e8 ran once (launcher/sender exit 0, outcome SUCCESS).
+
+**Checks:**
+- result 9aa86b52 (5,746,159 B) and environment.json af5841e6 (4,309,120 B), both recomputed locally;
+- 23,467 inventory files;
+- `runtime_admitted=false`, `cuda_imported=false`;
+- revocation tip 3e09133d, an ancestor of origin/main; after it there are no relied-on SHAs (run 1d42e2e8, CPU c663556c, placement 1765daf2, review 7dca4033, package a0046c1d), and 0 `REVOKED` lines.
+
+The compact receipt is `l1/receipts/b08-r5-environment-result-r1.json` (37d87a1eb1ed220228a9d98e04d3d907418b3793adb631136306273b2c3aca1e).
+
+**G6, actual against the historical candidate (2026-10-08T00:20Z).** The coordinator read these directly from the returned environment.json, from `python`, `packages` and `torch_build.values`. All six match:
+
+| Item | Version |
+|---|---|
+| Python | 3.12.12 |
+| numpy | 1.26.4 |
+| opencv-python | 4.10.0.84 |
+| torch | 2.7.1+cu118 |
+| torch CUDA build | 11.8 |
+| ultralytics | 8.1.24 |
+
+**C-4 ACCEPTED; G6 ACCEPTED.**
+
+**Quiet-read r13 → r14.** Run with `evidence/coordinator-quiet-read-r14.sh` (a61c99a3), which is r13 with only `Q=` changed. Exit code 0. Observation 5069a8d87f9414aefc0d9fdc41544691a29d3b436469bbb6d62463b25e0cb6a7: who 0, available 1,214,282,649,600 B, loadavg 0.02.
+
+**Next:** the owner fills the epoch-1 chain (`b08-r5-epoch01-chain-drafts-r1`, manifest ce69f97f) in a fresh version. This commit is the environment and G6 acceptance, and quiet-read r14 is the observation. The coordinator adds the between-phase attestations at issuance.
