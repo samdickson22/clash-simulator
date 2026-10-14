@@ -6396,3 +6396,18 @@ Lesson: an integration audit must construct the backend for real; a stub native 
 Any refusal or mismatch stops for a ruling, with no retry.
 
 **Resources** are the existing X4S-4 limits on 01. A console user means yield.
+
+## 2026-10-14 00:17Z: X4S-4 AR-1 done (fit-R5 anomaly resolved); ruling AR-2 (stale DataLoader sockets)
+
+**AR-1 is done.** It ran once, rc 0. `unresolved_anomalies()` validated ACK 4468dcb9 against anomaly 3c990118 and archived `RESOLVED-fit-R5-1791937009.json` (57513a5a). The ACK and the anomaly were renamed with their bytes unchanged.
+
+**New anomaly.** The driver's next tick raised `ANOMALY-driver-exception.json` (8dbd4b82). R3-F1 `prepare_fit_dirs` refused a special file: `cache/fit/tmp/pymp-*/listener-*` sockets. There are 6 `pymp-*` directories, 28 KB, left behind when the HALT teardown killed the old R5 fit's DataLoader workers at 13:35Z. Nothing else in `cache/fit` is special or linked. The guard worked as designed.
+
+**Ruling AR-2, as proposed:**
+1. Run `watchdog.py status`.
+2. **Move** the 6 `cache/fit/tmp/pymp-*` directories, with bytes and sockets unchanged, to `fits/halted-r2-R5/cache-fit-tmp/`.
+3. Write `driver/ACK-driver-exception.json` = {anomaly_sha256 8dbd4b82…, disposition "continue", owner "coordinator AR-2 <this commit>"}.
+
+The driver's own next tick consumes the ACK and launches R5 fresh.
+
+**Standing pre-authorization (AR-2b), for the rest of this X4S-4 run.** If a fit is killed abnormally and a later `prepare_fit_dirs` refuses **only** `pymp-*` multiprocessing listener sockets under `cache/fit/tmp`, the owner may apply the same set-aside to `fits/halted-<tag>/cache-fit-tmp/` and ACK "continue" without a new ruling, then report afterwards. Anything else still needs a ruling.
