@@ -6370,3 +6370,29 @@ The preflight ran (records at 6fda39eb). S5 exited 1 and `verify-received` retur
 3. **The coordinator GOs the host step**, then reruns the 03 preflight as l02 (new receive dir and argv), then 04 l00. The PF-2 flags still apply.
 
 Lesson: an integration audit must construct the backend for real; a stub native hides import-time side effects. See memory require-end-to-end-integration-before-host-go.
+
+## 2026-10-14 00:04Z: X4S-4 HR-2 r3 PR-1 coordinator check PASS; GO HR-2 (restart in J with T3)
+
+**The r3 change** is 5c7403287cfe67e16885aeb60360d7b9a1729f14. The watchdog.py diff against 62a5456e is 196cb5dadece6beb69203bc6d7a574029ba9f09e6d89a9a93a8ff1bdea587fee, and watchdog.py at r3 is 797320cc93f30072af29e2282bbe01d04e1f12c940a6140e602c9eb22bc0c0a6.
+
+**Coordinator direct check under PR-1, after Sol r1 and r2:** PASS.
+- **Publish order.** Both lanes publish the breach (for a failed or late outcome), then the pass completion, then the slow last-good result (success only). The late-return checks are unchanged.
+- **The gap after completion.** Between the slow pass completing and the new last-good result appearing, the previous last-good result is at most max(cycle − previous duration, 0) + budget old. That is 150 s or less, under the 180 s age bound, which leaves 30 s of scheduling slack. On the first pass, the startup bound (180 s) covers it.
+- **Late or failed passes.** A late or failed pass has its breach set before it appears complete.
+- **Fast lane.** The publish order changes and nothing else.
+- **Tests.** The completion_order test pauses the real workers after each publish, and 3 new mutants are killed. The matrix is 153/153 in all six configurations, and 17/17 mutants are killed.
+- **Known residual.** N1, the Tree teardown overlap, is pre-existing since R9 and is now documented as a known residual. This is exploration and NEVER ADOPTABLE.
+
+**GO HR-2.** The owner runs the pre-approved procedure (a4d5f695, steps 1–9) once, in J on 01:
+1. Install watchdog.py and check that it hashes to 797320cc93f30072af29e2282bbe01d04e1f12c940a6140e602c9eb22bc0c0a6 in base, rt-R3a and rt-R3a-rep. Re-seal RUNTIME-INVENTORY with only the watchdog entry changed.
+2. Stop PID 657762 by SIGTERM to its verified (pid, starttime 168497996).
+3. Archive HALT.json to `receipts/halt-r2/`, then run the sanctioned `resume`.
+4. Move the set-asides with bytes unchanged.
+5. Write `ACK-fit-R5` with disposition "continue".
+6. Set T3 to the write time, and the hard stop to T3 + 24 h.
+7. Take the before/after inventory and diff, then W0 with the default slow lane, then the P3-r4 `--final` check, which must reproduce inventory aadafb16.
+8. Relaunch P9 as `p9-collect-w-r2` and start the driver.
+
+Any refusal or mismatch stops for a ruling, with no retry.
+
+**Resources** are the existing X4S-4 limits on 01. A console user means yield.
