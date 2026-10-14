@@ -70,7 +70,9 @@ def test_current_balance_layer_updates_enabled_base_cards():
     loader = CardDataLoader()
     expected = {
         "Minions": (230, 107, 1200),
-        "Wallbreakers": (330, 350, 1200),
+        # Batch 2 §9a (reports/bot/calibration/BATCH2.md): native blasts do
+        # 281 = 110 * 256% (458 tower drops, 83 troop drops); was 137 -> 350.
+        "Wallbreakers": (330, 281, 1200),
         "MagicArcher": (529, 143, 1100),
         "MiniPekka": (1390, 755, 1600),
         "DartGoblin": (261, 151, 800),

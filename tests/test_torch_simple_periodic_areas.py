@@ -220,18 +220,21 @@ def test_poison_uses_serialized_periodic_cadence_and_tower_scale(
     noop = _cast(runtime)
     tower_before = 2_000.0
     troop_before = 2_000.0
+    # Batch 2 §9c (reports/bot/calibration/BATCH2.md): native crown towers drop
+    # 22 per Poison pulse (92 * 23%, rounded up); the old override was 21.
+    tower_pulse = 22.0
 
     for _ in range(23):
         runtime.step_tick(noop)
     assert float(runtime.state.hp[0, 3]) == tower_before
     assert float(runtime.state.hp[0, 6]) == troop_before
     runtime.step_tick(noop)
-    assert float(runtime.state.hp[0, 3]) == pytest.approx(tower_before - 21.0)
+    assert float(runtime.state.hp[0, 3]) == pytest.approx(tower_before - tower_pulse)
     assert float(runtime.state.hp[0, 6]) == pytest.approx(troop_before - 92.0)
 
     for _ in range(140):
         runtime.step_tick(noop)
-    assert float(runtime.state.hp[0, 3]) == pytest.approx(tower_before - 8 * 21.0)
+    assert float(runtime.state.hp[0, 3]) == pytest.approx(tower_before - 8 * tower_pulse)
     assert float(runtime.state.hp[0, 6]) == pytest.approx(troop_before - 8 * 92.0)
     assert not bool(runtime.effects.active.any())
 
