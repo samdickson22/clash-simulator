@@ -33,6 +33,8 @@ Policies (documented, counted in `stats`):
   streams (opponent elixir is then OVER-estimated by its cost); 'proxy' substitutes a same-cost C56 card from
   PROXY (keeps the elixir ledger; identity is wrong). Own non-C56 hand cards become empty (unplayable) slots.
 - More than 8 distinct C56 enemy cards (perception error) -> the 9th+ card's plays are dropped.
+- Card consistency (card-level records): an own unit of a card outside our deck, or an opponent unit of a 9th
+  distinct card, is dropped (board_card_ok; counted), so every unit reaching search is a card its owner can have.
 - Levels: the packet carries level 11 everywhere (R3a/it5s2 only ever saw 11); real levels go to the planner
   root (levels.py). Fair-information: nothing about the opponent other than the public board, tower HP and the
   card plays it made is read; see test_translate.py::test_invariance.
@@ -109,6 +111,7 @@ class OwnTracker:
 
 class LiveTranslator(Translator):
     """Perception records -> Information. One instance per match; feed records in time order."""
+    sanitize = True       # card-level units must be cards their owner can have (board_card_ok)
 
     def __init__(self, rt, own_deck, *, vocab=None, unknown_card='drop', proxy=None, seat=0, plays_from='births',
                  card_level=True, tracker_kw=None):
@@ -328,7 +331,10 @@ class LiveTranslator(Translator):
                 else:
                     self.stats[f'unmapped_card_unit:{card}'] += 1
                     continue
-            units.append((card, 0 if int(u['owner']) == 0 else 1, float(u['x']), float(u['y']), u.get('score')))
+            owner = 0 if int(u['owner']) == 0 else 1
+            if self.sanitize and not self.board_card_ok(card, owner):
+                continue
+            units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
         own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
         got, plays = self.tracker.update(record['tick'], units, own)
@@ -336,6 +342,28 @@ class LiveTranslator(Translator):
         for i, a in zip(idx, got):
             assigned[i] = a
         return assigned, plays
+
+    def board_card_ok(self, card, owner):
+        """Card-consistency guard (the deck rule; fair information): an on-board unit must be a card its owner can
+        have. Own units: our own 8-card deck (exact). Opponent units: a card it has been seen playing, or any card
+        while fewer than 8 distinct opponent cards are known. Anything else is a perception error (card confusion or
+        a false positive) and is DROPPED, counted in stats['board_dropped:<owner>:<card>']. Not flipped to the other
+        owner: perception reads the owner from the health-bar colour, and the measured channel's errors are in the
+        card, so a flip would put a phantom enemy where our own unit stands. A one-frame misread of a tracked unit
+        leaves that track alive for `ttl` ticks. Without this, an off-deck unit reaches the search root with no
+        entry in a deck-card config (lopp_fast 'fc') and the native panics (c56.rs electro_land, Electro Spirit).
+        Reads only our deck and the accepted public plays."""
+        if owner == 0:
+            ok = card in self.own_tracker.deck
+        else:
+            revealed = {n for _, n in self.plays[1]}
+            ok = card in revealed or len(revealed) < 8
+            if ok and card not in revealed:
+                self.stats['board_unrevealed_opp_kept'] += 1
+        if not ok:
+            self.stats[f'board_dropped:{owner}:{card}'] += 1
+            self.stats['board_dropped'] += 1
+        return ok
 
     def accept_events(self, record):
         from derived_public_state import PublicEvent

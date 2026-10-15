@@ -14,7 +14,10 @@ Nothing frozen is edited. Two pieces:
     tier='search': it5s2 polls every 5 ticks (D1 tracking), then WallCandidatePlayer decides on 10-tick
                    multiples with it5s2's action as its cutoff default ('it5s2' default) or R3a's ('R3a').
                    If the search raises, it5s2's action is used (source='fast-error'); after
-                   `max_errors` consecutive errors the search tier is disabled for the match.
+                   `max_errors` consecutive errors the search tier is disabled for the match. Native panics
+                   (pyo3 PanicException, a BaseException) count as errors too (`panics`); only
+                   KeyboardInterrupt/SystemExit/GeneratorExit propagate. A K4L pool whose worker died (panic in
+                   the worker) raises on every later decision (BrokenPipe/EOF), so it is disabled after max_errors.
     tier='fast':   pure it5s2 (bot/exit/student.py StudentPlayer decode: top-1 legal play when
                    P(play) >= 0.5375, else WAIT), every 5 ticks.
   Every Decision carries stats: source, wall/cpu ms, search hit/completed/candidates, both tiers' actions.
@@ -246,7 +249,7 @@ class LivePlayer:
         self.decisions = []
 
     def start(self, ctx: MatchContext):
-        self.ctx, self.errors, self.search_disabled = ctx, 0, False
+        self.ctx, self.errors, self.search_disabled, self.panics = ctx, 0, False, 0
         self.fast.start(ctx)
         if self.search is not None:
             self.search.start(ctx)
@@ -258,8 +261,10 @@ class LivePlayer:
         wall0, cpu0 = time.monotonic(), time.process_time()
         try:
             fast = self.fast.act(view).action     # polls every 5 ticks (D1 state); WAIT off-cadence
-        except Exception as ex:                   # a broken fast poller must not stop the search tier
+        except BaseException as ex:               # a broken fast poller must not stop the search tier
+            _reraise_control(ex)
             self.fast_errors = getattr(self, 'fast_errors', 0) + 1
+            self.panics += _is_panic(ex)
             if self.search is None:
                 if not view.can_act:
                     return Decision(WAIT, stats=None)
@@ -276,7 +281,9 @@ class LivePlayer:
         default = fast if self.cutoff_default == 'it5s2' else None
         try:
             d = self.search.act(view, wall0=wall0, default=default)
-        except Exception as ex:   # never refuse to act: it5s2 decides, the error is recorded
+        except BaseException as ex:   # never refuse to act: it5s2 decides, the error is recorded
+            _reraise_control(ex)          # native panics (pyo3 PanicException) are BaseException, not Exception
+            self.panics += _is_panic(ex)
             if not view.can_act or view.tick % SEARCH_INTERVAL:
                 return Decision(WAIT, stats=None)
             self.errors += 1              # consecutive failed DECISIONS (off-cadence polls do not count)
@@ -303,12 +310,24 @@ class LivePlayer:
             stats['search_wall_ms'] = 1000*search['wall_seconds']
         if error is not None:
             stats['error'] = error
+            stats['panics'] = self.panics
         self.decisions.append(stats)
         return Decision(int(d.action) if d.action < WAIT else WAIT, int(d.wait_ticks), stats)
 
     def close(self):
         if self.search is not None:
             self.search.close()
+
+
+def _reraise_control(ex):
+    """The act() guards catch BaseException (a Rust panic in the native search surfaces as
+    pyo3_runtime.PanicException, a BaseException); interpreter control flow still propagates."""
+    if isinstance(ex, (KeyboardInterrupt, SystemExit, GeneratorExit)):
+        raise ex
+
+
+def _is_panic(ex):
+    return int(type(ex).__name__ == 'PanicException')
 
 
 def make_live_player(rt, name):

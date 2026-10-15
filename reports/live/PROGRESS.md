@@ -193,3 +193,65 @@
   - **Live loop must call `anchor(0, ts)`.**
   - **Empirical-noise arms:** PERC-emp, PERC-emp-births, PERC-emp-both. The headline commands are in RESULTS (b),
     not yet run.
+- **09:25Z, perception win-rate block launched on 127x03.**
+  - fast: cores 0–19, PGID 3789271. K4L: cores 20–59 in 4-core groups, PGID 3789273.
+  - Arms: `LIVE-*` vs `PERC-emp:LIVE-*`; 2,400 games in our engine.
+  - Out dir: `03:/mpac/sdicks02/jobs/clasher/live-perc-winrate-ours/{fast,k4l}`. Scripts `run-{fast,k4l}.sh` are
+    resumable.
+  - Hand back to the bot lead by about 11:15Z.
+- **09:27Z, Mac bench round 3 at the gate:** suite 65/65; bundle 631bd087.
+  - K4L fleet-05 timing: p50/p95 59.8/138.3 ms, default 0.8%; i10 54.9/133.7.
+  - **Sol round 2 launched** (`live-macbench-sol-review-r2`). It covers the fix round plus the new mac_perc,
+    audit_site, frames_from_01 and K4L pool code.
+  - Accepted, if Sol finds the per-step listing complete: OS-level Metal/CoreML caches outside `~/clasher-live`.
+  - `frames_from_01` runs after the review.
+- **09:27Z, bot lead:**
+  - The GIL disagreement is likely in their Python/numpy rollout loop; they're fixing the docs and testing a
+    thread-only K4L variant (would replace the spawn pool on macOS).
+  - **If the Mac p99 is higher, i10 is the safer Mac default.** Keep the default share at ≤1% on 4 cores.
+- **09:35Z, Sol round 2: OK after fixes.**
+  - Blockers: process-group cleanup; push outside the lock and without a footprint check; MPS/CoreML OS caches;
+    frame cache authentication; ctypes temp-file path.
+  - **Ruling: OS-managed Metal/CoreML caches outside `~/clasher-live` are accepted**, with redirects for
+    everything we control and before/after snapshots.
+  - All findings were sent back. **GO on a clean suite and dry run, with no third Sol round:** frames_from_01, then
+    `drive.sh all`, then MAC-BENCH.md.
+- **10:27Z, perception win-rate block:**
+  - **Fast half done:** 1,200 games, 0 errors. PERC-emp:it5s2 vs perfect sight: R3a **−0.137** [−0.197, −0.077],
+    v1 **−0.113** [−0.163, −0.063]. Absolute 0.660 → 0.523 vs R3a, 0.883 → 0.770 vs v1.
+  - **K4L half crashed:** native panic at `c56.rs:265` (electro_land config lookup). All 6 worker deaths were in
+    the PERC-emp arm.
+    - Cause: K4L `fc` trims the card config to hands+cycles, and misperceived off-deck units have no entry.
+      PanicException is a BaseException, so the fallbacks missed it.
+    - Stopped it (PGID 3789273) and handed 03 back.
+    - Fixes: the bot lead's `bot-lead-k4l-fix-r1` (config, pool recovery, native lookup), plus ours,
+      `live-panic-fix-owner-r1` (BaseException guard, card-consistency sanitiser).
+    - Relaunch the K4L half after both land: `03:/mpac/sdicks02/jobs/clasher/live-perc-winrate-ours/run-k4l.sh`
+      resumes, but delete the k4l dir first, because its partial rows predate the fix.
+- **10:28Z, perception round 2 authorized** by the coordinator (perception costs −11 to −14 pp).
+  - Targets: spell recall .57, swarm/unit recall .81, Royal Ghost.
+  - Metric: Δ win rate of PERC-emp vs perfect sight.
+  - GPU: **127x01's A6000** from ~11:30Z, for up to ~10 h, once the bot lead posts "01 GPU free". Forward that to
+    the round-2 owner.
+  - Owner: Opus, `live-perc-r2-owner-r1`, doing CPU diagnosis first.
+- **10:38Z:** 127x01 A6000 free for perception round 2 (bot lead). Forwarded; window until ~20:30Z.
+- **10:44Z, PERC-R2 diagnosis** (`05:/mpac/sdicks02/jobs/clasher/live-perc-r2-20261015/diag/`):
+  - **Spells:** 32% of opponent spells sit below the 0.6 threshold (a discrimination problem), 9% have no peak.
+    Zap, EQ and RoyalDelivery are the worst.
+  - **Units:** 51% of misses are merged peaks. SkeletonArmy alone is 21% of misses; crowd recall is .54.
+  - **Royal Ghost:** now labelled with a stationary-visible rule. The Δ metric can't see it, because the sim's
+    truth shows Ghost.
+  - **ft-r3** on 01 (PID 3037297) since 10:41Z, ends ~14:55Z; GPU back ~16:30Z. Changes: effect identities for
+    spells, a count head for swarms, Ghost labels, event loss reaching the backbone.
+  - Asked the bot lead for ~60 cores for 45 min for the PERC-emp-x* ablation (7 arms, 4,200 games).
+- **10:46Z, perception-noise ablation launched on 127x03.**
+  - PGID 4060013; 36 workers on logical 0–35; 7 PERC-emp-x* arms; 4,200 games; ETA ~12:00Z.
+  - Out dir `03:/mpac/sdicks02/jobs/clasher/live-perc-ablate-ours`. Staged from HEAD plus the round-2 `perc.py`
+    and `empirical.py` only.
+  - Pairs against `live-perc-winrate-ours/fast`.
+  - Tell the bot lead when it ends.
+- **10:48Z, panic-fix (defence in depth) DONE** (`reports/live/integration/PANIC-FIX.md`).
+  - **Cause:** an own-side ElectroSpirit misread (not in our deck) under the K4L `fc` trimmed config.
+  - **Fixes:** a deck-rule board sanitizer in `translate.py`, and BaseException guards in `player.py`.
+  - **Tests:** 8 new pass, 39 existing pass. 10 PERC-emp:K4L games: 0 crashes.
+  - **Regression roots** for the bot lead are in `05:/mpac/sdicks02/jobs/clasher/live-panic-fix/`.
