@@ -18,6 +18,7 @@ the learned loop does not scale with threads. Tokens added to 'K4L-R...' names (
         the decision, concurrently with the native coarse scan; play chunk j goes to worker j. p<P> == c<P>.
 - fp    output-identical preparation caches (install_fast_prep): the root payload's config JSON and the repeated
         R3a forward of the r16 candidate list. Deterministic arms with and without fp have equal command hashes.
+- fc    fp plus roots built with only the deck cards in the config (cheaper parse/snapshot/shipping).
         Only the snapshot's dynamic part (~60 KB) travels per decision; workers hold the config (sent once) and
         rebuild the root with only the deck cards (ConfigCache; 1.1 vs 7.1 ms to parse).
 - w<ms> wall deadline through bot/live/player.py's WallCandidatePlayer (cutoff = start + ms - 8 ms reserve;
@@ -76,8 +77,14 @@ class ConfigCache:
         return head + self.cut[need] + tail
 
 
-def _pool_worker(conn, native):
-    """Worker loop: ('root', gen, snapshot, seat, kw, opp, cutoff) then ('run', gen, cid, keys) -> ('done', ...)."""
+def _pool_worker(conn, native, spawn=None):
+    """Worker loop: ('root', gen, snapshot, seat, kw, opp, cutoff) then ('run', gen, cid, keys) -> ('done', ...).
+    spawn = (native module name, metadata JSON, model names): a spawned worker builds its own NativeScripts."""
+    if spawn is not None:
+        module, meta, models = spawn
+        native = importlib.import_module(module).NativeScripts(meta)
+        for name in models:
+            load_model(name)
     state_class = importlib.import_module(type(native).__module__).BattleState
     root = seat = kw = opp = cutoff = configs = None
     gen, t_parse = -1, 0.
@@ -108,16 +115,28 @@ def _pool_worker(conn, native):
 
 
 class LearnedPool:
-    """P forked worker processes holding the native scripts and the opponent nets (loaded before the fork)."""
+    """P worker processes holding the native scripts and the opponent nets. Start method: fork (Linux default;
+    the nets are loaded before the fork) or spawn (macOS default, where fork after torch/Accelerate is unsafe;
+    the worker rebuilds NativeScripts from `meta`, the JSON the planner's own NativeScripts was built from).
+    CLASHER_LOPP_POOL_START overrides."""
 
-    def __init__(self, n, native, model_names=()):
+    def __init__(self, n, native, model_names=(), meta=None, config=None):
+        import os
+        import sys
+        method = os.environ.get('CLASHER_LOPP_POOL_START', 'spawn' if sys.platform == 'darwin' else 'fork')
         for name in model_names:
             load_model(name)
-        ctx = mp.get_context('fork')
+        ctx = mp.get_context(method)
+        spawn = None
+        if method != 'fork':
+            if meta is None:
+                raise ValueError('a spawned pool needs the native metadata JSON')
+            spawn = (type(native).__module__, meta, tuple(model_names))
+        self.method = method
         self.conns, self.procs = [], []
         for _ in range(n):
             here, there = ctx.Pipe()
-            proc = ctx.Process(target=_pool_worker, args=(there, native), daemon=True)
+            proc = ctx.Process(target=_pool_worker, args=(there, None if spawn else native, spawn), daemon=True)
             proc.start()
             there.close()
             self.conns.append(here)
@@ -126,6 +145,8 @@ class LearnedPool:
         self.pending, self.results, self.cpu = {}, {}, 0.
         self.timing = {}
         self.config = None
+        self.base_config = config        # R.config: lets deck-card (fc) roots travel as their dynamic part only
+        self.base_sent = False
 
     def begin(self, root, seat, kw, opp, cutoff):
         self.gen += 1
@@ -133,7 +154,15 @@ class LearnedPool:
         self.timing = dict(parse=0., chunk=0.)
         snap = root.snapshot()
         parts = split_snapshot(snap)
-        if parts is not None and parts[1] != self.config:    # new config (first root, level scaling): once
+        if parts is not None and len(parts[1]) < 1 << 20:     # a deck-card config (fc root)
+            if self.base_config is None:
+                parts = None                                    # no full config to cut from: ship it whole
+            elif not self.base_sent:                            # the workers cut from R.config, sent once
+                import json
+                self.config, self.base_sent = json.dumps(self.base_config), True
+                for conn in self.conns:
+                    conn.send(('config', self.config))
+        elif parts is not None and parts[1] != self.config:    # new config (first root, level scaling): once
             self.config = parts[1]
             for conn in self.conns:
                 conn.send(('config', self.config))
@@ -183,6 +212,7 @@ class _ConfigJson:
         self._json, self._config, self._verify = json, config, verify
         self._text = json.dumps(config)
         self.hits = 0
+        self.cut, self._cut = False, {}
 
     def __getattr__(self, name):
         return getattr(self._json, name)
@@ -191,26 +221,40 @@ class _ConfigJson:
         if args or kw or type(obj) is not dict or obj.get('config') is not self._config or list(obj)[-1] != 'config':
             return self._json.dumps(obj, *args, **kw)
         rest = self._json.dumps({k: v for k, v in obj.items() if k != 'config'})
-        text = (rest[:-1] + ', ' if len(rest) > 2 else '{') + '"config": ' + self._text + '}'
-        if self._verify and text != self._json.dumps(obj):
+        cfg = self._text
+        if self.cut:          # fc: only the cards in either player's hand or cycle (as ConfigCache)
+            cards = self._config['cards']
+            need = tuple(sorted({c for p in obj['players'] for c in p['hand'] + p['cycle'] if c in cards}))
+            if need not in self._cut:
+                self._cut[need] = self._json.dumps(dict(self._config, cards={k: v for k, v in cards.items()
+                                                                              if k in need}))
+            cfg = self._cut[need]
+        text = (rest[:-1] + ', ' if len(rest) > 2 else '{') + '"config": ' + cfg + '}'
+        if self._verify and not self.cut and text != self._json.dumps(obj):
             raise AssertionError('fast-prep json differs')
         self.hits += 1
         return text
 
 
-def install_fast_prep(rt):
+def install_fast_prep(rt, cut=False):
     """Token fp: output-identical preparation caches, process-wide and idempotent.
     1. Resources.root (and bot.live.levels.LevelRoot) json.dumps of the config -> _ConfigJson.
     2. proposals.outputs memo: K4C-r16's candidate list re-runs R3a's forward (bot/search/candidates.py ranked,
        r3a=16 > the poller's cached 8) on the same features the poller just used; an identical feature batch
        (every tensor torch.equal, same model) returns the previous outputs.
-    CLASHER_FASTPREP_VERIFY=1 recomputes both the slow way and raises on any difference."""
+    CLASHER_FASTPREP_VERIFY=1 recomputes both the slow way and raises on any difference.
+    cut=True (token fc; switches on for the whole process, never off): roots are built with only the deck cards
+    in the config, as the pool workers' ConfigCache does (7 -> ~1.5 ms to parse, 5 -> ~1 ms to snapshot); not
+    byte-identical, but every rollout value equal (lopp_fast_check) and command hashes equal end to end."""
     import os
     import sys
     if getattr(rt, '_fast_prep', False):
+        rt._fast_prep_shim.cut |= cut
         return
     verify = os.environ.get('CLASHER_FASTPREP_VERIFY') == '1'
     shim = _ConfigJson(rt.R.config, verify)
+    shim.cut = cut
+    rt._fast_prep_shim = shim
     for mod in (type(rt.R).root.__module__, 'bot.live.levels'):
         if mod == 'bot.live.levels':
             importlib.import_module(mod)
@@ -239,10 +283,14 @@ def install_fast_prep(rt):
     rt._fast_prep_stats = lambda: dict(json_hits=shim.hits, memo_hits=last.get('hits', 0))
 
 
-def get_pool(n, native, model_name):
-    """One pool per process (forked once, before any thread pool exists in this process)."""
+def get_pool(n, native, model_name, meta=None, config=None):
+    """One pool per process (started once, before any thread pool exists in this process).
+    meta: R.meta (dict) or its JSON; only a spawned pool uses it."""
+    import json
     if n not in _POOLS:
-        _POOLS[n] = LearnedPool(n, native, (model_name,))
+        if meta is not None and not isinstance(meta, str):
+            meta = json.dumps(meta)
+        _POOLS[n] = LearnedPool(n, native, (model_name,), meta, config)
     return _POOLS[n]
 
 
@@ -383,12 +431,13 @@ class _FastMixin:
 
     def _install_fast(self, ctx):
         import sdefault
-        if self.fast_prep:
-            install_fast_prep(self.rt)
+        if self.fast_prep or self.fast_cut:
+            install_fast_prep(self.rt, cut=self.fast_cut)
         core = self.p.core
         model = load_model(self.model_name)
         seed = ctx.seed
-        pool = get_pool(self.pool_size, core.native, self.model_name) if self.pool_size else None
+        pool = (get_pool(self.pool_size, core.native, self.model_name, getattr(self.rt.R, 'meta', None),
+                         self.rt.R.config) if self.pool_size else None)
         threads = self.native_threads
 
         def make_opp():
@@ -414,9 +463,10 @@ class _FastMixin:
 class FastLearnedPlayer(_FastMixin, LearnedOppPlayer):
     """Deterministic K4L-R with t/c/p tokens (no deadline)."""
 
-    def __init__(self, rt, *, threads=1, chunks=0, pool=0, fast_prep=False, **kw):
+    def __init__(self, rt, *, threads=1, chunks=0, pool=0, fast_prep=False, fast_cut=False, **kw):
         super().__init__(rt, **kw)
         self.native_threads, self.chunks, self.pool_size, self.fast_prep = threads, chunks, pool, fast_prep
+        self.fast_cut = fast_cut
 
     def start(self, ctx):
         LearnedOppPlayer.start(self, ctx)
@@ -430,15 +480,16 @@ def wall_player_class():
         """K4L-R under a wall deadline: WallCandidatePlayer's preparation/cutoff handling + reduce_fast."""
 
         def __init__(self, rt, *, wall_ms, threads, chunks=0, pool=0, model='pool', sample=False, switch=None,
-                     interval=5, rowwise=False, fast_prep=False, name=None):
+                     interval=5, rowwise=False, fast_prep=False, fast_cut=False, name=None):
             super().__init__(rt, r3a=16, wall_ms=wall_ms, threads=threads, name=name)
             self.model_name, self.sample, self.switch, self.interval = model, sample, switch, interval
-            self.rowwise, self.fast_prep = rowwise, fast_prep
+            self.rowwise, self.fast_prep, self.fast_cut = rowwise, fast_prep, fast_cut
             self.native_threads, self.chunks, self.pool_size = threads, chunks, pool
 
         def start(self, ctx):
             if self.pool_size:      # fork before the K kernel's thread pool can exist in this process
-                get_pool(self.pool_size, self.rt.R.native, self.model_name)
+                get_pool(self.pool_size, self.rt.R.native, self.model_name, getattr(self.rt.R, 'meta', None),
+                         self.rt.R.config)
             super().start(ctx)
             self._install_fast(ctx)
 

@@ -131,3 +131,98 @@ Reproduce with:
   - A is run first. B runs only if A fails the rule or compute remains after A.
 - **Reporting:** the paired delta vs K4C-r16 with a 95% bootstrap CI, pooled with equal weight per opponent, and
   per opponent.
+
+## Live-tier speed: results (2026-10-15, worker of the BOT LEAD, 127x04/08)
+
+**Answer: yes.** LIVE-K4L-R-gs-rw-fc-w200-t4-p4 makes exactly K4L-R-gs's decisions whenever its search completes,
+and on 5 pinned cores it completes 96% of decisions within the 192 ms budget.
+- **Design.** Native rollouts on 4 threads; learned rollouts in 4 persistent worker processes; a row-wise opponent
+  forward; output-identical preparation caches. Code: `bot/search/lopp_fast.py`.
+- **Wall-mode cutoff defaults:** 2.5%, vs 13.1% for K4CW-r16-w200-t4 in the same run.
+- **Live tier:** it5s2 defaults on 6.6% of decisions, vs 24.1% for LIVE-K4CW-r16-w200-t4.
+- **Strength:** in ours the deterministic twin is +0.045 [+0.012, +0.077] vs K4C-r16, with all 600 command hashes
+  equal to K4L-R-gs's games. Fresh bank 2 in RoyaleSim: see below (running).
+
+### What was slow, and the fixes (tokens on `K4L-R...` names)
+
+| finding | fix | exactness |
+|---|---|---|
+| The pinned native keeps the GIL in BattleState.step and NativeScripts.* (the `gil-release` cargo feature is off). Learned rollouts: 69.6 ms sequential → 79.3 ms on 4 threads. | `p<P>`: learned rollouts in P forked or spawned worker processes, started once per process. `t<N>`: native rollout_e1 on N threads (it does release the GIL). | Pool == serial, bit for bit (below). |
+| The opponent net's float32 forward depends on batch composition: OpenBLAS rows change when re-batched. A 2-row call costs 0.26 ms vs 0.038 ms for 1 row, because each call streams W1 (0.9 MB). | `rw`: one row per forward. | Values no longer depend on batching; 600/600 screen games equal K4L-R-gs. |
+| The root snapshot is 2.1 MB, of which 2.07 MB is the 56-card config. | Workers rebuild roots from the ~60 KB dynamic part plus a config holding only the cards in hand and cycle. Parse 1.1 vs 7.1 ms. | 0 mismatches on 3,800 checked rollout values. |
+| Preparation re-serializes the 2 MB config on every root, and K4C-r16's r16 list re-runs R3a's forward. | `fp`: cached config JSON (byte-identical payload) and an exact-input memo of R3a's outputs. `fc`: deck-card configs in the main process too. | `fp`: verify mode asserts equality. `fp`/`fc` games have the same command hash as K4L-R-gs. |
+
+**Exactness checks** (`bot/search/lopp_fast_check.py`, real K4C-r16 roots on HEADLINE cases 0 and 3).
+- Scripted opponent: rollout_e1 == serial Python loop == 4 threads == pool, bit for bit (2,940 rollouts).
+  - Same with spawned workers: 861 rollouts.
+  - Same on roots rebuilt from the deck-card config.
+- Learned opponent with `rw`: pool == the unchunked serial batch (980 values).
+- End to end, these arms reproduce K4L-R-gs's command_sha256 (03's games):
+  - K4L-R-gs-t4, -c4 and -t4-p4 (case 0);
+  - K4L-R-gs-rw-fc-t4-p4 (cases 2 and 5 vs v1);
+  - all 600 HEADLINE games of K4L-R-gs-rw.
+
+### Timing (per searched decision, ms)
+
+Method:
+- One game per pinned group of physical cores (`bot/search/lopp_time.py`). HEADLINE cases 0–3 (time1: 0–9) vs R3a and
+  v1.
+- The hosts are shared with the ExIt owner's jobs. `sibling busy` is the measured busy share of the groups' SMT
+  sibling CPUs.
+- **Default** = the cutoff default was played (S-default, a preparation cutoff, or a LIVE default).
+
+| run (cores per game, sibling busy) | arm | wall p50 / p95 / p99 / mean | within 192 ms | default |
+|---|---|---|---|---|
+| time1 (1 core, 0.00) | K4C-r16 | 273 / 462 / 656 / 253 | 32% | – |
+| time1 (1 core, 0.00) | K4L-R-gs | 242 / 383 / 463 / 222 | 35% | – |
+| time4 (5 cores, 0.10–0.16) | K4CW-r16-w200-t4 | 183 / 192 / 194 / 153 | – | 13.1% |
+| time4 (5 cores, 0.10–0.16) | LIVE-K4CW-r16-w200-t4 | 192 / 192 / 193 / 164 | – | 24.1% |
+| time4 (5 cores, 0.10–0.16) | K4L-R-gs-rw-fc-t4-p4 (complete, no deadline) | 97 / 188 / 254 / 104 | **95.6%** | – |
+| time4 (5 cores, 0.10–0.16) | K4L-R-gs-rw-fc-w200-t4-p4 | 102 / 184 / 193 / 104 | – | **2.5%** |
+| time4 (5 cores, 0.10–0.16) | LIVE-K4L-R-gs-rw-fc-w200-t4-p4 | 121 / 193 / 194 / 123 | – | **6.6%** |
+| time4 (5 cores, 0.10–0.16) | K4L-R-gs-rw-i10-fc-t4-p4 (complete) | 98 / 195 / 264 / 103 | 94.4% | – |
+| time2 (5 cores, 0.20–0.50) | K4CW-r16-w200-t4 | 192 / 193 / 195 / 178 | – | 27.5% |
+| time2 (5 cores, 0.20–0.50) | LIVE-K4CW-r16-w200-t4 | 192 / 193 / 200 / 177 | – | 35.9% |
+| time2 (5 cores, 0.20–0.50) | K4L-R-gs-rw-fp-t4-p4 (complete) | 137 / 233 / 325 / 139 | 83.6% | – |
+| time2 (5 cores, 0.20–0.50) | K4L-R-gs-rw-fp-w200-t4-p4 | 160 / 194 / 194 / 148 | – | 9.5% |
+| time2 (5 cores, 0.20–0.50) | LIVE-K4L-R-gs-rw-fp-w200-t4-p4 | 192 / 194 / 195 / 166 | – | 28.2% |
+
+- **Threads, 1 vs 4** (`lopp_threads`, time1 conditions, 30 roots × 8 keys):
+  - native rollout_e1: 36.8 → 24.0 ms;
+  - learned batch (pre-`rw`, in-process threads): 69.6 → 79.3 ms (CPU 128).
+- **time3** (5 cores, 0.23–0.29), complete-search configurations; share within 192 ms:
+
+  | config | within 192 ms |
+  |---|---:|
+  | t4-p4 | 89.6% |
+  | t4-p3 | 85.9% |
+  | t2-p4 | 66.7% |
+  | i10 | 89.7% |
+
+  So t4-p4 is the best split of 5 cores.
+- **time4 phases, p50/p95** (A complete):
+  - preparation 28/49;
+  - native coarse scan 46/98 (~20 rollouts on 4 threads);
+  - learned 25/47 (8 plays over 4 workers, waits overlapped with the scan);
+  - root shipping 2.4/9, worker parse 2.4/9.
+- **Preparation caches for K4CW too.** `--fast-prep` in time2 cut K4CW-r16-w200-t4's preparation p50 from 89 to
+  47 ms. Its defaults fell from 27.5% to 24.6% (LIVE: 35.9% → 26.7%). These caches are free for the LIVE lead's
+  tier as well.
+
+**Fit verdict (fresh-bank rule, condition 2).** Two runs give different answers on 2b:
+- time2 (contended): condition 2a holds, 2b fails (83.6% < 90%).
+- time4: both hold (2.5% ≤ 13.1%; 95.6% ≥ 90%).
+- Both runs are reported. Absolute fit on these shared hosts depends on the ExIt load. In every run the K4L live
+  variant defaulted far less often than the accepted K4CW tier.
+- **Definitive check:** the dedicated Mac (`lopp_time` with the arms above). The pool starts with `spawn` there,
+  verified exact on Linux.
+
+### Strength screens (ours, HEADLINE cases 0–299 × R3a, v1; paired; 95% bootstrap CIs)
+
+| arm | vs K4C-r16, pooled | R3a | v1 | vs K4L-R-gs, pooled | command hashes = K4L-R-gs |
+|---|---|---|---|---|---|
+| K4L-R-gs-rw (twin of the live variant) | **+0.045 [+0.012, +0.077]** | +0.067 | +0.023 | 0 | 600/600 |
+| K4L-R-gs-rw-i10 (learned opponent every 10 ticks) | **+0.055 [+0.022, +0.090]** | +0.063 [+0.007, +0.123] | +0.047 [+0.013, +0.080] | +0.010 [−0.020, +0.042] | 1/600 |
+
+- i10 is as strong as K4L-R-gs within noise, with less learned work (time4 learned phase p50 20.6 vs 24.8 ms). Keep it
+  as the fallback for slower per-core hardware.

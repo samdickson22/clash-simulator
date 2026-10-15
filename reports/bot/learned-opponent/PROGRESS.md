@@ -105,3 +105,29 @@ bot-lopp-models, sha256 equal). New code: bot/search/lopp_time.py (pinned per-de
 - 2026-10-15T01:38:04Z Screens launched (bot.search.run, HEADLINE 0-299 x R3a,v1, 600 games each): K4L-R-gs-rw on 04
   (bot-lfast/scr-rw, 40 workers) and K4L-R-gs-rw-i10 on 08 (bot-lfast/scr-rwi10, 36 workers), both via cpu_job
   leases. Baselines copied read-only from 03 to bot-lfast/base/ (bot-lopp-hl2, bot-headline-r16-ours, RoyaleSim dirs).
+- 2026-10-15T02:07:22Z i10 screen done (bot-lfast/scr-rwi10 on 08, 600 games, 0 errors): K4L-R-gs-rw-i10 vs K4C-r16
+  R3a +0.063, v1 +0.047 (point estimates; vs K4L-R-gs R3a -0.003, v1 +0.023). rw screen paused at 304/600 games (to
+  free 04 for timing): 304/304 command_sha256 equal to K4L-R-gs (bot-lopp-hl2), i.e. rw changed no decision.
+- time2 (04, one pinned 5-core group per game, 8 games per arm, cases 0-3 x R3a,v1; CONTENDED: load 60-90, SMT
+  siblings of the groups 20-50% busy), cutoff-default rates (S-default / preparation cutoff / LIVE default):
+  K4CW-r16-w200-t4 27.5% (hit 75%); LIVE-K4CW-r16-w200-t4 35.9%; with fp 24.6% / 26.7%;
+  K4L-R-gs-rw-fp-w200-t4-p4 9.5% (hit 26%); K4L-R-gs-rw-i10-fp-w200-t4-p4 5.6% (hit 12%);
+  LIVE-K4L-R-gs-rw-fp-w200-t4-p4 28.2%. Complete search K4L-R-gs-rw-fp-t4-p4 (no deadline): wall p50/p95/p99
+  137/233/325 ms, within 192 ms on 83.6% of decisions; prep 41/69, native phase 68/118, learned phase 29/52.
+  Fresh-bank rule check for A: condition 2a holds (9.5% <= 27.5%), 2b does not in this contended run (83.6% < 90%).
+- fc token (deck-card config in the main process's roots too): end to end K4L-R-gs-rw-fc-t4-p4 == K4L-R-gs
+  command_sha256 on case 2 and case 5 vs v1 (a080132c... = bot-lopp-hl2's K4L-R-gs game).
+- DEVIATION (logged before any fresh-bank result): fresh bank 2 for A launched on 08 at 02:01Z (after finishing the
+  rw screen there) although fit condition 2b is unresolved, to use idle compute. A's decisions equal K4L-R-gs's, so
+  the gate only decides whether the bank is worth running, not what it measures; the result will be reported
+  whatever the fit verdict. 08: bot-lfast/fresh2 cases 0-599 (fresh2-08.sh); cases 600-1199 to follow on 04.
+- 2026-10-15T02:07:22Z time3 (04): complete-search configs fp vs fc, p3/p4, t2/t4, and i10 (B's condition 2b).
+- time3 (04, contended, siblings 0.23-0.29), complete search within 192 ms: t4-p4 fc 89.6%, fp 88-89%, t4-p3 85.9%,
+  t2-p4 66.7%, i10 89.7% -> t4-p4. Pool now ships only the dynamic part for fc roots too (workers cut from R.config,
+  sent once): ship p50 15 -> 2.4 ms; K4L-R-gs-rw-fc-t4-p4 still == K4L-R-gs command_sha256 (cases 2, 5 vs v1).
+- 2026-10-15T02:51:43Z time4 (04, load 43-52, siblings 0.10-0.16): K4CW-r16-w200-t4 default 13.1%, LIVE-K4CW 24.1%;
+  K4L-R-gs-rw-fc-t4-p4 complete wall p50/p95/p99 97/188/254, within 192 ms 95.6%; -w200 default 2.5%; LIVE- 6.6%;
+  i10 complete 94.4%. Fit rule for A now holds (2a 2.5 <= 13.1, 2b 95.6 >= 90); time2's contended failure stays
+  reported. rw screen complete (600, 0 errors): 600/600 command_sha256 == K4L-R-gs; +0.045 [+0.012,+0.077] vs K4C-r16.
+  i10 screen: +0.055 [+0.022,+0.090] vs K4C-r16, +0.010 [-0.020,+0.042] vs K4L-R-gs. Fresh bank 2 running: 08 cases
+  0-599 (from 02:44Z), 04 cases 600-1199 (fresh2-04.sh, lease 40). B (i10) bank only if compute remains after A.

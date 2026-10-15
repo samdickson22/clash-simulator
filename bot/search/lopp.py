@@ -293,8 +293,8 @@ def make_lopp_player(rt, name):
             kw['sample'] = True
         elif token == 'rw':
             kw['rowwise'] = True
-        elif token == 'fp':                                 # bot/search/lopp_fast.py
-            fast['fast_prep'] = True
+        elif token in ('fp', 'fc'):                         # bot/search/lopp_fast.py
+            fast[dict(fp='fast_prep', fc='fast_cut')[token]] = True
         elif m := re.fullmatch(r'h(\d+)', token):
             kw['switch'] = int(m[1])
         elif m := re.fullmatch(r'i(\d+)', token):

@@ -41,7 +41,8 @@ def main():
     from bot.search.oppmodel import STYLES
     rt = Runtime()
     model = load_model(a.model)
-    pool = get_pool(a.pool, rt.R.native, a.model)          # fork before any thread pool exists
+    pool = get_pool(a.pool, rt.R.native, a.model, rt.R.meta)   # fork before any thread pool exists
+    print('pool start method', pool.method, flush=True)
     ex = get_executor(a.threads)
     st = dict(roots=0, rollouts=0, snapshot_mismatch=0, scripted_mismatch=0, learned_pool_mismatch=0,
               learned_values=0, unchunked_vs_chunked_differ=0, t_serial=0., t_chunked=0., t_pool=0.,

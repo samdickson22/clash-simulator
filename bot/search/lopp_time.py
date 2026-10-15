@@ -95,7 +95,7 @@ def worker(wid, cores, jobs, out, base, fast_prep=False):
     rt = Runtime()
     if fast_prep:      # every arm in this run gets lopp_fast's output-identical preparation caches
         from bot.search.lopp_fast import install_fast_prep
-        install_fast_prep(rt)
+        install_fast_prep(rt, cut=fast_prep == 'cut')
     sib = {c + 64 for c in cores}
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     for cand, opp, i in jobs:
@@ -189,7 +189,8 @@ def main():
     ap.add_argument('--group', type=int, default=1)
     ap.add_argument('--base', type=int, default=HEADLINE_BASE)
     ap.add_argument('--summary', nargs='+')
-    ap.add_argument('--fast-prep', action='store_true', help='install lopp_fast.install_fast_prep for every arm')
+    ap.add_argument('--fast-prep', nargs='?', const='fp', default=None, choices=['fp', 'cut'],
+                    help='install lopp_fast.install_fast_prep for every arm (cut: also deck-card configs)')
     a = ap.parse_args()
     if a.summary:
         return summary(a.summary)
