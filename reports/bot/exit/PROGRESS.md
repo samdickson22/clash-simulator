@@ -954,6 +954,47 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
   draining (py 96). Those three batches were stopped by verified PGID (s7017400/7800/8000; sealed shards kept), and
   `cpu_room.sh` now honours a per-host ceiling file `bot-cpu-claims/max-live` (written as **89 on 01**; delete it when
   the LIVE LEAD returns 01's GPU). 01 then had 75 live python.
+- **11:26Z, arm (b) fits launched** (lead: 08's GPU idle beside the bursty RL learner). Packs `packed-kl9a-x01/x04/x08`
+  = every sealed K4L-R-gs shard (it5s2 behaviour) at 11:26Z: 287,033 + 531,104 + 348,912 = **1,167,049 rows**
+  (kcM had 1,271,358), synced to 04 and 08 by `pack_sync.sh`. A detached appender (`<J>/append_kl.sh`) queued
+  kcM's exact recipe once all three packs had `.synced` (seeds paired with kcM1–3):
+
+  | name | host / queue | seed | cal cases | eval queue |
+  |---|---|---|---|---|
+  | kLM1 | 04 gpuq (`BOT_GPU_MAX_GB=20`) | 2026102101 | 490000 | 04 cpuq7 |
+  | kLM2 | 08 gpuq2 | 2026102102 | 491000 | 08 cpuq6 |
+  | kLM3 | 08 gpuq | 2026102103 | 492000 | 08 cpuq7 |
+
+  - 08 keep-alive `gpu_keepalive.sh gpuq/QUEUE kLM 2` (PID 1491243): up to 2 more kLM seeds when gpuq runs dry.
+  - 11:29Z: 08 GPU 98 %, 22 GB (learner 16 GB + kLM3 + kLM2). Next cal block: **493000**.
+  - Read: `pooled_delta.py v1,R3a <ce-kLMi>:kLMi,<ce-kcMi>:kcMi …` (teacher effect) and vs `$J8/ce-it5s2` (promotion).
+- **12:22Z, BL6 queued** (arm (b) promotion candidate). `packed-kl9b-x01/x04/x08` = K4L shards sealed after kl9a
+  (`--exclude packed-kl9a-*`): 119,019 + 253,417 + 198,364 = 570,800 rows, so **1,737,849 K4L rows** in all. BL6 = B6's
+  recipe (it2D grown to 6L/1536, lr 2e-4, warmup 150, 6000 steps, ckpts every 1500) with the six K4L packs as `--new`
+  at `--new-ratio 0.5` and the 12 it8 packs (it5full, ka6a, ka6b, kc7a × 3 hosts) as `--old`; appended by
+  `<J>/append_bl6.sh` once all packs were synced.
+
+  | name | host / queue | seed (= B6 seed) | cal cases | eval |
+  |---|---|---|---|---|
+  | BL6s1 | 04 gpuq (`BOT_GPU_MAX_GB=20`) | 2026102661 (B6s1) | 493000 | 04 cpuq7 |
+  | BL6s2 | 08 gpuq2, after kLM2 | 2026102662 (B6s2) | 494000 | 08 cpuq7 |
+  | BL6s3 | 04 gpuq2 (free after B6s7 ended 12:16Z) | 2026102663 (B6s3) | 495000 | 04 cpuq6 |
+
+  Next cal block: **496000**. ETA ≈ 4 h per fit + 45 min eval (≈ 17:00–17:30Z).
+- **ExIt fresh bank F9, pre-registered (12:47:41Z, before any game on it).** BASE **465456850770064** =
+  `int.from_bytes(os.urandom(6),'big')<<4`, drawn on 05; checked ≥1e9 away from HEADLINE, TRAIN1, RL_BANK, the FIT
+  bank and fresh banks 1–3. Why: K4L round 2 found that reseeded copies of a bot score −0.027/−0.038 vs its own
+  HEADLINE 0–299 games, i.e. HEADLINE is lucky by ~0.03 for anything selected on it (it5s2 included).
+  - **Reference:** it5s2 @0.5375, our engine, cases 0–599 vs v1 and R3a (1,200 games), `$J4/f9-it5s2`.
+  - **Screen** (which candidates get F9 games): pooled-seed HEADLINE Δ vs it5s2 ≥ −0.03 on both v1 and R3a (= level
+    with it5s2 after the reseed correction). RL snapshots: the best of v10/v20/… by HEADLINE mean Δ.
+  - **Claim (new best student):** on F9 cases 0–599, our engine, τ from the candidate's on-policy calibration,
+    paired per case vs `f9-it5s2` and pooled over the candidate's seeds, the mean Δ over v1 and R3a has a 95 %
+    bootstrap CI above 0, and neither opponent's Δ is below −0.02. Then RoyaleSim rsim15535 (vs v1, R3a, rext-bc;
+    paired vs `$J4/rsim-it5s2`) must not be negative (CI upper bound > 0).
+  - Report the play count vs v1 on F9 against the 37.8 ± 3 band.
+- **RL r4 v10** (our engine, HEADLINE 0–299, τ0 0.5375, paired vs it5s2; partial h2h): v1 0.880, Δ −0.003
+  [−0.047, +0.040]; R3a 0.677, Δ +0.017 [−0.040, +0.077]; h2h vs it5s2 0.520 (198 games). Flat. KL 0.30 at v15.
 - 10:02Z: skipped ev-B8s3-ka2026102684 (01 cpuq7; it sat in cpu_room with a 36-process claim ahead of the RL actors;
   a 4th seed of the closed B8 arm).
 
@@ -962,8 +1003,12 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
 | student | τ | vs v1 | Δ (v1) | vs R3a | Δ (R3a) | h2h vs it5s2 |
 |---|---|---|---|---|---|---|
 | B6s4 (6L seed 4) | 0.5075 | 0.863 | −0.020 [−0.067, +0.027] | 0.633 | −0.027 [−0.090, +0.037] | 0.490 |
+| B6s5 (6L seed 5) | 0.5075 | 0.857 | −0.027 [−0.073, +0.020] | 0.630 | −0.030 [−0.090, +0.030] | 0.477 |
+| B6x (6L, all ~9.5 M labels incl. Kall's older packs) | 0.5375 | 0.883 | 0.000 [−0.047, +0.043] | 0.657 | −0.003 [−0.063, +0.057] | 0.477 |
 
-- B6 pooled over s1–s4: **−0.013 [−0.050, +0.025]** vs v1, **−0.016 [−0.064, +0.033]** vs R3a.
+- B6 pooled over s1–s4: **−0.013 [−0.050, +0.025]** vs v1, **−0.016 [−0.064, +0.033]** vs R3a; over s1–s5:
+  **−0.015 [−0.051, +0.021]** / **−0.019 [−0.066, +0.029]** (the BL6 control).
+- B6x ties it5s2 (not above on either), so no fresh-bank run: 3 M more (older) labels do not move the B6 recipe.
 
 ## Next
 
