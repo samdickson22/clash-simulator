@@ -1019,6 +1019,96 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
   beside BL6s4); actors block 20, 32 workers (wrapper 91763); `kl_stop.sh` (PID 92732, limit 0.5 vs v29); eval watcher on 08
   `eval_watch.sh 127x01 RUN /mpac/sdicks02/jobs/clasher/bot-rl-r5-eval08 24` (PID 2815807). 01 K4L feeder target 80 → 50
   (PID 89723, `cpu-feed-k4l.log6`). Every r5 snapshot must pass F9 on its own (vs it5s2, and vs v20 for "better than v20").
+- **B6 on F9 (16:00Z):** vs it5s2 (paired): B6s1 v1 +0.020 [−0.015, +0.053] / R3a −0.003 [−0.047, +0.040]; B6s2 +0.025
+  [−0.010, +0.058] / +0.012 [−0.030, +0.055]; B6s3 0.000 [−0.037, +0.037] / −0.032 [−0.077, +0.013]. **Pooled: v1 +0.015
+  [−0.015, +0.045], R3a −0.008 [−0.043, +0.028]**, i.e. level with it5s2 off HEADLINE (on HEADLINE it read −0.016/−0.009,
+  consistent with ~0.03 of it5s2 HEADLINE luck). Pooled vs v20 on F9: v1 −0.020 [−0.049, +0.008], R3a −0.031
+  [−0.068, +0.006].
+- **16:01–16:04Z, GPUs refilled** (BL6s1–3 trained; kLM fillers done; 04/08 GPUs had gone idle):
+  - 08: **BL6s5** (gpuq, seed 2026102665, cal 497000, eval cpuq7) and **BL6s6** (gpuq2, 2026102666, cal 498000, eval cpuq6);
+    keep-alive `gpu_keepalive.sh gpuq/QUEUE BL6s 1` (PID 3154008). 08 GPU 99 %.
+  - 04: **BL6s7** (gpuq, 2026102667, cal 499000, eval cpuq7), keep-alive BL6s 1 (PID 3438336). Next cal block **500000**.
+  - **RL r6** (04): an independent second line from **v20** (anchor v20), r4's final critic, same settings, seed 2026101593,
+    **blocks ≥ 30**. RUN `/mpac/sdicks02/jobs/clasher/bot-rl-r6` (init copies in `bot-rl-r6-init/`); learner PID 3427060 (04
+    GPU), actors block 30, 32 workers (wrapper 3428924), `kl_stop.sh` PID 3431580; eval watcher on 08 `eval_watch.sh 127x04
+    RUN /mpac/sdicks02/jobs/clasher/bot-rl-r6-eval08 24` (PID 3160215). 04 K4L feeder target 80 → 45 (PID 3427027,
+    `cpu-feed-k4l.log2`).
+  - RL r5 (01) at v6 by 16:00Z, KL 0.094 vs v29.
+- **17:36Z reads.**
+  - RL r5 v10 (= v29 + 10 updates; HEADLINE, 192/300 h2h games): v1 0.887, Δ +0.003 [−0.043, +0.047]; R3a 0.700, Δ +0.040
+    [−0.027, +0.105]; **h2h vs it5s2 0.630 [0.562, 0.698]** (v20: 0.537). Passes the screen → `f9-rl5v10` queued in 01
+    cpuq6 (snapshot `bot-rl-r5/snapshots/policy-00010.pt`, sha e188e2ae…).
+  - RL r5 at v18 (KL 0.25), r6 at v10 (KL 0.15, EV 0.52).
+  - BL6s3 (τ 0.5075): v1 0.890, Δ vs it5s2 +0.007 [−0.040, +0.053]; R3a 0.667, +0.007 [−0.057, +0.070]; h2h 0.463.
+    BL6s3 − B6s3 (same seed): v1 +0.017 [−0.030, +0.063], R3a +0.040 [−0.020, +0.097]. BL6s2 partial (253 R3a games):
+    −0.027 / −0.059.
+  - 16:52Z: ev-BL6s2 moved from 08 cpuq7 to 08 cpuq6; ev-kLM3-ka2026102105 stopped (kLM settled).
+- **BL6 verdict (18:20Z): null.** HEADLINE 0–299, Δ paired vs `$J8/ce-it5s2` (BL6s1 at 746/900 games):
+
+  | fit | τ | vs v1 | Δ (v1) | vs R3a | Δ (R3a) | h2h |
+  |---|---|---|---|---|---|---|
+  | BL6s1 | 0.5075 | 0.877 | −0.007 [−0.053, +0.040] | 0.667 | +0.007 [−0.050, +0.067] | 0.500 (n 146) |
+  | BL6s2 | — | 0.857 | −0.027 [−0.077, +0.020] | 0.613 | −0.047 [−0.103, +0.010] | 0.450 |
+  | BL6s3 | 0.5075 | 0.890 | +0.007 [−0.040, +0.053] | 0.667 | +0.007 [−0.057, +0.070] | 0.463 |
+  | BL6s4 | 0.4775 | 0.887 | +0.003 [−0.040, +0.047] | 0.620 | −0.040 [−0.100, +0.020] | 0.473 |
+
+  Pooled s1–s4 vs it5s2: v1 −0.006 [−0.043, +0.033], R3a −0.018 [−0.067, +0.031]. **BL6 − B6 (same seeds, 4 pairs): v1
+  +0.007 [−0.019, +0.033], R3a −0.003 [−0.035, +0.030].** K4L labels at ratio 0.5 add nothing to the B6 recipe, so arm (b)
+  closes without a candidate (the kcM-recipe gain vs v1 does not carry over). BL6 is on F9-screen level but below v20 and
+  adds nothing over B6, so it gets no F9 games.
+  - BL6s5/s6 (08), BL6s7 (04) and 01's filler BL6s4-ka2026102665 keep training as GPU fillers; their evals were pre-marked
+    done (ev-BL6s5/6/7, ev-BL6s4-ka2026102665) so the CPU goes to RL F9 runs; BL6 keep-alives stopped. A successor can
+    re-queue those evals under new names.
+  - 18:16Z: 01 K4L feeder target 50 → 20 (PID 1023539, `cpu-feed-k4l.log7`) so F9 runs get room.
+- **18:57Z, keep-alives on every GPU queue** (lead: 04's gpuq ran dry after BL6s7 ended 18:21Z; the lead had started a BL6s
+  keep-alive there, PID 99089, which appended filler BL6ska185604). Since BL6 is null, the fillers are **BL6f\*** lines
+  whose fit_eval writes evals to `<J>/cpuq-parked/QUEUE`, a queue **with no runner**: the GPU stays busy and the
+  checkpoints are kept, but no CPU is spent evaluating them (a successor can run those lines by hand). Appended BL6f1 (01
+  gpuq), BL6f2/BL6f3 (04 gpuq/gpuq2), BL6f4/BL6f5 (08 gpuq/gpuq2); seeds 2026102691–95. Keep-alives
+  `gpu_keepalive.sh <q>/QUEUE BL6f 3` on all five: 01 gpuq 1196124, 04 gpuq 109055, 04 gpuq2 109143, 08 gpuq 4093222,
+  08 gpuq2 4093287. The lead's 04 keep-alive (99089) was replaced; its filler's eval (ev-BL6s7-ka2026102668) was pre-skipped.
+  18:59Z: 04 GPU 100 % (BL6f3 + BL6ska185604 + RL r6 learner).
+- **19:01Z, RL r5 is the strongest line.** HEADLINE 0–299 (Δ paired vs `$J8/ce-it5s2`), τ0 0.5375:
+
+  | snapshot | vs v1 | Δ (v1) | vs R3a | Δ (R3a) | h2h vs it5s2 |
+  |---|---|---|---|---|---|
+  | r5 v10 | 0.887 | +0.003 [−0.043, +0.047] | 0.700 | +0.040 [−0.027, +0.105] | 0.603 |
+  | r5 v20 | 0.910 | +0.027 [−0.017, +0.070] | 0.763 | **+0.103 [+0.040, +0.167]** | 0.563 |
+  | r6 v10 (from v20) | 0.890 | +0.007 [−0.037, +0.050] | 0.660 | 0.000 [−0.067, +0.067] | 0.553 |
+
+  - F9 r5 v10 (partial, 929/1200): v1 0.908, Δ vs it5s2 **+0.052 [+0.017, +0.085]** (600); R3a 0.711, +0.049 [−0.009, +0.106]
+    (329); vs v20 on F9: +0.017 [−0.015, +0.048] / +0.018 [−0.036, +0.076].
+  - Queued 19:01Z: `f9-rl5v20` (04 cpuq) and RoyaleSim gates `rsim-rl5v20` (04 cpuq2) and `rsim-rl5v10` (08 cpuq), with snapshot
+    copies `<J>/ckpt-rl5/` (v10 sha e188e2ae…, v20 sha e6f3c4ec…). Feeders lowered for room: 04 45 → 20 (PID 129493,
+    `cpu-feed-k4l.log3`), 08 90 → 40 (PID 4115670, `cpu-feed-k4l.log3`).
+  - RL r5 at v26 (KL 0.28 vs v29), r6 at v21 (KL 0.28 vs v20).
+- **19:27Z, coordinator HOLD on 01** (a lab admin, mpacadmin, logged in ~19:16Z): don't raise 01's load, start nothing new
+  there, restart nothing; the lead set `bot-cpu-claims/max-live` on 01 to the current count (54). Done: 01 K4L feeder loop
+  stopped (1023539; in-flight batches finish; it does not use cpu_room), 01 BL6f keep-alive stopped (1196124), BL6f1 marked
+  done in 01 gpuq (never started). Left running: 01's current GPU filler (BL6s4-ka2026102665), RL r5 learner and actors.
+  No pending items in 01's CPU queues. **While the hold lasts, queue new CPU work on 04/08 only.** When it ends: delete
+  01 `max-live` (the lead's), restart the 01 feeder/keep-alive if wanted (same args as `cpu-feed-k4l.log7`, keep-alive BL6f 3).
+- **RL r5 v10 on F9 = NEW BEST STUDENT, superseding r4 v20 (19:50Z, same pre-registered rule).** Our engine, F9 cases
+  0–599, τ0 0.5375, paired per case:
+
+  | comparison | v1 | R3a | mean of v1 and R3a |
+  |---|---|---|---|
+  | r5 v10 score | 0.908 | 0.723 | |
+  | r5 v10 − it5s2 | **+0.052 [+0.017, +0.085]** | **+0.067 [+0.023, +0.110]** | **+0.059 [+0.031, +0.087]** |
+  | r5 v10 − r4 v20 | +0.017 [−0.015, +0.048] | +0.043 [−0.002, +0.087] | **+0.030 [+0.002, +0.058]** |
+
+  - Plays per game vs v1 on F9: **34.9** (band 37.8 ± 3 = 34.8–40.8: just inside; it5s2 37.0, v20 35.5). RL lowers the
+    play count a little each round; a successor continuing RL should check it and recalibrate on-policy if it leaves the
+    band.
+  - RoyaleSim rsim15535 gate (HEADLINE 0–299, paired vs `$J4/rsim-it5s2`; R3a at 242/300 at 19:50Z): v1 0.903, +0.017
+    [−0.030, +0.060]; R3a 0.711, +0.029 [−0.041, +0.103]; rext-bc 0.897, +0.013 [−0.030, +0.057]; mean of the three
+    **+0.025 [−0.008, +0.058]**: not negative.
+  - Checkpoint: `/mpac/sdicks02/jobs/clasher/bot-rl-r5/snapshots/policy-00010.pt` (01; copies `<J>/ckpt-rl5/` on 04 and 08),
+    sha256 **e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19**, threshold 0.5375. Lineage: it5s2 →
+    RL r4 (30 updates, stopped at KL 0.516) → v29 → RL r5 (10 updates, anchor v29).
+  - Selection: r5 v10 was the only r5 snapshot screened when its F9 run was queued; F9 was not used to choose it.
+  - RoyaleSim of r5 v20 (complete): v1 0.887, 0.000 [−0.043, +0.043]; R3a 0.683, +0.037 [−0.023, +0.100]; rext-bc 0.893,
+    +0.010 [−0.037, +0.057]; mean +0.016 [−0.013, +0.044]. F9 of r5 v20 still running (04).
 - **kLM results (arm (b), K4L vs K4C labels at ~matched size, kcM recipe):**
 
   | fit | τ | vs v1 | Δ vs it5s2 (v1) | vs R3a | Δ vs it5s2 (R3a) | h2h | Δ vs its kcM twin (v1 / R3a) |
