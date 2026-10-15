@@ -159,3 +159,17 @@ bot-lopp-models, sha256 equal). New code: bot/search/lopp_time.py (pinned per-de
   (0.9%), K4CW-r16-w200-t4 123/186 (1.5%). Speedup on 4 cores vs serial K4L-R-gs: 2.6x p50, 2.7x p95.
 - 04:28Z wall4 on 03: bot.live.headline_wall --group 4 (one CCX per game), engine ours, HEADLINE 0-299 x R3a,v1,
   K4L-R-gs-rw-fc-w200/w150-t4-p4 (cores 0-31) and K4CW-r16-w200/w150-t4 (cores 32-63), dirs bot-lfast/wall4-*.
+- 2026-10-15T04:51:59Z wall4 interim (~130-150 paired per comparison, quiet 03, 4 cores): K4CW-r16-w200-t4 vs
+  unbounded K4C-r16 +0.011 [-0.057,+0.077]; K4L w200 vs K4CW w200 +0.013 [-0.057,+0.081]; K4L w150 vs K4CW w150
+  +0.132 [+0.047,+0.218]; K4CW w150 vs unbounded K4C-r16 -0.140; K4L w150 vs unbounded K4L-R-gs -0.040. Fresh bank 2
+  at 3270/7200 (04:49Z).
+- 2026-10-15T06:16:14Z FRESH BANK 2, A (BASE 203119344380352, RoyaleSim 15.535, 1200 cases x R3a,v1,rext-bc, 7200 games,
+  0 errors; 04+08): K4L-R-gs-rw-fp vs K4C-r16 pooled +0.053 [+0.040,+0.066]; R3a +0.054 [+0.027,+0.082], v1 +0.065
+  [+0.043,+0.086], rext-bc +0.040 [+0.018,+0.062]. Win rates K4C-r16 0.754/0.873/0.885 -> 0.808/0.938/0.925.
+- wall4 FINAL (03, 4 pinned cores = one CCX per game, siblings idle, engine ours, HEADLINE 0-299 x R3a,v1, 600 games
+  per arm, 0 errors, 04:28-06:12Z): K4L-R-gs-rw-fc-w200-t4-p4 vs K4CW-r16-w200-t4 +0.058 [+0.020,+0.095] (R3a +0.047,
+  v1 +0.070); w150 vs w150 +0.160 [+0.120,+0.200]; K4L w150 vs K4CW w200 +0.043 [+0.007,+0.080]. vs unbounded:
+  K4CW w200 -0.027 [-0.060,+0.007], w150 -0.143 [-0.183,-0.102] (vs K4C-r16); K4L w200 -0.013 [-0.045,+0.017],
+  w150 -0.028 [-0.060,+0.003] (vs K4L-R-gs). K4L w200 vs unbounded K4C-r16 +0.032 [-0.005,+0.067].
+- B (i10) fresh bank running: 04 cases 0-299, 08 300-599 (cpu_job leases 40), 03 600-1199 (96 workers; the first 03
+  launch died at 06:12Z because 03's repo has no bot/exit/cpu_job.sh, relaunched 06:15Z without a lease).

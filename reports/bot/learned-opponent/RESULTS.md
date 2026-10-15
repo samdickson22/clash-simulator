@@ -143,8 +143,11 @@ Reproduce with:
   forward; output-identical preparation caches. Code: `bot/search/lopp_fast.py`.
 - **Wall-mode cutoff defaults:** 2.5%, vs 13.1% for K4CW-r16-w200-t4 in the same run.
 - **Live tier:** it5s2 defaults on 6.6% of decisions, vs 24.1% for LIVE-K4CW-r16-w200-t4.
-- **Strength:** in ours the deterministic twin is +0.045 [+0.012, +0.077] vs K4C-r16, with all 600 command hashes
-  equal to K4L-R-gs's games. Fresh bank 2 in RoyaleSim: see below (running).
+- **Strength, unbounded twin:**
+  - in ours, +0.045 [+0.012, +0.077] vs K4C-r16, with all 600 command hashes equal to K4L-R-gs's games;
+  - fresh bank 2 in RoyaleSim, **+0.053 [+0.040, +0.066]**.
+- **Strength under a real 200 ms deadline on 4 cores:** **+0.058 [+0.020, +0.095]** vs K4CW-r16-w200-t4.
+  - At 150 ms the gap is +0.160 [+0.120, +0.200].
 
 ### What was slow, and the fixes (tokens on `K4L-R...` names)
 
@@ -192,6 +195,44 @@ Setup: 2026-10-15 04:19Z, 8 games per arm (HEADLINE cases 0–3 × R3a, v1).
 - **4-core phases, p50/p95** (t4-p4): preparation 22/37, native scan 39/69, learned 17/26, root shipping 1.9/6.8.
 - **Mac.** No per-core ratio is assumed. Compare against the LIVE LEAD's Mac benchmark when it lands, by rerunning
   `bot.search.lopp_time` with these arms on 4 cores.
+
+### Strength under a real wall deadline, 4 cores (quiet 127x03; primary)
+
+Setup:
+- Harness: `bot.live.headline_wall --group 4`. Each game is pinned to one CCX (4 physical cores) with SMT siblings
+  idle.
+- Engine ours; HEADLINE cases 0–299 × R3a, v1; 600 games per arm; 0 errors. The R3a cutoff default applies, as in
+  K4CW.
+- Pairing: same cases, win 1 / draw 0.5, 95% bootstrap CIs, pooled = equal weight per opponent.
+
+| comparison | pooled | R3a | v1 |
+|---|---|---|---|
+| **K4L-R-gs-rw-fc-w200-t4-p4 vs K4CW-r16-w200-t4** | **+0.058 [+0.020, +0.095]** | +0.047 [−0.010, +0.103] | +0.070 [+0.023, +0.113] |
+| **K4L-R-gs-rw-fc-w150-t4-p4 vs K4CW-r16-w150-t4** | **+0.160 [+0.120, +0.200]** | +0.183 | +0.137 |
+| K4L w150 vs K4CW w200 | +0.043 [+0.007, +0.080] | +0.007 | +0.080 |
+| K4CW-r16-w200-t4 vs unbounded K4C-r16 | −0.027 [−0.060, +0.007] | −0.003 | −0.050 |
+| K4CW-r16-w150-t4 vs unbounded K4C-r16 | −0.143 [−0.183, −0.102] | −0.180 | −0.107 |
+| K4L w200 vs unbounded K4L-R-gs | −0.013 [−0.045, +0.017] | −0.023 | −0.003 |
+| K4L w150 vs unbounded K4L-R-gs | −0.028 [−0.060, +0.003] | −0.063 | +0.007 |
+| K4L w200 vs unbounded K4C-r16 | +0.032 [−0.005, +0.067] | +0.043 | +0.020 |
+
+- The K4L live variant keeps nearly all of its unbounded strength at 200 ms and most of it at 150 ms. K4C's wall
+  search loses 0.14 at 150 ms.
+- K4L at 150 ms beats K4C at 200 ms.
+- 5-core context run on the contended 04/08: K4L w200 vs K4CW w200 was +0.117 [+0.077, +0.155]. K4CW lost −0.092
+  there vs unbounded, because contention starves the K4C search.
+
+### Fresh bank 2: result (RoyaleSim 15.535, BASE 203119344380352, pre-registered above)
+
+| | R3a | v1 | rext-bc | pooled |
+|---|---|---|---|---|
+| K4C-r16 win rate | 0.754 | 0.873 | 0.885 | |
+| A = K4L-R-gs-rw-fp win rate | 0.808 | 0.938 | 0.925 | |
+| **A − K4C-r16, paired** | +0.054 [+0.027, +0.082] | +0.065 [+0.043, +0.086] | +0.040 [+0.018, +0.062] | **+0.053 [+0.040, +0.066]** |
+
+- 1,200 cases per opponent, 7,200 games, 0 errors.
+- This replicates fresh bank 1's +0.055 on new cases.
+- B (i10) is running on the same bank; see PROGRESS.md.
 
 ### Timing on the shared, contended hosts (5 cores; context only, superseded by the table above)
 
