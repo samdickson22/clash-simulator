@@ -6937,3 +6937,11 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 - **Decision:** the LIVE LEAD runs perception round 2 now, offline on renderer/val data. Targets are spell event recall (.57), swarm/unit recall (.81) and Royal Ghost. Success is measured as the Δ win rate of PERC-emp vs perfect sight.
 - **Resources:** one A6000 (01, 04 or 08), agreed between the leads. The BOT LEAD keeps CPU and the other GPUs.
 - **Also:** the K4L live panic (`c56.rs:265`, trimmed card config × misperceived unit) is being fixed by both leads. The fix is a total lookup plus a BaseException → it5s2 fallback. The K4L PERC-emp half gets rerun after the fix. The Mac bench is GO after the Sol r2 fixes.
+
+## 2026-10-15 22:53Z LIVE-1: the bot is playing live ladder
+
+- **Setup:** the official Clash Royale client on BlueStacks Air (Mac mini), installed from the Play Store under Sam's throwaway Google login. The game account is "bigdiddle". Our earlier crash was caused by the sideloaded APK, not by BlueStacks.
+- **Loop:** ScreenCaptureKit capture, then perception (hand/towers OK; units still blind on official arenas), then LIVE-K4L-R-gs + RL r5 v10 fast tier, then ADB taps (Sam's choice).
+- **First live results:** 3–0 wins, trophies 0 → 93. Opponents at this level are new accounts or bots, so these results prove the loop, not strength.
+- **Authority (Sam, 10-15):** full in-game authority on the throwaway account, including ladder. Still off: real-money purchases, credentials, other Mac apps/users, and anti-detection modifications.
+- **Next:** perception round 3 (background-invariant unit head, 01 GPU), then keep laddering with per-battle W/L, trophies and video.
