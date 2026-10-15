@@ -298,3 +298,9 @@ play-rate calibration), others. Reference = K4L-R-gs (its 600 HEADLINE-ours game
   bit for bit through both cuts. lopp_fast_check --rowwise cases 0,1 (80 roots, 6045 rollouts): exact, cut_mismatch 0.
   End to end K4L-R-gs-rw-fc-t4-p4 command_sha256 == bot-lopp-hl2 K4L-R-gs 12/12 so far (cases 0-11 x v1,R3a running on
   04/08, bot-k4l-fix/e2e-*), 0 failures logged.
+- 2026-10-15T11:26:52Z K4L fix follow-up: end to end K4L-R-gs-rw-fc-t4-p4 command_sha256 == bot-lopp-hl2 K4L-R-gs 24/24 (cases 0-11 x
+  v1,R3a), 0 errors, 0 failure lines; the 6 PERC-emp cases that killed workers (v1 2/8/25, R3a 3/17/25) all complete
+  with 0 panics and 0 fallbacks (bot-k4l-fix/perc-fixed). Native totality (deliverable 4, NATIVE-TOTAL.md): 44874fd6
+  rebuilt byte for byte from e1-20261009-r1/native-source-v2 (r1/engine-rs is the pre-E1 tree); 23 sites made total;
+  patched 681b5f2c parity-identical (577 fixtures, 1.01 M ticks, 300 real roots x full/cut), 0 vs 1,199 panics on the
+  totality probes. Pin proposed, not switched (BOT LEAD decides).

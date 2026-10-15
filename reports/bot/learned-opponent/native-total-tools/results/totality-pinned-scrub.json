@@ -1,0 +1,1695 @@
+{
+ "native": "/mpac/sdicks02/repos/clasher-bot-runtime/r1/native/clasher_core.abi3.so",
+ "scenarios": {
+  "arrows": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 11,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "barblog-rolling": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 11,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "earthquake": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 13,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "electro-spirit": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 13,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "fireball-projectile": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 11,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "firespirit-hut-production": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 19,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "60": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "75": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "90": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "110": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "130": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "160": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "goblin-barrel-delivery": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 13,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "goblin-hut-production": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "lightning-strike": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 10,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "log-rolling": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 13,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "meta-electro-spirit": {
+   "cuts": 1,
+   "failing_cuts": 1,
+   "failures": {
+    "0": {
+     "public_mask[0]": "PanicException: no entry found for key",
+     "public_mask[1]": "PanicException: no entry found for key",
+     "public_view[0]": "PanicException: no entry found for key",
+     "public_view[1]": "PanicException: no entry found for key",
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "select_action[0,balanced]": "PanicException: no entry found for key",
+     "select_action[0,defense]": "PanicException: no entry found for key",
+     "select_action[0,pressure]": "PanicException: no entry found for key",
+     "select_action[1,balanced]": "PanicException: no entry found for key",
+     "select_action[1,defense]": "PanicException: no entry found for key",
+     "select_action[1,pressure]": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 19
+  },
+  "mighty-miner-bomb": {
+   "ability_activated": true,
+   "cuts": 22,
+   "failing_cuts": 1,
+   "failures": {
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "poison-area": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 18,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "60": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "75": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "90": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "110": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "130": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "rocket-projectile": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 14,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "50": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "60": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "royal-delivery": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 12,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "tornado": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 9,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "zap": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 1,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[0,defense]": "PanicException: no entry found for key",
+     "rollout_e1[0,pressure]": "PanicException: no entry found for key",
+     "rollout_e1[1,balanced]": "PanicException: no entry found for key",
+     "rollout_e1[1,defense]": "PanicException: no entry found for key",
+     "rollout_e1[1,pressure]": "PanicException: no entry found for key",
+     "step400": "PanicException: no entry found for key"
+    }
+   },
+   "played": true,
+   "probes": 418
+  }
+ }
+}
