@@ -6,6 +6,7 @@ frozen split.json alone, before any match file is opened.
 """
 import gzip
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -175,11 +176,64 @@ def refine(scores, c, gy, gx):
     return float((patch*xx).sum()/s), float((patch*yy).sum()/s)
 
 
-def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units=128, offsets=False):
+# Cards that put several same-card bodies on the board (swarms, spawners, splits): the only identities the count
+# decode may add bodies for (a second Knight next to a Knight is a double count, not a merge).
+MULTI_BODY = frozenset({'AngryBarbarians', 'Archers', 'Bats', 'FireSpirits', 'FirespiritHut', 'GoblinBarrel', 'GoblinGang',
+                        'GoblinHut', 'Goblins', 'Golem', 'Goblinstein', 'Minions', 'MinionHorde', 'Rascals', 'RoyalHogs',
+                        'SkeletonArmy', 'Skeletons', 'Wallbreakers'})
+
+
+def _count_extras(heat, box, b, nb, peaks_cs, peaks_ys, peaks_xs, n_unit, floor, bodies=None, cmin=.9, radius=1):
+    """Round-2 count decode (window sum): body_box[2 + native owner] = bodies per half-tile cell. Peaks in descending score;
+    each peak of a MULTI_BODY identity claims its unclaimed (2r+1)^2 window, whose expected body count is the sum of the
+    owner's (clipped) count map there; extras = floor(sum - peaks in the window + 1 - cmin), placed on the window's
+    highest residual-count cells whose heat for that identity >= floor. Chosen on 6 val matches (r2/decode_grid.py,
+    ft-r3b epoch 6: F1 .823 vs .815 peaks only; recall .767 -> .816, swarm .684 -> .782).
+    -> [(c, gy, gx, fx, fy, score)] in half-tile cells."""
+    h, w = heat.shape[-2:]
+    cnt = np.clip(box[b, 2:4], 0, None)
+    order = np.argsort(-heat[peaks_cs, peaks_ys, peaks_xs])
+    pk = [(int(peaks_cs[k]), int(peaks_ys[k]), int(peaks_xs[k])) for k in order if int(peaks_cs[k]) % nb < n_unit]
+    peakcount = np.zeros((2, h, w), int)
+    for c, gy, gx in pk:
+        peakcount[c//nb, gy, gx] += 1
+    claimed = np.zeros((2, h, w), bool)
+    extras = []
+    for c, gy, gx in pk:
+        o = c//nb
+        y0, y1, x0, x1 = max(0, gy-radius), min(h, gy+radius+1), max(0, gx-radius), min(w, gx+radius+1)
+        free = ~claimed[o, y0:y1, x0:x1]
+        tot = float((cnt[o, y0:y1, x0:x1]*free).sum()); n_pk = int((peakcount[o, y0:y1, x0:x1]*free).sum())
+        claimed[o, y0:y1, x0:x1] = True
+        if bodies is not None and bodies[c % nb] not in MULTI_BODY:
+            continue
+        extra = int(math.floor(tot-n_pk+1-cmin)) if tot-n_pk >= cmin else 0
+        if extra <= 0:
+            continue
+        cells = sorted(((float(cnt[o, y, x])-peakcount[o, y, x], y, x) for y in range(y0, y1) for x in range(x0, x1)), reverse=True)
+        k = 0
+        while extra > 0 and k < 3*len(cells):
+            _, y, x = cells[k % len(cells)]
+            if heat[c, y, x] >= floor:
+                j = k//len(cells); ang = 2.4*k
+                extras.append((c, y, x, x+float(box[b, 0, y, x])-.5+.3*j*math.cos(ang), y+float(box[b, 1, y, x])-.5+.3*j*math.sin(ang),
+                               float(heat[c, gy, gx])*.999))
+                extra -= 1
+            k += 1
+    return extras
+
+
+def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units=128, offsets=False, counts=None,
+                 count_floor=.2):
     """One frame of numpy head outputs -> native-coordinate detections, towers, HUD.
 
     out: dict of numpy arrays for batch item b (sigmoid NOT yet applied to heatmap).
+    live-dense-v2 (identities 'fx:<spell>' present): effect peaks go to dec['effects'], never units, and with
+    `counts` (default: on for v2) the count head adds one detection per counted body (_count_extras).
     """
+    v2 = any(str(n).startswith('fx:') for n in bodies)
+    counts = v2 if counts is None else counts
+    n_unit = len(bodies)-sum(str(n).startswith('fx:') for n in bodies)-2  # card identities (towers follow)
     heat = 1/(1+np.exp(-out['body_heatmap'][b]))  # [2*nb,64,36]
     nb = len(bodies)
     # 3x3 NMS per channel
@@ -188,9 +242,19 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
     cs, ys, xs = np.nonzero(peaks)
     order = np.argsort(-heat[cs, ys, xs])[:max_units]
     hp = out['body_hp'][b, 0]; hpv = 1/(1+np.exp(-out['body_hp_visible'][b, 0]))
-    units = []
+    units, effects = [], []
+    if counts:
+        extra = _count_extras(heat, out['body_box'], b, nb, cs, ys, xs, n_unit, max(count_floor, min(threshold, count_floor)),
+                              bodies=bodies if counts != 'all' else None)
+        extra = [e for e in extra if e[5] >= threshold]
+    else:
+        extra = []
     for k in order:
         c, gy, gx = int(cs[k]), int(ys[k]), int(xs[k]); owner, ident = divmod(c, nb)
+        if bodies[ident].startswith('fx:'):
+            effects.append(dict(identity=bodies[ident], owner=owner, x=(gx+float(out['body_box'][b, 0, gy, gx])+0.)/2,
+                                y=(gy+float(out['body_box'][b, 1, gy, gx])+0.)/2, score=float(heat[c, gy, gx])))
+            continue
         if offsets:  # live-dense-v1: body_box[0:2] = sub-cell offset; returns x = (gx+off)/2 below
             fx, fy = gx+float(out['body_box'][b, 0, gy, gx])-.5, gy+float(out['body_box'][b, 1, gy, gx])-.5
         elif refine_pos:
@@ -199,6 +263,10 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
             fx, fy = gx, gy
         units.append(dict(identity=bodies[ident], owner=owner, x=(fx+.5)/2, y=(fy+.5)/2, score=float(heat[c, gy, gx]),
                           hp_frac=float(hp[gy, gx]) if (offsets or hpv[gy, gx] >= .5) else None))
+    for c, gy, gx, fx, fy, sc in extra:
+        owner, ident = divmod(int(c), nb)
+        units.append(dict(identity=bodies[ident], owner=owner, x=(fx+.5)/2, y=(fy+.5)/2, score=sc, hp_frac=float(hp[gy, gx]),
+                          counted=True))
     towers = []
     for owner, kind, side, ax, ay in TOWER_SLOTS:
         ident = bodies.index('KingTower' if kind == 'king' else 'PrincessTower'); c = owner*nb+ident
@@ -212,7 +280,7 @@ def decode_frame(out, b, cards, bodies, threshold=.5, refine_pos=True, max_units
     ids = probs.argmax(-1)
     names = [cards[i] if i < len(cards) else None for i in ids]
     digit = int(out['elixir_digit'][b].argmax())
-    return dict(units=units, towers=towers, hand=names[:4], next=names[4], hand_prob=[float(probs[j, ids[j]]) for j in range(5)],
+    return dict(units=units, effects=effects, towers=towers, hand=names[:4], next=names[4], hand_prob=[float(probs[j, ids[j]]) for j in range(5)],
                 hand_probs=probs, elixir_digit=digit, elixir=min(10., digit+float(out['elixir_fraction'][b])),
                 clock=float(out['clock_seconds'][b]), phase=int(out['phase'][b].argmax())+1)
 
@@ -225,7 +293,8 @@ def frame_record(dec, timestamp_ms=None, tower_threshold=.5, events=()):
             continue
         owner, x, y = own_view(u['owner'], u['x'], u['y'])
         units.append(dict(cls=u['identity'], card=body_card(u['identity']), owner=owner, x=round(x, 3), y=round(y, 3),
-                          hp_frac=None if u['hp_frac'] is None else round(u['hp_frac'], 4), score=round(u['score'], 4)))
+                          hp_frac=None if u['hp_frac'] is None else round(u['hp_frac'], 4), score=round(u['score'], 4),
+                          **({'counted': True} if u.get('counted') else {})))
     towers = []
     for t in dec['towers']:
         owner, _, _ = own_view(t['owner'], 9, 16)
@@ -238,7 +307,9 @@ def frame_record(dec, timestamp_ms=None, tower_threshold=.5, events=()):
         owner, x, y = own_view(e['side'], e['x_tiles'], e['y_tiles'])
         evs.append(dict(owner=owner, card=e['card'], x=round(x, 3), y=round(y, 3),
                         tick=round(float(e['execution_timestamp_ms']), 1), score=round(float(e['existence_q']), 4)))
-    return dict(timestamp_ms=timestamp_ms, units=units, towers=towers,
+    fx = [dict(card=e['identity'][3:], owner=own_view(e['owner'], e['x'], e['y'])[0], x=round(e['x'], 3),
+               y=round(32.-e['y'], 3), score=round(e['score'], 4)) for e in dec.get('effects', ())]
+    return dict(timestamp_ms=timestamp_ms, units=units, towers=towers, **(dict(effects=fx) if fx else {}),
                 hand=dict(cards=dec['hand'], probs=[round(p, 4) for p in dec['hand_prob'][:4]],
                           next=dec['next'], next_prob=round(dec['hand_prob'][4], 4)),
                 elixir=round(dec['elixir'], 3), clock_s=round(dec['clock'], 2), phase=dec['phase'], events=evs,

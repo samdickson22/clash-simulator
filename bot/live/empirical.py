@@ -51,7 +51,7 @@ def _sample(lst, rng, k=SAMPLE):
     return _sample([lst[i] for i in sorted(idx)], rng, k)
 
 
-def fit(dump, out, fusion, vocab):
+def fit(dump, out, fusion, vocab, unit_threshold=None, counted=True, unit_filter=None):
     from bot.live.real_replay import load_dump, fused_events, OWN_NATIVE
     rng = np.random.default_rng(0)
     cards = json.loads(Path(vocab).read_text())['cards']
@@ -67,8 +67,19 @@ def fit(dump, out, fusion, vocab):
     for f in files:
         head, rows = load_dump(f)
         prev = None
+        flt = None
+        if unit_filter is not None:      # perception round 2: live/perception/unit_filter.UnitFilter, run over every frame
+            import sys
+            sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'live/perception'))
+            from unit_filter import UnitFilter
+            flt = UnitFilter(**unit_filter)
         for r in rows:
             tr, pr = r['truth'], r['pred']
+            if flt is not None:
+                pr = dict(pr, units=flt([u for u in r['units_lo'] if not u.get('effect') and (counted or not u.get('counted'))]))
+            elif unit_threshold is not None or not counted:   # re-decide the unit set from the dump's >= 0.25 detections
+                pr = dict(pr, units=[u for u in r['units_lo'] if not u.get('effect') and (counted or not u.get('counted'))
+                                     and u['score'] >= (unit_threshold if unit_threshold is not None else .4)])
             if tr.get('objects_stale'):
                 prev = None
                 continue
@@ -162,7 +173,8 @@ def fit(dump, out, fusion, vocab):
     mk = {f'{a}{b}': markov[(a, b)] for a in (0, 1) for b in (0, 1)}
     stats = dict(
         schema='clasher.live.empirical-noise.v1', split='validation', heldout_opened=False, matches=len(files),
-        frames=frames_n, fusion=fusion,
+        frames=frames_n, fusion=fusion, units_decode=dict(threshold=unit_threshold if unit_threshold is not None else 'record',
+                                                           count_extras=counted, unit_filter=unit_filter),
         units=dict(confusion={k: dict(v) for k, v in conf.items()}, total=dict(tot), missed=dict(miss),
                    recall=sum(tot.values()) and 1-sum(miss.values())/sum(tot.values()),
                    markov=mk, p_hit_after_hit=mk['11']/max(1, mk['11']+mk['10']), p_hit_after_miss=mk['01']/max(1, mk['01']+mk['00']),
@@ -179,6 +191,15 @@ def fit(dump, out, fusion, vocab):
     return stats
 
 
+# Ablation parts (perc.py '-x<part>' arm tokens): the named noise component is removed, everything else as fitted.
+PARTS = {
+    'units': 'all unit noise (recall 1, true card, exact position/hp, no false positives)',
+    'recall': 'unit misses only (every true unit detected; confusion/position/FP noise kept)',
+    'conf': 'unit card confusion only', 'fp': 'false-positive units only',
+    'hud': 'hand/next/elixir/tower noise', 'ev': 'all opponent play-event noise (perfect, immediate events)',
+    'spell': 'opponent spell events perfect', 'troop': 'opponent troop/building events perfect',
+    'spur': 'spurious events only', 'lat': 'event latency and execution-time error only'}
+
 SPELLS = {'Arrows', 'BarbLog', 'Earthquake', 'Fireball', 'GoblinBarrel', 'Lightning', 'Log', 'Poison', 'Rocket',
           'RoyalDelivery', 'Tornado', 'Zap'}
 
@@ -186,8 +207,12 @@ SPELLS = {'Arrows', 'BarbLog', 'Earthquake', 'Fireball', 'GoblinBarrel', 'Lightn
 class EmpiricalNoise:
     """Per-match stateful channel (see module docstring). record: SynthPerception record (ticks, our frame)."""
 
-    def __init__(self, stats, rng, deck, cards=None):
+    def __init__(self, stats, rng, deck, cards=None, ablate=frozenset()):
         self.s, self.rng, self.deck = stats, rng, list(deck)
+        bad = set(ablate)-set(PARTS)
+        if bad:
+            raise ValueError(f'unknown ablation parts {sorted(bad)}')
+        self.x = frozenset(ablate)
         u = stats['units']
         self.recall = {c: 1-u['missed'].get(c, 0)/n for c, n in u['total'].items() if n >= 30}
         self.r0 = u['recall']
@@ -218,7 +243,7 @@ class EmpiricalNoise:
         return float(np.clip(base*self.recall.get(card, self.r0)/max(1e-6, self.r0), 0., 1.))
 
     def __call__(self, record):
-        rng, tick = self.rng, int(record['tick'])
+        rng, tick, ab = self.rng, int(record['tick']), self.x
         units, cur = [], []
         for t in record['units']:
             was = None
@@ -227,12 +252,18 @@ class EmpiricalNoise:
                     was = ph
                     break
             hit = rng.random() < self._det_p(t['card'], was)
+            if ab & {'units', 'recall'}:
+                hit = True
             cur.append((t['owner'], t['card'], t['x'], t['y'], hit))
             if not hit:
                 continue
             u = dict(t)
+            if 'units' in ab:
+                u['score'] = .8
+                units.append(u)
+                continue
             names, p = self.conf.get(t['card'], ([t['card']], np.ones(1)))
-            u['card'] = u['cls'] = self._pick(names, p)
+            u['card'] = u['cls'] = self._pick(names, p) if 'conf' not in ab else t['card']
             dx, dy = self.pos[rng.integers(len(self.pos))] if len(self.pos) else (0., 0.)
             u['x'] = float(np.clip(t['x']+dx, 0, 18)); u['y'] = float(np.clip(t['y']+dy, 0, 32))
             if len(self.hp):
@@ -243,7 +274,7 @@ class EmpiricalNoise:
         for owner in (0, 1):
             own_true = [t for t in record['units'] if t['owner'] == owner]
             names, p = self.fp_card[owner]
-            if not own_true or not names:
+            if not own_true or not names or ab & {'units', 'fp'}:
                 continue
             for _ in range(rng.poisson(self.fp_rate[owner])):
                 a = own_true[rng.integers(len(own_true))]
@@ -255,12 +286,13 @@ class EmpiricalNoise:
         towers = []
         for t in record['towers']:
             t = dict(t)
-            if t['alive']:
+            if t['alive'] and 'hud' not in ab:
                 tw = self.s['towers']['hp_residual']
                 t['hp_frac'] = float(np.clip(t['hp_frac']+tw[rng.integers(len(tw))], .01, 1)) if tw else t['hp_frac']
             towers.append(t)
         hud = self.s['hud']
         hand = dict(record['hand'])
+        hud = dict(hud, hand_slot_error=0., next_error=0., elixir_residual=[]) if 'hud' in ab else hud
         hand['cards'] = [(self._other(c) if c is not None and rng.random() < hud['hand_slot_error'] else c) for c in hand['cards']]
         if hand.get('next') is not None and rng.random() < hud['next_error']:
             hand['next'] = self._other(hand['next'])
@@ -273,6 +305,10 @@ class EmpiricalNoise:
             key = (e['card'], int(e['tick']), round(float(e['x']), 1), round(float(e['y']), 1))
             if key in self.fate:
                 continue
+            if 'ev' in ab or ('spell' if e['card'] in SPELLS else 'troop') in ab:
+                self.fate[key] = dict(owner=1, card=e['card'], x=float(e['x']), y=float(e['y']), tick=int(e['tick']),
+                                      due=e['tick'])
+                continue
             n = self.ev_tot.get(e['card'], 0)
             p = self.ev_det.get(e['card'], 0)/n if n >= 10 else self.ev_cls['spell' if e['card'] in SPELLS else 'troop']
             if rng.random() >= p:
@@ -282,6 +318,8 @@ class EmpiricalNoise:
             card = self._pick(list(row), np.asarray(list(row.values()), float)/sum(row.values())) if row else e['card']
             lat = float(self.lat[rng.integers(len(self.lat))]) if len(self.lat) else 150.
             xe = float(self.xerr[rng.integers(len(self.xerr))]) if len(self.xerr) else 0.
+            if 'lat' in ab:
+                lat = xe = 0.
             dx, dy = self.place[rng.integers(len(self.place))] if len(self.place) else (0., 0.)
             self.fate[key] = dict(owner=1, card=card, x=float(np.clip(e['x']+dx, 0, 18)), y=float(np.clip(e['y']+dy, 0, 32)),
                                   tick=int(round(e['tick']+xe/50.)), due=e['tick']+lat/50.)
@@ -289,7 +327,7 @@ class EmpiricalNoise:
             if ev is not None and not ev.get('sent') and tick >= ev['due']:
                 ev['sent'] = True
                 self.out.append(dict(owner=1, card=ev['card'], x=ev['x'], y=ev['y'], tick=min(tick, ev['tick'])))
-        if self.last_tick is not None and self.spur[0]:
+        if self.last_tick is not None and self.spur[0] and not ab & {'ev', 'spur'}:
             for _ in range(rng.poisson(self.spur_rate*max(0, tick-self.last_tick))):
                 opp = [t for t in record['units'] if t['owner'] == 1]
                 x, y = ((opp[rng.integers(len(opp))]['x'], opp[rng.integers(len(opp))]['y']) if opp and rng.random() < .5
@@ -313,8 +351,11 @@ def main():
     f.add_argument('--out', type=Path, default=STATS)
     f.add_argument('--fusion', type=json.loads, required=True)
     f.add_argument('--vocab', default='/mpac/sdicks02/jobs/clasher/live-perception-20261014/export-final/vocab.json')
+    f.add_argument('--unit-threshold', type=float, default=None, help='re-threshold units from the dump units_lo (>= 0.25)')
+    f.add_argument('--no-count-extras', action='store_true', help='drop count-decode extra bodies (round 2)')
+    f.add_argument('--unit-filter', type=json.loads, default=None, help='UnitFilter JSON (live/perception/unit_filter.py)')
     a = ap.parse_args()
-    s = fit(a.dump, a.out, a.fusion, a.vocab)
+    s = fit(a.dump, a.out, a.fusion, a.vocab, a.unit_threshold, not a.no_count_extras, a.unit_filter)
     print(json.dumps(dict(matches=s['matches'], frames=s['frames'], unit_recall=round(s['units']['recall'], 4),
                           p11=round(s['units']['p_hit_after_hit'], 3), p01=round(s['units']['p_hit_after_miss'], 3),
                           fp_per_frame=s['units']['fp_per_frame'], hand=s['hud']['hand_slot_error'],

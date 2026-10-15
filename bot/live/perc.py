@@ -25,17 +25,44 @@ from bot.players.base import Decision, PublicView, WAIT
 EMPIRICAL = {'emp': 'events', 'emp-births': 'births', 'emp-both': 'both'}   # arm -> opponent-play source
 
 
+def parse_empirical(arm):
+    """'emp[-r<N>][-births|-both][-x<part>...]' -> (opponent-play source, stats file, ablated parts) or None.
+
+    -r<N>     noise fitted on perception round N (bot/live/empirical-val-r<N>.json; plain 'emp' = round 1,
+              empirical-val.json). 'PERC-emp-r2:LIVE-fast-it5s2' = round-2 perception.
+    -s<name>  any fitted variant, bot/live/empirical-val-<name>.json (e.g. a unit-threshold variant 'emp-sr1u50').
+    -x<part>  ablation: that noise component is removed (EmpiricalNoise.PARTS), e.g. 'emp-xspell' = round-1 noise
+              with perfect opponent spell events. Diagnostic arms for 'which perception error costs win rate'."""
+    from bot.live.empirical import STATS, PARTS
+    toks = arm.split('-')
+    if toks[0] != 'emp':
+        return None
+    source, stats, ablate = 'events', STATS, []
+    for t in toks[1:]:
+        if t in ('births', 'both'):
+            source = t
+        elif t[:1] == 'r' and t[1:].isdigit():
+            stats = STATS.with_name(f'empirical-val-r{int(t[1:])}.json')
+        elif t[:1] == 's' and t[1:].isalnum():      # any fitted variant: bot/live/empirical-val-<name>.json
+            stats = STATS.with_name(f'empirical-val-{t[1:]}.json')
+        elif t[:1] == 'x' and t[1:] in PARTS:
+            ablate.append(t[1:])
+        else:
+            raise ValueError(f'unknown empirical arm token {t!r} in {arm!r}')
+    return source, stats, frozenset(ablate)
+
+
 class PercPlayer:
     def __init__(self, rt, arm, inner):
         from bot.live.replay import NOISE_GRID, PLAYS_FROM
-        if arm not in NOISE_GRID and arm not in EMPIRICAL:
-            raise ValueError(f'unknown perception arm {arm!r}; known {sorted(NOISE_GRID) + sorted(EMPIRICAL)}')
+        emp = parse_empirical(arm)
+        if arm not in NOISE_GRID and emp is None:
+            raise ValueError(f'unknown perception arm {arm!r}; known {sorted(NOISE_GRID) + sorted(EMPIRICAL)} + emp-r<N>/-x<part>')
         self.rt, self.arm, self.inner = rt, arm, inner
-        if arm in EMPIRICAL:
+        if emp is not None:
             import json
-            from bot.live.empirical import STATS
-            self.noise, self.plays_from = None, EMPIRICAL[arm]
-            self.stats = json.loads(STATS.read_text())
+            self.noise, self.plays_from = None, emp[0]
+            self.stats, self.ablate = json.loads(emp[1].read_text()), emp[2]
         else:
             self.noise, self.plays_from = NOISE_GRID[arm], PLAYS_FROM.get(arm, 'births')
         self.name = f'PERC-{arm}:{inner.name}'
@@ -59,7 +86,7 @@ class PercPlayer:
         self.rng = np.random.default_rng([ctx.seed, ctx.seat, 0x9e4c])
         if self.noise is None:
             from bot.live.empirical import EmpiricalNoise
-            self.channel = EmpiricalNoise(self.stats, self.rng, list(ctx.own_order))
+            self.channel = EmpiricalNoise(self.stats, self.rng, list(ctx.own_order), ablate=self.ablate)
         self.queue = CommandQueue(ctx.command_delay, 1)
         self.inner.start(ctx)
 

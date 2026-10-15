@@ -28,20 +28,21 @@ from sample_records import LABELS, truth_record
 def main():
     p = argparse.ArgumentParser(); p.add_argument('export'); p.add_argument('out', type=Path)
     p.add_argument('--shard', type=int, default=0); p.add_argument('--nshards', type=int, default=1)
-    p.add_argument('--stride', type=int, default=2); p.add_argument('--threads', type=int, default=4)
+    p.add_argument('--stride', type=int, default=2); p.add_argument('--threads', type=int, default=4); p.add_argument('--device', default='cpu')
     p.add_argument('--max-matches', type=int, default=0)
+    p.add_argument('--labels', type=Path, default=LABELS, help='truth labels (round 2: labels-r2, visible Ghost)')
     a = p.parse_args(); torch.set_num_threads(a.threads); a.out.mkdir(parents=True, exist_ok=True)
     guard = C.HeldoutGuard(); eps = guard.episodes('validation')
     eps = eps[:a.max_matches] if a.max_matches else eps
     eps = eps[a.shard::a.nshards]; guard.check(eps)
-    lp = LivePerception(a.export, device='cpu')
+    lp = LivePerception(a.export, device=a.device)
     for ep in eps:
         dst = a.out/f'{ep}.jsonl.gz'
         if dst.exists():
             continue
         guard.check([ep])
         rec = C.load_receipt(guard, ep, 'validation'); px = C.Pixels(guard, ep, rec)
-        lab = D.load(LABELS/f'{ep}.npz'); tick = lab['tick']
+        lab = D.load(a.labels/f'{ep}.npz'); tick = lab['tick']
         ev_rows = [e for e in C.read_jsonl(C.MATCHES/ep/'events.jsonl') if e['accepted'] and e['kind'] != 'champion ability']
         lp.reset(); t0 = time.perf_counter(); n = 0
         tmp = dst.with_suffix('.tmp')

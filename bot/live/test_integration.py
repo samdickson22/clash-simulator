@@ -205,6 +205,37 @@ def test_empirical_channel_is_deterministic_and_keeps_own_plays():
     assert len(opp) <= 1 + sum(1 for r in a for e in r['events'] if e['owner'] == 1)   # each play decided once
 
 
+
+def test_empirical_arm_names_and_ablations():
+    from bot.live.perc import parse_empirical
+    from bot.live.empirical import EmpiricalNoise, STATS
+    assert parse_empirical('emp')[:2] == ('events', STATS) and parse_empirical('p42') is None
+    src, path, ab = parse_empirical('emp-r2-both-xspell-xfp')
+    assert (src, path.name, ab) == ('both', 'empirical-val-r2.json', frozenset({'spell', 'fp'}))
+    with pytest.raises(ValueError):
+        parse_empirical('emp-xnothing')
+    assert parse_empirical('emp-sr1u50-xfp')[1].name == 'empirical-val-r1u50.json'
+    if not STATS.exists():
+        pytest.skip('empirical stats not fitted')
+    stats = json.loads(STATS.read_text())
+    rec = dict(tick=600, units=[dict(cls='Knight', card='Knight', owner=1, x=4.+k, y=20., hp_frac=.5, score=1.) for k in range(6)],
+               towers=[dict(owner=0, kind='king', side='center', hp_frac=.7, alive=True)],
+               hand=dict(cards=['Knight', 'Archers', 'Giant', 'Musketeer'], next='MiniPekka'), elixir=5.,
+               events=[dict(owner=1, card='Zap', x=4., y=20., tick=590), dict(owner=1, card='HogRider', x=8., y=20., tick=595)])
+    deck = ['Knight', 'Archers', 'Giant', 'Musketeer', 'MiniPekka', 'Fireball', 'Arrows', 'Goblins']
+    ch = EmpiricalNoise(stats, np.random.default_rng(3), deck, ablate={'units', 'hud', 'ev'})
+    for k in range(60):
+        r = ch(dict(rec, tick=600 + 5*k))
+        assert [(u['card'], u['x'], u['hp_frac']) for u in r['units']] == [(u['card'], u['x'], u['hp_frac']) for u in rec['units']]
+        assert r['hand'] == rec['hand'] and r['elixir'] == 5. and r['towers'][0]['hp_frac'] == .7
+        assert sorted((e['card'], e['tick']) for e in r['events']) == [('HogRider', 595), ('Zap', 590)]   # immediate, exact
+    ch = EmpiricalNoise(stats, np.random.default_rng(3), deck, ablate={'spell'})
+    for k in range(60):
+        r = ch(dict(rec, tick=600 + 5*k))
+        assert ('Zap', 590) in [(e['card'], e['tick']) for e in r['events']]
+    with pytest.raises(ValueError):
+        EmpiricalNoise(stats, np.random.default_rng(3), deck, ablate={'bogus'})
+
 # -- resync-capable cycle tracking (bot/live/resync.py) -------------------------------------------------------------
 DECK8 = ['Knight', 'Archers', 'Giant', 'Musketeer', 'MiniPekka', 'Fireball', 'Arrows', 'Goblins']   # opponent plays these
 SEEN = [(100 + 40*i, c) for i, c in enumerate(DECK8)]              # all 8 revealed; queue = last 4, hand = first 4

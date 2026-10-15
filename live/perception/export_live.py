@@ -68,8 +68,8 @@ def main():
     p.add_argument('--cpu-threads', default='16,4'); a = p.parse_args(); a.output.mkdir(parents=True, exist_ok=True)
     from clasher.vision.l1_v4 import PerceptionV4
     state = torch.load(a.checkpoint, map_location='cpu', weights_only=False)
-    if state.get('format') != 'live-dense-v1':
-        raise ValueError('expects a live-dense-v1 checkpoint')
+    if state.get('format') not in ('live-dense-v1', 'live-dense-v2'):
+        raise ValueError('expects a live-dense-v1/v2 checkpoint')
     model = PerceptionV4(len(state['cards']), len(state['identities'])); model.load_state_dict(state['model']); model.eval()
     frames = val_frames()
     wrapper = FrameExport(model).eval()
@@ -110,7 +110,9 @@ def main():
     (a.output/'parity.json').write_text(json.dumps(parity, indent=1)+'\n')
     vocab = dict(identities=state['identities'], cards=state['cards'], heatmap_channel='owner*len(identities)+identity',
                  native_owner={'0': 'opponent', '1': 'own (recorded viewpoint)'}, grid='64 rows x 36 cols, half tiles, native y down the screen',
-                 body_box='channels 0/1 = sub-cell x/y offset in [0,1]; x_tiles=(col+off_x)/2, y_tiles=(row+off_y)/2; channels 2/3 unused',
+                 body_box='channels 0/1 = sub-cell x/y offset in [0,1]; x_tiles=(col+off_x)/2, y_tiles=(row+off_y)/2; ' + ('channels 2/3 = bodies per cell, native owner 0/1 (count decode: common._count_extras)' if state.get('format') == 'live-dense-v2' else 'channels 2/3 unused'),
+                 effects='identities fx:<spell> = spell areas/projectiles: record["effects"], never units' if state.get('format') == 'live-dense-v2' else None,
+                 format=state.get('format'),
                  body_hp='fraction of max HP at the peak cell', hud_cards='5 slots (4 hand + next), classes = cards + [unknown]',
                  elixir='argmax(elixir_digit) + elixir_fraction',
                  event_pt='inputs: features ring [1,16,64,52,28] (frame.pt features of the last 16 processed frames, oldest first, zero padded), ages_ms [1,16] (now - frame time), valid [1,16] bool, births [1,2,64,36] (infer.visual_births); outputs EVENT_KEYS; channel = side*56+card; placement x=col/2, y=row/2 (tile centres)',

@@ -5,7 +5,14 @@ anchor. Every hit-point-bearing object is a positive except Ghost (invisible pha
 and unknown card ids, which become ignore regions. Objects without HP (projectiles,
 spell areas) are background. Train/validation only, guarded by the frozen split.
 
+Round 2 (--r2, live-dense-v2 vocabulary): objects without HP that belong to a spell card become positives of
+an EFFECT identity 'fx:<spell>' (appended after the towers; frame-level spell supervision, never a unit), and Royal
+Ghost becomes a positive while it is stationary on its target (raw x,y == targetX,targetY) more than 20 ticks after
+it first appeared: on the train rich snapshots that state is visible 87% of the time (moving: 27%), deploying is always
+invisible. Other Ghost frames stay ignore regions.
+
   nice python live/perception/dense_labels.py --out /mpac/sdicks02/jobs/clasher/live-perception-20261014/labels --workers 12
+  nice python live/perception/dense_labels.py --r2 --out /mpac/sdicks02/jobs/clasher/live-perc-r2-20261015/labels-r2 --workers 12
 """
 import argparse
 import gzip
@@ -19,14 +26,18 @@ import common as C
 
 TOWER_IDX = {'KingTower': 0, 'PrincessTower': 1}
 IGNORE_CARDS = ('Ghost',)
+EFFECTS = ('Arrows', 'BarbLog', 'Earthquake', 'Fireball', 'GoblinBarrel', 'Lightning', 'Log', 'Poison', 'Rocket',
+           'RoyalDelivery', 'Tornado', 'Zap')
+GHOST_SETTLE_TICKS = 20
 
 
-def vocab(cards):
-    return list(cards)+['KingTower', 'PrincessTower']
+def vocab(cards, effects=False):
+    return list(cards)+['KingTower', 'PrincessTower']+(['fx:'+c for c in EFFECTS] if effects else [])
 
 
 def build(args):
-    ep, split, out = args
+    ep, split, out = args[:3]
+    r2 = len(args) > 3 and args[3]
     guard = C.HeldoutGuard()
     guard.check([ep])
     target = Path(out)/f'{ep}.npz'
@@ -49,7 +60,7 @@ def build(args):
     with gzip.open(root/'objects.jsonl.gz', 'rt') as f:
         rows = [json.loads(x) for x in f]
     rticks = np.asarray([r['tick'] for r in rows], np.float32)
-    offsets = [0]; cols = []
+    offsets = [0]; cols = []; first_seen = {}
     anchors = {(o, ax, ay): k for o, k, s, ax, ay in C.TOWER_SLOTS}
     for r in rows:
         for o in r['objects']:
@@ -68,8 +79,15 @@ def build(args):
             else:
                 cls = id2idx.get(o['card_id'], -1)
                 if mx <= 0:
+                    if r2 and cls >= 0 and cards[cls] in EFFECTS:   # spell area / projectile: effect identity
+                        cols.append((len(cards)+2+EFFECTS.index(cards[cls]), o['owner'], o['x'], o['y'], -1, -1, 1))
                     continue  # projectile / spell area: background
                 flag = 1 if (cls >= 0 and cards[cls] not in IGNORE_CARDS and hp > 0) else 0
+                if r2 and cls >= 0 and cards[cls] == 'Ghost' and hp > 0:
+                    t0 = first_seen.setdefault(o.get('native_id'), r['tick'])
+                    raw = o.get('raw') or {}
+                    still = (raw.get('targetX'), raw.get('targetY')) == (o['x'], o['y'])
+                    flag = int(still and r['tick']-t0 > GHOST_SETTLE_TICKS)
             cols.append((cls, o['owner'], o['x'], o['y'], hp, mx, flag))
         offsets.append(len(cols))
     objs = np.asarray(cols, np.int32).reshape(-1, 7)
@@ -102,14 +120,15 @@ def frame_objects(lab, i):
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('--out', type=Path, required=True)
     p.add_argument('--workers', type=int, default=12); p.add_argument('--splits', default='train,validation')
+    p.add_argument('--r2', action='store_true', help='effect identities + stationary-Ghost positives (live-dense-v2)')
     a = p.parse_args(); a.out.mkdir(parents=True, exist_ok=True)
     guard = C.HeldoutGuard()
-    jobs = [(ep, s, str(a.out)) for s in a.splits.split(',') for ep in guard.episodes(s)]
+    jobs = [(ep, s, str(a.out), a.r2) for s in a.splits.split(',') for ep in guard.episodes(s)]
     guard.check([j[0] for j in jobs])
     with Pool(a.workers) as pool:
         for k, (ep, status) in enumerate(pool.imap_unordered(build, jobs)):
             if k % 50 == 0:
                 print(k, len(jobs), ep, status, flush=True)
-    (a.out/'vocab.json').write_text(json.dumps(dict(identities=vocab(guard.cards), cards=guard.cards,
+    (a.out/'vocab.json').write_text(json.dumps(dict(identities=vocab(guard.cards, a.r2), cards=guard.cards,
                                                     note='identity index = card index (C56 order from split.json) + KingTower, PrincessTower'))+'\n')
     print('done', len(jobs), flush=True)

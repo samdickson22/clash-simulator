@@ -135,7 +135,7 @@ def evaluate(a):
     assert not set(eps) & guard.heldout
     state = torch.load(a.checkpoint, map_location='cpu', weights_only=False)
     cards, bodies = state['cards'], state['bodies']
-    dense_model = state.get('format') == 'live-dense-v1'
+    dense_model = state.get('format') in ('live-dense-v1', 'live-dense-v2')
     if cards != guard.cards:
         raise ValueError('card vocabulary differs from split cards')
     model = PerceptionV4(len(cards), len(bodies)); model.load_state_dict(state['model']); model.eval().to(a.device)
@@ -167,7 +167,8 @@ def evaluate(a):
                                                                  'elixir_digit', 'elixir_fraction', 'clock_seconds', 'phase')}
             infer_s += time.perf_counter()-t0
             for b, i in enumerate(idx):
-                dec = C.decode_frame(out, b, cards, bodies, threshold=min(THRESHOLDS), refine_pos=not a.no_refine, offsets=dense_model)
+                dec = C.decode_frame(out, b, cards, bodies, threshold=min(THRESHOLDS), refine_pos=not a.no_refine, offsets=dense_model,
+                                      counts=False if a.no_counts else None)
                 if not dense_model:  # map body identities onto card names for card-level dense truth
                     for u in dec['units']:
                         u['body'] = u['identity']
@@ -328,7 +329,7 @@ if __name__ == '__main__':
     p.add_argument('--checkpoint', type=Path, required=True); p.add_argument('--out', type=Path, required=True)
     p.add_argument('--device', default='cpu'); p.add_argument('--threads', type=int, default=12)
     p.add_argument('--stride', type=int, default=1); p.add_argument('--offset', type=int, default=0)
-    p.add_argument('--max-matches', type=int, default=0); p.add_argument('--no-refine', action='store_true')
+    p.add_argument('--max-matches', type=int, default=0); p.add_argument('--no-refine', action='store_true'); p.add_argument('--no-counts', action='store_true')
     p.add_argument('--records', action='store_true'); p.add_argument('--truth', choices=('dense', 'formal'), default='dense')
     p.add_argument('--labels', type=Path, default=Path('/mpac/sdicks02/jobs/clasher/live-perception-20261014/labels'))
     a = p.parse_args(); a.out.mkdir(parents=True, exist_ok=True)

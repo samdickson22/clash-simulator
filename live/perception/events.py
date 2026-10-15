@@ -31,6 +31,7 @@ from torch.nn import functional as F
 OWN_NATIVE = 1  # native owner of the recorded viewpoint (common.OWN_NATIVE)
 # Spells that leave no unit body to vote with (GoblinBarrel, RoyalDelivery and BarbLog spawn units, so they wait).
 BODYLESS = frozenset({'Arrows', 'Earthquake', 'Fireball', 'Lightning', 'Log', 'Poison', 'Rocket', 'Tornado', 'Zap'})
+SPELLS = BODYLESS | {'BarbLog', 'GoblinBarrel', 'RoyalDelivery'}
 
 
 # Live default (LIVE integration (b), 2026-10-15): chosen over the even-half pick (thr .5, hold 700) because both tie on
@@ -43,7 +44,7 @@ LIVE_DEFAULT = dict(threshold=.6, hold_ms=500., max_hold_ms=500., vote_min=.35, 
 class EventTracker:
     def __init__(self, cards, threshold=.6, low=.2, radius=1.5, dt_ms=400., expire_ms=700., repeat_ms=3000., repeat_tiles=4.,
                  hold_ms=0., max_hold_ms=900., unit_radius=2.0, vote_lead_ms=150., pre_ms=1500., vote_min=.5, prior_min=.0,
-                 agree_frames=2, unit_floor=.25, early_share=None, early_cards=BODYLESS):
+                 agree_frames=2, unit_floor=.25, early_share=None, early_cards=BODYLESS, effect_cross=None, effect_floor=.3):
         self.cards = list(cards); self.n = len(cards); self.th = threshold; self.low = low
         self.radius = radius; self.dt = dt_ms; self.expire = expire_ms; self.tracks = []
         self.repeat_ms, self.repeat_tiles = repeat_ms, repeat_tiles; self.history = []
@@ -52,6 +53,10 @@ class EventTracker:
         self.unit_floor = unit_floor
         self.early_share, self.early = early_share, {i for i, c in enumerate(self.cards) if c in early_cards}
         self.idx = {c: i for i, c in enumerate(self.cards)}
+        # round 2: a spell track below `threshold` (score >= effect_floor) crosses when the frame head's spell-effect
+        # detections (live-dense-v2 'fx:' identities, passed in `units` with effect=True) vote its card >= effect_cross
+        self.effect_cross, self.effect_floor = effect_cross, effect_floor
+        self.spell_idx = {i for i, c in enumerate(self.cards) if c in SPELLS}
         self.frames = []      # (now_ms, [(native side, card idx, x, y, score)]) for the last pre_ms + max hold
         self.revised = 0
 
@@ -156,6 +161,13 @@ class EventTracker:
                     self._emit(best, now_ms, emitted)
                 elif best['crossed'] is None:
                     best['crossed'] = now_ms
+        if self.hold > 0 and self.effect_cross is not None:
+            for t in self.tracks:
+                if t['emitted'] or t['crossed'] is not None or t['score'] < self.effect_floor:
+                    continue
+                head = int(t['mass'].argmax())
+                if head in self.spell_idx and float(self.votes(t)[0][head]) >= self.effect_cross:
+                    t['crossed'] = now_ms
         if self.hold > 0:
             for t in self.tracks:
                 if t['emitted'] or t['crossed'] is None:

@@ -43,7 +43,13 @@ def visual_births(new_heat, old_heat):
 
 
 class LivePerception:
-    def __init__(self, export_dir, device='cpu', unit_threshold=.4, tower_threshold=.5, event_threshold=.6, fusion=None):
+    # unit_threshold .5 (was .4, an F1 pick): phantom units cost win rate about as much as misses (ABLATION.md); u50 vs
+    # u40 +0.02/+0.02 (R3a/v1, 1,800 games, LEAD 2026-10-15). Round-2 models: RESULTS-R2.md gives the threshold per export.
+    def __init__(self, export_dir, device='cpu', unit_threshold=.5, tower_threshold=.5, event_threshold=.6, fusion=None,
+                 unit_filter=None, count_extras=False):
+        """unit_filter: dict for unit_filter.UnitFilter (hysteresis + owner-level NMS, perception round 2); replaces the plain
+        unit_threshold when given (decode floor = its `lo`). count_extras: live-dense-v2 count-head extra bodies (off: they
+        cost more phantoms than they add recall, RESULTS-R2.md)."""
         from events import EventTracker, LIVE_DEFAULT
         self.fusion = dict(LIVE_DEFAULT if fusion is None else fusion, threshold=event_threshold)
         d = Path(export_dir); self.device = device; self.ut = unit_threshold; self.tt = tower_threshold
@@ -52,11 +58,17 @@ class LivePerception:
         vocab = json.loads((d/'vocab.json').read_text()); self.cards, self.identities = vocab['cards'], vocab['identities']
         self.et = event_threshold; self.tracker = EventTracker(self.cards, **self.fusion)
         self.ring = []; self.prev_heat = None
+        self.ufilter = None; self.counts = count_extras
+        if unit_filter is not None:
+            from unit_filter import UnitFilter
+            self.ufilter = UnitFilter(**unit_filter); self.ut = min(self.ut, self.ufilter.lo)
 
     def reset(self):
         """New match."""
         from events import EventTracker
         self.ring = []; self.prev_heat = None; self.tracker = EventTracker(self.cards, **self.fusion)
+        if self.ufilter is not None:
+            self.ufilter.reset()
 
     def step(self, image_bgr, timestamp_ms):
         from clasher.vision.l1_v4 import prepare_pixels
@@ -80,10 +92,16 @@ class LivePerception:
         ev = {k: v.float() for k, v in zip(EVENT_KEYS, self.event(cache, ages, valid, births))}
         out = {k: v.float().cpu().numpy() for k, v in outs.items() if k != 'features'}
         floor = self.ut if unit_floor is None else min(unit_floor, self.ut)
-        dec = C.decode_frame(out, 0, self.cards, self.identities, threshold=floor, offsets=True)
-        lo = C.frame_record(dec, timestamp_ms=timestamp_ms)['units']
+        dec = C.decode_frame(out, 0, self.cards, self.identities, threshold=floor, offsets=True, counts=self.counts)
+        rec_lo = C.frame_record(dec, timestamp_ms=timestamp_ms)
+        # round 2 (live-dense-v2): spell-effect detections join the tracker's vote stream (never units of the record)
+        lo = rec_lo['units']+[dict(e, cls=e['card'], hp_frac=None, effect=True) for e in rec_lo.get('effects', ())]
         dec['units'] = [u for u in dec['units'] if u['score'] >= self.ut]
+        dec['effects'] = [e for e in dec.get('effects', ()) if e['score'] >= self.ut]
         peaks = self.tracker.peaks(ev)
         events = self.tracker.update(ev, float(timestamp_ms), peaks=peaks, units=[u for u in lo if u['score'] >= self.tracker.unit_floor])
         self.last = dict(peaks=peaks, units_lo=lo)
-        return C.frame_record(dec, timestamp_ms=timestamp_ms, tower_threshold=self.tt, events=events)
+        rec = C.frame_record(dec, timestamp_ms=timestamp_ms, tower_threshold=self.tt, events=events)
+        if self.ufilter is not None:
+            rec['units'] = self.ufilter(rec['units'])
+        return rec
