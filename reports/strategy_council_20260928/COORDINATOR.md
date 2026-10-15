@@ -6930,3 +6930,10 @@ Sam asked to find out how strong the bot is in real play. A **LIVE LEAD** (Opus,
 - GPU time is carved out of the bot track on request.
 
 Anything needing Sam (account login, captcha, 2FA) is collected as a list and sent to him.
+
+## 2026-10-15 10:27Z PERC-R2: perception round 2 gets one A6000
+
+- **Measured:** perception noise costs the live fast tier −0.137 vs R3a and −0.113 vs v1 (1,200 games, PERC-emp vs perfect sight, our engine). That's the largest sim-to-live loss, bigger than the K4L gain (+0.055).
+- **Decision:** the LIVE LEAD runs perception round 2 now, offline on renderer/val data. Targets are spell event recall (.57), swarm/unit recall (.81) and Royal Ghost. Success is measured as the Δ win rate of PERC-emp vs perfect sight.
+- **Resources:** one A6000 (01, 04 or 08), agreed between the leads. The BOT LEAD keeps CPU and the other GPUs.
+- **Also:** the K4L live panic (`c56.rs:265`, trimmed card config × misperceived unit) is being fixed by both leads. The fix is a total lookup plus a BaseException → it5s2 fallback. The K4L PERC-emp half gets rerun after the fix. The Mac bench is GO after the Sol r2 fixes.
