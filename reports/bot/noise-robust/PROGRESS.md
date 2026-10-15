@@ -147,3 +147,34 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
 - **03, orc3** (PGID 1251970, 12 workers): sr1u50 oracle split, cases 1600+.
 - **03, orc4** (PGID 1313904, 24 workers): sr1u50 presence vs attributes oracle, cases 1700+.
 - **08, mr3-08** (PGID 3351467): PERC-emp K1/K2-D vs v1, cases 150–299 (secondary).
+
+## Round 2 (worker bot-lead-noise-robust-r2; resumes after the T3 restart)
+- **20:37Z, resume.** 03 idle (all r1 jobs dead). orc3 (41 games, 4,817 decisions) + orc4 (25 games, 2,583
+  decisions, cut at the fb1 launch) analysed, agreement vs the true-sight action / regret per decision:
+  - orc3: O:units **+6.8 pp** (regret −26%), O:unitrows +4.5 pp (−18%), O:nonunit +0.9 pp (−8%).
+  - orc4 (base 64.8%): O:unitrows +4.5 pp (−11%), **O:recall2 (presence) +1.7 pp (−9%)**, **O:attrs (attributes)
+    +2.1 pp (−5%)**, O:fp −0.1 pp. Neither dominates; recall2 + attrs ≈ 3.8 of unitrows' 4.5 pp. Each ≈2σ at this n.
+  - LIVE LEAD pointers checked: the v2 harness tree's bot/live translate/resync/perc/empirical/player are byte-identical
+    to origin/main (resync tracker 9090b0d7 and board sanitizer 45658350 included).
+- **New tree** 03:`clasher-bot-noise-v3` (= v2 + round-2 bot/noise); git worktree 05:`clasher-bot-noise2`, branch
+  bot/noise-robust-r2.
+- **New code:** `bot/noise/audit.py` `AUD:<player>` (translator audit: perceived vs true opponent revealed set, wrong
+  cards, first time the perceived set is full with a wrong card, board_dropped split true/false card, stream/resync
+  counters); shadow.py oracle splits O:pos/O:hp/O:face/O:body (one attribute of matched units from truth),
+  O:missown/O:missopp (recall2 per owner), O:phant (unmatched noisy units removed).
+- **20:36Z launched on 03:** aud1 (PGID 1823292, 20 workers): AUD:PERC-emp-sr1u50:LIVED-K4L vs R3a/v1, cases 0–99;
+  orc5 (PGID 1823306, 60 workers): FAN[O:unitrows|O:missopp|O:missown|O:phant|O:pos|O:hp|O:face|O:body], cases 1800+.
+
+## Round 3 (worker bot-lead-noise-robust-r3; r2 was cut off by a T3 restart before committing)
+- **21:01Z, resume.** r2's uncommitted code (audit.py, trfix.py, shadow.py O:pos/hp/face/body/missown/missopp/phant,
+  report.py pooled rows) committed as found. smoke-r2 (PERCXb3e2, 2 games): the r2 rule never fired (hashes equal):
+  the wrong cards there (Ghost, BarbLog) had board evidence from false-positive units, so they were protected, and
+  the locked-out cards were spells.
+- **aud1 audit** (AUD:PERC-emp-sr1u50:LIVED-K4L, HEADLINE 0–99, 194 games): the perceived opponent card set holds a
+  card the opponent never played in **164/194 games** (R3a 82/94, v1 82/100; 1.2 wrong cards/game), and is full (8)
+  with a wrong card in **154/194**, median from tick 1930 (~1:37 into the match). A true card is locked out in
+  **124/194** games, mostly spells: Fireball 45, Arrows 14, Royal Delivery 14, Log 13, Goblin Barrel 13, Rocket 9;
+  troops Giant 8, Valkyrie 8. Real board units are dropped in 43/194 games (6,274 unit-records). Wrong cards are the
+  spurious-event cards (Earthquake 26, Ghost 25, BarbLog 20, Mighty Miner 17, Ice Spirit 17, Arrows 16).
+  'ninth_enemy_card_dropped' is 0 everywhere: the 9th card's plays are dropped earlier by the mirror's 8-card check
+  in _consistent (counted as cycle_conflict_dropped:1), so the belief never holds the locked-out card.

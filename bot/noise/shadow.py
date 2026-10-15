@@ -18,6 +18,9 @@ from collections import Counter
 from bot.players.base import WAIT
 
 
+ATTR_SPLITS = ('missown', 'missopp', 'phant', 'pos', 'hp', 'face', 'body')
+
+
 class FanPlayer:
     def __init__(self, rt, tags, make, inner_name):
         from bot.noise.player import NoiseRobustPlayer
@@ -125,7 +128,7 @@ class FanPlayer:
                 opponent = tb.sample(rng)
             if what in ('units', 'all'):
                 info = replace(info, packet=with_entities(info.packet, _entities(TRUTH['view'].info.packet)))
-            elif what in ('ownu', 'oppu', 'recall', 'fp', 'unitrows', 'nonunit', 'recall2', 'attrs'):
+            elif what in ('ownu', 'oppu', 'recall', 'fp', 'unitrows', 'nonunit', 'recall2', 'attrs') + ATTR_SPLITS:
                 info = replace(info, packet=with_entities(info.packet, fair._mix_units(
                     what, _entities(info.packet), _entities(TRUTH['view'].info.packet))))
             return R.root(info, opponent, rng)
@@ -157,7 +160,7 @@ class FanPlayer:
             return keep + [e for e in nu if not own(e)] + [e for e in tu if own(e)]
         if what == 'oppu':
             return keep + [e for e in nu if own(e)] + [e for e in tu if not own(e)]
-        if what in ('recall2', 'attrs'):     # one-to-one greedy match within 1 tile, same owner
+        if what in ('recall2', 'attrs') + ATTR_SPLITS:     # one-to-one greedy match within 1 tile, same owner
             cand = sorted((math.hypot(a[1][0]*18 - b[1][0]*18, a[1][1]*32 - b[1][1]*32), i, j)
                           for i, a in enumerate(nu) for j, b in enumerate(tu) if own(a) == own(b))
             ui, uj, pair = set(), set(), {}
@@ -169,6 +172,28 @@ class FanPlayer:
                 ui.add(i); uj.add(j); pair[i] = j
             if what == 'recall2':         # every true unit without a partner is added (swarm members included)
                 return keep + nu + [e for j, e in enumerate(tu) if j not in uj]
+            if what in ('missown', 'missopp'):     # recall2 for one owner only
+                mine = what == 'missown'
+                return keep + nu + [e for j, e in enumerate(tu) if j not in uj and own(e) == mine]
+            if what == 'phant':           # noisy units without a true partner removed (matched ones unchanged)
+                return keep + [e for i, e in enumerate(nu) if i in pair]
+            if what in ('pos', 'hp', 'face', 'body'):    # one attribute of matched units from the true row
+                cols = {'pos': [0, 1], 'hp': [9], 'face': [27, 28]}.get(what)
+                out = list(keep)
+                for i, e in enumerate(nu):
+                    if i not in pair:
+                        out.append(e)
+                        continue
+                    t = tu[pair[i]]
+                    if what == 'body':    # true token + static columns; noisy position, hp and facing kept
+                        row = t[1].copy()
+                        row[[0, 1, 9, 27, 28]] = e[1][[0, 1, 9, 27, 28]]
+                        out.append((t[0], row) + tuple(t[2:]))
+                    else:
+                        row = e[1].copy()
+                        row[cols] = t[1][cols]
+                        out.append((e[0], row) + tuple(e[2:]))
+                return out
             # attrs: matched noisy units take the true row (position, hp, body, facing); others unchanged
             return keep + [tu[pair[i]] if i in pair else e for i, e in enumerate(nu)]
         if what == 'unitrows':       # true troop/building rows, noisy everything else (towers, no in-flight entities)

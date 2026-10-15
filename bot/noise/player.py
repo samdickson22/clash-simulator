@@ -210,10 +210,16 @@ def make_player(rt, name, fallback):
     if name.startswith('FAN['):
         from bot.noise.shadow import make_fan
         return make_fan(rt, name, fallback)
+    if name.startswith('PERCX'):
+        from bot.noise.trfix import make_percx
+        return make_percx(rt, name, fallback)
     if name.startswith('PERCs'):
         return make_reseeded_perc(rt, name, fallback)
     if name.startswith('LIVED-K4L-'):
         return make_det_live_lopp(rt, name)
+    if name.startswith('AUD:'):
+        from bot.noise.audit import AuditPlayer
+        return AuditPlayer(fallback(rt, name[4:]))
     if name.startswith('CAP:'):
         return CapturePlayer(fallback(rt, name[4:]))
     if name.startswith('NR-'):

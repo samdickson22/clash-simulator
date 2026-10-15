@@ -54,6 +54,10 @@ def dec_summary(player):
     nr = find(player, NoiseRobustPlayer)
     if nr is not None:
         out['nr'] = nr.summary()
+    from bot.noise.audit import AuditPlayer
+    aud = find(player, AuditPlayer)
+    if aud is not None:
+        out['aud'] = aud.summary()
     from bot.noise.shadow import FanPlayer
     fan = find(player, FanPlayer)
     if fan is not None:

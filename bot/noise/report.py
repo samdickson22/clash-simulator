@@ -78,6 +78,19 @@ def main():
                 line += f' | ERRORS {errors[arm]}'
             print(line)
             out.append(rec)
+    print('== pooled over opponents (paired by (opponent, index); 95% bootstrap, 4000 resamples, seed 0)')
+    for arm in arms:
+        for tag, ref in (('ref', a.ref), ('perfect', a.perfect)):
+            if not ref or ref == arm:
+                continue
+            d = [rows[(arm, o, i)]['score'] - rows[(ref, o, i)]['score'] for (c, o, i) in rows
+                 if c == arm and (ref, o, i) in rows]
+            if not d:
+                continue
+            rng = random.Random(0)
+            bs = sorted(sum(rng.choice(d) for _ in d)/len(d) for _ in range(4000))
+            print(f'{arm:62s} d{tag} {sum(d)/len(d):+.3f} [{bs[100]:+.3f}, {bs[3899]:+.3f}] n={len(d)}')
+            out.append(dict(arm=arm, opponent='pooled', **{f'd_{tag}': (sum(d)/len(d), bs[100], bs[3899], len(d))}))
     if a.json:
         open(a.json, 'w').write(json.dumps(out, indent=1))
 
