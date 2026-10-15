@@ -38,6 +38,7 @@ def vocab(cards, effects=False):
 def build(args):
     ep, split, out = args[:3]
     r2 = len(args) > 3 and args[3]
+    ghost_all = len(args) > 4 and args[4]
     guard = C.HeldoutGuard()
     guard.check([ep])
     target = Path(out)/f'{ep}.npz'
@@ -87,7 +88,7 @@ def build(args):
                     t0 = first_seen.setdefault(o.get('native_id'), r['tick'])
                     raw = o.get('raw') or {}
                     still = (raw.get('targetX'), raw.get('targetY')) == (o['x'], o['y'])
-                    flag = int(still and r['tick']-t0 > GHOST_SETTLE_TICKS)
+                    flag = int(still and r['tick']-t0 > GHOST_SETTLE_TICKS) if not ghost_all else 1
             cols.append((cls, o['owner'], o['x'], o['y'], hp, mx, flag))
         offsets.append(len(cols))
     objs = np.asarray(cols, np.int32).reshape(-1, 7)
@@ -121,9 +122,11 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('--out', type=Path, required=True)
     p.add_argument('--workers', type=int, default=12); p.add_argument('--splits', default='train,validation')
     p.add_argument('--r2', action='store_true', help='effect identities + stationary-Ghost positives (live-dense-v2)')
+    p.add_argument('--ghost-all', action='store_true', help='with --r2: EVERY Ghost body is a positive (evaluation truth that '
+                   'matches the bot simulator\'s perfect record; not for training)')
     a = p.parse_args(); a.out.mkdir(parents=True, exist_ok=True)
     guard = C.HeldoutGuard()
-    jobs = [(ep, s, str(a.out), a.r2) for s in a.splits.split(',') for ep in guard.episodes(s)]
+    jobs = [(ep, s, str(a.out), a.r2, a.ghost_all) for s in a.splits.split(',') for ep in guard.episodes(s)]
     guard.check([j[0] for j in jobs])
     with Pool(a.workers) as pool:
         for k, (ep, status) in enumerate(pool.imap_unordered(build, jobs)):
