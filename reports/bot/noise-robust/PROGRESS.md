@@ -235,3 +235,12 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
 - **Patch equivalence (r3 claim re-checked):** the patch applies cleanly to main's bot/live, and the result is
   byte-identical to r3's patchcheck tree. 03 patchcheck (patched bot/live, plays[1] membership) vs the scr1f harness arm
   (rows membership): 20/20 identical command hashes.
+- **23:13Z, screens final** (RESULTS 5a/5c). K4L fix pooled **+0.022 [+0.000, +0.043]** (n=600), oracle +0.032, perfect
+  sight +0.143. Fast tier fix +0.015 [−0.007, +0.037], oracle +0.018, perfect sight +0.077. The point estimate is
+  > 0, so the fresh bank was pre-registered (RESULTS 6, BASE 4405930208510496, committed 6f85e8df at 23:11Z before any
+  game). It was launched at 23:11–23:12Z, all chunks with code = main 6f85e8df (per-job code.sha256 identical):
+  - 03 fb2 (PGID 2293689, 80 workers, cases 0–439);
+  - 03 fb2-hi03 (PGID 2296905, 18 workers, 520–599);
+  - 04 fb2-hi04 (`cpu_job.sh 20`, PGID 1429951, 440–519). The first 04 lease asked for 30, waited with no room, and
+    was stopped before any game.
+  03 scr1f was stopped (SIGTERM PGID 1966317) after its cases 0–149 completed. 03 is at 100 live python.

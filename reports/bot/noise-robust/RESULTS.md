@@ -127,7 +127,21 @@ Setup: `-xunits-xev-xhud`, cases 0–14 × R3a/v1. Fix vs baseline: **30/30 iden
 
 ### 5c. Fast tier (scr1f, `LIVE-fast-it5s2`)
 
-Pending: cases 0–149 run on 03 and 150–299 on 04.
+HEADLINE cases 0–299 × R3a/v1: 0–149 on 03 and 150–299 on 04 (04 dir scr1f-hi04), 2,400 games, 0 errors. The 115
+overlapping games (03 ran slightly past 149) have identical command hashes and scores on both hosts. Same pairing
+and bootstrap as 5a.
+
+| arm − baseline | R3a (n=300) | v1 (n=300) | pooled (n=600) |
+|---|---|---|---|
+| **fix** PERCRe2b10 | +0.010 [−0.020, +0.043] | +0.020 [−0.010, +0.053] | **+0.015 [−0.007, +0.037]** |
+| oracle revealed set | +0.010 [−0.047, +0.063] | +0.027 [−0.020, +0.073] | +0.018 [−0.018, +0.055] |
+| perfect sight | +0.080 [+0.020, +0.140] | +0.073 [+0.023, +0.123] | +0.077 [+0.037, +0.115] |
+
+Mean score of the baseline: 0.580 (R3a), 0.810 (v1).
+
+**Translator audit** (baseline → fix):
+- true opponent unit-records dropped: R3a 23 → 1, v1 49 → 2 per game;
+- games with a wrong card: R3a 0.87 → 0.72, v1 0.79 → 0.51.
 
 ### 5d. Defect fixed after the screen (r4)
 
