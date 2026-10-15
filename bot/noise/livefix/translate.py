@@ -325,7 +325,7 @@ class LiveTranslator(Translator):
         self.events = []                     # PublicEvent stream of enemy plays
         self.public_events = []              # D1 rows of both seats
         from bot.noise.livefix.revealed import RevealedSet
-        self.revealed = RevealedSet(self.public_events, stats=self.stats,   # opponent card set: plays AND board
+        self.revealed = RevealedSet(self.public_events, self.plays[1], stats=self.stats,   # plays AND board
                                     spawns=lambda c: bool(self.cards.main.get(c)) if self.card_level else False)
         self._seen = set()
         self.tick, self._floor = None, 0

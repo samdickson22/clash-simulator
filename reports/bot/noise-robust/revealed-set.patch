@@ -1,0 +1,493 @@
+--- a/bot/live/translate.py
++++ b/bot/live/translate.py
+@@ -33,9 +33,11 @@
+ - Non-C56 cards (e.g. Spear Goblins, Goblin Cage): unknown_card='drop' removes the play from the bot's event
+   streams (opponent elixir is then OVER-estimated by its cost); 'proxy' substitutes a same-cost C56 card from
+   PROXY (keeps the elixir ledger; identity is wrong). Own non-C56 hand cards become empty (unplayable) slots.
+-- More than 8 distinct C56 enemy cards (perception error) -> the 9th+ card's plays are dropped.
+-- Card consistency (card-level records): an own unit of a card outside our deck, or an opponent unit of a 9th
+-  distinct card, is dropped (board_card_ok; counted), so every unit reaching search is a card its owner can have.
++- More than 8 distinct C56 enemy cards (perception error) -> the 9th+ card's plays are dropped, unless the
++  translator's RevealedSet (bot/live/revealed.py; one object for plays and board) evicts a weakly evidenced card.
++- Card consistency (card-level records): an own unit of a card outside our deck, or an opponent unit of a card
++  outside the RevealedSet once it holds 8, is dropped (board_card_ok; counted), so every unit reaching search is a
++  card its owner can have.
+ - Own hand/cycle (OwnTracker): always an engine-valid state (own_invariant_breaks): 4 slots of distinct deck cards
+   or None, next = cycle[0] not held, hand + cycle = the 8 deck cards. A HUD slot/next that disagrees with the
+   tracked state (duplicate, off-deck, next held, unread, plausible but wrong) is overridden, counted in own_fix:*.
+@@ -322,6 +324,9 @@
+         self.plays = {0: [], 1: []}          # accepted public plays (tick, name) the bot sees
+         self.events = []                     # PublicEvent stream of enemy plays
+         self.public_events = []              # D1 rows of both seats
++        from bot.live.revealed import RevealedSet
++        self.revealed = RevealedSet(self.public_events, self.plays[1], stats=self.stats,   # plays AND board
++                                    spawns=lambda c: bool(self.cards.main.get(c)) if self.card_level else False)
+         self._seen = set()
+         self.tick, self._floor = None, 0
+         self._prev, self._cur = [], []
+@@ -500,7 +505,7 @@
+ 
+     def assign(self, record):
+         """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
+-        units, idx = [], []
++        units, idx, mapped = [], [], []
+         for i, u in enumerate(record.get('units', ())):
+             card = u.get('card') or u.get('cls') or u.get('class')
+             if not self.cards.is_card(card):
+@@ -510,7 +515,11 @@
+                 else:
+                     self.stats[f'unmapped_card_unit:{card}'] += 1
+                     continue
+-            owner = 0 if int(u['owner']) == 0 else 1
++            mapped.append((i, u, card, 0 if int(u['owner']) == 0 else 1))
++        # board evidence for the RevealedSet (perceived units only), then the sanitizer reads the same set
++        for card in self.revealed.observe_board(record['tick'], {c for _, _, c, o in mapped if o == 1}):
++            self._admit(card, record['tick'], None, None, via_board=True)
++        for i, u, card, owner in mapped:
+             if self.sanitize and not self.board_card_ok(card, owner):
+                 continue
+             units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
+@@ -524,10 +533,10 @@
+ 
+     def board_card_ok(self, card, owner):
+         """Card-consistency guard (the deck rule; fair information): an on-board unit must be a card its owner can
+-        have. Own units: our own 8-card deck (exact). Opponent units: a card it has been seen playing, or any card
+-        while fewer than 8 distinct opponent cards are known. Anything else is a perception error (card confusion or
+-        a false positive) and is DROPPED, counted in stats['board_dropped:<owner>:<card>']. Not flipped to the other
+-        owner: perception reads the owner from the health-bar colour, and the measured channel's errors are in the
++        have. Own units: our own 8-card deck (exact). Opponent units: a card of the RevealedSet (its accepted plays,
++        or board-admitted cards), or any card while it holds fewer than 8 (bot/live/revealed.py). Anything else is
++        a perception error (card confusion or a false positive) and is DROPPED, counted in
++        stats['board_dropped:<owner>:<card>']. Not flipped to the other owner: perception reads the owner from the health-bar colour, and the measured channel's errors are in the
+         card, so a flip would put a phantom enemy where our own unit stands. A one-frame misread of a tracked unit
+         leaves that track alive for `ttl` ticks. Without this, an off-deck unit reaches the search root with no
+         entry in a deck-card config (lopp_fast 'fc') and the native panics (c56.rs electro_land, Electro Spirit).
+@@ -535,9 +544,8 @@
+         if owner == 0:
+             ok = card in self.own_tracker.deck
+         else:
+-            revealed = {n for _, n in self.plays[1]}
+-            ok = card in revealed or len(revealed) < 8
+-            if ok and card not in revealed:
++            ok = self.revealed.allows(card)
++            if ok and card not in self.revealed.members():
+                 self.stats['board_unrevealed_opp_kept'] += 1
+         if not ok:
+             self.stats[f'board_dropped:{owner}:{card}'] += 1
+@@ -562,6 +570,13 @@
+                 self.stats['late_event_retimed'] += 1
+                 tick = floor
+             name = self.card_name(str(e['card']))
++            if seat == 1 and name is not None and not self.revealed.allows(name):
++                # a 9th distinct card: kept as evidence; enters only if the RevealedSet evicts a weak card
++                x, y = float(e.get('x', 9.)), float(e.get('y', 16.))
++                self.revealed.reject(name, tick, x, y)
++                if not self._admit(name, tick, x, y):
++                    self.stats['ninth_enemy_card_dropped'] += 1
++                    continue
+             if name is not None and not self._consistent(seat, tick, name, float(e.get('x', 9.)), float(e.get('y', 16.))):
+                 self.stats[f'cycle_conflict_dropped:{seat}'] += 1
+                 if seat == 0 and str(e['card']) in self.own_tracker.deck:
+@@ -575,15 +590,15 @@
+             else:
+                 if name is None:
+                     continue
+-                distinct = {n for _, n in self.plays[1]}
+-                if name not in distinct and len(distinct) >= 8:
+-                    self.stats['ninth_enemy_card_dropped'] += 1
+-                    continue
+                 self.events.append(PublicEvent(tick, 'card', name))
+             self.plays[seat].append((tick, name))
+             # D1 rows use absolute tiles (seat-0 frame) = our frame.
+             self.public_events.append(dict(seat=seat, tick=tick, kind='card', name=name, amount=0.,
+                                            x=float(e.get('x', 9.)), y=float(e.get('y', 16.))))
++
++    def _admit(self, card, tick, x, y, via_board=False):
++        """Make room for a 9th card (RevealedSet eviction). Needs a history rewrite: resync translators only."""
++        return False
+ 
+     def hud(self, record):
+         h = record.get('hand') or {}
+--- a/bot/live/resync.py
++++ b/bot/live/resync.py
+@@ -31,6 +31,46 @@
+     def _init_resync(self):
+         self.resynced = False
+         self.restarts = 0
++        self.revealed.evict = True          # evidence-ranked revealed set (bot/live/revealed.py)
++
++    def _admit(self, card, tick, x, y, via_board=False):
++        """Evict the RevealedSet's weakest card W for `card`: the opponent history is rebuilt by re-running this
++        translator's play acceptance (stream guard + resync planning) over the perceived opponent plays without W's
++        and with `card`'s earlier rejected ones, i.e. the history it would hold had W never been accepted. Sets
++        `resynced`, so the caller restarts the player and its D1/belief trackers rebuild from the new history."""
++        w = self.revealed.victim(card, tick)
++        if w is None:
++            return False
++        perceived = [r for r in self.public_events if r['seat'] == 1 and not r.get('injected')]
++        removed = [(r['tick'], r['x'], r['y']) for r in perceived if r['name'] == w]
++        earlier = [dict(seat=1, tick=t, kind='card', name=card, amount=0., x=px, y=py)
++                   for t, px, py in self.revealed.rejected.get(card, ()) if via_board or t != tick]
++        self._rebuild([r for r in perceived if r['name'] != w] + earlier, max(tick, self.tick or 0))
++        self.revealed.evicted(w, card, removed, via_board)
++        self.resynced = True
++        return True
++
++    def _rebuild(self, opp_rows, until):
++        from derived_public_state import PublicEvent
++        saved = dict(self.stats)
++        self.public_events[:] = [r for r in self.public_events if r['seat'] != 1]
++        self.plays[1][:], self.events[:] = [], []
++        self._mirrors[1] = self._replay([])
++        dropped = 0
++        for r in sorted(opp_rows, key=lambda r: r['tick']):
++            if not self._consistent(1, int(r['tick']), r['name'], float(r['x']), float(r['y'])):
++                dropped += 1
++                continue
++            self.public_events.append(dict(seat=1, tick=int(r['tick']), kind='card', name=r['name'], amount=0.,
++                                           x=float(r['x']), y=float(r['y'])))
++        self.public_events.sort(key=lambda r: r['tick'])      # stable: same-tick order kept
++        opp = [r for r in self.public_events if r['seat'] == 1]
++        self.plays[1][:] = [(r['tick'], r['name']) for r in opp]
++        self.events[:] = [PublicEvent(r['tick'], 'card', r['name']) for r in opp]
++        self._mirrors[1].advance(until)
++        self.stats.clear()                                     # a rebuild is not new live traffic
++        self.stats.update(saved)
++        self.stats['evict_rebuild_dropped'] += dropped
+ 
+     def _consistent(self, seat, tick, name, x, y):
+         if super()._consistent(seat, tick, name, x, y):
+--- /dev/null
++++ b/bot/live/revealed.py
+@@ -0,0 +1,145 @@
++"""Evidence-ranked opponent revealed set (LIVE translator; proposed bot/live/revealed.py).
++
++Problem (bot lead translator audit, reports/bot/noise-robust/RESULTS.md section 5): the opponent's card set was
++first-come, the first 8 distinct cards of accepted opponent plays. Under the deployed perception noise
++(PERC-emp-sr1u50) a spurious or misread play event puts a card the opponent never had into that set in 85% of games,
++and once 8 cards are known a real card is LOCKED OUT for the rest of the match: its plays are dropped (the belief
++never holds it; mostly spells: Fireball, Arrows, Log, ...) and the board sanitizer drops its units.
++
++RevealedSet is ONE object that answers "can the opponent have card c" for both play acceptance
++(LiveTranslator.accept_events) and the board sanitizer (LiveTranslator.board_card_ok), so the two cannot disagree.
++Members = cards of the accepted opponent plays (translator.plays[1], rewritten in place by resync/eviction) plus
++cards admitted on board evidence alone. With `evict` off it is exactly the old first-come rule.
++
++Eviction (evidence only from public perception: perceived play events and perceived board units, never engine truth;
++unit scores are not used). Per opponent card:
++  plays     accepted perceived plays (resync-inferred plays excluded) + plays rejected while the set was full
++            (`dup_ticks` apart, so one play detected twice counts once);
++  board     records in which the card met the persistence rule: perceived on >= k of the last n records. A real
++            unit persists for seconds; false positives and per-frame card confusion rarely repeat on k of n.
++A member W is WEAK if it is contradicted, i.e. a card that deploys units, last played >= `confirm_ticks` ago, with
++no unit of it perceived on any record from 1 s before to `confirm_ticks` after any of its plays, and plays(W) <=
++`contra_plays`; or if it deploys no units (a spell), plays(W) <= `weak_plays` and board(W) <= `weak_board`. A unit
++card the board confirmed, or one played within `confirm_ticks`, is never weak. When the set is full, a non-member X
++evicts the weakest W (contradicted first, then fewest plays, fewest board records, oldest last evidence: a real card
++cycles back within about a minute) once X has `board_need` board records, or `events_need` plays (`contra_need` if W
++is contradicted). A card the opponent really plays repeatedly or keeps on the board is never evicted. The translator
++then re-runs its play acceptance (resync included) over the perceived opponent plays without W's and with X's
++rejected ones, i.e. the history it would have built had W never been accepted, and sets `resynced`, so the player
++rebuilds its D1/belief trackers from the corrected history (bot/live/resync.py).
++W's removed plays become rejected evidence for W, so a real card evicted by mistake comes back on its next play.
++"""
++from __future__ import annotations
++
++from bisect import bisect_left
++from collections import Counter, deque
++
++
++class RevealedSet:
++    cap = 8
++
++    def __init__(self, rows, plays=None, *, evict=False, persist=(3, 4), board_need=10, events_need=2, weak_plays=1,
++                 weak_board=0, contra_need=1, contra_plays=2, dup_ticks=80, confirm_ticks=80, spawns=None,
++                 stats=None):
++        self.rows = rows                     # translator.public_events (D1 rows of both seats; rewritten in place)
++        self.accepted = rows if plays is None else plays     # translator.plays[1]: accepted (tick, card) plays
++        self.evict = evict
++        self.persist_k, self.board_need, self.events_need = persist[0], board_need, events_need
++        self.weak_plays, self.weak_board, self.dup_ticks = weak_plays, weak_board, dup_ticks
++        self.confirm_ticks, self.contra_need, self.contra_plays = confirm_ticks, contra_need, contra_plays
++        self.spawns = spawns or (lambda card: False)   # card -> deploys troop/building units (public card data)
++        self.window = deque(maxlen=persist[1])
++        self.admitted = []                   # cards admitted on board evidence (no accepted play needed)
++        self.board = Counter()               # card -> records meeting the persistence rule
++        self.seen = {}                       # card -> ticks of the records with >= 1 perceived unit of it
++        self.rejected = {}                   # card -> [(tick, x, y)] plays not accepted while the set was full
++        self.last = {}                       # card -> tick of its latest evidence
++        self.stats = Counter() if stats is None else stats
++
++    # -- membership (the one rule both callers use) ------------------------------------------------------------
++    def _opp_rows(self):
++        return [r for r in self.rows if r['seat'] == 1 and r.get('kind', 'card') == 'card']
++
++    def members(self):
++        if self.accepted is self.rows:
++            return {r['name'] for r in self._opp_rows()} | set(self.admitted)
++        return {n for _, n in self.accepted} | set(self.admitted)
++
++    def allows(self, card):
++        m = self.members()
++        return card in m or len(m) < self.cap
++
++    # -- evidence ----------------------------------------------------------------------------------------------
++    def plays(self, card):
++        return (sum(1 for r in self._opp_rows() if r['name'] == card and not r.get('injected'))
++                + len(self.rejected.get(card, ())))
++
++    def observe_board(self, tick, cards):
++        """Once per record: the opponent cards perceived on the board (before the sanitizer). Returns the
++        non-members whose board evidence now asks for a place in a full set."""
++        cards = set(cards)
++        self.window.append(cards)
++        for c in cards:
++            self.seen.setdefault(c, []).append(tick)
++            if sum(c in w for w in self.window) >= self.persist_k:
++                self.board[c] += 1
++                self.last[c] = tick
++        if not self.evict:
++            return []
++        m = self.members()
++        return sorted(c for c in cards if c not in m and len(m) >= self.cap and self.board[c] >= self.board_need)
++
++    def reject(self, card, tick, x, y):
++        """A perceived play of a non-member while the set is full (kept as evidence, not accepted)."""
++        got = self.rejected.setdefault(card, [])
++        if not any(abs(tick - t) <= self.dup_ticks for t, _, _ in got):
++            got.append((tick, x, y))
++        self.last[card] = max(tick, self.last.get(card, tick))
++
++    def _last(self, card):
++        t = [r['tick'] for r in self._opp_rows() if r['name'] == card]
++        return max(t + [self.last.get(card, -1)])
++
++    def contradicted(self, card, tick):
++        """A unit card none of whose plays the board confirmed (no unit of it perceived near any play time)."""
++        t = [r['tick'] for r in self._opp_rows() if r['name'] == card and not r.get('injected')]
++        if not t or not self.spawns(card) or tick - max(t) < self.confirm_ticks:
++            return False
++        seen = self.seen.get(card, ())
++        for p in t:
++            i = bisect_left(seen, p - 20)
++            if i < len(seen) and seen[i] <= p + self.confirm_ticks:
++                return False
++        return True
++
++    def victim(self, newcomer, tick):
++        """The member to evict so `newcomer` can enter at `tick`, or None."""
++        m = self.members()
++        if not self.evict or newcomer in m or len(m) < self.cap:
++            return None
++        n_plays, n_board = self.plays(newcomer), self.board[newcomer]
++        if n_plays < min(self.events_need, self.contra_need) and n_board < self.board_need:
++            return None
++        contra = {c for c in m if self.contradicted(c, tick) and self.plays(c) <= self.contra_plays}
++        weak = contra | {c for c in m if not self.spawns(c) and self.plays(c) <= self.weak_plays
++                         and self.board[c] <= self.weak_board}
++        if not weak:
++            self.stats['evict_refused'] += 1
++            return None
++        w = min(weak, key=lambda c: (c not in contra, self.plays(c), self.board[c], self._last(c), c))
++        need = self.contra_need if w in contra else self.events_need
++        return w if n_plays >= need or n_board >= self.board_need else None
++
++    def evicted(self, w, x, removed, via_board):
++        """Bookkeeping after the translator rewrote the history without `w`: removed = w's (tick, x, y) plays."""
++        if w in self.admitted:
++            self.admitted.remove(w)
++        got = self.rejected.setdefault(w, [])
++        for t, px, py in removed:
++            if not any(abs(t - u) <= self.dup_ticks for u, _, _ in got):
++                got.append((t, px, py))
++        self.rejected.pop(x, None)           # x's rejected plays were re-inserted into the history (or are stale)
++        if via_board and x not in self.admitted:
++            self.admitted.append(x)
++        self.stats['evict'] += 1
++        self.stats[f'evict:{w}->{x}'] += 1
+--- /dev/null
++++ b/bot/live/test_revealed.py
+@@ -0,0 +1,183 @@
++"""Evidence-ranked revealed set (bot lead noise worker).
++
++    PYTHONPATH=. CLASHER_BOT_RUNTIME=... nice -n 19 python -m pytest -q bot/live/test_revealed.py
++"""
++import numpy as np
++import pytest
++
++from bot.live.revealed import RevealedSet
++
++OWN = ['Knight', 'Archers', 'Giant', 'Musketeer', 'MiniPekka', 'Fireball', 'Arrows', 'Goblins']
++# opponent: 7 real cards, then a spurious Earthquake fills the set; its real Log is locked out
++REAL = ['HogRider', 'Valkyrie', 'Zap', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball']
++
++
++@pytest.fixture(scope='module')
++def rt():
++    from bot.players.runtime import Runtime
++    return Runtime()
++
++
++def _rec(tick, units=(), events=(), **kw):
++    r = dict(tick=tick, elixir=5.0, hand=dict(cards=OWN[:4], next=OWN[4]), units=list(units), events=list(events),
++             towers=[dict(owner=0, kind='princess', side='left', hp_frac=1., alive=True)])
++    r.update(kw)
++    return r
++
++
++def _ev(card, tick, x=9.0, y=22.0):
++    return dict(owner=1, card=card, x=x, y=y, tick=tick)
++
++
++TROOPS = {'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer'}
++
++
++def _locked_out_stream(log_plays=(2600, 3400), board=None):
++    """Records every 5 ticks: REAL[:4], the spurious Earthquake, REAL[4:], Zap and HogRider again, then Log (the real
++    8th card). Each real troop play is on the board for 5 s (perceived)."""
++    order = REAL[:4] + ['Earthquake'] + REAL[4:]
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    plays.update({2000: 'Zap', 2200: 'HogRider'})
++    plays.update({t: 'Log' for t in log_plays})
++    for tick in range(100, 3600, 5):
++        ev = [_ev(plays[t], t) for t in plays if tick - 5 < t <= tick]
++        units = [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for t, c in plays.items()
++                 if c in TROOPS and t <= tick < t + 100]
++        units += board(tick) if board else []
++        yield _rec(tick, units=units, events=ev)
++
++
++def _run(rt, cls_name='resync', evict=True, stream=None, **rkw):
++    from bot.live.resync import ResyncTranslator
++    from bot.live.translate import LiveTranslator
++    cls = ResyncTranslator if cls_name == 'resync' else LiveTranslator
++    tr = cls(rt, OWN, plays_from='events')
++    tr.revealed.evict = evict
++    restarts, info = 0, None
++    for r in stream if stream is not None else _locked_out_stream(**rkw):
++        info = tr.information(r)
++        if getattr(tr, 'resynced', False):
++            tr.resynced, restarts = False, restarts + 1
++    return tr, info, restarts
++
++
++def test_off_is_the_first_come_rule():
++    rows = []
++    s = RevealedSet(rows)          # plays=None: members from the rows
++    for i, c in enumerate(REAL + ['Earthquake']):
++        rows.append(dict(seat=1, tick=100*i, kind='card', name=c))
++    assert s.allows('Earthquake') and not s.allows('Log') and s.victim('Log', 5000) is None
++    s.reject('Log', 4000, 9, 20)
++    s.reject('Log', 4500, 9, 20)
++    assert s.victim('Log', 4600) is None            # evict off: never
++
++
++def test_lockout_without_eviction(rt):
++    tr, info, restarts = _run(rt, evict=False)
++    assert 'Log' not in tr.revealed.members() and 'Earthquake' in tr.revealed.members()
++    assert tr.stats['ninth_enemy_card_dropped'] == 2 and restarts == 0
++
++
++def test_repeated_plays_evict_the_weak_card_and_resync(rt):
++    """Two Log plays (2600, 3400) evict the once-seen Earthquake; the history, mirror and stream are rewritten."""
++    from derived_d1 import DerivedD1
++    tr, info, restarts = _run(rt)
++    m = tr.revealed.members()
++    assert 'Log' in m and 'Earthquake' not in m and len(m) == 8
++    assert tr.stats['evict:Earthquake->Log'] == 1 and restarts >= 1
++    opp = [r for r in tr.public_events if r['seat'] == 1]
++    assert [n for _, n in tr.plays[1]] == [r['name'] for r in opp] == [e.name for e in tr.events]
++    assert [r['name'] for r in opp].count('Log') == 2 and 'Earthquake' not in {r['name'] for r in opp}
++    # cycle tracker re-synced: a fresh replay of the public history gives the translator's mirror
++    import copy
++    fresh, mirror = tr._replay(tr._history(), tr.tick), copy.deepcopy(tr._mirrors[1])
++    mirror.advance(tr.tick)
++    assert list(fresh.queue) == list(mirror.queue) and fresh.revealed == mirror.revealed
++    assert {e.name for e in info.events} == set(m)
++    # the evicted card's play is evidence again: it comes back only on new evidence
++    assert tr.revealed.plays('Earthquake') == 1
++
++
++def test_one_play_is_not_enough(rt):
++    tr, _, restarts = _run(rt, log_plays=(2600,))
++    assert 'Log' not in tr.revealed.members() and restarts == 0 and tr.stats['evict'] == 0
++
++
++def test_well_evidenced_cards_are_never_evicted(rt):
++    """Every member played twice, troops seen on the board (none weak): a 9th card cannot get in however often."""
++    order = REAL + ['Earthquake']
++    plays = {200 + 150*i: c for i, c in enumerate(order + order)}
++    plays.update({t: 'Log' for t in (3000, 3200, 3400)})
++
++    def units(tick):
++        return [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for t, c in plays.items()
++                if c in TROOPS and t <= tick < t + 100]
++    stream = (_rec(t, units=units(t), events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t])
++              for t in range(100, 3600, 5))
++    tr, _, _ = _run(rt, stream=stream)
++    assert 'Log' not in tr.revealed.members() and tr.stats['evict'] == 0 and tr.stats['evict_refused'] >= 1
++
++
++def _giant_board(t0=2500, frames=tuple(range(30))):
++    def board(tick):
++        k = (tick - t0)//5
++        if k in frames:
++            return [dict(card='Giant', owner=1, x=9.5, y=22.0 - .05*k, hp_frac=1., score=.8)]
++        return []
++    return board
++
++
++def test_board_and_sanitizer_share_the_set(rt):
++    """A persistent unit of an unseen card (Giant, its play never perceived; 10 records meeting 3-of-4) displaces
++    the weakest card W (the once-seen Earthquake), and from then on the sanitizer keeps Giant units and drops W's (one set for plays and board)."""
++    tr, info, restarts = _run(rt, log_plays=(), board=_giant_board())
++    assert tr.stats['evict'] == 1 and 'Giant' in tr.revealed.members() and restarts == 1
++    assert tr.stats['evict:Earthquake->Giant'] == 1
++    dropped = tr.stats['board_dropped:1:Giant']       # the frames before the k-of-n rule admitted it
++    assert 0 < dropped <= 12
++    assert tr.board_card_ok('Giant', 1) and not tr.board_card_ok('Earthquake', 1)
++    assert not tr.revealed.allows('Earthquake')        # and its plays are rejected too
++
++
++def test_flicker_is_not_board_evidence(rt):
++    """False positives / per-frame confusion: a card seen on isolated frames never meets the k-of-n rule."""
++    tr, _, _ = _run(rt, log_plays=(), board=_giant_board(frames=tuple(range(0, 200, 3))))
++    assert tr.stats['evict'] == 0 and 'Giant' not in tr.revealed.members()
++    assert tr.stats['board_dropped:1:Giant'] > 0
++
++
++def test_contradicted_troop_goes_first(rt):
++    """Two weak members (each played once, no board record): the troop card the board never confirmed (HogRider
++    here, deployed but never seen) is evicted before the spell (Zap), whatever their age."""
++    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
++    plays = {200 + 200*i: c for i, c in enumerate(order)}
++    plays.update({t: 'Log' for t in (2600, 3400)})
++    seen = {'Valkyrie': 600, 'Cannon': 800, 'SkeletonArmy': 1000, 'Musketeer': 1200}
++
++    def units(tick):
++        return [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for c, t in seen.items() if t <= tick < t + 100]
++    stream = (_rec(t, units=units(t), events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t])
++              for t in range(100, 3600, 5))
++    tr, _, _ = _run(rt, stream=stream)
++    assert tr.stats['evict:HogRider->Log'] == 1, dict(tr.stats)
++
++
++def test_fair_information_invariance(rt):
++    """The decision input (packet, enemy events, public rows, revealed set, eviction counters) is a function of the
++    perception records only: opponent-private truth added to the records (deck, hand, elixir, true card ids of
++    units, the true revealed set) changes nothing."""
++    def poisoned():
++        for r in _locked_out_stream(board=_giant_board()):
++            r = dict(r, opponent=dict(deck=REAL + ['Log'], hand=['Log']*4, elixir=9.9, revealed=REAL + ['Log']),
++                     opp_elixir=0.1, opp_hand=['Zap']*4)
++            r['units'] = [dict(u, private_card_id=26000000, true_card='Log') for u in r['units']]
++            r['events'] = [dict(e, true_card='Log') for e in r['events']]
++            yield r
++    a, ia, ra = _run(rt, stream=_locked_out_stream(board=_giant_board()))
++    b, ib, rb = _run(rt, stream=poisoned())
++    assert a.stats['evict'] >= 1
++    assert dict(a.stats) == dict(b.stats) and ra == rb and a.revealed.members() == b.revealed.members()
++    assert a.public_events == b.public_events and ia.events == ib.events and ia.own == ib.own
++    for f in ('entity_ids', 'entity_features', 'hand_ids', 'global_features', 'opponent_history_ids',
++              'opponent_seen_card_ids'):
++        assert np.array_equal(getattr(ia.packet.observation, f), getattr(ib.packet.observation, f)), f

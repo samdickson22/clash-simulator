@@ -8,8 +8,8 @@ never holds it; mostly spells: Fireball, Arrows, Log, ...) and the board sanitiz
 
 RevealedSet is ONE object that answers "can the opponent have card c" for both play acceptance
 (LiveTranslator.accept_events) and the board sanitizer (LiveTranslator.board_card_ok), so the two cannot disagree.
-Members = cards of the accepted opponent plays (the translator's public rows, rewritten in place by resync/eviction)
-plus cards admitted on board evidence alone. With `evict` off it is exactly the old first-come rule.
+Members = cards of the accepted opponent plays (translator.plays[1], rewritten in place by resync/eviction) plus
+cards admitted on board evidence alone. With `evict` off it is exactly the old first-come rule.
 
 Eviction (evidence only from public perception: perceived play events and perceived board units, never engine truth;
 unit scores are not used). Per opponent card:
@@ -38,10 +38,11 @@ from collections import Counter, deque
 class RevealedSet:
     cap = 8
 
-    def __init__(self, rows, *, evict=False, persist=(3, 4), board_need=10, events_need=2, weak_plays=1,
+    def __init__(self, rows, plays=None, *, evict=False, persist=(3, 4), board_need=10, events_need=2, weak_plays=1,
                  weak_board=0, contra_need=1, contra_plays=2, dup_ticks=80, confirm_ticks=80, spawns=None,
                  stats=None):
         self.rows = rows                     # translator.public_events (D1 rows of both seats; rewritten in place)
+        self.accepted = rows if plays is None else plays     # translator.plays[1]: accepted (tick, card) plays
         self.evict = evict
         self.persist_k, self.board_need, self.events_need = persist[0], board_need, events_need
         self.weak_plays, self.weak_board, self.dup_ticks = weak_plays, weak_board, dup_ticks
@@ -60,7 +61,9 @@ class RevealedSet:
         return [r for r in self.rows if r['seat'] == 1 and r.get('kind', 'card') == 'card']
 
     def members(self):
-        return {r['name'] for r in self._opp_rows()} | set(self.admitted)
+        if self.accepted is self.rows:
+            return {r['name'] for r in self._opp_rows()} | set(self.admitted)
+        return {n for _, n in self.accepted} | set(self.admitted)
 
     def allows(self, card):
         m = self.members()

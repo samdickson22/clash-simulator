@@ -78,7 +78,7 @@ def make_percr(rt, name, fallback):
             if cfg == 'off':
                 tr.revealed.evict = False
             elif cfg == 'oracle':
-                tr.revealed = oracle_set()(tr.public_events, stats=tr.stats)
+                tr.revealed = oracle_set()(tr.public_events, tr.plays[1], stats=tr.stats)
             else:
                 for k, v in cfg.items():
                     setattr(tr.revealed, k if k != 'persist' else 'persist_k', v if k != 'persist' else v[0])
@@ -104,8 +104,12 @@ def proposed_diff():
     from pathlib import Path
     root = Path(__file__).resolve().parents[2]
     out = []
-    for f in ('translate.py', 'resync.py', 'revealed.py'):
-        new = (root / 'bot/noise/livefix' / f).read_text().replace('bot.noise.livefix.', 'bot.live.').replace(
+    for f in ('translate.py', 'resync.py', 'revealed.py', 'test_revealed.py'):
+        src = root / ('bot/noise' if f.startswith('test_') else 'bot/noise/livefix') / f
+        new = src.read_text().replace('bot/noise/livefix = the proposed bot/live patch; ', '').replace(
+            'bot/noise/test_revealed.py', 'bot/live/test_revealed.py')
+        new = new.replace('\nProposed as bot/live/test_revealed.py with `bot.noise.livefix.` -> `bot.live.`.\n', '')
+        new = new.replace('bot.noise.livefix.', 'bot.live.').replace(
             "parents[2] / 'players/royalesim_vocab.json'", "parents[1] / 'players/royalesim_vocab.json'")
         old_p = root / 'bot/live' / f
         old = old_p.read_text() if old_p.exists() else ''

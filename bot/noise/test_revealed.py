@@ -65,7 +65,7 @@ def _run(rt, cls_name='resync', evict=True, stream=None, **rkw):
 
 def test_off_is_the_first_come_rule():
     rows = []
-    s = RevealedSet(rows)
+    s = RevealedSet(rows)          # plays=None: members from the rows
     for i, c in enumerate(REAL + ['Earthquake']):
         rows.append(dict(seat=1, tick=100*i, kind='card', name=c))
     assert s.allows('Earthquake') and not s.allows('Log') and s.victim('Log', 5000) is None
