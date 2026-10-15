@@ -456,4 +456,4 @@
   - Empty-frame false positives: Goblin Stadium 0 → 0, Training Camp 1.0 → 0.
   - Still misses most Minions and Archers. Renderer val dip: unit F1 .846 → .816.
   - Trainer PID 2322178, GPU 62–83%.
-- **23:22Z, live ladder: 10 battles, 8 W / 2 L, 228 trophies** (live10 W 3–0 vs MCneji41). Next arena unlock at 300; the loop owner will capture empty-arena frames for r3.
+- **23:22Z, live ladder: 10 battles, 8 W / 2 L, 228 trophies** (live10 W 3–0). Next arena unlock at 300; the loop owner will capture empty-arena frames for r3.
