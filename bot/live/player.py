@@ -316,6 +316,7 @@ def make_live_player(rt, name):
     'K4CW-r16[-w<ms>-t<threads>]'      the wall search alone (cutoff default R3a, as K4C)
     'LIVE-K4CW-r16-w<ms>-t<threads>'   LivePlayer search tier (cutoff default it5s2); suffix '-dR3a' for R3a
     'LIVE-fast-it5s2'                  LivePlayer pure it5s2
+    'LIVE-K4L-<lopp body>-w<ms>-t<N>[-p<P>]'  LivePlayer with the bot lead's wall K4L search tier (make_live_lopp)
     'PERC-<arm>:<name>'                <name> seeing the game only through synthetic perception at noise <arm>
     Anything else -> bot.eval.headline.make_player."""
     if name.startswith('PERC-'):     # 'PERC-<noise arm>:<player name>' (bot/live/perc.py)
@@ -326,6 +327,9 @@ def make_live_player(rt, name):
         return WallCandidatePlayer(rt, **parse_wall_name(name))
     if name == 'LIVE-fast-it5s2':
         return LivePlayer(rt, tier='fast')
+    if name.startswith('LIVE-K4L-'):   # bot lead's live K4L (bot/search/lopp_fast.py; opponent models outside git)
+        from bot.search.lopp_fast import make_live_lopp
+        return make_live_lopp(rt, name)
     if name.startswith('LIVE-K4CW-'):
         body, dflt = (name[5:-5], 'R3a') if name.endswith('-dR3a') else (name[5:], 'it5s2')
         kw = parse_wall_name(body)
