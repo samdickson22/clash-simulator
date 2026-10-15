@@ -232,7 +232,23 @@ Setup:
 
 - 1,200 cases per opponent, 7,200 games, 0 errors.
 - This replicates fresh bank 1's +0.055 on new cases.
-- B (i10) is running on the same bank; see PROGRESS.md.
+- **B = K4L-R-gs-rw-i10-fp** on the same bank (3,600 games, 0 errors):
+  - win rates 0.809 / 0.937 / 0.938;
+  - **B − K4C-r16: +0.057 [+0.044, +0.071]** (R3a +0.055 [+0.027, +0.083], v1 +0.064 [+0.043, +0.087], rext-bc +0.052
+    [+0.032, +0.074]);
+  - B − A: +0.004 [−0.008, +0.017].
+- **Deviation:** the bank was paused 03:00–04:07Z for the wall-clock eval and run before the fit gate resolved, as
+  logged. Every game is reported.
+
+### Recommendation
+- **Live search tier:** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4` (`bot.search.lopp_fast.make_live_lopp`).
+  - 4 cores: decision p50/p95 108/159 ms; the complete K4L search alone is 79/126 ms.
+  - Strength: +0.058 vs K4CW-r16-w200-t4 at the same deadline. Unbounded twin +0.053 on fresh bank 2.
+- **If the Mac budget is tighter:**
+  - w150 keeps −0.028 vs unbounded and beats K4CW at 200 ms;
+  - `-i10` is as strong (B − A +0.004) with less learned work.
+- **Mac check:** rerun `bot.search.lopp_time` on the Mac's 4 cores with these arms and compare with the LIVE LEAD's
+  benchmark.
 
 ### Timing on the shared, contended hosts (5 cores; context only, superseded by the table above)
 

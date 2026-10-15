@@ -173,3 +173,7 @@ bot-lopp-models, sha256 equal). New code: bot/search/lopp_time.py (pinned per-de
   w150 -0.028 [-0.060,+0.003] (vs K4L-R-gs). K4L w200 vs unbounded K4C-r16 +0.032 [-0.005,+0.067].
 - B (i10) fresh bank running: 04 cases 0-299, 08 300-599 (cpu_job leases 40), 03 600-1199 (96 workers; the first 03
   launch died at 06:12Z because 03's repo has no bot/exit/cpu_job.sh, relaunched 06:15Z without a lease).
+- 2026-10-15T06:40:30Z FRESH BANK 2, B done (3600 games, 0 errors; 04 cases 0-299, 08 300-599, 03 600-1199):
+  K4L-R-gs-rw-i10-fp vs K4C-r16 +0.057 [+0.044,+0.071] (R3a +0.055, v1 +0.064, rext-bc +0.052); B - A +0.004
+  [-0.008,+0.017]. All my jobs finished; nothing of mine running on 03/04/08. Raw data: 04 bot-lfast/{fresh2,f08,
+  fresh2b,fb-127x03,fb-127x08,wall-*,w08}; 03 bot-lfast/{t5-*,wall4-*}. Recommendation in RESULTS.md.
