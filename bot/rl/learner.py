@@ -150,6 +150,7 @@ def main(argv=None):
     ap.add_argument('--max-updates', type=int, default=10**6)
     ap.add_argument('--keep-versions', type=int, default=4, help='delete consumed rollouts older than this')
     ap.add_argument('--seed', type=int, default=2026101490)
+    ap.add_argument('--critic-init', help='critic state_dict to start from (bot.rl.critic_pretrain critic-best.pt)')
     ap.add_argument('--device', default='cuda')
     a = ap.parse_args(argv)
     from bot.exit.train import bootstrap, sha
@@ -185,6 +186,8 @@ def main(argv=None):
     elif (run / 'policies' / 'LATEST').exists():
         raise SystemExit('run already has policies; use --resume')
     else:
+        if a.critic_init:
+            critic.load_state_dict(torch.load(a.critic_init, map_location=device, weights_only=True))
         p0 = run / 'policies' / 'policy-00000.pt'
         save_policy(policy, cfg, p0, 0, dict(init=a.init, init_sha256=sha(a.init)))
         (run / 'policies' / 'LATEST').write_text(f'0 {p0}\n')

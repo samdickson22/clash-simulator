@@ -27,7 +27,21 @@ HEADLINE = (1455777415631152, 10**5)
 TRAIN1 = (874184153281168, 10**8)
 IT5S2 = '/mpac/sdicks02/repos/clasher-bot-runtime/students/it5s2-step001200.pt'
 TAU0 = 0.5375
-LEAGUE = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16', .10))
+_LEAGUE0 = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16', .10))
+
+
+def _league(spec):
+    """BOT_RL_LEAGUE='v1:.15,R3a:.35,...' changes the shares only; names and their order (= critic opponent ids)
+    stay those of _LEAGUE0."""
+    if not spec:
+        return _LEAGUE0
+    shares = {k: float(v) for k, v in (t.split(':') for t in spec.split(','))}
+    if set(shares) != {n for n, _ in _LEAGUE0} or abs(sum(shares.values()) - 1) > 1e-9:
+        raise ValueError(f'BOT_RL_LEAGUE must give shares summing to 1 for exactly {[n for n, _ in _LEAGUE0]}')
+    return tuple((n, shares[n]) for n, _ in _LEAGUE0)
+
+
+LEAGUE = _league(os.environ.get('BOT_RL_LEAGUE', ''))
 OPP_IDS = {name: i for i, (name, _) in enumerate(LEAGUE)}
 TOKEN_KEYS = ('ids', 'types', 'numeric', 'valid')
 

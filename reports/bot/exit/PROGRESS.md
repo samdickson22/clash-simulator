@@ -836,6 +836,104 @@ The lr-1e-5 arm-A fits are near-copies of it5s2 and serve as the null control fo
   `python3 bot/exit/pooled_delta.py v1,R3a <ce-B6sN/eval>:B6sN/,$REF …` (REF = `$J8/ce-it5s2/eval:it5s2`).
   A B6 that passes HEADLINE still needs the fresh bank 300–599 (`conf-*`) and RoyaleSim. Expect regression.
 
+## Iteration 9: change the supervision (owner: ExIt sub-agent #4, from 2026-10-15T09:20Z; time box ~12 h, to ~21:20Z)
+
+Lead decision: no more refits on the same supervision, no more K4C-r16 labels after the in-flight batches. Reference
+stays **it5s2** (sha 08bdaf32…, τ 0.5375). Promotion rule: pooled seeds beat it5s2 on HEADLINE 0–299 vs v1 and R3a →
+fresh cases (never HEADLINE for the final claim) → RoyaleSim rsim15535; report the play-count band vs v1 (37.8 ± 3).
+
+**Arm (a), soft/value targets, is already the recipe (measured 09:24Z).** `bot.exit.label` records the teacher's
+complete candidate list and per-candidate root scores (`root_actions/root_scores/root_valid`, WAIT and timed waits
+included), and `bot.exit.train` trains on `exit_r3.student.teacher_loss` = cross-entropy against
+softmax(scores / T) with T = 0.003, not the argmax. On 20 k K4C-r16 roots (`packed-kc7a-x08`):
+
+| statistic | p10 | p25 | p50 | p75 | p90 |
+|---|---|---|---|---|---|
+| candidates per root | 4 | 4 | 12 | 12 | 12 |
+| top-1 − top-2 score gap | 0.000 | 0.0017 | 0.0032 | 0.0037 | 0.0069 |
+| score range | 0.0053 | 0.0059 | 0.0086 | 0.0173 | 0.0288 |
+
+At T = 0.003 the target puts a mean 0.53 (median 0.59) on the best candidate, entropy 1.30 nats; T = 0.01 gives
+0.28, T ≥ 0.03 is near uniform. The temperature axis was already swept in ExIt r2
+(`reports/strategy_council_20260928/PLAN-NEXT-20261010.md`: X1 T=0.003 ≈ median gap, X2 ≈ argmax, X3 z-scored), and
+T = 0.003 is that sweep's recipe. So (a) is not a new lever; it9 runs (b) and (c) instead.
+
+**Arm (b): K4L-R-gs teacher, on-policy it5s2 behaviour.** The strongest bot (+0.055 [+0.041, +0.068] over K4C-r16 on
+fresh banks) as the labeller, everything else as the K4C-r16 feeders (pool v1,R3a,self, budget 64; its soft scores
+cover the work set: WAIT, timed waits and the top-8 plays).
+- Smoke (08, `$J8/k4l-smoke`, TRAIN1 [8990000, 8990003)): 90 CPU s per game, 233 labels, 0 budget cuts, sealed.
+- 01 had no K4L code or opponent nets: `bot/` rsynced from 05 and `bot-lopp-models/` copied from 04 (sha256 equal;
+  `pool.npz` 1e4bb6a0…).
+- 09:28Z: the K4C-r16 feeders were stopped (01 1237616, 04 4025244, 08 3385733; in-flight batches drain) and K4L-R-gs
+  feeders started: state `<J>/cpu-feed-k4l`, template `<J>/cpu-feed-k4l.tmpl`, log `<J>/cpu-feed-k4l.log`, cap 105,
+  100-game batches.
+
+| host | feeder PID | target | TRAIN1 block |
+|---|---|---|---|
+| 01 | 2646090 | 92 | [8000000, 8100000) |
+| 04 | 1490179 | 80 | [8100000, 8200000) |
+| 08 | 809475 | 70 | [8200000, 8300000) |
+
+- Plan: when ~1.3 M K4L rows exist, (1) **kLM1–3** = kcM1–3's exact recipe (from it5s2, 1500 steps, lr 1e-4, seeds
+  2026102101/02/03) on 1.27 M K4L rows, so kLM − kcM pooled over seeds is the teacher effect at matched size;
+  (2) **BL6** = arm B's B6 recipe (it2D, grown 6L, 6000 steps) with K4L rows as `--new` at ratio 0.5 and the 12
+  it8 packs as `--old`, the promotion candidate if K4L labels help.
+
+**Arm (c): RL retry, critic first.** RL r3's critic explained 0–36 % of outcome variance. The packs hold millions of
+it5s2-behaviour states with the labelled seat's game outcome (`recorded_outcome`), so `bot/rl/critic_pretrain.py`
+trains the RL critic (`bot.rl.learner.make_critic`) on them before any PPO, and reports explained variance on
+held-out games and on RL r3's 127 leftover rollouts (copied to `$J1/critic-inputs-r3`, with r3's
+`learner-state.pt` sha 4e66f255… as the reference critic). Opponent ids follow generate's pool rule
+(`('v1','R3a','self')[g % 3]`, checked against local receipts). If the pretrained critic is clearly better, RL r4 =
+PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and more actors vs R3a/it5s2
+(`BOT_RL_LEAGUE`, new in `bot/rl/actor.py`; names and ids unchanged).
+- 09:30Z: `packed-kc7b-x01` = all 01 K4C-r16 shards after kc7a (it5s2 behaviour): 15,856 shards, 4,477,958 rows.
+- 09:34Z: 01's B8 keep-alive (1161470) killed; its running filler B8s3-ka2026102684 finishes, no more B8 fillers.
+- **Critic c1** (01 GPU, `$J1/critic-c1`, PID 2712348): it5s2 init, all 7 it5s2-behaviour packs (kc7a ×3, ks7m ×3,
+  kc7b-x01) = 6,950,319 train rows, 344,795 held-out rows (by game); 20,190 shard receipts matched the pool rule.
+  4000 steps × 4096, lr 1e-4. Explained variance of the game outcome:
+
+  | critic | held-out games | RL r3 rollouts (127 games, 35 k decisions) | by opponent (rollouts): v1 / R3a / it5s2 |
+  |---|---|---|---|
+  | RL r3's own critic after 23 updates (reference) | — | 0.233 | 0.03 / 0.39 / 0.09 |
+  | c1, step 0 (untrained head) | −0.06 | −0.02 | — |
+  | c1, step 250 | 0.493 | 0.499 | 0.48 / 0.60 / 0.46 |
+  | c1, step 500 | 0.504 | 0.512 | 0.49 / 0.59 / 0.50 |
+  | c1, step 750 | 0.507 | 0.532 | 0.51 / 0.63 / 0.50 |
+
+  So 100× more games (from the ExIt corpus) more than double the critic's explained variance; this was the RL
+  owner's first recommendation.
+- **RL r4** (01; RUN = `/mpac/sdicks02/jobs/clasher/bot-rl-r4`, launched 10:00Z). Changes vs r3, as the RL owner
+  recommended:
+  - critic init = c1 step 750 (`RUN/critic-init-c1-step750.pt`, sha e849d8e0…), 1 critic-only warm-up update;
+  - policy lr 3e-5 (r3 1e-5), KL coefficient 0.01 (r3 0.05);
+  - league (`BOT_RL_LEAGUE`): v1 .15, R3a .35, it5s2 .30, self .15, K4C-r16 .05 (r3: .30/.25/.20/.15/.10), so actors
+    play where the headroom is;
+  - unchanged: λ 1 (MC advantage, now outcome − a 0.5-EV critic), κ 0.1, T 0.1, 2 epochs, ≤400 games per update,
+    max lag 2, snapshots every 10 versions, deployed decode at τ0 0.5375; RL_BANK unchanged with **new blocks ≥ 10**
+    (r3 used 0–4).
+  - Learner PID 2809878 (01 GPU, `BOT_GPU_MAX_GB=16`); actors block 10, 48 workers via `cpu_job.sh` (wrapper 2811714);
+    01's K4L feeder lowered 92 → 44 at 09:54Z (PID 2777620, `cpu-feed-k4l.log2`) to make room.
+  - Evals: `bot/rl/eval_watch.sh` on 08 (PID 972426, DST `/mpac/sdicks02/jobs/clasher/bot-rl-r4-eval08`, 24 workers):
+    each snapshot vs v1, R3a and it5s2 on HEADLINE 0–299, paired vs `$J8/ce-it5s2`.
+  - Stop: `touch RUN/STOP_ACTORS RUN/STOP_LEARNER` (01) and `bot-rl-r4-eval08/STOP` (08).
+- 10:14Z: the 48-worker actor pool was still waiting for room (01 live py 73, K4C batches draining), so it was
+  replaced by a **32-worker** pool on the same block 10 (block 10 had not started): wrapper PID 2886058,
+  `RUN/actor-b10.log`. Add a second pool on a new block (≥ 11) when 01 has room.
+- 10:24Z, update 1 (critic-only warm-up, 162 games, 45 k decisions): explained variance of the fresh batch
+  **before** training 0.348 (r3 at the same point: −0.002); explore score 0.568 (v1 0.84, R3a 0.62, it5s2 0.46);
+  deployed would-play 38.6 per game.
+- 10:02Z: skipped ev-B8s3-ka2026102684 (01 cpuq7; it sat in cpu_room with a 36-process claim ahead of the RL actors;
+  a 4th seed of the closed B8 arm).
+
+**it8 leftovers (read as they land; HEADLINE 0–299, Δ paired vs `$J8/ce-it5s2`):**
+
+| student | τ | vs v1 | Δ (v1) | vs R3a | Δ (R3a) | h2h vs it5s2 |
+|---|---|---|---|---|---|---|
+| B6s4 (6L seed 4) | 0.5075 | 0.863 | −0.020 [−0.067, +0.027] | 0.633 | −0.027 [−0.090, +0.037] | 0.490 |
+
+- B6 pooled over s1–s4: **−0.013 [−0.050, +0.025]** vs v1, **−0.016 [−0.064, +0.033]** vs R3a.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
