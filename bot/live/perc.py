@@ -1,6 +1,12 @@
 """PERC-<arm>:<player>: a player that sees the game ONLY through synthetic perception at a noise level (LIVE track).
 
-    'PERC-p42:LIVE-fast-it5s2', 'PERC-births:K4C-r16', 'PERC-p70:LIVE-K4CW-r16-w150-t4', ...
+    'PERC-p42:LIVE-fast-it5s2', 'PERC-births:K4C-r16', 'PERC-p70:LIVE-K4CW-r16-w150-t4', 'PERC-emp:LIVE-fast-it5s2', ...
+
+Empirical arms (LIVE integration, bot/live/empirical.py; noise measured on the 64 validation matches with the
+deployed body-fused event tracker, stats in bot/live/empirical-val.json): 'emp' (opponent plays from the play-event
+stream), 'emp-births' (from unit births only), 'emp-both' (events + births, de-duplicated: real_replay.BothTranslator).
+Detections are Markov-correlated per true unit, as measured (not independent flicker). Empirical arms use the
+resync-capable cycle tracking (bot/live/resync.py) and restart the inner player after a history rewrite.
 
 Each poll: the true seat view -> SynthPerception record (schema v1, card-level) -> replay.NOISE_GRID[arm] noise ->
 LiveTranslator (plays from births unless the arm is 'events') -> a PublicView with the same pending reservation
@@ -16,13 +22,22 @@ import numpy as np
 from bot.players.base import Decision, PublicView, WAIT
 
 
+EMPIRICAL = {'emp': 'events', 'emp-births': 'births', 'emp-both': 'both'}   # arm -> opponent-play source
+
+
 class PercPlayer:
     def __init__(self, rt, arm, inner):
         from bot.live.replay import NOISE_GRID, PLAYS_FROM
-        if arm not in NOISE_GRID:
-            raise ValueError(f'unknown perception arm {arm!r}; known {sorted(NOISE_GRID)}')
+        if arm not in NOISE_GRID and arm not in EMPIRICAL:
+            raise ValueError(f'unknown perception arm {arm!r}; known {sorted(NOISE_GRID) + sorted(EMPIRICAL)}')
         self.rt, self.arm, self.inner = rt, arm, inner
-        self.noise, self.plays_from = NOISE_GRID[arm], PLAYS_FROM.get(arm, 'births')
+        if arm in EMPIRICAL:
+            import json
+            from bot.live.empirical import STATS
+            self.noise, self.plays_from = None, EMPIRICAL[arm]
+            self.stats = json.loads(STATS.read_text())
+        else:
+            self.noise, self.plays_from = NOISE_GRID[arm], PLAYS_FROM.get(arm, 'births')
         self.name = f'PERC-{arm}:{inner.name}'
         self.deadline_seconds = inner.deadline_seconds
         self.errors = 0
@@ -33,19 +48,33 @@ class PercPlayer:
         from clasher.analysis.loss_review.delay_fixes import CommandQueue
         self.ctx = ctx
         self.synth = SynthPerception(self.rt)
-        self.tr = LiveTranslator(self.rt, list(ctx.own_order), plays_from=self.plays_from)
+        if self.noise is None:          # empirical arms: resync-capable cycle tracking (the deployable stack)
+            from bot.live.resync import ResyncTranslator, resync_both
+            self.tr = (resync_both()(self.rt, list(ctx.own_order)) if self.plays_from == 'both' else
+                       ResyncTranslator(self.rt, list(ctx.own_order), plays_from=self.plays_from))
+        else:
+            self.tr = LiveTranslator(self.rt, list(ctx.own_order), plays_from=self.plays_from)
         self.tr.set_own_order(ctx.own_order)
         self.cards = [c for c in sorted(self.rt.R.costs) if self.synth.cb.main.get(c)]
         self.rng = np.random.default_rng([ctx.seed, ctx.seat, 0x9e4c])
+        if self.noise is None:
+            from bot.live.empirical import EmpiricalNoise
+            self.channel = EmpiricalNoise(self.stats, self.rng, list(ctx.own_order))
         self.queue = CommandQueue(ctx.command_delay, 1)
         self.inner.start(ctx)
 
     def act(self, view: PublicView) -> Decision:
         from bot.live.synth import noisy
         own_view = view if view.seat == 0 else _as_seat0(view)
-        record = noisy(self.synth.record(own_view), self.noise, self.rng, list(self.ctx.own_order), self.cards)
+        if self.noise is None:
+            record = self.channel(self.synth.record(own_view))
+        else:
+            record = noisy(self.synth.record(own_view), self.noise, self.rng, list(self.ctx.own_order), self.cards)
         try:
             info = self.tr.information(record)
+            if getattr(self.tr, 'resynced', False):
+                from bot.live.resync import restart_if_resynced
+                restart_if_resynced(self.tr, self.inner, self.ctx)
             info = _with_seat(info, view.seat)
             self.queue.pending[:] = list(view.pending)
             try:

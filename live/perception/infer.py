@@ -9,7 +9,8 @@ Official-client frames must be scaled to that canvas; the domain gap is unmeasur
 Record coordinates: owner 0 = us, 1 = opponent; x in tiles from the screen left (0..18), y in tiles from
 the screen bottom (0..32, our king at (9, 3)). hp is a fraction of max HP. Play events come from the
 retrained TemporalHead over the last 16 processed frames (trained at 8-25 FPS) + events.EventTracker
-(location-level tracks, card voted over frames, emitted once); `tick` is the estimated execution time in ms
+(location-level tracks, card voted over frames, emitted once after the body-fusion hold, events.LIVE_DEFAULT;
+fusion={'hold_ms': 0} restores the original immediate emission); `tick` is the estimated execution time in ms
 on the caller's timestamp clock.
 """
 import json
@@ -42,24 +43,31 @@ def visual_births(new_heat, old_heat):
 
 
 class LivePerception:
-    def __init__(self, export_dir, device='cpu', unit_threshold=.4, tower_threshold=.5, event_threshold=.6):
-        from events import EventTracker
+    def __init__(self, export_dir, device='cpu', unit_threshold=.4, tower_threshold=.5, event_threshold=.6, fusion=None):
+        from events import EventTracker, LIVE_DEFAULT
+        self.fusion = dict(LIVE_DEFAULT if fusion is None else fusion, threshold=event_threshold)
         d = Path(export_dir); self.device = device; self.ut = unit_threshold; self.tt = tower_threshold
         self.frame = torch.jit.load(str(d/'frame.pt'), map_location=device).eval()
         self.event = torch.jit.load(str(d/'event.pt'), map_location=device).eval()
         vocab = json.loads((d/'vocab.json').read_text()); self.cards, self.identities = vocab['cards'], vocab['identities']
-        self.et = event_threshold; self.tracker = EventTracker(self.cards, threshold=event_threshold)
+        self.et = event_threshold; self.tracker = EventTracker(self.cards, **self.fusion)
         self.ring = []; self.prev_heat = None
 
     def reset(self):
         """New match."""
         from events import EventTracker
-        self.ring = []; self.prev_heat = None; self.tracker = EventTracker(self.cards, threshold=self.et)
+        self.ring = []; self.prev_heat = None; self.tracker = EventTracker(self.cards, **self.fusion)
 
-    @torch.inference_mode()
     def step(self, image_bgr, timestamp_ms):
         from clasher.vision.l1_v4 import prepare_pixels
         arena, hud = prepare_pixels(image_bgr)
+        return self.step_prepared(arena, hud, timestamp_ms)
+
+    @torch.inference_mode()
+    def step_prepared(self, arena, hud, timestamp_ms, unit_floor=None):
+        """Same as step() on the prepared 832x448 arena + 64x448 HUD (the pixel cache format). With `unit_floor`,
+        units down to that score are decoded and kept in self.last['units_lo'] (record frame); the record itself
+        keeps the unit threshold. self.last also holds the frame's event peaks (offline tracker replays)."""
         t = lambda x: torch.from_numpy(np.ascontiguousarray(x)).permute(2, 0, 1)[None].float().div(255).to(self.device)
         outs = dict(zip(FRAME_KEYS, self.frame(t(arena), t(hud))))
         self.ring = (self.ring+[(float(timestamp_ms), outs['features'][0])])[-16:]
@@ -69,8 +77,13 @@ class LivePerception:
         ages = torch.zeros(1, 16, device=self.device); ages[0, 16-n:] = torch.tensor([timestamp_ms-s for s, _ in self.ring], device=self.device)
         valid = torch.zeros(1, 16, dtype=torch.bool, device=self.device); valid[0, 16-n:] = True
         births = visual_births(outs['body_heatmap'], self.prev_heat); self.prev_heat = outs['body_heatmap']
-        ev = dict(zip(EVENT_KEYS, self.event(cache, ages, valid, births)))
-        events = self.tracker.update({k: v.float() for k, v in ev.items()}, float(timestamp_ms))
+        ev = {k: v.float() for k, v in zip(EVENT_KEYS, self.event(cache, ages, valid, births))}
         out = {k: v.float().cpu().numpy() for k, v in outs.items() if k != 'features'}
-        dec = C.decode_frame(out, 0, self.cards, self.identities, threshold=self.ut, offsets=True)
+        floor = self.ut if unit_floor is None else min(unit_floor, self.ut)
+        dec = C.decode_frame(out, 0, self.cards, self.identities, threshold=floor, offsets=True)
+        lo = C.frame_record(dec, timestamp_ms=timestamp_ms)['units']
+        dec['units'] = [u for u in dec['units'] if u['score'] >= self.ut]
+        peaks = self.tracker.peaks(ev)
+        events = self.tracker.update(ev, float(timestamp_ms), peaks=peaks, units=[u for u in lo if u['score'] >= self.tracker.unit_floor])
+        self.last = dict(peaks=peaks, units_lo=lo)
         return C.frame_record(dec, timestamp_ms=timestamp_ms, tower_threshold=self.tt, events=events)

@@ -168,3 +168,28 @@
     start.**
   - Opponent plays come from births grouped into clusters with a vote: P/R ~0.71/0.83 on real output, provisional.
   - Event ms times are converted to ticks.
+- **06:16Z, (a) event-card fusion, full val:**
+  - all-events F1 .807 → .855 (odd half, held out from config choice: .802 → .851);
+  - opponent troops P/R .917/.919; opponent spells .646/.577 (thr .5) or .773/.507 (thr .6, hold 500);
+  - median latency 150 → 225 ms.
+  - **(b) early findings:**
+    - only 59% of true opponent plays reach the bot, because the stream guard drops true plays after an earlier
+      miss; the resync cycle tracker is approved and assigned to the integ owner;
+    - a LiveSession bug is fixed: a single skipped poll used to kill the fast tier for the rest of the match.
+  - Royal Ghost is a perception blind spot.
+- **06:45Z, K4L adopted as the default live candidate:** `LIVE-K4L-R-gs-rw-fc-w200-t4-p4` (coordinator
+  row 2376f007).
+  - The `make_live_player` hook is on main (6543c103); 23 tests pass.
+  - Fleet: p50/p95 79/126 ms, +0.058 vs K4CW at 200 ms.
+  - Added to the Mac bench (mixed and alone) with the i10 fallback, K4CW w200/w150 and it5s2.
+  - The opponent models (`bot-lopp-models/*.npz`) are never committed.
+- **08:50Z, (a)+(b) DONE** (`reports/live/integration/RESULTS.md`).
+  - **Fusion:** deployed config thr .6 / hold 500 (`events.LIVE_DEFAULT`). Full-val all-events P/R .909/.794.
+  - **Resync cycle tracker** (`bot/live/resync.py`): opponent plays reaching the bot .594 → **.775**, precision .949.
+  - **Real-perception replay vs the true state:** it5s2 .856 exact on 64 val matches (dense-truth record .948).
+    K4CW-w200 .741 on 28 matches (its reseed floor .857).
+  - 0 translator or decision errors in every arm.
+  - The 01 K4CW runs are invalid (load ~85), so wall tiers need a quiet host.
+  - **Live loop must call `anchor(0, ts)`.**
+  - **Empirical-noise arms:** PERC-emp, PERC-emp-births, PERC-emp-both. The headline commands are in RESULTS (b),
+    not yet run.

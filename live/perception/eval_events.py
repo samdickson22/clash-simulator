@@ -18,7 +18,7 @@ import torch
 from scipy.optimize import linear_sum_assignment
 
 import common as C
-from finetune2 import SPELLS, visual_births
+from infer import SPELLS  # same set as finetune2.SPELLS
 
 WINDOWS = (500, 1000)
 THRESHOLDS = (.3, .4, .5, .6, .7)
@@ -26,6 +26,7 @@ THRESHOLDS = (.3, .4, .5, .6, .7)
 
 def run_match(model, guard, ep, stride, device, cards, fusion_threshold):
     from clasher.vision.l1_v4 import EventFusion
+    from finetune2 import visual_births
     rec = C.load_receipt(guard, ep, 'validation'); px = C.Pixels(guard, ep, rec)
     import dense_labels as D
     lab = D.load(Path(ARGS.labels)/f'{ep}.npz'); tick = lab['tick']

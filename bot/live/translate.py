@@ -449,7 +449,7 @@ class LiveSession:
     def step(self, record):
         """Feed every frame. Returns a Decision on poll ticks (every 5 ticks from 90), else None. Events seen on
         frames between polls are buffered and delivered (tick-clamped) with the next poll's record."""
-        from bot.players.base import PublicView, POLICY_INTERVAL, START_TICK, WAIT
+        from bot.players.base import POLICY_INTERVAL, START_TICK
         tick = record.get('tick')
         if tick is None:
             tick = self.tr.tick_of(record)        # HUD clock + phase + timestamp (ClockTracker, monotonic)
@@ -463,19 +463,34 @@ class LiveSession:
             order = cards + ([nxt] if nxt in self.own_deck and nxt not in cards else [])
             order += [c for c in self.own_deck if c not in order]
             self.tr.set_own_order(order)
-            self.player.start(MatchContext(seat=0, seed=self.seed, own_order=tuple(order),
-                                           command_delay=self.command_delay, opponent_delay=self.command_delay))
+            self.ctx = MatchContext(seat=0, seed=self.seed, own_order=tuple(order),
+                                    command_delay=self.command_delay, opponent_delay=self.command_delay)
+            self.player.start(self.ctx)
             self.started = True
         self._buffer.extend(record.get('events', ()))
         if tick < START_TICK or poll == self.last_poll:
             return None
+        if self.last_poll is not None and poll - self.last_poll > POLICY_INTERVAL:
+            # A frame gap skipped polls (capture/perception stall > 250 ms). The frozen 5-tick pollers (D1 gate in
+            # imitation/evaluation/standalone.py) raise on any gap and then fail on every later poll, which would end
+            # the fast tier for the match. Catch up on the current record with can_act=False (no tap from it).
+            for p in range(self.last_poll + POLICY_INTERVAL, poll, POLICY_INTERVAL):
+                self.tr.stats['catchup_polls'] += 1
+                self._poll(dict(record, tick=p, events=[]), p, catch_up=True)
         self.last_poll = poll
         record = dict(record, tick=poll, events=self._buffer)
         self._buffer = []
+        return self._poll(record, poll)
+
+    def _poll(self, record, poll, catch_up=False):
+        from bot.players.base import PublicView, WAIT
         info = self.tr.information(record)
+        if getattr(self.tr, 'resynced', False):   # resync translator rewrote the opponent history (bot/live/resync.py)
+            from bot.live.resync import restart_if_resynced
+            restart_if_resynced(self.tr, self.player, self.ctx)
         self._reconcile(info)
         reserved = self.ch.own_packet(info, self.rt.R.builder)
-        can_act = self.ch.available and poll >= self.wait_until
+        can_act = self.ch.available and poll >= self.wait_until and not catch_up
         view = PublicView(poll, 0, info, reserved, self.tr.public_events, tuple(self.ch.pending), can_act)
         d = self.player.act(view)
         if can_act and d.action < WAIT:
@@ -487,7 +502,7 @@ class LiveSession:
                 d.action = WAIT
         if can_act and d.wait_ticks:
             self.wait_until = poll + d.wait_ticks
-        self.log.append(dict(tick=poll, action=int(d.action), stats=d.stats))
+        self.log.append(dict(tick=poll, action=int(d.action), stats=d.stats, catch_up=catch_up))
         return d
 
     def close(self):
