@@ -981,6 +981,62 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
   | BL6s3 | 04 gpuq2 (free after B6s7 ended 12:16Z) | 2026102663 (B6s3) | 495000 | 04 cpuq6 |
 
   Next cal block: **496000**. ETA ≈ 4 h per fit + 45 min eval (≈ 17:00–17:30Z).
+- **RL r4 snapshot evals** (our engine, HEADLINE 0–299, deployed τ0 0.5375, Δ paired vs `$J8/ce-it5s2`):
+
+  | snapshot | KL at that version | vs v1 | Δ (v1) | vs R3a | Δ (R3a) | h2h vs it5s2 | plays/game vs v1 |
+  |---|---|---|---|---|---|---|---|
+  | v10 | 0.27 | 0.880 | −0.003 [−0.047, +0.040] | 0.677 | +0.017 [−0.040, +0.077] | 0.513 | — |
+  | v20 | 0.36 | 0.900 | +0.017 [−0.030, +0.060] | 0.690 | +0.030 [−0.030, +0.090] | 0.537 | 36.5 (band 37.8 ± 3: no recal) |
+  | v29 (final, KL 0.516) | 0.52 | 0.887 | +0.003 [−0.043, +0.050] | 0.707 | +0.047 [−0.017, +0.110] | 0.556 (n 117, partial) | — |
+
+  - v20 passes the F9 screen. 13:51Z: `f9-rl4v20` (04 cpuq; snapshot copied to `$J4/ckpt-rl4v20/`, sha256
+    ae369f23…) and, for the RoyaleSim gate, `rsim-rl4v20` (04 cpuq2; same args as `$J4/rsim-it5s2`).
+  - **13:57Z: RL r4 stopped by the collapse rule** (KL 0.516 at v29; 30 updates, ~4.9 k games). v29 queued for eval.
+    14:31Z: 01 sync stopped (`STOP_SYNC`), 01 K4L feeder target 44 → 80 (cap 89; PID 4171198, `cpu-feed-k4l.log4`).
+  - 13:17Z: `RUN/kl_stop.sh` (08, PID 2247006) applies the collapse rule: at KL > 0.5 it touches STOP_LEARNER and
+    STOP_ACTORS and queues the final version for eval. KL was 0.494 at v28 (13:50Z).
+- **RL r4 v20 on fresh bank F9 = NEW BEST STUDENT (14:52Z, pre-registered rule).** Our engine, F9 cases 0–599, τ0 0.5375,
+  paired per case vs `$J4/f9-it5s2` (it5s2 @0.5375 on the same cases):
+
+  | opponent | v20 | it5s2 | Δ (v20 − it5s2) | plays/game v20 / it5s2 |
+  |---|---|---|---|---|
+  | v1 | 0.892 | 0.857 | **+0.035 [+0.002, +0.068]** | 35.5 / 37.0 (band 37.8 ± 3: in) |
+  | R3a | 0.680 | 0.657 | +0.023 [−0.018, +0.063] | 42.2 / 43.4 |
+  | mean of v1 and R3a | | | **+0.029 [+0.003, +0.055]** | |
+
+  RoyaleSim rsim15535 gate (HEADLINE 0–299, paired vs `$J4/rsim-it5s2`): v1 0.860, −0.027 [−0.077, +0.020]; R3a 0.670,
+  +0.023 [−0.040, +0.087]; rext-bc 0.910, +0.027 [−0.017, +0.070]; mean of the three **+0.008 [−0.022, +0.038]**, not
+  negative. Claim rule met: mean CI above 0, neither opponent below −0.02, RoyaleSim not negative, play count in band.
+  - Checkpoint: `/mpac/sdicks02/jobs/clasher/bot-rl-r4/snapshots/policy-00020.pt` (08; copy `$J4/ckpt-rl4v20/`),
+    sha256 **ae369f2358bb98fe54726591b1f17149770ad6ad85c4bf7fcb1b0a4ead27aef2**, threshold 0.5375 (RL gate centre; no
+    recalibration needed). Serve as `student:<ckpt>@0.5375`.
+  - Selection note: v20 was picked from 2 snapshots (v10, v20) on HEADLINE; F9 was never used for selection.
+  - Caveat: one RL run; the R3a half alone is not significant, and RoyaleSim vs v1 is −0.027 (CI includes 0).
+- **RL r5 (14:54Z, 01): continue from v29** (anchor = v29, so the KL budget restarts; v29's HEADLINE is ≥ v20's and h2h vs
+  it5s2 rose 0.513 → 0.537 → 0.556 over v10/v20/v29). RUN `/mpac/sdicks02/jobs/clasher/bot-rl-r5` (01); init
+  `bot-rl-r5-init/snapshots/policy-00029.pt` (sha 1f5d651a…), critic `critic-r4-final.pt` (r4's final critic, sha
+  22e8a030…), critic lr 1e-5, policy lr 3e-5, KL 0.01, same league; **blocks ≥ 20** on RL_BANK. Learner PID 89766 (01 GPU,
+  beside BL6s4); actors block 20, 32 workers (wrapper 91763); `kl_stop.sh` (PID 92732, limit 0.5 vs v29); eval watcher on 08
+  `eval_watch.sh 127x01 RUN /mpac/sdicks02/jobs/clasher/bot-rl-r5-eval08 24` (PID 2815807). 01 K4L feeder target 80 → 50
+  (PID 89723, `cpu-feed-k4l.log6`). Every r5 snapshot must pass F9 on its own (vs it5s2, and vs v20 for "better than v20").
+- **kLM results (arm (b), K4L vs K4C labels at ~matched size, kcM recipe):**
+
+  | fit | τ | vs v1 | Δ vs it5s2 (v1) | vs R3a | Δ vs it5s2 (R3a) | h2h | Δ vs its kcM twin (v1 / R3a) |
+  |---|---|---|---|---|---|---|---|
+  | kLM1 | 0.4775 | 0.890 | +0.007 [−0.040, +0.050] | 0.610 | −0.050 [−0.110, +0.013] | 0.437 | |
+  | kLM2 | 0.4475 | 0.883 | 0.000 [−0.040, +0.043] | 0.607 | −0.053 [−0.117, +0.013] | 0.454 (n 271) | |
+  | kLM3 | 0.4775 | 0.887 | +0.003 [−0.040, +0.047] | 0.620 | −0.040 [−0.103, +0.023] | 0.437 | +0.050 [+0.003, +0.100] / −0.017 [−0.073, +0.037] |
+
+  - **K4L − K4C labels, pooled over the 3 seed pairs: v1 +0.051 [+0.022, +0.081], R3a −0.020 [−0.058, +0.018].** The
+    stronger teacher's labels make the student clearly better vs v1, not vs R3a (K4L's rollout opponent net imitates
+    v1 and R3a; K4C vs K4S labels were null on both). kLM − it5s2 pooled: v1 +0.003 [−0.031, +0.039], R3a −0.048
+    [−0.100, +0.004]; h2h 0.44–0.45; the on-policy calibration lowers τ to 0.45–0.48. So no kLM is a candidate: the
+    kcM-recipe refit from it5s2 loses ~0.05 whatever the labels, and K4L labels recover it vs v1 only. BL6 (K4L labels in
+    the B6 recipe) is the arm (b) candidate.
+- **14:42Z: 01's GPU is back** (lead; the `max-live` ceiling was removed by the lead). 14:43Z: 01 K4L feeder cap 89 → 105
+  (target 80; PID 33848, `cpu-feed-k4l.log5`). kl9a/kl9b x04/x08 packs copied to 01 (row counts equal). New 01 gpuq
+  runner (PID 38762, `gpuq/runner.log3`) with **BL6s4** (seed 2026102664 = B6s4's, cal 496000, eval 01 cpuq7) and keep-alive
+  `gpu_keepalive.sh gpuq/QUEUE BL6s 1` (PID 38836). 14:45:57Z: 01 GPU 99 %. Next cal block: **497000**.
 - **ExIt fresh bank F9, pre-registered (12:47:41Z, before any game on it).** BASE **465456850770064** =
   `int.from_bytes(os.urandom(6),'big')<<4`, drawn on 05; checked ≥1e9 away from HEADLINE, TRAIN1, RL_BANK, the FIT
   bank and fresh banks 1–3. Why: K4L round 2 found that reseeded copies of a bot score −0.027/−0.038 vs its own
@@ -1004,10 +1060,17 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
 |---|---|---|---|---|---|---|
 | B6s4 (6L seed 4) | 0.5075 | 0.863 | −0.020 [−0.067, +0.027] | 0.633 | −0.027 [−0.090, +0.037] | 0.490 |
 | B6s5 (6L seed 5) | 0.5075 | 0.857 | −0.027 [−0.073, +0.020] | 0.630 | −0.030 [−0.090, +0.030] | 0.477 |
+| B6s6 (6L seed 6) | 0.5375 | 0.880 | −0.003 [−0.053, +0.047] | 0.677 | +0.017 [−0.043, +0.077] | 0.513 |
+| B6s7 (6L seed 7) | 0.5375 | 0.853 | −0.030 [−0.077, +0.017] | 0.673 | +0.013 [−0.043, +0.070] | 0.523 |
 | B6x (6L, all ~9.5 M labels incl. Kall's older packs) | 0.5375 | 0.883 | 0.000 [−0.047, +0.043] | 0.657 | −0.003 [−0.063, +0.057] | 0.477 |
 
 - B6 pooled over s1–s4: **−0.013 [−0.050, +0.025]** vs v1, **−0.016 [−0.064, +0.033]** vs R3a; over s1–s5:
   **−0.015 [−0.051, +0.021]** / **−0.019 [−0.066, +0.029]** (the BL6 control).
+- **B6 pooled over all 7 seeds: −0.016 [−0.051, +0.020] vs v1, −0.009 [−0.055, +0.038] vs R3a**, h2h 0.48–0.52.
+  it5s2's HEADLINE games carry ~+0.03 of selection luck (K4L round 2 reseed controls), so the B6 recipe may be level
+  with or slightly above it5s2 off HEADLINE. B6 passes the F9 screen and is BL6's control, so B6s1–s3 (the original
+  seeds, chosen without looking at results) get F9 games (13:20Z): 08 `cpuq` f9-B6s1 then f9-B6s3, 08 `cpuq2` f9-B6s2,
+  out `$J8/f9-<name>`, 36 workers each, τ from each on-policy calibration.
 - B6x ties it5s2 (not above on either), so no fresh-bank run: 3 M more (older) labels do not move the B6 recipe.
 
 ## Next
