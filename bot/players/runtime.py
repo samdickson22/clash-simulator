@@ -35,6 +35,10 @@ PINS = dict(
 PIN_SETS = dict(
     r1=PINS,
     r2=dict(PINS, native_sha256='c50cb06622e42c5ba9bd43854e9bdf10b615ce84a3d08309e5067d82e776ef27'),
+    # r1-total = r1 with the panic-free native (every config.cards lookup total; outputs identical on valid states,
+    # reports/bot/learned-opponent/NATIVE-TOTAL.md). Keep CLASHER_BOT_RUNTIME=clasher-bot-runtime/r1 and set
+    # CLASHER_DELAY_NATIVE_DIR=clasher-bot-runtime/native-total-r1.
+    **{'r1-total': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b')},
 )
 
 
