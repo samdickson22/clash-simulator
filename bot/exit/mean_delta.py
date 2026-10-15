@@ -4,7 +4,7 @@
 
 Per opponent: mean over cases both played of (a - b). Mean row: per case, the average over the listed opponents of
 (a - b), over cases where both played every opponent; 5,000-draw bootstrap CI (seed 0; 95% unless --alpha), as bot.exit.report.
-Also prints each side's plays per game (the candidate seat's plays) per opponent.
+SUBSTR '=NAME' matches the candidate name exactly (as bot.exit.paired). Also prints each side's plays per game (the candidate seat's plays) per opponent.
 """
 from __future__ import annotations
 
@@ -28,7 +28,8 @@ def load(spec):
     for p in Path(d).glob('games-*.jsonl'):
         for line in p.read_text().splitlines():
             r = json.loads(line)
-            if 'error' in r or sub not in r['candidate']:
+            hit = r['candidate'] == sub[1:] if sub.startswith('=') else sub in r['candidate']
+            if 'error' in r or not hit:
                 continue
             score.setdefault(r['opponent'], {})[r['index']] = r['score']
             plays.setdefault(r['opponent'], {})[r['index']] = r['plays'][str(r['seat'])]

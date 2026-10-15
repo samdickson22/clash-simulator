@@ -1273,6 +1273,25 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
     watcher on 08 `eval_watch.sh 127x04 RUN /mpac/sdicks02/jobs/clasher/bot-rl-r8-eval08 24` (PID 1163670).
   - Keep-alives remain on 04 gpuq/gpuq2 (109055/109143) and 08 gpuq/gpuq2 (4093222/4093287).
 
+- **23:03Z: RoyaleSim r5 v30 (complete, HEADLINE 0–299, paired vs `$J4/rsim-it5s2`):** v1 0.887, 0.000 [−0.047, +0.047];
+  R3a 0.755, +0.108 [+0.047, +0.170]; rext-bc 0.897, +0.013 [−0.027, +0.053]; **mean +0.041 [+0.009, +0.070]** (gate
+  met). vs r5 v10's RoyaleSim: mean +0.013 [−0.014, +0.038]. F10 at 23:03Z: `f10-rl5v10` 1497/2000, `f10-rl5v30`
+  842/2000. RL r7 (08 learner) at v19; RL r8's actors wait in 04's `cpu_room` until `live-rl5v30` (36) ends.
+  01: ours 86 (49 actors + 37 F10) + the LIVE LEAD's 13 `finetune_r3` loaders.
+
+- **LIVE recipe for r5 v30 (`live-rl5v30`, 04, HEADLINE 0–299; paired vs the LIVE LEAD's `live-rl5-perc-ours/{rl5,it5s2}`,
+  read only; `mean_delta.py` now takes `=NAME` for exact candidate names):**
+
+  | comparison | v1 | R3a | mean |
+  |---|---|---|---|
+  | perfect sight (LIVE-fast), v30 − v10 | +0.050 [+0.007, +0.093] | +0.073 [+0.010, +0.137] | +0.062 [+0.022, +0.101] |
+  | sr1u50, v30 − v10 | +0.013 [−0.033, +0.063] | +0.058 [−0.005, +0.122] | +0.036 [−0.005, +0.075] |
+  | sr1u50, v30 − it5s2 | +0.053 [0.000, +0.107] | +0.090 [+0.023, +0.153] | +0.072 [+0.030, +0.112] |
+  | v30 noise penalty (sr1u50 − perfect) | −0.073 | −0.103 | −0.088 [−0.125, −0.052] |
+
+  v30 scores: perfect v1 0.937 / R3a 0.773 (= its eval_watch HEADLINE numbers exactly), sr1u50 0.863 / 0.670; plays/game
+  vs v1 33.8 perfect, 34.4 sr1u50.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
