@@ -96,3 +96,34 @@
     against `05:/mpac/sdicks02/jobs/clasher/live-glueC/parity.json`, then pin it via `bot/live/mac_pins.py`.
     Footprint: ~120 MB of files, 1 GB RSS.
   - **Open:** rollout spawns stay at level 11.
+- **00:51Z, wall eval launched on 127x03.**
+  - **Process:** PGID 2207770; script `/mpac/sdicks02/jobs/clasher/live-wall-rsim15535/run.sh` (resumable, re-run
+    to continue). Code staged at `03:/mpac/sdicks02/repos/clasher-live-eval` (bot/ + reports/explore/x4s).
+  - **ETA:** ~03:30Z. Tell the bot lead when it ends.
+  - **Pairing:** `bot/eval/pair_by_name.py` against `bot-headline-r16-rsim15535` (RESULTS §4).
+  - **K4L-R-gs** beat K4C-r16 by +0.055 [+0.041, +0.068] on the fresh bank. But it needs 120–140 ms of serial Python
+    per decision, so it doesn't fit live yet.
+- **00:57Z, perception events (interim, val only):**
+  - **Baseline T7 temporal head:** R 9% / P 5%, so unusable.
+  - **ft-r2** (01 A6000 since 00:04Z, ends ~05:34Z): TemporalHead joint with body/HUD, plus a location-level tracker
+    (`live/perception/events.py`).
+  - **At epoch 5 (8 val matches):** all events P 0.80 / R 0.72; opponent troops P 0.87 / R 0.75; opponent spells
+    **P 0.83 / R 0.47**; median placement error 0 tiles.
+  - **frame_record events:** `tick` is in **ms** on the caller clock, so the translator must convert it (TODO in
+    integration).
+  - The entry point is `live/perception/infer.py:LivePerception`. RESULTS ~06:30Z.
+- **02:58Z, wall eval: 2,400 games done, 0 errors.** Paired B−A vs K4C-r16 on RoyaleSim 15.535, HEADLINE bank:
+  - w200: R3a −0.087 [−0.143, −0.030], v1 −0.033 [−0.073, +0.007]
+  - w150: R3a −0.142, v1 −0.050
+  - w120: R3a −0.233, v1 −0.170
+  - **LIVE w150 (it5s2 default):** R3a −0.095 [−0.153, −0.037], v1 −0.013 [−0.060, +0.033]
+  - Reading: the deadline costs real strength (honest lateness included). The it5s2 cutoff default is better than
+    R3a's. The Mac per-core speed decides the tier.
+- **02:58Z:** added the arm `LIVE-K4CW-r16-w200-t4` (600 games, PGID 2574073 on 03, ETA ~03:40Z), then hand 03 back
+  to the bot lead.
+- **~02:50Z, GPU check (coordinator flagged it low):** 30 one-second samples averaged 90.8%. ft-r2 is healthy; the
+  dips come from the val passes.
+- **03:37Z, wall eval complete:** 3,000 games, 0 errors (`reports/live/WALL-EVAL.md`).
+  - LIVE-w200: R3a −0.070 [−0.127, −0.013], v1 −0.020 [−0.067, +0.027].
+  - Pending the Mac timing, the deployed tier is `LIVE-K4CW-r16-w200-t4`.
+  - 03 handed back to the bot lead.
