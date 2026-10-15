@@ -244,3 +244,5 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
   - 04 fb2-hi04 (`cpu_job.sh 20`, PGID 1429951, 440–519). The first 04 lease asked for 30, waited with no room, and
     was stopped before any game.
   03 scr1f was stopped (SIGTERM PGID 1966317) after its cases 0–149 completed. 03 is at 100 live python.
+- **23:42Z, fresh bank interim (progress only; outcome not inspected):** fb2 897/1760, hi03 191/320, hi04 243/320, 0
+  errors. perc_errors = 0 in the fix arm, with evictions occurring (correctness check of the r4 rebuild fix).
