@@ -1,0 +1,252 @@
+"""RL rollout actors (CPU): the learner's student plays league games in our engine and records its decisions.
+
+    bot/exit/cpu_job.sh 48 bot/exit/run.sh -m bot.rl.actor --run RUN --workers 48 --block 0
+
+RUN layout (shared with bot.rl.learner):
+- RUN/policies/LATEST: "<version> <path>" of the current policy (student-checkpoint format);
+- RUN/snapshots/LIST: one snapshot checkpoint path per line (league 'self' opponents);
+- RUN/rollouts/v<version>-g<game>.npz (+ RUN/rollouts/games-<block>-<worker>.jsonl summary rows);
+- RUN/STOP_ACTORS: workers exit after their current game.
+Game g = block*10**6 + k*workers + w uses x4s_setup(g, RL_BANK) (learner seat g%2); the opponent is drawn by a
+hash of g from the league shares. Only polls where the learner can act and has a legal play are recorded.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import time
+from pathlib import Path
+
+import numpy as np
+
+# int.from_bytes(os.urandom(6),'big')<<4, drawn on 127x04 2026-10-14T19:51Z (reports/bot/rl/PROGRESS.md)
+RL_BANK = int(os.environ.get('BOT_RL_BANK', '1462854985943728'))
+HEADLINE = (1455777415631152, 10**5)
+TRAIN1 = (874184153281168, 10**8)
+IT5S2 = '/mpac/sdicks02/repos/clasher-bot-runtime/students/it5s2-step001200.pt'
+TAU0 = 0.5375
+LEAGUE = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16', .10))
+OPP_IDS = {name: i for i, (name, _) in enumerate(LEAGUE)}
+TOKEN_KEYS = ('ids', 'types', 'numeric', 'valid')
+
+
+def check_bank(bank):
+    assert bank > 0, 'set BOT_RL_BANK'
+    for base, span in (HEADLINE, TRAIN1):
+        assert not (base - 10**9 < bank < base + span + 10**9), f'RL bank overlaps {base}'
+
+
+def league_pick(g):
+    u = int.from_bytes(hashlib.sha256(f'bot-rl-league|{g}'.encode()).digest()[:8], 'big') / 2**64
+    acc = 0.
+    for name, share in LEAGUE:
+        acc += share
+        if u < acc:
+            return name, u
+    return LEAGUE[-1][0], u
+
+
+class RLPolicy:
+    """Drop-in for s1 CachedPolicy inside V1Policy/StandalonePlayer: one forward per poll.
+
+    deploy mode reproduces CachedPolicy(threshold) exactly; explore mode samples bot.rl.dist and keeps the
+    poll's record in .last (features, sampled action, behaviour log-prob) for the player to keep or drop.
+    """
+
+    def __init__(self, base, tau, kappa=.5, temp=1., explore=True, generator=None):
+        self.base, self.model, self.costs = base, base.model, base.costs
+        self.tau, self.kappa, self.temp, self.explore = float(tau), float(kappa), float(temp), explore
+        self.gen = generator
+        self.last = None
+
+    def sample(self, packet, d1, generator=None):
+        import torch
+        from imitation.model.inference import single_features
+        from proposals import rank_actions
+        from bot.rl import dist
+        with torch.inference_mode():
+            b = single_features(packet, d1, self.costs)
+            raw = dist.forward(self.model, b)
+            prob = dist.masked_log_softmax(raw['gate'], raw['gate_mask']).exp()[:, 1]
+            card = dist.masked_log_softmax(raw['card'], raw['card_mask'])
+            tile = dist.masked_log_softmax(raw['tile'], raw['tile_mask'])
+            order = rank_actions((card[:, :, None] + tile).flatten(1)[0].numpy(), packet['action_mask'])
+            deploy = int(order[0]) if len(order) and float(prob[0]) >= self.tau else 2304
+            self.last = None
+            if not self.explore or not len(order):
+                return deploy
+            d = dist.explore(raw, self.tau, self.kappa, self.temp)
+            q = float(torch.sigmoid(d['z'][0]))
+            play = bool(torch.rand((), generator=self.gen) < q)
+            slot = tl = 0
+            action = 2304
+            if play:
+                slot = int(torch.multinomial(d['card'][0].exp(), 1, generator=self.gen))
+                tl = int(torch.multinomial(d['tile'][0, slot].exp(), 1, generator=self.gen))
+                action = slot * 576 + tl
+            lp = float(dist.log_prob(d, torch.tensor([play]), torch.tensor([slot]), torch.tensor([tl]))[0])
+            self.last = dict(b={k: v[0].numpy().copy() for k, v in b.items()}, play=play, slot=slot, tile=tl,
+                             logp=lp, p_play=float(prob[0]), q=q, deploy=deploy, action=action)
+            return action
+
+
+class RLPlayer:
+    deadline_seconds = None
+
+    def __init__(self, rt, base, tau, kappa, temp, explore, salt, name='rl'):
+        self.rt, self.base, self.tau, self.kappa, self.temp = rt, base, tau, kappa, temp
+        self.explore, self.salt, self.name = explore, salt, name
+        self.records = []
+
+    def start(self, ctx):
+        import torch
+        from policy import V1Policy
+        from bot.players.policy import POLICY_SEED_OFFSET
+        seed = int.from_bytes(hashlib.sha256(f'bot-rl-explore|{self.salt}|{ctx.seed}|{ctx.seat}'.encode())
+                              .digest()[:8], 'big') >> 1
+        self.rl = RLPolicy(self.base, self.tau, self.kappa, self.temp, self.explore,
+                           torch.Generator().manual_seed(seed))
+        self.poller = V1Policy(self.rl, self.rt.R.builder, self.rt.R.costs, ctx.seat, list(ctx.own_order),
+                               ctx.seed + POLICY_SEED_OFFSET + ctx.seat)
+        self.records = []
+
+    def act(self, view):
+        from bot.players.base import Decision, WAIT
+        action = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
+        rec, self.rl.last = self.rl.last, None
+        if rec is not None and view.can_act:
+            rec['tick'] = view.tick
+            self.records.append(rec)
+        return Decision(action if action < WAIT else WAIT)
+
+    def close(self):
+        pass
+
+
+def pack_records(records):
+    """Ragged token arrays flattened with per-row counts; fixed-shape arrays stacked."""
+    out = {}
+    keys = records[0]['b'].keys()
+    for k in keys:
+        if k in TOKEN_KEYS:
+            out['b_' + k] = np.concatenate([r['b'][k] for r in records], 0)
+        else:
+            out['b_' + k] = np.stack([r['b'][k] for r in records], 0)
+    out['ntok'] = np.array([len(r['b']['ids']) for r in records], np.int32)
+    for k, dt in (('play', bool), ('slot', np.int16), ('tile', np.int16), ('logp', np.float32),
+                  ('p_play', np.float32), ('q', np.float32), ('deploy', np.int16), ('action', np.int16),
+                  ('tick', np.int32)):
+        out[k] = np.array([r[k] for r in records], dt)
+    return out
+
+
+def read_latest(run):
+    p = run / 'policies' / 'LATEST'
+    v, path = p.read_text().split()
+    return int(v), path
+
+
+def worker(w, a):
+    os.environ.setdefault('PYTHONHASHSEED', '0')
+    import torch
+    torch.set_num_threads(1)
+    from bot.players.runtime import Runtime
+    from bot.players.ours import play_match, x4s_setup
+    from bot.eval.headline import make_player
+    from bot.exit import student as student_mod
+    rt = Runtime()
+    from proposals import load_student
+    run = a.run
+    out = run / 'rollouts'
+    summary = open(out / f'games-b{a.block}-w{w:03d}.jsonl', 'a', buffering=1)
+    version, base = -1, None
+    k = 0
+    while not (run / 'STOP_ACTORS').exists():
+        # back-pressure: do not run far ahead of the learner
+        while len(list(out.glob('v*.npz'))) > a.max_backlog and not (run / 'STOP_ACTORS').exists():
+            time.sleep(15)
+        v, path = read_latest(run)
+        if v != version:
+            base = load_student(path, TAU0)
+            version = v
+        g = a.block * 10**6 + k * a.workers + w
+        k += 1
+        if a.max_games and k > a.max_games:
+            break
+        case = x4s_setup(rt, g, RL_BANK)
+        opp, _ = league_pick(g)
+        opp_spec = opp
+        if opp == 'it5s2':
+            opp_spec = f'student:{IT5S2}@{TAU0}'
+        elif opp == 'self':
+            snaps = [s for s in (run / 'snapshots' / 'LIST').read_text().split()] if (run / 'snapshots' / 'LIST').exists() else []
+            snap = snaps[int(hashlib.sha256(f'bot-rl-snap|{g}'.encode()).hexdigest(), 16) % len(snaps)] if snaps else IT5S2
+            opp_spec = f'student:{snap}@{TAU0}'
+        # keep the per-process student cache to the models in use (snapshots would otherwise accumulate)
+        keep = {str(Path(IT5S2).resolve())}
+        if opp_spec.startswith('student:'):
+            keep.add(str(Path(opp_spec.split(':', 1)[1].rsplit('@', 1)[0]).resolve()))
+        for key in list(student_mod._POLICIES):
+            if key[0] not in keep:
+                student_mod._POLICIES.pop(key)
+        t0 = time.time()
+        try:
+            me = RLPlayer(rt, base, TAU0, a.kappa, a.temp, True, salt=f'{a.block}|{v}', name=f'rl-v{v}')
+            players = {case['seat']: me, 1 - case['seat']: make_player(rt, opp_spec)}
+            res = play_match(rt, players, seed=case['seed'], decks=case['decks'])
+            wnr = res['winner']
+            outcome = 0 if wnr is None or wnr == -1 else (1 if wnr == case['seat'] else -1)
+            row = dict(g=g, version=v, opponent=opp, opponent_spec=opp_spec, seat=case['seat'], seed=case['seed'],
+                       outcome=outcome, ticks=res['ticks'], towers=res['towers'], plays=res['plays'][case['seat']],
+                       opp_plays=res['plays'][1 - case['seat']], decisions=len(me.records),
+                       explore_plays=int(sum(r['play'] for r in me.records)),
+                       deploy_plays=int(sum(r['deploy'] < 2304 for r in me.records)),
+                       disagree=float(np.mean([r['action'] != r['deploy'] for r in me.records])) if me.records else 0.,
+                       cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0, worker=w, block=a.block,
+                       kappa=a.kappa, temp=a.temp)
+            if me.records:
+                arrays = pack_records(me.records)
+                arrays['meta'] = np.frombuffer(json.dumps(row).encode(), np.uint8)
+                tmp = out / f'.v{v:05d}-g{g}.npz.partial'
+                with open(tmp, 'wb') as fh:
+                    np.savez_compressed(fh, **arrays)
+                os.replace(tmp, out / f'v{v:05d}-g{g}.npz')
+        except Exception as ex:  # recorded, never silently dropped
+            import traceback
+            row = dict(g=g, version=v, opponent=opp, error=repr(ex)[:500], tb=traceback.format_exc()[-1500:])
+        summary.write(json.dumps(row) + '\n')
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--run', required=True, type=Path)
+    ap.add_argument('--workers', type=int, default=48)
+    ap.add_argument('--block', type=int, required=True, help='game-index block; never reuse one')
+    ap.add_argument('--kappa', type=float, default=.1)
+    ap.add_argument('--temp', type=float, default=.1)
+    ap.add_argument('--max-backlog', type=int, default=600)
+    ap.add_argument('--max-games', type=int, default=0, help='per worker; 0 = until STOP_ACTORS')
+    a = ap.parse_args(argv)
+    check_bank(RL_BANK)
+    (a.run / 'rollouts').mkdir(parents=True, exist_ok=True)
+    blocks = a.run / 'rollouts' / 'BLOCKS'
+    used = blocks.read_text().split() if blocks.exists() else []
+    if str(a.block) in used:
+        raise SystemExit(f'block {a.block} already used')
+    with open(blocks, 'a') as fh:
+        fh.write(f'{a.block}\n')
+    (a.run / f'actor-b{a.block}.json').write_text(json.dumps(dict(
+        args={k: str(v) for k, v in vars(a).items()}, bank=RL_BANK, league=LEAGUE, pid=os.getpid(),
+        started=time.time())))
+    from multiprocessing import Process
+    from bot.eval.headline import reap
+    procs = [Process(target=worker, args=(w, a)) for w in range(a.workers)]
+    for p in procs:
+        p.start()
+    reap(procs)
+
+
+if __name__ == '__main__':
+    main()
