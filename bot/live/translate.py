@@ -17,7 +17,8 @@ frame (our king at the bottom, y=0 at our edge); owner 0 = us, 1 = opponent:
 
 Output: fair_player.Information(tick, seat=0, packet, own, events) where
   packet  ConfidenceAwareActorObservation (v5) built like ContractV5ObservationBuilder.build_public;
-  own     dict(elixir, hand, cycle, refill) from the HUD + OwnTracker (own play order is own information);
+  own     dict(elixir, hand, cycle, refill): elixir from the HUD; hand/cycle/refill TRACKED by OwnTracker from the
+          opening order and our own plays (own information), the HUD only resolving what those leave open;
   events  derived_public_state.PublicEvent rows of ENEMY card plays (opponent elixir/cycle are derived from these
           by the bot's own belief, never read from anywhere else).
 plus `public_events`: D1 rows (seat, tick, kind, name, amount, x, y) of both seats.
@@ -35,6 +36,9 @@ Policies (documented, counted in `stats`):
 - More than 8 distinct C56 enemy cards (perception error) -> the 9th+ card's plays are dropped.
 - Card consistency (card-level records): an own unit of a card outside our deck, or an opponent unit of a 9th
   distinct card, is dropped (board_card_ok; counted), so every unit reaching search is a card its owner can have.
+- Own hand/cycle (OwnTracker): always an engine-valid state (own_invariant_breaks): 4 slots of distinct deck cards
+  or None, next = cycle[0] not held, hand + cycle = the 8 deck cards. A HUD slot/next that disagrees with the
+  tracked state (duplicate, off-deck, next held, unread, plausible but wrong) is overridden, counted in own_fix:*.
 - Levels: the packet carries level 11 everywhere (R3a/it5s2 only ever saw 11); real levels go to the planner
   root (levels.py). Fair-information: nothing about the opponent other than the public board, tower HP and the
   card plays it made is read; see test_translate.py::test_invariance.
@@ -80,33 +84,206 @@ def load_vocab(rt, path=VOCAB_PATH):
     return vocab
 
 
-class OwnTracker:
-    """Own hand/cycle from the HUD plus own play order. Queue = [next] + never-played cards (initial order unknown:
-    deck order) + played cards in play order; refill estimated from the last own play."""
+class _Cycle:
+    """The engine's own hand/cycle dynamics (src/clasher/player.py; frozen own_cycle.OwnCycle, same refill rule):
+    a play empties its slot and appends the card to the queue; when the refill cooldown is 0 the first empty slot
+    takes the queue head and the cooldown restarts. Invariant: hand cards + queue = the 8 deck cards, each once."""
+    __slots__ = ('hand', 'queue', 'tick', 'refill')
 
-    def __init__(self, deck):
+    def __init__(self, hand, queue, tick=0, refill=0):
+        self.hand, self.queue, self.tick, self.refill = list(hand), list(queue), tick, refill
+
+    def copy(self):
+        return _Cycle(self.hand, self.queue, self.tick, self.refill)
+
+    def advance(self, tick):
+        while self.tick < tick:
+            self.tick += 1
+            self.refill = max(0, self.refill - 50)
+            if not self.refill and None in self.hand and self.queue:
+                self.hand[self.hand.index(None)] = self.queue.pop(0)
+                self.refill = 1000 if self.tick < 2400 else 500 if self.tick < 4800 else 350
+
+    def play(self, card):
+        self.hand[self.hand.index(card)] = None
+        self.queue.append(card)
+
+
+def own_invariant_breaks(own, deck):
+    """[] when `own` is a state the engine can hold for this deck: 4 hand slots of distinct deck cards or None, the
+    cycle = exactly the other deck cards (4 with a full hand; the played card waits at its back during a refill),
+    next = cycle[0] not in the hand. Else the list of broken rules."""
+    hand, cycle, out = list(own['hand']), list(own['cycle']), []
+    held = [c for c in hand if c is not None]
+    if len(hand) != 4:
+        out.append('hand_slots')
+    if len(set(held)) != len(held):
+        out.append('hand_duplicate')
+    if set(held) - set(deck) or set(cycle) - set(deck):
+        out.append('off_deck')
+    if len(set(cycle)) != len(cycle) or set(cycle) & set(held) or len(cycle) + len(held) != 8:
+        out.append('cycle')
+    if cycle and cycle[0] in held:
+        out.append('next_in_hand')
+    return out
+
+
+def deck_state_breaks(state):
+    """The same structural rules for any player dict a search root receives (the opponent's belief sample has no
+    deck to compare with): distinct hand cards, cycle disjoint from them, hand + cycle = 8 cards."""
+    hand, cycle = list(state.get('hand') or ()), list(state.get('cycle') or ())
+    held = [c for c in hand if c is not None]
+    out = []
+    if len(hand) != 4:
+        out.append('hand_slots')
+    if len(set(held)) != len(held):
+        out.append('hand_duplicate')
+    if len(set(cycle)) != len(cycle) or set(cycle) & set(held) or len(cycle) + len(held) != 8:
+        out.append('cycle')
+    return out
+
+
+class OwnTracker:
+    """Own hand/next/cycle: TRACKED exactly from the opening order and our own plays (own information), with the HUD
+    used only where the tracker is genuinely uncertain. Every information() gets a state the engine can hold
+    (own_invariant_breaks == []), whatever perception reads.
+
+    - The prior hand and our own plays are known, so a slot changes only after our own play of that slot (engine
+      dynamics, _Cycle). A HUD reading that disagrees (a duplicated card, an off-deck card, next = a held card, an
+      empty/unread slot, a plausible but wrong card) is overridden by the tracked state; each overridden slot and
+      next is counted in stats (own_fix:*).
+    - The order of the opening queue past `known` (LiveSession: hand + next = 5 known; the other 3 come from the
+      deck order) is unknown. Each ordering is a hypothesis; every HUD reading scores them (a mismatch costs the
+      slot's confidence, min(prob, .98); no prob = .98) and the lowest cumulative cost wins (ties: the given
+      order). So the HUD only decides what the play history cannot: which unknown card is next / was drawn.
+    - Recovery when the tracker itself is wrong (a mid-match start with a guessed order, a missed own play):
+      (a) an own play of a card no hypothesis holds re-anchors on the HUD (own_reanchor_play); (b) a VALID HUD state
+      (4 distinct deck cards, next not held) that differs from the tracked one and reads the same on
+      `reanchor_polls` consecutive calls re-anchors on it (own_reanchor_hud). Under the measured noise (1.2% per
+      slot per frame, a random other deck card) (b) essentially never fires on a correct tracker.
+    Fair information: reads only our deck, our HUD and our own plays."""
+    reanchor_polls = 4
+    cap = .98
+
+    def __init__(self, deck, stats=None, order=None, known=5):
         if len(deck) != 8 or len(set(deck)) != 8:
             raise ValueError('own deck must be 8 distinct cards')
         self.deck, self.played, self.last_play = list(deck), [], None
+        self.stats = Counter() if stats is None else stats
+        self.reset(order or deck, known)
+
+    def reset(self, order, known=5):
+        """Opening order (hand[:4] + queue); entries past `known` have unknown relative order."""
+        order = list(order)
+        if sorted(order) != sorted(self.deck):
+            raise ValueError('own order must be a permutation of the deck')
+        self._reset_from(order[:4], order[4:], 0, 0, max(0, known - 4))
+
+    def _reset_from(self, hand, queue, tick, refill, known_queue):
+        """Hypotheses: the slots exactly as given; queue[:known_queue] fixed, every ordering of the rest."""
+        import itertools
+        head, tail = list(queue[:known_queue]), list(queue[known_queue:])
+        perms = [list(p) for p in itertools.permutations(tail)] if len(tail) <= 4 else [tail]
+        self.hyps = [_Cycle(hand, head + p, tick, refill) for p in perms]
+        self.cost = [0.]*len(self.hyps)
+        self.best, self._streak, self._last_valid = 0, 0, None
+
+    @property
+    def hand(self):
+        return list(self.hyps[self.best].hand)
 
     def play(self, tick, card):
         if card in self.played:
             self.played.remove(card)
         self.played.append(card)
         self.last_play = tick
+        for h in self.hyps:
+            h.advance(max(tick, h.tick))
+        keep = [i for i, h in enumerate(self.hyps) if card in h.hand]
+        if not keep:
+            # The tracker lost this card (mid-match start / missed play): put it into the hand where the HUD last
+            # saw it (else the first slot the HUD disagreed on, else an empty slot, else slot 0), then play it.
+            b = self.hyps[self.best].copy()
+            raw = self._last_raw or [None]*4
+            slot = next((i for i, c in enumerate(raw) if c == card), None)
+            if slot is None:
+                slot = next((i for i in range(4) if raw[i] is not None and raw[i] != b.hand[i]),
+                            b.hand.index(None) if None in b.hand else 0)
+            out = b.hand[slot]
+            b.queue = [out if c == card else c for c in b.queue] if out is not None else [c for c in b.queue if c != card]
+            b.hand[slot] = card
+            self._reset_from(b.hand, b.queue, b.tick, b.refill, len(b.queue))
+            self.stats['own_reanchor_play'] += 1
+            keep = [0]
+        elif len(keep) < len(self.hyps):
+            self.stats['own_order_pruned_by_play'] += len(self.hyps) - len(keep)
+        self.hyps = [self.hyps[i] for i in keep]
+        self.cost = [self.cost[i] for i in keep]
+        self.best = min(range(len(self.hyps)), key=lambda i: (self.cost[i], i))
+        for h in self.hyps:
+            h.play(card)
 
-    def own(self, tick, elixir, hand, next_card):
-        hand = [c if c in self.deck else None for c in list(hand)[:4]] + [None]*(4-len(list(hand)[:4]))
-        held = set(c for c in hand if c)
-        rest = [c for c in self.deck if c not in held]
-        first = [next_card] if next_card in rest else []
-        fresh = [c for c in self.deck if c in rest and c not in self.played and c not in first]
-        old = [c for c in self.played if c in rest and c not in first]
-        cycle = first + fresh + old
-        refill = 0
-        if None in hand and self.last_play is not None:
-            refill = max(0, 1000 - 50*(tick - self.last_play)) if tick < 2400 else max(0, 500 - 50*(tick - self.last_play))
-        return dict(elixir=float(elixir), hand=hand, cycle=cycle, refill=int(refill))
+    _last_raw = None
+
+    def own(self, tick, elixir, hand, next_card, probs=None, next_prob=None):
+        raw = [c for c in list(hand)[:4]] + [None]*(4-len(list(hand)[:4]))
+        probs = list(probs or [])[:4] + [None]*(4-len(list(probs or [])[:4]))
+        self._last_raw = raw
+        for h in self.hyps:
+            h.advance(tick)
+        w = [self.cap if p is None else min(float(p), self.cap) for p in probs]
+        wn = self.cap if next_prob is None else min(float(next_prob), self.cap)
+        for k, h in enumerate(self.hyps):
+            c = sum(w[i] for i in range(4) if raw[i] is not None and raw[i] != h.hand[i])
+            if next_card is not None and h.queue and next_card != h.queue[0]:
+                c += wn
+            self.cost[k] += c
+        best = min(range(len(self.hyps)), key=lambda i: (self.cost[i], i))
+        if best != self.best:
+            self.stats['own_order_switch'] += 1
+            self.best = best
+        b = self.hyps[best]
+        # (b) re-anchor on a persistent valid HUD state the tracker contradicts
+        valid = (None not in raw and len(set(raw)) == 4 and not set(raw) - set(self.deck)
+                 and next_card in self.deck and next_card not in raw)
+        state = (tuple(raw), next_card) if valid else None
+        if state is not None and state != (tuple(b.hand), b.queue[0] if b.queue else None):
+            self._streak = self._streak + 1 if state == self._last_valid else 1
+        else:
+            self._streak = 0
+        self._last_valid = state
+        if self._streak >= self.reanchor_polls:
+            queue = [next_card] + [c for c in b.queue if c not in raw and c != next_card]
+            queue += [c for c in self.deck if c not in raw and c not in queue]
+            self._reset_from(raw, queue, b.tick, b.refill, 1)
+            self.stats['own_reanchor_hud'] += 1
+            b = self.hyps[0]
+        out_hand, cycle = list(b.hand), list(b.queue)
+        self._count(raw, next_card, out_hand, cycle)
+        own = dict(elixir=float(elixir), hand=out_hand, cycle=cycle, refill=int(b.refill))
+        if own_invariant_breaks(own, self.deck):      # by construction never; counted so a regression shows
+            self.stats['own_invariant_break'] += 1
+        return own
+
+    def _count(self, raw, next_card, hand, cycle):
+        s, fixed = self.stats, 0
+        s['own_hud_frames'] += 1
+        for i, c in enumerate(raw):
+            if c == hand[i]:
+                continue
+            kind = ('missing' if c is None else 'off_deck' if c not in self.deck else
+                    'duplicate' if raw.count(c) > 1 else 'empty' if hand[i] is None else 'slot')
+            s[f'own_fix:{kind}'] += 1
+            fixed += 1
+        nxt = cycle[0] if cycle else None
+        if next_card != nxt:
+            kind = ('next_missing' if next_card is None else 'next_off_deck' if next_card not in self.deck else
+                    'next_in_hand' if next_card in raw or next_card in hand else 'next')
+            s[f'own_fix:{kind}'] += 1
+            fixed += 1
+        if fixed:
+            s['own_fix'] += fixed
+            s['own_fix_frames'] += 1
 
 
 class LiveTranslator(Translator):
@@ -140,7 +317,7 @@ class LiveTranslator(Translator):
         self.clock = ClockTracker()
         self.derived_plays = []          # (owner, card, x, y, tick) derived from unit births
         self.proxy = dict(PROXY if proxy is None else proxy)
-        self.own_tracker = OwnTracker(own_deck)
+        self.own_tracker = OwnTracker(own_deck, stats=self.stats)
         self.set_own_order(own_deck)
         self.plays = {0: [], 1: []}          # accepted public plays (tick, name) the bot sees
         self.events = []                     # PublicEvent stream of enemy plays
@@ -263,13 +440,15 @@ class LiveTranslator(Translator):
         return False      # no champions in our training; abilities are never pressed
 
     # -- events and HUD ---------------------------------------------------------------------------
-    def set_own_order(self, order):
-        """Own opening order (hand[:4] + queue), as given to the players' MatchContext. Resets the stream guard."""
+    def set_own_order(self, order, known=5):
+        """Own opening order (hand[:4] + queue), as given to the players' MatchContext. Resets the stream guard and
+        the own tracker; order[known:] has unknown relative order (scored by the HUD, OwnTracker)."""
         from imitation.evaluation.d1 import DerivedD1
         from own_cycle import OwnCycle
         if getattr(self, 'plays', None) and (self.plays[0] or self.plays[1]):
             raise ValueError('set the own order before any play is accepted')
         self.own_order = list(order)
+        self.own_tracker.reset(self.own_order, known)
         self._mirrors = {0: DerivedD1(self.costs), 1: DerivedD1(self.costs)}
         self._own_cycle = OwnCycle(self.own_order)
 
@@ -408,14 +587,16 @@ class LiveTranslator(Translator):
 
     def hud(self, record):
         h = record.get('hand') or {}
+        probs = next_prob = None
         if isinstance(h, dict):
             cards, nxt = list(h.get('cards', ())), h.get('next')
+            probs, next_prob = h.get('probs'), h.get('next_prob')
         else:
             cards, nxt = list(h)[:4], record.get('next')
         for c in cards + [nxt]:
             if c is not None and c not in self.costs:
                 self.stats[f'own_non_c56:{c}'] += 1
-        return self.own_tracker.own(record['tick'], float(record.get('elixir', 0.)), cards, nxt)
+        return self.own_tracker.own(record['tick'], float(record.get('elixir', 0.)), cards, nxt, probs, next_prob)
 
     def information(self, record):
         """One frame -> fair_player.Information. Records must arrive in non-decreasing tick order."""
@@ -447,8 +628,10 @@ class LiveTranslator(Translator):
 class LiveSession:
     """The live loop's bot side: perception record -> PublicView -> LivePlayer -> action, with the own command
     channel (CommandQueue, capacity 1, reservation) as in bot/players/ours.py. The caller performs the tap for the
-    returned action and keeps feeding records; the pending command is completed when the own HUD shows the
-    reserved card left its slot (or an own play event arrives), and expires after `expire` ticks."""
+    returned action and keeps feeding records; the pending command is completed when the raw own HUD shows the
+    reserved card left its slot on `confirm_polls` polls (or an own play event arrives), and expires after `expire`
+    ticks. The bot sees the TRACKED own hand (OwnTracker), never the raw HUD."""
+    confirm_polls = 2
 
     def __init__(self, rt, player, own_deck, *, seed=0, command_delay=27, expire=90, translator=None):
         from bot.players.base import MatchContext
@@ -458,21 +641,45 @@ class LiveSession:
         self.ch = CommandQueue(command_delay, 1)
         self.expire, self.wait_until, self.last_poll = expire, 0, None
         self.own_deck, self.seed, self.command_delay, self.started = list(own_deck), seed, command_delay, False
-        self.log, self._buffer = [], []
+        self.log, self._buffer, self._evidence = [], [], 0
 
     def _reconcile(self, info):
         if not self.ch.pending:
             return
         c = self.ch.pending[0]
-        slot_card = info.own['hand'][c.action // 576]
-        own_played = any(t >= c.submitted and n == c.card for t, n in self.tr.plays[0])
-        if own_played or slot_card != c.card:
+        # done when our play was accepted, or the TRACKED slot no longer holds the card (the tracker took the play
+        # although the stream guard dropped it from the public rows, or re-anchored): the tracked hand moves only on
+        # our plays, never on a single misread, so this cannot fire on HUD noise.
+        if (any(t >= c.submitted and n == c.card for t, n in self.tr.plays[0])
+                or info.own['hand'][c.action // 576] != c.card):
             self.ch.finish(True)
-            if not own_played:            # our own play is known from our command: emit it (perception has no events)
-                row, col = divmod(c.action % 576, 18)
-                self._buffer.append(dict(owner=0, card=c.card, x=col+.5, y=row+.5, tick=info.tick))
         elif info.tick - c.submitted > self.expire:
             self.ch.finish(False)
+
+    def _confirm_pending(self, record, poll):
+        """Our play of the pending command is known from the command itself once the RAW HUD shows the reserved card
+        left its slot: the slot reads empty or a card the tracked hand does not hold elsewhere, on `confirm_polls`
+        consecutive polls (a single misread slot, ~1% per frame, does not complete a command). Then the own play
+        event is added to THIS poll's record, so the tracked hand, the own mirrors and the D1 rows all take it before
+        the bot decides (the sanitised hand never shows a card that already left its slot)."""
+        if not self.ch.pending:
+            self._evidence = 0
+            return
+        c = self.ch.pending[0]
+        slot = c.action // 576
+        h = record.get('hand') or {}
+        cards = list(h.get('cards', ())) if isinstance(h, dict) else list(h)[:4]
+        raw = (cards + [None]*4)[slot]
+        held = [x for i, x in enumerate(self.tr.own_tracker.hand) if i != slot and x is not None]
+        if any(t >= c.submitted and n == c.card for t, n in self.tr.plays[0]):
+            return
+        self._evidence = self._evidence + 1 if raw != c.card and raw not in held else 0
+        if self._evidence >= self.confirm_polls:
+            self._evidence = 0
+            row, col = divmod(c.action % 576, 18)
+            record['events'] = list(record.get('events', ())) + [dict(owner=0, card=c.card, x=col+.5, y=row+.5,
+                                                                      tick=poll)]
+            self.tr.stats['own_play_confirmed_by_hud'] += 1
 
     def step(self, record):
         """Feed every frame. Returns a Decision on poll ticks (every 5 ticks from 90), else None. Events seen on
@@ -486,11 +693,13 @@ class LiveSession:
             from bot.players.base import MatchContext
             h = record.get('hand') or {}
             cards, nxt = (list(h.get('cards', ())), h.get('next')) if isinstance(h, dict) else (list(h)[:4], record.get('next'))
-            if len(cards) != 4 or set(cards) - set(self.own_deck) or None in cards:
-                return None       # wait for a complete opening hand
+            if len(cards) != 4 or set(cards) - set(self.own_deck) or None in cards or len(set(cards)) != 4:
+                self.tr.stats['opening_hand_waits'] += 1
+                return None       # wait for a complete opening hand of 4 distinct deck cards
             order = cards + ([nxt] if nxt in self.own_deck and nxt not in cards else [])
+            known = len(order)
             order += [c for c in self.own_deck if c not in order]
-            self.tr.set_own_order(order)
+            self.tr.set_own_order(order, known=known)
             self.ctx = MatchContext(seat=0, seed=self.seed, own_order=tuple(order),
                                     command_delay=self.command_delay, opponent_delay=self.command_delay)
             self.player.start(self.ctx)
@@ -512,6 +721,7 @@ class LiveSession:
 
     def _poll(self, record, poll, catch_up=False):
         from bot.players.base import PublicView, WAIT
+        self._confirm_pending(record, poll)
         info = self.tr.information(record)
         if getattr(self.tr, 'resynced', False):   # resync translator rewrote the opponent history (bot/live/resync.py)
             from bot.live.resync import restart_if_resynced

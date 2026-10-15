@@ -146,7 +146,11 @@ def test_translator_rows_towers_globals(rt):
     assert g[5] == pytest.approx(.5)
     assert [e.name for e in info.events] == ['HogRider']
     assert info.packet.observation.own_last_play.card_name == 'Knight'
-    assert info.own['cycle'] == ['MiniPekka', 'Fireball', 'Arrows', 'Goblins']
+    # Our Knight was played at 500 (own event): by 600 the engine refilled its slot with MiniPekka and Knight waits
+    # at the back of the cycle. The record's stale HUD (Knight still held) is overridden by the tracked state.
+    assert info.own['hand'] == ['MiniPekka', 'Archers', 'Giant', 'Musketeer']
+    assert info.own['cycle'] == ['Fireball', 'Arrows', 'Goblins', 'Knight']
+    assert tr.stats['own_fix:slot'] == 1 and tr.stats['own_fix:next_in_hand'] == 1
 
 
 def test_translator_equals_true_packet_on_engine_view(rt):

@@ -20,7 +20,9 @@ Nothing frozen is edited. Two pieces:
                    the worker) raises on every later decision (BrokenPipe/EOF), so it is disabled after max_errors.
     tier='fast':   pure it5s2 (bot/exit/student.py StudentPlayer decode: top-1 legal play when
                    P(play) >= 0.5375, else WAIT), every 5 ticks.
-  Every Decision carries stats: source, wall/cpu ms, search hit/completed/candidates, both tiers' actions.
+  Every Decision carries stats: source, wall/cpu ms, search hit/completed/candidates, both tiers' actions, and every
+  failure field the search reports (search_stats: e.g. lopp_fast's native_failure, counted per match in
+  `native_failures`), plus root hand/cycle invariant breaks of either player (root_state_breaks; expected 0).
 
 Actions are the seat's own frame: slot*576 + row*18 + col, WAIT = 2304 (bot/players/base.py).
 Deterministic only with wall_ms=None (no clock enters a decision); wall mode is not reproducible.
@@ -29,6 +31,7 @@ from __future__ import annotations
 
 import os
 import time
+from collections import Counter
 from pathlib import Path
 
 from bot.players.base import Decision, MatchContext, PublicView, SEARCH_INTERVAL, WAIT
@@ -146,6 +149,7 @@ class _WallMulti(MultiSearchPlayer):
         except TimeoutError:
             p.core.selected_wait_ticks = 0
             return self._done(fallback, dict(hit=True, fallback=True, preparation_cutoff='sample'), wall0)
+        breaks = root_state_breaks(info, opponent)
         root = (self.root_fn or R.root)(info, opponent, p.rng)
         p.core.roots = [root]
         try:
@@ -154,6 +158,7 @@ class _WallMulti(MultiSearchPlayer):
             p.core.roots = ()
         stats = dict(p.core.deadline_stats or {})
         stats.setdefault('candidates', len(candidates))
+        stats.update(breaks)
         return self._done(int(action), stats, wall0, p.core.selected_wait_ticks)
 
 
@@ -164,6 +169,20 @@ class WallCandidatePlayer(CandidateSearchPlayer, _WallMulti):
         super().__init__(rt, r3a=r3a, second=0, second_path=None,
                          name=name or wall_name(r3a, wall_ms, threads))
         self.set_deadline(wall_ms, threads)
+
+
+def root_state_breaks(info, opponent):
+    """Structural hand/cycle rules of both players a search root receives (translate.deck_state_breaks): our own
+    state is sanitised by OwnTracker, the opponent's is a belief sample (a deck permutation by construction). Counted
+    per decision ({'own_state_break': n, 'opp_state_break': n} when non-zero); never corrected here."""
+    from bot.live.translate import deck_state_breaks
+    out = {}
+    for key, state in (('own_state_break', info.own), ('opp_state_break', opponent)):
+        bad = deck_state_breaks(state)
+        if bad:
+            out[key] = len(bad)
+            out[key + 's'] = ','.join(bad)
+    return out
 
 
 def wall_name(r3a, wall_ms, threads):
@@ -250,6 +269,7 @@ class LivePlayer:
 
     def start(self, ctx: MatchContext):
         self.ctx, self.errors, self.search_disabled, self.panics = ctx, 0, False, 0
+        self.native_failures = Counter()     # search decisions the search gave up on (lopp native_failure kind)
         self.fast.start(ctx)
         if self.search is not None:
             self.search.start(ctx)
@@ -279,6 +299,7 @@ class LivePlayer:
                 return Decision(WAIT, stats=None)
             return self._done(Decision(fast), 'fast-disabled', wall0, cpu0, fast=fast)
         default = fast if self.cutoff_default == 'it5s2' else None
+        before = _search_failure_counts()
         try:
             d = self.search.act(view, wall0=wall0, default=default)
         except BaseException as ex:   # never refuse to act: it5s2 decides, the error is recorded
@@ -293,6 +314,9 @@ class LivePlayer:
             return d
         self.errors = 0
         s = d.stats
+        delta = {k: v - before.get(k, 0) for k, v in _search_failure_counts().items() if v != before.get(k, 0)}
+        if delta:                         # e.g. {'pool_recreated': 1} after a dead K4L worker, {'native_pool': 1}
+            s = dict(s, search_failures=delta)
         defaulted = bool(s.get('fallback')) or bool(s.get('student_default')) or 'preparation_cutoff' in s
         source = 'search' if not defaulted else f'default-{self.cutoff_default}'
         return self._done(d, source, wall0, cpu0, fast=fast, search=s)
@@ -304,9 +328,10 @@ class LivePlayer:
                      belief_rebuilds=getattr(self.search.p.belief, 'rebuilds', 0) if self.search else 0,
                      wall_ms=1000*(time.monotonic()-wall0), cpu_ms=1000*(time.process_time()-cpu0))
         if search is not None:
-            stats.update({k: search.get(k) for k in ('hit', 'completed', 'candidates', 'rollouts',
-                                                     'student_default', 'preparation_cutoff')
-                          if search.get(k) is not None})
+            stats.update(search_stats(search))
+            if search.get('native_failure') is not None:
+                self.native_failures[search['native_failure']] += 1
+                stats['native_failures'] = sum(self.native_failures.values())
             stats['search_wall_ms'] = 1000*search['wall_seconds']
         if error is not None:
             stats['error'] = error
@@ -317,6 +342,36 @@ class LivePlayer:
     def close(self):
         if self.search is not None:
             self.search.close()
+
+
+SEARCH_KEYS = ('hit', 'completed', 'candidates', 'rollouts', 'student_default', 'preparation_cutoff', 'native_failure',
+               'search_failures',
+               'own_state_break', 'own_state_breaks', 'opp_state_break', 'opp_state_breaks')
+RENAMED = {'native': 'native_rollouts', 'learned': 'learned_rollouts'}
+FAILURE_MARKS = ('fail', 'error', 'panic', 'broken', 'dead')
+
+
+def search_stats(search):
+    """The search tier's per-decision stats that enter LivePlayer's decision stats (and LiveSession.log): the
+    fixed keys above, lopp_fast's rollout split (native/learned -> *_rollouts), and ANY key naming a failure
+    (fail/error/panic/broken/dead), so a new failure field of the search reaches the logs without a change here."""
+    out = {}
+    for k, v in search.items():
+        if v is None:
+            continue
+        if k in SEARCH_KEYS or any(m in k for m in FAILURE_MARKS):
+            out[k] = v
+        elif k in RENAMED:
+            out[RENAMED[k]] = v
+    return out
+
+
+def _search_failure_counts():
+    """lopp.FAILURES (process-wide counts of K4L decisions given up / pools recreated) if the K4L search is loaded;
+    LivePlayer reports the per-decision change as `search_failures`."""
+    import sys
+    lopp = sys.modules.get('bot.search.lopp')
+    return dict(getattr(lopp, 'FAILURES', None) or {})
 
 
 def _reraise_control(ex):

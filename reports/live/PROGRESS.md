@@ -255,3 +255,30 @@
   - **Fixes:** a deck-rule board sanitizer in `translate.py`, and BaseException guards in `player.py`.
   - **Tests:** 8 new pass, 39 existing pass. 10 PERC-emp:K4L games: 0 crashes.
   - **Regression roots** for the bot lead are in `05:/mpac/sdicks02/jobs/clasher/live-panic-fix/`.
+- **10:52Z, bot lead's K4L fix on main (654b18bb):** the fc cut keeps every referenced card;
+  panic/EOF/BrokenPipe fall back to the cutoff default; the pool is replaced.
+  - The K4L rerun is staged in a separate dir, `03:/mpac/sdicks02/repos/clasher-live-eval2` (origin/main 654b18bb,
+    which includes our sanitizer 45658350), so the running ablation's tree isn't touched.
+  - Script: `03:/mpac/sdicks02/jobs/clasher/live-perc-winrate-k4l-r2/run.sh` (cores 0–59, group 4).
+  - Launch after the ablation ends and the bot lead posts "03 clear". Report the default share (this run is also the
+    re-timing).
+- **10:58Z:** ft-r3 relaunched (PID 3133892, GPU 92%), ending ~14:00–14:30Z. Loader stall fixed with NUMPY_MADVISE_HUGEPAGE=0 (THP compaction on 01); tip passed to the bot lead.
+- **11:00Z:** the K4L rerun run.sh sets NUMPY_MADVISE_HUGEPAGE=0 for both arms (recorded; it changes timing compared with earlier 03 runs).
+- **11:33Z, coordinator: live runs use pin set r1-total** (main 5cb79878, native 681b5f2c, panic-free,
+  output-identical to r1). The fleet bot track stays on r1.
+  - The K4L rerun is re-staged in `clasher-live-eval2` with r1-total and THP off; it loads 681b5f2c (checked).
+  - The Mac bench owner is told to build from 44874fd6 source + NATIVE-TOTAL.diff and pin `mac-r1-total`.
+  - **Bot-lead findings:** `native_failure` stat dropped in `_done`; duplicate hand card / 5-card cycle.
+    Assigned to `live-hand-sanitize-owner-r1`.
+- **11:41Z, K4L PERC rerun launched on 03:** PGID 90747, `run.sh --cores 36-59` (6 groups), r1-total, THP off.
+  The 2-game smoke was OK.
+  - When the ablation (PGID 4060013) ends, ~12:55Z: TERM -90747, then `setsid -f run.sh` (defaults to 0-59; it
+    resumes).
+  - The default share in the first part was measured beside the ablation; flag that in the results.
+- **12:01Z, hand/cycle fix DONE** (`reports/live/integration/HAND-FIX.md`).
+  - Own hand is now TRACKED from the opening order and our own plays; the HUD only breaks ties.
+  - Corrections in 5.1% of PERC-emp polls, 0 invariant breaks.
+  - The `native_failure` and `search_failures` stats are now logged.
+  - Tests: 61 pass, 1 skip (the panic repro, now a no-op on r1-total).
+  - **Note:** the running K4L rerun (code from 5cb79878) predates this fix, but it's consistent within its own run.
+    Later PERC numbers will include it.

@@ -167,9 +167,9 @@ MODELS = Path(os.environ.get('CLASHER_LOPP_MODELS', '/mpac/sdicks02/jobs/clasher
 
 @pytest.mark.skipif(not (MODELS / 'pool.npz').exists(), reason='no K4L opponent nets (CLASHER_LOPP_MODELS)')
 def test_k4l_dead_pool_worker_keeps_falling_back(rt):
-    """K4L p4: a pool worker that died (as after a panic in batch_rollouts) breaks every later search decision
-    (BrokenPipe/EOF); the match continues on it5s2 and the search tier is disabled after max_errors. Runs last in
-    this module: the pool is per process (lopp_fast._POOLS)."""
+    """K4L p4: a pool worker that died (as after a panic in batch_rollouts). Since main 654b18bb lopp_fast handles it
+    itself: the pool is recreated at the next pool use (here the very decision the worker was killed before;
+    lopp.FAILURES['pool_recreated'], reported per decision as `search_failures`), and the search resumes. No exception reaches LivePlayer. Runs last in this module: the pool is per process (lopp_fast._POOLS)."""
     from bot.live.player import make_live_player
     from bot.search import lopp_fast
     from bot.players.ours import play_match, x4s_setup
@@ -200,6 +200,7 @@ def test_k4l_dead_pool_worker_keeps_falling_back(rt):
                decks=case['decks'], max_ticks=900)
     srcs = [d['source'] for d in bot2.decisions]
     assert killed, 'pool worker was never killed'
-    k = srcs.index('fast-error')
-    assert 'search' not in srcs[k:] and 'fast-disabled' in srcs[k:]     # never searches again; disabled
-    assert all(d['action'] == d['fast_action'] for d in bot2.decisions[k:] if d['source'].startswith('fast'))
+    k = next(i for i, d in enumerate(bot2.decisions) if d.get('search_failures', {}).get('pool_recreated'))
+    assert k >= 2 and 'fast-error' not in srcs and not bot2.search_disabled
+    assert 'search' in srcs[k:]                                          # the recreated pool searches again
+    assert all(d['action'] == d['fast_action'] for d in bot2.decisions if d['source'].startswith(('fast', 'default')))
