@@ -28,6 +28,18 @@ Names 'K4L-' + tokens (candidates, coarse scan, refine, timed-wait bonus, S-defa
 - h<N>     learned opponent for the first N rollout ticks, scripted balanced afterwards
 - i<I>     learned opponent decision interval (default 5 = the real players' poll cadence)
 - t/c/p/w  threads, chunks, worker processes, wall deadline (kind R only): bot/search/lopp_fast.py
+Round 2 (kind R; defaults reproduce K4L-R exactly):
+- W<pct>   weight on the learned term: (1-w)*balanced + w*L (default (balanced + L)/2)
+- K<n>     n learned samples per key, sample j>0 with its own common random numbers (seed + [j]); L = their mean
+- T<n>     learned work set = top-n plays by the balanced coarse scan (default 8) + waits
+- m<a>+<b> several models: learned sample j uses model j mod len (e.g. mR3a+v1-K2: one R3a and one v1 sample)
+- b<p|m><tenths>  gate logit bias inside rollouts (bp5 = +0.5: more plays; bm5 = -0.5: fewer)
+- S<j>     reseeded control: learned sample k uses CRN key index k + j (S0 == K4L-R; S1 is K4L-R with other draws)
+- D        determinized samples (with K<n>): learned sample j>0 runs from its own root, built from its own belief
+           sample of the opponent's hidden cards (rng keyed seed, tick, j); sample 0 uses the planner's root.
+           Serial only (no t/c/p/w).
+- O        learned rollouts also drive OUR side with the learned net (own seat's public view, its own CRN key
+           seed + [7777]; decisions every i<I> ticks) instead of scripted balanced
 Deterministic: no wall clock; gs uniforms are keyed by (match seed, tick, rollout tick).
 """
 from __future__ import annotations
@@ -59,9 +71,10 @@ def load_model(name):
 class Learned:
     """Opponent controller: model + gate mode + optional switch to scripted balanced after `switch` ticks."""
 
-    def __init__(self, model, sample=False, switch=None, interval=5, seed=0, rowwise=False):
+    def __init__(self, model, sample=False, switch=None, interval=5, seed=0, rowwise=False, bias=0., own=None):
         self.m, self.sample, self.switch, self.interval, self.seed = model, sample, switch, interval, seed
-        self.rowwise = rowwise
+        self.rowwise, self.bias = rowwise, bias
+        self.own = own          # a Learned for our own seat inside the rollout (token O), else scripted balanced
         self.calls = self.plays = 0
         self.elixir_at_play = 0.
 
@@ -81,7 +94,7 @@ class Learned:
         else:
             h = m.trunk(X, cards)
             gate, vlog = m.heads(h)
-        p = 1 / (1 + np.exp(-gate[:, 0]))
+        p = 1 / (1 + np.exp(-(gate[:, 0] + self.bias if self.bias else gate[:, 0])))
         u = np.random.default_rng([*self.seed, tick]).random(2) if self.sample else None
         out = []
         self.calls += len(idxs)
@@ -141,12 +154,19 @@ def batch_rollouts(native, root, seat, actions, opponent, *, delay, opp_delay, h
 
     opp_decide(0, list(range(n)))
     step = math.gcd(interval, opponent.interval) if learned else interval
+    own_l = opponent.own if learned else None
     k = 0
     while k < horizon:
         if deadline is not None and time.monotonic() >= deadline:
             return None
         if k > 0:
-            if k % interval == 0:
+            if own_l is not None:
+                idxs = [i for i in range(n) if own[i] is None and k >= waits[i]]
+                if idxs and k % own_l.interval == 0:
+                    for i, a in zip(idxs, own_l.decide(native, sims, idxs, seat, tick0 + k)):
+                        if a != WAIT:
+                            own[i] = (k + delay, a)
+            elif k % interval == 0:
                 for i in range(n):
                     if own[i] is None and k >= waits[i]:
                         a = native.select_action(sims[i], seat, 'balanced')
@@ -170,7 +190,18 @@ def batch_rollouts(native, root, seat, actions, opponent, *, delay, opp_delay, h
     return [native.evaluate(s, seat, elixir_weight) for s in sims]
 
 
-def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine_proposals=(), make_opp=None):
+def mean_samples(vals):
+    """Mean of K learned samples (K=1: the value itself, so K1 == K4L-R bit for bit)."""
+    return vals[0] if len(vals) == 1 else sum(vals) / len(vals)
+
+
+def mix(b, learned, lw=None):
+    """K4L-R score: (balanced + learned)/2, or (1-lw)*balanced + lw*learned with token W<pct>."""
+    return (b + learned) / 2 if lw is None else (1 - lw) * b + lw * learned
+
+
+def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine_proposals=(), make_opp=None,
+                   root_for=None):
     """K4C-r16's anytime reduction (oppmodel.reduce_scores, weights=None) with the learned-opponent arms."""
     original = list(candidates)
     if WAIT not in original or len(set(original)) != len(original):
@@ -198,9 +229,11 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
 
     def learned_values(keys):
         keys = list(dict.fromkeys(keys))
-        vals = batch_rollouts(core.native, root, seat, keys, make_opp(), **kw)
-        n_learned[0] += len(keys)
-        return dict(zip(keys, vals))
+        n = arm.get('samples', 1)
+        runs = [batch_rollouts(core.native, root if j == 0 or root_for is None else root_for(j), seat, keys,
+                               make_opp(j), **kw) for j in range(n)]
+        n_learned[0] += n * len(keys)
+        return {a: mean_samples([r[i] for r in runs]) for i, a in enumerate(keys)}
 
     scores = {}
     if kind == 'L':
@@ -213,7 +246,7 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
         waits = [a for a in original if a >= WAIT and a != 2400]
         native_values(scan, STYLES[0])
         first = {a: 0. + nat[a, STYLES[0]] for a in scan}
-        chosen = set(sorted(plays, key=lambda a: (-first[a], original.index(a)))[:8])
+        chosen = set(sorted(plays, key=lambda a: (-first[a], original.index(a)))[:arm.get('top', 8)])
         chosen.update(a for a in refine_proposals if a in plays)
         work = [a for a in original if a >= WAIT or a in chosen]
         keys = [a for a in original if (a >= WAIT and a != 2400) or a in chosen]
@@ -226,7 +259,7 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
             k = WAIT if a == 2400 else a
             b = first[k] if k < WAIT else nat[k, STYLES[0]]
             if kind == 'R':
-                scores[a] = (b + L[k]) / 2
+                scores[a] = mix(b, L[k], arm.get('lw'))
                 continue
             s = b/3 if k < WAIT else 0. + b/3          # frozen order: ((b/3) + p/3) + d/3
             for style in STYLES[1:]:
@@ -241,27 +274,43 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
     return best, dict(rollouts=n_native[0] + n_learned[0], native=n_native[0], learned=n_learned[0])
 
 
+def sample_seed(seed, j):
+    """Common-random-number key of learned sample j (sample 0 = K4L-R's own key)."""
+    return list(seed) if j == 0 else [*seed, j]
+
+
 class LearnedOppPlayer(CandidateSearchPlayer):
-    def __init__(self, rt, *, arm, model='pool', sample=False, switch=None, interval=5, rowwise=False, name=None):
+    def __init__(self, rt, *, arm, model='pool', sample=False, switch=None, interval=5, rowwise=False, bias=0.,
+                 name=None):
         super().__init__(rt, r3a=16, second=0, name=name)
         self.arm, self.model_name = arm, model
-        self.sample, self.switch, self.interval, self.rowwise = sample, switch, interval, rowwise
+        self.sample, self.switch, self.interval, self.rowwise, self.bias = sample, switch, interval, rowwise, bias
 
     def start(self, ctx):
         super().start(ctx)
         import sdefault
         core = self.p.core
-        model = load_model(self.model_name) if self.arm['kind'] != 'X' else None
+        models = [load_model(m) for m in self.model_name.split('+')] if self.arm['kind'] != 'X' else [None]
         self._dec, self.opp_calls, self.opp_plays = {}, 0, 0
         seed = ctx.seed
 
-        def make_opp():
-            return Learned(model, self.sample, self.switch, self.interval, seed=[seed, int(core.info.tick)],
-                           rowwise=self.rowwise)
+        def make_opp(j=0):
+            key = sample_seed([seed, int(core.info.tick)], j + self.arm.get('offset', 0))
+            m = models[j % len(models)]
+            own = (Learned(m, self.sample, None, self.interval, seed=[*key, 7777], rowwise=self.rowwise,
+                           bias=self.bias) if self.arm.get('own') else None)
+            return Learned(m, self.sample, self.switch, self.interval, seed=key, rowwise=self.rowwise,
+                           bias=self.bias, own=own)
+
+        def root_for(j):
+            # token D: an independent belief sample of the hidden cards (and root RNG) for learned sample j
+            rng = np.random.default_rng([seed, int(core.info.tick), j, 0xD])
+            return self.rt.R.root(core.info, self.p.belief.sample(rng), rng)
 
         def score_candidates(root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
             action, info = reduce_learned(core, root, seat, candidates, self.arm, coarse_order=core.coarse_order,
-                                          refine_proposals=core.refine_proposals, make_opp=make_opp)
+                                          refine_proposals=core.refine_proposals, make_opp=make_opp,
+                                          root_for=root_for if self.arm.get('determinize') else None)
             action = fallback if action is None else action
             core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
@@ -281,14 +330,28 @@ class LearnedOppPlayer(CandidateSearchPlayer):
 def make_lopp_player(rt, name):
     """'K4L-' + tokens (module docstring), e.g. K4L-X, K4L-M0, K4L-M50, K4L-R, K4L-L-mR3a-gs-h60.
     t<N>/c<P>/p<P>/w<ms> (threads, chunks, worker processes, wall deadline): bot/search/lopp_fast.py."""
-    kw, arm, fast = {}, None, {}
+    kw, arm, fast, extra = {}, None, {}, {}
     for token in name.split('-')[1:]:
         if token in ('X', 'R', 'L'):
             arm = dict(kind=token)
         elif m := re.fullmatch(r'M(\d+)', token):
             arm = dict(kind='M', w=int(m[1])/100)
-        elif m := re.fullmatch(r'm([\w.]+)', token):
+        elif m := re.fullmatch(r'm([\w.+]+)', token):
             kw['model'] = m[1]
+        elif m := re.fullmatch(r'W(\d+)', token):
+            extra['lw'] = int(m[1]) / 100
+        elif m := re.fullmatch(r'K(\d+)', token):
+            extra['samples'] = int(m[1])
+        elif token == 'O':
+            extra['own'] = True
+        elif token == 'D':
+            extra['determinize'] = True
+        elif m := re.fullmatch(r'S(\d+)', token):
+            extra['offset'] = int(m[1])
+        elif m := re.fullmatch(r'T(\d+)', token):
+            extra['top'] = int(m[1])
+        elif m := re.fullmatch(r'b([pm])(\d+)', token):
+            kw['bias'] = (1 if m[1] == 'p' else -1) * int(m[2]) / 10
         elif token == 'gs':
             kw['sample'] = True
         elif token == 'rw':
@@ -305,6 +368,11 @@ def make_lopp_player(rt, name):
             raise ValueError(f'unknown learned-opponent token {token!r} in {name!r}')
     if arm is None:
         raise ValueError(name)
+    if extra and arm['kind'] != 'R':
+        raise ValueError(f'{name}: W/K/T/O tokens are defined for kind R only')
+    arm.update(extra)
+    if fast and arm.get('determinize'):
+        raise ValueError(f'{name}: D is serial only')
     if fast:
         from bot.search.lopp_fast import make_fast_player
         return make_fast_player(rt, name, arm, dict(kw, **fast))

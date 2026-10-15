@@ -58,6 +58,9 @@ def main():
     ap.add_argument('--dropout', type=float, default=0.3)
     ap.add_argument('--threads', type=int, default=16)
     ap.add_argument('--procs', type=int, default=16)
+    ap.add_argument('--layers', type=int, default=2, choices=[2, 3], help='trunk depth (3 adds W3/b3)')
+    ap.add_argument('--lr', type=float, default=1e-3)
+    ap.add_argument('--bs', type=int, default=1024)
     a = ap.parse_args()
     import torch
     import torch.nn as nn
@@ -78,10 +81,13 @@ def main():
     C = np.array([[vocab.get(t, 0) for t in r[3]] for r in rows], np.int64)
     A = np.array([r[4] for r in rows], np.int64)
     play = A < 2304
-    M = np.zeros((len(rows), 2304), bool)
-    for i, r in enumerate(rows):
-        if r[5] is not None:
-            M[i] = r[5]
+    # legal masks only for plays (a dense rows x 2304 mask is 5.5 GB at 2.4M rows); MI = row -> mask index
+    MI = np.full(len(rows), -1, np.int64)
+    MI[play] = np.arange(int(play.sum()))
+    M = np.zeros((int(play.sum()), 2304), bool)
+    for i in np.flatnonzero(play):
+        M[MI[i]] = rows[i][5]
+    rows = [(r[0], r[1]) for r in rows]      # free the per-row arrays (X, C, A, M hold everything else)
     mu = X[~val].mean(0)
     sd = X[~val].std(0)
     sd[sd < 1e-3] = 1.
@@ -97,6 +103,7 @@ def main():
             self.l1 = nn.Linear(D, H)
             self.l1c = nn.Linear(4 * E, H, bias=False)
             self.l2 = nn.Linear(H, H)
+            self.l3 = nn.Linear(H, H) if a.layers == 3 else None
             self.g = nn.Linear(H, 1)
             self.v = nn.Linear(H, V)
             self.t = nn.Linear(H, H)
@@ -105,26 +112,28 @@ def main():
 
         def trunk(self, x, c):
             h = F.dropout(F.relu(self.l1(x) + self.l1c(self.emb(c).flatten(1))), a.dropout, self.training)
-            return F.dropout(F.relu(self.l2(h)), a.dropout, self.training)
+            h = F.dropout(F.relu(self.l2(h)), a.dropout, self.training)
+            return h if self.l3 is None else F.dropout(F.relu(self.l3(h)), a.dropout, self.training)
 
         def tiles(self, h, card):
             return self.o(F.relu(self.t(h) + self.tem(card)))
 
     net = Net()
-    opt = torch.optim.Adam(net.parameters(), lr=1e-3, weight_decay=1e-5)
+    opt = torch.optim.Adam(net.parameters(), lr=a.lr, weight_decay=1e-5)
     Xt = torch.from_numpy((X - mu) / sd)
-    Ct, At, Pt, Mt = torch.from_numpy(C), torch.from_numpy(A), torch.from_numpy(play), torch.from_numpy(M)
+    Ct, At, Pt, Mt, MIt = (torch.from_numpy(C), torch.from_numpy(A), torch.from_numpy(play), torch.from_numpy(M),
+                           torch.from_numpy(MI))
     tr = np.flatnonzero(~val)
     va = np.flatnonzero(val)
 
     def losses(idx):
         idx = torch.from_numpy(idx)
-        x, c, act, p, m = Xt[idx], Ct[idx], At[idx], Pt[idx], Mt[idx]
+        x, c, act, p = Xt[idx], Ct[idx], At[idx], Pt[idx]
         h = net.trunk(x, c)
         lg = F.binary_cross_entropy_with_logits(net.g(h)[:, 0], p.float())
         out = dict(gate=lg)
         if p.any():
-            hp, cp, ap_, mp = h[p], c[p], act[p], m[p].view(-1, 4, 576)
+            hp, cp, ap_, mp = h[p], c[p], act[p], Mt[MIt[idx][p]].view(-1, 4, 576)
             slot = ap_ // 576
             legal = mp.any(-1)
             vl = net.v(hp).gather(1, cp)
@@ -136,7 +145,7 @@ def main():
             out['_vl'], out['_tl'], out['_slot'], out['_tile'] = vl, tl, slot, ap_ % 576
         return out
 
-    bs = 1024
+    bs = a.bs
     rng = np.random.default_rng(0)
     best = None
     for ep in range(a.epochs):
@@ -200,7 +209,8 @@ def main():
     sd_ = {k: v.detach().numpy() for k, v in net.state_dict().items()}
     np.savez(a.out / f'{a.name}.npz',
              emb=sd_['emb.weight'], W1=sd_['l1.weight'].T.copy(), b1=sd_['l1.bias'], W1c=sd_['l1c.weight'].T.copy(),
-             W2=sd_['l2.weight'].T.copy(), b2=sd_['l2.bias'], wg=sd_['g.weight'].T.copy(), bg=sd_['g.bias'],
+             W2=sd_['l2.weight'].T.copy(), b2=sd_['l2.bias'],
+             **({} if a.layers == 2 else dict(W3=sd_['l3.weight'].T.copy(), b3=sd_['l3.bias'])), wg=sd_['g.weight'].T.copy(), bg=sd_['g.bias'],
              Wv=sd_['v.weight'].T.copy(), bv=sd_['v.bias'], Wt=sd_['t.weight'].T.copy(), bt=sd_['t.bias'],
              tem=sd_['tem.weight'], Wo=sd_['o.weight'].T.copy(), bo=sd_['o.bias'],
              meta_vocab=np.array(vocab_tokens, np.int64), meta_cost=np.array([cost_of.get(t, 0.) for t in vocab_tokens]),

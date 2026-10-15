@@ -74,7 +74,8 @@ class NumpyOpponent:
         X = (X - self.mu) / self.sd
         emb = w['emb'][cards].reshape(len(cards), -1)
         h = np.maximum(0, X @ w['W1'] + emb @ w['W1c'] + w['b1'])
-        return np.maximum(0, h @ w['W2'] + w['b2'])
+        h = np.maximum(0, h @ w['W2'] + w['b2'])
+        return h if 'W3' not in w else np.maximum(0, h @ w['W3'] + w['b3'])
 
     def heads(self, h):
         w = self.w

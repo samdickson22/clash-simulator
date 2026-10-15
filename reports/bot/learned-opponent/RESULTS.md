@@ -153,7 +153,7 @@ Reproduce with:
 
 | finding | fix | exactness |
 |---|---|---|
-| The pinned native keeps the GIL in BattleState.step and NativeScripts.* (the `gil-release` cargo feature is off). Learned rollouts: 69.6 ms sequential → 79.3 ms on 4 threads. | `p<P>`: learned rollouts in P forked or spawned worker processes, started once per process. `t<N>`: native rollout_e1 on N threads (it does release the GIL). | Pool == serial, bit for bit (below). |
+| Learned rollouts do not scale with threads: 69.6 ms sequential → 79.3 ms on 4 threads. (Corrected 2026-10-15 by `bot.search.lopp_gil`: the native does release the GIL in BattleState.step (3.52× on 4 threads), NativeScripts.select_action (3.69×) and rollout_e1 (3.75×). What serialises the loop is the opponent's Python/numpy decide step (json.loads + featurize 1.07×, one-row forward 0.71×) plus native calls that do not scale (clone 0.25×, evaluate 0.32×, public_mask 0.63×, public_view 0.70×, apply_discrete 0.94×). The earlier note that the `gil-release` feature is off was wrong.) | `p<P>`: learned rollouts in P forked or spawned worker processes, started once per process. `t<N>`: native rollout_e1 on N threads (it does release the GIL). | Pool == serial, bit for bit (below). |
 | The opponent net's float32 forward depends on batch composition: OpenBLAS rows change when re-batched. A 2-row call costs 0.26 ms vs 0.038 ms for 1 row, because each call streams W1 (0.9 MB). | `rw`: one row per forward. | Values no longer depend on batching; 600/600 screen games equal K4L-R-gs. |
 | The root snapshot is 2.1 MB, of which 2.07 MB is the 56-card config. | Workers rebuild roots from the ~60 KB dynamic part plus a config holding only the cards in hand and cycle. Parse 1.1 vs 7.1 ms. | 0 mismatches on 3,800 checked rollout values. |
 | Preparation re-serializes the 2 MB config on every root, and K4C-r16's r16 list re-runs R3a's forward. | `fp`: cached config JSON (byte-identical payload) and an exact-input memo of R3a's outputs. `fc`: deck-card configs in the main process too. | `fp`: verify mode asserts equality. `fp`/`fc` games have the same command hash as K4L-R-gs. |
@@ -330,8 +330,34 @@ Method:
   - A spawned worker rebuilds NativeScripts from `json.dumps(R.meta)`; verified bit-exact on Linux with
     `CLASHER_LOPP_POOL_START=spawn`.
 - **Native and pins:** no new native build and no pin change; it runs on the frozen 44874fd6 runtime.
-- **Lever (d) was not needed.** Moving the opponent's forward into Rust, or building the existing `gil-release`
-  cargo feature, would make learned rollouts GIL-free in-process (~4 ms each instead of ~6–8). That would need a new
-  native build and pin set.
+- **Lever (d) was not needed.** Moving the opponent's decide step (public features + forward) into Rust would make
+  learned rollouts GIL-free in-process. That would need a new native build and pin set.
+  - Corrected 2026-10-15: `gil-release` is already on in the pinned native (step and select_action scale 3.5–3.7×
+    on 4 threads). The GIL-bound part is our Python/numpy decide plus clone/public_view/public_mask/evaluate.
+  - In-process threads therefore do not replace the pool: on the same roots a learned batch takes 135 ms on 4 threads
+    vs 66 ms with p4 (142 ms serial; values identical). See round 2 in PROGRESS.md.
 - **On a 5-core budget:** keep t4-p4, which beat t4-p3 and t2-p4. If the Mac's per-core speed falls short, use
   `-i10`, which is as strong in ours and has less learned work.
+
+## Round 2: fresh bank 3, pre-registered (2026-10-15T10:04:20Z, before any game on it)
+
+- **Drawn** 2026-10-15T10:04:20Z: BASE **4303584859564336** = int.from_bytes(os.urandom(6),'big')<<4. No game has been played on it.
+- **Engine and protocol:** RoyaleSim 15.535 via bot/eval/headline.py --engine rsim15535, cases 0–1199 × opponents R3a,
+  v1, rext-bc. Each arm is paired on the same cases against **K4L-R-gs-rw-fp**, the fp twin of K4L-R-gs: identical
+  decisions to K4L-R-gs (600/600 HEADLINE hashes for rw; fp cases 0 and 3 checked), played on this bank too.
+- **Candidate:** **K4L-R-gs-rw-O-fp** (token O: inside the learned rollouts our own side is also driven by the learned
+  net, with its own common-random-number key, instead of scripted balanced). It is the deterministic twin of
+  LIVE-K4L-R-gs-rw-O-fc-w200-t4-p4; its fp games equal the serial K4L-R-gs-rw-O games (cases 0 and 3).
+  - Why O: of 15 round-2 arms it is the only one positive in both screens:
+    - ours, HEADLINE 0–299: +0.035 [+0.009, +0.062] vs the mean of 3 equal-strength reference runs;
+    - RoyaleSim, HEADLINE 0–299 × 3 opponents: +0.024 [+0.002, +0.047] vs K4L-R-gs.
+  - Details in PROGRESS.md, round 2.
+- **Decision rule (fixed now).** K4L-R-gs-rw-O becomes the new best if both hold:
+  1. its pooled paired delta vs K4L-R-gs-rw-fp on this bank (equal weight per opponent, 95% bootstrap CI) has a lower
+     bound > 0;
+  2. in a 4-core pinned timing run on 127x03 (siblings idle, K4L reference in the same run),
+     LIVE-K4L-R-gs-rw-O-fc-w200-t4-p4 plays the cutoff default on ≤ 1% of decisions, and its complete search
+     (K4L-R-gs-rw-O-fc-t4-p4) has p95 ≤ 190 ms.
+  - Otherwise K4L-R-gs stays the best.
+- **Reporting:** pooled and per-opponent deltas, win rates, and timing p50/p95/p99 and default share. Every game is
+  reported.

@@ -1,9 +1,13 @@
 """K4L-R under a wall budget: threaded native rollouts, learned rollouts in persistent worker processes (exploration).
 
 K4L-R-gs (bot/search/lopp.py) spends its decision on ~22 native balanced rollouts (coarse scan + waits) and ~11
-Python-driven learned-opponent rollouts (WAIT, timed waits, top-8 plays). The pinned native releases the GIL in
-rollout_e1 but not in BattleState.step / NativeScripts.* (the `gil-release` cargo feature is off in 44874fd6), so
-the learned loop does not scale with threads. Tokens added to 'K4L-R...' names (kind R only):
+Python-driven learned-opponent rollouts (WAIT, timed waits, top-8 plays). Measured with bot/search/lopp_gil.py (1 vs 4
+threads, 4 pinned quiet cores, 2026-10-15): the pinned native releases the GIL in rollout_e1 (3.75x),
+BattleState.step (3.52x) and NativeScripts.select_action (3.69x), but clone (0.25x), evaluate (0.32x), public_mask
+(0.63x), public_view (0.70x) and apply_discrete (0.94x) do not scale, and the opponent's decide step is Python/numpy
+on the GIL (json.loads + featurize 1.07x, the one-row forward 0.71x). That decide step is about half of a learned
+rollout, so the learned loop does not scale with threads (a learned batch: 142 ms serial, 135 ms on 4 threads, 66 ms
+in the 4-process pool). Tokens added to 'K4L-R...' names (kind R only):
 
 - t<N>  native rollouts on N threads (1, 2 or 4; rollout_e1 on a private clone, as the frozen anchor.anytime).
         Values are unchanged: with no other token this is K4L-R bit for bit (same 11-key learned batch).
@@ -25,6 +29,9 @@ the learned loop does not scale with threads. Tokens added to 'K4L-R...' names (
         preparation cutoffs as K4CW). At the cutoff only keys with both a balanced and a learned value count;
         if no play is complete the S-default rule plays the cutoff default (R3a, or it5s2 under LIVE-).
         Requires t<N> (sets the K kernel's thread count too).
+Round-2 tokens (lopp.py: W<pct>, K<n>, T<n>, m<a>+<b>, b<p|m><tenths>) work here too: each learned sample j is
+its own set of chunks (the waits chunk of sample j goes to worker j mod P at the start of the decision); with rw
+the values equal the serial arm's. Under w<ms> a key counts only once all K samples are in.
 Examples: K4L-R-gs-t4 (== K4L-R-gs), K4L-R-gs-c4 (serial twin), K4L-R-gs-t4-p4, K4L-R-gs-w200-t4-p4,
 LIVE-K4L-R-gs-w200-t4-p4 (LivePlayer search tier with this search; it5s2 fast tier and cutoff default).
 Without w<ms> nothing reads the clock, so every arm is deterministic.
@@ -38,7 +45,8 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from multiprocessing.connection import wait as wait_conns
 
 from bot.players.base import WAIT
-from bot.search.lopp import Learned, LearnedOppPlayer, batch_rollouts, load_model
+from bot.search.lopp import (Learned, LearnedOppPlayer, batch_rollouts, load_model, mean_samples, mix,
+                              sample_seed)
 from bot.search.oppmodel import STYLES, TIMED_WAITS, _argmax, _bonus
 
 _POOLS: dict = {}
@@ -77,8 +85,19 @@ class ConfigCache:
         return head + self.cut[need] + tail
 
 
+def opponent_from_spec(opp, j=0):
+    """Learned sample j from the pool's opponent spec (models list, CRN key seed + [j] for j > 0)."""
+    models = opp.get('models') or [opp['model']]
+    m, key = load_model(models[j % len(models)]), sample_seed(opp['seed'], j + opp.get('offset', 0))
+    own = (Learned(m, opp['sample'], None, opp['interval'], seed=[*key, 7777], rowwise=opp.get('rowwise', False),
+                   bias=opp.get('bias', 0.)) if opp.get('own') else None)
+    return Learned(m, opp['sample'], opp['switch'], opp['interval'], seed=key, rowwise=opp.get('rowwise', False),
+                   bias=opp.get('bias', 0.), own=own)
+
+
 def _pool_worker(conn, native, spawn=None):
-    """Worker loop: ('root', gen, snapshot, seat, kw, opp, cutoff) then ('run', gen, cid, keys) -> ('done', ...).
+    """Worker loop: ('root', gen, snapshot, seat, kw, opp, cutoff) then ('run', gen, cid, keys[, sample]) ->
+    ('done', ...).
     spawn = (native module name, metadata JSON, model names): a spawned worker builds its own NativeScripts."""
     if spawn is not None:
         module, meta, models = spawn
@@ -101,13 +120,13 @@ def _pool_worker(conn, native, spawn=None):
             root = state_class(snap if isinstance(snap, str) else configs.payload(*snap))
             t_parse = time.monotonic() - t0
         elif msg[0] == 'run':
-            _, g, cid, keys = msg
+            _, g, cid, keys = msg[:4]
+            j = msg[4] if len(msg) > 4 else 0
             c0, w0 = time.process_time(), time.monotonic()
             vals = None
             if g == gen and (cutoff is None or time.monotonic() < cutoff):
-                opponent = opp if isinstance(opp, str) else Learned(   # a style name: exactness checks
-                    load_model(opp['model']), opp['sample'], opp['switch'], opp['interval'], seed=opp['seed'],
-                    rowwise=opp.get('rowwise', False))
+                # a style name: exactness checks
+                opponent = opp if isinstance(opp, str) else opponent_from_spec(opp, j)
                 vals = batch_rollouts(native, root, seat, keys, opponent, deadline=cutoff, **kw)
             conn.send(('done', g, cid, vals, time.process_time() - c0, time.monotonic() - w0, t_parse))
         else:
@@ -170,8 +189,8 @@ class LearnedPool:
         for conn in self.conns:
             conn.send(('root', self.gen, msg, seat, kw, opp, cutoff))
 
-    def submit(self, worker, cid, keys):
-        self.conns[worker].send(('run', self.gen, cid, list(keys)))
+    def submit(self, worker, cid, keys, sample=0):
+        self.conns[worker].send(('run', self.gen, cid, list(keys)) + ((sample,) if sample else ()))
         self.pending[cid] = worker
 
     def collect(self, cutoff=None):
@@ -285,12 +304,12 @@ def install_fast_prep(rt, cut=False):
 
 def get_pool(n, native, model_name, meta=None, config=None):
     """One pool per process (started once, before any thread pool exists in this process).
-    meta: R.meta (dict) or its JSON; only a spawned pool uses it."""
+    meta: R.meta (dict) or its JSON; only a spawned pool uses it. model_name may be 'a+b' (all loaded)."""
     import json
     if n not in _POOLS:
         if meta is not None and not isinstance(meta, str):
             meta = json.dumps(meta)
-        _POOLS[n] = LearnedPool(n, native, (model_name,), meta, config)
+        _POOLS[n] = LearnedPool(n, native, tuple(model_name.split('+')), meta, config)
     return _POOLS[n]
 
 
@@ -309,7 +328,7 @@ def chunk_keys(keys, parts):
 
 
 def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, chunks=0, pool=None,
-                deadline=None, coarse_order=(), refine_proposals=()):
+                deadline=None, coarse_order=(), refine_proposals=(), lw=None, samples=1, top=8):
     """lopp.reduce_learned for kind R, with threaded native rollouts, chunked/pooled learned rollouts, cutoff."""
     original = list(candidates)
     if WAIT not in original or len(set(original)) != len(original):
@@ -349,7 +368,8 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         futs = {ex.submit(rollout, a): a for a in todo}
     if pool is not None:      # ship the root while the native threads run (rollout_e1 releases the GIL)
         pool.begin(root, seat, kw, opp_spec, deadline)
-        pool.submit(0, 'w', waits)
+        for j in range(samples):
+            pool.submit(j % len(pool.conns), ('w', j), waits, j)
         tm['ship'] = time.monotonic() - t0
     if threads == 1:
         for a in todo:
@@ -375,29 +395,34 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
     L, n_learned, first = {}, 0, {}
     if all(a in nat for a in scan):
         first = {a: 0. + nat[a] for a in scan}
-        chosen = set(sorted(plays, key=lambda a: (-first[a], original.index(a)))[:8])
+        chosen = set(sorted(plays, key=lambda a: (-first[a], original.index(a)))[:top])
         chosen.update(a for a in refine_proposals if a in plays)
         work = [a for a in original if a >= WAIT or a in chosen]
         keys = [a for a in original if (a >= WAIT and a != 2400) or a in chosen]
         if pool is not None:
-            parts = chunk_keys(keys, len(pool.conns))
-            for cid, group in parts:
+            P = len(pool.conns)
+            parts = [((cid, j), group) for j in range(samples) for cid, group in chunk_keys(keys, P)]
+            for (cid, j), group in parts:
                 if cid != 'w':
-                    pool.submit(cid, cid, group)
+                    pool.submit((cid + j) % P, (cid, j), group, j)   # sample j's plays shifted by j workers
             results = pool.collect(deadline)
         else:
-            parts = chunk_keys(keys, chunks) if chunks else [('all', list(dict.fromkeys(keys)))]
+            base = chunk_keys(keys, chunks) if chunks else [('all', list(dict.fromkeys(keys)))]
+            parts = [((cid, j), group) for j in range(samples) for cid, group in base]
             results = {}
-            for cid, group in parts:
-                results[cid] = None if expired() else batch_rollouts(native, root, seat, group, make_opp(),
-                                                                     deadline=deadline, **kw)
+            for (cid, j), group in parts:
+                results[cid, j] = None if expired() else batch_rollouts(native, root, seat, group, make_opp(j),
+                                                                        deadline=deadline, **kw)
+        per = {}
         for cid, group in parts:
             vals = results.get(cid)
             if vals is None:
                 hit = True
                 continue
-            L.update(zip(group, vals))
+            for a, v in zip(group, vals):
+                per.setdefault(a, {})[cid[1]] = v
             n_learned += len(group)
+        L = {a: mean_samples([d[j] for j in range(samples)]) for a, d in per.items() if len(d) == samples}
     else:
         hit = True
         work = original
@@ -412,7 +437,7 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         b = first.get(k) if k < WAIT else nat.get(k)
         if b is None or k not in L:
             continue
-        scores[a] = (b + L[k]) / 2
+        scores[a] = mix(b, L[k], lw)
     elixir = float(core.info.packet.observation.global_features[5])*10
     for a in scores:
         scores[a] = _bonus(a, scores[a], elixir)
@@ -434,22 +459,28 @@ class _FastMixin:
         if self.fast_prep or self.fast_cut:
             install_fast_prep(self.rt, cut=self.fast_cut)
         core = self.p.core
-        model = load_model(self.model_name)
+        names = self.model_name.split('+')
+        for name in names:
+            load_model(name)
         seed = ctx.seed
         pool = (get_pool(self.pool_size, core.native, self.model_name, getattr(self.rt.R, 'meta', None),
                          self.rt.R.config) if self.pool_size else None)
         threads = self.native_threads
+        arm = self.arm
 
-        def make_opp():
-            return Learned(model, self.sample, self.switch, self.interval, seed=[seed, int(core.info.tick)],
-                           rowwise=self.rowwise)
+        def spec():
+            return dict(model=names[0], models=names, sample=self.sample, switch=self.switch,
+                        interval=self.interval, seed=[seed, int(core.info.tick)], rowwise=self.rowwise,
+                        bias=self.bias, own=bool(arm.get('own')), offset=arm.get('offset', 0))
+
+        def make_opp(j=0):
+            return opponent_from_spec(spec(), j)
 
         def score_candidates(root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
-            opp_spec = dict(model=self.model_name, sample=self.sample, switch=self.switch,
-                            interval=self.interval, seed=[seed, int(core.info.tick)], rowwise=self.rowwise)
-            action, info = reduce_fast(core, root, seat, candidates, make_opp=make_opp, opp_spec=opp_spec,
+            action, info = reduce_fast(core, root, seat, candidates, make_opp=make_opp, opp_spec=spec(),
                                        threads=threads, chunks=self.chunks, pool=pool, deadline=deadline,
-                                       coarse_order=core.coarse_order, refine_proposals=core.refine_proposals)
+                                       coarse_order=core.coarse_order, refine_proposals=core.refine_proposals,
+                                       lw=arm.get('lw'), samples=arm.get('samples', 1), top=arm.get('top', 8))
             action = fallback if action is None else action
             core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
@@ -480,9 +511,10 @@ def wall_player_class():
         """K4L-R under a wall deadline: WallCandidatePlayer's preparation/cutoff handling + reduce_fast."""
 
         def __init__(self, rt, *, wall_ms, threads, chunks=0, pool=0, model='pool', sample=False, switch=None,
-                     interval=5, rowwise=False, fast_prep=False, fast_cut=False, name=None):
+                     interval=5, rowwise=False, fast_prep=False, fast_cut=False, bias=0., arm=None, name=None):
             super().__init__(rt, r3a=16, wall_ms=wall_ms, threads=threads, name=name)
             self.model_name, self.sample, self.switch, self.interval = model, sample, switch, interval
+            self.bias, self.arm = bias, arm or dict(kind='R')
             self.rowwise, self.fast_prep, self.fast_cut = rowwise, fast_prep, fast_cut
             self.native_threads, self.chunks, self.pool_size = threads, chunks, pool
 
@@ -512,7 +544,7 @@ def make_fast_player(rt, name, arm, kw):
         if kw.get('threads', 1) not in (1, 2, 4):
             raise ValueError(f'{name}: w<ms> needs t1, t2 or t4')
         kw.setdefault('threads', 1)
-        return wall_player_class()(rt, name=name, **kw)
+        return wall_player_class()(rt, name=name, arm=arm, **kw)
     return FastLearnedPlayer(rt, arm=arm, name=name, **kw)
 
 
