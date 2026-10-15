@@ -1224,6 +1224,20 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
     cpuq2, 24 workers, `$J8/ckpt-rl6/policy-00030.pt` sha 2083facd…). 08 had dropped to 41 live python: K4L feeder
     target 8 → **25** (PID 663854, `cpu-feed-k4l.log5`). `f9-rl5v30` (08) at 641/1200 games.
 
+- **22:02Z: r5 v30 on F9 (complete)** — vs it5s2: v1 0.923, +0.067 [+0.032, +0.100]; R3a 0.759, +0.102 [+0.058, +0.147];
+  mean **+0.085 [+0.056, +0.113]**. **vs r5 v10: v1 +0.015 [−0.013, +0.043], R3a +0.036 [−0.008, +0.078], mean +0.025
+  [−0.001, +0.052]** → passes the F10 screen (candidate 1). Plays/game vs v1 **33.9** (R3a 37.9): **below the band**, so
+  per the F10 rule it also gets an on-policy recalibrated threshold, fixed before its F10 games (counted as a 2nd
+  candidate for the Bonferroni k).
+  - `f10-rl5v30` (τ0 0.5375) appended to 08 cpuq (24 workers). `cal-rl5v30` appended to 04 cpuq: `bot.exit.calibrate
+    --mode rate --target-plays 37.8 --opponents v1` (cal_eval.sh's recipe), TRAIN1 [510000, 510640), on a separate copy
+    `$J4/ckpt-rl5v30cal/policy-00030.pt` (sha 2772e8f9…) so the other copies keep τ0. Then `f10-rl5v30cal` at the
+    calibrated τ.
+  - Partial F9 r6 v30 vs r5 v10 (671/1200): v1 −0.018 [−0.048, +0.012] (600), R3a +0.085 (71). If it ends below v10, r6
+    (r4 v20 lineage, KL 0.36–0.43, deploy plays ~31–33) is stopped and 04 gets RL r8 from the best r5 snapshot.
+  - r7 at v10 (KL 0.125 vs v40; 21:57Z); 01 live python 95, admin logged out (no mpacadmin processes from ~21:48Z).
+    `f10-rl5v10` running (234/2000 at 22:02Z).
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
