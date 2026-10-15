@@ -203,3 +203,14 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
 - **21:24Z launched on 03** (tree clasher-bot-noise-v4s, code sha in each job's code.sha256; HEADLINE 0–299 × R3a/v1):
   scr1 (PGID 1966302, 80 workers): K4L twin × {sr1u50 base, PERCRe2b10 fix, PERCRoracle, perfect sight, PERCs1
   reseeded}; scr1f (PGID 1966317, 16 workers): fast tier × {base, fix, oracle, perfect}.
+
+## Round 4 (worker bot-lead-noise-robust-r4; r3 was interrupted externally at 21:55:39Z, no error)
+- **22:02Z, resume.** 03 jobs alive (scr1 PGID 1966302 ~1000/3000, scr1f PGID 1966317 ~340/2400, floorchk PGID 2015046
+  23/60; base 1455777415631152 = HEADLINE). scr1f runs at ~10 games/min (≈3.4 h), so its upper half (cases 150–299)
+  is queued on a 04 lease: tree 04:`clasher-bot-noise-v4s` (rsync of 03's; whole-tree sha256 0da7ef99… equal on both
+  hosts; runtime r1/native-total-r1 and it5s2 student hashes equal), job 04:/mpac/sdicks02/jobs/clasher/bot-noise/scr1f-hi04
+  (`bot/exit/cpu_job.sh 30`, PGID 1054542, waiting for room). 03's scr1f is stopped once it passes case 150.
+- **Interim scr1** (K4L, paired vs AUD:PERC-emp-sr1u50 baseline, n≈83–99 per opponent):
+  fix PERCRe2b10 R3a +0.036 [−0.024, +0.096], v1 +0.061 [+0.010, +0.122], pooled +0.050 [+0.006, +0.094] (n=181);
+  oracle revealed set pooled +0.083 [+0.017, +0.150]; reseeded baseline PERCs1 pooled +0.000 [−0.082, +0.082];
+  perfect sight pooled +0.168 [+0.098, +0.239].
