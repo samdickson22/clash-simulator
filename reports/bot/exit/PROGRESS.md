@@ -1200,6 +1200,30 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   candidate is also run at an on-policy recalibrated threshold and the claim uses whichever τ was fixed **before** its
   F10 games.
 
+- **20:38–20:40Z launches** (bot-first; the K4L feeders only make filler labels now that arm (b) is closed, so CPU
+  moves to RL actors and evals):
+  - 01 K4L feeder target 55 → **10**, cap 100 (stopped 1618247; new PID 1675752, `cpu-feed-k4l.log9`).
+  - **RL r7** (01) = r5 continued with a fresh KL budget: init/anchor **r5 v40** (`bot-rl-r7-init/policy-00040.pt`, sha
+    13f02881…; KL 0.42 vs v29, before v42's 0.71 spike), critic = r5's final critic (`critic-r5-final.pt` from r5
+    `learner-state.pt` update 43, sha f023967c…), r5's exact args, seed 2026101597, **blocks ≥ 40**. RUN
+    `/mpac/sdicks02/jobs/clasher/bot-rl-r7`; learner PID 1675774 (01 GPU, `BOT_GPU_MAX_GB=16`), actors block 40, **48
+    workers** (wrapper 1678162, same `BOT_RL_LEAGUE`), `kl_stop.sh` PID 1678216 (0.5 vs v40). Eval watcher on 08:
+    `eval_watch.sh 127x01 RUN /mpac/sdicks02/jobs/clasher/bot-rl-r7-eval08 24` (PID 450255, log `bot-rl-r7-eval08.log`).
+  - **F10 reference** `f10-rl5v10` appended to 01 cpuq6 (36 workers; `$J1/ckpt-rl5/policy-00010.pt`, sha e188e2ae…).
+  - 08 K4L feeder target 40 → **8**, cap 100 (stopped 4115670; new PID 450237, `cpu-feed-k4l.log4`); `f9-rl5v30`
+    appended to 08 cpuq (24 workers; `$J8/ckpt-rl5/policy-00030.pt`, sha 2772e8f9…).
+  - Plan for 04: when r6 hits its KL stop, start **RL r8** there from **r5 v10** (independent seed, blocks ≥ 50) on the
+    freed actors and GPU.
+- **21:17Z reads.** HEADLINE 0–299 (Δ vs it5s2): **r5 v40** v1 0.872 −0.012 [−0.057, +0.035], R3a 0.753 +0.093
+  [+0.037, +0.150], h2h 0.557 (mean +0.040, below v30's +0.083); **r6 v30** v1 0.917 +0.033 [−0.007, +0.073], R3a 0.733
+  +0.073 [+0.010, +0.137], h2h 0.613. Both pass the F10 HEADLINE screen (≥ +0.022).
+  - r7 updates 1–3: KL 0.022/0.037/0.049 vs v40, EV 0.22–0.54, in-training deploy plays 34–37. ~7 min per update while
+    01's old K4L batches drain (01 live python 98; `f10-rl5v10` waits in `cpu_room` for 36).
+  - r6 at v39: KL 0.377 vs v20, in-training deploy plays **32.0** (falling; check vs v1 on F9).
+  - Queued: `rsim-rl5v30` (04 cpuq2, 30 workers, snapshot `$J4/ckpt-rl5/policy-00030.pt` sha 2772e8f9…); `f9-rl6v30` (08
+    cpuq2, 24 workers, `$J8/ckpt-rl6/policy-00030.pt` sha 2083facd…). 08 had dropped to 41 live python: K4L feeder
+    target 8 → **25** (PID 663854, `cpu-feed-k4l.log5`). `f9-rl5v30` (08) at 641/1200 games.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
