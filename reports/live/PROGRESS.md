@@ -347,3 +347,113 @@
     electron and node-gyp caches.
   - The Chrome cache was skipped because Chrome was running.
   - `brew cleanup` was narrowed to the download cache only, per Sol: it would otherwise remove kegs.
+- **17:33Z, BlueStacks trial phase 1 done** (`reports/live/mac-ops/bluestacks/`).
+  - APK: CR versionCode 160402020, 5 splits, Supercell cert 59ea9ded verified (arm64 variant).
+  - Own adb r37.0.1 on port 5047. Offline harness 41/41.
+  - Notes: the console user is `simonfarshid` (Sam's session runs in the background); RAM is tight with the VM up
+    (swap 8.1/9.2 GB).
+  - **Rulings:** the conf ADB-key edit is accepted; guard = pressure critical for 30 s or disk < 6 GiB; on a stale
+    lock, stop; scrcpy decided later.
+  - **Sol review** `live-bluestacks-sol-review-r1` is running. After the fixes, GO for phase 2 without another stop.
+- **17:38Z, Sol review of the BlueStacks scripts: OK after fixes** (6 blockers: RC masking, unverified fetch, whole-conf restore, PID adoption, orphan VM processes, unowned adb kill-server; plus 3 should-fixes). Sent to the owner; GO for phase 2 once the offline suite is green with a mutation-checked test per finding.
+- **20:34Z, RL r5 v10 student check under deployed noise launched on 04** via `cpu_job.sh 36` (PGID 605836).
+  - Checkpoint `policy-00010.pt`, sha e188e2ae verified.
+  - Arms: PERC-emp-sr1u50 with it5s2 vs rl5 (paired), plus rl5 perfect sight. 1,800 games.
+  - Out dir `04:/mpac/sdicks02/jobs/clasher/live-rl5-perc-ours`.
+  - Bot lead, fresh bank F9 vs it5s2: +0.059 [+0.031, +0.087]. K2-D multi-root is NOT confirmed.
+- **~18:3xZ, BlueStacks phase 2:** the stop rule triggered.
+  - BlueStacks boots in 23.6 s with the VM up: pressure warn, swap 9.2 → 11.3 GB, **RAM item answered**.
+  - The client (sideloaded, ADB on) dies 115 ms after start in nativeLoad ("Report: Exiting", `lskumcyej.e: 02`),
+    the same signature as the AVDs.
+- **20:39Z, coordinator ruling:** reproduce a stock player setup (that's not evasion).
+  - Ladder: **A** = ADB off (restore) plus a non-adb launch; **B** = Play install, prepared for Sam.
+  - Relayed to the trial owner.
+  - New possible Sam item: the console session is `simonfarshid`'s, and macOS input/capture likely needs Sam's
+    session on the console.
+- **20:44Z, native iPad-on-Mac route CLOSED:** Clash Royale has isIOSBinaryMacOSCompatible=false (Among Us control: true; all Supercell games false). Play Games on Win-on-Arm is not viable. BlueStacks stays primary.
+- **20:45Z, PRIORITY (Sam): bring up BlueStacks with the Google Play sign-in screen in sam's session.**
+  - Trial owner steered to: launch, then `open_play` (am start only), then a screenshot. No credentials, no CR
+    launch.
+  - **Sam access verified read-only:** Screen Sharing on, ARD all local users with full privileges,
+    `mac-mini` 100.101.16.91:5900 answers `RFB 003.889` over the tailnet, and sam's GUI session exists in the
+    background (the console is simonfarshid's).
+  - Sam instructions sent to the coordinator: `vnc://mac-mini`, user sam, **"Log in as yourself"**.
+- **20:50Z, Google Play Sign-in screen UP** in sam's session (BlueStacks PID 7218, guard until ~00:46Z; screenshot verified). Waiting for Sam to sign in. Next: uninstall the sideload, Play install, ADB off, stock launch.
+- **20:57Z, bot lead heads-up:** a perceived opponent revealed-set contamination (a wrong card in 29/34 games; the cap of 8 locks out a real card, and the sanitizer drops its units) may explain much of K4L's −0.20. Their r3 worker is prototyping an evidence-ranked set and will send a diff for bot/live/*. Our review checks: fairness, one rule for plays and board, resync, and a paired Δ.
+- **21:36Z, SAM: "its running on bluestacks".**
+  - Read-only checks: Sam restarted BlueStacks (new PID 65579; our 7218 is gone; our guard is inert); conf still has
+    ADB=1; our adb went offline at his restart.
+  - macOS screencapture from ssh fails (no Screen Recording permission, background session).
+  - Asked Sam via the coordinator: how it was installed and launched, the current screen, the ADB toggle state.
+    That decides adb I/O vs macOS I/O (which needs TCC permissions and an active session).
+  - Holding Mac actions.
+- **21:40Z, MILESTONE: the official CR is running on BlueStacks** (Sam installed it from the Play Store, so the
+  sideload was the crash cause).
+  - Sam granted Screen Recording to tailscaled; **macOS screencapture over ssh works** (3840×2160).
+  - The client is on its home screen, Training Progress 1/3, Battle highlighted.
+  - Next: an Accessibility grant for clicks (Sam), a fast ScreenCaptureKit helper (Sol look), recording Training
+    battle 2, the perception domain-gap check, calibration, then the first bot battle.
+  - Not using ADB.
+- **21:46Z, Mac mailbox created** at `~/clasher-live/mailbox/` (requests.jsonl, responses.jsonl, shots/). The Mac-side T3 thread (Sam's session, computer use) handles slow GUI work only. Waiting for its status.json heartbeat before sending r0001 (look only).
+- **21:51Z, macOS I/O verified from ssh:** screencapture OK; CGEvent mouse-move accepted
+  (AXIsProcessTrusted=true).
+  - Codex computer use is still denied, so it's fallback only. The mailbox is dropped (STOP file written).
+- **Mac bench DONE** (`reports/live/MAC-BENCH.md`):
+  - live tier LIVE-K4L-R-gs-rw-fc-w200-t4-p4: p50/p95/p99 22.7/48.9/79.8 ms with perception at 10 FPS, 0% defaults;
+  - Mac about 2.8× fleet per core;
+  - perception cpu-ev2 50.8 ms/frame.
+- **LIVE loop owner launched** (`live-loop-owner-r1`): capture helper, click helper, 16:9-vs-19:9 calibration,
+  record TC battle 2, domain-gap check, first bot TC battle. Sol review before each new Mac script.
+- **22:01Z, RL r5 v10 under deployed noise:** rl5 vs it5s2 (both sr1u50) R3a +0.032 [−0.032, +0.097], v1 +0.040
+  [−0.013, +0.093]; 1,800 games, 0 errors.
+  - **Adopted as the live fast tier and cutoff default:** CLASHER_LIVE_FAST=student:.../policy-00010.pt@0.5375,
+    sha e188e2ae. it5s2 is kept as the rollback.
+  - 04 handed back.
+- **22:02Z, Sam: "you can live test on the Mac".** The coordinator sent the loop owner a direct GO (FPS test, one harmless tap, rl5 smoke, TC battle 2, domain gap). The Sol review of the live/loop helpers runs in parallel and doesn't block (`live-loop-helpers-sol-r1`). From now on live testing beats pre-review, within the limits: TC only, no purchases, no credentials, no evasion.
+- **22:03Z, Sam: full in-game authority on the throwaway account.** Ladder, gems, gold, decks, chests and menus are all allowed; bans are accepted. Still off-limits: real-money payments, credentials/sign-ins, other Mac apps/users/files outside ~/clasher-live, and client or emulator modification to hide the bot. TC is the first loop check only; go to ladder once one full battle runs cleanly. Report W/L per battle with video. The coordinator told the loop owner.
+- **22:06Z, Sol review of live/loop (parallel):** 2 blockers (per-event target validation; mouse-up on interrupt) and 8 should-fixes. Sent to the loop owner: fix #1–#2 before any battle; single test taps allowed meanwhile.
+- **~22:20Z, loop owner on official frames:** account "bigdiddle", 0 trophies, Goblin Stadium.
+  - Deck: Knight, Archers, Minions, Arrows, Fireball, Giant, MiniPekka, Musketeer (all C56).
+  - Recorded 2 TC battles plus 1 ladder match with the bot idle (0–3).
+  - Mapping: arena scale 0.903; HUD remapped.
+  - **Perception on official frames:** hand ~98–99%, towers OK, elixir/clock/phase broken (being replaced),
+    **units ZERO** (sand vs grass arena skin).
+  - The first bot battle will be near-blind to units.
+- **22:46Z, perception r3 launched** (`live-perc-r3-owner-r1`): official-arena compositing fine-tune
+  of the unit head, evaluated on a hand-labelled official set. GPU (01 preferred) requested from the bot lead.
+- **22:47Z, bot lead:** 01 A6000 for perception r3, ~6–8 h, free around 23:05Z (they'll post "01 GPU free"). Forward that to the r3 owner.
+- **22:48Z, coordinator/Sam on r3:** (1) diagnose "zero units" first (pipeline: crop/scale/colour/normalization; raw max scores; sprite appearance; paste test) and report before the long fit; (2) make it background-invariant (many backgrounds including random textures and jitter; validate on labelled official frames plus a held-out arena). Relayed to the r3 owner. The loop owner now saves empty-arena frames for every new arena.
+- **22:49Z: 01 A6000 free** for perception r3 (bot lead); forwarded to the r3 owner. Window until ~06:00Z at the latest; the diagnosis report comes before the long fit.
+- **22:51Z, r3 "zero units" diagnosis: no pipeline bug** (BGR, scale and normalization correct; the
+  grid aligns).
+  - Official unit scores are 0.28–0.72 (renderer 0.89–0.95), with wrong cards at the peaks.
+  - Arena decorations give steady FPs at 0.3–0.4.
+  - Paste test: renderer units in a Goblin Stadium frame drop from ~0.9 to ~0.4. **The model keys on the arena.**
+  - **GO for the background-invariant fit:** compositing onto many backgrounds plus hard negatives; Training Camp
+    held out; ~80-frame hand-labelled official set; event head preserved; interim export as soon as it beats r1.
+- **22:53Z, MILESTONE: the bot plays live ladder in the official client. 3 battles, 3 W (3–0 each),
+  trophies 0 → 93**; live4 in progress.
+  - Input: ADB taps (Sam's choice, "nah A"; the client is fine with ADB on).
+  - Tower HP from the on-tower numbers; overlay at Mac localhost:8765.
+  - Still nearly blind to units (median 0 per frame). Low-trophy opponents are weak, so not strength evidence.
+  - The loop owner confirms no pipeline bug. Arena backgrounds at `05:scratch/live-loop/arena-bgs/goblin-stadium/`;
+    native capture 1020×1816 available. Forwarded to r3.
+- **~23:05Z, live ladder:** live1–5 all W 3–0, **0 → 154 trophies** (low-trophy opponents).
+  - Sam asked that the overlay show the raw model view (heatmap plus sub-threshold candidates), and that we not patch
+    around perception gaps without asking.
+- **~23:05Z, perception r3 fit `ft-r4` running on the 01 A6000** (PID 2307911, 5 h budget, ends ~04:05Z).
+  - Data: ~70% composited (8 Goblin Stadium floors, recoloured renderer floors, procedural textures, 6% empty-floor
+    negatives); Training Camp held out; blur matching the 720×1280 capture.
+  - Labelled official set: 81 frames (51 Goblin Stadium, 30 Training Camp), labelled by 5 Opus helpers with
+    confidence ratings.
+  - Round-1 baselines: renderer units P/R .952/.762; event .915/.742; decoration FP 1.0/frame on empty Training
+    Camp, 0 on Goblin Stadium.
+  - Checkpoints mirrored to 05 every 5 minutes.
+- **23:22Z, perception r3 INTERIM export (epoch 1) delivered to the loop owner:**
+  `/mpac/sdicks02/jobs/clasher/live-perc-r3-20261015/export-interim-e1/` (05 and 01); rollback `export-final`.
+  - Official unit P/R at 0.5, 74 labelled frames: Goblin Stadium .83/.06 → **.975/.245**; Training Camp (held out)
+    .18/.03 → **.93/.26**.
+  - Empty-frame false positives: Goblin Stadium 0 → 0, Training Camp 1.0 → 0.
+  - Still misses most Minions and Archers. Renderer val dip: unit F1 .846 → .816.
+  - Trainer PID 2322178, GPU 62–83%.
+- **23:22Z, live ladder: 10 battles, 8 W / 2 L, 228 trophies** (live10 W 3–0 vs MCneji41). Next arena unlock at 300; the loop owner will capture empty-arena frames for r3.
