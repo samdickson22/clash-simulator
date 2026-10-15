@@ -304,3 +304,69 @@ play-rate calibration), others. Reference = K4L-R-gs (its 600 HEADLINE-ours game
   rebuilt byte for byte from e1-20261009-r1/native-source-v2 (r1/engine-rs is the pre-E1 tree); 23 sites made total;
   patched 681b5f2c parity-identical (577 fixtures, 1.01 M ticks, 300 real roots x full/cut), 0 vs 1,199 panics on the
   totality probes. Pin proposed, not switched (BOT LEAD decides).
+- 2026-10-15T10:04:28Z fresh bank 3 launched: 08 cases 0-399 (fb3-08.sh), 04 cases 400-799 (fb3-04.sh), cpu_job leases 41,
+  40 workers each, out bot-lopp2/fb3 on each host; cases 800-1199 go to 03 after the LIVE block. Committed d62d4cf6
+  (code, pre-registration).
+- 2026-10-15T10:06:50Z functional smoke on contended 04 (1 game, not a fit measurement): LIVE-K4L-R-gs-rw-O-fc-w200-t4-p4 runs, 0 errors;
+  K4L-R-gs-rw-O-fc-t4-p4 == serial O command_sha256 (da9d136e). O's learned phase p50 38 ms vs ~20 ms for K4L
+  (own-side decide doubles the Python per learned rollout): the 4-core fit on quiet 03 decides rule 2.
+- 2026-10-15T10:07Z fb3 leases had no room at 41 (ExIt took it back): relaunched with 04 20 workers (lease 21), 08 30
+  (lease 31). 10:28Z: 04 300 games, 08 447.
+- 2026-10-15T10:31:37Z BOT LEAD: 03 back early; keep ~40 procs free for the K4L fix worker (bot-lead-k4l-fix-r1, native
+  panic in live K4L fc configs + pool fallbacks; it edits lopp_fast.py/lopp.py: pull before commits, re-run the fc
+  exactness check after it lands). fb3-03 launched (cases 800-1199, 38 workers, PGID 3996576). 10:32Z time2 on 03
+  (time-r2.sh, 4 groups of 4 physical cores 0-15, siblings 64-79 idle, fb3-03 re-pinned to 16-63,80-127): LIVE/complete
+  O and K4L, plus O-i10 (informative).
+- 2026-10-15T10:40:55Z time2 (03, 4 groups x 4 physical cores 0-15, siblings busy 0.01-0.02, fb3-03 on 16-63/80-127,
+  8 games/arm), wall p50/p95/p99 ms, default share: complete O 97/151/219, O-i10 89/148/205, K4L ref 86/141/197; LIVE
+  w200: O 121/178/193 default 1.9%, O-i10 111/173/193 2.0%, K4L ref 109/171/192 1.6% (ref 0.9% on the whole-quiet host
+  earlier). Rule 2b (complete O p95 <= 190) holds; 2a (default <= 1%) fails in this run, as does the reference. time3:
+  LIVE O vs LIVE K4L, 16 games each, same layout (10:41Z).
+- 2026-10-15T10:50:55Z K4L fix (worker bot-lead-k4l-fix-r1): LIVE perception run's c56.rs:265 panics (6/10 workers dead, PERC-emp arm)
+  reproduced through the harness (bot-k4l-fix/repro, RUST_BACKTRACE=1: electro_land via rollout_e1 and BattleState.step).
+  Root cause confirmed: a misperceived ElectroSpirit (chain source) on board, in neither hand/cycle, so the fc cut
+  dropped its card; on both captured roots the full config gives 0 panics (cut: 4/4 and 9/36 candidates panic).
+  Fixes (lopp_fast.py, lopp.py): config_need keeps hand+cycle plus every card named anywhere in the entities and pending
+  casts (whole config if a looked-up key is not a card), in _ConfigJson.dumps and the workers' ConfigCache; a native
+  panic (BaseException, not KeyboardInterrupt/SystemExit) in a rollout thread, the serial path or a pool worker, or a
+  dead worker (EOF/broken pipe), fails the decision (no score, hit -> cutoff default it5s2/R3a), counted in
+  lopp.FAILURES; workers survive panics; get_pool replaces a broken pool at the next decision. Cost: ConfigCache.need
+  0.7-1.2 ms per worker per decision, config_need 0.3-0.5 ms in the main process: re-time the LIVE fit.
+  Checks: lopp_safety_test (fixture bot/search/fixtures/c56-electro-missing.json, table-free, from capture c) ok:
+  old cut 6 panics / new cut 0 / values == full config; thread panic -> default; pool panic -> worker alive, next
+  decision == serial; killed worker -> default, pool recreated, == serial; LIVE LEAD crafted-fc-root.json -0.10562149106854207
+  bit for bit through both cuts. lopp_fast_check --rowwise cases 0,1 (80 roots, 6045 rollouts): exact, cut_mismatch 0.
+  End to end K4L-R-gs-rw-fc-t4-p4 command_sha256 == bot-lopp-hl2 K4L-R-gs 12/12 so far (cases 0-11 x v1,R3a running on
+  04/08, bot-k4l-fix/e2e-*), 0 failures logged.
+- 2026-10-15T10:51Z BOT LEAD: LIVE LEAD ablation pinned to 0-47/64-111 on 03; timing only on 48-63 (siblings 112-127).
+  time3 (on 0-15) stopped -> time3-aborted; time4 (pre-fix code) stopped. K4L fix 654b18bb (fc config_need, panic/pool
+  fallbacks) already on 03; synced to 04/08. fb3 post-fix replay (04, cases 400-401 x R3a,v1): K4L-R-gs-rw-O-fp
+  command_sha256 == pre-fix fb3 games 4/4 (fp/serial outputs unchanged by the fix; 0 failures so far).
+- BOT LEAD: export NUMPY_MADVISE_HUGEPAGE=0 added to bot-lopp-run.sh on 03/04/08 (all my scripts use it); timings
+  from time6 on are with it, earlier ones without.
+- 2026-10-15T11:06:42Z time5 (03 cores 48-63, fixed code, WITHOUT NUMPY_MADVISE_HUGEPAGE=0) INVALID: siblings 112-127 were
+  33-37% busy: another thread's unpinned job (bot-native-total parity_fixtures.py, PGID 4067630) ran on 57-61/115/118.
+  For the record: complete O 127/209/275, LIVE O 166/193/194 default 16.8%, LIVE K4L 156/193/194 default 14.0%.
+  time6 (with the env) stopped at 11:07Z for the same reason. Fit rule 2 still needs a quiet 4-core window.
+- 2026-10-15T11:26:52Z K4L fix follow-up: end to end K4L-R-gs-rw-fc-t4-p4 command_sha256 == bot-lopp-hl2 K4L-R-gs 24/24 (cases 0-11 x
+  v1,R3a), 0 errors, 0 failure lines; the 6 PERC-emp cases that killed workers (v1 2/8/25, R3a 3/17/25) all complete
+  with 0 panics and 0 fallbacks (bot-k4l-fix/perc-fixed). Native totality (deliverable 4, NATIVE-TOTAL.md): 44874fd6
+  rebuilt byte for byte from e1-20261009-r1/native-source-v2 (r1/engine-rs is the pre-E1 tree); 23 sites made total;
+  patched 681b5f2c parity-identical (577 fixtures, 1.01 M ticks, 300 real roots x full/cut), 0 vs 1,199 panics on the
+  totality probes. Pin proposed, not switched (BOT LEAD decides).
+- 2026-10-15T11:39:31Z fb3-03 done (cases 800-1199, 2400 games, 0 errors). Nothing of mine left on 03 (a stale remote
+  'until grep' waiter, PID 3581239, killed). BOT LEAD: nothing new on 03 until handed back (LIVE quiet block ~12:50Z+).
+- 2026-10-15T11:41:01Z fresh bank 3 interim (2444 paired cases of 3600; 04 1558, 08 2076, 03 2400 games): K4L-R-gs-rw-O-fp vs
+  K4L-R-gs-rw-fp -0.010 [-0.024,+0.004] (R3a +0.013, v1 -0.024, rext-bc -0.019). Running to completion as registered.
+- 2026-10-15T12:07Z fb3 rebalance (08 share done): 04 kept cases 400-599, 08 took 600-799 (04's finished games copied to
+  08 as games-from04-*; analysis dedupes by key); 08 relaunched at 10 workers (lease 11) for want of room.
+- 2026-10-15T12:44:43Z FRESH BANK 3 COMPLETE (BASE 4303584859564336, RoyaleSim 15.535, 7200 unique games, 0 errors; 03/04/08).
+  K4L-R-gs-rw-O-fp - K4L-R-gs-rw-fp, paired, 1200 cases/opp: pooled -0.004 [-0.017,+0.008]; R3a +0.008 [-0.017,+0.036],
+  v1 -0.022 [-0.042,-0.003], rext-bc +0.001 [-0.019,+0.021]. Win rates K4L-R-gs-rw-fp 0.804/0.938/0.928, O
+  0.812/0.915/0.929. Rule 1 fails -> O is NOT a new best; K4L-R-gs stays. Rule 2 (timing) moot; the attempts are logged
+  above (time2 valid but loaded; time5/time6 contaminated).
+- 2026-10-15T12:46:12Z ROUND 2 VERDICT: null. No arm beats K4L-R-gs. Scoring mix (W/K/T/b/mixture/D), opponent model v2 (pool2, pool2L)
+  and own-side learned rollouts (O) are all within noise; O's two positive screens were selection noise. Nothing of
+  mine is running on 03/04/08. Data: 03 bot-lopp2/{scr1,scr2,rec2-*,models,time*,gil.log,fb3}; 04 bot-lopp2/{scr3,rsh,
+  rec2,fb3,fb3-03c,fb3-08c,base}; 08 bot-lopp2/{rsh,rec2,fb3}. Models (not in git): 03 bot-lopp2/models/pool2.npz
+  (cb141bd0...), pool2L.npz (5d6332bf...), copies in bot-lopp-models on 04/08.

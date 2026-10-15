@@ -361,3 +361,88 @@ Method:
   - Otherwise K4L-R-gs stays the best.
 - **Reporting:** pooled and per-opponent deltas, win rates, and timing p50/p95/p99 and default share. Every game is
   reported.
+
+## Round 2: results (2026-10-15, worker of the BOT LEAD; hosts 03/04/08)
+
+**Answer: no.** No round-2 arm beats K4L-R-gs, so it stays the best bot.
+- The only promoted arm, O (own side learned inside the learned rollouts), scored **−0.004 [−0.017, +0.008]** on fresh
+  bank 3 (7,200 RoyaleSim games, 0 errors).
+- Per opponent vs K4L-R-gs-rw-fp: R3a +0.008 [−0.017, +0.036], v1 −0.022 [−0.042, −0.003], rext-bc +0.001 [−0.019, +0.021].
+- Win rates: K4L-R-gs-rw-fp 0.804 / 0.938 / 0.928; O 0.812 / 0.915 / 0.929.
+- Rule 1 fails. Rule 2 (timing) became moot.
+
+### Screens (ours, HEADLINE 0–299 × R3a, v1; 600 games per arm, 0 errors)
+
+All arms are serial deterministic twins (K4L-R-gs-rw-…).
+- **Columns.**
+  - "vs K4L-R-gs": paired against K4L-R-gs's own games (bot-lopp-hl2).
+  - "vs ref mean": paired against the mean of three equal-strength reference runs (K4L-R-gs, S1, S2;
+    `bot.search.lopp_screen`).
+  - The ref-mean comparison was added as a declared deviation after the reseeded controls showed that K4L-R-gs's own
+    run is lucky on these cases (+0.033 vs the other two).
+- **CPU** is s per searched decision under full host load (K4L-R-gs 0.415).
+
+| arm | what | vs K4L-R-gs | vs ref mean | RoyaleSim HEADLINE (vs K4L-R-gs + S1) | CPU |
+|---|---|---|---|---|---:|
+| S1 / S2 | reseeded controls (other CRN draws) | −0.027 / −0.038 | −0.007 / −0.025 | S1 0.000 | 0.40 / 0.35 |
+| W25 / W75 / W100 | learned weight 0.25 / 0.75 / 1.0 | −0.022 / −0.007 / +0.012 | 0.000 / +0.015 / +0.033 | W100 −0.026 [−0.049, −0.004] | 0.38–0.39 |
+| K2 / K3 | 2 / 3 learned samples (CRN each) | −0.022 / +0.012 | 0.000 / +0.033 | K3 +0.001 [−0.020, +0.021] | 0.49 / 0.60 |
+| T12 | learned top-12 | −0.018 | +0.003 | – | 0.42 |
+| bp5 / bm5 | gate logit bias ±0.5 | −0.017 / +0.010 | +0.005 / +0.032 | bm5 +0.004 [−0.018, +0.026] | 0.38 / 0.31 |
+| mR3a+v1-K2 | one R3a-model + one v1-model sample | −0.008 | +0.013 | – | 0.49 |
+| K2-D | 2 samples, each from its own belief sample of hidden cards | +0.007 | +0.028 | – | 0.53 |
+| mpool2 | opponent model v2 | −0.008 | +0.013 | – | 0.42 |
+| **O** | own side learned in learned rollouts | +0.013 | **+0.035 [+0.009, +0.062]** | **+0.024 [+0.005, +0.043]** | 0.42 |
+
+- **Opponent model v2** (pool2): 2.41M rows, of which 1.71M are on-policy vs K4L-R-gs (3,000 FIT-bank games, cases
+  600–2099) and 695k vs K4C-r16. Net 256×2.
+  - Validation, R3a: gate AUC 0.847, card top-1 0.86, tile ≤2 0.69.
+  - Validation, v1: AUC 0.58.
+  - In rollouts it is more passive than pool: 1.28 vs 1.53 plays per 160 ticks.
+  - pool2L (512×3) validated no better (R3a AUC 0.831) and was not screened.
+- **Real opponents vs K4L-R-gs** (recordings): R3a 2.31 plays per 160 ticks at 4.1 elixir; v1 1.43 at 7.83.
+  - A gate bias can match R3a's rate.
+  - Nothing matches v1, which plays rarely and at high elixir; its gate is close to unpredictable (AUC ~0.58).
+- **Why the scoring mix is flat.** Weight, samples, top-n, bias and mixture all move K4L-R-gs's decisions without
+  moving strength. The ours-screen positives against the reference mean (O, K3, W100, bm5 at +0.03) did not replicate
+  in RoyaleSim (K3 +0.001, bm5 +0.004, W100 −0.026), or on the fresh bank (O −0.004).
+
+### Timing (4 pinned physical cores per game, complete search unless LIVE)
+
+- **K-samples**, time1 (03 under load, siblings idle 0.01), p50/p95/p99 ms:
+  - ref 81/154/219;
+  - K2 107/193/257;
+  - K3 123/205/282.
+  - K3 does not fit, and K2 is marginal.
+- **O**, time2 (03 cores 0–15, siblings 0.01–0.02, other cores loaded, without NUMPY_MADVISE_HUGEPAGE=0):
+  - complete O 97/151/219 vs ref 86/141/197;
+  - LIVE w200, O: 121/178/193, default share 1.9%;
+  - LIVE w200, K4L: 109/171/192, default share 1.6%;
+  - O-i10: 111/173/193, default share 2.0%.
+  - O's learned phase is about 1.4× the reference's (p50 26 vs 19 ms).
+- **Invalid runs.** time5 and time6 on cores 48–63 overlapped another thread's unpinned job on the sibling CPUs
+  (siblings 33–37% busy) and are not used.
+- **Exactness.** Pooled K2/K3 and O (fc-t4-p4) reproduce their serial twins' command_sha256: 24/24 (K) and case 0
+  (O).
+  - The fp twins of O and K4L-R-gs were checked on cases 0 and 3.
+  - After the K4L fix 654b18bb, O-fp fresh-bank games replay identically (4/4).
+
+### GIL microbench (`bot.search.lopp_gil`, 03 CPUs 60–63, siblings idle, 24 real roots)
+
+| call | speedup, 1 → 4 threads | per call |
+|---|---:|---:|
+| rollout_e1 | 3.75× | |
+| BattleState.step | 3.52× | 0.10 ms per 5 ticks |
+| NativeScripts.select_action | 3.69× | 0.12 ms |
+| apply_discrete | 0.94× | |
+| public_view | 0.70× | 0.011 ms |
+| public_mask | 0.63× | 0.11 ms |
+| evaluate | 0.32× | |
+| clone | 0.25× | |
+| json.loads + featurize | 1.07× | 0.06 ms |
+| one-row numpy forward | 0.71× | 0.049 ms |
+
+- The first three rows release the GIL, so the old "gil-release off" note was wrong.
+- The opponent's decide step (the last two rows) is about half of a learned rollout and holds the GIL.
+- **Learned batch per root** (21.9 keys): serial 142 ms, 4 in-process threads 135 ms, p4 pool 66 ms; values equal.
+- In-process threads cannot replace the pool, macOS spawn included, unless the decide step moves to native code.

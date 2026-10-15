@@ -49,6 +49,8 @@ def main():
     arms = sorted({c for c, _ in by})
     for arm in arms:
         per, n = {}, {}
+        if not [r for r in refs if r != arm]:
+            continue                  # the only reference run: nothing to pair it with
         for o in opps:
             others = [r for r in refs if r != arm]
             idx = set(by.get((arm, o), {}))
