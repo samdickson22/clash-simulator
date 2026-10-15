@@ -706,6 +706,13 @@ Next calibration case block: 480000.
 | A1x300s2 | 0.5075 | 0.843 [0.800, 0.883] | −0.040 [−0.087, +0.003] | 0.650 | −0.010 [−0.073, +0.057] | 0.473 |
 | A1x800s1 (lr 1e-5, 800 steps) | 0.5375 | 0.857 [0.817, 0.897] | −0.027 [−0.073, +0.020] | 0.637 | −0.023 [−0.087, +0.037] | 0.487 |
 | A1x800s2 | 0.5375 | 0.870 [0.830, 0.907] | −0.013 [−0.060, +0.033] | 0.683 | +0.023 [−0.030, +0.077] | 0.447 |
+| **B6s1 (Kall lineage, 6L, 6000 steps, all 6.4 M)** | 0.5375 | 0.880 [0.843, 0.917] | −0.003 [−0.053, +0.043] | 0.650 | −0.010 [−0.067, +0.047] | 0.513 |
+| B6s2 (Kall lineage, 6L, seed 2) | 0.5375 | 0.867 [0.827, 0.903] | −0.017 [−0.063, +0.030] | 0.667 | +0.007 [−0.053, +0.067] | 0.497 |
+| soupB6s12 (weight average of B6s1 + B6s2) | 0.4775 | 0.857 [0.817, 0.897] | −0.027 [−0.070, +0.017] | 0.597 | **−0.063 [−0.123, −0.003]** | 0.477 |
+| B6s3 (6L, seed 3) | 0.5075 | 0.873 [0.833, 0.910] | −0.010 [−0.057, +0.037] | 0.627 | −0.033 [−0.093, +0.027] | 0.493 |
+| B8s2 (8L, seed 2) | 0.5075 | 0.833 [0.790, 0.877] | −0.050 [−0.100, −0.003] | 0.620 | −0.040 [−0.103, +0.027] | 0.507 |
+| **B8s3 (8L, seed 3)** | 0.5375 | 0.887 [0.850, 0.920] | **+0.003 [−0.040, +0.047]** | 0.662 | **+0.002 [−0.058, +0.062]** | 0.503 |
+| B8s1 (Kall lineage, 8L/2048, 6000 steps) | 0.5075 | 0.863 [0.823, 0.900] | −0.020 [−0.063, +0.023] | 0.623 | −0.037 [−0.100, +0.023] | 0.483 |
 | B8s1 @ step 3000 (probe) | 0.5375 | 0.853 [0.813, 0.893] | −0.030 [−0.080, +0.023] | 0.683 | +0.023 [−0.033, +0.080] | 0.537 |
 | B6s1 @ step 3000 (probe) | 0.5075 | 0.837 [0.793, 0.877] | −0.047 [−0.100, +0.003] | 0.600 | −0.060 [−0.120, 0.000] | 0.433 (n 263) |
 
@@ -734,6 +741,100 @@ The lr-1e-5 arm-A fits are near-copies of it5s2 and serve as the null control fo
     inflation of it5s2, not harm from the step. Small steps neither help nor hurt: **it5s2 is a local optimum** of
     this data/objective.
 - 03:26Z: 04 feeder 24 → 40 (`cpu-feed.log8`). 08 stays at 16: the lead's `bot-lfast` wall job holds 40 there.
+- **B6s1 final (04:10Z):** ties it5s2 (Δ −0.003 / −0.010, h2h 0.513). It is the best non-reference fit so far, but
+  not a win, so it was not promoted. Trained from it2D (not from it5s2), so data quantity at full training reaches
+  it5s2's level. Waiting on the other seeds and the 8L arm.
+- **Utilization flag (lead 03:54Z):** feeders 04 → target 80, 08 → target 70, 100-game batches, cap 105.
+  - From 03:56Z to 04:09Z the caps were 141/136 (to look past the old K4L wall lease's idle room). When the K4L
+    `bot-lfast/fresh2-resume` jobs (40-proc leases) started, live py overshot to 126 (04) and 115 (08).
+  - Fixed: caps back to 105 (PIDs 04 4025244, 08 3385733, `cpu-feed.log10`). Killed the newest batches by PGID:
+    04 s7108800 and 08 s7207900, so those 100-seed ranges are skipped.
+  - 04:12Z: live py 04 = 98, 08 = 105.
+  - The 08 feeder block is NOT exhausted: it runs to 7300000 (next_start ~7208000).
+  - **Rule:** never raise a feeder cap above 105 to work around another job's lease.
+- **04:25Z: 01's GPU is back from the LIVE LEAD** (lead). The LIVE LEAD's PID 1117790 (eval_val.py, ~2 GB) still
+  coexists; leave it alone.
+  - New 01 gpuq runner: PID 1161458, log `gpuq/runner.log2`.
+  - Keep-alive `gpu_keepalive.sh gpuq/QUEUE B8s 2`: PID 1161470, log `gpuq/keepalive-B8s.log`. It replicates the
+    last B8s line with seed+1, at most 2 fillers.
+  - Queued **B8s3** (8L, seed 2026102683, cal 484000); its eval goes to 01 cpuq7. Next cal block: **485000**.
+  - The lead restarted the 01 feeder at cap 105 (PID 1157187, `cpu-feed.log8`).
+- 04:45Z (lead): 01 feeder restarted at target 92, cap 105 (PID 1237616, `cpu-feed.log9`, same block). Evals on 01
+  take room through cpu_room leases, and the feeder yields.
+- **06:06Z:** B8s1 final is below its own step-3000 probe vs R3a (0.683 → 0.623). Not a win.
+  - 08 gpuq was empty after B6s2, so **B6x** is queued: 6L, seed 2026102671, cal 485000, on all ~9.5 M labels
+    (the 12 packs plus Kall's 8 older packs it2-08/04, it3st-08a/04a, it3D-04full/08full, it4-08a/04a).
+  - **soupB6s12** = `bot.exit.soup` of B6s1 + B6s2 at step 6000. Both grow it2D identically, so they share an
+    init. File `$J8/soup-B6s12/soup.pt`; eval `ev-soupB6s12` in 08 cpuq6, cal 486000.
+  - Next cal block: **487000**.
+- **06:40Z, B6 pooled over s1 and s2:** − it5s2 = **−0.010 [−0.050, +0.032]** vs v1 and **−0.002 [−0.053, +0.050]**
+  vs R3a. That is level with it5s2, the closest of any arm (arm A −0.018/−0.007, it7 −0.03…−0.05), but no win.
+- **07:10Z:** B8s2 (04), B6s3 (08) and B8s3 (01) finished training; their evals are in the cpuq7s.
+  - 01's keep-alive started filler `B8ska070748` (seed 2026102684, out `train-B8s3-ka2026102684`).
+  - Queued more 6L seeds: **B6s5** (04 gpuq, seed 2026102665, cal 487000) and **B6s6** (08 gpuq2, seed 2026102666,
+    cal 488000). Both finish after the time box (~11–12Z), so a successor must collect them.
+  - Next cal block: **489000**.
+- **07:40Z: the soup is negative.** Averaging two same-init 6000-step seeds needs τ 0.4775 (the gate gets less
+  confident) and loses −0.063 vs R3a. Don't soup Kall-lineage seeds.
+- **08:20Z: pooled arm B** (− it5s2, per case over seeds):
+  - B6 s1–3: **−0.010 [−0.048, +0.029]** vs v1, **−0.012 [−0.062, +0.038]** vs R3a.
+  - B8 s1–3: **−0.022 [−0.058, +0.014]** vs v1, **−0.025 [−0.077, +0.027]** vs R3a.
+- **B8s3 is above it5s2 on both (+0.003 / +0.002), so per the rule it goes to confirmation.** It is best of 3 seeds
+  with a noise-sized margin, so we expect regression. Both checks started 08:20Z and run in parallel to fit the box:
+  - fresh cases 300–599 vs v1 and R3a: `$J1/conf-B8s3` (01, cpu_job 36, PID 2321351). Pair with `$J8/conf-300`
+    (it5s2: `student:…ckpt-it5s2`).
+  - RoyaleSim rsim15535 vs rext-bc, v1, R3a: `$J4/rsim-B8s3` (04, cpu_job 36, PID 1129524). Ckpt copied to
+    `$J4/ckpt-B8s3/` (sha a13bb62f…). Pair with `$J4/rsim-it5s2`.
+  - Both use τ 0.5375 pinned (`@0.5375`).
+- **09:08Z: B8s3 fresh-case check FAILED.** Cases 300–599, paired with it5s2 in `$J8/conf-300`:
+
+  | opponent | B8s3 | it5s2 | Δ (B8s3 − it5s2) |
+  |---|---|---|---|
+  | v1 | 0.867 | 0.883 | −0.017 [−0.063, +0.033] |
+  | R3a | 0.610 | 0.673 | **−0.063 [−0.123, −0.003]** |
+
+  Its HEADLINE +0.003/+0.002 was best-of-3 seed noise. **Not a new best.** RoyaleSim (`$J4/rsim-B8s3`) is
+  recorded below for information only.
+- RoyaleSim rsim15535, B8s3 vs it5s2 (paired with `$J4/rsim-it5s2`):
+  - rext-bc: 0.867, Δ −0.017 [−0.060, +0.027]
+  - v1: 0.873, Δ −0.013 [−0.063, +0.033]
+  - R3a: 0.647, Δ 0.000 [−0.063, +0.063]
+
+### Iteration 8 verdict (09:10Z): no new best, it5s2 remains the reference
+
+- **Arm A, gentle refits from it5s2** (8 fits: lr 3e-5/1e-5 × 300/800 steps × 2 seeds). Pooled − it5s2:
+  −0.018 [−0.052, +0.018] vs v1, −0.007 [−0.054, +0.040] vs R3a. Near-copies (lr 1e-5) score the same as lr 3e-5.
+  it5s2 is a local optimum, and its 0–299 score carries about +0.02 of selection inflation.
+- **Arm B, Kall lineage on all 6.4 M labels** (from it2D, 6000 steps):
+  - B6 (3 seeds): −0.010 [−0.048, +0.029] / −0.012 [−0.062, +0.038].
+  - B8 (3 seeds): −0.022 [−0.058, +0.014] / −0.025 [−0.077, +0.027].
+  - Retraining from it2D on 2× the data reaches it5s2's level but does not pass it. 8 layers did not help.
+  - The only fit above it5s2 on HEADLINE (B8s3) failed the fresh bank.
+- **Side results:**
+  - K4C vs K4S labels are null over 3 seed pairs.
+  - Soup of B6s1+B6s2 is −0.063 vs R3a.
+  - All it7 leftovers are below it5s2.
+- **Conclusion:** the supervised ExIt student has plateaued at about 0.87–0.88 vs v1 and 0.63–0.67 vs R3a on this
+  teacher and label set. Neither step size (A) nor data quantity at full training (B) moves it. The remaining
+  lever is the teacher/targets (stronger or different supervision), or RL from it5s2.
+
+**Still running at hand-off (09:10Z).** Each fit's eval is queued automatically by fit_eval in its host's cpuq7.
+
+| fit | host | step at 09:10Z | ETA | note |
+|---|---|---|---|---|
+| B6x | 08 gpuq | 4500 | ≈10:10Z | 6L on all ~9.5 M labels (adds Kall's older data); cal 485000 |
+| B6s5 | 04 gpuq | 3218 | ≈11:15Z | 6L seed 5 |
+| B6s6 | 08 gpuq2 | 3073 | ≈11:20Z | 6L seed 6 |
+| B6s7 | 04 gpuq2 | 317 | ≈13:30Z | 6L seed 7 |
+| B8s3-ka2026102684 | 01 gpuq | 4500 | ≈09:45Z | B8 keep-alive filler |
+
+- After B8s3-ka2026102684, 01's keep-alive adds 1 more B8 filler (max 2), then stops.
+- Pending eval: ev-B6s4 (04 cpuq7).
+- Feeders (K4C-r16 teacher, it5s2 behaviour) keep running: 01 lead's PID 1237616; 04 PID 4025244 (target 80);
+  08 PID 3385733 (target 70). All cap 105, 100-game batches.
+- To pool B6 seeds when they land:
+  `python3 bot/exit/pooled_delta.py v1,R3a <ce-B6sN/eval>:B6sN/,$REF …` (REF = `$J8/ce-it5s2/eval:it5s2`).
+  A B6 that passes HEADLINE still needs the fresh bank 300–599 (`conf-*`) and RoyaleSim. Expect regression.
 
 ## Next
 
