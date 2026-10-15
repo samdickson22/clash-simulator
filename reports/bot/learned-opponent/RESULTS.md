@@ -226,3 +226,24 @@ Method:
 
 - i10 is as strong as K4L-R-gs within noise, with less learned work (time4 learned phase p50 20.6 vs 24.8 ms). Keep it
   as the fallback for slower per-core hardware.
+
+### Using it in the live loop
+- **Entry point:** `bot.search.lopp_fast.make_live_lopp(rt, 'LIVE-K4L-R-gs-rw-fc-w200-t4-p4')`. It returns a
+  `bot.live.player.LivePlayer` (it5s2 fast tier and cutoff default) whose search tier is the wall K4L.
+  - `bot/live/player.py:make_live_player` does not know `LIVE-K4L-*` names. The LIVE lead can route the prefix
+    there with 3 lines; it was not edited here.
+  - `bot.search.lopp_time` already resolves these names.
+- **Opponent net:** `$CLASHER_LOPP_MODELS/pool.npz`, sha256 `1e4bb6a01e06545b02a4f1632d564ef1dd76ceb9df2081273bd869af678b3f9e`.
+  - Not in git. Copies live in `bot-lopp-models` on 03, 04 and 08.
+  - 2.2 MB of float32 numpy; inference is numpy only.
+- **Processes:** the pool is 4 worker processes plus the game process. It starts at the first `start()`, before any
+  thread pool, and is reused across games.
+  - Start method: `fork` on Linux, `spawn` on macOS. Override with `CLASHER_LOPP_POOL_START`.
+  - A spawned worker rebuilds NativeScripts from `json.dumps(R.meta)`; verified bit-exact on Linux with
+    `CLASHER_LOPP_POOL_START=spawn`.
+- **Native and pins:** no new native build and no pin change; it runs on the frozen 44874fd6 runtime.
+- **Lever (d) was not needed.** Moving the opponent's forward into Rust, or building the existing `gil-release`
+  cargo feature, would make learned rollouts GIL-free in-process (~4 ms each instead of ~6–8). That would need a new
+  native build and pin set.
+- **On a 5-core budget:** keep t4-p4, which beat t4-p3 and t2-p4. If the Mac's per-core speed falls short, use
+  `-i10`, which is as strong in ours and has less learned work.

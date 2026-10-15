@@ -131,3 +131,21 @@ bot-lopp-models, sha256 equal). New code: bot/search/lopp_time.py (pinned per-de
   reported. rw screen complete (600, 0 errors): 600/600 command_sha256 == K4L-R-gs; +0.045 [+0.012,+0.077] vs K4C-r16.
   i10 screen: +0.055 [+0.022,+0.090] vs K4C-r16, +0.010 [-0.020,+0.042] vs K4L-R-gs. Fresh bank 2 running: 08 cases
   0-599 (from 02:44Z), 04 cases 600-1199 (fresh2-04.sh, lease 40). B (i10) bank only if compute remains after A.
+- 2026-10-15T03:00:31Z BOT LEAD 03:00Z: the LIVE LEAD's wall eval shows K4C-r16 under real deadlines losing -0.087 (R3a)
+  / -0.033 (v1) at 200 ms vs unbounded; strength per wall-clock ms is what matters -> measure at w200 with 5 cores
+  via bot.live.headline_wall --group 5. DEVIATION: fresh bank 2 paused (08 had 299 games of cases 0-599, 04 had 0;
+  resumable, both dirs bot-lfast/fresh2) to give both hosts to the wall eval; it resumes afterwards if time remains,
+  and whatever is complete will be reported. Wall eval launched on 04 (cases 0-149) and 08 (150-299): engine ours,
+  vs R3a,v1, K4L-R-gs-rw-fc-w200-t4-p4 (cores 0-19) and K4CW-r16-w200-t4 (cores 20-39, separate process so fc does
+  not touch it), 4 groups of 5 cores each per arm per host; dirs bot-lfast/wall-k4l, wall-k4cw; pairing vs
+  unbounded K4C-r16 (bot-headline-r16-ours) and K4L vs K4CW on the same cases.
+- 2026-10-15T03:30:30Z wall eval interim (~half; 04+08 merged, paired, 95% CIs): K4L-R-gs-rw-fc-w200-t4-p4 vs
+  K4CW-r16-w200-t4 +0.071 [+0.017,+0.126] (R3a +0.070, v1 +0.072); vs unbounded K4C-r16 +0.025 [-0.022,+0.070];
+  vs unbounded K4L-R-gs -0.019 [-0.059,+0.021]. K4CW-r16-w200-t4 vs unbounded K4C-r16 -0.061 [-0.117,-0.005]
+  (LIVE LEAD: -0.087 / -0.033 at 200 ms). 0 errors.
+- 2026-10-15T04:09:33Z wall eval FINAL (bot.live.headline_wall --group 5, w200, engine ours, HEADLINE 0-299 x R3a,v1,
+  600 games per arm, 0 errors; 04+08, CONTENDED hosts; 5 cores/game, i.e. above the coordinator's later 4-core
+  rule, so this is context, the 4-core 03 run supersedes it): K4L-R-gs-rw-fc-w200-t4-p4 vs K4CW-r16-w200-t4
+  +0.117 [+0.077,+0.155] (R3a +0.160, v1 +0.073); K4L wall vs unbounded K4C-r16 +0.025 [-0.010,+0.062]; K4L wall
+  vs unbounded K4L-R-gs -0.020 [-0.052,+0.013]; K4CW wall vs unbounded K4C-r16 -0.092 [-0.128,-0.052] (R3a -0.130,
+  v1 -0.053). Fresh bank 2 resumed (fresh2-resume.sh on 04: cases 600-1199, 08: 0-599, leases 40).
