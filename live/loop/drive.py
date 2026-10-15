@@ -39,12 +39,17 @@ ADB = os.path.expanduser('~/clasher-live/tools/platform-tools/adb')
 
 
 def hud_read(f):
-    """Android-size frame -> (battle HUD present, elixir 0..10 or None). Pink = elixir drop / bar fill."""
+    """Android-size frame -> (battle HUD present, elixir 0..10 or None). The bar (x 290..1038, 10 segments of 74.8 px)
+    is filled pink for whole elixir (light pink while it flashes) and light blue for the growing partial segment;
+    empty is dark blue. Present = the pink elixir drop at x 250..285."""
     o = f[1868:1888, 250:1040].astype(np.int16)
-    col = ((o[..., 2] > 170) & (o[..., 0] > 150) & (o[..., 1] < 130)).mean(0) > .5
-    present = col[:35].mean() > .6                       # the drop at x 250..285
-    xs = np.nonzero(col[40:])[0]                          # the bar from x 290
-    elixir = float(np.clip((xs.max() + 40 + 250 - 290)/74.8, 0, 10)) if len(xs) else 0.
+    b, g, r = o[..., 0], o[..., 1], o[..., 2]
+    pink = (r > 170) & (b > 150)
+    partial = (r > 25) & (r < 110) & (g > 65) & (b > 140)
+    present = (pink.mean(0) > .5)[:35].mean() > .6
+    col = ((pink | partial).mean(0) > .5)[40:]                 # the bar from x 290
+    xs = np.nonzero(col)[0]
+    elixir = float(np.clip((xs.max() + 1 + 40 + 250 - 290)/74.8, 0, 10)) if len(xs) else 0.
     return bool(present), (elixir if present else None)
 
 
@@ -239,21 +244,43 @@ def main(argv=None):
     ap.add_argument('--serial', default='127.0.0.1:5555')
     ap.add_argument('--overlay-port', type=int, default=8765, help='MJPEG view of what the bot sees (0 = off)')
     ap.add_argument('--arena', default='goblin-stadium', help='arena-bgs/<arena>/ name for the battle-start frames')
+    ap.add_argument('--matches', type=int, default=1, help='battles in one session (each in <out>/mNN/ when > 1)')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
     a = ap.parse_args(argv)
-    seconds = min(a.seconds, 900)
-    out = Path(a.out); out.mkdir(parents=True); (out/'video').mkdir()
+    seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
+    out = Path(a.out); out.mkdir(parents=True)
     if shutil.disk_usage(out).free < MIN_FREE:
         sys.exit('free space below 6 GiB')
-    logs = {k: open(out/f'{k}.jsonl', 'a', buffering=1) for k in ('frames', 'decisions', 'taps', 'events')}
     lock = threading.Lock()
+    cur = {}
+
+    def open_match(k):
+        """Per-battle dir (the run dir itself for a single battle): logs, video writer."""
+        d = out if a.matches == 1 else out/f'm{k:02d}'
+        d.mkdir(exist_ok=True); (d/'video').mkdir()
+        cur.update(dir=d, k=k, wr=Writer(d/'video'),
+                   logs={x: open(d/f'{x}.jsonl', 'a', buffering=1) for x in ('frames', 'decisions', 'taps', 'events')})
 
     def log(kind, row):
         with lock:
-            logs[kind].write(json.dumps(row, default=float) + '\n')
+            cur['logs'][kind].write(json.dumps(row, default=float) + '\n')
 
+    def close_match(state, n, sess, restarts):
+        cur['wr'].close()
+        st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts)
+        try:
+            sess.close()
+        except Exception as ex:
+            st['close_error'] = repr(ex)
+        (cur['dir']/'session.json').write_text(json.dumps(st, indent=1, default=str) + '\n')
+        for f in cur['logs'].values():
+            f.close()
+
+    open_match(1)
     from infer import LivePerception
     from bot.players.base import WAIT
+    from bot.live.player import make_live_player
+    from bot.live.translate import LiveSession
     t = time.monotonic()
     perc = LivePerception(a.export)
     rt, sess = build_bot(a.player)
@@ -263,19 +290,21 @@ def main(argv=None):
         o = _frame(*args); raw['out'] = o; return o
     perc.frame = _tap_frame
     from clasher.vision.l1_v4 import prepare_pixels
-    log('events', dict(ev='loaded', perception_s=None, load_s=time.monotonic() - t, player=a.player,
-                       fast=os.environ.get('CLASHER_LIVE_FAST')))
+    import hashlib
+    export_sha = hashlib.sha256((Path(a.export)/'frame.pt').read_bytes()).hexdigest()
+    loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
+                  export=str(a.export), export_frame_sha256=export_sha)
+    log('events', loaded)
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
         src = LiveFrames(a.bsgrab, crop, size, a.fps, seconds, open(out/'bsgrab.stderr', 'ab'))
     else:
         src = ReplayFrames(a.source.split(':', 1)[1], realtime=not a.no_realtime)
     taps = AdbTaps(a.serial, a.adb_port, lambda r: log('taps', r)) if a.tap == 'adb' else None
-    wr = Writer(out/'video')
     ov, last_play = None, None
     if a.overlay_port:
         from overlay import Overlay
-        ov = Overlay(a.overlay_port)
+        ov = Overlay(a.overlay_port, every=1)
     state, streak, miss, start_ms, n, t_end = 'wait', 0, 0, None, 0, time.monotonic() + seconds
     t0_ns, first_hud_ms = None, None
     try:
@@ -292,7 +321,7 @@ def main(argv=None):
             present, elixir = hud_read(f)
             row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present,
                        elixir=elixir, state=state)
-            wr.put(n, fr.bgr); n += 1
+            cur['wr'].put(n, fr.bgr); n += 1
             if n % 100 == 0 and shutil.disk_usage(out).free < MIN_FREE:
                 log('events', dict(ev='stop', why='free space below 6 GiB')); break
             if state == 'wait':
@@ -304,7 +333,8 @@ def main(argv=None):
                     log('events', dict(ev='match_start', ts_ms=start_ms, n=n))
                     if a.source == 'live':
                         threading.Thread(target=grab_arena_bg, daemon=True, args=(
-                            a.bsgrab, crop, Path(os.path.expanduser('~/clasher-live/loop/arena-bgs'))/a.arena, out.name,
+                            a.bsgrab, crop, Path(os.path.expanduser('~/clasher-live/loop/arena-bgs'))/a.arena,
+                            out.name + ('' if a.matches == 1 else f"-m{cur['k']:02d}"),
                             log)).start()
                 if ov is not None:
                     ov.update(fr.bgr, state='waiting for battle', elixir=elixir)
@@ -312,7 +342,15 @@ def main(argv=None):
             if state == 'battle':
                 miss = 0 if present else miss + 1
                 if miss >= 3*a.fps:
-                    state = 'ended'; log('events', dict(ev='match_end', ts_ms=ts_ms, n=n)); log('frames', row); break
+                    state = 'ended'; log('events', dict(ev='match_end', ts_ms=ts_ms, n=n)); log('frames', row)
+                    if cur['k'] >= a.matches:
+                        break
+                    close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
+                    open_match(cur['k'] + 1)
+                    sess = LiveSession(rt, make_live_player(rt, a.player), DECK)
+                    log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
+                    state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
+                    continue
                 if not present:
                     log('frames', row); continue
                 t1 = time.perf_counter(); cv = C.canvas(f); t2 = time.perf_counter()
@@ -377,20 +415,12 @@ def main(argv=None):
                               units_lo=perc.last.get('units_lo', ()))
                 log('frames', row)
     finally:
-        src.close(); wr.close()
+        src.close()
         if ov is not None:
             ov.close()
         if taps is not None:
             time.sleep(1); taps.close()
-        st = dict(state=state, frames=n, writer_dropped=wr.dropped, tr_stats=dict(sess.tr.stats),
-                  restarts=getattr(src, 'restarts', 0))
-        try:
-            sess.close()
-        except Exception as ex:
-            st['close_error'] = repr(ex)
-        (out/'session.json').write_text(json.dumps(st, indent=1, default=str) + '\n')
-        for f in logs.values():
-            f.close()
+        close_match(state, n, sess, getattr(src, 'restarts', 0))
     print(json.dumps(dict(state=state, frames=n)))
     return 0
 
