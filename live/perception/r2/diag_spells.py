@@ -13,7 +13,7 @@ from events import LIVE_DEFAULT  # noqa: E402
 
 SPELLS = {'Arrows', 'BarbLog', 'Earthquake', 'Fireball', 'GoblinBarrel', 'Lightning', 'Log', 'Poison', 'Rocket',
           'RoyalDelivery', 'Tornado', 'Zap'}
-VOCAB = '/mpac/sdicks02/jobs/clasher/live-perception-20261014/export-final/vocab.json'
+VOCAB = '/mpac/sdicks02/jobs/clasher/live-perception-20261014/export-final/vocab.json'  # same 56 cards in export-r2
 
 
 def main(dump, out):
