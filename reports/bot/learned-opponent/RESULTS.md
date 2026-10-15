@@ -134,8 +134,11 @@ Reproduce with:
 
 ## Live-tier speed: results (2026-10-15, worker of the BOT LEAD, 127x04/08)
 
-**Answer: yes.** LIVE-K4L-R-gs-rw-fc-w200-t4-p4 makes exactly K4L-R-gs's decisions whenever its search completes,
-and on 5 pinned cores it completes 96% of decisions within the 192 ms budget.
+**Answer: yes.** LIVE-K4L-R-gs-rw-fc-w200-t4-p4 makes exactly K4L-R-gs's decisions whenever its search completes.
+- On 4 pinned physical cores of quiet 127x03 the complete search takes p50 79 ms and p95 126 ms. It finishes within
+  the 192 ms budget on 99.1% of decisions.
+- That is 2.6× faster than serial K4L-R-gs at p50 (205 ms) and 2.7× at p95 (343 ms).
+- The numbers in the next two bullets come from the earlier 5-core run on contended hosts.
 - **Design.** Native rollouts on 4 threads; learned rollouts in 4 persistent worker processes; a row-wise opponent
   forward; output-identical preparation caches. Code: `bot/search/lopp_fast.py`.
 - **Wall-mode cutoff defaults:** 2.5%, vs 13.1% for K4CW-r16-w200-t4 in the same run.
@@ -162,7 +165,35 @@ and on 5 pinned cores it completes 96% of decisions within the 192 ms budget.
   - K4L-R-gs-rw-fc-t4-p4 (cases 2 and 5 vs v1);
   - all 600 HEADLINE games of K4L-R-gs-rw.
 
-### Timing (per searched decision, ms)
+### Timing on 4 and 6 cores, quiet 127x03 (primary, under the coordinator's 4–6 core rule)
+
+Setup: 2026-10-15 04:19Z, 8 games per arm (HEADLINE cases 0–3 × R3a, v1).
+- One pinned group per game: each 4-core group is one CCX, each 6-core group sits inside one CCD.
+- Cores 64–127 were unused; measured SMT sibling busy share ≤ 0.005.
+- **Default** = the cutoff default was played.
+
+| cores | arm | wall p50 / p95 / p99 / mean (ms) | within 192 ms | default |
+|---|---|---|---|---|
+| 1 | K4C-r16 (unbounded, serial) | 238 / 401 / 486 / 218 | 36% | – |
+| 1 | K4L-R-gs (unbounded, serial) | 205 / 343 / 426 / 183 | 46% | – |
+| 4 | **K4L-R-gs-rw-fc-t4-p4** (complete search, no deadline) | **79 / 126** / 170 / 77 | **99.1%** | – |
+| 4 | K4L-R-gs-rw-fc-t4-p3 | 83 / 135 / 184 / 80 | 99.1% | – |
+| 4 | K4L-R-gs-rw-fc-t2-p3 | 102 / 173 / 240 / 95 | 97.8% | – |
+| 4 | **K4L-R-gs-rw-fc-w200-t4-p4** | 84 / 124 / 180 / 79 | – | **0.9%** |
+| 4 | K4CW-r16-w200-t4 (reference) | 138 / 192 / 192 / 128 | – | 2.4% |
+| 4 | LIVE-K4L-R-gs-rw-fc-w200-t4-p3 | 108 / 159 / 192 / 103 | – | 0.9% |
+| 4 | LIVE-K4CW-r16-w200-t4 (reference) | 157 / 192 / 192 / 142 | – | 3.9% |
+| 6 | K4L-R-gs-rw-fc-t4-p4 (complete) | 72 / 115 / 159 / 71 | 99.1% | – |
+| 6 | K4L-R-gs-rw-fc-w200-t4-p4 | 76 / 115 / 167 / 72 | – | 0.9% |
+| 6 | K4CW-r16-w200-t4 (reference) | 123 / 186 / 192 / 117 | – | 1.5% |
+
+- **Speedup on 4 cores.** The complete K4L search is 2.6× faster than serial K4L-R-gs at p50 (205 → 79 ms) and 2.7× at
+  p95 (343 → 126 ms). It is also faster than K4C-r16's own wall search, which runs into its budget.
+- **4-core phases, p50/p95** (t4-p4): preparation 22/37, native scan 39/69, learned 17/26, root shipping 1.9/6.8.
+- **Mac.** No per-core ratio is assumed. Compare against the LIVE LEAD's Mac benchmark when it lands, by rerunning
+  `bot.search.lopp_time` with these arms on 4 cores.
+
+### Timing on the shared, contended hosts (5 cores; context only, superseded by the table above)
 
 Method:
 - One game per pinned group of physical cores (`bot/search/lopp_time.py`). HEADLINE cases 0–3 (time1: 0–9) vs R3a and

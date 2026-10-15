@@ -149,3 +149,13 @@ bot-lopp-models, sha256 equal). New code: bot/search/lopp_time.py (pinned per-de
   +0.117 [+0.077,+0.155] (R3a +0.160, v1 +0.073); K4L wall vs unbounded K4C-r16 +0.025 [-0.010,+0.062]; K4L wall
   vs unbounded K4L-R-gs -0.020 [-0.052,+0.013]; K4CW wall vs unbounded K4C-r16 -0.092 [-0.128,-0.052] (R3a -0.130,
   v1 -0.053). Fresh bank 2 resumed (fresh2-resume.sh on 04: cases 600-1199, 08: 0-599, leases 40).
+- 2026-10-15T04:28:26Z Coordinator constraint (BOT LEAD): live bot on the Mac mini; measure with 4 pinned physical cores
+  (6 secondary), SMT siblings idle, report p50/p95; no assumption on Mac per-core speed (use the LIVE LEAD's Mac
+  benchmark when it lands). 03 handed over at 04:18Z (quiet). time5 on 03 (04:19-04:27Z; 4-core groups = one CCX
+  each, 6-core groups inside one CCD, nothing on cores 64-127; sibling busy <= 0.005), 8 games per arm, p50/p95 ms:
+  1 core K4C-r16 238/401, K4L-R-gs 205/343; 4 cores K4L-R-gs-rw-fc-t4-p4 79/126 (99.1% within 192), t4-p3 83/135,
+  t2-p3 102/173, w200-t4-p4 84/124 (default 0.9%), LIVE-K4L-R-gs-rw-fc-w200-t4-p3 108/159 (default 0.9%),
+  K4CW-r16-w200-t4 138/192 (default 2.4%, hit 8%), LIVE-K4CW 157/192 (3.9%); 6 cores K4L t4-p4 72/115, w200 76/115
+  (0.9%), K4CW-r16-w200-t4 123/186 (1.5%). Speedup on 4 cores vs serial K4L-R-gs: 2.6x p50, 2.7x p95.
+- 04:28Z wall4 on 03: bot.live.headline_wall --group 4 (one CCX per game), engine ours, HEADLINE 0-299 x R3a,v1,
+  K4L-R-gs-rw-fc-w200/w150-t4-p4 (cores 0-31) and K4CW-r16-w200/w150-t4 (cores 32-63), dirs bot-lfast/wall4-*.
