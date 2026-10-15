@@ -214,3 +214,24 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
   fix PERCRe2b10 R3a +0.036 [−0.024, +0.096], v1 +0.061 [+0.010, +0.122], pooled +0.050 [+0.006, +0.094] (n=181);
   oracle revealed set pooled +0.083 [+0.017, +0.150]; reseeded baseline PERCs1 pooled +0.000 [−0.082, +0.082];
   perfect sight pooled +0.168 [+0.098, +0.239].
+- **22:59Z, floorchk final** (clean channel `-xunits-xev-xhud`, cases 0–14 × R3a/v1): fix vs baseline **30/30 identical
+  command hashes**, Δscore 0.000, 0 restarts. The fix is a no-op when perception is clean.
+- **Defect found in the r3 patch (fixed):** the LIVE test `test_hand_fix.py::test_perc_emp_game_own_state_is_exact…`
+  passes on unpatched main but failed on r3's patched tree (`bot.errors == 1`). Cause: an eviction rebuilt the
+  opponent mirror up to the RECORD tick (`max(tick, self.tick)`, and `assign`, i.e. the board path, runs before
+  `accept_events`), so any opponent event in that record that was earlier than the record tick (a lagged detection)
+  raised `ValueError('public time moved backwards')` in the stream guard. PercPlayer swallows this as a WAIT and loses
+  the rest of the record's events, including the evicting play. In a live session the exception would reach the loop.
+  Fix (bot/noise/livefix/resync.py `_admit`): rebuild up to the stream guard's time, i.e. the event's floored tick on
+  the play path, or `_floor` (the previous record's tick, the floor of every event still to come) on the board path.
+  Two regression tests were added (lagged play eviction; a board eviction followed by a lagged event in the same
+  record). Both fail on r3's resync.py ('public time moved backwards') and pass on the fix. test_revealed 11/11.
+  On the tree patched with the fixed code, the LIVE tests give 52 passed, 2 skipped, 3 deselected. The deselected
+  tests are `test_wall_deadline_is_kept`, which also fails on unpatched main at load 100, and two that import
+  `labels_v4`, which a bot-only tree does not have and which also fail on main.
+  The proposal patch was regenerated with `python -m bot.noise.revfix --diff`.
+- **Consequence for the screens:** scr1/scr1f ran r3's code, where about half of the play-triggered evictions also
+  lost one poll and the evicting play. The screen gates the fresh bank; the fresh bank runs the FIXED code.
+- **Patch equivalence (r3 claim re-checked):** the patch applies cleanly to main's bot/live, and the result is
+  byte-identical to r3's patchcheck tree. 03 patchcheck (patched bot/live, plays[1] membership) vs the scr1f harness arm
+  (rows membership): 20/20 identical command hashes.

@@ -34,15 +34,16 @@ def _ev(card, tick, x=9.0, y=22.0):
 TROOPS = {'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer'}
 
 
-def _locked_out_stream(log_plays=(2600, 3400), board=None):
+def _locked_out_stream(log_plays=(2600, 3400), board=None, lag=0):
     """Records every 5 ticks: REAL[:4], the spurious Earthquake, REAL[4:], Zap and HogRider again, then Log (the real
-    8th card). Each real troop play is on the board for 5 s (perceived)."""
+    8th card). Each real troop play is on the board for 5 s (perceived). `lag`: a play event first appears in a record
+    up to `lag` ticks after its own tick (a lagged detection: event tick < record tick)."""
     order = REAL[:4] + ['Earthquake'] + REAL[4:]
     plays = {200 + 200*i: c for i, c in enumerate(order)}
     plays.update({2000: 'Zap', 2200: 'HogRider'})
     plays.update({t: 'Log' for t in log_plays})
     for tick in range(100, 3600, 5):
-        ev = [_ev(plays[t], t) for t in plays if tick - 5 < t <= tick]
+        ev = [_ev(plays[t], t) for t in plays if tick - 5 < t + lag <= tick]
         units = [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for t, c in plays.items()
                  if c in TROOPS and t <= tick < t + 100]
         units += board(tick) if board else []
@@ -98,6 +99,37 @@ def test_repeated_plays_evict_the_weak_card_and_resync(rt):
     assert {e.name for e in info.events} == set(m)
     # the evicted card's play is evidence again: it comes back only on new evidence
     assert tr.revealed.plays('Earthquake') == 1
+
+
+def test_lagged_play_eviction_keeps_time_monotone(rt):
+    """A play-triggered eviction from a lagged event (event tick 5 ticks before its record's tick): the rebuilt mirror
+    must not run ahead of that event, or the event's own stream-guard check raises 'public time moved backwards'."""
+    tr, info, restarts = _run(rt, lag=3)
+    m = tr.revealed.members()
+    assert 'Log' in m and 'Earthquake' not in m and tr.stats['evict:Earthquake->Log'] == 1 and restarts >= 1
+    assert [n for _, n in tr.plays[1]].count('Log') == 2      # the evicting play itself is accepted
+
+
+def test_board_eviction_then_lagged_event_in_the_same_record(rt):
+    """A board-triggered eviction (assign runs before accept_events) followed, in the same record, by an opponent
+    play event earlier than the record tick: the event is processed normally (no time-backwards error)."""
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    t_evict = None
+    for r in _locked_out_stream(log_plays=(), board=_giant_board()):
+        tr.information(r)
+        if tr.stats['evict'] and t_evict is None:
+            t_evict = r['tick']
+    assert t_evict is not None
+
+    def stream():
+        for r in _locked_out_stream(log_plays=(), board=_giant_board()):
+            if r['tick'] == t_evict:
+                r = dict(r, events=r['events'] + [_ev('Valkyrie', t_evict - 3)])
+            yield r
+    tr2, _, restarts = _run(rt, stream=stream())
+    assert tr2.stats['evict:Earthquake->Giant'] == 1 and 'Giant' in tr2.revealed.members() and restarts >= 1
+    assert (t_evict - 3, 'Valkyrie') in tr2.plays[1] or tr2.stats['cycle_conflict_dropped:1'] >= 1
 
 
 def test_one_play_is_not_enough(rt):

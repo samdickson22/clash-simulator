@@ -45,7 +45,10 @@ class ResyncMixin:
         removed = [(r['tick'], r['x'], r['y']) for r in perceived if r['name'] == w]
         earlier = [dict(seat=1, tick=t, kind='card', name=card, amount=0., x=px, y=py)
                    for t, px, py in self.revealed.rejected.get(card, ()) if via_board or t != tick]
-        self._rebuild([r for r in perceived if r['name'] != w] + earlier, max(tick, self.tick or 0))
+        # The mirror must not run ahead of the stream guard: later events of this record may be earlier than the
+        # record tick (lagged detections). Play path: this event's (floored) tick. Board path (assign runs before
+        # accept_events): the previous record's tick, the floor of every event still to come.
+        self._rebuild([r for r in perceived if r['name'] != w] + earlier, self._floor if via_board else tick)
         self.revealed.evicted(w, card, removed, via_board)
         self.resynced = True
         return True
