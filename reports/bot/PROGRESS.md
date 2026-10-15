@@ -51,16 +51,15 @@ tier). Report to coordinator thread 0523ae6f.
   - RL fine-tune of it5s2 (PPO, KL-anchored): null (`reports/bot/rl/`).
   - ExIt iteration 7: 9 refits of it5s2, none better; it5s2 stays the best student.
 
-## Running (2026-10-14 17:59Z)
+- **2026-10-15 06:42Z:** live K4L variant `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`: 4-core p50/p95 79/126 ms, +0.058 [+0.020, +0.095]
+  vs K4CW-r16 at a real 200 ms; fresh bank 2 +0.053 vs K4C-r16. Handed to the LIVE LEAD (hook + Mac timing pending).
 
-- **ExIt iteration 6+ owner** (`bot-lead-exit-it6-r1`, Opus) on 01/04/08.
-  - CPU feeders: `bot/exit/cpu_feeder.sh`, state in `<J>/cpu-feed/`.
-  - GPU queues with keep-alives: `<J>/gpuq/`.
-  - The teacher is being switched to K4C-r16.
-  - J1=/mpac/sdicks02/jobs/clasher/bot-exit-r1-01, J4=…-04, J8=/mpac/sdicks02/jobs/clasher/bot-exit-r1.
-- **Daily headline:** T3 scheduled task at 13:00Z (v1 + v3).
-- **Hosts:** 01, 03, 04, 08 (05 light only).
-  - Exclusions: 01 PGID 516161, x4s4-onpolicy, t1-*; 08 v4-b-20261012-r1.
+## Running (2026-10-15 06:42Z)
+
+- **ExIt it9** (`bot-lead-exit-it9-r1`, Opus) on 01/04/08 (GPUs + CPU feeders): gentle refits of it5s2 and Kall on all labels.
+- **K4L round 2** (`bot-lead-lopp-r2-r1`, Opus), primary host 03: learned-term weight, multi-sample, opponent model v2.
+- **Daily headline:** T3 scheduled task at 13:00Z (v1 + v3), best bot from this file.
+- **Hosts:** 01, 03, 04, 08 (05 light only). Exclusions: 01 PGID 516161, x4s4-onpolicy, t1-*; 08 v4-b-20261012-r1.
 
 ## Next
 
