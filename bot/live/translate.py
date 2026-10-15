@@ -308,6 +308,10 @@ class LiveTranslator(Translator):
 
     @staticmethod
     def _event_tick(e, record):
+        if 'score' in e and e.get('exec_ms') is None and e.get('tick') is not None:
+            # perception temporal-head events carry the estimated execution time in ms under 'tick'
+            # (sample-records README, 2026-10-15); frame_record() names it exec_ms.
+            e = dict(e, exec_ms=e['tick'], tick=None)
         if e.get('tick') is None and e.get('exec_ms') is not None and record.get('timestamp_ms') is not None:
             return dict(e, tick=int(record['tick'] - max(0., record['timestamp_ms'] - e['exec_ms'])/50))
         return e
@@ -324,7 +328,7 @@ class LiveTranslator(Translator):
                 else:
                     self.stats[f'unmapped_card_unit:{card}'] += 1
                     continue
-            units.append((card, 0 if int(u['owner']) == 0 else 1, float(u['x']), float(u['y'])))
+            units.append((card, 0 if int(u['owner']) == 0 else 1, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
         own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
         got, plays = self.tracker.update(record['tick'], units, own)

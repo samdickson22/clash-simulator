@@ -31,3 +31,8 @@ Started 2026-10-14T22:57Z on 127x05, worktree /mpac/sdicks02/repos/clasher-live 
 - 00:30Z DONE (all 5 deliverables). Phase 3 results in RESULTS §2 (T1 K4C) and §3 (latency). 21 tests pass + 1 skipped until real perception records exist (asked live-percB to drop them at jobs/clasher/live-perception-20261014/sample-records/; test picks them up automatically).
   Nothing running. Nothing committed (LIVE LEAD commits; run clasher-secret-scan on the staged diff - not on 05's PATH; a pattern grep of bot/live + reports/live/bot was clean).
   Not done / open: D4 paired HEADLINE (bot lead's 03 slot), optional PERC headline, real-record test, Mac build+parity (needs Mac authorization).
+- 04:52Z Real-record fixes (scope set by LIVE LEAD; task (b) real-perception replay belongs to live-integ-ab-owner-r1 - I stop here):
+  births.py: ClockTracker anchored on confirmed elixir-phase transitions (+ anchor() for match start; robust clock-reading fallback) - real clock regression MAE 3-6 s had pushed ticks +1200 off; now <=12 ticks once anchored. UnitTracker play detection by spatial cluster vote (vote 10 ticks / 2.5 tiles / 2 hits / score>=.6, relabels absorbed 40 ticks): real-output opponent-play P/R .33-.42/.93-1.0 -> ~.71/.83 on the 2 sample val matches (truth units ~.91/.86).
+  translate.py: perception event 'tick' in ms (with 'score') -> exec_ms -> ticks; unit score passed to the tracker.
+  test_live.py: real-record test (sample-records), ms-event test, clock/births/frame_record expectations updated. 23 tests pass.
+  real_records.py: written (eval script), NOT run - the study is the integ owner's.

@@ -157,3 +157,14 @@
   - latency on 01 CPU: 107 ms per frame end to end, so the Mac needs MPS/CoreML or the event head on every other frame.
   - Files on 01 and 05: `/mpac/sdicks02/jobs/clasher/live-perception-20261014/` (export-final, sample-records).
   - Cheap next fix, no GPU: fuse the newborn unit's body identity into the event card.
+- **04:37Z, coordinator accepted step B** (eafb2277) and approved (a), (b) and (c) in that order.
+  - **(a) event-card fusion and (b) real-perception end-to-end replay:** delegated to an Opus owner,
+    `live-integ-ab-owner-r1`. Output goes to `reports/live/integration/`.
+  - **(c) Mac bench add-on:** a mixed contention case. The perception loop (MPS, then CoreML, then CPU with the
+    event head on every other frame) runs concurrently with each tier, and the recommended live tier comes from the
+    mixed numbers. This was added to the bench owner's fix round, so the same STOP gate applies.
+- **04:53Z, glueC real-record fixes done (23 tests pass); glueC stopped.**
+  - The ClockTracker is anchored on elixir-phase transitions. **The live loop must call `anchor(0, ts)` at match
+    start.**
+  - Opponent plays come from births grouped into clusters with a vote: P/R ~0.71/0.83 on real output, provisional.
+  - Event ms times are converted to ticks.

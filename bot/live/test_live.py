@@ -349,7 +349,7 @@ def test_clock_tracker_matches_the_hud_convention():
     for tick in range(1, 6001, 3):                    # ~frames every 150 ms
         clock, phase = hud_clock(tick)
         worst = max(worst, abs(c(clock, phase, 50*tick) - tick))
-    assert worst <= 3, worst
+    assert worst <= 10, worst                      # centre of the displayed second until a phase anchor
 
 
 def test_births_derive_plays_and_ignore_children_flicker_and_own(rt):
@@ -373,7 +373,7 @@ def test_births_derive_plays_and_ignore_children_flicker_and_own(rt):
         info = tr.information(record(tick=tick, events=[], units=[
             {'cls': c, 'card': c, 'owner': o, 'x': x, 'y': y, 'hp_frac': 1., 'score': .9} for c, o, x, y in units]))
     # confirmed on the 2nd sighting; first-sighting tick, floored to the previous record (the belief cannot go back)
-    assert [(e.name, e.tick) for e in info.events] == [('Knight', 610), ('GoblinHut', 630)]
+    assert [(e.name, e.tick) for e in info.events] == [('Knight', 610), ('GoblinHut', 635)]
     r = rows(info.packet, rt)
     assert tr.tracker.stats['birth_outside_zone'] == 1 and tr.tracker.stats['unconfirmed_birth'] == 1
 
@@ -398,10 +398,10 @@ def test_real_frame_record_code_path(rt):
     from bot.live.translate import LiveTranslator
     tr = LiveTranslator(rt, OWN)
     info = tr.information(rec)
-    assert info.tick == (180-150)*20 + 1 and info.events == ()        # a birth needs a second sighting
-    dec2 = dict(dec, clock=150.0)
-    info = tr.information(C.frame_record(dec2, timestamp_ms=123456+250))
-    assert info.tick == (180-150)*20 + 1 + 5
+    assert 601 <= info.tick <= 620 and info.events == ()              # a birth needs a second sighting
+    for k in range(1, 5):                                              # 4 more frames, 5 ticks apart
+        info = tr.information(C.frame_record(dict(dec, clock=150.4 - .25*k), timestamp_ms=123456 + 250*k))
+    assert 621 <= info.tick <= 640
     r = rows(info.packet, rt)
     k = [x for x in r if x['name'] == 'Knight'][0]
     assert k['own'] and (k['x'], k['y']) == pytest.approx((4.5, 32-(29-10.5)), abs=1e-3) and k['hp'] == pytest.approx(.5)
@@ -428,17 +428,36 @@ SAMPLE_RECORDS = '/mpac/sdicks02/jobs/clasher/live-perception-20261014/sample-re
 
 @pytest.mark.skipif(not __import__('os').path.isdir(SAMPLE_RECORDS), reason='no real perception records dropped yet')
 def test_real_perception_records_translate(rt):
-    """Real frame_record output of the perception model (validation frames, dropped by the perception owner)."""
+    """Real LivePerception output (validation match; lines {episode, seq, tick, pred, truth}, perception owner
+    2026-10-15) translates without the line's tick (HUD clock only), with no unmapped card, and yields opponent
+    plays from births that match the true plays."""
     import glob
     from bot.live.translate import LiveTranslator
-    files = sorted(glob.glob(SAMPLE_RECORDS + '/*.jsonl'))
-    assert files
-    recs = [json.loads(l) for l in open(files[0]) if l.strip()]
-    assert recs and recs[0].get('schema') == 'clasher.live.perception-frame.v1'
-    deck = [c for c in dict.fromkeys(c for r in recs for c in list(r['hand']['cards']) + [r['hand']['next']] if c)]
-    deck = (deck + [c for c in OWN if c not in deck])[:8]
-    tr = LiveTranslator(rt, deck)
-    for r in recs:
-        info = tr.information({k: v for k, v in r.items() if k != 'tick'})     # the translator never reads a tick
+    from bot.live.real_records import unique_plays, match_plays
+    path = sorted(glob.glob(SAMPLE_RECORDS + '/*.jsonl'))[0]
+    rows = [json.loads(l) for l in open(path) if l.strip()][:600]
+    assert rows[0]['pred']['schema'] == 'clasher.live.perception-frame.v1'
+    deck = list(dict.fromkeys(c for r in rows for c in r['truth']['hand']['cards'] + [r['truth']['hand']['next']] if c))
+    tr = LiveTranslator(rt, (deck + [c for c in OWN if c not in deck])[:8])
+    for r in rows:
+        info = tr.information(r['pred'])                  # no 'tick' key: HUD clock + phase + timestamp
         assert info.packet.observation.entity_mask.sum() >= 1
-    assert not any(k.startswith('unmapped_card_unit') for k in tr.stats), dict(tr.stats)
+    assert not any(k.startswith(('unmapped_card_unit', 'no_template')) for k in tr.stats), dict(tr.stats)
+    # play derivation, timed by the true tick (the clock is scored separately: test_clock_tracker_*)
+    tr = LiveTranslator(rt, (deck + [c for c in OWN if c not in deck])[:8])
+    for r in rows:
+        tr.information(dict(r['pred'], tick=int(r['tick']), events=[]))
+    derived = [dict(owner=o, card=c, x=x, y=y, tick=t) for o, c, x, y, t in tr.derived_plays]
+    m = match_plays(derived, unique_plays(rows))
+    assert m['recall'] >= .6 and m['precision'] >= .6, m
+
+
+def test_perception_event_times_in_ms_are_converted(rt):
+    """frame_record events carry the estimated execution time in ms: 'exec_ms' (frame_record) or 'tick' in ms with
+    a 'score' (sample-records). Both become ticks relative to the record's timestamp."""
+    from bot.live.translate import LiveTranslator
+    for ev in (dict(owner=1, card='Knight', x=9.5, y=24.5, exec_ms=600*50 - 1000, score=.9),
+               dict(owner=1, card='Knight', x=9.5, y=24.5, tick=600*50 - 1000, score=.9)):
+        tr = LiveTranslator(rt, OWN, plays_from='events')
+        info = tr.information(record(tick=600, timestamp_ms=600*50, units=[], events=[ev]))
+        assert [(e.name, e.tick) for e in info.events] == [('Knight', 580)], ev

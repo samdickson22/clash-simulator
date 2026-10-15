@@ -93,15 +93,29 @@ class Track:
 
 
 class UnitTracker:
+    """Tracks + opponent plays from births.
+
+    Play detection is per CLUSTER, not per track: a new main-body birth of owner o at (x, y) opens a cluster unless
+    one of o's clusters lies within `vote_tiles` (then it joins it). For `vote_ticks` after opening, every detection of
+    o within `vote_tiles` whose track was born since the cluster opened votes for its card (weighted by detection
+    score >= `min_score`); frames with such a detection are hits. Once the window has passed and the cluster has
+    >= `confirm_hits` hits it emits ONE play - the top-voted card at the first-sighting position and tick; a cluster
+    still short of hits after `confirm_ticks` is dropped (unconfirmed). A closed cluster absorbs further births within `vote_tiles` for `relabel_ticks` (a perception
+    relabel of the same spawn is not a new play; a same-card birth is the same play). Same-card births within
+    `cluster_tiles`/`cluster_ticks` of a play also join it (multi-unit cards spread out)."""
+
     def __init__(self, bodies: CardBodies, *, radius=1.2, speed=.06, max_radius=3.5, ttl=40, building_ttl=400,
-                 memory=200, cluster_tiles=4.0, cluster_ticks=40, confirm_hits=2, confirm_ticks=20):
+                 memory=200, cluster_tiles=4.0, cluster_ticks=40, confirm_hits=2, vote_ticks=10, vote_tiles=2.5,
+                 relabel_ticks=40, min_score=.6, confirm_ticks=30):
+        # Defaults from a sweep on the perception owner's 2 validation matches (sample-records, 49 opponent plays):
+        # real output P/R .75/.80 (vs .33-.42/.93-1.0 with per-track confirmation); truth units .91/.86.
         self.cb = bodies
         self.radius, self.speed, self.max_radius = radius, speed, max_radius
         self.ttl, self.building_ttl, self.memory = ttl, building_ttl, memory
         self.cluster_tiles, self.cluster_ticks = cluster_tiles, cluster_ticks
-        self.confirm_hits, self.confirm_ticks = confirm_hits, confirm_ticks
-        self.live, self.dead, self.births = [], [], []
-        self.pending = {}                   # track id -> [hits, (owner, card, x, y, tick)] awaiting confirmation
+        self.confirm_hits, self.vote_ticks, self.vote_tiles = confirm_hits, vote_ticks, vote_tiles
+        self.relabel_ticks, self.min_score, self.confirm_ticks = relabel_ticks, min_score, confirm_ticks
+        self.live, self.dead, self.clusters = [], [], []
         self.n = 0
         self.stats = Counter()
 
@@ -135,10 +149,27 @@ class UnitTracker:
         body = max(main, key=lambda bn: (bn[1]*k/total - have[bn[0]], bn[1]))[0]
         return body, True
 
+    def _birth(self, owner, card, x, y, tick, tower_alive):
+        for c in self.clusters:
+            if c['owner'] == owner and math.hypot(x - c['x'], y - c['y']) <= self.vote_tiles:
+                if c['card'] is None or tick - c['t0'] <= self.relabel_ticks:
+                    if c['card'] is not None and c['card'] != card:
+                        self.stats['relabel_absorbed'] += 1
+                    return
+            if c['owner'] == owner and c['card'] == card and tick - c['t0'] <= self.cluster_ticks and \
+                    math.hypot(x - c['x'], y - c['y']) <= self.cluster_tiles:
+                return
+        if owner == 1 and not self.deployable(card, x, y, tower_alive):
+            self.stats['birth_outside_zone'] += 1
+            return
+        self.clusters.append(dict(owner=owner, x=x, y=y, t0=tick, votes=Counter(), hits=0, card=None, last_hit=None))
+
     def update(self, tick, units, tower_alive):
-        """units: [(card, owner, x, y)] -> (assigned [(body or None, facing)], plays [(owner, card, x, y, tick)])."""
-        taken, out, plays = set(), [], []
-        for card, owner, x, y in units:
+        """units: [(card, owner, x, y[, score])] -> (assigned [(body or None, facing)], plays [(owner, card, x, y, tick)])."""
+        taken, out, plays, seen = set(), [], [], []
+        for u in units:
+            card, owner, x, y = u[:4]
+            score = u[4] if len(u) > 4 and u[4] is not None else 1.
             t = self._match(self.live, card, owner, x, y, tick, taken)
             if t is None:
                 t = self._match(self.dead, card, owner, x, y, tick, taken)
@@ -153,8 +184,7 @@ class UnitTracker:
                 t.x, t.y, t.last = x, y, tick
                 taken.add(t.id)
                 out.append((t.body, t.facing))
-                if t.id in self.pending:
-                    self.pending[t.id][0] += 1
+                seen.append((t, score))
                 continue
             body, main = self._body(card, owner, x, y, tick)
             if body is None:
@@ -168,31 +198,40 @@ class UnitTracker:
             out.append((t.body, t.facing))
             self.stats['births'] += 1
             if main:
-                recent = any(b[0] == owner and b[1] == card and tick - b[4] <= self.cluster_ticks and
-                             math.hypot(x - b[2], y - b[3]) <= self.cluster_tiles for b in self.births)
-                self.births.append((owner, card, x, y, tick))
-                if recent:
+                self._birth(owner, card, x, y, tick, tower_alive)
+            seen.append((t, score))
+        # votes/hits for open clusters, then close the ones whose window has passed
+        for c in self.clusters:
+            if c['card'] is not None:
+                continue
+            hit = False
+            for t, score in seen:
+                if t.main and t.owner == c['owner'] and t.first >= c['t0'] and score >= self.min_score and \
+                        math.hypot(t.x - c['x'], t.y - c['y']) <= self.vote_tiles:
+                    c['votes'][t.card] += score
+                    hit = True
+            c['hits'] += hit
+        keep = []
+        for c in self.clusters:
+            if c['card'] is None and tick - c['t0'] >= self.vote_ticks and \
+                    (c['hits'] >= self.confirm_hits or tick - c['t0'] > self.confirm_ticks):
+                if c['hits'] >= self.confirm_hits and c['votes']:
+                    c['card'] = max(c['votes'].items(), key=lambda kv: (kv[1], kv[0]))[0]
+                    if len(c['votes']) > 1:
+                        self.stats['vote_contested'] += 1
+                    plays.append((c['owner'], c['card'], c['x'], c['y'], c['t0']))
+                else:
+                    self.stats['unconfirmed_birth'] += 1
                     continue
-                if owner == 1 and not self.deployable(card, x, y, tower_alive):
-                    self.stats['birth_outside_zone'] += 1
-                    continue
-                self.pending[t.id] = [1, (owner, card, x, y, tick)]
-        # A play is a birth seen again (>= confirm_hits sightings within confirm_ticks): a one-frame mislabel is not
-        # a play. The play keeps the first-sighting tick and position.
-        for tid, (hits, play) in list(self.pending.items()):
-            if hits >= self.confirm_hits:
-                plays.append(play)
-                del self.pending[tid]
-            elif tick - play[4] > self.confirm_ticks:
-                self.stats['unconfirmed_birth'] += 1
-                del self.pending[tid]
+            if c['card'] is None or tick - c['t0'] <= max(self.relabel_ticks, self.cluster_ticks):
+                keep.append(c)
+        self.clusters = keep
         keep, gone = [], []
         for t in self.live:
             ttl = self.building_ttl if t.body[1] == 1 else self.ttl
             (keep if tick - t.last <= ttl else gone).append(t)
         self.live = keep
         self.dead = [t for t in self.dead + gone if tick - t.last <= self.memory]
-        self.births = [b for b in self.births if tick - b[4] <= self.cluster_ticks]
         return out, plays
 
     @staticmethod
@@ -205,21 +244,73 @@ class UnitTracker:
 
 
 class ClockTracker:
-    def __init__(self):
-        self.overtime, self.tick, self.anchor = False, None, None
+    """HUD clock -> tick, robust to misread frames. Game time is linear in capture time (20 ticks/s), so
+    tick = timestamp_ms/50 + offset; only the offset is estimated:
+    1. an anchor, best first: `anchor(tick, timestamp_ms)` from the live loop (e.g. match start), else a CONFIRMED
+       elixir-phase transition (1->2 at tick 2400, 2->3 at 4800; the new phase must hold for `confirm` frames; the
+       boundary is put midway between the last old-phase and first new-phase frame) - the phase head is far more
+       accurate than the clock regression;
+    2. otherwise the robust centre of all clock readings: a displayed second c says tick in [lo, lo+19],
+       lo = (180-c)*20+1 (regulation) or (300-c)*20+1 (overtime, chosen when nearer the current estimate); offset =
+       midpoint of the 80th-percentile lower end and 20th-percentile upper end, else the median centre.
+    Without timestamps: the plain per-frame reading. Monotonic. Phase deltas (elixir regen) never depend on the
+    offset; only absolute boundaries (2400/4800/3600) do."""
+
+    def __init__(self, window=4000, confirm=3):
+        from collections import deque
+        self.obs, self.tick = deque(maxlen=window), None
+        self.confirm, self.fixed, self.candidate = confirm, None, None
+        self.last_phase, self.last_ts = None, None
+
+    def anchor(self, tick, timestamp_ms):
+        self.fixed = float(tick) - float(timestamp_ms)/50
+
+    def offset(self):
+        if self.fixed is not None:
+            return self.fixed
+        lows = sorted(self.obs)
+        n = len(lows) - 1
+        lo, hi = lows[int(.8*n)], lows[int(.2*n)] + 19
+        return (lo + hi)/2 if lo <= hi else lows[n//2] + 9.5
+
+    def _phase(self, phase, ts):
+        if self.candidate is not None:
+            target, mid, seen = self.candidate
+            if phase == target:
+                seen += 1
+                if seen >= self.confirm and self.fixed is None:
+                    self.fixed = {2: 2400, 3: 4800}[target] - mid/50
+                    self.candidate = None
+                else:
+                    self.candidate = (target, mid, seen)
+            else:
+                self.candidate = None
+        if self.last_phase is not None and phase == self.last_phase + 1 and phase in (2, 3) and \
+                self.last_ts is not None and ts - self.last_ts <= 1000 and self.fixed is None:
+            self.candidate = (phase, (self.last_ts + ts)/2, 1)
+        if self.candidate is None or phase != self.candidate[0]:
+            self.last_phase, self.last_ts = phase, ts
+        elif self.last_phase is None:
+            self.last_phase, self.last_ts = phase, ts
 
     def __call__(self, clock_s, phase, timestamp_ms=None):
         c = max(0, int(round(float(clock_s))))
         phase = int(phase or 1)
-        if phase == 3 or (phase == 2 and c > 60):
-            self.overtime = True
-        lo = ((300 if self.overtime else 180) - c)*20 + 1
-        lo = max(lo, 0)
-        t = lo
-        if timestamp_ms is not None:
-            if self.anchor is None or self.anchor[0] != lo:
-                self.anchor = (lo, float(timestamp_ms))      # first frame seen in this displayed second
-            t = lo + min(19, max(0, int((float(timestamp_ms) - self.anchor[1])/50)))
+        reg, ot = (180 - c)*20 + 1, (300 - c)*20 + 1
+        if timestamp_ms is None:
+            t = ot if (phase == 3 or (phase == 2 and c > 60)) else reg
+        else:
+            ts = float(timestamp_ms)
+            self._phase(phase, ts)
+            t0 = ts/50
+            if self.obs or self.fixed is not None:
+                guess = t0 + self.offset()
+                lo = min((reg, ot), key=lambda v: abs(v + 9.5 - guess))
+            else:
+                lo = ot if (phase == 3 or (phase == 2 and c > 60)) else reg
+            self.obs.append(lo - t0)
+            t = int(round(t0 + self.offset()))
+        t = max(t, 0)
         if self.tick is not None:
             t = max(t, self.tick)
         self.tick = t
