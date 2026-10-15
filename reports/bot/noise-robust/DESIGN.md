@@ -4,9 +4,12 @@
 - **Primary metric:** `PERC-emp:LIVE-K4L-R-gs-rw-fc-w200-t4-p4` vs R3a. The LIVE LEAD measured
   −0.200 [−0.263, −0.137] (0.807 → 0.607) against perfect sight (c95ef57b).
 - **Secondary:** K4L vs v1 −0.070, and it5s2 −0.137 (R3a) / −0.113 (v1).
-- **Noise model:** exactly `bot/live/empirical.py` + `empirical-val.json` at current main (unit threshold 0.4).
-  Screens use this, the comparable reference for every number so far. Fresh-bank claims re-measure the candidate and
-  the unmodified baseline against the stats deployed at that time, pre-registered.
+- **Noise model:** `bot/live/empirical.py` at current main.
+  - Screens before 16:50Z used `PERC-emp` (empirical-val.json, unit threshold 0.4).
+  - **From 16:50Z the deployed reference is `PERC-emp-sr1u50`** (empirical-val-r1u50.json: round-1 model, unit
+    threshold 0.5, all-Ghost truth; LIVE LEAD 16:39Z). Screens and the fresh bank use it.
+  - PERC-emp stays a secondary robustness check.
+  - main's perc.py (f0eabd1d) reproduces the old PERC-emp games bit for bit (command hash fd28801b…, case 0 vs R3a).
 - **Boundary:** the LIVE LEAD owns everything up to the perceived view. This work changes only decisions given that
   view. bot/live/* is never edited; proposed hooks are written out as diffs in RESULTS.md.
 

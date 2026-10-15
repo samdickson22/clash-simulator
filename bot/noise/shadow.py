@@ -125,7 +125,7 @@ class FanPlayer:
                 opponent = tb.sample(rng)
             if what in ('units', 'all'):
                 info = replace(info, packet=with_entities(info.packet, _entities(TRUTH['view'].info.packet)))
-            elif what in ('ownu', 'oppu', 'recall', 'fp'):
+            elif what in ('ownu', 'oppu', 'recall', 'fp', 'unitrows', 'nonunit', 'recall2', 'attrs'):
                 info = replace(info, packet=with_entities(info.packet, fair._mix_units(
                     what, _entities(info.packet), _entities(TRUTH['view'].info.packet))))
             return R.root(info, opponent, rng)
@@ -157,6 +157,24 @@ class FanPlayer:
             return keep + [e for e in nu if not own(e)] + [e for e in tu if own(e)]
         if what == 'oppu':
             return keep + [e for e in nu if own(e)] + [e for e in tu if not own(e)]
+        if what in ('recall2', 'attrs'):     # one-to-one greedy match within 1 tile, same owner
+            cand = sorted((math.hypot(a[1][0]*18 - b[1][0]*18, a[1][1]*32 - b[1][1]*32), i, j)
+                          for i, a in enumerate(nu) for j, b in enumerate(tu) if own(a) == own(b))
+            ui, uj, pair = set(), set(), {}
+            for d, i, j in cand:
+                if d > 1.:
+                    break
+                if i in ui or j in uj:
+                    continue
+                ui.add(i); uj.add(j); pair[i] = j
+            if what == 'recall2':         # every true unit without a partner is added (swarm members included)
+                return keep + nu + [e for j, e in enumerate(tu) if j not in uj]
+            # attrs: matched noisy units take the true row (position, hp, body, facing); others unchanged
+            return keep + [tu[pair[i]] if i in pair else e for i, e in enumerate(nu)]
+        if what == 'unitrows':       # true troop/building rows, noisy everything else (towers, no in-flight entities)
+            return keep + tu
+        if what == 'nonunit':        # noisy units + the true non-unit entities (projectiles, spells, effects, towers)
+            return nu + [e for e in true if not unit(e)]
         if what == 'recall':
             return keep + nu + [e for e in tu if not near(e, nu)]
         return keep + [e for e in nu if near(e, tu)]

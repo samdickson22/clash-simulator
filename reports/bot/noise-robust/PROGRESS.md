@@ -106,10 +106,44 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
   - mr3 (03, cases 0–149) and mr3-08 (08, cases 150–299): noisy K1 vs K2-D vs v1;
   - mr4: the combination PERC-emp:NR-c2i12m2v5d0:LIVEMR-K2-D vs R3a and v1.
 
-## Running (since 16:38Z; 03 at 100 procs)
-- **03, mr1** (PGID 817335, 25 workers): noisy K1/K2/K2-D/K2-U3q50/K3-D-U3q50 vs R3a, to 300.
-- **03, mr2** (PGID 1046183, 36 workers): LIVEMR-K1, LIVEMR-K2-D (perfect sight), PERC-emp:LIVEMR-K4-D vs R3a.
-- **03, mr3** (PGID 1047691, 10 workers): noisy K1, K2-D vs v1, cases 0–149.
-- **03, mr4** (PGID 1049731, 18 workers): PERC-emp:NR-c2i12m2v5d0:LIVEMR-K2-D vs R3a and v1.
-- **03, f1** (PGID 672354, 6 workers): fast-tier filters.
-- **08, mr3-08** (PGID 3351467, 30-proc lease): noisy K1, K2-D vs v1, cases 150–299.
+- **16:45Z, committed b1438e52** (code + docs; only my 14 files).
+- **16:49Z, PERC-emp interim** vs PERC-emp:LIVEMR-K1, R3a:
+  - K2-D **+0.076 [−0.015, +0.168]** (n=131), K4-D +0.088 (n=91), K3-D-U3q50 +0.061, K2-U3q50 +0.030, K2 +0.015;
+  - combination NR-c2i12m2v5d0 + K2-D: +0.107 (n=28);
+  - perfect sight vs K1: K2-D **−0.011 [−0.098, +0.076]** (n=92), K3-D −0.041 (n=73).
+  - vs v1 (n≈20): K2-D +0.053, combination +0.091.
+- **16:50Z, switched to the deployed stats PERC-emp-sr1u50** (bot lead).
+  - Tree `clasher-bot-noise-v2` on 03/08 = my code + main's bot/live perc/empirical/stats (unmodified).
+  - Hash check: PERC-emp is bit-identical, and LIVEMR-K1 == LIVED on case 0.
+  - Stopped on 03: mr1, mr3, mr4, f1.
+  - Launched:
+    - sr1 (PGID 1094409, 54 workers): sr1u50 × {K1, K2-D, NR-c2i12m2v5d0:K2-D} vs R3a and v1, cases 0–299;
+    - sr1p (PGID 1094424, 6 workers): perfect-sight K1/K2-D vs v1.
+
+- **17:12Z, early K4L gap under sr1u50** (reported to the bot lead): R3a −0.224 [−0.358, −0.090] (n=67). It does
+  not shrink the way it5s2's did.
+- **17:39Z, sr1 interim** (n≈150–175):
+  - K4L gap R3a **−0.206 [−0.288, −0.124]** (0.820 → 0.606, n=170); v1 −0.134 [−0.239, −0.030] (n=67).
+  - K2-D vs K1: R3a +0.013 [−0.080, +0.107], v1 +0.012 [−0.058, +0.087].
+  - Filter + K2-D: R3a −0.003, v1 +0.011.
+  - Perfect sight K2-D vs K1: R3a +0.017 [−0.033, +0.070] (n=299), v1 −0.079 (n=63).
+  - **Reading:** D's PERC-emp signal (+0.076) does not carry over to sr1u50.
+  - mr2 stopped.
+- **17:40Z, the in-flight entity question** (capture: 29% of polls have a projectile/spell in the true table).
+  orc3 (sr1u50, 14 games, 1,730 decisions):
+  - O:unitrows (true troop/building rows only) agreement +4.3 pp, regret −28%;
+  - O:nonunit (true projectiles/spells/effects only) +1.8 pp, regret ≈0;
+  - O:units (both) +7.6 pp, regret −31%.
+  - The spell-reconstruction idea was dropped.
+- **17:58Z, K4L floor arm** (xunits+xhud+xev, round-1 stats) vs perfect sight: R3a **−0.012 [−0.085, +0.073]**
+  (n=82), v1 −0.011 (n=90). It is level, so the translator's structural losses cost K4L nothing.
+  - floor stopped.
+- **17:59Z, orc4 launched:** O:recall2 (every unmatched true unit added, swarms included) vs O:attrs (matched units
+  get true position/hp/body/facing) vs O:unitrows/O:fp, under sr1u50.
+
+## Running (since 17:59Z; 03 at 100 procs)
+- **03, sr1** (PGID 1094409, 54 workers): sr1u50 × {K1, K2-D, NR+K2-D} vs R3a and v1.
+- **03, sr1p** (PGID 1094424, 6 workers): perfect-sight K1/K2-D vs v1.
+- **03, orc3** (PGID 1251970, 12 workers): sr1u50 oracle split, cases 1600+.
+- **03, orc4** (PGID 1313904, 24 workers): sr1u50 presence vs attributes oracle, cases 1700+.
+- **08, mr3-08** (PGID 3351467): PERC-emp K1/K2-D vs v1, cases 150–299 (secondary).
