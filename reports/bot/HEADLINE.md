@@ -66,6 +66,11 @@ Everything is as in v2 (RoyaleSim 15.535, same cases and BASE), but the pool is 
 
 ## Tracked numbers
 
+> **Selection-bias caveat (2026-10-15 12:47Z).** Two reseeded copies of K4L-R-gs scored −0.027 and −0.038 against K4L-R-gs's own
+> games on HEADLINE cases 0–299 (`reports/bot/learned-opponent/RESULTS.md`, round 2). Bots chosen on this bank are
+> therefore lucky there by about 0.03, so absolute HEADLINE rows for selected bots are optimistic by roughly that much.
+> Claims of a new best bot rest only on fresh-bank paired deltas.
+
 | date (UTC) | engine | candidate | pool score [95% CI] | vs v1 | vs R3a | vs scripted-balanced | vs scripted-pressure | games | notes |
 |---|---|---|---|---|---|---|---|---:|---|
 | 2026-10-14 03:50 | ours (Python C56) | K4S-b64 | **0.864 [0.847, 0.882]** | 0.830 [0.787, 0.870] | 0.633 [0.580, 0.687] | 0.997 [0.990, 1.000] | 0.996 [0.990, 1.000] | 1200 | first run, bot-headline-r1 on 03. Scripted opponents are saturated, so the R3a and v1 columns carry the signal. |
