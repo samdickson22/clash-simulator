@@ -333,3 +333,17 @@
   - **Deployed perception stays r1 at threshold 0.5, no filter.**
   - Renderer-side decode tuning is saturated at sim resolution. The next lever is the official-client domain gap
     (blocked on Sam).
+- **17:02Z, coordinator approved the Mac disk cleanup:** android-sdk 10.2 GB, npm, pnpm prune, Chrome
+  cache, brew, and 4 cache dirs.
+  - Excluded: Codex caches, cargo registry, and everything in list C.
+  - Script `reports/live/mac-ops/disk_cleanup.zsh` is in Sol review (`live-mac-disk-cleanup-sol-r1`).
+  - The script skips the Chrome cache if Chrome is running.
+- **BlueStacks trial owner** `live-bluestacks-trial-owner-r1`: item 2 (RAM with the VM up) and item 3 (guest
+  account without Google, Supercell-signed sideload).
+  - Phase 1 (APK on 05 plus the scripts) ends at the Sol gate. Stop rule: no evasion.
+- **17:04Z, Mac disk cleanup DONE:** `reports/live/mac-ops/disk_cleanup.zsh`, Sol r1 fixes applied, dry run first.
+  - Free space **7.9 → 19.96 GiB** (21.4 GB), 12 GiB freed, `__RC=0`.
+  - Removed: android-sdk 10.2 GiB, npm 0.5 GiB, pnpm prune, the Homebrew download cache, colima, t3code-updater,
+    electron and node-gyp caches.
+  - The Chrome cache was skipped because Chrome was running.
+  - `brew cleanup` was narrowed to the download cache only, per Sol: it would otherwise remove kegs.

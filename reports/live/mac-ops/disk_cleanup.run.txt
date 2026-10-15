@@ -1,0 +1,16 @@
+[17:04:21Z] free before: 7 GiB (8338156 KiB)  DRY=0
+[17:04:21Z] processes whose command line references the SDK: 0
+[17:04:21Z] open files under SDK: 0
+[17:04:21Z] config files checked: 12; references: 0
+[17:04:21Z] rm  /Users/sam/.local/android-sdk  (10738576 KiB)
+[17:04:22Z] npm cache clean --force (/Users/sam/.npm, 2643828 KiB)
+[17:04:23Z] npm cache after: 2097204 KiB
+[17:04:23Z] pnpm store prune (/Users/sam/Library/pnpm/store/v11)
+[17:04:38Z] skip /Users/sam/Library/Caches/Google (Google Chrome is running)
+[17:04:38Z] rm  /Users/sam/Library/Caches/Homebrew/downloads  (516756 KiB)
+[17:04:38Z] rm  /Users/sam/Library/Caches/colima  (324568 KiB)
+[17:04:38Z] rm  /Users/sam/Library/Caches/t3code-updater  (302668 KiB)
+[17:04:38Z] rm  /Users/sam/Library/Caches/electron  (127208 KiB)
+[17:04:38Z] rm  /Users/sam/Library/Caches/node-gyp  (63860 KiB)
+[17:04:38Z] free after: 19 GiB (20925280 KiB); freed 12 GiB
+__RC=0
