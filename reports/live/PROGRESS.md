@@ -298,3 +298,38 @@
 - **13:53Z, unit-threshold test DONE:** u50 +0.020/+0.020 (n.s.); u55 +0.017/−0.037.
   - **Decision: deployed unit threshold 0.4 → 0.5**, provisional; round 2 picks its own.
   - 03 handed back to the bot lead.
+- **13:56Z, bot lead started `bot-lead-noise-robust-r1`** (decisions given a noisy view; target K4L
+  under PERC-emp vs R3a, now −0.200).
+  - Boundary: LIVE owns everything up to the perceived view; they send hook diffs to us.
+  - **Tell them whenever the noise statistics change:** u50 now, r2 at ~15–16Z.
+- **14:42Z, round-2 training done: no unit gain.**
+  - ft-r3b (ea104903…) lands on r1's precision/recall curve. Phantom proxy, best point: r1 .161 vs r2 .1585, a tie.
+  - Count extras hurt at every threshold.
+  - What r2 does add: Royal Ghost, spell-effect detections, a switchable count head.
+  - **01 GPU released to the bot lead at 14:42Z.**
+  - Next, CPU only: decode-side phantom filters (cross-identity NMS, persistence and hysteresis), one sim command,
+    RESULTS-R2.
+  - Default deploy stays r1 at 0.5.
+- **14:43Z, Mac bench on the Mac.**
+  - Parity is **bit-exact 600/600** (Mac native 617bfef4, from native-source-v2 + NATIVE-TOTAL.diff; the same tree
+    gives 681b5f2c on 05).
+  - The audit failed on a macOS pipe-path artefact; the owner stopped, fixed it (TA7) and re-ran the suite 98/98.
+  - **GO given** to resume, with `retire-bundle` approved.
+  - Fleet v4 baseline on r1-total: K4L p50/p95/p99 61.0/141.2/191.8 ms, default 0.8%; i10 56.5/134.7/185.5, 0.5%.
+- **14:55Z, PERC-R2 unit filter** (hysteresis .5/.25 plus owner NMS .6):
+  - r1: recall .760 → .801, phantoms .110 → .083/frame, proxy .161 → .174 (odd half .172);
+  - r2 with the filter: .819 / .094, proxy .176.
+  - Round-2 code committed as **ba4e560e**.
+  - CPU requested from the bot lead for the 4-arm sim (sr1u50, sr1f, sr2u55, r2; 2,400 games) →
+    `live-perc-r2-ours`.
+- **14:56Z, r2 sim HELD** at the perception owner's request: the Ghost truth-label bias (Royal Ghost is half of r2's phantoms). The 4 JSONs are being refit on common all-Ghost truth. Then the sim runs on 127x04, 36 workers, via the bot lead's `cpu_job.sh 36` lease wrapper.
+- **15:02Z, r2 sim launched on 127x04** via `cpu_job.sh 36` (PGID 3133738; it waits for room, then runs).
+  - Code: main **f0eabd1d**, the all-Ghost refit (r2 JSON sha c753b9bf).
+  - Out dir `04:/mpac/sdicks02/jobs/clasher/live-perc-r2-ours`; perfect-sight reference copied to
+    `04:…/live-perc-r2-ours-ref/fast` (600 rows).
+  - Filter re-selected at hi .45 / lo .25 / nms .6. Proxy: r1u50 .161, r1f .178, r2u55 .162, r2 .183.
+- **16:39Z, r2 sim DONE:** 2,400 games, 0 errors. The filter and r2 show **no measurable gain** vs r1u50; all
+  within ±0.06, and the filter leans −0.05 vs R3a.
+  - **Deployed perception stays r1 at threshold 0.5, no filter.**
+  - Renderer-side decode tuning is saturated at sim resolution. The next lever is the official-client domain gap
+    (blocked on Sam).

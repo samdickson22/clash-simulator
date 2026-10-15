@@ -56,3 +56,33 @@ unit-detection threshold was raised from the deployed 0.4. Only the unit stats w
 - **Decision (exploration):** move the deployed unit threshold to **0.5**. The evidence leans that way and the
   downside is small. Round 2 picks its own threshold with the same sweep.
 - The fresh PERC-emp re-measured on current code matches the old one: R3a +0.000, v1 +0.047, both n.s.
+
+## Follow-up 2: perception round 2 in the sim (2026-10-15 16:39Z)
+
+**Setup.**
+- 2,400 games on 127x04, 0 errors. Code from main f0eabd1d. The fits use the common all-Ghost truth.
+- Fast tier, it5s2. Our engine. Opponents v1 and R3a, 300 cases each, same base.
+- Perfect-sight reference: the earlier `LIVE-fast-it5s2` rows.
+
+| arm | proxy (predicted) | vs perfect: R3a | vs perfect: v1 | vs sr1u50: R3a | vs sr1u50: v1 |
+|---|---|---|---|---|---|
+| sr1u50: r1, threshold .5 (deployed) | .161 | −0.080 [−0.137, −0.020] | −0.073 [−0.123, −0.023] | — | — |
+| sr1f: r1 + unit filter | .178 | −0.130 [−0.190, −0.073] | −0.053 [−0.107, +0.000] | −0.050 [−0.110, +0.010] | +0.020 [−0.037, +0.077] |
+| sr2u55: r2, threshold .55 | .162 | −0.090 | −0.083 | −0.010 | −0.010 |
+| r2: r2 + unit filter | .183 | −0.127 | −0.077 | −0.047 [−0.107, +0.013] | −0.003 |
+
+r2 vs sr1f: R3a +0.003, v1 −0.023.
+
+**Reading.**
+- **The proxy's predicted gains, +.017 to +.022 for the filter, did not show up in win rate.** Every contrast is within
+  noise. The filter leans negative against R3a in both models.
+- A likely reason: hysteresis makes errors *persistent*. Phantoms and misses that last longer may cost more per frame
+  than the linear proxy, which counts only rates, assumes.
+- At n = 300 per opponent the 95% CI half-width is about ±0.06, so effects of ±0.02 cannot be resolved.
+- **Decision (exploration):**
+  - Keep the deployed perception at the round-1 model with unit threshold 0.5, no filter (`empirical-val-r1u50.json`).
+  - The filter stays available but off.
+  - The round-2 model stays as groundwork for Royal Ghost detection and spell effects.
+- **Implication:** decode and threshold tuning on renderer data has saturated at what this sim can measure. The next
+  real perception lever is the official-client domain gap, which needs frames from the emulator. Those are blocked
+  on Sam.
