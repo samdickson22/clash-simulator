@@ -1163,6 +1163,43 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
   out `$J8/f9-<name>`, 36 workers each, τ from each on-policy calibration.
 - B6x ties it5s2 (not above on either), so no fresh-bank run: 3 M more (older) labels do not move the B6 recipe.
 
+## Iteration 10: RL continuation (owner: ExIt/RL sub-agent #5, from 2026-10-15T20:32Z; time box ~12 h, to ~08:30Z 10-16)
+
+Takeover after a T3 restart cut off sub-agent #4. **Reference = RL r5 v10** (`bot-rl-r5/snapshots/policy-00010.pt` on 01;
+copies `<J>/ckpt-rl5/` on 04/08; sha256 e188e2ae…, τ0 0.5375). Paired reads: `bot/exit/mean_delta.py A_DIR:SUBSTR
+B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over opponents, plus plays/game per side);
+it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
+
+**State at takeover (20:32Z, read on the hosts):**
+- RL r5 (01) stopped by `kl_stop.sh` at 20:29:34Z: KL 0.713 > 0.5 vs v29 at version 42 (0.448 at v41; one-update
+  spike). Snapshots v10/v20/v30/v40 and final v42. 01's GPU then held only filler BL6s4-ka2026102665 (PID 1236307).
+- RL r6 (04) at v33, KL rising; its in-training deployed plays/game 32.0 (mixed league), i.e. the play count keeps
+  falling.
+- 01: the lead restored the K4L feeder (target 55, PID 1618247) and the BL6f keep-alive (PID 1618265) ~20:27Z; mpacadmin
+  idle 1 h 15 m (login 19:16Z). 04 live python 62, 08 91.
+- **r5 v20 on F9 (complete; 599/600 R3a cases):** vs it5s2 v1 +0.058 [+0.025, +0.092], R3a +0.048 [+0.005, +0.091], mean
+  **+0.053 [+0.025, +0.081]**; plays/game vs v1 **34.3** (below the 34.8–40.8 band). **v20 − v10 on F9: v1 +0.007
+  [−0.022, +0.035], R3a −0.019 [−0.062, +0.022], mean −0.006 [−0.033, +0.020]**: no gain from 10 more updates.
+  RoyaleSim v20 mean +0.016 [−0.013, +0.044]; RoyaleSim v10 (complete) v1 +0.017, R3a +0.053, rext-bc +0.013, mean
+  +0.028 [−0.001, +0.058].
+- HEADLINE (0–299, Δ vs it5s2): r5 v30 v1 0.937 **+0.053 [+0.013, +0.093]**, R3a 0.773 **+0.113 [+0.053, +0.173]**, h2h
+  0.580; r6 v20 v1 +0.017 [−0.027, +0.060], R3a +0.060 [−0.003, +0.123], h2h 0.640. HEADLINE's R3a half overstates RL
+  snapshots (r5 v20: +0.103 on HEADLINE, +0.048 on F9).
+
+**Fresh bank F10, pre-registered (2026-10-15T20:37:17Z, before any game on it).** BASE **1212998755579280** =
+`int.from_bytes(os.urandom(6),'big')<<4`, drawn on 05 (redraw if within 1e10 of any 13–17-digit integer in
+`reports/`, `bot/`, `imitation/` on origin/main; min distance 2.8e10). Why: F9 has now been used to compare r4 v20, r5
+v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for claims of **beating r5 v10**.
+- **Reference:** r5 v10 @0.5375, our engine, F10 cases 0–999 vs v1 and R3a (2,000 games), `<J>/f10-rl5v10`.
+- **Who gets F10 games** (at most 4 candidates this iteration): an RL snapshot (or seed-pooled student) whose HEADLINE
+  0–299 mean Δ vs it5s2 over v1/R3a is ≥ r5 v10's (+0.022), and whose F9 mean Δ vs r5 v10 is ≥ 0 (point estimate).
+- **Claim (new best student, replacing r5 v10):** on F10 cases 0–999, paired per case vs `f10-rl5v10`, the mean Δ over
+  v1 and R3a has a bootstrap CI above 0 at level 1 − 0.05/k (k = number of candidates given F10 games this iteration,
+  counted when the claim is made), neither opponent's Δ is below −0.02, RoyaleSim rsim15535 (HEADLINE 0–299 vs v1, R3a,
+  rext-bc) mean Δ vs `rsim-it5s2` has CI upper bound > 0, and plays/game vs v1 on F10 is in 34.8–40.8, or else the
+  candidate is also run at an on-policy recalibrated threshold and the claim uses whichever τ was fixed **before** its
+  F10 games.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
