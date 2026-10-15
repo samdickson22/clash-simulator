@@ -22,9 +22,11 @@ in the 4-process pool). Tokens added to 'K4L-R...' names (kind R only):
         the decision, concurrently with the native coarse scan; play chunk j goes to worker j. p<P> == c<P>.
 - fp    output-identical preparation caches (install_fast_prep): the root payload's config JSON and the repeated
         R3a forward of the r16 candidate list. Deterministic arms with and without fp have equal command hashes.
-- fc    fp plus roots built with only the deck cards in the config (cheaper parse/snapshot/shipping).
-        Only the snapshot's dynamic part (~60 KB) travels per decision; workers hold the config (sent once) and
-        rebuild the root with only the deck cards (ConfigCache; 1.1 vs 7.1 ms to parse).
+- fc    fp plus roots built with only the cards the state references in the config (cheaper parse/snapshot/
+        shipping): both players' hand and cycle plus every card named anywhere in the players, entities and pending
+        casts (config_need), or the whole config when a looked-up key is not a card. Only the snapshot's dynamic
+        part (~60 KB) travels per decision; workers hold the config (sent once) and rebuild the root with the same
+        cut (ConfigCache; 1.1 vs 7.1 ms to parse).
 - w<ms> wall deadline through bot/live/player.py's WallCandidatePlayer (cutoff = start + ms - 8 ms reserve;
         preparation cutoffs as K4CW). At the cutoff only keys with both a balanced and a learned value count;
         if no play is complete the S-default rule plays the cutoff default (R3a, or it5s2 under LIVE-).
@@ -35,6 +37,9 @@ the values equal the serial arm's. Under w<ms> a key counts only once all K samp
 Examples: K4L-R-gs-t4 (== K4L-R-gs), K4L-R-gs-c4 (serial twin), K4L-R-gs-t4-p4, K4L-R-gs-w200-t4-p4,
 LIVE-K4L-R-gs-w200-t4-p4 (LivePlayer search tier with this search; it5s2 fast tier and cutoff default).
 Without w<ms> nothing reads the clock, so every arm is deterministic.
+Failures: a native panic (pyo3 PanicException, a BaseException) in a rollout thread or a pool worker, or a dead pool
+worker (EOF/broken pipe), fails the whole decision (lopp.fail_decision: no score, hit, so the cutoff default plays);
+counted in lopp.FAILURES. A worker survives a panic; a dead worker's pool is replaced at the next decision.
 """
 from __future__ import annotations
 
@@ -45,8 +50,8 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from multiprocessing.connection import wait as wait_conns
 
 from bot.players.base import WAIT
-from bot.search.lopp import (Learned, LearnedOppPlayer, batch_rollouts, load_model, mean_samples, mix,
-                              sample_seed)
+from bot.search.lopp import (FAILURES, Learned, LearnedOppPlayer, batch_rollouts, fail_decision, fatal, load_model,
+                              mean_samples, mix, note_failure, sample_seed)
 from bot.search.oppmodel import STYLES, TIMED_WAITS, _argmax, _bonus
 
 _POOLS: dict = {}
@@ -63,23 +68,76 @@ def split_snapshot(snap):
     return snap[:i + 9], snap[i + 9:j], snap[j:]
 
 
+def _card_names(obj, cards, out):
+    """Every string (value or key) anywhere in obj that is a card name -> out."""
+    if isinstance(obj, str):
+        if obj in cards:
+            out.add(obj)
+    elif isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in cards:
+                out.add(k)
+            if not isinstance(v, (int, float, bool)) and v is not None:
+                _card_names(v, cards, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            if not isinstance(v, (int, float, bool)) and v is not None:
+                _card_names(v, cards, out)
+
+
+def config_need(players, entities, pending, cards):
+    """The cards an fc root keeps: both players' hand and cycle, and every card named anywhere in the entities
+    (stats name/payload key, chain sources, spawn and building templates, spell areas) and pending casts. Extra
+    cards cannot change a rollout (the native only looks cards up by name). None (= keep the whole config) when a
+    key the native indexes without a fallback is not a card at all: a hand/cycle card, a pending cast, an area's
+    spell, or the stats key of a chain source (electro_land: config.cards[key].chain)."""
+    looked_up = {c for p in players for c in p['hand'] + p['cycle']}
+    looked_up.update(c['name'] for c in pending if isinstance(c, dict) and c.get('name'))
+    for e in entities:
+        st = e.get('stats') or {}
+        if e.get('spell_name'):
+            looked_up.add(e['spell_name'])
+        if st.get('chain_count') or st.get('dragon_chain'):
+            looked_up.add(st.get('payload_key') or st.get('name'))
+    if not looked_up <= cards.keys():
+        return None
+    need = set(looked_up)
+    _card_names(entities, cards, need)
+    _card_names(pending, cards, need)
+    return tuple(sorted(need))
+
+
 class ConfigCache:
-    """Rebuilds a root from (head, tail) and a cached config, keeping only the cards in either player's hand or
-    cycle (the only cards a rollout can play). The cut config is re-serialized by Python's json (shortest
+    """Rebuilds a root from (head, tail) and a cached config, keeping only the cards the state references
+    (config_need; the whole config if it returns None). The cut config is re-serialized by Python's json (shortest
     round-trip floats; the native parses with float_roundtrip), so the values are exact; lopp_fast_check
     verifies every rollout value on such roots against the original root."""
 
     def __init__(self, text):
         import json
         cfg = json.loads(text)
+        self.full = text
         self.other = json.dumps({k: v for k, v in cfg.items() if k != 'cards'})[1:-1]
         self.cards = {n: json.dumps(n) + ':' + json.dumps(v) for n, v in cfg['cards'].items()}
         self.cut = {}
 
-    def payload(self, head, tail):
+    def need(self, head, tail):
+        """config_need on a snapshot's dynamic part (serde field order: players, entities, ... config,
+        pending_casts); None if the layout is not found."""
         import json
-        players = json.loads(head[head.index('"players":') + 10:head.index(',"entities":')])
-        need = tuple(sorted({c for p in players for c in p['hand'] + p['cycle'] if c in self.cards}))
+        dec = json.JSONDecoder()
+        try:
+            players = dec.raw_decode(head, head.index('"players":') + 10)[0]
+            entities = dec.raw_decode(head, head.index('"entities":') + 11)[0]
+            pending = dec.raw_decode(tail, tail.index('"pending_casts":') + 16)[0]
+        except ValueError:
+            return None
+        return config_need(players, entities, pending, self.cards)
+
+    def payload(self, head, tail):
+        need = self.need(head, tail)
+        if need is None:
+            return head + self.full + tail
         if need not in self.cut:
             self.cut[need] = '{' + self.other + ',"cards":{' + ','.join(self.cards[n] for n in need) + '}}'
         return head + self.cut[need] + tail
@@ -105,7 +163,7 @@ def _pool_worker(conn, native, spawn=None):
         for name in models:
             load_model(name)
     state_class = importlib.import_module(type(native).__module__).BattleState
-    root = seat = kw = opp = cutoff = configs = None
+    root = seat = kw = opp = cutoff = configs = root_err = None
     gen, t_parse = -1, 0.
     while True:
         try:
@@ -117,18 +175,30 @@ def _pool_worker(conn, native, spawn=None):
         elif msg[0] == 'root':
             _, gen, snap, seat, kw, opp, cutoff = msg
             t0 = time.monotonic()
-            root = state_class(snap if isinstance(snap, str) else configs.payload(*snap))
+            try:
+                root, root_err = state_class(snap if isinstance(snap, str) else configs.payload(*snap)), None
+            except BaseException as ex:
+                if fatal(ex):
+                    raise
+                root, root_err = None, f'root: {ex!r:.300}'
             t_parse = time.monotonic() - t0
         elif msg[0] == 'run':
             _, g, cid, keys = msg[:4]
             j = msg[4] if len(msg) > 4 else 0
             c0, w0 = time.process_time(), time.monotonic()
-            vals = None
-            if g == gen and (cutoff is None or time.monotonic() < cutoff):
-                # a style name: exactness checks
-                opponent = opp if isinstance(opp, str) else opponent_from_spec(opp, j)
-                vals = batch_rollouts(native, root, seat, keys, opponent, deadline=cutoff, **kw)
-            conn.send(('done', g, cid, vals, time.process_time() - c0, time.monotonic() - w0, t_parse))
+            vals = err = None
+            if g == gen and root_err is not None:
+                err = root_err
+            elif g == gen and (cutoff is None or time.monotonic() < cutoff):
+                try:
+                    # a style name: exactness checks
+                    opponent = opp if isinstance(opp, str) else opponent_from_spec(opp, j)
+                    vals = batch_rollouts(native, root, seat, keys, opponent, deadline=cutoff, **kw)
+                except BaseException as ex:     # a native panic: report it, keep serving (root is untouched)
+                    if fatal(ex):
+                        raise
+                    vals, err = None, repr(ex)[:300]
+            conn.send(('done', g, cid, vals, time.process_time() - c0, time.monotonic() - w0, t_parse, err))
         else:
             return
 
@@ -166,10 +236,13 @@ class LearnedPool:
         self.config = None
         self.base_config = config        # R.config: lets deck-card (fc) roots travel as their dynamic part only
         self.base_sent = False
+        self.broken = False              # a worker died (EOF / broken pipe): get_pool replaces the pool
+        self.errors = []                 # worker-reported failures (native panics) of the current decision
 
     def begin(self, root, seat, kw, opp, cutoff):
+        """Raises OSError/EOFError (and sets broken) when a worker is gone."""
         self.gen += 1
-        self.pending, self.results, self.cpu = {}, {}, 0.
+        self.pending, self.results, self.cpu, self.errors = {}, {}, 0., []
         self.timing = dict(parse=0., chunk=0.)
         snap = root.snapshot()
         parts = split_snapshot(snap)
@@ -179,18 +252,26 @@ class LearnedPool:
             elif not self.base_sent:                            # the workers cut from R.config, sent once
                 import json
                 self.config, self.base_sent = json.dumps(self.base_config), True
-                for conn in self.conns:
-                    conn.send(('config', self.config))
+                self._send_all(('config', self.config))
         elif parts is not None and parts[1] != self.config:    # new config (first root, level scaling): once
             self.config = parts[1]
-            for conn in self.conns:
-                conn.send(('config', self.config))
+            self._send_all(('config', self.config))
         msg = snap if parts is None else (parts[0], parts[2])
+        self._send_all(('root', self.gen, msg, seat, kw, opp, cutoff))
+
+    def _send_all(self, msg):
         for conn in self.conns:
-            conn.send(('root', self.gen, msg, seat, kw, opp, cutoff))
+            self._send(conn, msg)
+
+    def _send(self, conn, msg):
+        try:
+            conn.send(msg)
+        except (OSError, EOFError):
+            self.broken = True
+            raise
 
     def submit(self, worker, cid, keys, sample=0):
-        self.conns[worker].send(('run', self.gen, cid, list(keys)) + ((sample,) if sample else ()))
+        self._send(self.conns[worker], ('run', self.gen, cid, list(keys)) + ((sample,) if sample else ()))
         self.pending[cid] = worker
 
     def collect(self, cutoff=None):
@@ -201,9 +282,20 @@ class LearnedPool:
                 break
             busy = [self.conns[w] for w in set(self.pending.values())]
             for conn in wait_conns(busy, timeout=remaining):
-                _, gen, cid, vals, cpu, wall, parse = conn.recv()
+                try:
+                    _, gen, cid, vals, cpu, wall, parse, err = conn.recv()
+                except (OSError, EOFError):       # the worker died (killed, segfault): stop waiting for it
+                    self.broken = True
+                    w = self.conns.index(conn)
+                    lost = [c for c, x in self.pending.items() if x == w]
+                    for c in lost:
+                        self.pending.pop(c)
+                    self.errors.append(f'worker {w} died ({len(lost)} chunks lost)')
+                    continue
                 if gen != self.gen:
                     continue                      # a chunk abandoned at an earlier decision's cutoff
+                if err is not None:
+                    self.errors.append(err)
                 self.cpu += cpu
                 self.timing['parse'] = max(self.timing['parse'], parse)
                 self.timing['chunk'] = max(self.timing['chunk'], wall)
@@ -219,6 +311,11 @@ class LearnedPool:
                 pass
         for proc in self.procs:
             proc.join(timeout=1)
+            if proc.is_alive():           # busy on an abandoned chunk (broken pool): do not wait for it
+                proc.kill()
+                proc.join(timeout=1)
+        for conn in self.conns:
+            conn.close()
 
 
 class _ConfigJson:
@@ -241,9 +338,10 @@ class _ConfigJson:
             return self._json.dumps(obj, *args, **kw)
         rest = self._json.dumps({k: v for k, v in obj.items() if k != 'config'})
         cfg = self._text
-        if self.cut:          # fc: only the cards in either player's hand or cycle (as ConfigCache)
+        need = (config_need(obj['players'], obj.get('entities', ()), obj.get('pending_casts', ()),
+                            self._config['cards']) if self.cut else None)
+        if need is not None:  # fc: only the cards the state references (as ConfigCache); None: the whole config
             cards = self._config['cards']
-            need = tuple(sorted({c for p in obj['players'] for c in p['hand'] + p['cycle'] if c in cards}))
             if need not in self._cut:
                 self._cut[need] = self._json.dumps(dict(self._config, cards={k: v for k, v in cards.items()
                                                                               if k in need}))
@@ -262,9 +360,10 @@ def install_fast_prep(rt, cut=False):
        r3a=16 > the poller's cached 8) on the same features the poller just used; an identical feature batch
        (every tensor torch.equal, same model) returns the previous outputs.
     CLASHER_FASTPREP_VERIFY=1 recomputes both the slow way and raises on any difference.
-    cut=True (token fc; switches on for the whole process, never off): roots are built with only the deck cards
-    in the config, as the pool workers' ConfigCache does (7 -> ~1.5 ms to parse, 5 -> ~1 ms to snapshot); not
-    byte-identical, but every rollout value equal (lopp_fast_check) and command hashes equal end to end."""
+    cut=True (token fc; switches on for the whole process, never off): roots are built with only the referenced
+    cards (config_need) in the config, as the pool workers' ConfigCache does (7 -> ~1.5 ms to parse, 5 -> ~1 ms
+    to snapshot); not byte-identical, but every rollout value equal (lopp_fast_check) and command hashes equal end
+    to end."""
     import os
     import sys
     if getattr(rt, '_fast_prep', False):
@@ -304,8 +403,14 @@ def install_fast_prep(rt, cut=False):
 
 def get_pool(n, native, model_name, meta=None, config=None):
     """One pool per process (started once, before any thread pool exists in this process).
-    meta: R.meta (dict) or its JSON; only a spawned pool uses it. model_name may be 'a+b' (all loaded)."""
+    meta: R.meta (dict) or its JSON; only a spawned pool uses it. model_name may be 'a+b' (all loaded).
+    A broken pool (a worker died) is closed and replaced here, at the start of the next decision. With fork that
+    forks after this process's threads exist (idle between decisions); only a hard worker death gets here, since a
+    worker survives native panics."""
     import json
+    if n in _POOLS and (_POOLS[n].broken or not all(proc.is_alive() for proc in _POOLS[n].procs)):
+        _POOLS.pop(n).close()
+        FAILURES['pool_recreated'] += 1
     if n not in _POOLS:
         if meta is not None and not isinstance(meta, str):
             meta = json.dumps(meta)
@@ -341,6 +446,7 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
               interval=cfg.interval, elixir_weight=cfg.elixir_weight, tick0=int(core.info.tick))
     native = core.native
     hit = False
+    failed = []               # native panics / dead workers: the decision is given up (cutoff default)
     waits = [a for a in original if a >= WAIT and a != 2400]
 
     def expired():
@@ -356,6 +462,11 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
                                   cfg.horizon, cfg.interval, cfg.elixir_weight, budget)
         except TimeoutError:          # rollout_e1 past its budget ('E1 wall deadline')
             return None
+        except BaseException as ex:   # a native panic (PanicException is a BaseException)
+            if fatal(ex):
+                raise
+            failed.append(('native_thread', ex))
+            return None
         return None if expired() else v
 
     # Native balanced values: waits first (the K kernel's order), then the coarse scan.
@@ -367,14 +478,17 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         ex = get_executor(threads)
         futs = {ex.submit(rollout, a): a for a in todo}
     if pool is not None:      # ship the root while the native threads run (rollout_e1 releases the GIL)
-        pool.begin(root, seat, kw, opp_spec, deadline)
-        for j in range(samples):
-            pool.submit(j % len(pool.conns), ('w', j), waits, j)
+        try:
+            pool.begin(root, seat, kw, opp_spec, deadline)
+            for j in range(samples):
+                pool.submit(j % len(pool.conns), ('w', j), waits, j)
+        except (OSError, EOFError) as ex:
+            failed.append(('pool_dead', ex))
         tm['ship'] = time.monotonic() - t0
     if threads == 1:
         for a in todo:
             v = rollout(a)
-            if v is None:
+            if v is None or failed:
                 hit = True
                 break
             nat[a] = v
@@ -393,7 +507,9 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
     n_native = len(nat)
     tm['native'] = time.monotonic() - t0
     L, n_learned, first = {}, 0, {}
-    if all(a in nat for a in scan):
+    if failed:
+        work = original
+    elif all(a in nat for a in scan):
         first = {a: 0. + nat[a] for a in scan}
         chosen = set(sorted(plays, key=lambda a: (-first[a], original.index(a)))[:top])
         chosen.update(a for a in refine_proposals if a in plays)
@@ -402,17 +518,29 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
         if pool is not None:
             P = len(pool.conns)
             parts = [((cid, j), group) for j in range(samples) for cid, group in chunk_keys(keys, P)]
-            for (cid, j), group in parts:
-                if cid != 'w':
-                    pool.submit((cid + j) % P, (cid, j), group, j)   # sample j's plays shifted by j workers
-            results = pool.collect(deadline)
+            try:
+                for (cid, j), group in parts:
+                    if cid != 'w':
+                        pool.submit((cid + j) % P, (cid, j), group, j)   # sample j's plays shifted by j workers
+                results = pool.collect(deadline)
+            except (OSError, EOFError) as ex:
+                failed.append(('pool_dead', ex))
+                results = {}
+            if pool.errors:
+                failed.append(('pool_dead' if pool.broken else 'native_pool', pool.errors[0]))
         else:
             base = chunk_keys(keys, chunks) if chunks else [('all', list(dict.fromkeys(keys)))]
             parts = [((cid, j), group) for j in range(samples) for cid, group in base]
             results = {}
             for (cid, j), group in parts:
-                results[cid, j] = None if expired() else batch_rollouts(native, root, seat, group, make_opp(j),
-                                                                        deadline=deadline, **kw)
+                try:
+                    results[cid, j] = None if expired() else batch_rollouts(native, root, seat, group, make_opp(j),
+                                                                            deadline=deadline, **kw)
+                except BaseException as ex:
+                    if fatal(ex):
+                        raise
+                    failed.append(('native_serial', ex))
+                    break
         per = {}
         for cid, group in parts:
             vals = results.get(cid)
@@ -431,6 +559,13 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
     tm['learned'] = time.monotonic() - t0 - tm['native']
     if pool is not None:
         tm.update(pool.timing)
+    if failed:
+        kind, ex = failed[0]
+        note_failure(kind, ex)
+        fail_decision(core, work, kind)
+        info = dict(rollouts=n_native + n_learned, native=n_native, learned=n_learned, native_failure=kind,
+                    phase_ms={k: round(1e3 * v, 2) for k, v in tm.items()})
+        return None, info
     scores = {}
     for a in work:
         k = WAIT if a == 2400 else a
@@ -463,8 +598,11 @@ class _FastMixin:
         for name in names:
             load_model(name)
         seed = ctx.seed
-        pool = (get_pool(self.pool_size, core.native, self.model_name, getattr(self.rt.R, 'meta', None),
-                         self.rt.R.config) if self.pool_size else None)
+
+        def current_pool():     # the process pool; a broken one is replaced here (next decision)
+            return (get_pool(self.pool_size, core.native, self.model_name, getattr(self.rt.R, 'meta', None),
+                             self.rt.R.config) if self.pool_size else None)
+        current_pool()
         threads = self.native_threads
         arm = self.arm
 
@@ -478,7 +616,7 @@ class _FastMixin:
 
         def score_candidates(root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
             action, info = reduce_fast(core, root, seat, candidates, make_opp=make_opp, opp_spec=spec(),
-                                       threads=threads, chunks=self.chunks, pool=pool, deadline=deadline,
+                                       threads=threads, chunks=self.chunks, pool=current_pool(), deadline=deadline,
                                        coarse_order=core.coarse_order, refine_proposals=core.refine_proposals,
                                        lw=arm.get('lw'), samples=arm.get('samples', 1), top=arm.get('top', 8))
             action = fallback if action is None else action

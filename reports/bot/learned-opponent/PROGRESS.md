@@ -282,3 +282,19 @@ play-rate calibration), others. Reference = K4L-R-gs (its 600 HEADLINE-ours game
   the serial games' command_sha256 on cases 0 and 3 vs R3a (da9d136e, 5648c146; c97c01ef, aacf7644).
 - 2026-10-15T10:04:20Z FRESH BANK 3 drawn and pre-registered in RESULTS.md before any game: BASE 4303584859564336, RoyaleSim 15.535, cases 0-1199 x
   R3a,v1,rext-bc, K4L-R-gs-rw-O-fp vs K4L-R-gs-rw-fp (rule there).
+- 2026-10-15T10:50:55Z K4L fix (worker bot-lead-k4l-fix-r1): LIVE perception run's c56.rs:265 panics (6/10 workers dead, PERC-emp arm)
+  reproduced through the harness (bot-k4l-fix/repro, RUST_BACKTRACE=1: electro_land via rollout_e1 and BattleState.step).
+  Root cause confirmed: a misperceived ElectroSpirit (chain source) on board, in neither hand/cycle, so the fc cut
+  dropped its card; on both captured roots the full config gives 0 panics (cut: 4/4 and 9/36 candidates panic).
+  Fixes (lopp_fast.py, lopp.py): config_need keeps hand+cycle plus every card named anywhere in the entities and pending
+  casts (whole config if a looked-up key is not a card), in _ConfigJson.dumps and the workers' ConfigCache; a native
+  panic (BaseException, not KeyboardInterrupt/SystemExit) in a rollout thread, the serial path or a pool worker, or a
+  dead worker (EOF/broken pipe), fails the decision (no score, hit -> cutoff default it5s2/R3a), counted in
+  lopp.FAILURES; workers survive panics; get_pool replaces a broken pool at the next decision. Cost: ConfigCache.need
+  0.7-1.2 ms per worker per decision, config_need 0.3-0.5 ms in the main process: re-time the LIVE fit.
+  Checks: lopp_safety_test (fixture bot/search/fixtures/c56-electro-missing.json, table-free, from capture c) ok:
+  old cut 6 panics / new cut 0 / values == full config; thread panic -> default; pool panic -> worker alive, next
+  decision == serial; killed worker -> default, pool recreated, == serial; LIVE LEAD crafted-fc-root.json -0.10562149106854207
+  bit for bit through both cuts. lopp_fast_check --rowwise cases 0,1 (80 roots, 6045 rollouts): exact, cut_mismatch 0.
+  End to end K4L-R-gs-rw-fc-t4-p4 command_sha256 == bot-lopp-hl2 K4L-R-gs 12/12 so far (cases 0-11 x v1,R3a running on
+  04/08, bot-k4l-fix/e2e-*), 0 failures logged.

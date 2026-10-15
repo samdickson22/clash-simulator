@@ -1,0 +1,176 @@
+{
+ "source": "fail-3994582-1.json: PERC-emp:LIVE-K4L-R-gs-rw-fc-w200-t4-p4 (HEADLINE), tick 870, pinned native panic c56.rs:265 (ElectroSpirit not in the cut config)",
+ "tick": 870,
+ "seat": 0,
+ "candidates": [
+  190,
+  2304,
+  172,
+  189,
+  191,
+  1076,
+  1042,
+  1040,
+  1004,
+  1058,
+  1041,
+  1065,
+  1027,
+  1022,
+  1059,
+  1029,
+  993,
+  729,
+  646,
+  701,
+  238,
+  1140,
+  613,
+  256,
+  958,
+  612,
+  820,
+  584,
+  737,
+  834,
+  931,
+  259,
+  1003,
+  2400,
+  2401,
+  2402
+ ],
+ "sudden_death": false,
+ "players": [
+  {
+   "hand": [
+    "Cannon",
+    "GoblinBarrel",
+    "Valkyrie",
+    "Valkyrie"
+   ],
+   "cycle": [
+    "SkeletonArmy",
+    "Princess",
+    "Wallbreakers",
+    "BlowdartGoblin",
+    "IceSpirit"
+   ],
+   "elixir": 3.5601000000000003,
+   "last_card": null,
+   "last_cost": null,
+   "refill": 0
+  },
+  {
+   "hand": [
+    "Cannon",
+    "HogRider",
+    "IceGolem",
+    "Musketeer"
+   ],
+   "cycle": [
+    "IceSpirit",
+    "Fireball",
+    "Log",
+    "Skeletons"
+   ],
+   "elixir": 10.0,
+   "last_card": null,
+   "last_cost": null,
+   "refill": 0
+  }
+ ],
+ "entities": [
+  {
+   "name": "ElectroSpirit",
+   "payload_key": "ElectroSpirit",
+   "cls": "Troop",
+   "owner": 1,
+   "x": 14.789999842643738,
+   "y": 15.156999588012695,
+   "hp_frac": 0.989300012588501,
+   "facing": [
+    -110,
+    -994
+   ]
+  },
+  {
+   "name": "KingTower",
+   "payload_key": "level1:KingTower",
+   "cls": "Building",
+   "owner": 0,
+   "x": 9.0,
+   "y": 3.0,
+   "hp_frac": 1.0,
+   "facing": [
+    0,
+    1000
+   ]
+  },
+  {
+   "name": "Tower",
+   "payload_key": "level1:Tower",
+   "cls": "Building",
+   "owner": 0,
+   "x": 3.5000000596046448,
+   "y": 6.5,
+   "hp_frac": 1.0,
+   "facing": [
+    0,
+    1000
+   ]
+  },
+  {
+   "name": "Tower",
+   "payload_key": "level1:Tower",
+   "cls": "Building",
+   "owner": 0,
+   "x": 14.500000476837158,
+   "y": 6.5,
+   "hp_frac": 0.9998000264167786,
+   "facing": [
+    0,
+    1000
+   ]
+  },
+  {
+   "name": "KingTower",
+   "payload_key": "level1:KingTower",
+   "cls": "Building",
+   "owner": 1,
+   "x": 9.0,
+   "y": 29.0,
+   "hp_frac": 0.9995999932289124,
+   "facing": [
+    0,
+    -1000
+   ]
+  },
+  {
+   "name": "Tower",
+   "payload_key": "level1:Tower",
+   "cls": "Building",
+   "owner": 1,
+   "x": 3.5000000596046448,
+   "y": 25.5,
+   "hp_frac": 0.5410844087600708,
+   "facing": [
+    0,
+    -1000
+   ]
+  },
+  {
+   "name": "Tower",
+   "payload_key": "level1:Tower",
+   "cls": "Building",
+   "owner": 1,
+   "x": 14.500000476837158,
+   "y": 25.5,
+   "hp_frac": 0.23548322916030884,
+   "facing": [
+    0,
+    -1000
+   ]
+  }
+ ]
+}

@@ -48,7 +48,9 @@ import json
 import math
 import os
 import re
+import sys
 import time
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -58,6 +60,26 @@ from bot.search.candidates import CandidateSearchPlayer
 from bot.search.oppmodel import STYLES, TIMED_WAITS, _argmax, _bonus
 
 _MODELS: dict = {}
+FAILURES: Counter = Counter()   # decisions given up on a native panic / dead pool worker, by kind (process-wide)
+
+
+def fatal(ex):
+    """Exceptions a failure guard must re-raise. Everything else that a rollout raises, including pyo3's
+    PanicException (a BaseException: a Rust panic such as a card missing from the config), fails the decision."""
+    return isinstance(ex, (KeyboardInterrupt, SystemExit))
+
+
+def note_failure(kind, ex):
+    FAILURES[kind] += 1
+    sys.stderr.write(f'lopp: {kind}: {ex!r:.300} (decision -> cutoff default; counts {dict(FAILURES)})\n')
+
+
+def fail_decision(core, candidates, kind):
+    """A decision whose rollouts failed: no score, hit=True, so sdefault.apply_default plays the cutoff default
+    (it5s2 under LIVE-, else R3a) when there is a play, else the caller's fallback."""
+    work = list(candidates)
+    core.last = dict(candidates=work, scores=[None] * len(work), traces=[])
+    core.deadline_stats = dict(hit=True, fallback=True, completed=0, candidates=len(work), native_failure=kind)
 
 
 def load_model(name):
@@ -308,9 +330,16 @@ class LearnedOppPlayer(CandidateSearchPlayer):
             return self.rt.R.root(core.info, self.p.belief.sample(rng), rng)
 
         def score_candidates(root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
-            action, info = reduce_learned(core, root, seat, candidates, self.arm, coarse_order=core.coarse_order,
-                                          refine_proposals=core.refine_proposals, make_opp=make_opp,
-                                          root_for=root_for if self.arm.get('determinize') else None)
+            try:
+                action, info = reduce_learned(core, root, seat, candidates, self.arm, coarse_order=core.coarse_order,
+                                              refine_proposals=core.refine_proposals, make_opp=make_opp,
+                                              root_for=root_for if self.arm.get('determinize') else None)
+            except BaseException as ex:
+                if fatal(ex):
+                    raise
+                note_failure('serial', ex)
+                fail_decision(core, candidates, 'serial')
+                action, info = None, dict(rollouts=0, native=0, learned=0, native_failure='serial')
             action = fallback if action is None else action
             core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
