@@ -1,0 +1,185 @@
+"""Evidence-ranked revealed set (bot/noise/livefix = the proposed bot/live patch; bot lead noise worker).
+
+    PYTHONPATH=. CLASHER_BOT_RUNTIME=... nice -n 19 python -m pytest -q bot/noise/test_revealed.py
+
+Proposed as bot/live/test_revealed.py with `bot.noise.livefix.` -> `bot.live.`.
+"""
+import numpy as np
+import pytest
+
+from bot.noise.livefix.revealed import RevealedSet
+
+OWN = ['Knight', 'Archers', 'Giant', 'Musketeer', 'MiniPekka', 'Fireball', 'Arrows', 'Goblins']
+# opponent: 7 real cards, then a spurious Earthquake fills the set; its real Log is locked out
+REAL = ['HogRider', 'Valkyrie', 'Zap', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball']
+
+
+@pytest.fixture(scope='module')
+def rt():
+    from bot.players.runtime import Runtime
+    return Runtime()
+
+
+def _rec(tick, units=(), events=(), **kw):
+    r = dict(tick=tick, elixir=5.0, hand=dict(cards=OWN[:4], next=OWN[4]), units=list(units), events=list(events),
+             towers=[dict(owner=0, kind='princess', side='left', hp_frac=1., alive=True)])
+    r.update(kw)
+    return r
+
+
+def _ev(card, tick, x=9.0, y=22.0):
+    return dict(owner=1, card=card, x=x, y=y, tick=tick)
+
+
+TROOPS = {'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer'}
+
+
+def _locked_out_stream(log_plays=(2600, 3400), board=None):
+    """Records every 5 ticks: REAL[:4], the spurious Earthquake, REAL[4:], Zap and HogRider again, then Log (the real
+    8th card). Each real troop play is on the board for 5 s (perceived)."""
+    order = REAL[:4] + ['Earthquake'] + REAL[4:]
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    plays.update({2000: 'Zap', 2200: 'HogRider'})
+    plays.update({t: 'Log' for t in log_plays})
+    for tick in range(100, 3600, 5):
+        ev = [_ev(plays[t], t) for t in plays if tick - 5 < t <= tick]
+        units = [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for t, c in plays.items()
+                 if c in TROOPS and t <= tick < t + 100]
+        units += board(tick) if board else []
+        yield _rec(tick, units=units, events=ev)
+
+
+def _run(rt, cls_name='resync', evict=True, stream=None, **rkw):
+    from bot.noise.livefix.resync import ResyncTranslator
+    from bot.noise.livefix.translate import LiveTranslator
+    cls = ResyncTranslator if cls_name == 'resync' else LiveTranslator
+    tr = cls(rt, OWN, plays_from='events')
+    tr.revealed.evict = evict
+    restarts, info = 0, None
+    for r in stream if stream is not None else _locked_out_stream(**rkw):
+        info = tr.information(r)
+        if getattr(tr, 'resynced', False):
+            tr.resynced, restarts = False, restarts + 1
+    return tr, info, restarts
+
+
+def test_off_is_the_first_come_rule():
+    rows = []
+    s = RevealedSet(rows)
+    for i, c in enumerate(REAL + ['Earthquake']):
+        rows.append(dict(seat=1, tick=100*i, kind='card', name=c))
+    assert s.allows('Earthquake') and not s.allows('Log') and s.victim('Log', 5000) is None
+    s.reject('Log', 4000, 9, 20)
+    s.reject('Log', 4500, 9, 20)
+    assert s.victim('Log', 4600) is None            # evict off: never
+
+
+def test_lockout_without_eviction(rt):
+    tr, info, restarts = _run(rt, evict=False)
+    assert 'Log' not in tr.revealed.members() and 'Earthquake' in tr.revealed.members()
+    assert tr.stats['ninth_enemy_card_dropped'] == 2 and restarts == 0
+
+
+def test_repeated_plays_evict_the_weak_card_and_resync(rt):
+    """Two Log plays (2600, 3400) evict the once-seen Earthquake; the history, mirror and stream are rewritten."""
+    from derived_d1 import DerivedD1
+    tr, info, restarts = _run(rt)
+    m = tr.revealed.members()
+    assert 'Log' in m and 'Earthquake' not in m and len(m) == 8
+    assert tr.stats['evict:Earthquake->Log'] == 1 and restarts >= 1
+    opp = [r for r in tr.public_events if r['seat'] == 1]
+    assert [n for _, n in tr.plays[1]] == [r['name'] for r in opp] == [e.name for e in tr.events]
+    assert [r['name'] for r in opp].count('Log') == 2 and 'Earthquake' not in {r['name'] for r in opp}
+    # cycle tracker re-synced: a fresh replay of the public history gives the translator's mirror
+    import copy
+    fresh, mirror = tr._replay(tr._history(), tr.tick), copy.deepcopy(tr._mirrors[1])
+    mirror.advance(tr.tick)
+    assert list(fresh.queue) == list(mirror.queue) and fresh.revealed == mirror.revealed
+    assert {e.name for e in info.events} == set(m)
+    # the evicted card's play is evidence again: it comes back only on new evidence
+    assert tr.revealed.plays('Earthquake') == 1
+
+
+def test_one_play_is_not_enough(rt):
+    tr, _, restarts = _run(rt, log_plays=(2600,))
+    assert 'Log' not in tr.revealed.members() and restarts == 0 and tr.stats['evict'] == 0
+
+
+def test_well_evidenced_cards_are_never_evicted(rt):
+    """Every member played twice, troops seen on the board (none weak): a 9th card cannot get in however often."""
+    order = REAL + ['Earthquake']
+    plays = {200 + 150*i: c for i, c in enumerate(order + order)}
+    plays.update({t: 'Log' for t in (3000, 3200, 3400)})
+
+    def units(tick):
+        return [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for t, c in plays.items()
+                if c in TROOPS and t <= tick < t + 100]
+    stream = (_rec(t, units=units(t), events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t])
+              for t in range(100, 3600, 5))
+    tr, _, _ = _run(rt, stream=stream)
+    assert 'Log' not in tr.revealed.members() and tr.stats['evict'] == 0 and tr.stats['evict_refused'] >= 1
+
+
+def _giant_board(t0=2500, frames=tuple(range(30))):
+    def board(tick):
+        k = (tick - t0)//5
+        if k in frames:
+            return [dict(card='Giant', owner=1, x=9.5, y=22.0 - .05*k, hp_frac=1., score=.8)]
+        return []
+    return board
+
+
+def test_board_and_sanitizer_share_the_set(rt):
+    """A persistent unit of an unseen card (Giant, its play never perceived; 10 records meeting 3-of-4) displaces
+    the weakest card W (the once-seen Earthquake), and from then on the sanitizer keeps Giant units and drops W's (one set for plays and board)."""
+    tr, info, restarts = _run(rt, log_plays=(), board=_giant_board())
+    assert tr.stats['evict'] == 1 and 'Giant' in tr.revealed.members() and restarts == 1
+    assert tr.stats['evict:Earthquake->Giant'] == 1
+    dropped = tr.stats['board_dropped:1:Giant']       # the frames before the k-of-n rule admitted it
+    assert 0 < dropped <= 12
+    assert tr.board_card_ok('Giant', 1) and not tr.board_card_ok('Earthquake', 1)
+    assert not tr.revealed.allows('Earthquake')        # and its plays are rejected too
+
+
+def test_flicker_is_not_board_evidence(rt):
+    """False positives / per-frame confusion: a card seen on isolated frames never meets the k-of-n rule."""
+    tr, _, _ = _run(rt, log_plays=(), board=_giant_board(frames=tuple(range(0, 200, 3))))
+    assert tr.stats['evict'] == 0 and 'Giant' not in tr.revealed.members()
+    assert tr.stats['board_dropped:1:Giant'] > 0
+
+
+def test_contradicted_troop_goes_first(rt):
+    """Two weak members (each played once, no board record): the troop card the board never confirmed (HogRider
+    here, deployed but never seen) is evicted before the spell (Zap), whatever their age."""
+    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    plays.update({t: 'Log' for t in (2600, 3400)})
+    seen = {'Valkyrie': 600, 'Cannon': 800, 'SkeletonArmy': 1000, 'Musketeer': 1200}
+
+    def units(tick):
+        return [dict(card=c, owner=1, x=9.0, y=20.0, hp_frac=1., score=.8) for c, t in seen.items() if t <= tick < t + 100]
+    stream = (_rec(t, units=units(t), events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t])
+              for t in range(100, 3600, 5))
+    tr, _, _ = _run(rt, stream=stream)
+    assert tr.stats['evict:HogRider->Log'] == 1, dict(tr.stats)
+
+
+def test_fair_information_invariance(rt):
+    """The decision input (packet, enemy events, public rows, revealed set, eviction counters) is a function of the
+    perception records only: opponent-private truth added to the records (deck, hand, elixir, true card ids of
+    units, the true revealed set) changes nothing."""
+    def poisoned():
+        for r in _locked_out_stream(board=_giant_board()):
+            r = dict(r, opponent=dict(deck=REAL + ['Log'], hand=['Log']*4, elixir=9.9, revealed=REAL + ['Log']),
+                     opp_elixir=0.1, opp_hand=['Zap']*4)
+            r['units'] = [dict(u, private_card_id=26000000, true_card='Log') for u in r['units']]
+            r['events'] = [dict(e, true_card='Log') for e in r['events']]
+            yield r
+    a, ia, ra = _run(rt, stream=_locked_out_stream(board=_giant_board()))
+    b, ib, rb = _run(rt, stream=poisoned())
+    assert a.stats['evict'] >= 1
+    assert dict(a.stats) == dict(b.stats) and ra == rb and a.revealed.members() == b.revealed.members()
+    assert a.public_events == b.public_events and ia.events == ib.events and ia.own == ib.own
+    for f in ('entity_ids', 'entity_features', 'hand_ids', 'global_features', 'opponent_history_ids',
+              'opponent_seen_card_ids'):
+        assert np.array_equal(getattr(ia.packet.observation, f), getattr(ib.packet.observation, f)), f

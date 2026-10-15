@@ -81,6 +81,17 @@ class AuditPlayer:
                    restarts=getattr(tr, 'restarts', 0), opp_plays_perc=len(tr.plays[1]),
                    opp_injected=sum(1 for r in tr.public_events if r['seat'] == 1 and r.get('injected')))
         out.update({k: st.get(k, 0) for k in keys})
+        rs = getattr(tr, 'revealed', None)
+        if rs is not None and hasattr(rs, 'board'):   # RevealedSet evidence at the end: card -> [plays, board, true?]
+            cards = rs.members() | set(rs.rejected) | true_final
+            out['rev_evidence'] = {c: [rs.plays(c), rs.board[c], int(c in true_final), int(c in rs.members())]
+                                   for c in sorted(cards)}
+        ev = {k[6:]: v for k, v in st.items() if k.startswith('evict:') and v}   # RevealedSet evictions W->X
+        if ev or st.get('evict_refused') or st.get('evict_inconsistent'):
+            out.update(evict=sum(ev.values()), evict_refused=st.get('evict_refused', 0),
+                       evict_inconsistent=st.get('evict_inconsistent', 0), evictions=ev,
+                       evict_wrong_out=sum(v for k, v in ev.items() if k.split('->')[0] not in true_final),
+                       evict_true_in=sum(v for k, v in ev.items() if k.split('->')[1] in true_final))
         return out
 
     def close(self):

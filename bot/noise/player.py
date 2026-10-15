@@ -210,6 +210,9 @@ def make_player(rt, name, fallback):
     if name.startswith('FAN['):
         from bot.noise.shadow import make_fan
         return make_fan(rt, name, fallback)
+    if name.startswith('PERCR'):
+        from bot.noise.revfix import make_percr
+        return make_percr(rt, name, fallback)
     if name.startswith('PERCX'):
         from bot.noise.trfix import make_percx
         return make_percx(rt, name, fallback)

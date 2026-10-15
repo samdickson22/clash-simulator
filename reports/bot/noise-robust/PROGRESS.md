@@ -178,3 +178,28 @@ Design: DESIGN.md. Results: RESULTS.md. Code: bot/noise/ (filter.py, player.py, 
   spurious-event cards (Earthquake 26, Ghost 25, BarbLog 20, Mighty Miner 17, Ice Spirit 17, Arrows 16).
   'ninth_enemy_card_dropped' is 0 everywhere: the 9th card's plays are dropped earlier by the mirror's 8-card check
   in _consistent (counted as cycle_conflict_dropped:1), so the belief never holds the locked-out card.
+- **orc5 final** (168 games, 18,683 K4L decisions, sr1u50; agreement with the true-sight action vs base 61.6%):
+  O:unitrows **+4.9 pp** [+4.4, +5.5] (regret −14%); its parts: O:pos +1.2, O:missown +1.0, O:missopp +1.0,
+  O:hp +0.2, O:body +0.1, O:phant +0.1, O:face +0.1 pp (sum 3.7 of 4.9; the rest is interaction). No single
+  attribute dominates.
+- **Fix built (harness-side copy, bot/live untouched):** bot/noise/livefix/{translate,resync,revealed}.py are the
+  proposed bot/live files (only imports differ; `python -m bot.noise.revfix --diff` prints the exact patch);
+  `PERCR<tag>-<arm>:<player>` swaps the patched translator into the deployed PercPlayer (same noise stream).
+  - RevealedSet (one object for play acceptance AND the board sanitizer, LIVE LEAD req. 2): members = accepted
+    opponent plays + board-admitted cards. A full set evicts a WEAK card W (a unit card the board never confirmed
+    within 4 s of any of its plays, ≤2 plays; or a spell with ≤1 play) when a non-member X shows ≥2 plays (≥1 vs a
+    contradicted W) or ≥10 records meeting 3-of-4 persistence. Evidence = perceived plays/units only (req. 1; unit
+    scores unused). Eviction re-runs the resync translator's acceptance over the perceived plays without W's, plus
+    X's rejected ones, and sets `resynced` (req. 3: D1/belief rebuilt).
+  - `PERCRoff` (patched code, eviction off) is bit-identical to PERC-emp-sr1u50 (8/8 command hashes, fast tier).
+  - `PERCRoracle` (diagnostic): revealed set = the opponent's TRUE revealed cards, all else noisy.
+  - bot/noise/test_revealed.py: 9 tests (first-come rule when off, lock-out, eviction + resync consistency, one play
+    not enough, well-evidenced never evicted, board/sanitizer share the set, flicker is not evidence, contradicted
+    troop first, fair-information invariance with opponent-private truth injected into the records). 9/9 pass on 03.
+- **Fast-tier smoke** (cases 0–29 × R3a/v1, 60 paired games; tuned on these, so not evidence): true opponent units
+  dropped 2,273 → 117 (oracle 48); evictions 50, of which 40 removed a wrong card; Δscore +0.068 (oracle +0.083).
+  Rule history: v1 (r2's b3 / removal only) failed on cycle-inconsistent removals and swarm misreads
+  (Skeletons→SkeletonArmy reached 3 records), hence the rebuild, b10 and the 4 s sighting window.
+- **21:24Z launched on 03** (tree clasher-bot-noise-v4s, code sha in each job's code.sha256; HEADLINE 0–299 × R3a/v1):
+  scr1 (PGID 1966302, 80 workers): K4L twin × {sr1u50 base, PERCRe2b10 fix, PERCRoracle, perfect sight, PERCs1
+  reseeded}; scr1f (PGID 1966317, 16 workers): fast tier × {base, fix, oracle, perfect}.
