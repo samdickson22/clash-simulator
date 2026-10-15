@@ -127,3 +127,33 @@
   - LIVE-w200: R3a −0.070 [−0.127, −0.013], v1 −0.020 [−0.067, +0.027].
   - Pending the Mac timing, the deployed tier is `LIVE-K4CW-r16-w200-t4`.
   - 03 handed back to the bot lead.
+- **03:38Z, Mac CPU bench (coordinator-proposed, no emulator):** delegated to an Opus owner
+  (`live-macbench-owner-r1`), with progress in `reports/live/mac-bench/PROGRESS.md`.
+  - The owner stops before the first Mac run, for a Sol review.
+  - Mac writes go only to `~/clasher-live/`, with a total footprint ≤ 2 GB (9.3 GiB free).
+- **04:18Z, Mac bench at the gate:** scripts written; the end-to-end dry run on 05 is clean.
+  - **Native recipe corrected:** e1 staged source plus `--features extension-module,gil-release`. Bit-exact
+    parity holds on a 05 rebuild.
+  - **Clean fleet baseline:** w200-t4 p95 185 ms, default 2.0%; w150-t4 p95 142 ms, default 13.1%; it5s2
+    p50 13.3 ms. The old numbers came from a contended core.
+  - **Sol review:** running (`live-macbench-sol-review-r1`).
+  - **Kept:** rustc on 05 under `/mpac/sdicks02/tools-live` (613 MB).
+- **04:21Z, Sol review of the Mac bench** (`live-macbench-sol-review-r1`): **not OK as is.**
+  - 7 blockers: PID reuse in stop; `__RC` ignored when polling and on transfers; stale parity/audit approvals;
+    no disk watch during steps; xcrun fallback; `-I` without `-B`.
+  - 8 should-fixes and 1 nit.
+  - All were sent back to the owner. After fixes: a dry run on 05, my spot-check, then GO.
+- **04:24Z, ft-r2 final (val subset, 952 frames):**
+  - hand 99.05%; elixir MAE 0.057; units F1 0.846 (P 0.95, R 0.76); tower MAE 0.006;
+  - events P/R 0.91/0.74; spells 0.80/0.49.
+  - The 01 GPU was **released to the bot lead 4.5 h early**. The full-val eval (PID 1117790, CPU-bound) is finishing
+    alongside.
+  - No more fitting on renderer data. The next perception step needs official-client frames.
+- **04:36Z, step B DONE.** Final ft-r2 (sha cba64d2a…) on the FULL val split (64 matches); see
+  `reports/live/perception/RESULTS.md`.
+  - hand 98.85% per slot (97.0% all 4 right); elixir MAE 0.064; tower MAE 0.0089;
+  - units P/R/F1 0.907/0.774/0.835 within 1 tile;
+  - events P/R 0.872/0.750; opponent spells 0.745/0.490;
+  - latency on 01 CPU: 107 ms per frame end to end, so the Mac needs MPS/CoreML or the event head on every other frame.
+  - Files on 01 and 05: `/mpac/sdicks02/jobs/clasher/live-perception-20261014/` (export-final, sample-records).
+  - Cheap next fix, no GPU: fuse the newborn unit's body identity into the event card.

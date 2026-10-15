@@ -361,6 +361,25 @@ The search version is `PERC-births:LIVE-K4CW-r16,PERC-p42:LIVE-K4CW-r16`. That's
 
 ## 5. Mac porting note (no Mac access was used; nothing here has run on a Mac)
 
+> **CORRECTION (LIVE LEAD, 2026-10-15, from the Mac-bench owner's check):** the recipe below is incomplete.
+> 1. The pinned native 44874fd6 is not built from the runtime root's `engine-rs` as it stands: `rollout_e1`, which the
+>    search kernel calls, is patched in by `reports/explore/e1/stage_native.py`.
+> 2. The build needs `--features extension-module,gil-release` (`k-anytime/receipts/runtime-pin-03.json`). Without
+>    `gil-release`, parity still passes, but the 4 scoring threads are silently serialized.
+>
+> The corrected recipe is in `reports/live/mac-bench/mac/run.sh`. A rebuild on 05 with it passes parity bit-exactly
+> (40/40 roots, 600/600 values).
+>
+> Also, the latency table in §1 was measured on contended 05 cores, including core 5, which a foreign nice-19 process
+> has held at 100% for days. The clean baseline is in `reports/live/mac-bench/PROGRESS.md`:
+>
+> | tier | p95 | ends in default |
+> |---|---|---|
+> | w200-t4 | 185 ms | 2.0% |
+> | w150-t4 | 142 ms | 13.1% |
+> | unbounded, 1 thread | 380 ms | n/a |
+
+
 **1. Code.**
 - Copy this worktree's `bot/`. It holds bot/players, search, exit, eval and live; `bot/players/royalesim_vocab.json` is inside it.
 - Also copy `reports/explore/x4s/sdefault.py`. `runtime.py` puts `BOT_REPO/reports/explore/x4s` on `sys.path`, so recreate that path relative to the copied repo root.
