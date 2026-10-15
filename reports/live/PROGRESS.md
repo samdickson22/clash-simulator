@@ -282,3 +282,9 @@
   - Tests: 61 pass, 1 skip (the panic repro, now a no-op on r1-total).
   - **Note:** the running K4L rerun (code from 5cb79878) predates this fix, but it's consistent within its own run.
     Later PERC numbers will include it.
+- **12:27Z, ablation DONE** (`reports/live/perception/ABLATION.md`).
+  - The floor arm is level with perfect sight, so the method is valid.
+  - **Unit noise is the lever:** +0.06–0.07 (misses +0.04–0.05, phantoms +0.02–0.08).
+  - **Spells don't matter much:** about 0; all events only +0.02–0.03. HUD +0.01–0.02.
+  - The perc-r2 owner was told to put units first.
+- **12:27Z, K4L rerun restarted on 0–59** (new PGID 228307, resumed from 290 rows).
