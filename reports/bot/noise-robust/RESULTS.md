@@ -72,3 +72,20 @@ It was selected among ~6 multi-root variants and ~5 filters, so the screen carri
    groups on 03 (SMT siblings idle). Adoption needs fleet p99 ≤ 400 ms. p50/p95/p99, the default share and the Mac
    projection (÷2.8) are reported.
 4. **Also reported from the same games:** the K4L gap on the fresh bank, PERC-emp-sr1u50:B vs B.
+
+## 4b. Fresh-bank verdict (computed by the bot lead at 2026-10-15T20:31Z; the worker was cut off by a T3 restart)
+
+Data: 127x03:/mpac/sdicks02/jobs/clasher/bot-noise/fb1/{a,b,d}, cases 0–599 vs R3a and v1, 4,800 games, 0 errors,
+0 duplicates. Bootstrap: 4,000 resamples, seed 0, paired by (opponent, index), as pre-registered.
+
+| comparison | pooled (R3a + v1) | R3a | v1 |
+|---|---|---|---|
+| **noisy (sr1u50) C − B, primary** | **+0.015 [−0.013, +0.042]** | +0.033 [−0.008, +0.075] | −0.003 [−0.038, +0.032] |
+| perfect sight C − B | +0.008 [−0.013, +0.028] | 0.000 [−0.035, +0.033] | +0.015 [−0.008, +0.038] |
+
+Win rates (n = 600 each): noisy B 0.630 / 0.880, noisy C 0.663 / 0.877; perfect sight B 0.832 / 0.945, C 0.832 / 0.960.
+
+**Verdict: NOT CONFIRMED.** The primary CI includes 0, so LIVEMR-K2-D is not adopted and the timing run is moot.
+
+**Noise gap of the live search bot on this unselected bank:** PERC-emp-sr1u50:K1 − K1 = **−0.202 [−0.245, −0.162]** vs
+R3a and **−0.065 [−0.095, −0.035]** vs v1. This is the best estimate of what deployed perception costs K4L.
