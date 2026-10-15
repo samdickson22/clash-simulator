@@ -35,3 +35,24 @@
 
 **Consequence for perception round 2.** Prioritise unit recall (swarms, merged peaks) **and** unit false positives.
 Spell-event work comes second. Royal Ghost remains a live-only fix that this metric can't see.
+
+## Follow-up 1: unit threshold (round-1 model, 2026-10-15 13:53Z)
+
+**Setup.** 1,800 games on 03, 0 errors, code from main 5cb79878 (the hand fix e1b468ec is NOT included). The
+unit-detection threshold was raised from the deployed 0.4. Only the unit stats were refitted
+(`empirical-val-r1u50.json`, `-r1u55.json`):
+- at 0.5: recall .760, phantoms .053/.057 per frame;
+- at 0.55: recall .730, phantoms .027/.029.
+
+| arm | vs fresh PERC-emp: R3a | vs fresh PERC-emp: v1 | vs perfect: R3a | vs perfect: v1 |
+|---|---|---|---|---|
+| fresh PERC-emp (same code) | — | — | −0.137 [−0.200, −0.073] | −0.067 [−0.120, −0.013] |
+| **unit threshold 0.5** | +0.020 [−0.040, +0.080] | +0.020 [−0.033, +0.073] | −0.117 | −0.047 |
+| unit threshold 0.55 | +0.017 [−0.050, +0.087] | −0.037 [−0.090, +0.017] | −0.120 | −0.103 |
+
+**Reading.**
+- 0.5 is consistent with the phantom-cost proxy, which predicted about +0.02, but it isn't significant at n = 300 per
+  opponent. 0.55 is null to negative.
+- **Decision (exploration):** move the deployed unit threshold to **0.5**. The evidence leans that way and the
+  downside is small. Round 2 picks its own threshold with the same sweep.
+- The fresh PERC-emp re-measured on current code matches the old one: R3a +0.000, v1 +0.047, both n.s.

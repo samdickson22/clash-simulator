@@ -288,3 +288,13 @@
   - **Spells don't matter much:** about 0; all events only +0.02–0.03. HUD +0.01–0.02.
   - The perc-r2 owner was told to put units first.
 - **12:27Z, K4L rerun restarted on 0–59** (new PGID 228307, resumed from 290 rows).
+- **13:23Z, K4L PERC rerun DONE:** 1,200 games, 0 errors, **0 panics**, on r1-total with code from 5cb79878.
+  - Perfect-sight K4L: 0.807 vs R3a, 0.947 vs v1. PERC-emp:K4L: 0.607 / 0.877.
+  - **Δ R3a −0.200 [−0.263, −0.137], v1 −0.070 [−0.113, −0.023].**
+  - Under noise K4L still beats it5s2 (0.607 vs 0.523 R3a; 0.877 vs 0.770 v1; different code versions).
+  - The default share isn't available: headline rows carry no per-decision stats. TODO: add it to the runner.
+- **13:23Z, unit-threshold test launched on 03 0–59:** PGID 386848; arms fresh PERC-emp, -sr1u50, -sr1u55; 1,800
+  games. Out dir `live-perc-thr-ours`; code in `clasher-live-eval3`.
+- **13:53Z, unit-threshold test DONE:** u50 +0.020/+0.020 (n.s.); u55 +0.017/−0.037.
+  - **Decision: deployed unit threshold 0.4 → 0.5**, provisional; round 2 picks its own.
+  - 03 handed back to the bot lead.
