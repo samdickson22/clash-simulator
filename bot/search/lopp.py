@@ -21,8 +21,13 @@ Names 'K4L-' + tokens (candidates, coarse scan, refine, timed-wait bonus, S-defa
 - L        learned opponent only: every candidate scored by L (no coarse/refine split).
 - m<name>  model file $CLASHER_LOPP_MODELS/<name>.npz (default pool)
 - gs       sampled gate/card with common random numbers across candidates (default: calibrated threshold)
+- rw       row-wise forward (one state per numpy call): the float32 forward of a batch depends on its composition
+           (BLAS blocking), a single row does not, so rw values do not depend on how rollouts are batched;
+           single-row calls are also ~3x cheaper than 2-3-row batches. Differs from the batched forward in the
+           low bits only.
 - h<N>     learned opponent for the first N rollout ticks, scripted balanced afterwards
 - i<I>     learned opponent decision interval (default 5 = the real players' poll cadence)
+- t/c/p/w  threads, chunks, worker processes, wall deadline (kind R only): bot/search/lopp_fast.py
 Deterministic: no wall clock; gs uniforms are keyed by (match seed, tick, rollout tick).
 """
 from __future__ import annotations
@@ -31,6 +36,7 @@ import json
 import math
 import os
 import re
+import time
 from pathlib import Path
 
 import numpy as np
@@ -53,8 +59,9 @@ def load_model(name):
 class Learned:
     """Opponent controller: model + gate mode + optional switch to scripted balanced after `switch` ticks."""
 
-    def __init__(self, model, sample=False, switch=None, interval=5, seed=0):
+    def __init__(self, model, sample=False, switch=None, interval=5, seed=0, rowwise=False):
         self.m, self.sample, self.switch, self.interval, self.seed = model, sample, switch, interval, seed
+        self.rowwise = rowwise
         self.calls = self.plays = 0
         self.elixir_at_play = 0.
 
@@ -67,8 +74,13 @@ class Learned:
             x, hand = featurize(view, tick, m.cost_of)
             X.append(x); cards.append([m.vocab.get(t, 0) for t in hand])
         X, cards = np.stack(X), np.asarray(cards)
-        h = m.trunk(X, cards)
-        gate, vlog = m.heads(h)
+        if self.rowwise:    # one row per forward: values independent of the batch composition (rw)
+            h = np.concatenate([m.trunk(X[r:r+1], cards[r:r+1]) for r in range(len(idxs))])
+            heads = [m.heads(h[r:r+1]) for r in range(len(idxs))]
+            gate, vlog = np.concatenate([g for g, _ in heads]), np.concatenate([v for _, v in heads])
+        else:
+            h = m.trunk(X, cards)
+            gate, vlog = m.heads(h)
         p = 1 / (1 + np.exp(-gate[:, 0]))
         u = np.random.default_rng([*self.seed, tick]).random(2) if self.sample else None
         out = []
@@ -99,8 +111,10 @@ class Learned:
 
 
 def batch_rollouts(native, root, seat, actions, opponent, *, delay, opp_delay, horizon=160, interval=10,
-                   elixir_weight=1.0, tick0=0):
-    """Values of `actions` (plays, WAIT, timed waits 2400-2402). opponent: a style name or a Learned."""
+                   elixir_weight=1.0, tick0=0, deadline=None):
+    """Values of `actions` (plays, WAIT, timed waits 2400-2402). opponent: a style name or a Learned.
+    deadline: time.monotonic() cutoff checked between steps; past it the batch returns None (values unchanged
+    otherwise)."""
     n = len(actions)
     sims = [root.clone() for _ in range(n)]
     opp = 1 - seat
@@ -129,6 +143,8 @@ def batch_rollouts(native, root, seat, actions, opponent, *, delay, opp_delay, h
     step = math.gcd(interval, opponent.interval) if learned else interval
     k = 0
     while k < horizon:
+        if deadline is not None and time.monotonic() >= deadline:
+            return None
         if k > 0:
             if k % interval == 0:
                 for i in range(n):
@@ -226,10 +242,10 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
 
 
 class LearnedOppPlayer(CandidateSearchPlayer):
-    def __init__(self, rt, *, arm, model='pool', sample=False, switch=None, interval=5, name=None):
+    def __init__(self, rt, *, arm, model='pool', sample=False, switch=None, interval=5, rowwise=False, name=None):
         super().__init__(rt, r3a=16, second=0, name=name)
         self.arm, self.model_name = arm, model
-        self.sample, self.switch, self.interval = sample, switch, interval
+        self.sample, self.switch, self.interval, self.rowwise = sample, switch, interval, rowwise
 
     def start(self, ctx):
         super().start(ctx)
@@ -240,7 +256,8 @@ class LearnedOppPlayer(CandidateSearchPlayer):
         seed = ctx.seed
 
         def make_opp():
-            return Learned(model, self.sample, self.switch, self.interval, seed=[seed, int(core.info.tick)])
+            return Learned(model, self.sample, self.switch, self.interval, seed=[seed, int(core.info.tick)],
+                           rowwise=self.rowwise)
 
         def score_candidates(root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):
             action, info = reduce_learned(core, root, seat, candidates, self.arm, coarse_order=core.coarse_order,
@@ -262,8 +279,9 @@ class LearnedOppPlayer(CandidateSearchPlayer):
 
 
 def make_lopp_player(rt, name):
-    """'K4L-' + tokens (module docstring), e.g. K4L-X, K4L-M0, K4L-M50, K4L-R, K4L-L-mR3a-gs-h60."""
-    kw, arm = {}, None
+    """'K4L-' + tokens (module docstring), e.g. K4L-X, K4L-M0, K4L-M50, K4L-R, K4L-L-mR3a-gs-h60.
+    t<N>/c<P>/p<P>/w<ms> (threads, chunks, worker processes, wall deadline): bot/search/lopp_fast.py."""
+    kw, arm, fast = {}, None, {}
     for token in name.split('-')[1:]:
         if token in ('X', 'R', 'L'):
             arm = dict(kind=token)
@@ -273,12 +291,21 @@ def make_lopp_player(rt, name):
             kw['model'] = m[1]
         elif token == 'gs':
             kw['sample'] = True
+        elif token == 'rw':
+            kw['rowwise'] = True
+        elif token == 'fp':                                 # bot/search/lopp_fast.py
+            fast['fast_prep'] = True
         elif m := re.fullmatch(r'h(\d+)', token):
             kw['switch'] = int(m[1])
         elif m := re.fullmatch(r'i(\d+)', token):
             kw['interval'] = int(m[1])
+        elif m := re.fullmatch(r'([tcpw])(\d+)', token):   # bot/search/lopp_fast.py
+            fast[dict(t='threads', c='chunks', p='pool', w='wall_ms')[m[1]]] = int(m[2])
         else:
             raise ValueError(f'unknown learned-opponent token {token!r} in {name!r}')
     if arm is None:
         raise ValueError(name)
+    if fast:
+        from bot.search.lopp_fast import make_fast_player
+        return make_fast_player(rt, name, arm, dict(kw, **fast))
     return LearnedOppPlayer(rt, arm=arm, name=name, **kw)

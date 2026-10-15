@@ -64,3 +64,44 @@ CLASHER_LOPP_MODELS=/mpac/sdicks02/jobs/clasher/bot-lopp-models). Use ABSOLUTE -
   2195817639077040, 1200 cases/opp: pooled +0.055 [+0.041,+0.068]; R3a +0.049 [+0.021,+0.076], v1 +0.055
   [+0.034,+0.076], rext-bc +0.060 [+0.037,+0.082]. CONFIRMED. Per BOT LEAD, nothing further launched on 03 (0 procs).
   RESULTS.md final. Nothing committed. Open: uncontended single-thread timing + i10 strength screen need 04/08 room.
+
+## K4L live-tier speed (worker of the BOT LEAD, 2026-10-15; hosts 04/08 only)
+Goal: a K4L variant that keeps most of +0.055 and fits 200 ms wall per decision on 4-5 cores. Jobs on 127x04 under
+/mpac/sdicks02/jobs/clasher/bot-lfast/ (runner bot-lopp-run.sh copied to 04/08; models copied 03 -> 04/08 under
+bot-lopp-models, sha256 equal). New code: bot/search/lopp_time.py (pinned per-decision timing), lopp_fast.py
+(t/c/p/w tokens), lopp_fast_check.py (exactness); lopp.batch_rollouts gained an optional deadline (values unchanged).
+- 2026-10-15T01:18:37Z Step 1 (time1; 04 cores 0-9, one pinned game per core, 40-slot cpu_job lease, SMT siblings
+  <=1% busy over the run, i.e. quiet): 20 HEADLINE games each (cases 0-9 x R3a,v1), single thread, per searched
+  decision: K4C-r16 wall p50/p95/p99/mean 273/462/656/253 ms (CPU 253; search 219/399, prep 49/73; 42.4 rollouts);
+  K4L-R-gs 242/383/463/222 ms (CPU 222; search 190/325, prep 48/67; 33.4 rollouts). The 03 numbers (0.415 s) were
+  ~1.9x inflated by load. lopp_threads (30 roots, 8 keys/root, cores 20-24): native rollout_e1 36.8 ms seq ->
+  24.0 ms wall on 4 threads; learned lockstep batch 69.6 ms seq -> 79.3 ms wall on 4 threads (CPU 128 ms): worse.
+- Profile (cProfile, lopp_check, 12 roots): learned rollout ~5.3 ms vs native 3.7 ms; ~half is BattleState.step
+  (GIL held: the native's 'gil-release' cargo feature is compiled out in 44874fd6), half Python decide (public_view
+  JSON + featurize + small numpy calls). The forward is already batched across rollouts (lever c is in place).
+- numpy float32 forward rows depend on batch composition (1858/~2000 rows differ in low bits when re-batched), so
+  re-chunking cannot be bit-identical to K4L-R-gs by construction. Design: t<N> (threaded native, learned batch
+  unchanged: == K4L-R-gs exactly), c<P> (fixed chunks, serial twin), p<P> (same chunks in P forked workers: == c<P>).
+- Smoke (case 0 vs R3a): K4L-R-gs-t4, -c4, -t4-p4 all reproduce K4L-R-gs's command_sha256 (c97c01ef...).
+  lopp_fast_check (12 roots, 972 scripted + 324 learned rollouts): snapshot round trip, threads, pool == rollout_e1
+  bit for bit; pool == c4 bit for bit; chunked == unchunked on all 324 values. Root snapshot is 2.1 MB (config 2.07
+  MB = 56-card catalogue): shipping it cost ~39 ms on the GIL + 15 ms parse per worker under load -> workers now get
+  the config once and rebuild each root from the ~60 KB dynamic part with only the deck cards (parse 1.1 vs 7.1 ms).
+- 2026-10-15T01:38:04Z Contended smokes (04 load ~60, siblings 20-32% busy; NOT representative of quiet cores):
+  t4-p4 search p50 118 ms vs t4 160 (native phase 62-75 ms on 4 threads, learned 42 vs 95); K4CW-r16-w200-t4 in the
+  same run hit its cutoff on 90% of decisions and fell back to R3a on 35%. Root shipping after the config cut:
+  ship 9 ms, worker parse 3 ms (was 39 / 15). Benchmark on 40 dumped roots: learned rollout 10-12 ms at ANY batch
+  size (native 5.3 ms) because the opponent trunk streams W1 (888x256 f32, 0.9 MB) per call: a 1-row forward is
+  0.038 ms, a 2-row forward 0.26 ms (OpenBLAS small-M gemm). New token rw: one row per forward. Values then do not
+  depend on batching, and learned rollouts cost 6.5-8.4 ms (native 4.2) instead of 9.9-12.3 (native 5.3).
+  lopp_fast_check --rowwise (50 roots, cases 0,3): scripted 2940/2940 and learned pool == UNCHUNKED serial
+  980/980 bit for bit; roots rebuilt with the deck-card-only config: 0 mismatches. So K4L-R-gs-rw is the exact
+  serial twin of K4L-R-gs-rw-t4-p4 (any chunking).
+- Prep profile (60 decisions): per searched decision R3a's forward runs twice (poll + r16 re-rank, ~8-10 ms each)
+  and Resources.root json.dumps the 2 MB config (~12-17 ms) + parses it (7 ms). New token fp (install_fast_prep):
+  cached config JSON spliced into the byte-identical payload, and an exact-input memo of R3a's outputs().
+  Verify mode (CLASHER_FASTPREP_VERIFY=1, recompute + assert): case 2 vs v1, K4L-R-gs-rw-fp == K4L-R-gs-rw
+  command_sha256 (ac5b989b...), 101 json + 101 memo hits, no mismatch.
+- 2026-10-15T01:38:04Z Screens launched (bot.search.run, HEADLINE 0-299 x R3a,v1, 600 games each): K4L-R-gs-rw on 04
+  (bot-lfast/scr-rw, 40 workers) and K4L-R-gs-rw-i10 on 08 (bot-lfast/scr-rwi10, 36 workers), both via cpu_job
+  leases. Baselines copied read-only from 03 to bot-lfast/base/ (bot-lopp-hl2, bot-headline-r16-ours, RoyaleSim dirs).

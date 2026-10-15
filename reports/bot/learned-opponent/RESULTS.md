@@ -114,3 +114,20 @@ Raw logs on 127x03, `/mpac/sdicks02/jobs/clasher/`:
 Reproduce with:
 - `python -m bot.search.report <dirs> --baseline K4C-r16 --opponents …`
 - runner: `bot-lopp-run.sh MODULE ARGS`
+
+## Live-tier speed: fresh bank 2, pre-registered (2026-10-15, before any result of the arms below)
+
+- **Drawn** 2026-10-15T01:39:04Z: BASE **203119344380352** = int.from_bytes(os.urandom(6),'big')<<4. No game has been played on it.
+- **Engine and protocol:** RoyaleSim 15.535 via bot/eval/headline.py --engine rsim15535, cases 0–1199 × opponents
+  R3a, v1, rext-bc, each candidate paired against K4C-r16 on the same cases (K4C-r16 is played on this bank too).
+- **Candidates:** the deterministic twin of each live K4L variant (identical decisions when no cutoff hits):
+  - A = K4L-R-gs-rw-fp (twin of LIVE-K4L-R-gs-rw-fp-w200-t4-p4);
+  - B = K4L-R-gs-rw-i10-fp (twin of the i10 live variant).
+- **Decision rule (fixed now):** a candidate runs on this bank if both hold:
+  1. Strength: its HEADLINE screen in ours (cases 0–299 × R3a, v1) is ≥ +0.03 pooled vs K4C-r16, paired.
+  2. Fit: in one pinned timing run (5 physical cores per game, references in the same run), its wall variant
+     plays the cutoff default on no more decisions than K4CW-r16-w200-t4, and its complete search fits the
+     192 ms budget on ≥ 90% of decisions.
+  - A is run first. B runs only if A fails the rule or compute remains after A.
+- **Reporting:** the paired delta vs K4C-r16 with a 95% bootstrap CI, pooled with equal weight per opponent, and
+  per opponent.
