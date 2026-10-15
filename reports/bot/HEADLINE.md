@@ -64,6 +64,12 @@ Everything is as in v2 (RoyaleSim 15.535, same cases and BASE), but the pool is 
   the record.
 - **Scores reported:** pool-v3, external-only (rext-bc, rext-bcppo) and P1.
 
+## Daily fresh banks (pre-registered before any game)
+
+| drawn (UTC) | BASE | protocol |
+|---|---|---|
+| 2026-10-15T13:00:21Z | 3459036173349312 | RoyaleSim 15.535; best bot K4L-R-gs vs R3a, v1, rext-bc, cases 0–399 each; paired reference K4C-r16 on the same cases; quoted number = pool score with bootstrap 95% CI |
+
 ## Tracked numbers
 
 > **Selection-bias caveat (2026-10-15 12:47Z).** Two reseeded copies of K4L-R-gs scored −0.027 and −0.038 against K4L-R-gs's own
