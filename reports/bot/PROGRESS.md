@@ -45,6 +45,12 @@ tier). Report to coordinator thread 0523ae6f.
   - **Best bot: K4C-r16** (fresh-bank +0.021 over K4S-st). RoyaleSim P1 0.921, v3 0.924.
   - **Best student: it5s2** (ExIt; 0.883 vs v1). HEADLINE-v3 adds the human-clone external `rext-bc`.
 
+- **2026-10-15 ~00:50Z:**
+  - **Best bot: K4L-R-gs** (K4C-r16 with a learned rollout opponent). Fresh bank, RoyaleSim: +0.055 [+0.040, +0.069]
+    over K4C-r16 at equal CPU (`reports/bot/learned-opponent/`). Turn-based tiers only until its rollouts fit 200 ms.
+  - RL fine-tune of it5s2 (PPO, KL-anchored): null (`reports/bot/rl/`).
+  - ExIt iteration 7: 9 refits of it5s2, none better; it5s2 stays the best student.
+
 ## Running (2026-10-14 17:59Z)
 
 - **ExIt iteration 6+ owner** (`bot-lead-exit-it6-r1`, Opus) on 01/04/08.

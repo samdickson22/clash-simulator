@@ -55,6 +55,9 @@ def make_player(rt, name):
     if name.startswith('K4SV-'):  # K4S-st with a learned leaf value V(state, seat) (bot/value/players.py)
         from bot.value.players import make_value_player
         return make_value_player(rt, name)
+    if name.startswith('K4L-'):  # K4C-r16 with a learned rollout opponent (bot/search/lopp.py)
+        from bot.search.lopp import make_lopp_player
+        return make_lopp_player(rt, name)
     if name.startswith('K4O-'):  # K4C-r16 with other style aggregations / online style inference (bot/search/oppmodel.py)
         from bot.search.oppmodel import make_oppmodel_player
         return make_oppmodel_player(rt, name)
