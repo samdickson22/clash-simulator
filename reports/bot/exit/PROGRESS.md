@@ -679,6 +679,62 @@ Next calibration case block: 480000.
   **04 stopped** (next_start 7106000; restart with the old args from `cpu-feed/BEHAVIOUR.log`). The labels can't
   reach this time box's fits; the CPU goes to evals. In-flight batches drain on their own.
 
+**00:12Z: RL fine-tune finished (lead), so its CPU/GPU share is free.**
+- 08 `bot-cpu-claims/max-eval-workers` 24 → 36. 04 feeder restarted at target 24 (PID 2783863, `cpu-feed.log5`).
+- Learning-curve probes: detached `when_done.sh` append `ev-B6s1-3000` (08 cpuq7, cases 480000; PID 2179426) and
+  `ev-B8s1-3000` (04 cpuq7, 481000; PID 2788210) when the step-3000 ckpts appear. Next cal block: **482000**.
+- **K4C vs K4S, all 3 seed pairs** (ksM − kcM, per case pooled): vs v1 **+0.004 [−0.028, +0.037]**, vs R3a
+  **+0.020 [−0.018, +0.059]**: null. ksM3 (τ 0.5075): v1 0.833, Δ vs it5s2 −0.050 [−0.097, −0.007]; R3a 0.677,
+  Δ +0.017 [−0.040, +0.073]; h2h vs it5s2 0.443.
+- Reporting on 05: `bot/exit/it8_pull.sh` (EV=dir) copies `ce-*/eval/games-*.jsonl` to `/tmp/sdicks02-exit8/ev/<host>/`;
+  `python3 bot/exit/pooled_delta.py OPPS A,B [A,B ...]` gives seed-pooled paired deltas.
+
+**Iteration 8 results** (our engine, HEADLINE 0–299; Δ paired vs it5s2 `$J8/ce-it5s2`; h2h = score vs it5s2):
+
+| student | τ | vs v1 | Δ vs it5s2 (v1) | vs R3a | Δ vs it5s2 (R3a) | h2h vs it5s2 |
+|---|---|---|---|---|---|---|
+| kmix2 (it7 leftover) | 0.5375 | 0.890 [0.853, 0.923] | +0.007 [−0.037, +0.050] | 0.633 | −0.027 [−0.083, +0.027] | 0.470 |
+| kmix3 (it7 leftover) | 0.5375 | 0.883 [0.847, 0.920] | 0.000 [−0.040, +0.043] | 0.610 | −0.050 [−0.107, +0.007] | 0.503 |
+| kcA4 (it7 leftover, 1.55 M K4C) | 0.5075 | 0.863 [0.823, 0.900] | −0.020 [−0.063, +0.023] | 0.550 | **−0.110 [−0.167, −0.053]** | 0.417 |
+| kmixg8b (it7 leftover, 8 layers) | 0.5375 | 0.863 [0.823, 0.900] | −0.020 [−0.070, +0.027] | 0.630 | −0.030 [−0.083, +0.027] | 0.470 |
+| kmixg8a (it7 leftover, 8 layers) | 0.5075 | 0.850 [0.810, 0.890] | −0.033 [−0.083, +0.013] | 0.610 | −0.050 [−0.110, +0.013] | 0.470 |
+| A3x800s2 (lr 3e-5, 800 steps) | 0.5075 | 0.870 [0.830, 0.907] | −0.013 [−0.057, +0.033] | 0.630 | −0.030 [−0.087, +0.027] | 0.422 |
+| A3x300s1 (lr 3e-5, 300 steps) | 0.5375 | 0.847 [0.807, 0.887] | −0.037 [−0.087, +0.013] | 0.673 | +0.013 [−0.047, +0.073] | 0.477 |
+| A3x300s2 | 0.5375 | 0.870 [0.830, 0.907] | −0.013 [−0.060, +0.033] | 0.650 | −0.010 [−0.070, +0.050] | 0.480 |
+| A3x800s1 (lr 3e-5, 800 steps) | 0.5375 | 0.893 [0.857, 0.927] | +0.010 [−0.033, +0.053] | 0.640 | −0.020 [−0.083, +0.040] | 0.470 |
+| A1x300s1 (lr 1e-5, 300 steps) | 0.5375 | 0.873 [0.833, 0.910] | −0.010 [−0.057, +0.037] | 0.660 | 0.000 [−0.063, +0.060] | 0.473 |
+| A1x300s2 | 0.5075 | 0.843 [0.800, 0.883] | −0.040 [−0.087, +0.003] | 0.650 | −0.010 [−0.073, +0.057] | 0.473 |
+| A1x800s1 (lr 1e-5, 800 steps) | 0.5375 | 0.857 [0.817, 0.897] | −0.027 [−0.073, +0.020] | 0.637 | −0.023 [−0.087, +0.037] | 0.487 |
+| A1x800s2 | 0.5375 | 0.870 [0.830, 0.907] | −0.013 [−0.060, +0.033] | 0.683 | +0.023 [−0.030, +0.077] | 0.447 |
+| B8s1 @ step 3000 (probe) | 0.5375 | 0.853 [0.813, 0.893] | −0.030 [−0.080, +0.023] | 0.683 | +0.023 [−0.033, +0.080] | 0.537 |
+| B6s1 @ step 3000 (probe) | 0.5075 | 0.837 [0.793, 0.877] | −0.047 [−0.100, +0.003] | 0.600 | −0.060 [−0.120, 0.000] | 0.433 (n 263) |
+
+Note (01:10Z): even a 300-step lr-3e-5 nudge lands −0.037 vs v1. it5s2's 0–299 score was the max of 6 it5 fits and
+its +0.057 vs Kall did not replicate on 300–599, so "beat it5s2 on 0–299" carries a selection (winner's-curse) bias.
+The lr-1e-5 arm-A fits are near-copies of it5s2 and serve as the null control for that bias.
+- Eval routing: `bot/exit/moveto01.sh NAME [04|08]` moves a pending 04 cpuq6 eval to 01 (sha-checked copy).
+  Done for A3x300s2 (01 cpuq6); `moveto01.sh A1x300s1 08` did A1x300s1 (08 → 01 cpuq6).
+- **All it7 leftovers are in (01:35Z): none beats it5s2.**
+- **02:00Z:** feeders raised 24 → 48 on 01/04/08 (CPU idle at ~60/128; leases keep evals first). PIDs 01 465191,
+  04 3327187, 08 2717927; logs `cpu-feed.log6`. B6s1 at step 3313, B8s1 at 2577 (8L ≈ 15 steps/min → done ≈ 06:40Z).
+- **Arm A interim (02:30Z, 6 of 8):** pooled per case over the 6 fits, gentle refit − it5s2 = **−0.017 [−0.053,
+  +0.019]** vs v1 and **−0.009 [−0.057, +0.039]** vs R3a. No single fit beats it5s2 on both. Small steps neither help
+  nor hurt measurably, so it5s2 looks like a local optimum for this data (plus the 0–299 selection bias).
+- 02:27Z: 08 feeder 48 → 16 (PID 2853243) and 04 48 → 24 (PID 3472083), logs `cpu-feed.log7`. Target 48 starved
+  ev-A1x800s1 and the lead's `bot-lfast` job (both waited in cpu_room for 25 min). 01 stays at 48 (cap 89).
+- 02:53Z: 01 feeder target 72, cap 89 kept (PID 716842, `cpu-feed.log7`). Queued extra 6L seeds in gpuq2 to
+  follow B*s1: **B6s3** (08, seed 2026102663, cal 482000) and **B6s4** (04, seed 2026102664, cal 483000). Next cal
+  block: **484000**. Kill them (verified trainer PID) if B6s1/B6s2 finals are clearly below it5s2.
+  ETAs: B6s1 ≈ 03:50Z, B8s1 ≈ 04:40Z, B6s2 ≈ 05:30Z, B8s2 ≈ 06:45Z, B6s3/s4 ≈ 08:30–09:30Z (+45 min eval each).
+- **Arm A final (03:25Z, 8 of 8): no new best.** Pooled per case over all 8 fits, gentle refit − it5s2 = **−0.018
+  [−0.052, +0.018]** vs v1 and **−0.007 [−0.054, +0.040]** vs R3a.
+  - lr 1e-5 (4 fits): −0.022 [−0.058, +0.013] / −0.003 [−0.052, +0.046].
+  - lr 3e-5 (4 fits): −0.013 [−0.050, +0.024] / −0.012 [−0.061, +0.037].
+  - The near-copies (lr 1e-5) lose as much as lr 3e-5, so the ~−0.02 vs v1 is mostly the 0–299 selection
+    inflation of it5s2, not harm from the step. Small steps neither help nor hurt: **it5s2 is a local optimum** of
+    this data/objective.
+- 03:26Z: 04 feeder 24 → 40 (`cpu-feed.log8`). 08 stays at 16: the lead's `bot-lfast` wall job holds 40 there.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
