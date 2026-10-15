@@ -5,6 +5,7 @@
 # order; a job is done once "<name>" is in QUEUE_FILE.done. Append lines at any time; an empty queue is polled
 # every 60 s. Each job logs to <dir of QUEUE_FILE>/<name>.log.
 set -uo pipefail
+export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 queue=${1:?QUEUE_FILE}; done_file="$queue.done"; dir=$(dirname "$queue")
 touch "$done_file"
 while true; do

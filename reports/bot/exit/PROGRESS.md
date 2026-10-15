@@ -923,6 +923,37 @@ PPO from it5s2 with `--critic-init`, a lower KL coefficient and higher lr, and m
 - 10:24Z, update 1 (critic-only warm-up, 162 games, 45 k decisions): explained variance of the fresh batch
   **before** training 0.348 (r3 at the same point: −0.002); explore score 0.568 (v1 0.84, R3a 0.62, it5s2 0.46);
   deployed would-play 38.6 per game.
+- **10:36Z, allocation change (coordinator): 01's GPU goes to the LIVE LEAD's perception round 2 for ~6–10 h.**
+  - SIGTERM to critic c1 (2712348; stopped at step ~3300; `critic-best.pt` = step 3250, held-out EV 0.516), the RL r4
+    learner (2809878; state after update 2) and 01's gpuq runner (1161458). 01 `nvidia-smi`: no processes of ours
+    at 10:36:42Z. **Do not queue anything on 01's GPU until the LIVE LEAD returns it.**
+  - 01 K4L feeder cap 105 → **89** (target 44; PID 3011456, `cpu-feed-k4l.log3`), so the LIVE LEAD keeps ≤16 loader
+    cores. Other 01 CPU work continues; keep 01 ≤89 live python.
+  - **RL r4 moved to 08's GPU:** RUN copied to the same path on 08 (rollouts moved, not copied, so none is consumed
+    twice); learner resumed there with `--resume` and the same args (PID 1155932, `RUN/learner.log`; the 01 log is
+    `learner.log.01`). The actors stay on 01's CPU; `bot/rl/remote_sync.sh 127x08 RUN` on 01 (PID 3014735) pushes
+    rollouts to 08 and pulls policies back. Verified: 08 published version 2 and 01's LATEST followed.
+  - `bot/rl/eval_watch.sh` gained SRC_HOST `local` (08 cannot ssh to itself); the 08 watcher was restarted as
+    `eval_watch.sh local RUN …` (PID 1161529).
+  - Stop RL now: `touch RUN/STOP_LEARNER RUN/STOP_ACTORS` on 08 (01's sync propagates STOP_ACTORS), `RUN/STOP_SYNC`
+    on 01, `bot-rl-r4-eval08/STOP` on 08.
+- **10:57Z, critic reset.** After 4 PPO updates the critic's out-of-sample EV per batch had fallen from 0.35 (warm-up)
+  to 0.14–0.26 under online training at critic lr 1e-4 on ~160 games per update. `bot.rl.learner` now applies the
+  command-line lrs on `--resume`, and `--resume --critic-init` resets the critic and its optimizer. The learner was
+  restarted with the critic reset to c1's best (step 2500, held-out EV 0.5163, `RUN/critic-init-c1-step2500.pt` sha
+  09462971…) and `--critic-lr 1e-5`. Update 6 (the first after the reset): EV 0.40 before training on that batch.
+  Policy KL to it5s2 rises fast at lr 3e-5 / KL coefficient 0.01: 0.046, 0.060, 0.089, 0.115, 0.129 (updates 2–6;
+  r3 reached 0.034 after 20). Collapse rule: stop at KL > 0.5 or eval Δ < −0.05 twice.
+- **11:01Z, `NUMPY_MADVISE_HUGEPAGE=0`** (coordinator; THP madvise forces direct compaction: few-MB allocations took
+  2–47 s on 01). Exported in `bot/exit/run.sh` (feeders, actors, evals, calibration), `fit_eval.sh`, `gpu_queue.sh`,
+  `cpu_feeder.sh` and `bot/detach.sh` (every detached launch); the K4L feeder templates also carry it. Host copies on
+  01/04/08 updated. Restarted for it: the RL learner on 08 (PID 1321862, plain `--resume --critic-lr 1e-5`, the state
+  already holds the reset critic) and the 01 actors (block 10 stopped via STOP_ACTORS at 11:03Z; **block 11**, 32
+  workers, wrapper 3160647). Running fits and evals were left alone.
+- **01 ≤ 89 live python.** The new actor pool passed `cpu_room` under the default cap 105 while K4C batches were still
+  draining (py 96). Those three batches were stopped by verified PGID (s7017400/7800/8000; sealed shards kept), and
+  `cpu_room.sh` now honours a per-host ceiling file `bot-cpu-claims/max-live` (written as **89 on 01**; delete it when
+  the LIVE LEAD returns 01's GPU). 01 then had 75 live python.
 - 10:02Z: skipped ev-B8s3-ka2026102684 (01 cpuq7; it sat in cpu_room with a 36-process claim ahead of the RL actors;
   a 4th seed of the closed B8 arm).
 

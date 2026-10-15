@@ -7,6 +7,7 @@
 # STATE_DIR/../gen-ka-s<start>. NEXT_START is persisted in STATE_DIR/next_start (restarts never reuse a range).
 # Stops when NEXT_START+BATCH > STOP_AT, after MAX_BATCHES, or if a finished batch produced no games.
 set -uo pipefail
+export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 state=${1:?}; tmpl=${2:?}; target=${3:?}; batch=${4:?}; first=${5:?}; stop_at=${6:?}; cap=${7:-105}; max=${8:-200}
 repo=/mpac/sdicks02/repos/clasher-bot
 mkdir -p "$state"; [[ -s "$state/next_start" ]] || echo "$first" > "$state/next_start"

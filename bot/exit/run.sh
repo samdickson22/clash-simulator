@@ -2,6 +2,7 @@
 # Multi-process CPU launcher for bot.exit / bot.eval (nice 19, 1 thread per process, no GPU).
 #   bot/exit/run.sh -m bot.exit.generate --out DIR ...
 set -euo pipefail
+export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 repo=$(cd "$(dirname "$0")/../.." && pwd)
 export CLASHER_BOT_RUNTIME=${CLASHER_BOT_RUNTIME:-/mpac/sdicks02/repos/clasher-bot-runtime/r1}
 export CUDA_VISIBLE_DEVICES='' PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \

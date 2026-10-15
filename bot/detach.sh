@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Owned Linux wrapper: detached session, closed stdin, durable PID/PGID receipt.
 set -euo pipefail
+export NUMPY_MADVISE_HUGEPAGE=0  # no THP madvise: direct compaction stalls numpy allocs 2-47 s on fragmented hosts (LIVE LEAD 10-15)
 log=${1:?LOGFILE}; receipt=${2:?RECEIPT}; shift 2
 mkdir -p "$(dirname "$log")" "$(dirname "$receipt")"
 setsid -f bash -c '

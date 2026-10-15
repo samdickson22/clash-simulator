@@ -150,7 +150,7 @@ def main(argv=None):
     ap.add_argument('--max-updates', type=int, default=10**6)
     ap.add_argument('--keep-versions', type=int, default=4, help='delete consumed rollouts older than this')
     ap.add_argument('--seed', type=int, default=2026101490)
-    ap.add_argument('--critic-init', help='critic state_dict to start from (bot.rl.critic_pretrain critic-best.pt)')
+    ap.add_argument('--critic-init', help='critic state_dict to start from (bot.rl.critic_pretrain critic-best.pt); with --resume it resets the critic')
     ap.add_argument('--device', default='cuda')
     a = ap.parse_args(argv)
     from bot.exit.train import bootstrap, sha
@@ -183,6 +183,12 @@ def main(argv=None):
         policy.load_state_dict(st['policy']); critic.load_state_dict(st['critic'])
         opt.load_state_dict(st['opt']); copt.load_state_dict(st['copt'])
         version, update = st['version'], st['update']
+        for o, lr in ((opt, a.lr), (copt, a.critic_lr)):  # command-line learning rates win on resume
+            for g in o.param_groups:
+                g['lr'] = lr
+        if a.critic_init:  # --resume --critic-init: reset the critic (and its optimizer) to these weights
+            critic.load_state_dict(torch.load(a.critic_init, map_location=device, weights_only=True))
+            copt = torch.optim.AdamW(critic.parameters(), lr=a.critic_lr, weight_decay=0.)
     elif (run / 'policies' / 'LATEST').exists():
         raise SystemExit('run already has policies; use --resume')
     else:
