@@ -78,7 +78,8 @@ class AuditPlayer:
                    polls=self.polls['n'], drop_opp_truecard=drop_true, drop_opp_falsecard=drop_false,
                    drop_truecards=drop_true_cards,
                    drop_own=sum(v for k, v in st.items() if k.startswith('board_dropped:0:')),
-                   restarts=getattr(tr, 'restarts', 0), opp_plays_perc=len(tr.plays[1]),
+                   restarts=getattr(tr, 'restarts', 0), perc_errors=getattr(p, 'errors', 0),
+                   opp_plays_perc=len(tr.plays[1]),
                    opp_injected=sum(1 for r in tr.public_events if r['seat'] == 1 and r.get('injected')))
         out.update({k: st.get(k, 0) for k in keys})
         rs = getattr(tr, 'revealed', None)

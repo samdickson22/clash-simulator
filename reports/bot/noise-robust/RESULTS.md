@@ -1,6 +1,6 @@
 # Noise-robust decisions: results (bot lead worker, exploration)
 
-Status: IN PROGRESS. Numbers are from completed or interim screens, each labelled with its n. Design: DESIGN.md.
+Status: IN PROGRESS (r4: revealed-set fix screened; fresh bank section 6 pre-registered 23:10:27Z). Numbers are from completed or interim screens, each labelled with its n. Design: DESIGN.md.
 Log: PROGRESS.md.
 
 ## 1. Screens (ours engine, HEADLINE cases 0–299, PERC-emp = empirical-val.json, unit threshold 0.4)
@@ -89,3 +89,91 @@ Win rates (n = 600 each): noisy B 0.630 / 0.880, noisy C 0.663 / 0.877; perfect 
 
 **Noise gap of the live search bot on this unselected bank:** PERC-emp-sr1u50:K1 − K1 = **−0.202 [−0.245, −0.162]** vs
 R3a and **−0.065 [−0.095, −0.035]** vs v1. This is the best estimate of what deployed perception costs K4L.
+
+## 5. Evidence-ranked opponent revealed set (r3/r4)
+
+**Problem** (aud1, HEADLINE 0–99, 194 games): the deployed translator's opponent card set is first-come, the first
+8 distinct cards of accepted plays. Under sr1u50 it holds a card the opponent never played in 164/194 games. A true
+card is then locked out (its plays and units are dropped) in 124/194 games.
+
+**Fix:** bot/noise/livefix/revealed.py `RevealedSet`. It is one object for play acceptance and the board sanitizer,
+and it evicts weakly evidenced cards. Proposed bot/live patch: reports/bot/noise-robust/revealed-set.patch.
+
+### 5a. Screen scr1 (K4L twin `LIVED-K4L-R-gs-rw-fc`)
+
+HEADLINE cases 0–299 × R3a/v1; 3,000 games, 0 errors. Each arm is paired with the baseline
+`AUD:PERC-emp-sr1u50` by (opponent, index): 95% bootstrap, 4000 resamples, seed 0. The arms ran r3's code (see 5d).
+
+| arm − baseline | R3a (n=300) | v1 (n=300) | pooled (n=600) |
+|---|---|---|---|
+| **fix** PERCRe2b10 | +0.013 [−0.017, +0.047] | +0.030 [+0.000, +0.060] | **+0.022 [+0.000, +0.043]** |
+| oracle revealed set (diagnostic, reads truth) | +0.020 [−0.040, +0.080] | +0.043 [−0.003, +0.090] | +0.032 [−0.005, +0.070] |
+| reseeded baseline PERCs1 (noise-only control) | +0.007 [−0.057, +0.077] | −0.013 [−0.063, +0.037] | −0.003 [−0.043, +0.037] |
+| perfect sight | +0.203 [+0.143, +0.267] | +0.083 [+0.040, +0.130] | +0.143 [+0.107, +0.182] |
+
+Mean score of the baseline: 0.617 (R3a), 0.857 (v1).
+
+**Translator audit per game** (baseline → fix):
+- games with a wrong card in the final set: R3a 0.87 → 0.76, v1 0.78 → 0.55;
+- true opponent unit-records dropped by the sanitizer: R3a 17 → 1, v1 40 → 2;
+- true cards missing from the final set: R3a 0.67 → 0.44, v1 0.97 → 0.62.
+
+The oracle revealed set is worth only +0.032 of the +0.143 perfect-sight gap, so the lock-out is a minor part of
+the noise gap on this screen. The fix recovers about 2/3 of the oracle's value.
+
+### 5b. Clean-channel no-op check (floorchk)
+
+Setup: `-xunits-xev-xhud`, cases 0–14 × R3a/v1. Fix vs baseline: **30/30 identical command hashes**, Δ 0.000.
+
+### 5c. Fast tier (scr1f, `LIVE-fast-it5s2`)
+
+Pending: cases 0–149 run on 03 and 150–299 on 04.
+
+### 5d. Defect fixed after the screen (r4)
+
+An eviction rebuilt the opponent mirror up to the record tick. A lagged opponent event later in the same record
+then raised 'public time moved backwards'. PercPlayer turned that into a WAIT and lost the record's remaining
+events. A live session would have got the exception. Fix: rebuild up to the stream guard's time. Regression tests
+fail on the old code and pass on the fix. The fresh bank (section 6) runs the fixed code.
+
+## 6. Fresh bank for the revealed-set fix (PRE-REGISTERED 2026-10-15T23:10:27Z, before any game)
+
+**Bank and stats.**
+- BASE = **4405930208510496**, from `int.from_bytes(os.urandom(6), 'big') << 4`, drawn 2026-10-15T23:10:27Z. It is
+  not 919328127031168 (section 4).
+- Cases: x4s_setup(i, BASE), i = 0..599, vs R3a and vs v1, through bot/noise/run.py on the ours engine.
+- Noise: `PERC-emp-sr1u50`, stats bot/live/empirical-val-r1u50.json, sha256
+  c84464ba28b5504cb28c9f3bd536b17792656c5677b9c6fd506ee7d9291442cf.
+- Runtime pins: r1-total.
+
+**Code** (main at this commit; sha256):
+
+| file | sha256 |
+|---|---|
+| bot/noise/livefix/revealed.py | 63e2277a2ebff25c3363833a3d517b2f094d428f6df6ae69029ba250f5fd54dc |
+| bot/noise/livefix/resync.py | 2e6a697a895d7621fe4a94736199b5eb7c2167d620657191daa0cfeca34aed14 |
+| bot/noise/livefix/translate.py | c071f732e433ac088b4cc9eeceb5fcefca6a14e63d1fce530a7cef968d4c5e75 |
+| bot/noise/revfix.py | b2edfe8a03227c2cf5927e4304670e0f432db6a216784749ee42f86f84039f2e |
+| bot/noise/audit.py | dc3ce86d67d872d82f8964a129e7f856d9857f45564fadc89983d65fcd08af52 |
+| bot/live/perc.py | 6e1656f1… |
+| bot/live/empirical.py | 94df10a8… |
+| bot/live/translate.py | 5361deb0… |
+| bot/live/resync.py | 77e177f8… |
+| proposal patch reports/bot/noise-robust/revealed-set.patch | 90835df8a1e3cdb6250bf1c61b20c1142653946f8392384b6c72830299f7653a |
+
+**Arms** (same noise stream, same player):
+- **F** = `AUD:PERCRe2b10-emp-sr1u50:LIVED-K4L-R-gs-rw-fc` (the fix);
+- **B** = `AUD:PERC-emp-sr1u50:LIVED-K4L-R-gs-rw-fc` (the deployed translator).
+
+AUD is a read-only audit wrapper.
+
+**Decision rule.**
+1. **Primary:** the pooled Δ = mean score(F) − score(B) over R3a + v1, 600 cases each, paired by (opponent, index),
+   with a 95% bootstrap CI (4000 resamples, seed 0; bot/noise/report.py pooled row).
+   - **CONFIRMED** iff the CI lower bound > 0. Otherwise NOT CONFIRMED.
+2. **Also reported:** Δ vs R3a alone, with its CI (LIVE LEAD requirement d), and Δ vs v1 alone. Neither is the
+   claim test.
+3. **Also reported:** perc_errors per arm (it must be 0 for F), evictions, and dropped true unit-records.
+
+**Hosts:** cases 0–439 run on 03 (80 workers), 440–599 on 04 (`bot/exit/cpu_job.sh 30`). The results are merged by
+(arm, opponent, index).
