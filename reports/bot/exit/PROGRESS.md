@@ -1238,6 +1238,41 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   - r7 at v10 (KL 0.125 vs v40; 21:57Z); 01 live python 95, admin logged out (no mpacadmin processes from ~21:48Z).
     `f10-rl5v10` running (234/2000 at 22:02Z).
 
+- **LIVE handover recipe (22:20Z).** The LIVE LEAD adopted r5 v10 as the live fast tier and cutoff default (their
+  sr1u50 check: vs it5s2 R3a +0.032 [−0.032, +0.097], v1 +0.040 [−0.013, +0.093]). A confirmed successor must also come
+  with perfect-sight and sr1u50 numbers. Own copy of their harness: `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04
+  (`bot/` from origin 0d4a6bd9; `bot/live` identical to `clasher-live-eval5`); run as their `run.sh` does
+  (`CLASHER_LIVE_FAST=student:<ckpt>@τ bot.live.headline_wall --candidate LIVE-fast-it5s2,PERC-emp-sr1u50:LIVE-fast-it5s2
+  --opponents v1,R3a --games 300`, env pins r1-total). Check: 4/4 games (r5 v10, v1 cases 0–1, both candidates) have
+  the same command_sha256 as their `live-rl5-perc-ours/rl5`. Pair vs their `it5s2`/`rl5` dirs (read only).
+  `live-rl5v30` appended to 04 cpuq2 (36 workers, out `/mpac/sdicks02/jobs/clasher/bot-liveeval-rl5v30`).
+
+- **22:46Z: r6 v30 on F9 (complete)** — vs it5s2 v1 +0.033 [+0.002, +0.065], R3a +0.098 [+0.055, +0.140], mean +0.066
+  [+0.039, +0.092]; **vs r5 v10 mean +0.007 [−0.022, +0.034]** (v1 −0.018, R3a +0.032); vs r5 v30 −0.019 [−0.044,
+  +0.007]; 33.6 plays/game vs v1. The r4-v20 lineage is not better than r5's: **RL r6 stopped** at v49 (22:47Z,
+  STOP_LEARNER/STOP_ACTORS; kl_stop 3431580 killed; the 08 watcher got STOP).
+- **v30 recalibration (cal-rl5v30, rounds 0–2 on the same 128 TRAIN1 cases vs v1):** τ 0.5375 → 34.9 plays, score
+  0.898; τ 0.5075 → 36.3, 0.867; τ 0.4775 → 38.9, 0.836. Pushing an RL snapshot into the play band costs win rate on
+  common cases. **F10 rule amendment (22:47Z, before any candidate F10 game exists):** for RL snapshots the play band is
+  reported, not a gate (RL learns its play rate against the win signal; the band came from ExIt teacher rates); the
+  τcal F10 run is dropped, so r5 v30 counts once in k.
+- **22:48–22:51Z: 01's GPU to the LIVE LEAD's perception round 3 (coordinator, ~6–8 h).** 01 gpuq keep-alive 1618265
+  and runner 38762 stopped; filler BL6fka202652 (trainer 1863670) SIGTERMed and requeued as **BL6fka202652r** in 08
+  gpuq2 (paths rewritten, all present on 08). RL r7 learner SIGTERMed (state after update 18). **01 GPU free at
+  22:49:16Z** (nvidia-smi: Xorg/gnome-shell only). 01 feeder cap → 89 (PID 2244168, `cpu-feed-k4l.log10`) and
+  `bot-cpu-claims/max-live` = **89** on 01 (delete it when the LIVE LEAD returns the GPU); a fresh K4L batch (PGID
+  2242643) stopped → 86 live python. **Do not queue anything on 01's GPU.**
+  - **RL r7 moved to 08's GPU:** RUN copied to the same path on 08 (rollouts excluded; 01's logs kept as `*.01`),
+    learner `--resume` PID 1154334 (same args); actors stay on 01 (48, block 40) with `remote_sync.sh 127x08 RUN` on 01
+    (PID 2248018). kl_stop on 08 PID 1155378 (01's 1678216 killed). r7 eval watcher restarted as `local` on 08 (PID
+    1155410, log `bot-rl-r7-eval08.log2`); the old watcher's orphaned v10 eval (PGID 450255) was stopped and v10 is
+    re-evaluated. Stop r7: `touch RUN/STOP_LEARNER RUN/STOP_ACTORS` on 08 (sync propagates), `RUN/STOP_SYNC` on 01.
+  - **RL r8 (04)** = r5 continued from **v30** (the F9-best snapshot), r5's final critic, r5's args, seed 2026101598,
+    **blocks ≥ 50**. RUN `/mpac/sdicks02/jobs/clasher/bot-rl-r8`, init `bot-rl-r8-init/` (v30 sha 2772e8f9…, critic
+    f023967c…); learner PID 1313254 (04 GPU), actors block 50, 32 workers (wrapper 1314674), kl_stop PID 1314718; eval
+    watcher on 08 `eval_watch.sh 127x04 RUN /mpac/sdicks02/jobs/clasher/bot-rl-r8-eval08 24` (PID 1163670).
+  - Keep-alives remain on 04 gpuq/gpuq2 (109055/109143) and 08 gpuq/gpuq2 (4093222/4093287).
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
