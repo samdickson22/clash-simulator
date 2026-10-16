@@ -142,6 +142,22 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:40 UTC failed receipt copied and verified
+
+- Owner copied originalr6 to exactlocalpath
+  `/mpac/sdicks02/repos/clasher-bot-levels/reports/bot/levels/receipts/gates-all-r6-failed.txt`.
+  BOTcommand `sha256sum reports/bot/levels/receipts/gates-all-r6-failed.txt` verifiedSHA256
+  `819406620ba64ba8dfaac500c57af5389347e85a1c9b5d194fa3b67838385cab` at09:40:19Z.
+  Originalsource01dev/gates-all-r6.txtretained.
+- Gateowner confirmed existingpublicNativeScripts.apply_discrete contract plusnative snapshot/step/clone.
+  Repair prints exactrawentity/field old→nativevalues/types before any narrow normalization ofsource-proven
+  missingStringdefaults. NumericHP/damage/maxHP andowner/class/keychecksremainstrict. This is repairplan,
+  not executed gateacceptance;freshreview/runtimeevidence stillrequired. No duplicatediagnosis/job.
+- Firstfailureaudit alreadypushed `a3a3fb1856dc2906754f67f0992383a98854065f` at09:40:10Z;tempindexsecretscan,
+  JSON/whitespace/explicitpaths/sharedindexHEADchecksPASS. This follow-up records newlyavailableexactreceipt.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: bind failed level gate receipt and strict repair checks' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:39 UTC material gate failure
 
 - Reviewed01gate executionr6finished85/90PASS,5failures. Mapping121/121+13towersPASS; actualBfairinformation

@@ -75,6 +75,10 @@ and future delegation briefs. Actual permission controls remain unchanged. No ol
   pinnedBattleStatehasno deploy_card method; fixtures must use existingNativeScripts.apply_discrete,notrebuildruntime.
   Existingowner repairs/reviews fixtureAPI and adds exactentity/field snapshotdiff before any acceptance change.
   Receipt remains01:bot-levels/dev/gates-all-r6.txt; BOT read it directly09:39Z,localcopy initiallypending.
+  At09:40:19Z BOT verified local `levels/receipts/gates-all-r6-failed.txt` SHA256
+  `819406620ba64ba8dfaac500c57af5389347e85a1c9b5d194fa3b67838385cab`. Repair prints rawentity/field
+  values/types first; only source-proven missing String defaults may normalize. NumericHP/damage/maxHP and
+  owner/class/key checks stay strict; freshreview/executed evidence required before accepting any repairedgate.
   Pilotbank/games stillBLOCKEDbyfailures; fair/bodypasses do not waive nativephysics/all11/rollout/harnessgates.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
   08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
