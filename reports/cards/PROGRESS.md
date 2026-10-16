@@ -380,3 +380,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
 - 21:27Z **Mac parity build done** (cards-mac-build-sol-r1, ff4b93df2): native 8072e577 (2.4 MB, from 878d5f459), fixtures 577/577,
   roots 598/600 = 18 one-ULP rollout values from macOS exp(); all selected actions/digests/views/masks identical → lead call:
   live-qualified. Smoke 3/3. 782 MiB footprint. Pin live16402b-r3-mac merged to main 2fa5d496e; LIVE LEAD told (bundle 00:00Z).
+- 22:18Z LIVE LEAD deleted Mac ~/clasher-live/fullpool/venv (0.55 GB) for disk; runtime/native untouched; live launcher uses live venv; Mac parity rerun needs venv rebuild (ask LIVE first). Noted in mac/RESULTS.md.

@@ -160,7 +160,9 @@ export CLASHER_LOPP_POOL_START=spawn
 export BOT_FULLPOOL_POLICIES="v1=$HOME/clasher-live/fullpool/models/ext/main02-fp.pt,R3a=$HOME/clasher-live/fullpool/models/ext/R3a-fp.pt"
 export RAYON_NUM_THREADS=2 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 export VECLIB_MAXIMUM_THREADS=1 NUMBA_NUM_THREADS=1
-# Interpreter: $HOME/clasher-live/fullpool/venv/bin/python -B
+# Interpreter used for parity/smoke: $HOME/clasher-live/fullpool/venv/bin/python -B
+# NOTE 2026-10-16 ~22:20Z: the LIVE LEAD deleted fullpool/venv (0.55 GB) for disk; the live launcher uses the live venv.
+# Rerunning parity on the Mac needs that venv rebuilt (numpy 2.3.5, torch 2.10.0, numba 0.63.1, gymnasium 1.2.3, msgspec 0.20.0); ask the LIVE LEAD first for disk.
 # Smoke recipe: LIVE-K4L-R-gs-rw-fc-mpoolfp-w200-t1-p1
 ```
 
