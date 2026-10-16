@@ -8,9 +8,7 @@ Recordings, video and screenshots stay out of git: Mac `~/clasher-live/loop/{run
 ## TL;DR
 
 - **The bot plays ranked ladder battles end to end in the official client:** capture → perception → LiveSession(LivePlayer
-  `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`, RL r5 v10 fast tier/fallback) → ADB taps. **40 battles: 29 wins, 11 losses, 0 → 716 trophies (Arena 2 Bone Pit from 300). Two of the losses were driver
-  incidents (s2-m02, s4-m01: dim screen broke the readers / driver stopped). r1: 11-3; r5e3 (perception r3 ft-r5): 18-7 +
-  the s4 incident** (Goblin Stadium; opponents 21-164 trophies, tower levels 1-3). Low-trophy opposition: this shows the loop works,
+  `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`, RL r5 v10 fast tier/fallback) → ADB taps. **86 logged battles: 53 wins, 33 losses (including five incidents), 0 → 782 trophies (currently Barbarian Bowl; Bone Pit from 300). Five losses are incidents: s2-m02/s4-m01 (dim screen), s13-m01 (disk guard), s14-m01 (page pause), s14-m04 (opening-hand stall). r1: 11-3; r5e3 frames (including YOLO unit trials): 34-22 including incidents; ft-r6: 1-3** (Goblin Stadium; opponents 21-164 trophies, tower levels 1-3). Low-trophy opposition: this shows the loop works,
   not strength.
 - **Latency per decision (initial r1 battles):** capture 2 ms, canvas 1.6 ms, perception 113-117 ms (p50, CPU), LiveSession step p95 13-18 ms;
   **frame → tap p50 150-158 ms, p95 165-197 ms**; ADB two-tap ack 13-24 ms. ~8 processed FPS.
@@ -66,6 +64,83 @@ Recordings, video and screenshots stay out of git: Mac `~/clasher-live/loop/{run
 | s12-m02 | W 2-1 (+30) | 715 | r5e3 | 175.5 | 6.8 | 116.4 | 33.0 | 159.2 / 167.1 | 15.2 | 33 | 38 | 0 | 2 |
 | s12-m03 | W 1-0 (+30) | 745 | r5e3 | 175.7 | 6.3 | 121.0 | 33.4 | 167.6 / 220.6 | 17.5 | 30 | 34 | 0 | 3 |
 | s12-m04 | **L 0-3 (−29)** | 716 | r5e3 | 158.6 | 6.7 | 116.4 | 22.9 | 160.6 / 169.8 | 16.7 | 26 | 24 | 0 | 4 |
+| s13-m01 | **L 0-3 (−29), incident: disk stop** | 687 | r5e3 | — | — | — | — | — | — | — | — | — | — |
+| s14-m01 | **L 0-3 (−30), incident: page pause** | 657 | r5e3 | 143.4 | 7.0 | 115.9 | 16.6 | 156.9 / 242.4 | 13.8 | 12 | 12 | 0 | 1 |
+
+| s14-m02 | W 2-1 (+30) | 687 | r5e3 | 198.3 | 6.9 | 115.2 | 23.4 | 161.4 / 202.6 | 14.2 | 32 | 39 | 0 | 2 |
+| s14-m03 | W 3-1 (+30) | 717 | r5e3 | 166.4 | 6.8 | 117.0 | 21.3 | 160.6 / 191.3 | 14.2 | 25 | 31 | 0 | 3 |
+| s14-m04 | **L 0-3 (−29), incident: opening-hand stall** | 688 | r5e3 | 55.6 | 7.2 | 115.2 | 0.2 | — | — | 0 | 0 | 0 | 4 |
+
+| s15-m01 | **L 0-3 (−29)** | 659 | r5e3 | 150.5 | 6.8 | 116.5 | 27.7 | 157.3 / 221.9 | 16.4 | 23 | 27 | 0 | 1 |
+
+| s17-m01 | W 1-0 (+30) | 689 | r5e3 | 175.2 | 6.8 | 116.0 | 21.6 | 161.6 / 195.8 | 29.2 | 29 | 31 | 0 | 1 |
+
+| s17-m02 | **L 0-1 (−29)** | 660 | r5e3 | 175.8 | 6.8 | 116.6 | 20.2 | 161.2 / 217.6 | 28.0 | 26 | 25 | 0 | 2 |
+| s17-m03 | **L 0-1 (−29)** | 631 | r5e3 | 175.9 | 6.9 | 116.4 | 21.9 | 162.4 / 184.0 | 29.8 | 25 | 26 | 0 | 3 |
+
+| s17-m04 | W 1-0 (+30) | 661 | r5e3 | 175.6 | 6.9 | 115.7 | 22.9 | 164.8 / 185.5 | 27.4 | 26 | 27 | 0 | 4 |
+
+| s18-m01 | W 1-0 (+30) | 691 | r5e3 | 175.8 | 6.9 | 116.0 | 22.2 | 163.1 / 182.4 | 29.3 | 26 | 29 | 0 | 1 |
+| s18-m02 | W 3-0 (+30) | 721 | r5e3 | 169.2 | 6.9 | 116.1 | 20.9 | 157.8 / 180.7 | 26.6 | 26 | 24 | 0 | 2 |
+| s18-m03 | W 3-1 (+30) | 751 | r5e3 | 167.3 | 6.9 | 116.0 | 21.9 | 158.9 / 179.2 | 28.8 | 24 | 24 | 0 | 3 |
+| s18-m04 | W 2-0 (+30) | 781 | r5e3 | 175.4 | 6.9 | 115.9 | 21.6 | 157.6 / 216.6 | 28.1 | 28 | 23 | 0 | 4 |
+
+| s19-m01 | W 1-0 (+30) | 811 | r5e3 + yolo-v2l-e11 | 175.7 | 5.9 | 138.7 | 23.3 | 182.6 / 238.5 | 47.4 | 27 | 27 | 0 | 1 |
+
+| s19-m02 | **L 0-1 (−29)** | 782 | r5e3 + yolo-v2l-e11 | 231.6 | 5.9 | 139.2 | 24.1 | 181.3 / 202.5 | 48.0 | 37 | 35 | 0 | 2 |
+| s19-m03 | **L 0-2 (−33)** | 749 | r5e3 + yolo-v2l-e11 | 175.2 | 5.9 | 138.6 | 21.6 | 180.2 / 243.0 | 47.4 | 26 | 26 | 0 | 3 |
+| s19-m04 | **L 0-1 (−29)** | 720 | r5e3 + yolo-v2l-e11 | 175.6 | 5.9 | 138.6 | 24.8 | 181.6 / 228.3 | 48.0 | 27 | 26 | 0 | 4 |
+
+| s20-m01 | W 1-0 (+30) | 750 | r5e3 | 224.5 | 7.8 | 114.4 | 19.7 | 158.1 / 165.6 | 28.3 | 35 | 34 | 0 | 1 |
+
+| s20-m02 | **L 0-3 (−30)** | 720 | r5e3 | 47.6 | 7.8 | 114.4 | 19.9 | 156.4 / 205.5 | 28.2 | 6 | 7 | 0 | 2 |
+| s20-m03 | W 3-0 (+30) | 750 | r5e3 | 149.1 | 7.9 | 114.2 | 21.7 | 156.3 / 167.9 | 26.9 | 20 | 22 | 0 | 3 |
+| s20-m04 | W 2-1 (+30) | 780 | r5e3 | 175.1 | 6.9 | 117.2 | 24.3 | 162.6 / 213.4 | 28.8 | 25 | 25 | 0 | 4 |
+
+| s21-m01 | W 1-0 (+30) | 810 | r5e3 | 175.7 | 7.9 | 114.6 | 19.5 | 152.8 / 167.4 | 28.3 | 25 | 26 | 0 | 1 |
+
+| s21-m02 | **L 1-3 (−30)** | 780 | r5e3 | 127.8 | 7.9 | 114.1 | 17.7 | 151.3 / 219.0 | 29.4 | 16 | 15 | 0 | 2 |
+| s21-m03 | **L 1-3 (−30)** | 750 | r5e3 | 153.6 | 7.9 | 114.7 | 17.6 | 153.8 / 190.5 | 29.1 | 22 | 21 | 0 | 3 |
+| s21-m04 | W 3-1 (+30) | 780 | r5e3 | 152.5 | 7.9 | 114.9 | 18.6 | 156.5 / 165.1 | 28.7 | 21 | 21 | 0 | 4 |
+
+| s22-m01 | **L 1-3 (−29)** | 751 | r5e3 | 113.3 | 7.3 | 116.3 | 21.7 | 161.3 / 222.3 | 29.4 | 15 | 13 | 0 | 1 |
+| s22-m02 | **L 0-3 (−30)** | 721 | r5e3 | 65.1 | 7.8 | 114.9 | 21.6 | 158.7 / 231.9 | 28.0 | 11 | 11 | 0 | 2 |
+
+| s22-m03 | W 1-0 (+30) | 751 | r5e3 | 175.0 | 7.9 | 114.5 | 21.5 | 156.8 / 175.5 | 28.1 | 31 | 27 | 0 | 3 |
+
+| s22-m04 | W 1-0 (+30) | 781 | r5e3 | 211.8 | 7.9 | 114.5 | 20.9 | 155.7 / 169.7 | 29.1 | 38 | 32 | 0 | 4 |
+
+| s23-m01 | **L 1-3 (−30)** | 751 | ft-r6 + stale decode¹ | 105.8 | 7.8 | 115.7 | 18.8 | 155.7 / 201.0 | 29.1 | 14 | 13 | 0 | 1 |
+
+| s23-m02 | W 1-0 (+30) | 781 | ft-r6 + stale decode¹ | 175.5 | 7.8 | 115.7 | 19.3 | 160.0 / 195.7 | 26.9 | 29 | 28 | 0 | 2 |
+
+| s23-m03 | W 3-1 (+30) | 811 | ft-r6 + stale decode¹ | 152.3 | 7.8 | 116.6 | 19.9 | 156.8 / 170.3 | 27.1 | 30 | 25 | 0 | 3 |
+
+| s23-m04 | **L 0-1 (−30)** | 781 | ft-r6 + stale decode¹ | 175.3 | 7.8 | 116.2 | 23.9 | 162.6 / 195.4 | 29.5 | 30 | 27 | 0 | 4 |
+
+| s24-m01 | **L 0-1 (−30)** | 751 | ft-r6 + stale decode¹ | 184.3 | 7.8 | 115.7 | 20.1 | 160.4 / 212.1 | 29.9 | 31 | 26 | 0 | 1 |
+
+| s24-m02 | W 1-0 (+30) | 781 | ft-r6 + stale decode¹ | 175.1 | 7.8 | 116.1 | 21.2 | 160.6 / 193.6 | 27.8 | 25 | 26 | 0 | 2 |
+
+| s24-m03 | W 3-0 (+30) | 811 | ft-r6 + stale decode¹ | 175.5 | 7.8 | 115.7 | 21.5 | 157.2 / 168.2 | 27.5 | 28 | 26 | 0 | 3 |
+
+| s24-m04 | **L 1-3 (−30)** | 781 | ft-r6 + stale decode¹ | 251.8 | 7.7 | 116.4 | 21.4 | 161.0 / 193.4 | 29.4 | 42 | 42 | 0 | 4 |
+
+| s25-m01 | W 3-1 (+30) | 811 | ft-r6 + stale decode¹ | 146.2 | 7.8 | 115.7 | 19.8 | 157.0 / 184.4 | 28.0 | 20 | 18 | 0 | 1 |
+
+| s25-m02 | **L 1-3 (−30)** | 781 | ft-r6 + stale decode¹ | 149.7 | 7.8 | 116.3 | 17.7 | 155.3 / 164.4 | 29.1 | 20 | 20 | 0 | 2 |
+
+| s25-m03 | W 2-1 (+30) | 811 | ft-r6 + stale decode¹ | 175.4 | 7.8 | 115.8 | 19.4 | 160.4 / 207.8 | 27.7 | 27 | 23 | 0 | 3 |
+
+| s25-m04 | W 1-0 (+30) | 841 | ft-r6 + stale decode¹ | 200.2 | 7.8 | 116.0 | 19.5 | 157.2 / 179.7 | 28.8 | 33 | 31 | 0 | 4 |
+
+| s26-m01 | **L 1-2 (−30)** | 811 | ft-r6 | 188.9 | 7.8 | 115.7 | 18.6 | 155.8 / 193.1 | 28.6 | 28 | 27 | 0 | 1 |
+
+| s26-m02 | **L 1-3 (−29)** | 782 | ft-r6 | 258.7 | 7.8 | 115.7 | 20.7 | 157.5 / 170.3 | 27.7 | 47 | 47 | 0 | 2 |
+
+| s26-m03 | **L 1-3 (−30)** | 752 | ft-r6 | 177.2 | 7.8 | 115.6 | 18.3 | 156.4 / 163.9 | 27.4 | 28 | 26 | 0 | 3 |
+
+| s26-m04 | W 1-0 (+30) | 782 | ft-r6 | 175.9 | 7.8 | 115.5 | 19.8 | 160.9 / 171.1 | 29.6 | 27 | 27 | 0 | 4 |
 
 s2-m02 / s4-m01: the BlueStacks output dimmed mid-battle (white level ~180, cause unknown); the elixir/tower readers
 failed (elixir 0, princesses 'dead') and the bot tried past-bridge deploys; fixed by brightness normalization, a frame
@@ -107,4 +182,26 @@ s11 played on the grassy Barbarian Bowl arena (automatic background folder still
 
 s12-m02 has a confirmed card/slot desync: n864/tick2111.5 submitted Musketeer in slot3 while the same-frame HUD read MiniPekka in slot3 (.774) and Musketeer next (.963); game deployed MiniPekka. Opus loop owner investigating; keep laddering per LIVE LEAD. s12-m03 had transient performance drift: last60s FPS5.76/perception p95~170ms; s12-m04 recovered to6.89FPS/perception p95~120ms. No step errors or unhealthy battle frames during these sessions.
 
-Battle Log bl4-sol corrects s9b-m04 crowns to 2–3 (trophies unchanged); the earlier final video frame showed the red three-crown animation before the full result. s13-m01 is a driver incident pending Battle Log result: disk guard stopped below6GiB after a file pause; no completed result row yet.
+Battle Log bl4-sol corrects s9b-m04 crowns to 2–3 (trophies unchanged); the earlier final video frame showed the red three-crown animation before the full result. s13-m01 is a driver incident: disk guard stopped below6GiB after a file pause; Battle Log bl5-sol verifies its 0–3 loss,716→687.
+
+s14-m01 result verified from saved m02 result video: 0–3,−30. User page pause began at session101.599s and persisted to match_end153.362s. Driver still used Skeletons while Cannon was pending; m02 correctly uses Cannon. s14 latency/FPS above cover active processed frames.
+
+Classification (LIVE LEAD): s13-m01 disk-guard stop and s14-m01 Sam page pause are incidents, excluded from the clean-loss streak. Only clean bot losses count toward the three-consecutive-loss handback rule.
+
+s14-m03 W3–1: Sam page pause began only0.6s before match_end (25 submissions/31 HUD confirmations). s14-m04 is an opening-hand stall incident:0 polls/decisions/plays;395 frames read [Fireball,Valkyrie,GoblinBarrel,Minions], with Cannon misread as GoblinBarrel. The deck handshake could not find4 distinct deck cards. Excluded from clean-loss streak. LIVE LEAD is preparing a consolidated fix; no code change by babysitter.
+
+s15-m01 L0–3 was not an opening-hand stall:586 decisions/polls,23 submitted/27 HUD-confirmed, no user pause or step errors. Stopped PID23695 at match_end on LIVE LEAD instruction, before any m02 navigation or battle; ladder held for the consolidated fix. Clean-loss streak1.
+
+s17-m01 is the first battle after937aae60:685 decisions, first4.56649s after match_start;29 plays/31 HUD confirmations. Deck-constrained hand corrected Cannon while raw said GoblinBarrel on171 frames; e.g.n108 corrected [Giant,Fireball,Cannon,Minions] versus raw [Giant,Fireball,GoblinBarrel,Minions,Valkyrie]. No stall_alert,stall_cleared,tower_missing,low_disk,step_error,user pause,unhealthy or elixir0 frame. Units remain r5e3/model.
+
+Battle Log bl5-sol verifies s13-m01 L0–3 and the recent s14–s18 crown counts. s13/s14-m01 actual in-game decks already held Cannon, while their driver still held Skeletons; both remain incidents.
+
+From s19, units use YOLO v2l-e11 CoreML/ANE with adapter1a0f599d; hand/elixir/towers/events remain r5e3. First trial s19-m01: wholeFPS5.909,step p50/p95=6.254/23.293ms,yolo28.040/33.903ms,wait.005/.006ms; units/frame p50/p95=3/7(mean3.053,max9) versus units_model2/5(mean1.978,max7). No yolo_error,stall or guard event; W1–0. Shared-host CPU snapshot reported qemu37%; other-worker processes untouched. LIVE LEAD revised rollback to wholeFPS<5.5 or step p95>45ms/repeatederrors/stalls/obviousphantoms, and askedNullsowner to pause/throttle duringlive.
+
+s19 ended1W–3L,with three consecutive clean losses. YOLO enemy→ours owner error was measured by integration; observed Cannon example s19-m01n326/tick920.18 corroborates it. LIVE LEAD resolved the three-loss hold by directing s20 back to r5e3 units (no --units). Units remain model until a new owner-accuracy gate passes. Always-on overlay deployed at s20 boundary using corrected9f75ab5f drivef93a7a06…,driver8766/page8765.
+
+From s23, ft-r6 frame650bd5cf… / event44ecfb05… / vocabea43ae2e… replaces r5e3; units_source=model. All three Mac hashes verified; no YOLO. First decision4.55045s.
+
+¹ perception ft-r6 + stale decode (AnyTroop dup boxes; board unaffected per parity). The Mac's live/perception/common.py was the pre-any-unit version (sha256 153c8c61…), which emits ft-r6's AnyTroop/AnyBuilding objectness channels as units: 57.1% of logged s24 units (18,577/32,538). Parity on all s24 frames (old vs main's common.py 3b48744f…, live/loop/decode_parity.py, deployed bot tree 15117b86b + births bbdc651e): card units, towers, effects, events, hand identical 6118/6118 frames; translator board rows and the bot's observation identical 3082/3082 polls; accepted plays identical 4/4 battles. Tagged: every ft-r6 battle from s23-m01 (the first ft-r6 session) until the decode swap; untag from the first battle on common.py 3b48744f….
+
+s23m03/m04 include prebattle nav_stuck on free Daily Bonus chest/Snippet flows after m02/m03 wins; cleared manually between battles, no in-battle pause. Battles remain clean. s24 deploys births round3 bbdc651e (48636f63…) and reverts Skeletons→Cannon per LIVE LEAD until hand fix.

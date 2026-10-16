@@ -457,3 +457,567 @@
   - Still misses most Minions and Archers. Renderer val dip: unit F1 .846 → .816.
   - Trainer PID 2322178, GPU 62–83%.
 - **23:22Z, live ladder: 10 battles, 8 W / 2 L, 228 trophies** (live10 W 3–0). Next arena unlock at 300; the loop owner will capture empty-arena frames for r3.
+- **23:24Z, r3 epoch 2:** Goblin Stadium units P/R .898/.277; Training Camp .969/.320; 0 empty-frame FPs; renderer val recovering (unit F1 .821). Swap record sent to the loop owner (frame.pt 9b06f968, event.pt cc75886f, vocab d39b06bb). Asked for a threshold sweep (0.30–0.50) on the official set, plus a check of small units vs native-res capture.
+- **23:32Z, r3 recall checks:**
+  - **Threshold:** 0.5 kept (the proxy is flat over 0.40–0.50, and only 0.5 has 0 empty-frame FPs; at 0.30, R .48
+    but P .68).
+  - **Resolution:** not the cause (simulated degradation leaves recall flat).
+  - **Root cause: level badge plus HP bar.** The renderer draws them over every unit; the official client draws them
+    only on damaged units, and the detector keyed on them. Per-card recall at 0.4: Archers 13/37, Minions 14/51,
+    Knight 12/21.
+  - **ft-r5** drops the badge/HP strip for 60% of units (PID 2425017, from the r4 epoch-4 checkpoint, ends ~04:20Z).
+- **23:36Z, live ladder: 11 battles, 9W–2L, 258 trophies.**
+  - The driver now runs a session (up to 3 battles per driver; the overlay stays up).
+  - **Elixir reader fix:** it now counts the partial (light-blue) segment. Before, the bot saw only whole elixir in
+    all 11 battles.
+  - Overlay is at ~7.5 FPS. Archers are back in the deck (Sam's upgrades).
+  - Each run logs the perception export sha.
+  - Committed as a93a24c6.
+- **23:42Z, live: 12 battles, 10W–2L, 291 trophies; new arena Bone Pit (sand).**
+  - **Tower-HP OCR bug:** bright stone on the full-HP king read as "3"/"31", so the bot spent 7 elixir (Fireball +
+    Arrows) on a "nearly dead" king (won anyway, 3–0).
+  - Fixed: digit-match distance gate, rows with non-digit shapes discarded; verified on 5 recordings. The bad session
+    was stopped before its next battle.
+  - Bone Pit backgrounds saved; told r3 to use Bone Pit as a second unseen-arena test.
+- **00:00Z, live: 13 battles, 11W–2L, 321 trophies** (all played with r1 perception so far).
+- **r3 ft-r5 (badge strip) works.** Epoch 3 at 0.5:
+  - Goblin Stadium .959/.440 (e1 .975/.245);
+  - Training Camp .1.000/.485;
+  - **Bone Pit (unseen)** .857/.400 (r1 .750/.200);
+  - 0 empty-frame FPs; renderer unit F1 .828.
+  - **Interim 2** (`export-interim-r5e3`, frame.pt 81697f5b) sent to the loop owner.
+- **00:01Z, interim 2 (r5e3) is LIVE** (session s5).
+  - **Sam's observations, diagnosed:**
+    - (1) Few past-bridge plays after a tower falls: a real weakness from near-blind unit perception (the search
+      guards its own towers). It will be measured r1 vs r5e3.
+    - (2) Past-bridge attempts with no tower down: a **bug**. Dimmed screens hid the tower digits, and the reader
+      declared towers dead after 2 s. Fixed with brightness normalization, a 6 s dead rule on healthy frames, and the
+      driver pausing on dim/black frames. Verified live.
+- **00:02Z, r5e3 swap done** (sha OK; Bone Pit replay: units per frame 1.53 → 2.30, frames with ≥1 unit
+  86% → 94%; own Archers 23 → 113, Minions 0 → 28).
+  - **Record: 15 battles, 11W–4L, now 300 trophies.**
+  - Two of the losses were broken by the driver (dim screen mid-battle with the bot paused; driver stopped for the
+    reader fixes) and are marked as such.
+  - r5e3 is playing session s5; the comparison vs r1 comes after 3+ battles.
+- **00:04Z, coordinator rulings on Sam's observations, assigned:**
+  - **Pocket play** (r1 vs r5e3 measurement; decision states go to the bot lead if unchanged) and **overlay naming**
+    ("Skeleton (Skeleton Army)"): loop owner.
+  - **Multi-body play-counting correctness** (Skeleton Army, Goblin Gang, Minion Horde, Barbarians, Bats, Guards,
+    etc.; spawns must count 0) and **OOV placeholders** in the translator: new owner `live-translator-oov-owner-r1`.
+  - **OOV inventory:** loop owner, from the in-game Battle Log (both decks per battle, back-filled ~25), into
+    `reports/live/loop/opponent-decks.jsonl`, with no opponent names.
+  - Per-arena card lists: Haiku → `ARENA-CARDS.md`.
+  - **UNKNOWN_UNIT/BUILDING perception class**, then specific identities: r3 owner, after ft-r5.
+  - Engine additions for the most frequent missing cards: bot lead (coordinator-assigned).
+- **00:06Z, CARD LEAD** (thread `…clasher-card-lead-20261016-r1`) now owns adding all non-C56 cards to the
+  engine (Sam's request). LIVE keeps perception identities, the unknown class, `bot/live/` and the live native pin.
+  - Intro sent to the card lead; the inventory goes to them when the first versions land (Battle Log jsonl plus
+    ARENA-CARDS.md).
+  - The translator owner now coordinates the engine representation with the card lead.
+- **Shared-sprite ambiguity** (Skeletons vs Skeleton Army, Goblins vs Goblin Gang, Minions vs Horde): the card has to
+  be inferred at spawn from the burst. Sent to the translator owner (check plus fix) and the r3 owner (body classes
+  later).
+- **00:07Z, bot lead #2/#3:** the proxy-card plan fits (true id in the revealed set/cycle, proxy only as the board entity; must carry true cost; class-only unknowns can't fill the 8-card set; sanitizer keyed by true id). Pocket replay: the logs lack perception records, so the loop owner was asked to log perception.jsonl + session-config.json per battle (offline LiveSession replay), reconstruct past battles, and write pocket-moments.jsonl.
+- **00:11Z, routing change (Sam): Claude low, so new workers are GPT-6.1-Sol (high), Haiku OK, Opus only if Sol fails.** The loop, r3 and translator Opus owners were asked for self-contained HANDOFF.md files at their next checkpoint; Sol successors follow. The live Mac processes keep running.
+- **00:11Z, routing final (Sam): code workers stay Opus; Sol for evals, research, analysis, reviews and loop babysitting; Haiku narrow.** Handoffs cancelled for r3 and the translator. The loop owner finishes its code items, then hands the per-battle babysitting to a Sol worker.
+- **00:12Z, r3 plan approved:** ft-r5 plateaued, so stop after epoch 8; export the best epoch (3–8) as ft-r5 final to the loop owner; then ft-r6 with the AnyTroop/AnyBuilding head (~04:30Z); evals and export; release the 01 GPU by ~06:00Z. Routing: no recently started worker suits Sol right now (the translator owner is code-heavy and stays Opus).
+- **00:15Z, bot lead revealed-set fix** (patch sha 90835df8, commit 67a26536): strength NOT CONFIRMED (+0.013 [−0.003, +0.028] pooled; K4L vs R3a +0.017 [−0.008, +0.042]). Correctness: real opponent units dropped per game fall 24→1 (R3a) and 36→2 (v1); bit-identical on clean channels; my checks (a)–(d) met; `_admit` time-backwards bug fixed. **Decision:** adopt on correctness, gated on the Sol review. The translator owner applies it first, then layers OOV on revealed.py; the loop owner deploys between battles.
+- **00:20Z, revealed-set patch on HOLD:** Sol says merge after fixes. Three should-fix items: board-only admits skip belief/cycle; sanitize runs before evict within a frame; catch-up polls duplicate evidence (live-specific). A bot-lead Opus worker is fixing them, then a Sol re-review, then the final sha comes to me. The translator owner is told not to apply 67a26536.
+- **00:29Z, Battle Log inventory v1** committed (9b93d324) and forwarded to the CARD LEAD. 18 battles. Non-C56 cards faced: SpearGoblins 8, GoblinCage 6, Tombstone 4, Bomber 1. Auto-navigation is live and s7, a 4-battle unattended session, is running. 391 trophies. Logging perception.jsonl + session-config.json per battle from s6. The r5e3 battles s5-m01, s5-m02 and s6-m01 were all 3-0 wins.
+- **00:30Z, pocket-moments v1** committed (77b0899f) and forwarded to the bot lead. Pocket-play share of bot plays after taking a tower: r1 29% (13 stretches, 100 plays) vs r5e3 24% (5 stretches, 29 plays); small n, s7 adding. Exact LiveSession inputs exist for s6+ only (one stretch); reconstruction of earlier runs is next.
+- **00:42Z, live client version is 16.402** (versionCode 160402020; Play install at 2026-10-15 21:31Z), which matches RoyaleSim 16.402 data. Forwarded to the CARD LEAD and the bot lead. The CARD LEAD builds a `live16402` stats pin; it gets switched in after the bot lead's sim check. The driver logs the client version per battle from s8.
+- **00:43Z, live16402 swap gate (bot lead):**
+  - 0-error runs of K4L-live plus the fast tier on mixed decks;
+  - a sim check of K4L vs R3a/v1 on 200 cases under both pins;
+  - then a joint swap decision.
+  - Note: RoyaleSim's data is build 160402017; live is 160402020 (a patch-level difference).
+- **00:43Z, C56 stats diff (CARD LEAD):** 13/56 C56 cards differ materially from RoyaleSim 16.402.19.
+  - Largest: Wizard +8% damage; Xbow; Goblinstein doctor +47%; Wallbreakers −14%; Ghost/IceGolem/Spirits HP −5–7%; Spear Goblin hit speed 1.7→1.6 s (Goblin Gang/Hut).
+  - 22/66 non-C56 cards also differ.
+  - Details: reports/cards/stats/BALANCE-SIZE.md (cards/lead).
+  - Next: the live16402 pin → the bot lead's swap gate.
+- **00:46Z, loop handover.**
+  - Loop files are committed (38648cee).
+  - A Sol babysitter (`live-ladder-babysitter-sol-r1`, codex gpt-6.1-sol high) now runs the ladder from loop/HANDOFF.md, and the loop owner is going idle.
+  - Per-frame perception records exist for all 21 runs (live-logged from s6, reconstructed before that) and are forwarded to the bot lead.
+  - Results: 20 battles, 16-4, 451 trophies; r5e3 5-0 plus the s4 incident.
+  - **Multi-body counting fix** (translator, births.py): a real opponent elixir/cycle bug, with extras on r1 pred down 161→21 and SkeletonArmy 52→19 (17 true). Gate: a frozen patch, then a Sol review plus the bot lead's PERC-emp no-regression A/B, then commit and deploy at a session boundary.
+- **00:48Z, s8-m04 lost 0–1 in overtime** (−14 trophies). Perception r5e3, 0 step errors. No sign of a driver incident yet; reconciliation is pending. s9 (Mac PID 81424) was started by the Sol babysitter.
+- **00:50Z, s9 driver incident.**
+  - Crashed at session start, before any battle: the client-version block shadowed `out`.
+  - Fixed in b152532e and deployed to the Mac (drive.py 9665bb3e…; backup .bak-7c1a5e63). The babysitter restarts as s9b after the Battle Log.
+  - Losses reconciled from video and the Battle Log: s7-m03 L 0–1, s8-m02 L 0–3, s8-m04 L 0–1 (512→498).
+  - s8-m04 was a real bot loss, with no reader faults. Its opponent ran Bomber/SpearGoblins/Tombstone (non-C56).
+- **00:57Z, ladder results:** 27 battles, 19W–8L, 484 trophies.
+  - Recent results: 3W–4L since about 450 trophies, with clean losses (no reader faults), against opponents with Bomber/SpearGoblins/Tombstone.
+  - Reports committed as 55c6df14.
+  - Sam asked the loop owner directly for pause/resume and deck-from-screen buttons on the overlay; that's in progress. I told it to keep my b152532e fix, test the live startup path, and deploy at a session boundary via the babysitter, refusing non-C56 decks until proxies land.
+  - The babysitter's loss-report rule is relaxed (anomalies only).
+- **00:58Z, multi-body patch frozen** (sha 9ea9e745…; 97 passed, 1 skipped). The Sol review `live-multibody-review-sol-r1` is running, and the bot lead runs the PERC-emp no-regression A/B.
+- **00:59Z, births A/B running** (bot-lead-multibody-ab-sol-r1 on 03).
+  - Arms, paired on HEADLINE 0–299 vs R3a/v1:
+    - K4L PERC-emp, 600 games per tree;
+    - fast tier, 600 per tree;
+    - clean-channel arm, 60 games.
+  - Gate: pooled K4L CI lower bound ≥ −0.03 and 0 errors.
+- **01:00Z, revealed-set r2** (sha b1d81add…, commit 7d873ca8): all 3 Sol findings fixed (+6 tests).
+  - It now tags LiveSession records with _frame/_synthetic.
+  - Clean channel: 30/30 identical. Noisy smoke: 40 games, 0 errors.
+  - Sol re-review running, including composition with multibody.patch. HOLD the merge until its verdict.
+  - Planned merge order: multibody, then revealed-set, then OOV item 2.
+- **01:03Z, Sam's overlay controls:** Pause/Resume + PAUSE file + read deck from screen, with an out-of-scope block. Committed as 58fb7d5b (control_test 18/18 on the live path, with tap gating checked). The babysitter deploys at the s9b→s10 boundary with hash checks and a rollback path.
+- **01:05Z, possible DECK MISMATCH:** the Battle Deck screenshot taken around 00:55Z shows Goblin Cage replacing Archers (average 3.8), while the driver still assumes Archers. s9b-m01 logged 5 Archers plays. The babysitter will stop s9b at the battle end, verify the deck read-only, then deploy 58fb7d5b and hold battles BLOCKED/paused. We don't change Sam's deck. Sam to be told.
+- **01:05Z, deck mismatch = FALSE ALARM.** deckpage.png was an old crop (23:27:39Z, before the loop owner swapped Goblin Cage→Archers at 23:28:19Z). The live deck is the standard C56 deck. The babysitter continues with the deploy at the s9b→s10 boundary.
+- **01:06Z, Sol review r1 of multibody (9ea9e745): MERGE AFTER FIXES.**
+  - Findings: 5 must-fix (suppression eating genuine plays: Goblins by a live hut, cross-lane leftovers, Cannon replacement revival, FireSpirits by a hut, Knight absorbed into a Miner burst) and 1 should-fix (FirespiritHut memory).
+  - Performance: 2.1 ms p95 at 40 bodies.
+  - Next: the translator does a class audit (checklist table, a test per path, mutation checks), then re-freezes, then Sol r2.
+  - The bot lead's A/B continues; a smaller K4L confirmation follows on the final patch.
+- **01:07Z, controls live.**
+  - The loop owner hash-deployed 58fb7d5b and started s10 (PID 36003) after s9b ended, because Sam couldn't see the controls.
+  - s10 started paused (PAUSE file, now gone). It's now paused from the page, presumably Sam.
+  - The babysitter is the sole Mac operator; the loop owner is idle.
+- **01:08Z, revealed-set r2 Sol review: MERGE AFTER FIXES**, with composition issues against multibody.
+  - Blocker: `_body` signature changed. Also: duplicate plays and an elixir ledger at 0; composition loss; tick dedup; Skeletons evicting Army; evicted tracks leaking.
+  - The translator re-freeze adds a public births API (resolved identities, bodies_of/family_of, forget_card). The bot lead rebases onto the final multibody.
+  - Babysitter: s10-m01 was a 4.8 s false match while Sam was in the menus. Planned fix: ignore matches shorter than 30 s (Opus, later). The bot lead's duplicate launch (PID 37460) failed safely at mkdir, and s10.log was truncated.
+- **01:09Z, births API spec** from the bot lead, relayed to the translator. Required: snapshot/restore, last_tracks, resolve. Refinements: identity, forget_card, bodies_of/family_of. It goes into the multibody re-freeze.
+- **01:10Z, s9b done:** L 1–3, W 3–0, W 1–0, L 0–3; 30 battles total, 21W–9L, 530 trophies. All r5e3, 0 faults. Committed as fa2e637b.
+  - s10 is page-paused with Sam in the menus. Sam read a new deck (Valkyrie, Archers, Minions, Skeletons, Fireball, Giant, MiniPekka, Musketeer; all C56), not applied yet.
+  - Second false match (s10-m02, 4.5 s) sent to the loop owner's fix.
+- **01:11Z, Sam applied a new deck and resumed (s10-m03):** Valkyrie, Archers, Minions, Skeletons, Fireball, Giant, MiniPekka, Musketeer (all C56). paused=false, no out-of-scope cards. Laddering resumed.
+- **01:17Z, false-match fix committed** (6c720d67; s10 m01/m02 replay gives 0 starts, 1658 battle frames unchanged, tests 9/9 + 18/18). The babysitter deploys it at the s10→s11 boundary.
+- **Sam: 'we need spear gobs, tombstone and bomber detection'.**
+  - Perception: the r3 owner adds these 4 cards (plus GoblinCage) as the next fine-tune after ft-r6, from labelled official crops.
+  - The loop owner writes newcard-manifest.jsonl (battles × cards × video paths).
+  - The CARD LEAD supplies names, bodies and ETAs (engine cards vs proxies).
+- **01:17Z, CARD LEAD bodies:** SpearGoblins = 3× SpearGoblin (shared with the GoblinGang/Hut sprite); Tombstone = building + Skeleton spawns (shared sprite); GoblinCage = building + GoblinBrawler (distinct); Bomber (distinct).
+  - ETA: proxies on main in ~1–2 h. r1-cards1 (full scope, C56 bit-identical) ready for the bot lead's review in ~2–3 h; live16402 later.
+  - Implication: the SpearGoblin and Skeleton bodies are already perceivable (as GoblinGang/Skeletons labels), so translator OOV item 2 can infer SpearGoblins/Tombstone from shared bodies plus the battle log, while perception adds the Tombstone/GoblinCage/Bomber/Brawler identities.
+- **01:18Z, new-card manifest** committed (ce82d4d2): 17 battles with target cards, all with video on 05. Sent to the r3 owner by the loop owner. The babysitter re-runs it after each inventory.
+- **01:23Z, PYTHONHASHSEED live bug** (bot lead's question): the live process was unseeded, and R.meta card tokens differ by seed for BarbLog (24 vs 20), Ghost (289 vs 114) and BlowdartGoblin.
+  - Live impact so far: very likely none (none of these cards in our or opponent decks yet).
+  - Fixed: run.sh exports PYTHONHASHSEED=0, verified on the Mac. Plus drive.py --out collision hardening. Committed as 3d346510; deploys at s11→s12.
+  - s10 restart stall: name reuse gave FileExistsError, so the babysitter started s11 (PID 73430) with Sam's new deck.
+  - Coordinator: new perception plan (fresh pretrain, 122 cards, official assets) — plan due.
+- **01:29Z, perception path → YOLO** (Sam and coordinator). Launched:
+  - `live-katacr-baseline-sol-r1`: KataCR v0.7.13 baseline on the r3 official set, ETA 1–2 h.
+  - `live-yolo-integration-opus-r1`: CoreML/MPS speed during live play plus a YoloUnits adapter (--units yolo:).
+  - `live-nulls-generator-opus-r1`: Null's Royale labelled frames from the reference AVD (T1 seal lifted); plan in ~45 min. It also provides native-fixture slots for the CARD LEAD.
+  - r3 owner: finish ft-r6 (fallback); ft-r7 cancelled; labelling redirected to YOLO-format live labels plus the held-out split.
+  - YOLO fine-tune: after the Null's data exists (~T+6–12 h) on 01 plus 04/08 (6–10 GPU-h; bot lead needs 1 h notice).
+  - Sam: stop sealing; speed is not a blocker. Plan reported to the coordinator. arena-card-freq.json (70b27ec7) sent to the bot lead.
+- **Ladder:** s11 m01 W 1–0 (620), m02 W 2–1 (654). 33 battles, 24W–9L. Barbarian Bowl reached; --arena barbarian-bowl from s12.
+- **01:30Z, r3 owner:** ft-r6 epoch 3 beats ft-r5 final (GS .975/.497, TC 1.0/.557, BP .849/.397; 0 empty-frame FPs).
+  - ft-r6 done ~04:10Z, export ~04:50Z → babysitter swap.
+  - EVAL-SPLIT.md written (held-out battles: 134 frames, 472 units).
+  - Labelling redirected to full YOLO-format labels (208 training frames, 7 helpers). ft-r7 cancelled.
+  - The r3 owner now owns the YOLO fine-tune.
+- **01:32Z, s11 went 4–0** (W 1–0, 2–1, 1–0, 2–1; 590→714). 35 battles, 26W–9L. step p95 31–35 ms at 6.8–6.9 FPS. 3d346510 deployed (hashes match); s12 starting with --arena barbarian-bowl and a PYTHONHASHSEED check pending.
+- **01:35Z, compute compression (Sam: 'hella compute').**
+  - All 3 A6000s go to YOLO; 04/08 freed at 01:35Z.
+  - YOLO v1 starts now under the r3 owner (KataCR init + KataCR MIT dataset + r3 labels; parallel variants).
+  - `live-yolo-synth-compositor-opus-r1` launched: millions of composited frames on 03/04/08 CPU leases.
+  - Null's refocused to per-card cut-outs.
+  - Revised ETAs sent to the coordinator: KataCR numbers ~02:30Z, YOLO v1 candidate ~05–06Z, CoreML adapter ~04–05Z, go-live ~05–06:30Z, v2 ~10–14Z.
+  - s12 live with PYTHONHASHSEED=0 confirmed. Mac disk 9.8 GiB.
+- **01:36Z, s12-m01 L 1–2** (714→685), a clean loss with PYTHONHASHSEED=0 and no faults. 37 battles, 27W–10L. Mac disk 11.4 GiB.
+- **01:37Z, coordinator: Null's starts capturing NOW** with no plan-review step. Priority: cards KataCR doesn't cover (coverage list from the baseline worker → katacr-coverage.json), then current-art C56 refreshes, then CARD LEAD fixtures. Pre-run script review waived; hard limits kept.
+- **01:38Z, KataCR fast-track** (Sam/coordinator): if the baseline clearly beats r5e3, ship the simplest form (MPS/CPU, every 2nd–3rd frame with carry; step p95 ~33 ms kept) at the next boundary. The YOLO integration worker is retasked; the babysitter is warned.
+- **Pocket verdict (bot lead, dfde913a):** not perception, not costly. The live 27% pocket rate matches sim; forced pocket pushes Δ 0.000. pw2 is an optional harmless +5–7 pp of visible pocket play. Tower-missing guard and king_spell metric → loop owner.
+- **01:39Z, HAND/SLOT DESYNC bug** (s12-m02 n864): the bot submitted Musketeer from slot 3 while perception's hand showed MiniPekka there, and the game deployed Mini P.E.K.K.A. The previous play (n844, MiniPekka slot 3) likely never deployed, but the tracked hand cycled on submit. Sent to the loop owner (root cause, rate across runs, fix + test; priority over the tower guard). The babysitter keeps laddering.
+- **01:40Z, s12-m02 W 2–1** (685→715). 38 battles, 28W–10L.
+- **01:41Z, YOLO v1 plan (r3 owner).**
+  - Input: KataCR's 568×896 crop at (42.2,31.3)–(674.2,1019.3) of the 720×1280 capture. Classes: KataCR's 155 names + team.
+  - Variants: V1a on 04 (KataCR det1 YOLOv8-L init); V1b on 08 (COCO v8-M); V1c on 01 after ft-r6 (best + synthetic).
+  - Data: KataCR synthetic generator + 6.6k real + our labels ×3; EVAL-SPLIT excluded.
+  - Training by ~02:15Z, first scored ~02:45–03:00Z, usable candidate ~04:00–04:30Z.
+  - Crop and class format forwarded to the integration worker.
+- **01:43Z, Mac contention:** live FPS 6.9→5.8 and step p95 (last 60 s) 44.5 ms in s12-m03. Load 14–18: the Null's qemu at 65%, a broad find at 97% plus mds_stores. Both Mac workers told to kill broad find, limit qemu to 2 cores at background QoS, run one instance only, and verify live latency. s12-m03 W 1–0 (715→745); 39 battles, 29W–10L.
+- **01:49Z, Claude usage limit at ~01:45Z:** every Opus worker failed. After Sam's reset I resumed in place: loop owner (hand desync, tower guard), translator (multibody re-freeze + API), YOLO integration (KataCR fast-track), Null's (cut-outs), compositor, and the r3 owner (YOLO v1; yb1–7 relaunched on Sol/Haiku). The Sol interim lead spawned no duplicates. Orphaned Null's emulator stopped (load 20; disk 7.2 GiB). Barbarians (non-C56) seen in s12-m04. s12 2W–2L; 40 battles, 29W–11L, 716 trophies. Sam: stretch Claude, non-coding → Sol.
+- **01:50Z, KataCR preliminary** (results.json, conf .7, our EVAL set): GS .79/.31, TC .81/.27, BP .49/.20 vs r5e3 .96/.44, 1.0/.49, .82/.34. Worse as-is, pending the threshold sweep and mapping checks. If confirmed: no KataCR-as-is go-live, and KataCR becomes init + data for the YOLO fine-tune.
+- **01:54Z, s13 DOWN:** the driver stopped on its 6 GiB disk guard after m01 started.
+  - Cause: macOS swap growth (6.8/8 GiB, new swapfiles 01:40–01:46Z during the Null's emulator run). Free is now 8.3 GiB.
+  - The babysitter restarts as s14, syncing Sam's new in-game deck via /deck (Valkyrie, Archers, Minions, **Cannon**, Fireball, Giant, MiniPekka, Musketeer).
+  - The Null's emulator is held until Mac free ≥ 10 GiB and swap < 5 GiB.
+  - Loop owner: make the disk guard pause and resume instead of stopping.
+- **01:55Z, s14 running** (PID 81391, started by the loop owner at Sam's request). deck_pending = Sam's Cannon deck (from m02). Free 8.6 GiB, single driver verified.
+  - Risk: the deployed 3fede983 auto-suffix would allow a second concurrent driver. The babysitter must check ps before any start. The loop owner builds a single-instance lock next.
+- **01:58Z, compositor done** (cc6ecdaa).
+  - 10k pilot checked by eye (16 boxes/frame, 139 classes; HP bars only on damaged units).
+  - ~1M bulk on 03/04/08, ETA ~02:15–02:25Z, ~110 GB at scratch/yolo-synth/v1. Sol monitor `yolo-synth-sol-monitor-r1` took over.
+  - Gap: ~110 classes have opponent-only cut-outs (red↔blue swap, 16% of boxes), and the newest cards have none, so v2 needs Null's per-team cut-outs.
+  - New non-C56 cards from Battle Log bl4: Barbarians, MegaMinion, BattleRam.
+- **01:59Z, Sam → loop owner: 'vision gets confused when cards are grayed out'.** Unaffordable cards are drawn grey, and the hand head misreads them at low confidence (in s14-m01 Cannon was read as FirespiritHut/Skeletons). Likely linked to the hand/slot desync; the loop owner folds it into the hand fix after the single-instance lock (flock on ~/clasher-live/loop/driver.lock, in progress).
+- **02:01Z, bl4 inventory committed** (e7beb00f): 41 rows. New non-C56 cards: Barbarians 3, MegaMinion 2, BattleRam 1. Arena freq refreshed (GS 12, BP 21, Barbarian Bowl 8). Manifest has 31 rows. The Battle Log corrects s9b-m04 to L 2–3.
+  - Mac disk 9.56 GiB. s14 m02 is unpaused with the Cannon deck active.
+  - New cards forwarded to the CARD LEAD and the bot lead.
+- **02:02Z, YOLO V1a epoch 4** (04, KataCR det1 init), thr .5:
+  - Scores: GS .882/.610, TC .788/.536, BP .705/.466, empty-frame FPs 0.17/frame. ft-r5 final: GS .959/.440, TC 1.0/.485, BP .853/.388, 0 FPs.
+  - Recall is up everywhere, precision lower.
+  - V2 on 08: V1b weights + compositor synth .55 / our official .30 / KataCR real .15.
+  - V1c on 01 after ft-r6 (~04:50Z).
+  - Fixes: per-class ground offsets, 60 empty-arena hard negatives (GS river bushes firing as spear goblins), tower pseudo-labels.
+  - Labels: 114/208 frames done; Sol helpers on the remaining 94.
+  - Live-trial bar: P ≥ .9 at .5 and recall > ft-r5, ETA 1–2 h.
+- **02:03Z, multibody round 2 frozen** (sha a5667ac9…; 138 passed + 1 skip).
+  - R1–R14 class audit, 34/34 mutants killed, full births API for the bot lead.
+  - Dump: matched 871/1325, extras 116 (round 1: 825/83; old: 834/221).
+  - Sol r2 review `live-multibody-review-sol-r2` launched; the bot lead runs the confirmation A/B and rebases revealed-set onto it.
+  - CARD LEAD: Barbarians/MegaMinion/BattleRam already proxied (a382530c9). The Batch A C56 gate runs on 04, ETA 02:45–03:15Z.
+- **02:04Z, Null's capture GO** with a disk-first watchdog: start at ≥9 GiB free; stop at <8 GiB free, swap +1.5 GiB, or live p95 ≥45 ms for 2 min. 1.5 GB RAM, 2 cores, background QoS. The worker disclosed that its adb (5049) auto-connected to BlueStacks 01:52–01:59Z with no commands sent; fixed with ADB_LOCAL_TRANSPORT_MAX_PORT=5553. The bot lead queued the multibody r2 confirmation A/B; revealed-set Phase B is rebasing onto the final API.
+- **02:04Z, incidents:** s13-m01 was lost after the disk-guard stop (−29, 716→687); s14-m01 L 0–3 under Sam's page pause from 101 s (−30, →657). Both classed as incidents, not clean losses. Total 42 battles: 29W–13L (2 losses are these incidents, plus 2 earlier driver incidents). 657 trophies. s14-m02 is running with the Cannon deck active.
+- **02:08Z, s14-m02 W 2–1** (657→687, Cannon deck, clean). s14 done (m03/m04 results pending). s15 starts behind the empty-driver gate. Mac 9.0 GiB. The Null's worker launched its capture in the background and is waiting.
+- **02:09Z, OPENING-HAND STALL:** s14-m04 L 0–3 (717→688) with 0 decisions. LiveSession needs 4 deck cards, and perception reads Cannon as GoblinBarrel, so any battle with Cannon in the opening hand is AFK.
+  - s14: m02 W 2–1 and m03 W 3–1 (→717); m04 is an incident.
+  - Ladder HELD after s15-m01. The loop owner is building a deck-constrained hand read, packaged with the lock, tower guard, own-play dedupe and low-disk pause.
+  - Sam also reports the 'Play Again' end screen trips the driver.
+- **02:11Z, KataCR baseline FINAL** (7302ad89): worse than r5e3 as-is at all thresholds. Strong on Giant/Musketeer/SpearGoblin/Brawler/Tombstone; Archers R .08, Minions .05, MiniPekka .12. Weights and Ultralytics are AGPL-3.0 (internal use OK). Decision: no KataCR-as-is go-live; the integration worker is retargeted to the YOLO fine-tune (V1a/V2). Synth v1 on 08: 200k frames, 3.26M boxes.
+- **02:12Z, ladder HELD.** s15-m01 L 0–3 (688→659), clean (586 decisions, no stall). s15 stopped at match_end; no driver running. Mac 9.44 GiB. Waiting for the loop owner's consolidated package. Total 44 battles: 30W–14L (incl. 5 incident losses), 659 trophies.
+- **02:12Z, correction to the line above:** the total is **46 battles, 31W–15L**. Five of the losses are incidents: s2-m02, s4-m01, s13-m01, s14-m01, s14-m04. Clean record: 31W–10L. 659 trophies.
+- **02:14Z, Sam's deck-change lesson** (coordinator) propagated:
+  - Loop owner: authoritative deck read at session start and after edits; a deck-constrained hand; refuse with BLOCKED rather than going AFK; hand templates captured from the deck screen for any card; a stall guard that falls back to the fast tier after 6 s at full elixir.
+  - Babysitter: a manual pre-session deck check until that's automated, plus stall reporting.
+  - Resume after the bundle deploys; report the first post-fix battle.
+- **02:17Z, routing (Sam):** 'Claude burning, use Sol where possible', then 'Opus should still own stuff, don't switch EVERYTHING to Sol'. Final: Opus owners keep ownership (loop, translator, r3/YOLO, integration, Null's) and delegate non-coding slices to Sol helpers. The handoff orders were revoked. Synth v1 on 04 done (200k); 03 at ~200/600 shards.
+- **02:18Z, Sol r2 multibody: MERGE AFTER FIXES** (7 must, 3 should; the class is not closed).
+  - The translator does round 3, with a Sol-written randomized scenario fuzzer (Sam: Sol can take tedious coding).
+  - The revealed-set rebase holds on forget_card/state semantics.
+  - Interim option: ship a5667ac9 live if the bot lead's A/B shows no regression (old tracker 221 extras vs 116).
+- **02:22Z, revealed-set Phase B committed** by the bot lead on multibody r2: 8040430e, patch sha 890bfe58…. All 6 r2 findings addressed; test_revealed 29/29 plus test_multibody 77. Needs multibody on main first, and a re-run after multibody round 3 (forget_card/state). Clean-channel and smoke checks still running.
+- **02:23Z, Null's capture RUNNING** (Mac emulator PID 14886, watchdog, capture PID 65718; ship loop on 05; Sol monitor nulls-sol-monitor-r1).
+  - SpearGoblins smoke: 138 cut-outs. Batch 1 (10 cards, both teams) ETA 1.5–2 h.
+  - Client is 15.535 (not 16.402).
+  - Level badge/dial visible on cut-outs: asked for them to be flagged or masked, so the compositor adds them only to damaged units.
+  - CARD LEAD fixture slots offered (1–2 h, via me).
+- **02:24Z, bot lead: future pin switch = ONE bundle.** It is r1-cards1/live16402 pin + extended K4L rollout-opponent net + open-world belief + extended student rows. A pin alone would break: non-C56 cards become empty pad slots, and the closed-world belief raises 'no train deck'. Current live (r1-total + proxies) is fine. The bundle comes with a sim gate. Never deploy the CARD LEAD's pin by itself.
+- **02:25Z, r3 owner stays owner** (HANDOFF section in PROGRESS-R3.md).
+  - V2l (v8-L) on 04, restarted after a stale-code launch bug; V2m (v8-M) on 08. Both use the 134k real-format + 200k synth lists.
+  - Eval loops fixed. ft-r6 at step 12k, done ~04:10Z.
+  - Sol helper yolo-monitor-sol scores every 15 min (scratch/live-perc-r3/yolo-evals/MONITOR.md) and alerts when a candidate clears the bar.
+- **02:25Z, multibody round 3 in the working tree** (not frozen).
+  - All 10 Sol r2 findings fixed; test_multibody 110; r1+r2 reproducers pass; mutants 34/34 + 11/11.
+  - Sol fuzzer (translator-births-fuzzer-r1) being written; then pass rates a5667ac9 vs r3, then re-freeze.
+  - a5667ac9 stays reproducible for the interim ship.
+  - OOV item 2 code-complete (oov.patch 9f4dfbb4, pre-r3).
+- **02:25Z, CARD LEAD Null's fixture slot** penciled in (~90 min after cut-out batch 1; Sol worker cards-nulls-fixtures-sol-r1, probe only, mechanics only since the client is 15.535). Starts on my GO once its scripts are ready.
+- **02:26Z, translator:** round 3 is waiting on the Sol fuzzer.
+  - OOV item 2 code-complete (oov.py, 23 tests, 9/9 mutants; unknown_card default 'standin'). Its patch gets rebuilt after the r3 re-freeze and the revealed-set merge.
+  - NOTE: bot/live/births.py and translate.py in the shared worktree hold uncommitted WIP. Commit and deploy only explicitly listed files from the loop owner's package.
+- **02:27Z, overlay request (Sam via the coordinator):** the babysitter starts a PAUSED driver (PAUSE file, zero taps) so :8765 serves while the ladder is held. The loop owner makes the overlay always-on after the package.
+- **02:29Z, overlay serving** at http://mac-mini:8765 (100.101.16.91), verified from the Mac (HTTP 200, bound on *:8765).
+  - Paused overlay-only driver s16 PID 85141 (PAUSE file, zero taps).
+  - /state paused:false display bug → loop owner.
+  - The babysitter received a YOLO v2m-e2 candidate record; no unit swap until the adapter, deploy and latency checks are done.
+- **02:30Z, YOLO candidate yolo-v2m-e2** (v8-M, KataCR init; sha ee76ad2c… stripped). Held-out P/R at .5: GS .950/.843, TC .976/.835, BP .851/.718; 0 empty FPs (ft-r5: .959/.440, 1.0/.485, .853/.388).
+  - The integration worker builds yolo_units.py matching eval_yolo predict(), plus the Mac bench.
+  - Deploys with the hand-fix package. Reported to the coordinator.
+- **02:31Z, Null's overlays separated** (live/nulls/overlay.py).
+  - Badge, HP bar and deploy dial are cut out as their own RGBA rows with offsets; body rows carry flags. Format spec: scratch/nulls/cutouts/FORMAT.md.
+  - Batch 1 restarted 02:30Z (capture PID 86406); two old SpearGoblins runs discarded.
+  - Mac 9.8 GiB, swap −0.03. CARD LEAD slot ~04:10Z on my GO.
+- **02:32Z, Barbarian Bowl coverage** (Sam via the coordinator).
+  - r3 owner: BB held-out set (30–50 frames from held-out battles, Sol labelling), score yolo-v2m-e2 vs r5e3 as a 4th row. Gate the go-live only if BB recall is clearly worse.
+  - Compositor monitor: BB floors into the next shards.
+  - Babysitter: standing new-arena rule (bgs + first battles kept, notify).
+- **02:33Z, coordinator: decouple the resume from YOLO.** Resume on r5e3 once the hand package passes tests. ETA ~03:00–03:10Z.
+  - Loop owner status: s14-m04 replay gives its first decision at frame 28; s14-m02 parity 777 identical decisions, off-deck hand reads 34%→0%. Lock, dedupe, tower guard and low-disk pause done; stall-guard test in progress.
+  - Babysitter: BB first 3 battles kept on 05; 42 BB background files.
+- **02:35Z, BB eval set in labelling.**
+  - Held out: s14-m02 (22 frames) + s15-m01 (20), labelled from scratch by 2 Sol helpers (no model pre-labels).
+  - Training: 110 frames from 11 BB battles, YOLO pre-labels verified by 3 Sol helpers.
+  - Compositor asked for BB floors (training-eligible only). EVAL-SPLIT.md updated.
+  - Next: score v2m-e2 vs ft-r5 on BB.
+- **02:42Z, hand-fix package committed** (937aae60).
+  - Contents: deck-constrained hand, own-play dedupe, stall guard, flock, tower guard, low-disk pause, /state fix.
+  - Tests: s14-m04 replay gives its first decision at +28 frames; s14-m02 parity 777 decisions; all suites pass.
+  - The babysitter deploys and resumes as s17 (units r5e3).
+  - Deferred: deck-read automation, hand templates, Play Again, always-on overlay.
+- **02:43Z, YOLO adapter ready + committed** (yolo_units.py 1a0f599d).
+  - Runs CoreML fp16 on the ANE (worker thread): 896×576 p50/p95 18.7/31.5 ms, no frame skip.
+  - Parity 444/445 vs eval_yolo predict(). Replay: 4.29 vs 2.51 units/frame, 0 errors.
+  - The committed drive.py (937aae60, deploying as s17) already contains --units. Mac model/classes/offsets are in place (mlpackage 5731cc79).
+  - Plan: add yolo_units.py + --units at the s17→s18 boundary, after s17's first battles confirm the hand fix. Watch step_ms p95 and yolo_wait_ms.
+- **02:44Z, synthetic BB supplement done.** +100k frames each on 04/08 (now 300k/~4.9M boxes per host). Floors BB .40 / BP .25 / KataCR .25 / GS .10; BB held-outs excluded. 03's bulk is still running. Null's cut-outs not yet ingested.
+- **02:44Z, LADDER RESUMED:** 937aae60 deployed (all 5 Mac hashes match); deck check OK (Cannon). s17 PID 33809 on r5e3. m01's first decision came 4.57 s after match_start (MiniPekka, search). Full first-battle report pending.
+- **02:46Z, s17-m01 interim:** 343 decisions by 96 s; no stalls or errors.
+  - Cannon fix proven: hand=[Giant,Fireball,Cannon,Minions] while hand.raw had GoblinBarrel.
+  - Towers match. Mac 8.45 GiB.
+- **02:47Z, YOLO candidate 2: yolo-v2l-e11** (v8-L, sha 46b5752a…) supersedes v2m-e2.
+  - Held-out P/R at .5: GS .946/.887, TC .988/.856, BP .860/.752, BB .940/.793 (ft-r5 BB .922/.472). 0 empty FPs. BB gate passed.
+  - Mac ANE 27/39 ms.
+  - The integration worker exports CoreML and checks parity; deploy at the s17→s18 boundary with the v2m-e2 package as fallback.
+- **02:48Z, FIRST POST-FIX BATTLE s17-m01: W 1–0** (659→689).
+  - 685 decisions; first decision 4.6 s after start; 29/31 plays.
+  - Cannon corrected from raw GoblinBarrel on 171 frames. No stalls or errors. step p95 21.6 ms.
+  - Record: 47 battles, 32W–15L (5 losses are incidents; clean 32–10). Mac 9.46 GiB.
+- **02:48Z, synth v1 COMPLETE:** 1.21M frames, 19.7M boxes, 139 classes (03: 610k/67G; 04: 300k/33G; 08: 300k/33G). All QA checks pass. Missing: mirror, tesla-evolution-shock, zap-evolution. v2 waits for ≥5 Null's cut-out runs (none usable yet).
+- **02:49Z, BB rescore** on final labels, thr .5: v2l-e11 .954/.809, v2m-e2 .907/.770, ft-r5 .922/.476. Replaces the earlier figures; other arenas unchanged.
+- **02:53Z, bot lead sim check on Sam's Cannon deck:** 80 games, 0 errors. Every card is played by both K4L and the student.
+  - K4L wins 95% vs R3a and 100% vs v1; the student 90%/100%.
+  - The student almost never plays Giant (2/40 games); that's policy, not perception.
+  - Report: 127x03:/mpac/sdicks02/jobs/clasher/bot-deckcheck/REPORT.md.
+- **02:54Z, revealed-set 890bfe58 validated:** clean channel 30/30 identical; 40-game noisy smoke 0 errors, 37 evictions. Queued behind multibody round 3, then a re-run and a fresh Sol review.
+- **02:59Z, s17 done** (m04 W 1–0; account 661, so m02/m03 were losses; details in the 2-session report). s18 PID 75456 started on r5e3/937aae60 (YOLO export not ready at the boundary). Deck check OK.
+- **03:13Z, status.**
+  - Ladder: s17 2W–2L, s18 4–0 (781 trophies). 54 battles, 37W–17L (5 incident losses; clean 37–12).
+  - YOLO v2l-e11 exported to the Mac (mlpackage f69a2aac, parity 613/613, ANE p95 34.5 ms). The babysitter deploys it at s19 with rollback criteria.
+  - 08 GPU idle → r3 owner to queue the next run plus a keep-alive. 03 CPU → reclaimed by the bot lead (synth v1 done; v2 waits for Null's cut-outs).
+  - Multibody r3 frozen (8e04b255; OOV 4eeb623b on top): Sol r3 review launched; the bot lead A/B and revealed-set re-run on 8e04b255.
+- **03:13Z, bot lead:** 03 reclaimed (it11). Confirmation A/B switched to multibody r3 8e04b255. A Sol worker re-validates revealed-set on r3 (tests, clean channel, 40-game smoke).
+- **03:14Z, Sam: viewer down, bot idle (the s18→s19 gap).**
+  - Babysitter: start s19 with YOLO NOW. New rule: housekeeping (Battle Log, copies, prune) runs after the session starts; inter-session gaps of a few minutes max; Battle Log pass every ~3–4 sessions.
+  - Loop owner: always-on standalone overlay, now priority.
+- **03:15Z, s19 PLAYING with YOLO v2l-e11 units** (PID 22246). First decision 4.58 s after match_start; yolo 26.6 ms, wait 0.005 ms; no errors. Battle Log bl5 captured before launch, processed offline. Reported to the coordinator.
+- **03:16Z, Sam: between-session menu work** (upgrade cards, claim trophy road / Pass Royale / chests, build the best valid deck).
+  - Babysitter: ≤5 min per boundary of free claims plus gold upgrades (deck cards first: Giant, MiniPekka, Musketeer, Fireball); never real money or Google Play sheets; a one-time collection.json inventory; deck changes only from my list (all C56) with read/apply/verify.
+  - Bot lead: sim-rank candidate C56 decks from the collection.
+- **03:17Z, YOLO queues:** V2m on 08 had finished (not a candidate), so 08 idled; keep-alive queues are now on both hosts.
+  - V3l on 08 from V2l e24 (e24 already GS .960/.912, BP .872/.782, BB .939/.871 at .5).
+  - 04 finishes V2l, then V3l1024. 01 gets V1c after ft-r6. A Sol monitor alerts on >10 min idle.
+  - Bot lead deck search (bot-lead-deckopt-sol-r1, 04/08 CPU ≤40): 8–10 C56 decks, stage 1 at 100 games, stage 2 at 300; waiting for collection.json.
+- **03:18Z, Sam: YOLO owner confusion** (enemy Skeletons/Minions boxed as ours; ghost labels).
+  - Integration worker: live owner fix in yolo_units.py (badge colour, sticky owner, spawn side, own-deploy evidence), with before/after owner accuracy and a crowded-scene subset.
+  - r3 owner: per-arena owner accuracy plus a confusion matrix; training fix (owner-balanced, crowded scenes; the red↔blue swap is a suspected cause).
+  - Loop owner: faint/hide candidates under 0.3 on the overlay.
+- s19-m01 last-60 s FPS 5.97. Rollback rule refined to whole-battle FPS < 5.5, or step p95 > 45 ms, or errors; the first lever is Null's contention.
+- **03:18Z, contention under YOLO:** live frame perception 116→139 ms, FPS ~6.0. Null's qemu at 37% CPU, load ~11. Asked the Null's owner to STOP qemu during live battles (CONT between), or throttle to keep live FPS ≥6.5.
+- **03:19Z, FIRST YOLO BATTLE s19-m01: W 1–0** (781→811).
+  - 687 decisions, 27/27 plays. Whole-battle FPS 5.91; step p50/p95 6.3/23.3 ms; yolo 28/34 ms, wait ~0.
+  - Units/frame mean 3.05 vs 1.98 (old model). No errors; no massive phantoms seen.
+  - Record: 55 battles, 38W–17L (clean 38–12). bl5 inventory: no new non-C56 cards; manifest 44 rows.
+- **03:20Z, owner accuracy (r3 owner):** live v2l-e11 is 0.984 overall, but enemy→ours is **4.8%** (8/167); ours→enemy 1/410. It worsens with more synthetic training (V2l latest 9.4%), consistent with the red↔blue swap.
+  - Fixes: 3× team loss weight; V3lo on 08 from V2l e24 (synth .35 / official .40 / KataCR real .25); V3lo1024 queued on 04.
+  - Compositor asked for no-swap, ≥50% crowded mixed-team shards. New candidate gate: enemy→ours ≤3%.
+  - Asked the bot lead for a partial 03 lease for those shards.
+- **03:21Z, 03 lease granted** (~64 workers, 1–2 h) for no-swap crowded mixed-team shards (~150k). Sent to the compositor and its monitor. Release back to the bot lead when done.
+- **03:23Z, Mac disk dip** to 7.73 GiB during s19-m02, recovered to 9.03 after the video prune. Cause unattributed; swap stable 6.68. The Null's capture restarted with no qemu. Asked the Null's owner about AVD growth and to enforce the 8/9 GiB lines. The babysitter continues; s20 with YOLO at the boundary.
+- **03:23Z, Null's:** AVD unchanged (read-only, no snapshots); its watchdog correctly stopped the emulator at 7.77 GiB. A/B: freezing qemu doesn't change live FPS (5.91 vs 5.93), so the FPS cost is YOLO pre/post on the live side.
+  - Null's GO at ≥9 GiB with the battle gate off and a live-FPS trigger (<5.6 or step p95 >40 → stop until battle end).
+  - Integration worker: reduce YOLO GIL/CPU cost after the owner fix (target ≥6.5 FPS).
+- **03:25Z, always-on page committed** (9c1b6098). overlay_server on :8765 proxies the driver on :8766, shows 'between sessions: <reason>' from status.txt, and pause works without a driver; owner-coloured used-units view with toggles. The babysitter deploys it at the s19→s20 boundary.
+- **03:26Z, Sam: enemy Cannons tagged as ours.**
+  - Integration worker: a hard building rule in the owner fix (enemy half = enemy unless our deploy log says otherwise; our half = ours only with a deploy-log entry, otherwise flagged; owner fixed at first sighting), plus per-building owner rows and replay flip counts. Ships with the owner fix at the next boundary.
+  - r3 owner: per-class building owner eval; balance Cannon team data.
+- **03:27Z, Sol r3 multibody: MERGE AFTER FIXES** ('not closed enough to ship'; 6 must, 4 should).
+  - Fresh seeds: clean 19.3% exact / 2.50% missed / 1.40% extra; noisy 2.91% / 6.62%.
+  - DECISION: if the bot lead's A/B on 8e04b255 shows no regression, merge + deploy 8e04b255 as an interim (old tracker much worse: extras 221 vs 118). Round 4 follows (translator fixes 1–8; its Sol helper fixes the fuzzer, 9–10).
+- **03:29Z, deploy-hash catch (babysitter):** 9c1b6098 had accidentally swept in the integration worker's uncommitted owner-fix hooks in drive.py (they would crash against the deployed yolo_units). Fixed on main with 9f75ab5f (drive.py = 937aae60 + port default only, f93a7a06…) via a temp index, leaving the worker's WIP intact. Lesson: stage-check commits for files others are editing (git diff --cached for unexpected hunks).
+- **03:30Z, s19 (YOLO v2l-e11): 1W–3L** (W 1–0 →811, L 0–1, L 0–2, L 0–1 →720). 3 clean losses in a row, so the hold fired.
+  - DECISION: s20 rolls back to r5e3 units (no --units). YOLO returns after the model-based owner fix passes the gate (enemy→ours ≤3% overall and per building).
+  - Before YOLO: s17–s18 6–2.
+  - Totals: 58 battles, 39W–19L (clean 39–14).
+- **Sam: 'We shouldn't hard code cases in.'** Hand-coded owner rules cancelled.
+  - Owner gets fixed via owner-balanced data, hard-example mining from s19 and an optional learned temporal head.
+  - Translator: round 4 = correctness fixes only, no new special-case rules; design a learned play detector trained on sim truth + noise to replace the rule stack.
+  - Principle passed to all workers.
+- **03:31Z, Sam: owner via badge/bar colour + facing/motion, as LEARNED cues.**
+  - r3 owner: make badge/bar visible to the team prediction (context crop); a learned owner classifier on crop + 2–4 frame track history, balanced (team, damaged/undamaged, buildings both sides, crowded); blend with the YOLO team flag; report with and without.
+  - Opus code (sub-worker OK), Sol training/evals.
+  - v1team shards (no swap, 70% crowded mixed-team) on 03: 64k done.
+- **03:32Z, Cannon owner bias cause found** (r3 owner): KataCR real data has Cannon 1,533 ours vs 118 enemy. Rebalanced (85% of 'ours'-Cannon frames dropped → 237/105) for all current and queued runs. Per-class owner eval added. s19-m01 (enemy Cannon) to be held out. The babysitter flags enemy-building battles and keeps their video.
+- **03:32Z, learned owner classifier underway.**
+  - Confirmed: YOLO boxes exclude the badge/HP bar.
+  - Sub-worker owner-net-opus (live/perception/owner/, OWNER-NET.md): a context crop incl. badge/bar, no vertical flips (facing cue); balanced team/class/damaged; buildings for both teams.
+  - Hard examples from s19-m02+ (Sol-verified) also feed the YOLO V4 runs (share .10). s19-m01 becomes a held-out owner-eval battle.
+  - YOLO: V3lo (3× team weight) on 08 → V4lo (v1team); V3lo1024/V4lo1024 on 04. 01 is shared with the owner net after ft-r6.
+- **03:33Z, s19-m01 and m02 held out** for owner/enemy-building eval (~20 frames each, labelled from scratch by Sol). Hard-example mining uses s19-m03+. Compositor excludes them. Baseline = plain v2l-e11.
+- **03:34Z, Sam: no separate owner classifier; fix owner inside YOLO's team output.** owner-net-opus cancelled (keep the mining/labels/eval). YOLO gets owner-balanced data, s19 hard examples, the 3× team weight, and boxes/context covering the badge+bar (the r3 owner decides how). Report retrained vs v2l-e11 per arena/building/crowded.
+- **03:36Z, s20 PLAYING** (PID 81335) on r5e3 units (YOLO rollback). First decision 4.48 s after start.
+  - Always-on page deployed (server PID 67178; drive f93a7a06).
+  - Menu: free Pass gold claimed (+842 → 5571 gold). Deck cards can't be upgraded yet (not enough copies). Collection inventory at the next boundary.
+- **03:37Z, s20 verified.**
+  - Proxy page OK; FPS **7.85** / step p95 17.7 ms on r5e3 (vs ~5.9 FPS with YOLO), confirming YOLO's in-process CPU cost.
+  - RESULTS (authoritative, from the babysitter): 58 battles, 38W–20L incl. 5 incidents; 720 trophies before s20. Correction to my running tally of 39–19.
+  - Building flags on 43 battles; videos retained.
+- **03:38Z, revealed-set 890bfe58 re-validated on multibody r3 8e04b255:** applies cleanly; test_revealed 29/29, test_multibody 115/115; clean channel 30/30; smoke 40/40.
+  - Plan once the A/B passes: merge 8e04b255 (interim), then a Sol review of revealed-set against the r3 contract, then merge. OOV last.
+- **03:38Z, CARD LEAD:** all 7 priority non-C56 cards landed as real engine cards on main (0ee42633e): SpearGoblins, GoblinCage(+Brawler), Tombstone, Bomber, Barbarians, BattleRam, MegaMinion. r1-cards1 pin (full scope) smoke OK; live16402b (16.402 stats) in ~1 h.
+  - Live switch = ONE bundle: pin (live16402b) + bot-lead extended nets + open-world belief + translator OOV/driver C56-gate widening + Mac parity build.
+  - Until then the driver's C56 block on our deck stays, and opponent new cards go via the proxy table.
+- **03:40Z, v1team COMPLETE** (03: 150k frames, 2.75M boxes, no swap, 66% crowded); 03 released to the bot lead.
+  - Gap: only 34 classes have both-team cut-outs; our deck's archer/minion/mini-pekka are opponent-only in synthetic.
+  - r3 owner: upweight official frames for these. Null's: capture both teams of our deck cards first after batch 1.
+- **03:40Z, s20-m01 W 1–0** (720→750) on r5e3: 882 decisions, 35/34 plays, FPS 7.8, step p95 19.7 ms, 0 errors. Clean-loss streak reset.
+- **03:41Z, coordinator:** owner-net-opus told directly to stop classifier work and hand its labels (s19 hard examples and eval, hrd1/2, own1/2) to the r3 owner for YOLO retraining/eval. Process rule passed down: helpers ask via t3_thread_send, never UI input requests. Pending-request check: babysitter, Null's, compositor and integration all clear.
+- **03:42Z, translator round 4** (Sol r3 #1–6 fixed generally; #7 deferred to the learned detector; test_multibody 141 + 2 xfail; mutants all killed). Freeze waits on the fuzzer helper.
+  - Learned play-detector design approved (PLAY-DETECTOR-DESIGN.md): deterministic association + LightGBM decision; sim truth labels; ~3 days.
+  - Dataset helper starts now; heavy sim on a 03 lease via the bot lead.
+- **Account log:** the babysitter keeps ACCOUNT-LOG.md and reports each action; state sent to the coordinator (gold 5571, gems 300; Sam's upgrades inferred: Fireball +1, Giant +3; Cannon possibly upgradable). Collection inventory at s20→s21.
+- **03:43Z, ACCOUNT-LOG backfilled** and relayed to the coordinator. Observed: Sam upgraded Cannon L3→L6.
+  - Translator: dataset helper translator-playdet-dataset-r1 (Sol) started (bot/live/playdet/; heldout guard; bulk on 03, ~4–8 cores × 3–6 h, ask pending).
+- **06:48Z, RESUME after the Claude usage stop.**
+  - The LADDER WAS IDLE ~04:03–06:45Z (s21 ended; babysitter turn complete, not woken). Babysitter woken: start s22 now, with a standing rule to auto-continue sessions.
+  - Deck change authorized (bot lead deck search: Cannon→Skeletons, +8.0 pp [+3.7, +12.3]); logged in ACCOUNT-LOG.
+  - Multibody r3 interim: the bot lead A/B births arm +0.027 (events arm −0.017 [−0.047, +0.012], doesn't exercise births) → ship. But r3 on current main fails 3 champion tests → translator rebase.
+  - CARD LEAD Null's slot GO (120 min, the Null's owner pauses capture and pings the CARD LEAD directly). live16402b final.
+  - r3 owner running again (resumed at 06:41).
+- **06:49Z, Mac disk:** removed ~/clasher-live/apk (1.0 GB of sideload APKs, verified identical to 05 bst-trial/verified-160402020 via SHA256SUMS) to get above the 9 GiB Null's start line.
+- **06:53Z, s22 PLAYING** (PID 42105, r5e3) with the NEW DECK applied before m01: Valkyrie, Archers, Minions, Skeletons, Fireball, Giant, MiniPekka, Musketeer. Account log updated. First decision 4.5 s after start. Mac 9.63 GiB.
+- **06:57Z, s21 final 2W–2L** (W 1–0, L 0–3, L 0–3, W 3–1; 780). s22 (new Skeletons deck): m01 L 1–3, m02 L 0–3 (clean; 7.3–7.8 FPS). m03 running; a 3-loss hold is possible. Mac cleanup freed ~1.7 GiB → 11.1 GiB free. Record: 68 battles, 43W–25L (5 incidents).
+- **06:58Z, Sam: r5e3 barely sees friendly troops until damaged; rarely sees friendly swarms (1 of 3 Minions).**
+  - Asked the r3 owner for a baseline table (own-units recall undamaged/damaged, per-body swarm recall) for r5e3 / v2l-e11 / best epoch.
+  - New gates for the next live YOLO: owner ≤3%, friendly undamaged recall, swarm per-body recall.
+  - Training adds own-deploy hard examples from s20–s22 (labels pre-placed from taps/decisions).
+- **07:00Z, Sam: recurring dense-frame weakness audit.** Owner: the r3 perception owner (Opus), with Sol helpers reviewing frames. Every session or ~3 h; random dense frames from live + held-out candidate replays; misses/merges/owner/class/phantoms → WEAKNESSES.md; each item gets a data fix, and recurring items become eval slices. Added to the r3 standing instructions. First audit: s20–s22 + candidate replays.
+- **07:01Z, s22-m03 W 1–0** (721→751), the first win on the new Skeletons deck; streak reset. Correction: s21-m02/m03 were L 1–3 (not 0–3). Record 69 battles, 44W–25L.
+- **07:02Z, Sam screenshot (s22, tick 2022):** r5e3 boxes 1 of 2 enemy Archers and 1 of ≥2–3 own Minions, so swarm undercount on both teams. Sent to the r3 owner as the first WEAKNESSES.md item (pull the raw frame, label, hard example, diagnose model vs NMS/peak setting; run the best YOLO candidate on it).
+- **07:03Z, friendly/swarm baseline** (r3 owner, held-out 227 frames): ours undamaged recall r5e3 .17 / ft-r6 .32 / v2l-e11 .70 / V4lo-e14 .81; swarm bodies ours .28 / .40 / .88 / .86.
+  - Gates accepted: friendly undamaged ≥ .75, swarm ≥ .80, owner ≤ 3%. V4lo-e14 fails only owner (3.9%).
+  - Interim: ft-r6 replaces r5e3 at the s22→s23 boundary (babysitter).
+  - First WEAKNESSES entry ~10:30Z. Null's status relayed to the Sol monitor via the compositor.
+- **07:04Z, coordinator condition:** the ft-r6 swap goes ahead only if its enemy→ours rate on the 227 frames ≤ r5e3's. The swap is held (s23 on r5e3); the r3 owner runs owner_eval on both.
+- **07:05Z, ft-r6 swap GO:** enemy→ours 0/168 vs r5e3 0/158; ours→enemy 3/261 vs 3/218; ft-r6 matches 429 units vs 376. Swap at the next boundary.
+  - Possible card/slot mismatch s21-m03 (Minions logged, Valkyrie deployed) → loop owner (root cause + rate over s17–s22).
+- **07:13Z, merges and deploys.**
+  - Multibody r3 merged on main (bbdc651e; births sha 48636f63…); my earlier scratch failure was a namespace-package import artifact. The babysitter deploys births.py at the s23→s24 boundary with rollback criteria.
+  - Sol r4 review (e90541ed) launched.
+  - playdet dataset package committed (318699f4); 03 lease requested from the bot lead.
+  - **YOLO yolo-v4lo1024-e16 passes ALL gates** (enemy→ours 1.7%, buildings 0; ours undamaged .82; swarm .85/.85; id P/R all .931/.845). The integration worker exports at 1024×672 (parity, ANE latency, FPS) before deploy.
+  - s23 on ft-r6 (m01 L 1–3). s21–s22 4W–4L. 70 battles, 45W–25L.
+- **07:13Z, playdet:** 03 lease approved by the bot lead (8 cores × 2–3 h); translator told to proceed.
+  - s23-m02 W 1–0 (751→781).
+  - Daily free chest screen caused nav_stuck (the babysitter cleared it and logs the account items). Loop owner: reward-screen autonav (UI, safe buttons only).
+- **07:16Z, CARD MISMATCH:** logged ≠ played card in 6/38 s22 deploys (Skeletons deck) vs 0/47 (s20) and 1/50 (s21) on the Cannon deck.
+  - DECISION: revert the deck to Cannon at the s23→s24 boundary (account change, logged).
+  - Loop owner: root cause + general fix + post-tap resync, measured on replays.
+  - Reported to the coordinator.
+- **07:17Z, account claim:** daily bonus 2-star chest gave gold ×400, plus an emote snippet ('Night, Night…' 1/9). Balance verified at the boundary. s23-m03 underway.
+- **07:19Z, synth v1team3 on 04 done:** 50k frames; balanced official art for both teams; our deck's archer, minion and mini-pekka now have real both-team cut-outs. 08's 50k is queued.
+- **07:23Z, s23-m03 W 3–1 → 811.** Second daily chest: +400 gold + emote snippet (logged).
+  - Pushed the r3 owner's perception tools + WEAKNESSES audit 1 (0f6daaf1).
+  - playdet dataset running on 03 (8 workers, PGID 3924413).
+  - Asked the translator for an offline derived-play audit command (no derived-play log in the driver).
+- **07:25Z, Sol r4: not a safe improvement over r3** (5 must, incl. a phantom Golem on a dropout death, staggered swarms eaten by the 3-tick spawn rule, resolve not read-only).
+  - DECISION: stop rule iteration. r3 stays the live tracker. Fix only API purity if r3 shares it (r3.1).
+  - The translator's effort moves to the learned play detector, using Sol's r3/r4 reproducers + fuzzer (independent champion truth) as its test set. OOV rebases on r3.
+- **07:27Z, s23→s24 boundary.**
+  - births r3 deployed (Mac sha 48636f63 PASS).
+  - Trophy-road 750: claimed Mega Minion ×25 (choice was Battle Ram/Mega Minion; not MiniPekka); new 18th card, NOT in the deck.
+  - Deck reverting to Cannon.
+  - s23 final 2W–2L at 781. 74 battles, 47W–27L. s24 starting (ft-r6, Cannon deck, births r3).
+- **07:32Z, playdet-r1:** the T1 part ran (7m45s); all 16 sim shards hit an ability/reservation bug (28 matches, superseded). r2 patch verified; sim-only r2 launches after T1 validation (lease freed meanwhile).
+- **07:33Z, s24 playing** (PID 52100; r3 births live, 8 raw opponent events, 0 errors).
+  - Gold settled 6,971 (+1,400 from chests + win bonuses); Mega Minion L3, 18 cards.
+  - Babysitter woken (auto-continue).
+  - r3 resolve is pure (61k calls), so no r3.1. playdet sim fix committed (fdf3dd50).
+  - Translator found the synthetic FP channel unrealistic (5.0 vs 1.2 FP plays/match; persistence 0.45% vs 31.6%), so it re-noises before training. Audit tool coming.
+- **07:34Z, synth v1team3 complete on 04+08** (100k frames, balanced official art for both teams; no team-gap classes).
+  - playdet r2 sim (2000 matches) running on 03 under an 8-core lease. T1 shards on 03 lacked registered inputs; the translator finishes T1 (reminded: 05 is light-only).
+  - Null's still at 2 runs; v2 gate unchanged.
+
+### 07:36Z revealed-set r3-base review: MERGE AFTER FIXES
+- The Sol review of 890bfe58 on 0f6daaf1d passed (218 passed, 5 skipped), but found 3 defects:
+  - (1) spawn/child/leftover identities are treated as raw-label evidence, giving phantom admission and eviction;
+  - (2) synthetic catch-up polls still feed tracker.update(), so one capture turns into a play plus an eviction;
+  - (3) a board-only troop admission can never be evicted.
+- Repros are in /mpac/sdicks02/scratch/live-review/revset-r3. The fixes went to the bot lead; r3 alone stays live. Round-2 Sol review follows once the bot lead posts the new patch sha.
+- s24m01 L 0–1 (−30, 781→751), a clean loss; clean losses in a row: 2 (s23m04 + s24m01). The babysitter is watching the 3-clean-loss rule.
+
+### 07:38Z r3 owner correction on the YOLO e16 record (gate unchanged)
+- Training uses fixed 576×896 images in every run; `--imgsz 1024` affects only inference and eval. All of e16's gate numbers were measured at (1024,672), the size the Mac adapter runs (CoreML parity 756/756), so its pass stands.
+- Control: the 896-trained V4lo-e14 run at 1024 gets enemy→ours 2.5% but recall .80/.81, so it fails; e16 is still the only checkpoint passing every gate.
+- The deploy plan is unchanged; it waits on integration's export, FPS and step-time numbers.
+
+### 07:41Z audit_plays committed (390d6779b)
+- bot/live/audit_plays.py (aee42034…) and its test file (a4f5f97a…, 9 passed) are now on main. The command replays recorded runs through the real translator and compares trackers side by side.
+- Sample (r3 vs old, accepted plays / off-deck): s12-m04 9/2 vs 12/7; s12-m03 13/3 vs 14/2.
+- Finding: s23-m04 has 2011 unmapped AnyTroop units. Class-only perception units are dropped today; the OOV class-only path (rebased on r3) is the fix.
+
+### 07:43Z Sam: "it sometimes double counts troops" (s24, ft-r6)
+- Overlay screenshot (~07:42Z): two nested boxes on one own MiniPekka (0.71 + ~0.70), and overlapping labels on our Archers/Skeletons.
+- Routed to the r3 perception owner as a WEAKNESSES item:
+  - classify same-class double peak / cross-class / overlay artifact;
+  - check translator and births impact via audit_plays;
+  - run the frames through e16;
+  - fix through the model or tuned suppression on held-out data, no per-card rules;
+  - new standing "duplicate on one body" audit column per model.
+
+### 07:47Z double-count diagnosis: stale decode on the Mac
+- ft-r6's AnyTroop/AnyBuilding objectness channels fire on every body. The Mac common.py (blob 5949aad10, ba4e560e5) emits them as units, giving a second box on each body; they are 54–58% of logged s24 units.
+- Card-level effect is none: the translator drops Any*, and audit_plays found 0 births on one body in s24-m01/m02.
+- Fix: deploy main common.py (blob e0b013900, sha256 3b48744f…) at a boundary, after offline parity on 05 and a Mac import check; rollback is .bak-pre-anyunit. Sent to the loop owner.
+- Translator told: OOV must use record['unknown_units'], not raw AnyTroop.
+- e16 itself has 13 duplicates on held-out (minion ×8, valkyrie ×3 cross); the r3 owner is tuning NMS, results in ~30 min.
+
+### 07:49Z double-count follow-ups (coordinator approved the fix)
+- Board state: in card_level mode assign() leaves Any* as None and _rows() skips them, so board rows, HP and births never saw them. The loop owner's parity check now also compares board rows per frame.
+- Affected sessions: ft-r6 + stale decode = s23 onward until the swap. The loop owner tags them in RESULTS.md.
+- Closing the class: the loop owner is building a session-start manifest guard: sha256 of every imported/opened code-tree file vs a manifest from the intended commit, plus an imported-module coverage check and a PYTHONHASHSEED check; it refuses to start on mismatch and logs the manifest sha in the header. Sol review before it goes live.
+- e16: the corrected duplicate metric (same body, IoU ≥.3) gives class-wise .6 = 2, agnostic .6 = 0, all gates pass. Integration told to default to agnostic NMS .6. Sam's frame n=2821 under e16: one MiniPekka, both Archers (ft-r6 saw one), no duplicates. WEAKNESSES item 9 is 826758992.
+
+### 07:51Z revealed-set round-3 fixes in; Sol review round 2 started
+- Bot lead committed 39d8d7068; patch sha256 88fc13ee… verified by command on origin/main. Base is 501702884 (with r3 births).
+- The fixes cover source-card evidence for all births states, read-only catch-up tracker lookups, and provisional board-only admissions. test_revealed 39/39; LIVE suite 214/13/6 vs 175/13/6.
+- Sol round 2 task: live-revealed-set-review-sol-r3base-round2 (repros, class closure, thrash, suite vs unpatched, timing). The bot lead's 03 smoke and pinned-runtime suite are pending.
+
+### 07:56Z OOV r3 (class-only path) received
+- Patch oov-r3.patch sha256 67941b1d… verified; base 390d6779b; suite 217 passed / 1 skipped. It reads only record['unknown_units']; Any* arriving as units is skipped.
+- Measurement: 12,984 Any* detections, only in s23+, 71% overlapping a named unit (89% within ±2 frames). At most 80 genuine unknown tracks ≥3 frames over 7 battles (53 opponent).
+- Merge order: revealed-set first, then rebase OOV. A Sol review is running (live-oov-r3-review-sol-r1). Leaning toward keeping the default 'drop' and switching live via config.
+- The babysitter is asked to backfill s23/s24 opponent decks for the off-vocab correlation.
+
+### 08:03Z revealed-set Sol round 2: MERGE AFTER FIXES (again)
+- Suite 223/13/6 vs 184/13/6 (same missing-checkpoint failures); fair information clean.
+- Still open: source attribution depends on membership (MUST); provisional admissions thrash (MUST); gap ≠ empty frames (SHOULD); replay protection expires after 64 captures (SHOULD). 80-body p95 25.8 vs 15.9 ms.
+- Sent to the bot lead with an invariant table I1–I4, each with a property/fuzz test and a mutation check. Option to park revealed-set behind the learned detector if one more round can't close the classes. r3 alone stays live.
+- Ladder: s25m01 W (811), m02 L (781), m03 W (811); record 81 battles, 51W–30L. m04 active.
+
+### 08:04Z revealed-set PARKED (bot lead's decision, agreed)
+- Gain +0.013 [−0.003, +0.028] unconfirmed; r3 already cut off-deck drops 17→4 per game; class gaps found two rounds running; adds busy-board latency.
+- I1–I4 become the v2 contract on top of the learned detector. Patch 88fc13ee / 39d8d706 is kept in reports/bot/noise-robust/. r3 stays live alone.
+- OOV now rebases on main directly (no revealed-set dependency). The detector should output source card, confidence, capture id and tick for v2.
+
+### 08:12Z s25 3W–1L (841, record 82 / 52W–30L); Pass Royale wild cards; level gap
+- Account: free Pass Royale tier-25 chest, Common Wild Card ×67 (stock 112). Relayed. Wild-card upgrades (Archers L7, then Minions) moved to the s27 boundary.
+- The s25→s26 gap was 5m34 (over the cap) because the Pass claim UI ran long. The babysitter now hard-cuts optional menus at ~2 min, and s26's boundary is inventory only.
+- Finding: the live bot plans with every card at L11. drive.py never passes LivePlayer(levels=), and session-config has no level keys. LevelRoot exists (d9fc2843d). Sent to the bot lead as a possible lever: sim A/B, fair-information opponent levels, own levels from collection.json.
+
+### 08:13Z decode fix GO (pending Sol review of mac_decode_check.py)
+- Loop owner parity on all of s24 (6118 frames): perception identical except Any* (5769 frames → 0); board rows 3082/3082 identical; observation identical; accepted plays 4/4 identical; driver dry run 0 tracebacks.
+- The babysitter swaps common.py to 3b48744f… at a boundary (.bak-pre-anyunit, rollback criteria as planned). RESULTS s23-m01..s25-m04 are tagged "ft-r6 + stale decode¹".
+- Loop owner's flag (b) refuted: the deployed translate.py 5361deb0 defaults to unknown_card='drop' (line 293); 'standin' was in the 05 oov WIP. Flag (a): oov WIP in standin mode gave phantoms (rows 14/64); passed to the translator for its real-input evaluation.
+- Levels: the bot lead's Sol scoping (bot-lead-levels-scope-sol-r1) is checking sim capability first. Hold --levels until the A/B; wild cards are fine to spend.
+- Manifest guard built (15/15 tests); Sol review running.
+
+### 08:15Z Null's woken for the CARD LEAD slot; unknown_units mostly noise
+- The Null's generator thread had been idle since 06:54Z and never saw the slot GO. Woken via thread_send to pause capture, leave the AVD probe-ready and send the CARD LEAD the window. CARD LEAD informed.
+- Translator pointed to the re-decoded s24 records (05 scratch/live-loop/parity/cache-s24/*-new.jsonl).
+- Measured: unknown_units has 3.26 per frame, median score .064, p99 .169; only 27 ≥ .3 and 5 ≥ .5; card_max is absent from records. Effectively unthresholded noise. Flagged to the translator, who passes it to the r3 owner; needs a decode threshold chosen on held-out data. Harmless to the deployed translator, which ignores the key.
+
+### 08:16Z OOV class-only path PARKED (Sol: MERGE AFTER FIXES, 4 musts)
+- Musts: standin default vs config 'drop'; unknown building sites suppress named plays (Giant, Cannon); placeholder overflow of max_entities 128; EvictTranslator crash. Drop-mode audit identical. Report: scratch/live-review/oov-r3-review-20261016/REVIEW.txt.
+- Parked because ft-r6 unknown_units is noise (median .064, 27 ≥ .3 / 6118 frames) and e16 has no any-unit channel. v2 contract: Sol's findings + explicit opt-in + bounded placeholder budget + sites never relabel named births.
+- Translator now works full time on the learned play detector.
+
+### 08:16Z CARD LEAD Null's window 08:15:18Z–10:15:18Z
+- Delivered to the CARD LEAD's active turn. The 06:54Z ready message had only been queued and never reached them, so the probe sat idle.
+- Null's capture so far: 2 runs (SpearGoblins, both teams), no deck-card runs yet. The deck-first queue resumes at 10:15Z or when the CARD LEAD releases the slot. The emulator stays up; watchdog on, 11.2 GiB free.
+- yolo_synth v2 needs ≥5 Null's runs, so it's late; re-check after 10:15Z.
+
+### 08:17Z unknown_units thresholded (15d80e820); v1team4 CPU-starved
+- r3 owner: frame_record unknown_threshold=.5 and card_max added (about 5 in 6118 frames). On held-out, ft-r6 objectness peaks at P/R .19/.29, so parking OOV is right. e16 detects 93% of the 80 off-vocab units with team correct and names 89% of them (Tombstone 24/25, GoblinCage 18/20).
+- The decode swap stays pinned to 3b48744f…; 15d80e820's version goes into the manifest-guard bundle after a parity rerun.
+- yolo_synth v1team4 has been queued since start on 04/08 by cpu_room (136–137 procs vs a 105 ceiling). Asked the bot lead: 01 (load 4, GPU 96%), free slots, or keep queued. 02 and 07 have no route.
+- 08:18Z The bot lead granted 01 for v1team4 (~32 cores, leaving ~8 for the YOLO trainer). cpu_room.sh is fixed to ignore train_cr.py loaders. The synth owner is told to launch on 01 with no overlapping shards versus the queued x04a/x08a.
+
+### 08:21Z s26m02 L (782); record 84 / 52W–32L; 3-clean-loss rule changed
+- No more holding on 3 clean losses: continue and send a loss report. Hold only for real anomalies (errors/guards, FPS < 7.0, step p95 > 45 ms, decisions < 50% of normal, card mismatch, stuck HUD, ≥5 straight losses).
+- My error: a placeholder "noop" send to a spliced thread ID (clasher-live-lead under the 99d49b81 prefix). It failed harmlessly as thread_not_found. Rule reaffirmed: no placeholder sends.
+
+### 08:24Z yolo_synth v1team4 complete on 01 (x01a)
+- 50k frames, 889k boxes, 139 names, 5.8 GB at 01:/mpac/sdicks02/scratch/yolo-synth/v1team4/. Team swap 0; QA passed; held-outs excluded.
+- Gaps: Musketeer/Giant/Fireball have no official art (KataCR only); official opp MiniPekka pool 5 and Minion 7 are reused.
+- Handed to the r3 owner for V6lo/V7lo1024. x04a/x08a still queued, adding up to 100k frames if admitted. 01's CPU lease is released.
+
+### 08:30Z loop owner status: card-mismatch root cause found
+- Wrong card sent on 42/542 plays (7.75%) by video truth. Causes, mostly in the hand tracker:
+  - opening order taken from the first HUD frame while cards are still being dealt;
+  - whole-hand re-anchor fires on greyed-card noise;
+  - greyed cards misread confidently (Archers right only 18% when greyed);
+  - correct coloured reads never used to fix the tracked hand.
+- handsync gives 0/517 in replay against the deployed bot code. Package pending, with a stall-test re-run (test-tree issue).
+- Autonav reward-screen package pending as well.
+- Manifest guard: Sol r1 NO-GO with 7 gaps (incl. stale .pyc, opponent models uncovered); rebuilt, re-review next.
+- mac_decode_check.py is in Sol round 3. 15d80e820's common.py has parity with 3b48744f; sha256 8b755403….
+- After handsync, the Skeletons deck (the bot lead's top deck search result) can come back.
