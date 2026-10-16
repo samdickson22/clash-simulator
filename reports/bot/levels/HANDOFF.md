@@ -1,81 +1,44 @@
-# Level-aware search handoff — 2026-10-16 09:36:52 UTC
+# Level-aware search pilot — current handoff
 
-Owner: this level pilot thread, currently GPT-6.1-Sol high. Worktree `/mpac/sdicks02/repos/clasher-bot-levels`,
-branch `bot/levels`; job root `/mpac/sdicks02/jobs/clasher/bot-levels`. 05 is source/docs only; no heavy compute.
-Latest published docs/receipts commit `f85c66d375a949e007d9aeff6983c3f028c64b50`; implementation still uncommitted.
+Owner: this thread, GPT-6.1-Sol high. Worktree `/mpac/sdicks02/repos/clasher-bot-levels` on05; source/docs only. Job root `/mpac/sdicks02/jobs/clasher/bot-levels` on05/01. Date 2026-10-16; exact audit timestamps in PROGRESS.
 
-## Current authority and coordination
+## Authority and coordination
 
-Sam: **make obvious decisions**. Confident reversible work proceeds after meaningful checks, required review,
-and a concrete rollback. Defer only consequential hard-to-undo AND materially uncertain choices. No blanket
-Opus hold and no Claude limit retries. Sol is default; Astra only a small bounded hard diagnostic when useful.
+Sam: make obvious decisions. Confident reversible reviewed/tested changes proceed; defer only consequential hard-to-undo AND materially uncertain choices. No blanket Opus hold, no Claude retries. Sol default; bounded Astra diagnostic permitted. STRICT SILENCE: no routine parent/owner messages, reviews/results/commits/ack/polls. Only blocked parent action, urgent live failure, explicit request or essential dependency handoff; max2sentences+1path. Whole-assignment final once, automatic delivery suffices. Questions via t3_thread_send(mode=auto), never input tools. No rebroadcast existing active children; include in future/resumed briefs.
+Immediate BOT parent: `thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1`. No pending input requests.
 
-Questions/missing information go DIRECT via `t3_thread_send(mode="auto")` to immediate BOT parent:
-`thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1`.
-Include evidence/paths, recommendation and whether dependent work waits; continue independent work. Do not use
-user-input tools. Coordinator above BOT is `0523ae6f-baa3-4d4e-b233-b392671670db`. No pending input requests.
-Propagate rules to active descendants/new briefs, without reviving completed tasks merely to acknowledge them.
+CPU only01/03/04/08 via existing cpu_job.sh/N/nice10, total≤16taskprocesses/host; full-pool priority. No heavy05/GPU/09–18, live* writes/frozen runtime writes/protected jobs. Screen/input fairness and Mac-only emulator. No account actions. New host-touch code gets fresh review before execution.
 
-CPU only on 01/03/04/08 through existing `bot/exit/cpu_job.sh`, nice, ≤16 task processes/host, full-pool priority.
-Never hosts09–18, GPUs, live* writes, frozen runtime writes, other teams' protected job/data dirs or broad pkill.
-Screen/input-only fairness; any emulator remains Mac-only. New host scripts require fresh review before execution.
+## Current result and blocker
 
-## Accepted experiment
+**No primary BASE or bank; no primary outcomes.** Original100-case serial A/B/B0 pilot authorized once all mandatory gates pass, no additional confirmation.
+R11 native suite254/254 passed (121exports,13tower,32publicbodies, cut/snapshot/pool30each, one-fork A→B→A rawfc [1,2,2],4fairBdecisions). Only20 raw snapshot missing spell_name→emptyString defaults, no numeric changes. Focused R12tests114 pass.
+R12 complete all11DEV:8complete rows/4A-B command hash matches/positive B roots/0nativeFAILURES, but10total Cannon rejections across paired rows. Exit/reportFAIL correctly. Immutable full data job/dev/all11-r12-failed and receipts/all11-r12-failed*. No gate waived/case excluded.
+AstraR13 source audit found installed simulator ordinary building own_half territory versus public/native troop-pocket expansion. Owner chose minimal common public mask intersection ordinary-building own-frame y<15, conditioned exact installed binary microprobe+fresh review+meaningful tests+fresh same4case all11. Explicit common candidate-eligibility amendment before primary; weights/feature definitions/native rollout physics unchanged. Native rollout placement mismatch remains documented, no LIVE placement inference.
+Original03 exploratory probes twice admissiontimeout without execution: BOT parent explicitly accepted NONBLOCKING resource deferral; no retry/window needed or queued.
 
-Original100-case A/B/B0 pilot authorized once ALL scientific/review/resource gates pass; no further confirmation.
-No fresh primary BASE drawn and no primary outcomes yet. Serial K4L-R-gs-rw-fc, one fork/game.
-A=L11 roots/config/native. B0=existing root-only scaler. B=exact own levels, fair fixed opponent rarity estimate,
-exact tower curves and qualified seat/payload rollout templates, crown native metadata at6. This metadata affects
-leaf PLUS scripted crown spell lethality/Lightning, not merely leaf. Same-state learned features invariant only
-at that layer. No pooled LIVE equivalence/deployment claim.
+## Active work and next actions
 
-All experimental arms/controllers use the SAME fixed prior restriction excluding Clone/Earthquake/Tornado.
-2,500/2,925 decks retained; omitted weight15,371/69,380=22.15479965%. All54 true-deck projections unchanged.
-Original catalog immutable for projection/rollback. `scope.install(rt)` must run before manifest/players, identity
-binds scope. Conditional-population physics pilot, NOT literal current-live-prior equivalence. Missing playable
-or body exports fail closed; no outcome-dependent exclusions. Standard A outside pilot unchanged.
-Rollback selects standard A/removes experimental hooks, preserves all data; no pins/models/runtime files changed.
+1. R14 SOURCE ONLY completed. Receipt `/mpac/sdicks02/jobs/clasher/bot-levels/placement-r14-implementation.md` plus focused patch. Six changed root level files placement.py/placement_probe.py/test_placement.py/player.py/run.py/test_harness.py; parent recorder royalesim_match.py optional command_events never enters public views. Full exact hashes in receipt. Not synced/executed.
+2. Fresh independent Sol R15 ACTIVE: task `node:delegated-task:command%3Amcp%3A16f055f2-eb2e-4de8-811b-8f2250362499%3Adelegate-task%3Abot-levels-placement-review-r15-sol-20261016`; receipt placement-review-sol-r15.md. Source-only, no edits/tests/jobs. Review before any sync/execution. No duplicate review needed.
+3. AFTER matching-byte approval: check no owned jobs, sync reviewed files to01; sequential exact binary microprobe N1≤5m, inspect64 Cannon+18 descriptive nonbuilding results; full tests N1 with CLASHER_PLACEMENT_INTEGRATION=1 and CLASHER_LEVELS_PLACEMENT_PROOF; rerun native suiteN2; fresh complete all11 runner run.sh2 max3processes; reportN1. Commands in R14 receipt. Stop on failures; nonbuilding admitted simulator refusal requires separately reviewed correction. No overlap/source/cache edits during runs. Old all11bank SHA b4145717d0122d0f249bddce894be15748ac4c2b59cb190868c1039dabf8d15a, same original4cases bothseats/controllers. Never resume R12/mix identities.
+4. Required lower-priority s27-m02 shadow replay SOURCE ONLY active via existing harness owner task `node:delegated-task:command%3Amcp%3A16f055f2-eb2e-4de8-811b-8f2250362499%3Athread-send%3Alevels-s27-offline-shadow-source-r16-20261016`, backing thread original bot-levels-harness-sol-r1. Owns only bot/levels/diagnostics/; no primary source conflict. Must fresh-review before execution. Required original parent message82 asks2:56–2:14 L11vslevel-aware same-public-state LiveSession/LivePlayer diagnostic, action/Cannon-defence changes, not causal conclusion. Common recorded own driver, audit LIVE tower absoluteHP normalization, no Rsim-only placement adapter in LIVE replay. Input hashes receipts/s27-inputs.json. Do not call optional.
+5. After all mandatory gates clean, commit reviewed owned implementation+docs/receipts, register immutable fresh os.urandom BASE and decisionrule before bank/games; 100cases×3arms=300games serial. Exact primary common scope required matches installed rt.levels_scope; source snapshot explicit. No promotion or pooledLIVE claim.
 
-## Verified
+## Experiment semantics and provenance
 
-- Pinned runtime canonical L11 cache equality121/121; initial3/121 rawdict result was tuple/list JSON schema.
--13 tower checks pass; focused scope/config tests4 pass0.24s; original harness tests4 pass.
-- DEV A smoke4games twice:4/4 hashes/logs/towerHP identical,8wins,zeroerrors/failures/rejections.
-- Existing caches on01 tag50d22f86b3590abc:11,4,5,6,7,9 complete. Low levels118cards plus3 explicit errors above.
-- Scope/projection validation54/54,0.237CPU seconds (small read-only analysis, no runtime/model work on05).
-  Canonical original98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1;
-  restricted8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1.
+A=L11roots/config/native plus common supported prior+sim eligibility; standardA outsideexperiment unchanged. B0=root-only legacy LevelRoot, own producerlevels/opponentall5 without rarity adjustment/towerinput6 on oldcardladder, rollouts/meta11. B=exactownlevels/towers, fixedfair opponent rarityfloor estimates, qualified seat/body/spell/payload templates. Crownmetadata affects leaf AND scripted crown spell lethality/Lightning, learned-feature invariance only identical-state layer.
+Own Cannon8: Valk5/Arch7/Minions5/Cannon6/Fireball5/Giant6/MiniPekka5/Musk4,tower6. Opp truth independently from commonlevelpopulation4:4,5:49,6:25 with declared rarityoffset/floors; fair planner common5/rare4/epic6/legend9/champ11,tower6. Never per-match hidden truth.
+Fixed common prior removes Clone/Earthquake/Tornado425/2925decks,15371/69380weight22.15479965%,retains2500; all54true projections unchanged. Conditional-population physics only, not literal live-prior equivalence. Original immutable; unsupported failclosed,noL11fallback. Canonical original98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1; restricted8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1.
+Population snapshot receipts/opponent-decks-snapshot.jsonl SHA b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440. Ownlevels from explicit user/fixed scenario+ACCOUNT-LOG, collection.json absent; no false fresh extraction. receipts/own-levels-provenance.json.
+Runtime01 experimental copy job/runtime/live16402b-r2; existing dev/env.sh; caches11/4/5/6/7/9 tag50d22f86b3590abc existingonly exactraw+canonical digests, no build. Runtimeinit~150s. No owned CPU job currently. No emulator/account/GPU action.
 
-## Running and next (updated 2026-10-16T09:56:38.251022+00:00)
+## Git and completion
 
-1. R11 full native suite terminal0,254/254; raw snapshot audit only20 absent spell_name→emptyString defaults,
-   no numeric/type/entity/order/position/key changes. Original R6 failure preserved. No level game/job now on01.
-2. Harness owner completed final3 R8 fixes, receipt jobs/clasher/bot-levels/harness-r9-receipt.md.
-   Fresh independent R12 harness+bank reviewer active:
-   node:delegated-task:command%3Amcp%3A16f055f2-eb2e-4de8-811b-8f2250362499%3Adelegate-task%3Abot-levels-harness-bank-review-r12-20261016.
-   Reviews final v2identity/diagnostics plus pinned bank --source input; no tests/launches by reviewer.
-   Next conditional owner test on01 wrapper1/nice: test_harness,test_scope,test_configs,test_bank.
-3. Original03 probe second30min admission expired unrun,terminal124, no lingering processes or logs. No retry queued.
-4. After R12 review/tests, sync reviewed source01 and run existing run.sh2 with all11 DEV bank4cases,armsA,B,
-   --all11-gate, fresh output. Require8complete clean terminalrows,4/4 hashes,positive B rootcalls,bothseats/controllers.
-   Primarybank still absent. Population snapshot receipt SHA b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440
-   equals original DEVsource; primarybank must explicitly pass --source this snapshot.
-5. Once mandatory gates pass, freeze code/cache/manifest, commit owned implementation via temp index onorigin/main,
-   scan, required Opus coauthor. Pre-register fresh os.urandom BASE anddecisionrule before100cases×3arms primarygames.
-   No further userconfirmation required; serial only,no LIVEpromotion.
-6. s27-m02 data copied for optional lower-priority offline diagnostic only, no causal/live claim.
+Published implementation commit41df38a83efa239f99c11457503514b26db43a26 onorigin/main at09:59UTC via tempindex+scanPASS, required Opus coauthor. Localbranch remains f85c66d375a949e007d9aeff6983c3f028c64b50 and workingtree/index deliberately not aligned/reset. Do not stage others or reset shared checkout. Future commits tempindex from freshly fetched origin/main, guard ownedfile drift since41df, scanner, required coauthor, push; no unfinished/unreviewed diagnostics. Next progress commit due~11:59UTC. All exact commands/hashes/receipts in PROGRESS and jobdir. Rollback choose standardA/remove experimental root/native/mask hooks, originalprior preserved, frozenfiles/models/pins untouched.
 
-All receipts and detailed UTC commands are in PROGRESS and reports/bot/levels/receipts. Existing reviewers and gate
-implementation task completed; do not duplicate them. Use new delegate_task for each genuinely new review round.
+## Latest override — 2026-10-16T10:57:42.355830+00:00
 
+R15 COMPLETE conditional diagnosticapproval, P1missing runtime/imitation serving-source manifest. R14microprobe DONEterminal0, Cannon64PASS and all16actualrow14relocations fitownbox; additionalKnight+Minionsbridgeedge WATER bothseats BLOCK overallplacement. All further commands STOPPEDbeforefulltests. No ownedCPUjobs/no primaryBASEbank. Preserve d9115358… originalmicroproof asCannon-only evidence, neverhandedit/waive. Samegateowner R17ACTIVE sourceonly combininggeometry+manifestrepair; receipt job/placement-manifest-r17-implementation.md pending, fresh differentSol review thennewexclusiveprobe required. R15reviewcopy receipts/review-sol-r15-placement.md; actualprobe+audit receipts/placement-micro-r14*. Source05willadvanceR17;01currentlyR14reviewedbytes, nosyncuntilfreshapproval.
 
-Coordination update: STOP routine message spam. Parent/owner messages only for needed action/input, a real blocker/failure changing next steps, or a material result/deploy/account action. Default ≤3 short lines/80 words: current result, needed action, one receipt path. Commands/hashes/history belong in files. No acknowledgements, healthy polls, unchanged queues or logged/pushed notices. No reply/broadcast solely for this rule; include in future/resumed child briefs. Questions remain direct parent, never input tools.
-
-2026-10-16T09:47:15.398148+00:00
-
-Sam STRICT SILENCE supersedes prior message policy: no routine status, test/gate/review results, queues, receipts, commits, acknowledgements or manual completion notices, even labelled material. Log to files; parent reads them. Message only for a blocker requiring parent action, urgent live failure, an explicit request or essential dependency handoff; max2 sentences+1 receipt path. Automatic task completion suffices. Include in future/resumed child briefs, without rebroadcasting existing active children.
-
-2026-10-16T09:51:02.252195+00:00
-Sam final-delivery clarification: report once to the owning parent only when the whole assignment is done; automatic final result counts, no duplicate DM. Essential cross-owner handoffs go directly to that owner. Own substantial end-to-end work, do not spawn tiny per-test/per-step tasks; genuinely independent reviews remain separate.
-
-2026-10-16T09:59:46.745250+00:00 current: R12 final independent review complete conditionalAPPROVE;114/114tests pass on01. All11DEV running localsession25663,parent1435924,timeout1435713,wrapper1435715; logdev/all11-r12.txt,max3Python. No source/cache/runtime edits until terminal; no other owned level jobs. Original03probe secondadmission expired terminal124.
+s27sourceowner R16ACTIVE, frame234/action233 protocol resolved conditional UNVERIFIED INTERNAL RESERVATION (neveracktap), preservefiveacktapcount/uncertainty; no normalizationbridge needed towerhp_fracalreadycorrect. Requiredlowerprioritydiag, noexecutionyet.

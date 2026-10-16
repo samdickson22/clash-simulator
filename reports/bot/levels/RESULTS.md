@@ -1,7 +1,7 @@
 # Level-aware search pilot: interim evidence (exploration)
 
 2026-10-16, resumed by Sol high. [Progress and audit](PROGRESS.md), [design](DESIGN.md).
-**No primary pilot bank drawn or A/B outcomes collected.** Mandatory remaining gates are being completed.
+**No primary pilot bank drawn or A/B outcomes collected.** Complete-game all11 acceptance failed on shared Cannon rejections. The binary Cannon64 probe now passes, but it exposes a separate Knight/Minions bridge-edge mismatch; overall placement and the omitted imitation-source provenance repair remain blockers. Native254 checks are prior passing evidence, not final pilot readiness.
 BOT LEAD accepted the reversible serial design and fixed supported-card scope before outcomes.
 
 ## Verified evidence
@@ -34,7 +34,9 @@ The original projection catalog stays immutable; selected projection equality is
 This is a conditional-population physics pilot, not literal current-live-prior equivalence. Missing playable or
 identified body exports fail closed. There are no outcome-dependent exclusions or silent L11 substitutions.
 
-A uses L11 roots/config/native; B0 uses the existing root-only scaler; B uses exact own levels, a fixed fair
+A uses L11 roots/config/native; B0 uses the existing root-only scaler (own producing-body levels,
+opponent body default5 without rarity adjustment, tower input6 on the legacy card ladder; rollouts/meta11).
+B uses exact own levels, a fixed fair
 opponent estimate, tower curves and per-seat rollout templates. B's crown metadata changes both leaf evaluation
 and scripted crown spell lethality/Lightning ordering. Identical-state learned features remain equal at that
 layer; the complete public view is not claimed invariant. [Bounded source diagnostic](receipts/leaf-diagnostic-astra-r1.md).
@@ -52,11 +54,29 @@ A→B→A changes then reuses the content key, with shipped cache sizes [1,2,2].
 roots under identical public states and different hidden opponent levels; roots/commands match in both seats.
 This scripted balanced transport check makes no learned-pool or LIVE deployment claim.
 
-Still required before the primary bank: final harness source review and matching-byte regression tests,
-then forced all-L11 A/B command parity (four cases, both seats/controllers, positive B root execution),
-complete v2 provenance and clean terminal acceptance. Original deferred probes on03 have twice exhausted
+Final harness source review R12 conditionally approved execution; matching-byte tests passed114/114.
+The forced-all11 run completed all8 rows and matched4/4 A/B command hashes, with positive B roots in all4games.
+It **failed acceptance**: Cannon deployments were rejected identically in both arms (case1 OUT_OF_TERRITORY3;
+case2 OUT_OF_TERRITORY1 and WATER1 per arm). Parent exit1/report qualityFAIL; zero nativeFAILURES.
+The complete failed run is preserved in the job directory, with [audit](receipts/all11-r12-failed-audit.json)
+and [report](receipts/all11-r12-failed-report.txt). No primarybank has been drawn. The [bounded source diagnostic](receipts/territory-diagnostic-astra-r13.md) located the shipped simulator
+ordinary-building own-half rule, while the native/public mask opens troop bridge/pocket territory for buildings.
+A common public mask intersection is being implemented, conditioned on exact-binary microprobe confirmation.
+It amends actual command eligibility identically in every arm/controller, with weights, feature definitions
+and native rollout physics unchanged. No gate is relaxed or case excluded. Repair requires fresh independent
+review, binary probe, meaningful integration tests and the same complete all11 bank in a fresh output. Original deferred probes on03 have twice exhausted
 30-minute admission windows without running; full-pool priority is preserved and no retry is left queued.
+BOT LEAD explicitly accepted this as a nonblocking resource deferral: the reviewed matching-runtime suite
+supplies physics, transport and fairness evidence. No additional03 window or retry is needed.
 
 s27-m02 is preserved for a later offline diagnostic, not a causal conclusion. No account/emulator actions,
 frozen-runtime edits, pin/model changes or LIVE deployment occurred. Rollback selects standard A outside the
 experimental factory, preserving all original catalogs and receipts.
+
+## Exact-binary placement evidence and remaining blockers
+
+The reviewed R14 probe exited0 with64/64 Cannon fixtures:40 expected refusals and24 accepted controls. All16 boundary controls relocated inward to own centre y13.5, preserving a fitting3×3 box. [Binary receipt](receipts/placement-micro-r14.json), [owner audit](receipts/placement-micro-r14-owner-audit.json).
+
+This is **Cannon-only PASS, overall placement blocked**. Knight and Minions at the tested bridge edge were refused as WATER in both seats, while the shared public mask admits that location; tested bridge-interior/home controls and all six Fireball controls were accepted. No dependent test/native/all11 run was launched after that contradiction. A minimal common public geometry correction needs fresh review and binary confirmation.
+
+Fresh review also found a resume provenance gap: frozen imitation policy/mask/feature Python sources were absent from the runtime manifest. Their source closure and a resume-tamper regression are being added without changing runtime behavior. [Review](receipts/review-sol-r15-placement.md). Primary bank/games remain blocked; no BASE or outcomes exist.

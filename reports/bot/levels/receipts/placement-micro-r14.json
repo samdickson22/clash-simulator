@@ -1,0 +1,3050 @@
+{
+  "fixture": {
+    "card": "Cannon",
+    "command_delay_ticks": 0,
+    "elixir_milli": 10000,
+    "hand_slot": 2,
+    "level": 11,
+    "non_tower_bodies": 0,
+    "tick": 100,
+    "tower_level": 11,
+    "units": "18000 integer subtiles per tile; Cannon raw placement box 3x3 tiles"
+  },
+  "identity": {
+    "arena_sha256": "7fbe4b0dce373d49ec69f1cdaeb65047b1602ea58dd6ce3a79dfe9be03fe7169",
+    "binary_path": "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/royalesim/royalesim.abi3.so",
+    "binary_sha256": "97e03055332faeb986c91a12aa64c6e22ca65948b68351803d914e0a84eb43bb",
+    "calibration_sha256": "4c7c3d95a2ee078da103b9570e9a65debbbe90480352ae00a5f0ac6b6f883ebf",
+    "cards_sha256": "c68d6c011e0130649aa2647b21e293c8bf7141e32262bdfd8cc7592704229fdc",
+    "client": "16.402",
+    "data_path": "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/royalesim/data",
+    "placement_source_sha256": "10a0816dd55ed0292746edd7d7808841747ece751e552cd31709d945714263ab",
+    "probe_source_sha256": "6562c25b7851cfdd950536373156d6c0b0368e3609274251cca4ed00de0063aa",
+    "version": "0.1.34"
+  },
+  "nonbuilding_descriptive": [
+    {
+      "accepted": false,
+      "card": "Knight",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "reason": "WATER",
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "result": [
+        0,
+        6,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Knight",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        261000,
+        297000
+      ],
+      "result": [
+        0,
+        0,
+        100,
+        261000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Knight",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "result": [
+        0,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": false,
+      "card": "Minions",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "reason": "WATER",
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "result": [
+        5,
+        6,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Minions",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        261000,
+        297000
+      ],
+      "result": [
+        5,
+        0,
+        100,
+        261000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Minions",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "result": [
+        5,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Fireball",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "result": [
+        108,
+        0,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Fireball",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        261000,
+        297000
+      ],
+      "result": [
+        108,
+        0,
+        100,
+        261000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Fireball",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "result": [
+        108,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": false,
+      "card": "Knight",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "reason": "WATER",
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "result": [
+        0,
+        6,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Knight",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        63000,
+        279000
+      ],
+      "result": [
+        0,
+        0,
+        100,
+        63000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Knight",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "result": [
+        0,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    },
+    {
+      "accepted": false,
+      "card": "Minions",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "reason": "WATER",
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "result": [
+        5,
+        6,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Minions",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        63000,
+        279000
+      ],
+      "result": [
+        5,
+        0,
+        100,
+        63000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Minions",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "result": [
+        5,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Fireball",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "result": [
+        108,
+        0,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Fireball",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        16
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        63000,
+        279000
+      ],
+      "result": [
+        108,
+        0,
+        100,
+        63000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "card": "Fireball",
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "reason": "OK",
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "result": [
+        108,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    }
+  ],
+  "nonbuilding_note": "Descriptive only; inspect verdicts before accepting commands/primary. No nonbuilding mask change.",
+  "passed": true,
+  "protocol": "rsim-own-half-intersection-v1",
+  "rows": [
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_world_tiles": [
+        15.5,
+        17.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        279000,
+        315000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        279000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        171000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        10.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        189000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        189000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_world_tiles": [
+        14.5,
+        20.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        261000,
+        369000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        369000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        16.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        10.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        81000,
+        261000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_world_tiles": [
+        15.5,
+        17.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        279000,
+        315000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        279000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        171000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        10.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        189000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        189000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_world_tiles": [
+        14.5,
+        20.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        261000,
+        369000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        369000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        16.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        10.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        81000,
+        261000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_world_tiles": [
+        15.5,
+        17.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        279000,
+        315000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        279000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        171000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        10.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        189000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        189000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_world_tiles": [
+        14.5,
+        20.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        261000,
+        369000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        369000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        16.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        10.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        81000,
+        261000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_subtiles": [
+        279000,
+        315000
+      ],
+      "resolved_world_tiles": [
+        15.5,
+        17.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        279000,
+        315000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        279000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_subtiles": [
+        171000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        171000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_subtiles": [
+        189000,
+        351000
+      ],
+      "resolved_world_tiles": [
+        10.5,
+        19.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        189000,
+        351000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        189000,
+        351000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_subtiles": [
+        261000,
+        369000
+      ],
+      "resolved_world_tiles": [
+        14.5,
+        20.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        261000,
+        369000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        261000,
+        369000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_subtiles": [
+        243000,
+        297000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        16.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        243000,
+        297000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        297000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_subtiles": [
+        171000,
+        189000
+      ],
+      "resolved_world_tiles": [
+        9.5,
+        10.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        171000,
+        189000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        171000,
+        189000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_subtiles": [
+        81000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        81000,
+        261000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_subtiles": [
+        243000,
+        243000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        13.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        243000
+      ],
+      "seat": 0,
+      "tap_subtiles": [
+        243000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_world_tiles": [
+        2.5,
+        14.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        45000,
+        261000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        45000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        153000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        7.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        135000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        135000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_world_tiles": [
+        3.5,
+        11.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        63000,
+        207000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        207000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        15.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        21.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        243000,
+        315000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        false
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_world_tiles": [
+        2.5,
+        14.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        45000,
+        261000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        45000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        153000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        7.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        135000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        135000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_world_tiles": [
+        3.5,
+        11.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        63000,
+        207000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        207000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        15.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        21.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        243000,
+        315000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        false
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_world_tiles": [
+        2.5,
+        14.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        45000,
+        261000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        45000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        153000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        7.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        135000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        135000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_world_tiles": [
+        3.5,
+        11.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        63000,
+        207000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        207000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        15.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        21.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        243000,
+        315000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        false,
+        true
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        315000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        15,
+        17
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_subtiles": [
+        45000,
+        261000
+      ],
+      "resolved_world_tiles": [
+        2.5,
+        14.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        45000,
+        261000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        45000,
+        261000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_subtiles": [
+        153000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        153000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        10,
+        19
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_subtiles": [
+        135000,
+        225000
+      ],
+      "resolved_world_tiles": [
+        7.5,
+        12.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        135000,
+        225000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        135000,
+        225000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        14,
+        20
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OUT_OF_TERRITORY",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_subtiles": [
+        63000,
+        207000
+      ],
+      "resolved_world_tiles": [
+        3.5,
+        11.5
+      ],
+      "result": [
+        93,
+        8,
+        100,
+        63000,
+        207000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        63000,
+        207000
+      ]
+    },
+    {
+      "accepted": false,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        16
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "WATER",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_subtiles": [
+        81000,
+        279000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        15.5
+      ],
+      "result": [
+        93,
+        6,
+        100,
+        81000,
+        279000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        279000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        9,
+        10
+      ],
+      "passed": true,
+      "raw_box_crosses_river": false,
+      "reason": "OK",
+      "relocated": false,
+      "reported_resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_subtiles": [
+        153000,
+        387000
+      ],
+      "resolved_world_tiles": [
+        8.5,
+        21.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        153000,
+        387000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        153000,
+        387000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        4,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_subtiles": [
+        243000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        13.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        243000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        243000,
+        315000
+      ]
+    },
+    {
+      "accepted": true,
+      "enemy_down": [
+        true,
+        true
+      ],
+      "own_tile": [
+        13,
+        14
+      ],
+      "passed": true,
+      "raw_box_crosses_river": true,
+      "reason": "OK",
+      "relocated": true,
+      "reported_resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_subtiles": [
+        81000,
+        333000
+      ],
+      "resolved_world_tiles": [
+        4.5,
+        18.5
+      ],
+      "result": [
+        93,
+        0,
+        100,
+        81000,
+        333000
+      ],
+      "seat": 1,
+      "tap_subtiles": [
+        81000,
+        315000
+      ]
+    }
+  ]
+}

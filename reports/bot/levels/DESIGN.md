@@ -4,10 +4,10 @@
 `/mpac/sdicks02/jobs/clasher/bot-levels/SCOPE.md`).
 Log: [PROGRESS.md](PROGRESS.md). Results: [RESULTS.md](RESULTS.md). Code: `bot/levels/`.
 
-**Status (2026-10-16 Sol resumption): mapping verified; mandatory remaining gates pending.** Sam's updated
+**Status (2026-10-16 Sol resumption): native gates254/254 and regression tests114/114 pass; all11 commands match4/4 but clean acceptance FAILS due shared Cannon placement incompatibility.** Sam's updated
 rule authorizes confident reversible decisions after review and checks. BOT LEAD accepted this serial conditional-
 population design; no further Opus decision is needed to run the pilot once all gates pass. Runtime mapping is
-121/121, tower checks 13/13, and two focused regression tests pass. No pilot bank or primary games yet.
+121/121; exact raw snapshot differences are limited to missing spell_name becoming empty String. No pilot bank or primary games yet.
 
 ## Question
 
@@ -42,13 +42,15 @@ GoblinCage, ...) are therefore replaced by catalog decks: a limitation.
 ordered catalog with decks containing Clone, Earthquake or Tornado removed. This retains 2,500/2,925 decks and
 54,009/69,380 frequency weight; omitted mass is 15,371/69,380 = 22.15479965%. None of the 54 selected true-deck
 projections changes. `scope.install(rt)` preserves an immutable original catalog for projection/rollback, applies
-the restriction before any player starts, rejects external belief-prior overrides, and records both digests.
+the restriction before any player starts, rejects external belief-prior overrides, and records both digests. The primary bank explicitly reads the frozen population receipt
+`receipts/opponent-decks-snapshot.jsonl` (SHA256 b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440),
+matching the original DEV input; later live-log changes cannot alter its population.
 The original catalog still determines true-deck projection, with equality to the restricted projection asserted
 for every eligible row. This is a **conditional-population physics pilot**, not literal current-live-prior
 equivalence or evidence for immediate live promotion. Standard A outside this pilot is unchanged. No
 outcome-dependent exclusions or silent level-11 fallback are allowed.
 
-## Arms (same K4L player object, frozen weights/features/candidates)
+## Arms (same K4L player object, frozen weights/features and common candidate eligibility)
 
 Base player: `K4L-R-gs-rw-fc`, the deterministic twin of the live variant (same decisions whenever the live search
 completes). One process per game (fork after the runtime is built).
@@ -57,7 +59,9 @@ completes). One process per game (fork after the runtime is built).
 - **B0 (diagnostic, root-only):** the existing `bot/live/levels.py` LevelRoot installed on the actual K4L search
   object (`root_fn`, a new one-line hook in `bot/search/players.py`; the live installer currently loses it because
   `make_live_lopp` replaces the search object). Scales root bodies by the card ladder and towers by the card ladder
-  (known wrong for towers); cards played in rollouts spawn at level 11. A null here does not reject level-aware search.
+  (known wrong for towers); cards played in rollouts spawn at level 11. A null here does not reject level-aware search. Own bodies use the producing-card level map
+  (unmatched own bodies default11); every opponent body uses fixed5 without B's rarity adjustment. Tower inputs
+  are6 but the legacy scaler applies the card ladder, not the exact crown curve; native metadata remains11.
 - **B (level-aware):** `bot/levels/root.py` + `configs.py`:
   1. root bodies: the exact level-L fields (export of the producing card at L vs at 11; no rescaling of truncated
      values), hp = observed fraction × level max HP; projectiles in flight take the level's damage; spell carriers name
@@ -118,3 +122,21 @@ is outside this pilot and cannot be inferred from it. No frozen runtime, pin, ch
 Rollback: stop only a verified owned process group, preserve its outputs, and select standard A outside the
 experimental factory, or remove the experimental root/native/prior hooks. Original catalogs and all failed
 receipts remain available. Resume must reject changes in code, runtime, models, prior, environment or cache.
+
+## Common simulator placement amendment (before primary bank)
+
+The first all11 DEV run matched4/4 A/B command hashes and exercised B roots, but ordinary Cannon taps
+were rejected identically in both arms after the existing public mask admitted bridge/pocket locations.
+The installed RoyaleSim calibration specifies ordinary building territory as own_half, a shipped simulator
+rule labelled low confidence for the real client. This is an adapter mismatch, not evidence about live rules.
+[Bounded source diagnostic](receipts/territory-diagnostic-astra-r13.md). No primary bank/outcomes exist.
+
+Conditioned on exact-binary microprobe confirmation and fresh review/tests, intersect ordinary-building
+root candidate and policy masks with own-frame tile y<15, identically for every A/B/B0 actor and both
+opponent controllers/fallbacks. Never unmask a tile; preserve public affordability/occupancy, troop/spell
+and documented enemy-side-special masks and WAIT. Resolve any Mirror identity through public own history.
+No simulator full-state legality check enters a player. This explicitly amends common candidate eligibility;
+weights/features remain frozen. Native rollout placement is unchanged and remains a model limitation.
+No taps are moved or converted into unlogged waits; zero rejected deployments remains mandatory.
+Preserve the failed run; run the same complete4case all11 bank with a fresh output/manifest after repair.
+Rollback removes the experimental mask wrappers; no frozen runtime/pin/model or standard player is modified.

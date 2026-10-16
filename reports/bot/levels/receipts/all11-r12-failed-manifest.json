@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-16T10:13:28.489883+00:00",
+  "preserved_run": "/mpac/sdicks02/jobs/clasher/bot-levels/dev/all11-r12-failed",
+  "files": {
+    "launch-00001-result.json": "19f1a0f7610c14ece4e9bb2489c9f4e11d5d4b4a4cbe50699a165ce575fbd8e9",
+    "launch-00001.json": "b2b3036e7c757d78664fd98c33c3b6397fe2e7b6d46ecd5708967a0b9b12b6d6",
+    "report.json": "85cb91f96d86ec3aa273cee4384cebce59392ce176bb555409c6cdc4144a37d5",
+    "rows/A-00000.json": "50ca8f059476408965694a158307990e04458418da25deb97908f9f9755b522a",
+    "rows/A-00001.json": "2ae7d42e1088a03e536ccfda8f7bfca23211a6b1b5c3032eadaa757b7a0c0c4c",
+    "rows/A-00002.json": "9583b424cc57d0fc693c434dd76301b06f6ea953613d2c9977d4f2b6980cdd35",
+    "rows/A-00003.json": "81c7615c13ce39023a46df923ab13f254f706db333b4d8e06eca8f4bd6bf08be",
+    "rows/B-00000.json": "1fb58a9b4469f587a453a392072a82235a69aa4cfc63e20b3f6e8fe556736018",
+    "rows/B-00001.json": "62abc37158c0326e6a5af5192a91c7b7a3cc4ec13e4a172888e3ec2b91c3cb00",
+    "rows/B-00002.json": "06c46d3263ed5e8e3a773c4622f0c861e075879f1d45235ca13df477d87987ca",
+    "rows/B-00003.json": "e1afaaf4ff21dbfea8619e385693dea3783a3c791c33fae3040d8a3dda1de5c2"
+  }
+}
