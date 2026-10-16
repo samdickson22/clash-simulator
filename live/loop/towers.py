@@ -8,6 +8,8 @@ confirmed by the previous non-empty reading within 10 frames (equal, or falling 
 by more than half needs 6 identical readings (a misread '2' for 280 latched under a running minimum in live3; numbers
 blink under hits, so consecutive-frame equality went stale in live8). A princess whose number is gone for 60
 healthy frames (the driver skips dimmed/black frames) is destroyed for good; the king stays alive (its death ends the match).
+
+Troop-level badges are excluded from HP numbers; rejected components stay unreadable so they cannot shorten a number.
 """
 from pathlib import Path
 
@@ -32,6 +34,35 @@ def level_of_princess(hp):
     return min(range(1, 16), key=lambda lv: abs(tower_hp('princess', lv) - hp))
 
 
+BADGE_RED = .4
+
+
+def badge_ring(c, comp, x, y, w, h, pad=4):
+    """Fraction of saturated-red pixels in a 4 px ring around a digit component (c: BGR int16 crop; comp: its mask).
+    Troop level badges are a white digit on a filled red square; tower HP numbers are outlined white text."""
+    Y0, Y1, X0, X1 = max(0, y - pad), min(c.shape[0], y + h + pad), max(0, x - pad), min(c.shape[1], x + w + pad)
+    sub, m = c[Y0:Y1, X0:X1], comp[Y0:Y1, X0:X1].astype(np.uint8)
+    ring = ~cv2.dilate(m, np.ones((3, 3), np.uint8)).astype(bool)
+    b, g, r = sub[..., 0], sub[..., 1], sub[..., 2]
+    red = (r > 110) & (r > 2.5*g) & (r > 1.8*b)
+    # A red HP bar UNDER a real digit is not a surrounding badge. Require red above the digit too; use the
+    # normalized live pixels, since uniform gain changes the absolute red thresholds as well as digit geometry.
+    top = red[:max(0, y - Y0), :]
+    bottom = red[y + h - Y0:, :]
+    score = min(float(red[ring].mean()), float(top.mean()), float(bottom.mean())) if ring.any() and top.size and bottom.size else 0.
+    if score <= BADGE_RED:
+        return 0.
+    # The red must form one compact surrounding square, rather than a wide HP bar or the king tower's roof.
+    rb, gb, bb = c[..., 2], c[..., 1], c[..., 0]
+    red_all = ((rb > 110) & (rb > 2.5*gb) & (rb > 1.8*bb)).astype(np.uint8)
+    _, _, regions, _ = cv2.connectedComponentsWithStats(red_all)
+    for rx, ry, rw, rh, _ in regions[1:]:
+        if (rx < x and ry < y and rx + rw > x + w and ry + rh > y + h
+                and rw <= w + 52 and rh <= h + 16):
+            return score
+    return 0.
+
+
 def read_number(f, box):
     x1, y1, x2, y2 = box
     c = f[y1:y2, x1:x2].astype(np.int16)
@@ -47,6 +78,7 @@ def read_number(f, box):
         k = max(1, int(round(w/(.72*h)))) if w > 26 else 1
         if w/k > 26:
             continue
+        badge = badge_ring(c, lab == i, x, y, w, h) > BADGE_RED
         comp = (lab[y:y+h, x:x+w] == i).astype(np.float32)
         for j in range(k):
             xa, xb = int(round(j*w/k)), int(round((j + 1)*w/k))
@@ -56,7 +88,7 @@ def read_number(f, box):
             # a poor template match is not a digit (bright tower stones on the Bone Pit sand read as king HP '3'/'31'/'32'
             # and the bot spelled a full-HP king, s1 battle 1); recorded
             # digits match within ~15 (max 71 of 271), the stones at >= 37
-            gl.append((x + xa, y + h, h, ch if ch != 'x' and d.min() <= 30 else None))
+            gl.append((x + xa, y + h, h, ch if not badge and ch != 'x' and d.min() <= 30 else None))
     gl.sort()
     good = [g for g in gl if g[3] is not None]
     if not good:
