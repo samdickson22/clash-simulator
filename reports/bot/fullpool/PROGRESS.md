@@ -100,3 +100,7 @@ r1-cards1 is on main, the overlay is no longer needed.
   lopp_record --decks; INVENTORY.md, README.md, smoke.sh, smoke_summary.py. Unit tests 10/10.
 - 02:04–02:22Z full smoke on 08 (results in the state block). 2026-10-16T02:23:11Z handoff requested then cancelled by BOT LEAD
   (Sam: Opus keeps owning; non-coding slices go to Sol sub-workers). PROGRESS rewritten with a full state block.
+- 2026-10-16T02:28:57Z BOT LEAD decision: train under live16402 (r1-cards2). PLAN.md written (ExIt G1 with a K4C-r16 teacher, 4,000
+  games, ~1.5 M labels; F1 fit from rl5-v10-fp + the C56 corpus 1:1; R11 RL on GPU later; K4L K1 recording 2,400
+  games + KF1 refit; CPU-first compute table; Sol slices S1–S7). smoke.sh takes PINS=<pin set>. Sol S1 delegated
+  (smoke rerun on r1-cards1 once on main; clientRequestId fullpool-smoke-r1cards1-r1).

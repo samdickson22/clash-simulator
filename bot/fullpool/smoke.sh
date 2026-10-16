@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Full-pool smoke under pin r1-cards1 (run from a repo tree on 03/04/08 under bot/exit/cpu_job.sh, setsid):
 #   bot/exit/cpu_job.sh 14 bot/fullpool/smoke.sh OUT [ARMS]
-# Env: DEV = r1-cards1 runtime root; EXT = dir with rl5-v10-fp.pt (+ the original policy-00010.pt);
+# Env: DEV = runtime root; PINS = pin set (default r1-cards1; e.g. live16402); EXT = dir with rl5-v10-fp.pt (+ the original policy-00010.pt);
 #      LOPP = model dir with pool.npz and poolfp.npz; W = headline workers (default 12); N = games per arm (40).
 # Arms (default all, in this order):
 #   stu   extended RL r5 v10 student vs R3a, bank FP-DEV (both decks full-pool), N games
@@ -23,7 +23,7 @@ W=${W:-12}; N=${N:-40}
 PY=${PY:-/mpac/sdicks02/repos/clasher-bot/.venv/bin/python}
 export PYTHONHASHSEED=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 \
   CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1 NUMPY_MADVISE_HUGEPAGE=0 \
-  CLASHER_BOT_RUNTIME=$DEV CLASHER_DELAY_NATIVE_DIR=$DEV/native CLASHER_BOT_RUNTIME_PINS=r1-cards1 \
+  CLASHER_BOT_RUNTIME=$DEV CLASHER_DELAY_NATIVE_DIR=$DEV/native CLASHER_BOT_RUNTIME_PINS=${PINS:-r1-cards1} \
   CLASHER_LOPP_MODELS=$LOPP
 STU0="student:$EXT/policy-00010.pt@0.5375"; STU1="student:$EXT/rl5-v10-fp.pt@0.5375"
 mkdir -p "$OUT"
