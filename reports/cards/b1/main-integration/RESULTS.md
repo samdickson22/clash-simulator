@@ -1,4 +1,4 @@
-# B1 integration with fixed main — validation in progress
+# B1 integration with fixed main — public correction pending
 
 Original B1 acceptance remains at `1dab5bce4a550eb4a99e21558d62ab231db84b5a` / source `fb7c2895a967d6d7f10a017fc02b3a47c6ff83de` / native `63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc`. Its16/577/600 receipts were preserved; they do not certify this combination.
 
@@ -22,10 +22,10 @@ Combined source: normal merge `5c8afc2d78cb9160c42cd2536f1588cc0dc98c6e` of fixe
 | Affected synchronous paths, nested riders/container, scenario locksteps and exporter/config | PASS94/94 corrected run02; failed01 artifacts retained (six harness-assumption errors) |
 | Combat carry and observable once-only container supplement | PASS4/4 both seats; exact native continuations |
 | RoyaleSim16.402 original/current reference comparison | 39/39 paired regression checks,78 runs, no observable changes or harness gaps; reference22PASS/17DIFF retained |
-| Fresh exact-native C56 fixtures/chains577 + roots600 | Sole changed-arm run02 started11:42:18Z, PID1634216; pending |
+| Fresh exact-native C56 fixtures/chains577 + roots600 on source5c8/native6737 | PASS577/577 fixture records/chains,429 reference matches,0 errors;600/600 roots300full+300cut,12games/1800selections; completed12:17:48Z; run02-gate-compare.json |
 | Final independent implementation/evidence review | Pending exact complete results |
 
-No combined readiness or publication yet. Existing partial RoyaleSim fidelity, Rune Giant enchantment coverage gap and raw Python/native snapshot representation differences remain. Full serialized equality applies to native clone/reload continuations; digests and selected cross-engine fields do not prove whole-state equivalence.
+No combined readiness or publication yet. The source5c8 results above precede the explicit public alias candidate c13249919 and pending root consumer repair; they do not certify that new source. CARD LEAD authorized existing ThreeMusketeers body/projectile identity and an explicit700ms public-model load default while engine ranks remain700/650/700ms; frozen vocabulary/model dimensions stay unchanged. Actual emitted-carrier coverage, reviewed root integration, fresh exact-source acceptance and final independent review remain required. Existing partial RoyaleSim fidelity, Rune Giant enchantment coverage gap and raw Python/native snapshot representation differences remain. Full serialized equality applies to native clone/reload continuations; digests and selected cross-engine fields do not prove whole-state equivalence.
 
 Rollback: preserved `cards/b1-before-main-20261016` at exact original1dab plus immutable original receipts/native. No active runtime pins, immutable runtime roots or main/shared checkouts changed. Lead owns main merge; B2→C1 order retained.
 
