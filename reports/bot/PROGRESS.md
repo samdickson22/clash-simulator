@@ -233,3 +233,13 @@ Fixedbank continuity re-confirmation source unchanged from accepted daily0cd7fd2
 **Recoverycollectorcorrection:** existingrevset-r7collectorCOMPLETED/parked(commitd4926a9f6679),floorchk30/30hashidentical,40/40terminalsmoke/0errors,patched217vs178passeswithsame9fail/7skip. Supersedes09Zqueuedstatus; no restart or deploymentGO. Fullpoolbabysitter retains authorizedretryownership after08LIVEadmissionpriorityrelease.
 
 **R8coordination13:30Zupdate:** exact15-sourceofflineimplementationnowindependentGO(RELEASE.json,reviewhashverified),supersedesreviewpendingonly; canonicalbot/live/player.py0e1c0d88 differsattestedbase3b4f27d7,preservedprivatebytes/diff,nooverwrite. Executableportdeltafreshreview +existingintegration/release/prehost/separateplaygatesremain;acceptedAPI/twomasks/NO DRIVER/PAUSEunchanged.
+
+**R8sourcepublication13:54Z:** canonicale883a80da015360f6c19b2eb1f2cd6e10c2aa8d8 exactreviewedport/scanner0; deputyverified15sourcepins. Localplayer0e1cWIPpreserved, nooverlappingcodepublication; futuresurgerymustusepublishedsource/reviewexecutabledelta. Actualhost/runtime/pin/playauthorityabsent, NO DRIVER/PAUSE/LL0/separatehostprofileunchanged.
+
+### Daily recovery complete — 2026-10-16T14:15:43Z
+
+**Fresh quoted RoyaleSim15.535 pool: K4L-R-gs 0.878 [0.859, 0.895]; paired K4C-r16 0.826 [0.804, 0.848]; Δ+0.052[+0.028,+0.076].** BASE3877999783388832 preregisteredbb74fc17beforegames;2400/2400uniqueterminalrows,400/opponent/bot,0errors/missing/duplicates,bootstrap4000seed0equalopponents. R3a .810/.740,v1 .9275/.8625,rext-bc .895/.875. Fixedbank(selection-biased)re-confirmedRS P1 .931/v3 .937;oursP1 .935,0rerungames. Champion/faststudentunchanged. Both04/08ownedgroups/leasesgone;before/aftersource/runtime/modelpinsmatch,logs0bytes,noinventedlauncherexitcode. Allcommands/rawmanifest/exactCIs inrecoveryaudit/job; standard summarizer crosscheckPASS.
+
+Existingfullpoolowner ownsnormalr2retries/root/data/reviewbarriers,08LIVElease/trainingprioritypreserved; nospeculativereplacements/partialpromotion. Revsetcomplete/parked. ExistinglevelR30actualownerreport300/300quality_oktrue,parentexit0; thisdoesnoteraseR27invalidrawfailuresorconstitutedeputyacceptance/promotion. Existinglevelowner/parentvalidatesfinalinputs/cache/reportdecision; nofrozenfile/gameactionbydeputy. R8sourcee883/mainhooksandlocalplayer0e1cWIPpreserved; publicationONLYfiveownedreports/contractpaths,nocodeoverlap/host/runtime/pin/playauthority.
+
+CanonicalhistoricalBOTthread remainscontextblocked, nextoriginaldaily17Oct13Zstillboundthere; no retry/compactionfiction/duplicateschedule/fleet. Recoverydeputycompletedonlyunfinisheddaily/resourceassignment, exacttaskID inaudit. Oneautomaticwholeassignmentfinal toowningparent,nomanualDM.

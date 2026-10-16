@@ -37,7 +37,7 @@
     }
   ],
   "initial_commands": "T3 durable activity contains all exact tool argv/output since 13:13Z; audit-run.py captures subsequent commands separately.",
-  "status": "running",
+  "status": "completed_daily_and_resource_reconciliation",
   "fullpool_actual": "/mpac/sdicks02/jobs/clasher/bot-daily-recovery-20261016/fullpool-actual.json",
   "contract_r8_report": "/mpac/sdicks02/scratch/live-loop/packages/handsync-permission-r8/REPORT.md",
   "task_status_fallback": "non-child tasks not accessible; durable thread state + actual owner receipts",
@@ -128,5 +128,241 @@
     },
     "restart": false,
     "deployment_authority": false
-  }
+  },
+  "canonical_r8_publication": {
+    "commit": "e883a80da015360f6c19b2eb1f2cd6e10c2aa8d8",
+    "source_payloads_verified": 15,
+    "scanner_rc": 0,
+    "diff_check_rc": 0,
+    "receipt": "/mpac/sdicks02/scratch/live-review/r8-source-publication-k0liz4dr/publication-receipt.json",
+    "local_player_wip_preserved": "0e1c0d8870b31dec3acd79e356a7164e761f325a1532c076685ffcbf19e686cf",
+    "overlapping_publication_by_deputy": false,
+    "rule": "Reconcile surgically against published source and review any executable delta before future overlapping publication; no host/runtime/pin/play authority."
+  },
+  "completed_utc": "2026-10-16T14:15:43Z",
+  "headline_result": {
+    "utc": "2026-10-16T14:13:01.603254+00:00",
+    "base": 3877999783388832,
+    "rows": 2400,
+    "expected": 2400,
+    "unique_keys": 2400,
+    "missing": 0,
+    "extra": 0,
+    "errors": [],
+    "invalid": [],
+    "problems": [],
+    "complete": true,
+    "files_sha256": {
+      "host04/games-000.jsonl": "84bf46b79ced51090d337e9dca830b817aa1fa40e40256498a049e5d27137df5",
+      "host04/games-001.jsonl": "cc28f4f9a3659596d253cd58092c5052515b82115caa9b8bcbca200c1dbbcc0c",
+      "host04/games-002.jsonl": "680abfcd28daeec35a10be2cb6c2663209e725b71fc8e1a1913f79a1c0ed36b3",
+      "host04/games-003.jsonl": "fd5036168ceb14ec86c4bc14786061bb7883f0f7daca574a3647436466246d11",
+      "host04/games-004.jsonl": "e09a43055021eff63643d68ae8d25dae8853df5d0902ba45f3623dae1ab89bbb",
+      "host04/games-005.jsonl": "f9a757b128b33d7c04462da87ad871db002deec91443f02666dbfcc532855d08",
+      "host04/games-006.jsonl": "663e0b2190dfe22c416287f79b7f74229c6c7e3d3b4d64d9372c3eefbe8ed0bd",
+      "host04/games-007.jsonl": "3818dd76bb445ed378a92988d323855b42c3876ad20338a605f1877e51d0185c",
+      "host08/games-000.jsonl": "3fba7f5e8d5a3cb3afa2ac63e171ed3f1e415bbb71666eaebf28f15339b610cc",
+      "host08/games-001.jsonl": "e642fe7bc6aa7478f04253d9dab3e3c733265ab1d0c84ee11513e0dae8589520",
+      "host08/games-002.jsonl": "6e33a88e2f01a9f627cc740b80a55c9695147d930d1745fc6ce497c6478b4ab9",
+      "host08/games-003.jsonl": "d509dbc8e65f3c42a78a1ded7895e101ceb9861b94bf2f8d81db19394e9a8f24",
+      "host08/games-004.jsonl": "c0691366bd58e58d51562037c3f1bc6c7184235f7042084a1d218bf9eaad87d3",
+      "host08/games-005.jsonl": "81e79dd16217fb03898c977d39d53d05aa029252844f2b22ace4cf46fec1048b",
+      "host08/games-006.jsonl": "a3e3a1257488df10abd6cf17520fc1813536a0235af4ae82086cfd036de01136",
+      "host08/games-007.jsonl": "c8594b5d78c0d0fcdb8a89c34d91ad1793e9e2d7d65a0e16618200926352cc85",
+      "host08/games-008.jsonl": "ccf2561b2a29869d556c6ca19cd3e3cc1e30d080227f39a9d1a3147de4ba0d1e",
+      "host08/games-009.jsonl": "783b5ef36168190cb1b95308bc53b263e7d1509b99fe555a286ca778077dae3d",
+      "host08/games-010.jsonl": "fea9e158d36fa36c2a2b027df42e95cfc4d5ec599bc1f0247d00fa0f868314ca",
+      "host08/games-011.jsonl": "9ef0b3ca0d43805ec58672106d99cf85b4030ec93c7b63b0f3248f5cb6ad7d59",
+      "host08/games-012.jsonl": "aae408302e15dca9d9b99114374bf3fc705c1aeb661817119817cd5cdb2618de",
+      "host08/games-013.jsonl": "cdb5fd57cf28bc147cf9729d58165b7a53f000adc4744a64abb5a79bd63bc3ae",
+      "host08/games-014.jsonl": "39fe09325ff53e02b103faf8324475ecaadd8f69687bc41c508bae46be3516a9",
+      "host08/games-015.jsonl": "b60f8754517dd942cc70f9d1825d08e4f0bebeaed674015305307144d4306f5e",
+      "host08/games-016.jsonl": "fe95a5dde63f18754f8f0adbbbe65c3b54c87bb325e734202cc4db8fd537404c",
+      "host08/games-017.jsonl": "60384d005c6b1a321486b909a9825d1592f33401cfa61153034cb877bd01b9af",
+      "host08/games-018.jsonl": "200daaa3a9185382b43ee1d5d27d542a6d4dbe88cd90ced7b262e53bf38c7ea0",
+      "host08/games-019.jsonl": "ab93bf44aa9194e4edfafc83c55ae70553689d7d20619d0ec3f3a4f994811cf5",
+      "host08/games-020.jsonl": "4da5859ffb5823b8122563558531daa60b33ebb8d13a1cd9b7b8de75564ea942",
+      "host08/games-021.jsonl": "8d12e17b80c9c604cde2bad4d6e7e264b4413bff8f2f8528cc79fbbb4fe0ffbe",
+      "host08/games-022.jsonl": "3e49d81ace3383c1c40e7edaccc7725e8803a16bd7ad1b1b1421e4d83f51c469",
+      "host08/games-023.jsonl": "4e05739a1c53b0c16df9fcb034dbbf8c493a6bc7d6df383e7a16d66dafabf3e4",
+      "host08/games-024.jsonl": "1af74a5137e18079d45e3f644463419a7db2677304648ae633b86654155219e7",
+      "host08/games-025.jsonl": "cecb27a486b56c0cd6649735bff081cf1a0c29dc1410529dfe30e8c7f145151c",
+      "host08/games-026.jsonl": "3c13bbc38509a4b58f26f807b8e4951ea7e814189680b1ae0febfdb22ad33dc5",
+      "host08/games-027.jsonl": "c3d9751452fd24bd659eaec5a4a610d2455ac87a2bd774deff0e499e07138ca8",
+      "host08/games-028.jsonl": "c264452f6c583faa2c4e044236478eb296360c080b099a1841adb074e097f6c0",
+      "host08/games-029.jsonl": "4eec7d8e64d840baf6deca3d0bf436aa30a8a571f974ad16c696458e59edf02a",
+      "host08/games-030.jsonl": "87854e31d8a0b7eaaba2020c4941f1b475a938540a90a23134184e40864c7c88",
+      "host08/games-031.jsonl": "84f167f22c12719bd69e5423aebfe4ff6da20af16b66b7942ce890c450ec0d97"
+    },
+    "protocol": "4000 bootstrap draws, seed0, resample cases within each opponent, equal opponent weight",
+    "opponents": {
+      "K4L-R-gs": {
+        "R3a": {
+          "games": 400,
+          "mean": 0.81,
+          "ci": [
+            0.77,
+            0.8475
+          ],
+          "wins": 324,
+          "draws": 0,
+          "losses": 76,
+          "seat0": 0.805,
+          "seat1": 0.815,
+          "plays": 43.28,
+          "errors": 0,
+          "cpu": 54.78583183124754
+        },
+        "v1": {
+          "games": 400,
+          "mean": 0.9275,
+          "ci": [
+            0.9025,
+            0.9525
+          ],
+          "wins": 371,
+          "draws": 0,
+          "losses": 29,
+          "seat0": 0.915,
+          "seat1": 0.94,
+          "plays": 36.9775,
+          "errors": 0,
+          "cpu": 47.88334251552751
+        },
+        "rext-bc": {
+          "games": 400,
+          "mean": 0.895,
+          "ci": [
+            0.8625,
+            0.925
+          ],
+          "wins": 358,
+          "draws": 0,
+          "losses": 42,
+          "seat0": 0.88,
+          "seat1": 0.91,
+          "plays": 36.45,
+          "errors": 0,
+          "cpu": 36.241045990469985
+        }
+      },
+      "K4C-r16": {
+        "R3a": {
+          "games": 400,
+          "mean": 0.74,
+          "ci": [
+            0.6975,
+            0.7825
+          ],
+          "wins": 296,
+          "draws": 0,
+          "losses": 104,
+          "seat0": 0.725,
+          "seat1": 0.755,
+          "plays": 43.48,
+          "errors": 0,
+          "cpu": 51.5638665314025
+        },
+        "v1": {
+          "games": 400,
+          "mean": 0.8625,
+          "ci": [
+            0.8275,
+            0.895
+          ],
+          "wins": 345,
+          "draws": 0,
+          "losses": 55,
+          "seat0": 0.89,
+          "seat1": 0.835,
+          "plays": 38.6075,
+          "errors": 0,
+          "cpu": 49.66508053039996
+        },
+        "rext-bc": {
+          "games": 400,
+          "mean": 0.875,
+          "ci": [
+            0.8425,
+            0.9075
+          ],
+          "wins": 350,
+          "draws": 0,
+          "losses": 50,
+          "seat0": 0.9,
+          "seat1": 0.85,
+          "plays": 37.995,
+          "errors": 0,
+          "cpu": 37.1636135315325
+        }
+      }
+    },
+    "pools": {
+      "K4L-R-gs": {
+        "mean": 0.8775000000000001,
+        "ci": [
+          0.8591666666666665,
+          0.895
+        ],
+        "opponents": 3
+      },
+      "K4C-r16": {
+        "mean": 0.8258333333333333,
+        "ci": [
+          0.8041666666666667,
+          0.8475
+        ],
+        "opponents": 3
+      }
+    },
+    "paired": {
+      "R3a": {
+        "mean": 0.07,
+        "ci": [
+          0.025,
+          0.115
+        ],
+        "cases": 400
+      },
+      "v1": {
+        "mean": 0.065,
+        "ci": [
+          0.0275,
+          0.1025
+        ],
+        "cases": 400
+      },
+      "rext-bc": {
+        "mean": 0.02,
+        "ci": [
+          -0.0225,
+          0.0625
+        ],
+        "cases": 400
+      }
+    },
+    "paired_pool": {
+      "mean": 0.051666666666666666,
+      "ci": [
+        0.027499999999999997,
+        0.07583333333333334
+      ],
+      "cases_per_opponent": 400
+    }
+  },
+  "analysis_script_sha256": "ec0450c7d086a8c9e9503aec3d214b720eb7be6a241b44e2b5734822d718de2d",
+  "canonical_summarizer_crosscheck": "PASS: all six400-game point scores, two pool means/CIs and three paired opponent means/CIs agree; aggregatepairedpool from strict reducer",
+  "own_processes_and_leases": "All gone by14:13:01Z; both logs0bytes; detached launcher exit codes not separately captured",
+  "signals": [],
+  "account_actions": [],
+  "source_code_publications": [],
+  "runtime_pin_changes": [],
+  "model_promotions": [],
+  "current_best_bot": "K4L-R-gs unchanged",
+  "current_fast_student": "RLr5v10 unchanged",
+  "remaining_blockers": [
+    "Historical canonical BOT thread remains provider-handoff context-blocked; no supported compaction/context-size tool. Existing next daily schedule still bound there,17Oct13:00Z; no duplicate schedule/retry.",
+    "Fullpool/retries/root-gated next steps stay with existing babysitter/CARD owners; no separate live-piece promotion.",
+    "R8 canonical sourcee883 published and localplayer0e1cWIP preserved; actual runtime/host/pin/play authority absent and separate host profile/rollback unchanged."
+  ]
 }
