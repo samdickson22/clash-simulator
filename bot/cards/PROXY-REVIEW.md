@@ -11,3 +11,12 @@
 9. **Weakest proxies:** applied all requested combat choices: 3M→Musketeer ×3; MegaKnight/BattleHealer→Valkyrie; Fisherman→Knight; NightWitch→Knight+Bat; Demolisher→Firecracker then Wallbreaker; ElixirGolem stages→Giant/HogRider/RoyalHog (all building-targeting); ElectroDragon→BabyDragon; Mortar→Xbow; Snowball→Zap; removed all champion proxies and other listed unsafe bodies, prioritizing combat role and per-body count over proxy card cost/default deployment count.
 
 Validation on `127x05`, single pytest process: `/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -m pytest -q bot/cards/test_proxy_table.py`. Test metadata uses the read-only upstream checkout at `/mpac/sdicks02/tmp/bot-upstream/RoyaleSim`; set `ROYALESIM_ROOT` to relocate it. Production imports need no external metadata files. Changes are limited to the table, its test, and this review under `bot/cards`; no commit or push.
+
+## Round 2 (fresh Sol reviewer, REJECT → fixed by the lead)
+- BLOCKER RamRider: rider is an attached passenger → `body_map['RamRider']=None`, in UNPLACED_BODIES; new
+  `proxy_for_card()` for card lookup (`proxy_for_card('RamRider')=='HogRider'`), `proxy_body()` is body-first.
+- Tombstone / BarbarianHut / GoblinDrill: Cannon instead of GoblinHut_Rework (the hut proxy would invent SpearGoblin
+  production and death spawns); observed descendants are still mapped.
+- LavaHound → BabyDragon (no Balloon death bomb); SuspiciousBush → HogRider (no Wallbreaker explosion);
+  CLASS_ONLY building → Cannon (no BombTower death bomb). GoblinCage `why` cost fixed.
+- Regression test `test_review_r2_regressions`.

@@ -70,6 +70,7 @@ UNPLACED_BODIES = {
     'RageBarbarianBottle': 'stationary rage carrier: effect only',
     'PhoenixEgg': 'stationary ground incubation object (NO_MOVE_ALLOW_ATTRACT): omit until rebirth',
     'SpearGoblinGiant': 'attached airborne passenger: omit until detached SpearGoblin is observed',
+    'RamRider': 'attached passenger on the Ram (the Ram is the combat body); never a second unit',
 }
 
 UNSAFE_PROXY_BODIES = {
@@ -106,9 +107,9 @@ NAMED = {
     ),
     'BarbarianHut': dict(
         cost=6.0, cls='building', kind='building', air=False, bodies=1,
-        proxy_card='GoblinHut', proxy_body='GoblinHut_Rework',
-        body_map={'Barbarian': 'Barbarian', 'BarbarianHut': 'GoblinHut_Rework'},
-        why='spawner building with Barbarian descendants',
+        proxy_card='Cannon', proxy_body='Cannon',
+        body_map={'Barbarian': 'Barbarian', 'BarbarianHut': 'Cannon'},
+        why='building with Barbarian descendants; Cannon, because a GoblinHut proxy would invent SpearGoblin production/death spawns',
     ),
     'Barbarians': dict(
         cost=5.0, cls='troop', kind='troop', air=False, bodies=5,
@@ -235,7 +236,7 @@ NAMED = {
         cost=4.0, cls='building', kind='building', air=False, bodies=1,
         proxy_card='Cannon', proxy_body='Cannon',
         body_map={'GoblinBrawler': 'Knight', 'GoblinCage': 'Cannon'},
-        why='defensive building, cost 3; Brawler as Knight (melee single)',
+        why='defensive building, cost 4; Brawler as Knight (melee single)',
     ),
     'GoblinCurse': dict(
         cost=2.0, cls='spell', kind='spell', air=False, bodies=0,
@@ -251,8 +252,8 @@ NAMED = {
     ),
     'GoblinDrill': dict(
         cost=4.0, cls='building', kind='building', air=False, bodies=1,
-        proxy_card='GoblinHut', proxy_body='GoblinHut_Rework',
-        body_map={'Goblin': 'Goblin_Stab', 'GoblinDrill': 'GoblinHut_Rework', 'GoblinDrillDig': None},
+        proxy_card='Cannon', proxy_body='Cannon',
+        body_map={'Goblin': 'Goblin_Stab', 'GoblinDrill': 'Cannon', 'GoblinDrillDig': None},
         why='spawner building, cost 4',
     ),
     'GoblinGiant': dict(
@@ -305,9 +306,9 @@ NAMED = {
     ),
     'LavaHound': dict(
         cost=7.0, cls='troop', kind='troop', air=True, bodies=1,
-        proxy_card='Balloon', proxy_body='Balloon',
-        body_map={'LavaHound': 'Balloon', 'LavaPups': 'Minion'},
-        why='air building-targeting tank, cost 7 (nearest air Balloon)',
+        proxy_card='BabyDragon', proxy_body='BabyDragon',
+        body_map={'LavaHound': 'BabyDragon', 'LavaPups': 'Minion'},
+        why='air tank; BabyDragon (Balloon would add a death bomb Lava Hound lacks)',
     ),
     'LittlePrince': dict(
         cost=3.0, cls='troop', kind='troop', air=False, bodies=1,
@@ -405,7 +406,7 @@ NAMED = {
     'RamRider': dict(
         cost=5.0, cls='troop', kind='troop', air=False, bodies=1,
         proxy_card='HogRider', proxy_body='HogRider',
-        body_map={'Ram': 'HogRider', 'RamRider': 'Musketeer'},
+        body_map={'Ram': 'HogRider', 'RamRider': None},
         why='building-targeter (never a champion proxy)',
     ),
     'Ronin': dict(
@@ -464,9 +465,9 @@ NAMED = {
     ),
     'SuspiciousBush': dict(
         cost=2.0, cls='troop', kind='troop', air=False, bodies=1,
-        proxy_card='Wallbreakers', proxy_body='Wallbreaker',
-        body_map={'BushGoblin': 'Goblin_Stab', 'SuspiciousBush': 'Wallbreaker'},
-        why='building-targeting melee, cost 2',
+        proxy_card='HogRider', proxy_body='HogRider',
+        body_map={'BushGoblin': 'Goblin_Stab', 'SuspiciousBush': 'HogRider'},
+        why='zero-damage building-targeting runner; HogRider (Wallbreaker would explode)',
     ),
     'ThreeMusketeers': dict(
         cost=9.0, cls='troop', kind='troop', air=False, bodies=3,
@@ -478,9 +479,9 @@ NAMED = {
     ),
     'Tombstone': dict(
         cost=3.0, cls='building', kind='building', air=False, bodies=1,
-        proxy_card='GoblinHut', proxy_body='GoblinHut_Rework',
-        body_map={'Skeleton': 'Skeleton', 'Tombstone': 'GoblinHut_Rework'},
-        why='spawner building with Skeleton descendants; preserve role over cost',
+        proxy_card='Cannon', proxy_body='Cannon',
+        body_map={'Skeleton': 'Skeleton', 'Tombstone': 'Cannon'},
+        why='building with Skeleton descendants (mapped as observed); Cannon, because a GoblinHut proxy would invent SpearGoblin spawns',
     ),
     'Vines': dict(
         cost=3.0, cls='spell', kind='spell', air=False, bodies=0,
@@ -510,7 +511,7 @@ NAMED = {
 
 CLASS_ONLY = {
     'troop': dict(proxy_body='Knight', cost=4.0, reveals_card=False, charge_elixir=False),
-    'building': dict(proxy_body='BombTower', cost=4.0, reveals_card=False, charge_elixir=False),
+    'building': dict(proxy_body='Cannon', cost=4.0, reveals_card=False, charge_elixir=False),
     'air': dict(proxy_body='BabyDragon', cost=4.0, reveals_card=False, charge_elixir=False),
 }
 
@@ -642,8 +643,24 @@ _C56_CARD_BODIES = {
 }
 
 
+def proxy_for_card(card: str, *, air=None):
+    """Main proxy body for a CARD name (not a body name): e.g. RamRider -> HogRider."""
+    key = _CARD_INDEX.get(_norm(card))
+    if key in NAMED:
+        entry = NAMED[key]
+        if 'forms' in entry:
+            if air is None:
+                return None
+            return next(f['proxy_body'] for f in entry['forms'].values() if f['air'] == air)
+        return entry['proxy_body'] or None
+    if key is not None:
+        body = _C56_CARD_BODIES.get(key)
+        return _BODY_INDEX.get(_norm(body)) if body else None
+    return None
+
+
 def proxy_body(name: str, *, kind=None, air=None):
-    """Resolve a body/card case-insensitively, keeping aliases in separate maps.
+    """Resolve a BODY name (falling back to a card name) case-insensitively; use proxy_for_card for cards.
 
     Unknown names return None unless kind explicitly requests a class proxy.
     Known unplaced/unsafe bodies always return None, even with a class hint.

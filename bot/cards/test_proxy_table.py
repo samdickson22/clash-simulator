@@ -341,7 +341,7 @@ def test_canonical_lookup(name, expected):
 def test_explicit_fallback_and_form_selection():
     assert pt.proxy_body('SomeNewTroop', kind='troop', air=False) == 'Knight'
     assert pt.proxy_body('SomeNewFlyer', kind='troop', air=True) == 'BabyDragon'
-    assert pt.proxy_body('SomeNewBuilding', kind='building') == 'BombTower'
+    assert pt.proxy_body('SomeNewBuilding', kind='building') == 'Cannon'
     assert pt.proxy_body('SomeNewSpell', kind='spell') is None
     assert pt.proxy_body('Spirit Empress') is None  # flight required for form
     assert pt.proxy_body('Spirit Empress', air=False) == 'Musketeer'
@@ -394,4 +394,19 @@ def test_aliases_keep_known_policies_even_with_fallback_requested():
         assert pt.proxy_body(name, kind='troop') is None
     for name in ('Graveyard_rework_Skeleton', 'SkeletonKingSkeleton', 'skeleton'):
         assert pt.proxy_body(name) == 'Skeleton'
-    assert pt.proxy_body('goblin_drill', kind='building') == 'GoblinHut_Rework'
+    assert pt.proxy_body('goblin_drill', kind='building') == 'Cannon'
+
+
+def test_review_r2_regressions():
+    from bot.cards.proxy_table import NAMED, CLASS_ONLY, proxy_body, proxy_for_card, UNPLACED_BODIES
+    # Ram Rider: the rider is an attached passenger, never a second combat body.
+    assert NAMED['RamRider']['body_map']['RamRider'] is None and 'RamRider' in UNPLACED_BODIES
+    assert proxy_body('RamRider') is None and proxy_for_card('RamRider') == 'HogRider'
+    # Proxies must not invent units or payloads the true card lacks.
+    for card in ('Tombstone', 'BarbarianHut', 'GoblinDrill'):
+        assert 'GoblinHut_Rework' not in NAMED[card]['body_map'].values()
+        assert NAMED[card]['proxy_body'] != 'GoblinHut_Rework'
+    assert NAMED['LavaHound']['proxy_body'] != 'Balloon'
+    assert NAMED['SuspiciousBush']['proxy_body'] != 'Wallbreaker'
+    assert CLASS_ONLY['building']['proxy_body'] == 'Cannon'
+    assert 'cost 4' in NAMED['GoblinCage']['why']
