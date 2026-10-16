@@ -136,3 +136,11 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   Native **631ac18d27cb15d4eba7011113a9f69a4b85740ef68a27a87cabb0d68320ad86**; focused tests and
   continuation/negative receipts above. Concrete rollback: `git revert f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e`;
   no runtime or live-pin rollback required. Separate documentation receipt commit follows; same staged scan rule.
+- 09:20Z coordination rule recorded for this owner and all future delegation briefs: send routine questions,
+  missing information or constraints directly via `t3_thread_send(mode='auto')` to parent
+  `thread:delegated-task:command%3Amcp%3A7f0bf0df-35b9-48b9-bbf9-8f9cdcc3f584%3Adelegate-task%3Aclasher-card-lead-20261016-r1`
+  or the existing relevant owner, including question, paths/evidence, recommendation and whether dependent
+  work waits; continue independent work and make obvious authorized decisions. Do not use user-input tools.
+  Permission controls still apply. No existing active descendants or pending input requests to propagate/resolve.
+  No duplicate jobs/messages. Candidate `f68e5f80f` and receipt `0bd6fc5a3` pushed to `origin/cards/c1`;
+  lead directly notified with native hash, commands, test/PID receipts and rollback for fresh r2 review.
