@@ -30,6 +30,9 @@ def make_player(rt, name):
     if name.startswith('aliased:'):   # live-perception alias of the opponent's off-vocab cards (bot/fullpool/alias.py)
         from bot.fullpool.alias import AliasedPlayer
         return AliasedPlayer(rt, make_player(rt, name[8:]), name)
+    if name.startswith(('LIVE-K4CW-', 'K4CW-', 'PERC-')):   # bot/live/player.py names (e.g. LIVE-K4CW-r16, live belief)
+        from bot.live.player import make_live_player
+        return make_live_player(rt, name)
     from bot.players.policy import PolicyPlayer
     from bot.players.search import SearchPlayer
     from bot.players.variants import ScriptedPlayer, VariantPolicyPlayer
