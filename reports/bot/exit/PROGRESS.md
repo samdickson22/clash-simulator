@@ -1171,7 +1171,7 @@ B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over
 it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
 
 <!-- it10-state-begin -->
-### Iteration 10: current state (resume here; updated 2026-10-16T07:11:55Z)
+### Iteration 10: current state (resume here; updated 2026-10-16T08:14:05Z)
 
 Read this block first; the dated log below it has the evidence. Hosts: **01, 03, 04, 08** (never 02/06/07/09–18; 05 light
 only). Our work is only under `/mpac/sdicks02/jobs/clasher/bot-*` and `/mpac/sdicks02/repos/clasher-bot*`. Code is `bot/`
@@ -1195,14 +1195,14 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - **F10 BASE `1212998755579280`** (pre-registered 847340f2), cases 0–999 vs v1/R3a, reference `$J1/f10-rl5v10` (complete).
   Claim (replaces r5 v10): F10 mean Δ over v1/R3a vs r5 v10 with bootstrap CI above 0 at level 1 − 0.05/k, neither
   opponent below −0.02, RoyaleSim rsim15535 (HEADLINE 0–299 vs v1/R3a/rext-bc, paired vs `$J4/rsim-it5s2`) mean CI upper
-  > 0; play count reported only. **k = 2 used:** r5 v30 (−0.004 [−0.024, +0.016]) and the soup (−0.009 [−0.030, +0.012]), neither confirmed.
+  > 0; play count reported only. **k = 3 used:** r5 v30 (−0.004 [−0.024, +0.016]), the soup (−0.009 [−0.030, +0.012]) and r9 v4 (−0.003 [−0.026,
+  +0.021]), none confirmed. F9 understates r5 v10 (see the 08:15Z summary): do not use F9 against r5 v10 any more.
 - Reads: `.venv/bin/python -B -m bot.exit.mean_delta A_DIR:SUBSTR B_DIR:SUBSTR [--opps v1,R3a] [--alpha .025]` (`=NAME`
   exact). Local copies for reads on 05: `/mpac/sdicks02/jobs/clasher/bot-reads/`.
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now:** 01: `f10-rl9v4` (cpuq6, 56 workers, out `$J1/f10-rl9v4`, 2,000 games); 04: `rsim-rl9v4` (cpuq2, 30
-workers, out `$J4/rsim-rl9v4`, 900 games); verdict by Sol task `bot-it10-rl9v4-verdict-r2` with `--alpha 0.0167` (k = 3).
+**Running now:** nothing of ours (r9 v4 verdict 08:13Z: NOT CONFIRMED, F10 −0.003 [−0.026, +0.021]; k = 3 used).
 Done: F9 r9 v4 +0.029 [+0.002, +0.057] and r10 v3 +0.003 vs r5 v10; HEADLINE screens r9 v4 +0.053, r10 v3 +0.025. Earlier: soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
 in `$J1/ckpt-soup/`, `$J1/f10-soup-r5`, `$J1/rsim-soup-r5`, `bot-rl-soup/`). Verdict recipe for future candidates:
 `.venv/bin/python -B -m bot.exit.mean_delta <F10 dir>:<cand substr> $J1/f10-rl5v10:policy-00010 --alpha <0.05/k>`;
@@ -1500,6 +1500,26 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
     08 94 (G1 53, ours 0).
   - **Refill only after G1 finishes (~2–3 h).** Before restarting a feeder, `touch <J>/cpu-feed-k4l/checked-<S>` for every
     hand-stopped batch S listed above that has no games, else its guard exits.
+
+- **08:13Z: r9 v4 VERDICT = NOT CONFIRMED** (Sol task `bot-it10-rl9v4-verdict-r2`; 2,000 + 900 games, 0 errors). F10 vs r5
+  v10 at α 0.0167: v1 −0.004 [−0.030, +0.023], R3a −0.001 [−0.042, +0.038], **mean −0.003 [−0.026, +0.021]**; plays/game
+  vs v1 34.0 vs 34.8. RoyaleSim (04, rext-bc runs there) vs it5s2: v1 +0.023, R3a +0.117 [+0.053, +0.180], rext-bc +0.033,
+  mean +0.058 [+0.029, +0.087] (gate met, moot).
+- **Iteration 10 summary (08:15Z).**
+  - **Best student unchanged: RL r5 v10** (sha256 e188e2ae…, τ 0.5375; LIVE fast tier). Three F10 candidates, all level
+    with it: r5 v30 −0.004 [−0.024, +0.016], soup(r5 v10–v40) −0.009 [−0.030, +0.012], r9 v4 −0.003 [−0.026, +0.021].
+  - All three read ≈ +0.03 vs r5 v10 on F9 (+0.025, +0.029, +0.029) and ≈ 0 on F10. Since the reference is shared, the
+    likeliest reading is that r5 v10's own F9 games were unlucky (R3a: 0.723 on F9 vs 0.760 on F10), i.e. F9 *understates*
+    r5 v10 and overstates every comparison against it. F9 is spent as a screen against r5 v10; use F10 (or a new
+    pre-registered bank) for any future claim.
+  - RL past r5 v10 is flat at both batch sizes tried so far (160 games/update to v42; 480–800 games/update to r9 v4,
+    r10 v3), even though every snapshot beats it5s2 by +0.06–0.09 on F9 and +0.04–0.06 on RoyaleSim.
+  - Infrastructure added: F10 bank + rule (847340f2), `bot/exit/mean_delta.py`, LIVE-recipe harness copy on 04, the 03
+    tree `clasher-bot-rl03`, Sol-delegated verdict reads.
+  - **Ideas for the next round (when GPUs return):** (a) longer large-batch RL from r5 v10 (r9/r10 resume; snapshots every
+    5 updates, F10 only for clear HEADLINE+F9 leaders); (b) RL against a stronger league (K4L-R-gs/K4C opponents in the mix
+    instead of it5s2/self) since v1/R3a are near saturated for the student (0.91/0.76); (c) retrain the next student on the
+    full-pool G1 data (coordinator's plan) with r5 v10 as init, then RL on top.
 
 ## Next
 
