@@ -65,6 +65,7 @@ def run(rt, output):
     exact = ExactLevelRoot(rt, {c: 11 for c in CARDS}, lambda c: 11, 11, 11, force=True)
     scaled = LevelRoot(R, Levels(own=10, opp=10, own_tower=10, opp_tower=10))
     consumers = {'plain': R.root, 'exact11': exact.root, 'live10': scaled.root}
+    sample_reasons = Counter()
     metrics = Counter()
     names = Counter()
     kinds = Counter()
@@ -147,15 +148,34 @@ def run(rt, output):
             self.belief = DerivedPublicState({'decks': [dict(cards=CARDS, frequency=1)]}, R.costs)
             self.np_rng = np.random.default_rng(ctx.seed + ctx.seat)
             self.plays = Counter()
+            self.previous_roles = None
+            self.seen_three_shot = False
         def act(self, view):
             info = view.info
-            if view.tick % 10 == 0 and not info.packet.observation.terminal:
+            obs = info.packet.observation
+            roles = Counter()
+            for token,row in zip(obs.entity_ids[obs.entity_mask],obs.entity_features[obs.entity_mask]):
+                kind = ('Troop','Building','Projectile','AreaEffect','Entity')[int(np.argmax(row[4:9]))]
+                template = R.templates.get((int(token),kind))
+                if template is not None:
+                    roles[(template['stats']['name'],template['class'],bool(row[2]))] += 1
+            signature = tuple(roles[(name,'Troop',own)] for name in ('GoblinGiant','SpearGoblinGiant') for own in (False,True))
+            barrel = sum(v for (name,kind,_),v in roles.items() if name=='SkeletonBalloon' and kind=='TimedExplosive')
+            three_shot = any(name=='ThreeMusketeer_Rework_Character_1' and kind=='Projectile' for name,kind,_ in roles)
+            reason = ('periodic' if view.tick%50==0 else
+                      'graph_change' if self.previous_roles is None or signature!=self.previous_roles[0] else
+                      'barrel_change' if barrel!=self.previous_roles[1] else
+                      'first_three_shot' if three_shot and not self.seen_three_shot else None)
+            self.previous_roles = (signature,barrel)
+            if reason and not obs.terminal:
+                sample_reasons[reason] += 1
                 self.belief.update(info.tick, info.events)
                 opponent = self.belief.sample(self.np_rng)
                 for label, fn in consumers.items():
                     inspect_root(info, opponent, label, fn)
-                if view.tick % 50 == 0:
+                if view.tick%50==0:
                     inspect_root(reverse_rows(info), opponent, 'reversed', R.root, True)
+                self.seen_three_shot |= three_shot
             if not view.can_act or view.tick % 10:
                 return Decision(WAIT)
             mask = R.bots['balanced'].mask_builder.build(PublicActionMaskInput.from_confidence_observation(view.reserved.packet))
@@ -165,7 +185,8 @@ def run(rt, output):
                   if int(token) == giant and row[2] and row[4]]
             # Choose the intended card BEFORE affordability filtering. Saving
             # natural income for 3M must not be starved by cheaper legal cards.
-            candidates = [(self.plays[card],CARDS.index(card),slot,card)
+            priority = {c:i for i,c in enumerate(('GoblinGiant','SkeletonBalloon','RamRider','ThreeMusketeers','Clone','Rage','Fisherman','Zap'))}
+            candidates = [(self.plays[card],priority[card],slot,card)
                           for slot,card in enumerate(info.own['hand'][:4])
                           if card in CARDS and (card not in ('Clone','Rage') or gg)]
             if not candidates:
@@ -201,6 +222,15 @@ def run(rt, output):
             require(all(accepted[seat].get(card,0) > 0 for card in CARDS[:4]), ('missing real deployment', seed, seat, accepted))
         result['accepted_cards'] = accepted
         games.append(result)
+        # Retain completed-game evidence even if a later positive coverage
+        # requirement rejects the run; this is not a PASS artifact.
+        with output.with_suffix('.progress.jsonl').open('a') as f:
+            f.write(json.dumps(dict(game=len(games),seed=seed,ticks=result['ticks'],accepted=accepted,
+                metrics=dict(metrics),names=dict(names),kinds=dict(kinds),sample_reasons=dict(sample_reasons)))+'\n')
+        print(json.dumps(dict(game=len(games),ticks=result['ticks'],metrics=dict(metrics))),flush=True)
+    output.with_suffix('.diagnostics.json').write_text(json.dumps(dict(games=games,metrics=dict(metrics),names=dict(names),
+        kinds=dict(kinds),sample_reasons=dict(sample_reasons),examples=list(examples.values()),
+        multi_owner_witnesses=multi_owner_witnesses),indent=2)+'\n')
     require(metrics['plain'] > 100 and metrics['exact11'] == metrics['plain'] == metrics['live10'], metrics)
     require(metrics['attached_rows'] > 0 and metrics['continuations'] > 0, metrics)
     require(all(metrics['same_owner_complete_'+label]>0 for label in consumers), ('missing same-owner multi-parent witness',metrics))
@@ -209,4 +239,4 @@ def run(rt, output):
     require(metrics['max_3m_bodies'] >= 3, 'no complete 3M multi-body observation')
     require(('ThreeMusketeer_Rework_Character_1', 'Projectile') in examples, 'no actual 3M shot observation')
     output.write_text(json.dumps(dict(games=games, metrics=dict(metrics), names=dict(names), kinds=dict(kinds),
-        examples=list(examples.values()),multi_owner_witnesses=multi_owner_witnesses), indent=2)+'\n')
+        examples=list(examples.values()),multi_owner_witnesses=multi_owner_witnesses,sample_reasons=dict(sample_reasons)), indent=2)+'\n')
