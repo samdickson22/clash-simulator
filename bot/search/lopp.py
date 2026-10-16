@@ -40,9 +40,6 @@ Round 2 (kind R; defaults reproduce K4L-R exactly):
            Serial only (no t/c/p/w).
 - res      elixir reserve (bot/search/reserve.py): non-defensive plays leaving elixir below the deck's cheapest
            ground answer pay .015*shortfall/R after the timed-wait bonus (live-diag; kind R)
-- lc<N>    learned hold-back (bot/search/reserve.py install_leafcorr, kappa N/10; live-diag option 2)
-- rh       receding horizon: timed waits stay search candidates (scores, bonus) but the decision is a plain WAIT
-           (wait_ticks 0), so the player re-decides at the next search poll (live-diag; kind R)
 - O        learned rollouts also drive OUR side with the learned net (own seat's public view, its own CRN key
            seed + [7777]; decisions every i<I> ticks) instead of scripted balanced
 Deterministic: no wall clock; gs uniforms are keyed by (match seed, tick, rollout tick).
@@ -152,10 +149,10 @@ class Learned:
 
 
 def batch_rollouts(native, root, seat, actions, opponent, *, delay, opp_delay, horizon=160, interval=10,
-                   elixir_weight=1.0, tick0=0, deadline=None):
+                   elixir_weight=1.0, tick0=0, deadline=None, leaf=None):
     """Values of `actions` (plays, WAIT, timed waits 2400-2402). opponent: a style name or a Learned.
     deadline: time.monotonic() cutoff checked between steps; past it the batch returns None (values unchanged
-    otherwise)."""
+    otherwise). leaf: optional core.leaf_value(sim, seat, tick) added to every non-terminal (|v| < 2) leaf."""
     n = len(actions)
     sims = [root.clone() for _ in range(n)]
     opp = 1 - seat
@@ -215,7 +212,38 @@ def batch_rollouts(native, root, seat, actions, opponent, *, delay, opp_delay, h
                 if cur >= end:
                     break
         k = end
-    return [native.evaluate(s, seat, elixir_weight) for s in sims]
+    vals = [native.evaluate(s, seat, elixir_weight) for s in sims]
+    if leaf is not None:
+        vals = [v + leaf(s, seat, tick0 + horizon) if abs(v) < 2. else v for v, s in zip(vals, sims)]
+    return vals
+
+
+def leaf_native_values(core, root, seat, keys, style, leaf):
+    """rollout_e1 values plus the learned leaf term: plays and WAIT via rollout_commands with exactly rollout_e1's
+    arguments (same leaf, and its end state; bot/value/players.py), timed waits 2401/2402 via rollout_e1 plus the
+    WAIT leaf's term for the same style (the 2401/2402 end state is not exposed)."""
+    native, cfg = core.native, core.config
+    cd, od, iv, ew, h = core.command_delay, core.opponent_delay, cfg.interval, cfg.elixir_weight, cfg.horizon
+    tick = int(core.info.tick) + h
+    out, resid = {}, {}
+    for a in sorted(keys, key=lambda a: a in (2401, 2402)):
+        if a in (2401, 2402):
+            continue
+        phi, _, sim = native.rollout_commands(root, seat, a, [], style, cd, od, 1, 1, h, iv, iv, ew, True, False, False)
+        out[a] = phi if abs(phi) >= 2. else phi + leaf(sim, seat, tick)
+        if a == WAIT:
+            resid[style] = out[a] - phi
+    for a in keys:
+        if a in (2401, 2402):
+            phi = native.rollout_e1(root, seat, a, style, cd, od, h, iv, ew, 1e6)
+            w = resid.get(style)
+            if w is None:     # WAIT not in this call (or scored earlier): recompute its leaf term
+                p0, _, sim = native.rollout_commands(root, seat, WAIT, [], style, cd, od, 1, 1, h, iv, iv, ew, True, False,
+                                                     False)
+                w = 0. if abs(p0) >= 2. else leaf(sim, seat, tick)
+                resid[style] = w
+            out[a] = phi if abs(phi) >= 2. else phi + w
+    return [out[a] for a in keys]
 
 
 def mean_samples(vals):
@@ -242,13 +270,16 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
               interval=cfg.interval, elixir_weight=cfg.elixir_weight, tick0=int(core.info.tick))
     kind = arm['kind']
     nat, n_native, n_learned = {}, [0], [0]
+    leaf = getattr(core, 'leaf_value', None)      # learned leaf term (bot/fullpool/leaf_value.py; token vl<P>)
 
     def native_values(keys, style):
         keys = [a for a in keys if (a, style) not in nat]
         if not keys:
             return
         if kind == 'X':
-            vals = batch_rollouts(core.native, root, seat, keys, style, **kw)
+            vals = batch_rollouts(core.native, root, seat, keys, style, leaf=leaf, **kw)
+        elif leaf is not None:
+            vals = leaf_native_values(core, root, seat, keys, style, leaf)
         else:
             vals = [core.native.rollout_e1(root, seat, a, style, core.command_delay, core.opponent_delay,
                                            cfg.horizon, cfg.interval, cfg.elixir_weight, 1e6) for a in keys]
@@ -259,7 +290,7 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
         keys = list(dict.fromkeys(keys))
         n = arm.get('samples', 1)
         runs = [batch_rollouts(core.native, root if j == 0 or root_for is None else root_for(j), seat, keys,
-                               make_opp(j), **kw) for j in range(n)]
+                               make_opp(j), leaf=leaf, **kw) for j in range(n)]
         n_learned[0] += n * len(keys)
         return {a: mean_samples([r[i] for r in runs]) for i, a in enumerate(keys)}
 
@@ -310,9 +341,9 @@ def sample_seed(seed, j):
 
 class LearnedOppPlayer(CandidateSearchPlayer):
     def __init__(self, rt, *, arm, model='pool', sample=False, switch=None, interval=5, rowwise=False, bias=0.,
-                 name=None):
+                 leaf=None, name=None):
         super().__init__(rt, r3a=16, second=0, name=name)
-        self.arm, self.model_name = arm, model
+        self.arm, self.model_name, self.leaf = arm, model, leaf
         self.sample, self.switch, self.interval, self.rowwise, self.bias = sample, switch, interval, rowwise, bias
 
     def start(self, ctx):
@@ -322,9 +353,9 @@ class LearnedOppPlayer(CandidateSearchPlayer):
         if self.arm.get('reserve'):
             from bot.search.reserve import install
             install(self.rt, core, ctx.own_order)
-        if self.arm.get('leafcorr') is not None:
-            from bot.search.reserve import install_leafcorr
-            install_leafcorr(self.rt, core, ctx.own_order, self.arm['leafcorr'])
+        if self.leaf is not None:              # token vl<P>: $BOT_LEAF_VALUE model (bot/fullpool/leaf_value.py)
+            from bot.fullpool.leaf_value import install as install_leaf
+            install_leaf(core, os.environ['BOT_LEAF_VALUE'], self.leaf)
         models = [load_model(m) for m in self.model_name.split('+')] if self.arm['kind'] != 'X' else [None]
         self._dec, self.opp_calls, self.opp_plays = {}, 0, 0
         seed = ctx.seed
@@ -354,7 +385,7 @@ class LearnedOppPlayer(CandidateSearchPlayer):
                 fail_decision(core, candidates, 'serial')
                 action, info = None, dict(rollouts=0, native=0, learned=0, native_failure='serial')
             action = fallback if action is None else action
-            core.selected_wait_ticks = 0 if self.arm.get('rh') else TIMED_WAITS.get(action, 0)
+            core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
             core.deadline_stats['rollouts'] = info['rollouts']
             self._dec = info
@@ -384,12 +415,10 @@ def make_lopp_player(rt, name):
             extra['lw'] = int(m[1]) / 100
         elif m := re.fullmatch(r'K(\d+)', token):
             extra['samples'] = int(m[1])
+        elif m := re.fullmatch(r'vl(\d+)', token):        # learned leaf term, kappa = P/100 (serial only)
+            kw['leaf'] = int(m[1]) / 100
         elif token == 'res':                                # bot/search/reserve.py
             extra['reserve'] = True
-        elif token == 'rh':                                 # receding horizon: emit timed waits as plain WAIT
-            extra['rh'] = True
-        elif m := re.fullmatch(r'lc(\d+)', token):        # learned hold-back, kappa = N/10 (bot/search/reserve.py)
-            extra['leafcorr'] = int(m[1]) / 10
         elif token == 'O':
             extra['own'] = True
         elif token == 'D':
@@ -421,6 +450,8 @@ def make_lopp_player(rt, name):
     arm.update(extra)
     if fast and arm.get('determinize'):
         raise ValueError(f'{name}: D is serial only')
+    if fast and 'leaf' in kw:
+        raise ValueError(f'{name}: vl<P> is serial only (bot/search/lopp.py)')
     if fast:
         from bot.search.lopp_fast import make_fast_player
         return make_fast_player(rt, name, arm, dict(kw, **fast))

@@ -114,8 +114,11 @@ class VGroup:
         return int(self.ends[-1]) if len(self.ends) else 0
 
     def batch(self, flat):
+        """Rows come back in ascending flat order: combined_batch groups rows by store, and the store index is
+        monotone in the flat index, so sorting first keeps inputs and targets aligned."""
         import torch
         from exit_r3.teacher_batch import combined_batch
+        flat = np.sort(np.asarray(flat, np.int64))
         which = np.searchsorted(self.ends, flat, side='right')
         starts = np.r_[0, self.ends[:-1]]
         local = np.array([self.positions[w][f - starts[w]] for w, f in zip(which, flat)], np.int64)
@@ -183,7 +186,7 @@ def stats(p, t):
 def evaluate(net, held, kinds, device, microbatch, rows, elixir_rows):
     """Held-out metrics overall / per pack kind / by time bucket + the elixir sensitivity checks."""
     n = len(held)
-    idx = np.arange(n) if n <= rows else np.random.default_rng(0).choice(n, rows, replace=False)
+    idx = np.arange(n) if n <= rows else np.sort(np.random.default_rng(0).choice(n, rows, replace=False))
     p, t = predict(net, held, idx, device, microbatch)
     which = np.searchsorted(held.ends, idx, side='right')
     res = dict(rows=int(len(idx)), all=stats(p, t))
@@ -198,8 +201,8 @@ def evaluate(net, held, kinds, device, microbatch, rows, elixir_rows):
         m = (prog >= lo) & (prog < hi)
         if m.sum() > 100:
             res[f'time_{name}'] = {h: v['corr'] for h, v in stats(p[m], t[m]).items()}
-    sub = idx[:elixir_rows]
-    base = p[:len(sub)]
+    sub = np.sort(np.random.default_rng(1).choice(idx, min(elixir_rows, len(idx)), replace=False))
+    base = p[np.searchsorted(idx, sub)]
     sens = {}
     for name, key, delta, col, hi in (('own_elixir_plus1', 'global_features', .1, 5, 1.),
                                       ('opp_elixir_plus1', 'opp_elixir', 1., None, 10.)):

@@ -66,9 +66,14 @@ def worker(wid, games, a):
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
-    from bot.players.ours import play_match, x4s_setup
+    from bot.players.ours import play_match
     from bot.eval.headline import make_player
+    from bot.fullpool.banks import case as make_case, check_scope, select
+    from bot.fullpool.models import install_from_env
     rt = Runtime()
+    install_from_env(rt)          # BOT_FULLPOOL_POLICIES; unset = no-op
+    select(rt, a.decks)           # x4s = no-op (C56 HEADLINE-v1 setup)
+    check_scope(rt, a.decks, len(games), min(games, default=0), a.base)
     out = Path(a.out)
     (out / 'roots').mkdir(parents=True, exist_ok=True)
     pool = a.pool.split(',')
@@ -76,7 +81,7 @@ def worker(wid, games, a):
     for g in games:
         if (out / 'STOP').exists():
             break
-        case = x4s_setup(rt, g, a.base)
+        case = make_case(rt, g, a.base, a.decks)   # decks='x4s' -> x4s_setup (unchanged)
         seat, opp = case['seat'], pool[g % len(pool)]
         t0 = time.time()
         try:
@@ -109,6 +114,7 @@ def main():
     ap.add_argument('--start', type=int, default=0)
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--base', type=int, required=True)
+    ap.add_argument('--decks', default='x4s', help="deck spec of bot/fullpool/banks.py, e.g. 'fullpool:<seed>:freq=<sha12>'")
     a = ap.parse_args()
     check_bank(a.base, a.start, a.games)
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
