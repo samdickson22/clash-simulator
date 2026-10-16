@@ -1171,7 +1171,7 @@ B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over
 it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
 
 <!-- it10-state-begin -->
-### Iteration 10: current state (resume here; updated 2026-10-16T03:15:06Z)
+### Iteration 10: current state (resume here; updated 2026-10-16T06:45:51Z)
 
 Read this block first; the dated log below it has the evidence. Hosts: **01, 03, 04, 08** (never 02/06/07/09–18; 05 light
 only). Our work is only under `/mpac/sdicks02/jobs/clasher/bot-*` and `/mpac/sdicks02/repos/clasher-bot*`. Code is `bot/`
@@ -1201,16 +1201,12 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now:** 03: `f9-rl10v3` (detached PGID 3199222, 64 workers, `clasher-bot-rl03` tree, out
-`/mpac/sdicks02/jobs/clasher/bot-rl03/f9-rl10v3`, 1,200 games; Sol task `bot-it10-f9-rl10v3-r1`). 01: `f9-rl9v4` (01 cpuq6, 64 workers, out `$J1/f9-rl9v4`, 1,200 games; Sol task
-`bot-it10-f9-rl9v4-r1` reads it). Done: HEADLINE screens of the paused large-batch arms' latest policies, `hl-rl9v4` (01 cpuq6,
-36 workers, `$J1/ckpt-rl9/policy-00004.pt` sha 3c66ce5c…) and `hl-rl10v3` (01 cpuq7, 36 workers, `$J1/ckpt-rl10/policy-00003.pt`
-sha 4f88267b…), 900 games each, out `$J1/hl-rl9v4`, `$J1/hl-rl10v3`; read by Sol task `bot-it10-hl-r9r10-r1` (report vs
-`$J8/ce-it5s2`). Otherwise nothing (soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
+**Running now:** 04: `f10-rl9v4` (cpuq, 64 workers, out `$J4/f10-rl9v4`, 2,000 games) and `rsim-rl9v4` (cpuq2, 30
+workers, out `$J4/rsim-rl9v4`, 900 games), verdict by Sol task `bot-it10-rl9v4-verdict-r1` with `--alpha 0.0167` (k = 3).
+Done: F9 r9 v4 +0.029 [+0.002, +0.057] and r10 v3 +0.003 vs r5 v10; HEADLINE screens r9 v4 +0.053, r10 v3 +0.025. Earlier: soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
 in `$J1/ckpt-soup/`, `$J1/f10-soup-r5`, `$J1/rsim-soup-r5`, `bot-rl-soup/`). Verdict recipe for future candidates:
 `.venv/bin/python -B -m bot.exit.mean_delta <F10 dir>:<cand substr> $J1/f10-rl5v10:policy-00010 --alpha <0.05/k>`;
-RoyaleSim gates must run on 04/08 (rext-bc errors on 01). k = 2 used so far (r5 v30, soup); the next F10 candidate makes
-k = 3.
+RoyaleSim gates must run on 04/08 (rext-bc errors on 01). k = 3 now (r5 v30, soup, r9 v4).
 - CPU queue runners still alive (idle unless lines are appended): 01 cpuq6/cpuq7/cpuqka; 04 cpuq 3045524, cpuq2 3192422,
   cpuq6 363971, cpuq7 1222266, cpuqka 3964180; 08 cpuq 2525950, cpuq2 2581995, cpuq6 4115451, cpuq7 792386, cpuqka
   3544192. Keep any new 03/04/08 CPU job ≤ 30 workers in total per host.
@@ -1482,6 +1478,17 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
 
 - **03:40Z, 03 back (LIVE job gone):** `f9-rl10v3` on 03 (r10 v3 passed the screen at +0.025; detached PGID 3199222, 64
   workers) and the 03 feeder back to target 80 (PGID 3200991, cap 95). 03 at 96 live python right after launch.
+
+- **04:12Z F9 reads (Sol tasks `bot-it10-f9-rl9v4-r1`, `bot-it10-f9-rl10v3-r1`; 1,200 games each, 0 errors):**
+  - **r9 v4** vs r5 v10: v1 +0.013 [−0.017, +0.043], R3a +0.044 [+0.003, +0.087], **mean +0.029 [+0.002, +0.057]**; vs it5s2
+    mean +0.088 [+0.060, +0.115]; plays/game vs v1 34.7.
+  - **r10 v3** vs r5 v10: v1 +0.022, R3a −0.015, **mean +0.003 [−0.022, +0.028]**; vs it5s2 +0.062 [+0.037, +0.087].
+  - Decision: only r9 v4 gets F10 (r10 v3 ≈ 0 on F9; adding it would raise k for no expected gain), so **k = 3**,
+    α = 0.0167. Caveat: r5 v30 (+0.025) and the soup (+0.029) read the same on F9 and were level on F10.
+- **06:45Z** (after a usage-limit pause 04:12–06:45Z): `f10-rl9v4` (04 cpuq, 64 workers, out `$J4/f10-rl9v4`, 2,000 games)
+  and `rsim-rl9v4` (04 cpuq2, 30 workers, out `$J4/rsim-rl9v4`, 900 games) queued; snapshot `$J4/ckpt-rl9/policy-00004.pt`
+  sha256 3c66ce5c…. Verdict by Sol task `bot-it10-rl9v4-verdict-r1`. 01 feeder restarted (target 50, cap 89; PGID
+  2432032, `cpu-feed-k4l.log11`; `checked-8004700` touched).
 
 ## Next
 
