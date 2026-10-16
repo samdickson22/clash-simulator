@@ -1,0 +1,260 @@
+{
+  "fixtures": {
+    "linux_records": 577,
+    "mac_records": 577,
+    "byte_identical_records": 577,
+    "missing": [],
+    "extra": [],
+    "differences": []
+  },
+  "roots": {
+    "linux_records": 600,
+    "mac_records": 600,
+    "byte_identical_records": 598,
+    "missing": [],
+    "extra": [],
+    "differences": [
+      {
+        "key": [
+          980,
+          "full"
+        ],
+        "fields": [
+          {
+            "path": "/rollout_e1/0",
+            "linux": "-0x1.0d90bf5d0433bp-4",
+            "mac": "-0x1.0d90bf5d0433ap-4",
+            "linux_decimal": -0.06581187011057647,
+            "mac_decimal": -0.06581187011057646,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/1",
+            "linux": "-0x1.0d90bf5d0433bp-4",
+            "mac": "-0x1.0d90bf5d0433ap-4",
+            "linux_decimal": -0.06581187011057647,
+            "mac_decimal": -0.06581187011057646,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/2",
+            "linux": "-0x1.0d90bf5d0433bp-4",
+            "mac": "-0x1.0d90bf5d0433ap-4",
+            "linux_decimal": -0.06581187011057647,
+            "mac_decimal": -0.06581187011057646,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/9",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/10",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/11",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/12",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/13",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/14",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          }
+        ]
+      },
+      {
+        "key": [
+          980,
+          "cut"
+        ],
+        "fields": [
+          {
+            "path": "/rollout_e1/0",
+            "linux": "-0x1.0d90bf5d0433bp-4",
+            "mac": "-0x1.0d90bf5d0433ap-4",
+            "linux_decimal": -0.06581187011057647,
+            "mac_decimal": -0.06581187011057646,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/1",
+            "linux": "-0x1.0d90bf5d0433bp-4",
+            "mac": "-0x1.0d90bf5d0433ap-4",
+            "linux_decimal": -0.06581187011057647,
+            "mac_decimal": -0.06581187011057646,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/2",
+            "linux": "-0x1.0d90bf5d0433bp-4",
+            "mac": "-0x1.0d90bf5d0433ap-4",
+            "linux_decimal": -0.06581187011057647,
+            "mac_decimal": -0.06581187011057646,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/9",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/10",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/11",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/12",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/13",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          },
+          {
+            "path": "/rollout_e1/14",
+            "linux": "-0x1.6c17b8eb784c2p-4",
+            "mac": "-0x1.6c17b8eb784c1p-4",
+            "linux_decimal": -0.08888981088923045,
+            "mac_decimal": -0.08888981088923044,
+            "delta": 1.3877787807814457e-17
+          }
+        ]
+      }
+    ]
+  },
+  "linux_root_headers": [
+    {
+      "native": "/mpac/sdicks02/jobs/clasher/cards/batchA/out/clasher_core.abi3.so",
+      "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+      "roots_total": 1043,
+      "sampled": 300,
+      "args": {
+        "command_delay": 27,
+        "opponent_delay": 27,
+        "horizon": 160,
+        "interval": 10,
+        "elixir_weight": 1.0
+      }
+    },
+    {
+      "native": "/mpac/sdicks02/jobs/clasher/cards/batchA/out/clasher_core.abi3.so",
+      "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+      "roots_total": 1043,
+      "sampled": 300,
+      "args": {
+        "command_delay": 27,
+        "opponent_delay": 27,
+        "horizon": 160,
+        "interval": 10,
+        "elixir_weight": 1.0
+      }
+    },
+    {
+      "native": "/mpac/sdicks02/jobs/clasher/cards/batchA/out/clasher_core.abi3.so",
+      "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+      "roots_total": 1043,
+      "sampled": 300,
+      "args": {
+        "command_delay": 27,
+        "opponent_delay": 27,
+        "horizon": 160,
+        "interval": 10,
+        "elixir_weight": 1.0
+      }
+    },
+    {
+      "native": "/mpac/sdicks02/jobs/clasher/cards/batchA/out/clasher_core.abi3.so",
+      "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+      "roots_total": 1043,
+      "sampled": 300,
+      "args": {
+        "command_delay": 27,
+        "opponent_delay": 27,
+        "horizon": 160,
+        "interval": 10,
+        "elixir_weight": 1.0
+      }
+    }
+  ],
+  "mac_root_headers": [
+    {
+      "native": "/Users/sam/clasher-live/fullpool/live16402b-r3/native/clasher_core.abi3.so",
+      "native_sha256": "8072e5779f6940ead50955fb8335224ce5162823918e2e743523491a48e97988",
+      "roots_total": 1043,
+      "sampled": 300,
+      "args": {
+        "command_delay": 27,
+        "opponent_delay": 27,
+        "horizon": 160,
+        "interval": 10,
+        "elixir_weight": 1.0
+      }
+    }
+  ],
+  "header_semantics_equal": true,
+  "verdict": "FAIL",
+  "file_sha256": {
+    "linux-reference/compare.json": "5371b33164a52d7ee9fe242e155ac873cc11a2e7e1fa40e4de52032c9aba8744",
+    "linux-reference/fixtures-total.jsonl": "f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670",
+    "linux-reference/roots-total-0.jsonl": "751a1e25c483b8a3b7f247f69b6dcbee2a7ff381f6faac44374b998e6f46f92e",
+    "linux-reference/roots-total-1.jsonl": "295702c3aa4625b57709b7395facfba48abaf5af7e274c539a07b15e13795a90",
+    "linux-reference/roots-total-2.jsonl": "b9c339ae550c0b4becb759b65a0eccc93fb76c48034678cd0ec68835cb65fa51",
+    "linux-reference/roots-total-3.jsonl": "fb5a3eccddf52554b4db510b96cd1f20d73089753f442fff0c396e97077a4371",
+    "outputs/fixtures-mac.jsonl": "f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670",
+    "outputs/roots-mac.jsonl": "1f2229081792a0a6981e05f6ceb297cb992148d86b1019d740b32db6917a2bb4"
+  }
+}

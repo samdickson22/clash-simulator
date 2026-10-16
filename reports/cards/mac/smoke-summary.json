@@ -1,0 +1,18 @@
+{
+  "games": 3,
+  "passed": 3,
+  "crashes": 0,
+  "panics": 0,
+  "errors": 0,
+  "terminal": 3,
+  "identity": {
+    "native_sha256": "8072e5779f6940ead50955fb8335224ce5162823918e2e743523491a48e97988",
+    "pins": "live16402b-r3-mac",
+    "root": "/Users/sam/clasher-live/fullpool/live16402b-r3",
+    "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+    "card_scope": "full",
+    "definitions": 238,
+    "recipe": "LIVE-K4L-R-gs-rw-fc-mpoolfp-w200-t1-p1",
+    "torch": "2.10.0"
+  }
+}

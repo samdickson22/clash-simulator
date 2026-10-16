@@ -1,0 +1,11 @@
+{
+  "total": 819978240,
+  "runtime": 120602624,
+  "venv": 573399040,
+  "models": 94875648,
+  "code": 5394432,
+  "source": 14438400,
+  "free_bytes": 10208317440,
+  "measured_unix": 1792182221.4429162,
+  "measurement": "After all owned process groups exited"
+}
