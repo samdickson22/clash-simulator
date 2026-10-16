@@ -85,7 +85,15 @@ def make_player(rt, name):
     return headline_player(rt, name)
 
 
-def worker(wid, cores, jobs, out, base, fast_prep=False):
+def _fp_case(rt, i, base, decks):
+    from bot.fullpool.banks import case, select
+    if not getattr(rt, '_fp_selected', False):
+        select(rt, decks)
+        rt._fp_selected = True
+    return case(rt, i, base, decks)
+
+
+def worker(wid, cores, jobs, out, base, fast_prep=False, decks='x4s'):
     os.sched_setaffinity(0, cores)
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
@@ -93,13 +101,15 @@ def worker(wid, cores, jobs, out, base, fast_prep=False):
     from bot.players.ours import play_match, x4s_setup
     from bot.players.runtime import Runtime
     rt = Runtime()
+    from bot.fullpool.models import install_from_env
+    install_from_env(rt)   # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
     if fast_prep:      # every arm in this run gets lopp_fast's output-identical preparation caches
         from bot.search.lopp_fast import install_fast_prep
         install_fast_prep(rt, cut=fast_prep == 'cut')
     sib = {c + 64 for c in cores}
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     for cand, opp, i in jobs:
-        case = x4s_setup(rt, i, base)
+        case = x4s_setup(rt, i, base) if decks == 'x4s' else _fp_case(rt, i, base, decks)
         seat = case['seat']
         log = []
         s0 = cpu_ticks(sib)
@@ -188,10 +198,15 @@ def main():
     ap.add_argument('--cores')
     ap.add_argument('--group', type=int, default=1)
     ap.add_argument('--base', type=int, default=HEADLINE_BASE)
+    ap.add_argument('--decks', default='x4s', help="'x4s' (default) or a bot/fullpool/banks.py deck spec, e.g. e16bl")
+    ap.add_argument('--bank', default=None, help='named bank of bot/fullpool/banks.py: sets --base and --decks')
     ap.add_argument('--summary', nargs='+')
     ap.add_argument('--fast-prep', nargs='?', const='fp', default=None, choices=['fp', 'cut'],
                     help='install lopp_fast.install_fast_prep for every arm (cut: also deck-card configs)')
     a = ap.parse_args()
+    if a.bank:
+        from bot.fullpool.banks import BANKS
+        a.base, a.decks = BANKS[a.bank]['base'], BANKS[a.bank]['decks']
     if a.summary:
         return summary(a.summary)
     cores = parse_cores(a.cores)
@@ -203,7 +218,7 @@ def main():
     shares = [jobs[w::len(groups)] for w in range(len(groups))]
     (a.out / f'launch-{int(time.time())}.json').write_text(json.dumps(dict(
         args={k: str(v) for k, v in vars(a).items()}, groups=groups, jobs=len(jobs), started=time.time())))
-    procs = [Process(target=worker, args=(w, g, s, a.out, a.base, a.fast_prep))
+    procs = [Process(target=worker, args=(w, g, s, a.out, a.base, a.fast_prep, a.decks))
              for w, (g, s) in enumerate(zip(groups, shares)) if s]
     for p in procs:
         p.start()
