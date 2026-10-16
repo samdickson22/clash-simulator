@@ -399,3 +399,7 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
     hash differs from the no-token run.
   - So the bundle can ship `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res` if the ladder A/B keeps -res.
 - lopp_time gained --decks/--bank (4f426736) for the post-gate timing on 04 (e16 vs Battle Log cases).
+- 20:13–20:22Z **live16402c** (CARD LEAD: r3 + B1/B2, native 326ce6f9…, gamedata a7de3e93…, 08 RECEIPT.json
+  2e0891da…; pins on main 2ce6abd7b). Preflight on 08, tree J/repo-bca383f068e7 (main bca383f0, with the fixed
+  cpu_job.sh 5179f0f42): PASS at 20:21:28Z, meta tokens identical, 0 errors. K1 shard 14 launched on live16402c on 08
+  (W35, 800 cases, PGID 232762), tagged pin live16402c. The bundle stays on live16402b-r3, and no new G1.
