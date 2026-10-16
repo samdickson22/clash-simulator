@@ -17,7 +17,8 @@ body{margin:0;background:#111;color:#ddd;font:14px -apple-system,sans-serif;disp
 border:0;border-radius:6px;cursor:pointer} #pause{background:#c0392b;color:#fff} #play{background:#27ae60;color:#fff}
 #deck{width:100%;height:150px;font:13px monospace;background:#222;color:#ddd;border:1px solid #444} .st{margin:10px 0;
 padding:8px;background:#222;border-radius:6px;white-space:pre-wrap} .on{color:#f39c12;font-weight:bold}</style></head>
-<body><img src="/stream" style="height:100vh"><div id="side"><h3>clasher live</h3>
+<body><img id="video" src="/stream" style="height:100vh"><div id="side"><h3>clasher live</h3>
+<label><input type="checkbox" onchange="document.getElementById('video').src=this.checked?'/stream?low=1':'/stream'"> Mobile low bandwidth (3 FPS)</label>
 <button id="pause" onclick="post('/pause')">Pause bot</button><button id="play" onclick="post('/resume')">Resume bot</button>
 <div class="st" id="st">...</div>
 <div><label><input type="checkbox" id="vc" onchange="post('/view/candidates')"> model candidates + heatmap</label><br>
@@ -51,6 +52,43 @@ document.getElementById('deck').value=s.read.cards.map(c=>c||'???').join('\n');
 document.getElementById('msg').textContent=s.read.msg;}}catch(e){}}
 setInterval(poll,1000);poll();
 </script></body></html>"""
+
+
+STREAM_TIMEOUT = 3
+LOW_FPS = 3
+
+
+def complete_jpeg(jpg):
+    """Reject missing/truncated transport bodies before publishing a viewer frame."""
+    import numpy as np
+    try:
+        return (jpg.startswith(b'\xff\xd8') and jpg.endswith(b'\xff\xd9')
+                and cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR) is not None)
+    except cv2.error:
+        return False
+
+
+def viewer_jpeg(jpg, low=False):
+    """Mobile output only: full aspect ratio, at most 360 px wide, JPEG quality 50."""
+    if not low:
+        return jpg
+    import numpy as np
+    img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError('invalid viewer JPEG')
+    h, w = img.shape[:2]
+    if w > 360:
+        img = cv2.resize(img, (360, max(1, round(h*360/w))), interpolation=cv2.INTER_AREA)
+    ok, buf = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 50])
+    if not ok:
+        raise ValueError('viewer JPEG encode failed')
+    return buf.tobytes()
+
+
+def write_part(handler, jpg):
+    handler.wfile.write(b'--f\r\nContent-Type: image/jpeg\r\nContent-Length: %d\r\n\r\n' % len(jpg))
+    handler.wfile.write(jpg + b'\r\n')
+    handler.wfile.flush()
 
 
 # display-only: the body a source card puts on the field (perception labels every body with its source card)
@@ -145,27 +183,40 @@ class Overlay:
                                   deck=ov.deck, deck_pending=ov.deck_pending,
                                   read=ov.read_result, view=dict(ov.view))
                     return self.reply(200, json.dumps(st), 'application/json')
-                if self.path != '/stream':
+                if self.path not in ('/stream', '/stream?low=1'):
                     self.send_response(200); self.send_header('Content-Type', 'text/html'); self.end_headers()
                     self.wfile.write(PAGE); return
                 self.send_response(200)
-                self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=f'); self.end_headers()
+                self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=f')
+                self.send_header('Cache-Control', 'no-store'); self.end_headers()
+                self.connection.settimeout(STREAM_TIMEOUT)
+                low = self.path.endswith('?low=1')
+                sent = 0.
                 last = None
                 try:
-                    while True:
+                    while not ov.closed:
+                        if low:
+                            time.sleep(max(0, 1/LOW_FPS - (time.monotonic() - sent)))
                         with ov.cv:
-                            ov.cv.wait_for(lambda: ov.jpg is not last, timeout=5)
-                            last = ov.jpg
-                        if last is None:
+                            ov.cv.wait_for(lambda: ov.closed or ov.jpg is not last, timeout=1)
+                            if ov.closed:
+                                return
+                            jpg = ov.jpg
+                        if jpg is None:
                             continue
-                        self.wfile.write(b'--f\r\nContent-Type: image/jpeg\r\nContent-Length: %d\r\n\r\n' % len(last))
-                        self.wfile.write(last + b'\r\n')
-                except (BrokenPipeError, ConnectionResetError):
+                        if jpg is last and time.monotonic() - sent < 1:
+                            continue
+                        last = jpg
+                        write_part(self, viewer_jpeg(jpg, low))
+                        sent = time.monotonic()
+                except (OSError, ValueError):
                     return
 
+        self.closed = False
         self.srv = ThreadingHTTPServer((host, port), H)
         self.srv.daemon_threads = True
-        threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+        self.thread = threading.Thread(target=self.srv.serve_forever, daemon=True)
+        self.thread.start()
 
     def take_deck(self):
         with self.lock:
@@ -244,4 +295,9 @@ class Overlay:
                 self.jpg = buf.tobytes(); self.cv.notify_all()
 
     def close(self):
+        with self.cv:
+            self.closed = True
+            self.cv.notify_all()
         self.srv.shutdown()
+        self.srv.server_close()
+        self.thread.join(timeout=STREAM_TIMEOUT + 1)

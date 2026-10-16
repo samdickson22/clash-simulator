@@ -16,6 +16,7 @@ Env (tests): LL_LOOP_DIR (default ~/clasher-live/loop), LL_PAUSE_FILE, LL_DECK_F
 import argparse
 import fcntl
 import json
+import http.client
 import os
 import socket
 import sys
@@ -25,6 +26,7 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from contextlib import contextmanager
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -101,6 +103,12 @@ def idle_state():
 
 class Proxy:
     def __init__(self, port):
+        self.cv = threading.Condition()
+        self.jpg = None
+        self.serial = 0
+        self.clients = 0
+        self.reader = None
+        self.closed = False
         self.base = f'http://127.0.0.1:{port}'
 
     def alive(self):
@@ -114,6 +122,97 @@ class Proxy:
         req = urllib.request.Request(self.base + path, data=body, method='POST')
         with urllib.request.urlopen(req, timeout=5) as r:
             return r.status, r.read()
+
+
+    @contextmanager
+    def frames(self):
+        # One upstream reader and one complete frame, independent of downstream speed.
+        with self.cv:
+            self.clients += 1
+            if self.reader is None:
+                self.reader = threading.Thread(target=self._read, name='viewer-upstream', daemon=True)
+                self.reader.start()
+        try:
+            yield self
+        finally:
+            with self.cv:
+                self.clients -= 1
+                self.cv.notify_all()
+
+    def _read(self):
+        from overlay import complete_jpeg
+        try:
+            while True:
+                with self.cv:
+                    if self.closed or not self.clients:
+                        return
+                try:
+                    with urllib.request.urlopen(self.base + '/stream', timeout=3) as up:
+                        if up.headers.get_content_type() != 'multipart/x-mixed-replace' or up.headers.get_param('boundary') != 'f':
+                            raise ValueError('unexpected upstream stream')
+                        while True:
+                            with self.cv:
+                                if self.closed or not self.clients:
+                                    return
+                            jpg = read_part(up)
+                            if not complete_jpeg(jpg):
+                                raise ValueError('incomplete upstream JPEG')
+                            with self.cv:
+                                self.jpg = jpg
+                                self.serial += 1
+                                self.cv.notify_all()
+                except (OSError, ValueError, EOFError, http.client.HTTPException):
+                    # Keep the last complete frame when a driver/connection fails.
+                    with self.cv:
+                        if self.jpg is None:
+                            st = idle_state()
+                            self.jpg = idle_jpeg(['BETWEEN SESSIONS', st['reason'][:40],
+                                                 'last: ' + (st['last_session'] or '-')[:40],
+                                                 'ended: ' + (st['last_end'] or '-'),
+                                                 'PAUSED (file)' if st['paused'] else ''])
+                            self.serial += 1
+                            self.cv.notify_all()
+                        self.cv.wait(timeout=.5)
+        finally:
+            with self.cv:
+                self.reader = None
+                # A reconnect may arrive after the old reader decided to exit.
+                if self.clients and not self.closed:
+                    self.reader = threading.Thread(target=self._read, name='viewer-upstream', daemon=True)
+                    self.reader.start()
+                self.cv.notify_all()
+
+    def close(self):
+        with self.cv:
+            self.closed = True
+            reader = self.reader
+            self.cv.notify_all()
+        if reader:
+            reader.join(timeout=4)
+
+
+def read_part(up):
+    """Read a bounded complete multipart part; never relay transport fragments."""
+    if up.readline(128).strip() != b'--f':
+        raise EOFError('missing upstream boundary')
+    headers = {}
+    for _ in range(16):
+        line = up.readline(1024)
+        if line == b'\r\n':
+            break
+        key, sep, value = line.partition(b':')
+        if not sep:
+            raise ValueError('invalid multipart header')
+        headers[key.strip().lower()] = value.strip()
+    else:
+        raise ValueError('too many multipart headers')
+    n = int(headers.get(b'content-length', b'0'))
+    if headers.get(b'content-type') != b'image/jpeg' or not 0 < n <= 8*1024*1024:
+        raise ValueError('invalid JPEG part length/type')
+    jpg = up.read(n)
+    if len(jpg) != n or up.read(2) != b'\r\n':
+        raise EOFError('truncated upstream JPEG part')
+    return jpg
 
 
 def make_handler(proxy):
@@ -133,38 +232,37 @@ def make_handler(proxy):
                 st = proxy.alive()
                 return self.reply(200, json.dumps(dict(st, driver=True) if st is not None else idle_state()),
                                   'application/json')
-            if self.path == '/stream':
+            if self.path in ('/stream', '/stream?low=1'):
                 return self.stream()
             return self.reply(200, page(), 'text/html')
 
         def stream(self):
-            """Relay the driver's MJPEG while it is up; otherwise a placeholder frame every second, retrying."""
+            """Publish only complete latest frames; slow clients cannot stall the upstream reader."""
+            from overlay import STREAM_TIMEOUT, LOW_FPS, viewer_jpeg, write_part
             self.send_response(200)
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=f'); self.end_headers()
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=f')
+            self.send_header('Cache-Control', 'no-store'); self.end_headers()
+            self.connection.settimeout(STREAM_TIMEOUT)
+            low = self.path.endswith('?low=1')
+            serial, sent = -1, 0.
             try:
-                while True:
-                    try:
-                        with urllib.request.urlopen(proxy.base + '/stream', timeout=3) as up:
-                            ctype = up.headers.get('Content-Type', '')
-                            if 'boundary=f' not in ctype:
-                                raise OSError('unexpected upstream stream')
-                            while True:
-                                chunk = up.read(65536)
-                                if not chunk:
-                                    break
-                                self.wfile.write(chunk)
-                    except (BrokenPipeError, ConnectionResetError):
-                        return
-                    except Exception:
-                        pass
-                    st = idle_state()
-                    jpg = idle_jpeg(['BETWEEN SESSIONS', st['reason'][:40], 'last: ' + (st['last_session'] or '-')[:40],
-                                     'ended: ' + (st['last_end'] or '-'), 'PAUSED (file)' if st['paused'] else ''])
-                    for _ in range(2):
-                        self.wfile.write(b'--f\r\nContent-Type: image/jpeg\r\nContent-Length: %d\r\n\r\n' % len(jpg))
-                        self.wfile.write(jpg + b'\r\n'); self.wfile.flush()
-                        time.sleep(1)
-            except (BrokenPipeError, ConnectionResetError):
+                with proxy.frames():
+                    while not proxy.closed:
+                        if low:
+                            time.sleep(max(0, 1/LOW_FPS - (time.monotonic() - sent)))
+                        with proxy.cv:
+                            proxy.cv.wait_for(lambda: proxy.closed or proxy.serial != serial, timeout=1)
+                            if proxy.closed:
+                                return
+                            jpg, current = proxy.jpg, proxy.serial
+                        if jpg is None:
+                            continue
+                        # Repeat a last-good frame at most once a second to detect disconnected clients.
+                        if current == serial and time.monotonic() - sent < 1:
+                            continue
+                        write_part(self, viewer_jpeg(jpg, low))
+                        serial, sent = current, time.monotonic()
+            except (OSError, ValueError):
                 return
 
         def do_POST(self):
@@ -215,15 +313,20 @@ def main():
         print(f'overlay server already running ({lock.read().strip()})'); return 0
     lock.seek(0); lock.truncate(); lock.write(f'pid {os.getpid()} port {a.port} started {time.strftime("%FT%T%z")}\n'); lock.flush()
     (LOOP/'overlay-server.pid').write_text(f'{os.getpid()}\n')
+    proxy = Proxy(a.driver_port)
     srv = None
     while srv is None:                          # an older driver may still hold the port: wait for it
         try:
-            srv = ThreadingHTTPServer((a.host, a.port), make_handler(Proxy(a.driver_port)))
+            srv = ThreadingHTTPServer((a.host, a.port), make_handler(proxy))
         except OSError as e:
             print(f'port {a.port} busy ({e}); retrying in 5 s', flush=True); time.sleep(5)
     srv.daemon_threads = True
     print(f'overlay server on :{a.port} (driver page :{a.driver_port}), pid {os.getpid()}', flush=True)
-    srv.serve_forever()
+    try:
+        srv.serve_forever()
+    finally:
+        proxy.close()
+        srv.server_close()
 
 
 if __name__ == '__main__':
