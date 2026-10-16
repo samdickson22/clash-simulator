@@ -1,0 +1,3081 @@
+{
+  "all11_checks": null,
+  "arms": {
+    "A": {
+      "child_failures": 5,
+      "controller_prior_failures": 3,
+      "cpu_seconds_per_decision": 0.1293193418729875,
+      "cpu_seconds_per_game": 32.21357630242857,
+      "crowns_against": 0.35714285714285715,
+      "crowns_for": 1.3571428571428572,
+      "damage_dealt": 3539.214285714286,
+      "damage_taken": 2175.0714285714284,
+      "decisions": 1677,
+      "errors": 3,
+      "expected_games": 100,
+      "games": 14,
+      "incomplete_indices": [
+        10,
+        12,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "mean_score": 0.9285714285714286,
+      "missing_diagnostics": 3,
+      "missing_indices": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "native_failures": 0,
+      "nonterminal": 0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.12427156190855115,
+          "cpu_seconds_per_game": 30.824812915,
+          "crowns_against": 0.2857142857142857,
+          "crowns_for": 1,
+          "damage_dealt": 2759.4285714285716,
+          "damage_taken": 2184.285714285714,
+          "decisions": 842,
+          "games": 7,
+          "mean_score": 0.8571428571428571,
+          "own_cpu_seconds_per_game": 14.948093589571437,
+          "process_cpu_seconds_per_game": 31.59036278842857,
+          "wall_seconds_per_game": 31.621766410834557,
+          "wdl": [
+            6,
+            0,
+            1
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.13440943855568857,
+          "cpu_seconds_per_game": 33.602339689857146,
+          "crowns_against": 0.42857142857142855,
+          "crowns_for": 1.7142857142857142,
+          "damage_dealt": 4319,
+          "damage_taken": 2165.8571428571427,
+          "decisions": 835,
+          "games": 7,
+          "mean_score": 1.0,
+          "own_cpu_seconds_per_game": 16.033125884857135,
+          "process_cpu_seconds_per_game": 34.38172660842857,
+          "wall_seconds_per_game": 34.41431295183221,
+          "wdl": [
+            7,
+            0,
+            0
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 15.490609737214287,
+      "placement_failures": 3,
+      "process_cpu_seconds_per_game": 32.98604469842857,
+      "rejections": 7,
+      "wall_seconds_per_game": 33.018039681333384,
+      "wdl": [
+        13,
+        0,
+        1
+      ]
+    },
+    "B": {
+      "child_failures": 4,
+      "controller_prior_failures": 3,
+      "cpu_seconds_per_decision": 0.14399082227402984,
+      "cpu_seconds_per_game": 33.820418785928574,
+      "crowns_against": 0.21428571428571427,
+      "crowns_for": 0.9285714285714286,
+      "damage_dealt": 3089.0714285714284,
+      "damage_taken": 1420.0714285714287,
+      "decisions": 1675,
+      "errors": 3,
+      "expected_games": 100,
+      "games": 14,
+      "incomplete_indices": [
+        0,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "mean_score": 0.7857142857142857,
+      "missing_diagnostics": 3,
+      "missing_indices": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "native_failures": 0,
+      "nonterminal": 0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.1401070083922018,
+          "cpu_seconds_per_game": 33.75702921357143,
+          "crowns_against": 0.2857142857142857,
+          "crowns_for": 0.7142857142857143,
+          "damage_dealt": 2852.1428571428573,
+          "damage_taken": 1657.7142857142858,
+          "decisions": 872,
+          "games": 7,
+          "mean_score": 0.7142857142857143,
+          "own_cpu_seconds_per_game": 17.45333018828571,
+          "process_cpu_seconds_per_game": 34.53642340371429,
+          "wall_seconds_per_game": 34.57006135037435,
+          "wdl": [
+            5,
+            0,
+            2
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.14820836362515571,
+          "cpu_seconds_per_game": 33.88380835828571,
+          "crowns_against": 0.14285714285714285,
+          "crowns_for": 1.1428571428571428,
+          "damage_dealt": 3326,
+          "damage_taken": 1182.4285714285713,
+          "decisions": 803,
+          "games": 7,
+          "mean_score": 0.8571428571428571,
+          "own_cpu_seconds_per_game": 17.00161657014286,
+          "process_cpu_seconds_per_game": 34.67202434342857,
+          "wall_seconds_per_game": 34.70431005868262,
+          "wdl": [
+            6,
+            0,
+            1
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 17.22747337921429,
+      "paired": {
+        "ci95": [
+          -0.3333333333333333,
+          0.16666666666666666
+        ],
+        "command_pairs": 12,
+        "delta_metrics": {
+          "cpu_seconds_per_game": -1.6396974535833309,
+          "crowns_against": -0.25,
+          "crowns_for": -0.33333333333333326,
+          "damage_dealt": -565.5,
+          "damage_taken": -914.25
+        },
+        "delta_score_sd": 0.5149286505444373,
+        "delta_score_variance": 0.2651515151515152,
+        "differing_commands": 12,
+        "expected_pairs": 100,
+        "first_difference_tick_median": 147.0,
+        "identical_command_share": 0.0,
+        "identical_commands": 0,
+        "mean_delta_score": -0.08333333333333333,
+        "missing_indices": [
+          0,
+          10,
+          12,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "opponents": {
+          "R3a": {
+            "ci95": [
+              -0.5,
+              0.5
+            ],
+            "command_pairs": 6,
+            "delta_metrics": {
+              "cpu_seconds_per_game": 1.5180123488333308,
+              "crowns_against": -0.16666666666666666,
+              "crowns_for": -0.16666666666666663,
+              "damage_dealt": -137.66666666666697,
+              "damage_taken": -844.0000000000002
+            },
+            "delta_score_sd": 0.6324555320336759,
+            "delta_score_variance": 0.4,
+            "differing_commands": 6,
+            "first_difference_tick_median": 132.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": 0.0,
+            "own_log_differences": 6,
+            "pairs": 6,
+            "power_n_delta_005": 1255
+          },
+          "v1": {
+            "ci95": [
+              -0.5,
+              0.0
+            ],
+            "command_pairs": 6,
+            "delta_metrics": {
+              "cpu_seconds_per_game": -4.797407256000003,
+              "crowns_against": -0.33333333333333337,
+              "crowns_for": -0.5,
+              "damage_dealt": -993.3333333333335,
+              "damage_taken": -984.4999999999998
+            },
+            "delta_score_sd": 0.408248290463863,
+            "delta_score_variance": 0.16666666666666666,
+            "differing_commands": 6,
+            "first_difference_tick_median": 147.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": -0.16666666666666666,
+            "own_log_differences": 6,
+            "pairs": 6,
+            "power_n_delta_005": 523
+          }
+        },
+        "own_log_differences": 12,
+        "pairs": 12,
+        "power_n_delta_005": 832
+      },
+      "placement_failures": 3,
+      "process_cpu_seconds_per_game": 34.60422387357143,
+      "rejections": 4,
+      "wall_seconds_per_game": 34.637185704528484,
+      "wdl": [
+        11,
+        0,
+        3
+      ]
+    },
+    "B0": {
+      "child_failures": 3,
+      "controller_prior_failures": 2,
+      "cpu_seconds_per_decision": 0.1310805021179541,
+      "cpu_seconds_per_game": 34.26038252753334,
+      "crowns_against": 0.26666666666666666,
+      "crowns_for": 1,
+      "damage_dealt": 2948.266666666667,
+      "damage_taken": 1550.2,
+      "decisions": 1916,
+      "errors": 2,
+      "expected_games": 100,
+      "games": 15,
+      "incomplete_indices": [
+        13,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "mean_score": 0.8666666666666667,
+      "missing_diagnostics": 2,
+      "missing_indices": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "native_failures": 0,
+      "nonterminal": 0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.13407339202312143,
+          "cpu_seconds_per_game": 39.45011446585715,
+          "crowns_against": 0.14285714285714285,
+          "crowns_for": 1.1428571428571428,
+          "damage_dealt": 2936.5714285714284,
+          "damage_taken": 1445.2857142857142,
+          "decisions": 1038,
+          "games": 7,
+          "mean_score": 1.0,
+          "own_cpu_seconds_per_game": 19.881168702857153,
+          "process_cpu_seconds_per_game": 40.261475872285715,
+          "wall_seconds_per_game": 40.29943791873354,
+          "wdl": [
+            7,
+            0,
+            0
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.12754221086332573,
+          "cpu_seconds_per_game": 29.7193670815,
+          "crowns_against": 0.375,
+          "crowns_for": 0.875,
+          "damage_dealt": 2958.5,
+          "damage_taken": 1642,
+          "decisions": 878,
+          "games": 8,
+          "mean_score": 0.75,
+          "own_cpu_seconds_per_game": 13.99775764225,
+          "process_cpu_seconds_per_game": 30.547936109875,
+          "wall_seconds_per_game": 30.578815991641022,
+          "wdl": [
+            6,
+            0,
+            2
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 16.74334947053334,
+      "paired": {
+        "ci95": [
+          -0.38461538461538464,
+          0.0
+        ],
+        "command_pairs": 13,
+        "delta_metrics": {
+          "cpu_seconds_per_game": 1.3708085936923098,
+          "crowns_against": 0.0,
+          "crowns_for": -0.46153846153846145,
+          "damage_dealt": -738.6153846153848,
+          "damage_taken": -479.38461538461524
+        },
+        "delta_score_sd": 0.3755338080994054,
+        "delta_score_variance": 0.14102564102564105,
+        "differing_commands": 13,
+        "expected_pairs": 100,
+        "first_difference_tick_median": 147,
+        "identical_command_share": 0.0,
+        "identical_commands": 0,
+        "mean_delta_score": -0.15384615384615385,
+        "missing_indices": [
+          10,
+          12,
+          13,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "opponents": {
+          "R3a": {
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "command_pairs": 6,
+            "delta_metrics": {
+              "cpu_seconds_per_game": 8.75333431466667,
+              "crowns_against": 0.0,
+              "crowns_for": 0.0,
+              "damage_dealt": -73.33333333333348,
+              "damage_taken": -587.3333333333335
+            },
+            "delta_score_sd": 0.0,
+            "delta_score_variance": 0.0,
+            "differing_commands": 6,
+            "first_difference_tick_median": 147.0,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": 0.0,
+            "own_log_differences": 6,
+            "pairs": 6,
+            "power_n_delta_005": 0
+          },
+          "v1": {
+            "ci95": [
+              -0.5714285714285714,
+              0.0
+            ],
+            "command_pairs": 7,
+            "delta_metrics": {
+              "cpu_seconds_per_game": -4.957070595714288,
+              "crowns_against": 0.0,
+              "crowns_for": -0.8571428571428571,
+              "damage_dealt": -1308.8571428571427,
+              "damage_taken": -386.85714285714266
+            },
+            "delta_score_sd": 0.4879500364742666,
+            "delta_score_variance": 0.2380952380952381,
+            "differing_commands": 7,
+            "first_difference_tick_median": 257,
+            "identical_command_share": 0.0,
+            "identical_commands": 0,
+            "mean_delta_score": -0.2857142857142857,
+            "own_log_differences": 7,
+            "pairs": 7,
+            "power_n_delta_005": 747
+          }
+        },
+        "own_log_differences": 13,
+        "pairs": 13,
+        "power_n_delta_005": 443
+      },
+      "placement_failures": 2,
+      "process_cpu_seconds_per_game": 35.08092133233333,
+      "rejections": 5,
+      "wall_seconds_per_game": 35.1151062242842,
+      "wdl": [
+        13,
+        0,
+        2
+      ]
+    }
+  },
+  "baseline": "A",
+  "bootstrap": {
+    "interval": "percentile 95%",
+    "resamples": 20000,
+    "seed": 0
+  },
+  "coverage": {
+    "duplicate_rows": [],
+    "expected_rows": 300,
+    "identity_mismatches": [],
+    "incomplete_rows": [
+      {
+        "arm": "A",
+        "index": 10
+      },
+      {
+        "arm": "A",
+        "index": 12
+      },
+      {
+        "arm": "A",
+        "index": 16
+      },
+      {
+        "arm": "A",
+        "index": 17
+      },
+      {
+        "arm": "A",
+        "index": 18
+      },
+      {
+        "arm": "A",
+        "index": 19
+      },
+      {
+        "arm": "A",
+        "index": 20
+      },
+      {
+        "arm": "A",
+        "index": 21
+      },
+      {
+        "arm": "A",
+        "index": 22
+      },
+      {
+        "arm": "A",
+        "index": 23
+      },
+      {
+        "arm": "A",
+        "index": 24
+      },
+      {
+        "arm": "A",
+        "index": 25
+      },
+      {
+        "arm": "A",
+        "index": 26
+      },
+      {
+        "arm": "A",
+        "index": 27
+      },
+      {
+        "arm": "A",
+        "index": 28
+      },
+      {
+        "arm": "A",
+        "index": 29
+      },
+      {
+        "arm": "A",
+        "index": 30
+      },
+      {
+        "arm": "A",
+        "index": 31
+      },
+      {
+        "arm": "A",
+        "index": 32
+      },
+      {
+        "arm": "A",
+        "index": 33
+      },
+      {
+        "arm": "A",
+        "index": 34
+      },
+      {
+        "arm": "A",
+        "index": 35
+      },
+      {
+        "arm": "A",
+        "index": 36
+      },
+      {
+        "arm": "A",
+        "index": 37
+      },
+      {
+        "arm": "A",
+        "index": 38
+      },
+      {
+        "arm": "A",
+        "index": 39
+      },
+      {
+        "arm": "A",
+        "index": 40
+      },
+      {
+        "arm": "A",
+        "index": 41
+      },
+      {
+        "arm": "A",
+        "index": 42
+      },
+      {
+        "arm": "A",
+        "index": 43
+      },
+      {
+        "arm": "A",
+        "index": 44
+      },
+      {
+        "arm": "A",
+        "index": 45
+      },
+      {
+        "arm": "A",
+        "index": 46
+      },
+      {
+        "arm": "A",
+        "index": 47
+      },
+      {
+        "arm": "A",
+        "index": 48
+      },
+      {
+        "arm": "A",
+        "index": 49
+      },
+      {
+        "arm": "A",
+        "index": 50
+      },
+      {
+        "arm": "A",
+        "index": 51
+      },
+      {
+        "arm": "A",
+        "index": 52
+      },
+      {
+        "arm": "A",
+        "index": 53
+      },
+      {
+        "arm": "A",
+        "index": 54
+      },
+      {
+        "arm": "A",
+        "index": 55
+      },
+      {
+        "arm": "A",
+        "index": 56
+      },
+      {
+        "arm": "A",
+        "index": 57
+      },
+      {
+        "arm": "A",
+        "index": 58
+      },
+      {
+        "arm": "A",
+        "index": 59
+      },
+      {
+        "arm": "A",
+        "index": 60
+      },
+      {
+        "arm": "A",
+        "index": 61
+      },
+      {
+        "arm": "A",
+        "index": 62
+      },
+      {
+        "arm": "A",
+        "index": 63
+      },
+      {
+        "arm": "A",
+        "index": 64
+      },
+      {
+        "arm": "A",
+        "index": 65
+      },
+      {
+        "arm": "A",
+        "index": 66
+      },
+      {
+        "arm": "A",
+        "index": 67
+      },
+      {
+        "arm": "A",
+        "index": 68
+      },
+      {
+        "arm": "A",
+        "index": 69
+      },
+      {
+        "arm": "A",
+        "index": 70
+      },
+      {
+        "arm": "A",
+        "index": 71
+      },
+      {
+        "arm": "A",
+        "index": 72
+      },
+      {
+        "arm": "A",
+        "index": 73
+      },
+      {
+        "arm": "A",
+        "index": 74
+      },
+      {
+        "arm": "A",
+        "index": 75
+      },
+      {
+        "arm": "A",
+        "index": 76
+      },
+      {
+        "arm": "A",
+        "index": 77
+      },
+      {
+        "arm": "A",
+        "index": 78
+      },
+      {
+        "arm": "A",
+        "index": 79
+      },
+      {
+        "arm": "A",
+        "index": 80
+      },
+      {
+        "arm": "A",
+        "index": 81
+      },
+      {
+        "arm": "A",
+        "index": 82
+      },
+      {
+        "arm": "A",
+        "index": 83
+      },
+      {
+        "arm": "A",
+        "index": 84
+      },
+      {
+        "arm": "A",
+        "index": 85
+      },
+      {
+        "arm": "A",
+        "index": 86
+      },
+      {
+        "arm": "A",
+        "index": 87
+      },
+      {
+        "arm": "A",
+        "index": 88
+      },
+      {
+        "arm": "A",
+        "index": 89
+      },
+      {
+        "arm": "A",
+        "index": 90
+      },
+      {
+        "arm": "A",
+        "index": 91
+      },
+      {
+        "arm": "A",
+        "index": 92
+      },
+      {
+        "arm": "A",
+        "index": 93
+      },
+      {
+        "arm": "A",
+        "index": 94
+      },
+      {
+        "arm": "A",
+        "index": 95
+      },
+      {
+        "arm": "A",
+        "index": 96
+      },
+      {
+        "arm": "A",
+        "index": 97
+      },
+      {
+        "arm": "A",
+        "index": 98
+      },
+      {
+        "arm": "A",
+        "index": 99
+      },
+      {
+        "arm": "B",
+        "index": 0
+      },
+      {
+        "arm": "B",
+        "index": 15
+      },
+      {
+        "arm": "B",
+        "index": 16
+      },
+      {
+        "arm": "B",
+        "index": 17
+      },
+      {
+        "arm": "B",
+        "index": 18
+      },
+      {
+        "arm": "B",
+        "index": 19
+      },
+      {
+        "arm": "B",
+        "index": 20
+      },
+      {
+        "arm": "B",
+        "index": 21
+      },
+      {
+        "arm": "B",
+        "index": 22
+      },
+      {
+        "arm": "B",
+        "index": 23
+      },
+      {
+        "arm": "B",
+        "index": 24
+      },
+      {
+        "arm": "B",
+        "index": 25
+      },
+      {
+        "arm": "B",
+        "index": 26
+      },
+      {
+        "arm": "B",
+        "index": 27
+      },
+      {
+        "arm": "B",
+        "index": 28
+      },
+      {
+        "arm": "B",
+        "index": 29
+      },
+      {
+        "arm": "B",
+        "index": 30
+      },
+      {
+        "arm": "B",
+        "index": 31
+      },
+      {
+        "arm": "B",
+        "index": 32
+      },
+      {
+        "arm": "B",
+        "index": 33
+      },
+      {
+        "arm": "B",
+        "index": 34
+      },
+      {
+        "arm": "B",
+        "index": 35
+      },
+      {
+        "arm": "B",
+        "index": 36
+      },
+      {
+        "arm": "B",
+        "index": 37
+      },
+      {
+        "arm": "B",
+        "index": 38
+      },
+      {
+        "arm": "B",
+        "index": 39
+      },
+      {
+        "arm": "B",
+        "index": 40
+      },
+      {
+        "arm": "B",
+        "index": 41
+      },
+      {
+        "arm": "B",
+        "index": 42
+      },
+      {
+        "arm": "B",
+        "index": 43
+      },
+      {
+        "arm": "B",
+        "index": 44
+      },
+      {
+        "arm": "B",
+        "index": 45
+      },
+      {
+        "arm": "B",
+        "index": 46
+      },
+      {
+        "arm": "B",
+        "index": 47
+      },
+      {
+        "arm": "B",
+        "index": 48
+      },
+      {
+        "arm": "B",
+        "index": 49
+      },
+      {
+        "arm": "B",
+        "index": 50
+      },
+      {
+        "arm": "B",
+        "index": 51
+      },
+      {
+        "arm": "B",
+        "index": 52
+      },
+      {
+        "arm": "B",
+        "index": 53
+      },
+      {
+        "arm": "B",
+        "index": 54
+      },
+      {
+        "arm": "B",
+        "index": 55
+      },
+      {
+        "arm": "B",
+        "index": 56
+      },
+      {
+        "arm": "B",
+        "index": 57
+      },
+      {
+        "arm": "B",
+        "index": 58
+      },
+      {
+        "arm": "B",
+        "index": 59
+      },
+      {
+        "arm": "B",
+        "index": 60
+      },
+      {
+        "arm": "B",
+        "index": 61
+      },
+      {
+        "arm": "B",
+        "index": 62
+      },
+      {
+        "arm": "B",
+        "index": 63
+      },
+      {
+        "arm": "B",
+        "index": 64
+      },
+      {
+        "arm": "B",
+        "index": 65
+      },
+      {
+        "arm": "B",
+        "index": 66
+      },
+      {
+        "arm": "B",
+        "index": 67
+      },
+      {
+        "arm": "B",
+        "index": 68
+      },
+      {
+        "arm": "B",
+        "index": 69
+      },
+      {
+        "arm": "B",
+        "index": 70
+      },
+      {
+        "arm": "B",
+        "index": 71
+      },
+      {
+        "arm": "B",
+        "index": 72
+      },
+      {
+        "arm": "B",
+        "index": 73
+      },
+      {
+        "arm": "B",
+        "index": 74
+      },
+      {
+        "arm": "B",
+        "index": 75
+      },
+      {
+        "arm": "B",
+        "index": 76
+      },
+      {
+        "arm": "B",
+        "index": 77
+      },
+      {
+        "arm": "B",
+        "index": 78
+      },
+      {
+        "arm": "B",
+        "index": 79
+      },
+      {
+        "arm": "B",
+        "index": 80
+      },
+      {
+        "arm": "B",
+        "index": 81
+      },
+      {
+        "arm": "B",
+        "index": 82
+      },
+      {
+        "arm": "B",
+        "index": 83
+      },
+      {
+        "arm": "B",
+        "index": 84
+      },
+      {
+        "arm": "B",
+        "index": 85
+      },
+      {
+        "arm": "B",
+        "index": 86
+      },
+      {
+        "arm": "B",
+        "index": 87
+      },
+      {
+        "arm": "B",
+        "index": 88
+      },
+      {
+        "arm": "B",
+        "index": 89
+      },
+      {
+        "arm": "B",
+        "index": 90
+      },
+      {
+        "arm": "B",
+        "index": 91
+      },
+      {
+        "arm": "B",
+        "index": 92
+      },
+      {
+        "arm": "B",
+        "index": 93
+      },
+      {
+        "arm": "B",
+        "index": 94
+      },
+      {
+        "arm": "B",
+        "index": 95
+      },
+      {
+        "arm": "B",
+        "index": 96
+      },
+      {
+        "arm": "B",
+        "index": 97
+      },
+      {
+        "arm": "B",
+        "index": 98
+      },
+      {
+        "arm": "B",
+        "index": 99
+      },
+      {
+        "arm": "B0",
+        "index": 13
+      },
+      {
+        "arm": "B0",
+        "index": 16
+      },
+      {
+        "arm": "B0",
+        "index": 17
+      },
+      {
+        "arm": "B0",
+        "index": 18
+      },
+      {
+        "arm": "B0",
+        "index": 19
+      },
+      {
+        "arm": "B0",
+        "index": 20
+      },
+      {
+        "arm": "B0",
+        "index": 21
+      },
+      {
+        "arm": "B0",
+        "index": 22
+      },
+      {
+        "arm": "B0",
+        "index": 23
+      },
+      {
+        "arm": "B0",
+        "index": 24
+      },
+      {
+        "arm": "B0",
+        "index": 25
+      },
+      {
+        "arm": "B0",
+        "index": 26
+      },
+      {
+        "arm": "B0",
+        "index": 27
+      },
+      {
+        "arm": "B0",
+        "index": 28
+      },
+      {
+        "arm": "B0",
+        "index": 29
+      },
+      {
+        "arm": "B0",
+        "index": 30
+      },
+      {
+        "arm": "B0",
+        "index": 31
+      },
+      {
+        "arm": "B0",
+        "index": 32
+      },
+      {
+        "arm": "B0",
+        "index": 33
+      },
+      {
+        "arm": "B0",
+        "index": 34
+      },
+      {
+        "arm": "B0",
+        "index": 35
+      },
+      {
+        "arm": "B0",
+        "index": 36
+      },
+      {
+        "arm": "B0",
+        "index": 37
+      },
+      {
+        "arm": "B0",
+        "index": 38
+      },
+      {
+        "arm": "B0",
+        "index": 39
+      },
+      {
+        "arm": "B0",
+        "index": 40
+      },
+      {
+        "arm": "B0",
+        "index": 41
+      },
+      {
+        "arm": "B0",
+        "index": 42
+      },
+      {
+        "arm": "B0",
+        "index": 43
+      },
+      {
+        "arm": "B0",
+        "index": 44
+      },
+      {
+        "arm": "B0",
+        "index": 45
+      },
+      {
+        "arm": "B0",
+        "index": 46
+      },
+      {
+        "arm": "B0",
+        "index": 47
+      },
+      {
+        "arm": "B0",
+        "index": 48
+      },
+      {
+        "arm": "B0",
+        "index": 49
+      },
+      {
+        "arm": "B0",
+        "index": 50
+      },
+      {
+        "arm": "B0",
+        "index": 51
+      },
+      {
+        "arm": "B0",
+        "index": 52
+      },
+      {
+        "arm": "B0",
+        "index": 53
+      },
+      {
+        "arm": "B0",
+        "index": 54
+      },
+      {
+        "arm": "B0",
+        "index": 55
+      },
+      {
+        "arm": "B0",
+        "index": 56
+      },
+      {
+        "arm": "B0",
+        "index": 57
+      },
+      {
+        "arm": "B0",
+        "index": 58
+      },
+      {
+        "arm": "B0",
+        "index": 59
+      },
+      {
+        "arm": "B0",
+        "index": 60
+      },
+      {
+        "arm": "B0",
+        "index": 61
+      },
+      {
+        "arm": "B0",
+        "index": 62
+      },
+      {
+        "arm": "B0",
+        "index": 63
+      },
+      {
+        "arm": "B0",
+        "index": 64
+      },
+      {
+        "arm": "B0",
+        "index": 65
+      },
+      {
+        "arm": "B0",
+        "index": 66
+      },
+      {
+        "arm": "B0",
+        "index": 67
+      },
+      {
+        "arm": "B0",
+        "index": 68
+      },
+      {
+        "arm": "B0",
+        "index": 69
+      },
+      {
+        "arm": "B0",
+        "index": 70
+      },
+      {
+        "arm": "B0",
+        "index": 71
+      },
+      {
+        "arm": "B0",
+        "index": 72
+      },
+      {
+        "arm": "B0",
+        "index": 73
+      },
+      {
+        "arm": "B0",
+        "index": 74
+      },
+      {
+        "arm": "B0",
+        "index": 75
+      },
+      {
+        "arm": "B0",
+        "index": 76
+      },
+      {
+        "arm": "B0",
+        "index": 77
+      },
+      {
+        "arm": "B0",
+        "index": 78
+      },
+      {
+        "arm": "B0",
+        "index": 79
+      },
+      {
+        "arm": "B0",
+        "index": 80
+      },
+      {
+        "arm": "B0",
+        "index": 81
+      },
+      {
+        "arm": "B0",
+        "index": 82
+      },
+      {
+        "arm": "B0",
+        "index": 83
+      },
+      {
+        "arm": "B0",
+        "index": 84
+      },
+      {
+        "arm": "B0",
+        "index": 85
+      },
+      {
+        "arm": "B0",
+        "index": 86
+      },
+      {
+        "arm": "B0",
+        "index": 87
+      },
+      {
+        "arm": "B0",
+        "index": 88
+      },
+      {
+        "arm": "B0",
+        "index": 89
+      },
+      {
+        "arm": "B0",
+        "index": 90
+      },
+      {
+        "arm": "B0",
+        "index": 91
+      },
+      {
+        "arm": "B0",
+        "index": 92
+      },
+      {
+        "arm": "B0",
+        "index": 93
+      },
+      {
+        "arm": "B0",
+        "index": 94
+      },
+      {
+        "arm": "B0",
+        "index": 95
+      },
+      {
+        "arm": "B0",
+        "index": 96
+      },
+      {
+        "arm": "B0",
+        "index": 97
+      },
+      {
+        "arm": "B0",
+        "index": 98
+      },
+      {
+        "arm": "B0",
+        "index": 99
+      }
+    ],
+    "known": true,
+    "missing_rows": [
+      {
+        "arm": "A",
+        "index": 19
+      },
+      {
+        "arm": "A",
+        "index": 20
+      },
+      {
+        "arm": "A",
+        "index": 21
+      },
+      {
+        "arm": "A",
+        "index": 22
+      },
+      {
+        "arm": "A",
+        "index": 23
+      },
+      {
+        "arm": "A",
+        "index": 24
+      },
+      {
+        "arm": "A",
+        "index": 25
+      },
+      {
+        "arm": "A",
+        "index": 26
+      },
+      {
+        "arm": "A",
+        "index": 27
+      },
+      {
+        "arm": "A",
+        "index": 28
+      },
+      {
+        "arm": "A",
+        "index": 29
+      },
+      {
+        "arm": "A",
+        "index": 30
+      },
+      {
+        "arm": "A",
+        "index": 31
+      },
+      {
+        "arm": "A",
+        "index": 32
+      },
+      {
+        "arm": "A",
+        "index": 33
+      },
+      {
+        "arm": "A",
+        "index": 34
+      },
+      {
+        "arm": "A",
+        "index": 35
+      },
+      {
+        "arm": "A",
+        "index": 36
+      },
+      {
+        "arm": "A",
+        "index": 37
+      },
+      {
+        "arm": "A",
+        "index": 38
+      },
+      {
+        "arm": "A",
+        "index": 39
+      },
+      {
+        "arm": "A",
+        "index": 40
+      },
+      {
+        "arm": "A",
+        "index": 41
+      },
+      {
+        "arm": "A",
+        "index": 42
+      },
+      {
+        "arm": "A",
+        "index": 43
+      },
+      {
+        "arm": "A",
+        "index": 44
+      },
+      {
+        "arm": "A",
+        "index": 45
+      },
+      {
+        "arm": "A",
+        "index": 46
+      },
+      {
+        "arm": "A",
+        "index": 47
+      },
+      {
+        "arm": "A",
+        "index": 48
+      },
+      {
+        "arm": "A",
+        "index": 49
+      },
+      {
+        "arm": "A",
+        "index": 50
+      },
+      {
+        "arm": "A",
+        "index": 51
+      },
+      {
+        "arm": "A",
+        "index": 52
+      },
+      {
+        "arm": "A",
+        "index": 53
+      },
+      {
+        "arm": "A",
+        "index": 54
+      },
+      {
+        "arm": "A",
+        "index": 55
+      },
+      {
+        "arm": "A",
+        "index": 56
+      },
+      {
+        "arm": "A",
+        "index": 57
+      },
+      {
+        "arm": "A",
+        "index": 58
+      },
+      {
+        "arm": "A",
+        "index": 59
+      },
+      {
+        "arm": "A",
+        "index": 60
+      },
+      {
+        "arm": "A",
+        "index": 61
+      },
+      {
+        "arm": "A",
+        "index": 62
+      },
+      {
+        "arm": "A",
+        "index": 63
+      },
+      {
+        "arm": "A",
+        "index": 64
+      },
+      {
+        "arm": "A",
+        "index": 65
+      },
+      {
+        "arm": "A",
+        "index": 66
+      },
+      {
+        "arm": "A",
+        "index": 67
+      },
+      {
+        "arm": "A",
+        "index": 68
+      },
+      {
+        "arm": "A",
+        "index": 69
+      },
+      {
+        "arm": "A",
+        "index": 70
+      },
+      {
+        "arm": "A",
+        "index": 71
+      },
+      {
+        "arm": "A",
+        "index": 72
+      },
+      {
+        "arm": "A",
+        "index": 73
+      },
+      {
+        "arm": "A",
+        "index": 74
+      },
+      {
+        "arm": "A",
+        "index": 75
+      },
+      {
+        "arm": "A",
+        "index": 76
+      },
+      {
+        "arm": "A",
+        "index": 77
+      },
+      {
+        "arm": "A",
+        "index": 78
+      },
+      {
+        "arm": "A",
+        "index": 79
+      },
+      {
+        "arm": "A",
+        "index": 80
+      },
+      {
+        "arm": "A",
+        "index": 81
+      },
+      {
+        "arm": "A",
+        "index": 82
+      },
+      {
+        "arm": "A",
+        "index": 83
+      },
+      {
+        "arm": "A",
+        "index": 84
+      },
+      {
+        "arm": "A",
+        "index": 85
+      },
+      {
+        "arm": "A",
+        "index": 86
+      },
+      {
+        "arm": "A",
+        "index": 87
+      },
+      {
+        "arm": "A",
+        "index": 88
+      },
+      {
+        "arm": "A",
+        "index": 89
+      },
+      {
+        "arm": "A",
+        "index": 90
+      },
+      {
+        "arm": "A",
+        "index": 91
+      },
+      {
+        "arm": "A",
+        "index": 92
+      },
+      {
+        "arm": "A",
+        "index": 93
+      },
+      {
+        "arm": "A",
+        "index": 94
+      },
+      {
+        "arm": "A",
+        "index": 95
+      },
+      {
+        "arm": "A",
+        "index": 96
+      },
+      {
+        "arm": "A",
+        "index": 97
+      },
+      {
+        "arm": "A",
+        "index": 98
+      },
+      {
+        "arm": "A",
+        "index": 99
+      },
+      {
+        "arm": "B",
+        "index": 18
+      },
+      {
+        "arm": "B",
+        "index": 19
+      },
+      {
+        "arm": "B",
+        "index": 20
+      },
+      {
+        "arm": "B",
+        "index": 21
+      },
+      {
+        "arm": "B",
+        "index": 22
+      },
+      {
+        "arm": "B",
+        "index": 23
+      },
+      {
+        "arm": "B",
+        "index": 24
+      },
+      {
+        "arm": "B",
+        "index": 25
+      },
+      {
+        "arm": "B",
+        "index": 26
+      },
+      {
+        "arm": "B",
+        "index": 27
+      },
+      {
+        "arm": "B",
+        "index": 28
+      },
+      {
+        "arm": "B",
+        "index": 29
+      },
+      {
+        "arm": "B",
+        "index": 30
+      },
+      {
+        "arm": "B",
+        "index": 31
+      },
+      {
+        "arm": "B",
+        "index": 32
+      },
+      {
+        "arm": "B",
+        "index": 33
+      },
+      {
+        "arm": "B",
+        "index": 34
+      },
+      {
+        "arm": "B",
+        "index": 35
+      },
+      {
+        "arm": "B",
+        "index": 36
+      },
+      {
+        "arm": "B",
+        "index": 37
+      },
+      {
+        "arm": "B",
+        "index": 38
+      },
+      {
+        "arm": "B",
+        "index": 39
+      },
+      {
+        "arm": "B",
+        "index": 40
+      },
+      {
+        "arm": "B",
+        "index": 41
+      },
+      {
+        "arm": "B",
+        "index": 42
+      },
+      {
+        "arm": "B",
+        "index": 43
+      },
+      {
+        "arm": "B",
+        "index": 44
+      },
+      {
+        "arm": "B",
+        "index": 45
+      },
+      {
+        "arm": "B",
+        "index": 46
+      },
+      {
+        "arm": "B",
+        "index": 47
+      },
+      {
+        "arm": "B",
+        "index": 48
+      },
+      {
+        "arm": "B",
+        "index": 49
+      },
+      {
+        "arm": "B",
+        "index": 50
+      },
+      {
+        "arm": "B",
+        "index": 51
+      },
+      {
+        "arm": "B",
+        "index": 52
+      },
+      {
+        "arm": "B",
+        "index": 53
+      },
+      {
+        "arm": "B",
+        "index": 54
+      },
+      {
+        "arm": "B",
+        "index": 55
+      },
+      {
+        "arm": "B",
+        "index": 56
+      },
+      {
+        "arm": "B",
+        "index": 57
+      },
+      {
+        "arm": "B",
+        "index": 58
+      },
+      {
+        "arm": "B",
+        "index": 59
+      },
+      {
+        "arm": "B",
+        "index": 60
+      },
+      {
+        "arm": "B",
+        "index": 61
+      },
+      {
+        "arm": "B",
+        "index": 62
+      },
+      {
+        "arm": "B",
+        "index": 63
+      },
+      {
+        "arm": "B",
+        "index": 64
+      },
+      {
+        "arm": "B",
+        "index": 65
+      },
+      {
+        "arm": "B",
+        "index": 66
+      },
+      {
+        "arm": "B",
+        "index": 67
+      },
+      {
+        "arm": "B",
+        "index": 68
+      },
+      {
+        "arm": "B",
+        "index": 69
+      },
+      {
+        "arm": "B",
+        "index": 70
+      },
+      {
+        "arm": "B",
+        "index": 71
+      },
+      {
+        "arm": "B",
+        "index": 72
+      },
+      {
+        "arm": "B",
+        "index": 73
+      },
+      {
+        "arm": "B",
+        "index": 74
+      },
+      {
+        "arm": "B",
+        "index": 75
+      },
+      {
+        "arm": "B",
+        "index": 76
+      },
+      {
+        "arm": "B",
+        "index": 77
+      },
+      {
+        "arm": "B",
+        "index": 78
+      },
+      {
+        "arm": "B",
+        "index": 79
+      },
+      {
+        "arm": "B",
+        "index": 80
+      },
+      {
+        "arm": "B",
+        "index": 81
+      },
+      {
+        "arm": "B",
+        "index": 82
+      },
+      {
+        "arm": "B",
+        "index": 83
+      },
+      {
+        "arm": "B",
+        "index": 84
+      },
+      {
+        "arm": "B",
+        "index": 85
+      },
+      {
+        "arm": "B",
+        "index": 86
+      },
+      {
+        "arm": "B",
+        "index": 87
+      },
+      {
+        "arm": "B",
+        "index": 88
+      },
+      {
+        "arm": "B",
+        "index": 89
+      },
+      {
+        "arm": "B",
+        "index": 90
+      },
+      {
+        "arm": "B",
+        "index": 91
+      },
+      {
+        "arm": "B",
+        "index": 92
+      },
+      {
+        "arm": "B",
+        "index": 93
+      },
+      {
+        "arm": "B",
+        "index": 94
+      },
+      {
+        "arm": "B",
+        "index": 95
+      },
+      {
+        "arm": "B",
+        "index": 96
+      },
+      {
+        "arm": "B",
+        "index": 97
+      },
+      {
+        "arm": "B",
+        "index": 98
+      },
+      {
+        "arm": "B",
+        "index": 99
+      },
+      {
+        "arm": "B0",
+        "index": 18
+      },
+      {
+        "arm": "B0",
+        "index": 19
+      },
+      {
+        "arm": "B0",
+        "index": 20
+      },
+      {
+        "arm": "B0",
+        "index": 21
+      },
+      {
+        "arm": "B0",
+        "index": 22
+      },
+      {
+        "arm": "B0",
+        "index": 23
+      },
+      {
+        "arm": "B0",
+        "index": 24
+      },
+      {
+        "arm": "B0",
+        "index": 25
+      },
+      {
+        "arm": "B0",
+        "index": 26
+      },
+      {
+        "arm": "B0",
+        "index": 27
+      },
+      {
+        "arm": "B0",
+        "index": 28
+      },
+      {
+        "arm": "B0",
+        "index": 29
+      },
+      {
+        "arm": "B0",
+        "index": 30
+      },
+      {
+        "arm": "B0",
+        "index": 31
+      },
+      {
+        "arm": "B0",
+        "index": 32
+      },
+      {
+        "arm": "B0",
+        "index": 33
+      },
+      {
+        "arm": "B0",
+        "index": 34
+      },
+      {
+        "arm": "B0",
+        "index": 35
+      },
+      {
+        "arm": "B0",
+        "index": 36
+      },
+      {
+        "arm": "B0",
+        "index": 37
+      },
+      {
+        "arm": "B0",
+        "index": 38
+      },
+      {
+        "arm": "B0",
+        "index": 39
+      },
+      {
+        "arm": "B0",
+        "index": 40
+      },
+      {
+        "arm": "B0",
+        "index": 41
+      },
+      {
+        "arm": "B0",
+        "index": 42
+      },
+      {
+        "arm": "B0",
+        "index": 43
+      },
+      {
+        "arm": "B0",
+        "index": 44
+      },
+      {
+        "arm": "B0",
+        "index": 45
+      },
+      {
+        "arm": "B0",
+        "index": 46
+      },
+      {
+        "arm": "B0",
+        "index": 47
+      },
+      {
+        "arm": "B0",
+        "index": 48
+      },
+      {
+        "arm": "B0",
+        "index": 49
+      },
+      {
+        "arm": "B0",
+        "index": 50
+      },
+      {
+        "arm": "B0",
+        "index": 51
+      },
+      {
+        "arm": "B0",
+        "index": 52
+      },
+      {
+        "arm": "B0",
+        "index": 53
+      },
+      {
+        "arm": "B0",
+        "index": 54
+      },
+      {
+        "arm": "B0",
+        "index": 55
+      },
+      {
+        "arm": "B0",
+        "index": 56
+      },
+      {
+        "arm": "B0",
+        "index": 57
+      },
+      {
+        "arm": "B0",
+        "index": 58
+      },
+      {
+        "arm": "B0",
+        "index": 59
+      },
+      {
+        "arm": "B0",
+        "index": 60
+      },
+      {
+        "arm": "B0",
+        "index": 61
+      },
+      {
+        "arm": "B0",
+        "index": 62
+      },
+      {
+        "arm": "B0",
+        "index": 63
+      },
+      {
+        "arm": "B0",
+        "index": 64
+      },
+      {
+        "arm": "B0",
+        "index": 65
+      },
+      {
+        "arm": "B0",
+        "index": 66
+      },
+      {
+        "arm": "B0",
+        "index": 67
+      },
+      {
+        "arm": "B0",
+        "index": 68
+      },
+      {
+        "arm": "B0",
+        "index": 69
+      },
+      {
+        "arm": "B0",
+        "index": 70
+      },
+      {
+        "arm": "B0",
+        "index": 71
+      },
+      {
+        "arm": "B0",
+        "index": 72
+      },
+      {
+        "arm": "B0",
+        "index": 73
+      },
+      {
+        "arm": "B0",
+        "index": 74
+      },
+      {
+        "arm": "B0",
+        "index": 75
+      },
+      {
+        "arm": "B0",
+        "index": 76
+      },
+      {
+        "arm": "B0",
+        "index": 77
+      },
+      {
+        "arm": "B0",
+        "index": 78
+      },
+      {
+        "arm": "B0",
+        "index": 79
+      },
+      {
+        "arm": "B0",
+        "index": 80
+      },
+      {
+        "arm": "B0",
+        "index": 81
+      },
+      {
+        "arm": "B0",
+        "index": 82
+      },
+      {
+        "arm": "B0",
+        "index": 83
+      },
+      {
+        "arm": "B0",
+        "index": 84
+      },
+      {
+        "arm": "B0",
+        "index": 85
+      },
+      {
+        "arm": "B0",
+        "index": 86
+      },
+      {
+        "arm": "B0",
+        "index": 87
+      },
+      {
+        "arm": "B0",
+        "index": 88
+      },
+      {
+        "arm": "B0",
+        "index": 89
+      },
+      {
+        "arm": "B0",
+        "index": 90
+      },
+      {
+        "arm": "B0",
+        "index": 91
+      },
+      {
+        "arm": "B0",
+        "index": 92
+      },
+      {
+        "arm": "B0",
+        "index": 93
+      },
+      {
+        "arm": "B0",
+        "index": 94
+      },
+      {
+        "arm": "B0",
+        "index": 95
+      },
+      {
+        "arm": "B0",
+        "index": 96
+      },
+      {
+        "arm": "B0",
+        "index": 97
+      },
+      {
+        "arm": "B0",
+        "index": 98
+      },
+      {
+        "arm": "B0",
+        "index": 99
+      }
+    ],
+    "observed_rows": 55,
+    "parent_exit_code": 143,
+    "problems": [],
+    "unexpected_rows": []
+  },
+  "quality_ok": false
+}

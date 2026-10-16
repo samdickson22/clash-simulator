@@ -4,7 +4,7 @@
 `/mpac/sdicks02/jobs/clasher/bot-levels/SCOPE.md`).
 Log: [PROGRESS.md](PROGRESS.md). Results: [RESULTS.md](RESULTS.md). Code: `bot/levels/`.
 
-**Status (2026-10-16 12:28 UTC): mandatory gates pass at reviewed R26 source:9 cold isolated regressions,216 integration tests,254 native checks,145 catalogue classifications/1024 binary commands, and8 clean complete-game all11 rows with4/4A-B hashes/positive B roots/zero rejections.** Exact original support bytes restored under review; all seven cache files unchanged through validation. Earlier failures remain preserved. BOT LEAD's explicit100-case serial A/B/B0 authority is active; BASE1273808234825296/rule registration and the100-case bank are now frozen before games; no primary outcomes yet.
+**Status (2026-10-16T12:57:53Z): R27 primary stopped/invalid after16GAME_OVER rejections in4terminal games during the no-play HP-drain phase.** Before R27,9cold/216integration/254native/145classification/1024binary/8cleanall11 checks passed. Those DEV cases did not expose command closure before finalgame_over. All failed rows/registration/bank are preserved. A minimal common lifecycle repair and exact boundary/late-pending/final-score fixtures are in source-only R28 implementation, with fresh independent review and final gates required before a fresh100-case registration. No accepted strength conclusion or promotion.
 
 
 ## Question
@@ -141,3 +141,9 @@ The earlier failed v2 probe is preserved: it stopped before taps on two metadata
 ## Primary registration receipt
 
 The rule above was recorded with fresh BASE1273808234825296 at2026-10-16T12:30:35Z before bank generation or primary games. [Registration](receipts/pilot-r27-registration.json), [bank audit](receipts/pilot-r27-bank-audit.json). Bank rawSHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1, registration rawSHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983. Source implementation80b7c103aee6af558f12a615e158fc395d6cea36; all gates PASS. No decision-rule, weights, prior or eligibility changes are allowed after this registration within the pilot.
+
+## R27 lifecycle failure and recovery amendment
+
+R27 remains permanently invalid/incomplete. The pinned simulator closes command acceptance at overtime expiry while HP drain continues toward finalgame_over. The common wrapper previously waited only for finalgame_over, allowing late reservations/dispatches. The accepted source-repair plan uses validated public phase/clock/rules before due-command hand checks and policy polls, keeps unsent reservations as pending operational evidence, and advances the real engine with empty commands until its actual final winner/crowns/HP/tick. It does not alter physics, policy, prior, level estimates or rejection gates. [Preserved audit](receipts/pilot-r27-terminal-order-audit.md).
+
+Exact-binary boundary and scripted queue/independent-drain tests, a fresh different Sol review, and final matching-source scientific gates precede recovery. Then a fresh full100-case bank will be registered with the same population, arm semantics and promising rule; all invalid R27 data remain reported. No selected outcome/card/deck is excluded and no old row is relabelled valid. No new BASE has been drawn.

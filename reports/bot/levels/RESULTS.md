@@ -1,7 +1,7 @@
 # Level-aware search pilot: interim evidence (exploration)
 
 2026-10-16, resumed by Sol high. [Progress and audit](PROGRESS.md), [design](DESIGN.md).
-**Fresh primary bank registered; no primary games or strength outcomes yet.** All mandatory gates now pass:145 catalogue classifications/1024 exact-binary taps,9 cold isolation tests,216 integration tests,254 native checks, and8 clean all11 rows/4A-Bcommandhashpairs/positive B roots/zero rejections. Exact original support was restored under review; seven cache files remain unchanged. Registration BASE1273808234825296 and the fixed100-case bank are recorded before games. Earlier failures remain preserved. The required s27 replay completed23/23pairs, changing3actionIDs+3wait durations with no Cannon chosen. [Replay result](S27-M02.md).
+**R27 primary stopped: INVALID/INCOMPLETE; no accepted strength conclusion.** Owner-directed bounded cleanup finished2026-10-16T12:43:33Z with parent/shell exit143. All55 rows and logs are preserved:47 terminal games, including4 failed winning rows with16 GAME_OVER refusals, plus8 interrupted games;245 requested games never produced rows. No retries, exclusions, source changes or restart. [Stop audit](receipts/pilot-r27-stop-audit.json), [terminal-order audit and proposal](receipts/pilot-r27-terminal-order-audit.md). Before games, the mandatory DEV gates passed145 classifications/1024 binary taps,9 cold tests,216 integration tests,254 native checks and8 clean all11 rows/4matched pairs. They did not expose the later command-closure defect. All1327 frozen input checks and7 cache hashes still match after stop. The required s27 replay remains separate:23/23pairs,3actionIDs+3wait durations changed, no Cannon chosen. [Replay result](S27-M02.md).
 BOT LEAD accepted the reversible serial design and fixed supported-card scope before outcomes.
 
 ## Verified evidence
@@ -108,3 +108,49 @@ The final same-bank DEV run passes**8/8 clean terminal rows and4/4 complete A/B 
 ## Fresh primary registration
 
 At2026-10-16T12:30:35Z(05:30:35PDT), after all mandatory gates passed, BASE**1273808234825296** was drawn from fresh os.urandom(6)<<4 with the unchanged decision rule. [Immutable registration](receipts/pilot-r27-registration.json), SHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983. The100-case bank contains54eligible pool rows and balances25cases in each controller/seat group. Bank SHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1. [Bank audit](receipts/pilot-r27-bank-audit.json), [fixed bank](receipts/pilot-r27-bank.json). No primary game had started at this publication. All300A/B/B0 games remain requested; partial reports will be labelled incomplete, with no outcome-dependent changes or exclusions.
+
+## R27 stopped primary — invalid and incomplete
+
+The first open interim at12:41:33Z contained22/300 rows and6 clean A/B pairs.
+B/case0 was already a recorded terminal win with four GAME_OVER refusals and
+child exit1; that row and its score were preserved. The owner directed STOP
+instead of completing an invalid run. Only the verified parent632390 received
+SIGTERM at12:43:32Z; its existing bounded cleanup reaped all8 owned children.
+Parent/shell exit143, final receipt12:43:33Z. No retry or exclusion occurred.
+
+The preserved post-stop report exited1:55/300 rows,47 terminal,43 clean,
+8 interrupted and245 missing. A/case10 and12, B/case0 and B0/case13 have
+16 GAME_OVER refusals in total; all four raw outcomes are wins. All47 terminal
+rows have zero native FAILURES. The8 interrupted rows retain signal exit-15
+and absent diagnostics, not fabricated outcomes or asserted prior mutations.
+There are no identity/coverage-schema mismatches among the observed records.
+[Detailed stop inventory](receipts/pilot-r27-stop-audit.json),
+[unchanged machine report](receipts/pilot-r27-poststop-report.txt).
+
+The machine report's clean-only summaries use14 A,14 B and15 B0 games and
+12 clean A/B pairs; they omit failed winning outcomes by validation rule.
+Those partial metrics and plug-in power values are preserved for audit only.
+They cannot decide the preregistered primary rule or size a confirmation.
+Raw terminal W/D/L, including failed rows, are A15/0/1, B12/0/3, B0 14/0/2;
+these too are incomplete, invalid exploratory outcomes with no strength claim.
+
+All1327 frozen source/runtime/model/proof/cache/bank/registration checks still
+match on01 after stop; all107 source hashes match05 and all7 cache files are
+unchanged. All58 job-output files were copied01→05 and SHA verified, including
+every55 row, launch identity, parent completion and report. Raw logs, first
+interim and post-stop reports are separately preserved under the job directory.
+The immutable bank/BASE and registration remain unchanged.
+
+The [source audit](receipts/pilot-r27-terminal-order-audit.md) distinguishes
+public command closure at6000 from final game_over after HP drain. The common
+match loop checks only the latter, so it can dispatch and reserve commands in
+the intervening no-play phase. A minimal proposed guard would retain accepted
+commands and unsent queue evidence, skip dispatch/polls after public closure,
+and continue native empty-command drain to the actual winner/crowns/HP/tick.
+No source/test changes or boundary experiment were made. Review of preserved
+failure and the proposed late-pending/last-accepted/terminal-score tests is
+required before implementation or restart. R27 remains invalid permanently.
+
+## Repair authorized; execution still blocked
+
+The parent accepted the bounded common command-phase bookkeeping plan after reviewing the full pinned API/calibration and preserved failures. Existing owner R28 is implementing the guard and meaningful boundary/late-pending/final-score fixtures source-only. No source execution, boundary experiment, repaired PASS or restart has occurred. Fresh independent review and final gates remain required; any later pilot uses a fresh full registration with unchanged population, policy and decision rule, retaining R27 permanently as invalid exploration.
