@@ -1,11 +1,11 @@
 # Batch B2 spell mechanics results
 
 Status: **C56 gate FAIL** on the requested frozen B2 tree (`4916d66b8`, handoff `745d18c2c`).
-The original 04 fixture sweep is still running; failure was reported immediately and the
-Opus owner was woken with the one-hunk fix specification in [GATE-TRIAGE.md](GATE-TRIAGE.md).
+The original 04 sweep has finished: fixture records and native chains **410/577 identical
+(167 different)**; roots **600/600 identical**. Failure was reported immediately, before
+waiting for these final counts, and the Opus owner was woken with the one-hunk fix specification in [GATE-TRIAGE.md](GATE-TRIAGE.md).
 No engine changes were made in this worktree by the test agent. A scratch diagnostic revert
-was used only on 08. This report distinguishes completed fidelity/repro results from the
-ongoing full gate. The Opus owner has since committed the one-hunk engine fix as `aa8d28a76`;
+was used only on 08. All requested fidelity, mixed repro, and original gate measurements are complete. The Opus owner has since committed the one-hunk engine fix as `aa8d28a76`;
 that corrected source is not the frozen gate arm measured here.
 
 ## Inputs and completed fidelity sweep
@@ -117,7 +117,8 @@ REUSE_PINNED=1 setsid /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 8 bas
 
 Own PID/PGID 2737392, held by a shell waiting on that exact PID; no pgrep/pkill used.
 All Python gate work uses nice 15. Batch A's PID 2388512 was already gone and no Batch A job
-was signaled or changed. `gate.pid`, `gate.log`, and eventual `gate.exit` record this run.
+was signaled or changed. `gate.pid`, `gate.log`, and `gate.exit` record this run; the exact-PID wait returned 0.
+Fixtures ran 2026-10-16T02:20:23Z–02:46:34Z; roots and comparison finished afterward.
 
 Root `rt` mirrors r1 symlinks except `engine-rs → gtree`, `src → gtree/py/src`, and
 `gamedata.json → gtree/py/gamedata.json`. 04 gtree/gout were copied from frozen 08 copies.
@@ -134,15 +135,28 @@ Batch A's run. Baseline Batch A itself passed 577/577 fixture records and 600/60
 
 | Check | Result | Evidence |
 |---|---|---|
-| Fixture complete-record equality | **FAIL (sweep running)** | First failing episode v4-phase-a-1975100701 |
-| Rust-only native chains | **FAIL (sweep running)** | First digest divergence t1439; config differs from initial snapshot t1200 |
-| Roots, 300 full + 300 cut | PENDING | Scheduled by gate.sh after fixture pool completes |
-| Overall requested frozen B2 | **FAIL** | One failing fixture is sufficient; full counts will be filled from compare.json |
+| Fixture complete-record equality | **FAIL: 410/577 identical** | 167 different; first v4-phase-a-1975100701 |
+| Rust-only native chains | **FAIL: 410/577 equal** | 1,010,680 ticks; zero errors in either arm; first digest divergence t1439 |
+| Roots, full | **PASS: 300/300 identical** | Fixed sample of 300 recorded roots |
+| Roots, cut | **PASS: 300/300 identical** | Same roots, hand/cycle config |
+| Overall requested frozen B2 | **FAIL** | Fixture trajectory equality required 577/577 |
+
+The final comparison is retained in [evidence/gate-compare.json](evidence/gate-compare.json);
+input hashes and symlinks are in [evidence/gate-provenance.json](evidence/gate-provenance.json).
+The 600 equal root records cover 9,336 rollout values, 1,800 select calls, 478 apply_discrete
+cases, and 1,800 step checks across 12 games, absolute ticks 140..5570. Python/native full
+fixture parity counts remain 429/577 in each arm; that count does not imply native trajectory
+equality between arms.
+
+Process exit status only indicates runner completion: the gate verdict is computed from
+record equality and error counts in compare.json, not from a zero shell exit.
 
 See [GATE-TRIAGE.md](GATE-TRIAGE.md) for precise owner fix and one-hunk bisect: all 2402
 digest and snapshot hashes in the first failing fixture match pinned after reverting only
 the RollingProjectile deploy-delay hunk in an 08 scratch gtree. Diagnostics detail/phase_step
-confirm the Barbarian deploy/target/movement transition. No frozen gate engine code was changed.
+confirm the Barbarian deploy/target/movement transition. A full 56-card C56 native-normalized
+config export has only the four BarbLog timing differences; the scratch revert removes all
+four ([evidence](evidence/c56-config-diff.json)). No frozen gate engine code was changed.
 
 ## Native-diff mixed repros
 
@@ -160,5 +174,10 @@ PYTHONPATH by including r1's `reports/strategy_council_20260928/engine-speed`, r
 
 Game 509: Python creates IceGolemite entity 49; native does not (`next_id` 50 vs 49).
 The new entity/ID difference appears in the object phase in diagnostics.phase_step. It has
-no exception/panic; this mismatch is separate from the C56 BarbLog regression. Full evidence
+no exception/panic. Its signature matches the known IceGolemite config-export gap documented
+in [native-diff RESULTS](../native-diff/RESULTS.md): `differential.config` creates the death
+area only for the `IceGolem` alias, while this pool requests `IceGolemite`. The prior
+native-diff report assigned game 509 to Mirror × SkeletonBalloon; this rerun reports its
+new first failure without assuming it is the old cause. This is separate from the C56
+BarbLog regression. Full evidence
 08 `fid/mixed-509-details-game-509.json` (retained by an extra one-game diagnostic rerun).

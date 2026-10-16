@@ -1,0 +1,25 @@
+{
+ "total": [
+  {
+   "path": ".config.cards.BarbLog.spawns[0][0].deploy",
+   "pinned": 1.0,
+   "B2": 1.05
+  },
+  {
+   "path": ".config.cards.BarbLog.spawns[0][0].tunnel_total",
+   "pinned": 1.0,
+   "B2": 1.05
+  },
+  {
+   "path": ".config.cards.BarbLog.spawns[1][0].deploy",
+   "pinned": 1.0,
+   "B2": 1.05
+  },
+  {
+   "path": ".config.cards.BarbLog.spawns[1][0].tunnel_total",
+   "pinned": 1.0,
+   "B2": 1.05
+  }
+ ],
+ "revert-rolling": []
+}

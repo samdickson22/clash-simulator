@@ -1,7 +1,9 @@
 # B2 C56 gate failure — RollingProjectile deploy delay
 
 Status: **FAIL** for frozen B2 `4916d66b8` / native `df5443abf6d629fc34fded6fbc515ea40c70ecd6efe6693e379462500b617488`.
-The full 04 gate is still running (PID 2737392); this finding is actionable now.
+The full 04 gate (PID 2737392) has finished: fixtures/chains 410/577 equal (167 different),
+roots 600/600 identical. This finding was sent to the owner before the full run finished.
+Final comparison: [evidence/gate-compare.json](evidence/gate-compare.json).
 
 ## Cause and precise fix spec
 
@@ -40,6 +42,12 @@ At the initial snapshot (tick 1200), the only semantic native snapshot differenc
 - `.config.cards.BarbLog.spawns[0][0].deploy`: 1.0 → 1.05 seconds.
 - `.config.cards.BarbLog.spawns[0][0].tunnel_total`: 1.0 → 1.05.
 - The same two fields for seat 1.
+
+A separate full **56-card C56** config export and native snapshot normalization confirms
+these are the only four differences across the entire card set. The one-hunk scratch revert
+removes all differences (including the config and state). Evidence:
+[evidence/c56-config-diff.json](evidence/c56-config-diff.json); raw exports remain on 08 in
+`fid/c56-config-{pinned,total,revert-rolling}.json`.
 
 First native digest difference: tick **1439**. This is a behavioral regression as well as an
 initial config/snapshot difference; it is not explained by inert serialization keys.

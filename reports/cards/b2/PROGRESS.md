@@ -101,3 +101,20 @@ guess; ours is the client's strict intersects; shared by C56 spells -> not chang
   (gate.pid 2961219, cpu_job 8; both arms; gtree = git archive aa8d28a76 engine-cards; gout = df5443ab copy; roots +
   gate-tools copied from b2/). Output b2-fix/gate/compare.json. The original frozen run in b2/ (PID 2737392,
   4916d66b8/df5443ab) is left untouched and is reported as FAIL regardless.
+
+## Test-agent completed results (2026-10-16)
+
+- Original frozen gate on 04 PID 2737392 finished: **FAIL** fixtures and Rust-only chains
+  410/577 equal, 167 different; **PASS** roots 600/600 (300 full + 300 cut); no Rust-only errors.
+  Native df5443ab; source 4916d66b8; pinned outputs reused from complete identical-input Batch A.
+  Exact-PID wait returned 0 (runner completion, not a PASS verdict). See RESULTS.md and evidence/gate-compare.json.
+- One-hunk scratch bisect isolated RollingProjectile._spawn_units +50 ms (BarbLog). Revert restores
+  2402/2402 digest + snapshot hashes in first failing fixture; full C56 normalized config then identical.
+  GATE-TRIAGE.md sent to Opus owner immediately; owner fix aa8d28a76 and corrected b2-fix gate are separate.
+- Pool PID 3069080 completed, final.done exists. B2 fidelity **13/28 → 16/28 → 24/28**
+  (base/mechanics/mechanics+scratch stats). Full pool **54/196 → 57/196 → 65/196**.
+  All 168 other-card compare verdicts and difference lists unchanged. Final Clone 3/3;
+  Graveyard 1/3; GoblinCurse 2/3; remaining scenarios and cause/fix table in RESULTS.md.
+- mixed_repro PYTHONPATH fixed via run_mixed.sh; games75/416 MATCH3600, 133 MATCH3254(game over),
+  509 MISMATCH first digest t341 (missing native IceGolemite death area, known alias/export signature).
+  Detail/phase_step retained; all four ran without exception/panic.
