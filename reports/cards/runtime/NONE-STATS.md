@@ -7,8 +7,8 @@ for a non-damage spell. Numeric building-damage values keep the exact previous c
 horizon order. `None` crown damage already means zero, and metadata deliberately retains optional building damage
 as JSON null for Rust's existing `unwrap_or`.
 
-Changes are confined to Python: the ranking building-damage fallback, the ranking ordinary-damage conversion, and
-the metadata ordinary-damage conversion. No native source or binary changed. `r1-cards2-r2` and `live16402b-r2`
+Changes are confined to Python: the ranking building-damage fallback, ordinary-damage conversions in ranking/metadata,
+and the public body-health fallback matching BattleState._spawn_entity (100 HP when the raw stat is None). No native source or binary changed. `r1-cards2-r2` and `live16402b-r2`
 retain their parents' native, gamedata and checkpoint pins. There is no sealing.
 
 ## Scope and assumptions
@@ -26,14 +26,14 @@ ranked as an admitted hand card without changing the observation/action contract
 all corresponding ladder aliases are exercised. This limitation predates the None-stat fix.
 
 The probe builds `Runtime(verify=True)`, checks all metadata, inventories every ladder definition and script/body
-stat, then exercises all four hand slots, both seats and five boards: Crown towers alone, enemy Cannon, Knight,
-Minions, and all three together. It invokes public masks, all three scripted ranking styles, planner candidates,
+stat, then exercises all four hand slots, both seats and six boards: Crown towers alone, enemy Cannon, Knight,
+Minions, all three together, and an actual ThreeMusketeers deployment. It invokes public masks, all three scripted ranking styles, planner candidates,
 native masks/selection/evaluation. C56 ranks are compared exactly to the original module, including every score.
-The released-root rerun also checks required numeric fields for visible body rows. ThreeMusketeers' aggregate row (token 326) has None HP, but no runtime body template references it: the runtime emits the child Musketeer token. The probe records this distinction rather than treating an aggregate card wrapper as a visible body.
+The released-root rerun checks all body rows and actual ThreeMusketeers deployment. Its raw definition has None HP, and the current engine spawns a 100 HP compatibility body with token 326. This exposed a second real float(None) site in _bodies. The new explicit None fallback matches the engine's 100 HP value and native template. No ThreeMusketeers mechanics are changed.
 
 ## Audit table
 
-20 audit rows: 3 changed conversion sites in 2 Python files; 17 reviewed rows require no change.
+21 audit rows: 4 changed conversion sites in 3 Python files; 17 reviewed rows require no change.
 Runtime inventory covers 125 spellings (122 ladder names plus runtime aliases), 121 admitted canonical cards.
 The receipt records None and missing values together; spell attribute presence is distinguished in the released-root rerun.
 For building_damage, only Freeze has a present None attribute; absent attributes on C56 spells already used the old getattr default.
@@ -52,6 +52,7 @@ Freeze has numeric ordinary damage 148 in this live root, so its fallback is 148
 | c56_scripted / public opponent / metadata / masks | mana_cost; deploy_w_tile_margin; targets_only_buildings | None (0) across all 125 spellings | Required numeric cost; margin already or 0; targets read as bool; no change |
 | initialize / public opponent / metadata / reward | summon_count | 64: Arrows, BabyDragon, Balloon, BarbLog, BarbarianHut, BombTower, Bomber, Bowler, Cannon, Clone, DarkMagic, DarkPrince, Earthquake, ElectroWizard, Elixir Collector, Fireball, Freeze, Giant, GiantBuffer, GoblinBarrel, GoblinCage, GoblinCurse, GoblinDrill, GoblinHut, GoldenKnight, Golem, Graveyard, IceWizard, InfernoTower, Knight, LavaHound, Lightning, Log, MightyMiner, Miner, MiniPekka, Mirror, Monk, Mortar, Musketeer, Pekka, Poison, Prince, Princess, Rage, RamRider, Rocket, Ronin, RoyalDelivery, RoyalGiant, SkeletonKing, Snowball, Tesla, ThreeMusketeers, Tombstone, Tornado, Valkyrie, Vines, Witch, WitchMother, Wizard, Xbow, Zap, ZapMachine | Existing or 1 (or explicit formation default); no change |
 | metadata / public opponent / reward | scaled_hitpoints / hitpoints | 23: Arrows, BarbLog, Clone, DarkMagic, Earthquake, Fireball, Freeze, GoblinBarrel, GoblinCurse, Graveyard, Lightning, Log, MergeMaiden, Mirror, Poison, Rage, Rocket, RoyalDelivery, Snowball, ThreeMusketeers, Tornado, Vines, Zap | Metadata/efficiency use or 0; visible bodies use resolved child payload stats; required body fields probed; no change |
+| public_scripted_opponent._bodies | scaled_hitpoints / get_scaled_stat(hitpoints) | ThreeMusketeers body token 326 (1) | **FIX:** explicit None → 100, matching BattleState._spawn_entity; numeric path unchanged |
 | metadata / public opponent / reward | scaled_damage | 31: Arrows, BarbLog, BarbarianHut, Clone, DarkMagic, Earthquake, Elixir Collector, Fireball, Freeze, GoblinBarrel, GoblinCage, GoblinCurse, GoblinDrill, GoblinHut, Graveyard, Lightning, Log, MergeMaiden, Mirror, Poison, Rage, Rocket, RoyalDelivery, SkeletonBalloon, Snowball, SuspiciousBush, ThreeMusketeers, Tombstone, Tornado, Vines, Zap | Existing or 0; entity.damage normalized numeric; no change |
 | c56_scripted / public opponent / metadata | range | 10: BarbLog, Fireball, Freeze, GoblinBarrel, Log, MergeMaiden, Mirror, Rocket, Snowball, ThreeMusketeers | Existing or 0; no change |
 | metadata / masks / public opponent | collision_radius | 22: Arrows, BarbLog, Clone, DarkMagic, Earthquake, Fireball, Freeze, GoblinBarrel, GoblinCurse, Graveyard, Lightning, Log, MergeMaiden, Mirror, Poison, Rocket, RoyalDelivery, Snowball, ThreeMusketeers, Tornado, Vines, Zap | Existing or 0/or 0.5 and explicit None checks; no change |

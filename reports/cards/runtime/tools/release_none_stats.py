@@ -16,6 +16,7 @@ import time
 PATCHES = {
     'engine-cards/py/src/clasher/rl/c56_scripted.py': 'src/clasher/rl/c56_scripted.py',
     'engine-cards/c56_controller.py': 'engine-rs/c56_controller.py',
+    'engine-cards/py/src/clasher/rl/public_scripted_opponent.py': 'src/clasher/rl/public_scripted_opponent.py',
 }
 
 
@@ -58,10 +59,11 @@ def write(path, obj):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('mode', choices=('create', 'verify'))
+    ap.add_argument('mode', choices=('create', 'verify', 'correct-assembly'))
     ap.add_argument('--name', required=True, choices=('live16402b-r2', 'r1-cards2-r2'))
     ap.add_argument('--source', type=Path, required=True, help='git archive of the source commit')
     ap.add_argument('--commit', required=True)
+    ap.add_argument('--canonical-receipt', type=Path, help='byte-identical receipt from the corrected 08 assembly')
     ap.add_argument('--out', type=Path, required=True)
     a = ap.parse_args()
     roots = Path('/mpac/sdicks02/repos/clasher-bot-runtime')
@@ -69,6 +71,47 @@ def main():
     sys.path.insert(0, str(a.source))
     from bot.players.runtime import PIN_SETS
     pins = PIN_SETS[a.name]
+    if a.mode == 'correct-assembly':
+        # Only this task's newly reserved, still-unreleased r2 assemblies qualify.
+        # Parent roots are immutable inputs and are never opened for writing.
+        previous = json.loads((target / 'RECEIPT.json').read_text())
+        previous_sha = sha(target / 'RECEIPT.json')
+        assert previous['source_commit'] == '9133b634ba1c20ea5e441014b8d4cb7c1db39f5d'
+        assert previous_sha == {'r1-cards2-r2': 'b2c1a2e46585df1089781f7b064f834ed9dc9f28874add1cefcef1561b408ced',
+                                'live16402b-r2': '92338abb973ef1100ca3969ec404346317135c915a0f27bfc754fe816eb022a0'}[a.name]
+        assert readonly(target)
+        assert digest(inventory(target, exclude_receipt=True)) == previous['content_manifest_sha256']
+        before = digest(inventory(parent))
+        assert before == previous['parent']['inventory_sha256']
+        src = 'engine-cards/py/src/clasher/rl/public_scripted_opponent.py'
+        dst = PATCHES[src]
+        p = target / dst
+        assert sha(p) == sha(parent / dst)
+        old_hash = sha(p)
+        p.chmod(p.stat().st_mode | stat.S_IWUSR)
+        shutil.copyfile(a.source / src, p)
+        p.chmod(p.stat().st_mode & ~0o222)
+        receipt = json.loads(json.dumps(previous))
+        receipt.update(source_commit=a.commit, runtime_pins_commit=a.commit)
+        receipt['assembly_correction'] = dict(previous_receipt_sha256=previous_sha,
+            previous_source_commit=previous['source_commit'],
+            reason='Second audit finding before final release: ThreeMusketeers public body None HP; match engine fallback 100')
+        receipt['changed_files'][dst] = dict(source=src, before=old_hash, after=sha(p))
+        receipt['overlay_files'][dst] = sha(p)
+        receipt['content_manifest_sha256'] = digest(inventory(target, exclude_receipt=True))
+        if a.canonical_receipt:
+            canonical = json.loads(a.canonical_receipt.read_text())
+            assert canonical == receipt
+            receipt = canonical
+        p = target / 'RECEIPT.json'
+        p.chmod(p.stat().st_mode | stat.S_IWUSR)
+        write(p, receipt)
+        p.chmod(p.stat().st_mode & ~0o222)
+        assert readonly(target) and digest(inventory(parent)) == before
+        assert digest(inventory(target, exclude_receipt=True)) == receipt['content_manifest_sha256']
+        write(a.out, receipt)
+        print('CORRECTED_ASSEMBLY', a.name, sha(p), flush=True)
+        return
     if a.mode == 'create':
         assert not os.path.lexists(target), f'TARGET_EXISTS_STOP {target}'
         before = digest(inventory(parent))

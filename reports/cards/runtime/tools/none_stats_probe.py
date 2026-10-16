@@ -62,20 +62,15 @@ def main():
         assert stats is not None, name
         out['none_stats'][name] = [f for f in fields if getattr(stats, f, None) is None]
     out['body_none_stats'] = {}
-    out['unused_aggregate_body_rows'] = {}
-    body_tokens = {token for token, kind in R.templates if kind in ('Troop', 'Building')}
+    out['body_hp_fallbacks'] = {}
     for token, stats in R.bots['balanced'].bodies.items():
         out['body_none_stats'][f'{token}/{stats.name}'] = [f for f in fields if getattr(stats, f, None) is None]
         if stats.scaled_hitpoints is None:
-            # Aggregate card aliases (ThreeMusketeers) are metadata rows, not
-            # visible units. Runtime templates serialize their child Musketeer.
-            assert token not in body_tokens, (token, stats.name)
-            out['unused_aggregate_body_rows'][f'{token}/{stats.name}'] = 'no runtime troop/building template; resolved child supplies HP'
-            continue
-        # _bodies reads these without a numeric fallback. All present troop/building
-        # payloads must supply them; optional shield data is tested through the same expression.
+            out['body_hp_fallbacks'][f'{token}/{stats.name}'] = 100
+            template = R.templates[token, 'Troop']
+            assert template['stats']['max_hp'] == 100, (token, template['stats'])
         check(f'body-stats/{token}', lambda stats=stats: (
-            float(stats.scaled_hitpoints), float(stats.mana_cost),
+            float(100 if stats.scaled_hitpoints is None else stats.scaled_hitpoints), float(stats.mana_cost),
             float((stats._raw_entry.get('summonCharacterData', {}).get('shieldHitpoints', 0)) or 0)))
     out['spell_missing_fields'] = {}
     for name, spell in R.bots['balanced'].spells.items():
@@ -86,7 +81,7 @@ def main():
     for style, bot in R.bots.items():
         check(f'metadata/{style}', lambda bot=bot: c56_controller.metadata(R.builder, bot=bot, action_cards=tuple(R.meta['cards'])))
     # Enemy threats are real engine entities; towers are present in every board.
-    fixtures = [('tower', None), ('building', 'Cannon'), ('troop', 'Knight'), ('air', 'Minions'), ('mixed', 'Cannon')]
+    fixtures = [('tower', None), ('building', 'Cannon'), ('troop', 'Knight'), ('air', 'Minions'), ('mixed', 'Cannon'), ('missing-hp', 'ThreeMusketeers')]
     for seat in (0, 1):
         for board, threat in fixtures:
             decks = [list(rt.x4s_decks()[0]), ['Cannon', 'Knight', 'Minions', 'HogRider', 'Archers', 'Fireball', 'Zap', 'Skeletons']]
@@ -95,6 +90,8 @@ def main():
             b = battle(dict(seed=2000024, decks=decks), R.builder.loader)
             for card in ([threat] if threat and board != 'mixed' else ['Cannon', 'Knight', 'Minions'] if board == 'mixed' else []):
                 b.players[1-seat].elixir = 10.
+                if card not in b.players[1-seat].hand:
+                    b.players[1-seat].hand[0] = card
                 assert b.deploy_card(1-seat, card, Position(4.5 if card == 'Cannon' else 13.5, 21.5 if seat == 0 else 10.5)), card
             for _ in range(40):
                 b.step()
@@ -116,6 +113,8 @@ def main():
                     packet = R.builder.build_public(mine, seat)
                     assert int(packet.observation.hand_ids[slot]) == R.builder.token_id(resolved, namespace='card_action')
                     bodies = R.bots['balanced']._bodies(packet)
+                    if board == 'missing-hp':
+                        assert any(b.enemy and not b.crown and b.max_hp == 100 for b in bodies)
                     if board in ('building', 'mixed'):
                         assert any(b.enemy and not b.crown and b.cost > 0 for b in bodies)
                     label = f'{name}/{seat}/{board}/{slot}'
