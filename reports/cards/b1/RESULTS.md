@@ -187,5 +187,30 @@ The final focused regression suite passed **16/16** on the corrected source (rep
 
 Native clone/reload continuations compare **every serialized field exactly**. Python live-import continuations also check digest, RNG, selectors, mount/rank/graph, heal scope and recipient immunity. Complete raw Python/native snapshot differences are recorded by path in the JSON report; inherited projectile fields, clocks/derived projections and routing/cache state still differ, so **complete cross-engine state equality is not claimed**.
 
-The sole new changed-arm C56 gate is running; no new readiness claim yet. Candidate native is
-`63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc` (implementation commit `fb7c2895a`, 04 run `review-r1-20261016-04`).
+**The new C56 gate passed** (04, 09:58:43–10:42:49Z, validation run `review-r1-20261016-06`):
+
+| Contract | Actual result |
+|---|---|
+| Fixture records / native snapshot chains | **577/577 identical / 577 equal** |
+| Python-reference parity / native errors | **429/429 unchanged / 0 errors** |
+| Sampled root records | **600/600 identical: 300 full + 300 cut** |
+| Coverage | 12 games, 1,800 select_action calls, 9,336 rollout values |
+
+Only the changed arm was executed; immutable pinned-arm records were reused with checked expected hashes, original
+comparison receipt, and unchanged helper/root identities. All four changed root shards attest the expected native
+hash and contain 150 unique records each. Source verification before and after the gate covers all 506 tracked
+engine files. See `review-r1-gate-compare.json`, `review-r1-gate.log`, `review-r1-completion.txt`, and
+`review-r1-final-host-receipts.txt`. Earlier gate artifacts remain unchanged.
+
+Stable engine source is `fb7c2895a` (preceded by `1b13bed7c`); native SHA256 is
+`63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc`, genuinely built in
+`review-r1-20261016-04` and reused unchanged for validation run06 with explicit origin attestation.
+
+The new independent final review (`review-r3-final.md`, GPT-6.1-Sol high) found no further actionable source/evidence
+issues and made approval conditional on this exact C56 result. That condition is now satisfied with the actual new
+receipt. **The requested review fixes are complete and ready for lead integration.** The historical per-card fidelity
+limits above and disclosed raw Python/native representation differences remain; they are not presented as resolved.
+
+Rollback is source-only: revert `fb7c2895a` then `1b13bed7c` in the integrating branch to restore the pre-review engine
+at `b79471993`; prior native `6215ee54…` and all historical receipts remain available. No runtime/pin/promotion or
+merge/rebase action was performed. B2→C1 dependency order and live-lead ownership remain in force.
