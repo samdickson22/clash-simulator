@@ -686,6 +686,7 @@ def main(argv=None):
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
                        card_scope=(getattr(rt, 'pins', None) or {}).get('card_scope', 'c56'), playable_cards=len(PLAYABLE),
                        true_ids=_spec_record('CLASHER_LIVE_TRUE_IDS'), play_decider=_spec_record('CLASHER_LIVE_PLAY_DECIDER'),
+                       owner_model=_spec_record('CLASHER_LIVE_OWNER_MODEL'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
                        logged='live', perc_threads=a.perc_threads, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
