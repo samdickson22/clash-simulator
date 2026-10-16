@@ -82,3 +82,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   worker — its turn ended). B1/B2 worktrees from 7720915a8. Timing cause found (side tables uncut → >1 MiB config
   re-shipped per decision); fix = fc_cut side tables + content-hash pool cache (scope worker). 03/04/08 busy with LIVE
   compositing 12–24 h → workers use cpu_job N≤8.
+- 01:50Z RESUME after the Claude usage stop (~01:45Z). Resumed in place: scope, b1, b2 (Opus). live16402 kept running.
+  Batch A gate r2 on 04 PID 2388512 (native 1923619e, serialization fix; Batch A edits after 7720915a8 uncommitted in
+  this worktree), watched by the lead; wake cards-batchA-opus-r1 only for code fixes. Routing now: non-coding (gates,
+  sweeps, reviews, bookkeeping) → Sol; engine code → Opus; narrow → Haiku. No duplicate threads found.
