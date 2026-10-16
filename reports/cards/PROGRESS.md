@@ -382,3 +382,4 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   live-qualified. Smoke 3/3. 782 MiB footprint. Pin live16402b-r3-mac merged to main 2fa5d496e; LIVE LEAD told (bundle 00:00Z).
 - 22:18Z LIVE LEAD deleted Mac ~/clasher-live/fullpool/venv (0.55 GB) for disk; runtime/native untouched; live launcher uses live venv; Mac parity rerun needs venv rebuild (ask LIVE first). Noted in mac/RESULTS.md.
 - 23:47Z Full pool LIVE on Mac since s58 (live16402b-r3-mac). Told LIVE LEAD: Batch A = 14 verified (incl. SkeletonDragons, Mortar, FlyingMachine, Witch, PEKKA, Guards); B1/B2 in 16402c; rest unverified-but-real entities → map all to true ids; 16402c Mac build offered (needs venv + disk window).
+- 23:47Z LIVE: translator true-ids v2 = 14 Batch A, v3 = all r3 entities (after BOT LEAD sim smoke). 16402c Mac build deferred until account ~1,800 (now 1,330) or an idle Mac window — LIVE LEAD will ping.
