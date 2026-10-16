@@ -119,3 +119,6 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   errors), f97b2052e/a71a7643a (assembler safety, Sol), 878d5f459 (Batch A boundary-class fix, native de11f124, 21
   paths × 2 seats audited). Running: Batch A gate r4 (04, PGID 3671549; Sol shepherd), Batch A review r3, runtime review
   r2 (fresh Sol), r1-cards2/live16402b assembly+gates (Sol; swap to final native/runtime when gates finish).
+- 03:28Z **MERGED cards/lead → main 0ee42633e**: Batch A (gate run 4 PASS on native de11f124; review r3 APPROVE),
+  r1-cards1 (R.bots widened; runtime review r3 APPROVE after lead fix 99b26b995), live16402 tooling. Told BOT LEAD +
+  coordinator. Pending: live16402b final (Sol r1cards2 worker) = BOT LEAD generation start signal.
