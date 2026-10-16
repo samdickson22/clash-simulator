@@ -1292,6 +1292,36 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   v30 scores: perfect v1 0.937 / R3a 0.773 (= its eval_watch HEADLINE numbers exactly), sr1u50 0.863 / 0.670; plays/game
   vs v1 33.8 perfect, 34.4 sr1u50.
 
+- **F10 VERDICT (23:57Z): r5 v30 NOT CONFIRMED; r5 v10 stays the best student.** F10 cases 0–999, our engine, τ0
+  0.5375, paired per case vs `f10-rl5v10` (2,000 + 2,000 games, 0 error rows), k = 1:
+
+  | | v1 | R3a | mean |
+  |---|---|---|---|
+  | r5 v10 score | 0.910 | 0.760 | |
+  | r5 v30 score | 0.922 | 0.741 | |
+  | v30 − v10 | +0.012 [−0.010, +0.035] | −0.019 [−0.052, +0.013] | **−0.004 [−0.024, +0.016]** |
+
+  Plays/game vs v1: v30 34.4, v10 34.8. So r5 past v10 is level with v10 off the selection banks: HEADLINE said +0.061,
+  F9 +0.025 [−0.001, +0.052], F10 −0.004. Pooled F9+F10 (1,600 cases) ≈ +0.007. RL r6 v30 (F9 +0.007) and RL r7
+  v10/v20 (= r5 v50/v60; HEADLINE mean +0.026/+0.015 vs r5 v10's +0.022) agree. **Reading:** at 160 games per update,
+  lr 3e-5, KL 0.01, the policy random-walks (≈0.04 KL per update) once past r5 v10, with no further gain vs v1/R3a.
+- **00:00–00:03Z, new arms (bigger batches against the update noise), both from r5 v10, r5's final critic, KL-stop 0.5
+  vs v10, snapshots every 5 updates:**
+  - RL r7 and r8 stopped (STOP files; kl_stops 1155378/1314718 killed; 01 `STOP_SYNC`); their 08 watchers got STOP.
+  - **RL r9** (04): `--games-per-update 480 --max-games-per-update 800`, **lr 3e-5**, seed 2026101599, **blocks ≥ 60**.
+    RUN `/mpac/sdicks02/jobs/clasher/bot-rl-r9`, init `bot-rl-r9-init/` (v10 sha e188e2ae…, critic f023967c…); learner
+    PID 1698595 (04 GPU), actors block 60, **64 workers** (wrapper 1700492), kl_stop 1700514; 04 K4L feeder target 8,
+    cap 98 (PID 1698573, `cpu-feed-k4l.log5`). Watcher on 08: `eval_watch.sh 127x04 RUN …/bot-rl-r9-eval08 24` (PID
+    1677034).
+  - **RL r10** (learner 08 GPU, actors 01 CPU): same but **lr 1e-5**, seed 2026101600, **blocks ≥ 70**. RUN
+    `/mpac/sdicks02/jobs/clasher/bot-rl-r10` on both hosts; learner PID 1670964 (08), kl_stop 1672991 (08); on 01
+    `remote_sync.sh 127x08 RUN` PID 2569158 and actors block 70, **64 workers** (wrapper 2571003). Watcher on 08
+    `eval_watch.sh local RUN …/bot-rl-r10-eval08 24` (PID 1677062).
+  - **Soup screen:** `/mpac/sdicks02/jobs/clasher/bot-rl-soup/soup-r5-v10-40.pt` = uniform average of r5 v10/v20/v30/v40
+    (`bot.exit.soup`; sha256 ba809435…), HEADLINE vs v1/R3a/it5s2 @0.5375 queued as `hl-soup-r5` in 08 cpuq.
+  - 08 K4L feeder target 30, cap 96 (PID 1678054, `cpu-feed-k4l.log7`): 08 had dropped to 43 live python.
+  - Candidates for F10 from now on are counted in k (r5 v30 was k = 1).
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
