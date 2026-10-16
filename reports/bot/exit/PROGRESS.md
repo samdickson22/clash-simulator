@@ -1456,6 +1456,11 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   resume commands, feeder args, CPU caps. `bot/exit/mean_delta.py` synced to 01/04/08 and 03's `clasher-bot-rl03`
   (verdict command tested on 01).
 
+- **02:00Z: handoff cancelled (Sam: Opus keeps ownership).** The ExIt/RL sub-agent #5 (Opus) stays owner of the
+  RL/student track; eval babysitting goes to Sol sub-workers via T3 `delegate_task` (codex / gpt-6.1-sol, reasoning
+  high). Delegated: soup F10 + RoyaleSim verdict (read-only; task `bot-it10-soup-verdict-r1`), which reports back with
+  the mechanical CONFIRMED/NOT CONFIRMED rule from the state block. The state block stays the resume point.
+
 ## Next
 
 1. Results of eval-stD (search plus student D), and H/I calibration followed by evals.
