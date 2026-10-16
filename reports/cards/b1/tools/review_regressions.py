@@ -101,6 +101,8 @@ def test_clone(seat, card='GoblinGiant'):
     assert b.deploy_card(seat, 'Clone', parent.position)
     assert native.apply_action(seat, 'Clone', parent.position.x, parent.position.y)
     audited_state(b, native, cfg)
+    # Batch B2: the Clone resolves in the next tick's object phase (after movement), as RoyaleSim measures.
+    drive(b, native, cfg, 1)
     clones = [e for e in b.entities.values() if e.is_clone]
     assert len(clones) == (3 if card == 'GoblinGiant' else 1), len(clones)
     if card == 'GoblinGiant':
@@ -148,6 +150,8 @@ def test_clone_boundaries(seat):
         assert b.deploy_card(seat, 'Clone', tap)
         assert native.apply_action(seat, 'Clone', tap.x, tap.y)
         audited_state(b, native, cfg)
+        # Batch B2: the Clone resolves in the next tick's object phase (after movement).
+        drive(b, native, cfg, 1)
         clones = [e for e in b.entities.values() if e.is_clone]
         giant = next(e for e in clones if e.card_stats.name == 'GoblinGiant')
         riders = [e for e in clones if getattr(e, '_rider_mount', None) is giant]

@@ -579,3 +579,17 @@ OwnB2Rage80/80stateFAILs requirecorrection separatefromC1: nestedpayloadposition
 Local revalidation inspected1154 native audit rows total,577 in each arm; the atomic
 receipt and the RESULTS table report per-arm denominators. All23 gate-output hashes
 and the two copied native binaries matched their recorded SHA256 values.
+
+### 2026-10-16 B1+B2 merge (Opus)
+- Merged origin/main b82939149 (B1) into cards/b2 = 8eaa7d1ec (resolution in the commit message). Native
+  326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732 (08 b1b2/out).
+- Parity on 08 b1b2/fid (tools/run_b1b2.sh): B2 scenarios 28/28 (root) and 28/28 (rootstats); Batch A 42/42; B1 scenarios
+  (10 B1 + 14 Batch A cards x 3) 72/72; first-update paths 42/42; Clone bounds 6/6; B1 tap probes all digest-equal
+  (the GoblinGiant x Log and two RoyalRecruits taps are deploys refused identically by both engines); B1 review
+  regressions 16/16 after adapting its two Clone tests to B2's deferred (object-phase) Clone cast: one step before
+  counting clones (reports/cards/b1/tools/review_regressions.py).
+- Stun/freeze-expiry target acquisition: tools/probe_stun_target.py (4 victims x 8 stun/freeze sources x 2 seats x 3
+  cast ticks, digest + every entity's target/hp/stun each tick) running on 08 (PID 566310, fid/stun.log); no mismatch
+  printed after 30 min. The reported Python-acquires-on-0.05->0 difference was not reproduced on the merged native.
+- Combined C56 gate on 127x04 `/mpac/sdicks02/jobs/clasher/cards/b1b2-gate/` PID 1103181 (cpu_job 8, both arms;
+  gtree = 8eaa7d1ec engine-cards, gout = 326ce6f9) -> gate/compare.json.
