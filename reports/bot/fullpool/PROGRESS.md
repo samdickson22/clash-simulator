@@ -140,7 +140,7 @@ r1-cards1 is on main, the overlay is no longer needed.
 | LIVE16402-RECEIPT.json | 81f5ccb3e054449cd64788161514ef2f302481f28b1167a1594c6542f08d4204 |
 
 The dev root 08:jobs/clasher/cards/runtime/live16402b-dev has the same native, gamedata and both inner receipts.
-Every G1 shard receipt and row, and every K1 rec line and row, carries  (pins, root, receipt, native and
+Every G1 shard receipt and row, and every K1 rec line and row, carries `runtime` (pins, root, receipt, native and
 gamedata shas; bot/fullpool/provenance.py), so the data can be weighted or refreshed by pin when r1-cards3 or
 live16402c (Batches B1/B2) land.
 
@@ -166,7 +166,7 @@ Logs and data are on each host: J/g1-x<h>.log, J/G1/ (games-*.jsonl, games/), J/
 J = /mpac/sdicks02/jobs/clasher/bot-fullpool.
 
 **Known runtime bug (CARD LEAD).** In 1 of the first 30 G1 games on 08 (game 2000024, student deck with Freeze),
- () raised TypeError on None.
+`c56_scripted.ranked_actions:266` (`float(getattr(spell, 'building_damage', damage))`) raised TypeError on None.
 The attribute exists but is None for Freeze, and probably for other non-damage spells. It fires when our or the
 teacher's hand holds such a spell and an enemy non-crown building is on the board, and the whole game is lost. G1
 records it as an error row. The fix belongs in the root (a None fallback). A rerun of the same command on a fixed
