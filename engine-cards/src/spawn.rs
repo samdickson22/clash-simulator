@@ -31,7 +31,7 @@ impl BattleState {
         let a = &self.entities[i]; let center = (a.x,a.y);
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
             (e.alive && e.owner!=a.owner && e.class=="Troop" && !e.spirit
-                && !e.underground && e.stagger<=1e-9
+                && !e.underground && e.stagger<=1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                 && (if e.stats.air { air } else { ground })
                 && Self::in_area(e,a.x,a.y,radius)).then_some(j)
         }).collect();

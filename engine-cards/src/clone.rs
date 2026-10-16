@@ -38,6 +38,14 @@ impl BattleState {
         let (hx,hy)=(dx*256/d,dy*256/d);
         (hx*125/256,hy*125/256)
     }
+    /// A ground unit's point inside an alive building's footprint (|dx|, |dy| < building radius + own radius).
+    fn slide_blocked(&self,i:usize,x:i64,y:i64)->bool {
+        let r=units(self.entities[i].stats.radius);
+        self.entities.iter().enumerate().any(|(j,b)| j!=i && b.alive && b.class=="Building" && {
+            let reach=units(b.stats.radius)+r;
+            (x-units(b.x)).abs()<reach && (y-units(b.y)).abs()<reach
+        })
+    }
     /// Python native_tilemap.recover_native_ground_position (LogicBattle::cf44d8), as the knockback recovery uses it.
     fn recover_ground(&self,x:i64,y:i64)->(i64,i64) {
         let (x,y)=(x.clamp(250,17750),y.clamp(250,31750));
@@ -63,13 +71,11 @@ impl BattleState {
         let (ox,oy)=(units(self.entities[i].x),units(self.entities[i].y));
         let (mut x,mut y)=((ox+sx).clamp(0,17999),(oy+sy).clamp(0,31999));
         if !self.entities[i].collision_air(self.tick) {
-            let r=units(self.entities[i].stats.radius);
-            let blocked=self.entities.iter().enumerate().any(|(j,b)| j!=i && b.alive && b.class=="Building" && {
-                let reach=units(b.stats.radius)+r;
-                (x-units(b.x)).abs()<reach && (y-units(b.y)).abs()<reach
-            });
-            if blocked { (x,y)=(ox,oy); }
+            // Review r2: one bounded round -- refuse a step into a footprint, recover a river point, then revalidate
+            // both constraints; a recovered point inside a footprint (or still on water) falls back to the old point.
+            if self.slide_blocked(i,x,y) { (x,y)=(ox,oy); }
             (x,y)=self.recover_ground(x,y);
+            if self.slide_blocked(i,x,y) || self.config.water[(y/500*36+x/500) as usize] { (x,y)=(ox,oy); }
         }
         let e=&mut self.entities[i];
         e.x=x as f64/1000.0;e.y=y as f64/1000.0;

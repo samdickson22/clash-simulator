@@ -1,23 +1,41 @@
 # Batch B2 spell mechanics results
 
-Current continuation (2026-10-16): **engine acceptance pending**. The preserved six-file
-review-r2 source WIP is bound to native7738; no fresh C56 result is available for it.
-The independent semantic-v1 run3586969 is active and retains meaningful Troop
-FAILs in Zap, ElectroDragon and IceSpirit. These are not excluded or accepted;
-C1 owns supported shared Troop causes/fixes under the lead's ordered integration
-contract. B2 owns fixture validity, target exclusions, Clone bounds and fresh C56.
+Current continuation (2026-10-16T13:08Z): **engine acceptance pending**. Current
+nine-file engine WIP includes the six review-r2 guard/Clone paths and Rage state
+corrections; it has not been built. Native7738 represents the earlier six-file
+source, not the current candidate. No fresh C56 result is available for either.
+Semantic-v1 run3586969 is terminal:2480 continuations,1033 retained meaningful-state
+FAILs, zero structurally invalid continuations. Focused mutation/descendant/first-
+update/Clone/scenario evidence passed on that earlier source; those checks do not
+waive the full-state FAILs. C1 owns supported shared Troop causes/fixes under the
+lead's ordered integration contract. B2 owns fixture validity, target exclusions,
+Clone bounds, Rage state correction and matching affected/build/C56 evidence.
 The historical gate/fidelity measurements below retain their original source scope.
 
 The separately reviewed [bounded capture protocol](NATURAL-DASH-FIXTURE-V1.md)
 includes old blue Zap lead1/t0, ElectroDragon lead6/t14 and IceSpirit lead0/t23,
 plus red equivalents: complete constructor and paired pre/post-first-mismatch roots
 are required. Sixteen selected natural-acquisition continuations accompany them.
-[Exact independent re-review](evidence/fixture-v1-review2-approved.json) approved one
-CPU1/nice15 execution after3586969 terminal/no live group/no lease; execution has
-not begun. [Capture index](evidence/B2-C1-CAPTURE-INDEX.md) distinguishes available
-immutable summary/source receipts from missing roots. Source-only controls prove
-neither heading coincidence nor dynamic mode/readers. No new semantic exemption,
-competing sweep, obsolete gate restart or main/runtime/pin change is authorized.
+[Exact independent re-review](evidence/fixture-v1-review2-approved.json) approved the
+completed CPU1/nice15 job940202:22 paired continuations, six legacy first mismatches
+reproduced, constructor and before/after full roots retained,16 natural cases with
+ten retained FAILs. [Capture index](evidence/B2-C1-CAPTURE-INDEX.md) provides immutable
+paths/individual root hashes and the completed direct C1 dependency handoff.
+Source-only controls are not dynamic cause evidence. No semantic exemption,
+competing sweep, obsolete gate restart or main/runtime/pin change occurred.
+
+[Rage correction proposal](RAGE-STATE-FIX.md) requires one new-source three-arm build
+and bounded affected evidence, then a separately reviewed fresh C56 gate. Its first
+independent review rejected an unpinned historical identity chain; the rejection
+is retained. The repaired stager pins the known capture identity, verifies all old
+inputs and rejects re-signed replacement references. Seven local stdlib controls
+pass; review2 approved bounded execution and no affected job has launched. The old C56-v1 approval
+pins native7738 and must not be executed against the new source.
+
+The lead's B2-C1-base-readiness-20261016.json records C1 candidate65fca236e waiting
+for a reviewed, committed B2-first prerequisite. Conditional B2 readiness still
+requires matching affected/build/C56 evidence and independent review, retaining
+every external FAIL. Final engine/main acceptance waits ordered integrated evidence.
 
 Status: **C56 gate FAIL** on the requested frozen B2 tree (`4916d66b8`, handoff `745d18c2c`).
 The original 04 sweep has finished: fixture records and native chains **410/577 identical

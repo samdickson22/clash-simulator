@@ -855,6 +855,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && e.stagger <= 1e-9
+                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                     && e.owner != cast.player as i32
                     && (e.class == "Troop" || e.class == "Building")
                     && (!e.hidden || spell.affects_hidden)
@@ -887,6 +888,7 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && e.stagger <= 1e-9
+                        && !e.dash_travel()
                         && Self::in_area(e, cast.x, cast.y, spell.radius))
                     .then_some(i)
                 })
@@ -1014,7 +1016,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.hidden
-                    && e.stagger <= 1e-9
+                    && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && source.can_hit_plane(e)
@@ -1035,7 +1037,7 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && !e.hidden
-                        && e.stagger <= 1e-9
+                        && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                         && e.owner != source.owner
                         && (e.class == "Troop" || e.class == "Building")
                         && source.can_hit_plane(e)
@@ -1075,6 +1077,7 @@ impl BattleState {
                     && e.owner != effect.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && e.stagger <= 1e-9
+                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                     && Self::in_area(e, effect.x, effect.y, effect.effect_radius)
                 {
                     e.slow_ms = e.slow_ms.max(effect.effect_slow_ms);
@@ -1125,6 +1128,7 @@ impl BattleState {
                 || target.owner == cast.player as i32
                 || !(target.class == "Troop" || target.class == "Building")
                 || self.entities[i].hit_ids.contains(&target.id)
+                || target.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
             {
                 continue;
             }
@@ -2464,7 +2468,7 @@ impl BattleState {
                                 && !e.underground
                                 && e.owner != a.owner
                                 && (e.class == "Troop" || e.class == "Building")
-                                && e.stagger <= 1e-9
+                                && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                 && !e.hidden
                                 && a.can_hit_plane(e)
                                 && Self::in_area(e, origin.0, origin.1, a.stats.area_radius)
@@ -3089,7 +3093,7 @@ impl BattleState {
                                         && !e.hidden
                                         && !e.spirit
                                         && !e.underground
-                                        && e.stagger <= 1e-9
+                                        && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                         && e.owner != shot.owner
                                         && (!shot.source_character || e.death_immunity.is_none())
                                         && (e.class == "Troop" || e.class == "Building")
@@ -3133,7 +3137,7 @@ impl BattleState {
                                         && !e.underground
                                         && (e.class == "Troop" || e.class == "Building")
                                         && shot.can_hit_plane(e)
-                                        && e.stagger <= 1e-9
+                                        && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                                         && Self::in_area(e, shot.aim.0, shot.aim.1, 0.0))
                                     .then_some(j)
                                 })
@@ -3457,7 +3461,7 @@ impl BattleState {
                     && !e.underground
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && e.stagger <= 1e-9
+                    && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                     && !e.hidden
                     && Self::in_area(e, source.x, source.y, source.stats.death_radius))
                 .then_some(k)
@@ -3887,6 +3891,9 @@ impl BattleState {
                     // Batch B2: a command's birth-skipping object (Void, Vines, Goblin Curse, Graveyard) first updates
                     // on the boundary after the next one, as Python's birth tick = tick + 1 outside a logic tick.
                     e.birth = self.tick + if e.scope_skip_birth { 1 } else { 0 };
+                    if spell.name == "Rage" {
+                        e.place_rage_payload(x, y, player as i32);
+                    }
                     self.entities.push(e);
                 }
             } else {

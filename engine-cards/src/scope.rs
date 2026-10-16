@@ -85,6 +85,18 @@ pub(super) enum Effect {
 }
 
 impl Entity {
+    /// Python death_area_snapshot creates each pending Rage payload at its
+    /// parent's current point, including the nested impact payload.
+    pub(super) fn place_rage_payload(&mut self, x: f64, y: f64, owner: i32) {
+        self.x = x; self.y = y; self.owner = owner;
+        match &mut self.scope {
+            Some(Effect::Container { child, .. }) | Some(Effect::StartAction { child }) =>
+                child.place_rage_payload(x, y, owner),
+            Some(Effect::Haste { impact: Some(child), .. }) =>
+                child.place_rage_payload(x, y, owner),
+            _ => {}
+        }
+    }
     /// Batch B2: the ms before which no enemy may lock this entity: Archer Queen stealth or a spawned unit's
     /// acquire delay (Python Entity.is_targetable_by). Equal to `stealth_until` whenever the delay is unset (C56).
     pub(super) fn lock_after(&self) -> i64 {
@@ -129,6 +141,9 @@ impl BattleState {
         let mut child = template.clone();
         child.id = self.next_id as i32; self.next_id += 1;
         child.x = source.x; child.y = source.y; child.owner = source.owner;
+        if child.stats.name == "Rage" {
+            child.place_rage_payload(source.x, source.y, source.owner);
+        }
         child.birth = self.tick; self.entities.push(child);
     }
     fn haste_scan(&mut self, area: &Entity, duration: f64, axes: (f64,f64,f64)) {
@@ -405,6 +420,8 @@ impl BattleState {
                             self.haste_scan(&area,if *cap { refresh.min((area.effect_duration-*next).max(0.0) + step) } else { *refresh },*axes);
                             *next += step;
                         }
+                        // Both exported views describe the same live haste clock.
+                        self.entities[i].next_effect = *next_scan;
                     }
                     if active >= area.effect_duration-1e-9 { self.entities[i].alive = false; }
                 }

@@ -183,7 +183,7 @@ impl BattleState {
                     && !e.hidden
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                     && !matches!(e.entity_kind, 2 | 3)
                     && Self::in_area(e, bomb.x, bomb.y, bomb.bomb_radius))
                 .then_some(j)
@@ -497,7 +497,7 @@ impl BattleState {
         if spell.freeze_effect && !area.effect_applied {
             let targets: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
                 (e.alive && e.owner != area.owner && !e.hidden && !e.spirit && !e.underground
-                    && e.stagger <= 1e-9 && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
+                    && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */ && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.airborne())
                     && Self::in_area(e,area.x,area.y,area.effect_radius)).then_some(j)
             }).collect();
@@ -658,6 +658,7 @@ impl BattleState {
                         && !e.underground
                         && !e.hidden
                         && e.stagger <= 1e-9
+                        && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                         && (e.class == "Troop" || e.class == "Building")
                         && !self.entities[i].hit_ids.contains(&e.id)
                         && Self::in_area(e, area.x, area.y, area.effect_radius)

@@ -1,0 +1,27 @@
+{
+ "utc": "2026-10-16T12:25:49.973856+00:00",
+ "pid": 940202,
+ "pgid": 940202,
+ "args": [
+  "nice",
+  "-n",
+  "15",
+  "bash",
+  "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+  "1",
+  "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+  "-B",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z/fid/stage_fixture_preflight_v1.py",
+  "--run",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z"
+ ],
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z",
+ "tag": "fixturev1-20261016T1226Z",
+ "cpu_bound": 1,
+ "nice": 15,
+ "source_and_tools_sha256": "abe1fc6b8f3158bd27df0b03ed8098e1ddc475fb9989a1c5abf547dab6074b95",
+ "native_sha256": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+ "old_pid": 3586969,
+ "old_live_group": [],
+ "old_lease_present": false
+}

@@ -1,5 +1,57 @@
 # B2 → C1 retained evidence and capture availability
 
+## Captures now complete (2026-10-16T12:31:05Z terminal observation)
+
+Use `fixturev1-20261016T1226Z-root-index.json` for all36 individual constructor/
+pre/post roots, canonical root SHA256 values, exact JSON pointers and selected
+actor/mode observations. Full immutable artifact on08:
+`/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z/fid/fixtures.json`,
+SHA256 `b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358`.
+The complete initial and first-context roots are at `/legacy/0` Zap blue lead1/t0,
+`/legacy/2` ElectroDragon blue lead6/t14 and `/legacy/4` IceSpirit blue lead0/t23;
+red equivalents are indices1/3/5. Each retains `initial_root/{python,native}` and
+`first_context/{before,after}/{python,native}`. No constructor/paired root is missing.
+
+One approved CPU1/nice15 run PID/PGID940202 launched12:25:49.973856Z, admitted
+12:25:50.937900Z, completed12:29:51.246278Z. At12:31:05Z PID/lease absent.
+`fixturev1-20261016T1226Z-terminal.json`: CAPTURE_COMPLETE/exit0, changed_inputs[],
+six retained legacy FAILs and natural comparison FAIL. This is collection success,
+not engine/semantic acceptance. Actual native7738 unchanged, exact source is
+7e2f0f165 reporting commit plus the OLD six-file r2 engine WIP bound by the frozen
+504-file manifest; later local Rage WIP is not part of these captures.
+Manifest SHA256 `abe1fc6b8f3158bd27df0b03ed8098e1ddc475fb9989a1c5abf547dab6074b95`;
+identity SHA256 `3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5`.
+Host `identity.json`/`source-and-tools.json` bind all actual source/exporter/Python/
+native/gamedata/tools/review/old failure evidence; exact approval2 is linked below.
+
+All six old first-bad fields/ticks reproduced exactly. Actual Zap blue constructor
+has stun0.5, frozen_moving=true,26 retained route cells and forced travel. Old Dragon
+blue pre-t14 bodies7/8 coincide at(9,17.5); paired headings retain the observed
+Python/native disagreement. IceSpirit before/after captures expose actual phase,
+entity_kind, spirit/shot target and ordinary/slow stats. These facts enable C1's
+reader/cause work; they are not an independent claim of a complete dynamic cause.
+
+All16 selected natural continuations collected45ticks, accepted required actions,
+normal reference launch tick44 and no digest divergence. Zap lead1/-4 and Freeze
+lead1 both seats have no applicable differences (6/16). Log retains rolling aim;
+IceSpirit retains mode-derived fields; Dragon/MagicArcher/AxeMan retain projectile
+history fields (10/16). Do not call the subset a semantic PASS or general normal
+reachability proof. Full initial/first-bad roots for every natural failure are in
+`/rows/<index>`; exact row indices/reference observations are in the root index.
+
+Old3586969 is terminal (observed12:25:30Z), no live group/lease. All12 child exit
+receipts are0; final strict semantic validator failed on meaningful Zap state, no
+semantic PASS. Wrapper exit code was not independently recorded. Complete sweep:
+62 case/seat rows ×40 offsets =2480,1033 mismatches,0 structurally invalid runs.
+Both-seat intended mutants detected (Lightning8/seat, Log39/seat with its own digest
+equal); descendant,42 first-update,6 Clone bounds+2 exact recovery and28/28/42 scenario
+parity checks pass. These focused results do not waive the1033 failures. Local
+inspection receipts `semv1-complete-sweep-structural.json` and
+`semv1-terminal-focused-checks.json` match the capture identity's old-output hashes.
+
+The following paragraphs preserve earlier availability history; superseded pending
+statements are not the current capture status.
+
 2026-10-16T11:53:04Z last exact status: **3586969 is active**, CPU lease4, original
 frozen semantic-v1 job `/mpac/sdicks02/jobs/clasher/cards/b2-semv1-20261016T1052Z`
 on08. Phase1 logs43/62 rows; no phase exit yet. Do not duplicate, alter or relaunch it.

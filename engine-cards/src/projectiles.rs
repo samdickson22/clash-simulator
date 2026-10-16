@@ -37,6 +37,7 @@ impl BattleState {
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
             (e.alive && e.owner!=shot.owner && !e.hidden && !e.spirit && !e.underground
                 && e.stagger<=1e-9 && !e.above_surface() && e.death_immunity.is_none()
+                && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                 && (e.class=="Troop" || e.class=="Building") && !shot.hit_ids.contains(&e.id)
                 && Self::in_area(e,shot.x,shot.y,radius)).then_some(j)
         }).collect();
@@ -79,7 +80,7 @@ impl BattleState {
         if shot.stats.projectile_stun <= 0.0 && (shot.stats.projectile_slow_duration <= 0.0 || shot.stats.projectile_slow_multiplier >= 1.0) { return; }
         // entities.py:5721-5740 queries again after damage, including death children.
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
-            (e.alive && !e.hidden && !e.spirit && !e.underground && e.stagger <= 1e-9
+            (e.alive && !e.hidden && !e.spirit && !e.underground && e.stagger <= 1e-9 && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                 && e.owner != shot.owner && (!shot.source_character || e.death_immunity.is_none())
                 && (e.class == "Troop" || e.class == "Building")
                 && shot.can_hit_plane(e)
@@ -205,6 +206,7 @@ impl BattleState {
                     && !e.underground
                     && (!shot.source_character || e.death_immunity.is_none())
                     && e.stagger <= 1e-9
+                    && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                     && (e.class == "Troop" || e.class == "Building")
                     && (!e.airborne() || shot.stats.can_air)
                     && !shot.hit_ids.contains(&e.id)
