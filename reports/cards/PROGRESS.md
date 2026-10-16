@@ -62,3 +62,9 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   (15.535-measured) only where RS 15.535==16.402 on that field. Live client = 160402020 (RS table 16.402.19; flag).
   r1-cards1 stays sim-continuity (C56 bit-identical). Proxy v1 NOT approved (Sol review) → v2 in progress; review by a
   fresh instance, not the writer.
+- 01:24Z Proxy table approved (3 Sol rounds) and LANDED ON MAIN a382530c9 (temp-index commit). Batch A: 37/42 fidelity
+  scenarios PASS (mech+stats), native==Python 42/42, C56 gate queued on 04 (PID 2204895). Batch A ETA to coordinator
+  03:30–04:00Z. r1-cards1 roots 600/600, HEADLINE gate on 03; timing probe of non-C56 live-search fallback is top
+  priority (scope worker). Sam: official client data allowed (scratch only, hashes). Null's Royale fresh instance
+  (LIVE LEAD building) → native fixtures for the 66; never touch sealed AVD ~/.cache/clasher-native-reference
+  (until 2026-10-25). Rule: native wins on mechanics; 16.402 stats from RoyaleSim unless Null's is 16.402.
