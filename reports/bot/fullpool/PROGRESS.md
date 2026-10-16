@@ -391,3 +391,11 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   bot/cards/{fc_cut,scope,proxy_table}, bot/eval/headline, bot/exit/student, bot/fullpool/{banks,belief,cards,decks,
   extend,models}, bot/players/{policy,variants}, bot/search/{candidates,oppmodel,reserve}). Removed: bot/live/
   {mac_bench,mac_perc}.py.
+- 20:01Z **`res` token proven for the full-pool player** (LIVE-AB1 cases 0–9 vs R3a, 08; bot/fullpool/res_check.py;
+  old tree b3e81b9e without reserve code vs new main):
+  - Without the token, `K4L-R-gs-mk1a1` and the lopp_fast path `K4L-R-gs-rw-fc-t2-mk1a1` both give identical command
+    hashes, 10 of 10, and the reserve is never called.
+  - With `-res`, both fire in 10 of 10 games, with penalty > 0 on 4,600 of 12,560 scored keys, and every command
+    hash differs from the no-token run.
+  - So the bundle can ship `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res` if the ladder A/B keeps -res.
+- lopp_time gained --decks/--bank (4f426736) for the post-gate timing on 04 (e16 vs Battle Log cases).
