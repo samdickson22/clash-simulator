@@ -117,14 +117,23 @@ def repair_public_graph(entities):
 
     Each (parent, rank) slot has capacity one. Deterministic augmenting matching
     maximizes admitted riders, preferring the public-heading slot distance.
-    Coincident graphs and changed headings remain documented approximations.
-    Missing/remote/over-capacity parents are rejected, never invented. A missing
-    rider row is allowed and stays missing. Ordinary released SpearGoblins and
+    First try the ordinary radial geometry. After post-carry movement (such as
+    Fisherman drag), a complete observed population of two riders per parent
+    can violate that geometry. For that owner only, recompute a capacity-bounded
+    assignment over all observed compatible parents, using geometry as a
+    preference rather than an admission test. No hidden transport state enters.
+
+    Coincident or transported complete graphs are public-model approximations;
+    balanced truncation can conceal the original pairing. Incomplete populations
+    retain geometric admission and can reject transported partial observations.
+    Missing/over-capacity parents are rejected, never invented. A missing
+    rider row stays missing. Ordinary released SpearGoblins and
     projectile carriers are never attached.
     """
     parents = sorted((e for e in entities if e['class'] == 'Troop' and e['stats']['name'] == GG_PARENT), key=_public_order)
     riders = sorted((e for e in entities if e['class'] == 'Troop' and e['stats']['name'] == GG_RIDER), key=_public_order)
-    report = dict(parents=len(parents), riders=len(riders), matched=0, ambiguous=0, boundary_candidates=0, unsupported=[])
+    report = dict(parents=len(parents), riders=len(riders), matched=0, ambiguous=0,
+                  boundary_candidates=0, structural_fallback=[], structural_riders=0, unsupported=[])
     # Generic legacy shot prototypes can themselves inherit a rider body's
     # stale mount/rank. A shot is never an attachment, even on a rider-only row.
     for e in entities:
@@ -185,8 +194,29 @@ def repair_public_graph(entities):
     # Process constrained rows first. Reverse public order on equal constraints
     # lets the augmenting displacement give earlier public rows their best slot.
     for r in sorted(range(len(riders)), key=lambda i: (len(preferences[i]), -i)):
-        if not attach(r, set()):
-            report['unsupported'].append(riders[r]['id'])
+        attach(r, set())
+    for owner in sorted({r['owner'] for r in riders}):
+        group = [i for i, r in enumerate(riders) if r['owner'] == owner]
+        compatible = [i for i, (p, _, _) in enumerate(slots) if p['owner'] == owner]
+        if (not compatible or len(group) != len(compatible)
+                or all(i in assigned.values() for i in group)):
+            continue
+        # Recompute the ENTIRE affected owner, so an old partial assignment
+        # cannot consume the best slot and strand a displaced sibling.
+        for i in compatible:
+            assigned.pop(i, None)
+        for i in group:
+            r = riders[i]
+            preferences[i] = sorted(compatible, key=lambda s: (
+                min((r['x']-x)**2+(r['y']-y)**2 for x,y in slots[s][2]),
+                _public_order(slots[s][0]), slots[s][1]))
+        for i in reversed(group):
+            if not attach(i, set()):
+                raise ValueError('complete public attachment assignment failed')
+        report['structural_fallback'].append(owner)
+        report['structural_riders'] += len(group)
+    matched = set(assigned.values())
+    report['unsupported'] = [r['id'] for i,r in enumerate(riders) if i not in matched]
     report['matched'] = len(assigned)
     if report['unsupported']:
         raise PublicGraphError(report)
