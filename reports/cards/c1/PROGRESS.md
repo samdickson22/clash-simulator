@@ -966,3 +966,29 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   scoped isolated commits. Assignment OPEN, later reconciled-main/full C56 and
   broader coverage still mandatory. Strictsilence/direct-owner/one final rules
   remain authoritative; no routine DM or duplicate child/job.
+
+## 2026-10-16T17:06Z — exact R6 approval and single approved execution
+
+R6 independent review APPROVED exact5fc9c5121b4d0a995500eecb2bce21c0f7833625,
+526 inputs. Report SHA2a1d0e90aca1da588756cc5e15570c7e9441bedcf77ed59e70217c11c219b891;
+typed approval SHA1756302570c8493eb998bd1dec4d203d9a8ce973ce252dca2f9a33d4bd5252c9.
+Local stdlib-only Python3.12 nice15 rehashed all526 and verified clean tracked
+HEAD. Read-only08 17:05:35Z ps for3502954/3503110/539594/540091/608754 found
+none; old wrapper leases absent and both original FAIL cleanup terminals read.
+Approved stage independently also rejects any live prior family/lease or missing
+terminal. No old artifact changed and no recovery rerun.
+
+Executed once, unchanged reviewed tool, on local05 (staging only):
+`nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/c1/tools/diagnostic_job.py stage reports/cards/c1/integration/diagnostic-review-r6.json c1diag-20261016T170550Z-r3`.
+Source-bound08 launch17:05:50.926040Z PID/PGID1054216; CPU4 nice15,
+admission2326e269528bf3e6c38882ceeaa0ba2bf0c942852904713f5ed2107087c6ffb4,
+manifest7977982fb6747340c670d1d94b28112990c4f59ae0fac85b7ae5235a78a88182,
+platformac7483bccdd813ada044866e6e7ef70cd3f3f59018f210afb8999c6ddfaa06e9.
+17:06:03Z exact wrapper live nice15, lease `4 1054216`; job/output/numba-cache
+all exactly0700. Build started; actual nine phases remain pending. Source/cache/
+all prior failures preserved; no borrowed native, engine import or compute05.
+Launch receipt is integration/c1diag-20261016T170550Z-r3-launch.json. Rollback
+is isolated integration commits only, no active deployment/pin changed.
+Assignment OPEN through actual phases/failure resolution/final evidence review;
+final reconciled-main full C56 and live pins WITHHELD. Strictsilence/direct-owner
+coordination and one automatic final delivery remain in force.

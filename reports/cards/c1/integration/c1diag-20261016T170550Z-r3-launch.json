@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-16T17:05:50.926040+00:00",
+  "pid": 1054216,
+  "pgid": 1054216,
+  "command": [
+    "nice",
+    "-n",
+    "15",
+    "bash",
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+    "4",
+    "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+    "-P",
+    "-s",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T170550Z-r3/src/reports/cards/c1/tools/diagnostic_job.py",
+    "run",
+    "/mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T170550Z-r3",
+    "2326e269528bf3e6c38882ceeaa0ba2bf0c942852904713f5ed2107087c6ffb4"
+  ],
+  "commit": "5fc9c5121b4d0a995500eecb2bce21c0f7833625",
+  "manifest_sha256": "7977982fb6747340c670d1d94b28112990c4f59ae0fac85b7ae5235a78a88182",
+  "review_sha256": "1756302570c8493eb998bd1dec4d203d9a8ce973ce252dca2f9a33d4bd5252c9",
+  "platform_sha256": "ac7483bccdd813ada044866e6e7ef70cd3f3f59018f210afb8999c6ddfaa06e9",
+  "cpu": 4,
+  "nice": 15,
+  "job": "/mpac/sdicks02/jobs/clasher/cards/c1/c1diag-20261016T170550Z-r3",
+  "host": "127x08"
+}
