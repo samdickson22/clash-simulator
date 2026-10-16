@@ -21,6 +21,14 @@ from pathlib import Path
 import numpy as np
 
 
+def check_export_head(expected, actual):
+    """Fail an export if serving logits are nonfinite or differ beyond float32 tolerance."""
+    if not np.isfinite(expected).all() or not np.isfinite(actual).all():
+        raise ValueError('nonfinite torch/numpy export logits')
+    np.testing.assert_allclose(actual, expected, rtol=1e-4, atol=1e-4, equal_nan=False)
+    return float(np.abs(actual - expected).max())
+
+
 def load_file(args):
     path, opponents, cost_of = args
     from bot.search.lopp_feat import featurize
@@ -234,18 +242,23 @@ def main():
              tem=sd_['tem.weight'], Wo=sd_['o.weight'].T.copy(), bo=sd_['o.bias'],
              meta_vocab=np.array(vocab_tokens, np.int64), meta_cost=np.array([cost_of.get(t, 0.) for t in vocab_tokens]),
              meta_tau=np.array(tau), meta_mu=mu.astype(np.float32), meta_sd=sd.astype(np.float32))
-    (a.out / f'{a.name}.json').write_text(json.dumps(dict(metrics, args=vars(a) | dict(out=str(a.out))), indent=1))
-
-    # numpy forward must match torch
+    # Export completion requires serving parity of all three heads on held-out views.
     from bot.search.lopp_feat import NumpyOpponent
     npm = NumpyOpponent(a.out / f'{a.name}.npz')
     idx = va[:64]
     with torch.no_grad():
         ht = net.trunk(Xt[torch.from_numpy(idx)], Ct[torch.from_numpy(idx)])
         gt = net.g(ht)[:, 0].numpy()
+        vt = net.v(ht).numpy()
+        tt = [net.tiles(ht, Ct[torch.from_numpy(idx), slot]).numpy() for slot in range(4)]
     hn = npm.trunk(X[idx], C[idx])
-    gn = npm.heads(hn)[0][:, 0]
-    print('numpy-vs-torch gate max diff', float(np.abs(gn - gt).max()), flush=True)
+    gn, vn = npm.heads(hn)
+    parity = dict(rows=len(idx), gate=check_export_head(gt, gn[:, 0]), card=check_export_head(vt, vn),
+                  tile=max(check_export_head(tt[slot], npm.tiles(hn, C[idx, slot])) for slot in range(4)),
+                  rtol=1e-4, atol=1e-4, passed=True)
+    serial_args = {k: str(v) if isinstance(v, Path) else v for k, v in vars(a).items()}
+    (a.out / f'{a.name}.json').write_text(json.dumps(dict(metrics, args=serial_args, export_parity=parity), indent=1))
+    print(json.dumps(dict(export_parity=parity)), flush=True)
 
 
 if __name__ == '__main__':

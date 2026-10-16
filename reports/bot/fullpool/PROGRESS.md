@@ -246,3 +246,51 @@ root retries exactly the errored games, since done_games skips only non-error ro
   - **Babysitter:** steered with the new shards, GPU checks on 01/04/08, and halving order (newest shard first).
   - **cpu_feeder.sh** has the same live_py flaw (it counts the YOLO loaders). The feeders are off now; it11 must
     patch it before restarting them.
+
+## 2026-10-16 16:22Z — packing/refit recovery closed at explicit blockers (Sol high)
+
+Recovered in place after the provider-stream failure. Full evidence and source proof:
+`reports/bot/fullpool/REFIT-AUDIT.md`; commands/results/failures, exact identities, snapshots and preserved
+failed/current outputs: `05:/mpac/sdicks02/jobs/clasher/bot-fullpool/refit-recovery-20261016T1611Z/`.
+An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier history remains intact.
+
+- **Packing:** existing packs 03/04/08 contain 2,262,299 / 2,953,699 / 1,976,795 rows = **7,192,793**.
+  Complete metadata, source-index hashes and row sums agree; 23,266 sealed shards, zero duplicate source paths
+  across packs. Array payload hashes were not all recomputed. No repack launched. Original pack PGIDs:
+  03/1594987 (16:05:25–16:07:41), 04/558472 (16:05:25–16:08:39), 08/1660796 (16:05:26–16:07:37).
+- **F1 invalid:** actual host source proved ratios 1.0 (08) and 2.0 (04) left `old=None`; required C56 replay
+  corpora were not loaded. Old manifest hashes did not prove inclusion. Both trained entirely from G1,
+  which itself can include C56 observations. `old_rows=0` was accurate, not accounting ambiguity.
+- **Failed CUDA evidence:** first attempts 08/1905505 and 04/812758 failed by 16:10:02 with incompatible torch/
+  driver; `fail1.log` files preserved. Their printed `rc 0` was false success from the wrapper. Prior provider
+  deletion of first output dirs is documented; recovery deleted no outputs. Retry detach initially returned
+  those stale receipts, not actual retry job identities.
+- **Adopted current jobs:** F1a08 PGID1918203/trainer1918288, F1b04 PGID855251/trainer855446, actual process starts
+  16:10:37. KF1a01 PGID2895857/trainer2896071 (16:06:11), KF1b01 PGID2896463/trainer2896759 (receipt16:06:12).
+  Actual argv, boot/start ticks, source hashes, log descriptors, UID/cwd/executable and lease10 each were checked.
+  KF1 loaded only K1 x0/x11/x10 (3,292,938 rows); required old C56 pool recording union was absent.
+- **CPU gates failed:** KF1 configured16 training threads per lease10; extraction8 is an earlier phase, so
+  peak16, not24. F1 configured8 trainer threads plus8 concurrent loaders, envelope16 per lease10.
+  NLWP was not equated to compute demand. No live lease edits or capacity assumptions were made.
+- **Authority and stop:** parent direction16:13:09 required exact guarded stop for these failures. LIVE
+  temporarily lent only the exact existing04/08 F1 jobs; that did not waive correctness/capacity. Independent
+  Sol review approved guard SHA256 `c15032d1a166d9d63f1f2d8ec42ad3245ec0586c959517e092f0958254c72dc3`.
+  One SIGTERM after fresh identity/lease/source/log-fd revalidation per exact group:04 F1b16:17:21,
+  08 F1a16:17:27,01 KF1a16:17:36,01 KF1b16:17:49. All had no live members by16:17:53; their own EXIT traps
+  removed leases. Terminal snapshot16:18:20 confirmed no refit lease or GPU process. LIVE received GPU handback;
+  GPU04/08 reverted to LIVE. No retry, extension, output deletion, SIGKILL or promotion occurred.
+- **Output status:** F1a/f1b ended at recorded steps208/202; no checkpoint/complete marker. KF1a/b ended after
+  epoch4; no model export. All original/current logs, receipts, inputs and train logs survive and were copied
+  into the recovery evidence. These are invalid/incomplete attempts, not evaluated models.
+- **Prepared fixes, independently reviewed:** fractional mixtures(.5 and2/3), rejected silent old omission,
+  compatible CUDA venv default, current-lease CPU budget validation (F1 8+2=10; KF1 max8,8+parent=9), fresh names/
+  output guards, real trainer exit propagation, safe `set -e` env sourcing, required `OLD_REC`, Path-safe KF1 JSON,
+  finite/tolerance-checked gate/card/all-hand-tile serving parity before export completion JSON. Actual host
+  source trees remain unchanged. Four light unit tests, shell syntax, both OWN env modes and diff checks passed;
+  final independent source review approved preparation only. No corrected fit/export or eval ran.
+- **Concrete remaining gates:** review immutable datasets and exact legacy KF1 recording identities/union;
+  obtain fresh capacity/allocation; stage/review exact corrected host sources and fresh argv/log/receipt/output
+  identities; separately authorize a relaunch and subsequent result gates. Earlier preflights/idle observations
+  are not authority. Existing K1 first-pass groups04/2819629 and08/2850352 continue untouched (lease4 each);
+  no failed-game retries or old gates were revived. Coordination blockers go to owning parent0523ae6f…;
+  the shared bot lead remains context-blocked. No routine milestone DMs were sent.
