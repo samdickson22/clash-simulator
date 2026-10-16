@@ -294,3 +294,35 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   are not authority. Existing K1 first-pass groups04/2819629 and08/2850352 continue untouched (lease4 each);
   no failed-game retries or old gates were revived. Coordination blockers go to owning parent0523ae6f…;
   the shared bot lead remains context-blocked. No routine milestone DMs were sent.
+- 17:10–17:50Z **F1 refits done** on GPU (fixed sources b32921a3: --new-ratio is the new-corpus fraction; the C56 replay is
+  actually mixed). Each arm: one attempt inside the LIVE LEAD's 16:30–18:30Z GPU windows, CPU 10 (4 threads + 6
+  loaders), 1200 steps, init rl5-v10-fp, new = the three G1 packs (6,836,154 train / 356,639 held-out rows),
+  old = kc7a x01/x04/x08 (1,545,817 rows). Rows per batch: new 2048 (f1a2) / 2731 (f1b2).
+
+  | arm | host | new fraction | held-out loss | threshold | step-001200.pt sha256 prefix |
+  |---|---|---|---|---|---|
+  | f1a2 | 08 | 0.5 | 4.943 | 0.644 | 0c03f79ffe5aa19e |
+  | f1b2 | 04 | 2/3 | 4.930 | 0.642 | 34176b656d3a7bb8 |
+
+  Checkpoints are every 250 steps, with complete.json. The old f1a/f1b dirs (invalid: no C56 replay) are kept.
+- 17:46Z **BOT LEAD reset:** no permission process; the owner launches, fixes and retries; the pin is
+  **live16402b-r3** (the CARD LEAD fixed the template-error class).
+  - r3 roots: identical on 03/04/08 except the per-host RECEIPT.json (file manifest excluding RECEIPT.json
+    1aa243756bd98494…). Copied 04 → 01 into J/roots/live16402b-r3 (same manifest).
+  - Tree J/repo-b82939149f8a (main b8293914). Its first r3 preflight FAILED: ModuleNotFoundError
+    clasher.rl.slot_permission. Main commit e883a80da (LIVE slot eligibility) imports a module that exists only in the
+    repo's src/, while Runtime puts the root's clasher package first, so every search player on main breaks against
+    the fleet roots. Workaround: the run tree overlays the four pre-e883a80da files (bot/search/{players,candidates,
+    lopp_fast}.py, bot/live/player.py; shas in T/OVERLAY-pre-e883a80da.txt). In sim no packet has slot-permission
+    data, so behaviour is unchanged. After the overlay, r3 preflight PASS on 03 (17:55:57Z) and 01 (17:56:39Z).
+    **This needs a proper fix on main by the LIVE LEAD.**
+- 17:48–17:57Z **launched on r3:**
+  - G1 shard 8 (03, W50, 4000 games, PGID 1895853) and G1 shard 9 (01, W40, 3200 games, PGID 335988).
+  - K1 shard 12 (03, W36, 1000 cases, PGID 1896024) and K1 shard 13 (01, W25, 600 cases, PGID 336557).
+  - Reruns of the template-errored games: G1 shards 0–7 on their hosts (W4 each); K1 shards 2, 10, 11 (RETRY=1).
+  - KF1 arm a on 01 (k1a1, CPU, from poolfp, PGID 4033434) and arm b on 08 (k1b1, fresh vocab, PGID 4178213).
+    Both on K1 x0 + x2 + x10 + x11 plus the legacy bot-lopp-rec union; NAME/receipt in J.
+  - The r2 K1 shard 1 on 04 (PGID 2819629) continues.
+- 17:59Z Sol helper (fullpool-f1-screen-babysit-r3-20261016): F1 screen on FP-DEV, then C56-REG (f1a2, f1b2 vs the
+  rl5-v10-fp baseline, opponents extended R3a and v1, 300 paired cases, on 04/08 via run/eval_f1.sh), plus
+  babysitting and filling 04/08 with new G1 shards after the evals.
