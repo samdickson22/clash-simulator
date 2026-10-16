@@ -39,6 +39,43 @@ def initial(seed=1, cards=CARDS, *, level=11):
     return b
 
 
+def _fan_stats(s, projectile):
+    """Batch B1: a character's MultipleProjectiles fan of straight pellets (entities.py _create_projectile_fan)."""
+    count = int(getattr(s, "multiple_projectiles", 1) or 1)
+    if count <= 1 or not projectile.get("projectileRange"):
+        return {}
+    return dict(
+        fan=count,
+        fan_radius=float(projectile.get("projectileRadius", projectile.get("radius", 0)) or 0) / 1000,
+        fan_delay_ms=int(projectile.get("randomDelay", 0) or 0),
+        fan_stop=bool(projectile.get("checkCollisions", False)),
+    )
+
+
+def _attack_select_stats(s):
+    """Batch B1: the Three Musketeers' attack selector (entities.py Troop._melee_selected)."""
+    select = getattr(s, "attack_select", None)
+    if not select:
+        return {}
+    return dict(attack_select=dict(
+        range=float(select.get("meleeRange", 0) or 0) / 1000,
+        damage=float(s.get_scaled_stat(select.get("meleeDamage", 0))),
+        ground_only=bool(select.get("meleeGroundOnly", True)),
+    ))
+
+
+def _rider_stats(e):
+    """Batch B1: a mount's attached-rider block (mechanics/shared/riders.py)."""
+    riders = next((m for m in e.mechanics if type(m).__name__ == "AttachedRiders"), None)
+    if riders is None:
+        return {}
+    data = riders.rider_data
+    return dict(riders=dict(
+        number=int(riders.number), radius=int(riders.radius_units),
+        shift=int(data.get("spawnAngleShift", 0) or 0), max_angle=int(data.get("spawnMaxAngle", 0) or 0),
+    ))
+
+
 def entity(e, *, clone_prototype=True):
     from mirror_snapshot import payload_key
     from clasher.unit_traits import is_knockback_immune, is_hover_unit_card
@@ -124,7 +161,12 @@ def entity(e, *, clone_prototype=True):
         else 0.0
     )
     stats = dict(
+        **({"ignore_buffs": list(s.ignore_buffs)} if getattr(s, "ignore_buffs", ()) else {}),
         min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
+        fly_direct=bool(getattr(s, "fly_direct_paths", False)),
+        **_fan_stats(s, projectile),
+        **_rider_stats(e),
+        **_attack_select_stats(s),
         death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
         dash=dash_spec,
@@ -378,6 +420,15 @@ def entity(e, *, clone_prototype=True):
         cooldown=float(e.attack_cooldown),
         force_due=stats["ordinary"] and e.attack_cooldown <= 0,
     )
+    if getattr(getattr(e, "card_stats", None), "attack_select", None):
+        if getattr(e, "_attack_select_choice", None) is not None:
+            out["attack_choice"] = bool(e._attack_select_choice)
+        if getattr(e, "_attack_select_target", None) is not None:
+            out["select_target"] = int(e._attack_select_target)
+    mount = getattr(e, "_rider_mount", None)
+    if mount is not None and mount.is_alive:
+        out["mount"] = mount.id
+        out["rider_rank"] = int(getattr(e, "_rider_rank", 0))
     # Retain exact sensor identities for nested and one-tick payload templates.
     from types import SimpleNamespace
     from clasher.rl.structured_obs import StructuredObservationBuilder
@@ -414,6 +465,11 @@ def entity(e, *, clone_prototype=True):
     return out
 
 
+def formation_member(e):
+    """Creation payloads are emitted by config.create_areas, not formations."""
+    return getattr(e, "_creation_source_id", None) is None
+
+
 def config(cards=CARDS, *, level=11, mirror_templates=True):
     from functools import partial
     template_battle = partial(initial, level=level)
@@ -435,6 +491,8 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         spirit_areas={},
         production_children={},
         spawn_areas={},
+        hit_areas={},
+        create_areas={},
         ability_bombs={},
     )
     from clasher.placement import ground_spawn_tile_clear
@@ -562,7 +620,9 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             old = set(b.entities)
             x, y = (8.5 if card == "RoyalRecruits" else 4.5), 10.5 if seat == 0 else 21.5
             assert b.deploy_card(seat, card, Position(x, y))
-            units = [entity(b.entities[i]) for i in sorted(b.entities.keys() - old)]
+            # Creation-time heal areas are config.create_areas, not formation members.
+            units = [entity(b.entities[i]) for i in sorted(b.entities.keys() - old)
+                     if formation_member(b.entities[i])]
             for unit in units:
                 if unit["underground"]:
                     unit["x"], unit["y"] = unit["tunnel_destination"]
@@ -600,8 +660,18 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             footprint=size,
             anywhere=bool(getattr(stats, "can_deploy_on_enemy_side", False)),
             margin=int(getattr(stats, "deploy_w_tile_margin", 0) or 0),
-            mirror_x=len(units) in (2, 3, 4),
-            recruits_line=card == "RoyalRecruits",
+            # Riders (Goblin Giant) are laid by their mount's heading, never by lane.
+            mirror_x=(len(units) in (2, 3, 4) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5))
+            and not any("mount" in unit for unit in units)
+            and not getattr(stats, "summon_members", None),
+            recruits_line=card == "RoyalRecruits" and not getattr(stats, "summon_width", 0),
+            line_search=bool(
+                getattr(stats, "summon_width", 0)
+                and not getattr(stats, "deploy_w_tile_margin", 0)
+                and len(units) >= 2
+                and not units[0]["stats"]["air"]
+                and not getattr(stats, "summon_character_second_data", None)
+            ),
         )
         if card == "MightyMiner":
             source = b.entities[max(b.entities)]
@@ -708,9 +778,21 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         spawn_area = next(
             (m for m in source.mechanics if type(m).__name__ == "SpawnAreaEffect"), None,
         )
-        if spawn_area is not None:
+        created = next(
+            (e for e in b.entities.values() if getattr(e, "_creation_source_id", None) == source.id), None,
+        )
+        if spawn_area is not None and created is not None:
+            # Batch B1: a heal area cast at the unit's creation (Battle Healer).
+            out["create_areas"][source.card_stats.name] = entity(created)
+        elif spawn_area is not None:
             spawn_area.on_spawn(source)
             out["spawn_areas"][source.card_stats.name] = entity(b.entities[max(b.entities)])
+        on_hit = next(
+            (m for m in source.mechanics if type(m).__name__ == "AreaEffectOnHit"), None,
+        )
+        if on_hit is not None:
+            on_hit.on_attack_hit(source, source)
+            out["hit_areas"][source.card_stats.name] = entity(b.entities[max(b.entities)])
         if card in ("Balloon", "BombTower", "GiantSkeleton"):
             source = b.entities[max(b.entities)]
             name = source.card_stats.name
@@ -719,6 +801,11 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         if card in ('DarkWitch','SkeletonBalloon','LavaHound','ElixirGolem','BarbarianHut'):
             from payload_snapshot import export_payloads
             export_payloads(b.entities[units[0]['id']],b,out)
+        # Batch B1: an attached rider's own death spawn (Goblin Giant's dismount).
+        rider = next((u for u in units if "mount" in u), None)
+        if rider is not None:
+            from payload_snapshot import export_payloads
+            export_payloads(b.entities[rider['id']], b, out)
     if mirror_templates and 'Mirror' in cards:
         from mirror_snapshot import extend
         extend(out, cards)

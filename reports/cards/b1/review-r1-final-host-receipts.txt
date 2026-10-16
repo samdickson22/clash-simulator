@@ -1,0 +1,73 @@
+2026-10-16T09:58:42Z
+2026-10-16T09:40:38Z pid=3195931 phase=build
+2026-10-16T09:57:09Z pid=3958282 phase=test
+63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-06/out/clasher_core.abi3.so
+Artifact reuse: genuine successful build from /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-04, source commit fb7c2895a967d6d7f10a017fc02b3a47c6ff83de; no fresh06 build claimed.
+    PID     ELAPSED COMMAND
+5851495001ca2a73f5c3a225a41bc46d0c0ebba418d6d34a8f10593a215ef993  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-06/tools/review_jobs.sh
+9932be076e02a61e6b2c9cc2b73e8f6334c301155c6127eb5db1eda569f4e897  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-06/tools/review_regressions.py
+8a20f9b0cd9243b8499da258168e92939a1583ac877d84f9b3952f83021625eb  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-06/tools/review_gate_assert.py
+fixtures-pinned.jsonl: OK
+roots-pinned-0.jsonl: OK
+roots-pinned-1.jsonl: OK
+roots-pinned-2.jsonl: OK
+roots-pinned-3.jsonl: OK
+dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e  /mpac/sdicks02/jobs/clasher/cards/b1/gate-tools/compare.py
+057bd386f022d3770baf0a47d19b7eac2b8e9fc978a0464746ae4a6fc7afe976  /mpac/sdicks02/jobs/clasher/cards/b1/gate-tools/parity_fixtures.py
+2d721a49d003abfaadd0e5f532749f700addfd733c493e7acf2b6abe225063eb  /mpac/sdicks02/jobs/clasher/cards/b1/gate-tools/parity_roots.py
+7c8cc7d2f72ae06e6bbada7cd2772e27235c796fe4a06e603f6b35fc45784cb0  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-003.jsonl.gz
+bf5627638c6dfef3211ad013ceecda8f35ad9464b498a3f2f11d7a964c05540a  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-005.jsonl.gz
+4a5b58085ece2ff8bf38eec133dc703fb5b2a16e9984ba7ff32e5dd4e50ed59c  /mpac/sdicks02/jobs/clasher/cards/b1/roots/config-4a5b58085ece2ff8.json
+545943806569a55c903dd35932ef158fdb487939df61f29d6bfaa30000a8f156  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-000.jsonl.gz
+e4fe56ae8145592bfc1a77811e1e199481506b47fe1a8dc5abfb98ed11c64e54  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-010.jsonl.gz
+231bce7f0e839a88ef3e9770885a9a0d67a90315fd70a3fade11c85cdc4ca72b  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-008.jsonl.gz
+f5e3d6ef87d09f856c66ec5a39de6b0803191efdc3695af1b579398025dee2c4  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-006.jsonl.gz
+5b79c513c5721227ed9234efa0696d2a567c538299b4534c679306ebf6be3120  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-009.jsonl.gz
+631b949a3e3b65a3cc2a5946b7d2fb50985a9f1d8104cf0e93e2c96f56bb5df7  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-011.jsonl.gz
+33307e7b36f0a2ec3b8d13f3808eb5e750ae53054a5a6a4853bffd617d8f0834  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-001.jsonl.gz
+05a45c10a1166d69f8d158cfb02916584c5fd4a4f4cdf19791813dad55d2ef7c  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-007.jsonl.gz
+ba757b9b72d59a74d515ce61425ba5a4682ca84f9674cd88ca3b11fd370ea3bf  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-002.jsonl.gz
+c6c607dbe7a512288e4da864b95c2aa79c5051d8b83c20e531ea7701c3a3b9ae  /mpac/sdicks02/jobs/clasher/cards/b1/roots/roots-004.jsonl.gz
+total 12
+lrwxrwxrwx 1 sdicks02 csc-local-users 66 Oct 16 02:50 HANDOFF_127X05_20261007.md -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/HANDOFF_127X05_20261007.md
+lrwxrwxrwx 1 sdicks02 csc-local-users 63 Oct 16 02:50 HANDOFF_F35_20261005.md -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/HANDOFF_F35_20261005.md
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 LICENSE -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/LICENSE
+lrwxrwxrwx 1 sdicks02 csc-local-users 50 Oct 16 02:50 MASK-V2.md -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/MASK-V2.md
+lrwxrwxrwx 1 sdicks02 csc-local-users 60 Oct 16 02:50 R3a-calibration.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/R3a-calibration.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 46 Oct 16 02:50 R3a.pt -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/R3a.pt
+lrwxrwxrwx 1 sdicks02 csc-local-users 49 Oct 16 02:50 README.md -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/README.md
+lrwxrwxrwx 1 sdicks02 csc-local-users 49 Oct 16 02:50 artifacts -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/artifacts
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 body.pt -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/body.pt
+lrwxrwxrwx 1 sdicks02 csc-local-users 51 Oct 16 02:50 checkpoints -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/checkpoints
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 configs -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/configs
+lrwxrwxrwx 1 sdicks02 csc-local-users 48 Oct 16 02:50 datasets -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/datasets
+lrwxrwxrwx 1 sdicks02 csc-local-users 50 Oct 16 02:50 decks.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/decks.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 44 Oct 16 02:50 docs -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/docs
+lrwxrwxrwx 1 sdicks02 csc-local-users 50 Oct 16 02:50 dry-inputs -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/dry-inputs
+lrwxrwxrwx 1 sdicks02 csc-local-users  7 Oct 16 02:50 engine-rs -> ../tree
+lrwxrwxrwx 1 sdicks02 csc-local-users 48 Oct 16 02:50 examples -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/examples
+lrwxrwxrwx 1 sdicks02 csc-local-users 51 Oct 16 02:50 experiments -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/experiments
+lrwxrwxrwx 1 sdicks02 csc-local-users 24 Oct 16 02:50 gamedata.json -> ../tree/py/gamedata.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 53 Oct 16 02:50 geometry.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/geometry.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 53 Oct 16 02:50 hitboxes.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/hitboxes.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 hud.npz -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/hud.npz
+lrwxrwxrwx 1 sdicks02 csc-local-users 49 Oct 16 02:50 imitation -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/imitation
+lrwxrwxrwx 1 sdicks02 csc-local-users 56 Oct 16 02:50 load-config.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/load-config.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 49 Oct 16 02:50 main02.pt -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/main02.pt
+lrwxrwxrwx 1 sdicks02 csc-local-users 46 Oct 16 02:50 native -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/native
+lrwxrwxrwx 1 sdicks02 csc-local-users 49 Oct 16 02:50 native-r6 -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/native-r6
+lrwxrwxrwx 1 sdicks02 csc-local-users 54 Oct 16 02:50 pyproject.toml -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/pyproject.toml
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 reports -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/reports
+lrwxrwxrwx 1 sdicks02 csc-local-users 56 Oct 16 02:50 requirements.txt -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/requirements.txt
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 scripts -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/scripts
+lrwxrwxrwx 1 sdicks02 csc-local-users 50 Oct 16 02:50 split.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/split.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 14 Oct 16 02:50 src -> ../tree/py/src
+lrwxrwxrwx 1 sdicks02 csc-local-users 54 Oct 16 02:50 student-source -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/student-source
+lrwxrwxrwx 1 sdicks02 csc-local-users 45 Oct 16 02:50 tests -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/tests
+lrwxrwxrwx 1 sdicks02 csc-local-users 45 Oct 16 02:50 tools -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/tools
+lrwxrwxrwx 1 sdicks02 csc-local-users 53 Oct 16 02:50 topology.json -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/topology.json
+lrwxrwxrwx 1 sdicks02 csc-local-users 51 Oct 16 02:50 train-match -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/train-match
+lrwxrwxrwx 1 sdicks02 csc-local-users 54 Oct 16 02:50 training_decks -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/training_decks
+lrwxrwxrwx 1 sdicks02 csc-local-users 47 Oct 16 02:50 uv.lock -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/uv.lock
+lrwxrwxrwx 1 sdicks02 csc-local-users 59 Oct 16 02:50 visualize_battle.py -> /mpac/sdicks02/jobs/clasher/cards/b1/rt/visualize_battle.py
+681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b  /mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so

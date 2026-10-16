@@ -1,0 +1,15 @@
+2026-10-16T14:27:05Z
+2026-10-16T14:25:36Z pid=2878232 phase=public
+GENUINE PUBLIC05 emitted14/14 + owner16/16;32boundarygraphs/64paths;8positive/8zero/8futureClone witnesses; actual native6737; production182039/harness995336; non-public04 origins retained
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/out/clasher_core.abi3.so: OK
+fixtures-pinned.jsonl: OK
+roots-pinned-0.jsonl: OK
+roots-pinned-1.jsonl: OK
+roots-pinned-2.jsonl: OK
+roots-pinned-3.jsonl: OK
+43299db661f38155682eb54086a7ac8b14650a3f9a69639849710bcba3d033a1  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/source.sha256
+d78de5dc344c166d4e7f7424c86a8d8cb6f4a76c2d4ad431284dc34f343eef0e  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/tools.sha256
+ccb7afef6375e685b9797adb564f1e28d0988f7b20672bc251e3d44b602db5a0  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/inputs.sha256
+dcbb8b753e78202684ceb8c461f265f330ec3be226be87b7e077fb716c075511  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/public-emitted.json
+8d941d25fb6e5b68867fc23c35e7e3579d55676eccbd8b8c3cd64c4533b18c52  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/public-owner.json
+3229013       0 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n 15 bash /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/tools/review_jobs.sh /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05 gate

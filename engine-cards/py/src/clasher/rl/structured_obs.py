@@ -446,18 +446,35 @@ class StructuredObservationBuilder:
             if name not in {None, "", "Unknown"} and str(name) not in candidates:
                 candidates.append(str(name))
 
+        def add_public_identity(value: Any) -> None:
+            # A generated payload may deliberately share an existing public
+            # token without renaming its mechanical stats or expanding a frozen
+            # vocabulary. Namespace-specific aliases also distinguish bodies
+            # from their shots through the existing public entity kind.
+            if isinstance(value, dict):
+                identities = value.get("publicIdentity")
+                if isinstance(identities, dict):
+                    add(identities.get(namespace))
+
         def add_projectiles(value: Any, *, rolling: bool) -> None:
             if not isinstance(value, dict):
                 return
             child = value.get("spawnProjectileData")
             if rolling:
+                add_public_identity(child)
                 add(child)
+                add_public_identity(value)
                 add(value)
             else:
+                add_public_identity(value)
                 add(value)
+                add_public_identity(child)
                 add(child)
 
+        add_public_identity(raw)
         if namespace in {"troop_body", "building_body"}:
+            add_public_identity(getattr(stats, "summon_character_data", None))
+            add_public_identity(raw.get("summonCharacterData"))
             add(getattr(stats, "summon_character_data", None))
             add(raw.get("summonCharacterData"))
         elif namespace == "projectile":

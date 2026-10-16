@@ -122,7 +122,38 @@ class Resources:
             elif isinstance(value,(tuple,list)):
                 for nested in value:complete(nested)
         complete(self.config)
+        if 'ThreeMusketeers' in self.config['cards']:
+            # v5 deliberately shares one identity across the rework ranks. Use
+            # rank 1's 700ms static body and its ACTUAL emitted rework shot,
+            # explicitly, independent of config traversal/demo encounter order.
+            from public_root import THREE_MEMBER, install_three_templates
+            demo=initial(seed=880602,cards=('ThreeMusketeers','Knight','Archers','Fireball'))
+            demo.players[0].elixir=10.
+            demo.deploy_card(0,'ThreeMusketeers',Position(4.5,10.5))
+            member=next(e for e in demo.entities.values() if e.card_stats.name==THREE_MEMBER)
+            shot_id=demo.next_entity_id
+            member._create_projectile(None,demo,target_position=Position(4.5,19.5))
+            shot=demo.entities[shot_id]
+            for body,ns in ((member,'troop_body'),(shot,'projectile')):
+                token,_=self.builder._entity_row(body,0)
+                expected=self.builder.token_id('ThreeMusketeers',namespace=ns)
+                if expected<=1 or token!=expected:
+                    raise ValueError(f'actual ThreeMusketeers carrier disagrees with public alias: {ns}')
+            shot_template=entity(shot)
+            # Ordinary Projectile has travel_speed (tiles/second), not speed.
+            # Match live_snapshot.live_entity's native logic-units/tick import;
+            # raw differential.entity leaves this field zero for these shots.
+            shot_template['stats']['speed']=round(shot.travel_speed*50)
+            install_three_templates(self.config,self.builder,self.templates,shot_template)
         self.template_count=len(self.templates)
+
+    def repair_public_graph(self,entities):
+        from public_root import PublicGraphError, repair_public_graph
+        try:
+            self.public_graph_report=repair_public_graph(entities)
+        except PublicGraphError as ex:
+            self.public_graph_report=ex.report
+            raise
 
     def root(self,info,opponent,rng):
         obs=info.packet.observation
@@ -160,6 +191,7 @@ class Resources:
                 elif cooldown>0:
                     a.update(active=False,start=now-a['duration']-a['cooldown']+cooldown,last_use=now-a['duration']-a['cooldown']+cooldown)
             entities.append(e)
+        self.repair_public_graph(entities)
         for e in entities:
             c=e.get('champion')
             if c and c['effect']['kind']=='Goblin':

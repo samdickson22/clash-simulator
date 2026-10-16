@@ -1812,6 +1812,18 @@ class Entity(ABC):
             and target.is_expected_to_die_from_projectiles()
         )
     
+    def _kamikaze_drain(self) -> None:
+        """Ported from RoyaleSim (MIT), state.rs kamikaze_drain (combat.KAMIKAZE_TIME =
+        flat_drain_to_zero, measured on client 15.535.29 Skeleton Barrels): from its
+        fire tick a delayed kamikaze loses floor(max HP x 50 / KamikazeTime) a tick,
+        nothing carried; the serialized delay still ends it."""
+        delay_ms = int(getattr(self.card_stats, "kamikaze_time", 0) or 0)
+        if delay_ms <= 0 or not self.is_alive:
+            return
+        step = int(round(self.max_hitpoints)) * 50 // delay_ms
+        if step > 0:
+            self.take_damage(min(float(step), self.hitpoints))
+
     def is_stunned(self) -> bool:
         """Check if entity is currently stunned"""
         return self.stun_timer > 0
@@ -3035,6 +3047,8 @@ class Troop(Entity):
             return
         if self.spawn_stagger_remaining > 1e-9:
             return
+        if getattr(self, "_rider_mount", None) is not None and self._rider_mount.is_alive:
+            return
         if self._native_natural_movement_active and getattr(
             self, "_native_frozen_stop_route", None
         ) is not None:
@@ -3372,7 +3386,11 @@ class Troop(Entity):
             # physical collision eligibility is a separate predicate.
             # The departing Spirit body remains a stationary avoidance
             # obstacle until the launch interval ends, without body pressure.
-            if isinstance(other, Troop) and other.is_alive and not launched_spirit and other.spawn_stagger_remaining <= 1e-9:
+            if (
+                isinstance(other, Troop) and other.is_alive and not launched_spirit
+                and other.spawn_stagger_remaining <= 1e-9
+                and not (getattr(other, "_rider_mount", None) is not None and other._rider_mount.is_alive)
+            ):
                 # Native states 0/2/8/10 zero the direction dot product;
                 # freeze preserves the prior walking versus attacking state.
                 if (
@@ -3894,6 +3912,8 @@ class Troop(Entity):
             )
             if self.kamikaze_timer_remaining <= 1e-9:
                 self.take_damage(self.hitpoints)
+            else:
+                self._kamikaze_drain()
             return
 
         # A deployed troop enters with its Load Time already preloaded. Full
@@ -3912,6 +3932,18 @@ class Troop(Entity):
             self._attack_windup_active = False
         else:
             self._attack_windup_active = True
+        if getattr(self.card_stats, "attack_select", None):
+            # Batch B1 (RoyaleSim (MIT) combat.ATTACK_SELECT_MOMENT =
+            # at_swing_start): the attack entry is chosen on a fresh cycle's
+            # first tick in reach, and again at each hit for the next swing.
+            if not target_in_range:
+                self._attack_select_choice = None
+            elif (
+                getattr(self, "_attack_select_choice", None) is None
+                or getattr(self, "_attack_select_target", None) != current_target.id
+            ):
+                self._attack_select_choice = self._melee_selected(current_target)
+                self._attack_select_target = current_target.id
         
         if current_target:
             # Move towards target if out of range
@@ -3957,6 +3989,7 @@ class Troop(Entity):
                         self.kamikaze_primed = True
                         self.kamikaze_timer_remaining = delay
                         self._attack_windup_active = False
+                        self._kamikaze_drain()
                         return
                     # Payload-only kamikaze troops with no explicit delay
                     # break on the committed attack frame.
@@ -3965,7 +3998,20 @@ class Troop(Entity):
 
                 # Check if this troop uses projectiles
                 uses_projectile = self._uses_projectiles()
-                if uses_projectile:
+                select = getattr(self.card_stats, "attack_select", None)
+                melee_selected = bool(
+                    select
+                    and getattr(self, "_attack_select_choice", None)
+                    and not is_airborne_target(current_target)
+                )
+                if melee_selected:
+                    # The bayonet: a direct hit for the selector's damage.
+                    self._deal_attack_damage(
+                        current_target,
+                        float(self.card_stats.get_scaled_stat(select.get("meleeDamage", 0))),
+                        battle_state,
+                    )
+                elif uses_projectile:
                     self._create_projectile(current_target, battle_state)
                 else:
                     # Direct attack with special charging damage if applicable
@@ -3975,6 +4021,9 @@ class Troop(Entity):
                         attack_damage,
                         battle_state,
                     )
+                if select:
+                    self._attack_select_choice = self._melee_selected(current_target)
+                    self._attack_select_target = current_target.id
 
                 # This lifecycle point is deliberately after projectile
                 # creation.  Mechanics such as recoil must not move the
@@ -3989,6 +4038,20 @@ class Troop(Entity):
                 self._attack_preload_blocked = False
                 self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
+
+    def _melee_selected(self, target: 'Entity') -> bool:
+        """combat.ATTACK_SELECT_RANGE = range_plus_both_radii, on the ground."""
+        select = getattr(self.card_stats, "attack_select", None) or {}
+        if select.get("meleeGroundOnly", True) and is_airborne_target(target):
+            return False
+        reach = tiles_to_logic_units(
+            float(select.get("meleeRange", 0) or 0) / 1000.0
+            + float(getattr(self.card_stats, "collision_radius", 0.5) or 0.5)
+            + float(getattr(target.card_stats, "collision_radius", 0.5) or 0.5)
+        )
+        dx = tiles_to_logic_units(target.position.x) - tiles_to_logic_units(self.position.x)
+        dy = tiles_to_logic_units(target.position.y) - tiles_to_logic_units(self.position.y)
+        return dx * dx + dy * dy <= reach * reach
 
     def _get_attack_damage(self) -> float:
         """Get the appropriate damage value based on charging state"""
@@ -4127,6 +4190,17 @@ class Troop(Entity):
             )
             
             battle_state.entities[rolling_projectile.id] = rolling_projectile
+        elif (
+            projectile_range > 0
+            and int(getattr(self.card_stats, "multiple_projectiles", 1) or 1) > 1
+        ):
+            self._create_projectile_fan(
+                target, battle_state, aim_position, launch_position,
+                projectile_data, projectile_damage, projectile_speed,
+                projectile_range, hits_air, hits_ground,
+                crown_tower_damage_multiplier, crown_tower_damage,
+            )
+            return
         else:
             # Create regular projectile
             is_piercing = projectile_range > 0
@@ -4198,6 +4272,88 @@ class Troop(Entity):
         battle_state.next_entity_id += 1
         if not is_rolling_projectile:
             projectile.resolve_start_collision(battle_state)
+
+    def _create_projectile_fan(
+        self, target, battle_state, aim_position, launch_position,
+        projectile_data, projectile_damage, projectile_speed,
+        projectile_range, hits_air, hits_ground,
+        crown_tower_damage_multiplier, crown_tower_damage,
+    ) -> None:
+        """Fire a MultipleProjectiles volley of straight pellets (Hunter).
+
+        Ported from RoyaleSim (MIT), combat.rs ``fire`` under
+        combat.MULTIPLE_PROJECTILES = client_fan and PROJECTILE_COLLISIONS =
+        client_columns (measured on client 15.535.29 Hunter volleys): every
+        pellet starts at the shared launch point, aims ProjectileRange from the
+        attacker on the target bearing turned 0, +7, -7, +14, ... degrees,
+        stands ceil(U / 50 ms) ticks (U uniform in 0..RandomDelay) before its
+        first step, tests the creation reach (ProjectileRadius plus
+        ProjectileStartExtraRadius) on its creation tick and, with
+        CheckCollisions, is gone on the tick it hits.
+        """
+        from .logic_math import logic_cos, logic_sin
+
+        count = int(getattr(self.card_stats, "multiple_projectiles", 1) or 1)
+        radius = float(
+            projectile_data.get("projectileRadius", projectile_data.get("radius", 0)) or 0
+        ) / 1000.0
+        random_delay_ms = int(projectile_data.get("randomDelay", 0) or 0)
+        stop_on_hit = bool(projectile_data.get("checkCollisions", False))
+        sx, sy = tiles_to_logic_units(self.position.x), tiles_to_logic_units(self.position.y)
+        vx = tiles_to_logic_units(aim_position.x) - sx
+        vy = tiles_to_logic_units(aim_position.y) - sy
+        if vx == 0 and vy == 0:
+            vy = 1 if self.player_id == 0 else -1
+        range_units = tiles_to_logic_units(projectile_range)
+        pellets = []
+        for k in range(count):
+            step = ((k + 1) // 2) * 7
+            degrees = step if k % 2 == 1 else -step
+            cosine, sine = logic_cos(degrees, 1024), logic_sin(degrees, 1024)
+            ax, ay = normalized_vector_logic_units(
+                vx * cosine - vy * sine, vx * sine + vy * cosine, range_units,
+            )
+            hold_ticks = 0
+            if random_delay_ms > 0:
+                hold_ticks = (battle_state.rng.randrange(random_delay_ms) + 49) // 50
+            pellet = Projectile(
+                id=battle_state.next_entity_id,
+                position=Position(launch_position.x, launch_position.y),
+                player_id=self.player_id,
+                card_stats=self.card_stats,
+                hitpoints=1,
+                max_hitpoints=1,
+                damage=projectile_damage,
+                range=self.range,
+                sight_range=1.0,
+                target_position=Position(
+                    logic_units_to_tiles(sx + ax), logic_units_to_tiles(sy + ay),
+                ),
+                travel_speed=projectile_speed,
+                splash_radius=radius,
+                source_name=self.card_stats.name if self.card_stats else "Unknown",
+                hits_air=hits_air,
+                hits_ground=hits_ground,
+                crown_tower_damage_multiplier=crown_tower_damage_multiplier,
+                crown_tower_damage=crown_tower_damage,
+                source_entity=self,
+                primary_target=(
+                    target if target is not None and target.is_alive else None
+                ),
+                tracks_target=False,
+                pierces=True,
+                projectile_range=projectile_range,
+                start_extra_radius=float(
+                    projectile_data.get("projectileStartExtraRadius", 0) or 0
+                ) / 1000.0,
+                launch_delay=hold_ticks * LOGIC_TICK_SECONDS,
+            )
+            pellet.stop_on_hit = stop_on_hit
+            battle_state.entities[pellet.id] = pellet
+            battle_state.next_entity_id += 1
+            pellets.append(pellet)
+        for pellet in pellets:
+            pellet.resolve_start_collision(battle_state)
 
     def _on_attack(self) -> None:
         """Handle post-attack mechanics like charging state reset"""
@@ -4329,6 +4485,10 @@ class Troop(Entity):
                 self,
                 target_entity,
             )
+            # Ported from RoyaleSim (MIT), state.rs phase_path16402_for
+            # (movement.FLY_DIRECT_PATHS = read, measured on client 15.535.29).
+            if getattr(self.card_stats, "fly_direct_paths", False):
+                pathfind_target = target_entity.position
         else:
             # LogicPathFinder owns bridge and river selection through the
             # immutable arena's lane/water costs. Hovering characters travel
@@ -5196,6 +5356,8 @@ class Projectile(Entity):
     launch_position: Optional[Position] = field(default=None, repr=False)
     start_extra_radius: float = 0.0
     start_collision_resolved: bool = field(default=False, repr=False)
+    # CheckCollisions (Batch B1, Hunter pellets): gone on the tick it hits.
+    stop_on_hit: bool = False
     spawn_projectile_data: Optional[Dict[str, Any]] = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
@@ -5387,6 +5549,8 @@ class Projectile(Entity):
         if self.source_entity is not None:
             for hit_target in hit_targets:
                 self._notify_source_hit(hit_target)
+        if self.stop_on_hit and hit_targets:
+            self.is_alive = False
 
     def _update_piercing_tick(
         self,
@@ -5430,7 +5594,7 @@ class Projectile(Entity):
         if self.source_entity is not None:
             for hit_target in hit_targets:
                 self._notify_source_hit(hit_target)
-        if reached_endpoint:
+        if reached_endpoint or (self.stop_on_hit and hit_targets):
             self.is_alive = False
 
     def _damage_piercing_targets_at(
@@ -7061,12 +7225,27 @@ class TimedExplosive(Entity):
             
         self.time_alive += dt
         
+        if self.carries_freeze_to_children:
+            # Ported from RoyaleSim (MIT), spell.rs step_spells under
+            # spawner.DEATH_BOMB_SPAWN_TIMING = units_at_fuse_end (measured,
+            # client 16.402 Skeleton Barrel): a container releases its units
+            # one logic tick after this engine's plain-bomb fuse check, each
+            # with its same-tick first update, and lands its hit on the next
+            # tick. Plain bombs (Balloon, Bomb Tower, Giant Skeleton) carry no
+            # units and keep the single-step fuse below.
+            if self.time_alive >= self.explosion_timer + 0.1 - 1e-9:
+                self._explode(battle_state, release_units=False)
+                self.is_alive = False
+            elif self.time_alive >= self.explosion_timer + 0.05 - 1e-9:
+                self._spawn_death_units(battle_state, first_update=True)
+            return
+
         # Check if timer expired
         if self.time_alive >= self.explosion_timer - 1e-9:
             self._explode(battle_state)
             self.is_alive = False
     
-    def _explode(self, battle_state: 'BattleState') -> None:
+    def _explode(self, battle_state: 'BattleState', release_units: bool = True) -> None:
         """Deal explosion damage to entities in radius using hitbox collision"""
         from .mechanics.shared.knockback import apply_radial_knockback
 
@@ -7103,10 +7282,10 @@ class TimedExplosive(Entity):
                 )
 
         # Optional chained death spawn (e.g. Skeleton Barrel container -> Skeletons).
-        if self.death_spawn_name and self.death_spawn_count > 0:
+        if release_units and self.death_spawn_name and self.death_spawn_count > 0:
             self._spawn_death_units(battle_state)
 
-    def _spawn_death_units(self, battle_state: 'BattleState') -> None:
+    def _spawn_death_units(self, battle_state: 'BattleState', first_update: bool = False) -> None:
         """Spawn units around this explosive when configured."""
         from .factory.dynamic_factory import troop_from_character_data
         from .formations import native_radial_spawn_offset
@@ -7193,6 +7372,10 @@ class TimedExplosive(Entity):
                     self.freeze_expiry_time,
                     battle_state.time,
                 )
+            # As with DeathSpawn: finish initialization before the synchronous
+            # combat/movement callback can observe the new character.
+            if first_update:
+                battle_state._first_update_spawned(spawned, collide=False)
     
     def _hitbox_overlaps_with_explosion(self, entity: 'Entity') -> bool:
         """Check if entity's hitbox overlaps with explosion radius"""

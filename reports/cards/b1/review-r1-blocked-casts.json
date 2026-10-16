@@ -1,0 +1,101 @@
+{
+  "tests": [
+    {
+      "name": "clone-graph-seat0",
+      "ok": true
+    },
+    {
+      "name": "clone-boundaries-seat0",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-05/tools/review_regressions.py\", line 275, in run\n    fn(*args)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-05/tools/review_regressions.py\", line 142, in test_clone_boundaries\n    assert b.deploy_card(seat, 'Clone', tap)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "name": "clone-knight-negative-seat0",
+      "ok": true
+    },
+    {
+      "name": "mirror-healer-seat0",
+      "ok": true
+    },
+    {
+      "name": "selector-seat0",
+      "ok": true
+    },
+    {
+      "name": "projectile-musketeer-negative-seat0",
+      "ok": true
+    },
+    {
+      "name": "clone-graph-seat1",
+      "ok": true
+    },
+    {
+      "name": "clone-boundaries-seat1",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-05/tools/review_regressions.py\", line 275, in run\n    fn(*args)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-20261016-05/tools/review_regressions.py\", line 142, in test_clone_boundaries\n    assert b.deploy_card(seat, 'Clone', tap)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "name": "clone-knight-negative-seat1",
+      "ok": true
+    },
+    {
+      "name": "mirror-healer-seat1",
+      "ok": true
+    },
+    {
+      "name": "selector-seat1",
+      "ok": true
+    },
+    {
+      "name": "projectile-musketeer-negative-seat1",
+      "ok": true
+    },
+    {
+      "name": "recipient-immunity-BattleHealerAll",
+      "ok": true
+    },
+    {
+      "name": "removed-immunity-negative-BattleHealerAll",
+      "ok": true
+    },
+    {
+      "name": "recipient-immunity-BattleHealerSpawnBuff",
+      "ok": true
+    },
+    {
+      "name": "removed-immunity-negative-BattleHealerSpawnBuff",
+      "ok": true
+    }
+  ],
+  "passed": 14,
+  "total": 16,
+  "full_state_audit_diff_paths": {
+    "/entities/*/age": 179,
+    "/entities/*/aim/*": 4,
+    "/entities/*/attacked_current": 595,
+    "/entities/*/birth": 9795,
+    "/entities/*/clock/remaining": 37,
+    "/entities/*/clock/timeline": 37,
+    "/entities/*/clock_initialized": 37,
+    "/entities/*/clone_template": 37,
+    "/entities/*/cooldown": 848,
+    "/entities/*/facing/*": 74,
+    "/entities/*/finish_tick": 428,
+    "/entities/*/landed_tick": 428,
+    "/entities/*/lane": 179,
+    "/entities/*/last_target": 179,
+    "/entities/*/nav_target": 18,
+    "/entities/*/pending_ms": 18,
+    "/entities/*/public_speed_base": 2931,
+    "/entities/*/push_tick": 428,
+    "/entities/*/route_occupied/*": 202368,
+    "/entities/*/spell_name": 48,
+    "/entities/*/started": 179,
+    "/entities/*/stats/air": 25,
+    "/entities/*/stats/max_hp": 179,
+    "/entities/*/stats/ordinary": 37,
+    "/entities/*/stats/sight": 179,
+    "/entities/*/tunnel_total": 12
+  },
+  "note": "Native clone/reload equality is exact for every serialized field. Raw Python/native representation gaps are reported, not silently dropped."
+}

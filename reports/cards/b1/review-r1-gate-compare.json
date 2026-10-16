@@ -1,0 +1,45 @@
+{
+ "fixtures": {
+  "pinned": 577,
+  "total": 577,
+  "identical_records": 577,
+  "differing": [],
+  "rs_full_parity": {
+   "pinned": 429,
+   "total": 429
+  },
+  "rust_only_chains_equal": 577,
+  "rust_only_errors": {
+   "pinned": 0,
+   "total": 0
+  },
+  "rust_only_ticks": 1010680
+ },
+ "roots": {
+  "native": [
+   "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+   "63db3e164e906de1729cd021ec0ddd75188ad71407f19a635fe4768ec7f925bc"
+  ],
+  "roots_total": 1043,
+  "sampled_roots": 300,
+  "records": {
+   "pinned": 600,
+   "total": 600
+  },
+  "identical_records": 600,
+  "differing": [],
+  "rollout_e1_values": 9336,
+  "select_action_calls": 1800,
+  "apply_discrete": 478,
+  "step_checks": 1800,
+  "games": 12,
+  "tick_range": [
+   140,
+   5570
+  ],
+  "by_variant": {
+   "full": 300,
+   "cut": 300
+  }
+ }
+}

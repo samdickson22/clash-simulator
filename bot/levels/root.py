@@ -1,6 +1,7 @@
 """Level-aware planner roots for arm B of the pilot (exploration; reports/bot/levels/DESIGN.md).
 
-ExactLevelRoot.root(info, opponent, rng) is fair_player.Resources.root with three changes, and nothing else:
+ExactLevelRoot.root(info, opponent, rng) shares Resources' public template and
+attachment defaults, with three level changes:
 1. every root body gets the EXACT stats of its level: the fields in which the level-L export of its producing card
    differs from the level-11 export (configs.LevelConfigs) replace the level-11 template's (no rescaling of
    truncated level-11 values); hp = observed fraction x the level's max HP; a projectile in flight keeps max_hp 1
@@ -13,6 +14,9 @@ client shows it; the opponent's card levels from a fixed fair estimate (profile.
 its producing card's: among the cards of the owner that produce that body (units, spawns, side-table children), the
 ones in that owner's known deck (ours; for the opponent, the root's belief sample hand+cycle), else any producer.
 With every level 11 and force=False this is R.root itself.
+The shared ThreeMusketeers template uses a coarse 700ms load for all three
+unobserved ranks. "Exact" refers to exported level fields, not rank/phase/target
+recovery or exact GoblinGiant attachment pairing in ambiguous public graphs.
 """
 from __future__ import annotations
 
@@ -29,7 +33,25 @@ TOWER_BASE = {('KingTower', 'max_hp'): (2400, 7), ('KingTower', 'damage'): (50, 
 TOWERS = ('KingTower', 'Tower')
 SKIP_TOP = {'hp', 'x', 'y', 'id', 'owner', 'target', 'alive', 'facing', 'birth', 'age', 'clock', 'lane',
             'deploy', 'stagger', 'cooldown', 'aim', 'shot_target', 'active', 'tunnel_origin', 'tunnel_destination',
-            'death_travel'}
+            'death_travel', 'mount', 'rider_rank'}
+PUBLIC_LEVEL_CLONE_CARDS = frozenset({'GoblinGiant', 'ThreeMusketeers', 'BattleHealer'})
+BATTLE_HEALER_PULSES = frozenset({'BattleHealerSpawnHeal', 'BattleHealerHeal'})
+
+
+def public_carrier_identity(obj):
+    """Existing spell key, or B1 pulse's explicit static public identity.
+
+    HealPulse exports have no spell_name. Both healer pulses also share the
+    empty stats name, so their declared area identities must distinguish the
+    level payloads. Keep every other carrier's existing selection policy.
+    """
+    spell = obj.get('spell_name', '')
+    if spell or obj.get('class') != 'HealPulse':
+        return spell
+    for namespace, names in obj.get('public_identity', ()):
+        if namespace == 'area_effect' and names and names[0] in BATTLE_HEALER_PULSES:
+            return names[0]
+    return ''
 
 
 def tower_stat(name, field, level):
@@ -42,10 +64,15 @@ def tower_stat(name, field, level):
 
 
 def _templates(obj, out, card):
-    """(stats name, class) -> template, every entity template under obj (first wins), tagged with its card."""
+    """(stats name, class, public carrier identity) -> template and card.
+
+    Heal pulses share an empty mechanical stats name/class but have different
+    declared public area identities and payloads. Keep both, without adding a
+    mechanical spell_name field that the exporter does not supply.
+    """
     if isinstance(obj, dict):
         if 'class' in obj and 'stats' in obj:
-            out.setdefault((obj['stats']['name'], obj['class']), (card, obj))
+            out.setdefault((obj['stats']['name'], obj['class'], public_carrier_identity(obj)), (card, obj))
         for k, v in obj.items():
             if k != 'stats':
                 _templates(v, out, card)
@@ -82,7 +109,7 @@ class ExactLevelRoot:
     def producers(self):
         """stats name -> sorted cards producing it (formations, spawns, side-table children reachable from the card)."""
         if self._producers is None:
-            cfg, out = self.R.config, {}
+            cfg, out, carriers = self.R.config, {}, {}
             from bot.cards.fc_cut import strings
             side = {(t, k): v for t in SIDE if isinstance(cfg.get(t), dict) for k, v in cfg[t].items()}
             for card in base_cards(cfg):
@@ -97,18 +124,26 @@ class ExactLevelRoot:
                             seen.add((t, s))
                             _templates(v, found, card)
                             todo.extend(strings(v))
-                for name, _ in found:
+                for name, _, spell in found:
                     out.setdefault(name, set()).add(card)
+                    if spell:
+                        carriers.setdefault(spell, set()).add(card)
             self._producers = {k: sorted(v) for k, v in out.items()}
+            self._carriers = {k: sorted(v) for k, v in carriers.items()}
         return self._producers
 
     def body_card(self, name, owner, seat, deck, spell=None):
-        # Spell carriers share the empty stats name. Their public template's
-        # spell_name identifies the actual producing card without hidden truth.
+        # Empty-name carriers use their existing spell key or scoped declared
+        # public pulse identity, never hidden emission/cast provenance.
         if spell:
             card = spell.split(':', 1)[1] if spell.startswith('level') and ':' in spell else spell
             if card not in self.R.config['cards']:
-                raise ValueError(f'unknown public spell carrier {spell}')
+                self.producers()
+                cards = self._carriers.get(card, [])
+                mine = [c for c in cards if c in deck]
+                if not cards:
+                    raise ValueError(f'unknown public spell carrier {spell}')
+                return (mine or cards)[0]
             return card
         cards = self.producers().get(name, [])
         mine = [c for c in cards if c in deck]
@@ -122,9 +157,9 @@ class ExactLevelRoot:
             self._cfg[seat] = (cfg, CutConfig(cfg), report)
         return self._cfg[seat]
 
-    def body_delta(self, card, level, name, cls):
+    def body_delta(self, card, level, name, cls, spell=''):
         """Exact level-L fields of body (name, cls) from `card`'s exports: (stats delta, top-level delta)."""
-        key = (card, level, name, cls)
+        key = (card, level, name, cls, spell)
         if key not in self._delta:
             out = None
             e11, eL = self.lc.entry(card, 11), self.lc.entry(card, level)
@@ -132,10 +167,25 @@ class ExactLevelRoot:
                 t11, tL = {}, {}
                 _templates([e11['card'], e11['tables']], t11, card)
                 _templates([eL['card'], eL['tables']], tL, card)
-                k = (name, cls) if (name, cls) in tL else next((x for x in tL if x[0] == name), None)
-                if k is not None and k in t11:
-                    a, b = t11[k][1], tL[k][1]
-                    out = (_delta(a['stats'], b['stats']), _delta(a, b, SKIP_TOP | {'stats', 'clone_template'}))
+                # Qualified direct spells change identity at non-11 levels;
+                # child pulses retain their distinct public payload name.
+                spell11 = spell.split(':', 1)[1] if spell.startswith('level') and ':' in spell else spell
+                spellL = qkey(card, level) if spell11 == card else spell11
+                k11, kL = (name, cls, spell11), (name, cls, spellL)
+                if kL not in tL and cls == 'Projectile':
+                    # Ordinary in-flight shots inherit the producing body's
+                    # level damage; exclude body-only fields below.
+                    kL = next((x for x in tL if x[0] == name and x[1] in ('Troop', 'Building')), None)
+                    k11 = next((x for x in t11 if x[0] == name and x[1] in ('Troop', 'Building')), None)
+                if kL is not None and kL in tL and k11 in t11:
+                    a, b = t11[k11][1], tL[kL][1]
+                    # Scoped B1 clone capabilities include GG's closed static
+                    # rider graph and must follow its level. Keep the existing
+                    # C56 prototype policy/bytes outside this specific repair.
+                    skip = SKIP_TOP | {'stats'}
+                    if card not in PUBLIC_LEVEL_CLONE_CARDS:
+                        skip = skip | {'clone_template'}
+                    out = (_delta(a['stats'], b['stats']), _delta(a, b, skip))
             self._delta[key] = out
         return self._delta[key]
 
@@ -194,7 +244,8 @@ class ExactLevelRoot:
             if name in TOWERS:
                 self.tower(e, self.towers[0 if owner == seat else 1])
             else:
-                card = self.body_card(name, owner, seat, decks[owner], spell=e.get('spell_name'))
+                identity = public_carrier_identity(e)
+                card = self.body_card(name, owner, seat, decks[owner], spell=identity)
                 level = self.level(seat, owner, card) if card else 11
                 if card is None:
                     self.stats['unmapped'] += 1
@@ -202,13 +253,13 @@ class ExactLevelRoot:
                 elif level != 11:
                     if self.lc.entry(card, level) is None:
                         raise ValueError(f'no exact level export for root body {name} from {card} L{level}')
-                    d = self.body_delta(card, level, name, e['class'])
+                    d = self.body_delta(card, level, name, e['class'], identity)
                     if d is None:
                         raise ValueError(f'no matching exact body template for {name}/{e["class"]} from {card} L{level}')
                     sd, td = d
                     if e['class'] == 'Projectile':
                         sd = {k: v for k, v in sd.items() if k not in ('max_hp',)}
-                        td = {k: v for k, v in td.items() if k not in ('shield', 'spell_name')}
+                        td = {k: v for k, v in td.items() if k not in ('shield', 'spell_name', 'clone_template', 'clone_children')}
                     e['stats'].update(copy.deepcopy(sd))
                     e.update(copy.deepcopy(td))
                     self.stats['leveled'] += 1
@@ -240,6 +291,7 @@ class ExactLevelRoot:
                     a.update(active=False, start=now-a['duration']-a['cooldown']+cooldown,
                              last_use=now-a['duration']-a['cooldown']+cooldown)
             entities.append(e)
+        R.repair_public_graph(entities)
         for e in entities:
             c = e.get('champion')
             if c and c['effect']['kind'] == 'Goblin':

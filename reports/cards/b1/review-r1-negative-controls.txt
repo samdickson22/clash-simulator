@@ -1,0 +1,3 @@
+Native 9cc3314c (without Clone rider spawn clamp); reviewed legal-tap probe634e526d
+seat0: expected tick0 digest mismatch, negative control PASS
+seat1: expected tick0 digest mismatch, negative control PASS

@@ -439,6 +439,9 @@ class HealPulse(AreaEffect):
     recipients: list = field(default_factory=list)
     snapshot_taken: bool = False
     ticks_done: int = 0
+    # Ported from RoyaleSim (MIT), state.rs buff admission: immunity belongs
+    # to each recipient, independently of the caster.
+    buff_name: str = ""
 
     def update(self, dt: float, battle_state: "BattleState") -> None:
         if not self.is_alive:
@@ -448,6 +451,7 @@ class HealPulse(AreaEffect):
             self.recipients = [
                 e for e in battle_state.entities.values()
                 if isinstance(e, Troop) and e.player_id == self.player_id and e.is_alive
+                and self.buff_name not in getattr(e.card_stats, "ignore_buffs", ())
                 and not getattr(e, "_self_projectile_launched", False)
                 and e.intersects_native_area(self.position, self.radius)
             ]

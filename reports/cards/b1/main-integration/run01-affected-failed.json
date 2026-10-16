@@ -1,0 +1,2204 @@
+{
+  "total": 94,
+  "passed": 88,
+  "tests": [
+    {
+      "name": "first-update/zap/0",
+      "ok": true,
+      "detail": {
+        "case": "zap",
+        "actions": [
+          [
+            1,
+            1,
+            "Zap",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 1,
+        "hp_before_death": 99.0,
+        "native": "ok",
+        "final_digest": "374f03994e0f54808ac68fabfccda675218ecaabf2bc0cb375ec05dcc56109d1",
+        "control_death": 113
+      }
+    },
+    {
+      "name": "first-update/zap/1",
+      "ok": true,
+      "detail": {
+        "case": "zap",
+        "actions": [
+          [
+            1,
+            0,
+            "Zap",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 1,
+        "hp_before_death": 99.0,
+        "native": "ok",
+        "final_digest": "ef5c2738e6174ad0ca49095efc1a934e08c0c0a0ba3b2cf29eec39706ac7eaaa",
+        "control_death": 113
+      }
+    },
+    {
+      "name": "first-update/fireball/0",
+      "ok": true,
+      "detail": {
+        "case": "fireball",
+        "actions": [
+          [
+            1,
+            1,
+            "Fireball",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 32,
+        "hp_before_death": 272.0,
+        "native": "ok",
+        "final_digest": "6193494550ec31b79cda5361f904a9601f6474d799e6ef28d9b6a65ae421fe31",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/fireball/1",
+      "ok": true,
+      "detail": {
+        "case": "fireball",
+        "actions": [
+          [
+            1,
+            0,
+            "Fireball",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 32,
+        "hp_before_death": 272.0,
+        "native": "ok",
+        "final_digest": "aff22db6bcdf5af509c713054d1ffd4c297a12539e83d3987734d517dcf69c76",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/arrows/0",
+      "ok": true,
+      "detail": {
+        "case": "arrows",
+        "actions": [
+          [
+            1,
+            1,
+            "Arrows",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 16,
+        "hp_before_death": 46.0,
+        "native": "ok",
+        "final_digest": "70d465938534aea30b2aebb492abdbb3f9723e0b9804dd44dffa37741ed8bb28",
+        "control_death": 67
+      }
+    },
+    {
+      "name": "first-update/arrows/1",
+      "ok": true,
+      "detail": {
+        "case": "arrows",
+        "actions": [
+          [
+            1,
+            0,
+            "Arrows",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 16,
+        "hp_before_death": 46.0,
+        "native": "ok",
+        "final_digest": "8108b2d48ccff7844a01023f3404353bf237fda14554fd740f91fbdb84c4a8e9",
+        "control_death": 67
+      }
+    },
+    {
+      "name": "first-update/rocket/0",
+      "ok": true,
+      "detail": {
+        "case": "rocket",
+        "actions": [
+          [
+            1,
+            1,
+            "Rocket",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 55,
+        "hp_before_death": 452.0,
+        "native": "ok",
+        "final_digest": "7ce0f01578bdf84fb4c844a5e9f6c68cbc735f26ce1a92733c06e5ab8545a206",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/rocket/1",
+      "ok": true,
+      "detail": {
+        "case": "rocket",
+        "actions": [
+          [
+            1,
+            0,
+            "Rocket",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 55,
+        "hp_before_death": 452.0,
+        "native": "ok",
+        "final_digest": "468043bd8abb4a10994dc23666f242bfdcb43906c845b45f76b6c6a27fb651be",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/lightning/0",
+      "ok": true,
+      "detail": {
+        "case": "lightning",
+        "actions": [
+          [
+            1,
+            1,
+            "Lightning",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 19,
+        "hp_before_death": 483.0,
+        "native": "ok",
+        "final_digest": "019aa4728b8626f7ae3bd52322bdd34d9372a63676248655d8039d030c2690ec",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/lightning/1",
+      "ok": true,
+      "detail": {
+        "case": "lightning",
+        "actions": [
+          [
+            1,
+            0,
+            "Lightning",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 19,
+        "hp_before_death": 483.0,
+        "native": "ok",
+        "final_digest": "e202e1d5f6025c5b9f13a0dbed31e872f53b6e82fffafc1a6eb876938551334c",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/log/0",
+      "ok": true,
+      "detail": {
+        "case": "log",
+        "actions": [
+          [
+            1,
+            1,
+            "Log",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 41,
+        "hp_before_death": 24.0,
+        "native": "ok",
+        "final_digest": "53cc7973ac44d8ef2654ecb5be2d6b7a8da89e342e10ce32aa4e0b33c3ab1226",
+        "control_death": 67
+      }
+    },
+    {
+      "name": "first-update/log/1",
+      "ok": true,
+      "detail": {
+        "case": "log",
+        "actions": [
+          [
+            1,
+            0,
+            "Log",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 42,
+        "hp_before_death": 23.0,
+        "native": "ok",
+        "final_digest": "e18ddd17f294c93061eecae80be6bb4afc55ac1897183b64bb8987d59c46413c",
+        "control_death": 67
+      }
+    },
+    {
+      "name": "first-update/snowball/0",
+      "ok": true,
+      "detail": {
+        "case": "snowball",
+        "actions": [
+          [
+            1,
+            1,
+            "Snowball",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 24,
+        "hp_before_death": 79.0,
+        "native": "ok",
+        "final_digest": "95e3fce0e10bfebe310c94fbd72359e74bc6031d1982cbaa275c9cf1b15055d2",
+        "control_death": 113
+      }
+    },
+    {
+      "name": "first-update/snowball/1",
+      "ok": true,
+      "detail": {
+        "case": "snowball",
+        "actions": [
+          [
+            1,
+            0,
+            "Snowball",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 24,
+        "hp_before_death": 79.0,
+        "native": "ok",
+        "final_digest": "3c724692c08548c2e40924729fdf6bba8be84b15af34ae2ef577d170191da19e",
+        "control_death": 113
+      }
+    },
+    {
+      "name": "first-update/earthquake/0",
+      "ok": true,
+      "detail": {
+        "case": "earthquake",
+        "actions": [
+          [
+            1,
+            1,
+            "Earthquake",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 20,
+        "hp_before_death": 42.0,
+        "native": "ok",
+        "final_digest": "ad90c916906fe8e05efa0c37b59714b17e459d7489457de7e065bf2d763725e4",
+        "control_death": 67
+      }
+    },
+    {
+      "name": "first-update/earthquake/1",
+      "ok": true,
+      "detail": {
+        "case": "earthquake",
+        "actions": [
+          [
+            1,
+            0,
+            "Earthquake",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 20,
+        "hp_before_death": 42.0,
+        "native": "ok",
+        "final_digest": "7611cb9aed86ea1c6f896d46b29a831d5aaee4157aa83c0b79ef6eb80f9a88a3",
+        "control_death": 67
+      }
+    },
+    {
+      "name": "first-update/poison/0",
+      "ok": true,
+      "detail": {
+        "case": "poison",
+        "actions": [
+          [
+            1,
+            1,
+            "Poison",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 25,
+        "hp_before_death": 18.0,
+        "native": "ok",
+        "final_digest": "7f3a5542ba6b887b2e9287cfc7aa6efcd6ed90b296f40902b5a4a14b094aa706",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/poison/1",
+      "ok": true,
+      "detail": {
+        "case": "poison",
+        "actions": [
+          [
+            1,
+            0,
+            "Poison",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 25,
+        "hp_before_death": 18.0,
+        "native": "ok",
+        "final_digest": "d5f7aac1ff119eb7f1ced316410569472efc56aa9a026ea4d91a80b34caf15d3",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/freeze/0",
+      "ok": true,
+      "detail": {
+        "case": "freeze",
+        "actions": [
+          [
+            1,
+            1,
+            "Freeze",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 1,
+        "hp_before_death": 19.0,
+        "native": "ok",
+        "final_digest": "1f528330a6c20e21782a91390c35a03be42e73636b72e6536e24eca7092b061b",
+        "control_death": 22
+      }
+    },
+    {
+      "name": "first-update/freeze/1",
+      "ok": true,
+      "detail": {
+        "case": "freeze",
+        "actions": [
+          [
+            1,
+            0,
+            "Freeze",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 1,
+        "hp_before_death": 19.0,
+        "native": "ok",
+        "final_digest": "02ad2ab43ddd226821e0aecfdbcdface62fef4e7d9698b058ff3236e0fb90337",
+        "control_death": 22
+      }
+    },
+    {
+      "name": "first-update/tornado/0",
+      "ok": true,
+      "detail": {
+        "case": "tornado",
+        "actions": [
+          [
+            1,
+            1,
+            "Tornado",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 12,
+        "hp_before_death": 20.0,
+        "native": "ok",
+        "final_digest": "8e29ecae3927eaf08614f94e16300ce9b7a2352da3074da35026451870ab7446",
+        "control_death": 33
+      }
+    },
+    {
+      "name": "first-update/tornado/1",
+      "ok": true,
+      "detail": {
+        "case": "tornado",
+        "actions": [
+          [
+            1,
+            0,
+            "Tornado",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 12,
+        "hp_before_death": 20.0,
+        "native": "ok",
+        "final_digest": "c830a9ebc3fe2cc418d2b1104e222e18ec9f87c4c190191f4abd61cc68a2b577",
+        "control_death": 33
+      }
+    },
+    {
+      "name": "first-update/goblin_curse/0",
+      "ok": true,
+      "detail": {
+        "case": "goblin_curse",
+        "actions": [
+          [
+            1,
+            1,
+            "GoblinCurse",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 21,
+        "hp_before_death": 12.0,
+        "native": "ok",
+        "final_digest": "3a4037ce4d40ff66cb82db0d89800746923375c2a51015a28221c4cd678391dc",
+        "control_death": 33
+      }
+    },
+    {
+      "name": "first-update/goblin_curse/1",
+      "ok": true,
+      "detail": {
+        "case": "goblin_curse",
+        "actions": [
+          [
+            1,
+            0,
+            "GoblinCurse",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 21,
+        "hp_before_death": 12.0,
+        "native": "ok",
+        "final_digest": "a9b049d6cabbcee69af4108d67846c623f754b3217dc48d358f10f7c0c34cd91",
+        "control_death": 33
+      }
+    },
+    {
+      "name": "first-update/fireball_hut/0",
+      "ok": true,
+      "detail": {
+        "case": "fireball_hut",
+        "actions": [
+          [
+            1,
+            1,
+            "Fireball",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 32,
+        "hp_before_death": 238.0,
+        "native": "ok",
+        "final_digest": "09c518c1abb3bb7c93c23b1910ef420c286cbf1f6e921e1ecc0ec0e70b983053",
+        "control_death": 154
+      }
+    },
+    {
+      "name": "first-update/fireball_hut/1",
+      "ok": true,
+      "detail": {
+        "case": "fireball_hut",
+        "actions": [
+          [
+            1,
+            0,
+            "Fireball",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 32,
+        "hp_before_death": 238.0,
+        "native": "ok",
+        "final_digest": "8aa4661ab523d100f44c18fa2e1ebcd0a3f1f55bde21dc81a315af38960ea7f2",
+        "control_death": 154
+      }
+    },
+    {
+      "name": "first-update/musketeer_projectile/0",
+      "ok": true,
+      "detail": {
+        "case": "musketeer_projectile",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 53,
+        "hp_before_death": 153.0,
+        "native": "ok",
+        "final_digest": "7daffe907400a165beafef5fdafd03b1c7182363b337788915a2b05bbc4ec6c2",
+        "control_death": 226
+      }
+    },
+    {
+      "name": "first-update/musketeer_projectile/1",
+      "ok": true,
+      "detail": {
+        "case": "musketeer_projectile",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 53,
+        "hp_before_death": 153.0,
+        "native": "ok",
+        "final_digest": "55462e4e87d9f094c9ee7b7911d7d8d2ec2b41c192e771b8cdd0652a6769336a",
+        "control_death": 226
+      }
+    },
+    {
+      "name": "first-update/bomber_splash/0",
+      "ok": true,
+      "detail": {
+        "case": "bomber_splash",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 5,
+        "hp_before_death": 36.0,
+        "native": "ok",
+        "final_digest": "a70d3d7ea314c7ed25f40a554d80d5288abb7bab245f56ea8170268c0016acd1",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/bomber_splash/1",
+      "ok": true,
+      "detail": {
+        "case": "bomber_splash",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 5,
+        "hp_before_death": 36.0,
+        "native": "ok",
+        "final_digest": "913faadeb5ced9dffd651f611927dc937c922bf5b4aac3fef068b6d719d1e6b5",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/knight_melee/0",
+      "ok": true,
+      "detail": {
+        "case": "knight_melee",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 55,
+        "hp_before_death": 152.0,
+        "native": "ok",
+        "final_digest": "5541ee6168dadbae2bd185c7a9f7daa17369cbfe238db42ab943ce7db6e9cdde",
+        "control_death": 226
+      }
+    },
+    {
+      "name": "first-update/knight_melee/1",
+      "ok": true,
+      "detail": {
+        "case": "knight_melee",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 55,
+        "hp_before_death": 152.0,
+        "native": "ok",
+        "final_digest": "9bb922827e8b59dae294724a689e169cb8c4fc22ced1752d7545067d4baeef88",
+        "control_death": 226
+      }
+    },
+    {
+      "name": "first-update/tower_shot_drill/0",
+      "ok": true,
+      "detail": {
+        "case": "tower_shot_drill",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 47,
+        "hp_before_death": 26.0,
+        "native": "ok",
+        "final_digest": "08b8c8de7e9c2c3ef62d28439f6bbe4cd6d5beda0dde0a1cda58fd076a49fa2f",
+        "control_death": 50
+      }
+    },
+    {
+      "name": "first-update/tower_shot_drill/1",
+      "ok": true,
+      "detail": {
+        "case": "tower_shot_drill",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 45,
+        "hp_before_death": 13.0,
+        "native": "ok",
+        "final_digest": "9554323185d681bcea24d4bdf332b09332436c494c6943ed67193b915fe094a7",
+        "control_death": 46
+      }
+    },
+    {
+      "name": "first-update/balloon_death_bomb/0",
+      "ok": true,
+      "detail": {
+        "case": "balloon_death_bomb",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 3,
+        "hp_before_death": 37.0,
+        "native": "ok",
+        "final_digest": "5a57b6538048debd641a5794e99dccf27a78310ce445b2133884341dbf5b88da",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/balloon_death_bomb/1",
+      "ok": true,
+      "detail": {
+        "case": "balloon_death_bomb",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 3,
+        "hp_before_death": 37.0,
+        "native": "ok",
+        "final_digest": "2977ab20fb6f0c38c397ccdce2fac7a67b4ef19b7cfec8e5efcec0e90740780a",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/golem_death_damage/0",
+      "ok": true,
+      "detail": {
+        "case": "golem_death_damage",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 9,
+        "hp_before_death": 32.0,
+        "native": "ok",
+        "final_digest": "42dfd94d4c4e4c92bc5c60b16f3eb222d35d6353a035a5ad6a4e8ba4c8500455",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/golem_death_damage/1",
+      "ok": true,
+      "detail": {
+        "case": "golem_death_damage",
+        "actions": [],
+        "first_mismatch": null,
+        "victim_death": 9,
+        "hp_before_death": 32.0,
+        "native": "ok",
+        "final_digest": "7fabe70ba2d009ef40445897f3241ec245c387d18202d0f7ef8f5934b3f2ff39",
+        "control_death": 44
+      }
+    },
+    {
+      "name": "first-update/mighty_miner_ability/0",
+      "ok": true,
+      "detail": {
+        "case": "mighty_miner_ability",
+        "actions": [
+          [
+            5,
+            1,
+            "ABILITY",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 33,
+        "hp_before_death": 121.0,
+        "native": "ok",
+        "final_digest": "241a36dc4879a017a0684c5896d480a1c954bef21130a8b30fd5054c90dff215",
+        "control_death": 169
+      }
+    },
+    {
+      "name": "first-update/mighty_miner_ability/1",
+      "ok": true,
+      "detail": {
+        "case": "mighty_miner_ability",
+        "actions": [
+          [
+            5,
+            0,
+            "ABILITY",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 33,
+        "hp_before_death": 121.0,
+        "native": "ok",
+        "final_digest": "a1b273e30811fd6956d8a2ca8c9372a70e6a0742c3d8df9b7f4541eaa083e861",
+        "control_death": 169
+      }
+    },
+    {
+      "name": "first-update/frozen_tombstone_death/0",
+      "ok": true,
+      "detail": {
+        "case": "frozen_tombstone_death",
+        "actions": [
+          [
+            0,
+            0,
+            "Tombstone",
+            true,
+            true
+          ],
+          [
+            40,
+            1,
+            "Freeze",
+            true,
+            true
+          ],
+          [
+            41,
+            1,
+            "Rocket",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 95,
+        "hp_before_death": 315.0,
+        "native": "ok",
+        "final_digest": "1a8bdc7a21877ebc273afa1afe36f0ce3be81c0479ca08050f98fb61fa6d6eee",
+        "control_death": null
+      }
+    },
+    {
+      "name": "first-update/frozen_tombstone_death/1",
+      "ok": true,
+      "detail": {
+        "case": "frozen_tombstone_death",
+        "actions": [
+          [
+            0,
+            1,
+            "Tombstone",
+            true,
+            true
+          ],
+          [
+            40,
+            0,
+            "Freeze",
+            true,
+            true
+          ],
+          [
+            41,
+            0,
+            "Rocket",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "victim_death": 95,
+        "hp_before_death": 315.0,
+        "native": "ok",
+        "final_digest": "fa7083cb01e838240bcb9924f5c4387141ec4f001d028f8b91ab940003241d25",
+        "control_death": null
+      }
+    },
+    {
+      "name": "batchA-case/frozen_tombstone_death",
+      "ok": true,
+      "detail": {
+        "card": "frozen_tombstone_death",
+        "scenario": "frozen_tombstone_death",
+        "ticks": 400,
+        "deploys": [
+          [
+            0,
+            0,
+            "Tombstone",
+            true,
+            true
+          ],
+          [
+            40,
+            1,
+            "Freeze",
+            true,
+            true
+          ],
+          [
+            41,
+            1,
+            "Rocket",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "1a8bdc7a21877ebc273afa1afe36f0ce3be81c0479ca08050f98fb61fa6d6eee"
+      }
+    },
+    {
+      "name": "batchA-case/frozen_tombstone_death_red",
+      "ok": true,
+      "detail": {
+        "card": "frozen_tombstone_death_red",
+        "scenario": "frozen_tombstone_death_red",
+        "ticks": 400,
+        "deploys": [
+          [
+            0,
+            1,
+            "Tombstone",
+            true,
+            true
+          ],
+          [
+            40,
+            0,
+            "Freeze",
+            true,
+            true
+          ],
+          [
+            41,
+            0,
+            "Rocket",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "fa7083cb01e838240bcb9924f5c4387141ec4f001d028f8b91ab940003241d25"
+      }
+    },
+    {
+      "name": "batchA-case/witch_corner",
+      "ok": true,
+      "detail": {
+        "card": "witch_corner",
+        "scenario": "witch_corner",
+        "ticks": 600,
+        "setup": [
+          0,
+          "Witch",
+          [
+            0.5,
+            1.5
+          ],
+          [
+            0.5,
+            0.5
+          ],
+          37
+        ],
+        "deploys": [],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "a901c0135c2eb394d331601e19853e5ac464b7e446988982daa053b3803fc930"
+      }
+    },
+    {
+      "name": "batchA-case/witch_corner_red",
+      "ok": true,
+      "detail": {
+        "card": "witch_corner_red",
+        "scenario": "witch_corner_red",
+        "ticks": 600,
+        "setup": [
+          1,
+          "Witch",
+          [
+            17.5,
+            30.5
+          ],
+          [
+            17.5,
+            31.5
+          ],
+          37
+        ],
+        "deploys": [],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "f083dc5c93613ae68c2ea0f3e90e1bbeca7e52bb16ed1c95e862cc4a3e6f1b4c"
+      }
+    },
+    {
+      "name": "nested-riders/0/False",
+      "ok": true,
+      "detail": {
+        "seat": 0,
+        "periodic": false,
+        "events": [
+          {
+            "tick": 80,
+            "id": 14,
+            "before": [
+              4.5,
+              12.0
+            ],
+            "after": [
+              4.5,
+              12.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          },
+          {
+            "tick": 80,
+            "id": 15,
+            "before": [
+              4.5,
+              12.0
+            ],
+            "after": [
+              4.5,
+              12.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          },
+          {
+            "tick": 80,
+            "id": 16,
+            "before": [
+              4.5,
+              12.0
+            ],
+            "after": [
+              4.5,
+              12.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          },
+          {
+            "tick": 80,
+            "id": 17,
+            "before": [
+              4.5,
+              12.0
+            ],
+            "after": [
+              4.5,
+              12.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-riders/0/True",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 40, in record\n    detail = fn()\n             ^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 230, in <lambda>\n    record(f'nested-riders/{seat}/{periodic}', lambda s=seat, p=periodic: nested(s, p))\n                                                                          ^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 143, in nested\n    require(any(len(e['hidden']) == 2 for e in events), ('missing sibling hiding', events))\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 35, in require\n    raise RuntimeError(detail)\nRuntimeError: ('missing sibling hiding', [{'tick': 39, 'id': 11, 'before': (0.548, 0.25), 'after': (0.581, 0.183), 'freeze': 0.0, 'hidden': [12, 13, 14], 'collide': True, 'riders': [9, 10]}, {'tick': 39, 'id': 12, 'before': (0.25, 0.608), 'after': (0.155, 0.679), 'freeze': 0.0, 'hidden': [11, 13, 14], 'collide': True, 'riders': [9, 10]}, {'tick': 39, 'id': 13, 'before': (0.548, 2.608), 'after': (0.574, 2.693), 'freeze': 0.0, 'hidden': [11, 12, 14], 'collide': True, 'riders': [9, 10]}, {'tick': 39, 'id': 14, 'before': (2.548, 0.608), 'after': (2.574, 0.693), 'freeze': 0.0, 'hidden': [11, 12, 13], 'collide': True, 'riders': [9, 10]}])\n"
+    },
+    {
+      "name": "container-release/0/zero-deploy=False",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 40, in record\n    detail = fn()\n             ^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 232, in <lambda>\n    record(f'container-release/{seat}/zero-deploy={zero}', lambda s=seat, z=zero: container_release(s,z))\n                                                                                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 211, in container_release\n    py.step(); native.step()\n    ^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 747, in step\n    self._step_logic_tick()\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 900, in _step_logic_tick\n    self._run_object_phase(\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 1000, in _run_object_phase\n    entity.update(dt, self)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7240, in update\n    self._spawn_death_units(battle_state, first_update=True)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7378, in _spawn_death_units\n    battle_state._first_update_spawned(spawned, collide=False)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 204, in observe\n    require(before == (child.position.x, child.position.y), 'frozen container child moved')\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 35, in require\n    raise RuntimeError(detail)\nRuntimeError: frozen container child moved\n"
+    },
+    {
+      "name": "container-release/0/zero-deploy=True",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 40, in record\n    detail = fn()\n             ^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 232, in <lambda>\n    record(f'container-release/{seat}/zero-deploy={zero}', lambda s=seat, z=zero: container_release(s,z))\n                                                                                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 211, in container_release\n    py.step(); native.step()\n    ^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 747, in step\n    self._step_logic_tick()\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 900, in _step_logic_tick\n    self._run_object_phase(\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 1000, in _run_object_phase\n    entity.update(dt, self)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7240, in update\n    self._spawn_death_units(battle_state, first_update=True)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7378, in _spawn_death_units\n    battle_state._first_update_spawned(spawned, collide=False)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 204, in observe\n    require(before == (child.position.x, child.position.y), 'frozen container child moved')\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 35, in require\n    raise RuntimeError(detail)\nRuntimeError: frozen container child moved\n"
+    },
+    {
+      "name": "nested-riders/1/False",
+      "ok": true,
+      "detail": {
+        "seat": 1,
+        "periodic": false,
+        "events": [
+          {
+            "tick": 80,
+            "id": 14,
+            "before": [
+              13.5,
+              20.0
+            ],
+            "after": [
+              13.5,
+              20.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          },
+          {
+            "tick": 80,
+            "id": 15,
+            "before": [
+              13.5,
+              20.0
+            ],
+            "after": [
+              13.5,
+              20.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          },
+          {
+            "tick": 80,
+            "id": 16,
+            "before": [
+              13.5,
+              20.0
+            ],
+            "after": [
+              13.5,
+              20.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          },
+          {
+            "tick": 80,
+            "id": 17,
+            "before": [
+              13.5,
+              20.0
+            ],
+            "after": [
+              13.5,
+              20.0
+            ],
+            "freeze": 1.300000000000007,
+            "hidden": [],
+            "collide": false,
+            "riders": [
+              10,
+              11
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-riders/1/True",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 40, in record\n    detail = fn()\n             ^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 230, in <lambda>\n    record(f'nested-riders/{seat}/{periodic}', lambda s=seat, p=periodic: nested(s, p))\n                                                                          ^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 143, in nested\n    require(any(len(e['hidden']) == 2 for e in events), ('missing sibling hiding', events))\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 35, in require\n    raise RuntimeError(detail)\nRuntimeError: ('missing sibling hiding', [{'tick': 39, 'id': 11, 'before': (17.452, 29.392), 'after': (17.426, 29.307), 'freeze': 0.0, 'hidden': [12, 13, 14], 'collide': True, 'riders': [9, 10]}, {'tick': 39, 'id': 12, 'before': (15.452, 31.392), 'after': (15.426, 31.307), 'freeze': 0.0, 'hidden': [11, 13, 14], 'collide': True, 'riders': [9, 10]}, {'tick': 39, 'id': 13, 'before': (17.452, 31.75), 'after': (17.419, 31.817), 'freeze': 0.0, 'hidden': [11, 12, 14], 'collide': True, 'riders': [9, 10]}, {'tick': 39, 'id': 14, 'before': (17.75, 31.392), 'after': (17.845, 31.321), 'freeze': 0.0, 'hidden': [11, 12, 13], 'collide': True, 'riders': [9, 10]}])\n"
+    },
+    {
+      "name": "container-release/1/zero-deploy=False",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 40, in record\n    detail = fn()\n             ^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 232, in <lambda>\n    record(f'container-release/{seat}/zero-deploy={zero}', lambda s=seat, z=zero: container_release(s,z))\n                                                                                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 211, in container_release\n    py.step(); native.step()\n    ^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 747, in step\n    self._step_logic_tick()\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 900, in _step_logic_tick\n    self._run_object_phase(\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 1000, in _run_object_phase\n    entity.update(dt, self)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7240, in update\n    self._spawn_death_units(battle_state, first_update=True)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7378, in _spawn_death_units\n    battle_state._first_update_spawned(spawned, collide=False)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 204, in observe\n    require(before == (child.position.x, child.position.y), 'frozen container child moved')\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 35, in require\n    raise RuntimeError(detail)\nRuntimeError: frozen container child moved\n"
+    },
+    {
+      "name": "container-release/1/zero-deploy=True",
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 40, in record\n    detail = fn()\n             ^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 232, in <lambda>\n    record(f'container-release/{seat}/zero-deploy={zero}', lambda s=seat, z=zero: container_release(s,z))\n                                                                                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 211, in container_release\n    py.step(); native.step()\n    ^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 747, in step\n    self._step_logic_tick()\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 900, in _step_logic_tick\n    self._run_object_phase(\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/battle.py\", line 1000, in _run_object_phase\n    entity.update(dt, self)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7240, in update\n    self._spawn_death_units(battle_state, first_update=True)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src/clasher/entities.py\", line 7378, in _spawn_death_units\n    battle_state._first_update_spawned(spawned, collide=False)\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 204, in observe\n    require(before == (child.position.x, child.position.y), 'frozen container child moved')\n  File \"/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tools/affected.py\", line 35, in require\n    raise RuntimeError(detail)\nRuntimeError: frozen container child moved\n"
+    },
+    {
+      "name": "batchA/Tombstone/alone",
+      "ok": true,
+      "detail": {
+        "card": "Tombstone",
+        "scenario": "alone",
+        "ticks": 1500,
+        "deploys": [
+          [
+            0,
+            0,
+            "Tombstone",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "b584af2c182b387b9a0e3780cdfaf4c1fb01045e9c9f3fc3eb0d53617f1a09d9"
+      }
+    },
+    {
+      "name": "batchA/Tombstone/hog",
+      "ok": true,
+      "detail": {
+        "card": "Tombstone",
+        "scenario": "hog",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Tombstone",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "HogRider",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "999a6534dd36db53e8ddc1e7dd4221e2dba3143a800a0bc8eb7ccc066f0c6f3c"
+      }
+    },
+    {
+      "name": "batchA/Tombstone/giant",
+      "ok": true,
+      "detail": {
+        "card": "Tombstone",
+        "scenario": "giant",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Tombstone",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Giant",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "8bed9db1ffbb42e83a56b4a5aa9353fd2386cbeb761f6df9cda7f92c173c116c"
+      }
+    },
+    {
+      "name": "batchA/BarbarianHut/alone",
+      "ok": true,
+      "detail": {
+        "card": "BarbarianHut",
+        "scenario": "alone",
+        "ticks": 1500,
+        "deploys": [
+          [
+            0,
+            0,
+            "BarbarianHut",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "a58cc674ad46c0eb0b237a1386e01b14fb93d8539814e9a2dda5c963ce4e7a24"
+      }
+    },
+    {
+      "name": "batchA/BarbarianHut/hog",
+      "ok": true,
+      "detail": {
+        "card": "BarbarianHut",
+        "scenario": "hog",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "BarbarianHut",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "HogRider",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "e88dad65c1d62b78f0fb11506c710d4d06adfba10e2d7fa361d4ef1752a18a2e"
+      }
+    },
+    {
+      "name": "batchA/BarbarianHut/giant",
+      "ok": true,
+      "detail": {
+        "card": "BarbarianHut",
+        "scenario": "giant",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "BarbarianHut",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Giant",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "ef225fb33c2e3b2490cab61f7298e07279a8cef52f219d1e0febf235ff74ad44"
+      }
+    },
+    {
+      "name": "batchA/Witch/alone",
+      "ok": true,
+      "detail": {
+        "card": "Witch",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Witch",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "2439ee7339cf88fa810120a22f2a576afde3cbec03a946afca28d285db988035"
+      }
+    },
+    {
+      "name": "batchA/Witch/knight",
+      "ok": true,
+      "detail": {
+        "card": "Witch",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Witch",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "5d5d076fcae9c6676193841acc886fea719ab0779646bd4db72fd0156d6e5751"
+      }
+    },
+    {
+      "name": "batchA/Witch/minions",
+      "ok": true,
+      "detail": {
+        "card": "Witch",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Witch",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok",
+        "final_digest": "8b7d6bd96ab7d47a6a217864f4ddb6b1a31abc5d70bc2b7874d778ad3b500970"
+      }
+    },
+    {
+      "name": "b1/RoyalRecruits/alone",
+      "ok": true,
+      "detail": {
+        "card": "RoyalRecruits",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "RoyalRecruits",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/RoyalRecruits/knight",
+      "ok": true,
+      "detail": {
+        "card": "RoyalRecruits",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "RoyalRecruits",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/RoyalRecruits/minions",
+      "ok": true,
+      "detail": {
+        "card": "RoyalRecruits",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "RoyalRecruits",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/ThreeMusketeers/alone",
+      "ok": true,
+      "detail": {
+        "card": "ThreeMusketeers",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "ThreeMusketeers",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/ThreeMusketeers/knight",
+      "ok": true,
+      "detail": {
+        "card": "ThreeMusketeers",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "ThreeMusketeers",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/ThreeMusketeers/minions",
+      "ok": true,
+      "detail": {
+        "card": "ThreeMusketeers",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "ThreeMusketeers",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GiantSkeleton/alone",
+      "ok": true,
+      "detail": {
+        "card": "GiantSkeleton",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GiantSkeleton",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GiantSkeleton/knight",
+      "ok": true,
+      "detail": {
+        "card": "GiantSkeleton",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GiantSkeleton",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GiantSkeleton/minions",
+      "ok": true,
+      "detail": {
+        "card": "GiantSkeleton",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GiantSkeleton",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/SkeletonBalloon/alone",
+      "ok": true,
+      "detail": {
+        "card": "SkeletonBalloon",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "SkeletonBalloon",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/SkeletonBalloon/knight",
+      "ok": true,
+      "detail": {
+        "card": "SkeletonBalloon",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "SkeletonBalloon",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/SkeletonBalloon/minions",
+      "ok": true,
+      "detail": {
+        "card": "SkeletonBalloon",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "SkeletonBalloon",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/Hunter/alone",
+      "ok": true,
+      "detail": {
+        "card": "Hunter",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Hunter",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/Hunter/knight",
+      "ok": true,
+      "detail": {
+        "card": "Hunter",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Hunter",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/Hunter/minions",
+      "ok": true,
+      "detail": {
+        "card": "Hunter",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "Hunter",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/MiniSparkys/alone",
+      "ok": true,
+      "detail": {
+        "card": "MiniSparkys",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "MiniSparkys",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/MiniSparkys/knight",
+      "ok": true,
+      "detail": {
+        "card": "MiniSparkys",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "MiniSparkys",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/MiniSparkys/minions",
+      "ok": true,
+      "detail": {
+        "card": "MiniSparkys",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "MiniSparkys",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/RoyalGiant/alone",
+      "ok": true,
+      "detail": {
+        "card": "RoyalGiant",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "RoyalGiant",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/RoyalGiant/knight",
+      "ok": true,
+      "detail": {
+        "card": "RoyalGiant",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "RoyalGiant",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/RoyalGiant/minions",
+      "ok": true,
+      "detail": {
+        "card": "RoyalGiant",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "RoyalGiant",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/BattleHealer/alone",
+      "ok": true,
+      "detail": {
+        "card": "BattleHealer",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "BattleHealer",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/BattleHealer/knight",
+      "ok": true,
+      "detail": {
+        "card": "BattleHealer",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "BattleHealer",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/BattleHealer/minions",
+      "ok": true,
+      "detail": {
+        "card": "BattleHealer",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "BattleHealer",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GoblinGiant/alone",
+      "ok": true,
+      "detail": {
+        "card": "GoblinGiant",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GoblinGiant",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GoblinGiant/knight",
+      "ok": true,
+      "detail": {
+        "card": "GoblinGiant",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GoblinGiant",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GoblinGiant/minions",
+      "ok": true,
+      "detail": {
+        "card": "GoblinGiant",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GoblinGiant",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GiantBuffer/alone",
+      "ok": true,
+      "detail": {
+        "card": "GiantBuffer",
+        "scenario": "alone",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GiantBuffer",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GiantBuffer/knight",
+      "ok": true,
+      "detail": {
+        "card": "GiantBuffer",
+        "scenario": "knight",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GiantBuffer",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Knight",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "b1/GiantBuffer/minions",
+      "ok": true,
+      "detail": {
+        "card": "GiantBuffer",
+        "scenario": "minions",
+        "ticks": 600,
+        "deploys": [
+          [
+            0,
+            0,
+            "GiantBuffer",
+            true,
+            true
+          ],
+          [
+            0,
+            1,
+            "Minions",
+            true,
+            true
+          ]
+        ],
+        "first_mismatch": null,
+        "native": "ok"
+      }
+    },
+    {
+      "name": "public-template-export-config",
+      "ok": true,
+      "detail": {
+        "entities": 15,
+        "config_tables": [
+          "ability_bombs",
+          "atan",
+          "blocked_tiles",
+          "cards",
+          "costs",
+          "create_areas",
+          "death_areas",
+          "death_children",
+          "death_objects",
+          "hit_areas",
+          "lane_ids",
+          "production_children",
+          "rotations",
+          "spawn_areas",
+          "spawn_clear",
+          "spirit_areas",
+          "walkable",
+          "water"
+        ],
+        "public_fields": true
+      }
+    }
+  ],
+  "raw_state_diff_paths": {
+    "/entities/*/birth": 5638,
+    "/entities/*/route_occupied/*": 173136,
+    "/entities/*/public_speed_base": 1672,
+    "/entities/*/clone_template/owner": 443,
+    "/entities/*/clone_template/facing/*": 443,
+    "/entities/*/landed_tick": 886,
+    "/entities/*/finish_tick": 886,
+    "/entities/*/push_tick": 886,
+    "/entities/*/attacked_current": 42,
+    "/entities/*/started": 42,
+    "/entities/*/lane": 42,
+    "/entities/*/stats/max_hp": 42,
+    "/entities/*/stats/sight": 42,
+    "/entities/*/aim/*": 8,
+    "/entities/*/last_target": 42,
+    "/entities/*/age": 42
+  },
+  "note": "Digests and explicit B1 metadata/positions do not certify raw cross-engine snapshot equality."
+}

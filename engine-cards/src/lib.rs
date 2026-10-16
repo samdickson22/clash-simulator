@@ -17,6 +17,7 @@ mod souls;
 mod scope;
 mod scripts;
 mod spawn;
+mod riders;
 
 use clock::Clock;
 use mt::Mt;
@@ -32,6 +33,9 @@ fn one() -> f64 {
 }
 fn is_zero(x: &f64) -> bool {
     *x == 0.0
+}
+fn is_zero_i64(x: &i64) -> bool {
+    *x == 0
 }
 
 fn units(x: f64) -> i64 {
@@ -63,9 +67,29 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    ignore_buffs: Vec<String>,
     // Batch A fields are omitted from snapshots at their inert default, so C56 snapshots stay byte-identical.
     #[serde(default, skip_serializing_if = "is_zero")]
     min_range: f64,
+    // Batch B1 fields: omitted from snapshots at their inert default, like Batch A's.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    fly_direct: bool,
+    // MultipleProjectiles fan of straight pellets (Hunter): count, ProjectileRadius, RandomDelay ms, CheckCollisions.
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    fan: i64,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    fan_radius: f64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    fan_delay_ms: i64,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    fan_stop: bool,
+    // A mount's SpawnAttach rider block (riders.rs).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    riders: Option<riders::RiderSpec>,
+    // The Three Musketeers' attack selector (riders.rs AttackSelect).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    attack_select: Option<riders::AttackSelect>,
     #[serde(default)]
     payload_key: String,
     #[serde(default)]
@@ -270,8 +294,20 @@ struct FrozenStopRoute {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Entity {
+    // Batch B1: an attached rider's live mount (mechanics/shared/riders.py) and its rank among the mount's riders.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    mount: Option<i32>,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    rider_rank: i64,
+    // Attack selector state: the entry chosen for the current swing and the target it was chosen against.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    attack_choice: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    select_target: Option<i32>,
     #[serde(default)]
     clone_template: Option<Arc<Entity>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    clone_children: Vec<Entity>,
     #[serde(default)]
     spawn_push_done: bool,
     #[serde(default)]
@@ -358,6 +394,9 @@ struct Entity {
     ghost_time: f64,
     #[serde(default)]
     piercing: bool,
+    // Batch B1: a CheckCollisions straight shot is gone on the tick it hits (Hunter pellets).
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    stop_on_hit: bool,
     #[serde(default)]
     projectile_origin: (f64, f64),
     #[serde(default)]
@@ -635,6 +674,9 @@ struct Card {
     mirror: bool,
     #[serde(default)]
     recruits_line: bool,
+    // Batch B1: a SummonWidth line without DeployWTileMargin searches its centre (deployment.rs line_centre).
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    line_search: bool,
     #[serde(default)]
     anywhere: bool,
     cost: f64,
@@ -680,6 +722,12 @@ struct Config {
     production_children: BTreeMap<String, Entity>,
     #[serde(default)]
     spawn_areas: BTreeMap<String, Entity>,
+    // Batch B1: AreaEffectOnHit templates (Battle Healer's on-hit heal), released at the attacker on a melee hit.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    hit_areas: BTreeMap<String, Entity>,
+    // Batch B1: heal areas cast at a unit's creation (Battle Healer's spawn heal), keyed by the unit.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    create_areas: BTreeMap<String, Entity>,
     #[serde(default)]
     soul_skeletons: Vec<Vec<Vec<Entity>>>,
     #[serde(default)]
@@ -842,7 +890,7 @@ impl BattleState {
                     && !(spell.ignore_buildings && e.class == "Building")
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && e.owner != cast.player as i32
                     && (e.class == "Troop" || e.class == "Building")
                     && (!e.hidden || spell.affects_hidden)
@@ -874,7 +922,7 @@ impl BattleState {
                         && !e.hidden
                         && !e.spirit
                         && !e.underground
-                        && e.stagger <= 1e-9
+                        && !e.absent()
                         && Self::in_area(e, cast.x, cast.y, spell.radius))
                     .then_some(i)
                 })
@@ -1002,7 +1050,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.hidden
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
                     && source.can_hit_plane(e)
@@ -1023,7 +1071,7 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && !e.hidden
-                        && e.stagger <= 1e-9
+                        && !e.absent()
                         && e.owner != source.owner
                         && (e.class == "Troop" || e.class == "Building")
                         && source.can_hit_plane(e)
@@ -1062,7 +1110,7 @@ impl BattleState {
                     && !e.underground
                     && e.owner != effect.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && Self::in_area(e, effect.x, effect.y, effect.effect_radius)
                 {
                     e.slow_ms = e.slow_ms.max(effect.effect_slow_ms);
@@ -1337,7 +1385,7 @@ impl BattleState {
                 && a.can_hit_plane(b)
                 && channel_targetable(b)
                 && !inside_min_range(a, b)
-                && b.stagger <= 1e-9
+                && !b.absent()
                 && keep_reach(a, b)
                 && (a.stats.projectile_speed == 0 || a.attacked_current || !self.pending_lethal(j))
             {
@@ -1359,7 +1407,7 @@ impl BattleState {
                     || !a.can_hit_plane(b)
                     || !channel_targetable(b)
                     || inside_min_range(a, b)
-                    || b.stagger > 1e-9
+                    || b.absent()
                     || b.owner == a.owner
                     || b.class != class
                     || (a.stats.only_buildings && class != "Building")
@@ -1395,7 +1443,7 @@ impl BattleState {
                             && !old.hidden
                             && old.death_immunity.is_none()
                             && old.stealth_until <= self.tick * 50
-                            && old.stagger <= 1e-9))
+                            && !old.absent()))
                     && old.owner != a.owner
                     && a.can_hit_plane(old)
                     && channel_targetable(old)
@@ -1454,7 +1502,7 @@ impl BattleState {
                     && b.stealth_until <= self.tick * 50
                     && !b.spirit
                     && !b.underground
-                    && b.stagger <= 1e-9
+                    && !b.absent()
                     && a.can_hit_plane(b)
                     && channel_targetable(b)
                     && (a.stats.projectile_speed == 0
@@ -1606,6 +1654,10 @@ impl BattleState {
                     e.direction = norm(gx - units(e.x), gy - units(e.y), 256);
                 }
                 e.route_backwards = false;
+            }
+            // Ported from RoyaleSim (MIT), state.rs phase_path16402_for (movement.FLY_DIRECT_PATHS = read).
+            if self.entities[i].stats.fly_direct {
+                return (units(self.entities[j].x), units(self.entities[j].y));
             }
             return goal
                 .map(center)
@@ -1776,7 +1828,7 @@ impl BattleState {
     }
     fn collide(&self, i: usize) -> (i64, i64) {
         let a = &self.entities[i];
-        if a.stagger > 1e-9 || a.dash_travel() {
+        if a.absent() || a.dash_travel() {
             return (0, 0);
         }
         let (mut vx, mut vy, mut count) = a.controlled_vector;
@@ -1789,6 +1841,7 @@ impl BattleState {
                 || self.hidden.contains(&j)
                 || !b.alive
                 || b.spirit
+                || b.mount.is_some()
                 || b.dash_travel()
                 || (b.underground && b.class == "Troop")
                 || (b.class != "Troop" && b.class != "Building")
@@ -1868,7 +1921,7 @@ impl BattleState {
             }
             let mut r = units(e.stats.radius);
             if r < 1 { return; }
-            if e.class == "Troop" && e.alive && e.stagger <= 1e-9 {
+            if e.class == "Troop" && e.alive && !e.absent() {
                 r += 250;
             }
             let (x, y) = (units(e.x), units(e.y));
@@ -1923,7 +1976,7 @@ impl BattleState {
                     continue;
                 }
                 let side = fy * (bx - x) - fx * (by - y) < 0;
-                if b.class == "Troop" && b.alive && !b.spirit && b.stagger <= 1e-9 {
+                if b.class == "Troop" && b.alive && !b.spirit && !b.absent() {
                     let dot = if b.death_ticks <= 0
                         && b.push.is_none()
                         && b.push_tick != self.tick
@@ -2171,7 +2224,7 @@ impl BattleState {
                     && !e.hidden
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && self.pending_lethal(j)
             });
         if (previous != target
@@ -2245,13 +2298,26 @@ impl BattleState {
         // Target observation during interrupting pushback does not start a hit.
         if self.entities[i].kamikaze_primed {
             self.entities[i].kamikaze_timer = (self.entities[i].kamikaze_timer-0.05).max(0.0);
-            if self.entities[i].kamikaze_timer<=1e-9 { self.damage(i,self.entities[i].hp); }
+            if self.entities[i].kamikaze_timer<=1e-9 { self.damage(i,self.entities[i].hp); } else { self.kamikaze_drain(i); }
             return;
         }
         if engaged {
             self.entities[i].started = true;
         }
         self.entities[i].windup = engaged;
+        if self.entities[i].stats.attack_select.is_some() {
+            // combat.ATTACK_SELECT_MOMENT = at_swing_start (entities.py Troop.update_combat_component).
+            if !engaged {
+                self.entities[i].attack_choice = None;
+            } else if let Some(j) = j {
+                let tid = self.entities[j].id;
+                if self.entities[i].attack_choice.is_none() || self.entities[i].select_target != Some(tid) {
+                    let choice = self.melee_selected(i, j);
+                    self.entities[i].attack_choice = Some(choice);
+                    self.entities[i].select_target = Some(tid);
+                }
+            }
+        }
         if self.entities[i].class == "Building" && self.entities[i].stats.ordinary && !engaged {
             self.entities[i].clock.stop();
             self.entities[i].force_due = false;
@@ -2300,6 +2366,7 @@ impl BattleState {
                         self.entities[i].kamikaze_primed=true;
                         self.entities[i].kamikaze_timer=delay;
                         self.entities[i].windup=false;
+                        self.kamikaze_drain(i);
                     } else { self.damage(i,self.entities[i].hp); }
                     return;
                 }
@@ -2346,8 +2413,17 @@ impl BattleState {
                     self.entities[i].force_due = false;
                     return;
                 }
-                if a.stats.projectile_speed > 0 {
+                let bayonet = a.stats.attack_select.is_some()
+                    && a.attack_choice == Some(true)
+                    && !self.entities[j].airborne();
+                if !bayonet && a.stats.projectile_speed > 0 && a.stats.fan > 1 && a.stats.projectile_range > 0.0 {
+                    self.fire_fan(&a, j, target);
+                } else if !bayonet && a.stats.projectile_speed > 0 {
                     let mut shot = a.clone();
+                    shot.mount = None;
+                    shot.rider_rank = 0;
+                    shot.attack_choice = None;
+                    shot.select_target = None;
                     shot.id = self.next_id as i32;
                     self.next_id += 1;
                     shot.class = "Projectile".into();
@@ -2412,7 +2488,9 @@ impl BattleState {
                     if start_hit { self.piercing_hits(index,start_radius); }
                 } else {
                     let secondary = self.secondary_recipients(i, j);
-                    let damage = if a.charge >= 10000 && a.stats.special_damage > 0.0 {
+                    let damage = if bayonet {
+                        a.stats.attack_select.as_ref().map_or(a.stats.damage, |s| s.damage)
+                    } else if a.charge >= 10000 && a.stats.special_damage > 0.0 {
                         a.stats.special_damage
                     } else {
                         a.stats.damage
@@ -2424,7 +2502,7 @@ impl BattleState {
                     };
                     let mut victims = Vec::new();
                     if self.entities[j].alive
-                        && self.entities[j].stagger <= 1e-9
+                        && !self.entities[j].absent()
                         && !self.entities[j].hidden
                     {
                         victims.push(j);
@@ -2438,7 +2516,7 @@ impl BattleState {
                                 && !e.underground
                                 && e.owner != a.owner
                                 && (e.class == "Troop" || e.class == "Building")
-                                && e.stagger <= 1e-9
+                                && !e.absent()
                                 && !e.hidden
                                 && a.can_hit_plane(e)
                                 && Self::in_area(e, origin.0, origin.1, a.stats.area_radius)
@@ -2465,6 +2543,7 @@ impl BattleState {
                         self.character_hit_buff(i, k);
                     }
                     self.character_hit_buff(i, j);
+                    self.hit_area(i);
                 }
                 if self.entities[i].stats.kamikaze
                     || (self.entities[i].stats.break_on_building_hit
@@ -2480,6 +2559,11 @@ impl BattleState {
                 } else {
                     0.0
                 };
+                if self.entities[i].stats.attack_select.is_some() {
+                    let choice = self.melee_selected(i, j);
+                    self.entities[i].attack_choice = Some(choice);
+                    self.entities[i].select_target = Some(self.entities[j].id);
+                }
                 // Committed payloads may synchronously knock the attacker back.
                 // Python clears the preload block after those death/hit hooks.
                 self.entities[i].preload_blocked = false;
@@ -2488,6 +2572,18 @@ impl BattleState {
                 self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
                 self.entities[i].force_due = false;
             }
+        }
+    }
+    /// Ported from RoyaleSim (MIT), state.rs `kamikaze_drain` (combat.KAMIKAZE_TIME = flat_drain_to_zero); mirrors
+    /// entities.py Troop._kamikaze_drain. Inert without a kamikaze delay (no C56 card sets one).
+    fn kamikaze_drain(&mut self, i: usize) {
+        let Some(delay) = self.entities[i].stats.kamikaze_delay else { return; };
+        let delay_ms = (delay * 1000.0).round() as i64;
+        if delay_ms <= 0 || !self.entities[i].alive { return; }
+        let step = (self.entities[i].stats.max_hp.round() as i64) * 50 / delay_ms;
+        if step > 0 {
+            let amount = (step as f64).min(self.entities[i].hp);
+            self.damage(i, amount);
         }
     }
     fn hide_tick(&mut self, i: usize) {
@@ -2620,7 +2716,7 @@ impl BattleState {
         let external = if collide { self.collide(i) } else { (0, 0) };
         self.entities[i].controlled_vector = (0, 0, 0);
         self.entities[i].controlled_bypass = false;
-        if self.entities[i].stagger > 1e-9 {
+        if self.entities[i].absent() {
             return;
         }
         if self.entities[i].moving {
@@ -2755,7 +2851,7 @@ impl BattleState {
                 && !self.entities[j].spirit
                 && (self.entities[j].hidden
                     || self.entities[j].underground
-                    || self.entities[j].stagger > 1e-9
+                    || self.entities[j].absent()
                     || self.entities[j].death_immunity.is_some()
                     || self.entities[j].stealth_until > self.tick * 50
                     || (self.entities[i].stats.projectile_speed > 0
@@ -2881,6 +2977,7 @@ impl BattleState {
         self.route_ctx = Some(ctx.clone());
         self.in_tick = true;
         let eligible: Vec<bool> = self.entities.iter().map(|e| e.alive).collect();
+        let mount_facings = self.mount_facings();
         for i in 0..n {
             self.flush_grid();
             if eligible[i]
@@ -2889,6 +2986,9 @@ impl BattleState {
             {
                 self.combat_one(i);
             }
+        }
+        if !mount_facings.is_empty() {
+            self.carry_riders(&mount_facings);
         }
         capture!("combat");
         for i in 0..n {
@@ -2993,6 +3093,10 @@ impl BattleState {
                     projectile_alive = Some(self.entities.iter().filter(|e| e.alive).map(|e| e.id).collect());
                 }
                 if self.entities[i].piercing {
+                    if self.entities[i].launch_delay > 1e-12 {
+                        self.entities[i].launch_delay = (self.entities[i].launch_delay - 0.05).max(0.0);
+                        continue;
+                    }
                     self.piercing_tick(i);
                     continue;
                 }
@@ -3050,7 +3154,7 @@ impl BattleState {
                                         && !e.hidden
                                         && !e.spirit
                                         && !e.underground
-                                        && e.stagger <= 1e-9
+                                        && !e.absent()
                                         && e.owner != shot.owner
                                         && (!shot.source_character || e.death_immunity.is_none())
                                         && (e.class == "Troop" || e.class == "Building")
@@ -3094,7 +3198,7 @@ impl BattleState {
                                         && !e.underground
                                         && (e.class == "Troop" || e.class == "Building")
                                         && shot.can_hit_plane(e)
-                                        && e.stagger <= 1e-9
+                                        && !e.absent()
                                         && Self::in_area(e, shot.aim.0, shot.aim.1, 0.0))
                                     .then_some(j)
                                 })
@@ -3349,7 +3453,7 @@ impl BattleState {
     }
     fn damage(&mut self, j: usize, amount: f64) {
         let e = &mut self.entities[j];
-        if e.stagger > 1e-9 || e.spirit || e.underground
+        if e.absent() || e.spirit || e.underground
             || e.dash_travel() || e.dash.as_ref().is_some_and(|s| self.tick*50 < s.immunity) {
             return;
         }
@@ -3386,7 +3490,8 @@ impl BattleState {
                 || self.config.death_objects.contains_key(e.stats.key())
                 || self.config.death_areas.contains_key(e.stats.key())
                 || self.config.death_children.contains_key(e.stats.key())
-                || e.souls_collected > 0);
+                || e.souls_collected > 0
+                || e.stats.riders.is_some());
         let died = was_alive && !e.alive;
         let source = if death { Some(e.clone()) } else { None };
         if died {
@@ -3418,7 +3523,7 @@ impl BattleState {
                     && !e.underground
                     && e.owner != source.owner
                     && (e.class == "Troop" || e.class == "Building")
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && !e.hidden
                     && Self::in_area(e, source.x, source.y, source.stats.death_radius))
                 .then_some(k)
@@ -3460,6 +3565,7 @@ impl BattleState {
             effect.birth = self.tick;
             self.entities.push(effect);
         }
+        self.dismount_riders(&source);
     }
     fn spawn_death_templates(&mut self, source: &Entity, templates: Vec<Entity>) {
             let count = templates.len();
@@ -3800,6 +3906,18 @@ impl BattleState {
         } else {
             None
         };
+        // Batch B1: a SummonWidth line's centre (Royal Recruits), after the column's forward edge (battle.py
+        // BattleState._native_line_centre, called with the tap's edge).
+        let (x, y) = if c.line_search && c.spell.is_none() {
+            let flip = if x < 9.0 || !c.mirror_x.unwrap_or(true) { 1 } else { -1 };
+            let offsets: Vec<(i64, i64)> = c.units[player].iter().map(|t| (units(t.x) * flip, units(t.y))).collect();
+            let ground = (if requested_x < 9.0 { -1 } else { 0 }, if player == 1 { -1 } else { 0 });
+            let tap = (units(x), units(y));
+            match self.line_centre(player, tap, &offsets, ground) {
+                Some(found) if found != tap => (found.0 as f64 / 1000.0, found.1 as f64 / 1000.0),
+                _ => (x, y),
+            }
+        } else { (x, y) };
         let p = &mut self.players[player];
         let slot = p.hand.iter().position(|n| n.as_deref() == Some(card));
         if p.elixir + 1e-9 < cost || slot.is_none() {
@@ -3864,10 +3982,14 @@ impl BattleState {
                 player, c.units[player].len(),
             ))
         } else { None };
+        let first_id = self.next_id as i32;
         for (unit_index, template) in c.units[player].iter().enumerate() {
             let mut e = template.clone();
             e.id = self.next_id as i32;
             self.next_id += 1;
+            if e.mount.is_some() {
+                e.mount = Some(first_id);
+            }
             let offset_x = units(template.x)
                 * if x < 9.0 || !c.mirror_x.unwrap_or(true) {
                     1
@@ -3928,7 +4050,20 @@ impl BattleState {
                 e.underground = e.deploy > 1e-9;
             }
             self.bind_champion(&mut e);
+            let created = (!e.is_clone).then(|| self.config.create_areas.get(e.stats.key()).cloned()).flatten();
+            let (ux, uy, uowner) = (e.x, e.y, e.owner);
             self.entities.push(e);
+            if let Some(mut area) = created {
+                // Batch B1: battle.py on_created -> spawn_area.py SpawnAreaEffect.on_created.
+                area.id = self.next_id as i32;
+                self.next_id += 1;
+                area.x = ux;
+                area.y = uy;
+                area.owner = uowner;
+                area.facing = (0, if uowner == 0 { 1000 } else { -1000 });
+                area.birth = self.tick;
+                self.entities.push(area);
+            }
         }
         Ok(true)
     }

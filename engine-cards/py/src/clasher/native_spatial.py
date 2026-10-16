@@ -32,6 +32,7 @@ class NativeAvoidanceGrid:
             isinstance(entity, Troop)
             and entity.is_alive
             and entity.spawn_stagger_remaining <= 1e-9
+            and not (getattr(entity, "_rider_mount", None) is not None and entity._rider_mount.is_alive)
         ):
             radius += 250
         x = tiles_to_logic_units(entity.position.x)
