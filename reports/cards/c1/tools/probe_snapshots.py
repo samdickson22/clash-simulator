@@ -150,8 +150,10 @@ def compare(b, cfg, native, t, seen_static, classes):
             keys = [k for k in keys if k not in ('push_velocity', 'push_reset', 'push_preserve')]
         if p.get('class') in CLASS_FIELDS:
             # A native shot is a clone of its shooter: its status fields copy the shooter's and are never read.
+            # Production (Witch's spawner) ticks only in the character/building object branch (lib.rs).
             keys = [k for k in keys if k not in ('slow_ms', 'area_slows', 'hastes', 'stun', 'freeze_pause',
-                                                 'freeze_expiry', 'periodic', 'shield', 'move_target', 'target')]
+                                                 'freeze_expiry', 'periodic', 'shield', 'move_target', 'target',
+                                                 'production')]
         if p.get('clock_initialized') and r.get('clock_initialized'):
             keys.append('clock')
         if i not in seen_static and p.get('class') not in CLASS_FIELDS:
