@@ -125,3 +125,49 @@ r1-cards1 is on main, the overlay is no longer needed.
 - 2026-10-16T06:45:52Z released root clasher-bot-runtime/r1-cards1 is on 03/04/08 (native 681b5f2c…, receipt source 0ee42633e,
   created 03:33Z). Sol confirmation smoke on it delegated (stu, k4lf, genf N=12 + c56s/c56k, hash comparison with
   the dev-root run). Still waiting for the r1-cards2/live16402b ping to start G1/K1.
+
+## G1 + K1 generation (started 2026-10-16 06:54Z) — RUNNING
+
+**Pin:** live16402b (r1-cards2 + 16.402.19 stats). Pins taken from cards/lead e545eb6bd and carried to main in
+2ebaea73. Released root /mpac/sdicks02/repos/clasher-bot-runtime/live16402b on 03/04/08 (read-only):
+
+| file | sha256 |
+|---|---|
+| native/clasher_core.abi3.so | de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1 |
+| gamedata.json | a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb |
+| RECEIPT.json (identical on 03/04/08) | 2311429803ed84321ab9d97456aa872ec7127734428d02468de6729e7f534aac |
+| CARDS-RUNTIME-RECEIPT.json | 87d4cf225ebdaf39a00650080246a5b01d42c8ac54e702005aab0a2b1e50439c |
+| LIVE16402-RECEIPT.json | 81f5ccb3e054449cd64788161514ef2f302481f28b1167a1594c6542f08d4204 |
+
+The dev root 08:jobs/clasher/cards/runtime/live16402b-dev has the same native, gamedata and both inner receipts.
+Every G1 shard receipt and row, and every K1 rec line and row, carries  (pins, root, receipt, native and
+gamedata shas; bot/fullpool/provenance.py), so the data can be weighted or refreshed by pin when r1-cards3 or
+live16402c (Batches B1/B2) land.
+
+**Preflight PASS:**
+- 08: live16402b-dev root, tree 2ebaea73, 06:47–06:53Z.
+- 03 (07:01:59Z) and 04 (07:03:39Z): released root, tree 98f4e2b3.
+
+On all three: meta tokens identical to the r1-cards1 dump (no K4L re-extension needed), the three checkpoint
+receipts verified, and the 1-game G1 and K1 runs were identical across hosts (293 labels, 2 belief rebuilds; 563 K1
+rows; 0 errors).
+
+**Launches** (tree J/repo-98f4e2b36313, ROOT = released root, OWN=full, decks fullpool:11433651:freq=b53b02a1fde4,
+G1 base 2613058991490864, K1 base +50,000,000). Each host had live python ≥ 60 at launch (08 74, 03 74, 04 82), so
+every host got the 16-process split:
+
+| host | G1 (shard, games, W, PGID) | K1 (shard, cases × 3 opponents, W, PGID) | launched |
+|---|---|---|---|
+| 08 | 2, 1600, 11, 2850130 | 2, 320, 3, 2850352 | 06:54:10Z |
+| 03 | 0, 800, 11, 3862002 | 0, 160, 3, 3862040 | 07:04:38Z |
+| 04 | 1, 1600, 11, 2819527 | 1, 320, 3, 2819629 | 07:04:39Z |
+
+Logs and data are on each host: J/g1-x<h>.log, J/G1/ (games-*.jsonl, games/), J/k1-x<h>.log, J/K1-x<shard>/.
+J = /mpac/sdicks02/jobs/clasher/bot-fullpool.
+
+**Known runtime bug (CARD LEAD).** In 1 of the first 30 G1 games on 08 (game 2000024, student deck with Freeze),
+ () raised TypeError on None.
+The attribute exists but is None for Freeze, and probably for other non-damage spells. It fires when our or the
+teacher's hand holds such a spell and an enemy non-crown building is on the board, and the whole game is lost. G1
+records it as an error row. The fix belongs in the root (a None fallback). A rerun of the same command on a fixed
+root retries exactly the errored games, since done_games skips only non-error rows.
