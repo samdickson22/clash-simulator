@@ -1,0 +1,10366 @@
+{
+ "completed": 600,
+ "statuses": {
+  "match": 496,
+  "mismatch": 104
+ },
+ "ticks": 1842169,
+ "triage_errors": 0,
+ "groups": {
+  "objects|IceGolemite|ids,next_id": 37,
+  "combat|IceGolemite|ids,next_id": 37,
+  "objects|ElectroDragon,FirespiritHut|hp,ids,next_id,target": 1,
+  "movement|MightyMiner|y": 2,
+  "movement|BossBandit|x,y": 1,
+  "objects||next_id": 2,
+  "combat|Xbow|ids,next_id": 5,
+  "objects|Skeleton|hp": 2,
+  "combat|IceGolemite,Xbow|class,ids,next_id,x,y": 1,
+  "combat|Fisherman,LittlePrince,MegaKnight,Tower|ids,target": 1,
+  "combat|Miner|hp": 1,
+  "movement|IceSpirits,Monk|x,y": 1,
+  "combat|Prince|hp": 1,
+  "movement|MightyMiner,Tower|x,y": 1,
+  "combat|Goblins,Valkyrie|ids,target": 1,
+  "combat|Skeleton|hp": 1,
+  "combat|RoyalHogs|hp": 1,
+  "movement|Assassin|hp": 1,
+  "combat|ElectroDragon|hp": 1,
+  "combat|Goblin|hp": 2,
+  "combat|Valkyrie|hp": 1,
+  "objects|FireSpirits|ids,next_id": 1,
+  "combat|Heal|hp": 1,
+  "movement|Archer,BossBandit,Heal|hp,ids,x,y": 1
+ },
+ "games": [
+  {
+   "game": 0,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 1,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 2,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 3,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 4,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 5,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 6,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 7,
+   "status": "mismatch",
+   "tick": 250,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      17,
+      18,
+      19
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      17,
+      18
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 20,
+     "rust": 19
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 8,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 9,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 10,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 11,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 12,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 13,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 14,
+   "status": "mismatch",
+   "tick": 196,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      11,
+      12,
+      15,
+      16
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      11,
+      12,
+      15
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 17,
+     "rust": 16
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 15,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 16,
+   "status": "mismatch",
+   "tick": 696,
+   "kind": "digest",
+   "names": [
+    "ElectroDragon",
+    "FirespiritHut"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.56.hp",
+     "python": 727.0,
+     "rust": 517.0
+    },
+    {
+     "field": ".entities.56.target",
+     "python": 48,
+     "rust": null
+    },
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      32,
+      48,
+      56,
+      59
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      32,
+      48,
+      56,
+      59,
+      63
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 63,
+     "rust": 64
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 17,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 18,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 19,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 20,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 21,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 22,
+   "status": "mismatch",
+   "tick": 1926,
+   "kind": "digest",
+   "names": [
+    "MightyMiner"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.250.y",
+     "python": 19.628,
+     "rust": 19.568
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 23,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 24,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 25,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 26,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 27,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 28,
+   "status": "mismatch",
+   "tick": 2390,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      227,
+      268,
+      286,
+      313,
+      314,
+      315,
+      316,
+      317,
+      318,
+      320,
+      323,
+      324
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      227,
+      268,
+      286,
+      313,
+      314,
+      315,
+      316,
+      317,
+      318,
+      320,
+      323
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 325,
+     "rust": 324
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 29,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 30,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 31,
+   "status": "mismatch",
+   "tick": 1475,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      133,
+      177,
+      184,
+      186
+     ],
+     "rust": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      133,
+      177,
+      184
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 187,
+     "rust": 186
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 32,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 33,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 34,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 35,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 36,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 37,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 38,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 39,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 40,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 41,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 42,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 43,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 44,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 45,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 46,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 47,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 48,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 49,
+   "status": "mismatch",
+   "tick": 384,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      62,
+      86,
+      87,
+      88
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      62,
+      86,
+      87
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 89,
+     "rust": 88
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 50,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 51,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 52,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 53,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 54,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 55,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 56,
+   "status": "mismatch",
+   "tick": 663,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      50,
+      60
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      50
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 61,
+     "rust": 60
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 57,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 58,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 59,
+   "status": "mismatch",
+   "tick": 375,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      12,
+      17,
+      28,
+      29,
+      30,
+      56,
+      57,
+      58
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      12,
+      17,
+      28,
+      29,
+      30,
+      56,
+      57
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 59,
+     "rust": 58
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 60,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 61,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 62,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 63,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 64,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 65,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 66,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 67,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 68,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 69,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 70,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 71,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 72,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 73,
+   "status": "mismatch",
+   "tick": 1261,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      135,
+      145
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      135
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 146,
+     "rust": 145
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 74,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 75,
+   "status": "mismatch",
+   "tick": 92,
+   "kind": "digest",
+   "names": [
+    "BossBandit"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.7.x",
+     "python": 13.712,
+     "rust": 13.711
+    },
+    {
+     "field": ".entities.7.y",
+     "python": 19.625,
+     "rust": 19.611
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 76,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 77,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 78,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 79,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 80,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 81,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 82,
+   "status": "mismatch",
+   "tick": 1368,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      118,
+      119,
+      120,
+      121,
+      131,
+      132,
+      133,
+      134,
+      135
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      118,
+      119,
+      120,
+      121,
+      131,
+      132,
+      133,
+      134
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 136,
+     "rust": 135
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 83,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 84,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 85,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 86,
+   "status": "mismatch",
+   "tick": 745,
+   "kind": "digest",
+   "names": [],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".next_id",
+     "python": 71,
+     "rust": 72
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 87,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 88,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 89,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 90,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 91,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 92,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 93,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 94,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 95,
+   "status": "mismatch",
+   "tick": 389,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      14,
+      47,
+      48,
+      54,
+      55
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      14,
+      47,
+      48,
+      54
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 56,
+     "rust": 55
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 96,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 97,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 98,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 99,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 100,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 101,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 102,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 103,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 104,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 105,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 106,
+   "status": "mismatch",
+   "tick": 491,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      13,
+      22,
+      28,
+      38,
+      39,
+      40
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      13,
+      22,
+      28,
+      38,
+      39
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 41,
+     "rust": 40
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 107,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 108,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 109,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 110,
+   "status": "mismatch",
+   "tick": 1384,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      149,
+      157
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      149
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 158,
+     "rust": 157
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 111,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 112,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 113,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 114,
+   "status": "mismatch",
+   "tick": 248,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      14,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      14,
+      27,
+      28,
+      29,
+      30,
+      31
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 33,
+     "rust": 32
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 115,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 116,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 117,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 118,
+   "status": "mismatch",
+   "tick": 868,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      57,
+      85,
+      96
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      57,
+      85
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 97,
+     "rust": 96
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 119,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 120,
+   "status": "mismatch",
+   "tick": 971,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      11,
+      79,
+      125,
+      150,
+      153,
+      167,
+      168,
+      169
+     ],
+     "rust": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      11,
+      79,
+      125,
+      150,
+      153,
+      167,
+      168
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 170,
+     "rust": 169
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 121,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 122,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 123,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 124,
+   "status": "mismatch",
+   "tick": 3042,
+   "kind": "digest",
+   "names": [
+    "Xbow"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      215,
+      220,
+      221,
+      222,
+      232,
+      233,
+      234
+     ],
+     "rust": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      215,
+      220,
+      221,
+      222,
+      232,
+      233,
+      234,
+      236
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 236,
+     "rust": 237
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 125,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 126,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 127,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 128,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 129,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 130,
+   "status": "mismatch",
+   "tick": 263,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11,
+      12,
+      22,
+      24,
+      25,
+      26
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      11,
+      12,
+      22,
+      24,
+      25
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 27,
+     "rust": 26
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 131,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 132,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 133,
+   "status": "mismatch",
+   "tick": 1334,
+   "kind": "digest",
+   "names": [
+    "Skeleton"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.160.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.161.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.162.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.163.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.164.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.165.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.166.hp",
+     "python": 89.0,
+     "rust": 81.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 134,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 135,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 136,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 137,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 138,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 139,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 140,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 141,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 142,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 143,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 144,
+   "status": "mismatch",
+   "tick": 141,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      12,
+      13,
+      18,
+      21,
+      22
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      12,
+      13,
+      18,
+      21
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 23,
+     "rust": 22
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 145,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 146,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 147,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 148,
+   "status": "mismatch",
+   "tick": 1522,
+   "kind": "digest",
+   "names": [
+    "IceGolemite",
+    "Xbow"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.186.class",
+     "python": "AreaEffect",
+     "rust": "Projectile"
+    },
+    {
+     "field": ".entities.186.x",
+     "python": 4.412,
+     "rust": 7.17
+    },
+    {
+     "field": ".entities.186.y",
+     "python": 15.233,
+     "rust": 19.557
+    },
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      145,
+      154,
+      156,
+      176,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      145,
+      154,
+      156,
+      176,
+      182,
+      183,
+      184,
+      185,
+      186
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 188,
+     "rust": 187
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 149,
+   "status": "mismatch",
+   "tick": 947,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      26,
+      45,
+      46,
+      47,
+      48,
+      50,
+      51,
+      60,
+      61,
+      62,
+      63,
+      97,
+      98,
+      101,
+      102,
+      103,
+      104
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      26,
+      45,
+      46,
+      47,
+      48,
+      50,
+      51,
+      60,
+      61,
+      62,
+      63,
+      97,
+      98,
+      101,
+      102,
+      103
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 105,
+     "rust": 104
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 150,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 151,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 152,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 153,
+   "status": "mismatch",
+   "tick": 308,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      37,
+      68,
+      75,
+      84,
+      85
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      37,
+      68,
+      75,
+      84
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 86,
+     "rust": 85
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 154,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 155,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 156,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 157,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 158,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 159,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 160,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 161,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 162,
+   "status": "mismatch",
+   "tick": 729,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      66,
+      72,
+      74
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      66,
+      72
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 75,
+     "rust": 74
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 163,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 164,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 165,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 166,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 167,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 168,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 169,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 170,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 171,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 172,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 173,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 174,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 175,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 176,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 177,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 178,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 179,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 180,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 181,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 182,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 183,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 184,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 185,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 186,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 187,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 188,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 189,
+   "status": "mismatch",
+   "tick": 171,
+   "kind": "digest",
+   "names": [
+    "Fisherman",
+    "LittlePrince",
+    "MegaKnight",
+    "Tower"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.2.target",
+     "python": null,
+     "rust": 10
+    },
+    {
+     "field": ".entities.7.target",
+     "python": null,
+     "rust": 10
+    },
+    {
+     "field": ".entities.9.target",
+     "python": null,
+     "rust": 10
+    },
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      16,
+      18
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      16,
+      18
+     ]
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 190,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 191,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 192,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 193,
+   "status": "mismatch",
+   "tick": 691,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      14,
+      73,
+      74,
+      89,
+      92,
+      96,
+      99,
+      100,
+      103,
+      104,
+      105,
+      106,
+      109,
+      111
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      14,
+      73,
+      74,
+      89,
+      92,
+      96,
+      99,
+      100,
+      103,
+      104,
+      105,
+      106,
+      109
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 112,
+     "rust": 111
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 194,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 195,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 196,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 197,
+   "status": "mismatch",
+   "tick": 311,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      11,
+      16,
+      24,
+      39,
+      43,
+      44
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      11,
+      16,
+      24,
+      39,
+      43
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 45,
+     "rust": 44
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 198,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 199,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 200,
+   "status": "mismatch",
+   "tick": 797,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      36,
+      59,
+      79,
+      82
+     ],
+     "rust": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      36,
+      59,
+      79
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 83,
+     "rust": 82
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 201,
+   "status": "mismatch",
+   "tick": 522,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      41,
+      42,
+      50,
+      51,
+      52
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      41,
+      42,
+      50,
+      51
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 53,
+     "rust": 52
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 202,
+   "status": "mismatch",
+   "tick": 3067,
+   "kind": "digest",
+   "names": [
+    "Miner"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.324.hp",
+     "python": 1210.0,
+     "rust": 1167.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 203,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 204,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 205,
+   "status": "mismatch",
+   "tick": 186,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      13,
+      15,
+      16,
+      17,
+      25,
+      43
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      13,
+      15,
+      16,
+      17,
+      25
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 44,
+     "rust": 43
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 206,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 207,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 208,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 209,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 210,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 211,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 212,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 213,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 214,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 215,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 216,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 217,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 218,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 219,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 220,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 221,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 222,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 223,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 224,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 225,
+   "status": "mismatch",
+   "tick": 701,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      26,
+      59,
+      64,
+      65
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      26,
+      59,
+      64
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 66,
+     "rust": 65
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 226,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 227,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 228,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 229,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 230,
+   "status": "mismatch",
+   "tick": 401,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      12,
+      16,
+      55,
+      56
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      12,
+      16,
+      55
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 57,
+     "rust": 56
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 231,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 232,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 233,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 234,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 235,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 236,
+   "status": "mismatch",
+   "tick": 1416,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      89,
+      93,
+      97
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      89,
+      93
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 98,
+     "rust": 97
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 237,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 238,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 239,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 240,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 241,
+   "status": "mismatch",
+   "tick": 580,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      11,
+      12,
+      13,
+      47,
+      51,
+      65,
+      67
+     ],
+     "rust": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      11,
+      12,
+      13,
+      47,
+      51,
+      65
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 68,
+     "rust": 67
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 242,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 243,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 244,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 245,
+   "status": "mismatch",
+   "tick": 2027,
+   "kind": "digest",
+   "names": [
+    "IceSpirits",
+    "Monk"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.111.x",
+     "python": 13.731,
+     "rust": 13.75
+    },
+    {
+     "field": ".entities.111.y",
+     "python": 17.711,
+     "rust": 17.655
+    },
+    {
+     "field": ".entities.114.x",
+     "python": 13.758,
+     "rust": 13.754
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 246,
+   "status": "mismatch",
+   "tick": 1080,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      77,
+      95,
+      96,
+      97,
+      128,
+      158
+     ],
+     "rust": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      77,
+      95,
+      96,
+      97,
+      128
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 159,
+     "rust": 158
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 247,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 248,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 249,
+   "status": "mismatch",
+   "tick": 333,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      46,
+      51
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      46
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 52,
+     "rust": 51
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 250,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 251,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 252,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 253,
+   "status": "mismatch",
+   "tick": 112,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 18,
+     "rust": 17
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 254,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 255,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 256,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 257,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 258,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 259,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 260,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 261,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 262,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 263,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 264,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 265,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 266,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 267,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 268,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 269,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 270,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 271,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 272,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 273,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 274,
+   "status": "mismatch",
+   "tick": 749,
+   "kind": "digest",
+   "names": [
+    "MightyMiner"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.41.y",
+     "python": 13.887,
+     "rust": 13.947
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 275,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 276,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 277,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 278,
+   "status": "mismatch",
+   "tick": 857,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      50,
+      51,
+      52,
+      53,
+      66,
+      78
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      50,
+      51,
+      52,
+      53,
+      66
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 79,
+     "rust": 78
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 279,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 280,
+   "status": "mismatch",
+   "tick": 1457,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      82,
+      95,
+      118,
+      122
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      82,
+      95,
+      118
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 123,
+     "rust": 122
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 281,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 282,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 283,
+   "status": "mismatch",
+   "tick": 204,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      14,
+      20,
+      21,
+      23
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      14,
+      20,
+      21
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 24,
+     "rust": 23
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 284,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 285,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 286,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 287,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 288,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 289,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 290,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 291,
+   "status": "mismatch",
+   "tick": 607,
+   "kind": "digest",
+   "names": [
+    "Prince"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.35.hp",
+     "python": 1920.0,
+     "rust": 1877.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 292,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 293,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 294,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 295,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 296,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 297,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 298,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 299,
+   "status": "mismatch",
+   "tick": 789,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      14,
+      39,
+      57,
+      58,
+      62
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      14,
+      39,
+      57,
+      58
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 63,
+     "rust": 62
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 300,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 301,
+   "status": "mismatch",
+   "tick": 1208,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      242,
+      246,
+      251,
+      253,
+      254,
+      262,
+      264,
+      265,
+      267,
+      268,
+      269
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      242,
+      246,
+      251,
+      253,
+      254,
+      262,
+      264,
+      265,
+      267,
+      268
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 270,
+     "rust": 269
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 302,
+   "status": "mismatch",
+   "tick": 238,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      22,
+      26,
+      27
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      22,
+      26
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 28,
+     "rust": 27
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 303,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 304,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 305,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 306,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 307,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 308,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 309,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 310,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 311,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 312,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 313,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 314,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 315,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 316,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 317,
+   "status": "mismatch",
+   "tick": 3485,
+   "kind": "digest",
+   "names": [
+    "Xbow"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      325,
+      343,
+      351,
+      357,
+      358,
+      362,
+      369,
+      377,
+      378
+     ],
+     "rust": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      325,
+      343,
+      351,
+      357,
+      358,
+      362,
+      369,
+      377,
+      378,
+      379
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 379,
+     "rust": 380
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 318,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 319,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 320,
+   "status": "mismatch",
+   "tick": 944,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      33,
+      78,
+      85,
+      105,
+      106,
+      107,
+      108
+     ],
+     "rust": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      33,
+      78,
+      85,
+      105,
+      106,
+      107
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 109,
+     "rust": 108
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 321,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 322,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 323,
+   "status": "mismatch",
+   "tick": 844,
+   "kind": "digest",
+   "names": [
+    "MightyMiner",
+    "Tower"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.52.y",
+     "python": 19.496,
+     "rust": 19.556
+    },
+    {
+     "field": ".entities.79.x",
+     "python": 14.246,
+     "rust": 14.244
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 324,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 325,
+   "status": "mismatch",
+   "tick": 133,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 13,
+     "rust": 12
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 326,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 327,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 328,
+   "status": "mismatch",
+   "tick": 336,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      28,
+      29,
+      30,
+      31
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      28,
+      29,
+      30
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 32,
+     "rust": 31
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 329,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 330,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 331,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 332,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 333,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 334,
+   "status": "mismatch",
+   "tick": 1155,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      81,
+      95,
+      101,
+      112
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      81,
+      95,
+      101
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 113,
+     "rust": 112
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 335,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 336,
+   "status": "mismatch",
+   "tick": 3139,
+   "kind": "digest",
+   "names": [],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".next_id",
+     "python": 485,
+     "rust": 486
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 337,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 338,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 339,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 340,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 341,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 342,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 343,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 344,
+   "status": "mismatch",
+   "tick": 1939,
+   "kind": "digest",
+   "names": [
+    "Goblins",
+    "Valkyrie"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.266.target",
+     "python": 284,
+     "rust": null
+    },
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      5,
+      6,
+      238,
+      265,
+      266,
+      277,
+      283,
+      284,
+      285,
+      286,
+      287,
+      293,
+      294,
+      300
+     ],
+     "rust": [
+      2,
+      3,
+      5,
+      6,
+      238,
+      265,
+      266,
+      277,
+      283,
+      285,
+      286,
+      287,
+      293,
+      294,
+      300
+     ]
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 345,
+   "status": "mismatch",
+   "tick": 878,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      75,
+      81,
+      94,
+      98,
+      99,
+      100,
+      101,
+      102,
+      104
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      75,
+      81,
+      94,
+      98,
+      99,
+      100,
+      101,
+      102
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 105,
+     "rust": 104
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 346,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 347,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 348,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 349,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 350,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 351,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 352,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 353,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 354,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 355,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 356,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 357,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 358,
+   "status": "mismatch",
+   "tick": 941,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      80,
+      81,
+      87,
+      89,
+      90,
+      91
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      80,
+      81,
+      87,
+      89,
+      90
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 92,
+     "rust": 91
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 359,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 360,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 361,
+   "status": "mismatch",
+   "tick": 283,
+   "kind": "digest",
+   "names": [
+    "Xbow"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      40,
+      58,
+      59
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      40,
+      58,
+      59,
+      60
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 60,
+     "rust": 61
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 362,
+   "status": "mismatch",
+   "tick": 469,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      14,
+      17,
+      51,
+      52,
+      60,
+      61,
+      62
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      14,
+      17,
+      51,
+      52,
+      60,
+      61
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 63,
+     "rust": 62
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 363,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 364,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 365,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 366,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 367,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 368,
+   "status": "mismatch",
+   "tick": 678,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      34,
+      39,
+      42,
+      43
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      34,
+      39,
+      42
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 44,
+     "rust": 43
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 369,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 370,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 371,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 372,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 373,
+   "status": "mismatch",
+   "tick": 3083,
+   "kind": "digest",
+   "names": [
+    "Xbow"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      280,
+      281,
+      289,
+      299,
+      303,
+      305,
+      306,
+      307,
+      308,
+      309,
+      310,
+      311,
+      316,
+      317
+     ],
+     "rust": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      280,
+      281,
+      289,
+      299,
+      303,
+      305,
+      306,
+      307,
+      308,
+      309,
+      310,
+      311,
+      316,
+      317,
+      318
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 318,
+     "rust": 319
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 374,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 375,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 376,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 377,
+   "status": "mismatch",
+   "tick": 2743,
+   "kind": "digest",
+   "names": [
+    "Skeleton"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.265.hp",
+     "python": 81.0,
+     "rust": 38.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 378,
+   "status": "mismatch",
+   "tick": 569,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      48,
+      59,
+      60
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      48,
+      59
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 61,
+     "rust": 60
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 379,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 380,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 381,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 382,
+   "status": "mismatch",
+   "tick": 1030,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      78,
+      94,
+      99
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      78,
+      94
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 100,
+     "rust": 99
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 383,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 384,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 385,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 386,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 387,
+   "status": "mismatch",
+   "tick": 1051,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      73,
+      76,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      90,
+      94,
+      95,
+      96,
+      98
+     ],
+     "rust": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      73,
+      76,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      90,
+      94,
+      95,
+      96
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 99,
+     "rust": 98
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 388,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 389,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 390,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 391,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 392,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 393,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 394,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 395,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 396,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 397,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 398,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 399,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 400,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 401,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 402,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 403,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 404,
+   "status": "mismatch",
+   "tick": 1011,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      62,
+      89,
+      90,
+      96,
+      103,
+      104
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      62,
+      89,
+      90,
+      96,
+      103
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 105,
+     "rust": 104
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 405,
+   "status": "mismatch",
+   "tick": 1043,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      106,
+      107
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      106
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 108,
+     "rust": 107
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 406,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 407,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 408,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 409,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 410,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 411,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 412,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 413,
+   "status": "mismatch",
+   "tick": 918,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      72,
+      78,
+      91,
+      98
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      72,
+      78,
+      91
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 99,
+     "rust": 98
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 414,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 415,
+   "status": "mismatch",
+   "tick": 709,
+   "kind": "digest",
+   "names": [
+    "RoyalHogs"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.40.hp",
+     "python": 33.0,
+     "rust": 301.0
+    },
+    {
+     "field": ".entities.43.hp",
+     "python": 301.0,
+     "rust": 569.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 416,
+   "status": "mismatch",
+   "tick": 845,
+   "kind": "digest",
+   "names": [
+    "Assassin"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.84.hp",
+     "python": 177.0,
+     "rust": 85.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 417,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 418,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 419,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 420,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 421,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 422,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 423,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 424,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 425,
+   "status": "mismatch",
+   "tick": 735,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      75,
+      94,
+      95,
+      96,
+      99
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      75,
+      94,
+      95,
+      96
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 100,
+     "rust": 99
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 426,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 427,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 428,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 429,
+   "status": "mismatch",
+   "tick": 545,
+   "kind": "digest",
+   "names": [
+    "ElectroDragon"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.42.hp",
+     "python": 1049.0,
+     "rust": 1006.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 430,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 431,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 432,
+   "status": "mismatch",
+   "tick": 798,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      47,
+      71,
+      77,
+      83,
+      87,
+      88
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      47,
+      71,
+      77,
+      83,
+      87
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 89,
+     "rust": 88
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 433,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 434,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 435,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 436,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 437,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 438,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 439,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 440,
+   "status": "mismatch",
+   "tick": 605,
+   "kind": "digest",
+   "names": [
+    "Goblin"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.56.hp",
+     "python": 202.0,
+     "rust": 159.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 441,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 442,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 443,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 444,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 445,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 446,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 447,
+   "status": "mismatch",
+   "tick": 175,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      12,
+      36,
+      37
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      12,
+      36
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 38,
+     "rust": 37
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 448,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 449,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 450,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 451,
+   "status": "mismatch",
+   "tick": 121,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      18,
+      23,
+      24,
+      25
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      18,
+      23,
+      24
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 26,
+     "rust": 25
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 452,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 453,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 454,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 455,
+   "status": "mismatch",
+   "tick": 1562,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      91,
+      92,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      117,
+      139
+     ],
+     "rust": [
+      1,
+      3,
+      4,
+      5,
+      6,
+      91,
+      92,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      117
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 140,
+     "rust": 139
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 456,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 457,
+   "status": "mismatch",
+   "tick": 134,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      12,
+      13,
+      14,
+      17,
+      18
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      12,
+      13,
+      14,
+      17
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 19,
+     "rust": 18
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 458,
+   "status": "mismatch",
+   "tick": 2566,
+   "kind": "digest",
+   "names": [
+    "Valkyrie"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.239.hp",
+     "python": 1587.0,
+     "rust": 1544.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 459,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 460,
+   "status": "mismatch",
+   "tick": 3160,
+   "kind": "digest",
+   "names": [
+    "FireSpirits"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      214,
+      216,
+      217,
+      221,
+      222,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      243,
+      244
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      214,
+      216,
+      217,
+      221,
+      222,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      243,
+      245
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 245,
+     "rust": 246
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 461,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 462,
+   "status": "mismatch",
+   "tick": 1488,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      166,
+      167,
+      168
+     ],
+     "rust": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      166,
+      167
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 169,
+     "rust": 168
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 463,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 464,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 465,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 466,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 467,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 468,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 469,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 470,
+   "status": "mismatch",
+   "tick": 995,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      98,
+      99,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      112
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      98,
+      99,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 113,
+     "rust": 112
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 471,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 472,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 473,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 474,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 475,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 476,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 477,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 478,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 479,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 480,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 481,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 482,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 483,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 484,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 485,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 486,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 487,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 488,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 489,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 490,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 491,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 492,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 493,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 494,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 495,
+   "status": "mismatch",
+   "tick": 573,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      56,
+      63,
+      76
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      56,
+      63
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 77,
+     "rust": 76
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 496,
+   "status": "mismatch",
+   "tick": 413,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      13,
+      14,
+      15,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      45,
+      51,
+      52,
+      53
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      13,
+      14,
+      15,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      45,
+      51,
+      52
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 54,
+     "rust": 53
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 497,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 498,
+   "status": "mismatch",
+   "tick": 1248,
+   "kind": "digest",
+   "names": [
+    "Heal"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.140.hp",
+     "python": 230.0,
+     "rust": 187.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 499,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 500,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 501,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 502,
+   "status": "mismatch",
+   "tick": 1247,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      99,
+      100,
+      101,
+      109,
+      135,
+      136,
+      137,
+      144,
+      145,
+      146,
+      147
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      99,
+      100,
+      101,
+      109,
+      135,
+      136,
+      137,
+      144,
+      145,
+      146
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 148,
+     "rust": 147
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 503,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 504,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 505,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 506,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 507,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 508,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 509,
+   "status": "mismatch",
+   "tick": 277,
+   "kind": "digest",
+   "names": [
+    "Skeleton"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.35.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.36.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.37.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.38.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.39.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.40.hp",
+     "python": 89.0,
+     "rust": 81.0
+    },
+    {
+     "field": ".entities.41.hp",
+     "python": 89.0,
+     "rust": 81.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 510,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 511,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 512,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 513,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 514,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 515,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 516,
+   "status": "mismatch",
+   "tick": 155,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      31,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      31,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 45,
+     "rust": 44
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 517,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 518,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 519,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 520,
+   "status": "mismatch",
+   "tick": 156,
+   "kind": "digest",
+   "names": [
+    "Xbow"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      28,
+      29,
+      30
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      28,
+      29,
+      30,
+      32
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 32,
+     "rust": 33
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 521,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 522,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 523,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 524,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 525,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 526,
+   "status": "mismatch",
+   "tick": 1090,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      35,
+      49,
+      54,
+      55
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      35,
+      49,
+      54
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 56,
+     "rust": 55
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 527,
+   "status": "mismatch",
+   "tick": 544,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      12,
+      55,
+      71
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      12,
+      55
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 72,
+     "rust": 71
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 528,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 529,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 530,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 531,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 532,
+   "status": "mismatch",
+   "tick": 323,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      17,
+      18,
+      26
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      17,
+      18
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 27,
+     "rust": 26
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 533,
+   "status": "mismatch",
+   "tick": 164,
+   "kind": "digest",
+   "names": [
+    "Goblin"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.45.hp",
+     "python": 202.0,
+     "rust": 159.0
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 534,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 535,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 536,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 537,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 538,
+   "status": "mismatch",
+   "tick": 938,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      103,
+      109,
+      114,
+      116
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      103,
+      109,
+      114
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 117,
+     "rust": 116
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 539,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 540,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 541,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 542,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 543,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 544,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 545,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 546,
+   "status": "mismatch",
+   "tick": 1006,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      75,
+      78,
+      79,
+      81,
+      101,
+      102,
+      103
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      75,
+      78,
+      79,
+      81,
+      101,
+      102
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 104,
+     "rust": 103
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 547,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 548,
+   "status": "mismatch",
+   "tick": 3271,
+   "kind": "digest",
+   "names": [
+    "Archer",
+    "BossBandit",
+    "Heal"
+   ],
+   "phase": "movement",
+   "differences": [
+    {
+     "field": ".entities.294.hp",
+     "python": 812.0,
+     "rust": 700.0
+    },
+    {
+     "field": ".entities.294.x",
+     "python": 3.229,
+     "rust": 3.231
+    },
+    {
+     "field": ".entities.294.y",
+     "python": 18.983,
+     "rust": 18.893
+    },
+    {
+     "field": ".entities.319.x",
+     "python": 3.728,
+     "rust": 3.807
+    },
+    {
+     "field": ".entities.319.y",
+     "python": 17.987,
+     "rust": 17.86
+    },
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      294,
+      302,
+      303,
+      313,
+      314,
+      319,
+      323
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      294,
+      302,
+      303,
+      313,
+      314,
+      319
+     ]
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 549,
+   "status": "mismatch",
+   "tick": 209,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      13,
+      14,
+      19,
+      20,
+      21,
+      37,
+      38,
+      39,
+      42,
+      43,
+      44,
+      45
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      13,
+      14,
+      19,
+      20,
+      21,
+      37,
+      38,
+      39,
+      42,
+      43,
+      44
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 46,
+     "rust": 45
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 550,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 551,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 552,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 553,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 554,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 555,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 556,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 557,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 558,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 559,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 560,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 561,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 562,
+   "status": "mismatch",
+   "tick": 134,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      11,
+      13,
+      14,
+      15,
+      17,
+      23,
+      26
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      11,
+      13,
+      14,
+      15,
+      17,
+      23
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 27,
+     "rust": 26
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 563,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 564,
+   "status": "mismatch",
+   "tick": 462,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "objects",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      86,
+      87,
+      90
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      86,
+      87
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 91,
+     "rust": 90
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 565,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 566,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 567,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 568,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 569,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 570,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 571,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 572,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 573,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 574,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 575,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 576,
+   "status": "mismatch",
+   "tick": 206,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      23,
+      24,
+      25
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      23,
+      24
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 26,
+     "rust": 25
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 577,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 578,
+   "status": "mismatch",
+   "tick": 817,
+   "kind": "digest",
+   "names": [
+    "IceGolemite"
+   ],
+   "phase": "combat",
+   "differences": [
+    {
+     "field": ".entities.ids",
+     "python": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      41,
+      88,
+      95,
+      100,
+      101,
+      103,
+      104,
+      105,
+      106,
+      110
+     ],
+     "rust": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      41,
+      88,
+      95,
+      100,
+      101,
+      103,
+      104,
+      105,
+      106
+     ]
+    },
+    {
+     "field": ".next_id",
+     "python": 111,
+     "rust": 110
+    }
+   ],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 579,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 580,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 581,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 582,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 583,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 584,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 585,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 586,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 587,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 588,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 589,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 590,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 591,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 592,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 593,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 594,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 595,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 596,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 597,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 598,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 599,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  }
+ ]
+}

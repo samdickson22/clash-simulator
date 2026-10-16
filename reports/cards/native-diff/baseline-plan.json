@@ -1,0 +1,1983 @@
+{
+ "c56": [
+  "AngryBarbarians",
+  "Archer",
+  "ArcherQueen",
+  "Arrows",
+  "BabyDragon",
+  "Balloon",
+  "BarbLog",
+  "Bats",
+  "Berserker",
+  "BlowdartGoblin",
+  "BombTower",
+  "Cannon",
+  "DarkPrince",
+  "Earthquake",
+  "ElectroSpirit",
+  "FireSpirits",
+  "Fireball",
+  "Firecracker",
+  "FirespiritHut",
+  "Ghost",
+  "Giant",
+  "GoblinBarrel",
+  "GoblinGang",
+  "GoblinHut",
+  "Goblins",
+  "Goblinstein",
+  "Golem",
+  "HogRider",
+  "IceGolemite",
+  "IceSpirits",
+  "InfernoTower",
+  "Knight",
+  "Lightning",
+  "Log",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MinionHorde",
+  "Minions",
+  "Musketeer",
+  "Poison",
+  "Prince",
+  "Princess",
+  "Rascals",
+  "Rocket",
+  "RoyalDelivery",
+  "RoyalHogs",
+  "SkeletonArmy",
+  "Skeletons",
+  "Tesla",
+  "Tornado",
+  "Valkyrie",
+  "Wallbreakers",
+  "Wizard",
+  "Xbow",
+  "Zap"
+ ],
+ "games": [
+  {
+   "game": 800,
+   "seed": 9250000,
+   "decks": [
+    [
+     "Xbow",
+     "Minions",
+     "Archer",
+     "Earthquake",
+     "BarbLog",
+     "ElectroSpirit",
+     "Zap",
+     "Princess"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "DarkPrince",
+     "Earthquake",
+     "Archer",
+     "Balloon"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 801,
+   "seed": 9250001,
+   "decks": [
+    [
+     "InfernoTower",
+     "AngryBarbarians",
+     "IceSpirits",
+     "GoblinBarrel",
+     "RoyalHogs",
+     "GoblinHut",
+     "Miner",
+     "Knight"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "FireSpirits",
+     "Lightning",
+     "MightyMiner",
+     "Cannon"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 802,
+   "seed": 9250002,
+   "decks": [
+    [
+     "Valkyrie",
+     "Golem",
+     "SkeletonArmy",
+     "BabyDragon",
+     "Arrows",
+     "IceSpirits",
+     "Berserker",
+     "Tesla"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "GoblinHut",
+     "FireSpirits",
+     "Log",
+     "Xbow"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 803,
+   "seed": 9250003,
+   "decks": [
+    [
+     "Xbow",
+     "MinionHorde",
+     "Firecracker",
+     "Skeletons",
+     "MightyMiner",
+     "Princess",
+     "BlowdartGoblin",
+     "IceSpirits"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "InfernoTower",
+     "Poison",
+     "Balloon",
+     "Earthquake"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 804,
+   "seed": 9250004,
+   "decks": [
+    [
+     "InfernoTower",
+     "Rascals",
+     "Wizard",
+     "Fireball",
+     "Ghost",
+     "Knight",
+     "MiniPekka",
+     "MinionHorde"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Rocket",
+     "Tornado",
+     "MiniPekka",
+     "Goblinstein"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 805,
+   "seed": 9250005,
+   "decks": [
+    [
+     "Valkyrie",
+     "Log",
+     "Zap",
+     "RoyalHogs",
+     "MightyMiner",
+     "Skeletons",
+     "Bats",
+     "FireSpirits"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "GoblinHut",
+     "Fireball",
+     "AngryBarbarians",
+     "Wallbreakers"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 806,
+   "seed": 9250006,
+   "decks": [
+    [
+     "Xbow",
+     "Giant",
+     "Zap",
+     "Skeletons",
+     "RoyalHogs",
+     "HogRider",
+     "FirespiritHut",
+     "Goblinstein"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Prince",
+     "Log",
+     "Zap",
+     "MightyMiner"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 807,
+   "seed": 9250007,
+   "decks": [
+    [
+     "InfernoTower",
+     "Xbow",
+     "BabyDragon",
+     "Goblins",
+     "Goblinstein",
+     "MinionHorde",
+     "Rascals",
+     "Earthquake"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Arrows",
+     "Musketeer",
+     "Wallbreakers",
+     "Princess"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 808,
+   "seed": 9250008,
+   "decks": [
+    [
+     "Valkyrie",
+     "BombTower",
+     "Zap",
+     "Poison",
+     "FirespiritHut",
+     "MinionHorde",
+     "HogRider",
+     "MiniPekka"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "HogRider",
+     "Tesla",
+     "Musketeer",
+     "Berserker"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 809,
+   "seed": 9250009,
+   "decks": [
+    [
+     "Xbow",
+     "Musketeer",
+     "Cannon",
+     "ElectroSpirit",
+     "Archer",
+     "Golem",
+     "Tornado",
+     "Wallbreakers"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Poison",
+     "Earthquake",
+     "GoblinHut",
+     "Golem"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 810,
+   "seed": 9250010,
+   "decks": [
+    [
+     "InfernoTower",
+     "Minions",
+     "Tesla",
+     "Log",
+     "Cannon",
+     "Ghost",
+     "Goblinstein",
+     "Prince"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "InfernoTower",
+     "MiniPekka",
+     "Giant",
+     "Wallbreakers"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 811,
+   "seed": 9250011,
+   "decks": [
+    [
+     "Valkyrie",
+     "Minions",
+     "RoyalDelivery",
+     "Giant",
+     "SkeletonArmy",
+     "Princess",
+     "Archer",
+     "BabyDragon"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "FireSpirits",
+     "Wallbreakers",
+     "Goblins",
+     "Tornado"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 812,
+   "seed": 9250012,
+   "decks": [
+    [
+     "Xbow",
+     "MiniPekka",
+     "SkeletonArmy",
+     "DarkPrince",
+     "IceSpirits",
+     "GoblinBarrel",
+     "Zap",
+     "Poison"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "MiniPekka",
+     "Skeletons",
+     "FirespiritHut",
+     "Princess"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 813,
+   "seed": 9250013,
+   "decks": [
+    [
+     "InfernoTower",
+     "BabyDragon",
+     "Tornado",
+     "Tesla",
+     "RoyalDelivery",
+     "FirespiritHut",
+     "Musketeer",
+     "ElectroSpirit"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "ArcherQueen",
+     "InfernoTower",
+     "Giant",
+     "AngryBarbarians"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 814,
+   "seed": 9250014,
+   "decks": [
+    [
+     "Valkyrie",
+     "RoyalHogs",
+     "Earthquake",
+     "Knight",
+     "RoyalDelivery",
+     "Balloon",
+     "Poison",
+     "Goblins"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "ArcherQueen",
+     "Bats",
+     "Earthquake",
+     "GoblinGang"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 815,
+   "seed": 9250015,
+   "decks": [
+    [
+     "Xbow",
+     "Goblinstein",
+     "Wallbreakers",
+     "ArcherQueen",
+     "Golem",
+     "Valkyrie",
+     "Bats",
+     "MiniPekka"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Rascals",
+     "Earthquake",
+     "Bats",
+     "Goblins"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 816,
+   "seed": 9250016,
+   "decks": [
+    [
+     "InfernoTower",
+     "Archer",
+     "Wallbreakers",
+     "ElectroSpirit",
+     "Arrows",
+     "Firecracker",
+     "Tornado",
+     "Fireball"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "RoyalHogs",
+     "Lightning",
+     "Berserker",
+     "GoblinGang"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 817,
+   "seed": 9250017,
+   "decks": [
+    [
+     "Valkyrie",
+     "SkeletonArmy",
+     "Log",
+     "Zap",
+     "Miner",
+     "Tornado",
+     "GoblinHut",
+     "Wallbreakers"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Goblinstein",
+     "AngryBarbarians",
+     "Poison",
+     "Skeletons"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 818,
+   "seed": 9250018,
+   "decks": [
+    [
+     "Xbow",
+     "FirespiritHut",
+     "DarkPrince",
+     "Minions",
+     "Balloon",
+     "Earthquake",
+     "Golem",
+     "Rascals"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Golem",
+     "BarbLog",
+     "Tornado",
+     "Berserker"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 819,
+   "seed": 9250019,
+   "decks": [
+    [
+     "InfernoTower",
+     "RoyalHogs",
+     "SkeletonArmy",
+     "Skeletons",
+     "GoblinBarrel",
+     "Tesla",
+     "Knight",
+     "ArcherQueen"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "RoyalHogs",
+     "MiniPekka",
+     "Archer",
+     "Princess"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 820,
+   "seed": 9250020,
+   "decks": [
+    [
+     "Valkyrie",
+     "Knight",
+     "Fireball",
+     "Poison",
+     "Firecracker",
+     "Arrows",
+     "MinionHorde",
+     "Earthquake"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Skeletons",
+     "Wallbreakers",
+     "Fireball",
+     "Zap"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 821,
+   "seed": 9250021,
+   "decks": [
+    [
+     "Xbow",
+     "Arrows",
+     "BabyDragon",
+     "Tornado",
+     "Poison",
+     "Ghost",
+     "InfernoTower",
+     "Archer"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "BombTower",
+     "MinionHorde",
+     "RoyalDelivery",
+     "Goblins"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 822,
+   "seed": 9250022,
+   "decks": [
+    [
+     "InfernoTower",
+     "Bats",
+     "Minions",
+     "Miner",
+     "BarbLog",
+     "Knight",
+     "Wallbreakers",
+     "Lightning"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "InfernoTower",
+     "Golem",
+     "Goblins",
+     "Musketeer"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 823,
+   "seed": 9250023,
+   "decks": [
+    [
+     "Valkyrie",
+     "InfernoTower",
+     "BombTower",
+     "Ghost",
+     "Fireball",
+     "Wallbreakers",
+     "BarbLog",
+     "FireSpirits"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Balloon",
+     "MightyMiner",
+     "RoyalHogs",
+     "GoblinGang"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 824,
+   "seed": 9250024,
+   "decks": [
+    [
+     "Xbow",
+     "InfernoTower",
+     "Poison",
+     "Knight",
+     "Balloon",
+     "Wizard",
+     "Log",
+     "Tornado"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "ArcherQueen",
+     "Firecracker",
+     "Golem",
+     "Tornado"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 825,
+   "seed": 9250025,
+   "decks": [
+    [
+     "InfernoTower",
+     "Cannon",
+     "Bats",
+     "MiniPekka",
+     "Tesla",
+     "Fireball",
+     "FirespiritHut",
+     "FireSpirits"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Musketeer",
+     "Tornado",
+     "Poison",
+     "Wizard"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 826,
+   "seed": 9250026,
+   "decks": [
+    [
+     "Valkyrie",
+     "Knight",
+     "Goblinstein",
+     "MinionHorde",
+     "Cannon",
+     "Tesla",
+     "BlowdartGoblin",
+     "Princess"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Ghost",
+     "Xbow",
+     "BabyDragon",
+     "Goblinstein"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 827,
+   "seed": 9250027,
+   "decks": [
+    [
+     "Xbow",
+     "Goblinstein",
+     "Knight",
+     "AngryBarbarians",
+     "Ghost",
+     "Skeletons",
+     "ArcherQueen",
+     "IceSpirits"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Zap",
+     "RoyalHogs",
+     "Rascals",
+     "Firecracker"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 828,
+   "seed": 9250028,
+   "decks": [
+    [
+     "InfernoTower",
+     "Cannon",
+     "Minions",
+     "Xbow",
+     "IceSpirits",
+     "Balloon",
+     "BabyDragon",
+     "Golem"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Goblinstein",
+     "RoyalHogs",
+     "Golem",
+     "Miner"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 829,
+   "seed": 9250029,
+   "decks": [
+    [
+     "Valkyrie",
+     "Wallbreakers",
+     "Rascals",
+     "MiniPekka",
+     "RoyalDelivery",
+     "Minions",
+     "Berserker",
+     "MinionHorde"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Lightning",
+     "DarkPrince",
+     "GoblinGang",
+     "MiniPekka"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 830,
+   "seed": 9250030,
+   "decks": [
+    [
+     "Xbow",
+     "BombTower",
+     "DarkPrince",
+     "Rascals",
+     "Poison",
+     "BlowdartGoblin",
+     "GoblinHut",
+     "Fireball"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Minions",
+     "Rocket",
+     "Rascals",
+     "BarbLog"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 831,
+   "seed": 9250031,
+   "decks": [
+    [
+     "InfernoTower",
+     "Firecracker",
+     "Ghost",
+     "Archer",
+     "Poison",
+     "Tornado",
+     "BabyDragon",
+     "Zap"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "BabyDragon",
+     "Zap",
+     "Princess",
+     "Miner"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 832,
+   "seed": 9250032,
+   "decks": [
+    [
+     "Valkyrie",
+     "GoblinBarrel",
+     "Log",
+     "Golem",
+     "Berserker",
+     "Firecracker",
+     "Skeletons",
+     "HogRider"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Zap",
+     "Wallbreakers",
+     "Cannon",
+     "HogRider"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 833,
+   "seed": 9250033,
+   "decks": [
+    [
+     "Xbow",
+     "Lightning",
+     "Minions",
+     "Giant",
+     "RoyalDelivery",
+     "HogRider",
+     "ElectroSpirit",
+     "Log"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Earthquake",
+     "InfernoTower",
+     "Prince",
+     "Princess"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 834,
+   "seed": 9250034,
+   "decks": [
+    [
+     "InfernoTower",
+     "Wallbreakers",
+     "Berserker",
+     "Log",
+     "RoyalDelivery",
+     "Balloon",
+     "Wizard",
+     "Ghost"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Miner",
+     "Cannon",
+     "HogRider",
+     "IceSpirits"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 835,
+   "seed": 9250035,
+   "decks": [
+    [
+     "Valkyrie",
+     "Archer",
+     "Musketeer",
+     "FireSpirits",
+     "BabyDragon",
+     "Princess",
+     "GoblinHut",
+     "Tornado"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "BombTower",
+     "Berserker",
+     "Cannon",
+     "Skeletons"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 836,
+   "seed": 9250036,
+   "decks": [
+    [
+     "Xbow",
+     "Archer",
+     "Ghost",
+     "Giant",
+     "BombTower",
+     "Earthquake",
+     "GoblinHut",
+     "Goblinstein"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Earthquake",
+     "Princess",
+     "Xbow",
+     "Tornado"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 837,
+   "seed": 9250037,
+   "decks": [
+    [
+     "InfernoTower",
+     "RoyalHogs",
+     "HogRider",
+     "Cannon",
+     "Knight",
+     "GoblinGang",
+     "MinionHorde",
+     "RoyalDelivery"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Rocket",
+     "Log",
+     "BabyDragon",
+     "Poison"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 838,
+   "seed": 9250038,
+   "decks": [
+    [
+     "Valkyrie",
+     "Wallbreakers",
+     "Golem",
+     "Tesla",
+     "Balloon",
+     "Tornado",
+     "HogRider",
+     "Rocket"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "BombTower",
+     "BarbLog",
+     "Lightning",
+     "Skeletons"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 839,
+   "seed": 9250039,
+   "decks": [
+    [
+     "Xbow",
+     "Skeletons",
+     "RoyalHogs",
+     "Miner",
+     "Prince",
+     "Giant",
+     "SkeletonArmy",
+     "Princess"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "BabyDragon",
+     "Goblinstein",
+     "Zap",
+     "DarkPrince"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 840,
+   "seed": 9250040,
+   "decks": [
+    [
+     "InfernoTower",
+     "FirespiritHut",
+     "Musketeer",
+     "GoblinGang",
+     "DarkPrince",
+     "Ghost",
+     "Rocket",
+     "Princess"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Minions",
+     "MightyMiner",
+     "Miner",
+     "Poison"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 841,
+   "seed": 9250041,
+   "decks": [
+    [
+     "Valkyrie",
+     "MightyMiner",
+     "Giant",
+     "Log",
+     "GoblinHut",
+     "BarbLog",
+     "HogRider",
+     "Firecracker"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "MinionHorde",
+     "FireSpirits",
+     "Goblinstein",
+     "FirespiritHut"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 842,
+   "seed": 9250042,
+   "decks": [
+    [
+     "Xbow",
+     "Arrows",
+     "Tesla",
+     "Wallbreakers",
+     "Goblinstein",
+     "BarbLog",
+     "Golem",
+     "Rascals"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Berserker",
+     "Valkyrie",
+     "FireSpirits",
+     "Prince"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 843,
+   "seed": 9250043,
+   "decks": [
+    [
+     "InfernoTower",
+     "Bats",
+     "BarbLog",
+     "Princess",
+     "FirespiritHut",
+     "Wallbreakers",
+     "Arrows",
+     "Xbow"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Miner",
+     "Berserker",
+     "FirespiritHut",
+     "Bats"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 844,
+   "seed": 9250044,
+   "decks": [
+    [
+     "Valkyrie",
+     "Giant",
+     "GoblinBarrel",
+     "GoblinHut",
+     "Golem",
+     "Musketeer",
+     "Firecracker",
+     "Miner"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Minions",
+     "Rascals",
+     "Ghost",
+     "IceSpirits"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 845,
+   "seed": 9250045,
+   "decks": [
+    [
+     "Xbow",
+     "Prince",
+     "MiniPekka",
+     "Berserker",
+     "Musketeer",
+     "Tesla",
+     "Rocket",
+     "Goblins"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Princess",
+     "DarkPrince",
+     "RoyalDelivery",
+     "Bats"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 846,
+   "seed": 9250046,
+   "decks": [
+    [
+     "InfernoTower",
+     "ArcherQueen",
+     "Wallbreakers",
+     "SkeletonArmy",
+     "BarbLog",
+     "Knight",
+     "MiniPekka",
+     "Tesla"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "GoblinHut",
+     "Musketeer",
+     "BombTower",
+     "Prince"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 847,
+   "seed": 9250047,
+   "decks": [
+    [
+     "Valkyrie",
+     "Berserker",
+     "Giant",
+     "SkeletonArmy",
+     "Xbow",
+     "Firecracker",
+     "BombTower",
+     "Miner"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Cannon",
+     "Wallbreakers",
+     "FirespiritHut",
+     "Arrows"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 848,
+   "seed": 9250048,
+   "decks": [
+    [
+     "Xbow",
+     "GoblinHut",
+     "DarkPrince",
+     "MinionHorde",
+     "BarbLog",
+     "Knight",
+     "BombTower",
+     "Cannon"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Bats",
+     "RoyalHogs",
+     "Berserker",
+     "Firecracker"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 849,
+   "seed": 9250049,
+   "decks": [
+    [
+     "InfernoTower",
+     "Fireball",
+     "IceSpirits",
+     "Bats",
+     "Archer",
+     "Zap",
+     "Knight",
+     "Prince"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Rascals",
+     "Zap",
+     "IceSpirits",
+     "Berserker"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 850,
+   "seed": 9250050,
+   "decks": [
+    [
+     "Valkyrie",
+     "Musketeer",
+     "Archer",
+     "MinionHorde",
+     "ElectroSpirit",
+     "RoyalDelivery",
+     "Firecracker",
+     "Tornado"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "DarkPrince",
+     "Skeletons",
+     "HogRider",
+     "Wallbreakers"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 851,
+   "seed": 9250051,
+   "decks": [
+    [
+     "Xbow",
+     "Tesla",
+     "Giant",
+     "RoyalDelivery",
+     "RoyalHogs",
+     "AngryBarbarians",
+     "MiniPekka",
+     "Berserker"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "HogRider",
+     "BlowdartGoblin",
+     "BabyDragon",
+     "Tesla"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 852,
+   "seed": 9250052,
+   "decks": [
+    [
+     "InfernoTower",
+     "Poison",
+     "ArcherQueen",
+     "DarkPrince",
+     "Zap",
+     "MightyMiner",
+     "BlowdartGoblin",
+     "Xbow"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "GoblinGang",
+     "Wallbreakers",
+     "Ghost",
+     "Goblins"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 853,
+   "seed": 9250053,
+   "decks": [
+    [
+     "Valkyrie",
+     "IceSpirits",
+     "ArcherQueen",
+     "FireSpirits",
+     "Rocket",
+     "ElectroSpirit",
+     "Musketeer",
+     "Giant"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "MinionHorde",
+     "FirespiritHut",
+     "GoblinHut",
+     "BarbLog"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 854,
+   "seed": 9250054,
+   "decks": [
+    [
+     "Xbow",
+     "Rocket",
+     "DarkPrince",
+     "Log",
+     "Wizard",
+     "SkeletonArmy",
+     "Ghost",
+     "Skeletons"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Golem",
+     "IceSpirits",
+     "Fireball",
+     "Zap"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 855,
+   "seed": 9250055,
+   "decks": [
+    [
+     "InfernoTower",
+     "BarbLog",
+     "SkeletonArmy",
+     "ArcherQueen",
+     "ElectroSpirit",
+     "MiniPekka",
+     "FirespiritHut",
+     "Knight"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "ArcherQueen",
+     "Firecracker",
+     "Valkyrie",
+     "BlowdartGoblin"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 856,
+   "seed": 9250056,
+   "decks": [
+    [
+     "Valkyrie",
+     "FireSpirits",
+     "Wallbreakers",
+     "Lightning",
+     "Knight",
+     "Poison",
+     "DarkPrince",
+     "Log"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "MiniPekka",
+     "Rocket",
+     "Archer",
+     "Minions"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 857,
+   "seed": 9250057,
+   "decks": [
+    [
+     "Xbow",
+     "GoblinBarrel",
+     "MightyMiner",
+     "DarkPrince",
+     "BombTower",
+     "Poison",
+     "Zap",
+     "BabyDragon"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "InfernoTower",
+     "Wizard",
+     "Lightning",
+     "Rascals"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  },
+  {
+   "game": 858,
+   "seed": 9250058,
+   "decks": [
+    [
+     "InfernoTower",
+     "FireSpirits",
+     "Xbow",
+     "Poison",
+     "Prince",
+     "Princess",
+     "BombTower",
+     "Balloon"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Rascals",
+     "HogRider",
+     "RoyalDelivery",
+     "Log"
+    ]
+   ],
+   "lane": 0,
+   "style": 2
+  },
+  {
+   "game": 859,
+   "seed": 9250059,
+   "decks": [
+    [
+     "Valkyrie",
+     "ElectroSpirit",
+     "Tornado",
+     "Archer",
+     "Earthquake",
+     "IceSpirits",
+     "Wizard",
+     "SkeletonArmy"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Prince",
+     "MiniPekka",
+     "Tornado",
+     "ArcherQueen"
+    ]
+   ],
+   "lane": 1,
+   "style": 2
+  },
+  {
+   "game": 860,
+   "seed": 9250060,
+   "decks": [
+    [
+     "Xbow",
+     "Valkyrie",
+     "BombTower",
+     "Firecracker",
+     "Arrows",
+     "Lightning",
+     "Miner",
+     "GoblinGang"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Princess",
+     "Berserker",
+     "Xbow",
+     "Earthquake"
+    ]
+   ],
+   "lane": 0,
+   "style": 0
+  },
+  {
+   "game": 861,
+   "seed": 9250061,
+   "decks": [
+    [
+     "InfernoTower",
+     "AngryBarbarians",
+     "IceSpirits",
+     "Poison",
+     "ElectroSpirit",
+     "Wallbreakers",
+     "Balloon",
+     "Log"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Xbow",
+     "Valkyrie",
+     "GoblinGang",
+     "Bats"
+    ]
+   ],
+   "lane": 1,
+   "style": 0
+  },
+  {
+   "game": 862,
+   "seed": 9250062,
+   "decks": [
+    [
+     "Valkyrie",
+     "ElectroSpirit",
+     "Xbow",
+     "Knight",
+     "Tornado",
+     "GoblinGang",
+     "MinionHorde",
+     "Fireball"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "FireSpirits",
+     "Cannon",
+     "Minions",
+     "DarkPrince"
+    ]
+   ],
+   "lane": 0,
+   "style": 1
+  },
+  {
+   "game": 863,
+   "seed": 9250063,
+   "decks": [
+    [
+     "Xbow",
+     "AngryBarbarians",
+     "GoblinGang",
+     "Zap",
+     "RoyalHogs",
+     "Princess",
+     "MinionHorde",
+     "Musketeer"
+    ],
+    [
+     "ElectroSpirit",
+     "SkeletonArmy",
+     "GoblinBarrel",
+     "Knight",
+     "Berserker",
+     "Fireball",
+     "Miner",
+     "BombTower"
+    ]
+   ],
+   "lane": 1,
+   "style": 1
+  }
+ ],
+ "kinds": {
+  "AngryBarbarians": "troop",
+  "Archer": "troop",
+  "ArcherQueen": "troop",
+  "Arrows": "spell",
+  "Assassin": "troop",
+  "AxeMan": "troop",
+  "BabyDragon": "troop",
+  "Balloon": "troop",
+  "BarbLog": "spell",
+  "BarbarianHut": "building",
+  "Barbarians": "troop",
+  "Bats": "troop",
+  "BattleHealer": "troop",
+  "BattleRam": "troop",
+  "Berserker": "troop",
+  "BlowdartGoblin": "troop",
+  "BombTower": "building",
+  "Bomber": "troop",
+  "BossBandit": "troop",
+  "Bowler": "troop",
+  "Cannon": "building",
+  "Clone": "spell",
+  "DarkMagic": "spell",
+  "DarkPrince": "troop",
+  "DarkWitch": "troop",
+  "DartBarrell": "troop",
+  "Earthquake": "spell",
+  "ElectroDragon": "troop",
+  "ElectroGiant": "troop",
+  "ElectroSpirit": "troop",
+  "ElectroWizard": "troop",
+  "EliteArcher": "troop",
+  "Elixir Collector": "building",
+  "ElixirGolem": "troop",
+  "FireSpirits": "troop",
+  "Fireball": "spell",
+  "Firecracker": "troop",
+  "FirespiritHut": "building",
+  "Fisherman": "troop",
+  "Freeze": "spell",
+  "Ghost": "troop",
+  "Giant": "troop",
+  "GiantBuffer": "troop",
+  "GiantSkeleton": "troop",
+  "GoblinBarrel": "spell",
+  "GoblinCage": "building",
+  "GoblinCurse": "spell",
+  "GoblinDemolisher": "troop",
+  "GoblinDrill": "building",
+  "GoblinGang": "troop",
+  "GoblinGiant": "troop",
+  "GoblinHut": "building",
+  "GoblinMachine": "troop",
+  "Goblins": "troop",
+  "Goblinstein": "troop",
+  "GoldenKnight": "troop",
+  "Golem": "troop",
+  "Graveyard": "spell",
+  "Heal": "spell",
+  "HogRider": "troop",
+  "Hunter": "troop",
+  "IceGolemite": "troop",
+  "IceSpirits": "troop",
+  "IceWizard": "troop",
+  "InfernoDragon": "troop",
+  "InfernoTower": "building",
+  "Knight": "troop",
+  "LavaHound": "troop",
+  "Lightning": "spell",
+  "LittlePrince": "troop",
+  "Log": "spell",
+  "MegaKnight": "troop",
+  "MegaMinion": "troop",
+  "MergeMaiden": "spell",
+  "MightyMiner": "troop",
+  "Miner": "troop",
+  "MiniPekka": "troop",
+  "MiniSparkys": "troop",
+  "MinionHorde": "troop",
+  "Minions": "troop",
+  "Mirror": "spell",
+  "Monk": "troop",
+  "Mortar": "building",
+  "MovingCannon": "troop",
+  "Musketeer": "troop",
+  "Pekka": "troop",
+  "Phoenix": "troop",
+  "Poison": "spell",
+  "Prince": "troop",
+  "Princess": "troop",
+  "Rage": "spell",
+  "RageBarbarian": "troop",
+  "RamRider": "troop",
+  "Rascals": "troop",
+  "Rocket": "spell",
+  "Ronin": "troop",
+  "RoyalDelivery": "spell",
+  "RoyalGiant": "troop",
+  "RoyalHogs": "troop",
+  "RoyalRecruits": "troop",
+  "SkeletonArmy": "troop",
+  "SkeletonBalloon": "troop",
+  "SkeletonDragons": "troop",
+  "SkeletonKing": "troop",
+  "SkeletonWarriors": "troop",
+  "Skeletons": "troop",
+  "Snowball": "spell",
+  "SpearGoblins": "troop",
+  "SuspiciousBush": "troop",
+  "Tesla": "building",
+  "ThreeMusketeers": "troop",
+  "Tombstone": "building",
+  "Tornado": "spell",
+  "Valkyrie": "troop",
+  "Vines": "spell",
+  "Wallbreakers": "troop",
+  "Witch": "troop",
+  "WitchMother": "troop",
+  "Wizard": "troop",
+  "Xbow": "building",
+  "Zap": "spell",
+  "ZapMachine": "troop"
+ },
+ "pin": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+ "seed": 6812026,
+ "ticks": 3600,
+ "version": 1,
+ "note": "Supplemental C56-only clocks/retarget controls, IceGolemite excluded."
+}

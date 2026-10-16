@@ -1,0 +1,2879 @@
+{
+ "games": 600,
+ "total_ticks": 1842169,
+ "first_kinds": {
+  "digest": 104
+ },
+ "cards": {
+  "AngryBarbarians": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 172
+  },
+  "Archer": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 198
+  },
+  "ArcherQueen": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 184
+  },
+  "Arrows": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 216
+  },
+  "Assassin": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 207
+  },
+  "AxeMan": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 196
+  },
+  "BabyDragon": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 178
+  },
+  "Balloon": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 184
+  },
+  "BarbLog": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 68,
+   "successful_plays": 183
+  },
+  "BarbarianHut": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 184
+  },
+  "Barbarians": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 73,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 177
+  },
+  "Bats": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 67,
+   "successful_plays": 208
+  },
+  "BattleHealer": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 203
+  },
+  "BattleRam": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 181
+  },
+  "Berserker": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 198
+  },
+  "BlowdartGoblin": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 199
+  },
+  "BombTower": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 208
+  },
+  "Bomber": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 77,
+   "successful_plays": 210
+  },
+  "BossBandit": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 181
+  },
+  "Bowler": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 72,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 174
+  },
+  "Cannon": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 206
+  },
+  "Clone": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 199
+  },
+  "DarkMagic": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 199
+  },
+  "DarkPrince": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 193
+  },
+  "DarkWitch": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 189
+  },
+  "DartBarrell": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 195
+  },
+  "Earthquake": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 199
+  },
+  "ElectroDragon": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 77,
+   "successful_plays": 194
+  },
+  "ElectroGiant": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 67,
+   "successful_plays": 165
+  },
+  "ElectroSpirit": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 203
+  },
+  "ElectroWizard": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 188
+  },
+  "EliteArcher": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 201
+  },
+  "Elixir Collector": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 181
+  },
+  "ElixirGolem": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 184
+  },
+  "FireSpirits": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 68,
+   "successful_plays": 213
+  },
+  "Fireball": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 211
+  },
+  "Firecracker": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 195
+  },
+  "FirespiritHut": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 80,
+   "equal_prefix_deployed_games": 78,
+   "successful_plays": 192
+  },
+  "Fisherman": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 197
+  },
+  "Freeze": {
+   "scope": "new",
+   "appearances": 77,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 198
+  },
+  "Ghost": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 198
+  },
+  "Giant": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 183
+  },
+  "GiantBuffer": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 185
+  },
+  "GiantSkeleton": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 68,
+   "successful_plays": 186
+  },
+  "GoblinBarrel": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 209
+  },
+  "GoblinCage": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 201
+  },
+  "GoblinCurse": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 205
+  },
+  "GoblinDemolisher": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 201
+  },
+  "GoblinDrill": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 185
+  },
+  "GoblinGang": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 199
+  },
+  "GoblinGiant": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 174
+  },
+  "GoblinHut": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 191
+  },
+  "GoblinMachine": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 68,
+   "successful_plays": 180
+  },
+  "Goblins": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 199
+  },
+  "Goblinstein": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 190
+  },
+  "GoldenKnight": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 196
+  },
+  "Golem": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 164
+  },
+  "Graveyard": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 194
+  },
+  "Heal": {
+   "scope": "new",
+   "appearances": 77,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 215
+  },
+  "HogRider": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 188
+  },
+  "Hunter": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 164
+  },
+  "IceGolemite": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 204
+  },
+  "IceSpirits": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 209
+  },
+  "IceWizard": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 202
+  },
+  "InfernoDragon": {
+   "scope": "new",
+   "appearances": 77,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 202
+  },
+  "InfernoTower": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 193
+  },
+  "Knight": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 210
+  },
+  "LavaHound": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 168
+  },
+  "Lightning": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 77,
+   "successful_plays": 197
+  },
+  "LittlePrince": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 194
+  },
+  "Log": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 199
+  },
+  "MegaKnight": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 74,
+   "equal_prefix_deployed_games": 66,
+   "successful_plays": 148
+  },
+  "MegaMinion": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 215
+  },
+  "MergeMaiden": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 179
+  },
+  "MightyMiner": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 188
+  },
+  "Miner": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 196
+  },
+  "MiniPekka": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 77,
+   "successful_plays": 201
+  },
+  "MiniSparkys": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 174
+  },
+  "MinionHorde": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 185
+  },
+  "Minions": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 202
+  },
+  "Mirror": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 78,
+   "successful_plays": 220
+  },
+  "Monk": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 189
+  },
+  "Mortar": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 206
+  },
+  "MovingCannon": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 167
+  },
+  "Musketeer": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 186
+  },
+  "Pekka": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 74,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 167
+  },
+  "Phoenix": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 77,
+   "successful_plays": 190
+  },
+  "Poison": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 210
+  },
+  "Prince": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 74,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 179
+  },
+  "Princess": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 69,
+   "successful_plays": 203
+  },
+  "Rage": {
+   "scope": "new",
+   "appearances": 77,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 209
+  },
+  "RageBarbarian": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 178
+  },
+  "RamRider": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 77,
+   "successful_plays": 180
+  },
+  "Rascals": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 187
+  },
+  "Rocket": {
+   "scope": "C56",
+   "appearances": 77,
+   "deployed_games": 74,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 167
+  },
+  "Ronin": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 197
+  },
+  "RoyalDelivery": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 74,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 180
+  },
+  "RoyalGiant": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 169
+  },
+  "RoyalHogs": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 177
+  },
+  "RoyalRecruits": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 171
+  },
+  "SkeletonArmy": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 210
+  },
+  "SkeletonBalloon": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 70,
+   "successful_plays": 203
+  },
+  "SkeletonDragons": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 194
+  },
+  "SkeletonKing": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 195
+  },
+  "SkeletonWarriors": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 194
+  },
+  "Skeletons": {
+   "scope": "C56",
+   "appearances": 80,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 74,
+   "successful_plays": 216
+  },
+  "Snowball": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 210
+  },
+  "SpearGoblins": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 211
+  },
+  "SuspiciousBush": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 74,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 209
+  },
+  "Tesla": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 79,
+   "equal_prefix_deployed_games": 75,
+   "successful_plays": 214
+  },
+  "ThreeMusketeers": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 146
+  },
+  "Tombstone": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 192
+  },
+  "Tornado": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 203
+  },
+  "Valkyrie": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 78,
+   "equal_prefix_deployed_games": 78,
+   "successful_plays": 196
+  },
+  "Vines": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 212
+  },
+  "Wallbreakers": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 201
+  },
+  "Witch": {
+   "scope": "new",
+   "appearances": 78,
+   "deployed_games": 75,
+   "equal_prefix_deployed_games": 71,
+   "successful_plays": 174
+  },
+  "WitchMother": {
+   "scope": "new",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 200
+  },
+  "Wizard": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 72,
+   "successful_plays": 185
+  },
+  "Xbow": {
+   "scope": "C56",
+   "appearances": 78,
+   "deployed_games": 76,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 190
+  },
+  "Zap": {
+   "scope": "C56",
+   "appearances": 79,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 76,
+   "successful_plays": 210
+  },
+  "ZapMachine": {
+   "scope": "new",
+   "appearances": 80,
+   "deployed_games": 77,
+   "equal_prefix_deployed_games": 73,
+   "successful_plays": 176
+  }
+ },
+ "mechanic_types": [
+  "ArcherQueenCloak",
+  "AttackRecoil",
+  "BanditDash",
+  "BattleRamCharge",
+  "CrownTowerScaling",
+  "DamageRamp",
+  "DeathAreaEffect",
+  "DeathDamage",
+  "DeathSpawn",
+  "ElectroDragonChainLightning",
+  "ElectroSpiritChain",
+  "ElixirProduction",
+  "FishermanHook",
+  "GoblinHutProduction",
+  "GoblinsteinTether",
+  "HealSpiritBurst",
+  "HideWhenIdle",
+  "IceSpiritFreeze",
+  "InvisibilityWhenNotAttacking",
+  "KamikazeSplash",
+  "MegaKnightSlam",
+  "MightyMinerSwitch",
+  "MultipleTargetAttack",
+  "PeriodicSpawner",
+  "SerializedOnHitBuff",
+  "Shield",
+  "SkeletonKingSoulCollector",
+  "SpawnAreaEffect",
+  "SpawnPushback",
+  "UndergroundDeployment",
+  "WallBreakersDemolition"
+ ],
+ "nearby_mechanic_pairs": [
+  [
+   "ArcherQueenCloak",
+   "ArcherQueenCloak"
+  ],
+  [
+   "ArcherQueenCloak",
+   "AttackRecoil"
+  ],
+  [
+   "ArcherQueenCloak",
+   "BanditDash"
+  ],
+  [
+   "ArcherQueenCloak",
+   "BattleRamCharge"
+  ],
+  [
+   "ArcherQueenCloak",
+   "CrownTowerScaling"
+  ],
+  [
+   "ArcherQueenCloak",
+   "DamageRamp"
+  ],
+  [
+   "ArcherQueenCloak",
+   "DeathAreaEffect"
+  ],
+  [
+   "ArcherQueenCloak",
+   "DeathDamage"
+  ],
+  [
+   "ArcherQueenCloak",
+   "DeathSpawn"
+  ],
+  [
+   "ArcherQueenCloak",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "ArcherQueenCloak",
+   "ElectroSpiritChain"
+  ],
+  [
+   "ArcherQueenCloak",
+   "ElixirProduction"
+  ],
+  [
+   "ArcherQueenCloak",
+   "FishermanHook"
+  ],
+  [
+   "ArcherQueenCloak",
+   "GoblinsteinTether"
+  ],
+  [
+   "ArcherQueenCloak",
+   "HealSpiritBurst"
+  ],
+  [
+   "ArcherQueenCloak",
+   "HideWhenIdle"
+  ],
+  [
+   "ArcherQueenCloak",
+   "IceSpiritFreeze"
+  ],
+  [
+   "ArcherQueenCloak",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "ArcherQueenCloak",
+   "KamikazeSplash"
+  ],
+  [
+   "ArcherQueenCloak",
+   "MegaKnightSlam"
+  ],
+  [
+   "ArcherQueenCloak",
+   "MightyMinerSwitch"
+  ],
+  [
+   "ArcherQueenCloak",
+   "MultipleTargetAttack"
+  ],
+  [
+   "ArcherQueenCloak",
+   "PeriodicSpawner"
+  ],
+  [
+   "ArcherQueenCloak",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "ArcherQueenCloak",
+   "Shield"
+  ],
+  [
+   "ArcherQueenCloak",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "ArcherQueenCloak",
+   "SpawnAreaEffect"
+  ],
+  [
+   "ArcherQueenCloak",
+   "SpawnPushback"
+  ],
+  [
+   "ArcherQueenCloak",
+   "UndergroundDeployment"
+  ],
+  [
+   "ArcherQueenCloak",
+   "WallBreakersDemolition"
+  ],
+  [
+   "AttackRecoil",
+   "AttackRecoil"
+  ],
+  [
+   "AttackRecoil",
+   "BanditDash"
+  ],
+  [
+   "AttackRecoil",
+   "BattleRamCharge"
+  ],
+  [
+   "AttackRecoil",
+   "CrownTowerScaling"
+  ],
+  [
+   "AttackRecoil",
+   "DamageRamp"
+  ],
+  [
+   "AttackRecoil",
+   "DeathAreaEffect"
+  ],
+  [
+   "AttackRecoil",
+   "DeathDamage"
+  ],
+  [
+   "AttackRecoil",
+   "DeathSpawn"
+  ],
+  [
+   "AttackRecoil",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "AttackRecoil",
+   "FishermanHook"
+  ],
+  [
+   "AttackRecoil",
+   "GoblinHutProduction"
+  ],
+  [
+   "AttackRecoil",
+   "GoblinsteinTether"
+  ],
+  [
+   "AttackRecoil",
+   "HealSpiritBurst"
+  ],
+  [
+   "AttackRecoil",
+   "HideWhenIdle"
+  ],
+  [
+   "AttackRecoil",
+   "IceSpiritFreeze"
+  ],
+  [
+   "AttackRecoil",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "AttackRecoil",
+   "KamikazeSplash"
+  ],
+  [
+   "AttackRecoil",
+   "MegaKnightSlam"
+  ],
+  [
+   "AttackRecoil",
+   "MightyMinerSwitch"
+  ],
+  [
+   "AttackRecoil",
+   "MultipleTargetAttack"
+  ],
+  [
+   "AttackRecoil",
+   "PeriodicSpawner"
+  ],
+  [
+   "AttackRecoil",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "AttackRecoil",
+   "Shield"
+  ],
+  [
+   "AttackRecoil",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "AttackRecoil",
+   "SpawnAreaEffect"
+  ],
+  [
+   "AttackRecoil",
+   "SpawnPushback"
+  ],
+  [
+   "AttackRecoil",
+   "UndergroundDeployment"
+  ],
+  [
+   "AttackRecoil",
+   "WallBreakersDemolition"
+  ],
+  [
+   "BanditDash",
+   "BanditDash"
+  ],
+  [
+   "BanditDash",
+   "BattleRamCharge"
+  ],
+  [
+   "BanditDash",
+   "CrownTowerScaling"
+  ],
+  [
+   "BanditDash",
+   "DamageRamp"
+  ],
+  [
+   "BanditDash",
+   "DeathAreaEffect"
+  ],
+  [
+   "BanditDash",
+   "DeathDamage"
+  ],
+  [
+   "BanditDash",
+   "DeathSpawn"
+  ],
+  [
+   "BanditDash",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "BanditDash",
+   "ElectroSpiritChain"
+  ],
+  [
+   "BanditDash",
+   "ElixirProduction"
+  ],
+  [
+   "BanditDash",
+   "FishermanHook"
+  ],
+  [
+   "BanditDash",
+   "GoblinHutProduction"
+  ],
+  [
+   "BanditDash",
+   "GoblinsteinTether"
+  ],
+  [
+   "BanditDash",
+   "HealSpiritBurst"
+  ],
+  [
+   "BanditDash",
+   "HideWhenIdle"
+  ],
+  [
+   "BanditDash",
+   "IceSpiritFreeze"
+  ],
+  [
+   "BanditDash",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "BanditDash",
+   "KamikazeSplash"
+  ],
+  [
+   "BanditDash",
+   "MegaKnightSlam"
+  ],
+  [
+   "BanditDash",
+   "MightyMinerSwitch"
+  ],
+  [
+   "BanditDash",
+   "MultipleTargetAttack"
+  ],
+  [
+   "BanditDash",
+   "PeriodicSpawner"
+  ],
+  [
+   "BanditDash",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "BanditDash",
+   "Shield"
+  ],
+  [
+   "BanditDash",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "BanditDash",
+   "SpawnAreaEffect"
+  ],
+  [
+   "BanditDash",
+   "SpawnPushback"
+  ],
+  [
+   "BanditDash",
+   "UndergroundDeployment"
+  ],
+  [
+   "BanditDash",
+   "WallBreakersDemolition"
+  ],
+  [
+   "BattleRamCharge",
+   "BattleRamCharge"
+  ],
+  [
+   "BattleRamCharge",
+   "CrownTowerScaling"
+  ],
+  [
+   "BattleRamCharge",
+   "DamageRamp"
+  ],
+  [
+   "BattleRamCharge",
+   "DeathAreaEffect"
+  ],
+  [
+   "BattleRamCharge",
+   "DeathDamage"
+  ],
+  [
+   "BattleRamCharge",
+   "DeathSpawn"
+  ],
+  [
+   "BattleRamCharge",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "BattleRamCharge",
+   "ElectroSpiritChain"
+  ],
+  [
+   "BattleRamCharge",
+   "ElixirProduction"
+  ],
+  [
+   "BattleRamCharge",
+   "FishermanHook"
+  ],
+  [
+   "BattleRamCharge",
+   "GoblinHutProduction"
+  ],
+  [
+   "BattleRamCharge",
+   "GoblinsteinTether"
+  ],
+  [
+   "BattleRamCharge",
+   "HealSpiritBurst"
+  ],
+  [
+   "BattleRamCharge",
+   "HideWhenIdle"
+  ],
+  [
+   "BattleRamCharge",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "BattleRamCharge",
+   "KamikazeSplash"
+  ],
+  [
+   "BattleRamCharge",
+   "MegaKnightSlam"
+  ],
+  [
+   "BattleRamCharge",
+   "MightyMinerSwitch"
+  ],
+  [
+   "BattleRamCharge",
+   "MultipleTargetAttack"
+  ],
+  [
+   "BattleRamCharge",
+   "PeriodicSpawner"
+  ],
+  [
+   "BattleRamCharge",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "BattleRamCharge",
+   "Shield"
+  ],
+  [
+   "BattleRamCharge",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "BattleRamCharge",
+   "SpawnAreaEffect"
+  ],
+  [
+   "BattleRamCharge",
+   "SpawnPushback"
+  ],
+  [
+   "BattleRamCharge",
+   "UndergroundDeployment"
+  ],
+  [
+   "BattleRamCharge",
+   "WallBreakersDemolition"
+  ],
+  [
+   "CrownTowerScaling",
+   "CrownTowerScaling"
+  ],
+  [
+   "CrownTowerScaling",
+   "DamageRamp"
+  ],
+  [
+   "CrownTowerScaling",
+   "DeathAreaEffect"
+  ],
+  [
+   "CrownTowerScaling",
+   "DeathDamage"
+  ],
+  [
+   "CrownTowerScaling",
+   "DeathSpawn"
+  ],
+  [
+   "CrownTowerScaling",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "CrownTowerScaling",
+   "ElectroSpiritChain"
+  ],
+  [
+   "CrownTowerScaling",
+   "ElixirProduction"
+  ],
+  [
+   "CrownTowerScaling",
+   "FishermanHook"
+  ],
+  [
+   "CrownTowerScaling",
+   "GoblinHutProduction"
+  ],
+  [
+   "CrownTowerScaling",
+   "GoblinsteinTether"
+  ],
+  [
+   "CrownTowerScaling",
+   "HideWhenIdle"
+  ],
+  [
+   "CrownTowerScaling",
+   "IceSpiritFreeze"
+  ],
+  [
+   "CrownTowerScaling",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "CrownTowerScaling",
+   "KamikazeSplash"
+  ],
+  [
+   "CrownTowerScaling",
+   "MegaKnightSlam"
+  ],
+  [
+   "CrownTowerScaling",
+   "MightyMinerSwitch"
+  ],
+  [
+   "CrownTowerScaling",
+   "MultipleTargetAttack"
+  ],
+  [
+   "CrownTowerScaling",
+   "PeriodicSpawner"
+  ],
+  [
+   "CrownTowerScaling",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "CrownTowerScaling",
+   "Shield"
+  ],
+  [
+   "CrownTowerScaling",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "CrownTowerScaling",
+   "SpawnAreaEffect"
+  ],
+  [
+   "CrownTowerScaling",
+   "SpawnPushback"
+  ],
+  [
+   "CrownTowerScaling",
+   "UndergroundDeployment"
+  ],
+  [
+   "CrownTowerScaling",
+   "WallBreakersDemolition"
+  ],
+  [
+   "DamageRamp",
+   "DamageRamp"
+  ],
+  [
+   "DamageRamp",
+   "DeathAreaEffect"
+  ],
+  [
+   "DamageRamp",
+   "DeathDamage"
+  ],
+  [
+   "DamageRamp",
+   "DeathSpawn"
+  ],
+  [
+   "DamageRamp",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "DamageRamp",
+   "ElectroSpiritChain"
+  ],
+  [
+   "DamageRamp",
+   "ElixirProduction"
+  ],
+  [
+   "DamageRamp",
+   "FishermanHook"
+  ],
+  [
+   "DamageRamp",
+   "GoblinHutProduction"
+  ],
+  [
+   "DamageRamp",
+   "GoblinsteinTether"
+  ],
+  [
+   "DamageRamp",
+   "HealSpiritBurst"
+  ],
+  [
+   "DamageRamp",
+   "HideWhenIdle"
+  ],
+  [
+   "DamageRamp",
+   "IceSpiritFreeze"
+  ],
+  [
+   "DamageRamp",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "DamageRamp",
+   "KamikazeSplash"
+  ],
+  [
+   "DamageRamp",
+   "MegaKnightSlam"
+  ],
+  [
+   "DamageRamp",
+   "MightyMinerSwitch"
+  ],
+  [
+   "DamageRamp",
+   "MultipleTargetAttack"
+  ],
+  [
+   "DamageRamp",
+   "PeriodicSpawner"
+  ],
+  [
+   "DamageRamp",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "DamageRamp",
+   "Shield"
+  ],
+  [
+   "DamageRamp",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "DamageRamp",
+   "SpawnAreaEffect"
+  ],
+  [
+   "DamageRamp",
+   "SpawnPushback"
+  ],
+  [
+   "DamageRamp",
+   "UndergroundDeployment"
+  ],
+  [
+   "DamageRamp",
+   "WallBreakersDemolition"
+  ],
+  [
+   "DeathAreaEffect",
+   "DeathAreaEffect"
+  ],
+  [
+   "DeathAreaEffect",
+   "DeathDamage"
+  ],
+  [
+   "DeathAreaEffect",
+   "DeathSpawn"
+  ],
+  [
+   "DeathAreaEffect",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "DeathAreaEffect",
+   "ElectroSpiritChain"
+  ],
+  [
+   "DeathAreaEffect",
+   "ElixirProduction"
+  ],
+  [
+   "DeathAreaEffect",
+   "FishermanHook"
+  ],
+  [
+   "DeathAreaEffect",
+   "GoblinHutProduction"
+  ],
+  [
+   "DeathAreaEffect",
+   "GoblinsteinTether"
+  ],
+  [
+   "DeathAreaEffect",
+   "HealSpiritBurst"
+  ],
+  [
+   "DeathAreaEffect",
+   "HideWhenIdle"
+  ],
+  [
+   "DeathAreaEffect",
+   "IceSpiritFreeze"
+  ],
+  [
+   "DeathAreaEffect",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "DeathAreaEffect",
+   "KamikazeSplash"
+  ],
+  [
+   "DeathAreaEffect",
+   "MegaKnightSlam"
+  ],
+  [
+   "DeathAreaEffect",
+   "MightyMinerSwitch"
+  ],
+  [
+   "DeathAreaEffect",
+   "MultipleTargetAttack"
+  ],
+  [
+   "DeathAreaEffect",
+   "PeriodicSpawner"
+  ],
+  [
+   "DeathAreaEffect",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "DeathAreaEffect",
+   "Shield"
+  ],
+  [
+   "DeathAreaEffect",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "DeathAreaEffect",
+   "SpawnAreaEffect"
+  ],
+  [
+   "DeathAreaEffect",
+   "SpawnPushback"
+  ],
+  [
+   "DeathAreaEffect",
+   "UndergroundDeployment"
+  ],
+  [
+   "DeathAreaEffect",
+   "WallBreakersDemolition"
+  ],
+  [
+   "DeathDamage",
+   "DeathDamage"
+  ],
+  [
+   "DeathDamage",
+   "DeathSpawn"
+  ],
+  [
+   "DeathDamage",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "DeathDamage",
+   "ElectroSpiritChain"
+  ],
+  [
+   "DeathDamage",
+   "ElixirProduction"
+  ],
+  [
+   "DeathDamage",
+   "FishermanHook"
+  ],
+  [
+   "DeathDamage",
+   "GoblinHutProduction"
+  ],
+  [
+   "DeathDamage",
+   "GoblinsteinTether"
+  ],
+  [
+   "DeathDamage",
+   "HealSpiritBurst"
+  ],
+  [
+   "DeathDamage",
+   "HideWhenIdle"
+  ],
+  [
+   "DeathDamage",
+   "IceSpiritFreeze"
+  ],
+  [
+   "DeathDamage",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "DeathDamage",
+   "KamikazeSplash"
+  ],
+  [
+   "DeathDamage",
+   "MegaKnightSlam"
+  ],
+  [
+   "DeathDamage",
+   "MightyMinerSwitch"
+  ],
+  [
+   "DeathDamage",
+   "MultipleTargetAttack"
+  ],
+  [
+   "DeathDamage",
+   "PeriodicSpawner"
+  ],
+  [
+   "DeathDamage",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "DeathDamage",
+   "Shield"
+  ],
+  [
+   "DeathDamage",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "DeathDamage",
+   "SpawnAreaEffect"
+  ],
+  [
+   "DeathDamage",
+   "SpawnPushback"
+  ],
+  [
+   "DeathDamage",
+   "UndergroundDeployment"
+  ],
+  [
+   "DeathDamage",
+   "WallBreakersDemolition"
+  ],
+  [
+   "DeathSpawn",
+   "DeathSpawn"
+  ],
+  [
+   "DeathSpawn",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "DeathSpawn",
+   "ElectroSpiritChain"
+  ],
+  [
+   "DeathSpawn",
+   "ElixirProduction"
+  ],
+  [
+   "DeathSpawn",
+   "FishermanHook"
+  ],
+  [
+   "DeathSpawn",
+   "GoblinHutProduction"
+  ],
+  [
+   "DeathSpawn",
+   "GoblinsteinTether"
+  ],
+  [
+   "DeathSpawn",
+   "HealSpiritBurst"
+  ],
+  [
+   "DeathSpawn",
+   "HideWhenIdle"
+  ],
+  [
+   "DeathSpawn",
+   "IceSpiritFreeze"
+  ],
+  [
+   "DeathSpawn",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "DeathSpawn",
+   "KamikazeSplash"
+  ],
+  [
+   "DeathSpawn",
+   "MegaKnightSlam"
+  ],
+  [
+   "DeathSpawn",
+   "MightyMinerSwitch"
+  ],
+  [
+   "DeathSpawn",
+   "MultipleTargetAttack"
+  ],
+  [
+   "DeathSpawn",
+   "PeriodicSpawner"
+  ],
+  [
+   "DeathSpawn",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "DeathSpawn",
+   "Shield"
+  ],
+  [
+   "DeathSpawn",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "DeathSpawn",
+   "SpawnAreaEffect"
+  ],
+  [
+   "DeathSpawn",
+   "SpawnPushback"
+  ],
+  [
+   "DeathSpawn",
+   "UndergroundDeployment"
+  ],
+  [
+   "DeathSpawn",
+   "WallBreakersDemolition"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "ElectroDragonChainLightning"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "ElectroSpiritChain"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "ElixirProduction"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "FishermanHook"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "GoblinHutProduction"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "GoblinsteinTether"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "HealSpiritBurst"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "HideWhenIdle"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "IceSpiritFreeze"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "KamikazeSplash"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "MegaKnightSlam"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "MightyMinerSwitch"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "MultipleTargetAttack"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "PeriodicSpawner"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "Shield"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "SpawnAreaEffect"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "SpawnPushback"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "UndergroundDeployment"
+  ],
+  [
+   "ElectroDragonChainLightning",
+   "WallBreakersDemolition"
+  ],
+  [
+   "ElectroSpiritChain",
+   "ElectroSpiritChain"
+  ],
+  [
+   "ElectroSpiritChain",
+   "FishermanHook"
+  ],
+  [
+   "ElectroSpiritChain",
+   "GoblinHutProduction"
+  ],
+  [
+   "ElectroSpiritChain",
+   "GoblinsteinTether"
+  ],
+  [
+   "ElectroSpiritChain",
+   "HealSpiritBurst"
+  ],
+  [
+   "ElectroSpiritChain",
+   "HideWhenIdle"
+  ],
+  [
+   "ElectroSpiritChain",
+   "IceSpiritFreeze"
+  ],
+  [
+   "ElectroSpiritChain",
+   "KamikazeSplash"
+  ],
+  [
+   "ElectroSpiritChain",
+   "MegaKnightSlam"
+  ],
+  [
+   "ElectroSpiritChain",
+   "MightyMinerSwitch"
+  ],
+  [
+   "ElectroSpiritChain",
+   "MultipleTargetAttack"
+  ],
+  [
+   "ElectroSpiritChain",
+   "PeriodicSpawner"
+  ],
+  [
+   "ElectroSpiritChain",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "ElectroSpiritChain",
+   "Shield"
+  ],
+  [
+   "ElectroSpiritChain",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "ElectroSpiritChain",
+   "SpawnAreaEffect"
+  ],
+  [
+   "ElectroSpiritChain",
+   "SpawnPushback"
+  ],
+  [
+   "ElectroSpiritChain",
+   "UndergroundDeployment"
+  ],
+  [
+   "ElectroSpiritChain",
+   "WallBreakersDemolition"
+  ],
+  [
+   "ElixirProduction",
+   "ElixirProduction"
+  ],
+  [
+   "ElixirProduction",
+   "FishermanHook"
+  ],
+  [
+   "ElixirProduction",
+   "GoblinsteinTether"
+  ],
+  [
+   "ElixirProduction",
+   "HealSpiritBurst"
+  ],
+  [
+   "ElixirProduction",
+   "HideWhenIdle"
+  ],
+  [
+   "ElixirProduction",
+   "IceSpiritFreeze"
+  ],
+  [
+   "ElixirProduction",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "ElixirProduction",
+   "KamikazeSplash"
+  ],
+  [
+   "ElixirProduction",
+   "MegaKnightSlam"
+  ],
+  [
+   "ElixirProduction",
+   "MightyMinerSwitch"
+  ],
+  [
+   "ElixirProduction",
+   "MultipleTargetAttack"
+  ],
+  [
+   "ElixirProduction",
+   "PeriodicSpawner"
+  ],
+  [
+   "ElixirProduction",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "ElixirProduction",
+   "Shield"
+  ],
+  [
+   "ElixirProduction",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "ElixirProduction",
+   "SpawnAreaEffect"
+  ],
+  [
+   "ElixirProduction",
+   "SpawnPushback"
+  ],
+  [
+   "ElixirProduction",
+   "UndergroundDeployment"
+  ],
+  [
+   "ElixirProduction",
+   "WallBreakersDemolition"
+  ],
+  [
+   "FishermanHook",
+   "FishermanHook"
+  ],
+  [
+   "FishermanHook",
+   "GoblinHutProduction"
+  ],
+  [
+   "FishermanHook",
+   "GoblinsteinTether"
+  ],
+  [
+   "FishermanHook",
+   "HealSpiritBurst"
+  ],
+  [
+   "FishermanHook",
+   "HideWhenIdle"
+  ],
+  [
+   "FishermanHook",
+   "IceSpiritFreeze"
+  ],
+  [
+   "FishermanHook",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "FishermanHook",
+   "KamikazeSplash"
+  ],
+  [
+   "FishermanHook",
+   "MegaKnightSlam"
+  ],
+  [
+   "FishermanHook",
+   "MightyMinerSwitch"
+  ],
+  [
+   "FishermanHook",
+   "MultipleTargetAttack"
+  ],
+  [
+   "FishermanHook",
+   "PeriodicSpawner"
+  ],
+  [
+   "FishermanHook",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "FishermanHook",
+   "Shield"
+  ],
+  [
+   "FishermanHook",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "FishermanHook",
+   "SpawnAreaEffect"
+  ],
+  [
+   "FishermanHook",
+   "SpawnPushback"
+  ],
+  [
+   "FishermanHook",
+   "UndergroundDeployment"
+  ],
+  [
+   "FishermanHook",
+   "WallBreakersDemolition"
+  ],
+  [
+   "GoblinHutProduction",
+   "GoblinsteinTether"
+  ],
+  [
+   "GoblinHutProduction",
+   "HideWhenIdle"
+  ],
+  [
+   "GoblinHutProduction",
+   "IceSpiritFreeze"
+  ],
+  [
+   "GoblinHutProduction",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "GoblinHutProduction",
+   "KamikazeSplash"
+  ],
+  [
+   "GoblinHutProduction",
+   "MegaKnightSlam"
+  ],
+  [
+   "GoblinHutProduction",
+   "MightyMinerSwitch"
+  ],
+  [
+   "GoblinHutProduction",
+   "MultipleTargetAttack"
+  ],
+  [
+   "GoblinHutProduction",
+   "PeriodicSpawner"
+  ],
+  [
+   "GoblinHutProduction",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "GoblinHutProduction",
+   "Shield"
+  ],
+  [
+   "GoblinHutProduction",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "GoblinHutProduction",
+   "SpawnAreaEffect"
+  ],
+  [
+   "GoblinHutProduction",
+   "SpawnPushback"
+  ],
+  [
+   "GoblinHutProduction",
+   "UndergroundDeployment"
+  ],
+  [
+   "GoblinHutProduction",
+   "WallBreakersDemolition"
+  ],
+  [
+   "GoblinsteinTether",
+   "GoblinsteinTether"
+  ],
+  [
+   "GoblinsteinTether",
+   "HealSpiritBurst"
+  ],
+  [
+   "GoblinsteinTether",
+   "HideWhenIdle"
+  ],
+  [
+   "GoblinsteinTether",
+   "IceSpiritFreeze"
+  ],
+  [
+   "GoblinsteinTether",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "GoblinsteinTether",
+   "KamikazeSplash"
+  ],
+  [
+   "GoblinsteinTether",
+   "MegaKnightSlam"
+  ],
+  [
+   "GoblinsteinTether",
+   "MightyMinerSwitch"
+  ],
+  [
+   "GoblinsteinTether",
+   "MultipleTargetAttack"
+  ],
+  [
+   "GoblinsteinTether",
+   "PeriodicSpawner"
+  ],
+  [
+   "GoblinsteinTether",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "GoblinsteinTether",
+   "Shield"
+  ],
+  [
+   "GoblinsteinTether",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "GoblinsteinTether",
+   "SpawnAreaEffect"
+  ],
+  [
+   "GoblinsteinTether",
+   "SpawnPushback"
+  ],
+  [
+   "GoblinsteinTether",
+   "UndergroundDeployment"
+  ],
+  [
+   "GoblinsteinTether",
+   "WallBreakersDemolition"
+  ],
+  [
+   "HealSpiritBurst",
+   "HealSpiritBurst"
+  ],
+  [
+   "HealSpiritBurst",
+   "HideWhenIdle"
+  ],
+  [
+   "HealSpiritBurst",
+   "IceSpiritFreeze"
+  ],
+  [
+   "HealSpiritBurst",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "HealSpiritBurst",
+   "KamikazeSplash"
+  ],
+  [
+   "HealSpiritBurst",
+   "MegaKnightSlam"
+  ],
+  [
+   "HealSpiritBurst",
+   "MightyMinerSwitch"
+  ],
+  [
+   "HealSpiritBurst",
+   "MultipleTargetAttack"
+  ],
+  [
+   "HealSpiritBurst",
+   "PeriodicSpawner"
+  ],
+  [
+   "HealSpiritBurst",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "HealSpiritBurst",
+   "Shield"
+  ],
+  [
+   "HealSpiritBurst",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "HealSpiritBurst",
+   "SpawnAreaEffect"
+  ],
+  [
+   "HealSpiritBurst",
+   "SpawnPushback"
+  ],
+  [
+   "HealSpiritBurst",
+   "UndergroundDeployment"
+  ],
+  [
+   "HealSpiritBurst",
+   "WallBreakersDemolition"
+  ],
+  [
+   "HideWhenIdle",
+   "HideWhenIdle"
+  ],
+  [
+   "HideWhenIdle",
+   "IceSpiritFreeze"
+  ],
+  [
+   "HideWhenIdle",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "HideWhenIdle",
+   "KamikazeSplash"
+  ],
+  [
+   "HideWhenIdle",
+   "MegaKnightSlam"
+  ],
+  [
+   "HideWhenIdle",
+   "MightyMinerSwitch"
+  ],
+  [
+   "HideWhenIdle",
+   "MultipleTargetAttack"
+  ],
+  [
+   "HideWhenIdle",
+   "PeriodicSpawner"
+  ],
+  [
+   "HideWhenIdle",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "HideWhenIdle",
+   "Shield"
+  ],
+  [
+   "HideWhenIdle",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "HideWhenIdle",
+   "SpawnAreaEffect"
+  ],
+  [
+   "HideWhenIdle",
+   "SpawnPushback"
+  ],
+  [
+   "HideWhenIdle",
+   "UndergroundDeployment"
+  ],
+  [
+   "HideWhenIdle",
+   "WallBreakersDemolition"
+  ],
+  [
+   "IceSpiritFreeze",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "IceSpiritFreeze",
+   "KamikazeSplash"
+  ],
+  [
+   "IceSpiritFreeze",
+   "MegaKnightSlam"
+  ],
+  [
+   "IceSpiritFreeze",
+   "MultipleTargetAttack"
+  ],
+  [
+   "IceSpiritFreeze",
+   "PeriodicSpawner"
+  ],
+  [
+   "IceSpiritFreeze",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "IceSpiritFreeze",
+   "Shield"
+  ],
+  [
+   "IceSpiritFreeze",
+   "SpawnAreaEffect"
+  ],
+  [
+   "IceSpiritFreeze",
+   "SpawnPushback"
+  ],
+  [
+   "IceSpiritFreeze",
+   "UndergroundDeployment"
+  ],
+  [
+   "IceSpiritFreeze",
+   "WallBreakersDemolition"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "MegaKnightSlam"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "MightyMinerSwitch"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "MultipleTargetAttack"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "PeriodicSpawner"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "Shield"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "SpawnAreaEffect"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "SpawnPushback"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "UndergroundDeployment"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "WallBreakersDemolition"
+  ],
+  [
+   "KamikazeSplash",
+   "KamikazeSplash"
+  ],
+  [
+   "KamikazeSplash",
+   "MegaKnightSlam"
+  ],
+  [
+   "KamikazeSplash",
+   "MightyMinerSwitch"
+  ],
+  [
+   "KamikazeSplash",
+   "MultipleTargetAttack"
+  ],
+  [
+   "KamikazeSplash",
+   "PeriodicSpawner"
+  ],
+  [
+   "KamikazeSplash",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "KamikazeSplash",
+   "Shield"
+  ],
+  [
+   "KamikazeSplash",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "KamikazeSplash",
+   "SpawnAreaEffect"
+  ],
+  [
+   "KamikazeSplash",
+   "SpawnPushback"
+  ],
+  [
+   "KamikazeSplash",
+   "UndergroundDeployment"
+  ],
+  [
+   "KamikazeSplash",
+   "WallBreakersDemolition"
+  ],
+  [
+   "MegaKnightSlam",
+   "MegaKnightSlam"
+  ],
+  [
+   "MegaKnightSlam",
+   "MightyMinerSwitch"
+  ],
+  [
+   "MegaKnightSlam",
+   "MultipleTargetAttack"
+  ],
+  [
+   "MegaKnightSlam",
+   "PeriodicSpawner"
+  ],
+  [
+   "MegaKnightSlam",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "MegaKnightSlam",
+   "Shield"
+  ],
+  [
+   "MegaKnightSlam",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "MegaKnightSlam",
+   "SpawnAreaEffect"
+  ],
+  [
+   "MegaKnightSlam",
+   "SpawnPushback"
+  ],
+  [
+   "MegaKnightSlam",
+   "UndergroundDeployment"
+  ],
+  [
+   "MegaKnightSlam",
+   "WallBreakersDemolition"
+  ],
+  [
+   "MightyMinerSwitch",
+   "MightyMinerSwitch"
+  ],
+  [
+   "MightyMinerSwitch",
+   "MultipleTargetAttack"
+  ],
+  [
+   "MightyMinerSwitch",
+   "PeriodicSpawner"
+  ],
+  [
+   "MightyMinerSwitch",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "MightyMinerSwitch",
+   "Shield"
+  ],
+  [
+   "MightyMinerSwitch",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "MightyMinerSwitch",
+   "SpawnAreaEffect"
+  ],
+  [
+   "MightyMinerSwitch",
+   "SpawnPushback"
+  ],
+  [
+   "MightyMinerSwitch",
+   "UndergroundDeployment"
+  ],
+  [
+   "MightyMinerSwitch",
+   "WallBreakersDemolition"
+  ],
+  [
+   "MultipleTargetAttack",
+   "MultipleTargetAttack"
+  ],
+  [
+   "MultipleTargetAttack",
+   "PeriodicSpawner"
+  ],
+  [
+   "MultipleTargetAttack",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "MultipleTargetAttack",
+   "Shield"
+  ],
+  [
+   "MultipleTargetAttack",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "MultipleTargetAttack",
+   "SpawnAreaEffect"
+  ],
+  [
+   "MultipleTargetAttack",
+   "SpawnPushback"
+  ],
+  [
+   "MultipleTargetAttack",
+   "UndergroundDeployment"
+  ],
+  [
+   "MultipleTargetAttack",
+   "WallBreakersDemolition"
+  ],
+  [
+   "PeriodicSpawner",
+   "PeriodicSpawner"
+  ],
+  [
+   "PeriodicSpawner",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "PeriodicSpawner",
+   "Shield"
+  ],
+  [
+   "PeriodicSpawner",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "PeriodicSpawner",
+   "SpawnAreaEffect"
+  ],
+  [
+   "PeriodicSpawner",
+   "SpawnPushback"
+  ],
+  [
+   "PeriodicSpawner",
+   "UndergroundDeployment"
+  ],
+  [
+   "PeriodicSpawner",
+   "WallBreakersDemolition"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "SerializedOnHitBuff"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "Shield"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "SpawnAreaEffect"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "SpawnPushback"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "UndergroundDeployment"
+  ],
+  [
+   "SerializedOnHitBuff",
+   "WallBreakersDemolition"
+  ],
+  [
+   "Shield",
+   "Shield"
+  ],
+  [
+   "Shield",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "Shield",
+   "SpawnAreaEffect"
+  ],
+  [
+   "Shield",
+   "SpawnPushback"
+  ],
+  [
+   "Shield",
+   "UndergroundDeployment"
+  ],
+  [
+   "Shield",
+   "WallBreakersDemolition"
+  ],
+  [
+   "SkeletonKingSoulCollector",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "SkeletonKingSoulCollector",
+   "SpawnAreaEffect"
+  ],
+  [
+   "SkeletonKingSoulCollector",
+   "SpawnPushback"
+  ],
+  [
+   "SkeletonKingSoulCollector",
+   "UndergroundDeployment"
+  ],
+  [
+   "SkeletonKingSoulCollector",
+   "WallBreakersDemolition"
+  ],
+  [
+   "SpawnAreaEffect",
+   "SpawnAreaEffect"
+  ],
+  [
+   "SpawnAreaEffect",
+   "SpawnPushback"
+  ],
+  [
+   "SpawnAreaEffect",
+   "UndergroundDeployment"
+  ],
+  [
+   "SpawnAreaEffect",
+   "WallBreakersDemolition"
+  ],
+  [
+   "SpawnPushback",
+   "SpawnPushback"
+  ],
+  [
+   "SpawnPushback",
+   "UndergroundDeployment"
+  ],
+  [
+   "SpawnPushback",
+   "WallBreakersDemolition"
+  ],
+  [
+   "UndergroundDeployment",
+   "UndergroundDeployment"
+  ],
+  [
+   "UndergroundDeployment",
+   "WallBreakersDemolition"
+  ],
+  [
+   "WallBreakersDemolition",
+   "WallBreakersDemolition"
+  ]
+ ],
+ "nearby_card_pairs_count": 7591,
+ "missing_mechanic_proximity_pairs": [
+  [
+   "ArcherQueenCloak",
+   "GoblinHutProduction"
+  ],
+  [
+   "AttackRecoil",
+   "ElectroSpiritChain"
+  ],
+  [
+   "AttackRecoil",
+   "ElixirProduction"
+  ],
+  [
+   "BattleRamCharge",
+   "IceSpiritFreeze"
+  ],
+  [
+   "CrownTowerScaling",
+   "HealSpiritBurst"
+  ],
+  [
+   "ElectroSpiritChain",
+   "ElixirProduction"
+  ],
+  [
+   "ElectroSpiritChain",
+   "InvisibilityWhenNotAttacking"
+  ],
+  [
+   "ElixirProduction",
+   "GoblinHutProduction"
+  ],
+  [
+   "GoblinHutProduction",
+   "HealSpiritBurst"
+  ],
+  [
+   "IceSpiritFreeze",
+   "MightyMinerSwitch"
+  ],
+  [
+   "IceSpiritFreeze",
+   "SkeletonKingSoulCollector"
+  ],
+  [
+   "InvisibilityWhenNotAttacking",
+   "KamikazeSplash"
+  ]
+ ],
+ "with_focused_games_missing_pairs": [],
+ "with_focused_games_cross_pairs": 465
+}

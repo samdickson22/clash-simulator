@@ -1,0 +1,575 @@
+{
+ "c56": [
+  "AngryBarbarians",
+  "Archer",
+  "ArcherQueen",
+  "Arrows",
+  "BabyDragon",
+  "Balloon",
+  "BarbLog",
+  "Bats",
+  "Berserker",
+  "BlowdartGoblin",
+  "BombTower",
+  "Cannon",
+  "DarkPrince",
+  "Earthquake",
+  "ElectroSpirit",
+  "FireSpirits",
+  "Fireball",
+  "Firecracker",
+  "FirespiritHut",
+  "Ghost",
+  "Giant",
+  "GoblinBarrel",
+  "GoblinGang",
+  "GoblinHut",
+  "Goblins",
+  "Goblinstein",
+  "Golem",
+  "HogRider",
+  "IceGolemite",
+  "IceSpirits",
+  "InfernoTower",
+  "Knight",
+  "Lightning",
+  "Log",
+  "MightyMiner",
+  "Miner",
+  "MiniPekka",
+  "MinionHorde",
+  "Minions",
+  "Musketeer",
+  "Poison",
+  "Prince",
+  "Princess",
+  "Rascals",
+  "Rocket",
+  "RoyalDelivery",
+  "RoyalHogs",
+  "SkeletonArmy",
+  "Skeletons",
+  "Tesla",
+  "Tornado",
+  "Valkyrie",
+  "Wallbreakers",
+  "Wizard",
+  "Xbow",
+  "Zap"
+ ],
+ "games": [
+  {
+   "game": 624,
+   "seed": 8840000,
+   "decks": [
+    [
+     "ArcherQueen",
+     "GoblinHut",
+     "Miner",
+     "EliteArcher",
+     "Assassin",
+     "SuspiciousBush",
+     "GoldenKnight",
+     "GoblinDrill"
+    ],
+    [
+     "Knight",
+     "Wallbreakers",
+     "Prince",
+     "Goblinstein",
+     "Golem",
+     "ElixirGolem",
+     "GoblinDemolisher",
+     "Snowball"
+    ]
+   ],
+   "lane": 0,
+   "style": 2,
+   "mechanic_pair": [
+    "ArcherQueenCloak",
+    "GoblinHutProduction"
+   ]
+  },
+  {
+   "game": 625,
+   "seed": 8840001,
+   "decks": [
+    [
+     "Firecracker",
+     "ElectroSpirit",
+     "Goblinstein",
+     "SkeletonWarriors",
+     "Rage",
+     "Elixir Collector",
+     "BossBandit",
+     "ElectroDragon"
+    ],
+    [
+     "Knight",
+     "ArcherQueen",
+     "GiantBuffer",
+     "GiantSkeleton",
+     "LittlePrince",
+     "Zap",
+     "WitchMother",
+     "RageBarbarian"
+    ]
+   ],
+   "lane": 1,
+   "style": 2,
+   "mechanic_pair": [
+    "AttackRecoil",
+    "ElectroSpiritChain"
+   ]
+  },
+  {
+   "game": 626,
+   "seed": 8840002,
+   "decks": [
+    [
+     "Firecracker",
+     "Elixir Collector",
+     "BombTower",
+     "Tesla",
+     "ElixirGolem",
+     "Bats",
+     "Skeletons",
+     "BattleHealer"
+    ],
+    [
+     "Knight",
+     "Ghost",
+     "MovingCannon",
+     "GiantSkeleton",
+     "Wallbreakers",
+     "FirespiritHut",
+     "GoblinGiant",
+     "Hunter"
+    ]
+   ],
+   "lane": 0,
+   "style": 2,
+   "mechanic_pair": [
+    "AttackRecoil",
+    "ElixirProduction"
+   ]
+  },
+  {
+   "game": 627,
+   "seed": 8840003,
+   "decks": [
+    [
+     "BattleRam",
+     "IceSpirits",
+     "MegaMinion",
+     "Skeletons",
+     "ElectroSpirit",
+     "DarkMagic",
+     "ElectroWizard",
+     "ElectroGiant"
+    ],
+    [
+     "Knight",
+     "Freeze",
+     "Poison",
+     "RoyalHogs",
+     "Log",
+     "Clone",
+     "FireSpirits",
+     "Valkyrie"
+    ]
+   ],
+   "lane": 1,
+   "style": 2,
+   "mechanic_pair": [
+    "BattleRamCharge",
+    "IceSpiritFreeze"
+   ]
+  },
+  {
+   "game": 628,
+   "seed": 8840004,
+   "decks": [
+    [
+     "Miner",
+     "Heal",
+     "Arrows",
+     "GoblinGiant",
+     "Poison",
+     "Musketeer",
+     "Bowler",
+     "Rage"
+    ],
+    [
+     "Knight",
+     "SkeletonWarriors",
+     "MiniPekka",
+     "BarbarianHut",
+     "Clone",
+     "GiantBuffer",
+     "Monk",
+     "RoyalGiant"
+    ]
+   ],
+   "lane": 0,
+   "style": 2,
+   "mechanic_pair": [
+    "CrownTowerScaling",
+    "HealSpiritBurst"
+   ]
+  },
+  {
+   "game": 629,
+   "seed": 8840005,
+   "decks": [
+    [
+     "ElectroSpirit",
+     "Elixir Collector",
+     "BattleRam",
+     "Giant",
+     "Assassin",
+     "Pekka",
+     "InfernoTower",
+     "Tornado"
+    ],
+    [
+     "Knight",
+     "ElectroDragon",
+     "MightyMiner",
+     "EliteArcher",
+     "Cannon",
+     "Zap",
+     "Freeze",
+     "Phoenix"
+    ]
+   ],
+   "lane": 1,
+   "style": 2,
+   "mechanic_pair": [
+    "ElectroSpiritChain",
+    "ElixirProduction"
+   ]
+  },
+  {
+   "game": 630,
+   "seed": 8840006,
+   "decks": [
+    [
+     "ElectroSpirit",
+     "Ghost",
+     "IceWizard",
+     "Tombstone",
+     "RageBarbarian",
+     "RoyalHogs",
+     "Wizard",
+     "Tesla"
+    ],
+    [
+     "Knight",
+     "MergeMaiden",
+     "AxeMan",
+     "LavaHound",
+     "ElixirGolem",
+     "Elixir Collector",
+     "HogRider",
+     "Fireball"
+    ]
+   ],
+   "lane": 0,
+   "style": 2,
+   "mechanic_pair": [
+    "ElectroSpiritChain",
+    "InvisibilityWhenNotAttacking"
+   ]
+  },
+  {
+   "game": 631,
+   "seed": 8840007,
+   "decks": [
+    [
+     "Elixir Collector",
+     "GoblinHut",
+     "DartBarrell",
+     "SuspiciousBush",
+     "Firecracker",
+     "Archer",
+     "Wizard",
+     "SkeletonWarriors"
+    ],
+    [
+     "Knight",
+     "BarbLog",
+     "Rascals",
+     "Zap",
+     "Goblinstein",
+     "Phoenix",
+     "Bowler",
+     "Fisherman"
+    ]
+   ],
+   "lane": 1,
+   "style": 2,
+   "mechanic_pair": [
+    "ElixirProduction",
+    "GoblinHutProduction"
+   ]
+  },
+  {
+   "game": 632,
+   "seed": 8840008,
+   "decks": [
+    [
+     "GoblinHut",
+     "Heal",
+     "Ronin",
+     "MergeMaiden",
+     "ThreeMusketeers",
+     "Bowler",
+     "Fisherman",
+     "ZapMachine"
+    ],
+    [
+     "Knight",
+     "Log",
+     "Princess",
+     "ArcherQueen",
+     "Hunter",
+     "Mortar",
+     "BossBandit",
+     "Musketeer"
+    ]
+   ],
+   "lane": 0,
+   "style": 2,
+   "mechanic_pair": [
+    "GoblinHutProduction",
+    "HealSpiritBurst"
+   ]
+  },
+  {
+   "game": 633,
+   "seed": 8840009,
+   "decks": [
+    [
+     "IceSpirits",
+     "MightyMiner",
+     "Graveyard",
+     "Mortar",
+     "Miner",
+     "IceWizard",
+     "Phoenix",
+     "Arrows"
+    ],
+    [
+     "Knight",
+     "SkeletonDragons",
+     "GoldenKnight",
+     "Earthquake",
+     "Goblinstein",
+     "GoblinBarrel",
+     "SkeletonArmy",
+     "RoyalDelivery"
+    ]
+   ],
+   "lane": 1,
+   "style": 2,
+   "mechanic_pair": [
+    "IceSpiritFreeze",
+    "MightyMinerSwitch"
+   ]
+  },
+  {
+   "game": 634,
+   "seed": 8840010,
+   "decks": [
+    [
+     "IceSpirits",
+     "SkeletonKing",
+     "ArcherQueen",
+     "DarkPrince",
+     "HogRider",
+     "GoblinCage",
+     "AngryBarbarians",
+     "Skeletons"
+    ],
+    [
+     "Knight",
+     "Valkyrie",
+     "Bowler",
+     "Wallbreakers",
+     "AxeMan",
+     "GoblinDemolisher",
+     "Lightning",
+     "Musketeer"
+    ]
+   ],
+   "lane": 0,
+   "style": 2,
+   "mechanic_pair": [
+    "IceSpiritFreeze",
+    "SkeletonKingSoulCollector"
+   ]
+  },
+  {
+   "game": 635,
+   "seed": 8840011,
+   "decks": [
+    [
+     "Ghost",
+     "FireSpirits",
+     "BarbLog",
+     "ElectroDragon",
+     "SuspiciousBush",
+     "DartBarrell",
+     "BattleRam",
+     "Log"
+    ],
+    [
+     "Knight",
+     "RoyalGiant",
+     "InfernoTower",
+     "MergeMaiden",
+     "RoyalDelivery",
+     "Pekka",
+     "ElectroGiant",
+     "LittlePrince"
+    ]
+   ],
+   "lane": 1,
+   "style": 2,
+   "mechanic_pair": [
+    "InvisibilityWhenNotAttacking",
+    "KamikazeSplash"
+   ]
+  }
+ ],
+ "kinds": {
+  "AngryBarbarians": "troop",
+  "Archer": "troop",
+  "ArcherQueen": "troop",
+  "Arrows": "spell",
+  "Assassin": "troop",
+  "AxeMan": "troop",
+  "BabyDragon": "troop",
+  "Balloon": "troop",
+  "BarbLog": "spell",
+  "BarbarianHut": "building",
+  "Barbarians": "troop",
+  "Bats": "troop",
+  "BattleHealer": "troop",
+  "BattleRam": "troop",
+  "Berserker": "troop",
+  "BlowdartGoblin": "troop",
+  "BombTower": "building",
+  "Bomber": "troop",
+  "BossBandit": "troop",
+  "Bowler": "troop",
+  "Cannon": "building",
+  "Clone": "spell",
+  "DarkMagic": "spell",
+  "DarkPrince": "troop",
+  "DarkWitch": "troop",
+  "DartBarrell": "troop",
+  "Earthquake": "spell",
+  "ElectroDragon": "troop",
+  "ElectroGiant": "troop",
+  "ElectroSpirit": "troop",
+  "ElectroWizard": "troop",
+  "EliteArcher": "troop",
+  "Elixir Collector": "building",
+  "ElixirGolem": "troop",
+  "FireSpirits": "troop",
+  "Fireball": "spell",
+  "Firecracker": "troop",
+  "FirespiritHut": "building",
+  "Fisherman": "troop",
+  "Freeze": "spell",
+  "Ghost": "troop",
+  "Giant": "troop",
+  "GiantBuffer": "troop",
+  "GiantSkeleton": "troop",
+  "GoblinBarrel": "spell",
+  "GoblinCage": "building",
+  "GoblinCurse": "spell",
+  "GoblinDemolisher": "troop",
+  "GoblinDrill": "building",
+  "GoblinGang": "troop",
+  "GoblinGiant": "troop",
+  "GoblinHut": "building",
+  "GoblinMachine": "troop",
+  "Goblins": "troop",
+  "Goblinstein": "troop",
+  "GoldenKnight": "troop",
+  "Golem": "troop",
+  "Graveyard": "spell",
+  "Heal": "spell",
+  "HogRider": "troop",
+  "Hunter": "troop",
+  "IceGolemite": "troop",
+  "IceSpirits": "troop",
+  "IceWizard": "troop",
+  "InfernoDragon": "troop",
+  "InfernoTower": "building",
+  "Knight": "troop",
+  "LavaHound": "troop",
+  "Lightning": "spell",
+  "LittlePrince": "troop",
+  "Log": "spell",
+  "MegaKnight": "troop",
+  "MegaMinion": "troop",
+  "MergeMaiden": "spell",
+  "MightyMiner": "troop",
+  "Miner": "troop",
+  "MiniPekka": "troop",
+  "MiniSparkys": "troop",
+  "MinionHorde": "troop",
+  "Minions": "troop",
+  "Mirror": "spell",
+  "Monk": "troop",
+  "Mortar": "building",
+  "MovingCannon": "troop",
+  "Musketeer": "troop",
+  "Pekka": "troop",
+  "Phoenix": "troop",
+  "Poison": "spell",
+  "Prince": "troop",
+  "Princess": "troop",
+  "Rage": "spell",
+  "RageBarbarian": "troop",
+  "RamRider": "troop",
+  "Rascals": "troop",
+  "Rocket": "spell",
+  "Ronin": "troop",
+  "RoyalDelivery": "spell",
+  "RoyalGiant": "troop",
+  "RoyalHogs": "troop",
+  "RoyalRecruits": "troop",
+  "SkeletonArmy": "troop",
+  "SkeletonBalloon": "troop",
+  "SkeletonDragons": "troop",
+  "SkeletonKing": "troop",
+  "SkeletonWarriors": "troop",
+  "Skeletons": "troop",
+  "Snowball": "spell",
+  "SpearGoblins": "troop",
+  "SuspiciousBush": "troop",
+  "Tesla": "building",
+  "ThreeMusketeers": "troop",
+  "Tombstone": "building",
+  "Tornado": "spell",
+  "Valkyrie": "troop",
+  "Vines": "spell",
+  "Wallbreakers": "troop",
+  "Witch": "troop",
+  "WitchMother": "troop",
+  "Wizard": "troop",
+  "Xbow": "building",
+  "Zap": "spell",
+  "ZapMachine": "troop"
+ },
+ "pin": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+ "seed": 6812026,
+ "ticks": 3600,
+ "version": 1,
+ "note": "Supplemental targeted mechanic-proximity opportunities, not primary random games or C56 controls."
+}

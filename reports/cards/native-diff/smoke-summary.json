@@ -1,0 +1,33 @@
+{
+ "completed": 2,
+ "statuses": {
+  "match": 2
+ },
+ "ticks": 7200,
+ "triage_errors": 0,
+ "groups": {},
+ "games": [
+  {
+   "game": 0,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  },
+  {
+   "game": 1,
+   "status": "match",
+   "tick": null,
+   "kind": null,
+   "names": [],
+   "phase": null,
+   "differences": [],
+   "triage_error": null,
+   "error": null
+  }
+ ]
+}
