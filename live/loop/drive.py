@@ -46,6 +46,33 @@ STALL_MS = float(os.environ.get('LL_STALL_S', 6))*1000   # full elixir this long
 DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer']
 DECK_FILE = Path(os.path.expanduser(os.environ.get('LL_DECK_FILE', '~/clasher-live/loop/deck.json')))      # set from the live page; survives restarts
 PAUSE_FILE = Path(os.path.expanduser(os.environ.get('LL_PAUSE_FILE', '~/clasher-live/loop/PAUSE')))         # exists = paused (same as the page button)
+STATUS_FILE = Path(os.path.expanduser(os.environ.get('LL_STATUS_FILE', '~/clasher-live/loop/status.txt')))  # the page's between-sessions reason
+MANIFEST = Path(os.path.expanduser(os.environ.get('LL_MANIFEST', '~/clasher-live/loop/MANIFEST.json')))
+
+
+def check_manifest():
+    """Deployment check at session start: (problems, info). MANIFEST.json = {"commit": ..., "files": {relpath: sha256}}
+    with relpaths under the code tree this drive.py runs from (live/loop/../..). Twice the Mac ran other code than we
+    believed (PYTHONHASHSEED unset; a stale perception common.py). Missing manifest -> no check (logged), so shipping
+    the guard never blocks play; a manifest that does not match -> the caller refuses to start."""
+    import hashlib
+    bad = [] if os.environ.get('PYTHONHASHSEED') == '0' else [f"PYTHONHASHSEED={os.environ.get('PYTHONHASHSEED')!r}, must be '0'"]
+    if not MANIFEST.exists():
+        return bad, dict(manifest=None)
+    try:
+        man = json.loads(MANIFEST.read_text())
+        files = man['files']
+    except Exception as ex:
+        return bad + [f'manifest unreadable: {ex!r}'[:200]], dict(manifest=str(MANIFEST))
+    root = HERE.parents[1]
+    for rel, want in sorted(files.items()):
+        p = root/rel
+        if not p.is_file():
+            bad.append(f'missing {rel}')
+        elif hashlib.sha256(p.read_bytes()).hexdigest() != want:
+            bad.append(f'changed {rel}')
+    return bad, dict(manifest=str(MANIFEST), commit=man.get('commit'), files=len(files),
+                     sha256=hashlib.sha256(MANIFEST.read_bytes()).hexdigest())
 
 
 def load_deck():
@@ -484,6 +511,14 @@ def main(argv=None):
             f.close()
 
     open_match(1)
+    bad, man_info = check_manifest()                # before anything loads and before any tap
+    if bad:
+        log('events', dict(ev='manifest_refused', problems=bad[:20], **man_info))
+        STATUS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        STATUS_FILE.write_text('REFUSED (deployment check): ' + '; '.join(bad)[:400] + '\n')
+        print('deployment check failed:', *bad[:20], sep='\n  ', file=sys.stderr)
+        return 3
+    log('events', dict(ev='manifest_ok' if man_info.get('manifest') else 'manifest_absent', **man_info))
     from infer import LivePerception
     from bot.players.base import WAIT
     from bot.live.player import make_live_player
@@ -527,7 +562,7 @@ def main(argv=None):
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
                        translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
                        session=dict(cls=type(sess).__name__, handsync=HANDSYNC, elixir_flash=ELIXIR_FLASH, seed=0, command_delay=27, expire=90),
-                       pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'),
+                       pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
                        logged='live', perc_threads=a.perc_threads, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
