@@ -4140,6 +4140,17 @@ class Troop(Entity):
             )
             
             battle_state.entities[rolling_projectile.id] = rolling_projectile
+        elif (
+            projectile_range > 0
+            and int(getattr(self.card_stats, "multiple_projectiles", 1) or 1) > 1
+        ):
+            self._create_projectile_fan(
+                target, battle_state, aim_position, launch_position,
+                projectile_data, projectile_damage, projectile_speed,
+                projectile_range, hits_air, hits_ground,
+                crown_tower_damage_multiplier, crown_tower_damage,
+            )
+            return
         else:
             # Create regular projectile
             is_piercing = projectile_range > 0
@@ -4211,6 +4222,88 @@ class Troop(Entity):
         battle_state.next_entity_id += 1
         if not is_rolling_projectile:
             projectile.resolve_start_collision(battle_state)
+
+    def _create_projectile_fan(
+        self, target, battle_state, aim_position, launch_position,
+        projectile_data, projectile_damage, projectile_speed,
+        projectile_range, hits_air, hits_ground,
+        crown_tower_damage_multiplier, crown_tower_damage,
+    ) -> None:
+        """Fire a MultipleProjectiles volley of straight pellets (Hunter).
+
+        Ported from RoyaleSim (MIT), combat.rs ``fire`` under
+        combat.MULTIPLE_PROJECTILES = client_fan and PROJECTILE_COLLISIONS =
+        client_columns (measured on client 15.535.29 Hunter volleys): every
+        pellet starts at the shared launch point, aims ProjectileRange from the
+        attacker on the target bearing turned 0, +7, -7, +14, ... degrees,
+        stands ceil(U / 50 ms) ticks (U uniform in 0..RandomDelay) before its
+        first step, tests the creation reach (ProjectileRadius plus
+        ProjectileStartExtraRadius) on its creation tick and, with
+        CheckCollisions, is gone on the tick it hits.
+        """
+        from .logic_math import logic_cos, logic_sin
+
+        count = int(getattr(self.card_stats, "multiple_projectiles", 1) or 1)
+        radius = float(
+            projectile_data.get("projectileRadius", projectile_data.get("radius", 0)) or 0
+        ) / 1000.0
+        random_delay_ms = int(projectile_data.get("randomDelay", 0) or 0)
+        stop_on_hit = bool(projectile_data.get("checkCollisions", False))
+        sx, sy = tiles_to_logic_units(self.position.x), tiles_to_logic_units(self.position.y)
+        vx = tiles_to_logic_units(aim_position.x) - sx
+        vy = tiles_to_logic_units(aim_position.y) - sy
+        if vx == 0 and vy == 0:
+            vy = 1 if self.player_id == 0 else -1
+        range_units = tiles_to_logic_units(projectile_range)
+        pellets = []
+        for k in range(count):
+            step = ((k + 1) // 2) * 7
+            degrees = step if k % 2 == 1 else -step
+            cosine, sine = logic_cos(degrees, 1024), logic_sin(degrees, 1024)
+            ax, ay = normalized_vector_logic_units(
+                vx * cosine - vy * sine, vx * sine + vy * cosine, range_units,
+            )
+            hold_ticks = 0
+            if random_delay_ms > 0:
+                hold_ticks = (battle_state.rng.randrange(random_delay_ms) + 49) // 50
+            pellet = Projectile(
+                id=battle_state.next_entity_id,
+                position=Position(launch_position.x, launch_position.y),
+                player_id=self.player_id,
+                card_stats=self.card_stats,
+                hitpoints=1,
+                max_hitpoints=1,
+                damage=projectile_damage,
+                range=self.range,
+                sight_range=1.0,
+                target_position=Position(
+                    logic_units_to_tiles(sx + ax), logic_units_to_tiles(sy + ay),
+                ),
+                travel_speed=projectile_speed,
+                splash_radius=radius,
+                source_name=self.card_stats.name if self.card_stats else "Unknown",
+                hits_air=hits_air,
+                hits_ground=hits_ground,
+                crown_tower_damage_multiplier=crown_tower_damage_multiplier,
+                crown_tower_damage=crown_tower_damage,
+                source_entity=self,
+                primary_target=(
+                    target if target is not None and target.is_alive else None
+                ),
+                tracks_target=False,
+                pierces=True,
+                projectile_range=projectile_range,
+                start_extra_radius=float(
+                    projectile_data.get("projectileStartExtraRadius", 0) or 0
+                ) / 1000.0,
+                launch_delay=hold_ticks * LOGIC_TICK_SECONDS,
+            )
+            pellet.stop_on_hit = stop_on_hit
+            battle_state.entities[pellet.id] = pellet
+            battle_state.next_entity_id += 1
+            pellets.append(pellet)
+        for pellet in pellets:
+            pellet.resolve_start_collision(battle_state)
 
     def _on_attack(self) -> None:
         """Handle post-attack mechanics like charging state reset"""
@@ -5213,6 +5306,8 @@ class Projectile(Entity):
     launch_position: Optional[Position] = field(default=None, repr=False)
     start_extra_radius: float = 0.0
     start_collision_resolved: bool = field(default=False, repr=False)
+    # CheckCollisions (Batch B1, Hunter pellets): gone on the tick it hits.
+    stop_on_hit: bool = False
     spawn_projectile_data: Optional[Dict[str, Any]] = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
@@ -5404,6 +5499,8 @@ class Projectile(Entity):
         if self.source_entity is not None:
             for hit_target in hit_targets:
                 self._notify_source_hit(hit_target)
+        if self.stop_on_hit and hit_targets:
+            self.is_alive = False
 
     def _update_piercing_tick(
         self,
@@ -5447,7 +5544,7 @@ class Projectile(Entity):
         if self.source_entity is not None:
             for hit_target in hit_targets:
                 self._notify_source_hit(hit_target)
-        if reached_endpoint:
+        if reached_endpoint or (self.stop_on_hit and hit_targets):
             self.is_alive = False
 
     def _damage_piercing_targets_at(

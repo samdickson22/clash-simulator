@@ -213,10 +213,73 @@ impl BattleState {
             })
             .collect();
         let damage = shot.stats.damage;
+        let stop = shot.stop_on_hit && !victims.is_empty();
         for j in victims {
             let id = self.entities[j].id;
             self.entities[i].hit_ids.push(id);
             self.damage(j, damage);
+        }
+        if stop {
+            self.entities[i].alive = false;
+        }
+    }
+
+    /// Ported from RoyaleSim (MIT), combat.rs `fire` (combat.MULTIPLE_PROJECTILES = client_fan, PROJECTILE_COLLISIONS =
+    /// client_columns); mirrors entities.py Troop._create_projectile_fan. `a` is the attacker's start-of-hit copy.
+    pub(super) fn fire_fan(&mut self, a: &Entity, j: usize, target: Option<i32>) {
+        let (tx, ty) = (self.entities[j].x, self.entities[j].y);
+        let mut base = a.clone();
+        base.class = "Projectile".into();
+        base.champion = None;
+        base.entity_kind = 2;
+        base.freeze_pause = 0.0;
+        base.source_character = true;
+        base.hp = 1.0;
+        base.alive = true;
+        base.target = None;
+        base.shot_target = if self.entities[j].alive { target } else { None };
+        let (mx, my) = norm(units(tx - a.x), units(ty - a.y), units(a.stats.muzzle));
+        base.x = (units(a.x) + mx) as f64 / 1000.0;
+        base.y = (units(a.y) + my + units(a.stats.muzzle_y) * if a.owner == 0 { 1 } else { -1 }) as f64 / 1000.0;
+        base.projectile_origin = (base.x, base.y);
+        base.stats.can_air = a.stats.projectile_air.unwrap_or(a.stats.can_air);
+        base.stats.can_ground = a.stats.projectile_ground.or(a.stats.can_ground);
+        base.piercing = true;
+        base.stop_on_hit = a.stats.fan_stop;
+        base.stats.homing = Some(false);
+        base.stats.damage = a.stats.projectile_damage.unwrap_or(a.stats.damage);
+        base.stats.projectile_radius = a.stats.fan_radius;
+        base.birth = self.tick;
+        base.stats.speed = a.stats.projectile_speed;
+        base.route.clear();
+        base.goal = None;
+        let (sx, sy) = (units(a.x), units(a.y));
+        let (mut vx, mut vy) = (units(tx) - sx, units(ty) - sy);
+        if vx == 0 && vy == 0 {
+            vy = if a.owner == 0 { 1 } else { -1 };
+        }
+        let range = units(a.stats.projectile_range);
+        let first = self.entities.len();
+        for k in 0..a.stats.fan {
+            let step = ((k + 1) / 2) * 7;
+            let deg = if k % 2 == 1 { step } else { -step };
+            let (cos, sin) = self.config.rotations[deg.rem_euclid(360) as usize];
+            let (ax, ay) = norm(vx * cos - vy * sin, vx * sin + vy * cos, range);
+            let hold = if a.stats.fan_delay_ms > 0 {
+                (self.rng.below(a.stats.fan_delay_ms as u32) as i64 + 49) / 50
+            } else { 0 };
+            let mut shot = base.clone();
+            shot.id = self.next_id as i32;
+            self.next_id += 1;
+            shot.aim = ((sx + ax) as f64 / 1000.0, (sy + ay) as f64 / 1000.0);
+            shot.launch_delay = hold as f64 * 0.05;
+            self.entities.push(shot);
+        }
+        for index in first..self.entities.len() {
+            if self.entities[index].alive && self.entities[index].stats.projectile_extra > 0.0 {
+                let radius = self.entities[index].stats.projectile_radius + self.entities[index].stats.projectile_extra;
+                self.piercing_hits(index, radius);
+            }
         }
     }
 

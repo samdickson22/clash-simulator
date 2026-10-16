@@ -39,6 +39,19 @@ def initial(seed=1, cards=CARDS, *, level=11):
     return b
 
 
+def _fan_stats(s, projectile):
+    """Batch B1: a character's MultipleProjectiles fan of straight pellets (entities.py _create_projectile_fan)."""
+    count = int(getattr(s, "multiple_projectiles", 1) or 1)
+    if count <= 1 or not projectile.get("projectileRange"):
+        return {}
+    return dict(
+        fan=count,
+        fan_radius=float(projectile.get("projectileRadius", projectile.get("radius", 0)) or 0) / 1000,
+        fan_delay_ms=int(projectile.get("randomDelay", 0) or 0),
+        fan_stop=bool(projectile.get("checkCollisions", False)),
+    )
+
+
 def entity(e, *, clone_prototype=True):
     from mirror_snapshot import payload_key
     from clasher.unit_traits import is_knockback_immune, is_hover_unit_card
@@ -126,6 +139,7 @@ def entity(e, *, clone_prototype=True):
     stats = dict(
         min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
         fly_direct=bool(getattr(s, "fly_direct_paths", False)),
+        **_fan_stats(s, projectile),
         death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
         dash=dash_spec,

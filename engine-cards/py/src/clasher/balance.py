@@ -253,6 +253,7 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "sightClipSide": 2000,
         "projectileStartRadius": 1200,
     },
+    "Hunter": {"projectileStartRadius": 1000},
     "MiniZapMachine": {
         "overrideAttackFinishTime": True,
         "attackFinishTime": 0,
@@ -438,6 +439,7 @@ CHARACTER_RUNTIME_TRAITS: dict[str, dict[str, Any]] = {
     "GoblinGiant": {"mass": 18, "ignorePushback": True},
     "GiantSkeleton": {"mass": 18, "ignorePushback": True},
     "MiniZapMachine": {"mass": 4},
+    "Hunter": {"mass": 5},
     # Battle Healer's Hovering only prices river water in her ground route
     # (RoyaleSim (MIT) pathfinding.HOVERING_WATER_RULE); she otherwise walks
     # the ordinary ground route. The engine's hover arm is Royal Ghost's
@@ -513,6 +515,14 @@ PROJECTILE_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "projectileStartExtraRadius": 650,
         "spawnRadius": 80,
         "scatter": "Line",
+    },
+    # Batch B1: Hunter's pellet row (RoyaleSim (MIT) cards-15535.1).
+    "HunterProjectile": {
+        "homing": False,
+        "projectileRadius": 300,
+        "projectileStartExtraRadius": 650,
+        "checkCollisions": True,
+        "randomDelay": 200,
     },
     "IceSpiritsProjectile": {"homing": True},
     "ice_wizardProjectile": {"homing": True},

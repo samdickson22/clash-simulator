@@ -33,6 +33,9 @@ fn one() -> f64 {
 fn is_zero(x: &f64) -> bool {
     *x == 0.0
 }
+fn is_zero_i64(x: &i64) -> bool {
+    *x == 0
+}
 
 fn units(x: f64) -> i64 {
     (x * 1000.0).round_ties_even() as i64
@@ -69,6 +72,15 @@ struct Stats {
     // Batch B1 fields: omitted from snapshots at their inert default, like Batch A's.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     fly_direct: bool,
+    // MultipleProjectiles fan of straight pellets (Hunter): count, ProjectileRadius, RandomDelay ms, CheckCollisions.
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    fan: i64,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    fan_radius: f64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    fan_delay_ms: i64,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    fan_stop: bool,
     #[serde(default)]
     payload_key: String,
     #[serde(default)]
@@ -361,6 +373,9 @@ struct Entity {
     ghost_time: f64,
     #[serde(default)]
     piercing: bool,
+    // Batch B1: a CheckCollisions straight shot is gone on the tick it hits (Hunter pellets).
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    stop_on_hit: bool,
     #[serde(default)]
     projectile_origin: (f64, f64),
     #[serde(default)]
@@ -2342,7 +2357,9 @@ impl BattleState {
                     self.entities[i].force_due = false;
                     return;
                 }
-                if a.stats.projectile_speed > 0 {
+                if a.stats.projectile_speed > 0 && a.stats.fan > 1 && a.stats.projectile_range > 0.0 {
+                    self.fire_fan(&a, j, target);
+                } else if a.stats.projectile_speed > 0 {
                     let mut shot = a.clone();
                     shot.id = self.next_id as i32;
                     self.next_id += 1;
@@ -3019,6 +3036,10 @@ impl BattleState {
                     projectile_alive = Some(self.entities.iter().filter(|e| e.alive).map(|e| e.id).collect());
                 }
                 if self.entities[i].piercing {
+                    if self.entities[i].launch_delay > 1e-12 {
+                        self.entities[i].launch_delay = (self.entities[i].launch_delay - 0.05).max(0.0);
+                        continue;
+                    }
                     self.piercing_tick(i);
                     continue;
                 }

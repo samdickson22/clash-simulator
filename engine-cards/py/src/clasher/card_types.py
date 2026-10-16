@@ -294,6 +294,9 @@ class CardStatsCompat:
         )
         self.kamikaze = bool(char_data.get("kamikaze"))
         self.kamikaze_time = int(char_data.get("kamikazeTime", 0) or 0)
+        # MultipleProjectiles of a character weapon (Hunter 10; Princess 5 decoys,
+        # which fire one damaging shot: the fan applies to ranged shots only).
+        self.multiple_projectiles = int(char_data.get("multipleProjectiles", 1) or 1)
         self.death_spawn_character_data = death_spawn_data or None
 
         # Buff modifiers
