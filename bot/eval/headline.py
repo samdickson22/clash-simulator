@@ -138,6 +138,9 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0)
             if decks != 'x4s':
                 row.update(decks=decks, deck_lists=case['decks'])
+            alias = {s: dict(p.observe_alias.counts) for s, p in players.items() if getattr(p, 'observe_alias', None)}
+            if alias:
+                row['alias_counts'] = alias
         except Exception as ex:  # recorded, never silently dropped
             row = dict(candidate=cand, opponent=opp, index=i, seat=case['seat'], error=repr(ex)[:500])
             if decks != 'x4s':
