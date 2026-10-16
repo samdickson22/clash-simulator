@@ -1,6 +1,19 @@
 # BOT LEAD Sol continuation audit — 2026-10-16 (exploration)
 
-## Authority and scope
+## Current authority (updated 09:17–09:21 UTC)
+
+Sam superseded the initial blanket Opus hold: make confident, routine, reversible decisions now within project
+authority, with meaningful passing checks, required reviews and concrete rollback. Defer only consequential
+hard-to-undo AND sufficiently uncertain choices where Opus could materially change approach. Sol high default,
+bounded Astra where useful, no Claude limit retries. Scientific/review failures still block acceptance.
+
+Coordination questions go DIRECT via `t3_thread_send(mode='auto')` to the parent
+`0523ae6f-baa3-4d4e-b233-b392671670db` or existing owner; include question/evidence/paths/recommendation/dependent
+wait and continue independent work. No user-input tools. This was sent to all3active descendants (levels owner,
+G1K1babysitter,r7collector), with recursive propagation and future-brief instruction. No old pending input reported.
+Actual permission controls, fairness, host/resource rules and required host-script review remain.
+
+## Initial authority and scope (historical; blanket hold superseded above)
 
 Sam's latest instruction in this thread overrides old model routing: Sol high continues existing work; no major
 strategy/runtime/model promotion before Sam returns to Opus. Resume only genuinely stopped unfinished work,
@@ -74,6 +87,58 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
   promotion. Coordinator immediately notified via `bot-level-blocker-20261016T0910Z`; owner acknowledged via
   `bot-level-blocker-ack-20261016T0910Z`. First attempt to patch PROGRESS used a nonmatching context line and was
   rejected without edits; corrected the patch and recorded this blocker here and in PROGRESS.
+
+## Follow-up evidence and decisions
+
+### 09:17–09:21 UTC decision rule, schema confirmation and serial pilot
+
+- Read existing level DESIGN/RESULTS, root/player/config source and bounded Astra receipt; no new Astra task or
+  duplicate diagnostic. Propagated corrected decision rule to levels owner, active launcherreviewer, G1K1babysitter,
+  r7collector and CARDlead; owner handles recursive propagation. Keys `bot-obvious-decisions-*`,
+  `bot-card-root-rule-update-20261016-r1`; coordination keys `bot-coordination-rule-20261016-<taskname>`.
+- Level owner runtime confirmation09:18Z: raw3/121 vs canonicalnativeJSON121/121, noerrors. Musketeer/Archers/
+  Fireball tunnel_origin is tuple(0,0) inruntime vs list[0,0] ondisk. Schema-only mismatch confirmed. Mapping hold
+  lifted. Tower13checksPASS(8curvesL10/12+L4–8RoyaleSimHP); configs pytest2passed0.19s. Original exports unchanged;
+  L4/6/7/9 completed118cards/3knownerrors at359/355/377/382CPUseconds.
+- DECISION: accept original SERIAL100casepaired A/B/B0 physics experiment after remaining mandatorygatesPASS.
+  A unchangedL11; B0existingLevelRootrootonly; Bexactownlevels/towers/per-seattemplates+qualifiedpayloads/spells,
+  fairfixedopponentmediancommon5/rare4/epic6/legendary9,crownmetadata2030/3312. The metadata affects leaf AND
+  scriptedcrownspelllethality/Lightning; identical-state learnedfeatures unchanged. Honest scope resolves the
+  normalization deferral. Serial experiment does not depend on pooledLIVE deployment; no claim about pooled
+  startup/recovery equivalence. Existing rawfc transport gate retained. RollbackselectA/removeexperimenthooks;
+  no frozenruntime,pin or weights writes. Levelowner notified key `bot-level-design-decision-20261016-r2`;
+  parent `bot-serial-level-decision-20261016-r1`.
+- Pre-bank scope audit `levels/receipts/scope-audit-r1.json`: originalcatalogSHA
+  80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a,2925decks/69380frequency.
+  ExcludingClone/Earthquake/Tornado removes425decks/15371frequency=22.1547996541%;2500decksremain.
+  All54selectedtrue-gameprojections unchanged. Earthquake385decks,Tornado43,overlap3,Clone0.
+- DECISION: accept fixed supported-prior restriction identically A/B/B0 and policy pollers BEFORE bank/outcomes,
+  keeping original projection catalog immutable. Conditional-population physics pilot only; not literal current
+  live-prior equivalence or immediate deployment evidence. Require same ordered-prior digest inallarms/pollers,
+  no unsupportedcard reachable inroot hand/cycle, forcedall11 on same subset, provenance and deterministicresume
+  scope checks. No silentL11 or post-outcome exclusion. Rollbackomitexperimental prior replacement/selectoriginalA
+  outsidepilot. Owner `bot-level-supported-prior-decision-20261016-r1`; parent
+  `bot-level-supported-scope-to-parent-20261016-r1`. Owner implements; no extra compute launched by BOTLEAD.
+- Remaining blockers are evidence-based: forcedall11bothseats/controllers, rootperseatcard/spellimpact,
+  rootfixtures/fairnessdecisioninvariance, fc/snapshot/rawpooltransport, freshlauncherreview, scope/provenance/
+  completeness. No bank drawn. No blanket design/promotion hold remains.
+- G1K1babysitter09:16:32Z normalcheck:all13PGIDsaliveprogressing;G15927attempts/5865ok/2350972labels/62knownerrors
+  (51Freeze11BarbarianRage);K11713attempts/1704ok/1055727recrows/9knownerrors(3Freeze6BarbarianRage).
+  No original shard finished,no retry due;03r2preflightstillqueued,logempty/noPASS.
+  Literalcounts03=108,08=105,04=91,01=95;actualPython03=97,08=102,04=89,01=86(includes31YOLOloaders).
+  No new workers/oversubscription. GPU01=56%firstqualifyinglow,computePID1967844;04/08idle/nocompute. No logins.
+  Existing GPUbackoff rule unchanged; nohalving/kills/launches inthischeck.
+- CARDlead confirms no new root/pin release yet. Corrected native-only translator/board-root coverage and fresh
+  independentreview stillpending; existing08wrapper2432076 retained. PriorK4L12/12,assembler11,55834Nonechecks,
+  8496rankcomparisonsPASS; oldr2BarbarianRage crash reproduced negativecontrol. Exact immutable release receipts,
+  source/native hashes,host preflights and rollback to retainedr2 required before migration.
+- Exact read commands this interval included `cat reports/bot/levels/DESIGN.md`,
+  `cat reports/bot/levels/receipts/leaf-diagnostic-astra-r1.md`, `cat reports/bot/levels/RESULTS.md`,
+  `sed -n '1,230p' bot/levels/root.py`, `sed -n '1,230p' bot/levels/player.py`,
+  `cat reports/bot/levels/receipts/scope-audit-r1.json`, `cat reports/bot/levels/receipts/configs-L6-r1.txt`,
+  `sed -n '1,235p' bot/levels/configs.py`, all in the existing levelownerworktree, read-only.
+- Follow-up commit command:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: accept gated serial level pilot under updated Sam direction' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
 
 ## Existing job identifiers (no launch in this continuation)
 
@@ -152,8 +217,10 @@ commit/validation commands, UTC outputs, commit SHA, file hashes and rollback st
 - Keep G1/K1 generation and the existing round-7 collector active. Resume no superseded agent or finished eval.
 - Keep C56 feeders off for G1; retain r9/r10 checkpoints and LIVE GPU ownership. Do not start a replacement
   trainer because a planned run completed. Existing F1/KF1 fits stay behind their data/resource/review gates.
-- Promote no student, runtime, card pin or level-aware search. The current r5v10 student remains unchanged.
-- Defer major normalization/strategy choices to Opus after the bounded diagnostic and independent review.
+- Current r5v10 remains unchanged because no stronger student is confirmed. Reviewed/gated/rollbackable changes
+  may proceed under the updated rule; no blanket promotion hold. Serial level pilot is accepted subject to gates.
+- Defer only consequential hard-to-undo and materially uncertain choices. Serial normalization scope and fixed
+  supported-prior experiment are now decided; pooledLIVE integration remains outside this serial experiment.
 - Conservative wrapper overcount is documented; no scheduler/cap-policy change is made during this continuation.
 - No rollback needed: no compute/runtime/account mutation was made. To undo this documentation update, revert
   only its explicit report/audit paths on the then-current main; never reset a shared index or other workers' files.

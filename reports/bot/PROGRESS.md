@@ -3,19 +3,27 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:13 UTC
+## Current handoff: Sol interim, 2026-10-16 09:21 UTC
 
-Sam's 2026-10-16 direction: continue existing work on GPT-6.1-Sol high; no major strategy, runtime or model
-promotion until Sam returns to Opus. Preserve ownership, data and existing gates. Bounded Astra high diagnostics
-are allowed for deep technical uncertainties. All image/crop/zoom work uses Sol. Screen/input-only fairness and
-Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09–18.
+Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
+reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
+rollback. Defer only consequential, hard-to-undo AND materially uncertain choices where Opus could change the
+approach. Sol high is default; bounded Astra high where useful; no Claude limit retries. Preserve ownership/data/
+gates. All image/crop/zoom work uses Sol. Screen/input-only fairness, Mac-only emulator scope, no heavy work on05
+and never hosts09–18 remain binding.
+
+**Coordination:** missing information, clarification and constraints go by `t3_thread_send(mode='auto')` to the
+existing owner or parent `0523ae6f-baa3-4d4e-b233-b392671670db`, stating evidence/paths, recommendation and whether
+dependent work waits; continue independent work. Do not use user-input tools. Propagate to all active descendants
+and future delegation briefs. Actual permission controls remain unchanged. No old pending input request reported.
 
 - **Best student remains RL r5 v10**, threshold 0.5375, SHA256
   `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10
   delta was −0.003 [−0.026, +0.021], not confirmed (2,000 games, no errors). Details: `exit/PROGRESS.md`.
   C56 feeders deliberately remain OFF for G1. RL r9/r10 are checkpointed and paused; GPUs remain LIVE-owned.
-- **Full-pool G1/K1:** existing Sol babysitter `fullpool-g1k1-babysit-r1` is active. Latest 08:55:24Z receipts:
-  G1 4,881 rows / 1,936,547 labels / 52 known errors; K1 1,171 games / 719,578 recording rows / 7 known errors.
+- **Full-pool G1/K1:** existing Sol babysitter `fullpool-g1k1-babysit-r1` is active. Latest 09:16:32Z receipts:
+  G1 5,927 attempts / 5,865 successful / 2,350,972 labels / 62 known errors (51 Freeze,11 BarbarianRage);
+  K1 1,713 attempts / 1,704 successful / 1,055,727 recording rows / 9 known errors (3 Freeze,6 BarbarianRage).
   All 13 recorded process groups alive. Existing r2 retry/preflight rules remain in force; no new root is promoted.
   See `fullpool/PROGRESS.md` and `/mpac/sdicks02/jobs/clasher/bot-fullpool/babysit-g1k1.log` on 05.
 - **Revealed-set round 7:** existing Sol collector `revset-r7-collect-1` active. Floorchk 0/60, smoke 0/40 at
@@ -24,23 +32,28 @@ Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09�
   containing "python" inflate that conservative count; no accounting script or priorities changed.
   LIVE comparison complete: patched 217 passed / 9 failed / 7 skipped, unpatched 178/9/7, identical failure sets.
   The +39 passing tests do not clear the pending floorchk/smoke gates or authorize deployment.
-- **Level pilot HOLD before bank/game (09:10Z):** original owner resumed in place on Sol; helper completed the DEV harness. Four pytest tests pass;
-  repeated four-game DEV A runs match all four hashes/logs/tower HP, 8/8 wins, no errors/rejections/failures.
-  Original exporter on 01 PID 2918593 finished: L11 121 cards/no errors; L5 118 cards/3 errors (Clone, Earthquake,
-  Tornado). Full-runtime check11 matches only 3/121 cards to R.config; 118 unsupported, including pilot cards.
-  Arm B would silently retain L11 for most cards, so it must not run. The earlier 20-card preliminary mapping
-  claim is not upheld by this full check. Owner diagnoses structural mismatch; disjoint exports4/6/7/9 continue.
-  At 09:13Z the owner identified a likely tuple/list mismatch in cached entity tunnel coordinates: the preliminary
-  check skipped JSON roundtripping. Canonical native-JSON comparison and a versioned support receipt are patched,
-  but fresh review/runtime confirmation remain pending; HOLD is unchanged. Astra found leaf_native also changes
-  scripted spell lethality/Lightning ranking; learned feature vectors match for identical states. Normalization
-  and fork/spawn pool behavior remain design questions for Opus. Tower Archers→Archer uses the existing alias map.
-  Deferred 03 probe
-  expired its original admission timeout without running and was not requeued. Independent Sol review and a small
-  Astra diagnostic on leaf normalization are active. No pilot bank drawn and no promotion. See `levels/PROGRESS.md`.
+- **Level pilot: serial design accepted; remaining gates block bank/games.** Mapping-specific hold LIFTED at09:18Z:
+  raw equality3/121 versus canonical nativeJSON121/121 proves tuple/list serialization mismatch, not stat mismatch.
+  All13 tower checks pass and2 configs regressions pass. L11 export121/0errors; L4/5/6/7/9 each118cards with3known
+  errors(Clone/Earthquake/Tornado). Original exports preserved. DEV A runner previously passed4tests and4/4repeat
+  hashes/logs/towerHP,8/8wins; this is harness evidence only.
+  **Decision:** original serial100case paired A/B/B0 is authorized AFTER all mandatory gates and fresh launcher
+  review pass, without another confirmation. A=unchangedL11; B0=existingrootonlyapproximation;
+  B=exactownlevels/towers/per-seatpayloads +fairfixedopponentraritymedian +crownmetadata2030/3312.
+  B metadata affects leaf AND scripted crown spell lethality/Lightning; learned features match for identicalstate.
+  No pooledLIVE claim; no need to solve pooleddeployment to run this serial experiment. Astra diagnostic supports
+  this scope; no categorical Opus deferral. Rollback selectA/removeexperimental root/native hooks; frozenruntime,
+  pins and weights untouched.
+  **Coverage decision:** fixed supported-card prior identically across A/B/B0 and policy pollers before any player
+  starts; retain original projection catalog. Excluding Clone/Earthquake/Tornado removes425/2925beliefdecks and
+  15371/69380frequency(22.1548%),leaves2500decks; all54true-deckprojections unchanged. This is a conditional-population
+  physics pilot, NOT literal deployed-prior equivalence. Require common ordered-prior digest, root reachability,
+  provenance/resume and all11 parity checks; no silentL11 fallback/post-outcome exclusions. Receipt owned by level
+  worker: `levels/receipts/scope-audit-r1.json`. Mandatory root/card/spell/fairness/fc/rawpooltransport/all11 and
+  launcherreview/provenance gates remain. No fresh bank drawn or pilot strength claim. See `levels/PROGRESS.md`.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
   08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
-  completed jobs, not failures; no replacement trainer is authorized under the interim hold.
+  completed jobs, not failures. Existing GPU ownership and resource coordination remain; no trainer was restarted.
 - **Descendant inventory:** 67 unique descendants at inspection: 4 running (all Sol), 57 completed, 3 interrupted,
   2 cancelled, 1 idle. Interrupted/cancelled tasks are superseded or already delivered results; the idle throughput
   researcher already delivered its result. No actually stopped unfinished descendant needed restarting. No duplicate
@@ -48,9 +61,10 @@ Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09�
   **Later heartbeat correction:** a new revset-fix-r2 report-handling turn failed on Claude after the collector's
   diagnosis. Coordinator switched that exact owner thread to Sol high and resumed only report/handoff acknowledgment.
   The original coding task stays complete; the existing Sol collector and all jobs/gates/priorities are unchanged.
-- **Next concrete action:** keep existing G1/K1 and round-7 collectors running; collect level reviews/export receipts.
-  Keep fits behind their existing data/resource/review gates. Park promotions, new strategies and unresolved major
-  normalization choices for Opus. Daily HEADLINE schedule remains enabled for 13:00Z, using the existing protocol.
+- **Next concrete action:** existing level owner implements/gates the accepted serial design and fixed prior scope;
+  run the original pilot once all validity/review/resource gates pass. Keep G1/K1 and round-7 collectors active;
+  existing template/root fixes may release only after exact reviewed/gated receipts and host preflights. Fits keep
+  their data/resource/review gates. Daily HEADLINE remains enabled for13:00Z with the existing protocol.
 
 ### UTC audit
 
