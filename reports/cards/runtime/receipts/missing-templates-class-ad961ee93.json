@@ -1,0 +1,5795 @@
+{
+  "approved_source_commit": "ad961ee9301a51bc8611947ea879d35f17ddf592",
+  "approved_source_manifest_sha256": "047ae90b7902798f162936330c9089293e602b95b28071dd8375999707d1200d",
+  "buffs": {
+    "_haste_effects": 2261,
+    "_periodic_damage_effects": 1236,
+    "_slow_effects": 4276
+  },
+  "cards": 122,
+  "checks": {
+    "all-translator-statics": 1420,
+    "config-template": 6320,
+    "meta-body": 1818,
+    "meta-body-name": 1818,
+    "native-deploy": 3660,
+    "native-meta-body": 1812,
+    "native-meta-body-name": 1812,
+    "native-public-board": 5856,
+    "native-public-root": 448,
+    "native-script-body": 5436,
+    "native-template": 3610,
+    "native-translator-object": 3610,
+    "native-translator-resolved": 7220,
+    "native-translator-static": 3610,
+    "native-typed": 3610,
+    "public-board": 5856,
+    "public-root": 464,
+    "script-body": 5454,
+    "target-final": 5,
+    "target-native-board": 10,
+    "target-translator": 10,
+    "template": 3646,
+    "translator-mapping": 3144,
+    "translator-object": 3646,
+    "translator-resolved": 7292,
+    "translator-row": 7292,
+    "translator-static": 3646,
+    "typed-token": 3646
+  },
+  "config_objects": 142,
+  "failures": [],
+  "historical_template_kind_aliases": {
+    "102/Projectile": 0,
+    "104/Projectile": 0,
+    "105/Projectile": 0,
+    "106/Projectile": 0,
+    "110/Projectile": 0,
+    "114/Projectile": 0,
+    "115/Projectile": 0,
+    "117/Projectile": 0,
+    "118/Projectile": 0,
+    "12/Projectile": 0,
+    "125/Projectile": 0,
+    "128/Projectile": 0,
+    "129/Projectile": 1,
+    "13/Projectile": 0,
+    "139/Projectile": 0,
+    "14/Projectile": 0,
+    "141/Projectile": 0,
+    "146/Projectile": 1,
+    "15/Projectile": 0,
+    "150/Projectile": 0,
+    "151/Projectile": 1,
+    "153/Projectile": 0,
+    "155/Projectile": 0,
+    "16/Projectile": 0,
+    "163/Projectile": 0,
+    "164/Projectile": 0,
+    "166/Projectile": 0,
+    "17/Projectile": 0,
+    "173/Projectile": 0,
+    "181/Projectile": 0,
+    "182/Projectile": 0,
+    "187/Projectile": 0,
+    "190/Projectile": 0,
+    "191/Projectile": 0,
+    "192/Projectile": 0,
+    "193/Projectile": 0,
+    "195/Projectile": 0,
+    "197/Projectile": 0,
+    "198/Projectile": 0,
+    "199/Projectile": 0,
+    "203/Projectile": 0,
+    "204/Projectile": 0,
+    "205/Projectile": 1,
+    "207/Projectile": 1,
+    "208/Projectile": 0,
+    "209/Projectile": 0,
+    "210/Projectile": 0,
+    "211/Projectile": 0,
+    "212/Projectile": 0,
+    "215/Projectile": 0,
+    "216/Projectile": 0,
+    "223/Projectile": 0,
+    "225/Projectile": 0,
+    "226/Projectile": 0,
+    "228/Projectile": 0,
+    "23/Projectile": 0,
+    "231/Projectile": 0,
+    "232/Projectile": 0,
+    "233/Projectile": 0,
+    "236/Projectile": 0,
+    "237/Projectile": 0,
+    "238/Projectile": 0,
+    "240/Projectile": 0,
+    "242/Projectile": 1,
+    "243/Projectile": 1,
+    "244/Projectile": 0,
+    "245/Projectile": 0,
+    "25/Projectile": 1,
+    "250/Projectile": 0,
+    "251/Projectile": 0,
+    "253/Projectile": 0,
+    "254/Projectile": 0,
+    "259/Projectile": 0,
+    "260/Projectile": 0,
+    "261/Projectile": 0,
+    "263/Projectile": 0,
+    "265/Projectile": 0,
+    "272/Projectile": 0,
+    "273/Projectile": 0,
+    "274/Projectile": 0,
+    "275/Projectile": 0,
+    "276/Projectile": 0,
+    "28/Projectile": 0,
+    "282/Projectile": 0,
+    "290/Projectile": 0,
+    "291/Projectile": 0,
+    "293/Projectile": 0,
+    "294/Projectile": 0,
+    "296/Projectile": 0,
+    "297/Projectile": 0,
+    "298/Projectile": 0,
+    "3/Projectile": 0,
+    "30/Projectile": 0,
+    "302/Projectile": 0,
+    "303/Projectile": 0,
+    "304/Projectile": 0,
+    "308/Projectile": 0,
+    "31/Projectile": 0,
+    "310/Projectile": 0,
+    "315/Projectile": 0,
+    "318/Projectile": 0,
+    "319/Projectile": 0,
+    "320/Projectile": 0,
+    "325/Projectile": 1,
+    "326/Projectile": 0,
+    "327/Projectile": 1,
+    "329/Projectile": 1,
+    "330/Projectile": 1,
+    "331/Projectile": 0,
+    "346/Projectile": 0,
+    "348/Projectile": 0,
+    "349/Projectile": 0,
+    "350/Projectile": 0,
+    "351/Projectile": 0,
+    "352/Projectile": 0,
+    "353/Projectile": 0,
+    "354/Projectile": 1,
+    "355/Projectile": 1,
+    "358/Projectile": 0,
+    "359/Projectile": 0,
+    "36/Projectile": 0,
+    "37/Projectile": 0,
+    "38/Projectile": 0,
+    "39/Projectile": 0,
+    "4/Projectile": 0,
+    "41/Projectile": 0,
+    "42/Projectile": 1,
+    "44/Projectile": 1,
+    "45/Projectile": 0,
+    "46/Projectile": 0,
+    "5/Projectile": 0,
+    "55/Projectile": 0,
+    "56/Projectile": 0,
+    "59/Projectile": 0,
+    "6/Projectile": 0,
+    "62/Projectile": 1,
+    "65/Projectile": 0,
+    "7/Projectile": 0,
+    "73/Projectile": 0,
+    "74/Projectile": 0,
+    "75/Projectile": 0,
+    "76/Projectile": 0,
+    "79/Projectile": 0,
+    "82/Projectile": 0,
+    "83/Projectile": 0,
+    "84/Projectile": 0,
+    "85/Projectile": 0,
+    "86/Projectile": 0,
+    "87/Projectile": 0,
+    "90/Projectile": 0,
+    "91/Projectile": 0,
+    "92/Projectile": 1,
+    "94/Projectile": 0,
+    "96/Projectile": 0,
+    "97/Projectile": 0,
+    "98/Projectile": 0,
+    "99/Projectile": 0
+  },
+  "inputs": {
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-0.json": "d64b8fa4ae3cb271d339f407dafa812cee5111e0b7997b925835ce9d131f7e7c",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-1.json": "b80db09cdbcc67d57fff9dab0df63c6274aefc1ea330604cb590bb821537eff9",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-2.json": "5fcb6ecc0a0c1424a5deafa0f1f7d56c4730285aef5dc625c533e6b001eba9d0",
+    "reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-3.json": "1c1f58ad19c683b20002b9b949f00541ed68e388561e7ebd3aa3ac348fb79447"
+  },
+  "native_actions": "121/122 admitted; MergeMaiden excluded by frozen v5, Python zero-object definition audited",
+  "native_materialized_carriers": [
+    "10/Projectile",
+    "100/Projectile",
+    "102/Troop",
+    "103/Projectile",
+    "106/Troop",
+    "108/AreaEffect",
+    "109/AreaEffect",
+    "110/Projectile",
+    "111/Troop",
+    "114/Troop",
+    "115/Troop",
+    "117/Troop",
+    "118/AreaEffect",
+    "118/Troop",
+    "12/Troop",
+    "125/Troop",
+    "126/Projectile",
+    "128/Troop",
+    "129/Building",
+    "13/Troop",
+    "130/AreaEffect",
+    "139/Troop",
+    "14/Projectile",
+    "141/Projectile",
+    "146/Building",
+    "147/AreaEffect",
+    "15/Troop",
+    "150/Troop",
+    "152/Building",
+    "153/Troop",
+    "155/Troop",
+    "16/Projectile",
+    "164/Troop",
+    "166/Troop",
+    "17/AreaEffect",
+    "17/Troop",
+    "173/Troop",
+    "181/Troop",
+    "182/Troop",
+    "183/AreaEffect",
+    "188/AreaEffect",
+    "188/Troop",
+    "190/Projectile",
+    "191/Troop",
+    "192/Troop",
+    "193/Projectile",
+    "195/Troop",
+    "197/Troop",
+    "198/Projectile",
+    "199/Troop",
+    "2/Troop",
+    "20/Projectile",
+    "200/AreaEffect",
+    "203/Projectile",
+    "204/Troop",
+    "205/Building",
+    "207/Building",
+    "207/Projectile",
+    "208/Troop",
+    "209/Troop",
+    "210/Projectile",
+    "211/Projectile",
+    "212/Troop",
+    "214/AreaEffect",
+    "215/Troop",
+    "216/Projectile",
+    "218/Projectile",
+    "223/Troop",
+    "225/Troop",
+    "226/Projectile",
+    "228/AreaEffect",
+    "228/Troop",
+    "23/Troop",
+    "231/Troop",
+    "232/Troop",
+    "234/Troop",
+    "235/Troop",
+    "237/Projectile",
+    "240/Troop",
+    "242/Building",
+    "243/Projectile",
+    "244/Troop",
+    "245/Projectile",
+    "25/Building",
+    "250/Troop",
+    "251/Projectile",
+    "253/Troop",
+    "254/Troop",
+    "258/AreaEffect",
+    "259/Troop",
+    "26/AreaEffect",
+    "260/Troop",
+    "261/Projectile",
+    "263/Projectile",
+    "264/AreaEffect",
+    "265/Troop",
+    "269/AreaEffect",
+    "27/AreaEffect",
+    "271/Troop",
+    "274/Troop",
+    "275/Troop",
+    "276/Projectile",
+    "278/Troop",
+    "280/Projectile",
+    "282/Troop",
+    "286/Projectile",
+    "29/Troop",
+    "290/Troop",
+    "291/Projectile",
+    "292/Troop",
+    "296/Troop",
+    "298/AreaEffect",
+    "298/Troop",
+    "301/Troop",
+    "302/Projectile",
+    "304/Troop",
+    "307/Troop",
+    "31/Troop",
+    "311/Projectile",
+    "315/Troop",
+    "318/Projectile",
+    "320/Troop",
+    "321/AreaEffect",
+    "325/Building",
+    "326/Troop",
+    "327/Building",
+    "328/AreaEffect",
+    "329/Building",
+    "329/Projectile",
+    "330/Projectile",
+    "331/Troop",
+    "332/AreaEffect",
+    "346/Projectile",
+    "347/Troop",
+    "348/Projectile",
+    "35/AreaEffect",
+    "350/Troop",
+    "351/Troop",
+    "352/Projectile",
+    "353/Troop",
+    "354/Building",
+    "355/Projectile",
+    "358/Troop",
+    "359/Projectile",
+    "36/Troop",
+    "37/Troop",
+    "38/Troop",
+    "39/Projectile",
+    "4/Troop",
+    "41/Projectile",
+    "42/AreaEffect",
+    "42/Building",
+    "44/Projectile",
+    "45/Troop",
+    "46/Troop",
+    "5/Projectile",
+    "55/Troop",
+    "56/Projectile",
+    "59/Troop",
+    "6/Troop",
+    "62/Building",
+    "65/Projectile",
+    "68/AreaEffect",
+    "7/Projectile",
+    "73/Troop",
+    "74/Troop",
+    "75/Troop",
+    "76/Projectile",
+    "79/Troop",
+    "81/AreaEffect",
+    "82/Troop",
+    "83/AreaEffect",
+    "83/Projectile",
+    "84/Troop",
+    "85/Troop",
+    "86/AreaEffect",
+    "86/Projectile",
+    "87/Troop",
+    "88/AreaEffect",
+    "90/Troop",
+    "91/Projectile",
+    "93/Building",
+    "95/Troop",
+    "96/Troop",
+    "97/Troop",
+    "98/Troop",
+    "99/Projectile"
+  ],
+  "object_kinds": {
+    "AreaEffect": 27,
+    "Building": 14,
+    "Projectile": 51,
+    "Troop": 95
+  },
+  "objects": {
+    "10/Projectile": {
+      "cards": [
+        "Arrows"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Arrows"
+      ],
+      "token_name": "Arrows"
+    },
+    "100/Projectile": {
+      "cards": [
+        "Fireball"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Fireball"
+      ],
+      "token_name": "Fireball"
+    },
+    "102/Troop": {
+      "cards": [
+        "Firecracker"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Firecracker"
+      ],
+      "token_name": "Firecracker"
+    },
+    "103/Projectile": {
+      "cards": [
+        "Firecracker"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Firecracker"
+      ],
+      "token_name": "FirecrackerExplosion"
+    },
+    "106/Troop": {
+      "cards": [
+        "Fisherman"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Fisherman"
+      ],
+      "token_name": "Fisherman"
+    },
+    "108/AreaEffect": {
+      "cards": [
+        "Freeze"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Freeze"
+      ],
+      "token_name": "Freeze"
+    },
+    "109/AreaEffect": {
+      "cards": [
+        "IceGolemite"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "FreezeIceGolemite",
+        "IceGolemite"
+      ],
+      "token_name": "FreezeIceGolemite"
+    },
+    "110/Projectile": {
+      "cards": [
+        "FirespiritHut"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "FirespiritHut"
+      ],
+      "token_name": "Furnace_Rework_Projectile"
+    },
+    "111/Troop": {
+      "cards": [
+        "FirespiritHut"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "FirespiritHut"
+      ],
+      "token_name": "Furnace_rework"
+    },
+    "114/Troop": {
+      "cards": [
+        "Ghost"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Ghost"
+      ],
+      "token_name": "Ghost"
+    },
+    "115/Troop": {
+      "cards": [
+        "Giant"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Giant"
+      ],
+      "token_name": "Giant"
+    },
+    "117/Troop": {
+      "cards": [
+        "GiantBuffer"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GiantBuffer"
+      ],
+      "token_name": "GiantBuffer"
+    },
+    "118/AreaEffect": {
+      "cards": [
+        "GiantSkeleton"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GiantSkeleton"
+      ],
+      "token_name": "GiantSkeleton"
+    },
+    "118/Troop": {
+      "cards": [
+        "GiantSkeleton"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GiantSkeleton"
+      ],
+      "token_name": "GiantSkeleton"
+    },
+    "12/Troop": {
+      "cards": [
+        "Assassin"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Assassin"
+      ],
+      "token_name": "Assassin"
+    },
+    "125/Troop": {
+      "cards": [
+        "GoblinBarrel",
+        "GoblinDrill"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblin"
+      ],
+      "token_name": "Goblin"
+    },
+    "126/Projectile": {
+      "cards": [
+        "GoblinBarrel"
+      ],
+      "classes": [
+        "SpawnProjectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinBarrel"
+      ],
+      "token_name": "GoblinBarrel"
+    },
+    "128/Troop": {
+      "cards": [
+        "GoblinCage"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinBrawler"
+      ],
+      "token_name": "GoblinBrawler"
+    },
+    "129/Building": {
+      "cards": [
+        "GoblinCage"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinCage"
+      ],
+      "token_name": "GoblinCage"
+    },
+    "13/Troop": {
+      "cards": [
+        "AxeMan"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "AxeMan"
+      ],
+      "token_name": "AxeMan"
+    },
+    "130/AreaEffect": {
+      "cards": [
+        "GoblinCurse"
+      ],
+      "classes": [
+        "GoblinCurseArea"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinCurse"
+      ],
+      "token_name": "GoblinCurse"
+    },
+    "139/Troop": {
+      "cards": [
+        "GoblinDemolisher"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDemolisher"
+      ],
+      "token_name": "GoblinDemolisher"
+    },
+    "14/Projectile": {
+      "cards": [
+        "AxeMan"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "AxeMan"
+      ],
+      "token_name": "AxeManProjectile"
+    },
+    "141/Projectile": {
+      "cards": [
+        "GoblinDemolisher"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDemolisher"
+      ],
+      "token_name": "GoblinDemolisherProjectile"
+    },
+    "146/Building": {
+      "cards": [
+        "GoblinDrill"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDrill"
+      ],
+      "token_name": "GoblinDrill"
+    },
+    "147/AreaEffect": {
+      "cards": [
+        "GoblinDrill"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinDrillDamage"
+      ],
+      "token_name": "GoblinDrillDamage"
+    },
+    "15/Troop": {
+      "cards": [
+        "BabyDragon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BabyDragon"
+      ],
+      "token_name": "BabyDragon"
+    },
+    "150/Troop": {
+      "cards": [
+        "GoblinGiant"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinGiant"
+      ],
+      "token_name": "GoblinGiant"
+    },
+    "152/Building": {
+      "cards": [
+        "GoblinHut"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinHut"
+      ],
+      "token_name": "GoblinHut_Rework"
+    },
+    "153/Troop": {
+      "cards": [
+        "GoblinMachine"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoblinMachine"
+      ],
+      "token_name": "GoblinMachine"
+    },
+    "155/Troop": {
+      "cards": [
+        "GoblinGang",
+        "Goblins"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblin_Stab",
+        "Goblins"
+      ],
+      "token_name": "Goblin_Stab"
+    },
+    "16/Projectile": {
+      "cards": [
+        "BabyDragon"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BabyDragon"
+      ],
+      "token_name": "BabyDragonProjectile"
+    },
+    "164/Troop": {
+      "cards": [
+        "Goblinstein"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblinstein"
+      ],
+      "token_name": "Goblinstein"
+    },
+    "166/Troop": {
+      "cards": [
+        "Goblinstein"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblinstein_doctor"
+      ],
+      "token_name": "Goblinstein_doctor"
+    },
+    "17/AreaEffect": {
+      "cards": [
+        "Balloon"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Balloon"
+      ],
+      "token_name": "Balloon"
+    },
+    "17/Troop": {
+      "cards": [
+        "Balloon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Balloon"
+      ],
+      "token_name": "Balloon"
+    },
+    "173/Troop": {
+      "cards": [
+        "GoldenKnight"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "GoldenKnight"
+      ],
+      "token_name": "GoldenKnight"
+    },
+    "181/Troop": {
+      "cards": [
+        "Golem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Golem"
+      ],
+      "token_name": "Golem"
+    },
+    "182/Troop": {
+      "cards": [
+        "Golem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Golemite"
+      ],
+      "token_name": "Golemite"
+    },
+    "183/AreaEffect": {
+      "cards": [
+        "Graveyard"
+      ],
+      "classes": [
+        "Graveyard"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Graveyard"
+      ],
+      "token_name": "Graveyard"
+    },
+    "188/AreaEffect": {
+      "cards": [
+        "Heal"
+      ],
+      "classes": [
+        "HealPulse"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "",
+        "HealSpirit"
+      ],
+      "token_name": "HealSpirit"
+    },
+    "188/Troop": {
+      "cards": [
+        "Heal"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Heal"
+      ],
+      "token_name": "HealSpirit"
+    },
+    "190/Projectile": {
+      "cards": [
+        "Heal"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Heal"
+      ],
+      "token_name": "HealSpiritProjectile"
+    },
+    "191/Troop": {
+      "cards": [
+        "HogRider"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "HogRider"
+      ],
+      "token_name": "HogRider"
+    },
+    "192/Troop": {
+      "cards": [
+        "Hunter"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Hunter"
+      ],
+      "token_name": "Hunter"
+    },
+    "193/Projectile": {
+      "cards": [
+        "Hunter"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Hunter"
+      ],
+      "token_name": "HunterProjectile"
+    },
+    "195/Troop": {
+      "cards": [
+        "IceGolemite"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceGolemite"
+      ],
+      "token_name": "IceGolemite"
+    },
+    "197/Troop": {
+      "cards": [
+        "IceSpirits"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceSpirits"
+      ],
+      "token_name": "IceSpirits"
+    },
+    "198/Projectile": {
+      "cards": [
+        "IceSpirits"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceSpirits"
+      ],
+      "token_name": "IceSpiritsProjectile"
+    },
+    "199/Troop": {
+      "cards": [
+        "IceWizard"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceWizard"
+      ],
+      "token_name": "IceWizard"
+    },
+    "2/Troop": {
+      "cards": [
+        "AngryBarbarians"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "AngryBarbarians"
+      ],
+      "token_name": "AngryBarbarian"
+    },
+    "20/Projectile": {
+      "cards": [
+        "BarbLog"
+      ],
+      "classes": [
+        "RollingProjectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BarbLog"
+      ],
+      "token_name": "BarbLog"
+    },
+    "200/AreaEffect": {
+      "cards": [
+        "IceWizard"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceWizardCold"
+      ],
+      "token_name": "IceWizardCold"
+    },
+    "203/Projectile": {
+      "cards": [
+        "IceWizard"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "IceWizard"
+      ],
+      "token_name": "Ice_wizardProjectile"
+    },
+    "204/Troop": {
+      "cards": [
+        "InfernoDragon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "InfernoDragon"
+      ],
+      "token_name": "InfernoDragon"
+    },
+    "205/Building": {
+      "cards": [
+        "InfernoTower"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "InfernoTower"
+      ],
+      "token_name": "InfernoTower"
+    },
+    "207/Building": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "KingTower"
+      ],
+      "token_name": "KingTower"
+    },
+    "207/Projectile": {
+      "cards": [
+        "ElixirGolem",
+        "Giant",
+        "Golem",
+        "RoyalGiant"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "lifetime"
+      ],
+      "names": [
+        "KingTower"
+      ],
+      "token_name": "KingTower"
+    },
+    "208/Troop": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Knight"
+      ],
+      "token_name": "Knight"
+    },
+    "209/Troop": {
+      "cards": [
+        "LavaHound"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "LavaHound"
+      ],
+      "token_name": "LavaHound"
+    },
+    "210/Projectile": {
+      "cards": [
+        "LavaHound"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "lifetime"
+      ],
+      "names": [
+        "LavaHound"
+      ],
+      "token_name": "LavaHoundProjectile"
+    },
+    "211/Projectile": {
+      "cards": [
+        "LavaHound"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "LavaPups"
+      ],
+      "token_name": "LavaPupProjectile"
+    },
+    "212/Troop": {
+      "cards": [
+        "LavaHound"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "LavaPups"
+      ],
+      "token_name": "LavaPups"
+    },
+    "214/AreaEffect": {
+      "cards": [
+        "Lightning"
+      ],
+      "classes": [
+        "RankedStrikeArea"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Lightning"
+      ],
+      "token_name": "Lightning"
+    },
+    "215/Troop": {
+      "cards": [
+        "LittlePrince"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "LittlePrince"
+      ],
+      "token_name": "LittlePrince"
+    },
+    "216/Projectile": {
+      "cards": [
+        "LittlePrince"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "LittlePrince"
+      ],
+      "token_name": "LittlePrinceProjectile"
+    },
+    "218/Projectile": {
+      "cards": [
+        "Log"
+      ],
+      "classes": [
+        "RollingProjectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Log"
+      ],
+      "token_name": "Log"
+    },
+    "223/Troop": {
+      "cards": [
+        "MegaKnight"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MegaKnight"
+      ],
+      "token_name": "MegaKnight"
+    },
+    "225/Troop": {
+      "cards": [
+        "MegaMinion"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MegaMinion"
+      ],
+      "token_name": "MegaMinion"
+    },
+    "226/Projectile": {
+      "cards": [
+        "MegaMinion"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MegaMinion"
+      ],
+      "token_name": "MegaMinionSpit"
+    },
+    "228/AreaEffect": {
+      "cards": [
+        "MightyMiner"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MightyMiner"
+      ],
+      "token_name": "MightyMiner"
+    },
+    "228/Troop": {
+      "cards": [
+        "MightyMiner"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MightyMiner"
+      ],
+      "token_name": "MightyMiner"
+    },
+    "23/Troop": {
+      "cards": [
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "BattleRam"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Barbarian",
+        "Barbarians"
+      ],
+      "token_name": "Barbarian"
+    },
+    "231/Troop": {
+      "cards": [
+        "Miner"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Miner"
+      ],
+      "token_name": "Miner"
+    },
+    "232/Troop": {
+      "cards": [
+        "MiniPekka"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MiniPekka"
+      ],
+      "token_name": "MiniPekka"
+    },
+    "234/Troop": {
+      "cards": [
+        "MiniSparkys"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MiniSparkys"
+      ],
+      "token_name": "MiniZapMachine"
+    },
+    "235/Troop": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MinionHorde",
+        "Minions"
+      ],
+      "token_name": "Minion"
+    },
+    "237/Projectile": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MinionHorde",
+        "Minions"
+      ],
+      "token_name": "MinionSpit"
+    },
+    "240/Troop": {
+      "cards": [
+        "Monk"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Monk"
+      ],
+      "token_name": "Monk"
+    },
+    "242/Building": {
+      "cards": [
+        "Mortar"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Mortar"
+      ],
+      "token_name": "Mortar"
+    },
+    "243/Projectile": {
+      "cards": [
+        "Mortar"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "lifetime"
+      ],
+      "names": [
+        "Mortar"
+      ],
+      "token_name": "MortarProjectile"
+    },
+    "244/Troop": {
+      "cards": [
+        "MovingCannon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MovingCannon"
+      ],
+      "token_name": "MovingCannon"
+    },
+    "245/Projectile": {
+      "cards": [
+        "MovingCannon"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "MovingCannon"
+      ],
+      "token_name": "MovingCannonProjectile"
+    },
+    "25/Building": {
+      "cards": [
+        "BarbarianHut"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BarbarianHut"
+      ],
+      "token_name": "BarbarianHut"
+    },
+    "250/Troop": {
+      "cards": [
+        "Musketeer"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Musketeer"
+      ],
+      "token_name": "Musketeer"
+    },
+    "251/Projectile": {
+      "cards": [
+        "Musketeer"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Musketeer"
+      ],
+      "token_name": "MusketeerProjectile"
+    },
+    "253/Troop": {
+      "cards": [
+        "Pekka"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Pekka"
+      ],
+      "token_name": "Pekka"
+    },
+    "254/Troop": {
+      "cards": [
+        "Phoenix"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Phoenix"
+      ],
+      "token_name": "Phoenix"
+    },
+    "258/AreaEffect": {
+      "cards": [
+        "Poison"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Poison"
+      ],
+      "token_name": "Poison"
+    },
+    "259/Troop": {
+      "cards": [
+        "Prince"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Prince"
+      ],
+      "token_name": "Prince"
+    },
+    "26/AreaEffect": {
+      "cards": [
+        "RageBarbarian"
+      ],
+      "classes": [
+        "BuffAreaEffect",
+        "DeathAreaEffectContainer",
+        "DeathAreaStartAction"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BarbarianRage",
+        "RageBarbarian"
+      ],
+      "token_name": "BarbarianRage"
+    },
+    "260/Troop": {
+      "cards": [
+        "Princess"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Princess"
+      ],
+      "token_name": "Princess"
+    },
+    "261/Projectile": {
+      "cards": [
+        "Princess"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Princess"
+      ],
+      "token_name": "PrincessProjectile"
+    },
+    "263/Projectile": {
+      "cards": [
+        "Goblinstein"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Goblinstein_doctor"
+      ],
+      "token_name": "Prj_goblinstein_doctor"
+    },
+    "264/AreaEffect": {
+      "cards": [
+        "Rage"
+      ],
+      "classes": [
+        "BuffAreaEffect",
+        "DeathAreaEffectContainer"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Rage"
+      ],
+      "token_name": "Rage"
+    },
+    "265/Troop": {
+      "cards": [
+        "RageBarbarian"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RageBarbarian"
+      ],
+      "token_name": "RageBarbarian"
+    },
+    "269/AreaEffect": {
+      "cards": [
+        "Rage"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Rage",
+        "RageDamage"
+      ],
+      "token_name": "RageDamage"
+    },
+    "27/AreaEffect": {
+      "cards": [
+        "RageBarbarian"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BarbarianRageDamage",
+        "RageBarbarian"
+      ],
+      "token_name": "BarbarianRageDamage"
+    },
+    "271/Troop": {
+      "cards": [
+        "RamRider"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RamRider"
+      ],
+      "token_name": "Ram"
+    },
+    "274/Troop": {
+      "cards": [
+        "Rascals"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RascalBoy"
+      ],
+      "token_name": "RascalBoy"
+    },
+    "275/Troop": {
+      "cards": [
+        "Rascals"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RascalGirl"
+      ],
+      "token_name": "RascalGirl"
+    },
+    "276/Projectile": {
+      "cards": [
+        "Rascals"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RascalGirl"
+      ],
+      "token_name": "RascalGirlProjectile"
+    },
+    "278/Troop": {
+      "cards": [
+        "RoyalRecruits"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RoyalRecruits"
+      ],
+      "token_name": "Recruit"
+    },
+    "280/Projectile": {
+      "cards": [
+        "Rocket"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Rocket"
+      ],
+      "token_name": "Rocket"
+    },
+    "282/Troop": {
+      "cards": [
+        "Ronin"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Ronin"
+      ],
+      "token_name": "Ronin"
+    },
+    "286/Projectile": {
+      "cards": [
+        "RoyalDelivery"
+      ],
+      "classes": [
+        "SpawnProjectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RoyalDelivery"
+      ],
+      "token_name": "RoyalDelivery"
+    },
+    "29/Troop": {
+      "cards": [
+        "Bats",
+        "DarkWitch"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bat",
+        "Bats"
+      ],
+      "token_name": "Bat"
+    },
+    "290/Troop": {
+      "cards": [
+        "RoyalGiant"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RoyalGiant"
+      ],
+      "token_name": "RoyalGiant"
+    },
+    "291/Projectile": {
+      "cards": [
+        "RoyalGiant"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "lifetime"
+      ],
+      "names": [
+        "RoyalGiant"
+      ],
+      "token_name": "RoyalGiantProjectile"
+    },
+    "292/Troop": {
+      "cards": [
+        "RoyalHogs"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "RoyalHogs"
+      ],
+      "token_name": "RoyalHog"
+    },
+    "296/Troop": {
+      "cards": [
+        "Graveyard",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "Skeletons",
+        "Tombstone",
+        "Witch"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Skeleton",
+        "SkeletonArmy",
+        "Skeletons"
+      ],
+      "token_name": "Skeleton"
+    },
+    "298/AreaEffect": {
+      "cards": [
+        "SkeletonBalloon"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SkeletonBalloon"
+      ],
+      "token_name": "SkeletonBalloon"
+    },
+    "298/Troop": {
+      "cards": [
+        "SkeletonBalloon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SkeletonBalloon"
+      ],
+      "token_name": "SkeletonBalloon"
+    },
+    "301/Troop": {
+      "cards": [
+        "SkeletonDragons"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SkeletonDragons"
+      ],
+      "token_name": "SkeletonDragon"
+    },
+    "302/Projectile": {
+      "cards": [
+        "SkeletonDragons"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SkeletonDragons"
+      ],
+      "token_name": "SkeletonDragonProjectile"
+    },
+    "304/Troop": {
+      "cards": [
+        "SkeletonKing"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SkeletonKing"
+      ],
+      "token_name": "SkeletonKing"
+    },
+    "307/Troop": {
+      "cards": [
+        "SkeletonWarriors"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SkeletonWarriors"
+      ],
+      "token_name": "SkeletonWarrior"
+    },
+    "31/Troop": {
+      "cards": [
+        "BattleHealer"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BattleHealer"
+      ],
+      "token_name": "BattleHealer"
+    },
+    "311/Projectile": {
+      "cards": [
+        "Snowball"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Snowball"
+      ],
+      "token_name": "Snowball"
+    },
+    "315/Troop": {
+      "cards": [
+        "GoblinGang",
+        "GoblinHut",
+        "SpearGoblins"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SpearGoblin",
+        "SpearGoblins"
+      ],
+      "token_name": "SpearGoblin"
+    },
+    "318/Projectile": {
+      "cards": [
+        "GoblinGang",
+        "GoblinHut",
+        "SpearGoblins"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SpearGoblin",
+        "SpearGoblins"
+      ],
+      "token_name": "SpearGoblinProjectile"
+    },
+    "320/Troop": {
+      "cards": [
+        "SuspiciousBush"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SuspiciousBush"
+      ],
+      "token_name": "SuspiciousBush"
+    },
+    "321/AreaEffect": {
+      "cards": [
+        "SuspiciousBush"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "SuspiciousBush",
+        "SuspiciousBush_DummyAEO"
+      ],
+      "token_name": "SuspiciousBush_DummyAEO"
+    },
+    "325/Building": {
+      "cards": [
+        "Tesla"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Tesla"
+      ],
+      "token_name": "Tesla"
+    },
+    "326/Troop": {
+      "cards": [
+        "ThreeMusketeers"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ThreeMusketeers"
+      ],
+      "token_name": "ThreeMusketeers"
+    },
+    "327/Building": {
+      "cards": [
+        "Tombstone"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Tombstone"
+      ],
+      "token_name": "Tombstone"
+    },
+    "328/AreaEffect": {
+      "cards": [
+        "Tornado"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Tornado"
+      ],
+      "token_name": "Tornado"
+    },
+    "329/Building": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Tower"
+      ],
+      "token_name": "Tower"
+    },
+    "329/Projectile": {
+      "cards": [
+        "AngryBarbarians",
+        "Arrows",
+        "Assassin",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "BattleRam",
+        "Berserker",
+        "BossBandit",
+        "ElectroGiant",
+        "ElectroWizard",
+        "ElixirGolem",
+        "Fisherman",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "Goblins",
+        "Goblinstein",
+        "Golem",
+        "Graveyard",
+        "HogRider",
+        "IceGolemite",
+        "Knight",
+        "LavaHound",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "RageBarbarian",
+        "RamRider",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonWarriors",
+        "SuspiciousBush",
+        "Tombstone",
+        "Wallbreakers",
+        "Witch"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Tower"
+      ],
+      "token_name": "Tower"
+    },
+    "330/Projectile": {
+      "cards": [
+        "BarbLog",
+        "Barbarians",
+        "BattleRam",
+        "Cannon",
+        "ElectroGiant",
+        "ElectroWizard",
+        "ElixirGolem",
+        "Fisherman",
+        "Giant",
+        "GiantBuffer",
+        "GoblinBarrel",
+        "GoblinDrill",
+        "GoblinGiant",
+        "GoblinHut",
+        "Goblinstein",
+        "Golem",
+        "Graveyard",
+        "HogRider",
+        "IceGolemite",
+        "RamRider",
+        "RoyalGiant",
+        "RoyalHogs",
+        "SkeletonBalloon",
+        "SuspiciousBush",
+        "Wallbreakers"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Cannon"
+      ],
+      "token_name": "TowerCannonball"
+    },
+    "331/Troop": {
+      "cards": [
+        "Valkyrie"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Valkyrie"
+      ],
+      "token_name": "Valkyrie"
+    },
+    "332/AreaEffect": {
+      "cards": [
+        "Vines"
+      ],
+      "classes": [
+        "VinesArea"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Vines"
+      ],
+      "token_name": "Vines"
+    },
+    "346/Projectile": {
+      "cards": [
+        "WitchMother"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "WitchMother"
+      ],
+      "token_name": "VoodooProjectile"
+    },
+    "347/Troop": {
+      "cards": [
+        "Wallbreakers"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Wallbreakers"
+      ],
+      "token_name": "Wallbreaker"
+    },
+    "348/Projectile": {
+      "cards": [
+        "Wallbreakers"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "lifetime"
+      ],
+      "names": [
+        "Wallbreakers"
+      ],
+      "token_name": "WallbreakerProjectile"
+    },
+    "35/AreaEffect": {
+      "cards": [
+        "BattleHealer"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BattleHealer",
+        "BattleHealerSpawnHeal"
+      ],
+      "token_name": "BattleHealerSpawnHeal"
+    },
+    "350/Troop": {
+      "cards": [
+        "Witch"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Witch"
+      ],
+      "token_name": "Witch"
+    },
+    "351/Troop": {
+      "cards": [
+        "WitchMother"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "WitchMother"
+      ],
+      "token_name": "WitchMother"
+    },
+    "352/Projectile": {
+      "cards": [
+        "Witch"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Witch"
+      ],
+      "token_name": "WitchProjectile"
+    },
+    "353/Troop": {
+      "cards": [
+        "Wizard"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Wizard"
+      ],
+      "token_name": "Wizard"
+    },
+    "354/Building": {
+      "cards": [
+        "Xbow"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Xbow"
+      ],
+      "token_name": "Xbow"
+    },
+    "355/Projectile": {
+      "cards": [
+        "Xbow"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Xbow"
+      ],
+      "token_name": "Xbow_projectile"
+    },
+    "358/Troop": {
+      "cards": [
+        "ZapMachine"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ZapMachine"
+      ],
+      "token_name": "ZapMachine"
+    },
+    "359/Projectile": {
+      "cards": [
+        "ZapMachine"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ZapMachine"
+      ],
+      "token_name": "ZapMachineProjectile"
+    },
+    "36/Troop": {
+      "cards": [
+        "BattleRam"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BattleRam"
+      ],
+      "token_name": "BattleRam"
+    },
+    "37/Troop": {
+      "cards": [
+        "Berserker"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Berserker"
+      ],
+      "token_name": "Berserker"
+    },
+    "38/Troop": {
+      "cards": [
+        "BlowdartGoblin"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BlowdartGoblin"
+      ],
+      "token_name": "BlowdartGoblin"
+    },
+    "39/Projectile": {
+      "cards": [
+        "BlowdartGoblin"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BlowdartGoblin"
+      ],
+      "token_name": "BlowdartGoblinProjectile"
+    },
+    "4/Troop": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Archer"
+      ],
+      "token_name": "Archer"
+    },
+    "41/Projectile": {
+      "cards": [
+        "Bomber"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bomber"
+      ],
+      "token_name": "BombSkeletonProjectile"
+    },
+    "42/AreaEffect": {
+      "cards": [
+        "BombTower"
+      ],
+      "classes": [
+        "TimedExplosive"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BombTower"
+      ],
+      "token_name": "BombTower"
+    },
+    "42/Building": {
+      "cards": [
+        "BombTower"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BombTower"
+      ],
+      "token_name": "BombTower"
+    },
+    "44/Projectile": {
+      "cards": [
+        "BombTower"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BombTower"
+      ],
+      "token_name": "BombTowerProjectile"
+    },
+    "45/Troop": {
+      "cards": [
+        "Bomber"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bomber"
+      ],
+      "token_name": "Bomber"
+    },
+    "46/Troop": {
+      "cards": [
+        "BossBandit"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BossBandit"
+      ],
+      "token_name": "BossBandit"
+    },
+    "5/Projectile": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Archer"
+      ],
+      "token_name": "ArcherArrow"
+    },
+    "55/Troop": {
+      "cards": [
+        "Bowler"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bowler"
+      ],
+      "token_name": "Bowler"
+    },
+    "56/Projectile": {
+      "cards": [
+        "Bowler"
+      ],
+      "classes": [
+        "RollingProjectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Bowler"
+      ],
+      "token_name": "BowlerProjectile"
+    },
+    "59/Troop": {
+      "cards": [
+        "SuspiciousBush"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "BushGoblin"
+      ],
+      "token_name": "BushGoblin"
+    },
+    "6/Troop": {
+      "cards": [
+        "ArcherQueen"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ArcherQueen"
+      ],
+      "token_name": "ArcherQueen"
+    },
+    "62/Building": {
+      "cards": [
+        "AngryBarbarians",
+        "Archer",
+        "ArcherQueen",
+        "Arrows",
+        "Assassin",
+        "AxeMan",
+        "BabyDragon",
+        "Balloon",
+        "BarbLog",
+        "BarbarianHut",
+        "Barbarians",
+        "Bats",
+        "BattleHealer",
+        "BattleRam",
+        "Berserker",
+        "BlowdartGoblin",
+        "BombTower",
+        "Bomber",
+        "BossBandit",
+        "Bowler",
+        "Cannon",
+        "Clone",
+        "DarkMagic",
+        "DarkPrince",
+        "DarkWitch",
+        "DartBarrell",
+        "Earthquake",
+        "ElectroDragon",
+        "ElectroGiant",
+        "ElectroSpirit",
+        "ElectroWizard",
+        "EliteArcher",
+        "Elixir Collector",
+        "ElixirGolem",
+        "FireSpirits",
+        "Fireball",
+        "Firecracker",
+        "FirespiritHut",
+        "Fisherman",
+        "Freeze",
+        "Ghost",
+        "Giant",
+        "GiantBuffer",
+        "GiantSkeleton",
+        "GoblinBarrel",
+        "GoblinCage",
+        "GoblinCurse",
+        "GoblinDemolisher",
+        "GoblinDrill",
+        "GoblinGang",
+        "GoblinGiant",
+        "GoblinHut",
+        "GoblinMachine",
+        "Goblins",
+        "Goblinstein",
+        "GoldenKnight",
+        "Golem",
+        "Graveyard",
+        "Heal",
+        "HogRider",
+        "Hunter",
+        "IceGolemite",
+        "IceSpirits",
+        "IceWizard",
+        "InfernoDragon",
+        "InfernoTower",
+        "Knight",
+        "LavaHound",
+        "Lightning",
+        "LittlePrince",
+        "Log",
+        "MegaKnight",
+        "MegaMinion",
+        "MergeMaiden",
+        "MightyMiner",
+        "Miner",
+        "MiniPekka",
+        "MiniSparkys",
+        "MinionHorde",
+        "Minions",
+        "Mirror",
+        "Monk",
+        "Mortar",
+        "MovingCannon",
+        "Musketeer",
+        "Pekka",
+        "Phoenix",
+        "Poison",
+        "Prince",
+        "Princess",
+        "Rage",
+        "RageBarbarian",
+        "RamRider",
+        "Rascals",
+        "Rocket",
+        "Ronin",
+        "RoyalDelivery",
+        "RoyalGiant",
+        "RoyalHogs",
+        "RoyalRecruits",
+        "SkeletonArmy",
+        "SkeletonBalloon",
+        "SkeletonDragons",
+        "SkeletonKing",
+        "SkeletonWarriors",
+        "Skeletons",
+        "Snowball",
+        "SpearGoblins",
+        "SuspiciousBush",
+        "Tesla",
+        "ThreeMusketeers",
+        "Tombstone",
+        "Tornado",
+        "Valkyrie",
+        "Vines",
+        "Wallbreakers",
+        "Witch",
+        "WitchMother",
+        "Wizard",
+        "Xbow",
+        "Zap",
+        "ZapMachine"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Cannon"
+      ],
+      "token_name": "Cannon"
+    },
+    "65/Projectile": {
+      "cards": [
+        "Wizard"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Wizard"
+      ],
+      "token_name": "Chr_wizardProjectile"
+    },
+    "68/AreaEffect": {
+      "cards": [
+        "DarkMagic"
+      ],
+      "classes": [
+        "VoidArea"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DarkMagic"
+      ],
+      "token_name": "DarkMagic"
+    },
+    "7/Projectile": {
+      "cards": [
+        "ArcherQueen"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ArcherQueen"
+      ],
+      "token_name": "ArcherQueenArrow"
+    },
+    "73/Troop": {
+      "cards": [
+        "DarkPrince"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DarkPrince"
+      ],
+      "token_name": "DarkPrince"
+    },
+    "74/Troop": {
+      "cards": [
+        "DarkWitch"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DarkWitch"
+      ],
+      "token_name": "DarkWitch"
+    },
+    "75/Troop": {
+      "cards": [
+        "DartBarrell"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DartBarrell"
+      ],
+      "token_name": "DartBarrell"
+    },
+    "76/Projectile": {
+      "cards": [
+        "DartBarrell"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DartBarrell"
+      ],
+      "token_name": "DartBarrellProjectile"
+    },
+    "79/Troop": {
+      "cards": [
+        "RoyalDelivery"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "DeliveryRecruit"
+      ],
+      "token_name": "DeliveryRecruit"
+    },
+    "81/AreaEffect": {
+      "cards": [
+        "Earthquake"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Earthquake"
+      ],
+      "token_name": "Earthquake"
+    },
+    "82/Troop": {
+      "cards": [
+        "ElectroDragon"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroDragon"
+      ],
+      "token_name": "ElectroDragon"
+    },
+    "83/AreaEffect": {
+      "cards": [
+        "ElectroDragon"
+      ],
+      "classes": [
+        "ChainLightning"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroDragon"
+      ],
+      "token_name": "ElectroDragonProjectile"
+    },
+    "83/Projectile": {
+      "cards": [
+        "ElectroDragon"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroDragon"
+      ],
+      "token_name": "ElectroDragonProjectile"
+    },
+    "84/Troop": {
+      "cards": [
+        "ElectroGiant"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroGiant"
+      ],
+      "token_name": "ElectroGiant"
+    },
+    "85/Troop": {
+      "cards": [
+        "ElectroSpirit"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroSpirit"
+      ],
+      "token_name": "ElectroSpirit"
+    },
+    "86/AreaEffect": {
+      "cards": [
+        "ElectroSpirit"
+      ],
+      "classes": [
+        "ChainLightning"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroSpirit"
+      ],
+      "token_name": "ElectroSpiritProjectile"
+    },
+    "86/Projectile": {
+      "cards": [
+        "ElectroSpirit"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroSpirit"
+      ],
+      "token_name": "ElectroSpiritProjectile"
+    },
+    "87/Troop": {
+      "cards": [
+        "ElectroWizard"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroWizard"
+      ],
+      "token_name": "ElectroWizard"
+    },
+    "88/AreaEffect": {
+      "cards": [
+        "ElectroWizard"
+      ],
+      "classes": [
+        "AreaEffect"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "AreaEffect",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElectroWizardZap"
+      ],
+      "token_name": "ElectroWizardZap"
+    },
+    "90/Troop": {
+      "cards": [
+        "EliteArcher"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "EliteArcher"
+      ],
+      "token_name": "EliteArcher"
+    },
+    "91/Projectile": {
+      "cards": [
+        "EliteArcher"
+      ],
+      "classes": [
+        "Projectile"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "EliteArcher"
+      ],
+      "token_name": "EliteArcherArrow"
+    },
+    "93/Building": {
+      "cards": [
+        "Elixir Collector"
+      ],
+      "classes": [
+        "Building"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Building",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "Elixir Collector"
+      ],
+      "token_name": "ElixirCollector"
+    },
+    "95/Troop": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElixirGolem"
+      ],
+      "token_name": "ElixirGolem1"
+    },
+    "96/Troop": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElixirGolem2"
+      ],
+      "token_name": "ElixirGolem2"
+    },
+    "97/Troop": {
+      "cards": [
+        "ElixirGolem"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "ElixirGolem4"
+      ],
+      "token_name": "ElixirGolem4"
+    },
+    "98/Troop": {
+      "cards": [
+        "FireSpirits",
+        "FirespiritHut"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "native",
+        "python"
+      ],
+      "kind": "Troop",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "FireSpirits"
+      ],
+      "token_name": "FireSpirits"
+    },
+    "99/Projectile": {
+      "cards": [
+        "FireSpirits",
+        "FirespiritHut"
+      ],
+      "classes": [
+        "Troop"
+      ],
+      "engines": [
+        "python"
+      ],
+      "kind": "Projectile",
+      "modes": [
+        "combat",
+        "death",
+        "lifetime"
+      ],
+      "names": [
+        "FireSpirits"
+      ],
+      "token_name": "FireSpiritsProjectile"
+    }
+  },
+  "result": "PASS",
+  "root_scope": "Projected synthetic public-carrier board stress; native constructor materialization is distinct from native gameplay emission",
+  "scenarios": 366,
+  "scope": "full class",
+  "seats": [
+    0,
+    1
+  ],
+  "source_sha256": {
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-df1edc84-source/bot/cards/scope.py": "f116b76ab4079a1cbe208e7220587cf001c2966156ec939517780c2bb53dde98",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-df1edc84-source/bot/players/royalesim_translate.py": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-df1edc84-source/bot/players/royalesim_vocab.py": "8da911ae6b326763a4b65ea5a11550269b25e9121c131026386fc0e8fc6cd17b",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-df1edc84-source/bot/players/runtime.py": "2c2bf84391074590f8bb61c00c55dfc2ec5959b593d0b6f39ec8045c4fb5aae1",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/class-df1edc84-source/reports/cards/runtime/tools/object_templates_probe.py": "df1edc84b659451b49ef57b66d46bc3ee6b9c5c3a94b30a6742a151246ed54dd",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live/engine-rs/differential.py": "2e93bdec3607fb434e46d51c5bf9c6f0108a60b534b3d216049e86ae7592860c",
+    "/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3/dev-live/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "89f0c28b4aab1dba42a56c3a2d0e23949d3e0d22bd5aceee03347e2ed6fecc46"
+  },
+  "target_paths": {
+    "147/AreaEffect": {
+      "card": "GoblinDrill",
+      "exact_translator_seats": [
+        0,
+        1
+      ],
+      "native_board_seats": [
+        0,
+        1
+      ],
+      "native_constructor_materialized": true,
+      "native_gameplay_emitted": false,
+      "source_motion_outputs": {
+        "0": [
+          "147/AreaEffect"
+        ],
+        "1": [
+          "147/AreaEffect"
+        ],
+        "2": [
+          "147/AreaEffect"
+        ],
+        "3": [
+          "147/AreaEffect"
+        ],
+        "4": [
+          "147/AreaEffect"
+        ],
+        "5": [
+          "147/AreaEffect"
+        ],
+        "6": [
+          "147/AreaEffect"
+        ]
+      },
+      "source_schema_exact": true
+    },
+    "200/AreaEffect": {
+      "card": "IceWizard",
+      "exact_translator_seats": [
+        0,
+        1
+      ],
+      "native_board_seats": [
+        0,
+        1
+      ],
+      "native_constructor_materialized": true,
+      "native_gameplay_emitted": false,
+      "source_motion_outputs": {
+        "0": [
+          "200/AreaEffect"
+        ],
+        "1": [
+          "200/AreaEffect"
+        ],
+        "2": [
+          "200/AreaEffect"
+        ],
+        "3": [
+          "200/AreaEffect"
+        ],
+        "4": [
+          "200/AreaEffect"
+        ],
+        "5": [
+          "200/AreaEffect"
+        ],
+        "6": [
+          "200/AreaEffect"
+        ]
+      },
+      "source_schema_exact": true
+    },
+    "269/AreaEffect": {
+      "card": "Rage",
+      "exact_translator_seats": [
+        0,
+        1
+      ],
+      "native_board_seats": [
+        0,
+        1
+      ],
+      "native_constructor_materialized": true,
+      "native_gameplay_emitted": true,
+      "source_motion_outputs": {
+        "0": [
+          "264/AreaEffect"
+        ],
+        "1": [
+          "264/AreaEffect"
+        ],
+        "2": [
+          "264/AreaEffect"
+        ],
+        "3": [
+          "264/AreaEffect"
+        ],
+        "4": [
+          "264/AreaEffect"
+        ],
+        "5": [
+          "264/AreaEffect"
+        ],
+        "6": [
+          "264/AreaEffect"
+        ]
+      },
+      "source_schema_exact": false
+    },
+    "27/AreaEffect": {
+      "card": "RageBarbarian",
+      "exact_translator_seats": [
+        0,
+        1
+      ],
+      "native_board_seats": [
+        0,
+        1
+      ],
+      "native_constructor_materialized": true,
+      "native_gameplay_emitted": true,
+      "source_motion_outputs": {
+        "0": [
+          "26/AreaEffect"
+        ],
+        "1": [
+          "26/AreaEffect"
+        ],
+        "2": [
+          "26/AreaEffect"
+        ],
+        "3": [
+          "26/AreaEffect"
+        ],
+        "4": [
+          "26/AreaEffect"
+        ],
+        "5": [
+          "26/AreaEffect"
+        ],
+        "6": [
+          "26/AreaEffect"
+        ]
+      },
+      "source_schema_exact": false
+    },
+    "88/AreaEffect": {
+      "card": "ElectroWizard",
+      "exact_translator_seats": [
+        0,
+        1
+      ],
+      "native_board_seats": [
+        0,
+        1
+      ],
+      "native_constructor_materialized": true,
+      "native_gameplay_emitted": false,
+      "source_motion_outputs": {
+        "0": [
+          "88/AreaEffect"
+        ],
+        "1": [
+          "88/AreaEffect"
+        ],
+        "2": [
+          "88/AreaEffect"
+        ],
+        "3": [
+          "88/AreaEffect"
+        ],
+        "4": [
+          "88/AreaEffect"
+        ],
+        "5": [
+          "88/AreaEffect"
+        ],
+        "6": [
+          "88/AreaEffect"
+        ]
+      },
+      "source_schema_exact": true
+    }
+  },
+  "templates": 355,
+  "total_checks": 96171,
+  "translator_tables": {
+    "objects": 355,
+    "projectiles": 45,
+    "spells": 204,
+    "statics": 355,
+    "units": 142
+  }
+}

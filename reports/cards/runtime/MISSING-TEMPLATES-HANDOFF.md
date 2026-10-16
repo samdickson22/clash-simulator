@@ -77,3 +77,12 @@ with SAME owned frozenfullpoolrepo+3policies+extensionreceipts and exactpre/post
 no resume/restart of anyoldjob. Source archive extractedwith tar--same-permissions, verifyallbyte/link/modes,
 freezeonlynewS andverifyfinalmodes beforecopy2releasehelper. All actions remainconditionalonfullcoverage,
 acceptedmain, hostpreflight andnormalCPUadmission; noactivepin. All details/protocol/reviewattestation committed.
+
+
+2026-10-16T10:35Z fullclass230877 finishednaturally, allworkersabsent/leasegone. Acceptedaggregate
+receipts/missing-templates-class-ad961ee93.json SHA7f78c31fc4a2e6821f0a0ae438a6db5e1c5122de623a0cbfbeb9a5b6cc1dc001:
+PASS122/366/96,171checks/0exceptions,187/187observed-nativeconstructed,142/142config,0native-onlykeys.
+No newjob yet. Mainintegrationdependencyhandoff using receipts/missing-templates-gate-packet.json; waitexact
+acceptedMAIN from CARDLEAD before release. Latest approvedworkflow/replay98299e81 andtotality9ba60dec mustbe
+included in acceptedsourcearchive; these toolchanges do not alter classsource7/native/data. Historical ACTIVE
+sectionabove is supersededbythisterminalreceipt, not an instructionto restart. Allrelease/finalrootgates remain.

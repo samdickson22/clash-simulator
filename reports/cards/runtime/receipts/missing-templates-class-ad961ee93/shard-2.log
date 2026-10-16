@@ -1,0 +1,120 @@
+scenario Goblins combat
+scenario Goblins death
+scenario Goblins lifetime
+Goblins objects 10 failures 0
+scenario Balloon combat
+scenario Balloon death
+scenario Balloon lifetime
+Balloon objects 12 failures 0
+scenario Skeletons combat
+scenario Skeletons death
+scenario Skeletons lifetime
+Skeletons objects 13 failures 0
+scenario Musketeer combat
+scenario Musketeer death
+scenario Musketeer lifetime
+Musketeer objects 15 failures 0
+scenario MiniPekka combat
+scenario MiniPekka death
+scenario MiniPekka lifetime
+MiniPekka objects 16 failures 0
+scenario MinionHorde combat
+scenario MinionHorde death
+scenario MinionHorde lifetime
+MinionHorde objects 16 failures 0
+scenario Princess combat
+scenario Princess death
+scenario Princess lifetime
+Princess objects 18 failures 0
+scenario IceSpirits combat
+scenario IceSpirits death
+scenario IceSpirits lifetime
+IceSpirits objects 20 failures 0
+scenario Bowler combat
+scenario Bowler death
+scenario Bowler lifetime
+Bowler objects 22 failures 0
+scenario IceGolemite combat
+scenario IceGolemite death
+scenario IceGolemite lifetime
+IceGolemite objects 25 failures 0
+scenario ElectroWizard combat
+scenario ElectroWizard death
+scenario ElectroWizard lifetime
+ElectroWizard objects 27 failures 0
+scenario Assassin combat
+scenario Assassin death
+scenario Assassin lifetime
+Assassin objects 28 failures 0
+scenario Ghost combat
+scenario Ghost death
+scenario Ghost lifetime
+Ghost objects 29 failures 0
+scenario MovingCannon combat
+scenario MovingCannon death
+scenario MovingCannon lifetime
+MovingCannon objects 31 failures 0
+scenario Wallbreakers combat
+scenario Wallbreakers death
+scenario Wallbreakers lifetime
+Wallbreakers objects 33 failures 0
+scenario EliteArcher combat
+scenario EliteArcher death
+scenario EliteArcher lifetime
+EliteArcher objects 35 failures 0
+scenario ElixirGolem combat
+scenario ElixirGolem death
+scenario ElixirGolem lifetime
+ElixirGolem objects 39 failures 0
+scenario GoldenKnight combat
+scenario GoldenKnight death
+scenario GoldenKnight lifetime
+GoldenKnight objects 40 failures 0
+scenario ElectroSpirit combat
+scenario ElectroSpirit death
+scenario ElectroSpirit lifetime
+ElectroSpirit objects 43 failures 0
+scenario GoblinDemolisher combat
+scenario GoblinDemolisher death
+scenario GoblinDemolisher lifetime
+GoblinDemolisher objects 45 failures 0
+scenario GiantBuffer combat
+scenario GiantBuffer death
+scenario GiantBuffer lifetime
+GiantBuffer objects 46 failures 0
+scenario Cannon combat
+scenario Cannon death
+scenario Cannon lifetime
+Cannon objects 46 failures 0
+scenario BombTower combat
+scenario BombTower death
+scenario BombTower lifetime
+BombTower objects 49 failures 0
+scenario Xbow combat
+scenario Xbow death
+scenario Xbow lifetime
+Xbow objects 51 failures 0
+scenario GoblinDrill combat
+scenario GoblinDrill death
+scenario GoblinDrill lifetime
+GoblinDrill objects 54 failures 0
+scenario Rocket combat
+scenario Rocket death
+scenario Rocket lifetime
+Rocket objects 55 failures 0
+scenario Lightning combat
+scenario Lightning death
+scenario Lightning lifetime
+Lightning objects 56 failures 0
+scenario Log combat
+scenario Log death
+scenario Log lifetime
+Log objects 57 failures 0
+scenario BarbLog combat
+scenario BarbLog death
+scenario BarbLog lifetime
+BarbLog objects 59 failures 0
+scenario DarkMagic combat
+scenario DarkMagic death
+scenario DarkMagic lifetime
+DarkMagic objects 60 failures 0

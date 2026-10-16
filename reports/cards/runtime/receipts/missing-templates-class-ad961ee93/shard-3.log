@@ -1,0 +1,120 @@
+scenario Giant combat
+scenario Giant death
+scenario Giant lifetime
+Giant objects 12 failures 0
+scenario Witch combat
+scenario Witch death
+scenario Witch lifetime
+Witch objects 15 failures 0
+scenario Valkyrie combat
+scenario Valkyrie death
+scenario Valkyrie lifetime
+Valkyrie objects 16 failures 0
+scenario BabyDragon combat
+scenario BabyDragon death
+scenario BabyDragon lifetime
+BabyDragon objects 18 failures 0
+scenario SpearGoblins combat
+scenario SpearGoblins death
+scenario SpearGoblins lifetime
+SpearGoblins objects 20 failures 0
+scenario IceWizard combat
+scenario IceWizard death
+scenario IceWizard lifetime
+IceWizard objects 23 failures 0
+scenario DarkPrince combat
+scenario DarkPrince death
+scenario DarkPrince lifetime
+DarkPrince objects 24 failures 0
+scenario FireSpirits combat
+scenario FireSpirits death
+scenario FireSpirits lifetime
+FireSpirits objects 26 failures 0
+scenario RageBarbarian combat
+scenario RageBarbarian death
+scenario RageBarbarian lifetime
+RageBarbarian objects 29 failures 0
+scenario MegaMinion combat
+scenario MegaMinion death
+scenario MegaMinion lifetime
+MegaMinion objects 31 failures 0
+scenario AngryBarbarians combat
+scenario AngryBarbarians death
+scenario AngryBarbarians lifetime
+AngryBarbarians objects 32 failures 0
+scenario RoyalRecruits combat
+scenario RoyalRecruits death
+scenario RoyalRecruits lifetime
+RoyalRecruits objects 33 failures 0
+scenario RamRider combat
+scenario RamRider death
+scenario RamRider lifetime
+RamRider objects 34 failures 0
+scenario MegaKnight combat
+scenario MegaKnight death
+scenario MegaKnight lifetime
+MegaKnight objects 35 failures 0
+scenario RoyalHogs combat
+scenario RoyalHogs death
+scenario RoyalHogs lifetime
+RoyalHogs objects 36 failures 0
+scenario ElectroDragon combat
+scenario ElectroDragon death
+scenario ElectroDragon lifetime
+ElectroDragon objects 39 failures 0
+scenario BattleHealer combat
+scenario BattleHealer death
+scenario BattleHealer lifetime
+BattleHealer objects 41 failures 0
+scenario Monk combat
+scenario Monk death
+scenario Monk lifetime
+Monk objects 42 failures 0
+scenario ElectroGiant combat
+scenario ElectroGiant death
+scenario ElectroGiant lifetime
+ElectroGiant objects 43 failures 0
+scenario GoblinMachine combat
+scenario GoblinMachine death
+scenario GoblinMachine lifetime
+GoblinMachine objects 44 failures 0
+scenario Berserker combat
+scenario Berserker death
+scenario Berserker lifetime
+Berserker objects 45 failures 0
+scenario GoblinHut combat
+scenario GoblinHut death
+scenario GoblinHut lifetime
+GoblinHut objects 46 failures 0
+scenario BarbarianHut combat
+scenario BarbarianHut death
+scenario BarbarianHut lifetime
+BarbarianHut objects 48 failures 0
+scenario Tombstone combat
+scenario Tombstone death
+scenario Tombstone lifetime
+Tombstone objects 49 failures 0
+scenario Fireball combat
+scenario Fireball death
+scenario Fireball lifetime
+Fireball objects 50 failures 0
+scenario GoblinBarrel combat
+scenario GoblinBarrel death
+scenario GoblinBarrel lifetime
+GoblinBarrel objects 52 failures 0
+scenario Zap combat
+scenario Zap death
+scenario Zap lifetime
+Zap objects 52 failures 0
+scenario Tornado combat
+scenario Tornado death
+scenario Tornado lifetime
+Tornado objects 53 failures 0
+scenario Heal combat
+scenario Heal death
+scenario Heal lifetime
+Heal objects 56 failures 0
+scenario GoblinCurse combat
+scenario GoblinCurse death
+scenario GoblinCurse lifetime
+GoblinCurse objects 57 failures 0

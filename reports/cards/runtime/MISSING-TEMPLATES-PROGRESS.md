@@ -434,3 +434,36 @@ Read-only04baseline c86dcd4524ba1e4cc702ffbf5db17afce60773d8a34db41ca912a9dc9a5e
 Commands/details: MISSING-TEMPLATES-RELEASE-PROTOCOL.md. Rollback: oldhelper retained ingit, nohostchanges.
 
 - 2026-10-16T10:23:48Z independent native workflowround2 APPROVE exactprotocolf55a71db/replay98299e81, conditionalon completecoverage/acceptedmain/provenance/hostprerequisites; no reviewer execution. PriorR1/R2 resolved, attestation missing-templates-release-protocol-review.json. Nojoblaunch oractivepinchange.
+
+
+## 2026-10-16T10:25:56Z — runtime lookup cross-check retained
+
+Read-only rg over bot/players, bot/live, engine-cards/*.py, engine-cards/py/src/clasher, fair_player and scope:
+`rg -n -i 'no C56 public model template|raise (KeyError|ValueError).*?(template|body|bodies|token|identity)|templates\[|bodies\[' <scopedpaths>`
+Saved140matches to receipts/missing-templates-lookup-audit.txt. Reviewed runtime-relevant body guards:
+Resources.root and LIVE LevelRoot duplicate exactsamecompleted R.templates lookup; public builder typed
+identity matches exportedconfig order/exceptions; public opponent visible bodies require typedmeta/script
+bodies onlyforTroop/Building (area/projectile skipped); c56_controller emits bodymeta fromscript-bodytable.
+Corrected probe checks these tables forboth Python/native objects and actual source mapping+sharedformatter;
+Noneprobe exercises actual scripted body/ranking/mask paths. Othermatched guards concern contractconfidence,
+invalid schema/settings oranalysis/sourcebuild setup, not missing reachable effect lookups. No codechange.
+Currentonlyhostjob remains immutablefullclass230877/4workers; no new job, release or activepin action.
+
+
+## 2026-10-16T10:36:09Z — accepted complete corrected class gate; main integration dependency
+
+04read-only10:34:55Z: wrapper230877/4workers absent, lease230877 ABSENT; allfourrawreceiptscomplete=true,
+PASS,93/93/90/90scenarios; allfiles/logs frozen naturally. No jobstop/restart/duplicate. CopiedallfourJSON/logs
+via scopedscp to receipts/missing-templates-class-ad961ee93/. Ran approvedparser88530263 withad961manifest:
+`PYTHONDONTWRITEBYTECODE=1 nice -n 15 python3 -B reports/cards/runtime/tools/summarize_object_templates.py --approved-source reports/cards/runtime/receipts/missing-templates-approved-source-ad961ee93.json --out reports/cards/runtime/receipts/missing-templates-class-ad961ee93.json reports/cards/runtime/receipts/missing-templates-class-ad961ee93/shard-{0,1,2,3}.json`.
+PASS122distinctdefinitions/366scenarios/96,171checks/0exceptions;450/450/1500ticks, bothseats/engines.
+187observed/native-materializedkeys(95troop14building51projectile27area),142/142configidentitiesobserved,
+355templates; translator355objects/355statics/142units/45projectiles/204spells. Native-onlykeys0, omissions0;
+sevenPython-onlybirthjournalkeys stillnativeconstruct/rootchecked (alllisted in report);157inheritedaliases.
+Five exactareafixes allformatter/nativeboard bothseats;nativegameplayemission2/5,other3within-step only.
+FullclasssummarySHA7f78c31fc4a2e6821f0a0ae438a6db5e1c5122de623a0cbfbeb9a5b6cc1dc001.
+K4L12/12, assembler11+12, None55,834/rank8,496 remain accepted separately; originalr2negative intact.
+Regenerated187-rowreport fromacceptedreceipt. No source7 changes after approvedprobe; acceptedmain merge
+is requiredbefore reviewed immutableopt-inrelease. Gatepacket records pendingmain/release/finalgates, notwhole-taskdone.
+Stagedscan/commitonlyownsource/probe/audit/report/receipt paths; noleadPROGRESS/Nulls staging.
+Concrete rollback retainedr2roots/pins; noactiveLIVEpinswitch/no sealing. Essentialmainintegrationhandoff pendingcheckpoint.
