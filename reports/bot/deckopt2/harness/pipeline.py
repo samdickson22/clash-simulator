@@ -135,8 +135,14 @@ def main():
                 elif not full_done:
                     current = 'true-deck validation first; projected validation bank registered'
                 else:
-                    launch_if_needed(ROOT / 'final-validation', 'validation', 'final-validation')
-                    current = 'projected validation'
+                    # Full-pool goes live00:00Z. Projected validation is optional,
+                    # off the critical path, and requires a fresh idle-CPU audit.
+                    dump(ROOT / 'PROJECTED-IDLE-ONLY.json', dict(utc=utc(),
+                         state='not run; optional after true-deck completion and idle-capacity audit',
+                         bank_sha256=sha(ROOT / 'final-validation/validation/bank.json')))
+                    current = 'true-deck complete; projected optional idle-only, not admitted'
+                    dump(ROOT / 'pipeline-status.json', dict(updated_utc=utc(), stage=current))
+                    return
                 if complete(ROOT / 'final-validation', 'validation'):
                     command([PY, ROOT / 'refresh.py'])
                     dump(ROOT / 'VALIDATION-READY.json', dict(utc=utc(),

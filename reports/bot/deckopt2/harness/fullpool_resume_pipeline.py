@@ -58,7 +58,7 @@ def main():
         for host in HOSTS[:2]:
             if host == '127x03' and not (ROOT/'projected-parity/receipt.json').exists():
                 continue  # Reserve the released small allocation for the required parity check.
-            sizes = (4,1,3,8,8,8)
+            sizes = (4,)  # BOT LEAD: no additional01/03 capacity tonight.
             for i,n in enumerate(sizes):launch(host,f'fpr2-{host[-2:]}-{i}',n)
         # Projected validation is deferred until this variant completes.
         # The first claims fit the allocation released by screening: 01:6,
