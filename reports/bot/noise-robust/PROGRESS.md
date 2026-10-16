@@ -416,3 +416,30 @@ python3 $J/audsum-r4.py $J/fb2,$J/fb2-hi03,$J/fb2-hi04
     the same failure set.
   - Patch regenerated, sha256 571749db6694ff970cf6e35233ccbf1a391743d68fbf00a837d5604346c013cc.
     floorchk and the smoke run at the end of Phase B, on the combined tree.
+- **Phase B, in development (01:25–01:49Z).**
+  - Status: multibody has not landed on origin/main; births.py there is still 46a595b9. Phase B is built against
+    multibody-r1 (9ea9e745) plus a dev-only shim of the requested API. The shim source-patches r1 to add
+    `snapshot/restore/last_tracks/identity/resolve/forget_card` and `CardBodies.bodies_of`. The work lives in the
+    scratch worktree 05:`clasher-bot-revfix5-mb` = origin/main + multibody-r1 + Phase B in bot/noise; the shim and
+    the `livefix/__init__.py` hook are never committed.
+  - Design:
+    - `assign` snapshots the tracker. `_track_frame` sanitizes on resolved identity, tracks the frame as one batch,
+      and validates the bodies.
+    - Board evidence is keyed by the resolved deployment card (`_evidence_card`).
+    - `refilter` restores the snapshot, forgets the evicted cards' tracks, and re-tracks the frame with the final set.
+  - Tests: test_revealed 28/28 on the combined tree; test_multibody passes. The 6 tests that touch Phase B (the
+    round-1 refilter test plus 5 new ones) fail on 574e4341's livefix + multibody-r1: 4 with TypeError, the
+    SkeletonArmy test by eviction, and the sibling test. Mutation checks on the fixed code catch each rule: no
+    forget_card fails the leak test; the r5 per-unit `_body` gives 6 × Goblin_Stab; raw labels evict SkeletonArmy;
+    no body rule fails the sibling test; no identity rule fails the misread test.
+  - LIVE suite, combined tree (05 scratch `clasher-bot-revfix5-mbcheck`): patched 111/13/2 vs unpatched 83/13/2,
+    with the same 13 failures.
+  - Preliminary 03 runs (tree 03:`clasher-bot-revfix6-mbr1`, cpu_job.sh 9 each, 8 workers):
+    - floorchk-r6pre: 30/30 identical command hashes, Δscore 0.000, 0 restarts.
+    - smoke-r6pre (HEADLINE 300–319 × R3a/v1): 40/40 terminal, 0 errors, perc_errors 0, 35 evictions
+      (r5 smoke: 47).
+    - Unit-records dropped: false-card 398 (r5 1,193) and true-card 75 (r5 64).
+    - Mean score 0.700 (r5 0.775). That is n=40 on different code, so it is not a strength comparison.
+  - Next: when the final multibody (with the births API) lands, rebase, swap the shim for the real API, and re-run
+    the tests, the LIVE suite, floorchk and the smoke on that tree. The fallback is the latest scratch multibody at
+    ~03:20Z.
