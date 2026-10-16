@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:07 UTC
+## Current handoff: Sol interim, 2026-10-16 09:10 UTC
 
 Sam's 2026-10-16 direction: continue existing work on GPT-6.1-Sol high; no major strategy, runtime or model
 promotion until Sam returns to Opus. Preserve ownership, data and existing gates. Bounded Astra high diagnostics
@@ -24,9 +24,13 @@ Mac-only emulator scope remain binding; no heavy work on 05 and never hosts 09â€
   containing "python" inflate that conservative count; no accounting script or priorities changed.
   LIVE comparison complete: patched 217 passed / 9 failed / 7 skipped, unpatched 178/9/7, identical failure sets.
   The +39 passing tests do not clear the pending floorchk/smoke gates or authorize deployment.
-- **Level pilot:** original owner resumed in place on Sol; helper completed the DEV harness. Four pytest tests pass;
+- **Level pilot HOLD before bank/game (09:10Z):** original owner resumed in place on Sol; helper completed the DEV harness. Four pytest tests pass;
   repeated four-game DEV A runs match all four hashes/logs/tower HP, 8/8 wins, no errors/rejections/failures.
-  Exporter on 01 PID 2918593 remains alive; L11 exported 121 cards with no errors, L5 ongoing. Deferred 03 probe
+  Original exporter on 01 PID 2918593 finished: L11 121 cards/no errors; L5 118 cards/3 errors (Clone, Earthquake,
+  Tornado). Full-runtime check11 matches only 3/121 cards to R.config; 118 unsupported, including pilot cards.
+  Arm B would silently retain L11 for most cards, so it must not run. The earlier 20-card preliminary mapping
+  claim is not upheld by this full check. Owner diagnoses structural mismatch; disjoint exports4/6/7/9 continue.
+  Deferred 03 probe
   expired its original admission timeout without running and was not requeued. Independent Sol review and a small
   Astra diagnostic on leaf normalization are active. No pilot bank drawn and no promotion. See `levels/PROGRESS.md`.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at

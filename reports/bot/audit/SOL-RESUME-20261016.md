@@ -62,6 +62,18 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
   installed Git does not support `rev-parse --path-format=absolute`. Replaced it with `rev-parse --git-path index`
   plus Python path resolution. The error and exact commands are retained in the local command log; no rollback
   or remote mutation resulted from that failed attempt.
+- **09:10:15Z:** documentation commit `5da7369307c07de542a2d5812cc99363978cbc22` pushed to main via an isolated
+  temporary index on parent `2b7049fae3c60fadb425a4e6e14f0d645da7e396`. Three explicit paths only. JSON parsing,
+  staged whitespace check and mandatory secret scan passed; shared worktree index SHA and HEAD unchanged.
+  Exact helper launch: `python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+- **09:10Z, MATERIAL correction from level owner:** original11/5 exporter completed. L11 121cards/0errors;
+  L5 118cards/3errors(Clone,Earthquake,Tornado). Full-runtime check11 matches only3/121 cards to R.config;
+  118 unsupported INCLUDING pilot cards. Current B would silently keep L11 for most cards. **Pilot HOLD before
+  bank/game**; earlier20-card preliminary mapping claim is not upheld. Existing disjoint4/6/7/9 exports remain
+  alive/valid. Source/schema diagnosis stays with original owner and existing reviewers; no duplicate work or
+  promotion. Coordinator immediately notified via `bot-level-blocker-20261016T0910Z`; owner acknowledged via
+  `bot-level-blocker-ack-20261016T0910Z`. First attempt to patch PROGRESS used a nonmatching context line and was
+  rejected without edits; corrected the patch and recorded this blocker here and in PROGRESS.
 
 ## Existing job identifiers (no launch in this continuation)
 
