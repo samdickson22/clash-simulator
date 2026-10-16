@@ -1,0 +1,17 @@
+{
+ "games": 600,
+ "statuses": {
+  "match": 496,
+  "mismatch": 104
+ },
+ "mismatch_rate": 0.17333333333333334,
+ "ticks": 1842169,
+ "panics": 0,
+ "exceptions": 0,
+ "replay_errors": 0,
+ "action_first_divergences": 0,
+ "post_divergence_action_disagreements": 111,
+ "new_interaction_games": 15,
+ "c56_mixed_clock_games": 14,
+ "known_c56_games": 75
+}

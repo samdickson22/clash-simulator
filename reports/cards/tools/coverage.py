@@ -1,0 +1,112 @@
+"""Build reports/cards/COVERAGE.md from the probe/fidelity/translator inputs (missing inputs show as '?').
+
+python3 reports/cards/tools/coverage.py [--python probe-python.json] [--native probe-native.json]
+    [--fidelity reports/cards/fidelity/results.jsonl] [--seen opponent-decks.jsonl] > reports/cards/COVERAGE.md
+"""
+import argparse
+import json
+import sys
+from collections import Counter
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pool import ladder_pool, ROOT
+
+C56 = frozenset((
+    'AngryBarbarians', 'Archer', 'ArcherQueen', 'Arrows', 'BabyDragon', 'Balloon', 'BarbLog', 'Bats',
+    'Berserker', 'BlowdartGoblin', 'BombTower', 'Cannon', 'DarkPrince', 'Earthquake', 'ElectroSpirit',
+    'FireSpirits', 'Fireball', 'Firecracker', 'FirespiritHut', 'Ghost', 'Giant', 'GoblinBarrel',
+    'GoblinGang', 'GoblinHut', 'Goblins', 'Goblinstein', 'Golem', 'HogRider', 'IceGolemite', 'IceSpirits',
+    'InfernoTower', 'Knight', 'Lightning', 'Log', 'MightyMiner', 'Miner', 'MiniPekka', 'MinionHorde',
+    'Minions', 'Musketeer', 'Poison', 'Prince', 'Princess', 'Rascals', 'Rocket', 'RoyalDelivery',
+    'RoyalHogs', 'SkeletonArmy', 'Skeletons', 'Tesla', 'Tornado', 'Valkyrie', 'Wallbreakers', 'Wizard',
+    'Xbow', 'Zap'))
+
+# Batch plan: live priority first, then arena order, then shared mechanics; champions last.
+BATCH = {}
+for b, names in {
+    'A': 'GoblinCage SpearGoblins Bomber Tombstone Barbarians BattleRam MegaMinion BarbarianHut Mortar DartBarrell '
+         'Witch Pekka SkeletonWarriors SkeletonDragons',
+    'B': 'RoyalGiant ThreeMusketeers RoyalRecruits GiantSkeleton BattleHealer Freeze Snowball Vines SkeletonBalloon '
+         'GoblinGiant GiantBuffer Hunter MiniSparkys',
+    'C': 'ZapMachine InfernoDragon ElectroWizard RamRider MegaKnight IceWizard ElectroDragon Phoenix GoblinDemolisher '
+         'LavaHound Bowler Assassin EliteArcher ElectroGiant SuspiciousBush RageBarbarian AxeMan DarkWitch '
+         'ElixirGolem Ronin MovingCannon Fisherman WitchMother GoblinMachine',
+    'D': 'Graveyard Heal Rage GoblinCurse Mirror Clone DarkMagic MergeMaiden GoblinDrill',
+    'E': 'Elixir_Collector',
+    'F': 'SkeletonKing GoldenKnight BossBandit Monk LittlePrince',
+}.items():
+    for n in names.split():
+        BATCH[n.replace('_', ' ')] = b
+
+
+def load_json(path, default):
+    try:
+        p = Path(path)
+        if p.suffix == '.jsonl':
+            return [json.loads(line) for line in p.read_text().splitlines() if line.strip()]
+        return json.loads(p.read_text())
+    except (OSError, ValueError):
+        return default
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--python', default='/mpac/sdicks02/jobs/clasher/cards/probe-python.json')
+    ap.add_argument('--native', default='/mpac/sdicks02/jobs/clasher/cards/probe-native.json')
+    ap.add_argument('--fidelity', default=str(ROOT / 'reports/cards/fidelity/results.jsonl'))
+    ap.add_argument('--scope', default=str(ROOT / 'reports/cards/runtime/scope.json'))
+    ap.add_argument('--seen', default='/mpac/sdicks02/jobs/clasher/cards/opponent-decks.jsonl')  # git show origin/main:reports/live/loop/opponent-decks.jsonl
+    a = ap.parse_args()
+    py = {r['card']: r for r in load_json(a.python, [])}
+    nat = {r['card']: r for r in load_json(a.native, [])}
+    fid = {}
+    for r in load_json(a.fidelity, []):
+        if 'card' in r and 'verdict' in r:
+            fid[r['card']] = r['verdict']
+    scope = set(load_json(a.scope, {}).get('cards', []))
+    seen = Counter()
+    for row in load_json(a.seen, []):
+        for c in row.get('opponent_deck') or row.get('opp_deck') or []:
+            seen[c] += 1
+    try:
+        sys.path.insert(0, str(ROOT))
+        from bot.cards.proxy_table import NAMED
+    except Exception:
+        NAMED = {}
+
+    rows = []
+    for c in sorted(ladder_pool(), key=lambda c: (c['name'] not in C56, BATCH.get(c['name'], 'Z'), c['arena'] or 99, c['name'])):
+        n = c['name']
+        p = py.get(n, {})
+        r = nat.get(n, {})
+        if n in C56:
+            engine = 'C56'
+        elif not r:
+            engine = '?'
+        elif r.get('native') == 'ok' and r.get('first_mismatch') is None:
+            engine = 'native=py'
+        else:
+            engine = f"diff@{r.get('first_mismatch')}" if r.get('native') == 'ok' else 'native err'
+        test = 'C56 gates' if n in C56 else fid.get(n, '-')
+        trans = 'C56' if n in C56 else ('real (r1-cards1)' if n in scope else ('proxy ' + NAMED[n]['proxy_card'] if n in NAMED else 'drop'))
+        perc = 'C56 vocab' if n in C56 else 'LIVE r3 (pending)'
+        rows.append(f"| {c['display']} | `{n}` | {c['kind']} | {c['cost']} | {c['arena']} | {BATCH.get(n, '' if n in C56 else '?')} "
+                    f"| {'ok' if p.get('python') == 'ok' else p.get('python', '?')} | {engine} | {test} | {trans} | {perc} | {seen.get(n, seen.get(c['display'], 0))} |")
+    total = len(rows)
+    missing = sum(1 for c in ladder_pool() if c['name'] not in C56)
+    print('# Card coverage (generated by reports/cards/tools/coverage.py; do not edit by hand)\n')
+    print(f'Pool: {total} ladder cards (gamedata.json, visible, no tower troops). C56: {total - missing}. Missing: {missing}.\n')
+    print('Columns: **py** = our Python engine plays it; **engine** = native 681b5f2c vs Python 900-tick lockstep digest '
+          '(`native=py` = bit-identical); **fidelity** = vs RoyaleSim 16.402 scenario check; **translator** = how the '
+          'live translator represents it; **perception** = LIVE LEAD domain; **seen** = opponent decks containing it '
+          '(Battle Log inventory).\n')
+    print('Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remaining troops, D spells + drill, '
+          'E elixir collector, F champions (abilities) last.\n')
+    print('| card | name | kind | cost | arena | batch | py | engine | fidelity | translator | perception | seen |')
+    print('|---|---|---|---:|---:|---|---|---|---|---|---|---:|')
+    print('\n'.join(rows))
+
+
+if __name__ == '__main__':
+    main()

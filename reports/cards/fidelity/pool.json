@@ -1,0 +1,266 @@
+[
+  {
+    "name": "Pekka",
+    "kind": "troop"
+  },
+  {
+    "name": "Witch",
+    "kind": "troop"
+  },
+  {
+    "name": "Barbarians",
+    "kind": "troop"
+  },
+  {
+    "name": "Bomber",
+    "kind": "troop"
+  },
+  {
+    "name": "SpearGoblins",
+    "kind": "troop"
+  },
+  {
+    "name": "GiantSkeleton",
+    "kind": "troop"
+  },
+  {
+    "name": "IceWizard",
+    "kind": "troop"
+  },
+  {
+    "name": "RoyalGiant",
+    "kind": "troop"
+  },
+  {
+    "name": "SkeletonWarriors",
+    "kind": "troop"
+  },
+  {
+    "name": "ThreeMusketeers",
+    "kind": "troop"
+  },
+  {
+    "name": "LavaHound",
+    "kind": "troop"
+  },
+  {
+    "name": "ZapMachine",
+    "kind": "troop"
+  },
+  {
+    "name": "Bowler",
+    "kind": "troop"
+  },
+  {
+    "name": "RageBarbarian",
+    "kind": "troop"
+  },
+  {
+    "name": "BattleRam",
+    "kind": "troop"
+  },
+  {
+    "name": "InfernoDragon",
+    "kind": "troop"
+  },
+  {
+    "name": "MegaMinion",
+    "kind": "troop"
+  },
+  {
+    "name": "ElectroWizard",
+    "kind": "troop"
+  },
+  {
+    "name": "Hunter",
+    "kind": "troop"
+  },
+  {
+    "name": "AxeMan",
+    "kind": "troop"
+  },
+  {
+    "name": "Assassin",
+    "kind": "troop"
+  },
+  {
+    "name": "RoyalRecruits",
+    "kind": "troop"
+  },
+  {
+    "name": "DarkWitch",
+    "kind": "troop"
+  },
+  {
+    "name": "RamRider",
+    "kind": "troop"
+  },
+  {
+    "name": "MiniSparkys",
+    "kind": "troop"
+  },
+  {
+    "name": "MovingCannon",
+    "kind": "troop"
+  },
+  {
+    "name": "MegaKnight",
+    "kind": "troop"
+  },
+  {
+    "name": "SkeletonBalloon",
+    "kind": "troop"
+  },
+  {
+    "name": "DartBarrell",
+    "kind": "troop"
+  },
+  {
+    "name": "GoblinGiant",
+    "kind": "troop"
+  },
+  {
+    "name": "Fisherman",
+    "kind": "troop"
+  },
+  {
+    "name": "EliteArcher",
+    "kind": "troop"
+  },
+  {
+    "name": "ElectroDragon",
+    "kind": "troop"
+  },
+  {
+    "name": "ElixirGolem",
+    "kind": "troop"
+  },
+  {
+    "name": "BattleHealer",
+    "kind": "troop"
+  },
+  {
+    "name": "SkeletonKing",
+    "kind": "troop"
+  },
+  {
+    "name": "GoldenKnight",
+    "kind": "troop"
+  },
+  {
+    "name": "Monk",
+    "kind": "troop"
+  },
+  {
+    "name": "SkeletonDragons",
+    "kind": "troop"
+  },
+  {
+    "name": "WitchMother",
+    "kind": "troop"
+  },
+  {
+    "name": "ElectroGiant",
+    "kind": "troop"
+  },
+  {
+    "name": "Phoenix",
+    "kind": "troop"
+  },
+  {
+    "name": "LittlePrince",
+    "kind": "troop"
+  },
+  {
+    "name": "GoblinDemolisher",
+    "kind": "troop"
+  },
+  {
+    "name": "GoblinMachine",
+    "kind": "troop"
+  },
+  {
+    "name": "SuspiciousBush",
+    "kind": "troop"
+  },
+  {
+    "name": "GiantBuffer",
+    "kind": "troop"
+  },
+  {
+    "name": "BossBandit",
+    "kind": "troop"
+  },
+  {
+    "name": "Ronin",
+    "kind": "troop"
+  },
+  {
+    "name": "Mortar",
+    "kind": "building"
+  },
+  {
+    "name": "BarbarianHut",
+    "kind": "building"
+  },
+  {
+    "name": "Elixir Collector",
+    "kind": "building"
+  },
+  {
+    "name": "Tombstone",
+    "kind": "building"
+  },
+  {
+    "name": "GoblinCage",
+    "kind": "building"
+  },
+  {
+    "name": "GoblinDrill",
+    "kind": "building"
+  },
+  {
+    "name": "Rage",
+    "kind": "spell"
+  },
+  {
+    "name": "Freeze",
+    "kind": "spell"
+  },
+  {
+    "name": "Mirror",
+    "kind": "spell"
+  },
+  {
+    "name": "Graveyard",
+    "kind": "spell"
+  },
+  {
+    "name": "Clone",
+    "kind": "spell"
+  },
+  {
+    "name": "Heal",
+    "kind": "spell"
+  },
+  {
+    "name": "Snowball",
+    "kind": "spell"
+  },
+  {
+    "name": "DarkMagic",
+    "kind": "spell"
+  },
+  {
+    "name": "GoblinCurse",
+    "kind": "spell"
+  },
+  {
+    "name": "MergeMaiden",
+    "kind": "spell"
+  },
+  {
+    "name": "Vines",
+    "kind": "spell"
+  }
+]

@@ -1,0 +1,32 @@
+{
+ "host": "127x08",
+ "python": "3.12.15 (main, Oct  3 2026, 01:03:07) [Clang 22.1.3 ]",
+ "source": "read-only clasher-bot-runtime/r1/src",
+ "sha256": {
+  "../out-total/clasher_core.abi3.so": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+  "engine-rs/differential.py": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+  "engine-rs/diagnostics.py": "edb1b2daefe3df380c6b75fd297d8e799208d5120b974a7683f421905974bab1",
+  "engine-rs/src/lib.rs": "9acddeb884581d0651666da2f2f03519058f9d69dfd4287a87e7be50c8c7a48c",
+  "src/clasher/battle.py": "1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2",
+  "src/clasher/entities.py": "917da0be17cdbea1ad434e42080fdb11ac9afabbe47a6aae099974f830cc098a",
+  "src/clasher/cards/bandit.py": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9",
+  "src/clasher/cards/mega_knight.py": "7ac3d9eaf45d9e29beee4561713fbec7aa3cd8b89ba445a4d0bb4bfb81fa49ac",
+  "src/clasher/cards/electro_dragon.py": "2d8237453312c4ff04b01a1b738f609a2e81006e93809c991a87bc89230c683b",
+  "../native-diff/mixed_games.py": "7692e8972fd04688c8a45c94d6cf8ba1a620c552470a23e65f52e14e9ef8a6e6",
+  "../native-diff/plan.json": "96b36298bfd77a66520f9c13f932b8958137c844e8395b85c6088e4ca5afa250",
+  "gamedata.json": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65"
+ },
+ "native_scope": "full 122-card config with Mirror level-12 templates",
+ "primary_launcher": 1886743,
+ "followups_launcher": 1973576,
+ "mechanics_launcher": 2003561,
+ "baseline_pending_cancelled": 2075965,
+ "baseline_launcher": null,
+ "baseline_cancelled_launchers": [
+  2075965,
+  2116836
+ ],
+ "baseline_games_run": 0,
+ "c56_repros_launcher": 2047519,
+ "c56_repros_worker": 2056107
+}

@@ -1,0 +1,16 @@
+{
+  "rows": 620,
+  "cards": 66,
+  "counts": {
+    "PASS": 4,
+    "DIFF": 62,
+    "NOT-IN-ROYALESIM": 0,
+    "HARNESS-GAP": 0
+  },
+  "accepted_all_deployments": true,
+  "r1_battle_sha256": "1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2",
+  "interventions": {
+    "rsim:hand_forced": 6
+  },
+  "source_symbols_checked": true
+}

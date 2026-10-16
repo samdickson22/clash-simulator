@@ -1,0 +1,117 @@
+import time
+import math
+from typing import Dict, Any, Optional, Callable
+import json
+from pathlib import Path
+
+from .battle import BattleState, STANDARD_MATCH_TICKS
+from .arena import Position
+from .paths import gamedata_path, resolve_path
+
+
+class BattleEngine:
+    """Main engine for running Clash Royale battles"""
+    
+    def __init__(self, data_file: str | Path | None = None):
+        self.data_file = gamedata_path(data_file, must_exist=True)
+        self.battle: Optional[BattleState] = None
+        
+    def create_battle(self) -> BattleState:
+        """Create a new battle instance"""
+        self.battle = BattleState()
+        self.battle.card_loader.data_file = self.data_file
+        self.battle.card_loader.load_cards()
+        return self.battle
+    
+    def run_battle(self, 
+                   max_ticks: int = STANDARD_MATCH_TICKS,
+                   speed_factor: float = 1.0,
+                   on_tick: Optional[Callable[[BattleState], None]] = None) -> Dict[str, Any]:
+        """Run a complete battle to completion"""
+        
+        if not self.battle:
+            self.create_battle()
+
+        factor = float(speed_factor)
+        if not math.isfinite(factor) or factor <= 0.0:
+            raise ValueError("speed_factor must be a finite positive number")
+        tick_budget = max(0, int(max_ticks))
+        target_tick = self.battle.tick + tick_budget
+        
+        start_time = time.time()
+        
+        while self.battle.tick < target_tick and not self.battle.game_over:
+            remaining_ticks = target_tick - self.battle.tick
+            tick_before_batch = self.battle.tick
+            self.battle.step(min(factor, float(remaining_ticks)))
+            
+            if on_tick and self.battle.tick > tick_before_batch:
+                on_tick(self.battle)
+        
+        end_time = time.time()
+        
+        return {
+            "result": self.battle.get_state_summary(),
+            "duration_seconds": end_time - start_time,
+            "ticks_per_second": self.battle.tick / (end_time - start_time) if end_time > start_time else 0
+        }
+    
+    def run_headless(self, speed_factor: float = 10.0) -> Dict[str, Any]:
+        """Run battle in headless mode for maximum speed"""
+        return self.run_battle(speed_factor=speed_factor)
+    
+    def simulate_action(self, player_id: int, card_name: str, x: float, y: float) -> bool:
+        """Simulate a player action (card deployment)"""
+        if not self.battle:
+            return False
+        
+        position = Position(x, y)
+        return self.battle.deploy_card(player_id, card_name, position)
+    
+    def get_battle_state(self) -> Optional[Dict[str, Any]]:
+        """Get current battle state as dict"""
+        if not self.battle:
+            return None
+        
+        return {
+            "time": self.battle.time,
+            "tick": self.battle.tick,
+            "entities": {
+                eid: {
+                    "id": entity.id,
+                    "type": entity.__class__.__name__,
+                    "position": {"x": entity.position.x, "y": entity.position.y},
+                    "player_id": entity.player_id,
+                    "hitpoints": entity.hitpoints,
+                    "max_hitpoints": entity.max_hitpoints,
+                    "is_alive": entity.is_alive
+                }
+                for eid, entity in self.battle.entities.items()
+            },
+            "players": [
+                {
+                    "player_id": p.player_id,
+                    "elixir": p.elixir,
+                    "hand": p.hand,
+                    "king_tower_hp": p.king_tower_hp,
+                    "left_tower_hp": p.left_tower_hp,
+                    "right_tower_hp": p.right_tower_hp,
+                    "crowns": self.battle.get_crown_count(i)
+                }
+                for i, p in enumerate(self.battle.players)
+            ],
+            "game_over": self.battle.game_over,
+            "winner": self.battle.winner,
+            "double_elixir": self.battle.double_elixir,
+            "triple_elixir": self.battle.triple_elixir,
+            "overtime": self.battle.overtime
+        }
+    
+    def save_replay(self, filename: str | Path) -> None:
+        """Save battle replay to JSON file"""
+        state = self.get_battle_state()
+        if state:
+            replay_path = resolve_path(filename, must_exist=False)
+            replay_path.parent.mkdir(parents=True, exist_ok=True)
+            with replay_path.open('w') as f:
+                json.dump(state, f, indent=2)
