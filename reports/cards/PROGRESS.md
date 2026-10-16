@@ -107,3 +107,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   assigned); live switch ships as bundle r1-cards1 + their extended nets + open-world belief; (2) full-pool retrain
   generates under **live16402 on r1-cards2** → tell BOT LEAD when that opt-in pin is ready (start signal).
   Null's slots: reference AVD, client 15.535.13 → mechanics only; slot 1–2 h via LIVE LEAD.
+- 02:36Z Batch A review r2 REJECT (same class: spell-killed spawner → death-spawn first update vs spell status pass,
+  Python synchronous, Rust after direct_spell). Opus owner told to close the CLASS (audit table of all mid-phase spawn
+  paths + probe per row), relaunch gate. Gate r3 (5f07238c) to be killed; r1-cards2/live16402b gates continue on
+  5f07238c, final native swapped in with smoke + K4L sha check.
