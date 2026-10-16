@@ -62,3 +62,15 @@ Owner: Opus live-diag research sub-agent of the BOT LEAD (thread clasher-bot-lea
   04 -res (PGID 2010521). DECISION RESTS ON BASE2 ALONE (bank 1 selected -res among 7 arms).
 - RUNNING: ab6 λ/R grid on bank 1 (dev): 08 -res8 -res30 (PGID 3367853), 04 -res15p1 (PGID 2155688). Best grid arm then needs a NEW bank.
 - TRAINING-FIX.md drafted (plan + ETAs).
+TRAIN_BASE=3948945398717664 drawn 2026-10-16T18:58:41Z
+- Option 2 data (BOT LEAD approved 18:5xZ): bot/livediag/dumpbank_gen.py; train bank above; db1 = 08 cases 0-499 (W10),
+  04 cases 500-999 (W10); out <host>:jobs/clasher/bot-livediag/db1/roots-*.jsonl; resumable (same launcher).
+  Smoke (dbsmoke on 08): replay_ok 4/4, ~220 s per base game incl. 2 reserve replays.
+BASE3 (strong-opponent check)=2390764269446208 drawn 2026-10-16T19:18:55Z
+BASE4 (strong-opponent replication)=1870204031157424 drawn 2026-10-16T19:31:33Z
+
+## Status 2026-10-16T19:4xZ: deployable -res
+- Strong-opponent gate PASSED (RESULTS §5b): -res vs LIVE-K4CW-r16 +0.18 [+0.07, +0.30] on BASE3. Replication ab8 on BASE4 running.
+- Deployable token `res` (bot/search/reserve.py + lopp.py/lopp_fast.py hooks); res_equiv 3/3 equal hashes; wall check
+  (lopp_time, 04 cores 40-49, 2x5) p50/p95 base 86/128 ms, res 96/137 ms, hit 0.008/0.009, 0 errors.
+- db1 (option 2) STOPPED at 103 rows for the gate; restart with 4-opponent mix (adds LIVE-K4CW-r16) via run_db.sh (resumable).

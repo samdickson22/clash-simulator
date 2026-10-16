@@ -53,6 +53,7 @@ from bot.players.base import WAIT
 from bot.search.lopp import (FAILURES, Learned, LearnedOppPlayer, batch_rollouts, fail_decision, fatal, load_model,
                               mean_samples, mix, note_failure, sample_seed)
 from bot.search.oppmodel import STYLES, TIMED_WAITS, _argmax, _bonus
+from bot.search.reserve import apply as reserve_apply
 
 _POOLS: dict = {}
 _EXECUTORS: dict = {}
@@ -612,6 +613,7 @@ def reduce_fast(core, root, seat, candidates, *, make_opp, opp_spec, threads=1, 
     elixir = float(core.info.packet.observation.global_features[5])*10
     for a in scores:
         scores[a] = _bonus(a, scores[a], elixir)
+    reserve_apply(core, scores, elixir)              # token res only (bot/search/reserve.py)
     best = _argmax(work, scores)
     core.last = dict(candidates=work, scores=[scores.get(a) for a in work], traces=[])
     core.deadline_stats = dict(hit=hit, fallback=best is None, completed=len(scores), candidates=len(work))
@@ -630,6 +632,9 @@ class _FastMixin:
         if self.fast_prep or self.fast_cut:
             install_fast_prep(self.rt, cut=self.fast_cut)
         core = self.p.core
+        if self.arm.get('reserve'):
+            from bot.search.reserve import install
+            install(self.rt, core, ctx.own_order)
         names = self.model_name.split('+')
         for name in names:
             load_model(name)

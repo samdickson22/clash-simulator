@@ -126,10 +126,41 @@ Method (`root_scores.py --levels`, `root_report.py`):
   13–14), but they never win. **The leaf value and horizon rank a back Giant or a banked Fireball below cheap bridge plays**,
   and pruning plays no part.
 - **-res** is the only arm that moves the mechanism: elixir at the Giant cross rises 2.95 → 3.54, and it never loses on an
-  opponent. Its pooled CI spans 0. **Confirmation running:** -res vs base on fresh bank 2, BASE2 = 580000520902944
-  (drawn 2026-10-16T18:53:30Z), 136 cases × 3 opponents (`ab5/` on 04 and 08).
+  opponent on bank 1. Its pooled CI spans 0.
+- **BASE2 confirmation: NOT CONFIRMED.** Bank 2 is BASE2 = 580000520902944 (drawn 2026-10-16T18:53:30Z), 136 cases × 3 opponents, 408 paired games, 0 errors:
+
+  | opponent | base | -res | Δ |
+  |---|---:|---:|---:|
+  | R3a | 0.882 | 0.853 | −0.029 |
+  | v1 | 0.912 | 0.919 | +0.007 |
+  | rext-bc | 0.993 | 0.963 | −0.029 |
+  | **pool** | | | **−0.017 [−0.047, +0.015]** |
+
+  Elixir at the Giant's cross rises 2.96 → 3.68. Banking more works mechanically but does not buy wins against these opponents. **Not deployed.**
 - **rext-bc is saturated** with the live deck vs Giant decks (base 0.985), so it carries little signal here. R3a and v1 drive the deltas.
 - **Deployment rule (bot lead):** deploy only an arm that wins on the pooled fresh bank and doesn't lose on rext-bc. Nothing qualifies yet.
+
+### 5b. Against a STRONG opponent (bot lead: the sim pool is too weak to punish an elixir dump)
+
+The opponent is `LIVE-K4CW-r16`: deterministic K4C-r16 with the live belief (the frozen K4C belief raises on our off-prior e16 deck). The opponent decks are
+the Giant decks.
+
+**BASE3** = 2390764269446208, drawn 2026-10-16T19:18:55Z before any game; 100 paired cases; 0 errors:
+
+| | base LD-K4L-R-gs-rw | -res |
+|---|---:|---:|
+| score vs K4C-r16 | 0.41 | **0.59** |
+| Δ [95% CI] | | **+0.18 [+0.07, +0.30]** (paired W/T/L 27/64/9) |
+| elixir at Giant cross (median) | 3.46 | 4.43 |
+| Giant / Fireball plays per game | 0.44 / 1.33 | 0.58 / 1.39 |
+| undefended Giant pushes | 5.1% | 6.5% |
+| reaction p50 | 2.65 s | 2.65 s |
+
+- **Against an opponent that punishes the dump, the reserve term pays.** The weak pool (R3a / v1 / rext-bc at 0.88–0.99)
+  hid it.
+- This is the deploy case set by the bot lead: it wins vs the strong opponent and is neutral elsewhere (BASE2 pooled −0.017 [−0.047, +0.015]).
+- The live A/B gate (§7) passes.
+- A replication on BASE4 = 1870204031157424 (drawn 2026-10-16T19:31:33Z, 100 cases) is running.
 
 ## 6. Handsync (tap guard, s44+) vs off (s41–s43)
 
@@ -161,3 +192,29 @@ Tool: `bot/livediag/handsync_cmp.py` on 12 battles off vs 10 battles on; Δ is o
 - (c) Cannons: mostly sensible. Pockets are legal, and a few wrong-lane or anti-air Cannons are rollout choices.
 - None of this is a perception, latency, tile-mapping or level problem. All three show identically in sim.
   The mis-taps (~8%) are the one live I/O problem, and the tap guard (s44+) addresses them.
+
+## 7. PRE-REGISTRATION: live A/B, -res vs base (written 2026-10-16T19:20:49Z, before any -res live session)
+
+Status: **gate PASSED** (§5b: +0.18 [+0.07, +0.30] vs K4C-r16). Gated on the strong-opponent sim check (§5; base vs -res vs LIVE-K4CW-r16 on BASE3 = 2390764269446208, drawn
+2026-10-16T19:18:55Z, 100 cases). The gate passes unless -res is clearly negative there, i.e. it passes if the CI upper bound is ≥ 0
+or the point estimate is ≥ −0.02. On a pass:
+- **Arms:**
+  - base `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`;
+  - treatment `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res` (bot/search/reserve.py, λ .015, R = 3).
+  - Fast tier rl5 v10 in both; everything else equal.
+- **Assignment:** alternating ladder SESSIONS, about 10 per arm (~40 battles per arm). The LIVE LEAD sequences them: after one clean r3c
+  session, or after full-pool if that bundle is ready first.
+- **Arm attribution:** read only from each session's session-config.json `player` (and the manifest), never inferred.
+- **Unit:** the battle. Included: sessions whose session-config player is one of the two arms, with the e16 deck, and battles with ≥ 100 logged
+  decisions (the rule used in §1). Exclusions are listed with reasons.
+- **PRIMARY (mechanism) metrics:** each is reported as a per-arm value and as treatment − base, with a bootstrap 95% CI over battles (4000 draws, seed 0).
+  1. **elixir at the Giant's cross:** pooled over perceived enemy Giant pushes (live_metrics.analyse);
+  2. **undefended Giant-push share:** pushes with no defence before tower contact over pushes (live_metrics.analyse);
+  3. **reaction time:** enemy play (births proxy, handsync_cmp.births) → our next submitted play, per-battle median, then the mean over battles;
+  4. **plays per battle;**
+  5. **Giant and Fireball plays per battle.**
+- **Expected direction from sim (bank 1, BASE2):** elixir at the cross up by ~+0.6, and Giant and Fireball counts about flat. The reaction-time and
+  undefended-share effects in sim were ~0.
+- **SECONDARY:** win rate (wins/battles per arm, from the LIVE LEAD's battle results). At ~40 battles its SE is ≈ ±0.11, so it is descriptive only.
+- **Reporting:** results are reported as sessions land, with no sealing. Tools: bot/livediag/live_metrics.py and bot/livediag/handsync_cmp.py, using the
+  same metric code as §1 and §6.

@@ -38,6 +38,8 @@ Round 2 (kind R; defaults reproduce K4L-R exactly):
 - D        determinized samples (with K<n>): learned sample j>0 runs from its own root, built from its own belief
            sample of the opponent's hidden cards (rng keyed seed, tick, j); sample 0 uses the planner's root.
            Serial only (no t/c/p/w).
+- res      elixir reserve (bot/search/reserve.py): non-defensive plays leaving elixir below the deck's cheapest
+           ground answer pay .015*shortfall/R after the timed-wait bonus (live-diag; kind R)
 - O        learned rollouts also drive OUR side with the learned net (own seat's public view, its own CRN key
            seed + [7777]; decisions every i<I> ticks) instead of scripted balanced
 Deterministic: no wall clock; gs uniforms are keyed by (match seed, tick, rollout tick).
@@ -58,6 +60,7 @@ import numpy as np
 from bot.players.base import WAIT
 from bot.search.candidates import CandidateSearchPlayer
 from bot.search.oppmodel import STYLES, TIMED_WAITS, _argmax, _bonus
+from bot.search.reserve import apply as reserve_apply
 
 _MODELS: dict = {}
 FAILURES: Counter = Counter()   # decisions given up on a native panic / dead pool worker, by kind (process-wide)
@@ -290,6 +293,7 @@ def reduce_learned(core, root, seat, candidates, arm, *, coarse_order=(), refine
     elixir = float(core.info.packet.observation.global_features[5])*10
     for a in scores:
         scores[a] = _bonus(a, scores[a], elixir)
+    reserve_apply(core, scores, elixir)              # token res only (bot/search/reserve.py)
     best = _argmax(work, scores)
     core.last = dict(candidates=work, scores=[scores.get(a) for a in work], traces=[])
     core.deadline_stats = dict(hit=False, fallback=best is None, completed=len(scores), candidates=len(work))
@@ -312,6 +316,9 @@ class LearnedOppPlayer(CandidateSearchPlayer):
         super().start(ctx)
         import sdefault
         core = self.p.core
+        if self.arm.get('reserve'):
+            from bot.search.reserve import install
+            install(self.rt, core, ctx.own_order)
         models = [load_model(m) for m in self.model_name.split('+')] if self.arm['kind'] != 'X' else [None]
         self._dec, self.opp_calls, self.opp_plays = {}, 0, 0
         seed = ctx.seed
@@ -371,6 +378,8 @@ def make_lopp_player(rt, name):
             extra['lw'] = int(m[1]) / 100
         elif m := re.fullmatch(r'K(\d+)', token):
             extra['samples'] = int(m[1])
+        elif token == 'res':                                # bot/search/reserve.py
+            extra['reserve'] = True
         elif token == 'O':
             extra['own'] = True
         elif token == 'D':

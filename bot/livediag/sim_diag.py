@@ -118,7 +118,7 @@ def worker(wid, cores, jobs, out, base):
         rng = random.Random(base + i)
         rng.shuffle(own); rng.shuffle(other)
         rec = Recorder(make(rt, cand), seat)
-        players = {seat: rec, 1-seat: make_live_player(rt, opp)}
+        players = {seat: rec, 1-seat: make(rt, opp)}   # LD-* opponents: the strong K4L mirror
         t0 = time.time()
         try:
             res = play_match(rt, players, seed=base+i, decks=[own, other] if seat == 0 else [other, own],
