@@ -309,3 +309,111 @@ by verified PGID3422841 if necessary. Frozen superseded arm is not requeued auto
 actually needed under a new decision. Failed first staging remains recorded as failure.
 
 - Pre-commit diff check found trailing spaces at truncated source-snippet boundaries in two TSV displays; trimmed display whitespace only, no site/guard/result changes. Raw scanner/saved script is unchanged. Rechecked staged diff and reran staged secret scan before commit.
+
+### 2026-10-16T09:39:04Z: resumed ownership of existing validation only
+
+Parent acknowledged audit5da80abb0 and directs continued ownership/triage of3422841 only, no new
+job/watcher duplicate, no obsolete gate/relaunch or CPU-wrapper bypass. CPU admission bottleneck has
+been raised to BOT LEAD by the parent; no unrelated job stop is authorized or attempted.
+Exact read-only PID/lease/output command already recorded above was repeated with lstart added:
+launcher3422841/PGID3422841 NI15, start02:33:56 hostlocal=09:33:56Z, child3422863 cpu_room4,
+no lease or outputs at09:39:04Z. Six engine WIP paths unchanged; no new build, test or host mutation.
+When admitted/terminal inspect strict JSON validator, intended both-seat mutation failures and actual
+path coverage; a failing strict comparison remains a failure. Any routine fix gets affected reviewed
+rerun only, preserving original evidence and B2→C1 order. Rollback unchanged: only the exact new
+owned validation group if necessary; never requeue frozen arm automatically or stop unrelated jobs.
+
+### 2026-10-16T09:41:39Z: Sam communication constraint
+
+Only send parent/owner messages when action/input is needed, a real blocker/failure changes next steps,
+or a material result/deploy/account action matters. Default <=3 short lines /80words: current result,
+needed action, one receipt path; no history/full-hash dumps. Batch related updates. Commands/hashes
+and detailed progress stay in scoped files. No acknowledgment, healthy poll, unchanged queue/gate or
+logged/pushed receipt messages. Coordinator already broadcasts active threads: do not rebroadcast
+active children. Include this rule in every future/resumed child brief. Clarifications still go direct
+parent via t3_thread_send(mode=auto), never user-input tools. No further unchanged-queue parent messages.
+
+### 2026-10-16T09:46:54Z: Sam STRICT SILENCE supersedes routine reporting
+
+No routine status, test/gate/review results, queue/receipt/commit updates, acknowledgments or manual
+completion messages, including material results. Log detailed results in scoped files; parent reads them.
+Message ONLY for a blocker needing parent action, urgent live failure, explicit request or essential
+dependency handoff; max2sentences+1receipt path. Automatic task completion suffices, no duplicate manual
+message. Include in future/resumed-child briefs; do not rebroadcast to already active children
+(coordinator covers tree). No reply/acknowledgment sent. Existing validation ownership continues.
+
+### 2026-10-16T09:49:55Z: once-only final ownership rule
+
+Report once to owning parent only when the whole assignment is actually done: final result, artifact,
+remaining blocker if any. T3 automatic final-result delivery counts; no duplicate manual DM. Essential
+cross-owner handoffs go directly to that owner, not the coordinator. No progress/milestone/acknowledgment
+messages. Own substantial end-to-end implementation/tests/docs/fixes; no tiny per-test/per-step children.
+Independent reviews remain separate. Include in future child briefs. Current validation remains owned
+while awaiting normal admission; do not report it as completed while merely queued.
+
+- 2026-10-16T09:57:07Z: exact3422841 group still queued; own cpu_room child3422863
+  has claim4, no lease/output, host max-live uses default105. Wrapper/claim state is normal; admission
+  bottleneck already raised by parent, so no redundant DM or bypass. Latest file evidence/r2v2-admission-status.json.
+  Existing recorded read-only status command repeated at09:40:23/09:41:40/09:43:59/09:46:18/09:49:08/
+  09:51:23/09:53:37/09:56:55Z; no changed result. Added read-only own claim/max-live checks at09:57:07Z:
+  `ssh 127x08 'date -u +%FT%TZ; ps -o pid,ppid,pgid,ni,etime,stat,args --ppid 3422841; if test -f /mpac/sdicks02/jobs/clasher/bot-cpu-claims/claim-3422863; then cat /mpac/sdicks02/jobs/clasher/bot-cpu-claims/claim-3422863; else echo own-claim=absent; fi; if test -f /mpac/sdicks02/jobs/clasher/bot-cpu-claims/max-live; then cat /mpac/sdicks02/jobs/clasher/bot-cpu-claims/max-live; else echo max-live=default; fi; ps -o pid,ppid,pgid,stat,args --ppid 3422863'`.
+
+- 2026-10-16T10:07:18Z: same exact owned3422841 group remains queued (33:22), lease/output absent. Recorded read-only status command repeated10:00:43/10:04:05/10:07:18Z. No job/review/test started, no CPU bypass or unrelated stop; continued ownership while parent/BOT LEAD handle the already-raised admission bottleneck. Latest observation updated in evidence/r2v2-admission-status.json; no routine parent message.
+
+### 2026-10-16T10:20:57Z: admitted; first strict snapshot failure retained
+
+Existing3422841 admitted at approximately10:18:37Z (identity file10:18, phase elapsed2:20 at10:20:57);
+lease4/PGID3422841, four live Python workers1758166/1758169/1758171/1758172, NI19 (inherited15 then
+nice15 saturates19), oneCPU each. Wrapper and concurrency are intact; no new job/watcher.
+Snapshot rows already FAIL: Zap blue40/40 firstt31 (digest equal): Tower public_speed_base PythonNone
+versus native0; Tower-arrow aim.y26.5 versus26.0. IceSpirit/ElectroDragon troop sources failpublic_speed_base
+PythonNone versus native120/60 at t24. Preserve full run; do not widen exclusions. First strict failure
+evidence/r2v2-first-strict-failure-20261016.json. Routine source/export/projection triage starts locally
+while original four shards continue; no result DM under Sam silence. No automatic rerun or live changes.
+
+- 2026-10-16T10:25:27Z local triage: source proves live_snapshot.py aim export reads current primary target
+  position, while Projectile.target_position / native aim hold last committed endpoint through launch delay.
+  Corrected only the LOCAL probe's exported aim to read actual target_position (no new exclusion or engine
+  change); added negative control that wrong native aim still fails while target ID remains compared.
+  Local stdlib tests9/9PASS. Frozen admitted script unchanged; no affected rerun started.
+  public_speed_base is missing from Python export; native uses an optional cache/fallback only in leaf.rs
+  public ETA features and may inherit it into projectiles. A small bounded read-only Astra-high diagnostic
+  (task suffix b2-snapshot-export-diagnostic-astra-20261016-1025) examines source-grounded semantic
+  comparison versus a raw-state blocker under C56 constraints. No permission/acceptance implied, no
+  widened ignores, no parent progress DM. New affected host execution still requires independent review.
+
+### 2026-10-16T10:27:14Z: strict cache blocker diagnosed; comparison contract needs parent decision
+
+Bounded Astra diagnostic complete; evidence/snapshot-cache-diagnostic-20261016.md. Committed-aim export
+correction justified (exact delayed/birth cause of observed arrows not yet proven). Actual troop base speed
+can be compared independently, retaining native non-null historical cache and exactNone fallback. Native
+Tower/projectile cached-speed histories are not reconstructible from current Python state and are unused
+for projectile motion; dropping them would widen current strict/no-new-exclusions contract. Existing
+3422841 evidence staysFAIL. Request a separate explicitly reviewed semantic comparison contract from
+parent before any affected rerun; continue original run/path triage meanwhile. No new exclusion or engine
+change, no C56 gate, no additional CPU job. This is a genuine acceptance blocker needing parent action,
+so one concise direct question is permitted by strict silence; no progress/status DM.
+
+- 2026-10-16T10:28:45Z: local probe now uses the independently observed committed-aim export consistently at
+  initial native construction and comparisons. Added an ADDITIONAL independent troop-speed check:
+  Python Entity._unslowed_movement_speed() versus native non-null cached value or exactNone normal/charge
+  fallback. Raw public_speed_base differences remain in strict comparison; no cache removal or semantic
+  contract change implemented while parent decision is pending. Local tests11/11PASS, including actual
+  source Python speed methods, wrong-speed negatives, valid zero cache, charge-threshold history and
+  wrong-aim negative; receipt evidence/projection-triage-local-tests-20261016.json records exact local
+  script hashes. No corrected host script execution, engine change or extra CPU job. Original3422841
+  continues all phases; 33/62 snapshot summaries existed at10:28:27Z, no phase exit yet.
+
+### 2026-10-16T10:46:43.649459+00:00: versioned semantic proposal; original3422841 terminal FAIL
+
+Parent expressly authorizes proposal/review via decision `/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-semantic-comparison-decision.md`; this does not accept the engine. Separate contract SEMANTIC-SNAPSHOT-V1.md and seven affected tools prepared. Original probe_dash_full.py restored exactly to5da80abb0 (2e7a4d...); original run/files untouched. Current strict run terminal: noPID/lease at10:44:35Z, phase1 exits0/0/1/0. Third shard emitted12 case/seat summaries then config failed on unsupported Executioner; canonical name AxeMan has no Executioner alias. Other shards16/16/14 rows retain raw cache/aim FAILs. New fixture keeps executioner label but uses AxeMan, with AST/data preflight for31 cards. Original FU/Clone/scenario phases never started after nonzero phase1; revised affected runner verifies absence before running their unchanged probes once.
+
+Exact read-only terminal command: `ssh 127x08 'date -u +%FT%TZ; ps -o pid,ppid,pgid,ni,etime,stat,args -p 3422841; if test -f /mpac/sdicks02/jobs/clasher/bot-cpu-claims/lease-3422841; then cat /mpac/sdicks02/jobs/clasher/bot-cpu-claims/lease-3422841; fi; ls -l /mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z/fid/r2v2*.exit; tail -c 1400 /mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z/run.log'`. Read-only scp copied exact four full-*.log, four full-*.exit and identity JSON into evidence/r2v2-raw-terminal; hashes and parsed counts in evidence/r2v2-terminal-summary.json. Raw host files retained. No new job/watch/rebuild/gate launched.
+
+Local command `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/b2/tools/test_r2_harness.py`:18 stdlib controlsPASS, including strict meaningful fields/cache/history/descendant controls and validation rejection. `bash -n reports/cards/b2/tools/run_semantic_v1.sh`, AST parse six local Python files plus embedded scheduler REMOTE, and `git diff --check` PASS. Evidence/semantic-v1-local-controls.json pins tool bytes. No engine/native simulation on05. Independent read-only Sol-high whole-proposal review task `node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-semantic-v1-independent-review-20261016-1048` running; no affected execution before exact reviewed bytes approved. New scheduler only stages one fresh isolated tag after old group/lease terminal, normalcpu_job4/nice15, with source/library/input/raw-FAIL hashes; no oldrun writes or kills. Rollback reporting/probe contract only; no runtime/pin/source acceptance. Sam strict silence retained; review brief includes direct-parent questions and no routine DMs.
+
+### 2026-10-16T10:50:23.596995+00:00: independent semantic-v1 execution review approved
+
+Whole-proposal independent Sol-high review approved exact8 contract/tool bytes, no concrete blocker or false-PASS route. Receipt evidence/semantic-v1-review-approved.json, task b2-semantic-v1-independent-review-20261016-1048. Reviewer independently matched491 source inputs to retained identity and restored strict comparator, inspected applicability/propagation/counts/mutants/scheduler without SSH/tests/engine execution. Approval is for ONE fresh normalcpu_job4/nice15 affected run after old group/lease terminal; no engine acceptance/integration/build/source substitution/pin. Exact8 SHA256 rechecked locally, all match. No active reviewer descendants.
+
+Preparing one reporting/probe-only commit with explicit paths; six engine WIP paths remain unstaged. Run `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` on staged diff before commit. Then run exact approved `python3 reports/cards/b2/tools/stage_semantic_v1.py reports/cards/b2/evidence/semantic-v1-review-approved.json semv1-20261016T1052Z` once. Stage rechecks old3422841 group terminal/no lease and verifies hashes before normalCPU queue; do not retry if any failure or lost acknowledgment. Receipt will be evidence/semv1-20261016T1052Z-launch.json. Rollback is reporting/probe commit revert; original raw FAIL comparator/run preserved. Any exact new owned group stop requires liveness/identity check first; frozen arms are not automatically requeued.

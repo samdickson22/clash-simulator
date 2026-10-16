@@ -499,3 +499,51 @@ then three scenario workers; source hashes equal the frozen already-built b2m/tr
 At09:34:12Z it was waiting in cpu_room4 (child3422863), without a lease or outputs.
 No corrected dynamic results yet. Final engine-review readiness, mutation detections and C56 parity
 remain pending; no acceptance or promotion is claimed. The six engine WIP files remain preserved.
+
+
+### 2026-10-16: strict run FAIL; separately versioned semantic proposal
+
+PID3422841 admitted at approximately10:18:37Z and was terminal with no live PID/lease
+at10:44:35Z. The original exact reviewed comparator remains unchanged, and its raw
+FAILs remain FAILs. Terminal summaries and raw log copies are in
+[evidence/r2v2-terminal-summary.json](evidence/r2v2-terminal-summary.json) and
+[evidence/r2v2-raw-terminal](evidence/r2v2-raw-terminal).
+
+| Strict shard | Completed case/seat summaries | Collector exit | Verdict |
+| --- | --- | --- | --- |
+| 1 | 16/16 | 0 | Raw snapshot mismatches retained |
+| 2 | 16/16 | 0 | Raw snapshot mismatches retained |
+| 3 | 12/16 | 1 | Config failed on unsupported Executioner name before final four rows |
+| 4 | 14/14 | 0 | Raw snapshot mismatches retained |
+
+The strict run cannot establish successful complete full-state parity. Digest-equal
+raw failures include Python's unexported native historical `public_speed_base` cache
+and tracking-projectile aim exported from a newer target location rather than the
+committed endpoint. The original third shard's unsupported name stopped later
+phases; first-update/Clone/scenario parity and both mutant controls were not run.
+These absences remain explicit rather than being interpreted as passes.
+
+CARD LEAD authorized a separate proposal under
+`/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-semantic-comparison-decision.md`.
+[SEMANTIC-SNAPSHOT-V1.md](SEMANTIC-SNAPSHOT-V1.md) defines its field/class matrix,
+source-bound descendant propagation proof, raw applicability ledger, independent
+Troop base-speed comparison, committed-aim projection, unknown-class strictness,
+negative controls, exact affected-run requirements and rollback. Eighteen local
+stdlib controls pass; no affected dynamic execution occurred before independent
+review. The original comparator and failed host run are immutable. The probe-only
+aim correction does not repair the production shared exporter; that gap is explicit.
+
+New collector uses canonical `AxeMan` for the existing `executioner` case label; a
+source/data preflight checks all31 source names. A fresh affected run must retain
+the same engine/native bytes, record applicability paths/raw values/reasons, detect
+both-seat intended hit-set guard mutants (Log while its intended delta's digest
+agrees), exercise actual non-Troop source→Troop child continuation without cache
+leakage, and execute the unchanged parity phases once because the original aborted
+before them. The exact proposal and affected scheduler/runner are undergoing
+independent Sol-high review before execution.
+
+No C56 gate, final engine approval or acceptance is implied by this proposal. The
+six engine WIP files remain uncommitted. B2→C1 order and the two exact C1 selector
+carryovers above are unchanged; no C1/B1 work has been imported.
+
+Independent read-only Sol-high review **APPROVED FOR BOUNDED TEST EXECUTION** of the exact8 contract/tool files; [review receipt](evidence/semantic-v1-review-approved.json). Source/propagation/independent-state/count/mutation/scheduler controls passed inspection, including491 source identity checks. This approval precedes affected execution and supplies no engine acceptance or C56 result.
