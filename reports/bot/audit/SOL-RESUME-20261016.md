@@ -142,6 +142,27 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 12:43 UTC actual deployed S40 source provenance receipt
+
+- Ownerpreservedfoldedread-only28actualMacsourcecopies,all11BASEsourcepins(7runtime+4bot),actualtranslator5361,
+  actualv5liveprojection/builder/staticMRO/consumerentrypoints. Attributionusesimmutable source/runtime and
+  source/codeatsnapshotroot,notarchivalbytes. Receiptread+hashedbyBOT:
+  `/mpac/sdicks02/scratch/live-loop/evidence/deployed-permission-contract-20261016T123203Z/receipt.json`,
+  SHA256292c3544539dad48b2ad15ece31c190d2eebb90346781c5d304a072eaf5ab778at12:43:25Z.
+- Receiptreportsall28pre/postMacsourcehashesequal,0444copies/nosymlinks,finalsource/controlcapture12:40:58Z.
+  BOTdidnotindependentlycontactMac/importmodel/runtime/native;receiptverificationisprovenanceclassification,
+  notfutureimplementationacceptanceorbackendclosureproof.
+- Addedactualdispatchchecklisttocontractcoordination:ContractV5build_publicandliveTranslatorproject_public_v5
+  aredistinctcallers;ConfidenceAwareActorObservationcontainsActorObservation;v5maskoverrideaddsabilityafter
+  basebuild,sorequiredWAIT-onlyeligibilitymustremainseparateaftercompletednativelegalityandnotmutatemodelmask.
+  ActualStandalone/D1/Policy/CachedPolicy/candidates/MultiSearch/_WallMulti/LivePlayerbrancheslistedforclosure.
+- No sharededits,integration/release/model/pin/liveauthority. StaticMROisnotnewexecutedMRO. NOdriver/watcher,
+  PAUSE/HOLDunchanged;futureauthorizedfallbackLL_HANDSYNC=0only,restoredhandsync2aneverenablesbythisevidence.
+- Exactcommands:readreceiptJSONusingboundedprint;`sha256sum <receiptpath>`;`date -u`returned12:43:25Z.
+  Loggedonly,no routineprogress/ack/receiptDMtocooordinator/owner.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: bind S40 coordination to actual deployed source evidence' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 12:31–12:33 UTC requested S40 stable-contract coordination
 
 - Explicitloopownerrequest:stablefour-slotpermissioncontractandsharedbotcoordinationbeforeisolatedhelper

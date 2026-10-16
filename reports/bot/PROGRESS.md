@@ -34,6 +34,11 @@ session-requiredfailclosed,legacyabsentparity. Criticallynativeaction_maskfeeds 
 unchanged;separateeligibility_maskrestrictsactualchoice/proposals/candidates/fallbacksonly,notfeatures/roots/
 ledger/cadenceorhypotheticalfuturehands. Detailedcache/capture/fallback/guardacceptanceguidance:
 `contracts/S40-SLOT-PERMISSION-COORDINATION.md`. Allsteeringthroughloopowner;no competingimplementation.
+At12:43Z actualdeployedbaseprovenanceisnowpreserved:28immutableMacsourcecopies and11BASEsourcepins(7runtime+
+4bot),actual5361,source-declaredv5live/simulatorprojection/MRO+consumerentrypoints. Base/rollbackattributionuses
+snapshot source/{runtime,code},notarchivalmain. ThisclearsbaseprovenanceONLY;staticMROisnotexecutedclosure,
+and noimplementationacceptance/sharededit/integration/release/liveauthority. ReceiptSHA
+`292c3544539dad48b2ad15ece31c190d2eebb90346781c5d304a072eaf5ab778` documentedinthecontractcoordinationfile.
 
 **CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
 CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight

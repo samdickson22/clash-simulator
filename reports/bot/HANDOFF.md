@@ -43,3 +43,6 @@ Current state and detailed receipts: [PROGRESS.md](PROGRESS.md),
   FrozenSlotPermissionAPI+two-maskboundaryacceptedforcoordination:originalnativeaction_maskmustremainmodelinput,
   separateeligibility_maskforactualchoices/proposals/fallbacks;requiredsession/capture/pollbindingfailclosed.
   Cache/cadence/state/guardacceptanceandownerboundariesincontracts/S40-SLOT-PERMISSION-COORDINATION.md.
+  Actualdeployed28immutableMacsourcecopies+11BASEsourcepinsverifiedbyownerreceipt;usesnapshot source/runtime
+  andsource/codeforbase/rollback,v5live/simulatorprojectionandMROactive.DeployedbaseprovenanceONLY,notexecuted
+  backendclosure/implementationacceptance/integration/release/liveauthority;PAUSE/NOdriverholdunchanged.

@@ -72,3 +72,33 @@ controls. Record actual module/source/runtime paths and hashes of deployed e4v3 
 different main/frozen runtime is not evidence. Fresh review/scans and rollback precede any host bytes or release.
 
 No source implementation, test execution, model/runtime/pin change, compute job or live action by this thread.
+
+## Deployed-base evidence update — 12:43 UTC
+
+Authoritative attribution now uses the owner's immutable actual-Mac copies under
+`/mpac/sdicks02/scratch/live-loop/evidence/deployed-permission-contract-20261016T123203Z/source/{runtime,code}`.
+Receipt SHA256 `292c3544539dad48b2ad15ece31c190d2eebb90346781c5d304a072eaf5ab778`.
+The receipt reports 28 source copies, all local hashes matching Mac pre/post copies, and all eleven BASE source
+pins (seven runtime + four bot) matching, plus actual translator5361. These are source-provenance facts, not
+executed model/runtime/closure tests or acceptance of the helper implementation. Earlier generic main-source
+inspection must not substitute for these actual deployed bytes when assembling base or rollback.
+
+The source-declared dispatch includes two observation callers: simulator `ContractV5ObservationBuilder.build_public`
+and live inherited `Translator.observation -> project_public_v5 -> exact_public_observation`. The confidence wrapper
+contains ActorObservation; it does not inherit it. Required sidecar/capture propagation must survive both callers
+and reservation/transport rebuilds without changing feature arrays.
+
+Actual mask MRO is ContractV5ActionMaskBuilder -> PublicActionMaskBuilder; the v5 override fills ability legality
+after `super().build`. Therefore an eligibility implementation must see the completed native v5 mask and enforce
+required failure as WAIT-only separately; modifying only the base builder can both corrupt features and let the
+v5 override re-enable an ability. Preserve the complete original native model mask, including its ability bit.
+
+Actual consumer closure includes StudentPlayer/V1Policy/CachedPolicy, StandalonePlayer/D1/model_packet,
+inference Policy.sample/propose, cached_policy threshold-rank and stochastic paths/proposal cache, candidate
+proposer/merge hooks, MultiSearchPlayer and `_WallMulti` default/coarse/student-last/refinement/deadline routes,
+and LivePlayer fast/cutoff/default/error routes. This is the source-derived checklist, not executable closure proof.
+
+Receipt's MRO/import paths are source-declared static provenance, not newly executed `__mro__`/`__file__` captures.
+Runtime root resolves the immutable bundle; runtime/src modules precede CODE fallback. No driver/watcher exists;
+PAUSE/HOLD and LL_HANDSYNC=0-only future fallback remain. Do not enable restored handsync2a or infer live
+authority, shared integration, package clearance, model/pin change or release from this evidence update.
