@@ -1,6 +1,10 @@
 # Diagnostic procedure — review before execution
 
-The postmerge source is mergeae04c8846 (first parent frozen9fa, second11ff).
+The postmerge source begins at mergeae04c8846 (first parent frozen9fa, second11ff).
+Independent diagnostic r1 rejected75748b45f for duplicate recovery methods,
+failed-probe after-import evidence loss and incomplete causal controls. The
+revised candidate removes the duplicate, fixes evidence/control handling and
+adds explicit selectors/affected recovery phases; see DIAGNOSTIC-r1-response.md.
 This procedure is new and **UNEXECUTED**. Source/procedure independent review
 must bind the later exact commit containing these tools before any host command.
 The final C1 full C56/main/pin hold remains; this is a bounded diagnostic job.
@@ -41,14 +45,18 @@ only as process-control helpers; its gate preflight/main is never called.
 Every child has its own process group. Actual child wait exits, partial/final
 phase exits and cleanup receipts are retained, including cancellation/error.
 
-Four sequential probes run with actual import/source/data/native receipts:
+Eight sequential probes run with actual import/source/data/native receipts:
 
 | Phase | Exact bounded content | Required result shape |
 |---|---|---|
 | shared |32 current-schema robustness continuations, both seats, uninterrupted/native clone/reload/Python clone, strict frozen semantic-v1/template and required witnesses |32 rows, exact native SHA, all required witnesses/FOCUSED_PASS for phase PASS |
 | review | original C1 Ronin finish/reflection/orphan and boulder endpoint full-state continuations plus dropped-state negative controls |21 completed results and exit0 |
+| selectors |8 current-schema secondary/chain ×travel/idle ×both-seat continuations; Python reservations, native combat effects, chain release target/visited IDs/aim, impact and clone/reload |8 distinct witnessed results, strict semantic-v1 and exact native SHA |
 | followup | original axe birth/return/expiry and actual childless-origin continuation/read-path controls |2 completed cases, exact native SHA and exit0 |
-| first-update | Batch A21 creation paths ×both seats and causal death controls |42 rows, no errors/mismatches/rejected actions, intended victim death differing from control |
+| first-update | unchanged Batch A21 fixture definitions ×both seats through a new C1 diagnostic helper; full validated control results, script-born victim observation and failed roots |42 distinct rows, completed real/control ticks, matching actual victim identity/stats/HP/creation observation, no errors/mismatches/rejected actions, causal death differing from a valid control |
+| clone-bounds | unchanged B2 edge/river/tower slide fixtures, both seats |6 distinct completed cases, accepted casts, equal position/digest throughout |
+| clone-recovery | unchanged B2 water/building fallback fixture, both seats |2 cases,10 ticks each, legal ground/clearance, equal positions/digest, completed slide |
+| terrain | existing C1 Bandit water-end and MegaKnight/Giant cases, both seats |4 distinct cases,400 ticks, accepted actions, no digest mismatch/error |
 
 A failed probe does not erase its raw output or prevent the other bounded phases
 from collecting evidence, unless cancelled. No31-source/40-offset sweep or C56
@@ -56,12 +64,26 @@ is launched. The shared probe retains initial/paired/partial roots itself; the
 worker captures available local battle/native roots from exceptional focused
 frames in addition to partial result/log files. A native crash is a failed child,
 never an inferred semantic pass. Actual imports are confined for clasher/native
-to this capsule, and all loaded module file hashes are recorded. Admission,
+to this capsule, and loaded module file hashes are recorded before result
+validation even for FOCUSED_FAIL, partial output or failed causal controls.
+After-import inventory errors are retained independently and fail the phase.
+The first-update diagnostic copy keeps all42 rows and full controls, including
+errors; script-deployed victims are discovered after commands. Control setup
+keeps victim operations/creation commands and removes opponents including crown
+towers during its counterfactual observation window. An actual victim with
+matching identity/placement/HP/stats and full tick completion is required; an
+errored or absent victim never stands for a valid no-death result. Original
+Batch A helper/artifacts are unchanged. Admission,
 source, data, native and external inventories are checked after probes as well.
 Terminal output distinguishes diagnostic PASS/FAIL and always says engine
-acceptance=false/finalC56=WITHHELD. Further selector/other-Spirit/generic-child
-meaningful coverage and actual failures may require reviewed follow-up fixtures;
-these four phases do not discharge all integration/final-acceptance obligations.
+acceptance=false/finalC56=WITHHELD. Other-Spirit/generic-child meaningful coverage
+and actual failures may require reviewed follow-up fixtures; these phases do
+not discharge all integration/final-acceptance obligations. Secondary IDs are
+not native snapshot fields: its witness retains direct Python reservations,
+native combat-phase primary/recipient/distractor effects and a paired idle
+positive control, alongside inspected candidate-count selection. This is stated
+as such, without inventing observed native private IDs. Chain selected/visited
+IDs and aim are observed directly on native and Python continuation roots.
 
 Before execution: inspect the independent verdict and exact bindings, verify
 current source and job liveness/receipts, then invoke the exact reviewed stage

@@ -77,3 +77,18 @@ retains11ff and its approvals. Rollback only new isolated integration commits,
 keeping the base ref and every failed receipt/artifact intact. No deployed state
 changed. Sam strict silence/direct-owner coordination/one final diagnostic
 delivery and no tiny-step delegates remain in force.
+
+## Current repair candidate (2026-10-16T15:15Z)
+
+Independent diagnostic r1 REJECTED75748b45f: duplicate recovery definitions,
+failed-probe after-import evidence loss, and incomplete causal controls. Exact
+failed verdict/receipt are retained. Repairs and source qualifications are in
+DIAGNOSTIC-r1-response.md; current source differs from757 only in clone.rs to
+use the already shared recovery helper. No compiler/native/host run occurred.
+New selector and first-update diagnostic copies keep targetability distinct
+from effect gates, full control errors/actual victim identities and all rows.
+The proposed one-build bounded phases are32/21/8selectors/2followup/42firstupdate/
+6Clonebounds/2Clonerecovery/4terrain cases. These remain NOT RUN and require a
+fresh exact postmerge/probe/procedure independent review. Admission-only local
+tests are not diagnostic completion. Later reconciled-main full C56/pin hold,
+all original FAILs and the failed pool admission receipt remain unchanged.

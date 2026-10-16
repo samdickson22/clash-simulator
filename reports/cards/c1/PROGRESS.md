@@ -696,3 +696,35 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   source/review/extra/symlink/external drift, actual USER/LOGNAME CPU accounting,
   clean pin-free environment, AST/bootstrap and pre-engine-import optimized guards.
   No host/job/compiler/native/engine execution. Fresh review remains mandatory.
+- 2026-10-16T14:56Z source/procedure75748b45f144165374b122bbff766543606721b0
+  committed/pushed after explicit staged checks/secret scan. Fresh independent
+  task c1-b2-first-postmerge-procedure-75748b45f-r1 terminal REJECT, retrieved15:04Z.
+  Full verdict integration/REVIEW-diagnostic-r1.md SHA59160d8a; machine receipt
+  diagnostic-review-r1.json SHA604c18f1. No execution approval. D1 duplicate
+  recover_ground helpers would prevent Rust compilation; D2 failed/partial probe
+  result assertions skipped after-import evidence; D3 discarded failed controls
+  could look like valid no-death and script-created victims were never observed.
+- 15:04–15:15Z scoped repairs: delete clone.rs duplicate only, sharing unchanged
+  C1 recovery with Clone/dash/leap and retaining bounds/tie/fallback behavior.
+  After-import module inventory and independent identity failures now persist
+  before result validation for failed/partial outcomes. New C1 first-update
+  diagnostic keeps original BatchA cases/helper intact, observes script-born
+  victims, preserves full completed/errored controls and actual victim IDs/stats/
+  HP/placement/time, requiring validated causal distinction across all42 rows.
+  Add8 explicit current-schema secondary/chain selector continuations with both
+  seat travel/idle positive controls, exact chain target/visited IDs/aim and
+  native combat-effect evidence for non-exported secondary reservations. No
+  guessed selector area guards. Add existing6Clonebounds/2Clonerecovery/4terrain
+  affected checks to one bounded job; no duplicate build/full sweep/C56.
+- Local commands `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/`
+  followed by test_diagnostic_job.py, test_diagnostic_repairs.py and
+  test_integration_selectors.py all PASS (AST/stdlib/mocks only). D2 mock's first
+  attempt moved its synthetic build.json while archiving a previous test case;
+  retained failure and fixed harness to archive only shared-phase files. No real
+  build artifacts involved. Source/receipt/test bindings and failure text in
+  integration/procedure-local-r2.json; new engine inventory in
+  repair-source-inventory-r2.json. Combined doc patch verification twice found
+  stale context, made no writes; corrected exact scoped context. No host/native/
+  engine/compiler execution, oldFAILs/pool check/base/original approvals intact.
+  Fresh exact-source/procedure review required before diagnostic execution;
+  final fullC1C56/main/pins still withheld. Whole assignment remains OPEN.

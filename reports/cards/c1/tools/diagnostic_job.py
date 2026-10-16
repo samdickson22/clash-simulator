@@ -33,8 +33,9 @@ EXTRAS = [
     'reports/cards/c1/tools/'+name for name in (
         'diagnostic_job.py','diagnostic_worker.py','final_gate.py','final_gate_contract.py',
         'probe_shared_troop.py','probe_review_r2.py','probe_snapshots.py',
-        'probe_snapshot_followup.py','probe_c1_cases.py')]
-EXTRAS += ['reports/cards/b2/tools/snapshot_contract_v1.py']
+        'probe_snapshot_followup.py','probe_c1_cases.py','probe_integration_selectors.py',
+        'probe_first_update_diagnostic.py')]
+EXTRAS += ['reports/cards/b2/tools/'+name for name in ('snapshot_contract_v1.py','probe_clone_bounds.py','probe_clone_recovery.py')]
 EXTRAS += ['reports/cards/batchA/tools/'+name for name in (
     'probe_native_scen.py','scenarios.py','probe_first_update_paths.py')]
 EXTRAS += ['reports/strategy_council_20260928/engine-speed/es_common.py']
@@ -206,13 +207,20 @@ def run(job,admission_sha):
         tasks=[('shared',job/'src/reports/cards/c1/tools/probe_shared_troop.py',
             ['--contract',str(job/'src/reports/cards/b2/tools/snapshot_contract_v1.py'),'--native-sha256',native_sha]),
             ('review',job/'src/reports/cards/c1/tools/probe_review_r2.py',[]),
+            ('selectors',job/'src/reports/cards/c1/tools/probe_integration_selectors.py',
+                ['--contract',str(job/'src/reports/cards/b2/tools/snapshot_contract_v1.py'),'--native-sha256',native_sha]),
             ('followup',job/'src/reports/cards/c1/tools/probe_snapshot_followup.py',[]),
-            ('first-update',job/'src/reports/cards/batchA/tools/probe_first_update_paths.py',[])]
+            ('first-update',job/'src/reports/cards/c1/tools/probe_first_update_diagnostic.py',[]),
+            ('clone-bounds',job/'src/reports/cards/b2/tools/probe_clone_bounds.py',[]),
+            ('clone-recovery',job/'src/reports/cards/b2/tools/probe_clone_recovery.py',[]),
+            ('terrain',job/'src/reports/cards/c1/tools/probe_c1_cases.py',
+                ['bandit_water_end','bandit_water_end_red','mk_vs_giant','mk_vs_giant_red'])]
         for label,probe,args in tasks:
             G.check_cancelled(); validate(job)
             command=[PY,'-P','-s','-B',str(HERE/'diagnostic_worker.py'),str(job),label,str(probe),*args]
             paths=['native','src/engine-cards','src/engine-cards/py/src','src/reports/cards/c1/tools',
                    'src/reports/cards/batchA/tools','src/reports/strategy_council_20260928/engine-speed']
+            paths.append('src/reports/cards/b2/tools')
             probe_env=dict(env,PYTHONPATH=os.pathsep.join(str(job/path) for path in paths),CLASHER_ROOT=str(job/'root'),
                 C1_DIAG_MANIFEST_SHA256=admission['manifest_sha256'],C1_DIAG_BUILD_SHA256=sha(output/'build.json'))
             children.start(label,command,probe_env)

@@ -1,0 +1,20 @@
+{
+  "scope": "AST/stdlib/mocks only; no hosts/engine/native/compiler/jobs",
+  "tests": [
+    {
+      "name": "test_diagnostic_job.py",
+      "exit": 0,
+      "stdout": "PASS: stdlib inventory/review/source/extra/symlink/external drift, clean CPU-accounting environment, embedded bootstrap AST and optimized guards; no hosts/engine/native/jobs\n"
+    },
+    {
+      "name": "test_diagnostic_repairs.py",
+      "exit": 0,
+      "stdout": "PASS: one shared recovery definition; script-born victims/full causal-control error/identity negatives; failed/partial/drifted probes always retain after-import evidence; AST/stdlib/mocks only\n"
+    },
+    {
+      "name": "test_integration_selectors.py",
+      "exit": 0,
+      "stdout": "PASS: both-seat secondary reservation/guard/effect and chain target/visited-ID/multiplicity/aim/impact negative controls; AST/mocks only\n"
+    }
+  ]
+}
