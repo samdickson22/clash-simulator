@@ -31,7 +31,9 @@ new parent IDs/distinct ranks; protected source SHA unchanged. This is source
 evidence only, not native or deployed consumer acceptance. All underlying graph
 geometry cases remain in the approved helper suite and B1 admitted scoped16.
 
-Independent Sol-high patch correctness/fair-information review pending before
-essential owner handoff. Original r3 evidence/roots and B1's sole reviewed
+Independent Sol-high native `/root/b1_public_root_review` roundr4 APPROVES patch
+for OWNER integration, tied to sourcef89b8acd5 and exact patch/base/output hashes
+above; receipt `receipts/b1-public-root-review-r4.md`. Actual scaled consumer
+native validation still belongs to LIVE owner after integration. Original r3 evidence/roots and B1's sole reviewed
 validation sequence remain unchanged. Rollback is omitting/reverting this one
 source patch; retain every runtime/old root and active selection unchanged.

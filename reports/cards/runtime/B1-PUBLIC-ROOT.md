@@ -1,8 +1,9 @@
 # B1 compatible public Resources and graph reconstruction
 
-UPDATED: e0e9f634e implementation approval is superseded by the owner-found
-projectile-speed defect before execution. Corrected candidate requires fresh
-independent review and admitted combined-source acceptance. Baseebab18cc, engine aliasc13249919. Authority:
+CURRENT: speed-corrected sourcef89b8acd5 has fresh independent Sol-high reviewr4
+APPROVE; admitted combined-source acceptance remains pending. Historicale0
+approval was superseded by the owner-found speed defect before execution and
+does not accept these bytes. Baseebab18cc, engine aliasc13249919. Authority:
 `reports/cards/reviews/B1-public-identity-root-policy.md` on cards/lead. No
 published r3 root/evidence, model, vocabulary, active pin or consumer deployment
 is changed by this branch. B1 owns final integration/testing sequence; lead owns
@@ -150,3 +151,7 @@ protected source remains read-only; a separate guarded same-helper patch and
 source-extracted fixture evidence are in B1-LIVE-LEVEL-PATCH.md. LIVE owner owns
 integration/native acceptance. The two owned consumers are the actual scoped16
 gate paths; do not silently count proposed LIVE patch as deployed/tested native.
+Fresh reviewr4 at exacte f89b8acd5f8b1927fef8f56ad4729269dff4fdc6 APPROVES full
+combined corrected implementation/scoped probe and separately the proposed LIVE
+patch. Receipt `receipts/b1-public-root-review-r4.md` binds hashes and real gate
+conditions; active source packet-r4 supersedes preserved historical packet.
