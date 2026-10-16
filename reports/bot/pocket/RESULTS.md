@@ -1,8 +1,13 @@
 # Does K4L-R-gs under-attack the pocket with true state? (exploration)
 
 2026-10-16, worker of the BOT LEAD (question from Sam via the coordinator). Exploration tier, not preregistered.
-Hosts 127x08 (K4L games) and 127x04 (references). Code: `bot/pocket/diag.py` (logger, search counterfactual,
-forced replays), `bot/pocket/analyze.py` (summaries). Status: **in progress** (sections marked TODO pending).
+Hosts 127x08 (K4L games) and 127x04 (references). Code:
+- `bot/pocket/diag.py`: logger, search counterfactual, forced replays;
+- `bot/pocket/analyze.py`: summaries;
+- `bot/pocket/live_replay.py`: offline LiveSession → LivePlayer replay of logged live matches;
+- `bot/pocket/variant.py`: the `K4P-*` fix arms.
+
+Status: **in progress**. Sections marked TODO are pending.
 
 **Question.** In live ladder play the bot often defends instead of pushing the pocket after taking an enemy princess
 tower. Is that a perception artefact, or does K4L-R-gs under-attack the pocket even with true state?
@@ -45,14 +50,101 @@ reaches the king tower (row ~29) within it. A slow tank only gets there near the
 - A pocket troop walks to the king tower (its lane tower is gone), so the leaf credits its damage almost nothing.
   The troop's board value (0.08 term) is the same wherever it is placed.
 
-**Card levels.** The LIVE LEAD asked for a level 1–4 variant. The Python engine supports card and tower levels
-(`PlayerState.card_levels`, `tower_level`). The native search root does not: `C56RolloutPlanner.import_root`
-raises on any card level ≠ 11, and the native config carries level-11 stats. So K4L cannot run below level 11
-without a new native build; not done here.
+**Card levels (live is 1–4).** Not run.
+- The Python engine supports card levels, but crown towers only at levels 10–12 (`clasher.tower_scaling.tower_stat`
+  raises otherwise). A level 1–4 battle therefore cannot be built.
+- The fair planner root (`R.root`) is level-11 regardless. The s6 live session also ran without levels
+  (`session-config.json` has none), so live K4L plans on level-11 stats too.
+- A uniform level change scales troop and tower HP and damage by the same per-level multiplier, so troop:tower
+  ratios, and with them pocket value, change little. Mixed levels (cards 1–4 against higher towers) could matter
+  but need tower stats below level 10.
 
-## 2. True-state measurement (TODO)
+## 2. True-state measurement: K4L-R-gs pockets, far more than the human-imitation references
 
-## 3. Counterfactual (TODO)
+**Setup.** HEADLINE cases 0–299 × R3a, v1 in our engine (true state, level 11), logged by `bot.pocket.diag`.
+- Games: 600 K4L-R-gs, 0 errors. References: R3a and v1 as the candidate.
+- "Took the first tower": the candidate destroyed an enemy princess tower before losing one of its own.
+- Post-tower decisions: every searched decision from that tick to the end of the game. For R3a and v1, every play.
+- Classes (own frame): pocket = troop/building in rows 17–20 on the dead tower's half (the engine's expanded zone);
+  bridge = rows 13–16; back = rows ≤ 12; spells separate.
+
+**After K4L takes the first tower** (162 games vs R3a, 222 vs v1):
+
+| | K4L vs R3a | K4L vs v1 | R3a vs R3a | R3a vs v1 | v1 vs R3a (partial) |
+|---|---:|---:|---:|---:|---:|
+| games where the candidate took the first tower | 162 / 300 | 222 / 300 | 54 / 150 | 89 / 150 | 26 / 77 |
+| plays in the pocket (all plays) | **23.8%** | **31.2%** | 2.1% | 1.8% | 14.9% |
+| pocket share of troop plays | 27.6% | 35.9% | 2.4% | 2.0% | 17.6% |
+| back (rows ≤ 12) share of plays | 39.9% | 35.5% | 66.4% | 61.3% | 42.9% |
+| back plays with an enemy unit in our half | 59.5% | 44.2% | 59.1% | 40.1% | 61.2% |
+| bridge share | 21.7% | 18.5% | 21.4% | 22.6% | 26.8% |
+| games with ≥ 1 pocket play | 151 / 162 | 211 / 222 | 17 / 54 | 24 / 89 | 23 / 26 |
+| median time to first pocket play | 14.2 s | 11.8 s | 39.8 s | 49.0 s | 41.0 s |
+| score after taking the first tower | 0.981 | 0.991 | 0.815 | 0.910 | 0.615 |
+
+R3a reference columns: cases 0–149 (127x04 `ref`); 150–299 (`ref-b`) agree (R3a vs R3a pocket 1.3%, vs v1 1.1%).
+
+**Was the pocket legal and offered?** Shares are of K4L's post-tower searched decisions:
+
+| | vs R3a | vs v1 |
+|---|---:|---:|
+| a pocket placement was legal (affordable troop/building in hand) | 58.2% | 59.4% |
+| … and ≥ 1 pocket play was among the candidates | 88.8% | 90.5% |
+| … of which from R3a's top-16 | 55.6% | 65.2% |
+| … and ≥ 1 pocket play survived into the learned work set (top-8) | **43.5%** | 53.3% |
+| K4L chose the pocket when one was in the work set | 34.2% | 34.2% |
+| when a pocket play was legal, K4L chose: pocket / wait / back | 14.9% / 39.9% / 25.0% | 18.2% / 43.9% / 20.8% |
+
+- The mask opens the pocket correctly. A pocket play is a candidate at about 90% of the decisions where one is
+  legal.
+- **The bottleneck is the balanced coarse scan.** It cuts pocket plays from the learned work set at about half of
+  those decisions (§1: the scripted balanced opponent and our scripted follow-ups both play away from the pocket).
+
+**Matched to the live definition** (`live/loop/pocket.py`):
+- Stretch = from an enemy princess tower's death to the next enemy tower death or the end of the game.
+- Pocket = any play, spells included, in rows ≥ 17 within 5 tiles of the dead tower's lane x.
+
+| | stretches | plays | pocket | enemy side | own side |
+|---|---:|---:|---:|---:|---:|
+| K4L-R-gs, true-state sim, vs R3a | 282 | 4,164 | **25.2%** | 33.1% | 65.3% |
+| K4L-R-gs, true-state sim, vs v1 | 426 | 4,392 | **30.9%** | 40.8% | 57.7% |
+| R3a, sim, vs R3a / vs v1 | 100 / 52 | 1,938 / 851 | 2.8% / 2.6% | 8.7% / 10.2% | 91.1% / 89.7% |
+| live, perception r1 (LIVE LEAD) | 13 | 100 | 29% | – | 63% |
+| live, perception r5e3 (LIVE LEAD) | 5 | 29 | 24% | – | – |
+
+**The live pocket rate (24–29%) equals the true-state sim rate (25–31%).** Better perception did not raise it, and
+perfect information in sim does not either. **So the live behaviour is not a perception artefact; it is how
+K4L-R-gs plays.**
+
+One caveat on the live definition: its ±5-tile lane window excludes spells on the king. In s6-m01 the bot's
+Fireball on the enemy king (row 26, col 7) counts as not pocket.
+
+## 3. Counterfactual
+
+**Search counterfactual (`--cf-every 20`).** Sample: post-tower decisions where K4L did not play the pocket and a
+pocket play was legal. At each one, on the decision's own root, I re-scored with K4L-R-gs's scorer
+((balanced + learned)/2 + timed-wait bonus):
+- the chosen action;
+- WAIT;
+- up to 3 pocket tiles per legal troop card, plus the candidate list's own pocket plays.
+
+This was done at horizons of 160, 320 and 480 ticks. Logging plus counterfactual is output-neutral: 4/4 smoke games
+had identical `command_sha256`.
+
+| best pocket vs chosen | vs R3a (n = 2,795) better / worse | vs v1 (n = 3,074) better / worse |
+|---|---|---|
+| 160 ticks (the search's horizon) | 7.6% / 81.1% | 7.5% / 72.8% |
+| 320 ticks | 36.5% / 45.3% | 34.4% / 40.4% |
+| 480 ticks | 38.7% / 36.9% | 36.4% / 32.2% |
+| 480 ticks, learned-opponent term only | 45.7% / 26.6% | 42.6% / 21.7% |
+
+- The remaining rows are ties, mostly positions already won (both options terminal +2).
+- At its own horizon the scorer prefers K4L's choice almost always; that is partly selection: the choice was the
+  argmax of these same 160-tick rollouts.
+- At 320–480 ticks the best pocket push is about even with the choice. Against the learned opponent it is ahead
+  roughly 2:1.
+- So the 160-tick, balanced-heavy scorer is biased against the pocket. Whether that costs games is the
+  forced-replay question below (TODO).
 
 ## 4. Verdict (TODO)
 

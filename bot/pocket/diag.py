@@ -231,6 +231,8 @@ class Logged:
                        n_pocket_r3a=len([c for c in pocket_c if c in first]), n_pocket_work=len(pw),
                        pocket_legal=len(legal),
                        pocket_legal_cards=sorted({hand[c // 576][0] for c in legal}),
+                       top=[(int(c), classify(c, hand, gf) if c < 2400 else 'wait', round(s, 5)) for c, s in
+                            sorted(((c, s) for c, s in scores.items() if s is not None), key=lambda x: -x[1])[:5]],
                        chosen_score=scores.get(key), best_pocket_score=max(
                            [scores[c] for c in pw if scores.get(c) is not None], default=None))
             if (self.cf_every and (dd[0] or dd[1]) and row['cls'] != 'pocket' and legal
@@ -261,13 +263,21 @@ class Logged:
                     cards=[hand[a // 576][0] if a < WAIT else None for a in keys], **{str(k): v for k, v in out.items()})
 
 
+def make_player(rt, name):
+    """bot.eval.headline.make_player plus K4P-* (bot/pocket/variant.py)."""
+    if name.startswith('K4P-'):
+        from bot.pocket.variant import make_pocket_player
+        return make_pocket_player(rt, name)
+    from bot.eval.headline import make_player as headline_player
+    return headline_player(rt, name)
+
+
 def worker(wid, jobs, out: Path, base: int, cf_every: int):
     os.environ.setdefault('PYTHONHASHSEED', '0')
     import torch
     torch.set_num_threads(1)
     from bot.players.runtime import Runtime
     from bot.players.ours import play_match, x4s_setup
-    from bot.eval.headline import make_player
     rt = Runtime()
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     dh = open(out / f'dec-{wid:03d}.jsonl', 'a')

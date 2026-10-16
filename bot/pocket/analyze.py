@@ -32,7 +32,9 @@ def load(dirs):
                     continue
                 decs[r['candidate'], r['opponent'], r['index'], r.get('tag')].append(r)
     for k in decs:
-        decs[k].sort(key=lambda r: r['tick'])
+        # an interrupted game is replayed from scratch on resume: drop its (identical) earlier rows
+        uniq = {json.dumps(r, sort_keys=True): r for r in decs[k]}
+        decs[k] = sorted(uniq.values(), key=lambda r: (r['tick'], r['kind']))
     return games, decs
 
 
@@ -98,6 +100,8 @@ def stats(dirs):
                    troop_shares={k: round(cls[k] / len(troop), 3) for k in ('pocket', 'enemy', 'bridge', 'back')}
                    if troop else {},
                    dead_lane_bridge_share=round(dead_bridge / len(plays), 3) if plays else None,
+                   back_with_threat=pct(sum(r['cls'] == 'back' and r['threats'] > 0 for r in plays),
+                                        cls['back']),
                    plays_per_min=round(len(plays) / max(1, sum(rem)) * 1200, 2),
                    games_with_pocket=len(tf), median_ticks_to_pocket=st.median(tf) if tf else None,
                    games_with_push=len(tpush), median_ticks_to_push=st.median(tpush) if tpush else None,
@@ -112,6 +116,9 @@ def stats(dirs):
                        pocket_in_work=pct(sum(r['n_pocket_work'] > 0 for r in legal), len(legal)),
                        mean_pocket_candidates=round(sum(r['n_pocket_cand'] for r in legal) / len(legal), 2)
                        if legal else None,
+                       wait_when_pocket_legal=pct(sum(r['cls'] == 'wait' for r in legal), len(legal)),
+                       pocket_when_pocket_legal=pct(sum(r['cls'] == 'pocket' for r in legal), len(legal)),
+                       back_when_pocket_legal=pct(sum(r['cls'] == 'back' for r in legal), len(legal)),
                        chose_pocket_when_in_work=pct(sum(r['cls'] == 'pocket' for r in legal if r['n_pocket_work']),
                                                      sum(r['n_pocket_work'] > 0 for r in legal)),
                        threat_share=pct(sum(r['threats'] > 0 for r in srch), len(srch)))
@@ -150,8 +157,10 @@ def cf(dirs):
                 res[opp, 'ALL'][part + h].append(max(vv[j] for j in pk) - vv[0])
     out = {}
     for (opp, cls), d in sorted(res.items()):
-        out[f'{opp} {cls}'] = {h: dict(n=len(x), pocket_better=round(sum(y > 0 for y in x) / len(x), 3),
-                                       median_delta=round(st.median(x), 4), mean_delta=round(sum(x) / len(x), 4))
+        out[f'{opp} {cls}'] = {h: dict(n=len(x), pocket_better=round(sum(y > 1e-9 for y in x) / len(x), 3),
+                                       pocket_worse=round(sum(y < -1e-9 for y in x) / len(x), 3),
+                                       median_delta_untied=round(st.median([y for y in x if abs(y) > 1e-9] or [0]), 4),
+                                       mean_delta=round(sum(x) / len(x), 4))
                                for h, x in d.items()}
     return out
 
@@ -161,7 +170,9 @@ def pick(dirs, n, out, h, seed=0):
     for (cand, opp, i, tag), r in cf_rows(dirs):
         c = r['cf']
         pk = [j for j, k in enumerate(c['cls']) if k == 'pocket']
-        if tag is None and pk:
+        # decisions the brief asks about (K4L chose a wait or a defensive own-half play) whose outcome is still open
+        # in the scorer's own 160-tick view (not every option a terminal +-2)
+        if tag is None and pk and r['cls'] in ('wait', 'back', 'spell_own') and abs(c['160'][0]) < 2:
             best = max(pk, key=lambda j: c[str(h)][j])
             rows.append(dict(candidate=cand, opponent=opp, index=i, tick=r['tick'], action=c['keys'][best],
                              was=r['action'], was_cls=r['cls'], delta=c[str(h)][best] - c[str(h)][0],
@@ -191,7 +202,11 @@ def forced(dirs):
         if not base or 'error' in base:
             continue
         cf_, cb = crowns(g), crowns(base)
+        e, o = str(1 - g['seat']), str(g['seat'])
+        hp = lambda x, s: sum(x['towers'][s])
         res[opp].append(dict(ds=g['score'] - base['score'], dcf=cf_[0] - cb[0], dca=cf_[1] - cb[1],
+                             dking=(base['towers'][e][0] - g['towers'][e][0]) / 4824,
+                             dhp_for=(hp(base, e) - hp(g, e)) / 1000, dhp_against=(hp(base, o) - hp(g, o)) / 1000,
                              applied=g.get('forced_applied'), was_cls=(g.get('force') or {}).get('was_cls'),
                              pred=(g.get('force') or {}).get('delta')))
     out = {}
@@ -205,19 +220,68 @@ def forced(dirs):
                         ci95=[round(bs[50], 4), round(bs[1949], 4)],
                         better=sum(d > 0 for d in ds), worse=sum(d < 0 for d in ds),
                         mean_dcrowns_for=round(sum(x['dcf'] for x in xs) / len(xs), 3),
-                        mean_dcrowns_against=round(sum(x['dca'] for x in xs) / len(xs), 3))
+                        mean_dcrowns_against=round(sum(x['dca'] for x in xs) / len(xs), 3),
+                        mean_enemy_king_damage_gain=round(sum(x['dking'] for x in xs) / len(xs), 4),
+                        mean_enemy_tower_khp_gain=round(sum(x['dhp_for'] for x in xs) / len(xs), 3),
+                        mean_own_tower_khp_loss=round(sum(x['dhp_against'] for x in xs) / len(xs), 3))
+    return out
+
+
+def live(dirs):
+    """live/loop/pocket.py's definition on sim games: stretch = an enemy princess tower's death (own-frame side l/r)
+    to the next enemy princess tower death or the end of the game (skipped if < 40 ticks); plays split by row
+    (<= 14 own, 15-16 bridge, >= 17 enemy); pocket = enemy side within 5 tiles of the dead tower's lane x (3.5/14.5).
+    Spells count as plays, as in the live script."""
+    games, decs = load(dirs)
+    agg = defaultdict(lambda: Counter())
+    for key, rows in decs.items():
+        cand, opp, i, tag = key
+        g = games.get(key)
+        if tag is not None or not g or 'error' in g:
+            continue
+        deaths = {}
+        for r in rows:
+            if r['kind'] == 'tower':
+                for j, side in ((0, 'l'), (1, 'r')):
+                    if r['dead'][j] and side not in deaths:
+                        deaths[side] = r['tick']
+        order = sorted(deaths.items(), key=lambda kv: kv[1])
+        for n, (side, t0) in enumerate(order):
+            t1 = order[n + 1][1] if n + 1 < len(order) else g['ticks']
+            if t1 - t0 < 40:
+                continue
+            c = agg[cand, opp]
+            c['stretches'] += 1
+            c['seconds'] += (t1 - t0) / 20
+            for r in rows:
+                if r['kind'] not in ('search', 'play') or not t0 <= r['tick'] < t1 or r['action'] >= 2304:
+                    continue
+                row, col = (r['action'] % 576) // 18, r['action'] % 18
+                zone = 'enemy' if row >= 17 else ('bridge' if row >= 15 else 'own')
+                c['plays'] += 1
+                c[zone] += 1
+                c['pocket'] += zone == 'enemy' and abs(col + .5 - (3.5 if side == 'l' else 14.5)) <= 5
+                c['spell'] += r['cls'].startswith('spell')
+    out = {}
+    for (cand, opp), c in sorted(agg.items()):
+        n = c['plays']
+        out[f'{cand} vs {opp}'] = dict(stretches=c['stretches'], plays=n, plays_per_min=round(n / max(1, c['seconds']) * 60, 2),
+                                       pocket=round(c['pocket'] / n, 3) if n else None,
+                                       enemy_side=round(c['enemy'] / n, 3) if n else None,
+                                       own_side=round(c['own'] / n, 3) if n else None,
+                                       spells=round(c['spell'] / n, 3) if n else None)
     return out
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['stats', 'cf', 'pick', 'forced'])
+    ap.add_argument('cmd', choices=['stats', 'cf', 'pick', 'forced', 'live'])
     ap.add_argument('dirs', nargs='+')
     ap.add_argument('--n', type=int, default=150)
     ap.add_argument('--h', type=int, default=320)
     ap.add_argument('--out')
     a = ap.parse_args()
-    f = dict(stats=stats, cf=cf, forced=forced)
+    f = dict(stats=stats, cf=cf, forced=forced, live=live)
     res = pick(a.dirs, a.n, a.out, a.h) if a.cmd == 'pick' else f[a.cmd](a.dirs)
     print(json.dumps(res, indent=1, default=str))
 
