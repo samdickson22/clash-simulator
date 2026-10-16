@@ -348,3 +348,66 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   No runtime/live-pin rollback needed. Explicit adds, staged diff check and staged secret scan precede each
   commit; final receipt-only commit/push uses the same guarded commands. One automatic final delivery only,
   no manual parent completion DM. B2 acceptance/integration then exact-native fresh C56 still required.
+
+## Shared Troop assignment: triage before exact captures (UTC)
+- 2026-10-16T11:30–11:41Z resumed substantive C1 ownership under CARD LEAD
+  `reports/cards/reviews/B2-C1-integration-contract.md`: Zap retained route,
+  ElectroDragon heading, IceSpirit mode stats. `SHARED-TROOP.md` records actual
+  source readers, evidence levels, missing captures, ownership and ordered gates.
+  No engine/native/tool-approval change, merge/rebase/selector copying/build/gate.
+- Direct essential owner handoff to B2 via t3_thread_send(auto), retry keys
+  `c1-shared-troop-capture-handoff-20261016` and
+  `c1-capture-three-exact-old-cases-20261016`: request immutable constructors and
+  paired first-bad pre/post states for Zap bluelead1/t0, ElectroDragon bluelead6/t14,
+  IceSpirit bluelead0/t23, exact source/native/tool receipts and normal acquisition.
+  Second message requests the two missing non-Zap captures in the same proposal
+  before independent review; no duplicate sweep or separate collection job.
+  B2 supplied `evidence/B2-C1-CAPTURE-INDEX.md`: frozen collector retained summaries,
+  not full roots. At11:36:39Z its existing08PID/PGID3586969 was active/lease4/24of62
+  rows. B2 owns liveness and one reviewed bounded capture after terminal; C1 made
+  no host contact, poll, job/watcher/queue or artifact change in B2.
+- Read-only source review used `rg --files`, `rg -n`, `sed -n`, `cat`, and
+  `git diff --no-index --` for B2/C1 dash.rs and dash_snapshot.py. Important actual
+  schema difference: B2 dash uses timer/destination and legacy charging; C1 uses
+  wait/goal/blocked and standing. Do not import an old B2 root into C1 and claim
+  same-schema parity. Exact old reproductions and current-source equivalents need
+  separate bindings, plus the real normal-acquisition witness.
+  Two initial guessed source reads under engine-cards/src/clasher failed because
+  Python resides under py/src/clasher; corrected immediately. An absent B2
+  HANDOFF/glob read was harmless; no source or old evidence was changed.
+- Exact local light command on05 at11:38Z:
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_shared_troop.py > reports/cards/c1/shared-troop/source-witness.json`.
+  PASS executes selected unmodified reference AST function bodies with explicit
+  minimal fixtures, reads retained failure JSON and hashes all sources. No engine
+  imports/battle/native/host execution. `shared-troop/source-receipt.json` binds
+  exact command/CWD/UTC/source bytes/output hash. Confirms source-level route
+  numbers and one-node threshold, exact/quantized-zero heading and nonzero controls,
+  kind0→2 ordinary switch and active-slow multiplier controls. This does NOT
+  establish dynamic cause, reachability, native parity or acceptance.
+- IceSpirit is C56. Its ordinary stat has a live end-of-frame cleanup reader even
+  though spirit skips normal components. Retain comparison; no inert/export-only
+  claim. ElectroDragon zero-displacement remains source candidate; Zap residual
+  stun remains inferred until roots. All retained FAILs, C56 and original631ac/
+  f68e5f80f/97171f5 approvals preserved. Later scoped fix needs exact witnesses,
+  negative controls, independent commit-bound review, frozen B2-first integration
+  and required fresh exact-native C56 in order; rollback only new scoped commits.
+- Current Sam authority/strict silence/direct-owner coordination remain in force:
+  no routine DMs or acknowledgments, no inputtools, one automatic final delivery
+  only when whole assignment done; independently reviewed host scripts required
+  before execution. No active descendants or legacy input request. Future briefs
+  repeat these rules; no tiny-step delegation.
+- 11:41–11:44Z expanded only the pure local inspection tool. Exact v2 command:
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_shared_troop.py > reports/cards/c1/shared-troop/source-witness-v2.json`.
+  PASS exercises actual reference finish_movement_tick with post-transport/frozen
+  state, three guard negatives and nonzero external displacement ordering; actual
+  Bandit dispatch shows paused stunned standing and continued forced-stunned
+  travel. No actual transport/battle/native or runtime module is imported.
+  Source/command/output bindings in source-receipt-v2.json, old v1 artifacts kept.
+  A first combined documentation apply_patch failed verification on an unmatched
+  RESULTS header and wrote nothing; corrected patch passed. No failed test hidden.
+- Small bounded source-only Astra-high diagnostic task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-ice-spirit-mode-readers-astra-20261016-1144`
+  examines nine named files/ranges for mode-stat readers, retained slows and
+  descendant/clone/reload risks before choosing a correction. No engine execution,
+  edits, host use or descendants authorized; prompt carries current strict silence
+  and coordination authority. This is not implementation review or acceptance.

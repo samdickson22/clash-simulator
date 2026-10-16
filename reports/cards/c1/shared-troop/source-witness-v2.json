@@ -1,0 +1,540 @@
+{
+  "kind": "source-witness-not-engine-acceptance",
+  "retained_failures": {
+    "electro-dragon": {
+      "captured_root_present": false,
+      "cast": {
+        "before_export": true,
+        "native": null,
+        "python": true
+      },
+      "differences": [
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.8.facing[1]",
+          "native": 0,
+          "python": -1000,
+          "spell_name": "",
+          "stats_name": "ElectroDragon",
+          "tick": 14
+        }
+      ],
+      "first": 14,
+      "first_field": "state.entities.8.facing[1]",
+      "gate_queries": [],
+      "lead": 6,
+      "mismatches": 30,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-first-electro-dragon-blue.json",
+      "runs": 40,
+      "sha256": "183711d0338299413316f81c7efca8aca9ac8386aecee292b9bc3408f2575201"
+    },
+    "ice-spirit": {
+      "captured_root_present": false,
+      "cast": {
+        "before_export": false,
+        "native": true,
+        "python": true
+      },
+      "differences": [
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.8.stats.ordinary",
+          "native": true,
+          "python": false,
+          "spell_name": "",
+          "stats_name": "IceSpirits",
+          "tick": 23
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.8.stats.projectile_slow_multiplier",
+          "native": 0.0,
+          "python": 1.0,
+          "spell_name": "",
+          "stats_name": "IceSpirits",
+          "tick": 23
+        }
+      ],
+      "first": 23,
+      "first_field": "state.entities.8.stats.ordinary",
+      "gate_queries": [],
+      "lead": 0,
+      "mismatches": 36,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-first-ice-spirit-blue.json",
+      "runs": 40,
+      "sha256": "21b8cfdda704e536321b8540570ae7fcaf2fd761bc274065268d5443f8d0a2c5"
+    },
+    "zap": {
+      "captured_root_present": false,
+      "cast": {
+        "before_export": true,
+        "native": null,
+        "python": true
+      },
+      "differences": [
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": 750,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 0
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": 250,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 1
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -250,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 2
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.direction[0]",
+          "native": 181,
+          "python": 254,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 3
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.direction[1]",
+          "native": 181,
+          "python": -28,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 3
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -750,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 3
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.route",
+          "native": [
+            [
+              21,
+              23
+            ],
+            [
+              22,
+              24
+            ],
+            [
+              23,
+              25
+            ],
+            [
+              24,
+              26
+            ],
+            [
+              25,
+              27
+            ],
+            [
+              26,
+              28
+            ],
+            [
+              27,
+              29
+            ],
+            [
+              27,
+              30
+            ],
+            [
+              28,
+              31
+            ],
+            [
+              28,
+              32
+            ],
+            [
+              28,
+              33
+            ],
+            [
+              28,
+              34
+            ],
+            [
+              28,
+              35
+            ],
+            [
+              28,
+              36
+            ],
+            [
+              28,
+              37
+            ],
+            [
+              28,
+              38
+            ],
+            [
+              28,
+              39
+            ],
+            [
+              28,
+              40
+            ],
+            [
+              28,
+              41
+            ],
+            [
+              28,
+              42
+            ],
+            [
+              28,
+              43
+            ],
+            [
+              28,
+              44
+            ],
+            [
+              28,
+              45
+            ],
+            [
+              28,
+              46
+            ],
+            [
+              28,
+              47
+            ],
+            [
+              28,
+              48
+            ]
+          ],
+          "python": [
+            [
+              22,
+              24
+            ],
+            [
+              23,
+              25
+            ],
+            [
+              24,
+              26
+            ],
+            [
+              25,
+              27
+            ],
+            [
+              26,
+              28
+            ],
+            [
+              27,
+              29
+            ],
+            [
+              27,
+              30
+            ],
+            [
+              28,
+              31
+            ],
+            [
+              28,
+              32
+            ],
+            [
+              28,
+              33
+            ],
+            [
+              28,
+              34
+            ],
+            [
+              28,
+              35
+            ],
+            [
+              28,
+              36
+            ],
+            [
+              28,
+              37
+            ],
+            [
+              28,
+              38
+            ],
+            [
+              28,
+              39
+            ],
+            [
+              28,
+              40
+            ],
+            [
+              28,
+              41
+            ],
+            [
+              28,
+              42
+            ],
+            [
+              28,
+              43
+            ],
+            [
+              28,
+              44
+            ],
+            [
+              28,
+              45
+            ],
+            [
+              28,
+              46
+            ],
+            [
+              28,
+              47
+            ],
+            [
+              28,
+              48
+            ]
+          ],
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 3
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[0]",
+          "native": 1750,
+          "python": 2250,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 4
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -1250,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 5
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -1750,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 6
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -2250,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 7
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -2750,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 8
+        },
+        {
+          "digest_equal": true,
+          "entity_class": "Troop",
+          "field": "state.entities.7.facing[1]",
+          "native": 1250,
+          "python": -3250,
+          "spell_name": "",
+          "stats_name": "Assassin",
+          "tick": 9
+        }
+      ],
+      "first": 0,
+      "first_field": "state.entities.7.facing[1]",
+      "gate_queries": [],
+      "lead": 1,
+      "mismatches": 10,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-first-zap-blue.json",
+      "runs": 40,
+      "sha256": "715ed22635c6b7231e1d25b68e34037f253200bddeef70628cb81a3bea1180af"
+    }
+  },
+  "source": {
+    "actual_dash_dispatch_controls": [
+      "stunned_stand_pauses",
+      "unstunned_stand_launches",
+      "forced_stunned_travel_still_runs"
+    ],
+    "actual_finalizer_controls": [
+      "post_transport",
+      "not_stunned",
+      "not_frozen_moving",
+      "empty_route",
+      "facing_before_external_and_pop_after_external"
+    ],
+    "ice_ordinary_character_projectile_character": [
+      true,
+      false,
+      true
+    ],
+    "limitation": "Source/explicit-state witness only; no native execution, captured root or normal gameplay proof.",
+    "nonzero_and_quantized_zero_controls": true,
+    "projectile_slow_mode_controls": [
+      0.0,
+      1.0,
+      0.7,
+      0.0
+    ],
+    "retained_route_trace": [
+      {
+        "consumed": false,
+        "direction": [
+          181,
+          181
+        ],
+        "facing": [
+          1750,
+          750
+        ],
+        "route": [
+          [
+            21,
+            23
+          ],
+          [
+            22,
+            24
+          ]
+        ],
+        "y": 11
+      },
+      {
+        "consumed": false,
+        "direction": [
+          181,
+          181
+        ],
+        "facing": [
+          1750,
+          250
+        ],
+        "route": [
+          [
+            21,
+            23
+          ],
+          [
+            22,
+            24
+          ]
+        ],
+        "y": 11.5
+      },
+      {
+        "consumed": false,
+        "direction": [
+          181,
+          181
+        ],
+        "facing": [
+          1750,
+          -250
+        ],
+        "route": [
+          [
+            21,
+            23
+          ],
+          [
+            22,
+            24
+          ]
+        ],
+        "y": 12
+      },
+      {
+        "consumed": true,
+        "direction": [
+          254,
+          -28
+        ],
+        "facing": [
+          1750,
+          -750
+        ],
+        "route": [
+          [
+            22,
+            24
+          ]
+        ],
+        "y": 12.5
+      }
+    ],
+    "threshold_and_one_node_controls": true,
+    "zero_heading_preserved": true
+  }
+}

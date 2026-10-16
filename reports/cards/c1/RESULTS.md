@@ -11,6 +11,11 @@ corrections are not in git** (§3, for the live16402 overlay; fidelity "with sta
 08 built by `batchA/tools/apply_stats.py`). Omitted metadata that the compact export drops (no value in our data at
 all, or a mechanic switch) is restored declaratively in `balance.py`, as Batch A did.
 
+Shared Troop follow-up is active under the ordered B2→C1 contract: see
+[triage and witness ledger](SHARED-TROOP.md). Zap's forced-state mismatch is
+established; heading coincidence, exact Spirit mode history and ordinary gameplay
+reachability still need B2's reviewed captures. No new fix/parity/acceptance claim.
+
 Launcher repair is complete: fresh independent r5 **APPROVE** at tools commit
 `97171f531a31f9663f74ff95093d58053125860d` ([full review](reviews/FINAL-TOOLS-r5.md),
 [exact receipt/rollback](reviews/REPAIR-RECEIPT.json)). All six launcher findings plus expiry wording and later
