@@ -416,7 +416,7 @@ coordination and one automatic final delivery remain in force.
 
 New owner (the previous thread could not continue). Exploration tier: correctness gates only.
 Branch **`cards/c1-main`** = origin/main (A + B1 + B2, engine-cards == f71fe8d20) merged with
-`cards/b2-c1-integration-20261016`. Merge commit `d0a60de59`, native
+`cards/b2-c1-integration-20261016`. Merge commit `d0a60de59`; gated engine commit **`5c41d4a8a`**, native
 **`9f66228815bbb6c3349feeee256aa2d9d546171e4a8cc8e9731699c359869bd1`** (reproduced on 04 and 08).
 
 ### Root causes fixed
@@ -461,12 +461,17 @@ detectable (local negative controls):
 - Fidelity on the B2+C1 integration source (08 `c1/o2/fid/f1-*`): **C1 32/36 mechanics, 35/36 with the overlay**,
   identical verdicts to the original C1. Pool 77/193 mechanics, 80/193 with stats (C1 alone: 74/77). The residual
   is ElectroWizard × Knight (C56 Knight clock, §5).
-- **On main (`d0a60de59`, native `9f662288`), pending at hand-off:**
-  - native==Python suite: 08 `c1/o3/m1/`, PGID 495959. It covers C1 36 + 72 cases, Batch A 42 + 4, B2 28, B1 30
+- First main run (`d0a60de59`): the suite showed every Spirit export raising `UnboundLocalError`. Main's
+  `differential.entity` had a later function-local `SimpleNamespace` import, which shadowed the module import
+  used by the launched-carrier line. Fixed in `5c41d4a8a`, Python-only, native unchanged; shared 32/32 after the
+  fix. That gate (PID 3515215) and suite were stopped; the aborted dir is `c1-main-gate-d0a60de59-aborted`.
+- **On main (`5c41d4a8a`, native `9f662288`), pending at hand-off:**
+  - native==Python suite: 08 `c1/o3/m2/`, PGID 1082193. It covers C1 36 + 72 cases, Batch A 42 + 4, B2 28, B1 30
     full-snapshot, B1 16 regressions, shared 32, first-update, the 21-path first-update probe, dash-clock,
     selectors, review, followup, clone, terrain and the 11 named native-diff games.
   - Fidelity: 08 `c1/o3/fid/fm-*`.
-  - **C56 gate: 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/`, PID = PGID 3515215, started 19:19:46Z.**
+  - **C56 gate: 04 `/mpac/sdicks02/jobs/clasher/cards/c1-main-gate/` (commit `5c41d4a8a`), PID = PGID 3925919,
+    started 19:27:51Z.**
 
 Lesson: a rebuild copied over a native that running probes had mmap'd segfaulted the first suite (s1, discarded).
 Builds now go to `native-<sha>/` with an atomic symlink, and each suite pins its native and a frozen source copy.

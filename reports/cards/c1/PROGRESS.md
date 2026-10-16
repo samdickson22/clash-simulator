@@ -997,5 +997,6 @@ coordination and one automatic final delivery remain in force.
 
 Took over from the previous C1 owner. Fixed shared `zap/external` (combat stun gate), the C56 Spirit-stats
 regression found by gate g1, child-capable spell-shot origin and comparator representation rules; merged onto main
-(A + B1 + B2) as `cards/c1-main` `d0a60de59`, native `9f662288`. Pending: suite 08 `c1/o3/m1` (PGID 495959),
-fidelity `c1/o3/fid/fm`, C56 gate 04 `c1-main-gate` PID 3515215. Details: RESULTS.md "Owner 2".
+(A + B1 + B2) as `cards/c1-main` `d0a60de59`, plus the `SimpleNamespace` shadowing fix `5c41d4a8a`, native
+`9f662288`. Pending: suite 08 `c1/o3/m2` (PGID 1082193), fidelity `c1/o3/fid/fm`, C56 gate 04 `c1-main-gate`
+PID 3925919 (19:27:51Z). Details: RESULTS.md "Owner 2".
