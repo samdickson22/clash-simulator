@@ -1,0 +1,7 @@
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json: OK
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json: OK
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json: OK
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json: OK
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json: OK
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json: OK
+/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json: OK

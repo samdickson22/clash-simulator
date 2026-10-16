@@ -1,156 +1,60 @@
-# Level-aware search pilot: interim evidence (exploration)
+# Level-aware search pilot: current evidence
 
-2026-10-16, resumed by Sol high. [Progress and audit](PROGRESS.md), [design](DESIGN.md).
-**R27 primary stopped: INVALID/INCOMPLETE; no accepted strength conclusion.** Owner-directed bounded cleanup finished2026-10-16T12:43:33Z with parent/shell exit143. All55 rows and logs are preserved:47 terminal games, including4 failed winning rows with16 GAME_OVER refusals, plus8 interrupted games;245 requested games never produced rows. No retries, exclusions, source changes or restart. [Stop audit](receipts/pilot-r27-stop-audit.json), [terminal-order audit and proposal](receipts/pilot-r27-terminal-order-audit.md). Before games, the mandatory DEV gates passed145 classifications/1024 binary taps,9 cold tests,216 integration tests,254 native checks and8 clean all11 rows/4matched pairs. They did not expose the later command-closure defect. All1327 frozen input checks and7 cache hashes still match after stop. The required s27 replay remains separate:23/23pairs,3actionIDs+3wait durations changed, no Cannon chosen. [Replay result](S27-M02.md).
-BOT LEAD accepted the reversible serial design and fixed supported-card scope before outcomes.
+Updated2026-10-16 13:20UTC/06:20PDT. **The assignment is unfinished. R27 is permanently INVALID/INCOMPLETE; no accepted mixed-level strength estimate or confirmation decision exists.** The common terminal-phase repair passed fresh independent R29 source review. Its six exact-binary boundary cases and nine cold cache regressions pass; all256 integration tests pass; all254 native checks and the original four-case all11 gate pass. No new registration or restart has run. [Design](DESIGN.md), [progress/audit](PROGRESS.md), [handoff](HANDOFF.md).
 
-## Verified evidence
+## R27 stopped primary — invalid and preserved
 
-- RoyaleSim mixed-level reset: level-6 towers have 3312/2030 HP; Musketeer at L4/7/11 has 375/496/721 HP.
-  Original job log `rsim-probe-01.txt`, SHA256 `287e3d23b993713dd29ab81ac5a19274950ec1033a55c1ba5bb15718d0a2df95`.
-- Harness DEV base 1: four A games, repeated twice. All four command hashes, own logs and tower HP match;
-  eight wins, zero errors/rejected deployments/search failures/translator diagnostics. First run 96.364 CPU
-  s/game and 98.576 wall s/game; repeat 97.321 CPU s/game and 99.505 wall s/game. Four original unit tests passed.
-  [Receipt](receipts/harness-dev-audit.json). This is runner determinism evidence, not level-aware strength.
-- Fresh pinned-runtime mapping: **121/121** cached L11 exports match the native JSON. The initial raw-Python
-  comparison was 3/121 because disk JSON changes coordinate tuples to lists. No export stats were changed.
-  [Executed schema/tower receipt](receipts/gates-schema-towers-r2.txt), SHA256
-  `cd30432de666b2e58929f59702c358b630298f36bb7c93127038b93a31b04645`.
-- Tower checks: **13/13 pass** — eight HP/damage curve checks at L10/12 and five L4–8 HP checks against RoyaleSim.
-  The earlier Archers catalogue alias failure is preserved in [the failed receipt](receipts/gates-towers-r1.txt).
-- Two regression tests pass: cached tuple/list representation versus real damage differences, and tower-shot
-  HP preservation. [Receipt](receipts/pytest-configs-r2.txt), SHA256
-  `615346574e154b3beff92a0c3300cc216b1d715cbac6441c7dbf923797c8c68f`.
-- Existing exports at L4/5/6/7/9 contain 118 cards and three explicit errors: Clone, Earthquake, Tornado.
-  L11 contains 121 cards, zero errors. All original export logs are preserved under receipts.
+The100-case A/B/B0 bank was registered before games at2026-10-16T12:30:35Z(05:30:35PDT), after the mandatory gates below passed. BASE1273808234825296 came from fresh os.urandom(6)<<4. The [immutable registration](receipts/pilot-r27-registration.json) has SHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983; [bank](receipts/pilot-r27-bank.json) SHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1. Its54eligible pool rows retain every original projection; controllers and seats are balanced25cases per group. [Bank audit](receipts/pilot-r27-bank-audit.json).
 
-## Fixed scope and interpretation
+The first open interim at12:41:33Z contained22/300rows and6clean A/B pairs. B/case0 was a terminal win with4actual GAME_OVER refusals and childexit1. The owner stopped the verified parent632390 at12:43:32Z; existing bounded cleanup reaped all8children and finished12:43:33Z with parent/shell143. No retry, exclusion or source change occurred during the run.
 
-No selected true-deck projection is lost (0/54). The belief catalog restriction removes 425/2925 decks,
-15,371/69,380 frequency weight = **22.15479965%**, identically for every experimental arm and policy controller.
-The original projection catalog stays immutable; selected projection equality is asserted before bank creation.
-[Scope audit](receipts/scope-audit-r1.json), SHA256
-`c7f2c5beac6c67da79ddb4295900978b6ae6f41af40d8dbe5fb841005ef8334d`.
-This is a conditional-population physics pilot, not literal current-live-prior equivalence. Missing playable or
-identified body exports fail closed. There are no outcome-dependent exclusions or silent L11 substitutions.
+The preserved poststop report is **55/300rows:47terminal(43clean+4failedwinningrows),8interrupted,245missing**, qualityFAIL. A/case10/12, B/case0 and B0/case13 contain16GAME_OVER refusals, all at>=6000, with nativeFAILURES0. Every affected raw outcome is a win. All47terminal rows have nativeFAILURES0; interrupted rows retain signal-15 and absent diagnostics. No duplicates or identity mismatches were found. [Stop inventory](receipts/pilot-r27-stop-audit.json), [parent audit](receipts/pilot-r27-parent-audit.json), [unchanged report](receipts/pilot-r27-poststop-report.txt).
 
-A uses L11 roots/config/native; B0 uses the existing root-only scaler (own producing-body levels,
-opponent body default5 without rarity adjustment, tower input6 on the legacy card ladder; rollouts/meta11).
-B uses exact own levels, a fixed fair
-opponent estimate, tower curves and per-seat rollout templates. B's crown metadata changes both leaf evaluation
-and scripted crown spell lethality/Lightning ordering. Identical-state learned features remain equal at that
-layer; the complete public view is not claimed invariant. [Bounded source diagnostic](receipts/leaf-diagnostic-astra-r1.md).
-The pilot is serial; it makes no pooled LIVE integration or immediate promotion claim.
+Clean-only summaries contain14A/14B/15B0 games and12A/B pairs, omitting failed winning rows by validation rule. They cannot decide the registered rule or size confirmation. Raw terminal W/D/L including failures are A15/0/1, B12/0/3, B0 14/0/2; these are also incomplete invalid exploration, with no strength claim. Every raw row/event/outcome remains preserved.
 
-## Native gates passed; complete-game parity pending
+All1327 frozen input checks,107source hashes and7cache hashes matched after stop. All58output files were copied01→05 and SHA verified. Full raw job, logs and immutable manifests remain under `/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r27`; original bank/registration are unchanged. Completed B games exercised1859roots/20095bodies/7075leveled/11579tower visits, unmapped0. This is operational coverage only.
 
-The corrected native suite passed **254/254** checks: exports, towers, mixed seats, spell impacts,
-32 public root bodies, snapshot/cut/cache transport and fair-information roots/decisions.
-[Executed receipt](receipts/gates-all-r11.txt), [raw snapshot audit](receipts/gates-r11-owner-audit.json).
-Both native snapshot comparisons differ only because serde emits absent `spell_name` as an empty string
-(10 fields per seat). There are no numeric/type/entity/order/position/qualified-key changes.
-Thirty action values each match their uncut references through cut, snapshot and one-worker raw-fc transport;
-A→B→A changes then reuses the content key, with shipped cache sizes [1,2,2]. Four real B decisions invoke
-roots under identical public states and different hidden opponent levels; roots/commands match in both seats.
-This scripted balanced transport check makes no learned-pool or LIVE deployment claim.
+## Terminal-phase repair: review and boundary passed; remaining gates pending
 
-Final harness source review R12 conditionally approved execution; matching-byte tests passed114/114.
-The forced-all11 run completed all8 rows and matched4/4 A/B command hashes, with positive B roots in all4games.
-It **failed acceptance**: Cannon deployments were rejected identically in both arms (case1 OUT_OF_TERRITORY3;
-case2 OUT_OF_TERRITORY1 and WATER1 per arm). Parent exit1/report qualityFAIL; zero nativeFAILURES.
-The complete failed run is preserved in the job directory, with [audit](receipts/all11-r12-failed-audit.json)
-and [report](receipts/all11-r12-failed-report.txt). No primarybank has been drawn. The [bounded source diagnostic](receipts/territory-diagnostic-astra-r13.md) located the shipped simulator
-ordinary-building own-half rule, while the native/public mask opens troop bridge/pocket territory for buildings.
-A reviewed common public mask intersection now passes the exact-binary placement probe described below; integration acceptance remains blocked.
-It amends actual command eligibility identically in every arm/controller, with weights, feature definitions
-and native rollout physics unchanged. No gate is relaxed or case excluded. Repair requires fresh independent
-review, binary probe, meaningful integration tests and the same complete all11 bank in a fresh output. Original deferred probes on03 have twice exhausted
-30-minute admission windows without running; full-pool priority is preserved and no retry is left queued.
-BOT LEAD explicitly accepted this as a nonblocking resource deferral: the reviewed matching-runtime suite
-supplies physics, transport and fairness evidence. No additional03 window or retry is needed.
+The [source audit](receipts/pilot-r27-terminal-order-audit.md) establishes a separate no-play phase at overtime expiry before final HP-drain game_over, using the pinned calibration/API, compiled deploy guard and corroborating public facade. The facade is not proven the wheel's exact Rust revision; failed games did not capture historical full states. The wrapper checked only final game_over and therefore admitted late reservations/dispatches. Calling6000 terminal would corrupt final HP/crowns/tick/scoring.
 
-The required s27-m02 offline diagnostic is complete; [its result and limits](S27-M02.md) support no causal conclusion. No account/emulator actions,
-frozen-runtime edits, pin/model changes or LIVE deployment occurred. Rollback selects standard A outside the
-experimental factory, preserving all original catalogs and receipts.
+R28 adds a common validated public calibration/clock phase guard before due-slot inspection, dispatch and policy polls, shared by both seats/all arms. Unsent reservations remain pending with exact operational evidence and unchanged accounting. Empty commands continue native scoring until actual game_over; rejection/error/native/completeness gates are unchanged. No old refusal is filtered or reclassified. Weights/features/levels/scope/placement/translator/native/frozen runtimes remain unchanged.
 
-## Exact-binary placement evidence and remaining blockers
+Source receipt `/mpac/sdicks02/jobs/clasher/bot-levels/terminal-r28-implementation.md` binds the three changed/new files and109-entry closure. Fresh R29 review covers exact-binary accepted5997/refused6000/actual later scoring, delayed draws, real27tick queues/5tick polls, unsent6002 reservations, independent identical-state drain references, early king/crown endings, preserved real rejection/report failure and immutable R27 evidence. R29 approved the matching bytes and bounded commands. Six exact-binary cases now pass: both clients accept5997, refuse6000 while game_over=false, finish unequal-HP wins at6128, and exact ties drain once at returned6068 then draw at6148. [Boundary audit](receipts/terminal-boundary-r28-owner-audit.json), [raw evidence](receipts/terminal-boundary-r28.json). Nine cold cache regressions pass with unchanged seven-file cache. Full six-file integration passes256/256(127.07s,0skip), including40terminal fixtures and unchanged exact cache/spell anchors. [Integration audit](receipts/integration-terminal-r28-owner-audit.json). All254native checks also pass at these matching bytes, with unchanged seven-file cache and only the same20missing spell_name string defaults. [Native audit](receipts/gates-terminal-r28-owner-audit.json). Original all11 now passes8clean terminal rows/4full command and final-state hash pairs, B roots[102,113,106,67]/unmapped0, allparent/childexit0 and reportqualityPASS. [All11 audit](receipts/all11-terminal-r28-owner-audit.json). All109source and1329frozen-input checks match; all7cache files are unchanged. These DEV games end before command closure, whose behavior is independently covered by the boundary and queue fixtures. All mandatory gates now pass for the reviewed serial experiment; publication and fresh registration precede games.
 
-The reviewed R14 probe exited0 with64/64 Cannon fixtures:40 expected refusals and24 accepted controls. All16 boundary controls relocated inward to own centre y13.5, preserving a fitting3×3 box. [Binary receipt](receipts/placement-micro-r14.json), [owner audit](receipts/placement-micro-r14-owner-audit.json).
+Recovery retains all invalid R27 evidence and uses a **new full100-case registration from fresh os.urandom BASE**, after final gates and before games, with unchanged population/arms/policy/rule. No new BASE has been drawn; no selective reuse or outcome-dependent exclusions are permitted.
 
-This is **Cannon-only PASS, overall placement blocked**. Knight and Minions at the tested bridge edge were refused as WATER in both seats, while the shared public mask admits that location; tested bridge-interior/home controls and all six Fireball controls were accepted. No dependent test/native/all11 run was launched after that contradiction. This historical failure prompted a common public geometry correction; the subsequent v3 result below confirms the selected simulator placements.
+## Prior mandatory gates: passed before R27
 
-Fresh review also found a resume provenance gap: frozen imitation policy/mask/feature Python sources were absent from the runtime manifest. Their source closure and resume-tamper regressions were added, then raw-token identity was also repaired and freshly reviewed, without changing runtime behavior. [Review](receipts/review-sol-r15-placement.md). Primary bank/games remain blocked; no BASE or outcomes exist.
+These results qualify their matching R26 bytes, and remain evidence of those layers. They did not expose the subsequently reached terminal lifecycle defect.
 
-The broader R17 probe exited1 before deployment tests. Its145 native catalogue rows expose two static classification disagreements (Tornado and MergeMaiden); Cannon/river tap counts are both zero. [Failed receipt](receipts/placement-micro-r17-failed.json), [audit](receipts/placement-micro-r17-owner-audit.json). Generic schema precedence/variant-class reconciliation and the final raw-token manifest repair passed fresh R23 source review. This historical failed run supplies no physics evidence.
+| gate | observed result | receipt |
+| --- | --- | --- |
+| mixed-level simulator reset | L6 towers3312/2030HP; MusketeerL4/7/11 HP375/496/721 | original job rsim-probe-01.txt |
+| exact export/tower mapping |121/121L11 exports;13tower checks | [schema](receipts/gates-schema-towers-r2.txt) |
+| exact-binary public placement |145classifications;1024commands,380accepted/512expectedWATER/132expectedterritory;16inward Cannon controls fit3×3 | [probe](receipts/placement-micro-r21.json), [audit](receipts/placement-micro-r21-owner-audit.json) |
+| cold read-only cache failures |9/9pass,0.18s | [log](receipts/pytest-preload-isolated-r25.txt) |
+| actual full integration |216/216pass,124.43s,0skip | [audit](receipts/integration-r25-owner-audit.json) |
+| native physics/transport/fairness |254/254pass | [audit](receipts/gates-r25-owner-audit.json) |
+| complete-game all11 |8clean terminal rows/4fullA-Bcommand-hash pairs; all4B roots positive; parent/children0 | [audit](receipts/all11-r25-owner-audit.json), [report](receipts/all11-r25-report.txt) |
+| final source review |fresh R26 approves matching bytes | [review](receipts/review-sol-r26-cache-import.md) |
 
-Current blocking update 2026-10-16T11:50:11.593285+00:00: full integration179PASS/12FAIL; timedWAIT fixture handling and changed Fireball support-cache baseline under source-only R24 repair plus bounded Astra cause audit. No cache restoration yet; fresh review→tests→native→clean four-caseall11 still required before primarybank. See PROGRESS R24 audit and job/gates-r24-repair-brief.md.
+Native evidence includes121exports,13tower checks,32public bodies, four actual fair B roots/decisions, and30comparisons each through cut/snapshot/raw-fc. One worker A→B→A changes then reuses the content key, shipped sizes[1,2,2]. All20raw snapshot differences are absent spell_name becoming empty strings; no numeric/type/entity/order/owner/position/key waiver. This is scripted balanced transport, not learned-pool or LIVE equivalence.
 
-## V3 probe passed; integration repair pending
+Integration preserved exact FireballL11 damage688/crown159 andL4 357/83, Poison92/21,121qualification and all7cache hashes. R24 repaired early global spell-registry initialization before actual Runtime plus an implicit support writer; original support bytes were restored after review, bad bytes preserved. [Bounded cause audit](receipts/fireball-bootstrap-astra-r24.md). The full failed config was not captured, so no empirical one-field-only reference-hash reconstruction is claimed. Existing exports are unchanged; no exporter, tolerance or L11 fallback was introduced.
 
-The R23-reviewed v3 probe passed **145/145 catalogue classifications and all1,024 commands**:64 Cannon controls plus960 card/seat/river/territory controls. It retained the original18 edge cases. Overall results were380 accepted controls,512 expected WATER refusals and132 expected territory refusals. All16 inward Cannon relocations fit their3×3 own-half box. [Binary receipt](receipts/placement-micro-r21.json), [count audit](receipts/placement-micro-r21-owner-audit.json). This supports the common simulator command adapter; native rollout geometry and LIVE placement rules are not claimed equivalent.
+Earlier failed R6/R12/R14/R17/R21 checks remain in receipts and PROGRESS. They supply no waived PASS. Original exploratory r1/r1-total probes twice exhausted30minute03admission windows without running; BOT LEAD accepted a nonblocking resource deferral because the matching-runtime suite supplies the required physics/transport/fairness evidence. No retry is queued or needed.
 
-The subsequent five-file integration suite **failed:179passed/12failed**. Ten fixtures treated timed-WAIT2400 as a publicmask index(size2306). Two real B-root fairness fixtures failed closed on FireballL4 after the suite changed the supported-card whitelist. All six raw level exports remain unchanged. [Failure audit](receipts/integration-failure-r24-owner-audit.json), [original failed log](receipts/pytest-placement-r21.txt). The original whitelist bytes have been reconstructed exactly for review, but the cache has not yet been restored.
+## Frozen experiment and interpretation
 
-R24 source-only repair is complete: semantic WAIT checks, Runtime-first fixture construction and existing-only immutable caches including primary preload. The bounded Astra source audit established the cache/call-order defect. Fresh independent R25 review is active before restoration or execution. A fresh independent review, passing full integration, fresh native gates and clean complete-game all11 evidence remain required before any primary bank or games. No support/physics gate has been relaxed.
+A assumesL11 roots/config/native. B0 is the legacy root-only scaler: own producer levels, opponent body5 without rarity adjustment, tower input6 on the old card ladder, rollout/meta11. B uses exact own levels, fixed fair opponent estimates, tower curves and qualified seat spell/payload templates. B crown metadata affects **leaf and scripted crown-spell lethality/Lightning**, while identical-state learned feature invariance is evidence only for that layer. Frozen learned weights/features/static columns remain fixed; native Mirror payload12/direct-cast holder-key limitations remain disclosed. Serial search/oneprocess pergame supplies no pooled LIVE claim.
 
-The bounded [Astra source audit](receipts/fireball-bootstrap-astra-r24.md) establishes an early global spell-registry initialization path: stale Fireball crown damage172HP versus normalized159HP atL11. Its existing L4 export remains357ordinary/83crownHP. It also identifies a separate support-manifest writer in the primary preload that must become read-only. The full failed-process config was not captured, so the complete reference-hash change is not claimed empirically to differ in only one field. No numerical tolerance or physics change is accepted.
+Own Cannon8 levels: Valkyrie5,Archers7,Minions5,Cannon6,Fireball5,Giant6,MiniPekka5,Musketeer4; towers6. This is the explicitly authorized fixed scenario plus ACCOUNT-LOG, not a fresh collection.json extraction (file absent). Opponent true common levels are independent population draws4:4/5:49/6:25; noncommon minus1 with rarity floors. B's fixed fair estimate is common5/rare4/epic6/legendary9/champion11,tower6, never hidden per-match levels/deck/order.
 
-## R26 repair validation
+The common supported-card prior omits Clone/Earthquake/Tornado425/2925decks and15371/69380frequency=**22.15479965%**, retaining2500decks; all54original true-deck projections are unchanged. [Scope audit](receipts/scope-audit-r1.json). It is a conditional-population physics experiment, not literal current-live-prior equivalence or immediate promotion evidence. All arms/pollers share the restriction and static simulator eligibility adapter; native rollout geometry and LIVE placement laws are not claimed equivalent. Unsupported exports fail closed.
 
-The cold isolated no-write regression passes9/9cases. Full clean-process integration passes**216/216** with no skips, exact121-card qualification, Fireball688/159 atL11 and357/83 atL4, and unchanged seven-file cache. [Audit](receipts/integration-r25-owner-audit.json). The original support bytes were restored exactly after independent review, with the failed manifest retained.
+Score1/.5/0; primaryΔ=B−A;20,000case-pair bootstrap resamples,seed0. Promising iffΔ>=+.03; B0 never decides. Only a valid promising pilot sizes confirmation at80%power,δ.05,two-sidedα.05 from paired SD, clamp650–1300pairs while reporting raw required n/underpower. No automatic confirmation launch. The live200ms default-share/latency check follows only a valid promising result. Rollback selects standardA/removes experiment hooks while preserving original prior, good/bad caches, frozen models/pins and failures. No LIVE deployment/account/emulator/GPU action occurred.
 
-Fresh native gates pass**254/254** at the same reviewed source/cache:121exports,13towerchecks,32publicbodies,fouractualfairBdecisions and30eachcut/snapshot/raw-fc comparisons. All20rawsnapshot differences are only missing spell_name becoming empty strings; no numeric/entity/ordering/owner/position/key waiver. [Audit](receipts/gates-r25-owner-audit.json). The original four-case clean all11 run is in progress in a fresh output. No primary BASE/bank/outcomes exist.
+## Completed offline s27 diagnostic
 
-## Clean complete-game all11 acceptance
-
-The final same-bank DEV run passes**8/8 clean terminal rows and4/4 complete A/B command-hash pairs**. B actually built102,113,106 and67roots, with zero unmapped bodies. Both controllers and seats are covered, every recorded deployment is accepted, all child/parent exits are0, and completeness/provenance report quality isPASS. Seven cache hashes remain unchanged. [Owner audit](receipts/all11-r25-owner-audit.json), [report](receipts/all11-r25-report.txt). This closes the earlier Cannon rejection blocker and qualifies the frozen serial experiment for fresh registration; it is no mixed-level strength result.
-
-## Fresh primary registration
-
-At2026-10-16T12:30:35Z(05:30:35PDT), after all mandatory gates passed, BASE**1273808234825296** was drawn from fresh os.urandom(6)<<4 with the unchanged decision rule. [Immutable registration](receipts/pilot-r27-registration.json), SHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983. The100-case bank contains54eligible pool rows and balances25cases in each controller/seat group. Bank SHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1. [Bank audit](receipts/pilot-r27-bank-audit.json), [fixed bank](receipts/pilot-r27-bank.json). No primary game had started at this publication. All300A/B/B0 games remain requested; partial reports will be labelled incomplete, with no outcome-dependent changes or exclusions.
-
-## R27 stopped primary — invalid and incomplete
-
-The first open interim at12:41:33Z contained22/300 rows and6 clean A/B pairs.
-B/case0 was already a recorded terminal win with four GAME_OVER refusals and
-child exit1; that row and its score were preserved. The owner directed STOP
-instead of completing an invalid run. Only the verified parent632390 received
-SIGTERM at12:43:32Z; its existing bounded cleanup reaped all8 owned children.
-Parent/shell exit143, final receipt12:43:33Z. No retry or exclusion occurred.
-
-The preserved post-stop report exited1:55/300 rows,47 terminal,43 clean,
-8 interrupted and245 missing. A/case10 and12, B/case0 and B0/case13 have
-16 GAME_OVER refusals in total; all four raw outcomes are wins. All47 terminal
-rows have zero native FAILURES. The8 interrupted rows retain signal exit-15
-and absent diagnostics, not fabricated outcomes or asserted prior mutations.
-There are no identity/coverage-schema mismatches among the observed records.
-[Detailed stop inventory](receipts/pilot-r27-stop-audit.json),
-[unchanged machine report](receipts/pilot-r27-poststop-report.txt).
-
-The machine report's clean-only summaries use14 A,14 B and15 B0 games and
-12 clean A/B pairs; they omit failed winning outcomes by validation rule.
-Those partial metrics and plug-in power values are preserved for audit only.
-They cannot decide the preregistered primary rule or size a confirmation.
-Raw terminal W/D/L, including failed rows, are A15/0/1, B12/0/3, B0 14/0/2;
-these too are incomplete, invalid exploratory outcomes with no strength claim.
-
-All1327 frozen source/runtime/model/proof/cache/bank/registration checks still
-match on01 after stop; all107 source hashes match05 and all7 cache files are
-unchanged. All58 job-output files were copied01→05 and SHA verified, including
-every55 row, launch identity, parent completion and report. Raw logs, first
-interim and post-stop reports are separately preserved under the job directory.
-The immutable bank/BASE and registration remain unchanged.
-
-The [source audit](receipts/pilot-r27-terminal-order-audit.md) distinguishes
-public command closure at6000 from final game_over after HP drain. The common
-match loop checks only the latter, so it can dispatch and reserve commands in
-the intervening no-play phase. A minimal proposed guard would retain accepted
-commands and unsent queue evidence, skip dispatch/polls after public closure,
-and continue native empty-command drain to the actual winner/crowns/HP/tick.
-No source/test changes or boundary experiment were made. Review of preserved
-failure and the proposed late-pending/last-accepted/terminal-score tests is
-required before implementation or restart. R27 remains invalid permanently.
-
-## Repair authorized; execution still blocked
-
-The parent accepted the bounded common command-phase bookkeeping plan after reviewing the full pinned API/calibration and preserved failures. Existing owner R28 is implementing the guard and meaningful boundary/late-pending/final-score fixtures source-only. No source execution, boundary experiment, repaired PASS or restart has occurred. Fresh independent review and final gates remain required; any later pilot uses a fresh full registration with unchanged population, policy and decision rule, retaining R27 permanently as invalid exploration.
+[Full result and limits](S27-M02.md):52fixtures pass;23/23paired opportunities/actual B roots,0errors/nativeFAILURES/queue mismatches, equal public hashes. Three actionIDs and three wait durations change. Cannon is chosen0times in either arm despite21available/9affordable opportunities, including7affordable home-threat states. Five acknowledged taps plus one explicitly UNVERIFIED internal reservation233 preserve queue context; this is never six acknowledged plays. Staleft-r6 duplicate perception, conditional recorded future/gating, and current writer snapshots not proven original Mac revision remain disclosed. No causal/outcome/latency claim and no rerun are warranted. Conditional200ms source notes are read-only, not a benchmark or deployment.

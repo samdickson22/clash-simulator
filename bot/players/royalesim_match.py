@@ -22,6 +22,8 @@ weakest-tower tie-break (15.535 arm: the client's HP drain, which can run past t
 
 Engine time is advanced event to event (polls, due commands), so state_json is decoded about
 once per 5 ticks; RoyaleSim stops a step early when the battle ends.
+Command acceptance closes before final game_over under client_hp_drain. Unsent
+reservations stay pending while empty-command steps finish the native scoring.
 """
 from __future__ import annotations
 
@@ -36,6 +38,58 @@ from .royalesim_adapter import action_to_command, royalesim_card
 # match.START_MANA (calibration.json: 60/60 recorded sides). The API example's 5000 is not the game.
 START_ELIXIR_MILLI = 6000
 MAX_TICKS = 7200        # safety cap: regulation+overtime end at 6000, the HP drain shortly after
+
+
+class CommandPhase:
+    """Public no-play phase, distinct from terminal; bind the Battle's actual rules once.
+
+    The pinned API exports overrides as {section.KEY: JSON text}. Unknown rules
+    or a public clock inconsistent with those rules refuse before any player starts.
+    No player, hidden record, deploy oracle or scoring approximation is consulted.
+    """
+
+    def __init__(self, battle, state):
+        import royalesim as rs
+        try:
+            ledger = json.loads(rs.EMBEDDED_CALIBRATION_JSON)
+            overrides = battle.calibration_overrides()
+            if not isinstance(overrides, dict) or any(type(k) is not str or type(v) is not str
+                                                      for k, v in overrides.items()):
+                raise ValueError('expected {section.KEY: JSON text} calibration_overrides')
+            self.overrides = {k: json.loads(v) for k, v in overrides.items()}
+            self.rules = {}
+            for key in ('time.TICK_MS', 'match.REGULAR_TIME_S', 'match.OVERTIME_S',
+                        'match.OVERTIME_TIEBREAK', 'match.BATTLE_END'):
+                section, name = key.split('.')
+                self.rules[key] = self.overrides[key] if key in self.overrides else ledger[section][name]['value']
+        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f'unsupported RoyaleSim command-phase calibration API: {exc}') from exc
+        self.rule = self.rules['match.OVERTIME_TIEBREAK']
+        if (self.rule not in ('client_hp_drain', 'lowest_tower_hp_absolute', 'lowest_tower_hp_fraction', 'none_draw')
+                or self.rules['match.BATTLE_END'] != 'rules'):
+            raise ValueError(f'unsupported RoyaleSim command-phase rules: {self.rules}')
+        ms, regular, overtime = (self.rules[k] for k in ('time.TICK_MS', 'match.REGULAR_TIME_S', 'match.OVERTIME_S'))
+        if (any(type(v) is not int or v <= 0 for v in (ms, regular, overtime))
+                or regular*1000 % ms or overtime*1000 % ms):
+            raise ValueError(f'unsupported RoyaleSim command-phase clock: {self.rules}')
+        self.clock = dict(tick_ms=ms, regular_ticks=regular*1000//ms, overtime_ticks=overtime*1000//ms)
+        self.validate(state)
+
+    def validate(self, state):
+        if (not isinstance(state, dict) or type(state.get('tick')) is not int or state['tick'] < 0
+                or any(type(state.get(k)) is not int or state[k] != v for k, v in self.clock.items())
+                or any(type(state.get(k)) is not bool for k in ('overtime', 'game_over'))
+                or (not state['game_over'] and state['overtime'] != (state['tick'] >= state['regular_ticks']))):
+            raise ValueError(f'unsupported RoyaleSim public command-phase clock; expected {self.clock}')
+
+    def closed(self, state):
+        self.validate(state)
+        return (self.rule == 'client_hp_drain' and state['overtime'] and not state['game_over']
+                and state['tick'] >= state['regular_ticks'] + state['overtime_ticks'])
+
+    def receipt(self):
+        return dict(version='rsim-command-phase-v1', rules=dict(self.rules), overrides=dict(self.overrides),
+                    clock=dict(self.clock), closed_tick=None, observed_closed_tick=None, pending={0: [], 1: []})
 
 
 class RsimMatch:
@@ -55,6 +109,8 @@ class RsimMatch:
         self.b.reset(seed=int(seed) % (1 << 64), decks=[[self.ids[royalesim_card(c)] for c in d] for d in self.decks],
                      shuffle=0, start_tick=0, elixir_milli=[START_ELIXIR_MILLI]*2, tower_hp=None, spawns=[],
                      **self.level_args(levels, tower_levels))
+        self.refresh()
+        self.command_phase = CommandPhase(self.b, self.state)
         self.tr = Translator(rt, vocab, catalogue)
         self.tr.bind(self.b)
         self.own = {a: OwnCycleView(self.decks[a]) for a in (0, 1)}
@@ -76,6 +132,8 @@ class RsimMatch:
 
     def refresh(self):
         self.state = json.loads(self.b.state_json())
+        if hasattr(self, 'command_phase'):
+            self.command_phase.validate(self.state)
         return self.state
 
     @property
@@ -133,6 +191,7 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
     R = rt.R
     m = RsimMatch(rt, vocab or load(rt), decks, seed, client=client, levels=levels, tower_levels=tower_levels,
                  record_commands=verbose)
+    phase = m.command_phase.receipt()
     for a in (0, 1):
         if hasattr(players[a], 'bind_rsim'):
             players[a].bind_rsim(m)
@@ -148,6 +207,18 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
     try:
         while not m.state['game_over'] and m.tick < max_ticks:
             tick = m.tick
+            if m.command_phase.closed(m.state):
+                if phase['closed_tick'] is None:
+                    phase['closed_tick'] = m.state['regular_ticks'] + m.state['overtime_ticks']
+                    phase['observed_closed_tick'] = tick
+                    phase['pending'] = {a: [dict(submitted=c.submitted, due=c.due, action=c.action,
+                        card=c.card, cost=c.cost, status='not_dispatched', reason='command_phase_closed')
+                        for c in channels[a].pending] for a in (0, 1)}
+                # Keep queue accounting intact; overdue reservations cannot schedule drain steps.
+                nxt = (tick//POLICY_INTERVAL+1)*POLICY_INTERVAL
+                m.b.step([], min(nxt, max_ticks)-tick)
+                m.refresh()
+                continue
             due = []
             for actor in (0, 1):
                 ch = channels[actor]
@@ -165,7 +236,8 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
                     channels[actor].finish(ok)
                 if any(channels[a].ready(tick) for a in (0, 1)):
                     raise AssertionError('capacity 1: one command per seat per tick')
-            if tick >= START_TICK and tick % POLICY_INTERVAL == 0 and not m.state['game_over']:
+            if (tick >= START_TICK and tick % POLICY_INTERVAL == 0 and not m.state['game_over']
+                    and not m.command_phase.closed(m.state)):
                 for actor in (0, 1):
                     ch, player = channels[actor], players[actor]
                     with WINDOW:
@@ -211,6 +283,7 @@ def play_match(rt, players, *, seed, decks, vocab=None, client='15.535.29', max_
                   plays={a: len(play_log[a]) for a in (0, 1)},
                   accepted={a: sum(p[3] for p in play_log[a]) for a in (0, 1)},
                   deploy_reasons=reasons,
+                  command_phase=phase,
                   channels={a: channels[a].diagnostics() for a in (0, 1)},
                   translator=dict(m.tr.stats), own_cycle={a: dict(m.own[a].mismatch) for a in (0, 1)},
                   timing=timing, cpu_seconds=time.process_time()-cpu0_match)

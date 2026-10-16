@@ -1,0 +1,25 @@
+{
+  "R27_acceptance": "permanently invalid",
+  "changed_or_added": {
+    "bot/levels/terminal_probe.py": {
+      "after": "bc0ea5f54103aa84944318513757e3aea85e2015e3bf0f087a68e2d18d534d63",
+      "before": null
+    },
+    "bot/levels/test_terminal.py": {
+      "after": "bb442ac23d042d20394787900caecb2bb2326bbe29d8e9270f4c3f60ea33c739",
+      "before": null
+    },
+    "bot/players/royalesim_match.py": {
+      "after": "5f1a5987c0fd9cd44f889fda83c971374e148cd1cde1665b080a3cb6d35c25c6",
+      "before": "35b70b459a4a5acc66608494de452d16b7b0e9a8e1d8b15da3a8b066ebee7029"
+    }
+  },
+  "execution": "none",
+  "new_count": 109,
+  "no_project_imports": true,
+  "old_count": 107,
+  "review": "R29 pending",
+  "source_only": true,
+  "unchanged": 106,
+  "utc": "2026-10-16T13:24:11.235619+00:00"
+}

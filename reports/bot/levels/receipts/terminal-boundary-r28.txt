@@ -1,0 +1,1 @@
+{"passed": true, "receipt": "/mpac/sdicks02/jobs/clasher/bot-levels/dev/terminal-boundary-r28.json"}

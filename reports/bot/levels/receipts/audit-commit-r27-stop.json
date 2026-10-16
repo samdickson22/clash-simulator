@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-16T12:59:31.207653+00:00",
+  "commit": "96338931a6695cacb0e48b143895db966565c897",
+  "parent": "5310474f1785161ebac52ab3fa94640ca8e39609",
+  "tree": "be2855e21cf64596f1ef69eb3f6af229923e0b90",
+  "files": [
+    "reports/bot/levels/DESIGN.md",
+    "reports/bot/levels/HANDOFF.md",
+    "reports/bot/levels/PROGRESS.md",
+    "reports/bot/levels/RESULTS.md",
+    "reports/bot/levels/receipts/pilot-r27-execution.md",
+    "reports/bot/levels/receipts/pilot-r27-first-failure.md",
+    "reports/bot/levels/receipts/pilot-r27-parent-audit.json",
+    "reports/bot/levels/receipts/pilot-r27-poststop-report.json",
+    "reports/bot/levels/receipts/pilot-r27-poststop-report.txt",
+    "reports/bot/levels/receipts/pilot-r27-preserved-files.sha256",
+    "reports/bot/levels/receipts/pilot-r27-preserved-logs.sha256",
+    "reports/bot/levels/receipts/pilot-r27-stop-audit.json",
+    "reports/bot/levels/receipts/pilot-r27-terminal-order-audit.md",
+    "reports/bot/levels/receipts/prereg-commit-r27.json"
+  ],
+  "scan": "PASS",
+  "scope": "docs/receipts only; active R28source excluded; invalidR27preserved",
+  "index": "temporary; sharedindex/localbranchunchanged"
+}

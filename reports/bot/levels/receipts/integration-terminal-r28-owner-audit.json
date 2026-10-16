@@ -1,0 +1,216 @@
+{
+  "R27_acceptance": "immutable invalid preserved by actual test",
+  "anchors": [
+    {
+      "check11": [
+        [
+          "AngryBarbarians",
+          "ArcherQueen",
+          "Archers",
+          "Arrows",
+          "Assassin",
+          "AxeMan",
+          "BabyDragon",
+          "Balloon",
+          "BarbLog",
+          "BarbarianHut",
+          "Barbarians",
+          "Bats",
+          "BattleHealer",
+          "BattleRam",
+          "Berserker",
+          "BlowdartGoblin",
+          "BombTower",
+          "Bomber",
+          "BossBandit",
+          "Bowler",
+          "Cannon",
+          "Clone",
+          "DarkMagic",
+          "DarkPrince",
+          "DarkWitch",
+          "DartBarrell",
+          "Earthquake",
+          "ElectroDragon",
+          "ElectroGiant",
+          "ElectroSpirit",
+          "ElectroWizard",
+          "EliteArcher",
+          "Elixir Collector",
+          "ElixirGolem",
+          "FireSpirits",
+          "Fireball",
+          "Firecracker",
+          "FirespiritHut",
+          "Fisherman",
+          "Freeze",
+          "Ghost",
+          "Giant",
+          "GiantBuffer",
+          "GiantSkeleton",
+          "GoblinBarrel",
+          "GoblinCage",
+          "GoblinCurse",
+          "GoblinDemolisher",
+          "GoblinDrill",
+          "GoblinGang",
+          "GoblinGiant",
+          "GoblinHut",
+          "GoblinMachine",
+          "Goblins",
+          "Goblinstein",
+          "GoldenKnight",
+          "Golem",
+          "Graveyard",
+          "Heal",
+          "HogRider",
+          "Hunter",
+          "IceGolem",
+          "IceSpirit",
+          "IceWizard",
+          "InfernoDragon",
+          "InfernoTower",
+          "Knight",
+          "LavaHound",
+          "Lightning",
+          "LittlePrince",
+          "Log",
+          "MegaKnight",
+          "MegaMinion",
+          "MightyMiner",
+          "Miner",
+          "MiniPekka",
+          "MiniSparkys",
+          "MinionHorde",
+          "Minions",
+          "Mirror",
+          "Monk",
+          "Mortar",
+          "MovingCannon",
+          "Musketeer",
+          "Pekka",
+          "Phoenix",
+          "Poison",
+          "Prince",
+          "Princess",
+          "Rage",
+          "RageBarbarian",
+          "RamRider",
+          "Rascals",
+          "Rocket",
+          "Ronin",
+          "RoyalDelivery",
+          "RoyalGiant",
+          "RoyalHogs",
+          "RoyalRecruits",
+          "SkeletonArmy",
+          "SkeletonBalloon",
+          "SkeletonDragons",
+          "SkeletonKing",
+          "SkeletonWarriors",
+          "Skeletons",
+          "Snowball",
+          "SpearGoblins",
+          "SuspiciousBush",
+          "Tesla",
+          "ThreeMusketeers",
+          "Tombstone",
+          "Tornado",
+          "Valkyrie",
+          "Vines",
+          "Wallbreakers",
+          "Witch",
+          "WitchMother",
+          "Wizard",
+          "Xbow",
+          "Zap",
+          "ZapMachine"
+        ],
+        {}
+      ],
+      "frozen_fixture_cache": {
+        "11": {
+          "canonical_sha256": "0700072fb0c81682de7e419363f3cee19cb2518ce49ece2332149ffc093828f9",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json",
+          "raw_sha256": "1a36f377d55be3ea34e20225aa17eb92bead8e148b216b5b1346f0e7d04c8a94"
+        },
+        "4": {
+          "canonical_sha256": "314a6eaf17947386d889f04edc7ea7a7080aad703e4e6dc20a52ac8f26c7ee1c",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json",
+          "raw_sha256": "bd77caea134e469c89dc1d25d60f30474a404feef6b529d26b0e307a8f3a7d95"
+        },
+        "5": {
+          "canonical_sha256": "38dc346eeaccbb14a625eb65cf055bb5fdaae7e069dc69ded2c90f17519caafd",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json",
+          "raw_sha256": "e88a6e04183f449754775b7f9d999c2ca3982601cb6f35dbbc1aec28d1555dfe"
+        },
+        "6": {
+          "canonical_sha256": "6dc6240cede22c916cd519a372b73f49265caf633f854ffdb382d48cc19d1398",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json",
+          "raw_sha256": "ad4b725b180cb2aa0abf50c13cf378ba2a954233eac43080b248f2f40146dcbb"
+        },
+        "7": {
+          "canonical_sha256": "af59897ecc32c11b40d5b67746f4a58bd85516f47e756498029b1663fddd8c84",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json",
+          "raw_sha256": "8fc9633bbd50906d7f95575b7c93ba6a39e540aec2997f67c2d50b8a1477b6f3"
+        },
+        "9": {
+          "canonical_sha256": "825ce4dc7b1fb58bce9b345df5dbaf325b5a9207b4738db310b6050f17a5eb0e",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json",
+          "raw_sha256": "88a2472e54b090853bd18016cdafda642aafa1fd00f03ca6e7fa20f3edd638b2"
+        },
+        "supported": {
+          "canonical_sha256": "b97c2a61edd7fedc37182320a143673012f34e5b35e34effd69eb99d1aded8e7",
+          "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json",
+          "raw_sha256": "e03491147b6d2da405b3aa81be782c49f782513bfffa7412aaa0a8581f2507bc"
+        }
+      },
+      "normalized_spells": {
+        "Fireball": {
+          "crown_tower_damage": 159.0,
+          "crown_tower_damage_multiplier": 0.22999999999999998,
+          "damage": 688.0,
+          "knockback_distance": 1.0,
+          "level": 11,
+          "radius": 2.5,
+          "travel_speed": 11.999999999999998
+        },
+        "L4.Fireball": {
+          "crown_tower_damage": 83.0,
+          "crown_tower_damage_multiplier": 0.22999999999999998,
+          "damage": 357.0,
+          "level": 4
+        },
+        "L4.Fireball.carrier_damage": [
+          [
+            357.0
+          ],
+          [
+            357.0
+          ]
+        ],
+        "Poison": {
+          "crown_tower_damage": 21.0,
+          "crown_tower_damage_multiplier": 0.21999999999999997,
+          "damage": 92.0,
+          "level": 11
+        }
+      },
+      "supported": 121
+    }
+  ],
+  "cache_after": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json: OK\n/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json: OK\n/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json: OK\n/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json: OK\n/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json: OK\n/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json: OK\n/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json: OK\n",
+  "exit_code": 0,
+  "log_sha256": "07a1782238f04b13cbb0ba5de4cab33249f50f447eec691bfde42496bc9ae7a0",
+  "new_terminal_tests": 40,
+  "primary_ready": false,
+  "remaining": [
+    "native gates",
+    "same original four-case all11",
+    "final complete report and provenance"
+  ],
+  "seconds": 127.07,
+  "skipped": 0,
+  "tests": 256,
+  "utc": "2026-10-16T13:32:08.344877+00:00"
+}
