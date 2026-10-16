@@ -54,6 +54,11 @@ i.e. today's scorer cannot bank on its own; that is the problem to fix, not the 
 correction: bot-lead-live-diag-r1 (Opus). Sol helpers for evals/babysitting. Hosts: 01/03 full-pool generation;
 04/08 live-diag hold (~20 each) to ~23:30Z, then full-pool.
 
+**Utilization 2026-10-16 20:13 UTC:** the 04/08 hold for live-diag is lifted early (04 had 20 live python, 08 had 15). 04 goes to
+live-diag db2 + -res-wint + the deck search; 08 to live-diag db2 + full-pool K1 on live16402c. 01 CPU is full (cap 89
+with the LIVE loaders). **01 GPU: no bot GPU job is ready for ~6 h** (student fits done, the K4L trainer is CPU-only,
+the leaf fit is small and data-bound). It's offered to the LIVE LEAD for YOLO until the value-net fit (~2026-10-17).
+
 ## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
 
 Copy the ID from this table (or from fresh `t3_thread_list` output) for EVERY send. Never type or assemble one.
