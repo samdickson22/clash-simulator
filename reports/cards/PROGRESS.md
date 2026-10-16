@@ -68,3 +68,11 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   priority (scope worker). Sam: official client data allowed (scratch only, hashes). Null's Royale fresh instance
   (LIVE LEAD building) → native fixtures for the 66; never touch sealed AVD ~/.cache/clasher-native-reference
   (until 2026-10-25). Rule: native wins on mechanics; 16.402 stats from RoyaleSim unless Null's is 16.402.
+- 01:36Z Fidelity all 66 (2fcaa794f): PASS 4 (MegaMinion, Pekka, SkeletonKing, Mirror) / DIFF 62, grouped: stats(15) →
+  live16402 overlay; spawning/formation, spells, special mechanics, attack/targeting timing, death releases → Opus
+  batches. Native mixed-deck diff: 600 games, 0 panics; new-card native≠Python: BossBandit dash ×MightyMiner/Monk (4),
+  ElectroDragon chain hook (4), MegaKnight splash discard (2), Mirror×SkeletonBalloon level (2), Poison during dash (2),
+  IceSpirit×BossBandit interrupt (1); C56-in-mixed: InfernoTower retarget (8), Xbow clock (5), Valkyrie (1);
+  IceGolemite 75 = harness alias (IceGolemite vs IceGolem name) artifact.
+  NEXT after Batch A commit: native-parity follow-ups → Batch A worker; then parallel Opus workers in separate worktrees
+  per mechanic group (spells / spawning+death / special / timing), each with its own C56 gate.
