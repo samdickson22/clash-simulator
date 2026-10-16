@@ -6954,3 +6954,9 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 - **BOT LEAD:** retrains the learned components (student, rollout opponent, opponent model) on full-pool games after card Batch A passes its gate.
 - **LIVE LEAD:** a fresh perception pretrain on a clean mixed dataset: official-client sprites on official arenas, damage-only HP badges, live frames with Battle Log labels, and a held-out arena. It replaces the fine-tune stack.
 - **Routing (Sam, 10-16):** Opus for code, GPT-6.1-Sol for evals/research/analysis/reviews, Haiku for narrow slices.
+
+## 2026-10-16 01:25Z T1-RETIRED: TIERS seal lifted
+
+- The T1/TIERS Mac study ended invalid (A3P-1, 32f5e2e4). Its outcomes were waiting for a 14-day descriptive release, which no longer serves BOT-FIRST.
+- **Retired.** The seal is lifted, and no release ruling is needed. The old result files are kept in place.
+- The Null's Royale reference AVD (`clasher_reference_api35`, `nullsroyale.rel.free`) is now usable for perception data and new-card native fixtures. It stays offline and separate from the live BlueStacks account.
