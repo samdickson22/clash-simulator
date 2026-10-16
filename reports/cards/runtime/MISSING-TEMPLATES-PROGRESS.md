@@ -375,3 +375,25 @@ All4nice15/thread1workers via reviewedrunner; expected122distinctdefinitions/366
 142configidentities observed, allobservedobjects native-materialized, zero failures, durations450/450/1500,
 seven-source bound toad961manifest. Finalacceptance requires parsercomplete proof, not intermediatePASS flags.
 No release publication or activepin switch. Detailed milestones logged only; strictsilence observed.
+
+- 2026-10-16T10:09Z essential cross-owner handoff ONLY (strictsilence exception): read-only LIVE HEAD
+2ab8dd1e85311885e996c3ba36c5db310830f1b3 still has independent incomplete vocab loader/constructor;
+`git -C /mpac/sdicks02/repos/clasher-live apply --check .../patches/live-template-vocab.patch` PASS.
+Sent reviewedpatch to LIVE LEAD direct via T3auto requesttemplate-live-vocab-handoff-20261016, conditioned
+on CARD core1802 integration, explicitly no activepin switch. No LIVE files/worktree/index modified.
+PatchSHA532867a5e4cbb5894f7ac7fe5ce6c80beece10dc472fcad01ad984b92fe02e5d.
+
+
+## 2026-10-16T10:18Z — released-root totality protocol review retained
+
+Independent native reviewer `/root/host_script_review` APPROVE exact totality helper
+9ba60dec43d41618c7ad9953d61359bb6f0e03f9e4e7ede4464e0d3f161b1b3c, separate from implementation review.
+Only change: permit exact immutable released live16402b-r3 after receipt/read-only preflight, in addition
+ to own scratch. All2-child admission/reaping and expected-guard checks retained. Approved cpu_job2 protocol
+requires accepted full coverage/source plus release verification first; no totality/release job launched.
+Review brief MISSING-TEMPLATES-TOTALITY-REVIEW.md and receipt missing-templates-totality-review.json.
+Read-only04 liveness10:14:59Z: wrapper230877, workers231604/231605/231607/231608 allRN, owned samePGID,
+12:40 CPU elapsed12:43; allcurrent shardlogs0failures. Preserve sweep and existing no-duplicate policy.
+This is partial liveness, not complete class evidence. No source change to frozen full-sweep candidate.
+Rollback for helper: prior committed script retained in git; no host action executed or root/pin changed.
+Strict silence/final once, direct-parent clarification and no-tiny-delegation rules persist in scoped HANDOFF.

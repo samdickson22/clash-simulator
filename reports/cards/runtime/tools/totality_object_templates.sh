@@ -6,8 +6,13 @@ REPO=${CARD_TEMPLATE_SOURCE:?committed source export}
 PY=/mpac/sdicks02/repos/clasher-bot/.venv/bin/python
 export PYTHONHASHSEED=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RAYON_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1
 unset CLASHER_ROOT CLASHER_EVAL_RUNTIME_ROOT CLASHER_DELAY_NATIVE_DIR
-export CLASHER_BOT_RUNTIME=${CARD_TEMPLATE_RUNTIME:?explicit isolated scratch runtime} CLASHER_BOT_RUNTIME_PINS=live16402b-r3
-case "$CLASHER_BOT_RUNTIME" in "$J"/*) ;; *) echo 'scratch runtime must be within CARD_TEMPLATE_JOB' >&2; exit 2;; esac
+export CLASHER_BOT_RUNTIME=${CARD_TEMPLATE_RUNTIME:?explicit candidate runtime} CLASHER_BOT_RUNTIME_PINS=live16402b-r3
+case "$CLASHER_BOT_RUNTIME" in
+  "$J"/*) ;;
+  /mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3)
+    [[ -f "$CLASHER_BOT_RUNTIME/RECEIPT.json" && ! -w "$CLASHER_BOT_RUNTIME" ]] || { echo 'released r3 receipt/read-only preflight failed' >&2; exit 2; } ;;
+  *) echo 'runtime must be own scratch or exact released r3' >&2; exit 2;;
+esac
 [[ ! -e "$J/totality" ]] || { echo 'totality output exists; preserve it' >&2; exit 2; }
 mkdir -p "$J/totality"
 pids=()

@@ -1,0 +1,14 @@
+{
+  "approved_protocol": "cpu_job.sh 2 after release verification, coverage, accepted source prerequisites; exact released live16402b-r3 only with receipt and read-only root, or owned scratch; four receipts each17 scenarios/6707 probes",
+  "executed_by_reviewer": false,
+  "independent": true,
+  "model": "gpt-6.1-sol",
+  "read_only": true,
+  "reasoningEffort": "high",
+  "script": "reports/cards/runtime/tools/totality_object_templates.sh",
+  "sha256": "9ba60dec43d41618c7ad9953d61359bb6f0e03f9e4e7ede4464e0d3f161b1b3c",
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "verdict": "APPROVE",
+  "verdict_text": "APPROVE totality script 9ba60dec43d41618c7ad9953d61359bb6f0e03f9e4e7ede4464e0d3f161b1b3c for reviewed cpu_job.sh2 protocol after stated release verification, coverage, source prerequisites pass. Allowlist preserves read-only execution and child reaping; inspect allfour receipts17scenarios/6707probes each, preserve sweep230877, active pins unchanged."
+}
