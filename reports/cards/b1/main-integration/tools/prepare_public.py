@@ -46,10 +46,11 @@ subprocess.run(['git', 'diff', '--exit-code', revision, '--', *files], cwd=ROOT,
 subprocess.run(['git', 'diff', '--exit-code', '5c8afc2d78cb9160c42cd2536f1588cc0dc98c6e', revision, '--',
                 'engine-cards/src', 'engine-cards/Cargo.toml', 'engine-cards/Cargo.lock', 'engine-cards/build.rs'],
                cwd=ROOT, check=True)
-packet_path = ROOT/'reports/cards/runtime/receipts/b1-public-root-implementation-packet.json'
+packet_path = ROOT/'reports/cards/runtime/receipts/b1-public-root-implementation-packet-r4.json'
 packet = json.loads(packet_path.read_text())
-require(packet['approved_source'] == 'e0e9f634e28f6cbc8bdd10631a6b3437d69dfef2' and
-        packet['review']['verdict'] == 'APPROVE', 'reviewed root-source packet required')
+require(packet['approved_source'] == 'f89b8acd5f8b1927fef8f56ad4729269dff4fdc6' and
+        packet['review']['round'] == 4 and packet['review']['verdict'] == 'APPROVE',
+        'corrected reviewed root-source packet required')
 for path, digest in packet['sha256'].items():
     require(sha(ROOT/path) == digest, 'approved public implementation changed: '+path)
 OUT.mkdir()
@@ -68,7 +69,7 @@ for source, name in ((ROOT/REPORT/'native-build-inputs.sha256', 'native-build-in
                      (ROOT/REPORT/'gate-inputs-expected.sha256', 'gate-inputs-expected.sha256'),
                      (ROOT/REPORT/'tools/stage_public.sh', 'stage_public.sh'),
                      (packet_path, 'root-implementation-packet.json'),
-                     (ROOT/'reports/cards/runtime/receipts/b1-public-root-review-r3.md', 'root-source-review-r3.md')):
+                     (ROOT/'reports/cards/runtime/receipts/b1-public-root-review-r4.md', 'root-source-review.md')):
     shutil.copyfile(source, OUT/name)
 inputs = sorted(p for p in OUT.iterdir() if p.is_file())
 with (OUT/'inputs.sha256').open('x') as output:

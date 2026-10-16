@@ -139,7 +139,12 @@ class Resources:
                 expected=self.builder.token_id('ThreeMusketeers',namespace=ns)
                 if expected<=1 or token!=expected:
                     raise ValueError(f'actual ThreeMusketeers carrier disagrees with public alias: {ns}')
-            install_three_templates(self.config,self.builder,self.templates,entity(shot))
+            shot_template=entity(shot)
+            # Ordinary Projectile has travel_speed (tiles/second), not speed.
+            # Match live_snapshot.live_entity's native logic-units/tick import;
+            # raw differential.entity leaves this field zero for these shots.
+            shot_template['stats']['speed']=round(shot.travel_speed*50)
+            install_three_templates(self.config,self.builder,self.templates,shot_template)
         self.template_count=len(self.templates)
 
     def repair_public_graph(self,entities):

@@ -129,3 +129,45 @@ preservation only; native reuse provenance/actual runtime consumer paths and
 model inputs remain measured by B1's new-source phase. No job/PID/lease created
 by this worker, no host scripts executed, no r3/root/pin switch. Next essential
 handoff supplies exact approved source and entrypoint to B1; no routine ownerDM.
+
+2026-10-16T12:41Z audit: evidence commit
+`3317935357de80ce523e17e6baf111cc9a89bac6` records approved source, reviewr3 and
+machine packet71e60043b6912f65926192d5c5315d7ccff08c563e11d6e0ac7ee8f4a9525db9.
+`git push -u origin cards/b1-public-root-20261016` succeeded; read-only
+`git ls-remote --heads origin cards/b1-public-root-20261016` matched331793535.
+Essential dependency handoff directly to B1 (clientRequestId
+template-b1-public-root-approved-e0e9f634e-20261016) provided exact approved
+source, all3 patch commits, entrypoint/denominators and separate host-review
+prerequisite; acceptance and fresh jobs remain owned by B1's sole sequence.
+No main/cardslead edit, published root operation, second job or old-gate reuse.
+
+Documented Mirror carrier-level ambiguity explicitly: shared public identity
+does not identify the producing cast/level. Plain template remainslevel11;
+wrapper uses existing producing-card public deck/level estimate. Conditional
+level exports are exact fields, not proof of mirrored provenance or live rank
+recovery. Documentation-only clarification; approved production/probe hashes
+unchanged. Pending actual scoped tests remain a real acceptance prerequisite.
+
+2026-10-16T12:48–12:53Z consumer inventory: `rg -n` on R.templates/mounts found
+third production builder `bot/live/levels.py:LevelRoot.payload`, used for
+nontrivial LIVE levels and pilotB0; its old copied algorithm would remain stale.
+Read-only source SHA822cee2a... matches LIVE owner's clean file. Protected
+bot/live remains unedited (`git diff --exit-code -- bot/live` PASS). Prepared
+minimal guarded shared-helper patch in own `patches/B1-live-level-public-graph.patch`,
+SHAba392e46..., proposed outputa3289daf... . `git apply --check` and AST PASS,
+not applied. Source-extracted in-memory stdlib payload test reproduces stale
+GG links, validates patched new IDs/ranks, preserves legacy/new empty C56 payload
+bytes and verifies original source unchanged; receipt
+`receipts/b1-live-level-patch-stdlib.txt`. No native/host/root/pin action.
+Separate independent patch review and LIVE owner integration/test handoff remain;
+approved core/probe11 hashes and B1's single planned validation unchanged.
+
+B1's strengthened own emitted suite is now14cases, adding real mirrored pulses
+and invalid pipeline controls; its HOST-PLAN-PUBLIC.md explicitly retires the
+old immutable implementation packet's earlier emitted10 scope. Actual acceptance
+denominators will be14emitted+16owner groups,32boundarygraphs/64rootpaths; the
+packet remains historical/source-review binding, not a current execution claim.
+
+2026-10-16T12:53:58.571052+00:00: owner source audit found canonical actual shot from raw differential.entity has stats.speed0 while native movement reads that field; live_snapshot.live_entity converts travel_speed*50. Prior e0 implementation review remains historical and is explicitly invalidated for acceptance, without erasing evidence. No host execution occurred. Corrected only scoped Three template normalization, installer rejects zero/mismatched speeds; actual owner probe gains8 positive native one-tile/50ms movement witnesses across plain/level11/9/both seats, each with zero-speed negative control, within the existing16groups.21stdlib tests PASS with added zero/wrong-speed cases, AST3PASS, LIVE optional patch stdlib proofPASS, git diffcheckPASS. Fresh exact-source reviewr4 required before B1 phase; no old approval/gate transfer.
+
+2026-10-16T12:56:34.955765+00:00: independent native Sol-high /root/b1_public_root_review fresh roundr4 APPROVES exact f89b8acd5f8b1927fef8f56ad4729269dff4fdc6 combined corrected alias/root implementation and scoped probe, separately APPROVES guarded proposed LIVE LevelRoot patch for owner integration. All prior findings resolved, no additional correctness/fairness blocker.21stdlib/AST/diff/protectedsource checks verified; NO native/host execution. Active packet-r4 explicitly supersedes historical e0 packet; full11 bindings refreshed, emitted14/scoped16+32boundarygraphs64paths+8positive8zero controls. Actual B1 phase and separate LIVE native validation remain prerequisites. Essential approved corrected-source handoff goes directly to B1; reviewed unapplied LIVE patch goes directly to LIVE owner, no coordinator spam or active switch.

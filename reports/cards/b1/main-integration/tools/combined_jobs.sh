@@ -82,6 +82,7 @@ gate)
   # Reuse immutable pinned-arm receipts from the completed B1 final gate.
   # Run only the changed arm; never rewrite the original gate or runtime.
   BASE=/mpac/sdicks02/jobs/clasher/cards/b1/gate
+  sha256sum -c --quiet "$A/gate-inputs-expected.sha256"
   PIN=/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so
   [[ $(sha256sum "$PIN" | cut -d' ' -f1) == 681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b ]]
   cmp "$BASE/compare.json" "$A/original-compare.json"
@@ -102,6 +103,9 @@ gate)
   done
   "$PY" -B "$T/compare.py" "$G" > "$G/compare.json"
   "$PY" -B "$A/tools/review_gate_assert.py" "$G/compare.json"
+  sha256sum -c --quiet "$A/gate-inputs-expected.sha256"
+  sha256sum -c --quiet "$A/pinned-receipts.sha256"
+  (cd "$BASE" && sha256sum -c --quiet "$A/pinned-expected.sha256")
   cat "$G/compare.json"
   ;;
 esac

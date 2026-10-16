@@ -171,10 +171,11 @@ class GraphTests(unittest.TestCase):
 
 class TemplateTests(unittest.TestCase):
     def fixture(self):
-        body = {'class': 'Troop', 'stats': dict(name=p.THREE_MEMBER, load=700, attack_select={'damage': 123}),
+        body = {'class': 'Troop', 'stats': dict(name=p.THREE_MEMBER, load=700, projectile_speed=1000, attack_select={'damage': 123}),
                 'public_identity': [('troop_body', ['ThreeMusketeers', p.THREE_MEMBER])]}
         shot = copy.deepcopy(body)
         shot.update({'class':'Projectile', 'public_identity':[('projectile', ['ThreeMusketeers', p.THREE_MEMBER])]})
+        shot['stats']['speed'] = 1000
         second = copy.deepcopy(body); second['stats'].update(name='ThreeMusketeer_Rework_Character_2', load=650)
         cfg = {'cards': {'ThreeMusketeers': {'units': [[second, body], []]}}}
         return cfg, SimpleNamespace(token_id=lambda name, namespace: 326), shot
@@ -190,13 +191,15 @@ class TemplateTests(unittest.TestCase):
         self.assertEqual(cfg['cards']['ThreeMusketeers']['units'][0][0]['stats']['load'], 650)
 
     def test_wrong_canonical_body_alias_load_projectile_and_token_rejected(self):
-        for bad in ('body', 'load', 'alias', 'projectile', 'token'):
+        for bad in ('body', 'load', 'alias', 'projectile', 'token', 'zero_speed', 'wrong_speed'):
             cfg, builder, shot = self.fixture()
             if bad == 'body': cfg['cards']['ThreeMusketeers']['units'][0][1]['stats']['name'] = 'Musketeer'
             if bad == 'load': cfg['cards']['ThreeMusketeers']['units'][0][1]['stats']['load'] = 650
             if bad == 'alias': shot['public_identity'] = [('projectile', ['Musketeer'])]
             if bad == 'projectile': shot['stats']['name'] = 'Musketeer'
             if bad == 'token': builder.token_id = lambda *args, **kw: 1
+            if bad == 'zero_speed': shot['stats']['speed'] = 0
+            if bad == 'wrong_speed': shot['stats']['speed'] = 20
             with self.assertRaises(ValueError):
                 p.install_three_templates(cfg, builder, {}, shot)
 

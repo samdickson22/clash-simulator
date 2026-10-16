@@ -1,7 +1,9 @@
 # B1 compatible public Resources and graph reconstruction
 
-Implementation/scoped probe independently APPROVED at sourcee0e9f634e;
-fresh admitted combined-source acceptance still pending. Baseebab18cc, engine aliasc13249919. Authority:
+CURRENT: speed-corrected sourcef89b8acd5 has fresh independent Sol-high reviewr4
+APPROVE; admitted combined-source acceptance remains pending. Historicale0
+approval was superseded by the owner-found speed defect before execution and
+does not accept these bytes. Baseebab18cc, engine aliasc13249919. Authority:
 `reports/cards/reviews/B1-public-identity-root-policy.md` on cards/lead. No
 published r3 root/evidence, model, vocabulary, active pin or consumer deployment
 is changed by this branch. B1 owns final integration/testing sequence; lead owns
@@ -18,6 +20,13 @@ load and rework selector, and registers an actual isolated shot created with
 that member's engine projectile factory. It requires both actual sensor tokens
 to agree with the declared existing alias. This replaces only those two exact
 template keys. Normal Musketeer and all C56 entries keep their existing priority.
+The actual shot template normalizes native movement speed with
+`round(shot.travel_speed*50)`, exactly the conversion in `live_snapshot.live_entity`.
+Raw `differential.entity` exports zero `stats.speed` for ordinary Projectile
+objects, despite their positive `projectile_speed`. The scoped installer rejects
+zero/mismatched movement speed. Actual native motion controls require1000logic
+units/50ms and about one tile of positive displacement, independently of native
+restart equality; deliberately zeroed controls must remain stationary.
 
 The public model deliberately uses700ms for every rank; it loses rank2's650ms
 load. Engine names, loads700/650/700, formations, stagger, selectors, source
@@ -86,6 +95,12 @@ Python templates can retain identical native/data pins. This avoids accepting
 pre-B1 level exports with missing pulses or changed rework shapes. Existing
 direct-spell per-seat approximation, unsupported exports, private phase/target
 defaults and opponent level estimates remain documented consumer limitations.
+Mirror and ordinary casts can emit the same public carrier identity. The plain
+root retains its level11 template default; the level wrapper uses its existing
+producing-card level rule and public deck/estimate, not hidden cast provenance.
+Neither claims to recover a mirrored carrier's true level from a shared token.
+The exact exported pulse/body fields are checked conditional on that level
+selection. Public rework rank and combat phase remain equally unobserved.
 
 ## Validation interface and rollback
 
@@ -105,6 +120,9 @@ Native snapshots omit zero rider_rank: probes use its documented default0,
 while always requiring valid mount ownership/type/ID. Two byte-equal
 controls isolate the graph helper on C56 boards; they do not replace B1's full
 old-vs-new source acceptance gate.
+Eight positive native rework-shot movement witnesses (plain/level, levels11/9,
+both seats), each with a zero-speed control, are included in the existing16
+groups. No extra Resources build or competing phase is introduced.
 
 B1 `public_emitted.run` separately owns all3 actual members/shots, GG shots and
 released children, healer spawn/hit pulses and both TimedExplosive carriers.
@@ -119,9 +137,21 @@ the fixed pre-alias B1 ref/native, original source5c8 gate1634216 and all failed
 artifacts immutable. No old acceptance is transferred to new Python source;
 no deployment, opt-in root release, pin/model change or sealing is implied.
 
-Implementation review: native independent `/root/b1_public_root_review`, Solhigh,
-roundr3 APPROVE at exacte0e9f634e28f6cbc8bdd10631a6b3437d69dfef2. Preserved r1/r2
+Implementation review history: native independent `/root/b1_public_root_review`, Solhigh,
+roundr3 APPROVE at exacte0e9f634e28f6cbc8bdd10631a6b3437d69dfef2, subsequently
+invalidated for acceptance by the pre-execution projectile-speed finding. Preserved r1/r2
 REQUEST_CHANGES and r3 approval receipts record every finding/response/hash.
-Root patch commits8aab1b2b5→fa3622618→e0e9f634e atop aliasc13249919; no unrelated
+Root patch commits8aab1b2b5→fa3622618→e0e9f634e then a separate speed correction
+atop aliasc13249919; no unrelated
 shared edits.21stdlib tests PASS; native/public/gate acceptance remains pending
 B1's one separately host-reviewed, exact-source admitted sequence.
+
+The consumer inventory also found LIVE LevelRoot's copied scaled path. That
+protected source remains read-only; a separate guarded same-helper patch and
+source-extracted fixture evidence are in B1-LIVE-LEVEL-PATCH.md. LIVE owner owns
+integration/native acceptance. The two owned consumers are the actual scoped16
+gate paths; do not silently count proposed LIVE patch as deployed/tested native.
+Fresh reviewr4 at exacte f89b8acd5f8b1927fef8f56ad4729269dff4fdc6 APPROVES full
+combined corrected implementation/scoped probe and separately the proposed LIVE
+patch. Receipt `receipts/b1-public-root-review-r4.md` binds hashes and real gate
+conditions; active source packet-r4 supersedes preserved historical packet.

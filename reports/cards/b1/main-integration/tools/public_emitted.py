@@ -35,6 +35,16 @@ def fixture(cards):
     return h.fresh(tuple(dict.fromkeys((*cards, 'Knight', 'Archers', 'Zap'))))
 
 
+def native_identity(output):
+    actual = Path(h.clasher_core.__file__).resolve()
+    expected = Path(output).resolve().parent/'out/clasher_core.abi3.so'
+    digest = hashlib.sha256(actual.read_bytes()).hexdigest()
+    require(actual == expected.resolve() and digest ==
+            '6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d',
+            ('wrong actual imported native', str(actual), digest))
+    return dict(file=str(actual), sha256=digest)
+
+
 def deploy(py, card, seat, x=5.5, y=10.5):
     py.players[seat].hand[0] = card
     py.players[seat].elixir = 10
@@ -91,16 +101,30 @@ def witness(R, fair, py, obj, seat, expected_name, expected_class):
         if expected_class == 'TimedExplosive':
             for key in ('bomb_timer', 'bomb_damage', 'bomb_radius', 'freeze_carrier'):
                 require(actual.get(key) == template.get(key), ('wrong root bomb payload', expected_name, key))
+        if expected_class == 'Projectile':
+            speed = round(obj.travel_speed*50)
+            require(speed > 0 and template['stats']['speed'] == actual['stats']['speed'] == speed,
+                    ('incorrect public projectile native speed', expected_name, speed, actual['stats']['speed']))
+            if expected_name == 'ThreeMusketeers':
+                require(speed == 1000, 'incorrect independent rework native shot speed')
     clone, reload = root.clone(), h.clasher_core.BattleState(root.snapshot())
-    for _ in range(3):
+    initial_positions = {e['id']:(e['x'],e['y']) for e in found}
+    moved = set()
+    for _ in range(max(3, int(template.get('launch_delay', 0)/.05)+2)):
         clone.step(); reload.step()
         require(json.loads(clone.snapshot()) == json.loads(reload.snapshot()),
                 ('public-root native full restart', expected_name))
+        if expected_class == 'Projectile':
+            for e in json.loads(clone.snapshot())['entities']:
+                if e['id'] in initial_positions and (e['x'],e['y']) != initial_positions[e['id']]:
+                    moved.add(e['id'])
+    if expected_class == 'Projectile':
+        require(set(initial_positions) <= moved, ('projected projectile never moved after launch delay', expected_name))
     return dict(id=obj.id, token=int(token), public_name=expected_name, kind=kind,
                 emitted_class=expected_class, mechanical_name=exported['stats']['name'],
                 selected_name=template['stats']['name'], engine_load=exported['stats']['load'],
                 model_load=template['stats']['load'], scope=exported.get('scope'),
-                root_ids=[e['id'] for e in found]), exported, template, state
+                root_ids=[e['id'] for e in found], projected_movement=sorted(moved)), exported, template, state
 
 
 def musketeers(R, fair, seat):
@@ -348,6 +372,15 @@ def rejected_controls(R, fair, seat):
         wrong_template = rejected(lambda: musketeers(R, fair, seat), 'noncanonical public default')
     finally:
         R.templates[key] = saved
+    projectile_key = (R.builder.token_id('ThreeMusketeers'), 'Projectile')
+    saved_shot = R.templates[projectile_key]
+    try:
+        broken_shot = copy.deepcopy(saved_shot)
+        broken_shot['stats']['speed'] = 0
+        R.templates[projectile_key] = broken_shot
+        zero_speed = rejected(lambda: musketeers(R, fair, seat), 'incorrect public projectile native speed')
+    finally:
+        R.templates[projectile_key] = saved_shot
     had_root = 'root' in vars(R)
     saved_root = R.root
 
@@ -368,10 +401,11 @@ def rejected_controls(R, fair, seat):
             R.root = saved_root
         else:
             del R.root
-    return dict(wrong_token=wrong_token, wrong_template=wrong_template, wrong_root=wrong_root)
+    return dict(wrong_token=wrong_token, wrong_template=wrong_template, zero_speed=zero_speed, wrong_root=wrong_root)
 
 
 def run(R, fair, output):
+    imported_native = native_identity(output)
     frozen_bytes = Path(TOKEN_FILE).read_bytes()
     pinned = load_pinned_tokens()
     require(hashlib.sha256(frozen_bytes).hexdigest() ==
@@ -414,6 +448,7 @@ def run(R, fair, output):
     require(Path(TOKEN_FILE).read_bytes() == frozen_bytes, 'vocabulary mutated')
     require(model_hashes == {key:hashlib.sha256(path.read_bytes()).hexdigest() for key,path in model_paths.items()},
             'model bytes mutated during public phase')
+    require(native_identity(output) == imported_native, 'actual imported native changed during public phase')
     builder_path = Path(inspect.getfile(type(R.builder))).resolve()
     report = dict(total=len(results), passed=sum(r['ok'] for r in results), tests=results,
                   builder_type=type(R.builder).__module__+'.'+type(R.builder).__qualname__,
@@ -423,6 +458,7 @@ def run(R, fair, output):
                   card_feature_shape=list(R.builder.card_stat_features.shape),
                   model_input_files={key:str(path.resolve()) for key,path in model_paths.items()},
                   model_input_sha256=model_hashes,
+                  imported_native=imported_native,
                   fair_player_file=str(Path(fair.__file__).resolve()),
                   note='Actual emitted identity/template/public-root witnesses; 700ms coarse rework load default. Public roots do not reconstruct private clocks/targets or exact live rank identity.')
     with open(output, 'x') as f:
@@ -431,6 +467,7 @@ def run(R, fair, output):
 
 
 if __name__ == '__main__':
+    native_identity(sys.argv[1])
     import c56_controller
     import fair_player
     from bot.cards.scope import _widened

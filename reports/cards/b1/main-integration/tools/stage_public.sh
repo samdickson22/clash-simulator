@@ -20,7 +20,7 @@ mv "$A/repo/engine-cards" "$A/tree"
 cp "$I/source.sha256" "$A/source.sha256"
 cp "$I/source-commit.txt" "$A/source-commit.txt"
 cp "$I/native-build-inputs.sha256" "$A/native-build-inputs.sha256"
-cp "$I/root-implementation-packet.json" "$I/root-source-review-r3.md" "$A/"
+cp "$I/root-implementation-packet.json" "$I/root-source-review.md" "$A/"
 (cd "$A" && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet native-build-inputs.sha256)
 sed "s|  tree/|  $BUILD/tree/|" "$A/native-build-inputs.sha256" > "$A/native-build-origin-expected.sha256"
 sha256sum -c --quiet "$A/native-build-origin-expected.sha256"
@@ -42,7 +42,7 @@ cp "$P/affected.py" "$P/first_update_paths.py" "$P/reference.py" "$A/tools/"
 cp "$A/repo/reports/cards/b1/tools/review_regressions.py" "$A/repo/reports/cards/b1/tools/review_gate_assert.py" "$A/tools/"
 cp "$A/repo/reports/cards/runtime/tools/probe_b1_public_root.py" "$A/tools/"
 mkdir "$A/supplemental"
-cp "$OLD/supplemental/supplemental.py" "$OLD/supplemental/supplemental_jobs.sh" "$A/supplemental/"
+cp "$P/supplemental.py" "$A/supplemental/"
 cp "$P/combined_supplemental_jobs.sh" "$A/supplemental/supplemental_jobs.sh"
 (cd "$A/supplemental" && sha256sum supplemental.py supplemental_jobs.sh > tools.sha256)
 cp "$OLD/stats-spec.json" "$A/stats-spec.json"
@@ -82,7 +82,7 @@ find "$A/root" -type l -printf '%p -> %l\n' | sort > "$A/mirror-links.txt"
   sha256sum source-commit.txt native-build-inputs.sha256 native-build-origin-expected.sha256 \
     build-origin.txt native-origin.sha256 stats-spec.json original-source.sha256 \
     pinned-expected.sha256 original-compare.json gate-inputs-expected.sha256 mirror-links.txt \
-    root-implementation-packet.json root-source-review-r3.md
+    root-implementation-packet.json root-source-review.md
 } > "$A/inputs.sha256"
 (cd "$A" && sha256sum -c --quiet source.sha256 && sha256sum -c --quiet tools.sha256 && sha256sum -c --quiet inputs.sha256)
 sha256sum -c --quiet "$A/native.sha256"

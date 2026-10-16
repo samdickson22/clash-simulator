@@ -1,6 +1,22 @@
 # B1 public root handoff
 
-IMPLEMENTATION APPROVED, ADMITTED VALIDATION PENDING; no runtime acceptance or
+CURRENT: corrected sourcef89b8acd5f8b1927fef8f56ad4729269dff4fdc6 has fresh
+independent Sol-high native `/root/b1_public_root_review` roundr4 APPROVE,
+receipt `receipts/b1-public-root-review-r4.md` and active machine packet
+`receipts/b1-public-root-implementation-packet-r4.json`.21stdlib tests PASS;
+actual native/public acceptance still pending B1's one reviewed admitted phase.
+Scope16groups/32boundarygraphs/64plain+levelpaths plus8positive rework native
+motion witnesses and8zero-speed controls; B1 own emitted suite14. Core/probe
+hashes changed from e0 and require fresh stage/host review; do not execute old
+source. Separate proposed guarded LIVE LevelRoot patch also reviewed APPROVE
+for owner integration, remains unapplied and requires LIVE owner native tests.
+
+HISTORICAL UPDATE: approvede0 source invalidated for acceptance by owner-found zero
+canonical projectile movement speed before execution. Corrected speed source
+and refreshed independent review/packet are required; retained e0 packet/review
+below are HISTORICAL, not authorization to execute/accept current bytes.
+
+HISTORICAL IMPLEMENTATION APPROVED, ADMITTED VALIDATION PENDING; no runtime acceptance or
 deployment claim. Isolated branch `cards/b1-public-root-20261016`, baseebab18cc,
 aliasc13249919, root code commits8aab1b2b5,fa3622618,e0e9f634e (apply all three
 atop B1 alias; later commits are scoped evidence). Exact approved source
