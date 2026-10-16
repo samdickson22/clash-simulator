@@ -356,3 +356,7 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   probe 08 PID 566310 (mismatch not reproduced). Sol: gate shepherd cards-b1b2-gate-sol, fresh merge review
   cards-b1b2-merge-review-r1, release engineer cards-live16402c-release-sol (assemble r1-cards3/live16402c dev roots +
   tests now, release on FINAL). Task prefix 2372d8e6.
+- 18:58Z B1+B2 merge review APPROVE (fresh Sol). LIVE LEAD planning full-pool switch: told them all 7 seen off-vocab cards
+  (Bomber 37, Cage 34, Tombstone 30, SpearGoblins 30, Barbarians 17, MegaMinion 14, BattleRam 14 of 87 decks) are Batch A,
+  verified, in live16402b-r3 (recommended pin; native de11f124, .so 6.7 MB); live16402c ETA 2–3 h; Mac build not done
+  (source 878d5f459; offered a Sol builder if LIVE wants).
