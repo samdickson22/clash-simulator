@@ -1,163 +1,183 @@
-# C1 fresh final gate — prepared, not launched
+# C1 final gate: schema 2, preparation only
 
-2026-10-16. The focused correction `f68e5f80f` / native `631ac18d` has independent r2 **APPROVE**; this is not
-the integrated final gate. The historical PASS covers only `2ac024c7`. This plan and the new
-`tools/final_gate.sh` require independent host-script review before execution. No engine/native change is
-needed for preparation, and no merge, rebase, build or final gate is authorized by this document alone.
+The r1 launcher at `476a747f75569040f9b137d0991691c95e6f1b29` was **REJECTED**. Its recipe and
+`ready.json`/`inputs.sha256` protocol are retired. Do not execute it. The six repairs below replace the
+bare-wait gate with a reviewed Python driver; no engine/native change, simulation, build, remote command,
+merge/rebase, gate or pin switch is part of this repair assignment. Fresh independent approval of the revised
+commit is required before any host execution. Comparator normalization remains approved at SHA256
+`aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8`, with its existing semantic scope.
 
-Review inputs: [approval/results](RESULTS.md), [exact comparator predicates and continuation receipts](SNAPSHOT-DIAGNOSTICS.md),
-and [unexecuted launcher](tools/final_gate.sh). Launcher SHA256
-`57c3bd179aac3f9b50b930606b22c5f139ef7b37713202647cd7ebd589faa282`;
-tested comparator `aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8`.
-Review code delta with `git diff 933178477 HEAD -- reports/cards/c1/` in the C1 worktree. These hashes identify
-the submissions; independent launcher review and comparator coverage acceptance are still outstanding.
+## Order and authority
 
-## Required order and immutable identities
+1. CARD LEAD accepts B2 and supplies its exact commit plus required integration case IDs. Integrate B2 before
+   C1 in the authorized integration checkout; reconcile actual conflicts only. The driver verifies accepted
+   B2 ancestry with `git --no-replace-objects merge-base --is-ancestor` against the integrated commit.
+2. Build the frozen integrated source on 04 under the existing reviewed `build.sh`, CPU lease ≤8, nice15,
+   cargo -j8. Retain command, source/native/inventory hashes, PID/PGID, successful exit and start/end UTC.
+   Native631ac focused approval and native2ac historical gate do not cover the combined source.
+3. Rerun affected tests on that exact source/native. Required inventory: review-r2=21, snapshot-followup=2,
+   c1-cases=72 (36 scripts × both seats), first-update=42, batchA-review=4, c1-scenarios=36,
+   named-replays=11 (games22,245,274,323,16,86,336,460,189,415,548), plus the accepted B2 owner's explicit
+   integration cases. Every deploy/result/continuation must be inspected; hashes alone do not establish PASS.
+   Reconfirm comparator read sites/negative controls if integration changes them. No obsolete B2 gate.
+4. Obtain independent approval of the exact launcher/helper commit, inspect actual raw review/test/build
+   evidence and authorize the dependency inventory. Then audit liveness/receipts for duplicate jobs. Only
+   then stage and launch a fresh full C56 gate on04. This plan provides no B2 acceptance or launch authority.
 
-1. CARD LEAD supplies **accepted and integrated B2** receipt and exact accepted source SHA. Existing review
-   approval of C1 is not a substitute. Keep B2 selectors (including ElectroWizard secondary, ElectroDragon
-   hop, Log/Bandit remembered hits) in B2; retain C1 boulder/axe filters. Reconcile actual conflicts only, in
-   the lead-authorized integration target; record each resolution and review any substantive change.
-2. Record the exact integrated source commit, prove the accepted B2 commit is its ancestor, and freeze the
-   source. Rerun affected C1/B2 probes on that combined Python/native; inherited `2ac024c7` diagnostics and
-   `631ac18d` focused approval are not receipts for the combined source. Meaningful snapshot-continuation
-   findings must be resolved or explicitly bounded by independent review before the integration verdict.
-3. Build that exact frozen source on **04 only**, using existing `c1/build.sh` under `cpu_job.sh 8` / nice 15 /
-   cargo -j8. Record PID/PGID, input commit, build start/end, binary hash. Do not reuse the old native hash
-   by assumption. No heavy 05 work, no hosts 09–18, no emulator work or active-pin/runtime writes.
-4. After affected verification passes and launcher review approves the **exact script hash**, audit jobs and
-   launch the fresh C56 gate once. Give the lead exact PID/PGID and receipts for passive shepherding.
+LIVE LEAD retains active-pin authority. No runtime writes, active pin switch, emulator work, heavy05 compute,
+hosts09–18, or unrelated worktrees. Preserve inherited08 PID1042473 artifacts and04 diagnostics4131290/
+4132214; this preparation did not poll/restart them. Historical gate/native2ac artifacts remain unchanged.
 
-`B2_ACCEPTED_SHA` and `INTEGRATED_SHA` are intentionally unfilled while B2 is pending. `NATIVE_SHA` is assigned
-from the combined build receipt. `PREP_COMMIT` identifies the reviewed tools/plan revision. No placeholder is
-a readiness signal. Routine coordination goes directly to CARD LEAD via `t3_thread_send(mode='auto')`,
-including evidence, recommendation and whether dependent work waits; no user-input tools. Parent thread:
-`thread:delegated-task:command%3Amcp%3A7f0bf0df-35b9-48b9-bbf9-8f9cdcc3f584%3Adelegate-task%3Aclasher-card-lead-20261016-r1`.
-No active descendants or pending legacy input requests; future briefs must repeat this coordination rule.
-Sam's later strict-silence rule supersedes routine reporting: message only for blocked parent action, urgent live
-failure, explicit request or essential dependency handoff, max two sentences plus one receipt path. No routine
-status/results/queue/commit acknowledgments or duplicate manual completion; detailed evidence stays in files.
+Strict silence: no routine DMs/status/test/review/commit updates or manual completion duplicates. Questions
+requiring owner action go directly to CARD LEAD through `t3_thread_send(mode='auto')`, maximum two sentences
+plus one receipt path; never user-input tools. One automatic final delivery for the whole assignment.
+Parent: `thread:delegated-task:command%3Amcp%3A7f0bf0df-35b9-48b9-bbf9-8f9cdcc3f584%3Adelegate-task%3Aclasher-card-lead-20261016-r1`.
+Future/resumed child briefs repeat these rules. Independent review remains separate from implementation.
 
-## Fresh bundle on 04
+## Materialized one-use bundle
 
-Use `/mpac/sdicks02/jobs/clasher/cards/c1/final-${INTEGRATED_SHA:0:12}`. A failed/interrupted attempt is preserved;
-any justified later attempt uses a fresh `-rN` suffix after duplicate/job audit. Never reuse `c1/gate`, `verify`,
-`tree`, `out`, `tree-r2`, `out-r2` or either inherited snapshot job directory.
+After prerequisites, use `/mpac/sdicks02/jobs/clasher/cards/c1/final-<integrated SHA first12>[-rN]` on04.
+A failed/interrupted attempt keeps all evidence and its persistent claim. A retry requires a fresh suffix and
+job audit. Never reuse the inherited `gate`, `verify`, `out`, `tree-r2`, or `out-r2` directories.
 
-The following is a staging recipe **for review and later use**, not an executed preparation job. Commands
-using unresolved SHAs must wait. Supply only verified full hexadecimal commit/hash values.
+The run must be owned, canonical, real, mode0700, containing exactly `inputs/`, `ready.json`, `manifest.json`.
+No old logs, PASS, output, dangling symlink or persistent claim is admitted. Every input is a private
+single-link regular file or real directory: **no input symlinks, hardlinks, special files or external input
+allowlist**. Dereference permitted read-only source material during separately authorized staging; do not
+change permissions on the original. Materialize all roles, including transitive report modules, data and
+Python packages. Input directories and controls are frozen without write bits before admission. The run
+parent stays0700 so the driver can exclusively create its own `.gate-started/` and `output/`.
 
-```bash
-# In the authorized local integration checkout, after B2 acceptance/integration:
-git rev-parse "$INTEGRATED_SHA^{commit}"
-git merge-base --is-ancestor "$B2_ACCEPTED_SHA" "$INTEGRATED_SHA"
-RUN=/mpac/sdicks02/jobs/clasher/cards/c1/final-${INTEGRATED_SHA:0:12}
-ssh 127x04 "test ! -e '$RUN' && mkdir -p '$RUN/tree' '$RUN/rt' '$RUN/tools' '$RUN/gate-tools' '$RUN/batchA-tools' '$RUN/c1-tools' '$RUN/verify' '$RUN/receipts'"
-git archive "$INTEGRATED_SHA" engine-cards | ssh 127x04 "tar -x -C '$RUN/tree' --strip-components=1"
-```
+`inputs/` roles (all required, no other top-level entries):
 
-Populate `c1-tools` / `batchA-tools` from the reviewed `PREP_COMMIT`, not a mutable checkout; retain their source
-commit/hash manifest. Copy the unchanged gate and helper tools from the historical C1 bundle on 04:
+| Role | Exact content / binding |
+|---|---|
+| engine | Entire tracked `engine-cards/` Git archive at integrated commit, including Python/gamedata/glue; no build products |
+| native | Only `clasher_core.abi3.so` from the successful integrated build, matching receipt SHA and ELF magic |
+| pinned-native | Only `clasher_core.abi3.so`, pinned681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b |
+| r1 | Full materialized historical r1 runtime, including engine glue, src, models, report modules and data; inventory approved by owning lead |
+| total-runtime | Byte-identical r1 files except engine-rs replaced by entire engine role, src replaced by engine/py/src, gamedata from engine/py/gamedata.json |
+| bot | Entire tracked bot repository Git archive at declared bot_commit, including bot package and transitive tracked report modules/data |
+| python | Standalone Python3.12.12 prefix with regular executable bin/python3.12, stdlib, lib-dynload, complete venv site-packages and native dependency libraries; full inventory approved by owner |
+| fixtures | Frozen t1-split.json plus t1-trainval fixture inputs; all 577 train/validation IDs derive from split and existing fixture dirs |
+| roots | Frozen roots-*.jsonl.gz and config-*.json inputs; sample is sorted Random(20261015).sample(range(total),300) |
+| tools | Exactly final_gate.sh, final_gate.py, final_gate_contract.py, gate_worker.py, gate_fixtures.py, gate_roots.py, gate_compare.py from independently approved tools commit |
+| evidence | Typed receipts plus raw review/build/tests/platform/input provenance under raw/ |
 
-```bash
-cp -a /mpac/sdicks02/jobs/clasher/cards/c1/tools/gate.sh "$RUN/tools/gate.sh"
-cp -a /mpac/sdicks02/jobs/clasher/cards/c1/gate-tools/. "$RUN/gate-tools/"
-cp -a /mpac/sdicks02/jobs/clasher/cards/c1/rt/. "$RUN/rt/"
-ln -sfn "$RUN/tree" "$RUN/rt/engine-rs"
-ln -sfn "$RUN/tree/py/src" "$RUN/rt/src"
-ln -sfn "$RUN/tree/py/gamedata.json" "$RUN/rt/gamedata.json"
-ln -s /mpac/sdicks02/jobs/clasher/cards/batchA/roots "$RUN/roots"
-/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 8 bash /mpac/sdicks02/jobs/clasher/cards/c1/build.sh "$RUN/tree" "$RUN/out"
-```
+The driver authenticates source/tool/bot Git objects from an explicit local repository allowlist (C1, CARD
+LEAD, main, bot checkouts); does not trust current checkout files or a claimed archive SHA. Engine and bot
+file inventories must exactly equal their declared Git archives. Staging a bot revision with tracked symlinks
+or submodules is rejected; an explicit reviewed materialization contract would be needed, not an ignore.
+All r1/Python/fixture/root content is hashed recursively and bound to owner-approved platform/input evidence.
+This is an owner attestation with checked identities, **not cryptographic proof that a human approved it**.
+The lead must inspect/authenticate the actual evidence and approve that inventory before launch. The driver
+cannot discover an omitted optional dependency by magic; isolated worker paths prevent imports falling back
+to an unlisted checkout/site package. Missing dependencies fail the gate. The host OS/dynamic loader and fixed
+control interpreter are trusted platform components; record their platform provenance in the raw evidence.
+The worker verifies its actual sys.base_prefix is the frozen capsule and its version is3.12.12.
 
-These commands are confined to the new bundle; `rt` is a mirror of symlinks to read-only r1 metadata, with
-three local source/data overrides. Do not edit the referenced runtime. Confirm all three resolved targets
-and the pinned native before use. Keep the committed gamedata **without overlay** for C56. Optional C1
-overlay checks use a separate scratch root with the four documented stat rows, never the final gate root.
+`manifest.json` is a JSON object keyed by canonical paths relative to inputs (including role dirs and empty
+dirs). Each directory record is `{ "kind":"dir", "mode":320 }` (0500 example); file record adds
+`"kind":"file", "mode":256, "size":N, "sha256":"<64hex>"` (0400 example; executable0555).
+Inventory records must exactly equal recursive actual lstat/hash results. Duplicate JSON keys, traversal,
+absolute/noncanonical/control-character paths, extra/missing files, write bits, links and unlisted roles fail.
+Controls, evidence and helpers are included in repeated checks; output/control paths cannot masquerade as inputs.
 
-Read-only source hashes of the reused reviewed gate helpers (confirmed 09:34Z on 04):
-
-- `tools/gate.sh`: `21bbecaf168be4c5b5ff44f96208025b58424b62efdf80ecf9179db37353e170`.
-- `gate-tools/parity_fixtures.py`: `057bd386f022d3770baf0a47d19b7eac2b8e9fc978a0464746ae4a6fc7afe976`.
-- `gate-tools/parity_roots.py`: `2d721a49d003abfaadd0e5f532749f700addfd733c493e7acf2b6abe225063eb`.
-- `gate-tools/compare.py`: `dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e`.
-
-## Affected verification before readiness
-
-Use isolated logs/JSON under `$RUN/verify`, check every child exit and parse its result; do not infer PASS from
-bare `wait` or a done marker. Run independent groups sequentially under leases ≤8. Exact Python environment:
-
-```bash
-PY=/mpac/sdicks02/repos/clasher-bot/.venv/bin/python
-ES=/mpac/sdicks02/repos/clasher-bot-runtime/r1/reports/strategy_council_20260928/engine-speed
-export PYTHONPATH=$RUN/out:$RUN/rt/engine-rs:$RUN/rt/src:$ES:$RUN/batchA-tools:$RUN/c1-tools
-export CARDS_GAMEDATA=$RUN/rt/gamedata.json PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1
-export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
-# Each payload below runs through cpu_job.sh N nice -n 15, with its own output log and JSON.
-"$PY" -B "$RUN/c1-tools/probe_review_r2.py" "$RUN/verify/review-r2.json"
-"$PY" -B "$RUN/c1-tools/probe_snapshot_followup.py" "$RUN/verify/snapshot-followup.json"
-"$PY" -B "$RUN/c1-tools/probe_c1_cases.py" "$RUN/verify/c1-cases.json"
-"$PY" -B "$RUN/batchA-tools/probe_first_update_paths.py" "$RUN/verify/first-update.json"
-"$PY" -B "$RUN/batchA-tools/probe_native_scen.py" "$RUN/verify/batchA-review.json" --cases
-"$PY" -B "$RUN/batchA-tools/probe_native_scen.py" "$RUN/verify/c1-scenarios.json" Bowler Assassin ZapMachine ElectroWizard IceWizard InfernoDragon MegaKnight Fisherman AxeMan ElectroDragon BossBandit Ronin
-```
-
-Require 21 focused correction cases, the two bounded continuation cases, 72 C1 cases (36 scripts × both seats), 42 first-update paths,
-four Batch A review cases, 36 C1 scenarios; every scripted deploy must be valid. Repeat overlay scenarios if
-merge resolutions touch their config. Replay the eleven named mixed games via `replay_games.py` with the
-frozen `nd-plan.json` and IDs `22 245 274 323 16 86 336 460 189 415 548`. Rerun only relevant B2 final-owner
-selector/continuation controls against the integrated native (accepted B2 receipts define their exact CLI;
-do not run obsolete B2 gate launchers). In particular, carry over attacks.rs secondary and c56.rs chain guards,
-and explicitly cover Log remembered hits plus C1 boulder/axe filters. Account for all meaningful differences;
-selected-field comparator equality is not complete snapshot byte equivalence. Keep negative controls live.
-
-## Readiness binding and gate invocation
-
-Create `inputs.sha256` **relative to `$RUN`** over the immutable tree, native, reviewed tools/launcher, copied
-review/test/build receipts, and root/fixture input files. It must exclude output directories and readiness
-controls to avoid self-reference. Hash both the manifest itself and each referenced receipt. Preserve input
-source manifests and the exact commands in the lead's audit. Freeze the bundle before declaring readiness.
-
-`ready.json` is the lead's explicit assertion backed by copied evidence, not a tool-generated approval:
+`ready.json` has exactly these fields (angle-bracket values are deliberately unfilled):
 
 ```json
 {
-  "integrated_commit": "<full integrated SHA>",
-  "native_sha256": "<fresh combined build SHA256>",
-  "b2_accepted_commit": "<full accepted B2 SHA>",
-  "launcher_sha256": "<independently approved final_gate.sh SHA256>",
-  "inputs_sha256": "<SHA256 of inputs.sha256>",
-  "prerequisites": {"b2_accepted": true, "b2_integrated": true, "affected_probes_pass": true, "launcher_reviewed": true},
-  "receipts": {"receipts/b2-acceptance.json": "<hash>", "receipts/integration.json": "<hash>", "receipts/launcher-review.md": "<hash>"}
+  "schema": 2,
+  "integrated_commit": "<40hex>",
+  "b2_accepted_commit": "<40hex>",
+  "tools_commit": "<independently reviewed 40hex>",
+  "bot_commit": "<40hex>",
+  "native_sha256": "<64hex>",
+  "source_repo": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "bot_repo": "/mpac/sdicks02/repos/clasher-bot",
+  "manifest_sha256": "<hash of exact manifest.json bytes>",
+  "receipts": {
+    "b2": {"path":"evidence/b2.json", "sha256":"<64hex>"},
+    "integration": {"path":"evidence/integration.json", "sha256":"<64hex>"},
+    "build": {"path":"evidence/build.json", "sha256":"<64hex>"},
+    "tests": {"path":"evidence/tests.json", "sha256":"<64hex>"},
+    "launcher_review": {"path":"evidence/launcher-review.json", "sha256":"<64hex>"},
+    "platform": {"path":"evidence/platform.json", "sha256":"<64hex>"}
+  }
 }
 ```
 
-Immediately before launch, check `ps -p 1042473` on 08 and `ps -p 4131290,4132214` on 04 plus their receipts;
-inspect `ps -u sdicks02 -o pid,ppid,pgid,etime,args` for any existing final bundle job/lease. Do not terminate
-or duplicate the inherited jobs. After prerequisites and script review pass, launch **once**, on 04:
+Every typed receipt requires matching `kind`, nonempty `authority` and `evidence_id`, and nonempty
+`raw_evidence` mapping of evidence/raw paths to SHA256, all present in the manifest. Additional required fields:
+
+- b2: `verdict=ACCEPTED`, matching `commit`, unique `required_integration_cases` list.
+- integration/build/tests: `source_commit`, `native_sha256`, `engine_inventory_sha256`, `verdict=PASS`, integer
+  `exit_code=0`. Integration adds matching `b2_commit` and `required_tests`: exact group-to-case-ID arrays,
+  with counts above and B2 IDs matching accepted B2. A case-count total alone is insufficient.
+- build: nonempty command argv, positive pid/pgid, ordered started_utc/ended_utc endingZ.
+- tests: `groups` mapping all required groups to actual unique case rows `{case,verdict:"PASS",exit_code:0,
+  artifact:"evidence/raw/...",artifact_sha256:"..."}`. Case IDs must match integration.required_tests and
+  each actual artifact must be inventoried/hashed. Lead authenticates the artifacts' contents and exit receipts.
+- launcher_review: `verdict=APPROVE`, `reviewed_commit=tools_commit`, `code_hashes` exactly seven tools basenames
+  to hashes matching both Git and materialized files. Raw independent review must actually approve this revision.
+- platform: `verdict=APPROVED`, `dependency_closure=materialized-no-symlinks`, `python_version=3.12.12`,
+  and `python_inventory_sha256`, `r1_inventory_sha256`, `fixtures_inventory_sha256`, `roots_inventory_sha256`.
+
+Inventory-binding hashes in these typed receipts use SHA256 over Python
+`json.dumps(content_map, sort_keys=True).encode()` (default separators/ensure_ascii), where content_map maps
+all role-relative file names to SHA256, excluding directories; the outer manifest independently binds modes,
+sizes and empty dirs. Keep exact raw evidence alongside each typed translation; never replace a rejected report
+or failed artifact with a later PASS. The tests module supplies synthetic schema examples; none authorize a run.
+
+## Driver/result contract
+
+The shell must be entered with `/bin/bash -p`; env-i is also applied **before cpu_job.sh** so neither wrapper
+nor child can reload inherited BASH_ENV. The driver uses a fixed isolated control interpreter, checks04 host
+and its direct parent's existing8-slot lease/PGID, and exclusively claims before control validation. It keeps
+the exact originally read ready/manifest bytes; validates without generating a new trusted baseline; rechecks
+those bytes and the full frozen inventory before fixtures, before roots, before comparator, and at completion.
+No environment from the caller reaches workers. Logs record the effective minimal environment/per-arm roots.
+Workers fix r1 policy, remove stale EVAL root, isolate sys.path, disable site/.pth processing and bytecode,
+use nice15 and single-thread BLAS/OMP/Rayon. No ambient overlays, Python optimization, pin policy or loader preload.
+
+Fixtures: two parents, three pool workers each. Individually wait both, record exit statuses, then audit exact
+577 IDs/schema/chain hashes/ticks/action counts/results, native import path and cross-arm bytes before roots.
+Preserve historical Python/native lockstep residuals: no requirement that every start/first mismatch agrees
+with Python. Roots: eight individually waited workers, four shards per arm; deterministic300 IDs, full/cut
+pairing and assignment; all header fields, source identities, action sampling and checks validated. Required
+per-root checks: actions×3 rollouts, seven evaluation parts, evaluate, two views/masks, three selections, three
+cumulative steps (1,50,200), snapshot hash, and apply+step40 when sampled plays exist. Cross-arm bodies must
+be byte-identical. The descriptive unchanged comparator is separately waited; a nonzero exit also rejects.
+
+All generated paths are exclusively created with nofollow; no inherited gate.sh/bare wait. Helpers only
+reopen reserved regular output files in an owned nonwritable directory. Phase receipts include every PID/PGID,
+command, exit/signal and UTC. Interrupted children are stopped by exact owned child PGIDs and waited, never
+pgrep/pkill. Failure leaves claim, raw logs, per-phase and all-child exits and FAIL.json; roots never start after
+failed fixture exits/audit. Success is written to exclusive .PASS.tmp, atomically linked without clobbering to
+PASS.json, then temp removed; any publication exception removes PASS. Accept only PASS with outer launcher
+exit0 and matching launch/baseline/phase receipts, no FAIL. A SIGKILL/power loss cannot supply a valid outer exit.
+
+After review/prerequisites/job audit, the **later owner-approved** invocation is (not run here):
 
 ```bash
-setsid nohup /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 8 bash "$RUN/c1-tools/final_gate.sh" "$RUN" "$INTEGRATED_SHA" "$NATIVE_SHA" "$B2_ACCEPTED_SHA" > "$RUN/launcher.log" 2>&1 < /dev/null &
-taskpid=$!; printf '%s\n' "$taskpid"
-ps -p "$taskpid" -o pid,ppid,pgid,lstart,etime,args
+setsid /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+  /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 8 \
+  /bin/bash -p "$RUN/inputs/tools/final_gate.sh" \
+  "$RUN" "$INTEGRATED_SHA" "$NATIVE_SHA" "$B2_ACCEPTED_SHA" "$TOOLS_COMMIT" \
+  </dev/null >/dev/null 2>&1 &
 ```
 
-The wrapper restricts host/path, requires its parent's eight-CPU lease, checks readiness/script/native/input
-hashes, reserves an atomic one-use marker, runs the **unchanged** historical gate, and independently audits
-all raw records/bytes/IDs/native headers before `PASS.utc`. It sanitizes inherited root/overlay variables.
-Two fixture pools have three workers each (eight processes with their parents), followed by eight root shards.
-Keep `launch.receipt`, UTC start/end, `exit-code.txt`, `gate/compare.json`, raw JSONLs/logs, pre/post hashes and
-`PASS.utc`. An empty done file or descriptive compare output is insufficient.
+Capture $! and its actual PGID plus final outer status in an independently approved owner/shepherd receipt;
+do not infer successful launcher exit from PASS alone. No new watcher or staging/host script is provided by
+this plan. Any new/changed host-touching script requires separate independent review before execution.
 
-Required result: **577/577 fixture records byte-identical; 577/577 Rust-only chains, zero errors; 300/300 full
-+ 300/300 cut roots with exact bodies**, unique/matching IDs and all eight expected native headers. Pinned
-native remains `681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b`. Record every discrepancy and
-bound/triage it rather than broadening comparison. Lead audits receipts independently before acceptance.
+## Review/rollback
 
-## Preservation and rollback
+r1 findings and failed scratch artifacts remain at CARD LEAD `reports/cards/reviews/C1-final-tools-r1.md`
+and `/mpac/sdicks02/jobs/clasher/cards/c1-final-tools-review-local/`. Revised local checks import only pure
+validators and AST-extracted wait/filesystem functions with fake processes. No native/engine/host driver runs.
+See scoped `reviews/` for candidate-bound fresh independent verdict, exact hashes and local command receipts.
 
-No active live pin switch. Failed verification/gate leaves the isolated bundle and reviewed baseline intact;
-record status/PID and end passive waits with lead shepherding. No automatic retry. Revert an unaccepted
-integration through its recorded merge parent/commit in the lead-authorized checkout, not a destructive reset.
-Focused correction rollback remains `git revert f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e`; historical native
-`2ac024c7` and `c1/gate` artifacts stay intact. No production/runtime restoration is needed for this preparation.
+Rollback this tools repair by reverting its scoped commit(s), **without executing the rejected old launcher**.
+For engine fallback retain f68e5f80f and unchanged native631ac artifacts, plus historical native2ac gate artifacts;
+no runtime/live-pin rollback is necessary because none was changed. Combined-source/B2 gates remain pending.

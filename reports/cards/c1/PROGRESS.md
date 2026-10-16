@@ -174,7 +174,7 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   birth t29/id9 through return/expiry (period30, expiry age31), Python/native snapshot continuations and
   aim/target-position perturbations; nonzero phase mutation detected. Exact `mk_target_dies` t80/id11 has
   child_count/damage/range/speed all zero, so its sole native origin-reader is unreachable; exported-origin
-  continuation and arbitrary native-origin perturbation preserve positions/digest/damage through expiry+10.
+  continuation and arbitrary native-origin perturbation preserve positions/digest/damage through expiry (10 updates to expiry).
   Native never rebuilt. Lead notified with receipt and narrower follow-up recommendation.
 - 09:41Z user authorized narrow comparator predicates only; implemented in `probe_snapshots.py`, with
   explicit phase/endpoints/hit-multiplicity and child-capability negative controls in the bounded probe.
@@ -223,3 +223,43 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   original untracked peek.py/snapcmp_probe.py remain preserved. Final automatic delivery is the sole completion
   report; no duplicate manual parent message. Pending prerequisites are lead's independent launcher/comparator
   review and accepted/integrated B2 before final integrated coverage, not unfinished preparation code.
+
+## Current authority / launcher repair (2026-10-16 UTC)
+
+- Current owner is Codex gpt-6.1-sol high. Earlier blanket Opus/promotion HOLD wording is retired by Sam's
+  updated direction; historical text above is retained. Confident reversible repairs proceed within ownership,
+  but unmet independent review, B2 acceptance/integration, exact-source coverage and required gates still block
+  admission. LIVE LEAD owns active live pins. No live switch, merge/rebase or final gate in this repair.
+- Strict silence remains current: no routine DMs/status/test/review/queue/commit/ack spam, one automatic final
+  delivery when this whole repair assignment is done. Missing information requiring action goes directly to
+  the owning CARD LEAD via t3_thread_send(mode='auto'), max two sentences plus one receipt path; no input tools.
+  Future/resumed descendant briefs must include this; do not rebroadcast to already active children. No
+  pending legacy input request. Independent review of the complete repair is the only delegated work planned.
+- 10:29–10:36Z local source inspection/editing only on05, no engine/native import, host command, simulation,
+  build, queue, launcher/gate execution or duplicate watcher. Read full CARD LEAD review
+  `reports/cards/reviews/C1-final-tools-r1.md`: launcher REJECT at476a747f, comparator APPROVE unchanged.
+  Original review/scratch failures remain untouched. The rejected schema1 recipe is explicitly retired;
+  `FINAL-GATE-PLAN.md` now describes frozen private copies and typed schema2 admission, not input symlinks.
+- F1–F6 repair: replace inherited bare-wait launcher with individually waited2 fixture parents /8 root workers /
+  comparator, phase/all-child exit receipts; complete lstat inventory with no links/extra files; authenticated
+  integrated engine and full bot Git archives, checked B2 ancestry; typed owner evidence bound to raw artifacts,
+  source/native/review/case identities; private exclusive outputs and atomic no-clobber PASS; persistent claim
+  before validation and checks of original bytes/inventory before every phase/completion; env-i, bash-p,
+  isolated Python bootstrap/sys.path and explicit r1 per-arm roots; expected577 IDs, exact deterministic300
+  sample/shards/full-cut pairs and full chain/check/header validation. Reviewed helper copies add path relocation
+  and action/header metadata only; historical budgets/pools/shards/comparison semantics preserved.
+- F7 correction: previous09:38 statement "expiry+10" was an overclaim. The origin loop compared through removal
+  after10 updates (trace81..90), then broke. Corrected PROGRESS and SNAPSHOT-DIAGNOSTICS to **through expiry
+  (10 updates to expiry)**; no new post-expiry simulation claimed or run. Final followup raw receipt authenticity
+  remains limited as r1 review states; owning lead must inspect/hash actual final files before coverage admission.
+- Local command: `/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B
+  reports/cards/c1/tools/test_final_gate_contract.py`. Pure synthetic validators plus AST-extracted filesystem /
+  fake-child wait functions only. First run:11 groups,3 test-harness NameError errors (missing stat in extracted
+  namespace); preserved `reviews/repair-local-first-failure.json`, tool output in thread. Fixed harness import;
+  passing runs and exact hashes/exit/status in `reviews/repair-local-receipt-r2.json` and tests log. No actual
+  Popen, native/engine import, host driver main or remote command exercised. `bash -n`, AST parse all7 new
+  Python tools, `git diff --check` passed. Comparator hash remains aad00c4b; `git diff f68e5f80f -- engine-cards`
+  empty. No inherited process/artifact was touched or restarted; historical native2ac/focused631ac retained.
+- Rollback: revert scoped tools/docs repair commit(s), keeping rejected launcher disabled; engine rollback
+  remains f68e5f80f/native631ac and historical native2ac artifacts. No runtime/pin rollback needed. Actual
+  integrated source/native, B2 acceptance and fresh C56 are intentionally not invented by these local checks.

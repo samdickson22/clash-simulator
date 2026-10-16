@@ -99,7 +99,7 @@ Python origin `[9,29]` vs native `[0,0]`. `lib.rs:3272` prevents the child call 
 also returns before its sole origin reader at nonpositive child damage/range. Full native-source search for
 projectile_origin finds no other reader; remaining sites are declaration/assignments. Constructor preserves
 supplied origin. Python-export continuation, native roundtrip and native origin set to `[-99,99]` preserve shot
-position/aim/target/hits plus digest/damage to expiry+10, with no reachable child direction. Trace begins
+position/aim/target/hits plus digest/damage through expiry (10 updates to expiry), with no reachable child direction. Trace begins
 `(8.494,28.024)` and ends `(3.94,19.24)` before removal. No child-reader comparison is bypassed to get PASS.
 
 **Origin predicate:** only matching `Projectile`, matching spell Arrows, both non-source/non-piercing with no

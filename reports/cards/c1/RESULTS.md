@@ -266,3 +266,19 @@ Lead review of this comparator diff/proof remains a prerequisite to broader cove
 previously recorded semantic field classes; artifacts are preserved. 08 PID/PGID **1042473** remains active
 at **09:46:12Z**, no completion receipt. Raw earlier digest-case receipt has 72/72 entries, correcting the
 old 35-script/70-case prose arithmetic; no raw evidence or historical gate result was modified.
+
+## Launcher rejection repair (preparation, no new engine verdict)
+
+CARD LEAD `reports/cards/reviews/C1-final-tools-r1.md` rejected the schema1 launcher at476a747f for six
+safety/provenance defects; its scoped comparator normalization approval is unchanged. The new schema2 driver
+and contract fix per-child exits, complete source/dependency/typed evidence binding, output confinement,
+original-control freezing, inherited pin/environment leakage, and expected fixture/root/schema validation.
+`FINAL-GATE-PLAN.md` specifies admission, exact commands, failure receipts and rollback. Helpers preserve
+historical fixture pools/root sample/budgets while adding audit metadata and relocating inputs to private copies.
+No final gate/host launcher/native build ran; local synthetic verifier checks do not establish integrated parity.
+Fresh candidate-bound independent launcher review is required before execution. B2 acceptance/integration,
+affected combined-source checks and fresh C56 remain mandatory; no live pin/runtime change.
+
+The origin continuation was **through expiry (10 updates to expiry)**, not10 post-expiry updates. Corrected
+prose without extending evidence. Prior failed review/artifacts are preserved; review's final followup raw-file
+authenticity caveat remains. Exact local commands/results/hashes and repair rollback are in PROGRESS/reviews.

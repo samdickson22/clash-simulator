@@ -1,0 +1,9 @@
+{
+  "time_bound": "during local repair, before 2026-10-16T10:36:10Z; original tool output in thread",
+  "command": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/tools/test_final_gate_contract.py",
+  "exit_code": 1,
+  "scope": "local pure synthetic checks only",
+  "tests_run": 11,
+  "errors": 3,
+  "cause": "AST test harness namespace omitted stat, causing NameError in extracted directory() helper; launcher source itself imports stat. Fixed test harness import/namespace. Original tool result retained in thread; no old rejection artifacts modified."
+}
