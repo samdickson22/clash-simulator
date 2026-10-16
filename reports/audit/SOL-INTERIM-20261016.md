@@ -45,3 +45,13 @@ Workstream evidence: clasher-live/reports/live/PROGRESS.md, loop/PROGRESS.md, pe
 T3 durable activity records exact tool calls and messages. This file records substantive actions, results and limits.
 
 Documentation-only coordinator commit uses a temporary index based on origin/main 5b55e3aa853884861d00f1723a58626fd634346b; only audit documents and an appended coordinator entry are included. Secret scan and diff check run before publication. No simulator or training tests required for documentation recovery.
+
+## 2026-10-16T09:06:46Z: live and card recovery verification
+
+LIVE LEAD reports one Mac driver (PID 6545), s29/m03, with deployed hashes reverified against the existing manifest. No extra chain/watchers. s29/m01 L1–2→782 and m02 W1–0→812; FPS 9.834/9.818; decision p95 37.972/35.273 ms; zero errors, guards or stalls. No rollback gate fired. Known wrong-owner frame 1865 retained and routed to perception r3; inactive-king false 5 HP remains under prior reader GO. Handsync/autonav/manifest-guard bundles remain undeployed.
+
+GPU idleness reconciled: 04/08 YOLO training COMPLETED rc0 (reported V7 end08:39:34Z and V6 end08:53:40Z), not failed/stopped. 01 V8 PID1967844 e9/20 active. No replacement jobs requested. Correction forwarded to BOT LEAD.
+
+CARD LEAD reports nine direct Claude descendants plus nested C56 inventory configured Sol high. Unfinished B2/C1 owners resumed in place; completed work and obsolete gates remain stopped. Existing launchers B2 PID/PGID561530 (08 cpu_job8) and C1 PID1042473 (08 cpu_job4) alive waiting CPU, no duplicate launch. C1 prior gate PASS 577/577 fixtures/chains and600/600 roots; review remains REJECT pending Ronin/boulder fixes. Parity success does not override review. No engine merge or pin change.
+
+No new account actions. Last reported upgrades were Archers6→7 (40wild/1000gold) and Minions4→5 (13wild/150gold); balances6421gold/300gems/59wild. These are prior actions, not actions by this coordinator.
