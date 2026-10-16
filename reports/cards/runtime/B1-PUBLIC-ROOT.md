@@ -1,7 +1,8 @@
 # B1 compatible public Resources and graph reconstruction
 
-CURRENT: future-clone orientation correction is pending fresh independent
-review. Prior speed-corrected sourcef89b8acd5 had reviewr4 APPROVE, now superseded
+CURRENT: clone-orientation-corrected sourceff23043fc has fresh independent
+Sol-high reviewr5 APPROVE; actual admitted acceptance remains pending. Prior
+speed-corrected sourcef89b8acd5 had reviewr4 APPROVE, now superseded
 for acceptance by this newly found owner-orientation defect. Historicale0
 approval was superseded by the owner-found speed defect before execution and
 does not accept these bytes. Baseebab18cc, engine aliasc13249919. Authority:
@@ -168,3 +169,9 @@ Fresh reviewr4 at exacte f89b8acd5f8b1927fef8f56ad4729269dff4fdc6 APPROVES full
 combined corrected implementation/scoped probe and separately the proposed LIVE
 patch. Receipt `receipts/b1-public-root-review-r4.md` binds hashes and real gate
 conditions; active source packet-r4 supersedes preserved historical packet.
+
+CURRENT reviewr5 APPROVES exact ff23043fc3857bd26b42440637da4d017b12731d,
+including the subsequent static future-Clone owner-orientation repair and
+positive geometry controls. Active packet-r5 supersedes packet-r4 for acceptance
+while preserving all historical approvals/findings.23stdlib controls pass;
+native/public/gate evidence remains B1's fresh admitted prerequisite.
