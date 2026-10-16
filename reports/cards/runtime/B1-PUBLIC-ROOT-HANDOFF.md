@@ -1,3 +1,13 @@
+CURRENT: exact corrected source65548282891b93455fdbf1a27ad6c2594f76d54e
+has fresh independent Sol-high /root/b1_public_root_review round6 APPROVE.
+Active packet `receipts/b1-public-root-implementation-packet-r6.json`, SHA
+`51d62bbe85e68a0468fd723d9e841e1fd0042dc6420bf084c756894342ddf175`; review receipt
+`receipts/b1-public-root-review-r6.md`.25stdlib PASS including actual exported
+pulses without spell_name. Scoped16 remains unexecuted for current source;
+Clone spell11 with body9 is explicit. B1 alone owns fresh staging review and
+admitted validation; failedrun03 and old gates remain immutable.
+
+HISTORICAL RUN03 DIAGNOSIS / PRE-REVIEW READINESS:
 CURRENT: actual admitted run03 scoped12/16; four level cases failed before
 movement/future-Clone witnesses. Round5 source approval is retained historically
 but does not establish acceptance. Corrected candidate now distinguishes the two
