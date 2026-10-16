@@ -32,3 +32,22 @@ See COVERAGE.md "Batch plan".
   `reports/live/loop/opponent-decks.jsonl` pending. BOT LEAD rules: CPU on 03/04/08 via
   `clasher-bot/bot/exit/cpu_job.sh`, cargo nice ≤32 jobs, parity gate tools `reports/bot/learned-opponent/native-total-tools/`,
   new pin set `r1-cards1` (never change r1/r1-total), proxy table + hook diff to BOT LEAD before ship.
+- 00:50Z Native sweep done: all 66 new cards native==Python (solo+Knight 900 ticks); only C56 IceGolemite diverges
+  (t=307, known). Python baseline committed as engine-cards/py (7e64d8b93).
+- Fidelity group 1 (vs RoyaleSim 16.402): PASS MegaMinion, Pekka; DIFF 12 (stats: Brawler HP 1080/1121, Bomber dmg
+  225/212, Barbarian HP 691/716 [shared with C56 BarbLog]; spawner first-spawn timing Tombstone/BarbarianHut; hit
+  timing SpearGoblins/SkeletonDragons/Mortar/DartBarrell; Guards speed).
+
+## Workers (taskIds: node:delegated-task:command%3Amcp%3A9a073ec3-0825-4649-8b7b-6d04c9b33067%3Adelegate-task%3A<id>)
+| id | model | job | output |
+|---|---|---|---|
+| cards-fidelity-sol-r1 | Sol | RoyaleSim scenario fidelity, all 66 | reports/cards/fidelity/ |
+| cards-statsdiff-haiku-r1 | Haiku | gamedata vs 16.402 stat diff | reports/cards/stats/ |
+| cards-runtime-scope-opus-r1 | Opus | full-pool scope, r1-cards1 assembler, parity + K4L no-crash gate, baked-in C56 inventory | bot/players/runtime.py, bot/cards/, reports/cards/runtime/ |
+| cards-proxy-haiku-r1 | Haiku | proxy table (named + class-only) | bot/cards/proxy_table.py |
+| cards-native-diff-sol-r1 | Sol | ≥600 mixed-deck native-vs-Python games | reports/cards/native-diff/ |
+| cards-batchA-opus-r1 | Opus | Batch A fidelity fixes in engine-cards (C56 bit-identical) | engine-cards/, reports/cards/batchA/ |
+
+## Definition of done per card
+engine native==Python (probe + mixed games) · fidelity PASS vs RoyaleSim (or documented 16.402) · C56 parity gate
+unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1; proxy on r1-total) · perception = LIVE.
