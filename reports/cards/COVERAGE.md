@@ -8,7 +8,7 @@ A successful deployment probe alone does not certify mechanics or action support
 
 Kind, cost and arena are unmodified gamedata labels; balance-overlay values and live detections are tracked separately.
 
-Acceptance ledger: `reports/cards/coverage-status.json` (as of 2026-10-16T09:56:00Z); live job details: `reports/cards/PROGRESS.md`.
+Acceptance ledger: `reports/cards/coverage-status.json` (as of 2026-10-16T10:46:53Z); live job details: `reports/cards/PROGRESS.md`.
 
 Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remaining troops, D spells + drill, E elixir collector, F champions (abilities) last.
 
@@ -84,19 +84,19 @@ Batches: A live priority (arenas 1–6 + seen live), B arenas 7–10, C remainin
 | Guards | `SkeletonWarriors` | troop | 3 | 6 | A | probe ok | digest=py | 0/3 baseline | A: merged; C56 gate passed | full-scope; proxy SkeletonArmy | LIVE owner; unverified here | 0 |
 | Witch | `Witch` | troop | 5 | 6 | A | probe ok | digest=py | 0/3 baseline | A: merged; C56 gate passed | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
 | BarbarianHut | `BarbarianHut` | building | 6 | 9 | A | probe ok | digest=py | 0/3 baseline | A: merged; C56 gate passed | full-scope; proxy Cannon | LIVE owner; unverified here | 0 |
-| RoyalGiant | `RoyalGiant` | troop | 6 | 7 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
-| RoyalRecruits | `RoyalRecruits` | troop | 7 | 7 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
-| ThreeMusketeers | `ThreeMusketeers` | troop | 9 | 7 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
-| BattleHealer | `BattleHealer` | troop | 4 | 8 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
+| RoyalGiant | `RoyalGiant` | troop | 6 | 7 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
+| RoyalRecruits | `RoyalRecruits` | troop | 7 | 7 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Knight | LIVE owner; unverified here | 0 |
+| ThreeMusketeers | `ThreeMusketeers` | troop | 9 | 7 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
+| BattleHealer | `BattleHealer` | troop | 4 | 8 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
 | Freeze | `Freeze` | spell | 4 | 8 | B | probe ok | digest=py | 2/4 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; spell/effect stub | LIVE owner; unverified here | 0 |
-| GiantSkeleton | `GiantSkeleton` | troop | 6 | 8 | B | probe ok | digest=py | 1/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
+| GiantSkeleton | `GiantSkeleton` | troop | 6 | 8 | B | probe ok | digest=py | 1/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
 | Giant Snowball | `Snowball` | spell | 2 | 8 | B | probe ok | digest=py | 3/4 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; spell/effect stub | LIVE owner; unverified here | 0 |
 | Vines | `Vines` | spell | 3 | 8 | B | probe ok | digest=py | 3/4 baseline | B2: WIP; dynamic validation and fresh gate pending | full-scope; spell/effect stub | LIVE owner; unverified here | 0 |
-| Rune Giant | `GiantBuffer` | troop | 4 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
-| GoblinGiant | `GoblinGiant` | troop | 6 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
-| Skeleton Barrel | `SkeletonBalloon` | troop | 3 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Balloon | LIVE owner; unverified here | 0 |
-| Hunter | `Hunter` | troop | 4 | 10 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
-| Zappies | `MiniSparkys` | troop | 4 | 10 | B | probe ok | digest=py | 0/3 baseline | B1: candidate; boundary regression and fresh gate pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
+| Rune Giant | `GiantBuffer` | troop | 4 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
+| GoblinGiant | `GoblinGiant` | troop | 6 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Giant | LIVE owner; unverified here | 0 |
+| Skeleton Barrel | `SkeletonBalloon` | troop | 3 | 9 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Balloon | LIVE owner; unverified here | 0 |
+| Hunter | `Hunter` | troop | 4 | 10 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
+| Zappies | `MiniSparkys` | troop | 4 | 10 | B | probe ok | digest=py | 0/3 baseline | B1: reviewed candidate; 16 regressions and C56 577/600 passed; main integration pending | full-scope; proxy Musketeer | LIVE owner; unverified here | 0 |
 | ElectroWizard | `ElectroWizard` | troop | 4 | 11 | C | probe ok | digest=py | 1/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Wizard | LIVE owner; unverified here | 0 |
 | InfernoDragon | `InfernoDragon` | troop | 4 | 11 | C | probe ok | digest=py | 2/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy BabyDragon | LIVE owner; unverified here | 0 |
 | MegaKnight | `MegaKnight` | troop | 7 | 11 | C | probe ok | digest=py | 0/3 baseline | C1: focused fixes reviewed; B2 integration and fresh gate pending | full-scope; proxy Valkyrie | LIVE owner; unverified here | 0 |
