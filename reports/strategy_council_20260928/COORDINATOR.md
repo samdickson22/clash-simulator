@@ -6972,3 +6972,11 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 ## 2026-10-16T09:15:26Z: interim heartbeat — blockers held, capture suspect identified
 
 No pending user requests or host overload. Recovered one new Claude report-handler failure in place on Sol; collector unchanged. Level pilot held before games (runtime mapping mismatch; diagnostic correction unconfirmed). Card/template fixes remain under review, no active pins changed. Live e16 s29 finished3W1L→872, then prior-approved s30 continued. Four real capture interruptions have a strong offline suspect: driver starts a secondSCKclient forarena-background capture at eachmatch_start; loop owner owns offlinefix/review, no controlled causalproof or liveedit. Detailed corrections and action receipts: reports/audit/SOL-INTERIM-20261016.md and sol-interim-20261016-events.jsonl. Major decisions await Opus.
+
+## 2026-10-16T09:17:38Z: Sam corrects decision authority — make obvious decisions
+
+Sam explicitly said to make obvious decisions and use Astra for decisions when helpful. The previous coordinator blanket hold on designs, promotions and reversible deployments is superseded. Decide routine, confident, reversible actions now. Defer consequential choices that are hard to undo and genuinely uncertain enough that Opus could materially improve the approach.
+
+Concrete direction sent to LIVE/BOT/CARD leads plus loop, level and perception owners: finish/test/review the duplicate-SCK-client fix and deploy at a normal boundary with exact rollback; similarly ship hand/tower/autonav fixes when real blockers clear. Reviewed/gated opt-in card/template releases need no blanket Opus wait. A minimal honest level experiment can be chosen by Sol/Astra after runtime mapping validity is confirmed. Failed checks, invalid evidence and unmet independent review conditions remain blockers.
+
+Existing hourly heartbeat updated with this correction taking precedence. Sol high remains default, Astra high bounded when useful. Host/fair-information/account limits remain. This is authorization to execute justified reversible work, not a waiver of substantive checks. Decisions, evidence and rollback must be logged.

@@ -71,3 +71,11 @@ No new account actions. Last reported upgrades were Archers6→7 (40wild/1000gol
 - Null's conditional host-script review is preserved:118verifiedreceipts,driver4070rc0,noSTOP,uploadedhashmatch beforefixedreach;deadline10:09:55Z,hardstop10:10Z. Offline08 replay approved only as reviewed materializedsnapshot,explicit environment,nice15,workers1,cpu_job3,whenroom. OriginalCage evidence invalid.
 
 Machine-readable action receipts through this heartbeat are committed in sol-interim-20261016-events.jsonl. Detailed owner command logs remain at the referenced workstream paths. No big decision, promotion, account action or compute launch by this coordinator.
+
+## 2026-10-16T09:17:38Z: Sam corrects decision authority — make obvious decisions
+
+Sam explicitly said to make obvious decisions and use Astra for decisions when helpful. The previous coordinator blanket hold on designs, promotions and reversible deployments is superseded. Decide routine, confident, reversible actions now. Defer consequential choices that are hard to undo and genuinely uncertain enough that Opus could materially improve the approach.
+
+Concrete direction sent to LIVE/BOT/CARD leads plus loop, level and perception owners: finish/test/review the duplicate-SCK-client fix and deploy at a normal boundary with exact rollback; similarly ship hand/tower/autonav fixes when real blockers clear. Reviewed/gated opt-in card/template releases need no blanket Opus wait. A minimal honest level experiment can be chosen by Sol/Astra after runtime mapping validity is confirmed. Failed checks, invalid evidence and unmet independent review conditions remain blockers.
+
+Existing hourly heartbeat updated with this correction taking precedence. Sol high remains default, Astra high bounded when useful. Host/fair-information/account limits remain. This is authorization to execute justified reversible work, not a waiver of substantive checks. Decisions, evidence and rollback must be logged.
