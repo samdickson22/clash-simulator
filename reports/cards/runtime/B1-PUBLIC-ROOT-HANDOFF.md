@@ -1,3 +1,25 @@
+CURRENT SCOPED RESULT: approved source65548282891b93455fdbf1a27ad6c2594f76d54e,
+independent Sol-high reviewr6 APPROVE,25stdlib PASS. Actual admitted04run04 at
+combined182039c8fbfce1103dd6430fa27e3c5f17b06c81 passes all16/16scoped groups,
+including32boundarygraphs/64plain+levelpaths,8positive1000-speed movements,
+8zero-speed controls and8future-Clone geometry witnesses, both seats/plain and
+forced11/9 bodies (Clone spell11). Consumer hashes exactly match r6packet.
+Own runtime receipt `receipts/b1-public-root-run04-scoped.json` SHA
+`8d941d25fb6e5b68867fc23c35e7e3579d55676eccbd8b8c3cd64c4533b18c52`.
+Final scoped packet `receipts/B1-PUBLIC-ROOT-RESULTS.json` distinguishes source
+review, actual scoped success and incomplete whole-B1 acceptance.
+
+WHOLE B1 ACCEPTANCE STILL PENDING: combined04public emitted12/14 fails only both
+ordinary C56 terminal-shot zero-speed controls; owner is repairing its harness.
+Fresh16/94/4 PASS and39reference pairs unchanged (22PASS/17DIFF) at182039 are
+separate evidence. Current full577/600 and final B1 review have NOT passed.
+Do not treat scoped16 or prior r3/5c8 gates as clearing that blocker. B1 retains
+its one admitted sequence/main handoff; worker launched0jobs and changed no
+runtime/model/vocab/pin. Separate LIVE patch source-integrated b2676684f, native
+scaled adoption remains owner-owned. Preserve all failed/partial runs and r3
+roots/evidence; no sealing or release. No new scoped source repair indicated
+by actualrun04. Historical source-review and failure records follow.
+
 CURRENT: exact corrected source65548282891b93455fdbf1a27ad6c2594f76d54e
 has fresh independent Sol-high /root/b1_public_root_review round6 APPROVE.
 Active packet `receipts/b1-public-root-implementation-packet-r6.json`, SHA

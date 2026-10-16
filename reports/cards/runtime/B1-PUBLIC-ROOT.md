@@ -178,3 +178,13 @@ including the subsequent static future-Clone owner-orientation repair and
 positive geometry controls. Active packet-r5 supersedes packet-r4 for acceptance
 while preserving all historical approvals/findings.23stdlib controls pass;
 native/public/gate evidence remains B1's fresh admitted prerequisite.
+
+## Actual scoped validation (run04)
+
+Approved source655482828, combined182039, actual04run04 passes16/16scoped
+groups, with all8movement/8zero/8future-Clone geometry witnesses and32boundary
+fixtures through64plain+level paths. The real pulse/no-spell_name repair and
+Clone11/body9 fixture now execute successfully. This is scoped implementation
+evidence, not whole-B1 acceptance: emitted12/14 still fails ordinary C56
+terminal-shot zero-speed controls; current577/600 and final evidence review are
+owner-pending. See receipts/B1-PUBLIC-ROOT-RESULTS.json for exact bindings.

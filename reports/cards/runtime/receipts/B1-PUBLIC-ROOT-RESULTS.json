@@ -1,0 +1,191 @@
+{
+  "status": "SCOPED_ROOT_REPAIR_VERIFIED_B1_ACCEPTANCE_PENDING",
+  "utc": "2026-10-16T14:17:20.146532+00:00",
+  "base": "ebab18cc8f7194d22940f4177dec3225b3ddafcc",
+  "alias": "c132499193082c642bcc1889c5013a0d66a157ee",
+  "approved_source": "65548282891b93455fdbf1a27ad6c2594f76d54e",
+  "evidence_checkpoint": "ff7c6626de6a47a2e6a857d22364a772789433e2",
+  "combined_executed_source": "182039c8fbfce1103dd6430fa27e3c5f17b06c81",
+  "source_sha256": {
+    "engine-cards/public_root.py": "12297e978ecdcfd59e8ffc8699fee3ff1a3558dfcd0c5499a63b6bfcefb41b5c",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "2f2d278ffb499db690cf4daa729f127c3f0f0118f65083358c202f660bf553c6",
+    "bot/levels/root.py": "28bb7f091456ed97ffdf4498b7bc38ff9d6904ed55de2dab001b7a83647a70b1",
+    "bot/levels/configs.py": "89ef4eed5279bf530e40e6e1d65d7045cb56de9e70166dbb752b2d1cb20cd08f",
+    "reports/cards/runtime/tools/probe_b1_public_root.py": "617005a8d84c5732d48cfce4fe5bf11029ae4a57c946d6b35c3b8715dd2aa9cc",
+    "reports/cards/runtime/tools/test_b1_public_root.py": "4cb3b8fe7f6916b9e06ed9e88abbf67ca6680d07ff329e175ad273511a42307f",
+    "engine-cards/py/src/clasher/balance.py": "5d87d6483912a1c895a9faea7b82baa6d55c3f08ee08b3bd3fac57005cb28893",
+    "engine-cards/py/src/clasher/rl/structured_obs.py": "3689c41f402e567e10cb404955c8a13cb1ca3c284a5c69e45037bfd1f22318c2",
+    "engine-cards/py/src/clasher/rl/contract_v5_tokens.json": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+    "engine-cards/py/src/clasher/rl/contract_v5.py": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08",
+    "bot/cards/build_runtime.py": "f51b42f33dc7f143bae6b22e6df7660c2c7475413e90a1b640afbdfd801a55b8",
+    "reports/cards/runtime/fixtures/b1-public-heal-pulses-run03.json": "91499a8d4d2dc4d254058c4cfb77790fdf33a53925577a8bbb12723a8b914475"
+  },
+  "review": {
+    "task": "/root/b1_public_root_review",
+    "round": 6,
+    "model": "gpt-6.1-sol",
+    "reasoning": "high",
+    "verdict": "APPROVE",
+    "receipt": "reports/cards/runtime/receipts/b1-public-root-review-r6.md"
+  },
+  "stdlib_tests": {
+    "passed": 25,
+    "total": 25,
+    "receipt": "reports/cards/runtime/receipts/b1-public-root-stdlib-r6.txt"
+  },
+  "scoped_native_public": {
+    "passed": 16,
+    "total": 16,
+    "receipt": "reports/cards/runtime/receipts/b1-public-root-run04-scoped.json",
+    "sha256": "8d941d25fb6e5b68867fc23c35e7e3579d55676eccbd8b8c3cd64c4533b18c52",
+    "boundary_graphs": 32,
+    "boundary_plain_level_paths": 64,
+    "positive_1000_speed_witnesses": 8,
+    "zero_speed_controls": 8,
+    "future_clone_geometry_witnesses": 8,
+    "minimum_movement": 0.9999995956422282,
+    "maximum_movement": 1.0000000000001137,
+    "maximum_zero_speed_quantization_drift": 6.615345272749849e-07,
+    "plain_and_forced_levels": [
+      11,
+      9
+    ],
+    "seats": [
+      0,
+      1
+    ],
+    "clone_spell_level_at_body9": 11,
+    "c56_graph_disabled_byte_controls": 2,
+    "full_c56_gate": false,
+    "consumer_files": {
+      "fair_player": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py",
+      "public_root": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tree/public_root.py",
+      "bot.levels.root": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/bot/levels/root.py",
+      "bot.levels.configs": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo/bot/levels/configs.py"
+    },
+    "consumer_sha256": {
+      "fair_player": "2f2d278ffb499db690cf4daa729f127c3f0f0118f65083358c202f660bf553c6",
+      "public_root": "12297e978ecdcfd59e8ffc8699fee3ff1a3558dfcd0c5499a63b6bfcefb41b5c",
+      "bot.levels.root": "28bb7f091456ed97ffdf4498b7bc38ff9d6904ed55de2dab001b7a83647a70b1",
+      "bot.levels.configs": "89ef4eed5279bf530e40e6e1d65d7045cb56de9e70166dbb752b2d1cb20cd08f"
+    }
+  },
+  "b1_sequence_receipts": {
+    "run04-preparation.json": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/run04-preparation.json",
+      "sha256": "7a66c04baab33ed7f69491085658b1d055b0583d418fadfe004b21a59bfd1e83"
+    },
+    "run04-regressions.json": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/run04-regressions.json",
+      "sha256": "95af5f1212884df3cef0a6bce0e0aa569e24972f19107feb2b84b5e29c0004ce"
+    },
+    "run04-affected.json": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/run04-affected.json",
+      "sha256": "f2dfabd2bf3554f222bdadac3a353cfbe50449a5125624c41342549b13c7e3db"
+    },
+    "run04-supplemental.json": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/run04-supplemental.json",
+      "sha256": "a5dc2edaced2894f07a3835c2fabd4262e3ff6dfb1e5b7e3e1b67f95d0fcf47d"
+    },
+    "run04-reference-compare.json": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/run04-reference-compare.json",
+      "sha256": "bcf18d6fff836f80b07dd7004fed69162d4e42a0f5497997e730b204d92298a9"
+    },
+    "run04-public-launch-receipt.txt": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/run04-public-launch-receipt.txt",
+      "sha256": "640098d1509238c5e964e7b23d499f18531ce955342036f8c2535ed800dea92d"
+    }
+  },
+  "b1_sequence_counts": {
+    "regressions": 16,
+    "affected": 94,
+    "supplemental": 4,
+    "paired_reference_observables_unchanged": 39,
+    "reference_actual_pass": 22,
+    "reference_actual_diff": 17,
+    "rune_giant_enchantment_audited": false
+  },
+  "combined_public_phase": {
+    "status": "FAILED_EMITTED_ONLY",
+    "emitted_passed": 12,
+    "emitted_total": 14,
+    "emitted_json_sha256": "efcf2cc3219199ec8beb4ded1cba13a7f6841775f83b630a060e1526f57e0b89",
+    "emitted_failures": [
+      [
+        0,
+        "rework-bodies-shots",
+        "RuntimeError: zero-speed ordinary control disappeared or moved"
+      ],
+      [
+        1,
+        "rework-bodies-shots",
+        "RuntimeError: zero-speed ordinary control disappeared or moved"
+      ]
+    ],
+    "imported_native": {
+      "file": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/out/clasher_core.abi3.so",
+      "sha256": "6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d"
+    },
+    "vocabulary_file_sha256": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+    "vocabulary_tokens": 360,
+    "card_feature_shape": [
+      360,
+      57
+    ],
+    "model_input_sha256": {
+      "v1": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "r3a": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85"
+    },
+    "full_c56_and_final_b1_review": "PENDING_OWNER_EMITTED_FIX_REVIEW_AND_FRESH_VALIDATION"
+  },
+  "archive_preparation": {
+    "commit": "182039c8fbfce1103dd6430fa27e3c5f17b06c81",
+    "source_files": 803,
+    "packet_bound_files": 12,
+    "source_archive_sha256": "66624477e7d23c16705f3aa2a1f0c729937daab35d1f8f08264d34890e8af71b",
+    "source_manifest_sha256": "43299db661f38155682eb54086a7ac8b14650a3f9a69639849710bcba3d033a1",
+    "input_manifest_sha256": "221481f8ad998798263118a0aec7dfd02e9dcebecaa3aae3623433cec83270c8",
+    "output": "/tmp/b1-public-stage-20261016-04",
+    "note": "Preparation only; host staging/execution require independent approval."
+  },
+  "implementation_packet_sha256": "51d62bbe85e68a0468fd723d9e841e1fd0042dc6420bf084c756894342ddf175",
+  "historical_failure": {
+    "host": "127x04",
+    "path": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03",
+    "combined_source": "d9903b15c04a40dda0425b2d00a43530626e7b03",
+    "scoped_total": 16,
+    "scoped_passed": 12,
+    "level11_failures": 2,
+    "level9_failures": 2,
+    "owner_json_sha256": "ccaaf7159e4bd63a532f5887acdb459e389292ddceca190a0de47abc35640e44",
+    "terminal_log_sha256": "2802ff741c41a9888beec8facf5020406babf5e18cf05e2b92e63103cded187d",
+    "frozen_log_gzip": "reports/cards/runtime/receipts/b1-public-root-run03-failed-public.log.gz",
+    "causes": [
+      "Actual HealPulse has no spell_name; synthetic test masked production pulse lookup collision.",
+      "Clone L9 inheritance explicitly unsupported; fixture now uses Clone11 with body9."
+    ],
+    "movement_and_futureclone_witnesses_reached": false
+  },
+  "live_consumer": {
+    "path": "reports/cards/runtime/patches/B1-live-level-public-graph.patch",
+    "sha256": "ba392e466fb7a73585f57669b234364d0b37ed492e3a199b02c2d4fb276da37f",
+    "base_sha256": "822cee2a73d9de27a069e99cc6dd21eb04686aecc552c7a5cd59f826796e00e5",
+    "proposed_output_sha256": "a3289daf71ef7f1e4270e2b4f56542a31f07c00a86b645ab94c7fbadd3d032bf",
+    "verdict": "APPROVE for owner integration",
+    "applied": false,
+    "native_validation": "pending LIVE owner adoption; dedicated B1 protected source unchanged",
+    "review_unchanged_in_round": 5,
+    "owner_integrated_commit": "b2676684f1b02e919cd2ca7c63f28e1e70cd1e31",
+    "owner_source_checks": 12
+  },
+  "worker_jobs_launched": 0,
+  "active_pin_or_model_or_vocab_changes": false,
+  "runtime_release_or_sealing": false,
+  "r3_roots_and_evidence_preserved": true,
+  "rollback": "Revert scoped alias/root candidates only; preserve original B1/native/build/gates, run03 failure, run04 partial evidence, r3 immutable roots and all active pins. LIVE source revert belongs to LIVE owner.",
+  "remaining_owner_work": [
+    "B1 repairs ordinary C56 terminal-shot zero-speed harness control and independently reviews changed staging/probe.",
+    "B1 completes its single admitted full public14+scoped16/required577+600/final evidence review sequence, with no old-source acceptance transfer.",
+    "LIVE owner validates scaled native consumer when adopting new Resources; no active runtime switch implied."
+  ]
+}
