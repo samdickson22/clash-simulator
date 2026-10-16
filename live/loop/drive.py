@@ -578,6 +578,8 @@ def main(argv=None):
         from overlay import Overlay
         ov = Overlay(a.overlay_port, every=1)
         ov.deck = list(deck)
+        if yolo is not None:                   # display only: unit boxes from the same per-class ground offsets as the board
+            ov.ground_dy = {n: float(o['dy']) for n, o in yolo.offsets.items()}
         playable = C56
         ov.deck_check = lambda names: None     # any 8 distinct names are recorded; out-of-scope cards block battles
         import deckread
