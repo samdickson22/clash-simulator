@@ -35,6 +35,7 @@ from battlelog import C56  # noqa: E402  (the 56 cards our engines and perceptio
 from frames import Grabber  # noqa: E402
 
 MIN_FREE = 6 << 30
+FALSE_MATCH_MS = 30_000          # a battle ending sooner than this after match_start was a false HUD transition
 DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer']
 DECK_FILE = Path(os.path.expanduser(os.environ.get('LL_DECK_FILE', '~/clasher-live/loop/deck.json')))      # set from the live page; survives restarts
 PAUSE_FILE = Path(os.path.expanduser(os.environ.get('LL_PAUSE_FILE', '~/clasher-live/loop/PAUSE')))         # exists = paused (same as the page button)
@@ -98,7 +99,10 @@ def hud_read(f):
     b, g, r = o[..., 0], o[..., 1], o[..., 2]
     pink = (r > 170) & (b > 150)
     partial = (r > 25) & (r < 110) & (g > 65) & (b > 140)
-    present = (pink.mean(0) > .5)[:35].mean() > .6
+    # the drop is saturated magenta (green well below red and blue); a bright neutral / pinkish-white full-screen flash
+    # in the menus also passes `pink` and started two false battles in s10 (m01, m02) while Sam was paused in the menus
+    magenta = pink & (g < .6*np.minimum(r, b))
+    present = (magenta.mean(0) > .5)[:35].mean() > .6
     col = ((pink | partial).mean(0) > .5)[40:]                 # the bar from x 290
     xs = np.nonzero(col)[0]
     elixir = float(np.clip((xs.max() + 1 + 40 + 250 - 290)/74.8, 0, 10)) if len(xs) else 0.
@@ -329,14 +333,14 @@ def main(argv=None):
         with lock:
             cur['logs'][kind].write(json.dumps(row, default=float) + '\n')
 
-    def close_match(state, n, sess, restarts):
+    def close_match(state, n, sess, restarts, summary='session.json'):
         cur['wr'].close()
         st = dict(state=state, frames=n, writer_dropped=cur['wr'].dropped, tr_stats=dict(sess.tr.stats), restarts=restarts)
         try:
             sess.close()
         except Exception as ex:
             st['close_error'] = repr(ex)
-        (cur['dir']/'session.json').write_text(json.dumps(st, indent=1, default=str) + '\n')
+        (cur['dir']/summary).write_text(json.dumps(st, indent=1, default=str) + '\n')
         (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
         for f in cur['logs'].values():
             f.close()
@@ -486,7 +490,8 @@ def main(argv=None):
             if state == 'wait':
                 streak = streak + 1 if present else 0
                 first_hud_ms = (first_hud_ms if streak > 1 else ts_ms) if present else None
-                if streak >= 3:
+                # paused (Sam in the menus): menu screens can flash HUD-like pixels -> need 1.5 s of HUD, not 0.3 s
+                if streak >= (15 if paused else 3):
                     state, start_ms = 'battle', first_hud_ms
                     perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader()
                     log('events', dict(ev='match_start', ts_ms=start_ms, n=n))
@@ -500,6 +505,26 @@ def main(argv=None):
                 log('frames', row); continue
             if state == 'battle':
                 miss = 0 if present else miss + 1
+                if miss >= 3*a.fps and ts_ms - start_ms < FALSE_MATCH_MS:
+                    # a 'battle' shorter than 30 s is a false HUD transition (s10-m01: 4.8 s while Sam was in the menus):
+                    # logged, its dir renamed mNN-false-<time> with false_match.json (no session.json), and it does not
+                    # count toward --matches; the same mNN is reopened with a fresh LiveSession
+                    log('events', dict(ev='false_match', start_ms=start_ms, end_ms=ts_ms, seconds=round((ts_ms - start_ms)/1e3, 1),
+                                       n=n, paused=paused))
+                    log('frames', row)
+                    k = cur['k']
+                    if a.matches > 1:
+                        close_match('false_match', n, sess, getattr(src, 'restarts', 0), summary='false_match.json')
+                        cur['dir'].rename(cur['dir'].with_name(f"{cur['dir'].name}-false-{time.strftime('%H%M%S')}"))
+                        open_match(k)
+                        log('events', dict(loaded, ev='loaded', load_s=0, session=k, after='false_match'))
+                        (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
+                    sess = LiveSession(rt, make_live_player(rt, a.player), deck)
+                    state, streak, miss, first_hud_ms, last_play = 'wait', 0, 0, None, None
+                    if a.matches > 1:
+                        n, t0_ns = 0, None
+                    base_bright = []
+                    continue
                 if miss >= 3*a.fps:
                     state = 'ended'; log('events', dict(ev='match_end', ts_ms=ts_ms, n=n)); log('frames', row)
                     if cur['k'] >= a.matches:
