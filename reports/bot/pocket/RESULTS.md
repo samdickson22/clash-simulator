@@ -7,7 +7,17 @@ Hosts 127x08 (K4L games) and 127x04 (references). Code:
 - `bot/pocket/live_replay.py`: offline LiveSession → LivePlayer replay of logged live matches;
 - `bot/pocket/variant.py`: the `K4P-*` fix arms.
 
-Status: **in progress**. Sections marked TODO are pending.
+Status: **done** (2026-10-16 ~01:40Z).
+
+**Answer.** With true state, K4L-R-gs pushes the pocket at the same rate as live: 25–31% of post-tower plays in
+sim, 27% in the offline live replay, 24–29% live. That is about 10× the human-imitation reference R3a (2–3%).
+- **Not a perception artefact.**
+- **Not costly bot-side under-attack either.** The search does have a measurable bias against the pocket (the
+  balanced coarse scan cuts pocket plays; the leaf values king damage about 8× below princess damage). But:
+  - forcing the search's best pocket push instead of its wait/defensive choice is outcome-neutral, Δ 0.000
+    [−0.023, +0.023] over 300 forced replays;
+  - fixing the coarse-scan cut (`K4P-pw2`) is neutral, +0.003 [−0.008, +0.015];
+  - fixing the leaf (`K4P-kc100`) is harmful, −0.060 [−0.083, −0.037].
 
 **Question.** In live ladder play the bot often defends instead of pushing the pocket after taking an enemy princess
 tower. Is that a perception artefact, or does K4L-R-gs under-attack the pocket even with true state?
@@ -144,7 +154,25 @@ had identical `command_sha256`.
 - At 320–480 ticks the best pocket push is about even with the choice. Against the learned opponent it is ahead
   roughly 2:1.
 - So the 160-tick, balanced-heavy scorer is biased against the pocket. Whether that costs games is the
-  forced-replay question below (TODO).
+  forced-replay question below.
+
+**Forced replays (true outcomes).**
+- **Sample.** 300 post-tower decisions, at most one per game, 150 per opponent, drawn from the counterfactual rows
+  (`analyze pick`, seed 0). In each, K4L chose a wait (186) or an own-half play (114). Each was still open in the
+  scorer's 160-tick view, i.e. not every option a terminal ±2.
+- **Method.** Each game is replayed from the start: identical up to that tick (deterministic), then at that
+  decision the best pocket push by the 320-tick score is played instead, and K4L-R-gs continues. The forced action
+  was applied in 300/300 games.
+
+| forced pocket push − K4L's choice | n | Δ score [95% CI] | better / worse games | Δ crowns for / against | Δ enemy-king damage | Δ tower HP dealt / lost (k) |
+|---|---:|---|---|---|---:|---|
+| vs R3a | 150 | −0.020 [−0.060, +0.013] | 2 / 5 | +0.013 / +0.007 | +4.5% | +0.22 / +0.18 |
+| vs v1 | 150 | +0.020 [−0.013, +0.053] | 5 / 2 | +0.047 / +0.040 | −2.6% | −0.16 / +0.16 |
+| **both** | 300 | **0.000 [−0.023, +0.023]** | 7 / 7 | +0.030 / +0.023 | +1.0% | +0.03 / +0.17 |
+
+- At decisions where K4L defended or waited after taking a tower, pushing the pocket instead does not win more.
+- It trades a little crown pressure for about as much counter-damage (own towers lose 0.17k HP more on average).
+- Defending is not a mistake there; the two options are equal in outcome.
 
 ### Live stretches replayed offline (all valid runs)
 
@@ -188,9 +216,77 @@ statistical instead:
 
 Perception (unit misses, `board_dropped`) does not explain the defending.
 
-## 4. Verdict (TODO)
+## 4. Fix screen (paired vs K4L-R-gs, HEADLINE cases 0–299, ours)
+
+Arms are `bot/pocket/variant.py` `K4P-*`. Every arm runs K4L-R-gs's exact code path until a princess tower is
+down.
+- Check: `K4P-kc0` (the post-tower Python path with no change) reproduces K4L-R-gs's `command_sha256` on 16/16
+  games.
+- Baseline: K4L-R-gs's own logged run, 0.820 [0.777, 0.863] vs R3a and 0.940 [0.913, 0.967] vs v1.
+
+| arm | what | vs R3a | vs v1 | pooled | sim pocket share (live definition) |
+|---|---|---|---|---|---|
+| `K4P-pw2` | pocket tiles added as candidates; best 2 pocket plays forced into the learned work set | +0.000 [−0.020, +0.020] | +0.007 [−0.007, +0.020] | **+0.003 [−0.008, +0.015]** | 32% / 36% (from 25% / 31%) |
+| `K4P-kc100` | king credit κ = 1 (both kings, once a princess tower of that side is down) | −0.107 [−0.147, −0.067] | −0.013 [−0.037, +0.010] | **−0.060 [−0.083, −0.037]** | 32% / 36% |
+| `K4P-kc100-pw2` | both | −0.153 [−0.235, −0.082] (85 cases; stopped) | – | – | – |
+
+- No fix improves the bot. `pw2` raises pocket play by 5–7 pp at no cost and no gain.
+- The king credit hurts. With a pocket share similar to `pw2`'s, its harm comes from distorting the leaf
+  elsewhere: it also inflates own-king danger once we lose a tower, and it overrides the princess/crown terms.
+- None of these is worth a fresh bank.
+- If the LIVE LEAD wants more visible pocket play, `pw2` is the only harmless option. It costs about 2–6 extra
+  learned rollouts at post-tower decisions; its speed in the live variant was not measured.
+
+## 5. Verdict
+
+**Bot-side under-attack: no.**
+1. **Rate.** The live pocket rate (24–29%) is the true-state rate (25–31% in sim, 27% replaying the live
+   perception). Perception does not lower it, and full information does not raise it.
+2. **Search.** The scorer is biased against the pocket at its 160-tick horizon:
+   - the balanced coarse scan keeps a pocket play in the work set at only 44–53% of decisions where one is a
+     candidate;
+   - the defense-v2 leaf values king HP about 8× below princess HP once one tower is down;
+   - at 320–480 ticks the best pocket push is about level with K4L's choice.
+3. **Outcomes.** That bias does not cost games:
+   - forced pocket pushes at K4L's wait/defensive decisions: Δ 0.000 [−0.023, +0.023] (300 replays);
+   - removing the coarse-scan cut: +0.003 [−0.008, +0.015];
+   - adding king credit: −0.060.
+
+   Caveat: after taking the first tower, K4L already wins 98–99% of HEADLINE games vs R3a and v1. The sim has
+   little room to show a pocket benefit against these opponents. Stronger live opponents could differ, and only
+   live or fresh-bank data can show that.
+4. **Defending is often the right call.** 45–60% of K4L's back plays after the tower answer an enemy unit
+   already in our half. Waiting (40–44% of decisions with a legal pocket) mostly banks elixir while the tower lead
+   holds.
+
+**Live caveats for the LIVE LEAD.**
+- `bot/live/translate.py` counts a tower *missing* from a perception record as alive at 100%. A destroyed
+  tower that perception stops reporting would close the pocket mask and erase the crown from the leaf.
+  - In s6-m01 the records carry `alive: false`, so it was fine there. Worth an assertion in the loop.
+- The live pocket metric excludes king-targeted spells. In s6-m01 a Fireball on the king counts as "not pocket".
+- Level 1–4 was not simulated: crown towers exist only at levels 10–12 in our engine.
 
 ## Reproduce
+
+Job dirs on 127x08 and 127x04, `/mpac/sdicks02/jobs/clasher/bot-pocket/`:
+
+| dir | host | contents |
+|---|---|---|
+| `main` | 08 | K4L-R-gs, logged + counterfactual |
+| `ref` | 04 | R3a/v1 cases 0–149 |
+| `ref-b` | 08 | R3a/v1 cases 150–299 |
+| `forced`, `force-jobs.jsonl` | 08 | forced replays and their job list |
+| `pw2`, `kc100pw2` | 08 | fix screens |
+| `kc100-a`, `kc100-b` | 04 | kc100 screen (`kc100-copy` on 08 merges both for the report) |
+| `eq-kc0` | 04 | equivalence check |
+| `live/out` | 04 | live replays (`live/` holds the run copies) |
+
+Commands:
+- `python -m bot.pocket.analyze {stats,live,cf,pick,forced} DIRS`
+- `python -m bot.search.report main pw2 kc100-copy --baseline K4L-R-gs`
+- `python -m bot.pocket.live_analyze live/out`
+
+The live replays run from an origin/main tree (`/mpac/sdicks02/repos/clasher-bot-pocket`, runner `run-main.sh`).
 - Runner (04/08): `/mpac/sdicks02/jobs/clasher/bot-pocket/run.sh MODULE ARGS` (bot-lopp-run.sh env + r1-total pins).
 - Smoke: 4 K4L-R-gs games with logging + counterfactual have the same `command_sha256` as plain
   `bot.eval.headline` (4/4; dirs `bot-pocket/smoke-cf`, `bot-pocket/smoke-plain` on 08).
