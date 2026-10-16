@@ -68,6 +68,33 @@ def strip_defaults(v):
     return v
 
 
+def resolve_reseed(e):
+    """Apply a pending cooldown write exactly as lib.rs Entity.consume_clock_reseed does at the next combat
+    update (clock.rs stop/refund_now included). Python defers a cooldown write to get_clock() and exports it as
+    `clock_reseed`; native sometimes applies the same write at once. Both sides are resolved, so a real clock or
+    due-latch difference after resolution is still reported."""
+    remaining, clock, stats = e.get('clock_reseed'), e.get('clock'), e.get('stats') or {}
+    if remaining is None or not isinstance(clock, dict):
+        return e
+    c = dict(clock)
+    e = dict(e, clock=c, clock_reseed=None)
+    if stats.get('ordinary'):
+        e['clock_initialized'] = True
+    finish = c.get('finish', 0)
+    if c.get('refund', 0) and 0 < c.get('timeline', 0) < c['interval']:
+        c['remaining'] = max(c['load'] - c['timeline'], 0)
+    c['timeline'] = 0
+    e['force_due'] = remaining == 0
+    first = c['interval'] - c['load']
+    if 0 < remaining < first:
+        c['timeline'] = c['interval'] - remaining
+        c['remaining'] = 0
+    else:
+        c['remaining'] = min(c['load'], max(remaining - first, 0))
+    c['finish'] = finish
+    return e
+
+
 def normalize_owned_fields(p, r, keys):
     """Only proved C1 representations; see SNAPSHOT-DIAGNOSTICS.md and followup-final.json.
 
@@ -88,6 +115,11 @@ def normalize_owned_fields(p, r, keys):
             # entities.py PingpongProjectile._pp_point/update never reads target_position;
             # projectiles.rs:31 reads only pp_origin/apex/t + pp spec. All remain compared.
             keys = [k for k in keys if k != 'aim']
+    elif p.get('class') == r.get('class') == 'RollingProjectile' and p.get('spell_name') and r.get('spell_name'):
+        # A spell roll (Log, Barbarian Barrel): lib.rs rolling_tick moves by owner direction, traveled range and
+        # the spell radius and never reads `aim`; the Python export has no target for it. The character boulder
+        # (empty spell_name, rolling_character_tick reads aim) stays strictly compared.
+        keys = [k for k in keys if k != 'aim']
     elif p.get('class') == r.get('class') and p.get('class') in ('Projectile', 'SpawnProjectile'):
         # projectiles.rs projectile_children is the sole native origin reader and needs child damage and range
         # (entities.py reads launch_position for the same children). A shot that can spawn none on either
@@ -110,7 +142,7 @@ def compare(b, cfg, native, t, seen_static, classes):
         classes.setdefault('<ids>', dict(first=t, count=0, example=[sorted(set(py) - set(rs)), sorted(set(rs) - set(py))]))
         classes['<ids>']['count'] += 1
     for i in set(py) & set(rs):
-        p, r = py[i], rs[i]
+        p, r = resolve_reseed(py[i]), resolve_reseed(rs[i])
         keys = list(CHECK) + list(CLASS_FIELDS.get(p.get('class'), ()))
         p, r, keys = normalize_owned_fields(p, r, keys)
         if p.get('push') is None and r.get('push') is None:
@@ -133,7 +165,15 @@ def compare(b, cfg, native, t, seen_static, classes):
         if isinstance(p.get('scope'), dict) or isinstance(r.get('scope'), dict):
             p, r = dict(p, scope=strip_defaults(p.get('scope'))), dict(r, scope=strip_defaults(r.get('scope')))
         for k in keys:
-            if p.get(k) != r.get(k):
+            pv, rv = p.get(k), r.get(k)
+            if k == 'hit_ids':
+                # Membership only on both sides (Python sets; native contains/push/extend, never iterated or
+                # digested): order is dropped, multiplicity kept.
+                pv, rv = sorted(pv or []), sorted(rv or [])
+            if (pv is None and _is_default(rv)) or (rv is None and _is_default(pv)):
+                # One side omits a key at its serde default (e.g. native skips chain_wait 0).
+                continue
+            if pv != rv:
                 if k == 'stats':
                     label = 'stats.' + ','.join(sorted(x for x in set(p[k]) | set(r[k]) if p[k].get(x) != r[k].get(x)))
                 else:
