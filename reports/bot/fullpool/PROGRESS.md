@@ -198,3 +198,6 @@ root retries exactly the errored games, since done_games skips only non-error ro
     checks), back off when a user logs in, and leave root switching to the owner.
   - **Patched root:** when live16402b-r2 (Freeze fix) lands, every later shard launches on it and the errored games
     are rerun there.
+- 07:12Z G1 shard 6 on 03 (it11's C56 feeders stopped, so 03 was at live 38, 104 GB free, no users): 3000 games
+  (indices 6,000,000+), W=50, PGID 3889910, J/g1-x03-s6.log. 04's queued shard 4 (W=30) now fits. Babysitter
+  tracks all 7 G1 shards (0–6) and was restarted to keep its loop in one turn (its first turn had ended at 07:10Z).
