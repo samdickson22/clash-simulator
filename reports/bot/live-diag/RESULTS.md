@@ -317,3 +317,18 @@ Early; win/loss per battle requested from the LIVE LEAD (session.json has no res
   - Giant per battle: −0.25 [−0.67, +0.17];
   - **Fireball per battle 0.33 → 1.33: +1.00 [+0.33, +1.83].**
 - Not pooled with the full-pool phase (§7b).
+
+### 5g. Learned hold-back (option 2), dev screen on BASE6 = 467516450769760 (drawn 2026-10-16T21:54:26Z), vs K4C-r16, 100 paired, 0 errors
+
+| arm | score | Δ vs base [95% CI] | Δ vs -res | reaction p50/p90 s | Giant reaction p50 s | undefended | Giant / Fireball per game |
+|---|---:|---|---|---|---:|---:|---|
+| base | 0.39 | — | −0.16 [−0.28, −0.04] | 2.65 / 7.15 | 2.15 | 10.4% | 0.41 / 1.35 |
+| -res | 0.55 | +0.16 [+0.04, +0.28] | — | 2.65 / 7.65 | 2.65 | 5.5% | 0.55 / 1.34 |
+| -rh | 0.42 | +0.03 [−0.11, +0.17] | −0.13 [−0.26, +0.01] | 2.65 / 6.65 | 2.15 | 8.8% | 0.14 / 1.07 |
+| **-rh-lc10** | **0.56** | **+0.17 [+0.04, +0.29]** | +0.01 [−0.12, +0.14] | 2.65 / **6.65** | **1.65** | 10.9% | 0.66 / 1.15 |
+| -rh-lc30 | 0.53 | +0.14 [+0.00, +0.27] | −0.02 [−0.17, +0.12] | 2.65 / 6.65 | 2.15 | 7.0% | 0.86 / 1.16 |
+
+- **The model:** leafcorr-h600-v1, sha256 beae23112857fbf4…, a ridge fit on 1,163 rh-mode binding roots with a 30 s margin target. CV corr is +0.11, and +0.19 on K4C rows.
+- **Result:** per-tick play plus the learned hold-back term matches -res's strength with no committed timed waits, and has the fastest p90 and Giant reactions.
+- **κ = 1.0 (lc10) picked on this dev bank. Confirmation on BASE7 = 1029667185899056:** base, -res and -rh-lc10, vs K4C-r16 and rext-bc, 100 paired each.
+  Success (bot lead): -rh-lc10 beats base and -res vs K4C-r16 and rext-bc.

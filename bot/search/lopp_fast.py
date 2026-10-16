@@ -635,6 +635,9 @@ class _FastMixin:
         if self.arm.get('reserve'):
             from bot.search.reserve import install
             install(self.rt, core, ctx.own_order)
+        if self.arm.get('leafcorr') is not None:
+            from bot.search.reserve import install_leafcorr
+            install_leafcorr(self.rt, core, ctx.own_order, self.arm['leafcorr'])
         names = self.model_name.split('+')
         for name in names:
             load_model(name)
@@ -662,7 +665,7 @@ class _FastMixin:
                                        lw=arm.get('lw'), samples=arm.get('samples', 1), top=arm.get('top', 8),
                                        base_cut=self.fast_cut)
             action = fallback if action is None else action
-            core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
+            core.selected_wait_ticks = 0 if arm.get('rh') else TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
             core.deadline_stats['rollouts'] = info['rollouts']
             self._dec = info

@@ -40,6 +40,9 @@ Round 2 (kind R; defaults reproduce K4L-R exactly):
            Serial only (no t/c/p/w).
 - res      elixir reserve (bot/search/reserve.py): non-defensive plays leaving elixir below the deck's cheapest
            ground answer pay .015*shortfall/R after the timed-wait bonus (live-diag; kind R)
+- lc<N>    learned hold-back (bot/search/reserve.py install_leafcorr, kappa N/10; live-diag option 2)
+- rh       receding horizon: timed waits stay search candidates (scores, bonus) but the decision is a plain WAIT
+           (wait_ticks 0), so the player re-decides at the next search poll (live-diag; kind R)
 - O        learned rollouts also drive OUR side with the learned net (own seat's public view, its own CRN key
            seed + [7777]; decisions every i<I> ticks) instead of scripted balanced
 Deterministic: no wall clock; gs uniforms are keyed by (match seed, tick, rollout tick).
@@ -319,6 +322,9 @@ class LearnedOppPlayer(CandidateSearchPlayer):
         if self.arm.get('reserve'):
             from bot.search.reserve import install
             install(self.rt, core, ctx.own_order)
+        if self.arm.get('leafcorr') is not None:
+            from bot.search.reserve import install_leafcorr
+            install_leafcorr(self.rt, core, ctx.own_order, self.arm['leafcorr'])
         models = [load_model(m) for m in self.model_name.split('+')] if self.arm['kind'] != 'X' else [None]
         self._dec, self.opp_calls, self.opp_plays = {}, 0, 0
         seed = ctx.seed
@@ -348,7 +354,7 @@ class LearnedOppPlayer(CandidateSearchPlayer):
                 fail_decision(core, candidates, 'serial')
                 action, info = None, dict(rollouts=0, native=0, learned=0, native_failure='serial')
             action = fallback if action is None else action
-            core.selected_wait_ticks = TIMED_WAITS.get(action, 0)
+            core.selected_wait_ticks = 0 if self.arm.get('rh') else TIMED_WAITS.get(action, 0)
             action = sdefault.apply_default(core, action, fallback, candidates)
             core.deadline_stats['rollouts'] = info['rollouts']
             self._dec = info
@@ -380,6 +386,10 @@ def make_lopp_player(rt, name):
             extra['samples'] = int(m[1])
         elif token == 'res':                                # bot/search/reserve.py
             extra['reserve'] = True
+        elif token == 'rh':                                 # receding horizon: emit timed waits as plain WAIT
+            extra['rh'] = True
+        elif m := re.fullmatch(r'lc(\d+)', token):        # learned hold-back, kappa = N/10 (bot/search/reserve.py)
+            extra['leafcorr'] = int(m[1]) / 10
         elif token == 'O':
             extra['own'] = True
         elif token == 'D':
