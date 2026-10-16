@@ -598,3 +598,5 @@ and the two copied native binaries matched their recorded SHA256 values.
   identical (300 full + 300 cut). compare.json copied to evidence/b1b2-gate-compare.json.
 - probe_stun_target.py finished: 192/192 runs native == Python (digest + every entity's target/hp/stun every tick). The
   reported stun-expiry targeting difference does not occur on the merged native.
+
+- 2026-10-16T19:09:28Z: combined B1+B2 C56 gate **PASS**, source 8eaa7d1ec/native 326ce6f9 vs pinned 681b5f2c: fixtures 577/577 byte-identical, Rust-only chains 577/577 (0 errors each), roots 300/300 full + 300/300 cut byte-identical. Existing 04 PID 1103181 completed 19:06:22Z; existing 08 PID 566310 stun/freeze probe completed 18:58:39Z with 192/192 cases, 0 bad and no mismatch lines (`b1b2/fid/stun.log`). Both PIDs observed terminal; no relaunch or engine edits. Raw completed outputs independently checked with local stdlib; full table, paths and SHA256 receipts in RESULTS.md. Historical FAILs retained.

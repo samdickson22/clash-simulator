@@ -1,5 +1,46 @@
 # Batch B2 spell mechanics results
 
+## Combined B1+B2 C56 gate — PASS (2026-10-16)
+
+Measured engine-cards source `8eaa7d1ec` on `cards/b2` after the B1 merge.
+Candidate native SHA256: `326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732`.
+Pinned native SHA256: `681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b`.
+The existing 127x04 cpu_job 8 gate, PID 1103181, completed at **19:06:22Z**;
+PID absence was observed at 19:08:27Z. No relaunch was needed.
+
+| Gate measurement | Required | Measured | Verdict |
+| --- | --- | --- | --- |
+| Complete fixture records, byte-identical | 577/577 | 577/577; both arms contain 577 | PASS |
+| Rust-only chains identical | 577/577 | 577/577; 1,010,680 ticks | PASS |
+| Rust-only errors | 0 in each arm | pinned 0; candidate 0 | PASS |
+| Full root records identical | 300/300 | 300/300 | PASS |
+| Cut root records identical | 300/300 | 300/300 | PASS |
+| Stun/freeze target probe | no mismatch | 192/192 cases; 0 bad; no mismatch/error lines | PASS |
+
+Gate evidence: `127x04:/mpac/sdicks02/jobs/clasher/cards/b1b2-gate/gate/compare.json`
+(SHA256 `954d0002d471fe23e9b4d53c3df231e469b49f7c6edb084ab3b5327edb1efe60`).
+Read-only copies of the completed outputs were independently checked with local
+stdlib: both entire fixture JSONL files are byte-identical, SHA256
+`f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670`;
+577 unique episodes and all 577 Rust-only chains match with no Rust-only errors.
+All 600 keyed root records are byte-identical across all four shards per arm,
+excluding the expected distinct native-provenance headers: 300 sampled roots of 1043,
+12 games, ticks 140–5570, 9336 rollout values, 1800 selections, 478 discrete applies
+and 1800 step checks. Fixture Rust/Python full parity is unchanged at 429/577
+in each arm.
+
+The existing 127x08 stun/freeze probe, PID 566310, completed at **18:58:39Z**;
+PID absence was observed at 18:59:27Z. Actual evidence directory is
+`/mpac/sdicks02/jobs/clasher/cards/b1b2/fid/` (not the older `b2/fid/`).
+`stun.log` contains only `{"runs": 192, "bad": 0}`. Independent parsing of
+`stun.json` confirms the exact 4 victims × 8 sources × 2 seats × 3 cast ticks,
+160 compared ticks per case, all 192 Knight and source actions accepted by both engines,
+and no first mismatch or error. JSON SHA256:
+`36173d10f978c1a84db9b5275e842927879fe38d13b2ffe42d82724ad285da99`;
+log SHA256: `5b8fd818b5d17eb5772487edc53843eecf5d6ededc92be8cb84eadb055c4368d`.
+
+Historical results and retained FAILs below keep their original source scope.
+
 Current continuation (2026-10-16T14:37:10Z): **conditional B2 source readiness approved;
 engine acceptance remains pending**. The [final independent review](evidence/final-conditional-source-review-approved.json)
 binds report7eb8953c3 and the unchanged source/evidence in the
