@@ -1,7 +1,7 @@
 # Level-aware search pilot: interim evidence (exploration)
 
 2026-10-16, resumed by Sol high. [Progress and audit](PROGRESS.md), [design](DESIGN.md).
-**No primary pilot bank drawn or strength outcomes collected.** All mandatory gates now pass:145 catalogue classifications/1024 exact-binary taps,9 cold isolation tests,216 integration tests,254 native checks, and8 clean all11 rows/4A-Bcommandhashpairs/positive B roots/zero rejections. Exact original support was restored under review; seven cache files remain unchanged. Fresh pre-registration and100-case bank are next. Earlier failures remain preserved. The required s27 replay completed23/23pairs, changing3actionIDs+3wait durations with no Cannon chosen. [Replay result](S27-M02.md).
+**Fresh primary bank registered; no primary games or strength outcomes yet.** All mandatory gates now pass:145 catalogue classifications/1024 exact-binary taps,9 cold isolation tests,216 integration tests,254 native checks, and8 clean all11 rows/4A-Bcommandhashpairs/positive B roots/zero rejections. Exact original support was restored under review; seven cache files remain unchanged. Registration BASE1273808234825296 and the fixed100-case bank are recorded before games. Earlier failures remain preserved. The required s27 replay completed23/23pairs, changing3actionIDs+3wait durations with no Cannon chosen. [Replay result](S27-M02.md).
 BOT LEAD accepted the reversible serial design and fixed supported-card scope before outcomes.
 
 ## Verified evidence
@@ -104,3 +104,7 @@ Fresh native gates pass**254/254** at the same reviewed source/cache:121exports,
 ## Clean complete-game all11 acceptance
 
 The final same-bank DEV run passes**8/8 clean terminal rows and4/4 complete A/B command-hash pairs**. B actually built102,113,106 and67roots, with zero unmapped bodies. Both controllers and seats are covered, every recorded deployment is accepted, all child/parent exits are0, and completeness/provenance report quality isPASS. Seven cache hashes remain unchanged. [Owner audit](receipts/all11-r25-owner-audit.json), [report](receipts/all11-r25-report.txt). This closes the earlier Cannon rejection blocker and qualifies the frozen serial experiment for fresh registration; it is no mixed-level strength result.
+
+## Fresh primary registration
+
+At2026-10-16T12:30:35Z(05:30:35PDT), after all mandatory gates passed, BASE**1273808234825296** was drawn from fresh os.urandom(6)<<4 with the unchanged decision rule. [Immutable registration](receipts/pilot-r27-registration.json), SHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983. The100-case bank contains54eligible pool rows and balances25cases in each controller/seat group. Bank SHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1. [Bank audit](receipts/pilot-r27-bank-audit.json), [fixed bank](receipts/pilot-r27-bank.json). No primary game had started at this publication. All300A/B/B0 games remain requested; partial reports will be labelled incomplete, with no outcome-dependent changes or exclusions.

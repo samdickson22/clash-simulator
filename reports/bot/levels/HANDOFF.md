@@ -1,3 +1,9 @@
+# PRIMARY R27 REGISTRATION FROZEN —2026-10-16 12:34UTC/05:34PT
+
+AllgatesPASS/sourcepublished80b7c103aee6af558f12a615e158fc395d6cea36. FreshBASE1273808234825296 registered12:30:35UTC beforebank/games,registrationSHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983. Bankjobterminal0/session25119consumed:100cases/54poolrows,controllers×seats25each,source/scope/view/profile/indicesallchecked,all7cacheunchanged. BankSHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1,pathjob/pilot-r27-bank.json. No primarygameyet/noCPUjobs. Immutablecopies+auditinreports/bot/levels/receipts/pilot-r27-*.json. Nextpublishregistration/docs thenactivateexistingharnessownerfromfullconcretebrief,one300gamejobN8on01/max9Python(auxreport1=10≤16),existingreviewedlauncher/leases/nice10,fullpoolpriority. No extraapprovalneeded; no sealing/partialreportslabelincomplete,nooutcomechanges. Parentownsfinalinterpretation/confirmation-sizingonlyifpromising. Strictsilence/limits unchanged.
+
+Prior chronology follows; older activejob/nobankstatements are historical.
+
 # Level-aware pilot — current handoff
 
 2026-10-16 12:28UTC/05:28PT. ALL MANDATORYGATESPASS atR26source. NO primaryBASE/bank/outcomesyet. Next:publishreviewedcode+receipts,registerfreshBASE+unchangeddecisionruleBEFOREbank/games,build100casesfromfixedsource,execute100×A/B/B0=300serialgames(originalBOTauthority,noextraapproval). Details/ownership/constraints/history below preserved; lateststatusoverrideshistoricalappendices.

@@ -1,0 +1,8772 @@
+{
+  "base": 1273808234825296,
+  "cases": [
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Fireball",
+          "Musketeer",
+          "Giant",
+          "Valkyrie",
+          "Cannon",
+          "Minions",
+          "Archers"
+        ],
+        [
+          "Log",
+          "Knight",
+          "MiniPekka",
+          "Musketeer",
+          "Firecracker",
+          "Cannon",
+          "Fireball",
+          "HogRider"
+        ]
+      ],
+      "index": 0,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 6,
+            "Fireball": 4,
+            "Firecracker": 5,
+            "HogRider": 5,
+            "Knight": 6,
+            "Log": 9,
+            "MiniPekka": 3,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m01",
+      "row_source_index": 23,
+      "seat": 0,
+      "seed": 1273808234825296,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Archers",
+          "Arrows",
+          "Knight",
+          "Fireball",
+          "Musketeer",
+          "MiniPekka",
+          "Minions"
+        ],
+        [
+          "Minions",
+          "Musketeer",
+          "MiniPekka",
+          "Archers",
+          "Giant",
+          "Fireball",
+          "Cannon",
+          "Valkyrie"
+        ]
+      ],
+      "index": 1,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m02",
+      "row_source_index": 34,
+      "seat": 1,
+      "seed": 1273808234825297,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Cannon",
+          "Musketeer",
+          "Archers",
+          "Giant",
+          "Valkyrie",
+          "Fireball",
+          "MiniPekka"
+        ],
+        [
+          "Fireball",
+          "Minions",
+          "Archers",
+          "Musketeer",
+          "Knight",
+          "Arrows",
+          "Giant",
+          "MiniPekka"
+        ]
+      ],
+      "index": 2,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m03",
+      "row_source_index": 37,
+      "seat": 0,
+      "seed": 1273808234825298,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "MiniPekka",
+          "Minions",
+          "Arrows",
+          "Giant",
+          "Archers",
+          "Musketeer",
+          "Knight"
+        ],
+        [
+          "Valkyrie",
+          "Cannon",
+          "Giant",
+          "Archers",
+          "Musketeer",
+          "Minions",
+          "Fireball",
+          "MiniPekka"
+        ]
+      ],
+      "index": 3,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m04",
+      "row_source_index": 8,
+      "seat": 1,
+      "seed": 1273808234825299,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Giant",
+          "MiniPekka",
+          "Minions",
+          "Valkyrie",
+          "Cannon",
+          "Fireball",
+          "Musketeer"
+        ],
+        [
+          "Skeletons",
+          "Log",
+          "Fireball",
+          "Valkyrie",
+          "Musketeer",
+          "Cannon",
+          "IceSpirit",
+          "HogRider"
+        ]
+      ],
+      "index": 4,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 5,
+            "Fireball": 4,
+            "HogRider": 4,
+            "IceSpirit": 5,
+            "Log": 9,
+            "Musketeer": 4,
+            "Skeletons": 5,
+            "Valkyrie": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m03",
+      "row_source_index": 5,
+      "seat": 0,
+      "seed": 1273808234825300,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "MiniPekka",
+          "Minions",
+          "Fireball",
+          "Arrows",
+          "Knight",
+          "Giant",
+          "Archers"
+        ],
+        [
+          "Giant",
+          "Cannon",
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Valkyrie",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 5,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 3
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m04",
+      "row_source_index": 0,
+      "seat": 1,
+      "seed": 1273808234825301,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Valkyrie",
+          "Cannon",
+          "Musketeer",
+          "Fireball",
+          "Minions",
+          "Archers",
+          "MiniPekka"
+        ],
+        [
+          "Fireball",
+          "Giant",
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Musketeer",
+          "Arrows",
+          "Knight"
+        ]
+      ],
+      "index": 6,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 4,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m04",
+      "row_source_index": 0,
+      "seat": 0,
+      "seed": 1273808234825302,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Arrows",
+          "MiniPekka",
+          "Fireball",
+          "Musketeer",
+          "Knight",
+          "Minions",
+          "Giant",
+          "Archers"
+        ],
+        [
+          "Valkyrie",
+          "Fireball",
+          "Cannon",
+          "Archers",
+          "MiniPekka",
+          "Minions",
+          "Giant",
+          "Musketeer"
+        ]
+      ],
+      "index": 7,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 3,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m04",
+      "row_source_index": 0,
+      "seat": 1,
+      "seed": 1273808234825303,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Fireball",
+          "Giant",
+          "Valkyrie",
+          "Cannon",
+          "MiniPekka",
+          "Musketeer",
+          "Minions"
+        ],
+        [
+          "Fireball",
+          "Knight",
+          "Archers",
+          "Musketeer",
+          "Giant",
+          "MiniPekka",
+          "Minions",
+          "Arrows"
+        ]
+      ],
+      "index": 8,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 4,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m02",
+      "row_source_index": 34,
+      "seat": 0,
+      "seed": 1273808234825304,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Musketeer",
+          "MiniPekka",
+          "Giant",
+          "Fireball",
+          "Arrows",
+          "Knight",
+          "Archers"
+        ],
+        [
+          "MiniPekka",
+          "Cannon",
+          "Giant",
+          "Valkyrie",
+          "Archers",
+          "Minions",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 9,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 4,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m02",
+      "row_source_index": 10,
+      "seat": 1,
+      "seed": 1273808234825305,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Fireball",
+          "Cannon",
+          "Valkyrie",
+          "MiniPekka",
+          "Minions",
+          "Archers",
+          "Musketeer"
+        ],
+        [
+          "Archers",
+          "Minions",
+          "MiniPekka",
+          "GoblinHut",
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Knight"
+        ]
+      ],
+      "index": 10,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "GoblinHut": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s20-m03",
+      "row_source_index": 25,
+      "seat": 0,
+      "seed": 1273808234825306,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Giant",
+          "Musketeer",
+          "MiniPekka",
+          "Minions",
+          "GoblinHut",
+          "Knight",
+          "Fireball"
+        ],
+        [
+          "Archers",
+          "Valkyrie",
+          "Cannon",
+          "Giant",
+          "MiniPekka",
+          "Minions",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 11,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 5,
+            "Giant": 5,
+            "GoblinHut": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 4,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s20-m01",
+      "row_source_index": 27,
+      "seat": 1,
+      "seed": 1273808234825307,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "MiniPekka",
+          "Musketeer",
+          "Fireball",
+          "Valkyrie",
+          "Archers",
+          "Cannon",
+          "Minions"
+        ],
+        [
+          "Fireball",
+          "Arrows",
+          "Musketeer",
+          "Knight",
+          "Giant",
+          "Minions",
+          "Archers",
+          "MiniPekka"
+        ]
+      ],
+      "index": 12,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m04",
+      "row_source_index": 46,
+      "seat": 0,
+      "seed": 1273808234825308,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Knight",
+          "Giant",
+          "Arrows",
+          "Fireball",
+          "Archers",
+          "Musketeer",
+          "MiniPekka"
+        ],
+        [
+          "Minions",
+          "Musketeer",
+          "Archers",
+          "Cannon",
+          "Giant",
+          "Fireball",
+          "Valkyrie",
+          "MiniPekka"
+        ]
+      ],
+      "index": 13,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m03",
+      "row_source_index": 9,
+      "seat": 1,
+      "seed": 1273808234825309,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Minions",
+          "Archers",
+          "Fireball",
+          "Giant",
+          "Valkyrie",
+          "Cannon",
+          "Musketeer"
+        ],
+        [
+          "Fireball",
+          "Archers",
+          "Arrows",
+          "Knight",
+          "Giant",
+          "Minions",
+          "MiniPekka",
+          "Musketeer"
+        ]
+      ],
+      "index": 14,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s23-m01",
+      "row_source_index": 15,
+      "seat": 0,
+      "seed": 1273808234825310,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Zap",
+          "Giant",
+          "Valkyrie",
+          "Archers",
+          "Balloon",
+          "AngryBarbarians",
+          "HogRider"
+        ],
+        [
+          "Musketeer",
+          "Cannon",
+          "MiniPekka",
+          "Valkyrie",
+          "Minions",
+          "Giant",
+          "Archers",
+          "Fireball"
+        ]
+      ],
+      "index": 15,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "AngryBarbarians": 5,
+            "Archers": 4,
+            "Balloon": 6,
+            "Giant": 3,
+            "HogRider": 4,
+            "MiniPekka": 4,
+            "Valkyrie": 4,
+            "Zap": 6
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m01",
+      "row_source_index": 7,
+      "seat": 1,
+      "seed": 1273808234825311,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Cannon",
+          "Musketeer",
+          "Fireball",
+          "Giant",
+          "Valkyrie"
+        ],
+        [
+          "Archers",
+          "Fireball",
+          "MiniPekka",
+          "Musketeer",
+          "Minions",
+          "Giant",
+          "Knight",
+          "Arrows"
+        ]
+      ],
+      "index": 16,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m01",
+      "row_source_index": 44,
+      "seat": 0,
+      "seed": 1273808234825312,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Lightning",
+          "Log",
+          "Skeletons",
+          "MiniPekka",
+          "Princess",
+          "IceGolem",
+          "Minions",
+          "HogRider"
+        ],
+        [
+          "Cannon",
+          "Valkyrie",
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Giant",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 17,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "HogRider": 4,
+            "IceGolem": 5,
+            "Lightning": 6,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Princess": 9,
+            "Skeletons": 6
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s22-m02",
+      "row_source_index": 18,
+      "seat": 1,
+      "seed": 1273808234825313,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Cannon",
+          "Fireball",
+          "Minions",
+          "Giant",
+          "MiniPekka",
+          "Archers",
+          "Valkyrie"
+        ],
+        [
+          "MiniPekka",
+          "Firecracker",
+          "Fireball",
+          "Knight",
+          "HogRider",
+          "Musketeer",
+          "Log",
+          "Cannon"
+        ]
+      ],
+      "index": 18,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 5,
+            "Fireball": 4,
+            "Firecracker": 5,
+            "HogRider": 4,
+            "Knight": 5,
+            "Log": 9,
+            "MiniPekka": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m01",
+      "row_source_index": 23,
+      "seat": 0,
+      "seed": 1273808234825314,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "HogRider",
+          "Knight",
+          "Archers",
+          "Log",
+          "Cannon",
+          "Skeletons",
+          "IceSpirit",
+          "Fireball"
+        ],
+        [
+          "Fireball",
+          "MiniPekka",
+          "Valkyrie",
+          "Musketeer",
+          "Archers",
+          "Cannon",
+          "Minions",
+          "Giant"
+        ]
+      ],
+      "index": 19,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Cannon": 5,
+            "Fireball": 3,
+            "HogRider": 4,
+            "IceSpirit": 5,
+            "Knight": 5,
+            "Log": 9,
+            "Skeletons": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m02",
+      "row_source_index": 2,
+      "seat": 1,
+      "seed": 1273808234825315,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "Giant",
+          "Minions",
+          "Cannon",
+          "Musketeer",
+          "Valkyrie",
+          "Archers",
+          "MiniPekka"
+        ],
+        [
+          "Giant",
+          "Musketeer",
+          "Archers",
+          "Knight",
+          "Arrows",
+          "Minions",
+          "Fireball",
+          "MiniPekka"
+        ]
+      ],
+      "index": 20,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 3,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m03",
+      "row_source_index": 1,
+      "seat": 0,
+      "seed": 1273808234825316,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "Skeletons",
+          "Arrows",
+          "Lightning",
+          "Knight",
+          "ElectroSpirit",
+          "Cannon",
+          "Balloon"
+        ],
+        [
+          "Cannon",
+          "Archers",
+          "MiniPekka",
+          "Giant",
+          "Musketeer",
+          "Minions",
+          "Valkyrie",
+          "Fireball"
+        ]
+      ],
+      "index": 21,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Arrows": 5,
+            "Balloon": 6,
+            "Cannon": 5,
+            "ElectroSpirit": 5,
+            "Knight": 5,
+            "Lightning": 6,
+            "Skeletons": 5,
+            "Valkyrie": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s20-m04",
+      "row_source_index": 24,
+      "seat": 1,
+      "seed": 1273808234825317,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Cannon",
+          "Giant",
+          "MiniPekka",
+          "Archers",
+          "Fireball",
+          "Valkyrie",
+          "Musketeer"
+        ],
+        [
+          "Minions",
+          "MiniPekka",
+          "Fireball",
+          "Archers",
+          "Arrows",
+          "Musketeer",
+          "Knight",
+          "Giant"
+        ]
+      ],
+      "index": 22,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m04",
+      "row_source_index": 41,
+      "seat": 0,
+      "seed": 1273808234825318,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Giant",
+          "Musketeer",
+          "Knight",
+          "Fireball",
+          "Minions",
+          "Arrows",
+          "MiniPekka"
+        ],
+        [
+          "MiniPekka",
+          "Giant",
+          "Fireball",
+          "Musketeer",
+          "Archers",
+          "Cannon",
+          "Minions",
+          "Valkyrie"
+        ]
+      ],
+      "index": 23,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m02",
+      "row_source_index": 10,
+      "seat": 1,
+      "seed": 1273808234825319,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "Archers",
+          "Valkyrie",
+          "Minions",
+          "Musketeer",
+          "Giant",
+          "Cannon",
+          "MiniPekka"
+        ],
+        [
+          "MiniPekka",
+          "Fireball",
+          "Knight",
+          "Minions",
+          "Archers",
+          "Arrows",
+          "Musketeer",
+          "Giant"
+        ]
+      ],
+      "index": 24,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 3,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m04",
+      "row_source_index": 0,
+      "seat": 0,
+      "seed": 1273808234825320,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Arrows",
+          "Musketeer",
+          "Knight",
+          "Minions",
+          "Giant",
+          "Fireball",
+          "Archers",
+          "MiniPekka"
+        ],
+        [
+          "Valkyrie",
+          "Cannon",
+          "Fireball",
+          "Giant",
+          "Musketeer",
+          "Archers",
+          "MiniPekka",
+          "Minions"
+        ]
+      ],
+      "index": 25,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s23-m04",
+      "row_source_index": 12,
+      "seat": 1,
+      "seed": 1273808234825321,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Musketeer",
+          "Giant",
+          "Cannon",
+          "MiniPekka",
+          "Archers",
+          "Fireball",
+          "Valkyrie"
+        ],
+        [
+          "Minions",
+          "Fireball",
+          "Archers",
+          "Musketeer",
+          "Giant",
+          "Knight",
+          "MiniPekka",
+          "Arrows"
+        ]
+      ],
+      "index": 26,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 3
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m04",
+      "row_source_index": 32,
+      "seat": 0,
+      "seed": 1273808234825322,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "MiniPekka",
+          "Minions",
+          "Musketeer",
+          "Knight",
+          "Fireball",
+          "Giant",
+          "Arrows"
+        ],
+        [
+          "MiniPekka",
+          "Valkyrie",
+          "Cannon",
+          "Fireball",
+          "Minions",
+          "Giant",
+          "Archers",
+          "Musketeer"
+        ]
+      ],
+      "index": 27,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m03",
+      "row_source_index": 37,
+      "seat": 1,
+      "seed": 1273808234825323,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "Archers",
+          "Minions",
+          "Fireball",
+          "Cannon",
+          "Musketeer",
+          "Giant",
+          "MiniPekka"
+        ],
+        [
+          "Musketeer",
+          "Log",
+          "MiniPekka",
+          "Firecracker",
+          "HogRider",
+          "Fireball",
+          "Knight",
+          "Cannon"
+        ]
+      ],
+      "index": 28,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 6,
+            "Fireball": 4,
+            "Firecracker": 6,
+            "HogRider": 4,
+            "Knight": 6,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m01",
+      "row_source_index": 23,
+      "seat": 0,
+      "seed": 1273808234825324,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Arrows",
+          "Musketeer",
+          "MiniPekka",
+          "Fireball",
+          "Minions",
+          "Giant",
+          "Knight"
+        ],
+        [
+          "Musketeer",
+          "Minions",
+          "Cannon",
+          "Valkyrie",
+          "MiniPekka",
+          "Giant",
+          "Fireball",
+          "Archers"
+        ]
+      ],
+      "index": 29,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 3,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s23-m02",
+      "row_source_index": 14,
+      "seat": 1,
+      "seed": 1273808234825325,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Cannon",
+          "Fireball",
+          "Minions",
+          "MiniPekka",
+          "Giant",
+          "Musketeer",
+          "Archers",
+          "Valkyrie"
+        ],
+        [
+          "Valkyrie",
+          "Log",
+          "RoyalHogs",
+          "Fireball",
+          "Skeletons",
+          "ElectroSpirit",
+          "Archers",
+          "Cannon"
+        ]
+      ],
+      "index": 30,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Cannon": 6,
+            "ElectroSpirit": 5,
+            "Fireball": 4,
+            "Log": 9,
+            "RoyalHogs": 5,
+            "Skeletons": 5,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s19-m03",
+      "row_source_index": 29,
+      "seat": 0,
+      "seed": 1273808234825326,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "GoblinHut",
+          "Giant",
+          "MiniPekka",
+          "Knight",
+          "Fireball",
+          "Minions",
+          "Archers",
+          "Musketeer"
+        ],
+        [
+          "Valkyrie",
+          "Minions",
+          "Archers",
+          "Giant",
+          "MiniPekka",
+          "Fireball",
+          "Musketeer",
+          "Cannon"
+        ]
+      ],
+      "index": 31,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 5,
+            "GoblinHut": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s20-m03",
+      "row_source_index": 25,
+      "seat": 1,
+      "seed": 1273808234825327,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Musketeer",
+          "Cannon",
+          "Fireball",
+          "Valkyrie",
+          "Minions",
+          "MiniPekka",
+          "Giant"
+        ],
+        [
+          "Giant",
+          "GoblinHut",
+          "Minions",
+          "Knight",
+          "MiniPekka",
+          "Archers",
+          "Fireball",
+          "Musketeer"
+        ]
+      ],
+      "index": 32,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Fireball": 5,
+            "Giant": 5,
+            "GoblinHut": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m01",
+      "row_source_index": 39,
+      "seat": 0,
+      "seed": 1273808234825328,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "MiniPekka",
+          "Knight",
+          "Giant",
+          "Fireball",
+          "Minions",
+          "GoblinHut",
+          "Musketeer"
+        ],
+        [
+          "Fireball",
+          "Minions",
+          "Archers",
+          "MiniPekka",
+          "Musketeer",
+          "Valkyrie",
+          "Cannon",
+          "Giant"
+        ]
+      ],
+      "index": 33,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 5,
+            "GoblinHut": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m01",
+      "row_source_index": 39,
+      "seat": 1,
+      "seed": 1273808234825329,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "Musketeer",
+          "Archers",
+          "Giant",
+          "Minions",
+          "MiniPekka",
+          "Cannon",
+          "Fireball"
+        ],
+        [
+          "Archers",
+          "Knight",
+          "Musketeer",
+          "GoblinHut",
+          "MiniPekka",
+          "Fireball",
+          "Giant",
+          "Minions"
+        ]
+      ],
+      "index": 34,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "GoblinHut": 3,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s22-m04",
+      "row_source_index": 16,
+      "seat": 0,
+      "seed": 1273808234825330,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Minions",
+          "Giant",
+          "Fireball",
+          "Archers",
+          "Arrows",
+          "Knight",
+          "Musketeer"
+        ],
+        [
+          "Valkyrie",
+          "Giant",
+          "Fireball",
+          "Minions",
+          "Cannon",
+          "MiniPekka",
+          "Archers",
+          "Musketeer"
+        ]
+      ],
+      "index": 35,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 3
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s19-m04",
+      "row_source_index": 28,
+      "seat": 1,
+      "seed": 1273808234825331,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "MiniPekka",
+          "Minions",
+          "Valkyrie",
+          "Archers",
+          "Giant",
+          "Cannon",
+          "Fireball"
+        ],
+        [
+          "Arrows",
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Knight"
+        ]
+      ],
+      "index": 36,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s11-m04",
+      "row_source_index": 50,
+      "seat": 0,
+      "seed": 1273808234825332,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "MiniPekka",
+          "Fireball",
+          "GoblinHut",
+          "Minions",
+          "Giant",
+          "Knight",
+          "Archers"
+        ],
+        [
+          "Fireball",
+          "Cannon",
+          "MiniPekka",
+          "Archers",
+          "Giant",
+          "Valkyrie",
+          "Musketeer",
+          "Minions"
+        ]
+      ],
+      "index": 37,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "GoblinHut": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m01",
+      "row_source_index": 39,
+      "seat": 1,
+      "seed": 1273808234825333,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Giant",
+          "Cannon",
+          "Archers",
+          "Minions",
+          "Musketeer",
+          "Valkyrie",
+          "Fireball"
+        ],
+        [
+          "Skeletons",
+          "Musketeer",
+          "IceSpirit",
+          "Cannon",
+          "Fireball",
+          "HogRider",
+          "Valkyrie",
+          "Log"
+        ]
+      ],
+      "index": 38,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 5,
+            "Fireball": 5,
+            "HogRider": 4,
+            "IceSpirit": 5,
+            "Log": 9,
+            "Musketeer": 3,
+            "Skeletons": 6,
+            "Valkyrie": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m03",
+      "row_source_index": 5,
+      "seat": 0,
+      "seed": 1273808234825334,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Fireball",
+          "MiniPekka",
+          "Giant",
+          "Arrows",
+          "Knight",
+          "Musketeer",
+          "Archers"
+        ],
+        [
+          "Cannon",
+          "Musketeer",
+          "MiniPekka",
+          "Giant",
+          "Fireball",
+          "Minions",
+          "Archers",
+          "Valkyrie"
+        ]
+      ],
+      "index": 39,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m02",
+      "row_source_index": 10,
+      "seat": 1,
+      "seed": 1273808234825335,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Cannon",
+          "Minions",
+          "Giant",
+          "Fireball",
+          "Valkyrie",
+          "Archers",
+          "Musketeer"
+        ],
+        [
+          "Giant",
+          "Knight",
+          "Minions",
+          "Musketeer",
+          "Arrows",
+          "Fireball",
+          "Archers",
+          "MiniPekka"
+        ]
+      ],
+      "index": 40,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m04",
+      "row_source_index": 46,
+      "seat": 0,
+      "seed": 1273808234825336,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Minions",
+          "Arrows",
+          "MiniPekka",
+          "Giant",
+          "Knight",
+          "Fireball",
+          "Archers"
+        ],
+        [
+          "Archers",
+          "Minions",
+          "Musketeer",
+          "MiniPekka",
+          "Valkyrie",
+          "Fireball",
+          "Giant",
+          "Cannon"
+        ]
+      ],
+      "index": 41,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 4,
+            "Fireball": 4,
+            "Giant": 5,
+            "Knight": 4,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m04",
+      "row_source_index": 46,
+      "seat": 1,
+      "seed": 1273808234825337,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Cannon",
+          "Minions",
+          "Valkyrie",
+          "MiniPekka",
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Archers"
+        ],
+        [
+          "MiniPekka",
+          "Skeletons",
+          "HogRider",
+          "IceGolem",
+          "Minions",
+          "Lightning",
+          "Log",
+          "Princess"
+        ]
+      ],
+      "index": 42,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "HogRider": 4,
+            "IceGolem": 4,
+            "Lightning": 6,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Princess": 9,
+            "Skeletons": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m01",
+      "row_source_index": 49,
+      "seat": 0,
+      "seed": 1273808234825338,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "Skeletons",
+          "RoyalHogs",
+          "Lightning",
+          "BarbLog",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Wizard"
+        ],
+        [
+          "Archers",
+          "Valkyrie",
+          "Fireball",
+          "Minions",
+          "Cannon",
+          "MiniPekka",
+          "Giant",
+          "Musketeer"
+        ]
+      ],
+      "index": 43,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "BarbLog": 6,
+            "ElectroSpirit": 5,
+            "GoblinHut": 5,
+            "Lightning": 6,
+            "RoyalHogs": 4,
+            "Skeletons": 5,
+            "Valkyrie": 4,
+            "Wizard": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s11-m03",
+      "row_source_index": 51,
+      "seat": 1,
+      "seed": 1273808234825339,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Valkyrie",
+          "Cannon",
+          "MiniPekka",
+          "Minions",
+          "Giant",
+          "Musketeer",
+          "Fireball"
+        ],
+        [
+          "MiniPekka",
+          "Zap",
+          "Valkyrie",
+          "AngryBarbarians",
+          "Giant",
+          "Balloon",
+          "HogRider",
+          "Archers"
+        ]
+      ],
+      "index": 44,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "AngryBarbarians": 5,
+            "Archers": 6,
+            "Balloon": 6,
+            "Giant": 4,
+            "HogRider": 3,
+            "MiniPekka": 4,
+            "Valkyrie": 4,
+            "Zap": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m01",
+      "row_source_index": 7,
+      "seat": 0,
+      "seed": 1273808234825340,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Arrows",
+          "Knight",
+          "MiniPekka",
+          "Musketeer",
+          "Minions",
+          "Archers",
+          "Giant",
+          "Fireball"
+        ],
+        [
+          "Fireball",
+          "MiniPekka",
+          "Giant",
+          "Archers",
+          "Musketeer",
+          "Cannon",
+          "Minions",
+          "Valkyrie"
+        ]
+      ],
+      "index": 45,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m01",
+      "row_source_index": 44,
+      "seat": 1,
+      "seed": 1273808234825341,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Cannon",
+          "Musketeer",
+          "Minions",
+          "Archers",
+          "Fireball",
+          "MiniPekka",
+          "Valkyrie"
+        ],
+        [
+          "GoblinHut",
+          "ElectroSpirit",
+          "Log",
+          "RoyalHogs",
+          "Skeletons",
+          "FirespiritHut",
+          "Fireball",
+          "Berserker"
+        ]
+      ],
+      "index": 46,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Berserker": 5,
+            "ElectroSpirit": 5,
+            "Fireball": 4,
+            "FirespiritHut": 4,
+            "GoblinHut": 4,
+            "Log": 9,
+            "RoyalHogs": 5,
+            "Skeletons": 6
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m02",
+      "row_source_index": 43,
+      "seat": 0,
+      "seed": 1273808234825342,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Archers",
+          "Knight",
+          "Minions",
+          "MiniPekka",
+          "Arrows",
+          "Fireball",
+          "Musketeer"
+        ],
+        [
+          "Cannon",
+          "Giant",
+          "Archers",
+          "Musketeer",
+          "Valkyrie",
+          "Minions",
+          "Fireball",
+          "MiniPekka"
+        ]
+      ],
+      "index": 47,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 3
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m03",
+      "row_source_index": 21,
+      "seat": 1,
+      "seed": 1273808234825343,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "MiniPekka",
+          "Giant",
+          "Valkyrie",
+          "Fireball",
+          "Cannon",
+          "Archers",
+          "Minions"
+        ],
+        [
+          "MiniPekka",
+          "Minions",
+          "Fireball",
+          "Knight",
+          "Musketeer",
+          "Giant",
+          "Archers",
+          "Arrows"
+        ]
+      ],
+      "index": 48,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m04",
+      "row_source_index": 41,
+      "seat": 0,
+      "seed": 1273808234825344,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Fireball",
+          "Skeletons",
+          "Log",
+          "Knight",
+          "HogRider",
+          "Cannon",
+          "IceSpirit"
+        ],
+        [
+          "Fireball",
+          "MiniPekka",
+          "Giant",
+          "Musketeer",
+          "Valkyrie",
+          "Cannon",
+          "Minions",
+          "Archers"
+        ]
+      ],
+      "index": 49,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Cannon": 6,
+            "Fireball": 4,
+            "HogRider": 5,
+            "IceSpirit": 6,
+            "Knight": 6,
+            "Log": 9,
+            "Skeletons": 6
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m02",
+      "row_source_index": 2,
+      "seat": 1,
+      "seed": 1273808234825345,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Cannon",
+          "MiniPekka",
+          "Fireball",
+          "Musketeer",
+          "Archers",
+          "Valkyrie",
+          "Giant"
+        ],
+        [
+          "Knight",
+          "Archers",
+          "Arrows",
+          "Minions",
+          "MiniPekka",
+          "Giant",
+          "Fireball",
+          "Musketeer"
+        ]
+      ],
+      "index": 50,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m01",
+      "row_source_index": 44,
+      "seat": 0,
+      "seed": 1273808234825346,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Log",
+          "HogRider",
+          "Minions",
+          "MiniPekka",
+          "Skeletons",
+          "IceGolem",
+          "Lightning",
+          "Princess"
+        ],
+        [
+          "Cannon",
+          "Valkyrie",
+          "Fireball",
+          "Minions",
+          "Archers",
+          "Giant",
+          "Musketeer",
+          "MiniPekka"
+        ]
+      ],
+      "index": 51,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "HogRider": 5,
+            "IceGolem": 4,
+            "Lightning": 6,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Princess": 9,
+            "Skeletons": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s22-m02",
+      "row_source_index": 18,
+      "seat": 1,
+      "seed": 1273808234825347,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Minions",
+          "Cannon",
+          "Archers",
+          "Musketeer",
+          "Fireball",
+          "Valkyrie",
+          "Giant"
+        ],
+        [
+          "Log",
+          "IceGolem",
+          "Minions",
+          "Lightning",
+          "Skeletons",
+          "HogRider",
+          "Princess",
+          "MiniPekka"
+        ]
+      ],
+      "index": 52,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "HogRider": 4,
+            "IceGolem": 4,
+            "Lightning": 6,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Princess": 9,
+            "Skeletons": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s22-m02",
+      "row_source_index": 18,
+      "seat": 0,
+      "seed": 1273808234825348,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Arrows",
+          "MiniPekka",
+          "Archers",
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Minions",
+          "Knight"
+        ],
+        [
+          "Valkyrie",
+          "MiniPekka",
+          "Archers",
+          "Cannon",
+          "Fireball",
+          "Giant",
+          "Musketeer",
+          "Minions"
+        ]
+      ],
+      "index": 53,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m03",
+      "row_source_index": 37,
+      "seat": 1,
+      "seed": 1273808234825349,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "MiniPekka",
+          "Fireball",
+          "Minions",
+          "Giant",
+          "Cannon",
+          "Musketeer",
+          "Archers"
+        ],
+        [
+          "Fireball",
+          "Archers",
+          "Musketeer",
+          "GoblinHut",
+          "Giant",
+          "Minions",
+          "MiniPekka",
+          "Knight"
+        ]
+      ],
+      "index": 54,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "GoblinHut": 3,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m03",
+      "row_source_index": 42,
+      "seat": 0,
+      "seed": 1273808234825350,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Lightning",
+          "ElectroSpirit",
+          "RoyalHogs",
+          "Wizard",
+          "GoblinHut",
+          "Skeletons",
+          "Valkyrie",
+          "BarbLog"
+        ],
+        [
+          "Minions",
+          "Archers",
+          "Cannon",
+          "Valkyrie",
+          "Fireball",
+          "MiniPekka",
+          "Giant",
+          "Musketeer"
+        ]
+      ],
+      "index": 55,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "BarbLog": 6,
+            "ElectroSpirit": 5,
+            "GoblinHut": 5,
+            "Lightning": 6,
+            "RoyalHogs": 4,
+            "Skeletons": 6,
+            "Valkyrie": 4,
+            "Wizard": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s11-m01",
+      "row_source_index": 53,
+      "seat": 1,
+      "seed": 1273808234825351,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Cannon",
+          "Giant",
+          "Archers",
+          "Minions",
+          "Fireball",
+          "MiniPekka",
+          "Musketeer",
+          "Valkyrie"
+        ],
+        [
+          "Minions",
+          "Musketeer",
+          "MiniPekka",
+          "Arrows",
+          "Archers",
+          "Giant",
+          "Fireball",
+          "Knight"
+        ]
+      ],
+      "index": 56,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m03",
+      "row_source_index": 1,
+      "seat": 0,
+      "seed": 1273808234825352,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Giant",
+          "MiniPekka",
+          "Fireball",
+          "Archers",
+          "Musketeer",
+          "Knight",
+          "GoblinHut"
+        ],
+        [
+          "Fireball",
+          "MiniPekka",
+          "Valkyrie",
+          "Musketeer",
+          "Giant",
+          "Minions",
+          "Cannon",
+          "Archers"
+        ]
+      ],
+      "index": 57,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "GoblinHut": 5,
+            "Knight": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m02",
+      "row_source_index": 48,
+      "seat": 1,
+      "seed": 1273808234825353,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Minions",
+          "Archers",
+          "Cannon",
+          "Valkyrie",
+          "MiniPekka"
+        ],
+        [
+          "Archers",
+          "Zap",
+          "MiniPekka",
+          "Giant",
+          "AngryBarbarians",
+          "HogRider",
+          "Balloon",
+          "Valkyrie"
+        ]
+      ],
+      "index": 58,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "AngryBarbarians": 5,
+            "Archers": 5,
+            "Balloon": 6,
+            "Giant": 4,
+            "HogRider": 4,
+            "MiniPekka": 4,
+            "Valkyrie": 4,
+            "Zap": 6
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m01",
+      "row_source_index": 7,
+      "seat": 0,
+      "seed": 1273808234825354,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Archers",
+          "Minions",
+          "MiniPekka",
+          "Musketeer",
+          "Knight",
+          "Fireball",
+          "Arrows"
+        ],
+        [
+          "Musketeer",
+          "Fireball",
+          "MiniPekka",
+          "Archers",
+          "Valkyrie",
+          "Cannon",
+          "Giant",
+          "Minions"
+        ]
+      ],
+      "index": 59,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 4,
+            "Arrows": 5,
+            "Fireball": 3,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 3,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m02",
+      "row_source_index": 6,
+      "seat": 1,
+      "seed": 1273808234825355,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Minions",
+          "Valkyrie",
+          "Cannon",
+          "Musketeer",
+          "Archers",
+          "Fireball",
+          "Giant"
+        ],
+        [
+          "IceSpirit",
+          "Log",
+          "Skeletons",
+          "Fireball",
+          "Musketeer",
+          "Valkyrie",
+          "HogRider",
+          "Cannon"
+        ]
+      ],
+      "index": 60,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 5,
+            "Fireball": 4,
+            "HogRider": 4,
+            "IceSpirit": 5,
+            "Log": 9,
+            "Musketeer": 4,
+            "Skeletons": 6,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m03",
+      "row_source_index": 5,
+      "seat": 0,
+      "seed": 1273808234825356,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Knight",
+          "Minions",
+          "Arrows",
+          "Giant",
+          "MiniPekka",
+          "Fireball",
+          "Archers"
+        ],
+        [
+          "Cannon",
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Valkyrie",
+          "Minions",
+          "Archers",
+          "MiniPekka"
+        ]
+      ],
+      "index": 61,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m04",
+      "row_source_index": 8,
+      "seat": 1,
+      "seed": 1273808234825357,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Cannon",
+          "Giant",
+          "Minions",
+          "Valkyrie",
+          "Musketeer",
+          "Fireball",
+          "MiniPekka",
+          "Archers"
+        ],
+        [
+          "Cannon",
+          "Fireball",
+          "Log",
+          "IceSpirit",
+          "Skeletons",
+          "HogRider",
+          "Archers",
+          "Knight"
+        ]
+      ],
+      "index": 62,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Cannon": 5,
+            "Fireball": 5,
+            "HogRider": 5,
+            "IceSpirit": 5,
+            "Knight": 6,
+            "Log": 9,
+            "Skeletons": 6
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m02",
+      "row_source_index": 2,
+      "seat": 0,
+      "seed": 1273808234825358,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Knight",
+          "Minions",
+          "GoblinHut",
+          "Fireball",
+          "Giant",
+          "Archers",
+          "Musketeer",
+          "MiniPekka"
+        ],
+        [
+          "Musketeer",
+          "Giant",
+          "Cannon",
+          "Archers",
+          "MiniPekka",
+          "Valkyrie",
+          "Fireball",
+          "Minions"
+        ]
+      ],
+      "index": 63,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "GoblinHut": 5,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m01",
+      "row_source_index": 39,
+      "seat": 1,
+      "seed": 1273808234825359,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Valkyrie",
+          "Archers",
+          "MiniPekka",
+          "Fireball",
+          "Minions",
+          "Musketeer",
+          "Cannon",
+          "Giant"
+        ],
+        [
+          "Skeletons",
+          "IceGolem",
+          "Lightning",
+          "HogRider",
+          "Minions",
+          "Princess",
+          "Log",
+          "MiniPekka"
+        ]
+      ],
+      "index": 64,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "HogRider": 4,
+            "IceGolem": 3,
+            "Lightning": 6,
+            "Log": 9,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Princess": 9,
+            "Skeletons": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s22-m02",
+      "row_source_index": 18,
+      "seat": 0,
+      "seed": 1273808234825360,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Archers",
+          "MiniPekka",
+          "Giant",
+          "Knight",
+          "Arrows",
+          "Fireball",
+          "Musketeer"
+        ],
+        [
+          "Archers",
+          "Musketeer",
+          "Fireball",
+          "MiniPekka",
+          "Cannon",
+          "Giant",
+          "Valkyrie",
+          "Minions"
+        ]
+      ],
+      "index": 65,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 3
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m01",
+      "row_source_index": 35,
+      "seat": 1,
+      "seed": 1273808234825361,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Fireball",
+          "Archers",
+          "MiniPekka",
+          "Minions",
+          "Giant",
+          "Valkyrie",
+          "Cannon"
+        ],
+        [
+          "Musketeer",
+          "Arrows",
+          "Archers",
+          "Fireball",
+          "Minions",
+          "Giant",
+          "Knight",
+          "MiniPekka"
+        ]
+      ],
+      "index": 66,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m03",
+      "row_source_index": 21,
+      "seat": 0,
+      "seed": 1273808234825362,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "GoblinHut",
+          "MiniPekka",
+          "Knight",
+          "Fireball",
+          "Archers",
+          "Minions",
+          "Giant"
+        ],
+        [
+          "Giant",
+          "MiniPekka",
+          "Fireball",
+          "Valkyrie",
+          "Minions",
+          "Cannon",
+          "Musketeer",
+          "Archers"
+        ]
+      ],
+      "index": 67,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "GoblinHut": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s20-m01",
+      "row_source_index": 27,
+      "seat": 1,
+      "seed": 1273808234825363,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "MiniPekka",
+          "Valkyrie",
+          "Fireball",
+          "Giant",
+          "Minions",
+          "Musketeer",
+          "Cannon"
+        ],
+        [
+          "Giant",
+          "Archers",
+          "Knight",
+          "Minions",
+          "MiniPekka",
+          "Musketeer",
+          "Arrows",
+          "Fireball"
+        ]
+      ],
+      "index": 68,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 4,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m01",
+      "row_source_index": 35,
+      "seat": 0,
+      "seed": 1273808234825364,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Knight",
+          "Giant",
+          "Fireball",
+          "Arrows"
+        ],
+        [
+          "Cannon",
+          "Musketeer",
+          "Giant",
+          "Valkyrie",
+          "Minions",
+          "Archers",
+          "Fireball",
+          "MiniPekka"
+        ]
+      ],
+      "index": 69,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m01",
+      "row_source_index": 35,
+      "seat": 1,
+      "seed": 1273808234825365,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Minions",
+          "Fireball",
+          "Giant",
+          "Cannon",
+          "MiniPekka",
+          "Valkyrie",
+          "Musketeer"
+        ],
+        [
+          "Giant",
+          "Archers",
+          "Knight",
+          "Minions",
+          "GoblinHut",
+          "MiniPekka",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 70,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "GoblinHut": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s11-m02",
+      "row_source_index": 52,
+      "seat": 0,
+      "seed": 1273808234825366,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "Minions",
+          "Archers",
+          "Knight",
+          "MiniPekka",
+          "Arrows",
+          "Fireball",
+          "Musketeer"
+        ],
+        [
+          "Musketeer",
+          "MiniPekka",
+          "Valkyrie",
+          "Archers",
+          "Minions",
+          "Giant",
+          "Fireball",
+          "Cannon"
+        ]
+      ],
+      "index": 71,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 3,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s14-m04",
+      "row_source_index": 41,
+      "seat": 1,
+      "seed": 1273808234825367,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Valkyrie",
+          "Archers",
+          "Minions",
+          "Giant",
+          "Musketeer",
+          "Fireball",
+          "Cannon"
+        ],
+        [
+          "Musketeer",
+          "Giant",
+          "Minions",
+          "MiniPekka",
+          "Archers",
+          "Knight",
+          "Arrows",
+          "Fireball"
+        ]
+      ],
+      "index": 72,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m03",
+      "row_source_index": 1,
+      "seat": 0,
+      "seed": 1273808234825368,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "Minions",
+          "Archers",
+          "MiniPekka",
+          "Knight",
+          "Giant",
+          "Musketeer",
+          "Arrows"
+        ],
+        [
+          "Archers",
+          "Valkyrie",
+          "Fireball",
+          "Cannon",
+          "Minions",
+          "Musketeer",
+          "Giant",
+          "MiniPekka"
+        ]
+      ],
+      "index": 73,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m01",
+      "row_source_index": 11,
+      "seat": 1,
+      "seed": 1273808234825369,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Cannon",
+          "Musketeer",
+          "Fireball",
+          "MiniPekka",
+          "Giant",
+          "Minions",
+          "Archers",
+          "Valkyrie"
+        ],
+        [
+          "Skeletons",
+          "ElectroSpirit",
+          "Cannon",
+          "MiniPekka",
+          "HogRider",
+          "Musketeer",
+          "Arrows",
+          "Valkyrie"
+        ]
+      ],
+      "index": 74,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Arrows": 6,
+            "Cannon": 5,
+            "ElectroSpirit": 5,
+            "HogRider": 4,
+            "MiniPekka": 5,
+            "Musketeer": 4,
+            "Skeletons": 5,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m01",
+      "row_source_index": 3,
+      "seat": 0,
+      "seed": 1273808234825370,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Giant",
+          "Knight",
+          "Fireball",
+          "Arrows",
+          "MiniPekka",
+          "Minions",
+          "Archers"
+        ],
+        [
+          "Giant",
+          "Minions",
+          "Fireball",
+          "Cannon",
+          "Valkyrie",
+          "Musketeer",
+          "MiniPekka",
+          "Archers"
+        ]
+      ],
+      "index": 75,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m02",
+      "row_source_index": 38,
+      "seat": 1,
+      "seed": 1273808234825371,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Musketeer",
+          "Archers",
+          "Fireball",
+          "Cannon",
+          "MiniPekka",
+          "Giant",
+          "Valkyrie"
+        ],
+        [
+          "Fireball",
+          "Archers",
+          "MiniPekka",
+          "Arrows",
+          "Minions",
+          "Musketeer",
+          "Giant",
+          "Knight"
+        ]
+      ],
+      "index": 76,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 4,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s15-m01",
+      "row_source_index": 40,
+      "seat": 0,
+      "seed": 1273808234825372,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "Firecracker",
+          "Musketeer",
+          "MiniPekka",
+          "Log",
+          "HogRider",
+          "Knight",
+          "Cannon"
+        ],
+        [
+          "MiniPekka",
+          "Giant",
+          "Musketeer",
+          "Valkyrie",
+          "Cannon",
+          "Archers",
+          "Fireball",
+          "Minions"
+        ]
+      ],
+      "index": 77,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Cannon": 6,
+            "Fireball": 4,
+            "Firecracker": 5,
+            "HogRider": 5,
+            "Knight": 5,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m01",
+      "row_source_index": 23,
+      "seat": 1,
+      "seed": 1273808234825373,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "Cannon",
+          "Valkyrie",
+          "Musketeer",
+          "MiniPekka",
+          "Giant",
+          "Archers",
+          "Minions"
+        ],
+        [
+          "Arrows",
+          "Fireball",
+          "Minions",
+          "Knight",
+          "Giant",
+          "Musketeer",
+          "Archers",
+          "MiniPekka"
+        ]
+      ],
+      "index": 78,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m03",
+      "row_source_index": 47,
+      "seat": 0,
+      "seed": 1273808234825374,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Arrows",
+          "MiniPekka",
+          "Fireball",
+          "Minions",
+          "Giant",
+          "Knight",
+          "Musketeer"
+        ],
+        [
+          "Cannon",
+          "MiniPekka",
+          "Valkyrie",
+          "Giant",
+          "Fireball",
+          "Archers",
+          "Musketeer",
+          "Minions"
+        ]
+      ],
+      "index": 79,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 4,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s23-m03",
+      "row_source_index": 13,
+      "seat": 1,
+      "seed": 1273808234825375,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Valkyrie",
+          "Fireball",
+          "Archers",
+          "MiniPekka",
+          "Cannon",
+          "Minions",
+          "Giant"
+        ],
+        [
+          "Fireball",
+          "Minions",
+          "GoblinHut",
+          "Archers",
+          "MiniPekka",
+          "Musketeer",
+          "Giant",
+          "Knight"
+        ]
+      ],
+      "index": 80,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "GoblinHut": 5,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s22-m01",
+      "row_source_index": 19,
+      "seat": 0,
+      "seed": 1273808234825376,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "HogRider",
+          "MiniPekka",
+          "Firecracker",
+          "Log",
+          "Cannon",
+          "Musketeer",
+          "Knight",
+          "Fireball"
+        ],
+        [
+          "Minions",
+          "Musketeer",
+          "Fireball",
+          "Archers",
+          "Cannon",
+          "Giant",
+          "Valkyrie",
+          "MiniPekka"
+        ]
+      ],
+      "index": 81,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Cannon": 5,
+            "Fireball": 4,
+            "Firecracker": 5,
+            "HogRider": 4,
+            "Knight": 5,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m01",
+      "row_source_index": 23,
+      "seat": 1,
+      "seed": 1273808234825377,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Giant",
+          "MiniPekka",
+          "Fireball",
+          "Minions",
+          "Musketeer",
+          "Cannon",
+          "Valkyrie"
+        ],
+        [
+          "Minions",
+          "Knight",
+          "Archers",
+          "Musketeer",
+          "Giant",
+          "MiniPekka",
+          "Fireball",
+          "Arrows"
+        ]
+      ],
+      "index": 82,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s25-m02",
+      "row_source_index": 6,
+      "seat": 0,
+      "seed": 1273808234825378,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "MiniPekka",
+          "Giant",
+          "Arrows",
+          "Fireball",
+          "Knight",
+          "Musketeer",
+          "Archers"
+        ],
+        [
+          "Minions",
+          "Musketeer",
+          "MiniPekka",
+          "Giant",
+          "Cannon",
+          "Archers",
+          "Fireball",
+          "Valkyrie"
+        ]
+      ],
+      "index": 83,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 3
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m02",
+      "row_source_index": 38,
+      "seat": 1,
+      "seed": 1273808234825379,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Fireball",
+          "Valkyrie",
+          "Cannon",
+          "Minions",
+          "MiniPekka",
+          "Giant",
+          "Archers"
+        ],
+        [
+          "Arrows",
+          "Musketeer",
+          "Minions",
+          "MiniPekka",
+          "Giant",
+          "Fireball",
+          "Knight",
+          "Archers"
+        ]
+      ],
+      "index": 84,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s23-m01",
+      "row_source_index": 15,
+      "seat": 0,
+      "seed": 1273808234825380,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Knight",
+          "Fireball",
+          "MiniPekka",
+          "Minions",
+          "Arrows",
+          "Giant",
+          "Archers",
+          "Musketeer"
+        ],
+        [
+          "Cannon",
+          "Archers",
+          "Valkyrie",
+          "Musketeer",
+          "MiniPekka",
+          "Fireball",
+          "Minions",
+          "Giant"
+        ]
+      ],
+      "index": 85,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m02",
+      "row_source_index": 10,
+      "seat": 1,
+      "seed": 1273808234825381,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Minions",
+          "Cannon",
+          "Valkyrie",
+          "Archers",
+          "Giant",
+          "Fireball",
+          "MiniPekka"
+        ],
+        [
+          "Valkyrie",
+          "GoblinHut",
+          "ElectroSpirit",
+          "BarbLog",
+          "Wizard",
+          "Skeletons",
+          "Lightning",
+          "RoyalHogs"
+        ]
+      ],
+      "index": 86,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "BarbLog": 6,
+            "ElectroSpirit": 4,
+            "GoblinHut": 4,
+            "Lightning": 6,
+            "RoyalHogs": 4,
+            "Skeletons": 6,
+            "Valkyrie": 4,
+            "Wizard": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s11-m01",
+      "row_source_index": 53,
+      "seat": 0,
+      "seed": 1273808234825382,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "MiniPekka",
+          "Giant",
+          "Musketeer",
+          "Arrows",
+          "Knight",
+          "Fireball",
+          "Archers"
+        ],
+        [
+          "Archers",
+          "Giant",
+          "Fireball",
+          "Valkyrie",
+          "Musketeer",
+          "Minions",
+          "MiniPekka",
+          "Cannon"
+        ]
+      ],
+      "index": 87,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m03",
+      "row_source_index": 1,
+      "seat": 1,
+      "seed": 1273808234825383,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "Valkyrie",
+          "Giant",
+          "Archers",
+          "Cannon",
+          "Minions",
+          "MiniPekka",
+          "Musketeer"
+        ],
+        [
+          "Fireball",
+          "MiniPekka",
+          "Archers",
+          "Giant",
+          "Knight",
+          "Minions",
+          "Arrows",
+          "Musketeer"
+        ]
+      ],
+      "index": 88,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 4,
+            "Arrows": 6,
+            "Fireball": 5,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s15-m01",
+      "row_source_index": 40,
+      "seat": 0,
+      "seed": 1273808234825384,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Giant",
+          "MiniPekka",
+          "Musketeer",
+          "Archers",
+          "Minions",
+          "Fireball",
+          "Knight",
+          "GoblinHut"
+        ],
+        [
+          "Valkyrie",
+          "Minions",
+          "Musketeer",
+          "Archers",
+          "Cannon",
+          "MiniPekka",
+          "Fireball",
+          "Giant"
+        ]
+      ],
+      "index": 89,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 4,
+            "Giant": 5,
+            "GoblinHut": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m01",
+      "row_source_index": 39,
+      "seat": 1,
+      "seed": 1273808234825385,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Musketeer",
+          "Giant",
+          "Fireball",
+          "Minions",
+          "MiniPekka",
+          "Cannon",
+          "Archers",
+          "Valkyrie"
+        ],
+        [
+          "MiniPekka",
+          "HogRider",
+          "Log",
+          "Cannon",
+          "Musketeer",
+          "Knight",
+          "Fireball",
+          "Firecracker"
+        ]
+      ],
+      "index": 90,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Cannon": 5,
+            "Fireball": 5,
+            "Firecracker": 5,
+            "HogRider": 5,
+            "Knight": 5,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m01",
+      "row_source_index": 23,
+      "seat": 0,
+      "seed": 1273808234825386,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Arrows",
+          "Knight",
+          "MiniPekka",
+          "Musketeer",
+          "Minions",
+          "Giant",
+          "Fireball",
+          "Archers"
+        ],
+        [
+          "Giant",
+          "Cannon",
+          "Minions",
+          "Musketeer",
+          "Valkyrie",
+          "MiniPekka",
+          "Archers",
+          "Fireball"
+        ]
+      ],
+      "index": 91,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 5,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s21-m02",
+      "row_source_index": 22,
+      "seat": 1,
+      "seed": 1273808234825387,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Cannon",
+          "Valkyrie",
+          "MiniPekka",
+          "Musketeer",
+          "Fireball",
+          "Archers",
+          "Minions",
+          "Giant"
+        ],
+        [
+          "Fireball",
+          "Knight",
+          "Archers",
+          "Musketeer",
+          "Arrows",
+          "Giant",
+          "Minions",
+          "MiniPekka"
+        ]
+      ],
+      "index": 92,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s11-m04",
+      "row_source_index": 50,
+      "seat": 0,
+      "seed": 1273808234825388,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Skeletons",
+          "IceGolem",
+          "HogRider",
+          "Log",
+          "MiniPekka",
+          "Lightning",
+          "Princess",
+          "Minions"
+        ],
+        [
+          "MiniPekka",
+          "Fireball",
+          "Valkyrie",
+          "Musketeer",
+          "Minions",
+          "Giant",
+          "Archers",
+          "Cannon"
+        ]
+      ],
+      "index": 93,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "HogRider": 4,
+            "IceGolem": 4,
+            "Lightning": 6,
+            "Log": 9,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Princess": 9,
+            "Skeletons": 6
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m01",
+      "row_source_index": 49,
+      "seat": 1,
+      "seed": 1273808234825389,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Archers",
+          "Minions",
+          "Fireball",
+          "MiniPekka",
+          "Valkyrie",
+          "Musketeer",
+          "Giant",
+          "Cannon"
+        ],
+        [
+          "Arrows",
+          "Minions",
+          "Archers",
+          "MiniPekka",
+          "Knight",
+          "Giant",
+          "Musketeer",
+          "Fireball"
+        ]
+      ],
+      "index": 94,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m02",
+      "row_source_index": 34,
+      "seat": 0,
+      "seed": 1273808234825390,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "IceSpirit",
+          "HogRider",
+          "Fireball",
+          "Cannon",
+          "Knight",
+          "Skeletons",
+          "Log",
+          "Archers"
+        ],
+        [
+          "MiniPekka",
+          "Giant",
+          "Minions",
+          "Musketeer",
+          "Valkyrie",
+          "Archers",
+          "Fireball",
+          "Cannon"
+        ]
+      ],
+      "index": 95,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Cannon": 5,
+            "Fireball": 3,
+            "HogRider": 4,
+            "IceSpirit": 5,
+            "Knight": 4,
+            "Log": 9,
+            "Skeletons": 5
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s26-m02",
+      "row_source_index": 2,
+      "seat": 1,
+      "seed": 1273808234825391,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Giant",
+          "Minions",
+          "Cannon",
+          "Musketeer",
+          "Fireball",
+          "Archers",
+          "Valkyrie"
+        ],
+        [
+          "Musketeer",
+          "Knight",
+          "MiniPekka",
+          "Archers",
+          "Arrows",
+          "Minions",
+          "Fireball",
+          "Giant"
+        ]
+      ],
+      "index": 96,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 6,
+            "MiniPekka": 3,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s18-m01",
+      "row_source_index": 35,
+      "seat": 0,
+      "seed": 1273808234825392,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Minions",
+          "Fireball",
+          "MiniPekka",
+          "Giant",
+          "GoblinHut",
+          "Musketeer",
+          "Archers",
+          "Knight"
+        ],
+        [
+          "Giant",
+          "Valkyrie",
+          "MiniPekka",
+          "Archers",
+          "Minions",
+          "Fireball",
+          "Musketeer",
+          "Cannon"
+        ]
+      ],
+      "index": 97,
+      "opponent": "R3a",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 5,
+            "Fireball": 5,
+            "Giant": 4,
+            "GoblinHut": 5,
+            "Knight": 6,
+            "MiniPekka": 4,
+            "Minions": 6,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s17-m01",
+      "row_source_index": 39,
+      "seat": 1,
+      "seed": 1273808234825393,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "MiniPekka",
+          "Fireball",
+          "Valkyrie",
+          "Cannon",
+          "Giant",
+          "Musketeer",
+          "Minions",
+          "Archers"
+        ],
+        [
+          "Fireball",
+          "Minions",
+          "Giant",
+          "MiniPekka",
+          "Arrows",
+          "Archers",
+          "Knight",
+          "Musketeer"
+        ]
+      ],
+      "index": 98,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          },
+          {
+            "Archers": 5,
+            "Arrows": 6,
+            "Fireball": 4,
+            "Giant": 4,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s12-m03",
+      "row_source_index": 47,
+      "seat": 0,
+      "seed": 1273808234825394,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    },
+    {
+      "decks": [
+        [
+          "Fireball",
+          "MiniPekka",
+          "Musketeer",
+          "Giant",
+          "Knight",
+          "Minions",
+          "Archers",
+          "Arrows"
+        ],
+        [
+          "Minions",
+          "Cannon",
+          "MiniPekka",
+          "Musketeer",
+          "Valkyrie",
+          "Archers",
+          "Giant",
+          "Fireball"
+        ]
+      ],
+      "index": 99,
+      "opponent": "v1",
+      "profile": {
+        "cards": [
+          {
+            "Archers": 6,
+            "Arrows": 5,
+            "Fireball": 4,
+            "Giant": 5,
+            "Knight": 5,
+            "MiniPekka": 4,
+            "Minions": 5,
+            "Musketeer": 4
+          },
+          {
+            "Archers": 7,
+            "Cannon": 6,
+            "Fireball": 5,
+            "Giant": 6,
+            "MiniPekka": 5,
+            "Minions": 5,
+            "Musketeer": 4,
+            "Valkyrie": 5
+          }
+        ],
+        "note": "true",
+        "towers": [
+          6,
+          6
+        ]
+      },
+      "row_id": "s24-m04",
+      "row_source_index": 8,
+      "seat": 1,
+      "seed": 1273808234825395,
+      "view": {
+        "opp_tower": 6,
+        "own_levels": {
+          "Archers": 7,
+          "Cannon": 6,
+          "Fireball": 5,
+          "Giant": 6,
+          "MiniPekka": 5,
+          "Minions": 5,
+          "Musketeer": 4,
+          "Valkyrie": 5
+        },
+        "own_tower": 6
+      }
+    }
+  ],
+  "constants": {
+    "COMMON_PRIOR": [
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        49
+      ],
+      [
+        6,
+        25
+      ]
+    ],
+    "OPP_TOWER": 6,
+    "OWN_LEVELS": {
+      "Archers": 7,
+      "Arrows": 1,
+      "Cannon": 6,
+      "Fireball": 5,
+      "Giant": 6,
+      "GoblinCage": 5,
+      "GoblinHut": 5,
+      "Knight": 3,
+      "MegaMinion": 3,
+      "MiniPekka": 5,
+      "Minions": 5,
+      "Musketeer": 4,
+      "Skeletons": 5,
+      "Tombstone": 5,
+      "Valkyrie": 5
+    },
+    "OWN_TOWER": 6,
+    "RARE_OFFSET": {
+      "champion": 1,
+      "common": 0,
+      "epic": 1,
+      "legendary": 1,
+      "rare": 1
+    }
+  },
+  "created": "2026-10-16T12:31:55.285708Z",
+  "n": 100,
+  "pool": [
+    {
+      "opp_trophies": 753,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "Tombstone",
+        "MegaMinion",
+        "Giant",
+        "Fireball",
+        "Barbarians",
+        "BattleRam"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s26-m04",
+      "source_index": 0
+    },
+    {
+      "opp_trophies": 782,
+      "original_deck": [
+        "Giant",
+        "Musketeer",
+        "MegaMinion",
+        "Skeletons",
+        "MiniPekka",
+        "GoblinCage",
+        "Fireball",
+        "Arrows"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s26-m03",
+      "source_index": 1
+    },
+    {
+      "opp_trophies": 812,
+      "original_deck": [
+        "Knight",
+        "Skeletons",
+        "Bomber",
+        "MiniPekka",
+        "Cannon",
+        "Fireball",
+        "BattleRam",
+        "Archers"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Knight",
+        "Log",
+        "Skeletons"
+      ],
+      "run": "s26-m02",
+      "source_index": 2
+    },
+    {
+      "opp_trophies": 841,
+      "original_deck": [
+        "Knight",
+        "Cannon",
+        "Valkyrie",
+        "Arrows",
+        "Musketeer",
+        "Bomber",
+        "Skeletons",
+        "MiniPekka"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Arrows",
+        "Cannon",
+        "ElectroSpirit",
+        "HogRider",
+        "MiniPekka",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s26-m01",
+      "source_index": 3
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "Arrows",
+        "Bomber",
+        "MiniPekka",
+        "Skeletons",
+        "Musketeer",
+        "Cannon"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Arrows",
+        "Cannon",
+        "ElectroSpirit",
+        "HogRider",
+        "MiniPekka",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s25-m04",
+      "source_index": 4
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "Musketeer",
+        "Valkyrie",
+        "Minions",
+        "Arrows",
+        "Cannon",
+        "Skeletons"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s25-m03",
+      "source_index": 5
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Knight",
+        "MegaMinion",
+        "Archers",
+        "MiniPekka",
+        "Arrows",
+        "Fireball",
+        "GoblinCage",
+        "BattleRam"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s25-m02",
+      "source_index": 6
+    },
+    {
+      "opp_trophies": 782,
+      "original_deck": [
+        "Giant",
+        "GoblinCage",
+        "Barbarians",
+        "BattleRam",
+        "MiniPekka",
+        "Valkyrie",
+        "Cannon",
+        "MegaMinion"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "AngryBarbarians",
+        "Archers",
+        "Balloon",
+        "Giant",
+        "HogRider",
+        "MiniPekka",
+        "Valkyrie",
+        "Zap"
+      ],
+      "run": "s25-m01",
+      "source_index": 7
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Giant",
+        "Arrows",
+        "Valkyrie",
+        "Skeletons",
+        "Minions",
+        "Tombstone",
+        "Musketeer",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m04",
+      "source_index": 8
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Knight",
+        "Bomber",
+        "Tombstone",
+        "MiniPekka",
+        "Fireball",
+        "GoblinCage",
+        "Giant",
+        "Skeletons"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m03",
+      "source_index": 9
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "BattleRam",
+        "Giant",
+        "Barbarians",
+        "Tombstone",
+        "Fireball",
+        "MegaMinion"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m02",
+      "source_index": 10
+    },
+    {
+      "opp_trophies": 779,
+      "original_deck": [
+        "Archers",
+        "SpearGoblins",
+        "Giant",
+        "MiniPekka",
+        "Bomber",
+        "Goblins",
+        "Fireball",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s24-m01",
+      "source_index": 11
+    },
+    {
+      "opp_trophies": 811,
+      "original_deck": [
+        "Knight",
+        "Minions",
+        "Goblins",
+        "Archers",
+        "Valkyrie",
+        "Musketeer",
+        "SpearGoblins",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m04",
+      "source_index": 12
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Knight",
+        "Fireball",
+        "Bomber",
+        "GoblinCage",
+        "Giant",
+        "Tombstone",
+        "Skeletons",
+        "MiniPekka"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m03",
+      "source_index": 13
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "BattleRam",
+        "Archers",
+        "Barbarians",
+        "Musketeer",
+        "MegaMinion",
+        "Valkyrie"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m02",
+      "source_index": 14
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Archers",
+        "MiniPekka",
+        "Goblins",
+        "Valkyrie",
+        "Minions",
+        "Arrows",
+        "GoblinCage",
+        "Giant"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s23-m01",
+      "source_index": 15
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "GoblinHut",
+        "Archers",
+        "Musketeer",
+        "Giant",
+        "Bomber",
+        "Valkyrie",
+        "Fireball"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s22-m04",
+      "source_index": 16
+    },
+    {
+      "opp_trophies": 721,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer",
+        "Archers",
+        "Giant",
+        "Fireball",
+        "Arrows"
+      ],
+      "overlap": 8,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s22-m03",
+      "source_index": 17
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Archers",
+        "Goblins",
+        "MiniPekka",
+        "Bomber",
+        "Skeletons",
+        "Minions",
+        "SpearGoblins",
+        "Valkyrie"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "HogRider",
+        "IceGolem",
+        "Lightning",
+        "Log",
+        "MiniPekka",
+        "Minions",
+        "Princess",
+        "Skeletons"
+      ],
+      "run": "s22-m02",
+      "source_index": 18
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Goblins",
+        "GoblinHut",
+        "MiniPekka",
+        "GoblinCage",
+        "Giant",
+        "Barbarians",
+        "SpearGoblins",
+        "BattleRam"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s22-m01",
+      "source_index": 19
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Giant",
+        "Valkyrie",
+        "Bomber",
+        "MiniPekka",
+        "GoblinHut",
+        "Fireball",
+        "Barbarians",
+        "MegaMinion"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s21-m04",
+      "source_index": 20
+    },
+    {
+      "opp_trophies": 780,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "GoblinCage",
+        "Giant",
+        "Tombstone",
+        "Bomber",
+        "Skeletons",
+        "Fireball"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s21-m03",
+      "source_index": 21
+    },
+    {
+      "opp_trophies": 810,
+      "original_deck": [
+        "Knight",
+        "MiniPekka",
+        "BattleRam",
+        "Archers",
+        "Musketeer",
+        "Barbarians",
+        "MegaMinion",
+        "Valkyrie"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s21-m02",
+      "source_index": 22
+    },
+    {
+      "opp_trophies": 780,
+      "original_deck": [
+        "Knight",
+        "Musketeer",
+        "MiniPekka",
+        "BattleRam",
+        "Cannon",
+        "Bomber",
+        "Fireball",
+        "Valkyrie"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "Firecracker",
+        "HogRider",
+        "Knight",
+        "Log",
+        "MiniPekka",
+        "Musketeer"
+      ],
+      "run": "s21-m01",
+      "source_index": 23
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Knight",
+        "BattleRam",
+        "Cannon",
+        "MiniPekka",
+        "Arrows",
+        "Archers",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Arrows",
+        "Balloon",
+        "Cannon",
+        "ElectroSpirit",
+        "Knight",
+        "Lightning",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s20-m04",
+      "source_index": 24
+    },
+    {
+      "opp_trophies": 722,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "Bomber",
+        "Giant",
+        "Fireball",
+        "Archers",
+        "GoblinHut",
+        "Musketeer"
+      ],
+      "overlap": 6,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s20-m03",
+      "source_index": 25
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "Barbarians",
+        "MiniPekka",
+        "Arrows",
+        "Minions",
+        "Bomber",
+        "Archers"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s20-m02",
+      "source_index": 26
+    },
+    {
+      "opp_trophies": 720,
+      "original_deck": [
+        "Giant",
+        "Minions",
+        "GoblinHut",
+        "MiniPekka",
+        "Bomber",
+        "Fireball",
+        "SpearGoblins",
+        "Tombstone"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s20-m01",
+      "source_index": 27
+    },
+    {
+      "opp_trophies": 750,
+      "original_deck": [
+        "Knight",
+        "MegaMinion",
+        "Tombstone",
+        "Giant",
+        "BattleRam",
+        "Barbarians",
+        "MiniPekka",
+        "Fireball"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s19-m04",
+      "source_index": 28
+    },
+    {
+      "opp_trophies": 747,
+      "original_deck": [
+        "Valkyrie",
+        "Skeletons",
+        "MegaMinion",
+        "Cannon",
+        "Fireball",
+        "BattleRam",
+        "Archers",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Cannon",
+        "ElectroSpirit",
+        "Fireball",
+        "Log",
+        "RoyalHogs",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s19-m03",
+      "source_index": 29
+    },
+    {
+      "opp_trophies": 812,
+      "original_deck": [
+        "Goblins",
+        "MiniPekka",
+        "Fireball",
+        "BattleRam",
+        "Cannon",
+        "Valkyrie",
+        "Minions",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "Log",
+        "MiniPekka",
+        "Musketeer",
+        "Valkyrie",
+        "Zap"
+      ],
+      "run": "s19-m02",
+      "source_index": 30
+    },
+    {
+      "opp_trophies": 781,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "Musketeer",
+        "Valkyrie",
+        "Minions",
+        "Arrows",
+        "Cannon",
+        "Skeletons"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Musketeer",
+        "Skeletons",
+        "Valkyrie"
+      ],
+      "run": "s19-m01",
+      "source_index": 31
+    },
+    {
+      "opp_trophies": 751,
+      "original_deck": [
+        "Knight",
+        "GoblinCage",
+        "Skeletons",
+        "Bomber",
+        "Tombstone",
+        "Fireball",
+        "MiniPekka",
+        "Giant"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s18-m04",
+      "source_index": 32
+    },
+    {
+      "opp_trophies": 721,
+      "original_deck": [
+        "Goblins",
+        "MiniPekka",
+        "Barbarians",
+        "GoblinHut",
+        "SpearGoblins",
+        "Valkyrie",
+        "GoblinCage",
+        "Giant"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Goblins",
+        "Lightning",
+        "RoyalHogs",
+        "Valkyrie",
+        "Wizard"
+      ],
+      "run": "s18-m03",
+      "source_index": 33
+    },
+    {
+      "opp_trophies": 691,
+      "original_deck": [
+        "Goblins",
+        "GoblinHut",
+        "Fireball",
+        "MiniPekka",
+        "Giant",
+        "Musketeer",
+        "Arrows",
+        "SpearGoblins"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s18-m02",
+      "source_index": 34
+    },
+    {
+      "opp_trophies": 661,
+      "original_deck": [
+        "Valkyrie",
+        "Tombstone",
+        "Bomber",
+        "Arrows",
+        "SpearGoblins",
+        "MiniPekka",
+        "Musketeer",
+        "Fireball"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s18-m01",
+      "source_index": 35
+    },
+    {
+      "opp_trophies": 642,
+      "original_deck": [
+        "Goblins",
+        "Bomber",
+        "MiniPekka",
+        "GoblinHut",
+        "Fireball",
+        "Tombstone",
+        "Giant",
+        "Skeletons"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m04",
+      "source_index": 36
+    },
+    {
+      "opp_trophies": 668,
+      "original_deck": [
+        "Archers",
+        "Valkyrie",
+        "MiniPekka",
+        "GoblinCage",
+        "Musketeer",
+        "Minions",
+        "Skeletons",
+        "Arrows"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m03",
+      "source_index": 37
+    },
+    {
+      "opp_trophies": 700,
+      "original_deck": [
+        "Knight",
+        "Bomber",
+        "Barbarians",
+        "Arrows",
+        "Fireball",
+        "Valkyrie",
+        "MiniPekka",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m02",
+      "source_index": 38
+    },
+    {
+      "opp_trophies": 662,
+      "original_deck": [
+        "Knight",
+        "Valkyrie",
+        "SpearGoblins",
+        "MiniPekka",
+        "Giant",
+        "GoblinHut",
+        "Goblins",
+        "GoblinCage"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s17-m01",
+      "source_index": 39
+    },
+    {
+      "opp_trophies": 699,
+      "original_deck": [
+        "Knight",
+        "Archers",
+        "Skeletons",
+        "GoblinHut",
+        "Arrows",
+        "Giant",
+        "Musketeer",
+        "Barbarians"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s15-m01",
+      "source_index": 40
+    },
+    {
+      "opp_trophies": 719,
+      "original_deck": [
+        "Knight",
+        "Barbarians",
+        "Giant",
+        "Cannon",
+        "Goblins",
+        "Tombstone",
+        "Fireball",
+        "Arrows"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s14-m04",
+      "source_index": 41
+    },
+    {
+      "opp_trophies": 687,
+      "original_deck": [
+        "Archers",
+        "Valkyrie",
+        "MiniPekka",
+        "Bomber",
+        "Giant",
+        "Minions",
+        "Goblins",
+        "GoblinHut"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s14-m03",
+      "source_index": 42
+    },
+    {
+      "opp_trophies": 659,
+      "original_deck": [
+        "Giant",
+        "Skeletons",
+        "Tombstone",
+        "GoblinHut",
+        "Arrows",
+        "GoblinCage",
+        "SpearGoblins",
+        "Fireball"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "Berserker",
+        "ElectroSpirit",
+        "Fireball",
+        "FirespiritHut",
+        "GoblinHut",
+        "Log",
+        "RoyalHogs",
+        "Skeletons"
+      ],
+      "run": "s14-m02",
+      "source_index": 43
+    },
+    {
+      "opp_trophies": 687,
+      "original_deck": [
+        "Giant",
+        "Arrows",
+        "MiniPekka",
+        "Skeletons",
+        "Fireball",
+        "MegaMinion",
+        "GoblinCage",
+        "Musketeer"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s14-m01",
+      "source_index": 44
+    },
+    {
+      "opp_trophies": 720,
+      "original_deck": [
+        "Giant",
+        "Bomber",
+        "MiniPekka",
+        "Valkyrie",
+        "Fireball",
+        "GoblinHut",
+        "MegaMinion",
+        "Barbarians"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s13-m01",
+      "source_index": 45
+    },
+    {
+      "opp_trophies": 746,
+      "original_deck": [
+        "Knight",
+        "Minions",
+        "Valkyrie",
+        "Archers",
+        "Barbarians",
+        "Arrows",
+        "MiniPekka",
+        "Bomber"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s12-m04",
+      "source_index": 46
+    },
+    {
+      "opp_trophies": 717,
+      "original_deck": [
+        "Archers",
+        "Goblins",
+        "Valkyrie",
+        "Giant",
+        "GoblinCage",
+        "Minions",
+        "Arrows",
+        "MiniPekka"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s12-m03",
+      "source_index": 47
+    },
+    {
+      "opp_trophies": 685,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "MiniPekka",
+        "MegaMinion",
+        "Valkyrie",
+        "GoblinHut",
+        "Barbarians",
+        "Bomber"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s12-m02",
+      "source_index": 48
+    },
+    {
+      "opp_trophies": 715,
+      "original_deck": [
+        "Archers",
+        "MiniPekka",
+        "Valkyrie",
+        "Minions",
+        "SpearGoblins",
+        "Goblins",
+        "Skeletons",
+        "Bomber"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "HogRider",
+        "IceGolem",
+        "Lightning",
+        "Log",
+        "MiniPekka",
+        "Minions",
+        "Princess",
+        "Skeletons"
+      ],
+      "run": "s12-m01",
+      "source_index": 49
+    },
+    {
+      "opp_trophies": 684,
+      "original_deck": [
+        "Knight",
+        "MegaMinion",
+        "BattleRam",
+        "Tombstone",
+        "MiniPekka",
+        "Giant",
+        "Fireball",
+        "Barbarians"
+      ],
+      "overlap": 4,
+      "projected_deck": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s11-m04",
+      "source_index": 50
+    },
+    {
+      "opp_trophies": 654,
+      "original_deck": [
+        "Goblins",
+        "GoblinHut",
+        "Bomber",
+        "GoblinCage",
+        "Tombstone",
+        "SpearGoblins",
+        "Valkyrie",
+        "Skeletons"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Lightning",
+        "RoyalHogs",
+        "Skeletons",
+        "Valkyrie",
+        "Wizard"
+      ],
+      "run": "s11-m03",
+      "source_index": 51
+    },
+    {
+      "opp_trophies": 668,
+      "original_deck": [
+        "Giant",
+        "Fireball",
+        "Tombstone",
+        "GoblinHut",
+        "Musketeer",
+        "MiniPekka",
+        "Valkyrie",
+        "GoblinCage"
+      ],
+      "overlap": 5,
+      "projected_deck": [
+        "Archers",
+        "Fireball",
+        "Giant",
+        "GoblinHut",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ],
+      "run": "s11-m02",
+      "source_index": 52
+    },
+    {
+      "opp_trophies": 600,
+      "original_deck": [
+        "Goblins",
+        "Valkyrie",
+        "GoblinHut",
+        "Bomber",
+        "Skeletons",
+        "Tombstone",
+        "GoblinCage",
+        "SpearGoblins"
+      ],
+      "overlap": 3,
+      "projected_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Lightning",
+        "RoyalHogs",
+        "Skeletons",
+        "Valkyrie",
+        "Wizard"
+      ],
+      "run": "s11-m01",
+      "source_index": 53
+    }
+  ],
+  "scope": {
+    "excluded": [
+      "Clone",
+      "Earthquake",
+      "Tornado"
+    ],
+    "omitted_decks": 425,
+    "omitted_frequency": 15371,
+    "omitted_mass": 0.22154799654078985,
+    "original_decks": 2925,
+    "original_frequency": 69380,
+    "original_sha256": "98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1",
+    "restricted_sha256": "8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1",
+    "retained_decks": 2500
+  },
+  "source": "reports/bot/levels/receipts/opponent-decks-snapshot.jsonl",
+  "source_sha256": "b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440"
+}
