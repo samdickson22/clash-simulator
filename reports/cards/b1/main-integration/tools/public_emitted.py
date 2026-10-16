@@ -314,7 +314,7 @@ def bomb(R, fair, seat, card):
     from clasher.entities import Building
     py, cfg = fixture((card, 'Cannon'))
     parent = h.spawn(py, card, seat, *point(seat, 5.5, 10.5))
-    target = py._spawn_entity(Building, h.Position(*point(seat, 5.5, 11)),
+    target = py._spawn_entity(Building, h.Position(*point(seat, 5.5, 11.5)),
                               1-seat, py.card_loader.get_card('Cannon'))
     require(type(target).__name__ == 'Building' and target.entity_kind == 1,
             'bomb target must be an actual stationary building')

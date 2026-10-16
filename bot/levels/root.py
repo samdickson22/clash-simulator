@@ -35,6 +35,23 @@ SKIP_TOP = {'hp', 'x', 'y', 'id', 'owner', 'target', 'alive', 'facing', 'birth',
             'deploy', 'stagger', 'cooldown', 'aim', 'shot_target', 'active', 'tunnel_origin', 'tunnel_destination',
             'death_travel', 'mount', 'rider_rank'}
 PUBLIC_LEVEL_CLONE_CARDS = frozenset({'GoblinGiant', 'ThreeMusketeers', 'BattleHealer'})
+BATTLE_HEALER_PULSES = frozenset({'BattleHealerSpawnHeal', 'BattleHealerHeal'})
+
+
+def public_carrier_identity(obj):
+    """Existing spell key, or B1 pulse's explicit static public identity.
+
+    HealPulse exports have no spell_name. Both healer pulses also share the
+    empty stats name, so their declared area identities must distinguish the
+    level payloads. Keep every other carrier's existing selection policy.
+    """
+    spell = obj.get('spell_name', '')
+    if spell or obj.get('class') != 'HealPulse':
+        return spell
+    for namespace, names in obj.get('public_identity', ()):
+        if namespace == 'area_effect' and names and names[0] in BATTLE_HEALER_PULSES:
+            return names[0]
+    return ''
 
 
 def tower_stat(name, field, level):
@@ -47,14 +64,15 @@ def tower_stat(name, field, level):
 
 
 def _templates(obj, out, card):
-    """(stats name, class, public spell) -> template, tagged with its card.
+    """(stats name, class, public carrier identity) -> template and card.
 
     Heal pulses share an empty mechanical stats name/class but have different
-    public spell identities and payloads. Keep both rather than first-wins.
+    declared public area identities and payloads. Keep both, without adding a
+    mechanical spell_name field that the exporter does not supply.
     """
     if isinstance(obj, dict):
         if 'class' in obj and 'stats' in obj:
-            out.setdefault((obj['stats']['name'], obj['class'], obj.get('spell_name', '')), (card, obj))
+            out.setdefault((obj['stats']['name'], obj['class'], public_carrier_identity(obj)), (card, obj))
         for k, v in obj.items():
             if k != 'stats':
                 _templates(v, out, card)
@@ -115,8 +133,8 @@ class ExactLevelRoot:
         return self._producers
 
     def body_card(self, name, owner, seat, deck, spell=None):
-        # Spell carriers share the empty stats name. Their public template's
-        # spell_name identifies the actual producing card without hidden truth.
+        # Empty-name carriers use their existing spell key or scoped declared
+        # public pulse identity, never hidden emission/cast provenance.
         if spell:
             card = spell.split(':', 1)[1] if spell.startswith('level') and ':' in spell else spell
             if card not in self.R.config['cards']:
@@ -226,7 +244,8 @@ class ExactLevelRoot:
             if name in TOWERS:
                 self.tower(e, self.towers[0 if owner == seat else 1])
             else:
-                card = self.body_card(name, owner, seat, decks[owner], spell=e.get('spell_name'))
+                identity = public_carrier_identity(e)
+                card = self.body_card(name, owner, seat, decks[owner], spell=identity)
                 level = self.level(seat, owner, card) if card else 11
                 if card is None:
                     self.stats['unmapped'] += 1
@@ -234,7 +253,7 @@ class ExactLevelRoot:
                 elif level != 11:
                     if self.lc.entry(card, level) is None:
                         raise ValueError(f'no exact level export for root body {name} from {card} L{level}')
-                    d = self.body_delta(card, level, name, e['class'], e.get('spell_name', ''))
+                    d = self.body_delta(card, level, name, e['class'], identity)
                     if d is None:
                         raise ValueError(f'no matching exact body template for {name}/{e["class"]} from {card} L{level}')
                     sd, td = d

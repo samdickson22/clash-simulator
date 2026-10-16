@@ -285,10 +285,12 @@ class LevelConfigTests(unittest.TestCase):
 
     def test_healer_same_class_empty_names_have_distinct_public_delta_keys(self):
         cls, collect = self.root_class()
-        pulse = lambda spell, heal: {'class':'HealPulse', 'spell_name':spell,
-                                   'stats':{'name':'', 'load':0}, 'scope':{'heal_per_tick':heal}}
-        a = pulse('BattleHealerSpawnHeal', 5)
-        b = pulse('BattleHealerHeal', 10)
+        # Frozen actual run03 exports, not a synthetic spell_name field that
+        # the exporter never writes for HealPulse.
+        fixture = json.loads((REPO / 'reports/cards/runtime/fixtures/b1-public-heal-pulses-run03.json').read_text())
+        a, b = (fixture['levels']['11']['pulses'][table] for table in ('create_areas', 'hit_areas'))
+        self.assertNotIn('spell_name', a)
+        self.assertNotIn('spell_name', b)
         templates = {}
         collect([a,b], templates, 'BattleHealer')
         self.assertEqual(len(templates), 2)
@@ -298,13 +300,38 @@ class LevelConfigTests(unittest.TestCase):
         root._producers = None
         self.assertEqual(root.body_card('', 0, 0, {'BattleHealer'}, spell='BattleHealerHeal'), 'BattleHealer')
         e11 = {'card':{}, 'tables':{'create_areas':{'BattleHealer':a}, 'hit_areas':{'BattleHealer':b}}}
-        e9 = copy.deepcopy(e11)
-        e9['tables']['create_areas']['BattleHealer']['scope']['heal_per_tick'] = 3
-        e9['tables']['hit_areas']['BattleHealer']['scope']['heal_per_tick'] = 7
+        e9 = {'card':{}, 'tables':{table:{'BattleHealer':fixture['levels']['9']['pulses'][table]}
+                                 for table in ('create_areas','hit_areas')}}
         root.lc = SimpleNamespace(entry=lambda card, lv: e11 if lv == 11 else e9)
         root._delta = {}
-        self.assertEqual(root.body_delta('BattleHealer', 9, '', 'HealPulse', 'BattleHealerSpawnHeal')[1]['scope']['heal_per_tick'], 3)
-        self.assertEqual(root.body_delta('BattleHealer', 9, '', 'HealPulse', 'BattleHealerHeal')[1]['scope']['heal_per_tick'], 7)
+        self.assertEqual(root.body_delta('BattleHealer', 9, '', 'HealPulse', 'BattleHealerSpawnHeal')[1]['scope']['heal_per_tick'], 41)
+        self.assertEqual(root.body_delta('BattleHealer', 9, '', 'HealPulse', 'BattleHealerHeal')[1]['scope']['heal_per_tick'], 21)
+        self.assertEqual(root.body_card('', 0, 0, {'BattleHealer','Zap'}, spell='BattleHealerSpawnHeal'), 'BattleHealer')
+
+    def test_public_pulse_selection_preserves_existing_carriers_and_no_metadata_mutation(self):
+        tree = ast.parse((REPO / 'bot/levels/root.py').read_text())
+        tree.body = [n for n in tree.body if isinstance(n, (ast.Assign,ast.FunctionDef)) and
+                     (not isinstance(n,ast.FunctionDef) or n.name == 'public_carrier_identity')]
+        ns = {}
+        exec(compile(tree,'<production-carrier-identity>','exec'),ns)
+        identify = ns['public_carrier_identity']
+        fixtures = [dict(**{'class':'HealPulse'}, public_identity=[['area_effect',['HealSpiritHeal']]]),
+                    dict(**{'class':'AreaEffect'}, public_identity=[['area_effect',['BattleHealerHeal']]]),
+                    dict(**{'class':'HealPulse'}, spell_name='level9:Poison',public_identity=[['area_effect',['BattleHealerHeal']]])]
+        before = copy.deepcopy(fixtures)
+        self.assertEqual([identify(e) for e in fixtures], ['', '', 'level9:Poison'])
+        self.assertEqual(fixtures, before)
+
+    def test_probe_keeps_unsupported_clone_spell11_with_level9_bodies(self):
+        fixture = json.loads((REPO / 'reports/cards/runtime/fixtures/b1-public-heal-pulses-run03.json').read_text())
+        self.assertEqual(fixture['levels']['9']['errors']['Clone'], "ValueError('Clone level 9 inheritance is not implemented')")
+        tree = ast.parse((REPO / 'reports/cards/runtime/tools/probe_b1_public_root.py').read_text())
+        fn = next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name == 'level_case')
+        expr = next(n.value for n in fn.body if isinstance(n,ast.Assign) and
+                    any(isinstance(t,ast.Name) and t.id == 'levels' for t in n.targets))
+        levels = eval(compile(ast.Expression(expr),'<actual-probe-level-policy>','eval'),
+                      {'cards':('Clone','GoblinGiant','ThreeMusketeers','BattleHealer'), 'level':9})
+        self.assertEqual(levels, {'Clone':11,'GoblinGiant':9,'ThreeMusketeers':9,'BattleHealer':9})
 
     def test_healer_pulses_qualified_and_cache_binds_config(self):
         from bot.levels.configs import SIDE, LevelConfigs, _qualify
