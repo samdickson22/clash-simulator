@@ -71,10 +71,11 @@ class SimOrigins:
         return bool(getattr(entity, '_underground_deployment', False)
                     or getattr(entity, '_stealth_until', 0) > tick * 50)
 
-    def activate_abilities(self):
-        """Deterministic augmentation of play_match's ordinary card-only loop."""
+    def activate_abilities(self, idle=lambda owner: True):
+        """Deterministic augmentation of play_match's ordinary card-only loop. An ability spends elixir, so it fires
+        only for a seat whose bot holds no reserved (pending) card command: `idle(owner)`."""
         for owner in (0, 1):
-            if not self.b.can_activate_champion_ability(owner):
+            if not idle(owner) or not self.b.can_activate_champion_ability(owner):
                 continue
             entity, mechanic = self.b._champion_ability_mechanic(owner)
             if self.b.activate_champion_ability(owner):

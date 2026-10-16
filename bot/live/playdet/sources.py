@@ -109,8 +109,17 @@ def sim_source(rt, index, seed, emit, max_ticks=6001, players=('v1', 'scripted-p
     from bot.players.base import PublicView
     from fair_player import observe
     import stage2_matches
+    from clasher.analysis.loss_review import delay_fixes
 
     decks = sim_decks(rt, index, seed)
+    # play_match's per-seat command queues (created in seat order): an ability must not spend elixir the bot has
+    # reserved for a pending card command (own_packet raises 'reservations exceed physical elixir')
+    queues = []
+
+    class Queue(delay_fixes.CommandQueue):
+        def __init__(self, *args, **kw):
+            super().__init__(*args, **kw)
+            queues.append(self)
     original_battle = stage2_matches.battle
     captured = {}
     synth = SynthPerception(rt)
@@ -154,7 +163,7 @@ def sim_source(rt, index, seed, emit, max_ticks=6001, players=('v1', 'scripted-p
 
         def step_and_capture(*args, **kw):
             if abilities and b.tick >= 90 and b.tick % 20 == 0:
-                ledger.activate_abilities()
+                ledger.activate_abilities(idle=lambda owner: len(queues) == 2 and not queues[owner].pending)
             result = step(*args, **kw)
             ledger.observe_abilities()
             capture()
@@ -164,9 +173,11 @@ def sim_source(rt, index, seed, emit, max_ticks=6001, players=('v1', 'scripted-p
         capture()
         return b
 
-    with patch.object(stage2_matches, 'battle', make_battle):
+    with patch.object(stage2_matches, 'battle', make_battle), patch.object(delay_fixes, 'CommandQueue', Queue):
         result = play_match(rt, {s: make_live_player(rt, players[s]) for s in (0, 1)},
                             seed=seed, decks=decks, max_ticks=max_ticks)
+    if len(queues) != 2:
+        raise RuntimeError(f'expected play_match to create 2 command queues, saw {len(queues)}')
     ledger = captured['ledger']
     # Wall/CPU timings belong in the job manifest, never in deterministic data.
     result = {k: v for k, v in result.items() if k not in ('timing', 'cpu_seconds')}
