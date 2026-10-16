@@ -137,3 +137,5 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   Clone slides ignore bounds/terrain) → Opus B2 fixing + class audit, b2-merge gate killed, b2-merge2 to follow.
   BOT LEAD bug: c56_scripted.ranked_actions float(None) building_damage (Freeze) → Sol fix + 122-card None-stat audit +
   live16402b-r2/r1-cards2-r2 release (cards-nonestat-fix-sol-r1). main ← cards/lead merged again f75889654.
+- 07:53Z None-stat fix 43d688f85 (Freeze building_damage, 3M HP; 4 sites; 122-card probe 55,834 checks 0 exc; C56 K4L 12/12)
+  → live16402b-r2 / r1-cards2-r2 RELEASED 03/04/08 (receipts recomputed by lead); BOT LEAD told. Fresh Sol review running.
