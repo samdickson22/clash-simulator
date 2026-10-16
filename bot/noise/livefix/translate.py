@@ -340,6 +340,7 @@ class LiveTranslator(Translator):
         self._seen = set()
         self.tick, self._floor = None, 0
         self._prev, self._cur = [], []
+        self._board = None                   # this frame's tracking input/output for refilter()
 
     # -- bodies -------------------------------------------------------------------------------
     def body(self, name):
@@ -514,8 +515,11 @@ class LiveTranslator(Translator):
         return e
 
     def assign(self, record):
-        """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays."""
-        units, idx, mapped = [], [], []
+        """Card-level units -> [(body (token, kind) or None, facing)] via the UnitTracker; derived plays.
+        The sanitizer (`_track_frame`) runs first. Board evidence for the RevealedSet (perceived units only; once per
+        real capture) is then keyed by the tracker's RESOLVED deployment identity where it has one (`_evidence_card`),
+        and a board admission it triggers is finalised by `refilter`, like a play-triggered eviction."""
+        mapped = []
         for i, u in enumerate(record.get('units', ())):
             card = u.get('card') or u.get('cls') or u.get('class')
             if not self.cards.is_card(card):
@@ -526,60 +530,146 @@ class LiveTranslator(Translator):
                     self.stats[f'unmapped_card_unit:{card}'] += 1
                     continue
             mapped.append((i, u, card, 0 if int(u['owner']) == 0 else 1))
-        # board evidence for the RevealedSet (perceived units only; once per real frame), then the sanitizer reads
-        # the same set
+        rv = self.revealed
+        own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
+        # the tracker state before this frame: refilter() re-runs the frame from it if the set changes in this frame
+        snap = self.tracker.snapshot() if self.sanitize and rv.evict else None
+        assigned, plays, ident, drops = self._track_frame(record, mapped, own)
+        self.stats.update(drops)
+        self._board = dict(version=rv.version, version0=rv.version, snap=snap, mapped=mapped, own=own,
+                           plays=list(plays), drops=drops, assigned=assigned)
         seen = {}
-        for _, u, c, o in mapped:
+        for i, u, c, o in mapped:
             if o == 1:
-                seen.setdefault(c, (float(u['x']), float(u['y'])))
-        for card in self.revealed.observe_board(record['tick'], seen, frame_identity(record),
-                                                bool(record.get('_synthetic'))):
+                seen.setdefault(self._evidence_card(c, ident.get(i)), (float(u['x']), float(u['y'])))
+        for card in rv.observe_board(record['tick'], seen, frame_identity(record), bool(record.get('_synthetic'))):
             self._admit(card, record['tick'], None, None, via_board=True)
-        self._board = (self.revealed.version, mapped, set())     # refilter() input if a play evicts later on
+        return assigned, plays
+
+    def _strict(self):
+        """The set is full: an opponent unit must belong to a member (else any card is allowed)."""
+        rv = self.revealed
+        return len(rv.members()) >= rv.cap
+
+    def _allowed_bodies(self):
+        """Every body a member card can put on the board (main bodies, production and death children)."""
+        out = set()
+        for m in self.revealed.members():
+            out |= self.cards.bodies_of(m)
+        return out
+
+    def _evidence_card(self, label, ident):
+        """The card a perceived opponent unit is evidence for: the resolved card of the deployment its track belongs
+        to (a play the tracker emitted) when that is a member or the raw label is not allowed (15 'Skeletons' labels
+        of a SkeletonArmy deployment are SkeletonArmy evidence), else the raw label."""
+        c = ident.card if ident is not None and ident.state == 'played' else None
+        if c and c != label and (c in self.revealed.members() or not self.revealed.allows(label)):
+            self.stats['board_evidence_resolved'] += 1
+            return c
+        return label
+
+    def _track_frame(self, record, mapped, own):
+        """Sanitize this frame's units against the current set, give the kept ones to the tracker (one batch), and
+        validate the bodies it assigns. -> (assigned, plays, {unit index: tracker Identity}, drop counters).
+        Opponent units, when the set is full (bot/live/revealed.py):
+          kept   if the label is a member card (board_card_ok), or the tracker resolves the unit to a track of a
+                 deployment of a member card (a misread label of a known deployment), or every body the label's card
+                 can put down is a body of a member card (a member's next deployment read with a sibling label);
+          then   dropped if the tracker gives it a body no member card has (a track of an evicted card, a relabel).
+        Own units: our own deck. Nothing is dropped while the set is not full, so a clean channel is unchanged."""
+        tick, rv, s = record['tick'], self.revealed, Counter()
+        strict = self.sanitize and self._strict()
+        ident, bodies = {}, None
+        if strict:
+            bad = [k for k, (i, u, c, o) in enumerate(mapped) if o == 1 and not rv.allows(c)]
+            if bad:
+                res = self.tracker.resolve([(c, o, float(u['x']), float(u['y']), u.get('score'))
+                                            for i, u, c, o in mapped], tick)
+                ident = {mapped[k][0]: res[k] for k in bad if res[k] is not None}
+                bodies = self._allowed_bodies()
+        units, idx, owners, dropped = [], [], [], set()
         for i, u, card, owner in mapped:
-            if self.sanitize and not self.board_card_ok(card, owner):
-                self._board[2].add(i)
+            if self.sanitize and not self._unit_ok(card, owner, ident.get(i), bodies, s):
+                dropped.add(i)
                 continue
             units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
-        own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
-        got, plays = self.tracker.update(record['tick'], units, own)
+            owners.append((owner, card))
+        got, plays = self.tracker.update(tick, units, own)
+        tracks = list(getattr(self.tracker, 'last_tracks', ()) or [None]*len(idx))
         assigned = [(None, (0., 0.))]*len(record.get('units', ()))
-        for i, a in zip(idx, got):
+        if strict:
+            bodies = self._allowed_bodies() if bodies is None else bodies
+        for i, a, (owner, card), tid in zip(idx, got, owners, tracks):
+            if strict and owner == 1 and a[0] is not None and a[0] not in bodies:
+                s[f'board_body_dropped:{card}'] += 1
+                s[f'board_dropped:1:{card}'] += 1
+                s['board_dropped'] += 1
+                continue
             assigned[i] = a
-        return assigned, plays
+            if owner == 1 and tid is not None:
+                ident[i] = self.tracker.identity(tid)
+        return assigned, plays, ident, s
+
+    def _unit_ok(self, card, owner, ident, bodies, s):
+        if owner == 0 or self.revealed.allows(card):
+            return self.board_card_ok(card, owner, s)
+        if ident is not None and ident.state == 'played' and ident.card in self.revealed.members():
+            s['board_kept_by_identity'] += 1
+            return True
+        b = self.cards.bodies_of(card)
+        if bodies is not None and b and b <= bodies:
+            s['board_kept_by_body'] += 1
+            return True
+        s[f'board_dropped:{owner}:{card}'] += 1
+        s['board_dropped'] += 1
+        return False
 
     def refilter(self, record):
         """Finalise this frame's board filtering against the revealed set after ALL of its admissions: a play in
-        accept_events may evict a card W for X after the sanitizer ran (assign), so the packet would keep W's units
-        and miss X's. W's units are dropped; X's units, dropped by the sanitizer and so never given to the tracker,
-        get the tracker's body choice for a new unit (read-only: the tracker does not take them twice) with an unknown
-        facing. The board_dropped counters are corrected, so each unit is counted once, by its final decision."""
-        version, mapped, dropped = self._board
-        if not self.sanitize or version == self.revealed.version:
+        accept_events, or the board evidence itself, may evict a card W for X after the sanitizer ran, so the packet
+        would keep W's units and miss X's. The tracker is restored to its state before this frame, W's tracks are
+        forgotten (a later unit at their place is a new body, never W's), and the frame is tracked again as ONE batch
+        with the final set: X's units get their deployment's composition (GoblinGang: goblins and spear goblins),
+        nothing is counted twice, and the drop counters are those of the final decisions. A play the second pass
+        emits that the first did not is accepted now."""
+        b, rv = self._board, self.revealed
+        if b is None:
             return
-        assigned = list(record['_assigned'])
-        s = self.stats
-        for i, u, card, owner in mapped:
-            if owner != 1:
-                continue
-            ok = self.revealed.allows(card)
-            if i not in dropped and not ok:
-                assigned[i] = (None, (0., 0.))
-                s[f'board_dropped:1:{card}'] += 1
-                s['board_dropped'] += 1
-                s['board_refilter_dropped'] += 1
-            elif i in dropped and ok:
-                body, _ = self.tracker._body(card, 1, float(u['x']), float(u['y']), record['tick'])
-                if body is None:
-                    continue
-                assigned[i] = (body, (0., 0.))
-                s[f'board_dropped:1:{card}'] -= 1
-                s['board_dropped'] -= 1
-                s['board_refilter_kept'] += 1
-        record['_assigned'] = assigned
+        for _ in range(3):
+            if b['version'] == rv.version:
+                return
+            if b['snap'] is None:          # no sanitizer: the units stay; only the evicted cards' tracks go
+                for w in rv.evictions[b['version']:]:
+                    self.stats['tracks_forgotten'] += self.tracker.forget_card(1, w)
+                b['version'] = rv.version
+                return
+            self.tracker.restore(b['snap'])
+            for w in rv.evictions[b['version0']:]:
+                self.stats['tracks_forgotten'] += self.tracker.forget_card(1, w)
+            version = rv.version
+            assigned, plays, _, drops = self._track_frame(record, b['mapped'], b['own'])
+            pairs = list(zip(b['assigned'], assigned))
+            self.stats.subtract(b['drops'])
+            self.stats.update(drops)
+            self.stats['board_refilter_kept'] += sum(x[0] is None and y[0] is not None for x, y in pairs)
+            self.stats['board_refilter_dropped'] += sum(x[0] is not None and y[0] is None for x, y in pairs)
+            self.stats['board_refilter'] += 1
+            record['_assigned'] = assigned
+            new = [p for p in plays if p not in b['plays']]
+            self.stats['board_refilter_play_lost'] += sum(1 for p in b['plays'] if p not in plays)
+            b.update(version=version, plays=list(plays), drops=drops, assigned=assigned)
+            ev = []
+            for owner, card, x, y, tick in new:
+                if owner == 1 and self.plays_from == 'births':
+                    self.derived_plays.append((owner, card, x, y, tick))
+                    ev.append(dict(owner=1, card=card, x=x, y=y, tick=tick, derived=True))
+            if ev:
+                self.stats['board_refilter_play_new'] += len(ev)
+                self.accept_events(dict(record, events=ev))
+        self.stats['board_refilter_unsettled'] += 1
 
-    def board_card_ok(self, card, owner):
+    def board_card_ok(self, card, owner, stats=None):
         """Card-consistency guard (the deck rule; fair information): an on-board unit must be a card its owner can
         have. Own units: our own 8-card deck (exact). Opponent units: a card of the RevealedSet (its accepted plays,
         or board-admitted cards), or any card while it holds fewer than 8 (bot/live/revealed.py). Anything else is
@@ -588,16 +678,17 @@ class LiveTranslator(Translator):
         card, so a flip would put a phantom enemy where our own unit stands. A one-frame misread of a tracked unit
         leaves that track alive for `ttl` ticks. Without this, an off-deck unit reaches the search root with no
         entry in a deck-card config (lopp_fast 'fc') and the native panics (c56.rs electro_land, Electro Spirit).
-        Reads only our deck and the accepted public plays."""
+        Reads only our deck and the accepted public plays. `stats`: the counter to count into (default self.stats)."""
+        s = self.stats if stats is None else stats
         if owner == 0:
             ok = card in self.own_tracker.deck
         else:
             ok = self.revealed.allows(card)
             if ok and card not in self.revealed.members():
-                self.stats['board_unrevealed_opp_kept'] += 1
+                s['board_unrevealed_opp_kept'] += 1
         if not ok:
-            self.stats[f'board_dropped:{owner}:{card}'] += 1
-            self.stats['board_dropped'] += 1
+            s[f'board_dropped:{owner}:{card}'] += 1
+            s['board_dropped'] += 1
         return ok
 
     def accept_events(self, record):

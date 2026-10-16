@@ -356,3 +356,92 @@ over 12 catch-up polls, so one Giant sighting became 11 board records and evicte
 - Smoke smoke-r5: `AUD:PERCRe2b10-emp-sr1u50:LIVED-K4L-R-gs-rw-fc` vs R3a and v1, HEADLINE cases 300–319, 40 games.
   0 errors, 0 exceptions, perc_errors 0, 47 evictions in 26 games, 1–2 true unit-records dropped per game.
 - Patch: reports/bot/noise-robust/revealed-set.patch, sha256 b1d81add72f82966fce1800437c290512d40bf231ddd2b67d7ba84def4dca7b1.
+
+## 10. Review round 2: six findings fixed (correctness only; the strength verdict stands)
+
+A second independent review reproduced six defects in the r5 patch, some only in combination with the LIVE LEAD's
+multibody births.py. All six are fixed in bot/noise/livefix; bot/live on main is untouched. Phase A (findings 2 and 4)
+does not need multibody and was committed first (574e4341). Phase B (findings 1, 3, 5 and 6) makes the revealed set
+read the births tracker's RESOLVED identities through its public API. It is built and verified against the
+LIVE LEAD's frozen multibody-r2 candidate (05:/mpac/sdicks02/scratch/live-review/multibody-r2/multibody.patch, sha256
+a5667ac9dde9bd4c5e9fb32bba7b08ff59fac72ec52935106474cd8670037a34; births API in its MULTIBODY.md, sha256 911c125d…).
+**The patch needs that births.py: multibody merges first.**
+
+**2. A delayed real play duplicated a board inference.**
+- Case: Giant is inferred at 2480; its real play (execution tick 2500) arrives in the record of 2605 and is retimed
+  to 2600. That is 120 ticks after the inference, so it is not a duplicate for the resync planner, which invents up to
+  four plays (and their elixir).
+- Fix: a perceived opponent play of a board-admitted card is matched to its inferred play on its OWN time and place,
+  BEFORE the floor retiming (`RevealedSet.matches_board_play`: within `dup_ticks`, and within 4 tiles unless the
+  inferred place is the default). It replaces the inference (`ResyncMixin._reconcile_board`): the history is rebuilt
+  with the perceived play at 2500 and without the inferred row, and the `board_plays` entry goes. If the rebuilt
+  history cannot hold the play, the old one is restored.
+- Tests: `test_delayed_real_play_replaces_the_board_inference`, plus the guard `test_a_later_real_play_is_not_the_board_inference`.
+
+**4. Frame identity was the game tick.**
+- Cases: a second real capture with the same tick but another timestamp was dropped. The replay's legacy
+  `_hud_frame` catch-up repeated one capture under 12 poll ticks with no tag, so it gave 12 evidence records and an
+  eviction.
+- Fix: `translate.frame_identity` is the supplied `_frame` (else `frame_id`/`seq`), else `timestamp_ms`, else the
+  tick. `observe_board` skips synthetic polls and any identity among the last 64. LiveSession and `_hud_frame` (now in
+  the patch as bot/live/real_replay.py) tag their catch-ups `_synthetic` with the capture's identity.
+- Tests: `test_same_tick_captures_are_distinct_evidence`, `test_untagged_catch_up_repeats_are_one_capture`,
+  `test_replay_hud_catch_up_is_tagged`.
+
+**1 and 3. Refilter called the tracker's `_body` per unit.**
+- Cases: with multibody, `_body` takes the family and returns three values, so a restored unit raised TypeError.
+  Even when it worked, a read-only per-unit body gave a newly admitted GoblinGang 6 × Goblin_Stab, and the restored
+  units were never tracked, so they were born again on the next frame.
+- Fix: `assign` snapshots the tracker before the frame. If the set changes in the frame (a play or a board admission
+  evicts W for X), `refilter` restores the snapshot, forgets W's tracks and re-tracks the whole frame as ONE batch with
+  the final set. A play emitted only by the second pass is accepted then. The drop counters are those of the final
+  decisions.
+- Tests:
+  - `test_same_frame_eviction_refilters_the_board` (round 1). With multibody-r1 it was the TypeError path; r2 keeps a
+    backward-compatible `_body`, so the call no longer raises, and the fixed code no longer calls `_body`.
+  - `test_refilter_tracks_restored_units`: the restored Giant is tracked, so the next frame continues it with no
+    second birth.
+  - `test_same_frame_admission_keeps_the_deployment_composition`: 3 Goblin_Stab + 3 SpearGoblin on the evicting frame
+    and the next.
+  - `test_refilter_counts_each_unit_once`: own units are counted once on a re-tracked frame.
+
+**5. Raw labels overturned a correct multibody inference.**
+- Case: 15 units labelled Skeletons resolve to a SkeletonArmy play. Once the set is full, those labels were dropped,
+  never confirmed SkeletonArmy, and their persistence evicted SkeletonArmy for Skeletons.
+- Fix: board evidence is keyed by the tracker's resolved deployment card (`_evidence_card`). That key is used when the
+  unit's track belongs to a deployment the tracker emitted as a play, and its card is a member or the raw label is not
+  allowed. When the set is full, the sanitizer keeps a unit whose label is a member, OR whose track resolves to a
+  member's deployment (`resolve`, read-only), OR whose label's bodies are all bodies of a member card (the next
+  SkeletonArmy read as Skeletons).
+- Tests: `test_resolved_skeleton_army_is_not_overturned_by_its_labels`,
+  `test_next_deployment_read_with_a_sibling_label_is_kept`, `test_misread_label_of_a_resolved_track_is_kept`.
+
+**6. Evicted tracks leaked forbidden bodies.**
+- Case: HogRider is evicted for Giant; a Giant at the HogRider's spot then matched the old track by cross-family
+  relabel and entered as a HogRider body.
+- Fix: the evicted card's tracks are forgotten (births `forget_card`). Every kept opponent body is also validated: a
+  body no member card has is dropped (`board_body_dropped`).
+- Test: `test_evicted_card_tracks_do_not_leak_bodies`.
+
+**Mutation checks** (each Phase B rule switched off on the fixed code; each one is caught):
+- no `forget_card`: the leak test fails;
+- the r5 per-unit `_body` refilter: the composition test fails (6 × Goblin_Stab);
+- raw labels: the SkeletonArmy test fails (evicted);
+- no body rule: the sibling test fails;
+- no identity rule: the misread test fails;
+- `board_card_ok` counting into `self.stats` on a re-tracked frame: the counting test fails.
+
+**Verification** (combined tree = origin/main e7beb00f7 + multibody-r2 + this patch):
+- test_revealed: 29/29 pass, as does test_multibody (77). Together that is 106 passed on 05.
+- On 574e4341's livefix + multibody-r2, all 7 Phase B tests fail. The round-1 refilter test passes there, because of
+  r2's backward-compatible `_body`. Phase A's 4 regression tests failed on 7d873ca8 (RESULTS above).
+- LIVE suite (05 full repo): patched 153 passed / 13 failed / 2 skipped vs unpatched (main + multibody-r2)
+  124/13/2, with the same 13 failures (missing runtime/student files on 05).
+- The development preliminaries ran against multibody-r1 plus a dev-only API shim (floorchk-r6pre 30/30 identical,
+  smoke-r6pre 40/40 terminal, 0 errors). They are superseded by the r2 runs below.
+- floorchk-r6 and smoke-r6 (03, tree `clasher-bot-revfix6-mb2` = this combined tree) were launched at 02:05Z. They
+  were still running at the hand-off (PROGRESS round 6); their results go here.
+- **HOLD (multibody round 3).** The r2 review found two defects in the API this fix relies on: `forget_card` keeps
+  a cached played state and the deleted members' votes, and a suppressed duplicate reports `state == 'played'`.
+  Round 3 fixes them with the same signatures. The tests are written to the documented contract, so they must be
+  re-run on round 3 before the patch is final.

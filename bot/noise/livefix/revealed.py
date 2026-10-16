@@ -37,6 +37,13 @@ the capture timestamp, else the tick; translate.frame_identity) add nothing.
 A perceived play of a board-admitted card that matches its inferred play (own execution time within `dup_ticks`,
 place within `reconcile_tiles` when known) REPLACES it (`reconciled`): the translator rebuilds the history with the
 perceived play, so a delayed detection of that deployment is not a second play.
+With the multibody births tracker (bot/live/births.py), the translator feeds this set the tracker's RESOLVED identity,
+not raw labels: a unit whose track belongs to a deployment the tracker emitted as a play of card C is board evidence for
+C (15 'Skeletons' labels of a SkeletonArmy are SkeletonArmy evidence). The board sanitizer, once the set is full,
+keeps a unit whose label is a member, or whose track resolves to a member's deployment, or whose label's bodies are all
+bodies of a member card. It then drops any unit the tracker gives a body no member card has. An evicted card's tracks
+are forgotten (`evictions`; the translator calls births' forget_card), so none of its bodies leaks through a later
+relabel.
 """
 from __future__ import annotations
 
@@ -66,6 +73,7 @@ class RevealedSet:
         self.frames = deque(maxlen=recent_frames)   # identities of the latest real captures taken as evidence
         self.reconcile_tiles = reconcile_tiles
         self.version = 0                     # +1 per eviction (membership changed by a history rewrite)
+        self.evictions = []                  # evicted cards, in order (evictions[v] made version v+1)
         self.board = Counter()               # card -> records meeting the persistence rule
         self.seen = {}                       # card -> ticks of the records with >= 1 perceived unit of it
         self.rejected = {}                   # card -> [(tick, x, y)] plays not accepted while the set was full
@@ -186,6 +194,7 @@ class RevealedSet:
             self.admitted.remove(w)
         self.board_plays = {c: p for c, p in (self.board_plays if inferred is None else inferred).items() if c != w}
         self.version += 1
+        self.evictions.append(w)
         got = self.rejected.setdefault(w, [])
         for t, px, py in removed:
             if not any(abs(t - u) <= self.dup_ticks for u, _, _ in got):

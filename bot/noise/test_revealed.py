@@ -287,7 +287,8 @@ def test_board_play_survives_a_later_eviction(rt):
 def _opp_bodies(info, rt):
     o = info.packet.observation
     names = rt.R.builder.token_names
-    return [names[int(o.entity_ids[i])] for i in np.flatnonzero(o.entity_mask) if o.entity_features[i][2] < .5]
+    return [n for n in (names[int(o.entity_ids[i])] for i in np.flatnonzero(o.entity_mask) if o.entity_features[i][2] < .5)
+            if 'Tower' not in n]
 
 
 def test_same_frame_eviction_refilters_the_board(rt):
@@ -473,3 +474,126 @@ def test_replay_hud_catch_up_is_tagged(rt):
     assert s['errors'] == 0 and s['catchup'] == 12
     assert tr.revealed.seen['Giant'] == [2465] and tr.revealed.board['Giant'] == 0
     assert tr.stats['evict'] == 0 and tr.stats['board_evidence_skipped'] == 12
+
+
+# -- review round 2 (phase B, with the multibody births tracker): resolved identities --------------------------------
+ORDER8 = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
+
+
+def _frames(rt, plays, units, until, start=100):
+    """Events-mode resync translator fed every 5 ticks: plays {tick: card}, units(tick) -> perceived units.
+    -> (translator, {tick: Information})."""
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    tr.set_own_order(OWN)
+    out = {}
+    for t in range(start, until + 1, 5):
+        out[t] = tr.information(_rec(t, units=units(t), events=[_ev(plays[p], p) for p in plays if t - 5 < p <= t]))
+        tr.resynced = False
+    return tr, out
+
+
+def _u(card, x, y):
+    return dict(card=card, owner=1, x=x, y=y, hp_frac=1., score=.8)
+
+
+def test_refilter_tracks_restored_units(rt):
+    """Multibody births (its `_body` takes the family and returns three values): a same-frame eviction re-tracks the
+    frame without the TypeError of the per-unit `_body` call, and the restored Giant unit IS tracked: the next frame
+    matches its track (no second birth)."""
+    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
+    plays[2600] = 'Giant'
+    units = lambda t: [_u('Giant', 9.5, 22.0 - .02*(t - 2600))] if t >= 2600 else []
+    tr, info = _frames(rt, plays, units, 2610)
+    assert tr.stats['evict:HogRider->Giant'] == 1 and tr.stats['board_refilter'] == 1
+    assert any('Giant' in b for b in _opp_bodies(info[2600], rt))
+    births = [t for t in tr.tracker.live if t.owner == 1]
+    assert len(births) == 1 and births[0].last == 2610 and tr.tracker.stats['births'] == 1
+
+
+def test_same_frame_admission_keeps_the_deployment_composition(rt):
+    """A GoblinGang play evicts HogRider in a frame holding its six units (all labelled GoblinGang). Re-tracked as
+    one batch, they get the card's composition: 3 goblins + 3 spear goblins (not 6 copies of one body), and the
+    next frame matches all six tracks."""
+    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
+    plays[2600] = 'GoblinGang'
+    ring = [(9.0 + .6*np.cos(a), 22.0 + .6*np.sin(a)) for a in np.linspace(0, 2*np.pi, 6, endpoint=False)]
+    units = lambda t: [_u('GoblinGang', x, y - .02*(t - 2600)) for x, y in ring] if t >= 2600 else []
+    tr, info = _frames(rt, plays, units, 2605)
+    assert tr.stats['evict:HogRider->GoblinGang'] == 1
+    for t in (2600, 2605):
+        bodies = sorted(_opp_bodies(info[t], rt))
+        assert bodies == ['Goblin_Stab']*3 + ['SpearGoblin']*3, (t, bodies)
+    assert tr.tracker.stats['births'] == 6
+
+
+def _skeleton_army(t0, n=15, life=300):
+    pts = [(9.0 + 1.6*np.cos(a), 22.0 + 1.6*np.sin(a)) for a in np.linspace(0, 2*np.pi, n, endpoint=False)]
+    return lambda t: [_u('Skeletons', x, y - .02*(t - t0)) for x, y in pts] if t0 <= t < t0 + life else []
+
+
+def test_resolved_skeleton_army_is_not_overturned_by_its_labels(rt):
+    """SkeletonArmy is the 8th card; its 15 bodies are all labelled Skeletons. The tracker resolves the deployment
+    to SkeletonArmy, so once the set is full those units are SkeletonArmy units: kept, confirming SkeletonArmy, and
+    never evidence for Skeletons. (By raw labels they were dropped, SkeletonArmy was never confirmed, and the
+    persistent 'Skeletons' records evicted it.)"""
+    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'Earthquake', 'Musketeer', 'Fireball', 'SkeletonArmy']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    tr, info = _frames(rt, plays, _skeleton_army(1600), 1950)
+    assert tr.stats['evict'] == 0 and 'SkeletonArmy' in tr.revealed.members(), dict(tr.stats)
+    assert 'Skeletons' not in tr.revealed.members() and tr.revealed.board['Skeletons'] < tr.revealed.board_need
+    assert not tr.revealed.contradicted('SkeletonArmy', 1950)
+    assert tr.stats['board_evidence_resolved'] > 0
+    assert sum(b == 'Skeleton' for b in _opp_bodies(info[1800], rt)) >= 12
+
+
+def test_next_deployment_read_with_a_sibling_label_is_kept(rt):
+    """Set full with SkeletonArmy (not Skeletons). The opponent's next SkeletonArmy, labelled Skeletons again, has no
+    track yet: its units are kept because a member card (SkeletonArmy) has every body the label can put down, and
+    the tracker resolves the new deployment."""
+    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'Earthquake', 'Musketeer', 'Fireball', 'SkeletonArmy']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    plays[3000] = 'SkeletonArmy'
+    tr, info = _frames(rt, plays, _skeleton_army(3000, life=200), 3150)
+    assert tr.stats['evict'] == 0 and tr.stats['board_kept_by_body'] > 0
+    assert sum(b == 'Skeleton' for b in _opp_bodies(info[3100], rt)) >= 12
+
+
+def test_evicted_card_tracks_do_not_leak_bodies(rt):
+    """HogRider (contradicted; seen on 2 frames only, so no persistence) is evicted for Giant at 2600 while a
+    HogRider unit stands at (4, 18). At 2605 a Giant is seen at that very spot and the HogRider is gone: the evicted
+    card's track is forgotten, so the Giant is a new Giant body, not a cross-family relabel of the HogRider track
+    (which would put a HogRider body, a card the set no longer allows, into the packet)."""
+    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
+    plays[2600] = 'Giant'
+    units = lambda t: ([_u('HogRider', 4.0, 18.0)] if 2595 <= t <= 2600 else
+                       [_u('Giant', 4.0, 18.0)] if t > 2600 else [])
+    tr, info = _frames(rt, plays, units, 2610)
+    assert tr.stats['evict:HogRider->Giant'] == 1 and tr.stats['tracks_forgotten'] >= 1
+    for t in (2605, 2610):
+        assert _opp_bodies(info[t], rt) == ['Giant'], (t, _opp_bodies(info[t], rt))
+    assert not any(t.label() == 'HogRider' for t in tr.tracker.live + tr.tracker.dead)
+    assert tr.stats['board_body_dropped:Giant'] == 0
+
+
+def test_misread_label_of_a_resolved_track_is_kept(rt):
+    """Set full with Giant (not Knight). One frame reads the walking Giant as 'Knight', a card whose bodies no member
+    has. The tracker resolves that unit to the Giant deployment's track, so it stays a Giant (by its raw label it
+    was dropped and the Giant vanished from the packet for that frame)."""
+    order = ['Zap', 'HogRider', 'Valkyrie', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Giant']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    units = lambda t: [_u('Knight' if t == 1700 else 'Giant', 9.5, 22.0 - .03*(t - 1600))] if t >= 1600 else []
+    tr, info = _frames(rt, plays, units, 1710)
+    assert _opp_bodies(info[1700], rt) == ['Giant'] and tr.stats['board_kept_by_identity'] == 1
+    assert tr.stats['board_dropped'] == 0 and tr.stats['evict'] == 0
+
+
+def test_refilter_counts_each_unit_once(rt):
+    """A frame re-tracked by refilter counts every unit's sanitizer decision once (own units included)."""
+    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
+    plays[2600] = 'Giant'
+    units = lambda t: ([_u('Giant', 9.5, 22.0), dict(card='Valkyrie', owner=0, x=9.0, y=8.0, hp_frac=1., score=.8)]
+                       if t == 2600 else [])
+    tr, _ = _frames(rt, plays, units, 2600)
+    assert tr.stats['board_refilter'] == 1 and tr.stats['board_dropped:0:Valkyrie'] == 1
+    assert tr.stats['board_dropped'] == 1 and tr.stats['board_dropped:1:Giant'] == 0

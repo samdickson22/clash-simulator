@@ -443,3 +443,50 @@ python3 $J/audsum-r4.py $J/fb2,$J/fb2-hi03,$J/fb2-hi04
   - Next: when the final multibody (with the births API) lands, rebase, swap the shim for the real API, and re-run
     the tests, the LIVE suite, floorchk and the smoke on that tree. The fallback is the latest scratch multibody at
     ~03:20Z.
+- **Phase B, rebased on multibody-r2 (02:00–02:25Z); HAND-OFF state.** This section is complete on its own.
+  - **Code** (committed with this entry): bot/noise/livefix/translate.py (`assign` / `_track_frame` / `_unit_ok` /
+    `_evidence_card` / `refilter`; `board_card_ok(stats=)`), livefix/revealed.py (`evictions`, docstring), and 8 new
+    tests in bot/noise/test_revealed.py, 29 in all. The patch `reports/bot/noise-robust/revealed-set.patch`, sha256
+    890bfe58c05d77604d34e43ac37c2101dae938b44e5c9ded531e6aac7acf512b, NEEDS the multibody births API
+    (snapshot/restore, last_tracks, resolve, identity, forget_card, bodies_of): multibody merges first. On today's
+    main births.py, the bot/noise PERCR arms and the Phase B tests fail until it lands.
+  - **Multibody used:** r2 = 05:/mpac/sdicks02/scratch/live-review/multibody-r2/multibody.patch, sha256
+    a5667ac9dde9bd4c5e9fb32bba7b08ff59fac72ec52935106474cd8670037a34 (MULTIBODY.md 911c125d…), applied on origin/main
+    e7beb00f7. The dev shim is gone.
+  - **Verified on main + r2 + patch:**
+    - test_revealed 29/29 and test_multibody 77: 106 passed.
+    - The 7 Phase B tests fail on 574e4341's livefix + r2.
+    - Mutation script: /mpac/sdicks02/jobs/clasher/bot-revfix-r2-local/mutation_checks.py. Run it from a combined tree
+      with `PYTHONPATH=.`; every rule's mutation is caught, M5 through M5b.
+    - LIVE suite: 153/13/2 patched vs 124/13/2 unpatched, with the same 13 failures.
+  - **HOLD (BOT LEAD, 02:2xZ):** the r2 review found `forget_card` keeps a cached played state and the deleted
+    members' votes, and a suppressed duplicate reports `identity().state == 'played'`. Round 3 fixes both with the
+    same signatures. Findings 5 and 6 rely on these. The tests follow the documented contract; re-run them on r3.
+  - **Running at hand-off** (03 tree `/mpac/sdicks02/repos/clasher-bot-revfix6-mb2` = 05 scratch
+    `clasher-bot-revfix5-mb2` = main e7beb00f7 + multibody-r2 + this Phase B; bot/ sha-of-shas 3412f689…, equal on both
+    hosts):
+    - floorchk-r6, PGID 2898199: 60 games, clean channel, base vs fix, HEADLINE 0–14 × R3a/v1;
+    - smoke-r6, PGID 2898256: 40 games, the fix arm under sr1u50, HEADLINE 300–319 × R3a/v1.
+    - Both run through `cpu_job.sh 9` with 8 workers, launched 02:05Z. 03 was at load ~97, with 14/60 and 0/40 games
+      done at 02:20Z.
+  - **To collect** (on 03): the pass bars are 30/30 identical hashes, Δ 0.000 and 0 restarts for floorchk, and 40/40
+    terminal games with 0 errors and 0 perc_errors for the smoke:
+    ```
+    J0=/mpac/sdicks02/jobs/clasher/bot-noise; cd $J0
+    python3 audsum-r4.py floorchk-r6 --floor
+    python3 -c "import json,glob; rs=[json.loads(l) for p in glob.glob('smoke-r6/games-*.jsonl') for l in open(p)]; a=[r.get('aud',{}) for r in rs]; print(len(rs), sum(r.get('terminal',0) for r in rs), sum('error' in r for r in rs), sum(x.get('perc_errors',0) for x in a), sum(x.get('evict',0) for x in a))"
+    ```
+    Then replace the "still running" line in RESULTS §10 with the numbers.
+  - **When multibody round 3 lands:**
+    1. Apply it on origin/main in a scratch worktree (as `clasher-bot-revfix5-mb2`), and copy in bot/noise from this
+       commit.
+    2. Run `pytest bot/noise/test_revealed.py bot/live/test_multibody.py`, the mutation script, and the LIVE suite
+       with and without `revealed-set.patch` (`python -m bot.noise.revfix --diff`).
+    3. If any bot/ file changed, rsync bot/ to a new 03 tree, then re-run floorchk and the smoke as above
+       (new dir names).
+    4. Recompute the patch sha256 and commit with
+       `/mpac/sdicks02/jobs/clasher/bot-revfix-r2-local/commit.sh MSG paths…`. It uses a temp index on origin/main
+       and the secret scan, and its tree is 05 `clasher-bot-revfix5`.
+  - **Scratch** (05; safe to delete after round 3): worktrees `clasher-bot-revfix5-mb` (r1 + shim),
+    `clasher-bot-revfix5-mb2` (r2), `clasher-bot-revfix5-mbcheck` (r2 + patch), `clasher-bot-revfix5-livecheck`;
+    /tmp/sdicks02-oldB*; 03 tree `clasher-bot-revfix6-mbr1` (r1 preliminaries).
