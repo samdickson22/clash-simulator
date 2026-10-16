@@ -7,7 +7,7 @@
 3. **P2 — Two path families cannot satisfy the new witness requirements.** [affected.py:52](/mpac/sdicks02/repos/clasher-cards-b1/reports/cards/b1/main-integration/tools/affected.py:52) requires a death witness and a later/no-death control:
    - `frozen_tombstone_death` deploys its victim in the script, but the imported helper captures `victims` before scripted deployments and never refreshes it. Its death witness therefore remains `None` in both seats.
    - `tower_shot_drill` has no scripted action or opposing setup entity to remove. The generated control retains the attacking default tower and identical setup, so it cannot establish later death.
-   
+
    Repair victim tracking and construct controls that retain the victim while suppressing the relevant killing effect.
 
 The inspected `lib.rs` carry placement otherwise matches Python: capture original live mount headings, finish synchronous combat callbacks, carry riders, then move original entities. Persistent grid/`RouteCtx`/`in_tick`, hidden-sibling filtering, mounted combat eligibility and movement exclusion remain. Mounted neighbors retain the accepted static-avoidance classification in both engines. Both selector/mount exports and main’s `public_identity`/`public_static` block survive; the compatibility changes remain present. No further actionable integration defect found in the inspected clean merges.
