@@ -75,3 +75,5 @@ BASE4 (strong-opponent replication)=1870204031157424 drawn 2026-10-16T19:31:33Z
   (lopp_time, 04 cores 40-49, 2x5) p50/p95 base 86/128 ms, res 96/137 ms, hit 0.008/0.009, 0 errors.
 - db1 (option 2) STOPPED at 103 rows for the gate; restart with 4-opponent mix (adds LIVE-K4CW-r16) via run_db.sh (resumable).
 BASE5 (B: wait/rh arms vs strong opponent)=2439740075545088 drawn 2026-10-16T19:42:25Z
+TRAIN_BASE2 (db2, rh-mode option-2 data)=3777504499689488 drawn 2026-10-16T20:02:55Z
+- 20:1xZ db2 rescaled (BOT LEAD: hosts idle): 08 cases 0-499 W40, 04 cases 500-1499 W40 (grown beyond 1000), fixed cpu_job.sh (flock, 5179f0f42) in run trees.

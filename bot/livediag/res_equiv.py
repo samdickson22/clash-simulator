@@ -8,7 +8,9 @@ Arms (each inside bot.live.player.LivePlayer with the rl5 fast tier, determinist
   E  LD-K4L-R-gs-rw                           (base twin)
   F  LD-K4L-R-gs-rw-res-rh                    (sim wrapper RecedingHorizon over the -res twin)
   G  K4L-R-gs-rw-fc-t4-p4-res-rh              (deployed reduction + tokens res, rh)
-Expected: command_sha256 A == B == C, D == E and F == G on every case (rw makes chunked/pooled values equal the serial ones).
+  H  LD-K4L-R-gs-rw-res-wint                  (sim wrapper bot/livediag/variants.Interruptible)
+  I  bot/search/interrupt.Interruptible over the deployed reduction + res (the Mac -wint package)
+Expected: command_sha256 A == B == C, D == E, F == G and H == I on every case (rw makes chunked/pooled values equal the serial ones).
 
     python -m bot.livediag.res_equiv --cases 0,1,2 --opponent R3a --base BASE
 """
@@ -17,6 +19,11 @@ from __future__ import annotations
 import argparse
 import json
 import random
+
+
+def _interrupt(rt, live):
+    from bot.search.interrupt import Interruptible
+    return Interruptible(rt, live)
 
 
 def main():
@@ -44,7 +51,8 @@ def main():
     arms = dict(A=lambda: make_variant(rt, 'LD-K4L-R-gs-rw-res'), B=lambda: twin('K4L-R-gs-rw-res'),
                 C=lambda: twin('K4L-R-gs-rw-fc-t4-p4-res'), D=lambda: twin('K4L-R-gs-rw-fc-t4-p4'),
                 E=lambda: make_variant(rt, 'LD-K4L-R-gs-rw'),
-                F=lambda: make_variant(rt, 'LD-K4L-R-gs-rw-res-rh'), G=lambda: twin('K4L-R-gs-rw-fc-t4-p4-res-rh'))
+                F=lambda: make_variant(rt, 'LD-K4L-R-gs-rw-res-rh'), G=lambda: twin('K4L-R-gs-rw-fc-t4-p4-res-rh'),
+                H=lambda: make_variant(rt, 'LD-K4L-R-gs-rw-res-wint'), I=lambda: _interrupt(rt, twin('K4L-R-gs-rw-fc-t4-p4-res')))
     out = {}
     for i in [int(x) for x in a.cases.split(',')]:
         seat = i % 2

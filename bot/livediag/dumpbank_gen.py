@@ -33,7 +33,7 @@ from bot.players.base import Decision, WAIT
 
 OPPONENTS = ('R3a', 'v1', 'rext-bc', 'LIVE-K4CW-r16')   # + strong K4C-r16 (live belief; bot lead 19:2xZ); cases written
 # before the change used i % 3 over the first three, and every row records its opponent
-PLAYER = 'LD-K4L-R-gs-rw'
+PLAYER = os.environ.get('LD_DB_PLAYER', 'LD-K4L-R-gs-rw')   # db2 (Sam 2026-10-16: holding back must be learned in rh mode): LD-K4L-R-gs-rw-rh
 
 
 WINDOW = 200
@@ -148,7 +148,7 @@ def worker(wid, idxs, out, base, k):
                                  replay_ok=f.get('root_action') == r['action'],
                                  delta_outcome=res['score'] - res2['score'],
                                  delta_score=r['dump_score'] - max(r['wait_score'], r['timed_wait_score'] or -9)))
-            row = dict(index=i, base=base, eligible=len(probe.roots), roots=rows, base_game=res,
+            row = dict(index=i, base=base, player=PLAYER, eligible=len(probe.roots), roots=rows, base_game=res,
                        seconds=round(time.time() - t0, 1))
         except Exception:
             import traceback

@@ -162,6 +162,27 @@ the Giant decks.
 - The live A/B gate (§7) passes.
 - A replication on BASE4 = 1870204031157424 (drawn 2026-10-16T19:31:33Z, 100 cases) is running.
 
+### 5e. BASE5 (2439740075545088, drawn 2026-10-16T19:42:25Z): receding horizon and interrupt vs K4C-r16 (100 paired each, 0 errors)
+
+| arm | score | Δ vs base [95% CI] | Δ vs -res | reaction p50/p90 s | Giant reaction p50 s | undefended Giant pushes | elixir at cross p50 |
+|---|---:|---|---|---|---:|---:|---:|
+| base | 0.51 | — | | 2.65 / 7.65 | 2.15 | 5.5% (3/55) | 3.30 |
+| -res | 0.55 | +0.04 [−0.09, +0.16] | — | 2.65 / 7.65 | 3.65 | 5.0% (3/60) | 4.32 |
+| -res-wint | 0.59 | +0.08 [−0.03, +0.19] | +0.04 [−0.08, +0.17] | 2.65 / 7.65 | 2.15 | 13.8% (9/65) | 3.82 |
+| -res-rh | 0.47 | −0.04 [−0.16, +0.08] | −0.08 [−0.22, +0.06] | 2.65 / 7.15 | 2.65 | 10.2% | 3.61 |
+| -rh | 0.28 | **−0.23 [−0.36, −0.10]** | | 2.65 / 6.65 | 3.15 | 10.8% | 2.88 |
+
+**§5c (-res-rh) and §5d (-res-wint) verdicts.**
+- -res-rh fails §5c.
+- -res-wint fails §5d. Its Δ vs -res point estimate (+0.04) passes, but neither the overall reaction p50 (unchanged) nor the undefended share
+  (13.8% vs 5.0%) improves. It does cut Giant reaction p50 by 1.5 s.
+- So -res stays the live treatment. Package for an override or a later A/B: macsnap/pkg-wint.
+
+**Reading.**
+- Receding horizon alone costs −0.23 against the strong opponent. With the current scorer the committed timed waits ARE the banking, so per-tick play needs a
+  learned hold-back term (option 2, now generated in -rh mode).
+- -res vs base across three fresh strong-opponent banks: +0.18 / +0.08 / +0.04 (BASE3 / 4 / 5), mean ≈ +0.10.
+
 ## 6. Handsync (tap guard, s44+) vs off (s41–s43)
 
 Tool: `bot/livediag/handsync_cmp.py` on 12 battles off vs 10 battles on; Δ is on − off with a bootstrap 95% CI over battles.
@@ -240,3 +261,11 @@ reported for a later A/B.
   each stratum, and the pooled Δ is the battle-weighted mean of the stratum Δs.
 - **Full-pool restart.** If the full-pool bundle wins its gate and goes live, the -res A/B restarts on top of it as a NEW A/B with a fresh count;
   it is never pooled across that change.
+
+### 5d. -res-wint decision rule (fixed 2026-10-16T20:02:02Z, before any -res-wint game)
+Direction from Sam via the coordinator: holding back must be learned, and committed timed waits cost reaction time. The test is
+-res-wint (-res, plus interrupting a timed wait when the enemy count on our half grows or a new enemy card event arrives) vs -res,
+on BASE5 = 2439740075545088 vs LIVE-K4CW-r16, 100 paired cases. BASE5 did not select -res-wint, and it pairs with BASE5's -res games.
+- **Rule:** -res-wint becomes the live treatment if the point estimate of Δ(-res-wint − -res) is ≥ −0.02 AND either reaction p50 (enemy play → our next play) or the
+  undefended-push share improves vs -res.
+- **Timing:** if it qualifies before s53 starts, it goes in at s53; otherwise at the next A/B restart.
