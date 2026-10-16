@@ -465,7 +465,6 @@ def entity(e, *, clone_prototype=True):
         out["mount"] = mount.id
         out["rider_rank"] = int(getattr(e, "_rider_rank", 0))
     # Retain exact sensor identities for nested and one-tick payload templates.
-    from types import SimpleNamespace
     from clasher.rl.structured_obs import StructuredObservationBuilder
     holder = SimpleNamespace(loader=getattr(getattr(e, 'battle_state', None), 'card_loader', None),
                              _payload_name=StructuredObservationBuilder._payload_name)
