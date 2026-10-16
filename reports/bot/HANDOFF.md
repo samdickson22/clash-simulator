@@ -33,8 +33,9 @@ Current state and detailed receipts: [PROGRESS.md](PROGRESS.md),
   nice15),coordinatedtoCARDlead afterexactsource/runtime/nativepreflight+old08queuedgroupexit.
   Noothermoves,bypass,pinchanges orBOTsignals. Receipt05jobs/clasher/bot-sol-resume-20261016/
   cpu-room04-20261016T094152Z.json. Normalwrapperrechecks changingload; sampleisnotareservation.
-  CPU08update11:29:26Z:472replayarmscompleteexit0;newreviewedpostanalysislauncher664638,wrapper664649,
-  cpu_job3claim664663queued,noanalysisPID/exitreceipt. KeepNEWBOT08retriesdeferreduntilNEWclaimadmitsnaturally;
-  supersedescompletedclaim4040562. Preserverunningjobs/wrapper/cap,no bypass/preemption/migration/duplicates.
+  CPU/GPU08update11:54:59Z:CARDclaim664663admitted/postanalysisexit0;GPU0idle,noBOTleasechange,LIVEowned.
+  Normalroom43(live62,idle0,cap105). NextsoleLIVEclean08trainerCPU12/nice19,10loaders,single-threadmath,
+  fullreviewedfootprint≤16;CARD→reviewedtrainer→NEWBOTretriespriority,no01. Resourceconfirmationisnotlauncher/
+  inputpreflightapproval;no newtrainer/transfer/hostinstallbyBOT. Runningjobs/caps/wrapperspreserved.
 - Allowncommits usetempindexonorigin/main,mandatorysecret-scan,explicitownpaths; retainsharedindex/HEAD.
   Exactcommands,commitreceipts,hashesandrollbacks05jobs/clasher/bot-sol-resume-20261016/.

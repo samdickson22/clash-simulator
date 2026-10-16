@@ -142,6 +142,28 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 11:54 UTC requested clean08 resource confirmation
+
+- ExplicitLIVErequestreservesstandingLIVEGPU08/GPU0 forsolee16clean08-only20epochrepeat;proposal
+  `/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/clean08-intake/next-trainer-proposal.json`readbyBOT.
+  No trainer/transfer/installstarted;requiredhostlauncherreview/inputhash/preflight/offhostcopy/evaluationplan
+  stillgatesexecution. Initimmutablee16,nooldV8descendant;noeligibility/promotioninferred. No01allowed.
+- Read-only08at11:54:36Z:GPU0util0%,104MiB,nocomputeprocesses,nologins,noBOTGPUleasechange.
+  At11:54:59Z normalcanonicalcountlive62,idle0,cap105,room43;12slotstotal74.
+  Activeleasegroupswant/used12/12,4/4,4/4,41/41;no capoverrideobserved.
+- PriorCARDclaim664663no longerqueued:analysis-r1.pid2382206,exit-code0,logverifies472completedreplayarmsand
+ 112scenarios/0errors. ThusCARD-before-newtrainerdependencyalreadyfulfillednaturally;no bypass/preemption.
+- DECISION:confirmnormalcpu_job12/nice19for10loaderswithsingle-threadmath,fullconcurrentfootprintleased;
+  up to16onlyifreviewedandneeded,not12reservationfor16consumers. Standingglobalcap105andGPUownershipunchanged;
+  resourceapprovaldoesnotapproveunreviewedlauncher,transfers,hostinstallsortriggersnewtraineritself.
+  PriorityCARD→soleapprovedreviewedLIVEtrainer→NEWBOTretries;preserverunningjobs/wrappers,no01.
+- Essentialdirectownerrepliesonly:LIVE `bot-clean08-resource-disposition-20261016T1154Z`,babysitter
+  `bot-clean08-cpu-priority-handoff-20261016T1154Z`;2sentences+proposalpath each.No coordinatorprogressDM.
+- Readcommands: `cat <proposalpath>`; `timeout 30 ssh -n 127x08` queryingwho,nvidia-smigpu/computeapps,
+  max-live/claim/leasefilesandexactCARDPGID;secondreadonlyps/leaseformulaandanalysisPID/exit/logtail.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: confirm reviewed clean08 resource priority after CARD admission' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 11:29 UTC essential postanalysis admission handoff
 
 - ExplicitCARDrequest:all472offline replayarmscompleteexit0;reviewedfinalpostanalysisnowwaits08cpu_job3
