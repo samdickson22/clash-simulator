@@ -133,3 +133,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   B2 merged onto cards/lead (9e881f00a/27ef53e5c, native 466aeba3; parity 28/28 + 42/42 + 42/42); b2-merge C56 gate on
   04 PID 2123864 (Sol shepherd cards-b2merge-gate-sol) + fresh Sol review cards-b2-review-r1 (task prefix 6b4c485c).
   Null's 120-min slot GO from LIVE LEAD; wake cards-nulls-fixtures-sol-r1 when the Null's owner says probe idle.
+- 07:07Z B2 review r1 REJECT (scope_targets misses dash-travel guard → Curse/Vines/Void on dashing Bandit native-only;
+  Clone slides ignore bounds/terrain) → Opus B2 fixing + class audit, b2-merge gate killed, b2-merge2 to follow.
+  BOT LEAD bug: c56_scripted.ranked_actions float(None) building_damage (Freeze) → Sol fix + 122-card None-stat audit +
+  live16402b-r2/r1-cards2-r2 release (cards-nonestat-fix-sol-r1). main ← cards/lead merged again f75889654.
