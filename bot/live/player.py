@@ -274,8 +274,12 @@ class LivePlayer:
         if self.search is not None:
             self.search.start(ctx)
             belief = self.search.p.belief
-            belief.__class__ = live_belief_class()
-            belief.human_prior = self.rt.PRIOR
+            from bot.fullpool.belief import belief_spec
+            if belief_spec(self.rt) == 'c56':   # default: C56 catalog completed with the revealed cards
+                belief.__class__ = live_belief_class()
+                belief.human_prior = self.rt.PRIOR
+            # else (BOT_BELIEF_PRIOR / rt.belief_prior = a full-pool deck spec): keep the open-world full-pool belief
+            # the search tier installed (bot/fullpool/belief.py), so revealed off-vocab cards are modelled.
 
     def act(self, view: PublicView) -> Decision:
         wall0, cpu0 = time.monotonic(), time.process_time()
