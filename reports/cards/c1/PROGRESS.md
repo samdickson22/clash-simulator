@@ -604,3 +604,40 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   onlynewcandidate/probe commits; preserveallcaptures/FAILs/originalapprovals.
 - One combined documentation apply_patch used an incorrect top-level PROGRESS
   path and was rejected without writes; corrected scoped paths immediately.
+- 2026-10-16T13:01:34Z essential frozen-base dependency handoff sent once to
+  CARD LEAD (clientRequestId c1-shared-troop-frozen-base-dependency-65fca236e).
+  Lead's 13:03Z reply confirms no frozen B2-first base: uncommitted Rage/source
+  corrections, matching build, exact-source C56 and reviewed conditional packet
+  remain pending. Read-only readiness JSON at
+  `/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-base-readiness-20261016.json`
+  SHA256 `85faec0500084744236248e151ba195c0bf783c761d4d92f071d0e0791e1561d`.
+  Old7738/capture-source approvals cannot substitute. C1 candidate65fca remains
+  UNCOMPILED/native UNBUILT; dependent build/parity/integration/full gate waits
+  for lead's exact reconciled frozen base. No host execution or duplicate job.
+  Continue only local source/probe review repairs; preserve all old FAILs,
+  artifacts, original approvals and rollback bindings. Strict silence retained;
+  no routine acknowledgment/status DM or pending legacy input request.
+- 2026-10-16T13:09–13:17Z independent candidate r1 terminal REJECT at65fca:
+  missing fresh-template prerequisite and unlinked/inert Zap control witnesses.
+  Raw verdict SHA3f369994/receipt15eced66 retained. No additional native-source
+  blocker identified by inspection; this is not an engine approval. Repaired
+  probe only: template checks across Python/clone/allnative arms initially/every
+  frame, failure-root evidence; actual finalizer entry/exit observations and
+  paired roots, current guard/transport/head/direction/projection checks, strict
+  travel-owned node pop, threshold-crossing external-vector order. Both-seat
+  AST/mock negative controls pass, including per-native-arm initial/later invalid
+  templates and exactly-once/exception-preserving observer controls. Exact command
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_shared_troop_probe.py`.
+  No engine import, simulation/native/host/build/job/gate execution. Candidate
+  Rust/comparator unchanged; all FAILs preserved. Source-only external-vector
+  dispatch risk retained for future actual reproduction, no speculative engine
+  fix. Full response/read sites/rollback in shared-troop/CANDIDATE-r1-response.md;
+  refreshed hashes/results in candidate-local-receipt-r2.json. Revised commit and
+  fresh independent complete source/probe review required before any acceptance.
+- Candidate r1 raw review ends with a preserved extra blank line. As with the
+  earlier immutable preparation review, record its original SHA without editing
+  reviewer bytes: normal staged diff whitespace checks exclude only
+  shared-troop/REVIEW-candidate-r1.md, whose check uses
+  `git -c core.whitespace=-blank-at-eof diff --cached --check -- reports/cards/c1/shared-troop/REVIEW-candidate-r1.md`.
+  This sole artifact EOF exception does not relax code/other whitespace or the
+  required staged secret scan. No source/native changes follow from it.

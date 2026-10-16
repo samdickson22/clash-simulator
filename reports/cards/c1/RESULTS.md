@@ -326,3 +326,11 @@ Final tools approval is scoped to preparation at97171f5; the later receipt-only 
 code/test/plan. Source/receipt/code hashes, faithful typed launcher-review translation, preserved failures,
 exact commands and concrete rollback are indexed in reviews/REPAIR-RECEIPT.json and PROGRESS. The final
 origin claim remains through expiry (10 updates to expiry), with no added simulation or byte-equivalence claim.
+
+Shared Troop work remains open: exact B2 captures establish scoped Zap/Dragon
+forced-state causes and IceSpirit's two mode failures. Candidate65fca is unbuilt.
+Independent source/probe r1 rejected two probe gaps; the response and local
+repairs are in `shared-troop/CANDIDATE-r1-response.md`, pending fresh commit-bound
+review. No actual continuation/build/native acceptance follows from local mock
+checks. Lead's reviewed frozen B2-first base, affected exact-native evidence and
+ordered fresh C56 still precede acceptance; old7738 is not that base.

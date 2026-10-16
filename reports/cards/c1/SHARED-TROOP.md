@@ -159,3 +159,26 @@ silence permits only actual action-needed blockers, urgent live failures, explic
 requests or essential owner handoffs; max2sentences+1receipt path. No routine
 results/status/ack DMs. One automatic final delivery when this whole assignment is
 done. Future delegated briefs carry these rules; no tiny-step delegates.
+
+## Current captured candidate and review (2026-10-16T13:17Z)
+
+The earlier active-job/capture-pending statements above are historical. Collection
+940202 completed22/22; exact roots and confirmed scoped causes are indexed in
+`shared-troop/CAPTURE-DIAGNOSIS.md` and `CAPTURE-FACTS.json`. Forced Zap and Dragon
+normal gameplay reachability remain unproved. IceSpirit's normal fixture retains
+the two strict mode failures; there is no field exemption or broad PASS.
+
+New native candidate65fca changes only troop.rs/lib.rs/dash.rs and remains
+UNCOMPILED/native UNBUILT. Independent source/probe review r1 rejected its probe
+for missing fresh-template checks and inert/unlinked Zap witnesses; no additional
+blocking native-source defect was found by inspection. Both probe findings are
+repaired locally, with strict both-seat negative controls and unchanged native
+source/comparator. See `shared-troop/CANDIDATE-r1-response.md` for exact objections,
+responses and unresolved actual-coverage risks. Fresh review of revised bytes is
+required. The 32-case continuation remains NOT RUN, not prospective evidence.
+
+Lead readiness packet13:03Z has no frozen B2-first base. Current B2 uncommitted
+Rage corrections, matching build, fresh exact-source C56 and reviewed conditional
+packet remain prerequisites. Dependent C1 build/parity/gates wait; old7738 and
+old-source approvals cannot substitute. No merge, selector copying, host run or
+pin change accompanies the preparation repair. Whole assignment remains OPEN.

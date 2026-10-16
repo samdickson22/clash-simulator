@@ -8,6 +8,7 @@ This module does not launch jobs, build, contact hosts, or alter input artifacts
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import sys
 import traceback
@@ -70,6 +71,47 @@ def compare(b, cfg, native, contract):
     return differences, applicability, raw, native.digest() == D.battle_digest(b)
 
 
+def validate_templates(result, contract, label, state, offset):
+    """The frozen comparator's cache exclusions require this separate proof."""
+    check = dict(arm=label, offset=offset)
+    result.setdefault('template_checks', []).append(check)
+    try:
+        check.update(paths=contract.fresh_troop_templates(state), valid=True)
+    except Exception:
+        check.update(valid=False, error=traceback.format_exc(limit=4), root=state)
+        raise
+
+
+def watched_row(state, watched):
+    return next((row for row in state['entities'] if row['id'] == watched), None)
+
+
+def movement_observation(actor):
+    """Read-only evidence at the actual post-dash/pre-external finalizer boundary."""
+    return dict(position=[round(actor.position.x*1000), round(actor.position.y*1000)],
+        route=[list(cell) for cell in (actor._native_ground_route_cells or [])],
+        direction=list(actor._native_ground_route_direction or (0,0)),
+        facing=[actor._facing_x_units, actor._facing_y_units],
+        phase=actor._bandit_state, stun=actor.stun_timer,
+        frozen_moving=actor._native_moving_when_frozen,
+        external=[0,0] if actor._pending_movement_consumed else
+            [round(actor._pending_movement_x*1000), round(actor._pending_movement_y*1000)])
+
+
+def observe_finalization(actor, events):
+    # Install after battle.clone(), separately on each Python arm. The closure
+    # calls that arm's original bound method once and never changes engine state.
+    original = actor.finish_movement_tick
+    def observed(battle):
+        event = dict(before=movement_observation(actor))
+        events.append(event)
+        try:
+            return original(battle)
+        finally:
+            event['after'] = movement_observation(actor)
+    actor.finish_movement_tick = observed
+
+
 def continuation(name, b, cfg, contract, ticks, *, schedule=None, watched=None, record=None):
     """Compare every frame, uninterrupted, battle-cloned and reloaded native arms.
 
@@ -79,16 +121,27 @@ def continuation(name, b, cfg, contract, ticks, *, schedule=None, watched=None, 
     encoded = snapshot(b, cfg, contract)
     result = record if record is not None else {}
     result.update(case=name, fixture='explicit-current-source-robustness-v1',
-                  initial=json.loads(encoded), first_context=None, differences=[], frames=[], errors=[])
+                  watched=watched, initial=json.loads(encoded), first_context=None,
+                  differences=[], frames=[], errors=[], template_checks=[], zap_transition_roots=[])
+    validate_templates(result,contract,'python/initial',result['initial'],-1)
     live = D.clasher_core.BattleState(encoded)
     arms = dict(uninterrupted=live, clone=live.clone(), reload=D.clasher_core.BattleState(live.snapshot()))
     python_clone = b.clone()
+    for label, arm in arms.items():
+        validate_templates(result,contract,label+'/initial',json.loads(arm.snapshot()),-1)
+    validate_templates(result,contract,'python_clone/initial',json.loads(snapshot(python_clone,cfg,contract)),-1)
+    movement_events = dict(python=[],python_clone=[])
+    if name.startswith('zap/'):
+        observe_finalization(b.entities[watched],movement_events['python'])
+        observe_finalization(python_clone.entities[watched],movement_events['python_clone'])
     for offset in range(ticks):
         if schedule:
             schedule(offset, b, python_clone, arms)
         before = dict(python=json.loads(snapshot(b, cfg, contract)),
-                      native=json.loads(arms['uninterrupted'].snapshot()))
+                      natives={label:json.loads(arm.snapshot()) for label,arm in arms.items()})
+        before['native'] = before['natives']['uninterrupted']
         result['last_before'] = before
+        starts = {label:len(events) for label,events in movement_events.items()}
         b.step(); python_clone.step()
         if D.battle_digest(python_clone) != D.battle_digest(b):
             result['errors'].append(dict(offset=offset,kind='python-clone-digest'))
@@ -99,6 +152,11 @@ def continuation(name, b, cfg, contract, ticks, *, schedule=None, watched=None, 
             result['errors'].append(dict(offset=offset,kind='python-clone-state',differences=clone_delta))
         for arm in arms.values():
             arm.step(1)
+        after = dict(python=json.loads(snapshot(b,cfg,contract)),
+                     natives={label:json.loads(arm.snapshot()) for label,arm in arms.items()})
+        for label,state in dict(python=after['python'],
+                python_clone=json.loads(snapshot(python_clone,cfg,contract)),**after['natives']).items():
+            validate_templates(result,contract,label,state,offset)
         outcomes = {}
         for label, arm in arms.items():
             delta, applicability, raw, equal = compare(b, cfg, arm, contract)
@@ -109,13 +167,24 @@ def continuation(name, b, cfg, contract, ticks, *, schedule=None, watched=None, 
                 if result['first_context'] is None:
                     result['first_context'] = dict(offset=offset, arm=label, before=before,
                         after=dict(python=json.loads(snapshot(b, cfg, contract)), native=json.loads(arm.snapshot())))
-        state = json.loads(arms['uninterrupted'].snapshot())
+        state = after['natives']['uninterrupted']
         selected = [e for e in state['entities'] if e['id'] == watched]
         result['frames'].append(dict(offset=offset, tick=b.tick,
             actor=None if not selected else {k:selected[0].get(k) for k in
                 ('id','x','y','alive','target','facing','direction','route','dash','stun','frozen_moving','entity_kind','spirit',
                  'shot_target','aim','clock','clock_initialized','started','windup','stats')},
             arms_equal=all(arm.snapshot() == arms['uninterrupted'].snapshot() for arm in arms.values())))
+        if name.startswith('zap/'):
+            frame = result['frames'][-1]
+            frame['movement'] = {label:events[starts[label]:] for label,events in movement_events.items()}
+            frame['transition'] = dict(
+                python=dict(before=watched_row(before['python'],watched),after=watched_row(after['python'],watched)),
+                natives={label:dict(before=watched_row(before['natives'][label],watched),after=watched_row(root,watched))
+                         for label,root in after['natives'].items()})
+            pre,post = frame['transition']['python']['before'],frame['transition']['python']['after']
+            if offset == 0 or (pre is not None and post is not None and
+                    (pre.get('dash') or {}).get('phase')=='travel' and pre['route'] != post['route']):
+                result['zap_transition_roots'].append(dict(offset=offset,before=before,after=after))
         if not result['frames'][-1]['arms_equal']:
             result['errors'].append(dict(offset=offset,kind='native-clone-reload-state',
                 differences={label:list(contract.differences(state,json.loads(arm.snapshot())))
@@ -143,7 +212,9 @@ def zap_fixture(seat, variant):
     if variant == 'empty_route':
         actor._native_ground_route_cells = []
     if variant == 'external':
-        actor.accumulate_movement_vector_units(250,-500 if seat == 0 else 500,bypasses_cap=True)
+        # Cross the reached-node threshold on the first transport frame. The
+        # pre-external and post-external projections must disagree in the witness.
+        actor.accumulate_movement_vector_units(250,1000 if seat == 0 else -1000,bypasses_cap=True)
     return b, cfg, actor.id
 
 
@@ -210,15 +281,100 @@ def cleanup_fixture(seat, variant):
     return b, cfg, identity, kill_target
 
 
+def trunc_div(value, divisor):
+    return (-1 if value < 0 else 1)*(abs(value)//divisor)
+
+
+def projected_remaining(head, position, direction):
+    return sum(trunc_div(d*(c*500+250-p),256) for c,p,d in zip(head,position,direction))
+
+
+def require_zap_witness(name, seat, result):
+    variant = name.split('/')[1]
+    assert variant in ('frozen','external','no_stun','not_frozen','empty_route')
+    initial = watched_row(result['initial'],result['watched'])
+    assert initial is not None and initial['alive'], 'missing constructor actor'
+    route = [] if variant=='empty_route' else ([[21,23],[22,24],[23,25]] if seat==0 else [[21,40],[22,39],[23,38]])
+    frozen = variant!='not_frozen'
+    assert (initial.get('dash') or {}).get('phase')=='travel'
+    assert initial['route']==route and initial['direction']==[181,181 if seat==0 else -181]
+    assert initial['frozen_moving'] is frozen
+    assert (initial['stun']==0 if variant=='no_stun' else initial['stun']>0)
+    assert result['frames'] and all(frame['actor'] is not None for frame in result['frames']), 'missing continuation actor'
+    pops = []
+    for index, frame in enumerate(result['frames']):
+        transition = frame['transition']
+        before,after = transition['python']['before'],transition['python']['after']
+        assert before is not None and after is not None
+        if (before.get('dash') or {}).get('phase')!='travel':
+            continue
+        events = frame['movement']['python']
+        assert len(events)==1 and frame['movement']['python_clone']==events, 'missing/unequal finalizer observations'
+        pre,post = events[0]['before'],events[0]['after']
+        # Prove ownership at the finalizer boundary, not a later ordinary walk.
+        if pre['phase']!='travel':
+            assert index!=0, 'first frame did not retain travel'
+            continue
+        assert pre['position'] != [round(before['x']*1000),round(before['y']*1000)], 'no dash transport'
+        assert pre['route']==before['route'] and pre['direction']==before['direction']
+        assert post['phase']=='travel'
+        if index==0:
+            assert pre['route']==route and pre['frozen_moving'] is frozen
+            assert (pre['stun']==0 if variant=='no_stun' else pre['stun']>0)
+            if variant!='external':
+                assert pre['external']==[0,0], 'unexpected vector in isolated guard control'
+        expected_position = [max(0,min(limit,p+v)) for p,v,limit in zip(pre['position'],pre['external'],(17999,31999))]
+        assert post['position']==expected_position, 'external displacement not consumed at finalization'
+        active = pre['stun']>0 and pre['frozen_moving'] and pre['route']
+        expected_route,expected_direction,expected_facing = pre['route'],pre['direction'],pre['facing']
+        if active:
+            head = pre['route'][0]
+            vector = [c*500+250-p for c,p in zip(head,pre['position'])]
+            if vector != [0,0]:
+                expected_facing = vector
+            if projected_remaining(head,post['position'],pre['direction']) < 1001:
+                expected_route = pre['route'][1:]
+                delta = [c*500+250-p for c,p in zip(expected_route[0],post['position'])] if expected_route else [0,0]
+                length = max(1,math.isqrt(sum(d*d for d in delta)))
+                expected_direction = [trunc_div(d*256,length) for d in delta]
+                pops.append(frame['offset'])
+        assert post['facing']==expected_facing, 'heading used post-external position'
+        assert post['route']==expected_route, 'wrong threshold or excessive node consumption'
+        assert post['direction']==expected_direction, 'retained/new route direction lost'
+        for pair in [transition['python'],*transition['natives'].values()]:
+            assert pair['before'] is not None and pair['after'] is not None
+            assert (pair['before'].get('dash') or {}).get('phase')=='travel'
+            assert pair['before']['route']==before['route'] and pair['before']['direction']==before['direction']
+            assert [pair['before'][key] for key in ('x','y','stun','frozen_moving','facing')]==[before[key] for key in ('x','y','stun','frozen_moving','facing')]
+            row = pair['after']
+            assert (row.get('dash') or {}).get('phase')=='travel'
+            assert [round(row['x']*1000),round(row['y']*1000)]==post['position']
+            assert row['facing']==expected_facing and row['route']==expected_route and row['direction']==expected_direction
+        if variant=='external' and index==0:
+            assert pre['external']==[250,1000 if seat==0 else -1000], 'external control not reached'
+            assert active and projected_remaining(head,pre['position'],pre['direction'])>=1001
+            assert projected_remaining(head,post['position'],pre['direction'])<1001, 'external vector did not distinguish advancement order'
+            assert expected_facing != [c*500+250-p for c,p in zip(head,post['position'])]
+    assert (result['frames'][0]['transition']['python']['before'].get('dash') or {}).get('phase')=='travel'
+    if variant in ('frozen','external'):
+        assert pops, 'no node consumption while dash still owns travel'
+    roots = {pair['offset']:pair for pair in result['zap_transition_roots']}
+    assert {0,*pops} <= roots.keys(), 'missing exact paired transition roots'
+    for offset in {0,*pops}:
+        frame = next(frame for frame in result['frames'] if frame['offset']==offset)
+        for boundary in ('before','after'):
+            assert watched_row(roots[offset][boundary]['python'],result['watched'])==frame['transition']['python'][boundary]
+            for label,pair in frame['transition']['natives'].items():
+                assert watched_row(roots[offset][boundary]['natives'][label],result['watched'])==pair[boundary]
+    result['zap_witness_offsets'] = sorted({0,*pops})
+
+
 def require_witness(name, seat, result):
     """An equal run that never exercised its intended transition must fail."""
     actors = [frame['actor'] for frame in result['frames']]
     live = [actor for actor in actors if actor is not None]
     if name.startswith('zap/'):
-        if name in ('zap/frozen','zap/external'):
-            assert any(a['stun']>0 and a['frozen_moving'] and a['route'] and
-                       (a.get('dash') or {}).get('phase')=='travel' for a in live)
-            assert any(len(a['route'])<3 for a in live if a['stun']>0), 'no frozen node consumption'
+        require_zap_witness(name,seat,result)
     elif name == 'heading/coincident':
         assert actors[0] is not None and actors[0]['target']==7
         assert actors[0]['facing']==[0,-1000 if seat==0 else 1000], 'zero-distance heading lost'
