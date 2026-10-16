@@ -436,3 +436,12 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
 
   FullPoolBelief (672k states) is cheaper than the C56 LiveBelief (4.9M). The full-pool path is not slower; the 65%
   smoke result is host contention. The gate is unaffected: its arm B was the deterministic no-wall twin.
+- 21:29–21:45Z **bundle package delivered to the loop owner** (thread live-loop-owner-r1, 21:4xZ), ahead of the 23:00Z
+  deadline. Reference reports/bot/fullpool/BUNDLE.md (b8d41879). Code main 2fa5d496; 11 changed + 17 added closure
+  files vs the Mac snapshot; 4 data files; models with sha and size; env for both players; res included.
+  - f1a2 C56 regression DONE (1800 games, 0 errors): +0.001 [−0.037, +0.037] vs rl5-v10-fp, so f1a2 ships as the
+    fast tier.
+  - Mac-tree-copy equivalence: 40/40 command hashes identical (mk1a1, mk1a1-res, fast path t2, both). res is inert
+    without the token and fires with it.
+  - Timing (03, pinned): base 83/190/194 ms, 4.4% hit; mk1a1 78/184/193, 3.5%; mk1a1-res 85/173/200, 2.7%.
+  - Deck-search's serial-twin hash mismatch was their own harness (a Recorder cached the 0.2 s deadline). Not the bot.
