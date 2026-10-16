@@ -6980,3 +6980,7 @@ Sam explicitly said to make obvious decisions and use Astra for decisions when h
 Concrete direction sent to LIVE/BOT/CARD leads plus loop, level and perception owners: finish/test/review the duplicate-SCK-client fix and deploy at a normal boundary with exact rollback; similarly ship hand/tower/autonav fixes when real blockers clear. Reviewed/gated opt-in card/template releases need no blanket Opus wait. A minimal honest level experiment can be chosen by Sol/Astra after runtime mapping validity is confirmed. Failed checks, invalid evidence and unmet independent review conditions remain blockers.
 
 Existing hourly heartbeat updated with this correction taking precedence. Sol high remains default, Astra high bounded when useful. Host/fair-information/account limits remain. This is authorization to execute justified reversible work, not a waiver of substantive checks. Decisions, evidence and rollback must be logged.
+
+## 2026-10-16T09:20:38Z: Sam requires direct parent messaging
+
+Clarifications from subagents go directly to parent/appropriate owner via t3_thread_send, not user-input tools. Sent to all20 active descendants with recursive propagation/handoff requirements. Existing input sweep is15min, legacy requests still checked; one wrong review-source path resolved. Audit: reports/audit/SOL-INTERIM-20261016.md and events JSONL. Actual permission controls unchanged.

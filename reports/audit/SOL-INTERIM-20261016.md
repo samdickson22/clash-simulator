@@ -79,3 +79,11 @@ Sam explicitly said to make obvious decisions and use Astra for decisions when h
 Concrete direction sent to LIVE/BOT/CARD leads plus loop, level and perception owners: finish/test/review the duplicate-SCK-client fix and deploy at a normal boundary with exact rollback; similarly ship hand/tower/autonav fixes when real blockers clear. Reviewed/gated opt-in card/template releases need no blanket Opus wait. A minimal honest level experiment can be chosen by Sol/Astra after runtime mapping validity is confirmed. Failed checks, invalid evidence and unmet independent review conditions remain blockers.
 
 Existing hourly heartbeat updated with this correction taking precedence. Sol high remains default, Astra high bounded when useful. Host/fair-information/account limits remain. This is authorization to execute justified reversible work, not a waiver of substantive checks. Decisions, evidence and rollback must be logged.
+
+## 2026-10-16T09:20:38Z: direct parent messaging and periodic input checks
+
+Sam directs all subagents to message their parent or appropriate existing owner directly via t3_thread_send for clarification/coordination. Do not use request_user_input, request_user_input_async, AskUserQuestion or equivalent input-request tools. Broadcast delivered to all20 currently active descendants, with exact direct-parent IDs, recursive propagation, future-brief and HANDOFF instructions. Actual permission controls are unchanged.
+
+The immediately preceding sweep checked19 active threads and resolved one real question: a review brief named nonexistent clasher-bot-levels05; coordinator verified clasher-bot-levels contains the harness, answered to use it and notified the level owner. No remaining request on that reviewer. Existing heartbeat changed to15minutes for legacy/accidental pending requests; full utilization sampling remains about hourly. No duplicate schedule.
+
+Exact delivery/request IDs and schedule receipts are preserved in the action log and direct-message-rule-receipts.json under the coordinator audit job directory. No compute launch, pin change, account action or deployment by coordinator.
