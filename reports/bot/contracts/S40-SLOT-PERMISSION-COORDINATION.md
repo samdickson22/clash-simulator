@@ -102,3 +102,7 @@ Receipt's MRO/import paths are source-declared static provenance, not newly exec
 Runtime root resolves the immutable bundle; runtime/src modules precede CODE fallback. No driver/watcher exists;
 PAUSE/HOLD and LL_HANDSYNC=0-only future fallback remain. Do not enable restored handsync2a or infer live
 authority, shared integration, package clearance, model/pin change or release from this evidence update.
+
+## 2026-10-16 daily recovery deputy: R8 handoff retained
+
+Essential owner handoff: `/mpac/sdicks02/scratch/live-loop/packages/handsync-permission-r8/REPORT.md` is the exact current API, tests, base/rollback map and hold. Isolated15-file implementation frozen under fresh independent fullSolreview; all11backendBASEs actualMacattested includinglopp_fast. Retain accepted immutableSlotPermission/two-mask boundary: original native action_mask stays model-featureinput and packet/modelidentity/probs/confidence intact; separate eligibility constrains allactualfast/search/fallbackselection. Existingloopowner owns end-to-end implementation/review/integration; no duplicatedimplementation/sharedsourceedit/release or liveauthority. NO DRIVER/PAUSE and pairedrollback/LL_HANDSYNC=0 on anyseparatelyauthorizedrestart retained. Canonical historicalthread remains handofffailed, deputy records coordination only.

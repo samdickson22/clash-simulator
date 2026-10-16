@@ -32,3 +32,9 @@ Essential user R8 handoff read at13:14Z: `/mpac/sdicks02/scratch/live-loop/packa
 Pre-registration preparation only; no new game yet. Bank will be drawn once and appended to HEADLINE before any outcomes, committed through a temp index on fresh origin/main. Detailed source/runtime/model hashes and launch receipts retained in private job audit, weights never committed. Final result pending.
 
 Pre-registration: BASE3877999783388832, draw2026-10-16T13:17:50Z; HEADLINE append completed before any game. Plan primary+pairedreference2400games. Existing reviewed launchers only; no new host-touching scripts.
+
+## 13:18–13:19Z launch and health receipt
+
+Pre-registration commit `bb74fc1727b8bb8728ac403fe1c56cadde6f91c4` pushed13:17:56Z BEFORE both launches. Existing unchanged detach.sh→cpu_job.sh→bot-lopp-run.sh only;04PID/PGID3261204(lease9/8workers,cases0–79,480rows) launched13:18:10Z;08PID/PGID4091359(lease33/32workers,cases80–399,1920rows) launched13:18:11Z. Both launch.json actualengine/base/candidates/opponents/ranges match, both leases admitted. Literal python counts13:18:33Z04=71,08=75≤105; no bypass or external source sync. Exact rext-bc actor/policy/probe/spec/environment hashes identical04/08, kept private; no weights published.
+
+13:19:02Z01load1.12/GPU0/threequeuewrappersalive;03CPUload8.36/literal8Python; no consoleusers. Existing C56feeders deliberatelyOFF, GPU ownershipLIVE; no relaunch based on idleness. Existingrevsetcollector nowcompleted, terminalreceipt to reconcile before any continuation. Historical schedule lastRunStatus=succeeded describes dispatch, while durableactualrun218FAILEDbeforework; next scheduled task remains unchanged/boundhistoricalthread17Oct13Z, no schedule duplicated or modified.

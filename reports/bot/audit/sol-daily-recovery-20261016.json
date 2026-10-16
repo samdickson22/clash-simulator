@@ -12,9 +12,32 @@
   "error": "Insufficient context allowance for the provider handoff. Compact the target conversation or use a larger-context model; the current request has not been truncated.",
   "historical_thread_preserved": true,
   "base_drawn": true,
-  "jobs_launched": [],
+  "jobs_launched": [
+    {
+      "host": "127x04",
+      "pid": 3261204,
+      "pgid": 3261204,
+      "utc": "2026-10-16T13:18:10Z",
+      "lease": 9,
+      "workers": 8,
+      "start": 0,
+      "games": 80,
+      "expected_rows": 480
+    },
+    {
+      "host": "127x08",
+      "pid": 4091359,
+      "pgid": 4091359,
+      "utc": "2026-10-16T13:18:11Z",
+      "lease": 33,
+      "workers": 32,
+      "start": 80,
+      "games": 320,
+      "expected_rows": 1920
+    }
+  ],
   "initial_commands": "T3 durable activity contains all exact tool argv/output since 13:13Z; audit-run.py captures subsequent commands separately.",
-  "status": "registered_before_games",
+  "status": "running",
   "fullpool_actual": "/mpac/sdicks02/jobs/clasher/bot-daily-recovery-20261016/fullpool-actual.json",
   "contract_r8_report": "/mpac/sdicks02/scratch/live-loop/packages/handsync-permission-r8/REPORT.md",
   "task_status_fallback": "non-child tasks not accessible; durable thread state + actual owner receipts",
@@ -33,5 +56,34 @@
     }
   },
   "base": 3877999783388832,
-  "drawn_utc": "2026-10-16T13:17:50Z"
+  "drawn_utc": "2026-10-16T13:17:50Z",
+  "preregistration_commit": "bb74fc1727b8bb8728ac403fe1c56cadde6f91c4",
+  "source_parity": {
+    "baseline": "0cd7fd28",
+    "tracked_equal": 143,
+    "changed_accounting_or_live_only": 7,
+    "absent_live_only": 8
+  },
+  "health": {
+    "utc": "2026-10-16T13:19:02Z",
+    "01": {
+      "load": 1.12,
+      "gpu_pct": 0,
+      "queues_alive": 3
+    },
+    "03": {
+      "load": 8.36,
+      "live_python_literal": 8
+    },
+    "04": {
+      "load": 67.06,
+      "gpu_pct": 0
+    },
+    "08": {
+      "load": 22.85,
+      "gpu_pct": 95,
+      "trainer": 3609621
+    }
+  },
+  "retained_contract": "R8 full independent Sol review active; no integration/release/live authority"
 }
