@@ -142,6 +142,28 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:28 UTC scope implementation and queued original probe
+
+- Existing levelowner implemented accepted scope in `bot/levels/scope.py`, experimental playerfactory and bank
+  projection equality guard. Read-only BOT check confirms ordered-prior digests, deep-copied preserved original,
+  idempotency guard and fixed excluded cards in scope.py. This source inspection is not a runtime/review PASS.
+  Fresh independent scope review remains active; original/standardAoutsidepilot untouched.
+- Gateworker drafts actualroot/fairdecision fixtures onbothseats and explicit productionrawfc A→B→A reuse;
+  harnessworker repairs fullmanifest-before-resume, nonzero failure/completeness/parity and ownedchildcleanup.
+  Fresh review covers completed gate/harness bytes before tests. No bank drawn or primary games.
+- All01disjointexports finished; no01compute until reviewedgates. Exact finalreceiptSHAs await owneraudit; partial
+  digests/filenames are not evidence. Existingmapping/towerPASS status unchanged.
+- At09:26:07.950341Z owner verified old03probe absent, then requeued originalN4probe ONCE undernice10 and original
+  30min admission/execution timeout,queuedPIDs287537/287538. Fullpoolpriority still enforced by admission.
+  Exact ownercommand preserved:
+  `ssh 127x03 'nice -n 10 timeout --kill-after=10s 30m /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 bash /mpac/sdicks02/jobs/clasher/bot-levels/run_all.sh'`.
+  Another timeout is recorded asdeferral,notspin-retried. No duplicateprobe or BOTLEADcompute launch.
+- Parent notified `bot-level-implemented-scope-and-probe-20261016T0928Z`. Read-only commands inlevelworktree:
+  `sed -n '1,240p' bot/levels/scope.py`; `rg -n 'scope|PRIOR|projection|manifest|resume' bot/levels/run.py bot/levels/profile.py bot/levels/player.py bot/levels/bank.py bot/levels/factory.py`;
+  `tail -45 reports/bot/levels/PROGRESS.md`. factory.py doesnotexist; actualfactory isplayer.py,which rg located.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: record level scope implementation and bounded probe requeue' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:13 UTC follow-up
 
 - Level owner reports likely cause of the3/121 result: Python tuple coordinates (`tunnel_origin`/`destination`)

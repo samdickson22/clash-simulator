@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:21 UTC
+## Current handoff: Sol interim, 2026-10-16 09:28 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
@@ -51,6 +51,13 @@ and future delegation briefs. Actual permission controls remain unchanged. No ol
   provenance/resume and all11 parity checks; no silentL11 fallback/post-outcome exclusions. Receipt owned by level
   worker: `levels/receipts/scope-audit-r1.json`. Mandatory root/card/spell/fairness/fc/rawpooltransport/all11 and
   launcherreview/provenance gates remain. No fresh bank drawn or pilot strength claim. See `levels/PROGRESS.md`.
+  At09:28Z the fixed scope is implemented in experiment-only scope.py/playerfactory and bank original-projection
+  equality guard; fresh independent scope review active. Existing gateworker drafts actualroots/fairdecisions both
+  seats and explicit rawfc A→B→A; harnessworker fixes fullmanifest-before-resume, nonzero failures/completeness/
+  parity and owned-childcleanup. Finished bytes receive fresh review before tests. All01exports complete; no01
+  compute until reviewedgates. Original03probe verifiedabsent and requeued ONCE09:26:07Z,N4lease/nice10/30mintimeout,
+  queuedPIDs287537/287538; no duplicate/spinretry and no bank/primarygames. Final receipt hashes await exact owner
+  audit; do not infer from filenames or partial digests.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
   08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
   completed jobs, not failures. Existing GPU ownership and resource coordination remain; no trainer was restarted.
