@@ -1171,7 +1171,7 @@ B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over
 it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
 
 <!-- it10-state-begin -->
-### Iteration 10: current state (resume here; updated 2026-10-16T01:36:24Z)
+### Iteration 10: current state (resume here; updated 2026-10-16T01:50:15Z)
 
 Read this block first; the dated log below it has the evidence. Hosts: **01, 03, 04, 08** (never 02/06/07/09–18; 05 light
 only). Our work is only under `/mpac/sdicks02/jobs/clasher/bot-*` and `/mpac/sdicks02/repos/clasher-bot*`. Code is `bot/`
@@ -1201,14 +1201,38 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now (CPU only):**
-- **Soup candidate** `soup-r5-v10-40.pt` = uniform average of r5 v10/v20/v30/v40 (`bot.exit.soup`), sha256 ba809435…,
-  @0.5375; HEADLINE mean +0.050 (v1 +0.033, R3a +0.067).
-  - `f9-soup-r5`: 08 cpuq (PGID 2525950), 24 workers, out `/mpac/sdicks02/jobs/clasher/bot-rl-soup/f9-soup-r5-v10-40`.
-  - `f10-soup-r5`: 01 cpuq6 (runner PGID 2084764), 64 workers, out `$J1/f10-soup-r5` (ckpt `$J1/ckpt-soup/`).
-  - `rsim-soup-r5`: 01 cpuq7 (runner PGID 2925089), 12 workers, out `$J1/rsim-soup-r5`.
-  - Claim check when done: `mean_delta <f10-soup-r5>:soup <f10-rl5v10>:policy-00010 --alpha 0.025`, plus RoyaleSim vs
-    `$J4/rsim-it5s2` (mean CI upper > 0), and report F9 vs r5 v10.
+**Running now (CPU only; all on 01, nothing of ours on 03/04/08 since 01:41Z):**
+
+| job | host / runner PGID | job PID (cpu_job) | out dir | games expected | at 01:50Z |
+|---|---|---|---|---|---|
+| `f10-soup-r5b` (soup on F10, 56 workers) | 01 cpuq6 / 2084764 | 2969503 | `/mpac/sdicks02/jobs/clasher/bot-exit-r1-01/f10-soup-r5` | 2,000 (cases 0–999 × v1,R3a) | 392 |
+| `rsim-soup-r5` (soup RoyaleSim gate, 12 workers) | 01 cpuq7 / 2925089 | 2962807 | `/mpac/sdicks02/jobs/clasher/bot-exit-r1-01/rsim-soup-r5` | 900 (HEADLINE 0–299 × rext-bc,v1,R3a) | 444 |
+
+- Progress: `ssh 127x01 'cat /mpac/sdicks02/jobs/clasher/bot-exit-r1-01/f10-soup-r5/games-*.jsonl | wc -l'` (same for
+  `rsim-soup-r5`). ETA ≈ 03:30Z (F10) and ≈ 03:00Z (RoyaleSim). Finished = runner log `END <name> rc=0` in
+  `$J1/cpuq6/runner.log*` / `$J1/cpuq7/runner.log*`.
+- **Soup candidate** = `/mpac/sdicks02/jobs/clasher/bot-exit-r1-01/ckpt-soup/soup-r5-v10-40.pt` (copy on 08:
+  `/mpac/sdicks02/jobs/clasher/bot-rl-soup/soup-r5-v10-40.pt`), sha256
+  `ba8094355653dd257213a20fab530d4a104cec044343b4b37f6bff8ba2a5b0ae`, uniform average (`bot.exit.soup`) of r5
+  v10/v20/v30/v40, served @0.5375. Done so far: HEADLINE mean +0.050 vs it5s2; **F9 vs r5 v10 +0.029 [+0.002, +0.056]**
+  (v1 +0.018, R3a +0.039), vs it5s2 +0.088; plays/game vs v1 33.9.
+- **Verdict commands** (on 01, from `/mpac/sdicks02/repos/clasher-bot`; k = 2 → `--alpha 0.025`):
+  - F10: `.venv/bin/python -B -m bot.exit.mean_delta /mpac/sdicks02/jobs/clasher/bot-exit-r1-01/f10-soup-r5:soup
+    /mpac/sdicks02/jobs/clasher/bot-exit-r1-01/f10-rl5v10:policy-00010 --alpha 0.025`. **Confirmed** iff the `mean(v1,R3a)`
+    CI lower bound > 0 and neither the v1 nor the R3a point Δ is below −0.02. (Runs play all v1 cases first; a partial
+    read at 01:52Z had v1 only: −0.007 [−0.045, +0.031], n = 419. Do not judge before 2,000 games.)
+  - RoyaleSim: `rsync -a 127x04:/mpac/sdicks02/jobs/clasher/bot-exit-r1-04/rsim-it5s2/ /tmp/rsim-it5s2/` then
+    `.venv/bin/python -B -m bot.exit.mean_delta /mpac/sdicks02/jobs/clasher/bot-exit-r1-01/rsim-soup-r5:soup
+    /tmp/rsim-it5s2:it5s2 --opps v1,R3a,rext-bc`. Gate met iff the mean CI upper bound > 0.
+  - Both met → **new best student = the soup**: record path, sha256 (compute with `sha256sum`), τ 0.5375 here and in the
+    best-student paragraph above, then run the LIVE recipe for it (copy 04 cpuq2's `live-rl5v30` line with the soup
+    checkpoint and a new out dir; ≤ 30 workers on 04 while the LIVE LEAD has 04; 1,200 games) and pair vs
+    `/mpac/sdicks02/jobs/clasher/live-rl5-perc-ours/{rl5,it5s2}` with `=LIVE-fast-it5s2` and
+    `=PERC-emp-sr1u50:LIVE-fast-it5s2`; report all to the bot lead (the LIVE LEAD would switch its fast tier).
+    Otherwise r5 v10 stays best; report the verdict either way.
+- Commits: build on origin/main with a temp index (the shared checkout has foreign staged files), run
+  `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` with that index, `git commit-tree -p origin/main`, push
+  `NEW:refs/heads/main`; helper used this iteration: `/mpac/sdicks02/jobs/clasher/bot-reads/commit.sh MSGFILE PATH…` (05).
 - CPU queue runners still alive (idle unless lines are appended): 01 cpuq6/cpuq7/cpuqka; 04 cpuq 3045524, cpuq2 3192422,
   cpuq6 363971, cpuq7 1222266, cpuqka 3964180; 08 cpuq 2525950, cpuq2 2581995, cpuq6 4115451, cpuq7 792386, cpuqka
   3544192. Keep any new 03/04/08 CPU job ≤ 30 workers in total per host.
@@ -1426,6 +1450,11 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   +0.150], mean +0.088 [+0.062, +0.115]; **vs r5 v10 v1 +0.018 [−0.010, +0.048], R3a +0.039 [−0.004, +0.083], mean
   +0.029 [+0.002, +0.056]**; plays/game vs v1 33.9. (r5 v30 read +0.025 here and was level on F10.) F10 + RoyaleSim
   running on 01. 08 now has 0 of our processes.
+
+- **01:52Z, handoff (model routing: the remaining work is running/reading evals).** The state block at the top of
+  Iteration 10 is complete for a fresh worker: running jobs with PIDs, out dirs, game counts, verdict commands, GPU
+  resume commands, feeder args, CPU caps. `bot/exit/mean_delta.py` synced to 01/04/08 and 03's `clasher-bot-rl03`
+  (verdict command tested on 01).
 
 ## Next
 
