@@ -67,7 +67,7 @@ both seats/turns, released ordinary bodies, inherited shot links and unchanged
 unrelated payload bytes have explicit stdlib controls. Runtime graph control
 compares native reloads and C56 raw payload bytes separately from B1 source gates.
 
-2026-10-16T12:34:39Z: first checkpoint
+2026-10-16T12:34:39Z audit: first checkpoint (actual commit12:29:49Z)
 `8aab1b2b57565a3f50c167f288e2e5d402d8d84f` created with exactly10 scoped paths
 after explicit add (forced only ignored own reports), staged secret-scan and
 diffcheck PASS. Essential requested entrypoint/source handoff sent directly to
@@ -95,7 +95,7 @@ checks only. Corrected stable checkpoint and fresh independent review still
 precede B1's one admitted combined public16 + emitted10 + existing required
 gates. No native job/lease/PID was created by this worker.
 
-2026-10-16T12:39Z: corrected checkpointfa36226189af573339a95ca06123fb39371a8dae
+2026-10-16T12:39Z audit: corrected checkpointfa36226189af573339a95ca06123fb39371a8dae (actual commit12:35:29Z)
 created after explicit own add, scanner and staged diffcheck PASS. Initial add
 returned1 because ignored report directory required -f even for the scoped
 pathspec; only intended own files had staged, verified exact git-dir/index and
@@ -109,3 +109,23 @@ mount/duplicate-rank/wrong-owner controls. Fresh r3 review required; no host or
 runtime probe run and no prior gate reuse. Exact command remains
 `python3 -B reports/cards/runtime/tools/test_b1_public_root.py`, receipt
 `receipts/b1-public-root-stdlib-r3.txt`; `git diff --check` PASS.
+
+2026-10-16T12:39:12Z: stable source checkpoint
+`e0e9f634e28f6cbc8bdd10631a6b3437d69dfef2` (actual commit12:38:28Z) has fresh
+native independent reviewer `/root/b1_public_root_review` roundr3 APPROVE for
+FULL combined alias+root implementation and scoped probe, conditioned on real
+host-script review and admitted B1 gates. Receipt
+`receipts/b1-public-root-review-r3.md` preserves exact eight-file hashes and
+scope/limitations. No additional defect found; earlier requests fully resolved.
+Staged scanner/diffcheck passed before source commit; source tree clean atreview.
+
+Exact preservation check `git diff --exit-code ebab18cc..HEAD -- engine-cards/src
+engine-cards/Cargo.toml engine-cards/Cargo.lock engine-cards/build.rs
+engine-cards/py/src/clasher/rl/contract_v5.py
+engine-cards/py/src/clasher/rl/contract_v5_tokens.json bot/players/runtime.py
+imitation/model.py` PASS. Frozen vocabulary file SHA5e20ce.../ordered35db1a...,
+360tokens/ThreeMusketeers326 independently parsed unchanged. This is source
+preservation only; native reuse provenance/actual runtime consumer paths and
+model inputs remain measured by B1's new-source phase. No job/PID/lease created
+by this worker, no host scripts executed, no r3/root/pin switch. Next essential
+handoff supplies exact approved source and entrypoint to B1; no routine ownerDM.

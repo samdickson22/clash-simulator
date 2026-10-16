@@ -1,7 +1,7 @@
 # B1 compatible public Resources and graph reconstruction
 
-Candidate only, pending independent review and fresh admitted combined-source
-acceptance. Baseebab18cc, engine aliasc13249919. Authority:
+Implementation/scoped probe independently APPROVED at sourcee0e9f634e;
+fresh admitted combined-source acceptance still pending. Baseebab18cc, engine aliasc13249919. Authority:
 `reports/cards/reviews/B1-public-identity-root-policy.md` on cards/lead. No
 published r3 root/evidence, model, vocabulary, active pin or consumer deployment
 is changed by this branch. B1 owns final integration/testing sequence; lead owns
@@ -118,3 +118,10 @@ Rollback: revert only new alias/root commits from the isolated candidate. Keep
 the fixed pre-alias B1 ref/native, original source5c8 gate1634216 and all failed
 artifacts immutable. No old acceptance is transferred to new Python source;
 no deployment, opt-in root release, pin/model change or sealing is implied.
+
+Implementation review: native independent `/root/b1_public_root_review`, Solhigh,
+roundr3 APPROVE at exacte0e9f634e28f6cbc8bdd10631a6b3437d69dfef2. Preserved r1/r2
+REQUEST_CHANGES and r3 approval receipts record every finding/response/hash.
+Root patch commits8aab1b2b5→fa3622618→e0e9f634e atop aliasc13249919; no unrelated
+shared edits.21stdlib tests PASS; native/public/gate acceptance remains pending
+B1's one separately host-reviewed, exact-source admitted sequence.
