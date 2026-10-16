@@ -129,3 +129,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   worker releasing r1-cards2 + live16402b (send 03/04 receipts to BOT LEAD). B2-fix C56 gate PASS (577/600) → B2 Opus
   merging onto cards/lead (sync first-update design) + re-gate. C1/C2 specs committed b16716481; C1 Opus started.
   Null's worker READY FOR SLOT 120 min → requested from LIVE LEAD. B1 resumed by coordinator.
+- 06:53Z r1-cards2 + live16402b RELEASED read-only on 03/04/08 (receipts c02c5a58c; recomputed by lead); BOT LEAD told.
+  B2 merged onto cards/lead (9e881f00a/27ef53e5c, native 466aeba3; parity 28/28 + 42/42 + 42/42); b2-merge C56 gate on
+  04 PID 2123864 (Sol shepherd cards-b2merge-gate-sol) + fresh Sol review cards-b2-review-r1 (task prefix 6b4c485c).
+  Null's 120-min slot GO from LIVE LEAD; wake cards-nulls-fixtures-sol-r1 when the Null's owner says probe idle.
