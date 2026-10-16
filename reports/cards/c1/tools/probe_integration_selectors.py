@@ -16,6 +16,7 @@ if sys.flags.optimize: raise RuntimeError('unoptimized selector probe required')
 
 import differential as D
 import probe_shared_troop as T
+from probe_dash_clock import capture_roots
 
 
 def fixture(seat,kind,travel):
@@ -123,42 +124,92 @@ def require_witness(result):
 
 
 def run_case(result,b,cfg,contract):
-    initial=json.loads(T.snapshot(b,cfg,contract)); result.update(initial=initial,frames=[],differences=[],errors=[],template_checks=[])
-    T.validate_templates(result,contract,'python/initial',initial,-1)
-    live=D.clasher_core.BattleState(json.dumps(initial))
-    arms=dict(live=live,clone=live.clone(),reload=D.clasher_core.BattleState(live.snapshot()))
-    cloned=b.clone(); reservations=dict(python=[],clone=[]); result['reservations']=reservations
-    if result['kind']=='secondary':
-        observe_reservations(b,result['ids'],reservations['python'])
-        observe_reservations(cloned,result['ids'],reservations['clone'])
-    for label,arm in arms.items(): T.validate_templates(result,contract,label+'/initial',json.loads(arm.snapshot()),-1)
-    T.validate_templates(result,contract,'clone/initial',json.loads(T.snapshot(cloned,cfg,contract)),-1)
-    for offset in range(12):
-        result['last_before']=dict(python=json.loads(T.snapshot(b,cfg,contract)),native=json.loads(live.snapshot()))
-        b.step(); cloned.step()
-        phases=dict(json.loads(live.debug_step()))
-        arms['clone'].step(1); arms['reload'].step(1)
-        python=json.loads(T.snapshot(b,cfg,contract)); native=json.loads(live.snapshot())
-        T.validate_templates(result,contract,'python',python,offset)
-        T.validate_templates(result,contract,'python_clone',json.loads(T.snapshot(cloned,cfg,contract)),offset)
-        assert json.loads(T.snapshot(cloned,cfg,contract))==python, 'Python clone drift'
-        outcomes={}
-        for label,arm in arms.items():
-            T.validate_templates(result,contract,label,json.loads(arm.snapshot()),offset)
-            delta,applicability,raw,equal=T.compare(b,cfg,arm,contract)
-            outcomes[label]=dict(differences=delta,applicability=applicability,raw=raw,digest_equal=equal)
-            if delta or not equal:
-                result['differences'].append(dict(offset=offset,arm=label,**outcomes[label]))
-                if 'first_context' not in result:
-                    result['first_context']=dict(before=result['last_before'],after=dict(python=python,native=json.loads(arm.snapshot())))
-            assert json.loads(arm.snapshot())==native, 'native clone/reload/debug-step drift'
-        ids=result['ids']
-        result['frames'].append(dict(offset=offset,tick=b.tick,
-            python_rows={name:row(python,identity) if identity is not None else None for name,identity in ids.items()},
-            native_rows={name:row(native,identity) if identity is not None else None for name,identity in ids.items()},
-            native_combat={name:row(phases['combat'],identity) if identity is not None else None for name,identity in ids.items()},outcomes=outcomes))
-    require_witness(result)
-    result['status']='FOCUSED_FAIL' if result['differences'] or result['errors'] else 'FOCUSED_PASS'
+    result.update(frames=[],differences=[],errors=[],template_checks=[],first_context=None)
+    pythons=dict(reference=b); arms={}
+    context=dict(offset=-1,operation='setup',before={},after={},completed_steps=[])
+    result['current_context']=context
+    try:
+        initial=json.loads(T.snapshot(b,cfg,contract)); result['initial']=initial
+        context['before']=dict(python=dict(reference=initial),natives={})
+        T.validate_templates(result,contract,'python/initial',initial,-1)
+        context['operation']='native/initial'
+        live=D.clasher_core.BattleState(json.dumps(initial)); arms['live']=live
+        context['operation']='native/clone'
+        arms['clone']=live.clone()
+        context['operation']='native/reload'
+        arms['reload']=D.clasher_core.BattleState(live.snapshot())
+        context['operation']='python/clone'
+        cloned=b.clone(); pythons['clone']=cloned
+        reservations=dict(python=[],clone=[]); result['reservations']=reservations
+        context['operation']='reservation_observers'
+        if result['kind']=='secondary':
+            observe_reservations(b,result['ids'],reservations['python'])
+            observe_reservations(cloned,result['ids'],reservations['clone'])
+        context['before'],errors=capture_roots(pythons,arms,cfg,contract)
+        assert not errors, 'initial root capture failed: '+repr(errors)
+        for label,state in context['before']['natives'].items():
+            context['operation']='initial_template/'+label
+            T.validate_templates(result,contract,label+'/initial',state,-1)
+        T.validate_templates(result,contract,'clone/initial',context['before']['python']['clone'],-1)
+        for offset in range(12):
+            context=dict(offset=offset,operation='before',before={},after={},completed_steps=[])
+            result['current_context']=context
+            context['before'],errors=capture_roots(pythons,arms,cfg,contract)
+            result['last_before']=context['before']
+            assert not errors, 'pre-step root capture failed: '+repr(errors)
+            for label,arm in pythons.items():
+                context['operation']='python/step/'+label
+                arm.step(); context['completed_steps'].append('python/'+label)
+            context['operation']='native/debug_step'
+            encoded=live.debug_step(); context['completed_steps'].append('native/live')
+            context['operation']='native/debug_decode'
+            try: phases=dict(json.loads(encoded))
+            except BaseException:
+                context['native_debug_raw']=encoded
+                raise
+            context['native_phases']=phases
+            for label in ('clone','reload'):
+                context['operation']='native/step/'+label
+                arms[label].step(1); context['completed_steps'].append('native/'+label)
+            context['operation']='after'
+            context['after'],errors=capture_roots(pythons,arms,cfg,contract)
+            assert not errors, 'post-step root capture failed: '+repr(errors)
+            python=context['after']['python']['reference']; native=context['after']['natives']['live']
+            for label,state in context['after']['python'].items():
+                context['operation']='python/validate/'+label
+                T.validate_templates(result,contract,'python/'+label,state,offset)
+                assert state==python, 'Python clone drift: '+label
+                assert D.battle_digest(pythons[label])==D.battle_digest(b), 'Python clone digest drift: '+label
+            outcomes={}
+            for label,arm in arms.items():
+                context['operation']='native/compare/'+label
+                state=context['after']['natives'][label]
+                T.validate_templates(result,contract,label,state,offset)
+                delta,applicability,raw,equal=T.compare(b,cfg,arm,contract)
+                outcomes[label]=dict(differences=delta,applicability=applicability,raw=raw,digest_equal=equal)
+                if delta or not equal:
+                    result['differences'].append(dict(offset=offset,arm=label,**outcomes[label]))
+                    context.setdefault('first_failure',dict(operation=context['operation'],arm=label,kind='semantic'))
+                    if result['first_context'] is None: result['first_context']=context
+                assert state==native, 'native clone/reload/debug-step drift: '+label
+            ids=result['ids']
+            result['frames'].append(dict(offset=offset,tick=b.tick,
+                python_rows={name:row(python,identity) if identity is not None else None for name,identity in ids.items()},
+                native_rows={name:row(native,identity) if identity is not None else None for name,identity in ids.items()},
+                native_combat={name:row(phases['combat'],identity) if identity is not None else None for name,identity in ids.items()},outcomes=outcomes))
+        context['operation']='required_witness'
+        require_witness(result)
+        result['status']='FOCUSED_FAIL' if result['differences'] or result['errors'] else 'FOCUSED_PASS'
+    except BaseException:
+        original=traceback.format_exc(limit=12)
+        roots,errors=capture_roots(pythons,arms,cfg,contract)
+        context['exception_observed']=roots; context['root_capture_errors']=errors
+        if not context['after']: context['after']=roots
+        context['error']=original
+        result['errors'].append(dict(offset=context['offset'],operation=context['operation'],error=original))
+        if result['first_context'] is None: result['first_context']=context
+        result['failure_context']=context
+        raise
 
 
 def main():

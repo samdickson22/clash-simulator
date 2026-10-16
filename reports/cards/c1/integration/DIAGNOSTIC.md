@@ -23,6 +23,11 @@ R4 rejected8d's probe for Python pre-step cloning and failed-root retention
 gaps. Both are repaired locally with exact run_case/main mocked controls;
 DIAGNOSTIC-r4-response.md binds the response. Engine/caching changes are still
 unexecuted and need fresh independent exact review; no new host job launched.
+R5 confirmed Dash fixes and rejected9466 for analogous selector evidence loss.
+Selector and new first-update catches now retain available post-error roots;
+exact AST/main persistence tests pass. Response: DIAGNOSTIC-r5-response.md.
+Engine506 hashes remain8d, new native still unbuilt; fresh full R6 review and
+actual nine-phase diagnostic remain required. No preparation-only completion.
 
 ## Merge and scope
 

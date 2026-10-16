@@ -379,3 +379,9 @@ repaired locally with exact run_case/main mocked controls and persisted failed
 case read-back; no engine bytes changed from8d and no host run occurred. Five
 local suites pass, but the actual source-bound build/nine phases still require
 fresh independent exact review. Response: integration/DIAGNOSTIC-r4-response.md.
+
+R5 confirmed the Dash repairs but rejected9466's selector failed-root retention.
+Selector and the new first-update catch now preserve available post-error arms
+through saved cases; expanded exact AST/main mocks pass. Engine bytes remain8d,
+no new host/native execution. Fresh complete exact R6 review and actual bounded
+diagnostic still required; see integration/DIAGNOSTIC-r5-response.md.

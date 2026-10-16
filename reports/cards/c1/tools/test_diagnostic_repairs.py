@@ -1,8 +1,10 @@
 """Source-only D1/D2/D3 regression controls; stdlib mocks, never real engines."""
 import ast
+import contextlib
 from collections import deque
 import copy
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -44,16 +46,22 @@ def first_update_controls():
             if self.broken and self.tick==2: raise AssertionError('synthetic control step failure')
             if self.kill_at is not None and self.tick==self.kill_at:
                 for entity in self.entities.values(): entity.hitpoints=0;entity.is_alive=False
-    current={};broken=[False]
+    current={};broken=[False];native_broken=[False];snapshot_broken=[False]
     def initial(*args,**kwargs):
         current['battle']=Battle(broken[0]);return current['battle']
     class Native:
-        def __init__(self,raw): pass
+        def __init__(self,raw): self.tick=json.loads(raw)['tick']
         def apply_action(self,*args): return True
-        def step(self,*args): pass
-        def digest(self): return str(current['battle'].tick)
-        def snapshot(self): return snapshot(current['battle'],{})
-    def snapshot(b,cfg): return json.dumps(dict(tick=b.tick,entities=[dict(id=e.id,hp=e.hitpoints) for e in b.entities.values()]))
+        def step(self,*args):
+            self.tick+=1
+            if native_broken[0] and self.tick==2: raise AssertionError('synthetic native step failure')
+        def digest(self): return str(self.tick)
+        def snapshot(self):
+            root=json.loads(snapshot(current['battle'],{}));root['tick']=self.tick
+            return json.dumps(root)
+    def snapshot(b,cfg):
+        if snapshot_broken[0] and b.tick==2: raise AssertionError('synthetic snapshot failure')
+        return json.dumps(dict(tick=b.tick,entities=[dict(id=e.id,hp=e.hitpoints) for e in b.entities.values()]))
     namespace['D']=SimpleNamespace(initial=initial,config=lambda *args:{},
         Position=lambda x,y:SimpleNamespace(x=x,y=y),clasher_core=SimpleNamespace(BattleState=Native),
         snapshot=snapshot,battle_digest=lambda b:str(b.tick),entity=lambda e:dict(stats=dict(name=e.card_stats.name)))
@@ -70,7 +78,46 @@ def first_update_controls():
         broken[0]=True
         bad=namespace['one']('script-born/blue',namespace['control_case'](case),prefix.with_name('broken-control'),True)
         assert bad['status']=='ERROR' and 'synthetic control step failure' in bad['error']
+        context=bad['exception_context']
+        assert context['before']['python']['tick']==1 and context['after']['python']['tick']==2
+        assert context['after']['native'] is None and context['completed_steps']==[]
         reject(lambda:namespace['validate_pair'](dict(real,control=bad)))
+        broken[0]=False;native_broken[0]=True
+        partial=namespace['one']('script-born/blue',case,prefix.with_name('broken-native'))
+        assert partial['status']=='ERROR' and 'synthetic native step failure' in partial['error']
+        context=partial['exception_context']
+        assert context['operation']=='native/step' and context['completed_steps']==['python']
+        assert context['before']['native']['tick']==1
+        assert context['after']['python']['tick']==context['after']['native']['tick']==2
+        native_broken[0]=False;snapshot_broken[0]=True
+        unavailable=namespace['one']('script-born/blue',namespace['control_case'](case),prefix.with_name('unavailable-snapshot'),True)
+        assert unavailable['status']=='ERROR' and 'synthetic snapshot failure' in unavailable['error']
+        assert unavailable['exception_context']['after']['python']['unavailable_error']
+        assert unavailable['exception_context']['root_capture_errors']
+        snapshot_broken[0]=False
+        # Exact saved outcome/control structures retain partial roots; the
+        # real main writes these dictionaries without projecting fields away.
+        retained=json.loads(json.dumps(dict(partial=partial,control=bad,unavailable=unavailable)))
+        assert retained['partial']['exception_context']['after']['native']['tick']==2
+        namespace.update(Path=Path,sys=sys)
+        namespace['A'].CASES={'case'+str(i):copy.deepcopy(case) for i in range(21)}
+        namespace['A'].mirror=lambda value:copy.deepcopy(value)
+        driver=extract(path,'main',namespace)
+        native_broken[0]=True;old_argv=sys.argv[:];saved_output=Path(temp)/'first-update.json';code=None
+        try:
+            sys.argv=['probe',str(saved_output)]
+            with contextlib.redirect_stdout(io.StringIO()):
+                try: driver()
+                except SystemExit as failure: code=failure.code
+        finally:
+            sys.argv=old_argv;native_broken[0]=False
+        saved=json.loads(saved_output.read_text())
+        assert code==1 and len(saved)==42
+        for index,failed in enumerate(saved):
+            assert failed['status']=='ERROR' and failed['validation_error']
+            assert failed['exception_context']['after']['python']['tick']==2
+            assert failed['exception_context']['after']['native']['tick']==2
+            assert json.loads(saved_output.with_name('first-update-'+str(index)+'-result.json').read_text())==failed
         for key,value in (('status','ERROR'),('error','failed'),('completed_ticks',1),('case','other/red'),
                           ('victim',[1,'Tombstone']),('victim_observations',[])):
             altered=copy.deepcopy(good);altered[key]=value
@@ -149,7 +196,7 @@ def main():
     definitions=[path for path in source.glob('*.rs') if 'fn recover_ground(' in path.read_text()]
     assert definitions==[source/'dash.rs'],'duplicate recovery definition remains'
     first_update_controls();after_import_controls()
-    print('PASS: one shared recovery definition; script-born victims/full causal-control error/identity negatives; failed/partial/drifted probes always retain after-import evidence; AST/stdlib/mocks only')
+    print('PASS: one shared recovery definition; script-born/full causal controls; Python/native partial-step and unavailable-snapshot roots retained in exact42-case main JSON; failed/partial/drifted probes retain after-import evidence; AST/stdlib/mocks only')
 
 
 if __name__=='__main__': main()

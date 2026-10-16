@@ -1,14 +1,125 @@
 """Pure AST witness controls, no engine/native execution or host access."""
 import ast
+import argparse
+import contextlib
 import copy
+import hashlib
+import io
+import json
 from pathlib import Path
+import sys
+import tempfile
+import traceback
 from types import SimpleNamespace
+from unittest.mock import patch
 
 
 def reject(call):
     try: call()
     except AssertionError: return
     raise AssertionError('wrong/unreached selector witness accepted')
+
+
+def execution_controls(path,tree):
+    helper=ast.parse(path.with_name('probe_dash_clock.py').read_text())
+    ids=dict(actor=7,primary=8,bandit=9,other=10,chain=11)
+    def exercise(fault=None,persist=False):
+        counts=[0]
+        def state(tick): return dict(tick=tick,entities=[dict(id=i,hp=100,clock=dict(remaining=0)) for i in range(7,12)])
+        class Battle:
+            def __init__(self,tick=0,kind='reference'): self.tick,self.kind=tick,kind
+            def clone(self):
+                if fault=='python-construction': raise ValueError('injected Python clone construction')
+                return Battle(self.tick,'clone')
+            def step(self):
+                self.tick+=1
+                if fault=='python-step' and self.kind=='reference' and self.tick==4: raise ValueError('injected partial Python step')
+            def state(self):
+                if fault=='snapshot' and self.kind=='clone' and self.tick==3: raise ValueError('injected clone snapshot')
+                out=state(self.tick)
+                if fault=='python-clone' and self.kind=='clone' and self.tick>=3: out['entities'][0]['clock']['remaining']=77
+                return out
+        class Native:
+            def __init__(self,encoded,kind): self.tick=json.loads(encoded)['tick']; self.kind=kind
+            def clone(self):
+                if fault=='native-construction': raise ValueError('injected native clone construction')
+                return Native(self.snapshot(),'clone')
+            def snapshot(self):
+                out=state(self.tick)
+                if fault=='native-clone' and self.kind=='clone' and self.tick>=3: out['entities'][0]['clock']['remaining']=88
+                return json.dumps(out)
+            def step(self,count):
+                self.tick+=count
+                if fault=='native-step' and self.kind=='reload' and self.tick==4: raise ValueError('injected partial native step')
+            def debug_step(self):
+                self.tick+=1
+                if fault=='debug-decode' and self.tick==3: return 'malformed phase JSON'
+                return json.dumps([['combat',state(self.tick)]])
+        def create(encoded):
+            counts[0]+=1
+            if fault=='reload-construction' and counts[0]==2: raise ValueError('injected reload construction')
+            return Native(encoded,'live' if counts[0]%2 else 'reload')
+        def templates(result,contract,label,root,offset):
+            if fault=='template' and label=='python/clone' and offset==2: raise ValueError('injected selector template')
+        def compare(b,cfg,native,contract):
+            if fault=='comparison' and b.tick==3: raise ValueError('injected selector comparison')
+            delta=[] if json.loads(native.snapshot())==b.state() else [dict(field='test.clock')]
+            return delta,[],delta,not delta
+        def digest(b): return str(b.tick)+('bad' if fault=='digest' and b.kind=='clone' and b.tick==3 else '')
+        fake_T=SimpleNamespace(snapshot=lambda b,cfg,contract:json.dumps(b.state()),validate_templates=templates,
+            compare=compare,watched_row=lambda root,identity:next((r for r in root['entities'] if r['id']==identity),None),
+            load_contract=lambda path:object(),CONTRACT_SHA='a'*64)
+        fake_D=SimpleNamespace(clasher_core=SimpleNamespace(BattleState=create),battle_digest=digest)
+        ns=dict(json=json,traceback=traceback,T=fake_T,D=fake_D,observe_reservations=lambda *args:None,
+            require_witness=lambda result:None)
+        for source,name in ((helper,'capture_roots'),(tree,'row'),(tree,'run_case')):
+            node=next(node for node in source.body if isinstance(node,ast.FunctionDef) and node.name==name)
+            exec(compile(ast.Module(body=[node],type_ignores=[]),str(path),'exec'),ns)
+        result=dict(kind='secondary',ids=ids);error=None
+        try: ns['run_case'](result,Battle(),{},object())
+        except (AssertionError,ValueError) as failure: error=str(failure)
+        if persist:
+            with tempfile.TemporaryDirectory(prefix='c1-selector-failure-') as temp:
+                directory=Path(temp);artifact=directory/'fake-native.txt';artifact.write_text('not native')
+                fake_D.clasher_core.__file__=str(artifact)
+                ns.update(argparse=argparse,Path=Path,hashlib=hashlib,sys=sys,
+                    fixture=lambda *args:(Battle(),{},ids))
+                node=next(node for node in tree.body if isinstance(node,ast.FunctionDef) and node.name=='main')
+                exec(compile(ast.Module(body=[node],type_ignores=[]),str(path),'exec'),ns)
+                output=directory/'selectors.json';code=None
+                args=['probe',str(output),'--contract',str(directory/'fake-contract'),
+                    '--native-sha256',hashlib.sha256(artifact.read_bytes()).hexdigest()]
+                with patch.object(sys,'argv',args),contextlib.redirect_stdout(io.StringIO()):
+                    try: ns['main']()
+                    except SystemExit as failure: code=failure.code
+                report=json.loads(output.read_text())
+                assert code==1 and report['status']=='FOCUSED_FAIL' and len(report['results'])==8
+                for index,failed in enumerate(report['results']):
+                    context=failed['failure_context'];assert failed['status']=='ERROR' and failed['error']
+                    assert context['offset']==2 and len(failed['frames'])==2
+                    assert context['after']['python']['clone']['entities'][0]['clock']['remaining']==77
+                    assert context['after']['python']['reference']['tick']==3
+                    assert context['after']['natives']['reload']['tick']==3
+                    assert json.loads(output.with_name('selectors-'+str(index)+'-result.json').read_text())==failed
+        return result,error
+    result,error=exercise()
+    assert error is None and len(result['frames'])==12 and result['first_context'] is None
+    for fault,offset,after_tick in (('python-clone',2,3),('native-clone',2,3),('digest',2,3),
+            ('python-step',3,4),('native-step',3,4),('snapshot',2,3),('template',2,3),
+            ('comparison',2,3),('debug-decode',2,3),('python-construction',-1,0),
+            ('native-construction',-1,0),('reload-construction',-1,0)):
+        result,error=exercise(fault);assert error is not None,fault
+        context=result['failure_context'];assert context['offset']==offset and result['first_context'] is context
+        assert context['after']['python']['reference']['tick']==after_tick and context['error']
+        if offset>=0: assert result['last_before']['python']['reference']['tick']==offset
+        if fault=='python-clone': assert context['after']['python']['clone']['entities'][0]['clock']['remaining']==77
+        if fault=='native-clone': assert context['after']['natives']['clone']['entities'][0]['clock']['remaining']==88
+        if fault=='native-step': assert 'native/reload' not in context['completed_steps']
+        if fault=='snapshot': assert context['after']['python']['clone']['unavailable_error'] and context['root_capture_errors']
+        if fault=='debug-decode': assert context['native_debug_raw']=='malformed phase JSON'
+        assert json.loads(json.dumps(result))['failure_context']['offset']==offset
+    exercise('python-clone',persist=True)
+    print('PASS: exact selector run_case/main AST retains clone/digest/partial-step/snapshot/template/comparison/construction/debug failures; all8 saved cases preserve failing and paired roots')
 
 
 def main():
@@ -64,6 +175,7 @@ def main():
                 else: bad['frames'][1]['native_rows']['bandit']['stun']=0
                 reject(lambda:witness(bad))
     print('PASS: both-seat secondary reservation/guard/effect and chain target/visited-ID/multiplicity/aim/impact negative controls; AST/mocks only')
+    execution_controls(path,tree)
 
 
 if __name__=='__main__': main()

@@ -20,6 +20,13 @@ roots. The revised probe retains an initial Python clone plus a fresh Python
 clone at every pre-step, and records every available pre/post arm before
 assertions with exception/partial-step contexts. See DIAGNOSTIC-r4-response.md.
 No new source/native/host execution follows from the local mock repair.
+R5 confirmed both Dash repairs but rejected9466's selector clone-error root
+loss. The selector now reuses the capture helper before assertions and keeps
+all available/partial arms through saved case errors. The new first-update
+helper's analogous catch retains post-error roots too. Original fixtures and
+comparators stay unchanged. See DIAGNOSTIC-r5-response.md; fresh full exact
+review still precedes any new host execution. No legacy failure is accepted
+merely because only partial evidence is available.
 The final C1 full C56/main/pin hold remains; this is a bounded diagnostic job.
 
 `tools/diagnostic_job.py stage REVIEW.json TAG` constructs a one-use source

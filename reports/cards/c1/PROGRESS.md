@@ -919,3 +919,50 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   normalize failed evidence. Verify that exact sole diagnostic, run cached
   diff-check on every other path, then staged secret scan before commit. This
   is a scoped evidence-EOF exception, not a source/check failure waiver.
+
+### 2026-10-16T16:48Z — R5 selector rejection and catch-path repair
+
+- Scoped repair9466f58eaa49747b34e3d48a50eb55384ac6f451 committed/pushed after
+  explicit12-path add, exact immutable-review EOF exception and staged secret
+  scan PASS. Fresh independent task c1-b2-first-diagnostic-9466f58ea-r5-independent
+  REJECTED R5-F1/P2 selector clone errors lost failing post-step roots before
+  assertion; all8 fake saved rows failed but only prior frames survived. R4
+  Dash F1/F2 independently resolved. R5 reportSHA2645d79952f35016389970d8f9f403f234bbf6b38f531bac221ff13b8b8911a4,
+  typedSHA49ab124fa21b50741a32480544cba32780da1e0452c7de620e6e6d21f7a56763,
+  both preserved exactly. No execution/recovery/build/probe on9466.
+- Selector now imports read-only capture_roots from its already-bound Dash
+  helper, retaining all available pre/post Python/native arms before assertions,
+  construction/step/snapshot/template/comparison failures, offset/operation,
+  first/failure/current context, original traceback and completed steps. Native
+  debug phases retained; malformed JSON retains raw return and completed live
+  call. All8 identities, fixtures/actions, reservations/visitedIDs/aim/wait/
+  impact witnesses and native private-ID inference limit unchanged. Every
+  failed row remains failed; no target guard, field ignore or state rewrite.
+- Same-class audit found trace-only catches in the new first-update helper:
+  now capture available post-error Python/native roots, before root, operation,
+  offset/completed calls and explicit unavailable errors for real/control.
+  Original traceback and strict D3 causal validation retained. Original BatchA,
+  B2 and prior shared/focused probe sources unchanged. Legacy partial-evidence
+  limits are stated, no complete post-error-root/broad-equivalence claim; any
+  actual failed legacy case still blocks acceptance and needs bounded diagnosis.
+- Five commands via `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/`
+  plus test_diagnostic_job.py, test_diagnostic_repairs.py,
+  test_integration_selectors.py, test_diagnostic_permissions.py and
+  test_dash_clock_witness.py PASS. Extended selector exact run_case/main AST
+  controls inject clone77/native88/digest/partial steps/snapshot/template/compare/
+  constructors/debug-decode faults; every saved8-case/per-caseJSON keeps paired
+  first-bad roots and fails exit1. First-update exact one/main mocks retain
+  partial Python/native/unavailable roots through42 failed synthetic rows and
+  saved sidecars, exit1; no real fixture/seat/mechanics claim. All temps cleaned,
+  no engine/native/Numba/host/compiler/signal execution. Full outputs/source
+  hashes in local-r6 JSON. No failing test or evidence erased.
+- Engine506 hashes unchanged8d inventory; only four diagnostic/test files and
+  scoped reports changed. Detailed response integration/DIAGNOSTIC-r5-response.
+  New native/cache relocation still UNBUILT/UNRUN. Fresh full independent R6
+  must bind526 exact inputs before one source-bound build and nine serial
+  phases32/12/21/8/2/42/6/2/4. No recovery/oldnative/JIT cache/duplicate sweep/
+  fullC56/main/pin/runtime action. Preserve failed reviews/jobs/sourcecache/
+  after-import roots and original9fa/11ff/2ac/631ac/f42 artifacts. Rollback only
+  scoped isolated commits. Assignment OPEN, later reconciled-main/full C56 and
+  broader coverage still mandatory. Strictsilence/direct-owner/one final rules
+  remain authoritative; no routine DM or duplicate child/job.

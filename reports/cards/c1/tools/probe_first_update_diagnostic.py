@@ -43,6 +43,7 @@ def one(name,case,prefix,control=False):
         status='ERROR',native='python-control' if control else 'not-started',
         actions=[],first_mismatch=None,victim_death=None,victim_observations=[])
     b=cfg=native=None
+    operation='setup';offset=None;completed_steps=[]
     try:
         need={0:[],1:[]}
         for op in case['setup']:
@@ -91,8 +92,10 @@ def one(name,case,prefix,control=False):
         bytick={}
         for tick,side,card,tile in case['script']: bytick.setdefault(tick,[]).append((side,card,tile))
         for tick in range(case['end']):
+            offset=tick;operation='before';completed_steps=[]
             out['last_before']=dict(python=json.loads(D.snapshot(b,cfg)),native=None if control else json.loads(native.snapshot()))
             previous_hp=sum(entity.hitpoints for entity in victims if entity.is_alive)
+            operation='actions'
             for side,card,tile in bytick.get(tick,[]):
                 if card=='ABILITY':
                     py=bool(b.activate_champion_ability(side));rs=None if control else bool(native.activate_champion_ability(side))
@@ -103,9 +106,13 @@ def one(name,case,prefix,control=False):
                 observe_victims()
             if previous_hp==0: previous_hp=sum(entity.hitpoints for entity in victims if entity.is_alive)
             previous_tick=b.tick
+            operation='python/step'
             b.step()
+            completed_steps.append('python');operation='python/tickguard'
             assert b.tick==previous_tick+1,'fixture/control stopped advancing'
-            if native is not None: native.step(1)
+            if native is not None:
+                operation='native/step';native.step(1);completed_steps.append('native')
+            operation='post-step-validation'
             observe_victims();out['completed_ticks']=tick+1
             if out['victim_death'] is None and victims and not any(entity.is_alive for entity in victims):
                 out['victim_death']=tick;out['hp_before_death']=previous_hp
@@ -119,6 +126,20 @@ def one(name,case,prefix,control=False):
         out['final_digest']=D.battle_digest(b)
     except BaseException:
         out.update(status='ERROR',error=traceback.format_exc(limit=8))
+        context=dict(offset=offset,operation=operation,completed_steps=completed_steps,
+            before=out.get('last_before'),after={},root_capture_errors=[])
+        for label,arm in (('python',b),('native',native)):
+            if arm is None:
+                context['after'][label]=None
+                continue
+            try:
+                encoded=D.snapshot(arm,cfg) if label=='python' else arm.snapshot()
+                context['after'][label]=json.loads(encoded)
+            except BaseException:
+                error=traceback.format_exc(limit=8)
+                context['after'][label]=dict(unavailable_error=error)
+                context['root_capture_errors'].append(dict(arm=label,error=error))
+        out['exception_context']=context
         if not control: out['native']='error'
     return out
 
