@@ -85,5 +85,48 @@
       "trainer": 3609621
     }
   },
-  "retained_contract": "R8 full independent Sol review active; no integration/release/live authority"
+  "retained_contract": {
+    "utc": "2026-10-16T13:32:08.778503+00:00",
+    "release": "/mpac/sdicks02/scratch/live-loop/packages/handsync-permission-r8/RELEASE.json",
+    "release_sha256": "e5b43fe153928aeb97b6246d545fd20d9f592b7aba999ea02dae52094d754104",
+    "verdict": "GO",
+    "review_sha256": "f1668a80da758061682b0250e584daa9696c2dc6e7ad2b7337395c6320a50800",
+    "review_sha256_verified": true,
+    "canonical_player_sha256": "0e1c0d8870b31dec3acd79e356a7164e761f325a1532c076685ffcbf19e686cf",
+    "actual_deployed_base_sha256": "3b4f27d7d62042b56d0fd7fd0dc92bc4d0579a6f08505df3d4aa9da7ba6e4e11",
+    "reviewed_candidate_player_sha256": "2aa0faa901fd8c18afcdca0e0d660bc0cdb6b797fe9459cc3d9b3b0a8deb60ce",
+    "action": "read-only preservation; no code port, shared integration, install or live action",
+    "parent_remaining": [
+      "canonical/shared integration preserving divergent owned work; executable port delta needs review",
+      "required secret scanner, scoped commit and release",
+      "prehost guards and any new installer review/offline dry run",
+      "separate host/play/canary authority; no session41 authorized"
+    ],
+    "diff_exit_code": 1,
+    "diff_lines": 193
+  },
+  "revset_reconciliation": {
+    "status": "completed_parked",
+    "commit": "d4926a9f6679",
+    "floorchk": {
+      "pairs": 30,
+      "identical_hashes": 30,
+      "differ": 0,
+      "mean_dscore": 0.0,
+      "restarts": 0
+    },
+    "smoke": {
+      "games": 40,
+      "terminal": 40,
+      "errors": 0,
+      "perc_errors": 0
+    },
+    "live_comparison": {
+      "unpatched": "178pass/9fail/7skip",
+      "patched": "217pass/9fail/7skip",
+      "identical_failure_sets": true
+    },
+    "restart": false,
+    "deployment_authority": false
+  }
 }
