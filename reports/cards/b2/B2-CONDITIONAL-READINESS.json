@@ -1,5 +1,5 @@
 {
-  "status": "PENDING_FINAL_INDEPENDENT_REVIEW",
+  "status": "APPROVED_FOR_CONDITIONAL_B2_SOURCE_READINESS",
   "engine_acceptance": false,
   "main_publication": false,
   "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
@@ -81,7 +81,14 @@
     "local_readonly_copy": "/tmp/b2-c56v2-outputs-20261016T1344Z"
   },
   "final_independent_review": {
-    "status": "PENDING"
+    "status": "APPROVED_FOR_CONDITIONAL_B2_SOURCE_READINESS",
+    "task_id": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-final-conditional-source-evidence-review-20261016-1427",
+    "receipt": "evidence/final-conditional-source-review-approved.json",
+    "sha256": "7644206520395d9b66a1e764f37502de912bf17fff129d0919ae75d615f29cd1",
+    "reviewed_report_commit": "7eb8953c33ff0767a891af3da2493a0e9c0f060a",
+    "reviewed_packet_sha256": "1a88df7a07f24887cc67610b1653a41236b53adc226c4dee3965ffb861e93e74",
+    "scope": "Conditional B2 source readiness only. All external FAILs retained; final engine acceptance/main publication require isolated B2-first then C1 integration, combined meaningful-state/C56 evidence and independent review.",
+    "authorized_final_report_update": "Review/status fields and review receipt only; source, existing evidence, numerical claims and retained failures unchanged."
   },
   "retained_external_failures": {
     "semantic_v1": {

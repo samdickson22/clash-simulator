@@ -1,7 +1,10 @@
 # Batch B2 spell mechanics results
 
-Current continuation (2026-10-16T14:22Z): **conditional B2 source readiness awaits final
-independent review; engine acceptance remains pending**. Candidate
+Current continuation (2026-10-16T14:37:10Z): **conditional B2 source readiness approved;
+engine acceptance remains pending**. The [final independent review](evidence/final-conditional-source-review-approved.json)
+binds report7eb8953c3 and the unchanged source/evidence in the
+[committed readiness packet](B2-CONDITIONAL-READINESS.json). Final acceptance requires
+ordered B2-first → C1 integration and combined meaningful-state/C56 evidence and review. Candidate
 55bac129b includes the nine engine files covering review-r2 guard/Clone paths and
 Rage state corrections. Three sequential native builds completed under the single
 reviewed08 CPU4 job3614622; actual primary hash76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054.
