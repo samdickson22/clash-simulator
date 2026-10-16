@@ -10,15 +10,21 @@ import json
 import os
 import stat
 import subprocess
+import signal
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 TOOLS = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('contract', TOOLS / 'final_gate_contract.py')
 C = importlib.util.module_from_spec(spec); spec.loader.exec_module(C)
 tree = ast.parse((TOOLS / 'final_gate.py').read_text())
-scope = dict(C=C, os=os, Path=Path, json=json, stat=stat, hashlib=hashlib)
+fake_signal = SimpleNamespace(SIGTERM=signal.SIGTERM, SIGINT=signal.SIGINT, SIGHUP=signal.SIGHUP,
+                              SIG_BLOCK=signal.SIG_BLOCK, SIG_SETMASK=signal.SIG_SETMASK,
+                              pthread_sigmask=lambda *a: set())
+scope = dict(C=C, os=os, Path=Path, json=json, stat=stat, hashlib=hashlib, subprocess=subprocess, signal=fake_signal)
 selected = [n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))
             and n.name in ('directory', 'new_file', 'write_json', 'check_original', 'Children', 'archive_files')]
 exec(compile(ast.Module(body=selected, type_ignores=[]), '<extracted pure driver helpers>', 'exec'), scope)
@@ -56,6 +62,75 @@ class ContractTests(unittest.TestCase):
         rows[7]['exit_code'] = 17
         self.reject(C.statuses_ok, rows, labels)
         self.reject(C.statuses_ok, [dict(label='compare', pid=1, exit_code=-15)], ['compare'])
+
+    def test_R3_interruption_preserves_fixture_root_and_failed_prior_exits(self):
+        for count in (2, 8):
+            for prior_status in (0, 17):
+                with self.subTest(children=count, prior_status=prior_status), tempfile.TemporaryDirectory() as d:
+                    out = Path(d); out.chmod(0o700)
+                    class Fake:
+                        def __init__(self, i): self.pid, self.i, self.calls = 101+i, i, 0
+                        def wait(self, timeout=None):
+                            self.calls += 1
+                            if self.i == count-1 and self.calls == 1: raise InterruptedError('synthetic stop')
+                            return prior_status if self.i == 0 else 0
+                    children = scope['Children'](out)
+                    labels = ['child'+str(i) for i in range(count)]
+                    children.live = {k:(Fake(i),['fake'], 'start') for i,k in enumerate(labels)}
+                    with self.assertRaises(InterruptedError): children.wait('phase', labels)
+                    partial = json.loads((out/'phase-exits.json').read_text())
+                    self.assertEqual([r['label'] for r in partial], labels[:-1])
+                    self.assertEqual(partial[0]['exit_code'], prior_status)
+                    with patch.object(os, 'killpg') as kill:
+                        children.stop()
+                        kill.assert_called_once_with(100+count, signal.SIGTERM)
+                    final = json.loads((out/'all-child-exits.json').read_text())
+                    self.assertEqual(len(final), count)
+                    self.assertEqual({r['label'] for r in final}, set(labels))
+                    self.assertEqual(final[0], partial[0])
+                    self.assertEqual(json.loads((out/'phase-final-exits.json').read_text()), final)
+
+    def test_R3_interrupt_after_store_does_not_duplicate_or_overwrite_status(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d); out.chmod(0o700)
+            class StopAfterStore(dict):
+                def __setitem__(self, key, value):
+                    super().__setitem__(key,value)
+                    if len(self) == 1: raise InterruptedError('after store before live deletion')
+            class Fake:
+                pid=101
+                def wait(self, timeout=None): return 17
+            children = scope['Children'](out); children.completed = StopAfterStore()
+            children.live = {'first':(Fake(),['fake'],'start')}
+            with self.assertRaises(InterruptedError): children.wait('phase',['first'])
+            observed = children.rows[0].copy()
+            with patch.object(os,'killpg'): children.stop()
+            self.assertEqual(children.rows, [observed]); self.assertFalse(children.live)
+
+    def test_R3_spawn_cancellation_waits_until_PID_is_registered(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d); out.chmod(0o700)
+            children = scope['Children'](out); children.begin_phase('phase',['first'])
+            class Fake:
+                pid=101
+                def wait(self, timeout=None): return 17
+            old_subprocess, old_mask = scope['subprocess'], fake_signal.pthread_sigmask
+            def mask(how, value):
+                if how == signal.SIG_SETMASK:
+                    self.assertIn('first',children.live)
+                    raise InterruptedError('deferred spawn cancellation')
+                return set()
+            scope['subprocess'] = SimpleNamespace(Popen=lambda *a,**k:Fake(), DEVNULL=-3, STDOUT=-2,
+                                                TimeoutExpired=subprocess.TimeoutExpired)
+            fake_signal.pthread_sigmask = mask
+            try:
+                with self.assertRaises(InterruptedError): children.start('first',['fake'],{})
+            finally:
+                fake_signal.pthread_sigmask = old_mask; scope['subprocess'] = old_subprocess
+            with patch.object(os,'killpg'): children.stop()
+            final = json.loads((out/'phase-final-exits.json').read_text())
+            self.assertEqual([(r['label'],r['exit_code']) for r in final],[('first',17)])
+            self.assertEqual(json.loads((out/'all-child-exits.json').read_text()),final)
 
     def test_F2_manifest_paths_before_reads(self):
         for name in ('/tmp/outside', '../outside', 'engine/../outside', 'engine//a', '.', 'engine/./a',

@@ -1,0 +1,3 @@
+?? reports/cards/c1/reviews/r3-independent/
+?? reports/cards/c1/tools/peek.py
+?? reports/cards/c1/tools/snapcmp_probe.py

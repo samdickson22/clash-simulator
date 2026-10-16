@@ -280,3 +280,18 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
   preserved rather than overwritten. New r3 response carries original six findings and every r2 objection.
   Need fresh independent commit-bound r3 before any host execution; accepted/integrated B2 and actual combined
   source/native coverage still required. No inherited job poll/restart, new gate/build/simulation or host script.
+- 10:45–10:57Z revised **4bfae6b0844b4620d9482cc996a74bf86f1a1887** secret-scanned/committed/pushed;
+  fresh independent r3 task `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Acards-c1-final-tools-r3-4bfae6b-independent`
+  REJECTED one interruption-receipt defect, confirmed r2 fixes/hashseed and other classes. Full verdict and
+ 13+10 groups, failed first harness attempt, exact reproduction/source/receipt retained under reviews/FINAL-TOOLS-r3.md
+  and r3-independent. Large raw Git .bin/.delta files remain locally intact/hash-indexed, not needed in public Git.
+- R3-1 fixed: persist observed statuses by unique label before deleting live state; partial phase receipt on
+  later-wait interruption; final phase/all-child union retains prior successful/failed statuses without
+  duplicates/overwrites. Register phases before spawn; defer stop signals around spawn/PID registration,
+  receipt writes and final cleanup; worker clears inherited mask before dispatch, pending cancellation restored
+  before PASS. New synthetic tests cover fixture2/root8 after prior0/17, store/delete gap, spawn registration gap.
+  Popen/killpg/mask calls are mocked, no actual process signals/masks or host script execution.
+- Revised local16 groups PASS, AST7/basics bash-n PASS; exact command/start/end/log/code hashes in
+  reviews/repair-local-receipt-r4.json. All old logs/rejections preserved; no engine/native/comparator/followup
+  delta, host build/gate, inherited poll/restart or live pin change. Full r4 response requests fresh exact-commit
+  independent review; B2→C1 integration/coverage/C56 and owning-lead evidence authority remain unchanged.

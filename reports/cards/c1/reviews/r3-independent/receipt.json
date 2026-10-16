@@ -1,0 +1,696 @@
+{
+  "artifacts": {
+    "complete-reviewed.delta": "5242fbb807e069077683f8b64cb9a50f61301071201df889857f0ec997860c4d",
+    "focused-reviewed.delta": "d310c202ee6c316f1430358ec95f8d076474ca44a8d4dcda08044978dc4f27cd",
+    "git-full-tree.bin": "1e455d43b8e89eb8789b0da651afc6c4b3c9da6e2327de884221312007a03359",
+    "git-prefixed-tree.bin": "7709cae4ea1375da193cbb05ff503b1ed96db97fa04008e7e82bb1ed6ca5c295",
+    "independent-tests-first-attempt.log": "d5b4050dbaf67f51fa3f00fcd438f3afffa3fa986dbed99042d5386003a80fb9",
+    "independent-tests.log": "62003a2e817ce8287aceef6dcf954f170c0fff3326ef2376ac0b199eda7f0706",
+    "independent_checks-first-attempt.py": "2d9ae0728cfe89dfe3b7cc2bfb98ab86e7a2413d218e99faa26b3239800b3880",
+    "independent_checks.py": "ef73518bad064c39786dbc0065be8fbc674c78500ab61f22caaffffa834b0ba2",
+    "interrupted-wait-reproduction-rerun.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "interrupted-wait-reproduction.json": "54a2273737a8bc799f578a8a7f69d78f0306f1bf2816568bf1133b747e4cdcc7",
+    "record-review.log": "abe74c26c88810be2931380e7e3bdd53c2928059d0e0a826a17e1e9be431db1f",
+    "record_review.py": "1384f8c48b83bd057668dcc7ad5ff91bbc5d40a91e5e8b02a96fde53c94695ff",
+    "reviewed-hashes.md": "a2816b0e11cc9ea916b7b19c189fd4562c7628a23afd14fc5fe180ed2f0fdd2a",
+    "status-before-report.txt": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29",
+    "submitted-tests.log": "4ee3411c8c0db6589dfb482c1f421e935631067ba2fcd0faa0c251827bc96d21"
+  },
+  "base": "476a747f75569040f9b137d0991691c95e6f1b29",
+  "candidate": "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+  "candidate_delta_file_sha256": {
+    "reports/cards/c1/FINAL-GATE-PLAN.md": "85bd82a0866a05afd0c8894e8104664f37a48545fc383708742ce27a449c2620",
+    "reports/cards/c1/PROGRESS.md": "9aa211ae984d51be6e2eba7d48b1c1e23785ff9e5bb3817956d4b03d7da0d8bf",
+    "reports/cards/c1/RESULTS.md": "a8373f1e34e0d5875385db607ed9e4e2aa1718b1f90b7830b59d6709de4f91f9",
+    "reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2.md": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r3-response.md": "c2c81d11a6a32c5efc0a78644635f1475a1666be02c54a7b73e152052d37c8f6",
+    "reports/cards/c1/reviews/r2-independent/independent-tests.log": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22",
+    "reports/cards/c1/reviews/r2-independent/independent_checks.py": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f",
+    "reports/cards/c1/reviews/r2-independent/receipt.json": "9b4dd181982bbd0f0727cfeb6154131590b01db8fbd760417178c5c7b34525a7",
+    "reports/cards/c1/reviews/r2-independent/reviewed-hashes.md": "ce1b1b19c63514dacb92d58d0fed9b7786c848b65590fabc11127b4252d90d8a",
+    "reports/cards/c1/reviews/r2-independent/submitted-tests.log": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361",
+    "reports/cards/c1/reviews/r2-parent-discovery.txt": "ae9c859fed93e7fa2a876d9234a06209ef6c088d58a43432183cc7518ab85013",
+    "reports/cards/c1/reviews/repair-local-first-failure.json": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b",
+    "reports/cards/c1/reviews/repair-local-receipt-r2.json": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936",
+    "reports/cards/c1/reviews/repair-local-receipt-r3.json": "8e318b1bc7cb72a4cf963eaf9f65120305aa326b5bbc92005838be4a96e8823c",
+    "reports/cards/c1/reviews/repair-local-tests-r2.log": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633",
+    "reports/cards/c1/reviews/repair-local-tests-r3.log": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c",
+    "reports/cards/c1/tools/final_gate.py": "4f9fe978f2b80a746de50b0e7e5969df19fca576dddfdb47bd93169aeec82496",
+    "reports/cards/c1/tools/final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "reports/cards/c1/tools/final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "reports/cards/c1/tools/gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "reports/cards/c1/tools/gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "reports/cards/c1/tools/gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "reports/cards/c1/tools/gate_worker.py": "8b8fc204a36849f0ee2d64705e9e9cec1dce32c7cab27d57ccf6e87811ba1742",
+    "reports/cards/c1/tools/test_final_gate_contract.py": "0c5924ab846b8400bf46c0a337a7b2fe8c97eae4de45fe0767d36e179880fe22"
+  },
+  "candidate_tree": "82f9e1a2d089799fc39ad2e25d52cd4ca16d2055",
+  "focused_base": "c45854febf93352284dd9f76b02651d989d906a7",
+  "focused_delta_sha256": "d310c202ee6c316f1430358ec95f8d076474ca44a8d4dcda08044978dc4f27cd",
+  "full_delta_sha256": "5242fbb807e069077683f8b64cb9a50f61301071201df889857f0ec997860c4d",
+  "readonly_commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.516455+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.510975+00:00",
+      "stderr": "",
+      "stdout": "4bfae6b0844b4620d9482cc996a74bf86f1a1887\n82f9e1a2d089799fc39ad2e25d52cd4ca16d2055\n",
+      "stdout_bytes": 82,
+      "stdout_sha256": "9558204e4ac8b16119aac97c74a71f9d2a884596cd8b093a03a25d9a6805e2f3"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.562841+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.516499+00:00",
+      "stderr": "",
+      "stdout_artifact": "status-before-report.txt",
+      "stdout_bytes": 121,
+      "stdout_sha256": "9940e9ce0f27f84cdc10b1f565d8673cbd65c2288cb716586ad2c33ad1ab9a29"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.571201+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.563050+00:00",
+      "stderr": "",
+      "stdout": "reports/cards/c1/FINAL-GATE-PLAN.md\nreports/cards/c1/PROGRESS.md\nreports/cards/c1/RESULTS.md\nreports/cards/c1/SNAPSHOT-DIAGNOSTICS.md\nreports/cards/c1/reviews/FINAL-TOOLS-r2-response.md\nreports/cards/c1/reviews/FINAL-TOOLS-r2.md\nreports/cards/c1/reviews/FINAL-TOOLS-r3-response.md\nreports/cards/c1/reviews/r2-independent/independent-tests.log\nreports/cards/c1/reviews/r2-independent/independent_checks.py\nreports/cards/c1/reviews/r2-independent/receipt.json\nreports/cards/c1/reviews/r2-independent/reviewed-hashes.md\nreports/cards/c1/reviews/r2-independent/submitted-tests.log\nreports/cards/c1/reviews/r2-parent-discovery.txt\nreports/cards/c1/reviews/repair-local-first-failure.json\nreports/cards/c1/reviews/repair-local-receipt-r2.json\nreports/cards/c1/reviews/repair-local-receipt-r3.json\nreports/cards/c1/reviews/repair-local-tests-r2.log\nreports/cards/c1/reviews/repair-local-tests-r3.log\nreports/cards/c1/tools/final_gate.py\nreports/cards/c1/tools/final_gate.sh\nreports/cards/c1/tools/final_gate_contract.py\nreports/cards/c1/tools/gate_compare.py\nreports/cards/c1/tools/gate_fixtures.py\nreports/cards/c1/tools/gate_roots.py\nreports/cards/c1/tools/gate_worker.py\nreports/cards/c1/tools/test_final_gate_contract.py\n",
+      "stdout_bytes": 1218,
+      "stdout_sha256": "7074037fc718687861ce179f5eee066a8f83261e19dbe976d929154c7884f1d8"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/FINAL-GATE-PLAN.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.577980+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.571264+00:00",
+      "stderr": "",
+      "stdout_bytes": 15100,
+      "stdout_sha256": "85bd82a0866a05afd0c8894e8104664f37a48545fc383708742ce27a449c2620"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/PROGRESS.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.585002+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.578102+00:00",
+      "stderr": "",
+      "stdout_bytes": 27385,
+      "stdout_sha256": "9aa211ae984d51be6e2eba7d48b1c1e23785ff9e5bb3817956d4b03d7da0d8bf"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/RESULTS.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.592089+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.585187+00:00",
+      "stderr": "",
+      "stdout_bytes": 29896,
+      "stdout_sha256": "a8373f1e34e0d5875385db607ed9e4e2aa1718b1f90b7830b59d6709de4f91f9"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.599157+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.592265+00:00",
+      "stderr": "",
+      "stdout_bytes": 10954,
+      "stdout_sha256": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.606020+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.599270+00:00",
+      "stderr": "",
+      "stdout_bytes": 4142,
+      "stdout_sha256": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/FINAL-TOOLS-r2.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.612613+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.606155+00:00",
+      "stderr": "",
+      "stdout_bytes": 14261,
+      "stdout_sha256": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/FINAL-TOOLS-r3-response.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.618788+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.612722+00:00",
+      "stderr": "",
+      "stdout": "# C1 final-tools r3 implementation response\n\nOriginal assignment and F1\u2013F7 response remain in FINAL-TOOLS-r2-response.md; original rejection is CARD LEAD\n`reports/cards/reviews/C1-final-tools-r1.md`. Fresh r2 independently **REJECTED c45854febf93352284dd9f76b02651d989d906a7**\nfor two additional startup defects, verifying the original six repair classes apart from these findings.\nFull verdict,12+7 groups and exact hash/command receipts are preserved in FINAL-TOOLS-r2.md/r2-independent/.\nDo not rerun old r2 defect-expecting checks against revised source and present that as an r2 receipt.\n\n- R2-1 P1 CPU accounting: sanitized invocation now explicitly supplies USER derived by `/usr/bin/id -un`\n  before the unchanged CPU wrapper. It retains env-i/bash-p; no arbitrary caller USER/environment restoration.\n  Static regression checks require identity-derived USER in the documented invocation. Wrapper source was\n  read, never executed; future actual admission remains gated.\n- R2-2 P2 full archive: archive_files omits `-- <prefix>` for a full tree and retains it/stripping for nonempty\n  engine/tools prefixes. Mock checks assert exact argv for both forms, then check corrupt commit/blob negative\n  controls. Real local read-only `git --no-replace-objects ls-tree -r -z HEAD` exit0, count/hash/commit in r3 receipt;\n  old empty-argument command's128 diagnostic is preserved with r2 evidence.\n- Parent's additional reproducibility finding: -I implies-E, silently ignoring PYTHONHASHSEED=0 for workers.\n  Local Python flag-only checks showed hash_randomization1 under-I versus0 under-P -s -S -B. Workers now use\n  those latter flags under the explicit minimal environment and enforce seed0, safe_path/no_site/no_user_site\n  plus standalone frozen base_prefix/version in bootstrap. Effective worker flags/seed are recorded. Control\n  interpreter stays-I: it does no engine work. New local13th group probes actual stdlib interpreter flags\n  only, never worker/engine/native/host main; positive result `0 True 1 1`. No gate launched.\n\nUpdated full suite:13 local groups PASS; AST all7 Python tools and bash syntax pass. No engine/native,\napproved comparator or followup code change. r3 code/commands/logs in repair-local-receipt-r3.json and\nrepair-local-tests-r3.log. All prior failed artifacts/verdicts remain; no runtime/active-pin mutation.\n\nFresh independent scope is the COMPLETE six-finding repair plus all r2 objections/responses and the hash-seed\nfix, bound to the revised commit (not a follow-up verdict on stale c45854f). No unresolved code objection\nis deliberately deferred. External readiness prerequisites remain B2 acceptance/integration, exact-source\nbuild/affected checks, owner-authenticated complete dependency/input inventory, duplicate-job audit and fresh\nC56. Human approval authenticity remains owner authority; no byte-equivalence/engine acceptance claim.\nOnly local serial pure/source/mock/flag tests are permitted for this review: no launcher/host script main,\nengine/native import, simulation/build/remote/emulator/deploy/pin execution. Preserve strict silence and\none automatic whole-review completion. Roll back scoped repair commits without running rejected old tools.\n",
+      "stdout_bytes": 3201,
+      "stdout_sha256": "c2c81d11a6a32c5efc0a78644635f1475a1666be02c54a7b73e152052d37c8f6"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/r2-independent/independent-tests.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.625413+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.618885+00:00",
+      "stderr": "",
+      "stdout": "test_PASS_publication_success_and_postlink_exception (__main__.IndependentChecks.test_PASS_publication_success_and_postlink_exception) ... ok\ntest_all_new_python_AST (__main__.IndependentChecks.test_all_new_python_AST) ... ok\ntest_archive_default_sends_empty_pathspec (__main__.IndependentChecks.test_archive_default_sends_empty_pathspec) ... ok\ntest_fixture_main_relocated_readpath_and_pool (__main__.IndependentChecks.test_fixture_main_relocated_readpath_and_pool) ... ok\ntest_historical_helper_operations_exactly_preserved (__main__.IndependentChecks.test_historical_helper_operations_exactly_preserved) ... ok\ntest_outer_wrapper_environment_source_dependency (__main__.IndependentChecks.test_outer_wrapper_environment_source_dependency) ... ok\ntest_worker_both_arms_frozen_paths_and_policy (__main__.IndependentChecks.test_worker_both_arms_frozen_paths_and_policy) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.027s\n\nOK\n",
+      "stdout_bytes": 974,
+      "stdout_sha256": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/r2-independent/independent_checks.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.632020+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.625491+00:00",
+      "stderr": "",
+      "stdout_bytes": 10042,
+      "stdout_sha256": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/r2-independent/receipt.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.638410+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.632147+00:00",
+      "stderr": "",
+      "stdout_bytes": 6040,
+      "stdout_sha256": "9b4dd181982bbd0f0727cfeb6154131590b01db8fbd760417178c5c7b34525a7"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/r2-independent/reviewed-hashes.md"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.645449+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.638511+00:00",
+      "stderr": "",
+      "stdout": "- `reports/cards/c1/FINAL-GATE-PLAN.md`: `51cfb2dd81eb37b25c987e882fcf8c2e8afc74ebdc1645c3f32a365ed0ec8fad`.\n- `reports/cards/c1/PROGRESS.md`: `bca9a288b68f5d2cff6674f877dd49001297f8b70e56dca96a75916f131dbaac`.\n- `reports/cards/c1/RESULTS.md`: `e6621eef3590df8b86d024722b9bb8aa74cfb1142d6c4a957057a782171d4761`.\n- `reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md`: `5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01`.\n- `reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md`: `5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d`.\n- `reports/cards/c1/reviews/repair-local-first-failure.json`: `d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b`.\n- `reports/cards/c1/reviews/repair-local-receipt-r2.json`: `6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936`.\n- `reports/cards/c1/reviews/repair-local-tests-r2.log`: `5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633`.\n- `reports/cards/c1/tools/final_gate.py`: `f1eb2e557d73010def69aea9adfeaf8a1ce47c3b5e40d87ac66342a339db2953`.\n- `reports/cards/c1/tools/final_gate.sh`: `297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5`.\n- `reports/cards/c1/tools/final_gate_contract.py`: `222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8`.\n- `reports/cards/c1/tools/gate_compare.py`: `dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e`.\n- `reports/cards/c1/tools/gate_fixtures.py`: `8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21`.\n- `reports/cards/c1/tools/gate_roots.py`: `155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f`.\n- `reports/cards/c1/tools/gate_worker.py`: `88a526b4cda2f8ed031c12520821a267c51a93b768bcd2ebe87da4cd230f9c60`.\n- `reports/cards/c1/tools/test_final_gate_contract.py`: `6e94910e3d0e4ec120ecd18a6ad4ac17e189aa9ee76f317eae080d84f4714fcf`.\n",
+      "stdout_bytes": 1841,
+      "stdout_sha256": "ce1b1b19c63514dacb92d58d0fed9b7786c848b65590fabc11127b4252d90d8a"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/r2-independent/submitted-tests.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.652740+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.645546+00:00",
+      "stderr": "",
+      "stdout": "test_F1_complete_output_then_failure_or_signal (__main__.ContractTests.test_F1_complete_output_then_failure_or_signal) ... ok\ntest_F1_root_and_comparator_exit_inventory (__main__.ContractTests.test_F1_root_and_comparator_exit_inventory) ... ok\ntest_F2_authenticated_Git_archive_and_blob_identity (__main__.ContractTests.test_F2_authenticated_Git_archive_and_blob_identity) ... ok\ntest_F2_full_manifest_missing_extra_control (__main__.ContractTests.test_F2_full_manifest_missing_extra_control) ... ok\ntest_F2_manifest_paths_before_reads (__main__.ContractTests.test_F2_manifest_paths_before_reads) ... ok\ntest_F2_typed_source_build_test_review_bindings (__main__.ContractTests.test_F2_typed_source_build_test_review_bindings) ... ok\ntest_F3_exclusive_output_never_truncates_external_or_stale_PASS (__main__.ContractTests.test_F3_exclusive_output_never_truncates_external_or_stale_PASS) ... ok\ntest_F3_symlink_hardlink_extra_input_rejected (__main__.ContractTests.test_F3_symlink_hardlink_extra_input_rejected) ... ok\ntest_F4_original_control_replacement_cannot_rebaseline (__main__.ContractTests.test_F4_original_control_replacement_cannot_rebaseline) ... ok\ntest_F5_clean_environment_and_isolated_worker (__main__.ContractTests.test_F5_clean_environment_and_isolated_worker) ... ok\ntest_F6_fixtures_positive_residuals_and_negative_controls (__main__.ContractTests.test_F6_fixtures_positive_residuals_and_negative_controls) ... ok\ntest_F6_root_sample_schema_headers_and_checks (__main__.ContractTests.test_F6_root_sample_schema_headers_and_checks) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.160s\n\nOK\n",
+      "stdout_bytes": 1653,
+      "stdout_sha256": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/r2-parent-discovery.txt"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.659803+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.652846+00:00",
+      "stderr": "",
+      "stdout": "Parent-side post-commit static inspection (2026-10-16T10:37Z, candidate unchanged): actual local read-only\n`git ls-tree -r -z HEAD -- ''` exits128 (`fatal: empty string is not a valid pathspec`). Thus archive_files\nwith default empty prefix cannot authenticate the full bot archive as written in c45854f. Candidate must not\nlaunch; let independent r2 complete its whole review against this fixed commit, then correct and obtain a\nnew commit-bound round. The prior synthetic mock did not model Git's empty-pathspec rejection. This is a\nfail-closed usability defect (preflight stops before workers), not evidence of host execution.\n\nAdditional static source finding: existing cpu_room.sh uses ps -u \"$USER\" in live()/leased_idle(). The plan's\nouter env-i drops USER, so this recipe can break CPU accounting even though driver later checks an8-slot lease.\nNo wrapper was executed. Future corrected recipe must supply USER from /usr/bin/id -un (identity-derived,\nnot caller's arbitrary USER), and preserve this in a focused static contract test. Local raw read path:\n/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh. Worker environment need not retain USER.\n\nParent-side Python flag check only (no worker/host code execution): PYTHONHASHSEED=0 with bot Python\n-I -S -B prints sys.flags.hash_randomization=1; with -P -s -S -B prints0. Thus c45854f's isolated workers\nignore the explicit historical seed, a reproducibility defect. Minimal env remains needed; worker command\nshould use -P -s -S -B under that env (no inherited PYTHON*), enforce hash_randomization0 in bootstrap,\nand record effective worker flags. Fixed control interpreter can retain-I because it performs no engine work.\n",
+      "stdout_bytes": 1687,
+      "stdout_sha256": "ae9c859fed93e7fa2a876d9234a06209ef6c088d58a43432183cc7518ab85013"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/repair-local-first-failure.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.666151+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.659941+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"time_bound\": \"during local repair, before 2026-10-16T10:36:10Z; original tool output in thread\",\n  \"command\": \"/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/tools/test_final_gate_contract.py\",\n  \"exit_code\": 1,\n  \"scope\": \"local pure synthetic checks only\",\n  \"tests_run\": 11,\n  \"errors\": 3,\n  \"cause\": \"AST test harness namespace omitted stat, causing NameError in extracted directory() helper; launcher source itself imports stat. Fixed test harness import/namespace. Original tool result retained in thread; no old rejection artifacts modified.\"\n}\n",
+      "stdout_bytes": 586,
+      "stdout_sha256": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/repair-local-receipt-r2.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.672367+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.666278+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"ast_files\": [\n    \"final_gate.py\",\n    \"final_gate_contract.py\",\n    \"gate_worker.py\",\n    \"gate_fixtures.py\",\n    \"gate_roots.py\",\n    \"gate_compare.py\",\n    \"test_final_gate_contract.py\"\n  ],\n  \"bash_n_exit\": 0,\n  \"code_hashes\": {\n    \"final_gate.py\": \"f1eb2e557d73010def69aea9adfeaf8a1ce47c3b5e40d87ac66342a339db2953\",\n    \"final_gate.sh\": \"297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5\",\n    \"final_gate_contract.py\": \"222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8\",\n    \"gate_compare.py\": \"dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e\",\n    \"gate_fixtures.py\": \"8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21\",\n    \"gate_roots.py\": \"155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f\",\n    \"gate_worker.py\": \"88a526b4cda2f8ed031c12520821a267c51a93b768bcd2ebe87da4cd230f9c60\",\n    \"test_final_gate_contract.py\": \"6e94910e3d0e4ec120ecd18a6ad4ac17e189aa9ee76f317eae080d84f4714fcf\"\n  },\n  \"command\": [\n    \"/mpac/sdicks02/repos/clasher-bot/.venv/bin/python\",\n    \"-I\",\n    \"-S\",\n    \"-B\",\n    \"reports/cards/c1/tools/test_final_gate_contract.py\"\n  ],\n  \"ended_utc\": \"2026-10-16T10:36:10.270562+00:00\",\n  \"exit_code\": 0,\n  \"log_sha256\": \"5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633\",\n  \"scope\": \"local validators/AST filesystem/wait helpers, fake child processes only; no host launcher, native, engine, remote, build or simulation\",\n  \"started_utc\": \"2026-10-16T10:36:10.041377+00:00\"\n}\n",
+      "stdout_bytes": 1503,
+      "stdout_sha256": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/repair-local-receipt-r3.json"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.678716+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.672462+00:00",
+      "stderr": "",
+      "stdout": "{\n  \"ast_files\": [\n    \"final_gate.py\",\n    \"final_gate_contract.py\",\n    \"gate_worker.py\",\n    \"gate_fixtures.py\",\n    \"gate_roots.py\",\n    \"gate_compare.py\",\n    \"test_final_gate_contract.py\"\n  ],\n  \"bash_n_exit\": 0,\n  \"code_hashes\": {\n    \"final_gate.py\": \"4f9fe978f2b80a746de50b0e7e5969df19fca576dddfdb47bd93169aeec82496\",\n    \"final_gate.sh\": \"297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5\",\n    \"final_gate_contract.py\": \"222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8\",\n    \"gate_compare.py\": \"dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e\",\n    \"gate_fixtures.py\": \"8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21\",\n    \"gate_roots.py\": \"155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f\",\n    \"gate_worker.py\": \"8b8fc204a36849f0ee2d64705e9e9cec1dce32c7cab27d57ccf6e87811ba1742\",\n    \"test_final_gate_contract.py\": \"0c5924ab846b8400bf46c0a337a7b2fe8c97eae4de45fe0767d36e179880fe22\"\n  },\n  \"command\": [\n    \"/mpac/sdicks02/repos/clasher-bot/.venv/bin/python\",\n    \"-I\",\n    \"-S\",\n    \"-B\",\n    \"reports/cards/c1/tools/test_final_gate_contract.py\"\n  ],\n  \"ended_utc\": \"2026-10-16T10:44:33.270534+00:00\",\n  \"exit_code\": 0,\n  \"full_tree_git_query\": {\n    \"command\": [\n      \"/usr/bin/git\",\n      \"--no-replace-objects\",\n      \"ls-tree\",\n      \"-r\",\n      \"-z\",\n      \"HEAD\"\n    ],\n    \"commit\": \"c45854febf93352284dd9f76b02651d989d906a7\",\n    \"entries\": 15276,\n    \"exit_code\": 0,\n    \"output_sha256\": \"ca0ab8fa59cc68f470f47a800d1b363043879bfa476df215cde03581a838025d\"\n  },\n  \"log_sha256\": \"852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c\",\n  \"scope\": \"local synthetic validators/AST helpers/fake children; pure interpreter flag subprocess and read-only Git query; no host driver/launcher, engine/native, simulation, build or remote execution\",\n  \"started_utc\": \"2026-10-16T10:44:32.983752+00:00\"\n}\n",
+      "stdout_bytes": 1908,
+      "stdout_sha256": "8e318b1bc7cb72a4cf963eaf9f65120305aa326b5bbc92005838be4a96e8823c"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/repair-local-tests-r2.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.685596+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.678854+00:00",
+      "stderr": "",
+      "stdout": "test_F1_complete_output_then_failure_or_signal (__main__.ContractTests.test_F1_complete_output_then_failure_or_signal) ... ok\ntest_F1_root_and_comparator_exit_inventory (__main__.ContractTests.test_F1_root_and_comparator_exit_inventory) ... ok\ntest_F2_authenticated_Git_archive_and_blob_identity (__main__.ContractTests.test_F2_authenticated_Git_archive_and_blob_identity) ... ok\ntest_F2_full_manifest_missing_extra_control (__main__.ContractTests.test_F2_full_manifest_missing_extra_control) ... ok\ntest_F2_manifest_paths_before_reads (__main__.ContractTests.test_F2_manifest_paths_before_reads) ... ok\ntest_F2_typed_source_build_test_review_bindings (__main__.ContractTests.test_F2_typed_source_build_test_review_bindings) ... ok\ntest_F3_exclusive_output_never_truncates_external_or_stale_PASS (__main__.ContractTests.test_F3_exclusive_output_never_truncates_external_or_stale_PASS) ... ok\ntest_F3_symlink_hardlink_extra_input_rejected (__main__.ContractTests.test_F3_symlink_hardlink_extra_input_rejected) ... ok\ntest_F4_original_control_replacement_cannot_rebaseline (__main__.ContractTests.test_F4_original_control_replacement_cannot_rebaseline) ... ok\ntest_F5_clean_environment_and_isolated_worker (__main__.ContractTests.test_F5_clean_environment_and_isolated_worker) ... ok\ntest_F6_fixtures_positive_residuals_and_negative_controls (__main__.ContractTests.test_F6_fixtures_positive_residuals_and_negative_controls) ... ok\ntest_F6_root_sample_schema_headers_and_checks (__main__.ContractTests.test_F6_root_sample_schema_headers_and_checks) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.158s\n\nOK\n",
+      "stdout_bytes": 1653,
+      "stdout_sha256": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/reviews/repair-local-tests-r3.log"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.691710+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.685704+00:00",
+      "stderr": "",
+      "stdout": "test_F1_complete_output_then_failure_or_signal (__main__.ContractTests.test_F1_complete_output_then_failure_or_signal) ... ok\ntest_F1_root_and_comparator_exit_inventory (__main__.ContractTests.test_F1_root_and_comparator_exit_inventory) ... ok\ntest_F2_authenticated_Git_archive_and_blob_identity (__main__.ContractTests.test_F2_authenticated_Git_archive_and_blob_identity) ... ok\ntest_F2_full_manifest_missing_extra_control (__main__.ContractTests.test_F2_full_manifest_missing_extra_control) ... ok\ntest_F2_manifest_paths_before_reads (__main__.ContractTests.test_F2_manifest_paths_before_reads) ... ok\ntest_F2_typed_source_build_test_review_bindings (__main__.ContractTests.test_F2_typed_source_build_test_review_bindings) ... ok\ntest_F3_exclusive_output_never_truncates_external_or_stale_PASS (__main__.ContractTests.test_F3_exclusive_output_never_truncates_external_or_stale_PASS) ... ok\ntest_F3_symlink_hardlink_extra_input_rejected (__main__.ContractTests.test_F3_symlink_hardlink_extra_input_rejected) ... ok\ntest_F4_original_control_replacement_cannot_rebaseline (__main__.ContractTests.test_F4_original_control_replacement_cannot_rebaseline) ... ok\ntest_F5_clean_environment_and_isolated_worker (__main__.ContractTests.test_F5_clean_environment_and_isolated_worker) ... ok\ntest_F6_fixtures_positive_residuals_and_negative_controls (__main__.ContractTests.test_F6_fixtures_positive_residuals_and_negative_controls) ... ok\ntest_F6_root_sample_schema_headers_and_checks (__main__.ContractTests.test_F6_root_sample_schema_headers_and_checks) ... ok\ntest_R2_CPU_identity_and_worker_historical_hash_seed (__main__.ContractTests.test_R2_CPU_identity_and_worker_historical_hash_seed) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.174s\n\nOK\n",
+      "stdout_bytes": 1791,
+      "stdout_sha256": "852a75725d820ec46b1a7e6fd84d495c5a1a3f8ad2ca6d5653d31aa57052149c"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/final_gate.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.698355+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.691804+00:00",
+      "stderr": "",
+      "stdout_bytes": 16806,
+      "stdout_sha256": "4f9fe978f2b80a746de50b0e7e5969df19fca576dddfdb47bd93169aeec82496"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/final_gate.sh"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.705130+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.698515+00:00",
+      "stderr": "",
+      "stdout": "#!/bin/bash -p\n# PREPARATION ONLY: independent approval, B2 acceptance/integration and frozen schema-2 inputs required.\nset -euo pipefail\n[[ $# == 5 ]] || { echo 'Expected RUN SOURCE NATIVE_SHA256 B2_ACCEPTED_COMMIT TOOLS_COMMIT' >&2; exit 2; }\nexec /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \\\n  /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B \\\n  \"$(dirname \"$0\")/final_gate.py\" \"$@\"\n",
+      "stdout_bytes": 417,
+      "stdout_sha256": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/final_gate_contract.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.712175+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.705208+00:00",
+      "stderr": "",
+      "stdout_bytes": 19086,
+      "stdout_sha256": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/gate_compare.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.718263+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.712304+00:00",
+      "stderr": "",
+      "stdout": "\"\"\"Compare pinned vs patched gate outputs (fixtures-*.jsonl, roots-*-<i>.jsonl) in DIR; prints one JSON summary.\"\"\"\nimport json\nimport sys\nfrom pathlib import Path\n\nd = Path(sys.argv[1])\nout = {}\nfx = {}\nfor tag in ('pinned', 'total'):\n    fx[tag] = {r['episode']: r for r in map(json.loads, (d / f'fixtures-{tag}.jsonl').read_text().splitlines())}\neps = sorted(fx['pinned'])\nsame = [e for e in eps if fx['total'].get(e) == fx['pinned'][e]]\nrs_ok = {t: sum(1 for e in eps if (r := fx[t][e]['rs']).get('start_match') and r.get('first_mismatch') is None\n                and not r.get('action_mismatch') and 'error' not in r) for t in fx}\nout['fixtures'] = dict(pinned=len(fx['pinned']), total=len(fx['total']), identical_records=len(same),\n                       differing=[e for e in eps if e not in same][:10],\n                       rs_full_parity=rs_ok,\n                       rust_only_chains_equal=sum(1 for e in eps if fx['total'].get(e, {}).get('rust_only') == fx['pinned'][e]['rust_only']),\n                       rust_only_errors={t: sum(1 for e in eps if 'error' in fx[t][e]['rust_only']) for t in fx},\n                       rust_only_ticks=sum(fx['pinned'][e]['rust_only'].get('ticks', 0) for e in eps))\nrt = {}\nfor tag in ('pinned', 'total'):\n    rows, heads = [], []\n    for p in sorted(d.glob(f'roots-{tag}-*.jsonl')):\n        lines = p.read_text().splitlines()\n        heads.append(json.loads(lines[0]))\n        rows += [json.loads(x) for x in lines[1:]]\n    rt[tag] = dict(heads=heads, rows={(r['k'], r['variant']): r for r in rows})\nkeys = sorted(rt['pinned']['rows'])\neq = [k for k in keys if rt['total']['rows'].get(k) == rt['pinned']['rows'][k]]\nP = rt['pinned']['rows']\nout['roots'] = dict(native=[h['native_sha256'] for h in (rt['pinned']['heads'][0], rt['total']['heads'][0])],\n                    roots_total=rt['pinned']['heads'][0]['roots_total'],\n                    sampled_roots=len({k[0] for k in keys}), records=dict(pinned=len(keys), total=len(rt['total']['rows'])),\n                    identical_records=len(eq), differing=[k for k in keys if k not in eq][:10],\n                    rollout_e1_values=sum(len(P[k]['rollout_e1']) for k in keys),\n                    select_action_calls=sum(len(P[k]['select'])for k in keys),\n                    apply_discrete=sum(1 for k in keys if 'apply' in P[k]),\n                    step_checks=sum(len(P[k]['step']) for k in keys),\n                    games=len({P[k]['index'] for k in keys}),\n                    tick_range=[min(P[k]['tick'] for k in keys), max(P[k]['tick'] for k in keys)],\n                    by_variant={v: sum(1 for k in eq if k[1] == v) for v in ('full', 'cut')})\nprint(json.dumps(out, indent=1))\n",
+      "stdout_bytes": 2690,
+      "stdout_sha256": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/gate_fixtures.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.724904+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.718364+00:00",
+      "stderr": "",
+      "stdout": "\"\"\"577-fixture native gate, one native per process (the native is whatever `clasher_core` resolves to on PYTHONPATH).\n\n    PYTHONPATH=<native dir>:<engine-rs src>:<r1>/src:<bot repo> python parity_fixtures.py --out OUT.jsonl --workers N\n\nPer train+val fixture (bot.fidelity.rs_parity's set):\n- rs: bot.fidelity.rs_parity.run_one unchanged (Python<->Rust lockstep digest gate; first mismatch);\n- rust_only: the same imported Rust start state and recorded plays applied to Rust alone, stepped to the\n  recording's end/game over; sha256 chain over every tick's digest(), the apply_action results, and the full\n  snapshot() every 100 ticks + at the end. Equal chains across two natives = bit-identical full trajectories.\n\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nfrom multiprocessing import Pool\n\n\ndef rust_only(ep):\n    import clasher_core\n    from differential import config, snapshot\n    from bot.fidelity import rs_parity as rp\n    rp.D = Path(os.environ[\"C1_GATE_FIXTURES\"])\n    from bot.fidelity.fixture import load_fixture, load_split\n    fix = load_fixture(rp.D / \"t1-trainval\" / ep, load_split(rp.D / \"t1-split.json\"))\n    try:\n        b = rp._py_battle(fix)\n        cards = tuple(sorted({rp._name(rp.ID2N[i]) for s in (0, 1) for i in fix.initial_order[s]}))\n        if cards not in rp._CFG:\n            rp._CFG[cards] = config(cards)\n        r = clasher_core.BattleState(snapshot(b, rp._CFG[cards]))\n    except Exception as ex:\n        return dict(error=repr(ex)[:300])\n    plays = sorted((p for p in fix.plays if p.kind != \"champion ability\"), key=lambda p: (p.exec_tick, p.side, p.slot))\n    h = hashlib.sha256(r.snapshot().encode())\n    pi, t, actions = 0, fix.start_tick, []\n    while t < fix.end_tick:\n        while pi < len(plays) and plays[pi].exec_tick - 1 <= t:\n            p = plays[pi]\n            try:\n                ok = bool(r.apply_action(p.side, rp._name(p.card), p.tile[0], p.tile[1]))\n            except Exception as ex:\n                ok = 'err:' + type(ex).__name__\n            actions.append(ok)\n            h.update(repr(ok).encode())\n            pi += 1\n        r.step(1)\n        t += 1\n        h.update(str(r.digest()).encode())\n        if (t - fix.start_tick) % 100 == 0:\n            h.update(r.snapshot().encode())\n    final = r.snapshot()\n    h.update(final.encode())\n    return dict(ticks=t - fix.start_tick, chain=h.hexdigest(), final=hashlib.sha256(final.encode()).hexdigest(),\n                accepted=sum(a is True for a in actions), plays=len(actions), action_results=actions)\n\n\ndef one(ep):\n    from bot.fidelity import rs_parity as rp\n    rp.D = Path(os.environ[\"C1_GATE_FIXTURES\"])\n    res = dict(episode=ep, rs=rp.run_one(ep))\n    res['rust_only'] = rust_only(ep)\n    return res\n\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--out', required=True)\n    ap.add_argument('--workers', type=int, default=8)\n    ap.add_argument('--limit', type=int, default=0)\n    a = ap.parse_args()\n    import clasher_core\n    from bot.fidelity import rs_parity as rp\n    rp.D = Path(os.environ[\"C1_GATE_FIXTURES\"])\n    from bot.fidelity.fixture import load_split\n    sp = load_split(rp.D / \"t1-split.json\")\n    eps = sorted(e for e in sp if sp[e] in ('train', 'validation') and (rp.D / \"t1-trainval\" / e).exists())\n    if a.limit:\n        eps = eps[:a.limit]\n    print(json.dumps(dict(native=clasher_core.__file__, fixtures=len(eps))), flush=True)\n    with Pool(a.workers) as pool, open(a.out, 'w') as fh:\n        for r in pool.imap(one, eps):\n            fh.write(json.dumps(r, sort_keys=True) + '\\n')\n            fh.flush()\n\n\nif __name__ == '__main__':\n    main()\n",
+      "stdout_bytes": 3655,
+      "stdout_sha256": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/gate_roots.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.731019+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.725024+00:00",
+      "stderr": "",
+      "stdout_bytes": 5267,
+      "stdout_sha256": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/gate_worker.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.736960+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.731109+00:00",
+      "stderr": "",
+      "stdout": "\"\"\"Isolated worker bootstrap; the reviewed driver is its only supported caller.\"\"\"\nimport os\nfrom pathlib import Path\nimport runpy\nimport sys\n\n\ndef main():\n    capsule, tag, helper, *args = sys.argv[1:]\n    capsule = Path(capsule)\n    if Path(sys.base_prefix).resolve() != capsule / 'python' or sys.version.split()[0] != '3.12.12':\n        raise RuntimeError('Python did not bootstrap from the frozen standalone capsule')\n    if sys.flags.hash_randomization or not sys.flags.safe_path or not sys.flags.no_site or not sys.flags.no_user_site:\n        raise RuntimeError('worker must preserve seed0 and disable implicit/site/user import paths')\n    rt = capsule / ('r1' if tag == 'pinned' else 'total-runtime')\n    native = capsule / ('pinned-native' if tag == 'pinned' else 'native')\n    std = capsule / 'python/lib/python3.12'\n    sys.path[:] = [str(native), str(rt / 'engine-rs'), str(rt / 'src'),\n                   str(rt / 'reports/strategy_council_20260928/engine-speed'),\n                   str(capsule / 'bot'), str(std / 'site-packages'), str(std),\n                   str(std / 'lib-dynload')]\n    sys.dont_write_bytecode = True\n    os.environ.update(CLASHER_ROOT=str(rt), CLASHER_BOT_RUNTIME=str(rt),\n                      CLASHER_DELAY_NATIVE_DIR=str(native), CLASHER_BOT_RUNTIME_PINS='r1',\n                      C1_GATE_BOT_ROOT=str(capsule / 'bot'), C1_GATE_FIXTURES=str(capsule / 'fixtures'))\n    os.environ.pop('CLASHER_EVAL_RUNTIME_ROOT', None)\n    sys.argv = [str(capsule / 'tools' / helper)] + args\n    runpy.run_path(sys.argv[0], run_name='__main__')\n\n\nif __name__ == '__main__':\n    main()\n",
+      "stdout_bytes": 1608,
+      "stdout_sha256": "8b8fc204a36849f0ee2d64705e9e9cec1dce32c7cab27d57ccf6e87811ba1742"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887:reports/cards/c1/tools/test_final_gate_contract.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.743961+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.737041+00:00",
+      "stderr": "",
+      "stdout_bytes": 15661,
+      "stdout_sha256": "0c5924ab846b8400bf46c0a337a7b2fe8c97eae4de45fe0767d36e179880fe22"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.756497+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.744087+00:00",
+      "stderr": "",
+      "stdout_artifact": "complete-reviewed.delta",
+      "stdout_bytes": 168831,
+      "stdout_sha256": "5242fbb807e069077683f8b64cb9a50f61301071201df889857f0ec997860c4d"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary",
+        "c45854febf93352284dd9f76b02651d989d906a7",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.768327+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.757097+00:00",
+      "stderr": "",
+      "stdout_artifact": "focused-reviewed.delta",
+      "stdout_bytes": 58698,
+      "stdout_sha256": "d310c202ee6c316f1430358ec95f8d076474ca44a8d4dcda08044978dc4f27cd"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "reports/cards/c1/tools/final_gate.sh"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.771192+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.768677+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.782148+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.771208+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "476a747f75569040f9b137d0991691c95e6f1b29",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+        "--",
+        "engine-cards",
+        "reports/cards/c1/tools/probe_snapshots.py",
+        "reports/cards/c1/tools/probe_snapshot_followup.py"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.788335+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.782160+00:00",
+      "stderr": "",
+      "stdout": "",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-tree",
+        "-r",
+        "-z",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.811527+00:00",
+      "entries": 15286,
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.788347+00:00",
+      "stderr": "",
+      "stdout_artifact": "git-full-tree.bin",
+      "stdout_bytes": 1922663,
+      "stdout_sha256": "1e455d43b8e89eb8789b0da651afc6c4b3c9da6e2327de884221312007a03359"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-tree",
+        "-r",
+        "-z",
+        "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+        "--",
+        "reports/cards/c1/tools"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.823954+00:00",
+      "entries": 20,
+      "exit_code": 0,
+      "started_utc": "2026-10-16T10:49:33.818001+00:00",
+      "stderr": "",
+      "stdout_artifact": "git-prefixed-tree.bin",
+      "stdout_bytes": 1836,
+      "stdout_sha256": "7709cae4ea1375da193cbb05ff503b1ed96db97fa04008e7e82bb1ed6ca5c295"
+    },
+    {
+      "argv": [
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-P",
+        "-s",
+        "-S",
+        "-B",
+        "-c",
+        "import sys; print(sys.flags.hash_randomization, sys.flags.safe_path, sys.flags.no_site, sys.flags.no_user_site)"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.837951+00:00",
+      "exit_code": 0,
+      "explicit_environment": {
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0"
+      },
+      "started_utc": "2026-10-16T10:49:33.824444+00:00",
+      "stderr": "",
+      "stdout": "0 True 1 1\n",
+      "stdout_bytes": 11,
+      "stdout_sha256": "e2742b8d89b52472439f65773e40a24ac430f77c8e9f069ae56fb5957e705139"
+    },
+    {
+      "argv": [
+        "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "-c",
+        "import sys; print(sys.flags.hash_randomization, sys.flags.safe_path, sys.flags.no_site, sys.flags.no_user_site)"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "ended_utc": "2026-10-16T10:49:33.850844+00:00",
+      "exit_code": 0,
+      "explicit_environment": {
+        "PATH": "/usr/bin:/bin",
+        "PYTHONHASHSEED": "0"
+      },
+      "started_utc": "2026-10-16T10:49:33.837973+00:00",
+      "stderr": "",
+      "stdout": "1 True 1 1\n",
+      "stdout_bytes": 11,
+      "stdout_sha256": "bd25cac349a8f654a138dce3e1f7c68e1b2586d0f8189ce278de9b949060ad35"
+    }
+  ],
+  "readpath_and_preserved_sha256": {
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh": "e77b40f7ef61009fb244f50edb69711a73b416e369091e3957b41715a3743949",
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh": "ae1d26161b1666a3b697a3c54bb2f7ddf1768e2bc2ca4e359f5107f5827a3c36",
+    "/mpac/sdicks02/repos/clasher-bot/bot/fidelity/fixture.py": "f10be50f19034081ba042f6416631242bf91a75dc827f4dbae513319a9bfc457",
+    "/mpac/sdicks02/repos/clasher-bot/bot/fidelity/rs_parity.py": "b9c99df6c88cee1a4f9d94a96862b6493f5974f29aec4b0fe7b6a9b68c3b2b8a",
+    "/mpac/sdicks02/repos/clasher-bot/bot/live/native_parity.py": "e826a70749b61fc81edb40aedbd47a8a4743ea714b34178822eee4b5f14c02e5",
+    "/mpac/sdicks02/repos/clasher-bot/bot/players/runtime.py": "891a54d6fe641fdb8b7aafab38d07f58bc5231e3298464c4e3d6cea813e025cc",
+    "/mpac/sdicks02/repos/clasher-bot/bot/search/lopp_fast.py": "716e5848fe7a4d4e28bd3f4343bebd084f820bd2bed9b82e3f69b98d8313506d",
+    "/mpac/sdicks02/repos/clasher-cards-c1/engine-cards/differential.py": "693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9",
+    "/mpac/sdicks02/repos/clasher-cards-c1/engine-cards/py/src/clasher/paths.py": "39bd4bca9c1631af067123dd538f35bd31c90c3f42936ef50efa3dd26e81ac7f",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/peek.py": "e8f0b2ac3280b5395b098a9bcb62765f9865dcf6c172f5e60d4d9d2bf8107b85",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/probe_snapshot_followup.py": "60be8aaf65052557b333d5fe6cfd74636841d55ff7c4a3eef15835e1d66a3208",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/probe_snapshots.py": "aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/snapcmp_probe.py": "b850a5e707903606d43df4f4bd8f292cb5ea830f18b881e21476384089372b6b",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/strategy_council_20260928/engine-speed/es_common.py": "92c4b9829d458b95acc5e4cde69467b3c4248669d4acccf4302034b39970f7f5",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "6d2665d02da7a74083313b64693e87bf59d50b303904e614ae3136b7741f8c76",
+    "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/C1-final-tools-r1.md": "1653b7d82d1d3b947618e1f7bebe762bfef54f6f31aa781456627fc16c0dceb0"
+  },
+  "report_sha256": "aecae401fce8d0c0bc0be0d9368b6700017867658144013d6535dc6310bf78b8",
+  "scope": "Local serial read-only source/Git/hash/AST, pure contract validators, mocked bootstrap/publication/wait helpers, scratch filesystem and stdlib-only interpreter flag probes. No driver main/run_gate, actual worker/helper/launcher/staging/host script, engine/native import, simulation, build, remote, emulator, deployment, pin action, delegation, production edit, commit or push.",
+  "verification": [
+    {
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r3-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/tools/test_final_gate_contract.py > reports/cards/c1/reviews/r3-independent/submitted-tests.log 2>&1",
+      "exit_code": 0,
+      "result": "13 submitted groups PASS; includes real stdlib-only interpreter flag probe"
+    },
+    {
+      "artifact_at_attempt": "independent_checks-first-attempt.py / independent-tests-first-attempt.log",
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r3-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/reviews/r3-independent/independent_checks.py > reports/cards/c1/reviews/r3-independent/independent-tests.log 2>&1",
+      "exit_code": 1,
+      "result": "9 groups passed; filesystem test harness expected FileExistsError but inherited setgid bit caused earlier correct mode rejection; no production defect"
+    },
+    {
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r3-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/reviews/r3-independent/independent_checks.py > reports/cards/c1/reviews/r3-independent/independent-tests.log 2>&1",
+      "exit_code": 0,
+      "result": "10 independent groups PASS after explicitly chmod700 scratch directory; one group intentionally reproduces the new interrupted-wait finding"
+    },
+    {
+      "command": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/reviews/r3-independent/record_review.py > reports/cards/c1/reviews/r3-independent/record-review.log 2>&1",
+      "exit_code": 0,
+      "result": "38 recorded read-only commands/flag probes all exit0"
+    }
+  ]
+}

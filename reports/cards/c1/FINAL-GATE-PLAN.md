@@ -159,6 +159,14 @@ pgrep/pkill. Failure leaves claim, raw logs, per-phase and all-child exits and F
 failed fixture exits/audit. Success is written to exclusive .PASS.tmp, atomically linked without clobbering to
 PASS.json, then temp removed; any publication exception removes PASS. Accept only PASS with outer launcher
 exit0 and matching launch/baseline/phase receipts, no FAIL. A SIGKILL/power loss cannot supply a valid outer exit.
+Each observed child status is stored by unique label before its live entry is removed. If a later wait raises,
+phase-exits.json preserves the partial observations; cleanup retains them and publishes phase-final-exits.json
+and all-child-exits.json with the complete union, without duplicates or overwritten statuses. Cleanup blocks
+TERM/INT/HUP until children and receipts finish, then restores the signal mask so pending cancellation prevents
+PASS. SIGKILL/power loss remain detectable through missing outer exit/complete receipts, not catchable cleanup.
+Phases are registered before any spawn. Spawn/PID registration and phase-receipt writes also defer these
+signals; workers immediately reset their inherited mask before gate dispatch. A stop at spawn completion
+therefore leaves a tracked PID and final phase/all-child receipts even if the phase wait was never entered.
 
 After review/prerequisites/job audit, the **later owner-approved** invocation is (not run here):
 

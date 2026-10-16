@@ -287,3 +287,8 @@ Fresh launcher review r2 rejected c45854f for dropping USER before CPU accountin
 pathspec. Both repaired; an additional local flag check corrected workers ignoring hashseed0 under-I.
 The13-group revised local suite passes with no engine/native/host launcher execution. Original r2 rejection
 and artifacts remain; see FINAL-TOOLS-r3-response.md for full repair/review bindings. Fresh r3 required.
+
+Fresh r3 rejected4bfae6b for losing prior exit receipts during a later interrupted wait. Persistent per-label
+statuses, partial/final phase receipts and protected spawn/cleanup boundaries now preserve that provenance;
+16 local synthetic groups pass. Failed r3 artifacts remain intact and source-bound. A fresh r4 review must
+approve revised code before host execution. Engine/native/comparator and B2→C1 gate prerequisites unchanged.

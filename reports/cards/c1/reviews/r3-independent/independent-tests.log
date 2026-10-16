@@ -1,0 +1,15 @@
+test_R2_CPU_identity_source_and_minimal_worker_command (__main__.ReviewTests.test_R2_CPU_identity_source_and_minimal_worker_command) ... ok
+test_R2_archive_full_and_prefix_exact_argv (__main__.ReviewTests.test_R2_archive_full_and_prefix_exact_argv) ... ok
+test_all_python_AST_and_phase_order (__main__.ReviewTests.test_all_python_AST_and_phase_order) ... ok
+test_bootstrap_guard_AST_with_inert_runpy_both_arms_and_bad_flags (__main__.ReviewTests.test_bootstrap_guard_AST_with_inert_runpy_both_arms_and_bad_flags) ... ok
+test_expected_fixture_and_root_derivation_from_synthetic_files (__main__.ReviewTests.test_expected_fixture_and_root_derivation_from_synthetic_files) ... ok
+test_frozen_control_and_input_content_replacements (__main__.ReviewTests.test_frozen_control_and_input_content_replacements) ... ok
+test_historical_helpers_exactly_preserved_after_declared_adaptations (__main__.ReviewTests.test_historical_helpers_exactly_preserved_after_declared_adaptations) ... ok
+test_output_parent_and_stale_dangling_paths_reject (__main__.ReviewTests.test_output_parent_and_stale_dangling_paths_reject) ... ok
+test_publication_tail_postlink_failure_removes_PASS (__main__.ReviewTests.test_publication_tail_postlink_failure_removes_PASS) ... ok
+test_reproduce_interrupted_wait_loses_already_reaped_exit_receipt (__main__.ReviewTests.test_reproduce_interrupted_wait_loses_already_reaped_exit_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.389s
+
+OK

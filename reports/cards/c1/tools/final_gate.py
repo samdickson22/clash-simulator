@@ -152,24 +152,49 @@ def preflight(run, requested):
 
 class Children:
     def __init__(self, output):
-        self.output, self.live, self.rows = output, {}, []
+        self.output, self.live, self.completed, self.phases = output, {}, {}, {}
+
+    @property
+    def rows(self):
+        return list(self.completed.values())
+
+    def begin_phase(self, phase, labels):
+        C.require(phase not in self.phases, 'duplicate phase')
+        self.phases[phase] = list(labels)
 
     def start(self, label, command, env):
-        with os.fdopen(new_file(self.output, label + '.log'), 'wb') as log:
-            p = subprocess.Popen(command, env=env, cwd=self.output, stdin=subprocess.DEVNULL,
-                                 stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-        self.live[label] = (p, command, utc())
+        C.require(label not in self.live and label not in self.completed, 'duplicate child label')
+        # Defer cancellation until a newly spawned PID is registered. The worker resets this inherited
+        # mask immediately on entry, before importing gate code or creating its own pool.
+        mask = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT, signal.SIGHUP})
+        try:
+            with os.fdopen(new_file(self.output, label + '.log'), 'wb') as log:
+                p = subprocess.Popen(command, env=env, cwd=self.output, stdin=subprocess.DEVNULL,
+                                     stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+                self.live[label] = (p, command, utc())
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, mask)
 
     def wait(self, phase, labels):
-        rows = []
-        for label in labels:
-            p, command, started = self.live[label]
-            code = p.wait()  # Every PID individually, including shutdown failure and negative signal status.
-            rows.append(dict(label=label, pid=p.pid, pgid=p.pid, exit_code=code, command=command,
-                             started_utc=started, ended_utc=utc()))
-            del self.live[label]
-        self.rows.extend(rows)
-        write_json(self.output, phase + '-exits.json', rows)
+        if phase not in self.phases:
+            self.begin_phase(phase, labels)
+        C.require(self.phases[phase] == list(labels), 'phase child inventory changed')
+        try:
+            for label in labels:
+                p, command, started = self.live[label]
+                code = p.wait()  # Individually retain even complete-output shutdown failure/signal.
+                # Store BEFORE removing live state. Dict identity makes cleanup idempotent if interrupted
+                # between these statements; the already observed status/time is never overwritten.
+                self.completed[label] = dict(label=label, pid=p.pid, pgid=p.pid, exit_code=code, command=command,
+                                             started_utc=started, ended_utc=utc())
+                del self.live[label]
+        finally:
+            rows = [self.completed[k] for k in labels if k in self.completed]
+            mask = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT, signal.SIGHUP})
+            try:
+                write_json(self.output, phase + '-exits.json', rows)  # Partial observations on unwind.
+            finally:
+                signal.pthread_sigmask(signal.SIG_SETMASK, mask)
         C.statuses_ok(rows, labels)
 
     def stop(self):
@@ -179,13 +204,18 @@ class Children:
             except ProcessLookupError:
                 pass
         for label, (p, command, started) in list(self.live.items()):
+            if label in self.completed:  # A signal may have arrived just after the persistent store.
+                del self.live[label]
+                continue
             try:
                 code = p.wait(timeout=10)
             except subprocess.TimeoutExpired:
                 os.killpg(p.pid, signal.SIGKILL); code = p.wait()
-            self.rows.append(dict(label=label, pid=p.pid, pgid=p.pid, exit_code=code,
-                                  command=command, started_utc=started, ended_utc=utc()))
+            self.completed[label] = dict(label=label, pid=p.pid, pgid=p.pid, exit_code=code,
+                                         command=command, started_utc=started, ended_utc=utc())
             del self.live[label]
+        for phase, labels in self.phases.items():
+            write_json(self.output, phase + '-final-exits.json', [self.completed[k] for k in labels if k in self.completed])
         write_json(self.output, 'all-child-exits.json', self.rows)
 
 
@@ -216,6 +246,7 @@ def run_gate(run, requested):
                 str(capsule / 'tools/gate_worker.py'), str(capsule), tag, helper, *map(str, args)]
     try:
         check_original(run, initial)
+        children.begin_phase('fixtures', ['fixtures-pinned', 'fixtures-total'])
         for tag in ('pinned', 'total'):
             children.start('fixtures-' + tag, command(tag, 'gate_fixtures.py', '--out',
                            gate / f'fixtures-{tag}.jsonl', '--workers', '3'), env)
@@ -229,10 +260,11 @@ def run_gate(run, requested):
         C.require(C.read_regular(gate / 'fixtures-pinned.jsonl') == C.read_regular(gate / 'fixtures-total.jsonl'),
                   'fixture bodies differ')
         check_original(run, initial)
-        labels = []
+        labels = [f'roots-{tag}-{i}' for tag in ('pinned', 'total') for i in range(4)]
+        children.begin_phase('roots', labels)
         for tag in ('pinned', 'total'):
             for i in range(4):
-                label = f'roots-{tag}-{i}'; labels.append(label)
+                label = f'roots-{tag}-{i}'
                 children.start(label, command(tag, 'gate_roots.py', '--roots', capsule / 'roots', '--sample', '300',
                                '--shard', f'{i}/4', '--out', gate / (label + '.jsonl')), env)
         children.wait('roots', labels)
@@ -246,6 +278,7 @@ def run_gate(run, requested):
             b = C.read_regular(gate / f'roots-total-{i}.jsonl').splitlines()[1:]
             C.require(a == b, 'root bodies differ')
         check_original(run, initial)
+        children.begin_phase('comparator', ['compare'])
         children.start('compare', command('pinned', 'gate_compare.py', gate), env)
         children.wait('comparator', ['compare'])
         summary = C.decode(C.read_regular(output / 'compare.log'))
@@ -256,7 +289,13 @@ def run_gate(run, requested):
                     source_commit=requested[0], native_sha256=requested[1], b2_commit=requested[2],
                     tools_commit=requested[3], ended_utc=utc(), child_statuses=children.rows)
     finally:
-        children.stop()
+        # Complete cleanup/receipts under repeated stop signals, then deliver any pending cancellation
+        # before success can publish. Linux-only host driver; no handlers or signals run in pure tests.
+        mask = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT, signal.SIGHUP})
+        try:
+            children.stop()
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, mask)
 
 
 def interrupted(signum, frame):

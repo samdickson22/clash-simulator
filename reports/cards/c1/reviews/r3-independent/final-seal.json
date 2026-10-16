@@ -1,0 +1,36 @@
+{
+  "all_candidate_and_preserved_hashes_still_match": true,
+  "candidate": "4bfae6b0844b4620d9482cc996a74bf86f1a1887",
+  "final_head_command": {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "stdout": "4bfae6b0844b4620d9482cc996a74bf86f1a1887\n82f9e1a2d089799fc39ad2e25d52cd4ca16d2055\n"
+  },
+  "final_status_command": {
+    "argv": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit_code": 0,
+    "stdout": "?? reports/cards/c1/reviews/FINAL-TOOLS-r3.md\n?? reports/cards/c1/reviews/r3-independent/\n?? reports/cards/c1/tools/peek.py\n?? reports/cards/c1/tools/snapcmp_probe.py\n"
+  },
+  "final_tracked_diff_command": {
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "receipt_sha256": "43f0aa7a2d026492abae04bcd732790f5968cc338138c8f396c11a64c90f538d",
+  "report_sha256": "aecae401fce8d0c0bc0be0d9368b6700017867658144013d6535dc6310bf78b8",
+  "scope": "Read-only final verification plus scratch receipt sealing only",
+  "tree": "82f9e1a2d089799fc39ad2e25d52cd4ca16d2055"
+}

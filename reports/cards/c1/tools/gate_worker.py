@@ -2,10 +2,13 @@
 import os
 from pathlib import Path
 import runpy
+import signal
 import sys
 
 
 def main():
+    # Parent defers cancellation around spawn/PID registration; workers must accept stop signals normally.
+    signal.pthread_sigmask(signal.SIG_SETMASK, set())
     capsule, tag, helper, *args = sys.argv[1:]
     capsule = Path(capsule)
     if Path(sys.base_prefix).resolve() != capsule / 'python' or sys.version.split()[0] != '3.12.12':
