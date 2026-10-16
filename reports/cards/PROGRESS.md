@@ -51,3 +51,6 @@ See COVERAGE.md "Batch plan".
 ## Definition of done per card
 engine native==Python (probe + mixed games) · fidelity PASS vs RoyaleSim (or documented 16.402) · C56 parity gate
 unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1; proxy on r1-total) · perception = LIVE.
+- 00:29Z Proxy table b55c3b017 sent (BOT LEAD Sol review pending). Decisions: class-only unknowns not charged to elixir
+  (BOT LEAD + translator agree); Barbarian HP stays 691 in r1-cards1 (C56 bit-identity wins; calibration is a separate
+  pin decision). Translator hook must rebase on BOT LEAD's revised livefix revealed-set patch. Stats diff 3a3bcaa74.
