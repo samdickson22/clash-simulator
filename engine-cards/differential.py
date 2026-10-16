@@ -52,6 +52,18 @@ def _fan_stats(s, projectile):
     )
 
 
+def _rider_stats(e):
+    """Batch B1: a mount's attached-rider block (mechanics/shared/riders.py)."""
+    riders = next((m for m in e.mechanics if type(m).__name__ == "AttachedRiders"), None)
+    if riders is None:
+        return {}
+    data = riders.rider_data
+    return dict(riders=dict(
+        number=int(riders.number), radius=int(riders.radius_units),
+        shift=int(data.get("spawnAngleShift", 0) or 0), max_angle=int(data.get("spawnMaxAngle", 0) or 0),
+    ))
+
+
 def entity(e, *, clone_prototype=True):
     from mirror_snapshot import payload_key
     from clasher.unit_traits import is_knockback_immune, is_hover_unit_card
@@ -140,6 +152,7 @@ def entity(e, *, clone_prototype=True):
         min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
         fly_direct=bool(getattr(s, "fly_direct_paths", False)),
         **_fan_stats(s, projectile),
+        **_rider_stats(e),
         death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
         dash=dash_spec,
@@ -393,6 +406,10 @@ def entity(e, *, clone_prototype=True):
         cooldown=float(e.attack_cooldown),
         force_due=stats["ordinary"] and e.attack_cooldown <= 0,
     )
+    mount = getattr(e, "_rider_mount", None)
+    if mount is not None and mount.is_alive:
+        out["mount"] = mount.id
+        out["rider_rank"] = int(getattr(e, "_rider_rank", 0))
     if clone_prototype and type(e).__name__ == 'Troop' and not e.is_clone and s is not None:
         from clone_snapshot import prototype
         out['clone_template'] = prototype(e)
@@ -585,7 +602,9 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             footprint=size,
             anywhere=bool(getattr(stats, "can_deploy_on_enemy_side", False)),
             margin=int(getattr(stats, "deploy_w_tile_margin", 0) or 0),
-            mirror_x=len(units) in (2, 3, 4) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5),
+            # Riders (Goblin Giant) are laid by their mount's heading, never by lane.
+            mirror_x=(len(units) in (2, 3, 4) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5))
+            and not any("mount" in unit for unit in units),
             recruits_line=card == "RoyalRecruits" and not getattr(stats, "summon_width", 0),
             line_search=bool(
                 getattr(stats, "summon_width", 0)
@@ -711,6 +730,11 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         if card in ('DarkWitch','SkeletonBalloon','LavaHound','ElixirGolem','BarbarianHut'):
             from payload_snapshot import export_payloads
             export_payloads(b.entities[units[0]['id']],b,out)
+        # Batch B1: an attached rider's own death spawn (Goblin Giant's dismount).
+        rider = next((u for u in units if "mount" in u), None)
+        if rider is not None:
+            from payload_snapshot import export_payloads
+            export_payloads(b.entities[rider['id']], b, out)
     if mirror_templates and 'Mirror' in cards:
         from mirror_snapshot import extend
         extend(out, cards)

@@ -262,6 +262,15 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "stopMovementAfterMS": 640,
         "waitMS": 100,
         "sightClipSide": 2000,
+        # SpawnAttach rider block (mechanics/shared/riders.py).
+        "spawnAttach": True,
+        "spawnRadius": 900,
+    },
+    "SpearGoblinGiant": {
+        "flyingHeight": 4000,
+        "spawnAngleShift": -22,
+        "spawnMaxAngle": 90,
+        "deathSpawnDeployTime": 700,
     },
     "IceWizard": {"projectileStartRadius": 550},
     "InfernoDragon": {
@@ -440,6 +449,7 @@ CHARACTER_RUNTIME_TRAITS: dict[str, dict[str, Any]] = {
     "GiantSkeleton": {"mass": 18, "ignorePushback": True},
     "MiniZapMachine": {"mass": 4},
     "Hunter": {"mass": 5},
+    "SpearGoblinGiant": {"mass": 1},
     # Battle Healer's Hovering only prices river water in her ground route
     # (RoyaleSim (MIT) pathfinding.HOVERING_WATER_RULE); she otherwise walks
     # the ordinary ground route. The engine's hover arm is Royal Ghost's

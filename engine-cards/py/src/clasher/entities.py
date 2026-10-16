@@ -3047,6 +3047,8 @@ class Troop(Entity):
             return
         if self.spawn_stagger_remaining > 1e-9:
             return
+        if getattr(self, "_rider_mount", None) is not None and self._rider_mount.is_alive:
+            return
         if self._native_natural_movement_active and getattr(
             self, "_native_frozen_stop_route", None
         ) is not None:
@@ -3382,7 +3384,11 @@ class Troop(Entity):
             # physical collision eligibility is a separate predicate.
             # The departing Spirit body remains a stationary avoidance
             # obstacle until the launch interval ends, without body pressure.
-            if isinstance(other, Troop) and other.is_alive and not launched_spirit and other.spawn_stagger_remaining <= 1e-9:
+            if (
+                isinstance(other, Troop) and other.is_alive and not launched_spirit
+                and other.spawn_stagger_remaining <= 1e-9
+                and not (getattr(other, "_rider_mount", None) is not None and other._rider_mount.is_alive)
+            ):
                 # Native states 0/2/8/10 zero the direction dot product;
                 # freeze preserves the prior walking versus attacking state.
                 if (

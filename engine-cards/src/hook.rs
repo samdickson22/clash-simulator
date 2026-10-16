@@ -26,7 +26,7 @@ impl BattleState {
     fn hook_range(&self,i:usize,j:usize,spec:&Spec)->bool {
         let a=&self.entities[i];let b=&self.entities[j];
         if !b.alive || b.owner==a.owner || b.spirit || b.hidden || b.underground
-           || b.stagger>1e-9 || b.death_immunity.is_some() || b.stealth_until>self.tick*50
+           || b.absent() || b.death_immunity.is_some() || b.stealth_until>self.tick*50
            || !(b.class=="Troop" || b.class=="Building") || !a.can_hit_plane(b) {return false;}
         let distance=((a.x-b.x).powi(2)+(a.y-b.y).powi(2)).sqrt();
         distance>spec.minimum+1e-9 && distance<=spec.maximum+b.stats.radius+1e-9
@@ -117,7 +117,7 @@ impl BattleState {
                     state.position=Some(((units(x)+mx) as f64/1000.0,(units(y)+my) as f64/1000.0));
                 } else {
                     state.position=Some((b.x,b.y));
-                    if b.spirit || b.underground || b.stagger>1e-9 || b.hidden || b.death_immunity.is_some() {
+                    if b.spirit || b.underground || b.absent() || b.hidden || b.death_immunity.is_some() {
                         self.hook_finish(i,&mut state,true);
                     } else {
                         if b.class!="Building" {self.hook_interrupt(j);}

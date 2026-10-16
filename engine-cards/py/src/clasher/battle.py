@@ -818,6 +818,12 @@ class BattleState:
             e.id for e in entities_to_update
             if isinstance(e, (Troop, Building)) and e.is_alive
         )
+        # Batch B1 riders: each mount's heading as the last tick left it.
+        mount_facings = [
+            (e, e._rider_mechanic, e.native_facing_units())
+            for e in entities_to_update
+            if getattr(e, "_rider_mechanic", None) is not None and e.is_alive
+        ]
         try:
             # Component type 0: combat components run in object-ID order
             # against the same start-of-frame positions. Direct damage and
@@ -846,6 +852,11 @@ class BattleState:
             self._defer_projectile_impacts = False
             self._projectile_lethal_reservations = None
             self._combat_phase_eligible_ids = frozenset()
+
+        # rider.POSITION: riders stand on their mounts before anything moves.
+        for mount, riders, facing in mount_facings:
+            if mount.is_alive:
+                riders.carry(mount, facing)
 
         # Component type 1: movement and deployment-specific transport.
         for entity in entities_to_update:
@@ -2111,6 +2122,11 @@ class BattleState:
         if grid is not None:
             grid.add(troop)
         troop.on_spawn()
+        # Batch B1: creation-time payloads (a mount's attached riders).
+        for mechanic in list(troop.mechanics):
+            on_created = getattr(mechanic, "on_created", None)
+            if callable(on_created):
+                on_created(troop)
 
     def _first_update_spawned(self, troop, *, collide: bool = True) -> None:
         """Run a just-emitted troop's combat and movement components once.
@@ -2935,7 +2951,9 @@ class BattleState:
 
     def _accumulate_troop_collision_for(self, troop: Troop) -> None:
         """Queue body pressure, including on troops whose travel is frozen."""
-        if troop.spawn_stagger_remaining > 1e-9:
+        from .mechanics.shared.riders import mounted
+
+        if troop.spawn_stagger_remaining > 1e-9 or mounted(troop):
             return
         from .unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
 
@@ -2970,6 +2988,7 @@ class BattleState:
                 other is troop
                 or not isinstance(other, Troop)
                 or not other.is_alive
+                or mounted(other)
                 or (
                     is_in_transit(other)
                     and not getattr(other, "_river_jump_active", False)

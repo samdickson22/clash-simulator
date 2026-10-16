@@ -131,7 +131,7 @@ impl BattleState {
     }
     pub(super) fn slow_target(&mut self, j: usize, duration: f64, axes: (f64, f64, f64)) {
         let e = &mut self.entities[j];
-        if !e.alive || e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
+        if !e.alive || e.hidden || e.underground || e.spirit || e.absent() || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
         if axes == (0.7, 0.7, 0.7) {
             e.slow_ms = e.slow_ms.max((duration*1000.0).round_ties_even() as i64);
         } else if let Some(slow) = e.area_slows.iter_mut().find(|s| (s.1,s.2,s.3)==axes) {
@@ -286,7 +286,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.hidden
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && (e.class == "Troop" || e.class == "Building")
                     && Self::in_area(e, area.x, area.y, area.effect_radius))
                 .then_some(i)
@@ -305,7 +305,7 @@ impl BattleState {
         self.stun_target(j, duration);
         let e = &mut self.entities[j];
         e.freeze_expiry = e.freeze_expiry.max(expiry);
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 {
+        if e.hidden || e.underground || e.spirit || e.absent() {
             return;
         }
         if let Some(slow) = e
@@ -327,7 +327,7 @@ impl BattleState {
         damage: f64,
     ) {
         let e = &mut self.entities[j];
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || damage <= 0.0 {
+        if e.hidden || e.underground || e.spirit || e.absent() || damage <= 0.0 {
             return;
         }
         if let Some(buff) = e.periodic.iter_mut().find(|b| b.source_id == source_id) {

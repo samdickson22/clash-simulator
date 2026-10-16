@@ -36,7 +36,7 @@ impl BattleState {
         let shot = &self.entities[i];
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
             (e.alive && e.owner!=shot.owner && !e.hidden && !e.spirit && !e.underground
-                && e.stagger<=1e-9 && !e.above_surface() && e.death_immunity.is_none()
+                && !e.absent() && !e.above_surface() && e.death_immunity.is_none()
                 && (e.class=="Troop" || e.class=="Building") && !shot.hit_ids.contains(&e.id)
                 && Self::in_area(e,shot.x,shot.y,radius)).then_some(j)
         }).collect();
@@ -79,7 +79,7 @@ impl BattleState {
         if shot.stats.projectile_stun <= 0.0 && (shot.stats.projectile_slow_duration <= 0.0 || shot.stats.projectile_slow_multiplier >= 1.0) { return; }
         // entities.py:5721-5740 queries again after damage, including death children.
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
-            (e.alive && !e.hidden && !e.spirit && !e.underground && e.stagger <= 1e-9
+            (e.alive && !e.hidden && !e.spirit && !e.underground && !e.absent()
                 && e.owner != shot.owner && (!shot.source_character || e.death_immunity.is_none())
                 && (e.class == "Troop" || e.class == "Building")
                 && shot.can_hit_plane(e)
@@ -204,7 +204,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && (!shot.source_character || e.death_immunity.is_none())
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && (e.class == "Troop" || e.class == "Building")
                     && (!e.airborne() || shot.stats.can_air)
                     && !shot.hit_ids.contains(&e.id)
@@ -229,6 +229,8 @@ impl BattleState {
     pub(super) fn fire_fan(&mut self, a: &Entity, j: usize, target: Option<i32>) {
         let (tx, ty) = (self.entities[j].x, self.entities[j].y);
         let mut base = a.clone();
+        base.mount = None;
+        base.rider_rank = 0;
         base.class = "Projectile".into();
         base.champion = None;
         base.entity_kind = 2;

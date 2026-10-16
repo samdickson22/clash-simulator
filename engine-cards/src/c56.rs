@@ -104,7 +104,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && e.death_immunity.is_none()
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && !e.dash_travel()
             });
         let e = &mut self.entities[i];
@@ -152,7 +152,7 @@ impl BattleState {
                     && !b.hidden
                     && !b.spirit
                     && !b.underground
-                    && b.stagger <= 1e-9
+                    && !b.absent()
                     && b.death_immunity.is_none()
                     && b.stealth_until <= self.tick * 50
                     && reach(a, b, 0.0)
@@ -205,7 +205,7 @@ impl BattleState {
                     && !e.hidden
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && !matches!(e.entity_kind, 2 | 3)
                     && Self::in_area(e, bomb.x, bomb.y, bomb.bomb_radius))
                 .then_some(j)
@@ -230,14 +230,14 @@ impl BattleState {
     }
     pub(super) fn stun_target_mode(&mut self, i: usize, duration: f64, interrupt: bool) {
         if duration>0.0 && !self.entities[i].spirit && !self.entities[i].underground
-            && !self.entities[i].hidden && self.entities[i].stagger<=1e-9 && !self.entities[i].dash_travel() {
+            && !self.entities[i].hidden && !self.entities[i].absent() && !self.entities[i].dash_travel() {
             self.hook_cancel(i);
         }
         let e = &mut self.entities[i];
         // A committed on-hit status still interrupts a depleted character's
         // start-of-phase combat component. Python can_receive_effect does
         // not test HP (entities.py:610-624,2987-3005).
-        if duration <= 0.0 || e.spirit || e.underground || e.hidden || e.stagger > 1e-9 || e.dash_travel()
+        if duration <= 0.0 || e.spirit || e.underground || e.hidden || e.absent() || e.dash_travel()
         {
             return;
         }
@@ -456,7 +456,7 @@ impl BattleState {
                     && e.owner != area.owner
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && (!e.hidden || spell.affects_hidden)
                     && (e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.airborne())
@@ -509,7 +509,7 @@ impl BattleState {
         if spell.freeze_effect && !area.effect_applied {
             let targets: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
                 (e.alive && e.owner != area.owner && !e.hidden && !e.spirit && !e.underground
-                    && e.stagger <= 1e-9 && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
+                    && !e.absent() && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.airborne())
                     && Self::in_area(e,area.x,area.y,area.effect_radius)).then_some(j)
             }).collect();
@@ -669,7 +669,7 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && !e.hidden
-                        && e.stagger <= 1e-9
+                        && !e.absent()
                         && (e.class == "Troop" || e.class == "Building")
                         && !self.entities[i].hit_ids.contains(&e.id)
                         && Self::in_area(e, area.x, area.y, area.effect_radius)
