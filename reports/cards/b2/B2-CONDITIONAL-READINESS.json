@@ -1,5 +1,5 @@
 {
-  "status": "PENDING_AFFECTED_C56_AND_FINAL_INDEPENDENT_REVIEW",
+  "status": "PENDING_C56_AND_FINAL_INDEPENDENT_REVIEW",
   "engine_acceptance": false,
   "main_publication": false,
   "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
@@ -19,13 +19,23 @@
     }
   },
   "affected": {
-    "status": "RUNNING",
+    "status": "AFFECTED_CHECKS_COMPLETE",
     "pid": 3614622,
     "pgid": 3614622,
     "cpu_bound": 4,
     "nice": 15,
     "launch": "evidence/ragefixv1-20261016T1313Z-launch.json",
-    "review": "evidence/ragefix-v1-review2-approved.json"
+    "review": "evidence/ragefix-v1-review2-approved.json",
+    "receipt": "evidence/ragefixv1-20261016T1313Z-affected.json",
+    "sha256": "0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19",
+    "wrapper_exit": 0,
+    "terminal_no_live_pid_or_lease": true,
+    "rage_matching_continuations": 80,
+    "rage_raw_discrepancy_runs_retained": 80,
+    "rage_impact_matching_continuations": 8,
+    "rage_mirror_matching_continuations": 2,
+    "unchanged_critical_guard_continuations": 560,
+    "retained_semantic_failures": 56
   },
   "c56": {
     "status": "PENDING",

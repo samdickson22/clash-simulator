@@ -1,7 +1,7 @@
 # Fresh exact-source B2 C56 gate v2
 
-Draft pending the current affected job. Do not execute until its terminal affected
-receipt is pinned here/in code and the complete v2 bundle has independent review.
+Proposal with the terminal affected receipt pinned here/in code. Do not execute
+until the complete v2 bundle has independent review.
 This is a separate version: the old approved v1 bytes remain preserved and have
 never executed. V1's old7738 candidate is inapplicable to the Rage source commit.
 
@@ -10,8 +10,11 @@ engine files exactly as built by the sole08 Rage job. Its actual primary native 
 76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054. The build identity
 adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0 binds source,
 three sequential builds, distinct intended-mutant libraries and every probe/input.
-That build is complete, but matching affected evidence remains pending. Neither
-build success nor this draft certifies source readiness or engine acceptance.
+The affected receipt0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19
+completed13:31:41.824352Z; wrapper exit0/no live PID or lease was observed13:32:20Z.
+All specified affected checks passed, with56 semantic FAILs explicitly retained.
+Neither this bounded result nor this proposal certifies final source readiness or
+engine acceptance; fresh exact C56 and final independent review remain pending.
 
 Before staging, the reviewed v2 candidate receipt must supply the exact existing08
 job, literal build/affected hashes, source commit and native hash. The stager checks
@@ -40,6 +43,8 @@ after a failing phase; no obsolete gate restart, auto-retry, alternate admission
 process stop, runtime write, main merge or live pin change. Both arms explicitly use
 their native/runtime paths, unpatched r1 for the pinned arm and copied candidate
 engine/src/gamedata for the total arm. No stats overlay.
+Ambient CLASHER_* settings and Python/shell startup/path overrides are removed
+before the new lease; each arm supplies its explicit runtime/native settings.
 
 The historical gate-provenance receipt pins the canonical three scripts and exact
 13-file root corpus. All1043 logical roots must be unique; deterministic seed20261015

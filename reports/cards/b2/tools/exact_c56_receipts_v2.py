@@ -19,7 +19,7 @@ if not __debug__ or sys.flags.optimize:
 PIN = '681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b'
 TOTAL = '76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054'
 BUILD_SHA256 = 'adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0'
-AFFECTED_SHA256 = 'AFFECTED_RECEIPT_PENDING'
+AFFECTED_SHA256 = '0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19'
 SOURCE_COMMIT = '55bac129b93a055898524b53cc350091fb65259e'
 ARGS=dict(command_delay=27,opponent_delay=27,horizon=160,interval=10,elixir_weight=1.0)
 LABELS = ['fixtures-pinned', 'fixtures-total'] + [f'roots-{arm}-{i}' for arm in ('pinned','total') for i in range(2)]

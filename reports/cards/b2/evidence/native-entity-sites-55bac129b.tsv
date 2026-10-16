@@ -1,0 +1,88 @@
+astar.rs:31	route	for i in 0..n {
+attacks.rs:22	secondary_recipients	let mut candidates: Vec<(usize,f64)> = self.entities.iter().enumerate().filter_map(|(j,e)| {
+c56.rs:176	bomb_tick	let targets: Vec<usize> = self
+c56.rs:318	chain_tick	let candidates: Vec<(usize, f64)> = self
+c56.rs:399	chain_tick	e.hit_ids.push(id);
+c56.rs:436	area_targets	self.entities
+c56.rs:498	c56_area_tick	let targets: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
+c56.rs:650	ranked_strike_tick	let target = self
+c56.rs:670	ranked_strike_tick	self.entities[i].hit_ids.push(id);
+champions.rs:66	bind_champion	let bound = self
+champions.rs:82	refresh_champion_owner	let selected = self
+champions.rs:115	refresh_dead_champions	let groups: Vec<_> = self
+champions.rs:126	ability_owner	let mut keys: Vec<_> = self
+clone.rs:6	clone_spell	let recipients:Vec<usize>=self.entities.iter().enumerate().filter_map(|(i,e)| {
+clone.rs:44	slide_blocked	self.entities.iter().enumerate().any(|(j,b)| j!=i && b.alive && b.class=="Building" && {
+deployment.rs:6	prepare_placement_mask	let signature: Vec<i32> = self.entities.iter().filter(|e| e.alive && e.class == "Building").map(|e| 
+deployment.rs:16	prepare_placement_mask	let bounds: Vec<_> = self.entities.iter().filter(|e| e.alive && e.class == "Building").map(|e| {
+deployment.rs:41	child_position_clear	&& !self.entities.iter().any(|e| {
+deployment.rs:78	recruit_positions	let blocked: Vec<(f64, f64)> = self.entities.iter().filter_map(|e| {
+hook.rs:36	hook_candidate	let candidates:Vec<(usize,f64)>=self.entities.iter().enumerate().filter(|(j,_)|self.hook_range(i,*j,
+hook.rs:83	hook_move_valid	!self.entities.iter().any(|b|b.alive && b.class=="Building" && {
+leap.rs:45	leap_slam	let victims:Vec<usize>=self.entities.iter().enumerate().filter_map(|(j,e)| {
+lib.rs:844	grouped_spell	.and_then(|g| self.entities.iter().find(|e| e.damage_group == Some(g)))
+lib.rs:847	grouped_spell	let targets: Vec<usize> = self
+lib.rs:868	grouped_spell	for e in &mut self.entities {
+lib.rs:870	grouped_spell	e.hit_ids.extend(&ids);
+lib.rs:879	grouped_spell	let status_targets: Vec<usize> = self
+lib.rs:1010	spirit_tick	let victims: Vec<usize> = self
+lib.rs:1031	spirit_tick	let status: Vec<usize> = self
+lib.rs:1073	area_tick	for e in &mut self.entities {
+lib.rs:1125	rolling_tick	for j in 0..self.entities.len() {
+lib.rs:1148	rolling_tick	self.entities[i].hit_ids.push(id);
+lib.rs:1155	rolling_tick	self.entities[i].hit_ids.push(id);
+lib.rs:1179	can_deploy_anywhere	&& !self.entities.iter().any(|e| {
+lib.rs:1196	can_deploy	&& self.entities.iter().any(|e| {
+lib.rs:1214	can_deploy	let alive = self.entities.iter().any(|e| {
+lib.rs:1245	footprint_blocked	self.entities.iter().any(|e| {
+lib.rs:1254	payload_blocked	self.entities.iter().any(|e| {
+lib.rs:1310	index	self.entities.iter().position(|e| e.id == id)
+lib.rs:1317	pending_lethal	let damage: f64 = self
+lib.rs:1368	target_candidate	for (j, b) in self.entities.iter().enumerate() {
+lib.rs:1484	target_candidate	let kings: Vec<&Entity> = self
+lib.rs:1497	target_candidate	let princesses: Vec<&Entity> = self
+lib.rs:1545	occupied	for e in self
+lib.rs:1813	collide	for (j, b) in self.entities.iter().enumerate() {
+lib.rs:1891	avoidance_grid	for i in 0..self.entities.len() { self.add_avoidance_entity(i, &mut buckets); }
+lib.rs:2463	combat_one	for (k, e) in self.entities.iter().enumerate() {
+lib.rs:2901	tick_once	self.entities
+lib.rs:2913	tick_once	let eligible: Vec<bool> = self.entities.iter().map(|e| e.alive).collect();
+lib.rs:2914	tick_once	for i in 0..n {
+lib.rs:2924	tick_once	for i in 0..n {
+lib.rs:2932	tick_once	for i in 0..n {
+lib.rs:2937	tick_once	for i in 0..n {
+lib.rs:2950	tick_once	for i in 0..n {
+lib.rs:2957	tick_once	for e in &mut self.entities[..n] {
+lib.rs:3036	tick_once	projectile_alive = Some(self.entities.iter().filter(|e| e.alive).map(|e| e.id).collect());
+lib.rs:3087	tick_once	let victims: Vec<usize> = self
+lib.rs:3127	tick_once	let victims: Vec<usize> = self
+lib.rs:3239	tick_once	for i in 0..self.entities.len() {
+lib.rs:3266	tick_once	let dead: Vec<i32> = self
+lib.rs:3272	tick_once	for e in &mut self.entities {
+lib.rs:3299	tick_once	let wake: Vec<i32> = self
+lib.rs:3308	tick_once	let removed_positions: BTreeMap<i32, (f64, f64)> = self
+lib.rs:3314	tick_once	for e in &mut self.entities {
+lib.rs:3329	tick_once	self.entities
+lib.rs:3344	tick_once	self.entities
+lib.rs:3359	tick_once	self.entities
+lib.rs:3385	activate_king	for e in &mut self.entities {
+lib.rs:3403	damage	for beam in &mut self.entities {
+lib.rs:3452	death_effects	let victims: Vec<usize> = self
+lib.rs:3575	hex_digest	for e in &self.entities {
+lib.rs:3800	apply_action	|| self.entities.iter().any(|e| {
+lib.rs:3813	apply_action	if self.entities.iter().any(|e| {
+projectiles.rs:37	rolling_character_hits	let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
+projectiles.rs:47	rolling_character_hits	self.entities[i].hit_ids.push(id);
+projectiles.rs:82	projectile_splash_status	let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
+projectiles.rs:197	piercing_hits	let victims: Vec<usize> = self
+projectiles.rs:220	piercing_hits	self.entities[i].hit_ids.push(id);
+scope.rs:151	haste_scan	for e in &mut self.entities {
+scope.rs:182	remember_cursed_dead	if !self
+scope.rs:189	remember_cursed_dead	let dead: BTreeMap<i32, (f64, f64, bool)> = self
+scope.rs:195	remember_cursed_dead	for e in &mut self.entities {
+scope.rs:233	internal_spawn_valid	!self.entities.iter().any(|e| {
+scope.rs:308	scope_targets	self.entities
+scope.rs:506	scope_tick	*recipients = self
+souls.rs:14	collect_souls	let count = self.entities.iter().filter(|e| {
+spawn.rs:32	spawn_push_hook	let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
+spawn.rs:132	production_tick	let nearby = self.entities.iter().any(|e| {

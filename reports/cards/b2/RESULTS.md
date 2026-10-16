@@ -4,8 +4,18 @@ Current continuation (2026-10-16T13:18Z): **engine acceptance pending**. Candida
 55bac129b includes the nine engine files covering review-r2 guard/Clone paths and
 Rage state corrections. Three sequential native builds completed under the single
 reviewed08 CPU4 job3614622; actual primary hash76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054.
-Affected checks are running. Native7738 represents the earlier six-file source,
+Affected checks completed with wrapper exit0. Native7738 represents the earlier six-file source,
 not the current candidate. No fresh C56 result is available for either.
+Completed bounded baselines on the current candidate:80/80 Rage meaningful-state
+matches under unchanged approvedv1 applicability, with all80 raw-discrepancy runs
+retained; all560 critical guard continuation records exactly equal the historical
+records, including56 semantic FAILs. This read-only subset validation is recorded
+in [the baseline receipt](evidence/ragefixv1-20261016T1313Z-baselines.json); subsequent
+affected phases and the final validator also completed successfully at13:31:41Z.
+The [atomic affected receipt](evidence/ragefixv1-20261016T1313Z-affected.json) binds both
+guard mutants, descendant propagation, first-update/Clone/scenario checks and the
+8 enemy Rage impact/2 Mirror expiry continuations. Semantic FAIL remains explicit;
+this is bounded source evidence, not an overall semantic-sweep PASS.
 Semantic-v1 run3586969 is terminal:2480 continuations,1033 retained meaningful-state
 FAILs, zero structurally invalid continuations. Focused mutation/descendant/first-
 update/Clone/scenario evidence passed on that earlier source; those checks do not
@@ -31,10 +41,10 @@ and bounded affected evidence, then a separately reviewed fresh C56 gate. Its fi
 independent review rejected an unpinned historical identity chain; the rejection
 is retained. The repaired stager pins the known capture identity, verifies all old
 inputs and rejects re-signed replacement references. Seven local stdlib controls
-pass; review2 approved bounded execution and the sole new job is running. The old C56-v1 approval
+pass; review2 approved bounded execution and the sole new job is complete. The old C56-v1 approval
 pins native7738 and must not be executed against the new source.
-The separate [v2 draft](EXACT-C56-GATE-V2.md) binds the actual new build; its affected
-receipt pin is deliberately pending, so it cannot execute. New exact review is
+The separate [v2 proposal](EXACT-C56-GATE-V2.md) binds the actual new build and affected
+receipt. New exact review is
 required before one fresh source-matched C56 gate.
 
 The lead's B2-C1-base-readiness-20261016.json records C1 candidate65fca236e waiting
@@ -269,6 +279,15 @@ the river are recovered to land; Knight at (3.5, 8.6): the copy stops at y 8.036
 
 
 ## Review r2: complete saved entity-site inventory (2026-10-16 UTC)
+
+Source refresh for committed55bac129b: [current88-site inventory](evidence/native-entity-sites-55bac129b.tsv)
+was produced by the unchanged reviewed scanner at13:23Z. Its file/function/source-
+expression multiset exactly matches the expanded old inventory after removing the
+header, numeric line offsets and trailing whitespace. Rage's payload/clock changes
+introduce no new selector or hit-ID site. The full Python pairing/guard/probe table
+below therefore remains applicable, including every stated static/dynamic coverage
+gap and both exact future C1 integration carryovers. This inventory check is not a
+dynamic correctness or engine acceptance claim.
 
 The review-r1 table above is superseded as evidence of selector completeness: digest equality did not expose
 Lightning ranking or remembered-hit-set differences. The r2 patch is WIP, built but **not yet verified**.

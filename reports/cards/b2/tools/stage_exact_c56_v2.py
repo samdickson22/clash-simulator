@@ -21,7 +21,7 @@ SCOPE=HERE.parent
 WORKTREE=HERE.parents[3]
 TOTAL='76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054'
 BUILD_SHA256='adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0'
-AFFECTED_SHA256='AFFECTED_RECEIPT_PENDING'
+AFFECTED_SHA256='0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19'
 SOURCE_COMMIT='55bac129b93a055898524b53cc350091fb65259e'
 PIN='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b'
 FILES=['stage_exact_c56_v2.py','run_exact_c56_v2.sh','exact_c56_receipts_v2.py','test_exact_c56_receipts_v2.py','observe_c56_fixtures_v2.py']
@@ -91,7 +91,7 @@ def sha(path):
 def validate_candidate(job):
     assert job.parent==Path('/mpac/sdicks02/jobs/clasher/cards') and job.name.startswith('b2-ragefixv1-')
     assert sha(job/'build.json')=='adcd109b3482984c322af61fa2adbae8c8380fbc42cb3f8404603d304273daf0','reviewed build identity changed'
-    assert sha(job/'affected.json')=='AFFECTED_RECEIPT_PENDING','reviewed affected receipt changed'
+    assert sha(job/'affected.json')=='0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19','reviewed affected receipt changed'
     build=json.loads((job/'build.json').read_text())
     affected=json.loads((job/'affected.json').read_text())
     assert build['source_commit']=='55bac129b93a055898524b53cc350091fb65259e'
@@ -190,9 +190,9 @@ with (job/'manifest.json').open('w') as out:json.dump(manifest,out,indent=1)
 manifest_sha=sha(job/'manifest.json')
 (job/'gate').mkdir()
 env=os.environ.copy()
-for key in ('BASH_ENV','ENV','PYTHONHOME','PYTHONINSPECT','PYTHONSTARTUP','PYTHONPATH',
-            'CLASHER_ROOT','CLASHER_EVAL_RUNTIME_ROOT','CLASHER_DELAY_NATIVE_DIR','CLASHER_BOT_RUNTIME','CLASHER_BOT_RUNTIME_PINS'):
-    env.pop(key,None)
+for key in list(env):
+    if key.startswith('CLASHER_') or key in ('BASH_ENV','ENV','PYTHONHOME','PYTHONINSPECT','PYTHONSTARTUP','PYTHONPATH'):
+        env.pop(key,None)
 env.update(B2_C56_MANIFEST_SHA256=manifest_sha,PYTHONDONTWRITEBYTECODE='1',PYTHONHASHSEED='0',PYTHONOPTIMIZE='0',
            OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',RAYON_NUM_THREADS='1',CUDA_VISIBLE_DEVICES='')
 command=['nice','-n','15','bash','/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh','4','bash',str(job/'tools/run_exact_c56_v2.sh'),str(job)]

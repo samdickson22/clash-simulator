@@ -104,6 +104,14 @@ class ExactGateTests(unittest.TestCase):
             tree=ast.parse(Path(__file__).with_name(name).read_text())
             guard=next(n for n in tree.body if isinstance(n,ast.If) and '__debug__' in ast.dump(n.test))
             with self.assertRaises(SystemExit,msg=name):exec(compile(ast.Module(body=[guard],type_ignores=[]),name,'exec',optimize=1),{'sys':__import__('sys')})
+        staging=ast.parse(Path(__file__).with_name('stage_exact_c56_v2.py').read_text())
+        for assignment in staging.body:
+            if not isinstance(assignment,ast.Assign):continue
+            labels={n.id for n in assignment.targets if isinstance(n,ast.Name)}
+            if not labels.intersection({'READ08','READ_BUILD08','REMOTE'}):continue
+            tree=ast.parse(ast.literal_eval(assignment.value))
+            guard=next(n for n in tree.body if isinstance(n,ast.If) and '__debug__' in ast.dump(n.test))
+            with self.assertRaises(SystemExit,msg=str(labels)):exec(compile(ast.Module(body=[guard],type_ignores=[]),'embedded','exec',optimize=1),{'sys':__import__('sys')})
     def test_exact_complete_same_arms(self):
         result=gate.validate_records(*evidence())
         self.assertEqual(result['fixtures'],577);self.assertEqual(result['roots'],600)
