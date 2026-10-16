@@ -230,7 +230,11 @@ def level_case(R, fair, output, seat, level):
     lc = LevelConfigs(rt, cache=Path(output).with_suffix('.level-cache'))
     for lv in sorted({11, level}):
         lc.build(lv, cards=cards)
-    wrapper = ExactLevelRoot(rt, {c:level for c in cards}, lambda c: level if c in cards else 11,
+    # Clone non-11 inheritance is explicitly unsupported by the exporter. Keep
+    # the future spell at11 while independently leveling all observed bodies;
+    # this exercises Clone of a level9 GG without pretending Clone L9 exists.
+    levels = {c:11 if c == 'Clone' else level for c in cards}
+    wrapper = ExactLevelRoot(rt, levels, lambda c: levels.get(c, 11),
                              11, 11, lc=lc, force=True)
     py, parent, spawn = fixture(seat)
     first = py.next_entity_id
@@ -266,10 +270,14 @@ def level_case(R, fair, output, seat, level):
             e['clock']['load'] == e['stats']['load'] == 700 and e['stats'].get('attack_select') for e in rework),
             'wrong explicit level public rework default')
     pulses = [e for e in payload['entities'] if e['class'] == 'HealPulse']
-    require({e['spell_name'] for e in pulses} == {'BattleHealerSpawnHeal', 'BattleHealerHeal'},
+    # Actual HealPulse JSON has no spell_name. Independently audit its declared
+    # public metadata (not the production selection helper) and exact payload.
+    pulse_names = [next((names[0] for ns,names in e.get('public_identity', ())
+                        if ns == 'area_effect' and names), None) for e in pulses]
+    require(len(pulses) == 2 and set(pulse_names) == {'BattleHealerSpawnHeal', 'BattleHealerHeal'},
             'level wrapper conflated healer public identities')
-    for e in pulses:
-        table = 'create_areas' if e['spell_name'] == 'BattleHealerSpawnHeal' else 'hit_areas'
+    for e, name in zip(pulses, pulse_names):
+        table = 'create_areas' if name == 'BattleHealerSpawnHeal' else 'hit_areas'
         expected = lc.entry('BattleHealer', level)['tables'][table]
         expected = next(v for k,v in expected.items() if k.endswith('BattleHealer'))
         require(e['scope']['heal_per_tick'] == expected['scope']['heal_per_tick'] and
@@ -296,7 +304,7 @@ def level_case(R, fair, output, seat, level):
     clone_geometry = dict(level=future_clone_geometry(root,seat), plain=future_clone_geometry(plain_root,seat))
     native_restart(root)
     native_restart(plain_root)
-    return dict(seat=seat, level=level, rework_bodies=len(rework), pulse_payloads=len(pulses),
+    return dict(seat=seat, level=level, clone_spell_level=levels['Clone'], rework_bodies=len(rework), pulse_payloads=len(pulses),
                 clone_graph=True, clone_geometry=clone_geometry, native_continuation=True,
                 projectile_motion=motion, wrapper_stats=wrapper.stats)
 

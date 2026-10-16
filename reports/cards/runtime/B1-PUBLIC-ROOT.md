@@ -90,9 +90,12 @@ unseen current riders are created. Both consumers share this normalization.
 The wrapper shares the same canonical templates and graph helper. Explicit
 700ms remains700ms at every exported level; "ExactLevelRoot" names level stat
 selection, not exact hidden rank/phase recovery. Level exports now include
-BattleHealer `create_areas` and `hit_areas`; their distinct public spell names
+BattleHealer `create_areas` and `hit_areas`; their distinct declared public area identities
 disambiguate shared-empty-name HealPulse bodies and select the correct producing
-card and level payload. Direct spells retain their existing qualified names.
+card and level payload. Actual HealPulse exports have no `spell_name`; the
+consumer uses their existing `public_identity` metadata, scoped to the two
+BattleHealer pulses. No mechanical field, vocabulary entry or observed row is
+added. Direct spells retain their existing qualified names.
 Level-specific clone capability prototypes follow their producing bodies for
 the scoped GoblinGiant/ThreeMusketeers/BattleHealer producers only. Existing C56
 prototype defaults remain unchanged; this does not broaden into unrelated Clone

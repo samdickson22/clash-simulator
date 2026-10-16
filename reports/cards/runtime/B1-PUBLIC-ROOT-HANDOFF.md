@@ -1,3 +1,16 @@
+CURRENT: actual admitted run03 scoped12/16; four level cases failed before
+movement/future-Clone witnesses. Round5 source approval is retained historically
+but does not establish acceptance. Corrected candidate now distinguishes the two
+actual no-spell_name HealPulse exports using their existing static public area
+identities, scoped to BattleHealer only. Probe keeps unsupported Clone at11
+while observed GG/3M/healer/Cannon bodies use9; no new Clone inheritance claim.
+25stdlib tests PASS using frozen actual11/9 pulse exports and exact Clone error.
+Fresh independent round6 review and B1 reviewed staging/admitted public rerun
+are required. Preserve run03 failed outputs and all earlier gates/roots; no
+second job or running-input mutation. Separate LIVE source integration is
+recorded in B1-LIVE-LEVEL-PATCH.md; native scaled adoption remains owner-owned.
+
+HISTORICAL ROUND5 READINESS:
 # B1 public root handoff
 
 CURRENT: corrected sourceff23043fc3857bd26b42440637da4d017b12731d has fresh
