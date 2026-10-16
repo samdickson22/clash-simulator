@@ -92,3 +92,8 @@ guess; ours is the client's strict intersects; shared by C56 spells -> not chang
 ### Unfinished
 - RESULTS.md not written yet (fill from this table + final-*.jsonl + gate compare.json).
 - Clone/Graveyard/GoblinCurse 3-scenario fidelity rerun with the final tree (traces were run, not the full harness for Clone).
+- 2026-10-16T02:26:30Z GATE FAIL (Sol triage, GATE-TRIAGE.md): my Graveyard deploy +50 ms replace() also hit the identical
+  call in RollingProjectile._spawn_units (C56 BarbLog Barbarian deploy/tunnel_total 1.0 -> 1.05). Reverted that one
+  argument only (Graveyard hunk kept); audit of added lines found no other duplicated hunk. Python-only change: native
+  df5443ab unchanged. NEXT: rerun the full gate on 04 with this commit's Python + df5443ab; recheck Graveyard fidelity
+  and mixed repros (75/416/133 match per triage; 509 IceGolemite spawn is not B2's).

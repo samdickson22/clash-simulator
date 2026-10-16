@@ -7021,13 +7021,7 @@ class RollingProjectile(Entity):
             Position(self.position.x, self.position.y),
             self.player_id,
             spawn_stats,
-            # Batch B2: the Skeleton's 500 ms DeployTime counts from the tick after it appears (RoyaleSim (MIT):
-            # ready on its appearance + 10); its object phase runs on its birth tick, so start one tick longer.
-            deploy_delay_override=(
-                self.spawn_deploy_delay_override + 0.05
-                if self.spawn_deploy_delay_override
-                else self.spawn_deploy_delay_override
-            ),
+            deploy_delay_override=self.spawn_deploy_delay_override,
             is_clone=self.is_clone,
             snap_to_valid=False,
         )
