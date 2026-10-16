@@ -20,7 +20,7 @@ run_case() {   # $1 = dir, $2 = FAKE_HOLD (frames per image at 10 fps), $3 = ext
     CLASHER_BOT_RUNTIME=/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1 \
     CLASHER_LIVE_FAST=student:/mpac/sdicks02/scratch/live-loop/rl5/policy-00010.pt@0.5375 \
     CLASHER_LOPP_MODELS=/mpac/sdicks02/jobs/clasher/live-macbench/lopp-models OMP_NUM_THREADS=4 CUDA_VISIBLE_DEVICES= \
-    LL_ADB=$HERE/fake_adb.sh FAKE_ADB_LOG=$T/adb.log LL_DECK_FILE=$T/deck.json LL_PAUSE_FILE=$T/PAUSE \
+    LL_ADB=$HERE/fake_adb.sh FAKE_ADB_LOG=$T/adb.log LL_DECK_FILE=$T/deck.json LL_PAUSE_FILE=$T/PAUSE LL_LOCK_FILE=$T/driver.lock \
     FAKE_IMAGES=$SHOTS/nx2.png:$BATTLE:$SHOTS/nx2.png:$SHOTS/nx2.png:$SHOTS/nx2.png:$SHOTS/nx2.png FAKE_HOLD=$2 \
     timeout 200 nice -n 10 taskset -c 24-31 $BOTPY -B $LOOP/drive.py --out $T/run --source live --bsgrab $T/bsgrab \
       --tap adb --export /mpac/sdicks02/jobs/clasher/live-perc-r3-20261015/export-interim-r5e3 --overlay-port 0 $3 \

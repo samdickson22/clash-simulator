@@ -13,7 +13,7 @@ export PYTHONPATH=$R:$R/src:$R/live/perception:/mpac/sdicks02/scratch/live-loop/
   CLASHER_BOT_RUNTIME=/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1 \
   CLASHER_LIVE_FAST=student:/mpac/sdicks02/scratch/live-loop/rl5/policy-00010.pt@0.5375 \
   CLASHER_LOPP_MODELS=/mpac/sdicks02/jobs/clasher/live-macbench/lopp-models OMP_NUM_THREADS=4 CUDA_VISIBLE_DEVICES= \
-  LL_ADB=$HERE/fake_adb.sh FAKE_ADB_LOG=$T/adb.log LL_DECK_FILE=$T/deck.json LL_PAUSE_FILE=$T/PAUSE \
+  LL_ADB=$HERE/fake_adb.sh FAKE_ADB_LOG=$T/adb.log LL_DECK_FILE=$T/deck.json LL_PAUSE_FILE=$T/PAUSE LL_LOCK_FILE=$T/driver.lock \
   FAKE_IMAGES=$SHOTS/nx2.png:$SHOTS/deckpage.png FAKE_HOLD=120
 printf '#!/bin/sh\nexec %s %s "$@"\n' /mpac/sdicks02/scratch/live-loop/venv/bin/python "$HERE/fake_bsgrab.py" > $T/bsgrab
 chmod +x $T/bsgrab
@@ -56,7 +56,7 @@ check "resumed_by_user event" '[ "$(ev resumed_by_user)" -ge 1 ]'
 check "deck.json written" 'grep -q MiniPekka $T/deck.json'
 check "bad deck (7 cards) rejected" 'post deck "Knight,Archers,Minions,Arrows,Fireball,Giant,MiniPekka" | grep -q "NOT applied"'
 touch $T/PAUSE; sleep 2
-check "PAUSE file pauses" '[ "$(jq_ "s[\"paused_reason\"]")" = file ]'
+check "PAUSE file pauses (/state paused:true, reason file)" '[ "$(jq_ "s[\"paused_reason\"] == \"file\" and s[\"paused\"]")" = True ]'
 rm -f $T/PAUSE
 kill -TERM $DPID; wait $DPID
 check "driver exits cleanly on TERM" '[ -f $T/run/m01/session.json ]'

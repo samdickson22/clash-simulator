@@ -34,7 +34,7 @@ async function post(u,b){const r=await fetch(u,{method:'POST',body:b||''});docum
 async function poll(){try{const s=await (await fetch('/state')).json();
 const oos=s.deck_out_of_scope||[];const blocked=oos.length>0;
 document.getElementById('st').innerHTML=(blocked?'<span class=on>BLOCKED: deck has cards the bot cannot see or play: '+oos.join(', ')+
-'. No battles until the deck is changed.</span>\n':'')+((s.paused||blocked)?'<span class=on>PAUSED</span>':'running')+'\nstate: '+s.state+
+'. No battles until the deck is changed.</span>\n':'')+((s.paused||blocked)?'<span class=on>PAUSED'+(s.paused_reason?' ('+s.paused_reason+')':'')+'</span>':'running')+'\nstate: '+s.state+
 '\nbattle: '+(s.match||'-')+'\ndeck: '+s.deck.join(', ')+(s.deck_pending?'\n(new deck from next battle)':'');
 if(!deckLoaded){document.getElementById('deck').value=s.deck.join('\n');deckLoaded=true;}
 if(s.read&&s.read.t!==lastRead){lastRead=s.read.t;
@@ -124,7 +124,9 @@ class Overlay:
                 if self.path == '/state':
                     import json
                     with ov.lock:
-                        st = dict(ov.status, paused=ov.paused, deck=ov.deck, deck_pending=ov.deck_pending,
+                        reason = ov.status.get('paused_reason') or ('page' if ov.paused else None)
+                        st = dict(ov.status, paused=bool(reason), paused_reason=reason, paused_by_page=ov.paused,
+                                  deck=ov.deck, deck_pending=ov.deck_pending,
                                   read=ov.read_result)
                     return self.reply(200, json.dumps(st), 'application/json')
                 if self.path != '/stream':

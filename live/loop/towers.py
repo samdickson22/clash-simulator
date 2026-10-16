@@ -112,3 +112,28 @@ class TowerReader:
             alive, hp, mx = r[key]
             t['alive'], t['hp_frac'], t['hp_read'] = alive, round(hp/mx, 4) if alive else 0., hp
         return r
+
+
+SLOTS = [(o, k, s) for o in (0, 1) for k, s in (('king', 'center'), ('princess', 'left'), ('princess', 'right'))]
+
+
+def guard_towers(rec, last):
+    """Always 6 towers in rec['towers']: a slot missing from the record (perception/OCR) is filled with its last known
+    state, and a tower once dead stays dead (bot/live/translate.py treats a missing tower as alive at 100%: a destroyed
+    tower dropping out would close the pocket and drop the crown from the evaluation). `last` (dict, per battle) keeps
+    the state. Returns the number of slots filled this frame."""
+    have = {(t['owner'], t['kind'], t['side']): t for t in rec.get('towers', ())}
+    out, missing = [], 0
+    for key in SLOTS:
+        t = have.get(key)
+        prev = last.get(key)
+        if t is None:
+            missing += 1
+            t = dict(prev) if prev else dict(owner=key[0], kind=key[1], side=key[2], alive=True, hp_frac=1.0, score=0.0)
+            t['carried'] = True
+        elif prev is not None and not prev['alive'] and t.get('alive'):
+            t = dict(t, alive=False, hp_frac=0.0, hp_read=0)            # dead stays dead
+        last[key] = {k: v for k, v in t.items() if k != 'carried'}
+        out.append(t)
+    rec['towers'] = out
+    return missing

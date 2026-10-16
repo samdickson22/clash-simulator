@@ -6,13 +6,18 @@ RUNS_ROOT/<run>/{frames,decisions,events}.jsonl from drive.py (05: /mpac/sdicks0
 counts as destroyed at the first processed frame where the driver's tower record shows it dead and it stays dead to
 the end. The stretch runs from that tick to the next opponent tower death or the end of the battle. Plays are split by
 the bot's target row (action = slot*576 + row*18 + col; rows 0..14 our side, 15..16 bridge/river, >= 17 enemy side);
-'pocket' = enemy side within 5 tiles of the dead tower's x on that lane.
+'pocket' = enemy side within 5 tiles of the dead tower's x on that lane; 'king_spell' = a spell aimed within 3.5 tiles
+of the opponent king tower (a crown attempt, e.g. s6-m01's Fireball); categories are exclusive: king_spell, pocket,
+other enemy side, bridge, own side.
 """
 import argparse
 import json
 from pathlib import Path
 
 SIDE_X = {'l': 3.5, 'r': 14.5}
+SPELLS = {'Arrows', 'Fireball', 'Zap', 'Log', 'BarbLog', 'Poison', 'Lightning', 'Rocket', 'Earthquake', 'Tornado',
+          'GoblinBarrel', 'RoyalDelivery'}
+KING_XY = (9.0, 29.0)                 # opponent king tower, bot tile coords (y from our side)
 
 
 def load(p):
@@ -48,12 +53,15 @@ def run_moments(d):
                 continue
             row, col = (x['action'] % 576)//18, x['action'] % 18
             zone = 'enemy' if row >= 17 else ('bridge' if row >= 15 else 'own')
-            pocket = zone == 'enemy' and abs(col + .5 - SIDE_X[side]) <= 5
+            king_spell = x.get('card') in SPELLS and ((col + .5 - KING_XY[0])**2 + (row + .5 - KING_XY[1])**2)**.5 <= 3.5
+            pocket = zone == 'enemy' and not king_spell and abs(col + .5 - SIDE_X[side]) <= 5
             plays.append(dict(tick=round(x['tick']), card=x.get('card'), row=row, col=col, zone=zone, pocket=pocket,
+                              king_spell=king_spell,
                               source=(x.get('stats') or {}).get('source')))
         out.append(dict(run=d.name, tower=f'opp-{side}', tick_range=[round(t0), round(t1)],
                         seconds=round((t1 - t0)/20, 1), plays=len(plays),
-                        pocket_plays=sum(p['pocket'] for p in plays), enemy_side=sum(p['zone'] == 'enemy' for p in plays),
+                        pocket_plays=sum(p['pocket'] for p in plays), king_spell=sum(p['king_spell'] for p in plays),
+                        enemy_side=sum(p['zone'] == 'enemy' for p in plays),
                         own_side=sum(p['zone'] == 'own' for p in plays), bot_plays=plays,
                         perception_log=(d/'perception.jsonl').exists()))
     return out
@@ -76,6 +84,7 @@ def main():
             f.write(json.dumps(r) + '\n')
     for r in rows:
         print(r['run'], r['tower'], r['tick_range'], f"{r['seconds']}s plays {r['plays']} pocket {r['pocket_plays']} "
+              f"king_spell {r['king_spell']} "
               f"enemy {r['enemy_side']} own {r['own_side']}")
 
 

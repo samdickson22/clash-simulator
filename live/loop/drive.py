@@ -31,11 +31,18 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import canvas as C  # noqa: E402
 import towers as TW  # noqa: E402
+import ownplay  # noqa: E402
+import handread  # noqa: E402
 from battlelog import C56  # noqa: E402  (the 56 cards our engines and perception know)
 from frames import Grabber  # noqa: E402
 
 MIN_FREE = 6 << 30
-FALSE_MATCH_MS = 30_000          # a battle ending sooner than this after match_start was a false HUD transition
+GB = 1 << 30
+DISK_PAUSE = float(os.environ.get('LL_DISK_PAUSE_GB', 6))*GB    # below: no new battles (low_disk pause)
+DISK_RESUME = float(os.environ.get('LL_DISK_RESUME_GB', 7))*GB  # above again: resume
+DISK_STOP = float(os.environ.get('LL_DISK_STOP_GB', 3))*GB      # below: stop, even mid-battle
+FALSE_MATCH_MS = 30_000
+STALL_MS = float(os.environ.get('LL_STALL_S', 6))*1000   # full elixir this long without a play -> fast tier          # a battle ending sooner than this after match_start was a false HUD transition
 DECK = ['Knight', 'Archers', 'Minions', 'Arrows', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer']
 DECK_FILE = Path(os.path.expanduser(os.environ.get('LL_DECK_FILE', '~/clasher-live/loop/deck.json')))      # set from the live page; survives restarts
 PAUSE_FILE = Path(os.path.expanduser(os.environ.get('LL_PAUSE_FILE', '~/clasher-live/loop/PAUSE')))         # exists = paused (same as the page button)
@@ -309,6 +316,9 @@ def main(argv=None):
     ap.add_argument('--matches', type=int, default=1, help='battles in one session (each in <out>/mNN/ when > 1)')
     ap.add_argument('--autonav', action='store_true', help='tap OK on the result screen and Battle on home between battles')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
+    ap.add_argument('--units', default='model', help="'model' (default: LivePerception units) or "
+                    "'yolo:<model>[+<model>]:<mapping.json>[:conf=.5,cu=ne|gpu|cpu|all,device=cpu|mps,every=1]': a YOLO "
+                    "detector replaces only the record's units / unknown_units (live/perception/yolo_units.py)")
     a = ap.parse_args(argv)
     import signal
 
@@ -316,13 +326,25 @@ def main(argv=None):
         raise SystemExit(128 + signum)
     signal.signal(signal.SIGTERM, _term)
     seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
+    # one driver at a time (one operator): an exclusive flock held for the process lifetime; a second driver exits
+    lock_path = Path(os.path.expanduser(os.environ.get('LL_LOCK_FILE', '~/clasher-live/loop/driver.lock')))
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    import fcntl
+    lock_fd = open(lock_path, 'a+')
+    try:
+        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        lock_fd.seek(0)
+        sys.exit(f'another driver holds {lock_path} ({lock_fd.read().strip() or "unknown"}): refusing to start')
+    lock_fd.seek(0); lock_fd.truncate(); lock_fd.write(f'pid {os.getpid()} out {a.out} started {time.strftime("%FT%T%z")}\n')
+    lock_fd.flush()
     out = Path(a.out)
     if out.exists():                          # a reused session name must not stall the ladder (s10 restart, 10-16)
         out = out.with_name(f"{out.name}-{time.strftime('%H%M%S')}")
         print(f'run dir {a.out} exists; using {out}', file=sys.stderr)
     out.mkdir(parents=True)
-    if shutil.disk_usage(out).free < MIN_FREE:
-        sys.exit('free space below 6 GiB')
+    if shutil.disk_usage(out).free < DISK_STOP:
+        sys.exit('free space below the stop floor')
     lock = threading.Lock()
     cur = {}
 
@@ -356,6 +378,10 @@ def main(argv=None):
     from bot.live.translate import LiveSession
     t = time.monotonic()
     perc = LivePerception(a.export)
+    yolo = None
+    if a.units != 'model':                      # YOLO units (perception keeps hand, elixir, towers, clock, events)
+        from yolo_units import from_spec
+        yolo = from_spec(a.units)
     deck = load_deck()
     rt, sess = build_bot(a.player, deck)
     raw = {}                                   # the frame model's last outputs (overlay: what the model sees)
@@ -367,7 +393,7 @@ def main(argv=None):
     import hashlib
     export_sha = hashlib.sha256((Path(a.export)/'frame.pt').read_bytes()).hexdigest()
     loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
-                  export=str(a.export), export_frame_sha256=export_sha)
+                  export=str(a.export), export_frame_sha256=export_sha, units=a.units)
     log('events', loaded)
     # everything needed to replay LiveSession offline from perception.jsonl (bot lead): deck, players, export, options
     client = {}
@@ -393,7 +419,7 @@ def main(argv=None):
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
-                       logged='live')
+                       logged='live', units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
@@ -416,6 +442,7 @@ def main(argv=None):
     nav_seen, nav_last, nav_t = 0, None, 0.
     nav_stuck_t = time.monotonic()
     was_paused = False
+    low_disk = False
     try:
         while time.monotonic() < t_end:
             fr = src.get()
@@ -443,7 +470,7 @@ def main(argv=None):
             present, elixir = hud_read(f)
             deck_oos = [c for c in deck if c not in C56]
             why = ('file' if PAUSE_FILE.exists() else 'page' if (ov is not None and ov.paused) else
-                   'deck_out_of_scope' if deck_oos else None)
+                   'deck_out_of_scope' if deck_oos else 'low_disk' if (low_disk and state != 'battle') else None)
             paused = why is not None
             if paused != was_paused:
                 log('events', dict(ev='paused_by_user' if paused else 'resumed_by_user', reason=why, state=state,
@@ -477,8 +504,16 @@ def main(argv=None):
             row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present, white=round(white),
                        elixir=elixir, state=state)
             cur['wr'].put(n, fr.bgr); n += 1
-            if n % 100 == 0 and shutil.disk_usage(out).free < MIN_FREE:
-                log('events', dict(ev='stop', why='free space below 6 GiB')); break
+            if n % 50 == 1:
+                # a transient swap spike must not kill the session: below DISK_PAUSE no NEW battle starts (a battle in
+                # progress is finished), resume above DISK_RESUME; only below DISK_STOP does the driver stop
+                free = shutil.disk_usage(out).free
+                if free < DISK_STOP:
+                    log('events', dict(ev='stop', why='free space below the stop floor', free_gb=round(free/GB, 2))); break
+                if not low_disk and free < DISK_PAUSE:
+                    low_disk = True; log('events', dict(ev='low_disk', free_gb=round(free/GB, 2), state=state))
+                elif low_disk and free > DISK_RESUME:
+                    low_disk = False; log('events', dict(ev='disk_ok', free_gb=round(free/GB, 2), state=state))
             if state == 'wait' and a.autonav and taps is not None and not present and not paused:
                 kind = screen_kind(f)
                 nav_seen = nav_seen + 1 if kind and kind == nav_last else (1 if kind else 0); nav_last = kind
@@ -498,6 +533,12 @@ def main(argv=None):
                 if streak >= (15 if paused else 3):
                     state, start_ms = 'battle', first_hud_ms
                     perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader()
+                    yolo_last, yolo_k = None, 0
+                    tower_last, tower_missing = {}, 0
+                    last_play_ms, stall = start_ms, False
+                    if os.environ.get('LL_TEST_STALL') == '1' and getattr(sess.player, 'search', None) is not None:
+                        from bot.players.base import Decision as _D     # test hook: the search tier always WAITs
+                        sess.player.search.act = lambda view, **kw: _D(WAIT, stats={'source': 'test-stall', 'wall_seconds': 0.0})
                     log('events', dict(ev='match_start', ts_ms=start_ms, n=n))
                     if a.source == 'live':
                         threading.Thread(target=grab_arena_bg, daemon=True, args=(
@@ -544,9 +585,31 @@ def main(argv=None):
                 if not present:
                     log('frames', row); continue
                 t1 = time.perf_counter(); cv = C.canvas(f); t2 = time.perf_counter()
+                # YOLO units on a worker thread, overlapping our frame model; every=N: detect on every Nth battle frame and
+                # reuse the last detections in between (units_age_ms in the record)
+                fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
+                yolo_k += 1
                 arena_px, hud_px = prepare_pixels(cv)
                 rec = perc.step_prepared(arena_px, hud_px, ts_ms, unit_floor=.05 if ov is not None else None)
+                if yolo is not None:
+                    tw0 = time.perf_counter()
+                    if fut is not None:
+                        try:
+                            yolo_last = dict(fut.result(), ts_ms=ts_ms)
+                        except Exception as ex:          # no units this frame rather than a dead loop
+                            yolo_last = dict(units=[], unknown_units=[], units_yolo=[], ts_ms=ts_ms, error=repr(ex)[:200])
+                            log('events', dict(ev='yolo_error', n=n-1, error=yolo_last['error']))
+                    row.update(yolo_ms=yolo.last_ms if fut is not None else None, yolo_wait_ms=1e3*(time.perf_counter() - tw0))
+                    rec['units_model'] = rec['units']
+                    rec['units'], rec['unknown_units'] = list(yolo_last['units']), list(yolo_last['unknown_units'])
+                    rec['units_yolo'], rec['units_age_ms'] = yolo_last['units_yolo'], ts_ms - yolo_last['ts_ms']
                 towers.apply(rec, f)       # tower alive/HP from the drawn numbers (perception's HP head misreads)
+                gone = TW.guard_towers(rec, tower_last)       # always 6 towers; missing -> last state; dead stays dead
+                if gone:
+                    tower_missing += gone
+                    if tower_missing == gone or tower_missing % 50 < gone:      # first time, then every ~50 slots
+                        log('events', dict(ev='tower_missing', n=n-1, tick=(ts_ms - start_ms)/50, this_frame=gone,
+                                           count=tower_missing))
                 t3 = time.perf_counter()
                 tick = (ts_ms - start_ms)/50
                 # Our taps land ~15 ms after submit, so the HUD bar drops BEFORE the bot's command model (27-tick delay)
@@ -558,6 +621,12 @@ def main(argv=None):
                     row['elixir_floored'] = reserved
                 rec['phase'] = 1 if tick < 2400 else (2 if tick < 4800 else 3)
                 rec['clock_s'] = max(0., 180 - tick/20) if tick < 3600 else max(0., 300 - tick/20)
+                if 'out' in raw:                                  # own hand = most probable distinct DECK cards (handread.py)
+                    hr = handread.deck_constrained(raw['out'][4][0].float().cpu().numpy(), perc.cards, deck)
+                    if hr is not None:
+                        rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
+                                           next_prob=hr['next_prob'], raw=hr['raw'])
+                ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
                 log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
                 pend0 = len(sess.ch.pending)
                 d, err = None, None
@@ -576,8 +645,23 @@ def main(argv=None):
                                    for t in rec['towers']],
                            events=[(e['owner'], e['card'], round(e['x'], 1), round(e['y'], 1)) for e in rec['events']],
                            err=err)
+                # stall guard: full elixir and no play for STALL_MS in a battle the bot is playing -> fast tier (rl5
+                # student on the deck-constrained hand) until the next play; logged and shown on the overlay
+                if not paused and elixir is not None and elixir >= 9.5 and ts_ms - last_play_ms > STALL_MS and not stall:
+                    stall = True
+                    log('events', dict(ev='stall_alert', n=n-1, tick=tick, ts_ms=ts_ms, elixir=elixir,
+                                       session_started=bool(sess.started), seconds=round((ts_ms - last_play_ms)/1e3, 1)))
+                    if hasattr(sess.player, 'search_disabled'):
+                        sess.player.search_disabled = True
                 if d is not None:
                     submitted = len(sess.ch.pending) > pend0 and d.action < WAIT
+                    if submitted:
+                        last_play_ms = ts_ms
+                        if stall:
+                            stall = False
+                            if hasattr(sess.player, 'search_disabled'):
+                                sess.player.search_disabled = False
+                            log('events', dict(ev='stall_cleared', n=n-1, tick=tick, card_source=(d.stats or {}).get('source')))
                     drow = dict(n=n-1, tick=tick, poll=sess.last_poll, action=int(d.action), submitted=submitted,
                                 step_ms=1e3*(t4-t3), stats=d.stats, own=sess.log[-1] if sess.log else None)
                     if submitted:
@@ -602,7 +686,8 @@ def main(argv=None):
                         keep = [i for i, n in enumerate(perc.identities)
                                 if n not in ('KingTower', 'PrincessTower') and not str(n).startswith('fx:')]
                         heat = np.stack([hm[o*nb:(o+1)*nb][keep].max(0) for o in (0, 1)])
-                    ov.update(fr.bgr, rec, 'PAUSED (bot not playing)' if paused else 'battle', tick, elixir, last_play, heat=heat,
+                    ov.update(fr.bgr, rec, 'PAUSED (bot not playing)' if paused else ('STALL: fast tier' if stall else 'battle'),
+                              tick, elixir, last_play, heat=heat,
                               units_lo=perc.last.get('units_lo', ()))
                 log('frames', row)
     finally:
