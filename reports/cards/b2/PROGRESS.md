@@ -593,3 +593,8 @@ and the two copied native binaries matched their recorded SHA256 values.
   printed after 30 min. The reported Python-acquires-on-0.05->0 difference was not reproduced on the merged native.
 - Combined C56 gate on 127x04 `/mpac/sdicks02/jobs/clasher/cards/b1b2-gate/` PID 1103181 (cpu_job 8, both arms;
   gtree = 8eaa7d1ec engine-cards, gout = 326ce6f9) -> gate/compare.json.
+- Combined B1+B2 C56 gate (04 b1b2-gate, PID 1103181, gtree 8eaa7d1ec engine-cards, native 326ce6f9): **PASS** -- fixtures
+  577/577 identical, rust_only chains 577/577 equal, 0 rust_only errors, rs_full_parity 429 = 429; roots 600/600
+  identical (300 full + 300 cut). compare.json copied to evidence/b1b2-gate-compare.json.
+- probe_stun_target.py finished: 192/192 runs native == Python (digest + every entity's target/hp/stun every tick). The
+  reported stun-expiry targeting difference does not occur on the merged native.
