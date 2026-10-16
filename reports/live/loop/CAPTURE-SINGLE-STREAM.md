@@ -1,0 +1,13 @@
+# Single-stream capture fix
+
+The live driver started a second ScreenCaptureKit stream at each match start to collect arena backgrounds. In s29, four battles each recorded one -3805 interruption and a primary-stream gap of 730–880 ms about 1.5–1.7 s after match start. The second stream is a concrete mechanism candidate; the baseline evidence alone does not prove causality.
+
+The fix removes the secondary capture helper and records candidate references to the three primary-stream HUD frames already sent to the video writer. References are relative to the event directory, so false-match directory renames and reuse do not redirect them to another match. Metadata explicitly marks pending, unverified availability and does not claim that dropped or failed writes were saved. Capture dimensions remain the primary stream's dimensions; existing native backgrounds remain available.
+
+Exact deployed base driver SHA256: `fbf34ebebfa8cc8c797ceb993767461c0d09c19a350f2162c1e618c08452c9fd`. Final driver: `aa98505f02932bd63163ad0e4176c1e1078690734cc3f9d38753d77c0e7d17da`. Offline test: `d49e44a514fd81cdd37fa22f9bf96c91db44498b3e0258a7e73518d8ad675ccd`. The base already includes the deployed `--perc-threads` option; this fix preserves it. No tower, handsync, navigation, manifest, model or launcher change is included.
+
+Validation: final fake-live test passed with one primary capture process, no secondary stream, no restart, and three JPEG candidates resolving to recorded frame metadata after ordinary writer close. A rename/reopen probe preserved all three JPEG hashes and frame metadata in the archived false match. Command: `bash /mpac/sdicks02/scratch/live-loop/capture-single-stream-test-r1/live/loop/tests/capture_single_stream_test.sh`; final logs `/tmp/tmp.Qbxo2oh9zy`. Fresh independent Sol review r3 returned GO for these exact hashes, with no blockers; the reviewer verified unchanged remaining AST, one capture call site, truthful pending metadata and actual false-match lifecycle resolution. Review: `/mpac/sdicks02/scratch/live-review/capture-single-stream-r3/r3REVIEW.md`. Required secret scan and scoped diff check passed.
+
+Deployment: the sole babysitter swaps only the driver at a normal session boundary, verifies the exact base and backup hashes, then starts the next session with the existing arguments. First-battle evidence records capture restart delta, sequence resets and startup gaps, FPS, decision latency, errors, writer drops and candidate-file availability. Existing rollback thresholds remain unchanged.
+
+Rollback: restore the exact `fbf34ebe…` driver backup at a safe boundary and restart with the same arguments. Never overwrite unexpected deployed bytes. No extra capture client or driver is needed for validation.

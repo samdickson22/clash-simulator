@@ -258,24 +258,6 @@ class _CodeFallback:
         return None
 
 
-def grab_arena_bg(bsgrab, crop, out_dir, tag, log):
-    """Perception round 3 request: 3 full-resolution frames of the (still empty) arena right after the battle starts,
-    from a second, short bsgrab stream at the viewport's native pixel size."""
-    from frames import read_frames
-    try:
-        out_dir.mkdir(parents=True, exist_ok=True)
-        w, h = int(round(crop[2]*2)), int(round(crop[3]*2))
-        p = subprocess.Popen([bsgrab, 'stream', '--crop', ','.join(map(str, crop)), '--size', f'{w},{h}', '--fps', '4',
-                              '--frames', '3', '--seconds', '5'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        k = 0
-        for fr in read_frames(p.stdout):
-            cv2.imwrite(str(out_dir/f'{tag}-{k}-{w}x{h}.png'), fr.bgr); k += 1
-        p.wait(5)
-        log('events', dict(ev='arena_bg', dir=str(out_dir), frames=k))
-    except Exception as ex:
-        log('events', dict(ev='arena_bg_error', error=repr(ex)[:200]))
-
-
 def B_load_templates():
     import battlelog
     return battlelog.load_templates(HERE/'cards')
@@ -317,6 +299,9 @@ def main(argv=None):
     ap.add_argument('--matches', type=int, default=1, help='battles in one session (each in <out>/mNN/ when > 1)')
     ap.add_argument('--autonav', action='store_true', help='tap OK on the result screen and Battle on home between battles')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
+    ap.add_argument('--perc-threads', type=int, default=0,
+                    help='torch intra-op threads while our frame model runs (0 = unchanged: the bot pins torch to 1 thread '
+                         'process-wide; 4 roughly halves perc_ms on the Mac); restored right after each frame')
     ap.add_argument('--units', default='model', help="'model' (default: LivePerception units) or "
                     "'yolo:<model>[+<model>]:<mapping.json>[:conf=.5,cu=ne|gpu|cpu|all,device=cpu|mps,every=1]': a YOLO "
                     "detector replaces only the record's units / unknown_units (live/perception/yolo_units.py)")
@@ -420,7 +405,7 @@ def main(argv=None):
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
-                       logged='live', units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
+                       logged='live', perc_threads=a.perc_threads, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
     crop = [float(v) for v in a.crop.split(',')]; size = [int(v) for v in a.size.split(',')]
     if a.source == 'live':
@@ -542,10 +527,15 @@ def main(argv=None):
                         sess.player.search.act = lambda view, **kw: _D(WAIT, stats={'source': 'test-stall', 'wall_seconds': 0.0})
                     log('events', dict(ev='match_start', ts_ms=start_ms, n=n))
                     if a.source == 'live':
-                        threading.Thread(target=grab_arena_bg, daemon=True, args=(
-                            a.bsgrab, crop, Path(os.path.expanduser('~/clasher-live/loop/arena-bgs'))/a.arena,
-                            out.name + ('' if a.matches == 1 else f"-m{cur['k']:02d}"),
-                            log)).start()
+                        # Reuse the three HUD frames already queued in the main recording. Starting another SCK
+                        # client here correlates with -3805 interruptions in s29; never open a second capture stream.
+                        log('events', dict(ev='arena_bg', source='main_stream_recording', arena=a.arena,
+                                           dir='video', path_base='event_directory',
+                                           candidate_files=[f'{i:06d}.jpg' for i in range(max(0, n - 3), n)],
+                                           requested_frames=min(3, n), frames=None, width=int(fr.bgr.shape[1]), height=int(fr.bgr.shape[0]),
+                                           native_resolution=False, writer_pending=True,
+                                           availability='unverified; check recording after writer close',
+                                           frame_metadata='frames.jsonl', n=n-1, ts_ms=ts_ms))
                 if ov is not None:
                     ov.update(fr.bgr, state='PAUSED (no taps)' if paused else 'waiting for battle', elixir=elixir)
                 log('frames', row); continue
@@ -591,7 +581,12 @@ def main(argv=None):
                 fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
                 yolo_k += 1
                 arena_px, hud_px = prepare_pixels(cv)
+                if a.perc_threads:
+                    import torch
+                    nt = torch.get_num_threads(); torch.set_num_threads(a.perc_threads)
                 rec = perc.step_prepared(arena_px, hud_px, ts_ms, unit_floor=.05 if ov is not None else None)
+                if a.perc_threads:
+                    torch.set_num_threads(nt)
                 if yolo is not None:
                     tw0 = time.perf_counter()
                     if fut is not None:
