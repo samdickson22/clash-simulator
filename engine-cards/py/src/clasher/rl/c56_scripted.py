@@ -261,9 +261,12 @@ def ranked_actions(bot, packet, *, all_plays=False):
                     if name in {"Poison", "Earthquake"}
                     else 1.0
                 )
-                damage = float(getattr(spell, "damage", 0)) * horizon
+                damage = float(getattr(spell, "damage", 0) or 0) * horizon
                 if building and not b.crown:
-                    damage = float(getattr(spell, "building_damage", damage)) * horizon
+                    # Optional building damage means use the ordinary damage.
+                    # Preserve the numeric C56 path (including its horizon order).
+                    building_damage = getattr(spell, "building_damage", None)
+                    damage = float(damage if building_damage is None else building_damage) * horizon
                 if b.crown:
                     crown = float(getattr(spell, "crown_tower_damage", 0) or 0)
                     lethal |= overlap & (b.hp > 0) & (b.hp <= crown + 1e-3)

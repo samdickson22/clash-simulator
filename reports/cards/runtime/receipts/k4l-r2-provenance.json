@@ -1,0 +1,26 @@
+{
+  "source_commit": "234e5cd899ebea077e3cbe3e95dab5e0cf4aa0b6",
+  "engine_files": {
+    "src/clasher/rl/c56_scripted.py": "965e7d1c288372b249a8aecd71909331905faae520e8f11e5a0b675010292064",
+    "src/clasher/rl/public_scripted_opponent.py": "932f1e9a88f9370b39d9b8b73e0600cdc5774225dadc9d2be2216d3f96753d76",
+    "engine-rs/c56_controller.py": "adfd6bc5c4395899432aa20f603a080dcbccfe2e1030c85e8d16e6641fc88910"
+  },
+  "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "candidate": "K4L-R-gs-rw-fc-p2",
+  "opponents": [
+    "R3a",
+    "v1"
+  ],
+  "cases": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "baseline_pins": "r1-total",
+  "patched_pins": "r1-cards2",
+  "PYTHONHASHSEED": 0
+}

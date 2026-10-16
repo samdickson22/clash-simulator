@@ -1,0 +1,164 @@
+{
+  "beta": 0.0,
+  "case": {
+    "deck_spec": "fullpool:11433651:freq=b53b02a1fde4",
+    "decks": [
+      [
+        "Freeze",
+        "InfernoTower",
+        "Fireball",
+        "Skeletons",
+        "BombTower",
+        "Valkyrie",
+        "Giant",
+        "Goblins"
+      ],
+      [
+        "FireSpirits",
+        "Archers",
+        "Barbarians",
+        "GoblinHut",
+        "GoblinCage",
+        "Musketeer",
+        "Cannon",
+        "Arrows"
+      ]
+    ],
+    "seat": 0,
+    "seed": 2613058993490888
+  },
+  "fullpool_policies": {
+    "R3a": "/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/R3a-fp.pt",
+    "v1": "/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/main02-fp.pt"
+  },
+  "game": 2000024,
+  "no_sealing": true,
+  "opponent": "self",
+  "original": {
+    "error": "TypeError: float() argument must be a string or a real number, not 'NoneType'",
+    "trace": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/replay_none_stats.py\", line 43, in main\n    result = play_match(rt, players, seed=game['seed'], decks=game['decks'])\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/replay-repo/bot/players/ours.py\", line 89, in play_match\n    decision = player.act(view)\n               ^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/replay-repo/bot/exit/label.py\", line 54, in act\n    t = self.teacher.act(view)\n        ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/replay-repo/bot/search/players.py\", line 163, in act\n    candidates, mask = p.core.candidates(view.reserved.packet, extra)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/replay-repo/bot/search/candidates.py\", line 81, in candidates\n    out, mask = original(packet, first + extra)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/dev-live/reports/explore/e1/planner.py\", line 100, in candidates\n    actions, mask = super().candidates(packet, policy_proposals)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/dev-live/reports/explore/w-screen8/planner.py\", line 21, in candidates\n    actions, mask = super().candidates(packet, policy_proposals)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/dev-live/src/clasher/analysis/loss_review/search_ab.py\", line 63, in candidates\n    candidates, mask = super().candidates(packet, policy_proposals)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/dev-live/src/clasher/rl/c56_rollout_planner.py\", line 76, in candidates\n    ranked = bot._ranked_actions(packet, all_plays=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/dev-live/src/clasher/rl/public_scripted_opponent.py\", line 211, in _ranked_actions\n    return ranked_actions(self, packet, all_plays=all_plays)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/baseline_c56_scripted.py\", line 266, in ranked_actions\n    damage = float(getattr(spell, \"building_damage\", damage)) * horizon\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: float() argument must be a string or a real number, not 'NoneType'\n"
+  },
+  "patched": {
+    "counts": {
+      "0": {
+        "agree": 210,
+        "behavior_play_at_label": 12,
+        "executed_teacher": 0,
+        "hit": 0,
+        "labelled": 280,
+        "other_skip": 0,
+        "polls": 703,
+        "searched": 280,
+        "single_candidate": 0,
+        "student_default": 0,
+        "teacher_play": 69
+      },
+      "1": {
+        "agree": 165,
+        "behavior_play_at_label": 12,
+        "executed_teacher": 0,
+        "hit": 0,
+        "labelled": 284,
+        "other_skip": 0,
+        "polls": 703,
+        "searched": 284,
+        "single_candidate": 0,
+        "student_default": 0,
+        "teacher_play": 114
+      }
+    },
+    "result": {
+      "accepted": {
+        "0": 28,
+        "1": 26
+      },
+      "channels": {
+        "0": {
+          "blocked_polls": 140,
+          "executed": 28,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 28
+        },
+        "1": {
+          "blocked_polls": 133,
+          "executed": 26,
+          "peak_pending": 1,
+          "pending_at_end": 1,
+          "rejected": 0,
+          "submitted": 27
+        }
+      },
+      "command_sha256": "fa51cd35e7ceca754336735355d75717dac0aea98947f01cc76b5839d2a39df9",
+      "cpu_seconds": 244.25171380399996,
+      "decks": [
+        [
+          "Freeze",
+          "InfernoTower",
+          "Fireball",
+          "Skeletons",
+          "BombTower",
+          "Valkyrie",
+          "Giant",
+          "Goblins"
+        ],
+        [
+          "FireSpirits",
+          "Archers",
+          "Barbarians",
+          "GoblinHut",
+          "GoblinCage",
+          "Musketeer",
+          "Cannon",
+          "Arrows"
+        ]
+      ],
+      "players": {
+        "0": "student:/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/rl5-v10-fp.pt@0.5375|label:K4C-r16",
+        "1": "student:/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/rl5-v10-fp.pt@0.5375|label:K4C-r16"
+      },
+      "plays": {
+        "0": 28,
+        "1": 26
+      },
+      "seed": 2613058993490888,
+      "terminal": true,
+      "ticks": 3601,
+      "timing": {
+        "0": {
+          "cpu": 102.81494295700003,
+          "decisions": 563,
+          "overrun_ticks": 0,
+          "wall": 102.95328898215666
+        },
+        "1": {
+          "cpu": 126.56380140900026,
+          "decisions": 570,
+          "overrun_ticks": 0,
+          "wall": 126.72794818971306
+        }
+      },
+      "towers": {
+        "0": [
+          4824.0,
+          2673.0,
+          2940.0
+        ],
+        "1": [
+          4824.0,
+          3052.0,
+          0.0
+        ]
+      },
+      "winner": 0
+    },
+    "rows_in_memory": {
+      "0": 280,
+      "1": 284
+    }
+  },
+  "runtime": "/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5/dev-live",
+  "student": "student:/mpac/sdicks02/jobs/clasher/bot-fullpool/ext/rl5-v10-fp.pt@0.5375",
+  "teacher": "K4C-r16"
+}
