@@ -27,6 +27,9 @@ HEADLINE_BASE = 1455777415631152  # fresh bank: int.from_bytes(os.urandom(6),'bi
 
 
 def make_player(rt, name):
+    if name.startswith('aliased:'):   # live-perception alias of the opponent's off-vocab cards (bot/fullpool/alias.py)
+        from bot.fullpool.alias import AliasedPlayer
+        return AliasedPlayer(rt, make_player(rt, name[8:]), name)
     from bot.players.policy import PolicyPlayer
     from bot.players.search import SearchPlayer
     from bot.players.variants import ScriptedPlayer, VariantPolicyPlayer

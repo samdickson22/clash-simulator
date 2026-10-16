@@ -44,7 +44,7 @@ def alias_tables(path=None):
     if not hashlib.sha256(data).hexdigest().startswith(KATACR[1]):
         raise ValueError(f'{path}: sha256 does not match the pinned katacr_to_clasher.json')
     classes = json.loads(data)['classes']
-    cards, bodies = {}, {}
+    cards, bodies, own = {}, {}, {}
     for name, v in sorted(classes.items()):
         src = engine_name(v.get('source_card') or '', strict=False)
         if not src or src in C56:
@@ -52,7 +52,11 @@ def alias_tables(path=None):
         ident = engine_name(v.get('identity') or '', strict=False)
         alias = ident if ident in C56 else None
         if v.get('unit'):
-            cards.setdefault(src, alias)
+            # a card play is read from its first birth: prefer the class of the card's own deployed body
+            # (goblin-cage for GoblinCage, not its death-spawn goblin-brawler)
+            mine = _norm(v.get('body') or name) in (_norm(src), _norm(src).rstrip('s'))
+            if src not in cards or (mine and not own.get(src)):
+                cards[src], own[src] = alias, mine
             if alias is not None and v.get('body'):
                 bodies[v['body']] = _C56_CARD_BODIES.get(alias, alias)
         else:

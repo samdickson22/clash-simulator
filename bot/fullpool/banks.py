@@ -24,6 +24,7 @@ reports/bot/fullpool/freq/), so a LIVE refresh never changes a bank's cases:
 from __future__ import annotations
 
 import random
+from pathlib import Path
 
 BANKS = {
     # C56-only regression: HEADLINE-v1 itself (r1 / r1-total / r1-cards1 must give identical command hashes here).
@@ -39,6 +40,9 @@ BANKS = {
                       use='honest full-pool claims (both decks full-pool)'),
     'FPO-FRESH1': dict(base=4370374256243600, decks='fullpool:10434953:freq=b53b02a1fde4,own=c56', games=300,
                        use='honest live-like claims: candidate C56 deck vs full-pool opponents'),
+    # Live full-pool switch gate (A/B, 2026-10-16): e16 vs the LIVE Battle Log decks; base drawn 19:12Z before any game.
+    'LIVE-AB1': dict(base=2988209034608560, decks='e16bl', games=1600,
+                     use='arm A aliased:K4L-R-gs-mpool vs arm B K4L-R-gs-mk1a1, paired; claim bank (fresh, unselected)'),
     # Training generation (ExIt / RL): bot.exit.generate --base; disjoint from all of the above (checked).
     'FP-TRAIN1': dict(base=2613058991490864, decks='fullpool:11433651:freq=b53b02a1fde4', games=10**8,
                       use='full-pool label generation / self-play (games g = 0..)'),
@@ -77,11 +81,36 @@ def sampler(spec):
     return _SAMPLERS[spec]
 
 
+E16 = ('Valkyrie', 'Archers', 'Minions', 'Cannon', 'Fireball', 'Giant', 'MiniPekka', 'Musketeer')   # live e16 deck
+BATTLELOG = (Path(__file__).resolve().parents[2] / 'reports/bot/fullpool/ab/opponent-decks-20261016.jsonl',
+             '3a7c4e78afe1ade7')    # LIVE LEAD Battle Log, 91 opponent decks (sha256 prefix)
+_BL = []
+
+
+def battlelog_decks():
+    if not _BL:
+        import hashlib
+        import json
+        from bot.fullpool.cards import engine_name
+        data = BATTLELOG[0].read_bytes()
+        if not hashlib.sha256(data).hexdigest().startswith(BATTLELOG[1]):
+            raise ValueError(f'{BATTLELOG[0]}: sha256 mismatch')
+        _BL.extend(sorted(engine_name(c) for c in json.loads(l)['opp_deck']) for l in data.decode().splitlines() if l.strip())
+    return _BL
+
+
 def case(rt, index, base, decks='x4s', *, opp_c56=False):
     """opp_c56: force the other seat's deck to C56 for this case (e.g. an RL league game against a search player)."""
     from bot.players.ours import x4s_setup
     if decks == 'x4s':
         return x4s_setup(rt, index, base)
+    if decks == 'e16bl':   # live A/B: our e16 deck vs Battle Log opponent deck (index % 91), same shuffle rule
+        bl = battlelog_decks()
+        seed, seat = base + index, index % 2
+        own, other = list(E16), list(bl[index % len(bl)])
+        rng = random.Random(seed)
+        rng.shuffle(own); rng.shuffle(other)
+        return dict(seed=seed, seat=seat, decks=[own, other] if seat == 0 else [other, own], deck_spec=decks)
     spec, seats = parse(decks)
     s = sampler(spec)
     seed, seat = base + index, index % 2
@@ -97,7 +126,7 @@ def select(rt, decks='x4s', belief=None):
     if decks == 'x4s' and belief is None:
         return
     if belief is None:
-        belief = parse(decks)[0]
+        belief = 'fullpool:11433651:freq=b53b02a1fde4' if decks == 'e16bl' else parse(decks)[0]
     rt.belief_prior = None if belief == 'c56' else belief
     if belief != 'c56':
         sampler(belief)

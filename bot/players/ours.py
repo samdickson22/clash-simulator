@@ -49,6 +49,8 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
         players[a].start(MatchContext(seat=a, seed=seed, own_order=tuple(
             list(b.players[a].hand)+list(b.players[a].cycle_queue)), command_delay=delay,
             opponent_delay=delay))
+    # Optional per-seat perception alias (bot/fullpool/alias.py AliasedPlayer); None for every other player.
+    aliases = {a: getattr(players[a], 'observe_alias', None) for a in (0, 1)}
     space = DiscreteTileActionSpace()
     recorder = PublicRecorder(R.builder)
     recorder.__enter__(); recorder.bind(b)
@@ -82,9 +84,13 @@ def play_match(rt, players, *, seed, decks, max_ticks=6001, delay=27, capacity=1
                     with WINDOW:
                         wall0, cpu0 = time.monotonic(), time.process_time()
                         info = observe(b, R.builder, actor, public_events[actor])
+                        if aliases[actor] is not None:
+                            info = aliases[actor].info(info)
                         reserved = ch.own_packet(info, R.builder)
                         can_act = ch.available and b.tick >= waits[actor] and b.tick >= available_at[actor]
-                        view = PublicView(b.tick, actor, info, reserved, recorder.public_events,
+                        view = PublicView(b.tick, actor, info, reserved,
+                                          recorder.public_events if aliases[actor] is None
+                                          else aliases[actor].recorder(recorder.public_events),
                                           tuple(ch.pending), can_act)
                         decision = player.act(view)
                         if not can_act:
