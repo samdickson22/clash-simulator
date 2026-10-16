@@ -90,6 +90,15 @@ PIN_SETS = dict(
 )
 
 
+# macOS arm64 build of engine-cards 878d5f459; same r3 data/checkpoints and scope.
+# Strict C56 parity: 577/577 fixtures, 598/600 roots (one-ULP differences).
+# Unqualified candidate; build/parity receipt: reports/cards/mac/RESULTS.md.
+PIN_SETS['live16402b-r3-mac'] = dict(
+    PIN_SETS['live16402b-r3'],
+    native_sha256='8072e5779f6940ead50955fb8335224ce5162823918e2e743523491a48e97988',
+)
+
+
 def selected_pins():
     name = os.environ.get('CLASHER_BOT_RUNTIME_PINS', 'r1')
     if name not in PIN_SETS:

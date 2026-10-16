@@ -1,0 +1,103 @@
+{
+  "endpoint_diagnostics": [
+    {
+      "action": 2304,
+      "linux_e1": "-0x1.0d90bf5d0433bp-4",
+      "mac_e1": "-0x1.0d90bf5d0433ap-4",
+      "endpoint_snapshot_identical": true,
+      "endpoint_digest_identical": true,
+      "command_events_identical": true,
+      "linux_command_equals_e1": true,
+      "mac_command_equals_e1": true,
+      "parts_differences": {
+        "6": [
+          "0x1.24698b96c3c42p-3",
+          "0x1.24698b96c3c40p-3"
+        ]
+      }
+    },
+    {
+      "action": 685,
+      "linux_e1": "-0x1.6c17b8eb784c2p-4",
+      "mac_e1": "-0x1.6c17b8eb784c1p-4",
+      "endpoint_snapshot_identical": true,
+      "endpoint_digest_identical": true,
+      "command_events_identical": true,
+      "linux_command_equals_e1": true,
+      "mac_command_equals_e1": true,
+      "parts_differences": {
+        "6": [
+          "0x1.522f073ccf7aap-3",
+          "0x1.522f073ccf7a9p-3"
+        ]
+      }
+    },
+    {
+      "action": 803,
+      "linux_e1": "-0x1.6c17b8eb784c2p-4",
+      "mac_e1": "-0x1.6c17b8eb784c1p-4",
+      "endpoint_snapshot_identical": true,
+      "endpoint_digest_identical": true,
+      "command_events_identical": true,
+      "linux_command_equals_e1": true,
+      "mac_command_equals_e1": true,
+      "parts_differences": {
+        "6": [
+          "0x1.522f073ccf7aap-3",
+          "0x1.522f073ccf7a9p-3"
+        ]
+      }
+    }
+  ],
+  "libm_exp_differences": [
+    {
+      "action": 2304,
+      "body": 35,
+      "name": "HogRider",
+      "argument_hex": "-0x1.6e54fe9d10988p-1",
+      "linux_exp_hex": "0x1.f4afac24b2b36p-2",
+      "remaining_value_hex": "0x1.b5ad37997d468p+1",
+      "vulnerability_hex": "0x1.793061999999ap-1",
+      "owner_danger": 1,
+      "mac_exp_hex": "0x1.f4afac24b2b35p-2"
+    },
+    {
+      "action": 685,
+      "body": 38,
+      "name": "HogRider",
+      "argument_hex": "-0x1.6e54fe9d10988p-1",
+      "linux_exp_hex": "0x1.f4afac24b2b36p-2",
+      "remaining_value_hex": "0x1.b5ad37997d468p+1",
+      "vulnerability_hex": "0x1.793061999999ap-1",
+      "owner_danger": 1,
+      "mac_exp_hex": "0x1.f4afac24b2b35p-2"
+    },
+    {
+      "action": 803,
+      "body": 38,
+      "name": "HogRider",
+      "argument_hex": "-0x1.6e54fe9d10988p-1",
+      "linux_exp_hex": "0x1.f4afac24b2b36p-2",
+      "remaining_value_hex": "0x1.b5ad37997d468p+1",
+      "vulnerability_hex": "0x1.793061999999ap-1",
+      "owner_danger": 1,
+      "mac_exp_hex": "0x1.f4afac24b2b35p-2"
+    }
+  ],
+  "mac_leaf_danger_reconstructed_by_exp_substitution": [
+    {
+      "action": 2304,
+      "danger_hex": "0x1.24698b96c3c40p-3"
+    },
+    {
+      "action": 685,
+      "danger_hex": "0x1.522f073ccf7a9p-3"
+    },
+    {
+      "action": 803,
+      "danger_hex": "0x1.522f073ccf7a9p-3"
+    }
+  ],
+  "native_math_changed": false,
+  "strict_parity_verdict": "FAIL"
+}
