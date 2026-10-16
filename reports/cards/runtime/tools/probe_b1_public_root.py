@@ -13,6 +13,7 @@ from dataclasses import replace
 import hashlib
 import inspect
 import json
+import math
 from pathlib import Path
 import traceback
 from types import SimpleNamespace
@@ -98,6 +99,37 @@ def native_restart(root, ticks=4):
         graph(json.loads(a.snapshot()))
 
 
+def projectile_motion(root):
+    """Independent positive native movement, with a zero-speed control.
+
+    Full native restart equality alone would also accept stationary shots.
+    Require the actual reconstructed rework shot to travel one tile in50ms.
+    """
+    import clasher_core
+    before = json.loads(root.snapshot())
+    shots = [e for e in before['entities'] if e['class'] == 'Projectile' and
+             e['stats']['name'] == 'ThreeMusketeer_Rework_Character_1']
+    require(len(shots) == 1, 'missing actual rework projectile movement witness')
+    shot = shots[0]
+    require(shot['stats']['speed'] == shot['stats']['projectile_speed'] == 1000,
+            'native rework movement speed is not normalized1000')
+    moving = root.clone()
+    moving.step()
+    after = next((e for e in json.loads(moving.snapshot())['entities'] if e['id'] == shot['id']), None)
+    require(after is not None, 'rework movement fixture shot disappeared before positive witness')
+    distance = math.hypot(after['x']-shot['x'], after['y']-shot['y'])
+    require(.99 < distance < 1.01, ('rework native shot did not move one tile/50ms', distance))
+    zero_payload = copy.deepcopy(before)
+    next(e for e in zero_payload['entities'] if e['id'] == shot['id'])['stats']['speed'] = 0
+    zero = clasher_core.BattleState(json.dumps(zero_payload))
+    zero.step()
+    stopped = next(e for e in json.loads(zero.snapshot())['entities'] if e['id'] == shot['id'])
+    zero_distance = math.hypot(stopped['x']-shot['x'], stopped['y']-shot['y'])
+    require(zero_distance < .002, ('zero-speed negative control moved', zero_distance))
+    return dict(speed=1000, distance=distance, zero_speed_distance=zero_distance,
+                start=[shot['x'],shot['y']], finish=[after['x'],after['y']])
+
+
 def graph_case(R, fair, seat, multiple=False, coincident=False, clone=False):
     from differential import Position
     py, parent, _ = fixture(seat, multiple=multiple, coincident=coincident)
@@ -180,6 +212,10 @@ def level_case(R, fair, output, seat, level):
     py.players[seat].hand[0] = 'ThreeMusketeers'
     require(py.deploy_card(seat, 'ThreeMusketeers', Position(12.5 if seat == 0 else 5.5,
                                                            10.5 if seat == 0 else 21.5)), '3M deployment')
+    member = next(e for e in py.entities.values() if e.card_stats is not None and
+                  e.card_stats.name == 'ThreeMusketeer_Rework_Character_1')
+    member._create_projectile(None, py, target_position=Position(member.position.x,
+                              member.position.y+(5 if seat == 0 else -5)))
     healer = spawn('BattleHealer', seat, 8.5, 10.5)
     on_hit = next(m for m in healer.mechanics if type(m).__name__ == 'AreaEffectOnHit')
     on_hit.on_attack_hit(healer, healer)
@@ -199,7 +235,8 @@ def level_case(R, fair, output, seat, level):
     info = fair.observe(py, R.builder, seat, ())
     payload = json.loads(wrapper.payload(info, info.own, np.random.default_rng(12)))
     graph(payload)
-    rework = [e for e in payload['entities'] if e['stats']['name'].startswith('ThreeMusketeer_Rework_Character')]
+    rework = [e for e in payload['entities'] if e['class'] == 'Troop' and
+              e['stats']['name'].startswith('ThreeMusketeer_Rework_Character')]
     require(len(rework) == 3 and all(e['stats']['name'] == 'ThreeMusketeer_Rework_Character_1' and
             e['clock']['load'] == e['stats']['load'] == 700 and e['stats'].get('attack_select') for e in rework),
             'wrong explicit level public rework default')
@@ -226,6 +263,8 @@ def level_case(R, fair, output, seat, level):
             'Clone prototype retains old level damage/payload')
     import clasher_core
     root = clasher_core.BattleState(json.dumps(payload))
+    motion = dict(level=projectile_motion(root), plain=projectile_motion(
+                  R.root(info, info.own, np.random.default_rng(12))))
     native_restart(root)
     # Apply an actual future Clone to this public root and check newly allocated
     # links, with no private graph information passed from the fixture.
@@ -234,7 +273,7 @@ def level_case(R, fair, output, seat, level):
     require(len(graph(state)) == 4, 'future public Clone lost/doubled attached graph')
     native_restart(root)
     return dict(seat=seat, level=level, rework_bodies=len(rework), pulse_payloads=len(pulses),
-                clone_graph=True, native_continuation=True, wrapper_stats=wrapper.stats)
+                clone_graph=True, native_continuation=True, projectile_motion=motion, wrapper_stats=wrapper.stats)
 
 
 def c56_unchanged(R, fair, seat):

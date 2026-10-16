@@ -1,6 +1,11 @@
 # B1 public root handoff
 
-IMPLEMENTATION APPROVED, ADMITTED VALIDATION PENDING; no runtime acceptance or
+UPDATED: approvede0 source invalidated for acceptance by owner-found zero
+canonical projectile movement speed before execution. Corrected speed source
+and refreshed independent review/packet are required; retained e0 packet/review
+below are HISTORICAL, not authorization to execute/accept current bytes.
+
+HISTORICAL IMPLEMENTATION APPROVED, ADMITTED VALIDATION PENDING; no runtime acceptance or
 deployment claim. Isolated branch `cards/b1-public-root-20261016`, baseebab18cc,
 aliasc13249919, root code commits8aab1b2b5,fa3622618,e0e9f634e (apply all three
 atop B1 alias; later commits are scoped evidence). Exact approved source

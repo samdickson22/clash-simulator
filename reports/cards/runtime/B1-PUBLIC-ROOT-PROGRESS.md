@@ -167,3 +167,5 @@ and invalid pipeline controls; its HOST-PLAN-PUBLIC.md explicitly retires the
 old immutable implementation packet's earlier emitted10 scope. Actual acceptance
 denominators will be14emitted+16owner groups,32boundarygraphs/64rootpaths; the
 packet remains historical/source-review binding, not a current execution claim.
+
+2026-10-16T12:53:58.571052+00:00: owner source audit found canonical actual shot from raw differential.entity has stats.speed0 while native movement reads that field; live_snapshot.live_entity converts travel_speed*50. Prior e0 implementation review remains historical and is explicitly invalidated for acceptance, without erasing evidence. No host execution occurred. Corrected only scoped Three template normalization, installer rejects zero/mismatched speeds; actual owner probe gains8 positive native one-tile/50ms movement witnesses across plain/level11/9/both seats, each with zero-speed negative control, within the existing16groups.21stdlib tests PASS with added zero/wrong-speed cases, AST3PASS, LIVE optional patch stdlib proofPASS, git diffcheckPASS. Fresh exact-source reviewr4 required before B1 phase; no old approval/gate transfer.

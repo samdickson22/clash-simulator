@@ -45,6 +45,9 @@ def install_three_templates(config, builder, templates, projectile):
         raise ValueError('invalid canonical public ThreeMusketeers body')
     if projectile['class'] != 'Projectile' or projectile['stats']['name'] != THREE_MEMBER:
         raise ValueError('invalid actual public ThreeMusketeers projectile')
+    speed = projectile['stats'].get('speed', 0)
+    if speed <= 0 or speed != projectile['stats'].get('projectile_speed'):
+        raise ValueError('unnormalized public ThreeMusketeers projectile movement speed')
     for kind, ns, value in (('Troop', 'troop_body', bodies[0]), ('Projectile', 'projectile', projectile)):
         token = builder.token_id('ThreeMusketeers', namespace=ns)
         if token <= 1:
