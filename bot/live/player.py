@@ -114,10 +114,16 @@ class _WallMulti(MultiSearchPlayer):
         wall0 = time.monotonic() if wall0 is None else wall0
         fallback = int(self.poller.poll(view.tick, view.reserved.packet, view.public_events))
         fallback = fallback if fallback < WAIT else WAIT
+        from clasher.rl.slot_permission import choice_or_wait, permission_state
+        fallback = choice_or_wait(fallback, view.reserved.packet)
         if not view.can_act or view.tick % SEARCH_INTERVAL:
             return Decision(WAIT, stats=None)
         if default is not None:
-            fallback = int(default) if int(default) < WAIT else WAIT
+            fallback = choice_or_wait(int(default) if int(default) < WAIT else WAIT, view.reserved.packet)
+        allowed, _ = permission_state(view.reserved.packet)
+        if allowed is not None and not any(allowed):
+            p.core.selected_wait_ticks = 0
+            return self._done(WAIT, dict(hit=False, fallback=False, candidates=1, permission_wait=True), wall0)
         cutoff = None if self.deadline_seconds is None else wall0+self.deadline_seconds-RETURN_RESERVE
         try:
             p.belief.update(info.tick, info.events, deadline=cutoff)
@@ -127,7 +133,7 @@ class _WallMulti(MultiSearchPlayer):
         p.core.info, p.core.costs, p.core.pending = info, R.costs, tuple(view.pending)
         p.core.opponent_elixir = self.poller.opponent_elixir
         from imitation.evaluation.d1 import model_packet
-        proposals = self.cached.propose(model_packet(view.reserved.packet, self.poller.mask),
+        proposals = self.cached.propose(model_packet(view.reserved.packet, self.poller.player.last_feature_mask, eligibility_mask=self.poller.mask),
                                         self.poller.player.last_d1)
         p.core.coarse_order = tuple(v['action'] for v in proposals)
         student = [v['action'] for v in proposals]
@@ -159,7 +165,10 @@ class _WallMulti(MultiSearchPlayer):
         stats = dict(p.core.deadline_stats or {})
         stats.setdefault('candidates', len(candidates))
         stats.update(breaks)
-        return self._done(int(action), stats, wall0, p.core.selected_wait_ticks)
+        final_action = choice_or_wait(action, view.reserved.packet)
+        if permission_state(view.reserved.packet)[1] is not None:
+            stats.update(permission_proposed_action=int(action), permission_final_action=final_action)
+        return self._done(final_action, stats, wall0, p.core.selected_wait_ticks)
 
 
 class WallCandidatePlayer(CandidateSearchPlayer, _WallMulti):
@@ -251,7 +260,9 @@ class LivePlayer:
     """Player facade: start(ctx), act(view) / decide(view) -> Decision, close()."""
 
     def __init__(self, rt, *, tier='search', wall_ms=200, threads=4, r3a=16, fast_spec=FAST_DEFAULT,
-                 cutoff_default='it5s2', max_errors=3, levels=None, name=None):
+                 cutoff_default='it5s2', max_errors=3, levels=None, name=None, slot_permission_mode='legacy'):
+        from clasher.rl.slot_permission import check_mode
+        self.__slot_permission_mode = check_mode(slot_permission_mode)
         if tier not in ('search', 'fast'):
             raise ValueError(tier)
         if cutoff_default not in ('it5s2', 'R3a'):
@@ -267,6 +278,10 @@ class LivePlayer:
                              f'LIVE-{self.search.name}' + ('' if cutoff_default == 'it5s2' else '-dR3a'))
         self.decisions = []
 
+    @property
+    def slot_permission_mode(self):
+        return self.__slot_permission_mode
+
     def start(self, ctx: MatchContext):
         self.ctx, self.errors, self.search_disabled, self.panics = ctx, 0, False, 0
         self.native_failures = Counter()     # search decisions the search gave up on (lopp native_failure kind)
@@ -278,6 +293,24 @@ class LivePlayer:
             belief.human_prior = self.rt.PRIOR
 
     def act(self, view: PublicView) -> Decision:
+        from clasher.rl.slot_permission import bind_view, permission_state
+        view = bind_view(view, self.slot_permission_mode)
+        self._permission_packet = view.reserved.packet
+        _, self._permission_status = permission_state(view.reserved.packet)
+        d = self._act_bound(view)
+        if self._permission_status is not None:
+            d.stats = dict(d.stats or {})
+            d.stats.setdefault('slot_permission', dict(self._permission_status, final_action=int(d.action)))
+            for label, player in (('fast', self.fast), ('default', self.search)):
+                policy = getattr(player, 'cached', None)
+                poller = getattr(player, 'poller', None)
+                current = getattr(getattr(poller, 'player', None), 'last_tick', None) == view.tick
+                original = getattr(policy, 'original_action', None)
+                if current and original is not None:
+                    d.stats['slot_permission']['native_' + label + '_action'] = int(original)
+        return d
+
+    def _act_bound(self, view: PublicView) -> Decision:
         wall0, cpu0 = time.monotonic(), time.process_time()
         try:
             fast = self.fast.act(view).action     # polls every 5 ticks (D1 state); WAIT off-cadence
@@ -324,9 +357,16 @@ class LivePlayer:
     decide = act
 
     def _done(self, d, source, wall0, cpu0, *, fast, search=None, error=None):
+        from clasher.rl.slot_permission import choice_or_wait
+        proposed = int(d.action)
+        d.action = choice_or_wait(proposed, self._permission_packet)
+        if d.action != proposed:
+            d.wait_ticks = 0
         stats = dict(source=source, action=int(d.action), fast_action=int(fast),
                      belief_rebuilds=getattr(self.search.p.belief, 'rebuilds', 0) if self.search else 0,
                      wall_ms=1000*(time.monotonic()-wall0), cpu_ms=1000*(time.process_time()-cpu0))
+        if self._permission_status is not None:
+            stats['slot_permission'] = dict(self._permission_status, proposed_action=proposed, final_action=int(d.action))
         if search is not None:
             stats.update(search_stats(search))
             if search.get('native_failure') is not None:
@@ -346,7 +386,8 @@ class LivePlayer:
 
 SEARCH_KEYS = ('hit', 'completed', 'candidates', 'rollouts', 'student_default', 'preparation_cutoff', 'native_failure',
                'search_failures',
-               'own_state_break', 'own_state_breaks', 'opp_state_break', 'opp_state_breaks')
+               'own_state_break', 'own_state_breaks', 'opp_state_break', 'opp_state_breaks',
+               'permission_proposed_action', 'permission_final_action')
 RENAMED = {'native': 'native_rollouts', 'learned': 'learned_rollouts'}
 FAILURE_MARKS = ('fail', 'error', 'panic', 'broken', 'dead')
 
@@ -385,7 +426,7 @@ def _is_panic(ex):
     return int(type(ex).__name__ == 'PanicException')
 
 
-def make_live_player(rt, name):
+def make_live_player(rt, name, *, slot_permission_mode='legacy'):
     """Names for bot.eval / bot.live runners:
     'K4CW-r16[-w<ms>-t<threads>]'      the wall search alone (cutoff default R3a, as K4C)
     'LIVE-K4CW-r16-w<ms>-t<threads>'   LivePlayer search tier (cutoff default it5s2); suffix '-dR3a' for R3a
@@ -393,6 +434,10 @@ def make_live_player(rt, name):
     'LIVE-K4L-<lopp body>-w<ms>-t<N>[-p<P>]'  LivePlayer with the bot lead's wall K4L search tier (make_live_lopp)
     'PERC-<arm>:<name>'                <name> seeing the game only through synthetic perception at noise <arm>
     Anything else -> bot.eval.headline.make_player."""
+    from clasher.rl.slot_permission import check_mode
+    check_mode(slot_permission_mode)
+    if slot_permission_mode == 'required' and not name.startswith('LIVE-'):
+        raise ValueError('required slot permission is supported only by LIVE factories')
     if name.startswith('PERC-'):     # 'PERC-<noise arm>:<player name>' (bot/live/perc.py)
         from bot.live.perc import PercPlayer
         arm, _, inner = name[5:].partition(':')
@@ -400,14 +445,16 @@ def make_live_player(rt, name):
     if name.startswith('K4CW-'):
         return WallCandidatePlayer(rt, **parse_wall_name(name))
     if name == 'LIVE-fast-it5s2':
-        return LivePlayer(rt, tier='fast')
+        return LivePlayer(rt, tier='fast', slot_permission_mode=slot_permission_mode)
     if name.startswith('LIVE-K4L-'):   # bot lead's live K4L (bot/search/lopp_fast.py; opponent models outside git)
         from bot.search.lopp_fast import make_live_lopp
-        return make_live_lopp(rt, name)
+        return make_live_lopp(rt, name, slot_permission_mode=slot_permission_mode)
     if name.startswith('LIVE-K4CW-'):
         body, dflt = (name[5:-5], 'R3a') if name.endswith('-dR3a') else (name[5:], 'it5s2')
         kw = parse_wall_name(body)
-        return LivePlayer(rt, tier='search', cutoff_default=dflt, **kw)
+        return LivePlayer(rt, tier='search', cutoff_default=dflt, slot_permission_mode=slot_permission_mode, **kw)
+    if slot_permission_mode != 'legacy':
+        raise ValueError('unsupported required slot-permission factory')
     return _HEADLINE_MAKE_PLAYER(rt, name)
 
 

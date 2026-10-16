@@ -275,7 +275,7 @@ def build_bot(player_name, deck):
     import clasher_core
     if Path(clasher_core.__file__).resolve().parent != rt.native_dir.resolve():
         sys.exit(f'clasher_core loaded from {clasher_core.__file__}, not the pinned {rt.native_dir}')
-    player = make_live_player(rt, player_name)
+    player = make_live_player(rt, player_name, slot_permission_mode='required') if HANDSYNC else make_live_player(rt, player_name)
     return rt, new_session(rt, player, deck)
 
 
@@ -286,7 +286,7 @@ def new_session(rt, player, deck):
     """handsync.SyncSession (own hand synced to coloured HUD reads + tap guard; handsync.py) unless LL_HANDSYNC=0."""
     if HANDSYNC:
         import handsync
-        return handsync.SyncSession(rt, player, deck, guard='enforce')
+        return handsync.SyncSession(rt, player, deck, guard='enforce', slot_permission_mode='required')
     from bot.live.translate import LiveSession
     return LiveSession(rt, player, deck)
 
@@ -419,7 +419,8 @@ def main(argv=None):
                                        unknown_card=getattr(sess.tr, 'unknown_card', None),
                                        plays_from=getattr(sess.tr, 'plays_from', None)),
                        session=dict(cls=type(sess).__module__ + '.' + type(sess).__name__, seed=0,
-                                    command_delay=27, expire=90, guard='enforce' if HANDSYNC else None),
+                                    command_delay=27, expire=90, guard='enforce' if HANDSYNC else None,
+                                    slot_permission_mode='required' if HANDSYNC else 'legacy'),
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
@@ -505,7 +506,7 @@ def main(argv=None):
                     if newdeck:
                         deck = newdeck; ov.deck = list(deck)
                         DECK_FILE.write_text(json.dumps(deck))
-                        sess = new_session(rt, make_live_player(rt, a.player), deck)
+                        sess = new_session(rt, (make_live_player(rt, a.player, slot_permission_mode='required') if HANDSYNC else make_live_player(rt, a.player)), deck)
                         session_cfg['deck'] = list(deck)
                         session_cfg['deck_out_of_scope'] = [c for c in deck if c not in C56]
                         log('events', dict(ev='deck_change', deck=deck))
@@ -587,7 +588,7 @@ def main(argv=None):
                         open_match(k)
                         log('events', dict(loaded, ev='loaded', load_s=0, session=k, after='false_match'))
                         (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
-                    sess = new_session(rt, make_live_player(rt, a.player), deck)
+                    sess = new_session(rt, (make_live_player(rt, a.player, slot_permission_mode='required') if HANDSYNC else make_live_player(rt, a.player)), deck)
                     state, streak, miss, first_hud_ms, last_play = 'wait', 0, 0, None, None
                     if a.matches > 1:
                         n, t0_ns = 0, None
@@ -599,7 +600,7 @@ def main(argv=None):
                         break
                     close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
                     open_match(cur['k'] + 1)
-                    sess = new_session(rt, make_live_player(rt, a.player), deck)
+                    sess = new_session(rt, (make_live_player(rt, a.player, slot_permission_mode='required') if HANDSYNC else make_live_player(rt, a.player)), deck)
                     log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
                     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
                     state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
@@ -675,6 +676,7 @@ def main(argv=None):
                 ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
                 log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
                 submitted0 = sess.ch.submitted     # monotonic sequence: completion/expiry may replace 1 pending with 1
+                permission0 = getattr(sess, '_permission_serial', 0)
                 d, err = None, None
                 try:
                     d = None if paused else sess.step(rec)
@@ -691,6 +693,8 @@ def main(argv=None):
                     if not getattr(sess, '_tb_logged', 0):
                         sess._tb_logged = 1; log('events', dict(ev='step_error', tb=traceback.format_exc()[-3000:]))
                 t4 = time.perf_counter()
+                if getattr(sess, '_permission_serial', 0) > permission0:
+                    row['slot_permission'] = sess.last_slot_permission
                 row.update(tick=tick, canvas_ms=1e3*(t2-t1), perc_ms=1e3*(t3-t2), step_ms=1e3*(t4-t3),
                            pre_ms=1e3*(t1-t_in), hand=rec['hand'], n_units=len(rec['units']),
                            units=[(u['owner'], u.get('cls'), round(u['x'], 1), round(u['y'], 1)) for u in rec['units']],
@@ -717,6 +721,8 @@ def main(argv=None):
                             log('events', dict(ev='stall_cleared', n=n-1, tick=tick, card_source=(d.stats or {}).get('source')))
                     drow = dict(n=n-1, tick=tick, poll=sess.last_poll, action=int(d.action), submitted=submitted,
                                 step_ms=1e3*(t4-t3), stats=d.stats, own=sess.log[-1] if sess.log else None)
+                    if 'slot_permission' in row:
+                        drow['slot_permission'] = row['slot_permission']
                     if submitted:
                         slot, card_xy, target_xy = C.action_target(d.action)
                         card = sess.ch.pending[-1].card if sess.ch.pending else None

@@ -189,7 +189,8 @@ class _GuardedPlayer:
                        all(u in ('empty', 'greyed') for u in ui))
         # The spending animation can leave the old pink bar visible after a command completes.
         # Positive UI unavailability denies new policy actions, but both pollers must still advance.
-        policy_view = replace(view, can_act=False) if unavailable else view
+        policy_view = self.sess._slot_permission_view(view)
+        policy_view = replace(policy_view, can_act=False) if unavailable else policy_view
         d = self.inner.act(policy_view)
         if unavailable:
             self.sess.tr.stats['handsync_no_playable_hand'] += 1
@@ -222,7 +223,25 @@ class SyncSession(LiveSession):
     hold_ms = 6000
     opening_limit = refusal_limit = 24
 
-    def __init__(self, rt, player, own_deck, *, guard='enforce', **kw):
+    def __init__(self, rt, player, own_deck, *, guard='enforce', slot_permission_mode='legacy', **kw):
+        if slot_permission_mode not in ('legacy', 'required'):
+            raise ValueError('invalid slot permission mode')
+        self._permission_session_id = None
+        if slot_permission_mode == 'required':
+            from uuid import uuid4
+            self._permission_session_id = uuid4().hex
+            from clasher.rl.public_observation import ConfidenceAwareActorObservation, SlotPermission
+            from dataclasses import fields
+            required = {'slot_permission', 'slot_permission_capture_id',
+                        'slot_permission_poll_tick', 'slot_permission_mode'}
+            if not required <= {f.name for f in fields(ConfidenceAwareActorObservation)}:
+                raise ValueError('slot permission backend unavailable')
+            if getattr(player, 'slot_permission_mode', None) != 'required':
+                raise ValueError('required slot permission player must be constructor-pinned')
+        self.slot_permission_mode = slot_permission_mode
+        self.last_slot_permission = None
+        self._permission_serial = 0
+        self._permission_last_actable_frame = None
         kw.setdefault('translator', SyncTranslator(rt, own_deck))
         super().__init__(rt, player, own_deck, **kw)
         self.player = _GuardedPlayer(player, self)
@@ -386,6 +405,62 @@ class SyncSession(LiveSession):
         self._rec = record
         self.tr.own_tracker.busy = {c.action // 576 for c in self.ch.pending}
         return super().step(record)
+
+    def _slot_permission_view(self, view):
+        """Private explicit control metadata; all model arrays/own state and reservations retain identity.
+
+        Backend independently binds the actual poll and intersects eligibility only AFTER model features.
+        Legacy callers take the original path. This does not replace final tap_guard enforcement.
+        """
+        if getattr(self, 'slot_permission_mode', 'legacy') == 'legacy':
+            return view
+        from clasher.rl.public_observation import SlotPermission
+        record = self._rec or {}
+        frame = record.get('ts_ms')
+        captured = record.get('timestamp_ms', frame)
+        scope = getattr(self, '_permission_session_id', None)
+        scope_valid = type(scope) is str and 0 < len(scope) <= 64
+        frame_identifiable = (isinstance(frame, Real) and not isinstance(frame, bool) and math.isfinite(frame)
+                              and float(frame) == self._frame_ms)
+        capture_valid = (scope_valid and frame_identifiable
+                         and isinstance(captured, Real) and not isinstance(captured, bool) and math.isfinite(captured)
+                         and float(frame) == float(captured))
+        valid = capture_valid
+        h = record.get('hand') or {}
+        ui = h.get('ui') if isinstance(h, dict) else None
+        valid = valid and isinstance(ui, (list, tuple)) and len(ui) == 4 and all(
+            u in ('empty', 'greyed', 'coloured') for u in ui)
+        cards, probs = (h.get('cards'), h.get('probs')) if isinstance(h, dict) else (None, None)
+        valid = valid and isinstance(cards, (list, tuple)) and len(cards) == 4
+        valid = valid and isinstance(probs, (list, tuple)) and len(probs) == 4
+        # A reused capture may advance catch-up pollers but may not enable a second current decision.
+        previous = getattr(self, '_permission_last_actable_frame', None)
+        if view.can_act and previous is not None and (not valid or float(frame) <= previous):
+            valid = False
+        if valid:
+            reasons = tuple(self.tap_guard(i*576) or 'eligible' for i in range(4))
+            allowed = tuple(r == 'eligible' for r in reasons)
+        else:
+            reasons, allowed = ('invalid_or_stale_observation',)*4, (False,)*4
+        capture_id = scope + ':' + float(frame).hex() if scope_valid and isinstance(frame, Real) and math.isfinite(frame) else 'invalid'
+        # Separate packet-side current capture binding is not taken from the permission object.
+        current_id = scope + ':' + float(captured).hex() if scope_valid and isinstance(captured, Real) and math.isfinite(captured) else 'missing'
+        poll = int(view.tick)
+        if float(view.tick) != poll or poll < 0:
+            raise ValueError('invalid permission poll')
+        permission = SlotPermission(allowed=allowed, capture_id=capture_id, poll_tick=poll, reasons=reasons)
+        packet = replace(view.reserved.packet, slot_permission=permission,
+                         slot_permission_capture_id=current_id, slot_permission_poll_tick=None,
+                         slot_permission_mode='required')
+        # Consume the primary capture even when its independent binding/UI was denied.
+        # Correcting metadata alone cannot authorize the same image at a later poll.
+        if view.can_act and frame_identifiable:
+            self._permission_last_actable_frame = max(float(frame), previous) if previous is not None else float(frame)
+        self._permission_serial = getattr(self, '_permission_serial', 0) + 1
+        self.last_slot_permission = dict(allowed=list(allowed), capture_id=capture_id,
+                                        current_capture_id=current_id, poll_tick=poll,
+                                        reasons=list(reasons), mode='required')
+        return replace(view, reserved=replace(view.reserved, packet=packet))
 
     def tap_guard(self, action):
         """None if the tap may go, else why not: the slot is empty / greyed / coloured with another card read."""
