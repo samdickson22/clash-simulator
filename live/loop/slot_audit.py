@@ -91,6 +91,13 @@ def intervals(ns, P, S, deck, conf, next_conf):
             x['truth'] = x['col_truth'] or x['next_truth']
             x['conflict'] = bool(x['next_truth'] and x['col_truth'] and x['next_truth'] != x['col_truth'])
         out.append(iv)
+    # one card is in one slot at a time: a Next-only truth that overlaps the same card in another slot is the preview
+    # of a later card (two plays within a few frames; s27-m01 slot 0 n109-519 'Fireball' was Valkyrie on video) -> drop it
+    for s in range(4):
+        for x in out[s]:
+            if x['truth'] and not x['col_truth'] and any(y['truth'] == x['truth'] and y['a'] <= x['b'] and x['a'] <= y['b']
+                                                         for t in range(4) if t != s for y in out[t]):
+                x['truth'], x['dup'] = None, True
     return out
 
 

@@ -26,7 +26,9 @@ CACHE = '/mpac/sdicks02/scratch/live-loop/slot-cache'
 
 
 # arm -> (guard threshold override or None = the drive's own, feedback): 'live' = the deployed guard, no feedback
-ARMS = {'live': (None, False, False), 'r3': (None, True, False), 'r3c': (None, True, True)}   # + floor_late
+ARMS = {'live': (None, False, False), 'r3c': (None, True, True), 'h1': (None, True, True)}   # + floor_late
+HAND_ARMS = {'h1'}      # hand reads from --hand-logits (CAL cleared: swaps off, as live under a new hand head)
+HAND_LOGITS = None
 
 
 def load_drive(path, arm):
@@ -36,6 +38,8 @@ def load_drive(path, arm):
     gp = ARMS[arm][0]
     if hasattr(m, 'FLOOR_LATE'):
         m.FLOOR_LATE = ARMS[arm][2]
+    if arm in HAND_ARMS:
+        m.CAL.clear()
     if gp is not None and hasattr(m, 'GUARD_PREC'):
         m.GUARD_PREC = gp
     elif gp is not None:
@@ -101,8 +105,19 @@ def replay(d, arm, drive_path, truth_play, truth_frame):
         sess.tr.clock.anchor(0, start)
     rows, swaps = [], []
     bar = {f['n']: f.get('elixir') for f in map(json.loads, open(d/'frames.jsonl'))}   # pre-floor (post-flash) reading
+    hand = {}
+    if arm in HAND_ARMS:
+        import numpy as np, handread
+        z = np.load(Path(HAND_LOGITS)/f'{d.parent.name}-{d.name}.npz')
+        cards = json.loads((Path(HAND_LOGITS)/'vocab.json').read_text())['cards']
+        hand = {int(n): handread.deck_constrained(lg, cards, deck) for n, lg in zip(z['n'], z['logits'])}
     for r in P:
         rec = {k: v for k, v in r.items() if k not in ('n', 'logged', 'tick', 'ts_ms')}
+        if arm in HAND_ARMS:
+            hr = hand.get(r['n'])
+            if hr is not None and isinstance(rec.get('hand'), dict):
+                rec['hand'] = dict(rec['hand'], cards=hr['cards'], probs=hr['probs'], next=hr['next'],
+                                   next_prob=hr['next_prob'], raw=hr['raw'])
         if rec.get('elixir') is not None:
             if ARMS[arm][2]:
                 rec['elixir'] = bar.get(r['n'], rec['elixir'])
@@ -128,7 +143,9 @@ def replay(d, arm, drive_path, truth_play, truth_frame):
 
 
 def one(job):
-    d, arm, drive_path = job
+    d, arm, drive_path, hl = job
+    global HAND_LOGITS
+    HAND_LOGITS = hl
     import slot_audit
     frames = []
     rows = slot_audit.audit(d, cache=CACHE, frames=frames)
@@ -175,14 +192,15 @@ def main():
     ap.add_argument('--drive', required=True)
     ap.add_argument('--json')
     ap.add_argument('--jobs', type=int, default=8)
+    ap.add_argument('--hand-logits', help='dir of hand_logits_offline.py npz + vocab.json (arm h1)')
     a = ap.parse_args()
-    jobs = [(d, arm, a.drive) for d in a.runs for arm in ARMS]
+    jobs = [(d, arm, a.drive, a.hand_logits) for d in a.runs for arm in ARMS if a.hand_logits or arm not in HAND_ARMS]
     with Pool(a.jobs) as p:
         res = p.map(one, jobs, chunksize=1)
     for r in res:
         if 'error' in r:
             print('ERROR', r['run'], r['arm'], r['error'])
-    out = {arm: summary(res, arm) for arm in ARMS}
+    out = {arm: summary(res, arm) for arm in ARMS if any(r.get('arm') == arm for r in res)}
     print(json.dumps(out, indent=1))
     for r in res:
         if r.get('arm') == 'r3':

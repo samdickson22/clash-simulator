@@ -321,6 +321,14 @@ ELIXIR_FLASH = os.environ.get('LL_ELIXIR_FLASH', '1' if HANDSYNC else '0') == '1
 # played; 21 of 71 greyed refusals on s44-s47), undoing the flash correction exactly where it applied. Late: the floor is
 # applied in SyncSession._reconcile to the commands still pending, on the unfloored reading.
 FLOOR_LATE = os.environ.get('LL_FLOOR_LATE', '1' if HANDSYNC else '0') == '1'
+# Own-hand classifier: LL_HAND_MODEL=<TorchScript hand.pt> (live/perception/hand/, h1 = live-perc-r3, 2026-10-16) maps the
+# normalized Android frame f [1920,1080,3] uint8 BGR -> [5, 56] logits (slots 0-3, next; perc.cards order, checked against
+# vocab.json beside it), decoded by the same handread.deck_constrained. Held-out (25 battles): coloured .997 vs ft-r6 .967,
+# greyed .995 vs .878, Archers .999 vs .756 (ft-r6's HUD head shares the arena backbone). Unset = ft-r6's HUD head (the
+# rollback); with it set, ft-r6's decode is logged beside it in rec['hand']['ft']. Mac CPU at --perc-threads 4: 6.1 ms p50
+# per frame. LL_HAND_EVERY=N runs it on every Nth battle frame (reusing the last logits) if FPS suffers.
+HAND_MODEL = os.environ.get('LL_HAND_MODEL')
+HAND_EVERY = max(1, int(os.environ.get('LL_HAND_EVERY', '1')))
 
 
 def bar_flash(f):
@@ -354,9 +362,9 @@ SLOT_BOXES = [(x1 + 11, 1619, x2 - 11, 1828) for x1, x2 in _SLOT_X]      # Andro
 # Precision of the HUD's read of a COLOURED slot, P(video truth == read), per read card and p bin (CAL_BINS lower edges),
 # from slot_audit video truth on s29-s35 + s41-s43 (live/loop/hud_calibration.py); None = under 30 frames (untrusted).
 # Cards not in CAL (a deck change) are never swapped in: the guard then works as r2.
-# CAL belongs to ONE HUD head: CAL_HEAD = sha256 of the export frame.pt it was measured on (ft-r6). Any other export (a
-# retrained / new HUD head) turns swaps off at session start (event hud_cal_off) until CAL is rebuilt for that head with
-# hud_calibration.py on its own live battles.
+# CAL belongs to ONE hand head: CAL_HEAD = sha256 of the model whose hand reads it was measured on (the export frame.pt
+# ft-r6, or LL_HAND_MODEL's hand.pt when set). Any other head turns swaps off at session start (event hud_cal_off) until
+# CAL is rebuilt for that head with hud_calibration.py on its own live battles.
 CAL_HEAD = '650bd5cf5d6677de7da2837cee401ea66efa17f9791c4bdfa942636aa97e63da'
 CAL_BINS = (0., .3, .5, .7, .9)
 CAL = {"Archers": [0.985, 0.999, 1.0, None, None], "Cannon": [0.957, 0.998, 1.0, 1.0, 1.0], "Fireball": [None, None, None, None, 1.0], "Giant": [None, None, None, 1.0, 1.0], "MiniPekka": [0.582, 0.993, 1.0, 1.0, 1.0], "Minions": [0.254, 0.875, 0.917, 1.0, 1.0], "Musketeer": [0.566, None, 1.0, 1.0, 1.0], "Valkyrie": [0.843, 0.731, 0.956, None, None]}
@@ -610,9 +618,23 @@ def main(argv=None):
     loaded = dict(ev='loaded', load_s=time.monotonic() - t, player=a.player, fast=os.environ.get('CLASHER_LIVE_FAST'),
                   export=str(a.export), export_frame_sha256=export_sha, units=a.units)
     log('events', loaded)
-    if HANDSYNC and export_sha != CAL_HEAD:     # the precision table is only valid for the HUD head it was measured on
+    hand_model, hand_info = None, None
+    if HAND_MODEL:
+        import torch
+        hp = Path(os.path.expanduser(HAND_MODEL))
+        voc = json.loads((hp.parent/'vocab.json').read_text())['cards']
+        if list(voc) != list(perc.cards):
+            log('events', dict(ev='hand_model_refused', path=str(hp), why='vocab.json != export card order'))
+            STATUS_FILE.write_text(f'REFUSED (hand model): {hp.parent}/vocab.json differs from the export card order\n')
+            return 3
+        hand_model = torch.jit.load(str(hp), map_location='cpu').eval()
+        hand_info = dict(path=str(hp), sha256=hashlib.sha256(hp.read_bytes()).hexdigest(), every=HAND_EVERY)
+        log('events', dict(ev='hand_model', **hand_info))
+    hand_head = hand_info['sha256'] if hand_info else export_sha
+    if HANDSYNC and hand_head != CAL_HEAD:      # the precision table is only valid for the hand head it was measured on
         CAL.clear()
-        log('events', dict(ev='hud_cal_off', export_frame_sha256=export_sha, cal_head=CAL_HEAD))
+        log('events', dict(ev='hud_cal_off', hand_head=hand_head, cal_head=CAL_HEAD,
+                           source='hand_model' if hand_info else 'export'))
     # everything needed to replay LiveSession offline from perception.jsonl (bot lead): deck, players, export, options
     client = {}
     try:                                       # read-only: the live client's package version (CARD LEAD / bot lead)
@@ -635,6 +657,7 @@ def main(argv=None):
                        translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
                        session=dict(cls=type(sess).__name__, handsync=HANDSYNC, elixir_flash=ELIXIR_FLASH, seed=0, command_delay=27, expire=90,
                                     swap_prec=SWAP_PREC, hud_cal=bool(CAL), cal_head=CAL_HEAD[:12], floor_late=FLOOR_LATE),
+                       hand_model=hand_info,
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
@@ -761,6 +784,7 @@ def main(argv=None):
                     state, start_ms = 'battle', first_hud_ms
                     perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader(); eflash = ElixirFlash()
                     yolo_last, yolo_k = None, 0
+                    hand_last, hand_k = None, 0
                     tower_last, tower_missing = {}, 0
                     last_play_ms, stall = start_ms, False
                     if os.environ.get('LL_TEST_STALL') == '1' and getattr(sess.player, 'search', None) is not None:
@@ -859,10 +883,29 @@ def main(argv=None):
                 rec['phase'] = 1 if tick < 2400 else (2 if tick < 4800 else 3)
                 rec['clock_s'] = max(0., 180 - tick/20) if tick < 3600 else max(0., 300 - tick/20)
                 if 'out' in raw:                                  # own hand = most probable distinct DECK cards (handread.py)
-                    hr = handread.deck_constrained(raw['out'][4][0].float().cpu().numpy(), perc.cards, deck)
+                    ft = raw['out'][4][0].float().cpu().numpy()
+                    logits = ft
+                    if hand_model is not None:                    # LL_HAND_MODEL: the own-hand classifier's logits
+                        if hand_last is None or hand_k % HAND_EVERY == 0:
+                            th = time.perf_counter()
+                            if a.perc_threads:
+                                nt = torch.get_num_threads(); torch.set_num_threads(a.perc_threads)
+                            with torch.inference_mode():
+                                hand_last = hand_model(torch.from_numpy(f)).float().numpy()
+                            if a.perc_threads:
+                                torch.set_num_threads(nt)
+                            row['hand_ms'] = round(1e3*(time.perf_counter() - th), 2)
+                        hand_k += 1
+                        logits = hand_last
+                    hr = handread.deck_constrained(logits, perc.cards, deck)
                     if hr is not None:
                         rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
                                            next_prob=hr['next_prob'], raw=hr['raw'])
+                        if hand_model is not None:                # ft-r6's read beside it (comparison only)
+                            h0 = handread.deck_constrained(ft, perc.cards, deck)
+                            if h0 is not None:
+                                rec['hand']['ft'] = dict(cards=h0['cards'], probs=h0['probs'], next=h0['next'],
+                                                         next_prob=h0['next_prob'])
                 if HANDSYNC and isinstance(rec.get('hand'), dict):
                     rec['hand']['ui'] = slot_ui(f)
                 ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
