@@ -56,7 +56,7 @@ def main():
     ap.add_argument('--native', default='/mpac/sdicks02/jobs/clasher/cards/probe-native.json')
     ap.add_argument('--fidelity', default=str(ROOT / 'reports/cards/fidelity/results.jsonl'))
     ap.add_argument('--scope', default=str(ROOT / 'reports/cards/runtime/scope.json'))
-    ap.add_argument('--seen', default='/mpac/sdicks02/repos/clasher-live/reports/live/loop/opponent-decks.jsonl')
+    ap.add_argument('--seen', default='/mpac/sdicks02/jobs/clasher/cards/opponent-decks.jsonl')  # git show origin/main:reports/live/loop/opponent-decks.jsonl
     a = ap.parse_args()
     py = {r['card']: r for r in load_json(a.python, [])}
     nat = {r['card']: r for r in load_json(a.native, [])}
