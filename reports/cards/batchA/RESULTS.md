@@ -148,11 +148,14 @@ overlay would).
   `tick_once`; `Stats.death_first_update` queues death children in `spawn_death_templates`.
 - `spawn.rs`: `Spec.first_update`; `production_child` queues its child.
 - Glue: `differential.py` exports `min_range`, `death_first_update`; `spawn_snapshot.py` exports `first_update`.
-- All new fields are `serde(default)`, inert (0/false) for every C56 card.
+- All new fields are `serde(default)` and inert (0/false) for every C56 card, and `skip_serializing_if` at that
+  default, so a C56 `snapshot()` is byte-identical. (The first gate attempt, build `112c0649…`, serialized them:
+  every `rust_only` chain differed only through the snapshot text, while every Python↔Rust `rs` record already
+  agreed. Run stopped at 506/577 fixtures, kept on 04 as `batchA/gate-killed-r1/`.)
 - Data-only fixes need no native code (the native reads them from the export): death-spawn deploy start,
   omitted fields, first-wave/blank-interval timing (exported spawner spec).
 - Build: `bash build.sh tree out` on 127x08 → `clasher_core.abi3.so` sha256
-  `112c064969de71e8f3fba891eaa134c10c9b7865c498567d0202f161a113c90d` (copied to 04 for the gate).
+  `1923619e996684122571cae05688e085163328b3cf6334dd3bad1a2d8e53aae8` (copied to 04 for the gate).
 
 ### Native == Python (127x08)
 

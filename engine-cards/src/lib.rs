@@ -30,6 +30,9 @@ use std::sync::Arc;
 fn one() -> f64 {
     1.0
 }
+fn is_zero(x: &f64) -> bool {
+    *x == 0.0
+}
 
 fn units(x: f64) -> i64 {
     (x * 1000.0).round_ties_even() as i64
@@ -60,7 +63,8 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
-    #[serde(default)]
+    // Batch A fields are omitted from snapshots at their inert default, so C56 snapshots stay byte-identical.
+    #[serde(default, skip_serializing_if = "is_zero")]
     min_range: f64,
     #[serde(default)]
     payload_key: String,
@@ -90,7 +94,7 @@ struct Stats {
     death_spawn_const: bool,
     #[serde(default)]
     death_zero_count: usize,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     death_first_update: bool,
     #[serde(default)]
     leaf_elixir_share: Option<f64>,
