@@ -127,7 +127,8 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
         try:
             players = {case['seat']: make_player(rt, cand), 1 - case['seat']: make_player(rt, opp)}
             if engine == 'ours':
-                res = play_match(rt, players, seed=case['seed'], decks=case['decks'])
+                res = play_match(rt, players, seed=case['seed'], decks=case['decks'],
+                                 verbose=bool(os.environ.get('BOT_PLAYLOG')))   # per-play log for reaction metrics
             else:
                 res = rsim_play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab, client=client)
             from bot.players.variants import close_logged
@@ -141,6 +142,8 @@ def worker(wid, jobs, out: Path, base: int, engine: str = 'ours', decks: str = '
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0)
             if decks != 'x4s':
                 row.update(decks=decks, deck_lists=case['decks'])
+            if 'play_log' in res:   # {seat: [(tick, card, action, accepted), ...]} (BOT_PLAYLOG=1)
+                row['play_log'] = {str(k): [list(x) for x in v] for k, v in res['play_log'].items()}
             alias = {s: dict(p.observe_alias.counts) for s, p in players.items() if getattr(p, 'observe_alias', None)}
             if alias:
                 row['alias_counts'] = alias
