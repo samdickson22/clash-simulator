@@ -1,0 +1,83 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "seat": 0,
+      "level": 9,
+      "reverse": false
+    },
+    {
+      "seat": 0,
+      "level": 9,
+      "reverse": true
+    },
+    {
+      "seat": 0,
+      "level": 11,
+      "reverse": false
+    },
+    {
+      "seat": 0,
+      "level": 11,
+      "reverse": true
+    },
+    {
+      "seat": 0,
+      "level": 13,
+      "reverse": false
+    },
+    {
+      "seat": 0,
+      "level": 13,
+      "reverse": true
+    },
+    {
+      "seat": 1,
+      "level": 9,
+      "reverse": false
+    },
+    {
+      "seat": 1,
+      "level": 9,
+      "reverse": true
+    },
+    {
+      "seat": 1,
+      "level": 11,
+      "reverse": false
+    },
+    {
+      "seat": 1,
+      "level": 11,
+      "reverse": true
+    },
+    {
+      "seat": 1,
+      "level": 13,
+      "reverse": false
+    },
+    {
+      "seat": 1,
+      "level": 13,
+      "reverse": true
+    }
+  ],
+  "source_sha256": "a3289daf71ef7f1e4270e2b4f56542a31f07c00a86b645ab94c7fbadd3d032bf",
+  "actual_module": true,
+  "native_executed": false,
+  "utc": "2026-10-16T12:59:21.855499+00:00",
+  "argv": [
+    "nice",
+    "-n",
+    "19",
+    "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/scratch/live-b1-level-source-Pg0dveup/reports/live/levels/check_b1_consumer.py",
+    "--levels",
+    "/mpac/sdicks02/scratch/live-b1-level-source-Pg0dveup/bot/live/levels.py",
+    "--cards-source",
+    "/mpac/sdicks02/repos/clasher-cards-b1-public-root"
+  ],
+  "exit_code": 0,
+  "helper_sha256": "0968768f08e930f9b72c1325c5ef33f542f5a7787d93b44d799a40cea4cae3b5"
+}
