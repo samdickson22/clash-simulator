@@ -370,3 +370,8 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   template probe 4 orphan-rider exceptions = harness artifact (single-object roots lack GoblinGiant parent) → v3 harness
   full gate then release. Real handled issue: GoblinGiant rider graph fallback in a mixed game → B1 owner (Opus) to fix +
   close class across attachment graphs.
+- 19:51Z **live16402c + r1-cards3 RELEASED** read-only 03/04/08 (native 326ce6f9, gamedata a7de3e93 / 892fbfa0; verified by lead
+  on all hosts; RECEIPT.json host-specific). v3 template class 96,792/0; None-stat 77,684/0; totality 0 panics; K4L 12/12.
+  PIN_SETS on main 2ce6abd7b. BOT LEAD + coordinator told. 90 fidelity-checked cards on main (C56 + A + B1 + B2).
+  B1 owner fixing GoblinGiant rider graph fallback (Ram-only scope; RamRider rider/bola stays C2). Mac parity build ETA
+  ~21:30–22:00Z (174/577 matching at 19:49Z). C1 r2 rebasing onto main.
