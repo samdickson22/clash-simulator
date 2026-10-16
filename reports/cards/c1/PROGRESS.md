@@ -35,7 +35,8 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
 - Native 2ac024c7 (hit-filter fix): game 4 matches; 173 = the known C56 X-Bow clock cause (reached by the new
   trajectory; base arm never gets there); 72 also diverges on the base arm. Full rerun of `verify.sh` +
   `nd_sample.sh`: 36/36 ×2, 70/70 cases, 42/42 paths, 4/4, 11/11, sample 82 match + 14 known causes.
-- Committed on `cards/c1`; C56 gate launched on 04 (see RESULTS §6 and the lead report).
+- Committed e0ade18d3 on `cards/c1`; C56 gate launched 2026-10-16T08:04Z on 127x04: `cpu_job.sh 8 bash c1/tools/gate.sh`,
+  PID = PGID 2082511, output `c1/gate/compare.json`, log `c1/gate.log`; patched native 2ac024c7 (pinned 681b5f2c).
 
 ## Next
 - Gate shepherd fills RESULTS §6. On FAIL: diff the first differing fixture/root with Batch A's tools; every new
