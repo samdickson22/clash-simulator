@@ -535,8 +535,6 @@ def main(argv=None):
                     state, start_ms = 'battle', first_hud_ms
                     perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader()
                     yolo_last, yolo_k = None, 0
-                    if yolo is not None:
-                        yolo.reset()
                     tower_last, tower_missing = {}, 0
                     last_play_ms, stall = start_ms, False
                     if os.environ.get('LL_TEST_STALL') == '1' and getattr(sess.player, 'search', None) is not None:
@@ -590,7 +588,7 @@ def main(argv=None):
                 t1 = time.perf_counter(); cv = C.canvas(f); t2 = time.perf_counter()
                 # YOLO units on a worker thread, overlapping our frame model; every=N: detect on every Nth battle frame and
                 # reuse the last detections in between (units_age_ms in the record)
-                fut = yolo.submit(f, ts_ms) if yolo is not None and yolo_k % yolo.every == 0 else None
+                fut = yolo.submit(f) if yolo is not None and yolo_k % yolo.every == 0 else None
                 yolo_k += 1
                 arena_px, hud_px = prepare_pixels(cv)
                 rec = perc.step_prepared(arena_px, hud_px, ts_ms, unit_floor=.05 if ov is not None else None)
@@ -669,9 +667,6 @@ def main(argv=None):
                                 step_ms=1e3*(t4-t3), stats=d.stats, own=sess.log[-1] if sess.log else None)
                     if submitted:
                         slot, card_xy, target_xy = C.action_target(d.action)
-                        if yolo is not None:            # owner fix: bodies born near our own deploy are ours
-                            row, col = divmod(int(d.action) % 576, 18)
-                            yolo.note_own_deploy(ts_ms, col + .5, row + .5)
                         card = sess.ch.pending[-1].card if sess.ch.pending else None
                         drow.update(slot=slot, card=card, card_xy=card_xy, target_xy=target_xy)
                         if not valid_tap(card_xy, target_xy):
