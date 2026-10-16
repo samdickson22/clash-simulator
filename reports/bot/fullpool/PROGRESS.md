@@ -117,3 +117,11 @@ r1-cards1 is on main, the overlay is no longer needed.
   (now expected to pass). Worktree fast-forwarded to 9f75ab5f8: unit tests 10/10, NEW == main's scope.EXTRA_CARDS.
   The launch kit no longer needs the overlay. Waiting for r1-cards2/live16402b (generation start signal).
 - 2026-10-16T03:43:25Z Sol S3 CPU-fit probe (08, 02:30–03:41Z): batch 4096 / 32 threads 242.7 s/step (1500 steps ≈ 101 h), batch 512 25.3 s/step, RSS 35 GB → F1 is GPU-only (PLAN.md updated); logs 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/probe-fit/.
+- 03:30–04:01Z Sol S1 smoke on r1-cards1 (08, PGID 885147, dev root r1-cards1-dev, tree origin/main d0eec65c, no
+  overlay): **all PASS**. stu 40/0 err (0.65), k4l 40/0 (0.90), **k4lf 40/0 (0.875, K4L on full-pool decks via the
+  widened R.bots)**, gen 2/0 (701 labels), **genf 2/0 (588 labels, K4S teacher holding non-C56 cards)**, c56s 20/20
+  and c56k 6/6 identical hashes, and identical to smoke1 (40/40, 12/12). 0 lopp failures, 0 tracebacks.
+  Out 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/smoke-r1c1-d0eec65c0aeb(.summary.json/.comparison.json).
+- 2026-10-16T06:45:52Z released root clasher-bot-runtime/r1-cards1 is on 03/04/08 (native 681b5f2c…, receipt source 0ee42633e,
+  created 03:33Z). Sol confirmation smoke on it delegated (stu, k4lf, genf N=12 + c56s/c56k, hash comparison with
+  the dev-root run). Still waiting for the r1-cards2/live16402b ping to start G1/K1.
