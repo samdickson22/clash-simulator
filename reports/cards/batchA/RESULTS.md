@@ -245,36 +245,50 @@ Mutation checks (Python mutants, `tools/mutants.py`, against native de11f124):
 
 ## 6. C56 parity
 
-BOT LEAD gate tools (`reports/bot/learned-opponent/native-total-tools/` parity_fixtures.py, parity_roots.py,
-compare.py; unmodified, wrapped by `tools/gate.sh`), run on 127x04 2026-10-16 01:44:11Z–02:18:04Z, ≤8 processes,
-nice, under `cpu_job.sh 8`. **pinned** = runtime r1 Python (`src`, engine-rs glue) + `native-total-r1` (681b5f2c);
-**patched** = r1 mirror with `src` → engine-cards/py/src and `engine-rs` → engine-cards (this patch, no stat overlay) +
-native `1923619e…`. Outputs: 04 `batchA/gate/`.
+**Run 4 PASS — native de11f124, source commit 878d5f459 on `cards/lead`.** BOT LEAD gate tools
+(`reports/bot/learned-opponent/native-total-tools/` parity_fixtures.py, parity_roots.py, compare.py;
+wrapped by `tools/gate.sh`) ran on 127x04 on 2026-10-16, 02:56:09Z–03:25:02Z. The inherited job
+was `cpu_job.sh 8 bash /mpac/sdicks02/jobs/clasher/cards/batchA/tools/gate.sh`, PGID 3671549;
+it completed normally. The shepherd monitored it with `kill -0` every three minutes and launched no
+new simulation job. Fixtures finished at 03:24:22Z, then roots at 03:25:02Z.
 
-| Gate | Inputs | Pinned | Patched | Equal |
+**Pinned** = runtime r1 Python (`src`, engine-rs glue) + `native-total-r1` (681b5f2c);
+**patched** = r1 mirror with `src` → engine-cards/py/src and `engine-rs` → engine-cards
+(this patch, no stat overlay) + native `de11f124…`. Outputs:
+`127x04:/mpac/sdicks02/jobs/clasher/cards/batchA/gate/`.
+
+| Run | Patched native | Fixtures byte-identical | Rust-only chains equal | Full roots identical | Cut roots identical | Verdict |
+|---|---|---|---|---|---|---|
+| 4 | `de11f124` (`878d5f459`) | **577/577** | **577/577** | **300/300** | **300/300** | **PASS** |
+
+| Gate | Inputs | Pinned | Patched (run 4, de11f124) | Equal |
 |---|---|---|---|---|
-| (a) 577 fixtures, `rs_parity.run_one` (Python ↔ Rust lockstep) | 577 train+val | 429/577 full parity | 429/577 | per-fixture records **577/577 identical** |
-| (a') Rust-only full trajectories (digest every tick, snapshots every 100 ticks + end) | 1,010,680 ticks | 0 errors | 0 errors | chains **577/577 equal**; files byte-identical, sha256 `f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670` both (the value NATIVE-TOTAL.md §4 recorded) |
-| (b) 300 sampled real roots × full/cut | 1,043 roots, 12 games, ticks 140–5,570 | 600 records | 600 | **600/600 identical**; files byte-identical apart from the header, sha256 `a710536268e111f1c200dea5c916302a258199dc3859e817e35236fb6094ea92` both |
+| (a) 577 fixtures, `rs_parity.run_one` (Python ↔ Rust lockstep) | 577 train+val | 429/577 full parity | 429/577 | per-fixture records **577/577 byte-identical** |
+| (a') Rust-only full trajectories (digest every tick, snapshots every 100 ticks + end) | 1,010,680 ticks | 0 errors | 0 errors | chains **577/577 equal**; fixture files byte-identical, sha256 `f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670` both |
+| (b) 300 sampled real roots × full/cut | 1,043 roots, 12 games, ticks 140–5,570 | 600 records | 600 | **600/600 identical**; shard bodies byte-identical apart from native metadata headers, combined body sha256 `a710536268e111f1c200dea5c916302a258199dc3859e817e35236fb6094ea92` both |
 | ↳ `full` | Same 300 sampled root IDs | 300 records | 300 | **300/300 identical**, no differing root IDs |
 | ↳ `cut` | Same 300 sampled root IDs | 300 records | 300 | **300/300 identical**, no differing root IDs |
 | ↳ contents | 9,336 rollout_e1 values, 1,800 select_action, 478 apply_discrete, 1,800 step checks | | | all equal |
-| C56 config export (`differential.config`, all 56 cards) | | | | equal apart from the new keys, which are inert (0/false) for C56 (`tools/cfg_dump.py`, `cfg_diff.py`) |
+| C56 config export (earlier check: `differential.config`, all 56 cards) | | | | equal apart from the new keys, which are inert (0/false) for C56 (`tools/cfg_dump.py`, `cfg_diff.py`) |
 
-**PASS: C56 behaviour is bit-identical on this gate (native 1923619e).** The review-round-2 build de11f124 is
-re-gated on 127x04 with the same `tools/gate.sh` (the 5f07238c run was stopped as superseded, partial outputs in
-`batchA/gate-5f07238c-stopped/`); earlier outputs are kept as 04 `batchA/gate-1923619e/`, the new ones land in
-`batchA/gate/compare.json`. The native source did change (§5); the gate covers that, plus the config-export change.
+Test-shepherd independent audit: read all 577 fixture pairs and all 600 root pairs; checked exact
+fixture record/file bytes, Rust-only trajectory records, exact bodies in all four root shards
+(native-path/hash headers excluded), matching `full`/`cut` root ID sets, no duplicate or missing IDs,
+and agreement with `compare.json`. Every root header identifies the expected arm's native SHA256;
+the patched binary itself also hashes to the expected value:
 
-Test-shepherd audit: the original PGID/PID 2388512 exited normally; no restart or additional simulation job
-was needed. Fixtures ended at 02:17:30Z and roots at 02:18:04Z. Verified native SHA256s:
-`681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b` (pinned) and
-`1923619e996684122571cae05688e085163328b3cf6334dd3bad1a2d8e53aae8` (patched).
-The three gate scripts match the documented native-total-tools copies byte-for-byte. Independently
-read all 577 fixture pairs and all 600 root pairs, checked exact body bytes in all four root shards
-(native-path/hash headers excluded), and checked matching `full`/`cut` root ID sets.
+- Pinned: `681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b`.
+- Patched (run 4): `de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1`.
+- `gate/compare.json`: `5371b33164a52d7ee9fe242e155ac873cc11a2e7e1fa40e4de52032c9aba8744`.
+
 **Differing fixture IDs: none. Differing root IDs: none.** Both arms retain the existing 429/577
-Python↔Rust full-length parity outcomes; this gate establishes regression parity rather than resolving
-those existing mismatches. No first-tick/subsystem triage or fix spec is needed. Evidence:
-`127x04:/mpac/sdicks02/jobs/clasher/cards/batchA/gate/compare.json`, the fixture/root JSONLs,
-and `batchA/gate.log`. Measurement only; the test shepherd changed reports only and committed nothing.
+Python↔Rust full-length parity outcomes; this gate establishes regression parity. No diagnostic
+bisect, fix spec, or owner wake-up was needed. Evidence: 04 `batchA/gate/compare.json`, the
+fixture/root JSONLs, and `batchA/gate.log`. Measurement only: reports updated; no engine edits,
+restart, commit, or sealing by the test shepherd.
+
+Earlier gate history: native `1923619e` passed on 2026-10-16, 01:44:11Z–02:18:04Z, with the same
+577/577 fixtures, 577/577 Rust-only chains, and 300 full + 300 cut roots. Its outputs remain in
+04 `batchA/gate-1923619e/`. The `5f07238c` run was stopped as superseded; its partial outputs remain
+in `batchA/gate-5f07238c-stopped/`. The initial serialization failure is described in §5 and kept in
+`batchA/gate-killed-r1/`. Run 4 above validates the review-round-2 native changes in §5.
