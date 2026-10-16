@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:47 UTC
+## Current handoff: Sol interim, 2026-10-16 10:01 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
@@ -23,11 +23,19 @@ No routine status/test/gate/review/queue/receipt/commit updates, acknowledgments
 even if calledmaterial. Detailed commands/hashes/progress liveinfiles; parentreads them. Automatic taskcompletion
 suffices; do not duplicate it. Coordinator broadcasts alreadyactivechildren; do NOTrebroadcast. Include thisrule
 in every future/resumedchildbrief. Clarifications remain directT3parent/owner,neveruser-inputtools.
+Report ONCE to owningparent whenWHOLEassignmentactuallydone(finalresult+artifact+remainingblocker); automaticT3
+finaldeliverycounts,no duplicateDM. Essentialcross-ownerhandoffgoesdirectowner. Ownsubstantialend-to-endwork,
+no tinypertest/perstepdelegation; independentreviews remainseparate. Includeinfuturechildbriefs.
 
 **CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
 CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight
 andverified08queuedgroup exit. Normalwrapper remainsauthoritative; no bypass/otherjobmove/pinchange.
 BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
+
+**CPU08coordination10:00:54Z:** live101+idleleases3=104of105,only1effective slot; reviewedofflineadjudication
+cpu_job3launcher4040494/claim4040562stillalive/admissiononly. BOTbabysitter mustdeferNEW08retry/optional launches
+untilthat existingclaim obtainsnormallease; allrunningjobs/caps/wrapperspreserved,no preemption/migration/bypass.
+CARDleadnotifiedasa requestedessentialhandoff. No QC/replayPythonstartedatinspection.
 
 - **Best student remains RL r5 v10**, threshold 0.5375, SHA256
   `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10
@@ -81,7 +89,7 @@ BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-r
   `9c714207acdb4637742c0d3473ba4d87be7b978f65d5b0063c39ad919e6fa9d7`.
   Scope reviewr5 found no new concrete scope/projectionblocker; it approved lightweight tests only, not pilotbank.
   Gate implementation finished; fresh independent executionreview next, harnessprovenancework continues.
-  **Reviewed gate runr6 FAILED85/90 on01:** mapping121/121 and13towersPASS; actualBfair-informationPASS4decisions/
+  **Historical reviewed gate runr6 FAILED85/90 on01 (superseded by R11 below):** mapping121/121 and13towersPASS; actualBfair-informationPASS4decisions/
   4positive rootcalls, identicalroots/actions underhidden5vs7 bothseats,zero searchfailures.32syntheticpublicbody
   payloadstatsPASS,but native snapshotphysicscomparisonsFAILbothseats. Sides/spell/cutraisedAttributeError because
   pinnedBattleStatehasno deploy_card method; fixtures must use existingNativeScripts.apply_discrete,notrebuildruntime.
@@ -98,6 +106,16 @@ BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-r
   confirms path,notacceptance; freshreview/runtimegatepending. ExactrootSHA
   `fb6321a0ce198fdd32de0902280306d4b1eaa11524ad67e322fd96fd88aa91e8`; test_configsSHA
   `762bc666079119d5559fac29401d59f2c3fbc8798bee83168b06b675bbcb0be0` at09:46:59Z.
+  **Current R11 pinned-runtime suite254/254PASS**, receiptSHA256
+  `11e2cf3b00b465437df396d8b0852701298cc43fbdf5be51d69e92cb408f672c`. Exactsnapshotdifferences areonly20
+  absent spell_name→emptyString fields(10/seat); nonumeric/type/entity/order/position/qualifiedkeychanges.
+  32publicbodies;30actionvaluesmatchuncut throughcut/snapshot/rawfcworker;A→B→Acontentkeychange/reuse,shipped[1,2,2];
+  4fairdecisionspositiveBrootcallsbothseats. Finalmatching-byte114testsPASS1.49s,R12reviewconditionallypermits
+  all11thenprimaryafterPASS. Complete-gameall11currentlyrunning4cases,bothseats/controllers,positiveBrootrequired;
+  no edits/syncoverexecutingbytes. Finalv2provenance/completeness+all11terminalacceptance remainbeforebank.
+  **Probe scope decision:** original03r1/r1-totalexploratoryunvalidatedprobe twiceexpired30mininadmissionwithout
+  execution;documentnonblockingresourcedeferral,no03window/retryneeded. Reviewedmatching-runtimegatesprovide
+  substantivepilotvalidityevidence; no waivedmandatorygate. Ownerreceiveddirectscopeanswer;no primarybank/outcomes.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
   08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
   completed jobs, not failures. Existing GPU ownership and resource coordination remain; no trainer was restarted.

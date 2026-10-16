@@ -142,6 +142,39 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 10:00–10:01 UTC requested scope disposition and three-slot coordination
+
+- Explicitlevelownerquestion:obsolete03N4probe twiceexpiredinadmission,didnotexecute;recommendnonblocking
+  documenteddeferral. BOTread originalSCOPE+run_all.sh:unvalidatedexploratorymain/rsim/runtimeprobes useold
+  r1/r1-total/native-total-r1,notcurrentpilotlive16402b-r2. Originalpilotmandatorygatesareall11,mixedseats,
+  spellimpact,towers,snapshot/cut/cachepreservation/fairness,notthatexploratoryscript'sexecution.
+- DECISION:acceptdocumentednonblockingresourcedeferral;no new03window/retry.No mandatorypilotgatewaived.
+  Existingreviewedmatching-runtime254/254suiteand114matchingbytetests supplysubstantivephysics/transport/
+  fairness/harness evidence;complete-gameall11+finalv2provenance/completenessstillrequired. Directscopeanswer
+  toexistingownerkey `bot-level-obsolete-probe-disposition-20261016T1001Z`,no coordinatorDM.
+- Read/hashedR11receipt11e2cf3b00b465437df396d8b0852701298cc43fbdf5be51d69e92cb408f672c;
+  ownerauditb7fa6a80cdffef71c08b9ff243fed0c1d8b93ffd2710d0cd931357d2d9188afc;
+  pytestallR12receipt6bac5686fa303ae1563fe31acdc77d49fc66f50699221e2df4746f211184621a(114passed1.49s).
+  Raw20differencesonlyabsent spell_name→emptyString,no numeric/type/entity/order/position/qualifiedkeychanges.
+  R11:254/254,32publicbodies,30cut/snapshot/rawpoolvalues,A→B→Akeychange/reusecache[1,2,2],4fairrootdecisions.
+  Reviewedall11completegamesrunningunderowner,frozencode/runtime/cache;no ownruntime/model/testexecution.
+- ExplicitCARDCPUrequest:08offlineadjudicationreviewedcpu_job3queuedlauncher4040494since09:44Z,nopythonwork.
+  BOTread-only10:00:54Z:live101,idle3,cap105,room1,three-slotwould107. Leasegroupswant/used4/1,12/12,4/4,
+  41/41,41/41;allalive,nologins. Queuedlauncher4040494→cpu_job4040553→cpu_room4040562,claim3,unchanged.
+- DECISION:preserveallrunningjobs/caps/wrappers;existingclaimwaitsnormaladmission. Essentialhandoff toown
+  G1K1babysitterdefersNEW08retry/optionalrefilluntilclaim4040562obtainslease,lettingnaturalcompletioncreate
+  needed3slots,no preemption/migration/bypass. CARDleadgetsrequestedcapacityanswer;nodelegatednewtask/job.
+  Keys `bot-reserve-next-normal08-adjudication-slots-20261016T1001Z` and
+  `bot-offline08-slot-disposition-20261016T1001Z`; bothdirectowners,notcoordinator.
+- Samwhole-assignmentfinal-deliveryclarificationpersistedHANDOFF/PROGRESSandfuturechildbriefrequirement:
+  oneautomaticfinalresultonlywholesubstantialassignmentdone,no manualduplicates/tinyperstepdelegation.
+- Exactreadcommands: `cat reports/bot/levels/RESULTS.md`; `cat reports/bot/levels/SCOPE.md`;
+  `cat /mpac/sdicks02/jobs/clasher/bot-levels/run_all.sh`; originaluserreceipts+sourcegatehashesreadvia
+  `sha256sum reports/bot/levels/receipts/gates-all-r11.txt reports/bot/levels/receipts/gates-r11-owner-audit.json reports/bot/levels/receipts/pytest-all-r12.txt`;
+  `timeout 30 ssh -n 127x08` withread-onlycanonicalps/leases/max-liveformulaandexact4040494groupinspection.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: retire obsolete probe prerequisite and coordinate offline admission' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:46–09:47 UTC spell-carrier source bug and strict silence
 
 - Owner foundrealBroot ambiguity:Fireball/Arrowscarriers shareempty stats.name andfirstproducer selectioncan
