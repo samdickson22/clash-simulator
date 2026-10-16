@@ -6968,3 +6968,7 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 - Prior-approved e16 deploy is live in s29: first battle 9.834 FPS, decision-step p95 37.972 ms, 26/26 confirmed plays, no reported errors/guards; L1–2. Enemy Musketeer/Goblin wrong-owner evidence retained. Inactive-king false 5 HP and wrong-card hand tracker remain priority weaknesses.
 - Updated existing hourly heartbeat with current limits and audit paths. No duplicate jobs or new compute launches by coordinator.
 - Full audit: reports/audit/SOL-INTERIM-20261016.md and sol-interim-20261016-resumes.json; detailed receipts under /mpac/sdicks02/jobs/clasher/coordinator-sol-20261016/.
+
+## 2026-10-16T09:15:26Z: interim heartbeat — blockers held, capture suspect identified
+
+No pending user requests or host overload. Recovered one new Claude report-handler failure in place on Sol; collector unchanged. Level pilot held before games (runtime mapping mismatch; diagnostic correction unconfirmed). Card/template fixes remain under review, no active pins changed. Live e16 s29 finished3W1L→872, then prior-approved s30 continued. Four real capture interruptions have a strong offline suspect: driver starts a secondSCKclient forarena-background capture at eachmatch_start; loop owner owns offlinefix/review, no controlled causalproof or liveedit. Detailed corrections and action receipts: reports/audit/SOL-INTERIM-20261016.md and sol-interim-20261016-events.jsonl. Major decisions await Opus.

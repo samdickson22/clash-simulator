@@ -55,3 +55,19 @@ GPU idleness reconciled: 04/08 YOLO training COMPLETED rc0 (reported V7 end08:39
 CARD LEAD reports nine direct Claude descendants plus nested C56 inventory configured Sol high. Unfinished B2/C1 owners resumed in place; completed work and obsolete gates remain stopped. Existing launchers B2 PID/PGID561530 (08 cpu_job8) and C1 PID1042473 (08 cpu_job4) alive waiting CPU, no duplicate launch. C1 prior gate PASS 577/577 fixtures/chains and600/600 roots; review remains REJECT pending Ronin/boulder fixes. Parity success does not override review. No engine merge or pin change.
 
 No new account actions. Last reported upgrades were Archers6→7 (40wild/1000gold) and Minions4→5 (13wild/150gold); balances6421gold/300gems/59wild. These are prior actions, not actions by this coordinator.
+
+## 2026-10-16T09:15:26Z: heartbeat and material evidence corrections
+
+- Pending requests: none on coordinator, all running descendants and three leads. Loads 01/03/04/08 =65.21/93.61/94.74/101.16; no console users. GPU01=89%;04/08 mostly idle after completed training, reviewed inference evaluations continue. No utilization intervention.
+- Recovered a newly failed Claude report-handling turn on the existing revealed-set owner using Sol high. Its completed patch and active collector remain unchanged; no duplicate work.
+- Level pilot HOLD before bank/games. Only3/121 runtime mappings passed. Tuple-versus-JSON-list mismatch is a likely diagnostic explanation, not yet runtime-confirmed. Existing review/exports continue. Astra found normalization affects scripted spell decisions as well as leaf score; design decisions remain for Opus. BOT audit commit d75744cb35994191ae977257b544cbefa6477448.
+- Translator internal train/report overlap affects205/513 physicalT1matches through noise arms. InternalP/R is diagnostic only; independentA/syntheticbank/fuzz/singleB gates stay unchanged. Fits wait for complete checksummed delivery.
+- Tower candidate remains offline after81/796 normal-digit changes. No new runtime bundle accepted.
+- Corrected s29 frame1865: both bodies enemy-owned; second class Musketeer/Goblin uncertain due overlap. Missing source fields leave the owner-error stage unproven. Previous confident Goblin wording is superseded.
+- Live s29 finished3W1L at872trophies; m04 9.797823FPS,decisionp9535.862ms,zero step/YOLO/stall/guard errors. Sole babysitter continued s30PID52026 under priorGO.
+- Four REAL capture interruptions remain separate incidents. Offline deployed-code diagnosis: match_start launchesgrab_arena_bg, which starts a secondSCK/bsgrab for3frames at4FPS. Allfour incidents follow starts by1.5–1.7s. Strong suspect, not controlled causalproof. Loop owner is preparing a bounded offline fix/review; no live edit or newhold. Evidence stderrSHA13959199ab92605ab0228893438f81e7e4d8d1444e0d6f453ac3f70ca572d2a8.
+- Card B1 independent review requests changes (Clone/rider, Healer/Mirror, immunity and projectile selectorstate). C1 routine fixes await tests/freshreview. Prior digest/parity passes do not override findings. B2→C1 order/no promotions retained.
+- Template baseline reproduced originalAreaEffect failure;55834None-stat checks passed,8496C56rankings identical. Missing fiveeffect keys logged. Revised nativeinventory/translator/nativeboardprobe awaits freshreview before alteredhostexecution. Existing baseline jobs exited naturally.
+- Null's conditional host-script review is preserved:118verifiedreceipts,driver4070rc0,noSTOP,uploadedhashmatch beforefixedreach;deadline10:09:55Z,hardstop10:10Z. Offline08 replay approved only as reviewed materializedsnapshot,explicit environment,nice15,workers1,cpu_job3,whenroom. OriginalCage evidence invalid.
+
+Machine-readable action receipts through this heartbeat are committed in sol-interim-20261016-events.jsonl. Detailed owner command logs remain at the referenced workstream paths. No big decision, promotion, account action or compute launch by this coordinator.
