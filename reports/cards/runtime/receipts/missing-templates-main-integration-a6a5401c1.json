@@ -1,0 +1,21 @@
+{
+  "accepted_checkpoint": "57b459e03c12968057ca2779fede93b45176540c",
+  "archive": "/mpac/sdicks02/jobs/clasher/cards/main-template-integration-a6a5401c127b-archive-r2/source.tar",
+  "archive_command": "git -c tar.umask=0022 archive --format=tar a6a5401c127bac5eab67ad25495c1922936f8a26 -- <reviewed-paths>",
+  "archive_members": 342,
+  "archive_sha256": "bd7849478d49fed1c409db7c7193dbebaf76230d134ef42fd55d40cccbac811a",
+  "commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "gate_packet_sha256": "f708471bf17bf424cf83140e909750ce08a123aa7982cb1fa0688dd95be9002a",
+  "git_blob_members_verified": 306,
+  "landed_utc": "2026-10-16T10:38:44.231999+00:00",
+  "main_push": "git push origin HEAD:main (normal fast-forward, no force)",
+  "manifest": "/mpac/sdicks02/jobs/clasher/cards/main-template-integration-a6a5401c127b-archive-r2/source-manifest.json",
+  "manifest_sha256": "d9e6da30454ca439eb85710261a78c52a930d3a1af0ae3744c150e29924f4f8b",
+  "no_active_pin_switch": true,
+  "prior_archive_attempt": "Preserved first archive: default git archive mode0664 differed from explicit git mode0644 assertion; no extraction/publication occurred. Fresh second archive explicitly sets tar.umask0022.",
+  "remote_main_verified": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "rollback": "git revert -m 1 a6a5401c127bac5eab67ad25495c1922936f8a26 after ordinary review; opt-in roots remain retained r2",
+  "source_checks": "7/7 accepted source hashes + 4/4 release/totality/None/replay helpers",
+  "status": "LANDED_MAIN_SOURCE_ARCHIVE_VERIFIED",
+  "utc": "2026-10-16T10:38:20.845149+00:00"
+}
