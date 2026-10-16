@@ -1201,7 +1201,8 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now (01 CPU only):** `f9-rl9v4` (01 cpuq6, 64 workers, out `$J1/f9-rl9v4`, 1,200 games; Sol task
+**Running now:** 03: `f9-rl10v3` (detached PGID 3199222, 64 workers, `clasher-bot-rl03` tree, out
+`/mpac/sdicks02/jobs/clasher/bot-rl03/f9-rl10v3`, 1,200 games; Sol task `bot-it10-f9-rl10v3-r1`). 01: `f9-rl9v4` (01 cpuq6, 64 workers, out `$J1/f9-rl9v4`, 1,200 games; Sol task
 `bot-it10-f9-rl9v4-r1` reads it). Done: HEADLINE screens of the paused large-batch arms' latest policies, `hl-rl9v4` (01 cpuq6,
 36 workers, `$J1/ckpt-rl9/policy-00004.pt` sha 3c66ce5c…) and `hl-rl10v3` (01 cpuq7, 36 workers, `$J1/ckpt-rl10/policy-00003.pt`
 sha 4f88267b…), 900 games each, out `$J1/hl-rl9v4`, `$J1/hl-rl10v3`; read by Sol task `bot-it10-hl-r9r10-r1` (report vs
@@ -1216,9 +1217,9 @@ k = 3.
 - **K4L feeders (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
   total live python; claims/leases make them yield; to throttle, kill the feeder PGID and relaunch with a lower TARGET,
   in-flight 100-game batches drain by themselves):**
-  - 03: PGID **3134550** (since 03:20:58Z; was 3103024 at target 80), `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l
-    $J3/cpu-feed-k4l.tmpl 36 100 8300000 8400000 95 400` (log `cpu-feed-k4l.log2`). **03 cap ~40 ours** while the LIVE team
-    runs ~64 YOLO-frame workers there (1–2 h from 03:21Z; the bot lead says when 03 is back, then relaunch at target 80)
+  - 03: PGID **3200991** (since 03:40:43Z), `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l $J3/cpu-feed-k4l.tmpl 80 100
+    8300000 8400000 95 400` (log `cpu-feed-k4l.log3`); 03 was capped at ~40 ours 03:21–03:38Z for a LIVE job (target 36,
+    PGID 3134550). Full-pool generation (G1/K1, live16402b pin) will take ~16 workers on 03: lower the target then
     (run from `/mpac/sdicks02/repos/clasher-bot-rl03`; `$J3=/mpac/sdicks02/jobs/clasher/bot-exit-r1-03`; new template uses
     the rl03 tree and runtime `students/it5s2-step001200.pt`; TRAIN1 block [8300000, 8400000), first labels checked: 0 errors).
   - 04: PGID 4161769, `… $J4/cpu-feed-k4l $J4/cpu-feed-k4l.tmpl 60 100 8100000 8200000 95 400` (log `cpu-feed-k4l.log6`).
@@ -1478,6 +1479,9 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   [−0.030, +0.090], h2h 0.607, mean +0.025. Both pass the +0.022 screen (HEADLINE has overstated every r5 snapshot past
   v10). **`f9-rl9v4`** queued in 01 cpuq6 (64 workers, out `$J1/f9-rl9v4`), read by Sol task `bot-it10-f9-rl9v4-r1`: F10
   (k would become 3, α 0.0167) only if its F9 mean Δ vs r5 v10 ≥ 0.
+
+- **03:40Z, 03 back (LIVE job gone):** `f9-rl10v3` on 03 (r10 v3 passed the screen at +0.025; detached PGID 3199222, 64
+  workers) and the 03 feeder back to target 80 (PGID 3200991, cap 95). 03 at 96 live python right after launch.
 
 ## Next
 
