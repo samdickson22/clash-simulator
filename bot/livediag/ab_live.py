@@ -24,6 +24,21 @@ from bot.livediag.live_metrics import CARDS, analyse, jl
 ARMS = {'LIVE-K4L-R-gs-rw-fc-w200-t4-p4': 'base', 'LIVE-K4L-R-gs-rw-fc-w200-t4-p4-res': 'res'}
 
 
+def arm_of(player, phase):
+    """(phase, arm) from the session-config player name (RESULTS §7b): phase 'fullpool' if the name carries mk1a1,
+    else 'c56'; arm 'res' if a -res token is present, else 'base'. None for other players."""
+    if not player or not player.startswith('LIVE-K4L-R-gs-rw-fc-w200-t4-p4'):
+        return None
+    toks = player.split('-')
+    ph = 'fullpool' if any(t.startswith('mk1a1') for t in toks) else 'c56'
+    if ph != phase:
+        return None
+    if any(t not in ('LIVE', 'K4L', 'R', 'gs', 'rw', 'fc', 'w200', 't4', 'p4', 'res') and not t.startswith('mk1a1')
+           for t in toks):
+        return None
+    return 'res' if 'res' in toks else 'base'
+
+
 def result(d):
     for name in ('session.json',):
         p = d / name
@@ -40,6 +55,7 @@ def main():
     ap.add_argument('runs', type=Path)
     ap.add_argument('--from', dest='first', type=int, default=52)
     ap.add_argument('--json')
+    ap.add_argument('--phase', default='c56', choices=['c56', 'fullpool'], help='RESULTS §7b: never pooled')
     a = ap.parse_args()
     arms, excluded = {'base': [], 'res': []}, []
     for d in sorted(a.runs.iterdir()):
@@ -50,10 +66,10 @@ def main():
             cfg = json.loads((d / 'session-config.json').read_text())
         except Exception as ex:
             excluded.append((d.name, f'no session-config ({ex!r})'[:80])); continue
-        arm = ARMS.get(cfg.get('player'))
+        arm = arm_of(cfg.get('player'), a.phase)
         us = cfg.get('units_source')
         spec = (us.get('spec') if isinstance(us, dict) else us) or cfg.get('export') or ''
-        stratum = 'v9a' if 'v9a' in spec else ('e16' if 'e16' in spec else 'other')
+        stratum = next((v for v in ('v11b', 'v9a', 'e16') if v in spec), 'other')
         if arm is None:
             excluded.append((d.name, f"player {cfg.get('player')}")); continue
         if sorted(cfg.get('deck') or []) != sorted(CARDS):
@@ -73,7 +89,7 @@ def main():
         'giant_per_battle': lambda bs: mean([x['giant'] for x in bs]),
         'fireball_per_battle': lambda bs: mean([x['fireball'] for x in bs]),
     }
-    out = dict(battles={k: len(v) for k, v in arms.items()}, sessions={k: sorted({x['sid'].split('-')[0] for x in v})
+    out = dict(phase=a.phase, battles={k: len(v) for k, v in arms.items()}, sessions={k: sorted({x['sid'].split('-')[0] for x in v})
                                                                         for k, v in arms.items()},
                excluded=excluded, metrics={})
     for name, f in metrics.items():

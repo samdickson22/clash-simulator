@@ -281,3 +281,26 @@ on BASE5 = 2439740075545088 vs LIVE-K4CW-r16, 100 paired cases. BASE5 did not se
 - **Rule:** -res-wint becomes the live treatment if the point estimate of Δ(-res-wint − -res) is ≥ −0.02 AND either reaction p50 (enemy play → our next play) or the
   undefended-push share improves vs -res.
 - **Timing:** if it qualifies before s53 starts, it goes in at s53; otherwise at the next A/B restart.
+
+### 7b. Pre-registered: the full-pool phase of the -res live A/B (2026-10-16T21:29:05Z, before any full-pool session)
+- **Phases (never pooled):**
+  - **C56 phase:** s53–s57; base `LIVE-K4L-R-gs-rw-fc-w200-t4-p4` vs `…-res`. Reported as its own small A/B.
+  - **Full-pool phase:** from about s58, after the 00:00Z ladder resume (the ladder pauses 22:00–00:00Z). The full-pool bundle is live: base `…-mk1a1` vs treatment
+    `…-mk1a1-res`, alternating per session.
+- **Arms:** read from session-config `player`. The phase comes from the name (`mk1a1` present = full pool), and the treatment from the `-res` token.
+- **Perception strata:** from session-config `units_source`: e16, v9a, and v11b (the resume model). Blocked as in §7a, within each phase.
+- **Primary metrics:** the same as §7, i.e. elixir at the Giant cross, undefended Giant-push share, reaction (births proxy) p50 **and p90**, plays per battle, and Giant and Fireball per battle.
+  Win rate is secondary. Each is reported per arm and as treatment − base with bootstrap CIs, per phase and per stratum.
+
+### 7c. Live running totals (C56 phase)
+
+**Totals 1** (2026-10-16T21:29:39Z): v9a stratum, base s52 + s54 (8 battles) vs -res s53 + s55 (8 battles); s51 (e16) is a base reference only.
+Δ -res − base, with 95% CI:
+- elixir at cross: −0.40 [−1.11, +0.42]
+- undefended share: −0.21 [−0.57, +0.11]
+- reaction p50: −0.20 s [−1.09, +0.64]
+- plays per battle: +0.6 [−8.5, +9.6]
+- Giant per battle: −0.25 [−0.88, +0.38]
+- Fireball per battle: +0.75 [+0.13, +1.38]
+
+Early; win/loss per battle requested from the LIVE LEAD (session.json has no result field).
