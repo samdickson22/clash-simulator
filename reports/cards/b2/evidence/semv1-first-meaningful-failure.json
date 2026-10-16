@@ -1,0 +1,22 @@
+{
+ "utc": "2026-10-16T11:18:24.615428+00:00",
+ "status": "FAIL under semantic-v1, preserved",
+ "run_pid": 3586969,
+ "case": "zap",
+ "seat": "blue",
+ "runs": 40,
+ "mismatches": 10,
+ "lead": 1,
+ "first_tick": 0,
+ "digest_equal": true,
+ "fields": [
+  "state.entities.7.direction[0]",
+  "state.entities.7.direction[1]",
+  "state.entities.7.facing[0]",
+  "state.entities.7.facing[1]",
+  "state.entities.7.route"
+ ],
+ "raw_summary_path": "reports/cards/b2/evidence/semv1-first-zap-blue.json",
+ "raw_summary_sha256": "715ed22635c6b7231e1d25b68e34037f253200bddeef70628cb81a3bea1180af",
+ "diagnostic_task": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-semantic-troop-history-diagnostic-astra-20261016-1118"
+}

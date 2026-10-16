@@ -1,5 +1,24 @@
 # Batch B2 spell mechanics results
 
+Current continuation (2026-10-16): **engine acceptance pending**. The preserved six-file
+review-r2 source WIP is bound to native7738; no fresh C56 result is available for it.
+The independent semantic-v1 run3586969 is active and retains meaningful Troop
+FAILs in Zap, ElectroDragon and IceSpirit. These are not excluded or accepted;
+C1 owns supported shared Troop causes/fixes under the lead's ordered integration
+contract. B2 owns fixture validity, target exclusions, Clone bounds and fresh C56.
+The historical gate/fidelity measurements below retain their original source scope.
+
+The separately reviewed [bounded capture protocol](NATURAL-DASH-FIXTURE-V1.md)
+includes old blue Zap lead1/t0, ElectroDragon lead6/t14 and IceSpirit lead0/t23,
+plus red equivalents: complete constructor and paired pre/post-first-mismatch roots
+are required. Sixteen selected natural-acquisition continuations accompany them.
+[Exact independent re-review](evidence/fixture-v1-review2-approved.json) approved one
+CPU1/nice15 execution after3586969 terminal/no live group/no lease; execution has
+not begun. [Capture index](evidence/B2-C1-CAPTURE-INDEX.md) distinguishes available
+immutable summary/source receipts from missing roots. Source-only controls prove
+neither heading coincidence nor dynamic mode/readers. No new semantic exemption,
+competing sweep, obsolete gate restart or main/runtime/pin change is authorized.
+
 Status: **C56 gate FAIL** on the requested frozen B2 tree (`4916d66b8`, handoff `745d18c2c`).
 The original 04 sweep has finished: fixture records and native chains **410/577 identical
 (167 different)**; roots **600/600 identical**. Failure was reported immediately, before
