@@ -360,3 +360,5 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   (Bomber 37, Cage 34, Tombstone 30, SpearGoblins 30, Barbarians 17, MegaMinion 14, BattleRam 14 of 87 decks) are Batch A,
   verified, in live16402b-r3 (recommended pin; native de11f124, .so 6.7 MB); live16402c ETA 2–3 h; Mac build not done
   (source 878d5f459; offered a Sol builder if LIVE wants).
+- 18:59Z LIVE LEAD: bundle pin = live16402b-r3; Mac slot granted → Sol cards-mac-build-sol-r1 building Mac native from 878d5f459
+  under ~/clasher-live/fullpool/ (nice19, ≤4 cores, FPS<9 pause, ≤2 GiB), parity vs Linux de11f124 outputs, smoke, env lines.
