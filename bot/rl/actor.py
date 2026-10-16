@@ -26,6 +26,10 @@ RL_BANK = int(os.environ.get('BOT_RL_BANK', '1462854985943728'))
 HEADLINE = (1455777415631152, 10**5)
 TRAIN1 = (874184153281168, 10**8)
 IT5S2 = '/mpac/sdicks02/repos/clasher-bot-runtime/students/it5s2-step001200.pt'
+# 'self' opponent before the first snapshot exists (default it5s2; full-pool runs set the init checkpoint)
+SELF0 = os.environ.get('BOT_RL_SELF0', IT5S2)
+# full-pool mode: search opponents get C56 decks unless BOT_RL_OPP_C56=0 (roots with R.bots widened, OWN=full)
+OPP_C56 = os.environ.get('BOT_RL_OPP_C56', '1') != '0'
 TAU0 = 0.5375
 # 'x4s' (default) or a full-pool deck spec (bot/fullpool/banks.py), e.g. BOT_RL_DECKS='fullpool:11433651'. In
 # full-pool mode the opponent deck is C56 whenever the league opponent is a search player (R.bots is C56).
@@ -33,9 +37,15 @@ RL_DECKS = os.environ.get('BOT_RL_DECKS', 'x4s')
 _LEAGUE0 = (('v1', .30), ('R3a', .25), ('it5s2', .20), ('self', .15), ('K4C-r16', .10))
 
 
-def _league(spec):
+def _league(spec, names_spec=''):
     """BOT_RL_LEAGUE='v1:.15,R3a:.35,...' changes the shares only; names and their order (= critic opponent ids)
-    stay those of _LEAGUE0."""
+    stay those of _LEAGUE0. BOT_RL_LEAGUE_NAMES='v1:.15,...,LIVE-K4CW-r16:.10' (new runs only) sets the names, order
+    and shares itself: any HEADLINE player name, plus 'it5s2' / 'self' as below."""
+    if names_spec:
+        league = tuple((n, float(v)) for n, v in (t.rsplit(':', 1) for t in names_spec.split(',')))
+        if abs(sum(v for _, v in league) - 1) > 1e-9 or len({n for n, _ in league}) != len(league):
+            raise ValueError('BOT_RL_LEAGUE_NAMES needs distinct names with shares summing to 1')
+        return league
     if not spec:
         return _LEAGUE0
     shares = {k: float(v) for k, v in (t.split(':') for t in spec.split(','))}
@@ -44,14 +54,15 @@ def _league(spec):
     return tuple((n, shares[n]) for n, _ in _LEAGUE0)
 
 
-LEAGUE = _league(os.environ.get('BOT_RL_LEAGUE', ''))
+LEAGUE = _league(os.environ.get('BOT_RL_LEAGUE', ''), os.environ.get('BOT_RL_LEAGUE_NAMES', ''))
 OPP_IDS = {name: i for i, (name, _) in enumerate(LEAGUE)}
 TOKEN_KEYS = ('ids', 'types', 'numeric', 'valid')
 
 
 def check_bank(bank):
     assert bank > 0, 'set BOT_RL_BANK'
-    for base, span in (HEADLINE, TRAIN1):
+    from bot.fullpool.banks import reserved_eval_banks
+    for base, span in (HEADLINE, TRAIN1) + tuple(reserved_eval_banks()):
         assert not (base - 10**9 < bank < base + span + 10**9), f'RL bank overlaps {base}'
 
 
@@ -174,7 +185,9 @@ def worker(w, a):
     from bot.eval.headline import make_player
     from bot.exit import student as student_mod
     from bot.fullpool.banks import case as make_case, check_scope, select
+    from bot.fullpool.models import install_from_env
     rt = Runtime()
+    install_from_env(rt)        # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
     select(rt, RL_DECKS)
     check_scope(rt, RL_DECKS, 50, 0, RL_BANK)
     from proposals import load_student
@@ -196,16 +209,16 @@ def worker(w, a):
         if a.max_games and k > a.max_games:
             break
         opp, _ = league_pick(g)
-        case = make_case(rt, g, RL_BANK, RL_DECKS, opp_c56=opp.startswith('K4'))   # 'x4s' -> x4s_setup(g, RL_BANK)
+        case = make_case(rt, g, RL_BANK, RL_DECKS, opp_c56=OPP_C56 and opp.startswith(('K4', 'LIVE-K4')))   # 'x4s' -> x4s_setup(g, RL_BANK)
         opp_spec = opp
         if opp == 'it5s2':
             opp_spec = f'student:{IT5S2}@{TAU0}'
         elif opp == 'self':
             snaps = [s for s in (run / 'snapshots' / 'LIST').read_text().split()] if (run / 'snapshots' / 'LIST').exists() else []
-            snap = snaps[int(hashlib.sha256(f'bot-rl-snap|{g}'.encode()).hexdigest(), 16) % len(snaps)] if snaps else IT5S2
+            snap = snaps[int(hashlib.sha256(f'bot-rl-snap|{g}'.encode()).hexdigest(), 16) % len(snaps)] if snaps else SELF0
             opp_spec = f'student:{snap}@{TAU0}'
         # keep the per-process student cache to the models in use (snapshots would otherwise accumulate)
-        keep = {str(Path(IT5S2).resolve())}
+        keep = {str(Path(IT5S2).resolve()), str(Path(SELF0).resolve())}
         if opp_spec.startswith('student:'):
             keep.add(str(Path(opp_spec.split(':', 1)[1].rsplit('@', 1)[0]).resolve()))
         for key in list(student_mod._POLICIES):
