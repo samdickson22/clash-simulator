@@ -547,3 +547,5 @@ six engine WIP files remain uncommitted. B2→C1 order and the two exact C1 sele
 carryovers above are unchanged; no C1/B1 work has been imported.
 
 Independent read-only Sol-high review **APPROVED FOR BOUNDED TEST EXECUTION** of the exact8 contract/tool files; [review receipt](evidence/semantic-v1-review-approved.json). Source/propagation/independent-state/count/mutation/scheduler controls passed inspection, including491 source identity checks. This approval precedes affected execution and supplies no engine acceptance or C56 result.
+
+The exact reviewed affected validation was queued once at10:50:56.214Z as PID/PGID3586969 under normalcpu_job4/nice15, fresh isolated tagsemv1-20261016T1052Z. [Launch receipt](evidence/semv1-20261016T1052Z-launch.json). At10:51:18Z no lease/outputs yet; no dynamic semantic result is claimed. Reporting/probe contract commit203beac3a preserves the original raw failures and six uncommitted engine WIP paths.
