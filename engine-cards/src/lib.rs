@@ -4001,6 +4001,10 @@ impl BattleState {
                         e.x = x;
                         e.y = y;
                     }
+                    if e.stats.child_damage > 0.0 && e.stats.child_range > 0 {
+                        // entities.py Projectile.launch_position, read only by projectile_children.
+                        e.projectile_origin = (e.x, e.y);
+                    }
                     e.aim = (x, y);
                     e.birth = self.tick;
                     self.entities.push(e);

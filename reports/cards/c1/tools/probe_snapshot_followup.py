@@ -155,14 +155,16 @@ def shot_origin():
     assert q['stats'].get('child_damage', 0) <= 0 or q['stats'].get('child_range', 0) <= 0, info
     assert p.get('spell_name') == q.get('spell_name') == 'Arrows', info
     assert 'projectile_origin' not in field_diff(p, q), field_diff(p, q)
-    for key, value in (('child_count', 1), ('child_damage', 100), ('child_range', 1000)):
+    # The no-reader rule needs both child damage and range absent; either one alone keeps it unread.
+    for key, value in (('child_damage', 100), ('child_range', 1000)):
         altered = deepcopy(q); altered['stats'][key] = value
-        assert 'projectile_origin' in field_diff(p, altered), ('masked origin with changed spec', key)
+        assert 'projectile_origin' not in field_diff(p, altered), ('half-capable origin compared', key)
     altered = deepcopy(q)
     altered['stats'].update(child_count=1, child_damage=100, child_range=1000)
     assert 'projectile_origin' in field_diff(p, altered), 'child-capable origin masked'
-    altered = deepcopy(q); altered.pop('spell_name', None)
-    assert 'projectile_origin' in field_diff(p, altered), 'unproven path masked'
+    altered = deepcopy(p)
+    altered['stats'].update(child_count=1, child_damage=100, child_range=1000)
+    assert 'projectile_origin' in field_diff(altered, q), 'python child-capable origin masked'
     resumed = D.clasher_core.BattleState(D.snapshot(b, cfg))
     roundtrip = D.clasher_core.BattleState(n.snapshot())
     changed = state(n)
@@ -191,8 +193,8 @@ def shot_origin():
     assert 'expired_after' in info, 'shot failed to expire in bounded follow-up'
     info.update(child_reader_guarded=True, python_snapshot_continuation_equal=True,
                 native_origin_perturbation_equal=True,
-                comparator_controls=['changed_child_count', 'changed_child_damage', 'changed_child_range',
-                                     'child_capable_origin', 'unproven_spell_identity'])
+                comparator_controls=['half_capable_unread', 'child_capable_origin_native',
+                                     'child_capable_origin_python'])
     return info
 
 

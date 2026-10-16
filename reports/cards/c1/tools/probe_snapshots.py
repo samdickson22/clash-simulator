@@ -53,6 +53,21 @@ def norm(v):
     return v
 
 
+def _is_default(v):
+    return v in (0, False, '', [], {}) or (isinstance(v, list) and all(x == 0 for x in v))
+
+
+def strip_defaults(v):
+    """Nested serialized entities (a scope's child/impact templates): native writes every serde-default
+    field and skips some at their default, the Python export omits others; import fills a missing key with
+    its default, so only a key whose value is its zero default is dropped. Any nonzero value stays compared."""
+    if isinstance(v, dict):
+        return {k: strip_defaults(x) for k, x in v.items() if not _is_default(x)}
+    if isinstance(v, list):
+        return [strip_defaults(x) for x in v]
+    return v
+
+
 def normalize_owned_fields(p, r, keys):
     """Only proved C1 representations; see SNAPSHOT-DIAGNOSTICS.md and followup-final.json.
 
@@ -73,16 +88,12 @@ def normalize_owned_fields(p, r, keys):
             # entities.py PingpongProjectile._pp_point/update never reads target_position;
             # projectiles.rs:31 reads only pp_origin/apex/t + pp spec. All remain compared.
             keys = [k for k in keys if k != 'aim']
-    elif p.get('class') == r.get('class') == 'Projectile':
+    elif p.get('class') == r.get('class') and p.get('class') in ('Projectile', 'SpawnProjectile'):
+        # projectiles.rs projectile_children is the sole native origin reader and needs child damage and range
+        # (entities.py reads launch_position for the same children). A shot that can spawn none on either
+        # side has no reader; any child-capable shot keeps the origin strictly compared.
         ps, rs = p.get('stats', {}), r.get('stats', {})
-        childless = all(k in ps and ps[k] == 0 and rs.get(k, 0) == 0
-                        for k in ('child_count', 'child_damage', 'child_range'))
-        if (p.get('spell_name') == r.get('spell_name') == 'Arrows' and childless
-                and p.get('source_character') is False and r.get('source_character') is False
-                and p.get('piercing') is False and r.get('piercing') is False
-                and p.get('shot_target') is None and r.get('shot_target') is None):
-            # Exact mk_target_dies spell-shot path. lib.rs child_count guard prevents its sole
-            # native origin reader, projectiles.rs:213; constructor otherwise preserves origin.
+        if all(s.get('child_damage', 0) <= 0 or s.get('child_range', 0) <= 0 for s in (ps, rs)):
             keys = [k for k in keys if k != 'projectile_origin']
     return p, r, keys
 
@@ -119,6 +130,8 @@ def compare(b, cfg, native, t, seen_static, classes):
                     rsd = dict(rsd, **{x: ps.get(x)})
             p, r = dict(p, stats=ps), dict(r, stats=rsd)
             keys += list(STATIC)
+        if isinstance(p.get('scope'), dict) or isinstance(r.get('scope'), dict):
+            p, r = dict(p, scope=strip_defaults(p.get('scope'))), dict(r, scope=strip_defaults(r.get('scope')))
         for k in keys:
             if p.get(k) != r.get(k):
                 if k == 'stats':

@@ -791,6 +791,10 @@ impl BattleState {
                 shot.id = self.next_id as i32;
                 self.next_id += 1;
                 shot.aim = aim;
+                if shot.stats.child_damage > 0.0 && shot.stats.child_range > 0 {
+                    // entities.py Projectile.launch_position, read only by projectile_children.
+                    shot.projectile_origin = (shot.x, shot.y);
+                }
                 shot.damage_group = Some(group);
                 shot.launch_delay = wave as f64 * spell.damage_wave_interval;
                 shot.birth = self.tick;
