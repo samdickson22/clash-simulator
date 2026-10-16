@@ -64,6 +64,17 @@ v1 output/receipt remain intact; the inspection tool was expanded for v2.
 
 ## Captures and ordered integration
 
+Bounded Astra source diagnostic completed; full result in
+`shared-troop/ICE-MODE-DIAGNOSTIC.md`. It supports conditional on-launch runtime
+mode synchronization, not an exporter workaround. The retained slow-only minimum
+must exclude movement_mode/haste and percentage rounding (so `slow_percent(false)`
+is unsuitable). More subtly, Python target-removal cleanup still consults an
+existing ordinary clock after kind2; changing native ordinary alone changes which
+cleanup predicate is used. Preserve the retained clock and test started/timeline
+disagreement, target death/launch and midflight clone/reload before accepting any
+two-field fix. Captured roots still required. These are new design constraints,
+not proof that the retained dynamic mismatch has this cause.
+
 B2 owns fixture validity and collection. Direct owner requests sent11:31–11:41Z
 ask for immutable constructor and paired pre/post-first-bad roots for all three
 old cases, with source/native/tool bindings, plus normal acquisition. B2's

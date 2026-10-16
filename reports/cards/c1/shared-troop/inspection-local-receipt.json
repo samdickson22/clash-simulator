@@ -1,0 +1,17 @@
+{
+  "base_commit": "5630d424b9c8dd3ba2ad5281b3a3587dd3eab5d2",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py",
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "engine_tree": "64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7",
+  "exit": 0,
+  "files": {
+    "reports/cards/c1/SHARED-TROOP.md": "3f25d95900a16afd121f5be4e5fb40d9aa3f6438a9b3ad10f1504b38ad39b5eb",
+    "reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md": "836aae9d0ee34d48f8a65fa59c0486f443f474b39f40bd38ae0e54bb6f9e0021",
+    "reports/cards/c1/tools/inspect_captured_troop.py": "e6f10937aab7c9a6812f2ff7890e9ff0d5c6172af72defbee62bbd69a08c275d",
+    "reports/cards/c1/tools/test_captured_troop_inspection.py": "b30136f9ce06d52420c986c9b6cb7d01fb0b0999605a66570a92358a0a7a72be"
+  },
+  "host": "127x05",
+  "input_kind": "explicit synthetic JSON controls; no actual B2 captures yet",
+  "scope": "stdlib JSON inspection only; no engine/native imports, simulations/builds/host execution",
+  "utc": "2026-10-16T11:48:09.392031+00:00"
+}

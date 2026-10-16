@@ -411,3 +411,30 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   descendant/clone/reload risks before choosing a correction. No engine execution,
   edits, host use or descendants authorized; prompt carries current strict silence
   and coordination authority. This is not implementation review or acceptance.
+- 11:44Z explicit eight-path add, `git diff --cached --check`, staged
+  `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan`,
+  `git commit -m "cards c1: bind shared Troop source witnesses and capture prerequisites"`
+  and `git push origin cards/c1` succeeded at **5630d424b**. Reports/source-only
+  witnesses; engine tree unchanged. No manual commit/status/result DM.
+- 11:45Z bounded Astra diagnostic completed; original result retained verbatim in
+  shared-troop/ICE-MODE-DIAGNOSTIC.md. On-launch two-field sync is conditional on
+  exact capture: retained slow-only minimum excludes move_mode, haste and percent
+  rounding; ordinary flag changes must preserve cleanup's existing-clock decision.
+  Native constructor does not repair stale midflight snapshots. Actual capture,
+  survival/lethal/clock-disagreement, nonstandard slows, clone/reload and descendant
+  controls remain required. No engine change or implementation acceptance.
+- 11:45–11:48Z prepared read-only `tools/inspect_captured_troop.py`: consumes only
+  B2's separately reviewed raw capture plus expected owner SHA, checks six legacy
+  cases/both seats, paired boundaries/IDs, retains FAILs and explicit absent values,
+  reports boundary displacement and selected mode/config readers. It never runs
+  engine/native or changes a comparator; selected observations are not parity or
+  causal/reachability proof. Actual inputs still absent. Pure local command:
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py`
+  PASS with six synthetic shapes, seven malformed root negatives, wrong SHA,
+  missing denominator/invalid collection, nonzero displacement and retained FAIL/
+  absent-field controls. No fake roots are represented as actual capture evidence.
+- Further read-only Clone source check: Python spells.py CloneSpell.cast and
+  native clone.rs use fresh prototypes; a launched live Troop carrier remains a
+  candidate in current source. Generic projectile children clone source Stats,
+  while Spirit area/ElectroSpirit chain uses configured templates. After B2
+  integration, rerun the real Clone/slide/hold boundary; do not pre-copy B2 code.
