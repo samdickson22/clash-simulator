@@ -410,3 +410,11 @@ def test_review_r2_regressions():
     assert NAMED['SuspiciousBush']['proxy_body'] != 'Wallbreaker'
     assert CLASS_ONLY['building']['proxy_body'] == 'Cannon'
     assert 'cost 4' in NAMED['GoblinCage']['why']
+
+
+def test_review_r3_c56_card_lookup():
+    from bot.cards.proxy_table import proxy_for_card, proxy_body
+    for card in ('Knight', 'Cannon', 'HogRider', 'BabyDragon', 'Musketeer', 'Skeletons', 'GoblinHut'):
+        assert proxy_for_card(card) is not None and proxy_for_card(card) == proxy_body(card), card
+    for card in ('Miner', 'ArcherQueen', 'Goblinstein'):  # blocked bodies stay blocked
+        assert proxy_for_card(card) is None, card

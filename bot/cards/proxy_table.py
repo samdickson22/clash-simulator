@@ -308,7 +308,7 @@ NAMED = {
         cost=7.0, cls='troop', kind='troop', air=True, bodies=1,
         proxy_card='BabyDragon', proxy_body='BabyDragon',
         body_map={'LavaHound': 'BabyDragon', 'LavaPups': 'Minion'},
-        why='air tank; BabyDragon (Balloon would add a death bomb Lava Hound lacks)',
+        why='APPROXIMATION (accepted, review r3): no C56 air body is building-only and single-target; BabyDragon adds troop targeting + splash but no death bomb (Balloon). Lava Hound damage is tiny; the pups (Minion) carry the threat',
     ),
     'LittlePrince': dict(
         cost=3.0, cls='troop', kind='troop', air=False, bodies=1,
@@ -654,8 +654,8 @@ def proxy_for_card(card: str, *, air=None):
             return next(f['proxy_body'] for f in entry['forms'].values() if f['air'] == air)
         return entry['proxy_body'] or None
     if key is not None:
-        body = _C56_CARD_BODIES.get(key)
-        return _BODY_INDEX.get(_norm(body)) if body else None
+        body = _C56_CARD_BODIES.get(key, key)  # C56 cards whose body has the card's name (Knight, Cannon, ...)
+        return _BODY_INDEX.get(_norm(body))
     return None
 
 
