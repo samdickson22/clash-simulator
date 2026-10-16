@@ -1,11 +1,12 @@
 # Batch B2 spell mechanics results
 
-Current continuation (2026-10-16T13:18Z): **engine acceptance pending**. Candidate
+Current continuation (2026-10-16T14:22Z): **conditional B2 source readiness awaits final
+independent review; engine acceptance remains pending**. Candidate
 55bac129b includes the nine engine files covering review-r2 guard/Clone paths and
 Rage state corrections. Three sequential native builds completed under the single
 reviewed08 CPU4 job3614622; actual primary hash76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054.
 Affected checks completed with wrapper exit0. Native7738 represents the earlier six-file source,
-not the current candidate. No fresh C56 result is available for either.
+not the current candidate. The fresh source-matched C56 gate now passes exactly.
 Completed bounded baselines on the current candidate:80/80 Rage meaningful-state
 matches under unchanged approvedv1 applicability, with all80 raw-discrepancy runs
 retained; all560 critical guard continuation records exactly equal the historical
@@ -44,8 +45,7 @@ inputs and rejects re-signed replacement references. Seven local stdlib controls
 pass; review2 approved bounded execution and the sole new job is complete. The old C56-v1 approval
 pins native7738 and must not be executed against the new source.
 The separate [v2 proposal](EXACT-C56-GATE-V2.md) binds the actual new build and affected
-receipt. New exact review is
-required before one fresh source-matched C56 gate.
+receipt. Exact review2 approved one fresh source-matched C56 gate, now complete.
 The first approved staging attempt stopped before admission because04's bot source
 copy lacks Git metadata; its [failure receipt](evidence/c56v2-20261016T1338Z-staging-failed.json)
 and partial directory remain preserved. Review2 approved the repaired actual-file
@@ -56,6 +56,36 @@ The lead's B2-C1-base-readiness-20261016.json records C1 candidate65fca236e wait
 for a reviewed, committed B2-first prerequisite. Conditional B2 readiness still
 requires matching affected/build/C56 evidence and independent review, retaining
 every external FAIL. Final engine/main acceptance waits ordered integrated evidence.
+
+### Current exact-source C56 result
+
+Source55bac129b, primary native76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054,
+compared with pinned681b5 and unpatchedR1 in the independently reviewed fresh04 job
+`b2-c56v2-20261016T1344Z`. Atomic PASS14:21:36.926470Z, wrapper exit0/no PGID582309 or
+lease observed14:22:19Z. [Exact receipt](evidence/c56v2-20261016T1344Z-exact-pass.json),
+[raw-record revalidation](evidence/c56v2-20261016T1344Z-revalidated.json),
+[terminal receipt](evidence/c56v2-20261016T1344Z-terminal.json).
+
+| Required check | Current matching source result |
+|---|---:|
+| Complete identical fixture records / native chains | 577/577 |
+| Reference parity, pinned / candidate | 429/577 each |
+| Observed native exceptions, pinned / candidate | 0 / 0 (577 audited rows each) |
+| Identical root records | 600/600 |
+| Full / cut roots over12 games | 300 / 300 |
+| Identical selections / step checks | 1800 / 1800 |
+| Source/data/native/tool input changes | 0;19462 hashes plus exact shared-source inventory rechecked |
+
+The577 fixture files are byte-identical SHAf5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670,
+also matching the historical pinned output. Root file headers identify their actual
+different native libraries; all600 root records compare equal. All23 consumed gate-
+output hashes and both native binaries were checked on copied raw artifacts with
+stdlib-only local validation. No engine ran on05. This certifies C56 only; all
+historical full-snapshot/semantic/capture/fidelity FAILs remain retained, and final
+independent source/evidence approval plus later integrated B2→C1 evidence remain
+necessary.
+
+### Historical failed frozen gate
 
 Status: **C56 gate FAIL** on the requested frozen B2 tree (`4916d66b8`, handoff `745d18c2c`).
 The original 04 sweep has finished: fixture records and native chains **410/577 identical

@@ -1,8 +1,8 @@
 # Final conditional B2 source/evidence review brief
 
-Preparation only: do not invoke final review until the current C56 job has a
-terminal validated result and its raw output bundle has been collected. This
-document introduces no additional sweep, acceptance, source edit or authority.
+C56 completed with an atomic exact PASS and the raw output bundle is collected.
+This is the final independent review brief, introducing no additional sweep,
+acceptance, source edit or authority.
 
 The requested verdict is conditional B2 source readiness for the lead's isolated
 B2-first→C1 integration, with all external FAILs retained. It is not integrated
@@ -68,7 +68,7 @@ Completed bounded affected evidence:
   old four immutable semantic references `/tmp/b2-semv1-outputs-20261016T1220Z`.
   Local bounded stdlib validation receipts are under evidence/; no engines ran on05.
 
-C56 evidence must be completed before using this brief. Current job on04 is
+C56 completed14:21:36.926470Z, wrapperexit0/no PGID or lease14:22:19Z. The job on04 is
 `/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z`, PID/PGID582309, CPU4/nice15.
 Manifesta8ae9d1a8933cbc84b3ad2fa849f7cd21086c1b3c87b2e251fcdaa000b159956,
 identitya74694ce259468316242b004d0774fd6a0bc823981b019ce7a3ca3889a31f646.
@@ -80,6 +80,15 @@ sample/source identity and all input/output/worker-audit hashes. Reviewed canoni
 code remains unchanged. Actual shared deployment source inventory10666 files and
 19462 total input hashes must remain unchanged at admission/completion. No fabricated
 Git commit for04's source copy. Do not accept only a summary PASS without the raw rows.
+Atomic receiptSHA28fc87d1bd784bc34df75d6691cd6044c727ce1c9915bc21a146480df3bbeeca
+is in evidence/c56v2-20261016T1344Z-exact-pass.json. All23 output hashes and both native
+binaries were checked against the raw local bundle `/tmp/b2-c56v2-outputs-20261016T1344Z`;
+pure validate_records/validate_audit/root_sample also passed on those actual records
+in1.36s, without engine execution. Full manifest/identity are in
+`/tmp/b2-c56v2-20261016T1344Z-{manifest,identity}.json`; root corpus is
+`/tmp/b2-c56-roots-review-20261016T1210Z`. All577 fixture records/chains are identical,
+429referenceparity/arm, zero actual audited native errors,600 root record matches,
+300full+300cut over12games and1800selections/steps. Every input remained unchanged.
 
 Review history and failures must stay visible: raw strict r2 failure, historical
 2480 semantic continuations/1033 FAILs, six old and ten natural capture FAILs, four

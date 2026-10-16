@@ -1,0 +1,14 @@
+{
+ "status": "C56_EXACT_PASS_TERMINAL",
+ "scope": "C56 only; final conditional source readiness pending independent review",
+ "utc": "2026-10-16T14:22:19Z",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z",
+ "pid": 582309,
+ "pgid": 582309,
+ "live_group_members": [],
+ "lease_present": false,
+ "wrapper_exit": 0,
+ "exact_pass_sha256": "28fc87d1bd784bc34df75d6691cd6044c727ce1c9915bc21a146480df3bbeeca",
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054"
+}

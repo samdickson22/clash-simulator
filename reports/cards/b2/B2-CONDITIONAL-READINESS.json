@@ -1,5 +1,5 @@
 {
-  "status": "PENDING_C56_AND_FINAL_INDEPENDENT_REVIEW",
+  "status": "PENDING_FINAL_INDEPENDENT_REVIEW",
   "engine_acceptance": false,
   "main_publication": false,
   "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
@@ -38,7 +38,7 @@
     "retained_semantic_failures": 56
   },
   "c56": {
-    "status": "RUNNING_ADMITTED",
+    "status": "C56_EXACT_PASS",
     "pinned_native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
     "candidate_native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
     "old_v1_gate": "UNEXECUTED_AND_INAPPLICABLE_TO_NEW_SOURCE",
@@ -57,7 +57,28 @@
       4,
       582309
     ],
-    "observed_admitted_utc": "2026-10-16T13:44:46Z"
+    "observed_admitted_utc": "2026-10-16T13:44:46Z",
+    "receipt": "evidence/c56v2-20261016T1344Z-exact-pass.json",
+    "sha256": "28fc87d1bd784bc34df75d6691cd6044c727ce1c9915bc21a146480df3bbeeca",
+    "terminal_utc": "2026-10-16T14:21:36.926470Z",
+    "wrapper_exit": 0,
+    "terminal_no_live_pgid_or_lease_observed_utc": "2026-10-16T14:22:19Z",
+    "fixtures": 577,
+    "identical_native_chains": 577,
+    "reference_parity": {
+      "pinned": 429,
+      "total": 429
+    },
+    "native_errors": 0,
+    "roots": 600,
+    "full": 300,
+    "cut": 300,
+    "games": 12,
+    "selections": 1800,
+    "step_checks": 1800,
+    "revalidated": "evidence/c56v2-20261016T1344Z-revalidated.json",
+    "raw_artifacts": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z/gate",
+    "local_readonly_copy": "/tmp/b2-c56v2-outputs-20261016T1344Z"
   },
   "final_independent_review": {
     "status": "PENDING"
