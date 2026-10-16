@@ -34,9 +34,15 @@ class RoninCounter(BaseMechanic):
         if not ronin.is_alive or battle.tick < ronin._ronin_ready_tick:
             return False
         ronin._ronin_ready_tick = battle.tick + self.cooldown_ms // 50
-        from ..ordinary_combat_clock import stop_hit
+        from ..ordinary_combat_clock import get_clock, publish
 
-        stop_hit(ronin)
+        # Ported from RoyaleSim (MIT), state.rs `parry_pass`: reset progress only,
+        # preserving load, target, and target-loss finish work (not movement stop_hit).
+        clock = get_clock(ronin)
+        if clock is not None:
+            clock.hit_timeline_ms = 0
+            ronin._ordinary_force_due = False
+            publish(ronin, clock)
         ronin._ronin_pending.append(
             (battle.tick + self.reflect_delay_ticks, attacker.id, float(amount) * self.damage_scalar / 100.0)
         )
@@ -60,3 +66,13 @@ class RoninCounter(BaseMechanic):
             attacker = battle.entities.get(attacker_id)
             if attacker is not None and attacker.is_alive:
                 attacker.take_damage(amount, source_kind=getattr(ronin.card_stats, "name", None))
+
+    @staticmethod
+    def deliver_orphans(battle) -> None:
+        """Service counter work whose defender has been removed; never retarget or counter again."""
+        due = [p for p in battle._orphan_counter_pending if p[0] <= battle.tick]
+        battle._orphan_counter_pending = [p for p in battle._orphan_counter_pending if p[0] > battle.tick]
+        for _, attacker_id, amount in due:
+            attacker = battle.entities.get(attacker_id)
+            if attacker is not None and attacker.is_alive:
+                attacker.take_damage(amount, source_kind="Ronin")

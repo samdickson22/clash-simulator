@@ -50,7 +50,9 @@ impl BattleState {
         let e = &mut self.entities[r];
         if e.stats.counter_cooldown == 0 || !e.alive || tick < e.counter_ready { return false; }
         e.counter_ready = tick + e.stats.counter_cooldown;
-        e.clock.stop();
+        // Ported from RoyaleSim (MIT), state.rs `parry_pass`: reset progress only;
+        // movement's stop() would erase target-loss finish work.
+        e.clock.timeline = 0;
         e.force_due = false;
         let id = self.entities[a].id;
         let e = &mut self.entities[r];

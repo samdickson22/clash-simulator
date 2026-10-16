@@ -764,6 +764,10 @@ pub struct BattleState {
     config: Arc<Config>,
     #[serde(default)]
     pending_casts: Vec<Cast>,
+    // Ported from RoyaleSim (MIT), state.rs `parry_pass`: scheduled reflects
+    // survive the defender's removal. Empty in all games without Ronin.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    orphan_counter_pending: Vec<(i64, i32, f64)>,
     /// During one first update: the step's hidden wave siblings (entity indices), skipped by collide/update_avoidance.
     #[serde(skip, default)]
     hidden: Vec<usize>,
@@ -2130,7 +2134,7 @@ impl BattleState {
     }
     fn combat_one(&mut self, i: usize) {
         self.entities[i].move_target = None;
-        if !self.entities[i].counter_pending.is_empty() && self.entities[i].alive {
+        if !self.entities[i].counter_pending.is_empty() {
             // Batch C1 (cards/ronin.py RoninCounter.deliver): due reflects land on their attackers.
             let tick = self.tick;
             let (due, keep): (Vec<_>, Vec<_>) =
@@ -3020,6 +3024,21 @@ impl BattleState {
         self.route_ctx = Some(ctx.clone());
         self.in_tick = true;
         let eligible: Vec<bool> = self.entities.iter().map(|e| e.alive).collect();
+        for e in &mut self.entities {
+            if !e.alive {
+                self.orphan_counter_pending.append(&mut e.counter_pending);
+            }
+        }
+        if !self.orphan_counter_pending.is_empty() {
+            let (due, keep): (Vec<_>, Vec<_>) = std::mem::take(&mut self.orphan_counter_pending)
+                .into_iter().partition(|p| p.0 <= self.tick);
+            self.orphan_counter_pending = keep;
+            for (_, id, amount) in due {
+                if let Some(j) = self.index(id).filter(|&j| self.entities[j].alive) {
+                    self.damage(j, amount);
+                }
+            }
+        }
         for i in 0..n {
             self.flush_grid();
             if eligible[i]
@@ -3426,6 +3445,11 @@ impl BattleState {
         }
         self.remember_cursed_dead();
         self.refresh_dead_champions();
+        for e in &mut self.entities {
+            if !e.alive {
+                self.orphan_counter_pending.append(&mut e.counter_pending);
+            }
+        }
         self.entities.retain(|e| e.alive);
         capture!("cleanup");
         let kings = [0, 1].map(|owner| {

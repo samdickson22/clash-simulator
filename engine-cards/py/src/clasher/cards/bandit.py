@@ -133,8 +133,10 @@ class BanditDash(BaseMechanic):
             return
         entity._bandit_wait -= 1
         if entity._bandit_wait <= 0:
+            # The still entry tick: travel (`_special_move_active`) owns this frame from here.
             self._launch_dash(entity, target)
-        # The stand (and the still entry tick) consumes this movement frame.
+            return
+        # The stand consumes this movement frame.
         entity._special_move_consumed_tick = True
 
     @staticmethod

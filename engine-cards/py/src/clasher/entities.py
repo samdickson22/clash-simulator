@@ -3040,7 +3040,7 @@ class Troop(Entity):
             return
         self._movement_target_id = None
 
-        if getattr(self, "_ronin_pending", None) and self.is_alive:
+        if getattr(self, "_ronin_pending", None):
             from .cards.ronin import RoninCounter
 
             RoninCounter.deliver(self, battle_state)

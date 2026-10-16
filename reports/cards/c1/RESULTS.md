@@ -163,3 +163,71 @@ SHA256 receipts:
 - `gate/compare.json`: `0b0237acf79f51b49f36c68f789e107fbfa79229c894ef8dc2ad9b2d331315d0`.
 
 No differences: no diagnostic bisect, fix spec, or owner wake-up needed. Measurement only; no engine edits or sealing.
+
+## 7. Coordination: dash-travel target exclusion (owned by B2)
+
+Per the lead (2026-10-16), target-selection dash-travel guards belong to the B2 audit. C1 keeps only the
+dashing unit's own movement/target revalidation (§2 §13) and the non-interrupting Freeze (§2 §16). C1 contains
+exactly **two** target-exclusion guards, both in hit filters that exist only in C1 form, both required for
+native==Python parity (mixed game 4) and both in the gated build 2ac024c7. They are listed here for routing; C1
+adds no other guard and does not touch the older C56 `piercing_hits`, the spell `rolling_tick`, scope, Lightning
+or grouped-spell selectors.
+
+| Native function (`engine-cards/src/projectiles.rs`) | C1 status | Guard added | Python rule mirrored |
+|---|---|---|---|
+| `rolling_character_hits` (Bowler boulder; body rewritten by C1, used by no C56 card) | rewritten | skip `dash_travel()` and stealthed (`stealth_until > now && !area_while_invisible`) units without adding them to `hit_ids` | `RollingProjectile._deal_straight_damage` → `can_receive_area_damage` |
+| `pingpong_tick` (Executioner axe; new in C1) | new | same two terms | `PingpongProjectile.update` → `can_receive_area_damage` |
+
+Merge note for B2: `probe_dash_paths.py` launches the dash through the old `BanditDash._launch_dash` with no
+seen target. Under C1's dash the travel target is `_bandit_seen_target` (native `dash.target`); a forced launch
+must set it (and `_bandit_goal` comes from `_launch_dash`), otherwise the forced dash ends on its next movement
+update. The older C56 `piercing_hits` has neither guard, while Python's piercing path does go through
+`can_receive_area_damage`: a candidate for B2's "piercing remembered hits" row.
+
+## 8. Review r1 corrections (Sol high candidate; fresh review required)
+
+Review r1 rejected `e0ade18d3` for the boulder snapshot endpoint and Ronin finish reset, and requested
+death-surviving reflected damage. The following candidate is separate from the historical §6 gate artifacts.
+Native build: **631ac18d27cb15d4eba7011113a9f69a4b85740ef68a27a87cabb0d68320ad86**, 04 `c1/out-r2/`.
+
+- Boulder: `live_snapshot.py` now exports `straight_endpoint` into `aim`. Mid-flight Python snapshot import
+  therefore retains the fixed flight goal. The existing Bandit WIP also aligns the still entry frame's
+  `consumed` flag with native; its travel state owns that movement frame.
+- Ronin: countering resets only the ordinary clock timeline. Python and native both retain load, target,
+  and finish recovery; the generic movement stop helper is no longer used for a counter.
+- Ronin death: living defenders retain their existing combat-slot delivery. Work on a dead defender is moved
+  to battle `orphan_counter_pending` before eligibility (if already dead) or at cleanup; an eligible defender
+  killed earlier in the combat phase still delivers its due work in its slot. The battle queue is exported
+  only when nonempty, `serde(default, skip_serializing_if = "Vec::is_empty")`, cloned independently, and serviced
+  at the combat boundary. Events retain their absolute due tick, attacker ID, and amount; missing/dead attackers
+  are dropped, and reflection uses damage directly without re-entering the counter hook. Idle fast-forward
+  cannot skip pending work. This is a narrow persistence fix, not a generalized scheduler change.
+
+`c1/tools/probe_review_r2.py` **PASS: 21 distinct focused cases** (19 in `review2.json` + 3 extra executions,
+including one repeated idle/clone case, in `extras.json`), 04 `c1/verify-r2/`. Four finish-recovery cases cover
+both seats and both creation orders; fourteen reflect cases cover live/dead defender, dead attacker, both dead,
+multiple events, dead at eligibility, and killed earlier in the same combat phase; two boulder cases resume
+mid-flight; one idle/clone case proves empty queue omission, fast-forward refusal, and clone independence.
+Each applicable case compares the selected semantic fields from full snapshots (explicit baseline exclusions
+in `probe_snapshots.py`), digest, clocks, and both pending queues after every tick. Python-export continuation
+and native serialize/reload continuation match, including after defender cleanup. Missing-endpoint,
+missing-finish, and missing-queue controls all detect the deliberately dropped state.
+
+The same finish probe against old native `2ac024c7` **fails at tick 22 as intended**: target/windup differ,
+Python finish=51/timeline=0/load remaining=350 versus old native finish=0/timeline=800/load remaining=1100.
+Evidence `negative-old-native.log`. An initial synthetic deploy fixture retained stale native movement telemetry;
+clearing that setup flag fixed the probe, with failed attempt retained as `review.log` (no engine workaround).
+
+Existing 08 launcher PID/PGID **1042473** is preserved and still running its original pre-Ronin-fix source/native
+`2ac024c7`; completed first Bowler/Assassin cases are equal. That long run is evidence for the boulder/Bandit WIP,
+not verification of the new Ronin native. No completion receipt yet. Its code/binary were not replaced.
+
+The final internal queue is excluded from the Python constructor (`init=False`); the affected idle/clone and
+combat-death controls were repeated in `extras-final.json`, **3/3 PASS**, native unchanged.
+
+Fresh independent r2 review and B2→C1 integration coverage remain prerequisites to acceptance. No new full
+C56 gate or pin/runtime/model change has occurred. Sam's updated direction retires the blanket Opus/design/
+promotion hold: confident reversible work can proceed within ownership when its gates pass. Broader counter
+selection/buff-phase work remains outside this focused correction, not blocked merely waiting for Opus.
+Rollback: revert the focused candidate commit to recover `2e8005054`'s engine and use native `2ac024c7`;
+existing gated artifacts are preserved and no live pin/runtime needs restoration.

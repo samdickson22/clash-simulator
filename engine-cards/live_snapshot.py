@@ -190,6 +190,9 @@ def live_entity(e, b, cfg=None):
                    hit_ids=sorted(e.hit_entity_ids), projectile_origin=position(e.launch_position))
     if type(e).__name__ == "RollingProjectile":
         out['roll_direction'] = (round(e.target_direction_x or 0),round(e.target_direction_y or 0))
+        if getattr(e, "straight_endpoint", None) is not None:
+            # Batch C1 straight boulder: native flies to `aim` (found by the full-snapshot probe).
+            out["aim"] = position(e.straight_endpoint)
         out["stats"]["speed"] = round(e.travel_speed)
         out["spell_name"] = getattr(e, "spell_name", "")
     if getattr(e, "_self_projectile_launched", False):

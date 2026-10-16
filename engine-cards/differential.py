@@ -753,6 +753,8 @@ def snapshot(b, cfg):
             ],
             entities=[live_entity(e, b, cfg) for e in b.entities.values()],
             pending_casts=pending_casts(b),
+            **(dict(orphan_counter_pending=[list(p) for p in b._orphan_counter_pending])
+               if b._orphan_counter_pending else {}),
             sudden_death=b.sudden_death,
             rng=dict(state=list(rng[:-1]), index=rng[-1]),
             game_over=b.game_over,
