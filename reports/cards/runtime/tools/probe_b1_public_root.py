@@ -41,7 +41,9 @@ def graph(state):
         require(parent is not None and parent['class'] == 'Troop' and
                 parent['stats']['name'] == 'GoblinGiant' and parent['owner'] == e['owner'],
                 ('wrong/missing reconstructed parent', e['id'], e.get('mount')))
-        slot = (parent['id'], e.get('rider_rank'))
+        # Rust serde omits rank zero; that documented default is a real rank,
+        # while an absent mount still fails the independent parent checks.
+        slot = (parent['id'], e.get('rider_rank', 0))
         require(slot[1] in (0, 1) and slot not in used, ('wrong/duplicate public rank', slot))
         used.add(slot)
     return used
@@ -63,7 +65,7 @@ def change_rows(info, order=None, remove_token=None):
 
 def fixture(seat, *, multiple=False, coincident=False):
     from differential import initial, Position
-    cards = ('GoblinGiant', 'ThreeMusketeers', 'BattleHealer', 'Clone', 'Knight', 'Archers', 'Zap')
+    cards = ('GoblinGiant', 'ThreeMusketeers', 'BattleHealer', 'Clone', 'Knight', 'Archers', 'Zap', 'Cannon')
     py = initial(seed=880610, cards=cards)
     def spawn(card, owner, x, y):
         if seat == 1:
@@ -115,7 +117,7 @@ def graph_case(R, fair, seat, multiple=False, coincident=False, clone=False):
         # Row IDs vary on reorder; compare observable geometry/rank relations.
         byid = {e['id']: e for e in state['entities']}
         links = sorted((e['owner'], round(e['x'], 5), round(e['y'], 5),
-                        round(byid[e['mount']]['x'], 5), round(byid[e['mount']]['y'], 5), e['rider_rank'])
+                        round(byid[e['mount']]['x'], 5), round(byid[e['mount']]['y'], 5), e.get('rider_rank', 0))
                        for e in state['entities'] if e.get('mount') is not None)
         outputs.append(links)
         native_restart(root)
@@ -133,11 +135,40 @@ def graph_case(R, fair, seat, multiple=False, coincident=False, clone=False):
                 observed_riders=len(outputs[0]), reorder=True, missing_parent_rejected=True)
 
 
+def boundary_case(R, fair, seat):
+    from bot.levels.root import ExactLevelRoot
+    points = ((.499,.499), (17.501,.499), (.499,31.501), (17.501,31.501),
+              (.499,10.5), (17.501,10.5), (8.5,.499), (8.5,31.501))
+    rt = SimpleNamespace(R=R, pins={})
+    wrapper = ExactLevelRoot(rt, {}, lambda card: 11, 11, 11, force=True)
+    witnesses = []
+    for point in points:
+        for carry in (False, True):
+            py, old, spawn = fixture(seat)
+            # Fresh source graph at an actual character-spawn clamp boundary;
+            # remove the earlier graph rather than fabricating extra public rows.
+            del py.entities[old.id]
+            for rider in old._rider_mechanic.riders:
+                del py.entities[rider.id]
+            parent = spawn('GoblinGiant', seat, *point)
+            if carry:
+                # Actual engine hook may place riders outside arena limits;
+                # the frozen sensor performs the documented public clipping.
+                parent._rider_mechanic.carry(parent, parent.native_facing_units())
+            info = fair.observe(py, R.builder, seat, ())
+            for consumer in (R, wrapper):
+                root = consumer.root(info, info.own, np.random.default_rng(15))
+                require(len(graph(json.loads(root.snapshot()))) == 2, 'valid clamped graph rejected/lost')
+                native_restart(root, ticks=2)
+            witnesses.append(dict(point=point, carry=carry, boundary_report=dict(R.public_graph_report)))
+    return dict(seat=seat, boundary_graphs=len(witnesses), plain_and_level=True, witnesses=witnesses)
+
+
 def level_case(R, fair, output, seat, level):
     from bot.levels.configs import LevelConfigs
     from bot.levels.root import ExactLevelRoot
     from differential import Position
-    cards = ('GoblinGiant', 'ThreeMusketeers', 'BattleHealer', 'Clone', 'Knight', 'Archers', 'Zap')
+    cards = ('GoblinGiant', 'ThreeMusketeers', 'BattleHealer', 'Clone', 'Knight', 'Archers', 'Zap', 'Cannon')
     rt = SimpleNamespace(R=R, pins={})
     lc = LevelConfigs(rt, cache=Path(output).with_suffix('.level-cache'))
     for lv in sorted({11, level}):
@@ -152,6 +183,14 @@ def level_case(R, fair, output, seat, level):
     healer = spawn('BattleHealer', seat, 8.5, 10.5)
     on_hit = next(m for m in healer.mechanics if type(m).__name__ == 'AreaEffectOnHit')
     on_hit.on_attack_hit(healer, healer)
+    py.players[seat].elixir = 10.
+    py.players[seat].hand[0] = 'Cannon'
+    building_id = py.next_entity_id
+    require(py.deploy_card(seat, 'Cannon', Position(14.5 if seat == 0 else 3.5,
+                                                   10.5 if seat == 0 else 21.5)), 'Cannon deployment')
+    cannon = py.entities[building_id]
+    cannon._create_projectile(None, py, target_position=Position(cannon.position.x,
+                              cannon.position.y + (5 if seat == 0 else -5)))
     # Public own-HUD fixture for a future legal Clone, independent of the
     # nine-elixir deployment used to obtain actual rework observation rows.
     py.players[seat].elixir = 10.
@@ -173,6 +212,11 @@ def level_case(R, fair, output, seat, level):
         expected = next(v for k,v in expected.items() if k.endswith('BattleHealer'))
         require(e['scope']['heal_per_tick'] == expected['scope']['heal_per_tick'] and
                 e['scope']['buff_name'] == expected['scope']['buff_name'], 'wrong level pulse payload')
+    shots = [e for e in payload['entities'] if e['class'] == 'Projectile' and e['stats']['name'] == 'Cannon']
+    expected_cannon = lc.entry('Cannon', level)['card']['units'][seat][0]
+    require(len(shots) == 1 and shots[0]['stats']['damage'] == expected_cannon['stats']['damage'] and
+            shots[0]['stats']['max_hp'] == 1 and shots[0]['hp'] == 1,
+            'Building-shot level fallback changed damage or projectile HP')
     giants = [e for e in payload['entities'] if e['stats']['name'] == 'GoblinGiant']
     prototype = giants[0]['clone_template']
     require(len(prototype['clone_children']) == 2 and all(e['mount'] == prototype['id']
@@ -236,6 +280,7 @@ def run(R, fair, output):
             tests.append((f'{seat}/graph/{label}', lambda s=seat,f=flags: graph_case(R, fair, s, **f)))
         for level in (11, 9):
             tests.append((f'{seat}/level/{level}', lambda s=seat,l=level: level_case(R, fair, output, s, l)))
+        tests.append((f'{seat}/boundaries', lambda s=seat: boundary_case(R, fair, s)))
         tests.append((f'{seat}/c56-bytes', lambda s=seat: c56_unchanged(R, fair, s)))
     for name, fn in tests:
         try:
@@ -250,4 +295,4 @@ def run(R, fair, output):
                   note='Public geometry/default model only; no hidden rank, clocks, targets, IDs or clone-state recovery. C56 graph-disabled byte control is separate from B1 full source gates.')
     with open(output, 'x') as stream:
         json.dump(report, stream, indent=2)
-    require(report['passed'] == report['total'] == 14, report)
+    require(report['passed'] == report['total'] == 16, report)

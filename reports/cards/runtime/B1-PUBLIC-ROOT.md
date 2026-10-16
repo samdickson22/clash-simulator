@@ -1,7 +1,7 @@
 # B1 compatible public Resources and graph reconstruction
 
-Candidate only, pending independent review and fresh admitted combined-source
-acceptance. Baseebab18cc, engine aliasc13249919. Authority:
+Implementation/scoped probe independently APPROVED at sourcee0e9f634e;
+fresh admitted combined-source acceptance still pending. Baseebab18cc, engine aliasc13249919. Authority:
 `reports/cards/reviews/B1-public-identity-root-policy.md` on cards/lead. No
 published r3 root/evidence, model, vocabulary, active pin or consumer deployment
 is changed by this branch. B1 owns final integration/testing sequence; lead owns
@@ -38,9 +38,14 @@ prototypes. It does not reinterpret unrelated graph mechanisms or C56 rows.
 Only observed Troop/GoblinGiant parents and Troop/SpearGoblinGiant riders
 participate. Parents expose the static two-rider geometry already serialized
 in their templates. Each observed parent provides two rank slots. Candidates
-must have equal public owner and radius within0.25tiles of the static900unit
-attachment radius. Public positions and heading determine preferred slot
-distance using the engine's static integer trigonometry. Deterministic
+must have equal public owner and remain within1.15tiles of the parent. Interior
+points must also lie within0.25tiles of the static900unit radius. Character
+creation clamps to[.25,extent-.25]; later carry can leave the arena and public
+coordinates clip to[0,extent]. Points on these known clamp edges (float32
+tolerance1e-4tiles) may have compressed radii. Arbitrary compressed interior
+points stay unsupported. Preferred slot distance compares the raw static offset
+and both known clamp projections using the engine's integer trigonometry.
+Deterministic
 augmenting matching fills distinct slots up to capacity. Source IDs, demo links,
 private targets, rank state and prior frames never enter the matching.
 
@@ -69,7 +74,10 @@ selection, not exact hidden rank/phase recovery. Level exports now include
 BattleHealer `create_areas` and `hit_areas`; their distinct public spell names
 disambiguate shared-empty-name HealPulse bodies and select the correct producing
 card and level payload. Direct spells retain their existing qualified names.
-Level-specific clone capability prototypes follow their producing bodies;
+Level-specific clone capability prototypes follow their producing bodies for
+the scoped GoblinGiant/ThreeMusketeers/BattleHealer producers only. Existing C56
+prototype defaults remain unchanged; this does not broaden into unrelated Clone
+or level-policy changes.
 projectiles never inherit body clone capabilities or HP. Dynamic mount/rank
 are excluded from level deltas and reconstructed only after deltas.
 
@@ -82,14 +90,19 @@ defaults and opponent level estimates remain documented consumer limitations.
 ## Validation interface and rollback
 
 `python3 -B reports/cards/runtime/tools/test_b1_public_root.py` runs only stdlib
-fixtures/source-extracted level methods on05 (16cases at first checkpoint).
+fixtures/source-extracted level methods on05 (21cases at corrected checkpoint;
+16cases at superseded first checkpoint,19at superseded second checkpoint).
 The actual admitted phase imports `probe_b1_public_root.py` and calls
 `run(R, fair_player_module, fresh_output_json)`, reusing B1's ONE widened cached
 Resources build. Its scope must include Clone in addition to B1's declared
-public cards. Fourteen actual public-row cases cover both seats, multiple and
+public cards (Cannon is already C56). Sixteen actual public-row cases cover both seats, multiple and
 coincident GGs, actual Clone rows, reorder/truncated parents, plain roots,
 forced level11/9 consumers, distinct healer payloads,700ms rework defaults,
-future native Clone graphs and full native reload/continuation. Two byte-equal
+future native Clone graphs, leveled Cannon shot damage/unit HP, and full native
+reload/continuation.32boundary fixtures cover eight walls/corners for both seats
+at actual creation/carry hooks, through plain and forced-level consumers.
+Native snapshots omit zero rider_rank: probes use its documented default0,
+while always requiring valid mount ownership/type/ID. Two byte-equal
 controls isolate the graph helper on C56 boards; they do not replace B1's full
 old-vs-new source acceptance gate.
 
@@ -105,3 +118,10 @@ Rollback: revert only new alias/root commits from the isolated candidate. Keep
 the fixed pre-alias B1 ref/native, original source5c8 gate1634216 and all failed
 artifacts immutable. No old acceptance is transferred to new Python source;
 no deployment, opt-in root release, pin/model change or sealing is implied.
+
+Implementation review: native independent `/root/b1_public_root_review`, Solhigh,
+roundr3 APPROVE at exacte0e9f634e28f6cbc8bdd10631a6b3437d69dfef2. Preserved r1/r2
+REQUEST_CHANGES and r3 approval receipts record every finding/response/hash.
+Root patch commits8aab1b2b5→fa3622618→e0e9f634e atop aliasc13249919; no unrelated
+shared edits.21stdlib tests PASS; native/public/gate acceptance remains pending
+B1's one separately host-reviewed, exact-source admitted sequence.

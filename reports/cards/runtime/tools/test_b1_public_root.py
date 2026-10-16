@@ -8,6 +8,7 @@ import ast
 import importlib.util
 import itertools
 import json
+import struct
 from pathlib import Path
 import sys
 import unittest
@@ -40,6 +41,30 @@ def bindings(rows):
 
 
 class GraphTests(unittest.TestCase):
+    def test_spawn_and_sensor_clamped_walls_corners_both_seats(self):
+        points = ((.499,.499), (17.501,.499), (.499,31.501), (17.501,31.501),
+                  (.499,10.5), (17.501,10.5), (8.5,.499), (8.5,31.501))
+        for owner, seat, margin, point in itertools.product((0,1), (0,1), (0.,.25), points):
+            a = giant(owner=owner, x=point[0], y=point[1], facing=(0,1000 if owner == 0 else -1000))
+            rows = [a, rider(a,0,1), rider(a,1,2)]
+            for e in rows[1:]:
+                e['x'], e['y'] = p._clamp_position(e['x'], e['y'], margin)
+            # Exact public normalization/float32 storage/seat inverse.
+            for e in rows:
+                for axis, extent in (('x',18.),('y',32.)):
+                    v = e[axis] if seat == 0 else extent-e[axis]
+                    v = max(0., min(1., v/extent))
+                    v = struct.unpack('f',struct.pack('f',v))[0]*extent
+                    e[axis] = v if seat == 0 else extent-v
+            self.assertEqual(p.repair_public_graph(rows)['matched'], 2)
+            self.assertEqual({e['rider_rank'] for e in rows[1:]}, {0,1})
+
+    def test_compressed_interior_radius_still_rejected(self):
+        a = giant(x=.499, y=.499)
+        r = rider(a,0,1); r.update(x=.499,y=.499)
+        with self.assertRaises(p.PublicGraphError):
+            p.repair_public_graph([a,r])
+
     def test_both_seats_and_rotated_headings(self):
         for seat, facing in itertools.product((0, 1), ((0, 1000), (0, -1000), (700, 700), (-1000, 0))):
             a = giant(owner=seat, facing=facing)
@@ -182,11 +207,43 @@ class LevelConfigTests(unittest.TestCase):
         # runtime on the light host. These methods only use stdlib operations.
         from bot.levels.configs import qkey, SIDE, base_cards
         tree = ast.parse((REPO / 'bot/levels/root.py').read_text())
-        tree.body = [n for n in tree.body if isinstance(n, (ast.ClassDef, ast.FunctionDef))]
+        tree.body = [n for n in tree.body if isinstance(n, (ast.ClassDef, ast.FunctionDef, ast.Assign))]
         ns = dict(copy=copy, qkey=qkey, SIDE=SIDE, base_cards=base_cards, TOWERS=('Tower', 'KingTower'),
                   SKIP_TOP={'mount', 'rider_rank', 'stats'})
         exec(compile(tree, '<production-level-methods>', 'exec'), ns)
         return ns['ExactLevelRoot'], ns['_templates']
+
+    def test_clone_capabilities_change_only_for_scoped_b1_producers(self):
+        cls, _ = self.root_class()
+        for name in ('GoblinGiant', 'ThreeMusketeers', 'BattleHealer', 'Knight', 'Musketeer'):
+            root = cls.__new__(cls)
+            body = {'class':'Troop', 'stats':{'name':name,'damage':100},
+                    'clone_template':{'stats':{'name':name,'damage':100}}}
+            e11 = {'card':{'units':[[body],[]]},'tables':{}}
+            e9 = copy.deepcopy(e11)
+            e9['card']['units'][0][0]['stats']['damage'] = 80
+            e9['card']['units'][0][0]['clone_template']['stats']['damage'] = 80
+            root.lc = SimpleNamespace(entry=lambda card, lv: e11 if lv == 11 else e9)
+            root._delta = {}
+            sd,td = root.body_delta(name,9,name,'Troop')
+            self.assertEqual(sd['damage'],80)
+            if name in ('Knight','Musketeer'):
+                self.assertNotIn('clone_template',td)
+                self.assertEqual(json.dumps(body['clone_template']),json.dumps({'stats':{'name':name,'damage':100}}))
+            else:
+                self.assertEqual(td['clone_template']['stats']['damage'],80)
+
+    def test_building_projectile_level_fallback_preserved(self):
+        cls, _ = self.root_class()
+        for name in ('Cannon', 'Tesla', 'Xbow'):
+            root = cls.__new__(cls)
+            body = {'class':'Building', 'stats':{'name':name, 'damage':100, 'max_hp':1000}}
+            e11 = {'card':{'units':[[body],[]]}, 'tables':{}}
+            e9 = copy.deepcopy(e11)
+            e9['card']['units'][0][0]['stats'].update(damage=80,max_hp=800)
+            root.lc = SimpleNamespace(entry=lambda card, lv: e11 if lv == 11 else e9)
+            root._delta = {}
+            self.assertEqual(root.body_delta(name,9,name,'Projectile')[0]['damage'], 80)
 
     def test_healer_same_class_empty_names_have_distinct_public_delta_keys(self):
         cls, collect = self.root_class()
@@ -220,6 +277,26 @@ class LevelConfigTests(unittest.TestCase):
         a = LevelConfigs(SimpleNamespace(R=SimpleNamespace(config={'cards': {}}), pins={}))
         b = LevelConfigs(SimpleNamespace(R=SimpleNamespace(config={'cards': {'BattleHealer': {}}}), pins={}))
         self.assertNotEqual(a.dir, b.dir)
+
+
+class NativeSnapshotOracleTests(unittest.TestCase):
+    def test_native_omitted_zero_rank_default_and_bad_graph_negative_controls(self):
+        tree = ast.parse((REPO / 'reports/cards/runtime/tools/probe_b1_public_root.py').read_text())
+        tree.body = [n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in ('require','graph')]
+        ns = {}
+        exec(compile(tree,'<production-native-snapshot-oracle>','exec'),ns)
+        a = giant()
+        r0,r1 = rider(a,0,1),rider(a,1,2)
+        r0.update(mount=a['id']); r0.pop('rider_rank')
+        r1.update(mount=a['id'],rider_rank=1)
+        self.assertEqual(len(ns['graph']({'entities':[a,r0,r1]})),2)
+        for bad in ('mount','rank','owner'):
+            rows = copy.deepcopy([a,r0,r1])
+            if bad == 'mount': rows[1]['mount'] = 99999
+            if bad == 'rank': rows[2]['rider_rank'] = 0
+            if bad == 'owner': rows[1]['owner'] = 1
+            with self.assertRaises(AssertionError):
+                ns['graph']({'entities':rows})
 
 
 if __name__ == '__main__':
