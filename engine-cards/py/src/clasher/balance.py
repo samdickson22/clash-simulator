@@ -968,6 +968,10 @@ def _furnace_entry(entry: dict[str, Any]) -> None:
 # absent; values from RoyaleSim (MIT) cards-15535.1 (the client 16.402
 # hitpoints 354 belong to the live16402 stat overlay).
 _THREE_MUSKETEER_CHARACTER = {
+    # Public v5 keeps one existing identity for the rework formation. Mechanical
+    # names and each rank's loadTime remain distinct; public roots deliberately
+    # use the first member's 700ms load as their coarse model default.
+    "publicIdentity": {"troop_body": "ThreeMusketeers"},
     "rarity": "Common",
     "hitpoints": 345,
     "hitSpeed": 1300,
@@ -986,6 +990,7 @@ _THREE_MUSKETEER_CHARACTER = {
     "tidSpeed": "TID_SPEED_3",
     "projectileData": {
         "name": "ThreeMusketeer_Rework_Projectile",
+        "publicIdentity": {"projectile": "ThreeMusketeers"},
         "damage": 80,
         "speed": 1000,
         "homing": True,
