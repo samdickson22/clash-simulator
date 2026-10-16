@@ -69,6 +69,19 @@ class AssemblerSafetyTest(unittest.TestCase):
                         self.run_main(module)
                     self.assertEqual((self.base / 'gamedata.json').read_text(), '{}')
 
+    def test_backup_cannot_contain_a_base_symlink_referent(self):
+        backup = self.root / 'runtime.old'
+        backup.mkdir()
+        (backup / 'input').write_text('preserve')
+        (self.base / 'reference').symlink_to(backup, target_is_directory=True)
+        self.make_base(self.target)
+        for module in (runtime, live):
+            with self.subTest(module=module.__name__):
+                with self.assertRaisesRegex(SystemExit, 'backup overlaps base symlink'):
+                    self.run_main(module)
+                self.assertEqual((backup / 'input').read_text(), 'preserve')
+                self.assertTrue(self.target.exists())
+
     def test_old_backup_cannot_contain_base(self):
         for module in (runtime, live):
             for nested in (False, True):

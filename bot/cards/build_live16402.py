@@ -29,7 +29,7 @@ import tempfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from bot.cards import balance_overlay as bo  # noqa: E402
-from bot.cards.build_runtime import staging_dir, validate_paths, write_text  # noqa: E402
+from bot.cards.build_runtime import base_inputs, staging_dir, validate_paths, write_text  # noqa: E402
 
 RUNTIMES = Path('/mpac/sdicks02/repos/clasher-bot-runtime')
 RECEIPT = 'LIVE16402-RECEIPT.json'
@@ -49,9 +49,8 @@ def main():
     a = ap.parse_args()
     base, target = Path(a.base).resolve(), Path(a.target).resolve()
     old = target.with_name(target.name + '.old')
-    inputs = dict(base=base, base_gamedata=base / 'gamedata.json',
-                  base_native=base / 'native/clasher_core.abi3.so',
-                  base_receipt=base / BASE_RECEIPT,
+    inputs = base_inputs(base)
+    inputs.update(base_receipt=base / BASE_RECEIPT,
                   rs16=Path(a.rs16), rs15=Path(a.rs15), calibration=Path(a.calibration))
     outputs = dict(target=target, backup=old)
     validate_paths(inputs, outputs)

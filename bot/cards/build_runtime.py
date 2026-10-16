@@ -110,6 +110,16 @@ def overlays(tracked):
     return out
 
 
+def base_inputs(base):
+    """Include aliases copied by rsync so cleanup cannot remove their referents."""
+    inputs = dict(base=base, base_gamedata=base / 'gamedata.json',
+                  base_native=base / 'native/clasher_core.abi3.so')
+    for path in base.rglob('*'):
+        if path.is_symlink():
+            inputs[f'base symlink {path.relative_to(base)}'] = path
+    return inputs
+
+
 def validate_paths(inputs, outputs):
     """Reject every output/input or output/output overlap before changing any path."""
     for name, path in outputs.items():
@@ -197,8 +207,7 @@ def main():
     base, target = Path(a.base).resolve(), Path(a.target).resolve()
     old = target.with_name(target.name + '.old')
     tree = target.with_name(target.name + '.source') if a.rev else Path(a.tree).resolve()
-    inputs = dict(base=base, base_gamedata=base / 'gamedata.json',
-                  base_native=base / 'native/clasher_core.abi3.so')
+    inputs = base_inputs(base)
     outputs = dict(target=target, backup=old)
     if a.rev:
         inputs['engine source'] = SOURCE / 'engine-cards'
