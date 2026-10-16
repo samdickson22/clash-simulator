@@ -142,3 +142,5 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
 - 08:06Z None-stat fix review APPROVE → main 57941b370. BOT LEAD: 'no C56 public model template: BarbarianRageDamage/AreaEffect'
   (Lumberjack, ~2/1000) → Sol worker cards-template-fix-sol-r1: class probe of all reachable objects × lookup tables,
   generic fix, r3 roots (live16402b-r3 / r1-cards2-r3).
+- 08:15Z Null's slot OPEN 08:15:18Z→10:15:18Z (reference AVD, client 15.535.13, probe 127.0.0.1:26795 on Mac); fixture
+  worker woken (stop by 10:10Z). B2 b2-merge2 gate on 04 PID 2553495 + B2 review r2 running.
