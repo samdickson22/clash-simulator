@@ -340,13 +340,13 @@ def main(argv=None):
     # everything needed to replay LiveSession offline from perception.jsonl (bot lead): deck, players, export, options
     client = {}
     try:                                       # read-only: the live client's package version (CARD LEAD / bot lead)
-        out = subprocess.run([ADB, '-P', str(a.adb_port), '-s', a.serial, 'shell',
+        pkg = subprocess.run([ADB, '-P', str(a.adb_port), '-s', a.serial, 'shell',
                               'dumpsys package com.supercell.clashroyale | grep -E "versionName|versionCode|lastUpdateTime"; '
                               'getprop persist.sys.timezone'], capture_output=True, text=True, timeout=20).stdout
-        for tok in out.split():
+        for tok in pkg.split():
             if '=' in tok and tok.split('=')[0] in ('versionName', 'versionCode', 'lastUpdateTime'):
                 client[tok.split('=')[0]] = tok.split('=', 1)[1]
-        lines = out.strip().splitlines()
+        lines = pkg.strip().splitlines()
         upd = [l for l in lines if 'lastUpdateTime' in l]
         if upd:
             client['lastUpdateTime'] = upd[0].split('=', 1)[1].strip()
