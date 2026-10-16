@@ -213,3 +213,18 @@ root retries exactly the errored games, since done_games skips only non-error ro
   Error share is 0.3–2.1% per host, under the 8% stop. The babysitter was resumed (07:34Z) with both errors marked
   known, and with the GPU rule refined: a low reading counts only when a compute process is present. 08 read 0% once
   between batches, then 93% with the LIVE process.
+- 08:05Z **live16402b-r2** (CARD LEAD Python-only fix: Freeze building_damage None and the ThreeMusketeers missing-HP
+  crash; same native de11f124 and gamedata a7de3e93). Root /mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2;
+  RECEIPT.json sha256 32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499 (identical on 03/04/08).
+  - Pins: r1-cards2-r2 and live16402b-r2 carried from cards/lead 43d688f85 to main (93c1fe1a). The launch kit
+    defaults to PINS=live16402b-r2.
+  - New option: `lopp_record --retry-errors` (k1.sh RETRY=1), because lopp_record counted error rows as done.
+  - r2 preflight PASS on 04 (08:00:49Z) and 08 (08:01:19Z), tree repo-93c1fe1af8ca. On 03 it is queued in cpu_job
+    (03 at 109 live python).
+  - **r2 does NOT fix the BarbarianRageDamage/AreaEffect template error.** Replaying game 5000110 on r2 (08,
+    07:54–07:57Z) failed identically. That one is still open for the CARD LEAD (fair_player.root has no template
+    for Lumberjack's death-rage area).
+  - Data tags: rows and shards made on r2 carry runtime.pins = live16402b-r2 and the r2 root path and receipt.
+  - Plan: running shards finish on live16402b. Each finished shard's errored games are rerun on r2 (same shard
+    command from the new tree; K1 with RETRY=1). Every new shard runs on r2. The babysitter owns the reruns and was
+    steered at 08:05Z.
