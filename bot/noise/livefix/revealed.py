@@ -28,7 +28,9 @@ then re-runs its play acceptance (resync included) over the perceived opponent p
 rejected ones, i.e. the history it would have built had W never been accepted, and sets `resynced`, so the player
 rebuilds its D1/belief trackers from the corrected history (bot/live/resync.py).
 W's removed plays become rejected evidence for W, so a real card evicted by mistake comes back on its next play.
-A card admitted on board evidence alone (its play was never perceived) enters the history as an inferred play
+A card admitted on board evidence alone (its play was never perceived) is PROVISIONAL: weak (evictable by a newcomer
+with `events_need` plays or `board_need` board records) once its units have not persisted for `confirm_ticks`, until a
+perceived play of it arrives. It enters the history as an inferred play
 (injected=True, board=True; the first sighting of its persistent run minus `deploy_ticks`, at that unit's position),
 so the mirror, the enemy event stream and the restarted belief all hold it; it is re-inserted on every later rebuild.
 Board evidence is counted once per REAL perception capture: synthetic catch-up polls (LiveSession and the replay
@@ -169,6 +171,13 @@ class RevealedSet:
                 return False
         return True
 
+    def provisional(self, tick):
+        """Board-only members (admitted on board evidence, no perceived play since) whose units have not met the
+        persistence rule for `confirm_ticks`: provisional, so weak. Later evidence revalidates them: a perceived play
+        makes them ordinary members, and while their units persist on the board they are not weak."""
+        return {c for c in self.board_plays if c in self.members() and self.plays(c) == 0
+                and tick - self.last.get(c, -10**9) >= self.confirm_ticks}
+
     def victim(self, newcomer, tick):
         """The member to evict so `newcomer` can enter at `tick`, or None."""
         m = self.members()
@@ -179,11 +188,13 @@ class RevealedSet:
             return None
         contra = {c for c in m if self.contradicted(c, tick) and self.plays(c) <= self.contra_plays}
         weak = contra | {c for c in m if not self.spawns(c) and self.plays(c) <= self.weak_plays
-                         and self.board[c] <= self.weak_board}
+                         and self.board[c] <= self.weak_board} | self.provisional(tick)
         if not weak:
             self.stats['evict_refused'] += 1
             return None
-        w = min(weak, key=lambda c: (c not in contra, self.plays(c), self.board[c], self._last(c), c))
+        # a board admission counts as one play of evidence (so a once-seen spell goes before a board-admitted troop)
+        w = min(weak, key=lambda c: (c not in contra, self.plays(c) + (c in self.board_plays), self.board[c],
+                                     self._last(c), c))
         need = self.contra_need if w in contra else self.events_need
         return w if n_plays >= need or n_board >= self.board_need else None
 

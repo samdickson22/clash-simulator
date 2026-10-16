@@ -490,3 +490,34 @@ python3 $J/audsum-r4.py $J/fb2,$J/fb2-hi03,$J/fb2-hi04
   - **Scratch** (05; safe to delete after round 3): worktrees `clasher-bot-revfix5-mb` (r1 + shim),
     `clasher-bot-revfix5-mb2` (r2), `clasher-bot-revfix5-mbcheck` (r2 + patch), `clasher-bot-revfix5-livecheck`;
     /tmp/sdicks02-oldB*; 03 tree `clasher-bot-revfix6-mbr1` (r1 preliminaries).
+
+## Round 7 (round-3 review of 890bfe58 on the multibody-r3 base; worker bot-lead-revset-fix-r2 resumed)
+- **07:37Z, start.**
+  - Worktree 05:`clasher-bot-revfix5` was fast-forwarded to origin/main 501702884, which includes r3 births
+    (bbdc651e).
+  - main's bot/live translate/resync/real_replay are unchanged since 8040430e, so the rebase needs no merge. The 29
+    earlier tests pass on r3 as they are.
+- **Fixes** (RESULTS 11):
+  1. Every resolved births state is evidence for its source card; an unknown source gives no evidence.
+  2. Synthetic or already-tracked captures are read-only for the births tracker.
+  3. Board-only admissions are provisional.
+- **Tests:** 10 new cases; 39/39 pass. The reviewer's 3 reproducers and the 4 resolved-state cases fail on
+  8040430e.
+- **LIVE suite on 05:** 214/13/6 patched vs 175/13/6, with the same failure set.
+- **Patch:** sha256 88fc13eef8fdb89b16dda5b82445496c7bb0bc7711979f6735d7e74d1d890eb1.
+- **07:48Z, launched on 03.** The tree is 03:`/mpac/sdicks02/repos/clasher-bot-revfix7`, an rsync of this commit's
+  bot/ (sha-of-shas 731699dd…, equal on 05 and 03). The jobs are in /mpac/sdicks02/jobs/clasher/bot-noise/:
+  - floorchk-r7: PGID 4019880, `cpu_job.sh 9`, 8 workers; clean channel, base vs fix, HEADLINE 0–14 × R3a/v1,
+    60 games.
+  - smoke-r7: PGID 4019902, `cpu_job.sh 7`, 6 workers; the fix arm under sr1u50, HEADLINE 300–319 × R3a/v1,
+    40 games.
+  - LIVE suite with the pinned runtime: unpatched tree `clasher-bot-revfix7` vs patched tree
+    `clasher-bot-revfix7-patch`. The output goes to 03:/mpac/sdicks02/jobs/clasher/bot-noise/live-r7/*.txt.
+- **Collect** (on 03, in that job directory):
+  - floorchk passes with 30/30 identical command hashes, Δ 0.000 and 0 restarts:
+    `python3 audsum-r4.py floorchk-r7 --floor`.
+  - The smoke passes with 40/40 terminal games and 0 errors and 0 perc_errors. Its evictions are reported too:
+    ```
+    python3 -c "import json,glob; rs=[json.loads(l) for p in glob.glob('smoke-r7/games-*.jsonl') for l in open(p)]; a=[r.get('aud',{}) for r in rs]; print(len(rs), sum(r.get('terminal',0) for r in rs), sum('error' in r for r in rs), sum(x.get('perc_errors',0) for x in a), sum(x.get('evict',0) for x in a))"
+    ```
+  - LIVE: compare the failure sets in live-r7/*.txt.

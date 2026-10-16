@@ -445,3 +445,53 @@ a5667ac9dde9bd4c5e9fb32bba7b08ff59fac72ec52935106474cd8670037a34; births API in 
   a cached played state and the deleted members' votes, and a suppressed duplicate reports `state == 'played'`.
   Round 3 fixes them with the same signatures. The tests are written to the documented contract, so they must be
   re-run on round 3 before the patch is final.
+
+## 11. Review round 3 (multibody r3 merged on main as bbdc651e): three findings fixed
+
+The LIVE LEAD's review of patch 890bfe58 on the r3 base (origin/main 0f6daaf1d) said MERGE AFTER FIXES. All three
+findings are fixed in bot/noise/livefix; bot/live on main is untouched. The fixes are data-driven: births states and
+evidence, with no card special cases. The reviewer's reproducers (05:/mpac/sdicks02/scratch/live-review/revset-r3)
+are now regression tests, and each fails on 8040430e.
+
+**1 (MUST). Non-played births identities fell back to raw labels.**
+- Case: a FirespiritHut's spirit, labelled FireSpirits and resolved by r3 as `state=spawn, card=FirespiritHut`,
+  counted as FireSpirits evidence. It evicted Zap and admitted a phantom FireSpirits with an inferred play.
+- Fix: every RESOLVED births state (played, spawn, child, leftover; duplicates map to leftover) is evidence for its
+  SOURCE card (`_evidence_card`). A resolved track with an unknown source (a spawn of an unidentified building) is
+  evidence for nothing. Pending and unresolved tracks still use the raw label. The sanitizer keeps a unit whose
+  resolved source is a member, in every resolved state.
+- Tests: `test_spawned_bodies_are_evidence_for_their_spawner` (the repro);
+  `test_every_births_state_has_a_defined_evidence_card[played|spawn|child|leftover|pending|none]`.
+
+**2 (MUST). Catch-up polls still fed the births tracker.**
+- Case: the board evidence skipped synthetic polls, but `tracker.update` ran on each of them. One Skeletons capture
+  repeated over 12 polls gave a Skeletons play at 2410 and evicted HogRider (resync and resync_both).
+- Fix: a synthetic poll, or a capture identity the tracker already took (`_tracked`, the last 64), is a REPLAY. The
+  tracker only resolves the units to its tracks (read-only `resolve`): no hits, votes, births or plays. Matched units
+  keep their track's body, and a unit that would be a birth has no body until the real poll of its capture.
+  Tracker time is not advanced either, so nothing closes early: the births path behaves as if the repeated polls had
+  not happened.
+- Tests: `test_catch_up_polls_add_nothing_to_the_births_tracker[resync|both]`. A gap now gives the same result as
+  real empty frames: no Skeletons play and no eviction.
+
+**3 (SHOULD). A board-only admission could never be evicted.**
+- Case: a phantom Giant evicted Zap. `contradicted()` skips injected plays and the weak rule skips troops, so 5 later
+  Zap detections could not re-admit Zap.
+- Fix: a board-only member (in `board_plays`, with no perceived play) is PROVISIONAL (`RevealedSet.provisional`). It
+  is weak once its units have not met the persistence rule for `confirm_ticks`, and a perceived play or a persisting
+  board presence revalidates it. A provisional victim needs the usual `events_need` plays or `board_need` board
+  records. In the victim ranking, a board admission counts as one play of evidence, so a once-seen spell goes before
+  a board-admitted troop.
+- Test: `test_board_only_admission_is_provisional` (the repro): Zap is re-admitted and the unconfirmed Giant evicted
+  (evictions Zap, then Giant).
+
+**Verification** (origin/main 5017028 = r3 base + later non-bot/live commits; bot/live translate/resync/real_replay
+are unchanged since 8040430e):
+- test_revealed: 39/39 pass (29 earlier + 10 new). On 8040430e's livefix, the 8 new test cases that must fail do
+  fail (3 repros, 4 resolved-state cases and the provisional repro). The pending and none cases are guards and pass
+  on both.
+- LIVE suite on 05, full repo, with versus without the patch: 214 passed / 13 failed / 6 skipped vs 175/13/6, with
+  the same 13 failures (missing runtime/student files on 05). The 03 run with the pinned runtime is in PROGRESS.
+- Invariants kept: `test_fair_information_invariance`, one shared set (`test_board_and_sanitizer_share_the_set`), and
+  the monotone-time tests all pass. Clean-channel bit-identity: floorchk-r7 (PROGRESS).
+- Patch: reports/bot/noise-robust/revealed-set.patch, sha256 88fc13eef8fdb89b16dda5b82445496c7bb0bc7711979f6735d7e74d1d890eb1.

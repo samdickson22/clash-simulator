@@ -597,3 +597,106 @@ def test_refilter_counts_each_unit_once(rt):
     tr, _ = _frames(rt, plays, units, 2600)
     assert tr.stats['board_refilter'] == 1 and tr.stats['board_dropped:0:Valkyrie'] == 1
     assert tr.stats['board_dropped'] == 1 and tr.stats['board_dropped:1:Giant'] == 0
+
+
+# -- review round 3 (multibody r3 merged): resolved sources, catch-up births, provisional board admissions ---------
+def test_spawned_bodies_are_evidence_for_their_spawner(rt):
+    """A FirespiritHut (8th card) spawns a Fire Spirit labelled FireSpirits. The tracker resolves it as a spawn of the
+    hut (state 'spawn', card FirespiritHut): it is FirespiritHut evidence, never a phantom FireSpirits that evicts a
+    real card (review r3 repro: Zap evicted at 1855, FireSpirits admitted with an inferred play at 1780)."""
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    order = ['HogRider', 'Valkyrie', 'Zap', 'Cannon', 'Earthquake', 'Musketeer', 'Fireball', 'FirespiritHut']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    states = set()
+    for t in range(100, 1910, 5):
+        units = [_u(c, 9, 20) for p, c in plays.items() if tr.cards.main.get(c) and c != 'FirespiritHut' and p <= t < p + 100]
+        if t >= 1600:
+            units.append(_u('FirespiritHut', 4.5, 26.5))
+        if 1800 <= t < 1900:
+            units.append(_u('FireSpirits', 4.5, 25.6 - .12*(t - 1800)))
+        tr.information(_rec(t, units, [_ev(plays[t], t)] if t in plays else []))
+        states |= {(tr.tracker.identity(x.id).state, tr.tracker.identity(x.id).card) for x in tr.tracker.live
+                   if x.owner == 1 and x.label() == 'FireSpirits'}
+    assert ('spawn', 'FirespiritHut') in states
+    assert tr.revealed.evictions == [] and 'FireSpirits' not in tr.revealed.members() and 'Zap' in tr.revealed.members()
+    assert tr.revealed.board['FireSpirits'] < tr.revealed.board_need and 'FireSpirits' not in tr.revealed.board_plays
+
+
+@pytest.mark.parametrize('state', ['played', 'spawn', 'child', 'leftover', 'pending', 'none'])
+def test_every_births_state_has_a_defined_evidence_card(rt, state):
+    """Every births Identity state: a resolved track (played, spawn, child, leftover/duplicate) is evidence for its
+    SOURCE card and is kept as a member's unit; one with an unknown source (a spawn of an unidentified building) is
+    evidence for nothing; a pending or unresolved track is evidence for its raw label, sanitized by that label."""
+    from collections import Counter
+    from bot.live.births import Identity
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    for i, c in enumerate(REAL + ['Earthquake']):
+        tr.information(_rec(200 + 200*i, events=[_ev(c, 200 + 200*i)]))
+    assert len(tr.revealed.members()) == 8 and not tr.revealed.allows('Skeletons')
+    body = next(iter(tr.cards.bodies_of('SkeletonArmy')))
+    known = Identity(1, 1, 'SkeletonArmy', 'Skeletons', 'SkeletonArmy', body, state)
+    unknown = Identity(2, 1, 'SkeletonArmy', 'Skeletons', None, body, state)
+    s = Counter()
+    if state in ('pending', 'none'):
+        assert tr._evidence_card('Skeletons', known) == 'Skeletons' == tr._evidence_card('Skeletons', unknown)
+        assert not tr._unit_ok('Witch', 1, known, None, s)          # sanitized by its own label
+    else:
+        assert tr._evidence_card('Skeletons', known) == 'SkeletonArmy'
+        assert tr._evidence_card('Skeletons', unknown) is None
+        assert tr._unit_ok('Witch', 1, known, None, s) and s['board_kept_by_identity'] == 1
+
+
+def _catch_up_birth(rt, make, gap):
+    """ORDER8 with HogRider never confirmed on the board (contradicted); then births mode and one Skeletons sighting
+    at 2465, after a frame gap (LiveSession: 12 synthetic catch-up polls) or after real empty frames."""
+    tr = make()
+    s = __import__('bot.noise.livefix.translate', fromlist=['LiveSession']).LiveSession(
+        rt, _Probe(rt, belief=False), OWN, translator=tr)
+    plays = {200 + 200*i: c for i, c in enumerate(ORDER8)}
+    for t in range(100, 2405, 5):
+        units = [_u(c, 9, 20) for p, c in plays.items() if tr.cards.main.get(c) and c != 'HogRider' and p <= t < p + 100]
+        s.step(_rec(t, units, [_ev(plays[t], t)] if t in plays else []))
+    tr.plays_from = 'births'
+    if not gap:
+        for t in range(2405, 2465, 5):
+            s.step(_rec(t))
+    s.step(_rec(2465, [_u('Skeletons', 4.5, 22)]))
+    return tr
+
+
+@pytest.mark.parametrize('kind', ['resync', 'both'])
+def test_catch_up_polls_add_nothing_to_the_births_tracker(rt, kind):
+    """One capture repeated over 12 catch-up polls is one sighting for the births tracker too: no hits, votes or
+    deployments from the synthetic polls, so no Skeletons play at 2410 and no eviction of HogRider (review r3 repro).
+    The gap gives the same result as real empty frames."""
+    from bot.noise.livefix.resync import ResyncTranslator, resync_both
+    make = (lambda: ResyncTranslator(rt, OWN, plays_from='events')) if kind == 'resync' else (lambda: resync_both()(rt, OWN))
+    a, b = _catch_up_birth(rt, make, True), _catch_up_birth(rt, make, False)
+    for tr in (a, b):
+        assert tr.revealed.evictions == [] and not [p for p in tr.plays[1] if p[1] == 'Skeletons'], tr.revealed.evictions
+    assert a.stats['catchup_polls'] == 12 and a.stats['tracker_replay_frames'] >= 12
+    assert a.revealed.seen.get('Skeletons') == b.revealed.seen.get('Skeletons') == [2465]
+
+
+def test_board_only_admission_is_provisional(rt):
+    """A phantom Giant (seen for 3 s, its play never perceived) is admitted on board evidence and evicts Zap. Its
+    admission is provisional: once its units no longer persist, it is weak, so Zap's later real plays (5
+    detections) re-admit Zap and evict the unconfirmed Giant (review r3 repro: Zap stayed out for good)."""
+    from bot.noise.livefix.resync import ResyncTranslator
+    tr = ResyncTranslator(rt, OWN, plays_from='events')
+    order = ['HogRider', 'Valkyrie', 'Zap', 'Cannon', 'SkeletonArmy', 'Musketeer', 'Fireball', 'Earthquake']
+    plays = {200 + 200*i: c for i, c in enumerate(order)}
+    plays.update({1800: 'Fireball', 2000: 'Earthquake'})
+    for t in range(100, 3605, 5):
+        units = [_u(c, 9, 20) for p, c in plays.items() if tr.cards.main.get(c) and p <= t < p + 100]
+        if 2500 <= t < 2560:
+            units.append(_u('Giant', 4.5, 20 - .02*(t - 2500)))
+        ev = [_ev(plays[t], t)] if t in plays else []
+        if t in (2800, 3000, 3200, 3400, 3600):
+            ev.append(_ev('Zap', t))
+        tr.information(_rec(t, units, ev))
+    assert tr.revealed.evictions == ['Zap', 'Giant'], tr.revealed.evictions
+    assert 'Zap' in tr.revealed.members() and 'Giant' not in tr.revealed.members()
+    assert 'Giant' not in tr.revealed.board_plays and not any(r['name'] == 'Giant' for r in tr.public_events)

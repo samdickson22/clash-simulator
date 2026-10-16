@@ -341,6 +341,8 @@ class LiveTranslator(Translator):
         self.tick, self._floor = None, 0
         self._prev, self._cur = [], []
         self._board = None                   # this frame's tracking input/output for refilter()
+        from collections import deque
+        self._tracked = deque(maxlen=64)     # identities of the captures the births tracker took (frame_identity)
 
     # -- bodies -------------------------------------------------------------------------------
     def body(self, name):
@@ -534,15 +536,21 @@ class LiveTranslator(Translator):
         own = {t['side']: t['alive'] for t in self.towers(record) if t['owner'] == 0 and t['kind'] == 'princess'}
         # the tracker state before this frame: refilter() re-runs the frame from it if the set changes in this frame
         snap = self.tracker.snapshot() if self.sanitize and rv.evict else None
-        assigned, plays, ident, drops = self._track_frame(record, mapped, own)
+        # a synthetic catch-up poll or an already tracked capture is no new perception: read-only for the tracker
+        frame = frame_identity(record)
+        replay = bool(record.get('_synthetic')) or frame in self._tracked
+        if not replay:
+            self._tracked.append(frame)
+        assigned, plays, ident, drops = self._track_frame(record, mapped, own, replay)
         self.stats.update(drops)
         self._board = dict(version=rv.version, version0=rv.version, snap=snap, mapped=mapped, own=own,
-                           plays=list(plays), drops=drops, assigned=assigned)
+                           plays=list(plays), drops=drops, assigned=assigned, replay=replay)
         seen = {}
         for i, u, c, o in mapped:
-            if o == 1:
-                seen.setdefault(self._evidence_card(c, ident.get(i)), (float(u['x']), float(u['y'])))
-        for card in rv.observe_board(record['tick'], seen, frame_identity(record), bool(record.get('_synthetic'))):
+            k = self._evidence_card(c, ident.get(i)) if o == 1 else None
+            if k is not None:
+                seen.setdefault(k, (float(u['x']), float(u['y'])))
+        for card in rv.observe_board(record['tick'], seen, frame, bool(record.get('_synthetic'))):
             self._admit(card, record['tick'], None, None, via_board=True)
         return assigned, plays
 
@@ -558,17 +566,27 @@ class LiveTranslator(Translator):
             out |= self.cards.bodies_of(m)
         return out
 
+    RESOLVED = ('played', 'spawn', 'child', 'leftover')     # births states whose track has a resolved source card
+
     def _evidence_card(self, label, ident):
-        """The card a perceived opponent unit is evidence for: the resolved card of the deployment its track belongs
-        to (a play the tracker emitted) when that is a member or the raw label is not allowed (15 'Skeletons' labels
-        of a SkeletonArmy deployment are SkeletonArmy evidence), else the raw label."""
-        c = ident.card if ident is not None and ident.state == 'played' else None
-        if c and c != label and (c in self.revealed.members() or not self.revealed.allows(label)):
+        """The card a perceived opponent unit is evidence for (None: no evidence). A track the tracker has resolved
+        (its deployment closed: a play, a spawner's spawn, a death child, a leftover/duplicate of an earlier play) is
+        evidence for its SOURCE card when that is a member or the raw label is not allowed (15 'Skeletons' labels of
+        a SkeletonArmy are SkeletonArmy evidence; a Fire Spirit walking off a FirespiritHut is FirespiritHut
+        evidence), and for nothing when its source is unknown (a spawn of an unidentified building). A pending or
+        unresolved track, or a birth, is evidence for its raw label."""
+        if ident is None or ident.state not in self.RESOLVED:
+            return label
+        c = ident.card
+        if c is None:
+            self.stats['board_evidence_unsourced'] += 1
+            return None
+        if c != label and (c in self.revealed.members() or not self.revealed.allows(label)):
             self.stats['board_evidence_resolved'] += 1
             return c
         return label
 
-    def _track_frame(self, record, mapped, own):
+    def _track_frame(self, record, mapped, own, replay=False):
         """Sanitize this frame's units against the current set, give the kept ones to the tracker (one batch), and
         validate the bodies it assigns. -> (assigned, plays, {unit index: tracker Identity}, drop counters).
         Opponent units, when the set is full (bot/live/revealed.py):
@@ -576,7 +594,9 @@ class LiveTranslator(Translator):
                  deployment of a member card (a misread label of a known deployment), or every body the label's card
                  can put down is a body of a member card (a member's next deployment read with a sibling label);
           then   dropped if the tracker gives it a body no member card has (a track of an evicted card, a relabel).
-        Own units: our own deck. Nothing is dropped while the set is not full, so a clean channel is unchanged."""
+        Own units: our own deck. Nothing is dropped while the set is not full, so a clean channel is unchanged.
+        `replay` (a synthetic catch-up poll, or a capture already tracked): the tracker only resolves the units to its
+        tracks (read-only: no hits, votes, births or plays); a unit that would be a birth has no body this poll."""
         tick, rv, s = record['tick'], self.revealed, Counter()
         strict = self.sanitize and self._strict()
         ident, bodies = {}, None
@@ -595,8 +615,14 @@ class LiveTranslator(Translator):
             units.append((card, owner, float(u['x']), float(u['y']), u.get('score')))
             idx.append(i)
             owners.append((owner, card))
-        got, plays = self.tracker.update(tick, units, own)
-        tracks = list(getattr(self.tracker, 'last_tracks', ()) or [None]*len(idx))
+        if replay:
+            res = self.tracker.resolve(units, tick) if units else []
+            got = [(r.body, (0., 0.)) if r is not None else (None, (0., 0.)) for r in res]
+            tracks, plays = [r.id if r is not None else None for r in res], []
+            s['tracker_replay_frames'] += 1
+        else:
+            got, plays = self.tracker.update(tick, units, own)
+            tracks = list(getattr(self.tracker, 'last_tracks', ()) or [None]*len(idx))
         assigned = [(None, (0., 0.))]*len(record.get('units', ()))
         if strict:
             bodies = self._allowed_bodies() if bodies is None else bodies
@@ -614,7 +640,7 @@ class LiveTranslator(Translator):
     def _unit_ok(self, card, owner, ident, bodies, s):
         if owner == 0 or self.revealed.allows(card):
             return self.board_card_ok(card, owner, s)
-        if ident is not None and ident.state == 'played' and ident.card in self.revealed.members():
+        if ident is not None and ident.state in self.RESOLVED and ident.card in self.revealed.members():
             s['board_kept_by_identity'] += 1
             return True
         b = self.cards.bodies_of(card)
@@ -648,7 +674,7 @@ class LiveTranslator(Translator):
             for w in rv.evictions[b['version0']:]:
                 self.stats['tracks_forgotten'] += self.tracker.forget_card(1, w)
             version = rv.version
-            assigned, plays, _, drops = self._track_frame(record, b['mapped'], b['own'])
+            assigned, plays, _, drops = self._track_frame(record, b['mapped'], b['own'], b['replay'])
             pairs = list(zip(b['assigned'], assigned))
             self.stats.subtract(b['drops'])
             self.stats.update(drops)
