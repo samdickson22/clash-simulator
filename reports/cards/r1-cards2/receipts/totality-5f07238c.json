@@ -1,0 +1,41 @@
+{
+  "stage": "totality",
+  "status": "PASS",
+  "result": {
+    "root-plain": {
+      "probes": 6707,
+      "panics": 0,
+      "failing_cuts": 68,
+      "failures": {
+        "ValueError: unsupported card absent from imported pilot configuration": 244
+      }
+    },
+    "root-scrub": {
+      "probes": 6707,
+      "panics": 0,
+      "failing_cuts": 0,
+      "failures": {}
+    },
+    "runtime-plain": {
+      "probes": 6707,
+      "panics": 0,
+      "failing_cuts": 67,
+      "failures": {
+        "ValueError: unsupported card absent from imported pilot configuration": 243
+      }
+    },
+    "runtime-scrub": {
+      "probes": 6707,
+      "panics": 0,
+      "failing_cuts": 0,
+      "failures": {}
+    }
+  },
+  "input_sha256": {
+    "totality-root-plain.json": "4788dc4fba2b3396a3ecaa23ded61a55ed4947cc6ea265aca7d1e4114512e6bb",
+    "totality-root-scrub.json": "04d3fc2f14d8b91f1b028f212b6dab3580fdf2ecc9cff692295a90ed3e3ef243",
+    "totality-runtime-plain.json": "9c1abe2b2fbd856703248869e478248052637e6c2b824eb2c24576638c3dc521",
+    "totality-runtime-scrub.json": "04d3fc2f14d8b91f1b028f212b6dab3580fdf2ecc9cff692295a90ed3e3ef243"
+  },
+  "audit_sha256": "91bb12065f0a50d711445f52468270249af9897d75fbe463f09c696468eedecc"
+}

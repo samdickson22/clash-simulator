@@ -67,7 +67,7 @@ impl BattleState {
         let outer = units(spec.maximum)+units(b.stats.radius);
         square >= inner*inner && square <= outer*outer
     }
-    pub(super) fn dash_combat(&mut self, i: usize, grid: &[Vec<usize>]) -> bool {
+    pub(super) fn dash_combat(&mut self, i: usize) -> bool {
         let Some(spec) = self.entities[i].stats.dash.clone() else { return false; };
         let Some(mut state) = self.entities[i].dash.take() else { return false; };
         let mut active = false;
@@ -76,7 +76,7 @@ impl BattleState {
         } else if state.phase == "travel" {
             active = true;
         } else if state.phase == "charging" {
-            let target = self.target(i,grid).and_then(|id| self.index(id));
+            let target = self.target(i).and_then(|id| self.index(id));
             if let Some(j) = target { self.entities[i].target = Some(self.entities[j].id); }
             if let Some(j) = target.filter(|&j| self.dash_band(i,j,&spec)) {
                 state.target = Some(self.entities[j].id);

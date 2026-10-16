@@ -1,0 +1,87 @@
+{
+  "status": "SUPERSEDED DRY RUN; long gates held pending replacement commit/native SHA",
+  "source_commit": "9eed63029db98d6f99db16c1701a964a0c741fd2",
+  "source_engine_tree_equals_worktree_HEAD": "ab241882502ce102af7df59c90c6fd5126d3dc0e",
+  "native": {
+    "sha256": "1923619e996684122571cae05688e085163328b3cf6334dd3bad1a2d8e53aae8",
+    "origin": "/mpac/sdicks02/jobs/clasher/cards/r1-cards2/native-rebuild/clasher_core.abi3.so",
+    "built_here": false
+  },
+  "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+  "base_gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "overlay_manifest_sha256": "870eb15b5253baa3afbf96f9fffbdaf6a6873e4bfda1744dc4d74f6e7538579c",
+  "overlay_files": 473,
+  "overlay_changed": 9,
+  "base_only_src_files": 0,
+  "overlay_applied_slots": 79,
+  "overlay_inputs": {
+    "calibration": {
+      "sha256": "9a70da5abd6be9d739df402d0c87d4504aaaf62b441758a0c547a0f3b017473d"
+    },
+    "gamedata": {
+      "sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65"
+    },
+    "royalesim_15535": {
+      "sha256": "c68d6c011e0130649aa2647b21e293c8bf7141e32262bdfd8cc7592704229fdc"
+    },
+    "royalesim_16402": {
+      "sha256": "babaa3d129e370c5838f12001683e2a5579dbaec581fd94968e689aacfc3fb60"
+    }
+  },
+  "receipts": {
+    "CARDS-RUNTIME-RECEIPT.json": "24aa81935740aefb9f36d85e8ef77dafe24070a4e72f28c5bafdb080cecc40ad",
+    "LIVE16402-RECEIPT.json": "884601c5cd49bbe4170ba75d9cc18648d41011006cf087507cba6858ba53d14a"
+  },
+  "local_glue_sha256": {
+    "bot/players/runtime.py": "7887fd7cacdec76b7906d851b2ae02912a1214e9fe082c5703414d4b04b25ae4",
+    "bot/cards/build_runtime.py": "fde9b80916386381ac9366f4804c06e868a398d185d10844733848fe2344bb31",
+    "bot/cards/build_live16402.py": "9fad0953fd432e1adcd355835e40fb4f860ccb2b95cac07dae0542869ba14a75",
+    "bot/cards/balance_overlay.py": "694b3028c71033f821b724163f3861ca5693d9cc906868e02293757e02bbf7d3",
+    "reports/cards/r1-cards2/tools/run.sh": "e6df2ef69877b53c0a4474a0ba6cdff5e774166509b49a6d1ce5d22a3a0df7ce"
+  },
+  "aborted_jobs": {
+    "roots": {
+      "host": "127x08",
+      "pgid": 3260029,
+      "baseline_records": 600,
+      "candidate_records": 56,
+      "valid_gate": false
+    },
+    "eval": {
+      "host": "127x04",
+      "pgid": 2871656,
+      "completed_games": 0,
+      "valid_gate": false
+    }
+  },
+  "smoke": {
+    "cards": {
+      "build_s": 45.6,
+      "scope": "full",
+      "cards": 237,
+      "meta_cards": 121,
+      "meta_bodies": 142,
+      "costs": 237,
+      "templates": 350,
+      "config": "f9ad860ffba69a3c",
+      "meta": "5bdbc8bf3ffbb3c0",
+      "costs_h": "8a56bbf08c8df628",
+      "templates_h": "9e1a3bdbf77604fe"
+    },
+    "live": {
+      "build_s": 46.0,
+      "scope": "full",
+      "cards": 238,
+      "meta_cards": 121,
+      "meta_bodies": 142,
+      "costs": 238,
+      "templates": 350,
+      "config": "193b6615e3a1b7c1",
+      "meta": "4d5fa11698eafc16",
+      "costs_h": "2e0399e47d0c32dc",
+      "templates_h": "bef954f967564d57"
+    }
+  },
+  "smoke_exit": 0,
+  "existing_pin_entries_unchanged": true
+}

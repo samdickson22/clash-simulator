@@ -2072,7 +2072,9 @@ class BattleState:
             troop._native_ground_route_cells = []
             troop._ground_path_cache_key = None
 
-    def _first_update_spawned(self, troop, *, collide: bool = True) -> None:
+    def _first_update_spawned(
+        self, troop, *, collide: bool = True, hidden: frozenset[int] = frozenset()
+    ) -> None:
         """Run a just-emitted troop's combat and movement components once.
 
         Ported from RoyaleSim (MIT), state.rs ``first_update``: an emission
@@ -2080,6 +2082,8 @@ class BattleState:
         one move step (spawner.SPAWNED_FIRST_STEP = client16402_same_tick).
         Buildings take no step. A death spawn's members step together from
         one point (``collide=False``): the step does not see the siblings.
+        ``hidden``: entity ids (a periodic wave's other members) that this
+        step's collision and avoidance scans skip.
         """
         if not isinstance(troop, Troop) or not troop.is_alive:
             return
@@ -2092,14 +2096,20 @@ class BattleState:
         if self.fast_path:
             self._rebuild_entity_buckets()
             self._rebuild_target_cache()
-        if collide:
-            self._accumulate_troop_collision_for(troop)
-        troop.begin_movement_tick()
+        # Saved and restored: a spawn inside this update gets its own set.
+        previous_hidden = getattr(self, "_first_update_hidden_ids", frozenset())
+        self._first_update_hidden_ids = hidden
         try:
-            troop.update_movement_component(dt, self)
+            if collide:
+                self._accumulate_troop_collision_for(troop)
+            troop.begin_movement_tick()
+            try:
+                troop.update_movement_component(dt, self)
+            finally:
+                troop.finish_movement_tick(self)
+                troop.quantize_logic_position()
         finally:
-            troop.finish_movement_tick(self)
-            troop.quantize_logic_position()
+            self._first_update_hidden_ids = previous_hidden
         if self.fast_path and not self._sync_fast_target_entity(troop):
             self._rebuild_target_cache()
 
@@ -2922,12 +2932,14 @@ class BattleState:
         )
         own_mass = max(1e-9, unit_mass(troop.card_stats))
         own_air_collision = uses_air_collision_plane(troop)
+        hidden = getattr(self, "_first_update_hidden_ids", ())
         for other in self.entities.values():
             other_airborne_leap = (
                 getattr(other, "_mk_leap_phase", None) == "airborne"
             )
             if (
                 other is troop
+                or other.id in hidden
                 or not isinstance(other, Troop)
                 or not other.is_alive
                 or (

@@ -83,9 +83,9 @@ impl BattleState {
         }
         (px + 1, py)
     }
-    fn production_child(&mut self, i: usize, index: usize, count: usize, spec: &Spec) {
+    fn production_child(&mut self, i: usize, index: usize, count: usize, spec: &Spec) -> Option<usize> {
         let parent = &self.entities[i];
-        let Some(mut child) = self.config.production_children.get(parent.stats.key()).cloned() else { return; };
+        let mut child = self.config.production_children.get(parent.stats.key()).cloned()?;
         Self::clone_payload(&mut child, parent);
         let (px, py) = (units(parent.x), units(parent.y));
         let (x, y) = if spec.radius > 0.0 {
@@ -110,8 +110,16 @@ impl BattleState {
         child.facing = (0, if parent.owner == 0 { 1000 } else { -1000 });
         child.birth = self.tick;
         self.entities.push(child);
-        if spec.first_update {
-            self.fresh.push((self.entities.len() - 1, true));
+        Some(self.entities.len() - 1)
+    }
+    /// The first update of one spawn call's children, right after that call (spawner.py:PeriodicSpawner._spawn_units):
+    /// each member with the call's other members hidden (apart).
+    fn production_first_update(&mut self, spec: &Spec, wave: &[usize]) {
+        if !spec.first_update {
+            return;
+        }
+        for &k in wave {
+            self.first_update_now(k, true, wave.iter().copied().filter(|&j| j != k).collect());
         }
     }
     pub(super) fn production_tick(&mut self, i: usize) {
@@ -154,7 +162,8 @@ impl BattleState {
                 }
                 budget -= needed;
                 state.unit_elapsed = 0.0;
-                self.production_child(i, state.wave_spawned, spec.count.max(1), &spec);
+                let child = self.production_child(i, state.wave_spawned, spec.count.max(1), &spec);
+                self.production_first_update(&spec, &child.into_iter().collect::<Vec<_>>());
                 state.wave_spawned += 1;
                 state.pending -= 1;
                 if state.pending == 0 {
@@ -184,14 +193,15 @@ impl BattleState {
             state.elapsed = 0.0;
             let count = spec.count.max(1);
             if spec.intra > 0.0 && count > 1 {
-                self.production_child(i, 0, count, &spec);
+                let child = self.production_child(i, 0, count, &spec);
+                self.production_first_update(&spec, &child.into_iter().collect::<Vec<_>>());
                 state.wave_spawned = 1;
                 state.pending = count - 1;
                 state.unit_elapsed = 0.0;
             } else {
-                for index in 0..count {
-                    self.production_child(i, index, count, &spec);
-                }
+                let wave: Vec<usize> =
+                    (0..count).filter_map(|index| self.production_child(i, index, count, &spec)).collect();
+                self.production_first_update(&spec, &wave);
                 state.waves += 1;
             }
             if budget == 0.0 {

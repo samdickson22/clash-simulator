@@ -353,15 +353,14 @@ def main():
         f'not comparable on {m_15535["unknown"]}. A row counted as "equals" means the older file has no differing row for it.',
         f'- RoyaleSim versions: `{RS_PATH.name}` (16.402.19) is used. The older `cards-160402017.json` (16.402.2) differs '
         f'from it on {len(rs_versions)} card-level fields ({", ".join(sorted({c for c, *_ in rs_versions}))}), so it is not the same truth.',
-        f'- CLIENT16402_VALUES: {overlay_ok} of {len(overlay_rows)} overlay values equal the 16.402.19 table as it stands; '
-        f'{overlay_unmapped} not mapped. The overlay is already in the table, so applying it again changes nothing.',
+        f'- CLIENT16402_VALUES: {overlay_ok} of {len(overlay_rows) - overlay_unmapped} mapped overlay values equal the '
+        f'16.402.19 table as it stands ({overlay_unmapped} not mapped). The table already carries the overlay, so it adds nothing here.',
         '- Crown-tower damage: gamedata stores a negative delta (e.g. -75) and RoyaleSim an effective percent (25 or 23). '
         'We convert ours with 100 + raw for negative raw, per RoyaleSim\'s stated convention. Ours is the first '
         'crownTowerDamagePercent in the base card; a spell\'s own area or projectile, or a unit, counts as its own. '
         'Values in a buff, a spawn chain or a unit\'s own area effect are UNCERTAIN.',
         f'- Blank 16.402 crown cells: RoyaleSim loads a blank cell as 100 (raw None). Where ours is not 100 and '
-        f'RoyaleSim\'s only value is that blank, the row is UNCERTAIN, not a difference ({", ".join(blank_cards) or "none"}). '
-        'The 15.535.29 table has a measured value on those cards.',
+        f'RoyaleSim\'s only value is that blank, the row is UNCERTAIN, not a difference ({", ".join(blank_cards) or "none"}).',
         '- Sub-units (death spawns, spawners, morphs, second units) are compared on base stats only, with the same rules as the card.',
         '- The material list is the brief\'s (hp, damage, speed, range, hit speed, cost, spawn counts). Load time, sight range, '
         'deploy time, spawn interval and spell radius/duration are compared but not material.',

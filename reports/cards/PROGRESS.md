@@ -49,6 +49,17 @@ See COVERAGE.md "Batch plan".
 | cards-batchA-opus-r1 | Opus | Batch A mechanics fixes in engine-cards (C56 bit-identical); stat fixes → overlay | engine-cards/, reports/cards/batchA/ |
 | cards-proxy-v2-sol-r1 | Sol | proxy table v2 per BOT LEAD Sol review (8 findings + weak proxies) | bot/cards/proxy_table.py |
 | cards-balance-size-haiku-r1 | Haiku | DONE c76bf1fff: C56 13/56, others 22/66 material vs 16.402.19 | reports/cards/stats/BALANCE-SIZE.md |
+| cards-b1-opus-r1 | Opus | Batch B1 troops mechanics (worktree clasher-cards-b1, branch cards/b1) | reports/cards/b1/ |
+| cards-b2-opus-r1 | Opus | Batch B2 spells mechanics + Poison-dash/Mirror-bomb native fixes (clasher-cards-b2, cards/b2) | reports/cards/b2/ |
+| cards-batchA-gate-sol-r1 | Sol | shepherd Batch A C56 gate on 04 (PGID 2388512), fill RESULTS §6, triage spec on FAIL | reports/cards/batchA/ |
+| cards-c1-spec-sol-r1 | Sol | Batch C specs: attack/targeting/dash cards + 4 native≠Python bugs | reports/cards/specs/C1-SPECS.md |
+| cards-c2-spec-sol-r1 | Sol | Batch C specs: special mechanics, death releases, stats-only confirmations | reports/cards/specs/C2-SPECS.md |
+| cards-b2-gate-sol-r1 | Sol | B2 C56 gate relaunch on 04 + RESULTS; wakes Opus B2 on FAIL | clasher-cards-b2 reports/cards/b2/ |
+| cards-scope-gate-sol-r1 | Sol | r1-cards1 policy gate + noncore final (08) → SCOPE.md; wakes Opus scope on FAIL | reports/cards/runtime/ |
+| cards-batchA-review-r1 | Sol | review Batch A engine diff 7e64d8b93..9eed63029 | (verdict) |
+| cards-r1cards2-sol-r1 | Sol | assemble r1-cards2 (scope+Batch A, native 1923619e) + live16402b; gates | reports/cards/r1-cards2/ |
+| cards-runtime-review-r1 | Sol | review runtime/overlay code 0874da215 | (verdict) |
+| cards-nulls-fixtures-sol-r1 | Sol | Null's Royale (15.535!) native fixtures: offline prep, then LIVE-granted slots | reports/cards/nulls/ |
 | cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
@@ -76,3 +87,38 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   IceGolemite 75 = harness alias (IceGolemite vs IceGolem name) artifact.
   NEXT after Batch A commit: native-parity follow-ups → Batch A worker; then parallel Opus workers in separate worktrees
   per mechanic group (spells / spawning+death / special / timing), each with its own C56 gate.
+- 01:38Z Batch A WIP committed 7720915a8 (gate on 04: fixtures 386/577 at 01:38Z; I watch it and wake the
+  worker — its turn ended). B1/B2 worktrees from 7720915a8. Timing cause found (side tables uncut → >1 MiB config
+  re-shipped per decision); fix = fc_cut side tables + content-hash pool cache (scope worker). 03/04/08 busy with LIVE
+  compositing 12–24 h → workers use cpu_job N≤8.
+- 01:50Z RESUME after the Claude usage stop (~01:45Z). Resumed in place: scope, b1, b2 (Opus). live16402 kept running.
+  Batch A gate r2 on 04 PID 2388512 (native 1923619e, serialization fix; Batch A edits after 7720915a8 uncommitted in
+  this worktree), watched by the lead; wake cards-batchA-opus-r1 only for code fixes. Routing now: non-coding (gates,
+  sweeps, reviews, bookkeeping) → Sol; engine code → Opus; narrow → Haiku. No duplicate threads found.
+- 02:16Z Sam: 'use some sol'. Non-coding moved to Sol (gate shepherd, C1/C2 spec writers). Cannon stall = live
+  own-deck tracker out of sync (driver deck still Skeletons), not engine scope: Cannon + whole live deck are C56.
+- 02:20Z **Batch A C56 gate PASS** (02:18Z: fixtures 577/577, rust-only 577/577, roots 600/600; native 1923619e;
+  commit 9eed63029). Reported to coordinator. Runtime/overlay code committed 0874da215. Opus owners (scope, B2,
+  Batch A, live16402) idle after handoff; B1 continues on Opus. Sol shepherds gates/reviews/assembly (Sam: Opus owns,
+  Sol = workhorse incl. tedious code). Merge to main after Sol reviews of Batch A engine + runtime code.
+- 02:25Z Batch A engine review REJECT: Freeze inheritance after first update in Python vs before drain in Rust
+  (death_effects.py:285 / lib.rs:3519) + wave siblings visible in first update → Opus Batch A owner fixing, then re-gate.
+  r1-cards2 assembly holding long gates for the new sha. BOT LEAD: (1) widen R.bots in r1-cards1 (Opus scope owner
+  assigned); live switch ships as bundle r1-cards1 + their extended nets + open-world belief; (2) full-pool retrain
+  generates under **live16402 on r1-cards2** → tell BOT LEAD when that opt-in pin is ready (start signal).
+  Null's slots: reference AVD, client 15.535.13 → mechanics only; slot 1–2 h via LIVE LEAD.
+- 02:36Z Batch A review r2 REJECT (same class: spell-killed spawner → death-spawn first update vs spell status pass,
+  Python synchronous, Rust after direct_spell). Opus owner told to close the CLASS (audit table of all mid-phase spawn
+  paths + probe per row), relaunch gate. Gate r3 (5f07238c) to be killed; r1-cards2/live16402b gates continue on
+  5f07238c, final native swapped in with smoke + K4L sha check.
+- 02:37Z Runtime code review (0874da215) REJECT: fc_cut drops Mirror level12:<card> payloads (BLOCKER), assembler staging
+  can delete BASE (BLOCKER), symlink-follow in rsync overlay, lopp_fast fc stale base config, r1-cards1 wrong-root
+  gamedata pin. Split: Opus scope owner (fc_cut/lopp_fast/runtime.py + R.bots), Sol r1-cards2 worker (assemblers +
+  tests). Then fresh Sol review round 2 before main.
+- 03:08Z Landed: d6c347ac1 (R.bots widened + runtime review fixes; gate4 K4L 12/12, mirror 80/80, own deck w/ new cards 0
+  errors), f97b2052e/a71a7643a (assembler safety, Sol), 878d5f459 (Batch A boundary-class fix, native de11f124, 21
+  paths × 2 seats audited). Running: Batch A gate r4 (04, PGID 3671549; Sol shepherd), Batch A review r3, runtime review
+  r2 (fresh Sol), r1-cards2/live16402b assembly+gates (Sol; swap to final native/runtime when gates finish).
+- 03:28Z **MERGED cards/lead → main 0ee42633e**: Batch A (gate run 4 PASS on native de11f124; review r3 APPROVE),
+  r1-cards1 (R.bots widened; runtime review r3 APPROVE after lead fix 99b26b995), live16402 tooling. Told BOT LEAD +
+  coordinator. Pending: live16402b final (Sol r1cards2 worker) = BOT LEAD generation start signal.

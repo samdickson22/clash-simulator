@@ -1,0 +1,79 @@
+{
+  "engine_commit": "878d5f459d58112527e9c3e76c804f27e5d7c0a3",
+  "runtime_commit": "d6c347ac1ce4ce8382745ba2d9a7fd31dcf830de",
+  "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "native_origin": "/mpac/sdicks02/jobs/clasher/cards/r1-cards2/final/native/clasher_core.abi3.so",
+  "native_copied_from_batchA_owner": true,
+  "native_rebuilt_by_this_worker": false,
+  "base_gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "overlay_gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+  "overlay_applied_slots": 79,
+  "overlay_manifest_sha256": "b98ea61c5dd438f26bfbdd42bdf51efbabe289a26964922b69730eff7b02aad3",
+  "overlay_files": 473,
+  "overlay_changed": [
+    "engine-rs/differential.py",
+    "src/clasher/balance.py",
+    "src/clasher/battle.py",
+    "src/clasher/card_types.py",
+    "src/clasher/entities.py",
+    "src/clasher/factory/mechanic_detector.py",
+    "src/clasher/mechanics/shared/death_effects.py",
+    "src/clasher/mechanics/shared/spawner.py",
+    "engine-rs/spawn_snapshot.py"
+  ],
+  "base_only_src_files": [],
+  "inputs": {
+    "calibration": {
+      "sha256": "9a70da5abd6be9d739df402d0c87d4504aaaf62b441758a0c547a0f3b017473d"
+    },
+    "gamedata": {
+      "sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65"
+    },
+    "royalesim_15535": {
+      "sha256": "c68d6c011e0130649aa2647b21e293c8bf7141e32262bdfd8cc7592704229fdc"
+    },
+    "royalesim_16402": {
+      "sha256": "babaa3d129e370c5838f12001683e2a5579dbaec581fd94968e689aacfc3fb60"
+    }
+  },
+  "receipt_sha256": {
+    "CARDS-RUNTIME-RECEIPT.json": "87d4cf225ebdaf39a00650080246a5b01d42c8ac54e702005aab0a2b1e50439c",
+    "LIVE16402-RECEIPT.json": "81f5ccb3e054449cd64788161514ef2f302481f28b1167a1594c6542f08d4204"
+  },
+  "pins": {
+    "r1-cards2": {
+      "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "r3a_threshold": 0.5005528330802917,
+      "card_scope": "full",
+      "fc_side_cut": true,
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65"
+    },
+    "live16402b": {
+      "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "r3a_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "r3a_threshold": 0.5005528330802917,
+      "card_scope": "full",
+      "fc_side_cut": true,
+      "gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+      "tournament_crown_from_gamedata": [
+        "Fireball",
+        "Poison"
+      ]
+    }
+  },
+  "other_worktree_pin_entries_unchanged_vs_head": "f4bb297291afeeaba1b3be91110d66f31cfbc09b",
+  "selected_worktree_pins_equal_gated_snapshot": true,
+  "code_sha256": {
+    "bot/cards/build_runtime.py": "03f7ca8916cec3da10823476ff15385c7d8c174bd47e6830fea2f6da3638df5b",
+    "bot/cards/build_live16402.py": "b06e3968408f8a0fda26f71ec09d07d605269d29b67cb9c6b28e465e70c3d1e1",
+    "bot/cards/balance_overlay.py": "694b3028c71033f821b724163f3861ca5693d9cc906868e02293757e02bbf7d3",
+    "bot/cards/scope.py": "f116b76ab4079a1cbe208e7220587cf001c2966156ec939517780c2bb53dde98",
+    "bot/cards/fc_cut.py": "9ab2bc406db4a7b09a9858703e32518bbbb9fd057298e6b23f84ce6554c916fd",
+    "bot/search/lopp_fast.py": "1426427195b971e546fcb6d34a01bc4b212c10e416b9adc8d50b744757d9a11b",
+    "bot/players/runtime.py": "fed61470c14ec2f79db1619fe1d37e46e483fdf5203cc58553708bc68e68c3fe"
+  },
+  "code_sha256_verified_on_host": "127x08"
+}

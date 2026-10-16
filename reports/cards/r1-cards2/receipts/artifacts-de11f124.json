@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "engine_commit": "878d5f459d58112527e9c3e76c804f27e5d7c0a3",
+  "native_sha256": "de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1",
+  "card_overlay_files_verified": 473,
+  "live_overlay_source_files_verified": 472,
+  "overlay_inputs_verified": 4,
+  "code_files_verified": 7,
+  "base_gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "live_gamedata_sha256": "a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb",
+  "receipt_sha256": {
+    "CARDS-RUNTIME-RECEIPT.json": "87d4cf225ebdaf39a00650080246a5b01d42c8ac54e702005aab0a2b1e50439c",
+    "LIVE16402-RECEIPT.json": "81f5ccb3e054449cd64788161514ef2f302481f28b1167a1594c6542f08d4204"
+  }
+}

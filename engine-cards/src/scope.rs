@@ -428,11 +428,12 @@ impl BattleState {
                         child.lane = self.config.lane_ids[(cy*36+cx) as usize];
                         child.id = self.next_id as i32; self.next_id += 1;
                         child.birth = self.tick;
-                        // Batch B2: acquire delay from now, and the creation-tick first update with contact push
-                        // (Python Graveyard._spawn_skeleton).
+                        // Batch B2: acquire delay from now, and the creation-tick first update with contact push, run
+                        // synchronously at the spawn point (Python Graveyard._spawn_skeleton -> _first_update_spawned).
                         if child.acquire_delay_ms > 0 { child.untargetable_until = self.tick * 50 + child.acquire_delay_ms; }
                         self.entities.push(child);
-                        self.fresh.push((self.entities.len() - 1, true));
+                        let k = self.entities.len() - 1;
+                        self.first_update_now(k, true, Vec::new());
                     }
                     *spawned += 1;
                     *next_spawn = deadlines.get(*spawned).copied().unwrap_or(*initial + *spawned as f64 * *interval);

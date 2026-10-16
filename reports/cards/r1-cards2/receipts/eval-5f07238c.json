@@ -1,0 +1,112 @@
+{
+  "stage": "eval",
+  "status": "PASS",
+  "result": {
+    "R3a": {
+      "live16402b": {
+        "games": 200,
+        "mean": 0.81,
+        "ci95": [
+          0.755,
+          0.865
+        ],
+        "wins": 162,
+        "draws": 0,
+        "losses": 38
+      },
+      "current": {
+        "games": 200,
+        "mean": 0.83,
+        "ci95": [
+          0.78,
+          0.88
+        ],
+        "wins": 166,
+        "draws": 0,
+        "losses": 34
+      },
+      "paired_diff": {
+        "mean": -0.02,
+        "lo": -0.08,
+        "hi": 0.045
+      },
+      "identical_command_streams": 0
+    },
+    "v1": {
+      "live16402b": {
+        "games": 200,
+        "mean": 0.92,
+        "ci95": [
+          0.88,
+          0.955
+        ],
+        "wins": 184,
+        "draws": 0,
+        "losses": 16
+      },
+      "current": {
+        "games": 200,
+        "mean": 0.95,
+        "ci95": [
+          0.915,
+          0.975
+        ],
+        "wins": 190,
+        "draws": 0,
+        "losses": 10
+      },
+      "paired_diff": {
+        "mean": -0.03,
+        "lo": -0.075,
+        "hi": 0.015
+      },
+      "identical_command_streams": 0
+    },
+    "pooled": {
+      "live16402b": {
+        "games": 400,
+        "mean": 0.865,
+        "ci95": [
+          0.8325,
+          0.8975
+        ],
+        "wins": 346,
+        "draws": 0,
+        "losses": 54
+      },
+      "current": {
+        "games": 400,
+        "mean": 0.89,
+        "ci95": [
+          0.8575,
+          0.92
+        ],
+        "wins": 356,
+        "draws": 0,
+        "losses": 44
+      },
+      "paired_diff": {
+        "mean": -0.025,
+        "lo": -0.0625,
+        "hi": 0.015
+      },
+      "identical_command_streams": 0
+    }
+  },
+  "input_sha256": {
+    "hl-live16402b/games-04-000.jsonl": "a4fb9866bf6385df67bd75c9570ceab85feee7415cef59785034e54579dca4c0",
+    "hl-live16402b/games-04-001.jsonl": "138279bf524e73a4c227ac213c3c69094b4a5d52862e4a9b66bde7fe237c6373",
+    "hl-live16402b/games-04-002.jsonl": "2e17e1a25863bd1104c2aee64fe4d622e19bd8838135f3752507bf1da9f07ea9",
+    "hl-live16402b/games-04-003.jsonl": "e96c9901f9651a09c16512937fe58af3a8215ca21aa91ce42ee52029d446b5a8",
+    "hl-live16402b/games-04-004.jsonl": "cb8f8d512a4ba5c0946e5fb97d12e1a8a1885706ede33653e7da7b8c26aff2bc",
+    "hl-live16402b/games-04-005.jsonl": "d7544303da18c0eaf24ddeb44f2ece01ca7bddea8c0f916115b890f49cdb47f2",
+    "hl-live16402b/games-08-000.jsonl": "4eb76004bb4ba3138d1379185d1232a841245c49ed4f101c9df15ca108ee3514",
+    "hl-live16402b/games-08-001.jsonl": "5f83a73c07f50c588d969f1f57b0c8669d9bbe204cf8189cf8bc6df5cbbe8e4d",
+    "hl-live16402b/games-08-002.jsonl": "e51fe9fa53cb813eb3346ea708c7006b8a90b710fc0f17a99f165788474511c6",
+    "hl-live16402b/games-08-003.jsonl": "2164bab3ecae8f1c1569c4776ef96a2de4335fba1202614d9e3dc48cde7b9578",
+    "hl-live16402b/games-08-004.jsonl": "2e114e20dad6bcf90722f9859658321ea2955016d2642223f47e9267c24f5d45",
+    "hl-live16402b/games-08-005.jsonl": "19ac0290b92460cd905559905f5f2ad4247fc4d403296357893e1707a5f86fff"
+  },
+  "audit_sha256": "91bb12065f0a50d711445f52468270249af9897d75fbe463f09c696468eedecc",
+  "current_arm_sha256": "627b198537b7be0341a536622049293e76636b02040cc31126358304d0a78e77"
+}

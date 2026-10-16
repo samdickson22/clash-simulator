@@ -1,0 +1,21 @@
+{
+  "original_arm": "127x04:/mpac/sdicks02/jobs/clasher/bot-lopp2/base/bot-lopp-hl2",
+  "filtered_reference": "/mpac/sdicks02/jobs/clasher/cards/live16402/ref/hl2-K4L-R-gs.jsonl",
+  "filtered_reference_sha256": "627b198537b7be0341a536622049293e76636b02040cc31126358304d0a78e77",
+  "cases_per_opponent": 200,
+  "errors": 0,
+  "terminal": 400,
+  "fresh_r1_total_headline_command_sha_matches": "12/12",
+  "outcomes": {
+    "R3a": {
+      "wins": 166,
+      "draws": 0,
+      "losses": 34
+    },
+    "v1": {
+      "wins": 190,
+      "draws": 0,
+      "losses": 10
+    }
+  }
+}

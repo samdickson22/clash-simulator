@@ -1,0 +1,60 @@
+{
+  "stage": "roots",
+  "status": "PASS",
+  "result": {
+    "records": 600,
+    "sampled_roots": 300,
+    "differing_ids": [],
+    "identical_by_variant": {
+      "full": 300,
+      "cut": 300
+    },
+    "headers": {
+      "live": {
+        "native": "/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so",
+        "native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+        "scope": "c56",
+        "cards": 56,
+        "config_sha": "ac4e792edadb67d2c25ea273ab15da6d1f16c569ecd92149e802649f618b3bdc",
+        "recorded_config": [
+          "4a5b58085ece2ff8bf38eec133dc703fb5b2a16e9984ba7ff32e5dd4e50ed59c"
+        ],
+        "roots_total": 1043,
+        "sampled": 300,
+        "args": {
+          "command_delay": 27,
+          "opponent_delay": 27,
+          "horizon": 160,
+          "interval": 10,
+          "elixir_weight": 1.0
+        }
+      },
+      "full": {
+        "native": "/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards2-dev/native/clasher_core.abi3.so",
+        "native_sha256": "5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252",
+        "scope": "full",
+        "cards": 237,
+        "config_sha": "3187f8ea57b2443e837d5d943b6a5d06f8389997b2c8de065c9740b19aa50486",
+        "recorded_config": [
+          "4a5b58085ece2ff8bf38eec133dc703fb5b2a16e9984ba7ff32e5dd4e50ed59c"
+        ],
+        "roots_total": 1043,
+        "sampled": 300,
+        "args": {
+          "command_delay": 27,
+          "opponent_delay": 27,
+          "horizon": 160,
+          "interval": 10,
+          "elixir_weight": 1.0
+        }
+      }
+    }
+  },
+  "input_sha256": {
+    "roots-full-0.jsonl": "8232c9f4b9630d5e0578ae7397e144a75eb38eb512e83eda6de6bae601f6ac1f",
+    "roots-full-1.jsonl": "8000c690920cdbb83ceb2891083d34d49989adfe8353649e043679c42a642215",
+    "roots-live-0.jsonl": "295b6171574061171549afd9123fa6ba8d4e0f4ae74a72d02029b9c008e6554e",
+    "roots-live-1.jsonl": "2f3c287f14fbae2666f5e37c9a412db1c9107b5b5e55daad1774fa8b8b03aabd"
+  },
+  "audit_sha256": "91bb12065f0a50d711445f52468270249af9897d75fbe463f09c696468eedecc"
+}
