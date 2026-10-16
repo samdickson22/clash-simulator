@@ -61,8 +61,13 @@ python -m bot.exit.train --init <ext>/rl5-v10-fp.pt --new G1pack --old <C56 K4C 
 ```
 
 - Initialised from rl5-v10-fp. The C56 corpus is mixed 1:1 as anti-forgetting, since C56 states dominate live.
-- Device: CPU if the timing probe allows (Sol slice S3: steps/min with 32 threads on 08). If it can't do 1500 steps
-  in about 3 h, queue on the first free GPU.
+- Device: **GPU only.** The S3 CPU probe (08, 02:30–03:41Z, 6-layer rl5-v10-fp, measured under contention):
+  - batch 4096 / microbatch 1024 / 32 threads: 242.7 s/step, so 1,500 steps ≈ 101 h;
+  - batch 512 / 32 threads: 25.3 s/step;
+  - peak RSS 35 GB.
+
+  F1 therefore waits for the first GPU the LIVE LEAD hands back. GPU estimate: ~1–1.5 h for 1,500 steps, scaled
+  from BL6's ≈4 h per 6,000 steps. G1 data generation stays CPU-first, so the GPU time goes only to fits.
 - Lower lr than the from-scratch fits (1e-4), because this fine-tunes an RL-tuned net.
 - Variants, cheap to run as soon as F1 works: new-ratio 2.0, and an arm without the C56 corpus.
 
@@ -123,11 +128,12 @@ python -m bot.search.lopp_record --out K1 --candidate K4C-r16 --opponents R3a,v1
 | K1 recording, 2,400 games | shares the cap with G1 | shares | shares | +1.6 h | +30 min |
 | baseline + screen evals (policy, ~1,800 games) | 8 | 8 | 8 | ~35 min per screen | ~10 min |
 | K4L screens (~1,200 K4L games) | 8 | 8 | 8 | ~40 min | ~12 min |
-| F1 student fit | – | – | CPU 32 threads, or GPU when free | probe first (S3) | – |
+| F1 student fit | – | GPU when handed back | GPU when handed back | ~1–1.5 h on a GPU (CPU measured at ≈101 h) | – |
 | KF1 K4L fit | CPU, 16 threads | – | – | ~30 min | – |
 | R11 RL | actors 16 | actors 16 | learner GPU + actors | GPU-gated | – |
 
-GPU queue, in order: F1 (if CPU is too slow), then critic pretrain, then the R11 learner. Nothing goes on 01.
+GPU queue, in order: F1 (GPU-only, measured), then critic pretrain, then the R11 learner. Nothing goes on 01. KF1
+(the K4L refit) stays on CPU.
 
 ## 5. Order of work and Sol slices
 
@@ -135,8 +141,7 @@ Opus keeps the design and code; Sol sub-workers run the slices.
 
 1. **S1 (running):** smoke rerun on r1-cards1 when it lands on main, including k4lf/genf (search seats on
    full-pool decks: the R.bots widening check).
-2. **S3 (now, light):** CPU-fit timing probe on 08. Pack smoke1/gen shards, then `bot.exit.train --device cpu
-   --steps 30 --batch 512` with 32 threads; report steps/min.
+2. **S3 (done):** the CPU-fit timing probe is too slow (242.7 s/step at batch 4096), so F1 is GPU-only.
 3. **On live16402:**
    - **S2:** dump meta tokens under live16402. If they differ from r1-cards1-meta.json, I re-extend the K4L nets.
      Then run `PINS=live16402 smoke.sh`.
@@ -199,4 +204,4 @@ the K1 game had 0 errors (859 rows).
    - K4L: once K1 reaches about 1,500 games, rsync the rec-*.jsonl.gz files to 03 and run fit_kf1.sh for ARM=a and
      ARM=b (CPU).
    - Student: once G1 is done (or about 2,500 games for an early F1), run pack_g1.sh on each host, rsync the packs
-     to the fit host, then fit_f1.sh on CPU if the S3 probe allows, otherwise DEVICE=cuda when a GPU is handed back.
+     to the GPU host, then `DEVICE=cuda THREADS=8 fit_f1.sh` (GPU-only, per S3).

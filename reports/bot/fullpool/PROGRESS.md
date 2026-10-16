@@ -116,3 +116,4 @@ r1-cards1 is on main, the overlay is no longer needed.
   smoke now on the r1-cards1 DEV root (native 681b5f2c = pin) with a tree from origin/main, all arms incl. k4lf/genf
   (now expected to pass). Worktree fast-forwarded to 9f75ab5f8: unit tests 10/10, NEW == main's scope.EXTRA_CARDS.
   The launch kit no longer needs the overlay. Waiting for r1-cards2/live16402b (generation start signal).
+- 2026-10-16T03:43:25Z Sol S3 CPU-fit probe (08, 02:30–03:41Z): batch 4096 / 32 threads 242.7 s/step (1500 steps ≈ 101 h), batch 512 25.3 s/step, RSS 35 GB → F1 is GPU-only (PLAN.md updated); logs 08:/mpac/sdicks02/jobs/clasher/bot-fullpool/probe-fit/.
