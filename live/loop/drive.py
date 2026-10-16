@@ -316,7 +316,11 @@ def main(argv=None):
         raise SystemExit(128 + signum)
     signal.signal(signal.SIGTERM, _term)
     seconds = min(a.seconds, 900*max(1, min(a.matches, 4)))
-    out = Path(a.out); out.mkdir(parents=True)
+    out = Path(a.out)
+    if out.exists():                          # a reused session name must not stall the ladder (s10 restart, 10-16)
+        out = out.with_name(f"{out.name}-{time.strftime('%H%M%S')}")
+        print(f'run dir {a.out} exists; using {out}', file=sys.stderr)
+    out.mkdir(parents=True)
     if shutil.disk_usage(out).free < MIN_FREE:
         sys.exit('free space below 6 GiB')
     lock = threading.Lock()
