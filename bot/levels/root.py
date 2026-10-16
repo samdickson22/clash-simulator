@@ -34,6 +34,7 @@ TOWERS = ('KingTower', 'Tower')
 SKIP_TOP = {'hp', 'x', 'y', 'id', 'owner', 'target', 'alive', 'facing', 'birth', 'age', 'clock', 'lane',
             'deploy', 'stagger', 'cooldown', 'aim', 'shot_target', 'active', 'tunnel_origin', 'tunnel_destination',
             'death_travel', 'mount', 'rider_rank'}
+PUBLIC_LEVEL_CLONE_CARDS = frozenset({'GoblinGiant', 'ThreeMusketeers', 'BattleHealer'})
 
 
 def tower_stat(name, field, level):
@@ -160,10 +161,13 @@ class ExactLevelRoot:
                     k11 = next((x for x in t11 if x[0] == name and x[1] in ('Troop', 'Building')), None)
                 if kL is not None and kL in tL and k11 in t11:
                     a, b = t11[k11][1], tL[kL][1]
-                    # Clone capabilities are static level-specific templates,
-                    # including GG's closed prototype rider graph. They are not
-                    # hidden state and must not stay at level 11 after scaling.
-                    out = (_delta(a['stats'], b['stats']), _delta(a, b, SKIP_TOP | {'stats'}))
+                    # Scoped B1 clone capabilities include GG's closed static
+                    # rider graph and must follow its level. Keep the existing
+                    # C56 prototype policy/bytes outside this specific repair.
+                    skip = SKIP_TOP | {'stats'}
+                    if card not in PUBLIC_LEVEL_CLONE_CARDS:
+                        skip = skip | {'clone_template'}
+                    out = (_delta(a['stats'], b['stats']), _delta(a, b, skip))
             self._delta[key] = out
         return self._delta[key]
 

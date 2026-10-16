@@ -82,7 +82,7 @@ Corrected Building/Troop fallback; tests cover Cannon/Tesla/Xbow and actual
 admitted Cannon shot level damage/HP. GG candidate policy now explicitly models
 static character clamp[.25,extent-.25] and public sensor clip[0,extent], retaining
 bounded1.15tile parent distance and rejecting compressed interior impostors.
-Added128 stdlib wall/corner owner/observer/clamp combinations within one test
+Added64 stdlib wall/corner owner/observer/clamp graph combinations (128riders) within one test
 and32 actual spawn/carry boundary fixtures across both seats in public phase,
 each through plain+forced-level root/native continuation. Owner also identified
 native serde omission of rank0; probe now uses documented0 default but always
@@ -94,3 +94,18 @@ level consumer and runtime probe3/3; `git diff --check` PASS. These are source
 checks only. Corrected stable checkpoint and fresh independent review still
 precede B1's one admitted combined public16 + emitted10 + existing required
 gates. No native job/lease/PID was created by this worker.
+
+2026-10-16T12:39Z: corrected checkpointfa36226189af573339a95ca06123fb39371a8dae
+created after explicit own add, scanner and staged diffcheck PASS. Initial add
+returned1 because ignored report directory required -f even for the scoped
+pathspec; only intended own files had staged, verified exact git-dir/index and
+path list, then repeated explicit add-f. No shared-index/worktree modification.
+Independent native reviewr2 REQUEST_CHANGES for overbroad static level Clone
+replacement affecting C56 Knight roots; full exact findings in
+`receipts/b1-public-root-review-r2.md`. Restricted replacement to precisely
+GoblinGiant/ThreeMusketeers/BattleHealer.21stdlib tests PASS, adding unrelated
+Knight/Musketeer preservation and native snapshot oracle default0/invalid
+mount/duplicate-rank/wrong-owner controls. Fresh r3 review required; no host or
+runtime probe run and no prior gate reuse. Exact command remains
+`python3 -B reports/cards/runtime/tools/test_b1_public_root.py`, receipt
+`receipts/b1-public-root-stdlib-r3.txt`; `git diff --check` PASS.

@@ -74,7 +74,10 @@ selection, not exact hidden rank/phase recovery. Level exports now include
 BattleHealer `create_areas` and `hit_areas`; their distinct public spell names
 disambiguate shared-empty-name HealPulse bodies and select the correct producing
 card and level payload. Direct spells retain their existing qualified names.
-Level-specific clone capability prototypes follow their producing bodies;
+Level-specific clone capability prototypes follow their producing bodies for
+the scoped GoblinGiant/ThreeMusketeers/BattleHealer producers only. Existing C56
+prototype defaults remain unchanged; this does not broaden into unrelated Clone
+or level-policy changes.
 projectiles never inherit body clone capabilities or HP. Dynamic mount/rank
 are excluded from level deltas and reconstructed only after deltas.
 
@@ -87,8 +90,8 @@ defaults and opponent level estimates remain documented consumer limitations.
 ## Validation interface and rollback
 
 `python3 -B reports/cards/runtime/tools/test_b1_public_root.py` runs only stdlib
-fixtures/source-extracted level methods on05 (19cases at corrected checkpoint;
-16cases at superseded first checkpoint).
+fixtures/source-extracted level methods on05 (21cases at corrected checkpoint;
+16cases at superseded first checkpoint,19at superseded second checkpoint).
 The actual admitted phase imports `probe_b1_public_root.py` and calls
 `run(R, fair_player_module, fresh_output_json)`, reusing B1's ONE widened cached
 Resources build. Its scope must include Clone in addition to B1's declared
