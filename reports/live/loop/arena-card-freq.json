@@ -1,74 +1,155 @@
 {
  "schema": "clasher.live.arena-card-freq.v1",
  "source": "reports/live/loop/opponent-decks.jsonl (Battle Log, opponent decks only; our deck excluded)",
- "note": "count = opponent decks containing the card; share = count/battles. Low-trophy ladder (0-620), small n.",
+ "note": "count = opponent decks containing the card; share = count/battles. Low-trophy ladder, small n.",
  "arenas": {
-  "bone-pit": {
-   "battles": 15,
+  "barbarian-bowl": {
+   "battles": 8,
    "cards": {
-    "Giant": {
-     "count": 12,
-     "share": 0.8
-    },
-    "Goblins": {
-     "count": 11,
-     "share": 0.733
-    },
-    "GoblinCage": {
-     "count": 11,
-     "share": 0.733
-    },
-    "SpearGoblins": {
-     "count": 10,
-     "share": 0.667
-    },
-    "Tombstone": {
-     "count": 10,
-     "share": 0.667
-    },
-    "Arrows": {
-     "count": 10,
-     "share": 0.667
-    },
-    "GoblinHut": {
-     "count": 9,
-     "share": 0.6
-    },
-    "Fireball": {
-     "count": 8,
-     "share": 0.533
+    "Valkyrie": {
+     "count": 7,
+     "share": 0.875
     },
     "MiniPekka": {
-     "count": 7,
-     "share": 0.467
-    },
-    "Knight": {
      "count": 6,
-     "share": 0.4
-    },
-    "Minions": {
-     "count": 6,
-     "share": 0.4
+     "share": 0.75
     },
     "Bomber": {
-     "count": 6,
-     "share": 0.4
+     "count": 5,
+     "share": 0.625
+    },
+    "Giant": {
+     "count": 4,
+     "share": 0.5
+    },
+    "GoblinCage": {
+     "count": 4,
+     "share": 0.5
+    },
+    "Goblins": {
+     "count": 4,
+     "share": 0.5
+    },
+    "GoblinHut": {
+     "count": 4,
+     "share": 0.5
+    },
+    "Tombstone": {
+     "count": 4,
+     "share": 0.5
     },
     "Archers": {
-     "count": 4,
-     "share": 0.267
+     "count": 3,
+     "share": 0.375
     },
-    "Valkyrie": {
-     "count": 4,
-     "share": 0.267
+    "Minions": {
+     "count": 3,
+     "share": 0.375
+    },
+    "Barbarians": {
+     "count": 3,
+     "share": 0.375
+    },
+    "Fireball": {
+     "count": 3,
+     "share": 0.375
     },
     "Skeletons": {
      "count": 3,
-     "share": 0.2
+     "share": 0.375
+    },
+    "SpearGoblins": {
+     "count": 3,
+     "share": 0.375
+    },
+    "Arrows": {
+     "count": 2,
+     "share": 0.25
+    },
+    "Knight": {
+     "count": 2,
+     "share": 0.25
+    },
+    "MegaMinion": {
+     "count": 2,
+     "share": 0.25
+    },
+    "BattleRam": {
+     "count": 1,
+     "share": 0.125
     },
     "Musketeer": {
-     "count": 3,
-     "share": 0.2
+     "count": 1,
+     "share": 0.125
+    }
+   }
+  },
+  "bone-pit": {
+   "battles": 21,
+   "cards": {
+    "Goblins": {
+     "count": 15,
+     "share": 0.714
+    },
+    "Giant": {
+     "count": 14,
+     "share": 0.667
+    },
+    "GoblinCage": {
+     "count": 14,
+     "share": 0.667
+    },
+    "Arrows": {
+     "count": 13,
+     "share": 0.619
+    },
+    "Tombstone": {
+     "count": 13,
+     "share": 0.619
+    },
+    "SpearGoblins": {
+     "count": 13,
+     "share": 0.619
+    },
+    "Bomber": {
+     "count": 12,
+     "share": 0.571
+    },
+    "GoblinHut": {
+     "count": 11,
+     "share": 0.524
+    },
+    "MiniPekka": {
+     "count": 11,
+     "share": 0.524
+    },
+    "Fireball": {
+     "count": 10,
+     "share": 0.476
+    },
+    "Valkyrie": {
+     "count": 9,
+     "share": 0.429
+    },
+    "Minions": {
+     "count": 8,
+     "share": 0.381
+    },
+    "Knight": {
+     "count": 8,
+     "share": 0.381
+    },
+    "Archers": {
+     "count": 7,
+     "share": 0.333
+    },
+    "Skeletons": {
+     "count": 6,
+     "share": 0.286
+    },
+    "Musketeer": {
+     "count": 4,
+     "share": 0.19
     }
    }
   },
@@ -83,11 +164,11 @@
      "count": 12,
      "share": 1.0
     },
-    "MiniPekka": {
+    "Giant": {
      "count": 10,
      "share": 0.833
     },
-    "Giant": {
+    "MiniPekka": {
      "count": 10,
      "share": 0.833
     },
@@ -107,11 +188,11 @@
      "count": 8,
      "share": 0.667
     },
-    "SpearGoblins": {
+    "GoblinHut": {
      "count": 4,
      "share": 0.333
     },
-    "GoblinHut": {
+    "SpearGoblins": {
      "count": 4,
      "share": 0.333
     },
