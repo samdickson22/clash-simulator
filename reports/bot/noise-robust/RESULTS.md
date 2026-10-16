@@ -495,3 +495,24 @@ are unchanged since 8040430e):
 - Invariants kept: `test_fair_information_invariance`, one shared set (`test_board_and_sanitizer_share_the_set`), and
   the monotone-time tests all pass. Clean-channel bit-identity: floorchk-r7 (PROGRESS).
 - Patch: reports/bot/noise-robust/revealed-set.patch, sha256 88fc13eef8fdb89b16dda5b82445496c7bb0bc7711979f6735d7e74d1d890eb1.
+
+## 12. PARKED (2026-10-16T08:04Z, bot lead)
+
+The revealed-set translator patch is parked behind the LIVE LEAD's learned play detector. It isn't merged; multibody r3 alone stays live.
+- **Last revision:** 39d8d706, patch sha256 88fc13eef8fdb89b16dda5b82445496c7bb0bc7711979f6735d7e74d1d890eb1. Its Sol round 2 said MERGE AFTER FIXES again, with class-level gaps (repros in 127x05:/mpac/sdicks02/scratch/live-review/revset-round2/).
+- **Why park:**
+  - the strength gain was unconfirmed (+0.013 [−0.003, +0.028] on its fresh bank);
+  - merged multibody r3 already cut off-deck unit drops from 17 to 4 per game (births arm);
+  - the evidence source will change with the learned detector;
+  - busy-board latency cost: p95 25.8 vs 15.9 ms at 80 bodies.
+
+**Design contract for any v2** (from the LIVE LEAD). Each invariant needs a property or fuzz test plus a mutation check showing the test fails when the rule is broken:
+
+| | invariant |
+|---|---|
+| I1 | The evidence card is a pure function of the resolved source for every births state, independent of set membership. Unknown or future states fail closed (no evidence). Only pending/unresolved tracks use the raw label. |
+| I2 | Admission and eviction depend only on evidence in a bounded recent window, not lifetime counters, with hysteresis. Bound: at most N evictions per M seconds under any input. |
+| I3 | A synthetic catch-up over a gap gives the same tracker and translator state as the same gap filled with real empty frames. Test it as a differential property over random gaps and sightings. |
+| I4 | A consumed capture can never change state again, at any age. Key on the monotone capture id or tick, not a bounded LRU. |
+
+Rules stay data-driven, with no card special cases.
