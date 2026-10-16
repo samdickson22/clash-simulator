@@ -1,0 +1,11 @@
+{
+  "actual_launch": "Totalityalreadyfinishednaturallybeforetwoindependentcpu1jobs; maxown04admitted2",
+  "decision": "Independenttotality2+None1+pairedreplay1 may overlap undernormalwrappersmaxown4; positiveonlyafternegativeverifiedterminal; finalallgatesmandatory",
+  "executed": false,
+  "independent": true,
+  "protocol_sha256": "6d3a49e6ed4725e8d80240826b0f467d032b217435e14fcf08f5d44d28b44178",
+  "read_only": true,
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "verdict": "APPROVE"
+}

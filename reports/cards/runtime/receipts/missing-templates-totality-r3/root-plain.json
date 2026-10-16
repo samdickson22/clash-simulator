@@ -1,0 +1,530 @@
+{
+ "native": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3/native/clasher_core.abi3.so",
+ "scenarios": {
+  "arrows": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 2,
+   "failures": {
+    "110": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "barblog-rolling": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 3,
+   "failures": {
+    "40": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "90": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "110": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "earthquake": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 5,
+   "failures": {
+    "110": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "130": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "300": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "electro-spirit": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 22,
+   "failures": {
+    "0": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "1": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "2": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "3": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "5": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "8": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "12": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "16": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "20": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "25": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "30": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "40": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "50": {
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "60": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "75": {
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "90": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "110": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "130": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "300": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "fireball-projectile": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 4,
+   "failures": {
+    "130": {
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "firespirit-hut-production": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "goblin-barrel-delivery": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 4,
+   "failures": {
+    "130": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "goblin-hut-production": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "lightning-strike": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "log-rolling": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 11,
+   "failures": {
+    "40": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "50": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "60": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "75": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "90": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "110": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "130": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "300": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "meta-electro-spirit": {
+   "cuts": 1,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 19
+  },
+  "mighty-miner-bomb": {
+   "ability_activated": true,
+   "cuts": 22,
+   "failing_cuts": 6,
+   "failures": {
+    "110": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "130": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "300": {
+     "rollout_e1[0,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[0,pressure]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,balanced]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,defense]": "ValueError: unsupported card absent from imported pilot configuration",
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "poison-area": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "rocket-projectile": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "royal-delivery": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "tornado": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 1,
+   "failures": {
+    "130": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  },
+  "zap": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 10,
+   "failures": {
+    "40": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "50": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "75": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "90": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "110": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "130": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "160": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "200": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "250": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    },
+    "300": {
+     "rollout_e1[1,pressure]": "ValueError: unsupported card absent from imported pilot configuration"
+    }
+   },
+   "played": true,
+   "probes": 418
+  }
+ }
+}

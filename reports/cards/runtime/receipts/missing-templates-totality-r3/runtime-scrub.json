@@ -1,0 +1,140 @@
+{
+ "native": "/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r3/native/clasher_core.abi3.so",
+ "scenarios": {
+  "arrows": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "barblog-rolling": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "earthquake": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "electro-spirit": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "fireball-projectile": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "firespirit-hut-production": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "goblin-barrel-delivery": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "goblin-hut-production": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "lightning-strike": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "log-rolling": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "meta-electro-spirit": {
+   "cuts": 1,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 19
+  },
+  "mighty-miner-bomb": {
+   "ability_activated": true,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "poison-area": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "rocket-projectile": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "royal-delivery": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "tornado": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  },
+  "zap": {
+   "ability_activated": null,
+   "cuts": 22,
+   "failing_cuts": 0,
+   "failures": {},
+   "played": true,
+   "probes": 418
+  }
+ }
+}

@@ -86,3 +86,64 @@ No newjob yet. Mainintegrationdependencyhandoff using receipts/missing-templates
 acceptedMAIN from CARDLEAD before release. Latest approvedworkflow/replay98299e81 andtotality9ba60dec mustbe
 included in acceptedsourcearchive; these toolchanges do not alter classsource7/native/data. Historical ACTIVE
 sectionabove is supersededbythisterminalreceipt, not an instructionto restart. Allrelease/finalrootgates remain.
+
+
+## 2026-10-16T10:52:16Z CURRENT continuation (supersedes older active/mainwait sections)
+
+Accepted main a6a5401c127bac5eab67ad25495c1922936f8a26 pushed/remoteverified; parent receipt
+receipts/missing-templates-main-integration-a6a5401c1.json. Sourcearchive bd7849478d49fed1c409db7c7193dbebaf76230d134ef42fd55d40cccbac811a,
+manifestd9e6da30454ca439eb85710261a78c52a930d3a1af0ae3744c150e29924f4f8b, explicitgit tar.umask0022.
+342archive members/306files; copied03/04/08ownJ/release-a6a5401c127b and extractedS=J/release-source-a6a5401c127b.
+Source306bytes+343kind/path/modes verified pre/postfreeze, S0555/patchfiles0444; no source7 change.
+03extra tar--compare returned1 solely306Uid/306Giddiffs virtual0 vsuser, preservedlog; independentround3
+APPROVE explicitfullmode/bytechecks and newS-only specialbitnormalization. No reextract/overwrite03S.
+Proofaggregate receipts/missing-templates-source-freeze-a6a5401c1.json; rawproofsD/localreleasejob.
+LIVE owner already integratedtwo-callpatch sourceae3f6b0c579c5c817630b92a64089917c6623704; parentalready
+handedcore, do notduplicate. Ownerreceipt missing-templates-live-integration-ae3f6b0c5.json, sourceonly/noactivepin.
+
+ACTIVE JOBS preserve/checkliveness beforeANYlaunch:
+-03 r1-cards2-r3verify wrapper/PGID649518 queued/no lease10:50:38Z. Priorcreate631844/640898 naturallyfinished.
+-04 totality wrapper/PGID2821097, driver2821298, firstbatchchildren2821302/2821303 RN10:50:39Z.
+  cpu_job2 nice15/thread1, actualreleasedlive16402b-r3; J/r3-gates/totality.log; fouroutputs
+  J/r3-gates/totality/{root,runtime}-{plain,scrub}.json/log plusJ/r3-gates/totality-summary.json.
+  Normalwrapperalreadyadmitted. DO NOT duplicate. Laterbatch workerIDschange. Validate actualfour17/6707,
+  sum26828/0panics/0unexpected,expectedplain244/243unsupportedguards,scrub0failure afterterminal/nolease.
+-08 live16402b-r3verify wrapper/PGID3595767 queued10:51:04Z afterlivecreate3507013 finished.
+No otherownsource/probe/fullclass/replay/Nonejobsactive. Fullclass230877completedaccepted, neverrestart.
+
+Actualimmutable r3rootscreatedsofar:
+r1-cards2-r3 on03/04/08: create receipts328ddcd8.../1fbc95d2.../3ab433bd..., contentsallidentical
+cce1cfaeff6cb4e0ea463eada256f7ddbf2b1b2c2284c8b2b9a780203e102df6, overlayb4854b9808bc17e9867e7e558e97e4611f23bc56b1e08364321a0d5c39dbdc7e.
+04/08RuntimeverifyPASS355templates/237config/121meta/474overlay, config5ea23abe494686e3ad8cedc678852bd51417fc5920a1f05a88863998b881c6d3;
+03verifywaitingnormaladmission, no bypass/no secondjob.
+live16402b-r3 on04/08: create2f60094df4007faecc4b3e2502b2c338255d8fd4650ea614ba74c1f02d387193 /783efdec1b5e4c10e20953a6e6b5a956eeeaec06dbe28c0bf1a6cd2c3a3b5ce2;
+contenta5642f50650e6e763c6bbb837c0b9cc67e76941a3fc016d62d599187c828530b,
+overlaybe562eefb73f349dd1b3ae0529d579ea09f2da64245abf4827cc7e7c16542118.
+04verifyPASS355templates/238config/121meta/474overlays/config4e7fa282b37a34e0c1b2e81933b06e91523fdd15b5b0b6f51bdc7347ebd741ec;
+08verifyactive.03live NOT created; after03r1verifyPASS/exited/nolease, normalcpu1create thenverifyonlyfreshpaths.
+Allparentsunchanged, read-only; receiptsperhost differhost/timebyreviewedprotocol; content/overlay/config mustequal.
+Localcopies reports/cards/release/{r1-cards2-r3,live16402b-r3}/CREATE-HH.json,VERIFY-HH.json asavailable.
+No active/default pinschanged, no sealing. Remainingfinalall6hostverify, actualr3gates, reportreleasepacketcommitpush.
+
+Frozenpairedreplayinputsready04 (reviewed protocol f55/replay98299e81 unchanged in acceptedS):
+J/replay-r3-repo contains364files,398kind/path/modeentries, exactcopyown08J/replay-repo excludingpycache;
+fullrelativefileSHAmanifest receipts/missing-templates-replay-repo-a6.sha256. Candidate runtime.py2c2bf843...,
+no symlinks; allbytes/modesverifiedbefore/afterreadonlyfreeze. J/replay-policies hasthree.pt+.fullpool.json
+(6regularfiles,7modeentries), readonly; receiptoutputsha==actualptsha. FullpolicySHAmanifest
+receipts/missing-templates-replay-policies-a6.sha256; three.pt hashes69313468.../ce7b0ea4.../a6565cab... .
+OriginalBOTglobalpolicies/replayrepo/worktree untouched. Samefrozeninputs forBOTHnewpairedruns; historicalr2
+negative preserved/path-only notcryptopair. AFTERtotalityterminal/acceptance, runactualr3Noneprobe cpu1
+--baseline-script J/baseline_c56_scripted.py (originalc86dcd4524ba1e4cc702ffbf5db17afce60773d8a34db41ca912a9dc9a5e8e69)
+--out J/r3-gates/none-stats-r3.json; require55834/0exceptions+8496exactranks. Then freshpair CPU1 sequential:
+S/reports/cards/runtime/tools/replay_missing_templates.py --repo J/replay-r3-repo --policy-dir J/replay-policies
+--expect-error --out J/r3-gates/replay-5000110-r2-paired.json with root/pinslive-r2, followedterminal/nolease by
+samecommand(no--expect-error) --out replay-5000110-r3.json root/pinslive-r3. Requireexpectedexactknownerror
+thenr3terminal/noerror, input_sha256==after bothruns andidenticalbetweenboth. No rowssealed/shardwrites.
+AllvenvPython -B/nice15/thread1/seed0/clear3overrideenv asreviewed; sourceSreadonly; finalROOTSactualreleased.
+
+OwnUNCOMMITTED scope includes report+audit/HANDOFF, sourcefreeze JSON, replaySHA manifests, newrelease
+CREATE/VERIFY receipts. Parent mayadvance sharedcards/lead; preserveunrelatedNulls/leadPROGRESS.
+Explicitaddonly+stagedsecret-scanbeforeEVERYcommit; mainintegrationlead-owned. No routineDMs/results/acks;
+onlyblockedrequiringparentaction,urgentlivefailure,explicitrequest,essentialownerhandoff max2sentences+onepath.
+WholeassignmentfinalONCE via automaticdelivery, notyetdone. FullclassreportPASS retainedindependentK4L12/12,
+assembler11/11+review12/12, NoneDev55834/rank8496 and exactr2negative. No Opus blankethold.

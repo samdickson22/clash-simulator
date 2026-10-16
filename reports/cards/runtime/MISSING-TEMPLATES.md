@@ -22,8 +22,9 @@ card's deterministic primary public carrier. This is a public-model prior, not n
 The assembler now exports and overlays the committed `fair_player.py` as well as engine-cards, rather than
 inheriting that file silently from the base runtime.
 
-LIVE code remains read-only. Its independent vocabulary loader/constructor needs
-[the supplied patch](patches/live-template-vocab.patch) to call the shared completion helper.
+LIVE code remained read-only for this worker. The LIVE owner integrated
+[the supplied patch](patches/live-template-vocab.patch) at source commitae3f6b0c579c5c817630b92a64089917c6623704 after corea6; focused validation and provenance are in
+[the owner receipt](receipts/missing-templates-live-integration-ae3f6b0c5.json). No active pin switch is implied.
 `bot/live/levels.py` uses the completed `R.templates`; no change to its duplicate template lookup is needed.
 
 ## Class gate and scope
@@ -115,6 +116,7 @@ Accepted receipts retained independently:
 | Game5000110 r2 negative control | Exact BarbarianRageDamage failure reproduced | receipts/missing-templates-replay-5000110-r2.json |
 | Initial class run | Development only:122 definitions/366 scenarios,56,354 checks,0 errors; coverage gaps | receipts/missing-templates-class-dev.json |
 | Corrected class run | PASS122/366,96,171checks,0exceptions;187observed/187materialized;142/142configidentities | receipts/missing-templates-class-ad961ee93.json |
+| Actual r3 totality | 26,828probes/0panics/0unexpected;487expectedplainunsupportedguards,scrub0fail | receipts/missing-templates-totality-r3-summary.json |
 
 Independent implementation review APPROVE binds checkpoint1802e899cea14807f659ee234dcd67839b392f46;
 its full brief, findings and hashes are in receipts/missing-templates-implementation-review-1802e899c.json.
@@ -122,9 +124,11 @@ Host-script approval is separate. Final release helper, totality helper and end-
 public entity columns with a normal HUD/global scaffold. Native constructor materialization and native gameplay
 emission are recorded separately, especially for within-step spawn effects. Corrected probe checkpointad961ee93 changes only its synthetic source catalogue to cover vocabulary body aliases;
 production code remains approved at1802e899c. The failed startup attempt and superseded queues are retained in the scoped audit.
-No r3 roots are published yet;
-no release verification receipts exist on03/04/08. Publication awaits accepted main integration and host prerequisites; final acceptance requires actual-root gates,
-with rollback by choosing untouched r2 roots. Candidate PIN_SETS entries do not change defaults or active pins.
+Opt-in r3 publication is in progress from accepted maina6a5401c127bac5eab67ad25495c1922936f8a26.
+Both04roots have Runtime(verify=True)/474overlays/fullmanifest/read-only/parent-invariance PASS; other
+host checks and final actual-r3 totality/None/paired5000110 gates remain pending in the scoped audit.
+This is not whole-assignment acceptance. All new roots are immutable; retained r2 roots provide rollback.
+Candidate PIN_SETS entries do not change defaults or active pins.
 
 All work uses `/mpac/sdicks02/jobs/clasher/cards/missing-templates-r3`, nice 15,
 `PYTHONHASHSEED=0`, `PYTHONDONTWRITEBYTECODE=1` and one thread per numerical library. Compute on 04/08 is admitted
