@@ -1,0 +1,11 @@
+{
+  "base_commit": "e5c11345d",
+  "r3_compatible_caller_commit": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+  "r3_compatible_callers": {
+    "bot/live/player.py": "3b4f27d7d62042b56d0fd7fd0dc92bc4d0579a6f08505df3d4aa9da7ba6e4e11",
+    "bot/search/candidates.py": "0c2e14fe334828ffdc91c207d546847fc78eb88ea5e1ef27e6cba7107f4cb14a",
+    "bot/search/lopp_fast.py": "dd0a067c8871300c34ead222b72c3fafe72901f83f8bf2532742e65040397f2b",
+    "bot/search/players.py": "a58a47875588691677a165f07678f48af103970f980b1f3b0baef8731fdeb1cd"
+  },
+  "reason": "Current caller-only slot-permission integration imports a module outside the engine-cards/r3 runtime contract. Freeze the four callers at the accepted r3 source for both gate arms and mixed probes; do not modify runtime physics, gates or main worktrees."
+}

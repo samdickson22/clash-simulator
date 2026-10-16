@@ -312,3 +312,34 @@ Rollback selects the retained matching r2 root and pin in the opt-in caller:
 `CLASHER_BOT_RUNTIME_PINS=live16402b-r2`, or the corresponding r1-cards2-r2 pair. Existing roots remain
 immutable and retained. G1/K1 keep their existing selections/retry rules until their owner accepts released
 receipts and host preflights; publication does not migrate them.
+
+
+## r1-cards3 and live16402c
+
+Status: **RELEASED, READ-ONLY on 127x03/127x04/127x08; 6/6 Runtime(verify=True) PASS**. Exploration tier, no sealing, default change or active LIVE pin switch. Release authorized by CARD LEAD’s FINAL and subsequent explicit adjudication of the orphan-rider fixture artifact and handled GoblinGiant fallback.
+
+Engine: **main + B1 + B2**, exact source `8eaa7d1ecac2f46a2c7d8d512a46ba4f03f7cb63`; native SHA256 on every host/root: `326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732`. All 507 tracked engine files in the B1+B2 native build tree match this commit; the 508-file export also includes committed fair_player.py. Native copied from 08 `jobs/clasher/cards/b1b2/out`; build UTC 2026-10-16T17:12:53Z–17:13:23Z. The accepted r3 None-stat/template fixes remain present. Matching PIN_SETS use full scope, fc_side_cut=True, inherited v1/R3a checkpoints, and Fireball/Poison crown derivation for live16402c.
+
+| Root (same path on 03/04/08) | gamedata SHA256 | Complete read-only content/mode/symlink manifest SHA256 (excluding RECEIPT.json) |
+|---|---|---|
+| `/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards3` | `892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65` | `30425d27563d87f2d76052bcfd929f64ce476e42d99abaf8bada325084cd6652` |
+| `/mpac/sdicks02/repos/clasher-bot-runtime/live16402c` | `a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb` | `7de3ed3cfb9516f626a6db11b7aabe2bde1f96adf5a09205a19b6abe42ed52b8` |
+
+| Root | Host | RECEIPT.json SHA256 | Runtime(verify=True) UTC |
+|---|---|---|---|
+| r1-cards3 | 127x03 | `e90489148b1e08930f32f9dc84724e9ba7f44aa9df3e0adb65f202b43942ff61` | 2026-10-16T19:38:22Z PASS — [receipt](r1-cards3/CREATE-03.json), [verify](r1-cards3/VERIFY-03.json) |
+| r1-cards3 | 127x04 | `0e0de113e68b73895259a8ec760b146847ba43fc87c86454008ab06847e543c7` | 2026-10-16T19:35:12Z PASS — [receipt](r1-cards3/CREATE-04.json), [verify](r1-cards3/VERIFY-04.json) |
+| r1-cards3 | 127x08 | `86a62b245ac7c1be7f40d52730a7bfca727cdcb0f9ce669898700663efda8221` | 2026-10-16T19:35:12Z PASS — [receipt](r1-cards3/CREATE-08.json), [verify](r1-cards3/VERIFY-08.json) |
+| live16402c | 127x03 | `0b8701c289ebfc81269847979c6219957b1a6ba6eb0a62eaafefd80005096619` | 2026-10-16T19:42:24Z PASS — [receipt](live16402c/CREATE-03.json), [verify](live16402c/VERIFY-03.json) |
+| live16402c | 127x04 | `4617b19092b7fdc7a2114704b7468c6a514522dfdbe93ffed92ce9a7a5b160be` | 2026-10-16T19:36:43Z PASS — [receipt](live16402c/CREATE-04.json), [verify](live16402c/VERIFY-04.json) |
+| live16402c | 127x08 | `2e0891da57f5952fcd292182af0b22838df14a4ff30d50ee7bbdbef5072270ac` | 2026-10-16T19:36:40Z PASS — [receipt](live16402c/CREATE-08.json), [verify](live16402c/VERIFY-08.json) |
+
+Every host passed all **476 overlay hashes**, native/data/checkpoint pins, complete copied content/modes/symlinks before/after Runtime, read-only permissions and unchanged r1-cards2-r3/live16402b-r3 parents. Both roots have 121 metadata cards and 359 templates; config entries are 237/238. Per-root complete content manifests agree across all three hosts. Receipts intentionally differ by host/time/parent receipt; each portable RECEIPT.json above is the 04 receipt, with CREATE-HH.json preserving actual host bytes.
+
+Procedure: verified dev roots on 08 → private ordinary read-only snapshots → checksum rsync to 03/04 → new sibling staging directory → host/time/source/parent receipt → freeze → atomic Linux renameat2 NOREPLACE. No hardlinks or deletion/replacement of existing roots. All six targets checked absent globally and again at publication. Snapshot manifest SHA256 `ccb6a89141cfcbd9344aa4e61978b8b1167c6f029e97083a0863b2c9892f6563`; release tool SHA256 `0b2afd9cf99a40b59e749bf15b819dc62d9d11290f701b0248b7bf37d19a23e8`; verified runtime.py SHA256 `24e98fd761767f3ed1a2f3add4321ab7996ccd2b533039a5cb126e0632579787`. Preserved assembler receipts retain their historical labels/paths; each new RECEIPT.json selects the actual root/pins. All source/overlay details remain in runtime roots; git carries hashes and aggregate receipts only.
+
+Gates: **Runtime 2/2**, **K4L HEADLINE 12/12 identical** vs r1-total, **26,828 totality probes / 0 panics / 0 unexpected errors**, **77,684 full-pool None-stat checks / 0 exceptions**, **122 definitions / 366 corrected class scenarios / 96,792 checks / 0 exceptions**, 191 observed/materialized objects and 144 config identities, **6/6 mixed LIVE K4L + fast runs / 0 crashes**. The lead’s independent combined gate passed 577 fixtures/577 chains/300+300 roots and stun 192/192. The corrected harness honors explicit public aliases and supplies an observed GoblinGiant parent for attached-rider fixtures; it does not suppress root exceptions. Original orphan rejections remain negative controls. Five filesystem release controls passed, including atomic no-replace and parent/source invariance.
+
+**Known issue:** one mixed LIVE GoblinGiant game recorded one root-graph error and fast fallback, without a crash/panic. The lead accepted this as nonblocking and routed it to the B1 owner separately. No claim that all GoblinGiant public boards reconstruct successfully. HEADLINE/mixed measurements use the documented frozen r3-compatible caller contract; current slot-permission callers need their owner’s matching package. See [RESULTS](../r1-cards3/RESULTS.md) for exact caller hashes, historical attempts, scope and receipts.
+
+All compute used normal cpu_job leases ≤4 (release/verification1), nice 15 and single-thread numerical libraries. No 01/02 or09–18 compute; no emulator, tailscale, crontab, model/account/default/live-selection changes. Existing release roots and original dev roots remain unchanged. Rollback selects the retained r3 root and matching r3 pin. This publication does not migrate active callers.

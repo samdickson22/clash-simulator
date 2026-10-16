@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "controls": [
+    "declared public alias with exact token accepted",
+    "undeclared mechanical name rejected",
+    "wrong public token rejected",
+    "conflicting declaration rejected"
+  ]
+}

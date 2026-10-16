@@ -1,0 +1,43 @@
+{
+  "time": "2026-10-16T19:12:16.933140+00:00",
+  "actions": [
+    {
+      "pgid": 3572701,
+      "action": "TERM owned job after FINAL stop-on-test-failure instruction",
+      "members": [
+        {
+          "pid": 3572701,
+          "cmdline": "bash -c /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B \"$1/run_class_v2.py\"; rc=$?; echo \"$rc\" > \"$1/class_v2.exit\" _ /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1 "
+        },
+        {
+          "pid": 3572711,
+          "cmdline": "bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n 15 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/run_class_v2.py "
+        },
+        {
+          "pid": 3573953,
+          "cmdline": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/run_class_v2.py "
+        },
+        {
+          "pid": 3574028,
+          "cmdline": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/runtime/tools/object_templates_probe.py --shard 0/4 --out /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/objects-v2-0.json "
+        },
+        {
+          "pid": 3574032,
+          "cmdline": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/runtime/tools/object_templates_probe.py --shard 1/4 --out /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/objects-v2-1.json "
+        },
+        {
+          "pid": 3574033,
+          "cmdline": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/runtime/tools/object_templates_probe.py --shard 2/4 --out /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/objects-v2-2.json "
+        },
+        {
+          "pid": 3574034,
+          "cmdline": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B reports/cards/runtime/tools/object_templates_probe.py --shard 3/4 --out /mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/objects-v2-3.json "
+        }
+      ]
+    },
+    {
+      "pgid": 4006564,
+      "action": "already exited"
+    }
+  ]
+}

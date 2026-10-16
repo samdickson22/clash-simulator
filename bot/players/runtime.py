@@ -80,6 +80,13 @@ PIN_SETS = dict(
                             card_scope='full', fc_side_cut=True,
                             gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
                             tournament_crown_from_gamedata=('Fireball', 'Poison'))},
+    # r1-cards3 = main + B1 + B2 (8eaa7d1ec), retaining r3 None-stat/template fixes.
+    **{'r1-cards3': dict(PINS, native_sha256='326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732',
+                         card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    **{'live16402c': dict(PINS, native_sha256='326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732',
+                         card_scope='full', fc_side_cut=True,
+                         gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                         tournament_crown_from_gamedata=('Fireball', 'Poison'))},
 )
 
 

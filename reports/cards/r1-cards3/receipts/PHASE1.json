@@ -1,0 +1,421 @@
+{
+  "status": "NOT_READY_TO_RELEASE",
+  "reason": "Template gate recorded four PublicGraphError exceptions; full corrected class gate not completed. Lead FINAL says stop/report if a Phase-1 test fails.",
+  "created": "2026-10-16T19:12:47.549644+00:00",
+  "engine_commit": "8eaa7d1ecac2f46a2c7d8d512a46ba4f03f7cb63",
+  "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+  "smokes": {
+    "r1-cards3": {
+      "scope": "full",
+      "cards": 237,
+      "meta_cards": 121,
+      "meta_bodies": 142,
+      "templates": 359
+    },
+    "live16402c": {
+      "scope": "full",
+      "cards": 238,
+      "meta_cards": 121,
+      "meta_bodies": 142,
+      "templates": 359
+    }
+  },
+  "none-r1-cards3": {
+    "checks": 38842,
+    "exceptions": 0,
+    "fixture": "private scripted-body metadata has HP=None; public packet, real battle and native config unchanged"
+  },
+  "none-live16402c": {
+    "checks": 38842,
+    "exceptions": 0,
+    "fixture": "private scripted-body metadata has HP=None; public packet, real battle and native config unchanged"
+  },
+  "headline": {
+    "result": "PASS",
+    "identical": 12,
+    "cases": [
+      {
+        "opponent": "R3a",
+        "index": 0,
+        "baseline": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633",
+        "candidate": "c97c01efd8b26fc7f7ef41013652c777eed55b0a91591337cc26001b583a0633"
+      },
+      {
+        "opponent": "R3a",
+        "index": 1,
+        "baseline": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115",
+        "candidate": "0e4bded993e5287ee5a0aff77cb9546c3b161e453a1d09b7234f710aa7818115"
+      },
+      {
+        "opponent": "R3a",
+        "index": 2,
+        "baseline": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0",
+        "candidate": "d82a57557a11ba77f24ac0631f25ca55d6dbf44775c6a3bee05cfb4a679799c0"
+      },
+      {
+        "opponent": "R3a",
+        "index": 3,
+        "baseline": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44",
+        "candidate": "aacf7644108ea9b9e0d7643ac32235eb0d962ddff70f45e9c0fd84dbbc5a8b44"
+      },
+      {
+        "opponent": "R3a",
+        "index": 4,
+        "baseline": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802",
+        "candidate": "69ef6692519e930cb3d175aa521f3d95817f705650957393a5501ff85d496802"
+      },
+      {
+        "opponent": "R3a",
+        "index": 5,
+        "baseline": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790",
+        "candidate": "9136d901cf2dc3d451fa703d8b0dda148233cc4b44b6f939abe25030985d5790"
+      },
+      {
+        "opponent": "v1",
+        "index": 0,
+        "baseline": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964",
+        "candidate": "735a54ff61829ff38bb77f2c05a4162b5543e1a1e7f3db2e644f4259490df964"
+      },
+      {
+        "opponent": "v1",
+        "index": 1,
+        "baseline": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5",
+        "candidate": "014ea92e54c6623534628d9fa9e574b691cba6c50548089ecba0d37788d436f5"
+      },
+      {
+        "opponent": "v1",
+        "index": 2,
+        "baseline": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66",
+        "candidate": "ac5b989b40f558f9dbd94f39b4f05121ab919b4735fda0c7852be6025472ea66"
+      },
+      {
+        "opponent": "v1",
+        "index": 3,
+        "baseline": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252",
+        "candidate": "3bc29a662fb7d31bc0b47b28e4e35b7ece1f098e83bfe4c5912208c95c4e1252"
+      },
+      {
+        "opponent": "v1",
+        "index": 4,
+        "baseline": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a",
+        "candidate": "1ad1ece376c0d048dd05d6db7400362744f171ae0ea427e46ac402f679bd069a"
+      },
+      {
+        "opponent": "v1",
+        "index": 5,
+        "baseline": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f",
+        "candidate": "a080132ca267adab77e927327ef9cbb84f6cb716da2d655f66aaa957a471d63f"
+      }
+    ]
+  },
+  "totality": {
+    "totality-root-plain": {
+      "probes": 6707,
+      "panics": 0,
+      "expected_rejections": 244,
+      "unexpected": {},
+      "failing_cuts": 68
+    },
+    "totality-root-scrub": {
+      "probes": 6707,
+      "panics": 0,
+      "expected_rejections": 0,
+      "unexpected": {},
+      "failing_cuts": 0
+    },
+    "totality-runtime-plain": {
+      "probes": 6707,
+      "panics": 0,
+      "expected_rejections": 243,
+      "unexpected": {},
+      "failing_cuts": 67
+    },
+    "totality-runtime-scrub": {
+      "probes": 6707,
+      "panics": 0,
+      "expected_rejections": 0,
+      "unexpected": {},
+      "failing_cuts": 0
+    }
+  },
+  "mixed": [
+    {
+      "player": "LIVE-K4L-R-gs-rw-fc-w200-t2-p2",
+      "deck": "B1B2A",
+      "ticks": 754,
+      "terminal": true,
+      "crash": null,
+      "panics": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "fast_errors": 0,
+      "root_errors": {},
+      "roots": 29,
+      "opp_noncore_roots": 28,
+      "opp_played": {
+        "Graveyard": 1,
+        "Rage": 1,
+        "Clone": 1,
+        "Freeze": 1,
+        "BattleHealer": 1
+      },
+      "own_played": {
+        "RoyalGiant": 1,
+        "BattleHealer": 1,
+        "Clone": 1,
+        "Rage": 1
+      },
+      "command_sha256": "90b994e4e20ec2ab41cfb0d14488ca3744ba928f1ad6f5e9eabab7929c943b99"
+    },
+    {
+      "player": "LIVE-K4L-R-gs-rw-fc-w200-t2-p2",
+      "deck": "B1B2B",
+      "ticks": 2401,
+      "terminal": false,
+      "crash": null,
+      "panics": 0,
+      "errors": {
+        "PublicGraphError(\"unsupported public GoblinGiant attachment graph: {'parents': 1, 'riders': 2, 'matched': 1, 'ambiguous': 0, 'boundary_candidates': 0, 'unsuppor": 1
+      },
+      "native_failures": {},
+      "search_failures": {},
+      "fast_errors": 0,
+      "root_errors": {
+        "PublicGraphError(\"unsupported public GoblinGiant attachment graph: {'parents': 1, 'riders': 2, 'matched': 1, 'ambiguous': 0, 'boundary_candidates': 0, 'unsupported': [13]}\")": 1
+      },
+      "roots": 66,
+      "opp_noncore_roots": 65,
+      "opp_played": {
+        "GoblinGiant": 1,
+        "Fisherman": 3,
+        "Tombstone": 2,
+        "RageBarbarian": 2,
+        "SkeletonBalloon": 2,
+        "ElectroWizard": 1,
+        "GoblinCage": 2
+      },
+      "own_played": {
+        "SkeletonBalloon": 3,
+        "ElectroWizard": 3,
+        "Fisherman": 2,
+        "Tombstone": 2,
+        "RageBarbarian": 2,
+        "GoblinCage": 1
+      },
+      "command_sha256": "869f612af10ff0eb195ecd4a00ea647e2212984c1e29deaf7686e660aaf8cd76"
+    },
+    {
+      "player": "LIVE-fast-it5s2",
+      "deck": "B1B2A",
+      "ticks": 2401,
+      "terminal": false,
+      "crash": null,
+      "panics": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "fast_errors": 0,
+      "root_errors": {},
+      "roots": 0,
+      "opp_noncore_roots": 0,
+      "opp_played": {
+        "Graveyard": 2,
+        "Rage": 3,
+        "Clone": 3,
+        "Freeze": 2,
+        "BattleHealer": 1,
+        "GiantBuffer": 2
+      },
+      "own_played": {
+        "RoyalGiant": 2,
+        "GiantBuffer": 2,
+        "Clone": 2,
+        "BattleHealer": 1,
+        "Freeze": 1,
+        "Rage": 2,
+        "Graveyard": 1
+      },
+      "command_sha256": "7db9e412e0cad29d2bcaba3391a3563737d454c9fc9198c63c4e56b6c8b91cc8"
+    },
+    {
+      "player": "LIVE-fast-it5s2",
+      "deck": "B1B2B",
+      "ticks": 2401,
+      "terminal": false,
+      "crash": null,
+      "panics": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "fast_errors": 0,
+      "root_errors": {},
+      "roots": 0,
+      "opp_noncore_roots": 0,
+      "opp_played": {
+        "GoblinGiant": 1,
+        "Fisherman": 3,
+        "Tombstone": 3,
+        "RageBarbarian": 1,
+        "SkeletonBalloon": 2,
+        "ElectroWizard": 2,
+        "GoblinCage": 1
+      },
+      "own_played": {
+        "SkeletonBalloon": 3,
+        "ElectroWizard": 2,
+        "Fisherman": 3,
+        "Tombstone": 2,
+        "GoblinCage": 2,
+        "GoblinGiant": 1
+      },
+      "command_sha256": "340654d51fc419a7000415d817babed7a81e575184af80c2746644dfb00c77f2"
+    },
+    {
+      "player": "LIVE-K4L-R-gs-rw-fc-w200-t2-p2",
+      "deck": "B1B2A",
+      "ticks": 2097,
+      "terminal": true,
+      "crash": null,
+      "panics": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "fast_errors": 0,
+      "root_errors": {},
+      "roots": 60,
+      "opp_noncore_roots": 57,
+      "opp_played": {
+        "ThreeMusketeers": 1,
+        "Rage": 2,
+        "Clone": 2,
+        "GiantBuffer": 2,
+        "BattleHealer": 2,
+        "Freeze": 1
+      },
+      "own_played": {
+        "BattleHealer": 2,
+        "Clone": 2,
+        "GiantBuffer": 2,
+        "Rage": 1,
+        "RoyalGiant": 2,
+        "Graveyard": 1
+      },
+      "command_sha256": "58569c06c5c722f4bf4ccdedaea198fc1f80c3d169ebcea7a5cf18ec56d9dc93"
+    },
+    {
+      "player": "LIVE-fast-it5s2",
+      "deck": "B1B2A",
+      "ticks": 2401,
+      "terminal": false,
+      "crash": null,
+      "panics": 0,
+      "errors": {},
+      "native_failures": {},
+      "search_failures": {},
+      "fast_errors": 0,
+      "root_errors": {},
+      "roots": 0,
+      "opp_noncore_roots": 0,
+      "opp_played": {
+        "ThreeMusketeers": 1,
+        "Rage": 3,
+        "Clone": 2,
+        "GiantBuffer": 2,
+        "BattleHealer": 2,
+        "Freeze": 2
+      },
+      "own_played": {
+        "BattleHealer": 2,
+        "Clone": 2,
+        "GiantBuffer": 2,
+        "Rage": 2,
+        "Freeze": 2,
+        "RoyalGiant": 2
+      },
+      "command_sha256": "0b1103f8bb6e31707780c90d887a1ff885956640eeb9a3f27ecbb6dc81d0e926"
+    }
+  ],
+  "class": {
+    "class-focused-v2": {
+      "complete": true,
+      "cards": [
+        "ThreeMusketeers",
+        "GoblinGiant"
+      ],
+      "scenarios": 6,
+      "exceptions": 4,
+      "failures": [
+        {
+          "site": "public-root/GoblinGiant/combat/python/316/Troop/0",
+          "error": "PublicGraphError: unsupported public GoblinGiant attachment graph: {'parents': 0, 'riders': 1, 'matched': 0, 'ambiguous': 0, 'boundary_candidates': 0, 'unsupported': [1]}"
+        },
+        {
+          "site": "public-root/GoblinGiant/combat/python/316/Troop/1",
+          "error": "PublicGraphError: unsupported public GoblinGiant attachment graph: {'parents': 0, 'riders': 1, 'matched': 0, 'ambiguous': 0, 'boundary_candidates': 0, 'unsupported': [1]}"
+        },
+        {
+          "site": "native-public-root/GoblinGiant/combat/native/('Troop', 'SpearGoblinGiant', '')/316/0",
+          "error": "PublicGraphError: unsupported public GoblinGiant attachment graph: {'parents': 0, 'riders': 1, 'matched': 0, 'ambiguous': 0, 'boundary_candidates': 0, 'unsupported': [1]}"
+        },
+        {
+          "site": "native-public-root/GoblinGiant/combat/native/('Troop', 'SpearGoblinGiant', '')/316/1",
+          "error": "PublicGraphError: unsupported public GoblinGiant attachment graph: {'parents': 0, 'riders': 1, 'matched': 0, 'ambiguous': 0, 'boundary_candidates': 0, 'unsupported': [1]}"
+        }
+      ]
+    },
+    "class-focused-v3": {
+      "complete": true,
+      "cards": [
+        "ThreeMusketeers",
+        "GoblinGiant"
+      ],
+      "scenarios": 6,
+      "exceptions": 0,
+      "failures": []
+    },
+    "stopped-full-v2": {
+      "objects-v2-0.json": {
+        "scenarios": 39,
+        "exceptions": 0,
+        "complete": false
+      },
+      "objects-v2-1.json": {
+        "scenarios": 39,
+        "exceptions": 0,
+        "complete": false
+      },
+      "objects-v2-2.json": {
+        "scenarios": 42,
+        "exceptions": 0,
+        "complete": false
+      },
+      "objects-v2-3.json": {
+        "scenarios": 42,
+        "exceptions": 0,
+        "complete": false
+      }
+    }
+  },
+  "input_sha256": {
+    "HEADLINE.json": "4d863a64dff7a7d5328f87caa17927c8d5ea8b2ef19a7b51ee1edff09070df06",
+    "TOTALITY.json": "7f450313205131413680388afd7c4c0690616791310ad09c7c97784e4e1d8b71",
+    "ASSEMBLY.json": "6a39abaf4d8cf7882936a7d32f2f72e10fbdb38c040b826d6dbbbcc04af1d2de",
+    "SOURCE-AUDIT.json": "b8927142faddcffca558558e83cafa96387a949d2b42d96836dffbfc1bd3af01",
+    "EVALUATOR.json": "e36bd83b5727eaa8f97583ccff855a1f7c207f96061485c4c6423c376ed401e0",
+    "STOP-AFTER-FAILED-TEMPLATE-GATE.json": "f7ee86d5a5c5c6d1b4499618fc99a721edb4b274559cbfb31c18e984d2a00c22",
+    "class-focused-v2.json": "2acc5c1f0e334dc916072fbb4499ec4327eb4f525d19fab4e893904f43e02ef8",
+    "class-focused-v3.json": "bcab2a6706a4f608348a92067bd2649f50916bd328968659ea4e0bde7e7d8e4e",
+    "none-v3-r1-cards3.json.inventory.json": "9df11f24b9a362ed99c4aceb4b0af98f01e49c31c0d70106f7a7ebfc7af56fb5",
+    "none-v3-r1-cards3.json": "f7b555f66d30d07d05b54e945c0b2878339a31ae4f9843dfbfd4be43c1bdc167",
+    "none-v3-live16402c.json.inventory.json": "53475f468d7813303a98fb60e168bfba45c7aba5f432928c981aecfb153a0645",
+    "none-v3-live16402c.json": "9767cf4509525dd60c8226cc577e72681d0f20a6e0e529158e6d318b6077afb1",
+    "objects-v2-0.json": "9900118a088886ce5dbe5450676637fe3d492a81785dfb626465eb57e064a171",
+    "objects-v2-1.json": "8207b90d588bc8bacd12a236268f12efd7666905d4317488e00294e45a4a6383",
+    "objects-v2-2.json": "536a494dd797ffb4fa2089bd8f371e6b423f02650ca7d1d7e6db2974ec9c0325",
+    "objects-v2-3.json": "c854ba4be2e90c5c73cd7c269a37abff3ca1f67e58f37c87062fd406ac7afaaf",
+    "mixed.jsonl": "d7685d866c1ce64cd68e69d85689e70efdd7e39c6b52b314198988290f607250",
+    "mixed-3m.jsonl": "6a5272c8d8182e728790e6f228ad485897348d57cc7e6ffce544802947ec0a93"
+  },
+  "releases_created": []
+}

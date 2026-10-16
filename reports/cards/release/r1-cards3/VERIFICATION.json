@@ -1,0 +1,59 @@
+{
+  "hosts": {
+    "127x03": {
+      "config_cards": 237,
+      "content_manifest_sha256": "30425d27563d87f2d76052bcfd929f64ce476e42d99abaf8bada325084cd6652",
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "host": "127x03",
+      "metadata_cards": 121,
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "overlay_files_verified": 476,
+      "parents_unchanged": true,
+      "read_only": true,
+      "receipt_sha256": "e90489148b1e08930f32f9dc84724e9ba7f44aa9df3e0adb65f202b43942ff61",
+      "result": "PASS",
+      "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards3",
+      "runtime_seconds": 212.351,
+      "templates": 359,
+      "verified_utc": "2026-10-16T19:38:22Z",
+      "verify": true
+    },
+    "127x04": {
+      "config_cards": 237,
+      "content_manifest_sha256": "30425d27563d87f2d76052bcfd929f64ce476e42d99abaf8bada325084cd6652",
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "host": "127x04",
+      "metadata_cards": 121,
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "overlay_files_verified": 476,
+      "parents_unchanged": true,
+      "read_only": true,
+      "receipt_sha256": "0e0de113e68b73895259a8ec760b146847ba43fc87c86454008ab06847e543c7",
+      "result": "PASS",
+      "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards3",
+      "runtime_seconds": 60.079,
+      "templates": 359,
+      "verified_utc": "2026-10-16T19:35:12Z",
+      "verify": true
+    },
+    "127x08": {
+      "config_cards": 237,
+      "content_manifest_sha256": "30425d27563d87f2d76052bcfd929f64ce476e42d99abaf8bada325084cd6652",
+      "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "host": "127x08",
+      "metadata_cards": 121,
+      "native_sha256": "326ce6f93c4db6a7bd15b667960a2d3ed40a0d48eab3badc9ddd181521996732",
+      "overlay_files_verified": 476,
+      "parents_unchanged": true,
+      "read_only": true,
+      "receipt_sha256": "86a62b245ac7c1be7f40d52730a7bfca727cdcb0f9ce669898700663efda8221",
+      "result": "PASS",
+      "root": "/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards3",
+      "runtime_seconds": 58.829,
+      "templates": 359,
+      "verified_utc": "2026-10-16T19:35:12Z",
+      "verify": true
+    }
+  },
+  "result": "PASS"
+}
