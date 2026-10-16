@@ -13,7 +13,7 @@
 set -euo pipefail
 COMMIT=$1; OUT=$2; SPEC=$3; EXPORT=$4; shift 4; EXTRA="$*"
 REPO=$(cd "$(dirname "$0")/../../.." && pwd)
-TREE=/Users/sam/clasher-live/loop/code/15117b86b-w1
+TREE=${TREE:-/Users/sam/clasher-live/loop/code/15117b86b-w1}   # the Mac code tree the manifest is checked against
 LIVE="live/loop/drive.py live/loop/battlelog.py live/loop/canvas.py live/loop/deckread.py live/loop/frames.py live/loop/handread.py
 live/loop/overlay.py live/loop/ownplay.py live/loop/towers.py live/loop/digits.npz live/perception/common.py live/perception/events.py
 live/perception/infer.py live/perception/unit_filter.py live/perception/yolo_units.py"
