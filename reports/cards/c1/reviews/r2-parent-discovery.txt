@@ -1,0 +1,18 @@
+Parent-side post-commit static inspection (2026-10-16T10:37Z, candidate unchanged): actual local read-only
+`git ls-tree -r -z HEAD -- ''` exits128 (`fatal: empty string is not a valid pathspec`). Thus archive_files
+with default empty prefix cannot authenticate the full bot archive as written in c45854f. Candidate must not
+launch; let independent r2 complete its whole review against this fixed commit, then correct and obtain a
+new commit-bound round. The prior synthetic mock did not model Git's empty-pathspec rejection. This is a
+fail-closed usability defect (preflight stops before workers), not evidence of host execution.
+
+Additional static source finding: existing cpu_room.sh uses ps -u "$USER" in live()/leased_idle(). The plan's
+outer env-i drops USER, so this recipe can break CPU accounting even though driver later checks an8-slot lease.
+No wrapper was executed. Future corrected recipe must supply USER from /usr/bin/id -un (identity-derived,
+not caller's arbitrary USER), and preserve this in a focused static contract test. Local raw read path:
+/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh. Worker environment need not retain USER.
+
+Parent-side Python flag check only (no worker/host code execution): PYTHONHASHSEED=0 with bot Python
+-I -S -B prints sys.flags.hash_randomization=1; with -P -s -S -B prints0. Thus c45854f's isolated workers
+ignore the explicit historical seed, a reproducibility defect. Minimal env remains needed; worker command
+should use -P -s -S -B under that env (no inherited PYTHON*), enforce hash_randomization0 in bootstrap,
+and record effective worker flags. Fixed control interpreter can retain-I because it performs no engine work.

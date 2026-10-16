@@ -1,0 +1,76 @@
+{
+  "artifacts": {
+    "independent-tests.log": "097c034aca8e5409bce90856ccc4e6970c08d2ef29259d5f9d91c8d0a09c3e22",
+    "independent_checks.py": "d2523d3fdf73f011ea25942b59d2a222dd2b3e5fc34dff2a43c1370dfe9f3f9f",
+    "submitted-tests.log": "954afce3cdabd22718a049102598dd99c101bc8b24ce0ef4df8c0a22b4330361"
+  },
+  "base": "476a747f75569040f9b137d0991691c95e6f1b29",
+  "candidate": "c45854febf93352284dd9f76b02651d989d906a7",
+  "candidate_tree": "31bf0bdcb54b2a47dab83edadba024d2ad428f46",
+  "delta_file_sha256": {
+    "reports/cards/c1/FINAL-GATE-PLAN.md": "51cfb2dd81eb37b25c987e882fcf8c2e8afc74ebdc1645c3f32a365ed0ec8fad",
+    "reports/cards/c1/PROGRESS.md": "bca9a288b68f5d2cff6674f877dd49001297f8b70e56dca96a75916f131dbaac",
+    "reports/cards/c1/RESULTS.md": "e6621eef3590df8b86d024722b9bb8aa74cfb1142d6c4a957057a782171d4761",
+    "reports/cards/c1/SNAPSHOT-DIAGNOSTICS.md": "5136eb6f3f80881a040e217e3e88220e146b0f83b2858dba7eef81856f9dbe01",
+    "reports/cards/c1/reviews/FINAL-TOOLS-r2-response.md": "5a607c2fbc7d646bfa9cc20ee4ec829be72ef69d4a88dc54a208ff33d605062d",
+    "reports/cards/c1/reviews/repair-local-first-failure.json": "d2c91865e1a3e75e095e7e5c786565b1e9b94ff2bd7949cfa2899c55ef683e8b",
+    "reports/cards/c1/reviews/repair-local-receipt-r2.json": "6dd78a2db440330b90f078244ef370445909377c1b07dcb41ee21e3b2d3b8936",
+    "reports/cards/c1/reviews/repair-local-tests-r2.log": "5d0b234bfae34376819e96bb10b1a95c9a69e391d39598daad81d5404858a633",
+    "reports/cards/c1/tools/final_gate.py": "f1eb2e557d73010def69aea9adfeaf8a1ce47c3b5e40d87ac66342a339db2953",
+    "reports/cards/c1/tools/final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "reports/cards/c1/tools/final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "reports/cards/c1/tools/gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "reports/cards/c1/tools/gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "reports/cards/c1/tools/gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "reports/cards/c1/tools/gate_worker.py": "88a526b4cda2f8ed031c12520821a267c51a93b768bcd2ebe87da4cd230f9c60",
+    "reports/cards/c1/tools/test_final_gate_contract.py": "6e94910e3d0e4ec120ecd18a6ad4ac17e189aa9ee76f317eae080d84f4714fcf"
+  },
+  "delta_sha256": "c723f0dbb61163e851b0ba9bedab18df4a44c9d30bfac68af113486add04c5de",
+  "head": "c45854febf93352284dd9f76b02651d989d906a7",
+  "readpath_and_preserved_sha256": {
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh": "e77b40f7ef61009fb244f50edb69711a73b416e369091e3957b41715a3743949",
+    "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh": "ae1d26161b1666a3b697a3c54bb2f7ddf1768e2bc2ca4e359f5107f5827a3c36",
+    "/mpac/sdicks02/repos/clasher-bot/bot/fidelity/fixture.py": "f10be50f19034081ba042f6416631242bf91a75dc827f4dbae513319a9bfc457",
+    "/mpac/sdicks02/repos/clasher-bot/bot/fidelity/rs_parity.py": "b9c99df6c88cee1a4f9d94a96862b6493f5974f29aec4b0fe7b6a9b68c3b2b8a",
+    "/mpac/sdicks02/repos/clasher-bot/bot/live/native_parity.py": "e826a70749b61fc81edb40aedbd47a8a4743ea714b34178822eee4b5f14c02e5",
+    "/mpac/sdicks02/repos/clasher-bot/bot/players/runtime.py": "891a54d6fe641fdb8b7aafab38d07f58bc5231e3298464c4e3d6cea813e025cc",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/peek.py": "e8f0b2ac3280b5395b098a9bcb62765f9865dcf6c172f5e60d4d9d2bf8107b85",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/probe_snapshot_followup.py": "60be8aaf65052557b333d5fe6cfd74636841d55ff7c4a3eef15835e1d66a3208",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/probe_snapshots.py": "aad00c4bed5418528db06308513f6edf66b12e0af9ca4c890dd8555bc5f150a8",
+    "/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/tools/snapcmp_probe.py": "b850a5e707903606d43df4f4bd8f292cb5ea830f18b881e21476384089372b6b",
+    "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/C1-final-tools-r1.md": "1653b7d82d1d3b947618e1f7bebe762bfef54f6f31aa781456627fc16c0dceb0"
+  },
+  "report_sha256": "2409b89a44b1e513ac960f909476e082899235904f3da96c9ffd6bb20fd0c083",
+  "scope": "local serial pure validators and AST-extracted mocked imports/process/filesystem helpers only; no host driver main or launcher/staging/host script execution; no actual engine/native import, simulation, build, remote, emulator, deployment or pin action",
+  "verification": [
+    {
+      "command": "TMPDIR=/mpac/sdicks02/repos/clasher-cards-c1/reports/cards/c1/reviews/r2-independent /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/tools/test_final_gate_contract.py > reports/cards/c1/reviews/r2-independent/submitted-tests.log 2>&1",
+      "exit_code": 0,
+      "result": "12 groups PASS"
+    },
+    {
+      "command": "/mpac/sdicks02/repos/clasher-bot/.venv/bin/python -I -S -B reports/cards/c1/reviews/r2-independent/independent_checks.py > reports/cards/c1/reviews/r2-independent/independent-tests.log 2>&1",
+      "exit_code": 0,
+      "result": "7 independent groups PASS; two groups deliberately assert the discovered defects"
+    },
+    {
+      "command": "bash -n reports/cards/c1/tools/final_gate.sh",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check 476a747f75569040f9b137d0991691c95e6f1b29 c45854febf93352284dd9f76b02651d989d906a7",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --exit-code 476a747f75569040f9b137d0991691c95e6f1b29 c45854febf93352284dd9f76b02651d989d906a7 -- engine-cards reports/cards/c1/tools/probe_snapshots.py reports/cards/c1/tools/probe_snapshot_followup.py",
+      "exit_code": 0,
+      "result": "empty delta"
+    },
+    {
+      "command": "git ls-tree -r -z HEAD -- ''",
+      "exit_code": 128,
+      "result": "read-only local Git command; independently reproduces parent discovery",
+      "stderr": "fatal: empty string is not a valid pathspec. please use . instead if you meant to match all paths"
+    }
+  ]
+}

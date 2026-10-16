@@ -9,6 +9,7 @@ import importlib.util
 import json
 import os
 import stat
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -81,12 +82,16 @@ class ContractTests(unittest.TestCase):
         data = dict(commit=commit_data, blob=blob)
         def fake_git(repo, *args):
             if args[:2] == ('cat-file','commit'): return data['commit']
-            if args[0] == 'ls-tree': return ('100644 blob ' + blob_id + '\tengine-cards/src/lib.rs\0').encode()
+            if args[0] == 'ls-tree':
+                self.assertEqual(args, ('ls-tree','-r','-z',commit,'--','engine-cards') if '--' in args
+                                 else ('ls-tree','-r','-z',commit))
+                return ('100644 blob ' + blob_id + '\tengine-cards/src/lib.rs\0').encode()
             if args[:2] == ('cat-file','blob'): return data['blob']
             raise ValueError('unexpected Git command')
         scope['git'] = fake_git
         f = scope['archive_files']
         self.assertEqual(f(Path('/unused'), commit, 'engine-cards'), {'src/lib.rs': C.sha(blob)})
+        self.assertEqual(f(Path('/unused'), commit), {'engine-cards/src/lib.rs': C.sha(blob)})
         data['commit'] = b'different commit'; self.reject(f, Path('/unused'), commit, 'engine-cards')
         data['commit'] = commit_data; data['blob'] = b'different blob'
         self.reject(f, Path('/unused'), commit, 'engine-cards')
@@ -190,6 +195,21 @@ class ContractTests(unittest.TestCase):
         shell = (TOOLS/'final_gate.sh').read_text()
         self.assertTrue(shell.startswith('#!/bin/bash -p'))
         self.assertIn('/usr/bin/env -i', shell)
+
+    def test_R2_CPU_identity_and_worker_historical_hash_seed(self):
+        plan = (TOOLS.parent/'FINAL-GATE-PLAN.md').read_text()
+        launch = plan.split('setsid /usr/bin/env -i ', 1)[1].split('```', 1)[0]
+        self.assertIn('USER="$(/usr/bin/id -un)"', launch)
+        self.assertNotIn('BASH_ENV=', launch)
+        # Only a stdlib flag probe, never a worker, engine, native or host script invocation.
+        env = dict(PATH='/usr/bin:/bin', PYTHONHASHSEED='0')
+        cmd = ['/mpac/sdicks02/repos/clasher-bot/.venv/bin/python','-P','-s','-S','-B','-c',
+               'import sys; print(sys.flags.hash_randomization, sys.flags.safe_path, sys.flags.no_site, sys.flags.no_user_site)']
+        p = subprocess.run(cmd, env=env, capture_output=True, text=True)
+        self.assertEqual((p.returncode,p.stdout.strip()), (0,'0 True 1 1'))
+        source = (TOOLS/'final_gate.py').read_text()
+        self.assertIn("'-P', '-s', '-S', '-B'", source)
+        self.assertIn('sys.flags.hash_randomization', (TOOLS/'gate_worker.py').read_text())
 
     def fixture_rows(self):
         expected = {f'episode{i}': dict(ticks=10, plays=2, split='train') for i in range(577)}

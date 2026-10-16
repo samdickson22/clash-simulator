@@ -263,3 +263,20 @@ Worker: CARD LEAD engine owner for Batch C1 (Opus). Worktree `/mpac/sdicks02/rep
 - Rollback: revert scoped tools/docs repair commit(s), keeping rejected launcher disabled; engine rollback
   remains f68e5f80f/native631ac and historical native2ac artifacts. No runtime/pin rollback needed. Actual
   integrated source/native, B2 acceptance and fresh C56 are intentionally not invented by these local checks.
+- 10:36–10:44Z repair candidate **c45854febf93352284dd9f76b02651d989d906a7** secret-scanned/committed and
+  pushed (explicit scoped add; ignored test log added explicitly with -f). Fresh independent r2 task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Acards-c1-final-tools-r2-c45854f-independent`
+  returned REJECT for two startup defects; full verdict and19 synthetic groups retained in reviews/FINAL-TOOLS-r2.md
+  and r2-independent/receipt.json. Only two essential factual handoffs to reviewer, no parent progress DMs.
+- Corrected both: full Git tree query omits empty pathspec (old readonly command exit128 preserved), outer
+  env-i invocation supplies identity-derived USER before cpu_room.sh's two ps user selectors. Added exact argv
+  regression for full/prefixed tree queries, identity source control; actual local readonly full-tree query exit0.
+  Parent additionally found-I ignores hashseed0: flag-only local Python commands produced1 (-I -S -B) vs0
+  (-P -s -S -B). Worker now uses latter flags under explicit clean env, enforces flags/seed and frozen base_prefix,
+  records effective flags; isolated control interpreter remains-I (no engine work).
+- Exact revised local command unchanged test_final_gate_contract.py:13 groups PASS (adds a pure stdlib flag
+  subprocess, no host script/worker or engine import), AST7 and bash-n pass. Detailed command/start/end/code
+  hashes/log/full-tree query count and output hash in reviews/repair-local-receipt-r3.json. r2 receipts/logs
+  preserved rather than overwritten. New r3 response carries original six findings and every r2 objection.
+  Need fresh independent commit-bound r3 before any host execution; accepted/integrated B2 and actual combined
+  source/native coverage still required. No inherited job poll/restart, new gate/build/simulation or host script.

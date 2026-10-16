@@ -10,6 +10,8 @@ def main():
     capsule = Path(capsule)
     if Path(sys.base_prefix).resolve() != capsule / 'python' or sys.version.split()[0] != '3.12.12':
         raise RuntimeError('Python did not bootstrap from the frozen standalone capsule')
+    if sys.flags.hash_randomization or not sys.flags.safe_path or not sys.flags.no_site or not sys.flags.no_user_site:
+        raise RuntimeError('worker must preserve seed0 and disable implicit/site/user import paths')
     rt = capsule / ('r1' if tag == 'pinned' else 'total-runtime')
     native = capsule / ('pinned-native' if tag == 'pinned' else 'native')
     std = capsule / 'python/lib/python3.12'

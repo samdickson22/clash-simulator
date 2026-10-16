@@ -139,6 +139,9 @@ those bytes and the full frozen inventory before fixtures, before roots, before 
 No environment from the caller reaches workers. Logs record the effective minimal environment/per-arm roots.
 Workers fix r1 policy, remove stale EVAL root, isolate sys.path, disable site/.pth processing and bytecode,
 use nice15 and single-thread BLAS/OMP/Rayon. No ambient overlays, Python optimization, pin policy or loader preload.
+Workers use -P -s -S -B under the explicit clean environment, keeping PYTHONHASHSEED=0; bootstrap requires
+hash_randomization=0, safe_path, no_site and no_user_site. The control interpreter alone uses-I (no engine
+operations): -I would ignore PYTHONHASHSEED and is intentionally not used for gate workers.
 
 Fixtures: two parents, three pool workers each. Individually wait both, record exit statuses, then audit exact
 577 IDs/schema/chain hashes/ticks/action counts/results, native import path and cross-arm bytes before roots.
@@ -160,7 +163,7 @@ exit0 and matching launch/baseline/phase receipts, no FAIL. A SIGKILL/power loss
 After review/prerequisites/job audit, the **later owner-approved** invocation is (not run here):
 
 ```bash
-setsid /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+setsid /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 USER="$(/usr/bin/id -un)" \
   /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 8 \
   /bin/bash -p "$RUN/inputs/tools/final_gate.sh" \
   "$RUN" "$INTEGRATED_SHA" "$NATIVE_SHA" "$B2_ACCEPTED_SHA" "$TOOLS_COMMIT" \
@@ -170,6 +173,8 @@ setsid /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \
 Capture $! and its actual PGID plus final outer status in an independently approved owner/shepherd receipt;
 do not infer successful launcher exit from PASS alone. No new watcher or staging/host script is provided by
 this plan. Any new/changed host-touching script requires separate independent review before execution.
+The outer wrapper requires USER for its two ps user selectors; derive it from actual identity as above,
+never drop it or restore the caller's arbitrary environment. The inner driver/worker environments stay clean.
 
 ## Review/rollback
 

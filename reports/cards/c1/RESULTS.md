@@ -282,3 +282,8 @@ affected combined-source checks and fresh C56 remain mandatory; no live pin/runt
 The origin continuation was **through expiry (10 updates to expiry)**, not10 post-expiry updates. Corrected
 prose without extending evidence. Prior failed review/artifacts are preserved; review's final followup raw-file
 authenticity caveat remains. Exact local commands/results/hashes and repair rollback are in PROGRESS/reviews.
+
+Fresh launcher review r2 rejected c45854f for dropping USER before CPU accounting and an empty full-tree Git
+pathspec. Both repaired; an additional local flag check corrected workers ignoring hashseed0 under-I.
+The13-group revised local suite passes with no engine/native/host launcher execution. Original r2 rejection
+and artifacts remain; see FINAL-TOOLS-r3-response.md for full repair/review bindings. Fresh r3 required.

@@ -63,7 +63,10 @@ def archive_files(repo, commit, prefix=''):
     C.require(hashlib.sha1(b'commit ' + str(len(raw)).encode() + b'\0' + raw).hexdigest() == commit,
               'Git commit object authentication failed')
     result = {}
-    for entry in git(repo, 'ls-tree', '-r', '-z', commit, '--', prefix).split(b'\0'):
+    query = ['ls-tree', '-r', '-z', commit]
+    if prefix:
+        query.extend(['--', prefix])
+    for entry in git(repo, *query).split(b'\0'):
         if not entry:
             continue
         meta, name = entry.split(b'\t', 1)
@@ -196,6 +199,7 @@ def run_gate(run, requested):
     env = dict(MIN_ENV, LD_LIBRARY_PATH=str(capsule / 'python/lib'))
     write_json(output, 'validated-baseline.json', dict(controls={k: C.sha(v) for k, v in initial.items()},
                requested=requested, fixture_ids=sorted(fixtures), root_sample=sample, environment=env,
+               worker_flags=['-P', '-s', '-S', '-B'], worker_hash_randomization=0,
                per_arm=dict(CLASHER_BOT_RUNTIME_PINS='r1', CLASHER_EVAL_RUNTIME_ROOT='derived per arm',
                             CLASHER_ROOT='inputs/{r1,total-runtime}', CLASHER_BOT_RUNTIME='inputs/{r1,total-runtime}',
                             CLASHER_DELAY_NATIVE_DIR='inputs/{pinned-native,native}')))
@@ -207,7 +211,8 @@ def run_gate(run, requested):
     gate.chmod(0o500)
     children = Children(output)
     def command(tag, helper, *args):
-        return ['/usr/bin/nice', '-n', '15', str(capsule / 'python/bin/python3.12'), '-I', '-S', '-B',
+        # -I implies -E and would ignore PYTHONHASHSEED=0. Clean env + -P/-s/-S give isolation with that seed.
+        return ['/usr/bin/nice', '-n', '15', str(capsule / 'python/bin/python3.12'), '-P', '-s', '-S', '-B',
                 str(capsule / 'tools/gate_worker.py'), str(capsule), tag, helper, *map(str, args)]
     try:
         check_original(run, initial)

@@ -1,0 +1,12 @@
+test_PASS_publication_success_and_postlink_exception (__main__.IndependentChecks.test_PASS_publication_success_and_postlink_exception) ... ok
+test_all_new_python_AST (__main__.IndependentChecks.test_all_new_python_AST) ... ok
+test_archive_default_sends_empty_pathspec (__main__.IndependentChecks.test_archive_default_sends_empty_pathspec) ... ok
+test_fixture_main_relocated_readpath_and_pool (__main__.IndependentChecks.test_fixture_main_relocated_readpath_and_pool) ... ok
+test_historical_helper_operations_exactly_preserved (__main__.IndependentChecks.test_historical_helper_operations_exactly_preserved) ... ok
+test_outer_wrapper_environment_source_dependency (__main__.IndependentChecks.test_outer_wrapper_environment_source_dependency) ... ok
+test_worker_both_arms_frozen_paths_and_policy (__main__.IndependentChecks.test_worker_both_arms_frozen_paths_and_policy) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.027s
+
+OK
