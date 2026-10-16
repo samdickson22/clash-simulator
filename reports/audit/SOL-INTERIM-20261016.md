@@ -139,3 +139,15 @@ The hourly sample found persistent low CPU use on01/03, now0.69/9.44;04/08 were6
 The level pilot was stopped as invalid after actual terminal-command rejections. Raw outcomes and immutable inputs remain; no retry, exclusion or accepted effect estimate is authorized before repair and review. Live play remains held after the failed hand-validation batch while explicit per-slot selection permission is developed against the actual deployed sources. The B1 scaled consumer patch is source-published only; combined native/root validation and active deployment remain separate gates.
 
 The sweep checked16active/lead threads with no pending input. Known paused and superseded threads remain stopped. No root host signal, compute launch, active pin/model/account change or live authorization occurred. Detailed commands and receipts remain in the coordinator journal and workstream files.
+
+## 2026-10-16T14:11:28Z: reviewed source remains separate from live acceptance
+
+Quiet checks found no pending input or newly failed unfinished workers. The canonical bot lead remains blocked by its oversized provider handoff; the compact Sol recovery child is active, owns the daily fresh-bank evaluation/resource reconciliation and coordinates the stable bot interface. Do not repeatedly retry the historical thread or duplicate its existing jobs.
+
+The hand-permission implementation and its canonical source port passed their separate reviews; source commit e883a80d preserves main configuration/root hooks. Actual-host bytes, installer/paired rollback and later live validation remain separately gated through the sole operator. The driver remains held, with no further live play authorized and all prior refusal failures preserved.
+
+The exact28fresh Spear originals passed source-alpha review and consumer promotion, yielding7body-bearing runs/61originals/0inpaints in the consumer record. This does not clear other sources, per-card balance or new-generation gates. Distinct loaded/queued bank lineage remains explicit. The existing reviewed08trainer is busy; no detector acceptance follows.
+
+The repaired level experiment is approaching completion, with292completed rows/97primary pairs clean in its latest owner audit and eight children still pending. Complete final rows, source/cache checks and the registered rule remain required before any decision. The prior invalid/stopped run is retained. Card combined-source/native/root acceptance and B2-to-C1 prerequisites remain with existing owners; no active pin change is inferred from source preparation.
+
+Hourly loads01/03/04/08 were4.42/0.54/25.49/18.76;08GPU96%,others idle, no console users or overload. Persistent low CPU remains with the recovery deputy and current owners for completed-versus-blocked work reconciliation; no speculative replacements or root host signals were made. Exact actions, task IDs and receipts are preserved in the event log and workstream files.
