@@ -60,6 +60,8 @@ See COVERAGE.md "Batch plan".
 | cards-r1cards2-sol-r1 | Sol | assemble r1-cards2 (scope+Batch A, native 1923619e) + live16402b; gates | reports/cards/r1-cards2/ |
 | cards-runtime-review-r1 | Sol | review runtime/overlay code 0874da215 | (verdict) |
 | cards-nulls-fixtures-sol-r1 | Sol | Null's Royale (15.535!) native fixtures: offline prep, then LIVE-granted slots | reports/cards/nulls/ |
+| cards-release-roots-sol-r1 | Sol | released read-only roots on 03/04/08 (r1-cards1 done; r1-cards2 + live16402b in progress) | reports/cards/release/ |
+| cards-c1-opus-r1 (task prefix 6b4c485c) | Opus | Batch C1 attack/targeting/dash + 4 native≠Python bugs (clasher-cards-c1, cards/c1) | reports/cards/c1/ |
 | cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
@@ -119,3 +121,15 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   errors), f97b2052e/a71a7643a (assembler safety, Sol), 878d5f459 (Batch A boundary-class fix, native de11f124, 21
   paths × 2 seats audited). Running: Batch A gate r4 (04, PGID 3671549; Sol shepherd), Batch A review r3, runtime review
   r2 (fresh Sol), r1-cards2/live16402b assembly+gates (Sol; swap to final native/runtime when gates finish).
+- 03:28Z **MERGED cards/lead → main 0ee42633e**: Batch A (gate run 4 PASS on native de11f124; review r3 APPROVE),
+  r1-cards1 (R.bots widened; runtime review r3 APPROVE after lead fix 99b26b995), live16402 tooling. Told BOT LEAD +
+  coordinator. Pending: live16402b final (Sol r1cards2 worker) = BOT LEAD generation start signal.
+- 06:47Z RESUME after the 2nd usage stop (~04:00Z). live16402b FINAL (native de11f124; smoke 2/2, K4L 12/12, totality
+  0 panics; e545eb6bd) → BOT LEAD start signal sent; generating on 08 dev root. r1-cards1 released on 03/04/08; release
+  worker releasing r1-cards2 + live16402b (send 03/04 receipts to BOT LEAD). B2-fix C56 gate PASS (577/600) → B2 Opus
+  merging onto cards/lead (sync first-update design) + re-gate. C1/C2 specs committed b16716481; C1 Opus started.
+  Null's worker READY FOR SLOT 120 min → requested from LIVE LEAD. B1 resumed by coordinator.
+- 06:53Z r1-cards2 + live16402b RELEASED read-only on 03/04/08 (receipts c02c5a58c; recomputed by lead); BOT LEAD told.
+  B2 merged onto cards/lead (9e881f00a/27ef53e5c, native 466aeba3; parity 28/28 + 42/42 + 42/42); b2-merge C56 gate on
+  04 PID 2123864 (Sol shepherd cards-b2merge-gate-sol) + fresh Sol review cards-b2-review-r1 (task prefix 6b4c485c).
+  Null's 120-min slot GO from LIVE LEAD; wake cards-nulls-fixtures-sol-r1 when the Null's owner says probe idle.
