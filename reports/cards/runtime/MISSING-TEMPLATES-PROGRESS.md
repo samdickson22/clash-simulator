@@ -397,3 +397,40 @@ Read-only04 liveness10:14:59Z: wrapper230877, workers231604/231605/231607/231608
 This is partial liveness, not complete class evidence. No source change to frozen full-sweep candidate.
 Rollback for helper: prior committed script retained in git; no host action executed or root/pin changed.
 Strict silence/final once, direct-parent clarification and no-tiny-delegation rules persist in scoped HANDOFF.
+
+
+## 2026-10-16T10:17Z — audit timestamp correction and read-only host preflight
+
+Previous entry header10:18Z was a transcription error: its commit f3cd8f4bf completed10:15:52Z.
+No future command execution is implied. Exact commands: bash-n totality helper; explicit5-own-path add,
+staged clasher-secret-scan and cached diff-check PASS; git commit --only those5 paths; git push origin cards/lead.
+Read-only03/04/08 preflight10:16:40Z: both r3targets ABSENT; both retained r2roots mode0555 and exactknown
+receipt hashes (r1cards2r2 4c509b531959c90dd07e7a83cc9a877345333e2e7d06992f01444de8ed1b1dba,
+liver2 32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499).
+No template/replay/release/totality processes03/08; only existing fullsweep4workers04. No release action taken.
+
+
+## 2026-10-16T10:23:27Z — final workflow review found provenance gaps; corrected plan under review
+
+Independent native /root/host_script_review finalworkflow round1 REJECT protocol44a1e0029767f8fb4f61f570712b13c481767c2df9b7218cb4d80af1a79a5b38:
+R1 extraction modes not enforced/verified (copy2 propagates source modes); R2 historicalr2negativecontrol
+records policypaths only, no cryptographic same-policy pairing. No host/job execution byreviewer orwriter.
+No implementation/classsource7 change; current04fullsweep230877 preserved, no duplicates or activepins.
+Bounded readonlysearch of own/BOT existingfullpool launch/preflight/extensionreceipts found policyhashes
+but no historicalcontrol-ownedhashproof; do not infer unchanged past bytes from currentpaths/mtime.
+Original5000110failure remains exactvalid negative evidence, separate from same-inputpaired acceptance.
+
+Revisedprotocol f55a71db9d01fffa12378383e958df760f4270512fb12a6ca690a0a1c1b7b9fb requires tar
+same-permissions, allmember mode/byte/linkverification, freezeS only andfinalmodes; one fresh paired r2negative
+and r3positive using SAME ownedfrozenreplayrepo/policies/extensionreceipts, sequentialcpu1 afterclass finishes.
+This is new review-required evidence, not restarting/resuming old exitedjobs; historicaloutputs preserved.
+Revisedreplayhelper98299e81a6027c28a32fc6f370adaac74e1577ff40decede06545bb5235d36d1 adds optional
+--policy-dir preservingoriginaldefault, exclusivefreshoutput, pre/post own/runtime.py/policy+receipt hashes,
+actualrootreceiptSHA. No game/deck/seed/teacher/opponent/studentthreshold/sealing behavior changes.
+Fresh independent native round2 requested with priorfindings/responses; execution waits APPROVE.
+Lightlocal --help andownscope diffcheckPASS; no runtime/replay executed. No parent action needed.
+Read-only04baseline c86dcd4524ba1e4cc702ffbf5db17afce60773d8a34db41ca912a9dc9a5e8e69 equals
+`git show 7e64d8b93:engine-cards/py/src/clasher/rl/c56_scripted.py | sha256sum`, bindingfinalNone rankbaseline.
+Commands/details: MISSING-TEMPLATES-RELEASE-PROTOCOL.md. Rollback: oldhelper retained ingit, nohostchanges.
+
+- 2026-10-16T10:23:48Z independent native workflowround2 APPROVE exactprotocolf55a71db/replay98299e81, conditionalon completecoverage/acceptedmain/provenance/hostprerequisites; no reviewer execution. PriorR1/R2 resolved, attestation missing-templates-release-protocol-review.json. Nojoblaunch oractivepinchange.

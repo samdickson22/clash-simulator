@@ -1,0 +1,27 @@
+{
+  "conditions": [
+    "Accepted complete correctedcoverage and requiredparity/implementationreview",
+    "Acceptedmain/sourcearchive exacthashes",
+    "Hostpreflight andnormalCPU admission",
+    "Paired inputmanifests exactlyequal",
+    "NoactiveLIVEpin switch"
+  ],
+  "executed_by_reviewer": false,
+  "files": {
+    "reports/cards/runtime/MISSING-TEMPLATES-RELEASE-PROTOCOL.md": "f55a71db9d01fffa12378383e958df760f4270512fb12a6ca690a0a1c1b7b9fb",
+    "reports/cards/runtime/tools/replay_missing_templates.py": "98299e81a6027c28a32fc6f370adaac74e1577ff40decede06545bb5235d36d1"
+  },
+  "independent": true,
+  "model": "gpt-6.1-sol",
+  "previous_verdict": "REJECT protocol44a1e002: source extraction modes unverified; historicalr2control has paths but no policy hashes",
+  "read_only": true,
+  "reasoningEffort": "high",
+  "resolved_findings": [
+    "Explicit extraction modes and allmember byte/link/mode verification before freeze; finalmode verified",
+    "Fresh paired r2negative/r3positive with same frozen source/policies/extensionreceipts, pre/post inputhashes equal; preserve historicalr2control"
+  ],
+  "round": 2,
+  "task": "/root/host_script_review",
+  "thread": "thread:provider:codex:native-thread:01a143f7-2e9a-7943-b700-4a9c715a4c72",
+  "verdict": "APPROVE"
+}

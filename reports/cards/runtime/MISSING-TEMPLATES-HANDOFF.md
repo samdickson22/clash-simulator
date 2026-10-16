@@ -67,3 +67,13 @@ No tiny delegated implementation tasks. Genuinely independent reviews use existi
 Include these rules in future/resumed briefs; do not rebroadcast to activechildren. No legacy input pending.
 Compute04/08cpu_jobN<=4 nice;05light only; never01/02 or09–18, otherlead worktrees read-only, no emulator,
 roader/tailscale/crontab; screen/input fairness/Mac-only emulator scope preserved. Existing G1/K1 unchanged.
+
+
+Final workflow review round2 APPROVE: MISSING-TEMPLATES-RELEASE-PROTOCOL.md
+f55a71db9d01fffa12378383e958df760f4270512fb12a6ca690a0a1c1b7b9fb, revised replayhelper
+98299e81a6027c28a32fc6f370adaac74e1577ff40decede06545bb5235d36d1. Preserve historicalpath-only
+r2negativecontrol, but it is not a same-policyhash pairing. Required fresh sequentialr2negative+r3positive
+with SAME owned frozenfullpoolrepo+3policies+extensionreceipts and exactpre/post hashes via --policy-dir;
+no resume/restart of anyoldjob. Source archive extractedwith tar--same-permissions, verifyallbyte/link/modes,
+freezeonlynewS andverifyfinalmodes beforecopy2releasehelper. All actions remainconditionalonfullcoverage,
+acceptedmain, hostpreflight andnormalCPUadmission; noactivepin. All details/protocol/reviewattestation committed.
