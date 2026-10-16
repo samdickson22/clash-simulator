@@ -17,6 +17,7 @@ mod souls;
 mod scope;
 mod scripts;
 mod spawn;
+mod troop;
 
 use clock::Clock;
 use mt::Mt;
@@ -1772,9 +1773,7 @@ impl BattleState {
             }
         }
         let (vx, vy) = norm(dx, dy, 256);
-        if dx != 0 || dy != 0 {
-            e.facing = (dx, dy);
-        }
+        e.face_vector((dx, dy));
         let (mut mx, mut my) = (vx * work / 256, vy * work / 256);
         if e.avoidance != 0 {
             let retained = 256 - e.avoidance.abs();
@@ -2292,7 +2291,8 @@ impl BattleState {
             let b = &self.entities[j.unwrap()];
             let a = &self.entities[i];
             if a.class == "Troop" {
-                self.entities[i].facing = (units(b.x - a.x), units(b.y - a.y));
+                let direction = (units(b.x - a.x), units(b.y - a.y));
+                self.entities[i].face_vector(direction);
             }
         }
         if self.entities[i].stun > 0.0 {
@@ -2420,11 +2420,7 @@ impl BattleState {
                 if self.entities[i].stats.spirit_speed > 0 {
                     let aim = (self.entities[j].x, self.entities[j].y);
                     let e = &mut self.entities[i];
-                    e.spirit = true;
-                    e.entity_kind = 2;
-                    e.spirit_launch = self.tick;
-                    e.shot_target = target;
-                    e.aim = aim;
+                    e.launch_spirit(self.tick, target, aim);
                     if !e.alive && !e.stats.electro_chain {
                         e.hp = 1.0;
                         e.alive = true;
@@ -2787,21 +2783,7 @@ impl BattleState {
             self.push_move(i, external, occupied, cells, signatures);
             // Python finish_movement_tick still services the frozen route
             // after pushback consumed the movement vector (entities.py:391).
-            let e = &mut self.entities[i];
-            if e.stun > 0.0 && e.frozen_moving {
-                if let Some(&waypoint) = e.route.front() {
-                    let (x, y) = center(waypoint);
-                    let (dx, dy) = (x - units(e.x), y - units(e.y));
-                    if dx != 0 || dy != 0 { e.facing = (dx, dy); }
-                    if e.direction.0 * dx / 256 + e.direction.1 * dy / 256 < 1001 {
-                        e.route.pop_front();
-                        e.direction = e.route.front().map(|&c| {
-                            let (x, y) = center(c);
-                            norm(x - units(e.x), y - units(e.y), 256)
-                        }).unwrap_or((0, 0));
-                    }
-                }
-            }
+            self.entities[i].finish_frozen_route();
             return;
         }
         self.update_avoidance(i);
@@ -2818,7 +2800,7 @@ impl BattleState {
             let e = &mut self.entities[i];
             e.moving = false;
             let (dx, dy) = (units(target.0 - e.x), units(target.1 - e.y));
-            e.facing = (dx, dy);
+            e.face_vector((dx, dy));
             let work = e.stats.jump_speed;
             let (fx, fy) = norm(dx, dy, 256);
             let (mut mx, mut my) = (fx * work / 256, fy * work / 256);
@@ -2858,33 +2840,7 @@ impl BattleState {
             self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
             self.entities[i].force_due = false;
             self.entities[i].moving = false;
-            let waypoint = if self.entities[i].frozen_moving {
-                self.entities[i].route.front().copied().map(center)
-            } else {
-                None
-            };
-            if let Some((x, y)) = waypoint {
-                self.entities[i].facing =
-                    (x - units(self.entities[i].x), y - units(self.entities[i].y));
-            }
-            self.apply_external(i, external);
-            if let Some((x, y)) = waypoint {
-                let e = &mut self.entities[i];
-                if e.direction.0 * (x - units(e.x)) / 256
-                    + e.direction.1 * (y - units(e.y)) / 256
-                    < 1001
-                {
-                    e.route.pop_front();
-                    e.direction = e
-                        .route
-                        .front()
-                        .map(|&c| {
-                            let (x, y) = center(c);
-                            norm(x - units(e.x), y - units(e.y), 256)
-                        })
-                        .unwrap_or((0, 0));
-                }
-            }
+            self.apply_external_and_finish_frozen_route(i, external);
             return;
         }
         if let Some(j) = self.entities[i].move_target.and_then(|id| self.index(id)) {
@@ -3404,11 +3360,7 @@ impl BattleState {
                     e.windup = false;
                     e.clock.finish = 0;
                 } else if e.stats.finish_allowed.unwrap_or(true)
-                    && if !e.stats.ordinary {
-                        e.started
-                    } else {
-                        e.clock.timeline > 0
-                    }
+                    && e.finish_started()
                 {
                     e.clock.finish = 1;
                 } else {

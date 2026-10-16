@@ -110,7 +110,7 @@ impl BattleState {
             state.consumed = false;
             self.entities[i].dash = Some(state);
             self.entities[i].moving = false;
-            self.apply_external(i,external);
+            self.apply_external_and_finish_frozen_route(i,external);
             return true;
         }
         if self.entities[i].stun > 0.0 {
@@ -135,7 +135,7 @@ impl BattleState {
                     state.wait = ((spec.windup as i64)/50).max(1)-1;
                     self.entities[i].dash = Some(state);
                     self.entities[i].moving = false;
-                    self.apply_external(i,external);
+                    self.apply_external_and_finish_frozen_route(i,external);
                     return true;
                 }
             }
@@ -163,7 +163,7 @@ impl BattleState {
         self.entities[i].dash = Some(state);
         if hold {
             self.entities[i].moving = false;
-            self.apply_external(i,external);
+            self.apply_external_and_finish_frozen_route(i,external);
         }
         hold
     }

@@ -4,6 +4,13 @@
 `/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md`.
 No engine change, new build, sweep, gate or selector copying has occurred here.
 
+**Current phase (after12:34Z):** exact B2 captures now verified and diagnosed;
+see `shared-troop/CAPTURE-DIAGNOSIS.md` and CAPTURE-FACTS.json. The initial
+preparation's no-engine-change statement above is historical. A new three-file
+native candidate and32-case prospective continuation probe are now prepared;
+no new native/build/engine execution or integration has occurred. Original source/
+native631ac and tool approvals remain scoped to their original artifacts.
+
 ## Evidence levels
 
 | Family | Established evidence | Not yet established |

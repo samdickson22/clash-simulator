@@ -539,3 +539,68 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   EOF exception preserves all other whitespace checks and exact source/receipt.
   Staged secret scan still required before the recording commit. No engine or
   approved preparation code changes for this provenance-preserving exception.
+- R3 review recording succeeded at **5d51e8ca5** with the documented sole raw
+  EOF whitespace exception, all other staged checks and staged secret scanPASS;
+  pushed cards/c1. Approved preparation source remained32eb85cd1 unchanged.
+
+## Exact B2 captures and scoped candidate (UTC)
+- 2026-10-16T12:34Z B2 owner handoff: approved08collection940202 terminal,22/22
+  captured/allFAILretained; old3586969 terminal. Index binds36 old constructor/
+  pre/post roots and16normal cases. Read exact B2 evidence/B2-C1-CAPTURE-INDEX.md,
+  fixturev1-20261016T1226Z-root-index.json and terminalreceipt. No duplicate job,
+  watcher or process poll by C1. Native captured7738f9d2 is not631ac/integrated.
+- Read-only commands: `scp -p 127x08:/mpac/sdicks02/jobs/clasher/cards/b2-fixturev1-20261016T1226Z/fid/fixtures.json /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json`,
+  same sourcejob identity.json and source-and-tools.json to the same new C1 local
+  job directory. Hashes match owner: fixturesb0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358,
+  identity3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5,
+  manifestabe1fc6b8f3158bd27df0b03ed8098e1ddc475fb9989a1c5abf547dab6074b95.
+  Raw51MB/config remains outside Git. No native file executed or new PID/PGID.
+- Exact approved local inspector command:
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_captured_troop.py /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/fixtures.json b0ecd196b9cd70a03fa358412c2c4fc8e195dd3960d9bae8689db23574d07358 > /mpac/sdicks02/jobs/clasher/cards/c1/shared-troop/capture-940202/observations.json`.
+  PASS structural inspection of actual roots;36 canonical root hashes match.
+  CAPTURE-FACTS.json binds exact paths/pointers/source and copied/raw/derivedhashes,
+  selectedvalues. Original1.47MB validationtrace embeds full assertion/config;
+  retain raw/unreducedfacts outsideGit, with rawpointer/hash/length and explicit
+  semantic/natural FAIL labels in scopedfacts. No lost raw failure/denominator.
+- Captured Zap constructors actually stun0.5/frozen_movingtrue/26routecells/forced
+  travel,26→27 positionsmatch while facing750/1250 diverges. Pre-existing stun
+  now confirmed; normal gameplay reachability remains unproved. Normal Zaplead1
+  and Freezelead1 bothseats record blockedlivequeries/no applicable differences
+  over45ticks; Zaplead-4 has no live query and is not guard evidence.
+- Dragon tick45 bodies7/8 coincide, no other dynamic object; Dragon8 targetNone/
+  priorheading±1000. It acquires7 in combat, nativezero versusPythonretained; then
+  Bandit moves±0.5 in movement. Frozen source component order rules out earlier
+  transport. Actual legacy cause confirmed; normal gameplay coincidence unproved.
+- IceSpirit old48→49 and normal67→68 bothseats actually change kind0→2/livecarrier/
+  retainedclock: Pythonmodefalse/1 versusnativetrue/0. No active slow/haste, area/
+  chain absent and children0 in exactconfig; dedicatedflight bypassesgenericstatus
+  here, but cleanup clock reader remains relevant. No normalization/inertclaim.
+- Captured-source-check.json: current B2 lib.rs/differential.py differ fromcapture
+  due laterWIP; other9 testedreadersmatch. Read-only scp of frozen semv1 tree/src/
+  lib.rs and tree/differential.py into C1scratch/frozen-source matches b2222830 and
+  4051a13b. No B2 source copied into engine-cards/integrated. Exact proof in
+  CAPTURE-DIAGNOSIS.md. Oversized exploratory selectedvalues output was truncated;
+  subsequent probes print scalar fields only; no raw artifact mutated/deleted.
+- 12:40–13:00Z scoped candidate src/troop.rs, lib.rs, dash.rs: shared nonzero-vector
+  heading for point-facing sites; frozenroute finalization face-before/external/
+  advance-after for dash, existingpushback andordinaryfreeze. Spiritruntime modes
+  use retained unrounded slow-onlyminimum; cleanup preserves initializedclock
+  after ordinaryfalse. No newserializedfields orstat-table changes. Globalheading
+  couldtouch C56; required exactC56 blocksacceptance on any change, no waiver.
+  Candidate UNCOMPILED/newnative UNBUILT; original631ac/tool artifacts untouched.
+- New probe_shared_troop.py:32 current-schema explicitrobustness cases/bothseats,
+  dashguards/external, heading,6Spiritmodifiers,4lethalflightclock/pending/noclock.
+  Strict unchangedsemantic-v1 everyframe; uninterrupted/nativeclone/reload and
+  Pythonclone; required transition/reader/removal prevents inertPASS. Allfailures/
+  partiallast-before roots retained. NativeSHA/probe exactcount guards, optimized
+  Python rejected before engineimport; verified comparatorbytes compiled once.
+  No oldB2dash conversion, fieldexemption or hostscript. Full32case probe NOTRUN.
+- Exact local lightcommand `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_shared_troop_probe.py`
+  PASS actualprobeAST/mock reader/nonexecution, scalar/heading/clock failures,
+  partialfailure-root preservation andactualoptimized-interpreterguard. Noengine/
+  nativeexecution. AST parsesPASS; command-vrustfmt returned1, no localparser/
+  invokedcompiler orinstall/build attempted. FrozenB2-firstbase, actualbuild/native
+  continuations, independentreview and orderedfullgates stillrequired. Rollback
+  onlynewcandidate/probe commits; preserveallcaptures/FAILs/originalapprovals.
+- One combined documentation apply_patch used an incorrect top-level PROGRESS
+  path and was rejected without writes; corrected scoped paths immediately.

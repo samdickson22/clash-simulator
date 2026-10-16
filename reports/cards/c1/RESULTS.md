@@ -19,6 +19,14 @@ Read-only capture preparation independently **APPROVED** at32eb85cd1
 ([scoped review](shared-troop/REVIEW-preparation-r3.md)); this supplies no engine,
 host-execution or actual-witness approval.
 
+Exact B2 captures are now verified:36 legacy root hashes plus retained normal
+fixture evidence; [captured diagnosis](shared-troop/CAPTURE-DIAGNOSIS.md) distinguishes
+forced Zap/heading reproduction from ordinary gameplay claims and records the
+normal-fixture IceSpirit mode transition. A scoped native candidate is written,
+with32-case prospective clone/reload/continuation coverage. **After-fix native
+verification is pending:** no build or simulation ran; frozen B2-first source,
+independent source/probe review and actual parity/C56 gates remain required.
+
 Launcher repair is complete: fresh independent r5 **APPROVE** at tools commit
 `97171f531a31f9663f74ff95093d58053125860d` ([full review](reviews/FINAL-TOOLS-r5.md),
 [exact receipt/rollback](reviews/REPAIR-RECEIPT.json)). All six launcher findings plus expiry wording and later
