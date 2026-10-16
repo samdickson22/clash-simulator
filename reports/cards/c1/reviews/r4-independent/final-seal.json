@@ -1,0 +1,66 @@
+{
+  "all_candidate_and_original_preserved_hashes_still_match": true,
+  "artifact_sha256": {
+    "cleanup-entry-reproduction-rerun.json": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "cleanup-entry-reproduction.json": "ff9f97303c119b137051334fbfbe467145ca71f411d625fab6f91a9df12a57b9",
+    "complete-reviewed.delta": "3da2e8796dc79fb475e7c8d4ccd4b0d0c4ba49730cae512d5db69c2222a9daf3",
+    "focused-reviewed.delta": "ab3ff1ef36ea28b250bb0ae7579e11a421bd93cf978aa9ce76a3df6d0ce20fc2",
+    "git-engine-tree.bin": "0d56cc97acf88e50b8fe09ebd5c7adf468c783543e2402c568aba89e634c8fb9",
+    "git-full-tree.bin": "0a417f18974018b0d9c683dc2625d91f0f5e7f854d3b010a87b24112da04c07c",
+    "git-tools-tree.bin": "79ab9a25518248e8b13238c0a55ab88167f30ea06b239b632cfbaeafddb7733b",
+    "independent-tests-first-attempt.log": "57e2586db3fd1cec57039ed74518f6990059062585dc0cd2755a3468fd3c4c91",
+    "independent-tests.log": "bafcfb6facabb5fc2688b8a2ae04d20551038d040f554d1720e0d3aeae02d3e2",
+    "independent_checks-first-attempt.py": "9545e5d3294ac6ff15ef7bf918e981eee3a134af1c79da7e884db3a656a95caf",
+    "independent_checks.py": "46d2ae33e97c23ac33556a57d131725309c9f56aed43cad13aee87d57a0ee905",
+    "receipt.json": "9c519ec351c147d9093dec6fd2589ab75bdd10df5809acba6e94375bd105f3f2",
+    "record-review.log": "1503bb98b5e0a092f828ff2586d9a31f30bc4d198885ac6a896f8d18a3b50d5a",
+    "record_review.py": "5154e81402fbb6ee6dc9820a80f9b5aa1279683a0e9c9e408dedddf2ba3740ee",
+    "reviewed-hashes.md": "69e6ccfe0748719c6c8b22f872281037d6842ba11e7492c4ccf90cfe19b2533d",
+    "seal_review.py": "f7fba057b008b607f54f6ab51e23d85742329a8e377e3f137075d78bd2cc0e02",
+    "status-before-report.txt": "e6d9cb4eeca0b15a67aac38c6dda8fa97a5bd59a76edb6543e4f29d3b0c12ace",
+    "submitted-tests.log": "71aed24c5d40b8867c160be604495a7628bd6f6610d37c4a19869b3dda3ec13c"
+  },
+  "candidate": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "c7de06ea5a6171b4490682a7bb1be9baa825a2b4\nd525cc4b5957f58894b9f7991917a65360096fda\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "?? reports/cards/c1/reviews/FINAL-TOOLS-r4.md\n?? reports/cards/c1/reviews/r3-independent/complete-reviewed.delta\n?? reports/cards/c1/reviews/r3-independent/focused-reviewed.delta\n?? reports/cards/c1/reviews/r3-independent/git-full-tree.bin\n?? reports/cards/c1/reviews/r3-independent/git-prefixed-tree.bin\n?? reports/cards/c1/reviews/r4-independent/\n?? reports/cards/c1/tools/peek.py\n?? reports/cards/c1/tools/snapcmp_probe.py\n"
+    }
+  ],
+  "finding": "R4-1",
+  "receipt_sha256": "9c519ec351c147d9093dec6fd2589ab75bdd10df5809acba6e94375bd105f3f2",
+  "report_sha256": "caf755d2cd3180f06329e42579db5a7f5b7ef5f9a1a22162b13cbc3c8fa42a11",
+  "scope": "Only final read-only Git/hash comparisons and this scratch seal; all old evidence/source untouched.",
+  "tree": "d525cc4b5957f58894b9f7991917a65360096fda",
+  "verdict": "REJECT"
+}

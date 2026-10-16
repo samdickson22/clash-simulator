@@ -1,0 +1,21 @@
+{
+  "base_commit": "5d51e8ca5030e20d279750bdf432dce7cefb6068",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_shared_troop_probe.py",
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "exit": 0,
+  "files": {
+    "engine-cards/src/dash.rs": "bf260e0ca2622586ba939c6271ec82f92083c6bb2f6e3a0c8d684c4324c8402c",
+    "engine-cards/src/lib.rs": "692f5ebd100b546d9f6056389789d78553fc4f961f8d395871c06bb9c57899c7",
+    "engine-cards/src/troop.rs": "8ec06480a913f3bc20d33aa947c482e8f8ebbb7d9e56bae3a5b744e9143f86e3",
+    "reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md": "8dbe6c024224fca6c79f1aebfbf4e96a00e0817a8dbd6f63e5e9cbc37d07f3d9",
+    "reports/cards/c1/shared-troop/CAPTURE-FACTS.json": "2d9120431af086dd40d609eeaec6dfcab9e38a214b49db146c5d7b6302e1dc68",
+    "reports/cards/c1/shared-troop/captured-source-check.json": "f941d8e0a402ac1384d851cf6d9929a167bf4019f41da8aa6bc116e3b4545ef4",
+    "reports/cards/c1/tools/probe_shared_troop.py": "ec25db4937ea129663cbb6029bd0a1370880590d76ee46ecc323881a5a1086cb",
+    "reports/cards/c1/tools/test_shared_troop_probe.py": "c720b338a37fc2d9c67e61b965792832ff035eb324d3693313e81e28ef6e9fa9"
+  },
+  "host": "127x05",
+  "native_after": "UNBUILT; frozen B2 prerequisite required",
+  "old_native_retained": "631ac18d27cb15d4eba7011113a9f69a4b85740ef68a27a87cabb0d68320ad86",
+  "scope": "Source candidate and AST/mock validation only; no engine/native execution or compilation",
+  "utc": "2026-10-16T12:59:41.885266+00:00"
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "check": "all later fixture/root wait boundaries",
+    "cases": 24
+  },
+  {
+    "check": "cleanup line injection",
+    "boundaries": 27,
+    "ordinary_and_normal_cases": 54
+  },
+  {
+    "check": "publication direct line injection",
+    "boundaries": [
+      335,
+      336,
+      337,
+      338,
+      340,
+      341,
+      342,
+      343
+    ],
+    "checkpoints": [
+      336,
+      338,
+      342
+    ],
+    "committed_return_line": 343
+  }
+]

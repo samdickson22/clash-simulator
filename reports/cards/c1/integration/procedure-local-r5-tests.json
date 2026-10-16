@@ -1,0 +1,72 @@
+{
+  "scope": "stdlib/AST/mocks only, no engine/native/Numba/host/compiler",
+  "refresh": "Only Dash suite rerun after final last_before retention correction and added assertion; four unchanged suites retain same-round PASS",
+  "tests": {
+    "names": [
+      "test_diagnostic_job.py",
+      "test_diagnostic_repairs.py",
+      "test_integration_selectors.py",
+      "test_diagnostic_permissions.py",
+      "test_dash_clock_witness.py"
+    ],
+    "results": [
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "f04cd6",
+          "wall_time_seconds": 0.697871079,
+          "exit_code": 0,
+          "original_token_count": 44,
+          "output": "PASS: stdlib inventory/review/source/extra/symlink/external drift, clean CPU-accounting environment, embedded bootstrap AST and optimized guards; no hosts/engine/native/jobs\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "30988f",
+          "wall_time_seconds": 1.525e-05,
+          "exit_code": 0,
+          "original_token_count": 49,
+          "output": "PASS: one shared recovery definition; script-born victims/full causal-control error/identity negatives; failed/partial/drifted probes always retain after-import evidence; AST/stdlib/mocks only\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "2608cb",
+          "wall_time_seconds": 1.501e-05,
+          "exit_code": 0,
+          "original_token_count": 35,
+          "output": "PASS: both-seat secondary reservation/guard/effect and chain target/visited-ID/multiplicity/aim/impact negative controls; AST/mocks only\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "969a49",
+          "wall_time_seconds": 9.79e-06,
+          "exit_code": 0,
+          "original_token_count": 56,
+          "output": "PASS: inherited2700 reproduction/exact0700 creation, cleanup-error terminal failure retention, symlink rejection, exact prebuild inventory and process/group/session/lease negative controls; no host/engine/native execution\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "689056",
+          "wall_time_seconds": 0.216715936,
+          "exit_code": 0,
+          "original_token_count": 126,
+          "output": "PASS: both-seat cold-zero/full, loaded changed/equal and miss/missing witness controls; old captured seed/remaining split, eager-init, finish/seed/force drift, incomplete/absent landing and missing ordinary resume rejected; AST only\nPASS: exact run_case AST clones Python at all40 pre-steps; post-landing/initial/native clone faults and step/snapshot/template/comparison/construction exceptions retain first-bad roots; exact main persists all12 failed cases with available arms/completed-step inventory\n"
+        }
+      }
+    ]
+  },
+  "recorded_utc": "2026-10-16T16:27:29.179496+00:00",
+  "source_sha256": {
+    "reports/cards/c1/tools/diagnostic_job.py": "f58fa0640851120ecb025a37150b4059d442bae76dc36d7e25feaeb8968eb5aa",
+    "reports/cards/c1/tools/diagnostic_worker.py": "37cfb6c238450436225d5034723fd9acb68bdd7e12a9281d63e0a919d12f19ac",
+    "reports/cards/c1/tools/probe_dash_clock.py": "081c9f67647999f4f2c90916cd1e8c4c90bad241c60e2f78b415eddf548ff34a",
+    "reports/cards/c1/tools/test_dash_clock_witness.py": "809423231077a5fea894f2a99966bbf8d92210a8efe1ebd079b03518123f85d3"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "files": [
+    {
+      "captured_sha256": "b222283043d2cceb56335eef667194bb832d154768d32dc5259e5d1d6aea1a7d",
+      "matches": false,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/src/lib.rs",
+      "sha256": "784c26dca51958ffe1c460dcc879d71cbd871cf4305cf7841d94cd991c617e9c"
+    },
+    {
+      "captured_sha256": "09c8dd8ccd8ba793aaea73a2839363778f93f5ab0b740a59ca0b6a477a3adbe8",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/src/dash.rs",
+      "sha256": "09c8dd8ccd8ba793aaea73a2839363778f93f5ab0b740a59ca0b6a477a3adbe8"
+    },
+    {
+      "captured_sha256": "a6279dd8044a5ae90280d07798708e6557eadb07aebaff3b85c382a15c3f5b7e",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/src/c56.rs",
+      "sha256": "a6279dd8044a5ae90280d07798708e6557eadb07aebaff3b85c382a15c3f5b7e"
+    },
+    {
+      "captured_sha256": "c1c75debb35723f7aa292658be382596dba39f5282f45d0fe116fa624be63b32",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/src/projectiles.rs",
+      "sha256": "c1c75debb35723f7aa292658be382596dba39f5282f45d0fe116fa624be63b32"
+    },
+    {
+      "captured_sha256": "205f8f72dfc5223a65d93222791231118adb51d4f292625c79994b1f4ae48674",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/entities.py",
+      "sha256": "205f8f72dfc5223a65d93222791231118adb51d4f292625c79994b1f4ae48674"
+    },
+    {
+      "captured_sha256": "1b39608f1df3cde62eb2f5988b9909faefc2b5e0218e0358af1d7cdb8048204e",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/battle.py",
+      "sha256": "1b39608f1df3cde62eb2f5988b9909faefc2b5e0218e0358af1d7cdb8048204e"
+    },
+    {
+      "captured_sha256": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/cards/bandit.py",
+      "sha256": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9"
+    },
+    {
+      "captured_sha256": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/cards/ice_spirit.py",
+      "sha256": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2"
+    },
+    {
+      "captured_sha256": "5537564d613e34d1f2bebf86ecf856f303a320069d883234276fb5713ddafbe9",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/ordinary_combat_clock.py",
+      "sha256": "5537564d613e34d1f2bebf86ecf856f303a320069d883234276fb5713ddafbe9"
+    },
+    {
+      "captured_sha256": "4051a13ba76df43050e0e0ad15fda9a53c3fd0d9d9ae6f67c49729ba0c61a85f",
+      "matches": false,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/differential.py",
+      "sha256": "fed04d31f832319e1840a6d83fec0511b955e2b67961d4170cc293e93b81ef47"
+    },
+    {
+      "captured_sha256": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+      "matches": true,
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/live_snapshot.py",
+      "sha256": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962"
+    }
+  ],
+  "identity_sha256": "3995110721b39f0b5c3c705299f533db4ed60383022d853ca98b0b0a548737d5",
+  "scope": "Local read-only source authentication against actual capture identity; no native/engine execution"
+}

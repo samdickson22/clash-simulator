@@ -1,0 +1,22 @@
+{
+  "authority": "Independent codex gpt-6.1-sol high review; owning CARD LEAD authenticates admission separately",
+  "code_hashes": {
+    "final_gate.py": "3cd4e36ce2c72721103ec7bf98086da65f1815747366060e4288ef42f6c67765",
+    "final_gate.sh": "297fbbb2f0c0e3f4c4368afdd4245b78792408075ce94f655dc7bc8209caf1d5",
+    "final_gate_contract.py": "222c69314e26d5aefcc3ad04a602ccac6e207ee7d22c65a5930a18d8ad291ad8",
+    "gate_compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+    "gate_fixtures.py": "8737b53fde2966d14ce6359cd0c3e5e24cc783bb9c7b1348b3ff468df2cfbf21",
+    "gate_roots.py": "155cbdb4b11ea8239057600e191465f073418f648070ee8f20f14cab25aefc5f",
+    "gate_worker.py": "8966f1264a87a5237d33a1e7642fc632a31601ba62b38878876553e1b0038802"
+  },
+  "evidence_id": "node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Acards-c1-final-tools-r5-97171f5-independent",
+  "kind": "launcher_review",
+  "owner_admission_still_required": true,
+  "raw_evidence": {
+    "evidence/raw/FINAL-TOOLS-r5-receipt.json": "7033b0f507c125365c552380c518fff17fe87b1d2bda2e520dbee79b7df59ccf",
+    "evidence/raw/FINAL-TOOLS-r5.md": "5eb6aff2dbc67df7e557247ff743a9c1425b78a95e26d4f3b85377c951dd47d2"
+  },
+  "reviewed_commit": "97171f531a31f9663f74ff95093d58053125860d",
+  "scope": "Complete launcher preparation only. No host, B2/integration, native, full-byte-equivalence, C56 or live-pin acceptance.",
+  "verdict": "APPROVE"
+}

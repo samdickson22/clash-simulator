@@ -1,17 +1,68 @@
 //! Fixed-endpoint child projectiles and recoil, following the Python oracle.
 use super::*;
 
-fn wide_roll_vector(direction: (i64,i64), work: i64) -> (i64,i64) {
-    let (x,y) = (direction.0 as i128*1_000_000,direction.1 as i128*1_000_000);
-    let square = x*x+y*y;
-    let mut length = (square as f64).sqrt() as i128;
-    while (length+1)*(length+1)<=square { length+=1; }
-    while length*length>square { length-=1; }
-    let length = length.max(1);
-    ((x*work as i128/length) as i64,(y*work as i128/length) as i64)
+const PI_Q40: i128 = 3_454_217_652_358;
+const TRIG_ONE: i64 = 1 << 20;
+/// Ported from RoyaleSim (MIT), fixed.rs `sin_pi_frac` (entities.py `sin_pi_frac`).
+fn sin_pi_frac(num: i64, den: i64) -> i64 {
+    let mut r = num.rem_euclid(2 * den);
+    let negative = r >= den;
+    if negative { r -= den; }
+    if 2 * r > den { r = den - r; }
+    let q: i128 = 1 << 40;
+    let x = PI_Q40 * (r as i128) / (den as i128);
+    let (mut sum, mut term) = (x, x);
+    for k in 1..=6i128 {
+        term = -((term * x / q) * x / q) / ((2 * k) * (2 * k + 1));
+        sum += term;
+    }
+    let v = ((sum + (1 << 19)) >> 20) as i64;
+    if negative { -v } else { v }
 }
 
 impl BattleState {
+    pub(super) fn pingpong_waiting(&mut self, i: usize) -> bool {
+        let Some(axe) = self.entities[i].pp_axe else { return false; };
+        if self.index(axe).is_some_and(|k| self.entities[k].alive) { return true; }
+        self.entities[i].pp_axe = None;
+        false
+    }
+    /// Batch C1 (entities.py PingpongProjectile.update; RoyaleSim (MIT) combat.rs `step_straight`, `pingpong_pos`).
+    pub(super) fn pingpong_tick(&mut self, i: usize) {
+        let period = self.entities[i].stats.pingpong_period;
+        self.entities[i].pp_t += 1;
+        let t = self.entities[i].pp_t;
+        if t > period { self.entities[i].alive = false; return; }
+        if 2 * t > period && 2 * (t - 1) <= period { self.entities[i].hit_ids.clear(); }
+        let shot = &self.entities[i];
+        let (cx, cy, reach) = (units(shot.x), units(shot.y), shot.stats.pingpong_reach);
+        let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j, e)| {
+            let r = reach + units(e.stats.radius);
+            let (dx, dy) = (units(e.x) - cx, units(e.y) - cy);
+            (e.alive && e.owner != shot.owner && !e.hidden && !e.spirit && !e.underground
+                && (!shot.source_character || e.death_immunity.is_none())
+                && !e.dash_travel() && !(e.stealth_until > self.tick * 50 && !e.stats.area_while_invisible)
+                && !e.absent() && (e.class == "Troop" || e.class == "Building")
+                && (!e.airborne() || shot.stats.can_air) && !shot.hit_ids.contains(&e.id)
+                && dx * dx + dy * dy <= r * r).then_some(j)
+        }).collect();
+        let damage = shot.stats.damage;
+        for j in victims {
+            let id = self.entities[j].id;
+            self.entities[i].hit_ids.push(id);
+            self.damage(j, damage);
+        }
+        let e = &mut self.entities[i];
+        let tt = if 2 * t == period { t - 1 } else { t };
+        let ((ox, oy), (ax, ay)) = (e.pp_origin.unwrap_or_default(), e.pp_apex.unwrap_or_default());
+        let (ux, uy) = (ax - ox, ay - oy);
+        let range = isqrt(ux * ux + uy * uy).max(1);
+        let start = e.stats.pingpong_start;
+        let d = start + (range - start) * sin_pi_frac(tt, period.max(1)) / TRIG_ONE;
+        e.x = (ox + ux * d / range) as f64 / 1000.0;
+        e.y = (oy + uy * d / range) as f64 / 1000.0;
+    }
+
     pub(super) fn projectile_homing(&mut self, i: usize) -> bool {
         if self.entities[i].temporary_remaining <= 0 { return false; }
         let Some(id) = self.entities[i].temporary_target else {
@@ -32,41 +83,45 @@ impl BattleState {
         true
     }
 
-    fn rolling_character_hits(&mut self, i: usize, radius: f64) {
+    /// Ported from RoyaleSim (MIT), combat.rs `straight_hits`: every enemy whose centre is within ProjectileRadius
+    /// + its radius of the sample, once per shot; radial push from the sample (no combat interrupt, hit reset).
+    pub(super) fn rolling_character_hits(&mut self, i: usize) {
         let shot = &self.entities[i];
+        let (cx,cy,reach) = (units(shot.x),units(shot.y),units(shot.stats.rolling_radius));
         let victims: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
+            let r = reach+units(e.stats.radius);
+            let (dx,dy) = (units(e.x)-cx,units(e.y)-cy);
+            // can_receive_area_damage: an effect-immune unit (dash travel) or a stealthed one is skipped
+            // without being marked hit.
             (e.alive && e.owner!=shot.owner && !e.hidden && !e.spirit && !e.underground
                 && !e.absent() && !e.above_surface() && e.death_immunity.is_none()
                 && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
+                && !(e.stealth_until > self.tick*50 && !e.stats.area_while_invisible)
                 && (e.class=="Troop" || e.class=="Building") && !shot.hit_ids.contains(&e.id)
-                && Self::in_area(e,shot.x,shot.y,radius)).then_some(j)
+                && dx*dx+dy*dy <= r*r).then_some(j)
         }).collect();
-        let (damage,push,direction) = (shot.stats.damage,shot.stats.projectile_knockback,shot.roll_direction);
+        let (damage,push) = (shot.stats.damage,shot.stats.projectile_knockback);
         for j in victims {
             let id = self.entities[j].id;
+            let center = (self.entities[i].x,self.entities[i].y);
             self.entities[i].hit_ids.push(id);
             self.damage(j,damage);
-            let center = (self.entities[j].x-direction.0 as f64/1000.0,self.entities[j].y-direction.1 as f64/1000.0);
-            self.radial_knockback(j,center,push,false,false,None);
+            self.radial_knockback(j,center,push,false,true,None);
         }
     }
 
+    /// Ported from RoyaleSim (MIT), combat.rs `step_straight` + path.rs `advance_client`: step the speed toward the
+    /// fixed endpoint (trunc0, nothing carried); the reaching step ends the shot without moving or testing.
     pub(super) fn rolling_character_tick(&mut self, i: usize) {
+        if self.entities[i].birth == self.tick { return; }
         let e = &mut self.entities[i];
         e.effect_age += 0.05;
-        let work = e.stats.speed.min(units(e.stats.projectile_range-e.traveled).max(0));
-        let (dx,dy) = wide_roll_vector(e.roll_direction,work);
-        e.x=(units(e.x)+dx) as f64/1000.0;e.y=(units(e.y)+dy) as f64/1000.0;
-        e.traveled += work as f64/1000.0;
-        let radius = e.stats.rolling_radius;
-        let terminal = e.traveled >= e.stats.projectile_range-1e-9;
-        self.rolling_character_hits(i,radius);
-        if terminal {
-            if self.entities[i].stats.projectile_radius>radius {
-                self.rolling_character_hits(i,self.entities[i].stats.projectile_radius);
-            }
-            self.entities[i].alive=false;
-        }
+        let (dx,dy) = (units(e.aim.0)-units(e.x),units(e.aim.1)-units(e.y));
+        let n = isqrt(dx*dx+dy*dy);
+        let speed = e.stats.speed;
+        if n <= speed { e.alive = false; return; }
+        e.x=(units(e.x)+dx*speed/n) as f64/1000.0;e.y=(units(e.y)+dy*speed/n) as f64/1000.0;
+        self.rolling_character_hits(i);
     }
     pub(super) fn projectile_status(&mut self, i: usize, j: usize) {
         let stats = &self.entities[i].stats;
@@ -143,6 +198,11 @@ impl BattleState {
         }
         e.push_preserve = true;
         e.push_reset = false;
+        // Batch C1 (firecracker.py AttackRecoil): an armed recoil releases a LoadFirstHit unit's swing.
+        if e.clock.refund != 0 {
+            e.clock.stop();
+            e.force_due = false;
+        }
     }
 
     pub(super) fn projectile_children(&mut self, i: usize) {

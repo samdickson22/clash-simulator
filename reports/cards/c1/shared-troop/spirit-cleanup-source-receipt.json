@@ -1,0 +1,15 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_spirit_cleanup.py > reports/cards/c1/shared-troop/spirit-cleanup-source-witness.json",
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "exit": 0,
+  "files": {
+    "engine-cards/py/src/clasher/attack_clock.py": "7efe928ef2daf59b1161a30e206629f6b2a2d564a8884c62b3e33b6e830bdfbf",
+    "engine-cards/py/src/clasher/entities.py": "19226704747aba6d4947be492a1673e41b4f426caa4df523dfc72a29ea980780",
+    "engine-cards/py/src/clasher/ordinary_combat_clock.py": "76dcf946ccec5299f13e426023930cc3cdf627499f5b5d81cdfa3c35e4429d62",
+    "reports/cards/c1/shared-troop/spirit-cleanup-source-witness.json": "24a87924685fa4d4746bd3f98e55c2c1cd4a3da8901a8c563982104d97f9cfda",
+    "reports/cards/c1/tools/inspect_spirit_cleanup.py": "3b33334408b8a6d28698d042f4a350f59efc00f6a913c94b889483d16dc8a3a8"
+  },
+  "host": "127x05",
+  "scope": "Reference AST cleanup/publish/stop/refund functions on seven explicit mode/clock states; no battle/native execution or actual capture",
+  "utc": "2026-10-16T11:51:52.779834+00:00"
+}

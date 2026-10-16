@@ -8,6 +8,10 @@ if TYPE_CHECKING:
     from ..entities import Entity
 
 
+# Ported from RoyaleSim (MIT), combat.rs CHAIN_HOP_WAIT_TICKS: each released hop skips three updates.
+CHAIN_HOP_WAIT_TICKS = 3
+
+
 @dataclass
 class ElectroDragonChainLightning(BaseMechanic):
     """Electro Dragon's bolt chains to additional enemies after each hit."""
@@ -52,6 +56,10 @@ class ElectroDragonChainLightning(BaseMechanic):
             travel_speed=self.projectile_speed_tiles_per_second,
             stun_duration=self.stun_duration_ms / 1000.0,
             visited_ids={target.id},
+            hop_wait_ticks=CHAIN_HOP_WAIT_TICKS,
         )
         battle_state.entities[chain.id] = chain
         battle_state.next_entity_id += 1
+        # Batch C1: the first hop is chosen as it is released, at the primary's impact.
+        chain._birth_tick = battle_state.tick
+        chain._release(battle_state, Position(target.position.x, target.position.y))

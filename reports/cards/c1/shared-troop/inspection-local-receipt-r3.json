@@ -1,0 +1,14 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py",
+  "correction": "Self-found R3: legacy IceSpirit lead0 constructor precedes card cast, record absent actor explicitly only at its constructor; before/after mismatch presence remains strict",
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "exit": 0,
+  "files": {
+    "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_dash_semantic_v1.py": "007005d45a34cebab6b206a126d925a5ce24155f659e43518c333fa7771f8eea",
+    "reports/cards/c1/tools/inspect_captured_troop.py": "d98d277bcf9f0184c003098861da2e5598f0f4079d5593c76954297190d1ba17",
+    "reports/cards/c1/tools/test_captured_troop_inspection.py": "159a5ea4056e3b26cec59d353449fa317d166a811d1953fe3f9f49aba4369dc7"
+  },
+  "host": "127x05",
+  "scope": "Synthetic JSON birth/absence controls only; no actual roots or engine execution",
+  "utc": "2026-10-16T12:06:01.464287+00:00"
+}

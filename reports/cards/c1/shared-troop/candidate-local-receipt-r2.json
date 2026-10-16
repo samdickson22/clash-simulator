@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-16T13:18:07.382799+00:00",
+  "base_commit": "65fca236e63708c3b1ac1160a00d655f758197d4",
+  "scope": "Local source/AST/stdlib/mocks only; no engine import or actual simulation/native/build/host execution",
+  "native_after": "UNBUILT",
+  "engine_diff_from_65fca236e_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_shared_troop_probe.py",
+  "exit": 0,
+  "stdout": "PASS: both-seat linked Zap/guard/order controls, exact template prerequisite across native arms, partial-failure roots and optimized-Python guard; no actual native/engine run\n",
+  "stderr": "",
+  "source_sha256": {
+    "engine-cards/src/troop.rs": "8ec06480a913f3bc20d33aa947c482e8f8ebbb7d9e56bae3a5b744e9143f86e3",
+    "engine-cards/src/lib.rs": "692f5ebd100b546d9f6056389789d78553fc4f961f8d395871c06bb9c57899c7",
+    "engine-cards/src/dash.rs": "bf260e0ca2622586ba939c6271ec82f92083c6bb2f6e3a0c8d684c4324c8402c",
+    "reports/cards/c1/tools/probe_shared_troop.py": "50bf11e85c0718314fadc99110eb9d5fe0e04ab8be08470579a281d5de7739bd",
+    "reports/cards/c1/tools/test_shared_troop_probe.py": "dab89ec9526c04bc2d2609aace4d4fccf081b76443030f0ef55fc25e1e1fa165",
+    "reports/cards/c1/shared-troop/REVIEW-candidate-r1.md": "3f369994ebcdce21dec2eeba368900682d51aebdf667e03c409ee05c8d55ed22",
+    "reports/cards/c1/shared-troop/review-candidate-r1-receipt.json": "15eced664a3436f1aaa3b640381d266b312d4cf59ddd83f005d6f0dfcafa2ad3",
+    "reports/cards/c1/shared-troop/CANDIDATE-r1-response.md": "d5b27953526a8c3d74fc4f8b81d0119c7c63dbe9167739c106181c5e8c28cf98",
+    "reports/cards/c1/shared-troop/CAPTURE-FACTS.json": "2d9120431af086dd40d609eeaec6dfcab9e38a214b49db146c5d7b6302e1dc68",
+    "reports/cards/c1/shared-troop/CAPTURE-DIAGNOSIS.md": "8dbe6c024224fca6c79f1aebfbf4e96a00e0817a8dbd6f63e5e9cbc37d07f3d9"
+  },
+  "contract": {
+    "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/snapshot_contract_v1.py",
+    "sha256": "8ca5826c87c22aa288065cdb2655f06436409fe05cae9d029684d1f89e3dd4e3",
+    "changed": false
+  },
+  "prior_verdict": "REJECT_SOURCE_PROBE_PROPOSAL_AT_65fca236e",
+  "fresh_review": "REQUIRED",
+  "actual_32_case_probe": "NOT_RUN",
+  "engine_acceptance": false,
+  "frozen_base": null,
+  "dependent_execution": "WAITING_FOR_LEAD_REVIEWED_B2_FIRST_BASE",
+  "rollback": "Revert only new isolated source/probe commits; preserve captured FAILs, reviews, raw outputs and original approvals"
+}

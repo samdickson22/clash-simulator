@@ -1,0 +1,20 @@
+{
+  "request_snapshot": {
+    "utc": "2026-10-16T16:29:57.763890+00:00",
+    "commit": "9466f58eaa49747b34e3d48a50eb55384ac6f451",
+    "taskId": "node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-b2-first-diagnostic-9466f58ea-r5-independent",
+    "state": "PENDING_INDEPENDENT_REVIEW",
+    "assignment": "OPEN",
+    "new_build": "NOT_RUN",
+    "source_native": "new source UNBUILT; historical f42 FAIL retained",
+    "next": "Read terminal R5 verdict, if approved validate526inputs/oldjobliveness then one fresh08 CPU4 nice15 Cargo-j4 job ninephases; repair reviewfindings beforeanyhostaction",
+    "final_C56_main_pins": "WITHHELD"
+  },
+  "resolution": {
+    "recorded_utc": "2026-10-16T16:48:19.948270+00:00",
+    "verdict": "REJECT",
+    "finding": "R5-F1 selector catch loses failed post roots; Dash R4 findings resolved",
+    "host_execution": "NOT_RUN",
+    "assignment": "OPEN"
+  }
+}

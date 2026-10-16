@@ -245,7 +245,11 @@ impl BattleState {
         }
         // Python's ordinary stun path pauses the weapon without get_clock().
         // Keep a first clock absent and any deferred cooldown write pending.
-        e.dash_cancel();
+        // Only an interrupting stun reaches BanditDash.handle_stun; a non-interrupting Freeze keeps
+        // the anticipation (entities.py apply_stun pause branch).
+        if interrupt {
+            e.dash_cancel();
+        }
         if e.stun <= 1e-9 {
             e.frozen_moving = e.moving || e.move_target.is_some();
         }
@@ -312,8 +316,60 @@ impl BattleState {
         chain.chain_origin = (chain.x,chain.y);
         chain.hit_ids = vec![self.entities[j].id];
         chain.birth = self.tick; self.entities.push(chain);
+        if self.entities.last().unwrap().stats.chain_hop_wait > 0 {
+            let k = self.entities.len()-1;
+            let at = (self.entities[k].x,self.entities[k].y);
+            self.chain_release(k, at);
+        }
+    }
+    /// Batch C1 (entities.py ChainLightning._release; RoyaleSim (MIT) combat.rs `chain_next`): the next hop's
+    /// target is taken at release, nearest by centre distance squared then creation order.
+    fn chain_release(&mut self, i: usize, at: (f64,f64)) {
+        self.entities[i].chain_origin = at;
+        if self.entities[i].chain_remaining == 0 {
+            self.entities[i].shot_target = None; self.entities[i].alive = false; return;
+        }
+        let chain = &self.entities[i];
+        let (ax,ay,reach) = (units(at.0),units(at.1),units(chain.stats.chain_range));
+        let best = self.entities.iter().enumerate().filter(|(_, e)| {
+            e.alive && e.owner != chain.owner && !e.hidden && !e.spirit && !e.underground
+                && (e.class == "Troop" || e.class == "Building") && e.death_immunity.is_none()
+                && e.mount.is_none() // _can_chain_to: a mounted rider blocks targeting (riders.py RiderOnMount)
+                && chain.can_hit_plane(e) && !chain.hit_ids.contains(&e.id)
+        }).map(|(j,e)| { let (dx,dy)=(units(e.x)-ax,units(e.y)-ay); (dx*dx+dy*dy, e.id, j) })
+            .filter(|&(d2,_,_)| d2 <= reach*reach).min();
+        let Some((_,id,j)) = best else {
+            self.entities[i].shot_target = None; self.entities[i].alive = false; return;
+        };
+        let aim = (self.entities[j].x,self.entities[j].y);
+        let e = &mut self.entities[i];
+        e.shot_target = Some(id); e.hit_ids.push(id); e.aim = aim; e.chain_wait = e.stats.chain_hop_wait;
+    }
+    fn chain_waited_tick(&mut self, i: usize) {
+        if self.entities[i].birth == self.tick { return; }
+        if self.entities[i].chain_wait > 0 { self.entities[i].chain_wait -= 1; return; }
+        let target = self.entities[i].shot_target.and_then(|id| self.index(id)).filter(|&j| self.entities[j].alive);
+        if let Some(j) = target { self.entities[i].aim = (self.entities[j].x,self.entities[j].y); }
+        let e = &mut self.entities[i];
+        let (dx,dy) = (units(e.aim.0)-units(e.x),units(e.aim.1)-units(e.y));
+        let n = isqrt(dx*dx+dy*dy);
+        let speed = e.stats.speed;
+        if n > speed {
+            e.x = (units(e.x)+dx*speed/n) as f64/1000.0; e.y = (units(e.y)+dy*speed/n) as f64/1000.0;
+            return;
+        }
+        e.x = e.aim.0; e.y = e.aim.1;
+        let at = e.aim;
+        if let Some(j) = target {
+            let (damage, stun) = (self.entities[i].stats.damage, self.entities[i].stats.spirit_stun);
+            self.damage(j, damage);
+            self.stun_target(j, stun);
+        }
+        self.entities[i].chain_remaining = self.entities[i].chain_remaining.saturating_sub(1);
+        self.chain_release(i, at);
     }
     pub(super) fn chain_tick(&mut self, i: usize) {
+        if self.entities[i].stats.chain_hop_wait > 0 { self.chain_waited_tick(i); return; }
         let mut remaining = 0.05;
         while self.entities[i].chain_remaining > 0 {
             let chain = &self.entities[i];
@@ -325,6 +381,8 @@ impl BattleState {
                     && !e.underground
                     && (e.class == "Troop" || e.class == "Building")
                     && e.death_immunity.is_none()
+                    // _can_chain_to: a mounted rider blocks targeting (riders.py RiderOnMount); no C56 entity has a mount.
+                    && e.mount.is_none()
                     && chain.can_hit_plane(e)
                     && !chain.hit_ids.contains(&e.id)
             };
@@ -753,6 +811,10 @@ impl BattleState {
                 shot.id = self.next_id as i32;
                 self.next_id += 1;
                 shot.aim = aim;
+                if shot.stats.child_damage > 0.0 && shot.stats.child_range > 0 {
+                    // entities.py Projectile.launch_position, read only by projectile_children.
+                    shot.projectile_origin = (shot.x, shot.y);
+                }
                 shot.damage_group = Some(group);
                 shot.launch_delay = wave as f64 * spell.damage_wave_interval;
                 shot.birth = self.tick;
