@@ -2175,11 +2175,12 @@ impl BattleState {
         if self.entities[i].deploy > 0.0 || !self.entities[i].active {
             return;
         }
+        // entities.py Troop._update_active_combat returns early only on the freeze pause; a stun returns
+        // after target observation (below). Every ordinary stun also sets the pause (stun_target_mode),
+        // so an ordinary troop never reaches the later return with a live pause.
         if self.entities[i].freeze_pause > 0.0
             || (self.entities[i].stun > 0.0
-                && (self.entities[i].stats.ordinary
-                    || self.entities[i].king
-                    || self.entities[i].stats.name == "Tower"))
+                && (self.entities[i].king || self.entities[i].stats.name == "Tower"))
         {
             if self.entities[i].active && self.entities[i].activation_remaining > 0.0 {
                 self.entities[i].activation_remaining =
@@ -2251,7 +2252,11 @@ impl BattleState {
             self.entities[i].clock.advance(50, 0, false);
             return;
         }
-        self.entities[i].consume_clock_reseed();
+        // A stunned ordinary troop observes targets without get_clock(): a cold clock stays cold and a
+        // pending reseed waits for the thaw (entities.py `_update_active_combat` stun return).
+        if !(self.entities[i].stun > 0.0 && self.entities[i].stats.ordinary) {
+            self.entities[i].consume_clock_reseed();
+        }
         let target = self.target(i);
         let old = self.entities[i].target;
         let had_attacked_current = self.entities[i].attacked_current;
