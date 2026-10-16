@@ -182,3 +182,19 @@ root retries exactly the errored games, since done_games skips only non-error ro
 - 07:05Z Sol babysitter for G1/K1 delegated (clientRequestId fullpool-g1k1-babysit-r1; log 05:J/babysit-g1k1.log;
   relaunch-same-command on death; an extra K1 shard per host once its G1 shard ends; stop and report on a new error
   type or >8% errors).
+- 07:08Z **G1 scale-up** (coordinator): new G1 shards with fresh game indices on the same tree and live16402b root,
+  via cpu_job.sh, nice 15. Memory check first: about 0.85 GB RSS per worker; 76–91 GB available. The 105 live-python
+  cap binds (live 08 61, 03 79, 04 97):
+
+  | host | shard | games | W | PGID | log |
+  |---|---|---|---|---|---|
+  | 08 | 5 | 3200 | 40 | 3611792 | J/g1-x08-s5.log |
+  | 03 | 3 | 1700 | 21 | 3874483 | J/g1-x03-s3.log |
+  | 04 | 4 | 2400 | 30 | 2936118 | J/g1-x04-s4.log (waits in cpu_job.sh until the host has room) |
+
+  - **Shared output dir:** shards on a host share J/G1. Sealed shards are per game; games-<worker>.jsonl lines from
+    two shards may share a file (append-mode single writes). done_games/pack read all of it.
+  - **Babysitter rules:** steered to watch the GPUs on 04/08 (halve our extra shard if a GPU is under 70% on two
+    checks), back off when a user logs in, and leave root switching to the owner.
+  - **Patched root:** when live16402b-r2 (Freeze fix) lands, every later shard launches on it and the errored games
+    are rerun there.
