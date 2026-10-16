@@ -54,6 +54,11 @@ See COVERAGE.md "Batch plan".
 | cards-batchA-gate-sol-r1 | Sol | shepherd Batch A C56 gate on 04 (PGID 2388512), fill RESULTS §6, triage spec on FAIL | reports/cards/batchA/ |
 | cards-c1-spec-sol-r1 | Sol | Batch C specs: attack/targeting/dash cards + 4 native≠Python bugs | reports/cards/specs/C1-SPECS.md |
 | cards-c2-spec-sol-r1 | Sol | Batch C specs: special mechanics, death releases, stats-only confirmations | reports/cards/specs/C2-SPECS.md |
+| cards-b2-gate-sol-r1 | Sol | B2 C56 gate relaunch on 04 + RESULTS; wakes Opus B2 on FAIL | clasher-cards-b2 reports/cards/b2/ |
+| cards-scope-gate-sol-r1 | Sol | r1-cards1 policy gate + noncore final (08) → SCOPE.md; wakes Opus scope on FAIL | reports/cards/runtime/ |
+| cards-batchA-review-r1 | Sol | review Batch A engine diff 7e64d8b93..9eed63029 | (verdict) |
+| cards-r1cards2-sol-r1 | Sol | assemble r1-cards2 (scope+Batch A, native 1923619e) + live16402b; gates | reports/cards/r1-cards2/ |
+| cards-runtime-review-r1 | Sol | review runtime/overlay code 0874da215 | (verdict) |
 | cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
@@ -91,3 +96,7 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   sweeps, reviews, bookkeeping) → Sol; engine code → Opus; narrow → Haiku. No duplicate threads found.
 - 02:16Z Sam: 'use some sol'. Non-coding moved to Sol (gate shepherd, C1/C2 spec writers). Cannon stall = live
   own-deck tracker out of sync (driver deck still Skeletons), not engine scope: Cannon + whole live deck are C56.
+- 02:20Z **Batch A C56 gate PASS** (02:18Z: fixtures 577/577, rust-only 577/577, roots 600/600; native 1923619e;
+  commit 9eed63029). Reported to coordinator. Runtime/overlay code committed 0874da215. Opus owners (scope, B2,
+  Batch A, live16402) idle after handoff; B1 continues on Opus. Sol shepherds gates/reviews/assembly (Sam: Opus owns,
+  Sol = workhorse incl. tedious code). Merge to main after Sol reviews of Batch A engine + runtime code.
