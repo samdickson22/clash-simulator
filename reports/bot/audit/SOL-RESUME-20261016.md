@@ -142,6 +142,28 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:46–09:47 UTC spell-carrier source bug and strict silence
+
+- Owner foundrealBroot ambiguity:Fireball/Arrowscarriers shareempty stats.name andfirstproducer selectioncan
+  chooseArrowswhenbotharebelieved. Fixusespublictemplate spell_name,nottruehiddenstate. Bothspellsrootfixture/
+  regressionaddedbyexistingowner;freshreview/runtimegatepending;no acceptanceorbank/outcomes.
+- BOTread-onlysourceinspection09:46:59Z confirms callfromR.templates-derivedentity'sspell_name, qualifiedname
+  stripping, configcardvalidation andexistingbodyfallbackfornonspellentities. Thisisnotruntimeproof.
+  root.pySHA256fb6321a0ce198fdd32de0902280306d4b1eaa11524ad67e322fd96fd88aa91e8;
+  test_configs.pySHA256762bc666079119d5559fac29401d59f2c3fbc8798bee83168b06b675bbcb0be0.
+  Commands: `sed -n '103,124p' bot/levels/root.py`; `sed -n '184,211p' bot/levels/root.py`;
+  `sha256sum bot/levels/root.py bot/levels/test_configs.py`; priorboundedrgread includedbothspellsfixture and
+  exactsnapshotdiagnostic,allinexistinglevelworktree.No ownimplementation,test/native/game orduplicatejob.
+- LatestSamSTRICTSILENCEsupersedespriorroutinecommunicationrule. MessageONLYblockedneedingparentaction,
+  urgentlivefailure,explicitrequest,oressentialdependencyhandoff;max2sentences+1receiptpath.No routine status/
+  test/gate/review/queue/receipt/commit updates,acks/manualcompletionmessages,evenifcalledmaterial. Detailedlogs
+  infiles;parentreads.Automatictaskcompletiononly,noduplicates.PersistedPROGRESS/HANDOFFandfuture/resumedbrief
+  requirement; no rebroadcasttoalreadyactivechildrenandno parent/ownerupdateforthisroutineongoingrepair.
+- Initialdocumentationpatchfailedcontextverificationbecauseauditinsertionswereorderedbackward;noeditsmade.
+  Reappliedorderedpatches. No host/compute/account/pinmutationorrollback.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: record spell carrier root ambiguity and strict silence' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:41–09:42 UTC requested one-slot CPU coordination
 
 - CARDrequest:08templatefive-targetpilot2967873cpu_job1 waitedabout11min;B2corrected3422841cpu_job4alsoqueued.
@@ -159,7 +181,7 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
   remainindurableactivity. No admissionprobeinvoked:executingcpu_room.sh itselfwouldcreateaclaim,soinspection
   reproduceditsread-onlyformula withoutcreatingone.
 - LatestSammessage-disciplineinstructionpersistedPROGRESS+HANDOFF:action/input/changedblocker/materialresult
-  messagesonly,default3lines/80words,onereceiptpath,batchrelated;detailedlogsinf iles. Noacks/healthypolls/
+  messagesonly,default3lines/80words,onereceiptpath,batchrelated;detailedlogs in files. Noacks/healthypolls/
   unchangedqueues/logged-pushedmessages. Coordinatorbroadcasts existingchildren;BOTdidnotrebroadcast.
   Includeinfuture/resumedchildbriefs;clarificationsremain directT3parent/owner,neverinputtools.
 - Follow-up commitcommand:

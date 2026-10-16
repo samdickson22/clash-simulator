@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:42 UTC
+## Current handoff: Sol interim, 2026-10-16 09:47 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
@@ -17,11 +17,12 @@ existing owner or parent `0523ae6f-baa3-4d4e-b233-b392671670db`, stating evidenc
 dependent work waits; continue independent work. Do not use user-input tools. Propagate to all active descendants
 and future delegation briefs. Actual permission controls remain unchanged. No old pending input request reported.
 
-**Message discipline (latest Sam rule):** message parent/owner only when action/input is needed, a real blocker/
-failure changes next steps, or a material result/deploy/account action matters. Default≤3shortlines/80words,
-current result+neededaction+onereceiptpath. Batch relatedupdates; detailed commands/hashes/progress liveinfiles.
-No acknowledgments, healthy polls, unchanged gates/queues or logged/pushed notices. Coordinator broadcasts current
-threads; do not rebroadcast activechildren. Include this rule in every future/resumedchildbrief.
+**STRICT SILENCE (latest Sam rule, supersedes earlier message discipline):** message ONLY when blocked needing
+parent action, urgent live failure, explicit request, or essential dependency handoff. Max2sentences+1receiptpath.
+No routine status/test/gate/review/queue/receipt/commit updates, acknowledgments or manualcompletion messages,
+even if calledmaterial. Detailed commands/hashes/progress liveinfiles; parentreads them. Automatic taskcompletion
+suffices; do not duplicate it. Coordinator broadcasts alreadyactivechildren; do NOTrebroadcast. Include thisrule
+in every future/resumedchildbrief. Clarifications remain directT3parent/owner,neveruser-inputtools.
 
 **CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
 CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight
@@ -91,6 +92,12 @@ BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-r
   values/types first; only source-proven missing String defaults may normalize. NumericHP/damage/maxHP and
   owner/class/key checks stay strict; freshreview/executed evidence required before accepting any repairedgate.
   Pilotbank/games stillBLOCKEDbyfailures; fair/bodypasses do not waive nativephysics/all11/rollout/harnessgates.
+  **09:46Z sourcebug:** Fireball/Arrowscarriers shareempty stats.name; firstproducer selection could applyArrows
+  stats toFireball whenbotharebelieved. Existingownerfix usespublictemplate spell_name (not hiddentruth), with
+  qualifiedspellhandling andunknowncardrejection; bothspellsruntimefixture/regressionadded. BOTsourceinspection
+  confirms path,notacceptance; freshreview/runtimegatepending. ExactrootSHA
+  `fb6321a0ce198fdd32de0902280306d4b1eaa11524ad67e322fd96fd88aa91e8`; test_configsSHA
+  `762bc666079119d5559fac29401d59f2c3fbc8798bee83168b06b675bbcb0be0` at09:46:59Z.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
   08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
   completed jobs, not failures. Existing GPU ownership and resource coordination remain; no trainer was restarted.
