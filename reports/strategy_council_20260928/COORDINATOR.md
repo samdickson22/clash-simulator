@@ -6992,3 +6992,12 @@ Solebabysitter deployedreviewedcapture+tower at31→32boundary withseparaterollb
 ## 2026-10-16T10:33:33Z: viewer live; controlled rollbacks
 
 Viewer complete-frame/mobile fix is deployed and HTTP/JPEG validated. YOLO remains off after a real board phantom. Hand r4 field failure caused LL_HANDSYNC=0 rollback; reviewed r5 single-file, one-battle canary is authorized after required guards, not yet confirmed deployed. Quiet checks found no pending requests or new failures. Details and source receipts are in reports/audit/SOL-INTERIM-20261016.md and the events JSONL.
+
+
+### 2026-10-16T11:11:59Z Sol interim coordinator
+
+The hand synchronization r5 canary removed reservation errors but failed the unchanged refusal gate: three of 22 attempts were correctly refused while the elixir bar lagged a spend animation. The existing owner repaired policy availability using positive own-HUD evidence, preserving final guards, polling, historical failures and all thresholds. Independent review and scoped commit d40eff941 passed; coordinator authorized one further battle only. Sole-operator command receipts confirm the single hand-source deployment and one-match launch; no battle result is claimed here. Validation hold follows, with LL_HANDSYNC=0 rollback on any separately authorized restart.
+
+The original-source capture gate now qualifies five completed runs across three cards and both teams, strictly on verified subsets. This does not clear per-card balance, shared minimum-source counts, changed-mask QA or generation gates. MiniPekka t1 remains held; completed457 and queued443 provenance stay separate. The existing synth monitor received the essential dependency handoff.
+
+Quiet sweep checked 17 active/lead threads with no pending questions or newly failed unfinished work; known superseded/paused threads remain stopped. Hourly host loads were 52.84/86.90/84.87/97.45 on01/03/04/08, with no console users or overload. Completed/rejected training explains idle GPUs. No duplicate worker, compute launch, scheduler change, active pin change or account action by coordinator. Exact commands, task IDs and receipts remain in the audit event log and workstream files.
