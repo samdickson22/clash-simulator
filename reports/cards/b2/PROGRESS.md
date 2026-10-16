@@ -124,3 +124,9 @@ guess; ours is the client's strict intersects; shared by C56 spells -> not chang
   Merged native 466aeba37eb7d273a4a92f7aceb1d7cbe6192a55a83e8fd13537f598c51ad926 (08 b2m/out). Parity on 08 b2m/fid:
   B2 10-card scenarios 28/28 native==Python (root and rootstats), Batch A 42/42, probe_first_update_paths 42/42.
   GATE on 127x04 `/mpac/sdicks02/jobs/clasher/cards/b2-merge/` PID 2123864 (cpu_job 8, both arms) -> gate/compare.json.
+- 2026-10-16 review r1 REJECT fixes (fresh Sol review of e545eb6bd..27ef53e5c): native scope_targets + scope_periodic skip
+  dash travel; native collide() lets a dashing unit consume its queued controlled vector (Tornado pull, found by the new
+  audit probe); Clone slide steps settle (arena clamp, building footprint refuse, river recovery) in both engines.
+  Audit table + Clone settle in RESULTS.md. Native 58f993748b2160fcc6e38226cba533974be6c11803263077d2773ecc3b6c1674
+  (08 b2m/out2). Parity: B2 28/28 (root, rootstats), Batch A 42/42, first-update paths 42/42, dash audit 20 sources x
+  2 seats x 40 offsets 0 mismatches, Clone bounds 6/6. Old b2-merge gate (PID 2123864, native 466aeba3) killed by group.

@@ -1788,8 +1788,22 @@ impl BattleState {
     }
     fn collide(&self, i: usize) -> (i64, i64) {
         let a = &self.entities[i];
-        if a.stagger > 1e-9 || a.dash_travel() {
+        if a.stagger > 1e-9 {
             return (0, 0);
+        }
+        if a.dash_travel() {
+            // Batch B2: a dash in travel takes no contact pressure (Python is_in_transit), but a controlled vector
+            // already queued (a Tornado pull on the tick before the launch) is still consumed, as Python's
+            // begin_movement_tick does. Only BanditDash bodies dash (no C56 card).
+            let (mut vx, mut vy, count) = a.controlled_vector;
+            if count > 0 {
+                vx /= count;
+                vy /= count;
+            }
+            if !a.controlled_bypass && vx * vx + vy * vy > 150 * 150 {
+                return norm(vx, vy, 150);
+            }
+            return (vx, vy);
         }
         let (mut vx, mut vy, mut count) = a.controlled_vector;
         for (j, b) in self.entities.iter().enumerate() {

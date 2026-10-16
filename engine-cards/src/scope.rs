@@ -300,6 +300,9 @@ impl BattleState {
                     && !e.underground
                     && !e.hidden
                     && e.stagger <= 1e-9
+                    // Batch B2: a dash in travel is outside every selector (Python can_receive_area_damage ->
+                    // BanditDash.allows_effect), before Void counts, Vines ranks or Curse marks.
+                    && !e.dash_travel()
                     && (e.class == "Troop" || e.class == "Building")
                     && Self::in_area(e, area.x, area.y, area.effect_radius))
                 .then_some(i)
@@ -340,7 +343,7 @@ impl BattleState {
         damage: f64,
     ) {
         let e = &mut self.entities[j];
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || damage <= 0.0 {
+        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || damage <= 0.0 || e.dash_travel() {
             return;
         }
         if let Some(buff) = e.periodic.iter_mut().find(|b| b.source_id == source_id) {

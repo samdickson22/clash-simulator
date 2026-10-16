@@ -2060,10 +2060,24 @@ class BattleState:
     def _advance_clone_slide(self, troop) -> None:
         """Batch B2: one fixed Clone slide step (spells.CLONE_OFFSET); the slide ends after its 10th step."""
         sx, sy, left = troop._clone_slide
-        troop.position = Position(
-            logic_units_to_tiles(tiles_to_logic_units(troop.position.x) + sx),
-            logic_units_to_tiles(tiles_to_logic_units(troop.position.y) + sy),
-        )
+        # The step settles as RoyaleSim (MIT) spell.rs `settle` does for a slide, with this engine's primitives:
+        # clamp to the arena (moveObject); a ground unit's step into a building footprint is refused (settle's
+        # unresolved fallback, the old point); a ground point on the river is recovered to land as a knockback's is.
+        from .native_tilemap import recover_native_ground_position
+        from .unit_traits import uses_air_collision_plane
+        ox, oy = tiles_to_logic_units(troop.position.x), tiles_to_logic_units(troop.position.y)
+        x, y = max(0, min(17999, ox + sx)), max(0, min(31999, oy + sy))
+        if not uses_air_collision_plane(troop):
+            r = tiles_to_logic_units(troop.get_collision_radius())
+            for b in self.entities.values():
+                if b is troop or not isinstance(b, Building) or not b.is_alive:
+                    continue
+                reach = tiles_to_logic_units(b.get_collision_radius()) + r
+                if abs(x - tiles_to_logic_units(b.position.x)) < reach and abs(y - tiles_to_logic_units(b.position.y)) < reach:
+                    x, y = ox, oy
+                    break
+            x, y = recover_native_ground_position(x, y)
+        troop.position = Position(logic_units_to_tiles(x), logic_units_to_tiles(y))
         left -= 1
         troop._clone_slide = [sx, sy, left] if left > 0 else None
         if left <= 0:

@@ -38,10 +38,41 @@ impl BattleState {
         let (hx,hy)=(dx*256/d,dy*256/d);
         (hx*125/256,hy*125/256)
     }
+    /// Python native_tilemap.recover_native_ground_position (LogicBattle::cf44d8), as the knockback recovery uses it.
+    fn recover_ground(&self,x:i64,y:i64)->(i64,i64) {
+        let (x,y)=(x.clamp(250,17750),y.clamp(250,31750));
+        let water=|cx:i64,cy:i64| self.config.water[(cy/500*36+cx/500) as usize];
+        if !water(x,y) {return (x,y);}
+        let (mut best,mut distance)=((x,y),i64::MAX);
+        for dy in (-2250i64..=2750).step_by(500) {
+            for dx in (-2250i64..=2750).step_by(500) {
+                let (cx,cy)=(x+dx,y+dy);
+                if !(0..18000).contains(&cx) || !(0..32000).contains(&cy) || water(cx,cy) {continue;}
+                let d=dx.abs().max(dy.abs())+((53*dx.abs().min(dy.abs()))>>7);
+                if d<distance {best=(cx,cy);distance=d;}
+            }
+        }
+        best
+    }
     pub(super) fn advance_clone_slide(&mut self,i:usize) {
         let Some((sx,sy,left))=self.entities[i].clone_slide else {return;};
+        // Batch B2: the step settles as RoyaleSim (MIT) spell.rs `settle` does for a slide, with this engine's own
+        // primitives (Python BattleState._advance_clone_slide): clamp to the arena; a ground unit's step into a
+        // building footprint is refused (the unresolved fallback, `old`); a ground point on the river is recovered
+        // to land as a knockback's is.
+        let (ox,oy)=(units(self.entities[i].x),units(self.entities[i].y));
+        let (mut x,mut y)=((ox+sx).clamp(0,17999),(oy+sy).clamp(0,31999));
+        if !self.entities[i].collision_air(self.tick) {
+            let r=units(self.entities[i].stats.radius);
+            let blocked=self.entities.iter().enumerate().any(|(j,b)| j!=i && b.alive && b.class=="Building" && {
+                let reach=units(b.stats.radius)+r;
+                (x-units(b.x)).abs()<reach && (y-units(b.y)).abs()<reach
+            });
+            if blocked { (x,y)=(ox,oy); }
+            (x,y)=self.recover_ground(x,y);
+        }
         let e=&mut self.entities[i];
-        e.x=(units(e.x)+sx) as f64/1000.0;e.y=(units(e.y)+sy) as f64/1000.0;
+        e.x=x as f64/1000.0;e.y=y as f64/1000.0;
         e.clone_slide=if left>1 {Some((sx,sy,left-1))} else {None};
         if left<=1 {
             // CLONE_SLIDE_ROUTE = client15535_dropped: plan afresh from the slide's end.

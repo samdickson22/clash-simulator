@@ -181,3 +181,46 @@ native-diff report assigned game 509 to Mirror × SkeletonBalloon; this rerun re
 new first failure without assuming it is the old cause. This is separate from the C56
 BarbLog regression. Full evidence
 08 `fid/mixed-509-details-game-509.json` (retained by an extra one-game diagnostic rerun).
+
+## Review r1: dash-travel exclusion audit (native == Python)
+
+Python is the reference: during Bandit / Boss Bandit dash travel `BanditDash.allows_effect` makes
+`Entity.can_receive_effect` (and so `can_receive_area_damage`, `apply_slow`, `apply_periodic_damage`, forced
+movement) false. `apply_haste`, the Heal Spirit pulse and Clone have no effect gate in Python and none in native
+(kept). Only BanditDash bodies dash, so every guard below is C56-inert.
+
+Probe `tools/probe_dash_paths.py` (127x08 `b2m/fid/dash-final-*.json`, native `58f99374`): for each source and each
+offset L = -4..35 ticks between the cast and a forced dash launch (Python `BanditDash._launch_dash` toward the enemy
+King Tower; L > 0 casts in Python before the export, L <= 0 exports first and casts in both engines), both engines
+step 45 ticks; every tick compares battle_digest, the Bandit's hp / position / stun / slow count / periodic-buff count
+/ hastes / freeze expiry / shield, and every scope area's state. "Exercised" = runs in which the Bandit was in dash
+travel within 4 tiles of the cast while the spell object was alive or on the cast tick.
+
+| Path (native site) | Probe source(s) | Native fix | Mismatches blue / red (of 40) | Exercised blue / red |
+|---|---|---|---|---|
+| area_targets: periodic damage, slow, pull (`c56.rs:area_targets`) | Poison, Earthquake, Tornado | B2: skip dash travel | 0 / 0 each | 40, 40, 24 / same |
+| pull carried into the dash (`lib.rs:collide`) | Tornado (pull queued the tick before launch) | review r1: a dashing unit consumes its queued controlled vector (Python begin_movement_tick); was dropped | 0 / 0 (was 20 / 20) | 24 / 24 |
+| scope_targets: Curse marks + conversion, Vines catch ranking, Void tier count (`scope.rs:scope_targets`) | GoblinCurse, Vines, DarkMagic | review r1: skip dash travel before counting / ranking | 0 / 0 each (old native: Vines 6, Void 6 offsets) | 40 / 40 each |
+| scope periodic install (`scope.rs:scope_periodic`) | GoblinCurse, Vines | review r1: defensive dash guard | 0 / 0 | 40 / 40 |
+| freeze (`scope.rs:freeze_for`) | Freeze, Vines snare | pre-existing guard | 0 / 0 | 40 / 40 |
+| direct damage / stun (`lib.rs:damage`, `c56.rs:stun_target_mode`) | Zap, Arrows, Rocket | pre-existing guard | 0 / 0 each | 5, 31, 40 / same |
+| knockback (radial and rolling) | Fireball, Snowball, Log, BarbLog | pre-existing | 0 / 0 each | 34, 27, 5, 5 / same |
+| chain / ranked strike | Lightning, ElectroSpirit | pre-existing | 0 / 0 each | 14, 5 / same |
+| spirit freeze | IceSpirit | pre-existing | 0 / 0 | 5 / 5 |
+| rage haste (`scope.rs:haste_scan`) | Rage (own) | none: Python apply_haste has no gate either (kept) | 0 / 0 | 40 / 40 |
+| heal (`scope.rs` Heal) | Heal Spirit (own) | none (Python HealPulse ungated) | 0 / 0 | 5 / 5 |
+| clone | Clone (own) | none (Python CloneSpell ungated) | 0 / 0 | 5 / 5 |
+
+"5" = only the five lockstep cast offsets (instant effects, or a body that leaves the 4-tile window at once); the
+rolling Log/BarbLog contact with a dashing Bandit is therefore covered only at the cast tick.
+
+## Review r1: Clone slide settling
+
+`battle.py:_advance_clone_slide` and `clone.rs:advance_clone_slide` now settle each fixed step as RoyaleSim's
+`spell::settle` does, with this engine's primitives: clamp to the arena (0..17999 / 0..31999); for a ground unit a
+step into an alive building's footprint (|dx|, |dy| < building radius + own radius) is refused (settle's unresolved
+fallback, the old point); then the river recovery the knockback uses (`recover_native_ground_position`, native
+`recover_ground`). Timing unchanged (10 steps after the movement phase, route dropped on the last).
+Probe `tools/probe_clone_bounds.py` (08 `b2m/fid/f-clone-bounds.json`), both seats, native == Python every tick:
+Knight at (4.5, 0.5): copy ends at (3.719, 0.25) (was (5.38, -0.38)); Knight at (9.0, 14.6): the original's steps into
+the river are recovered to land; Knight at (3.5, 8.6): the copy stops at y 8.036 at its princess tower's footprint.
