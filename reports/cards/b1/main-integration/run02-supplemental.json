@@ -1,0 +1,253 @@
+{
+  "total": 4,
+  "passed": 4,
+  "tests": [
+    {
+      "name": "melee-before-carry",
+      "seat": 0,
+      "ok": true,
+      "witness": [
+        {
+          "tick": 175,
+          "emitted": {
+            "37": 175,
+            "38": 175,
+            "39": 175,
+            "40": 175
+          },
+          "graph": [
+            9,
+            10,
+            11,
+            37,
+            38,
+            39,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unfrozen-zero-deploy-once",
+      "seat": 0,
+      "ok": true,
+      "witness": [
+        {
+          "id": 12,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.347,
+            10.304
+          ],
+          "target": 4
+        },
+        {
+          "id": 13,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.555,
+            10.257
+          ],
+          "target": 4
+        },
+        {
+          "id": 14,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.726,
+            10.395
+          ],
+          "target": 4
+        },
+        {
+          "id": 15,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.724,
+            10.609
+          ],
+          "target": 4
+        },
+        {
+          "id": 16,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.551,
+            10.744
+          ],
+          "target": 4
+        },
+        {
+          "id": 17,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.343,
+            10.694
+          ],
+          "target": 4
+        },
+        {
+          "id": 18,
+          "tick": 13,
+          "before": [
+            4.5,
+            10.5
+          ],
+          "after": [
+            4.25,
+            10.5
+          ],
+          "target": 4
+        }
+      ]
+    },
+    {
+      "name": "melee-before-carry",
+      "seat": 1,
+      "ok": true,
+      "witness": [
+        {
+          "tick": 175,
+          "emitted": {
+            "37": 175,
+            "38": 175,
+            "39": 175,
+            "40": 175
+          },
+          "graph": [
+            9,
+            10,
+            11,
+            37,
+            38,
+            39,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unfrozen-zero-deploy-once",
+      "seat": 1,
+      "ok": true,
+      "witness": [
+        {
+          "id": 12,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.653,
+            21.696
+          ],
+          "target": 2
+        },
+        {
+          "id": 13,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.445,
+            21.743
+          ],
+          "target": 2
+        },
+        {
+          "id": 14,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.274,
+            21.605
+          ],
+          "target": 2
+        },
+        {
+          "id": 15,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.276,
+            21.391
+          ],
+          "target": 2
+        },
+        {
+          "id": 16,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.449,
+            21.256
+          ],
+          "target": 2
+        },
+        {
+          "id": 17,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.657,
+            21.306
+          ],
+          "target": 2
+        },
+        {
+          "id": 18,
+          "tick": 13,
+          "before": [
+            13.5,
+            21.5
+          ],
+          "after": [
+            13.75,
+            21.5
+          ],
+          "target": 2
+        }
+      ]
+    }
+  ],
+  "note": "Explicit phase/first-step positions plus exact native restart equality; raw cross-engine state is not certified."
+}

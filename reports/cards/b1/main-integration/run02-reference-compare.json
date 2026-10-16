@@ -1,0 +1,1151 @@
+{
+  "total": 39,
+  "b1_regressions": [],
+  "results": [
+    {
+      "card": "RoyalRecruits",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "RoyalRecruits",
+      "scenario": "knight",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 6,
+      "differences": 6,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits[5].victim",
+          "ours": [
+            1,
+            1
+          ],
+          "royalesim": [
+            1,
+            2
+          ]
+        },
+        {
+          "metric": "tower_hits[6].victim",
+          "ours": [
+            1,
+            2
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[10].victim",
+          "ours": [
+            1,
+            1
+          ],
+          "royalesim": [
+            1,
+            2
+          ]
+        },
+        {
+          "metric": "tower_hits[11].victim",
+          "ours": [
+            1,
+            2
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[14].victim",
+          "ours": [
+            1,
+            1
+          ],
+          "royalesim": [
+            1,
+            2
+          ]
+        },
+        {
+          "metric": "tower_hits[15].victim",
+          "ours": [
+            1,
+            2
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "card": "RoyalRecruits",
+      "scenario": "minions",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "ThreeMusketeers",
+      "scenario": "alone",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 3,
+      "differences": 3,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "ThreeMusketeer_Rework_Character_1[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        },
+        {
+          "metric": "ThreeMusketeer_Rework_Character_2[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        },
+        {
+          "metric": "ThreeMusketeer_Rework_Character_3[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        }
+      ]
+    },
+    {
+      "card": "ThreeMusketeers",
+      "scenario": "knight",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 3,
+      "differences": 3,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "ThreeMusketeer_Rework_Character_1[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        },
+        {
+          "metric": "ThreeMusketeer_Rework_Character_2[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        },
+        {
+          "metric": "ThreeMusketeer_Rework_Character_3[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        }
+      ]
+    },
+    {
+      "card": "ThreeMusketeers",
+      "scenario": "minions",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 3,
+      "differences": 3,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "ThreeMusketeer_Rework_Character_1[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        },
+        {
+          "metric": "ThreeMusketeer_Rework_Character_2[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        },
+        {
+          "metric": "ThreeMusketeer_Rework_Character_3[0].max_hp",
+          "ours": 883,
+          "royalesim": 906
+        }
+      ]
+    },
+    {
+      "card": "GiantSkeleton",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "GiantSkeleton",
+      "scenario": "knight",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 1,
+      "differences": 1,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits[7].tick",
+          "ours": 568,
+          "royalesim": 570
+        }
+      ]
+    },
+    {
+      "card": "GiantSkeleton",
+      "scenario": "minions",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 1,
+      "differences": 1,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits[2].tick",
+          "ours": 273,
+          "royalesim": 275
+        }
+      ]
+    },
+    {
+      "card": "SkeletonBalloon",
+      "scenario": "alone",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 20,
+      "differences": 20,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "Skeleton[0].death",
+          "ours": 257,
+          "royalesim": 242
+        },
+        {
+          "metric": "Skeleton[1].death",
+          "ours": 225,
+          "royalesim": 258
+        },
+        {
+          "metric": "Skeleton[2].death",
+          "ours": 241,
+          "royalesim": 194
+        },
+        {
+          "metric": "Skeleton[3].death",
+          "ours": 176,
+          "royalesim": 226
+        },
+        {
+          "metric": "Skeleton[4].death",
+          "ours": 193,
+          "royalesim": 161
+        },
+        {
+          "metric": "Skeleton[5].death",
+          "ours": 161,
+          "royalesim": 178
+        },
+        {
+          "metric": "tower_hits.count",
+          "ours": 13,
+          "royalesim": 19
+        },
+        {
+          "metric": "tower_hits[4].tick",
+          "ours": 174,
+          "royalesim": 170
+        },
+        {
+          "metric": "tower_hits[7].tick",
+          "ours": 189,
+          "royalesim": 180
+        },
+        {
+          "metric": "tower_hits[8].tick",
+          "ours": 192,
+          "royalesim": 188
+        },
+        {
+          "metric": "tower_hits[9].tick",
+          "ours": 196,
+          "royalesim": 192
+        },
+        {
+          "metric": "tower_hits[9].damage",
+          "ours": 162,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[10].tick",
+          "ours": 214,
+          "royalesim": 197
+        },
+        {
+          "metric": "tower_hits[11].tick",
+          "ours": 218,
+          "royalesim": 199
+        },
+        {
+          "metric": "tower_hits[11].damage",
+          "ours": 162,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[12].tick",
+          "ours": 240,
+          "royalesim": 201
+        },
+        {
+          "metric": "tower_hits[12].damage",
+          "ours": 162,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_damage_10s",
+          "ours": 1036,
+          "royalesim": 1117
+        },
+        {
+          "metric": "tower_damage_20s",
+          "ours": 1441,
+          "royalesim": 1684
+        },
+        {
+          "metric": "tower_damage_30s",
+          "ours": 1441,
+          "royalesim": 1684
+        }
+      ]
+    },
+    {
+      "card": "SkeletonBalloon",
+      "scenario": "knight",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 31,
+      "differences": 31,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits.count",
+          "ours": 20,
+          "royalesim": 26
+        },
+        {
+          "metric": "tower_hits[5].tick",
+          "ours": 174,
+          "royalesim": 170
+        },
+        {
+          "metric": "tower_hits[8].tick",
+          "ours": 189,
+          "royalesim": 180
+        },
+        {
+          "metric": "tower_hits[9].tick",
+          "ours": 192,
+          "royalesim": 188
+        },
+        {
+          "metric": "tower_hits[10].tick",
+          "ours": 194,
+          "royalesim": 192
+        },
+        {
+          "metric": "tower_hits[10].victim",
+          "ours": [
+            0,
+            1
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[10].damage",
+          "ours": 202,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[11].tick",
+          "ours": 196,
+          "royalesim": 194
+        },
+        {
+          "metric": "tower_hits[11].victim",
+          "ours": [
+            1,
+            1
+          ],
+          "royalesim": [
+            0,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[11].damage",
+          "ours": 162,
+          "royalesim": 202
+        },
+        {
+          "metric": "tower_hits[12].tick",
+          "ours": 214,
+          "royalesim": 197
+        },
+        {
+          "metric": "tower_hits[13].tick",
+          "ours": 218,
+          "royalesim": 199
+        },
+        {
+          "metric": "tower_hits[13].victim",
+          "ours": [
+            0,
+            1
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[13].damage",
+          "ours": 202,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[14].tick",
+          "ours": 218,
+          "royalesim": 201
+        },
+        {
+          "metric": "tower_hits[14].damage",
+          "ours": 162,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[15].tick",
+          "ours": 240,
+          "royalesim": 210
+        },
+        {
+          "metric": "tower_hits[15].damage",
+          "ours": 162,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[16].tick",
+          "ours": 242,
+          "royalesim": 218
+        },
+        {
+          "metric": "tower_hits[17].tick",
+          "ours": 266,
+          "royalesim": 219
+        },
+        {
+          "metric": "tower_hits[17].victim",
+          "ours": [
+            0,
+            1
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[17].damage",
+          "ours": 202,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[18].tick",
+          "ours": 290,
+          "royalesim": 221
+        },
+        {
+          "metric": "tower_hits[18].victim",
+          "ours": [
+            0,
+            1
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[18].damage",
+          "ours": 202,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_hits[19].tick",
+          "ours": 314,
+          "royalesim": 223
+        },
+        {
+          "metric": "tower_hits[19].victim",
+          "ours": [
+            0,
+            1
+          ],
+          "royalesim": [
+            1,
+            1
+          ]
+        },
+        {
+          "metric": "tower_hits[19].damage",
+          "ours": 202,
+          "royalesim": 81
+        },
+        {
+          "metric": "tower_damage_10s",
+          "ours": 1036,
+          "royalesim": 1117
+        },
+        {
+          "metric": "tower_damage_20s",
+          "ours": 1441,
+          "royalesim": 1684
+        },
+        {
+          "metric": "tower_damage_30s",
+          "ours": 1441,
+          "royalesim": 1684
+        }
+      ]
+    },
+    {
+      "card": "SkeletonBalloon",
+      "scenario": "minions",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 4,
+      "differences": 4,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "Skeleton[0].observed_speed",
+          "ours": 1.7763,
+          "royalesim": 2.1258
+        },
+        {
+          "metric": "Skeleton[5].observed_speed",
+          "ours": 1.7839,
+          "royalesim": 1.8315
+        },
+        {
+          "metric": "enemy_hits[4].tick",
+          "ours": 177,
+          "royalesim": 232
+        },
+        {
+          "metric": "enemy_hits[5].tick",
+          "ours": 193,
+          "royalesim": 246
+        }
+      ]
+    },
+    {
+      "card": "Hunter",
+      "scenario": "alone",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 10,
+      "differences": 10,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits.count",
+          "ours": 7,
+          "royalesim": 6
+        },
+        {
+          "metric": "tower_hits[0].damage",
+          "ours": 168,
+          "royalesim": 84
+        },
+        {
+          "metric": "tower_hits[1].damage",
+          "ours": 84,
+          "royalesim": 168
+        },
+        {
+          "metric": "tower_hits[2].damage",
+          "ours": 84,
+          "royalesim": 168
+        },
+        {
+          "metric": "tower_hits[3].tick",
+          "ours": 136,
+          "royalesim": 178
+        },
+        {
+          "metric": "tower_hits[3].damage",
+          "ours": 84,
+          "royalesim": 168
+        },
+        {
+          "metric": "tower_hits[4].tick",
+          "ours": 177,
+          "royalesim": 179
+        },
+        {
+          "metric": "tower_hits[4].damage",
+          "ours": 168,
+          "royalesim": 84
+        },
+        {
+          "metric": "tower_hits[5].tick",
+          "ours": 178,
+          "royalesim": 180
+        },
+        {
+          "metric": "tower_hits[5].damage",
+          "ours": 84,
+          "royalesim": 168
+        }
+      ]
+    },
+    {
+      "card": "Hunter",
+      "scenario": "knight",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "Hunter",
+      "scenario": "minions",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 5,
+      "differences": 5,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "enemy_hits.count",
+          "ours": 7,
+          "royalesim": 6
+        },
+        {
+          "metric": "enemy_hits[2].tick",
+          "ours": 39,
+          "royalesim": 41
+        },
+        {
+          "metric": "enemy_hits[2].damage",
+          "ours": 84,
+          "royalesim": 168
+        },
+        {
+          "metric": "enemy_hits[4].tick",
+          "ours": 41,
+          "royalesim": 81
+        },
+        {
+          "metric": "enemy_hits[4].damage",
+          "ours": 84,
+          "royalesim": 62
+        }
+      ]
+    },
+    {
+      "card": "MiniSparkys",
+      "scenario": "alone",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 6,
+      "differences": 6,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits[3].tick",
+          "ours": 187,
+          "royalesim": 189
+        },
+        {
+          "metric": "tower_hits[4].tick",
+          "ours": 190,
+          "royalesim": 192
+        },
+        {
+          "metric": "tower_hits[5].tick",
+          "ours": 231,
+          "royalesim": 235
+        },
+        {
+          "metric": "tower_hits[6].tick",
+          "ours": 234,
+          "royalesim": 238
+        },
+        {
+          "metric": "tower_hits[7].tick",
+          "ours": 278,
+          "royalesim": 284
+        },
+        {
+          "metric": "tower_hits[8].tick",
+          "ours": 322,
+          "royalesim": 330
+        }
+      ]
+    },
+    {
+      "card": "MiniSparkys",
+      "scenario": "knight",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 16,
+      "differences": 16,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "enemy_hits[3].tick",
+          "ours": 80,
+          "royalesim": 82
+        },
+        {
+          "metric": "enemy_hits[4].tick",
+          "ours": 82,
+          "royalesim": 84
+        },
+        {
+          "metric": "enemy_hits[5].tick",
+          "ours": 84,
+          "royalesim": 86
+        },
+        {
+          "metric": "enemy_hits[6].tick",
+          "ours": 126,
+          "royalesim": 130
+        },
+        {
+          "metric": "enemy_hits[7].tick",
+          "ours": 128,
+          "royalesim": 132
+        },
+        {
+          "metric": "enemy_hits[8].tick",
+          "ours": 170,
+          "royalesim": 176
+        },
+        {
+          "metric": "enemy_hits[9].tick",
+          "ours": 172,
+          "royalesim": 178
+        },
+        {
+          "metric": "enemy_hits[10].tick",
+          "ours": 214,
+          "royalesim": 224
+        },
+        {
+          "metric": "enemy_hits[11].tick",
+          "ours": 216,
+          "royalesim": 270
+        },
+        {
+          "metric": "enemy_hits[12].tick",
+          "ours": 260,
+          "royalesim": 343
+        },
+        {
+          "metric": "enemy_hits[12].damage",
+          "ours": 117,
+          "royalesim": 109
+        },
+        {
+          "metric": "enemy_hits[13].tick",
+          "ours": 304,
+          "royalesim": 358
+        },
+        {
+          "metric": "enemy_hits[13].damage",
+          "ours": 117,
+          "royalesim": 109
+        },
+        {
+          "metric": "enemy_hits[14].tick",
+          "ours": 361,
+          "royalesim": 372
+        },
+        {
+          "metric": "enemy_hits[15].tick",
+          "ours": 376,
+          "royalesim": 387
+        },
+        {
+          "metric": "enemy_hits[15].damage",
+          "ours": 19,
+          "royalesim": 35
+        }
+      ]
+    },
+    {
+      "card": "MiniSparkys",
+      "scenario": "minions",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 6,
+      "differences": 6,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "tower_hits[0].tick",
+          "ours": 238,
+          "royalesim": 242
+        },
+        {
+          "metric": "tower_hits[1].tick",
+          "ours": 282,
+          "royalesim": 288
+        },
+        {
+          "metric": "enemy_hits[2].tick",
+          "ours": 54,
+          "royalesim": 40
+        },
+        {
+          "metric": "enemy_hits[3].tick",
+          "ours": 82,
+          "royalesim": 84
+        },
+        {
+          "metric": "enemy_hits[4].tick",
+          "ours": 98,
+          "royalesim": 86
+        },
+        {
+          "metric": "enemy_hits[5].tick",
+          "ours": 126,
+          "royalesim": 130
+        }
+      ]
+    },
+    {
+      "card": "RoyalGiant",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "RoyalGiant",
+      "scenario": "knight",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "RoyalGiant",
+      "scenario": "minions",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "BattleHealer",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "BattleHealer",
+      "scenario": "knight",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "BattleHealer",
+      "scenario": "minions",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "GoblinGiant",
+      "scenario": "alone",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 2,
+      "differences": 2,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "SpearGoblin[0].death",
+          "ours": 585,
+          "royalesim": null
+        },
+        {
+          "metric": "SpearGoblin[1].death",
+          "ours": null,
+          "royalesim": 586
+        }
+      ]
+    },
+    {
+      "card": "GoblinGiant",
+      "scenario": "knight",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "GoblinGiant",
+      "scenario": "minions",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "GiantBuffer",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "GiantBuffer",
+      "scenario": "knight",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "GiantBuffer",
+      "scenario": "minions",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "Tombstone",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "Tombstone",
+      "scenario": "hog",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 14,
+      "differences": 14,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "Skeleton[2].observed_speed",
+          "ours": 2.3476,
+          "royalesim": 1.8535
+        },
+        {
+          "metric": "Skeleton[3].observed_speed",
+          "ours": 1.9394,
+          "royalesim": 1.8033
+        },
+        {
+          "metric": "Skeleton[4].observed_speed",
+          "ours": 1.6001,
+          "royalesim": 2.0923
+        },
+        {
+          "metric": "Skeleton[5].observed_speed",
+          "ours": 2.3483,
+          "royalesim": 1.2876
+        },
+        {
+          "metric": "enemy_hits.count",
+          "ours": 15,
+          "royalesim": 16
+        },
+        {
+          "metric": "enemy_hits[9].damage",
+          "ours": 162,
+          "royalesim": 81
+        },
+        {
+          "metric": "enemy_hits[10].tick",
+          "ours": 128,
+          "royalesim": 132
+        },
+        {
+          "metric": "enemy_hits[10].damage",
+          "ours": 81,
+          "royalesim": 109
+        },
+        {
+          "metric": "enemy_hits[11].tick",
+          "ours": 132,
+          "royalesim": 140
+        },
+        {
+          "metric": "enemy_hits[11].damage",
+          "ours": 109,
+          "royalesim": 81
+        },
+        {
+          "metric": "enemy_hits[13].tick",
+          "ours": 141,
+          "royalesim": 146
+        },
+        {
+          "metric": "enemy_hits[13].damage",
+          "ours": 81,
+          "royalesim": 109
+        },
+        {
+          "metric": "enemy_hits[14].tick",
+          "ours": 145,
+          "royalesim": 159
+        },
+        {
+          "metric": "enemy_hits[14].damage",
+          "ours": 102,
+          "royalesim": 109
+        }
+      ]
+    },
+    {
+      "card": "Tombstone",
+      "scenario": "giant",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "BarbarianHut",
+      "scenario": "alone",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "BarbarianHut",
+      "scenario": "hog",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "BarbarianHut",
+      "scenario": "giant",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "Witch",
+      "scenario": "alone",
+      "before": "DIFF",
+      "after": "DIFF",
+      "before_differences": 2,
+      "differences": 2,
+      "ours_unchanged": true,
+      "details": [
+        {
+          "metric": "Skeleton[4].death",
+          "ours": 298,
+          "royalesim": 282
+        },
+        {
+          "metric": "Skeleton[5].death",
+          "ours": 282,
+          "royalesim": 298
+        }
+      ]
+    },
+    {
+      "card": "Witch",
+      "scenario": "knight",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    },
+    {
+      "card": "Witch",
+      "scenario": "minions",
+      "before": "PASS",
+      "after": "PASS",
+      "before_differences": 0,
+      "differences": 0,
+      "ours_unchanged": true,
+      "details": []
+    }
+  ],
+  "note": "Partial reference fidelity is reported; no all-card or Rune Giant enchantment certification."
+}

@@ -140,7 +140,14 @@ def nested(seat, periodic):
             restarted = True
     require(events and restarted, 'no synchronous emission/restart witness')
     if periodic:
-        require(any(len(e['hidden']) == 2 for e in events), ('missing sibling hiding', events))
+        spawner = next(m for m in victim.mechanics if type(m).__name__ == 'PeriodicSpawner')
+        waves = {}
+        for event in events:
+            waves.setdefault(event['tick'], set()).add(event['id'])
+        require(any(len(ids) == spawner.count for ids in waves.values()), ('missing complete wave', events))
+        for event in events:
+            require(set(event['hidden']) == waves[event['tick']] - {event['id']},
+                    ('missing exact sibling hiding', event, waves))
     else:
         require(not victim.is_alive and any(not e['collide'] for e in events), ('no death first update', events))
         require(any(e['freeze'] > 0 and e['before'] == e['after'] for e in events),
@@ -200,16 +207,36 @@ def container_release(seat, zero_deploy):
         require(child.freeze_expiry_time == bomb.freeze_expiry_time and child.stun_timer > 0,
                 ('first update preceded inherited Freeze', child.id))
         before = (child.position.x, child.position.y)
+        travel_before = child._death_spawn_travel_ticks_remaining
         original(child, **kw)
-        require(before == (child.position.x, child.position.y), 'frozen container child moved')
+        if travel_before > 0:
+            # Freeze stops natural walking; controlled death-spawn transport
+            # still consumes exactly one travel step in the shared engines.
+            require(child._death_spawn_travel_ticks_remaining == travel_before - 1,
+                    ('controlled travel step count', child.id, travel_before))
+        else:
+            require(before == (child.position.x, child.position.y), 'frozen natural movement')
         require(kw.get('collide') is False, 'container collision pass')
         events.append(dict(id=child.id, tick=py.tick, freeze=child.stun_timer,
-                           position=before, deploy=child.deploy_delay_remaining))
+                           before=before, after=(child.position.x, child.position.y),
+                           deploy=child.deploy_delay_remaining,
+                           travel_before=travel_before,
+                           travel_after=child._death_spawn_travel_ticks_remaining))
 
     py._first_update_spawned = observe
     for _ in range(int((bomb.explosion_timer + .2) / py.dt) + 4):
         py.step(); native.step()
-        b1.audited_state(py, native, cfg)
+        actual = b1.audited_state(py, native, cfg)
+        rows = {e['id']: e for e in actual['entities']}
+        for event in events:
+            if event['tick'] == py.tick:
+                child = py.entities[event['id']]
+                row = rows[event['id']]
+                require((row['x'], row['y']) == event['after'], ('native frozen travel position', event, row))
+                require(row['death_ticks'] == event['travel_after'], ('native frozen travel count', event, row))
+                require(abs(row['stun']-child.stun_timer) < 1e-8 and
+                        abs(row['deploy']-child.deploy_delay_remaining) < 1e-8,
+                        ('native newborn Freeze/deploy state', event, row))
     require(len(events) == bomb.death_spawn_count and len({e['id'] for e in events}) == len(events),
             ('container first update count', events, bomb.death_spawn_count))
     require(len({e['tick'] for e in events}) == 1 and not bomb.is_alive, 'release/fuse boundary')
