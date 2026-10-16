@@ -372,3 +372,10 @@ artifact/provenance/rollback bindings are in integration/diagnostic-r2-execution
 small witness extracts and DIAGNOSTIC-r3-execution-response.md. No stats tables,
 new comparator exemption, main/pin/runtime acceptance or final fullC1C56 run.
 Later reconciled B1/current-main freeze and ordered full C56 remain mandatory.
+
+Independent diagnostic R4 REJECTED8d's new probe: it lacked fresh Python cloning
+at every current pre-step and lost failed clone post-step roots. Both are now
+repaired locally with exact run_case/main mocked controls and persisted failed
+case read-back; no engine bytes changed from8d and no host run occurred. Five
+local suites pass, but the actual source-bound build/nine phases still require
+fresh independent exact review. Response: integration/DIAGNOSTIC-r4-response.md.

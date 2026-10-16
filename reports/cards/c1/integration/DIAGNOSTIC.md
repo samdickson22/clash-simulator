@@ -19,6 +19,10 @@ source and fixes only captured cold Dash-hit projection, adding12 deadline
 controls. Fresh exact independent review precedes a new build/nine phases. See
 DIAGNOSTIC-r3-execution-response.md and diagnostic-r2-execution-evidence.json.
 Whole diagnostic assignment remains OPEN; final full C56/main/pins withheld.
+R4 rejected8d's probe for Python pre-step cloning and failed-root retention
+gaps. Both are repaired locally with exact run_case/main mocked controls;
+DIAGNOSTIC-r4-response.md binds the response. Engine/caching changes are still
+unexecuted and need fresh independent exact review; no new host job launched.
 
 ## Merge and scope
 

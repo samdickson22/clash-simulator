@@ -871,3 +871,51 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   isolated commits only; no runtime/pin/main changes. Later reconciled-main full
   C56 and broad coverage still withheld. Assignment OPEN; Sam strictsilence/
   direct-owner-only questions/one automatic final whole-assignment report remain.
+
+### 2026-10-16T16:27Z — R4 clone/evidence rejection repaired for fresh review
+
+- Cold Dash/cache candidate8d54d100b3a594398254366f2f98127de19249cf was committed
+  with22 explicit scoped paths, staged diff-check/secret scan PASS and pushed.
+  Fresh independent task c1-b2-first-diagnostic-8d54d100b-r4-independent REJECTED
+  R4-F1/P2 missing every-prestep Python clone; R4-F2/P2 dropped post-step clone
+  roots before assertion. Five local suites had passed but did not exercise
+  run_case wiring. No host run on8d. Exact reportSHAc20f05fcd55a8de1ac2a93f4d011c9ccfeafc3810f07849a0019ad975a1a5222;
+  typed verdictSHA198e2117ea74c8688b21bd7587bf38d0014736186fe2136de918147386016306.
+  R4 retained full prior source/procedure findings and granted no execution;
+  narrow engine/cache changes had no additional identified blocker, not approval.
+- Repair F1: retain initial independent Python clone plus fresh Python clone
+  from reference at every pre-step alongside fresh native clone/reload. All
+  Python post roots/digests/templates compared; worker checks exact40 offset/
+  tick clone boundary vector for each complete case. Repair F2: save full
+  before roots before clone construction, all post-arm roots before assertions,
+  exact offset/operation/completed_steps, first semantic arm, original traceback
+  and first/failure contexts. Failed construction/partial step/snapshot/template/
+  comparison captures every available arm and explicit unavailable errors, keeps
+  good existing roots, updates last_before even before a clone constructor fails.
+  No swallowed failure, field exemption or engine/control change.
+- Expanded same Dash local test executes exact capture_roots/run_case/main AST
+  with fake engine/native/template APIs: observes initial+40 fresh clone calls;
+  post-landing-only/initial/native clone faults, Python/native constructor faults,
+  mutating step failure, snapshot/template/comparison failures retain paired
+  first-bad roots and partial-arm inventory. Exact main writes12failed mocked
+  rows to self-cleaned tempJSON and exits1; read-back proves roots persist.
+  All five stdlib/AST/mock suites PASS via previously documented commands.
+  Only affected Dash suite rerun after final last_before assertion; unchanged
+  four same-round results retained. Full stdout/sourceSHA in local-r5 JSON.
+  No engine/native/Numba/compiler/host/signal execution. A combined docs patch
+  first found stale line context and wrote nothing; verified unchanged state
+  then applied exact context. No failed test/harness result hidden.
+- Engine506 hashes still exact rejected8d repair inventory; only probe/worker/
+  localtest and scoped docs/receipts change. Detailed response in
+  integration/DIAGNOSTIC-r4-response.md, old rejection and all earlier FAILs/
+  approvals/source/native artifacts intact. Fresh exact independent R5 required
+  before one source-bound build/nine phases32/12/21/8/2/42/6/2/4. New native still
+  UNBUILT; no recovery/duplicate job/watchers/fullgate/main/pin/runtime action.
+  Rollback only isolated new commits. Whole diagnostic assignment OPEN; later
+  reconciled-main freeze/full C56 and remaining broad coverage still mandatory.
+  SAM strictsilence/direct-owner questions/one automatic final remain in force.
+- Staged whitespace check found one added blank line at EOF in immutable
+  REVIEW-diagnostic-r4.md:68. Preserve exact reviewerSHA c20f05fc...; do not
+  normalize failed evidence. Verify that exact sole diagnostic, run cached
+  diff-check on every other path, then staged secret scan before commit. This
+  is a scoped evidence-EOF exception, not a source/check failure waiver.

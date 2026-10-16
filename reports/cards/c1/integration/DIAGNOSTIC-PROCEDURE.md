@@ -15,6 +15,11 @@ Numba cache files. Remaining seven phases never ran; no phase coverage accepted.
 See DIAGNOSTIC-r3-execution-response.md. The next candidate fixes cache placement
 and the captured cold Dash deadline projection, adds12 bounded controls and
 requires a fresh exact source/probe/procedure review before any host execution.
+R4 rejected8d for missing current-boundary Python clones and dropped clone-failure
+roots. The revised probe retains an initial Python clone plus a fresh Python
+clone at every pre-step, and records every available pre/post arm before
+assertions with exception/partial-step contexts. See DIAGNOSTIC-r4-response.md.
+No new source/native/host execution follows from the local mock repair.
 The final C1 full C56/main/pin hold remains; this is a bounded diagnostic job.
 
 `tools/diagnostic_job.py stage REVIEW.json TAG` constructs a one-use source

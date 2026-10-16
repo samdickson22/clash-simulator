@@ -91,6 +91,8 @@ def main():
             assert data['native_sha256']==build['native_sha256'] and len(data['results'])==12
             assert data['status']=='FOCUSED_PASS' and all(row['status']=='FOCUSED_PASS' and
                 row['required_witness_observed'] and row['ticks']==40 for row in data['results'])
+            assert all(row['clone_boundaries']==[dict(offset=i,tick=row['initial']['tick']+i)
+                for i in range(40)] for row in data['results'])
             assert {(row['seat'],row['mode']) for row in data['results']}=={(seat,mode) for seat in (0,1)
                 for mode in ('cold_zero','cold_equal','loaded_changed','loaded_equal','miss','missing')}
         elif label=='review':
