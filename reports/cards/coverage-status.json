@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-16T11:34:07Z",
+  "updated_utc": "2026-10-16T14:43:19Z",
   "streams": {
     "A": {
       "cards": [
@@ -54,9 +54,10 @@
         "Heal",
         "Mirror"
       ],
-      "status": "conditional source readiness pending; retained semantic failures need ordered C1 integration",
-      "evidence": "cards/b2:reports/cards/b2/PROGRESS.md",
-      "native_sha_prefix": "7738f9d2"
+      "status": "conditional source readiness approved; exact C56 577/600 passed; final integrated acceptance pending",
+      "evidence": "reviews/B2-conditional-readiness-9fa2ea993.json",
+      "native_sha_prefix": "76f873f1",
+      "source_commit": "55bac129b93a055898524b53cc350091fb65259e"
     },
     "C1": {
       "cards": [
@@ -73,7 +74,7 @@
         "BossBandit",
         "Ronin"
       ],
-      "status": "focused fixes and launcher reviewed; shared Troop triage and ordered B2 integration pending",
+      "status": "source/probe proposal reviewed; frozen B2-first diagnostic integration/build pending",
       "evidence": "reports/cards/reviews/C1-r2.md",
       "source_commit": "f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e",
       "native_sha_prefix": "631ac18d"
