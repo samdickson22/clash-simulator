@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:28 UTC
+## Current handoff: Sol interim, 2026-10-16 09:32 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
@@ -58,6 +58,14 @@ and future delegation briefs. Actual permission controls remain unchanged. No ol
   compute until reviewedgates. Original03probe verifiedabsent and requeued ONCE09:26:07Z,N4lease/nice10/30mintimeout,
   queuedPIDs287537/287538; no duplicate/spinretry and no bank/primarygames. Final receipt hashes await exact owner
   audit; do not infer from filenames or partial digests.
+  Owner published docs/receipts only in `f85c66d375a949e007d9aeff6983c3f028c64b50`; BOT verified all24paths
+  underreports/bot/levels and both committedblob/localreceipt hashes. Mapping/towers receiptSHA256
+  `cd30432de666b2e58929f59702c358b630298f36bb7c93127038b93a31b04645`; scopeauditSHA256
+  `c7f2c5beac6c67da79ddb4295900978b6ae6f41af40d8dbe5fb841005ef8334d`.
+  Additional reviewed01scope/configtests4passed0.24s; localreceiptSHA256
+  `9c714207acdb4637742c0d3473ba4d87be7b978f65d5b0063c39ad919e6fa9d7`.
+  Scope reviewr5 found no new concrete scope/projectionblocker; it approved lightweight tests only, not pilotbank.
+  Gate implementation finished; fresh independent executionreview next, harnessprovenancework continues.
 - **GPU reconciliation (LIVE/r3 owners):** 04 V7lo1024 completed rc0 at 08:39:34Z; 08 V6lo completed rc0 at
   08:53:40Z. Eval loops remain alive. 01 V8 PID 1967844 remains active around epoch 9/20. Idle 04/08 GPUs are
   completed jobs, not failures. Existing GPU ownership and resource coordination remain; no trainer was restarted.

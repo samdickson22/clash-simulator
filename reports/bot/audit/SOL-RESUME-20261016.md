@@ -142,6 +142,32 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:31–09:32 UTC published receipt verification
+
+- Verified ownerpublication `f85c66d375a949e007d9aeff6983c3f028c64b50` afterfetch:24changedpaths allunder
+  reports/bot/levels, no implementation staged; required Opuscoauthor retained. Owner reports tempindex+secret
+  scanPASS. BOT read commit metadata/paths; did not rerun owner's commit operation or tests.
+- Exact mapping/towerSHA256 both localreceipt and committedblob:
+  `cd30432de666b2e58929f59702c358b630298f36bb7c93127038b93a31b04645`.
+  Exact scopeauditSHA256 bothlocal and committedblob:
+  `c7f2c5beac6c67da79ddb4295900978b6ae6f41af40d8dbe5fb841005ef8334d`.
+- Additional reviewed01scope/configtestreceipt `pytest-scope-configs-r5.txt`:4passed0.24s; localSHA256
+  `9c714207acdb4637742c0d3473ba4d87be7b978f65d5b0063c39ad919e6fa9d7`. This newerreceipt is separate from
+  publicationf85's earlier2-testreceipt. Source reviewr5 found no new concrete scope/projectionblocker and approved
+  this lightweight test invocation only; no bank/gameapproval or exactrootgate waiver.
+- Gateimplementation finished, fresh independent executionreview next; harnessprovenance continues. No pilotbank/
+  outcomes. Parent notified `bot-level-published-receipts-verified-20261016T0932Z`; existing owners retain work.
+- Exact commands inlevelworktree:
+  `git fetch origin`; `git show --format=fuller --stat f85c66d375a949e007d9aeff6983c3f028c64b50`;
+  `sha256sum reports/bot/levels/receipts/gates-schema-towers-r2.txt reports/bot/levels/receipts/scope-audit-r1.json`;
+  `cat reports/bot/levels/receipts/pytest-scope-configs-r5.txt`;
+  `sha256sum reports/bot/levels/receipts/pytest-scope-configs-r5.txt`;
+  `head -24 reports/bot/levels/receipts/review-sol-r5-scope.md`;
+  `git show f85c66d375a949e007d9aeff6983c3f028c64b50:reports/bot/levels/receipts/gates-schema-towers-r2.txt | sha256sum`;
+  `git show f85c66d375a949e007d9aeff6983c3f028c64b50:reports/bot/levels/receipts/scope-audit-r1.json | sha256sum`.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: verify published level receipts and scope tests' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:28 UTC scope implementation and queued original probe
 
 - Existing levelowner implemented accepted scope in `bot/levels/scope.py`, experimental playerfactory and bank
