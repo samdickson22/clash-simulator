@@ -30,6 +30,12 @@ complete engine delta and SHA inventory are review inputs; auto-merging does not
 establish semantic correctness. There are28 engine paths changed from B2 (the
 full C1 scope), not merely the shared helper's three Rust paths.
 
+Merge committed/pushed as `ae04c8846` after explicit conflict/docs staging,
+the documented two immutable-review EOF exceptions, all other staged whitespace
+checks and staged secret scan. The source inventory contains506 tracked engine
+files. The original C1 helper/probe/comparator bytes remain exact11ff; fresh
+postmerge/procedure review is next, not inherited from source-only4635 approval.
+
 Explicit B2 carryovers are preserved without blanket effect filters:
 `attacks.rs:secondary_recipients` follows `Entity.can_attack_target`, while new
 `c56.rs:chain_release` follows `_can_chain_to` and secondary targetability. The

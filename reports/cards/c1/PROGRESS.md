@@ -678,3 +678,21 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   protected11ff helper/probe/comparator hashes and existing stdlib/mock probe
   controls PASS. No actual engine/native/compiler/host/job execution. Independent
   exact postmerge source and new host procedure review remains prerequisite.
+- B2-first merge **ae04c8846** committed/pushed after staged secret scan and
+  normal staged checks, with only the two SHA-identical inherited raw-review EOF
+  exceptions described above. 506 engine files bound in merge-source inventory.
+  Original11ff/cards-c1/base ref unchanged. New diagnostic_job.py/worker/procedure
+  prepare one fresh source-bound08 CPU4/nice15/Cargo-j4 build and four bounded
+  phases32/21/2/42, retaining raw failures/import identities/partial roots and
+  before/after inventories. Reuses reviewed final_gate Children/signal control,
+  never its gate entry point; final full C1 C56/main/pin acceptance still withheld.
+  New host-touching code UNEXECUTED pending independent exact-commit review.
+- Local stdlib test command
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_diagnostic_job.py`
+  first failed because its declared BatchA pool.json was not in committed inputs.
+  Removed that unused dependency: only probe_native_scen's uncalled __main__
+  reads it; the chosen phases import its functions only. Original failure text
+  retained in integration/procedure-local-r1.json. Refreshed test PASS checks
+  source/review/extra/symlink/external drift, actual USER/LOGNAME CPU accounting,
+  clean pin-free environment, AST/bootstrap and pre-engine-import optimized guards.
+  No host/job/compiler/native/engine execution. Fresh review remains mandatory.
