@@ -1,18 +1,18 @@
 {
  "bone-pit": {
-  "battles": 6,
+  "battles": 15,
   "non_c56": {
-   "Tombstone": 4,
-   "SpearGoblins": 4,
-   "GoblinCage": 4,
-   "Bomber": 1
+   "Tombstone": 10,
+   "Bomber": 6,
+   "SpearGoblins": 10,
+   "GoblinCage": 11
   }
  },
  "goblin-stadium": {
   "battles": 12,
   "non_c56": {
-   "SpearGoblins": 4,
-   "GoblinCage": 2
+   "GoblinCage": 2,
+   "SpearGoblins": 4
   }
  }
 }

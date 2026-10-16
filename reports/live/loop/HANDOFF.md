@@ -20,7 +20,9 @@ Results table: `reports/live/loop/RESULTS.md`. Log: `PROGRESS.md`.
 
 - **Trophies and arena:** ~391+, Arena 2 Bone Pit (sand). Record through s6-m01: 16 W – 5 L. 2 of the losses were
   driver incidents: s2-m02 and s4-m01, the dim screen.
-- **Live session:** `s7`, driver PID 773, `--matches 4 --autonav`, perception r5e3.
+- **Live session:** `s8`, driver PID 45077, `--matches 4 --autonav`, perception r5e3 (s7 finished its 4 battles
+  unattended; s8 was started by `scratch/live-loop/chain.sh 773 s8`). Video up to s7 is on 05 `runs/` and pruned on
+  the Mac (14 GiB free).
 - **Perception live:** r3 ft-r5 final, `export-interim-r5e3`:
   - frame.pt `81697f5b1be73e97…`, event.pt `638276a0…`, vocab `d39b06bb…`; threshold .5 (defaults).
   - On the Mac: `~/clasher-live/perc-exports/interim-r5e3/`. On 05: `/mpac/sdicks02/jobs/clasher/live-perc-r3-20261015/export-interim-r5e3/`.

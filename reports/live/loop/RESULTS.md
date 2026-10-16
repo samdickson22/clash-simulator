@@ -8,13 +8,13 @@ Recordings, video and screenshots stay out of git: Mac `~/clasher-live/loop/{run
 ## TL;DR
 
 - **The bot plays ranked ladder battles end to end in the official client:** capture → perception → LiveSession(LivePlayer
-  `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`, RL r5 v10 fast tier/fallback) → ADB taps. **20 battles: 16 wins, 4 losses, 0 → 451 trophies (Arena 2 Bone Pit from 300). Two of the losses were driver
-  incidents (s2-m02, s4-m01: dim screen broke the readers / driver stopped). r1: 11-3; r5e3 (perception r3 ft-r5): 5-0 +
+  `LIVE-K4L-R-gs-rw-fc-w200-t4-p4`, RL r5 v10 fast tier/fallback) → ADB taps. **27 battles: 19 wins, 8 losses, 0 → 484 trophies (Arena 2 Bone Pit from 300). Two of the losses were driver
+  incidents (s2-m02, s4-m01: dim screen broke the readers / driver stopped). r1: 11-3; r5e3 (perception r3 ft-r5): 8-4 +
   the s4 incident** (Goblin Stadium; opponents 21-164 trophies, tower levels 1-3). Low-trophy opposition: this shows the loop works,
   not strength.
-- **Latency per decision:** capture 2 ms, canvas 1.6 ms, perception 113-117 ms (p50, CPU), LiveSession step p95 13-18 ms;
+- **Latency per decision (initial r1 battles):** capture 2 ms, canvas 1.6 ms, perception 113-117 ms (p50, CPU), LiveSession step p95 13-18 ms;
   **frame → tap p50 150-158 ms, p95 165-197 ms**; ADB two-tap ack 13-24 ms. ~8 processed FPS.
-- **Misclicks: none detected** — every submitted play was confirmed by the HUD (card left its slot) except one in live4 (6/7).
+- **HUD confirmation is an aggregate diagnostic:** some battles have fewer confirmations than submissions; others have extra confirmations from reanchoring. See per-battle counts below.
 - **Perception on official frames (r1 export, 16:9 remap):** own hand 98.3% per slot, next 99.7%; the HUD elixir/clock/
   phase heads fail (replaced by a bar reader and the anchored tick); tower HP head misreads (replaced by OCR of the drawn
   numbers); **units ≈ blind** (median 0-1 detections/frame; weak cross-identity responses at real units). Not a pipeline bug
@@ -38,20 +38,26 @@ Recordings, video and screenshots stay out of git: Mac `~/clasher-live/loop/{run
 | live10 | W 3-0 (+30) | 228 | r1 | 141.8 | 7.5 | 114.9 | 17.2 | 149.9 / 162.7 | 25.7 | 20 | 19 | 0 | 1 |
 | live11 | W 3-1 (+30) | 258 | r1 | 158.9 | 7.5 | 115.1 | 17.8 | 150.2 / 163.4 | 25.6 | 23 | 24 | 0 | 1 |
 | s1-m01 | W 3-0 (+33) | 291 | r1 | 150.3 | 7.0 | 115.2 | 27.0 | 153.5 / 204.3 | 16.3 | 21 | 21 | 0 | 1 |
-| s2-m01 | W 3-0 (+30) | 321 | r1 | 96.7 | 7.1 | 114.7 | 19.4 | 151.9 / 198.5 | 15.5 | 12 | 12 | 0 | 1 |
-| s2-m02 | **L 2-3** | 291+ | r1 | — | — | — | — | — | — | — | — | — | — |
-| s4-m01 | **L 1-3 (−7)** | ~300 | r5e3 (driver stopped) | — | — | — | — | — | — | — | — | — | — |
+| s2-m01 | W 3-1 (+30) | 321 | r1 | 96.7 | 7.1 | 114.7 | 19.4 | 151.9 / 198.5 | 15.5 | 12 | 12 | 0 | 1 |
+| s2-m02 | **L 2-3 (−14)** | 307 | r1 | — | — | — | — | — | — | — | — | — | — |
+| s4-m01 | **L 1-3 (−7)** | 300 | r5e3 (driver stopped) | — | — | — | — | — | — | — | — | — | — |
 | s5-m01 | W 3-0 (+30) | 330 | r5e3 | 164.1 | 7.0 | 114.9 | 24.1 | 163.1 / 194.8 | 14.6 | 27 | 28 | 0 | 1 |
 | s5-m02 | W 3-0 (+31) | 361 | r5e3 | 149.2 | 7.0 | 114.8 | 19.8 | 153.9 / 195.9 | 15.7 | 23 | 24 | 0 | 2 |
 | s6-m01 | W 3-0 (+30) | 391 | r5e3 | 58.1 | 6.9 | 115.2 | 31.6 | 154.4 / 195.5 | 16.7 | 8 | 9 | 0 | 1 |
-| s7-m01 | W (+30) | 421 | r5e3 | 136.0 | 6.9 | 115.4 | 22.7 | 160.4 / 209.0 | 16.3 | 18 | 17 | 0 | 1 |
-| s7-m02 | W (+30) | 451 | r5e3 | 175.5 | 6.9 | 115.8 | 25.0 | 160.4 / 217.2 | 15.9 | 26 | 27 | 0 | 2 |
+| s7-m01 | W 3-0 (+30) | 421 | r5e3 | 136.0 | 6.9 | 115.4 | 22.7 | 160.4 / 209.0 | 16.3 | 18 | 17 | 0 | 1 |
+| s7-m02 | W 2-0 (+30) | 451 | r5e3 | 175.5 | 6.9 | 115.8 | 25.0 | 160.4 / 217.2 | 15.9 | 26 | 27 | 0 | 2 |
+| s7-m03 | **L 0-1 (−15)** | 436 | r5e3 | 175.2 | 6.9 | 115.9 | 26.5 | 161.5 / 182.5 | 15.2 | 28 | 29 | 0 | 3 |
+| s7-m04 | W 3-0 (+30) | 466 | r5e3 | 87.8 | 6.9 | 115.2 | 18.3 | 159.0 / 191.6 | 15.5 | 10 | 12 | 0 | 4 |
+| s8-m01 | W 3-1 (+30) | 496 | r5e3 | 131.5 | 6.9 | 116.0 | 19.2 | 157.7 / 203.4 | 15.3 | 19 | 18 | 0 | 1 |
+| s8-m02 | **L 0-3 (−14)** | 482 | r5e3 | 47.2 | 6.9 | 115.2 | 34.6 | 160.1 / 213.1 | 14.3 | 8 | 7 | 0 | 2 |
+| s8-m03 | W 3-0 (+30) | 512 | r5e3 | 135.7 | 6.9 | 115.6 | 19.8 | 155.2 / 162.7 | 14.8 | 20 | 20 | 0 | 3 |
+| s8-m04 | **L 0-1 (−14)** | 498 | r5e3 | 197.1 | 6.8 | 115.8 | 32.7 | 158.3 / 168.8 | 14.8 | 30 | 29 | 0 | 4 |
+| s9b-m01 | **L 1-3 (−14)** | 484 | r5e3 | 167.6 | 6.9 | 115.7 | 33.0 | 163.1 / 207.5 | 14.5 | 25 | 26 | 0 | 1 |
 
 s2-m02 / s4-m01: the BlueStacks output dimmed mid-battle (white level ~180, cause unknown); the elixir/tower readers
 failed (elixir 0, princesses 'dead') and the bot tried past-bridge deploys; fixed by brightness normalization, a frame
 health pause and slow tower death (60 healthy frames). s5+: interim/final r5e3 perception. s7+: --autonav (result OK,
-trophy-road OK, home Battle; unknown screens never tapped). s7 trophies from the trophy road (451); s7 crowns pending
-the Battle Log. s1/s2 = session driver (`--matches 3`, one driver for consecutive battles; s1-m01+ Bone Pit sand arena, cards
+trophy-road OK, home Battle; unknown screens never tapped). s7/s8 crowns and trophy counts verified from Battle Log bl3-sol; s7-m01 crowns from final video. s8-m04 was a real loss: no unhealthy frames, no elixir=0 or falsely dead princess reads, 30 plays / 29 HUD-confirmed, no step errors. Capture restarts in multi-match sessions are cumulative per driver. s1/s2 = session driver (`--matches 3`, one driver for consecutive battles; s1-m01+ Bone Pit sand arena, cards
 upgraded by Sam: Archers L5, Knight L3, ... ). s1-m01: the tower OCR read bright Bone Pit tower stones as king HP
 '3'/'31' and the bot threw Fireball + Arrows at a full-HP king (Sam); fixed before s2 (template-distance gate, a non-digit
 in the number row voids the reading). Perception: r1 = `live-perception-20261014/export-final` (frame.pt sha256 20f77a71…, unit threshold 0.5); from
