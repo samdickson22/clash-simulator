@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:39 UTC
+## Current handoff: Sol interim, 2026-10-16 09:42 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
@@ -16,6 +16,17 @@ and never hosts09–18 remain binding.
 existing owner or parent `0523ae6f-baa3-4d4e-b233-b392671670db`, stating evidence/paths, recommendation and whether
 dependent work waits; continue independent work. Do not use user-input tools. Propagate to all active descendants
 and future delegation briefs. Actual permission controls remain unchanged. No old pending input request reported.
+
+**Message discipline (latest Sam rule):** message parent/owner only when action/input is needed, a real blocker/
+failure changes next steps, or a material result/deploy/account action matters. Default≤3shortlines/80words,
+current result+neededaction+onereceiptpath. Batch relatedupdates; detailed commands/hashes/progress liveinfiles.
+No acknowledgments, healthy polls, unchanged gates/queues or logged/pushed notices. Coordinator broadcasts current
+threads; do not rebroadcast activechildren. Include this rule in every future/resumedchildbrief.
+
+**CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
+CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight
+andverified08queuedgroup exit. Normalwrapper remainsauthoritative; no bypass/otherjobmove/pinchange.
+BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
 
 - **Best student remains RL r5 v10**, threshold 0.5375, SHA256
   `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10

@@ -142,6 +142,29 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:41–09:42 UTC requested one-slot CPU coordination
+
+- CARDrequest:08templatefive-targetpilot2967873cpu_job1 waitedabout11min;B2corrected3422841cpu_job4alsoqueued.
+  OwnerauthorizedmovingONLYpilot04 afterreviewedscript+exactsource/runtime/nativepreflight+old08groupexit.
+  BOTperformedread-only04inspection;nofile/lease/process/job/pinmutationonhosts.
+- Firstsample09:41:12Z:literal91,nologins,sixleasefilesplusclaim3260459request33(YOLOsynthwaiting).
+  Second09:41:52Z canonical-formularead:leasegroupswant/used41/41,12/12,4/4,31/31,4/0,4/1;allownersalive,
+  uniquePGIDs. Idle7;live91;cap105,nohostoverride;room7;onepilottotal99. Thisispoint-in-timeevidence,notreservation.
+- DECISION:normalcpu_job1/nice15pilot04expectedtoadmit; normalwrapperauthoritativeifloadchanges. No bypass,
+  no B2move,no otherjobstop/reallocation. CARDlead receivesneededaction inonebriefmessage
+  `bot-admit-one-template-pilot04-20261016T094152Z`; no routineparentreceiptmessage.
+- Evidenceandgating05 `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
+  Shellreadcommandsuse `timeout 30 ssh -n 127x04`, `who`, existingcpu_room.sh source, userpsliteralcount,
+  readclaims/leases,kill-0ownerliveness(no signal),perPGIDps/awkpythonusage andmax-live read. Exacttoolarguments
+  remainindurableactivity. No admissionprobeinvoked:executingcpu_room.sh itselfwouldcreateaclaim,soinspection
+  reproduceditsread-onlyformula withoutcreatingone.
+- LatestSammessage-disciplineinstructionpersistedPROGRESS+HANDOFF:action/input/changedblocker/materialresult
+  messagesonly,default3lines/80words,onereceiptpath,batchrelated;detailedlogsinf iles. Noacks/healthypolls/
+  unchangedqueues/logged-pushedmessages. Coordinatorbroadcasts existingchildren;BOTdidnotrebroadcast.
+  Includeinfuture/resumedchildbriefs;clarificationsremain directT3parent/owner,neverinputtools.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: coordinate one template CPU slot and persist message discipline' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:40 UTC failed receipt copied and verified
 
 - Owner copied originalr6 to exactlocalpath
