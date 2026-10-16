@@ -86,6 +86,12 @@ Python templates can retain identical native/data pins. This avoids accepting
 pre-B1 level exports with missing pulses or changed rework shapes. Existing
 direct-spell per-seat approximation, unsupported exports, private phase/target
 defaults and opponent level estimates remain documented consumer limitations.
+Mirror and ordinary casts can emit the same public carrier identity. The plain
+root retains its level11 template default; the level wrapper uses its existing
+producing-card level rule and public deck/estimate, not hidden cast provenance.
+Neither claims to recover a mirrored carrier's true level from a shared token.
+The exact exported pulse/body fields are checked conditional on that level
+selection. Public rework rank and combat phase remain equally unobserved.
 
 ## Validation interface and rollback
 

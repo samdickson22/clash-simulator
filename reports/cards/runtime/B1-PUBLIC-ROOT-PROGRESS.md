@@ -129,3 +129,21 @@ preservation only; native reuse provenance/actual runtime consumer paths and
 model inputs remain measured by B1's new-source phase. No job/PID/lease created
 by this worker, no host scripts executed, no r3/root/pin switch. Next essential
 handoff supplies exact approved source and entrypoint to B1; no routine ownerDM.
+
+2026-10-16T12:41Z audit: evidence commit
+`3317935357de80ce523e17e6baf111cc9a89bac6` records approved source, reviewr3 and
+machine packet71e60043b6912f65926192d5c5315d7ccff08c563e11d6e0ac7ee8f4a9525db9.
+`git push -u origin cards/b1-public-root-20261016` succeeded; read-only
+`git ls-remote --heads origin cards/b1-public-root-20261016` matched331793535.
+Essential dependency handoff directly to B1 (clientRequestId
+template-b1-public-root-approved-e0e9f634e-20261016) provided exact approved
+source, all3 patch commits, entrypoint/denominators and separate host-review
+prerequisite; acceptance and fresh jobs remain owned by B1's sole sequence.
+No main/cardslead edit, published root operation, second job or old-gate reuse.
+
+Documented Mirror carrier-level ambiguity explicitly: shared public identity
+does not identify the producing cast/level. Plain template remainslevel11;
+wrapper uses existing producing-card public deck/level estimate. Conditional
+level exports are exact fields, not proof of mirrored provenance or live rank
+recovery. Documentation-only clarification; approved production/probe hashes
+unchanged. Pending actual scoped tests remain a real acceptance prerequisite.
