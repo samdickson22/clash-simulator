@@ -1,6 +1,6 @@
 # Noise-robust decisions: results (bot lead worker, exploration)
 
-Status: IN PROGRESS (r4: revealed-set fix screened; fresh bank section 6 pre-registered 23:10:27Z). Numbers are from completed or interim screens, each labelled with its n. Design: DESIGN.md.
+Status: r4 DONE. Revealed-set fix: screen +0.022 (K4L, n=600); fresh bank NOT CONFIRMED +0.013 [−0.003, +0.028] (section 6b); LIVE LEAD checks section 7. Design: DESIGN.md.
 Log: PROGRESS.md.
 
 ## 1. Screens (ours engine, HEADLINE cases 0–299, PERC-emp = empirical-val.json, unit threshold 0.4)
@@ -191,3 +191,116 @@ AUD is a read-only audit wrapper.
 
 **Hosts:** cases 0–439 run on 03 (80 workers), 440–599 on 04 (`bot/exit/cpu_job.sh 30`). The results are merged by
 (arm, opponent, index).
+
+## 6b. Fresh-bank verdict (computed 2026-10-16T00:10Z by the r4 worker)
+
+**Data:** 127x03:/mpac/sdicks02/jobs/clasher/bot-noise/{fb2 (cases 0–439), fb2-hi03 (520–599), fb2-hi04 (440–519,
+copied from 04)}.
+- 2,400 games, 0 errors, 0 duplicate keys.
+- Every chunk ran main 6f85e8df (identical code.sha256).
+
+**Analysis:** `bot.noise.report fb2,fb2-hi03,fb2-hi04 --ref AUD:PERC-emp-sr1u50:LIVED-K4L-R-gs-rw-fc`, the
+pre-registered bootstrap. Output: fb2/verdict-r4.json.
+
+| F − B (fix − deployed translator), sr1u50 | Δ [95% CI] | n |
+|---|---|---|
+| **pooled R3a + v1 (primary)** | **+0.013 [−0.003, +0.028]** | 1200 |
+| R3a alone (LIVE LEAD requirement d) | +0.017 [−0.008, +0.042] | 600 |
+| v1 alone | +0.008 [−0.007, +0.025] | 600 |
+
+Mean scores: B 0.633 / 0.873 and F 0.650 / 0.882 (R3a / v1). Decision timing is unchanged: p50/p95/p99 is
+358/767/946 ms for F vs 354/750/928 ms for B (R3a).
+
+**Verdict: NOT CONFIRMED.** The CI lower bound is −0.003, not > 0. The point estimate is positive and consistent
+with the screen (+0.022), and the fix never hurt measurably. But a gain of ~+0.01–0.02 is below what 1,200 pairs
+can confirm.
+
+**Mechanism** (audit, B → F, per game):
+- true opponent unit-records dropped by the sanitizer: R3a 24 → 1, v1 36 → 2;
+- true cards missing from the final set: R3a 0.63 → 0.32, v1 0.93 → 0.52.
+
+F made 827 evictions: 760 removed a card the opponent never played, and 519 admitted a true card.
+perc_errors = 0 in both arms, which confirms the r4 rebuild fix.
+
+The translator problem is real and the fix largely repairs it. The win-rate value is small because the oracle
+revealed set itself is worth only ~+0.03 (screen 5a). Most of the noise gap (perfect sight +0.14) is elsewhere: unit
+positions, missed units, and opponent belief/elixir (section 2, orc5).
+
+## 7. LIVE LEAD acceptance checks for reports/bot/noise-robust/revealed-set.patch
+
+**(a) Evidence comes only from public perception: MET.**
+- RevealedSet's inputs are the perceived opponent play events (`accept_events` → `reject`/`allows`/`victim`) and
+  the card names of perceived board units (`assign` → `observe_board`). Unit scores are not used.
+- `spawns` uses public card data only.
+- Test `test_fair_information_invariance` injects opponent-private truth into every record: deck, hand, elixir, true
+  card ids of units and events, and the true revealed set. Packet arrays, events, public rows, members and every
+  counter stay identical.
+- The PERCRoracle arm reads truth, but it is a harness diagnostic and is not in the patch.
+
+**(b) Play acceptance and the board sanitizer share one object: MET.**
+- `LiveTranslator.revealed` is the only RevealedSet.
+- `accept_events` gates a 9th card with `self.revealed.allows(name)`, and `ninth_enemy_card_dropped` now counts
+  there.
+- `board_card_ok` uses `self.revealed.allows(card)` / `members()`.
+- Test `test_board_and_sanitizer_share_the_set`: a board-admitted card is kept by the sanitizer, and the evicted card
+  is rejected for both plays and units.
+
+**(c) Eviction re-syncs the cycle tracker with replayed plays: MET (after the r4 fix).**
+- `ResyncMixin._admit` → `_rebuild` re-runs the stream guard and resync over the perceived opponent plays. W's plays
+  are removed and X's rejected ones added.
+- It then rewrites `public_events`, `plays[1]`, `events` and the opponent mirror, and sets `resynced`. That makes
+  `restart_if_resynced` rebuild the player's D1/belief trackers.
+- Test `test_repeated_plays_evict_the_weak_card_and_resync` checks that a fresh replay of the public history equals
+  the mirror.
+- r4 fixed a defect here (5d): the mirror ran ahead of lagged events and raised. The new tests
+  `test_lagged_play_eviction_keeps_time_monotone` and `test_board_eviction_then_lagged_event_in_the_same_record`
+  pass, and a mutation check confirms both fail on the old code.
+- On the patched bot/live: test_revealed 11/11, LIVE suite 52 passed / 2 skipped / 3 deselected. The deselected
+  tests fail identically on unpatched main: a wall-clock test at load 100, and two missing `labels_v4`.
+
+**(d) Δ under PERC-emp-sr1u50 for K4L vs R3a, paired:**
+- fresh bank: **+0.017 [−0.008, +0.042] (n=600)**;
+- screen: +0.013 [−0.017, +0.047] (n=300).
+
+**Recommendation:** the patch is safe to adopt. It is a no-op on a clean channel (30/30 identical hashes), has no
+timing cost, and repairs the translator's revealed set (24 → 1 dropped true unit-records per game). Its win-rate
+gain is NOT CONFIRMED (+0.013 pooled). Adopting it is the LIVE LEAD's call, on correctness grounds, not as a
+measured strength gain.
+
+## 8. Off-vocabulary cards and class-only unknowns (design constraint from the BOT LEAD, 2026-10-16)
+
+The constraint comes from perception round 3, which adds class-only `UNKNOWN_UNIT`/`UNKNOWN_BUILDING` detections
+and a proxy table that maps named off-vocab cards to C56 proxies, with the TRUE id kept in the revealed set. Where
+the patch stands, and the extension points:
+
+**(a) True ids that are not C56 names: NOT YET MET.** Today it holds proxy names.
+- RevealedSet is keyed by plain strings with no vocabulary check, so it can hold any id.
+- But `accept_events` calls `card_name()` (C56 name, or the PROXY name, or None = dropped) BEFORE the RevealedSet
+  check, and `members()` reads `translator.plays[1]`, which holds the names fed to D1 (i.e. proxies). So the set
+  holds proxy names.
+- Consequences: two off-vocab cards with the same proxy share one slot. A proxy that equals a card the opponent
+  really has is merged with it. For a non-C56 id, `spawns()` returns False, so a troop is treated as spell-like by the
+  weakness rule.
+- Extension point:
+  1. Key the set by a `true_id` carried on each accepted public row (`row['true_id']`, default = name). Call
+     `allows`/`reject`/`victim` with the true id, and keep the proxy name only for D1/events/packet.
+  2. Have `members()` read `{row.get('true_id', name)}` (a parallel list next to `plays[1]`).
+  3. Take `spawns(id)` from the proxy table's unit class (troop/building/spell), which the CARD LEAD table should
+     carry.
+  4. Map the board path's unit card through the same table before `observe_board`.
+
+  These are small edits in translate.py (`accept_events`, `assign`, `card_name` returning (true_id, proxy)) and
+  revealed.py (`members`). Behaviour on all-C56 games is unchanged when true_id == name.
+
+**(b) Class-only unknowns as pending evidence: PARTLY MET** (they never occupy a slot), with no evidence kept.
+- Today `assign` drops a unit whose class is not a card before `observe_board` (counted `unmapped_card_unit:<cls>`),
+  so a class-only detection can never take one of the 8 slots or evict anything.
+- Extension point:
+  1. Add `RevealedSet.observe_unknown(tick, cls, x, y)`, which appends to `self.pending[cls]` (outside `members()`
+     and the cap).
+  2. When a named detection or play later matches it (place and time window), move its records into `board[card]`
+     / `seen[card]` and drop them from `pending`.
+  3. Never let `pending` evict, or admit through `victim`.
+- A class-only unit cannot enter the search root (it has no card config), so the sanitizer keeps dropping it.
+
+Neither extension changed the screened or fresh-bank code.
