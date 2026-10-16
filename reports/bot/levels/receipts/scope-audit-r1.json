@@ -1,0 +1,24 @@
+{
+  "catalog_sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+  "total_decks": 2925,
+  "total_frequency": 69380,
+  "omitted_decks": 425,
+  "omitted_frequency": 15371,
+  "omitted_mass": 0.22154799654078985,
+  "by_card": {
+    "Clone": {
+      "decks": 0,
+      "frequency": 0
+    },
+    "Earthquake": {
+      "decks": 385,
+      "frequency": 15272
+    },
+    "Tornado": {
+      "decks": 43,
+      "frequency": 155
+    }
+  },
+  "projected_rows": 54,
+  "projected_omitted_rows": 0
+}

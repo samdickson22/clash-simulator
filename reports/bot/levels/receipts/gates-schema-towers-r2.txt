@@ -1,0 +1,19 @@
+export comparison: raw Python equality 3/121; native JSON equality 121/121
+PASS all L11 cached exports == native config JSON  {}
+Musketeer.units[0][0].tunnel_origin: runtime tuple (0.0, 0.0); disk list [0.0, 0.0]
+Archers.units[0][0].tunnel_origin: runtime tuple (0.0, 0.0); disk list [0.0, 0.0]
+Fireball.units[0][0].tunnel_origin: runtime tuple (0.0, 0.0); disk list [0.0, 0.0]
+PASS towers curve KingTower.max_hp L10 == tower_scaling  4392
+PASS towers curve KingTower.max_hp L12 == tower_scaling  5304
+PASS towers curve KingTower.damage L10 == tower_scaling  99
+PASS towers curve KingTower.damage L12 == tower_scaling  119
+PASS towers curve Tower.max_hp L10 == tower_scaling  2786
+PASS towers curve Tower.max_hp L12 == tower_scaling  3346
+PASS towers curve Tower.damage L10 == tower_scaling  99
+PASS towers curve Tower.damage L12 == tower_scaling  119
+PASS towers L4 HP == RoyaleSim 16.402  rsim [2904, 1750, 1750] ours [2904, 1750, 1750]
+PASS towers L5 HP == RoyaleSim 16.402  rsim [3096, 1890, 1890] ours [3096, 1890, 1890]
+PASS towers L6 HP == RoyaleSim 16.402  rsim [3312, 2030, 2030] ours [3312, 2030, 2030]
+PASS towers L7 HP == RoyaleSim 16.402  rsim [3528, 2184, 2184] ours [3528, 2184, 2184]
+PASS towers L8 HP == RoyaleSim 16.402  rsim [3768, 2352, 2352] ours [3768, 2352, 2352]
+{"fails": []}

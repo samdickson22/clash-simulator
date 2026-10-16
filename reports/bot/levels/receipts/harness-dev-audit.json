@@ -1,0 +1,216 @@
+{
+  "comparisons": [
+    {
+      "command_sha256": "8c6486fcd6a0d507f02d96c542f837eef705f75deac42d53f87dd4f857d2e154",
+      "index": 0,
+      "match": true
+    },
+    {
+      "command_sha256": "3fb6f57e6f5793a904e3e0866322443afafa7ce1091e46be6c5f1306c9bf591f",
+      "index": 1,
+      "match": true
+    },
+    {
+      "command_sha256": "ae76bada1bcc409177f24b197a8b76578d3ab1efdb71e264067f9705611f4883",
+      "index": 2,
+      "match": true
+    },
+    {
+      "command_sha256": "bb9b4d8f842e67efa925a5d0ddf764289effd1e685079f4d6a62ab737249c1d1",
+      "index": 3,
+      "match": true
+    }
+  ],
+  "file_sha256": {
+    "bank.py": "0fa10e738aa747d538578f82cb3c202c8aad5420178b35a37ca15105a1d6fd79",
+    "report.py": "934be598002e1e36aef977cb5b82b83e345b95444a613334300efce701489add",
+    "run.py": "794cd760f43983ef8c1097b1750b6ed35dea870cc400329ac70842194a26858a",
+    "run.sh": "b5887e1e7064db7a37eb7dc220666d0137af314562aeb296b46cee6048c2f307",
+    "test_harness.py": "4e0727070643316305825d7aa23dd0b2394e9511da0ea7b9d80d63533245971b"
+  },
+  "runs": {
+    "smoke1": {
+      "child_pids": [
+        3243792,
+        3243809,
+        3300775,
+        3302064
+      ],
+      "cpu_seconds_per_decision": 0.4054921426377118,
+      "cpu_seconds_per_game": 96.36352328325,
+      "crowns_against": 0,
+      "crowns_for": 1,
+      "damage_dealt": 2931.5,
+      "damage_taken": 1318,
+      "decisions": 472,
+      "errors": 0,
+      "failures": [
+        {},
+        {},
+        {},
+        {}
+      ],
+      "games": 4,
+      "mean_score": 1.0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.39839794513023286,
+          "cpu_seconds_per_game": 85.56735615,
+          "crowns_against": 0,
+          "crowns_for": 1,
+          "damage_dealt": 2867,
+          "damage_taken": 1055.5,
+          "decisions": 215,
+          "games": 2,
+          "mean_score": 1.0,
+          "own_cpu_seconds_per_game": 42.827779101500035,
+          "process_cpu_seconds_per_game": 87.508123216,
+          "wall_seconds_per_game": 87.68370209704153,
+          "wdl": [
+            2,
+            0,
+            0
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.41142697712840426,
+          "cpu_seconds_per_game": 107.15969041650001,
+          "crowns_against": 0,
+          "crowns_for": 1,
+          "damage_dealt": 2996,
+          "damage_taken": 1580.5,
+          "decisions": 257,
+          "games": 2,
+          "mean_score": 1.0,
+          "own_cpu_seconds_per_game": 52.868366560999945,
+          "process_cpu_seconds_per_game": 109.253959549,
+          "wall_seconds_per_game": 109.46850353851914,
+          "wdl": [
+            2,
+            0,
+            0
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 47.84807283124999,
+      "process_cpu_seconds_per_game": 98.3810413825,
+      "rejected": 0,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "ticks": [
+        3600,
+        3812,
+        3600,
+        5273
+      ],
+      "translator": [
+        {},
+        {},
+        {},
+        {}
+      ],
+      "wall_seconds_per_game": 98.57610281778034,
+      "wdl": [
+        4,
+        0,
+        0
+      ]
+    },
+    "smoke2": {
+      "child_pids": [
+        3240815,
+        3240833,
+        3297871,
+        3298863
+      ],
+      "cpu_seconds_per_decision": 0.4094281785233053,
+      "cpu_seconds_per_game": 97.32139467725,
+      "crowns_against": 0,
+      "crowns_for": 1,
+      "damage_dealt": 2931.5,
+      "damage_taken": 1318,
+      "decisions": 472,
+      "errors": 0,
+      "failures": [
+        {},
+        {},
+        {},
+        {}
+      ],
+      "games": 4,
+      "mean_score": 1.0,
+      "opponents": {
+        "R3a": {
+          "cpu_seconds_per_decision": 0.39617094226976746,
+          "cpu_seconds_per_game": 85.3685172545,
+          "crowns_against": 0,
+          "crowns_for": 1,
+          "damage_dealt": 2867,
+          "damage_taken": 1055.5,
+          "decisions": 215,
+          "games": 2,
+          "mean_score": 1.0,
+          "own_cpu_seconds_per_game": 42.588376294,
+          "process_cpu_seconds_per_game": 87.305167144,
+          "wall_seconds_per_game": 87.4823214279022,
+          "wdl": [
+            2,
+            0,
+            0
+          ]
+        },
+        "v1": {
+          "cpu_seconds_per_decision": 0.4205188625486386,
+          "cpu_seconds_per_game": 109.27427209999999,
+          "crowns_against": 0,
+          "crowns_for": 1,
+          "damage_dealt": 2996,
+          "damage_taken": 1580.5,
+          "decisions": 257,
+          "games": 2,
+          "mean_score": 1.0,
+          "own_cpu_seconds_per_game": 54.036673837500054,
+          "process_cpu_seconds_per_game": 111.31185776699999,
+          "wall_seconds_per_game": 111.52672500407789,
+          "wdl": [
+            2,
+            0,
+            0
+          ]
+        }
+      },
+      "own_cpu_seconds_per_game": 48.31252506575003,
+      "process_cpu_seconds_per_game": 99.3085124555,
+      "rejected": 0,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "ticks": [
+        3600,
+        3812,
+        3600,
+        5273
+      ],
+      "translator": [
+        {},
+        {},
+        {},
+        {}
+      ],
+      "wall_seconds_per_game": 99.50452321599005,
+      "wdl": [
+        4,
+        0,
+        0
+      ]
+    }
+  },
+  "time": "2026-10-16T09:03:32.308800+00:00"
+}
