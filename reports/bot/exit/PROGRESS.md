@@ -1171,7 +1171,7 @@ B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over
 it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
 
 <!-- it10-state-begin -->
-### Iteration 10: current state (resume here; updated 2026-10-16T06:45:51Z)
+### Iteration 10: current state (resume here; updated 2026-10-16T07:11:55Z)
 
 Read this block first; the dated log below it has the evidence. Hosts: **01, 03, 04, 08** (never 02/06/07/09–18; 05 light
 only). Our work is only under `/mpac/sdicks02/jobs/clasher/bot-*` and `/mpac/sdicks02/repos/clasher-bot*`. Code is `bot/`
@@ -1201,8 +1201,8 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now:** 04: `f10-rl9v4` (cpuq, 64 workers, out `$J4/f10-rl9v4`, 2,000 games) and `rsim-rl9v4` (cpuq2, 30
-workers, out `$J4/rsim-rl9v4`, 900 games), verdict by Sol task `bot-it10-rl9v4-verdict-r1` with `--alpha 0.0167` (k = 3).
+**Running now:** 01: `f10-rl9v4` (cpuq6, 56 workers, out `$J1/f10-rl9v4`, 2,000 games); 04: `rsim-rl9v4` (cpuq2, 30
+workers, out `$J4/rsim-rl9v4`, 900 games); verdict by Sol task `bot-it10-rl9v4-verdict-r2` with `--alpha 0.0167` (k = 3).
 Done: F9 r9 v4 +0.029 [+0.002, +0.057] and r10 v3 +0.003 vs r5 v10; HEADLINE screens r9 v4 +0.053, r10 v3 +0.025. Earlier: soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
 in `$J1/ckpt-soup/`, `$J1/f10-soup-r5`, `$J1/rsim-soup-r5`, `bot-rl-soup/`). Verdict recipe for future candidates:
 `.venv/bin/python -B -m bot.exit.mean_delta <F10 dir>:<cand substr> $J1/f10-rl5v10:policy-00010 --alpha <0.05/k>`;
@@ -1210,7 +1210,7 @@ RoyaleSim gates must run on 04/08 (rext-bc errors on 01). k = 3 now (r5 v30, sou
 - CPU queue runners still alive (idle unless lines are appended): 01 cpuq6/cpuq7/cpuqka; 04 cpuq 3045524, cpuq2 3192422,
   cpuq6 363971, cpuq7 1222266, cpuqka 3964180; 08 cpuq 2525950, cpuq2 2581995, cpuq6 4115451, cpuq7 792386, cpuqka
   3544192. Keep any new 03/04/08 CPU job ≤ 30 workers in total per host.
-- **K4L feeders (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
+- **K4L feeders: ALL STOPPED since 07:09Z (G1 has priority; refill after G1).** Last args (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
   total live python; claims/leases make them yield; to throttle, kill the feeder PGID and relaunch with a lower TARGET,
   in-flight 100-game batches drain by themselves):**
   - 03: PGID **3200991** (since 03:40:43Z), `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l $J3/cpu-feed-k4l.tmpl 80 100
@@ -1489,6 +1489,17 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   and `rsim-rl9v4` (04 cpuq2, 30 workers, out `$J4/rsim-rl9v4`, 900 games) queued; snapshot `$J4/ckpt-rl9/policy-00004.pt`
   sha256 3c66ce5c…. Verdict by Sol task `bot-it10-rl9v4-verdict-r1`. 01 feeder restarted (target 50, cap 89; PGID
   2432032, `cpu-feed-k4l.log11`; `checked-8004700` touched).
+
+- **07:09–07:12Z, coordinator: full-pool G1 generation (`/mpac/sdicks02/jobs/clasher/bot-fullpool/G1`, retrain data for the
+  next student) outranks the C56/K4L label feeders.** All four feeders stopped (03 3200991, 04 4161769, 08 425186, 01
+  2432032) and their in-flight batches stopped by PGID (03: 8304500, 8305000–8305500; 04: 8109800, 8109900; 08: 8207600;
+  01: 8004900–8005200). `f10-rl9v4` withdrawn from 04 before it started (its `END … rc=0` line there is empty; no out dir)
+  and run on **01** instead (cpuq6, 56 workers, out `$J1/f10-rl9v4`, started 07:10:27Z); `rsim-rl9v4` keeps running on 04
+  (cpuq2, 30). Verdict: Sol task `bot-it10-rl9v4-verdict-r2` (round 1 cancelled for the path change).
+  - Live python 07:11:38Z: 01 88 (ours 58 = F10 + LIVE loaders), 03 38 (G1 34, ours 0), 04 70 (G1 12, ours 21 = RoyaleSim),
+    08 94 (G1 53, ours 0).
+  - **Refill only after G1 finishes (~2–3 h).** Before restarting a feeder, `touch <J>/cpu-feed-k4l/checked-<S>` for every
+    hand-stopped batch S listed above that has no games, else its guard exits.
 
 ## Next
 
