@@ -33,6 +33,9 @@ fn one() -> f64 {
 fn is_zero(x: &f64) -> bool {
     *x == 0.0
 }
+fn is_zero_i64(x: &i64) -> bool {
+    *x == 0
+}
 
 fn units(x: f64) -> i64 {
     (x * 1000.0).round_ties_even() as i64
@@ -96,6 +99,34 @@ struct Stats {
     death_zero_count: usize,
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     death_first_update: bool,
+    // Batch C1: Python Entity.should_cancel_committed_hit exemption (dashCooldown > 0, or direct area damage
+    // while LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE is false). Exported only when true.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    discard_exempt: bool,
+    // Batch C1: Electro Dragon chain hop wait (CHAIN_HOP_WAIT_TICKS); 0 = the Electro Spirit chain.
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    chain_hop_wait: i64,
+    // Batch C1 pingpong throw (entities.py PingpongProjectile): PingpongVisualTime/50, ProjectileRadius and
+    // ProjectileStartRadius in native units; 0 = none.
+    // Batch C1: Inferno Dragon's LoadTime > HitSpeed progress cycle (entities.py `_overload_clock`).
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    overload_clock: bool,
+    // Batch C1: Ronin's passive counter (cards/ronin.py): cooldown and reflect delay in ticks, damage
+    // scalar in percent, stop buff in seconds; 0 = none.
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    counter_cooldown: i64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    counter_scalar: i64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    counter_delay: i64,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    counter_stop: f64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    pingpong_period: i64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    pingpong_reach: i64,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    pingpong_start: i64,
     #[serde(default)]
     leaf_elixir_share: Option<f64>,
     #[serde(default)]
@@ -376,6 +407,26 @@ struct Entity {
     chain_remaining: usize,
     #[serde(default)]
     chain_time: f64,
+    /// Batch C1 Electro Dragon hop: updates the released hop still waits (entities.py ChainLightning).
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    chain_wait: i64,
+    /// Batch C1 pingpong throw state (the axe) and the thrower's live axe id.
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    counter_ready: i64,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    counter_pending: Vec<(i64, i32, f64)>,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    ovl_load: i64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    ovl_target: Option<i32>,
+    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    pp_t: i64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pp_origin: Option<(i64, i64)>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pp_apex: Option<(i64, i64)>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pp_axe: Option<i32>,
     #[serde(default)]
     controlled_vector: (i64, i64, i64),
     #[serde(default)]
@@ -2079,6 +2130,18 @@ impl BattleState {
     }
     fn combat_one(&mut self, i: usize) {
         self.entities[i].move_target = None;
+        if !self.entities[i].counter_pending.is_empty() && self.entities[i].alive {
+            // Batch C1 (cards/ronin.py RoninCounter.deliver): due reflects land on their attackers.
+            let tick = self.tick;
+            let (due, keep): (Vec<_>, Vec<_>) =
+                std::mem::take(&mut self.entities[i].counter_pending).into_iter().partition(|p| p.0 <= tick);
+            self.entities[i].counter_pending = keep;
+            for (_, id, amount) in due {
+                if let Some(j) = self.index(id).filter(|&j| self.entities[j].alive) {
+                    self.damage(j, amount);
+                }
+            }
+        }
         if self.entities[i].deploy > 0.0 || !self.entities[i].active {
             return;
         }
@@ -2096,6 +2159,9 @@ impl BattleState {
                 }
             }
             return;
+        }
+        if self.entities[i].stats.overload_clock {
+            self.entities[i].ovl_load = (self.entities[i].ovl_load - 50).max(0);
         }
         if self.entities[i].forced_active && self.entities[i].push.is_none()
             && self.entities[i].clock.finish==0 && self.entities[i].jump.is_none() { return; }
@@ -2146,6 +2212,15 @@ impl BattleState {
         if self.dash_combat(i) { return; }
         if self.leap_combat(i) { return; }
         if self.hook_combat(i) { return; }
+        if self.pingpong_waiting(i) {
+            // Batch C1 (entities.py `_pingpong_throw_out`): live target kept, none taken, progress stands.
+            self.entities[i].consume_clock_reseed();
+            if self.entities[i].target.and_then(|t| self.index(t)).is_none_or(|j| !self.entities[j].alive) {
+                self.entities[i].target = None;
+            }
+            self.entities[i].clock.advance(50, 0, false);
+            return;
+        }
         self.entities[i].consume_clock_reseed();
         let target = self.target(i);
         let old = self.entities[i].target;
@@ -2261,7 +2336,27 @@ impl BattleState {
         } else {
             self.entities[i].attack_work()
         };
-        let due = if !self.entities[i].stats.ordinary {
+        let mut overload_hold = false;
+        if self.entities[i].stats.overload_clock {
+            let e = &mut self.entities[i];
+            if !engaged {
+                e.ovl_target = None;
+            } else if e.ovl_target != target {
+                if e.ovl_load > e.stats.interval {
+                    overload_hold = true;
+                    if e.ramp_target.is_some() {
+                        e.ramp_time = (e.ramp_time - e.attack_work() as f64).max(0.0);
+                    }
+                } else {
+                    e.ovl_load = 0;
+                    e.ovl_target = target;
+                    e.cooldown = e.stats.interval as f64 / 1000.0;
+                }
+            }
+        }
+        let due = if overload_hold {
+            false
+        } else if !self.entities[i].stats.ordinary {
             let floor = if engaged {
                 0.0
             } else {
@@ -2295,6 +2390,9 @@ impl BattleState {
                 self.entities[i].move_target = target;
             }
             if due {
+                if self.entities[i].stats.overload_clock {
+                    self.entities[i].ovl_load = self.entities[i].stats.load;
+                }
                 if let Some(delay) = self.entities[i].stats.kamikaze_delay {
                     if delay>0.0 {
                         self.entities[i].kamikaze_primed=true;
@@ -2334,7 +2432,8 @@ impl BattleState {
                 self.entities[i].attacked_current = true;
                 let a = self.entities[i].clone();
                 let target_body = &self.entities[j];
-                let cancel = a.stats.speed > 0
+                let cancel = !a.stats.discard_exempt
+                    && a.stats.speed > 0
                     && ((a.x - target_body.x).powi(2) + (a.y - target_body.y).powi(2)).sqrt()
                         > engagement_radius(&a, target_body)
                             + target_body.stats.radius
@@ -2374,7 +2473,23 @@ impl BattleState {
                     shot.projectile_origin = (shot.x, shot.y);
                     shot.stats.can_air = a.stats.projectile_air.unwrap_or(a.stats.can_air);
                     shot.stats.can_ground = a.stats.projectile_ground.or(a.stats.can_ground);
-                    if a.stats.projectile_range > 0.0 {
+                    let pingpong = a.stats.pingpong_period > 0 && a.stats.projectile_range > 0.0;
+                    if pingpong {
+                        // Batch C1 (entities.py PingpongProjectile.throw).
+                        let (ox, oy) = (units(a.x), units(a.y));
+                        let (vx, mut vy) = (units(shot.aim.0) - ox, units(shot.aim.1) - oy);
+                        if vx == 0 && vy == 0 { vy = if a.owner == 0 { 1 } else { -1 }; }
+                        let n = isqrt(vx * vx + vy * vy).max(1);
+                        let (reach, start) = (units(a.stats.projectile_range), a.stats.pingpong_start);
+                        shot.pp_origin = Some((ox, oy));
+                        shot.pp_apex = Some((ox + vx * reach / n, oy + vy * reach / n));
+                        shot.pp_t = 0;
+                        shot.x = (ox + vx * start / n) as f64 / 1000.0;
+                        shot.y = (oy + vy * start / n) as f64 / 1000.0;
+                        shot.projectile_origin = (shot.x, shot.y);
+                        shot.stats.homing = Some(false);
+                        shot.hit_ids.clear();
+                    } else if a.stats.projectile_range > 0.0 {
                         let (dx, dy) = norm(
                             units(shot.aim.0 - a.x),
                             units(shot.aim.1 - a.y),
@@ -2393,6 +2508,11 @@ impl BattleState {
                         shot.roll_direction = (units(self.entities[j].x-a.x),units(self.entities[j].y-a.y));
                         shot.traveled = 0.0;
                         shot.effect_age = 0.0;
+                        // Batch C1 straight shot: endpoint ProjectileRange from the attacker's centre.
+                        let (vx,vy) = if shot.roll_direction != (0,0) { shot.roll_direction }
+                            else { (0, if a.owner == 0 { 1 } else { -1 }) };
+                        let (ex,ey) = norm(vx,vy,units(a.stats.projectile_range));
+                        shot.aim = ((units(a.x)+ex) as f64/1000.0,(units(a.y)+ey) as f64/1000.0);
                     } else if a.stats.homing_time > 0 && shot.shot_target.is_some() {
                         let (dx,dy) = (units(self.entities[j].x)-units(shot.x),units(self.entities[j].y)-units(shot.y));
                         if isqrt(dx*dx+dy*dy) > units(a.stats.homing_min) {
@@ -2408,8 +2528,15 @@ impl BattleState {
                     let index = self.entities.len();
                     let start_radius = shot.stats.projectile_radius + shot.stats.projectile_extra;
                     let start_hit = shot.piercing && shot.stats.projectile_extra > 0.0;
+                    if pingpong {
+                        shot.class = "PingpongProjectile".into();
+                        self.entities[i].pp_axe = Some(shot.id);
+                    }
+                    let rolling = shot.class == "RollingProjectile";
                     self.entities.push(shot);
                     if start_hit { self.piercing_hits(index,start_radius); }
+                    // The creation tick tests the launch point and does not step (RoyaleSim fire).
+                    if rolling { self.rolling_character_hits(index); }
                 } else {
                     let secondary = self.secondary_recipients(i, j);
                     let damage = if a.charge >= 10000 && a.stats.special_damage > 0.0 {
@@ -2447,6 +2574,7 @@ impl BattleState {
                             }
                         }
                     }
+                    let counterable = a.class == "Troop" && !a.airborne();
                     for k in victims {
                         let victim = &self.entities[k];
                         let amount = if victim.king || victim.stats.name == "Tower" {
@@ -2454,6 +2582,9 @@ impl BattleState {
                         } else {
                             damage
                         };
+                        if counterable && k == j && self.try_counter(k, i, amount) {
+                            continue;
+                        }
                         self.damage(k, amount);
                     }
                     for k in secondary {
@@ -2709,6 +2840,11 @@ impl BattleState {
         if self.dash_movement(i,external) { return; }
         if self.leap_movement(i,external) { return; }
         if self.hook_stop_movement(i,external) { return; }
+        if self.pingpong_waiting(i) {
+            self.entities[i].moving = false;
+            self.apply_external(i, external);
+            return;
+        }
         if self.entities[i].stun > 0.0 {
             if let Some(saved) = &mut self.entities[i].frozen_stop {
                 saved.frozen = true;
@@ -2758,6 +2894,9 @@ impl BattleState {
                     || self.entities[j].stagger > 1e-9
                     || self.entities[j].death_immunity.is_some()
                     || self.entities[j].stealth_until > self.tick * 50
+                    // DamageRamp.allows_target: a continuous channel rejects a recipient in Bandit
+                    // travel; combat's channel_targetable guard, re-checked before natural movement.
+                    || (!self.entities[i].stats.ramp_stages.is_empty() && self.entities[j].dash_travel())
                     || (self.entities[i].stats.projectile_speed > 0
                         && !self.entities[i].attacked_current
                         && self.pending_lethal(j)))
@@ -2939,7 +3078,6 @@ impl BattleState {
             let Some(spell) = self.config.cards.get(&cast.name).and_then(|c| c.spell.clone()) else { continue; };
             self.direct_spell(&cast, &spell, None);
         }
-        let mut projectile_alive: Option<std::collections::BTreeSet<i32>> = None;
         let mut object_indices: Vec<usize> = (0..n).collect();
         object_indices.sort_by_key(|&i| {
             (
@@ -2952,6 +3090,7 @@ impl BattleState {
                     0
                 } else if self.entities[i].class == "Projectile"
                     || self.entities[i].class == "SpawnProjectile"
+                    || self.entities[i].class == "PingpongProjectile"
                     || self.entities[i].spirit
                 {
                     1
@@ -2988,10 +3127,9 @@ impl BattleState {
                 else { self.rolling_tick(i); }
             } else if self.entities[i].class == "SpawnProjectile" {
                 self.delivery_tick(i);
+            } else if self.entities[i].class == "PingpongProjectile" {
+                self.pingpong_tick(i);
             } else if self.entities[i].class == "Projectile" {
-                if projectile_alive.is_none() {
-                    projectile_alive = Some(self.entities.iter().filter(|e| e.alive).map(|e| e.id).collect());
-                }
                 if self.entities[i].piercing {
                     self.piercing_tick(i);
                     continue;
@@ -3072,11 +3210,19 @@ impl BattleState {
                             let shot = &self.entities[i];
                             let target = &self.entities[j];
                             let ground_jumper = target.jump.is_some() && shot.stats.can_ground.unwrap_or(true);
+                            // Python Projectile._collect_splash_targets/_can_damage: the source-hit hook
+                            // (_notify_source_hit) runs only for a primary in this impact's recipient set,
+                            // taken before the damage (a primary this shot kills still chains).
+                            let recipient = target.alive
+                                && target.owner != shot.owner
+                                && target.entity_kind != 2
+                                && target.entity_kind != 3
+                                && (shot.can_hit_plane(target) || ground_jumper);
                             if !target.hidden && (shot.can_hit_plane(target) || ground_jumper) {
                                 self.damage(j, damage);
                                 self.projectile_status(i, j);
-                                if projectile_alive.as_ref().unwrap().contains(&self.entities[j].id) { self.dragon_chain_hit(i, j); }
                             }
+                            if recipient { self.dragon_chain_hit(i, j); }
                         } else if self.entities[i].shot_target.is_none() {
                             // A shot created after its target died has no primary
                             // target. Python performs a zero-radius endpoint query.

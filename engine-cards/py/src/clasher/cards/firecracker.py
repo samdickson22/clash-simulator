@@ -31,7 +31,7 @@ class AttackRecoil(BaseMechanic):
             return
         from ..mechanics.shared.knockback import apply_radial_knockback
 
-        apply_radial_knockback(
+        armed = apply_radial_knockback(
             entity,
             battle_state,
             target_position,
@@ -40,6 +40,12 @@ class AttackRecoil(BaseMechanic):
             ignores_mass=True,
             interrupts_combat=False,
         )
+        if armed and getattr(entity.card_stats, "load_first_hit", False):
+            # Batch C1, ported from RoyaleSim (MIT) state.rs `attack_recoil`: an armed recoil releases
+            # a LoadFirstHit unit from its swing (progress 0); a refused one keeps the cycle.
+            from ..ordinary_combat_clock import stop_hit
+
+            stop_hit(entity)
 
 
 FirecrackerRecoil = AttackRecoil

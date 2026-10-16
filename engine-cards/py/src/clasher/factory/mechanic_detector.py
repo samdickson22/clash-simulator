@@ -52,8 +52,16 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     # Get character data (for troops/buildings)
     char_data = entry.get("summonCharacterData", {}) or entry.get("summonSpellData", {})
 
+    if char_data.get("counterCooldown"):
+        from ..cards.ronin import RoninCounter
+
+        mechanics.append(RoninCounter())
+
     if char_data.get("spawnAreaObjectData"):
-        mechanics.append(SpawnAreaEffect(area_data=char_data["spawnAreaObjectData"]))
+        mechanics.append(SpawnAreaEffect(
+            area_data=char_data["spawnAreaObjectData"],
+            at_creation=bool(char_data.get("spawnAreaAtCreation", False)),
+        ))
 
     # Death effects
     # DeathDamage directly on unit

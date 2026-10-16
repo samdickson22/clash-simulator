@@ -1,4 +1,4 @@
-"""Read-only Bandit mechanic serialization, including live anticipation/travel."""
+"""Read-only Bandit-family dash serialization: stand, travel and the damage-only landing tail (Batch C1)."""
 
 
 def dash(e):
@@ -10,9 +10,9 @@ def dash(e):
                 damage=float(e.card_stats.get_scaled_stat(m.dash_damage))
                     if m.dash_damage > 0 else e.damage*2.0,
                 tail=m.post_dash_immunity_ms)
-    state = dict(phase='travel' if e._bandit_dashing else 'charging' if e._bandit_charging else 'idle',
-                 timer=e._bandit_dash_timer, target=e._bandit_dash_target_id,
-                 destination=e._bandit_dash_target,
+    state = dict(phase=e._bandit_state, wait=int(e._bandit_wait), target=e._bandit_seen_target,
+                 blocked=bool(e._bandit_blocked),
+                 goal=None if e._bandit_goal is None else list(e._bandit_goal),
                  immunity=int(e._bandit_invulnerable_until),
                  consumed=bool(getattr(e,'_special_move_consumed_tick',False)))
     return spec, state

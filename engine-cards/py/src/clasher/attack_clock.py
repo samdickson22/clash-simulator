@@ -16,6 +16,10 @@ class OrdinaryAttackClock:
     hit_timeline_ms: int = 0
     load_remaining_ms: int = 0
     finish_elapsed_ms: int = 0
+    # Batch C1, LoadFirstHit (RoyaleSim (MIT) combat.rs `attack_step_progress`, LOAD_FIRST_HIT_LEAVE =
+    # client15535_refund_at_death): leaving a swing before it fires gives its windup back,
+    # load = max(LoadTime - progress, 0), and a lost target installs no finish work. 0 = off.
+    refund_on_leave: int = 0
 
     def __post_init__(self) -> None:
         if any(type(value) is not int for value in vars(self).values()):
@@ -71,8 +75,16 @@ class OrdinaryAttackClock:
             self.load_remaining_ms = self.load_time_ms
         return hits
 
+    def _refund(self) -> None:
+        if self.refund_on_leave and 0 < self.hit_timeline_ms < self.hit_interval_ms:
+            self.load_remaining_ms = max(self.load_time_ms - self.hit_timeline_ms, 0)
+
     def target_removed(self) -> None:
         """Install ordinary finish work after an established hit loses its target."""
+        if self.refund_on_leave:
+            self._refund()
+            self.hit_timeline_ms = 0
+            return
         if self.hit_timeline_ms and self.finish_time_ms:
             self.finish_elapsed_ms = 1
         else:
@@ -86,5 +98,6 @@ class OrdinaryAttackClock:
 
     def stop_hit(self) -> None:
         """Movement clears hit progress without reloading the weapon."""
+        self._refund()
         self.hit_timeline_ms = 0
         self.finish_elapsed_ms = 0

@@ -43,6 +43,22 @@ impl BattleState {
         selected
     }
 
+    /// Batch C1 (cards/ronin.py RoninCounter.try_counter): a ready counter takes the direct hit of
+    /// attacker `a` on Ronin `r` instead of its damage.
+    pub(super) fn try_counter(&mut self, r: usize, a: usize, amount: f64) -> bool {
+        let tick = self.tick;
+        let e = &mut self.entities[r];
+        if e.stats.counter_cooldown == 0 || !e.alive || tick < e.counter_ready { return false; }
+        e.counter_ready = tick + e.stats.counter_cooldown;
+        e.clock.stop();
+        e.force_due = false;
+        let id = self.entities[a].id;
+        let e = &mut self.entities[r];
+        e.counter_pending.push((tick + e.stats.counter_delay, id, amount * e.stats.counter_scalar as f64 / 100.0));
+        let stop = e.stats.counter_stop;
+        self.slow_target(a, stop, (0.0, 0.05, 0.0));
+        true
+    }
     pub(super) fn character_hit_buff(&mut self, i: usize, j: usize) {
         let Some(buff) = self.entities[i].stats.hit_buff.clone() else { return; };
         if buff.axes.0 <= 0.0 && buff.axes.1 <= 0.0 && buff.axes.2 <= 0.0 {

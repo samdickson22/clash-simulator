@@ -39,6 +39,17 @@ def initial(seed=1, cards=CARDS, *, level=11):
     return b
 
 
+def discard_exempt(e):
+    """Python Entity.should_cancel_committed_hit exemptions that do not depend on the target (Batch C1)."""
+    from clasher.balance import LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE
+    s = getattr(e, "card_stats", None)
+    if (not LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE and float(getattr(s, "area_damage_radius", 0) or 0) > 0.0
+            and not e.has_attack_projectile_definition()):
+        return True
+    raw = getattr(s, "_raw_entry", {}) or {}
+    return float((raw.get("summonCharacterData", {}) or {}).get("dashCooldown", 0.0) or 0.0) > 0.0
+
+
 def entity(e, *, clone_prototype=True):
     from mirror_snapshot import payload_key
     from clasher.unit_traits import is_knockback_immune, is_hover_unit_card
@@ -124,6 +135,16 @@ def entity(e, *, clone_prototype=True):
         else 0.0
     )
     stats = dict(
+        **({"discard_exempt": True} if discard_exempt(e) else {}),
+        **({"chain_hop_wait": int(e.hop_wait_ticks)} if getattr(e, "hop_wait_ticks", 0) else {}),
+        **({"overload_clock": True} if getattr(e, "_overload_clock", lambda: False)() else {}),
+        **(dict(counter_cooldown=c.cooldown_ms // 50, counter_scalar=c.damage_scalar,
+                counter_delay=c.reflect_delay_ticks, counter_stop=c.stop_ms / 1000.0)
+           if (c := next((m for m in e.mechanics if type(m).__name__ == "RoninCounter"), None)) else {}),
+        **(dict(pingpong_period=max(1, int(projectile.get("pingpongVisualTime") or 0) // 50),
+                pingpong_reach=int(projectile.get("projectileRadius", 0) or 0),
+                pingpong_start=round(float(getattr(s, "projectile_start_radius", 0.0) or 0.0) * 1000))
+           if int(projectile.get("pingpongVisualTime", 0) or 0) > 0 else {}),
         min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
         death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
@@ -373,7 +394,10 @@ def entity(e, *, clone_prototype=True):
         lane=int(getattr(e, "_native_lane_id", 0)),
         age=int(getattr(e, "_native_deployed_elapsed_ms", 0)),
         clock_initialized=e._ordinary_clock is not None,
-        clock=dict(interval=interval, load=load, timeline=0, remaining=0, finish=0),
+        # LoadFirstHit: the load timer leaves the deploy at LoadTime (Batch C1).
+        clock=dict(interval=interval, load=load, timeline=0,
+                   remaining=load if getattr(s, "load_first_hit", False) else 0, finish=0,
+                   **({"refund": 1} if getattr(s, "load_first_hit", False) else {})),
         facing=[int(e._facing_x_units), int(e._facing_y_units)],
         cooldown=float(e.attack_cooldown),
         force_due=stats["ordinary"] and e.attack_cooldown <= 0,
@@ -534,6 +558,10 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             assert b.deploy_card(seat, card, Position(x, y))
             units = [entity(b.entities[i]) for i in sorted(b.entities.keys() - old)]
             for unit in units:
+                # Batch C1: a card play area cast with its character stands on the character's
+                # point, so it takes the character's deploy snap.
+                if unit["class"] == "AreaEffect":
+                    unit["stats"]["skip_deploy_snap"] = False
                 if unit["underground"]:
                     unit["x"], unit["y"] = unit["tunnel_destination"]
                 # Formation offsets exclude the documented one-unit anchor snap.
@@ -591,6 +619,8 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             out["cards"][card]["chain"] = entity(chain)
             out["cards"][card]["chain"]["stats"]["speed"] = round(chain.travel_speed * 50)
             out["cards"][card]["chain"]["chain_remaining"] = chain.remaining_bounces
+            # The template battle's release finds no hop target; the native template releases afresh.
+            out["cards"][card]["chain"]["alive"] = True
         if card == "ElectroSpirit":
             source = b.entities[max(b.entities)]
             mechanic = next(
@@ -678,7 +708,7 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
         spawn_area = next(
             (m for m in source.mechanics if type(m).__name__ == "SpawnAreaEffect"), None,
         )
-        if spawn_area is not None:
+        if spawn_area is not None and not spawn_area.at_creation:
             spawn_area.on_spawn(source)
             out["spawn_areas"][source.card_stats.name] = entity(b.entities[max(b.entities)])
         if card in ("Balloon", "BombTower", "GiantSkeleton"):

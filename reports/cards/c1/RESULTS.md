@@ -1,0 +1,135 @@
+# Batch C1: attack, targeting and dash fixes (12 cards + 4 native≠Python bugs) — results
+
+Exploration tier. Spec: `reports/cards/specs/C1-SPECS.md` (Sol researcher), checked against the code before each
+change; where the spec and the code or RoyaleSim disagreed, the deviation is listed per card. Ours = engine-cards
+Python engine plus its native mirror; reference = RoyaleSim (MIT) 16.402 through the fidelity harness (`--table
+160402`, harness copy `batchA/tools/scenarios.py`). Branch `cards/c1` (from b16716481). Host evidence: 127x08
+`/mpac/sdicks02/jobs/clasher/cards/c1/` (fidelity, builds, negative control) and 127x04 (native verification, gate).
+
+Value rule: native mechanics are authoritative; RoyaleSim 16.402 is authoritative on stats. **Pure stat-value
+corrections are not in git** (§3, for the live16402 overlay; fidelity "with stats" runs use a scratch gamedata on
+08 built by `batchA/tools/apply_stats.py`). Omitted metadata that the compact export drops (no value in our data at
+all, or a mechanic switch) is restored declaratively in `balance.py`, as Batch A did.
+
+## Verdicts (3 scenarios per card: alone / knight / minions)
+
+| Card | Before | Mechanics | Mechanics + stats overlay | Remaining |
+|---|---|---|---|---|
+| Bowler | 2/3 | **3/3** | **3/3** | — |
+| Assassin (Bandit) | 1/3 | **3/3** | **3/3** | — |
+| ZapMachine (Sparky) | 1/3 | **3/3** | **3/3** | — |
+| ElectroWizard | 1/3 | 2/3 | 2/3 | knight: C56 Knight's hit cycle under the stun-on-hit (§4) |
+| IceWizard | 1/3 | **3/3** | **3/3** | — |
+| InfernoDragon | 2/3 | **3/3** | **3/3** | — |
+| MegaKnight | 0/3 | **3/3** | **3/3** | — |
+| Fisherman | 2/3 | **3/3** | **3/3** | — |
+| AxeMan (Executioner) | 0/3 | **3/3** | **3/3** | — |
+| ElectroDragon | 2/3 | **3/3** | **3/3** | — |
+| BossBandit | 0/3 | **3/3** | **3/3** | — |
+| Ronin | 0/3 | 0/3 | **3/3** | needs the §3 overlay rows (hit/load) |
+
+**C1 scenarios PASS: 12/36 before → 32/36 mechanics → 35/36 with the overlay.** Rest of the 66-card pool (54 cards,
+162 scenarios), same runs: **no verdict and no difference-count change** (pool total 54 → 74 → 77 of 196). Runs: 08
+`c1/fid/final-{base,mech,stats}.jsonl` (base = engine-cards at b16716481 on native de11f124).
+
+## 1. Causes and fixes, per card (Python reference + native mirror; all in `engine-cards/`)
+
+Ported logic carries `Ported from RoyaleSim (MIT), <file>` comments. New serialized native fields are
+`serde(default)` and `skip_serializing_if` at their inert default; the new exporter keys are emitted only when set.
+
+| Card | Cause (vs RoyaleSim) | Fix (Python / native) |
+|---|---|---|
+| **Bowler** | The boulder's finite range started at the muzzle (endpoint 1000 too far), took a terminal 1800 area sample, and flew on its creation tick; spurious tower hits 74..374. | Straight shot: endpoint = body centre + trunc(v·range/n); creation-tick test at the muzzle, no step; then `advance_client` steps of 170 (trunc0, nothing carried), expiring on the reaching step without a test; circle contact ProjectileRadius + victim radius, once per victim; radial push from the sample (no combat interrupt). `entities.py:RollingProjectile._update_straight/_deal_straight_damage`, `_create_projectile`; native `projectiles.rs:rolling_character_tick/_hits`, `lib.rs` shot creation. Bowler is the only character with a rolling shot; Log/BarbLog (rolling spells) untouched. |
+| **Assassin, BossBandit** | Charge started from the previous tick's target and counted a full 800 ms from the next frame; one 500 step a tick to an exact endpoint, hit only on arrival; tail 100 ms (Boss: no dash metadata). Assassin died at 81 before travel. | `cards/bandit.py` rewritten as RoyaleSim's movement-phase dash: first sight of the current target (blocked for that sight inside DashMinRange+both radii), stand DashCooldown/50−1 = 15 ticks (combat runs normally; a stand ends on target change/death or an attack starting), still entry, goal = 500-cell centre `dash_goal_native`, two JumpSpeed/2 half-steps a tick (`dash_half_step`), range test Range+both radii after each against the target's current point, blow, ground repair (`recover_native_ground_position`), tail 150 ms. Python's non-interrupting Freeze contract is kept: a stand neither counts down nor cancels while stunned. `balance.py`: Assassin tail 150, BossBandit dashCooldown 800 + tail 150 (omitted). Native `dash.rs` (new State: phase/wait/target/blocked/goal), `dash_snapshot.py`. |
+| **ZapMachine** | LoadFirstHit and AttackPushBack omitted (and the ZapMachine body had no mechanics: the `Sparky` registry entry is dead). First shot 42 instead of 101; period 80 not 79. | Restored `loadFirstHit`, `attackPushback 750`, `projectileStartRadius 1200`, `ignorePushback` (omitted). The ordinary progress clock now covers LoadFirstHit: load leaves the deploy at LoadTime (`first_hit_time` = HitSpeed), a leave/target loss before the fire refunds load = max(LoadTime − progress, 0) and installs no finish work (`attack_clock.py refund_on_leave`, LOAD_FIRST_HIT_LEAVE), and an armed launch recoil releases the swing (progress 0) (`firecracker.py AttackRecoil`, RoyaleSim `attack_recoil`). Native `clock.rs` (`refund`), `projectiles.rs:recoil`, exporter clock seed. Firecracker (C56) keeps its recoil and clock. |
+| **ElectroWizard, IceWizard** | The spellAsDeploy area (ElectroWizardZap 192 + 500 ms stun / IceWizardCold 84 + slow) was cast at deploy end on everything then in range; RoyaleSim casts it on the character's creation tick and adds one tick to its deploy. | `gamedata_normalization.py` marks the card area `spawnAreaAtCreation`; `SpawnAreaEffect.cast_at_creation` runs from `battle.deploy_card` (hand plays and Mirror; never Clone copies or direct spawns), deploy +50 ms, no ready-time recast. Native: no code change; the card template now carries the area as a second unit (`differential.py`, AreaEffect takes the character's deploy snap). |
+| **InfernoDragon** | LoadTime 1200 > HitSpeed 400 was reduced to an 800 ms retarget delay; every retarget fired 10 ticks early. | RoyaleSim progress cycle for this body only (`overloadedProgressClock` in `balance.py`): a load timer runs 50 a combat update (finish hold included), each beam sets it to LoadTime, and a fresh cycle on a new target stands until load ≤ HitSpeed, then starts from progress 0; the stand is not ramp lock time. `entities.py:_update_active_combat` / native `combat_one` (`overload_clock`, `ovl_load`, `ovl_target`). Inferno Tower / Mighty Miner (C56) keep the legacy clock. |
+| **MegaKnight** | A 300 ms landing hold after the blow (RoyaleSim ends the dash 4 ticks after it), plus the same prior-tick charge and interpolated flight as the Bandit. | `cards/mega_knight.py` rewritten as RoyaleSim's timed dash: first-sight stand 17 ticks, entry moves, JumpSpeed (250) a tick to the 500-cell goal holding where the arrival step ends, blow at entry+16 (motion stops, ground repaired), end at blow+4 (`DASH_BLOW_TO_END_TICKS`; raw dashLandingTime 300 kept as `landing_raw_ms`). Native `leap.rs`, `leap_snapshot.py`. |
+| **Fisherman** | The idle hook scanned every far enemy; after the self-drag to the princess he hooked the king and never swung. | The hook considers only the current target (RoyaleSim `special_step`). `cards/fisherman.py:_find_hook_target`, native `hook.rs:hook_candidate`. |
+| **AxeMan** | The axe was a one-way piercing shot; the thrower kept firing every 18 ticks and walking. | `PingpongProjectile` (`entities.py`): 30-update sine out-and-back from the body centre to ProjectileRange (integer `sin_pi_frac`, RoyaleSim `fixed.rs`), each update testing the previous point, hit set cleared once on the turn; the thrower holds (live target kept, no new target, progress stands, load runs, no walking) until the axe is removed at T+31, so throws are 49 ticks apart. `balance.py`: AxeMan projectileStartRadius 600, AxeManProjectile projectileRadius 1000 (omitted). Native `projectiles.rs:pingpong_tick`, `lib.rs` (throw, `pingpong_waiting` in combat and movement). |
+| **ElectroDragon** | The chain hopped with no wait, several hops per update. | Dragon-only chain mode: the next target is taken at release by (centre distance², creation order); each hop waits 3 updates (`CHAIN_HOP_WAIT_TICKS`), then flies at 2000 a tick, one hop per update; a hop whose target died lands on its last aim, counts, and releases on. `entities.py:ChainLightning._release/_update_waited`, `cards/electro_dragon.py`; native `c56.rs:chain_release/chain_waited_tick`. Electro Spirit's chain unchanged. |
+| **Ronin** | No counter (the compact export keeps only the action names); hit/load are stat rows. | `cards/ronin.py:RoninCounter` from restored metadata (cooldown 3500, scalar 200 %, stop 500 ms, reflect after 300 ms): a ready Ronin countering a normal direct hit by a ground troop without an attack projectile takes 0, restarts its attack progress, slows the attacker (movement 0, hit speed 5 %, spawn 0) and reflects 2× the hit 6 ticks later. Interception at `entities.py:_resolve_attack_damage` (primary target), delivery at the Ronin's combat component; native `attacks.rs:try_counter`, `lib.rs` melee loop and `combat_one`. Flyers, buildings, projectiles, spells and dash blows are not countered. |
+
+Spec deviations (decided, documented): Bowler's boulder tests its muzzle on the creation tick (RoyaleSim `fire`
+creation test) instead of the spec's "no hit" creation tick. The Bandit stand is a countdown paused while stunned
+(Python's Freeze contract) rather than an absolute mark. Fisherman takes only the current-target fix; the spec's
+450/510 drag speeds, margin release and primed hit were not needed for any scenario and are left as listed
+residuals. Ronin counters only the primary target of a direct hit (splash/secondary bolts on a Ronin are not
+countered) and the attacker buff lands at once, not next tick.
+
+## 2. Native≠Python bugs (Python is the oracle)
+
+| Bug | Fix (native only; Python unchanged) | Replay (native-diff plan, full length) |
+|---|---|---|
+| §13 BossBandit × MightyMiner/Monk: movement spent toward a target that entered dash travel | `lib.rs:movement_one` committed-target check adds the combat helper's channel predicate (ramp owner and target in dash travel) | games 22, 245, 274, 323: **match** (base arm: first mismatch 1909, 2027, 749, 844) |
+| §14 ElectroDragon chain hook for an invalid primary | the source-hit hook runs only for a primary in this impact's recipient set (alive, enemy, not kind 2/3, plane or ground jumper), taken before the damage; the whole-phase `projectile_alive` set is gone | games 16, 86, 336, 460: **match** (base: 696, 745, 3139, 3160) |
+| §15 MegaKnight long-distance splash discard | exported `discard_exempt` = Python `should_cancel_committed_hit` exemptions (dashCooldown > 0, or direct area damage while the global is off) | games 189, 415: **match** (base: 171, 709) |
+| §16 IceSpirit × BossBandit non-interrupting freeze | `c56.rs:stun_target_mode` cancels a dash stand only when `interrupt` | game 548 **match**; it no longer diverges on the base arm either (the Batch A Python changes its action history), so the focused cases `bandit_freeze_stand`, `bandit_icespirit_{50,56}`, `bandit_zap_stand` carry the check (§4) |
+
+All eleven games were replayed with C1 Python + native `2ac024c7` (04 `c1/verify/nd.json`) and, as control, base
+Python + native de11f124 (08 `c1/nd/base.json`).
+
+## 3. Stat-value corrections for the `live16402` overlay (not applied in engine-cards)
+
+| Card | Body (nested object) | Field | Ours (gamedata, base) | RoyaleSim 16.402 | Effect |
+|---|---|---|---|---|---|
+| Bowler | BowlerProjectile | projectileRange | 7500 | 7000 | not needed for PASS (mechanics alone pass 3/3) |
+| AxeMan | AxeManProjectile | projectileRange | 7500 | 7000 | not needed for PASS |
+| Ronin | Ronin | hitSpeed | 1400 | 1300 | period 28 → 26 ticks; required for 3/3 |
+| Ronin | Ronin | loadTime | 1100 | 900 | first hit +2 ticks; required for 3/3 |
+
+The scratch overlay on 08 (`c1/stats/gamedata.json`) applies exactly these four rows.
+
+Omitted metadata restored in `balance.py` (not stat rebalances: absent from the compact export, or a mechanic
+switch): Assassin `dashImmuneToDamageTime` 100 → 150; BossBandit `dashCooldown` 800, `dashImmuneToDamageTime` 150;
+ZapMachine `loadFirstHit`, `attackPushback` 750, `projectileStartRadius` 1200, `ignorePushback`; AxeMan
+`projectileStartRadius` 600; AxeManProjectile `projectileRadius` 1000; InfernoDragon `overloadedProgressClock`;
+Ronin counter metadata. MegaKnight's recovery is a mechanic constant (4 ticks), its raw 300 is kept.
+
+## 4. Native == Python
+
+Native `2ac024c79f473d8ac3e29b83f494401f1021dcca148c8c66dbe9f8ae7bae83cd` (built on 127x04 from this tree; evidence
+04 `c1/verify/`; the first round on 6741bb91 is in `c1/verify-r1/`).
+
+| Check | Result |
+|---|---|
+| `batchA/tools/probe_native_scen.py`, the 36 C1 fidelity scenarios, digest every tick | **36/36** equal (no overlay) and **36/36** (with overlay) |
+| Focused C1 cases (`c1/tools/probe_c1_cases.py`, 35 scripts × both seats; 12 scripts fixed after both engines rejected a deploy): Freeze/Zap/IceSpirit/Log during a Bandit stand, Zap during travel, Fisherman hook vs Bandit and MegaKnight, target death mid-dash, dash ending over water, Bandit vs Inferno Tower / Mighty Miner, MegaKnight vs Zap/Giant, Bowler vs Barbarians and off-axis, Sparky zapped / target killed pre-fire, Inferno Dragon vs Skeleton Army and Zap, Electro Dragon vs Skeleton Army / Goblins, Electro/Ice Wizard close at birth, Clone, Mirror, Fisherman vs Giant and two targets, axe vs Skeleton Army and owner killed mid-throw, Ronin vs Barbarians / Minions / Prince / Electro Wizard | **70/70** equal |
+| Batch A first-update path audit (`probe_first_update_paths.py`, 21 paths × 2 seats) | **42/42** equal |
+| Batch A review cases (frozen Tombstone death, Witch corner, both seats) | **4/4** |
+| native-diff named games (§2) | **11/11** full-length match |
+| Mixed-deck sample: 96 native-diff plan games with ≥ 2 C1 cards (not the named 11), full length (`c1/tools/nd_sample.sh`) | **82 match**; 14 first divergences, all known causes: IceGolemite alias harness artefact 10, Poison × Bandit dash (75, B2 scope), Mirror × Skeleton Barrel level (133), C56 X-Bow load clock in a mixed context (173: the X-Bow fires a tick early, load 300 vs 50 — the known native-diff X-Bow cause, reached here because the C1 game trajectory changed; the base arm never gets there), game 72 (diverges identically on the base arm at its game-over tick). Round 1 found one C1 bug (game 4, below), fixed. |
+| Negative control: C1 Python with the unpatched native de11f124 | diverges on Bowler (147/29/147), ZapMachine (209/177), InfernoDragon minions (72), Fisherman alone (121); Assassin/BossBandit/MegaKnight state no longer loads; ElectroWizard/IceWizard equal (that fix is config-only) |
+
+Bug found by the mixed sample (round 1, native 6741bb91, game 4 at tick 676): Python's area-damage eligibility
+(`can_receive_area_damage`) skips a unit in Bandit dash travel or stealth **without marking it hit**; the native
+boulder and axe filters lacked both terms, so a boulder that crossed a dashing Boss Bandit could never hit it after
+it landed. Both native filters now skip such units (`projectiles.rs:rolling_character_hits`, `pingpong_tick`). Older
+piercing shots (C56) keep their filter unchanged.
+
+The digest does not cover every private timer; the new private states (stand/travel, overload load, axe t,
+chain wait, counter queue, clock refund) are exported in snapshots, but no mid-flight snapshot-continuation probe
+was run for them.
+
+## 5. Residuals and not implemented
+
+- **ElectroWizard × Knight** (6 differences): the C56 Knight's swing cycle under the Wizard's 500 ms stun-on-hit is
+  34 ticks here, 33 in RoyaleSim (Knight hits on the Wizard 54/88/122/156 vs 53/86/119/152). C56 clock; blocked by
+  C56 parity.
+- Spec items left out (no scenario needs them; candidates for a follow-up): Fisherman drag speeds 450/510, margin
+  release and primed first hit; Bandit route clear at entry; Ronin counters on splash/secondary hits and next-tick
+  buff installation; Sparky "target unlocked" after recoil; MegaKnight non-collidable after the blow; the Electro
+  Dragon dead-hop visibility rules beyond `_can_chain_to`; ElectroWizard spawn crown-tower damage (UNCERTAIN row).
+- No Mirror-level/evolution/hero forms were touched.
+
+## 6. C56 parity
+
+C56 config export (`differential.config`, all 56 cards, `batchA/tools/cfg_dump.py`): base and C1 **byte-identical**
+(sha256 `e52e8a960aed71f69624ccdb297cd890dcdd8b60506ea662a48d3353fac6d9db` both).
+
+Gate: `batchA/tools/gate.sh` copy on 127x04 (`c1/tools/gate.sh`; 577 fixtures + 300 × 2 roots, pinned 681b5f2c vs
+C1 native 2ac024c7 + C1 Python). **Pending** — launched at handoff; results to be filled by the shepherd.
+
+| Run | Patched native | Fixtures byte-identical | Rust-only chains equal | Full roots identical | Cut roots identical | Verdict |
+|---|---|---|---|---|---|---|
+| 1 | `2ac024c7` | pending | pending | pending | pending | pending |

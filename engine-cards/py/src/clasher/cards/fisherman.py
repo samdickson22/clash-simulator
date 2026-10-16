@@ -118,12 +118,13 @@ class FishermanHook(BaseMechanic):
         self._cancel(entity, self._target(entity))
 
     def _find_hook_target(self, entity: 'Entity'):
-        candidates = []
-        for target in entity.battle_state.entities.values():
-            if not self._is_hook_target_in_range(entity, target):
-                continue
-            candidates.append((target, entity.position.distance_to(target.position)))
-        return entity._select_nearest_target(candidates)
+        # Batch C1 (RoyaleSim (MIT) state.rs `special_step`): the hook considers only the current
+        # target, never a fresh scan of every far enemy; a Fisherman in melee with the princess after
+        # a self-drag keeps hitting her instead of hooking the king.
+        target = entity.battle_state.entities.get(entity.target_id)
+        if target is None or not target.is_alive or not self._is_hook_target_in_range(entity, target):
+            return None
+        return target
 
     def _is_hook_target_in_range(self, entity: 'Entity', target: 'Entity') -> bool:
         if not target.is_targetable_by(entity.player_id):

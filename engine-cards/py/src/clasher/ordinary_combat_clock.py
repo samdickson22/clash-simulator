@@ -2,6 +2,7 @@
 
 from .attack_clock import OrdinaryAttackClock
 from .cards.ice_spirit import IceSpiritFreeze
+from .cards.firecracker import AttackRecoil
 from .mechanics.mechanic_base import BaseMechanic
 
 
@@ -15,13 +16,15 @@ def supported(entity) -> bool:
     load = int(getattr(stats, "load_time", 0) or 0)
     if not 0 <= load <= hit or hit <= 0:
         return False
+    load_first_hit = bool(getattr(stats, "load_first_hit", False))
     if (
-        getattr(stats, "load_first_hit", False)
-        or getattr(stats, "attack_sequence", None)
+        getattr(stats, "attack_sequence", None)
         or getattr(stats, "override_attack_finish_time", False)
     ):
         return False
-    if getattr(stats, "first_hit_time", None) != hit - load:
+    # Batch C1: a LoadFirstHit weapon (Sparky) runs the same progress clock with its load timer
+    # seeded at LoadTime, the leave refund and its recoil's cycle reset.
+    if getattr(stats, "first_hit_time", None) != (hit if load_first_hit else hit - load):
         return False
     # Ice Spirit uses the ordinary clock until its launch hook replaces the
     # character with a projectile. Other custom handlers await native coverage.
@@ -29,6 +32,7 @@ def supported(entity) -> bool:
         getattr(type(mechanic), method, None) is getattr(BaseMechanic, method)
         for mechanic in entity.mechanics
         if not isinstance(mechanic, IceSpiritFreeze)
+        and not (load_first_hit and isinstance(mechanic, AttackRecoil))
         for method in ("on_attack_start", "on_attack_committed")
     )
 
@@ -61,6 +65,8 @@ def get_clock(entity):
     clock = entity._ordinary_clock
     if clock is None:
         clock = OrdinaryAttackClock(int(entity.card_stats.hit_speed), int(entity.card_stats.load_time or 0))
+        if getattr(entity.card_stats, "load_first_hit", False):
+            clock.refund_on_leave = 1
         entity._ordinary_clock = clock
         seed_remaining(entity, clock, entity.attack_cooldown)
     elif abs(entity.attack_cooldown - entity._ordinary_clock_projection) > 1e-8:

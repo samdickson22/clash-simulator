@@ -12,12 +12,30 @@ class SpawnAreaEffect(BaseMechanic):
     """Create a character's serialized spawn-area object after deployment."""
 
     area_data: dict
+    # Batch C1: a card play area (Electro/Ice Wizard spellAsDeploy) is cast when the card's character is
+    # created by a hand play (battle.deploy_card), never again at deploy end, and adds one tick to the
+    # character's deploy (RoyaleSim (MIT) state.rs `phase_spawn`). Clone copies cast nothing.
+    at_creation: bool = False
     _applied: bool = field(init=False, default=False)
 
     def on_spawn(self, entity) -> None:
+        if self.at_creation:
+            self._applied = True
+            return
         if self._applied or not hasattr(entity, "battle_state"):
             return
         self._applied = True
+        self._create_area(entity)
+
+    def cast_at_creation(self, entity) -> None:
+        if self._applied or not hasattr(entity, "battle_state") or entity.is_clone:
+            return
+        self._applied = True
+        entity.deploy_delay_remaining += 0.05
+        entity.placement_delay_total += 0.05
+        self._create_area(entity)
+
+    def _create_area(self, entity) -> None:
         battle = entity.battle_state
         from ...entities import AreaEffect
 

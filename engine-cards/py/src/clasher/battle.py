@@ -1329,6 +1329,12 @@ class BattleState:
                 entity = self.entities[entity_id]
                 if isinstance(entity, (Troop, Building)) and entity.deploy_delay_remaining > 1e-9:
                     entity.placement_pending = True
+            # Batch C1: a card play area (Electro/Ice Wizard) is cast on its character's creation tick.
+            for entity_id in sorted(self.entities.keys() - entity_ids_before):
+                entity = self.entities[entity_id]
+                for mechanic in getattr(entity, "mechanics", ()):
+                    if getattr(mechanic, "at_creation", False):
+                        mechanic.cast_at_creation(entity)
 
         self.public_card_play_history[player_id].append((self.tick, resolved_name))
         return True
