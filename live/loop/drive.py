@@ -397,6 +397,22 @@ def slot_ui(frame):
     return out
 
 
+def _spec_record(var):
+    """{path, sha256} of a translator switch spec named by an env var (None when unset): replays can then rebuild it."""
+    import hashlib
+    p = os.environ.get(var)
+    return None if not p else dict(path=p, sha256=hashlib.sha256(Path(p).read_bytes()).hexdigest())
+
+
+def playable_cards(rt):
+    """Cards our deck may hold: the C56, or with a full card-scope runtime (the card-pool switch, e.g.
+    CLASHER_BOT_RUNTIME_PINS=live16402b-r3) every playable card it has: its config cards minus level variants
+    ('level12:Knight'), each with a cost."""
+    if (getattr(rt, 'pins', None) or {}).get('card_scope', 'c56') == 'full':
+        return {c for c in rt.R.config['cards'] if ':' not in c and c in rt.R.costs}
+    return set(C56)
+
+
 def make_session(rt, player, deck):
     from bot.live.translate import LiveSession
     if not HANDSYNC:
@@ -612,6 +628,9 @@ def main(argv=None):
         yolo = from_spec(a.units)
     deck = load_deck()
     rt, sess = build_bot(a.player, deck)
+    # our own hand is read over the export's card vocabulary (perc.cards, = the hand model's vocab.json): a deck card
+    # outside it could never be read in hand, so it stays out of scope even when the runtime could play it
+    PLAYABLE = playable_cards(rt) & set(perc.cards)
     raw = {}                                   # the frame model's last outputs (overlay: what the model sees)
     _frame = perc.frame
     def _tap_frame(*args):
@@ -657,7 +676,7 @@ def main(argv=None):
         client['guest_timezone'] = lines[-1].strip() if lines else None
     except Exception as ex:
         client['error'] = repr(ex)[:200]
-    session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=deck, deck_out_of_scope=[c for c in deck if c not in C56], player=a.player,
+    session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=deck, deck_out_of_scope=[c for c in deck if c not in PLAYABLE], player=a.player,
                        fast=os.environ.get('CLASHER_LIVE_FAST'), export=str(a.export), export_frame_sha256=export_sha,
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
                        translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
@@ -665,6 +684,8 @@ def main(argv=None):
                                     swap_prec=SWAP_PREC, hud_cal=bool(CAL), cal_head=(CAL_HEAD or '')[:12], floor_late=FLOOR_LATE),
                        hand_model=hand_info,
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'), manifest=man_info,
+                       card_scope=(getattr(rt, 'pins', None) or {}).get('card_scope', 'c56'), playable_cards=len(PLAYABLE),
+                       true_ids=_spec_record('CLASHER_LIVE_TRUE_IDS'), play_decider=_spec_record('CLASHER_LIVE_PLAY_DECIDER'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
                        logged='live', perc_threads=a.perc_threads, units_source='model' if yolo is None else dict(spec=a.units, **yolo.info()))
@@ -682,7 +703,7 @@ def main(argv=None):
         ov.deck = list(deck)
         if yolo is not None:                   # display only: unit boxes from the same per-class ground offsets as the board
             ov.ground_dy = {n: float(o['dy']) for n, o in yolo.offsets.items()}
-        playable = C56
+        playable = PLAYABLE
         ov.deck_check = lambda names: None     # any 8 distinct names are recorded; out-of-scope cards block battles
         import deckread
         card_templates = B_load_templates()
@@ -722,7 +743,7 @@ def main(argv=None):
             flash_raw = None
             if ELIXIR_FLASH and present and elixir is not None and state == 'battle':
                 elixir, flash_raw = eflash.update(f, elixir, n)
-            deck_oos = [c for c in deck if c not in C56]
+            deck_oos = [c for c in deck if c not in PLAYABLE]
             why = ('file' if PAUSE_FILE.exists() else 'page' if (ov is not None and ov.paused) else
                    'deck_out_of_scope' if deck_oos else 'low_disk' if (low_disk and state != 'battle') else None)
             paused = why is not None
@@ -753,7 +774,7 @@ def main(argv=None):
                         DECK_FILE.write_text(json.dumps(deck))
                         sess = make_session(rt, make_live_player(rt, a.player), deck)
                         session_cfg['deck'] = list(deck)
-                        session_cfg['deck_out_of_scope'] = [c for c in deck if c not in C56]
+                        session_cfg['deck_out_of_scope'] = [c for c in deck if c not in PLAYABLE]
                         log('events', dict(ev='deck_change', deck=deck))
             row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present, white=round(white),
                        elixir=elixir, state=state)
