@@ -1171,7 +1171,7 @@ B_DIR:SUBSTR [--opps v1,R3a] [--alpha]` (per opponent and the per-case mean over
 it reproduces the 19:50Z F9 numbers for r5 v10 exactly.
 
 <!-- it10-state-begin -->
-### Iteration 10: current state (resume here; updated 2026-10-16T02:41:38Z)
+### Iteration 10: current state (resume here; updated 2026-10-16T03:15:06Z)
 
 Read this block first; the dated log below it has the evidence. Hosts: **01, 03, 04, 08** (never 02/06/07/09–18; 05 light
 only). Our work is only under `/mpac/sdicks02/jobs/clasher/bot-*` and `/mpac/sdicks02/repos/clasher-bot*`. Code is `bot/`
@@ -1212,9 +1212,19 @@ k = 3.
 - CPU queue runners still alive (idle unless lines are appended): 01 cpuq6/cpuq7/cpuqka; 04 cpuq 3045524, cpuq2 3192422,
   cpuq6 363971, cpuq7 1222266, cpuqka 3964180; 08 cpuq 2525950, cpuq2 2581995, cpuq6 4115451, cpuq7 792386, cpuqka
   3544192. Keep any new 03/04/08 CPU job ≤ 30 workers in total per host.
+- **K4L feeders (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
+  total live python; claims/leases make them yield; to throttle, kill the feeder PGID and relaunch with a lower TARGET,
+  in-flight 100-game batches drain by themselves):**
+  - 03: PGID 3103024, `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l $J3/cpu-feed-k4l.tmpl 80 100 8300000 8400000 95 400`
+    (run from `/mpac/sdicks02/repos/clasher-bot-rl03`; `$J3=/mpac/sdicks02/jobs/clasher/bot-exit-r1-03`; new template uses
+    the rl03 tree and runtime `students/it5s2-step001200.pt`; TRAIN1 block [8300000, 8400000), first labels checked: 0 errors).
+  - 04: PGID 4161769, `… $J4/cpu-feed-k4l $J4/cpu-feed-k4l.tmpl 60 100 8100000 8200000 95 400` (log `cpu-feed-k4l.log6`).
+  - 08: PGID 425186, `… $J8/cpu-feed-k4l $J8/cpu-feed-k4l.tmpl 30 100 8200000 8300000 95 400` (log `cpu-feed-k4l.log8`).
+  - The coordinator expects full-pool generation on the new live pin (~40 workers on 04/08, 16 on 03) within a few
+    hours: lower these feeders then.
 - **Stopped (01:34Z):** all GPU queue runners + BL6f keep-alives on 04/08, filler fits, RL r9/r10 learners (SIGTERM;
-  state saved after r9 update 5 = v4, r10 update 4 = v3), all r9/r10 actor pools (04, 01, 03) and syncs, kl_stops, all
-  K4L feeders (01, 04, 08), eval watchers r4/r5/r9/r10 on 08 (STOP files). No RL run is active.
+  state saved after r9 update 5 = v4, r10 update 4 = v3), all r9/r10 actor pools (04, 01, 03) and syncs, kl_stops, the
+  K4L feeders until 03:12Z, eval watchers r4/r5/r9/r10 on 08 (STOP files). No RL run is active.
 
 **Resume when GPUs return** (ask/confirm the allocation first):
 1. RL r9 (04 GPU; RUN `/mpac/sdicks02/jobs/clasher/bot-rl-r9`): `rm RUN/STOP_LEARNER RUN/STOP_ACTORS`; `cd
@@ -1449,6 +1459,11 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
 
 - 02:46Z: `hl-rl9v4` / `hl-rl10v3` queued on 01 (CPU otherwise idle): early read of whether the 480–800-game batches
   move r5 v10 on HEADLINE (screen only; neither is a selected snapshot).
+
+- **03:12–03:15Z, CPU refill (coordinator: LIVE compositing done; fill 03/04 to ~95).** No verdict evals were pending
+  (soup done; r9 v4 / r10 v3 screens already on 01), so feeders: 03 new (target 80, block 8300000), 04 target 60, 08 target
+  30, all cap 95. Live python at 03:14:40Z: 01 90 (76 ours: HEADLINE screens), 03 79 (77 ours), 04 92 (29 ours + others),
+  08 13 → feeder ramping to ~42.
 
 ## Next
 
