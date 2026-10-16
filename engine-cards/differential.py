@@ -13,6 +13,7 @@ import sys
 import time
 from collections import deque
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 ES = ROOT / "reports/strategy_council_20260928/engine-speed"
@@ -70,6 +71,13 @@ def entity(e, *, clone_prototype=True):
     hook_spec, hook_state = hook(e)
 
     s = e.card_stats
+    # A launched Spirit carrier (kind 2) keeps its character template stats natively (troop.rs
+    # launch_spirit); its mode-derived stats are exported as the character's, not the projectile's.
+    carrier = (
+        SimpleNamespace(card_stats=s, entity_kind=0, mechanics=e.mechanics)
+        if getattr(e, "_self_projectile_launched", False)
+        else e
+    )
     projectile = getattr(s, "projectile_data", None) or {}
     child = (
         getattr(e, "spawn_projectile_data", projectile.get("spawnProjectileData")) or {}
@@ -172,7 +180,7 @@ def entity(e, *, clone_prototype=True):
               + int(getattr(s, "summon_character_second_count", 0) or 0)),
         projectile_stun=float(getattr(e, "stun_duration", projectile_stun)),
         projectile_slow_duration=float(getattr(e, "slow_duration", 0 if projectile_stun else float(projectile.get("buffTime", 0)) / 1000.0)),
-        projectile_slow_multiplier=float(e.slow_multiplier if e.entity_kind == 2 else max(0.0, 1.0 + float(buff.get("speedMultiplier", 0)) / 100.0)),
+        projectile_slow_multiplier=float(e.slow_multiplier if carrier.entity_kind == 2 else max(0.0, 1.0 + float(buff.get("speedMultiplier", 0)) / 100.0)),
         area_while_invisible=bool(
             getattr(s, "allow_area_damage_when_invisible", False)
         ),
@@ -259,7 +267,7 @@ def entity(e, *, clone_prototype=True):
         knockback_immune=is_knockback_immune(s),
         hide_ms=hide.hide_delay_ms if hide else 0,
         rise_ms=hide.rise_time_ms if hide else 0,
-        ordinary=supported(e),
+        ordinary=supported(carrier),
         finish_allowed=interval > 1
         and not any(
             getattr(s, name, False)

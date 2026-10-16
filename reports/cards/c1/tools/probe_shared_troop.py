@@ -379,12 +379,17 @@ def require_witness(name, seat, result):
         assert actors[0] is not None and actors[0]['target']==7
         assert actors[0]['facing']==[0,-1000 if seat==0 else 1000], 'zero-distance heading lost'
     elif name.startswith('spirit/'):
-        expected = {'uniform':0.7,'overlap':0.333,'above_one':1.25}.get(name.split('/')[1],1.0)
         assert any(a['spirit'] and a['entity_kind']==2 for a in live), 'no actual Spirit launch'
+        # The carrier keeps its character template stats through launch (troop.rs launch_spirit;
+        # differential.entity exports the same), whatever the slow/haste/mode axes; the full-state
+        # comparison against Python every tick covers the rest.
+        # Native's own import of the pre-step state (the native stats representation).
+        initial = watched_row(json.loads(D.clasher_core.BattleState(json.dumps(result['initial'])).snapshot()),
+                              result['watched'])
+        template = initial['stats']
+        assert not initial['spirit'] and template['ordinary'] is True
         for actor in live:
-            if actor['spirit']:
-                assert actor['stats']['ordinary'] is False
-                assert actor['stats']['projectile_slow_multiplier']==expected
+            assert actor['stats']==template, 'carrier stats changed at launch'
         assert actors[-1] is None, 'carrier did not reach impact/removal'
     elif name.startswith('cleanup/'):
         expected = 1 if name in ('cleanup/positive_not_started','cleanup/no_clock') else 0

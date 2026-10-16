@@ -46,33 +46,23 @@ impl Entity {
         }
     }
 
-    /// Entity._recompute_slow_state, independent of movement mode and haste.
-    /// An effect's movement axis may exceed one while another axis is slowed;
-    /// only the empty set has a default of one. Keep the unrounded scalar.
-    fn carrier_slow_multiplier(&self) -> f64 {
-        let mut factor = if self.slow_ms > 0 { Some(0.7_f64) } else { None };
-        for slow in &self.area_slows {
-            factor = Some(factor.map_or(slow.1, |current| current.min(slow.1)));
-        }
-        factor.unwrap_or(1.0)
-    }
-
-    /// IceSpiritFreeze.on_attack_start / differential.entity: the flight carrier
-    /// changes kind and mode-derived stats together, retaining its loaded clock.
+    /// IceSpiritFreeze.on_attack_start: the flight carrier changes kind and keeps its
+    /// loaded clock. Its stats stay the character template (the exporter reports a
+    /// launched carrier's mode stats as a character, differential.entity), so C56
+    /// snapshots keep their pinned bytes; `spirit` marks the launch for readers.
     pub(super) fn launch_spirit(&mut self, tick: i64, target: Option<i32>, aim: (f64, f64)) {
         self.spirit = true;
         self.entity_kind = 2;
         self.spirit_launch = tick;
         self.shot_target = target;
         self.aim = aim;
-        self.stats.ordinary = false;
-        self.stats.projectile_slow_multiplier = self.carrier_slow_multiplier();
     }
 
-    /// on_combat_target_removed consults an existing clock after Spirit launch,
-    /// even though supported(kind=2) and its exported ordinary flag are false.
+    /// on_combat_target_removed: an ordinary character reads its clock; after a Spirit
+    /// launch supported(kind=2) is false and only an existing clock is consulted.
     pub(super) fn finish_started(&self) -> bool {
-        if self.stats.ordinary || (self.spirit && self.clock_initialized) {
+        let clocked = if self.spirit { self.clock_initialized } else { self.stats.ordinary };
+        if clocked {
             self.clock.timeline > 0
         } else {
             self.started
