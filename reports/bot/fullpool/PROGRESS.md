@@ -366,3 +366,28 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   - bot/live/player.py keeps the full-pool open-world belief when BOT_BELIEF_PRIOR is a full-pool spec (64c720ea).
   - headline resolves LIVE-/K4CW-/PERC- names.
   - packet_check (22ff0a60). The translator owner got the token-space answer and the checker.
+- 19:45–19:56Z **bundle fixes and checks:**
+  - **Live belief bug fixed:** the live wall-search planner (bot/live/player.py WallCandidatePlayer.start, the third
+    PublicPlanner site) still used rt.PRIOR, so the live bundle player ran the plain C56 Belief even with
+    BOT_BELIEF_PRIOR set. Found by an import-closure probe; fixed in 844d5655 (default unchanged).
+    - After the fix, `LIVE-K4L-R-gs-rw-fc-w200-t4-p4-mk1a1-res` runs FullPoolBelief. It reads the data files
+      reports/bot/fullpool/freq/arena-card-freq-b53b02a1fde4.json and reports/live/loop/ARENA-CARDS.md (plus the ab/
+      Battle Log decks only in sim cases).
+    - Its bot/ import closure is 34 modules: bot/{cards/{fc_cut,scope}, eval/headline, exit/student,
+      fullpool/{banks,belief,cards,extend,models}, live/{levels,player,translate},
+      players/{base,ours,policy,royalesim_translate,runtime,search,variants},
+      search/{candidates,lopp,lopp_fast,lopp_feat,oppmodel,players,reserve}} plus the __init__ files.
+  - **The running gate is valid:** in its tree, arm B K4L-R-gs-mk1a1 runs FullPoolBelief (400 decks, 672,000 states)
+    and arm A runs LiveBelief over the C56 catalog (4,914,000 states). The gate players don't use the patched live
+    planner.
+  - **`res` token** (main 7b693b8e4, bot/search/reserve.py): without the token, `K4L-R-gs-mk1a1` gives identical
+    command hashes on the old tree (no reserve code) and on new main, 7 of 7 LIVE-AB1 cases, and the reserve is never
+    called. With-token and lopp_fast (t2) variants are running on 08 (res-new2/res-old2). The p2 variant cannot run
+    inside a Pool worker.
+- **Mac scope:** the Mac snapshot manifest (scratch/live-loop/packages/manifest-simple-r2/bot-snapshot-20261016.sha256,
+  71 files) vs main d4d32f9a. Changed: 16 files (bot/live/{births,levels,player,translate},
+  bot/players/{ours,royalesim_match,royalesim_translate,royalesim_vocab,runtime,search},
+  bot/search/{lopp,lopp_fast,lopp_feat,lopp_record,lopp_train,players}). Added: 220 (of which the live closure needs
+  bot/cards/{fc_cut,scope,proxy_table}, bot/eval/headline, bot/exit/student, bot/fullpool/{banks,belief,cards,decks,
+  extend,models}, bot/players/{policy,variants}, bot/search/{candidates,oppmodel,reserve}). Removed: bot/live/
+  {mac_bench,mac_perc}.py.
