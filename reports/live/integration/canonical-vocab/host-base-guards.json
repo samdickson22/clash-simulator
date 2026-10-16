@@ -1,0 +1,40 @@
+{
+  "schema": "canonical-vocab-host-base-v1",
+  "utc": "2026-10-16T10:46:35.317682+00:00",
+  "actual_original_sha256": {
+    "bot/live/births.py": "48636f630a0ba1a7567a3f383bfcbca3aeba97418b917e278aa621dd6e8fd227",
+    "bot/live/translate.py": "5361deb0dbe166fd751bbb3ed3d7a710acc23cc6cbd36cb8eaaee5eb1d9458d8",
+    "bot/players/royalesim_translate.py": "96229925be51b54ae330f0711082198dae997f0031189988125bbeb00de1bf36",
+    "live/perception/yolo_units.py": "091350dfeb69a97735160a647dac3749a70cc3ba862790ef5c10720a5714b515",
+    "yolo/classes.json": "f033bf1b787d6594bde9296ba7350932a449d367f9635969b354fa8269f95bec"
+  },
+  "unchanged_sha256": {
+    "bot/players/royalesim_vocab.json": "12850e47f3d82524e5b91aef5052bbeb3b11a3cc5466282c98edbe84fa617cb1"
+  },
+  "release_sha256": {
+    "bot/live/births.py": "87993dd3e5a173187ba6ac27cf9b8c1fe74c4a84b31560772a49adbbbf012f39",
+    "bot/live/engine_body_aliases.json": "3793a3c24d8336bc13308bfef9890a01dcec9748cd5475b9d6192fa78a2cf1bc",
+    "bot/live/translate.py": "43c9a5c70c1a7f40ad707e8b8389fa84d8589e8819049fd2953d16c2d66e8488",
+    "bot/players/royalesim_translate.py": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+    "live/perception/yolo_units.py": "1b05090de88885d0fcc19461e008a981e62174ed1bd3e62d73400a69a50298e6",
+    "yolo/body-resolution-r3.json": "65581fa6239b5716b6fe3a54d04b67b2764006408d01a0dc7db394bdafa687b9",
+    "yolo/classes.json": "ee8adecb240b14b2193bf34f01dd53f6a4fa1e36e1c55fdc882692c05cd7bc62"
+  },
+  "complete_vocab_helper_sha256": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+  "actual_host_attestation": "runtime-capability-s32 source-commit-comparison.json and22inputequivalence; original5files,notcurrentmainbytes",
+  "actual_host_helper_receipt": "source/royalesim_translate.py SHA96229925 attested actualMac and identical archivalcopy",
+  "source_base_commit": "ae3f6b0c579c5c817630b92a64089917c6623704",
+  "source_base_sha256": {
+    "bot/live/translate.py": "4d9c37a5b75886df74c92bc042f675bddf6553a08e7b489be66eebf7804e50bf",
+    "bot/live/births.py": "48636f630a0ba1a7567a3f383bfcbca3aeba97418b917e278aa621dd6e8fd227",
+    "bot/players/royalesim_translate.py": "381138734b2fcdd45434685b3b764f30c70583c51f8cc9fc4052d9b55df29fa6",
+    "bot/live/engine_body_aliases.json": null,
+    "live/perception/yolo_units.py": "ec53d9f9a8285c11092fecc5e67755c4d269fe2c776c9a9a3932543c4e359deb",
+    "yolo/classes.json": null,
+    "yolo/body-resolution-r3.json": null
+  },
+  "target_roots": "explicit --repo-root for bot/ and live/; --yolo-root for external classes/body-resolution assets; no assumed Mac path",
+  "phase_semantics": "base/rollback require5originals+unchangedvocab; added2data absent or exactrelease; released requiresall7+unchangedvocab",
+  "rollback": "restoreall5originals including sharedhelper,unsetcompatenv; retainnewdataonlyifexact/inert; noautomaticwrite/deploy/pin action",
+  "release_authorization": "none; detectorOFF/model/phantom/field/runtime/CoreML/review/LEADgatesremain"
+}

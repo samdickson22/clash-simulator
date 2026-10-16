@@ -1,10 +1,17 @@
 """YOLO unit detector for the live loop: an Ultralytics-style detector + a class mapping -> the record's `units` (and the
-additive `unknown_units`) in exactly the LivePerception format. Our frame model keeps hand, elixir, towers, clock and events;
+additive `unknown_units`). A mapping with observation_contract='canonical-body-v1' emits truthful observed body/family,
+raw detector evidence and an explicit optional legacy backend proxy; old mappings retain the original record behavior.
+Our frame model keeps hand, elixir, towers, clock and events;
 only `units` are replaced (drive.py --units yolo:<model>:<classes.json>[:k=v,...]).
 
   y = from_spec('yolo:yolo-v2m-e2-896x576-fp16.mlpackage:live/yolo_synth/classes.json:offsets=ground-offsets.json')
   out = y.step(android_bgr)      # the driver's normalized official frame (any size, 9:16; drive.normalize(to_android(..)))
   out['units'], out['unknown_units'], out['units_yolo'] (the detector class name per unit)
+
+Canonical observations require the matching body-aware consumer. cls is the reviewed observed_body (or raw name with
+body_resolution='unresolved'); card is mapping.card, a detector family label, not deployment provenance. spawn_card is
+never inferred. legacy_backend_proxy is projection data, never an observed identity. Backend compatibility is an
+explicit consumer policy; this adapter performs no backend card selection or capability inference.
 
 Matches the r3 owner's reference, live/perception/yolo/eval_yolo.py predict():
 * Crop: capture box (42.2, 31.3)-(674.2, 1019.3) in 720x1280 px, scaled to the frame size, INTER_AREA warp to 568x896
@@ -83,8 +90,9 @@ def crop(frame):
 
 
 def letterbox(im, h, w):
-    """Ultralytics LetterBox(auto=False, center): scale to fit (never up), pad with 114 -> (img, k, pad_x, pad_y)."""
-    k = min(h/im.shape[0], w/im.shape[1], 1.)
+    """Ultralytics LetterBox(auto=False, scaleup=True, center): scale to fit, pad with 114 -> (img, k, pad_x, pad_y).
+    568x896 -> 896x576: k 1, 4 px each side; -> 1024x672: k 1.143 (resize to 649x1024), 11/12 px."""
+    k = min(h/im.shape[0], w/im.shape[1])
     nw, nh = int(round(im.shape[1]*k)), int(round(im.shape[0]*k))
     if (nw, nh) != (im.shape[1], im.shape[0]):
         im = cv2.resize(im, (nw, nh), interpolation=cv2.INTER_LINEAR)
@@ -145,6 +153,7 @@ class _Model:
         if not self.names:
             raise ValueError(f'{p}: no class names (model metadata, {side.name} or mapping["names"])')
         self.scale255 = str(meta.get('input_range', '0-1')) == '0-255'
+        self.nms = str(meta.get('nms', 'classwise'))          # the model's recorded NMS default (e16: 'agnostic')
 
     def run(self, rgb):
         if self.kind == 'coreml':
@@ -172,17 +181,33 @@ class _Model:
 
 class YoloUnits:
     def __init__(self, models, mapping, conf=.5, iou=.6, compute_units='ne', device='cpu', every=1, fmt=None, offsets=None,
-                 threads=0):
+                 threads=0, agnostic=None):
         """models: path or list of paths (merged, class-agnostic NMS); mapping: classes.json / katacr_to_clasher.json path or
         dict. every: the driver detects on every Nth battle frame and reuses the last detections in between."""
         self.every = max(1, int(every))
         self.cls, self.class_list, self.map = load_mapping(mapping)
+        self.observation_contract = self.map.get('observation_contract')
+        if self.observation_contract not in (None, 'canonical-body-v1'):
+            raise ValueError(f'unsupported observation_contract: {self.observation_contract!r}')
+        if self.observation_contract:
+            for name, entry in self.cls.items():
+                if self.is_unit(name):
+                    if entry.get('kind', 'troop') not in ('troop', 'building'):
+                        raise ValueError(f'{name}: canonical units need troop/building kind')
+                    body = entry.get('observed_body')
+                    status = entry.get('body_resolution')
+                    if status not in ('resolved', 'unresolved') or (status == 'resolved') != bool(body):
+                        raise ValueError(f'{name}: invalid canonical body resolution')
+                    if body is not None and (not isinstance(body, str) or not body.strip()):
+                        raise ValueError(f'{name}: observed_body must be a nonempty name or null')
         self.mapping_path = None if isinstance(mapping, dict) else str(mapping)
         self.offsets_path = str(offsets) if offsets else None
         self.offsets = json.loads(Path(offsets).read_text()) if offsets else {}
         paths = [models] if isinstance(models, (str, Path)) else list(models)
         self.models = [_Model(p, compute_units, device, names=self.class_list, threads=threads) for p in paths]
         self.conf, self.iou, self.fmt = conf, iou, fmt or self.map.get('format', 'auto')
+        # class-agnostic NMS (KataCR non_max_suppression(agnostic=True)): the spec's agnostic=0/1, else the model metadata 'nms'
+        self.agnostic = all(m.nms == 'agnostic' for m in self.models) if agnostic is None else bool(agnostic)
         for m in self.models:
             team = m.names[-1] in TEAM_NAMES
             m.fmt = self.fmt if self.fmt != 'auto' else 'katacr' if team else 'name_team'
@@ -203,11 +228,14 @@ class YoloUnits:
             for f in files:
                 h.update(f.read_bytes())
             return h.hexdigest()
-        return dict(models=[dict(path=str(m.path), sha256=sha(m.path), input_hw=[m.h, m.w], kind=m.kind, format=m.fmt)
+        result = dict(models=[dict(path=str(m.path), sha256=sha(m.path), input_hw=[m.h, m.w], kind=m.kind, format=m.fmt)
                             for m in self.models],
                     mapping=self.mapping_path, mapping_sha256=sha(self.mapping_path) if self.mapping_path else None,
                     offsets=self.offsets_path, offsets_sha256=sha(self.offsets_path) if self.offsets_path else None,
-                    conf=self.conf, iou=self.iou, every=self.every)
+                    conf=self.conf, iou=self.iou, agnostic=self.agnostic, every=self.every)
+        if self.observation_contract:
+            result['observation_contract'] = self.observation_contract
+        return result
 
     def _detect(self, m, cr):
         """568x896 crop -> [dict(name, team, score, box=(x1, y1, x2, y2) in crop px)] after class-wise NMS."""
@@ -222,7 +250,9 @@ class YoloUnits:
             return []
         b, s, c = raw[:4, keep].T, s[keep], c[keep]
         xywh = np.c_[b[:, 0] - b[:, 2]/2, b[:, 1] - b[:, 3]/2, b[:, 2], b[:, 3]]
-        off = xywh.copy(); off[:, :2] += c[:, None]*7680.      # class-wise NMS (KataCR / Ultralytics max_wh offset)
+        off = xywh.copy()
+        if not self.agnostic:                   # class-wise NMS (KataCR / Ultralytics max_wh offset); agnostic: offset 0
+            off[:, :2] += c[:, None]*7680.
         idx = np.array(cv2.dnn.NMSBoxes(off.tolist(), s.tolist(), self.conf, self.iou), int).reshape(-1)
         tm = raw[-1, keep] if team else None
         out = []
@@ -235,7 +265,8 @@ class YoloUnits:
                 continue
             x1, y1, w, h = xywh[i]
             box = ((x1 - px)/k, (y1 - py)/k, (x1 + w - px)/k, (y1 + h - py)/k)        # crop px (Ultralytics scale_boxes)
-            out.append(dict(name=str(name), team=tv, score=float(s[i]), box=box))
+            out.append(dict(name=str(name), class_idx=int(c[i]), team=tv, p_team=float(tm[i]) if team else float(tv),
+                            score=float(s[i]), box=box))
         return out
 
     def ground(self, d):
@@ -271,6 +302,22 @@ class YoloUnits:
             x, y = self.ground(d)
             owner = d['team']
             e = self.cls.get(d['name']) or {}
+            if self.observation_contract == 'canonical-body-v1':
+                body = e.get('observed_body')
+                # card is a detector family label, never a claim of deployment provenance.
+                unit = dict(cls=body or d['name'], card=e.get('card'), kind=e.get('kind', 'troop'), owner=int(owner),
+                            x=round(float(x), 3), y=round(float(y), 3), hp_frac=None, score=round(d['score'], 4),
+                            observation_contract=self.observation_contract,
+                            body_resolution=e.get('body_resolution', 'unresolved'),
+                            rawdetector=dict(name=d['name'], class_idx=d.get('class_idx'),
+                                             p_team=d.get('p_team'), variant=e.get('variant', 'base')))
+                proxy = e.get('legacy_backend_proxy')
+                if proxy is not None:
+                    # Copy so consumers cannot mutate the class registry through a returned observation.
+                    unit['legacy_backend_proxy'] = dict(proxy)
+                units.append(unit)
+                src.append(d['name'])
+                continue
             ident = e.get('identity')
             if ident and ident != 'unknown_unit':
                 units.append(dict(cls=ident, card=_body_card(ident), owner=int(owner), x=round(float(x), 3), y=round(float(y), 3),
@@ -312,7 +359,7 @@ def _body_card(identity):
 
 
 def from_spec(spec):
-    """drive.py --units 'yolo:<model>[+<model>...]:<mapping>[:k=v,...]' (k: conf, iou, cu, device, every, format, offsets,
+    """drive.py --units 'yolo:<model>[+<model>...]:<mapping>[:k=v,...]' (k: conf, iou, agnostic (1: class-agnostic NMS), cu, device, every, format, offsets,
     threads (torch backend intra-op threads while detecting; offline replays))."""
     import os
     parts = spec.split(':')
@@ -323,4 +370,5 @@ def from_spec(spec):
     return YoloUnits([ex(p) for p in parts[1].split('+')], ex(parts[2]), conf=float(opts.get('conf', .5)),
                      iou=float(opts.get('iou', .6)), compute_units=opts.get('cu', 'ne'), device=opts.get('device', 'cpu'),
                      every=int(opts.get('every', 1)), fmt=opts.get('format'),
-                     offsets=ex(opts['offsets']) if 'offsets' in opts else None, threads=int(opts.get('threads', 0)))
+                     offsets=ex(opts['offsets']) if 'offsets' in opts else None, threads=int(opts.get('threads', 0)),
+                     agnostic=None if 'agnostic' not in opts else opts['agnostic'] == '1')
