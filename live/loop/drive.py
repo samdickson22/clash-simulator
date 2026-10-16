@@ -885,12 +885,16 @@ def main(argv=None):
                         try:
                             yolo_last = dict(fut.result(), ts_ms=ts_ms)
                         except Exception as ex:          # no units this frame rather than a dead loop
-                            yolo_last = dict(units=[], unknown_units=[], units_yolo=[], ts_ms=ts_ms, error=repr(ex)[:200])
+                            yolo_last = dict(units=[], unknown_units=[], units_yolo=[], units_yolo_info=[], unknown_yolo_info=[],
+                                             ts_ms=ts_ms, error=repr(ex)[:200])
                             log('events', dict(ev='yolo_error', n=n-1, error=yolo_last['error']))
                     row.update(yolo_ms=yolo.last_ms if fut is not None else None, yolo_wait_ms=1e3*(time.perf_counter() - tw0))
                     rec['units_model'] = rec['units']
                     rec['units'], rec['unknown_units'] = list(yolo_last['units']), list(yolo_last['unknown_units'])
                     rec['units_yolo'], rec['units_age_ms'] = yolo_last['units_yolo'], ts_ms - yolo_last['ts_ms']
+                    # logging only (translator's temporal owner model): team probability + class score per unit, parallel
+                    rec['units_yolo_info'] = yolo_last.get('units_yolo_info', [])
+                    rec['unknown_yolo_info'] = yolo_last.get('unknown_yolo_info', [])
                 towers.apply(rec, f)       # tower alive/HP from the drawn numbers (perception's HP head misreads)
                 gone = TW.guard_towers(rec, tower_last)       # always 6 towers; missing -> last state; dead stays dead
                 if gone:

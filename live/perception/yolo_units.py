@@ -273,6 +273,7 @@ class YoloUnits:
     def step(self, frame_bgr):
         t0 = time.perf_counter()
         units, unknown, src = [], [], []
+        info, unknown_info = [], []    # logging only: per-unit team probability + class score, parallel to units / unknown
         m, self.last_oob = self.arena_margin, 0
         for d in self.detections(frame_bgr):
             if not self.is_unit(d['name']):
@@ -288,11 +289,13 @@ class YoloUnits:
                 units.append(dict(cls=ident, card=_body_card(ident), owner=int(owner), x=round(float(x), 3), y=round(float(y), 3),
                                   hp_frac=None, score=round(d['score'], 4)))
                 src.append(d['name'])
+                info.append(dict(p_team=round(float(d['p_team']), 4), score=round(d['score'], 4)))
             else:
                 unknown.append(dict(owner=int(owner), kind=e.get('kind', 'troop'), x=round(float(x), 3), y=round(float(y), 3),
                                     score=round(d['score'], 4)))
+                unknown_info.append(dict(name=d['name'], p_team=round(float(d['p_team']), 4), score=round(d['score'], 4)))
         self.last_ms = 1e3*(time.perf_counter() - t0)
-        return dict(units=units, unknown_units=unknown, units_yolo=src)
+        return dict(units=units, unknown_units=unknown, units_yolo=src, units_yolo_info=info, unknown_yolo_info=unknown_info)
 
     def submit(self, frame_bgr):
         """Run step() on a worker thread (overlaps our frame model); .result() of the returned future."""
