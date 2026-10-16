@@ -3930,6 +3930,18 @@ class Troop(Entity):
             self._attack_windup_active = False
         else:
             self._attack_windup_active = True
+        if getattr(self.card_stats, "attack_select", None):
+            # Batch B1 (RoyaleSim (MIT) combat.ATTACK_SELECT_MOMENT =
+            # at_swing_start): the attack entry is chosen on a fresh cycle's
+            # first tick in reach, and again at each hit for the next swing.
+            if not target_in_range:
+                self._attack_select_choice = None
+            elif (
+                getattr(self, "_attack_select_choice", None) is None
+                or getattr(self, "_attack_select_target", None) != current_target.id
+            ):
+                self._attack_select_choice = self._melee_selected(current_target)
+                self._attack_select_target = current_target.id
         
         if current_target:
             # Move towards target if out of range
@@ -3984,7 +3996,20 @@ class Troop(Entity):
 
                 # Check if this troop uses projectiles
                 uses_projectile = self._uses_projectiles()
-                if uses_projectile:
+                select = getattr(self.card_stats, "attack_select", None)
+                melee_selected = bool(
+                    select
+                    and getattr(self, "_attack_select_choice", None)
+                    and not is_airborne_target(current_target)
+                )
+                if melee_selected:
+                    # The bayonet: a direct hit for the selector's damage.
+                    self._deal_attack_damage(
+                        current_target,
+                        float(self.card_stats.get_scaled_stat(select.get("meleeDamage", 0))),
+                        battle_state,
+                    )
+                elif uses_projectile:
                     self._create_projectile(current_target, battle_state)
                 else:
                     # Direct attack with special charging damage if applicable
@@ -3994,6 +4019,9 @@ class Troop(Entity):
                         attack_damage,
                         battle_state,
                     )
+                if select:
+                    self._attack_select_choice = self._melee_selected(current_target)
+                    self._attack_select_target = current_target.id
 
                 # This lifecycle point is deliberately after projectile
                 # creation.  Mechanics such as recoil must not move the
@@ -4008,6 +4036,20 @@ class Troop(Entity):
                 self._attack_preload_blocked = False
                 self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
+
+    def _melee_selected(self, target: 'Entity') -> bool:
+        """combat.ATTACK_SELECT_RANGE = range_plus_both_radii, on the ground."""
+        select = getattr(self.card_stats, "attack_select", None) or {}
+        if select.get("meleeGroundOnly", True) and is_airborne_target(target):
+            return False
+        reach = tiles_to_logic_units(
+            float(select.get("meleeRange", 0) or 0) / 1000.0
+            + float(getattr(self.card_stats, "collision_radius", 0.5) or 0.5)
+            + float(getattr(target.card_stats, "collision_radius", 0.5) or 0.5)
+        )
+        dx = tiles_to_logic_units(target.position.x) - tiles_to_logic_units(self.position.x)
+        dy = tiles_to_logic_units(target.position.y) - tiles_to_logic_units(self.position.y)
+        return dx * dx + dy * dy <= reach * reach
 
     def _get_attack_damage(self) -> float:
         """Get the appropriate damage value based on charging state"""

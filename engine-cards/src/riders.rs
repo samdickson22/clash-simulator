@@ -11,6 +11,15 @@ pub(super) struct RiderSpec {
     pub(super) max_angle: i64,
 }
 
+/// combat.ATTACK_SELECT_* (Three Musketeers): bayonet `damage` (scaled) when the target is on the ground within
+/// `range` plus both radii; mirrors entities.py Troop._melee_selected.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+pub(super) struct AttackSelect {
+    pub(super) range: f64,
+    pub(super) damage: f64,
+    pub(super) ground_only: bool,
+}
+
 impl Entity {
     /// Outside every target, damage, effect and body query: a unit waiting for its spawn stagger, or an attached
     /// rider (its mount is cleared when the mount dies). Equal to the stagger test for every C56 entity.
@@ -27,6 +36,18 @@ impl BattleState {
         let deg = (self.vector_angle(facing.0, facing.1) + a).rem_euclid(360) as usize;
         let (cos, sin) = self.config.rotations[deg];
         (cos * spec.radius / 1024, sin * spec.radius / 1024)
+    }
+
+    /// Ported from RoyaleSim (MIT), combat.rs `select_attack` (ATTACK_SELECT_RANGE = range_plus_both_radii).
+    pub(super) fn melee_selected(&self, i: usize, j: usize) -> bool {
+        let (a, b) = (&self.entities[i], &self.entities[j]);
+        let Some(sel) = a.stats.attack_select.as_ref() else { return false };
+        if sel.ground_only && b.airborne() {
+            return false;
+        }
+        let reach = units(sel.range + a.stats.radius + b.stats.radius);
+        let (dx, dy) = (units(b.x) - units(a.x), units(b.y) - units(a.y));
+        dx * dx + dy * dy <= reach * reach
     }
 
     /// Each live mount's id and heading at the start of the tick (battle.py `mount_facings`).

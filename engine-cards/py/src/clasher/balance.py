@@ -959,9 +959,64 @@ def _furnace_entry(entry: dict[str, Any]) -> None:
     )
 
 
+# Batch B1: the compact export carries only the Three Musketeers rework's card
+# row. Its SummonCharactersList members, their SummonCharactersOffsetsX/Y and
+# the three rework characters with their OnStartingAttackAction selector
+# (bayonet when the target is on the ground within 1600 plus both radii) are
+# absent; values from RoyaleSim (MIT) cards-15535.1 (the client 16.402
+# hitpoints 354 belong to the live16402 stat overlay).
+_THREE_MUSKETEER_CHARACTER = {
+    "rarity": "Common",
+    "hitpoints": 345,
+    "hitSpeed": 1300,
+    "loadTime": 700,
+    "speed": 60,
+    "range": 6000,
+    "sightRange": 6000,
+    "deployTime": 1000,
+    "collisionRadius": 500,
+    "attacksGround": True,
+    "attacksAir": True,
+    "mass": 5,
+    "projectileStartRadius": 750,
+    "source": "characters",
+    "tidTarget": "TID_TARGETS_AIR_AND_GROUND",
+    "tidSpeed": "TID_SPEED_3",
+    "projectileData": {
+        "name": "ThreeMusketeer_Rework_Projectile",
+        "damage": 80,
+        "speed": 1000,
+        "homing": True,
+        "rarity": "Common",
+        "source": "projectiles",
+    },
+    "attackSelect": {"meleeRange": 1600, "meleeGroundOnly": True, "meleeDamage": 123},
+}
+
+
+def _three_musketeers_entry(entry: dict[str, Any]) -> None:
+    """Expose the three rework characters as explicit summon members."""
+    if entry.get("summonCharacterData") or entry.get("summonMembers"):
+        return
+    members = []
+    for rank, (offset_x, offset_y, load_time) in enumerate(
+        ((0, -1000, 700), (-1000, 1000, 650), (1000, 1000, 700))
+    ):
+        character = deepcopy(_THREE_MUSKETEER_CHARACTER)
+        character["name"] = f"ThreeMusketeer_Rework_Character_{rank + 1}"
+        character["loadTime"] = load_time
+        members.append(
+            {"characterData": character, "offsetX": offset_x, "offsetY": offset_y}
+        )
+    entry["summonCharacterData"] = deepcopy(members[0]["characterData"])
+    entry["summonNumber"] = len(members)
+    entry["summonMembers"] = members
+
+
 # Structural rewrites for engine-scope cards whose export row has the wrong
 # shape (not value patches). Keyed by card name; no pilot card is listed.
 ENTRY_TRANSFORMS = {
+    "ThreeMusketeers": _three_musketeers_entry,
     "Heal": _heal_spirit_entry,
     "GoblinDrill": _goblin_drill_entry,
     "FirespiritHut": _furnace_entry,

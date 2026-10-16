@@ -1563,7 +1563,9 @@ class BattleState:
         second_count = getattr(card_stats, 'summon_character_second_count', None) or 0
         second_data = getattr(card_stats, 'summon_character_second_data', None)
         
-        if summon_count > 1 or second_count > 0:
+        if getattr(card_stats, "summon_members", None):
+            self._spawn_explicit_members(position, player_id, card_stats, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
+        elif summon_count > 1 or second_count > 0:
             # Spawn swarm units in a circle around the target position
             # summon_radius is already converted to tiles in data loading
             self._spawn_swarm_troops(position, player_id, card_stats, summon_count, summon_radius, second_count, second_data, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
@@ -1571,6 +1573,39 @@ class BattleState:
             # Spawn single unit at exact position
             self._spawn_single_troop(position, player_id, card_stats, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
     
+    def _spawn_explicit_members(self, position: Position, player_id: int, card_stats: CardStatsCompat, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
+        """Lay a deploy at explicit member offsets (Three Musketeers).
+
+        Ported from RoyaleSim (MIT), state.rs ``formation_members_with``
+        (formation.EXPLICIT_OFFSETS_FRAME = owner_frame_negated, measured on
+        client 15.535.29): member k stands at (-X[k], -Y[k]) from the ground
+        point in its owner's frame, staggered k x SummonDeployDelay and laid
+        like a ring member.
+        """
+        from .factory.dynamic_factory import troop_from_character_data
+
+        level = getattr(card_stats, "level", 11)
+        delay_ms = getattr(card_stats, "summon_deploy_delay", 0) or 0
+        sign = -1.0 if player_id == 0 else 1.0
+        for index, member in enumerate(card_stats.summon_members):
+            data = member["characterData"]
+            stats = troop_from_character_data(
+                data.get("name", card_stats.name), data, elixir=0,
+                raw_overrides={"level": level}, rarity=data.get("rarity", "Common"),
+            )
+            self._spawn_unit_at_position(
+                Position(
+                    position.x + sign * float(member.get("offsetX", 0)) / 1000.0,
+                    position.y + sign * float(member.get("offsetY", 0)) / 1000.0,
+                ),
+                player_id,
+                stats,
+                deploy_delay_offset=index * delay_ms / 1000.0,
+                snap_to_valid=False,
+                deployment_edge_y=deployment_edge_y,
+                lane_coordinate_offset=lane_coordinate_offset,
+            )
+
     def _spawn_single_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn a single troop entity through the common spawn primitive."""
         # The deployment anchor has already been validated by ``deploy_card``.

@@ -85,6 +85,9 @@ struct Stats {
     // A mount's SpawnAttach rider block (riders.rs).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     riders: Option<riders::RiderSpec>,
+    // The Three Musketeers' attack selector (riders.rs AttackSelect).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    attack_select: Option<riders::AttackSelect>,
     #[serde(default)]
     payload_key: String,
     #[serde(default)]
@@ -294,6 +297,11 @@ struct Entity {
     mount: Option<i32>,
     #[serde(default, skip_serializing_if = "is_zero_i64")]
     rider_rank: i64,
+    // Attack selector state: the entry chosen for the current swing and the target it was chosen against.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    attack_choice: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    select_target: Option<i32>,
     #[serde(default)]
     clone_template: Option<Arc<Entity>>,
     #[serde(default)]
@@ -2272,6 +2280,19 @@ impl BattleState {
             self.entities[i].started = true;
         }
         self.entities[i].windup = engaged;
+        if self.entities[i].stats.attack_select.is_some() {
+            // combat.ATTACK_SELECT_MOMENT = at_swing_start (entities.py Troop.update_combat_component).
+            if !engaged {
+                self.entities[i].attack_choice = None;
+            } else if let Some(j) = j {
+                let tid = self.entities[j].id;
+                if self.entities[i].attack_choice.is_none() || self.entities[i].select_target != Some(tid) {
+                    let choice = self.melee_selected(i, j);
+                    self.entities[i].attack_choice = Some(choice);
+                    self.entities[i].select_target = Some(tid);
+                }
+            }
+        }
         if self.entities[i].class == "Building" && self.entities[i].stats.ordinary && !engaged {
             self.entities[i].clock.stop();
             self.entities[i].force_due = false;
@@ -2367,9 +2388,12 @@ impl BattleState {
                     self.entities[i].force_due = false;
                     return;
                 }
-                if a.stats.projectile_speed > 0 && a.stats.fan > 1 && a.stats.projectile_range > 0.0 {
+                let bayonet = a.stats.attack_select.is_some()
+                    && a.attack_choice == Some(true)
+                    && !self.entities[j].airborne();
+                if !bayonet && a.stats.projectile_speed > 0 && a.stats.fan > 1 && a.stats.projectile_range > 0.0 {
                     self.fire_fan(&a, j, target);
-                } else if a.stats.projectile_speed > 0 {
+                } else if !bayonet && a.stats.projectile_speed > 0 {
                     let mut shot = a.clone();
                     shot.mount = None;
                     shot.rider_rank = 0;
@@ -2437,7 +2461,9 @@ impl BattleState {
                     if start_hit { self.piercing_hits(index,start_radius); }
                 } else {
                     let secondary = self.secondary_recipients(i, j);
-                    let damage = if a.charge >= 10000 && a.stats.special_damage > 0.0 {
+                    let damage = if bayonet {
+                        a.stats.attack_select.as_ref().map_or(a.stats.damage, |s| s.damage)
+                    } else if a.charge >= 10000 && a.stats.special_damage > 0.0 {
                         a.stats.special_damage
                     } else {
                         a.stats.damage
@@ -2505,6 +2531,11 @@ impl BattleState {
                 } else {
                     0.0
                 };
+                if self.entities[i].stats.attack_select.is_some() {
+                    let choice = self.melee_selected(i, j);
+                    self.entities[i].attack_choice = Some(choice);
+                    self.entities[i].select_target = Some(self.entities[j].id);
+                }
                 // Committed payloads may synchronously knock the attacker back.
                 // Python clears the preload block after those death/hit hooks.
                 self.entities[i].preload_blocked = false;

@@ -229,6 +229,8 @@ class CardStatsCompat:
             else units_to_tiles(raw_summon_radius)
         )
         self.summon_deploy_delay = raw.get("summonDeployDelay")
+        # Batch B1: explicit summon members (Three Musketeers, balance.py).
+        self.summon_members = raw.get("summonMembers") or None
         self.summon_formation = raw.get("summonFormation")
         self.summon_width = units_to_tiles(raw.get("summonWidth")) or 0.0
         self.deploy_w_tile_margin = int(raw.get("deployWTileMargin", 0) or 0)
@@ -338,6 +340,8 @@ class CardStatsCompat:
         # FlyDirectPaths (Skeleton Barrel): the flyer aims at its target's
         # centre every tick instead of its one-node route cell.
         self.fly_direct_paths = bool(char_data.get("flyDirectPaths", False))
+        # Attack selector (Three Musketeers' bayonet): {meleeRange, meleeGroundOnly, meleeDamage}.
+        self.attack_select = char_data.get("attackSelect") or None
         self.sight_clip = units_to_tiles(char_data.get("sightClip")) or 0.0
         if self.sight_clip <= 0.0 and (self.speed or 0) > 0:
             self.sight_clip = 1.0

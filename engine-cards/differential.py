@@ -52,6 +52,18 @@ def _fan_stats(s, projectile):
     )
 
 
+def _attack_select_stats(s):
+    """Batch B1: the Three Musketeers' attack selector (entities.py Troop._melee_selected)."""
+    select = getattr(s, "attack_select", None)
+    if not select:
+        return {}
+    return dict(attack_select=dict(
+        range=float(select.get("meleeRange", 0) or 0) / 1000,
+        damage=float(s.get_scaled_stat(select.get("meleeDamage", 0))),
+        ground_only=bool(select.get("meleeGroundOnly", True)),
+    ))
+
+
 def _rider_stats(e):
     """Batch B1: a mount's attached-rider block (mechanics/shared/riders.py)."""
     riders = next((m for m in e.mechanics if type(m).__name__ == "AttachedRiders"), None)
@@ -153,6 +165,7 @@ def entity(e, *, clone_prototype=True):
         fly_direct=bool(getattr(s, "fly_direct_paths", False)),
         **_fan_stats(s, projectile),
         **_rider_stats(e),
+        **_attack_select_stats(s),
         death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
         dash=dash_spec,
@@ -406,6 +419,11 @@ def entity(e, *, clone_prototype=True):
         cooldown=float(e.attack_cooldown),
         force_due=stats["ordinary"] and e.attack_cooldown <= 0,
     )
+    if getattr(getattr(e, "card_stats", None), "attack_select", None):
+        if getattr(e, "_attack_select_choice", None) is not None:
+            out["attack_choice"] = bool(e._attack_select_choice)
+        if getattr(e, "_attack_select_target", None) is not None:
+            out["select_target"] = int(e._attack_select_target)
     mount = getattr(e, "_rider_mount", None)
     if mount is not None and mount.is_alive:
         out["mount"] = mount.id
@@ -604,7 +622,8 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             margin=int(getattr(stats, "deploy_w_tile_margin", 0) or 0),
             # Riders (Goblin Giant) are laid by their mount's heading, never by lane.
             mirror_x=(len(units) in (2, 3, 4) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5))
-            and not any("mount" in unit for unit in units),
+            and not any("mount" in unit for unit in units)
+            and not getattr(stats, "summon_members", None),
             recruits_line=card == "RoyalRecruits" and not getattr(stats, "summon_width", 0),
             line_search=bool(
                 getattr(stats, "summon_width", 0)
