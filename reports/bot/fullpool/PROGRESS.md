@@ -403,3 +403,19 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   2e0891da…; pins on main 2ce6abd7b). Preflight on 08, tree J/repo-bca383f068e7 (main bca383f0, with the fixed
   cpu_job.sh 5179f0f42): PASS at 20:21:28Z, meta tokens identical, 0 errors. K1 shard 14 launched on live16402c on 08
   (W35, 800 cases, PGID 232762), tagged pin live16402c. The bundle stays on live16402b-r3, and no new G1.
+- 21:08Z **LIVE SWITCH GATE: PASS** (bank LIVE-AB1, fresh, base drawn 19:12Z before any game; e16 vs the 91 Battle Log
+  decks; live16402b-r3; 3800 games, 0 errors; rows on 01/03 J/ab1-weak, J/ab1-k4cw; python -m bot.fullpool.ab_summary).
+  A = current live (`aliased:K4L-R-gs-mpool`, live alias of off-vocab cards, C56 catalog belief).
+  B = full-pool (`K4L-R-gs-mk1a1`, true ids, open-world belief). Paired by (opponent, case):
+
+  | opponent | n | A | B | B − A [95% CI] | C56-only decks | off-vocab decks |
+  |---|---|---|---|---|---|---|
+  | R3a | 800 | 0.848 | 0.901 | **+0.054 [+0.024, +0.085]** | +0.009 (n107) | +0.061 [+0.027, +0.094] |
+  | v1 | 800 | 0.939 | 0.966 | **+0.028 [+0.008, +0.048]** | +0.037 (n107) | +0.026 [+0.006, +0.046] |
+  | LIVE-K4CW-r16 (strong) | 300 | 0.383 | 0.533 | **+0.150 [+0.073, +0.227]** | +0.073 (n41) | +0.162 [+0.081, +0.243] |
+  | pooled R3a+v1 | 1600 | 0.893 | 0.934 | **+0.041 [+0.023, +0.059]** | | |
+  | pooled all | 1900 | 0.813 | 0.871 | **+0.058 [+0.038, +0.078]** | +0.031 [−0.024, +0.086] (n255) | +0.062 [+0.041, +0.083] (n1645) |
+
+  Gate: B ≥ A pooled (yes, CI excludes 0); no loss on C56-only decks (+0.031, CI includes 0, no regression); the
+  strong-opponent row improves most (+0.15). Not in the gate: rext-bc (RoyaleSim-only; C56 RoyaleSim vocab),
+  reaction time and undefended pushes (these rows have no play logs; BOT_PLAYLOG=1 adds them from now on).
