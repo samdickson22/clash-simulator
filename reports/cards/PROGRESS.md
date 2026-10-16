@@ -375,3 +375,5 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   PIN_SETS on main 2ce6abd7b. BOT LEAD + coordinator told. 90 fidelity-checked cards on main (C56 + A + B1 + B2).
   B1 owner fixing GoblinGiant rider graph fallback (Ram-only scope; RamRider rider/bola stays C2). Mac parity build ETA
   ~21:30–22:00Z (174/577 matching at 19:49Z). C1 r2 rebasing onto main.
+- 20:43Z 08 admission block (B1 GG-rider validation behind BOT LEAD's 36-slot K1 claim) = cpu_job.sh lock bug (5179f0f42);
+  BOT LEAD stopped the claim and fixed main b8ad5e222 (deployed to clasher-bot/bot/exit on 01/03/04/08). B1 PID 282411 admitted next.
