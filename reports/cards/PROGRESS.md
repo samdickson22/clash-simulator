@@ -377,3 +377,6 @@ No routine status, result, test/gate/review, queue/receipt/commit updates, ackno
   ~21:30–22:00Z (174/577 matching at 19:49Z). C1 r2 rebasing onto main.
 - 20:43Z 08 admission block (B1 GG-rider validation behind BOT LEAD's 36-slot K1 claim) = cpu_job.sh lock bug (5179f0f42);
   BOT LEAD stopped the claim and fixed main b8ad5e222 (deployed to clasher-bot/bot/exit on 01/03/04/08). B1 PID 282411 admitted next.
+- 21:27Z **Mac parity build done** (cards-mac-build-sol-r1, ff4b93df2): native 8072e577 (2.4 MB, from 878d5f459), fixtures 577/577,
+  roots 598/600 = 18 one-ULP rollout values from macOS exp(); all selected actions/digests/views/masks identical → lead call:
+  live-qualified. Smoke 3/3. 782 MiB footprint. Pin live16402b-r3-mac merged to main 2fa5d496e; LIVE LEAD told (bundle 00:00Z).
