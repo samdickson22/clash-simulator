@@ -1201,7 +1201,8 @@ live python on **03, 04, 08** (the LIVE LEAD composites synthetic frames there);
 - A confirmed successor also needs LIVE perfect-sight + sr1u50 numbers: copy 04 cpuq2's `live-rl5v30` line with the new
   checkpoint (harness `/mpac/sdicks02/repos/clasher-bot-liveeval` on 04), pair vs `live-rl5-perc-ours/{rl5,it5s2}`.
 
-**Running now (01 CPU only):** HEADLINE screens of the paused large-batch arms' latest policies, `hl-rl9v4` (01 cpuq6,
+**Running now (01 CPU only):** `f9-rl9v4` (01 cpuq6, 64 workers, out `$J1/f9-rl9v4`, 1,200 games; Sol task
+`bot-it10-f9-rl9v4-r1` reads it). Done: HEADLINE screens of the paused large-batch arms' latest policies, `hl-rl9v4` (01 cpuq6,
 36 workers, `$J1/ckpt-rl9/policy-00004.pt` sha 3c66ce5c…) and `hl-rl10v3` (01 cpuq7, 36 workers, `$J1/ckpt-rl10/policy-00003.pt`
 sha 4f88267b…), 900 games each, out `$J1/hl-rl9v4`, `$J1/hl-rl10v3`; read by Sol task `bot-it10-hl-r9r10-r1` (report vs
 `$J8/ce-it5s2`). Otherwise nothing (soup verdict done 02:41Z, NOT CONFIRMED: F10 −0.009 [−0.030, +0.012]; soup files kept
@@ -1470,6 +1471,13 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
 - **03:21Z, 03 capped at ~40 ours** (bot lead: LIVE needs ~64 workers on 03 for 1–2 h). 03 feeder target 80 → 36 (PGID
   3134550); batches 8300200 (PGID 3115132, 24 rows kept) and 8300300 (3119047, 12 rows) stopped by PGID. 03 then: 48 live
   python, 33 ours.
+
+- **03:34Z, HEADLINE screens of the paused large-batch arms** (Sol task `bot-it10-hl-r9r10-r1`; 900 games each, 0 errors;
+  Δ vs `$J8/ce-it5s2`): **r9 v4** (lr 3e-5, 4 updates × ~490 games) v1 0.897 +0.013 [−0.030, +0.057], R3a 0.753 +0.093
+  [+0.037, +0.150], h2h 0.637, mean +0.053; **r10 v3** (lr 1e-5) v1 0.903 +0.020 [−0.023, +0.063], R3a 0.690 +0.030
+  [−0.030, +0.090], h2h 0.607, mean +0.025. Both pass the +0.022 screen (HEADLINE has overstated every r5 snapshot past
+  v10). **`f9-rl9v4`** queued in 01 cpuq6 (64 workers, out `$J1/f9-rl9v4`), read by Sol task `bot-it10-f9-rl9v4-r1`: F10
+  (k would become 3, α 0.0167) only if its F9 mean Δ vs r5 v10 ≥ 0.
 
 ## Next
 
