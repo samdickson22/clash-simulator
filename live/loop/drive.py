@@ -412,6 +412,9 @@ def main(argv=None):
     session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=deck, deck_out_of_scope=[c for c in deck if c not in C56], player=a.player,
                        fast=os.environ.get('CLASHER_LIVE_FAST'), export=str(a.export), export_frame_sha256=export_sha,
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
+                       hand_decoder=dict(mode='deck+UI-affordability' if HANDSYNC else 'deck', cards=list(perc.cards),
+                                         model_logits=('hand.model_logits float32 pre-softmax; rows slots0..3,next; empty columns>=cards'
+                                                       if HANDSYNC else None)),
                        translator=dict(cls=type(sess.tr).__module__ + '.' + type(sess.tr).__name__,
                                        unknown_card=getattr(sess.tr, 'unknown_card', None),
                                        plays_from=getattr(sess.tr, 'plays_from', None)),
@@ -646,21 +649,29 @@ def main(argv=None):
                     row['elixir_floored'] = reserved
                 rec['phase'] = 1 if tick < 2400 else (2 if tick < 4800 else 3)
                 rec['clock_s'] = max(0., 180 - tick/20) if tick < 3600 else max(0., 300 - tick/20)
-                if 'out' in raw:                                  # own hand = most probable distinct DECK cards (handread.py)
-                    hr = handread.deck_constrained(raw['out'][4][0].float().cpu().numpy(), perc.cards, deck)
-                    if hr is not None:
-                        rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
-                                           next_prob=hr['next_prob'], raw=hr['raw'])
                 rec['ts_ms'] = ts_ms           # actual capture identity survives inherited catch-up policy ticks
+                ui = None
                 if HANDSYNC and isinstance(rec.get('hand'), dict):
                     try:
                         import handui           # rollback LL_HANDSYNC=0 neither imports nor calls the new reader
-                        rec['hand']['ui'] = handui.slot_ui(f)
+                        ui = handui.slot_ui(f)
+                        rec['hand']['ui'] = ui
                     except Exception as ex:
                         log('events', dict(ev='step_error', component='handui', n=n-1, error=repr(ex)[:300]))
                         row['err'] = repr(ex)[:300]
                         log('frames', row)
                         continue                # missing UI must not silently fall back to unguarded battle taps
+                if 'out' in raw:                # distinct deck cards + one shared visible affordability state
+                    kw = dict(ui=ui, costs=rt.R.costs) if HANDSYNC else {}
+                    hud_logits = raw['out'][4][0].float().cpu().numpy()
+                    hr = handread.deck_constrained(hud_logits, perc.cards, deck, **kw)
+                    if hr is not None:
+                        rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
+                                           next_prob=hr['next_prob'], raw=hr['raw'])
+                        if 'ui_consistent' in hr:
+                            rec['hand']['ui_consistent'] = hr['ui_consistent']
+                        if HANDSYNC:
+                            rec['hand']['model_logits'] = hud_logits.tolist()  # exact float32 HUD evidence for replay
                 ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
                 log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
                 submitted0 = sess.ch.submitted     # monotonic sequence: completion/expiry may replace 1 pending with 1
