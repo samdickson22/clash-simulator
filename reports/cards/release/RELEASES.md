@@ -156,3 +156,64 @@ All three release receipts are byte-identical by SHA256; full copied contents ma
 
 
 Final release step complete: r1-cards2 and live16402b are released and verified on all three requested hosts. No existing runtime roots modified, no commits, no sealing.
+
+
+## r1-cards2-r2 and live16402b-r2
+
+Status: **RELEASED, READ-ONLY** on 127x03/127x04/127x08. Final Runtime and complete-content verification **6/6 PASS** (exploration tier; no sealing).
+Patch source commit: `234e5cd899ebea077e3cbe3e95dab5e0cf4aa0b6`.
+Python fixes: optional spell building/ordinary damage and the public body HP fallback for ThreeMusketeers.
+Native and gamedata pins are unchanged. Both roots contain three patched Python files; all other copied
+files are inherited from their immutable parent roots.
+
+r1-cards2-r2:
+
+- Root on 127x03/127x04/127x08: `/mpac/sdicks02/repos/clasher-bot-runtime/r1-cards2-r2`.
+- Native SHA256: `de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1`.
+- gamedata.json SHA256: `892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65`.
+- Final RECEIPT.json SHA256: `4c509b531959c90dd07e7a83cc9a877345333e2e7d06992f01444de8ed1b1dba` (same receipt bytes on every host).
+- Complete content/mode/symlink manifest SHA256: `64ae60c2b2121a112fef1c322e378ae8264096148ca7c07d74c018882401c6c3`.
+- Parent receipt SHA256: `257f309de64b315de6723833a05b896729fbe21f8a320110d08225a058e7516b`; parent contents and modes checked unchanged.
+- [RECEIPT.json](r1-cards2-r2/RECEIPT.json); [per-host verification](r1-cards2-r2/VERIFICATION.json).
+
+live16402b-r2:
+
+- Root on 127x03/127x04/127x08: `/mpac/sdicks02/repos/clasher-bot-runtime/live16402b-r2`.
+- Native SHA256: `de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1`.
+- gamedata.json SHA256: `a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb`.
+- Final RECEIPT.json SHA256: `32028a65d30f08b5efdbde77c020f93e9aaf252d98a7efaec407e02b0ebb9499` (same receipt bytes on every host).
+- Complete content/mode/symlink manifest SHA256: `ff8dc4d2dcda59abeac2b8e76c8e0ec182387f148127c58a51a346fed6c5f5ba`.
+- Parent receipt SHA256: `2311429803ed84321ab9d97456aa872ec7127734428d02468de6729e7f534aac`; parent contents and modes checked unchanged.
+- [RECEIPT.json](live16402b-r2/RECEIPT.json); [per-host verification](live16402b-r2/VERIFICATION.json).
+
+Procedure: reserve absent destinations, copy each immutable parent without hardlinks, and apply only committed
+Python patches. The second audit found a real ThreeMusketeers HP conversion crash during final validation.
+The newly created r2 assemblies were corrected before final handoff; their receipts retain the first assembly
+receipt SHA and the correction reason. Only these task-created r2 assemblies were written during correction;
+all pre-existing parent/runtime roots stayed untouched. Final assemblies are read-only, including receipts.
+Assembler receipts and the parent release receipt are preserved byte for byte inside each new root.
+
+`release_none_stats.py verify` checks Runtime(verify=True), all 473 overlay hashes, assembler and parent receipts,
+all three committed patch hashes, the complete content/mode/symlink manifest before/after Runtime, read-only
+permissions, and parent-root invariance. Full-pool/None audit, K4L command hashes, native totality probes, and
+exact game 2000024 replay are recorded in [NONE-STATS.md](../runtime/NONE-STATS.md).
+
+Scratch job: `/mpac/sdicks02/jobs/clasher/cards/none-stats-r2-bchzbvd5` on 03/04/08, with local receipts on 05.
+04/08 work used `bot/exit/cpu_job.sh` leases of 1, 2 or 4 and nice 15; numerical libraries used one thread.
+
+r1-cards2-r2 final Runtime(verify=True), full content and read-only checks:
+
+- 127x03: **PASS**, `2026-10-16T07:40:11Z`; 473 overlays, parent unchanged, 121 metadata cards, 237 config entries, 350 templates.
+- 127x04: **PASS**, `2026-10-16T07:39:32Z`; 473 overlays, parent unchanged, 121 metadata cards, 237 config entries, 350 templates.
+- 127x08: **PASS**, `2026-10-16T07:39:42Z`; 473 overlays, parent unchanged, 121 metadata cards, 237 config entries, 350 templates.
+
+live16402b-r2 final Runtime(verify=True), full content and read-only checks:
+
+- 127x03: **PASS**, `2026-10-16T07:42:04Z`; 473 overlays, parent unchanged, 121 metadata cards, 238 config entries, 350 templates.
+- 127x04: **PASS**, `2026-10-16T07:40:40Z`; 473 overlays, parent unchanged, 121 metadata cards, 238 config entries, 350 templates.
+- 127x08: **PASS**, `2026-10-16T07:40:57Z`; 473 overlays, parent unchanged, 121 metadata cards, 238 config entries, 350 templates.
+
+Final gates: all-card probe **55,834 checks / 0 exceptions or panics**, C56 ranking **8,496 exact comparisons**,
+K4L HEADLINE **12/12 command hashes identical**, native totality **26,828 probes / 0 panics / 0 unexpected errors**.
+Game 2000024 reproduces the original crash and completes on live16402b-r2 at tick 3601 with command SHA256
+`fa51cd35e7ceca754336735355d75717dac0aea98947f01cc76b5839d2a39df9`. No training rows sealed.

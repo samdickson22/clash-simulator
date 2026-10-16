@@ -1,0 +1,34 @@
+{
+  "root-plain": {
+    "scenarios": 17,
+    "probes": 6707,
+    "failing_cuts": 68,
+    "panics": 0,
+    "expected_rejections": 244,
+    "unexpected": {}
+  },
+  "root-scrub": {
+    "scenarios": 17,
+    "probes": 6707,
+    "failing_cuts": 0,
+    "panics": 0,
+    "expected_rejections": 0,
+    "unexpected": {}
+  },
+  "runtime-plain": {
+    "scenarios": 17,
+    "probes": 6707,
+    "failing_cuts": 67,
+    "panics": 0,
+    "expected_rejections": 243,
+    "unexpected": {}
+  },
+  "runtime-scrub": {
+    "scenarios": 17,
+    "probes": 6707,
+    "failing_cuts": 0,
+    "panics": 0,
+    "expected_rejections": 0,
+    "unexpected": {}
+  }
+}

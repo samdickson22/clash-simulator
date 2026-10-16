@@ -1,5 +1,10 @@
 # Optional-stat totality patch (exploration tier)
 
+Final status: **PASS**. Two reachable crashes fixed; 55,834 all-card checks with zero exceptions/panics,
+8,496 exact C56 ranking comparisons, HEADLINE **12/12** command hashes identical, native totality
+**26,828 probes / 0 panics**, and both roots verified read-only on all three hosts.
+[Machine summary](receipts/NONE-STATS-RESULTS.json).
+
 The reported crash was `float(None)` in `clasher.rl.c56_scripted.ranked_actions` when a present spell's
 `building_damage` is `None` and a visible enemy non-Crown building is scored. A `getattr` default only handles a
 missing attribute. The patch explicitly uses ordinary damage for `None`; ordinary damage itself defaults to zero
@@ -8,7 +13,7 @@ horizon order. `None` crown damage already means zero, and metadata deliberately
 as JSON null for Rust's existing `unwrap_or`.
 
 Changes are confined to Python: the ranking building-damage fallback, ordinary-damage conversions in ranking/metadata,
-and the public body-health fallback matching BattleState._spawn_entity (100 HP when the raw stat is None). No native source or binary changed. `r1-cards2-r2` and `live16402b-r2`
+and the public body-health fallback matching BattleState._spawn_entity (100 HP when the raw stat is None). The audit found two reachable crash sites: Freeze building damage and ThreeMusketeers body HP. No native source or binary changed. `r1-cards2-r2` and `live16402b-r2`
 retain their parents' native, gamedata and checkpoint pins. There is no sealing.
 
 ## Scope and assumptions
@@ -51,7 +56,7 @@ Freeze has numeric ordinary damage 148 in this live root, so its fallback is 148
 | c56_scripted / metadata | spell.hits_air | 10 None/missing: BarbLog, Clone, DarkMagic, GoblinCurse, Graveyard, Log, Mirror, Rage, RoyalDelivery, Vines | Boolean filtering, no numeric conversion; no change |
 | c56_scripted / public opponent / metadata / masks | mana_cost; deploy_w_tile_margin; targets_only_buildings | None (0) across all 125 spellings | Required numeric cost; margin already or 0; targets read as bool; no change |
 | initialize / public opponent / metadata / reward | summon_count | 64: Arrows, BabyDragon, Balloon, BarbLog, BarbarianHut, BombTower, Bomber, Bowler, Cannon, Clone, DarkMagic, DarkPrince, Earthquake, ElectroWizard, Elixir Collector, Fireball, Freeze, Giant, GiantBuffer, GoblinBarrel, GoblinCage, GoblinCurse, GoblinDrill, GoblinHut, GoldenKnight, Golem, Graveyard, IceWizard, InfernoTower, Knight, LavaHound, Lightning, Log, MightyMiner, Miner, MiniPekka, Mirror, Monk, Mortar, Musketeer, Pekka, Poison, Prince, Princess, Rage, RamRider, Rocket, Ronin, RoyalDelivery, RoyalGiant, SkeletonKing, Snowball, Tesla, ThreeMusketeers, Tombstone, Tornado, Valkyrie, Vines, Witch, WitchMother, Wizard, Xbow, Zap, ZapMachine | Existing or 1 (or explicit formation default); no change |
-| metadata / public opponent / reward | scaled_hitpoints / hitpoints | 23: Arrows, BarbLog, Clone, DarkMagic, Earthquake, Fireball, Freeze, GoblinBarrel, GoblinCurse, Graveyard, Lightning, Log, MergeMaiden, Mirror, Poison, Rage, Rocket, RoyalDelivery, Snowball, ThreeMusketeers, Tornado, Vines, Zap | Metadata/efficiency use or 0; visible bodies use resolved child payload stats; required body fields probed; no change |
+| metadata / public opponent / reward | scaled_hitpoints / hitpoints | 23: Arrows, BarbLog, Clone, DarkMagic, Earthquake, Fireball, Freeze, GoblinBarrel, GoblinCurse, Graveyard, Lightning, Log, MergeMaiden, Mirror, Poison, Rage, Rocket, RoyalDelivery, Snowball, ThreeMusketeers, Tornado, Vines, Zap | Metadata/efficiency use or 0; body-health conversion is covered by the next row; no additional change |
 | public_scripted_opponent._bodies | scaled_hitpoints / get_scaled_stat(hitpoints) | ThreeMusketeers body token 326 (1) | **FIX:** explicit None → 100, matching BattleState._spawn_entity; numeric path unchanged |
 | metadata / public opponent / reward | scaled_damage | 31: Arrows, BarbLog, BarbarianHut, Clone, DarkMagic, Earthquake, Elixir Collector, Fireball, Freeze, GoblinBarrel, GoblinCage, GoblinCurse, GoblinDrill, GoblinHut, Graveyard, Lightning, Log, MergeMaiden, Mirror, Poison, Rage, Rocket, RoyalDelivery, SkeletonBalloon, Snowball, SuspiciousBush, ThreeMusketeers, Tombstone, Tornado, Vines, Zap | Existing or 0; entity.damage normalized numeric; no change |
 | c56_scripted / public opponent / metadata | range | 10: BarbLog, Fireball, Freeze, GoblinBarrel, Log, MergeMaiden, Mirror, Rocket, Snowball, ThreeMusketeers | Existing or 0; no change |
@@ -65,8 +70,8 @@ Freeze has numeric ordinary damage 148 in this live root, so its fallback is 148
 
 The legacy P16 public opponent admits its declared base roster only. Its direct spell damage/radius/crown and Log
 range arithmetic are numeric for that roster. The live/full-pool path dispatches to `c56_scripted` instead.
-`PublicScriptedOpponent._bodies` only reads health from resolved visible troop/building payloads, whose health and
-cost are required numeric fields; optional shield values already use `or 0`. The probe checks every body table row.
+`PublicScriptedOpponent._bodies` reads health from visible troop/building rows. Missing health now uses the same
+100 HP fallback as entity spawning; cost is numeric for all body rows; optional shield values already use `or 0`. The probe checks every body table row.
 
 Native details: `c56_scripts.rs` uses `building_damage.unwrap_or(damage)`; its other spell fields deserialize as
 numeric scalars from Python metadata. `leaf.rs` uses `leaf_elixir_share.unwrap_or(0.0)`; entity damage/HP/interval
@@ -77,7 +82,7 @@ No native patch, and thus no native rebuild/parity-gate obligation, is introduce
 
 ## Verification and release evidence
 
-Development probe: **PASS**, 46,403 calls, 0 exceptions/panics, 7,080 exact C56 ranking comparisons.
+Initial development probe (before the ThreeMusketeers finding; five boards): **PASS**, 46,403 calls, 0 exceptions/panics, 7,080 exact C56 ranking comparisons.
 Evidence: [none-stats-dev.json](receipts/none-stats-dev.json).
 
 Exact game 2000024: seed `2613058993490888`; student `rl5-v10-fp.pt@0.5375`, K4C-r16 teacher, beta=0,
@@ -89,7 +94,46 @@ winner seat 0, command SHA256 `fa51cd35e7ceca754336735355d75717dac0aea98947f01cc
 [replay-2000024-dev.json](receipts/replay-2000024-dev.json). The replay uses an isolated copy of BOT LEAD's
 `repo-98f4e2b36313`, with this task's runtime.py and the tracked X4S/S1 dependencies added to that scratch copy.
 
-K4L gate and released-root verification: pending; receipts will be appended after completion.
+Final-root game replay: **PASS** on `live16402b-r2`; the original ranking reproduces the TypeError and the
+patched ranking completes at tick 3601 with the same command SHA256 above. No rows were sealed.
+Evidence: [replay-2000024-r2.json](receipts/replay-2000024-r2.json).
+The original ThreeMusketeers deployment reproducer is retained in
+[three-musketeers-original.txt](receipts/three-musketeers-original.txt); the final probe includes that real board.
+
+Final native totality: **PASS**, four variants × 6,707 = **26,828 probes**, **0 panics**, **0 unexpected errors**.
+Plain config-cut variants deliberately retain an unsupported card in hand and return 244/243 expected
+`ValueError: unsupported card absent from imported pilot configuration` rejections (68/67 failing cuts).
+Both scrub variants have **0 failures**. Counts match the previously released de11f124 totality receipt.
+Evidence: [summary](receipts/totality-r2-summary.json), [root/plain](receipts/totality-r2-root-plain.json),
+[root/scrub](receipts/totality-r2-root-scrub.json), [runtime/plain](receipts/totality-r2-runtime-plain.json),
+[runtime/scrub](receipts/totality-r2-runtime-scrub.json).
+
+Final host verification: **6/6 PASS**, both roots on 127x03/127x04/127x08. All roots are read-only; all 473 overlay
+hashes, complete content/mode/symlink manifests, source patch hashes and preserved receipts pass, and parent
+contents/modes are unchanged. Source snapshot `234e5cd899ebea077e3cbe3e95dab5e0cf4aa0b6`.
+[r1-cards2-r2 receipt](../release/r1-cards2-r2/RECEIPT.json),
+[r1-cards2-r2 per-host verification](../release/r1-cards2-r2/VERIFICATION.json),
+[live16402b-r2 receipt](../release/live16402b-r2/RECEIPT.json),
+[live16402b-r2 per-host verification](../release/live16402b-r2/VERIFICATION.json).
+
+Final all-card probe: **PASS**, **55,834 checks**, **0 exceptions/panics**, **8,496 exact C56 ranking comparisons**.
+All 122 ladder definitions audited; 121 canonical runtime cards / 124 admitted spellings tested across both seats,
+all hand slots and six boards. The pre-existing MergeMaiden exclusion is asserted and recorded.
+[Full receipt](receipts/none-stats-r2.json).
+
+Final K4L HEADLINE gate: **PASS, 12/12 command SHA256s identical** for r1-total vs patched r1-cards2,
+cases 0–5 × R3a/v1, including the ThreeMusketeers HP fix. All three engine Python hashes are checked against
+committed source snapshot `234e5cd899ebea077e3cbe3e95dab5e0cf4aa0b6`.
+[Gate receipt](receipts/k4l-r2.json), [source provenance](receipts/k4l-r2-provenance.json),
+[baseline games](receipts/k4l-r2-c56.jsonl), [patched games](receipts/k4l-r2-patched.jsonl).
+The first Freeze-only gate also passed 12/12; the patched arm was rerun after adding the HP fix, reusing the
+completed immutable r1-total baseline. Native source/binary unchanged; no native rebuild was needed.
+
+PIN_SETS entries: `r1-cards2-r2` and `live16402b-r2` in `bot/players/runtime.py:70` and `:72`;
+native `de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1` in both,
+baseline gamedata `892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65` for cards2,
+live gamedata `a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb` for live16402b.
+Full card scope, fc_side_cut and live Fireball/Poison crown settings match the parent pin sets.
 
 Commands use `PYTHONHASHSEED=0`, `PYTHONDONTWRITEBYTECODE=1`, single-thread numerical libraries and `nice -n 15`.
 Compute on 04/08 uses `/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh` with leases of at most four.

@@ -1,0 +1,6 @@
+template aliases [((326, 'Troop'), 'ThreeMusketeers', 100.0), ((326, 'Projectile'), 'ThreeMusketeers', 1.0)]
+meta {'token': 326, 'radius': 0.0, 'blocker_radius': 0.0, 'cost': 9.0, 'count': 1.0, 'hp': 0.0, 'damage': 0.0, 'range': 0.0, 'shield': False, 'building': False, 'spell': False, 'margin': 0, 'only_buildings': False, 'air': False, 'can_air': False}
+deployed True
+entities [('Building', 'Tower', 3052), ('Building', 'Tower', 3052), ('Building', 'KingTower', 4824), ('Building', 'Tower', 3052), ('Building', 'Tower', 3052), ('Building', 'KingTower', 4824), ('Troop', 'ThreeMusketeers', None)]
+packet tokens [326, 207, 329, 329, 207, 329, 329]
+ERROR TypeError("float() argument must be a string or a real number, not 'NoneType'")
