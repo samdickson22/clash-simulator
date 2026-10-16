@@ -44,9 +44,18 @@ At the initial snapshot (tick 1200), the only semantic native snapshot differenc
 First native digest difference: tick **1439**. This is a behavioral regression as well as an
 initial config/snapshot difference; it is not explained by inert serialization keys.
 
+The cross-arm `diagnostics.detail` / `phase_step` replay at 1438→1439 confirms entity 33 is
+Barbarian. Before the tick its deploy clock is 0 in pinned Python vs ~0.05 in B2 native.
+The combat phase first differs in target/move_target (2 vs null); movement then differs at
+(11.556, 26.982) vs (11.5, 27.0). The same diagnostic tool exposes unrelated existing
+cooldown/age fields, which are not the isolated cause. Evidence: `gate-phase-1439.json`.
+
 Evidence on 08 under `b2/fid/`: `gate_probe.py`, `run_gate_probe.sh`, `gate_probe.log`,
 `probe-{pinned,total,revert-rolling}/trace.json`, native snapshots every 100 ticks, and
 `run_gate_bisect.sh`. The probe compares every tick, not only the gate's 100-tick snapshot checkpoints.
+
+The Opus owner has committed this fix in `aa8d28a76`. The original frozen gate remains
+unchanged; the corrected follow-up needs its own full gate result.
 
 ## Acceptance after owner fix
 

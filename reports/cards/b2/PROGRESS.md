@@ -97,3 +97,7 @@ guess; ours is the client's strict intersects; shared by C56 spells -> not chang
   argument only (Graveyard hunk kept); audit of added lines found no other duplicated hunk. Python-only change: native
   df5443ab unchanged. NEXT: rerun the full gate on 04 with this commit's Python + df5443ab; recheck Graveyard fidelity
   and mixed repros (75/416/133 match per triage; 509 IceGolemite spawn is not B2's).
+- 2026-10-16T02:29Z CORRECTED GATE launched on 127x04 in a separate dir `/mpac/sdicks02/jobs/clasher/cards/b2-fix/`
+  (gate.pid 2961219, cpu_job 8; both arms; gtree = git archive aa8d28a76 engine-cards; gout = df5443ab copy; roots +
+  gate-tools copied from b2/). Output b2-fix/gate/compare.json. The original frozen run in b2/ (PID 2737392,
+  4916d66b8/df5443ab) is left untouched and is reported as FAIL regardless.

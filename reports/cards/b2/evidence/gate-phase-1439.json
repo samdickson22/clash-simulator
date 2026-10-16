@@ -1,0 +1,646 @@
+{
+ "before_tick": 1438,
+ "before_diff": [
+  {
+   "field": ".entities.10.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.10.cooldown",
+   "python": 0.0,
+   "rust": 0.3
+  },
+  {
+   "field": ".entities.33.deploy",
+   "python": 0.0,
+   "rust": 0.049999999999999684
+  },
+  {
+   "field": ".entities.35.age",
+   "python": 0,
+   "rust": 71200
+  },
+  {
+   "field": ".entities.35.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.35.cooldown",
+   "python": 0.0,
+   "rust": -4.3021142204224816e-16
+  },
+  {
+   "field": ".entities.35.pending_lethal",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.4.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.8.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.8.cooldown",
+   "python": 0.5,
+   "rust": 1.8
+  }
+ ],
+ "phases": {
+  "before": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.deploy",
+    "python": 0.0,
+    "rust": 0.049999999999999684
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ],
+  "start": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.deploy",
+    "python": 0.0,
+    "rust": 0.049999999999999684
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ],
+  "combat": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.deploy",
+    "python": 0.0,
+    "rust": 0.049999999999999684
+   },
+   {
+    "field": ".entities.33.move_target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ],
+  "movement": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.deploy",
+    "python": 0.0,
+    "rust": 0.049999999999999684
+   },
+   {
+    "field": ".entities.33.facing[0]",
+    "python": 750,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[1]",
+    "python": -250,
+    "rust": -1000
+   },
+   {
+    "field": ".entities.33.move_target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.x",
+    "python": 11.556,
+    "rust": 11.5
+   },
+   {
+    "field": ".entities.33.y",
+    "python": 26.982,
+    "rust": 27.0
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ],
+  "objects": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.age",
+    "python": 50,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[0]",
+    "python": 750,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[1]",
+    "python": -250,
+    "rust": -1000
+   },
+   {
+    "field": ".entities.33.move_target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.x",
+    "python": 11.556,
+    "rust": 11.5
+   },
+   {
+    "field": ".entities.33.y",
+    "python": 26.982,
+    "rust": 27.0
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ],
+  "cleanup": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.age",
+    "python": 50,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[0]",
+    "python": 750,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[1]",
+    "python": -250,
+    "rust": -1000
+   },
+   {
+    "field": ".entities.33.move_target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.x",
+    "python": 11.556,
+    "rust": 11.5
+   },
+   {
+    "field": ".entities.33.y",
+    "python": 26.982,
+    "rust": 27.0
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ],
+  "complete": [
+   {
+    "field": ".entities.10.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.10.cooldown",
+    "python": 0.0,
+    "rust": 0.3
+   },
+   {
+    "field": ".entities.33.age",
+    "python": 50,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[0]",
+    "python": 750,
+    "rust": 0
+   },
+   {
+    "field": ".entities.33.facing[1]",
+    "python": -250,
+    "rust": -1000
+   },
+   {
+    "field": ".entities.33.move_target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.target",
+    "python": 2,
+    "rust": null
+   },
+   {
+    "field": ".entities.33.x",
+    "python": 11.556,
+    "rust": 11.5
+   },
+   {
+    "field": ".entities.33.y",
+    "python": 26.982,
+    "rust": 27.0
+   },
+   {
+    "field": ".entities.35.age",
+    "python": 0,
+    "rust": 71200
+   },
+   {
+    "field": ".entities.35.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.35.cooldown",
+    "python": 0.0,
+    "rust": -4.3021142204224816e-16
+   },
+   {
+    "field": ".entities.35.pending_lethal",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.4.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.attacked_current",
+    "python": false,
+    "rust": true
+   },
+   {
+    "field": ".entities.8.cooldown",
+    "python": 0.5,
+    "rust": 1.8
+   }
+  ]
+ },
+ "after_diff": [
+  {
+   "field": ".entities.10.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.10.cooldown",
+   "python": 0.0,
+   "rust": 0.3
+  },
+  {
+   "field": ".entities.33.age",
+   "python": 50,
+   "rust": 0
+  },
+  {
+   "field": ".entities.33.facing[0]",
+   "python": 750,
+   "rust": 0
+  },
+  {
+   "field": ".entities.33.facing[1]",
+   "python": -250,
+   "rust": -1000
+  },
+  {
+   "field": ".entities.33.move_target",
+   "python": 2,
+   "rust": null
+  },
+  {
+   "field": ".entities.33.target",
+   "python": 2,
+   "rust": null
+  },
+  {
+   "field": ".entities.33.x",
+   "python": 11.556,
+   "rust": 11.5
+  },
+  {
+   "field": ".entities.33.y",
+   "python": 26.982,
+   "rust": 27.0
+  },
+  {
+   "field": ".entities.35.age",
+   "python": 0,
+   "rust": 71200
+  },
+  {
+   "field": ".entities.35.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.35.cooldown",
+   "python": 0.0,
+   "rust": -4.3021142204224816e-16
+  },
+  {
+   "field": ".entities.35.pending_lethal",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.4.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.8.attacked_current",
+   "python": false,
+   "rust": true
+  },
+  {
+   "field": ".entities.8.cooldown",
+   "python": 0.5,
+   "rust": 1.8
+  }
+ ],
+ "names": {
+  "1": "Tower",
+  "2": "Tower",
+  "3": "KingTower",
+  "4": "Tower",
+  "5": "Tower",
+  "6": "KingTower",
+  "8": "BombTower",
+  "10": "Xbow",
+  "14": "Tesla",
+  "33": "Barbarian",
+  "35": "Tower"
+ }
+}
