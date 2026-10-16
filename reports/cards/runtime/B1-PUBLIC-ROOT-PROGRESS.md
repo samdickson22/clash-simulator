@@ -147,3 +147,23 @@ wrapper uses existing producing-card public deck/level estimate. Conditional
 level exports are exact fields, not proof of mirrored provenance or live rank
 recovery. Documentation-only clarification; approved production/probe hashes
 unchanged. Pending actual scoped tests remain a real acceptance prerequisite.
+
+2026-10-16T12:48–12:53Z consumer inventory: `rg -n` on R.templates/mounts found
+third production builder `bot/live/levels.py:LevelRoot.payload`, used for
+nontrivial LIVE levels and pilotB0; its old copied algorithm would remain stale.
+Read-only source SHA822cee2a... matches LIVE owner's clean file. Protected
+bot/live remains unedited (`git diff --exit-code -- bot/live` PASS). Prepared
+minimal guarded shared-helper patch in own `patches/B1-live-level-public-graph.patch`,
+SHAba392e46..., proposed outputa3289daf... . `git apply --check` and AST PASS,
+not applied. Source-extracted in-memory stdlib payload test reproduces stale
+GG links, validates patched new IDs/ranks, preserves legacy/new empty C56 payload
+bytes and verifies original source unchanged; receipt
+`receipts/b1-live-level-patch-stdlib.txt`. No native/host/root/pin action.
+Separate independent patch review and LIVE owner integration/test handoff remain;
+approved core/probe11 hashes and B1's single planned validation unchanged.
+
+B1's strengthened own emitted suite is now14cases, adding real mirrored pulses
+and invalid pipeline controls; its HOST-PLAN-PUBLIC.md explicitly retires the
+old immutable implementation packet's earlier emitted10 scope. Actual acceptance
+denominators will be14emitted+16owner groups,32boundarygraphs/64rootpaths; the
+packet remains historical/source-review binding, not a current execution claim.
