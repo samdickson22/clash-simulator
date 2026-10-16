@@ -1210,7 +1210,9 @@ RoyaleSim gates must run on 04/08 (rext-bc errors on 01). k = 3 now (r5 v30, sou
 - CPU queue runners still alive (idle unless lines are appended): 01 cpuq6/cpuq7/cpuqka; 04 cpuq 3045524, cpuq2 3192422,
   cpuq6 363971, cpuq7 1222266, cpuqka 3964180; 08 cpuq 2525950, cpuq2 2581995, cpuq6 4115451, cpuq7 792386, cpuqka
   3544192. Keep any new 03/04/08 CPU job ≤ 30 workers in total per host.
-- **K4L feeders: ALL STOPPED since 07:09Z (G1 has priority; refill after G1).** Last args (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
+- **K4L feeders: ALL STOPPED since 07:09Z (G1 has priority; refill after G1).** `cpu_feeder.sh`/`cpu_room.sh` are main
+07281e09's on 01/03(rl03)/04/08 (synced 08:2xZ; sha256 29ab9f64…/ae1d2616…): their live-python count skips the LIVE
+LEAD's YOLO loaders (`BOT_CPU_IGNORE`, default `train_cr\.py`). Last args (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
   total live python; claims/leases make them yield; to throttle, kill the feeder PGID and relaunch with a lower TARGET,
   in-flight 100-game batches drain by themselves):**
   - 03: PGID **3200991** (since 03:40:43Z), `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l $J3/cpu-feed-k4l.tmpl 80 100
@@ -1520,6 +1522,10 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
     5 updates, F10 only for clear HEADLINE+F9 leaders); (b) RL against a stronger league (K4L-R-gs/K4C opponents in the mix
     instead of it5s2/self) since v1/R3a are near saturated for the student (0.91/0.76); (c) retrain the next student on the
     full-pool G1 data (coordinator's plan) with r5 v10 as init, then RL on top.
+
+- 08:2xZ: `cpu_feeder.sh` from main 07281e09 (live count ignores the LIVE LEAD's `train_cr.py` loaders via `BOT_CPU_IGNORE`)
+  synced to 01/04/08 and 03's `clasher-bot-rl03` (cpu_room.sh there matched 07281e09 already, rl03 copy updated); no
+  feeder restarted (waiting for G1).
 
 ## Next
 
