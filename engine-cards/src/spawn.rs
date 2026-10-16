@@ -11,7 +11,7 @@ pub(super) struct Spec {
     maximum: i64,
     radius: f64,
     gated: bool,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     first_update: bool,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]

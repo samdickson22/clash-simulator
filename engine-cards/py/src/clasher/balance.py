@@ -244,6 +244,24 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "SkeletonDragon": {"projectileStartRadius": 450},
     "DartBarrell": {"projectileStartRadius": 1500},
+    # Batch B1 (RoyaleSim (MIT) cards-15535.1): the stomp gait columns the
+    # export drops. Walking speed then normalizes like the Giant's (45 -> 52,
+    # 60 -> 69) and the gait pauses WaitMS after every StopMovementAfterMS.
+    "RoyalGiant": {
+        "stopMovementAfterMS": 640,
+        "waitMS": 100,
+        "sightClipSide": 2000,
+        "projectileStartRadius": 1200,
+    },
+    "MiniZapMachine": {
+        "overrideAttackFinishTime": True,
+        "attackFinishTime": 0,
+    },
+    "GoblinGiant": {
+        "stopMovementAfterMS": 640,
+        "waitMS": 100,
+        "sightClipSide": 2000,
+    },
     "IceWizard": {"projectileStartRadius": 550},
     "InfernoDragon": {
         "projectileStartRadius": 450,
@@ -341,6 +359,8 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     "HogRider": {"sightClip": 4000, "sightClipSide": 4000},
     "RoyalHog": {"sightClip": 4000, "sightClipSide": 4000},
     "SkeletonBalloon": {
+        # Batch B1: FlyDirectPaths (RoyaleSim (MIT) cards-15535.1).
+        "flyDirectPaths": True,
         "sightClipSide": 2000,
         "range": 350,
         "kamikazeTime": 500,
@@ -370,6 +390,8 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "BalloonBomb": {"deathDamageRadius": 3000},
     "BombTowerBomb": {"deathDamageRadius": 3000},
+    # Batch B1 (RoyaleSim (MIT) cards-15535.1): Giant Skeleton's bomb row.
+    "GiantSkeletonBomb": {"deathDamageRadius": 3000, "deathPushback": 1800},
 }
 
 
@@ -411,6 +433,16 @@ CHARACTER_RUNTIME_TRAITS: dict[str, dict[str, Any]] = {
     "Firecracker": {"mass": 6},
     "Ghost": {"mass": 3, "hovering": True},
     "Giant": {"mass": 18, "ignorePushback": True},
+    # Batch B1 bodies, RoyaleSim (MIT) cards-15535.1.
+    "RoyalGiant": {"mass": 18, "ignorePushback": True},
+    "GoblinGiant": {"mass": 18, "ignorePushback": True},
+    "GiantSkeleton": {"mass": 18, "ignorePushback": True},
+    "MiniZapMachine": {"mass": 4},
+    # Battle Healer's Hovering only prices river water in her ground route
+    # (RoyaleSim (MIT) pathfinding.HOVERING_WATER_RULE); she otherwise walks
+    # the ordinary ground route. The engine's hover arm is Royal Ghost's
+    # direct (air-like) route, so she keeps the walker route here.
+    "BattleHealer": {"mass": 6, "hovering": False},
     "Goblin": {"mass": 2},
     "Goblin_Stab": {"mass": 2},
     "Golem": {"mass": 20, "ignorePushback": True},
@@ -742,6 +774,11 @@ ENTRY_PATH_OVERRIDES: dict[str, dict[tuple[str, ...], Any]] = {
     "RoyalHogs": {
         ("summonWidth",): 3500,
         ("deployWTileMargin",): 2,
+    },
+    # Batch B1: Royal Recruits' wide formation column (RoyaleSim (MIT)
+    # cards-15535.1 SummonWidth); it selects the same native wide formation.
+    "RoyalRecruits": {
+        ("summonWidth",): 14000,
     },
     "Ghost": {
         ("summonCharacterData", "buffWhenNotAttackingUseAttackRange"): True,

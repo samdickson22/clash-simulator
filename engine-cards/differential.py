@@ -125,6 +125,7 @@ def entity(e, *, clone_prototype=True):
     )
     stats = dict(
         min_range=float(getattr(s, "minimum_range", 0) or 0) / 1000,
+        fly_direct=bool(getattr(s, "fly_direct_paths", False)),
         death_first_update=bool(getattr(death_spawn, "first_update", False)),
         spawn_push=(spawn_push.distance_tiles, spawn_push.radius_tiles, spawn_push.hits_air, spawn_push.hits_ground) if spawn_push else None,
         dash=dash_spec,
@@ -570,8 +571,15 @@ def config(cards=CARDS, *, level=11, mirror_templates=True):
             footprint=size,
             anywhere=bool(getattr(stats, "can_deploy_on_enemy_side", False)),
             margin=int(getattr(stats, "deploy_w_tile_margin", 0) or 0),
-            mirror_x=len(units) in (2, 3, 4),
-            recruits_line=card == "RoyalRecruits",
+            mirror_x=len(units) in (2, 3, 4) or bool(getattr(stats, "summon_width", 0) and len(units) >= 5),
+            recruits_line=card == "RoyalRecruits" and not getattr(stats, "summon_width", 0),
+            line_search=bool(
+                getattr(stats, "summon_width", 0)
+                and not getattr(stats, "deploy_w_tile_margin", 0)
+                and len(units) >= 2
+                and not units[0]["stats"]["air"]
+                and not getattr(stats, "summon_character_second_data", None)
+            ),
         )
         if card == "MightyMiner":
             source = b.entities[max(b.entities)]

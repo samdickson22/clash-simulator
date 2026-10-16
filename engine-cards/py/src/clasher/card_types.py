@@ -332,6 +332,9 @@ class CardStatsCompat:
             char_data.get("stopMovementAfterMS", 0) or 0
         )
         self.wait_ms = int(char_data.get("waitMS", 0) or 0)
+        # FlyDirectPaths (Skeleton Barrel): the flyer aims at its target's
+        # centre every tick instead of its one-node route cell.
+        self.fly_direct_paths = bool(char_data.get("flyDirectPaths", False))
         self.sight_clip = units_to_tiles(char_data.get("sightClip")) or 0.0
         if self.sight_clip <= 0.0 and (self.speed or 0) > 0:
             self.sight_clip = 1.0

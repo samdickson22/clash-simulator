@@ -55,6 +55,12 @@ def formation_offset(
         and (
             (int(lane_id) == 1 and slot_count in {2, 3})
             or (int(lane_id) == 2 and slot_count == 4)
+            # Batch B1: a wide line of five or more (Royal Recruits) lays its
+            # zigzag from the other end on the right lane. Ported from
+            # RoyaleSim (MIT), formation.rs member_offset (ring counts 5, 6,
+            # 8+ mirror on LANE_RIGHT), measured on Royal Recruits taps. No
+            # C56 card has a wide line of five or more.
+            or (width_units != 0 and int(lane_id) == 2 and slot_count >= 5 and slot_count != 7)
         )
     )
 
@@ -233,3 +239,73 @@ def native_radial_spawn_offset(
     if flip_y:
         y_units = -y_units
     return logic_units_to_tiles(x_units), logic_units_to_tiles(y_units)
+
+
+# Ported from RoyaleSim (MIT), formation.rs `line_centre_client` and its constants
+# (formation.LINE_CENTRE_SEARCH = client15535_interleaved_first_ring, LINE_FRAME =
+# client15535_y_reflection, LINE_KING_BACK_ROW = client16402_open, LINE_TERRITORY =
+# client16402_troop_territory). Native units; checks run in the owner's y frame.
+LINE_CELL = 1000
+LINE_PRINCESS_X = ((2000, 5000), (13000, 16000))
+LINE_PRINCESS_Y = (5000, 8000)
+LINE_KING_COLUMNS = (7000, 11000)
+LINE_KING_BACK_Y = 4000
+LINE_KING_BACK_ROW_Y = 1000
+LINE_BACK_ROW_OPEN_X = (6000, 12000)
+LINE_KING_TILE_COLS = (7, 11)
+LINE_KING_TILE_ROWS = 5
+LINE_SEARCH_RINGS_CLIENT = 31
+
+
+def line_centre_client(tap, offsets, ground, owner, may_stand, width=18000, height=32000):
+    """Return the absolute tile centre (native units) a SummonWidth line stands on.
+
+    ``tap``, ``ground`` and ``offsets`` are absolute native-unit points/displacements
+    (``offsets`` = the members' displacements from the line's ground point).
+    ``may_stand(x, y)`` tests an absolute ground point against the owner's troop
+    territory. Returns None when no centre within the search rings is valid.
+    """
+    cell = LINE_CELL
+    half = max((abs(int(o[0])) for o in offsets), default=0)
+
+    def own_y(y):
+        return height - y if owner == 1 else y
+
+    first_row = LINE_KING_BACK_ROW_Y // cell
+
+    def valid(cx, cy):
+        oy = own_y(cy)
+        ex, ey = cx + ground[0], cy + ground[1]
+        if cx - half < -cell // 2 or cx + half > width + cell // 2 or not may_stand(ex, ey):
+            return False
+        if oy < LINE_KING_BACK_ROW_Y and not (LINE_BACK_ROW_OPEN_X[0] <= cx < LINE_BACK_ROW_OPEN_X[1]):
+            return False
+        col, row = cx // cell, oy // cell
+        if LINE_KING_TILE_COLS[0] <= col < LINE_KING_TILE_COLS[1] and first_row <= row < LINE_KING_TILE_ROWS:
+            return False
+        for ox, oy_off in offsets:
+            mx, my = ex + int(ox), own_y(ey + int(oy_off))
+            if LINE_PRINCESS_Y[0] <= my < LINE_PRINCESS_Y[1] and any(a <= mx < b for a, b in LINE_PRINCESS_X):
+                return False
+            if LINE_KING_COLUMNS[0] <= mx < LINE_KING_COLUMNS[1] and LINE_KING_BACK_ROW_Y <= my < LINE_KING_BACK_Y:
+                return False
+        return True
+
+    tx0 = min(max(int(tap[0]), 0), width - 1)
+    ty0 = min(max(int(tap[1]), 0), height - 1)
+    tx, ty = tx0 // cell, ty0 // cell
+    best = None
+    for r in range(LINE_SEARCH_RINGS_CLIENT):
+        if r == 0:
+            ring = [(0, 0)]
+        else:
+            ring = [d for i in range(2 * r) for d in ((i - r, -r), (-r, r - i), (r - i, r), (r, i - r))]
+        for dx, dy in ring:
+            cx, cy = (tx + dx) * cell + cell // 2, (ty + dy) * cell + cell // 2
+            if valid(cx, cy):
+                d = (cx - tx0) ** 2 + (cy - ty0) ** 2
+                if best is None or d < best[0]:
+                    best = (d, cx, cy)
+        if best is not None:
+            break
+    return None if best is None else (best[1], best[2])

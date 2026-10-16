@@ -30,6 +30,9 @@ use std::sync::Arc;
 fn one() -> f64 {
     1.0
 }
+fn is_zero(x: &f64) -> bool {
+    *x == 0.0
+}
 
 fn units(x: f64) -> i64 {
     (x * 1000.0).round_ties_even() as i64
@@ -60,8 +63,12 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
-    #[serde(default)]
+    // Batch A fields are omitted from snapshots at their inert default, so C56 snapshots stay byte-identical.
+    #[serde(default, skip_serializing_if = "is_zero")]
     min_range: f64,
+    // Batch B1 fields: omitted from snapshots at their inert default, like Batch A's.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    fly_direct: bool,
     #[serde(default)]
     payload_key: String,
     #[serde(default)]
@@ -90,7 +97,7 @@ struct Stats {
     death_spawn_const: bool,
     #[serde(default)]
     death_zero_count: usize,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     death_first_update: bool,
     #[serde(default)]
     leaf_elixir_share: Option<f64>,
@@ -631,6 +638,9 @@ struct Card {
     mirror: bool,
     #[serde(default)]
     recruits_line: bool,
+    // Batch B1: a SummonWidth line without DeployWTileMargin searches its centre (deployment.rs line_centre).
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    line_search: bool,
     #[serde(default)]
     anywhere: bool,
     cost: f64,
@@ -1589,6 +1599,10 @@ impl BattleState {
                 }
                 e.route_backwards = false;
             }
+            // Ported from RoyaleSim (MIT), state.rs phase_path16402_for (movement.FLY_DIRECT_PATHS = read).
+            if self.entities[i].stats.fly_direct {
+                return (units(self.entities[j].x), units(self.entities[j].y));
+            }
             return goal
                 .map(center)
                 .unwrap_or((units(self.entities[j].x), units(self.entities[j].y)));
@@ -2226,7 +2240,7 @@ impl BattleState {
         // Target observation during interrupting pushback does not start a hit.
         if self.entities[i].kamikaze_primed {
             self.entities[i].kamikaze_timer = (self.entities[i].kamikaze_timer-0.05).max(0.0);
-            if self.entities[i].kamikaze_timer<=1e-9 { self.damage(i,self.entities[i].hp); }
+            if self.entities[i].kamikaze_timer<=1e-9 { self.damage(i,self.entities[i].hp); } else { self.kamikaze_drain(i); }
             return;
         }
         if engaged {
@@ -2281,6 +2295,7 @@ impl BattleState {
                         self.entities[i].kamikaze_primed=true;
                         self.entities[i].kamikaze_timer=delay;
                         self.entities[i].windup=false;
+                        self.kamikaze_drain(i);
                     } else { self.damage(i,self.entities[i].hp); }
                     return;
                 }
@@ -2469,6 +2484,18 @@ impl BattleState {
                 self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);
                 self.entities[i].force_due = false;
             }
+        }
+    }
+    /// Ported from RoyaleSim (MIT), state.rs `kamikaze_drain` (combat.KAMIKAZE_TIME = flat_drain_to_zero); mirrors
+    /// entities.py Troop._kamikaze_drain. Inert without a kamikaze delay (no C56 card sets one).
+    fn kamikaze_drain(&mut self, i: usize) {
+        let Some(delay) = self.entities[i].stats.kamikaze_delay else { return; };
+        let delay_ms = (delay * 1000.0).round() as i64;
+        if delay_ms <= 0 || !self.entities[i].alive { return; }
+        let step = (self.entities[i].stats.max_hp.round() as i64) * 50 / delay_ms;
+        if step > 0 {
+            let amount = (step as f64).min(self.entities[i].hp);
+            self.damage(i, amount);
         }
     }
     fn hide_tick(&mut self, i: usize) {
@@ -3797,6 +3824,18 @@ impl BattleState {
         } else {
             None
         };
+        // Batch B1: a SummonWidth line's centre (Royal Recruits), after the column's forward edge (battle.py
+        // BattleState._native_line_centre, called with the tap's edge).
+        let (x, y) = if c.line_search && c.spell.is_none() {
+            let flip = if x < 9.0 || !c.mirror_x.unwrap_or(true) { 1 } else { -1 };
+            let offsets: Vec<(i64, i64)> = c.units[player].iter().map(|t| (units(t.x) * flip, units(t.y))).collect();
+            let ground = (if requested_x < 9.0 { -1 } else { 0 }, if player == 1 { -1 } else { 0 });
+            let tap = (units(x), units(y));
+            match self.line_centre(player, tap, &offsets, ground) {
+                Some(found) if found != tap => (found.0 as f64 / 1000.0, found.1 as f64 / 1000.0),
+                _ => (x, y),
+            }
+        } else { (x, y) };
         let p = &mut self.players[player];
         let slot = p.hand.iter().position(|n| n.as_deref() == Some(card));
         if p.elixir + 1e-9 < cost || slot.is_none() {

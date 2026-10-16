@@ -74,6 +74,52 @@ impl BattleState {
         best
     }
 
+    /// Ported from RoyaleSim (MIT), formation.rs `line_centre_client` (formation.LINE_CENTRE_SEARCH =
+    /// client15535_interleaved_first_ring, LINE_FRAME = client15535_y_reflection, LINE_KING_BACK_ROW = client16402_open,
+    /// LINE_TERRITORY = client16402_troop_territory); mirrors formations.py line_centre_client and
+    /// battle.py BattleState._native_line_centre. Absolute native units; checks in the owner's y frame.
+    pub(super) fn line_centre(&self, player: usize, tap: (i64, i64), offsets: &[(i64, i64)], ground: (i64, i64)) -> Option<(i64, i64)> {
+        const CELL: i64 = 1000;
+        let (w, h) = (18000i64, 32000i64);
+        let half = offsets.iter().map(|o| o.0.abs()).max().unwrap_or(0);
+        let own_y = |y: i64| if player == 1 { h - y } else { y };
+        let first_row = 1000 / CELL;
+        let valid = |cx: i64, cy: i64| -> bool {
+            let oy = own_y(cy);
+            let (ex, ey) = (cx + ground.0, cy + ground.1);
+            if cx - half < -CELL / 2 || cx + half > w + CELL / 2
+                || !self.can_deploy(player, ex as f64 / 1000.0, ey as f64 / 1000.0, true) {
+                return false;
+            }
+            if oy < 1000 && !(6000..12000).contains(&cx) { return false; }
+            let (col, row) = (cx.div_euclid(CELL), oy.div_euclid(CELL));
+            if (7..11).contains(&col) && (first_row..5).contains(&row) { return false; }
+            offsets.iter().all(|o| {
+                let (mx, my) = (ex + o.0, own_y(ey + o.1));
+                let princess = (5000..8000).contains(&my) && ((2000..5000).contains(&mx) || (13000..16000).contains(&mx));
+                let king = (7000..11000).contains(&mx) && (1000..4000).contains(&my);
+                !princess && !king
+            })
+        };
+        let t0 = (tap.0.clamp(0, w - 1), tap.1.clamp(0, h - 1));
+        let (tx, ty) = (t0.0.div_euclid(CELL), t0.1.div_euclid(CELL));
+        let mut best: Option<(i64, i64, i64)> = None;
+        for r in 0..31i64 {
+            let ring: Vec<(i64, i64)> = if r == 0 { vec![(0, 0)] } else {
+                (0..2 * r).flat_map(|i| [(i - r, -r), (-r, r - i), (r - i, r), (r, i - r)]).collect()
+            };
+            for (dx, dy) in ring {
+                let (cx, cy) = ((tx + dx) * CELL + CELL / 2, (ty + dy) * CELL + CELL / 2);
+                if valid(cx, cy) {
+                    let d = (cx - t0.0).pow(2) + (cy - t0.1).pow(2);
+                    if best.map_or(true, |b| d < b.0) { best = Some((d, cx, cy)); }
+                }
+            }
+            if best.is_some() { break; }
+        }
+        best.map(|b| (b.1, b.2))
+    }
+
     pub(super) fn recruit_positions(&self, x: f64, y: f64, owner: usize, count: usize) -> Vec<(f64, f64)> {
         let blocked: Vec<(f64, f64)> = self.entities.iter().filter_map(|e| {
             let r = if e.king { 2.0 } else { 1.5 };

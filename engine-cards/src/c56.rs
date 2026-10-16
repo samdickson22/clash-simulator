@@ -169,7 +169,29 @@ impl BattleState {
 
     pub(super) fn bomb_tick(&mut self, i: usize) {
         self.entities[i].effect_age += 0.05;
-        if self.entities[i].effect_age < self.entities[i].bomb_timer - 1e-9 {
+        // Ported from RoyaleSim (MIT), spell.rs step_spells (spawner.DEATH_BOMB_SPAWN_TIMING = units_at_fuse_end):
+        // a container (a bomb with children, the Skeleton Barrel's) releases its units one tick after the plain
+        // fuse, each with its same-tick first update, and lands its hit on the next tick. Mirrors entities.py
+        // TimedExplosive.update. Plain bombs (no children; every C56 bomb) keep the single-step fuse.
+        let container = self.config.bomb_children.get(&self.entities[i].stats.name).cloned();
+        if let Some(templates) = container {
+            let age = self.entities[i].effect_age;
+            let timer = self.entities[i].bomb_timer;
+            if age < timer + 0.05 - 1e-9 {
+                return;
+            }
+            if age < timer + 0.1 - 1e-9 {
+                let bomb = self.entities[i].clone();
+                let first = self.entities.len();
+                self.spawn_death_templates(&bomb, templates);
+                for k in first..self.entities.len() {
+                    if !self.fresh.iter().any(|&(f, _)| f == k) {
+                        self.fresh.push((k, false));
+                    }
+                }
+                return;
+            }
+        } else if self.entities[i].effect_age < self.entities[i].bomb_timer - 1e-9 {
             return;
         }
         let bomb = self.entities[i].clone();
@@ -199,9 +221,6 @@ impl BattleState {
                 false,
                 None,
             );
-        }
-        if let Some(templates) = self.config.bomb_children.get(&bomb.stats.name).cloned() {
-            self.spawn_death_templates(&bomb,templates);
         }
         self.entities[i].alive = false;
     }

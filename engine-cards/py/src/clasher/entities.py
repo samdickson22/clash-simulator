@@ -1812,6 +1812,18 @@ class Entity(ABC):
             and target.is_expected_to_die_from_projectiles()
         )
     
+    def _kamikaze_drain(self) -> None:
+        """Ported from RoyaleSim (MIT), state.rs kamikaze_drain (combat.KAMIKAZE_TIME =
+        flat_drain_to_zero, measured on client 15.535.29 Skeleton Barrels): from its
+        fire tick a delayed kamikaze loses floor(max HP x 50 / KamikazeTime) a tick,
+        nothing carried; the serialized delay still ends it."""
+        delay_ms = int(getattr(self.card_stats, "kamikaze_time", 0) or 0)
+        if delay_ms <= 0 or not self.is_alive:
+            return
+        step = int(round(self.max_hitpoints)) * 50 // delay_ms
+        if step > 0:
+            self.take_damage(min(float(step), self.hitpoints))
+
     def is_stunned(self) -> bool:
         """Check if entity is currently stunned"""
         return self.stun_timer > 0
@@ -3892,6 +3904,8 @@ class Troop(Entity):
             )
             if self.kamikaze_timer_remaining <= 1e-9:
                 self.take_damage(self.hitpoints)
+            else:
+                self._kamikaze_drain()
             return
 
         # A deployed troop enters with its Load Time already preloaded. Full
@@ -3955,6 +3969,7 @@ class Troop(Entity):
                         self.kamikaze_primed = True
                         self.kamikaze_timer_remaining = delay
                         self._attack_windup_active = False
+                        self._kamikaze_drain()
                         return
                     # Payload-only kamikaze troops with no explicit delay
                     # break on the committed attack frame.
@@ -4327,6 +4342,10 @@ class Troop(Entity):
                 self,
                 target_entity,
             )
+            # Ported from RoyaleSim (MIT), state.rs phase_path16402_for
+            # (movement.FLY_DIRECT_PATHS = read, measured on client 15.535.29).
+            if getattr(self.card_stats, "fly_direct_paths", False):
+                pathfind_target = target_entity.position
         else:
             # LogicPathFinder owns bridge and river selection through the
             # immutable arena's lane/water costs. Hovering characters travel
@@ -7059,12 +7078,27 @@ class TimedExplosive(Entity):
             
         self.time_alive += dt
         
+        if self.carries_freeze_to_children:
+            # Ported from RoyaleSim (MIT), spell.rs step_spells under
+            # spawner.DEATH_BOMB_SPAWN_TIMING = units_at_fuse_end (measured,
+            # client 16.402 Skeleton Barrel): a container releases its units
+            # one logic tick after this engine's plain-bomb fuse check, each
+            # with its same-tick first update, and lands its hit on the next
+            # tick. Plain bombs (Balloon, Bomb Tower, Giant Skeleton) carry no
+            # units and keep the single-step fuse below.
+            if self.time_alive >= self.explosion_timer + 0.1 - 1e-9:
+                self._explode(battle_state, release_units=False)
+                self.is_alive = False
+            elif self.time_alive >= self.explosion_timer + 0.05 - 1e-9:
+                self._spawn_death_units(battle_state, first_update=True)
+            return
+
         # Check if timer expired
         if self.time_alive >= self.explosion_timer - 1e-9:
             self._explode(battle_state)
             self.is_alive = False
     
-    def _explode(self, battle_state: 'BattleState') -> None:
+    def _explode(self, battle_state: 'BattleState', release_units: bool = True) -> None:
         """Deal explosion damage to entities in radius using hitbox collision"""
         from .mechanics.shared.knockback import apply_radial_knockback
 
@@ -7101,10 +7135,10 @@ class TimedExplosive(Entity):
                 )
 
         # Optional chained death spawn (e.g. Skeleton Barrel container -> Skeletons).
-        if self.death_spawn_name and self.death_spawn_count > 0:
+        if release_units and self.death_spawn_name and self.death_spawn_count > 0:
             self._spawn_death_units(battle_state)
 
-    def _spawn_death_units(self, battle_state: 'BattleState') -> None:
+    def _spawn_death_units(self, battle_state: 'BattleState', first_update: bool = False) -> None:
         """Spawn units around this explosive when configured."""
         from .factory.dynamic_factory import troop_from_character_data
         from .formations import native_radial_spawn_offset
@@ -7170,6 +7204,8 @@ class TimedExplosive(Entity):
                 ),
             )
             spawned = battle_state.entities.get(spawned_id)
+            if first_update:
+                battle_state._first_update_spawned(spawned, collide=False)
             if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
