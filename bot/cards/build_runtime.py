@@ -19,8 +19,8 @@
    are NOT included), native sha256 and origin, sha256 of every overlay file and of the manifest, which overlays
    changed a base file, base path and base native sha256.
 Select it with CLASHER_BOT_RUNTIME=TARGET CLASHER_BOT_RUNTIME_PINS=r1-cards1 (no CLASHER_DELAY_NATIVE_DIR).
-TARGET must not exist, or must hold a previous receipt (then it moves to TARGET.old). A target under
-clasher-bot-runtime/ (the real r1-cards1) needs --release.
+TARGET must not exist, or must hold a previous receipt (then it moves to TARGET.old). Staging uses a unique
+TARGET.assembling-* sibling. A target under clasher-bot-runtime/ (the real r1-cards1) needs --release.
 """
 from __future__ import annotations
 
@@ -34,6 +34,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 
 SOURCE = Path(__file__).resolve().parents[2]
 RUNTIMES = Path('/mpac/sdicks02/repos/clasher-bot-runtime')
@@ -56,6 +57,8 @@ def git(*args):
 def export(rev, out):
     """git archive REV engine-cards -> OUT/engine-cards (committed files only: uncommitted edits never ship), plus
     OUT/SOURCE-GIT.json {commit, tracked, dirty_at_export}."""
+    validate_paths({'engine source': SOURCE / 'engine-cards', 'git metadata': SOURCE / '.git'},
+                   {'source export': out})
     commit = git('rev-parse', rev).strip()
     if out.exists() and any(out.iterdir()):
         if not (out / 'SOURCE-GIT.json').exists():
@@ -107,12 +110,67 @@ def overlays(tracked):
     return out
 
 
+def validate_paths(inputs, outputs):
+    """Reject every output/input or output/output overlap before changing any path."""
+    for name, path in outputs.items():
+        if Path(path).is_symlink():
+            sys.exit(f'symlinked output path: {name}: {path}')
+    inputs = {k: Path(v).resolve() for k, v in inputs.items()}
+    outputs = {k: Path(v).resolve() for k, v in outputs.items()}
+    def overlap(a, b):
+        return a == b or a in b.parents or b in a.parents
+    for name, path in outputs.items():
+        for other, source in inputs.items():
+            if overlap(path, source):
+                sys.exit(f'{name} overlaps {other}: {path} / {source}')
+    pairs = list(outputs.items())
+    for i, (name, path) in enumerate(pairs):
+        for other, dest in pairs[i + 1:]:
+            if overlap(path, dest):
+                sys.exit(f'{name} overlaps {other}: {path} / {dest}')
+
+
+def staging_dir(target, inputs, outputs):
+    """A new sibling cannot alias an existing input or an abandoned staging tree."""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = Path(tempfile.mkdtemp(prefix=target.name + '.assembling-', dir=target.parent))
+    validate_paths(inputs, dict(outputs, staging=tmp))
+    return tmp
+
+
+def reject_symlink_ancestors(root, destinations):
+    """Check all destination parents before installing any overlay into a copied base."""
+    for destination in destinations:
+        parent = root
+        for part in destination.relative_to(root).parts[:-1]:
+            parent = parent / part
+            if parent.is_symlink():
+                sys.exit(f'symlinked destination ancestor: {parent}')
+
+
 def install(src, dst):
-    """New inode (temp + rename): never writes through a hardlink into BASE."""
+    """New inode (unique temp + rename): never writes through a BASE hardlink or temp symlink."""
     dst.parent.mkdir(parents=True, exist_ok=True)
-    tmp = dst.with_name(dst.name + '.cards-tmp')
-    shutil.copy2(src, tmp)
-    os.replace(tmp, dst)
+    fd, name = tempfile.mkstemp(prefix=dst.name + '.cards-', dir=dst.parent)
+    os.close(fd)
+    tmp = Path(name)
+    try:
+        shutil.copy2(src, tmp)
+        os.replace(tmp, dst)
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
+def write_text(dst, text):
+    """Write metadata as a new inode, including when BASE contains a symlink at dst."""
+    fd, name = tempfile.mkstemp(prefix=dst.name + '.cards-', dir=dst.parent)
+    tmp = Path(name)
+    try:
+        with os.fdopen(fd, 'w') as stream:
+            stream.write(text)
+        os.replace(tmp, dst)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 def main():
@@ -137,35 +195,50 @@ def main():
     if not a.target or not (a.native or a.build_dir):
         sys.exit('need --target and one of --native / --build-dir')
     base, target = Path(a.base).resolve(), Path(a.target).resolve()
-    if target == base or base in target.parents or target in base.parents:
-        sys.exit('target overlaps base')
+    old = target.with_name(target.name + '.old')
+    tree = target.with_name(target.name + '.source') if a.rev else Path(a.tree).resolve()
+    inputs = dict(base=base, base_gamedata=base / 'gamedata.json',
+                  base_native=base / 'native/clasher_core.abi3.so')
+    outputs = dict(target=target, backup=old)
+    if a.rev:
+        inputs['engine source'] = SOURCE / 'engine-cards'
+        outputs['source export'] = tree
+    else:
+        inputs['overlay tree'] = tree
+    if a.native:
+        inputs['native'] = Path(a.native).resolve()
+    if a.build_dir:
+        outputs['native build'] = Path(a.build_dir).resolve()
+    validate_paths(inputs, outputs)
     if RUNTIMES in target.parents and not a.release:
         sys.exit(f'{target} is a live runtime path: pass --release')
-    if target.exists() and any(target.iterdir()):
-        if not (target / RECEIPT).exists():
-            sys.exit(f'{target} exists and holds no {RECEIPT}: refusing to replace it')
-        old = target.with_name(target.name + '.old')
-        if old.exists():
-            subprocess.run(['chmod', '-R', 'u+w', str(old)], check=True)
-            shutil.rmtree(old)
-        target.rename(old)
+    replacing = target.exists() and any(target.iterdir())
+    if replacing and not (target / RECEIPT).exists():
+        sys.exit(f'{target} exists and holds no {RECEIPT}: refusing to replace it')
     if a.rev:
         tree = export(a.rev, target.with_name(target.name + '.source'))
     else:
         tree = Path(a.tree).resolve()
     info = source_info(tree)
+    inputs.update({f'overlay {rel}': tree / rel for rel in info['tracked']})
+    validate_paths(inputs, {k: v for k, v in outputs.items() if k != 'source export'})
+    if replacing:
+        if old.exists():
+            subprocess.run(['chmod', '-R', 'u+w', str(old)], check=True)
+            shutil.rmtree(old)
+        target.rename(old)
     native = build_native(tree, Path(a.build_dir).resolve()) if a.build_dir else Path(a.native).resolve()
     native_sha = sha256(native)
 
-    target.parent.mkdir(parents=True, exist_ok=True)
-    tmp = target.with_name(target.name + '.assembling')
-    if tmp.exists():
-        shutil.rmtree(tmp)
+    inputs['overlay tree'] = tree
+    tmp = staging_dir(target, inputs, {k: v for k, v in outputs.items() if k != 'source export'})
     cmd = ['rsync', '-a', f'{base}/', f'{tmp}/']
     if a.link:
         cmd[2:2] = [f'--link-dest={base}']
     subprocess.run(cmd, check=True)
 
+    destinations = [tmp / dst for _, dst in overlays(info['tracked'])]
+    reject_symlink_ancestors(tmp, destinations + [tmp / 'native/clasher_core.abi3.so'])
     files = []
     for rel, dst in overlays(info['tracked']):
         src = tree / rel
@@ -192,7 +265,7 @@ def main():
         overlay_manifest_sha256=hashlib.sha256(manifest.encode()).hexdigest(),
         overlay_files=len(files), overlay_changed=[f['path'] for f in files if f['changed']],
         src_base_only=base_only, files=files)
-    (tmp / RECEIPT).write_text(json.dumps(receipt, indent=1) + '\n')
+    write_text(tmp / RECEIPT, json.dumps(receipt, indent=1) + '\n')
     tmp.rename(target)
     print(json.dumps({k: receipt[k] for k in ('source_commit', 'source_dirty_at_export_not_included', 'native', 'overlay_files',
                                                'overlay_changed', 'overlay_manifest_sha256')}, indent=1))
