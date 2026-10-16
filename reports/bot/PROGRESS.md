@@ -54,6 +54,23 @@ i.e. today's scorer cannot bank on its own; that is the problem to fix, not the 
 correction: bot-lead-live-diag-r1 (Opus). Sol helpers for evals/babysitting. Hosts: 01/03 full-pool generation;
 04/08 live-diag hold (~20 each) to ~23:30Z, then full-pool.
 
+## Thread ID table (copied from delegate_task / t3_thread_list results; updated 2026-10-16 20:11 UTC)
+
+Copy the ID from this table (or from fresh `t3_thread_list` output) for EVERY send. Never type or assemble one.
+Message text is written before the call; a send under ~50 characters is never made.
+
+| who | threadId |
+|---|---|
+| coordinator | `0523ae6f-baa3-4d4e-b233-b392671670db` |
+| BOT LEAD (me) | `thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1` |
+| LIVE LEAD | `thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-live-lead-20261014-r1` |
+| CARD LEAD | `thread:delegated-task:command%3Amcp%3A7f0bf0df-35b9-48b9-bbf9-8f9cdcc3f584%3Adelegate-task%3Aclasher-card-lead-20261016-r1` |
+| full-pool owner (Opus) | `thread:delegated-task:command%3Amcp%3Adfd92f6b-12ec-4f9d-b843-9d07e96ff7c2%3Adelegate-task%3Abot-lead-fullpool-prep-r1` |
+| live-diag owner (Opus) | `thread:delegated-task:command%3Amcp%3Ad5b57bd6-719b-4e85-a080-8b8bfc639a49%3Adelegate-task%3Abot-lead-live-diag-r1` |
+| deck search (Sol) | `thread:delegated-task:command%3Amcp%3Ad5b57bd6-719b-4e85-a080-8b8bfc639a49%3Adelegate-task%3Abot-lead-deckopt2-r1` |
+| LIVE loop owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-loop-owner-r1` |
+| LIVE translator owner | `thread:delegated-task:command%3Amcp%3A99d49b81-f9ec-41a6-bede-03f9b418a3db%3Adelegate-task%3Alive-translator-oov-owner-r1` |
+
 ## Superseded handoff: Sol interim, 2026-10-16 10:01 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
