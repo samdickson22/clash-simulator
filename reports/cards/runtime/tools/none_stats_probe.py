@@ -62,8 +62,16 @@ def main():
         assert stats is not None, name
         out['none_stats'][name] = [f for f in fields if getattr(stats, f, None) is None]
     out['body_none_stats'] = {}
+    out['unused_aggregate_body_rows'] = {}
+    body_tokens = {token for token, kind in R.templates if kind in ('Troop', 'Building')}
     for token, stats in R.bots['balanced'].bodies.items():
         out['body_none_stats'][f'{token}/{stats.name}'] = [f for f in fields if getattr(stats, f, None) is None]
+        if stats.scaled_hitpoints is None:
+            # Aggregate card aliases (ThreeMusketeers) are metadata rows, not
+            # visible units. Runtime templates serialize their child Musketeer.
+            assert token not in body_tokens, (token, stats.name)
+            out['unused_aggregate_body_rows'][f'{token}/{stats.name}'] = 'no runtime troop/building template; resolved child supplies HP'
+            continue
         # _bodies reads these without a numeric fallback. All present troop/building
         # payloads must supply them; optional shield data is tested through the same expression.
         check(f'body-stats/{token}', lambda stats=stats: (
@@ -91,6 +99,7 @@ def main():
             for _ in range(40):
                 b.step()
             out['boards'][f'{seat}/{board}'] = [e.card_stats.name for e in b.entities.values() if getattr(e, 'card_stats', None)]
+            mine = b.clone()  # stat/mask/ranking calls do not advance the Python battle
             for name in names:
                 resolved = canonical.get(resolve_card_name(name))
                 if resolved is None:
@@ -100,7 +109,6 @@ def main():
                     out['excluded'][name] = EXCLUDED[name]
                     continue
                 for slot in range(4):
-                    mine = b.clone()
                     hand = [c for c in decks[seat] if c != resolved][:4]
                     hand[slot] = resolved
                     mine.players[seat].hand = hand

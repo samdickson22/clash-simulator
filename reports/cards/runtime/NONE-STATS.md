@@ -29,7 +29,7 @@ The probe builds `Runtime(verify=True)`, checks all metadata, inventories every 
 stat, then exercises all four hand slots, both seats and five boards: Crown towers alone, enemy Cannon, Knight,
 Minions, and all three together. It invokes public masks, all three scripted ranking styles, planner candidates,
 native masks/selection/evaluation. C56 ranks are compared exactly to the original module, including every score.
-The released-root rerun also checks the required numeric body fields through the public opponent's own conversions.
+The released-root rerun also checks required numeric fields for visible body rows. ThreeMusketeers' aggregate row (token 326) has None HP, but no runtime body template references it: the runtime emits the child Musketeer token. The probe records this distinction rather than treating an aggregate card wrapper as a visible body.
 
 ## Audit table
 
@@ -71,8 +71,7 @@ Native details: `c56_scripts.rs` uses `building_damage.unwrap_or(damage)`; its o
 numeric scalars from Python metadata. `leaf.rs` uses `leaf_elixir_share.unwrap_or(0.0)`; entity damage/HP/interval
 are numeric normalized fields. `scripts.rs:417`'s crown-damage unwrap belongs to `public_choice`, reached only when
 `meta.c56` is false; these released roots always use `meta.c56=true`, dispatching to `c56_choice`. The placement
-`half.unwrap()` is guarded by `m.building`, which constructs `Some(half)`; the anchor minimum is guarded by nonempty
-anchors. Other unwraps cover checked deadlines, serialization or completed rollout results, not optional card stats.
+`half.unwrap()` is guarded by `m.building`, which constructs `Some(half)`; the anchor minimum uses the nonempty anchor list exported for admitted unrestricted building cards. Other unwraps cover checked deadlines, serialization or completed rollout results, not optional card stats.
 No native patch, and thus no native rebuild/parity-gate obligation, is introduced.
 
 ## Verification and release evidence
