@@ -75,6 +75,8 @@ def worker(wid, jobs, out: Path, base: int, decks: str = 'x4s'):
     rt = Runtime()
     select(rt, decks)
     check_scope(rt, decks, len(jobs), min((i for _, _, i in jobs), default=0), base)
+    from bot.fullpool.provenance import runtime_tag
+    tag = runtime_tag(rt)
     fh = open(out / f'games-{wid:03d}.jsonl', 'a')
     rec = gzip.open(out / f'rec-{wid:03d}.jsonl.gz', 'at')
     for cand, opp, i in jobs:
@@ -91,8 +93,8 @@ def worker(wid, jobs, out: Path, base: int, decks: str = 'x4s'):
                        score=score, winner=w, terminal=res['terminal'], ticks=res['ticks'], towers=res['towers'],
                        plays=res['plays'], accepted=res['accepted'], command_sha256=res['command_sha256'],
                        cpu_seconds=res['cpu_seconds'], wall_seconds=time.time() - t0,
-                       rec_rows=len(wrapped.rows), rec_errors=wrapped.errors)
-            rec.write(json.dumps(dict(index=i, opponent=opp, seat=1 - seat, rows=wrapped.rows)) + '\n')
+                       rec_rows=len(wrapped.rows), rec_errors=wrapped.errors, runtime=tag)
+            rec.write(json.dumps(dict(index=i, opponent=opp, seat=1 - seat, runtime=tag, rows=wrapped.rows)) + '\n')
             rec.flush()
         except Exception as ex:  # recorded, never silently dropped
             import traceback

@@ -85,6 +85,7 @@ def play_one(rt, g, a, out: Path):
                            teacher=p.teacher.name, beta=a.beta, base=a.base, outcome=outcome, winner=w,
                            ticks=res['ticks'], rows=len(p.rows), counts=p.counts,
                            command_sha256=res['command_sha256'])
+            receipt['runtime'] = a.runtime_tag
             if a.decks != 'x4s':
                 receipt.update(decks=a.decks, deck_lists=case['decks'])
             seal_rows(out / 'games' / f'game-{g:07d}-s{s}', p.rows, p.scores, receipt)
@@ -97,6 +98,7 @@ def play_one(rt, g, a, out: Path):
                terminal=res['terminal'], ticks=res['ticks'], plays=res['plays'], shards=shards,
                command_sha256=res['command_sha256'], cpu_seconds=res['cpu_seconds'],
                wall_seconds=time.time() - t0)
+    row['runtime'] = a.runtime_tag
     if a.decks != 'x4s':
         row.update(decks=a.decks, deck_lists=case['decks'])
     return row
@@ -113,6 +115,8 @@ def worker(wid, games, a, out: Path):
     install_from_env(rt)              # BOT_FULLPOOL_POLICIES (extended v1/R3a); unset = no-op
     select(rt, a.decks, a.belief_prior)
     check_scope(rt, a.decks, len(games), min(games, default=0), a.base)
+    from bot.fullpool.provenance import runtime_tag
+    a.runtime_tag = runtime_tag(rt)   # pin set + root/receipt/native/gamedata shas on every shard receipt and row
     with open(out / f'games-{wid:03d}.jsonl', 'a') as fh:
         for g in games:
             if (out / 'STOP').exists():

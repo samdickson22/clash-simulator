@@ -58,11 +58,11 @@ PIN_SETS = dict(
                          card_scope='full', fc_side_cut=True,
                          gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
                          tournament_crown_from_gamedata=('Fireball', 'Poison'))},
-    # r1-cards2 = r1-cards1 + Batch A mechanics + review fixes (b7c6976e4); dev builds and gates: reports/cards/r1-cards2/.
-    **{'r1-cards2': dict(PINS, native_sha256='5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252',
+    # r1-cards2 = r1-cards1 + Batch A mechanics + review fixes (878d5f459); dev builds and gates: reports/cards/r1-cards2/.
+    **{'r1-cards2': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
                          card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
     # live16402b = r1-cards2 + the same 16.402.19 stat overlay; select its matching dev root explicitly.
-    **{'live16402b': dict(PINS, native_sha256='5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252',
+    **{'live16402b': dict(PINS, native_sha256='de11f12401da396b309cd2e5d3ea422cfa1c94f462a4e3250fd51d89a62887b1',
                          card_scope='full', fc_side_cut=True,
                          gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
                          tournament_crown_from_gamedata=('Fireball', 'Poison'))},
