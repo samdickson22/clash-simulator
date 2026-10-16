@@ -53,6 +53,8 @@ def main():
         lambda r: r['first_context']['after']['python'].update(tick=102),
         lambda r: r['first_context']['before'].pop('python'),
         lambda r: r['first_context']['before']['python']['entities'].append(copy.deepcopy(r['first_context']['before']['python']['entities'][0])),
+        lambda r: r['first_context']['before']['python']['entities'].append(copy.deepcopy(r['first_context']['before']['python']['entities'][1])),
+        lambda r: r.update(first_context=None),
     ):
         bad = copy.deepcopy(rows[0]); mutate(bad)
         reject(lambda: observation(bad))
@@ -70,7 +72,7 @@ def main():
         reject(lambda: inspect(path, sha))
         data['legacy'] = rows; data['collection_status'] = 'INVALID'; sha = write(data)
         reject(lambda: inspect(path, sha))
-    print('PASS: six synthetic shapes, retained FAIL/absence, coincidence control, seven malformed roots, hash/denominator/collection negatives; no actual capture or native test')
+    print('PASS: six synthetic shapes, retained FAIL/absence, coincidence control, nine malformed roots, hash/denominator/collection negatives; no actual capture or native test')
 
 
 if __name__ == '__main__':

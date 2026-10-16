@@ -42,6 +42,9 @@ def frame(pair, identity):
         raise ValueError('unequal paired tick boundary')
     result = dict(tick=pair['python']['tick'])
     for arm, state in pair.items():
+        ids = [e['id'] for e in state['entities']]
+        if len(ids) != len(set(ids)):
+            raise ValueError('duplicate entity IDs in root')
         actor = entity(state, identity)
         target_id = actor.get('target')
         targets = [e for e in state['entities'] if e['id'] == target_id]
@@ -66,6 +69,8 @@ def observation(row):
                   evidence_kind='captured-boundary-observations-not-causal-proof')
     context = row['first_context']
     if context is None:
+        if row['seat'] == 0:
+            raise ValueError('required blue legacy mismatch was not captured')
         result['first_context'] = None
         return result
     before, after = frame(context['before'], identity), frame(context['after'], identity)
