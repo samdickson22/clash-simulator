@@ -15,6 +15,9 @@ Shared Troop follow-up is active under the ordered B2→C1 contract: see
 [triage and witness ledger](SHARED-TROOP.md). Zap's forced-state mismatch is
 established; heading coincidence, exact Spirit mode history and ordinary gameplay
 reachability still need B2's reviewed captures. No new fix/parity/acceptance claim.
+Read-only capture preparation independently **APPROVED** at32eb85cd1
+([scoped review](shared-troop/REVIEW-preparation-r3.md)); this supplies no engine,
+host-execution or actual-witness approval.
 
 Launcher repair is complete: fresh independent r5 **APPROVE** at tools commit
 `97171f531a31f9663f74ff95093d58053125860d` ([full review](reviews/FINAL-TOOLS-r5.md),

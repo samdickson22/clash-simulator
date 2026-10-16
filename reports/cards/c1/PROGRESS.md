@@ -509,3 +509,33 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   Earlier r2 approval is preserved at2105c2959, not inherited by new bytes. Fresh
   independent complete preparation review required; no original tool/native,
   runtime/host/build/job/gate/selector/engine changes.
+- 12:06Z revised R3 **32eb85cd1814b7414ee6959d5ab5e3da36612ee1** explicitly
+  staged, staged diffchecked/secret-scanned, committed/pushed. Fresh complete
+  independent Sol-high r3 task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-shared-troop-preparation-review-32eb85cd1-r3`
+  **APPROVE**, retrieved12:13:00Z. Full verdict/exact independent commands/hashes
+  in REVIEW-preparation-r3.md/review-preparation-r3-receipt.json. Independent130
+  named checks plus source/provenance assertions pass: both-seat unborn/born,
+  present/asymmetric constructor observations, strict missing later/other-case
+  actor rejection, prior R1/R2 regressions, originalfrozen sources, exactASTwitness
+  outputs and protectedengine/tools. Reviewer retained two harness assumptions
+  (base_commit as post-edit, unavailableast.unparse) and corrections in receipt.
+- All preparation findings are resolved at that exact commit; no actual captures
+  or engine fixes have been executed/reviewed. B2 still owns its single oldrun,
+  independently reviewed collection and exact root handoff. Dependent diagnosis/
+  supported fixes/regressions/implementation review remain OPEN. No duplicate
+  job/watch/process poll, build/gate, host touch, B2 selector copying or new engine/
+  comparator/native change. This approval is not completion of the whole shared
+  Troop assignment. Sam strict silence retained; no manual approval/result DM.
+- R3 receipt recording's first strict `git diff --cached --check` exited2 solely
+  for the independently hashed raw review's extra blank line at EOF (line50).
+  No secret scan/commit/push ran after that failure. Preserve the original review
+  byte-for-byte/hash49f9e3604adb90dac4b3f435115c2e8388e9c2c523976a4d38eb2c4afa310091
+  and receipt3338212f4d7b1248001439a23aadbe51852d03affb61ea0f7edfdb05bee360b1.
+  Correct recording check: normal `git diff --cached --check -- .
+  ':!reports/cards/c1/shared-troop/REVIEW-preparation-r3.md'`, then
+  `git -c core.whitespace=-blank-at-eof diff --cached --check --
+  reports/cards/c1/shared-troop/REVIEW-preparation-r3.md`; this sole raw-artifact
+  EOF exception preserves all other whitespace checks and exact source/receipt.
+  Staged secret scan still required before the recording commit. No engine or
+  approved preparation code changes for this provenance-preserving exception.

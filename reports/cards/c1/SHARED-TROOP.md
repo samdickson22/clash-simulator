@@ -54,6 +54,13 @@ controls pass; `inspection-local-receipt-r3.json` binds the source convention.
 Original r2 approval remains scoped to2105c2959; revised preparation needs fresh
 independent review. This is no new field exemption or dynamic engine finding.
 
+Fresh preparation r3 **APPROVE** now binds exact
+32eb85cd1814b7414ee6959d5ab5e3da36612ee1, including constructor birth handling and
+all prior regressions; `shared-troop/REVIEW-preparation-r3.md` and its receipt bind
+the full independent result. This supersedes r2 only for preparation readiness;
+actual captures, fixes, engine/native verification, collection/host execution and
+coverage are still open. No source or original native/tool approval changed.
+
 ## Read paths and scope constraints
 
 - Zap: `Entity.finish_movement_tick` (`entities.py:389`) runs from the movement
