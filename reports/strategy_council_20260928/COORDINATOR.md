@@ -6984,3 +6984,7 @@ Existing hourly heartbeat updated with this correction taking precedence. Sol hi
 ## 2026-10-16T09:20:38Z: Sam requires direct parent messaging
 
 Clarifications from subagents go directly to parent/appropriate owner via t3_thread_send, not user-input tools. Sent to all20 active descendants with recursive propagation/handoff requirements. Existing input sweep is15min, legacy requests still checked; one wrong review-source path resolved. Audit: reports/audit/SOL-INTERIM-20261016.md and events JSONL. Actual permission controls unchanged.
+
+## 2026-10-16T09:45:10Z: capture/tower deployed; quiet messaging
+
+Solebabysitter deployedreviewedcapture+tower at31→32boundary withseparaterollbacks;samebotconfig. Firstbattlevalidationpending. Samrequestsbriefexception-onlymessages,broadcast22threads. NewSpellValleyArcherphantomandgrayviewer/bandwidthissueassignedexistingowners. Mappingaliasisintentionalunsupported-cardproxy,notneuralconfusion;truthfulobservation/proxycontractunderreview. SeeinterimauditandeventsJSONL.

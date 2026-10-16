@@ -87,3 +87,15 @@ Sam directs all subagents to message their parent or appropriate existing owner 
 The immediately preceding sweep checked19 active threads and resolved one real question: a review brief named nonexistent clasher-bot-levels05; coordinator verified clasher-bot-levels contains the harness, answered to use it and notified the level owner. No remaining request on that reviewer. Existing heartbeat changed to15minutes for legacy/accidental pending requests; full utilization sampling remains about hourly. No duplicate schedule.
 
 Exact delivery/request IDs and schedule receipts are preserved in the action log and direct-message-rule-receipts.json under the coordinator audit job directory. No compute launch, pin change, account action or deployment by coordinator.
+
+## 2026-10-16T09:45:10Z: quiet communication; fixes deployed; new vision/viewer work
+
+Sam requests exception-only, brief messages. Broadcast to22active/lead threads; no acknowledgments, healthy polls, unchanged queues or everycommit receipt. Full details remain in files. Existing15min check stays quiet unless intervention/materialchange is needed.
+
+Capture and tower fixes deployed by solebabysitter at clean31→32boundary,reported09:38:09Z,__DEPLOY_OK/__RC0; exactseparatebackups retained. Driver aa98505f02932bd63163ad0e4176c1e1078690734cc3f9d38753d77c0e7d17da; towers58033f080ecafe1f80d45e43c287253cd0ebd5010f04de695f3cad060edbfdf4. Samee16/perc4/Cannon8botargs; no unrelatedbundle/accountaction. Firstcompletedbattlevalidationpending.
+
+Sam's screenshotMusketeermiss/ownermisread confirmed. Image2visuallymatchesraw1287;image1doesnotmatch1280,exactunknown. LowerKnightcorrect,notBarbarian. Separatealiasaudit:canonicalBarbariansUNSUPPORTEDactual56cardcfg;Knightlegacyproxyintentreal. Genericobservation/backendproxycontractfix belongs toexistingintegrationowner,R3coordinates/rawheadsteamtrace. No blindcardpriorityfix.
+
+NewSamimages showreportedtopSpellValleyArcherphantom andintermittentgrayviewer. ExistingSolvisualhelperreused;R3ownshardnegatives/eval,loopownervieweronlydiagnosis+lowbandwidthmode. Rootcodereadfoundproxyraw64KiBrelay+idleframeinsertwithoutcompletepartvalidation:truncationsuspect,notestablishedcause. Decision:completeframes/lastgoodrenderwithreducedviewerresolution/FPS/quality,measurebytes,slow/truncatedclienttests,preservecontrols;no capture/inferencechange.
+
+Card focusedreviews/gates and conditionalseriallevelpilot continue with substantive blockers. Native126fixturecapturecompleted,idle;strictthreewaymechanicreplaypending. Exactevents,taskIDs,commandsourcesandprovenance in sol-interim-20261016-events.jsonl andworkstreamPROGRESS.
