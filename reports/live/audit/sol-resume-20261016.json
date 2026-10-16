@@ -1,0 +1,1302 @@
+{
+  "utc": "2026-10-16T09:08:08Z",
+  "owner": "LIVE LEAD, GPT-6.1-Sol high",
+  "authorization": "Sam current 2026-10-16 obvious-decisions authority; confident reversible fixes proceed after meaningfulchecks/requiredreview/rollback;formerblanketholdsuperseded",
+  "head": "55a2aabee2e818c3cf7b532010b64c5780e5d7a5",
+  "commands": [
+    {
+      "utc": "2026-10-16T09:08:08Z",
+      "argv": [
+        "nice",
+        "-n",
+        "19",
+        "taskset",
+        "-c",
+        "12-15",
+        "/mpac/sdicks02/scratch/live-loop/venv/bin/python",
+        "live/loop/report_run.py",
+        "/mpac/sdicks02/scratch/live-loop/runs-all/s29-m01",
+        "--json"
+      ],
+      "rc": 0,
+      "stderr": ""
+    },
+    {
+      "utc": "2026-10-16T09:08:08Z",
+      "argv": [
+        "nice",
+        "-n",
+        "19",
+        "taskset",
+        "-c",
+        "12-15",
+        "/mpac/sdicks02/scratch/live-loop/venv/bin/python",
+        "live/loop/report_run.py",
+        "/mpac/sdicks02/scratch/live-loop/runs-all/s29-m02",
+        "--json"
+      ],
+      "rc": 0,
+      "stderr": ""
+    }
+  ],
+  "local_reports": [
+    {
+      "run": "s29-m01",
+      "state": "ended",
+      "battle_frames": 1722,
+      "battle_s": 175.1,
+      "fps": 9.8,
+      "latency_ms": {
+        "cap_ms": [
+          2.3,
+          3.7,
+          17.9
+        ],
+        "canvas_ms": [
+          1.8,
+          1.8,
+          1.9
+        ],
+        "perc_ms": [
+          78.9,
+          82.4,
+          98.5
+        ],
+        "step_ms": [
+          0.3,
+          19.9,
+          44.2
+        ]
+      },
+      "frame_to_tap_ms": [
+        123.6,
+        165.5,
+        222.1
+      ],
+      "tap_ack_ms": [
+        42.9,
+        46.9,
+        47.7
+      ],
+      "polls": 684,
+      "plays": 26,
+      "plays_confirmed_by_hud": 26,
+      "cards": {
+        "MiniPekka": 4,
+        "Valkyrie": 3,
+        "Minions": 5,
+        "Archers": 5,
+        "Cannon": 4,
+        "Musketeer": 4,
+        "Fireball": 1
+      },
+      "sources": {
+        "search": 100,
+        "null": 584
+      },
+      "step_errors": {},
+      "elixir_floored": 241,
+      "units_per_frame": [
+        3.0,
+        7.0,
+        9.0
+      ],
+      "events": [
+        "loaded",
+        "nav_tap",
+        "nav_tap",
+        "nav_tap",
+        "match_start",
+        "arena_bg",
+        "match_end"
+      ],
+      "writer_dropped": 0,
+      "capture_restarts": 1,
+      "play_list": [
+        [
+          91,
+          "MiniPekka",
+          [
+            769,
+            959
+          ],
+          "search"
+        ],
+        [
+          130,
+          "Valkyrie",
+          [
+            821,
+            876
+          ],
+          "search"
+        ],
+        [
+          241,
+          "Minions",
+          [
+            615,
+            876
+          ],
+          "search"
+        ],
+        [
+          381,
+          "Archers",
+          [
+            254,
+            1000
+          ],
+          "search"
+        ],
+        [
+          560,
+          "Cannon",
+          [
+            512,
+            1000
+          ],
+          "search"
+        ],
+        [
+          811,
+          "Musketeer",
+          [
+            460,
+            1000
+          ],
+          "search"
+        ],
+        [
+          991,
+          "MiniPekka",
+          [
+            305,
+            876
+          ],
+          "search"
+        ],
+        [
+          1161,
+          "Minions",
+          [
+            924,
+            1000
+          ],
+          "search"
+        ],
+        [
+          1340,
+          "Archers",
+          [
+            151,
+            1166
+          ],
+          "search"
+        ],
+        [
+          1510,
+          "Cannon",
+          [
+            99,
+            1373
+          ],
+          "search"
+        ],
+        [
+          1721,
+          "Musketeer",
+          [
+            512,
+            876
+          ],
+          "search"
+        ],
+        [
+          1961,
+          "Valkyrie",
+          [
+            254,
+            918
+          ],
+          "search"
+        ],
+        [
+          2121,
+          "Minions",
+          [
+            821,
+            1000
+          ],
+          "search"
+        ],
+        [
+          2271,
+          "Archers",
+          [
+            666,
+            1125
+          ],
+          "search"
+        ],
+        [
+          2410,
+          "MiniPekka",
+          [
+            924,
+            918
+          ],
+          "search"
+        ],
+        [
+          2560,
+          "Musketeer",
+          [
+            769,
+            876
+          ],
+          "search"
+        ],
+        [
+          2671,
+          "Fireball",
+          [
+            769,
+            504
+          ],
+          "search"
+        ],
+        [
+          2730,
+          "Cannon",
+          [
+            666,
+            876
+          ],
+          "search"
+        ],
+        [
+          2841,
+          "Archers",
+          [
+            254,
+            1207
+          ],
+          "search"
+        ],
+        [
+          2930,
+          "Minions",
+          [
+            254,
+            1207
+          ],
+          "search"
+        ],
+        [
+          3011,
+          "Valkyrie",
+          [
+            563,
+            670
+          ],
+          "search"
+        ],
+        [
+          3110,
+          "MiniPekka",
+          [
+            563,
+            628
+          ],
+          "search"
+        ],
+        [
+          3260,
+          "Cannon",
+          [
+            563,
+            1000
+          ],
+          "search"
+        ],
+        [
+          3310,
+          "Archers",
+          [
+            975,
+            628
+          ],
+          "search"
+        ],
+        [
+          3371,
+          "Minions",
+          [
+            563,
+            1000
+          ],
+          "search"
+        ],
+        [
+          3490,
+          "Musketeer",
+          [
+            872,
+            1331
+          ],
+          "search"
+        ]
+      ],
+      "tap_guard": {
+        "refused": 0,
+        "rate": 0.0
+      },
+      "handsync": {},
+      "full_elixir_max_s": 0.0,
+      "nav_taps": {
+        "result": 1,
+        "road": 1,
+        "home": 1
+      },
+      "nav_stuck": 0,
+      "rollback_flags": []
+    },
+    {
+      "run": "s29-m02",
+      "state": "ended",
+      "battle_frames": 2201,
+      "battle_s": 224.2,
+      "fps": 9.8,
+      "latency_ms": {
+        "cap_ms": [
+          2.3,
+          4.2,
+          28.9
+        ],
+        "canvas_ms": [
+          1.7,
+          1.9,
+          2.5
+        ],
+        "perc_ms": [
+          78.5,
+          82.6,
+          114.4
+        ],
+        "step_ms": [
+          0.3,
+          19.4,
+          40.9
+        ]
+      },
+      "frame_to_tap_ms": [
+        121.9,
+        151.0,
+        183.2
+      ],
+      "tap_ack_ms": [
+        42.3,
+        46.6,
+        47.3
+      ],
+      "polls": 881,
+      "plays": 36,
+      "plays_confirmed_by_hud": 35,
+      "cards": {
+        "Archers": 4,
+        "Fireball": 1,
+        "MiniPekka": 6,
+        "Cannon": 5,
+        "Minions": 11,
+        "Musketeer": 5,
+        "Valkyrie": 4
+      },
+      "sources": {
+        "search": 126,
+        "null": 755
+      },
+      "step_errors": {},
+      "elixir_floored": 331,
+      "units_per_frame": [
+        3.0,
+        6.0,
+        7.0
+      ],
+      "events": [
+        "loaded",
+        "nav_stuck",
+        "nav_tap",
+        "nav_tap",
+        "match_start",
+        "arena_bg",
+        "match_end"
+      ],
+      "writer_dropped": 0,
+      "capture_restarts": 2,
+      "play_list": [
+        [
+          91,
+          "Archers",
+          [
+            512,
+            876
+          ],
+          "search"
+        ],
+        [
+          210,
+          "Fireball",
+          [
+            408,
+            339
+          ],
+          "search"
+        ],
+        [
+          321,
+          "MiniPekka",
+          [
+            872,
+            876
+          ],
+          "search"
+        ],
+        [
+          480,
+          "Archers",
+          [
+            357,
+            876
+          ],
+          "search"
+        ],
+        [
+          650,
+          "Cannon",
+          [
+            460,
+            1083
+          ],
+          "search"
+        ],
+        [
+          813,
+          "Minions",
+          [
+            254,
+            918
+          ],
+          "search"
+        ],
+        [
+          1050,
+          "Musketeer",
+          [
+            821,
+            1000
+          ],
+          "search"
+        ],
+        [
+          1281,
+          "MiniPekka",
+          [
+            872,
+            959
+          ],
+          "search"
+        ],
+        [
+          1440,
+          "Archers",
+          [
+            563,
+            1125
+          ],
+          "search"
+        ],
+        [
+          1630,
+          "Cannon",
+          [
+            666,
+            876
+          ],
+          "search"
+        ],
+        [
+          1770,
+          "Minions",
+          [
+            821,
+            918
+          ],
+          "search"
+        ],
+        [
+          2011,
+          "Musketeer",
+          [
+            408,
+            959
+          ],
+          "search"
+        ],
+        [
+          2231,
+          "MiniPekka",
+          [
+            821,
+            876
+          ],
+          "search"
+        ],
+        [
+          2371,
+          "Minions",
+          [
+            769,
+            1042
+          ],
+          "search"
+        ],
+        [
+          2461,
+          "Cannon",
+          [
+            821,
+            876
+          ],
+          "search"
+        ],
+        [
+          2520,
+          "Minions",
+          [
+            924,
+            876
+          ],
+          "search"
+        ],
+        [
+          2641,
+          "Musketeer",
+          [
+            821,
+            876
+          ],
+          "search"
+        ],
+        [
+          2741,
+          "Minions",
+          [
+            769,
+            876
+          ],
+          "search"
+        ],
+        [
+          2870,
+          "Archers",
+          [
+            821,
+            918
+          ],
+          "search"
+        ],
+        [
+          3001,
+          "MiniPekka",
+          [
+            615,
+            1042
+          ],
+          "search"
+        ],
+        [
+          3040,
+          "Minions",
+          [
+            924,
+            959
+          ],
+          "search"
+        ],
+        [
+          3161,
+          "Musketeer",
+          [
+            357,
+            876
+          ],
+          "search"
+        ],
+        [
+          3261,
+          "Valkyrie",
+          [
+            872,
+            876
+          ],
+          "search"
+        ],
+        [
+          3360,
+          "Valkyrie",
+          [
+            202,
+            918
+          ],
+          "search"
+        ],
+        [
+          3491,
+          "Cannon",
+          [
+            821,
+            1042
+          ],
+          "search"
+        ],
+        [
+          3560,
+          "Minions",
+          [
+            408,
+            918
+          ],
+          "search"
+        ],
+        [
+          3641,
+          "MiniPekka",
+          [
+            821,
+            959
+          ],
+          "search"
+        ],
+        [
+          3760,
+          "Musketeer",
+          [
+            769,
+            918
+          ],
+          "search"
+        ],
+        [
+          3890,
+          "Valkyrie",
+          [
+            821,
+            1042
+          ],
+          "search"
+        ],
+        [
+          4011,
+          "Valkyrie",
+          [
+            872,
+            876
+          ],
+          "search"
+        ],
+        [
+          4031,
+          "Minions",
+          [
+            872,
+            918
+          ],
+          "search"
+        ],
+        [
+          4061,
+          "Minions",
+          [
+            821,
+            1000
+          ],
+          "search"
+        ],
+        [
+          4140,
+          "MiniPekka",
+          [
+            924,
+            1207
+          ],
+          "search"
+        ],
+        [
+          4211,
+          "Minions",
+          [
+            512,
+            1125
+          ],
+          "search"
+        ],
+        [
+          4350,
+          "Minions",
+          [
+            357,
+            876
+          ],
+          "search"
+        ],
+        [
+          4451,
+          "Cannon",
+          [
+            615,
+            1042
+          ],
+          "search"
+        ]
+      ],
+      "tap_guard": {
+        "refused": 0,
+        "rate": 0.0
+      },
+      "handsync": {},
+      "full_elixir_max_s": 0.0,
+      "nav_taps": {
+        "result": 1,
+        "home": 1
+      },
+      "nav_stuck": 1,
+      "rollback_flags": []
+    }
+  ],
+  "evidence": [
+    {
+      "path": "/mpac/sdicks02/scratch/live-loop/runs/s29/m01/video/001865.jpg",
+      "bytes": 149212,
+      "sha256": "1921b93488dd7aa79280e941c20e272903430d8f800b41290bfe216edd62126b"
+    },
+    {
+      "path": "/mpac/sdicks02/scratch/live-loop/runs-all/s29-m01/session-config.json",
+      "bytes": 2106,
+      "sha256": "73d87d3f64aa00a8af7749705b6f947b411defe2fbaaa209aeae14764549aeb2"
+    },
+    {
+      "path": "/mpac/sdicks02/scratch/live-review/handsync-r1/REVIEW.txt",
+      "bytes": 15396,
+      "sha256": "46e771581fbed6b0d364bcd538f09ebc51c21aa53edcb71c292957dc3007028a"
+    },
+    {
+      "path": "/mpac/sdicks02/scratch/live-review/handsync-r1/logs/test-summary.json",
+      "bytes": 4615,
+      "sha256": "f41d7fe60a45e7da5bc2cc1f5da1f074c4887005a12e0ef0dc6282c820749fba"
+    }
+  ],
+  "babysitter_receipt_utc": "2026-10-16T09:05:26Z",
+  "driver_pid": 6545,
+  "page_pid": 67178,
+  "exactly_one_driver": true,
+  "observer_or_chain_watchers": 0,
+  "live_hashes": {
+    "drive": "fbf34ebebfa8cc8c797ceb993767461c0d09c19a350f2162c1e618c08452c9fd",
+    "adapter": "091350dfeb69a97735160a647dac3749a70cc3ba862790ef5c10720a5714b515",
+    "common": "3b48744f8222e8168c4748cb620b807f0b791b437561781be3ed33377f11352a",
+    "births": "48636f630a0ba1a7567a3f383bfcbca3aeba97418b917e278aa621dd6e8fd227",
+    "units_aggregate": "6e6b117f3519c529d082503984d9d5d08e7ab69a9f8052386545d356681950e3"
+  },
+  "gates": {
+    "fps_min": 5.5,
+    "decision_step_p95_max_ms": 45,
+    "rollback_on": [
+      "traceback/yolo error",
+      "stall guard",
+      "obvious phantoms"
+    ],
+    "s29_decision_step_p95_ms": [
+      37.972,
+      35.273
+    ],
+    "s29_fps": [
+      9.834,
+      9.818
+    ],
+    "triggered": false,
+    "procedure": "If only step high and FPS fine drop --perc-threads first; otherwise drop --units; restore backups only for driver error."
+  },
+  "open_defects": [
+    "s29-m01 n1865 tick3506.211 two red enemy bridge bodies assigned ours; stored classes Musketeer/Goblins, visual class/instance association uncertain; explicit producer/source fields absent, raw root cause unresolved",
+    "inactive king HP5 from troop level badge in towers.py OCR; loop owner owns candidate; broad regression81/796 changed so NOT deployed",
+    "handsync GO AFTER FIXES/autonav NO-GO; measurement mode raw4/517 wrong, allguardflagged;25baselineactionsomitted",
+    "manifest r2 NO-GO; concrete spawnworker/non-strict/lazyread findings unresolved; fixes/review required under current reversible-decision authority"
+  ],
+  "jobs": {
+    "V7_04": "completed rc0 08:39:34Z",
+    "V6_08": "completed rc0 08:53:40Z",
+    "V8_01": "existing PID1967844 e9/20 at09:04Z",
+    "playdet_03": "existing driver3965663;1191/2000 at09:06:47Z;8/16 rc0,zero failures"
+  },
+  "routing": {
+    "translator": "configured codex gpt-6.1-sol high and resumed in place ordinal27",
+    "resume_task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Athread-send%3Alive-translator-sol-resume-20261016-r1",
+    "others": "existing babysitter/r3/loop/synth/yb3/level-pilot active, no duplicates"
+  },
+  "changes_by_lead": [
+    "local audit JSON/PROGRESS and scoped fixreports",
+    "translator/integration existingthreads resumedSolhigh",
+    "freshcaptureSolreviewrounds tracked;supersededbytescanceled",
+    "two scopedsource/test/reportcommits pushed throughisolatedtempindex+requiredscanner",
+    "reviewedcapture+towerDEPLOYGOsolebabysitter atnormalboundary;live receiptpending",
+    "parent/owner coordination;no leadMaccommands/driver/input"
+  ],
+  "new_host_commands_by_lead": [],
+  "new_jobs": [],
+  "deployments": [
+    {
+      "utc": "2026-10-16T09:38:09Z",
+      "driver_sha": "aa98505f02932bd63163ad0e4176c1e1078690734cc3f9d38753d77c0e7d17da",
+      "tower_sha": "58033f080ecafe1f80d45e43c287253cd0ebd5010f04de695f3cad060edbfdf4",
+      "operator": "existingsoleSolbabysitter",
+      "guards": "natural31exit4/4,emptydriver,PAUSEabsent,stage/base/backup/deployedhashespass,__DEPLOY_OK/__RC0",
+      "driver_backup_sha": "fbf34ebebfa8cc8c797ceb993767461c0d09c19a350f2162c1e618c08452c9fd",
+      "tower_backup_sha": "8209787893f0bc19cddcf174d78acfae004b197fcc65dd0e9ead64e6a34ecc3c",
+      "session": "s32",
+      "pid": 33448,
+      "start_utc": "2026-10-16T09:38:25Z",
+      "args": "samee16/perc4/ft-r6HUD/Cannon8/r3births/barbarian-bowl",
+      "changes": "onlydriver+towers;noaccount/model/deck/otherbundle",
+      "commands_receipt": "/mpac/sdicks02/scratch/live-loop/s31-s32-twofix-commands-sol.json",
+      "first_battle_validation": "capture/HP/performancePASS s32-m01;separateperceptionbannerboardgatepending"
+    }
+  ],
+  "rollbacks": [],
+  "commits": [
+    {
+      "utc": "2026-10-16T09:27:00.479321+00:00",
+      "parent": "5c9f5bb7a902a56cb3952bf14a6ebb567bbad511",
+      "commit": "bd3eec30d9412876436610a59defd73e4717771c",
+      "candidate_sha256": "aa98505f02932bd63163ad0e4176c1e1078690734cc3f9d38753d77c0e7d17da",
+      "test_sha256": "d49e44a514fd81cdd37fa22f9bf96c91db44498b3e0258a7e73518d8ad675ccd",
+      "files": [
+        "live/loop/drive.py",
+        "live/loop/tests/capture_single_stream_test.sh",
+        "reports/live/loop/CAPTURE-SINGLE-STREAM.md"
+      ],
+      "scan_rc": 0,
+      "diff_check_rc": 0,
+      "stat": "live/loop/drive.py                            | 41 +++++++---------\n live/loop/tests/capture_single_stream_test.sh | 68 +++++++++++++++++++++++++++\n reports/live/loop/CAPTURE-SINGLE-STREAM.md    | 13 +++++\n 3 files changed, 99 insertions(+), 23 deletions(-)",
+      "push_rc": 0,
+      "push_stdout": "",
+      "push_stderr": "To https://github.com/samdickson22/clash-simulator.git\n   5c9f5bb7a..bd3eec30d  bd3eec30d9412876436610a59defd73e4717771c -> main\n",
+      "shared_worktree_head_index": "unchanged by this operation"
+    },
+    {
+      "utc": "2026-10-16T09:29:58.890806+00:00",
+      "parent": "3b37a16e8ffd23bc9ed75595ba5b23502fe3057b",
+      "commit": "0dfea3172f57c68082e22795e3ce9d2096afe9b9",
+      "source_sha": "58033f080ecafe1f80d45e43c287253cd0ebd5010f04de695f3cad060edbfdf4",
+      "test_sha": "0ce1bc711f2ace46b88c9950b10ce84914b680beb0375573b3356ddc814d6c69",
+      "files": [
+        "live/loop/tests/test_tower_badge.py",
+        "live/loop/towers.py",
+        "reports/live/loop/TOWER-BADGE-FIX.md"
+      ],
+      "scan_rc": 0,
+      "diff_check_rc": 0,
+      "stat": "live/loop/tests/test_tower_badge.py  | 119 +++++++++++++++++++++++++++++++++++\n live/loop/towers.py                  |  34 +++++++++-\n reports/live/loop/TOWER-BADGE-FIX.md |  13 ++++\n 3 files changed, 165 insertions(+), 1 deletion(-)",
+      "push_rc": 0,
+      "push_output": "To https://github.com/samdickson22/clash-simulator.git\n   3b37a16e8..0dfea3172  0dfea3172f57c68082e22795e3ce9d2096afe9b9 -> main\n",
+      "shared_worktree_head_index": "unchanged"
+    }
+  ],
+  "deferred": [
+    "Onlyconsequentialhard-to-undochoiceswithmaterialuncertainty;noautomaticOpusdeferral",
+    "ManifestbundleactualNO-GOrequiresconcretefixes/review,notblanketdesignhold",
+    "No candidate promotion unless allstandinggatespass"
+  ],
+  "scan_note": "Initial metadata-only rg --files over jobs was too broad and listed paused t1 paths; no contents opened and no mutation; subsequent searches scoped to live paths.",
+  "followup_utc": "2026-10-16T09:08:35Z",
+  "navigation_reconciliation": {
+    "s29-m02": "raw nav_stuck n0/ts0; result tap at4.6543385s;home tap8.688903249s;match start14.250389917s;automatic clearance,no manual taps/filepause",
+    "capture_restarts": [
+      1,
+      2
+    ],
+    "source": "existing Sol babysitter follow-up"
+  },
+  "latest_babysitter_receipt": {
+    "session": "s29",
+    "match": "m04 playing",
+    "driver": 6545,
+    "completed": "m03 W1-0 +30\u2192842",
+    "s29_record": "2W-1L through m03",
+    "m03": {
+      "decisions": 786,
+      "plays": 32,
+      "hud_confirmations": 33,
+      "fps_rounded": 9.8,
+      "decision_step_p95_ms": 36.362,
+      "nav_stuck": 1,
+      "capture_restarts": 3,
+      "step_yolo_errors_guards_stalls_manual_taps": 0
+    },
+    "new_account_actions": 0,
+    "new_promotion": false
+  },
+  "capture_incident_correction": {
+    "utc": "2026-10-16T09:10:09Z",
+    "source": "sole babysitter deployed LiveFrames._run + s29/bsgrab.stderr read-only receipt",
+    "real_sck_interruptions": 4,
+    "starts": 5,
+    "error": "SCStreamErrorDomain Code -3805 application connection interrupted",
+    "cumulative_end_m01_m02_m03": [
+      1,
+      2,
+      3
+    ],
+    "cause": "unknown",
+    "sck_clients_started_by_babysitter": 0,
+    "evidence_copy": "babysitter to copy bsgrab.stderr after session",
+    "existing_gates": "unchanged; whole FPS ~9.8; no step/yolo/stall errors",
+    "parent_loop_owner_notified": true
+  },
+  "synth_revision_receipt": {
+    "utc_reported": "2026-10-16T09:09Z",
+    "synced_utc": "2026-10-16T09:07Z",
+    "official_masks": 443,
+    "preview_negatives": 310,
+    "sprite_rows": 5962,
+    "floors": 281,
+    "heldouts": 16,
+    "hosts": [
+      "03",
+      "04",
+      "08"
+    ],
+    "queued_before_after": [
+      "x04a1:26",
+      "x08a0:25"
+    ],
+    "host01": "untouched; x01a50k used457",
+    "pilot04": "1k used457",
+    "receipt": "monitor-sol/official-rev2-sync-receipt.json",
+    "rollback": "monitor-sol/bank-457-rollback",
+    "hashes": {
+      "sprites.jsonl": "272db21bb5d7af015dde2739344ed8854eafa19711a8e5107ea6a37c617013f9",
+      "sprites-official.jsonl": "365ad6dc9cbc0986b670fb56ac789a3732b2b181bd6c62fdd96637986d50bb52",
+      "bgs.json": "1758a52dfa3d29df43939bbd7d34e6a1527d9ba7f7cd94346d39d14f88e449c2"
+    },
+    "nulls_runs": 2,
+    "nulls_gate_minimum": 5,
+    "new_restart_launch_signal": false,
+    "loaded_bank_confirmation": "pending admission log5962"
+  },
+  "owner_review": {
+    "utc": "2026-10-16T09:09:23.678631+00:00",
+    "finding": "Two red L5 right-bridge bodies/badges conflict with final units owner0 for Musketeer (score .5845,13.609,15.704) and Goblins (score .5063,14.19,17.192). Neighbor frames corroborate red badges. Class/instance overlap remains uncertain.",
+    "uncertainty": [
+      "Do not turn the leading Musketeer-like visual into a certain class label; second Musketeer/Goblin identity is unresolved.",
+      "Two badges and overlapping bodies support two red enemies, but individual box/body matching and exact card identity remain uncertain.",
+      "No raw detector boxes or explicit source/owner-source fields are stored in the exact JSONL row; cause cannot be localized to a producer or fusion stage.",
+      "Lower-right deployment and units_model-only class candidates do not justify extra team/class corrections."
+    ],
+    "files": [
+      {
+        "path": "/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/s29m01/review.json",
+        "sha256": "46ba76a05abc68dedf9196773048193412ecad5deac83c21375def6759a7298f"
+      },
+      {
+        "path": "/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/s29m01/verification.json",
+        "sha256": "0ae8be4380f2c46a13517a297ad19462f0f7aadbeaceae77225ff6cda705e4a2"
+      },
+      {
+        "path": "/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/s29m01/source.sha256",
+        "sha256": "d4dde27eb4d6155a86779c5c5d1c1dd2458764b4f645136680ebb229d9b49a16"
+      }
+    ],
+    "all_sources_unchanged": true,
+    "new_label_or_patch_applied": false
+  },
+  "translator_followup": {
+    "reported_utc": "2026-10-16T09:10Z",
+    "report": "reports/live/integration/PROGRESS.md",
+    "tests": "10CLI/testset passed;diff check clean;existing fit driver check-only passes complete32-shard ledger/rejects partial delivery",
+    "fits": "await checksummed gen03 delivery;approved sequential2thread nice19 on05",
+    "diagnostic_caveat": "205/513 T1 physical matches straddle internal train/report split through noise arms; internalP/R diagnostic only",
+    "gates": "independent A/syntheticbank/fuzz/singleB unchanged",
+    "deferred": "No blanket split hold; corrected loader independentlyreviewedGO,fitawaitsverifieddata",
+    "no_birth_rule_runtime_change": true,
+    "provisional_eta": "sims10:10\u201310:25Z,extraction10:45\u201311:15Z",
+    "split_redesign_deferred": false,
+    "split_correction": "SolindependentGO trainb7372226/test718dae19;9tests;54136rows205\u21920;413/100groupdisjoint;rollbackfaea95ce;requiredscanner0;fitswaitverifieddata",
+    "gen03": "09:32Z1530/2000,8/16rc0,zero failures,8NI19workers,no duplicates"
+  },
+  "s29_final": {
+    "record": "3W-1L",
+    "trophies": 872,
+    "m04": {
+      "result": "W1-0",
+      "decisions": 708,
+      "plays": 26,
+      "hud_confirmed": 23,
+      "fps": 9.797823,
+      "decision_p50_ms": 7.234,
+      "decision_p95_ms": 35.862,
+      "step_yolo_stall_guard_errors": 0,
+      "nav_stuck_autocleared": 1
+    },
+    "s30": {
+      "pid": 52026,
+      "state": "m01 battle, same approved e16/perc4/Cannon8",
+      "boundary_seconds": 18,
+      "new_account_action": false,
+      "new_promotion": false
+    }
+  },
+  "capture_startup_finding": {
+    "utc": "2026-10-16T09:14:32Z",
+    "deployed_driver_path": "/mpac/sdicks02/scratch/live-lead-e16-stage/live/loop/drive.py",
+    "driver_sha256": "fbf34ebebfa8cc8c797ceb993767461c0d09c19a350f2162c1e618c08452c9fd",
+    "secondary_stream_helper_lines": "261\u2013274",
+    "unconditional_live_match_call_lines": "547\u2013551",
+    "code_behavior": "Every live match_start starts second bsgrab/SCK process for3 native frames,fps4,seconds5",
+    "evidence": "All4s29events arena_bg frames3;1seqreset/\u22123805 perbattle about1.5\u20131.7s afterstart",
+    "causal_status": "Concrete in-driver second capture client;strong mechanism/timing candidate,not controlled causalproof",
+    "owner": "loop owner;bounded offline routine fix/review;lead does not edit driver",
+    "live_action": "none;priorGO/gates unchanged",
+    "hashes": {
+      "/mpac/sdicks02/scratch/live-loop/s29-capture-gap-receipt-sol.json": "4c74aa0b991d6ad615e885075f6c7675a39ad1a0da96ccd268da6c807829db5a",
+      "/mpac/sdicks02/scratch/live-loop/runs/s29/bsgrab.stderr": "13959199ab92605ab0228893438f81e7e4d8d1444e0d6f453ac3f70ca572d2a8"
+    },
+    "commands": [
+      "sed -n 255,282p /mpac/sdicks02/scratch/live-lead-e16-stage/live/loop/drive.py",
+      "sed -n 526,559p /mpac/sdicks02/scratch/live-lead-e16-stage/live/loop/drive.py",
+      "cat /mpac/sdicks02/scratch/live-loop/runs/s29/bsgrab.stderr",
+      "python3 local JSONL extraction of match_start/arena_bg events from runs-all/s29-m01..04/events.jsonl"
+    ]
+  },
+  "current_decision_authority": {
+    "utc": "2026-10-16T09:23:59Z",
+    "rule": "Sam: make obvious decisions; routine confident reversible changes proceed with meaningful checks/requiredreview/rollback;only consequential hard-to-undo sufficientlyuncertain choices defer",
+    "supersedes": "earlier blanket no-big-decisions/promotions freeze",
+    "propagated_to": [
+      "loopowner",
+      "babysitter",
+      "r3",
+      "synthowner\u2192monitor",
+      "translator\u2192gen03",
+      "reviewer"
+    ],
+    "failed_tests_or_unmet_reviews": "still block"
+  },
+  "coordination_rule": {
+    "utc": "2026-10-16T09:23:59Z",
+    "method": "direct t3_thread_send(mode=auto) to parent/existingowner;no userinput tools",
+    "parent": "0523ae6f-baa3-4d4e-b233-b392671670db",
+    "recursive_propagation": true,
+    "future_briefs": true,
+    "pending_userinput_requests": false,
+    "permissions": "unchanged"
+  },
+  "capture_fix_candidate": {
+    "base_sha": "fbf34ebebfa8cc8c797ceb993767461c0d09c19a350f2162c1e618c08452c9fd",
+    "final_sha": "aa98505f02932bd63163ad0e4176c1e1078690734cc3f9d38753d77c0e7d17da",
+    "test_sha": "d49e44a514fd81cdd37fa22f9bf96c91db44498b3e0258a7e73518d8ad675ccd",
+    "package": "/mpac/sdicks02/scratch/live-loop/packages/capture-single-stream-r1",
+    "test_result": "finalE2E+falsematchrename/reopenprobePASS session6173exit0",
+    "test_log": "/tmp/tmp.Qbxo2oh9zy",
+    "prior_rounds": [
+      {
+        "r1": "6b2e37",
+        "result": "superseded;canceled;realfalsematchmetadataaliasfindingreturned"
+      },
+      {
+        "r2": "358269",
+        "result": "superseded;canceled;notdeployable"
+      }
+    ],
+    "r3_task": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Adelegate-task%3Alivelead-capture-single-stream-sol-review-20261016-r3",
+    "review": "freshSolr3GO no blockers;taskstatusacknowledged",
+    "deployment": "deployed09:38:09Z;firstbattlecapturePASS zero3805/restarts/seqresets,3referencesresolve",
+    "rollback": "restoreexactfbf backup only atsafe boundary",
+    "commit": "bd3eec30d9412876436610a59defd73e4717771c"
+  },
+  "final6_eval": {
+    "receipt": "/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/resume-sol/deploy-eval-receipt.json",
+    "status": "all6rc0;227frames833units18empties each;emptyFP0;nonepassesallstandinggates",
+    "V6_TC_P": [
+      0.957,
+      0.957,
+      0.957
+    ],
+    "V7_TC_P": [
+      0.968,
+      0.947,
+      0.926
+    ],
+    "TC_P_floor": 0.97,
+    "retained": "e16 passes existinggates",
+    "raw_deployed_eval_dirs": "separate",
+    "next": "existingV8 continues;no failingcandidatepromotion"
+  },
+  "tower_fix": {
+    "source_sha": "58033f080ecafe1f80d45e43c287253cd0ebd5010f04de695f3cad060edbfdf4",
+    "base_rollback_sha": "8209787893f0bc19cddcf174d78acfae004b197fcc65dd0e9ead64e6a34ecc3c",
+    "test_sha": "0ce1bc711f2ace46b88c9950b10ce84914b680beb0375573b3356ddc814d6c69",
+    "review": "independentSolGO sourceunchanged;12badge/10guard/796baseline/127king/3007forcedcomponentchecks",
+    "final_hardened_tests": "13/13badge;10/10guard;require5recordings/rejected5\u2192None",
+    "source_change": "OCRcompactbadgeonly;TowerReaderASTidentical;noreset/full/death/maxchange",
+    "commit": "0dfea3172f57c68082e22795e3ce9d2096afe9b9",
+    "deployment": "deployed09:38:09Z;firstbattleHP/perfPASS nofalse5,actualdamaged3199\u21923086preserved",
+    "microbench_05_ms": {
+      "old_p50_p95": [
+        3.108,
+        3.684
+      ],
+      "new_p50_p95": [
+        4.084,
+        5.846
+      ]
+    }
+  },
+  "mapping_contract_audit": {
+    "owner": "r3overallcontract;existingYOLOintegrationimplementationonSol,resumedinplace",
+    "task": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Athread-send%3Alive-yolo-integration-generic-mapping-audit-20261016-r1",
+    "baseline": "adapter091350df,mappingf033bf1b,unknown_carddrop",
+    "finding": "barbarian/evolution cardBarbarians identityKnight;adapteridentity output;mustseparatecanonicalobservationfromlegacycapabilityproxy",
+    "intent_caveat": "frozenKataCRtablehasintentionalC56proxies GoblinCage\u2192Cannon/GoblinBrawler\u2192Knight;notblindcardpriority",
+    "specific_screens": "lowerbodiesvisuallyKnight,NOTBarbariangroundtruth;Musketeermiss/wrongteamconfirmed",
+    "rawhead_trace": "r3independentbounded5frames+existingSolimagehelper,no duplicate",
+    "shared_files": "nooverwrites;isolatedexactdeployedbasepackagebeforeLEADfreshreview",
+    "actual_runtime": "56configuredcards/70templates;allsource_card!=identityaliasescorrespondtounsupportedcanonicalcfg;Barbariantoken23aloneinsufficient",
+    "consumer_coordination": "existingtranslator/OOVownerisolateddeployed5361consumercompatibility;R3overall/integrationsoleadapterimplementation;defaultassignmustforwardbodyconstraint",
+    "contract": "truthfulcanonicalobservedbody+detectorfamilycard(notspawnprovenance)+rawname/index/p_team;explicitoptionallegacybackendproxy;projectionseparateexact/proxy/unplaced;nevermutateobservations",
+    "new_package": "nonefrozen;no reviewablegenericfixyet"
+  },
+  "s30_results": {
+    "m01": "W3-1\u2192902",
+    "m02": "W2-0\u2192932",
+    "m03": "W1-0\u2192962",
+    "m04": "completed;finalresultpendingbabysitter",
+    "s31": "PID93716started09:25Z unchangedargs;capture+towerdeploymentpending31\u219232"
+  },
+  "yb3_repair": {
+    "utc": "2026-10-16T09:24Z",
+    "scope": "9reviewedstaleunitlabelrepairs on05/01/04/08;39\u219238bodies,51towerrowspreserved;noimages/raw/spec/list/exclusions",
+    "rollbacks": "perhostJOB/data-repairs/yb3-repair-20261016",
+    "V8": "samePID;per-samplechangedlabelsafter09:24;OLD457synthlineageretained",
+    "post_hash_verification": "r3reportsPASSall4"
+  },
+  "sam_screenshot_provenance": {
+    "five_frame_sample": [
+      1188,
+      1208,
+      1228,
+      1248,
+      1288
+    ],
+    "sample_join": "noexactjoinamong5sampledframes",
+    "later_exact_anchor_check": {
+      "image2": "n1287HIGHconfidence",
+      "image1": "exactnunresolved,n1280VISUALLYREJECTED"
+    },
+    "not_contradiction": "1287notinthe5frames",
+    "lower_knight": "visuallyKnight,notBarbariangroundtruth",
+    "main_musketeer": "enemyredbadge;owner1at1188/1208\u2192owner0at1228/1288",
+    "overlap": "1248Knightowner0despiteredbadges+overlap;no producerrootcausefromcomparison",
+    "reports": "scratch/live-perc-r3/sam-20261016-0222/{REPORT.md,RAW_ANCHOR_ADDENDUM.md,EXACT_ANCHOR_CHECK.md,review.json}",
+    "extra_clients_helpers": "none;existingr3Solonly"
+  },
+  "staging_receipt": {
+    "capture": "Macstageaa98505verified__STAGE_RC0at09:30Z",
+    "tower": "released58033;receiptpending",
+    "deployment": "pendingnormal31\u219232",
+    "priority": "staging+normalboundarybeforeoptionalanchor/inventory"
+  },
+  "handsync_nav_r2": {
+    "driver_sha": "7a48155ed0fe8cf39c49a9dba894d1c19cce06510f07a55ddb1e11d52615fe53",
+    "base": "aa98505",
+    "tower_preserved": "58033f",
+    "review": "existingownerfreshSolr2active,noGOyet",
+    "tests": "57hand/32classifier+1437frames/actualdriverexceptions-LL0rollback-hold-noautonav/7snormalmatchedplayPASS",
+    "known_reward_interpretation": "knownbaselineauthorizedmanualfreeflowsreportednav_stuck/manual/account,notsilentlysuppressed;UNKNOWNneverautotap;unsafe/unclassifiable/cannotclear/newcrash-stallholdunchanged",
+    "release": "blockedpendingactualreview+scopedcommit,notdeployed"
+  },
+  "reference_slot": {
+    "originalcapture": "4070rc0,PID1559063absent,118tick600recordingscomplete",
+    "controls": "allcapture/control drivers exited0;explicitIDLEreceipt",
+    "hardstop": "10:10Z,sendcap10:09:55",
+    "nulls_resume": "releasedreservation/instructedexistingapprovedpipelineownerlivenesschecks;noautomatic126fixturegatecredit",
+    "last_recording": "09:40:22Z",
+    "receipt": "/mpac/sdicks02/jobs/clasher/cards/nulls/slot-20261016-081518/SLOT-IDLE.json"
+  },
+  "message_policy": {
+    "utc": "2026-10-16T09:42:01Z",
+    "rule": "STRICT SILENCE: no routine status/test/gate/review/queue/receipt/commit/ack/manualcompletion messages,evenifcalledmaterial;ONLY blockedneedingparentaction,urgentlivefailure,explicitrequest,oressentialdependencyhandoff;max2sentences+1receiptpath",
+    "no_messages": "acknowledgments,healthypolls,unchangedgates/queues,logged/pushedonlyreceipts",
+    "active_descendants": "coordinatorcovers tree;doNOTrebroadcast",
+    "future_resumed_briefs": true,
+    "automatic_completion": "sufficient;doNOTduplicate"
+  },
+  "first_postfix_validation": {
+    "utc_recorded": "2026-10-16T09:49:12Z",
+    "receipt": "/mpac/sdicks02/scratch/live-loop/s32-m01-twofix-receipt-sol.json",
+    "sha256": "891410452c79db7eb1907e757069fea93592979bd624869058d893a13536a505",
+    "result": {
+      "outcome": "W",
+      "crowns": [
+        2,
+        0
+      ],
+      "delta": 30,
+      "trophies_after": 1030
+    },
+    "fps": 9.8,
+    "decisions": 684,
+    "submitted": 27,
+    "hud_confirmations": 26,
+    "decision_p50_p95_ms": [
+      7.2247914504259825,
+      35.06795410066846
+    ],
+    "capture": {
+      "primary_starts": 1,
+      "interruptions_3805": 0,
+      "restart_delta": 0,
+      "seq_resets": [],
+      "start_window_max_gap_ms": 508.64858399999866,
+      "candidate_metadata_present": true,
+      "all3files_exist": true
+    },
+    "tower_checks": {
+      "own_king_hp_reads": [
+        3312
+      ],
+      "enemy_king_hp_reads": [
+        2400,
+        3086,
+        3199,
+        3312
+      ],
+      "no_false_5": true,
+      "real_enemy_king_final": 3086,
+      "visual_result_frame": "shots/s32m01-result-existing.jpg"
+    },
+    "step_errors": {},
+    "writer_dropped": 0,
+    "nav_stuck": 0,
+    "scope": "capture/HP/performancevalidation;NOTperfectperceptionclaim",
+    "independent_local_report": "report_run.py s32-m01 --json rc0;rollback_flags[];capture_restarts0",
+    "pending_perception_gate": "staticpurplebanner raw/finalArcheratn1219/tick2289.737,x4.572/y32.697,score.5825;exactbackendboardimpact requestedexistingtranslatorowner beforeadjudicatingobviousphantomrollback"
+  },
+  "perception_head_followup": {
+    "receipt": "scratch/live-perc-r3/audit-20261016/s30m04-heads/summary.json",
+    "e16_PyTorch_JPEG": "Muskclass.962/p_teamenemy.003at1228;class.821/team.103at1287;wrongownerbeforemapping",
+    "limitation": "NOToriginalCoreMLtensor/parityclaim",
+    "static_banner": "n1219s32m01tick2289.737rawarcher-evolutionowner0.5825,x4.572/y32.697;boardimpactdependencyrequested",
+    "no_new_rule_or_model_change": true
+  }
+}
