@@ -30,8 +30,10 @@ impl BattleState {
                 body.mount=body.mount.map(|id| ids[&id]);
                 // riders.py creates each attachment in integer logic units;
                 // subtracting/adding tile floats changes the serialized bits.
-                body.x=(units(x)+units(body.x)-units(origin.0)) as f64/1000.0;
-                body.y=(units(y)+units(body.y)-units(origin.1)) as f64/1000.0;
+                // Every character spawn clamps its center before lane lookup,
+                // including attachments (battle.py _spawn_unit_at_position).
+                body.x=(units(x)+units(body.x)-units(origin.0)).clamp(250,17750) as f64/1000.0;
+                body.y=(units(y)+units(body.y)-units(origin.1)).clamp(250,31750) as f64/1000.0;
                 body.owner=owner;body.facing=(0,if owner==0 {1000} else {-1000});
                 let (cx,cy)=cell(body.x,body.y);body.lane=self.config.lane_ids[(cy*36+cx) as usize];
                 body.birth=self.tick;
