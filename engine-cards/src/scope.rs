@@ -45,6 +45,9 @@ pub(super) enum Effect {
         recipients: Vec<i32>,
         snapshot_taken: bool,
         ticks_done: usize,
+        // Ported from RoyaleSim (MIT), state.rs recipient buff admission.
+        #[serde(default, skip_serializing_if = "String::is_empty")]
+        buff_name: String,
     },
     Curse {
         scan_interval: f64,
@@ -54,6 +57,9 @@ pub(super) enum Effect {
         interval: f64,
         next_scan: f64,
         cursed: Vec<Cursed>,
+        // Batch B2: the curse buff's movement multiplier (absent = no slow).
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        slow: Option<f64>,
     },
     Void {
         pulse_times: Vec<f64>,
@@ -74,10 +80,31 @@ pub(super) enum Effect {
         selected: bool,
         pending: Vec<(f64, i32)>,
         grounded: Vec<(f64, i32)>,
+        #[serde(default)]
+        catches: usize,
+        #[serde(default)]
+        caught: Vec<i32>,
     },
 }
 
 impl Entity {
+    /// Python death_area_snapshot creates each pending Rage payload at its
+    /// parent's current point, including the nested impact payload.
+    pub(super) fn place_rage_payload(&mut self, x: f64, y: f64, owner: i32) {
+        self.x = x; self.y = y; self.owner = owner;
+        match &mut self.scope {
+            Some(Effect::Container { child, .. }) | Some(Effect::StartAction { child }) =>
+                child.place_rage_payload(x, y, owner),
+            Some(Effect::Haste { impact: Some(child), .. }) =>
+                child.place_rage_payload(x, y, owner),
+            _ => {}
+        }
+    }
+    /// Batch B2: the ms before which no enemy may lock this entity: Archer Queen stealth or a spawned unit's
+    /// acquire delay (Python Entity.is_targetable_by). Equal to `stealth_until` whenever the delay is unset (C56).
+    pub(super) fn lock_after(&self) -> i64 {
+        self.stealth_until.max(self.untargetable_until)
+    }
     pub(super) fn haste_percent(&self, axis: usize) -> i64 {
         let factor = self.hastes.iter().map(|h| match axis { 1 => h.1, 2 => h.2, _ => h.3 })
             .fold(1.0_f64, f64::max);
@@ -107,7 +134,8 @@ impl Entity {
         self.airborne() || (self.leap_airborne() && !self.grounded)
     }
     pub(super) fn collision_air(&self, tick: i64) -> bool {
-        self.above_surface() || self.stats.hover || self.landed_tick == tick
+        // Batch B2: a Vines-grounded flier keeps the air collision plane (Python uses_air_collision_plane).
+        self.grounded || self.above_surface() || self.stats.hover || self.landed_tick == tick
     }
 }
 
@@ -116,6 +144,9 @@ impl BattleState {
         let mut child = template.clone();
         child.id = self.next_id as i32; self.next_id += 1;
         child.x = source.x; child.y = source.y; child.owner = source.owner;
+        if child.stats.name == "Rage" {
+            child.place_rage_payload(source.x, source.y, source.owner);
+        }
         child.birth = self.tick; self.entities.push(child);
     }
     fn haste_scan(&mut self, area: &Entity, duration: f64, axes: (f64,f64,f64)) {
@@ -131,7 +162,7 @@ impl BattleState {
     }
     pub(super) fn slow_target(&mut self, j: usize, duration: f64, axes: (f64, f64, f64)) {
         let e = &mut self.entities[j];
-        if !e.alive || e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
+        if !e.alive || e.hidden || e.underground || e.spirit || e.absent() || e.dash_travel() || duration <= 1e-9 || axes.0.min(axes.1).min(axes.2) >= 1.0 { return; }
         if axes == (0.7, 0.7, 0.7) {
             e.slow_ms = e.slow_ms.max((duration*1000.0).round_ties_even() as i64);
         } else if let Some(slow) = e.area_slows.iter_mut().find(|s| (s.1,s.2,s.3)==axes) {
@@ -286,7 +317,10 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && !e.hidden
-                    && e.stagger <= 1e-9
+                    && !e.absent()
+                    // Batch B2: a dash in travel is outside every selector (Python can_receive_area_damage ->
+                    // BanditDash.allows_effect), before Void counts, Vines ranks or Curse marks.
+                    && !e.dash_travel()
                     && (e.class == "Troop" || e.class == "Building")
                     && Self::in_area(e, area.x, area.y, area.effect_radius))
                 .then_some(i)
@@ -305,7 +339,7 @@ impl BattleState {
         self.stun_target(j, duration);
         let e = &mut self.entities[j];
         e.freeze_expiry = e.freeze_expiry.max(expiry);
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 {
+        if e.hidden || e.underground || e.spirit || e.absent() {
             return;
         }
         if let Some(slow) = e
@@ -327,7 +361,7 @@ impl BattleState {
         damage: f64,
     ) {
         let e = &mut self.entities[j];
-        if e.hidden || e.underground || e.spirit || e.stagger > 1e-9 || damage <= 0.0 {
+        if e.hidden || e.underground || e.spirit || e.absent() || damage <= 0.0 || e.dash_travel() {
             return;
         }
         if let Some(buff) = e.periodic.iter_mut().find(|b| b.source_id == source_id) {
@@ -382,11 +416,15 @@ impl BattleState {
                         }
                     } else {
                         let step = interval.max(0.05);
-                        let next = next_scan.get_or_insert(step);
+                        // Batch B2: first application on the landing update; cap = life left + one HitSpeed
+                        // (Python BuffAreaEffect.update).
+                        let next = next_scan.get_or_insert(0.05);
                         while *next <= active.min(area.effect_duration)+1e-9 && *next < area.effect_duration-1e-9 {
-                            self.haste_scan(&area,if *cap { refresh.min((area.effect_duration-*next).max(0.0)) } else { *refresh },*axes);
+                            self.haste_scan(&area,if *cap { refresh.min((area.effect_duration-*next).max(0.0) + step) } else { *refresh },*axes);
                             *next += step;
                         }
+                        // Both exported views describe the same live haste clock.
+                        self.entities[i].next_effect = *next_scan;
                     }
                     if active >= area.effect_duration-1e-9 { self.entities[i].alive = false; }
                 }
@@ -401,7 +439,8 @@ impl BattleState {
                     } else { offsets[*spawned % offsets.len()] };
                     if !offsets.is_empty() {
                         if *mirror_x && area.x > 9.0 { dx = -dx; }
-                        if *orient_y && area.owner == 1 { dy = -dy; }
+                        // Batch B2: against_forward orientation (Python Graveyard._spawn_skeleton).
+                        if *orient_y { if area.owner == 0 { dy = -dy; } }
                         else if !*mirror_x && !*orient_y && area.owner == 1 { dx = -dx; dy = -dy; }
                     }
                     if let Some(template) = self.config.cards.get(&area.spell_name).and_then(|c| c.spawns[area.owner as usize].first()) {
@@ -411,7 +450,13 @@ impl BattleState {
                         let (cx,cy) = cell(child.x,child.y);
                         child.lane = self.config.lane_ids[(cy*36+cx) as usize];
                         child.id = self.next_id as i32; self.next_id += 1;
-                        child.birth = self.tick; self.entities.push(child);
+                        child.birth = self.tick;
+                        // Batch B2: acquire delay from now, and the creation-tick first update with contact push, run
+                        // synchronously at the spawn point (Python Graveyard._spawn_skeleton -> _first_update_spawned).
+                        if child.acquire_delay_ms > 0 { child.untargetable_until = self.tick * 50 + child.acquire_delay_ms; }
+                        self.entities.push(child);
+                        let k = self.entities.len() - 1;
+                        self.first_update_now(k, true, Vec::new());
                     }
                     *spawned += 1;
                     *next_spawn = deadlines.get(*spawned).copied().unwrap_or(*initial + *spawned as f64 * *interval);
@@ -458,6 +503,7 @@ impl BattleState {
                 recipients,
                 snapshot_taken,
                 ticks_done,
+                buff_name,
             } => {
                 if !*snapshot_taken {
                     *snapshot_taken = true;
@@ -468,6 +514,7 @@ impl BattleState {
                             e.class == "Troop"
                                 && e.owner == area.owner
                                 && e.alive
+                                && !e.stats.ignore_buffs.contains(buff_name)
                                 && !e.spirit
                                 && Self::in_area(e, area.x, area.y, area.effect_radius)
                         })
@@ -500,6 +547,7 @@ impl BattleState {
                 interval,
                 next_scan,
                 cursed,
+                slow,
             } => {
                 let now = self.tick as f64 * 0.05;
                 cursed.retain(|target| {
@@ -529,6 +577,9 @@ impl BattleState {
                             *damage
                         };
                         self.scope_periodic(j, area.id, *buff_time, *interval, amount);
+                        if let Some(m) = *slow {
+                            self.slow_target(j, *buff_time, (m, 1.0, 1.0));
+                        }
                         if troop {
                             if let Some(entry) = cursed.iter_mut().find(|v| v.id == id) {
                                 entry.expiry = entry.expiry.max(expiry);
@@ -608,31 +659,35 @@ impl BattleState {
                 selected,
                 pending,
                 grounded,
+                catches,
+                caught,
             } => {
-                if !*selected && area.effect_age >= *select_delay - 1e-9 {
-                    *selected = true;
-                    let mut targets = self.scope_targets(&area);
-                    targets.sort_by(|&a, &b| {
-                        let a = &self.entities[a];
-                        let b = &self.entities[b];
-                        (b.hp + b.shield)
-                            .total_cmp(&(a.hp + a.shield))
-                            .then(a.id.cmp(&b.id))
-                    });
-                    for (&delay, j) in action_delays.iter().zip(targets) {
-                        pending.push((*select_delay + delay, self.entities[j].id));
-                    }
-                }
-                while pending
-                    .first()
-                    .is_some_and(|v| v.0 <= area.effect_age + 1e-9)
+                // Batch B2. Ported from RoyaleSim (MIT), spell.rs `catch`: each catch re-picks, when it falls, the
+                // unit in reach with the highest hp + shield not yet caught by this cast (lower id on a tie).
+                let _ = &pending;
+                while *catches < action_delays.len()
+                    && *select_delay + action_delays[*catches] <= area.effect_age + 1e-9
                 {
-                    let (_, id) = pending.remove(0);
-                    if let Some(j) = self.index(id).filter(|&j| self.entities[j].alive) {
+                    *catches += 1;
+                    let best = self
+                        .scope_targets(&area)
+                        .into_iter()
+                        .filter(|&j| !caught.contains(&self.entities[j].id))
+                        .min_by(|&a, &b| {
+                            let a = &self.entities[a];
+                            let b = &self.entities[b];
+                            (b.hp + b.shield)
+                                .total_cmp(&(a.hp + a.shield))
+                                .then(a.id.cmp(&b.id))
+                        });
+                    if let Some(j) = best {
+                        caught.push(self.entities[j].id);
+                        let id = self.entities[j].id;
                         let target = &mut self.entities[j];
                         if target.airborne() && target.stats.air {
                             target.grounded = true;
-                            grounded.push((area.effect_age + *snare_duration, id));
+                            // AIR_TO_GROUND_WINDOW: TotalDuration 2000 + 2 x 50 ms transition (Python VINES_AIR_TO_GROUND_S).
+                            grounded.push((area.effect_age + (2.0 + 2.0 * 0.05), id));
                         }
                         let amount = if target.king || target.stats.name == "Tower" {
                             *crown_damage
@@ -647,6 +702,7 @@ impl BattleState {
                         self.scope_periodic(j, area.id, *snare_duration, *interval, amount);
                     }
                 }
+                *selected = *catches >= action_delays.len();
                 grounded.retain(|&(time, id)| {
                     if time <= area.effect_age + 1e-9 {
                         if let Some(j) = self.index(id) {
@@ -658,7 +714,6 @@ impl BattleState {
                     }
                 });
                 if *selected
-                    && pending.is_empty()
                     && grounded.is_empty()
                     && area.effect_age >= area.effect_duration - 1e-9
                 {

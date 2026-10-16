@@ -1,0 +1,13 @@
+--- a/bot/live/levels.py
++++ b/bot/live/levels.py
+@@ -112,6 +112,10 @@
+                     a.update(active=False, start=now-a['duration']-a['cooldown']+cooldown,
+                              last_use=now-a['duration']-a['cooldown']+cooldown)
+             entities.append(e)
++        # New Resources supplies the public-only GG graph policy; older frozen
++        # runtimes retain their existing behavior until their owner upgrades.
++        if hasattr(R, 'repair_public_graph'):
++            R.repair_public_graph(entities)
+         for e in entities:
+             c = e.get('champion')
+             if c and c['effect']['kind'] == 'Goblin':

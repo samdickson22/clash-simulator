@@ -1,0 +1,142 @@
+{
+  "quality_ok": true,
+  "all11_checks": {
+    "b_roots_exercised": true,
+    "command_hashes_match": true,
+    "complete_diagnostics": true,
+    "complete_unique_rows": true,
+    "controller_priors_match": true,
+    "terminal_results": true,
+    "zero_child_failures": true,
+    "zero_errors": true,
+    "zero_native_failures": true,
+    "zero_rejected_deployments": true
+  },
+  "coverage": {
+    "duplicate_rows": [],
+    "expected_rows": 8,
+    "identity_mismatches": [],
+    "incomplete_rows": [],
+    "known": true,
+    "missing_rows": [],
+    "observed_rows": 8,
+    "parent_exit_code": 0,
+    "problems": [],
+    "unexpected_rows": []
+  },
+  "source_review": "R26",
+  "bank_sha256": "b4145717d0122d0f249bddce894be15748ac4c2b59cb190868c1039dabf8d15a",
+  "cache_after": [
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json: OK",
+    "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json: OK"
+  ],
+  "row_summary": [
+    {
+      "arm": "A",
+      "index": 0,
+      "seat": 0,
+      "opponent": "R3a",
+      "command_sha256": "d89d5c1ec8dd6784c403755a868a0a7feda9dc5b80251de45d106614faf28e75",
+      "events": 51,
+      "b_roots": 0,
+      "cpu_seconds": 25.387716569000002,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "A",
+      "index": 1,
+      "seat": 1,
+      "opponent": "R3a",
+      "command_sha256": "a69f5716aaf8c2becbb3d10baeabc80a869898511ffd05247add6bcf9b04cade",
+      "events": 58,
+      "b_roots": 0,
+      "cpu_seconds": 27.549123283,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "A",
+      "index": 2,
+      "seat": 0,
+      "opponent": "v1",
+      "command_sha256": "3810f9882d57ea0022eaf1f34270302d571570e64d0644cf1f8c714268dd0d03",
+      "events": 47,
+      "b_roots": 0,
+      "cpu_seconds": 25.68414178,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "A",
+      "index": 3,
+      "seat": 1,
+      "opponent": "v1",
+      "command_sha256": "b268937e244e4e8316bb298050089a46b91400670a45b4b424bb6cb27f22492a",
+      "events": 25,
+      "b_roots": 0,
+      "cpu_seconds": 16.762582237,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "B",
+      "index": 0,
+      "seat": 0,
+      "opponent": "R3a",
+      "command_sha256": "d89d5c1ec8dd6784c403755a868a0a7feda9dc5b80251de45d106614faf28e75",
+      "events": 51,
+      "b_roots": 102,
+      "cpu_seconds": 25.537529537,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "B",
+      "index": 1,
+      "seat": 1,
+      "opponent": "R3a",
+      "command_sha256": "a69f5716aaf8c2becbb3d10baeabc80a869898511ffd05247add6bcf9b04cade",
+      "events": 58,
+      "b_roots": 113,
+      "cpu_seconds": 27.539052406,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "B",
+      "index": 2,
+      "seat": 0,
+      "opponent": "v1",
+      "command_sha256": "3810f9882d57ea0022eaf1f34270302d571570e64d0644cf1f8c714268dd0d03",
+      "events": 47,
+      "b_roots": 106,
+      "cpu_seconds": 25.790056372000002,
+      "child_exit_code": 0
+    },
+    {
+      "arm": "B",
+      "index": 3,
+      "seat": 1,
+      "opponent": "v1",
+      "command_sha256": "b268937e244e4e8316bb298050089a46b91400670a45b4b424bb6cb27f22492a",
+      "events": 25,
+      "b_roots": 67,
+      "cpu_seconds": 16.831596634,
+      "child_exit_code": 0
+    }
+  ],
+  "artifact_sha256": {
+    "launch-00001-result.json": "18803d19f5936fac7146f22a67f3c82baa2ad8c3ac0805c8109b0aa954030c53",
+    "launch-00001.json": "b912eb43e78c53d79d1e5c96f25d2c746de6030a6b9fe5cdd95200e523bda465",
+    "report.json": "8b58c9ba899f01b343f981b67b5bc5d410ecad9fb4b2649355500023d0628f37",
+    "rows/A-00000.json": "53aa7e81cc9636d48c6cc353899e45f6de2ea475cb01c342803bb5c9a843e7e9",
+    "rows/A-00001.json": "09a139c0e9d08fb31b0e4caae98db4ad92d86fcc1d826b8daa3890b48712de66",
+    "rows/A-00002.json": "12fac94e703fa08947d88df06d02c3563d260342042093dd7bbb9604e398d413",
+    "rows/A-00003.json": "077662a2f1ecd2bac06f0720c1f2a5386fb238a5b2563b632af4085c57dc193f",
+    "rows/B-00000.json": "03e8d64b44e1c9181efd9388ca6cfa5db4e737bea7c2eb0c875ec7834f09c888",
+    "rows/B-00001.json": "62b2bfc9d24e34cb782888d1d2a00b26bb3f443e156e3ed4f58a6353e1f9fba9",
+    "rows/B-00002.json": "2beeb3eff3bf8f195201cb3738f2fb6e198373b3e41e677227a6ee491afccce4",
+    "rows/B-00003.json": "4df5f847d82eb694d8d6d6ef30cd020243786e81884deebec53ca06189f901b1"
+  },
+  "scope": "full-game all11 parity/clean command acceptance only, no mixed-level strength outcomes"
+}

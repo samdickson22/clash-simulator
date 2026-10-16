@@ -872,7 +872,18 @@
       "first_battle_validation": "capture/HP/performancePASS s32-m01;separateperceptionbannerboardgatepending"
     }
   ],
-  "rollbacks": [],
+  "rollbacks": [
+    {
+      "utc": "2026-10-16T09:54:06Z",
+      "scope": "launchargumentonly;omit--units\u2192ft-r6modelunits",
+      "trigger": "confirmedobviousbannerphantomgate",
+      "session": "s33",
+      "pid": 77969,
+      "source_files": "unchanged reviewedcapture+towers",
+      "evidence_retained": true,
+      "completion_validation": "PASS firstwholefallbackbattle;sourceconfig/loggedinputsverified;nofreshpacketserializationclaim"
+    }
+  ],
   "commits": [
     {
       "utc": "2026-10-16T09:27:00.479321+00:00",
@@ -1120,7 +1131,7 @@
     ],
     "r3_task": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Adelegate-task%3Alivelead-capture-single-stream-sol-review-20261016-r3",
     "review": "freshSolr3GO no blockers;taskstatusacknowledged",
-    "deployment": "deployed09:38:09Z;firstbattlecapturePASS zero3805/restarts/seqresets,3referencesresolve",
+    "deployment": "capturefixvalidatedandretained;independentYOLOphantomrollbackdoesnotrevertcapture",
     "rollback": "restoreexactfbf backup only atsafe boundary",
     "commit": "bd3eec30d9412876436610a59defd73e4717771c"
   },
@@ -1150,7 +1161,7 @@
     "final_hardened_tests": "13/13badge;10/10guard;require5recordings/rejected5\u2192None",
     "source_change": "OCRcompactbadgeonly;TowerReaderASTidentical;noreset/full/death/maxchange",
     "commit": "0dfea3172f57c68082e22795e3ce9d2096afe9b9",
-    "deployment": "deployed09:38:09Z;firstbattleHP/perfPASS nofalse5,actualdamaged3199\u21923086preserved",
+    "deployment": "towerfixvalidatedandretained;independentYOLOphantomrollbackdoesnotreverttowers",
     "microbench_05_ms": {
       "old_p50_p95": [
         3.108,
@@ -1174,7 +1185,15 @@
     "actual_runtime": "56configuredcards/70templates;allsource_card!=identityaliasescorrespondtounsupportedcanonicalcfg;Barbariantoken23aloneinsufficient",
     "consumer_coordination": "existingtranslator/OOVownerisolateddeployed5361consumercompatibility;R3overall/integrationsoleadapterimplementation;defaultassignmustforwardbodyconstraint",
     "contract": "truthfulcanonicalobservedbody+detectorfamilycard(notspawnprovenance)+rawname/index/p_team;explicitoptionallegacybackendproxy;projectionseparateexact/proxy/unplaced;nevermutateobservations",
-    "new_package": "nonefrozen;no reviewablegenericfixyet"
+    "new_package": "nonefrozen;no reviewablegenericfixyet",
+    "adapter_release": "/mpac/sdicks02/jobs/clasher/katacr-yolo-live-20261016/mapping-audit-20261016T0931Z/adapter-release.json",
+    "adapter_sha": "1b05090de88885d0fcc19461e008a981e62174ed1bd3e62d73400a69a50298e6",
+    "mapping_sha": "ee8adecb240b14b2193bf34f01dd53f6a4fa1e36e1c55fdc882692c05cd7bc62",
+    "body_resolution_sha": "65581fa6239b5716b6fe3a54d04b67b2764006408d01a0dc7db394bdafa687b9",
+    "body_resolution": "91resolved/27unresolved",
+    "consumer_env": "CLASHER_LIVE_LEGACY_MAPPING_COMPAT=v1 explicitoptinonly",
+    "status": "adapterfrozen;matchingconsumer+fullintegration+freshindependentreviewblockship",
+    "essential_handoff": "artifactroutedexistingtranslatorconsumerownerandr3overallowner;noadapter-onlydeploy"
   },
   "s30_results": {
     "m01": "W3-1\u2192902",
@@ -1239,7 +1258,10 @@
     "no_messages": "acknowledgments,healthypolls,unchangedgates/queues,logged/pushedonlyreceipts",
     "active_descendants": "coordinatorcovers tree;doNOTrebroadcast",
     "future_resumed_briefs": true,
-    "automatic_completion": "sufficient;doNOTduplicate"
+    "automatic_completion": "sufficient;doNOTduplicate",
+    "final_assignment_report": "onceonlywhenwholeassignmentdone,result+artifact+remainingblocker;automaticdeliverycounts,nomanualduplicate",
+    "dependency_handoffs": "directowner,notcoordinator",
+    "scope": "ownsubstantialendtoendwork;notinyperstepagents;genuinelyindependentreviewsseparate"
   },
   "first_postfix_validation": {
     "utc_recorded": "2026-10-16T09:49:12Z",
@@ -1290,7 +1312,7 @@
     "nav_stuck": 0,
     "scope": "capture/HP/performancevalidation;NOTperfectperceptionclaim",
     "independent_local_report": "report_run.py s32-m01 --json rc0;rollback_flags[];capture_restarts0",
-    "pending_perception_gate": "staticpurplebanner raw/finalArcheratn1219/tick2289.737,x4.572/y32.697,score.5825;exactbackendboardimpact requestedexistingtranslatorowner beforeadjudicatingobviousphantomrollback"
+    "pending_perception_gate": "RESOLVED:confirmedstaticbannerentersboard;obviousphantomgateFIRED;YOLOrollbackorderedatnextsafeboundary"
   },
   "perception_head_followup": {
     "receipt": "scratch/live-perc-r3/audit-20261016/s30m04-heads/summary.json",
@@ -1298,5 +1320,195 @@
     "limitation": "NOToriginalCoreMLtensor/parityclaim",
     "static_banner": "n1219s32m01tick2289.737rawarcher-evolutionowner0.5825,x4.572/y32.697;boardimpactdependencyrequested",
     "no_new_rule_or_model_change": true
-  }
+  },
+  "audit_docs_commit": {
+    "commit": "c42a85c20084796029be34c6d27e8a5c92dc44f1",
+    "receipt": "/mpac/sdicks02/scratch/live-review/live-resume-audit-commit-t26ohz5z/receipt.json",
+    "scanner": 0,
+    "diffcheck": 0,
+    "scope": "onlyownPROGRESS/HANDOFF/audit;sharedHEAD/index/WIPpreserved",
+    "manual_parent_notification": "none perstrictsilence"
+  },
+  "banner_phantom_gate": {
+    "utc": "2026-10-16T09:53:51Z",
+    "receipt": "/mpac/sdicks02/jobs/clasher/live-multibody-20261015/consumer-mapping-compat-20261016/s32-m01-n1219-deployed-board.json",
+    "sha256": "2b82d972181f19e32e2cb59cbc9c95e9303af87ec15ebf2925533284b83f183a",
+    "confirmed": "exactdeployed5361/4863atloggedpoll2290assignsownArchertoken4/0;packetx4.572/y32.0,input32.697clampednotrejected",
+    "scope": "exactconsumerfreshframe+corroborativeprecedingpolls;NOTpolicychoice/CoreMLtensorreproduction;+10tickdiagnosticsuperseded",
+    "decision": "existingobvious-phantomrollbackgateFIRED",
+    "action": "solebabysitterdirectedearliestsafebetweenbattleboundarydisable--units,useft-r6modelunits;preserveaa98505capture/58033tower,sameotherargs",
+    "operator_state": "32m04playingat09:53Z;donotinterruptbattle/startduplicate",
+    "parent_notification": "urgentlivefailureexception;max2sentences+receiptpath",
+    "r3_dependency": "retainSpellValleystaticUInegativeacceptanceslice;resolveconfirmedcasebeforeYOLOre-release",
+    "rollback_receipt": "/mpac/sdicks02/scratch/live-loop/s32-phantom-rollback-receipt-sol.json",
+    "command_receipt": "/mpac/sdicks02/scratch/live-loop/s33-rollback-command-sol.json",
+    "execution": "32m04naturalexit33448,nointerrupt/noSIGTERM;emptygate/PAUSEabsent/hashguardsPASS;s33PID77969started09:54:06Z__RC0with--unitsOMITTED",
+    "verified_config": "actualunits_source=model;loadedunits=model,frame650bd5cf;33m01unpaused",
+    "preserved": "captureaa98505/tower58033/perc4/export/Cannon8/runtime/r3births;arenaargspell-valleyfromactualclientevidence",
+    "validation": "COMPLETED;actualmodelconfig+1731finalinputrecords/zeroYOLOoverride+unchangedconsumerprovenance;firstfallbackwholeFPS9.8744/decisionp9532.7675,noerrors/guards/capturerestarts",
+    "completion_receipt_sha256": "869cb6b1e50e2092a2c2ce2c9dcbd8bdc5ba77784cfce1626caa7900c12eb6df",
+    "packet_board_limitation": "No fresh packet-board serialization/replay was added. Verified same5361translator/4863births consumes exact logged model-unit records from aa98505 branch, with documented existing C56 canonicalization/token aliases unchanged; per-unit source annotations absent.",
+    "completion_report": "onceparentexplicitrequestfulfilled;noautomatic/manualduplicatereport"
+  },
+  "viewer_release": {
+    "package": "/mpac/sdicks02/scratch/live-loop/viewer-r1",
+    "review": "freshindependentSolGO sourcef16a0473/serveref6f1dde/test2ae06121;8new+7existing/mixedbackend/restart/slowclientprobes",
+    "commit": "547a3b6521c51fc9180bec2a49759ce39fd20505",
+    "commit_receipt": "/mpac/sdicks02/scratch/live-review/viewer-stream-commit-jll826do/receipt.json",
+    "scanner_rc": 0,
+    "diff_check_rc": 0,
+    "scope": "onlytwofrozenimplementationfiles+test+concisedoc;sharedHEAD/index/WIPpreserved",
+    "source_bases": [
+      "1f3e1328da059e57d95cc08a1cb364d9f68a78495bf7f426466eee81358c09c4",
+      "3bf49bfbe97503e88190f6c3e52dfed4b4fcfa0a6b27519b9907f13f6d98cdaf"
+    ],
+    "handoff": "solebabysitterRELEASEGOstage+normalboundary+verifiedownedproxyrestartviaexistinglauncher;preserveallbot/capture/controlstate;deployedreceiptpending",
+    "rollback": "restoreonly2exactbaselinebackups+restartonlyverifiedproxy,sameports/args;driverreloadnextnormalboundary",
+    "tests_limit": "provesframingbug,notSamgraycause;93.2percentlocalpayloadreductionnotWAN/Safari;lastgoodmaybestale"
+  },
+  "actions": [
+    {
+      "utc": "2026-10-16T10:09:38Z",
+      "action": "independent full canonical contract Sol-high prehost review launched",
+      "task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Adelegate-task%3Alivelead-canonical-contract-full-sol-prehost-20261016-r1",
+      "client_request_id": "livelead-canonical-contract-full-sol-prehost-20261016-r1",
+      "handoff": "/mpac/sdicks02/jobs/clasher/katacr-yolo-live-20261016/mapping-audit-20261016T0931Z/full-bundle-review-handoff.json",
+      "report": "/mpac/sdicks02/scratch/live-review/canonical-contract-full-r1/REVIEW.md",
+      "bounds": "local read-only/tests max20min, nice19 <=2cores, singlethreadBLAS, no helpers/models/host actions",
+      "scope": "contract code/data only; e16 remains disabled; no adapter-alone deployment or phantom gate clearance",
+      "nulls": "independent GO c4ffb6f9; conditional one-tap/seed2026101610 release sent existing sole monitor, all fresh preconditions and queue-first rollback mandatory",
+      "nulls_report": "/mpac/sdicks02/scratch/nulls/qa/anr-recovery-independent-review-1003.md",
+      "nulls_release_request": "livelead-nulls-anr-reviewed-release-20261016-r1",
+      "log_correction": "Initial log command python unavailable rc127, rerun python3; no prior write occurred"
+    },
+    {
+      "utc": "2026-10-16T10:12:07.963034+00:00",
+      "action": "CARD vocab integration prepared; blocked on core landing",
+      "core": "1802e899cea14807f659ee234dcd67839b392f46",
+      "origin_main": "eb4ba937874ff8df8ba37ee99eb1860a448884fb",
+      "core_ancestor_rc": 1,
+      "origin_complete_vocab": false,
+      "patch_sha256": "532867a5e4cbb5894f7ac7fe5ce6c80beece10dc472fcad01ad984b92fe02e5d",
+      "receipt": "/mpac/sdicks02/scratch/live-review/vocab-live-integration-1q85j1me/receipt.json",
+      "checks": "apply-check current origin + frozen contract PASS; exacthelper model-free 241 measured entries preserved,inputimmutable,idempotent,loaderwronghashrejects,constructor AST PASS",
+      "checks_receipt": "/mpac/sdicks02/scratch/live-review/vocab-live-integration-1q85j1me/completion-check.json",
+      "shared_changes": false,
+      "active_pin_switch": false,
+      "correction": "Initial DM to translator incorrectly said core landed due shell final-command rc masking; explicit ancestor/hash check corrected and immediate correction DM sent. CARD dependency handoff sent; no premature integration commit."
+    },
+    {
+      "utc": "2026-10-16T10:19:54.477641+00:00",
+      "action": "canonical full bundle independent r1 NO-GO; existing consumer owner assigned generic fix/refreeze",
+      "task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Adelegate-task%3Alivelead-canonical-contract-full-sol-prehost-20261016-r1",
+      "report": "/mpac/sdicks02/scratch/live-review/canonical-contract-full-r1/REVIEW.md",
+      "blocker": "P2 R1 barbarian->hunter verified proxy transition breaks exact5361/4863 board and public play/cost/cycle timing",
+      "verification": "24bundle+15adapter+22runtime+111capability pins verified;152consumer/18adapter checks passed;2neworiginal-source transition assertions fail",
+      "recommendation": "Strict exact canonical constraints; explicitly separate legacy-proxy backend tracking/effective-body audit without mutating observations; no silent exception",
+      "release": "HELD; e16 disabled/phantom gate retained; no adapter-alone deployment",
+      "shared_integrity": "Frozen sources and sampled shared production sources unchanged; concurrent sharedindex change observed byreviewer, causeunknown; no index restoration attempted",
+      "optional": "N1 malformed canonical body validation; N2 complete cwd/env/runtimepin receipts",
+      "next": "Existing consumer implementation owner fix/tests/refreeze then new independent review round, r3 notified essential contract handoff"
+    },
+    {
+      "utc": "2026-10-16T10:20:30.554146+00:00",
+      "action": "read soleoperator viewer validation and handsync rollback receipts",
+      "viewer": "completed:29valid720x1280default+9valid360x640mobile JPEGs, defaultmobileunchecked, controls preserved; no WAN/Safari claim",
+      "viewer_receipt": "/mpac/sdicks02/scratch/live-loop/viewer-r1-deploy-receipt-sol.json",
+      "handsync": "FAILED r4; safe rollback LL_HANDSYNC=0 actualbaseLiveSession/LiveTranslator verified; firstwholebattleperf pending",
+      "handsync_receipt": "/mpac/sdicks02/scratch/live-loop/handsync-autonav-r4-deploy-receipt-sol.json",
+      "rollback_pid": 40053,
+      "rollback_session": "s35",
+      "stop_utc": "2026-10-16T10:14:28Z",
+      "missed_boundaries": "Safe-state guarded SIGTERM after m03 match_end; m01/m02 boundaries were missed during observer gaps, not a deliberate additional trial; no active battle interrupted; m04 only wait/no match_start",
+      "known_additional_hold": "handsync_hold tap_guard:greyed n383 ts38757.176417",
+      "retained": "reviewedviewer/capture/tower/modelunits/deck/args; sources unchanged",
+      "next": "Existing loopowner generic fullfield reproduction/fix/review, no duplicate operator or helper"
+    },
+    {
+      "utc": "2026-10-16T10:21:02.601764+00:00",
+      "action": "acknowledged terminal consumer vocab handoff task; core prerequisite still absent after fresh fetch",
+      "task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Athread-send%3Alivelead-vocab-contract-integration-20261016-r1",
+      "status": "completed original run, hasPendingChildRuns true for existing R1 correction; do not duplicate",
+      "origin_main": "eb4ba937874ff8df8ba37ee99eb1860a448884fb",
+      "core_ancestor_rc": 1,
+      "complete_vocab_available": false,
+      "next": "wait CARD existing dependency handoff; preserve staged vocab patch and frozen-contract review blocker; no pin/host/source change"
+    },
+    {
+      "utc": "2026-10-16T10:21:56.574362+00:00",
+      "action": "acknowledged R3 owner terminal handoff; release hold retained",
+      "task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Athread-send%3Alivelead-canonical-r1-fix-handoff-r3-20261016",
+      "result": "R3 will reconcile earlier approval wording with blocking fullbundle independent R1 and update handoff; no release until consumer correction/differentialtests/fresh review",
+      "next": "existing consumer fix task remains sole implementation owner; no duplicate work, e16 stays disabled"
+    },
+    {
+      "utc": "2026-10-16T10:34:01.140497+00:00",
+      "action": "fresh independent R2 fullbundle review launched; reviewed r5 singlefile scoped release for ONEbattle canary",
+      "review_task": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Adelegate-task%3Alivelead-canonical-contract-full-sol-prehost-20261016-r2",
+      "review_client_request": "livelead-canonical-contract-full-sol-prehost-20261016-r2",
+      "review_source": "/mpac/sdicks02/jobs/clasher/live-multibody-20261015/consumer-mapping-compat-r2-20261016/consumer-release.json",
+      "review_report": "/mpac/sdicks02/scratch/live-review/canonical-contract-full-r2/REVIEW.md",
+      "review_bounds": "Sol-high local model-free PREINSPECT transitive tests/no policy or detector inference,nice19/2cores/20min; R1,N1,N2 carried, onlyone reviewowner",
+      "review_gate": "no e16 enablement, runtime/pin action or adapter-alone deploy",
+      "handsync_commit": "9fad2e273935272bdc023f4da6d1a09ac46398b2",
+      "handsync_receipt": "/mpac/sdicks02/scratch/live-review/handsync-r5-commit-u29whq42/receipt.json",
+      "handsync_source_sha256": "7b1c0b5c165f8c00879e8d66cf7ed5e25ce795f1b92a88a09fb0bfa8f28d0829",
+      "handsync_scan_rc": 0,
+      "handsync_diff_check_rc": 0,
+      "handsync_release": "ONLY handsync.py; exactr4base/driver/backup guards, soleoperator, LL_HANDSYNC1 ONEbattle via existing limit; no furtherplay/autostart before validation",
+      "hold_authority": "Explicit Sam/currentuser authorizes clear ONLY reviewed five-loss hold for canary; everyloss/incident retained, otherholds/gates unaffected",
+      "rollback": "LL_HANDSYNC0 safe boundary preserving viewer/capture/tower/modelunits/pins/deck, optionally restoreverifiedr4sourcebutkeepLL0",
+      "essential_handoff": "livelead-handsync-r5-one-battle-release-20261016",
+      "host_actions_by_lead": [],
+      "shared_index_unchanged_during_commit": true
+    },
+    {
+      "utc": "2026-10-16T10:40:53.839243+00:00",
+      "action": "reviewed two-call LIVE vocab source integration completed after CARD core landed",
+      "commit": "ae3f6b0c579c5c817630b92a64089917c6623704",
+      "parent_core": "a6a5401c127bac5eab67ad25495c1922936f8a26",
+      "source": "bot/live/translate.py",
+      "sha256": "4d9c37a5b75886df74c92bc042f675bddf6553a08e7b489be66eebf7804e50bf",
+      "receipt": "/mpac/sdicks02/scratch/live-review/vocab-live-commit-zkroscqu/receipt.json",
+      "tests": "8focusedexisting translator/fair-information tests16.02s+241measuredfixtureentries preserved/inputimmutable/idempotent/tokenhashrejects",
+      "test_env": "archived Macbench runtime r1-total/Linuxnative-total-r1,nice19CPUs2-3singlethread, no detector/policy inference",
+      "required_scanner_rc": 0,
+      "diff_check_rc": 0,
+      "shared_index_head_source": "untouched, scopedtempindexonly",
+      "host_pin_actions": [],
+      "essential_handoffs": [
+        "CARDwholepatchcompletion",
+        "consumer combinedrelease dependency; R2 frozen snapshot unchanged/exacthelper hostdependency must reconcile"
+      ]
+    },
+    {
+      "utc": "2026-10-16T10:41:49.951117+00:00",
+      "action": "fresh independent R2 fullbundle GO code/data contract only; combined vocab preparation assigned existing owner",
+      "task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Adelegate-task%3Alivelead-canonical-contract-full-sol-prehost-20261016-r2",
+      "report": "/mpac/sdicks02/scratch/live-review/canonical-contract-full-r2/REVIEW.md",
+      "manifest_sha256": "71cdbde2c3ce9c39f4b2512900aaaed1455101ea921d3f775aa1e8fe59e69f85",
+      "result": "R1/N1/N2 closed;214frozen+36independent+18integration/312subtests PASS;requiredscanner0; fullhash/patch/reverse verified",
+      "model_free": "Guarded zero policy/detector calls; publicresourceinit, in-memory removalof3policyloading statements; no productedits. Narrowlimit: two pureevent-list scoringhelpers inspectedafter execution",
+      "release": "No live release: e16OFF/phantom and independentmodel/field/performance/runtime/CoreMLgates remain; no adapter-alone/pin action",
+      "next": "Existing consumer owner prepares one combinedcandidate R2+landedae3f6b0c5+exacthelper38113873, allactualbaseguards/pairedrollback/model-free regressions, thenfreshcombinedreview; preserveR2snapshot/sharedWIP",
+      "essential_handoff": "livelead-canonical-r2-go-combined-vocab-package-20261016"
+    },
+    {
+      "utc": "2026-10-16T10:48:22.708356+00:00",
+      "action": "r5 ONEbattle canary failed unchanged refusal gate, source rollback/hold verified; fullfield investigation assigned original loopowner",
+      "task_id": "node:delegated-task:command%3Amcp%3Aff24817d-3245-4789-ba9a-57d6d29f6e75%3Athread-send%3Alivelead-handsync-r5-one-battle-release-20261016",
+      "receipt": "/mpac/sdicks02/scratch/live-loop/handsync-r5-one-battle-receipt-sol.json",
+      "result": "L2-3;1000trophies/0delta inferredfloor not settledtext;119battles70W49L includes legacyincidents",
+      "transaction": "19/19physicalHUD completions,0reservation/step errors,4temporalown duplicatesdropped",
+      "performance": "9.8728876FPS,decisionp9531.2141ms,0captureinterruptions/drops/HP5/navstuck",
+      "failed_gate": "3/22=13.636% greyed refuses >10%, no exemption/relaxation",
+      "physicalcardlimit": "first5sampleddisplayeddeploycardsmatch, not all19audit/futurewrongrate",
+      "singlelimit": "1start/1end, naturalexit,nochain/autostart,allvideo05retained1573/211552624 bytes",
+      "rollback": "afterexit source7b1guard+exact2a backup restoreONLYhandsync; nextlaunchLL_HANDSYNC0 required, no newdriver/battle",
+      "live_state": "NOdriver,proxy20393,validationPAUSE,NO furtherplay authorized",
+      "next": "Existing loopowner resumed fullfield refusal diagnosis/justifiedgenericfix/reviewpackage; no duplicateoperator/helper; actualpostrefusal2304null not originalrequests1994/221/2097",
+      "handoff": "livelead-r5-greyed-field-investigation-20261016",
+      "preserved": "all losses/incidents,viewer/capture/tower/modelunits/pins/deck/otherargs"
+    }
+  ]
 }

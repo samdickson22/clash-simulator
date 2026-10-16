@@ -622,11 +622,17 @@ def create_spell_from_json(
             crown_tower_damage_multiplier=_percent_to_multiplier(
                 area_data.get("crownTowerDamagePercent", buff_data.get("crownTowerDamagePercent"))
             ),
-            crown_tower_damage=_crown_damage(
-                name,
-                damage,
-                area_data.get("crownTowerDamagePercent", buff_data.get("crownTowerDamagePercent")),
-                level=level,
+            # Batch B2: an absolute crown-tower hit (16.402 CrownTowerDamagePerHit, level scaled; Freeze 15) replaces
+            # the percent when the data carries it. No export carries the column today (overlay rows add it).
+            crown_tower_damage=(
+                float(scale_stat(area_data["crownTowerDamagePerHit"], level) or 0)
+                if area_data.get("crownTowerDamagePerHit")
+                else _crown_damage(
+                    name,
+                    damage,
+                    area_data.get("crownTowerDamagePercent", buff_data.get("crownTowerDamagePercent")),
+                    level=level,
+                )
             ),
             max_damage_ticks=1 if damage > 0 else 0,
             damage_on_spawn=damage > 0,

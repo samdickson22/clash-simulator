@@ -1,13 +1,11 @@
 # Level-aware search pilot: design (exploration)
 
-2026-10-16, owner: level-aware search pilot (Opus) for the BOT LEAD. Scope: [SCOPE.md](SCOPE.md) (copy of 127x05
+2026-10-16, owner: level-aware search pilot for the BOT LEAD, resumed under Sol high. Scope: [SCOPE.md](SCOPE.md) (copy of 127x05
 `/mpac/sdicks02/jobs/clasher/bot-levels/SCOPE.md`).
 Log: [PROGRESS.md](PROGRESS.md). Results: [RESULTS.md](RESULTS.md). Code: `bot/levels/`.
 
-**Status (2026-10-16 Sol resumption): mapping verified; mandatory remaining gates pending.** Sam's updated
-rule authorizes confident reversible decisions after review and checks. BOT LEAD accepted this serial conditional-
-population design; no further Opus decision is needed to run the pilot once all gates pass. Runtime mapping is
-121/121, tower checks 13/13, and two focused regression tests pass. No pilot bank or primary games yet.
+**Status: COMPLETE.** The reviewed R28 lifecycle repair and final gates passed before fresh R30 registration. All300games completed cleanly. Primary B−A was−0.03,95%CI[−0.10,+0.03], below the registered+0.03 promising point estimate; no confirmation, conditional200ms benchmark or LIVE bundle is advanced. R27 remains permanently invalid and fully preserved. See [final results](RESULTS.md) and [decision receipt](receipts/pilot-r30-decision.json).
+
 
 ## Question
 
@@ -42,13 +40,15 @@ GoblinCage, ...) are therefore replaced by catalog decks: a limitation.
 ordered catalog with decks containing Clone, Earthquake or Tornado removed. This retains 2,500/2,925 decks and
 54,009/69,380 frequency weight; omitted mass is 15,371/69,380 = 22.15479965%. None of the 54 selected true-deck
 projections changes. `scope.install(rt)` preserves an immutable original catalog for projection/rollback, applies
-the restriction before any player starts, rejects external belief-prior overrides, and records both digests.
+the restriction before any player starts, rejects external belief-prior overrides, and records both digests. The primary bank explicitly reads the frozen population receipt
+`receipts/opponent-decks-snapshot.jsonl` (SHA256 b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440),
+matching the original DEV input; later live-log changes cannot alter its population.
 The original catalog still determines true-deck projection, with equality to the restricted projection asserted
 for every eligible row. This is a **conditional-population physics pilot**, not literal current-live-prior
 equivalence or evidence for immediate live promotion. Standard A outside this pilot is unchanged. No
 outcome-dependent exclusions or silent level-11 fallback are allowed.
 
-## Arms (same K4L player object, frozen weights/features/candidates)
+## Arms (same K4L player object, frozen weights/features and common candidate eligibility)
 
 Base player: `K4L-R-gs-rw-fc`, the deterministic twin of the live variant (same decisions whenever the live search
 completes). One process per game (fork after the runtime is built).
@@ -57,7 +57,9 @@ completes). One process per game (fork after the runtime is built).
 - **B0 (diagnostic, root-only):** the existing `bot/live/levels.py` LevelRoot installed on the actual K4L search
   object (`root_fn`, a new one-line hook in `bot/search/players.py`; the live installer currently loses it because
   `make_live_lopp` replaces the search object). Scales root bodies by the card ladder and towers by the card ladder
-  (known wrong for towers); cards played in rollouts spawn at level 11. A null here does not reject level-aware search.
+  (known wrong for towers); cards played in rollouts spawn at level 11. A null here does not reject level-aware search. Own bodies use the producing-card level map
+  (unmatched own bodies default11); every opponent body uses fixed5 without B's rarity adjustment. Tower inputs
+  are6 but the legacy scaler applies the card ladder, not the exact crown curve; native metadata remains11.
 - **B (level-aware):** `bot/levels/root.py` + `configs.py`:
   1. root bodies: the exact level-L fields (export of the producing card at L vs at 11; no rescaling of truncated
      values), hp = observed fraction × level max HP; projectiles in flight take the level's damage; spell carriers name
@@ -115,6 +117,41 @@ consistently for coarse and learned rollouts. The separate raw-fc transport gate
 with matching metadata and tests only that transport contract. Existing pooled LIVE startup/recovery behavior
 is outside this pilot and cannot be inferred from it. No frozen runtime, pin, checkpoint or model file is modified.
 
-Rollback: stop only a verified owned process group, preserve its outputs, and select standard A outside the
+Rollback: signal only verified owned PIDs through the existing bounded parent cleanup, preserve outputs, and select standard A outside the
 experimental factory, or remove the experimental root/native/prior hooks. Original catalogs and all failed
 receipts remain available. Resume must reject changes in code, runtime, models, prior, environment or cache.
+
+## Common simulator eligibility amendment (before primary bank)
+
+The first all11 DEV run matched4/4 A/B full command hashes but failed acceptance on shared Cannon territory/water rejections. The installed RoyaleSim ordinary-building own-half rule differs from the existing planning mask's troop pocket/bridge expansion. The rule is labelled low confidence for the real client; this amendment matches the shipped experimental simulator and establishes no LIVE placement law.
+
+All experimental A/B/B0 actors and both opponent controllers receive the same per-instance public mask intersection, version **rsim-static-water-intersection-v3**:
+
+- Ordinary buildings retain existing own-frame rows0–14 and lose rows15–31. Legal boundary taps may relocate their3×3 box inward in RoyaleSim; no footprint erosion or command movement is added.
+- Troops, including air/champions, tunnels, rolling/spawn spells intersect the existing mask with static not-WATER geometry from pinned public arena/card metadata. A tile centre touching any surrounding half-cell WATER is removed. Unrestricted spells retain their full base mask; tunnels retain enemy-side land.
+- Spell deployment precedence uses both SpellAsDeploy and enemy-side permission. Uniform static variant forms resolve recursively; missing/mixed/cyclic identities fail closed. Public own accepted history resolves Mirror. No Battle, state/check_deploy legality oracle or hidden opponent input enters a player.
+- Actual scripted/candidate/random/ranked/proposal and policy/fallback mask instances are wrapped and checked. No tile is enabled, tap moved/refunded, or deployment converted into an unlogged wait. WAIT, affordability, occupancy and base territory remain. Unknown identities fail closed.
+
+Weights, learned feature definitions and static columns remain fixed. Native rollout geometry stays unchanged and remains a model mismatch. Standard factories outside this experiment are unchanged. This explicitly amends shared command eligibility before the fresh primary bank; it is part of the conditional simulator experiment, not a LIVE bundle proposal.
+
+The reviewed v3 binary probe passed145/145 catalogue classifications and all1024 commands:64 Cannon fixtures and960 river/card/seat/public-tower fixtures, including the original18 nonbuilding observations. All16 Cannon boundary controls actually settled at own y13.5 with a fitting3×3 box. The complete matrix independently expects380 accepted commands,512 WATER refusals and132 territory refusals. [Raw receipt](receipts/placement-micro-r21.json), [owner audit](receipts/placement-micro-r21-owner-audit.json). Native flying flags are recorded, not asserted equal to root metadata.
+
+The earlier failed v2 probe is preserved: it stopped before taps on two metadata classifications, repaired generically through spell precedence and uniform variant resolution; it contributes no physics result. The new raw token-data and serving-source provenance repair passed source review. Full controller/hidden-information integration, native transport gates and the same complete four-case all11 bank at final bytes remain mandatory before primary registration. Zero rejection/failure and completeness gates are unchanged. Rollback removes the experimental wrappers/selects standard A, with original catalogues and all failed receipts retained.
+
+## Primary registration receipt
+
+The rule above was recorded with fresh BASE1273808234825296 at2026-10-16T12:30:35Z before bank generation or primary games. [Registration](receipts/pilot-r27-registration.json), [bank audit](receipts/pilot-r27-bank-audit.json). Bank rawSHA5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1, registration rawSHA54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983. Source implementation80b7c103aee6af558f12a615e158fc395d6cea36; all gates PASS. No decision-rule, weights, prior or eligibility changes are allowed after this registration within the pilot.
+
+## R27 lifecycle failure and recovery amendment
+
+R27 remains permanently invalid/incomplete. The pinned simulator closes command acceptance at overtime expiry while HP drain continues toward finalgame_over. The common wrapper previously waited only for finalgame_over, allowing late reservations/dispatches. The accepted source-repair plan uses validated public phase/clock/rules before due-command hand checks and policy polls, keeps unsent reservations as pending operational evidence, and advances the real engine with empty commands until its actual final winner/crowns/HP/tick. It does not alter physics, policy, prior, level estimates or rejection gates. [Preserved audit](receipts/pilot-r27-terminal-order-audit.md).
+
+Exact-binary boundary and scripted queue/independent-drain tests, a fresh different Sol review, and final matching-source scientific gates precede recovery. Then a fresh full100-case bank will be registered with the same population, arm semantics and promising rule; all invalid R27 data remain reported. No selected outcome/card/deck is excluded and no old row is relabelled valid. After matching-byte gates passed and repair63cd3e42f8058ed6964706349a6ac3acd2a7d38e was published, fresh R30BASE2444755928545600 was recorded13:41:00UTC/06:41:00PDT before bank generation/games, with the same rule. RegistrationSHA bc41e9a4274499894e05c95dde90bfd798141504cd594ac6fce1cc139992d056.
+
+R28 implementation is approved at matching bytes by fresh independent R29 review. Six pinned-binary boundary cases establish accepted5997/refused6000 before final scoring, actual wins at6128 and tied draws at6148 for both supported clients; nine cold regressions and256 integration tests pass. All254native physics/transport/fairness checks pass unchanged, with exact cache/spell anchors. The same original four-case complete all11 bank now passes8clean rows/4full command-and-state-hash pairs with positive B roots, zero failures and complete provenance; all1329frozen input checks and7cache hashes match. All required serial gates pass before new registration. Distribution commits carry our changes; the actual109-entry source closure additionally binds five inherited files exactly reproducible from baselinef85c66d375a949e007d9aeff6983c3f028c64b50. No newer-main substitution or whole-main-tree test-equivalence claim is made. [Inherited source provenance](receipts/terminal-r29-inherited-source-provenance.json).
+
+R30 bank generation/audit completed before games:100cases/54poolrows, all original projections/constants/scope unchanged,25cases percontroller/seat, bankSHA9ef6bbade097dfc1040cf5eac6ce5eccce132c464b4bc9d429948422778844a6. [Registration](receipts/pilot-r30-registration.json), [bank audit](receipts/pilot-r30-bank-audit.json). No R30 games have started at this publication.
+
+## Final registered decision
+
+R30 finished2026-10-16T14:09:22Z/07:09:22PDT with100pairedcases and300cleanterminalgames, no retries/exclusions/errors/native failures/rejections. A96wins/B93/B083; B−A−0.03,95%pairedbootstrapCI[−0.10,+0.03]. The unchanged point-estimate threshold+0.03 is not met; B0 is diagnostic only. No conditionalconfirmation/200msjob orLIVEbundle follows. This is a conditional-population serial result, not general harm/equivalence or pooledLIVEperformance. Fullcode/review/gates/registration/bank/rawlogs/provenance/failures are retained, and rollback remains standardA/removalofexperimentalhooks without touching frozen runtimes/models.

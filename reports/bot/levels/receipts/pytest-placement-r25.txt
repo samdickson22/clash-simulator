@@ -1,0 +1,148 @@
+....usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: workers must be in 1..15; start/count must be nonnegative
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: workers must be in 1..15; start/count must be nonnegative
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: workers must be in 1..15; start/count must be nonnegative
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: unrecognized arguments: --work 2
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: base-player must be the deterministic serial K4L-R-gs-rw-fc
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: all11 gate requires both arms A/B
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: all11 gate requires both arms A/B
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: all11 gate requires both arms A/B
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: launch with PYTHONHASHSEED=0
+...............................2026-10-16T12:18:28.190403Z preflight parent=3820141 requested=2 workers=1
+.2026-10-16T12:18:28.230795Z preflight parent=3820141 requested=2 workers=1
+.2026-10-16T12:18:28.271226Z preflight parent=3820141 requested=2 workers=1
+................................................................2026-10-16T12:18:28.661863Z start pid=12345 arm=A index=0
+2026-10-16T12:18:28.662064Z done pid=12345 arm=A index=0 status=256
+...2026-10-16T12:18:28.664906Z preflight parent=3820141 requested=2 workers=1
+2026-10-16T12:18:28.684349Z parent=3820141 jobs=2 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-32/test_all_done_resume_still_bui0/output/launch-00001.json
+2026-10-16T12:18:28.685044Z preflight parent=3820141 requested=2 workers=1
+2026-10-16T12:18:28.704255Z parent=3820141 jobs=0 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-32/test_all_done_resume_still_bui0/output/launch-00002.json
+2026-10-16T12:18:28.704574Z preflight parent=3820141 requested=2 workers=1
+.2026-10-16T12:18:28.725544Z preflight parent=3820141 requested=2 workers=1
+2026-10-16T12:18:28.744794Z parent=3820141 jobs=2 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-32/test_all_done_resume_still_bui1/output/launch-00001.json
+2026-10-16T12:18:28.745468Z preflight parent=3820141 requested=2 workers=1
+2026-10-16T12:18:28.764741Z parent=3820141 jobs=0 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-32/test_all_done_resume_still_bui1/output/launch-00002.json
+2026-10-16T12:18:28.765110Z preflight parent=3820141 requested=2 workers=1
+.2026-10-16T12:18:28.786099Z preflight parent=3820141 requested=2 workers=1
+2026-10-16T12:18:28.805381Z parent=3820141 jobs=2 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-32/test_all_done_resume_still_bui2/output/launch-00001.json
+2026-10-16T12:18:28.806057Z preflight parent=3820141 requested=2 workers=1
+2026-10-16T12:18:28.825310Z parent=3820141 jobs=0 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-32/test_all_done_resume_still_bui2/output/launch-00002.json
+2026-10-16T12:18:28.825679Z preflight parent=3820141 requested=2 workers=1
+.2026-10-16T12:18:28.849502Z preflight parent=3820141 requested=2 workers=1
+.2026-10-16T12:18:28.861212Z preflight parent=3820141 requested=2 workers=1
+.Recorded evidence: incomplete, invalid, or unregistered; rows 3/4; missing 1, incomplete 2; parent exit 0.
+
+| arm | games | errors | score | W/D/L | damage dealt/taken | crowns for/against | CPU s/game | CPU s/decision | wall s/game |
+|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| A | 1 | 0 | 1.000 | 1/0/0 | —/— | —/— | — | — | — |
+| B | 1 | 0 | 1.000 | 1/0/0 | —/— | —/— | — | — | — |
+
+A: native failures=2, rejected deployments=1, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[0].
+
+B: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[1], incomplete indices=[1].
+Pairs vs A: 0/2; missing paired indices=[0, 1].
+
+Paired Δ = arm − A; 95% percentile bootstrap, 20,000 resamples, NumPy seed 0.
+
+| arm / opponent | pairs | Δscore [95% CI] | SD(Δ) | identical commands | first differing own tick (median) |
+|---|---:|---|---:|---:|---:|
+| B / all | 0 | — — | — | — | — |
+| B / R3a | 0 | — — | — | — | — |
+| B / v1 | 0 | — — | — | — | — |
+
+B: n = unavailable paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: —/—; Δ crowns for/against: —/—.
+
+CPU/game is match process CPU (both seats and simulation); CPU/decision is our seat’s total decision CPU / decisions. Wall/game is each child’s elapsed time; runtime initialization is excluded. A differing full command hash can have identical own play logs; those pairs have no own divergence tick. Power uses observed sample SD; zero observed SD gives a zero plug-in estimate, not evidence of adequate power.
+
+A opponent scores: R3a n=0, score=—, W/D/L=0/0/0; v1 n=1, score=1.000, W/D/L=1/0/0.
+
+B opponent scores: R3a n=0, score=—, W/D/L=0/0/0; v1 n=1, score=1.000, W/D/L=1/0/0.
+.................................{"check11": [["AngryBarbarians", "ArcherQueen", "Archers", "Arrows", "Assassin", "AxeMan", "BabyDragon", "Balloon", "BarbLog", "BarbarianHut", "Barbarians", "Bats", "BattleHealer", "BattleRam", "Berserker", "BlowdartGoblin", "BombTower", "Bomber", "BossBandit", "Bowler", "Cannon", "Clone", "DarkMagic", "DarkPrince", "DarkWitch", "DartBarrell", "Earthquake", "ElectroDragon", "ElectroGiant", "ElectroSpirit", "ElectroWizard", "EliteArcher", "Elixir Collector", "ElixirGolem", "FireSpirits", "Fireball", "Firecracker", "FirespiritHut", "Fisherman", "Freeze", "Ghost", "Giant", "GiantBuffer", "GiantSkeleton", "GoblinBarrel", "GoblinCage", "GoblinCurse", "GoblinDemolisher", "GoblinDrill", "GoblinGang", "GoblinGiant", "GoblinHut", "GoblinMachine", "Goblins", "Goblinstein", "GoldenKnight", "Golem", "Graveyard", "Heal", "HogRider", "Hunter", "IceGolem", "IceSpirit", "IceWizard", "InfernoDragon", "InfernoTower", "Knight", "LavaHound", "Lightning", "LittlePrince", "Log", "MegaKnight", "MegaMinion", "MightyMiner", "Miner", "MiniPekka", "MiniSparkys", "MinionHorde", "Minions", "Mirror", "Monk", "Mortar", "MovingCannon", "Musketeer", "Pekka", "Phoenix", "Poison", "Prince", "Princess", "Rage", "RageBarbarian", "RamRider", "Rascals", "Rocket", "Ronin", "RoyalDelivery", "RoyalGiant", "RoyalHogs", "RoyalRecruits", "SkeletonArmy", "SkeletonBalloon", "SkeletonDragons", "SkeletonKing", "SkeletonWarriors", "Skeletons", "Snowball", "SpearGoblins", "SuspiciousBush", "Tesla", "ThreeMusketeers", "Tombstone", "Tornado", "Valkyrie", "Vines", "Wallbreakers", "Witch", "WitchMother", "Wizard", "Xbow", "Zap", "ZapMachine"], {}], "frozen_fixture_cache": {"11": {"canonical_sha256": "0700072fb0c81682de7e419363f3cee19cb2518ce49ece2332149ffc093828f9", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L11.json", "raw_sha256": "1a36f377d55be3ea34e20225aa17eb92bead8e148b216b5b1346f0e7d04c8a94"}, "4": {"canonical_sha256": "314a6eaf17947386d889f04edc7ea7a7080aad703e4e6dc20a52ac8f26c7ee1c", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L4.json", "raw_sha256": "bd77caea134e469c89dc1d25d60f30474a404feef6b529d26b0e307a8f3a7d95"}, "5": {"canonical_sha256": "38dc346eeaccbb14a625eb65cf055bb5fdaae7e069dc69ded2c90f17519caafd", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L5.json", "raw_sha256": "e88a6e04183f449754775b7f9d999c2ca3982601cb6f35dbbc1aec28d1555dfe"}, "6": {"canonical_sha256": "6dc6240cede22c916cd519a372b73f49265caf633f854ffdb382d48cc19d1398", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L6.json", "raw_sha256": "ad4b725b180cb2aa0abf50c13cf378ba2a954233eac43080b248f2f40146dcbb"}, "7": {"canonical_sha256": "af59897ecc32c11b40d5b67746f4a58bd85516f47e756498029b1663fddd8c84", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L7.json", "raw_sha256": "8fc9633bbd50906d7f95575b7c93ba6a39e540aec2997f67c2d50b8a1477b6f3"}, "9": {"canonical_sha256": "825ce4dc7b1fb58bce9b345df5dbaf325b5a9207b4738db310b6050f17a5eb0e", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/L9.json", "raw_sha256": "88a2472e54b090853bd18016cdafda642aafa1fd00f03ca6e7fa20f3edd638b2"}, "supported": {"canonical_sha256": "b97c2a61edd7fedc37182320a143673012f34e5b35e34effd69eb99d1aded8e7", "path": "/mpac/sdicks02/jobs/clasher/bot-levels/level-configs/50d22f86b3590abc/supported.json", "raw_sha256": "e03491147b6d2da405b3aa81be782c49f782513bfffa7412aaa0a8581f2507bc"}}, "normalized_spells": {"Fireball": {"crown_tower_damage": 159.0, "crown_tower_damage_multiplier": 0.22999999999999998, "damage": 688.0, "knockback_distance": 1.0, "level": 11, "radius": 2.5, "travel_speed": 11.999999999999998}, "L4.Fireball": {"crown_tower_damage": 83.0, "crown_tower_damage_multiplier": 0.22999999999999998, "damage": 357.0, "level": 4}, "L4.Fireball.carrier_damage": [[357.0], [357.0]], "Poison": {"crown_tower_damage": 21.0, "crown_tower_damage_multiplier": 0.21999999999999997, "damage": 92.0, "level": 11}}, "supported": 121}
+......................................................{"seat": 0, "down": [false, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, false], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, false], "ordinary": "Cannon", "player": "v1-policy", "action": 2304, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 0, "down": [true, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, false], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, false], "ordinary": "Cannon", "player": "v1-policy", "action": 2304, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 0, "down": [false, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, true], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [false, true], "ordinary": "Cannon", "player": "v1-policy", "action": 2304, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 0, "down": [true, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Cannon", "player": "v1-policy", "action": 2304, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 1, "down": [false, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, false], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, false], "ordinary": "Cannon", "player": "v1-policy", "action": 2174, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 0, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 0, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 1, "down": [true, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, false], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 844, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, false], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, false], "ordinary": "Cannon", "player": "v1-policy", "action": 2174, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 1, "down": [false, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, true], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [false, true], "ordinary": "Cannon", "player": "v1-policy", "action": 2174, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 86, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 8, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 1, "down": [true, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Cannon", "player": "K4L-R-gs-rw-fc", "action": 860, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Cannon", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Cannon", "player": "v1-policy", "action": 2174, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 0, "down": [true, true], "ordinary": "Tesla", "player": "K4L-R-gs-rw-fc", "action": 824, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Tesla", "player": "K4L-R-gs-rw-fc", "action": 824, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Tesla", "player": "K4L-R-gs-rw-fc", "action": 824, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Tesla", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 0, "down": [true, true], "ordinary": "Tesla", "player": "v1-policy", "action": 2304, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+.{"seat": 1, "down": [true, true], "ordinary": "Tesla", "player": "K4L-R-gs-rw-fc", "action": 938, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Tesla", "player": "K4L-R-gs-rw-fc", "action": 938, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Tesla", "player": "K4L-R-gs-rw-fc", "action": 938, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Tesla", "player": "R3a-student", "action": 1346, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+{"seat": 1, "down": [true, true], "ordinary": "Tesla", "player": "v1-policy", "action": 2304, "mask": {"version": "rsim-static-water-intersection-v3", "calls": 2, "removed": 172, "unknown_slots": 0, "mirror_slots": 0, "water_removed": 16, "base_type": "clasher.rl.contract_v5.ContractV5ActionMaskBuilder"}}
+...
+216 passed in 124.43s (0:02:04)

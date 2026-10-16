@@ -1,0 +1,761 @@
+{
+  "status": "INVALID_INCOMPLETE_STOPPED",
+  "created": "2026-10-16T12:49:47Z",
+  "reason": "Owner-directed stop after GAME_OVER rejected deployments; no retry, exclusion, acceptance, confirmation sizing or restart.",
+  "stop": {
+    "host": "127x01",
+    "verified_parent_pid": 632390,
+    "verified_parent_ppid": 632373,
+    "signal": "SIGTERM",
+    "sent_utc": "2026-10-16T12:43:32Z",
+    "parent_finished": "2026-10-16T12:43:33.019817Z",
+    "parent_exit_code": 143,
+    "shell_exit_code": 143,
+    "verified_gone_pids": [
+      632368,
+      632372,
+      632373,
+      632390,
+      838100,
+      841327,
+      845670,
+      846350,
+      854162,
+      855303,
+      855752,
+      862534
+    ],
+    "interrupted_children": [
+      {
+        "arm": "A",
+        "index": 16,
+        "pid": 841327,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "A",
+        "index": 17,
+        "pid": 854162,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "A",
+        "index": 18,
+        "pid": 862534,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "B",
+        "index": 15,
+        "pid": 838100,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "B",
+        "index": 16,
+        "pid": 846350,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "B",
+        "index": 17,
+        "pid": 855752,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "B0",
+        "index": 16,
+        "pid": 845670,
+        "child_exit_code": -15
+      },
+      {
+        "arm": "B0",
+        "index": 17,
+        "pid": 855303,
+        "child_exit_code": -15
+      }
+    ]
+  },
+  "immutable_inputs": {
+    "base": 1273808234825296,
+    "registration_sha256": "54852dcdcf652bf44a5a50513b24c17eb351d9550a7bf113ea7132d709463983",
+    "bank_sha256": "5966322b7b5acf8f6e3df82e94a10284a5bd9f33be82f8d7cedaee8d711032c1",
+    "source_files": 107,
+    "runtime_inputs": 1211,
+    "preflight_and_poststop_sha_checks": 1327,
+    "caches_unchanged": 7,
+    "source_changes": false,
+    "runtime_changes": false,
+    "tests_run_during_source_audit": false
+  },
+  "coverage": {
+    "expected_rows": 300,
+    "observed_rows": 55,
+    "terminal_rows": 47,
+    "clean_terminal_rows": 43,
+    "terminated_rows": 8,
+    "missing_rows": 245,
+    "incomplete_or_invalid_rows_including_missing": 257,
+    "raw_terminal_A_B_pairs": 15,
+    "clean_terminal_A_B_pairs": 12,
+    "quality_ok": false,
+    "report_exit_code": 1,
+    "identity_mismatches": [],
+    "coverage_problems": []
+  },
+  "arms": {
+    "A": {
+      "rows": 19,
+      "terminal_rows": 16,
+      "zero_exit_rows": 14,
+      "terminated_rows": [
+        16,
+        17,
+        18
+      ],
+      "rejected_terminal_rows": [
+        10,
+        12
+      ],
+      "rejections": 7,
+      "raw_terminal_wdl": [
+        15,
+        0,
+        1
+      ],
+      "native_failures_in_terminal_rows": 0
+    },
+    "B": {
+      "rows": 18,
+      "terminal_rows": 15,
+      "zero_exit_rows": 14,
+      "terminated_rows": [
+        15,
+        16,
+        17
+      ],
+      "rejected_terminal_rows": [
+        0
+      ],
+      "rejections": 4,
+      "raw_terminal_wdl": [
+        12,
+        0,
+        3
+      ],
+      "native_failures_in_terminal_rows": 0
+    },
+    "B0": {
+      "rows": 18,
+      "terminal_rows": 16,
+      "zero_exit_rows": 15,
+      "terminated_rows": [
+        16,
+        17
+      ],
+      "rejected_terminal_rows": [
+        13
+      ],
+      "rejections": 5,
+      "raw_terminal_wdl": [
+        14,
+        0,
+        2
+      ],
+      "native_failures_in_terminal_rows": 0
+    }
+  },
+  "failures": {
+    "native_failures_recorded_in_terminal_rows": 0,
+    "rejected_deployments": 16,
+    "rejection_reason_counts": {
+      "GAME_OVER": 16
+    },
+    "failed_terminal_rows": [
+      {
+        "arm": "A",
+        "index": 10,
+        "score": 1,
+        "ticks": 6096,
+        "child_exit_code": 1,
+        "last_accepted": {
+          "action": 1304,
+          "card": "GoblinHut",
+          "ok": true,
+          "reason": "OK",
+          "result": [
+            94,
+            0,
+            5992,
+            171000,
+            423000
+          ],
+          "seat": 1,
+          "target_subtiles": [
+            171000,
+            423000
+          ],
+          "tick": 5992
+        },
+        "crowns": {
+          "0": 1,
+          "1": 0
+        },
+        "towers": {
+          "0": [
+            3184,
+            1150,
+            1279
+          ],
+          "1": [
+            3184,
+            0,
+            951
+          ]
+        },
+        "channels": {
+          "0": {
+            "blocked_polls": 1000,
+            "executed": 58,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 2,
+            "submitted": 59
+          },
+          "1": {
+            "blocked_polls": 255,
+            "executed": 51,
+            "peak_pending": 1,
+            "pending_at_end": 0,
+            "rejected": 1,
+            "submitted": 51
+          }
+        },
+        "accepted": {
+          "0": 56,
+          "1": 50
+        },
+        "command_sha256": "1a8b4abfe011fe0e690da5fee7b6181a28341309b0004130df6e6870279d340c",
+        "rejections": [
+          {
+            "action": 237,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6047,
+              63000,
+              243000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              63000,
+              243000
+            ],
+            "tick": 6047
+          },
+          {
+            "action": 1983,
+            "card": "Minions",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              5,
+              10,
+              6067,
+              261000,
+              315000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              261000,
+              315000
+            ],
+            "tick": 6067
+          },
+          {
+            "action": 237,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6077,
+              63000,
+              243000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              63000,
+              243000
+            ],
+            "tick": 6077
+          }
+        ]
+      },
+      {
+        "arm": "A",
+        "index": 12,
+        "score": 1,
+        "ticks": 6100,
+        "child_exit_code": 1,
+        "last_accepted": {
+          "action": 176,
+          "card": "Archers",
+          "ok": true,
+          "reason": "OK",
+          "result": [
+            1,
+            0,
+            5997,
+            261000,
+            171000
+          ],
+          "seat": 0,
+          "target_subtiles": [
+            261000,
+            171000
+          ],
+          "tick": 5997
+        },
+        "crowns": {
+          "0": 1,
+          "1": 0
+        },
+        "towers": {
+          "0": [
+            3060,
+            470,
+            1665
+          ],
+          "1": [
+            3060,
+            0,
+            77
+          ]
+        },
+        "channels": {
+          "0": {
+            "blocked_polls": 1002,
+            "executed": 56,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 1,
+            "submitted": 57
+          },
+          "1": {
+            "blocked_polls": 304,
+            "executed": 60,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 3,
+            "submitted": 61
+          }
+        },
+        "accepted": {
+          "0": 55,
+          "1": 57
+        },
+        "command_sha256": "18df944f4f2368cbf6ad948cf9387611e4490658634c5b9d27f9a5efd3914b02",
+        "rejections": [
+          {
+            "action": 1272,
+            "card": "Knight",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              0,
+              10,
+              6012,
+              99000,
+              459000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              99000,
+              459000
+            ],
+            "tick": 6012
+          },
+          {
+            "action": 1272,
+            "card": "Knight",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              0,
+              10,
+              6042,
+              99000,
+              459000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              99000,
+              459000
+            ],
+            "tick": 6042
+          },
+          {
+            "action": 1976,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6072,
+              63000,
+              333000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              63000,
+              333000
+            ],
+            "tick": 6072
+          },
+          {
+            "action": 1965,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6087,
+              63000,
+              243000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              63000,
+              243000
+            ],
+            "tick": 6087
+          }
+        ]
+      },
+      {
+        "arm": "B",
+        "index": 0,
+        "score": 1,
+        "ticks": 6105,
+        "child_exit_code": 1,
+        "last_accepted": {
+          "action": 1208,
+          "card": "Musketeer",
+          "ok": true,
+          "reason": "OK",
+          "result": [
+            14,
+            0,
+            5997,
+            45000,
+            63000
+          ],
+          "seat": 0,
+          "target_subtiles": [
+            45000,
+            63000
+          ],
+          "tick": 5997
+        },
+        "crowns": {
+          "0": 1,
+          "1": 0
+        },
+        "towers": {
+          "0": [
+            2846,
+            1317,
+            658
+          ],
+          "1": [
+            3026,
+            0,
+            1274
+          ]
+        },
+        "channels": {
+          "0": {
+            "blocked_polls": 1001,
+            "executed": 58,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 1,
+            "submitted": 59
+          },
+          "1": {
+            "blocked_polls": 312,
+            "executed": 62,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 3,
+            "submitted": 63
+          }
+        },
+        "accepted": {
+          "0": 57,
+          "1": 59
+        },
+        "command_sha256": "b5434405062ea39862e829c17daf696d96b2a354b4a2cfca9f4af756dc6bc5fa",
+        "rejections": [
+          {
+            "action": 1261,
+            "card": "Knight",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              0,
+              10,
+              6027,
+              297000,
+              459000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              297000,
+              459000
+            ],
+            "tick": 6027
+          },
+          {
+            "action": 1272,
+            "card": "Knight",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              0,
+              10,
+              6057,
+              99000,
+              459000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              99000,
+              459000
+            ],
+            "tick": 6057
+          },
+          {
+            "action": 1965,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6087,
+              63000,
+              243000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              63000,
+              243000
+            ],
+            "tick": 6087
+          },
+          {
+            "action": 1272,
+            "card": "Knight",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              0,
+              10,
+              6087,
+              99000,
+              459000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              99000,
+              459000
+            ],
+            "tick": 6087
+          }
+        ]
+      },
+      {
+        "arm": "B0",
+        "index": 13,
+        "score": 1,
+        "ticks": 6116,
+        "child_exit_code": 1,
+        "last_accepted": {
+          "action": 1885,
+          "card": "Valkyrie",
+          "ok": true,
+          "reason": "OK",
+          "result": [
+            11,
+            0,
+            5977,
+            81000,
+            423000
+          ],
+          "seat": 1,
+          "target_subtiles": [
+            81000,
+            423000
+          ],
+          "tick": 5977
+        },
+        "crowns": {
+          "0": 0,
+          "1": 1
+        },
+        "towers": {
+          "0": [
+            2649,
+            494,
+            0
+          ],
+          "1": [
+            2649,
+            767,
+            1166
+          ]
+        },
+        "channels": {
+          "0": {
+            "blocked_polls": 305,
+            "executed": 60,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 3,
+            "submitted": 61
+          },
+          "1": {
+            "blocked_polls": 1003,
+            "executed": 58,
+            "peak_pending": 1,
+            "pending_at_end": 1,
+            "rejected": 2,
+            "submitted": 59
+          }
+        },
+        "accepted": {
+          "0": 57,
+          "1": 56
+        },
+        "command_sha256": "8b530912546304123ea750c0af4abe24b72a875c708f13d0e319f6ff63ab7bd8",
+        "rejections": [
+          {
+            "action": 1497,
+            "card": "Fireball",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              108,
+              10,
+              6027,
+              63000,
+              351000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              63000,
+              351000
+            ],
+            "tick": 6027
+          },
+          {
+            "action": 1976,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6057,
+              261000,
+              243000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              261000,
+              243000
+            ],
+            "tick": 6057
+          },
+          {
+            "action": 1389,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6067,
+              261000,
+              333000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              261000,
+              333000
+            ],
+            "tick": 6067
+          },
+          {
+            "action": 1976,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6087,
+              261000,
+              243000
+            ],
+            "seat": 0,
+            "target_subtiles": [
+              261000,
+              243000
+            ],
+            "tick": 6087
+          },
+          {
+            "action": 1389,
+            "card": "Giant",
+            "ok": false,
+            "reason": "GAME_OVER",
+            "result": [
+              3,
+              10,
+              6097,
+              261000,
+              333000
+            ],
+            "seat": 1,
+            "target_subtiles": [
+              261000,
+              333000
+            ],
+            "tick": 6097
+          }
+        ]
+      }
+    ],
+    "note": "All four failed terminal rows have raw wins; clean-only report statistics exclude them and cannot support the primary decision rule. Missing controller/channel/failure diagnostics in interrupted rows are absence caused by SIGTERM, not observed prior mutations or native failures."
+  },
+  "preserved": {
+    "job_dir": "/mpac/sdicks02/jobs/clasher/bot-levels/pilot-r27",
+    "raw_row_inventory": "pilot-r27-preserved-files.sha256",
+    "copyback_check": "pilot-r27-copyback-check.txt",
+    "logs_inventory": "pilot-r27-preserved-logs.sha256",
+    "poststop_report": "pilot-r27-poststop-report.json",
+    "first_interim_report": "pilot-r27-interim-0001.json",
+    "source_audit": "pilot-r27-terminal-order-audit.md",
+    "private_environment": "Full preflight environment remains mode0600 on01 only, excluded from public artifacts."
+  },
+  "disposition": "All original rows, command events, log, launch identity and parent completion retained on01 and copied to05. Existing report regenerated once after stop with CPU1 lease/nice; its nonzero result is preserved. Source-only repair proposal awaiting owner review."
+}

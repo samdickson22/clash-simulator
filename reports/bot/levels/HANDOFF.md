@@ -1,81 +1,43 @@
-# Level-aware search handoff — 2026-10-16 09:36:52 UTC
+# Level-aware pilot — completed handoff
 
-Owner: this level pilot thread, currently GPT-6.1-Sol high. Worktree `/mpac/sdicks02/repos/clasher-bot-levels`,
-branch `bot/levels`; job root `/mpac/sdicks02/jobs/clasher/bot-levels`. 05 is source/docs only; no heavy compute.
-Latest published docs/receipts commit `f85c66d375a949e007d9aeff6983c3f028c64b50`; implementation still uncommitted.
+**Assignment complete.** The valid R30 pilot finished at2026-10-16T14:09:22Z /07:09:22PDT:100primary pairs,300clean terminal games. A96wins/B93/B083; primary B−A=−0.03,95%CI[−0.10,+0.03], below the registered+0.03 point-estimate threshold. **NOT PROMISING.** No confirmation, conditional200ms benchmark orLIVEbundle is advanced. This does not establish general harm/equivalence. No remaining blockers, running owned jobs/helpers or pending user-input requests. Parent final publication/automatic whole-assignment result closes the work; do not resume completed helpers without a new substantive authorized brief.
 
-## Current authority and coordination
+[RESULTS.md](RESULTS.md) is the final readable report; [DESIGN.md](DESIGN.md) is the fixed protocol; [PROGRESS.md](PROGRESS.md) preserves exact UTC actions/commands/tests/failed cases/commits/rollback. Decision and audits are in receipts/pilot-r30-{decision,parent-audit,owner-audit}.json. Results publication receipt is recorded outside git at `/mpac/sdicks02/jobs/clasher/bot-levels/dev/results-commit-r30.json`, avoiding a self-referential commit hash.
 
-Sam: **make obvious decisions**. Confident reversible work proceeds after meaningful checks, required review,
-and a concrete rollback. Defer only consequential hard-to-undo AND materially uncertain choices. No blanket
-Opus hold and no Claude limit retries. Sol is default; Astra only a small bounded hard diagnostic when useful.
+## Artifacts and reproduction
 
-Questions/missing information go DIRECT via `t3_thread_send(mode="auto")` to immediate BOT parent:
-`thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1`.
-Include evidence/paths, recommendation and whether dependent work waits; continue independent work. Do not use
-user-input tools. Coordinator above BOT is `0523ae6f-baa3-4d4e-b233-b392671670db`. No pending input requests.
-Propagate rules to active descendants/new briefs, without reviving completed tasks merely to acknowledge them.
+Worktree05/01 W=`/mpac/sdicks02/repos/clasher-bot-levels`; job05/01 J=`/mpac/sdicks02/jobs/clasher/bot-levels`; unchanged copied planning runtime01=J/runtime/live16402b-r2. Complete rawjob J/pilot-r30, commandlog J/pilot-r30.txt, four preserved open interims, final machine report, row/owner/parent audits and inventories are on05/01 as documented in owner audit. All303raw+37aux files SHAverified; seven final audit artifacts additionally mirrored05→01. All original R27 outputs remain separate/unchanged58of58.
 
-CPU only on 01/03/04/08 through existing `bot/exit/cpu_job.sh`, nice, ≤16 task processes/host, full-pool priority.
-Never hosts09–18, GPUs, live* writes, frozen runtime writes, other teams' protected job/data dirs or broad pkill.
-Screen/input-only fairness; any emulator remains Mac-only. New host scripts require fresh review before execution.
+Repair/codepublication63cd3e42f8058ed6964706349a6ac3acd2a7d38e; pregame registration/bank publication04f5730f304ca32da517ad4314643a2065ea6ece. R30BASE2444755928545600 drawn fromfreshos.urandom(6)<<4 at13:41:00UTC/06:41PDT afterallgates and beforebank/games. RegistrationSHA bc41e9a4274499894e05c95dde90bfd798141504cd594ac6fce1cc139992d056; bankSHA9ef6bbade097dfc1040cf5eac6ce5eccce132c464b4bc9d429948422778844a6. Bank100cases/54poolrows/41sampledsource rows/25percontrollerseat, unchanged population/constants/scope/projections. No selective reuse of R27 or outcome-dependent adjustment.
 
-## Accepted experiment
+Actual109-entry experimental source closure governs evidence. Five inherited files(build_runtime/test_build_runtime/royalesim_translate/royalesim_vocab/runtime) match baselinef85c66d375a949e007d9aeff6983c3f028c64b50 and actual R27 rather than distributionmain; exactgitblobs/hashes are in receipts/terminal-r29-inherited-source-provenance.json. Do not substitute newer-main files and call them tested. All1332frozen inputs/109source/1211runtime-file identity/seven cache hashes matchedafterR30. Frozen runtimes/pins/models/priorreferences remain unchanged. LocalbranchHEAD intentionallyf85c66d; sharedindex unchanged. Commits use freshorigin/main+temporaryindex, ownedupstreamdriftguard, scope/whitespace checks, `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` privateoutput and requiredCo-Authored-By trailer. Nevercheckout/reset/stage others.
 
-Original100-case A/B/B0 pilot authorized once ALL scientific/review/resource gates pass; no further confirmation.
-No fresh primary BASE drawn and no primary outcomes yet. Serial K4L-R-gs-rw-fc, one fork/game.
-A=L11 roots/config/native. B0=existing root-only scaler. B=exact own levels, fair fixed opponent rarity estimate,
-exact tower curves and qualified seat/payload rollout templates, crown native metadata at6. This metadata affects
-leaf PLUS scripted crown spell lethality/Lightning, not merely leaf. Same-state learned features invariant only
-at that layer. No pooled LIVE equivalence/deployment claim.
+## Execution and acceptance
 
-All experimental arms/controllers use the SAME fixed prior restriction excluding Clone/Earthquake/Tornado.
-2,500/2,925 decks retained; omitted weight15,371/69,380=22.15479965%. All54 true-deck projections unchanged.
-Original catalog immutable for projection/rollback. `scope.install(rt)` must run before manifest/players, identity
-binds scope. Conditional-population physics pilot, NOT literal current-live-prior equivalence. Missing playable
-or body exports fail closed; no outcome-dependent exclusions. Standard A outside pilot unchanged.
-Rollback selects standard A/removes experimental hooks, preserves all data; no pins/models/runtime files changed.
+Single reviewedrun.sh8 on01, nice10, lease9Python(parent+8children), auxiliaryreport1<=10 of16,fullpoolpriority/outer4h; launched13:46:08Z/06:46PDT, parent4161121/lease4160992/timeout4160990/shell4160975, session77059consumed0. Finished14:09:21.957562Z, outer14:09:22Z; parent/shell/all300unique children0, no owned process remains. All300rows terminal/unique/case+identityexact,1200controllerpriorbeforeafterobservationsmatch, zeroerrors/nativeFAILURES/rejections/missingdiagnostics/prior/placement/provenance failures, no retry/exclusion. Complete report qualityPASS. Parent independently recomputed scores/pairedSD and verified all inventories/current source enumeration.
 
-## Verified
+B100positive root rows; summedroots12118/bodies130675/leveled45947/towers75186/unmapped0. Common commandphase35closures(A9/B10/B016) at6000, nativefinal6088–6139, latestaccepted5997,23unsentreservations retained with truthful channelaccounting, zero postclosuredispatch/earlyscore/filtering. Nativewinner/crowns/allHP/tick authoritative. Known frozen translator counters38202SpearGoblin_Dummy garrisonspriteobservations and8Lightningbolts are retained/distinct fromexact-rootunmapped ornativeFAILURES; nozero-translator-warningclaim.
 
-- Pinned runtime canonical L11 cache equality121/121; initial3/121 rawdict result was tuple/list JSON schema.
--13 tower checks pass; focused scope/config tests4 pass0.24s; original harness tests4 pass.
-- DEV A smoke4games twice:4/4 hashes/logs/towerHP identical,8wins,zeroerrors/failures/rejections.
-- Existing caches on01 tag50d22f86b3590abc:11,4,5,6,7,9 complete. Low levels118cards plus3 explicit errors above.
-- Scope/projection validation54/54,0.237CPU seconds (small read-only analysis, no runtime/model work on05).
-  Canonical original98ffccd04c44d55d255f104c0f969559c421e02f0e6e8293f9a9fa0165227ec1;
-  restricted8ef16962fd617bfa5662b058637ee876c6b136a8730d9a355ed951e405e897a1.
+MeanmatchCPU/ourCPUperdecision/childwall seconds: A34.580/.1378/35.405; B33.907/.1398/34.736; B034.967/.1360/35.838. Serial metrics, not200ms/pooledLIVEperformance. Primary4better/7worse/89ties,SD.3319668962442192/CI[-.10,+.03]; B0−A−.13/CI[-.21,-.05],diagnosticonly. ControllergroupsR3a−.08/v1+.02,50each; never changefixeddecision. Genericreportmechanicalpowerlinesarenotaselectedconfirmationplan.
 
-## Running and next (updated 2026-10-16T09:56:38.251022+00:00)
+## Gates, design and limits
 
-1. R11 full native suite terminal0,254/254; raw snapshot audit only20 absent spell_name→emptyString defaults,
-   no numeric/type/entity/order/position/key changes. Original R6 failure preserved. No level game/job now on01.
-2. Harness owner completed final3 R8 fixes, receipt jobs/clasher/bot-levels/harness-r9-receipt.md.
-   Fresh independent R12 harness+bank reviewer active:
-   node:delegated-task:command%3Amcp%3A16f055f2-eb2e-4de8-811b-8f2250362499%3Adelegate-task%3Abot-levels-harness-bank-review-r12-20261016.
-   Reviews final v2identity/diagnostics plus pinned bank --source input; no tests/launches by reviewer.
-   Next conditional owner test on01 wrapper1/nice: test_harness,test_scope,test_configs,test_bank.
-3. Original03 probe second30min admission expired unrun,terminal124, no lingering processes or logs. No retry queued.
-4. After R12 review/tests, sync reviewed source01 and run existing run.sh2 with all11 DEV bank4cases,armsA,B,
-   --all11-gate, fresh output. Require8complete clean terminalrows,4/4 hashes,positive B rootcalls,bothseats/controllers.
-   Primarybank still absent. Population snapshot receipt SHA b00ae7df0caa96358cbe0b6fdd9ed0dfb0becd7b270e80de96cca40c2cfd7440
-   equals original DEVsource; primarybank must explicitly pass --source this snapshot.
-5. Once mandatory gates pass, freeze code/cache/manifest, commit owned implementation via temp index onorigin/main,
-   scan, required Opus coauthor. Pre-register fresh os.urandom BASE anddecisionrule before100cases×3arms primarygames.
-   No further userconfirmation required; serial only,no LIVEpromotion.
-6. s27-m02 data copied for optional lower-priority offline diagnostic only, no causal/live claim.
+Fresh differentSol R29APPROVEMATCHINGBYTES in J/terminal-review-sol-r29.md before any newprobe/sync/execution. Onlycommon royalesim_match.py plusnewterminal_probe.py/test_terminal.py changed;106old sourceentriesunchanged. Commonfile5f1a5987c0fd9cd44f889fda83c971374e148cd1cde1665b080a3cb6d35c25c6, probebc0ea5f54103aa84944318513757e3aea85e2015e3bf0f087a68e2d18d534d63,testbb442ac23d042d20394787900caecb2bb2326bbe29d8e9270f4c3f60ea33c739;109manifest3b5e45cdbec0adeb5bd8144c32af21abea9be186e911023d4c1e9361cba64510. Parentexecutedsequentialgates:6pinnedAPIboundary cases,9coldregressions,256integration(40newterminalfixtures),254nativechecks,originalall11bank8cleanrows/4fullcommandANDstatehashpairs/Broots[102,113,106,67]. AllPASS/no mandatoryskip/cacheunchanged. Staticplacement145/1024 remainsvalidatunchangeddependencies. Only20snapshotdiffsabsentspell_name→emptyString; no numeric/type/entity/order/owner/position/key waiver. OneforkscriptedA→B→A rawfcshipped[1,2,2]/30eachcut-snapshot-pool; notlearnedLIVEpoolproof.
 
-All receipts and detailed UTC commands are in PROGRESS and reports/bot/levels/receipts. Existing reviewers and gate
-implementation task completed; do not duplicate them. Use new delegate_task for each genuinely new review round.
+TruthRsim0.1.34/client16.402 and matchinglive16402b-r2 planners, fixedownlevelsValk5/Arch7/Minions5/Cannon6/Fireball5/Giant6/MiniPekka5/Musk4/towers6(userfixedscenario+ACCOUNT-LOG,collection.jsonabsent). Opptruth independentlycommon4:4,5:49,6:25 withnoncommonminus1/rarityfloors; Bfairfixedcommon5/rare4/epic6/legend9/champ11/tower6. No per-matchhiddenlevels/deck/order. A=L11root/config/meta; B0legacyroot-onlyownproducer/opponentall5/tower6oldladder,rollout/meta11; Bexactroots/towercurves/qualifiedseatspell+payloads andcrownmeta. Crownmetadataaffectsleaf ANDscriptedcrownspelllethality/Lightning; identical-statelearnedfeatureinvarianceonlythatlayer. Weights/features/staticcolumns frozen; Mirrorpayload12/directcastsharedholderlimits disclosed.
 
+Common supportedprior removesClone/EQ/Tornado425/2925decks,15371/69380freq22.15479965%;2500retained/all54true-deckprojectionsunchanged. Commonpublicsimeligibilityv3identicalallarms/pollers/candidates; nativerolloutgeometry unchanged/notLIVEplacementlaw. Conditionalpopulationonly, notliteralcurrentLIVEprior/immediatepromotion. Unsupportedexportsfailclosed/noL11fallback. Score1/.5/0,20kcasebootstrapseed0,promisingiffmeanB−A>=+.03. Rulefails; noconfirmation/conditional200ms/bundle. J/conditional-200ms-source-notes-r27.md and-r30.md are READ-ONLY preparation, notbenchmarks/prototypes. No further work triggered. New study needs a new reason/authority, not posthoc reinterpretation.
 
-Coordination update: STOP routine message spam. Parent/owner messages only for needed action/input, a real blocker/failure changing next steps, or a material result/deploy/account action. Default ≤3 short lines/80 words: current result, needed action, one receipt path. Commands/hashes/history belong in files. No acknowledgements, healthy polls, unchanged queues or logged/pushed notices. No reply/broadcast solely for this rule; include in future/resumed child briefs. Questions remain direct parent, never input tools.
+## Preserved R27, s27 and rollback
 
-2026-10-16T09:47:15.398148+00:00
+R27permanentlyINVALID/INCOMPLETE:55rows/47terminal(43clean+4failedwinswith16GAME_OVER>=6000)/8cleanupSIGTERM/245missing,parent143,all47nativeFAILURES0. FirstaffectedarmB,index0; otherA10/A12/B0-13. Everyrawoutcome/event/registration/bank retained, no acceptance/reuse. Sourceauditdistinguishes pinnedcalibration/API/compileddeployguard fromsupplementaryfacade(notexactRustrevision) and historical inference(nohistoricalfullstates). NewR28binarymeasurementsvalidatephase, notoldgamereconstruction. Newcommonpubliceffectivecalibration+clockguard beforehandchecks/dispatch/act keepsunsentqueuesandactualnativeHPdrainfinalscore; no policy/physics/rejectiongate change. InitialfailedDEVreceipts andgood/badcache remainpreserved. Twice03exploratoryprobeadmissiontimeouts explicitlyacceptednonblocking; no retries/queues.
 
-Sam STRICT SILENCE supersedes prior message policy: no routine status, test/gate/review results, queues, receipts, commits, acknowledgements or manual completion notices, even labelled material. Log to files; parent reads them. Message only for a blocker requiring parent action, urgent live failure, an explicit request or essential dependency handoff; max2 sentences+1 receipt path. Automatic task completion suffices. Include in future/resumed child briefs, without rebroadcasting existing active children.
+Requireds27DONE:52fixtures/23pairedactualBroots,zeroerrors/nativefailures/queue mismatch/allpublichashesmatch;3actionIDs+3waitdurationschange,Cannon0botharms(available21/affordable9/home-threataffordable7).5acktaps+1explicitUNVERIFIEDinternalreservation233,not6verifiedplays. Conditionalrecordedfuture/gating/staleperception/currentwritersnapshotnotprovenoriginalMacrevision; nocausal/outcome/latencyclaim. S27-M02.md/fullJ/s27-diagnostic-dev-r20 retained,norerun.
 
-2026-10-16T09:51:02.252195+00:00
-Sam final-delivery clarification: report once to the owning parent only when the whole assignment is done; automatic final result counts, no duplicate DM. Essential cross-owner handoffs go directly to that owner. Own substantial end-to-end work, do not spawn tiny per-test/per-step tasks; genuinely independent reviews remain separate.
+No LIVE/model/runtimepin/poolpromotion, deployment, emulator/account/GPUaction. RollbackstandardA/removeexperimentalhooks preservespriors/caches/models/failures. IfexplicitlyrestoringpreR28commonharness AFTERalljobsstopped, verify35b70b45... fromJ/dev/pre-r28-source-r29/royalesim_match.py, moveonlytwonewownedterminalmodulesaside andverifyold107identity; this restoresknownoldlifecycledefectandgrantsnoPASS/restart. No rollbackwasperformed.
 
-2026-10-16T09:59:46.745250+00:00 current: R12 final independent review complete conditionalAPPROVE;114/114tests pass on01. All11DEV running localsession25663,parent1435924,timeout1435713,wrapper1435715; logdev/all11-r12.txt,max3Python. No source/cache/runtime edits until terminal; no other owned level jobs. Original03probe secondadmission expired terminal124.
+## Coordination for any future authorized continuation
+
+Sam: makeconfidentreversible reviewed/gateddecisions; deferonlyconsequentialhard-to-undo ANDmateriallyuncertain. Soldefault,boundedAstrahighfornarrowharddiagnosticwhenuseful,noClaude retries. Strictsilence: no routineDM/status/test/gate/review/queue/commit/ack/completion. Onlyblockedneedingparentaction,urgentlivefailure,explicitrequest,essentialdependency<=2sentences+1receipt. Whole-assignmentautomaticfinalONCE counts; no duplicatemanualDM. Questionsdirectt3_thread_send(auto)parent/appropriateexistingowner,neverinputtools; propagateinfuture/resumedbriefs,norebroadcastactivechildren. No pendinginput/helper/job now.
+
+ImmediateBOTparent: `thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-bot-lead-20261014-r1`. Existingharnessownerthread529e902e.../bot-levels-harness-sol-r1 COMPLETE(tasklevels-primary-pilot-execution-r30-20261016), nopendingchildren. R29review COMPLETE. Do notrevivecompleted/supersededtasksorcopyjobs. CPUonly01/03/04/08<=16inclparents/threads asappropriate,existingcpu_job.sh/nice/fullpoolpriority; noheavy05/GPU/09–18/protectedlive*/k4s/T1/frozenruntimewrites. Newhost-touchscriptsreviewfirst. Neverpkill-f/signalunverifiedPIDs. Preserve screen/inputfairness/Mac-onlyemulatorscope. Envexistingdev/env.shseed0/NumPyhugepage0/math1/CUDAhidden/bytecodeoff/normalownedR/EVALsame/noexternalprior. LogexactUTCcommands/validation/rollback, Sam-facingPT; PROGRESScommit<=2h duringactivework, tempindex/scanner/coauthor/ownfilesonly.

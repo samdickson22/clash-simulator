@@ -1,0 +1,30 @@
+Recorded evidence: complete and clean; rows 8/8; missing 0, incomplete 0; parent exit 0.
+
+| arm | games | errors | score | W/D/L | damage dealt/taken | crowns for/against | CPU s/game | CPU s/decision | wall s/game |
+|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| A | 4 | 0 | 0.750 | 3/0/1 | 6566.750/3627.750 | 1.500/0.500 | 23.257 | 0.112 | 24.038 |
+| B | 4 | 0 | 0.750 | 3/0/1 | 6566.750/3627.750 | 1.500/0.500 | 23.354 | 0.113 | 24.133 |
+
+A: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[].
+
+B: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[].
+Pairs vs A: 4/4; missing paired indices=[].
+
+All11 evidence checks (no general pilot-readiness claim): complete_unique_rows=True; complete_diagnostics=True; terminal_results=True; zero_errors=True; zero_native_failures=True; zero_rejected_deployments=True; zero_child_failures=True; controller_priors_match=True; command_hashes_match=True; b_roots_exercised=True.
+
+Paired Δ = arm − A; 95% percentile bootstrap, 20,000 resamples, NumPy seed 0.
+
+| arm / opponent | pairs | Δscore [95% CI] | SD(Δ) | identical commands | first differing own tick (median) |
+|---|---:|---|---:|---:|---:|
+| B / all | 4 | 0.000 [0.000, 0.000] | 0.000 | 1.000 | — |
+| B / R3a | 2 | 0.000 [0.000, 0.000] | 0.000 | 1.000 | — |
+| B / v1 | 2 | 0.000 [0.000, 0.000] | 0.000 | 1.000 | — |
+
+B: n = 0 paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: 0.000/0.000; Δ crowns for/against: 0.000/0.000.
+
+CPU/game is match process CPU (both seats and simulation); CPU/decision is our seat’s total decision CPU / decisions. Wall/game is each child’s elapsed time; runtime initialization is excluded. A differing full command hash can have identical own play logs; those pairs have no own divergence tick. Power uses observed sample SD; zero observed SD gives a zero plug-in estimate, not evidence of adequate power.
+
+A opponent scores: R3a n=2, score=0.500, W/D/L=1/0/1; v1 n=2, score=1.000, W/D/L=2/0/0.
+
+B opponent scores: R3a n=2, score=0.500, W/D/L=1/0/1; v1 n=2, score=1.000, W/D/L=2/0/0.

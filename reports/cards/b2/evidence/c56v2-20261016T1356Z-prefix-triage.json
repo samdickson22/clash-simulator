@@ -1,0 +1,11 @@
+{
+ "status": "PREFIX_TRIAGE_ONLY_NOT_GATE_EVIDENCE",
+ "collected_per_arm": 150,
+ "common_keys": 150,
+ "different_full_records": [],
+ "inputs": {
+  "/tmp/b2-c56v2-20261016T1356Z-prefix-pinned.jsonl": "7736ac3960ea5b86d5bc8c8bf858a76600d2583e2e1e96ac252840afd4ae0211",
+  "/tmp/b2-c56v2-20261016T1356Z-prefix-total.jsonl": "7736ac3960ea5b86d5bc8c8bf858a76600d2583e2e1e96ac252840afd4ae0211"
+ },
+ "scope": "Read-only first150 complete rows per active arm; final577/fullroot/input/exception checks still mandatory."
+}

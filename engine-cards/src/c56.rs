@@ -104,7 +104,7 @@ impl BattleState {
                     && !e.spirit
                     && !e.underground
                     && e.death_immunity.is_none()
-                    && e.stagger <= 1e-9
+                    && !e.absent()
                     && !e.dash_travel()
             });
         let e = &mut self.entities[i];
@@ -152,9 +152,9 @@ impl BattleState {
                     && !b.hidden
                     && !b.spirit
                     && !b.underground
-                    && b.stagger <= 1e-9
+                    && !b.absent()
                     && b.death_immunity.is_none()
-                    && b.stealth_until <= self.tick * 50
+                    && b.lock_after() <= self.tick * 50
                     && reach(a, b, 0.0)
             });
         if engaged {
@@ -169,7 +169,31 @@ impl BattleState {
 
     pub(super) fn bomb_tick(&mut self, i: usize) {
         self.entities[i].effect_age += 0.05;
-        if self.entities[i].effect_age < self.entities[i].bomb_timer - 1e-9 {
+        // Ported from RoyaleSim (MIT), spell.rs step_spells (spawner.DEATH_BOMB_SPAWN_TIMING = units_at_fuse_end):
+        // a container (a bomb with children, the Skeleton Barrel's) releases its units one tick after the plain
+        // fuse, each with its same-tick first update, and lands its hit on the next tick. Mirrors entities.py
+        // TimedExplosive.update. Plain bombs (no children; every C56 bomb) keep the single-step fuse.
+        // Batch B2: a mirrored bomb carries its level-qualified payload key (level12:...); unqualified
+        // bombs (every level-11 C56 bomb) resolve exactly as before.
+        let container = self.config.bomb_children.get(self.entities[i].stats.key())
+            .or_else(|| self.config.bomb_children.get(&self.entities[i].stats.name)).cloned();
+        if let Some(templates) = container {
+            let age = self.entities[i].effect_age;
+            let timer = self.entities[i].bomb_timer;
+            if age < timer + 0.05 - 1e-9 {
+                return;
+            }
+            if age < timer + 0.1 - 1e-9 {
+                // Container releases always take one synchronous first update,
+                // after each child's full initialization and Freeze inheritance.
+                // A local source flag also avoids double-updating templates
+                // whose source already requests the ordinary death-spawn step.
+                let mut bomb = self.entities[i].clone();
+                bomb.stats.death_first_update = true;
+                self.spawn_death_templates(&bomb, templates);
+                return;
+            }
+        } else if self.entities[i].effect_age < self.entities[i].bomb_timer - 1e-9 {
             return;
         }
         let bomb = self.entities[i].clone();
@@ -183,7 +207,7 @@ impl BattleState {
                     && !e.hidden
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */
                     && !matches!(e.entity_kind, 2 | 3)
                     && Self::in_area(e, bomb.x, bomb.y, bomb.bomb_radius))
                 .then_some(j)
@@ -200,9 +224,6 @@ impl BattleState {
                 None,
             );
         }
-        if let Some(templates) = self.config.bomb_children.get(&bomb.stats.name).cloned() {
-            self.spawn_death_templates(&bomb,templates);
-        }
         self.entities[i].alive = false;
     }
 
@@ -211,14 +232,14 @@ impl BattleState {
     }
     pub(super) fn stun_target_mode(&mut self, i: usize, duration: f64, interrupt: bool) {
         if duration>0.0 && !self.entities[i].spirit && !self.entities[i].underground
-            && !self.entities[i].hidden && self.entities[i].stagger<=1e-9 && !self.entities[i].dash_travel() {
+            && !self.entities[i].hidden && !self.entities[i].absent() && !self.entities[i].dash_travel() {
             self.hook_cancel(i);
         }
         let e = &mut self.entities[i];
         // A committed on-hit status still interrupts a depleted character's
         // start-of-phase combat component. Python can_receive_effect does
         // not test HP (entities.py:610-624,2987-3005).
-        if duration <= 0.0 || e.spirit || e.underground || e.hidden || e.stagger > 1e-9 || e.dash_travel()
+        if duration <= 0.0 || e.spirit || e.underground || e.hidden || e.absent() || e.dash_travel()
         {
             return;
         }
@@ -437,7 +458,10 @@ impl BattleState {
                     && e.owner != area.owner
                     && !e.spirit
                     && !e.underground
-                    && e.stagger <= 1e-9
+                    && !e.absent()
+                    // Batch B2: a dash in travel is outside every area (Python can_receive_effect ->
+                    // BanditDash.blocks_status_effect); only BanditDash bodies carry a dash, none in C56.
+                    && !e.dash_travel()
                     && (!e.hidden || spell.affects_hidden)
                     && (e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.airborne())
@@ -490,7 +514,7 @@ impl BattleState {
         if spell.freeze_effect && !area.effect_applied {
             let targets: Vec<usize> = self.entities.iter().enumerate().filter_map(|(j,e)| {
                 (e.alive && e.owner != area.owner && !e.hidden && !e.spirit && !e.underground
-                    && e.stagger <= 1e-9 && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
+                    && !e.absent() && !e.dash_travel() /* B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect) */ && (e.freeze_carrier || e.class == "Troop" || e.class == "Building")
                     && (spell.hits_air.unwrap_or(true) || !e.airborne())
                     && Self::in_area(e,area.x,area.y,area.effect_radius)).then_some(j)
             }).collect();
@@ -650,7 +674,8 @@ impl BattleState {
                         && !e.spirit
                         && !e.underground
                         && !e.hidden
-                        && e.stagger <= 1e-9
+                        && !e.absent()
+                        && !e.dash_travel() // Batch B2 r2: dash travel excluded (Python can_receive_area_damage / can_receive_effect).
                         && (e.class == "Troop" || e.class == "Building")
                         && !self.entities[i].hit_ids.contains(&e.id)
                         && Self::in_area(e, area.x, area.y, area.effect_radius)

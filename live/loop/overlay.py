@@ -135,6 +135,7 @@ class Overlay:
         self.read_req, self.read_result = False, None
         self.view = dict(candidates=False, model_units=False)      # page toggles; off = only what the bot uses
         self.deck_check = lambda names: None
+        self.ground_dy = {}                      # YOLO class name -> ground offset dy (tiles); empty = fixed box lift
         self.lock = threading.Lock()
         ov = self
 
@@ -264,9 +265,15 @@ class Overlay:
                     cv2.circle(img, P(ax, ay), 14, (160, 160, 160), 1)
                     cv2.putText(img, f"model:{label(u.get('cls'))} {u.get('score', 0):.2f}", P(ax+16, ay-8), 0, .38,
                                 (160, 160, 160), 1)
-            for u in rec.get('units', ()):         # what the bot actually gets (YOLO's units with --units yolo)
+            units = rec.get('units') or ()
+            names = rec.get('units_yolo') or ()      # the YOLO class of each unit (same order) when --units yolo
+            names = names if len(names) == len(units) else [None]*len(units)
+            for u, name in zip(units, names):        # what the bot actually gets (YOLO's units with --units yolo)
                 ax, ay = C.tile_to_android(u['x'], u['y'])
                 w, h, lift = (v*C.ARENA_S for v in _box_shape(u.get('cls')))
+                dy = self.ground_dy.get(name)
+                if dy is not None:               # YOLO units: box bottom dy tiles above the ground point (a flyer's shadow)
+                    lift = h/2 + dy*C.TILE_C*C.ARENA_S
                 col = (255, 140, 0) if u['owner'] == 0 else (0, 0, 255)
                 cv2.rectangle(img, P(ax-w/2, ay-lift-h/2), P(ax+w/2, ay-lift+h/2), col, 2)
                 cv2.putText(img, f"{label(u.get('cls'))} {u.get('score', 0):.2f}", P(ax-w/2, ay-lift-h/2-6), 0, .45, col, 1)

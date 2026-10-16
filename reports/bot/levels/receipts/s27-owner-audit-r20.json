@@ -1,0 +1,202 @@
+{
+  "B_root_calls": 23,
+  "action_id_differences": 3,
+  "affordable_cannon_with_public_home_threat": {
+    "A": {
+      "affordable_with_public_home_threat": 7,
+      "chosen": 0,
+      "frames": [
+        274,
+        333,
+        411,
+        427,
+        484,
+        500,
+        516
+      ]
+    },
+    "B": {
+      "affordable_with_public_home_threat": 7,
+      "chosen": 0,
+      "frames": [
+        274,
+        333,
+        411,
+        427,
+        484,
+        500,
+        516
+      ]
+    }
+  },
+  "all_public_view_digests_match": true,
+  "cannon": {
+    "A": {
+      "cannon_affordable": 9,
+      "cannon_available": 21,
+      "cannon_chosen": 0,
+      "cannon_home_defense": 0,
+      "cpu_s": 27.93858527600017,
+      "native_failures": 0,
+      "wall_s": 27.978689616778865
+    },
+    "B": {
+      "cannon_affordable": 9,
+      "cannon_available": 21,
+      "cannon_chosen": 0,
+      "cannon_home_defense": 0,
+      "cpu_s": 26.183885612000097,
+      "native_failures": 0,
+      "wall_s": 26.22189771826379
+    }
+  },
+  "canonical_report_sha256": "97c774a543dd8668e574c9e0685278a84f5f15f50da5879dc8ad92b4c18d26ff",
+  "changes": [
+    {
+      "A": {
+        "action": 813,
+        "card": "Giant",
+        "col": 3,
+        "row": 13,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 0
+      },
+      "clock_s": 171.995707875,
+      "frame": 230,
+      "tick": 160
+    },
+    {
+      "A": {
+        "action": 236,
+        "card": "Archers",
+        "col": 2,
+        "row": 13,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 260,
+        "card": "Archers",
+        "col": 8,
+        "row": 14,
+        "wait_ticks": 0
+      },
+      "clock_s": 166.338733625,
+      "frame": 274,
+      "tick": 270
+    },
+    {
+      "A": {
+        "action": 249,
+        "card": "Minions",
+        "col": 15,
+        "row": 13,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 20
+      },
+      "clock_s": 158.367521333,
+      "frame": 333,
+      "tick": 430
+    },
+    {
+      "A": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 40
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 20
+      },
+      "clock_s": 150.492309458,
+      "frame": 395,
+      "tick": 590
+    },
+    {
+      "A": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 40
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 20
+      },
+      "clock_s": 148.4727545,
+      "frame": 411,
+      "tick": 630
+    },
+    {
+      "A": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 0
+      },
+      "B": {
+        "action": 2304,
+        "card": null,
+        "col": null,
+        "row": null,
+        "wait_ticks": 40
+      },
+      "clock_s": 145.44087925,
+      "frame": 434,
+      "tick": 690
+    }
+  ],
+  "conditional_driver": "Frame234/action233 is an UNVERIFIED INTERNAL RESERVATION; later HUD-derived play/context is conditional, never an acknowledged tap/verified actual play.",
+  "decision_tuple_differences": 6,
+  "execution_source": "actual01 R17 bot snapshot plus reviewed R20 diagnostic package; root/config/scope/profile/live/search dependencies match R22; R21 primary sync only AFTER replay terminal",
+  "exit_code": 0,
+  "expected": 23,
+  "failed": 0,
+  "fixture_tests": 52,
+  "king59_frame500": {
+    "A": {
+      "damage": 109.0,
+      "hp": 85.86719790101051,
+      "max_hp": 4824.0
+    },
+    "B": {
+      "damage": 72.0,
+      "hp": 58.95359855890274,
+      "max_hp": 3312.0
+    }
+  },
+  "raw_artifact_sha256": {
+    "launch.json": "5660bbd4b5c7b314f9df5fb568061d5fa8ff298e67b6fda666c06009ac1fa9e1",
+    "receipt.json": "81291fbbdc251d245d694791a2bfdc4f215978bc378e84be2b42bf07b2f5a5bb",
+    "report.json": "66c76224a33d0356cd291f5796275c24a9da0f42b733b35170d4ba087bf2579f",
+    "report.md": "04f81479301be71cab3bae4529e934f0dee89b05f28e15fa2b88d4db9c6eda9a",
+    "states.jsonl": "0fd07ee2cb04987497a66739f3076d1ae6d9700bfe2f8b9564e9812b111792d7"
+  },
+  "remaining_claims": "Descriptive chosen actions on fixed recorded future; no causal/outcome or literal historical live equivalence.",
+  "report_digest_format": "receipt.report_sha256 is canonical parsed JSON; states_sha256 is raw file bytes",
+  "successful_pairs": 23,
+  "unvisited": 0,
+  "utc": "2026-10-16 11:40:00 UTC",
+  "wait_only_differences": 3
+}

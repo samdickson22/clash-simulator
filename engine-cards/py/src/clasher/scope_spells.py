@@ -78,6 +78,13 @@ def _enemy_characters_in_area(
 
 
 def _register(battle_state: "BattleState", effect: Entity, name: str) -> None:
+    # Batch B2: the field takes no object update on its birth boundary, as death-area objects
+    # (death_area._register_death_object). RoyaleSim (MIT) spell.rs measures the Void strike at
+    # C+30, the Vines catch at C+18 and the curse's first application on C+1, C the cast tick; without this
+    # skip all three ran one tick early.
+    effect._native_object_birth_tick = battle_state.tick + int(
+        not getattr(battle_state, "_logic_tick_active", False)
+    )
     effect.spell_name = name
     effect.battle_state = battle_state
     battle_state.entities[effect.id] = effect
@@ -85,6 +92,7 @@ def _register(battle_state: "BattleState", effect: Entity, name: str) -> None:
 
 
 # --------------------------------------------------------------------------- Vines
+VINES_AIR_TO_GROUND_S = 2.0 + 2 * 0.05
 @dataclass
 class VinesArea(AreaEffect):
     select_delay: float = 0.9
@@ -94,26 +102,35 @@ class VinesArea(AreaEffect):
     dot_interval: float = 1.0
     crown_dot_damage: float = 0.0
     selected: bool = False
-    pending: list = field(default_factory=list)  # (apply_time, entity)
+    pending: list = field(default_factory=list)  # unused since Batch B2 (catches are picked when they fall)
     grounded: list = field(default_factory=list)  # (restore_time, entity)
+    catches_done: int = 0
+    caught: list = field(default_factory=list)  # ids caught by this cast
 
     def update(self, dt: float, battle_state: "BattleState") -> None:
         if not self.is_alive:
             return
         self.time_alive += max(0.0, dt)
         name = getattr(self, "spell_name", "Vines")
-        if not self.selected and self.time_alive >= self.select_delay - 1e-9:
-            self.selected = True
-            candidates = _enemy_characters_in_area(
-                battle_state, self.player_id, self.position, self.radius, name,
-            )
-            candidates.sort(key=lambda e: (-(e.hitpoints + _shield_hp(e)), e.id))
-            for delay, target in zip(self.action_delays, candidates):
-                self.pending.append((self.select_delay + delay, target))
-        while self.pending and self.pending[0][0] <= self.time_alive + 1e-9:
-            _, target = self.pending.pop(0)
-            if target.is_alive and target.id in battle_state.entities:
+        # Batch B2. Ported from RoyaleSim (MIT), spell.rs `catch`: each catch picks, when it falls, the unit in reach
+        # with the highest current hp plus shield that this cast has not caught (earlier created on a tie);
+        # spells.MULTI_CATCH_RANKING = repick_each_catch (measured on client 15.535.29). A catch with no candidate is spent.
+        while (
+            self.catches_done < len(self.action_delays)
+            and self.select_delay + self.action_delays[self.catches_done] <= self.time_alive + 1e-9
+        ):
+            self.catches_done += 1
+            candidates = [
+                e for e in _enemy_characters_in_area(
+                    battle_state, self.player_id, self.position, self.radius, name,
+                )
+                if e.id not in self.caught
+            ]
+            if candidates:
+                target = min(candidates, key=lambda e: (-(e.hitpoints + _shield_hp(e)), e.id))
+                self.caught.append(target.id)
                 self._snare(target, battle_state, name)
+        self.selected = self.catches_done >= len(self.action_delays)
         still = []
         for restore_time, target in self.grounded:
             if restore_time <= self.time_alive + 1e-9:
@@ -123,13 +140,16 @@ class VinesArea(AreaEffect):
             else:
                 still.append((restore_time, target))
         self.grounded = still
-        if self.selected and not self.pending and not self.grounded and self.time_alive >= self.duration - 1e-9:
+        if self.selected and not self.grounded and self.time_alive >= self.duration - 1e-9:
             self.is_alive = False
 
     def _snare(self, target: Entity, battle_state: "BattleState", name: str) -> None:
         if is_airborne_target(target) and getattr(target, "is_air_unit", False):
             target._vines_grounded = True
-            self.grounded.append((self.time_alive + self.snare_duration, target))
+            # Batch B2. Ported from RoyaleSim (MIT), calibration spells.AIR_TO_GROUND_WINDOW (measured on client
+            # 15.535.29): ActionAirToGround TotalDuration 2000 plus its 50 ms TransitionDuration twice; the flier is
+            # back in the air on catch + 43.
+            self.grounded.append((self.time_alive + VINES_AIR_TO_GROUND_S, target))
             battle_state.sync_fast_target_entity(target)
         target.apply_stun(self.snare_duration, source_kind=name)
         target.apply_slow(self.snare_duration, 0.0, source_kind=name)
@@ -152,6 +172,8 @@ class VinesSpell(Spell):
     dot_damage: float = 0.0
     crown_dot_damage: float = 0.0
     dot_interval: float = 1.0
+    select_delay: float = 0.9
+    action_delays: tuple[float, ...] = (0.0, 0.05, 0.15)
 
     def cast(self, battle_state: "BattleState", player_id: int, target_pos: Position) -> bool:
         effect = VinesArea(
@@ -162,6 +184,7 @@ class VinesSpell(Spell):
             radius=self.radius, duration=self.duration,
             dot_damage=self.dot_damage, crown_dot_damage=self.crown_dot_damage,
             dot_interval=self.dot_interval,
+            select_delay=self.select_delay, action_delays=self.action_delays,
         )
         _register(battle_state, effect, self.name)
         return True
@@ -248,6 +271,7 @@ class GoblinCurseArea(AreaEffect):
     dot_interval: float = 1.0
     goblin_data: dict | None = None
     spell_level: int = 11
+    speed_multiplier: float = 1.0
     next_scan: float = 0.0
     cursed: dict = field(default_factory=dict)  # id -> [entity, expiry_time]
 
@@ -268,6 +292,13 @@ class GoblinCurseArea(AreaEffect):
                     source_id=self.id, source_kind=name, duration=self.buff_time,
                     hit_interval=self.dot_interval, damage=damage,
                 )
+                if self.speed_multiplier < 1.0:
+                    # Batch B2: the curse damage buff's SpeedMultiplier (16.402: -15, movement only; RoyaleSim
+                    # (MIT) 16.402 table GoblinCurseDamage), refreshed with the buff.
+                    target.apply_slow(
+                        self.buff_time, self.speed_multiplier,
+                        attack_speed_multiplier=1.0, spawn_speed_multiplier=1.0, source_kind=name,
+                    )
                 if isinstance(target, Troop):
                     entry = self.cursed.get(target.id)
                     if entry is None:
@@ -304,7 +335,19 @@ class GoblinCurseArea(AreaEffect):
             raw_overrides={"level": self.spell_level},
             rarity=self.goblin_data.get("rarity", "Common"),
         )
-        battle_state._spawn_unit_at_position(position, self.player_id, stats, snap_to_valid=True)
+        # Batch B2: the curse goblin deploys its row's DeployTime counted from the tick after the death (RoyaleSim
+        # (MIT) calibration status.BUFF_DEATH_SPAWN_DEPLOY_TIME = unit_deploy_time, measured on client 15.535.29: 20
+        # ticks, 9 of 9). Its object phase runs on its birth tick, so it starts one logic tick longer, as
+        # DeathSpawn.on_death does for a set DeathSpawnDeployTime.
+        deploy_ms = float(
+            self.goblin_data.get("deployTime")
+            or (self.goblin_data.get("baseData") or {}).get("deployTime")
+            or 1000
+        )
+        battle_state._spawn_unit_at_position(
+            position, self.player_id, stats, snap_to_valid=True,
+            deploy_delay_override=(deploy_ms + 50) / 1000.0,
+        )
 
 
 @dataclass
@@ -316,6 +359,7 @@ class GoblinCurseSpell(Spell):
     crown_dot_damage: float = 0.0
     dot_interval: float = 1.0
     goblin_data: dict | None = None
+    speed_multiplier: float = 1.0
 
     def cast(self, battle_state: "BattleState", player_id: int, target_pos: Position) -> bool:
         effect = GoblinCurseArea(
@@ -327,7 +371,7 @@ class GoblinCurseSpell(Spell):
             scan_interval=self.scan_interval, buff_time=self.buff_time,
             dot_damage=self.dot_damage, crown_dot_damage=self.crown_dot_damage,
             dot_interval=self.dot_interval, goblin_data=self.goblin_data,
-            spell_level=self.level,
+            spell_level=self.level, speed_multiplier=self.speed_multiplier,
         )
         _register(battle_state, effect, self.name)
         return True
@@ -361,10 +405,22 @@ def build_scope_spell(spell_data: dict[str, Any], level: int) -> Spell | None:
     if name == "Vines":
         # Snare buff values are only in the native catalog (vines.toml):
         # DamagePerSecond 60, CrownTowerDamagePerHit 14, HitFrequency 1000.
+        # Catch clock. The legacy export (an action graph, no HitSpeed) catches at 900 ms + 0/50/150 ms
+        # (vines.toml). Client 16.402 data makes the field a pulsing area instead -- HitSpeed 250, HitSpeedOffset
+        # 900, MaximumTargets 1, LifeDuration 1400 -- one catch per pulse while the field lives: 900/1150/1400 ms
+        # (RoyaleSim (MIT) 16.402 table, `catch_offsets_ms`). Read the pulse fields when the data carries them.
+        life_ms = float(area.get("lifeDuration", 2000))
+        select_ms, delays = 900.0, (0.0, 0.05, 0.15)
+        hit_ms = float(area.get("hitSpeed", 0) or 0)
+        if hit_ms > 0:
+            select_ms = float(area.get("hitSpeedOffset", 900) or 0)
+            count = max(1, int((life_ms - select_ms) // hit_ms) + 1)
+            delays = tuple(k * hit_ms / 1000.0 for k in range(count))
         return VinesSpell(
             name=name, mana_cost=mana_cost, level=level,
             radius=float(area.get("radius", spell_data.get("radius", 2500))) / 1000.0,
-            duration=float(area.get("lifeDuration", 2000)) / 1000.0,
+            duration=life_ms / 1000.0,
+            select_delay=select_ms / 1000.0, action_delays=delays,
             dot_damage=_periodic_hit(60, 1.0, level),
             crown_dot_damage=float(scale_stat(14, level) or 0),
             dot_interval=1.0,
@@ -426,7 +482,14 @@ def build_scope_spell(spell_data: dict[str, Any], level: int) -> Spell | None:
         crown_dot_damage=float(scale_stat(damage_buff.get("crownTowerDamagePerHit", 4), level) or 0),
         dot_interval=freq,
         goblin_data=goblin,
+        speed_multiplier=_buff_multiplier(damage_buff.get("speedMultiplier", 0)),
     )
+
+
+def _buff_multiplier(raw: Any) -> float:
+    """character_buffs multiplier encoding: blank/0 -> 1.0, negative -> 1 + raw/100, positive -> raw/100."""
+    raw = float(raw or 0)
+    return 1.0 if raw == 0 else max(0.0, 1.0 + raw / 100.0) if raw < 0 else raw / 100.0
 
 
 # ------------------------------------------------------------------ Heal Spirit
@@ -439,6 +502,9 @@ class HealPulse(AreaEffect):
     recipients: list = field(default_factory=list)
     snapshot_taken: bool = False
     ticks_done: int = 0
+    # Ported from RoyaleSim (MIT), state.rs buff admission: immunity belongs
+    # to each recipient, independently of the caster.
+    buff_name: str = ""
 
     def update(self, dt: float, battle_state: "BattleState") -> None:
         if not self.is_alive:
@@ -448,6 +514,7 @@ class HealPulse(AreaEffect):
             self.recipients = [
                 e for e in battle_state.entities.values()
                 if isinstance(e, Troop) and e.player_id == self.player_id and e.is_alive
+                and self.buff_name not in getattr(e.card_stats, "ignore_buffs", ())
                 and not getattr(e, "_self_projectile_launched", False)
                 and e.intersects_native_area(self.position, self.radius)
             ]

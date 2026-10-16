@@ -6992,3 +6992,63 @@ Solebabysitter deployedreviewedcapture+tower at31→32boundary withseparaterollb
 ## 2026-10-16T10:33:33Z: viewer live; controlled rollbacks
 
 Viewer complete-frame/mobile fix is deployed and HTTP/JPEG validated. YOLO remains off after a real board phantom. Hand r4 field failure caused LL_HANDSYNC=0 rollback; reviewed r5 single-file, one-battle canary is authorized after required guards, not yet confirmed deployed. Quiet checks found no pending requests or new failures. Details and source receipts are in reports/audit/SOL-INTERIM-20261016.md and the events JSONL.
+
+
+### 2026-10-16T11:11:59Z Sol interim coordinator
+
+The hand synchronization r5 canary removed reservation errors but failed the unchanged refusal gate: three of 22 attempts were correctly refused while the elixir bar lagged a spend animation. The existing owner repaired policy availability using positive own-HUD evidence, preserving final guards, polling, historical failures and all thresholds. Independent review and scoped commit d40eff941 passed; coordinator authorized one further battle only. Sole-operator command receipts confirm the single hand-source deployment and one-match launch; no battle result is claimed here. Validation hold follows, with LL_HANDSYNC=0 rollback on any separately authorized restart.
+
+The original-source capture gate now qualifies five completed runs across three cards and both teams, strictly on verified subsets. This does not clear per-card balance, shared minimum-source counts, changed-mask QA or generation gates. MiniPekka t1 remains held; completed457 and queued443 provenance stay separate. The existing synth monitor received the essential dependency handoff.
+
+Quiet sweep checked 17 active/lead threads with no pending questions or newly failed unfinished work; known superseded/paused threads remain stopped. Hourly host loads were 52.84/86.90/84.87/97.45 on01/03/04/08, with no console users or overload. Completed/rejected training explains idle GPUs. No duplicate worker, compute launch, scheduler change, active pin change or account action by coordinator. Exact commands, task IDs and receipts remain in the audit event log and workstream files.
+
+
+### 2026-10-16T12:11:51Z Sol interim coordinator
+
+The first hand-identity trial passed measured gates with16/16 matching deployments, zero refusals/errors and preserved raw logits. Coordinator authorized up to three sequential single-match validations with full checks between games. The next game passed; the following game failed the unchanged refusal gate at4/28, so the operator stopped after two of three, restored all three original sources and held with no driver. All losses and earlier failures remain. The existing LIVE/loop ownership received the complete diagnosis, generic repair and independent-review assignment; no further play is authorized.
+
+A trophy correction supersedes the initial receipt:1015 was an animated home value, while later existing frames settle s37 at1030,s38 at1000 ands39 at1030. The latest s40 settled trophy value remains unobserved. No new capture/input was used.
+
+The quiet sweep checked15active/lead threads with no pending questions or newly failed unfinished work. Hourly loads on01/03/04/08 were0.88/11.86/69.78/56.49 with no console users or overload. This is the first low-CPU observation on01/03 following normal prior samples; existing collection/retry owners continue, with no speculative replacement jobs. GPUs are idle while accepted training gates remain.
+
+The source capture threshold is met only for explicit reviewed subsets; per-card source balance and generation gates stay separate. The combined canonical/vocabulary code is source-integrated only, and YOLO remains disabled after its phantom failure. Level experiments remain blocked by actual cache/bootstrap and fixture failures, with existing owners and independent review progressing. Card source preparation and released-root verification do not imply final combined-engine acceptance or an active pin change. Exact commands, task IDs, hashes and receipts are retained in the event journal and workstream files.
+
+
+### 2026-10-16T13:13:50Z Sol interim coordinator
+
+The canonical bot lead failed its scheduled daily run. An in-place Sol recovery failed before work because its provider handoff exceeded the context allowance; the available tools expose no compaction control. Rather than retrying Claude or duplicating existing jobs, coordinator delegated the unfinished daily headline, resource reconciliation and necessary contract coordination to one compact Sol recovery child. The original thread and its history remain preserved. Exact task IDs and the failure are in the event log; the loop owner received the temporary coordination route.
+
+The hourly sample found persistent low CPU use on01/03, now0.69/9.44;04/08 were67.02/16.74. No console users or overload were found. Existing owners and the recovery child will distinguish completed generation from blocked authorized work, with no speculative replacement jobs. GPU training remains behind its existing launcher review.
+
+The level pilot was stopped as invalid after actual terminal-command rejections. Raw outcomes and immutable inputs remain; no retry, exclusion or accepted effect estimate is authorized before repair and review. Live play remains held after the failed hand-validation batch while explicit per-slot selection permission is developed against the actual deployed sources. The B1 scaled consumer patch is source-published only; combined native/root validation and active deployment remain separate gates.
+
+The sweep checked16active/lead threads with no pending input. Known paused and superseded threads remain stopped. No root host signal, compute launch, active pin/model/account change or live authorization occurred. Detailed commands and receipts remain in the coordinator journal and workstream files.
+
+
+### 2026-10-16T14:11:28Z Sol interim coordinator
+
+Quiet checks found no pending input or newly failed unfinished workers. The canonical bot lead remains blocked by its oversized provider handoff; the compact Sol recovery child is active, owns the daily fresh-bank evaluation/resource reconciliation and coordinates the stable bot interface. Do not repeatedly retry the historical thread or duplicate its existing jobs.
+
+The hand-permission implementation and its canonical source port passed their separate reviews; source commit e883a80d preserves main configuration/root hooks. Actual-host bytes, installer/paired rollback and later live validation remain separately gated through the sole operator. The driver remains held, with no further live play authorized and all prior refusal failures preserved.
+
+The exact28fresh Spear originals passed source-alpha review and consumer promotion, yielding7body-bearing runs/61originals/0inpaints in the consumer record. This does not clear other sources, per-card balance or new-generation gates. Distinct loaded/queued bank lineage remains explicit. The existing reviewed08trainer is busy; no detector acceptance follows.
+
+The repaired level experiment is approaching completion, with292completed rows/97primary pairs clean in its latest owner audit and eight children still pending. Complete final rows, source/cache checks and the registered rule remain required before any decision. The prior invalid/stopped run is retained. Card combined-source/native/root acceptance and B2-to-C1 prerequisites remain with existing owners; no active pin change is inferred from source preparation.
+
+Hourly loads01/03/04/08 were4.42/0.54/25.49/18.76;08GPU96%,others idle, no console users or overload. Persistent low CPU remains with the recovery deputy and current owners for completed-versus-blocked work reconciliation; no speculative replacements or root host signals were made. Exact actions, task IDs and receipts are preserved in the event log and workstream files.
+
+
+### 2026-10-16T15:12:41Z Sol interim coordinator
+
+The daily bot recovery completed2,400games without errors: K4L scored0.878[0.859,0.895], reference0.826[0.804,0.848], paired gain+0.052[0.028,0.076]. The champion remains unchanged. The separate level experiment completed100valid pairs/300games and failed its registered promising threshold: B−A−0.03,95%CI[−0.10,+0.03]. No confirmation, conditional latency follow-up or live bundle was triggered; the earlier invalid run remains preserved.
+
+The exact fifteen-source hand-permission package was installed and verified under source-only authority after independent installer review and named benchmark/LIVE/reference/BOT/CARD claim reconciliation. PAUSE, no-driver state, controls, model/native pins and historical refusal failures remain. Imports, readiness execution, capture/input, driver starts, hold clearance and play are not authorized. The existing loop owner is preparing the separately reviewed actual-runtime readiness probe. The one-install window ends15:24:16Z; original guarded same-transaction paired recovery remains available after expiry.
+
+The existing twenty-epoch vision training run produced COMPLETE and all epoch artifacts. Its owner had last finished an interim0–10audit, so coordinator resumed that same Sol owner for the final exact-count/provenance/weakness disposition only. No new training/evaluation job, helper or model promotion was started.
+
+Quiet sweep checked10active/lead threads with no pending questions or new failures. Hourly loads01/03/04/08 were3.90/0.12/12.95/7.91, GPUs idle, no console users or overload. Completed work and existing review/data gates govern remaining use; no speculative replacements were launched. Card bounded diagnostics and final combined acceptance remain with existing owners. Exact commands, receipts, task/run IDs and decisions remain in the journal and workstream files.
+
+
+### 2026-10-16T16:12:27Z — Sol interim audit
+
+Readiness consumed its one invocation at consumer guard exit2 before runtime/model work; all50 post-check hashes match, installed sources held/no driver/PAUSE/LL0, no retry. Final vision20epoch audit yields0core-qualified candidates. Newly failed automatically resumed full-pool owner recovered in place on Sol, with actual-job/stale-receipt audit and LIVE GPU allocation reconciliation required before further launches. Quiet input sweep empty; hourly loads4.51/.49/6.07/5.08, no users/overload. No root process signals, compute launch or model/pin/account change. Detailed receipts in reports/audit/SOL-INTERIM-20261016.md and coordinator job journal.

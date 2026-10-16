@@ -28,7 +28,7 @@ import os
 from pathlib import Path
 
 SIDE = ('death_areas', 'death_objects', 'death_children', 'spirit_areas', 'production_children', 'spawn_areas',
-        'ability_bombs', 'bomb_children')
+        'ability_bombs', 'bomb_children', 'create_areas', 'hit_areas')
 CACHE = Path(os.environ.get('CLASHER_LEVELS_CACHE', '/mpac/sdicks02/jobs/clasher/bot-levels/level-configs'))
 
 
@@ -76,8 +76,11 @@ class LevelConfigs:
     def __init__(self, rt, cache=CACHE):
         self.rt, self.R = rt, rt.R
         pins = rt.pins
+        # Python/config changes can share native/data pins. Never reuse a
+        # pre-B1 export missing healer pulses or rework member templates.
+        config_hash = hashlib.sha256(json.dumps(self.R.config, sort_keys=True).encode()).hexdigest()
         tag = hashlib.sha256(json.dumps([os.environ.get('CLASHER_BOT_RUNTIME_PINS', 'r1'), pins.get('native_sha256'),
-                                         pins.get('gamedata_sha256')]).encode()).hexdigest()[:16]
+                                         pins.get('gamedata_sha256'), config_hash]).encode()).hexdigest()[:16]
         self.dir = Path(cache) / tag
         self.levels = {}
         self._mixed = {}

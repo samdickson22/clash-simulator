@@ -33,7 +33,16 @@ Current state and detailed receipts: [PROGRESS.md](PROGRESS.md),
   nice15),coordinatedtoCARDlead afterexactsource/runtime/nativepreflight+old08queuedgroupexit.
   Noothermoves,bypass,pinchanges orBOTsignals. Receipt05jobs/clasher/bot-sol-resume-20261016/
   cpu-room04-20261016T094152Z.json. Normalwrapperrechecks changingload; sampleisnotareservation.
-  08at10:00:54Z:live101+idle3=104/105;existingofflineadjudicationlauncher4040494needs3andcorrectlywaits.
-  DeferNEWBOT08retrylaunchesuntilclaim4040562admitsnormally;preserverunningjobs/wrapper/cap,no preemption/move.
+  CPU/GPU08update11:54:59Z:CARDclaim664663admitted/postanalysisexit0;GPU0idle,noBOTleasechange,LIVEowned.
+  Normalroom43(live62,idle0,cap105). NextsoleLIVEclean08trainerCPU12/nice19,10loaders,single-threadmath,
+  fullreviewedfootprint≤16;CARD→reviewedtrainer→NEWBOTretriespriority,no01. Resourceconfirmationisnotlauncher/
+  inputpreflightapproval;no newtrainer/transfer/hostinstallbyBOT. Runningjobs/caps/wrapperspreserved.
 - Allowncommits usetempindexonorigin/main,mandatorysecret-scan,explicitownpaths; retainsharedindex/HEAD.
   Exactcommands,commitreceipts,hashesandrollbacks05jobs/clasher/bot-sol-resume-20261016/.
+- S40contract12:33Z:loopownerownse2erepairandexistingisolatede4v3helper;no newworker/sharededit/releasefromBOT.
+  FrozenSlotPermissionAPI+two-maskboundaryacceptedforcoordination:originalnativeaction_maskmustremainmodelinput,
+  separateeligibility_maskforactualchoices/proposals/fallbacks;requiredsession/capture/pollbindingfailclosed.
+  Cache/cadence/state/guardacceptanceandownerboundariesincontracts/S40-SLOT-PERMISSION-COORDINATION.md.
+  Actualdeployed28immutableMacsourcecopies+11BASEsourcepinsverifiedbyownerreceipt;usesnapshot source/runtime
+  andsource/codeforbase/rollback,v5live/simulatorprojectionandMROactive.DeployedbaseprovenanceONLY,notexecuted
+  backendclosure/implementationacceptance/integration/release/liveauthority;PAUSE/NOdriverholdunchanged.

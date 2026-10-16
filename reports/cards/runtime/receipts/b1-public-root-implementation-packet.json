@@ -1,0 +1,71 @@
+{
+  "status": "IMPLEMENTATION_APPROVED_PENDING_ADMITTED_VALIDATION",
+  "base": "ebab18cc8f7194d22940f4177dec3225b3ddafcc",
+  "alias": "c132499193082c642bcc1889c5013a0d66a157ee",
+  "approved_source": "e0e9f634e28f6cbc8bdd10631a6b3437d69dfef2",
+  "root_commits": [
+    "8aab1b2b57565a3f50c167f288e2e5d402d8d84f",
+    "fa36226189af573339a95ca06123fb39371a8dae",
+    "e0e9f634e28f6cbc8bdd10631a6b3437d69dfef2"
+  ],
+  "branch": "cards/b1-public-root-20261016",
+  "review": {
+    "task": "/root/b1_public_root_review",
+    "round": 3,
+    "model": "gpt-6.1-sol",
+    "reasoning": "high",
+    "verdict": "APPROVE",
+    "receipt": "reports/cards/runtime/receipts/b1-public-root-review-r3.md"
+  },
+  "sha256": {
+    "engine-cards/public_root.py": "1d6b84abe0b791483ef5ea40882bad736f25b2f884ec7a615b9b0041c113036d",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "4966d372bf65c80bb36ac1e98f7696c878c3bef92f097cf85feae2942809989c",
+    "bot/levels/root.py": "1a12d1682ca1a1d253a36f6735fd6d944433223471381b97808d708bf0f9d5ff",
+    "bot/levels/configs.py": "89ef4eed5279bf530e40e6e1d65d7045cb56de9e70166dbb752b2d1cb20cd08f",
+    "reports/cards/runtime/tools/probe_b1_public_root.py": "fa483bdb913279cb74a761c04afafa990bcd83c5a53e996c8c85062fcc6d4121",
+    "reports/cards/runtime/tools/test_b1_public_root.py": "4cc0c0c188785725adfa068be6f56f08f29addc8d5412f08e643fc3562271b2a",
+    "engine-cards/py/src/clasher/balance.py": "5d87d6483912a1c895a9faea7b82baa6d55c3f08ee08b3bd3fac57005cb28893",
+    "engine-cards/py/src/clasher/rl/structured_obs.py": "3689c41f402e567e10cb404955c8a13cb1ca3c284a5c69e45037bfd1f22318c2",
+    "engine-cards/py/src/clasher/rl/contract_v5_tokens.json": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+    "engine-cards/py/src/clasher/rl/contract_v5.py": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08",
+    "bot/cards/build_runtime.py": "f51b42f33dc7f143bae6b22e6df7660c2c7475413e90a1b640afbdfd801a55b8"
+  },
+  "scoped_files": [
+    "bot/levels/configs.py",
+    "bot/levels/root.py",
+    "engine-cards/public_root.py",
+    "reports/cards/runtime/B1-PUBLIC-ROOT-HANDOFF.md",
+    "reports/cards/runtime/B1-PUBLIC-ROOT-PROGRESS.md",
+    "reports/cards/runtime/B1-PUBLIC-ROOT.md",
+    "reports/cards/runtime/receipts/b1-public-root-review-r1.md",
+    "reports/cards/runtime/receipts/b1-public-root-review-r2.md",
+    "reports/cards/runtime/receipts/b1-public-root-stdlib-r2.txt",
+    "reports/cards/runtime/receipts/b1-public-root-stdlib-r3.txt",
+    "reports/cards/runtime/receipts/b1-public-root-stdlib.txt",
+    "reports/cards/runtime/tools/probe_b1_public_root.py",
+    "reports/cards/runtime/tools/test_b1_public_root.py",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py"
+  ],
+  "stdlib_tests": 21,
+  "public_expected": {
+    "scoped_case_groups": 16,
+    "emitted_case_groups": 10,
+    "boundary_graph_fixtures": 32,
+    "boundary_plain_level_paths": 64
+  },
+  "public_executed": false,
+  "host_script_approval": "separate B1 prerequisite",
+  "validation_owner": "B1 single combined admitted phase",
+  "entrypoint": "probe_b1_public_root.run(R, fair_player_module, fresh_output_json)",
+  "preserved": {
+    "vocabulary_tokens": 360,
+    "ThreeMusketeers": 326,
+    "rust_build_inputs": true,
+    "runtime_pin_source": true,
+    "model_source": true,
+    "released_r3_roots": true
+  },
+  "no_active_pin_switch": true,
+  "no_sealing": true,
+  "rollback": "Revert new alias/root candidates only; retain pre-alias B1/native/gates and all r3 roots/evidence; no deployment implied."
+}

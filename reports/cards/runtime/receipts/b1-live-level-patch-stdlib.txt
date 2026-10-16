@@ -1,0 +1,1 @@
+PASS: legacy/new C56 payload bytes preserved; old stale GG graph reproduced; proposed consumer repairs valid distinct ranks; protected source unchanged

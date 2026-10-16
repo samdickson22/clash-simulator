@@ -1,0 +1,8 @@
+C56 PASS: 577 fixtures + 600 full/cut root records
+Supplemental receipt check correction: initial local (index,seat,variant) uniqueness diagnostic rejected repeated game indices; immutable compare.py keys sampled roots by (k,variant). No gate or source rerun/change.
+roots-total-0.jsonl 150 records native_sha256=6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d sha256=fe436c7e473b29da5659dbbdc1e8966aa9eb4f7ff4e1b0b8392e34f016546a94
+roots-total-1.jsonl 150 records native_sha256=6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d sha256=dffbe78bf09a651ed143595b1506c2f6f93a7c2e5f7b0e182d14201717fb5373
+roots-total-2.jsonl 150 records native_sha256=6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d sha256=4fea6bc2d486d94ba49ff43fb5de7bad7f1d269379e6418cffc827eb5c9451d9
+roots-total-3.jsonl 150 records native_sha256=6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d sha256=fffb50dad1ea0c1aa0924c4b2acb42dc221f75c519f2254911c8ae1e977ccc59
+600 unique (k,variant) keys across four shards; expected native in all metadata
+byte-exact gate log SHA256=78132f85733974fc21658e6221467b025951dc74c00f6a5a3ebbb39f69b91fc5

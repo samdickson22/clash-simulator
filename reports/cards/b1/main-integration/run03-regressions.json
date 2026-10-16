@@ -1,0 +1,99 @@
+{
+  "tests": [
+    {
+      "name": "clone-graph-seat0",
+      "ok": true
+    },
+    {
+      "name": "clone-boundaries-seat0",
+      "ok": true
+    },
+    {
+      "name": "clone-knight-negative-seat0",
+      "ok": true
+    },
+    {
+      "name": "mirror-healer-seat0",
+      "ok": true
+    },
+    {
+      "name": "selector-seat0",
+      "ok": true
+    },
+    {
+      "name": "projectile-musketeer-negative-seat0",
+      "ok": true
+    },
+    {
+      "name": "clone-graph-seat1",
+      "ok": true
+    },
+    {
+      "name": "clone-boundaries-seat1",
+      "ok": true
+    },
+    {
+      "name": "clone-knight-negative-seat1",
+      "ok": true
+    },
+    {
+      "name": "mirror-healer-seat1",
+      "ok": true
+    },
+    {
+      "name": "selector-seat1",
+      "ok": true
+    },
+    {
+      "name": "projectile-musketeer-negative-seat1",
+      "ok": true
+    },
+    {
+      "name": "recipient-immunity-BattleHealerAll",
+      "ok": true
+    },
+    {
+      "name": "removed-immunity-negative-BattleHealerAll",
+      "ok": true
+    },
+    {
+      "name": "recipient-immunity-BattleHealerSpawnBuff",
+      "ok": true
+    },
+    {
+      "name": "removed-immunity-negative-BattleHealerSpawnBuff",
+      "ok": true
+    }
+  ],
+  "passed": 16,
+  "total": 16,
+  "full_state_audit_diff_paths": {
+    "/entities/*/age": 179,
+    "/entities/*/aim/*": 4,
+    "/entities/*/attacked_current": 595,
+    "/entities/*/birth": 10695,
+    "/entities/*/clock/remaining": 37,
+    "/entities/*/clock/timeline": 37,
+    "/entities/*/clock_initialized": 37,
+    "/entities/*/clone_template": 37,
+    "/entities/*/cooldown": 992,
+    "/entities/*/facing/*": 74,
+    "/entities/*/finish_tick": 464,
+    "/entities/*/landed_tick": 464,
+    "/entities/*/lane": 179,
+    "/entities/*/last_target": 179,
+    "/entities/*/nav_target": 18,
+    "/entities/*/pending_ms": 18,
+    "/entities/*/public_speed_base": 3075,
+    "/entities/*/push_tick": 464,
+    "/entities/*/route_occupied/*": 221952,
+    "/entities/*/spell_name": 48,
+    "/entities/*/started": 179,
+    "/entities/*/stats/air": 25,
+    "/entities/*/stats/max_hp": 179,
+    "/entities/*/stats/ordinary": 37,
+    "/entities/*/stats/sight": 179,
+    "/entities/*/tunnel_total": 12
+  },
+  "note": "Native clone/reload equality is exact for every serialized field. Raw Python/native representation gaps are reported, not silently dropped."
+}

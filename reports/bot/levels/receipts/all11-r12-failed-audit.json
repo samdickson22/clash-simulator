@@ -1,0 +1,370 @@
+{
+  "utc": "2026-10-16T10:06:00.773725+00:00",
+  "parent_exit": 1,
+  "rows": 8,
+  "command_matches": 4,
+  "expected": 4,
+  "primary_ready": false,
+  "blocker": "Cannon truth-engine territory/water rejections in both arms",
+  "rows_audit": [
+    {
+      "arm": "A",
+      "index": 0,
+      "command_sha256": "d89d5c1ec8dd6784c403755a868a0a7feda9dc5b80251de45d106614faf28e75",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 593,
+          "executed": 26,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 26
+        },
+        "1": {
+          "blocked_polls": 125,
+          "executed": 25,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 25
+        }
+      },
+      "failures": {},
+      "child_exit_code": 0,
+      "level_diagnostics": {
+        "seat_configs": {},
+        "stats": {}
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 26
+        },
+        "1": {
+          "OK": 25
+        }
+      }
+    },
+    {
+      "arm": "A",
+      "index": 1,
+      "command_sha256": "5157fa5a4d69c6c2f5dfda4ecb94bb93c3035446ce198d7d783b033505697341",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 160,
+          "executed": 32,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 32
+        },
+        "1": {
+          "blocked_polls": 581,
+          "executed": 29,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 3,
+          "submitted": 29
+        }
+      },
+      "failures": {},
+      "child_exit_code": 1,
+      "level_diagnostics": {
+        "seat_configs": {},
+        "stats": {}
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 32
+        },
+        "1": {
+          "OK": 26,
+          "OUT_OF_TERRITORY": 3
+        }
+      }
+    },
+    {
+      "arm": "A",
+      "index": 2,
+      "command_sha256": "0b2044ac5c6e44233758942a93a4d3b7be010527c3ebf3a14dc2b6e1ec3baaa0",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 589,
+          "executed": 28,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 2,
+          "submitted": 28
+        },
+        "1": {
+          "blocked_polls": 105,
+          "executed": 21,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 21
+        }
+      },
+      "failures": {},
+      "child_exit_code": 1,
+      "level_diagnostics": {
+        "seat_configs": {},
+        "stats": {}
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 26,
+          "OUT_OF_TERRITORY": 1,
+          "WATER": 1
+        },
+        "1": {
+          "OK": 21
+        }
+      }
+    },
+    {
+      "arm": "A",
+      "index": 3,
+      "command_sha256": "b268937e244e4e8316bb298050089a46b91400670a45b4b424bb6cb27f22492a",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 55,
+          "executed": 11,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 11
+        },
+        "1": {
+          "blocked_polls": 423,
+          "executed": 14,
+          "peak_pending": 1,
+          "pending_at_end": 1,
+          "rejected": 0,
+          "submitted": 15
+        }
+      },
+      "failures": {},
+      "child_exit_code": 0,
+      "level_diagnostics": {
+        "seat_configs": {},
+        "stats": {}
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 11
+        },
+        "1": {
+          "OK": 14
+        }
+      }
+    },
+    {
+      "arm": "B",
+      "index": 0,
+      "command_sha256": "d89d5c1ec8dd6784c403755a868a0a7feda9dc5b80251de45d106614faf28e75",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 593,
+          "executed": 26,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 26
+        },
+        "1": {
+          "blocked_polls": 125,
+          "executed": 25,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 25
+        }
+      },
+      "failures": {},
+      "child_exit_code": 0,
+      "level_diagnostics": {
+        "seat_configs": {
+          "0": {
+            "changed": 0,
+            "direct": [],
+            "unsupported": []
+          }
+        },
+        "stats": {
+          "bodies": 1115,
+          "leveled": 0,
+          "roots": 102,
+          "towers": 0,
+          "unmapped": 0
+        }
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 26
+        },
+        "1": {
+          "OK": 25
+        }
+      }
+    },
+    {
+      "arm": "B",
+      "index": 1,
+      "command_sha256": "5157fa5a4d69c6c2f5dfda4ecb94bb93c3035446ce198d7d783b033505697341",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 160,
+          "executed": 32,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 32
+        },
+        "1": {
+          "blocked_polls": 581,
+          "executed": 29,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 3,
+          "submitted": 29
+        }
+      },
+      "failures": {},
+      "child_exit_code": 1,
+      "level_diagnostics": {
+        "seat_configs": {
+          "1": {
+            "changed": 0,
+            "direct": [],
+            "unsupported": []
+          }
+        },
+        "stats": {
+          "bodies": 1041,
+          "leveled": 0,
+          "roots": 109,
+          "towers": 0,
+          "unmapped": 0
+        }
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 32
+        },
+        "1": {
+          "OK": 26,
+          "OUT_OF_TERRITORY": 3
+        }
+      }
+    },
+    {
+      "arm": "B",
+      "index": 2,
+      "command_sha256": "0b2044ac5c6e44233758942a93a4d3b7be010527c3ebf3a14dc2b6e1ec3baaa0",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 589,
+          "executed": 28,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 2,
+          "submitted": 28
+        },
+        "1": {
+          "blocked_polls": 105,
+          "executed": 21,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 21
+        }
+      },
+      "failures": {},
+      "child_exit_code": 1,
+      "level_diagnostics": {
+        "seat_configs": {
+          "0": {
+            "changed": 0,
+            "direct": [],
+            "unsupported": []
+          }
+        },
+        "stats": {
+          "bodies": 1059,
+          "leveled": 0,
+          "roots": 104,
+          "towers": 0,
+          "unmapped": 0
+        }
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 26,
+          "OUT_OF_TERRITORY": 1,
+          "WATER": 1
+        },
+        "1": {
+          "OK": 21
+        }
+      }
+    },
+    {
+      "arm": "B",
+      "index": 3,
+      "command_sha256": "b268937e244e4e8316bb298050089a46b91400670a45b4b424bb6cb27f22492a",
+      "terminal": true,
+      "channels": {
+        "0": {
+          "blocked_polls": 55,
+          "executed": 11,
+          "peak_pending": 1,
+          "pending_at_end": 0,
+          "rejected": 0,
+          "submitted": 11
+        },
+        "1": {
+          "blocked_polls": 423,
+          "executed": 14,
+          "peak_pending": 1,
+          "pending_at_end": 1,
+          "rejected": 0,
+          "submitted": 15
+        }
+      },
+      "failures": {},
+      "child_exit_code": 0,
+      "level_diagnostics": {
+        "seat_configs": {
+          "1": {
+            "changed": 0,
+            "direct": [],
+            "unsupported": []
+          }
+        },
+        "stats": {
+          "bodies": 633,
+          "leveled": 0,
+          "roots": 67,
+          "towers": 0,
+          "unmapped": 0
+        }
+      },
+      "deploy_reasons": {
+        "0": {
+          "OK": 11
+        },
+        "1": {
+          "OK": 14
+        }
+      }
+    }
+  ],
+  "preserved_directory": "/mpac/sdicks02/jobs/clasher/bot-levels/dev/all11-r12-failed"
+}

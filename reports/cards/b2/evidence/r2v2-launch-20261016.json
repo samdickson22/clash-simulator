@@ -1,0 +1,41 @@
+{
+ "utc": "2026-10-16T09:33:56.816158+00:00",
+ "pid": 3422841,
+ "pgid": 3422841,
+ "args": [
+  "nice",
+  "-n",
+  "15",
+  "bash",
+  "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+  "4",
+  "bash",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z/fid/run_r2.sh",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z/out4",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z/mutA",
+  "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z/mutB",
+  "r2v2"
+ ],
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z",
+ "tag": "r2v2",
+ "source_and_tools_sha256": "001a53753aaa78aa788075029de25f7847638dfd81d8b3a0a1eb548acb52a9c4",
+ "native_sha256": {
+  "out4": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+  "mutA": "ff74a2fc8cfb7e78c60d0c1eb9e0880aebab8fb010939b2fa9d0eb6cfe01ee33",
+  "mutB": "2964dec34f8a0a29c9352e249e7e87e77adfce7bcdc908bdbb1443fb8b4265f3"
+ },
+ "reviewed_sha256": {
+  "probe_dash_full.py": "2e7a4d308ee20eec0bc987c54013102c0fc752916d438f6fa00c1f9bae1ede0c",
+  "run_r2.sh": "39ee7dff1d2172d8e58f9041f1b6e6c629fa7d10017fe4a8b39c744b67beacf4",
+  "validate_r2.py": "5dc495ded3a01755293c5c803ad4311008887df08173837b070593a80e5a4662",
+  "probe_clone_recovery.py": "70def80bd96d2e236f8773cbbec1e29bfb533217bda1a82e24b9d63a600a762c",
+  "native_entity_sites.py": "df6037b814c501ed507847803e8ae9d0e565ec8ceaec8e83a1c3cc41f6220c96",
+  "test_r2_harness.py": "c1d444931804ecf1b253a759584918436b723b556168ec5a85e47bdd5a5b542f",
+  "supersede_r2.py": "e84bb490263603e9e9df6bc3197b6b5b9a7eb052ad48a1d820b002ee25453ea0",
+  "stage_r2v2.py": "ff9c9a86b425cd5dedcc569a602fc39916bc7925ca37ccbf1f5d18f0e024bd73"
+ },
+ "cpu_bound": 4,
+ "nice": 15,
+ "superseded_receipt_sha256": "ff9043d36312a78b57bbd7dcd414919131d2c170ee1d9cd11e043bbc85f44e45"
+}

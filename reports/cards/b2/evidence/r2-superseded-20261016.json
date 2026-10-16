@@ -1,0 +1,29 @@
+{
+ "status": "superseded-not-evidence",
+ "before": {
+  "utc": "2026-10-16T09:30:50.120840+00:00",
+  "pid": 561530,
+  "start_ticks": 193963347,
+  "args": [
+   "bash",
+   "/mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh",
+   "8",
+   "bash",
+   "/mpac/sdicks02/jobs/clasher/cards/b2m/fid/run_r2.sh",
+   "/mpac/sdicks02/jobs/clasher/cards/b2m",
+   "/mpac/sdicks02/jobs/clasher/cards/b2m/out4",
+   "/mpac/sdicks02/jobs/clasher/cards/b2m/mutA",
+   "/mpac/sdicks02/jobs/clasher/cards/b2m/mutB"
+  ],
+  "members": [
+   " 561530       1  561530 Ss   bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 8 bash /mpac/sdicks02/jobs/clasher/cards/b2m/fid/run_r2.sh /mpac/sdicks02/jobs/clasher/cards/b2m /mpac/sdicks02/jobs/clasher/cards/b2m/out4 /mpac/sdicks02/jobs/clasher/cards/b2m/mutA /mpac/sdicks02/jobs/clasher/cards/b2m/mutB",
+   " 561552  561530  561530 S    bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_room.sh 8",
+   "3156679  561552  561530 S    sleep 20"
+  ],
+  "cpu_room_child": 561552
+ },
+ "utc": "2026-10-16T09:30:50.498639+00:00",
+ "live_group_members": [],
+ "lease_present": false,
+ "command": "SIGSTOP group561530; repeat identity/queued checks; TERM exact group561530; SIGCONT group561530"
+}

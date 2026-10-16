@@ -1,0 +1,1001 @@
+{
+ "status": "FAIL retained: complete sweep1033 mismatches",
+ "checks": {
+  "mutA": "PASS",
+  "mutB": "PASS",
+  "descendants": "PASS",
+  "paths_clone_scenarios": "PASS"
+ },
+ "inputs": {
+  "semv1-20261016T1052Z-clone-bounds.json": {
+   "sha256": "94726cbd9784edc5e62320e67a79965794363b53eac31bd53c909b8ea0ec2539",
+   "bytes": 2239
+  },
+  "semv1-20261016T1052Z-clone-checks.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-clone-recovery.json": {
+   "sha256": "0acd95b905f0edaeb3318116aeed0717edb30277ae1bb18174fcb5c9dc7a16b8",
+   "bytes": 833
+  },
+  "semv1-20261016T1052Z-descendants.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-descendants.json": {
+   "sha256": "d05311d20eb9c996c2794755742b2cf108702deef7c7a12631ffaa90e2c62ad2",
+   "bytes": 486514
+  },
+  "semv1-20261016T1052Z-fu-paths.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-fu-paths.json": {
+   "sha256": "30488c144145e7502491ce5c5f809383f23339dad869e7db0f7e9870052b2f2b",
+   "bytes": 12751
+  },
+  "semv1-20261016T1052Z-mutA.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-mutA.json": {
+   "sha256": "655c7dafba77b7a420778bb86dbf1124e08c5dc1318d26d50610367bb9a4dfa4",
+   "bytes": 8627497
+  },
+  "semv1-20261016T1052Z-mutB.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-mutB.json": {
+   "sha256": "924087176c209e33c8b872f916e2fd50a89c1e15cc5217bea006ed1892b17173",
+   "bytes": 11734429
+  },
+  "semv1-20261016T1052Z-scen-b2-root.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-scen-b2-root.json": {
+   "sha256": "25769e2e77c53cdb4b5a54618e7b6be2039d5d63622c6cbfffbb50fefabd7b96",
+   "bytes": 7848
+  },
+  "semv1-20261016T1052Z-scen-b2-stats.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-scen-b2-stats.json": {
+   "sha256": "25769e2e77c53cdb4b5a54618e7b6be2039d5d63622c6cbfffbb50fefabd7b96",
+   "bytes": 7848
+  },
+  "semv1-20261016T1052Z-scen-batchA.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-scen-batchA.json": {
+   "sha256": "371e1166e218670051296d36f1c33724f230e822d8b947ffb0b37a0a035bb447",
+   "bytes": 9790
+  },
+  "semv1-20261016T1052Z-semantic-1.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-semantic-1.json": {
+   "sha256": "0e05186022839285564273ba8faa2160c4ea0e0fa31d0d8df797c6e7152cfaf4",
+   "bytes": 92821354
+  },
+  "semv1-20261016T1052Z-semantic-2.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-semantic-2.json": {
+   "sha256": "55b2b913ce08fe87f8367b16bfa093b1ef4f8255cbf6c392f0fb91d9c18dc18e",
+   "bytes": 85807142
+  },
+  "semv1-20261016T1052Z-semantic-3.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-semantic-3.json": {
+   "sha256": "a540b24c0d4182aea711334d36c2837c9ad84350902a5f22a9950764f34379b9",
+   "bytes": 98207327
+  },
+  "semv1-20261016T1052Z-semantic-4.exit": {
+   "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+   "bytes": 2
+  },
+  "semv1-20261016T1052Z-semantic-4.json": {
+   "sha256": "23e6c6d7040cf1494ab928d035125aff416c376c7fe9a0b717df3e6da7cb9871",
+   "bytes": 89453077
+  }
+ },
+ "mutants": {
+  "mutA": [
+   {
+    "seat": "blue",
+    "runs": 40,
+    "hits": [
+     {
+      "lead": 2,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 3,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 4,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 5,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 6,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 7,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 8,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 9,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     }
+    ]
+   },
+   {
+    "seat": "red",
+    "runs": 40,
+    "hits": [
+     {
+      "lead": 2,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 3,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 4,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 5,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 6,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 7,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 8,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 9,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     }
+    ]
+   }
+  ],
+  "mutB": [
+   {
+    "seat": "blue",
+    "runs": 40,
+    "hits": [
+     {
+      "lead": -4,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": -3,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": -2,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": -1,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 0,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 1,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 2,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 3,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 4,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 5,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 6,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 7,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 8,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 9,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 10,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 11,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 12,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 13,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 14,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 15,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 16,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 17,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 18,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 19,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 20,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 21,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 22,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 23,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 24,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 25,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 26,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 27,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 28,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 29,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 30,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 31,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 32,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 33,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 34,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     }
+    ]
+   },
+   {
+    "seat": "red",
+    "runs": 40,
+    "hits": [
+     {
+      "lead": -4,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": -3,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": -2,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": -1,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 0,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 1,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 2,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 3,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 4,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 5,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 6,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 7,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 8,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 9,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 10,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 11,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 12,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 13,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 14,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 15,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 16,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 17,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 18,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 19,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 20,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 21,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 22,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 23,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 24,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 25,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 26,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 27,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 28,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 29,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 30,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 31,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 32,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 33,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     },
+     {
+      "lead": 34,
+      "field": "state.entities.8.hit_ids",
+      "python": [],
+      "native": [
+       7
+      ],
+      "digest_equal": true
+     }
+    ]
+   }
+  ]
+ },
+ "exits": {
+  "semv1-20261016T1052Z-semantic-2.exit": "0",
+  "semv1-20261016T1052Z-mutB.exit": "0",
+  "semv1-20261016T1052Z-scen-batchA.exit": "0",
+  "semv1-20261016T1052Z-fu-paths.exit": "0",
+  "semv1-20261016T1052Z-scen-b2-stats.exit": "0",
+  "semv1-20261016T1052Z-descendants.exit": "0",
+  "semv1-20261016T1052Z-semantic-1.exit": "0",
+  "semv1-20261016T1052Z-semantic-4.exit": "0",
+  "semv1-20261016T1052Z-semantic-3.exit": "0",
+  "semv1-20261016T1052Z-mutA.exit": "0",
+  "semv1-20261016T1052Z-clone-checks.exit": "0",
+  "semv1-20261016T1052Z-scen-b2-root.exit": "0"
+ }
+}

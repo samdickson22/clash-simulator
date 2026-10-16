@@ -1,0 +1,1037 @@
+{
+  "classifications": [
+    {
+      "card": "Knight",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Archer",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Goblins",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Giant",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Pekka",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Minions",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Balloon",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Witch",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Barbarians",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Golem",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Skeletons",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Valkyrie",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SkeletonArmy",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Bomber",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Musketeer",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "BabyDragon",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Prince",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Wizard",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MiniPekka",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SpearGoblins",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GiantSkeleton",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "HogRider",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MinionHorde",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "IceWizard",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "RoyalGiant",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SkeletonWarriors",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Princess",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "DarkPrince",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ThreeMusketeers",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "LavaHound",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "IceSpirits",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "FireSpirits",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Miner",
+      "flying": false,
+      "kind": "tunnel",
+      "passed": true,
+      "placement": 5
+    },
+    {
+      "card": "ZapMachine",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Bowler",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "RageBarbarian",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "BattleRam",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "InfernoDragon",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "IceGolemite",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MegaMinion",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "BlowdartGoblin",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GoblinGang",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ElectroWizard",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "AngryBarbarians",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Hunter",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "AxeMan",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Assassin",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "RoyalRecruits",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "DarkWitch",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Bats",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Ghost",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "RamRider",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MiniSparkys",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Rascals",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MovingCannon",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MegaKnight",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SkeletonBalloon",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "DartBarrell",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Wallbreakers",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "RoyalHogs",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GoblinGiant",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Fisherman",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "EliteArcher",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ElectroDragon",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Firecracker",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MightyMiner",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ElixirGolem",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "BattleHealer",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SkeletonKing",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ArcherQueen",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GoldenKnight",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperIceGolemite",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Monk",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperArcher",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "RoyalRecruits_Chess",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SkeletonDragons",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperHogRiderTerry",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "WitchMother",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ElectroSpirit",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "ElectroGiant",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "PrinceBuff",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Phoenix",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "TriWizards",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GoblinDemolisher",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GoblinMachine",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuspiciousBush",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperKnight",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SkeletonWarriors_SpookyChess",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GiantBuffer",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Berserker",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MergeMaiden_Normal",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "MergeMaiden_Mounted",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Ronin",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Cannon",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "GoblinHut",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "Mortar",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "InfernoTower",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "BombTower",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "BarbarianHut",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "Tesla",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "Elixir Collector",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "Xbow",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "Tombstone",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "FirespiritHut",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "BarbarianLauncher",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "GoblinCage",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "GoblinDrill",
+      "flying": false,
+      "kind": "tunnel",
+      "passed": true,
+      "placement": 5
+    },
+    {
+      "card": "GoblinPartyHut",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "Fireball",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Arrows",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Rage",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Rocket",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "GoblinBarrel",
+      "flying": false,
+      "kind": "water_spell",
+      "passed": true,
+      "placement": 4
+    },
+    {
+      "card": "Freeze",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Mirror",
+      "flying": false,
+      "kind": "mirror",
+      "passed": true,
+      "placement": 6
+    },
+    {
+      "card": "Lightning",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Zap",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Poison",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Graveyard",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Log",
+      "flying": false,
+      "kind": "rolling",
+      "passed": true,
+      "placement": 3
+    },
+    {
+      "card": "Tornado",
+      "flying": false,
+      "kind": "rolling",
+      "passed": false,
+      "placement": 2
+    },
+    {
+      "card": "Clone",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "Earthquake",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "BarbLog",
+      "flying": false,
+      "kind": "rolling",
+      "passed": true,
+      "placement": 3
+    },
+    {
+      "card": "Heal",
+      "flying": false,
+      "kind": "rolling",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Snowball",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "RoyalDelivery",
+      "flying": false,
+      "kind": "rolling",
+      "passed": true,
+      "placement": 3
+    },
+    {
+      "card": "WarmSpell",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "DarkMagic",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "GoblinCurse",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "MergeMaiden",
+      "flying": true,
+      "kind": "unrestricted",
+      "passed": false,
+      "placement": 0
+    },
+    {
+      "card": "Vines",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "MinionGiant",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "LittlePrince",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "Goblinstein",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "BossBandit",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperWitch",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperLavaHound",
+      "flying": true,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperEliteArcher",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "SuperMiniPekka",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GoblinRocketSilo",
+      "flying": false,
+      "kind": "ordinary",
+      "passed": true,
+      "placement": 1
+    },
+    {
+      "card": "GlobalClone",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "GoblinPartyRocket",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    },
+    {
+      "card": "SuperHogRider",
+      "flying": false,
+      "kind": "troop",
+      "passed": true,
+      "placement": 0
+    },
+    {
+      "card": "GlobalLightning",
+      "flying": false,
+      "kind": "unrestricted",
+      "passed": true,
+      "placement": 2
+    }
+  ],
+  "error": "ValueError(\"static classification disagrees with installed catalogue: [{'card': 'Tornado', 'kind': 'rolling', 'placement': 2, 'flying': False, 'passed': False}, {'card': 'MergeMaiden', 'kind': 'unrestricted', 'placement': 0, 'flying': True, 'passed': False}]\")",
+  "identity": {
+    "arena_sha256": "7fbe4b0dce373d49ec69f1cdaeb65047b1602ea58dd6ce3a79dfe9be03fe7169",
+    "binary_path": "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/royalesim/royalesim.abi3.so",
+    "binary_sha256": "97e03055332faeb986c91a12aa64c6e22ca65948b68351803d914e0a84eb43bb",
+    "calibration_sha256": "4c7c3d95a2ee078da103b9570e9a65debbbe90480352ae00a5f0ac6b6f883ebf",
+    "cards_sha256": "c68d6c011e0130649aa2647b21e293c8bf7141e32262bdfd8cc7592704229fdc",
+    "client": "16.402",
+    "data_path": "/mpac/sdicks02/repos/clasher-bot/.venv/lib/python3.12/site-packages/royalesim/data",
+    "placement_source_sha256": "8e6e55427942b5bd7fdb36cdbd241cbc0aecc82e143820b306d3896205281915",
+    "probe_source_sha256": "d742f77bca2cb3866dd225a302e1b84399c0d05ac84e8e14dba651d9938916ea",
+    "version": "0.1.34"
+  },
+  "nonbuilding_descriptive": [],
+  "passed": false,
+  "protocol": "rsim-static-water-intersection-v2",
+  "river_matrix": [],
+  "rows": []
+}

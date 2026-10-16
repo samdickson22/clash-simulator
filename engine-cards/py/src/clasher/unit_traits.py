@@ -200,6 +200,11 @@ def uses_air_collision_plane(entity: Any) -> bool:
     hover = getattr(entity, "_is_hover_unit", None)
     if hover is None:
         hover = is_hover_unit_card(getattr(entity, "card_stats", None))
+    # Batch B2: a flier a Vines catch holds to the ground is a ground unit for targeting and hit filters only;
+    # its body keeps the air collision plane (RoyaleSim (MIT) entity.rs `in_air`: "the walk, the collision and the
+    # flight height keep reading `flying`"). Only Vines sets _vines_grounded.
+    if getattr(entity, "_vines_grounded", False):
+        return True
     return bool(is_above_ground_surface(entity) or hover or (getattr(entity, "_river_landed_tick", -2) == getattr(getattr(entity, "battle_state", None), "tick", -1)))
 
 

@@ -63,11 +63,25 @@ def behavior_env():
 def runtime_files(root):
     """Frozen import roots and referenced weights/data; never scan job outputs."""
     council = root / 'reports/strategy_council_20260928'
-    directories = [root / p for p in ('engine-rs', 'src', 'student-source', 'reports/explore/s1',
+    directories = [root / p for p in ('engine-rs', 'src', 'imitation', 'student-source', 'reports/explore/s1',
                    'reports/explore/e1', 'reports/perf-audit/quickwins')]
-    directories += [council / p for p in ('engine-speed', 'search-noise-s4', 'search-noise-s6')]
+    directories += [council / p for p in ('imitation', 'engine-speed', 'search-noise-s4', 'search-noise-s6',
+                                         'c56/engine/root-v3')]
+    # imitation/evaluation/paths.py::setup can select a different serving engine root.
+    # Hash the full Python closure at both roots, never generated outputs or only weights.
+    serving = Path(os.environ.get('CLASHER_EVAL_RUNTIME_ROOT', os.environ.get('CLASHER_ROOT', root))).resolve()
+    serving_council = serving / 'reports/strategy_council_20260928'
+    directories += [serving/'src', serving/'engine-rs']
+    directories += [serving_council/p for p in ('imitation', 'engine-speed', 'c56/engine/root-v3')]
     paths = list(root.glob('*.py'))
     paths += [p for directory in directories for p in directory.rglob('*.py')]
+    # Raw token bytes are serving data beside contract_v5.py at either authorized
+    # source root. Semantic token/config digests cannot detect a formatting change.
+    tokens = {(base/'src/clasher/rl/contract_v5_tokens.json').resolve() for base in (root, serving)}
+    for token in sorted(tokens):
+        if not token.is_file():
+            raise ValueError(f'required serving contract token data missing: {token}')
+    paths += sorted(tokens)
     native = Path(os.environ.get('CLASHER_DELAY_NATIVE_DIR', root / 'native'))
     paths += list(native.glob('*.so')) + list(native.glob('*.py'))
     paths += [ENV_PATH, root / 'main02.pt', root / 'R3a.pt',
@@ -82,6 +96,11 @@ def runtime_files(root):
     paths.append(Path(spec.origin))
     for directory in spec.submodule_search_locations or []:
         paths += [p for p in Path(directory).rglob('*') if p.suffix in ('.py', '.so')]
+    proof_path = os.environ.get('CLASHER_LEVELS_PLACEMENT_PROOF')
+    if proof_path:
+        paths.append(Path(proof_path))  # Exact receipt bytes, not only its environment pathname.
+        data = Path(json.loads(Path(proof_path).read_bytes())['identity']['data_path'])
+        paths += [data / name for name in ('calibration.json', 'derived/arena.json', 'derived/cards.json')]
     return file_hashes(paths)
 
 
@@ -94,7 +113,8 @@ def invocation_identity(args, rt, vocab, manifest, inputs, sources, bank_sha256)
         runtime_path=str(rt.root.resolve()), pins=rt.pins, behavior_env=behavior_env(),
         python=sys.version, packages={name: metadata.version(name) for name in ('numpy', 'torch', 'royalesim')},
         levels_scope=rt.levels_scope, effective_prior_sha256=digest(rt.PRIOR),
-        config_sha256=digest(rt.R.config), vocab_sha256=digest(vocab), level_cache=manifest)))
+        config_sha256=digest(rt.R.config), vocab_sha256=digest(vocab), level_cache=manifest,
+        placement_compatibility=getattr(rt, '_placement', {}).get('proof'))))
 
 
 def identity_problems(identity):
@@ -138,6 +158,13 @@ def identity_problems(identity):
     if type(identity.get('all11_gate')) is not bool:
         problems.append('invalid identity all11_gate')
     sources = identity.get('source_sha256')
+    if isinstance(sources, dict) and 'bot/levels/placement.py' in sources:
+        placement = identity.get('placement_compatibility')
+        inputs = identity.get('runtime_files')
+        if (not isinstance(placement, dict) or placement.get('version') != 'rsim-static-water-intersection-v3'
+                or not sha(placement.get('sha256')) or not isinstance(inputs, dict) or
+                inputs.get(placement.get('path')) != placement.get('sha256')):
+            problems.append('missing exact-byte placement microprobe identity')
     if isinstance(arms, list) and 'B0' in arms and (not isinstance(sources, dict) or 'bot/live/levels.py' not in sources):
         problems.append('missing B0 root source identity')
     if isinstance(arms, list) and 'B' in arms:
@@ -176,7 +203,36 @@ def row_issues(row, *, require_exit=True):
                 missing_diagnostics=int(not diagnostics_complete(row, require_exit=require_exit)),
                 child_failures=int(row.get('child_exit_code', 0) not in (0, None)),
                 controller_prior_failures=int(row.get('protocol') == 'levels-harness-v2' and not prior_evidence_ok(row)),
+                placement_failures=int(bool(row.get('placement_compatibility')) and not placement_evidence_ok(row)),
                 nonterminal=int('error' not in row and row.get('terminal') is not True))
+
+
+def placement_evidence_ok(row):
+    expected, observed = row.get('placement_compatibility'), row.get('placement_diagnostics', {})
+    if (not isinstance(expected, dict) or not isinstance(observed, dict) or observed.get('proof') != expected
+            or observed.get('version') != expected.get('version')):
+        return False
+    actors, scripts = observed.get('actors', {}), observed.get('scripts', {})
+    if (not isinstance(actors, dict) or not isinstance(scripts, dict) or
+            not all(isinstance(a, dict) and isinstance(a.get('mask'), dict) for a in actors.values()) or
+            not all(isinstance(s, dict) for s in scripts.values())):
+        return False
+    if (set(actors) != {'0', '1'} or any(a.get('kind') not in ('policy', 'search') for a in actors.values())
+            or sorted(a['kind'] for a in actors.values()) != ['policy', 'search']):
+        return False
+    masks = list(scripts.values()) + [a['mask'] for a in actors.values()]
+    if not all(m.get('version') == expected.get('version') and all(type(m.get(k)) is int and m[k] >= 0
+               for k in ('calls', 'removed', 'unknown_slots', 'mirror_slots', 'water_removed')) for m in masks):
+        return False
+    paths = {f'R.bots[{style}].mask_builder' for style in ('balanced', 'pressure', 'defense')}
+    if set(scripts) != paths or scripts['R.bots[balanced].mask_builder'].get('calls', 0) <= 0:
+        return False
+    for actor in actors.values():
+        if actor.get('path') != 'poller.player.mask_builder' or actor.get('mask', {}).get('calls', 0) <= 0:
+            return False
+        if actor['kind'] == 'search' and actor.get('candidate_path') != 'p.core.bots[balanced].mask_builder':
+            return False
+    return True
 
 
 def prior_evidence_ok(row):
@@ -242,8 +298,17 @@ def validate_all11(case):
         raise ValueError(f'all11 gate requires complete level-11 true profile and view: case {case.get("index")}')
 
 
+def validate_bank_scope(bank, rt, *, all11_gate):
+    """Bind registered population to the installed scope before resume or any game fork."""
+    if 'scope' not in bank and all11_gate:
+        return  # Explicit compatibility exception for the original scope-less DEV all11 bank only.
+    scope = bank.get('scope')
+    if not isinstance(scope, dict) or not scope or scope != rt.levels_scope:
+        raise ValueError('registered bank scope missing or different from installed rt.levels_scope')
+
+
 def preload_configs(rt, jobs, all11_gate):
-    """Only planner-known levels; missing/incomplete exports abort before any fork."""
+    """Read existing planner-known exports/support once; never repair a cache before forks."""
     if not any(arm == 'B' for _, arm, _ in jobs):
         return
     from .configs import LevelConfigs, base_cards
@@ -255,6 +320,28 @@ def preload_configs(rt, jobs, all11_gate):
 
     # load()/supported() may otherwise build on a cache miss, including in a child.
     lc.build = refuse_export
+    support_path = lc.dir / 'supported.json'
+    if not support_path.is_file():
+        raise ValueError(f'existing supported manifest missing; no repair permitted: {support_path}')
+    support_raw = support_path.read_bytes()
+    support_data = json.loads(support_raw)
+    reference_sha = hashlib.sha256(json.dumps(rt.R.config, sort_keys=True).encode()).hexdigest()
+    if (not isinstance(support_data, dict) or support_data.get('comparison') != 'native-json-v1'
+            or support_data.get('reference_sha256') != reference_sha
+            or not isinstance(support_data.get('cards'), list)
+            or not all(isinstance(card, str) for card in support_data['cards'])
+            or len(set(support_data['cards'])) != len(support_data['cards'])
+            or not isinstance(support_data.get('unsupported'), dict)):
+        raise ValueError(f'existing supported manifest invalid/stale; no repair permitted: {support_path}; '
+                         f'runtime_reference={reference_sha}; cached={support_data!r}')
+    supported = frozenset(support_data['cards'])
+
+    def frozen_supported():
+        return supported
+
+    # Block the separate receipt-writer path, not just LevelConfigs.build().
+    lc._supported = supported
+    lc.supported = frozen_supported
     levels = {11}
     if not all11_gate:
         estimate = OpponentEstimate(rt)
@@ -280,26 +367,32 @@ def preload_configs(rt, jobs, all11_gate):
 
     lc.load = frozen_load
     reference = lc.load(11)
-    missing = set(base_cards(rt.R.config)) - (set(reference['cards']) | set(reference.get('errors', {})))
-    if reference.get('level') != 11 or missing:
-        raise ValueError(f'incomplete L11 export: missing={sorted(missing)}')
-    supported = lc.supported()  # Creates supported.json from the existing L11 export if absent.
-    if not (lc.dir / 'supported.json').is_file():
-        raise ValueError(f'supported manifest missing: {lc.dir}')
-    raw = (lc.dir / 'supported.json').read_bytes()
-    support_data = json.loads(raw)
-    reference_sha = hashlib.sha256(json.dumps(rt.R.config, sort_keys=True).encode()).hexdigest()
-    if (set(support_data['cards']) != supported or support_data.get('comparison') != 'native-json-v1'
-            or support_data.get('reference_sha256') != reference_sha):
-        raise ValueError('supported manifest changed while loading')
-    lc._supported = set(support_data['cards'])
+    expected = set(base_cards(rt.R.config))
+    present, errors = set(reference['cards']), set(reference.get('errors', {}))
+    if (type(reference.get('level')) is not int or reference['level'] != 11
+            or present & errors or present | errors != expected):
+        raise ValueError(f'incomplete L11 export: missing={sorted(expected - (present | errors))}; '
+                         f'extra={sorted((present | errors) - expected)}; overlap={sorted(present & errors)}')
+    good, bad = lc.check11()  # Exact comparison against these loaded bytes; never calls supported().
+    if set(good) != supported or bad != support_data['unsupported']:
+        from .fixture_support import differences
+        fields = []
+        for card, entry in reference['cards'].items():
+            fields.extend(differences(entry['card'], rt.R.config['cards'].get(card), f'cards.{card}'))
+            for table, rows in entry['tables'].items():
+                for key, value in rows.items():
+                    fields.extend(differences(value, rt.R.config.get(table, {}).get(key), f'{table}.{key}'))
+        raise ValueError('existing supported manifest disagrees with exact L11 check11; no repair permitted: ' +
+                         json.dumps(dict(cached=support_data, good=good, bad=bad, fields=fields), sort_keys=True))
     manifest = dict(cache_dir=str(lc.dir.resolve()), supported=dict(data=support_data,
-        raw_sha256=hashlib.sha256(raw).hexdigest(), loaded_sha256=digest(support_data)), exports=exports)
+        raw_sha256=hashlib.sha256(support_raw).hexdigest(), loaded_sha256=digest(support_data)), exports=exports)
     for level in sorted(levels):
         data = lc.load(level)
         errors = data.get('errors', {})
-        missing = set(supported) - (set(data['cards']) | set(errors))
-        if data.get('level') != level or missing:
+        cards = set(data['cards'])
+        missing = expected - (cards | set(errors))
+        if (type(data.get('level')) is not int or data['level'] != level or missing
+                or cards & set(errors) or cards | set(errors) != expected):
             raise ValueError(f'incomplete L{level} export: missing={sorted(missing)}')
     rt._level_configs = lc
     return manifest
@@ -327,6 +420,10 @@ def child(rt, vocab, case, arm, args, path, identity):
             raise ValueError('runtime inputs changed after launch')
         if 'behavior_env' in identity and behavior_env() != identity['behavior_env']:
             raise ValueError('behavior environment changed after launch')
+        if 'bot/levels/placement.py' in identity.get('source_sha256', {}):
+            if (not identity.get('placement_compatibility') or
+                    getattr(rt, '_placement', {}).get('proof') != identity['placement_compatibility']):
+                raise ValueError('child missing the parent-bound placement proof/installation')
         from bot.search.lopp import FAILURES
         from bot.levels.player import make_arm_player
         from bot.eval.headline import make_player
@@ -337,6 +434,9 @@ def child(rt, vocab, case, arm, args, path, identity):
                                  parity_all11=args.all11_gate)
         players = {seat: player,
                    1-seat: make_player(rt, case['opponent'])}
+        if identity.get('placement_compatibility'):
+            from bot.levels.placement import install_player
+            install_player(players[1-seat], kind='policy')
         capture_controller_priors(row, players, identity, 'before')
         result = play_match(rt, players, seed=case['seed'], decks=case['decks'], vocab=vocab,
                             client=args.client, verbose=True, levels=case['profile']['cards'],
@@ -351,6 +451,14 @@ def child(rt, vocab, case, arm, args, path, identity):
     except BaseException as exc:
         row.update(error=repr(exc), traceback=traceback.format_exc())
     finally:
+        if players and identity.get('placement_compatibility'):
+            try:
+                from bot.levels.placement import diagnostics
+                row['placement_diagnostics'] = diagnostics(rt, players, require_calls='error' not in row)
+            except Exception as exc:
+                row['placement_error'] = repr(exc)
+                row.setdefault('error', repr(exc))
+                row.setdefault('traceback', traceback.format_exc())
         if players and 'after' not in row.get('controller_prior_sha256', {}):
             try:
                 capture_controller_priors(row, players, identity, 'after')
@@ -552,8 +660,13 @@ def experiment(args):
     print(f'{utcnow()} preflight parent={os.getpid()} requested={len(planned)} workers={args.workers}', flush=True)
     root = Path(os.environ.get('CLASHER_BOT_RUNTIME', DEFAULT_RUNTIME)).resolve()
     sources, inputs = source_hashes(), runtime_files(root)
+    from .placement import proof
+    proof()  # Verify exact receipt/binary/data before paying for Runtime or accepting resume rows.
     rt = Runtime()
     install(rt)  # The same fixed conditional-population prior for every arm/controller.
+    validate_bank_scope(bank, rt, all11_gate=args.all11_gate)
+    from .placement import install_runtime
+    install_runtime(rt)  # Proof and actual instance paths bound before identity/resume.
     _ = rt.STUDENT
     from bot.search.lopp import load_model
     load_model('pool')  # Freeze the serial rollout model in the parent, not lazily per child.

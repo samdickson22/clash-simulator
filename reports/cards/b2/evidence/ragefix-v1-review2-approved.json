@@ -1,0 +1,15 @@
+{
+  "verdict": "APPROVED FOR BOUNDED TEST EXECUTION",
+  "reviewed_sha256": {
+    "tools/stage_rage_fix_v1.py": "ca6459f176b4e55e7874da5c2c676f1d0759d40a77c8223ad4247d96ba6bc484",
+    "tools/run_rage_fix_v1.sh": "e4776822e5731eefb98127c82d9a716cb80df9ddaafafffb2b379561a7d409c6",
+    "tools/validate_rage_fix_v1.py": "256fbfaf4382b9aa749dc5cd30065bdbb449471c0c8399b803f7b8ff2ca62228",
+    "tools/test_rage_fix_v1.py": "df841965239e8c654d4d39997d342cbbf550c07290027933875599742f310db2",
+    "tools/probe_rage_impact_v1.py": "d1e8068997d5ba195d65b246525279193e1614bd8b4c8ac9fefad064a833df19",
+    "RAGE-STATE-FIX.md": "55fc79c92f9e817591e2196ea91b8f1c247923d71ad629089ec39355251e5ea0",
+    "evidence/ragefix-source-review-inputs.json": "49c2111a433ab2abc0b3141405c61152c7f5d5a1e31e1a6180d8df4d926b4e38"
+  },
+  "review_task_id": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-rage-fix-v1-independent-review2-20261016-1309",
+  "review_summary": "**APPROVED FOR BOUNDED TEST EXECUTION**\n\nNo blocking findings. Round1’s provenance blocker is repaired: the literal identity pin binds the historical manifest and four semantic references before staging. Independent AST controls rejected changed references, other bound inputs, altered identity bytes, a changed terminal pin, re-signed receipts, and a missing reference.\n\nSeven stdlib tests, Python/embedded AST checks, optimized-mode rejection, and Bash syntax passed. The 504-file source map and eight approved semantic-v1 hashes match.\n\nApproval covers one fresh08 CPU4/nice15 job: three sequential candidate/mutant builds and the specified affected checks. Engine acceptance still requires matching fresh C56 evidence and independent review. Historical FAILs remain preserved; the old7738 gate remains unexecuted.\n\nNo edits, SSH, engine imports, builds, simulations, host jobs, or descendants occurred during review.\n\n```json\n{\n  \"verdict\": \"APPROVED FOR BOUNDED TEST EXECUTION\",\n  \"reviewed_sha256\": {\n    \"tools/stage_rage_fix_v1.py\": \"ca6459f176b4e55e7874da5c2c676f1d0759d40a77c8223ad4247d96ba6bc484\",\n    \"tools/run_rage_fix_v1.sh\": \"e4776822e5731eefb98127c82d9a716cb80df9ddaafafffb2b379561a7d409c6\",\n    \"tools/validate_rage_fix_v1.py\": \"256fbfaf4382b9aa749dc5cd30065bdbb449471c0c8399b803f7b8ff2ca62228\",\n    \"tools/test_rage_fix_v1.py\": \"df841965239e8c654d4d39997d342cbbf550c07290027933875599742f310db2\",\n    \"tools/probe_rage_impact_v1.py\": \"d1e8068997d5ba195d65b246525279193e1614bd8b4c8ac9fefad064a833df19\",\n    \"RAGE-STATE-FIX.md\": \"55fc79c92f9e817591e2196ea91b8f1c247923d71ad629089ec39355251e5ea0\",\n    \"evidence/ragefix-source-review-inputs.json\": \"49c2111a433ab2abc0b3141405c61152c7f5d5a1e31e1a6180d8df4d926b4e38\"\n  }\n}\n```",
+  "source_scope": "Exact504-file candidate map in evidence/ragefix-source-review-inputs.json; bounded execution only"
+}

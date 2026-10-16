@@ -51,6 +51,7 @@ FLYING = {'arrows', 'axe', 'baby-dragon', 'bat', 'bat-evolution', 'flying-machin
 BUILDINGS = {'goblin-hut', 'goblin-cage', 'tombstone', 'cannon', 'tesla', 'inferno-tower', 'bomb-tower', 'x-bow', 'mortar',
              'furnace', 'barbarian-hut', 'elixir-collector', 'goblin-drill'}
 DY_FLY, DY_BUILDING, DY_OTHER = .56, -.8, -.05
+ARENA_MARGIN = .5       # ground points beyond the 18x32 arena by more than this (tiles) are not units (banners, UI): dropped
 
 
 def _names(v):
@@ -83,8 +84,9 @@ def crop(frame):
 
 
 def letterbox(im, h, w):
-    """Ultralytics LetterBox(auto=False, center): scale to fit (never up), pad with 114 -> (img, k, pad_x, pad_y)."""
-    k = min(h/im.shape[0], w/im.shape[1], 1.)
+    """Ultralytics LetterBox(auto=False, scaleup=True, center): scale to fit, pad with 114 -> (img, k, pad_x, pad_y).
+    568x896 -> 896x576: k 1, 4 px each side; -> 1024x672: k 1.143 (resize to 649x1024), 11/12 px."""
+    k = min(h/im.shape[0], w/im.shape[1])
     nw, nh = int(round(im.shape[1]*k)), int(round(im.shape[0]*k))
     if (nw, nh) != (im.shape[1], im.shape[0]):
         im = cv2.resize(im, (nw, nh), interpolation=cv2.INTER_LINEAR)
@@ -145,6 +147,7 @@ class _Model:
         if not self.names:
             raise ValueError(f'{p}: no class names (model metadata, {side.name} or mapping["names"])')
         self.scale255 = str(meta.get('input_range', '0-1')) == '0-255'
+        self.nms = str(meta.get('nms', 'classwise'))          # the model's recorded NMS default (e16: 'agnostic')
 
     def run(self, rgb):
         if self.kind == 'coreml':
@@ -172,10 +175,11 @@ class _Model:
 
 class YoloUnits:
     def __init__(self, models, mapping, conf=.5, iou=.6, compute_units='ne', device='cpu', every=1, fmt=None, offsets=None,
-                 threads=0):
+                 threads=0, agnostic=None, arena_margin=ARENA_MARGIN):
         """models: path or list of paths (merged, class-agnostic NMS); mapping: classes.json / katacr_to_clasher.json path or
         dict. every: the driver detects on every Nth battle frame and reuses the last detections in between."""
         self.every = max(1, int(every))
+        self.arena_margin, self.last_oob = float(arena_margin), 0
         self.cls, self.class_list, self.map = load_mapping(mapping)
         self.mapping_path = None if isinstance(mapping, dict) else str(mapping)
         self.offsets_path = str(offsets) if offsets else None
@@ -183,6 +187,8 @@ class YoloUnits:
         paths = [models] if isinstance(models, (str, Path)) else list(models)
         self.models = [_Model(p, compute_units, device, names=self.class_list, threads=threads) for p in paths]
         self.conf, self.iou, self.fmt = conf, iou, fmt or self.map.get('format', 'auto')
+        # class-agnostic NMS (KataCR non_max_suppression(agnostic=True)): the spec's agnostic=0/1, else the model metadata 'nms'
+        self.agnostic = all(m.nms == 'agnostic' for m in self.models) if agnostic is None else bool(agnostic)
         for m in self.models:
             team = m.names[-1] in TEAM_NAMES
             m.fmt = self.fmt if self.fmt != 'auto' else 'katacr' if team else 'name_team'
@@ -207,7 +213,7 @@ class YoloUnits:
                             for m in self.models],
                     mapping=self.mapping_path, mapping_sha256=sha(self.mapping_path) if self.mapping_path else None,
                     offsets=self.offsets_path, offsets_sha256=sha(self.offsets_path) if self.offsets_path else None,
-                    conf=self.conf, iou=self.iou, every=self.every)
+                    conf=self.conf, iou=self.iou, agnostic=self.agnostic, every=self.every, arena_margin=self.arena_margin)
 
     def _detect(self, m, cr):
         """568x896 crop -> [dict(name, team, score, box=(x1, y1, x2, y2) in crop px)] after class-wise NMS."""
@@ -222,7 +228,9 @@ class YoloUnits:
             return []
         b, s, c = raw[:4, keep].T, s[keep], c[keep]
         xywh = np.c_[b[:, 0] - b[:, 2]/2, b[:, 1] - b[:, 3]/2, b[:, 2], b[:, 3]]
-        off = xywh.copy(); off[:, :2] += c[:, None]*7680.      # class-wise NMS (KataCR / Ultralytics max_wh offset)
+        off = xywh.copy()
+        if not self.agnostic:                   # class-wise NMS (KataCR / Ultralytics max_wh offset); agnostic: offset 0
+            off[:, :2] += c[:, None]*7680.
         idx = np.array(cv2.dnn.NMSBoxes(off.tolist(), s.tolist(), self.conf, self.iou), int).reshape(-1)
         tm = raw[-1, keep] if team else None
         out = []
@@ -235,7 +243,7 @@ class YoloUnits:
                 continue
             x1, y1, w, h = xywh[i]
             box = ((x1 - px)/k, (y1 - py)/k, (x1 + w - px)/k, (y1 + h - py)/k)        # crop px (Ultralytics scale_boxes)
-            out.append(dict(name=str(name), team=tv, score=float(s[i]), box=box))
+            out.append(dict(name=str(name), team=tv, p_team=float(tm[i]) if team else float(tv), score=float(s[i]), box=box))
         return out
 
     def ground(self, d):
@@ -265,10 +273,14 @@ class YoloUnits:
     def step(self, frame_bgr):
         t0 = time.perf_counter()
         units, unknown, src = [], [], []
+        m, self.last_oob = self.arena_margin, 0
         for d in self.detections(frame_bgr):
             if not self.is_unit(d['name']):
                 continue
             x, y = self.ground(d)
+            if not (-m <= x <= 18. + m and -m <= y <= 32. + m):    # outside the arena: dropped, never clamped onto the board
+                self.last_oob += 1
+                continue
             owner = d['team']
             e = self.cls.get(d['name']) or {}
             ident = e.get('identity')
@@ -312,7 +324,7 @@ def _body_card(identity):
 
 
 def from_spec(spec):
-    """drive.py --units 'yolo:<model>[+<model>...]:<mapping>[:k=v,...]' (k: conf, iou, cu, device, every, format, offsets,
+    """drive.py --units 'yolo:<model>[+<model>...]:<mapping>[:k=v,...]' (k: conf, iou, agnostic (1: class-agnostic NMS), arena_margin (tiles, default .5), cu, device, every, format, offsets,
     threads (torch backend intra-op threads while detecting; offline replays))."""
     import os
     parts = spec.split(':')
@@ -323,4 +335,6 @@ def from_spec(spec):
     return YoloUnits([ex(p) for p in parts[1].split('+')], ex(parts[2]), conf=float(opts.get('conf', .5)),
                      iou=float(opts.get('iou', .6)), compute_units=opts.get('cu', 'ne'), device=opts.get('device', 'cpu'),
                      every=int(opts.get('every', 1)), fmt=opts.get('format'),
-                     offsets=ex(opts['offsets']) if 'offsets' in opts else None, threads=int(opts.get('threads', 0)))
+                     offsets=ex(opts['offsets']) if 'offsets' in opts else None, threads=int(opts.get('threads', 0)),
+                     agnostic=None if 'agnostic' not in opts else opts['agnostic'] == '1',
+                     arena_margin=float(opts.get('arena_margin', ARENA_MARGIN)))

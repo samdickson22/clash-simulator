@@ -1,0 +1,60 @@
+{
+ "original_commit": "4916d66b8",
+ "handoff_commit": "745d18c2c",
+ "pid": 2737392,
+ "native_sha256": "df5443abf6d629fc34fded6fbc515ea40c70ecd6efe6693e379462500b617488",
+ "pinned_native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+ "pinned_outputs": {
+  "fixtures-pinned.jsonl": "f5a2665b2e7a14e4bf5cb2691a63ddc5cb7df150efd7f3b4ca7fd42fb5b5c670",
+  "roots-pinned-0.jsonl": "874120ce243e9b0316792e762814dfca2ee202791463aa29f4ce1919cd8616f3",
+  "roots-pinned-1.jsonl": "b9b79db729f9fa4c365306380be52fe30b517d2442098250e8ba390d6aa89555",
+  "roots-pinned-2.jsonl": "62f5ccacd54ff231f7532da11a640a710ec463a81cea4a783fd5afc876410968",
+  "roots-pinned-3.jsonl": "009897fe67a4e127925639b9492841c7780299daad71621934f2bb2956a06f42"
+ },
+ "pinned_copy_matches_batchA": true,
+ "roots": {
+  "config-4a5b58085ece2ff8.json": "4a5b58085ece2ff8bf38eec133dc703fb5b2a16e9984ba7ff32e5dd4e50ed59c",
+  "roots-000.jsonl.gz": "545943806569a55c903dd35932ef158fdb487939df61f29d6bfaa30000a8f156",
+  "roots-001.jsonl.gz": "33307e7b36f0a2ec3b8d13f3808eb5e750ae53054a5a6a4853bffd617d8f0834",
+  "roots-002.jsonl.gz": "ba757b9b72d59a74d515ce61425ba5a4682ca84f9674cd88ca3b11fd370ea3bf",
+  "roots-003.jsonl.gz": "7c8cc7d2f72ae06e6bbada7cd2772e27235c796fe4a06e603f6b35fc45784cb0",
+  "roots-004.jsonl.gz": "c6c607dbe7a512288e4da864b95c2aa79c5051d8b83c20e531ea7701c3a3b9ae",
+  "roots-005.jsonl.gz": "bf5627638c6dfef3211ad013ceecda8f35ad9464b498a3f2f11d7a964c05540a",
+  "roots-006.jsonl.gz": "f5e3d6ef87d09f856c66ec5a39de6b0803191efdc3695af1b579398025dee2c4",
+  "roots-007.jsonl.gz": "05a45c10a1166d69f8d158cfb02916584c5fd4a4f4cdf19791813dad55d2ef7c",
+  "roots-008.jsonl.gz": "231bce7f0e839a88ef3e9770885a9a0d67a90315fd70a3fade11c85cdc4ca72b",
+  "roots-009.jsonl.gz": "5b79c513c5721227ed9234efa0696d2a567c538299b4534c679306ebf6be3120",
+  "roots-010.jsonl.gz": "e4fe56ae8145592bfc1a77811e1e199481506b47fe1a8dc5abfb98ed11c64e54",
+  "roots-011.jsonl.gz": "631b949a3e3b65a3cc2a5946b7d2fb50985a9f1d8104cf0e93e2c96f56bb5df7"
+ },
+ "roots_match_batchA": true,
+ "gate_tools": {
+  "build.sh": "c73846682ce6f0361d4e10ae5b3bf92e77196840777a3616f8ffdfcf39dfcea4",
+  "check_src.py": "ccc2c4224bde350160340232d10cbc7e7cf5208c3e850ffda82acfb969ab1639",
+  "compare.py": "dce90963be2d46b6a0af8ba418d7c661b2d16a95f1d17202207c0c147eff9e6e",
+  "parity_all.sh": "118875a1241a63bea58593a737fea393e236d7864f7fccb69cb818d4d83192f9",
+  "parity_fixtures.py": "057bd386f022d3770baf0a47d19b7eac2b8e9fc978a0464746ae4a6fc7afe976",
+  "parity_roots.py": "2d721a49d003abfaadd0e5f532749f700addfd733c493e7acf2b6abe225063eb",
+  "patch_total.py": "48da4cafaad4e5442ea753f9b1a979cf363c703912d446ce4122e6311111c8d1",
+  "record_all.sh": "0cf077d39b08b64682c0ddc85de20ae96f914ea0c2c969d527af46da25f9ed39",
+  "record_roots.py": "222eea179aec127a465a5b31c6a803c1dbeba012b238ad76730139735b78798e",
+  "regress.py": "7e39452c019714acf396a10836bbbd150e5cf49efa1486728f3097f96941ab6a",
+  "regress_both.sh": "864ea274b2dadadca91ae7404850c673caba1f0376e3bd68776635853bdb2168",
+  "results/compare.json": "dcc058a7ff7539b812951e05216371ca92dc8fbeb07741433618b02ab6b275dd",
+  "results/regress-pinned.json": "c602ebee7f3f6c81c37a2c810660975fa2641392e01607c1ad66dc3b00cab3b1",
+  "results/regress-total.json": "c2ace59ac644dd8212a6fdebe201385dbb01356936d3de8d2377f1d2dbb9b6b5",
+  "results/totality-pinned-scrub.json": "e8ba2fe63ea4e2a28b907379f9b75a2df1bbe2d745e34f06a387536ae0c762be",
+  "results/totality-pinned.json": "c7791c7710ddd7f3c78cb5e0a2ef22cf7149045adad7c54d81b3b962529b92fe",
+  "results/totality-table.md": "cc8ed30b663f39f05eee700e56898fff11ba95403128e7cf0cd2bdfdfebc79f4",
+  "results/totality-total-scrub.json": "a812b07304fe5fdf4c4efdf6371b8e56545f97870526ad5c4438a7dac326b277",
+  "results/totality-total.json": "c414f42bb4c4c2cb787538f453e6f7b8110d1c0013cd4727c198462fc3643104",
+  "totality.py": "d8c443b8c3e4c9d48ab74f05b29614be65e0363d21737fdda55d54408c233692",
+  "totality_table.py": "d52a1e3d6f2171c4647f77496936addf8e1e58762207e3c5c513a097de5f91de"
+ },
+ "gate_tools_match_batchA": true,
+ "links": {
+  "engine-rs": "/mpac/sdicks02/jobs/clasher/cards/b2/gtree",
+  "src": "/mpac/sdicks02/jobs/clasher/cards/b2/gtree/py/src",
+  "gamedata.json": "/mpac/sdicks02/jobs/clasher/cards/b2/gtree/py/gamedata.json"
+ }
+}

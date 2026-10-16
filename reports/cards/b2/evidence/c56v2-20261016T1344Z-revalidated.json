@@ -1,0 +1,29 @@
+{
+ "fixtures": 577,
+ "identical_fixture_records": 577,
+ "identical_native_chains": 577,
+ "reference_parity": {
+  "pinned": 429,
+  "total": 429
+ },
+ "native_errors": 0,
+ "roots": 600,
+ "full": 300,
+ "cut": 300,
+ "games": 12,
+ "selections": 1800,
+ "step_checks": 1800,
+ "native_sha256": {
+  "pinned": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+  "total": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054"
+ },
+ "status": "READONLY_C56_RECORDS_REVALIDATED",
+ "scope": "Independent local stdlib raw-record/hash inspection, no native/engine execution; final source/evidence review still pending",
+ "audited_rows": {
+  "pinned": 577,
+  "total": 577
+ },
+ "validated_output_hashes": 23,
+ "exact_pass_sha256": "28fc87d1bd784bc34df75d6691cd6044c727ce1c9915bc21a146480df3bbeeca",
+ "elapsed_seconds": 1.3596551241353154
+}

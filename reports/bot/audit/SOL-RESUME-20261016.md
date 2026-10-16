@@ -142,6 +142,95 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 12:43 UTC actual deployed S40 source provenance receipt
+
+- Ownerpreservedfoldedread-only28actualMacsourcecopies,all11BASEsourcepins(7runtime+4bot),actualtranslator5361,
+  actualv5liveprojection/builder/staticMRO/consumerentrypoints. Attributionusesimmutable source/runtime and
+  source/codeatsnapshotroot,notarchivalbytes. Receiptread+hashedbyBOT:
+  `/mpac/sdicks02/scratch/live-loop/evidence/deployed-permission-contract-20261016T123203Z/receipt.json`,
+  SHA256292c3544539dad48b2ad15ece31c190d2eebb90346781c5d304a072eaf5ab778at12:43:25Z.
+- Receiptreportsall28pre/postMacsourcehashesequal,0444copies/nosymlinks,finalsource/controlcapture12:40:58Z.
+  BOTdidnotindependentlycontactMac/importmodel/runtime/native;receiptverificationisprovenanceclassification,
+  notfutureimplementationacceptanceorbackendclosureproof.
+- Addedactualdispatchchecklisttocontractcoordination:ContractV5build_publicandliveTranslatorproject_public_v5
+  aredistinctcallers;ConfidenceAwareActorObservationcontainsActorObservation;v5maskoverrideaddsabilityafter
+  basebuild,sorequiredWAIT-onlyeligibilitymustremainseparateaftercompletednativelegalityandnotmutatemodelmask.
+  ActualStandalone/D1/Policy/CachedPolicy/candidates/MultiSearch/_WallMulti/LivePlayerbrancheslistedforclosure.
+- No sharededits,integration/release/model/pin/liveauthority. StaticMROisnotnewexecutedMRO. NOdriver/watcher,
+  PAUSE/HOLDunchanged;futureauthorizedfallbackLL_HANDSYNC=0only,restoredhandsync2aneverenablesbythisevidence.
+- Exactcommands:readreceiptJSONusingboundedprint;`sha256sum <receiptpath>`;`date -u`returned12:43:25Z.
+  Loggedonly,no routineprogress/ack/receiptDMtocooordinator/owner.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: bind S40 coordination to actual deployed source evidence' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
+### 12:31–12:33 UTC requested S40 stable-contract coordination
+
+- Explicitloopownerrequest:stablefour-slotpermissioncontractandsharedbotcoordinationbeforeisolatedhelper
+  integration.Ownerretainse2eloopproducer/tests/review/package;existingretiredinterimBOThelperonly,noduplicate
+  workers/sharededits/release. ReadREQUIREMENTS.mdandfrozenhelperAPI.md,notamodel/runtimepromotionrequest.
+- Confirmeddesignboundary:immutableSlotPermissionfourstrictbooleans/captureid/backendpolltick/reasons,
+  independentpacketactualcaptureidentity,requiredmodefixedpersessionandcannotdowngrade,legacynonemetadata
+  parity.Two masks:actuale4v3build_rowencodesnativeaction_maskinfeatures;helpermustkeepthatmaskunchangedand
+  useseparateeligibility_maskonlyforchoices/proposals/candidates/fallbacks. Noprobability/confidence/ID/root/
+  own/reservation/event/cadencemutationallowed;guardindependent/historicalFAILED4/28unchanged.
+- BOTread-onlycurrentcontract/consumerinspectionfoundnoconflictingownedinterfaceedit;notaglobalcheckoutclaim.
+  ExistinggenericvariantscacheD1+nativeactionmaskaloneisinsufficientforpermission-specificproposals;guidance
+  requirescurrentcapture/pollkeyorrefilteringandeligibilitybeforetopK,argmax,samplingratherthanaftertruncation.
+  Currentrealcommandrestrictionmustnotcorruptfuturehypotheticalrollouthands. No ownimplementation/test/job.
+- Writtencontractreview `reports/bot/contracts/S40-SLOT-PERMISSION-COORDINATION.md` includesexactownership,
+  proposedcontractacceptance,consumer/cache/transport/cadence/fallback/state/guardchecksandactuale4v3lineage
+  provenance. No newreviewtaskorbackendworker;steerexistinghelperthroughloopowneronly.
+- Exactreads: `cat /mpac/sdicks02/scratch/live-loop/diagnostics/s40-r7/REQUIREMENTS.md`;
+  `cat /mpac/sdicks02/scratch/bot-slot-permission-s40-r1/API.md`; boundedrgofpublicobservation/actionmask/
+  consumersinbot/src;`sed -n '1,205p' src/clasher/rl/public_action_mask.py`;
+  `sed -n '125,190p' bot/search/players.py`;gitstatusonlyownedbot/srcpaths.No runtime/native/modelimports.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: coordinate isolated S40 permission API and separate selection mask' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+- Essentialrequestedcontractreplydeliveredtoexistingloopowneronly,key
+  `bot-s40-stable-contract-coordination-20261016T1233Z`;nohelperdirectsteer,newworkerorcoordinatorDM.
+- Firstdocpush12:34:51Z rejectednormalmainrace:remote13debde6fa997ab6989cb291087db1c761cc685c vs
+  expected80b7c103aee6af558f12a615e158fc395d6cea36;unpublishedcommit1d5e3782cdc6b452eb23a717f4238ed45d5a74fc.
+  Rebuildfreshindexonneworigin/mainandrereviewownpathdiff/secret-scan;no reset/forcepush/sharedindexmutation.
+
+### 11:54 UTC requested clean08 resource confirmation
+
+- ExplicitLIVErequestreservesstandingLIVEGPU08/GPU0 forsolee16clean08-only20epochrepeat;proposal
+  `/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/clean08-intake/next-trainer-proposal.json`readbyBOT.
+  No trainer/transfer/installstarted;requiredhostlauncherreview/inputhash/preflight/offhostcopy/evaluationplan
+  stillgatesexecution. Initimmutablee16,nooldV8descendant;noeligibility/promotioninferred. No01allowed.
+- Read-only08at11:54:36Z:GPU0util0%,104MiB,nocomputeprocesses,nologins,noBOTGPUleasechange.
+  At11:54:59Z normalcanonicalcountlive62,idle0,cap105,room43;12slotstotal74.
+  Activeleasegroupswant/used12/12,4/4,4/4,41/41;no capoverrideobserved.
+- PriorCARDclaim664663no longerqueued:analysis-r1.pid2382206,exit-code0,logverifies472completedreplayarmsand
+ 112scenarios/0errors. ThusCARD-before-newtrainerdependencyalreadyfulfillednaturally;no bypass/preemption.
+- DECISION:confirmnormalcpu_job12/nice19for10loaderswithsingle-threadmath,fullconcurrentfootprintleased;
+  up to16onlyifreviewedandneeded,not12reservationfor16consumers. Standingglobalcap105andGPUownershipunchanged;
+  resourceapprovaldoesnotapproveunreviewedlauncher,transfers,hostinstallsortriggersnewtraineritself.
+  PriorityCARD→soleapprovedreviewedLIVEtrainer→NEWBOTretries;preserverunningjobs/wrappers,no01.
+- Essentialdirectownerrepliesonly:LIVE `bot-clean08-resource-disposition-20261016T1154Z`,babysitter
+  `bot-clean08-cpu-priority-handoff-20261016T1154Z`;2sentences+proposalpath each.No coordinatorprogressDM.
+- Readcommands: `cat <proposalpath>`; `timeout 30 ssh -n 127x08` queryingwho,nvidia-smigpu/computeapps,
+  max-live/claim/leasefilesandexactCARDPGID;secondreadonlyps/leaseformulaandanalysisPID/exit/logtail.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: confirm reviewed clean08 resource priority after CARD admission' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
+### 11:29 UTC essential postanalysis admission handoff
+
+- ExplicitCARDrequest:all472offline replayarmscompleteexit0;reviewedfinalpostanalysisnowwaits08cpu_job3
+  claim664663,launcher664638. Originalreplaylease4040553released;newrequestsupersedescompletedclaim4040562.
+- BOTverifiedread-only11:29:26Z:launcher664638→wrapper664649→cpu_room664663→sleep,claim664663contains3,
+  noanalysis-r1.pid/exitreceipt/lease664649. ExistingG1K1babysitterT3statusrunning;nodead/completedagentrevived.
+- DECISIONcontinuesNEW08retry/optional-launchdeferraluntilthisexistingNEWclaimadmitsnaturally;allrunningjobs,
+  caps,wrappersunchanged.No bypass/migration/duplicate/no03-05compute.Signalsnone.
+- Essentialhandoffonlytoexistingbabysitter `bot-defer08-retries-for-postanalysis-664663-20261016`,2sentences+
+  CARDreceiptpath `/mpac/sdicks02/repos/clasher-cards/reports/cards/nulls/PROGRESS.md`. No coordinatorprogress/
+  receipt/commitDMandno duplicateacktoCARDowner.
+- Exactreadcommands: `date -u '+%Y-%m-%dT%H:%M:%SZ'` returned11:29:08Z;
+  `tail -32 /mpac/sdicks02/repos/clasher-cards/reports/cards/nulls/PROGRESS.md`;
+  `timeout 30 ssh -n 127x08` withexactPID/PPID/PGID664638filterandread-onlyclaim/lease/analysisPID/exitchecks.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: retain CPU deferral for reviewed offline postanalysis claim' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 10:00–10:01 UTC requested scope disposition and three-slot coordination
 
 - Explicitlevelownerquestion:obsolete03N4probe twiceexpiredinadmission,didnotexecute;recommendnonblocking

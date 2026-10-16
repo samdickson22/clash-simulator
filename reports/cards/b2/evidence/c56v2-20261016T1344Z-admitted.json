@@ -1,0 +1,28 @@
+{
+ "status": "ADMITTED_NO_RESULT_YET",
+ "host": "127x04",
+ "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-c56v2-20261016T1344Z",
+ "pid": 582309,
+ "pgid": 582309,
+ "lease": [
+  4,
+  582309
+ ],
+ "utc": "2026-10-16T13:44:11.729851+00:00",
+ "source_commit": "55bac129b93a055898524b53cc350091fb65259e",
+ "staging_commit": "2318ee752f814d9b3c59cf13fa266176b8a63bef",
+ "identity_sha256": "a74694ce259468316242b004d0774fd6a0bc823981b019ce7a3ca3889a31f646",
+ "manifest_sha256": "a8ae9d1a8933cbc84b3ad2fa849f7cd21086c1b3c87b2e251fcdaa000b159956",
+ "engine_file_count": 504,
+ "deployed_shared_source_files": 10666,
+ "shared_bot_commit": null,
+ "shared_bot_source_method": "actual-filesystem-python-json-v1",
+ "input_hashes": 19462,
+ "fixture_episodes": 577,
+ "sampled_roots": 300,
+ "native_sha256": {
+  "pinned": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
+  "total": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054"
+ },
+ "scope": "Identity/source binding only, no C56/engine acceptance until terminal validator and independent review."
+}

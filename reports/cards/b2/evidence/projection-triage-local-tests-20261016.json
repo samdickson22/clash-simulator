@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-16T10:28:45Z",
+  "kind": "local_stdlib_only",
+  "tests": 11,
+  "verdict": "PASS",
+  "seconds": 0.002,
+  "source_sha256": {
+    "probe_dash_full.py": "b2dca4e389032cc37553ef7dbf5327b88a592fe9c4f0caba1e122a80c955bb7a",
+    "test_r2_harness.py": "cdac3e6fb8e792982eaca8b8f7cc0b5448993add7a70e20b4dd2e268b7a8d691"
+  },
+  "checks": [
+    "actual committed projectile endpoint and unchanged target ID",
+    "wrong endpoint still fails",
+    "native non-null historical speed preserved across charge threshold",
+    "zero cache does not select fallback",
+    "native None uses exact normal/charge fallback",
+    "actual Python original-speed recovery",
+    "independent corruption of native or Python base speed fails",
+    "previous rejection/mutation/optional state/scanner checks"
+  ],
+  "dynamic_execution": false,
+  "original_r2v2_status": "FAIL remains, run still active",
+  "contract_change_implemented": false
+}

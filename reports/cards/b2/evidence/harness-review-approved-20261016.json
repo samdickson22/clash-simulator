@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-16T09:23:31Z",
+  "verdict": "APPROVED FOR BOUNDED TEST EXECUTION",
+  "task_id": "node:delegated-task:command%3Amcp%3Ac2371be3-b4fc-4c4c-9d4e-c37424334a7c%3Adelegate-task%3Ab2-r2-harness-independent-review3-20261016-0920",
+  "provider": "codex",
+  "model": "gpt-6.1-sol",
+  "reasoningEffort": "high",
+  "reviewed_sha256": {
+    "probe_dash_full.py": "2e7a4d308ee20eec0bc987c54013102c0fc752916d438f6fa00c1f9bae1ede0c",
+    "run_r2.sh": "e939157f39172d1ea9dfa7915825affc2e9100c1050b9af87c73b782ef956beb",
+    "validate_r2.py": "5dc495ded3a01755293c5c803ad4311008887df08173837b070593a80e5a4662",
+    "probe_clone_recovery.py": "70def80bd96d2e236f8773cbbec1e29bfb533217bda1a82e24b9d63a600a762c",
+    "native_entity_sites.py": "df6037b814c501ed507847803e8ae9d0e565ec8ceaec8e83a1c3cc41f6220c96",
+    "test_r2_harness.py": "c1d444931804ecf1b253a759584918436b723b556168ec5a85e47bdd5a5b542f"
+  },
+  "limitations": [
+    "read-only review; no dynamic parity performed",
+    "fresh non-r2 tag under cpu_job8 only",
+    "preserve queued PID/PGID561530 and its files; no duplicate/relaunch",
+    "full engine acceptance still requires successful parity/coverage/C56 receipts"
+  ]
+}

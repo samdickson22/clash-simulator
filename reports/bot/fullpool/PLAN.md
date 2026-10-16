@@ -56,7 +56,7 @@ python -m bot.exit.generate --out G1 --student student:<ext>/rl5-v10-fp.pt@0.537
 **F1, ExIt round 1 fit.**
 
 ```
-python -m bot.exit.train --init <ext>/rl5-v10-fp.pt --new G1pack --old <C56 K4C corpus, e.g. kc7a> --new-ratio 1.0 \
+python -m bot.exit.train --init <ext>/rl5-v10-fp.pt --new G1pack --old <C56 K4C corpus, e.g. kc7a> --new-ratio 0.5 \
     --temperature 0.003 --lr 3e-5 --steps 1500 --batch 4096 --device cpu|cuda
 ```
 
@@ -69,7 +69,9 @@ python -m bot.exit.train --init <ext>/rl5-v10-fp.pt --new G1pack --old <C56 K4C 
   F1 therefore waits for the first GPU the LIVE LEAD hands back. GPU estimate: ~1–1.5 h for 1,500 steps, scaled
   from BL6's ≈4 h per 6,000 steps. G1 data generation stays CPU-first, so the GPU time goes only to fits.
 - Lower lr than the from-scratch fits (1e-4), because this fine-tunes an RL-tuned net.
-- Variants, cheap to run as soon as F1 works: new-ratio 2.0, and an arm without the C56 corpus.
+- `--new-ratio` is the fraction of a batch from new data: .5 means 1:1 new:old; .6666666666666666 means 2:1.
+  An explicit new-only arm omits `--old` and uses 1.0 (`NO_OLD=1 NEW_RATIO=1` in the wrapper).
+  Earlier proposed values 1.0/2.0 with `--old` were erroneous and did not load the C56 corpus.
 
 **R11, RL round on the full pool.** Needs a GPU learner; actors run on CPU.
 - Init: the F1 winner, or rl5-v10-fp if F1 fails its gate.
@@ -205,3 +207,32 @@ the K1 game had 0 errors (859 rows).
      ARM=b (CPU).
    - Student: once G1 is done (or about 2,500 games for an early F1), run pack_g1.sh on each host, rsync the packs
      to the GPU host, then `DEVICE=cuda THREADS=8 fit_f1.sh` (GPU-only, per S3).
+
+## 7. Recovery gate, 2026-10-16 16:18Z (supersedes fit launch examples above)
+
+F1a/F1b and KF1a/KF1b were stopped after independently reviewed identity checks. No valid refit or screened
+winner exists. See `REFIT-AUDIT.md` for exact jobs, failures, source proof and evidence. All existing output
+paths, logs and receipts remain reserved evidence; never reuse them. No retry is authorized.
+
+Prepared wrappers require a fresh explicit `NAME`, unused outputs, and a current `cpu_job.sh` lease covering
+configured CPU demand. F1 defaults to 8 compute threads + 2 loaders (10 slots); KF1 defaults to 8 threads,
+8 preceding extraction workers plus the waiting parent (peak 9 slots). A process-count cap alone does not
+prove a threaded fit fits its lease. The wrappers do not obtain an allocation.
+
+Before any separately authorized attempt:
+
+- Review a fresh source revision and the actual host copies, runtime receipts, argv, environment and interpreter.
+  F1 CUDA defaults to `clasher-bot-gpu/venv/bin/python`; the CPU venv's installed torch fails on the fleet driver.
+- Approve exact CPU/GPU ownership and capacity. The temporary GPU04/08 loan covered only the now-stopped jobs;
+  both GPUs reverted to LIVE. Historical idle observations, allocations and preflights do not authorize a fit.
+- Review input manifests, immutable recording identities and duplicate/game-split checks. F1 requires the three
+  G1 packs plus the C56 kc7a corpora with a fractional mixture. KF1 requires K1 **and** identified legacy C56 pool
+  recordings via `OLD_REC`; those legacy recording identities are still unresolved. The 01 fit inputs excluded
+  them. The two still-running K1 shards are not immutable fit inputs.
+- Use fresh log, receipt and output identities; obtain a receipt that matches the actual process start, PGID,
+  argv and lease. `detach.sh` can return a stale pre-existing receipt, so a printed receipt is insufficient.
+- Require trainer completion and validated output. KF1 completion JSON now follows finite/allclose parity of
+  gate/card/tile serving logits on held-out views; this prepared check has not been exercised by a new fit.
+  Earlier wrappers could print `rc 0` after a traceback. Never infer success from that end marker.
+
+The existing experiment gates remain unrun. No old eval gate is revived and no model/runtime is promoted.

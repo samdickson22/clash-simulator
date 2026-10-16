@@ -1,0 +1,9 @@
+2026-10-16T13:28:23Z
+2026-10-16T13:28:00Z pid=3718905 phase=reference
+genuine39 pairs/78runs, all observables unchanged {'PASS': 22, 'DIFF': 17}
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/out/clasher_core.abi3.so: OK
+ae76ced45a920a97a899632281a3a47a5be7a0233875cefd8a8ec22ea5a844e2  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/root-implementation-packet.json
+258b3dc986997320b59e3da0122bad0a715d3b37970eb41dffc507b37fad3b4f  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/root-source-review.md
+c0a7dad32bf9e41d2b6379f1889795162f6749f3e98ddcae94f0a5d3673ae4bd  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/public_emitted.py
+a50c8f9ead56403fbd82109935e367b1b2922c8299ecf1342fb72b5cbd9d2a6d  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/probe_b1_public_root.py
+3847208       0 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n 15 bash /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03/tools/review_jobs.sh /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-03 public

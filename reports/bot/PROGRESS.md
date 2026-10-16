@@ -27,15 +27,32 @@ Report ONCE to owningparent whenWHOLEassignmentactuallydone(finalresult+artifact
 finaldeliverycounts,no duplicateDM. Essentialcross-ownerhandoffgoesdirectowner. Ownsubstantialend-to-endwork,
 no tinypertest/perstepdelegation; independentreviews remainseparate. Includeinfuturechildbriefs.
 
+**S40sharedcontractcoordination12:33Z:** existingloopownerretainse2eproducer/integration/review/release,andits
+existingisolatede4v3backendhelperonly. No conflictinginterfaceWIPinthisBOTownedwork; no newworker/sharededit.
+FrozenimmutableSlotPermissionAPIacceptedforcoordination(notrelease):independentcapture+backendpollbinding,
+session-requiredfailclosed,legacyabsentparity. Criticallynativeaction_maskfeeds e4v3model featuresandmustremain
+unchanged;separateeligibility_maskrestrictsactualchoice/proposals/candidates/fallbacksonly,notfeatures/roots/
+ledger/cadenceorhypotheticalfuturehands. Detailedcache/capture/fallback/guardacceptanceguidance:
+`contracts/S40-SLOT-PERMISSION-COORDINATION.md`. Allsteeringthroughloopowner;no competingimplementation.
+At12:43Z actualdeployedbaseprovenanceisnowpreserved:28immutableMacsourcecopies and11BASEsourcepins(7runtime+
+4bot),actual5361,source-declaredv5live/simulatorprojection/MRO+consumerentrypoints. Base/rollbackattributionuses
+snapshot source/{runtime,code},notarchivalmain. ThisclearsbaseprovenanceONLY;staticMROisnotexecutedclosure,
+and noimplementationacceptance/sharededit/integration/release/liveauthority. ReceiptSHA
+`292c3544539dad48b2ad15ece31c190d2eebb90346781c5d304a072eaf5ab778` documentedinthecontractcoordinationfile.
+
 **CPU coordination09:41:52Z:** 04literal live91+idleleases7+onepilot=99≤105, no logins; normaladmissionhas7slots.
 CARDlead may move ONLYtemplatepilot to04 throughreviewedcpu_job1/nice15 afterexactsource/runtime/nativepreflight
 andverified08queuedgroup exit. Normalwrapper remainsauthoritative; no bypass/otherjobmove/pinchange.
 BOT read-onlyreceipt: `/mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/cpu-room04-20261016T094152Z.json`.
 
-**CPU08coordination10:00:54Z:** live101+idleleases3=104of105,only1effective slot; reviewedofflineadjudication
-cpu_job3launcher4040494/claim4040562stillalive/admissiononly. BOTbabysitter mustdeferNEW08retry/optional launches
-untilthat existingclaim obtainsnormallease; allrunningjobs/caps/wrapperspreserved,no preemption/migration/bypass.
-CARDleadnotifiedasa requestedessentialhandoff. No QC/replayPythonstartedatinspection.
+**CPU/GPU08coordinationupdate11:54:59Z:** CARDpostanalysisclaim664663naturallyadmitted;analysisPID2382206,
+exit-code0,112scenarios/0errors;that specificretrydeferralfulfilled. GPU08/GPU0idle,no BOTleasechange;standing
+LIVEownershippreserved. Currentnormaladmissionlive62+idle0/cap105=43slots;proposed12wouldtotal74.
+LIVEsolee16clean08-only20epochrepeatCPUallocationconfirmed:normalcpu_job12/nice19,10loaders,single-threadmath;
+reservefullconcurrentfootprint(up to16onlyifreviewed/needed),CARDbeforetrainerbeforeNEWBOTretries,no01.
+No trainer/transfer/hostinstallauthorizedbythisresourceconfirmation;existingreview/hash/input/offhostcopy/
+evaluationgatesremain. Existingrunningjobs/caps/wrappersunchanged,no bypass/preemption/migration/duplicate.
+Proposal `/mpac/sdicks02/scratch/live-perc-r3/audit-20261016/clean08-intake/next-trainer-proposal.json`.
 
 - **Best student remains RL r5 v10**, threshold 0.5375, SHA256
   `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10
@@ -202,3 +219,27 @@ no process, launched no compute job and changed no runtime/model pin. No rollbac
 2. Search scorer: the scripted opponent models inside rollouts. These are the remaining lever after the candidate and
    leaf nulls.
 3. Re-headline the best bot when the code changes. Live play is a separate, later authorization.
+
+## Daily recovery deputy — 2026-10-16T13:17:50Z
+
+Canonical BOT scheduled run218 and Sol219/220 failed BEFORE work on provider-handoff context allowance; historical thread preserved, no Claude retry/fleet. Compact substantial recovery deputy task `node:delegated-task:command%3Amcp%3Adf0389d9-158c-4b1a-9667-b7602236a666%3Adelegate-task%3Abot-daily-headline-context-recovery-sol-20261016-r1` owns only unfinished daily/resource reconciliation. Existing owners/jobs unchanged; latest strict quiet and all gates apply.
+
+Exact pre-draw audit found noOct16bank/output/activeheadline on04/08; adopt none. Fresh BASE **3877999783388832**, drawn **2026-10-16T13:17:50Z**, registeredHEADLINE BEFOREgames; planned paired2400games via unchanged reviewed detach/cpu_job/bot-lopp-run launchers,04lease9/workers8/cases0–79;08lease33/workers32/cases80–399. Standardcpu_room/cap105/maxeval08=36; LIVE08lease12admitted3609461/trainer3609621GPU95% retained. Existing fullpoolbabysitter received essential release of retrypriority deferral only; no newshards/speculation. Existing levelR27invalid55rows/16GAME_OVER remainsstopped, R28source-onlyowner/review continues; no retry/acceptance/rebank bydeputy. ChampionK4L-R-gs and fastRLr5v10 unchanged.
+
+Fixedbank continuity re-confirmation source unchanged from accepted daily0cd7fd28 (143trackedbotfilesequal; changed/absentlive-only andaccountingfiles not in turn-based path), prior24/24commandhash equality retained; finalrowslabelselection-biased. R8isolated15-fileSlotPermissionimplementation/freshSolreview pending;all11BASEsactualMacattestedincludinglopp_fast,immutableAPI/twomasks retained,no competingcode/sharedintegration/release/liveauthority. Detailedcommands/receipts/blockers: `audit/SOL-DAILY-RECOVERY-20261016.md` and `/mpac/sdicks02/jobs/clasher/bot-daily-recovery-20261016/`. No gamesstartedatregistration.
+
+**Daily13:18Zactualadmission:** preregcommitbb74fc17 beforejobs;04PGID3261204 lease9/8workers/480rows,08PGID4091359 lease33/32workers/1920rows; bothactuallaunch.json matchBASE3877999783388832/rsim15535/samepairedcases. Conservativecounts04=71,08=75under105. Routineprogress/receiptsinaudit; resultsPENDING, championunchanged.
+
+**Recoverycollectorcorrection:** existingrevset-r7collectorCOMPLETED/parked(commitd4926a9f6679),floorchk30/30hashidentical,40/40terminalsmoke/0errors,patched217vs178passeswithsame9fail/7skip. Supersedes09Zqueuedstatus; no restart or deploymentGO. Fullpoolbabysitter retains authorizedretryownership after08LIVEadmissionpriorityrelease.
+
+**R8coordination13:30Zupdate:** exact15-sourceofflineimplementationnowindependentGO(RELEASE.json,reviewhashverified),supersedesreviewpendingonly; canonicalbot/live/player.py0e1c0d88 differsattestedbase3b4f27d7,preservedprivatebytes/diff,nooverwrite. Executableportdeltafreshreview +existingintegration/release/prehost/separateplaygatesremain;acceptedAPI/twomasks/NO DRIVER/PAUSEunchanged.
+
+**R8sourcepublication13:54Z:** canonicale883a80da015360f6c19b2eb1f2cd6e10c2aa8d8 exactreviewedport/scanner0; deputyverified15sourcepins. Localplayer0e1cWIPpreserved, nooverlappingcodepublication; futuresurgerymustusepublishedsource/reviewexecutabledelta. Actualhost/runtime/pin/playauthorityabsent, NO DRIVER/PAUSE/LL0/separatehostprofileunchanged.
+
+### Daily recovery complete — 2026-10-16T14:15:43Z
+
+**Fresh quoted RoyaleSim15.535 pool: K4L-R-gs 0.878 [0.859, 0.895]; paired K4C-r16 0.826 [0.804, 0.848]; Δ+0.052[+0.028,+0.076].** BASE3877999783388832 preregisteredbb74fc17beforegames;2400/2400uniqueterminalrows,400/opponent/bot,0errors/missing/duplicates,bootstrap4000seed0equalopponents. R3a .810/.740,v1 .9275/.8625,rext-bc .895/.875. Fixedbank(selection-biased)re-confirmedRS P1 .931/v3 .937;oursP1 .935,0rerungames. Champion/faststudentunchanged. Both04/08ownedgroups/leasesgone;before/aftersource/runtime/modelpinsmatch,logs0bytes,noinventedlauncherexitcode. Allcommands/rawmanifest/exactCIs inrecoveryaudit/job; standard summarizer crosscheckPASS.
+
+Existingfullpoolowner ownsnormalr2retries/root/data/reviewbarriers,08LIVElease/trainingprioritypreserved; nospeculativereplacements/partialpromotion. Revsetcomplete/parked. ExistinglevelR30actualownerreport300/300quality_oktrue,parentexit0; thisdoesnoteraseR27invalidrawfailuresorconstitutedeputyacceptance/promotion. Existinglevelowner/parentvalidatesfinalinputs/cache/reportdecision; nofrozenfile/gameactionbydeputy. R8sourcee883/mainhooksandlocalplayer0e1cWIPpreserved; publicationONLYfiveownedreports/contractpaths,nocodeoverlap/host/runtime/pin/playauthority.
+
+CanonicalhistoricalBOTthread remainscontextblocked, nextoriginaldaily17Oct13Zstillboundthere; no retry/compactionfiction/duplicateschedule/fleet. Recoverydeputycompletedonlyunfinisheddaily/resourceassignment, exacttaskID inaudit. Oneautomaticwholeassignmentfinal toowningparent,nomanualDM.

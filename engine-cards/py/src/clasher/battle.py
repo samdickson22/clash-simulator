@@ -22,7 +22,7 @@ from .factory.dynamic_factory import (
     building_from_values,
     troop_from_character_data,
 )
-from .spells import SPELL_REGISTRY, DirectDamageSpell, MirrorSpell, Spell
+from .spells import SPELL_REGISTRY, CloneSpell, DirectDamageSpell, MirrorSpell, Spell
 from .mechanics.shared.death_effects import DeathSpawn
 from .native_tilemap import (
     OUTERMOST_OBJECT_CENTER_TILES,
@@ -818,6 +818,12 @@ class BattleState:
             e.id for e in entities_to_update
             if isinstance(e, (Troop, Building)) and e.is_alive
         )
+        # Batch B1 riders: each mount's heading as the last tick left it.
+        mount_facings = [
+            (e, e._rider_mechanic, e.native_facing_units())
+            for e in entities_to_update
+            if getattr(e, "_rider_mechanic", None) is not None and e.is_alive
+        ]
         try:
             # Component type 0: combat components run in object-ID order
             # against the same start-of-frame positions. Direct damage and
@@ -847,11 +853,20 @@ class BattleState:
             self._projectile_lethal_reservations = None
             self._combat_phase_eligible_ids = frozenset()
 
+        # rider.POSITION: riders stand on their mounts before anything moves.
+        for mount, riders, facing in mount_facings:
+            if mount.is_alive:
+                riders.carry(mount, facing)
+
         # Component type 1: movement and deployment-specific transport.
         for entity in entities_to_update:
             if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
                 continue
             if getattr(entity, "_self_projectile_launched", False):
+                continue
+            if isinstance(entity, Troop) and getattr(entity, "_clone_slide", None):
+                # Batch B2: a Clone pair's slide replaces the movement component (no contact push); its
+                # step lands after every movement component (below), as RoyaleSim's step_knock_slides does.
                 continue
             if isinstance(entity, Troop):
                 # Each native movement component scans positions at its own
@@ -872,6 +887,12 @@ class BattleState:
                 entity.quantize_logic_position()
             if self.fast_path and not self._sync_fast_target_entity(entity):
                 self._rebuild_target_cache()
+
+        for entity in entities_to_update:
+            if isinstance(entity, Troop) and entity.is_alive and getattr(entity, "_clone_slide", None):
+                self._advance_clone_slide(entity)
+                if self.fast_path and not self._sync_fast_target_entity(entity):
+                    self._rebuild_target_cache()
 
         # Component type 2: building lifetime/hitpoint work.
         for entity in entities_to_update:
@@ -1098,7 +1119,8 @@ class BattleState:
                 player_id=player_id,
                 position=Position(position.x, position.y),
                 spell=spell,
-                object_phase=isinstance(effective_spell, DirectDamageSpell),
+                # Batch B2: Clone lands after the movement phase, as native resolves pending casts.
+                object_phase=isinstance(effective_spell, (DirectDamageSpell, CloneSpell)),
             )
         )
         self._next_spell_cast_sequence += 1
@@ -1552,7 +1574,9 @@ class BattleState:
         second_count = getattr(card_stats, 'summon_character_second_count', None) or 0
         second_data = getattr(card_stats, 'summon_character_second_data', None)
         
-        if summon_count > 1 or second_count > 0:
+        if getattr(card_stats, "summon_members", None):
+            self._spawn_explicit_members(position, player_id, card_stats, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
+        elif summon_count > 1 or second_count > 0:
             # Spawn swarm units in a circle around the target position
             # summon_radius is already converted to tiles in data loading
             self._spawn_swarm_troops(position, player_id, card_stats, summon_count, summon_radius, second_count, second_data, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
@@ -1560,6 +1584,39 @@ class BattleState:
             # Spawn single unit at exact position
             self._spawn_single_troop(position, player_id, card_stats, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
     
+    def _spawn_explicit_members(self, position: Position, player_id: int, card_stats: CardStatsCompat, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
+        """Lay a deploy at explicit member offsets (Three Musketeers).
+
+        Ported from RoyaleSim (MIT), state.rs ``formation_members_with``
+        (formation.EXPLICIT_OFFSETS_FRAME = owner_frame_negated, measured on
+        client 15.535.29): member k stands at (-X[k], -Y[k]) from the ground
+        point in its owner's frame, staggered k x SummonDeployDelay and laid
+        like a ring member.
+        """
+        from .factory.dynamic_factory import troop_from_character_data
+
+        level = getattr(card_stats, "level", 11)
+        delay_ms = getattr(card_stats, "summon_deploy_delay", 0) or 0
+        sign = -1.0 if player_id == 0 else 1.0
+        for index, member in enumerate(card_stats.summon_members):
+            data = member["characterData"]
+            stats = troop_from_character_data(
+                data.get("name", card_stats.name), data, elixir=0,
+                raw_overrides={"level": level}, rarity=data.get("rarity", "Common"),
+            )
+            self._spawn_unit_at_position(
+                Position(
+                    position.x + sign * float(member.get("offsetX", 0)) / 1000.0,
+                    position.y + sign * float(member.get("offsetY", 0)) / 1000.0,
+                ),
+                player_id,
+                stats,
+                deploy_delay_offset=index * delay_ms / 1000.0,
+                snap_to_valid=False,
+                deployment_edge_y=deployment_edge_y,
+                lane_coordinate_offset=lane_coordinate_offset,
+            )
+
     def _spawn_single_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn a single troop entity through the common spawn primitive."""
         # The deployment anchor has already been validated by ``deploy_card``.
@@ -1578,8 +1635,13 @@ class BattleState:
     def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, radius: float, second_count: int = 0, second_data: dict = None, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn multiple troop entities in a circle around center position"""
         # Check for data-selected deployment patterns.
-        is_royal_recruits = card_stats.name in ['RoyalRecruits', 'RoyalRecruits_Chess']
         summon_width = float(getattr(card_stats, "summon_width", 0.0) or 0.0)
+        # The legacy line spawn only serves a Royal Recruits payload without the
+        # SummonWidth column; with it the native wide formation applies.
+        is_royal_recruits = (
+            card_stats.name in ['RoyalRecruits', 'RoyalRecruits_Chess']
+            and summon_width <= 0.0
+        )
         
         # Check if this is a mixed swarm with front/back positioning (like Goblin Gang)
         has_front_back = (count > 0 and second_count > 0 and 
@@ -1590,6 +1652,10 @@ class BattleState:
             # Royal Recruits spawn in a horizontal line across battlefield
             self._spawn_royal_recruits_line(center_pos, player_id, card_stats, count, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
         elif summon_width > 0.0:
+            center_pos = self._native_line_centre(
+                center_pos, player_id, card_stats, count, radius, second_count,
+                lane_coordinate_offset,
+            )
             self._spawn_horizontal_formation(
                 center_pos,
                 player_id,
@@ -1788,6 +1854,63 @@ class BattleState:
                 lane_coordinate_offset=lane_coordinate_offset,
             )
     
+    def _line_territory(self, x_units: int, y_units: int, player_id: int) -> bool:
+        """Troop territory of an absolute ground point (no tower-footprint test)."""
+        pos = Position(x_units / 1000.0, y_units / 1000.0)
+        if not self.arena.is_valid_position(pos):
+            return False
+        if (int(pos.x), int(pos.y)) in self.arena.BLOCKED_TILES:
+            return False
+        if pos.y == 0 or pos.y == 31:
+            if not (6 <= pos.x <= 11):
+                return False
+        for x1, y1, x2, y2 in self.arena.get_deploy_zones(player_id, self):
+            if x1 <= pos.x < x2 and y1 <= pos.y < y2:
+                return True
+        return False
+
+    def _native_line_centre(self, center_pos: Position, player_id: int, card_stats, count: int, radius: float, second_count: int, lane_coordinate_offset=None) -> Position:
+        """Place a SummonWidth line whose whole formation may stand (Royal Recruits).
+
+        Ported from RoyaleSim (MIT), state.rs ``formation_members_with`` /
+        formation.rs ``line_centre_client``. A wide formation that serializes
+        DeployWTileMargin (Royal Hogs) keeps its margin placement rule instead.
+        """
+        from .formations import horizontal_line_offset, line_centre_client
+        from .unit_traits import is_air_unit_card
+
+        if (
+            int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) > 0
+            or second_count > 0
+            or count < 2
+            or is_air_unit_card(card_stats)
+        ):
+            return center_pos
+        width = float(getattr(card_stats, "summon_width", 0.0) or 0.0)
+        lane_id = self.arena.native_path_id_at(center_pos)
+        offsets = []
+        for index in range(count):
+            ox, oy = horizontal_line_offset(index, count, width, radius, player_id, lane_id=lane_id)
+            offsets.append((tiles_to_logic_units(ox), tiles_to_logic_units(oy)))
+        # ``center_pos`` already carries the one-unit ground nudge
+        # (formation.GROUND_DEPLOY_POINT); the search runs on the tap itself.
+        nudge_x, nudge_y = lane_coordinate_offset or (0.0, 0.0)
+        ground = (-tiles_to_logic_units(nudge_x), -tiles_to_logic_units(nudge_y))
+        tap = (
+            tiles_to_logic_units(center_pos.x) - ground[0],
+            tiles_to_logic_units(center_pos.y) - ground[1],
+        )
+        found = line_centre_client(
+            tap, offsets, ground, player_id,
+            lambda x, y: self._line_territory(x, y, player_id),
+        )
+        if found is None or (found[0], found[1]) == tap:
+            return center_pos
+        return Position(
+            logic_units_to_tiles(found[0] + ground[0]),
+            logic_units_to_tiles(found[1] + ground[1]),
+        )
+
     def _spawn_royal_recruits_line(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn Royal Recruits in a horizontal line across the battlefield, avoiding towers"""
         # Royal Recruits: 6 units spaced 2.5 tiles apart, center at deploy position
@@ -2045,6 +2168,50 @@ class BattleState:
         if grid is not None:
             grid.add(troop)
         troop.on_spawn()
+        # Batch B1: creation-time payloads (a mount's attached riders).
+        for mechanic in list(troop.mechanics):
+            on_created = getattr(mechanic, "on_created", None)
+            if callable(on_created):
+                on_created(troop)
+
+    def _advance_clone_slide(self, troop) -> None:
+        """Batch B2: one fixed Clone slide step (spells.CLONE_OFFSET); the slide ends after its 10th step."""
+        sx, sy, left = troop._clone_slide
+        # The step settles as RoyaleSim (MIT) spell.rs `settle` does for a slide, with this engine's primitives:
+        # clamp to the arena (moveObject); a ground unit's step into a building footprint is refused (settle's
+        # unresolved fallback, the old point); a ground point on the river is recovered to land as a knockback's is.
+        from .native_tilemap import native_spawn_tile_blocked, recover_native_ground_position
+        from .unit_traits import uses_air_collision_plane
+        ox, oy = tiles_to_logic_units(troop.position.x), tiles_to_logic_units(troop.position.y)
+        x, y = max(0, min(17999, ox + sx)), max(0, min(31999, oy + sy))
+        if not uses_air_collision_plane(troop):
+            r = tiles_to_logic_units(troop.get_collision_radius())
+
+            def blocked(px: int, py: int) -> bool:
+                for b in self.entities.values():
+                    if b is troop or not isinstance(b, Building) or not b.is_alive:
+                        continue
+                    reach = tiles_to_logic_units(b.get_collision_radius()) + r
+                    if (abs(px - tiles_to_logic_units(b.position.x)) < reach
+                            and abs(py - tiles_to_logic_units(b.position.y)) < reach):
+                        return True
+                return False
+
+            # One bounded round: refuse a step into a footprint, recover a river point, then revalidate both
+            # constraints; a recovered point inside a footprint (or still on water) falls back to the old point.
+            if blocked(x, y):
+                x, y = ox, oy
+            x, y = recover_native_ground_position(x, y)
+            if blocked(x, y) or native_spawn_tile_blocked(x // 500, y // 500):
+                x, y = ox, oy
+        troop.position = Position(logic_units_to_tiles(x), logic_units_to_tiles(y))
+        left -= 1
+        troop._clone_slide = [sx, sy, left] if left > 0 else None
+        if left <= 0:
+            # spells.CLONE_SLIDE_ROUTE = client15535_dropped (measured): the route is dropped on the slide's last
+            # tick and planned afresh from where the slide left the unit.
+            troop._native_ground_route_cells = []
+            troop._ground_path_cache_key = None
 
     def _first_update_spawned(
         self, troop, *, collide: bool = True, hidden: frozenset[int] = frozenset()
@@ -2879,7 +3046,9 @@ class BattleState:
 
     def _accumulate_troop_collision_for(self, troop: Troop) -> None:
         """Queue body pressure, including on troops whose travel is frozen."""
-        if troop.spawn_stagger_remaining > 1e-9:
+        from .mechanics.shared.riders import mounted
+
+        if troop.spawn_stagger_remaining > 1e-9 or mounted(troop):
             return
         from .unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
 
@@ -2916,6 +3085,7 @@ class BattleState:
                 or other.id in hidden
                 or not isinstance(other, Troop)
                 or not other.is_alive
+                or mounted(other)
                 or (
                     is_in_transit(other)
                     and not getattr(other, "_river_jump_active", False)

@@ -35,24 +35,19 @@ def require(name, ok, detail=''):
 
 
 def _preload(rt, gates):
-    from bot.levels.configs import LevelConfigs, base_cards
+    from bot.levels.configs import base_cards
+    from bot.levels.fixture_support import FrozenLevelConfigs, normalized_spells
     from bot.levels.profile import OpponentEstimate
-    lc = LevelConfigs(rt)
-
-    def refuse_export(level, cards=None):
-        raise ValueError(f'gate cannot build L{level}; required existing artifact: {lc.path(level)}')
-
-    lc.build = refuse_export
     levels = {11}
     if set(gates) & {'sides', 'spell', 'roots', 'cut', 'fair'}:
         levels.update((4, 5, 6, 7, 9))
     if 'fair' in gates:
         estimate = OpponentEstimate(rt)
         levels.update(estimate(c) for c in base_cards(rt.R.config))
-    # Check every path before any load/entry/mixed call, including the factory's injected cache.
-    missing = [str(lc.path(level)) for level in sorted(levels) if not lc.path(level).is_file()]
-    if missing:
-        raise ValueError(f'missing prebuilt level exports (no lazy export permitted): {missing}')
+    # Strict existing-only support/raw/canonical/check11 validation before any roots;
+    # no LevelConfigs.supported() fallback may rewrite the approved whitelist.
+    lc = FrozenLevelConfigs(rt, levels)
+    STATS['normalized_spells'] = normalized_spells(rt, lc)
     expected = set(base_cards(rt.R.config))
     for level in sorted(levels):
         data = lc.load(level)
@@ -61,6 +56,7 @@ def _preload(rt, gates):
                 f'{lc.path(level)}; cards={len(data["cards"])} errors={data.get("errors", {})}; missing={sorted(absent)}')
     rt._level_configs = lc
     STATS['cache_levels'] = sorted(levels)
+    STATS['cache_manifest'] = lc.manifest
     return lc
 
 
@@ -621,6 +617,7 @@ def main():
         for g in gates:
             before = COUNTS['checks']
             try:
+                lc.verify()
                 if g == 'towers':
                     gate_towers(rt)
                 else:
@@ -629,6 +626,8 @@ def main():
                 import traceback
                 traceback.print_exc()
                 check(f'{g} raised', False, repr(ex)[:500])
+            finally:
+                lc.verify()
             STATS.setdefault('gate_checks', {})[g] = COUNTS['checks'] - before
     except Exception as ex:
         import traceback

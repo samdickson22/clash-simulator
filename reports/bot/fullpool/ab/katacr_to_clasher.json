@@ -1,0 +1,1451 @@
+{
+  "classes": {
+    "archer": {
+      "source_card": "Archers",
+      "identity": "Archers",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "archer",
+      "ambiguous_sources": []
+    },
+    "archer-evolution": {
+      "source_card": "Archers",
+      "identity": "Archers",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "archer",
+      "ambiguous_sources": []
+    },
+    "archer-queen": {
+      "source_card": "ArcherQueen",
+      "identity": "ArcherQueen",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "archer-queen",
+      "ambiguous_sources": []
+    },
+    "arrows": {
+      "source_card": "Arrows",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "arrows",
+      "ambiguous_sources": []
+    },
+    "axe": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "axe",
+      "ambiguous_sources": []
+    },
+    "baby-dragon": {
+      "source_card": "BabyDragon",
+      "identity": "BabyDragon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "baby-dragon",
+      "ambiguous_sources": []
+    },
+    "balloon": {
+      "source_card": "Balloon",
+      "identity": "Balloon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "balloon",
+      "ambiguous_sources": []
+    },
+    "bandit": {
+      "source_card": "Assassin",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "bandit",
+      "ambiguous_sources": []
+    },
+    "bar": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "bar",
+      "ambiguous_sources": []
+    },
+    "bar-level": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "bar-level",
+      "ambiguous_sources": []
+    },
+    "barbarian": {
+      "source_card": "Barbarians",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "barbarian",
+      "ambiguous_sources": [
+        "Barbarians",
+        "BarbarianHut",
+        "BattleRam",
+        "BarbLog"
+      ]
+    },
+    "barbarian-barrel": {
+      "source_card": "BarbLog",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "barbarian-barrel",
+      "ambiguous_sources": []
+    },
+    "barbarian-evolution": {
+      "source_card": "Barbarians",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "barbarian",
+      "ambiguous_sources": [
+        "Barbarians",
+        "BarbarianHut",
+        "BattleRam",
+        "BarbLog"
+      ]
+    },
+    "barbarian-hut": {
+      "source_card": "BarbarianHut",
+      "identity": "Cannon",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "barbarian-hut",
+      "ambiguous_sources": []
+    },
+    "bat": {
+      "source_card": "Bats",
+      "identity": "Bats",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "bat",
+      "ambiguous_sources": []
+    },
+    "bat-evolution": {
+      "source_card": "Bats",
+      "identity": "Bats",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "bat",
+      "ambiguous_sources": []
+    },
+    "battle-healer": {
+      "source_card": "BattleHealer",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "battle-healer",
+      "ambiguous_sources": []
+    },
+    "battle-ram": {
+      "source_card": "BattleRam",
+      "identity": "HogRider",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "battle-ram",
+      "ambiguous_sources": []
+    },
+    "battle-ram-evolution": {
+      "source_card": "BattleRam",
+      "identity": "HogRider",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "battle-ram",
+      "ambiguous_sources": []
+    },
+    "bomb": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "bomb",
+      "ambiguous_sources": []
+    },
+    "bomb-tower": {
+      "source_card": "BombTower",
+      "identity": "BombTower",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "bomb-tower",
+      "ambiguous_sources": []
+    },
+    "bomber": {
+      "source_card": "Bomber",
+      "identity": "Firecracker",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "bomber",
+      "ambiguous_sources": []
+    },
+    "bomber-evolution": {
+      "source_card": "Bomber",
+      "identity": "Firecracker",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "bomber",
+      "ambiguous_sources": []
+    },
+    "bowler": {
+      "source_card": "Bowler",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "bowler",
+      "ambiguous_sources": []
+    },
+    "cannon": {
+      "source_card": "Cannon",
+      "identity": "Cannon",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "cannon",
+      "ambiguous_sources": []
+    },
+    "cannon-cart": {
+      "source_card": "MovingCannon",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "cannon-cart",
+      "ambiguous_sources": []
+    },
+    "cannoneer-tower": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "cannoneer-tower",
+      "ambiguous_sources": []
+    },
+    "clock": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "clock",
+      "ambiguous_sources": []
+    },
+    "clone": {
+      "source_card": "Clone",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "clone",
+      "ambiguous_sources": []
+    },
+    "dagger-duchess-tower": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "dagger-duchess-tower",
+      "ambiguous_sources": []
+    },
+    "dagger-duchess-tower-bar": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "dagger-duchess-tower-bar",
+      "ambiguous_sources": []
+    },
+    "dark-prince": {
+      "source_card": "DarkPrince",
+      "identity": "DarkPrince",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "dark-prince",
+      "ambiguous_sources": []
+    },
+    "dart-goblin": {
+      "source_card": "BlowdartGoblin",
+      "identity": "BlowdartGoblin",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "dart-goblin",
+      "ambiguous_sources": []
+    },
+    "dirt": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "dirt",
+      "ambiguous_sources": []
+    },
+    "earthquake": {
+      "source_card": "Earthquake",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "earthquake",
+      "ambiguous_sources": []
+    },
+    "electro-dragon": {
+      "source_card": "ElectroDragon",
+      "identity": "BabyDragon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "electro-dragon",
+      "ambiguous_sources": []
+    },
+    "electro-giant": {
+      "source_card": "ElectroGiant",
+      "identity": "Giant",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "electro-giant",
+      "ambiguous_sources": []
+    },
+    "electro-spirit": {
+      "source_card": "ElectroSpirit",
+      "identity": "ElectroSpirit",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "electro-spirit",
+      "ambiguous_sources": []
+    },
+    "electro-wizard": {
+      "source_card": "ElectroWizard",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "electro-wizard",
+      "ambiguous_sources": []
+    },
+    "elite-barbarian": {
+      "source_card": "AngryBarbarians",
+      "identity": "AngryBarbarians",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "elite-barbarian",
+      "ambiguous_sources": []
+    },
+    "elixir": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "elixir",
+      "ambiguous_sources": []
+    },
+    "elixir-collector": {
+      "source_card": "Elixir Collector",
+      "identity": "Cannon",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "elixir-collector",
+      "ambiguous_sources": []
+    },
+    "elixir-golem-big": {
+      "source_card": "ElixirGolem",
+      "identity": "Giant",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "elixir-golem-big",
+      "ambiguous_sources": []
+    },
+    "elixir-golem-mid": {
+      "source_card": "ElixirGolem",
+      "identity": "HogRider",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "elixir-golem-mid",
+      "ambiguous_sources": []
+    },
+    "elixir-golem-small": {
+      "source_card": "ElixirGolem",
+      "identity": "RoyalHogs",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "elixir-golem-small",
+      "ambiguous_sources": []
+    },
+    "emote": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "emote",
+      "ambiguous_sources": []
+    },
+    "evolution-symbol": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "evolution-symbol",
+      "ambiguous_sources": []
+    },
+    "executioner": {
+      "source_card": "AxeMan",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "executioner",
+      "ambiguous_sources": []
+    },
+    "fire-spirit": {
+      "source_card": "FireSpirits",
+      "identity": "FireSpirits",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "fire-spirit",
+      "ambiguous_sources": []
+    },
+    "fireball": {
+      "source_card": "Fireball",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "fireball",
+      "ambiguous_sources": []
+    },
+    "firecracker": {
+      "source_card": "Firecracker",
+      "identity": "Firecracker",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "firecracker",
+      "ambiguous_sources": []
+    },
+    "firecracker-evolution": {
+      "source_card": "Firecracker",
+      "identity": "Firecracker",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "firecracker",
+      "ambiguous_sources": []
+    },
+    "fisherman": {
+      "source_card": "Fisherman",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "fisherman",
+      "ambiguous_sources": []
+    },
+    "flying-machine": {
+      "source_card": "DartBarrell",
+      "identity": "BabyDragon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "flying-machine",
+      "ambiguous_sources": []
+    },
+    "freeze": {
+      "source_card": "Freeze",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "freeze",
+      "ambiguous_sources": []
+    },
+    "furnace": {
+      "source_card": "FirespiritHut",
+      "identity": "FirespiritHut",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "furnace",
+      "ambiguous_sources": []
+    },
+    "giant": {
+      "source_card": "Giant",
+      "identity": "Giant",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "giant",
+      "ambiguous_sources": []
+    },
+    "giant-skeleton": {
+      "source_card": "GiantSkeleton",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "giant-skeleton",
+      "ambiguous_sources": []
+    },
+    "giant-snowball": {
+      "source_card": "Snowball",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "giant-snowball",
+      "ambiguous_sources": []
+    },
+    "goblin": {
+      "source_card": "Goblins",
+      "identity": "Goblins",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "goblin",
+      "ambiguous_sources": [
+        "Goblins",
+        "GoblinGang",
+        "GoblinBarrel",
+        "GoblinDrill"
+      ]
+    },
+    "goblin-ball": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "goblin-ball",
+      "ambiguous_sources": []
+    },
+    "goblin-barrel": {
+      "source_card": "GoblinBarrel",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "goblin-barrel",
+      "ambiguous_sources": []
+    },
+    "goblin-brawler": {
+      "source_card": "GoblinCage",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "goblin-brawler",
+      "ambiguous_sources": []
+    },
+    "goblin-cage": {
+      "source_card": "GoblinCage",
+      "identity": "Cannon",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "goblin-cage",
+      "ambiguous_sources": []
+    },
+    "goblin-drill": {
+      "source_card": "GoblinDrill",
+      "identity": "Cannon",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "goblin-drill",
+      "ambiguous_sources": []
+    },
+    "goblin-giant": {
+      "source_card": "GoblinGiant",
+      "identity": "Giant",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "goblin-giant",
+      "ambiguous_sources": []
+    },
+    "goblin-hut": {
+      "source_card": "GoblinHut",
+      "identity": "GoblinHut",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "goblin-hut",
+      "ambiguous_sources": []
+    },
+    "golden-knight": {
+      "source_card": "GoldenKnight",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "golden-knight",
+      "ambiguous_sources": []
+    },
+    "golem": {
+      "source_card": "Golem",
+      "identity": "Golem",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "golem",
+      "ambiguous_sources": []
+    },
+    "golemite": {
+      "source_card": "Golem",
+      "identity": "Golem",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "golemite",
+      "ambiguous_sources": []
+    },
+    "graveyard": {
+      "source_card": "Graveyard",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "graveyard",
+      "ambiguous_sources": []
+    },
+    "guard": {
+      "source_card": "SkeletonWarriors",
+      "identity": "SkeletonArmy",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "guard",
+      "ambiguous_sources": []
+    },
+    "heal-spirit": {
+      "source_card": "Heal",
+      "identity": "ElectroSpirit",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "heal-spirit",
+      "ambiguous_sources": []
+    },
+    "hog": {
+      "source_card": "WitchMother",
+      "identity": "RoyalHogs",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "hog",
+      "ambiguous_sources": []
+    },
+    "hog-rider": {
+      "source_card": "HogRider",
+      "identity": "HogRider",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "hog-rider",
+      "ambiguous_sources": []
+    },
+    "hunter": {
+      "source_card": "Hunter",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "hunter",
+      "ambiguous_sources": []
+    },
+    "ice-golem": {
+      "source_card": "IceGolem",
+      "identity": "IceGolem",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "ice-golem",
+      "ambiguous_sources": []
+    },
+    "ice-spirit": {
+      "source_card": "IceSpirit",
+      "identity": "IceSpirit",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "ice-spirit",
+      "ambiguous_sources": []
+    },
+    "ice-spirit-evolution": {
+      "source_card": "IceSpirit",
+      "identity": "IceSpirit",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "ice-spirit",
+      "ambiguous_sources": []
+    },
+    "ice-spirit-evolution-symbol": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "ice-spirit-evolution-symbol",
+      "ambiguous_sources": []
+    },
+    "ice-wizard": {
+      "source_card": "IceWizard",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "ice-wizard",
+      "ambiguous_sources": []
+    },
+    "inferno-dragon": {
+      "source_card": "InfernoDragon",
+      "identity": "BabyDragon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "inferno-dragon",
+      "ambiguous_sources": []
+    },
+    "inferno-tower": {
+      "source_card": "InfernoTower",
+      "identity": "InfernoTower",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "inferno-tower",
+      "ambiguous_sources": []
+    },
+    "king-tower": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "king-tower",
+      "ambiguous_sources": []
+    },
+    "king-tower-bar": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "king-tower-bar",
+      "ambiguous_sources": []
+    },
+    "knight": {
+      "source_card": "Knight",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "knight",
+      "ambiguous_sources": []
+    },
+    "knight-evolution": {
+      "source_card": "Knight",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "knight",
+      "ambiguous_sources": []
+    },
+    "lava-hound": {
+      "source_card": "LavaHound",
+      "identity": "BabyDragon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "lava-hound",
+      "ambiguous_sources": []
+    },
+    "lava-pup": {
+      "source_card": "LavaHound",
+      "identity": "Minions",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "lava-pup",
+      "ambiguous_sources": []
+    },
+    "lightning": {
+      "source_card": "Lightning",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "lightning",
+      "ambiguous_sources": []
+    },
+    "little-prince": {
+      "source_card": "LittlePrince",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "little-prince",
+      "ambiguous_sources": []
+    },
+    "lumberjack": {
+      "source_card": "RageBarbarian",
+      "identity": "Berserker",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "lumberjack",
+      "ambiguous_sources": []
+    },
+    "magic-archer": {
+      "source_card": "EliteArcher",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "magic-archer",
+      "ambiguous_sources": []
+    },
+    "mega-knight": {
+      "source_card": "MegaKnight",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "mega-knight",
+      "ambiguous_sources": []
+    },
+    "mega-minion": {
+      "source_card": "MegaMinion",
+      "identity": "Minions",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "mega-minion",
+      "ambiguous_sources": []
+    },
+    "mighty-miner": {
+      "source_card": "MightyMiner",
+      "identity": "MightyMiner",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "mighty-miner",
+      "ambiguous_sources": []
+    },
+    "miner": {
+      "source_card": "Miner",
+      "identity": "Miner",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "miner",
+      "ambiguous_sources": []
+    },
+    "mini-pekka": {
+      "source_card": "MiniPekka",
+      "identity": "MiniPekka",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "mini-pekka",
+      "ambiguous_sources": []
+    },
+    "minion": {
+      "source_card": "Minions",
+      "identity": "Minions",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "minion",
+      "ambiguous_sources": [
+        "Minions",
+        "MinionHorde"
+      ]
+    },
+    "mirror": {
+      "source_card": "Mirror",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "mirror",
+      "ambiguous_sources": []
+    },
+    "monk": {
+      "source_card": "Monk",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "monk",
+      "ambiguous_sources": []
+    },
+    "mortar": {
+      "source_card": "Mortar",
+      "identity": "Xbow",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "mortar",
+      "ambiguous_sources": []
+    },
+    "mortar-evolution": {
+      "source_card": "Mortar",
+      "identity": "Xbow",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "mortar",
+      "ambiguous_sources": []
+    },
+    "mother-witch": {
+      "source_card": "WitchMother",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "mother-witch",
+      "ambiguous_sources": []
+    },
+    "musketeer": {
+      "source_card": "Musketeer",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "musketeer",
+      "ambiguous_sources": []
+    },
+    "night-witch": {
+      "source_card": "DarkWitch",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "night-witch",
+      "ambiguous_sources": []
+    },
+    "pekka": {
+      "source_card": "Pekka",
+      "identity": "MiniPekka",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "pekka",
+      "ambiguous_sources": []
+    },
+    "phoenix-big": {
+      "source_card": "Phoenix",
+      "identity": "Minions",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "phoenix-big",
+      "ambiguous_sources": []
+    },
+    "phoenix-egg": {
+      "source_card": "Phoenix",
+      "identity": "unknown_unit",
+      "unit": false,
+      "kind": "unplaced_object",
+      "air": false,
+      "body": "phoenix-egg",
+      "ambiguous_sources": [],
+      "note": "proxy_table.UNPLACED_BODIES: omit stationary incubation object until rebirth"
+    },
+    "phoenix-small": {
+      "source_card": "Phoenix",
+      "identity": "Minions",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "phoenix-small",
+      "ambiguous_sources": []
+    },
+    "poison": {
+      "source_card": "Poison",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "poison",
+      "ambiguous_sources": []
+    },
+    "prince": {
+      "source_card": "Prince",
+      "identity": "Prince",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "prince",
+      "ambiguous_sources": []
+    },
+    "princess": {
+      "source_card": "Princess",
+      "identity": "Princess",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "princess",
+      "ambiguous_sources": []
+    },
+    "queen-tower": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "queen-tower",
+      "ambiguous_sources": []
+    },
+    "rage": {
+      "source_card": "Rage",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "rage",
+      "ambiguous_sources": []
+    },
+    "ram-rider": {
+      "source_card": "RamRider",
+      "identity": "HogRider",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "ram-rider",
+      "ambiguous_sources": []
+    },
+    "rascal-boy": {
+      "source_card": "Rascals",
+      "identity": "Rascals",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "rascal-boy",
+      "ambiguous_sources": []
+    },
+    "rascal-girl": {
+      "source_card": "Rascals",
+      "identity": "Rascals",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "rascal-girl",
+      "ambiguous_sources": []
+    },
+    "rocket": {
+      "source_card": "Rocket",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "rocket",
+      "ambiguous_sources": []
+    },
+    "royal-delivery": {
+      "source_card": "RoyalDelivery",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-delivery",
+      "ambiguous_sources": []
+    },
+    "royal-ghost": {
+      "source_card": "Ghost",
+      "identity": "Ghost",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-ghost",
+      "ambiguous_sources": []
+    },
+    "royal-giant": {
+      "source_card": "RoyalGiant",
+      "identity": "Giant",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-giant",
+      "ambiguous_sources": []
+    },
+    "royal-giant-evolution": {
+      "source_card": "RoyalGiant",
+      "identity": "Giant",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-giant",
+      "ambiguous_sources": []
+    },
+    "royal-guardian": {
+      "source_card": "LittlePrince",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-guardian",
+      "ambiguous_sources": []
+    },
+    "royal-hog": {
+      "source_card": "RoyalHogs",
+      "identity": "RoyalHogs",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-hog",
+      "ambiguous_sources": []
+    },
+    "royal-recruit": {
+      "source_card": "RoyalDelivery",
+      "identity": "RoyalDelivery",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-recruit",
+      "ambiguous_sources": [
+        "RoyalDelivery",
+        "RoyalRecruits"
+      ]
+    },
+    "royal-recruit-evolution": {
+      "source_card": "RoyalRecruits",
+      "identity": "Knight",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "royal-recruit",
+      "ambiguous_sources": [
+        "RoyalDelivery",
+        "RoyalRecruits"
+      ]
+    },
+    "selected": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "selected",
+      "ambiguous_sources": []
+    },
+    "skeleton": {
+      "source_card": "Skeletons",
+      "identity": "Skeletons",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "skeleton",
+      "ambiguous_sources": [
+        "Skeletons",
+        "SkeletonArmy",
+        "Tombstone",
+        "Witch",
+        "Graveyard"
+      ]
+    },
+    "skeleton-barrel": {
+      "source_card": "SkeletonBalloon",
+      "identity": "Balloon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "skeleton-barrel",
+      "ambiguous_sources": []
+    },
+    "skeleton-dragon": {
+      "source_card": "SkeletonDragons",
+      "identity": "BabyDragon",
+      "unit": true,
+      "kind": "troop",
+      "air": true,
+      "body": "skeleton-dragon",
+      "ambiguous_sources": []
+    },
+    "skeleton-evolution": {
+      "source_card": "Skeletons",
+      "identity": "Skeletons",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "skeleton",
+      "ambiguous_sources": [
+        "Skeletons",
+        "SkeletonArmy",
+        "Tombstone",
+        "Witch",
+        "Graveyard"
+      ]
+    },
+    "skeleton-king": {
+      "source_card": "SkeletonKing",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "skeleton-king",
+      "ambiguous_sources": []
+    },
+    "skeleton-king-bar": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "skeleton-king-bar",
+      "ambiguous_sources": []
+    },
+    "skeleton-king-skill": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "skeleton-king-skill",
+      "ambiguous_sources": []
+    },
+    "sparky": {
+      "source_card": "ZapMachine",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "sparky",
+      "ambiguous_sources": []
+    },
+    "spear-goblin": {
+      "source_card": "SpearGoblins",
+      "identity": "Goblins",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "spear-goblin",
+      "ambiguous_sources": [
+        "SpearGoblins",
+        "GoblinGang",
+        "GoblinHut"
+      ]
+    },
+    "tesla": {
+      "source_card": "Tesla",
+      "identity": "Tesla",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "tesla",
+      "ambiguous_sources": []
+    },
+    "tesla-evolution": {
+      "source_card": "Tesla",
+      "identity": "Tesla",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "tesla",
+      "ambiguous_sources": []
+    },
+    "tesla-evolution-shock": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "tesla-evolution-shock",
+      "ambiguous_sources": []
+    },
+    "text": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "text",
+      "ambiguous_sources": []
+    },
+    "the-log": {
+      "source_card": "Log",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "the-log",
+      "ambiguous_sources": []
+    },
+    "tombstone": {
+      "source_card": "Tombstone",
+      "identity": "Cannon",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "tombstone",
+      "ambiguous_sources": []
+    },
+    "tornado": {
+      "source_card": "Tornado",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "tornado",
+      "ambiguous_sources": []
+    },
+    "tower-bar": {
+      "source_card": null,
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "tower-bar",
+      "ambiguous_sources": []
+    },
+    "valkyrie": {
+      "source_card": "Valkyrie",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "valkyrie",
+      "ambiguous_sources": []
+    },
+    "valkyrie-evolution": {
+      "source_card": "Valkyrie",
+      "identity": "Valkyrie",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "valkyrie",
+      "ambiguous_sources": []
+    },
+    "wall-breaker": {
+      "source_card": "Wallbreakers",
+      "identity": "Wallbreakers",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "wall-breaker",
+      "ambiguous_sources": []
+    },
+    "wall-breaker-evolution": {
+      "source_card": "Wallbreakers",
+      "identity": "Wallbreakers",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "wall-breaker",
+      "ambiguous_sources": []
+    },
+    "witch": {
+      "source_card": "Witch",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "witch",
+      "ambiguous_sources": []
+    },
+    "wizard": {
+      "source_card": "Wizard",
+      "identity": "Wizard",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "wizard",
+      "ambiguous_sources": []
+    },
+    "x-bow": {
+      "source_card": "Xbow",
+      "identity": "Xbow",
+      "unit": true,
+      "kind": "building",
+      "air": false,
+      "body": "x-bow",
+      "ambiguous_sources": []
+    },
+    "zap": {
+      "source_card": "Zap",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "zap",
+      "ambiguous_sources": []
+    },
+    "zap-evolution": {
+      "source_card": "Zap",
+      "identity": null,
+      "unit": false,
+      "kind": "troop",
+      "air": false,
+      "body": "zap",
+      "ambiguous_sources": []
+    },
+    "zappy": {
+      "source_card": "MiniSparkys",
+      "identity": "Musketeer",
+      "unit": true,
+      "kind": "troop",
+      "air": false,
+      "body": "zappy",
+      "ambiguous_sources": []
+    }
+  },
+  "owner": {
+    "0": 1,
+    "1": 0
+  },
+  "notes": [
+    "KataCR 0=friendly/blue -> r3 owner 1; KataCR 1=enemy/red -> r3 owner 0",
+    "Primary mapping is fixed; no ground truth, hand, opponent deck, temporal tracker or per-frame source-card oracle",
+    "Shared visual bodies use the canonical source shown; ambiguous sources are retained explicitly",
+    "Non-C56 bodies use proxy_table.py at a382530c9. OOV truth remains ignored for primary r3 identity scoring",
+    "Non-body objects, tower/UI/bar/projectile/spell classes are excluded from unit scoring"
+  ]
+}

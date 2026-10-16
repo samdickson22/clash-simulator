@@ -190,7 +190,7 @@ class CardBodies:
 class Track:
     __slots__ = ('card', 'owner', 'body', 'x', 'y', 'first', 'last', 'facing', 'main', 'id', 'fam', 'labels', 'fx', 'fy',
                  'px', 'py',
-                 'spawn', 'hint', 'resolved', 'state')
+                 'spawn', 'hint', 'resolved', 'state', 'body_constraint')
 
     def __init__(self, tid, card, owner, body, x, y, tick, main, fam):
         self.id, self.card, self.owner, self.body = tid, card, owner, body
@@ -202,6 +202,7 @@ class Track:
         self.hint = None         # perception spawn_card (deployment provenance)
         self.resolved = None     # card of the deployment this body belongs to, once its cluster closed
         self.state = 'none'      # pending | played | spawn | child | leftover | none
+        self.body_constraint = None       # canonical observed body, never deployment provenance
 
     def label(self):
         """Majority per-frame label (ties: the birth label)."""
@@ -357,7 +358,10 @@ class UnitTracker:
             card, owner, x, y = u[:4]
             score = u[4] if len(u) > 4 and u[4] is not None else 1.
             hint = u[5] if len(u) > 5 and u[5] and self.cb.is_card(u[5]) else None
-            parsed.append((card, owner, float(x), float(y), float(score), hint, self.cb.fam(card)))
+            body = tuple(u[6]) if len(u) > 6 and u[6] is not None else None
+            if body is not None and body not in self.cb.bodies_of(card):
+                raise ValueError(f'observed body outside configured card: {card}/{body}')
+            parsed.append((card, owner, float(x), float(y), float(score), hint, self.cb.fam(card), body))
         return parsed
 
     def _static(self, t):
@@ -424,6 +428,8 @@ class UnitTracker:
             for t in pool:
                 if t.fam != fam or t.owner != owner or t.id in taken:
                     continue
+                if not self._body_matches(t, u):
+                    continue                 # observed body cannot continue a different body of its family
                 if t.body[1] == 1 and not self._building(card) or self._spawner(t) and card != t.label():
                     continue                 # a building or spawner is only ever its own label (a goblin is not its hut)
                 d = math.hypot(x - t.x, y - t.y)
@@ -466,11 +472,22 @@ class UnitTracker:
             return False
         return not self._cycle_ok(t.owner, card, t.last)
 
+    def _body_matches(self, t, u):
+        """Exact observations constrain identity; legacy inputs retain original tracking.
+
+        An unconstrained proxy may relabel another unconstrained backend track,
+        but cannot repurpose an exact track as a card that cannot own its body.
+        """
+        if u[7] is not None:
+            return u[7] == t.body
+        return t.body_constraint is None or t.body in self.cb.bodies_of(u[0])
+
     def _relabel_ok(self, t, u, tick):
         """A label switch ACROSS families (Knight read as Valkyrie): the unit sits within `relabel_tiles` of a body of
         another family that is missing from this frame and was seen within `relabel_gap` ticks (never a building,
         never a unit with deployment provenance)."""
-        return (u[5] is None and t.owner == u[1] and t.fam != u[6] and t.body[1] != 1 and t.last < tick and
+        return (self._body_matches(t, u) and
+                u[5] is None and t.owner == u[1] and t.fam != u[6] and t.body[1] != 1 and t.last < tick and
                 tick - t.last <= self.relabel_gap and math.hypot(u[2] - t.x, u[3] - t.y) <= self.relabel_tiles)
 
     def _cycle_ok(self, owner, card, since):
@@ -851,7 +868,8 @@ class UnitTracker:
             if main and len(fam) <= self.cb.count.get(card, 0):
                 have = Counter()
                 for t in fam:
-                    t.body = self._fill_one(main, have) if len(main) > 1 else main[0][0]
+                    if t.body_constraint is None:
+                        t.body = self._fill_one(main, have) if len(main) > 1 else main[0][0]
                     have[t.body] += 1
         else:
             state, resolved = why
@@ -864,7 +882,7 @@ class UnitTracker:
 
     # -- frame ---------------------------------------------------------------------------------------------------------
     def update(self, tick, units, tower_alive, unknown=()):
-        """units: [(card, owner, x, y[, score[, spawn_card]])], unknown: class-only detections [(kind, owner, x, y)]
+        """units: [(card, owner, x, y[, score[, spawn_card[, body_constraint]]])], unknown: class-only detections [(kind, owner, x, y)]
         (never tracked as cards; unknown buildings are spawner sites) -> (assigned [(body or None, facing)],
         plays [(owner, card, x, y, tick)]). last_tracks: the track id per unit (None: no body)."""
         if self.last_tick is not None and tick < self.last_tick:
@@ -887,7 +905,9 @@ class UnitTracker:
                 self.stats['revived'] += 1
             elif how[i] == 'relabel':
                 self.stats['cross_family_relabel'] += 1
-            card, _, x, y, score, hint, _ = parsed[i]
+            card, _, x, y, score, hint, _, constraint = parsed[i]
+            if constraint is not None:
+                t.body_constraint = constraint
             t.px, t.py = t.x, t.y
             dx, dy = x - t.x, y - t.y
             if self._static(t):              # buildings and spawners do not move: a spawn read with their label
@@ -902,10 +922,14 @@ class UnitTracker:
             t.fam = self.cb.fam(t.label())
             out[i], ids[i] = (t.body, t.facing), t.id
             seen.append((t, score, card, hint))
-        for i, (card, owner, x, y, score, hint, fam) in enumerate(parsed):
+        for i, (card, owner, x, y, score, hint, fam, constraint) in enumerate(parsed):
             if got[i] is not None:
                 continue
             body, spawn = self._new_body(card, owner, x, y, tick, fam, hint)
+            if constraint is not None:
+                if constraint != body and constraint in {b for b, _ in self.cb.main.get(card, ())}:
+                    spawn = None        # a verified main body cannot be a different inferred child body
+                body = constraint
             if body is None:
                 self.stats[f'no_body:{card}'] += 1
                 out[i] = (None, (0., 0.))
@@ -913,12 +937,20 @@ class UnitTracker:
             self.n += 1
             t = Track(self.n, card, owner, body, x, y, tick, True, fam)
             t.spawn, t.hint = spawn, hint
+            t.body_constraint = constraint
             self.live.append(t)
             out[i], ids[i] = (t.body, t.facing), t.id
             self.stats['births'] += 1
             if spawn:
                 self.stats[f'{spawn["kind"]}_birth'] += 1
-            self._birth(t, tick, tower_alive)
+            if constraint is not None and constraint not in {b for b, _ in self.cb.main.get(card, ())}:
+                # A configured descendant body is visible, but its parent's play
+                # was not observed. Keep the body without inventing that play or
+                # a spawn_card/parent link. This also covers orphan death children.
+                t.main, t.state = False, 'child'
+                self.stats['observed_descendant_no_play'] += 1
+            else:
+                self._birth(t, tick, tower_alive)
             seen.append((t, score, card, hint))
         # votes/hits for open clusters (members only), then close the ones whose window has passed
         for c in self.clusters:

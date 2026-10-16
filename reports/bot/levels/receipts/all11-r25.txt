@@ -1,0 +1,18 @@
+2026-10-16T12:24:15.442349Z preflight parent=4068640 requested=8 workers=2
+2026-10-16T12:25:03.541967Z parent=4068640 jobs=8 workers=2; receipt=/mpac/sdicks02/jobs/clasher/bot-levels/dev/all11-placement-r25/launch-00001.json
+2026-10-16T12:25:03.559169Z start pid=4123710 arm=A index=0
+2026-10-16T12:25:03.575787Z start pid=4123729 arm=B index=0
+2026-10-16T12:25:29.794366Z done pid=4123710 arm=A index=0 status=0
+2026-10-16T12:25:29.813141Z start pid=4153576 arm=A index=1
+2026-10-16T12:25:29.970183Z done pid=4123729 arm=B index=0 status=0
+2026-10-16T12:25:29.989046Z start pid=4153775 arm=B index=1
+2026-10-16T12:25:58.198515Z done pid=4153576 arm=A index=1 status=0
+2026-10-16T12:25:58.218426Z start pid=4186034 arm=A index=2
+2026-10-16T12:25:58.351251Z done pid=4153775 arm=B index=1 status=0
+2026-10-16T12:25:58.370534Z start pid=4186202 arm=B index=2
+2026-10-16T12:26:24.726460Z done pid=4186034 arm=A index=2 status=0
+2026-10-16T12:26:24.746736Z start pid=27268 arm=A index=3
+2026-10-16T12:26:24.992355Z done pid=4186202 arm=B index=2 status=0
+2026-10-16T12:26:25.012181Z start pid=27761 arm=B index=3
+2026-10-16T12:26:42.361454Z done pid=27268 arm=A index=3 status=0
+2026-10-16T12:26:42.709381Z done pid=27761 arm=B index=3 status=0

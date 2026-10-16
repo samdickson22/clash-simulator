@@ -1,0 +1,20 @@
+{
+ "status": "FOCUSED_AFFECTED_CHECKS_MATCH",
+ "scope": "Local readonly replay of stdlib evidence validators, no engine execution. All full-sweep external FAILs retained.",
+ "affected_sha256": "0a105fda904f4d77c157f561fe4462d53fd29f61d3a510b4c8a03ce4b2325b19",
+ "validated_fid_output_hashes": 54,
+ "guard_mutants_both_seats": true,
+ "log_intended_hit_delta_own_digest_equal": true,
+ "descendant_cases": 4,
+ "first_update_cases": 42,
+ "clone_bounds_cases": 6,
+ "combined_recovery_cases": 2,
+ "scenario_rows": [
+  28,
+  28,
+  42
+ ],
+ "rage_impact_cases": 8,
+ "rage_mirror_cases": 2,
+ "elapsed_seconds": 0.31147310603410006
+}

@@ -1,0 +1,105 @@
+{
+  "observed_utc": "2026-10-16T10:20:57Z",
+  "jobdir": "/mpac/sdicks02/jobs/clasher/cards/b2-r2v2-20261016T0933Z",
+  "pid": 3422841,
+  "native": "7738f9d2c4c2b9f900fda60b69b70976faed186975662838b3b2af1f82a2e7ff",
+  "first_failure": {
+    "case": "zap",
+    "seat": "blue",
+    "runs": 40,
+    "mismatches": 40,
+    "cast_successes": 40,
+    "queried_runs": 5,
+    "query_count": 15,
+    "first_bad": {
+      "lead": -4,
+      "first": 31,
+      "field": "state.entities.4.public_speed_base",
+      "cast": {
+        "python": true,
+        "native": true,
+        "before_export": false
+      },
+      "gate_queries": [
+        {
+          "method": "can_receive_effect",
+          "source": "Zap",
+          "allowed": false
+        },
+        {
+          "method": "can_receive_area_damage",
+          "source": "Zap",
+          "allowed": false
+        },
+        {
+          "method": "can_receive_effect",
+          "source": "Zap",
+          "allowed": false
+        }
+      ],
+      "differences": [
+        {
+          "field": "state.entities.4.public_speed_base",
+          "python": null,
+          "native": 0.0,
+          "entity_class": "Building",
+          "spell_name": "",
+          "stats_name": "Tower"
+        },
+        {
+          "field": "state.entities.5.public_speed_base",
+          "python": null,
+          "native": 0.0,
+          "entity_class": "Building",
+          "spell_name": "",
+          "stats_name": "Tower"
+        },
+        {
+          "field": "state.entities.8.aim[1]",
+          "python": 26.5,
+          "native": 26.0,
+          "entity_class": "Projectile",
+          "spell_name": "",
+          "stats_name": "Tower"
+        },
+        {
+          "field": "state.entities.9.aim[1]",
+          "python": 26.5,
+          "native": 26.0,
+          "entity_class": "Projectile",
+          "spell_name": "",
+          "stats_name": "Tower"
+        }
+      ],
+      "digest_equal": true,
+      "ignored_fields": [
+        "entities.7.birth",
+        "entities.7.cooldown",
+        "entities.7.route_occupied",
+        "entities.9.stats.max_hp",
+        "entities.9.stats.sight",
+        "entities.9.birth",
+        "entities.9.last_target",
+        "entities.9.attacked_current",
+        "entities.9.age",
+        "entities.9.lane",
+        "entities.9.started",
+        "entities.2.birth",
+        "entities.8.stats.max_hp",
+        "entities.8.stats.sight",
+        "entities.8.birth",
+        "entities.8.last_target",
+        "entities.8.attacked_current",
+        "entities.8.age",
+        "entities.8.lane",
+        "entities.8.started",
+        "entities.4.birth",
+        "entities.5.birth",
+        "entities.6.birth",
+        "entities.1.birth",
+        "entities.3.birth"
+      ]
+    }
+  },
+  "verdict": "FAIL; do not normalize by widening exclusions"
+}

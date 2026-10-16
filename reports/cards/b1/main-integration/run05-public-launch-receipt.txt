@@ -1,0 +1,48 @@
+2026-10-16T14:22:56Z
+2026-10-16T14:22:36Z immutable04 production and genuine non-public evidence reused; fresh05 public+gate required
+182039c8fbfce1103dd6430fa27e3c5f17b06c81
+995336fa9ea7c422d7988909212de9521c448bdc
+{
+  "production_source_commit": "182039c8fbfce1103dd6430fa27e3c5f17b06c81",
+  "harness_commit": "995336fa9ea7c422d7988909212de9521c448bdc",
+  "native": "6737c140a4ab2792df22e53190001c58208f4ea27b9fd4d0cb0862e0e2f8161d",
+  "reused_actual_phases": {
+    "test": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T13:53:12Z pid=974989 phase=test\n",
+      "result_sha256": "95af5f1212884df3cef0a6bce0e0aa569e24972f19107feb2b84b5e29c0004ce"
+    },
+    "affected": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T14:01:29Z pid=1141325 phase=affected\n",
+      "result_sha256": "f2dfabd2bf3554f222bdadac3a353cfbe50449a5125624c41342549b13c7e3db"
+    },
+    "supplemental": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T14:04:02Z pid=1709505 phase=supplemental\n",
+      "result_sha256": "a5dc2edaced2894f07a3835c2fabd4262e3ff6dfb1e5b7e3e1b67f95d0fcf47d"
+    },
+    "reference": {
+      "executed_in": "/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04",
+      "receipt": "2026-10-16T14:05:10Z pid=1777319 phase=reference\n",
+      "pairs": 39,
+      "actual_runs": 78
+    }
+  },
+  "fresh_phases": [
+    "public",
+    "gate"
+  ],
+  "note": "No non-public phase or build re-executed. Production source and their complete inputs remain immutable04; only the ordinary zero-speed harness grid oracle/comment changed. All public cases and the sole C56 gate must execute fresh05."
+}/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/out/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/tree
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/repo
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/root
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-04/out
+43299db661f38155682eb54086a7ac8b14650a3f9a69639849710bcba3d033a1  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/source.sha256
+d78de5dc344c166d4e7f7424c86a8d8cb6f4a76c2d4ad431284dc34f343eef0e  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/tools.sha256
+ccb7afef6375e685b9797adb564f1e28d0988f7b20672bc251e3d44b602db5a0  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/inputs.sha256
+41fddc663b992f78f817cca6ec640ef2efa1182851b9c8c772aec775ad16cfc5  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/validation-origin.json
+1dcd9d1908d399b1301f89ba4f09f6c078bc845a9ac6e0420d1d908beef790a6  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/tools/public_emitted.py
+ffbf0e4fa8483601c26ae8699eef611f3201fa8d49848de11a4c88019c20fb44  /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/tools/review_jobs.sh
+2877844       0 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n 15 bash /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05/tools/review_jobs.sh /mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-05 public

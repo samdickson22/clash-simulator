@@ -1,0 +1,56 @@
+{
+  "schema": "canonical-engine-body-aliases-v1",
+  "reviewed_utc": "2026-10-16T09:56:44.511396+00:00",
+  "reviewer": "r3 Sol high",
+  "scope": "body identity equivalence only; no source-card/spawn/cost/placement policy",
+  "aliases": {
+    "Goblin": [
+      "Goblin",
+      "Goblin_Stab"
+    ]
+  },
+  "kind_constraints": {
+    "Goblin": "Troop"
+  },
+  "sources": [
+    {
+      "path": "/mpac/sdicks02/repos/clasher-live/live/perception/snapshot/body-catalog.json",
+      "sha256": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0",
+      "evidence": {
+        "34000002": "Goblin",
+        "34000119": "Goblin_Stab"
+      }
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-live/bot/cards/proxy_table.py",
+      "sha256": "72c3a4a964b5454a5ceacef9eb1a0785538c54b28d9c8dce02b15dfe7c1e52f3",
+      "evidence": "Existing explicit GoblinCurse and GoblinDrill body_map both map observed Goblin to Goblin_Stab; SHARED_BODY comment explicitly identifies curated Goblin/Goblin_Stab sprite equivalence."
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/katacr-yolo-live-20261016/mapping-audit-20261016T0931Z/capabilities-archived.json",
+      "sha256": "1309181c738e8227a6511ada16774945053672348fb204354c2d5534584dada3",
+      "evidence": {
+        "Goblins_main": [
+          {
+            "token": 155,
+            "kind": "Troop",
+            "name": "Goblin_Stab",
+            "multiplicity": 8
+          }
+        ]
+      }
+    }
+  ],
+  "consumer_requirements": [
+    "Keep canonical observed cls Goblin immutable; alias only selects a verified engine body.",
+    "Intersect candidates with configured source main/children/death templates and token kind; never use alias as spawn provenance.",
+    "Do not alias SpearGoblin, GoblinBrawler, GoblinGiant, GoblinHut or other named goblin bodies.",
+    "Do not enable unsupported source cards; existing default-drop and opt-in compatibility rules remain."
+  ],
+  "checks": {
+    "existing_explicit_body_maps": true,
+    "catalog_both_body_names": true,
+    "configured_Goblins_main_token155_Troop": true,
+    "no_SpearGoblin_alias": true
+  }
+}

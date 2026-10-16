@@ -1,0 +1,14 @@
+fixtures-pinned.jsonl: OK
+roots-pinned-0.jsonl: OK
+roots-pinned-1.jsonl: OK
+roots-pinned-2.jsonl: OK
+roots-pinned-3.jsonl: OK
+62c332627f4d1d5ef5c51a240643e7ce4a55edbc65ace018878668e55068bcfc  tools.sha256
+2026-10-16T11:03:25Z
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/src
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree
+/mpac/sdicks02/jobs/clasher/cards/b1/review-r1-main-20261016-01/tree/py/gamedata.json
+5ceae3a6722ade9714e72cb4cd6a7e6b27ee186a9a229c1962d84fe6399ddcd3  tools/review_jobs.sh
+241fe52f0dae33d10095c1230064d36ef4a56f7f9c80261342a7780960ff74d1  tools/affected.py
+0f0f8604699c9b5c5564d77d32a9e12534b4e3f7689df3fd3512517b963efba0  tools/first_update_paths.py
+build-launch pid=3593124

@@ -246,3 +246,97 @@ root retries exactly the errored games, since done_games skips only non-error ro
   - **Babysitter:** steered with the new shards, GPU checks on 01/04/08, and halving order (newest shard first).
   - **cpu_feeder.sh** has the same live_py flaw (it counts the YOLO loaders). The feeders are off now; it11 must
     patch it before restarting them.
+
+## 2026-10-16 16:22Z — packing/refit recovery closed at explicit blockers (Sol high)
+
+Recovered in place after the provider-stream failure. Full evidence and source proof:
+`reports/bot/fullpool/REFIT-AUDIT.md`; commands/results/failures, exact identities, snapshots and preserved
+failed/current outputs: `05:/mpac/sdicks02/jobs/clasher/bot-fullpool/refit-recovery-20261016T1611Z/`.
+An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier history remains intact.
+
+- **Packing:** existing packs 03/04/08 contain 2,262,299 / 2,953,699 / 1,976,795 rows = **7,192,793**.
+  Complete metadata, source-index hashes and row sums agree; 23,266 sealed shards, zero duplicate source paths
+  across packs. Array payload hashes were not all recomputed. No repack launched. Original pack PGIDs:
+  03/1594987 (16:05:25–16:07:41), 04/558472 (16:05:25–16:08:39), 08/1660796 (16:05:26–16:07:37).
+- **F1 invalid:** actual host source proved ratios 1.0 (08) and 2.0 (04) left `old=None`; required C56 replay
+  corpora were not loaded. Old manifest hashes did not prove inclusion. Both trained entirely from G1,
+  which itself can include C56 observations. `old_rows=0` was accurate, not accounting ambiguity.
+- **Failed CUDA evidence:** first attempts 08/1905505 and 04/812758 failed by 16:10:02 with incompatible torch/
+  driver; `fail1.log` files preserved. Their printed `rc 0` was false success from the wrapper. Prior provider
+  deletion of first output dirs is documented; recovery deleted no outputs. Retry detach initially returned
+  those stale receipts, not actual retry job identities.
+- **Adopted current jobs:** F1a08 PGID1918203/trainer1918288, F1b04 PGID855251/trainer855446, actual process starts
+  16:10:37. KF1a01 PGID2895857/trainer2896071 (16:06:11), KF1b01 PGID2896463/trainer2896759 (receipt16:06:12).
+  Actual argv, boot/start ticks, source hashes, log descriptors, UID/cwd/executable and lease10 each were checked.
+  KF1 loaded only K1 x0/x11/x10 (3,292,938 rows); required old C56 pool recording union was absent.
+- **CPU gates failed:** KF1 configured16 training threads per lease10; extraction8 is an earlier phase, so
+  peak16, not24. F1 configured8 trainer threads plus8 concurrent loaders, envelope16 per lease10.
+  NLWP was not equated to compute demand. No live lease edits or capacity assumptions were made.
+- **Authority and stop:** parent direction16:13:09 required exact guarded stop for these failures. LIVE
+  temporarily lent only the exact existing04/08 F1 jobs; that did not waive correctness/capacity. Independent
+  Sol review approved guard SHA256 `c15032d1a166d9d63f1f2d8ec42ad3245ec0586c959517e092f0958254c72dc3`.
+  One SIGTERM after fresh identity/lease/source/log-fd revalidation per exact group:04 F1b16:17:21,
+  08 F1a16:17:27,01 KF1a16:17:36,01 KF1b16:17:49. All had no live members by16:17:53; their own EXIT traps
+  removed leases. Terminal snapshot16:18:20 confirmed no refit lease or GPU process. LIVE received GPU handback;
+  GPU04/08 reverted to LIVE. No retry, extension, output deletion, SIGKILL or promotion occurred.
+- **Output status:** F1a/f1b ended at recorded steps208/202; no checkpoint/complete marker. KF1a/b ended after
+  epoch4; no model export. All original/current logs, receipts, inputs and train logs survive and were copied
+  into the recovery evidence. These are invalid/incomplete attempts, not evaluated models.
+- **Prepared fixes, independently reviewed:** fractional mixtures(.5 and2/3), rejected silent old omission,
+  compatible CUDA venv default, current-lease CPU budget validation (F1 8+2=10; KF1 max8,8+parent=9), fresh names/
+  output guards, real trainer exit propagation, safe `set -e` env sourcing, required `OLD_REC`, Path-safe KF1 JSON,
+  finite/tolerance-checked gate/card/all-hand-tile serving parity before export completion JSON. Actual host
+  source trees remain unchanged. Four light unit tests, shell syntax, both OWN env modes and diff checks passed;
+  final independent source review approved preparation only. No corrected fit/export or eval ran.
+- **Concrete remaining gates:** review immutable datasets and exact legacy KF1 recording identities/union;
+  obtain fresh capacity/allocation; stage/review exact corrected host sources and fresh argv/log/receipt/output
+  identities; separately authorize a relaunch and subsequent result gates. Earlier preflights/idle observations
+  are not authority. Existing K1 first-pass groups04/2819629 and08/2850352 continue untouched (lease4 each);
+  no failed-game retries or old gates were revived. Coordination blockers go to owning parent0523ae6f…;
+  the shared bot lead remains context-blocked. No routine milestone DMs were sent.
+- 17:10–17:50Z **F1 refits done** on GPU (fixed sources b32921a3: --new-ratio is the new-corpus fraction; the C56 replay is
+  actually mixed). Each arm: one attempt inside the LIVE LEAD's 16:30–18:30Z GPU windows, CPU 10 (4 threads + 6
+  loaders), 1200 steps, init rl5-v10-fp, new = the three G1 packs (6,836,154 train / 356,639 held-out rows),
+  old = kc7a x01/x04/x08 (1,545,817 rows). Rows per batch: new 2048 (f1a2) / 2731 (f1b2).
+
+  | arm | host | new fraction | held-out loss | threshold | step-001200.pt sha256 prefix |
+  |---|---|---|---|---|---|
+  | f1a2 | 08 | 0.5 | 4.943 | 0.644 | 0c03f79ffe5aa19e |
+  | f1b2 | 04 | 2/3 | 4.930 | 0.642 | 34176b656d3a7bb8 |
+
+  Checkpoints are every 250 steps, with complete.json. The old f1a/f1b dirs (invalid: no C56 replay) are kept.
+- 17:46Z **BOT LEAD reset:** no permission process; the owner launches, fixes and retries; the pin is
+  **live16402b-r3** (the CARD LEAD fixed the template-error class).
+  - r3 roots: identical on 03/04/08 except the per-host RECEIPT.json (file manifest excluding RECEIPT.json
+    1aa243756bd98494…). Copied 04 → 01 into J/roots/live16402b-r3 (same manifest).
+  - Tree J/repo-b82939149f8a (main b8293914). Its first r3 preflight FAILED: ModuleNotFoundError
+    clasher.rl.slot_permission. Main commit e883a80da (LIVE slot eligibility) imports a module that exists only in the
+    repo's src/, while Runtime puts the root's clasher package first, so every search player on main breaks against
+    the fleet roots. Workaround: the run tree overlays the four pre-e883a80da files (bot/search/{players,candidates,
+    lopp_fast}.py, bot/live/player.py; shas in T/OVERLAY-pre-e883a80da.txt). In sim no packet has slot-permission
+    data, so behaviour is unchanged. After the overlay, r3 preflight PASS on 03 (17:55:57Z) and 01 (17:56:39Z).
+    **This needs a proper fix on main by the LIVE LEAD.**
+- 17:48–17:57Z **launched on r3:**
+  - G1 shard 8 (03, W50, 4000 games, PGID 1895853) and G1 shard 9 (01, W40, 3200 games, PGID 335988).
+  - K1 shard 12 (03, W36, 1000 cases, PGID 1896024) and K1 shard 13 (01, W25, 600 cases, PGID 336557).
+  - Reruns of the template-errored games: G1 shards 0–7 on their hosts (W4 each); K1 shards 2, 10, 11 (RETRY=1).
+  - KF1 arm a on 01 (k1a1, CPU, from poolfp, PGID 4033434) and arm b on 08 (k1b1, fresh vocab, PGID 4178213).
+    Both on K1 x0 + x2 + x10 + x11 plus the legacy bot-lopp-rec union; NAME/receipt in J.
+  - The r2 K1 shard 1 on 04 (PGID 2819629) continues.
+- 17:59Z Sol helper (fullpool-f1-screen-babysit-r3-20261016): F1 screen on FP-DEV, then C56-REG (f1a2, f1b2 vs the
+  rl5-v10-fp baseline, opponents extended R3a and v1, 300 paired cases, on 04/08 via run/eval_f1.sh), plus
+  babysitting and filling 04/08 with new G1 shards after the evals.
+- 2026-10-16T18:15:52Z main fixed by 5bce7c28b (slot-permission change reverted, slot_permission.py deleted). Main's four files are byte-identical to my overlay (sha prefixes a58a4787/0c2e14fe/dd0a067c/3b4f27d7), so running jobs on repo-b82939149f8a are unaffected; the next stage drops the overlay.
+- 2026-10-16T18:26:54Z **F1 screen, FP-DEV** (both decks full-pool, live16402b-r3, 300 paired cases per opponent, 1800 games, 0
+  errors; rows on 04/08 at J/eval-f1-fpdev). Baseline = extended RL r5 v10 (0.5375); opponents are the extended R3a
+  and v1.
+
+  | opponent | base | f1a2 | f1b2 | f1a2 − base [95% CI] | f1b2 − base [95% CI] |
+  |---|---|---|---|---|---|
+  | R3a | 0.572 | 0.617 | 0.613 | +0.045 [−0.023, +0.110] | +0.042 [−0.022, +0.105] |
+  | v1 | 0.800 | 0.833 | 0.830 | +0.033 [−0.017, +0.083] | +0.030 [−0.027, +0.087] |
+  | pooled (n=600) | 0.686 | 0.725 | 0.722 | **+0.039 [−0.003, +0.082]** | +0.036 [−0.006, +0.078] |
+
+  Both arms are about +0.04 over the baseline, but this is the dev (selection) bank, so it is not a claim. The C56-REG
+  regression check was moved to 01 (W16), because live-diag has priority on 04/08 until ~20:05Z. The 08 eval lease
+  was lowered from 51 to 8 so it stopped blocking live-diag.

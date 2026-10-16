@@ -1,0 +1,161 @@
+{
+  "counts": {
+    "base": {
+      "scenarios": 196,
+      "pass": 54,
+      "b2_pass": 13
+    },
+    "mech": {
+      "scenarios": 196,
+      "pass": 57,
+      "b2_pass": 16
+    },
+    "stats": {
+      "scenarios": 196,
+      "pass": 65,
+      "b2_pass": 24
+    }
+  },
+  "cards": {
+    "Clone": {
+      "base": {
+        "pass": 2,
+        "total": 3
+      },
+      "mech": {
+        "pass": 3,
+        "total": 3
+      },
+      "stats": {
+        "pass": 3,
+        "total": 3
+      }
+    },
+    "DarkMagic": {
+      "base": {
+        "pass": 1,
+        "total": 3
+      },
+      "mech": {
+        "pass": 1,
+        "total": 3
+      },
+      "stats": {
+        "pass": 3,
+        "total": 3
+      }
+    },
+    "Freeze": {
+      "base": {
+        "pass": 1,
+        "total": 3
+      },
+      "mech": {
+        "pass": 1,
+        "total": 3
+      },
+      "stats": {
+        "pass": 3,
+        "total": 3
+      }
+    },
+    "GoblinCurse": {
+      "base": {
+        "pass": 2,
+        "total": 3
+      },
+      "mech": {
+        "pass": 2,
+        "total": 3
+      },
+      "stats": {
+        "pass": 2,
+        "total": 3
+      }
+    },
+    "Graveyard": {
+      "base": {
+        "pass": 0,
+        "total": 3
+      },
+      "mech": {
+        "pass": 1,
+        "total": 3
+      },
+      "stats": {
+        "pass": 1,
+        "total": 3
+      }
+    },
+    "Heal": {
+      "base": {
+        "pass": 0,
+        "total": 3
+      },
+      "mech": {
+        "pass": 0,
+        "total": 3
+      },
+      "stats": {
+        "pass": 3,
+        "total": 3
+      }
+    },
+    "Mirror": {
+      "base": {
+        "pass": 1,
+        "total": 1
+      },
+      "mech": {
+        "pass": 1,
+        "total": 1
+      },
+      "stats": {
+        "pass": 1,
+        "total": 1
+      }
+    },
+    "Rage": {
+      "base": {
+        "pass": 2,
+        "total": 3
+      },
+      "mech": {
+        "pass": 3,
+        "total": 3
+      },
+      "stats": {
+        "pass": 3,
+        "total": 3
+      }
+    },
+    "Snowball": {
+      "base": {
+        "pass": 2,
+        "total": 3
+      },
+      "mech": {
+        "pass": 2,
+        "total": 3
+      },
+      "stats": {
+        "pass": 2,
+        "total": 3
+      }
+    },
+    "Vines": {
+      "base": {
+        "pass": 2,
+        "total": 3
+      },
+      "mech": {
+        "pass": 2,
+        "total": 3
+      },
+      "stats": {
+        "pass": 3,
+        "total": 3
+      }
+    }
+  }
+}

@@ -1,0 +1,863 @@
+....usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: workers must be in 1..15; start/count must be nonnegative
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: workers must be in 1..15; start/count must be nonnegative
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: workers must be in 1..15; start/count must be nonnegative
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: unrecognized arguments: --work 2
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: base-player must be the deterministic serial K4L-R-gs-rw-fc
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: all11 gate requires both arms A/B
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: all11 gate requires both arms A/B
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: all11 gate requires both arms A/B
+.usage: __main__.py [-h] --out OUT --bank BANK [--arms ARMS] [--start START]
+                   [--count COUNT] [--workers WORKERS]
+                   [--base-player BASE_PLAYER] [--client CLIENT]
+                   [--all11-gate]
+__main__.py: error: launch with PYTHONHASHSEED=0
+...............................2026-10-16T11:39:16.421433Z preflight parent=1825247 requested=2 workers=1
+.2026-10-16T11:39:16.536879Z preflight parent=1825247 requested=2 workers=1
+.2026-10-16T11:39:16.636840Z preflight parent=1825247 requested=2 workers=1
+.....................................................2026-10-16T11:39:17.374750Z start pid=12345 arm=A index=0
+2026-10-16T11:39:17.375249Z done pid=12345 arm=A index=0 status=256
+...2026-10-16T11:39:17.382151Z preflight parent=1825247 requested=2 workers=1
+2026-10-16T11:39:17.429379Z parent=1825247 jobs=2 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-30/test_all_done_resume_still_bui0/output/launch-00001.json
+2026-10-16T11:39:17.431042Z preflight parent=1825247 requested=2 workers=1
+2026-10-16T11:39:17.477668Z parent=1825247 jobs=0 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-30/test_all_done_resume_still_bui0/output/launch-00002.json
+2026-10-16T11:39:17.478418Z preflight parent=1825247 requested=2 workers=1
+.2026-10-16T11:39:17.530529Z preflight parent=1825247 requested=2 workers=1
+2026-10-16T11:39:17.576935Z parent=1825247 jobs=2 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-30/test_all_done_resume_still_bui1/output/launch-00001.json
+2026-10-16T11:39:17.578504Z preflight parent=1825247 requested=2 workers=1
+2026-10-16T11:39:17.623859Z parent=1825247 jobs=0 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-30/test_all_done_resume_still_bui1/output/launch-00002.json
+2026-10-16T11:39:17.624822Z preflight parent=1825247 requested=2 workers=1
+.2026-10-16T11:39:17.673180Z preflight parent=1825247 requested=2 workers=1
+2026-10-16T11:39:17.717068Z parent=1825247 jobs=2 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-30/test_all_done_resume_still_bui2/output/launch-00001.json
+2026-10-16T11:39:17.718624Z preflight parent=1825247 requested=2 workers=1
+2026-10-16T11:39:17.763877Z parent=1825247 jobs=0 workers=1; receipt=/tmp/pytest-of-sdicks02/pytest-30/test_all_done_resume_still_bui2/output/launch-00002.json
+2026-10-16T11:39:17.764833Z preflight parent=1825247 requested=2 workers=1
+.2026-10-16T11:39:17.822201Z preflight parent=1825247 requested=2 workers=1
+.2026-10-16T11:39:17.850137Z preflight parent=1825247 requested=2 workers=1
+.Recorded evidence: incomplete, invalid, or unregistered; rows 3/4; missing 1, incomplete 2; parent exit 0.
+
+| arm | games | errors | score | W/D/L | damage dealt/taken | crowns for/against | CPU s/game | CPU s/decision | wall s/game |
+|---|---:|---:|---:|---|---|---|---:|---:|---:|
+| A | 1 | 0 | 1.000 | 1/0/0 | —/— | —/— | — | — | — |
+| B | 1 | 0 | 1.000 | 1/0/0 | —/— | —/— | — | — | — |
+
+A: native failures=2, rejected deployments=1, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[], incomplete indices=[0].
+
+B: native failures=0, rejected deployments=0, child failures=0, nonterminal=0; missing diagnostics=0; controller prior failures=0; missing indices=[1], incomplete indices=[1].
+Pairs vs A: 0/2; missing paired indices=[0, 1].
+
+Paired Δ = arm − A; 95% percentile bootstrap, 20,000 resamples, NumPy seed 0.
+
+| arm / opponent | pairs | Δscore [95% CI] | SD(Δ) | identical commands | first differing own tick (median) |
+|---|---:|---|---:|---:|---:|
+| B / all | 0 | — — | — | — | — |
+| B / R3a | 0 | — — | — | — | — |
+| B / v1 | 0 | — — | — | — | — |
+
+B: n = unavailable paired cases for 80% power, α=0.05 two-sided, Δ=0.05: ceil(((1.96+0.84) SD / 0.05)²).
+Paired Δ damage dealt/taken: —/—; Δ crowns for/against: —/—.
+
+CPU/game is match process CPU (both seats and simulation); CPU/decision is our seat’s total decision CPU / decisions. Wall/game is each child’s elapsed time; runtime initialization is excluded. A differing full command hash can have identical own play logs; those pairs have no own divergence tick. Power uses observed sample SD; zero observed SD gives a zero plug-in estimate, not evidence of adequate power.
+
+A opponent scores: R3a n=0, score=—, W/D/L=0/0/0; v1 n=1, score=1.000, W/D/L=1/0/0.
+
+B opponent scores: R3a n=0, score=—, W/D/L=0/0/0; v1 n=1, score=1.000, W/D/L=1/0/0.
+.........................................................................FFFFFFFFFFFF
+=================================== FAILURES ===================================
+__ test_actual_candidates_policy_fallback_and_both_opponents[0-down0-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 0
+down = (False, False), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b7729a80>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[0-down1-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 0
+down = (True, False), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f22d454c7f0>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[0-down2-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 0
+down = (False, True), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b7143310>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[0-down3-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 0
+down = (True, True), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b555e8f0>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[1-down4-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 1
+down = (False, False), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b35c5fc0>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[1-down5-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 1
+down = (True, False), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b5b27220>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[1-down6-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 1
+down = (False, True), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f22e70f8070>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+__ test_actual_candidates_policy_fallback_and_both_opponents[1-down7-Cannon] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 1
+down = (True, True), ordinary = 'Cannon'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b54c81f0>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+___ test_actual_candidates_policy_fallback_and_both_opponents[0-down8-Tesla] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 0
+down = (True, True), ordinary = 'Tesla'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b40cbfd0>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+___ test_actual_candidates_policy_fallback_and_both_opponents[1-down9-Tesla] ___
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 1
+down = (True, True), ordinary = 'Tesla'
+
+    @pytest.mark.parametrize('seat, down, ordinary',
+        [(seat, down, 'Cannon') for seat in (0, 1) for down in placement_probe.PATTERNS]
+        + [(seat, (True, True), 'Tesla') for seat in (0, 1)])
+    def test_actual_candidates_policy_fallback_and_both_opponents(runtime, seat, down, ordinary):
+        from bot.levels.player import make_arm_player
+        from bot.players.policy import PolicyPlayer
+        from bot.players.base import MatchContext, PublicView
+        from clasher.rl.public_action_mask import PublicActionMaskInput
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        match = _match(rt, seat, down, ordinary=ordinary)
+        info = match.information(seat)
+        view = PublicView(info.tick, seat, info, info, [], (), True)
+        ctx = MatchContext(seat=seat, seed=1701, own_order=tuple(match.decks[seat]))
+        fair = dict(own_levels=dict.fromkeys(match.decks[seat], 11), own_tower=11, opp_tower=11)
+        install = placement.install_runtime(rt)
+        assert placement.install_runtime(rt) is install
+        actors = [make_arm_player(rt, arm, view=fair, parity_all11=arm == 'B') for arm in ('A', 'B0', 'B')]
+        actors += [placement.install_player(PolicyPlayer(rt, source), kind='policy') for source in ('R3a', 'v1')]
+        for player in actors:
+            try:
+                assert placement.install_player(player, kind=player._placement_actor['kind']) is player
+                player.start(ctx)
+                wrapper = player.poller.player.mask_builder
+                assert isinstance(wrapper, placement.PlacementMask)
+                req = PublicActionMaskInput.from_confidence_observation(info.packet)
+                before = wrapper.base.build(req)
+                expected = wrapper.build(req)
+                assert np.array_equal(expected[2*576:2*576+15*18], before[2*576:2*576+15*18])
+                assert not expected[2*576+15*18:3*576].any()
+                assert not (expected & ~before).any() and expected[2304]
+                for x, y in placement_probe.FAILED:
+                    assert not expected[2*576+y*18+x]
+                for slot in (0, 1):  # Knight AND flying Minions share the fixed WATER test.
+                    assert not expected[slot*576:(slot+1)*576][expected_water()].any()
+                    assert np.array_equal(expected[slot*576:(slot+1)*576][~expected_water()],
+                                          before[slot*576:(slot+1)*576][~expected_water()])
+                assert np.array_equal(expected[3*576:4*576], before[3*576:4*576])  # Fireball.
+                if all(down):
+                    assert before[2*576+15*18:3*576].any()
+                    assert before[:576][expected_water()].any() and wrapper.water_removed > 0
+                if player._placement_actor['kind'] == 'search':
+                    illegal = [2*576+y*18+x for x, y in placement_probe.FAILED]
+                    illegal += [slot*576+y*18+x for slot in (0, 1) for y in (15, 16) for x in (2, 4, 13, 15)]
+                    candidates, mask = player.p.core.candidates(info.packet, illegal)
+>                   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f21b40a7970>
+
+>   assert 2304 in candidates and all(mask[a] for a in candidates)
+                                      ^^^^^^^
+E   IndexError: index 2400 is out of bounds for axis 0 with size 2306
+
+bot/levels/test_placement.py:471: IndexError
+_________________ test_hidden_state_invariance_and_recorder[0] _________________
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 0
+
+    @pytest.mark.parametrize('seat', [0, 1])
+    def test_hidden_state_invariance_and_recorder(runtime, seat):
+        from bot.players.base import MatchContext, PublicView
+        from bot.players.policy import PolicyPlayer
+        from .gates import _plain, _difference
+        from .player import make_arm_player
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        matches = [_match(rt, seat, (True, True), hidden=hidden) for hidden in (False, True)]
+        infos = [m.information(seat) for m in matches]
+        assert _plain(infos[0]) == _plain(infos[1]), _difference(_plain(infos[0]), _plain(infos[1]))
+        fair = dict(own_levels=dict.fromkeys(DECK, 11), own_tower=11, opp_tower=11)
+        for source in ('A', 'B0', 'B', 'R3a', 'v1'):
+            decisions, roots = [], []
+            for info in infos:
+                player = (make_arm_player(rt, source, view=fair) if source in ('A', 'B0', 'B') else
+                          placement.install_player(PolicyPlayer(rt, source), kind='policy'))
+                try:
+                    player.start(MatchContext(seat=seat, seed=1701, own_order=DECK))
+                    if source in ('A', 'B0', 'B'):
+                        rng = np.random.default_rng(7712)
+                        belief = player.p.belief.sample(rng)
+                        root_fn = player.root_fn or rt.R.root
+>                       roots.append(json.loads(root_fn(info, belief, rng).snapshot()))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:522: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/levels/root.py:158: in root
+    return clasher_core.BattleState(self.payload(info, opponent, rng))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <bot.levels.root.ExactLevelRoot object at 0x7f21b59e5b80>
+info = Information(tick=180, seat=0, packet=ConfidenceAwareActorObservation(observation=ActorObservation(entity_ids=array([20...ight', 'Minions', 'Cannon', 'Fireball'], 'cycle': ['Giant', 'Musketeer', 'Archers', 'Arrows'], 'refill': 0}, events=())
+opponent = {'cycle': ['IceGolem', 'IceSpirit', 'Fireball', 'Musketeer'], 'elixir': 6.0, 'hand': ['Cannon', 'HogRider', 'Log', 'Skeletons'], 'refill': 0}
+rng = Generator(PCG64) at 0x7F21B3647E60
+
+    def payload(self, info, opponent, rng):
+        from clasher.rl.contract_v5 import CHAMPION_COOLDOWN_GLOBAL, CHAMPION_DURATION_GLOBAL
+        R, seat = self.R, info.seat
+        names = R.builder.token_names
+        obs = info.packet.observation
+        cfg, cut, _ = self.config(seat)
+        # Unused full-scope entries may be unsupported at a low level, but any
+        # card this root can actually play must have the requested physics.
+        for owner, player in ((seat, info.own), (1 - seat, opponent)):
+            cards = list(player.get('hand') or []) + list(player.get('cycle') or [])
+            for card in cards:
+                if not card:
+                    continue
+                level = self.level(seat, owner, card)
+                if level != 11 and self.lc.entry(card, level) is None:
+>                   raise ValueError(f'no exact level export for playable card {card} L{level}, owner {owner}')
+E                   ValueError: no exact level export for playable card Fireball L4, owner 1
+
+bot/levels/root.py:175: ValueError
+_________________ test_hidden_state_invariance_and_recorder[1] _________________
+
+runtime = <bot.players.runtime.Runtime object at 0x7f22e5f07620>, seat = 1
+
+    @pytest.mark.parametrize('seat', [0, 1])
+    def test_hidden_state_invariance_and_recorder(runtime, seat):
+        from bot.players.base import MatchContext, PublicView
+        from bot.players.policy import PolicyPlayer
+        from .gates import _plain, _difference
+        from .player import make_arm_player
+        from bot.search.lopp import FAILURES
+        rt = runtime
+        matches = [_match(rt, seat, (True, True), hidden=hidden) for hidden in (False, True)]
+        infos = [m.information(seat) for m in matches]
+        assert _plain(infos[0]) == _plain(infos[1]), _difference(_plain(infos[0]), _plain(infos[1]))
+        fair = dict(own_levels=dict.fromkeys(DECK, 11), own_tower=11, opp_tower=11)
+        for source in ('A', 'B0', 'B', 'R3a', 'v1'):
+            decisions, roots = [], []
+            for info in infos:
+                player = (make_arm_player(rt, source, view=fair) if source in ('A', 'B0', 'B') else
+                          placement.install_player(PolicyPlayer(rt, source), kind='policy'))
+                try:
+                    player.start(MatchContext(seat=seat, seed=1701, own_order=DECK))
+                    if source in ('A', 'B0', 'B'):
+                        rng = np.random.default_rng(7712)
+                        belief = player.p.belief.sample(rng)
+                        root_fn = player.root_fn or rt.R.root
+>                       roots.append(json.loads(root_fn(info, belief, rng).snapshot()))
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bot/levels/test_placement.py:522: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+bot/levels/root.py:158: in root
+    return clasher_core.BattleState(self.payload(info, opponent, rng))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <bot.levels.root.ExactLevelRoot object at 0x7f21b365d430>
+info = Information(tick=180, seat=1, packet=ConfidenceAwareActorObservation(observation=ActorObservation(entity_ids=array([20...ight', 'Minions', 'Cannon', 'Fireball'], 'cycle': ['Giant', 'Musketeer', 'Archers', 'Arrows'], 'refill': 0}, events=())
+opponent = {'cycle': ['IceGolem', 'IceSpirit', 'Fireball', 'Musketeer'], 'elixir': 6.0, 'hand': ['Cannon', 'HogRider', 'Log', 'Skeletons'], 'refill': 0}
+rng = Generator(PCG64) at 0x7F21892E49E0
+
+    def payload(self, info, opponent, rng):
+        from clasher.rl.contract_v5 import CHAMPION_COOLDOWN_GLOBAL, CHAMPION_DURATION_GLOBAL
+        R, seat = self.R, info.seat
+        names = R.builder.token_names
+        obs = info.packet.observation
+        cfg, cut, _ = self.config(seat)
+        # Unused full-scope entries may be unsupported at a low level, but any
+        # card this root can actually play must have the requested physics.
+        for owner, player in ((seat, info.own), (1 - seat, opponent)):
+            cards = list(player.get('hand') or []) + list(player.get('cycle') or [])
+            for card in cards:
+                if not card:
+                    continue
+                level = self.level(seat, owner, card)
+                if level != 11 and self.lc.entry(card, level) is None:
+>                   raise ValueError(f'no exact level export for playable card {card} L{level}, owner {owner}')
+E                   ValueError: no exact level export for playable card Fireball L4, owner 0
+
+bot/levels/root.py:175: ValueError
+=========================== short test summary info ============================
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[0-down0-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[0-down1-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[0-down2-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[0-down3-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[1-down4-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[1-down5-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[1-down6-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[1-down7-Cannon]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[0-down8-Tesla]
+FAILED bot/levels/test_placement.py::test_actual_candidates_policy_fallback_and_both_opponents[1-down9-Tesla]
+FAILED bot/levels/test_placement.py::test_hidden_state_invariance_and_recorder[0]
+FAILED bot/levels/test_placement.py::test_hidden_state_invariance_and_recorder[1]
+12 failed, 179 passed in 151.00s (0:02:31)
