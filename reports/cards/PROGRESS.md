@@ -59,6 +59,7 @@ See COVERAGE.md "Batch plan".
 | cards-batchA-review-r1 | Sol | review Batch A engine diff 7e64d8b93..9eed63029 | (verdict) |
 | cards-r1cards2-sol-r1 | Sol | assemble r1-cards2 (scope+Batch A, native 1923619e) + live16402b; gates | reports/cards/r1-cards2/ |
 | cards-runtime-review-r1 | Sol | review runtime/overlay code 0874da215 | (verdict) |
+| cards-nulls-fixtures-sol-r1 | Sol | Null's Royale (15.535!) native fixtures: offline prep, then LIVE-granted slots | reports/cards/nulls/ |
 | cards-live16402-opus-r1 | Opus | live16402 overlay generator + pin + gate | bot/cards/balance_overlay.py, reports/cards/live16402/ |
 
 ## Definition of done per card
@@ -100,3 +101,9 @@ unchanged · in r1-cards1 scope · translator mapping (real body under r1-cards1
   commit 9eed63029). Reported to coordinator. Runtime/overlay code committed 0874da215. Opus owners (scope, B2,
   Batch A, live16402) idle after handoff; B1 continues on Opus. Sol shepherds gates/reviews/assembly (Sam: Opus owns,
   Sol = workhorse incl. tedious code). Merge to main after Sol reviews of Batch A engine + runtime code.
+- 02:25Z Batch A engine review REJECT: Freeze inheritance after first update in Python vs before drain in Rust
+  (death_effects.py:285 / lib.rs:3519) + wave siblings visible in first update → Opus Batch A owner fixing, then re-gate.
+  r1-cards2 assembly holding long gates for the new sha. BOT LEAD: (1) widen R.bots in r1-cards1 (Opus scope owner
+  assigned); live switch ships as bundle r1-cards1 + their extended nets + open-world belief; (2) full-pool retrain
+  generates under **live16402 on r1-cards2** → tell BOT LEAD when that opt-in pin is ready (start signal).
+  Null's slots: reference AVD, client 15.535.13 → mechanics only; slot 1–2 h via LIVE LEAD.
