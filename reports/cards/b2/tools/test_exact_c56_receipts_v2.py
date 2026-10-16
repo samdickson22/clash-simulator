@@ -27,6 +27,27 @@ def evidence():
 
 
 class ExactGateTests(unittest.TestCase):
+    def test_deployment_source_inventory_requires_no_git_and_detects_all_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'bot').mkdir();(root/'reports').mkdir()
+            (root/'bot/source.py').write_text('source original')
+            (root/'reports/config.json').write_text('{}')
+            (root/'.venv').mkdir();(root/'.venv/package.py').write_text('outside source contract')
+            self.assertFalse((root/'.git').exists())
+            before=gate.shared_source_inventory(root)
+            self.assertEqual(set(before),{'bot/source.py','reports/config.json'})
+            (root/'bot/untracked.py').write_text('new module')
+            self.assertNotEqual(before,gate.shared_source_inventory(root))
+            (root/'bot/untracked.py').unlink();self.assertEqual(before,gate.shared_source_inventory(root))
+            (root/'bot/source.py').write_text('source changed')
+            self.assertNotEqual(before,gate.shared_source_inventory(root))
+            (root/'bot/source.py').unlink()
+            self.assertNotEqual(before,gate.shared_source_inventory(root))
+            (root/'bot/source.py').symlink_to(root/'reports/config.json')
+            self.assertNotEqual(before,gate.shared_source_inventory(root))
+            (root/'bot/cycle').symlink_to(root)
+            with self.assertRaises(AssertionError):gate.shared_source_inventory(root)
+
     def test_exact_built_candidate_and_affected_failures_are_required(self):
         sources={str(i):'b'*64 for i in range(504)}
         native=dict(out4=gate.TOTAL,mutA='c'*64,mutB='d'*64)

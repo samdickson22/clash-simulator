@@ -174,8 +174,12 @@ for episode in episodes:
     for name in ('setup.json','evaluation-only.jsonl.gz','events.jsonl','objects.jsonl.gz'):
         paths.add(data/'t1-trainval'/episode/name)
 bot=Path('/mpac/sdicks02/repos/clasher-bot')
-tracked=subprocess.check_output(['git','-C',str(bot),'ls-files','-z'],text=True).split('\0')
-paths.update(bot/name for name in tracked if name and Path(name).suffix in ('.py','.json'))
+sys.path.insert(0,str(job/'tools'))
+from exact_c56_receipts_v2 import shared_source_inventory
+shared_sources=shared_source_inventory(bot)
+paths.update(bot/name for name in shared_sources)
+manifest.update(shared_bot_root=str(bot),shared_bot_source_method='actual-filesystem-python-json-v1',
+                shared_bot_files=shared_sources,shared_bot_commit=None)
 # Cover runtime Python/search/resource sources, configuration and model inputs.
 for directory in ('engine-rs','src','imitation','student-source','reports'):
     for path in (r1/directory).rglob('*'):
@@ -184,7 +188,6 @@ for path in r1.iterdir():
     if path.is_file() and path.suffix in ('.py','.json','.pt','.npz','.npy'):paths.add(path)
 python=Path('/mpac/sdicks02/repos/clasher-bot/.venv/bin/python')
 paths.add(python);paths.add(python.parent.parent/'pyvenv.cfg')
-manifest['shared_bot_commit']=subprocess.check_output(['git','-C',str(bot),'rev-parse','HEAD'],text=True).strip()
 manifest['inputs']={str(path):sha(path) for path in sorted(paths)}
 with (job/'manifest.json').open('w') as out:json.dump(manifest,out,indent=1)
 manifest_sha=sha(job/'manifest.json')

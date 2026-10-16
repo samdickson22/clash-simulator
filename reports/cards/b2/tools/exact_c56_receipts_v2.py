@@ -35,6 +35,32 @@ def sha(path):
 def utc(): return datetime.now(timezone.utc).isoformat()
 
 
+def shared_source_inventory(root):
+    # The04 bot deployment is a source copy without Git metadata. Pin every
+    # actual Python/JSON source and its resolved path, including untracked files.
+    excluded={'.git','.venv','__pycache__','.pytest_cache','node_modules','target'}
+    files={}
+    def visit(directory,ancestors):
+        resolved=directory.resolve()
+        assert resolved not in ancestors,('source directory symlink cycle',directory)
+        for path in sorted(directory.iterdir()):
+            if path.is_dir():
+                if path.name not in excluded:visit(path,ancestors|{resolved})
+            elif path.suffix in ('.py','.json'):
+                assert path.is_file(),('missing source file',path)
+                files[str(path.relative_to(root))]=dict(sha256=sha(path),resolved=str(path.resolve()))
+    visit(root,set())
+    assert files,'empty shared source inventory'
+    return files
+
+
+def check_shared_sources(manifest):
+    assert manifest['shared_bot_root']=='/mpac/sdicks02/repos/clasher-bot'
+    assert manifest['shared_bot_source_method']=='actual-filesystem-python-json-v1'
+    assert manifest['shared_bot_commit'] is None,'do not invent a deployment Git identity'
+    assert shared_source_inventory(Path(manifest['shared_bot_root']))==manifest['shared_bot_files'],'shared source inventory changed'
+
+
 def validate_candidate_binding(manifest):
     assert TOTAL!='0'*64 and 'PENDING' not in BUILD_SHA256 and 'PENDING' not in AFFECTED_SHA256
     candidate=manifest['candidate08'];build=candidate['build'];affected=candidate['affected']
@@ -90,6 +116,7 @@ def identity(job):
     for name,expected in inputs.items(): assert sha(Path(name))==expected, ('input changed',name)
     assert manifest['native_sha256']==dict(pinned=PIN,total=TOTAL)
     validate_candidate_binding(manifest)
+    check_shared_sources(manifest)
     corpus=json.loads((job/'gate-provenance.json').read_text())['roots']
     check_canonical(job/'canonical',json.loads((job/'gate-provenance.json').read_text()))
     assert {p.name for p in (job/'roots').iterdir()}==set(corpus)
@@ -155,6 +182,7 @@ def validate_audit(records,episodes,native_sha):
 def validate(job):
     ident=json.loads((job/'identity.json').read_text())
     for name,expected in ident['inputs'].items(): assert sha(Path(name))==expected, ('input changed during gate',name)
+    check_shared_sources(json.loads((job/'manifest.json').read_text()))
     for label in LABELS:
         assert (job/f'gate/{label}.exit').read_text().strip()=='0', ('nonzero child',label)
     fixtures,roots,headers={},{},{}

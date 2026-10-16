@@ -46,6 +46,11 @@ pins native7738 and must not be executed against the new source.
 The separate [v2 proposal](EXACT-C56-GATE-V2.md) binds the actual new build and affected
 receipt. New exact review is
 required before one fresh source-matched C56 gate.
+The first approved staging attempt stopped before admission because04's bot source
+copy lacks Git metadata; its [failure receipt](evidence/c56v2-20261016T1338Z-staging-failed.json)
+and partial directory remain preserved. Review2 approved the repaired actual-file
+inventory, including added/removed-file and resolved-path checks, for one fresh tag.
+No C56 result is claimed from that staging attempt.
 
 The lead's B2-C1-base-readiness-20261016.json records C1 candidate65fca236e waiting
 for a reviewed, committed B2-first prerequisite. Conditional B2 readiness still

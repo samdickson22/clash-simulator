@@ -50,7 +50,7 @@ The historical gate-provenance receipt pins the canonical three scripts and exac
 13-file root corpus. All1043 logical roots must be unique; deterministic seed20261015
 selects exact300 covering12 games, full/cut variants. Frozen rollout arguments are
 delays27/27,horizon160,interval10,elixir_weight1.0. Typed input hashes bind full engine,
-native, canonical and validation/observer code, tracked shared bot Python/JSON,
+native, canonical and validation/observer code, actual shared bot Python/JSON,
 relevant r1 sources/config/models, venv Python/pyvenv.cfg, exact577 train/validation
 episodes' setup/evaluation/events/objects and split, plus roots. Shared inputs are
 rechecked before/after; concurrent changes invalidate evidence. No held-out data.
@@ -79,3 +79,15 @@ and new exact candidate receipt together before any execution. Rollback abandons
 only the fresh job/source copies; preserve all raw failures. No runtime/pin rollback
 is needed. Strict silence/direct-parent coordination continues, no input tools or
 tiny delegates; one final automatic result only when the whole assignment is done.
+The first approved v2 staging attempt stopped before admission because the04 bot
+deployment has no Git metadata. Its fresh directory/tag is preserved without
+launch.json/run.log/PID/lease; it is a staging FAIL, not engine evidence. The repaired
+proposal requires a fresh tag and independent re-review before any execution.
+Actual shared bot Python/JSON files are now enumerated from the deployed filesystem,
+including untracked source, with byte hashes and resolved paths. Added/removed/
+changed files or link destinations fail both admission identity and final validation;
+directory link cycles fail closed. Git identity is explicitly null. Only dependency/
+generated directories (.git,.venv,__pycache__,.pytest_cache,node_modules,target) are
+excluded, while the existing venv interpreter/config and runtime input contract is
+retained. This improves source coverage without manufacturing a deployment commit.
+

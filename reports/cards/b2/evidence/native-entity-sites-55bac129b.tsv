@@ -13,7 +13,7 @@ champions.rs:115	refresh_dead_champions	let groups: Vec<_> = self
 champions.rs:126	ability_owner	let mut keys: Vec<_> = self
 clone.rs:6	clone_spell	let recipients:Vec<usize>=self.entities.iter().enumerate().filter_map(|(i,e)| {
 clone.rs:44	slide_blocked	self.entities.iter().enumerate().any(|(j,b)| j!=i && b.alive && b.class=="Building" && {
-deployment.rs:6	prepare_placement_mask	let signature: Vec<i32> = self.entities.iter().filter(|e| e.alive && e.class == "Building").map(|e| 
+deployment.rs:6	prepare_placement_mask	let signature: Vec<i32> = self.entities.iter().filter(|e| e.alive && e.class == "Building").map(|e|
 deployment.rs:16	prepare_placement_mask	let bounds: Vec<_> = self.entities.iter().filter(|e| e.alive && e.class == "Building").map(|e| {
 deployment.rs:41	child_position_clear	&& !self.entities.iter().any(|e| {
 deployment.rs:78	recruit_positions	let blocked: Vec<(f64, f64)> = self.entities.iter().filter_map(|e| {

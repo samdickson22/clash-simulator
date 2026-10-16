@@ -38,11 +38,13 @@
     "retained_semantic_failures": 56
   },
   "c56": {
-    "status": "PENDING",
+    "status": "FIRST_STAGING_ATTEMPT_FAILED_BEFORE_ADMISSION_REVIEWED_REPAIR_PENDING",
     "pinned_native_sha256": "681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b",
     "candidate_native_sha256": "76f873f1fcd2e1f5056ea792fe14828af2c0b60ba72579ecf28d6c1ba4fb7054",
     "old_v1_gate": "UNEXECUTED_AND_INAPPLICABLE_TO_NEW_SOURCE",
-    "draft": "EXACT-C56-GATE-V2.md"
+    "draft": "EXACT-C56-GATE-V2.md",
+    "failed_staging": "evidence/c56v2-20261016T1338Z-staging-failed.json",
+    "gate_process_started": false
   },
   "final_independent_review": {
     "status": "PENDING"
