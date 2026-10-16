@@ -1215,7 +1215,9 @@ k = 3.
 - **K4L feeders (filler labels; restarted 03:12–03:15Z on the coordinator's CPU refill, cap 95 so each host stays ≤ ~95
   total live python; claims/leases make them yield; to throttle, kill the feeder PGID and relaunch with a lower TARGET,
   in-flight 100-game batches drain by themselves):**
-  - 03: PGID 3103024, `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l $J3/cpu-feed-k4l.tmpl 80 100 8300000 8400000 95 400`
+  - 03: PGID **3134550** (since 03:20:58Z; was 3103024 at target 80), `bash bot/exit/cpu_feeder.sh $J3/cpu-feed-k4l
+    $J3/cpu-feed-k4l.tmpl 36 100 8300000 8400000 95 400` (log `cpu-feed-k4l.log2`). **03 cap ~40 ours** while the LIVE team
+    runs ~64 YOLO-frame workers there (1–2 h from 03:21Z; the bot lead says when 03 is back, then relaunch at target 80)
     (run from `/mpac/sdicks02/repos/clasher-bot-rl03`; `$J3=/mpac/sdicks02/jobs/clasher/bot-exit-r1-03`; new template uses
     the rl03 tree and runtime `students/it5s2-step001200.pt`; TRAIN1 block [8300000, 8400000), first labels checked: 0 errors).
   - 04: PGID 4161769, `… $J4/cpu-feed-k4l $J4/cpu-feed-k4l.tmpl 60 100 8100000 8200000 95 400` (log `cpu-feed-k4l.log6`).
@@ -1464,6 +1466,10 @@ v10 and r5 v20, so picking "the best of several" on F9 is selection; F10 is for 
   (soup done; r9 v4 / r10 v3 screens already on 01), so feeders: 03 new (target 80, block 8300000), 04 target 60, 08 target
   30, all cap 95. Live python at 03:14:40Z: 01 90 (76 ours: HEADLINE screens), 03 79 (77 ours), 04 92 (29 ours + others),
   08 13 → feeder ramping to ~42.
+
+- **03:21Z, 03 capped at ~40 ours** (bot lead: LIVE needs ~64 workers on 03 for 1–2 h). 03 feeder target 80 → 36 (PGID
+  3134550); batches 8300200 (PGID 3115132, 24 rows kept) and 8300300 (3119047, 12 rows) stopped by PGID. 03 then: 48 live
+  python, 33 ours.
 
 ## Next
 
