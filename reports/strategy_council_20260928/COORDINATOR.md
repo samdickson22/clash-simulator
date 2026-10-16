@@ -6960,3 +6960,11 @@ Anything needing Sam (account login, captcha, 2FA) is collected as a list and se
 - The T1/TIERS Mac study ended invalid (A3P-1, 32f5e2e4). Its outcomes were waiting for a 14-day descriptive release, which no longer serves BOT-FIRST.
 - **Retired.** The seal is lifted, and no release ruling is needed. The old result files are kept in place.
 - The Null's Royale reference AVD (`clasher_reference_api35`, `nullsroyale.rel.free`) is now usable for perception data and new-card native fixtures. It stays offline and separate from the live BlueStacks account.
+
+## 2026-10-16T09:04:28Z: Sol interim recovery (Sam: continue; no big decisions until Opus)
+
+- Sol high temporarily continues existing bots/vision/weakness fixes. Deep questions get a small bounded Astra attempt; unresolved complex work and major decisions wait for Opus. Latest user instruction supersedes older routing memories.
+- Resumed existing LIVE/BOT/CARD leads, perception r3, loop, synth, level pilot and yb3 in place; preserved active Sol helpers. CARD LEAD is recovering remaining B2/C1 owners. Obsolete gates/reviews remain stopped.
+- Prior-approved e16 deploy is live in s29: first battle 9.834 FPS, decision-step p95 37.972 ms, 26/26 confirmed plays, no reported errors/guards; L1–2. Enemy Musketeer/Goblin wrong-owner evidence retained. Inactive-king false 5 HP and wrong-card hand tracker remain priority weaknesses.
+- Updated existing hourly heartbeat with current limits and audit paths. No duplicate jobs or new compute launches by coordinator.
+- Full audit: reports/audit/SOL-INTERIM-20261016.md and sol-interim-20261016-resumes.json; detailed receipts under /mpac/sdicks02/jobs/clasher/coordinator-sol-20261016/.
