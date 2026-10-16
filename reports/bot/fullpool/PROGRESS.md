@@ -107,3 +107,6 @@ r1-cards1 is on main, the overlay is no longer needed.
 - 2026-10-16T02:34:47Z launch kit bot/fullpool/run/{env,stage,preflight,g1,k1,pack_g1,fit_f1,fit_kf1}.sh (PLAN.md commands);
   generate rows carry shards[seat].belief_rebuilds (FullPoolBelief only). CARD LEAD ETA for live16402-on-r1-cards2
   (native 5f07238c + R.bots widening): 2–4 h. Sol S3 (CPU fit timing probe on 08) delegated.
+- 02:35–02:45Z preflight dry run on 08 (overlay tree repo-f7e195088c65-ovl, r1-cards1 dev root, OWN=c56): PASS.
+  Meta tokens identical; receipts ok; G1 1 game 0 errors (457 labels, 267 CPU s for 6001 ticks, belief_rebuilds 1);
+  K1 1 game 0 errors (859 rows, 146 CPU s). 2026-10-16T02:45:53Z PLAN.md: costs updated, GO runbook (section 6).

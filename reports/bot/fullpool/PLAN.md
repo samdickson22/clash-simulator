@@ -49,8 +49,9 @@ python -m bot.exit.generate --out G1 --student student:<ext>/rl5-v10-fp.pt@0.537
   BOT_FULLPOOL_POLICIES.
 - **Volume:** 4,000 games, about 1.5 M labels est. This matches it5full, the corpus that produced it5s2. Shard by
   host with `--start`: 03 at 0, 04 at 1,000,000, 08 at 2,000,000.
-- **Cost est.:** ≈150 CPU s per labelled game (teacher ≈100 + student + opponent), so 4,000 games ≈ 167 CPU-h. At
-  48 processes (3 × 16) that is ~3.5 h; at 3 × 60, ~1 h.
+- **Cost:** a measured 1-game dry run (08, 02:35Z) took 267 CPU s for a full 6,001-tick game and gave 457 labels.
+  An average game is about 200 CPU s est., so 4,000 games ≈ 220 CPU-h. At 48 processes (3 × 16) that is ~4.6 h; at
+  3 × 60, ~1.2 h.
 
 **F1, ExIt round 1 fit.**
 
@@ -93,8 +94,8 @@ python -m bot.search.lopp_record --out K1 --candidate K4C-r16 --opponents R3a,v1
 
 - 800 cases × 3 opponents = 2,400 games, about 1.4 M rows est. (the original: 1,200 games, 695 k rows). Run under
   live16402 with extended opponents (BOT_FULLPOOL_POLICIES). The recorded seat always holds a full-pool deck.
-- Cost est.: ≈100 CPU s per game, so ~67 CPU-h, about 1.4 h at 48 processes. It runs in parallel with G1, sharing
-  the per-host cap.
+- Cost: a measured 1-game dry run took 146 CPU s for 6,001 ticks and gave 859 rows. Average ≈110 CPU s est., so
+  2,400 games ≈ 75 CPU-h, about 1.6 h at 48 processes. It runs in parallel with G1, sharing the per-host cap.
 - After F1, record ~800 more games with the F1 student as opponent (on-policy rows, the pool2 recipe).
 
 **KF1, refit (CPU, ~30 min).**
@@ -118,8 +119,8 @@ python -m bot.search.lopp_record --out K1 --candidate K4C-r16 --opponents R3a,v1
 
 | phase | 03 (no GPU) | 04 | 08 | wall at 16 / host | wall at ~60 / host |
 |---|---|---|---|---|---|
-| G1 labels, 4,000 games | 16 | 16 | 16 | ~3.5 h | ~1 h |
-| K1 recording, 2,400 games | shares the cap with G1 | shares | shares | +1.4 h | +25 min |
+| G1 labels, 4,000 games | 16 | 16 | 16 | ~4.6 h | ~1.2 h |
+| K1 recording, 2,400 games | shares the cap with G1 | shares | shares | +1.6 h | +30 min |
 | baseline + screen evals (policy, ~1,800 games) | 8 | 8 | 8 | ~35 min per screen | ~10 min |
 | K4L screens (~1,200 K4L games) | 8 | 8 | 8 | ~40 min | ~12 min |
 | F1 student fit | – | – | CPU 32 threads, or GPU when free | probe first (S3) | – |
@@ -149,3 +150,42 @@ Opus keeps the design and code; Sol sub-workers run the slices.
 - `--opponents` for extended policies in lopp_record already works via BOT_FULLPOOL_POLICIES; I'll check that
   extended `student:` opponents record correctly.
 - If live16402 changes meta tokens: re-extend the K4L nets.
+
+## 6. GO runbook (on the CARD LEAD's ping; all scripts in bot/fullpool/run/, committed)
+
+Dry run, 2026-10-16 02:35–02:45Z, on 08 with the r1-cards1 dev root, OWN=c56: preflight **PASS**. Meta tokens were
+identical to the dump, the three receipts verified, the G1 game had 0 errors (457 labels, belief_rebuilds 1), and
+the K1 game had 0 errors (859 rows).
+
+1. **05:** rebase on origin/main once the pin is merged, then `bot/fullpool/run/stage.sh 03 04 08`. This prints
+   the tree path T=$J/repo-<sha12>.
+2. **Each host, in T:**
+
+   ```
+   ROOT=<live16402 root> bot/exit/cpu_job.sh 2 bot/fullpool/run/preflight.sh $J/preflight-<sha12>
+   ```
+
+   - Use OWN=full, since R.bots is widened in this release; OWN=c56 is the fallback.
+   - It must print PREFLIGHT PASS. If the meta tokens differ, re-extend the K4L nets before K1/K4L work. G1 does not
+     depend on them.
+3. **G1:** one shard per host, SHARD 0/1/2 = 03/04/08, GAMES = 1334/1333/1333.
+
+   ```
+   ROOT=… W=11 bot/detach.sh $J/g1-x<h>.log $J/g1-x<h>.receipt.json bot/exit/cpu_job.sh 12 bot/fullpool/run/g1.sh <SHARD> <GAMES>
+   ```
+
+4. **K1** on the same hosts, within the remaining cap of 16: SHARD 0/1/2 with CASES 267.
+
+   ```
+   ROOT=… W=3 bot/detach.sh $J/k1-x<h>.log $J/k1-x<h>.receipt.json bot/exit/cpu_job.sh 4 bot/fullpool/run/k1.sh <SHARD> 267
+   ```
+
+   When the LIVE LEAD frees CPU, relaunch the same commands with larger W. They are resumable; finished games are
+   skipped.
+5. **Monitoring:** the games-*.jsonl rows (errors, belief_rebuilds, labelled) and `$J/G1/STOP` to stop. That's a
+   Sol slice.
+6. **Fits:**
+   - K4L: once K1 reaches about 1,500 games, rsync the rec-*.jsonl.gz files to 03 and run fit_kf1.sh for ARM=a and
+     ARM=b (CPU).
+   - Student: once G1 is done (or about 2,500 games for an early F1), run pack_g1.sh on each host, rsync the packs
+     to the fit host, then fit_f1.sh on CPU if the S3 probe allows, otherwise DEVICE=cuda when a GPU is handed back.
