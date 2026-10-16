@@ -130,3 +130,4 @@ guess; ours is the client's strict intersects; shared by C56 spells -> not chang
   Audit table + Clone settle in RESULTS.md. Native 58f993748b2160fcc6e38226cba533974be6c11803263077d2773ecc3b6c1674
   (08 b2m/out2). Parity: B2 28/28 (root, rootstats), Batch A 42/42, first-update paths 42/42, dash audit 20 sources x
   2 seats x 40 offsets 0 mismatches, Clone bounds 6/6. Old b2-merge gate (PID 2123864, native 466aeba3) killed by group.
+- 2026-10-16T08:13Z GATE b2-merge2 on 127x04 `/mpac/sdicks02/jobs/clasher/cards/b2-merge2/` PID 2553495 (cpu_job 8, both arms; gtree = a40557019 engine-cards; gout = 58f99374) -> gate/compare.json.
