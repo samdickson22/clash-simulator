@@ -1,0 +1,208 @@
+{
+  "actual_captures_reviewed": false,
+  "additional_read_only_b2_schema_sha256": {
+    "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/differential.py": "4051a13ba76df43050e0e0ad15fda9a53c3fd0d9d9ae6f67c49729ba0c61a85f",
+    "/mpac/sdicks02/repos/clasher-cards-b2/engine-cards/py/src/clasher/cards/bandit.py": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9"
+  },
+  "bindings": {
+    "commit_tree": "eed658c7a08f0eb12c2bd19e01e14d965b7aa941",
+    "engine_and_protected_launcher_comparator_followup_unchanged": true,
+    "engine_tree": "64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7",
+    "external_sources": {
+      "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py": {
+        "role": "read-only draft schema; never executed",
+        "sha256": "128bf4c98d21b672b4bcc6a15523d73ba93dda8cd91080c94ce0f52209237efa"
+      },
+      "/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md": {
+        "role": "controlling contract",
+        "sha256": "0a67e7117fe1b2f69e55acdff2512bdbcdcdb1c9339a0a394a936d55dd5f9172"
+      }
+    },
+    "files": {
+      "reports/cards/c1/SHARED-TROOP.md": {
+        "git_blob": "64ec31e4e1f49380f0648e2883c3227e00f8a9d2",
+        "sha256": "3f25d95900a16afd121f5be4e5fb40d9aa3f6438a9b3ad10f1504b38ad39b5eb"
+      },
+      "reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md": {
+        "git_blob": "f0400ffeff332d449320b0f656798d881e7ccfbf",
+        "sha256": "836aae9d0ee34d48f8a65fa59c0486f443f474b39f40bd38ae0e54bb6f9e0021"
+      },
+      "reports/cards/c1/shared-troop/inspection-local-receipt-v2.json": {
+        "git_blob": "b76469596b8c509432be625b97f98da07ba8cd24",
+        "sha256": "d9f8d9609d531c69e6d3f478cc4d6ce60de1d93b393ad116db03741407f5cfeb"
+      },
+      "reports/cards/c1/shared-troop/inspection-local-receipt.json": {
+        "git_blob": "aa90f98dfc88561980eac82572a6d4d2b51bc56f",
+        "sha256": "3f0a5561c40b0681538342af233bda0902032ed184a1708cdf796f6b4b7223d6"
+      },
+      "reports/cards/c1/shared-troop/source-receipt-v2.json": {
+        "git_blob": "577d4a9af758dd45bdd4d5725cd928f44a4f266f",
+        "sha256": "d067e4afec34dfc4ed1bc409a65c9bff1235a1f9ef2cd6839b15e062ba8d57ef"
+      },
+      "reports/cards/c1/shared-troop/source-receipt.json": {
+        "git_blob": "d6610ace69a5a11fbaa4deada7ef08a08098e166",
+        "sha256": "a04386a6a95537b5cb39de352d98437d70a5c651146215d130550883ca7d0ba9"
+      },
+      "reports/cards/c1/shared-troop/source-witness-v2.json": {
+        "git_blob": "a759519858b2dddb638a23936d4f0035ee251857",
+        "sha256": "e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7"
+      },
+      "reports/cards/c1/shared-troop/source-witness.json": {
+        "git_blob": "a5e84cc55f5daef59e849973e11cbe87177fc6a7",
+        "sha256": "4d2366b20c5e182ccffa784644e3fc9777bfc8bffc4a024f4b04cea6c3018ea1"
+      },
+      "reports/cards/c1/tools/inspect_captured_troop.py": {
+        "git_blob": "28b4a640c21b011f25b5024e56d0bcf0589fce2b",
+        "sha256": "e20b3d3a62a01655d3e9c6a392c5e514491d398a8edaa3964337bf18115cc7e8"
+      },
+      "reports/cards/c1/tools/inspect_shared_troop.py": {
+        "git_blob": "c0b14a86e55eb98ac4639202b8a821f3e9a94165",
+        "sha256": "005db32e9b0b7f3377d540b90c3d5c87409e3d8d5121a35f5446319d9127a6d2"
+      },
+      "reports/cards/c1/tools/test_captured_troop_inspection.py": {
+        "git_blob": "6d47d80f180951e34f578ba1354e89198e031e12",
+        "sha256": "ae2650e2b7f91d4cfc1275e28523610d26c6456c3d61ca8036b0c720a7105ed4"
+      }
+    },
+    "new_preparation_commits": [
+      "5630d424b9c8dd3ba2ad5281b3a3587dd3eab5d2",
+      "df438b2ed53e49ac80a5e2f0619e6a8b49766c60",
+      "b66b8f53809070344669a78b2bb825ead14eab31"
+    ],
+    "reviewed_commit": "b66b8f53809070344669a78b2bb825ead14eab31",
+    "tracked_worktree_clean": true
+  },
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py",
+      "exit_code": 0,
+      "id": "submitted_test",
+      "output": "PASS: six synthetic shapes, retained FAIL/absence, coincidence control, nine malformed roots, hash/denominator/collection negatives; no actual capture or native test\n",
+      "output_sha256": "5c1473b4f165c2e91f2ffbbe7170f2898932eacd014d3017eaa0a37401a61e4f",
+      "wall_time_seconds": 1.399e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport ast, hashlib, json, pathlib, subprocess, sys\nroot=pathlib.Path.cwd()\ndef sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()\nchecks={}\nfor name in ('source-receipt-v2.json','inspection-local-receipt-v2.json'):\n    receipt=json.loads((root/'reports/cards/c1/shared-troop'/name).read_text())\n    checks[name]={p: sha(root/p)==expected for p,expected in receipt['files'].items()}\n    assert all(checks[name].values()), checks[name]\nrun=subprocess.run([sys.executable,'-B','reports/cards/c1/tools/inspect_shared_troop.py'],capture_output=True)\nassert run.returncode==0, run.stderr.decode()\nwitness=json.loads(run.stdout)\nold=json.loads((root/'reports/cards/c1/shared-troop/source-witness-v2.json').read_text())\nassert witness==old\nfor name,entry in witness['retained_failures'].items():\n    data=json.loads(pathlib.Path(entry['path']).read_text())\n    assert sha(pathlib.Path(entry['path']))==entry['sha256']\n    assert data['first_bad']['differences']==entry['differences']\nv1=json.loads((root/'reports/cards/c1/shared-troop/source-witness.json').read_text())\nassert v1['retained_failures']==witness['retained_failures']\nfor path in ('reports/cards/c1/tools/inspect_shared_troop.py','reports/cards/c1/tools/inspect_captured_troop.py','reports/cards/c1/tools/test_captured_troop_inspection.py'):\n    ast.parse((root/path).read_text())\nprint(json.dumps({'current_receipt_hashes_match':checks,'fresh_source_witness_exit':run.returncode,'fresh_source_witness_stdout_sha256':hashlib.sha256(run.stdout).hexdigest(),'fresh_source_witness_matches_v2':True,'retained_failure_hashes_and_exact_differences_match':True,'v1_retained_failures_match_v2':True,'ast_parse':'3 tools PASS','scope':'stdlib source AST controls and JSON only; no engine imports or native execution'},sort_keys=True))\nPY",
+      "exit_code": 0,
+      "id": "source_verify",
+      "output": "{\"ast_parse\": \"3 tools PASS\", \"current_receipt_hashes_match\": {\"inspection-local-receipt-v2.json\": {\"reports/cards/c1/SHARED-TROOP.md\": true, \"reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md\": true, \"reports/cards/c1/tools/inspect_captured_troop.py\": true, \"reports/cards/c1/tools/test_captured_troop_inspection.py\": true}, \"source-receipt-v2.json\": {\"engine-cards/differential.py\": true, \"engine-cards/live_snapshot.py\": true, \"engine-cards/py/src/clasher/battle.py\": true, \"engine-cards/py/src/clasher/cards/bandit.py\": true, \"engine-cards/py/src/clasher/cards/ice_spirit.py\": true, \"engine-cards/py/src/clasher/entities.py\": true, \"engine-cards/py/src/clasher/kinematics.py\": true, \"engine-cards/py/src/clasher/native_tilemap.py\": true, \"engine-cards/py/src/clasher/ordinary_combat_clock.py\": true, \"engine-cards/py/src/clasher/pathfinding.py\": true, \"engine-cards/src/c56.rs\": true, \"engine-cards/src/clone.rs\": true, \"engine-cards/src/dash.rs\": true, \"engine-cards/src/lib.rs\": true, \"engine-cards/src/projectiles.rs\": true, \"engine-cards/src/spawn.rs\": true, \"reports/cards/c1/shared-troop/source-witness-v2.json\": true, \"reports/cards/c1/tools/inspect_shared_troop.py\": true}}, \"fresh_source_witness_exit\": 0, \"fresh_source_witness_matches_v2\": true, \"fresh_source_witness_stdout_sha256\": \"e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7\", \"retained_failure_hashes_and_exact_differences_match\": true, \"scope\": \"stdlib source AST controls and JSON only; no engine imports or native execution\", \"v1_retained_failures_match_v2\": true}\n",
+      "output_sha256": "d52e1e4b658229b6172f7fbcc986af2ef9d08603e52a2e1748ad4863371c299f",
+      "wall_time_seconds": 0.080485184
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport copy, hashlib, json, pathlib, sys, tempfile\nsys.path.insert(0,str(pathlib.Path('reports/cards/c1/tools').resolve()))\nfrom inspect_captured_troop import inspect, observation\nspecs={'zap':(1,7,0),'electro_dragon':(6,8,14),'ice_spirit':(0,8,23)}\ndef root(identity,tick):\n    return {'tick':tick,'entities':[{'id':identity,'class':'Troop','entity_kind':0,'x':9.0,'y':10.5,'target':10,'stats':{'name':'probe','ordinary':True}}, {'id':10,'class':'Troop','x':9.0,'y':10.5,'target':None,'stats':{'name':'target'}}],'config':{'cards':{},'spirit_areas':{}}}\ndef pair(identity,tick):\n    return {arm:root(identity,tick) for arm in ('python','native')}\nrows=[]\nfor case,(lead,identity,first) in specs.items():\n    for seat in (0,1):\n        rows.append({'case':case,'lead':lead,'seat':seat,'contract':'b2-semantic-snapshot-v1','source_sha256':'0'*64,'initial_root':pair(identity,100),'result':{'first':first,'field':'synthetic-first-difference','cast':{'python':True},'differences':[{'field':'later-continuation-difference','tick':first+1,'python':1,'native':2}]},'first_context':{'relative_tick':first,'before':pair(identity,100+first),'after':pair(identity,101+first),'differences':[{'field':'synthetic-first-difference','python':1,'native':2}],'digest_equal':True}})\ndata={'contract':'b2-semantic-snapshot-v1','collection_status':'COMPLETE','status':'CAPTURE_COMPLETE','semantic_status':'FAIL: six legacy discrepancies retained','natural_comparison_status':'FAIL','collection_error':None,'validation_error':'retained natural comparison failure','legacy':rows,'rows':[{'case':'synthetic-natural','first':1,'differences':[{'python':1,'native':2}]}]}\nwith tempfile.TemporaryDirectory(prefix='c1-preparation-independent-') as temp:\n    path=pathlib.Path(temp)/'synthetic.json'\n    raw=json.dumps(data).encode(); path.write_bytes(raw)\n    out=inspect(path,hashlib.sha256(raw).hexdigest())\n    rendered=json.dumps(out)\n    assert out['original_status']=='CAPTURE_COMPLETE' and 'FAIL' not in rendered\n    assert 'semantic_status' not in out and 'natural_comparison_status' not in out\n    assert 'later-continuation-difference' not in rendered\n    print('F1 REPRODUCED: draft-shaped CAPTURE_COMPLETE retains FAIL fields in input; inspector drops both explicit FAIL labels and result.differences continuation entries.')\n    bad=copy.deepcopy(rows[0])\n    for arm in ('python','native'):\n        bad['first_context']['before'][arm]['tick']=9000\n        bad['first_context']['after'][arm]['tick']=9001\n    observed=observation(bad)\n    assert observed['initial']['tick']==100 and observed['relative_tick']==0 and observed['before']['tick']==9000\n    print('F2 REPRODUCED: initial tick 100 and relative first 0 accepted with unrelated paired before/after ticks 9000/9001.')\n    missing=copy.deepcopy(rows[0]); missing['result'].pop('cast')\n    null=copy.deepcopy(missing); null['result']['cast']=None\n    assert observation(missing)['retained_result']==observation(null)['retained_result']\n    print('F1 ABSENCE REPRODUCED: omitted result.cast and explicit null produce identical retained_result.')\n    # Independent positives and rejection controls; these are synthetic shapes only.\n    assert out['rows'][0]['initial']['python']['actor']['fields']['dash']=='<absent>'\n    altered=copy.deepcopy(rows[0]); altered['initial_root']['python']['entities'][0]['dash']={'phase':'travel','timer':12.5,'destination':[10,11]}\n    assert observation(altered)['initial']['python']['actor']['fields']['dash']==altered['initial_root']['python']['entities'][0]['dash']\n    for mutate in (lambda d:d['legacy'].pop(),lambda d:d['legacy'].__setitem__(1,copy.deepcopy(d['legacy'][0])),lambda d:d.update(collection_status='INVALID')):\n        bad=copy.deepcopy(data); mutate(bad); raw=json.dumps(bad).encode(); path.write_bytes(raw)\n        try: inspect(path,hashlib.sha256(raw).hexdigest())\n        except ValueError: pass\n        else: raise AssertionError('existing denominator/collection guard failed')\n    print('PASS: independent hash-bound JSON shapes preserve raw B2 timer/destination dash, selected-field absence, and reject missing/duplicate six-seat collection and INVALID status. No actual captures or engine tests.')\nPY",
+      "exit_code": 0,
+      "id": "independent_json",
+      "output": "F1 REPRODUCED: draft-shaped CAPTURE_COMPLETE retains FAIL fields in input; inspector drops both explicit FAIL labels and result.differences continuation entries.\nF2 REPRODUCED: initial tick 100 and relative first 0 accepted with unrelated paired before/after ticks 9000/9001.\nF1 ABSENCE REPRODUCED: omitted result.cast and explicit null produce identical retained_result.\nPASS: independent hash-bound JSON shapes preserve raw B2 timer/destination dash, selected-field absence, and reject missing/duplicate six-seat collection and INVALID status. No actual captures or engine tests.\n",
+      "output_sha256": "287a0e4025fef180858cf5d69d939ff1445b563aab936934993e55c6b87571b6",
+      "wall_time_seconds": 1.468e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport copy, pathlib, sys\nsys.path.insert(0,str(pathlib.Path('reports/cards/c1/tools').resolve()))\nfrom inspect_captured_troop import observation\nactor={'id':7,'class':'Troop','target':None,'stats':{'name':'Assassin'}}\ndef pair(tick): return {arm:{'tick':tick,'entities':[copy.deepcopy(actor)]} for arm in ('python','native')}\nrow={'case':'zap','seat':0,'lead':1,'contract':'b2-semantic-snapshot-v1','source_sha256':'0'*64,'initial_root':pair(100),'result':{'first':0},'first_context':{'relative_tick':0,'before':pair(99),'after':pair(100),'differences':[{'field':'synthetic','python':1,'native':2}],'digest_equal':True}}\nout=observation(row)\nassert out['before']['tick']<out['initial']['tick']\nprint('F2 CONFIRMED: constructor tick 100, relative first 0, before tick 99 and after tick 100 are accepted; a boundary preceding construction cannot be the claimed continuation.')\nPY",
+      "exit_code": 0,
+      "id": "boundary_order",
+      "output": "F2 CONFIRMED: constructor tick 100, relative first 0, before tick 99 and after tick 100 are accepted; a boundary preceding construction cannot be the claimed continuation.\n",
+      "output_sha256": "467b018a388f51a2129edf980ecdd7f298f2ef0f6459d9ce45bd6cf7d9a50150",
+      "wall_time_seconds": 1.5301e-05
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B - <<'PY'\nimport hashlib,json,pathlib,subprocess\nroot=pathlib.Path.cwd()\ndef git(*args): return subprocess.check_output(['git',*args],text=True).strip()\ncommit=git('rev-parse','b66b8f538')\nassert git('rev-parse','HEAD')==commit\nnew=git('diff','--name-only','e6b017ff6',commit).splitlines()\nassert all(p.startswith('reports/cards/c1/') for p in new)\nassert git('rev-parse',commit+':engine-cards')==git('rev-parse','e6b017ff6:engine-cards')\nassert git('diff','97171f5',commit,'--','reports/cards/c1/tools/final_gate.py','reports/cards/c1/tools/final_gate.sh','reports/cards/c1/tools/final_gate_contract.py','reports/cards/c1/tools/gate_compare.py','reports/cards/c1/tools/gate_fixtures.py','reports/cards/c1/tools/gate_roots.py','reports/cards/c1/tools/gate_worker.py','reports/cards/c1/tools/probe_snapshot_followup.py')==''\npaths=['reports/cards/c1/SHARED-TROOP.md','reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md','reports/cards/c1/tools/inspect_shared_troop.py','reports/cards/c1/tools/inspect_captured_troop.py','reports/cards/c1/tools/test_captured_troop_inspection.py']\npaths += sorted(str(p.relative_to(root)) for p in (root/'reports/cards/c1/shared-troop').glob('*receipt*.json'))\npaths += sorted(str(p.relative_to(root)) for p in (root/'reports/cards/c1/shared-troop').glob('source-witness*.json'))\nfiles={}\nfor p in paths:\n    content=(root/p).read_bytes()\n    original=subprocess.check_output(['git','show',commit+':'+p])\n    assert content==original,p\n    files[p]={'sha256':hashlib.sha256(content).hexdigest(),'git_blob':git('rev-parse',commit+':'+p)}\nexternal={}\nfor p in [pathlib.Path('/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md'),pathlib.Path('/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py')]:\n    external[str(p)]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'role':'controlling contract' if p.name.endswith('contract.md') else 'read-only draft schema; never executed'}\nprint(json.dumps({'reviewed_commit':commit,'commit_tree':git('rev-parse',commit+'^{tree}'),'engine_tree':git('rev-parse',commit+':engine-cards'),'new_preparation_commits': [git('rev-parse',c) for c in ('5630d424b','df438b2ed','b66b8f538')],'engine_and_protected_launcher_comparator_followup_unchanged':True,'tracked_worktree_clean':git('status','--short','--untracked-files=no')=='','files':files,'external_sources':external},sort_keys=True,indent=2))\nPY",
+      "exit_code": 0,
+      "id": "bindings_check",
+      "output": "{\n  \"commit_tree\": \"eed658c7a08f0eb12c2bd19e01e14d965b7aa941\",\n  \"engine_and_protected_launcher_comparator_followup_unchanged\": true,\n  \"engine_tree\": \"64ed8e5bb66bff6cbe0e746ec59fbd0dd36b48f7\",\n  \"external_sources\": {\n    \"/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/tools/probe_fixture_preflight_v1.py\": {\n      \"role\": \"read-only draft schema; never executed\",\n      \"sha256\": \"128bf4c98d21b672b4bcc6a15523d73ba93dda8cd91080c94ce0f52209237efa\"\n    },\n    \"/mpac/sdicks02/repos/clasher-cards/reports/cards/reviews/B2-C1-integration-contract.md\": {\n      \"role\": \"controlling contract\",\n      \"sha256\": \"0a67e7117fe1b2f69e55acdff2512bdbcdcdb1c9339a0a394a936d55dd5f9172\"\n    }\n  },\n  \"files\": {\n    \"reports/cards/c1/SHARED-TROOP.md\": {\n      \"git_blob\": \"64ec31e4e1f49380f0648e2883c3227e00f8a9d2\",\n      \"sha256\": \"3f25d95900a16afd121f5be4e5fb40d9aa3f6438a9b3ad10f1504b38ad39b5eb\"\n    },\n    \"reports/cards/c1/shared-troop/ICE-MODE-DIAGNOSTIC.md\": {\n      \"git_blob\": \"f0400ffeff332d449320b0f656798d881e7ccfbf\",\n      \"sha256\": \"836aae9d0ee34d48f8a65fa59c0486f443f474b39f40bd38ae0e54bb6f9e0021\"\n    },\n    \"reports/cards/c1/shared-troop/inspection-local-receipt-v2.json\": {\n      \"git_blob\": \"b76469596b8c509432be625b97f98da07ba8cd24\",\n      \"sha256\": \"d9f8d9609d531c69e6d3f478cc4d6ce60de1d93b393ad116db03741407f5cfeb\"\n    },\n    \"reports/cards/c1/shared-troop/inspection-local-receipt.json\": {\n      \"git_blob\": \"aa90f98dfc88561980eac82572a6d4d2b51bc56f\",\n      \"sha256\": \"3f0a5561c40b0681538342af233bda0902032ed184a1708cdf796f6b4b7223d6\"\n    },\n    \"reports/cards/c1/shared-troop/source-receipt-v2.json\": {\n      \"git_blob\": \"577d4a9af758dd45bdd4d5725cd928f44a4f266f\",\n      \"sha256\": \"d067e4afec34dfc4ed1bc409a65c9bff1235a1f9ef2cd6839b15e062ba8d57ef\"\n    },\n    \"reports/cards/c1/shared-troop/source-receipt.json\": {\n      \"git_blob\": \"d6610ace69a5a11fbaa4deada7ef08a08098e166\",\n      \"sha256\": \"a04386a6a95537b5cb39de352d98437d70a5c651146215d130550883ca7d0ba9\"\n    },\n    \"reports/cards/c1/shared-troop/source-witness-v2.json\": {\n      \"git_blob\": \"a759519858b2dddb638a23936d4f0035ee251857\",\n      \"sha256\": \"e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7\"\n    },\n    \"reports/cards/c1/shared-troop/source-witness.json\": {\n      \"git_blob\": \"a5e84cc55f5daef59e849973e11cbe87177fc6a7\",\n      \"sha256\": \"4d2366b20c5e182ccffa784644e3fc9777bfc8bffc4a024f4b04cea6c3018ea1\"\n    },\n    \"reports/cards/c1/tools/inspect_captured_troop.py\": {\n      \"git_blob\": \"28b4a640c21b011f25b5024e56d0bcf0589fce2b\",\n      \"sha256\": \"e20b3d3a62a01655d3e9c6a392c5e514491d398a8edaa3964337bf18115cc7e8\"\n    },\n    \"reports/cards/c1/tools/inspect_shared_troop.py\": {\n      \"git_blob\": \"c0b14a86e55eb98ac4639202b8a821f3e9a94165\",\n      \"sha256\": \"005db32e9b0b7f3377d540b90c3d5c87409e3d8d5121a35f5446319d9127a6d2\"\n    },\n    \"reports/cards/c1/tools/test_captured_troop_inspection.py\": {\n      \"git_blob\": \"6d47d80f180951e34f578ba1354e89198e031e12\",\n      \"sha256\": \"ae2650e2b7f91d4cfc1275e28523610d26c6456c3d61ca8036b0c720a7105ed4\"\n    }\n  },\n  \"new_preparation_commits\": [\n    \"5630d424b9c8dd3ba2ad5281b3a3587dd3eab5d2\",\n    \"df438b2ed53e49ac80a5e2f0619e6a8b49766c60\",\n    \"b66b8f53809070344669a78b2bb825ead14eab31\"\n  ],\n  \"reviewed_commit\": \"b66b8f53809070344669a78b2bb825ead14eab31\",\n  \"tracked_worktree_clean\": true\n}\n",
+      "output_sha256": "1157800adef43fde45e6c5068ba3990dcf1c3ab0c35ded94cc12fc7675b88b14",
+      "wall_time_seconds": 0.135158796
+    }
+  ],
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "engine_imported": false,
+  "findings": [
+    {
+      "file": "reports/cards/c1/tools/inspect_captured_troop.py",
+      "id": "R1",
+      "lines": [
+        67,
+        68,
+        114,
+        115,
+        116,
+        117,
+        118
+      ],
+      "priority": "P2",
+      "title": "Preserve explicit FAIL evidence and complete result differences"
+    },
+    {
+      "file": "reports/cards/c1/tools/inspect_captured_troop.py",
+      "id": "R2",
+      "lines": [
+        65,
+        76,
+        77,
+        78,
+        79,
+        80
+      ],
+      "priority": "P2",
+      "title": "Bind mismatch boundaries to constructor timeline"
+    }
+  ],
+  "kind": "independent-preparation-review-r1",
+  "native_executed": false,
+  "pre_existing_c1_artifacts_preserved": {
+    "count": 273,
+    "sha256_of_sorted_hash_manifest": "d340f7c58b9fb5ce417efa424e780405fe74c04f0a94e80c163295ff84dcbe28",
+    "unchanged_across_review_artifact_write": true
+  },
+  "prior_approvals": "f68/native631ac and launcher97171f5 unchanged; no extension to new work",
+  "production_changes": "none; parent owns corrections",
+  "read_only_diff_check": {
+    "command": "git diff --check e6b017ff6..b66b8f538",
+    "exit_code": 0,
+    "output": ""
+  },
+  "retained_b2_summary_bindings": {
+    "electro-dragon": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-first-electro-dragon-blue.json",
+      "sha256": "183711d0338299413316f81c7efca8aca9ac8386aecee292b9bc3408f2575201"
+    },
+    "ice-spirit": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-first-ice-spirit-blue.json",
+      "sha256": "21b8cfdda704e536321b8540570ae7fcaf2fd761bc274065268d5443f8d0a2c5"
+    },
+    "zap": {
+      "path": "/mpac/sdicks02/repos/clasher-cards-b2/reports/cards/b2/evidence/semv1-first-zap-blue.json",
+      "sha256": "715ed22635c6b7231e1d25b68e34037f253200bddeef70628cb81a3bea1180af"
+    }
+  },
+  "review_artifact": {
+    "path": "reports/cards/c1/shared-troop/REVIEW-preparation-r1.md",
+    "sha256": "ff6a9bccc19831c51b9e5a4dc06aca565002e71ef662b3bbb57ff6b6f7da94f6"
+  },
+  "reviewed_commit": "b66b8f53809070344669a78b2bb825ead14eab31",
+  "scope": "Preparation only; no implementation, engine acceptance, fixture-validity, actual coverage or host execution approval",
+  "simulation_build_host_poll_git_mutation_or_children": false,
+  "source_reader_sha256": {
+    "engine-cards/dash_snapshot.py": "5219495ee3b33323ff0c127f3a3e1c58061cd339e7a460359f153eb9f5bc23fd",
+    "engine-cards/differential.py": "693a825bc57a78f59841ad1e2a8e30518102360075517343e574738f0343b7e9",
+    "engine-cards/live_snapshot.py": "57392c70a5c99159a893acb598ca130a241418bab55859e45a94090f85a95e83",
+    "engine-cards/py/src/clasher/battle.py": "1a39bed5c9e2f718d19feb467c0f5ac503bb983da88e805156af7e28a112468d",
+    "engine-cards/py/src/clasher/cards/bandit.py": "91e124e00316697eef606150e26a621a6f1d2f68b704dca1c84a6ae6a15316f0",
+    "engine-cards/py/src/clasher/cards/ice_spirit.py": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+    "engine-cards/py/src/clasher/entities.py": "19226704747aba6d4947be492a1673e41b4f426caa4df523dfc72a29ea980780",
+    "engine-cards/py/src/clasher/kinematics.py": "e19bad94c440c80a4fb308554e1d574da8679da99542bafa50cdefe396e0bafe",
+    "engine-cards/py/src/clasher/native_tilemap.py": "1277d77f53c078dd4591be10560a90a26bd0d7fe83658ee86e01275672af9f0c",
+    "engine-cards/py/src/clasher/ordinary_combat_clock.py": "76dcf946ccec5299f13e426023930cc3cdf627499f5b5d81cdfa3c35e4429d62",
+    "engine-cards/py/src/clasher/pathfinding.py": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+    "engine-cards/src/c56.rs": "6f5c11a6a6db9cf3e84d2c865cda8337ad879f4ad079fd5364bcc347c6868342",
+    "engine-cards/src/clone.rs": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+    "engine-cards/src/dash.rs": "099a2124b0d805c995bbb262db4d4d30f8c3b682ba8ada1e5ed2283586ba19aa",
+    "engine-cards/src/lib.rs": "8dfe545cce45f96817a0c948d8da4f934ba377e74db42bda7771f18b509e20ba",
+    "engine-cards/src/projectiles.rs": "e2d86027667b5f665be75915b874f46f645b74766ad1f01c52d99960d9940e4e",
+    "engine-cards/src/spawn.rs": "395c091ab1f78164b53eff53b8571fe15848cf994b1ff812d7b0feb00a7d00e5",
+    "reports/cards/c1/shared-troop/source-witness-v2.json": "e097f0617d2bb38966f5d8a4d95806e5e9d9772c1e2cf99dbad958ed5e01eeb7",
+    "reports/cards/c1/tools/inspect_shared_troop.py": "005db32e9b0b7f3377d540b90c3d5c87409e3d8d5121a35f5446319d9127a6d2"
+  },
+  "utc": "2026-10-16T11:54:05.723079+00:00",
+  "verdict": "REJECT"
+}

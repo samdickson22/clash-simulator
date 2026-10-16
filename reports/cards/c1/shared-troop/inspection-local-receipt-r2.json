@@ -1,0 +1,19 @@
+{
+  "base_commit": "b66b8f53809070344669a78b2bb825ead14eab31",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/test_captured_troop_inspection.py",
+  "corrections": [
+    "R1 owner status/error keys, complete later result/natural differences and key presence retained; bulk root/template blocks stay in hash-bound raw",
+    "R2 typed nonnegative ticks, constructor+relative boundary anchor, adjacent post, frozen45 window and optional comparison counts"
+  ],
+  "cwd": "/mpac/sdicks02/repos/clasher-cards-c1",
+  "exit": 0,
+  "files": {
+    "reports/cards/c1/shared-troop/REVIEW-preparation-r1.md": "ff6a9bccc19831c51b9e5a4dc06aca565002e71ef662b3bbb57ff6b6f7da94f6",
+    "reports/cards/c1/shared-troop/review-preparation-r1-receipt.json": "49e4c9528c7c09a8c4dc3363a2b33e53bbee3058e9c160c4333a590bc848c166",
+    "reports/cards/c1/tools/inspect_captured_troop.py": "64e35e8105c48b19f969d3d92ec66685bb25f022583e9b1ea2b1f321261d36d8",
+    "reports/cards/c1/tools/test_captured_troop_inspection.py": "d8f5462beafcee3ad783863c4ccb6dd1a3d47367cc3677344b76ebea2620111e"
+  },
+  "host": "127x05",
+  "scope": "Pure synthetic JSON tests only; prior explicit FAILs/review unchanged; no actual roots/engine execution",
+  "utc": "2026-10-16T11:56:41.343329+00:00"
+}

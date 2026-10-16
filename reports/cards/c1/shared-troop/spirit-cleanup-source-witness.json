@@ -1,0 +1,83 @@
+{
+  "evidence_kind": "unmodified-reference-AST-on-explicit-states",
+  "limitation": "No actual captured state, Rust execution, battle continuation or gameplay reachability proof. Two naive-mode-patch risks are retained, not accepted fixes.",
+  "rows": [
+    {
+      "actual_python_finish": 0,
+      "clock_initialized": false,
+      "finish_allowed": true,
+      "naive_differs": false,
+      "naive_ordinary_false_finish": 0,
+      "pending_lethal": false,
+      "remaining_clock_timeline": null,
+      "started": false,
+      "timeline": 0
+    },
+    {
+      "actual_python_finish": 1,
+      "clock_initialized": false,
+      "finish_allowed": true,
+      "naive_differs": false,
+      "naive_ordinary_false_finish": 1,
+      "pending_lethal": false,
+      "remaining_clock_timeline": null,
+      "started": true,
+      "timeline": 0
+    },
+    {
+      "actual_python_finish": 0,
+      "clock_initialized": true,
+      "finish_allowed": true,
+      "naive_differs": true,
+      "naive_ordinary_false_finish": 1,
+      "pending_lethal": false,
+      "remaining_clock_timeline": 0,
+      "started": true,
+      "timeline": 0
+    },
+    {
+      "actual_python_finish": 1,
+      "clock_initialized": true,
+      "finish_allowed": true,
+      "naive_differs": true,
+      "naive_ordinary_false_finish": 0,
+      "pending_lethal": false,
+      "remaining_clock_timeline": 1000,
+      "started": false,
+      "timeline": 1000
+    },
+    {
+      "actual_python_finish": 1,
+      "clock_initialized": true,
+      "finish_allowed": true,
+      "naive_differs": false,
+      "naive_ordinary_false_finish": 1,
+      "pending_lethal": false,
+      "remaining_clock_timeline": 1000,
+      "started": true,
+      "timeline": 1000
+    },
+    {
+      "actual_python_finish": 0,
+      "clock_initialized": true,
+      "finish_allowed": true,
+      "naive_differs": false,
+      "naive_ordinary_false_finish": 0,
+      "pending_lethal": true,
+      "remaining_clock_timeline": 1000,
+      "started": true,
+      "timeline": 1000
+    },
+    {
+      "actual_python_finish": 0,
+      "clock_initialized": true,
+      "finish_allowed": false,
+      "naive_differs": false,
+      "naive_ordinary_false_finish": 0,
+      "pending_lethal": false,
+      "remaining_clock_timeline": 0,
+      "started": true,
+      "timeline": 1000
+    }
+  ]
+}

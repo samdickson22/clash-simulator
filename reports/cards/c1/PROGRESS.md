@@ -438,3 +438,39 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   candidate in current source. Generic projectile children clone source Stats,
   while Spirit area/ElectroSpirit chain uses configured templates. After B2
   integration, rerun the real Clone/slide/hold boundary; do not pre-copy B2 code.
+- 11:48–11:49Z explicit staged diffcheck/secret scan/commit/push succeeded at
+  **df438b2ed**, then **b66b8f538** added unrelated duplicate-ID/missing-blue-context
+  guards and negatives. Prior source/inspection receipts preserved; exact later
+  command and hashes in inspection-local-receipt-v2.json. Engine tree unchanged.
+- 11:49Z fresh independent Sol-high preparation review task
+  `node:delegated-task:command%3Amcp%3Ae000c21a-3b07-43d9-b09f-4bc38d1126f1%3Adelegate-task%3Ac1-shared-troop-preparation-review-b66b8f538-r1`
+  examined exact b66b8f538, completed11:54:05Z **REJECT**. Full verdict and exact
+  independent commands/source/hash/output receipts in REVIEW-preparation-r1.md /
+  review-preparation-r1-receipt.json. Source-only witnesses/limits and protected
+  engine/tool identities otherwise confirmed. No actual roots/host execution.
+- R1 corrected: preserve owner CAPTURE_COMPLETE vs semantic/natural FAIL labels,
+  validation/collection errors and all later result/natural differences; missing
+  keys remain missing versus explicitnull. Only imported template/full-root blocks
+  are explicitly retained in hash-bound raw files, not printed as bulk config.
+  R2 corrected: exact nonnegative integer tick/index types; first before equals
+  constructor+relative, after equals before+1;45-frame bound and optional recorded
+  counts. Real-schema wrapper, later FAILs, presence, correct nonzero offsets,
+  detached9000 and pre-constructor99/100, bool/float/count-window negatives added.
+  Same pure local test command PASS at11:56:41Z; inspection-local-receipt-r2.json
+  pins exact code/review bytes. New independent commit-bound review still required.
+- 11:51:52Z source-only cleanup control exact command:
+  `PYTHONDONTWRITEBYTECODE=1 python3 -B reports/cards/c1/tools/inspect_spirit_cleanup.py > reports/cards/c1/shared-troop/spirit-cleanup-source-witness.json`.
+  PASS actual Python callback/publish/stop/refund AST on seven explicit kind2
+  states; two expose a naive ordinaryfalse cleanup predicate reversal. Does not
+  prove those states occur in the old root/gameplay. Exact source/output bindings
+  in spirit-cleanup-source-receipt.json; WITNESS-PLAN.md translates into focused
+  continuation/negative controls and exact integration/gate order, no host script.
+- Local frozen-source-bindings.json hashes16 relevant B2 current source paths
+  against exact admitted identity tree-prefix:16/16match; stores distinct C1
+  hashes and old B2native7738 binding. No actual native/host file touched or run.
+  One overly broad local identity-map diagnostic printed too much metadata and
+  was truncated; replaced with bounded suffix lookups. No evidence was altered.
+  A multi-operation apply_patch was rejected for targeting one file twice; then
+  corrected atomically. A documentation context typo likewise wrote nothing.
+  All old rejection/output files preserved. No engine/native/approved tool delta,
+  merge/rebase/build/job/host poll/selector copying or new normalization.

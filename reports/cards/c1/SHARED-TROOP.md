@@ -24,6 +24,17 @@ and route advancement after it, and demonstrates the stopped-standing versus
 forced-stunned-travel guard difference. These remain source controls. Original
 v1 output/receipt remain intact; the inspection tool was expanded for v2.
 
+Preparation review r1 at b66b8f538 **REJECTED** the JSON inspector's outcome
+projection and constructor timeline checks, not the underlying source triage.
+Full independent verdict/commands retained in shared-troop/REVIEW-preparation-r1.md
+and its receipt. Corrections now preserve all owner outcome/error fields, complete
+later legacy/natural differences and missing-versus-null result keys; imported
+template/full-root blocks remain explicitly in the hash-bound raw capture. Typed
+integer frames are anchored to constructor+relative index, with the frozen45-frame
+window and recorded-count bounds. New tests reproduce both rejected sequences and
+the collector's CAPTURE_COMPLETE wrapper with explicit FAILs. Fresh independent
+exact-commit review remains required before treating the inspection tool as ready.
+
 ## Read paths and scope constraints
 
 - Zap: `Entity.finish_movement_tick` (`entities.py:389`) runs from the movement

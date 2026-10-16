@@ -14,12 +14,14 @@ def sample(case, seat):
                  target=10, stats=dict(name=case, ordinary=True))
     target = dict(actor, id=10, target=None)
     state = dict(tick=100, entities=[actor, target], config=dict(cards={}, spirit_areas={}))
+    initial = dict(python=copy.deepcopy(state), native=copy.deepcopy(state))
+    state['tick'] += first
     before = dict(python=copy.deepcopy(state), native=copy.deepcopy(state))
     after = copy.deepcopy(before)
     for arm in after:
         after[arm]['tick'] += 1
     return dict(case=case, lead=lead, seat=seat, contract=CONTRACT, source_sha256='0'*64,
-                initial_root=copy.deepcopy(before), result=dict(first=first, cast=dict(python=True)),
+                initial_root=initial, result=dict(first=first, cast=dict(python=True)),
                 first_context=dict(relative_tick=first, before=before, after=after,
                                    differences=[dict(field='synthetic-control-only', python=False, native=True)],
                                    digest_equal=True))
@@ -45,6 +47,21 @@ def main():
     moved = copy.deepcopy(rows[2])
     moved['first_context']['before']['native']['entities'][1]['x'] += .001
     assert observation(moved)['zero_displacement_at_before_boundary']['native'] is False
+    for row in rows:
+        inspected = observation(row)
+        assert inspected['before']['tick'] == inspected['initial']['tick']+row['result']['first']
+    for before_tick in (99, 9000):
+        detached = copy.deepcopy(rows[0])
+        for arm in ('python', 'native'):
+            detached['first_context']['before'][arm]['tick'] = before_tick
+            detached['first_context']['after'][arm]['tick'] = before_tick+1
+        reject(lambda: observation(detached))
+    outside = copy.deepcopy(rows[0])
+    outside['result']['first'] = outside['first_context']['relative_tick'] = 45
+    for arm in ('python', 'native'):
+        outside['first_context']['before'][arm]['tick'] = 145
+        outside['first_context']['after'][arm]['tick'] = 146
+    reject(lambda: observation(outside))
     for mutate in (
         lambda r: r.update(lead=999),
         lambda r: r.update(seat=True),
@@ -55,6 +72,12 @@ def main():
         lambda r: r['first_context']['before']['python']['entities'].append(copy.deepcopy(r['first_context']['before']['python']['entities'][0])),
         lambda r: r['first_context']['before']['python']['entities'].append(copy.deepcopy(r['first_context']['before']['python']['entities'][1])),
         lambda r: r.update(first_context=None),
+        lambda r: r['initial_root']['python'].update(tick=True),
+        lambda r: r['first_context'].update(relative_tick=False),
+        lambda r: r['first_context']['after']['python'].update(tick=101.0),
+        lambda r: r['result'].update(first=0.0),
+        lambda r: r['result'].update(compared_ticks=0),
+        lambda r: r.update(compared_ticks=True),
     ):
         bad = copy.deepcopy(rows[0]); mutate(bad)
         reject(lambda: observation(bad))
@@ -63,16 +86,29 @@ def main():
         def write(data):
             raw = json.dumps(data).encode(); path.write_bytes(raw)
             return hashlib.sha256(raw).hexdigest()
-        data = dict(contract=CONTRACT, collection_status='COMPLETE', status='PREFLIGHT_FAIL', legacy=rows)
+        data = dict(contract=CONTRACT, collection_status='COMPLETE', status='CAPTURE_COMPLETE',
+                    semantic_status='FAIL: six legacy discrepancies retained', natural_comparison_status='FAIL',
+                    validation_error='retained natural failure', legacy=rows,
+                    rows=[dict(case='synthetic-natural-control', first=1,
+                               differences=[dict(field='later-natural', tick=44)])])
+        rows[0]['result']['differences'] = [dict(field='later-legacy', tick=44)]
         sha = write(data)
         out = inspect(path, sha)
-        assert out['engine_acceptance'] == 'NOT_EVALUATED' and out['original_status'] == 'PREFLIGHT_FAIL'
+        assert out['engine_acceptance'] == 'NOT_EVALUATED' and out['original_status'] == 'CAPTURE_COMPLETE'
+        for key in ('semantic_status', 'natural_comparison_status', 'validation_error'):
+            assert out['owner_outcomes'][key] == data[key]
+        assert out['rows'][0]['retained_result']['differences'] == rows[0]['result']['differences']
+        assert out['natural_outcomes'][0]['differences'] == data['rows'][0]['differences']
+        missing = copy.deepcopy(rows[0]); del missing['result']['cast']
+        null = copy.deepcopy(missing); null['result']['cast'] = None
+        assert 'cast' not in observation(missing)['retained_result']
+        assert observation(null)['retained_result']['cast'] is None
         reject(lambda: inspect(path, 'f'*64))
         data['legacy'].pop(); sha = write(data)
         reject(lambda: inspect(path, sha))
         data['legacy'] = rows; data['collection_status'] = 'INVALID'; sha = write(data)
         reject(lambda: inspect(path, sha))
-    print('PASS: six synthetic shapes, retained FAIL/absence, coincidence control, nine malformed roots, hash/denominator/collection negatives; no actual capture or native test')
+    print('PASS: six coherent synthetic shapes, real wrapper FAIL/later differences/presence, detached/pre-constructor/noninteger boundaries, malformed roots/hash/denominator/collection negatives; no actual capture or native test')
 
 
 if __name__ == '__main__':

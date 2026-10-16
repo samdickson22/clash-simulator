@@ -11,6 +11,7 @@ import sys
 
 
 CONTRACT = 'b2-semantic-snapshot-v1'
+END = 45  # frozen legacy collector's comparison window
 CASES = {'zap': (1, 7, 0), 'electro_dragon': (6, 8, 14), 'ice_spirit': (0, 8, 23)}
 FIELDS = ('id', 'class', 'entity_kind', 'x', 'y', 'alive', 'target', 'move_target', 'nav_target',
           'facing', 'direction', 'route', 'stun', 'freeze_pause', 'frozen_moving', 'moving',
@@ -20,6 +21,18 @@ FIELDS = ('id', 'class', 'entity_kind', 'x', 'y', 'alive', 'target', 'move_targe
 STATS = ('name', 'payload_key', 'ordinary', 'projectile_slow_multiplier', 'projectile_slow_duration',
          'projectile_stun', 'spirit_speed', 'spirit_stun', 'spirit_radius', 'electro_chain',
          'damage', 'finish_allowed', 'interval', 'load', 'child_count', 'child_damage', 'child_range')
+
+
+def integer(value, name):
+    if type(value) is not int or value < 0:
+        raise ValueError(f'expected nonnegative integer {name}')
+    return value
+
+
+def result_projection(result):
+    # Preserve all outcome/error/difference keys AND their presence. Only the
+    # imported template table is kept in the hash-bound raw capture instead.
+    return {k: v for k, v in result.items() if k != 'fresh_troop_templates'}
 
 
 def entity(state, identity):
@@ -38,6 +51,8 @@ def selected(row):
 def frame(pair, identity):
     if set(pair) != {'python', 'native'}:
         raise ValueError('expected Python/native pair')
+    for state in pair.values():
+        integer(state['tick'], 'frame tick')
     if pair['python']['tick'] != pair['native']['tick']:
         raise ValueError('unequal paired tick boundary')
     result = dict(tick=pair['python']['tick'])
@@ -64,17 +79,27 @@ def observation(row):
         raise ValueError('capture contains an execution error')
     result = dict(case=case, seat=row['seat'], lead=lead, initial=frame(row['initial_root'], identity),
                   original_source_sha256=row['source_sha256'],
-                  retained_result={k: row['result'].get(k) for k in ('first', 'field', 'cast', 'compared_ticks',
-                                                                    'digest_equal', 'digest_diverged', 'gate_queries')},
+                  retained_result=result_projection(row['result']),
+                  omitted_result_fields=['fresh_troop_templates'] if 'fresh_troop_templates' in row['result'] else [],
                   evidence_kind='captured-boundary-observations-not-causal-proof')
     context = row['first_context']
     if context is None:
-        if row['seat'] == 0:
+        if row['seat'] == 0 or row['result']['first'] is not None:
             raise ValueError('required blue legacy mismatch was not captured')
         result['first_context'] = None
         return result
     before, after = frame(context['before'], identity), frame(context['after'], identity)
-    if after['tick'] != before['tick']+1 or context['relative_tick'] != row['result']['first']:
+    relative = integer(context['relative_tick'], 'relative comparison tick')
+    first = integer(row['result']['first'], 'first comparison tick')
+    if relative >= END:
+        raise ValueError('relative comparison outside frozen legacy window')
+    for owner in (row, row['result']):
+        if 'compared_ticks' in owner:
+            count = integer(owner['compared_ticks'], 'comparison count')
+            if not relative < count <= END:
+                raise ValueError('mismatch outside recorded comparison count')
+    if (before['tick'] != result['initial']['tick']+relative
+            or after['tick'] != before['tick']+1 or relative != first):
         raise ValueError('incoherent first-mismatch boundaries')
     if row['seat'] == 0 and context['relative_tick'] != first_tick:
         raise ValueError('blue legacy first mismatch did not reproduce')
@@ -113,6 +138,13 @@ def inspect(path, expected_sha256):
         raise ValueError('missing or duplicated legacy capture')
     return dict(capture_path=str(Path(path).resolve()), capture_sha256=actual,
                 collection_status=data['collection_status'], original_status=data['status'],
+                owner_outcomes={k: v for k, v in data.items() if k not in ('legacy', 'rows')},
+                natural_outcomes=[{k: v for k, v in row.items()
+                                   if k not in ('initial_root', 'first_context', 'fresh_troop_templates')}
+                                  for row in data.get('rows', [])],
+                raw_capture_blocks_retained=['legacy.*.result.fresh_troop_templates',
+                                             'rows.*.initial_root', 'rows.*.first_context',
+                                             'rows.*.fresh_troop_templates'],
                 engine_acceptance='NOT_EVALUATED',
                 rows=[observation(row) for row in data['legacy']],
                 limitation='No source/native provenance authentication beyond supplied owner hash; no phase replay, cause/reachability or fixture-validity verdict.')
