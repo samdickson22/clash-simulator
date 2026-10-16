@@ -59,7 +59,10 @@ first**:
 - `R.templates` = base dict + full-build keys it lacks (168 → 350). Templates are registered with `setdefault` in
   config order, so a single full build could pick a different template for a token a C56 card shares with a new card
   (e.g. Goblin from GoblinDrill vs GoblinGang). The base-first merge rules that out.
-- Unchanged: `R.builder`, `R.bots` (Python scripted bots: our own candidates, Python-side scripts), `rt.PRIOR`, `rt.CAT`.
+- `R.bots` (Python scripted bots: the own-hand action scope of the planner's candidates, Python-side scripts) = the
+  full build's bots (§8; the base ones stay in `R.base_bots`). They agree with the base bots on every C56 token
+  (asserted), and `ranked_actions` reads only the hand's tokens.
+- Unchanged: `R.builder`, `rt.PRIOR`, `rt.CAT`.
 
 Scope: `EXTRA_CARDS` = the 66 pool cards outside C56 (pool 122 − 56 − 3 pool aliases of C56 cards: Archer=Archers,
 IceSpirits=IceSpirit, IceGolemite=IceGolem) minus `EXCLUDED = {MergeMaiden}` (Spirit Empress has no `card_vocab`
@@ -80,7 +83,7 @@ the state under **r1-cards1** (verified by the runs in §5 unless marked *code*)
 | 4 | `DerivedPublicState` ids from `costs`; human deck catalog (2,925 decks, only the 56) | non-C56 reveal → `KeyError` | ids cover the new cards. Plain `s1.Belief` (non-live K4*/K4L players) still raises `ValueError('no train deck/order…')` on the first non-C56 reveal (§5, expected). `LiveBelief` rebuilds the prior as catalog decks completed with the revealed cards, so **hidden slots are always C56** (prior unchanged, by design) |
 | 5 | D1 sidecar `DerivedD1(costs)` (every policy tier, fast tier, RL) | first non-C56 play → `ValueError('unknown card cost')` | works (fast tier and policies play out non-C56 games, §5). Mirror: `config` holds the placeholder cost 1.0, but D1 charges `costs[last_card] + 1` (`derived_d1.py`, correct) |
 | 6 | command channel `delay_fixes.py:73` `card not in costs` | non-C56 own play → `ValueError` | passes the costs check; our own non-C56 hand still fails earlier (row 7) |
-| 7 | `C56RolloutPlanner.candidates` (`c56_scripted.py:195`, via `R.bots`) | own non-C56 hand → `ValueError('own hand outside C56 action scope')` | **unchanged** (R.bots stay C56). Our decks are C56 today; widening R.bots is the next step if we ever hold a new card |
+| 7 | `C56RolloutPlanner.candidates` (`c56_scripted.py:195`, via `R.bots`) | own non-C56 hand → `ValueError('own hand outside C56 action scope')` | **widened** (2026-10-16, §8): `R.bots` = the full build's scripted bots, so own non-C56 cards are ordinary candidates, legal in the native mask and played by the native scripted styles |
 | 8 | native `meta.cards` gating (`scripts.rs:249,291,296`, `c56_scripts.rs:54`, `delay_commands.rs:42,61`) | the scripted rollout opponents never play a non-C56 card (it clogs a slot) | they now **play** the revealed/sampled new cards in rollouts (meta.cards has 121). Mirror needs `config.cards["level12:<prev>"]`; the fc cut (`config_need`) doesn't keep it, so Mirror is skipped in fc rollouts (*code*, no panic) |
 | 9 | native step-time config lookups (spell areas, chains) | r1-total: missing → effect skipped | entries exist for the new cards; the physics are the lead's per-card sweep (Python vs native, 900-tick digests) |
 | 10 | K4L learned opponent vocab (`lopp_train.py` → `.npz` `meta_vocab` = 57 = pad + 56) | non-C56 hand token → 0 from native view | **silently approximate**: the native view now sends the real token; the net maps it to index 0 (pad embedding), `cost_of` 0 → flagged affordable; the native mask allows the slot, so the learned opponent can play the card with the pad embedding. No crash. Retraining with a 122 vocab changes the table shapes |
@@ -173,15 +176,20 @@ v10 (`bot-rl-r5/snapshots/policy-00010.pt@0.5375`, sha e188e2ae…) vs v1 and R3
 full (pins r1-cards1, final code), dev root, PYTHONHASHSEED=0. (Planned for cases 0–29; cut to 0–9 because 03 sat at
 load 95. The c56 arm resumed 9 games from 03 on 08, and the full arm ran on 08.)
 
-| candidate | vs | identical command sha (c56 vs full) |
-|---|---|---|
-| it5s2 | v1 | **10/10** |
-| it5s2 | R3a | **10/10** |
-| RL r5 v10 | v1 | **10/10** |
-| RL r5 v10 | R3a | **10/10** |
+| candidate | vs | cases | identical command sha (c56 vs full) | errors (both arms) | gate |
+|---|---|---|---|---|---|
+| it5s2 | v1 | 0–9 | **10/10** | 0 | PASS |
+| it5s2 | R3a | 0–9 | **10/10** | 0 | PASS |
+| RL r5 v10 | v1 | 0–9 | **10/10** | 0 | PASS |
+| RL r5 v10 | R3a | 0–9 | **10/10** | 0 | PASS |
 
 **40/40 identical, 0 errors, 3,028 plays.** That covers both students' D1 / feature path on the widened `R.costs`, plus
 v1 and R3a as opponents.
+
+Gate shepherd independently verified these raw outputs on 127x08 at 2026-10-16T02:19:50Z under
+`cpu_job.sh 1`: exactly 40 unique rows per arm, each pair covers cases 0–9, no missing/duplicate cases, and command
+sha, winner, ticks and towers agree. Inputs: `08:/mpac/sdicks02/jobs/clasher/cards/runtime/gate2/hl-pol-{c56,full}/games-*.jsonl`.
+Source-file SHA256s and both gate summaries are preserved in `GATE-VERIFICATION.json` (this directory).
 
 The 577-fixture native gate (`parity_fixtures.py`) builds its configs with `differential.config(cards)` directly, not
 through Runtime, so it can't see the scope. The native is the same file (681b5f2c), so that gate's result for
@@ -239,14 +247,24 @@ so it isn't counted as new. The K4L-R-gs-rw-fc row is the deterministic non-live
 **Final-code re-run** (`tools/noncore_final.sh`, 08, 02:09–02:17Z, lopp_fast content-hash cache + r1-cards1
 `fc_side_cut`, host load ≈25), LIVE-K4L-R-gs-rw-fc-w200-t4-p4, 1 game per deck:
 
-| opp | deck | crashes | panics / errors / native fail / search fail / root errors | roots (opp non-C56) | search / default | completed / candidates (mean) | search wall ms (mean) |
-|---|---|---|---|---|---|---|---|
-| random | D1 | 0 | 0 / 0 / 0 / 0 / 0 | 83 (82) | 79 / 5 | 9.43 / 11.6 | 122 |
-| random | D2 | 0 | 0 / 0 / 0 / 0 / 0 | 113 (112) | 109 / 6 | 9.81 / 10.9 | 129 |
-| random | D3 | 0 | 0 / 0 / 0 / 0 / 0 | 86 (85) | 83 / 4 | 9.06 / 10.7 | 101 |
-| random | D4 | 0 | 0 / 0 / 0 / 0 / 0 | 87 (86) | 82 / 6 | 8.18 / 10.6 | 99 |
-| random | M1 | 0 | 0 / 0 / 0 / 0 / 0 | 112 (110) | 108 / 5 | 10.27 / 11.2 | 121 |
-| R3a | D1 | 0 | 0 / 0 / 0 / 0 / 0 | 109 (108) | 104 / 6 | 9.67 / 11.3 | 114 |
+| opp | deck | crashes | panics / errors / native fail / search fail / root errors | roots (opp non-C56) | search / default | completed / candidates (mean) | search wall ms (mean) | new unit types in roots | gate |
+|---|---|---|---|---|---|---|---|---|---|
+| random | D1 | 0 | 0 / 0 / 0 / 0 / 0 | 83 (82) | 79 / 5 | 9.43 / 11.6 | 122 | 6 | PASS |
+| random | D2 | 0 | 0 / 0 / 0 / 0 / 0 | 113 (112) | 109 / 6 | 9.81 / 10.9 | 129 | 4 | PASS |
+| random | D3 | 0 | 0 / 0 / 0 / 0 / 0 | 86 (85) | 83 / 4 | 9.06 / 10.7 | 101 | 5 | PASS |
+| random | D4 | 0 | 0 / 0 / 0 / 0 / 0 | 87 (86) | 82 / 6 | 8.18 / 10.6 | 99 | 6 | PASS |
+| random | M1 | 0 | 0 / 0 / 0 / 0 / 0 | 112 (110) | 108 / 5 | 10.27 / 11.2 | 121 | 2 | PASS |
+| R3a | D1 | 0 | 0 / 0 / 0 / 0 / 0 | 109 (108) | 104 / 6 | 9.67 / 11.3 | 114 | 6 | PASS |
+
+Gate shepherd independently verified all six raw rows are terminal, each has new-card entities in roots, and
+crash/panic/decision/fast/native/search/root error counts are zero. Input:
+`08:/mpac/sdicks02/jobs/clasher/cards/runtime/noncore-final/live.jsonl`; audit: `GATE-VERIFICATION.json`.
+Both jobs had already completed before this check: policy c56/full logs end rc 0 at 02:13:44Z/02:13:36Z;
+`noncore-final.log` records six rc 0 rows and ends at 02:17:16Z. No gate-script PIDs remained and no PID files were
+recorded in the job directory; no wait or restart was needed.
+
+**Separate live16402 worker:** `reports/cards/live16402/RESULTS.md` reports results built on **`r1-cards1-dev`**
+(live16402 overlay dev root base; receipt SHA256 `55163570…`). Those results were not re-run by this gate shepherd.
 
 **6/6 clean. With the fix, on a quieter host, the live search completes on non-C56 decks: 94–96% of decisions
 searched, about 9 of 11 candidates completed, ~100–130 ms of the 200 ms wall.** Earlier (§5, 03 at load 85, before
@@ -306,7 +324,8 @@ control shows the same), plus this ~+10–25 ms overhead, which is now gone.
 | `smoke_scope.py`, `dump_meta.py` | build sizes/hashes per pin; meta dump (hash-seed check); C56 reference lists `c56_*.json` |
 | `parity_scope_roots.py`, `compare_scope.py`, `gate.sh` | the §4 gate (`gate.sh roots` / `gate.sh headline`) |
 | `noncore_matches.py`, `noncore.sh`, `noncore_final.sh`, `noncore_summary.py` | the §5 runs (R.root spy, decision sources/errors/panics; `--live-belief`, `--save-roots`) and table |
-| `gate_k4l.sh`, `polgate.sh` | §4b HEADLINE command-hash gates (K4L 4 arms; policies per arm) |
+| `gate_k4l.sh`, `polgate.sh`, `bots_gate.sh` | §4b / §8 HEADLINE command-hash gates (K4L 4 arms; policies per arm; R.bots + review-fix gate) |
+| `own_probe.py`, `mirror_probe.py`, `stale_probe.py` | §8 own-hand legality; §9 Mirror cut and pool config freshness probes |
 | `decision_timing.py`, `timing_summary.py`, `timing.sh`, `quiet05.sh`, `config_sizes.py`, `time_roots.py` | §5b per-phase timing (paired by tick), config bytes per key |
 | `side_cut_check.py`, `probe_native_config.py` | side-cut value parity; whether a root's native config parses back equal to R.config (it doesn't: the native adds defaulted fields such as `mirror: false`, which is why the pool doesn't classify configs by value) |
 | `chain03.sh`, `chain03b.sh` | host chains used on 03 |
@@ -328,8 +347,8 @@ control shows the same), plus this ~+10–25 ms overhead, which is now gone.
    LiveBelief (`bot.live.player.live_belief_class`), as `noncore_matches.py --live-belief` does.
 5. **PYTHONHASHSEED on r1/r1-total:** set PYTHONHASHSEED=0 wherever r1/r1-total runs (live included). Otherwise the
    learned opponents see BarbLog/DartGoblin/Ghost as unknown. r1-cards1 doesn't depend on the seed (§1).
-6. Our own non-C56 hand still raises (`C56RolloutPlanner.candidates`, R.bots stay C56; §2 row 7). Widening `R.bots`
-   is the next scope step if a live deck ever holds a new card.
+6. Own non-C56 hand: done (§8). The live translator's OwnTracker / `own_non_c56` handling of our own new cards is
+   the LIVE side's to check.
 
 **LIVE LEAD**
 7. With r1-cards1, `R.templates` / `R.costs` / `R.meta` cover 121 cards, so the translator can pass non-C56 plays and
@@ -346,3 +365,58 @@ control shows the same), plus this ~+10–25 ms overhead, which is now gone.
 11. The real `clasher-bot-runtime/r1-cards1` isn't created yet: run `build_runtime.py --release` from a committed
     engine-cards revision (the Batch A edits in the worktree are uncommitted and would *not* ship). If its native sha
     differs from 681b5f2c, update the r1-cards1 `native_sha256` pin.
+
+## 8. Own-hand scope: widened `R.bots` (2026-10-16)
+
+`bot/cards/scope.py`: `R.bots` = the full build's three `PublicScriptedOpponent` instances (still `card_scope='c56'`,
+the class's widened-scope route, which is what `C56RolloutPlanner` requires). Their per-token tables are asserted
+equal to the base bots' on every C56 token. `ranked_actions` reads only the hand's tokens, so a C56 hand ranks
+exactly as before. The rest of the own-play path already used the widened tables: native mask and command
+simulation (`meta.cards`), `apply_action` (config cards, kept by the fc cut), the command channel (`R.costs`), the D1
+sidecar (`R.costs`), and the fast tier's v5 mask (all 122 cards).
+
+**Legality probe** (`tools/own_probe.py`, 05; our deck M1 = Goblin Cage, Spear Goblins, Tombstone, Bomber, Knight,
+Fireball, Hog Rider, Musketeer; 10 elixir; two hand orders, so every card is in hand once):
+
+| card | Python v5 mask tiles | native mask tiles | in a Python scripted style's top 3 | native scripted pick |
+|---|---|---|---|---|
+| GoblinCage | 120 | 120 | balanced, defense | — |
+| SpearGoblins | 222 | 222 | all 3 | pressure |
+| Tombstone | 120 | 120 | all 3 | balanced, defense |
+| Bomber | 222 | 222 | pressure | — |
+| Knight | 222 | 222 | all 3 | — |
+| Fireball | 548 | 548 | — | — |
+| HogRider | 222 | 222 | all 3 | all 3 |
+| Musketeer | 222 | 222 | all 3 | — |
+
+Before the change, the planner raised `'own hand outside C56 action scope'` for the first four cards.
+
+**Gate** (`tools/bots_gate.sh`, 08, cpu_job 7, 2026-10-16 02:44–03:05Z, final code = widened R.bots + all §9 fixes,
+PYTHONHASHSEED=0):
+
+| check | result |
+|---|---|
+| HEADLINE `K4L-R-gs-rw-fc-p2` vs R3a, v1, cases 0–5: c56 (r1-total) vs full (r1-cards1) | **12/12 identical command sha**, 0 errors; also equal to the 01:52Z c56 arm (12/12) |
+| side_cut_check (full vs cards-only vs side cut) | **265/265** recorded C56 roots, **80/80** non-C56 roots identical |
+| mirror_probe | side cut == full **80/80**, `level12:` kept in 80/80 (old cut: 38/80 differ) |
+
+**Own deck M1 vs R3a (opponent deck X1)**, 2 full games per player:
+
+| player | crashes / errors / panics / native fail / search fail | new cards we played | candidates on new slots (calls) | native mask legal / native picks of new cards | sources |
+|---|---|---|---|---|---|
+| LIVE-K4L-R-gs-rw-fc-w200-t4-p4 (live recipe) | 0 / 0 / 0 / 0 / 0 | GoblinCage 1+1, SpearGoblins 8+9, Bomber 7+8, Tombstone 6+8 | 1504 (130), 1256 (137) | 81 / 145, 58 / 119 | search 129+136, default 1+2 |
+| K4L-R-gs-rw-fc (deterministic) | 0 / 0 / – / 0 / 0 | Tombstone 7+6, SpearGoblins 6+6, Bomber 6+6 | 815 (117), 1046 (112) | 49 / 61, 51 / 83 | — |
+| LIVE-fast-it5s2 (fast tier) | 0 / 0 / 0 / 0 / 0 | Tombstone 9+13, SpearGoblins 10+13, Bomber 10+13 | — | — | fast 719+840 |
+
+Our side won 4 of the 6 games (live 2/2, deterministic K4L 1/2, fast tier 1/2). The policies have never trained on
+these cards, so Goblin Cage, legal on 120 tiles, is played rarely (by the live search only).
+
+## 9. Review fixes (Sol review of 0874da215, REJECTED; fixed 2026-10-16)
+
+| # | finding | fix | check |
+|---|---|---|---|
+| 1 | BLOCKER `fc_cut.py`: `config_need` keeps literal names only and never adds `level12:<card>`, so the cut drops Mirror's payloads and native silently skips Mirror | `fc_cut.mirror_need`: for each player with Mirror in hand or cycle, keep `level12:<X>` for every X in that player's hand, cycle and `last_card`. The side-table fixpoint then keeps their dependencies. Applied in both the worker cut (`ConfigCache.payload`) and the planner's own cut (`_ConfigJson.dumps`) | `tools/mirror_probe.py` (05, 80 states from real D1/D3 roots, Mirror in seat s's hand, `last_card` set or unset): side cut == full config **80/80** (Mirror-slot mask, rollout_e1 for WAIT + 4 Mirror tiles × 3 styles, select_action × 3, apply_discrete, step digests). The old cut differs on 38/80 (Mirror legal tiles 548 → 0). Every cut carries `level12:` |
+| 2 | SHOULD-FIX `lopp_fast.py`: in fc mode workers kept a stale base config (base shipped once; later roots sent only dynamic state) | with `base_cut` given (all reduce_fast callers), every root ships its *own* config text once per worker, keyed by sha1 of that text (`('config', text, key, raw)`, FIFO `CONFIG_CACHE = 16` mirrored by `LearnedPool.shipped`). fc roots are rebuilt as `head + text + tail` (raw: no re-cut, so the workers no longer depend on `base_config` or on the side cut being patched into them, which also covers spawned macOS workers). `base_cut=None` keeps the **original** protocol byte for byte, because `bot/noise/mr_fast.MRPool` and its worker depend on it | `tools/stale_probe.py` (05; 1-worker pool; root A with R.config, then root B with every card's damage ×2, both fc cuts of 0.36 MB): new protocol matches in-process rollouts for **A and B**. Legacy protocol: A ok, **B stale** (the reviewer's case; MRPool only) |
+| 3 | SHOULD-FIX `runtime.py`: wrong-root gap; a live16402 root passes `r1-cards1` verification (native and checkpoints match) | `BASE_GAMEDATA = '892fbfa0…'` (r1's = engine-cards/py's gamedata.json) pinned as `gamedata_sha256` for **r1-cards1 and r1-cards2**, checked under `verify` like live16402's | dev roots' gamedata sha 892fbfa0…; live16402's a7de3e93… now fails `r1-cards1` with 'gamedata pin' |
+
+Assembler path safety went to a Sol worker (not in this change).

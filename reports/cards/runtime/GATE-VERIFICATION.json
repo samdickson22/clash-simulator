@@ -1,0 +1,173 @@
+{
+  "checked_at": "2026-10-16T02:19:50.726303+00:00",
+  "host": "127x08",
+  "source_sha256": {
+    "gate2/hl-pol-c56/games-000.jsonl": "a0bb0e7b0aef1f21861dc6652d995d13077ebf589511c76b0aa413346e8c8f1a",
+    "gate2/hl-pol-c56/games-001.jsonl": "12fc0fb957ebe91622feb409dabde1363deed631996118b415b2cb2b26432d0d",
+    "gate2/hl-pol-c56/games-002.jsonl": "1bb00a712268a9fff4d4de1ebe0f5c49fa7a73dfb5f88e7ad82301706bbdc6e0",
+    "gate2/hl-pol-c56/games-003.jsonl": "9763dd238ee49869fe7436e3a30bb50357f7dedce6d3efcf4d971fe92fa1e6c0",
+    "gate2/hl-pol-c56/games-004.jsonl": "87168aa50ffb8505fea0e7ed3d124abd6941a6c43b681eb814fefc0ad6d66677",
+    "gate2/hl-pol-c56/games-005.jsonl": "ee94c64948d644fd61d3a3afccdd59039673a67573d0e2d418b138f1da61803b",
+    "gate2/hl-pol-full/games-000.jsonl": "95fe50aa786860efb081266c9ee301be61dfc42b51b3c59bc17f039607a8b17a",
+    "gate2/hl-pol-full/games-001.jsonl": "70ada6233b943182d6da4dbb2aa54ed724294bb5f72e6e851bc919e6b0c2920a",
+    "gate2/hl-pol-full/games-002.jsonl": "f8393a15a716f6385ec5d2b391997d5506e5aebb5b9a1a4ffce5d2df67ef85a6",
+    "gate2/hl-pol-full/games-003.jsonl": "c4d4e35b533d10c6e4eb4c38abb96bc742bc4b77286fd0450913b00b14817a22",
+    "gate2/hl-pol-full/games-004.jsonl": "7509d924e3d750a467cc4af69d7cb2e80454355a9fefff0c703c479bb022b5bf",
+    "gate2/hl-pol-full/games-005.jsonl": "1cf4661791b9641a071ee2bd83e8c9d63c4bfb366c1bfba118744bd8645d43fe",
+    "noncore-final/live.jsonl": "0dc76877387794b67d0e59a73dc57bf128992b47822509a9fb177dc7daf7310a"
+  },
+  "policy": [
+    {
+      "candidate": "policy-00010.pt@0.5375",
+      "opponent": "R3a",
+      "cases": "0-9",
+      "identical": 10,
+      "total": 10,
+      "errors": 0,
+      "status": "PASS"
+    },
+    {
+      "candidate": "policy-00010.pt@0.5375",
+      "opponent": "v1",
+      "cases": "0-9",
+      "identical": 10,
+      "total": 10,
+      "errors": 0,
+      "status": "PASS"
+    },
+    {
+      "candidate": "it5s2-step001200.pt@0.5375",
+      "opponent": "R3a",
+      "cases": "0-9",
+      "identical": 10,
+      "total": 10,
+      "errors": 0,
+      "status": "PASS"
+    },
+    {
+      "candidate": "it5s2-step001200.pt@0.5375",
+      "opponent": "v1",
+      "cases": "0-9",
+      "identical": 10,
+      "total": 10,
+      "errors": 0,
+      "status": "PASS"
+    }
+  ],
+  "final_rerun": [
+    {
+      "opponent": "random",
+      "deck": "D1",
+      "terminal": true,
+      "crashes": 0,
+      "panics": 0,
+      "errors": 0,
+      "roots": 83,
+      "opp_noncore_roots": 82,
+      "new_unit_types": 6,
+      "entities": {
+        "Fisherman": 28,
+        "Bomber": 29,
+        "Tombstone": 47,
+        "Mortar": 18,
+        "GoblinCage": 2,
+        "GoblinBrawler": 13
+      },
+      "status": "PASS"
+    },
+    {
+      "opponent": "random",
+      "deck": "D2",
+      "terminal": true,
+      "crashes": 0,
+      "panics": 0,
+      "errors": 0,
+      "roots": 113,
+      "opp_noncore_roots": 112,
+      "new_unit_types": 4,
+      "entities": {
+        "ElectroWizard": 41,
+        "Heal": 40,
+        "MegaMinion": 66,
+        "Witch": 48
+      },
+      "status": "PASS"
+    },
+    {
+      "opponent": "random",
+      "deck": "D3",
+      "terminal": true,
+      "crashes": 0,
+      "panics": 0,
+      "errors": 0,
+      "roots": 86,
+      "opp_noncore_roots": 85,
+      "new_unit_types": 5,
+      "entities": {
+        "GoldenKnight": 29,
+        "GoblinDrill": 18,
+        "Rage": 9,
+        "SkeletonKing": 16,
+        "Phoenix": 24
+      },
+      "status": "PASS"
+    },
+    {
+      "opponent": "random",
+      "deck": "D4",
+      "terminal": true,
+      "crashes": 0,
+      "panics": 0,
+      "errors": 0,
+      "roots": 87,
+      "opp_noncore_roots": 86,
+      "new_unit_types": 6,
+      "entities": {
+        "ElixirGolem": 38,
+        "ElixirGolem2": 21,
+        "ElixirGolem4": 24,
+        "SkeletonBalloon": 26,
+        "BattleRam": 1,
+        "DarkWitch": 11
+      },
+      "status": "PASS"
+    },
+    {
+      "opponent": "random",
+      "deck": "M1",
+      "terminal": true,
+      "crashes": 0,
+      "panics": 0,
+      "errors": 0,
+      "roots": 112,
+      "opp_noncore_roots": 110,
+      "new_unit_types": 2,
+      "entities": {
+        "Tombstone": 40,
+        "Bomber": 36
+      },
+      "status": "PASS"
+    },
+    {
+      "opponent": "R3a",
+      "deck": "D1",
+      "terminal": true,
+      "crashes": 0,
+      "panics": 0,
+      "errors": 0,
+      "roots": 109,
+      "opp_noncore_roots": 108,
+      "new_unit_types": 6,
+      "entities": {
+        "GoblinCage": 40,
+        "Tombstone": 16,
+        "Fisherman": 40,
+        "GoblinBrawler": 33,
+        "Mortar": 35,
+        "Bomber": 21
+      },
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

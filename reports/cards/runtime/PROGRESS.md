@@ -105,3 +105,16 @@ repo-before copies, r1-ro, students/ and lopp-models/ copies on 05, rl5 checkpoi
 Open items for other leads: SCOPE.md §7 (macOS spawn workers lack the side cut; K4L learned-opponent vocab is C56-only;
 non-live Belief raises on non-C56; set PYTHONHASHSEED=0 on r1/r1-total; translator pass-through is a LIVE LEAD decision;
 real r1-cards1 root not built yet).
+
+- 2026-10-16T02:19:50.726303+00:00 gate shepherd: independently re-derived policy PASS (40/40 identical command shas, exact cases 0–9 per pair, 0 errors) and final LIVE K4L PASS (6/6 terminal, 0 crashes/panics/errors, new-card entities in every row) on 127x08 via cpu_job.sh 1. Jobs were already complete (policy rc 0; final six rc 0), no active script PIDs or recorded PID files; no restart. Existing placeholder tables verified and augmented in SCOPE.md; live16402 base r1-cards1-dev noted without rerun. Audit/source hashes: GATE-VERIFICATION.json. Reports only; no code edits, commits or sealing.
+
+- 2026-10-16 02:20-03:10Z (after handoff; lead tasks): **R.bots widened** for r1-cards1 (scope.py: R.bots = full
+  build's scripted bots, asserted equal on C56 tokens; R.base_bots keeps the old). **Review fixes** (Sol review of
+  0874da215): (1) fc_cut.mirror_need keeps level12:<card> for Mirror holders' hand+cycle+last_card; (2) lopp_fast:
+  with base_cut every root's own config ships once per worker by sha1 (fc = raw, no worker re-cut, never stale);
+  base_cut=None = original protocol (bot/noise/mr_fast.MRPool needs it); (3) r1-cards1/r1-cards2 pin
+  gamedata_sha256 = BASE_GAMEDATA 892fbfa0... Gate 4 (08 jobs/.../runtime/gate4, bots_gate.sh, all done): K4L c56 vs
+  full 12/12 identical; side_cut_check 265/265 + 80/80; mirror_probe 80/80; own deck M1 vs R3a 6 games 0 errors, new
+  cards played (live recipe incl. GoblinCage). Probes on 05: own_probe (GoblinCage legal 120 tiles), stale_probe
+  (new protocol fresh for A and B; legacy stale on B). live16402 root now fails r1-cards1's gamedata pin (checked).
+  No jobs of mine running.

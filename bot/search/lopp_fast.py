@@ -172,8 +172,8 @@ def _pool_worker(conn, native, spawn=None):
         except EOFError:
             return
         if msg[0] == 'config':
-            if len(msg) > 2:
-                keyed[msg[2]] = ConfigCache(msg[1])
+            if len(msg) > 2:                    # (text, key, raw): raw = an fc root's own cut config, used as is
+                keyed[msg[2]] = msg[1] if msg[3] else ConfigCache(msg[1])
                 while len(keyed) > CONFIG_CACHE:
                     keyed.pop(next(iter(keyed)))
             else:
@@ -182,8 +182,14 @@ def _pool_worker(conn, native, spawn=None):
             _, gen, snap, seat, kw, opp, cutoff = msg
             t0 = time.monotonic()
             try:
-                root, root_err = state_class(snap if isinstance(snap, str) else keyed[snap[2]].payload(*snap[:2])
-                                             if len(snap) > 2 else configs.payload(*snap)), None
+                if isinstance(snap, str):
+                    payload = snap
+                elif len(snap) > 2:
+                    c = keyed[snap[2]]
+                    payload = snap[0] + c + snap[1] if isinstance(c, str) else c.payload(snap[0], snap[1])
+                else:
+                    payload = configs.payload(*snap)
+                root, root_err = state_class(payload), None
             except BaseException as ex:
                 if fatal(ex):
                     raise
@@ -210,7 +216,7 @@ def _pool_worker(conn, native, spawn=None):
             return
 
 
-CONFIG_CACHE = 8      # non-fc configs a pool worker keeps (keyed by content hash, FIFO)
+CONFIG_CACHE = 16     # configs a pool worker keeps (keyed by content hash, FIFO, mirrored by LearnedPool.shipped)
 
 
 class LearnedPool:
@@ -244,7 +250,7 @@ class LearnedPool:
         self.pending, self.results, self.cpu = {}, {}, 0.
         self.timing = {}
         self.config = None
-        self.base_config = config        # R.config: lets deck-card (fc) roots travel as their dynamic part only
+        self.base_config = config        # R.config: legacy protocol only (base_cut=None): fc roots travel as their dynamic part
         self.base_sent = False
         self.shipped = {}                # content hashes of the configs the workers hold (FIFO, CONFIG_CACHE)
         self.broken = False              # a worker died (EOF / broken pipe): get_pool replaces the pool
@@ -252,31 +258,40 @@ class LearnedPool:
 
     def begin(self, root, seat, kw, opp, cutoff, base_cut=None):
         """Raises OSError/EOFError (and sets broken) when a worker is gone.
-        base_cut: the root's config is an fc cut of R.config (reduce_fast passes the player's fc flag); None (direct
-        callers) keeps the old size test. Any other config ships once per worker, keyed by its content hash."""
+        base_cut (reduce_fast passes the player's fc flag): every root's static part, its config text, ships once per
+        worker keyed by its content hash, so a config reaches the workers once whatever its size and is never stale.
+        An fc root's config is already cut, and the workers use it as is (raw); others are cut per root (ConfigCache).
+        base_cut=None: the legacy protocol, unchanged (bot/noise/mr_fast.MRPool and its worker rely on it)."""
         self.gen += 1
         self.pending, self.results, self.cpu, self.errors = {}, {}, 0., []
         self.timing = dict(parse=0., chunk=0.)
         snap = root.snapshot()
         parts = split_snapshot(snap)
-        fc = parts is not None and (len(parts[1]) < 1 << 20 if base_cut is None else base_cut)
-        if fc:                                                  # a deck-card config (fc root)
-            if self.base_config is None:
-                parts = None                                    # no full config to cut from: ship it whole
-            elif not self.base_sent:                            # the workers cut from R.config, sent once
-                import json
-                self.config, self.base_sent = json.dumps(self.base_config), True
+        if base_cut is not None:
+            if parts is None:
+                msg = snap
+            else:
+                import hashlib
+                raw = bool(base_cut)
+                key = hashlib.sha1(parts[1].encode()).hexdigest() + ('r' if raw else 'c')
+                if key not in self.shipped:
+                    self._send_all(('config', parts[1], key, raw))
+                    self.shipped[key] = True
+                    while len(self.shipped) > CONFIG_CACHE:
+                        self.shipped.pop(next(iter(self.shipped)))
+                msg = (parts[0], parts[2], key)
+        else:
+            if parts is not None and len(parts[1]) < 1 << 20:     # a deck-card config (fc root)
+                if self.base_config is None:
+                    parts = None                                    # no full config to cut from: ship it whole
+                elif not self.base_sent:                            # the workers cut from R.config, sent once
+                    import json
+                    self.config, self.base_sent = json.dumps(self.base_config), True
+                    self._send_all(('config', self.config))
+            elif parts is not None and parts[1] != self.config:    # new config (first root, level scaling): once
+                self.config = parts[1]
                 self._send_all(('config', self.config))
-        elif parts is not None:                                 # any other config: once per content hash
-            import hashlib
-            key = hashlib.sha1(parts[1].encode()).hexdigest()
-            if key not in self.shipped:
-                self._send_all(('config', parts[1], key))
-                self.shipped[key] = True
-                while len(self.shipped) > CONFIG_CACHE:
-                    self.shipped.pop(next(iter(self.shipped)))
-            parts = (parts[0], parts[1], parts[2], key)
-        msg = snap if parts is None else (parts[0], parts[2]) if fc else (parts[0], parts[2], parts[3])
+            msg = snap if parts is None else (parts[0], parts[2])
         self._send_all(('root', self.gen, msg, seat, kw, opp, cutoff))
 
     def _send_all(self, msg):

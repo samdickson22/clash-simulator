@@ -81,6 +81,21 @@ class SideCut:
         return self._text[key]
 
 
+def mirror_need(cards, players, available):
+    """config_need keeps literal names only, but Mirror plays `level12:<last_card>` (scripts.rs / lib.rs look up
+    config.cards["level12:" + last_card]). For each player holding Mirror in hand or cycle, keep the level-12 payload
+    of every card that can become that player's last_card during a rollout: its hand, cycle and current last_card."""
+    extra = set()
+    for p in players:
+        own = [c for c in list(p.get('hand') or []) + list(p.get('cycle') or []) if c]
+        if 'Mirror' not in own:
+            continue
+        for c in own + [p.get('last_card')]:
+            if c and c != 'Mirror' and 'level12:' + c in available:
+                extra.add('level12:' + c)
+    return tuple(sorted(set(cards) | extra)) if extra - set(cards) else cards
+
+
 def install():
     from bot.search import lopp_fast as lf
     if getattr(lf, '_side_cut_installed', False):
@@ -104,6 +119,7 @@ def install():
         cards = need(players, entities, pending, self.cards)
         if cards is None:
             return head + self.full + tail
+        cards = mirror_need(cards, players, self.cards)
         kept, gated = self.side.keep(cards, strings([players, entities, pending]))
         key = (cards, kept, gated)
         if key not in self.cut:
@@ -121,6 +137,7 @@ def install():
         cards = need(players, entities, pending, self._config['cards'])
         if cards is None:
             return dumps(self, obj, *args, **kw)
+        cards = mirror_need(cards, players, self._config['cards'])
         side = self.__dict__.get('_side')
         if side is None:
             side = self._side = SideCut(self._config)

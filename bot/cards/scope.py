@@ -13,7 +13,11 @@ widened to C56 + EXTRA_CARDS, then merges into R, base first:
 - costs: from the merged config (C56 keys/values unchanged).
 - templates: the base dict, plus full-build keys it lacks. Templates are registered with setdefault in config
   order, so a single full build could pick a different template for a shared token; the base-first merge cannot.
-R.builder and R.bots (the Python scripted bots: our own candidates / Python-side scripts) stay the base C56 ones.
+- R.bots (the Python PublicScriptedOpponent per style: own-hand action scope of the planner's candidates and the
+  Python-side scripts) = the full build's bots, so a non-C56 card in our own hand ranks as an ordinary play instead
+  of raising 'own hand outside C56 action scope'. Their per-token tables agree with the base bots on every C56 token
+  (asserted), and ranked_actions only reads the hand's tokens, so C56 hands rank exactly as before.
+R.builder stays the base one.
 No frozen runtime file is modified; module globals are patched only during the second build and restored.
 """
 from __future__ import annotations
@@ -141,6 +145,15 @@ def extend(R, scope):
     R.native = clasher_core.NativeScripts(json.dumps(R.meta))
     R.costs = {n: c['cost'] for n, c in R.config['cards'].items()}
     R.templates = {**R.templates, **{k: v for k, v in F.templates.items() if k not in R.templates}}
+    for style, bot in R.bots.items():             # own-hand scope: the full build's scripted bots
+        wide = F.bots[style]
+        assert wide.style == bot.style and wide.card_scope == bot.card_scope == 'c56'
+        bad = [t for t in bot.cards if wide.cards.get(t, (None,))[0] != bot.cards[t][0]]
+        bad += [n for n in bot.spells if n not in wide.spells]
+        bad += [t for t in bot.bodies if t not in wide.bodies]
+        if bad:
+            raise AssertionError(f'bots[{style}]: full build differs on base entries {bad[:5]}')
+    R.base_bots, R.bots = R.bots, F.bots
     R.template_count = len(R.templates)
     R.card_scope = scope
     R.scope_cards = tuple(R.meta['cards'])     # playable names (config['cards'] adds Mirror's level12: payloads)

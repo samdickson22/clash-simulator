@@ -29,6 +29,10 @@ PINS = dict(
     r3a_threshold=0.5005528330802917,
 )
 
+# Baseline gamedata.json (r1 = engine-cards/py): pinned for the card-scope roots, so a root with an overlaid gamedata
+# (e.g. live16402's 16.402 stats) can't pass for r1-cards1/r1-cards2 just because native and checkpoints match.
+BASE_GAMEDATA = '892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65'
+
 # Per-runtime pin sets, selected by CLASHER_BOT_RUNTIME_PINS (default r1 = PINS, unchanged).
 # r2 = r1 plus the calibrated engine (reports/bot/calibration/BATCH1.md, BATCH2.md) and its rebuilt native core;
 # the checkpoints are r1's. Set CLASHER_BOT_RUNTIME to the matching root (clasher-bot-runtime/r2).
@@ -44,7 +48,7 @@ PIN_SETS = dict(
     # (bot/cards/build_runtime.py) with the native in <root>/native.
     # fc_side_cut: the fc root cut also drops unreachable side-table entries (bot/cards/fc_cut.py).
     **{'r1-cards1': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b',
-                         card_scope='full', fc_side_cut=True)},
+                         card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
     # live16402 = r1-cards1 + RoyaleSim 16.402.19 card stats for every pool card (bot/cards/balance_overlay.py; stats
     # change by design, so no C56 bit-identity; reports/cards/live16402/RESULTS.md). Root: an assembled live16402
     # root (bot/cards/build_live16402.py), native in <root>/native; gamedata_sha256 pins its overlay gamedata.
@@ -52,6 +56,14 @@ PIN_SETS = dict(
     # clasher.balance (measured on the earlier client) is dropped so the engine derives it from the overlay.
     **{'live16402': dict(PINS, native_sha256='681b5f2c866ba3df1aa9903d1bf40d565e21feb6f541319bef84ee493c72066b',
                          card_scope='full',
+                         gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
+                         tournament_crown_from_gamedata=('Fireball', 'Poison'))},
+    # r1-cards2 = r1-cards1 + Batch A mechanics + review fixes (b7c6976e4); dev builds and gates: reports/cards/r1-cards2/.
+    **{'r1-cards2': dict(PINS, native_sha256='5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252',
+                         card_scope='full', fc_side_cut=True, gamedata_sha256=BASE_GAMEDATA)},
+    # live16402b = r1-cards2 + the same 16.402.19 stat overlay; select its matching dev root explicitly.
+    **{'live16402b': dict(PINS, native_sha256='5f07238c3c3c1eafa7ada7b87aae00f9c40f69f78680aca206a4733c7b729252',
+                         card_scope='full', fc_side_cut=True,
                          gamedata_sha256='a7de3e93eb4320c48775da97cd0e5113fb793ea57782ba0eb006af0bd6eb0ccb',
                          tournament_crown_from_gamedata=('Fireball', 'Poison'))},
 )

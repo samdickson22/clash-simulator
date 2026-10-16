@@ -74,11 +74,14 @@ def main():
     ap.add_argument('--player', required=True)
     ap.add_argument('--opponent', default='R3a')
     ap.add_argument('--deck', default='D1')
+    ap.add_argument('--own-deck', default='X0', help='our deck: a DECKS key or X<i> (X4S deck i; default X0, C56)')
     ap.add_argument('--games', type=int, default=2)
     ap.add_argument('--seed', type=int, default=20261016000)
     ap.add_argument('--max-ticks', type=int, default=6001)
     ap.add_argument('--out', required=True)
     ap.add_argument('--save-roots', help='append every 5th root snapshot (+ deck, seat, tick) to this .jsonl.gz')
+    ap.add_argument('--probe-own', action='store_true',
+                    help='count non-C56 own-hand slots in planner candidates, the native mask and native scripted picks')
     ap.add_argument('--live-belief', action='store_true',
                     help="a non-LIVE search player gets LivePlayer's open-world belief (bot.live.player.live_belief_class)")
     a = ap.parse_args()
@@ -110,6 +113,16 @@ def main():
         players = dec.raw_decode(head, head.index('"players":') + 10)[0]
         entities = dec.raw_decode(head, head.index('"entities":') + 11)[0]
         opp = players[1 - info.seat]
+        if a.probe_own:
+            hand = players[info.seat]['hand']
+            new = [i for i, c in enumerate(hand[:4]) if c is not None and c not in c56]
+            if new:
+                mask = list(R.native.public_mask(r, info.seat))
+                own['roots_with_new'] += 1
+                own['new_slot_legal'] += sum(any(mask[i * 576:(i + 1) * 576]) for i in new)
+                for style in ('balanced', 'pressure', 'defense'):
+                    act = int(R.native.select_action(r.clone(), info.seat, style))
+                    own['native_picks_new'] += act < 2304 and act // 576 in new
         if any(c not in c56 for c in opp['hand'] + opp['cycle']):
             spy['opp_noncore_roots'] += 1
         if any(c not in c56 for c in players[info.seat]['hand'] + players[info.seat]['cycle']):
@@ -119,9 +132,24 @@ def main():
             if n is not None and n not in BASE_BODIES:
                 spy['entities'][n] += 1
         return r
+    own = Counter()
+
+    def probe_candidates(player):
+        p = (player.search if getattr(player, 'search', None) is not None else player).p
+        cands = p.core.candidates
+
+        def wrapped(packet, *args, **kw):
+            out = cands(packet, *args, **kw)
+            hand = p.core.info.own['hand']
+            new = {i for i, c in enumerate(hand[:4]) if c is not None and c not in c56}
+            if new:
+                own['candidate_calls_with_new'] += 1
+                own['candidates_new_slot'] += sum(1 for x in out[0] if x < 2304 and x // 576 in new)
+            return out
+        p.core.candidates = wrapped
     BASE_BODIES = set(json.loads((Path(__file__).resolve().parent / 'c56_bodies.json').read_text()))
     R.root = root
-    own_deck = list(rt.x4s_decks()[0])
+    own_deck = list(rt.x4s_decks()[int(a.own_deck[1:])]) if a.own_deck[0] == 'X' else list(DECKS[a.own_deck])
     with open(a.out, 'a') as fh:
         for g in range(a.games):
             seed = a.seed + g
@@ -137,9 +165,19 @@ def main():
             ours = make_live_player(rt, a.player)
             if a.live_belief:
                 ours = with_live_belief(rt, ours)
+            if a.probe_own and hasattr(ours, 'start') and (hasattr(ours, 'search') or a.player.startswith('K4')):
+                start0 = ours.start
+
+                def start_probe(ctx, start0=start0, ours=ours):
+                    start0(ctx)
+                    if getattr(ours, 'search', None) is not None or hasattr(ours, 'p'):
+                        probe_candidates(ours)
+                ours.start = start_probe
+            own.clear()
             opp = RandomMaskPlayer(rt, seed) if a.opponent == 'random' else make_live_player(rt, a.opponent)
             t0 = time.time()
-            row = dict(player=a.player, opponent=a.opponent, deck=a.deck, game=g, seed=seed, seat=seat, decks=decks)
+            row = dict(player=a.player, opponent=a.opponent, deck=a.deck, own_deck=a.own_deck, game=g, seed=seed, seat=seat,
+                       decks=decks)
             try:
                 res = play_match(rt, {seat: ours, 1 - seat: opp}, seed=seed, decks=decks, max_ticks=a.max_ticks,
                                  verbose=True)
@@ -176,6 +214,9 @@ def main():
             row['opp_noncore_roots'] = spy['opp_noncore_roots']
             row['own_noncore_roots'] = spy['own_noncore_roots']
             row['noncore_entities_in_roots'] = dict(spy['entities'])
+            if a.probe_own:
+                row['own_probe'] = dict(own)
+                row['own_new_played'] = {k: v for k, v in (row.get('own_played') or {}).items() if k not in c56}
             row['wall_s'] = round(time.time() - t0, 1)
             fh.write(json.dumps(row) + '\n')
             fh.flush()
