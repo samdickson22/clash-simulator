@@ -33,7 +33,6 @@ import canvas as C  # noqa: E402
 import towers as TW  # noqa: E402
 import ownplay  # noqa: E402
 import handread  # noqa: E402
-import screens  # noqa: E402
 from battlelog import C56  # noqa: E402  (the 56 cards our engines and perception know)
 from frames import Grabber  # noqa: E402
 
@@ -71,26 +70,26 @@ def normalize(f):
 
 
 def screen_kind(f):
-    """Between battles: (kind, tap xy) for result / road / home, else (None, None)."""
-    return screens.classify(f)
+    """Between battles (normalized Android frame): 'result' (blue OK right of yellow Play Again), 'home' (yellow
+    Battle button above the tab bar, no dark overlay), 'road' (trophy road: blue OK at the bottom, the blue trophy
+    column on the left), else None. Only these get auto-navigation taps, each on its OK / Battle button."""
+    m = lambda x1, y1, x2, y2: f[y1:y2, x1:x2].reshape(-1, 3).mean(0)
+    ok, again, battle = m(600, 1700, 810, 1780), m(250, 1700, 490, 1780), m(400, 1430, 700, 1540)
+    yellow = lambda c: c[2] > 190 and c[1] > 150 and c[0] < 140
+    blue = lambda c: c[0] > 200 and c[2] < 140
+    if blue(ok) and yellow(again):
+        return 'result'
+    coin = m(440, 35, 475, 75)                          # the gold coin in the home top bar (absent in battle)
+    bar = f[1000:1700, 0:90].astype(np.int16)              # the blue trophy column at the left edge, any x
+    col = ((bar[..., 0] > 180) & (bar[..., 2] < 120)).mean(0).max()
+    if blue(m(440, 1810, 640, 1880)) and col > .6 and not yellow(coin):
+        return 'road'                                   # trophy road after a trophy gain: only its OK button
+    if yellow(battle) and yellow(coin) and m(0, 1760, 1080, 1900)[0] > 90 and f[300:1300:8, ::8].mean() > 70:
+        return 'home'
+    return None
 
 
-class NavStability:
-    """Count consecutive distinct captures of the same screen and button position."""
-    def __init__(self):
-        self.capture, self.target, self.seen = None, None, 0
-
-    def reset(self):
-        self.target, self.seen = None, 0
-
-    def observe(self, capture, kind, xy):
-        if capture == self.capture:
-            return 0
-        self.capture = capture
-        target = (kind, tuple(xy)) if kind and xy else None
-        self.seen = self.seen + 1 if target is not None and target == self.target else int(target is not None)
-        self.target = target
-        return self.seen
+NAV_TAP = {'result': (705, 1740), 'home': (550, 1489), 'road': (540, 1845)}
 
 
 def frame_health(f):
@@ -264,6 +263,133 @@ def B_load_templates():
     return battlelog.load_templates(HERE/'cards')
 
 
+# ---- small handsync (LL_HANDSYNC=1; default off = the base LiveSession, byte-for-byte the old behaviour) ------------
+# Measured (05, s17-s41 video truth): the bot's TRACKED own hand is wrong on ~8-9% of plays (s41: 11/118), so the tap
+# lands on a different card than the bot chose. Small parts, no bot/search/runtime/tracker change:
+#  1. slot UI from pixels per hand slot: 'empty' (blue placeholder while a card slides in) / 'coloured' / 'greyed'
+#     (rec['hand']['ui']). The HUD read of a COLOURED slot is right 95-99.8% at p >= .1; a GREYED one 59-96%.
+#  2. opening wait: the opening order is taken from a dealt hand (no empty slot) read the same on 2 frames, not from
+#     the first frame after match start (mid-deal reads made 12 opening plays wrong, e.g. s27-m04 n212).
+#  The tracker itself is untouched (base OwnTracker + its whole-hand HUD re-anchor): masking greyed reads from it was
+#  measured WORSE on s41 (slot agreement .938 -> .868, re-anchors 150 -> 3), and per-slot swaps broke reservations (r4).
+#  + tap guard: a play is not submitted on a slot that is empty, greyed (the bot only plays affordable cards) or
+#     coloured with another card read (p >= .1): WAIT, re-decided next poll; counted in tr_stats tap_guard:*.
+HANDSYNC = os.environ.get('LL_HANDSYNC', '0') == '1'
+GUARD_ENFORCE = os.environ.get('LL_HANDSYNC_GUARD', 'enforce') != 'measure'   # measure: offline replay only
+# Elixir bar flash: for ~2-3 frames after our own play the client flashes the bar (filled colour with green raised: G 70-154
+# vs <= 66.5 on 6,746 normal battle frames), and hud_read returns the spent card's cost (4.08 / 3.06) instead of the true
+# level; the bot then believed it still had ~2.5 elixir and chose unaffordable cards (s44-m01: 3 of 7 greyed refusals;
+# s29-s41: 11 of 565 plays tapped during a flash, 10 unaffordable). During a flash after our play the reading is replaced
+# by the last pre-flash reading minus that card's cost (median 0.22 from the next true reading, 120 flashes), until the
+# bar shows the post-spend level (reading <= estimate + .8) or 8 frames pass. Default: on with LL_HANDSYNC=1.
+ELIXIR_FLASH = os.environ.get('LL_ELIXIR_FLASH', '1' if HANDSYNC else '0') == '1'
+
+
+def bar_flash(f):
+    """Mean green of the bar's filled columns (Android frame) > 70: the post-spend flash."""
+    o = f[1868:1888, 250:1040].astype(np.int16)
+    cols = ((o[..., 2] > 170) & (o[..., 0] > 150)).mean(0) > .5
+    return bool(cols.sum() >= 20 and o[..., 1][:, cols].mean() > 70)
+
+
+class ElixirFlash:
+    def __init__(self):
+        self.last_good, self.left, self.est, self.last_play = None, 0, None, None
+
+    def own_play(self, n, cost):
+        self.last_play = (n, cost)
+
+    def update(self, f, elixir, n):
+        """-> (elixir to use, raw reading if it was replaced else None)."""
+        if self.left == 0 and self.last_good is not None and self.last_play and n - self.last_play[0] <= 15 and bar_flash(f):
+            self.est, self.left = max(0., self.last_good - self.last_play[1]), 8
+        if self.left > 0:
+            if elixir <= self.est + .8:
+                self.left = 0
+            else:
+                self.left -= 1
+                return self.est, elixir
+        self.last_good = elixir
+        return elixir, None
+_SLOT_X = ((242, 429), (444, 632), (647, 835), (850, 1037))
+SLOT_BOXES = [(x1 + 11, 1619, x2 - 11, 1828) for x1, x2 in _SLOT_X]      # Android px (canvas.HUD_MAP card targets)
+TRUST_P = 0.      # coloured-slot reads disagreeing with the tracked card refuse at any p (s44-m01 n586: p .04)
+
+
+def slot_ui(frame):
+    """['empty' | 'coloured' | 'greyed'] for the 4 hand slots of a portrait frame of any size."""
+    h, w = frame.shape[:2]
+    sx, sy = w/1080, h/1920
+    out = []
+    for x1, y1, x2, y2 in SLOT_BOXES:
+        hsv = cv2.cvtColor(frame[int(y1*sy):int(y2*sy), int(x1*sx):int(x2*sx)], cv2.COLOR_BGR2HSV).reshape(-1, 3)
+        blue = ((hsv[:, 0] > 95) & (hsv[:, 0] < 125) & (hsv[:, 1] > 120)).mean()
+        out.append('empty' if blue > .9 else 'coloured' if hsv[:, 1].mean() > 60 else 'greyed')
+    return out
+
+
+def make_session(rt, player, deck):
+    from bot.live.translate import LiveSession
+    if not HANDSYNC:
+        return LiveSession(rt, player, deck)
+
+    class GuardedPlayer:
+        def __init__(self, inner, sess):
+            object.__setattr__(self, 'inner', inner); object.__setattr__(self, 'sess', sess)
+
+        def __getattr__(self, k):
+            return getattr(self.inner, k)
+
+        def __setattr__(self, k, v):
+            setattr(self.inner, k, v)
+
+        def act(self, view):
+            from bot.players.base import WAIT
+            d = self.inner.act(view)
+            if view.can_act and d.action < WAIT:
+                why = self.sess.tap_guard(int(d.action))
+                if why:
+                    self.sess.tr.stats[f'tap_guard:{why}'] += 1
+                    self.sess.guarded.append((int(view.tick), int(d.action), why))
+                    if GUARD_ENFORCE:
+                        d.stats = dict(d.stats or {}, tap_guard=why, guarded_action=int(d.action))
+                        d.action = WAIT
+            return d
+
+    class SyncSession(LiveSession):
+        def __init__(self, rt, player, deck):
+            super().__init__(rt, player, deck)
+            self.player = GuardedPlayer(player, self)
+            self._rec, self._open, self.guarded = None, None, []
+
+        def step(self, record):
+            h = record.get('hand') or {}
+            ui = h.get('ui') if isinstance(h, dict) else None
+            if not self.started and ui is not None:
+                read = (tuple(h.get('cards') or ()), h.get('next'))
+                if 'empty' in ui or read != self._open:
+                    self._open = None if 'empty' in ui else read
+                    self.tr.stats['opening_hand_waits'] += 1
+                    return None
+            self._rec = record
+            return super().step(record)
+
+        def tap_guard(self, action):
+            h = (self._rec or {}).get('hand') or {}
+            ui = h.get('ui') if isinstance(h, dict) else None
+            if ui is None:
+                return None
+            slot = action // 576
+            if ui[slot] in ('empty', 'greyed'):
+                return ui[slot]
+            read, p = (h.get('cards') or [None]*4)[slot], (h.get('probs') or [0]*4)[slot]
+            if read is not None and read != self.tr.own_tracker.hand[slot] and (p is None or p >= TRUST_P):
+                return 'coloured_mismatch'
+            return None
+
+    return SyncSession(rt, player, deck)
+
+
 def build_bot(player_name, deck):
     if os.environ.get('LL_PINS'):       # Mac: register the mac-r1-total pin set before Runtime() (as mac_bench)
         import bot.live.mac_pins as mp
@@ -276,19 +402,7 @@ def build_bot(player_name, deck):
     if Path(clasher_core.__file__).resolve().parent != rt.native_dir.resolve():
         sys.exit(f'clasher_core loaded from {clasher_core.__file__}, not the pinned {rt.native_dir}')
     player = make_live_player(rt, player_name)
-    return rt, new_session(rt, player, deck)
-
-
-HANDSYNC = os.environ.get('LL_HANDSYNC', '1') != '0'      # 0 = the base LiveSession (rollback)
-
-
-def new_session(rt, player, deck):
-    """handsync.SyncSession (own hand synced to coloured HUD reads + tap guard; handsync.py) unless LL_HANDSYNC=0."""
-    if HANDSYNC:
-        import handsync
-        return handsync.SyncSession(rt, player, deck, guard='enforce')
-    from bot.live.translate import LiveSession
-    return LiveSession(rt, player, deck)
+    return rt, make_session(rt, player, deck)
 
 
 def main(argv=None):
@@ -309,8 +423,7 @@ def main(argv=None):
                     help='the driver\'s own page/MJPEG (0 = off); the always-on overlay_server.py on :8765 proxies it')
     ap.add_argument('--arena', default='goblin-stadium', help='arena-bgs/<arena>/ name for the battle-start frames')
     ap.add_argument('--matches', type=int, default=1, help='battles in one session (each in <out>/mNN/ when > 1)')
-    ap.add_argument('--autonav', action='store_true', help='between battles: tap OK on the result and trophy road screens, '
-                    'Battle on home (screens.py); reward presenters remain unknown')
+    ap.add_argument('--autonav', action='store_true', help='tap OK on the result screen and Battle on home between battles')
     ap.add_argument('--no-realtime', action='store_true', help='replay: every frame, as fast as possible')
     ap.add_argument('--perc-threads', type=int, default=0,
                     help='torch intra-op threads while our frame model runs (0 = unchanged: the bot pins torch to 1 thread '
@@ -412,14 +525,8 @@ def main(argv=None):
     session_cfg = dict(schema='clasher.live.loop.session-config.v1', client=client, deck=deck, deck_out_of_scope=[c for c in deck if c not in C56], player=a.player,
                        fast=os.environ.get('CLASHER_LIVE_FAST'), export=str(a.export), export_frame_sha256=export_sha,
                        unit_threshold=perc.ut, tower_threshold=perc.tt, event_threshold=perc.et, unit_filter=None,
-                       hand_decoder=dict(mode='deck+UI-affordability' if HANDSYNC else 'deck', cards=list(perc.cards),
-                                         model_logits=('hand.model_logits float32 pre-softmax; rows slots0..3,next; empty columns>=cards'
-                                                       if HANDSYNC else None)),
-                       translator=dict(cls=type(sess.tr).__module__ + '.' + type(sess.tr).__name__,
-                                       unknown_card=getattr(sess.tr, 'unknown_card', None),
-                                       plays_from=getattr(sess.tr, 'plays_from', None)),
-                       session=dict(cls=type(sess).__module__ + '.' + type(sess).__name__, seed=0,
-                                    command_delay=27, expire=90, guard='enforce' if HANDSYNC else None),
+                       translator=dict(cls='bot.live.translate.LiveTranslator', unknown_card='drop', plays_from='births'),
+                       session=dict(cls=type(sess).__name__, handsync=HANDSYNC, elixir_flash=ELIXIR_FLASH, seed=0, command_delay=27, expire=90),
                        pins=os.environ.get('CLASHER_BOT_RUNTIME_PINS'),
                        overrides='elixir from the HUD bar (floored at pending reservations), phase/clock_s from the tick '
                                  'anchored at battle start, towers alive/hp from the drawn numbers (towers.py)',
@@ -441,12 +548,11 @@ def main(argv=None):
         import deckread
         card_templates = B_load_templates()
     state, streak, miss, start_ms, n, t_end = 'wait', 0, 0, None, 0, time.monotonic() + seconds
+    eflash = ElixirFlash()
     t0_ns, first_hud_ms = None, None
     base_bright = []
     nav_seen, nav_last, nav_t = 0, None, 0.
-    nav_stability = NavStability()
     nav_stuck_t = time.monotonic()
-    handsync_hold = None
     was_paused = False
     low_disk = False
     try:
@@ -467,7 +573,6 @@ def main(argv=None):
             # black frame, or (in battle) dimmed below 80% of this battle's own arena brightness (Bone Pit ~140, a
             # BlueStacks overlay dimmed it to ~100 in s2): no state change, no decision, no tap
             if bright < 40 or (state == 'battle' and ref is not None and bright < .8*ref):
-                nav_stability.reset()
                 cur['wr'].put(n, fr.bgr); n += 1
                 log('frames', dict(n=n-1, seq=fr.seq, ts_ms=(fr.display_ns - (t0_ns or fr.display_ns))/1e6, state=state,
                                    unhealthy=round(bright, 1)))
@@ -475,10 +580,12 @@ def main(argv=None):
                     ov.update(fr.bgr, state=f'PAUSED: frame too dark ({bright:.0f})')
                 continue
             present, elixir = hud_read(f)
+            flash_raw = None
+            if ELIXIR_FLASH and present and elixir is not None and state == 'battle':
+                elixir, flash_raw = eflash.update(f, elixir, n)
             deck_oos = [c for c in deck if c not in C56]
             why = ('file' if PAUSE_FILE.exists() else 'page' if (ov is not None and ov.paused) else
-                   'deck_out_of_scope' if deck_oos else 'handsync:' + handsync_hold if handsync_hold else
-                   'low_disk' if (low_disk and state != 'battle') else None)
+                   'deck_out_of_scope' if deck_oos else 'low_disk' if (low_disk and state != 'battle') else None)
             paused = why is not None
             if paused != was_paused:
                 log('events', dict(ev='paused_by_user' if paused else 'resumed_by_user', reason=why, state=state,
@@ -505,12 +612,14 @@ def main(argv=None):
                     if newdeck:
                         deck = newdeck; ov.deck = list(deck)
                         DECK_FILE.write_text(json.dumps(deck))
-                        sess = new_session(rt, make_live_player(rt, a.player), deck)
+                        sess = make_session(rt, make_live_player(rt, a.player), deck)
                         session_cfg['deck'] = list(deck)
                         session_cfg['deck_out_of_scope'] = [c for c in deck if c not in C56]
                         log('events', dict(ev='deck_change', deck=deck))
             row = dict(n=n, seq=fr.seq, ts_ms=ts_ms, cap_ms=(fr.recv_ns - fr.display_ns)/1e6, hud=present, white=round(white),
                        elixir=elixir, state=state)
+            if flash_raw is not None:
+                row['elixir_flash_raw'] = flash_raw
             cur['wr'].put(n, fr.bgr); n += 1
             if n % 50 == 1:
                 # a transient swap spike must not kill the session: below DISK_PAUSE no NEW battle starts (a battle in
@@ -523,34 +632,24 @@ def main(argv=None):
                 elif low_disk and free > DISK_RESUME:
                     low_disk = False; log('events', dict(ev='disk_ok', free_gb=round(free/GB, 2), state=state))
             if state == 'wait' and a.autonav and taps is not None and not present and not paused:
-                try:
-                    kind, xy = screen_kind(f)
-                except Exception as ex:
-                    nav_stability.reset()
-                    log('events', dict(ev='step_error', component='screens', n=n-1, error=repr(ex)[:300]))
-                    row['err'] = repr(ex)[:300]
-                    log('frames', row)
-                    continue                    # failed screen read never reaches the tap sink
-                nav_seen = nav_stability.observe(fr.display_ns, kind, xy)
-                if kind and nav_seen >= screens.STABLE[kind] and time.monotonic() - nav_t > 4:   # stable, 4 s apart
-                    x, y = xy
+                kind = screen_kind(f)
+                nav_seen = nav_seen + 1 if kind and kind == nav_last else (1 if kind else 0); nav_last = kind
+                if kind and nav_seen >= 5 and time.monotonic() - nav_t > 4:     # stable for 5 frames, 4 s apart
+                    x, y = NAV_TAP[kind]
                     taps.p.stdin.write(f'input tap {x} {y}\n'); taps.p.stdin.flush()
                     nav_t, nav_seen = time.monotonic(), 0
-                    nav_stability.reset()
                     log('events', dict(ev='nav_tap', screen=kind, xy=[x, y], ts_ms=ts_ms))
-                # unknown screen (popup, menu, shop, Sam in the menus): never tap; log once per 60 s of no progress
+                # unknown screen (reward, popup, menu, Sam in the menus): never tap; log once per 60 s of no progress
                 if kind is None and time.monotonic() - max(nav_t, nav_stuck_t) > 60:
                     nav_stuck_t = time.monotonic()
                     log('events', dict(ev='nav_stuck', ts_ms=ts_ms, n=n-1, note='unknown screen for 60 s, no tap'))
-            else:
-                nav_stability.reset()          # paused/HUD/battle frames interrupt consecutive navigation evidence
             if state == 'wait':
                 streak = streak + 1 if present else 0
                 first_hud_ms = (first_hud_ms if streak > 1 else ts_ms) if present else None
                 # paused (Sam in the menus): menu screens can flash HUD-like pixels -> need 1.5 s of HUD, not 0.3 s
                 if streak >= (15 if paused else 3):
                     state, start_ms = 'battle', first_hud_ms
-                    perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader()
+                    perc.reset(); sess.tr.clock.anchor(0, start_ms); towers = TW.TowerReader(); eflash = ElixirFlash()
                     yolo_last, yolo_k = None, 0
                     tower_last, tower_missing = {}, 0
                     last_play_ms, stall = start_ms, False
@@ -587,7 +686,7 @@ def main(argv=None):
                         open_match(k)
                         log('events', dict(loaded, ev='loaded', load_s=0, session=k, after='false_match'))
                         (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
-                    sess = new_session(rt, make_live_player(rt, a.player), deck)
+                    sess = make_session(rt, make_live_player(rt, a.player), deck)
                     state, streak, miss, first_hud_ms, last_play = 'wait', 0, 0, None, None
                     if a.matches > 1:
                         n, t0_ns = 0, None
@@ -599,7 +698,7 @@ def main(argv=None):
                         break
                     close_match(state, n, sess, getattr(src, 'restarts', 0))      # next battle: fresh logs + bot
                     open_match(cur['k'] + 1)
-                    sess = new_session(rt, make_live_player(rt, a.player), deck)
+                    sess = make_session(rt, make_live_player(rt, a.player), deck)
                     log('events', dict(loaded, ev='loaded', load_s=0, session=cur['k']))
                     (cur['dir']/'session-config.json').write_text(json.dumps(session_cfg, indent=1, default=str) + '\n')
                     state, streak, miss, n, t0_ns, first_hud_ms, last_play = 'wait', 0, 0, 0, None, None, None
@@ -649,42 +748,19 @@ def main(argv=None):
                     row['elixir_floored'] = reserved
                 rec['phase'] = 1 if tick < 2400 else (2 if tick < 4800 else 3)
                 rec['clock_s'] = max(0., 180 - tick/20) if tick < 3600 else max(0., 300 - tick/20)
-                rec['ts_ms'] = ts_ms           # actual capture identity survives inherited catch-up policy ticks
-                ui = None
-                if HANDSYNC and isinstance(rec.get('hand'), dict):
-                    try:
-                        import handui           # rollback LL_HANDSYNC=0 neither imports nor calls the new reader
-                        ui = handui.slot_ui(f)
-                        rec['hand']['ui'] = ui
-                    except Exception as ex:
-                        log('events', dict(ev='step_error', component='handui', n=n-1, error=repr(ex)[:300]))
-                        row['err'] = repr(ex)[:300]
-                        log('frames', row)
-                        continue                # missing UI must not silently fall back to unguarded battle taps
-                if 'out' in raw:                # distinct deck cards + one shared visible affordability state
-                    kw = dict(ui=ui, costs=rt.R.costs) if HANDSYNC else {}
-                    hud_logits = raw['out'][4][0].float().cpu().numpy()
-                    hr = handread.deck_constrained(hud_logits, perc.cards, deck, **kw)
+                if 'out' in raw:                                  # own hand = most probable distinct DECK cards (handread.py)
+                    hr = handread.deck_constrained(raw['out'][4][0].float().cpu().numpy(), perc.cards, deck)
                     if hr is not None:
                         rec['hand'] = dict(rec.get('hand') or {}, cards=hr['cards'], probs=hr['probs'], next=hr['next'],
                                            next_prob=hr['next_prob'], raw=hr['raw'])
-                        if 'ui_consistent' in hr:
-                            rec['hand']['ui_consistent'] = hr['ui_consistent']
-                        if HANDSYNC:
-                            rec['hand']['model_logits'] = hud_logits.tolist()  # exact float32 HUD evidence for replay
+                if HANDSYNC and isinstance(rec.get('hand'), dict):
+                    rec['hand']['ui'] = slot_ui(f)
                 ownplay.dedupe_own_events(rec, sess)            # one own play per deploy (see ownplay.py)
                 log('perception', dict(rec, n=n-1, tick=tick, ts_ms=ts_ms))   # exactly what LiveSession.step gets
-                submitted0 = sess.ch.submitted     # monotonic sequence: completion/expiry may replace 1 pending with 1
+                pend0 = len(sess.ch.pending)
                 d, err = None, None
                 try:
                     d = None if paused else sess.step(rec)
-                    hold = getattr(sess, 'hold_reason', None)
-                    if hold and handsync_hold is None:
-                        handsync_hold = hold
-                        log('events', dict(ev='handsync_hold', reason=hold, n=n-1, ts_ms=ts_ms))
-                        (out/'handsync-hold.json').write_text(json.dumps(dict(reason=hold, n=n-1, ts_ms=ts_ms)) + '\n')
-                    if handsync_hold:
-                        d = None                 # latched no-tap hold also blocks subsequent autonav/new sessions
                 except Exception as ex:          # logged; the loop keeps feeding frames
                     import traceback
                     err = repr(ex)[:300]
@@ -707,9 +783,10 @@ def main(argv=None):
                     if hasattr(sess.player, 'search_disabled'):
                         sess.player.search_disabled = True
                 if d is not None:
-                    submitted = sess.ch.submitted > submitted0 and d.action < WAIT
+                    submitted = len(sess.ch.pending) > pend0 and d.action < WAIT
                     if submitted:
                         last_play_ms = ts_ms
+                        eflash.own_play(n - 1, sess.ch.pending[-1].cost)
                         if stall:
                             stall = False
                             if hasattr(sess.player, 'search_disabled'):

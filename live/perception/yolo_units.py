@@ -1,17 +1,10 @@
 """YOLO unit detector for the live loop: an Ultralytics-style detector + a class mapping -> the record's `units` (and the
-additive `unknown_units`). A mapping with observation_contract='canonical-body-v1' emits truthful observed body/family,
-raw detector evidence and an explicit optional legacy backend proxy; old mappings retain the original record behavior.
-Our frame model keeps hand, elixir, towers, clock and events;
+additive `unknown_units`) in exactly the LivePerception format. Our frame model keeps hand, elixir, towers, clock and events;
 only `units` are replaced (drive.py --units yolo:<model>:<classes.json>[:k=v,...]).
 
   y = from_spec('yolo:yolo-v2m-e2-896x576-fp16.mlpackage:live/yolo_synth/classes.json:offsets=ground-offsets.json')
   out = y.step(android_bgr)      # the driver's normalized official frame (any size, 9:16; drive.normalize(to_android(..)))
   out['units'], out['unknown_units'], out['units_yolo'] (the detector class name per unit)
-
-Canonical observations require the matching body-aware consumer. cls is the reviewed observed_body (or raw name with
-body_resolution='unresolved'); card is mapping.card, a detector family label, not deployment provenance. spawn_card is
-never inferred. legacy_backend_proxy is projection data, never an observed identity. Backend compatibility is an
-explicit consumer policy; this adapter performs no backend card selection or capability inference.
 
 Matches the r3 owner's reference, live/perception/yolo/eval_yolo.py predict():
 * Crop: capture box (42.2, 31.3)-(674.2, 1019.3) in 720x1280 px, scaled to the frame size, INTER_AREA warp to 568x896
@@ -58,6 +51,7 @@ FLYING = {'arrows', 'axe', 'baby-dragon', 'bat', 'bat-evolution', 'flying-machin
 BUILDINGS = {'goblin-hut', 'goblin-cage', 'tombstone', 'cannon', 'tesla', 'inferno-tower', 'bomb-tower', 'x-bow', 'mortar',
              'furnace', 'barbarian-hut', 'elixir-collector', 'goblin-drill'}
 DY_FLY, DY_BUILDING, DY_OTHER = .56, -.8, -.05
+ARENA_MARGIN = .5       # ground points beyond the 18x32 arena by more than this (tiles) are not units (banners, UI): dropped
 
 
 def _names(v):
@@ -181,25 +175,12 @@ class _Model:
 
 class YoloUnits:
     def __init__(self, models, mapping, conf=.5, iou=.6, compute_units='ne', device='cpu', every=1, fmt=None, offsets=None,
-                 threads=0, agnostic=None):
+                 threads=0, agnostic=None, arena_margin=ARENA_MARGIN):
         """models: path or list of paths (merged, class-agnostic NMS); mapping: classes.json / katacr_to_clasher.json path or
         dict. every: the driver detects on every Nth battle frame and reuses the last detections in between."""
         self.every = max(1, int(every))
+        self.arena_margin, self.last_oob = float(arena_margin), 0
         self.cls, self.class_list, self.map = load_mapping(mapping)
-        self.observation_contract = self.map.get('observation_contract')
-        if self.observation_contract not in (None, 'canonical-body-v1'):
-            raise ValueError(f'unsupported observation_contract: {self.observation_contract!r}')
-        if self.observation_contract:
-            for name, entry in self.cls.items():
-                if self.is_unit(name):
-                    if entry.get('kind', 'troop') not in ('troop', 'building'):
-                        raise ValueError(f'{name}: canonical units need troop/building kind')
-                    body = entry.get('observed_body')
-                    status = entry.get('body_resolution')
-                    if status not in ('resolved', 'unresolved') or (status == 'resolved') != bool(body):
-                        raise ValueError(f'{name}: invalid canonical body resolution')
-                    if body is not None and (not isinstance(body, str) or not body.strip()):
-                        raise ValueError(f'{name}: observed_body must be a nonempty name or null')
         self.mapping_path = None if isinstance(mapping, dict) else str(mapping)
         self.offsets_path = str(offsets) if offsets else None
         self.offsets = json.loads(Path(offsets).read_text()) if offsets else {}
@@ -228,14 +209,11 @@ class YoloUnits:
             for f in files:
                 h.update(f.read_bytes())
             return h.hexdigest()
-        result = dict(models=[dict(path=str(m.path), sha256=sha(m.path), input_hw=[m.h, m.w], kind=m.kind, format=m.fmt)
+        return dict(models=[dict(path=str(m.path), sha256=sha(m.path), input_hw=[m.h, m.w], kind=m.kind, format=m.fmt)
                             for m in self.models],
                     mapping=self.mapping_path, mapping_sha256=sha(self.mapping_path) if self.mapping_path else None,
                     offsets=self.offsets_path, offsets_sha256=sha(self.offsets_path) if self.offsets_path else None,
-                    conf=self.conf, iou=self.iou, agnostic=self.agnostic, every=self.every)
-        if self.observation_contract:
-            result['observation_contract'] = self.observation_contract
-        return result
+                    conf=self.conf, iou=self.iou, agnostic=self.agnostic, every=self.every, arena_margin=self.arena_margin)
 
     def _detect(self, m, cr):
         """568x896 crop -> [dict(name, team, score, box=(x1, y1, x2, y2) in crop px)] after class-wise NMS."""
@@ -265,8 +243,7 @@ class YoloUnits:
                 continue
             x1, y1, w, h = xywh[i]
             box = ((x1 - px)/k, (y1 - py)/k, (x1 + w - px)/k, (y1 + h - py)/k)        # crop px (Ultralytics scale_boxes)
-            out.append(dict(name=str(name), class_idx=int(c[i]), team=tv, p_team=float(tm[i]) if team else float(tv),
-                            score=float(s[i]), box=box))
+            out.append(dict(name=str(name), team=tv, p_team=float(tm[i]) if team else float(tv), score=float(s[i]), box=box))
         return out
 
     def ground(self, d):
@@ -296,28 +273,16 @@ class YoloUnits:
     def step(self, frame_bgr):
         t0 = time.perf_counter()
         units, unknown, src = [], [], []
+        m, self.last_oob = self.arena_margin, 0
         for d in self.detections(frame_bgr):
             if not self.is_unit(d['name']):
                 continue
             x, y = self.ground(d)
+            if not (-m <= x <= 18. + m and -m <= y <= 32. + m):    # outside the arena: dropped, never clamped onto the board
+                self.last_oob += 1
+                continue
             owner = d['team']
             e = self.cls.get(d['name']) or {}
-            if self.observation_contract == 'canonical-body-v1':
-                body = e.get('observed_body')
-                # card is a detector family label, never a claim of deployment provenance.
-                unit = dict(cls=body or d['name'], card=e.get('card'), kind=e.get('kind', 'troop'), owner=int(owner),
-                            x=round(float(x), 3), y=round(float(y), 3), hp_frac=None, score=round(d['score'], 4),
-                            observation_contract=self.observation_contract,
-                            body_resolution=e.get('body_resolution', 'unresolved'),
-                            rawdetector=dict(name=d['name'], class_idx=d.get('class_idx'),
-                                             p_team=d.get('p_team'), variant=e.get('variant', 'base')))
-                proxy = e.get('legacy_backend_proxy')
-                if proxy is not None:
-                    # Copy so consumers cannot mutate the class registry through a returned observation.
-                    unit['legacy_backend_proxy'] = dict(proxy)
-                units.append(unit)
-                src.append(d['name'])
-                continue
             ident = e.get('identity')
             if ident and ident != 'unknown_unit':
                 units.append(dict(cls=ident, card=_body_card(ident), owner=int(owner), x=round(float(x), 3), y=round(float(y), 3),
@@ -359,7 +324,7 @@ def _body_card(identity):
 
 
 def from_spec(spec):
-    """drive.py --units 'yolo:<model>[+<model>...]:<mapping>[:k=v,...]' (k: conf, iou, agnostic (1: class-agnostic NMS), cu, device, every, format, offsets,
+    """drive.py --units 'yolo:<model>[+<model>...]:<mapping>[:k=v,...]' (k: conf, iou, agnostic (1: class-agnostic NMS), arena_margin (tiles, default .5), cu, device, every, format, offsets,
     threads (torch backend intra-op threads while detecting; offline replays))."""
     import os
     parts = spec.split(':')
@@ -371,4 +336,5 @@ def from_spec(spec):
                      iou=float(opts.get('iou', .6)), compute_units=opts.get('cu', 'ne'), device=opts.get('device', 'cpu'),
                      every=int(opts.get('every', 1)), fmt=opts.get('format'),
                      offsets=ex(opts['offsets']) if 'offsets' in opts else None, threads=int(opts.get('threads', 0)),
-                     agnostic=None if 'agnostic' not in opts else opts['agnostic'] == '1')
+                     agnostic=None if 'agnostic' not in opts else opts['agnostic'] == '1',
+                     arena_margin=float(opts.get('arena_margin', ARENA_MARGIN)))

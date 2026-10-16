@@ -3,7 +3,8 @@
 Digits: bright, low-saturation connected components in a fixed box per tower, classified by the nearest of 28
 k-means centroids (12x18) labelled once from recorded frames (digits.npz; 'x' = not a digit). Max HP: the princess's
 first full reading gives the tower level (clasher/tower_scaling.py growth: King HP +7%/level, others +8%, +10% from
-level 10); the king's max is that level's King HP (its number is hidden until damaged). A tower's HP is the latest reading
+level 10); the king's max is that level's King HP (its number is hidden until damaged, so a king STARTS FULL: its first reading
+must be >= max/2 with two agreeing reads; no 6-identical bypass). A tower's HP is the latest reading
 confirmed by the previous non-empty reading within 10 frames (equal, or falling within (cur/2, cur]); a rise or a drop
 by more than half needs 6 identical readings (a misread '2' for 280 latched under a running minimum in live3; numbers
 blink under hits, so consecutive-frame equality went stale in live8). A princess whose number is gone for 60
@@ -118,19 +119,25 @@ class TowerReader:
                 v = None
             hist = (self.prev.get(key, ()) + (v,))[-10:]
             self.prev[key] = hist
+            lv = self.level[side] or self.level['opp' if side == 'own' else 'own'] or 1
+            mx = tower_hp(kind, lv)
             cur = self.hp.get(key)
+            if kind == 'king' and cur is None:
+                # the king's number is hidden until its first damage, so its true starting state is FULL (not unknown): its first
+                # reading must be a plausible fall from max, >= max/2 with two agreeing reads (no 6-identical bypass). runs-all
+                # 2026-10-16: all 80 genuine first king readings were >= .837 of max; all 6 false ones <= .002 (stray badge/stone
+                # reads latched as e.g. 5 HP, then Fireballs on a full king: s1-m01 s8-m02 s28-m02 s28-m03 s29-m02 s38-m01)
+                cur = mx
             vals = [h for h in hist if h is not None]          # numbers blink under hits: confirm on actual readings
             if v is not None:
                 if cur is None or cur/2 <= v <= cur:
                     if len(vals) >= 2 and cur is None and vals[-2] == v or len(vals) >= 2 and cur is not None and v <= vals[-2] <= cur:
                         self.hp[key] = v                        # two readings agree / keep falling within range
-                elif len(vals) >= 6 and len(set(vals[-6:])) == 1:
-                    self.hp[key] = v                            # big drop or rise: 6 identical readings
+                elif len(vals) >= 6 and len(set(vals[-6:])) == 1 and not (kind == 'king' and key not in self.hp):
+                    self.hp[key] = v                            # big drop or rise: 6 identical readings (not a king's FIRST reading)
             self.missing[key] = 0 if v is not None or zero else self.missing.get(key, 0) + 1
             if kind != 'king' and self.missing[key] >= 60:
                 self.dead.add(key)
-            lv = self.level[side] or self.level['opp' if side == 'own' else 'own'] or 1
-            mx = tower_hp(kind, lv)
             hp = min(self.hp.get(key, mx), mx)
             alive = key not in self.dead
             out[key] = (alive, hp if alive else 0, mx)
