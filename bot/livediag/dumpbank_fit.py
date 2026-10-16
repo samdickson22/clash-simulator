@@ -109,6 +109,7 @@ def main():
     ap.add_argument('dirs', nargs='+')
     ap.add_argument('--out', required=True)
     ap.add_argument('--player', default=None)
+    ap.add_argument('--drop', default='', help='comma list of features to drop (deployed term: score_gap)')
     ap.add_argument('--target', default='final', help="'final' (game outcome + margin) or 'h<T>' (margin T ticks after the root)")
     ap.add_argument('--strong-weight', type=float, default=3.,
                     help='row weight of LIVE-K4CW-r16 games (bot lead: do not learn "rext-bc says spend")')
@@ -118,7 +119,9 @@ def main():
     rng = random.Random(0)
     rng.shuffle(games)
     fold = {g: i % 5 for i, g in enumerate(games)}
-    X = np.array([r['x'] for r in rows]); y = np.array([r['y'] for r in rows])
+    keep = [i for i, n in enumerate(NAMES) if n not in a.drop.split(',')]
+    names = [NAMES[i] for i in keep]
+    X = np.array([[r['x'][i] for i in keep] for r in rows]); y = np.array([r['y'] for r in rows])
     wt = np.array([a.strong_weight if r['opponent'] == 'LIVE-K4CW-r16' else 1. for r in rows])
     best = None
     for lam in (0.1, 1, 10, 100, 1000):
@@ -144,9 +147,9 @@ def main():
                by_opponent={o: dict(n=sum(1 for r in rows if r['opponent'] == o),
                                     y_mean=float(np.mean([r['y'] for r in rows if r['opponent'] == o])))
                             for o in sorted({r['opponent'] for r in rows})},
-               target=a.target, lam=lam, cv_corr=corr, cv_corr_strong=corr_strong, cv_sign_agreement=sign, strong_weight=a.strong_weight, features=list(NAMES),
-               coef_raw=dict(zip(NAMES, raw)), intercept=intercept,
-               coef_std=dict(zip(NAMES, w[:-1].tolist())))
+               target=a.target, lam=lam, cv_corr=corr, cv_corr_strong=corr_strong, cv_sign_agreement=sign, strong_weight=a.strong_weight, features=names,
+               coef_raw=dict(zip(names, raw)), intercept=intercept,
+               coef_std=dict(zip(names, w[:-1].tolist())))
     Path(a.out).write_text(json.dumps(out, indent=1) + '\n')
     print(json.dumps({k: v for k, v in out.items() if k not in ('coef_raw',)}, indent=1))
 

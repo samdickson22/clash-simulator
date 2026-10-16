@@ -304,3 +304,16 @@ on BASE5 = 2439740075545088 vs LIVE-K4CW-r16, 100 paired cases. BASE5 did not se
 - Fireball per battle: +0.75 [+0.13, +1.38]
 
 Early; win/loss per battle requested from the LIVE LEAD (session.json has no result field).
+
+**C56-phase FINAL** (2026-10-16T22:06:36Z; s51–s57)
+- v9a stratum: base s52/s54/s56 (12 battles) vs -res s53/s55/s57 (12 battles). s51 (e16) is a base reference only.
+- -res − base [95% CI]:
+  - win rate 0.58 → 0.50: −0.08 [−0.50, +0.33];
+  - undefended Giant-push share 22% → 3%: −0.19 [−0.51, +0.09], with Giant pushes faced: base 12, -res 31;
+  - reaction p50 3.71 → 3.12 s: −0.59 [−1.75, +0.33];
+  - reaction p90 8.63 → 7.45 s: −1.17 [−3.02, +0.30];
+  - elixir at cross 2.66 → 2.40: −0.27 [−1.02, +0.63];
+  - plays per battle: +1.8 [−5.2, +8.8];
+  - Giant per battle: −0.25 [−0.67, +0.17];
+  - **Fireball per battle 0.33 → 1.33: +1.00 [+0.33, +1.83].**
+- Not pooled with the full-pool phase (§7b).

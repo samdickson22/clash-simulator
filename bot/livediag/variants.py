@@ -34,9 +34,16 @@ with oppmodel._bonus's timed-wait bonus +.01*sqrt(ticks/20)*(1-elixir/10)):
   -rh      receding horizon: timed waits stay in the search as planning macros (their scores and bonus unchanged), but
            the player EMITS a plain no-op (wait_ticks 0), so it re-decides at the next search poll (10 ticks). Live
            mapping: LivePlayer would return Decision(WAIT, 0) instead of a timed wait; nothing else changes.
+  -lc<K>   learned hold-back (option 2): the -res insertion with penalty K/10 * max(0, -yhat(a)) instead of the hand-set one,
+           yhat = the ridge model $LD_LEAFCORR (default models/leafcorr-h600-v1.json, bot/livediag/dumpbank_fit.py:
+           predicted 30 s margin of spending freely minus holding a reserve) on the root's fair features with play a's
+           cost; applied in the same domain as the reserve window (no enemy troop/building on our half, elixir after
+           the play < R). E.g. LD-K4L-R-gs-rw-rh-lc10.
 Suffixes combine, e.g. LD-K4L-R-gs-rw-wint-gf, LD-K4L-R-gs-rw-res-rh.
 """
 from __future__ import annotations
+
+import os
 
 from bot.players.base import Decision, SEARCH_INTERVAL, WAIT
 
@@ -109,13 +116,50 @@ def ground_reserve(R, deck):
     return min(costs) if costs else 3.
 
 
+LEAFCORR = os.environ.get('LD_LEAFCORR', '/mpac/sdicks02/jobs/clasher/bot-livediag/models/leafcorr-h600-v1.json')
+CHEAP_GROUND = ('Archers', 'Cannon', 'Minions')
+
+
+def leafcorr_penalty(rt, core, search_player, deck, kappa, path=None):
+    """penalty(a, elixir) = kappa * max(0, -yhat(features with play a)) in the reserve-window domain (see -lc)."""
+    import json
+    m = json.loads(open(path or LEAFCORR).read())
+    coef = [m['coef_raw'][k] for k in m['features']]
+    b0 = m['intercept']
+    reserve, costs, builder = ground_reserve(rt.R, deck), rt.R.costs, rt.R.builder
+
+    def penalty(a, elixir):
+        if a >= WAIT:
+            return 0.
+        pk = core.info.packet
+        if enemy_count(rt, pk) > 0:
+            return 0.
+        obs = pk.observation
+        hand = [builder.card_name_for_token_id(int(t)) if int(t) > 0 else None for t in list(obs.hand_ids)[:4]]
+        card = hand[a // 576]
+        cost = float(costs[card]) if card in costs else 0.
+        if elixir - cost >= reserve:
+            return 0.
+        gf = [float(x) for x in obs.global_features]
+        opp = getattr(search_player.poller, 'opponent_elixir', None)
+        f = dict(elixir=elixir, elixir_after=elixir - cost, play_cost=cost, opp_elixir=opp if opp is not None else 5.,
+                 enemy_units=float(sum(1 for i in obs.entity_mask.nonzero()[0] if obs.entity_features[int(i)][3] > .5)),
+                 progress=gf[0], double=gf[2], overtime=gf[4], own_l=gf[8], own_r=gf[9], own_k=gf[10], opp_l=gf[11],
+                 opp_r=gf[12], opp_k=gf[13], giant_in_hand=float('Giant' in hand),
+                 fireball_in_hand=float('Fireball' in hand),
+                 cheap_answers=float(sum(1 for c in hand if c in CHEAP_GROUND)))
+        yhat = b0 + sum(c * f[k] for c, k in zip(coef, m['features']))
+        return kappa * max(0., -yhat)
+    return penalty
+
+
 class TwinSearch:
     """Deterministic K4L search with LivePlayer's search-tier call signature (default/wall0 unused: no deadline,
     so the S-default rule never fires), plus the candidate filter of the cap arms."""
 
-    def __init__(self, rt, inner, cap=None, gf=False, horizon=None, elixir_weight=None, res=None):
+    def __init__(self, rt, inner, cap=None, gf=False, horizon=None, elixir_weight=None, res=None, lc=None):
         self.rt, self.inner, self.cap, self.gf, self.elixir_weight = rt, inner, cap, gf, elixir_weight
-        self.res = res
+        self.res, self.lc = res, lc
         if horizon is not None:
             inner.horizon = inner.coarse_horizon = int(horizon)
 
@@ -148,9 +192,11 @@ class TwinSearch:
                 cost = float(costs[card]) if card in costs else 0.
                 return lam * max(0., reserve - (elixir - cost)) / reserve
             core.reserve_penalty = reserve_penalty
-        if self.gf or self.res:
+        if self.lc is not None:
+            core.reserve_penalty = leafcorr_penalty(self.rt, core, self.inner, ctx.own_order, self.lc)
+        if self.gf or self.res or self.lc is not None:
             import bot.search.lopp as lopp
-            gf, orig_sc = reduce_learned_mod(self.gf, bool(self.res)), core.score_candidates
+            gf, orig_sc = reduce_learned_mod(self.gf, bool(self.res) or self.lc is not None), core.score_candidates
 
             def score_candidates(root, seat, cands, **kw):
                 saved, lopp.reduce_learned = lopp.reduce_learned, gf
@@ -258,7 +304,8 @@ def make_variant(rt, name):
     import re
     parts = name[3:].split('-')
     arms = []
-    while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf', 'rh') or re.fullmatch(r'(h|ew)\d+|res(\d+)?(p\d)?', parts[-1])):
+    while parts and (parts[-1] in ('wcap10', 'wcapE', 'wint', 'gf', 'rh') or
+                     re.fullmatch(r'(h|ew|lc)\d+|res(\d+)?(p\d)?', parts[-1])):
         arms.insert(0, parts.pop())
     body = '-'.join(parts)
     if body != 'K4L-R-gs-rw':
@@ -268,6 +315,9 @@ def make_variant(rt, name):
     cap = 'all' if 'wcap10' in arms else ('enemy' if 'wcapE' in arms else None)
     horizon = next((int(a[1:]) for a in arms if a.startswith('h')), None)
     ew = next((int(a[2:]) / 10 for a in arms if a.startswith('ew')), None)
+    lc = next((int(a[2:]) / 10 for a in arms if a.startswith('lc')), None)
+    if lc is not None and any(a.startswith('res') for a in arms):
+        raise ValueError(f'{name}: lc and res are alternatives')
     res = None
     for a in arms:
         m = re.fullmatch(r'res(\d+)?(?:p(\d))?', a)
@@ -275,7 +325,7 @@ def make_variant(rt, name):
             res = ((int(m[1]) if m[1] else int(RES_LAMBDA * 1000)) / 1000, int(m[2] or 0))
     live = LivePlayer(rt, tier='search', fast_spec=FAST_DEFAULT, cutoff_default='it5s2', name=name)
     live.search = TwinSearch(rt, make_player(rt, body), cap=cap, gf='gf' in arms, horizon=horizon,
-                             elixir_weight=ew, res=res)
+                             elixir_weight=ew, res=res, lc=lc)
     live.deadline_seconds = None
     if 'wint' in arms and 'rh' in arms:
         raise ValueError(f'{name}: wint and rh are alternatives')

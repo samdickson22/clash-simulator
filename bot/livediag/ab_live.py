@@ -39,15 +39,23 @@ def arm_of(player, phase):
     return 'res' if 'res' in toks else 'base'
 
 
+RESULTS_MD = Path('/mpac/sdicks02/repos/clasher-live/reports/live/loop/RESULTS.md')   # babysitter-verified W/L
+_RES = None
+
+
 def result(d):
-    for name in ('session.json',):
-        p = d / name
-        if p.exists():
-            s = json.loads(p.read_text())
-            for k in ('result', 'outcome', 'winner', 'won'):
-                if k in s:
-                    return s[k]
-    return None
+    """'W' / 'L' / 'D' for battle dir sNN-mNN from the LIVE LEAD's results table (read in place), else None."""
+    global _RES
+    if _RES is None:
+        _RES = {}
+        if RESULTS_MD.exists():
+            for line in RESULTS_MD.read_text().splitlines():
+                cells = [c.strip() for c in line.strip().strip('|').split('|')]
+                if len(cells) > 1 and re.fullmatch(r's\d+[a-z]?-m\d+', cells[0]):
+                    r = cells[1].replace('*', '').strip()
+                    if r[:1] in 'WLD':
+                        _RES[cells[0]] = r[:1]
+    return _RES.get(d.name)
 
 
 def main():
@@ -85,11 +93,12 @@ def main():
         'elixir_at_giant_cross': lambda bs: mean([e for x in bs for e in x['elixir_cross']]),
         'undefended_share': lambda bs: sum(x['nodef'] for x in bs) / max(1, sum(x['pushes'] for x in bs)),
         'reaction_s': lambda bs: mean([sorted(x['react'])[len(x['react']) // 2] for x in bs if x['react']]),
+        'reaction_p90_s': lambda bs: mean([sorted(x['react'])[int(.9 * len(x['react']))] for x in bs if x['react']]),
         'plays_per_battle': lambda bs: mean([x['plays'] for x in bs]),
         'giant_per_battle': lambda bs: mean([x['giant'] for x in bs]),
         'fireball_per_battle': lambda bs: mean([x['fireball'] for x in bs]),
     }
-    out = dict(phase=a.phase, battles={k: len(v) for k, v in arms.items()}, sessions={k: sorted({x['sid'].split('-')[0] for x in v})
+    out = dict(phase=a.phase, giant_pushes={k: sum(x['pushes'] for x in v) for k, v in arms.items()}, battles={k: len(v) for k, v in arms.items()}, sessions={k: sorted({x['sid'].split('-')[0] for x in v})
                                                                         for k, v in arms.items()},
                excluded=excluded, metrics={})
     for name, f in metrics.items():
@@ -126,6 +135,15 @@ def main():
             out['pooled_blocked'][name] = dict(delta=round(pt, 3), ci=[round(draws[100], 3), round(draws[3900], 3)],
                                                strata=usable)
     out['results'] = {k: [x['result'] for x in v] for k, v in arms.items()}
+    win = lambda bs: mean([1. if x['result'] == 'W' else (0.5 if x['result'] == 'D' else 0.)
+                          for x in bs if x['result'] is not None])
+    out['win_rate'] = {k: dict(n=sum(1 for x in v if x['result']), rate=round(win(v), 3) if any(x['result'] for x in v)
+                               else None) for k, v in arms.items()}
+    for st in out['strata']:
+        sub = {k: [x for x in v if x['stratum'] == st and x['result']] for k, v in arms.items()}
+        out['strata'][st]['win_rate'] = {k: dict(n=len(v), rate=round(win(v), 3) if v else None) for k, v in sub.items()}
+        if len(sub['base']) > 1 and len(sub['res']) > 1:
+            out['strata'][st]['win_rate']['res_minus_base'] = boot_diff(sub['base'], sub['res'], win)
     text = json.dumps(out, indent=1, default=str)
     if a.json:
         Path(a.json).write_text(text + '\n')
