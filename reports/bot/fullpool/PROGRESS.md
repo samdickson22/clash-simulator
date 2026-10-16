@@ -327,3 +327,16 @@ An append-only pointer was added to the existing `babysit-g1k1.log`; its earlier
   rl5-v10-fp baseline, opponents extended R3a and v1, 300 paired cases, on 04/08 via run/eval_f1.sh), plus
   babysitting and filling 04/08 with new G1 shards after the evals.
 - 2026-10-16T18:15:52Z main fixed by 5bce7c28b (slot-permission change reverted, slot_permission.py deleted). Main's four files are byte-identical to my overlay (sha prefixes a58a4787/0c2e14fe/dd0a067c/3b4f27d7), so running jobs on repo-b82939149f8a are unaffected; the next stage drops the overlay.
+- 2026-10-16T18:26:54Z **F1 screen, FP-DEV** (both decks full-pool, live16402b-r3, 300 paired cases per opponent, 1800 games, 0
+  errors; rows on 04/08 at J/eval-f1-fpdev). Baseline = extended RL r5 v10 (0.5375); opponents are the extended R3a
+  and v1.
+
+  | opponent | base | f1a2 | f1b2 | f1a2 − base [95% CI] | f1b2 − base [95% CI] |
+  |---|---|---|---|---|---|
+  | R3a | 0.572 | 0.617 | 0.613 | +0.045 [−0.023, +0.110] | +0.042 [−0.022, +0.105] |
+  | v1 | 0.800 | 0.833 | 0.830 | +0.033 [−0.017, +0.083] | +0.030 [−0.027, +0.087] |
+  | pooled (n=600) | 0.686 | 0.725 | 0.722 | **+0.039 [−0.003, +0.082]** | +0.036 [−0.006, +0.078] |
+
+  Both arms are about +0.04 over the baseline, but this is the dev (selection) bank, so it is not a claim. The C56-REG
+  regression check was moved to 01 (W16), because live-diag has priority on 04/08 until ~20:05Z. The 08 eval lease
+  was lowered from 51 to 8 so it stopped blocking live-diag.
