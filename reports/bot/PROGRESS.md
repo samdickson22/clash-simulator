@@ -3,7 +3,7 @@
 Mandate: the strongest bot, judged by a trusted win rate. Coordinator ruling: COORDINATOR 91e2bb67 (exploration
 tier). Report to coordinator thread 0523ae6f.
 
-## Current handoff: Sol interim, 2026-10-16 09:32 UTC
+## Current handoff: Sol interim, 2026-10-16 09:37 UTC
 
 Sam's UPDATED 2026-10-16 direction supersedes the blanket Opus hold: **make obvious decisions now**. Confident,
 reversible changes may proceed within authority with meaningful passing checks, required reviews and concrete
@@ -21,10 +21,13 @@ and future delegation briefs. Actual permission controls remain unchanged. No ol
   `e188e2aeb9a6828ffbef237aa327e495eb39ca5f8322ae18aa70c63cb81bba19`. Iteration 10 is complete: r9 v4's F10
   delta was −0.003 [−0.026, +0.021], not confirmed (2,000 games, no errors). Details: `exit/PROGRESS.md`.
   C56 feeders deliberately remain OFF for G1. RL r9/r10 are checkpointed and paused; GPUs remain LIVE-owned.
-- **Full-pool G1/K1:** existing Sol babysitter `fullpool-g1k1-babysit-r1` is active. Latest 09:16:32Z receipts:
-  G1 5,927 attempts / 5,865 successful / 2,350,972 labels / 62 known errors (51 Freeze,11 BarbarianRage);
-  K1 1,713 attempts / 1,704 successful / 1,055,727 recording rows / 9 known errors (3 Freeze,6 BarbarianRage).
+- **Full-pool G1/K1:** existing Sol babysitter `fullpool-g1k1-babysit-r1` is active. Latest 09:36:35Z receipts,
+  independently reduced from its log: G1 6,917 attempts / 6,848 successful / 2,748,605 labels / 69 known errors;
+  K1 2,244 attempts / 2,233 successful / 1,385,311 recording rows / 11 known errors. No new error type or >8%hostrate.
   All 13 recorded process groups alive. Existing r2 retry/preflight rules remain in force; no new root is promoted.
+  Optional newK1shards3/4/5 DISABLED by BOT decision: retain existingjobs+authorizedretries/backoff only.
+  01GPU recovered56→99%,lowstreak0,nohalving;04/08idle/nocompute.03preflight4043492 stillqueued/noPASS;
+  no03r2 use. Literal03count108 vs97actualPython inherited; no new oversubscription. r2taggedrowsG1=703,K1=1703.
   See `fullpool/PROGRESS.md` and `/mpac/sdicks02/jobs/clasher/bot-fullpool/babysit-g1k1.log` on 05.
 - **Revealed-set round 7:** existing Sol collector `revset-r7-collect-1` active. Floorchk 0/60, smoke 0/40 at
   09:05:46–47Z. Both wait on the canonical 03 cpu_room.sh: live count 107, cap 105, leased_idle 0; all five

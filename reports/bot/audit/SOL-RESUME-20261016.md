@@ -142,6 +142,22 @@ Mac-only emulator scope, heldout exclusions and review before new host-touching 
 
 ## Existing job identifiers (no launch in this continuation)
 
+### 09:36–09:37 UTC full-pool health and scope
+
+- Existingbabysitter09:36:35Z:noactions,all13PGIDsalive/progressing,no newerror/>8%hostrate.
+  BOT independentlyreduced lastrecordper(host,kind,shard) fromits05log at09:37:44Z:
+  G16917attempts/6848ok/2748605labels/69knownerrors;K12244attempts/2233ok/1385311recrows/11knownerrors.
+- DECISION confirms optionalnewK1shards3/4/5disabled;existing13jobs+authorizedr2retries/GPU-userbackoffonly.
+  Originaloptionalexpansion is superseded; no newpermission/pin/runtimechange. Reruns require originalPGIDabsent
+  andhostpreflightPASS.03preflight4043492stillqueued/noPASS; no03r2usage.
+- GPU01recovered56→99%withYOLOPID1967844,lowstreakreset0,nohalving.04/08GPU0%andnocompute=idle,notstarved.
+  Nologins.03literal108/actual97;08literal103/actual99;04literal92/actual90;01literal86/actual83(50ownedworkers).
+  Inheritedliteralwrapperovercount,no newoversubscription. r2taggedrowsG1=703,K1=1703. Nextnormalcheck09:56Z.
+- Workersteering `bot-fullpool-no-optional-shards-20261016T0937Z`;parent
+  `bot-fullpool-0936-health-20261016-r1`. Nojobs/signals/halving/accountactions by BOT.
+- Follow-up commitcommand:
+  `BOT_AUDIT_COMMIT_TITLE='Bot: record full-pool progress and keep optional expansion disabled' python3 /mpac/sdicks02/jobs/clasher/bot-sol-resume-20261016/commit_docs.py`.
+
 ### 09:31–09:32 UTC published receipt verification
 
 - Verified ownerpublication `f85c66d375a949e007d9aeff6983c3f028c64b50` afterfetch:24changedpaths allunder
