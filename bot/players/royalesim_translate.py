@@ -88,10 +88,65 @@ class OwnCycleView:
         return dict(elixir=float(elixir), hand=list(hand), cycle=cycle, refill=int(t.refill))
 
 
+def complete_vocab(rt, vocab):
+    """Add runtime object rows absent from the external-simulator vocabulary.
+
+    Preserve every measured row and mapping. These defaults name engine
+    objects even when an external perception schema cannot produce them yet.
+    """
+    import copy
+    vocab = copy.deepcopy(vocab)
+    kinds = ('Troop', 'Building', 'Projectile', 'AreaEffect', 'Entity')
+    objects = vocab.setdefault('objects', {})
+    for (token, kind), template in rt.R.templates.items():
+        index = kinds.index(kind)
+        objects.setdefault(f'{token}/{index}', [token, index])
+        cols = template.get('public_static')
+        if cols is not None:
+            vocab['statics'].setdefault(f'{token}/{index}', dict(cols=cols, level=11, motion='dynamic',
+                                        name=rt.R.builder.token_names[token], kind=kind))
+        if index < 2:
+            vocab['units'].setdefault(rt.R.builder.token_names[token], [token, index])
+    def identity(template):
+        for ns, names in template.get('public_identity', ()):
+            token = next((rt.R.builder.token_id(n, namespace=ns) for n in names
+                          if rt.R.builder.token_id(n, namespace=ns) > 1), 1)
+            kind = template['entity_kind']
+            if (token, kinds[kind]) in rt.R.templates:
+                return [token, kind]
+        return None
+    # External rows provide a source card and a motion rather than an exact
+    # payload ID. For previously unmapped rows, use that card's deterministic
+    # primary public carrier. The exact-ID registry above retains every child.
+    for card, cfg in rt.R.config['cards'].items():
+        if card.startswith('level12:'):
+            continue
+        primary = next((identity(t) for group in cfg['units'] for t in group
+                        if t['entity_kind'] >= 2 and identity(t) is not None), None)
+        if primary:
+            for motion in range(7):
+                vocab['spells'].setdefault(f'{card}/{motion}', primary)
+        stats = rt.R.builder.loader.get_card(card)
+        shot = getattr(stats, 'projectile_data', None) or {}
+        token = rt.R.builder.token_id(shot.get('name'), namespace='projectile')
+        if (token, 'Projectile') in rt.R.templates:
+            vocab['projectiles'].setdefault(card, token)
+    for table in ('death_areas', 'death_objects', 'spirit_areas', 'spawn_areas'):
+        for card, template in rt.R.config.get(table, {}).items():
+            if card.startswith('level12:'):
+                continue
+            primary = identity(template)
+            if primary:
+                for motion in range(7):
+                    vocab['spells'].setdefault(f'{card}/{motion}', primary)
+    return vocab
+
+
 class Translator:
     def __init__(self, rt, vocab, catalogue):
         import royalesim as rs
         from .royalesim_adapter import our_card
+        vocab = complete_vocab(rt, vocab)
         self.rt, self.vocab = rt, vocab
         self.builder = rt.R.builder
         self.costs = rt.R.costs
@@ -184,9 +239,17 @@ class Translator:
                 self.stats[f'{label}_projectile:{key}'] += 1
                 continue
             rows.append((token, 2, team, x, y, None, (ax-x, ay-y)))
+        return self._resolved_rows(rows, seat)
+
+    def _resolved_rows(self, rows, seat):
+        """Format resolved public carriers through the same object registry.
+
+        Source-card/motion schemas may alias several engine child objects;
+        exact public carriers and source mappings share this final lookup.
+        """
         out = []
         for token, kind, team, x, y, hp, motion in rows:
-            if (token, kind) not in self.templates:
+            if (token, kind) not in self.templates or f'{token}/{kind}' not in self.vocab['objects']:
                 self.stats[f'no_template:{token}/{kind}'] += 1
                 continue
             row, level = self._row(seat, token, kind, team, x, y, hp, motion)

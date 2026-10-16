@@ -1,0 +1,32 @@
+{
+  "updated_utc": "2026-10-16T09:56:00Z",
+  "streams": {
+    "A": {
+      "cards": ["GoblinCage", "SpearGoblins", "Bomber", "Tombstone", "Barbarians", "BattleRam", "MegaMinion", "BarbarianHut", "Mortar", "DartBarrell", "Witch", "Pekka", "SkeletonWarriors", "SkeletonDragons"],
+      "status": "merged; C56 gate passed",
+      "evidence": "reports/cards/batchA/RESULTS.md",
+      "source_commit": "878d5f459",
+      "native_sha_prefix": "de11f124"
+    },
+    "B1": {
+      "cards": ["RoyalRecruits", "ThreeMusketeers", "GiantSkeleton", "SkeletonBalloon", "Hunter", "MiniSparkys", "RoyalGiant", "BattleHealer", "GoblinGiant", "GiantBuffer"],
+      "status": "candidate; boundary regression and fresh gate pending",
+      "evidence": "cards/b1:reports/cards/b1/PROGRESS.md",
+      "source_commit": "fb7c2895a967d6d7f10a017fc02b3a47c6ff83de",
+      "native_sha_prefix": "63db3e16"
+    },
+    "B2": {
+      "cards": ["Freeze", "Snowball", "Vines", "Rage", "DarkMagic", "GoblinCurse", "Clone", "Graveyard", "Heal", "Mirror"],
+      "status": "WIP; dynamic validation and fresh gate pending",
+      "evidence": "cards/b2:reports/cards/b2/PROGRESS.md",
+      "native_sha_prefix": "7738f9d2"
+    },
+    "C1": {
+      "cards": ["Bowler", "Assassin", "ZapMachine", "ElectroWizard", "IceWizard", "InfernoDragon", "MegaKnight", "Fisherman", "AxeMan", "ElectroDragon", "BossBandit", "Ronin"],
+      "status": "focused fixes reviewed; B2 integration and fresh gate pending",
+      "evidence": "reports/cards/reviews/C1-r2.md",
+      "source_commit": "f68e5f80f1b23f5d5245e3c6c856e5ec6fceac4e",
+      "native_sha_prefix": "631ac18d"
+    }
+  }
+}

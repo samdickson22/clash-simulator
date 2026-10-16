@@ -39,6 +39,7 @@ import tempfile
 SOURCE = Path(__file__).resolve().parents[2]
 RUNTIMES = Path('/mpac/sdicks02/repos/clasher-bot-runtime')
 RECEIPT = 'CARDS-RUNTIME-RECEIPT.json'
+FAIR_PLAYER = 'reports/strategy_council_20260928/engine-speed/stage5/fair_player.py'
 CARGO = dict(CARGO_HOME='/mpac/sdicks02/tools/cargo', RUSTUP_HOME='/mpac/sdicks02/tools/rustup')
 
 
@@ -55,9 +56,9 @@ def git(*args):
 
 
 def export(rev, out):
-    """git archive REV engine-cards -> OUT/engine-cards (committed files only: uncommitted edits never ship), plus
+    """git archive REV engine-cards + fair_player -> OUT (committed files only: uncommitted edits never ship), plus
     OUT/SOURCE-GIT.json {commit, tracked, dirty_at_export}."""
-    validate_paths({'engine source': SOURCE / 'engine-cards', 'git metadata': SOURCE / '.git'},
+    validate_paths({'engine source': SOURCE / 'engine-cards', 'fair player': SOURCE / FAIR_PLAYER, 'git metadata': SOURCE / '.git'},
                    {'source export': out})
     commit = git('rev-parse', rev).strip()
     if out.exists() and any(out.iterdir()):
@@ -65,11 +66,11 @@ def export(rev, out):
             sys.exit(f'{out} exists and is not an export: refusing to replace it')
         shutil.rmtree(out)
     out.mkdir(parents=True, exist_ok=True)
-    archive = subprocess.run(['git', '-C', str(SOURCE), 'archive', '--format=tar', commit, 'engine-cards'],
+    archive = subprocess.run(['git', '-C', str(SOURCE), 'archive', '--format=tar', commit, 'engine-cards', FAIR_PLAYER],
                              check=True, capture_output=True).stdout
     subprocess.run(['tar', '-x', '-C', str(out)], input=archive, check=True)
-    tracked = [x for x in git('ls-tree', '-r', '-z', '--name-only', commit, 'engine-cards').split('\0') if x]
-    dirty = [line[3:] for line in git('status', '--porcelain', '--', 'engine-cards').splitlines()]
+    tracked = [x for x in git('ls-tree', '-r', '-z', '--name-only', commit, 'engine-cards', FAIR_PLAYER).split('\0') if x]
+    dirty = [line[3:] for line in git('status', '--porcelain', '--', 'engine-cards', FAIR_PLAYER).splitlines()]
     (out / 'SOURCE-GIT.json').write_text(json.dumps(dict(commit=commit, tracked=tracked, dirty_at_export=dirty,
                                                          worktree=str(SOURCE))) + '\n')
     return out
@@ -77,6 +78,7 @@ def export(rev, out):
 
 def source_info(tree):
     info = json.loads((tree / 'SOURCE-GIT.json').read_text())
+    assert FAIR_PLAYER in info['tracked'], 'source export lacks fair_player; re-export with --rev'
     for rel in info['tracked']:
         assert (tree / rel).is_file(), rel
     return info
@@ -98,10 +100,12 @@ def build_native(tree, out):
 
 
 def overlays(tracked):
-    """[(source path, target-relative path)] from the git-tracked engine-cards files."""
+    """[(source path, target-relative path)] from tracked engine-cards and the public root builder."""
     out = []
     for rel in tracked:
-        if rel == 'engine-cards/py/gamedata.json':
+        if rel == FAIR_PLAYER:
+            out.append((rel, rel))
+        elif rel == 'engine-cards/py/gamedata.json':
             out.append((rel, 'gamedata.json'))
         elif rel.startswith('engine-cards/py/src/clasher/'):
             out.append((rel, 'src/' + rel[len('engine-cards/py/src/'):]))
@@ -211,6 +215,7 @@ def main():
     outputs = dict(target=target, backup=old)
     if a.rev:
         inputs['engine source'] = SOURCE / 'engine-cards'
+        inputs['fair player'] = SOURCE / FAIR_PLAYER
         outputs['source export'] = tree
     else:
         inputs['overlay tree'] = tree
