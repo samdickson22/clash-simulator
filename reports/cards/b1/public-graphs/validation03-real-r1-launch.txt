@@ -1,0 +1,12 @@
+2026-10-16T20:11:53Z
+3831883
+3831916
+3831936
+    PID    PGID STAT  NI     ELAPSED COMMAND
+3831883 3831883 Ss     0       00:06 bash /mpac/sdicks02/repos/clasher-bot/bot/exit/cpu_job.sh 4 nice -n15 bash /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validation_job.sh /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03 real-r1
+3831916 3831883 SN    15       00:06 bash /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validation_job.sh /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03 real-r1
+3831936 3831936 RNs   19       00:06 /mpac/sdicks02/repos/clasher-bot/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03/validate.py real-r1 /mpac/sdicks02/jobs/clasher/cards/b1/public-graphs-20261016-03
+/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/r1/gamedata.json: OK
+source-commit.txt: OK
+2026-10-16T20:11:47Z pid=3831916 phase=real-r1

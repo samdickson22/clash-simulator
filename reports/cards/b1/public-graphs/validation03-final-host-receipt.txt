@@ -1,0 +1,35 @@
+2026-10-16T21:15:56Z
+    PID    PGID STAT COMMAND
+6385207d863a518bd713a1a96b5f1c8763ccbf07
+public_root.py: OK
+validate.py: OK
+real_games.py: OK
+validation_job.sh: OK
+compare_headline.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/engine-rs/public_root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/player.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/candidates.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/lopp_fast.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/search/players.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/players/runtime.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/reports/cards/runtime/tools/noncore_matches.py: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/native/clasher_core.abi3.so: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/r1-cards3-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/runtime/live16402c-dev/gamedata.json: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/root.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/levels/configs.py: OK
+/mpac/sdicks02/jobs/clasher/cards/r1-cards3-phase1/repo-eval/bot/live/levels.py: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/native-total-r1/clasher_core.abi3.so: OK
+/mpac/sdicks02/repos/clasher-bot-runtime/r1/gamedata.json: OK
+source-commit.txt: OK
+2026-10-16T20:15:37Z pid=3831916 phase=real-r1
+2026-10-16T20:21:56Z pid=4057675 phase=real-live
+2026-10-16T20:46:44Z pid=1423212 phase=mixed
+2026-10-16T21:00:51Z pid=1673223 phase=headline-baseline
+2026-10-16T21:14:50Z pid=2488775 phase=headline-candidate
+e9705a4861daeb686a83ebe9adf33fa3c4f2931dafd11a945427ee841edbc52b  real-r1.json
+f30ee25d4b2f2350b44feb937125893b75b4966f3047f2196e92d9bfe3007193  real-live.json
+f224481aa4a2a483dc97ec724f45e767a1bd880aaf65e8568be136dc9f5c75ed  mixed.jsonl
+afbaecad90b9abb915d44b657ee1e500b0b21985c1e92f03dfdc26af6f9792b1  headline-baseline/games-000.jsonl
+c7c0b32e185dc93cb723f11caa443137291eda198c4541d852ad34f63559ea72  headline-candidate/games-000.jsonl
