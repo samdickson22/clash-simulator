@@ -44,6 +44,16 @@ preparation only. Actual captures, dynamic causes, ordinary reachability, engine
 fixes/parity, fixture classification, host execution and actual coverage remain
 unapproved and open. Original631ac/tool approvals are unchanged.
 
+Post-r2 self-audit found a further preparation gap before any actual capture use:
+the exact old IceSpirit lead0 case casts after construction, so actor8 does not
+yet exist in its constructor root. The inspector previously required it there.
+The revised tool records explicit absent/present constructor state for this case;
+the t23 mismatch's before/after actor requirement remains strict, as do other
+cases' constructor requirements. Both-seat unborn/birth and missing-later-actor
+controls pass; `inspection-local-receipt-r3.json` binds the source convention.
+Original r2 approval remains scoped to2105c2959; revised preparation needs fresh
+independent review. This is no new field exemption or dynamic engine finding.
+
 ## Read paths and scope constraints
 
 - Zap: `Entity.finish_movement_tick` (`entities.py:389`) runs from the movement

@@ -48,7 +48,7 @@ def selected(row):
                 stats={k: row['stats'][k] if k in row['stats'] else '<absent>' for k in STATS})
 
 
-def frame(pair, identity):
+def frame(pair, identity, *, allow_unborn=False):
     if set(pair) != {'python', 'native'}:
         raise ValueError('expected Python/native pair')
     for state in pair.values():
@@ -60,10 +60,14 @@ def frame(pair, identity):
         ids = [e['id'] for e in state['entities']]
         if len(ids) != len(set(ids)):
             raise ValueError('duplicate entity IDs in root')
+        if allow_unborn and identity not in ids:
+            result[arm] = dict(actor=None, actor_presence='absent', target=None)
+            continue
         actor = entity(state, identity)
         target_id = actor.get('target')
         targets = [e for e in state['entities'] if e['id'] == target_id]
-        result[arm] = dict(actor=selected(actor), target=selected(targets[0]) if targets else None)
+        result[arm] = dict(actor=selected(actor), actor_presence='present',
+                           target=selected(targets[0]) if targets else None)
         if targets:
             result[arm]['target_displacement_units'] = [round((targets[0][axis]-actor[axis])*1000)
                                                         for axis in ('x', 'y')]
@@ -77,7 +81,10 @@ def observation(row):
         raise ValueError('wrong case/lead/seat/contract')
     if 'error' in row or 'error' in row['result']:
         raise ValueError('capture contains an execution error')
-    result = dict(case=case, seat=row['seat'], lead=lead, initial=frame(row['initial_root'], identity),
+    # IceSpirit lead0 is cast in the first loop iteration AFTER construction.
+    # It need not exist in that initial root; it must exist at its t23 mismatch.
+    result = dict(case=case, seat=row['seat'], lead=lead,
+                  initial=frame(row['initial_root'], identity, allow_unborn=case == 'ice_spirit'),
                   original_source_sha256=row['source_sha256'],
                   retained_result=result_projection(row['result']),
                   omitted_result_fields=['fresh_troop_templates'] if 'fresh_troop_templates' in row['result'] else [],

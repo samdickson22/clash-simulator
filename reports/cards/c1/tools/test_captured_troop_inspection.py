@@ -15,6 +15,9 @@ def sample(case, seat):
     target = dict(actor, id=10, target=None)
     state = dict(tick=100, entities=[actor, target], config=dict(cards={}, spirit_areas={}))
     initial = dict(python=copy.deepcopy(state), native=copy.deepcopy(state))
+    if case == 'ice_spirit':
+        for arm in initial:
+            initial[arm]['entities'] = [r for r in initial[arm]['entities'] if r['id'] != identity]
     state['tick'] += first
     before = dict(python=copy.deepcopy(state), native=copy.deepcopy(state))
     after = copy.deepcopy(before)
@@ -40,7 +43,13 @@ def main():
     for row in rows:
         out = observation(row)
         assert out['differences'] == row['first_context']['differences']
-        assert out['initial']['python']['actor']['fields']['clock'] == '<absent>'
+        if row['case'] == 'ice_spirit':
+            for arm in ('python', 'native'):
+                assert out['initial'][arm]['actor'] is None
+                assert out['initial'][arm]['actor_presence'] == 'absent'
+                assert out['before'][arm]['actor_presence'] == 'present'
+        else:
+            assert out['initial']['python']['actor']['fields']['clock'] == '<absent>'
         assert out['evidence_kind'] == 'captured-boundary-observations-not-causal-proof'
     dragon = observation(rows[2])
     assert dragon['zero_displacement_at_before_boundary'] == dict(python=True, native=True)
@@ -78,9 +87,13 @@ def main():
         lambda r: r['result'].update(first=0.0),
         lambda r: r['result'].update(compared_ticks=0),
         lambda r: r.update(compared_ticks=True),
+        lambda r: r['initial_root']['python']['entities'].pop(0),
     ):
         bad = copy.deepcopy(rows[0]); mutate(bad)
         reject(lambda: observation(bad))
+    missing_later = copy.deepcopy(rows[4])
+    missing_later['first_context']['before']['python']['entities'].pop(0)
+    reject(lambda: observation(missing_later))
     with tempfile.TemporaryDirectory(prefix='c1-json-inspection-') as temp:
         path = Path(temp)/'synthetic.json'
         def write(data):

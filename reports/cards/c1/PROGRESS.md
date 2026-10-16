@@ -494,3 +494,18 @@ Strict silence/direct-owner questions/one automatic whole-assignment delivery re
   engine/native/normalization change. Preserve old failed review artifacts.
   Prior turn ended while the independent review was active; assignment remains
   open awaiting owner-provided actual captures, not completed by preparation.
+- 12:03Z r2 preparation approval/report receipt-only recording commit **42d61c728**
+  secret-scanned/diffchecked/committed/pushed; tools and engine unchanged from
+  independently reviewed2105c2959. No routine approval/commit DM.
+- 12:05–12:06Z own substantive source/fixture audit found R3 before actual use:
+  frozen legacy IceSpirit lead0 casts only in the loop after native construction;
+  actor8 is absent in its constructor root. Approved preparation inspector would
+  reject that valid birth history; no actual input/test run was attempted and no
+  native finding is claimed. Revised inspection reports explicit constructor actor
+  absence only for the IceSpirit case, keeps later t23 before/after strict, keeps
+  all other constructor actor requirements. Added both-seat unborn/birth and
+  missing-later/other-case actor negatives. Exact same local JSON test PASS at
+  12:06:01Z; command/current code/frozen producer hashes in inspection-local-receipt-r3.json.
+  Earlier r2 approval is preserved at2105c2959, not inherited by new bytes. Fresh
+  independent complete preparation review required; no original tool/native,
+  runtime/host/build/job/gate/selector/engine changes.
